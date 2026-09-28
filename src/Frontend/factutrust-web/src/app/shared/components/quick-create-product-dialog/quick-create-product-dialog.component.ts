@@ -28,6 +28,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
 import { HttpErrorResponse } from '@angular/common/http';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { PRODUCT_TYPE_OPTIONS, PRODUCT_UNIT_OPTIONS, PRODUCT_VAT_OPTIONS } from '@shared/constants/coded-option-labels';
 import {
   calculateFodecAmount,
   calculateSaleTtc,
@@ -49,29 +50,9 @@ interface VatOption {
   value: number;
 }
 
-const TYPE_OPTIONS: TypeOption[] = [
-  { label: 'Produit', value: 'Produit' },
-  { label: 'Service', value: 'Service' },
-];
-
-const UNIT_OPTIONS: UnitOption[] = [
-  { label: 'Unité', value: 'Unité' },
-  { label: 'Heure', value: 'Heure' },
-  { label: 'Jour', value: 'Jour' },
-  { label: 'Mois', value: 'Mois' },
-  { label: 'An', value: 'An' },
-  { label: 'Kg', value: 'Kg' },
-  { label: 'Litre', value: 'Litre' },
-  { label: 'Mètre', value: 'Mètre' },
-  { label: 'M²', value: 'M²' },
-];
-
-const VAT_OPTIONS: VatOption[] = [
-  { label: '19% - Taux normal', value: 19 },
-  { label: '13% - Taux intermédiaire', value: 13 },
-  { label: '7% - Taux réduit', value: 7 },
-  { label: '0% - Exonéré', value: 0 },
-];
+const TYPE_OPTIONS: TypeOption[] = PRODUCT_TYPE_OPTIONS;
+const UNIT_OPTIONS: UnitOption[] = PRODUCT_UNIT_OPTIONS;
+const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
 
 /**
  * Dialog to create a product with minimal fields (code, name, type, unit price, VAT, unit, stock).
@@ -98,21 +79,21 @@ const VAT_OPTIONS: VatOption[] = [
       <div class="quick-create-product-content">
         <div class="form-fields">
           <div class="form-block">
-            <h4 class="form-block-title">Identité</h4>
+            <h4 class="form-block-title" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.identite.3138be1c">Identité</h4>
             <div class="form-group">
-              <label for="quick-code">Code produit <span class="required">*</span></label>
+              <label for="quick-code"><ng-container i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.code.produit.60220afb">Code produit </ng-container> <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
               <input
                 pInputText
                 id="quick-code"
                 [ngModel]="code()"
                 (ngModelChange)="code.set($event)"
                 (blur)="codeTouched.set(true)"
-                placeholder="Ex: PROD-001"
+                placeholder="Ex: PROD-001" i18n-placeholder="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.ex.prod.001.654beeed"
                 class="w-full"
                 [class.ng-invalid]="showCodeError()"
                 [attr.aria-invalid]="showCodeError()"
                 [attr.aria-describedby]="showCodeError() ? 'quick-code-error' : null" />
-              <small class="form-hint">Min. 2 caractères</small>
+              <small class="form-hint" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.min.2.caracteres.af950758">Min. 2 caractères</small>
               @if (showCodeError()) {
                 <div class="field-error" id="quick-code-error" role="alert">
                   <i class="pi pi-exclamation-circle"></i>
@@ -122,19 +103,19 @@ const VAT_OPTIONS: VatOption[] = [
             </div>
 
             <div class="form-group">
-              <label for="quick-name">Nom <span class="required">*</span></label>
+              <label for="quick-name"><ng-container i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.nom.7ff20370">Nom </ng-container> <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
               <input
                 pInputText
                 id="quick-name"
                 [ngModel]="name()"
                 (ngModelChange)="name.set($event)"
                 (blur)="nameTouched.set(true)"
-                placeholder="Nom du produit ou service"
+                placeholder="Nom du produit ou service" i18n-placeholder="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.nom.du.produit.ou.service.d82d71d4"
                 class="w-full"
                 [class.ng-invalid]="showNameError()"
                 [attr.aria-invalid]="showNameError()"
                 [attr.aria-describedby]="showNameError() ? 'quick-name-error' : null" />
-              <small class="form-hint">Min. 2 caractères</small>
+              <small class="form-hint" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.min.2.caracteres.af950758">Min. 2 caractères</small>
               @if (showNameError()) {
                 <div class="field-error" id="quick-name-error" role="alert">
                   <i class="pi pi-exclamation-circle"></i>
@@ -145,7 +126,7 @@ const VAT_OPTIONS: VatOption[] = [
 
             <div class="form-row">
               <div class="form-group">
-                <label for="quick-type">Type <span class="required">*</span></label>
+                <label for="quick-type"><ng-container i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.type.3deb7456">Type </ng-container> <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
                 <p-select
                   id="quick-type"
                   [options]="typeOptions"
@@ -153,13 +134,13 @@ const VAT_OPTIONS: VatOption[] = [
                   (ngModelChange)="onCategoryChange($event)"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="Type"
+                  placeholder="Type" i18n-placeholder="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.type.3deb7456"
                   [appendTo]="panelMode ? 'body' : null"
                   [overlayOptions]="panelMode ? drawerOverlayOptions : undefined"
                   styleClass="w-full" />
               </div>
               <div class="form-group">
-                <label for="quick-unit">Unité <span class="required">*</span></label>
+                <label for="quick-unit"><ng-container i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.unite.388fd9c4">Unité </ng-container> <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
                 <p-select
                   id="quick-unit"
                   [options]="unitOptions"
@@ -167,7 +148,7 @@ const VAT_OPTIONS: VatOption[] = [
                   (ngModelChange)="unit.set($event)"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="Unité"
+                  placeholder="Unité" i18n-placeholder="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.unite.388fd9c4"
                   [appendTo]="panelMode ? 'body' : null"
                   [overlayOptions]="panelMode ? drawerOverlayOptions : undefined"
                   styleClass="w-full" />
@@ -176,7 +157,7 @@ const VAT_OPTIONS: VatOption[] = [
 
             @if (showStockManagement()) {
               <div class="form-group">
-                <label for="quick-stock">Gestion de stock</label>
+                <label for="quick-stock" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.gestion.de.stock.3f196b66">Gestion de stock</label>
                 <div class="status-switch">
                   <p-inputSwitch
                     id="quick-stock"
@@ -186,27 +167,27 @@ const VAT_OPTIONS: VatOption[] = [
                     [attr.aria-describedby]="stockDescribedBy()">
                   </p-inputSwitch>
                   <span [class.active]="resolveIsStockManaged()">
-                    {{ resolveIsStockManaged() ? 'Activée' : 'Désactivée' }}
+                    {{ resolveIsStockManaged() ? loc_ui_tern_activee_9b4e7c : loc_ui_tern_desactivee_74cc3b }}
                   </span>
                 </div>
                 @if (!isProductCategory()) {
-                  <small class="form-hint" id="quick-stock-type-hint">Disponible uniquement pour les produits physiques.</small>
+                  <small class="form-hint" id="quick-stock-type-hint" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.disponible.uniquement.pour.les.produits.physique.36d9ce42">Disponible uniquement pour les produits physiques.</small>
                 }
                 @if (resolveIsStockManaged()) {
-                  <small class="form-hint" id="quick-stock-zero-hint">Le stock initial reste à zéro jusqu'à une entrée de stock.</small>
+                  <small class="form-hint" id="quick-stock-zero-hint" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.le.stock.initial.reste.a.zero.jusqu.a.une.entree.cc3f0ff2">Le stock initial reste à zéro jusqu'à une entrée de stock.</small>
                 }
                 @if (showSupplierStockHint()) {
-                  <small class="form-hint" id="quick-stock-supplier-hint">Cet article ne sera pas ajouté à la facture fournisseur directe. Décochez Gestion de stock pour l'ajouter à la ligne.</small>
+                  <small class="form-hint" id="quick-stock-supplier-hint" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.cet.article.ne.sera.pas.ajoute.a.la.facture.four.c3405e7f">Cet article ne sera pas ajouté à la facture fournisseur directe. Décochez Gestion de stock pour l'ajouter à la ligne.</small>
                 }
               </div>
             }
           </div>
 
           <div class="form-block">
-            <h4 class="form-block-title">Tarification</h4>
+            <h4 class="form-block-title" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.tarification.5dc310ae">Tarification</h4>
             <div class="form-row">
               <div class="form-group">
-                <label for="quick-price">Prix unitaire HT (TND) <span class="required">*</span></label>
+                <label for="quick-price"><ng-container i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.prix.unitaire.ht.tnd.937c4281">Prix unitaire HT (TND) </ng-container> <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
                 <p-inputNumber
                   id="quick-price"
                   [ngModel]="unitPrice()"
@@ -215,11 +196,11 @@ const VAT_OPTIONS: VatOption[] = [
                   [minFractionDigits]="2"
                   [maxFractionDigits]="3"
                   mode="decimal"
-                  placeholder="0.000"
+                  placeholder="0.000" i18n-placeholder="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.0.000.725af307"
                   styleClass="w-full" />
               </div>
               <div class="form-group">
-                <label for="quick-vat">TVA <span class="required">*</span></label>
+                <label for="quick-vat"><ng-container i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.tva.fb62cb5d">TVA </ng-container> <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
                 <p-select
                   id="quick-vat"
                   [options]="vatOptions"
@@ -227,7 +208,7 @@ const VAT_OPTIONS: VatOption[] = [
                   (ngModelChange)="vatRate.set($event)"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="TVA"
+                  placeholder="TVA" i18n-placeholder="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.tva.fb62cb5d"
                   [appendTo]="panelMode ? 'body' : null"
                   [overlayOptions]="panelMode ? drawerOverlayOptions : undefined"
                   styleClass="w-full" />
@@ -240,16 +221,16 @@ const VAT_OPTIONS: VatOption[] = [
                 (ngModelChange)="isFodecApplicable.set($event)"
                 [binary]="true">
               </p-checkbox>
-              <label for="quick-fodec">FODEC applicable (1%)</label>
+              <label for="quick-fodec" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.fodec.applicable.1.01c61523">FODEC applicable (1%)</label>
             </div>
             <div class="price-preview">
               <div class="price-preview-row">
-                <span>Prix HT</span>
+                <span i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.prix.ht.362207ca">Prix HT</span>
                 <span class="value">{{ unitPrice() | number:'1.3-3' }} TND</span>
               </div>
               @if (isFodecApplicable()) {
                 <div class="price-preview-row">
-                  <span>FODEC (1%)</span>
+                  <span i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.fodec.1.cdda0228">FODEC (1%)</span>
                   <span class="value">{{ calculateFodec() | number:'1.3-3' }} TND</span>
                 </div>
               }
@@ -258,22 +239,22 @@ const VAT_OPTIONS: VatOption[] = [
                 <span class="value">{{ calculateVat() | number:'1.3-3' }} TND</span>
               </div>
               <div class="price-preview-row total">
-                <span>Prix TTC</span>
+                <span i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.prix.ttc.c48d80e8">Prix TTC</span>
                 <span class="value">{{ calculateTTC() | number:'1.3-3' }} TND</span>
               </div>
             </div>
           </div>
 
           <div class="form-block">
-            <h4 class="form-block-title">Optionnel</h4>
+            <h4 class="form-block-title" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.optionnel.879d6b16">Optionnel</h4>
             <div class="form-group">
-              <label for="quick-desc">Description</label>
+              <label for="quick-desc" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.description.55f8ebc8">Description</label>
               <textarea
                 pTextarea
                 id="quick-desc"
                 [ngModel]="description()"
                 (ngModelChange)="description.set($event)"
-                placeholder="Description du produit"
+                placeholder="Description du produit" i18n-placeholder="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.description.du.produit.c84f0797"
                 [rows]="2"
                 class="w-full"></textarea>
             </div>
@@ -295,15 +276,15 @@ const VAT_OPTIONS: VatOption[] = [
           class="panel-content"
           (click)="$event.stopPropagation()"
           role="dialog"
-          aria-label="Créer un nouveau produit"
+          aria-label="Créer un nouveau produit" i18n-aria-label="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.creer.un.nouveau.produit.1b9477c1"
           aria-modal="true">
           <div class="panel-header">
-            <h2 class="panel-title" id="quick-create-product-panel-title">Créer un produit</h2>
+            <h2 class="panel-title" id="quick-create-product-panel-title" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.creer.un.produit.c896c606">Créer un produit</h2>
             <button
               type="button"
               class="panel-close"
               (click)="close()"
-              aria-label="Fermer le panneau">
+              aria-label="Fermer le panneau" i18n-aria-label="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.fermer.le.panneau.e1210a2f">
               <i class="pi pi-times"></i>
             </button>
           </div>
@@ -316,17 +297,15 @@ const VAT_OPTIONS: VatOption[] = [
               icon="pi-times"
               iconPos="left"
               (click)="close()"
-              ariaLabel="Annuler">
-              Annuler
-            </app-button>
+              ariaLabel="Annuler" i18n-ariaLabel="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.annuler.e063e8ff" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.annuler.49ba3292"> Annuler </app-button>
             <app-button
               variant="primary"
               icon="pi-plus"
               iconPos="left"
               [disabled]="submitting() || !canSubmit()"
               (click)="submit()"
-              ariaLabel="Créer et ajouter">
-              {{ submitting() ? 'Création...' : 'Créer et ajouter' }}
+              ariaLabel="Créer et ajouter" i18n-ariaLabel="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.creer.et.ajouter.e972f565">
+              {{ submitting() ? loc_ui_tern_creation_dca950 : loc_ui_tern_creer_et_ajouter_b6333d }}
             </app-button>
           </div>
         </div>
@@ -335,7 +314,7 @@ const VAT_OPTIONS: VatOption[] = [
 
     @if (!panelMode) {
       <p-dialog
-        header="Créer un produit"
+        header="Créer un produit" i18n-header="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.creer.un.produit.c896c606"
         [(visible)]="visible"
         [modal]="true"
         [style]="{ width: '640px', maxWidth: '95vw' }"
@@ -343,7 +322,7 @@ const VAT_OPTIONS: VatOption[] = [
         [closable]="true"
         (onHide)="onHide()"
         [contentStyle]="{ overflow: 'visible' }"
-        ariaLabel="Créer un nouveau produit">
+        ariaLabel="Créer un nouveau produit" i18n-ariaLabel="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.creer.un.nouveau.produit.e51cec1d">
         <ng-container *ngTemplateOutlet="formContent"></ng-container>
         <ng-template pTemplate="footer">
           <div class="dialog-footer">
@@ -352,17 +331,15 @@ const VAT_OPTIONS: VatOption[] = [
               icon="pi-times"
               iconPos="left"
               (click)="close()"
-              ariaLabel="Annuler">
-              Annuler
-            </app-button>
+              ariaLabel="Annuler" i18n-ariaLabel="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.annuler.e063e8ff" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.annuler.49ba3292"> Annuler </app-button>
             <app-button
               variant="primary"
               icon="pi-plus"
               iconPos="left"
               [disabled]="submitting() || !canSubmit()"
               (click)="submit()"
-              ariaLabel="Créer et ajouter">
-              {{ submitting() ? 'Création...' : 'Créer et ajouter' }}
+              ariaLabel="Créer et ajouter" i18n-ariaLabel="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.creer.et.ajouter.e972f565">
+              {{ submitting() ? loc_ui_tern_creation_dca950 : loc_ui_tern_creer_et_ajouter_b6333d }}
             </app-button>
           </div>
         </ng-template>
@@ -423,7 +400,7 @@ const VAT_OPTIONS: VatOption[] = [
 
     .required {
       color: var(--color-error-600);
-      margin-left: var(--spacing-1);
+      margin-inline-start: var(--spacing-1);
     }
 
     .form-hint {
@@ -649,6 +626,10 @@ const VAT_OPTIONS: VatOption[] = [
   `],
 })
 export class QuickCreateProductDialogComponent {
+  readonly loc_ui_tern_activee_9b4e7c = $localize`:@@ui.tern.activee.9b4e7c:Activée`;
+  readonly loc_ui_tern_desactivee_74cc3b = $localize`:@@ui.tern.desactivee.74cc3b:Désactivée`;
+  readonly loc_ui_tern_creation_dca950 = $localize`:@@ui.tern.creation.dca950:Création...`;
+  readonly loc_ui_tern_creer_et_ajouter_b6333d = $localize`:@@ui.tern.creer.et.ajouter.b6333d:Créer et ajouter`;
   @Input() panelMode = false;
   /** Facture fournisseur directe : un article géré en stock n'est pas ajouté à la ligne. */
   @Input() stockExcludedFromLine = false;
@@ -731,12 +712,12 @@ export class QuickCreateProductDialogComponent {
 
   readonly codeErrorMessage = computed(() => {
     const v = this.code().trim();
-    return v.length === 0 ? 'Ce champ est obligatoire' : 'Min. 2 caractères';
+    return v.length === 0 ? $localize`:@@ui.tern.ce.champ.est.obligatoire.17061b:Ce champ est obligatoire` : $localize`:@@ui.tern.min.2.caracteres.af9507:Min. 2 caractères`;
   });
 
   readonly nameErrorMessage = computed(() => {
     const v = this.name().trim();
-    return v.length === 0 ? 'Ce champ est obligatoire' : 'Min. 2 caractères';
+    return v.length === 0 ? $localize`:@@ui.tern.ce.champ.est.obligatoire.17061b:Ce champ est obligatoire` : $localize`:@@ui.tern.min.2.caracteres.af9507:Min. 2 caractères`;
   });
 
   resolveIsStockManaged(): boolean {
@@ -860,9 +841,9 @@ export class QuickCreateProductDialogComponent {
         this.submitting.set(false);
         const message = this.errorHandler.extractErrorMessage(err);
         if (err.status === 409) {
-          this.errorMessage.set('Un produit avec ce code existe déjà.');
+          this.errorMessage.set($localize`:@@shared.quick-create-product-dialog.ts.un.produit.avec.ce.code.existe.deja.1e699ac3:Un produit avec ce code existe déjà.`);
         } else {
-          this.errorMessage.set(message || 'Impossible de créer le produit.');
+          this.errorMessage.set(message || $localize`:@@shared.quick-create-product-dialog.ts.impossible.de.creer.le.produit.12c9376c:Impossible de créer le produit.`);
         }
       },
     });

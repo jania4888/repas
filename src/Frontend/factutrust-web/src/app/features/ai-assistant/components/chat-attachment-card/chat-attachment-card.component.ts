@@ -25,14 +25,14 @@ import type { ChatAttachment } from '../../models/ai-chat.models';
           <div class="card__badges">
             <span class="badge badge--neutral">{{ formatLabel }}</span>
             @if (attachment.pageCount > 1) {
-              <span class="badge badge--neutral">{{ attachment.pageCount }} pages</span>
+              <span class="badge badge--neutral" i18n="@@ai-assistant.components.pages.fcdf352b">{{ attachment.pageCount }} pages</span>
             }
             <span class="badge badge--neutral">{{ sizeLabel }}</span>
             @if (attachment.ocrApplied) {
-              <span class="badge badge--info" title="Reconnaissance optique appliquée (document scanné)">OCR</span>
+              <span class="badge badge--info" title="Reconnaissance optique appliquée (document scanné)" i18n-title="@@ai-assistant.components.reconnaissance.optique.appliquee.document.scanne.69412bf1" i18n="@@ai-assistant.components.ocr.fd470836">OCR</span>
             }
             @if (attachment.truncated) {
-              <span class="badge badge--warning" title="Texte tronqué à la limite max">Tronqué</span>
+              <span class="badge badge--warning" title="Texte tronqué à la limite max" i18n-title="@@ai-assistant.components.texte.tronque.a.la.limite.max.67374c96" i18n="@@ai-assistant.components.tronque.cf5dabd4">Tronqué</span>
             }
           </div>
         </div>
@@ -42,17 +42,17 @@ import type { ChatAttachment } from '../../models/ai-chat.models';
             class="btn-ghost"
             (click)="toggleExpanded()"
             [attr.aria-expanded]="expanded()"
-            [attr.aria-label]="expanded() ? 'Masquer le texte extrait' : 'Voir le texte extrait'"
+            [attr.aria-label]="expanded() ? loc_ui_tern_masquer_le_texte_extrait_9e2022 : loc_ui_tern_voir_le_texte_extrait_f7e1e7"
           >
             <i class="fa-solid" [class.fa-chevron-down]="!expanded()" [class.fa-chevron-up]="expanded()" aria-hidden="true"></i>
-            <span>{{ expanded() ? 'Masquer' : 'Voir' }} le texte</span>
+            <span>{{ expanded() ? locMasquerLeTexte : locVoirLeTexte }}</span>
           </button>
           @if (editable) {
             <button
               type="button"
               class="btn-ghost btn-ghost--danger"
               (click)="emitRemove()"
-              aria-label="Supprimer cette pièce jointe"
+              aria-label="Supprimer cette pièce jointe" i18n-aria-label="@@ai-assistant.components.supprimer.cette.piece.jointe.4b3f3917"
             >
               <i class="fa-solid fa-xmark" aria-hidden="true"></i>
             </button>
@@ -150,7 +150,7 @@ import type { ChatAttachment } from '../../models/ai-chat.models';
       border-radius: var(--radius-md);
       font-size: var(--font-size-xs);
     }
-    .warnings ul { margin: 0; padding-left: var(--spacing-3); }
+    .warnings ul { margin: 0; padding-inline-start: var(--spacing-3); }
     .extract {
       max-height: 240px;
       overflow: auto;
@@ -169,6 +169,10 @@ import type { ChatAttachment } from '../../models/ai-chat.models';
   `]
 })
 export class ChatAttachmentCardComponent {
+  readonly loc_ui_tern_masquer_le_texte_extrait_9e2022 = $localize`:@@ui.tern.masquer.le.texte.extrait.9e2022:Masquer le texte extrait`;
+  readonly loc_ui_tern_voir_le_texte_extrait_f7e1e7 = $localize`:@@ui.tern.voir.le.texte.extrait.f7e1e7:Voir le texte extrait`;
+  readonly locMasquerLeTexte = $localize`:@@ai-assistant.chat-attachment-card.masquer.le.texte:Masquer le texte`;
+  readonly locVoirLeTexte = $localize`:@@ai-assistant.chat-attachment-card.voir.le.texte:Voir le texte`;
   @Input({ required: true }) attachment!: ChatAttachment;
   @Input() editable = false;
   @Output() removed = new EventEmitter<string>();
@@ -198,12 +202,12 @@ export class ChatAttachmentCardComponent {
   get formatLabel(): string {
     switch (this.attachment.format) {
       case 'pdf': return 'PDF';
-      case 'image': return 'Image';
+      case 'image': return $localize`:@@ai-assistant.chat-attachment-card.ts.image.50e19fda:Image`;
       case 'docx': return 'Word';
       case 'xlsx': return 'Excel';
       case 'csv': return 'CSV';
-      case 'txt': return 'Texte';
-      default: return this.attachment.format?.toUpperCase() || 'Fichier';
+      case 'txt': return $localize`:@@ai-assistant.chat-attachment-card.ts.texte.ff9afef1:Texte`;
+      default: return this.attachment.format?.toUpperCase() || $localize`:@@ai-assistant.chat-attachment-card.ts.fichier.f0fa5745:Fichier`;
     }
   }
 
@@ -216,6 +220,6 @@ export class ChatAttachmentCardComponent {
   }
 
   get ariaLabel(): string {
-    return `Pièce jointe ${this.attachment.fileName}, ${this.formatLabel}, ${this.sizeLabel}`;
+    return $localize`:@@ai-assistant.chat-attachment-card.ts.piece.jointe.filename.formatlabel.sizela.74bc908e:Pièce jointe ${this.attachment.fileName}:fileName:, ${this.formatLabel}:formatLabel:, ${this.sizeLabel}:sizeLabel:`;
   }
 }

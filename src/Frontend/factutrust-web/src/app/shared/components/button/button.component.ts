@@ -174,8 +174,8 @@ import { RouterModule } from '@angular/router';
       outline-offset: 2px;
     }
 
-    .btn .icon-left { margin-right: var(--spacing-1); }
-    .btn .icon-right { margin-left: var(--spacing-1); }
+    .btn .icon-left { margin-inline-end: var(--spacing-1); }
+    .btn .icon-right { margin-inline-start: var(--spacing-1); }
     
     // Link variant (anchor tag)
     a.btn {

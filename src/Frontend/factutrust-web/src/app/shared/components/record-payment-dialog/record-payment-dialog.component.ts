@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, EventEmitter, Input, Output, inject, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,13 +21,13 @@ import { formatLocalDate } from '@core/utils/date.util';
 const TRAITE_METHOD_VALUE = 5;
 
 const PAYMENT_METHOD_OPTIONS = [
-  { label: 'Espèces', value: 0 },
-  { label: 'Virement bancaire', value: 1 },
-  { label: 'Chèque', value: 2 },
-  { label: 'Carte bancaire', value: 3 },
-  { label: 'Paiement mobile', value: 4 },
-  { label: 'Traite (effet de commerce)', value: TRAITE_METHOD_VALUE },
-  { label: 'Autre', value: 99 }
+  { label: $localize`:@@shared.record-payment-dialog.ts.especes.b7679d62:Espèces`, value: 0 },
+  { label: $localize`:@@shared.record-payment-dialog.ts.virement.bancaire.8306f08e:Virement bancaire`, value: 1 },
+  { label: $localize`:@@shared.record-payment-dialog.ts.cheque.8bbb89a9:Chèque`, value: 2 },
+  { label: $localize`:@@shared.record-payment-dialog.ts.carte.bancaire.9e3d9bfa:Carte bancaire`, value: 3 },
+  { label: $localize`:@@shared.record-payment-dialog.ts.paiement.mobile.fdc8f501:Paiement mobile`, value: 4 },
+  { label: $localize`:@@shared.record-payment-dialog.ts.traite.effet.de.commerce.b1384467:Traite (effet de commerce)`, value: TRAITE_METHOD_VALUE },
+  { label: $localize`:@@shared.record-payment-dialog.ts.autre.43dacf9e:Autre`, value: 99 }
 ];
 
 /** Aligné sur InstaFact.Domain.Enums.PaymentMethod.Cash — défaut facture client (UI). */
@@ -53,34 +54,34 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
   template: `
     <ng-template #formContent>
       <div class="modal-content">
-        <p class="dialog-intro" *ngIf="invoiceNumber">
+        <p class="dialog-intro" *ngIf="invoiceNumber"><ng-container i18n="@@shared.components.record-payment-dialog.record-payment-dialog.facture.montant.total.c109136d">
           Facture {{ invoiceNumber }} — Montant total : {{ totalAmount | number:'1.3-3' }} {{ currency }}
-          @if (totalPaid > 0) {
+          </ng-container>@if (totalPaid > 0) {<ng-container i18n="@@shared.components.record-payment-dialog.record-payment-dialog.restant.du.c4504295">
             <br>
             <span class="remaining-info">Restant dû : {{ remainingAmount | number:'1.3-3' }} {{ currency }}</span>
-          }
+          </ng-container>}
         </p>
 
         <div class="form-fields">
           <div class="form-group">
-            <label for="paymentDate">Date de paiement <span class="required">*</span></label>
+            <label for="paymentDate"><ng-container i18n="@@shared.components.record-payment-dialog.record-payment-dialog.date.de.paiement.bd0020ef">Date de paiement </ng-container> <span class="required" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.text.df58248c">*</span></label>
             <p-datepicker
               id="paymentDate"
               [(ngModel)]="paymentDate"
               [showIcon]="true"
               dateFormat="dd/mm/yy"
               [maxDate]="maxDate"
-              placeholder="Sélectionnez la date"
+              placeholder="Sélectionnez la date" i18n-placeholder="@@shared.components.record-payment-dialog.record-payment-dialog.selectionnez.la.date.b9d5a16a"
               inputId="paymentDate"
               [appendTo]="panelMode ? 'body' : undefined"
               [baseZIndex]="panelMode ? drawerPrimeBaseZIndex : undefined"
               styleClass="w-full">
             </p-datepicker>
-            <small class="field-hint">Date à laquelle le paiement a été reçu</small>
+            <small class="field-hint" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.date.a.laquelle.le.paiement.a.ete.recu.cbe00fec">Date à laquelle le paiement a été reçu</small>
           </div>
 
           <div class="form-group">
-            <label for="amount">Montant net encaissé ({{ currency }}) <span class="required">*</span></label>
+            <label for="amount" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.montant.net.encaisse.336de827">Montant net encaissé ({{ currency }}) <span class="required">*</span></label>
             <p-inputNumber
               id="amount"
               [(ngModel)]="amount"
@@ -89,15 +90,15 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
               [maxFractionDigits]="3"
               [minFractionDigits]="3"
               mode="decimal"
-              placeholder="Montant reçu (banque)"
+              placeholder="Montant reçu (banque)" i18n-placeholder="@@shared.components.record-payment-dialog.record-payment-dialog.montant.recu.banque.a102a141"
               styleClass="w-full">
             </p-inputNumber>
-            <small class="field-hint">{{ totalPaid > 0 ? 'Restant dû TTC : ' + (remainingAmount | number:'1.3-3') + ' ' + currency : 'Par défaut : solde TTC' }}</small>
+            <small class="field-hint">{{ totalPaid > 0 ? loc_ui_tern_restant_du_ttc_6c8de4 + (remainingAmount | number:'1.3-3') + ' ' + currency : 'Par défaut : solde TTC' }}</small>
           </div>
 
           @if (invoiceType === 'client') {
             <div class="form-group">
-              <label for="whSubie">Retenue à la source subie ({{ currency }})</label>
+              <label for="whSubie" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.retenue.a.la.source.subie.df9bdc09">Retenue à la source subie ({{ currency }})</label>
               <p-inputNumber
                 id="whSubie"
                 [(ngModel)]="clientWithholdingAmount"
@@ -107,25 +108,25 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
                 [maxFractionDigits]="3"
                 [minFractionDigits]="3"
                 mode="decimal"
-                placeholder="0 si aucune"
+                placeholder="0 si aucune" i18n-placeholder="@@shared.components.record-payment-dialog.record-payment-dialog.0.si.aucune.25d7dfe9"
                 styleClass="w-full">
               </p-inputNumber>
-              <small class="field-hint">Montant retenu par le client (hors export TEJ déclarant). Net + retenue ne peut pas dépasser le restant dû.</small>
+              <small class="field-hint" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.montant.retenu.par.le.client.hors.export.tej.dec.702a5336">Montant retenu par le client (hors export TEJ déclarant). Net + retenue ne peut pas dépasser le restant dû.</small>
             </div>
           }
 
           <div class="form-group">
-            <label for="method">
+            <label for="method"><ng-container i18n="@@shared.components.record-payment-dialog.record-payment-dialog.mode.de.paiement.71aed79c">
               Mode de paiement
-              @if (invoiceType === 'client') {
-                <span class="required" aria-hidden="true">*</span>
+              </ng-container>@if (invoiceType === 'client') {
+                <span class="required" aria-hidden="true" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.text.df58248c">*</span>
               }
             </label>
             <p-select
               id="method"
               [options]="paymentMethodOptions"
               [(ngModel)]="selectedMethod"
-              placeholder="Sélectionnez un mode"
+              placeholder="Sélectionnez un mode" i18n-placeholder="@@shared.components.record-payment-dialog.record-payment-dialog.selectionnez.un.mode.4dfd28da"
               optionLabel="label"
               optionValue="value"
               [showClear]="true"
@@ -136,51 +137,49 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
               styleClass="w-full">
             </p-select>
             @if (invoiceType === 'client' && selectedMethod === null) {
-              <small id="method-required-hint" class="field-hint field-error" role="alert">
-                Veuillez sélectionner un mode de paiement.
-              </small>
+              <small id="method-required-hint" class="field-hint field-error" role="alert" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.veuillez.selectionner.un.mode.de.paiement.861ed82e"> Veuillez sélectionner un mode de paiement. </small>
             }
           </div>
 
           @if (isTraite) {
             <div class="form-group">
-              <label for="effetDueDate">Échéance de la traite <span class="required">*</span></label>
+              <label for="effetDueDate"><ng-container i18n="@@shared.components.record-payment-dialog.record-payment-dialog.echeance.de.la.traite.c1d67b86">Échéance de la traite </ng-container> <span class="required" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.text.df58248c">*</span></label>
               <p-datepicker
                 id="effetDueDate"
                 [(ngModel)]="effetDueDate"
                 [showIcon]="true"
                 dateFormat="dd/mm/yy"
-                placeholder="Date d'échéance de l'effet"
+                placeholder="Date d'échéance de l'effet" i18n-placeholder="@@shared.components.record-payment-dialog.record-payment-dialog.date.d.echeance.de.l.effet.7aa0b5c7"
                 inputId="effetDueDate"
                 [appendTo]="panelMode ? 'body' : undefined"
                 [baseZIndex]="panelMode ? drawerPrimeBaseZIndex : undefined"
                 styleClass="w-full">
               </p-datepicker>
-              <small class="field-hint">Date à laquelle l'effet arrivera à échéance (encaissement/paiement)</small>
+              <small class="field-hint" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.date.a.laquelle.l.effet.arrivera.a.echeance.enca.212b4555">Date à laquelle l'effet arrivera à échéance (encaissement/paiement)</small>
               @if (effetDueDate === null) {
-                <small class="field-hint field-error" role="alert">L'échéance de la traite est obligatoire.</small>
+                <small class="field-hint field-error" role="alert" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.l.echeance.de.la.traite.est.obligatoire.35bbf8eb">L'échéance de la traite est obligatoire.</small>
               }
             </div>
           }
 
           <div class="form-group">
-            <label for="reference">{{ isTraite ? 'N° de l\'effet' : 'Référence de paiement' }}</label>
+            <label for="reference">{{ isTraite ? loc_ui_tern_n_de_l_effet_e6c3cf : loc_ui_tern_reference_de_paiement_bb2ee1 }}</label>
             <input
               pInputText
               id="reference"
               [(ngModel)]="reference"
-              [placeholder]="invoiceType === 'supplier' ? 'Ex: virement, chèque n°…' : 'Ex: n° chèque, n° virement'"
+              [placeholder]="invoiceType === 'supplier' ? loc_ui_tern_ex_virement_cheque_n_257d6a : loc_ui_tern_ex_n_cheque_n_virement_40f515"
               class="w-full">
-            <small class="field-hint">Optionnel — N° de chèque, virement, etc.</small>
+            <small class="field-hint" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.optionnel.n.de.cheque.virement.etc.6a50a6f2">Optionnel — N° de chèque, virement, etc.</small>
           </div>
 
           <div class="form-group">
-            <label for="notes">Notes</label>
+            <label for="notes" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.notes.70440046">Notes</label>
             <textarea
               pTextarea
               id="notes"
               [(ngModel)]="notes"
-              placeholder="Notes internes (optionnel)"
+              placeholder="Notes internes (optionnel)" i18n-placeholder="@@shared.components.record-payment-dialog.record-payment-dialog.notes.internes.optionnel.10eb967f"
               [rows]="2"
               class="w-full">
             </textarea>
@@ -197,14 +196,14 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
     </ng-template>
 
     <ng-template #footerActions>
-      <app-button variant="outline" icon="pi-times" iconPos="left" (click)="close()">Annuler</app-button>
+      <app-button variant="outline" icon="pi-times" iconPos="left" (click)="close()" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.annuler.49ba3292">Annuler</app-button>
       <app-button
         variant="primary"
         icon="pi-check"
         iconPos="left"
         [disabled]="submitting() || !isValid()"
         (click)="submit()">
-        {{ submitting() ? 'Enregistrement...' : 'Enregistrer le paiement' }}
+        {{ submitting() ? loc_ui_tern_enregistrement_9bf105 : loc_ui_tern_enregistrer_le_paiement_6495b8 }}
       </app-button>
     </ng-template>
 
@@ -222,7 +221,7 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
               type="button"
               class="panel-close"
               (click)="close()"
-              aria-label="Fermer le panneau">
+              aria-label="Fermer le panneau" i18n-aria-label="@@shared.components.record-payment-dialog.record-payment-dialog.fermer.le.panneau.e1210a2f">
               <i class="pi pi-times"></i>
             </button>
           </div>
@@ -271,7 +270,7 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
       padding: var(--spacing-3) var(--spacing-4);
       background: var(--color-background-elevated, #fff);
       border: 1px solid var(--color-border-subtle);
-      border-left: 4px solid var(--color-primary-500);
+      border-inline-start: 4px solid var(--color-primary-500);
       border-radius: var(--radius-xl);
       box-shadow: var(--shadow-sm);
     }
@@ -468,6 +467,13 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
   `]
 })
 export class RecordPaymentDialogComponent {
+  readonly loc_ui_tern_restant_du_ttc_6c8de4 = $localize`:@@ui.tern.restant.du.ttc.6c8de4:Restant dû TTC : `;
+  readonly loc_ui_tern_n_de_l_effet_e6c3cf = $localize`:@@ui.tern.n.de.l.effet.e6c3cf:N° de l'effet`;
+  readonly loc_ui_tern_reference_de_paiement_bb2ee1 = $localize`:@@ui.tern.reference.de.paiement.bb2ee1:Référence de paiement`;
+  readonly loc_ui_tern_ex_virement_cheque_n_257d6a = $localize`:@@ui.tern.ex.virement.cheque.n.257d6a:Ex: virement, chèque n°…`;
+  readonly loc_ui_tern_ex_n_cheque_n_virement_40f515 = $localize`:@@ui.tern.ex.n.cheque.n.virement.40f515:Ex: n° chèque, n° virement`;
+  readonly loc_ui_tern_enregistrement_9bf105 = $localize`:@@ui.tern.enregistrement.9bf105:Enregistrement...`;
+  readonly loc_ui_tern_enregistrer_le_paiement_6495b8 = $localize`:@@ui.tern.enregistrer.le.paiement.6495b8:Enregistrer le paiement`;
   @Input() panelMode = false;
   @Input() invoiceId = '';
   @Input() invoiceNumber = '';
@@ -522,7 +528,7 @@ export class RecordPaymentDialogComponent {
   readonly maxDate = new Date();
 
   get dialogTitle(): string {
-    return this.invoiceType === 'client' ? 'Enregistrer un paiement' : 'Payer la facture';
+    return this.invoiceType === 'client' ? $localize`:@@ui.tern.enregistrer.un.paiement.72dddb:Enregistrer un paiement` : $localize`:@@ui.tern.payer.la.facture.4c5a80:Payer la facture`;
   }
 
   /** Vrai lorsque le mode sélectionné est la traite (effet de commerce). */
@@ -590,21 +596,21 @@ export class RecordPaymentDialogComponent {
     if (this.auth.isFirmDelegatedReadonly()) {
       this.toastService.add({
         severity: 'warn',
-        summary: 'Lecture seule',
-        detail: 'L\'enregistrement de paiements est interdit en mode dossier client pour le cabinet comptable.'
+        summary: $localize`:@@record-payment-dialog.component.summary.Lecture seul:Lecture seule`,
+        detail: $localize`:@@record-payment-dialog.component.detail.L_enregistrement:L'enregistrement de paiements est interdit en mode dossier client pour le cabinet comptable.`
       });
       return;
     }
 
     if (this.invoiceType === 'client') {
       if (this.selectedMethod === null || !ALLOWED_PAYMENT_METHOD_VALUES.has(this.selectedMethod)) {
-        this.errorMessage.set('Veuillez sélectionner un mode de paiement.');
+        this.errorMessage.set($localize`:@@shared.record-payment-dialog.ts.veuillez.selectionner.un.mode.de.paiemen.861ed82e:Veuillez sélectionner un mode de paiement.`);
         return;
       }
     }
 
     if (this.isTraite && !this.effetDueDate) {
-      this.errorMessage.set('Veuillez saisir l\'échéance de la traite.');
+      this.errorMessage.set($localize`:@@shared.record-payment-dialog.ts.veuillez.saisir.l.echeance.de.la.traite.e0de6fff:Veuillez saisir l'échéance de la traite.`);
       return;
     }
 
@@ -639,12 +645,12 @@ export class RecordPaymentDialogComponent {
           this.paymentRecorded.emit();
           this.close();
         } else {
-          this.errorMessage.set(this.getErrorMessage({ error: response }, 'Erreur lors de l\'enregistrement du paiement'));
+          this.errorMessage.set(this.getErrorMessage({ error: response }, $localize`:@@shared.record-payment-dialog.ts.erreur.lors.de.l.enregistrement.du.paiem.e23b0f61:Erreur lors de l'enregistrement du paiement`));
         }
       },
       error: (err) => {
         this.submitting.set(false);
-        this.errorMessage.set(this.getErrorMessage(err, 'Erreur lors de l\'enregistrement du paiement'));
+        this.errorMessage.set(this.getErrorMessage(err, $localize`:@@shared.record-payment-dialog.ts.erreur.lors.de.l.enregistrement.du.paiem.e23b0f61:Erreur lors de l'enregistrement du paiement`));
       }
     });
   }
@@ -666,12 +672,12 @@ export class RecordPaymentDialogComponent {
           this.paymentRecorded.emit();
           this.close();
         } else {
-          this.errorMessage.set(this.getErrorMessage({ error: response }, 'Erreur lors de l\'enregistrement'));
+          this.errorMessage.set(this.getErrorMessage({ error: response }, $localize`:@@shared.record-payment-dialog.ts.erreur.lors.de.l.enregistrement.28411a5e:Erreur lors de l'enregistrement`));
         }
       },
       error: (err) => {
         this.submitting.set(false);
-        this.errorMessage.set(this.getErrorMessage(err, 'Erreur lors de l\'enregistrement'));
+        this.errorMessage.set(this.getErrorMessage(err, $localize`:@@shared.record-payment-dialog.ts.erreur.lors.de.l.enregistrement.28411a5e:Erreur lors de l'enregistrement`));
       }
     });
   }

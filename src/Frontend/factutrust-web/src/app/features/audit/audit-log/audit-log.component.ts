@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -147,12 +148,12 @@ export class AuditLogComponent implements OnInit {
             this.totalRecords.set(r.data.totalCount);
             this.first = (r.data.page - 1) * r.data.pageSize;
           } else {
-            this.error.set(r.error ?? r.message ?? 'Impossible de charger le journal d’audit.');
+            this.error.set(r.error ?? r.message ?? $localize`:@@ui.tern.impossible.de.charger.le.journal.d.audit.586219:Impossible de charger le journal d’audit.`);
           }
         },
         error: () => {
           this.loading.set(false);
-          this.error.set('Erreur réseau. Réessayez plus tard.');
+          this.error.set($localize`:@@audit.audit-log.ts.erreur.reseau.reessayez.plus.tard.8e5647cd:Erreur réseau. Réessayez plus tard.`);
         }
       });
   }
@@ -172,18 +173,18 @@ export class AuditLogComponent implements OnInit {
             duplicatePreviousHashGroupCount: r.data.duplicatePreviousHashGroupCount
           });
         } else {
-          this.verifyError.set(r.error ?? r.message ?? 'Vérification impossible.');
+          this.verifyError.set(r.error ?? r.message ?? $localize`:@@ui.tern.verification.impossible.20427a:Vérification impossible.`);
         }
       },
       error: () => {
         this.verifyLoading.set(false);
-        this.verifyError.set('Erreur réseau lors de la vérification.');
+        this.verifyError.set($localize`:@@audit.audit-log.ts.erreur.reseau.lors.de.la.verification.ffea3b50:Erreur réseau lors de la vérification.`);
       }
     });
   }
 
   integrityValidMessage(count: number): string {
-    return `Chaîne d'intégrité valide — ${count} entrée(s) vérifiée(s).`;
+    return $localize`:@@audit.audit-log.ts.chaine.d.integrite.valide.count.entree.s.143347e3:Chaîne d'intégrité valide — ${count}:count: entrée(s) vérifiée(s).`;
   }
 
   integrityBrokenMessage(
@@ -192,18 +193,18 @@ export class AuditLogComponent implements OnInit {
     reason?: string | null,
     dupGroups?: number
   ): string {
-    const idPart = firstBrokenId ? ` — première anomalie détectée sur l'entrée ${firstBrokenId}.` : '';
+    const idPart = firstBrokenId ? $localize`:@@ui.tern.premiere.anomalie.detectee.sur.l.entree.ph.abddbb: — première anomalie détectée sur l'entrée ${firstBrokenId}:p0:.` : '';
     const reasonPart =
       reason === 'IntegrityMismatch'
-        ? ' Motif : empreinte incohérente avec le contenu enregistré.'
+        ? $localize`:@@ui.tern.motif.empreinte.incoherente.avec.le.conten.d00135: Motif : empreinte incohérente avec le contenu enregistré.`
         : reason === 'ChainMismatch'
-          ? ' Motif : lien avec l’entrée précédente incorrect.'
+          ? $localize`:@@ui.tern.motif.lien.avec.l.entree.precedente.incorr.2bb679: Motif : lien avec l’entrée précédente incorrect.`
           : '';
     const dupPart =
       dupGroups != null && dupGroups > 0
-        ? ` ${dupGroups} valeur(s) de chaîne antérieure dupliquée(s) — souvent lié à des écritures concurrentes avant correction.`
+        ? $localize`:@@ui.tern.ph.valeur.s.de.chaine.anterieure.dupliquee.4aa7b6: ${dupGroups}:p0: valeur(s) de chaîne antérieure dupliquée(s) — souvent lié à des écritures concurrentes avant correction.`
         : '';
-    return `Chaîne d'intégrité rompue — ${count} entrée(s) analysée(s).${idPart}${reasonPart}${dupPart}`;
+    return $localize`:@@audit.audit-log.ts.chaine.d.integrite.rompue.count.entree.s.05ebede1:Chaîne d'intégrité rompue — ${count}:count: entrée(s) analysée(s).${idPart}:idPart:${reasonPart}:reasonPart:${dupPart}:dupPart:`;
   }
 
   isBrokenHighlight(rowId: string): boolean {
@@ -234,15 +235,15 @@ export class AuditLogComponent implements OnInit {
       await navigator.clipboard.writeText(id);
       this.toast.add({
         severity: 'success',
-        summary: 'Copié',
-        detail: 'Identifiant copié dans le presse-papiers.',
+        summary: $localize`:@@audit-log.component.summary.Copié:Copié`,
+        detail: $localize`:@@audit-log.component.detail.Identifiant_copi:Identifiant copié dans le presse-papiers.`,
         life: 2500
       });
     } catch {
       this.toast.add({
         severity: 'error',
-        summary: 'Copie impossible',
-        detail: 'Autorisez l’accès au presse-papiers ou copiez manuellement.',
+        summary: $localize`:@@audit-log.component.summary.Copie imposs:Copie impossible`,
+        detail: $localize`:@@audit-log.component.detail.Autorisez_l_acc_:Autorisez l’accès au presse-papiers ou copiez manuellement.`,
         life: 4000
       });
     }
@@ -259,8 +260,8 @@ export class AuditLogComponent implements OnInit {
         else {
           this.toast.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: r.error ?? r.message ?? 'Chargement impossible.',
+            summary: $localize`:@@audit-log.component.summary.Erreur:Erreur`,
+            detail: r.error ?? r.message ?? $localize`:@@ui.tern.chargement.impossible.ce4b23:Chargement impossible.`,
             life: 4000
           });
           this.detailOpen.set(false);
@@ -270,8 +271,8 @@ export class AuditLogComponent implements OnInit {
         this.detailLoading.set(false);
         this.toast.add({
           severity: 'error',
-          summary: 'Réseau',
-          detail: 'Impossible de charger le détail.',
+          summary: $localize`:@@audit-log.component.summary.Réseau:Réseau`,
+          detail: $localize`:@@audit-log.component.detail.Impossible d:Impossible de charger le détail.`,
           life: 4000
         });
         this.detailOpen.set(false);

@@ -12,6 +12,7 @@ import {
   signal
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { erpCollatorCompare } from '@core/i18n/erp-format';
 import { firstValueFrom } from 'rxjs';
 import { ReplenishmentRecommendation } from '../../models/forecasting.models';
 import { QuantityFormatPipe } from '../../pipes/quantity-format.pipe';
@@ -68,17 +69,17 @@ export interface PreparePoLinePrice {
         aria-labelledby="prepare-modal-title">
         <header class="modal-header">
           <div>
-            <h3 id="prepare-modal-title">Créer les bons de commande</h3>
-            <span class="modal-subtitle">{{ recommendations.length }} recommandation(s) sélectionnée(s)</span>
+            <h3 id="prepare-modal-title" i18n="@@forecasting.components.creer.les.bons.de.commande.8e7effb0">Créer les bons de commande</h3>
+            <span class="modal-subtitle" i18n="@@forecasting.components.recommandation.s.selectionnee.s.89aa030e">{{ recommendations.length }} recommandation(s) sélectionnée(s)</span>
           </div>
-          <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer">
+          <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer" i18n-aria-label="@@forecasting.components.fermer.5ab4ec64">
             <i class="pi pi-times" aria-hidden="true"></i>
           </button>
         </header>
 
         <div class="modal-body">
           @if (groups().length > 0) {
-            <p class="hint">
+            <p class="hint" i18n="@@forecasting.components.verifiez.les.quantites.et.les.fournisseu.0e0b021c">
               Vérifiez les quantités et les fournisseurs ci-dessous.
               {{ linkableCount() }} bon(s) de commande sera(seront) créé(s) en statut <strong>Brouillon</strong>,
               regroupé(s) par fournisseur. Vous pourrez les valider ensuite depuis le module Achats.
@@ -91,12 +92,12 @@ export interface PreparePoLinePrice {
                       @if (g.supplierId) {
                         <i class="pi pi-truck" aria-hidden="true"></i>
                         {{ g.supplierName }}
-                      } @else {
+                      } @else {<ng-container i18n="@@forecasting.components.sans.fournisseur.849f6b64">
                         <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
                         Sans fournisseur
-                      }
+                      </ng-container>}
                     </span>
-                    <span class="group-count">
+                    <span class="group-count" i18n="@@forecasting.components.ligne.s.total.u.61c817f2">
                       {{ g.recommendations.length }} ligne(s) — total
                       {{ g.totalQty | qtyFmt: groupFormatUnit(g) }} u.
                     </span>
@@ -109,8 +110,8 @@ export interface PreparePoLinePrice {
                         class="po-bulk-select"
                         [ngModel]="bulkSupplierId()"
                         (ngModelChange)="onBulkAssign($event)"
-                        aria-label="Assigner un fournisseur à toutes les lignes sans fournisseur">
-                        <option [ngValue]="null">— Assigner un fournisseur à toutes ces lignes ({{ g.recommendations.length }}) —</option>
+                        aria-label="Assigner un fournisseur à toutes les lignes sans fournisseur" i18n-aria-label="@@forecasting.components.assigner.un.fournisseur.a.toutes.les.lignes.sans.dc01867b">
+                        <option [ngValue]="null" i18n="@@forecasting.components.assigner.un.fournisseur.a.toutes.ces.lig.f6149a60">— Assigner un fournisseur à toutes ces lignes ({{ g.recommendations.length }}) —</option>
                         @for (s of suppliers(); track s.id) {
                           <option [ngValue]="s.id">{{ s.name }}</option>
                         }
@@ -119,11 +120,11 @@ export interface PreparePoLinePrice {
                   }
                   <ul class="po-lines">
                     <li class="po-lines-header" aria-hidden="true">
-                      <span class="po-col-code">Code</span>
-                      <span class="po-col-name">Produit</span>
-                      <span class="po-col-supplier">Fournisseur</span>
-                      <span class="po-col-price">PU HT</span>
-                      <span class="po-col-qty">Qté</span>
+                      <span class="po-col-code" i18n="@@forecasting.components.code.adac6937">Code</span>
+                      <span class="po-col-name" i18n="@@forecasting.components.produit.ff673dc2">Produit</span>
+                      <span class="po-col-supplier" i18n="@@forecasting.components.fournisseur.97d91d89">Fournisseur</span>
+                      <span class="po-col-price" i18n="@@forecasting.components.pu.ht.79388cae">PU HT</span>
+                      <span class="po-col-qty" i18n="@@forecasting.components.qte.a4772129">Qté</span>
                     </li>
                     @for (r of g.recommendations; track r.id) {
                       <li class="po-line" [class.po-line--unassigned]="effectiveSupplierId(r) === null">
@@ -132,9 +133,9 @@ export interface PreparePoLinePrice {
                           <span class="po-name">{{ r.productName }}</span>
                           <div class="po-supplier-block">
                             @if (loadingSuppliers()) {
-                              <span class="assign-state">Chargement…</span>
+                              <span class="assign-state" i18n="@@forecasting.components.chargement.01cba1df">Chargement…</span>
                             } @else if (suppliers().length === 0) {
-                              <span class="assign-state">Aucun fournisseur — module Achats.</span>
+                              <span class="assign-state" i18n="@@forecasting.components.aucun.fournisseur.module.achats.d1ff1364">Aucun fournisseur — module Achats.</span>
                             } @else {
                               <label class="po-supplier-field">
                                 <select
@@ -142,8 +143,8 @@ export interface PreparePoLinePrice {
                                   [class.po-supplier-select--issue]="effectiveSupplierId(r) === null"
                                   [ngModel]="displaySupplierId(r)"
                                   (ngModelChange)="assign(r.id, $event)"
-                                  [attr.aria-label]="'Fournisseur pour ' + r.productCode">
-                                  <option [ngValue]="null">— Choisir un fournisseur —</option>
+                                  [attr.aria-label]="loc_ui_tern_fournisseur_pour_ac3489 + r.productCode">
+                                  <option [ngValue]="null" i18n="@@forecasting.components.choisir.un.fournisseur.6593f4d4">— Choisir un fournisseur —</option>
                                   @for (s of suppliers(); track s.id) {
                                     <option [ngValue]="s.id">{{ s.name }}</option>
                                   }
@@ -161,10 +162,10 @@ export interface PreparePoLinePrice {
                                 [ngModel]="draftPriceValue(r.id)"
                                 (ngModelChange)="setDraftPrice(r.id, $event)"
                                 [class.invalid]="priceInvalidForLinkable(r)"
-                                [attr.aria-label]="'Prix unitaire HT pour ' + r.productCode"
-                                placeholder="—" />
+                                [attr.aria-label]="loc_ui_tern_prix_unitaire_ht_pour_083196 + r.productCode"
+                                placeholder="—" i18n-placeholder="@@forecasting.components.text.1b93795b" />
                             </label>
-                            <span class="po-price-suffix">TND</span>
+                            <span class="po-price-suffix" i18n="@@forecasting.components.tnd.51da21a7">TND</span>
                           </div>
                           <div class="po-qty-block">
                             <label class="po-qty-field">
@@ -176,9 +177,9 @@ export interface PreparePoLinePrice {
                                 [ngModel]="draftQtyValue(r.id)"
                                 (ngModelChange)="setDraftQty(r.id, $event)"
                                 [class.invalid]="qtyInvalidFor(r.id)"
-                                [attr.aria-label]="'Quantité à commander pour ' + r.productCode" />
+                                [attr.aria-label]="loc_ui_tern_quantite_a_commander_pour_8e4c05 + r.productCode" />
                             </label>
-                            <span class="po-rec-hint" title="Quantité recommandée par le moteur">
+                            <span class="po-rec-hint" title="Quantité recommandée par le moteur" i18n-title="@@forecasting.components.quantite.recommandee.par.le.moteur.d20840f9" i18n="@@forecasting.components.rec.b95cb5dc">
                               Rec. {{ r.recommendedQty | qtyFmt: r.productUnit }}
                             </span>
                           </div>
@@ -191,19 +192,15 @@ export interface PreparePoLinePrice {
             </ul>
 
             @if (anyQtyInvalid()) {
-              <p class="qty-error" role="alert">
-                Chaque quantité doit être un nombre strictement supérieur à 0.
-              </p>
+              <p class="qty-error" role="alert" i18n="@@forecasting.components.chaque.quantite.doit.etre.un.nombre.strictement..e15fdb5e"> Chaque quantité doit être un nombre strictement supérieur à 0. </p>
             }
 
             @if (anyPriceMissing()) {
-              <p class="qty-error" role="alert">
-                Chaque ligne avec fournisseur doit avoir un prix unitaire HT strictement supérieur à 0.
-              </p>
+              <p class="qty-error" role="alert" i18n="@@forecasting.components.chaque.ligne.avec.fournisseur.doit.avoir.un.prix.660b9bab"> Chaque ligne avec fournisseur doit avoir un prix unitaire HT strictement supérieur à 0. </p>
             }
 
             @if (skippedCount() > 0) {
-              <div class="warning" role="alert">
+              <div class="warning" role="alert" i18n="@@forecasting.components.recommandation.s.sans.fournisseur.ne.ser.beb606ad">
                 <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
                 <span>
                   <strong>{{ skippedCount() }} recommandation(s) sans fournisseur</strong>
@@ -215,17 +212,17 @@ export interface PreparePoLinePrice {
               </div>
             }
           } @else {
-            <p class="state empty">Aucune recommandation à traiter.</p>
+            <p class="state empty" i18n="@@forecasting.components.aucune.recommandation.a.traiter.7d661bf4">Aucune recommandation à traiter.</p>
           }
         </div>
 
         <footer class="modal-footer">
-          <button class="btn btn-secondary" type="button" (click)="onCancel()">Annuler</button>
+          <button class="btn btn-secondary" type="button" (click)="onCancel()" i18n="@@forecasting.components.annuler.49ba3292">Annuler</button>
           <button
             class="btn btn-primary"
             type="button"
             (click)="onConfirm()"
-            [disabled]="!canConfirm()">
+            [disabled]="!canConfirm()" i18n="@@forecasting.components.confirmer.la.creation.bc.28f0aedb">
             <i class="pi pi-check" aria-hidden="true"></i>
             Confirmer la création ({{ linkableCount() }} BC)
           </button>
@@ -266,13 +263,13 @@ export interface PreparePoLinePrice {
     .po-supplier-select--issue { border-color: #fcd34d; }
     .po-price-block { display: flex; flex-direction: column; align-items: flex-end; gap: .1rem; min-width: 0; }
     .po-price-field { display: block; margin: 0; }
-    .po-price-input { width: 4.75rem; padding: .25rem .4rem; border: 1px solid var(--color-neutral-300, #d1d5db); border-radius: 6px; font: inherit; font-variant-numeric: tabular-nums; text-align: right; }
+    .po-price-input { width: 4.75rem; padding: .25rem .4rem; border: 1px solid var(--color-neutral-300, #d1d5db); border-radius: 6px; font: inherit; font-variant-numeric: tabular-nums; text-align: end; }
     .po-price-input:focus { outline: 2px solid var(--color-primary-400, #60a5fa); outline-offset: 1px; }
     .po-price-input.invalid { border-color: #f87171; background: #fef2f2; }
     .po-price-suffix { font-size: .65rem; color: var(--color-neutral-500, #6b7280); }
     .po-qty-block { display: flex; flex-direction: column; align-items: flex-end; gap: .1rem; min-width: 0; }
     .po-qty-field { display: block; margin: 0; }
-    .po-qty-input { width: 4.5rem; padding: .25rem .4rem; border: 1px solid var(--color-neutral-300, #d1d5db); border-radius: 6px; font: inherit; font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }
+    .po-qty-input { width: 4.5rem; padding: .25rem .4rem; border: 1px solid var(--color-neutral-300, #d1d5db); border-radius: 6px; font: inherit; font-variant-numeric: tabular-nums; font-weight: 600; text-align: end; }
     .po-qty-input:focus { outline: 2px solid var(--color-primary-400, #60a5fa); outline-offset: 1px; }
     .po-qty-input.invalid { border-color: #f87171; background: #fef2f2; }
     .po-rec-hint { font-size: .7rem; color: var(--color-neutral-500, #6b7280); white-space: nowrap; }
@@ -294,6 +291,9 @@ export interface PreparePoLinePrice {
   `]
 })
 export class PreparePoConfirmModalComponent implements OnInit {
+  readonly loc_ui_tern_fournisseur_pour_ac3489 = $localize`:@@ui.tern.fournisseur.pour.ac3489:Fournisseur pour `;
+  readonly loc_ui_tern_prix_unitaire_ht_pour_083196 = $localize`:@@ui.tern.prix.unitaire.ht.pour.083196:Prix unitaire HT pour `;
+  readonly loc_ui_tern_quantite_a_commander_pour_8e4c05 = $localize`:@@ui.tern.quantite.a.commander.pour.8e4c05:Quantité à commander pour `;
   /** Selected recommendations sent in for grouping & confirmation. */
   @Input() set selection(value: ReplenishmentRecommendation[]) {
     const list = value ?? [];
@@ -360,8 +360,8 @@ export class PreparePoConfirmModalComponent implements OnInit {
     for (const r of this._recs()) {
       const supplierId = this.effectiveSupplierId(r);
       const supplierName = supplierId === null
-        ? 'Sans fournisseur'
-        : (nameById.get(supplierId) ?? r.preferredSupplierName ?? 'Fournisseur');
+        ? $localize`:@@ui.tern.sans.fournisseur.b2a178:Sans fournisseur`
+        : (nameById.get(supplierId) ?? r.preferredSupplierName ?? $localize`:@@ui.tern.fournisseur.97d91d:Fournisseur`);
       const existing = grouped.get(supplierId);
       const qty = draft.get(r.id) ?? QuantityFormatPipe.toEditableQuantity(
         r.manualQtyOverride ?? r.recommendedQty,
@@ -383,7 +383,7 @@ export class PreparePoConfirmModalComponent implements OnInit {
     // Sort: linkable groups first, "no supplier" last.
     return [...grouped.values()].sort((a, b) => {
       if ((a.supplierId === null) === (b.supplierId === null)) {
-        return a.supplierName.localeCompare(b.supplierName, 'fr');
+        return erpCollatorCompare(a.supplierName, b.supplierName);
       }
       return a.supplierId === null ? 1 : -1;
     });

@@ -1,8 +1,6 @@
 <section class="board-v2" [attr.aria-busy]="loading()">
   <!-- Skip link — keyboard users can jump directly to the table. -->
-  <a class="skip-link" href="#repl-table" (click)="$event.preventDefault(); jumpToTable()">
-    Aller directement au tableau des recommandations
-  </a>
+  <a class="skip-link" href="#repl-table" (click)="$event.preventDefault(); jumpToTable()" i18n="@@forecasting.pages.aller.directement.au.tableau.des.recommandations.e119666c"> Aller directement au tableau des recommandations </a>
 
   <!-- KPI bar (top) -->
   <app-replenishment-kpi-bar [kpi]="kpi()" />
@@ -13,8 +11,8 @@
     (change)="onFiltersChange($event)" />
 
   <!-- Bulk actions / utilities -->
-  <header class="actions-bar" role="toolbar" aria-label="Actions du module Réapprovisionnement">
-    <div class="selection-info" aria-live="polite">
+  <header class="actions-bar" role="toolbar" aria-label="Actions du module Réapprovisionnement" i18n-aria-label="@@forecasting.pages.actions.du.module.reapprovisionnement.ca82d967">
+    <div class="selection-info" aria-live="polite" i18n="@@forecasting.pages.selectionnee.s.a46386d0">
       <strong>{{ selectionCount() }}</strong> / {{ totalCount() }} sélectionnée(s)
     </div>
 
@@ -25,9 +23,9 @@
         [disabled]="rows().length === 0"
         (click)="toggleSelectAll()"
         [attr.aria-pressed]="allRowsSelected()"
-        aria-label="Tout (dé)sélectionner">
+        aria-label="Tout (dé)sélectionner" i18n-aria-label="@@forecasting.pages.tout.de.selectionner.652493c0">
         <i class="pi" [class.pi-square]="!allRowsSelected() && !someRowsSelected()" [class.pi-minus]="someRowsSelected()" [class.pi-check-square]="allRowsSelected()" aria-hidden="true"></i>
-        {{ allRowsSelected() ? 'Désélectionner tout' : 'Tout sélectionner' }}
+        <ng-container i18n="@@forecasting.pages.sel.deselectionner.tout.tout.selectionner.8772367b">{!!(allRowsSelected()), select, true {Désélectionner tout} other {Tout sélectionner}}</ng-container>
       </button>
 
       <button
@@ -35,7 +33,7 @@
         class="btn btn-primary"
         [disabled]="selectionCount() === 0 || bulkActionInFlight()"
         (click)="bulkApprove()"
-        aria-label="Approuver les recommandations sélectionnées">
+        aria-label="Approuver les recommandations sélectionnées" i18n-aria-label="@@forecasting.pages.approuver.les.recommandations.selectionnees.b638302d">
         <i class="pi" [class.pi-check]="!bulkActionInFlight()" [class.pi-spin]="bulkActionInFlight()" [class.pi-spinner]="bulkActionInFlight()" aria-hidden="true"></i>
         {{ bulkActionInFlight() ? 'Approbation…' : 'Approuver (' + selectionCount() + ')' }}
       </button>
@@ -45,7 +43,7 @@
         class="btn btn-primary"
         [disabled]="selectionCount() === 0 || bulkActionInFlight()"
         (click)="openPreparePoModal()"
-        aria-label="Créer les bons de commande à partir de la sélection">
+        aria-label="Créer les bons de commande à partir de la sélection" i18n-aria-label="@@forecasting.pages.creer.les.bons.de.commande.a.partir.de.la.select.e3c29eaa" i18n="@@forecasting.pages.creer.les.bc.72dbafe0">
         <i class="pi pi-shopping-cart" aria-hidden="true"></i>
         Créer les BC ({{ selectionCount() }})
       </button>
@@ -55,9 +53,9 @@
         class="btn btn-secondary"
         [disabled]="generating()"
         (click)="generateNow()"
-        aria-label="Régénérer les recommandations">
+        aria-label="Régénérer les recommandations" i18n-aria-label="@@forecasting.pages.regenerer.les.recommandations.3e0054b4">
         <i class="pi pi-refresh" aria-hidden="true"></i>
-        {{ generating() ? 'Génération…' : 'Régénérer' }}
+        <ng-container i18n="@@forecasting.pages.sel.generation.regenerer.05d04060">{!!(generating()), select, true {Génération…} other {Régénérer}}</ng-container>
       </button>
     }
 
@@ -66,9 +64,9 @@
       class="btn btn-secondary"
       [disabled]="exporting() || rows().length === 0"
       (click)="exportCsv()"
-      aria-label="Exporter les recommandations au format CSV">
+      aria-label="Exporter les recommandations au format CSV" i18n-aria-label="@@forecasting.pages.exporter.les.recommandations.au.format.csv.0d84ce58">
       <i class="pi pi-download" aria-hidden="true"></i>
-      {{ exporting() ? 'Export…' : 'Exporter CSV' }}
+      <ng-container i18n="@@forecasting.pages.sel.export.exporter.csv.2dbab7d6">{!!(exporting()), select, true {Export…} other {Exporter CSV}}</ng-container>
     </button>
 
     <div class="actions-ai">
@@ -81,15 +79,15 @@
 
   <!-- Body: loading / empty / table -->
   @if (loading()) {
-    <div class="state loading" aria-live="polite">
+    <div class="state loading" aria-live="polite" i18n="@@forecasting.pages.chargement.f8c7a9cd">
       <i class="pi pi-spin pi-spinner" aria-hidden="true"></i> Chargement…
     </div>
   } @else if (rows().length === 0) {
-    <div class="state empty">
+    <div class="state empty"><ng-container i18n="@@forecasting.pages.aucune.recommandation.pour.ces.filtres.84d8713a">
       <i class="pi pi-info-circle" aria-hidden="true"></i>
       Aucune recommandation pour ces filtres.
-      @if (filters().status === 'pending' && canManage()) {
-        <span>Cliquez sur <strong>Régénérer</strong> pour relancer le calcul.</span>
+      </ng-container>@if (filters().status === 'pending' && canManage()) {
+        <span i18n="@@forecasting.pages.cliquez.sur.regenerer.pour.relancer.le.c.7ee035f1"><ng-container>Cliquez sur </ng-container> <strong>Régénérer</strong> pour relancer le calcul.</span>
       }
     </div>
   } @else {
@@ -98,40 +96,40 @@
              class="table"
              role="table"
              [attr.aria-rowcount]="totalCount()"
-             aria-label="Liste des recommandations de réapprovisionnement">
+             aria-label="Liste des recommandations de réapprovisionnement" i18n-aria-label="@@forecasting.pages.liste.des.recommandations.de.reapprovisionnement.8f148b91">
         <thead>
           <tr>
-            @if (canManage()) { <th class="check" scope="col" aria-label="Sélection"></th> }
-            <th scope="col">Produit</th>
-            <th scope="col">Entrepôt</th>
-            <th scope="col">Fournisseur</th>
+            @if (canManage()) { <th class="check" scope="col" aria-label="Sélection" i18n-aria-label="@@forecasting.pages.selection.ac0002b0"></th> }
+            <th scope="col" i18n="@@forecasting.pages.produit.ff673dc2">Produit</th>
+            <th scope="col" i18n="@@forecasting.pages.entrepot.c349c0bc">Entrepôt</th>
+            <th scope="col" i18n="@@forecasting.pages.fournisseur.97d91d89">Fournisseur</th>
             <th scope="col" class="num">
-              <button type="button" class="th-sort" (click)="toggleSort('rop')" [attr.aria-sort]="sortBy() === 'rop' ? (sortDesc() ? 'descending' : 'ascending') : 'none'">
+              <button type="button" class="th-sort" (click)="toggleSort('rop')" [attr.aria-sort]="sortBy() === 'rop' ? (sortDesc() ? 'descending' : 'ascending') : 'none'"><ng-container i18n="@@forecasting.pages.stock.rop.861515b6">
                 Stock / ROP
-                @if (sortBy() === 'rop') {
+                </ng-container>@if (sortBy() === 'rop') {
                   <i class="pi" [class.pi-sort-down]="sortDesc()" [class.pi-sort-up]="!sortDesc()" aria-hidden="true"></i>
                 }
               </button>
             </th>
             <th scope="col" class="num">
-              <button type="button" class="th-sort" (click)="toggleSort('qty')" [attr.aria-sort]="sortBy() === 'qty' ? (sortDesc() ? 'descending' : 'ascending') : 'none'">
+              <button type="button" class="th-sort" (click)="toggleSort('qty')" [attr.aria-sort]="sortBy() === 'qty' ? (sortDesc() ? 'descending' : 'ascending') : 'none'"><ng-container i18n="@@forecasting.pages.qte.a4772129">
                 Qté
-                @if (sortBy() === 'qty') {
+                </ng-container>@if (sortBy() === 'qty') {
                   <i class="pi" [class.pi-sort-down]="sortDesc()" [class.pi-sort-up]="!sortDesc()" aria-hidden="true"></i>
                 }
               </button>
             </th>
             <th scope="col" class="num">
-              <button type="button" class="th-sort" (click)="toggleSort('days')" [attr.aria-sort]="sortBy() === 'days' ? (sortDesc() ? 'descending' : 'ascending') : 'none'">
+              <button type="button" class="th-sort" (click)="toggleSort('days')" [attr.aria-sort]="sortBy() === 'days' ? (sortDesc() ? 'descending' : 'ascending') : 'none'"><ng-container i18n="@@forecasting.pages.jours.stock.9818c885">
                 Jours stock
-                @if (sortBy() === 'days') {
+                </ng-container>@if (sortBy() === 'days') {
                   <i class="pi" [class.pi-sort-down]="sortDesc()" [class.pi-sort-up]="!sortDesc()" aria-hidden="true"></i>
                 }
               </button>
             </th>
-            <th scope="col">Raisons</th>
-            <th scope="col">Statut</th>
-            @if (canManage()) { <th scope="col" aria-label="Actions"></th> }
+            <th scope="col" i18n="@@forecasting.pages.raisons.e8c661fc">Raisons</th>
+            <th scope="col" i18n="@@forecasting.pages.statut.659499f3">Statut</th>
+            @if (canManage()) { <th scope="col" aria-label="Actions" i18n-aria-label="@@forecasting.pages.actions.c3cd636a"></th> }
           </tr>
         </thead>
         <tbody>
@@ -145,13 +143,13 @@
                     type="checkbox"
                     [checked]="isSelected(r.id)"
                     (change)="toggleSelected(r.id)"
-                    [attr.aria-label]="'Sélectionner ' + r.productName" />
+                    [attr.aria-label]="loc_selectionner_productname_e7942c(r.productName)" />
                 </td>
               }
               <td>
                 <div class="product">
                   <span class="code">{{ r.productCode }}</span>
-                  <button class="name-btn" type="button" (click)="openProductDemand(r)" title="Voir la prévision de demande">
+                  <button class="name-btn" type="button" (click)="openProductDemand(r)" title="Voir la prévision de demande" i18n-title="@@forecasting.pages.voir.la.prevision.de.demande.4bdd1ee6">
                     {{ r.productName }}
                   </button>
                 </div>
@@ -162,14 +160,14 @@
                   <span class="supplier">{{ r.preferredSupplierName }}</span>
                 } @else {
                   <span class="supplier-missing"
-                        title="Aucun fournisseur : indispensable pour créer un bon de commande. Utilisez « Modifier » ou assignez-en un dans la fenêtre de création des BC.">
+                        title="Aucun fournisseur : indispensable pour créer un bon de commande. Utilisez « Modifier » ou assignez-en un dans la fenêtre de création des BC." i18n-title="@@forecasting.pages.aucun.fournisseur.indispensable.pour.creer.un.bo.1b67f284" i18n="@@forecasting.pages.non.renseigne.e84aead7">
                     <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
                     — Non renseigné —
                   </span>
                 }
               </td>
               <td class="num">
-                <div class="stock">
+                <div class="stock" i18n="@@forecasting.pages.rop.7357e3b2">
                   <span class="onhand" [class.zero]="r.currentStockOnHand === 0">
                     {{ r.currentStockOnHand | qtyFmt: r.productUnit }}
                   </span>
@@ -179,7 +177,7 @@
               <td class="num strong">
                 {{ (r.manualQtyOverride ?? r.recommendedQty) | qtyFmt: r.productUnit }}
                 @if (r.manualQtyOverride !== null && r.manualQtyOverride !== undefined) {
-                  <i class="pi pi-pencil overridden-icon" title="Quantité manuelle" aria-label="Quantité modifiée manuellement"></i>
+                  <i class="pi pi-pencil overridden-icon" title="Quantité manuelle" i18n-title="@@forecasting.pages.quantite.manuelle.a4f7596b" aria-label="Quantité modifiée manuellement" i18n-aria-label="@@forecasting.pages.quantite.modifiee.manuellement.b9e865b2"></i>
                 }
               </td>
               <td class="num">
@@ -188,7 +186,7 @@
                     {{ r.daysOfStockRemaining | qtyFmt: null }} j
                   </span>
                 } @else {
-                  <span class="muted">—</span>
+                  <span class="muted" i18n="@@forecasting.pages.text.1b93795b">—</span>
                 }
               </td>
               <td>
@@ -201,8 +199,8 @@
                 @if (r.status === 'ordered' && r.linkedPurchaseOrderId) {
                   <a class="po-link"
                      [routerLink]="['/purchase-orders', r.linkedPurchaseOrderId]"
-                     title="Ouvrir le bon de commande lié"
-                     aria-label="Ouvrir le bon de commande lié">
+                     title="Ouvrir le bon de commande lié" i18n-title="@@forecasting.pages.ouvrir.le.bon.de.commande.lie.e2939f2b"
+                     aria-label="Ouvrir le bon de commande lié" i18n-aria-label="@@forecasting.pages.ouvrir.le.bon.de.commande.lie.e2939f2b">
                     <i class="pi pi-external-link" aria-hidden="true"></i>
                   </a>
                 }
@@ -210,21 +208,21 @@
               @if (canManage()) {
                 <td class="actions">
                   @if (r.status === 'pending') {
-                    <button class="btn-icon" type="button" (click)="approve(r)" aria-label="Approuver">
+                    <button class="btn-icon" type="button" (click)="approve(r)" aria-label="Approuver" i18n-aria-label="@@forecasting.pages.approuver.3033e7d6">
                       <i class="pi pi-check" aria-hidden="true"></i>
                     </button>
-                    <button class="btn-icon danger" type="button" (click)="openDismissModal(r)" aria-label="Écarter">
+                    <button class="btn-icon danger" type="button" (click)="openDismissModal(r)" aria-label="Écarter" i18n-aria-label="@@forecasting.pages.ecarter.0559f961">
                       <i class="pi pi-times" aria-hidden="true"></i>
                     </button>
                   } @else if (r.status === 'approved' || r.status === 'dismissed') {
-                    <button class="btn-icon" type="button" (click)="undo(r)" aria-label="Annuler la décision">
+                    <button class="btn-icon" type="button" (click)="undo(r)" aria-label="Annuler la décision" i18n-aria-label="@@forecasting.pages.annuler.la.decision.93ab18f1">
                       <i class="pi pi-replay" aria-hidden="true"></i>
                     </button>
                   }
-                  <button class="btn-icon" type="button" (click)="openOverrideModal(r)" aria-label="Modifier la quantité ou le fournisseur">
+                  <button class="btn-icon" type="button" (click)="openOverrideModal(r)" aria-label="Modifier la quantité ou le fournisseur" i18n-aria-label="@@forecasting.pages.modifier.la.quantite.ou.le.fournisseur.78cf4fc0">
                     <i class="pi pi-pencil" aria-hidden="true"></i>
                   </button>
-                  <button class="btn-icon" type="button" (click)="openHistoryModal(r)" aria-label="Voir l'historique">
+                  <button class="btn-icon" type="button" (click)="openHistoryModal(r)" aria-label="Voir l'historique" i18n-aria-label="@@forecasting.pages.voir.l.historique.20bcddca">
                     <i class="pi pi-history" aria-hidden="true"></i>
                   </button>
                 </td>
@@ -237,20 +235,20 @@
 
     <!-- Pagination footer -->
     @if (totalCount() > pageSize()) {
-      <nav class="pagination" aria-label="Pagination">
+      <nav class="pagination" aria-label="Pagination" i18n-aria-label="@@forecasting.pages.pagination.100325b8">
         <button type="button" class="btn btn-secondary"
                 [disabled]="page() === 1"
                 (click)="goToPage(page() - 1)"
-                aria-label="Page précédente">
+                aria-label="Page précédente" i18n-aria-label="@@forecasting.pages.page.precedente.9e15ded9" i18n="@@forecasting.pages.precedent.12e3cf6e">
           <i class="pi pi-angle-left" aria-hidden="true"></i> Précédent
         </button>
         <span class="page-info" aria-live="polite">
-          Page <strong>{{ page() }}</strong> / {{ pageCount() }}
+          <ng-container i18n="@@forecasting.pages.page.fb06270f"> Page </ng-container> <strong>{{ page() }}</strong> / {{ pageCount() }}
         </span>
         <button type="button" class="btn btn-secondary"
                 [disabled]="page() === pageCount()"
                 (click)="goToPage(page() + 1)"
-                aria-label="Page suivante">
+                aria-label="Page suivante" i18n-aria-label="@@forecasting.pages.page.suivante.86b1be40" i18n="@@forecasting.pages.suivant.664e15fc">
           Suivant <i class="pi pi-angle-right" aria-hidden="true"></i>
         </button>
       </nav>

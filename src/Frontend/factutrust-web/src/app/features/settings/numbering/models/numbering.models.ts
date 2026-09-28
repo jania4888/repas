@@ -73,16 +73,16 @@ export interface PreviewNumberingResponse {
 
 export const BLOCK_TYPE_LABELS: Record<NumberingBlockType, string> = {
   [NumberingBlockType.FreeText]: 'Texte libre',
-  [NumberingBlockType.Separator]: 'Séparateur',
-  [NumberingBlockType.DocumentNumber]: 'Numéro de document',
-  [NumberingBlockType.DocumentNumberPadded3]: 'Numéro de document à 3 chiffres',
-  [NumberingBlockType.DocumentNumberPadded4]: 'Numéro de document à 4 chiffres',
-  [NumberingBlockType.DocumentNumberPadded5]: 'Numéro de document à 5 chiffres',
-  [NumberingBlockType.DocumentNumberPadded6]: 'Numéro de document à 6 chiffres',
-  [NumberingBlockType.Day]: 'Jour (JJ)',
-  [NumberingBlockType.Month]: 'Mois (MM)',
-  [NumberingBlockType.Year4]: 'Année (AAAA)',
-  [NumberingBlockType.Year2]: 'Année (AA)'
+  [NumberingBlockType.Separator]: $localize`:@@settings.numbering.ts.separateur.b9c2ee8d:Séparateur`,
+  [NumberingBlockType.DocumentNumber]: $localize`:@@settings.numbering.ts.numero.de.document.f65df140:Numéro de document`,
+  [NumberingBlockType.DocumentNumberPadded3]: $localize`:@@settings.numbering.ts.numero.de.document.a.3.chiffres.596b53d7:Numéro de document à 3 chiffres`,
+  [NumberingBlockType.DocumentNumberPadded4]: $localize`:@@settings.numbering.ts.numero.de.document.a.4.chiffres.a53e9484:Numéro de document à 4 chiffres`,
+  [NumberingBlockType.DocumentNumberPadded5]: $localize`:@@settings.numbering.ts.numero.de.document.a.5.chiffres.78d9d532:Numéro de document à 5 chiffres`,
+  [NumberingBlockType.DocumentNumberPadded6]: $localize`:@@settings.numbering.ts.numero.de.document.a.6.chiffres.f640c3ce:Numéro de document à 6 chiffres`,
+  [NumberingBlockType.Day]: $localize`:@@settings.numbering.ts.jour.jj.9e339227:Jour (JJ)`,
+  [NumberingBlockType.Month]: $localize`:@@settings.numbering.ts.mois.mm.9704b748:Mois (MM)`,
+  [NumberingBlockType.Year4]: $localize`:@@settings.numbering.ts.annee.aaaa.d05f8c31:Année (AAAA)`,
+  [NumberingBlockType.Year2]: $localize`:@@settings.numbering.ts.annee.aa.63239c04:Année (AA)`
 };
 
 export interface PaletteBlockTemplate {
@@ -113,20 +113,20 @@ export interface NumberingDocumentTab {
 }
 
 export const DOCUMENT_TYPE_TABS: readonly NumberingDocumentTab[] = [
-  { documentType: NumberingDocumentType.Invoice, label: 'Facture', shortLabel: 'FAC', icon: 'pi pi-file' },
-  { documentType: NumberingDocumentType.CreditNote, label: 'Facture avoir', shortLabel: 'AVO', icon: 'pi pi-replay' },
-  { documentType: NumberingDocumentType.Quote, label: 'Devis', shortLabel: 'DEV', icon: 'pi pi-file-edit' },
-  { documentType: NumberingDocumentType.DeliveryNote, label: 'Bon de livraison', shortLabel: 'BL', icon: 'pi pi-truck' },
-  { documentType: NumberingDocumentType.PurchaseOrder, label: 'Bon de commande', shortLabel: 'BC', icon: 'pi pi-shopping-cart' },
-  { documentType: NumberingDocumentType.StockTransfer, label: 'Transfert stock', shortLabel: 'TR', icon: 'pi pi-arrows-h' },
-  { documentType: NumberingDocumentType.PhysicalInventory, label: 'Inventaire physique', shortLabel: 'INVE', icon: 'pi pi-box' },
-  { documentType: NumberingDocumentType.CashReceipt, label: 'Encaissement caisse', shortLabel: 'ENC', icon: 'pi pi-wallet' },
-  { documentType: NumberingDocumentType.CashExpense, label: 'Décaissement caisse', shortLabel: 'DEP', icon: 'pi pi-money-bill' },
-  { documentType: NumberingDocumentType.BankDeposit, label: 'Remise bancaire', shortLabel: 'REM', icon: 'pi pi-building-columns' },
-  { documentType: NumberingDocumentType.SalesReturnNote, label: 'Bon de retour', shortLabel: 'BRT', icon: 'pi pi-replay' },
-  { documentType: NumberingDocumentType.ZReport, label: 'Clôture Z', shortLabel: 'Z', icon: 'pi pi-book' },
-  { documentType: NumberingDocumentType.StockEntry, label: "Bon d'entrée", shortLabel: 'BE', icon: 'pi pi-arrow-down' },
-  { documentType: NumberingDocumentType.StockIssue, label: 'Bon de sortie', shortLabel: 'BS', icon: 'pi pi-arrow-up' }
+  { documentType: NumberingDocumentType.Invoice, label: $localize`:@@settings.numbering.ts.facture.3953b9f5:Facture`, shortLabel: 'FAC', icon: 'pi pi-file' },
+  { documentType: NumberingDocumentType.CreditNote, label: $localize`:@@settings.numbering.ts.facture.avoir.84174db8:Facture avoir`, shortLabel: 'AVO', icon: 'pi pi-replay' },
+  { documentType: NumberingDocumentType.Quote, label: $localize`:@@settings.numbering.ts.devis.f7622f90:Devis`, shortLabel: 'DEV', icon: 'pi pi-file-edit' },
+  { documentType: NumberingDocumentType.DeliveryNote, label: $localize`:@@settings.numbering.ts.bon.de.livraison.1a60dc44:Bon de livraison`, shortLabel: 'BL', icon: 'pi pi-truck' },
+  { documentType: NumberingDocumentType.PurchaseOrder, label: $localize`:@@settings.numbering.ts.bon.de.commande.4b9aea29:Bon de commande`, shortLabel: 'BC', icon: 'pi pi-shopping-cart' },
+  { documentType: NumberingDocumentType.StockTransfer, label: $localize`:@@settings.numbering.ts.transfert.stock.4a85a5f6:Transfert stock`, shortLabel: 'TR', icon: 'pi pi-arrows-h' },
+  { documentType: NumberingDocumentType.PhysicalInventory, label: $localize`:@@settings.numbering.ts.inventaire.physique.38b526c7:Inventaire physique`, shortLabel: 'INVE', icon: 'pi pi-box' },
+  { documentType: NumberingDocumentType.CashReceipt, label: $localize`:@@settings.numbering.ts.encaissement.caisse.e2f101b5:Encaissement caisse`, shortLabel: 'ENC', icon: 'pi pi-wallet' },
+  { documentType: NumberingDocumentType.CashExpense, label: $localize`:@@settings.numbering.ts.decaissement.caisse.19ef35fa:Décaissement caisse`, shortLabel: 'DEP', icon: 'pi pi-money-bill' },
+  { documentType: NumberingDocumentType.BankDeposit, label: $localize`:@@settings.numbering.ts.remise.bancaire.0097046a:Remise bancaire`, shortLabel: 'REM', icon: 'pi pi-building-columns' },
+  { documentType: NumberingDocumentType.SalesReturnNote, label: $localize`:@@settings.numbering.ts.bon.de.retour.58d2db35:Bon de retour`, shortLabel: 'BRT', icon: 'pi pi-replay' },
+  { documentType: NumberingDocumentType.ZReport, label: $localize`:@@settings.numbering.ts.cloture.z.e93fcfd6:Clôture Z`, shortLabel: 'Z', icon: 'pi pi-book' },
+  { documentType: NumberingDocumentType.StockEntry, label: $localize`:@@settings.numbering.ts.bon.d.entree.e2e98811:Bon d'entrée`, shortLabel: 'BE', icon: 'pi pi-arrow-down' },
+  { documentType: NumberingDocumentType.StockIssue, label: $localize`:@@settings.numbering.ts.bon.de.sortie.8a13eaf2:Bon de sortie`, shortLabel: 'BS', icon: 'pi pi-arrow-up' }
 ];
 
 export const DEFAULT_FREE_TEXT: Record<NumberingDocumentType, string> = {

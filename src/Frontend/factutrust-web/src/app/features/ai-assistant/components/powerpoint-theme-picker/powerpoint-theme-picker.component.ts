@@ -25,16 +25,16 @@ interface FilterChip {
     <div class="ppt-theme-picker">
       <div class="ppt-theme-toolbar">
         <label class="ppt-theme-search">
-          <span class="visually-hidden">Rechercher un thème</span>
+          <span class="visually-hidden" i18n="@@ai-assistant.components.rechercher.un.theme.85517ba8">Rechercher un thème</span>
           <input
             type="search"
             [value]="searchQuery()"
             (input)="onSearchInput($event)"
-            placeholder="Rechercher un thème…"
+            placeholder="Rechercher un thème…" i18n-placeholder="@@ai-assistant.components.rechercher.un.theme.baed0dd4"
             autocomplete="off"
-            aria-label="Rechercher un thème" />
+            aria-label="Rechercher un thème" i18n-aria-label="@@ai-assistant.components.rechercher.un.theme.85517ba8" />
         </label>
-        <div class="ppt-theme-filters" role="toolbar" aria-label="Filtrer les thèmes">
+        <div class="ppt-theme-filters" role="toolbar" aria-label="Filtrer les thèmes" i18n-aria-label="@@ai-assistant.components.filtrer.les.themes.fab08028">
           @for (chip of filterChips; track chip.id) {
             <button
               type="button"
@@ -49,12 +49,12 @@ interface FilterChip {
       </div>
 
       @if (filteredTemplates().length === 0) {
-        <p class="ppt-theme-empty">Aucun thème ne correspond à votre recherche.</p>
+        <p class="ppt-theme-empty" i18n="@@ai-assistant.components.aucun.theme.ne.correspond.a.votre.recherche.c23ce894">Aucun thème ne correspond à votre recherche.</p>
       } @else {
         <div
           class="ppt-theme-grid"
           role="radiogroup"
-          aria-label="Thème visuel de la présentation"
+          aria-label="Thème visuel de la présentation" i18n-aria-label="@@ai-assistant.components.theme.visuel.de.la.presentation.e9c297d1"
           (keydown)="onGridKeydown($event)">
           @for (tpl of filteredTemplates(); track tpl.id; let i = $index) {
             <button
@@ -72,7 +72,7 @@ interface FilterChip {
                   <img
                     class="ppt-theme-thumb"
                     [src]="src"
-                    [alt]="'Aperçu du thème ' + tpl.name"
+                    [alt]="loc_ui_tern_apercu_du_theme_2b011a + tpl.name"
                     loading="lazy"
                     decoding="async"
                     (error)="onThumbnailError(tpl.key)" />
@@ -85,17 +85,17 @@ interface FilterChip {
                     [style.--link-color]="tpl.linkColorHex"
                     [style.--title-font]="tpl.titleFontFamily"
                     [style.--body-font]="tpl.bodyFontFamily">
-                    <span class="ppt-theme-preview-title">Titre</span>
+                    <span class="ppt-theme-preview-title" i18n="@@ai-assistant.components.titre.eb97899a">Titre</span>
                     <span class="ppt-theme-preview-body">
-                      Corps et <span class="ppt-theme-preview-link">lien</span>
+                      <ng-container i18n="@@ai-assistant.components.corps.et.8d315a87"> Corps et </ng-container> <span class="ppt-theme-preview-link" i18n="@@ai-assistant.components.lien.80bf0c8d">lien</span>
                     </span>
                   </div>
                 }
                 @if (selected === tpl.id) {
-                  <span class="ppt-theme-check" aria-hidden="true">✓</span>
+                  <span class="ppt-theme-check" aria-hidden="true" i18n="@@ai-assistant.components.text.698a8799">✓</span>
                 }
                 @if (tpl.engine === PowerPointThemeEngine.Hybrid) {
-                  <span class="ppt-theme-badge" aria-hidden="true">Master</span>
+                  <span class="ppt-theme-badge" aria-hidden="true" i18n="@@ai-assistant.components.master.78f3842f">Master</span>
                 }
               </div>
               <span class="ppt-theme-name">{{ tpl.name }}</span>
@@ -109,6 +109,7 @@ interface FilterChip {
   styleUrls: ['./powerpoint-theme-picker.component.scss']
 })
 export class PowerPointThemePickerComponent implements OnChanges {
+  readonly loc_ui_tern_apercu_du_theme_2b011a = $localize`:@@ui.tern.apercu.du.theme.2b011a:Aperçu du thème `;
   @Input({ required: true }) templates: PowerPointTemplateInfo[] = [];
   @Input() selected: PowerPointTemplate = PowerPointTemplate.Standard;
   @Output() selectedChange = new EventEmitter<PowerPointTemplate>();
@@ -120,11 +121,11 @@ export class PowerPointThemePickerComponent implements OnChanges {
   private readonly failedThumbnailKeys = signal<ReadonlySet<string>>(new Set());
 
   protected readonly filterChips: FilterChip[] = [
-    { id: 'all', label: 'Tous' },
-    { id: PowerPointThemeCategory.Light, label: 'Clair' },
-    { id: PowerPointThemeCategory.Dark, label: 'Sombre' },
-    { id: PowerPointThemeCategory.Premium, label: 'Premium' },
-    { id: PowerPointThemeCategory.Vibrant, label: 'Coloré' }
+    { id: 'all', label: $localize`:@@ai-assistant.powerpoint-theme-picker.ts.tous.b97ae3b4:Tous` },
+    { id: PowerPointThemeCategory.Light, label: $localize`:@@ai-assistant.powerpoint-theme-picker.ts.clair.1c50949a:Clair` },
+    { id: PowerPointThemeCategory.Dark, label: $localize`:@@ai-assistant.powerpoint-theme-picker.ts.sombre.b1fa84a3:Sombre` },
+    { id: PowerPointThemeCategory.Premium, label: $localize`:@@ai-assistant.powerpoint-theme-picker.ts.premium.6c2f2888:Premium` },
+    { id: PowerPointThemeCategory.Vibrant, label: $localize`:@@ai-assistant.powerpoint-theme-picker.ts.colore.e6ae1fc7:Coloré` }
   ];
 
   protected readonly filteredTemplates = computed(() => {

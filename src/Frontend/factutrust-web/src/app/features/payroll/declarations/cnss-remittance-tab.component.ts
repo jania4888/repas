@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { API_ERROR_CODE, apiErrorCode } from '@core/utils/api-error-code';
 import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -24,8 +26,8 @@ import { CnssRemittancePaymentDialogComponent } from './cnss-remittance-payment-
 
 const MONTH_LABELS = [
   '',
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  $localize`:@@payroll.cnss-remittance-tab.ts.janvier.7a32ae0f:Janvier`, $localize`:@@payroll.cnss-remittance-tab.ts.fevrier.63fc1803:Février`, $localize`:@@payroll.cnss-remittance-tab.ts.mars.1778011d:Mars`, $localize`:@@payroll.cnss-remittance-tab.ts.avril.4efeee46:Avril`, $localize`:@@payroll.cnss-remittance-tab.ts.mai.afe526a6:Mai`, $localize`:@@payroll.cnss-remittance-tab.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@payroll.cnss-remittance-tab.ts.juillet.e8e0920c:Juillet`, $localize`:@@payroll.cnss-remittance-tab.ts.aout.460b6696:Août`, $localize`:@@payroll.cnss-remittance-tab.ts.septembre.08d23f31:Septembre`, $localize`:@@payroll.cnss-remittance-tab.ts.octobre.0ed28485:Octobre`, $localize`:@@payroll.cnss-remittance-tab.ts.novembre.632580af:Novembre`, $localize`:@@payroll.cnss-remittance-tab.ts.decembre.03bcd9b0:Décembre`
 ];
 
 @Component({
@@ -54,7 +56,7 @@ const MONTH_LABELS = [
         (ngModelChange)="load()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Année"
+        placeholder="Année" i18n-placeholder="@@payroll.declarations.annee.1f910d98"
         styleClass="w-10rem" />
       <p-select
         [options]="monthOptions"
@@ -62,28 +64,28 @@ const MONTH_LABELS = [
         (ngModelChange)="load()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Mois"
+        placeholder="Mois" i18n-placeholder="@@payroll.declarations.mois.0d304bea"
         styleClass="w-10rem" />
-      <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()">Générer</app-button>
+      <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()" i18n="@@payroll.declarations.generer.bd221c07">Générer</app-button>
       <app-button
         variant="outline"
         icon="pi-download"
         iconPos="left"
         (click)="exportCsv()"
-        [disabled]="!canExport()">Exporter CSV</app-button>
+        [disabled]="!canExport()" i18n="@@payroll.declarations.exporter.csv.d4fc31cb">Exporter CSV</app-button>
       <app-button
         variant="outline"
         icon="pi-file-pdf"
         iconPos="left"
         (click)="exportPdf()"
-        [disabled]="!canExport()">Exporter PDF</app-button>
+        [disabled]="!canExport()" i18n="@@payroll.declarations.exporter.pdf.9a2c3956">Exporter PDF</app-button>
       @if (canPay()) {
         <app-button
           variant="success"
           icon="pi-wallet"
           iconPos="left"
           (click)="openPaymentDialog()"
-          [disabled]="!canRecordPayment()">Enregistrer le versement</app-button>
+          [disabled]="!canRecordPayment()" i18n="@@payroll.declarations.enregistrer.le.versement.abd144ad">Enregistrer le versement</app-button>
       }
     </div>
 
@@ -91,11 +93,9 @@ const MONTH_LABELS = [
       <div class="cnss-matricule-banner mb-3">
         <p-message
           severity="warn"
-          text="Le matricule employeur CNSS est manquant. Configurez-le pour exporter le bordereau ou enregistrer un versement."
+          text="Le matricule employeur CNSS est manquant. Configurez-le pour exporter le bordereau ou enregistrer un versement." i18n-text="@@payroll.declarations.le.matricule.employeur.cnss.est.manquant.fc66b845"
           styleClass="w-full" />
-        <app-button variant="ghost" routerLink="/settings/company" icon="pi-cog" iconPos="left">
-          Configurer le matricule
-        </app-button>
+        <app-button variant="ghost" routerLink="/settings/company" icon="pi-cog" iconPos="left" i18n="@@payroll.declarations.configurer.le.matricule.189aecce"> Configurer le matricule </app-button>
       </div>
     }
 
@@ -115,26 +115,26 @@ const MONTH_LABELS = [
     } @else if (!remittance()) {
       <app-payroll-empty-state
         icon="pi-exclamation-circle"
-        title="Impossible de charger le bordereau"
-        description="Vérifiez que la fonctionnalité est activée et que vous disposez des droits nécessaires."
+        title="Impossible de charger le bordereau" i18n-title="@@payroll.declarations.impossible.de.charger.le.bordereau.ea4207e2"
+        description="Vérifiez que la fonctionnalité est activée et que vous disposez des droits nécessaires." i18n-description="@@payroll.declarations.verifiez.que.la.fonctionnalite.est.activ.5b85bac5"
         [showAction]="true"
-        actionLabel="Réessayer"
+        actionLabel="Réessayer" i18n-actionLabel="@@payroll.declarations.reessayer.b885e20c"
         (actionClick)="load()" />
     } @else if (!remittance()!.isEligible) {
       <app-payroll-empty-state
         icon="pi-calendar"
-        title="Cycle de paie non disponible"
-        [description]="'Aucun cycle validé ou clôturé pour ' + monthLabel() + '.'"
+        title="Cycle de paie non disponible" i18n-title="@@payroll.declarations.cycle.de.paie.non.disponible.e1468b8a"
+        [description]="loc_ui_tern_aucun_cycle_valide_ou_cloture_pour_172d01 + monthLabel() + '.'"
         [showAction]="true"
-        actionLabel="Voir les cycles de paie"
+        actionLabel="Voir les cycles de paie" i18n-actionLabel="@@payroll.declarations.voir.les.cycles.de.paie.fd141467"
         actionRoute="/payroll/runs" />
     } @else if (remittance()!.lines.length === 0) {
       <app-payroll-empty-state
         icon="pi-file"
-        title="Aucun salarié"
-        description="Le cycle ne contient aucun bulletin."
+        title="Aucun salarié" i18n-title="@@payroll.declarations.aucun.salarie.a1567c77"
+        description="Le cycle ne contient aucun bulletin." i18n-description="@@payroll.declarations.le.cycle.ne.contient.aucun.bulletin.c15507c9"
         [showAction]="true"
-        actionLabel="Voir les cycles de paie"
+        actionLabel="Voir les cycles de paie" i18n-actionLabel="@@payroll.declarations.voir.les.cycles.de.paie.fd141467"
         actionRoute="/payroll/runs" />
     } @else {
       <app-payroll-stat-grid [items]="summaryStats()" class="mb-4" />
@@ -142,13 +142,13 @@ const MONTH_LABELS = [
       <p-table [value]="remittance()!.lines" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Salarié</th>
-            <th>CNSS</th>
-            <th class="text-right">Brut CNSS</th>
-            <th class="text-right">CNSS sal.</th>
-            <th class="text-right">CNSS pat.</th>
-            <th class="text-right">AT</th>
-            <th class="text-right">Total</th>
+            <th i18n="@@payroll.declarations.salarie.27f97915">Salarié</th>
+            <th i18n="@@payroll.declarations.cnss.a04d171a">CNSS</th>
+            <th class="text-right" i18n="@@payroll.declarations.brut.cnss.40e3c3cd">Brut CNSS</th>
+            <th class="text-right" i18n="@@payroll.declarations.cnss.sal.5d831d27">CNSS sal.</th>
+            <th class="text-right" i18n="@@payroll.declarations.cnss.pat.1d666774">CNSS pat.</th>
+            <th class="text-right" i18n="@@payroll.declarations.at.031fd11b">AT</th>
+            <th class="text-right" i18n="@@payroll.declarations.total.b25928c6">Total</th>
             <th class="col-warnings"></th>
           </tr>
         </ng-template>
@@ -207,6 +207,7 @@ const MONTH_LABELS = [
   `]
 })
 export class CnssRemittanceTabComponent implements OnInit {
+  readonly loc_ui_tern_aucun_cycle_valide_ou_cloture_pour_172d01 = $localize`:@@ui.tern.aucun.cycle.valide.ou.cloture.pour.172d01:Aucun cycle validé ou clôturé pour `;
   private readonly payroll = inject(PayrollService);
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
@@ -236,9 +237,14 @@ export class CnssRemittanceTabComponent implements OnInit {
     return !!r && r.isEligible && !r.hasExistingPayment && r.totalDue > 0 && !this.missingEmployerMatricule();
   });
 
-  missingEmployerMatricule = computed(() =>
-    !!this.remittance()?.warnings?.some(w => w.includes('Matricule employeur CNSS manquant'))
-  );
+  /**
+   * Champ structuré, jamais le texte de l'avertissement (traduisible) : le serveur renseigne
+   * toujours employerCnssNumber et n'émet l'avertissement « matricule manquant » que s'il est vide.
+   */
+  missingEmployerMatricule = computed(() => {
+    const r = this.remittance();
+    return !!r && !r.employerCnssNumber?.trim();
+  });
 
   otherWarnings = computed(() =>
     (this.remittance()?.warnings ?? []).filter(w => !w.includes('Matricule employeur CNSS manquant'))
@@ -250,11 +256,11 @@ export class CnssRemittanceTabComponent implements OnInit {
     const r = this.remittance();
     if (!r) return [];
     return [
-      { label: 'Salariés', value: r.employeeCount, icon: 'pi-users', variant: 'primary' },
-      { label: 'CNSS salarié', value: formatPayrollAmount(r.totalCnssEmployee, false), icon: 'pi-user', variant: 'warning' },
-      { label: 'CNSS patronale', value: formatPayrollAmount(r.totalCnssEmployer, false), icon: 'pi-building', variant: 'warning' },
-      { label: 'Accident travail', value: formatPayrollAmount(r.totalWorkAccident, false), icon: 'pi-shield', variant: 'primary' },
-      { label: 'Total à verser', value: formatPayrollAmount(r.totalDue, false), icon: 'pi-wallet', variant: 'success', featured: true }
+      { label: $localize`:@@payroll.cnss-remittance-tab.ts.salaries.ce68387d:Salariés`, value: r.employeeCount, icon: 'pi-users', variant: 'primary' },
+      { label: $localize`:@@payroll.cnss-remittance-tab.ts.cnss.salarie.e8528052:CNSS salarié`, value: formatPayrollAmount(r.totalCnssEmployee, false), icon: 'pi-user', variant: 'warning' },
+      { label: $localize`:@@payroll.cnss-remittance-tab.ts.cnss.patronale.607c8ea5:CNSS patronale`, value: formatPayrollAmount(r.totalCnssEmployer, false), icon: 'pi-building', variant: 'warning' },
+      { label: $localize`:@@payroll.cnss-remittance-tab.ts.accident.travail.d28f22ff:Accident travail`, value: formatPayrollAmount(r.totalWorkAccident, false), icon: 'pi-shield', variant: 'primary' },
+      { label: $localize`:@@payroll.cnss-remittance-tab.ts.total.a.verser.70ce9db0:Total à verser`, value: formatPayrollAmount(r.totalDue, false), icon: 'pi-wallet', variant: 'success', featured: true }
     ];
   });
 
@@ -274,7 +280,7 @@ export class CnssRemittanceTabComponent implements OnInit {
     const p = this.remittance()?.payment;
     if (!p) return '';
     const date = new Date(p.paymentDate).toLocaleDateString('fr-TN');
-    return `Versement enregistré le ${date}${p.reference ? ' — Réf. ' + p.reference : ''}`;
+    return $localize`:@@payroll.cnss-remittance-tab.ts.versement.enregistre.le.date.p.9740f175:Versement enregistré le ${date}:date:${p.reference ? $localize`:@@ui.tern.ref.44045a: — Réf. ` + p.reference : ''}:p:`;
   }
 
   load(): void {
@@ -285,15 +291,16 @@ export class CnssRemittanceTabComponent implements OnInit {
       next: res => this.remittance.set(res.data ?? null),
       error: err => {
         this.remittance.set(null);
-        const message = err?.error?.message ?? err?.error?.error ?? 'Impossible de générer le bordereau.';
-        const isMissingMatricule =
-          err?.error?.error?.code === 'CnssEmployerNumber' ||
-          (typeof message === 'string' && message.toLowerCase().includes('matricule employeur cnss'));
+        const message = err?.error?.message ?? err?.error?.error ?? $localize`:@@ui.tern.impossible.de.generer.le.bordereau.d130b4:Impossible de générer le bordereau.`;
+        const code = apiErrorCode(err);
+        const isMissingMatricule = code
+          ? code === API_ERROR_CODE.cnssEmployerNumberMissing
+          : typeof message === 'string' && message.toLowerCase().includes('matricule employeur cnss');
         this.toast.add({
           severity: 'error',
-          summary: 'Bordereau CNSS',
+          summary: $localize`:@@cnss-remittance-tab.component.summary.Bordereau CN:Bordereau CNSS`,
           detail: isMissingMatricule
-            ? 'Le matricule employeur CNSS est obligatoire. Configurez-le dans Mon entreprise.'
+            ? $localize`:@@ui.tern.le.matricule.employeur.cnss.est.obligatoir.d9d786:Le matricule employeur CNSS est obligatoire. Configurez-le dans Mon entreprise.`
             : message
         });
       }
@@ -304,7 +311,7 @@ export class CnssRemittanceTabComponent implements OnInit {
     if (!this.canExport()) return;
     this.payroll.exportCnssRemittanceCsv(this.year, this.month).subscribe({
       next: blob => downloadBlob(blob, `bordereau_cnss_${this.year}_${String(this.month).padStart(2, '0')}.csv`),
-      error: () => this.toast.add({ severity: 'error', summary: 'Bordereau CNSS', detail: 'Export CSV impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@cnss-remittance-tab.component.summary.Bordereau CN:Bordereau CNSS`, detail: $localize`:@@cnss-remittance-tab.component.detail.Export CSV i:Export CSV impossible.` })
     });
   }
 
@@ -312,7 +319,7 @@ export class CnssRemittanceTabComponent implements OnInit {
     if (!this.canExport()) return;
     this.payroll.exportCnssRemittancePdf(this.year, this.month).subscribe({
       next: blob => downloadBlob(blob, `bordereau_cnss_${this.year}_${String(this.month).padStart(2, '0')}.pdf`),
-      error: () => this.toast.add({ severity: 'error', summary: 'Bordereau CNSS', detail: 'Export PDF impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@cnss-remittance-tab.component.summary.Bordereau CN:Bordereau CNSS`, detail: $localize`:@@cnss-remittance-tab.component.detail.Export PDF i:Export PDF impossible.` })
     });
   }
 

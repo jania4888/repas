@@ -13,13 +13,13 @@ import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.co
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Documentation"
-      subtitle="Guide utilisateur pour découvrir et maîtriser InstaFact">
+      title="Documentation" i18n-title="@@documentation.documentation.documentation.9e9cf322"
+      subtitle="Guide utilisateur pour découvrir et maîtriser InstaFact" i18n-subtitle="@@documentation.documentation.guide.utilisateur.pour.decouvrir.et.mait.b0bd4973">
     </app-page-header>
 
     <div class="doc-intro">
-      <p>
-        Ce guide est conçu pour les <strong>utilisateurs novices</strong> et les personnes non-informaticiennes.
+      <p i18n="@@documentation.documentation.ce.guide.est.concu.pour.les.utilisateurs.21f88867">
+        <ng-container> Ce guide est conçu pour les </ng-container> <strong>utilisateurs novices</strong> et les personnes non-informaticiennes.
         Chaque action est expliquée simplement, avec des captures d'écran pour vous guider.
       </p>
     </div>
@@ -47,7 +47,7 @@ import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.co
       padding: var(--spacing-4);
       background: var(--color-primary-50);
       border-radius: var(--radius-xl);
-      border-left: 4px solid var(--color-primary-500);
+      border-inline-start: 4px solid var(--color-primary-500);
     }
 
     .doc-intro p {
@@ -124,7 +124,7 @@ import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.co
 export class DocumentationComponent {
   readonly chapters = DOC_CHAPTERS;
   readonly breadcrumbItems = [
-    { label: 'Accueil', route: '/dashboard' },
-    { label: 'Documentation', route: undefined }
+    { label: $localize`:@@documentation.documentation.ts.accueil.a8ff8fd2:Accueil`, route: '/dashboard' },
+    { label: $localize`:@@documentation.documentation.ts.documentation.9e9cf322:Documentation`, route: undefined }
   ];
 }

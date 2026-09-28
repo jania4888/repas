@@ -18,13 +18,13 @@ interface VatDetailRow {
   imports: [CommonModule, TableModule],
   template: `
     <div class="card vat-zone-card">
-      <h3 class="vat-zone-title">4. Détail de la TVA</h3>
+      <h3 class="vat-zone-title" i18n="@@accounting.vat-declaration.4.detail.de.la.tva.4d4901c6">4. Détail de la TVA</h3>
       <p-table [value]="detailRows" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
         <ng-template pTemplate="header">
           <tr>
-            <th>Désignation</th>
-            <th class="text-right">Base imposable</th>
-            <th class="text-right">Montant TVA</th>
+            <th i18n="@@accounting.vat-declaration.designation.63a9062c">Désignation</th>
+            <th class="text-right" i18n="@@accounting.vat-declaration.base.imposable.e1baa7e1">Base imposable</th>
+            <th class="text-right" i18n="@@accounting.vat-declaration.montant.tva.f0c1b7cc">Montant TVA</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row>
@@ -40,7 +40,7 @@ interface VatDetailRow {
   styles: `
     .vat-zone-card { padding: var(--spacing-5); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); margin-bottom: var(--spacing-4); }
     .vat-zone-title { font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin: 0 0 var(--spacing-4); color: var(--color-text-primary); }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .tabnum { font-variant-numeric: tabular-nums; }
     .vat-row-highlight { background: var(--color-primary-50,#eff6ff) !important; }
     .vat-row-bold td { font-weight: var(--font-weight-semibold); }
@@ -55,8 +55,8 @@ export class VatDeclarationVatDetailTableComponent {
 
     const rateLabels: Record<number, string> = {
       19: 'Taux normal 19 %',
-      13: 'Taux réduit 13 %',
-      7: 'Taux réduit 7 %'
+      13: $localize`:@@accounting.vat-declaration-vat-detail-table.ts.taux.reduit.13.b48b26d9:Taux réduit 13 %`,
+      7: $localize`:@@accounting.vat-declaration-vat-detail-table.ts.taux.reduit.7.3e5d1b2b:Taux réduit 7 %`
     };
 
     const breakdown = d.collectedVatBreakdown ?? [];
@@ -64,34 +64,34 @@ export class VatDeclarationVatDetailTableComponent {
 
     const rows: VatDetailRow[] = hasBreakdown
       ? breakdown.map(b => ({
-          designation: rateLabels[b.ratePercent] ?? `TVA ${b.ratePercent} %`,
+          designation: rateLabels[b.ratePercent] ?? $localize`:@@ui.tern.tva.ph.412aab:TVA ${b.ratePercent}:p0: %`,
           taxableBase: b.taxableBase,
           vatAmount: b.vatAmount
         }))
       : [
           { designation: 'Taux normal 19 %', taxableBase: null, vatAmount: d.collectedVat19 },
-          { designation: 'Taux réduit 13 %', taxableBase: null, vatAmount: d.collectedVat13 },
-          { designation: 'Taux réduit 7 %', taxableBase: null, vatAmount: d.collectedVat7 }
+          { designation: $localize`:@@accounting.vat-declaration-vat-detail-table.ts.taux.reduit.13.b48b26d9:Taux réduit 13 %`, taxableBase: null, vatAmount: d.collectedVat13 },
+          { designation: $localize`:@@accounting.vat-declaration-vat-detail-table.ts.taux.reduit.7.3e5d1b2b:Taux réduit 7 %`, taxableBase: null, vatAmount: d.collectedVat7 }
         ];
 
     const totalBase = hasBreakdown
       ? breakdown.reduce((s, b) => s + b.taxableBase, 0)
       : null;
     rows.push({
-      designation: 'Total TVA collectée',
+      designation: $localize`:@@accounting.vat-declaration-vat-detail-table.ts.total.tva.collectee.bf91cd22:Total TVA collectée`,
       taxableBase: totalBase,
       vatAmount: computeTotalCollected(d),
       bold: true
     });
 
     rows.push({
-      designation: 'TVA déductible',
+      designation: $localize`:@@accounting.vat-declaration-vat-detail-table.ts.tva.deductible.7d6d74f6:TVA déductible`,
       taxableBase: d.deductiblePurchasesTaxableBase ?? null,
       vatAmount: computeTotalDeductible(d)
     });
 
     rows.push({
-      designation: 'TVA à payer',
+      designation: $localize`:@@accounting.vat-declaration-vat-detail-table.ts.tva.a.payer.2094edec:TVA à payer`,
       taxableBase: null,
       vatAmount: d.vatDue,
       highlight: true,
@@ -100,7 +100,7 @@ export class VatDeclarationVatDetailTableComponent {
 
     if (d.creditToCarry > 0) {
       rows.push({
-        designation: 'Crédit à reporter',
+        designation: $localize`:@@accounting.vat-declaration-vat-detail-table.ts.credit.a.reporter.631d54c5:Crédit à reporter`,
         taxableBase: null,
         vatAmount: d.creditToCarry
       });

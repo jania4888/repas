@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { CnssRemittanceTabComponent } from './cnss-remittance-tab.component';
 import { PayrollService } from '@core/services/payroll.service';
 import { ToastService } from '@core/services/toast.service';
@@ -82,5 +82,34 @@ describe('CnssRemittanceTabComponent', () => {
     expect(compiled.querySelector('.cnss-matricule-banner')).toBeTruthy();
     expect(compiled.textContent).toContain('Le matricule employeur CNSS est manquant');
     expect(compiled.querySelector('.cnss-matricule-banner app-button a.btn')).toBeTruthy();
+  });
+
+  it('détecte le matricule manquant par le champ, même avec des avertissements traduits', async () => {
+    await setup({
+      ...baseRemittance,
+      employerCnssNumber: '  ' as string,
+      warnings: ['رقم انخراط المؤجر في CNSS مفقود.']
+    });
+    expect(fixture.componentInstance.missingEmployerMatricule()).toBeTrue();
+    expect(fixture.componentInstance.canExport()).toBeFalse();
+  });
+
+  it('le texte d’un avertissement ne pilote plus la détection : matricule renseigné ⇒ export possible', async () => {
+    await setup({ ...baseRemittance, warnings: ['Matricule employeur CNSS manquant.'] });
+    expect(fixture.componentInstance.missingEmployerMatricule()).toBeFalse();
+  });
+
+  it('erreur de chargement : matricule manquant reconnu au code, message arabe', async () => {
+    await setup();
+    const toast = TestBed.inject(ToastService) as unknown as { add: jasmine.Spy };
+    payrollService.getCnssRemittance.and.returnValue(
+      throwError(() => new HttpErrorResponse({
+        status: 400,
+        error: { success: false, error: 'رقم انخراط المؤجر في CNSS إلزامي.', code: 'Validation.CnssEmployerNumber' }
+      }))
+    );
+    fixture.componentInstance.load();
+    const detail = toast.add.calls.mostRecent().args[0].detail as string;
+    expect(detail).toContain('Mon entreprise');
   });
 });

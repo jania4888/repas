@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text.Json;
 using FactuTrust.API.Middleware;
+using FactuTrust.Application.Localization;
 using FactuTrust.Application.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
@@ -11,6 +12,11 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace FactuTrust.API.Tests;
+
+internal sealed class PassthroughMessageLocalizer : IMessageLocalizer
+{
+    public string Localize(string? message) => message ?? string.Empty;
+}
 
 /// <summary>
 /// Une table ou une colonne du modèle EF absente de la base tenant ressortait en 500
@@ -113,7 +119,8 @@ public sealed class TenantSchemaDriftResponseTests
         var middleware = new ExceptionHandlingMiddleware(
             _ => throw thrown,
             NullLogger<ExceptionHandlingMiddleware>.Instance,
-            new StubHostEnvironment(environmentName));
+            new StubHostEnvironment(environmentName),
+            new PassthroughMessageLocalizer());
 
         var context = new DefaultHttpContext();
         context.Response.Body = new MemoryStream();

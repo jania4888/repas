@@ -5,6 +5,7 @@ import { environment } from '@environments/environment';
 import { AuthService } from './auth.service';
 import { getAllNavSearchEntries, NavSearchEntry } from '../config/app-navigation.registry';
 import { getEntityGroupLabel } from '../config/search-entity.config';
+import { normalizeSearchText } from '../utils/search-text-normalize';
 
 export type GlobalSearchResultKind = 'page' | 'document' | 'recent';
 
@@ -88,7 +89,7 @@ export class GlobalSearchService {
   }
 
   normalize(text: string): string {
-    return text.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().trim();
+    return normalizeSearchText(text);
   }
 
   scoreNavMatch(query: string, entry: NavSearchEntry): number {
@@ -122,7 +123,7 @@ export class GlobalSearchService {
         subtitle: entry.breadcrumb,
         icon: entry.icon,
         route: entry.route,
-        group: entry.group === 'create' ? 'Actions' : entry.group === 'report' ? 'Rapports' : entry.group === 'documentation' ? 'Documentation' : 'Pages',
+        group: entry.group === 'create' ? $localize`:@@core.global-search.ts.actions.c3cd636a:Actions` : entry.group === 'report' ? $localize`:@@core.global-search.ts.rapports.db7d9fbb:Rapports` : entry.group === 'documentation' ? $localize`:@@core.global-search.ts.documentation.9e9cf322:Documentation` : $localize`:@@core.global-search.ts.pages.600584c2:Pages`,
         score: this.scoreNavMatch(q, entry)
       }))
       .filter(r => r.score > 0)
@@ -219,7 +220,7 @@ export class GlobalSearchService {
       title: e.title,
       icon: 'fa-solid fa-clock-rotate-left',
       route: e.route,
-      group: 'Recents',
+      group: $localize`:@@core.global-search.ts.recents.84380106:Recents`,
       score: 100 - i
     }));
   }

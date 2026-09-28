@@ -42,12 +42,12 @@ import { SupplierService, SupplierListItem } from '@core/services/supplier.servi
         aria-labelledby="override-modal-title">
         <header class="modal-header">
           <div>
-            <h3 id="override-modal-title">Modifier la recommandation</h3>
+            <h3 id="override-modal-title" i18n="@@forecasting.components.modifier.la.recommandation.c7fec7a3">Modifier la recommandation</h3>
             <span class="modal-subtitle" *ngIf="recommendation">
               {{ recommendation.productCode }} — {{ recommendation.productName }}
             </span>
           </div>
-          <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer">
+          <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer" i18n-aria-label="@@forecasting.components.fermer.5ab4ec64">
             <i class="pi pi-times" aria-hidden="true"></i>
           </button>
         </header>
@@ -56,61 +56,61 @@ import { SupplierService, SupplierListItem } from '@core/services/supplier.servi
           @if (recommendation; as r) {
             <div class="summary">
               <div class="kpi">
-                <span class="label">Quantité recommandée</span>
+                <span class="label" i18n="@@forecasting.components.quantite.recommandee.3a361a88">Quantité recommandée</span>
                 <span class="value">{{ r.recommendedQty | qtyFmt: r.productUnit }} u.</span>
               </div>
               <div class="kpi">
-                <span class="label">Stock actuel</span>
+                <span class="label" i18n="@@forecasting.components.stock.actuel.294a897a">Stock actuel</span>
                 <span class="value">{{ r.currentStockOnHand | qtyFmt: r.productUnit }} u.</span>
               </div>
               <div class="kpi">
-                <span class="label">En commande</span>
+                <span class="label" i18n="@@forecasting.components.en.commande.38fc4924">En commande</span>
                 <span class="value">{{ r.quantityOnOrder | qtyFmt: r.productUnit }} u.</span>
               </div>
             </div>
 
             <label class="field">
-              <span class="field-label">Quantité manuelle</span>
+              <span class="field-label" i18n="@@forecasting.components.quantite.manuelle.a4f7596b">Quantité manuelle</span>
               <input
                 type="number"
                 min="0"
                 step="any"
                 [(ngModel)]="qtyInput"
                 (ngModelChange)="qtyInput.set($event)"
-                placeholder="Laisser vide pour conserver la quantité recommandée" />
-              <small class="hint">Doit être &gt; 0. Vide = utiliser {{ r.recommendedQty | qtyFmt: r.productUnit }} u.</small>
+                placeholder="Laisser vide pour conserver la quantité recommandée" i18n-placeholder="@@forecasting.components.laisser.vide.pour.conserver.la.quantite.recomman.04dec656" />
+              <small class="hint" i18n="@@forecasting.components.doit.etre.0.vide.utiliser.u.f739ed25">Doit être &gt; 0. Vide = utiliser {{ r.recommendedQty | qtyFmt: r.productUnit }} u.</small>
             </label>
 
             <label class="field">
-              <span class="field-label">Fournisseur</span>
+              <span class="field-label" i18n="@@forecasting.components.fournisseur.97d91d89">Fournisseur</span>
               @if (loadingSuppliers()) {
-                <span class="state">Chargement des fournisseurs…</span>
+                <span class="state" i18n="@@forecasting.components.chargement.des.fournisseurs.fc55800e">Chargement des fournisseurs…</span>
               } @else {
                 <select [(ngModel)]="supplierIdInput" (ngModelChange)="supplierIdInput.set($event)">
-                  <option [ngValue]="null">— Préféré (ou aucun) —</option>
+                  <option [ngValue]="null" i18n="@@forecasting.components.prefere.ou.aucun.7577867f">— Préféré (ou aucun) —</option>
                   @for (s of suppliers(); track s.id) {
                     <option [ngValue]="s.id">{{ s.name }}</option>
                   }
                 </select>
               }
               @if (r.preferredSupplierName) {
-                <small class="hint">Préféré : {{ r.preferredSupplierName }}</small>
+                <small class="hint" i18n="@@forecasting.components.prefere.36977a03">Préféré : {{ r.preferredSupplierName }}</small>
               }
             </label>
 
             @if (qtyInvalid()) {
-              <p class="error" role="alert">La quantité manuelle doit être un nombre &gt; 0.</p>
+              <p class="error" role="alert" i18n="@@forecasting.components.la.quantite.manuelle.doit.etre.un.nombre.gt.0.67c6c68b">La quantité manuelle doit être un nombre &gt; 0.</p>
             }
           }
         </div>
 
         <footer class="modal-footer">
-          <button class="btn btn-secondary" type="button" (click)="onCancel()">Annuler</button>
+          <button class="btn btn-secondary" type="button" (click)="onCancel()" i18n="@@forecasting.components.annuler.49ba3292">Annuler</button>
           <button
             class="btn btn-primary"
             type="button"
             (click)="onConfirm()"
-            [disabled]="qtyInvalid()">
+            [disabled]="qtyInvalid()" i18n="@@forecasting.components.enregistrer.6c57ce9b">
             <i class="pi pi-check" aria-hidden="true"></i>
             Enregistrer
           </button>

@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -57,15 +59,15 @@ import { ProjectListKpiRowComponent } from './components/project-list-kpi-row.co
 import { ProjectFavoritesService } from './project-favorites.service';
 
 const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
-  Generic: 'Affaires générales',
-  Esn: 'Missions & régie',
+  Generic: $localize`:@@projects.project-list.ts.affaires.generales.cf7cec05:Affaires générales`,
+  Esn: $localize`:@@projects.project-list.ts.missions.regie.f9bc89f2:Missions & régie`,
   Btp: 'Chantiers BTP'
 };
 
 @Component({
   selector: 'app-project-list',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     RouterLink,
@@ -94,9 +96,9 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Projets"
-      subtitle="Affaires, chantiers et missions"
-      hint="Affaires, chantiers ESN et missions BTP : suivez avancement, tâches et heures à facturer.">
+      title="Projets" i18n-title="@@projects.project-list.projets.b1e8cd4d"
+      subtitle="Affaires, chantiers et missions" i18n-subtitle="@@projects.project-list.affaires.chantiers.et.missions.5344cbce"
+      hint="Affaires, chantiers ESN et missions BTP : suivez avancement, tâches et heures à facturer." i18n-hint="@@projects.project-list.affaires.chantiers.esn.et.missions.btp.s.645f358b">
       <p-menu #exportMenu [popup]="true" [model]="exportMenuItems" appendTo="body" />
       <app-button
         variant="secondary"
@@ -105,14 +107,12 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
         type="button"
         [disabled]="exporting()"
         (click)="exportMenu.toggle($event)"
-        ariaLabel="Exporter la liste des projets">
-        Exporter
-      </app-button>
-      <a routerLink="/projects/dashboard" class="p-button p-button-outlined p-button-sm">
+        ariaLabel="Exporter la liste des projets" i18n-ariaLabel="@@projects.project-list.exporter.la.liste.des.projets.33c176f5" i18n="@@projects.project-list.exporter.0cd84bdc"> Exporter </app-button>
+      <a routerLink="/projects/dashboard" class="p-button p-button-outlined p-button-sm" i18n="@@projects.project-list.tableau.de.bord.cb1cc88a">
         <i class="pi pi-chart-bar" aria-hidden="true"></i> Tableau de bord
       </a>
       @if (canCreate) {
-        <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openCreate()">Nouveau projet</app-button>
+        <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openCreate()" i18n="@@projects.project-list.nouveau.projet.29f05663">Nouveau projet</app-button>
       }
     </app-page-header>
 
@@ -128,10 +128,10 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           <input
             pInputText
             type="search"
-            placeholder="Rechercher un projet…"
+            placeholder="Rechercher un projet…" i18n-placeholder="@@projects.project-list.rechercher.un.projet.9923387b"
             [(ngModel)]="search"
             (ngModelChange)="onSearch($event)"
-            aria-label="Rechercher un projet" />
+            aria-label="Rechercher un projet" i18n-aria-label="@@projects.project-list.rechercher.un.projet.7ef9017c" />
         </span>
 
         <p-select
@@ -139,7 +139,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           [(ngModel)]="statusFilter"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@projects.project-list.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onFilterChange()" />
 
@@ -148,7 +148,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           [(ngModel)]="kindFilter"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les types"
+          placeholder="Tous les types" i18n-placeholder="@@projects.project-list.tous.les.types.5a6be24d"
           [showClear]="true"
           (onChange)="onFilterChange()" />
 
@@ -157,20 +157,20 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           [(ngModel)]="clientFilter"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les clients"
+          placeholder="Tous les clients" i18n-placeholder="@@projects.project-list.tous.les.clients.56f5092c"
           [showClear]="true"
           [filter]="true"
-          filterPlaceholder="Rechercher…"
+          filterPlaceholder="Rechercher…" i18n-filterPlaceholder="@@projects.project-list.rechercher.ed75dcce"
           (onChange)="onFilterChange()" />
 
         <button
           type="button"
           class="proj-list-more-filters"
           (click)="advancedPanel.toggle($event)"
-          aria-label="Plus de filtres">
+          aria-label="Plus de filtres" i18n-aria-label="@@projects.project-list.plus.de.filtres.51cff4a1"><ng-container i18n="@@projects.project-list.plus.de.filtres.a91c9068">
           <i class="pi pi-filter" aria-hidden="true"></i>
           Plus de filtres
-          @if (extraFiltersCount() > 0) {
+          </ng-container>@if (extraFiltersCount() > 0) {
             <span class="proj-list-more-filters__badge">{{ extraFiltersCount() }}</span>
           }
         </button>
@@ -178,59 +178,57 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
         <p-popover #advancedPanel>
           <div class="proj-list-advanced">
             <label class="proj-list-advanced__field">
-              <span>Chef de projet</span>
+              <span i18n="@@projects.project-list.chef.de.projet.7a1d6008">Chef de projet</span>
               <p-select
                 class="w-full"
                 [options]="ownerOptions()"
                 [(ngModel)]="ownerFilter"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Tous"
+                placeholder="Tous" i18n-placeholder="@@projects.project-list.tous.b97ae3b4"
                 [showClear]="true"
                 (onChange)="onFilterChange()" />
             </label>
             <label class="proj-list-advanced__field">
-              <span>Mode de facturation</span>
+              <span i18n="@@projects.project-list.mode.de.facturation.d797aff0">Mode de facturation</span>
               <p-select
                 class="w-full"
                 [options]="billingFilterOptions"
                 [(ngModel)]="billingFilter"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Tous"
+                placeholder="Tous" i18n-placeholder="@@projects.project-list.tous.b97ae3b4"
                 [showClear]="true"
                 (onChange)="onFilterChange()" />
             </label>
             <div class="proj-list-advanced__dates">
               <label class="proj-list-advanced__field">
-                <span>Échéance du</span>
+                <span i18n="@@projects.project-list.echeance.du.168e2cce">Échéance du</span>
                 <p-datepicker [(ngModel)]="endDateFrom" dateFormat="dd/mm/yy" [showIcon]="true" (onSelect)="onFilterChange()" />
               </label>
               <label class="proj-list-advanced__field">
-                <span>au</span>
+                <span i18n="@@projects.project-list.au.f095160c">au</span>
                 <p-datepicker [(ngModel)]="endDateTo" dateFormat="dd/mm/yy" [showIcon]="true" (onSelect)="onFilterChange()" />
               </label>
             </div>
             <label class="proj-list-advanced__check">
               <p-checkbox [(ngModel)]="overdueOnly" [binary]="true" (onChange)="onFilterChange()" inputId="overdueOnly" />
-              <span for="overdueOnly">Uniquement avec tâches en retard</span>
+              <span for="overdueOnly" i18n="@@projects.project-list.uniquement.avec.taches.en.retard.ee6f621f">Uniquement avec tâches en retard</span>
             </label>
             @if (extraFiltersCount() > 0) {
-              <button type="button" class="proj-list-advanced__reset" (click)="resetExtraFilters()">
-                Réinitialiser les filtres avancés
-              </button>
+              <button type="button" class="proj-list-advanced__reset" (click)="resetExtraFilters()" i18n="@@projects.project-list.reinitialiser.les.filtres.avances.f602005a"> Réinitialiser les filtres avancés </button>
             }
           </div>
         </p-popover>
 
         <div class="proj-list-filters__actions">
           @if (hasActiveFilters()) {
-            <button type="button" class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres">
+            <button type="button" class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="@@projects.project-list.reinitialiser.les.filtres.d8915f02" i18n="@@projects.project-list.reinitialiser.9637f51e">
               <i class="pi pi-times"></i>
               Réinitialiser ({{ activeFiltersCount() }})
             </button>
           }
-          <app-button variant="secondary" icon="pi-refresh" (click)="refreshAll()">Actualiser</app-button>
+          <app-button variant="secondary" icon="pi-refresh" (click)="refreshAll()" i18n="@@projects.project-list.actualiser.9d3b2a7d">Actualiser</app-button>
         </div>
       </div>
     </div>
@@ -253,20 +251,20 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           [loading]="loading()"
           [first]="(page - 1) * pageSize"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} projets"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} projets" i18n-currentPageReportTemplate="@@projects.project-list.affichage.de.first.a.last.sur.totalrecords.proje.43c25739"
           (onLazyLoad)="onPageChange($event)"
           styleClass="p-datatable-sm proj-list-table"
           [rowHover]="true">
           <ng-template pTemplate="header">
             <tr>
-              <th>Projet</th>
-              <th>Client</th>
-              <th>Chef de projet</th>
-              <th>Type</th>
-              <th>Statut</th>
-              <th>Échéance</th>
-              <th>Avancement</th>
-              <th>Tâches</th>
+              <th i18n="@@projects.project-list.projet.a9de3a26">Projet</th>
+              <th i18n="@@projects.project-list.client.1bdd79b1">Client</th>
+              <th i18n="@@projects.project-list.chef.de.projet.7a1d6008">Chef de projet</th>
+              <th i18n="@@projects.project-list.type.3deb7456">Type</th>
+              <th i18n="@@projects.project-list.statut.659499f3">Statut</th>
+              <th i18n="@@projects.project-list.echeance.f9a77ff6">Échéance</th>
+              <th i18n="@@projects.project-list.avancement.e1963fc4">Avancement</th>
+              <th i18n="@@projects.project-list.taches.1b018f86">Tâches</th>
               <th class="proj-list-actions-col"></th>
             </tr>
           </ng-template>
@@ -278,7 +276,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
                     type="button"
                     class="proj-fav-btn"
                     [class.proj-fav-btn--active]="isFavorite(p.id)"
-                    [attr.aria-label]="isFavorite(p.id) ? 'Retirer des favoris' : 'Ajouter aux favoris'"
+                    [attr.aria-label]="isFavorite(p.id) ? loc_ui_tern_retirer_des_favoris_dcaac8 : loc_ui_tern_ajouter_aux_favoris_721554"
                     (click)="toggleFavorite(p.id, $event)">
                     <i class="pi" [class.pi-star-fill]="isFavorite(p.id)" [class.pi-star]="!isFavorite(p.id)"></i>
                   </button>
@@ -287,7 +285,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
                   </span>
                   <div>
                     <strong>{{ p.name }}</strong>
-                    <span class="proj-list-project-desc">{{ p.kindDisplay }}</span>
+                    <span class="proj-list-project-desc">{{ p.kindDisplay | backendLabel }}</span>
                   </div>
                 </div>
               </td>
@@ -304,12 +302,12 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
                 } @else { — }
               </td>
               <td>
-                <span class="proj-kind-pill" [ngClass]="kindPillClass(p.kind)">{{ p.kindDisplay }}</span>
+                <span class="proj-kind-pill" [ngClass]="kindPillClass(p.kind)">{{ p.kindDisplay | backendLabel }}</span>
               </td>
               <td>
                 <span class="proj-list-status">
                   <span class="proj-list-status-dot" [ngClass]="statusDotClass(p.status)"></span>
-                  <app-status-badge [status]="statusBadge(p.status)" [label]="p.statusDisplay" [showIcon]="false" />
+                  <app-status-badge [status]="statusBadge(p.status)" [label]="p.statusDisplay | backendLabel" [showIcon]="false" />
                 </span>
               </td>
               <td>
@@ -328,9 +326,9 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
               </td>
               <td>
                 <div class="proj-list-tasks">
-                  <span>{{ p.openTaskCount }} ouvertes</span>
+                  <span i18n="@@projects.project-list.ouvertes.51a56e9c">{{ p.openTaskCount }} ouvertes</span>
                   @if (p.overdueTaskCount) {
-                    <span class="proj-list-tasks__late">{{ p.overdueTaskCount }} retard</span>
+                    <span class="proj-list-tasks__late" i18n="@@projects.project-list.retard.a24d2f37">{{ p.overdueTaskCount }} retard</span>
                   }
                 </div>
               </td>
@@ -338,7 +336,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
                 <button
                   type="button"
                   class="proj-dash-row-menu-btn"
-                  [attr.aria-label]="'Actions pour ' + p.name"
+                  [attr.aria-label]="loc_ui_tern_actions_pour_cf433f + p.name"
                   (click)="onRowMenu($event, p)">
                   <i class="pi pi-ellipsis-v"></i>
                 </button>
@@ -350,10 +348,10 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
               <td colspan="9">
                 <app-empty-state
                   icon="pi-briefcase"
-                  title="Aucun projet"
-                  description="Créez-en un pour démarrer le suivi d'affaire, de mission ESN ou de chantier BTP."
+                  title="Aucun projet" i18n-title="@@projects.project-list.aucun.projet.c77f3894"
+                  description="Créez-en un pour démarrer le suivi d'affaire, de mission ESN ou de chantier BTP." i18n-description="@@projects.project-list.creez.en.un.pour.demarrer.le.suivi.d.aff.f22e7fc5"
                   [showAction]="canCreate"
-                  actionLabel="Nouveau projet"
+                  actionLabel="Nouveau projet" i18n-actionLabel="@@projects.project-list.nouveau.projet.dcbfdaf5"
                   (actionClick)="openCreate()" />
               </td>
             </tr>
@@ -364,19 +362,19 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
 
     <p-menu #rowMenu [popup]="true" [model]="rowMenuItems()" appendTo="body" />
 
-    <p-dialog [(visible)]="createVisible" [modal]="true" header="Nouveau projet" [style]="{ width: '52rem' }" styleClass="proj-create-dialog">
-      <app-form-section title="Identité" icon="pi-id-card" variant="compact">
+    <p-dialog [(visible)]="createVisible" [modal]="true" header="Nouveau projet" i18n-header="@@projects.project-list.nouveau.projet.29f05663" [style]="{ width: '52rem' }" styleClass="proj-create-dialog">
+      <app-form-section title="Identité" i18n-title="@@projects.project-list.identite.3138be1c" icon="pi-id-card" variant="compact">
         <div class="ft-form-grid">
           <div class="ft-field">
-            <label for="createName">Nom <span class="ft-required" aria-hidden="true">*</span></label>
+            <label for="createName"><ng-container i18n="@@projects.project-list.nom.7ff20370">Nom </ng-container> <span class="ft-required" aria-hidden="true" i18n="@@projects.project-list.text.df58248c">*</span></label>
             <input id="createName" pInputText class="w-full" [(ngModel)]="draft.name" />
           </div>
           <div class="ft-field">
-            <label for="createClient">Client <span class="ft-required" aria-hidden="true">*</span></label>
-            <p-select inputId="createClient" class="w-full" [options]="clients()" [(ngModel)]="draft.clientId" optionLabel="name" optionValue="id" placeholder="Client" />
+            <label for="createClient"><ng-container i18n="@@projects.project-list.client.1bdd79b1">Client </ng-container> <span class="ft-required" aria-hidden="true" i18n="@@projects.project-list.text.df58248c">*</span></label>
+            <p-select inputId="createClient" class="w-full" [options]="clients()" [(ngModel)]="draft.clientId" optionLabel="name" optionValue="id" placeholder="Client" i18n-placeholder="@@projects.project-list.client.1bdd79b1" />
           </div>
           <div class="ft-field ft-field--full">
-            <span class="block font-medium">Type de projet</span>
+            <span class="block font-medium" i18n="@@projects.project-list.type.de.projet.46597b92">Type de projet</span>
             <div class="proj-kind-cards">
               @for (opt of kindOptions; track opt.value) {
                 <div
@@ -392,14 +390,14 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
         </div>
       </app-form-section>
 
-      <app-form-section title="Aperçu Kanban" icon="pi-table" variant="compact">
+      <app-form-section title="Aperçu Kanban" i18n-title="@@projects.project-list.apercu.kanban.4f287372" icon="pi-table" variant="compact">
         <app-project-kanban-template-preview [kind]="draft.kind" />
       </app-form-section>
 
-      <app-form-section title="Facturation" icon="pi-sliders-h" variant="compact">
+      <app-form-section title="Facturation" i18n-title="@@projects.project-list.facturation.04716c6b" icon="pi-sliders-h" variant="compact">
         <div class="ft-form-grid">
           <div class="ft-field ft-field--full">
-            <label for="createBilling">Facturation</label>
+            <label for="createBilling" i18n="@@projects.project-list.facturation.04716c6b">Facturation</label>
             <p-select inputId="createBilling" class="w-full" [options]="billingOptionsForKind()" [(ngModel)]="draft.billingMode" optionLabel="label" optionValue="value" />
           </div>
           <div class="ft-field ft-field--full">
@@ -407,8 +405,8 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
               <div class="proj-create-options__item">
                 <p-checkbox [(ngModel)]="draft.timesheetsEnabled" [binary]="true" inputId="createTimesheets" />
                 <label for="createTimesheets">
-                  <strong>Feuilles de temps</strong>
-                  <span class="text-sm text-color-secondary">Active la saisie et le suivi du temps sur ce projet.</span>
+                  <strong i18n="@@projects.project-list.feuilles.de.temps.679cea6a">Feuilles de temps</strong>
+                  <span class="text-sm text-color-secondary" i18n="@@projects.project-list.active.la.saisie.et.le.suivi.du.temps.sur.ce.pro.dbd98456">Active la saisie et le suivi du temps sur ce projet.</span>
                 </label>
               </div>
             </div>
@@ -416,60 +414,63 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
         </div>
       </app-form-section>
 
-      <app-form-section title="Détails" icon="pi-file" variant="compact">
+      <app-form-section title="Détails" i18n-title="@@projects.project-list.details.aaa029e6" icon="pi-file" variant="compact">
         <div class="ft-form-grid">
           <div class="ft-field ft-field--full">
-            <label for="createDescription">Description</label>
+            <label for="createDescription" i18n="@@projects.project-list.description.55f8ebc8">Description</label>
             <textarea id="createDescription" pTextarea class="w-full" rows="2" [(ngModel)]="draft.description"></textarea>
           </div>
           <div class="ft-field">
-            <label for="createStart">Début</label>
+            <label for="createStart" i18n="@@projects.project-list.debut.f0955314">Début</label>
             <p-datepicker inputId="createStart" class="w-full" [(ngModel)]="startDate" dateFormat="dd/mm/yy" [showIcon]="true" />
           </div>
           <div class="ft-field">
-            <label for="createEnd">Fin</label>
+            <label for="createEnd" i18n="@@projects.project-list.fin.4251065f">Fin</label>
             <p-datepicker inputId="createEnd" class="w-full" [(ngModel)]="endDate" dateFormat="dd/mm/yy" [showIcon]="true" />
           </div>
           <div class="ft-field">
-            <label for="createOwner">Chef de projet</label>
-            <p-select inputId="createOwner" class="w-full" [options]="users()" [(ngModel)]="draft.ownerUserId" optionLabel="displayName" optionValue="id" placeholder="Optionnel" [showClear]="true" />
+            <label for="createOwner" i18n="@@projects.project-list.chef.de.projet.7a1d6008">Chef de projet</label>
+            <p-select inputId="createOwner" class="w-full" [options]="users()" [(ngModel)]="draft.ownerUserId" optionLabel="displayName" optionValue="id" placeholder="Optionnel" i18n-placeholder="@@projects.project-list.optionnel.879d6b16" [showClear]="true" />
           </div>
           <div class="ft-field">
-            <label for="createBudget">Budget HT</label>
+            <label for="createBudget" i18n="@@projects.project-list.budget.ht.0374a3ad">Budget HT</label>
             <p-inputNumber inputId="createBudget" class="w-full" [(ngModel)]="draft.budgetHt" mode="decimal" [minFractionDigits]="3" />
           </div>
         </div>
       </app-form-section>
 
       @if (isBtp(draft.kind)) {
-        <app-form-section title="Chantier BTP" icon="pi-building" variant="compact">
+        <app-form-section title="Chantier BTP" i18n-title="@@projects.project-list.chantier.btp.20419af9" icon="pi-building" variant="compact">
           <div class="ft-form-grid">
             <div class="ft-field ft-field--full">
-              <label for="createSiteAddress">Adresse chantier</label>
+              <label for="createSiteAddress" i18n="@@projects.project-list.adresse.chantier.62e0d1f1">Adresse chantier</label>
               <input id="createSiteAddress" pInputText class="w-full" [(ngModel)]="draft.siteAddress" />
             </div>
             <div class="ft-field ft-field--full">
-              <label for="createContractNumber">N° de marché</label>
+              <label for="createContractNumber" i18n="@@projects.project-list.n.de.marche.1ce067d5">N° de marché</label>
               <input id="createContractNumber" pInputText class="w-full" [(ngModel)]="draft.contractNumber" />
             </div>
-            <p class="ft-hint ft-field--full m-0">Les situations de travaux et la retenue de garantie sont disponibles après activation.</p>
+            <p class="ft-hint ft-field--full m-0" i18n="@@projects.project-list.les.situations.de.travaux.et.la.retenue.de.garan.009bee93">Les situations de travaux et la retenue de garantie sont disponibles après activation.</p>
           </div>
         </app-form-section>
       }
       @if (draft.kind === 'Esn') {
-        <app-form-section title="Mission ESN" icon="pi-users" variant="compact">
-          <p class="text-sm text-color-secondary m-0">Renseignez le tarif de vente sur l'équipe avant de facturer en régie.</p>
+        <app-form-section title="Mission ESN" i18n-title="@@projects.project-list.mission.esn.7528bd23" icon="pi-users" variant="compact">
+          <p class="text-sm text-color-secondary m-0" i18n="@@projects.project-list.renseignez.le.tarif.de.vente.sur.l.equipe.avant..c64a0c55">Renseignez le tarif de vente sur l'équipe avant de facturer en régie.</p>
         </app-form-section>
       }
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (click)="createVisible = false">Annuler</app-button>
-        <app-button variant="primary" (click)="saveCreate()">Créer</app-button>
+        <app-button variant="secondary" (click)="createVisible = false" i18n="@@projects.project-list.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="saveCreate()" i18n="@@projects.project-list.creer.1a686172">Créer</app-button>
       </ng-template>
     </p-dialog>
   `
 })
 export class ProjectListComponent implements OnInit {
+  readonly loc_ui_tern_retirer_des_favoris_dcaac8 = $localize`:@@ui.tern.retirer.des.favoris.dcaac8:Retirer des favoris`;
+  readonly loc_ui_tern_ajouter_aux_favoris_721554 = $localize`:@@ui.tern.ajouter.aux.favoris.721554:Ajouter aux favoris`;
+  readonly loc_ui_tern_actions_pour_cf433f = $localize`:@@ui.tern.actions.pour.cf433f:Actions pour `;
   @ViewChild('rowMenu') rowMenu?: Menu;
 
   private readonly api = inject(ProjectApiService);
@@ -483,15 +484,15 @@ export class ProjectListComponent implements OnInit {
   private readonly search$ = new Subject<string>();
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Accueil', route: '/' },
-    { label: 'Projets' }
+    { label: $localize`:@@projects.project-list.ts.accueil.a8ff8fd2:Accueil`, route: '/' },
+    { label: $localize`:@@projects.project-list.ts.projets.b1e8cd4d:Projets` }
   ];
   readonly skeletonCols: SkeletonColumn[] = [
     { width: '18%' }, { width: '12%' }, { width: '12%' }, { width: '10%' },
     { width: '10%' }, { width: '11%' }, { width: '10%' }, { width: '10%' }, { width: '7%' }
   ];
   readonly exportMenuItems: MenuItem[] = [
-    { label: 'CSV — liste filtrée', icon: 'fa-solid fa-file-csv', command: () => this.exportCsv() }
+    { label: $localize`:@@projects.project-list.ts.csv.liste.filtree.0a556cad:CSV — liste filtrée`, icon: 'fa-solid fa-file-csv', command: () => this.exportCsv() }
   ];
   readonly billingFilterOptions = PROJECT_BILLING_OPTIONS;
 
@@ -547,11 +548,11 @@ export class ProjectListComponent implements OnInit {
   rowMenuItems = computed((): MenuItem[] => {
     const p = this.activeRow();
     if (!p) return [];
-    const favLabel = this.isFavorite(p.id) ? 'Retirer des favoris' : 'Ajouter aux favoris';
+    const favLabel = this.isFavorite(p.id) ? $localize`:@@ui.tern.retirer.des.favoris.dcaac8:Retirer des favoris` : $localize`:@@ui.tern.ajouter.aux.favoris.721554:Ajouter aux favoris`;
     return [
-      { label: 'Voir le projet', icon: 'pi pi-eye', command: () => this.open(p) },
-      { label: 'Tâches', icon: 'pi pi-list', command: () => void this.router.navigate(['/projects', p.id], { fragment: 'tasks' }) },
-      { label: 'Temps', icon: 'pi pi-clock', command: () => void this.router.navigate(['/projects', p.id], { fragment: 'time' }) },
+      { label: $localize`:@@projects.project-list.ts.voir.le.projet.4dfb4818:Voir le projet`, icon: 'pi pi-eye', command: () => this.open(p) },
+      { label: $localize`:@@projects.project-list.ts.taches.1b018f86:Tâches`, icon: 'pi pi-list', command: () => void this.router.navigate(['/projects', p.id], { fragment: 'tasks' }) },
+      { label: $localize`:@@projects.project-list.ts.temps.2986a8c2:Temps`, icon: 'pi pi-clock', command: () => void this.router.navigate(['/projects', p.id], { fragment: 'time' }) },
       { label: favLabel, icon: 'pi pi-star', command: () => this.favorites.toggle(p.id) }
     ];
   });
@@ -681,7 +682,7 @@ export class ProjectListComponent implements OnInit {
           },
           error: err => this.toast.add({
             severity: 'error',
-            summary: 'Indicateurs',
+            summary: $localize`:@@project-list.component.summary.Indicateurs:Indicateurs`,
             detail: this.errors.extractErrorMessage(err)
           })
         });
@@ -765,7 +766,7 @@ export class ProjectListComponent implements OnInit {
           this.totalRecords.set(r.data.totalCount);
           this.page = r.data.page;
         } else {
-          this.error.set(r.message || 'Chargement impossible');
+          this.error.set(r.message || $localize`:@@projects.project-list.ts.chargement.impossible.4c82ffbe:Chargement impossible`);
         }
       },
       error: err => {
@@ -787,11 +788,11 @@ export class ProjectListComponent implements OnInit {
         a.download = `projets-${new Date().toISOString().slice(0, 10)}.csv`;
         a.click();
         URL.revokeObjectURL(url);
-        this.toast.add({ severity: 'success', summary: 'Export', detail: 'Liste exportée en CSV.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-list.component.summary.Export:Export`, detail: $localize`:@@project-list.component.detail.Liste_export_e_e:Liste exportée en CSV.` });
       },
       error: err => {
         this.exporting.set(false);
-        this.toast.add({ severity: 'error', summary: 'Export', detail: this.errors.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@project-list.component.summary.Export:Export`, detail: this.errors.extractErrorMessage(err) });
       }
     });
   }
@@ -838,11 +839,11 @@ export class ProjectListComponent implements OnInit {
 
   saveCreate(): void {
     if (!this.draft.name?.trim()) {
-      this.toast.add({ severity: 'warn', summary: 'Nom requis', detail: 'Indiquez un nom de projet.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@project-list.component.summary.Nom requis:Nom requis`, detail: $localize`:@@project-list.component.detail.Indiquez_un_nom_:Indiquez un nom de projet.` });
       return;
     }
     if (!this.draft.clientId) {
-      this.toast.add({ severity: 'warn', summary: 'Client requis', detail: 'Sélectionnez un client.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@project-list.component.summary.Client_requis:Client requis`, detail: $localize`:@@project-list.component.detail.S_lectionnez_un_:Sélectionnez un client.` });
       return;
     }
     const payload: UpsertProjectPayload = {
@@ -855,13 +856,13 @@ export class ProjectListComponent implements OnInit {
       next: r => {
         if (r.success && r.data) {
           this.createVisible = false;
-          this.toast.add({ severity: 'success', summary: 'Projet créé', detail: 'Pensez à l’activer pour saisir du temps.' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@project-list.component.summary.Projet créé:Projet créé`, detail: $localize`:@@project-list.component.detail.Pensez_l_activ:Pensez à l’activer pour saisir du temps.` });
           void this.router.navigate(['/projects', r.data]);
         } else {
-          this.toast.add({ severity: 'error', summary: 'Création impossible', detail: r.message || 'Erreur' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@project-list.component.summary.Cr_ation_impossi:Création impossible`, detail: r.message || $localize`:@@projects.project-list.ts.erreur.ab546c23:Erreur` });
         }
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Création impossible', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-list.component.summary.Cr_ation_impossi:Création impossible`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 }

@@ -53,75 +53,69 @@ function toFrDate(d: Date): string {
   ],
   template: `
     <app-page-header
-      title="Exercice comptable — Immobilisations"
-      subtitle="Définir la frontière d'exercice du dossier pour les dotations et le tableau d'amortissement" />
+      title="Exercice comptable — Immobilisations" i18n-title="@@accounting.fixed-assets.exercice.comptable.immobilisations.37874f47"
+      subtitle="Définir la frontière d'exercice du dossier pour les dotations et le tableau d'amortissement" i18n-subtitle="@@accounting.fixed-assets.definir.la.frontiere.d.exercice.du.dossi.a5120d48" />
 
     <app-accounting-status-banner [message]="error() ?? ''" variant="error" *ngIf="error()" />
     <app-accounting-status-banner [message]="success() ?? ''" variant="success" *ngIf="success()" />
 
     <div class="card" *ngIf="loading()">
-      <p class="hint">Chargement des paramètres…</p>
+      <p class="hint" i18n="@@accounting.fixed-assets.chargement.des.parametres.28d37cc5">Chargement des paramètres…</p>
     </div>
 
     <div class="card" *ngIf="!loading()">
-      <p class="hint">
-        L'exercice comptable détermine la répartition des dotations et le libellé des exercices
+      <p class="hint" i18n="@@accounting.fixed-assets.l.exercice.comptable.determine.la.repartition.de.3debb716"> L'exercice comptable détermine la répartition des dotations et le libellé des exercices
         dans le tableau CP17 et les exports Immobilisations. Par défaut, l'exercice coïncide avec
-        l'année civile (janvier).
-      </p>
+        l'année civile (janvier). </p>
 
       <app-accounting-status-banner
         *ngIf="isOffset()"
-        title="Limitation transitoire"
+        title="Limitation transitoire" i18n-title="@@accounting.fixed-assets.limitation.transitoire.9ea0fb81"
         [message]="offsetLimitationMessage"
         variant="warning" />
 
       <div class="form-grid">
         <label>
-          Mois de début d'exercice *
+          <ng-container i18n="@@accounting.fixed-assets.mois.de.debut.d.exercice.97c6a5e8"> Mois de début d'exercice * </ng-container>
           <select class="accounting-filter-input" [(ngModel)]="form.fiscalYearStartMonth" (ngModelChange)="onFormChange()">
             <option *ngFor="let m of monthOptions" [value]="m.value">{{ m.label }}</option>
           </select>
-          <span class="hint">1 = janvier (exercice civil, comportement par défaut).</span>
+          <span class="hint" i18n="@@accounting.fixed-assets.1.janvier.exercice.civil.comportement.par.defaut.2bc6d026">1 = janvier (exercice civil, comportement par défaut).</span>
         </label>
 
         <fieldset class="form-section">
-          <legend>Format du libellé d'exercice *</legend>
+          <legend i18n="@@accounting.fixed-assets.format.du.libelle.d.exercice.9b92223f">Format du libellé d'exercice *</legend>
           <label class="radio-option">
             <input
               type="radio"
               name="labelFormat"
               value="N/N+1"
               [ngModel]="form.fiscalYearLabelFormat"
-              (ngModelChange)="onLabelFormatChange($event)" />
+              (ngModelChange)="onLabelFormatChange($event)" /><ng-container i18n="@@accounting.fixed-assets.n.n.1.ex.b05131eb">
             N/N+1 — ex. « {{ sampleFor('N/N+1') }} »
-          </label>
+          </ng-container></label>
           <label class="radio-option">
             <input
               type="radio"
               name="labelFormat"
               value="N"
               [ngModel]="form.fiscalYearLabelFormat"
-              (ngModelChange)="onLabelFormatChange($event)" />
+              (ngModelChange)="onLabelFormatChange($event)" /><ng-container i18n="@@accounting.fixed-assets.n.ex.17b2425e">
             N — ex. « {{ sampleFor('N') }} »
-          </label>
+          </ng-container></label>
         </fieldset>
       </div>
 
       <div class="preview">
-        <p>
+        <p i18n="@@accounting.fixed-assets.apercu.exercice.courant.affiche.frontier.8274168a">
           <strong>Aperçu :</strong> exercice courant affiché « {{ currentSample() }} »<ng-container *ngIf="isOffset()"> (frontière {{ offsetBoundary() }})</ng-container>.
         </p>
       </div>
 
       <div class="actions">
-        <app-button variant="primary" type="button" (click)="save()" [disabled]="saving()">
-          Enregistrer les paramètres
-        </app-button>
-        <app-button variant="secondary" type="button" routerLink="/accounting/fixed-assets/depreciation-run">
-          Aller aux dotations
-        </app-button>
-        <app-button variant="secondary" type="button" routerLink="/accounting/fixed-assets">Retour au registre</app-button>
+        <app-button variant="primary" type="button" (click)="save()" [disabled]="saving()" i18n="@@accounting.fixed-assets.enregistrer.les.parametres.f1ccef8d"> Enregistrer les paramètres </app-button>
+        <app-button variant="secondary" type="button" routerLink="/accounting/fixed-assets/depreciation-run" i18n="@@accounting.fixed-assets.aller.aux.dotations.1269addd"> Aller aux dotations </app-button>
+        <app-button variant="secondary" type="button" routerLink="/accounting/fixed-assets" i18n="@@accounting.fixed-assets.retour.au.registre.aa646cbf">Retour au registre</app-button>
       </div>
     </div>
   `,
@@ -190,9 +184,7 @@ export class FixedAssetSettingsComponent implements OnInit {
   readonly monthOptions = MONTH_LABELS_FR.map((label, idx) => ({ value: idx + 1, label }));
 
   readonly offsetLimitationMessage =
-    "L'exercice est décalé : le Grand-Livre, les périodes et les verrous comptables restent en année civile. " +
-    "Seul le module Immobilisations (dotations, tableau CP17, exports) applique la frontière d'exercice. " +
-    "Le bascule complète du socle est planifiée séparément.";
+    $localize`:@@accounting.fixed-asset-settings.ts.l.exercice.est.decale.le.grand.livre.les.a48b7418:L'exercice est décalé : le Grand-Livre, les périodes et les verrous comptables restent en année civile. Seul le module Immobilisations (dotations, tableau CP17, exports) applique la frontière d'exercice. Le bascule complète du socle est planifiée séparément.`;
 
   readonly loading = signal(true);
   readonly saving = signal(false);
@@ -241,7 +233,7 @@ export class FixedAssetSettingsComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Impossible de charger les paramètres d\'exercice.'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.fixed-asset-settings.ts.impossible.de.charger.les.parametres.d.e.10b79ca6:Impossible de charger les paramètres d'exercice.`));
       }
     });
   }
@@ -273,14 +265,14 @@ export class FixedAssetSettingsComponent implements OnInit {
             fiscalYearStartMonth: res.data.fiscalYearStartMonth,
             fiscalYearLabelFormat: res.data.fiscalYearLabelFormat
           };
-          this.success.set('Paramètres d\'exercice enregistrés.');
+          this.success.set($localize`:@@accounting.fixed-asset-settings.ts.parametres.d.exercice.enregistres.c6642120:Paramètres d'exercice enregistrés.`);
         } else {
-          this.error.set(res.message ?? 'Enregistrement impossible.');
+          this.error.set(res.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`);
         }
       },
       error: err => {
         this.saving.set(false);
-        this.error.set(err?.error?.message ?? 'Enregistrement impossible.');
+        this.error.set(err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`);
       }
     });
   }

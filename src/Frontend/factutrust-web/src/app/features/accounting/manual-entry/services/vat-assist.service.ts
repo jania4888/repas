@@ -19,7 +19,7 @@ export class VatAssistService {
 
     if (side === 'collected') {
       if (active.has(COLLECTED_ACCOUNT)) return { account: COLLECTED_ACCOUNT };
-      return { account: null, warning: `Compte TVA collectée ${COLLECTED_ACCOUNT} absent du plan.` };
+      return { account: null, warning: $localize`:@@accounting.vat-assist.ts.compte.tva.collectee.collected.account.a.9e616d70:Compte TVA collectée ${COLLECTED_ACCOUNT}:COLLECTED_ACCOUNT: absent du plan.` };
     }
 
     const isFixedAsset = counterpartAccount
@@ -33,7 +33,7 @@ export class VatAssistService {
       if (active.has(c)) return { account: c };
     }
 
-    return { account: null, warning: 'Aucun compte TVA déductible (43666/43662) trouvé dans le plan.' };
+    return { account: null, warning: $localize`:@@accounting.vat-assist.ts.aucun.compte.tva.deductible.43666.43662.adef90e8:Aucun compte TVA déductible (43666/43662) trouvé dans le plan.` };
   }
 
   computeVatAmount(base: number, ratePercent: number): number {
@@ -62,7 +62,7 @@ export class VatAssistService {
     const vatAmount = this.computeVatAmount(base, ratePercent);
     const { account, warning } = this.resolveVatAccount(side, line.accountNumber, accounts);
     if (!account) {
-      store.error.set(warning ?? 'Compte TVA introuvable.');
+      store.error.set(warning ?? $localize`:@@accounting.vat-assist.ts.compte.tva.introuvable.850afb98:Compte TVA introuvable.`);
       return;
     }
 

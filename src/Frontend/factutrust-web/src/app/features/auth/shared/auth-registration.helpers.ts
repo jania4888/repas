@@ -50,16 +50,16 @@ export function validateCompanyRegisterFormData(
   const errors: string[] = [];
 
   if (formValue.taxRegime !== 0 && !formValue.taxRegime) {
-    errors.push('Le régime fiscal est requis');
+    errors.push($localize`:@@auth.auth-registration.helpers.ts.le.regime.fiscal.est.requis.d20a3be7:Le régime fiscal est requis`);
   }
 
   if (!formValue.governorate) {
-    errors.push('Le gouvernorat est requis');
+    errors.push($localize`:@@auth.auth-registration.helpers.ts.le.gouvernorat.est.requis.7596f54f:Le gouvernorat est requis`);
   }
 
   const phone = cleanPhoneValue(formValue.phone);
   if (phone && !/^[2-57-9]\d{7}$/.test(phone)) {
-    errors.push('Le numéro de téléphone doit contenir 8 chiffres et commencer par 2, 3, 4, 5, 7 ou 9');
+    errors.push($localize`:@@auth.auth-registration.helpers.ts.le.numero.de.telephone.doit.contenir.8.c.11d37130:Le numéro de téléphone doit contenir 8 chiffres et commencer par 2, 3, 4, 5, 7 ou 9`);
   }
 
   const nifToValidate = nifOverride !== undefined
@@ -68,10 +68,10 @@ export function validateCompanyRegisterFormData(
 
   if (nifToValidate && nifToValidate.length > 0) {
     if (!NIF_PATTERN.test(nifToValidate)) {
-      errors.push('Le format du NIF est invalide (format attendu: 1772793W/A/M/000)');
+      errors.push($localize`:@@auth.auth-registration.helpers.ts.le.format.du.nif.est.invalide.format.att.f4470903:Le format du NIF est invalide (format attendu: 1772793W/A/M/000)`);
     }
   } else if (nifTouched) {
-    errors.push('Le matricule fiscal est requis (format: 1772793W/A/M/000)');
+    errors.push($localize`:@@auth.auth-registration.helpers.ts.le.matricule.fiscal.est.requis.format.17.26b09bb0:Le matricule fiscal est requis (format: 1772793W/A/M/000)`);
   }
 
   return errors;
@@ -92,12 +92,12 @@ export function validateFirmRegisterFormData(
   const errors: string[] = [];
 
   if (!formValue.governorate) {
-    errors.push('Le gouvernorat est requis');
+    errors.push($localize`:@@auth.auth-registration.helpers.ts.le.gouvernorat.est.requis.7596f54f:Le gouvernorat est requis`);
   }
 
   const phone = cleanPhoneValue(formValue.phone);
   if (phone && !/^[2-57-9]\d{7}$/.test(phone)) {
-    errors.push('Le numéro de téléphone doit contenir 8 chiffres et commencer par 2, 3, 4, 5, 7 ou 9');
+    errors.push($localize`:@@auth.auth-registration.helpers.ts.le.numero.de.telephone.doit.contenir.8.c.11d37130:Le numéro de téléphone doit contenir 8 chiffres et commencer par 2, 3, 4, 5, 7 ou 9`);
   }
 
   const nifToValidate = nifOverride !== undefined
@@ -106,10 +106,10 @@ export function validateFirmRegisterFormData(
 
   if (nifToValidate && nifToValidate.length > 0) {
     if (!NIF_PATTERN.test(nifToValidate)) {
-      errors.push('Le format du NIF est invalide (format attendu: 1772793W/A/M/000)');
+      errors.push($localize`:@@auth.auth-registration.helpers.ts.le.format.du.nif.est.invalide.format.att.f4470903:Le format du NIF est invalide (format attendu: 1772793W/A/M/000)`);
     }
   } else if (nifTouched) {
-    errors.push('Le matricule fiscal est requis (format: 1772793W/A/M/000)');
+    errors.push($localize`:@@auth.auth-registration.helpers.ts.le.matricule.fiscal.est.requis.format.17.26b09bb0:Le matricule fiscal est requis (format: 1772793W/A/M/000)`);
   }
 
   return errors;

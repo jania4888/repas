@@ -8,6 +8,7 @@ import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { isRealizedRevenue } from '@core/utils/invoice-metrics.util';
 import { buildKpiSparklines, type KpiSparklines } from './dashboard-kpi-series.util';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 export type { KpiSparklines };
 
@@ -59,13 +60,13 @@ export interface DashboardAggregatedData {
 }
 
 const MONTH_NAMES_FR = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  $localize`:@@dashboard.dashboard.ts.janvier.7a32ae0f:Janvier`, $localize`:@@dashboard.dashboard.ts.fevrier.63fc1803:Février`, $localize`:@@dashboard.dashboard.ts.mars.1778011d:Mars`, $localize`:@@dashboard.dashboard.ts.avril.4efeee46:Avril`, $localize`:@@dashboard.dashboard.ts.mai.afe526a6:Mai`, $localize`:@@dashboard.dashboard.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@dashboard.dashboard.ts.juillet.e8e0920c:Juillet`, $localize`:@@dashboard.dashboard.ts.aout.460b6696:Août`, $localize`:@@dashboard.dashboard.ts.septembre.08d23f31:Septembre`, $localize`:@@dashboard.dashboard.ts.octobre.0ed28485:Octobre`, $localize`:@@dashboard.dashboard.ts.novembre.632580af:Novembre`, $localize`:@@dashboard.dashboard.ts.decembre.03bcd9b0:Décembre`
 ];
 
 const MONTH_SHORT_FR = [
-  'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin',
-  'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'
+  $localize`:@@dashboard.dashboard.ts.jan.efed3690:Jan`, $localize`:@@dashboard.dashboard.ts.fev.7b8852ec:Fév`, $localize`:@@dashboard.dashboard.ts.mar.c4ba0822:Mar`, $localize`:@@dashboard.dashboard.ts.avr.d648a3b7:Avr`, $localize`:@@dashboard.dashboard.ts.mai.afe526a6:Mai`, $localize`:@@dashboard.dashboard.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@dashboard.dashboard.ts.juil.190b5d60:Juil`, $localize`:@@dashboard.dashboard.ts.aout.460b6696:Août`, $localize`:@@dashboard.dashboard.ts.sep.fdd289e3:Sep`, $localize`:@@dashboard.dashboard.ts.oct.51327aef:Oct`, $localize`:@@dashboard.dashboard.ts.nov.bb9bfefd:Nov`, $localize`:@@dashboard.dashboard.ts.dec.2bc2249a:Déc`
 ];
 
 @Injectable({ providedIn: 'root' })
@@ -243,17 +244,17 @@ export class DashboardService {
       let iconClass: string;
 
       if (status.includes('payé') || status.includes('paid')) {
-        description = `Paiement reçu pour ${inv.number}`;
+        description = $localize`:@@dashboard.dashboard.ts.paiement.recu.pour.number.aa5e2d5f:Paiement reçu pour ${inv.number}:number:`;
         iconClass = 'activity-success';
       } else if (status.includes('validé') || status.includes('validated') ||
                  status.includes('signé') || status.includes('signed')) {
-        description = `Facture ${inv.number} validée`;
+        description = $localize`:@@dashboard.dashboard.ts.facture.number.validee.fac00f06:Facture ${inv.number}:number: validée`;
         iconClass = 'activity-primary';
       } else if (status.includes('envoyé') || status.includes('sent')) {
-        description = `Facture ${inv.number} envoyée à ${inv.clientName}`;
+        description = $localize`:@@dashboard.dashboard.ts.facture.number.envoyee.a.clientname.0bc8ea33:Facture ${inv.number}:number: envoyée à ${inv.clientName}:clientName:`;
         iconClass = 'activity-info';
       } else {
-        description = `Facture ${inv.number} créée pour ${inv.clientName}`;
+        description = $localize`:@@dashboard.dashboard.ts.facture.number.creee.pour.clientname.af9541d5:Facture ${inv.number}:number: créée pour ${inv.clientName}:clientName:`;
         iconClass = 'activity-neutral';
       }
 
@@ -275,16 +276,16 @@ export class DashboardService {
       let iconClass: string;
 
       if (status.includes('accepté') || status.includes('accepted')) {
-        description = `Devis ${q.number} accepté par ${q.clientName}`;
+        description = $localize`:@@dashboard.dashboard.ts.devis.number.accepte.par.clientname.fb9003ef:Devis ${q.number}:number: accepté par ${q.clientName}:clientName:`;
         iconClass = 'activity-success';
       } else if (status.includes('envoyé') || status.includes('sent')) {
-        description = `Devis ${q.number} envoyé à ${q.clientName}`;
+        description = $localize`:@@dashboard.dashboard.ts.devis.number.envoye.a.clientname.311bc806:Devis ${q.number}:number: envoyé à ${q.clientName}:clientName:`;
         iconClass = 'activity-info';
       } else if (status.includes('converti') || status.includes('converted')) {
-        description = `Devis ${q.number} converti en facture`;
+        description = $localize`:@@dashboard.dashboard.ts.devis.number.converti.en.facture.d1ddf45a:Devis ${q.number}:number: converti en facture`;
         iconClass = 'activity-primary';
       } else {
-        description = `Devis ${q.number} créé pour ${q.clientName}`;
+        description = $localize`:@@dashboard.dashboard.ts.devis.number.cree.pour.clientname.254a3e71:Devis ${q.number}:number: créé pour ${q.clientName}:clientName:`;
         iconClass = 'activity-neutral';
       }
 
@@ -312,13 +313,13 @@ export class DashboardService {
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffMinutes < 1) return "À l'instant";
+    if (diffMinutes < 1) return $localize`:@@dashboard.dashboard.ts.a.l.instant.67cf83bb:À l'instant`;
     if (diffMinutes < 60) return `Il y a ${diffMinutes} min`;
     if (diffHours < 24) return `Il y a ${diffHours}h`;
     if (diffDays === 1) return 'Hier';
-    if (diffDays < 7) return `Il y a ${diffDays} jours`;
+    if (diffDays < 7) return $localize`:@@dashboard.dashboard.ts.il.y.a.diffdays.jours.44aa16a2:Il y a ${diffDays}:diffDays: jours`;
     if (diffDays < 30) return `Il y a ${Math.floor(diffDays / 7)} sem.`;
 
-    return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+    return date.toLocaleDateString(erpDateLocale('fr-FR'), { day: '2-digit', month: 'short' });
   }
 }

@@ -187,6 +187,7 @@ public class MasterDbContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasIndex(u => u.Email).IsUnique();
             entity.HasIndex(u => new { u.TenantId, u.PortalClientId });
             entity.Property(u => u.PortalInviteTokenHash).HasMaxLength(64);
+            entity.Property(u => u.PreferredLanguage).HasMaxLength(5);
             entity.HasMany(u => u.ModuleGrants)
                 .WithOne()
                 .HasForeignKey(g => g.UserId)
@@ -1755,6 +1756,9 @@ public class ApplicationUser : IdentityUser<Guid>
     public string? ProductOnboardingChecklistJson { get; set; }
 
     public DateTime? ProductOnboardingUpdatedAt { get; set; }
+
+    /// <summary>UI language preference (<c>fr</c> or <c>ar</c>). Null ⇒ French.</summary>
+    public string? PreferredLanguage { get; set; }
 
     public ICollection<UserModuleGrant> ModuleGrants { get; set; } = new List<UserModuleGrant>();
 

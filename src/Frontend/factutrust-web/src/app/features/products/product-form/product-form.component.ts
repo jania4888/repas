@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { API_ERROR_CODE } from '@core/utils/api-error-code';
 import { Component, OnInit, inject, signal, computed, ViewChild } from '@angular/core';
 import { environment } from '@environments/environment';
 import { PrintLabelsDialogComponent, LabelPrintTarget } from '../components/print-labels-dialog/print-labels-dialog.component';
@@ -26,6 +28,7 @@ import { ProductCategoryService } from '@core/services/product-category.service'
 import { SupplierService } from '@core/services/supplier.service';
 import { StockService, StockFeatures } from '@core/services/stock.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
+import { PRODUCT_CATEGORY_OPTIONS, PRODUCT_UNIT_OPTIONS, PRODUCT_VAT_OPTIONS } from '@shared/constants/coded-option-labels';
 import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { AppModule } from '@core/models/app-module';
@@ -69,6 +72,9 @@ interface VatOption {
   value: number;
 }
 
+/** Nom (en base) de la catégorie proposée par défaut à la création d'un produit. */
+const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
+
 @Component({
   selector: 'app-product-form',
   standalone: true,
@@ -99,29 +105,27 @@ interface VatOption {
     <app-breadcrumb [items]="breadcrumbItems()"></app-breadcrumb>
     
     <app-page-header 
-      [title]="isEditMode() ? 'Modifier le produit' : 'Nouveau produit'" 
-      [subtitle]="isEditMode() ? 'Modifiez les informations du produit' : 'Ajoutez un nouveau produit à votre catalogue'">
+      [title]="isEditMode() ? loc_ui_tern_modifier_le_produit_aeaa8f : loc_ui_tern_nouveau_produit_c31ca3" 
+      [subtitle]="isEditMode() ? loc_ui_tern_modifiez_les_informations_du_produit_41bd18 : loc_ui_tern_ajoutez_un_nouveau_produit_a_votre_catalog_d9126c">
       <app-button 
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/products">
-        Annuler
-      </app-button>
+        routerLink="/products" i18n="@@products.product-form.annuler.49ba3292"> Annuler </app-button>
     </app-page-header>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="form-grid" [class.form-grid--with-side]="hasSideSections()">
         <!-- General Information -->
-        <app-form-section class="section-identity" title="Informations générales" icon="pi-box" [number]="1">
+        <app-form-section class="section-identity" title="Informations générales" i18n-title="@@products.product-form.informations.generales.be6ba6e5" icon="pi-box" [number]="1">
           <div class="form-row form-row-3">
             <div class="form-group">
-              <label for="code">Code produit <span class="required">*</span></label>
+              <label for="code"><ng-container i18n="@@products.product-form.code.produit.60220afb">Code produit </ng-container> <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
               <input 
                 pInputText 
                 id="code" 
                 formControlName="code"
-                placeholder="Ex: PROD-001"
+                placeholder="Ex: PROD-001" i18n-placeholder="@@products.product-form.ex.prod.001.654beeed"
                 class="w-full"
                 [class.ng-invalid]="isInvalid('code')">
               @if (isInvalid('code')) {
@@ -133,12 +137,12 @@ interface VatOption {
             </div>
 
             <div class="form-group">
-              <label for="category">Type <span class="required">*</span></label>
+              <label for="category"><ng-container i18n="@@products.product-form.type.3deb7456">Type </ng-container> <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
               <p-select 
                 id="category"
                 [options]="categoryOptions" 
                 formControlName="category"
-                placeholder="Sélectionner"
+                placeholder="Sélectionner" i18n-placeholder="@@products.product-form.selectionner.ab31a36f"
                 styleClass="w-full">
               </p-select>
               @if (isInvalid('category')) {
@@ -150,22 +154,22 @@ interface VatOption {
             </div>
 
             <div class="form-group">
-              <label for="productCategoryId">Catégorie</label>
+              <label for="productCategoryId" i18n="@@products.product-form.categorie.6b38300a">Catégorie</label>
               <p-select 
                 id="productCategoryId"
                 [options]="productCategoryOptions()"
                 formControlName="productCategoryId"
-                placeholder="Sélectionner une catégorie"
+                placeholder="Sélectionner une catégorie" i18n-placeholder="@@products.product-form.selectionner.une.categorie.6b9668aa"
                 optionLabel="label"
                 optionValue="value"
                 styleClass="w-full">
               </p-select>
-              <small class="form-hint">Classification du produit. Par défaut: General</small>
+              <small class="form-hint" i18n="@@products.product-form.classification.du.produit.par.defaut.general.3db72c29">Classification du produit. Par défaut: General</small>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="barcode">Code-barres</label>
+            <label for="barcode" i18n="@@products.product-form.code.barres.a5ce859a">Code-barres</label>
             <div class="barcode-input-row">
               <span class="p-input-icon-left barcode-input-row__field">
                 <i class="pi pi-barcode" aria-hidden="true"></i>
@@ -173,7 +177,7 @@ interface VatOption {
                   pInputText
                   id="barcode"
                   formControlName="barcode"
-                  placeholder="Scannez ou saisissez le code-barres"
+                  placeholder="Scannez ou saisissez le code-barres" i18n-placeholder="@@products.product-form.scannez.ou.saisissez.le.code.barres.507da1a3"
                   class="w-full"
                   autocomplete="off"
                   spellcheck="false">
@@ -184,18 +188,14 @@ interface VatOption {
                 iconPos="left"
                 size="sm"
                 [disabled]="generatingBarcode()"
-                (clicked)="generateBarcode()">
-                Générer un code interne
-              </app-button>
+                (clicked)="generateBarcode()" i18n="@@products.product-form.generer.un.code.interne.922844a9"> Générer un code interne </app-button>
               @if (labelPrintingEnabled && isEditMode()) {
                 <app-button
                   variant="outline"
                   icon="pi-print"
                   iconPos="left"
                   size="sm"
-                  (clicked)="openLabelDialog()">
-                  Étiquettes
-                </app-button>
+                  (clicked)="openLabelDialog()" i18n="@@products.product-form.etiquettes.e26c690c"> Étiquettes </app-button>
               }
             </div>
             @if (barcodeSymbologyLabel()) {
@@ -204,19 +204,17 @@ interface VatOption {
                 {{ barcodeSymbologyLabel() }}
               </small>
             } @else {
-              <small class="form-hint">
-                Distinct du code produit. Laissez vide si l'article n'en a pas.
-              </small>
+              <small class="form-hint" i18n="@@products.product-form.distinct.du.code.produit.laissez.vide.si.l.artic.983b9086"> Distinct du code produit. Laissez vide si l'article n'en a pas. </small>
             }
           </div>
 
           <div class="form-group">
-            <label for="name">Désignation <span class="required">*</span></label>
+            <label for="name"><ng-container i18n="@@products.product-form.designation.63a9062c">Désignation </ng-container> <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
             <input 
               pInputText 
               id="name" 
               formControlName="name"
-              placeholder="Nom du produit ou service"
+              placeholder="Nom du produit ou service" i18n-placeholder="@@products.product-form.nom.du.produit.ou.service.d82d71d4"
               class="w-full"
               [class.ng-invalid]="isInvalid('name')">
             @if (isInvalid('name')) {
@@ -228,12 +226,12 @@ interface VatOption {
           </div>
 
           <div class="form-group">
-            <label for="description">Description</label>
+            <label for="description" i18n="@@products.product-form.description.55f8ebc8">Description</label>
             <textarea 
               pTextarea 
               id="description" 
               formControlName="description"
-              placeholder="Description détaillée du produit ou service..."
+              placeholder="Description détaillée du produit ou service..." i18n-placeholder="@@products.product-form.description.detaillee.du.produit.ou.service.8c65fcfc"
               [rows]="4"
               class="w-full">
             </textarea>
@@ -242,7 +240,7 @@ interface VatOption {
           @if (showStockManagementSection()) {
             <div class="form-row">
               <div class="form-group">
-                <label for="isStockManaged">Gestion de stock</label>
+                <label for="isStockManaged" i18n="@@products.product-form.gestion.de.stock.3f196b66">Gestion de stock</label>
                 <div class="status-switch">
                   <p-inputSwitch 
                     id="isStockManaged"
@@ -250,60 +248,56 @@ interface VatOption {
                     [disabled]="!isProductCategory()">
                   </p-inputSwitch>
                   <span [class.active]="form.get('isStockManaged')?.value">
-                    {{ form.get('isStockManaged')?.value ? 'Activée' : 'Désactivée' }}
+                    {{ form.get('isStockManaged')?.value ? loc_ui_tern_activee_9b4e7c : loc_ui_tern_desactivee_74cc3b }}
                   </span>
                 </div>
                 @if (!isProductCategory()) {
-                  <small class="form-hint">Disponible uniquement pour les produits physiques.</small>
+                  <small class="form-hint" i18n="@@products.product-form.disponible.uniquement.pour.les.produits.physique.36d9ce42">Disponible uniquement pour les produits physiques.</small>
                 }
               </div>
 
               @if (isProductCategory()) {
                 <div class="form-group">
-                  <label for="preferredSupplierId">Fournisseur préféré</label>
+                  <label for="preferredSupplierId" i18n="@@products.product-form.fournisseur.prefere.7d570b74">Fournisseur préféré</label>
                   <p-select
                     id="preferredSupplierId"
                     [options]="supplierOptions()"
                     formControlName="preferredSupplierId"
-                    placeholder="Aucun (à choisir lors de la commande)"
+                    placeholder="Aucun (à choisir lors de la commande)" i18n-placeholder="@@products.product-form.aucun.a.choisir.lors.de.la.commande.8c0a1570"
                     optionLabel="label"
                     optionValue="value"
                     [filter]="true"
                     [showClear]="true"
                     styleClass="w-full">
                   </p-select>
-                  <small class="form-hint">
-                    Utilisé par Prévisions IA — Réapprovisionnement : les recommandations de ce produit
+                  <small class="form-hint" i18n="@@products.product-form.utilise.par.previsions.ia.reapprovisionnement.le.fa88557b"> Utilisé par Prévisions IA — Réapprovisionnement : les recommandations de ce produit
                     seront pré-rattachées à ce fournisseur, ce qui permet de créer les bons de commande sans
-                    saisie manuelle.
-                  </small>
+                    saisie manuelle. </small>
                 </div>
               }
             </div>
 
             @if (isProductCategory() && form.get('isStockManaged')?.value) {
               <div class="form-group">
-                <label for="minimumStock">Stock minimum</label>
+                <label for="minimumStock" i18n="@@products.product-form.stock.minimum.8a0c24af">Stock minimum</label>
                 <p-inputNumber
                   id="minimumStock"
                   formControlName="minimumStock"
                   [min]="0"
                   [minFractionDigits]="0"
                   [maxFractionDigits]="3"
-                  placeholder="Non renseigné"
+                  placeholder="Non renseigné" i18n-placeholder="@@products.product-form.non.renseigne.9ccfe1f1"
                   styleClass="w-full">
                 </p-inputNumber>
-                <small class="form-hint">
-                  Optionnel — seuil d'alerte sur l'entrepôt par défaut. Utilisé par les alertes stock
-                  et le réapprovisionnement (« Sous le stock min. configuré »).
-                </small>
+                <small class="form-hint" i18n="@@products.product-form.optionnel.seuil.d.alerte.sur.l.entrepot.par.defa.1ef85276"> Optionnel — seuil d'alerte sur l'entrepôt par défaut. Utilisé par les alertes stock
+                  et le réapprovisionnement (« Sous le stock min. configuré »). </small>
               </div>
             }
           }
 
           @if (isProductCategory() && canMutateProduct()) {
             <div class="form-group product-image-group">
-              <label>Image produit</label>
+              <label i18n="@@products.product-form.image.produit.8586e902">Image produit</label>
               <div class="product-image-section">
                 <div class="product-image-preview" [class.has-image]="displayImageUrl()">
                   @if (displayImageUrl()) {
@@ -311,7 +305,7 @@ interface VatOption {
                   } @else {
                     <div class="product-image-placeholder">
                       <i class="pi pi-image"></i>
-                      <span>Ajouter une image</span>
+                      <span i18n="@@products.product-form.ajouter.une.image.762947a7">Ajouter une image</span>
                     </div>
                   }
                 </div>
@@ -320,10 +314,10 @@ interface VatOption {
                     mode="basic"
                     accept="image/*"
                     [maxFileSize]="2000000"
-                    chooseLabel="Choisir une image"
+                    chooseLabel="Choisir une image" i18n-chooseLabel="@@products.product-form.choisir.une.image.994ddf80"
                     (onSelect)="onProductImageSelect($event)"
                     [disabled]="saving()"
-                    aria-label="Choisir une image pour le produit">
+                    aria-label="Choisir une image pour le produit" i18n-aria-label="@@products.product-form.choisir.une.image.pour.le.produit.498fe514">
                   </p-fileUpload>
                   @if (displayImageUrl() || selectedImageFile()) {
                     <button
@@ -331,11 +325,9 @@ interface VatOption {
                       class="product-image-remove"
                       (click)="removeProductImage()"
                       [disabled]="saving()"
-                      aria-label="Supprimer l'image du produit">
-                      Supprimer l'image
-                    </button>
+                      aria-label="Supprimer l'image du produit" i18n-aria-label="@@products.product-form.supprimer.l.image.du.produit.32bd2603" i18n="@@products.product-form.supprimer.l.image.2042d17b"> Supprimer l'image </button>
                   }
-                  <small class="form-hint">JPEG, PNG ou WebP. Max 2 Mo.</small>
+                  <small class="form-hint" i18n="@@products.product-form.jpeg.png.ou.webp.max.2.mo.c876f43c">JPEG, PNG ou WebP. Max 2 Mo.</small>
                 </div>
               </div>
             </div>
@@ -343,14 +335,14 @@ interface VatOption {
 
           @if (isEditMode() && canMutateProduct()) {
             <div class="form-group">
-              <label for="isActive">Statut</label>
+              <label for="isActive" i18n="@@products.product-form.statut.659499f3">Statut</label>
               <div class="status-switch">
                 <p-inputSwitch 
                   id="isActive"
                   formControlName="isActive">
                 </p-inputSwitch>
                 <span [class.active]="form.get('isActive')?.value">
-                  {{ form.get('isActive')?.value ? 'Actif' : 'Inactif' }}
+                  {{ form.get('isActive')?.value ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033 }}
                 </span>
               </div>
             </div>
@@ -360,25 +352,25 @@ interface VatOption {
         @if (hasSideSections()) {
           <div class="section-side">
         @if (showVariantsSection()) {
-          <app-form-section id="variantes" class="section-variants" title="Variantes" icon="pi-th-large" [number]="variantsSectionNumber()">
+          <app-form-section id="variantes" class="section-variants" title="Variantes" i18n-title="@@products.product-form.variantes.69a7f04e" icon="pi-th-large" [number]="variantsSectionNumber()">
             <div class="form-group">
-              <label for="isVariantTemplate">Modèle de variantes</label>
+              <label for="isVariantTemplate" i18n="@@products.product-form.modele.de.variantes.25d7b4a0">Modèle de variantes</label>
               <div class="status-switch">
                 <p-inputSwitch id="isVariantTemplate" formControlName="isVariantTemplate"></p-inputSwitch>
                 <span [class.active]="form.get('isVariantTemplate')?.value">
-                  @if (form.get('isVariantTemplate')?.value) {
+                  @if (form.get('isVariantTemplate')?.value) {<ng-container i18n="@@products.product-form.oui.le.parent.n.est.pas.vendable.1a2b10db">
                     Oui — le parent n'est pas vendable
-                  } @else {
+                  </ng-container>} @else {<ng-container i18n="@@products.product-form.non.a7219939">
                     Non
-                  }
+                  </ng-container>}
                 </span>
               </div>
-              <small class="form-hint">Génère des SKU enfants (taille, couleur…). Le modèle est exclu des factures, du POS et du stock.</small>
+              <small class="form-hint" i18n="@@products.product-form.genere.des.sku.enfants.taille.couleur.le.modele..2a28a372">Génère des SKU enfants (taille, couleur…). Le modèle est exclu des factures, du POS et du stock.</small>
             </div>
             @if (isEditMode() && form.get('isVariantTemplate')?.value) {
               <div class="form-group">
-                <label>Générer la matrice</label>
-                <p class="form-hint">Sélectionnez les valeurs pour chaque axe — la combinaison crée les SKU enfants.</p>
+                <label i18n="@@products.product-form.generer.la.matrice.2b13764a">Générer la matrice</label>
+                <p class="form-hint" i18n="@@products.product-form.selectionnez.les.valeurs.pour.chaque.axe.la.comb.46270d39">Sélectionnez les valeurs pour chaque axe — la combinaison crée les SKU enfants.</p>
                 @for (attr of attributes(); track attr.id) {
                   <div class="variant-axis">
                     <strong>{{ attr.name }}</strong>
@@ -397,30 +389,26 @@ interface VatOption {
                 }
                 @if (attributes().length === 0) {
                   @if (canConfigureVariantAxes()) {
-                    <p class="form-hint">
+                    <p class="form-hint" i18n="@@products.product-form.creer.un.axe.de.variantes.ex.taille.coul.011f4bd5">
                       <a [routerLink]="variantAxesNewLink">Créer un axe de variantes</a> (ex. Taille, Couleur) avant de générer les SKU.
                     </p>
                   } @else {
-                    <p class="form-hint">
-                      Aucun axe de variantes n'est défini. Un administrateur peut les configurer dans Paramètres → Axes de variantes.
-                    </p>
+                    <p class="form-hint" i18n="@@products.product-form.aucun.axe.de.variantes.n.est.defini.un.administr.4fdc29c8"> Aucun axe de variantes n'est défini. Un administrateur peut les configurer dans Paramètres → Axes de variantes. </p>
                   }
                 }
                 @if (previewCombinationCount() > 0) {
-                  <p class="form-hint">
+                  <p class="form-hint"><ng-container i18n="@@products.product-form.apercu.combinaison.s.seront.creees.eb30c002">
                     Aperçu : {{ previewCombinationCount() }} combinaison(s) seront créées.
-                    @if (previewCombinationCount() > 50) {
-                      <strong> Plus de 50 SKU — confirmez avant de générer.</strong>
+                    </ng-container>@if (previewCombinationCount() > 50) {
+                      <strong i18n="@@products.product-form.plus.de.50.sku.confirmez.avant.de.generer.c2047ba3"> Plus de 50 SKU — confirmez avant de générer.</strong>
                     }
                   </p>
                 }
                 <app-button type="button" variant="secondary" icon="pi-sitemap" iconPos="left"
-                            (clicked)="generateVariants()" [disabled]="generatingVariants() || !hasVariantSelection()">
-                  Générer les SKU
-                </app-button>
+                            (clicked)="generateVariants()" [disabled]="generatingVariants() || !hasVariantSelection()" i18n="@@products.product-form.generer.les.sku.6ff4e512"> Générer les SKU </app-button>
               </div>
               <div class="form-group">
-                <label>SKU enfants</label>
+                <label i18n="@@products.product-form.sku.enfants.922c9ec5">SKU enfants</label>
                 <app-product-variant-matrix [parentProductId]="productId()!" />
               </div>
             }
@@ -428,20 +416,20 @@ interface VatOption {
         }
 
         @if (showTraceabilitySection()) {
-          <app-form-section class="section-trace" title="Traçabilité et valorisation" icon="pi-qrcode" [number]="traceSectionNumber()">
+          <app-form-section class="section-trace" title="Traçabilité et valorisation" i18n-title="@@products.product-form.tracabilite.et.valorisation.d1bd26b2" icon="pi-qrcode" [number]="traceSectionNumber()">
             @if (!traceabilityEditable()) {
-              <p class="form-hint">Activez la gestion de stock pour configurer la traçabilité et la valorisation.</p>
+              <p class="form-hint" i18n="@@products.product-form.activez.la.gestion.de.stock.pour.configurer.la.t.bd79223f">Activez la gestion de stock pour configurer la traçabilité et la valorisation.</p>
             } @else {
               <div class="form-row">
                 <div class="form-group">
-                  <label for="trackingMode">Suivi</label>
+                  <label for="trackingMode" i18n="@@products.product-form.suivi.29293f77">Suivi</label>
                   <p-select id="trackingMode" [options]="trackingModeSelectOptions()" formControlName="trackingMode"
                             optionLabel="label" optionValue="value" optionDisabled="disabled" styleClass="w-full"></p-select>
                   <small class="form-hint">{{ trackingModeHint() }}</small>
                 </div>
                 @if (showPickingFieldForForm()) {
                   <div class="form-group">
-                    <label for="pickingPolicy">Politique de prélèvement</label>
+                    <label for="pickingPolicy" i18n="@@products.product-form.politique.de.prelevement.f7a64bad">Politique de prélèvement</label>
                     <p-select id="pickingPolicy" [options]="pickingPolicySelectOptions()" formControlName="pickingPolicy"
                               optionLabel="label" optionValue="value" optionDisabled="disabled" styleClass="w-full"></p-select>
                     <small class="form-hint">{{ pickingPolicyHint() }}</small>
@@ -450,34 +438,32 @@ interface VatOption {
               </div>
               @if (showExpiryFieldsForForm()) {
                 <div class="form-group">
-                  <label for="hasExpiryTracking">Suivi de péremption (DLUO)</label>
+                  <label for="hasExpiryTracking" i18n="@@products.product-form.suivi.de.peremption.dluo.1e67289e">Suivi de péremption (DLUO)</label>
                   <div class="status-switch">
                     <p-inputSwitch id="hasExpiryTracking" formControlName="hasExpiryTracking"></p-inputSwitch>
                     <span [class.active]="form.get('hasExpiryTracking')?.value">
-                      {{ form.get('hasExpiryTracking')?.value ? 'Activé' : 'Désactivé' }}
+                      {{ form.get('hasExpiryTracking')?.value ? loc_ui_tern_active_42ce0b : loc_ui_tern_desactive_2d32fa }}
                     </span>
                   </div>
-                  <small class="form-hint">Obligatoire pour activer FEFO.</small>
+                  <small class="form-hint" i18n="@@products.product-form.obligatoire.pour.activer.fefo.06e5bf32">Obligatoire pour activer FEFO.</small>
                 </div>
                 <div class="form-group">
-                  <label for="expiryAlertDays">Alerte DLUO (jours)</label>
+                  <label for="expiryAlertDays" i18n="@@products.product-form.alerte.dluo.jours.2a61933b">Alerte DLUO (jours)</label>
                   <p-inputNumber id="expiryAlertDays" formControlName="expiryAlertDays" [min]="0" [max]="3650" styleClass="w-full"></p-inputNumber>
                 </div>
               }
               <div class="form-group">
-                <label for="costingMethod">Méthode de valorisation</label>
+                <label for="costingMethod" i18n="@@products.product-form.methode.de.valorisation.b3c5bcf0">Méthode de valorisation</label>
                 @if (showCostingDropdown()) {
                   <p-select id="costingMethod" [options]="costingMethodSelectOptions()" formControlName="costingMethod"
                             optionLabel="label" optionValue="value" optionDisabled="disabled" styleClass="w-full"></p-select>
                 } @else {
-                  <p class="costing-readonly">CMUP</p>
+                  <p class="costing-readonly" i18n="@@products.product-form.cmup.df307ace">CMUP</p>
                 }
                 <small class="form-hint">{{ costingMethodHint() }}</small>
                 @if (isEditMode() && (form.get('costingMethod')?.value === 1 || form.get('costingMethod')?.value === 2)) {
                   <app-button type="button" variant="outline" size="sm" class="mt-2"
-                              (clicked)="createOpeningLayer()" [disabled]="saving()">
-                    Créer la couche d'ouverture FIFO/LIFO
-                  </app-button>
+                              (clicked)="createOpeningLayer()" [disabled]="saving()" i18n="@@products.product-form.creer.la.couche.d.ouverture.fifo.lifo.a2aaa6ce"> Créer la couche d'ouverture FIFO/LIFO </app-button>
                 }
               </div>
             }
@@ -487,11 +473,11 @@ interface VatOption {
         }
 
         <!-- Pricing -->
-        <app-form-section class="section-pricing" title="Tarification" icon="pi-dollar" [number]="pricingSectionNumber()">
+        <app-form-section class="section-pricing" title="Tarification" i18n-title="@@products.product-form.tarification.5dc310ae" icon="pi-dollar" [number]="pricingSectionNumber()">
           <div class="pricing-block">
-            <h4 class="pricing-block-title">Coûts d'achat</h4>
+            <h4 class="pricing-block-title" i18n="@@products.product-form.couts.d.achat.1efe6462">Coûts d'achat</h4>
             <div class="form-group">
-              <label for="purchasePrice">Prix d'achat HT</label>
+              <label for="purchasePrice" i18n="@@products.product-form.prix.d.achat.ht.9e99d105">Prix d'achat HT</label>
               <p-inputNumber
                 id="purchasePrice"
                 formControlName="purchasePrice"
@@ -499,22 +485,20 @@ interface VatOption {
                 [minFractionDigits]="3"
                 [maxFractionDigits]="3"
                 suffix=" TND"
-                placeholder="Optionnel"
+                placeholder="Optionnel" i18n-placeholder="@@products.product-form.optionnel.879d6b16"
                 styleClass="w-full"
                 (onInput)="onPricingChange('purchasePrice')">
               </p-inputNumber>
-              <small class="form-hint">
-                Prix par défaut pour les bons de commande et factures fournisseurs.
-              </small>
+              <small class="form-hint" i18n="@@products.product-form.prix.par.defaut.pour.les.bons.de.commande.et.fac.3864e612"> Prix par défaut pour les bons de commande et factures fournisseurs. </small>
             </div>
 
             <div class="pricing-readonly-group">
-              <p class="pricing-readonly-badge">
+              <p class="pricing-readonly-badge" i18n="@@products.product-form.calcule.automatiquement.395afd28">
                 <i class="pi pi-lock" aria-hidden="true"></i>
                 Calculé automatiquement
               </p>
               <div class="form-group">
-                <label for="lastPurchasePrice">Dernier prix d'achat HT</label>
+                <label for="lastPurchasePrice" i18n="@@products.product-form.dernier.prix.d.achat.ht.ccb5059f">Dernier prix d'achat HT</label>
                 <p-inputNumber
                   id="lastPurchasePrice"
                   [ngModel]="lastPurchasePrice()"
@@ -526,11 +510,11 @@ interface VatOption {
                   [disabled]="true"
                   styleClass="w-full readonly-field">
                 </p-inputNumber>
-                <small class="form-hint">Mis à jour automatiquement à chaque réception BC.</small>
+                <small class="form-hint" i18n="@@products.product-form.mis.a.jour.automatiquement.a.chaque.reception.bc.752ca915">Mis à jour automatiquement à chaque réception BC.</small>
               </div>
 
               <div class="form-group">
-                <label for="weightedAverageCost">{{ (form.get('costingMethod')?.value === 1 || form.get('costingMethod')?.value === 2) ? 'Coût unitaire affiché HT' : 'Coût unitaire moyen pondéré (CMUP) HT' }}</label>
+                <label for="weightedAverageCost">{{ (form.get('costingMethod')?.value === 1 || form.get('costingMethod')?.value === 2) ? loc_ui_tern_cout_unitaire_affiche_ht_050c67 : loc_ui_tern_cout_unitaire_moyen_pondere_cmup_ht_665d78 }}</label>
                 <p-inputNumber
                   id="weightedAverageCost"
                   [ngModel]="weightedAverageCost()"
@@ -542,42 +526,42 @@ interface VatOption {
                   [disabled]="true"
                   styleClass="w-full readonly-field">
                 </p-inputNumber>
-                <small class="form-hint">Calculé depuis le stock (entrepôt par défaut).</small>
+                <small class="form-hint" i18n="@@products.product-form.calcule.depuis.le.stock.entrepot.par.defaut.7fda61fe">Calculé depuis le stock (entrepôt par défaut).</small>
               </div>
             </div>
           </div>
 
           <div class="pricing-block">
-            <h4 class="pricing-block-title">Prix de vente</h4>
+            <h4 class="pricing-block-title" i18n="@@products.product-form.prix.de.vente.ccbfa99b">Prix de vente</h4>
 
-            <h5 class="pricing-subblock-title">Paramètres de vente</h5>
+            <h5 class="pricing-subblock-title" i18n="@@products.product-form.parametres.de.vente.ba205151">Paramètres de vente</h5>
             <div class="form-row form-row-pricing-params">
               <div class="form-group">
-                <label for="unit">Unité de mesure <span class="required">*</span></label>
+                <label for="unit"><ng-container i18n="@@products.product-form.unite.de.mesure.f5101bff">Unité de mesure </ng-container> <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
                 <p-select
                   id="unit"
                   [options]="unitOptions"
                   formControlName="unit"
-                  placeholder="Sélectionner"
+                  placeholder="Sélectionner" i18n-placeholder="@@products.product-form.selectionner.ab31a36f"
                   [editable]="true"
                   styleClass="w-full">
                 </p-select>
               </div>
 
               <div class="form-group">
-                <label for="vatRate">Taux de TVA <span class="required">*</span></label>
+                <label for="vatRate"><ng-container i18n="@@products.product-form.taux.de.tva.e704ceaf">Taux de TVA </ng-container> <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
                 <p-select
                   id="vatRate"
                   [options]="vatOptions"
                   formControlName="vatRate"
-                  placeholder="Sélectionner"
+                  placeholder="Sélectionner" i18n-placeholder="@@products.product-form.selectionner.ab31a36f"
                   styleClass="w-full"
                   (onChange)="onPricingChange('vatRate')">
                 </p-select>
               </div>
 
               <div class="form-group fodec-group">
-                <label for="isFodecApplicable">FODEC</label>
+                <label for="isFodecApplicable" i18n="@@products.product-form.fodec.9a029080">FODEC</label>
                 <div class="fodec-checkbox">
                   <p-checkbox
                     inputId="isFodecApplicable"
@@ -585,15 +569,15 @@ interface VatOption {
                     [binary]="true"
                     (onChange)="onPricingChange('fodec')">
                   </p-checkbox>
-                  <label for="isFodecApplicable">FODEC applicable (1%)</label>
+                  <label for="isFodecApplicable" i18n="@@products.product-form.fodec.applicable.1.01c61523">FODEC applicable (1%)</label>
                 </div>
               </div>
             </div>
 
-            <h5 class="pricing-subblock-title">Montants</h5>
+            <h5 class="pricing-subblock-title" i18n="@@products.product-form.montants.6b312baa">Montants</h5>
             <div class="form-row form-row-pricing-flow">
               <div class="form-group">
-                <label for="profitMarginPercent">Marge bénéficiaire</label>
+                <label for="profitMarginPercent" i18n="@@products.product-form.marge.beneficiaire.b7324f90">Marge bénéficiaire</label>
                 <p-inputNumber
                   id="profitMarginPercent"
                   formControlName="profitMarginPercent"
@@ -601,12 +585,12 @@ interface VatOption {
                   [minFractionDigits]="3"
                   [maxFractionDigits]="3"
                   suffix=" %"
-                  placeholder="—"
+                  placeholder="—" i18n-placeholder="@@products.product-form.text.1b93795b"
                   styleClass="w-full"
                   (onInput)="onPricingChange('margin')">
                 </p-inputNumber>
                 @if (!canEditMargin()) {
-                  <small class="form-hint">Renseignez un prix d'achat HT pour activer la marge.</small>
+                  <small class="form-hint" i18n="@@products.product-form.renseignez.un.prix.d.achat.ht.pour.activer.la.ma.7d2edf6e">Renseignez un prix d'achat HT pour activer la marge.</small>
                 }
               </div>
 
@@ -615,7 +599,7 @@ interface VatOption {
               </span>
 
               <div class="form-group">
-                <label for="unitPrice">Prix de vente HT <span class="required">*</span></label>
+                <label for="unitPrice"><ng-container i18n="@@products.product-form.prix.de.vente.ht.7a39da52">Prix de vente HT </ng-container> <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
                 <p-inputNumber
                   id="unitPrice"
                   formControlName="unitPrice"
@@ -623,7 +607,7 @@ interface VatOption {
                   [minFractionDigits]="3"
                   [maxFractionDigits]="3"
                   suffix=" TND"
-                  placeholder="0.000"
+                  placeholder="0.000" i18n-placeholder="@@products.product-form.0.000.725af307"
                   styleClass="w-full"
                   [class.ng-invalid]="isInvalid('unitPrice')"
                   (onInput)="onPricingChange('unitPriceHt')">
@@ -641,7 +625,7 @@ interface VatOption {
               </span>
 
               <div class="form-group">
-                <label for="salePriceTtc">Prix de vente TTC <span class="required">*</span></label>
+                <label for="salePriceTtc"><ng-container i18n="@@products.product-form.prix.de.vente.ttc.87e7c028">Prix de vente TTC </ng-container> <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
                 <p-inputNumber
                   id="salePriceTtc"
                   formControlName="salePriceTtc"
@@ -649,21 +633,21 @@ interface VatOption {
                   [minFractionDigits]="3"
                   [maxFractionDigits]="3"
                   suffix=" TND"
-                  placeholder="0.000"
+                  placeholder="0.000" i18n-placeholder="@@products.product-form.0.000.725af307"
                   styleClass="w-full"
                   (onInput)="onPricingChange('saleTtc')">
                 </p-inputNumber>
               </div>
             </div>
 
-            <div class="price-preview" aria-label="Récapitulatif des prix">
+            <div class="price-preview" aria-label="Récapitulatif des prix" i18n-aria-label="@@products.product-form.recapitulatif.des.prix.3d69a8b0">
               <div class="preview-row">
-                <span>Prix HT</span>
+                <span i18n="@@products.product-form.prix.ht.362207ca">Prix HT</span>
                 <span class="value">{{ (form.get('unitPrice')?.value ?? 0) | number:'1.3-3' }} TND</span>
               </div>
               @if (form.get('isFodecApplicable')?.value) {
                 <div class="preview-row">
-                  <span>FODEC (1%)</span>
+                  <span i18n="@@products.product-form.fodec.1.cdda0228">FODEC (1%)</span>
                   <span class="value">{{ previewFodec() | number:'1.3-3' }} TND</span>
                 </div>
               }
@@ -672,28 +656,28 @@ interface VatOption {
                 <span class="value">{{ previewVat() | number:'1.3-3' }} TND</span>
               </div>
               <div class="preview-row total">
-                <span>Prix TTC</span>
+                <span i18n="@@products.product-form.prix.ttc.c48d80e8">Prix TTC</span>
                 <span class="value">{{ (form.get('salePriceTtc')?.value ?? 0) | number:'1.3-3' }} TND</span>
               </div>
             </div>
           </div>
 
           <div class="pricing-block">
-            <h4 class="pricing-block-title">Remise produit</h4>
+            <h4 class="pricing-block-title" i18n="@@products.product-form.remise.produit.158a2250">Remise produit</h4>
             <div class="form-row">
               <div class="form-group">
-                <label for="isDiscountEnabled">Remise</label>
+                <label for="isDiscountEnabled" i18n="@@products.product-form.remise.ce12d942">Remise</label>
                 <div class="fodec-checkbox">
                   <p-checkbox
                     inputId="isDiscountEnabled"
                     formControlName="isDiscountEnabled"
                     [binary]="true">
                   </p-checkbox>
-                  <label for="isDiscountEnabled">Activer la remise</label>
+                  <label for="isDiscountEnabled" i18n="@@products.product-form.activer.la.remise.5a012642">Activer la remise</label>
                 </div>
               </div>
               <div class="form-group">
-                <label for="maxDiscountPercent">Remise maximale</label>
+                <label for="maxDiscountPercent" i18n="@@products.product-form.remise.maximale.5d83e3b6">Remise maximale</label>
                 <p-inputNumber
                   id="maxDiscountPercent"
                   formControlName="maxDiscountPercent"
@@ -701,11 +685,11 @@ interface VatOption {
                   [minFractionDigits]="1"
                   [maxFractionDigits]="1"
                   suffix=" %"
-                  placeholder="0.0"
+                  placeholder="0.0" i18n-placeholder="@@products.product-form.0.0.38f6d787"
                   styleClass="w-full"
                   [class.ng-invalid]="isInvalid('maxDiscountPercent')">
                 </p-inputNumber>
-                <small class="form-hint discount-hint">(Remise globale maximale : 100,0 %)</small>
+                <small class="form-hint discount-hint" i18n="@@products.product-form.remise.globale.maximale.100.0.3676411c">(Remise globale maximale : 100,0 %)</small>
               </div>
             </div>
           </div>
@@ -714,7 +698,7 @@ interface VatOption {
 
       @if (isEditMode() && productId()) {
         <div class="form-grid-full">
-          <app-form-section title="Tarifs par client" icon="pi-users" [number]="clientPricesSectionNumber()">
+          <app-form-section title="Tarifs par client" i18n-title="@@products.product-form.tarifs.par.client.e47e033b" icon="pi-users" [number]="clientPricesSectionNumber()">
             <app-product-client-prices
               [productId]="productId()!"
               [catalogUnitPriceHT]="form.get('unitPrice')?.value ?? 0">
@@ -723,7 +707,7 @@ interface VatOption {
         </div>
       } @else if (!isEditMode()) {
         <div class="form-grid-full">
-          <div class="ft-alert ft-alert--info">
+          <div class="ft-alert ft-alert--info" i18n="@@products.product-form.enregistrez.le.produit.pour.definir.des.84be94ac">
             <i class="pi pi-info-circle"></i>
             Enregistrez le produit pour définir des tarifs par client.
           </div>
@@ -736,9 +720,7 @@ interface VatOption {
           variant="outline"
           icon="pi-times"
           iconPos="left"
-          routerLink="/products">
-          Annuler
-        </app-button>
+          routerLink="/products" i18n="@@products.product-form.annuler.49ba3292"> Annuler </app-button>
         @if (canMutateProduct()) {
           <app-button 
             variant="primary"
@@ -746,7 +728,7 @@ interface VatOption {
             [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"
             iconPos="left"
             [disabled]="form.invalid || saving()">
-            {{ isEditMode() ? 'Enregistrer' : 'Créer le produit' }}
+            {{ isEditMode() ? loc_ui_tern_enregistrer_f7c8bc : loc_ui_tern_creer_le_produit_e19a48 }}
           </app-button>
         }
       </div>
@@ -876,7 +858,7 @@ interface VatOption {
 
       .required {
         color: var(--color-error-600);
-        margin-left: var(--spacing-1);
+        margin-inline-start: var(--spacing-1);
       }
     }
 
@@ -1111,6 +1093,20 @@ interface VatOption {
   `]
 })
 export class ProductFormComponent implements OnInit {
+  readonly loc_ui_tern_modifier_le_produit_aeaa8f = $localize`:@@ui.tern.modifier.le.produit.aeaa8f:Modifier le produit`;
+  readonly loc_ui_tern_nouveau_produit_c31ca3 = $localize`:@@ui.tern.nouveau.produit.c31ca3:Nouveau produit`;
+  readonly loc_ui_tern_modifiez_les_informations_du_produit_41bd18 = $localize`:@@ui.tern.modifiez.les.informations.du.produit.41bd18:Modifiez les informations du produit`;
+  readonly loc_ui_tern_ajoutez_un_nouveau_produit_a_votre_catalog_d9126c = $localize`:@@ui.tern.ajoutez.un.nouveau.produit.a.votre.catalog.d9126c:Ajoutez un nouveau produit à votre catalogue`;
+  readonly loc_ui_tern_activee_9b4e7c = $localize`:@@ui.tern.activee.9b4e7c:Activée`;
+  readonly loc_ui_tern_desactivee_74cc3b = $localize`:@@ui.tern.desactivee.74cc3b:Désactivée`;
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
+  readonly loc_ui_tern_active_42ce0b = $localize`:@@ui.tern.active.42ce0b:Activé`;
+  readonly loc_ui_tern_desactive_2d32fa = $localize`:@@ui.tern.desactive.2d32fa:Désactivé`;
+  readonly loc_ui_tern_cout_unitaire_affiche_ht_050c67 = $localize`:@@ui.tern.cout.unitaire.affiche.ht.050c67:Coût unitaire affiché HT`;
+  readonly loc_ui_tern_cout_unitaire_moyen_pondere_cmup_ht_665d78 = $localize`:@@ui.tern.cout.unitaire.moyen.pondere.cmup.ht.665d78:Coût unitaire moyen pondéré (CMUP) HT`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_creer_le_produit_e19a48 = $localize`:@@ui.tern.creer.le.produit.e19a48:Créer le produit`;
   @ViewChild(ProductVariantMatrixComponent) variantMatrix?: ProductVariantMatrixComponent;
 
   private fb = inject(FormBuilder);
@@ -1269,41 +1265,20 @@ export class ProductFormComponent implements OnInit {
 
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const base: BreadcrumbItem[] = [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Produits & Services', route: '/products' }
+      { label: $localize`:@@products.product-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@products.product-form.ts.produits.services.01d33b70:Produits & Services`, route: '/products' }
     ];
     if (this.isEditMode()) {
-      base.push({ label: 'Modifier' });
+      base.push({ label: $localize`:@@products.product-form.ts.modifier.f260e757:Modifier` });
     } else {
-      base.push({ label: 'Nouveau produit' });
+      base.push({ label: $localize`:@@products.product-form.ts.nouveau.produit.c31ca342:Nouveau produit` });
     }
     return base;
   });
 
-  categoryOptions: CategoryOption[] = [
-    { label: 'Produit', value: 'Produit' },
-    { label: 'Service', value: 'Service' },
-    { label: 'Abonnement', value: 'Abonnement' }
-  ];
-
-  unitOptions: UnitOption[] = [
-    { label: 'Unité', value: 'Unité' },
-    { label: 'Heure', value: 'Heure' },
-    { label: 'Jour', value: 'Jour' },
-    { label: 'Mois', value: 'Mois' },
-    { label: 'An', value: 'An' },
-    { label: 'Kg', value: 'Kg' },
-    { label: 'Litre', value: 'Litre' },
-    { label: 'Mètre', value: 'Mètre' },
-    { label: 'M²', value: 'M²' }
-  ];
-
-  vatOptions: VatOption[] = [
-    { label: '19% - Taux normal', value: 19 },
-    { label: '13% - Taux intermédiaire', value: 13 },
-    { label: '7% - Taux réduit', value: 7 },
-    { label: '0% - Exonéré', value: 0 }
-  ];
+  categoryOptions: CategoryOption[] = PRODUCT_CATEGORY_OPTIONS;
+  unitOptions: UnitOption[] = PRODUCT_UNIT_OPTIONS;
+  vatOptions: VatOption[] = PRODUCT_VAT_OPTIONS;
 
   readonly generatingBarcode = signal(false);
   readonly labelPrintingEnabled = environment.featureFlags?.barcodeLabelPrinting === true;
@@ -1506,7 +1481,8 @@ export class ProductFormComponent implements OnInit {
       next: options => {
         this.productCategoryOptions.set(options);
         if (options.length > 0 && !this.productId()) {
-          const defaultCategory = options.find(o => o.label === 'General') ?? options[0];
+          // `label` est ici le nom de la catégorie en base (donnée, jamais traduite) et `value` son id.
+          const defaultCategory = options.find(o => o.label === DEFAULT_PRODUCT_CATEGORY_NAME) ?? options[0];
           this.form.patchValue({ productCategoryId: defaultCategory.value });
         }
       },
@@ -1579,8 +1555,8 @@ export class ProductFormComponent implements OnInit {
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: response.errors?.join(', ') || 'Impossible de charger le produit'
+            summary: $localize`:@@product-form.component.summary.Erreur:Erreur`,
+            detail: response.errors?.join(', ') || $localize`:@@products.product-form.ts.impossible.de.charger.le.produit.7a00d1a4:Impossible de charger le produit`
           });
           this.router.navigate(['/products']);
         }
@@ -1589,8 +1565,8 @@ export class ProductFormComponent implements OnInit {
         const errorMessage = this.errorHandler.extractErrorMessage(error);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: errorMessage || 'Impossible de charger le produit'
+          summary: $localize`:@@product-form.component.summary.Erreur:Erreur`,
+          detail: errorMessage || $localize`:@@products.product-form.ts.impossible.de.charger.le.produit.7a00d1a4:Impossible de charger le produit`
         });
         this.errorHandler.logError('Failed to load product', error);
         this.router.navigate(['/products']);
@@ -1657,8 +1633,8 @@ export class ProductFormComponent implements OnInit {
           if (response.success) {
             this.toastService.add({
               severity: 'success',
-              summary: 'Succès',
-              detail: response.message || 'Produit mis à jour avec succès'
+              summary: $localize`:@@product-form.component.summary.Succès:Succès`,
+              detail: response.message || $localize`:@@products.product-form.ts.produit.mis.a.jour.avec.succes.c367beef:Produit mis à jour avec succès`
             });
             const id = this.productId()!;
             const file = this.selectedImageFile();
@@ -1672,8 +1648,8 @@ export class ProductFormComponent implements OnInit {
                 error: (err) => {
                   this.toastService.add({
                     severity: 'warn',
-                    summary: 'Image',
-                    detail: 'Produit mis à jour ; l\'image n\'a pas pu être enregistrée.'
+                    summary: $localize`:@@product-form.component.summary.Image:Image`,
+                    detail: $localize`:@@product-form.component.detail.Produit_mis_jo:Produit mis à jour ; l'image n'a pas pu être enregistrée.`
                   });
                   this.saving.set(false);
                   this.navigateToProducts();
@@ -1697,9 +1673,10 @@ export class ProductFormComponent implements OnInit {
           } else {
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@product-form.component.summary.Erreur:Erreur`,
               detail: this.mapTraceabilityApiError(
-                response.errors?.join(', ') || 'Une erreur est survenue lors de la mise à jour'
+                response.errors?.join(', ') || $localize`:@@products.product-form.ts.une.erreur.est.survenue.lors.de.la.mise.0bf44f4f:Une erreur est survenue lors de la mise à jour`,
+                (response as { code?: string }).code
               )
             });
             this.saving.set(false);
@@ -1707,11 +1684,12 @@ export class ProductFormComponent implements OnInit {
         },
         error: (error) => {
           const errorMessage = this.mapTraceabilityApiError(
-            this.errorHandler.extractErrorMessage(error) || 'Une erreur est survenue lors de la mise à jour'
+            this.errorHandler.extractErrorMessage(error) || $localize`:@@products.product-form.ts.une.erreur.est.survenue.lors.de.la.mise.0bf44f4f:Une erreur est survenue lors de la mise à jour`,
+            this.errorHandler.getApiErrorCode(error)
           );
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@product-form.component.summary.Erreur:Erreur`,
             detail: errorMessage
           });
           this.errorHandler.logError('Failed to update product', error);
@@ -1752,8 +1730,8 @@ export class ProductFormComponent implements OnInit {
             const newId = response.data;
             this.toastService.add({
               severity: 'success',
-              summary: 'Succès',
-              detail: response.message || 'Produit créé avec succès'
+              summary: $localize`:@@product-form.component.summary.Succès:Succès`,
+              detail: response.message || $localize`:@@products.product-form.ts.produit.cree.avec.succes.0fed3c0d:Produit créé avec succès`
             });
             const file = this.selectedImageFile();
             if (file) {
@@ -1762,8 +1740,8 @@ export class ProductFormComponent implements OnInit {
                   if (!uploadRes.success) {
                     this.toastService.add({
                       severity: 'warn',
-                      summary: 'Image',
-                      detail: 'Produit créé ; l\'image n\'a pas pu être enregistrée.'
+                      summary: $localize`:@@product-form.component.summary.Image:Image`,
+                      detail: $localize`:@@product-form.component.detail.Produit_cr_l:Produit créé ; l'image n'a pas pu être enregistrée.`
                     });
                   }
                   this.saving.set(false);
@@ -1772,8 +1750,8 @@ export class ProductFormComponent implements OnInit {
                 error: () => {
                   this.toastService.add({
                     severity: 'warn',
-                    summary: 'Image',
-                    detail: 'Produit créé ; l\'image n\'a pas pu être enregistrée.'
+                    summary: $localize`:@@product-form.component.summary.Image:Image`,
+                    detail: $localize`:@@product-form.component.detail.Produit_cr_l:Produit créé ; l'image n'a pas pu être enregistrée.`
                   });
                   this.saving.set(false);
                   this.navigateAfterCreate(newId, createRequest.isVariantTemplate ?? false);
@@ -1786,9 +1764,10 @@ export class ProductFormComponent implements OnInit {
           } else {
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@product-form.component.summary.Erreur:Erreur`,
               detail: this.mapTraceabilityApiError(
-                response.errors?.join(', ') || 'Une erreur est survenue lors de la création'
+                response.errors?.join(', ') || $localize`:@@products.product-form.ts.une.erreur.est.survenue.lors.de.la.creat.3f7d195c:Une erreur est survenue lors de la création`,
+                (response as { code?: string }).code
               )
             });
             this.saving.set(false);
@@ -1796,11 +1775,12 @@ export class ProductFormComponent implements OnInit {
         },
         error: (error) => {
           const errorMessage = this.mapTraceabilityApiError(
-            this.errorHandler.extractErrorMessage(error) || 'Une erreur est survenue lors de la création'
+            this.errorHandler.extractErrorMessage(error) || $localize`:@@products.product-form.ts.une.erreur.est.survenue.lors.de.la.creat.3f7d195c:Une erreur est survenue lors de la création`,
+            this.errorHandler.getApiErrorCode(error)
           );
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@product-form.component.summary.Erreur:Erreur`,
             detail: errorMessage
           });
           this.errorHandler.logError('Failed to create product', error);
@@ -1851,7 +1831,7 @@ export class ProductFormComponent implements OnInit {
     if (!productId) return;
 
     const count = this.previewCombinationCount();
-    if (count > 50 && !confirm(`Générer ${count} SKU ? Cette opération peut prendre un moment.`)) {
+    if (count > 50 && !confirm($localize`:@@products.product-form.ts.generer.count.sku.cette.operation.peut.p.701f6b43:Générer ${count}:count: SKU ? Cette opération peut prendre un moment.`)) {
       return;
     }
 
@@ -1868,8 +1848,8 @@ export class ProductFormComponent implements OnInit {
         if (res.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Variantes',
-            detail: `${res.data?.length ?? 0} SKU enfant(s) créé(s)`
+            summary: $localize`:@@product-form.component.summary.Variantes:Variantes`,
+            detail: $localize`:@@products.product-form.ts.p.sku.enfant.s.cree.s.606d0d64:${res.data?.length ?? 0}:p: SKU enfant(s) créé(s)`
           });
           this.loadVariantAxes(productId);
           this.variantMatrix?.load();
@@ -1879,7 +1859,7 @@ export class ProductFormComponent implements OnInit {
         this.generatingVariants.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Variantes',
+          summary: $localize`:@@product-form.component.summary.Variantes:Variantes`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -1897,14 +1877,14 @@ export class ProductFormComponent implements OnInit {
         if (res.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Valorisation',
-            detail: 'Couche d\'ouverture créée. Vous pouvez enregistrer le produit.'
+            summary: $localize`:@@product-form.component.summary.Valorisation:Valorisation`,
+            detail: $localize`:@@product-form.component.detail.Couche_d_ouvertu:Couche d'ouverture créée. Vous pouvez enregistrer le produit.`
           });
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Valorisation',
-            detail: res.message || res.errors?.join(', ') || 'Impossible de créer la couche d\'ouverture.'
+            summary: $localize`:@@product-form.component.summary.Valorisation:Valorisation`,
+            detail: res.message || res.errors?.join(', ') || $localize`:@@products.product-form.ts.impossible.de.creer.la.couche.d.ouvertur.35397855:Impossible de créer la couche d'ouverture.`
           });
         }
       },
@@ -1912,7 +1892,7 @@ export class ProductFormComponent implements OnInit {
         this.saving.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Valorisation',
+          summary: $localize`:@@product-form.component.summary.Valorisation:Valorisation`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -1989,17 +1969,21 @@ export class ProductFormComponent implements OnInit {
     if (notifyFefoDowngrade && fefoDowngraded) {
       this.toastService.add({
         severity: 'info',
-        summary: 'Politique de prélèvement',
-        detail: 'FEFO nécessite le suivi DLUO. Passage à FIFO physique.'
+        summary: $localize`:@@product-form.component.summary.Politique_de_pr_:Politique de prélèvement`,
+        detail: $localize`:@@product-form.component.detail.FEFO_n_cessite_l:FEFO nécessite le suivi DLUO. Passage à FIFO physique.`
       });
     }
 
     return state;
   }
 
-  private mapTraceabilityApiError(message: string): string {
-    if (message.includes('couche d\'ouverture') || message.includes('couche d’ouverture')) {
-      return `${message} Utilisez le bouton « Créer la couche d'ouverture FIFO/LIFO » si le stock est à zéro.`;
+  /** Ajoute l'aide « couche d'ouverture » : code d'abord (message traduisible), texte en repli sans code. */
+  private mapTraceabilityApiError(message: string, code?: string): string {
+    const needsOpeningLayer = code
+      ? code === API_ERROR_CODE.openingLayerRequired
+      : message.includes('couche d\'ouverture') || message.includes('couche d’ouverture');
+    if (needsOpeningLayer) {
+      return $localize`:@@products.product-form.opening-layer-hint:${message}:message: Utilisez le bouton « Créer la couche d'ouverture FIFO/LIFO » si le stock est à zéro.`;
     }
     return message;
   }
@@ -2059,7 +2043,7 @@ export class ProductFormComponent implements OnInit {
           this.form.get('barcode')?.markAsDirty();
           this.toastService.add({
             severity: 'success',
-            summary: 'Code-barres engendré',
+            summary: $localize`:@@product-form.component.summary.Code_barres_enge:Code-barres engendré`,
             detail: response.data.barcode
           });
         }

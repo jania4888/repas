@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -17,7 +19,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 @Component({
   selector: 'app-payroll-overtime-grid',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     TableModule,
@@ -31,12 +33,12 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
   ],
   template: `
     <app-payroll-section
-      title="Éléments variables — Heures supplémentaires"
-      subtitle="Montant = (salaire base ÷ 208 en régime 48 h, ÷ 173,33 en régime 40 h) × heures × taux majoré. Override possible."
+      title="Éléments variables — Heures supplémentaires" i18n-title="@@payroll.runs.elements.variables.heures.supplementaires.d2df2e32"
+      subtitle="Montant = (salaire base ÷ 208 en régime 48 h, ÷ 173,33 en régime 40 h) × heures × taux majoré. Override possible." i18n-subtitle="@@payroll.runs.montant.salaire.base.208.en.regime.48.h.1c8e5c74"
       icon="pi-clock">
       @if (!readOnly) {
         <div class="payroll-toolbar mb-3">
-          <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()">Ajouter une ligne</app-button>
+          <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()" i18n="@@payroll.runs.ajouter.une.ligne.ba241fd4">Ajouter une ligne</app-button>
         </div>
       }
 
@@ -44,11 +46,11 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
       <p-table [value]="lines()" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Salarié</th>
-            <th class="text-right">Heures</th>
-            <th class="text-right">Taux</th>
-            <th class="text-right">Calculé</th>
-            <th class="text-right">Montant appliqué</th>
+            <th i18n="@@payroll.runs.salarie.27f97915">Salarié</th>
+            <th class="text-right" i18n="@@payroll.runs.heures.b4448c06">Heures</th>
+            <th class="text-right" i18n="@@payroll.runs.taux.18bc95b8">Taux</th>
+            <th class="text-right" i18n="@@payroll.runs.calcule.b550f80b">Calculé</th>
+            <th class="text-right" i18n="@@payroll.runs.montant.applique.6eaf1229">Montant appliqué</th>
             @if (!readOnly) { <th></th> }
           </tr>
         </ng-template>
@@ -56,7 +58,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
           <tr>
             <td>{{ line.employeeName }}</td>
             <td class="text-right">{{ line.hours }}</td>
-            <td class="text-right">{{ line.ratePercentDisplay }}</td>
+            <td class="text-right">{{ line.ratePercentDisplay | backendLabel }}</td>
             <td class="text-right">{{ line.computedAmount | payrollAmount }}</td>
             <td class="text-right">
               {{ line.effectiveAmount | payrollAmount }}
@@ -66,57 +68,59 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
             </td>
             @if (!readOnly) {
               <td class="actions">
-                <button type="button" class="p-button p-button-text p-button-sm" (click)="editLine(line)">Modifier</button>
-                <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(line)">Supprimer</button>
+                <button type="button" class="p-button p-button-text p-button-sm" (click)="editLine(line)" i18n="@@payroll.runs.modifier.f260e757">Modifier</button>
+                <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(line)" i18n="@@payroll.runs.supprimer.1acfc1c7">Supprimer</button>
               </td>
             }
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td [attr.colspan]="readOnly ? 5 : 6">Aucune heure supplémentaire saisie pour ce mois.</td></tr>
+          <tr><td [attr.colspan]="readOnly ? 5 : 6" i18n="@@payroll.runs.aucune.heure.supplementaire.saisie.pour.ce.mois.f6d658f4">Aucune heure supplémentaire saisie pour ce mois.</td></tr>
         </ng-template>
       </p-table>
       </div>
     </app-payroll-section>
 
-    <p-dialog [header]="editingId ? 'Modifier heures sup.' : 'Nouvelles heures sup.'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '480px' }">
+    <p-dialog [header]="editingId ? loc_ui_tern_modifier_heures_sup_811294 : loc_ui_tern_nouvelles_heures_sup_a24bc4" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '480px' }">
       <div class="payroll-form-group mb-2">
-        <label>Salarié</label>
+        <label i18n="@@payroll.runs.salarie.27f97915">Salarié</label>
         <p-select [options]="employees()" optionLabel="fullName" optionValue="id" [(ngModel)]="formEmployeeId" (ngModelChange)="onEmployeeChange()" appendTo="body" styleClass="w-full" [disabled]="!!editingId" />
       </div>
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Heures</label>
+          <label i18n="@@payroll.runs.heures.b4448c06">Heures</label>
           <p-inputNumber [(ngModel)]="formHours" [min]="0.5" [step]="0.5" [locale]="'fr-TN'" (ngModelChange)="refreshPreview()" styleClass="w-full" />
         </div>
         <div class="payroll-form-group">
-          <label>Taux majoré</label>
+          <label i18n="@@payroll.runs.taux.majore.5cb78527">Taux majoré</label>
           <p-select [options]="rateOptions" optionLabel="label" optionValue="value" [(ngModel)]="formRatePercent" (ngModelChange)="refreshPreview()" appendTo="body" styleClass="w-full" />
         </div>
       </div>
       <div class="payroll-form-group mb-2">
-        <label>Montant override (optionnel)</label>
+        <label i18n="@@payroll.runs.montant.override.optionnel.2e151738">Montant override (optionnel)</label>
         <p-inputNumber [(ngModel)]="formOverride" [minFractionDigits]="3" [maxFractionDigits]="3" [locale]="'fr-TN'" (ngModelChange)="refreshPreview()" styleClass="w-full" />
       </div>
-      <p class="payroll-info-text">Formule : (salaire base ÷ {{ divisorLabel }}) × heures × (taux % ÷ 100)</p>
+      <p class="payroll-info-text" i18n="@@payroll.runs.formule.salaire.base.heures.taux.100.3368a5ee">Formule : (salaire base ÷ {{ divisorLabel }}) × heures × (taux % ÷ 100)</p>
       @if (previewAmount() !== null) {
-        <p>Montant appliqué : <strong>{{ previewAmount() | payrollAmount }}</strong></p>
+        <p><ng-container i18n="@@payroll.runs.montant.applique.b4674e8b">Montant appliqué : </ng-container> <strong>{{ previewAmount() | payrollAmount }}</strong></p>
       }
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="dialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" (click)="save()">Enregistrer</app-button>
+        <app-button variant="outline" (click)="dialogVisible = false" i18n="@@payroll.runs.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="save()" i18n="@@payroll.runs.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
   `,
   styles: [`
     .mb-2 { margin-bottom: var(--spacing-2); }
     .mb-3 { margin-bottom: var(--spacing-4); }
-    .ml-2 { margin-left: var(--spacing-2); }
+    .ml-2 { margin-inline-start: var(--spacing-2); }
     .actions { white-space: nowrap; }
     .w-full { width: 100%; }
   `]
 })
 export class PayrollOvertimeGridComponent implements OnInit {
+  readonly loc_ui_tern_modifier_heures_sup_811294 = $localize`:@@ui.tern.modifier.heures.sup.811294:Modifier heures sup.`;
+  readonly loc_ui_tern_nouvelles_heures_sup_a24bc4 = $localize`:@@ui.tern.nouvelles.heures.sup.a24bc4:Nouvelles heures sup.`;
   @Input({ required: true }) year!: number;
   @Input({ required: true }) month!: number;
   @Input() readOnly = false;
@@ -160,7 +164,7 @@ export class PayrollOvertimeGridComponent implements OnInit {
   reload(): void {
     this.payroll.listOvertime(this.year, this.month).subscribe({
       next: res => this.lines.set(res.data ?? []),
-      error: () => this.toast.add({ severity: 'error', summary: 'Heures sup.', detail: 'Chargement impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@payroll-overtime-grid.component.summary.Heures sup.:Heures sup.`, detail: $localize`:@@payroll-overtime-grid.component.detail.Chargement_impos:Chargement impossible.` })
     });
   }
 
@@ -242,14 +246,14 @@ export class PayrollOvertimeGridComponent implements OnInit {
 
     req.subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Heures sup.', detail: 'Enregistré.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-overtime-grid.component.summary.Heures sup.:Heures sup.`, detail: $localize`:@@payroll-overtime-grid.component.detail.Enregistr_:Enregistré.` });
         this.dialogVisible = false;
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Heures sup.',
-        detail: err?.error?.message ?? 'Enregistrement impossible.'
+        summary: $localize`:@@payroll-overtime-grid.component.summary.Heures sup.:Heures sup.`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`
       })
     });
   }
@@ -257,10 +261,10 @@ export class PayrollOvertimeGridComponent implements OnInit {
   confirmDelete(line: PayrollOvertimeLine): void {
     if (this.readOnly) return;
     this.confirmation.confirm({
-      message: `Supprimer les heures sup. de ${line.employeeName} ?`,
-      header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      message: $localize`:@@payroll.payroll-overtime-grid.ts.supprimer.les.heures.sup.de.employeename.be884383:Supprimer les heures sup. de ${line.employeeName}:employeeName: ?`,
+      header: $localize`:@@payroll.payroll-overtime-grid.ts.confirmation.3424edc2:Confirmation`,
+      acceptLabel: $localize`:@@payroll-overtime-grid.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@payroll-overtime-grid.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.delete(line.id)
     });
@@ -269,13 +273,13 @@ export class PayrollOvertimeGridComponent implements OnInit {
   private delete(id: string): void {
     this.payroll.deleteOvertime(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Heures sup.', detail: 'Ligne supprimée.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-overtime-grid.component.summary.Heures sup.:Heures sup.`, detail: $localize`:@@payroll-overtime-grid.component.detail.Ligne_supprim_e_:Ligne supprimée.` });
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Heures sup.',
-        detail: err?.error?.message ?? 'Suppression impossible.'
+        summary: $localize`:@@payroll-overtime-grid.component.summary.Heures sup.:Heures sup.`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.suppression.impossible.0dffe4:Suppression impossible.`
       })
     });
   }

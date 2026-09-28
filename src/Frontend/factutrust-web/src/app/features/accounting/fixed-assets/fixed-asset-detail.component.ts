@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, ElementRef, HostListener, OnInit, ViewChild, afterNextRender, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -87,43 +88,41 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
 
     <app-accounting-status-banner [message]="error() ?? ''" variant="error" *ngIf="error()" />
     <div class="refresh-row" *ngIf="error() && asset()">
-      <app-button variant="secondary" type="button" icon="pi pi-refresh" (click)="refreshAsset()" [disabled]="saving()">
-        Actualiser la fiche
-      </app-button>
+      <app-button variant="secondary" type="button" icon="pi pi-refresh" (click)="refreshAsset()" [disabled]="saving()" i18n="@@accounting.fixed-assets.actualiser.la.fiche.d0adb1cb"> Actualiser la fiche </app-button>
     </div>
     <app-accounting-status-banner [message]="success() ?? ''" variant="success" *ngIf="success()" />
     <app-accounting-status-banner
       *ngIf="isDraftAsset()"
-      message="Immobilisation en brouillon — enregistrez vos modifications puis mettez en service dans la section ci-dessous."
+      message="Immobilisation en brouillon — enregistrez vos modifications puis mettez en service dans la section ci-dessous." i18n-message="@@accounting.fixed-assets.immobilisation.en.brouillon.enregistrez.3f7bc795"
       variant="info" />
 
     <!-- ============ Fiche immobilisation (création / brouillon / consultation) ============ -->
     <div class="card" *ngIf="isNew() || asset()">
       <p-tabs [lazy]="true">
         <p-tablist>
-          <p-tab [value]="0">Généralités</p-tab>
-          <p-tab [value]="1">Acquisition</p-tab>
+          <p-tab [value]="0" i18n="@@accounting.fixed-assets.generalites.2e49e62e">Généralités</p-tab>
+          <p-tab [value]="1" i18n="@@accounting.fixed-assets.acquisition.e85b4567">Acquisition</p-tab>
         </p-tablist>
         <p-tabpanels>
         <p-tabpanel [value]="0">
           <div class="form-grid">
             <label>
-              Désignation *
+              <ng-container i18n="@@accounting.fixed-assets.designation.26ab8d5c"> Désignation * </ng-container>
               <input class="accounting-filter-input" [(ngModel)]="form.label" [disabled]="readonly()" />
               <span class="field-error" *ngIf="fieldErrors()['label']">{{ fieldErrors()['label'] }}</span>
             </label>
             <label *ngIf="asset()">
-              N° inventaire
+              <ng-container i18n="@@accounting.fixed-assets.n.inventaire.160c8b37"> N° inventaire </ng-container>
               <input class="accounting-filter-input" [value]="asset()!.inventoryNumber" disabled />
             </label>
             <label>
-              Catégorie (taux légal tunisien) *
+              <ng-container i18n="@@accounting.fixed-assets.categorie.taux.legal.tunisien.89d4ee0a"> Catégorie (taux légal tunisien) * </ng-container>
               <select
                 class="accounting-filter-input"
                 [(ngModel)]="form.depreciationRateCategoryId"
                 (ngModelChange)="onCategoryChange($event)"
                 [disabled]="readonly()">
-                <option value="">— Sélectionner —</option>
+                <option value="" i18n="@@accounting.fixed-assets.selectionner.7ae1afc7">— Sélectionner —</option>
                 <option *ngFor="let c of categories()" [value]="c.id">
                   {{ c.label }} ({{ c.legalRatePercent | number: '1.2-2' }} %)
                 </option>
@@ -131,46 +130,46 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
               <span class="field-error" *ngIf="fieldErrors()['category']">{{ fieldErrors()['category'] }}</span>
             </label>
             <label>
-              Emplacement
+              <ng-container i18n="@@accounting.fixed-assets.emplacement.fecbe05d"> Emplacement </ng-container>
               <input class="accounting-filter-input" [(ngModel)]="form.location" [disabled]="readonly()" />
             </label>
             <label class="span-2">
-              Description
+              <ng-container i18n="@@accounting.fixed-assets.description.55f8ebc8"> Description </ng-container>
               <textarea class="accounting-filter-input" rows="2" [(ngModel)]="form.description" [disabled]="readonly()"></textarea>
             </label>
           </div>
 
           <fieldset class="form-section">
-            <legend>Amortissement</legend>
+            <legend i18n="@@accounting.fixed-assets.amortissement.403d7802">Amortissement</legend>
             <app-accounting-status-banner
               *ngIf="suggestIntegral()"
               [message]="integralSuggestionMessage"
               variant="info" />
             <div class="form-grid">
               <label>
-                Type d'amortissement
+                <ng-container i18n="@@accounting.fixed-assets.type.d.amortissement.284f07c1"> Type d'amortissement </ng-container>
                 <select
                   class="accounting-filter-input"
                   [(ngModel)]="form.depreciationMethod"
                   (ngModelChange)="onMethodChange($event)"
                   [disabled]="readonly() || isNonDepreciable()">
-                  <option [ngValue]="DepreciationMethod.Linear">Linéaire</option>
-                  <option [ngValue]="DepreciationMethod.Accelerated">Accéléré</option>
-                  <option [ngValue]="DepreciationMethod.Integral">Intégral</option>
+                  <option [ngValue]="DepreciationMethod.Linear" i18n="@@accounting.fixed-assets.lineaire.a5db4cfe">Linéaire</option>
+                  <option [ngValue]="DepreciationMethod.Accelerated" i18n="@@accounting.fixed-assets.accelere.064a76be">Accéléré</option>
+                  <option [ngValue]="DepreciationMethod.Integral" i18n="@@accounting.fixed-assets.integral.02387577">Intégral</option>
                 </select>
               </label>
               <label *ngIf="form.depreciationMethod === DepreciationMethod.Accelerated">
-                Coefficient (matériel industriel multi-équipes) *
+                <ng-container i18n="@@accounting.fixed-assets.coefficient.materiel.industriel.multi.equipes.185e972f"> Coefficient (matériel industriel multi-équipes) * </ng-container>
                 <select class="accounting-filter-input" [(ngModel)]="form.accelerationCoefficient" [disabled]="readonly()">
                   <option *ngFor="let c of ACCELERATION_COEFFICIENTS" [ngValue]="c">
-                    {{ c === 1.5 ? '1,5 — deux équipes (taux × 1,5)' : '2 — trois équipes (taux × 2)' }}
+                    {{ c === 1.5 ? loc_ui_tern_1_5_deux_equipes_taux_1_5_39373e : loc_ui_tern_2_trois_equipes_taux_2_65be4b }}
                   </option>
                 </select>
                 <span class="field-error" *ngIf="fieldErrors()['coefficient']">{{ fieldErrors()['coefficient'] }}</span>
-                <span class="hint">Décret 2008-492 art. 2 — réservé au matériel industriel des industries manufacturières non saisonnières.</span>
+                <span class="hint" i18n="@@accounting.fixed-assets.decret.2008.492.art.2.reserve.au.materiel.indust.cbda97ba">Décret 2008-492 art. 2 — réservé au matériel industriel des industries manufacturières non saisonnières.</span>
               </label>
               <label>
-                Durée d'utilisation (années)
+                <ng-container i18n="@@accounting.fixed-assets.duree.d.utilisation.annees.b376ba58"> Durée d'utilisation (années) </ng-container>
                 <input
                   type="number"
                   step="0.5"
@@ -181,7 +180,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
                   [disabled]="readonly() || isNonDepreciable()" />
               </label>
               <label>
-                Taux d'amortissement (%)
+                <ng-container i18n="@@accounting.fixed-assets.taux.d.amortissement.b4989373"> Taux d'amortissement (%) </ng-container>
                 <input
                   type="number"
                   step="0.01"
@@ -194,27 +193,25 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
                 <span class="field-error" *ngIf="fieldErrors()['rate']">{{ fieldErrors()['rate'] }}</span>
               </label>
             </div>
-            <p class="hint" *ngIf="isNonDepreciable()">Cette catégorie n'est pas amortissable (ex. terrains).</p>
-            <p class="hint" *ngIf="!isNonDepreciable()">
-              Le taux et la durée sont synchronisés (taux = 100 / durée). Le taux légal de la catégorie est proposé par défaut.
-            </p>
+            <p class="hint" *ngIf="isNonDepreciable()" i18n="@@accounting.fixed-assets.cette.categorie.n.est.pas.amortissable.ex.terrai.5eb9efc9">Cette catégorie n'est pas amortissable (ex. terrains).</p>
+            <p class="hint" *ngIf="!isNonDepreciable()" i18n="@@accounting.fixed-assets.le.taux.et.la.duree.sont.synchronises.taux.100.d.18bbd38f"> Le taux et la durée sont synchronisés (taux = 100 / durée). Le taux légal de la catégorie est proposé par défaut. </p>
           </fieldset>
 
           <fieldset class="form-section">
-            <legend>Comptabilisation</legend>
+            <legend i18n="@@accounting.fixed-assets.comptabilisation.87cf8493">Comptabilisation</legend>
             <div class="form-grid">
               <label>
-                Compte d'immobilisation (21x) *
+                <ng-container i18n="@@accounting.fixed-assets.compte.d.immobilisation.21x.4a9f36f0"> Compte d'immobilisation (21x) * </ng-container>
                 <input class="accounting-filter-input" [(ngModel)]="form.assetAccountNumber" [disabled]="readonly()" />
                 <span class="field-error" *ngIf="fieldErrors()['assetAccount']">{{ fieldErrors()['assetAccount'] }}</span>
               </label>
               <label>
-                Compte d'amortissement (28x) *
+                <ng-container i18n="@@accounting.fixed-assets.compte.d.amortissement.28x.a51a075a"> Compte d'amortissement (28x) * </ng-container>
                 <input class="accounting-filter-input" [(ngModel)]="form.depreciationAccountNumber" [disabled]="readonly()" />
                 <span class="field-error" *ngIf="fieldErrors()['depreciationAccount']">{{ fieldErrors()['depreciationAccount'] }}</span>
               </label>
               <label>
-                Compte de dotation (68x) *
+                <ng-container i18n="@@accounting.fixed-assets.compte.de.dotation.68x.def515bc"> Compte de dotation (68x) * </ng-container>
                 <input class="accounting-filter-input" [(ngModel)]="form.expenseAccountNumber" [disabled]="readonly()" />
                 <span class="field-error" *ngIf="fieldErrors()['expenseAccount']">{{ fieldErrors()['expenseAccount'] }}</span>
               </label>
@@ -225,57 +222,57 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
         <p-tabpanel [value]="1">
           <div class="form-grid">
             <label>
-              Date d'acquisition *
+              <ng-container i18n="@@accounting.fixed-assets.date.d.acquisition.2f4e592d"> Date d'acquisition * </ng-container>
               <input type="date" class="accounting-filter-input" [(ngModel)]="form.acquisitionDate" [disabled]="readonly()" />
               <span class="field-error" *ngIf="fieldErrors()['acquisitionDate']">{{ fieldErrors()['acquisitionDate'] }}</span>
             </label>
             <label>
-              Fournisseur
+              <ng-container i18n="@@accounting.fixed-assets.fournisseur.97d91d89"> Fournisseur </ng-container>
               <select class="accounting-filter-input" [(ngModel)]="form.supplierId" [disabled]="readonly()">
-                <option value="">— Aucun —</option>
+                <option value="" i18n="@@accounting.fixed-assets.aucun.67323ce2">— Aucun —</option>
                 <option *ngFor="let s of suppliers()" [value]="s.id">{{ s.name }}</option>
               </select>
             </label>
             <label>
-              Prix d'achat HT *
+              <ng-container i18n="@@accounting.fixed-assets.prix.d.achat.ht.7c620c71"> Prix d'achat HT * </ng-container>
               <app-accounting-amount-input
                 [(ngModel)]="form.acquisitionCost"
                 [disabled]="readonly()"
                 side="debit"
                 inputId="acquisitionCost"
-                ariaLabel="Prix d'achat HT" />
+                ariaLabel="Prix d'achat HT" i18n-ariaLabel="@@accounting.fixed-assets.prix.d.achat.ht.5cc09c1b" />
               <span class="field-error" *ngIf="fieldErrors()['cost']">{{ fieldErrors()['cost'] }}</span>
             </label>
             <label>
-              Montant TVA
+              <ng-container i18n="@@accounting.fixed-assets.montant.tva.f0c1b7cc"> Montant TVA </ng-container>
               <app-accounting-amount-input
                 [(ngModel)]="form.vatAmount"
                 [disabled]="readonly()"
                 side="debit"
                 inputId="vatAmount"
-                ariaLabel="Montant TVA" />
+                ariaLabel="Montant TVA" i18n-ariaLabel="@@accounting.fixed-assets.montant.tva.d1afc4f8" />
             </label>
             <label>
-              Frais capitalisés
+              <ng-container i18n="@@accounting.fixed-assets.frais.capitalises.a20d3797"> Frais capitalisés </ng-container>
               <app-accounting-amount-input
                 [(ngModel)]="form.capitalizedFees"
                 [disabled]="readonly()"
                 side="debit"
                 inputId="capitalizedFees"
-                ariaLabel="Frais capitalisés" />
+                ariaLabel="Frais capitalisés" i18n-ariaLabel="@@accounting.fixed-assets.frais.capitalises.6f02250a" />
             </label>
             <label>
-              Valeur résiduelle
+              <ng-container i18n="@@accounting.fixed-assets.valeur.residuelle.98da787c"> Valeur résiduelle </ng-container>
               <app-accounting-amount-input
                 [(ngModel)]="form.residualValue"
                 [disabled]="readonly()"
                 side="debit"
                 inputId="residualValue"
-                ariaLabel="Valeur résiduelle" />
+                ariaLabel="Valeur résiduelle" i18n-ariaLabel="@@accounting.fixed-assets.valeur.residuelle.ca8b8ac3" />
               <span class="field-error" *ngIf="fieldErrors()['residual']">{{ fieldErrors()['residual'] }}</span>
             </label>
             <label>
-              Montant amortissable
+              <ng-container i18n="@@accounting.fixed-assets.montant.amortissable.c6d09753"> Montant amortissable </ng-container>
               <input class="accounting-filter-input" [value]="depreciableBase() | number: '1.3-3'" disabled />
             </label>
           </div>
@@ -285,10 +282,10 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
 
       <div class="actions" *ngIf="!readonly()">
         <app-button variant="primary" type="button" (click)="save()" [disabled]="saving()">
-          {{ isNew() ? 'Enregistrer' : 'Enregistrer les modifications' }}
+          {{ isNew() ? loc_ui_tern_enregistrer_f7c8bc : loc_ui_tern_enregistrer_les_modifications_2a9459 }}
         </app-button>
         <app-button variant="secondary" type="button" routerLink="/accounting/fixed-assets">
-          {{ isNew() ? 'Annuler' : 'Retour au registre' }}
+          {{ isNew() ? loc_ui_tern_annuler_49ba32 : loc_ui_tern_retour_au_registre_aa646c }}
         </app-button>
       </div>
     </div>
@@ -296,15 +293,13 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
     <!-- ============ Simulation du tableau (brouillon) ============ -->
     <div class="card" *ngIf="isDraftAsset() && !isNonDepreciable()">
       <div class="schedule-header">
-        <h3>Simulation du tableau d'amortissement</h3>
+        <h3 i18n="@@accounting.fixed-assets.simulation.du.tableau.d.amortissement.d8d3d134">Simulation du tableau d'amortissement</h3>
         <div class="actions-inline">
           <label class="inline-field">
-            Date de mise en service hypothétique
+            <ng-container i18n="@@accounting.fixed-assets.date.de.mise.en.service.hypothetique.fc89622a"> Date de mise en service hypothétique </ng-container>
             <input type="date" class="accounting-filter-input" [(ngModel)]="previewDate" />
           </label>
-          <app-button variant="secondary" type="button" (click)="previewSchedule()" [disabled]="saving()">
-            Simuler le tableau
-          </app-button>
+          <app-button variant="secondary" type="button" (click)="previewSchedule()" [disabled]="saving()" i18n="@@accounting.fixed-assets.simuler.le.tableau.6cff95d9"> Simuler le tableau </app-button>
         </div>
       </div>
       <ng-container *ngIf="preview() as p">
@@ -314,67 +309,59 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
 
     <!-- ============ Mise en service ============ -->
     <div class="card" #putInServiceSection id="put-in-service" *ngIf="isDraftAsset()">
-      <h3>Mise en service</h3>
-      <p class="hint" *ngIf="!hasPositiveAcquisitionCost()">
-        Renseignez un prix d'achat HT positif (onglet Acquisition) avant la mise en service et la comptabilisation JIM.
-      </p>
-      <p class="hint" *ngIf="isFromSupplierInvoice()">
-        Cet actif provient d'une facture fournisseur déjà comptabilisée (journal des achats) :
-        aucune écriture d'acquisition supplémentaire ne sera générée.
-      </p>
+      <h3 i18n="@@accounting.fixed-assets.mise.en.service.9d7a72cb">Mise en service</h3>
+      <p class="hint" *ngIf="!hasPositiveAcquisitionCost()" i18n="@@accounting.fixed-assets.renseignez.un.prix.d.achat.ht.positif.onglet.acq.80ad42b1"> Renseignez un prix d'achat HT positif (onglet Acquisition) avant la mise en service et la comptabilisation JIM. </p>
+      <p class="hint" *ngIf="isFromSupplierInvoice()" i18n="@@accounting.fixed-assets.cet.actif.provient.d.une.facture.fournisseur.dej.20cd16a1"> Cet actif provient d'une facture fournisseur déjà comptabilisée (journal des achats) :
+        aucune écriture d'acquisition supplémentaire ne sera générée. </p>
       <div class="form-grid">
         <label>
-          Date de mise en service *
+          <ng-container i18n="@@accounting.fixed-assets.date.de.mise.en.service.4f4fe8a6"> Date de mise en service * </ng-container>
           <input type="date" class="accounting-filter-input" [(ngModel)]="inServiceDate" />
         </label>
         <label *ngIf="!isFromSupplierInvoice()">
-          Compte de crédit (404, 532, 101…) *
-          <input class="accounting-filter-input" [(ngModel)]="creditAccount" placeholder="404" />
+          <ng-container i18n="@@accounting.fixed-assets.compte.de.credit.404.532.101.72e064b6"> Compte de crédit (404, 532, 101…) * </ng-container>
+          <input class="accounting-filter-input" [(ngModel)]="creditAccount" placeholder="404" i18n-placeholder="@@accounting.fixed-assets.404.c35a9fc5" />
         </label>
       </div>
       <app-button variant="primary" type="button" (click)="putInService()" [disabled]="saving()">
-        {{ isFromSupplierInvoice() ? 'Mettre en service' : 'Mettre en service et comptabiliser' }}
+        {{ isFromSupplierInvoice() ? loc_ui_tern_mettre_en_service_79c6d1 : loc_ui_tern_mettre_en_service_et_comptabiliser_920942 }}
       </app-button>
     </div>
 
     <!-- ============ Tableau d'amortissement (actif en service) ============ -->
     <div class="card" *ngIf="isInServiceAsset()">
       <div class="schedule-header">
-        <h3>Tableau d'amortissement</h3>
+        <h3 i18n="@@accounting.fixed-assets.tableau.d.amortissement.2a7cef27">Tableau d'amortissement</h3>
         <div class="actions-inline" *ngIf="canShowScheduleActions()">
           <app-button variant="secondary" type="button" (click)="generateSchedule()" [disabled]="saving() || hasPostedLines()">
-            {{ schedule()?.lines?.length ? 'Regénérer' : 'Générer' }} le tableau
+            {{ schedule()?.lines?.length ? locRegenererTableau : locGenererTableau }}
           </app-button>
           <app-button
             variant="outline"
             type="button"
             icon="pi-download"
             (click)="exportSchedule()"
-            [disabled]="saving() || !schedule()?.lines?.length">
-            Export Excel
-          </app-button>
+            [disabled]="saving() || !schedule()?.lines?.length" i18n="@@accounting.fixed-assets.export.excel.4a245944"> Export Excel </app-button>
         </div>
       </div>
-      <p class="hint" *ngIf="hasPostedLines()">
-        Des dotations non extournées sont déjà comptabilisées : le tableau ne peut plus être regénéré.
-        Extournez l'écriture concernée pour autoriser la régénération.
-      </p>
+      <p class="hint" *ngIf="hasPostedLines()" i18n="@@accounting.fixed-assets.des.dotations.non.extournees.sont.deja.comptabil.02b3196b"> Des dotations non extournées sont déjà comptabilisées : le tableau ne peut plus être regénéré.
+        Extournez l'écriture concernée pour autoriser la régénération. </p>
 
       <ng-container *ngIf="schedule() as s">
         <ng-container *ngTemplateOutlet="normTable; context: { $implicit: s, simulated: false }"></ng-container>
 
-        <h4 class="detail-title" *ngIf="s.lines.length">Détail CP17</h4>
+        <h4 class="detail-title" *ngIf="s.lines.length" i18n="@@accounting.fixed-assets.detail.cp17.b3001501">Détail CP17</h4>
         <p-table *ngIf="s.lines.length" [value]="s.lines" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>Exercice</th>
-              <th class="text-right">VNC début</th>
-              <th class="text-right">Annuité normale</th>
-              <th class="text-right">Amort. antérieurs</th>
-              <th class="text-right">Dotation exercice</th>
-              <th class="text-right">Cumul</th>
-              <th class="text-right">VNC fin</th>
-              <th>Comptabilisé</th>
+              <th i18n="@@accounting.fixed-assets.exercice.e171e2b0">Exercice</th>
+              <th class="text-right" i18n="@@accounting.fixed-assets.vnc.debut.d0ad0de9">VNC début</th>
+              <th class="text-right" i18n="@@accounting.fixed-assets.annuite.normale.0c0af391">Annuité normale</th>
+              <th class="text-right" i18n="@@accounting.fixed-assets.amort.anterieurs.9487b2d6">Amort. antérieurs</th>
+              <th class="text-right" i18n="@@accounting.fixed-assets.dotation.exercice.614cb9fd">Dotation exercice</th>
+              <th class="text-right" i18n="@@accounting.fixed-assets.cumul.ff6c23db">Cumul</th>
+              <th class="text-right" i18n="@@accounting.fixed-assets.vnc.fin.20096b25">VNC fin</th>
+              <th i18n="@@accounting.fixed-assets.comptabilise.ec941159">Comptabilisé</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-line>
@@ -386,7 +373,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
               <td class="text-right">{{ line.depreciationAmount | number: '1.3-3' }}</td>
               <td class="text-right">{{ line.accumulatedDepreciation | number: '1.3-3' }}</td>
               <td class="text-right">{{ line.closingNbv | number: '1.3-3' }}</td>
-              <td>{{ line.isPosted ? 'Oui' : 'Non' }}</td>
+              <td>{{ line.isPosted ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
             </tr>
           </ng-template>
         </p-table>
@@ -396,12 +383,12 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
     <!-- ============ Tableau au format norme tunisienne (template partagé) ============ -->
     <ng-template #normTable let-s let-simulated="simulated">
       <div class="norm-summary" *ngIf="s.lines.length">
-        <div><strong>Nature du bien :</strong> {{ s.label }}</div>
-        <div><strong>Montant amortissable :</strong> {{ s.depreciableBase | accountingAmount }}</div>
-        <div><strong>Date de mise en service :</strong> {{ s.inServiceDate ? (s.inServiceDate | date: 'dd/MM/yyyy') : '—' }}</div>
-        <div><strong>Durée de vie :</strong> {{ s.usefulLifeYears | number: '1.0-2' }} ans</div>
-        <div><strong>Taux d'amortissement :</strong> {{ s.depreciationRatePercent | number: '1.2-2' }} %</div>
-        <div>
+        <div><strong i18n="@@accounting.fixed-assets.nature.du.bien.3cc65233">Nature du bien :</strong> {{ s.label }}</div>
+        <div><strong i18n="@@accounting.fixed-assets.montant.amortissable.44db17e0">Montant amortissable :</strong> {{ s.depreciableBase | accountingAmount }}</div>
+        <div><strong i18n="@@accounting.fixed-assets.date.de.mise.en.service.ec568998">Date de mise en service :</strong> {{ s.inServiceDate ? (s.inServiceDate | date: 'dd/MM/yyyy') : '—' }}</div>
+        <div i18n="@@accounting.fixed-assets.duree.de.vie.ans.5116d2de"><strong>Durée de vie :</strong> {{ s.usefulLifeYears | number: '1.0-2' }} ans</div>
+        <div><strong i18n="@@accounting.fixed-assets.taux.d.amortissement.9e76b4fd">Taux d'amortissement :</strong> {{ s.depreciationRatePercent | number: '1.2-2' }} %</div>
+        <div i18n="@@accounting.fixed-assets.methode.coefficient.70f02144">
           <strong>Méthode :</strong> {{ methodLabel(s.depreciationMethod) }}
           <ng-container *ngIf="s.depreciationMethod === DepreciationMethod.Accelerated"> (coefficient {{ s.accelerationCoefficient | number: '1.1-2' }})</ng-container>
         </div>
@@ -409,11 +396,11 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
       <table class="norm-table" *ngIf="s.lines.length">
         <thead>
           <tr>
-            <th>Année</th>
-            <th class="text-right">Base</th>
-            <th class="text-right">Annuité</th>
-            <th class="text-right">Annuités cumulées</th>
-            <th class="text-right">Valeur nette comptable</th>
+            <th i18n="@@accounting.fixed-assets.annee.1f910d98">Année</th>
+            <th class="text-right" i18n="@@accounting.fixed-assets.base.077fe9c5">Base</th>
+            <th class="text-right" i18n="@@accounting.fixed-assets.annuite.a3535b86">Annuité</th>
+            <th class="text-right" i18n="@@accounting.fixed-assets.annuites.cumulees.dd1a2fe5">Annuités cumulées</th>
+            <th class="text-right" i18n="@@accounting.fixed-assets.valeur.nette.comptable.f4d6eaf4">Valeur nette comptable</th>
           </tr>
         </thead>
         <tbody>
@@ -425,7 +412,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
             <td class="text-right">{{ line.closingNbv | number: '1.3-3' }}</td>
           </tr>
           <tr class="total-row">
-            <td><strong>TOTAL</strong></td>
+            <td><strong i18n="@@accounting.fixed-assets.total.5c6505ae">TOTAL</strong></td>
             <td></td>
             <td class="text-right"><strong>{{ totalDepreciation(s) | number: '1.3-3' }}</strong></td>
             <td></td>
@@ -433,71 +420,69 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
           </tr>
         </tbody>
       </table>
-      <p class="hint" *ngIf="!s.lines.length">Aucune ligne d'amortissement (bien non amortissable ou base nulle).</p>
+      <p class="hint" *ngIf="!s.lines.length" i18n="@@accounting.fixed-assets.aucune.ligne.d.amortissement.bien.non.amortissab.170eff32">Aucune ligne d'amortissement (bien non amortissable ou base nulle).</p>
     </ng-template>
 
     <!-- ============ Cession ============ -->
     <div class="card" *ngIf="canDisposeAsset()">
-      <h3>Cession / mise au rebut</h3>
+      <h3 i18n="@@accounting.fixed-assets.cession.mise.au.rebut.cabc2596">Cession / mise au rebut</h3>
       <div class="form-grid">
         <label>
-          Date de cession *
+          <ng-container i18n="@@accounting.fixed-assets.date.de.cession.6a6f45a3"> Date de cession * </ng-container>
           <input type="date" class="accounting-filter-input" [(ngModel)]="disposalDate" />
         </label>
         <label>
-          Prix de cession (TND)
+          <ng-container i18n="@@accounting.fixed-assets.prix.de.cession.tnd.47897c3e"> Prix de cession (TND) </ng-container>
           <app-accounting-amount-input
             [(ngModel)]="disposalProceeds"
             [disabled]="disposalMode === 'scrap'"
             side="debit"
             inputId="disposalProceeds"
-            ariaLabel="Prix de cession" />
+            ariaLabel="Prix de cession" i18n-ariaLabel="@@accounting.fixed-assets.prix.de.cession.c1619878" />
         </label>
       </div>
 
       <fieldset class="form-section">
-        <legend>Mode de règlement</legend>
+        <legend i18n="@@accounting.fixed-assets.mode.de.reglement.c82ec4a6">Mode de règlement</legend>
         <div class="disposal-mode-grid">
           <label class="radio-option">
-            <input type="radio" name="disposalMode" value="cash" [ngModel]="disposalMode" (ngModelChange)="onDisposalModeChange($event)" />
+            <input type="radio" name="disposalMode" value="cash" [ngModel]="disposalMode" (ngModelChange)="onDisposalModeChange($event)" /><ng-container i18n="@@accounting.fixed-assets.comptant.compte.de.tresorerie.5321.5411.ebcb7c50">
             Comptant — compte de trésorerie (5321, 5411…)
-          </label>
+          </ng-container></label>
           <label *ngIf="disposalMode === 'cash'">
-            Compte trésorerie *
-            <input class="accounting-filter-input" [(ngModel)]="treasuryAccount" placeholder="5321" />
+            <ng-container i18n="@@accounting.fixed-assets.compte.tresorerie.d0134786"> Compte trésorerie * </ng-container>
+            <input class="accounting-filter-input" [(ngModel)]="treasuryAccount" placeholder="5321" i18n-placeholder="@@accounting.fixed-assets.5321.c17ece1e" />
           </label>
           <label class="radio-option">
-            <input type="radio" name="disposalMode" value="receivable" [ngModel]="disposalMode" (ngModelChange)="onDisposalModeChange($event)" />
+            <input type="radio" name="disposalMode" value="receivable" [ngModel]="disposalMode" (ngModelChange)="onDisposalModeChange($event)" /><ng-container i18n="@@accounting.fixed-assets.a.terme.creance.sur.cession.prerempli.45.3db03bad">
             À terme — créance sur cession (prérempli 452)
-          </label>
+          </ng-container></label>
           <label *ngIf="disposalMode === 'receivable'">
-            Compte créance *
-            <input class="accounting-filter-input" [(ngModel)]="receivableAccount" placeholder="452" />
+            <ng-container i18n="@@accounting.fixed-assets.compte.creance.f64b8a52"> Compte créance * </ng-container>
+            <input class="accounting-filter-input" [(ngModel)]="receivableAccount" placeholder="452" i18n-placeholder="@@accounting.fixed-assets.452.3af0af21" />
           </label>
           <label class="radio-option">
-            <input type="radio" name="disposalMode" value="scrap" [ngModel]="disposalMode" (ngModelChange)="onDisposalModeChange($event)" />
+            <input type="radio" name="disposalMode" value="scrap" [ngModel]="disposalMode" (ngModelChange)="onDisposalModeChange($event)" /><ng-container i18n="@@accounting.fixed-assets.mise.au.rebut.produit.nul.aucun.compte.d.cecce5c9">
             Mise au rebut — produit nul, aucun compte de règlement
-          </label>
+          </ng-container></label>
         </div>
-        <p class="hint" *ngIf="disposalMode === 'scrap'">
-          La mise au rebut force un prix de cession nul : aucune écriture de règlement n'est générée (sortie 2xx / 28x / 636 uniquement).
-        </p>
+        <p class="hint" *ngIf="disposalMode === 'scrap'" i18n="@@accounting.fixed-assets.la.mise.au.rebut.force.un.prix.de.cession.nul.au.3560e640"> La mise au rebut force un prix de cession nul : aucune écriture de règlement n'est générée (sortie 2xx / 28x / 636 uniquement). </p>
       </fieldset>
 
-      <app-button variant="danger" type="button" (click)="confirmDispose()" [disabled]="saving()">Enregistrer la cession</app-button>
+      <app-button variant="danger" type="button" (click)="confirmDispose()" [disabled]="saving()" i18n="@@accounting.fixed-assets.enregistrer.la.cession.9bdc21df">Enregistrer la cession</app-button>
     </div>
 
     <!-- ============ Méta ============ -->
     <div class="card meta" *ngIf="asset()">
-      <p><strong>Statut :</strong> {{ statusLabel(asset()!) }}</p>
-      <p><strong>Méthode :</strong> {{ methodLabel(asset()!.depreciationMethod) }}
+      <p><strong i18n="@@accounting.fixed-assets.statut.b20e7fc2">Statut :</strong> {{ statusLabel(asset()!) }}</p>
+      <p i18n="@@accounting.fixed-assets.methode.coefficient.afbaed33"><strong>Méthode :</strong> {{ methodLabel(asset()!.depreciationMethod) }}
         <ng-container *ngIf="asset()!.depreciationMethod === DepreciationMethod.Accelerated"> (coefficient {{ asset()!.accelerationCoefficient | number: '1.1-2' }})</ng-container>
       </p>
-      <p><strong>Comptes :</strong> {{ asset()!.assetAccountNumber }} / {{ asset()!.depreciationAccountNumber }} / {{ asset()!.expenseAccountNumber }}</p>
-      <p><strong>VNC actuelle :</strong> {{ asset()!.netBookValue | accountingAmount }}</p>
+      <p><strong i18n="@@accounting.fixed-assets.comptes.d35dab21">Comptes :</strong> {{ asset()!.assetAccountNumber }} / {{ asset()!.depreciationAccountNumber }} / {{ asset()!.expenseAccountNumber }}</p>
+      <p><strong i18n="@@accounting.fixed-assets.vnc.actuelle.b1f08efc">VNC actuelle :</strong> {{ asset()!.netBookValue | accountingAmount }}</p>
       <p *ngIf="asset()!.supplierInvoiceId">
-        <strong>Facture fournisseur :</strong>
-        <a [routerLink]="['/supplier-invoices', asset()!.supplierInvoiceId]">Voir la facture source</a>
+        <strong i18n="@@accounting.fixed-assets.facture.fournisseur.acffd398">Facture fournisseur :</strong>
+        <a [routerLink]="['/supplier-invoices', asset()!.supplierInvoiceId]" i18n="@@accounting.fixed-assets.voir.la.facture.source.03c66c7b">Voir la facture source</a>
       </p>
     </div>
   `,
@@ -575,7 +560,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
         gap: 0.75rem;
       }
       .text-right {
-        text-align: right;
+        text-align: end;
       }
       .meta p {
         margin: 0.25rem 0;
@@ -619,6 +604,18 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
   ]
 })
 export class FixedAssetDetailComponent implements OnInit {
+  readonly loc_ui_tern_1_5_deux_equipes_taux_1_5_39373e = $localize`:@@ui.tern.1.5.deux.equipes.taux.1.5.39373e:1,5 — deux équipes (taux × 1,5)`;
+  readonly loc_ui_tern_2_trois_equipes_taux_2_65be4b = $localize`:@@ui.tern.2.trois.equipes.taux.2.65be4b:2 — trois équipes (taux × 2)`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_enregistrer_les_modifications_2a9459 = $localize`:@@ui.tern.enregistrer.les.modifications.2a9459:Enregistrer les modifications`;
+  readonly loc_ui_tern_annuler_49ba32 = $localize`:@@ui.tern.annuler.49ba32:Annuler`;
+  readonly loc_ui_tern_retour_au_registre_aa646c = $localize`:@@ui.tern.retour.au.registre.aa646c:Retour au registre`;
+  readonly loc_ui_tern_mettre_en_service_79c6d1 = $localize`:@@ui.tern.mettre.en.service.79c6d1:Mettre en service`;
+  readonly loc_ui_tern_mettre_en_service_et_comptabiliser_920942 = $localize`:@@ui.tern.mettre.en.service.et.comptabiliser.920942:Mettre en service et comptabiliser`;
+  readonly locRegenererTableau = $localize`:@@accounting.fixed-assets.regenerer.le.tableau:Regénérer le tableau`;
+  readonly locGenererTableau = $localize`:@@accounting.fixed-assets.generer.le.tableau:Générer le tableau`;
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
   private readonly api = inject(FixedAssetsService);
   private readonly supplierApi = inject(SupplierService);
   private readonly route = inject(ActivatedRoute);
@@ -631,7 +628,7 @@ export class FixedAssetDetailComponent implements OnInit {
   readonly ACCELERATION_COEFFICIENTS = ACCELERATION_COEFFICIENTS;
   readonly LOW_VALUE_ASSET_CEILING_TND = LOW_VALUE_ASSET_CEILING_TND;
   readonly integralSuggestionMessage =
-    `Base amortissable ≤ ${LOW_VALUE_ASSET_CEILING_TND} DT : l'amortissement intégral est recommandé (Décret 2008-492 art. 4).`;
+    $localize`:@@accounting.fixed-asset-detail.ts.base.amortissable.low.value.asset.ceilin.bd5644b4:Base amortissable ≤ ${LOW_VALUE_ASSET_CEILING_TND}:LOW_VALUE_ASSET_CEILING_TND: DT : l'amortissement intégral est recommandé (Décret 2008-492 art. 4).`;
 
   readonly isNew = signal(false);
   readonly asset = signal<FixedAssetDto | null>(null);
@@ -677,7 +674,7 @@ export class FixedAssetDetailComponent implements OnInit {
     }
     this.loadAsset(id);
     if (this.route.snapshot.queryParamMap.get('created') === '1') {
-      this.success.set('Brouillon créé — complétez la fiche puis procédez à la mise en service.');
+      this.success.set($localize`:@@accounting.fixed-asset-detail.ts.brouillon.cree.completez.la.fiche.puis.p.3afca311:Brouillon créé — complétez la fiche puis procédez à la mise en service.`);
       afterNextRender(() => this.scrollToPutInService());
     }
   }
@@ -837,7 +834,7 @@ export class FixedAssetDetailComponent implements OnInit {
   canDeactivate(): boolean {
     if (!this.isDirty()) return true;
     return window.confirm(
-      'Vous avez des modifications non enregistrées. Quitter cette page ? Les changements seront perdus.'
+      $localize`:@@accounting.fixed-asset-detail.ts.vous.avez.des.modifications.non.enregist.84457463:Vous avez des modifications non enregistrées. Quitter cette page ? Les changements seront perdus.`
     );
   }
 
@@ -845,7 +842,7 @@ export class FixedAssetDetailComponent implements OnInit {
   unloadNotification(event: BeforeUnloadEvent): void {
     if (this.isDirty()) {
       // Affecter returnValue déclenche la boîte de confirmation native du navigateur.
-      event.returnValue = 'Vous avez des modifications non enregistrées.';
+      event.returnValue = $localize`:@@accounting.fixed-asset-detail.ts.vous.avez.des.modifications.non.enregist.80479b8a:Vous avez des modifications non enregistrées.`;
     }
   }
 
@@ -906,18 +903,18 @@ export class FixedAssetDetailComponent implements OnInit {
 
   private validate(): boolean {
     const errors: Record<string, string> = {};
-    if (!this.form.label.trim()) errors['label'] = 'La désignation est obligatoire.';
-    if (!this.form.depreciationRateCategoryId) errors['category'] = 'La catégorie est obligatoire.';
-    if (!this.form.acquisitionDate) errors['acquisitionDate'] = "La date d'acquisition est obligatoire.";
+    if (!this.form.label.trim()) errors['label'] = $localize`:@@accounting.fixed-asset-detail.ts.la.designation.est.obligatoire.bdb532f0:La désignation est obligatoire.`;
+    if (!this.form.depreciationRateCategoryId) errors['category'] = $localize`:@@accounting.fixed-asset-detail.ts.la.categorie.est.obligatoire.33b95b04:La catégorie est obligatoire.`;
+    if (!this.form.acquisitionDate) errors['acquisitionDate'] = $localize`:@@accounting.fixed-asset-detail.ts.la.date.d.acquisition.est.obligatoire.53122395:La date d'acquisition est obligatoire.`;
     const total = (this.form.acquisitionCost || 0) + (this.form.capitalizedFees || 0);
-    if (total <= 0) errors['cost'] = "Le coût d'acquisition doit être positif.";
+    if (total <= 0) errors['cost'] = $localize`:@@accounting.fixed-asset-detail.ts.le.cout.d.acquisition.doit.etre.positif.294d9b47:Le coût d'acquisition doit être positif.`;
     if ((this.form.residualValue || 0) >= total && total > 0)
-      errors['residual'] = 'La valeur résiduelle doit être inférieure au coût total.';
+      errors['residual'] = $localize`:@@accounting.fixed-asset-detail.ts.la.valeur.residuelle.doit.etre.inferieur.ab484d23:La valeur résiduelle doit être inférieure au coût total.`;
     if (!this.isNonDepreciable()) {
       const rate = this.form.depreciationRatePercent;
-      if (rate !== null && (rate <= 0 || rate > 100)) errors['rate'] = 'Le taux doit être compris entre 0 et 100 %.';
+      if (rate !== null && (rate <= 0 || rate > 100)) errors['rate'] = $localize`:@@accounting.fixed-asset-detail.ts.le.taux.doit.etre.compris.entre.0.et.100.af09f376:Le taux doit être compris entre 0 et 100 %.`;
       if (this.form.depreciationMethod === DepreciationMethod.Accelerated && !ACCELERATION_COEFFICIENTS.includes(this.form.accelerationCoefficient))
-        errors['coefficient'] = 'Le coefficient accéléré doit être 1,5 ou 2 (Décret 2008-492 art. 2).';
+        errors['coefficient'] = $localize`:@@accounting.fixed-asset-detail.ts.le.coefficient.accelere.doit.etre.1.5.ou.dc27b9de:Le coefficient accéléré doit être 1,5 ou 2 (Décret 2008-492 art. 2).`;
     }
     // C1 — validation des comptes alignée serveur (FixedAssetAccountRules) : format, préfixes NCT
     // et cohérence corporel/incorporel. Affichage par champ via fieldErrors.
@@ -941,7 +938,7 @@ export class FixedAssetDetailComponent implements OnInit {
     this.error.set(null);
     this.success.set(null);
     if (!this.validate()) {
-      this.error.set('Veuillez corriger les champs en erreur.');
+      this.error.set($localize`:@@accounting.fixed-asset-detail.ts.veuillez.corriger.les.champs.en.erreur.85783828:Veuillez corriger les champs en erreur.`);
       return;
     }
     if (this.isNew()) this.create();
@@ -976,12 +973,12 @@ export class FixedAssetDetailComponent implements OnInit {
           if (res.data) {
             this.router.navigate(['/accounting/fixed-assets', res.data], { queryParams: { created: '1' } });
           } else {
-            this.error.set(res.message ?? 'Erreur lors de la création.');
+            this.error.set(res.message ?? $localize`:@@ui.tern.erreur.lors.de.la.creation.e406e7:Erreur lors de la création.`);
           }
         },
         error: err => {
           this.saving.set(false);
-          this.error.set(err?.error?.message ?? 'Erreur lors de la création.');
+          this.error.set(err?.error?.message ?? $localize`:@@ui.tern.erreur.lors.de.la.creation.e406e7:Erreur lors de la création.`);
         }
       });
   }
@@ -1012,13 +1009,13 @@ export class FixedAssetDetailComponent implements OnInit {
       next: () => {
         this.saving.set(false);
         this.error.set(null);
-        this.success.set('Modifications enregistrées.');
+        this.success.set($localize`:@@accounting.fixed-asset-detail.ts.modifications.enregistrees.563f985e:Modifications enregistrées.`);
         this.preview.set(null);
         this.loadAsset(id);
       },
       error: err => {
         this.saving.set(false);
-        this.error.set(err?.error?.message ?? "Erreur lors de l'enregistrement.");
+        this.error.set(err?.error?.message ?? $localize`:@@ui.tern.erreur.lors.de.l.enregistrement.e952ae:Erreur lors de l'enregistrement.`);
       }
     });
   }
@@ -1035,7 +1032,7 @@ export class FixedAssetDetailComponent implements OnInit {
       },
       error: err => {
         this.saving.set(false);
-        this.error.set(err?.error?.message ?? 'Erreur lors de la simulation.');
+        this.error.set(err?.error?.message ?? $localize`:@@ui.tern.erreur.lors.de.la.simulation.428d66:Erreur lors de la simulation.`);
       }
     });
   }
@@ -1053,8 +1050,8 @@ export class FixedAssetDetailComponent implements OnInit {
         this.error.set(null);
         this.success.set(
           this.isFromSupplierInvoice()
-            ? "Immobilisation mise en service et tableau d'amortissement généré."
-            : "Immobilisation mise en service, écriture JIM générée et tableau d'amortissement créé."
+            ? $localize`:@@ui.tern.immobilisation.mise.en.service.et.tableau..12cfa5:Immobilisation mise en service et tableau d'amortissement généré.`
+            : $localize`:@@ui.tern.immobilisation.mise.en.service.ecriture.ji.4c86f5:Immobilisation mise en service, écriture JIM générée et tableau d'amortissement créé.`
         );
         this.preview.set(null);
         this.loadAsset(id);
@@ -1065,10 +1062,10 @@ export class FixedAssetDetailComponent implements OnInit {
         const body = err?.error;
         if (body?.code === 'CONCURRENCY_CONFLICT') {
           this.error.set(
-            'Les données ont été modifiées entre-temps. La fiche a été actualisée — vérifiez le statut puis réessayez si nécessaire.'
+            $localize`:@@accounting.fixed-asset-detail.ts.les.donnees.ont.ete.modifiees.entre.temp.6e498430:Les données ont été modifiées entre-temps. La fiche a été actualisée — vérifiez le statut puis réessayez si nécessaire.`
           );
         } else {
-          this.error.set(body?.message ?? 'Erreur mise en service.');
+          this.error.set(body?.message ?? $localize`:@@ui.tern.erreur.mise.en.service.e7b505:Erreur mise en service.`);
         }
         this.loadAsset(id);
       }
@@ -1091,11 +1088,11 @@ export class FixedAssetDetailComponent implements OnInit {
       next: res => {
         this.schedule.set(res.data ?? null);
         this.saving.set(false);
-        this.success.set("Tableau d'amortissement généré.");
+        this.success.set($localize`:@@accounting.fixed-asset-detail.ts.tableau.d.amortissement.genere.73981911:Tableau d'amortissement généré.`);
       },
       error: err => {
         this.saving.set(false);
-        this.error.set(err?.error?.message ?? 'Erreur génération tableau.');
+        this.error.set(err?.error?.message ?? $localize`:@@ui.tern.erreur.generation.tableau.14036b:Erreur génération tableau.`);
       }
     });
   }
@@ -1110,11 +1107,11 @@ export class FixedAssetDetailComponent implements OnInit {
         this.saving.set(false);
         const label = this.asset()?.inventoryNumber ?? id;
         this.downloadBlob(blob, `tableau-amortissement-${label}.xlsx`);
-        this.success.set('Export Excel téléchargé.');
+        this.success.set($localize`:@@accounting.fixed-asset-detail.ts.export.excel.telecharge.08b3bed0:Export Excel téléchargé.`);
       },
       error: err => {
         this.saving.set(false);
-        this.error.set(err?.error?.message ?? 'Erreur export Excel.');
+        this.error.set(err?.error?.message ?? $localize`:@@ui.tern.erreur.export.excel.dd1ee1:Erreur export Excel.`);
       }
     });
   }
@@ -1150,16 +1147,12 @@ export class FixedAssetDetailComponent implements OnInit {
     const proceeds = this.disposalMode === 'scrap' ? 0 : this.disposalProceeds || 0;
     const account =
       this.disposalMode === 'scrap'
-        ? 'Mise au rebut — aucun compte de règlement'
+        ? $localize`:@@ui.tern.mise.au.rebut.aucun.compte.de.reglement.c29e73:Mise au rebut — aucun compte de règlement`
         : this.disposalMode === 'receivable'
-          ? `À terme — créance ${this.receivableAccount || '452'}`
-          : `Comptant — trésorerie ${this.treasuryAccount || '5321'}`;
+          ? $localize`:@@ui.tern.a.terme.creance.ph.4d7fd9:À terme — créance ${this.receivableAccount || '452'}:p0:`
+          : $localize`:@@ui.tern.comptant.tresorerie.ph.23ed5e:Comptant — trésorerie ${this.treasuryAccount || '5321'}:p0:`;
     return (
-      `Confirmer la cession de cette immobilisation ?\n` +
-      `Date de cession : ${this.disposalDate}\n` +
-      `Prix de cession : ${proceeds} TND\n` +
-      `Règlement : ${account}\n\n` +
-      `Cette action est irréversible.`
+      $localize`:@@accounting.fixed-asset-detail.ts.confirmer.la.cession.de.cette.immobilisa.bf7bb043:Confirmer la cession de cette immobilisation ?\nDate de cession : ${this.disposalDate}:disposalDate:\nPrix de cession : ${proceeds}:proceeds: TND\nRèglement : ${account}:account:\n\nCette action est irréversible.`
     );
   }
 
@@ -1170,11 +1163,11 @@ export class FixedAssetDetailComponent implements OnInit {
     this.error.set(null);
     this.success.set(null);
     this.confirmation.confirm({
-      header: 'Enregistrer la cession',
+      header: $localize`:@@accounting.fixed-asset-detail.ts.enregistrer.la.cession.9bdc21df:Enregistrer la cession`,
       message: this.disposalRecap(),
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Enregistrer la cession',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@fixed-asset-detail.component.acceptLabel.Enregistrer_la_c:Enregistrer la cession`,
+      rejectLabel: $localize`:@@fixed-asset-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       size: 'md',
       accept: () => this.dispose()
@@ -1190,12 +1183,12 @@ export class FixedAssetDetailComponent implements OnInit {
       .subscribe({
         next: () => {
           this.saving.set(false);
-          this.success.set('Cession enregistrée et écritures comptables générées.');
+          this.success.set($localize`:@@accounting.fixed-asset-detail.ts.cession.enregistree.et.ecritures.comptab.53b1d27c:Cession enregistrée et écritures comptables générées.`);
           this.loadAsset(id);
         },
         error: err => {
           this.saving.set(false);
-          this.error.set(err?.error?.message ?? 'Erreur cession.');
+          this.error.set(err?.error?.message ?? $localize`:@@ui.tern.erreur.cession.4817ce:Erreur cession.`);
         }
       });
   }
@@ -1229,7 +1222,7 @@ export class FixedAssetDetailComponent implements OnInit {
           this.api.getSchedule(id).subscribe(s => this.schedule.set(s.data ?? null));
         }
       },
-      error: () => this.error.set('Immobilisation introuvable.')
+      error: () => this.error.set($localize`:@@accounting.fixed-asset-detail.ts.immobilisation.introuvable.cd4a3ada:Immobilisation introuvable.`)
     });
   }
 
@@ -1242,14 +1235,14 @@ export class FixedAssetDetailComponent implements OnInit {
   }
 
   methodLabel(m: DepreciationMethod): string {
-    return DEPRECIATION_METHOD_LABELS[m] ?? 'Linéaire';
+    return DEPRECIATION_METHOD_LABELS[m] ?? $localize`:@@ui.tern.lineaire.a5db4c:Linéaire`;
   }
 
   pageTitle(): string {
-    return this.isNew() ? 'Nouvelle immobilisation' : (this.asset()?.label ?? 'Immobilisation');
+    return this.isNew() ? $localize`:@@ui.tern.nouvelle.immobilisation.477db8:Nouvelle immobilisation` : (this.asset()?.label ?? $localize`:@@ui.tern.immobilisation.b42edd:Immobilisation`);
   }
 
   pageSubtitle(): string {
-    return this.asset()?.inventoryNumber ?? "Saisie et tableau d'amortissement";
+    return this.asset()?.inventoryNumber ?? $localize`:@@ui.tern.saisie.et.tableau.d.amortissement.1d761c:Saisie et tableau d'amortissement`;
   }
 }

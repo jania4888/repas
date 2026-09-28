@@ -20,7 +20,7 @@ interface FiscalParametersApiResponse {
 const MIN_FISCAL_YEAR = 2000;
 const MAX_FISCAL_YEAR = 2100;
 const UNSAVED_CHANGES_MESSAGE =
-  'Des modifications non enregistrées seront perdues. Continuer ?';
+  $localize`:@@accounting.fiscal-parameters.ts.des.modifications.non.enregistrees.seron.a18f027c:Des modifications non enregistrées seront perdues. Continuer ?`;
 
 /**
  * Paramétrage fiscal par exercice : taux IS, minimum d'impôt, CSS, acomptes, report des déficits et
@@ -32,36 +32,36 @@ const UNSAVED_CHANGES_MESSAGE =
   standalone: true,
   imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, AccountingFilterBarComponent, AccountingStatusBannerComponent],
   template: `
-    <app-page-header title="Paramètres fiscaux"
-      subtitle="Taux IS, minimum d'impôt, CSS, acomptes et barème IRPP — par exercice" />
+    <app-page-header title="Paramètres fiscaux" i18n-title="@@accounting.fiscal-parameters.parametres.fiscaux.ec3397a0"
+      subtitle="Taux IS, minimum d'impôt, CSS, acomptes et barème IRPP — par exercice" i18n-subtitle="@@accounting.fiscal-parameters.taux.is.minimum.d.impot.css.acomptes.et.420bfe73" />
 
     @if (isDirty()) {
-      <p class="fp-dirty-indicator" role="status"><i class="pi pi-circle-fill" aria-hidden="true"></i> Modifications non enregistrées</p>
+      <p class="fp-dirty-indicator" role="status" i18n="@@accounting.fiscal-parameters.modifications.non.enregistrees.af44fff0"><i class="pi pi-circle-fill" aria-hidden="true"></i> Modifications non enregistrées</p>
     }
 
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Exercice des paramètres fiscaux">
+      <app-accounting-filter-bar ariaLabel="Exercice des paramètres fiscaux" i18n-ariaLabel="@@accounting.fiscal-parameters.exercice.des.parametres.fiscaux.6b8e7d5a">
         <div accountingFilterFields>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="fp-year">Exercice</label>
+            <label class="accounting-filter-label" for="fp-year" i18n="@@accounting.fiscal-parameters.exercice.e171e2b0">Exercice</label>
             <input id="fp-year" type="number" [ngModel]="fiscalYear" (ngModelChange)="onYearInputChange($event)"
               class="accounting-filter-input fp-year-input" min="2000" max="2100"
               [attr.aria-invalid]="!isYearValid()" />
             @if (!isYearValid()) {
-              <span class="fp-year-error" role="alert">Exercice invalide : doit être compris entre 2000 et 2100.</span>
+              <span class="fp-year-error" role="alert" i18n="@@accounting.fiscal-parameters.exercice.invalide.doit.etre.compris.entre.2000.e.db4c8a16">Exercice invalide : doit être compris entre 2000 et 2100.</span>
             }
           </div>
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="load()" [disabled]="loading() || !isYearValid()"
-            ariaLabel="Charger les paramètres de l'exercice">Charger</app-button>
+            ariaLabel="Charger les paramètres de l'exercice" i18n-ariaLabel="@@accounting.fiscal-parameters.charger.les.parametres.de.l.exercice.c853e85c" i18n="@@accounting.fiscal-parameters.charger.8f860300">Charger</app-button>
           <app-button variant="primary" icon="pi pi-save" type="button" (click)="save()" [disabled]="loading() || saving() || !model"
-            ariaLabel="Enregistrer les paramètres fiscaux">Enregistrer</app-button>
+            ariaLabel="Enregistrer les paramètres fiscaux" i18n-ariaLabel="@@accounting.fiscal-parameters.enregistrer.les.parametres.fiscaux.cc33ee82" i18n="@@accounting.fiscal-parameters.enregistrer.f7c8bcd8">Enregistrer</app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
 
-    <div class="fp-validate-banner" role="status">
+    <div class="fp-validate-banner" role="status" i18n="@@accounting.fiscal-parameters.valeurs.indicatives.a.valider.selon.la.l.bb0471cd">
       <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
       <span>
         <strong>Valeurs indicatives</strong> — à valider selon la loi de finances de l'exercice.
@@ -69,7 +69,7 @@ const UNSAVED_CHANGES_MESSAGE =
       </span>
     </div>
 
-    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="load()" />
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.fiscal-parameters.reessayer.c4f78b12" (retry)="load()" />
 
     @if (jsonError(); as jerr) {
       <div class="fp-json-error-banner" role="alert">
@@ -86,51 +86,51 @@ const UNSAVED_CHANGES_MESSAGE =
       @if (!m.isUserModified) {
         <div class="fp-default-banner" role="status">
           <i class="pi pi-info-circle" aria-hidden="true"></i>
-          <span>Paramètres standards en vigueur. Après enregistrement, vos valeurs personnalisées seront conservées et ne seront plus mises à jour automatiquement.</span>
+          <span i18n="@@accounting.fiscal-parameters.parametres.standards.en.vigueur.apres.enregistre.e086c573">Paramètres standards en vigueur. Après enregistrement, vos valeurs personnalisées seront conservées et ne seront plus mises à jour automatiquement.</span>
         </div>
       }
 
       <div class="fp-grid">
         <div class="card fp-card">
-          <h3 class="fp-title">Impôt sur les sociétés</h3>
-          <div class="fp-row"><label>Taux de droit commun</label><input type="number" step="0.01" min="0" max="1" [(ngModel)]="m.isStandardRate" /><span class="fp-hint">0.15 = 15 %</span></div>
-          <div class="fp-row"><label>Taux réduit</label><input type="number" step="0.01" min="0" max="1" [(ngModel)]="m.isReducedRate" /></div>
-          <div class="fp-row"><label>Taux sectoriel majoré</label><input type="number" step="0.01" min="0" max="1" [(ngModel)]="m.isSectorRate" /><span class="fp-hint">banques, assurances, télécoms…</span></div>
+          <h3 class="fp-title" i18n="@@accounting.fiscal-parameters.impot.sur.les.societes.33c535a2">Impôt sur les sociétés</h3>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.taux.de.droit.commun.f3555cac">Taux de droit commun</label><input type="number" step="0.01" min="0" max="1" [(ngModel)]="m.isStandardRate" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.0.15.15.584ea9ee">0.15 = 15 %</span></div>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.taux.reduit.48dc3022">Taux réduit</label><input type="number" step="0.01" min="0" max="1" [(ngModel)]="m.isReducedRate" /></div>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.taux.sectoriel.majore.16c309a7">Taux sectoriel majoré</label><input type="number" step="0.01" min="0" max="1" [(ngModel)]="m.isSectorRate" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.banques.assurances.telecoms.a926498e">banques, assurances, télécoms…</span></div>
         </div>
 
         <div class="card fp-card">
-          <h3 class="fp-title">Minimum d'impôt</h3>
-          <div class="fp-row"><label>Taux (droit commun)</label><input type="number" step="0.001" min="0" max="1" [(ngModel)]="m.minTaxRate" /><span class="fp-hint">0.002 = 0,2 % du CA local TTC</span></div>
-          <div class="fp-row"><label>Plancher (droit commun)</label><input type="number" step="0.001" min="0" [(ngModel)]="m.minTaxFloorTnd" /><span class="fp-hint">TND</span></div>
-          <div class="fp-row"><label>Taux réduit</label><input type="number" step="0.001" min="0" max="1" [(ngModel)]="m.minTaxReducedRate" /><span class="fp-hint">0.001 = 0,1 %</span></div>
-          <div class="fp-row"><label>Plancher réduit</label><input type="number" step="0.001" min="0" [(ngModel)]="m.minTaxFloorReducedTnd" /><span class="fp-hint">TND</span></div>
+          <h3 class="fp-title" i18n="@@accounting.fiscal-parameters.minimum.d.impot.8689385e">Minimum d'impôt</h3>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.taux.droit.commun.1738478e">Taux (droit commun)</label><input type="number" step="0.001" min="0" max="1" [(ngModel)]="m.minTaxRate" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.0.002.0.2.du.ca.local.ttc.26904314">0.002 = 0,2 % du CA local TTC</span></div>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.plancher.droit.commun.11d78598">Plancher (droit commun)</label><input type="number" step="0.001" min="0" [(ngModel)]="m.minTaxFloorTnd" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.tnd.51da21a7">TND</span></div>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.taux.reduit.48dc3022">Taux réduit</label><input type="number" step="0.001" min="0" max="1" [(ngModel)]="m.minTaxReducedRate" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.0.001.0.1.d4b62d5a">0.001 = 0,1 %</span></div>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.plancher.reduit.36c97c30">Plancher réduit</label><input type="number" step="0.001" min="0" [(ngModel)]="m.minTaxFloorReducedTnd" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.tnd.51da21a7">TND</span></div>
         </div>
 
         <div class="card fp-card">
-          <h3 class="fp-title">Contribution sociale de solidarité</h3>
+          <h3 class="fp-title" i18n="@@accounting.fiscal-parameters.contribution.sociale.de.solidarite.49cf2910">Contribution sociale de solidarité</h3>
           <div class="fp-row fp-row--check">
-            <label for="fp-css">La CSS s'applique</label>
+            <label for="fp-css" i18n="@@accounting.fiscal-parameters.la.css.s.applique.e06158a8">La CSS s'applique</label>
             <input id="fp-css" type="checkbox" [(ngModel)]="m.cssApplies" />
           </div>
-          <div class="fp-row"><label>Taux CSS</label><input type="number" step="0.001" min="0" max="1" [(ngModel)]="m.cssRate" /><span class="fp-hint">0.01 = 1 % de l'assiette imposable</span></div>
-          <div class="fp-row"><label>Plancher CSS</label><input type="number" step="0.001" min="0" [(ngModel)]="m.cssFloorTnd" /><span class="fp-hint">TND</span></div>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.taux.css.0070206d">Taux CSS</label><input type="number" step="0.001" min="0" max="1" [(ngModel)]="m.cssRate" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.0.01.1.de.l.assiette.imposable.0c6a4e47">0.01 = 1 % de l'assiette imposable</span></div>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.plancher.css.3c30a8cb">Plancher CSS</label><input type="number" step="0.001" min="0" [(ngModel)]="m.cssFloorTnd" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.tnd.51da21a7">TND</span></div>
         </div>
 
         <div class="card fp-card">
-          <h3 class="fp-title">Acomptes, reports et arrondi</h3>
-          <div class="fp-row"><label>Taux d'un acompte</label><input type="number" step="0.01" min="0" max="1" [(ngModel)]="m.acompteRate" /><span class="fp-hint">0.30 = 30 % de l'IS N-1</span></div>
-          <div class="fp-row"><label>Nombre d'acomptes</label><input type="number" step="1" min="0" max="12" [(ngModel)]="m.acompteCount" /></div>
-          <div class="fp-row"><label>Report des déficits (années)</label><input type="number" step="1" min="1" max="20" [(ngModel)]="m.deficitCarryForwardYears" /><span class="fp-hint">amortissements différés : illimité</span></div>
+          <h3 class="fp-title" i18n="@@accounting.fiscal-parameters.acomptes.reports.et.arrondi.f15dd43a">Acomptes, reports et arrondi</h3>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.taux.d.un.acompte.17038508">Taux d'un acompte</label><input type="number" step="0.01" min="0" max="1" [(ngModel)]="m.acompteRate" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.0.30.30.de.l.is.n.1.c440fa3d">0.30 = 30 % de l'IS N-1</span></div>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.nombre.d.acomptes.1eaa3604">Nombre d'acomptes</label><input type="number" step="1" min="0" max="12" [(ngModel)]="m.acompteCount" /></div>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.report.des.deficits.annees.23f152ab">Report des déficits (années)</label><input type="number" step="1" min="1" max="20" [(ngModel)]="m.deficitCarryForwardYears" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.amortissements.differes.illimite.a4e6a31a">amortissements différés : illimité</span></div>
           <div class="fp-row fp-row--check">
-            <label for="fp-round">Arrondir l'assiette au dinar</label>
+            <label for="fp-round" i18n="@@accounting.fiscal-parameters.arrondir.l.assiette.au.dinar.08d31433">Arrondir l'assiette au dinar</label>
             <input id="fp-round" type="checkbox" [(ngModel)]="m.roundTaxableToDinar" />
           </div>
         </div>
 
         <div class="card fp-card fp-card--wide">
-          <h3 class="fp-title">Barème IRPP (BIC — régime réel)</h3>
-          <p class="fp-hint">Tableau JSON : <code>[{{ '{' }}"lower":0,"rate":0{{ '}' }}, …]</code> — <em>lower</em> = borne inférieure annuelle (TND), <em>rate</em> = taux en %.</p>
-          <textarea rows="4" class="fp-json" [class.fp-json--invalid]="!!irppValidationError()" [(ngModel)]="m.irppBracketsJson" aria-label="Barème IRPP en JSON"></textarea>
+          <h3 class="fp-title" i18n="@@accounting.fiscal-parameters.bareme.irpp.bic.regime.reel.0fc0c501">Barème IRPP (BIC — régime réel)</h3>
+          <p class="fp-hint" i18n="@@accounting.fiscal-parameters.tableau.json.lower.0.rate.0.lower.borne.f242ddb0"><ng-container>Tableau JSON : </ng-container> <code>[{{ '{' }}"lower":0,"rate":0{{ '}' }}, …]</code> — <em>lower</em> = borne inférieure annuelle (TND), <em>rate</em> = taux en %.</p>
+          <textarea rows="4" class="fp-json" [class.fp-json--invalid]="!!irppValidationError()" [(ngModel)]="m.irppBracketsJson" aria-label="Barème IRPP en JSON" i18n-aria-label="@@accounting.fiscal-parameters.bareme.irpp.en.json.bef0cbaa"></textarea>
           @if (irppValidationError(); as verr) {
             <span class="fp-json-inline-error" role="alert">{{ verr }}</span>
           }
@@ -154,7 +154,7 @@ const UNSAVED_CHANGES_MESSAGE =
     .fp-row { display:grid; grid-template-columns:1fr 9rem auto; align-items:center; gap:var(--spacing-2); margin-bottom:var(--spacing-2); }
     .fp-row--check { grid-template-columns:1fr auto; }
     .fp-row label { font-size:var(--font-size-sm); color:var(--color-text-secondary); }
-    .fp-row input[type=number] { padding:0.4rem 0.55rem; border:1px solid var(--color-border-default,#cbd5e1); border-radius:var(--radius-md); text-align:right; font-variant-numeric:tabular-nums; }
+    .fp-row input[type=number] { padding:0.4rem 0.55rem; border:1px solid var(--color-border-default,#cbd5e1); border-radius:var(--radius-md); text-align:end; font-variant-numeric:tabular-nums; }
     .fp-hint { font-size:var(--font-size-xs); color:var(--color-text-tertiary); }
     .fp-json { width:100%; font-family:monospace; font-size:var(--font-size-sm); padding:var(--spacing-2); border:1px solid var(--color-border-default,#cbd5e1); border-radius:var(--radius-md); }
     .fp-json--invalid { border-color:var(--color-danger-600,#dc2626); }
@@ -183,7 +183,7 @@ export class FiscalParametersComponent implements OnInit {
       .pipe(
         switchMap(year =>
           this.api.getIncomeTaxParameters(year).pipe(
-            catchError(() => of<FiscalParametersApiResponse>({ success: false, error: 'Erreur réseau' }))
+            catchError(() => of<FiscalParametersApiResponse>({ success: false, error: $localize`:@@accounting.fiscal-parameters.ts.erreur.reseau.0683007f:Erreur réseau` }))
           )
         ),
         takeUntilDestroyed()
@@ -195,7 +195,7 @@ export class FiscalParametersComponent implements OnInit {
           this.snapshot = { ...res.data };
           this.jsonError.set(this.validateIrppJsonSyntax(res.data.irppBracketsJson));
         } else {
-          this.error.set(res.error ?? 'Erreur');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       });
   }
@@ -252,10 +252,10 @@ export class FiscalParametersComponent implements OnInit {
   private validateIrppJsonSyntax(raw: string): string | null {
     try {
       const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) return 'Le barème IRPP reçu du serveur est invalide (tableau attendu).';
+      if (!Array.isArray(parsed)) return $localize`:@@accounting.fiscal-parameters.ts.le.bareme.irpp.recu.du.serveur.est.inval.7ef58a26:Le barème IRPP reçu du serveur est invalide (tableau attendu).`;
       return null;
     } catch {
-      return 'Le barème IRPP reçu du serveur est illisible (JSON invalide) — vérifiez avant de sauvegarder.';
+      return $localize`:@@accounting.fiscal-parameters.ts.le.bareme.irpp.recu.du.serveur.est.illis.141f9d42:Le barème IRPP reçu du serveur est illisible (JSON invalide) — vérifiez avant de sauvegarder.`;
     }
   }
 
@@ -271,26 +271,26 @@ export class FiscalParametersComponent implements OnInit {
     try {
       parsed = JSON.parse(raw);
     } catch {
-      return 'Barème IRPP : JSON invalide.';
+      return $localize`:@@accounting.fiscal-parameters.ts.bareme.irpp.json.invalide.e3da66c9:Barème IRPP : JSON invalide.`;
     }
     if (!Array.isArray(parsed) || parsed.length === 0) {
-      return 'Barème IRPP : un tableau non vide de tranches est requis.';
+      return $localize`:@@accounting.fiscal-parameters.ts.bareme.irpp.un.tableau.non.vide.de.tranc.178edcd9:Barème IRPP : un tableau non vide de tranches est requis.`;
     }
     let previousLower = -1;
     for (const entry of parsed) {
       if (typeof entry !== 'object' || entry === null || Array.isArray(entry)) {
-        return 'Barème IRPP : chaque tranche doit être un objet { lower, rate }.';
+        return $localize`:@@accounting.fiscal-parameters.ts.bareme.irpp.chaque.tranche.doit.etre.un.38076dfc:Barème IRPP : chaque tranche doit être un objet { lower, rate }.`;
       }
       const lower = (entry as Record<string, unknown>)['lower'];
       const rate = (entry as Record<string, unknown>)['rate'];
       if (typeof lower !== 'number' || !Number.isFinite(lower) || lower < 0) {
-        return 'Barème IRPP : chaque « lower » doit être un nombre ≥ 0.';
+        return $localize`:@@accounting.fiscal-parameters.ts.bareme.irpp.chaque.lower.doit.etre.un.no.fe088626:Barème IRPP : chaque « lower » doit être un nombre ≥ 0.`;
       }
       if (typeof rate !== 'number' || !Number.isFinite(rate) || rate < 0 || rate > 100) {
-        return 'Barème IRPP : chaque « rate » doit être compris entre 0 et 100.';
+        return $localize`:@@accounting.fiscal-parameters.ts.bareme.irpp.chaque.rate.doit.etre.compri.2ed6568c:Barème IRPP : chaque « rate » doit être compris entre 0 et 100.`;
       }
       if (lower <= previousLower) {
-        return 'Barème IRPP : les bornes « lower » doivent être strictement croissantes et uniques.';
+        return $localize`:@@accounting.fiscal-parameters.ts.bareme.irpp.les.bornes.lower.doivent.etr.deae9533:Barème IRPP : les bornes « lower » doivent être strictement croissantes et uniques.`;
       }
       previousLower = lower;
     }
@@ -302,38 +302,38 @@ export class FiscalParametersComponent implements OnInit {
     if (!this.model) return null;
     const m = this.model;
     const rateFields: Array<[number, string]> = [
-      [m.isStandardRate, 'Taux IS de droit commun'],
-      [m.isReducedRate, 'Taux IS réduit'],
-      [m.isSectorRate, 'Taux IS sectoriel majoré'],
-      [m.minTaxRate, "Taux du minimum d'impôt"],
-      [m.minTaxReducedRate, "Taux réduit du minimum d'impôt"],
-      [m.cssRate, 'Taux CSS'],
-      [m.acompteRate, "Taux d'un acompte"]
+      [m.isStandardRate, $localize`:@@accounting.fiscal-parameters.ts.taux.is.de.droit.commun.d37f185c:Taux IS de droit commun`],
+      [m.isReducedRate, $localize`:@@accounting.fiscal-parameters.ts.taux.is.reduit.0bc7cf2d:Taux IS réduit`],
+      [m.isSectorRate, $localize`:@@accounting.fiscal-parameters.ts.taux.is.sectoriel.majore.4ec8a76f:Taux IS sectoriel majoré`],
+      [m.minTaxRate, $localize`:@@accounting.fiscal-parameters.ts.taux.du.minimum.d.impot.70af8e48:Taux du minimum d'impôt`],
+      [m.minTaxReducedRate, $localize`:@@accounting.fiscal-parameters.ts.taux.reduit.du.minimum.d.impot.80afdd6f:Taux réduit du minimum d'impôt`],
+      [m.cssRate, $localize`:@@accounting.fiscal-parameters.ts.taux.css.0070206d:Taux CSS`],
+      [m.acompteRate, $localize`:@@accounting.fiscal-parameters.ts.taux.d.un.acompte.17038508:Taux d'un acompte`]
     ];
     for (const [value, label] of rateFields) {
       const n = Number(value);
       if (!Number.isFinite(n) || n < 0 || n > 1) {
-        return `${label} : doit être compris entre 0 et 1.`;
+        return $localize`:@@accounting.fiscal-parameters.ts.label.doit.etre.compris.entre.0.et.1.8ee660ad:${label}:label: : doit être compris entre 0 et 1.`;
       }
     }
     const floorFields: Array<[number, string]> = [
-      [m.minTaxFloorTnd, "Plancher du minimum d'impôt"],
-      [m.minTaxFloorReducedTnd, "Plancher réduit du minimum d'impôt"],
-      [m.cssFloorTnd, 'Plancher CSS']
+      [m.minTaxFloorTnd, $localize`:@@accounting.fiscal-parameters.ts.plancher.du.minimum.d.impot.b293528b:Plancher du minimum d'impôt`],
+      [m.minTaxFloorReducedTnd, $localize`:@@accounting.fiscal-parameters.ts.plancher.reduit.du.minimum.d.impot.5bd56c4d:Plancher réduit du minimum d'impôt`],
+      [m.cssFloorTnd, $localize`:@@accounting.fiscal-parameters.ts.plancher.css.3c30a8cb:Plancher CSS`]
     ];
     for (const [value, label] of floorFields) {
       const n = Number(value);
       if (!Number.isFinite(n) || n < 0) {
-        return `${label} : doit être positif ou nul.`;
+        return $localize`:@@accounting.fiscal-parameters.ts.label.doit.etre.positif.ou.nul.e11ca7fe:${label}:label: : doit être positif ou nul.`;
       }
     }
     const acompteCount = Number(m.acompteCount);
     if (!Number.isInteger(acompteCount) || acompteCount < 0 || acompteCount > 12) {
-      return "Nombre d'acomptes : doit être compris entre 0 et 12.";
+      return $localize`:@@accounting.fiscal-parameters.ts.nombre.d.acomptes.doit.etre.compris.entr.3dde7df8:Nombre d'acomptes : doit être compris entre 0 et 12.`;
     }
     const deficitYears = Number(m.deficitCarryForwardYears);
     if (!Number.isInteger(deficitYears) || deficitYears < 1 || deficitYears > 20) {
-      return 'Report des déficits (années) : doit être compris entre 1 et 20.';
+      return $localize`:@@accounting.fiscal-parameters.ts.report.des.deficits.annees.doit.etre.com.2a7522b5:Report des déficits (années) : doit être compris entre 1 et 20.`;
     }
     return null;
   }
@@ -341,7 +341,7 @@ export class FiscalParametersComponent implements OnInit {
   save(): void {
     if (!this.model) return;
     if (!this.isYearValid()) {
-      this.error.set('Exercice invalide : doit être compris entre 2000 et 2100.');
+      this.error.set($localize`:@@accounting.fiscal-parameters.ts.exercice.invalide.doit.etre.compris.entr.db4c8a16:Exercice invalide : doit être compris entre 2000 et 2100.`);
       return;
     }
     const irppError = this.irppValidationError();
@@ -364,14 +364,14 @@ export class FiscalParametersComponent implements OnInit {
           this.model = { ...res.data };
           this.snapshot = { ...res.data };
           this.jsonError.set(this.validateIrppJsonSyntax(res.data.irppBracketsJson));
-          this.info.set('Paramètres enregistrés — ils ne seront plus réinitialisés automatiquement.');
+          this.info.set($localize`:@@accounting.fiscal-parameters.ts.parametres.enregistres.ils.ne.seront.plu.a92b4346:Paramètres enregistrés — ils ne seront plus réinitialisés automatiquement.`);
         } else {
-          this.error.set(res.error ?? "L'enregistrement a échoué.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.l.enregistrement.a.echoue.3f69ec:L'enregistrement a échoué.`);
         }
       },
       error: () => {
         this.saving.set(false);
-        this.error.set("L'enregistrement a échoué.");
+        this.error.set($localize`:@@accounting.fiscal-parameters.ts.l.enregistrement.a.echoue.3f69ec30:L'enregistrement a échoué.`);
       }
     });
   }

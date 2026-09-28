@@ -1,0 +1,78 @@
+{
+  "waves": {
+    "v1": {
+      "label": "Shell, core et shared",
+      "globs": [
+        "src/app/core/**",
+        "src/app/shared/**"
+      ]
+    },
+    "v2": {
+      "label": "Authentification",
+      "globs": [
+        "src/app/features/auth/**"
+      ]
+    },
+    "v3": {
+      "label": "Tableau de bord et fiches",
+      "globs": [
+        "src/app/features/dashboard/**",
+        "src/app/features/clients/**",
+        "src/app/features/suppliers/**",
+        "src/app/features/products/**",
+        "src/app/features/product-categories/**",
+        "src/app/features/settings/**"
+      ]
+    },
+    "v4": {
+      "label": "Ventes et achats",
+      "globs": [
+        "src/app/features/invoices/**",
+        "src/app/features/quotes/**",
+        "src/app/features/sales-orders/**",
+        "src/app/features/delivery-notes/**",
+        "src/app/features/sales-return-notes/**",
+        "src/app/features/purchase-orders/**",
+        "src/app/features/purchase-receipts/**",
+        "src/app/features/supplier-invoices/**",
+        "src/app/features/recurring-contracts/**"
+      ]
+    },
+    "v5": {
+      "label": "Opérations",
+      "globs": [
+        "src/app/features/stock/**",
+        "src/app/features/inventory/**",
+        "src/app/features/stock-vouchers/**",
+        "src/app/features/transfers/**",
+        "src/app/features/treasury/**",
+        "src/app/features/payments/**",
+        "src/app/features/pos/**",
+        "src/app/features/crm/**",
+        "src/app/features/exchanges/**",
+        "src/app/features/assistance/**"
+      ]
+    },
+    "v6": {
+      "label": "RH, projets, IA et rapports",
+      "globs": [
+        "src/app/features/payroll/**",
+        "src/app/features/projects/**",
+        "src/app/features/timesheets/**",
+        "src/app/features/forecasting/**",
+        "src/app/features/ai-assistant/**",
+        "src/app/features/reports/**",
+        "src/app/features/documentation/**",
+        "src/app/features/audit/**"
+      ]
+    },
+    "v7": {
+      "label": "Comptabilité, fiscal et Studio",
+      "globs": [
+        "src/app/features/accounting/**",
+        "src/app/features/withholding-tax/**",
+        "src/app/features/studio/**"
+      ]
+    }
+  }
+}

@@ -33,15 +33,15 @@ export interface DashboardBlockDef {
  * L'ordre de ce tableau fait foi pour la disposition initiale et la réconciliation.
  */
 export const DASHBOARD_BLOCK_DEFS: readonly DashboardBlockDef[] = [
-  { id: 'kpi', label: 'Indicateurs clés' },
-  { id: 'sector', label: 'Aperçu sectoriel & modules' },
-  { id: 'recommendations', label: 'Recommandé pour vous' },
-  { id: 'urgent', label: 'Actions requises' },
-  { id: 'quick-actions', label: 'Actions rapides' },
-  { id: 'accounting', label: 'Comptabilité' },
-  { id: 'crm', label: 'CRM Commercial' },
-  { id: 'chart', label: 'Évolution du CA' },
-  { id: 'bottom-grid', label: 'Factures, clients & activité' }
+  { id: 'kpi', label: $localize`:@@dashboard.dashboard-layout.ts.indicateurs.cles.ad2f0ef9:Indicateurs clés` },
+  { id: 'sector', label: $localize`:@@dashboard.dashboard-layout.ts.apercu.sectoriel.modules.56344376:Aperçu sectoriel & modules` },
+  { id: 'recommendations', label: $localize`:@@dashboard.dashboard-layout.ts.recommande.pour.vous.46f2c609:Recommandé pour vous` },
+  { id: 'urgent', label: $localize`:@@dashboard.dashboard-layout.ts.actions.requises.3ec278be:Actions requises` },
+  { id: 'quick-actions', label: $localize`:@@dashboard.dashboard-layout.ts.actions.rapides.abe69a9c:Actions rapides` },
+  { id: 'accounting', label: $localize`:@@dashboard.dashboard-layout.ts.comptabilite.20af7266:Comptabilité` },
+  { id: 'crm', label: $localize`:@@dashboard.dashboard-layout.ts.crm.commercial.96a9fcf3:CRM Commercial` },
+  { id: 'chart', label: $localize`:@@dashboard.dashboard-layout.ts.evolution.du.ca.ba7ac89b:Évolution du CA` },
+  { id: 'bottom-grid', label: $localize`:@@dashboard.dashboard-layout.ts.factures.clients.activite.f33b98f9:Factures, clients & activité` }
 ];
 
 /** Ordre par défaut des identifiants de blocs. */

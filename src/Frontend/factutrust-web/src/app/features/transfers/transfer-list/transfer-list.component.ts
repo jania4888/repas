@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal, DestroyRef, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
@@ -18,33 +20,33 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
 @Component({
   selector: 'app-transfer-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, TableModule, SelectModule, ButtonModule, TagModule, ToastModule, TableTotalsBarComponent],
+  imports: [BackendLabelPipe, CommonModule, RouterModule, FormsModule, TableModule, SelectModule, ButtonModule, TagModule, ToastModule, TableTotalsBarComponent],
   providers: [MessageService],
   template: `
     <p-toast></p-toast>
     <div class="page-container">
       <div class="page-header">
         <div>
-          <h1>Transferts entre entrepôts</h1>
-          <p class="text-muted">Gérez les transferts de stock entre vos entrepôts</p>
+          <h1 i18n="@@transfers.transfer-list.transferts.entre.entrepots.5043bd7d">Transferts entre entrepôts</h1>
+          <p class="text-muted" i18n="@@transfers.transfer-list.gerez.les.transferts.de.stock.entre.vos.entrepot.13ea9820">Gérez les transferts de stock entre vos entrepôts</p>
         </div>
         @if (canCreateTransfer()) {
-          <a routerLink="create" class="btn-primary">
+          <a routerLink="create" class="btn-primary" i18n="@@transfers.transfer-list.nouveau.transfert.14626fa6">
             <i class="fas fa-plus"></i> Nouveau transfert
           </a>
         }
       </div>
 
       <div class="card filters-card">
-        <div class="filters-grid" role="search" aria-label="Filtres des transferts">
+        <div class="filters-grid" role="search" aria-label="Filtres des transferts" i18n-aria-label="@@transfers.transfer-list.filtres.des.transferts.8aa7decf">
           <div class="filter-field">
-            <label class="filter-label" id="filter-status-label" for="filter-status">Statut</label>
+            <label class="filter-label" id="filter-status-label" for="filter-status" i18n="@@transfers.transfer-list.statut.659499f3">Statut</label>
             <p-select inputId="filter-status"
               [options]="statusOptions"
               [(ngModel)]="statusFilter"
               optionLabel="label"
               optionValue="value"
-              placeholder="Tous les statuts"
+              placeholder="Tous les statuts" i18n-placeholder="@@transfers.transfer-list.tous.les.statuts.2d5088af"
               [showClear]="true"
               [style]="{ width: '100%' }"
               appendTo="body"
@@ -52,34 +54,34 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
             </p-select>
           </div>
           <div class="filter-field">
-            <label class="filter-label" id="filter-wh-label" for="filter-warehouse">Entrepôt (source ou destination)</label>
+            <label class="filter-label" id="filter-wh-label" for="filter-warehouse" i18n="@@transfers.transfer-list.entrepot.source.ou.destination.d06d0c18">Entrepôt (source ou destination)</label>
             <p-select inputId="filter-warehouse"
               [options]="warehouseOptions"
               [(ngModel)]="warehouseFilter"
               optionLabel="label"
               optionValue="value"
-              placeholder="Tous les entrepôts"
+              placeholder="Tous les entrepôts" i18n-placeholder="@@transfers.transfer-list.tous.les.entrepots.2c918ad1"
               [showClear]="true"
               [filter]="warehouseOptions.length > 20"
               filterBy="label"
               [resetFilterOnHide]="true"
-              filterPlaceholder="Rechercher…"
+              filterPlaceholder="Rechercher…" i18n-filterPlaceholder="@@transfers.transfer-list.rechercher.ed75dcce"
               [style]="{ width: '100%' }"
               appendTo="body"
               ariaLabelledBy="filter-wh-label">
             </p-select>
           </div>
           <div class="filter-field">
-            <label class="filter-label" for="filter-from">Du</label>
+            <label class="filter-label" for="filter-from" i18n="@@transfers.transfer-list.du.84814985">Du</label>
             <input id="filter-from" type="date" class="date-input" [(ngModel)]="fromDate" />
           </div>
           <div class="filter-field">
-            <label class="filter-label" for="filter-to">Au</label>
+            <label class="filter-label" for="filter-to" i18n="@@transfers.transfer-list.au.7a1732d5">Au</label>
             <input id="filter-to" type="date" class="date-input" [(ngModel)]="toDate" />
           </div>
           <div class="filter-actions">
-            <button pButton type="button" label="Appliquer" icon="pi pi-filter" (click)="loadTransfers()"></button>
-            <button pButton type="button" label="Réinitialiser" class="p-button-outlined" (click)="resetFilters()"></button>
+            <button pButton type="button" label="Appliquer" i18n-label="@@transfers.transfer-list.appliquer.a4d66139" icon="pi pi-filter" (click)="loadTransfers()"></button>
+            <button pButton type="button" label="Réinitialiser" i18n-label="@@transfers.transfer-list.reinitialiser.e0e2ad54" class="p-button-outlined" (click)="resetFilters()"></button>
           </div>
         </div>
       </div>
@@ -90,16 +92,16 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
         <p-table [value]="transfers()" [paginator]="true" [rows]="20"
                  [loading]="loading()" styleClass="p-datatable-sm"
                  [rowHover]="true" [showCurrentPageReport]="true"
-                 currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} transferts">
+                 currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} transferts" i18n-currentPageReportTemplate="@@transfers.transfer-list.affichage.de.first.a.last.sur.totalrecords.trans.92fa6643">
           <ng-template pTemplate="header">
             <tr>
-              <th>Numéro</th>
-              <th>Date</th>
-              <th>Source</th>
-              <th>Destination</th>
-              <th>Lignes</th>
-              <th>Statut</th>
-              <th>Actions</th>
+              <th i18n="@@transfers.transfer-list.numero.15e73db0">Numéro</th>
+              <th i18n="@@transfers.transfer-list.date.eb9a4bc1">Date</th>
+              <th i18n="@@transfers.transfer-list.source.6da13add">Source</th>
+              <th i18n="@@transfers.transfer-list.destination.d4271349">Destination</th>
+              <th i18n="@@transfers.transfer-list.lignes.41c7025e">Lignes</th>
+              <th i18n="@@transfers.transfer-list.statut.659499f3">Statut</th>
+              <th i18n="@@transfers.transfer-list.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-transfer>
@@ -109,12 +111,12 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
               <td>{{ transfer.sourceWarehouseName }}</td>
               <td>{{ transfer.destinationWarehouseName }}</td>
               <td>{{ transfer.lineCount }}</td>
-              <td><span class="status-badge" [ngClass]="transfer.statusCss">{{ transfer.statusDisplay }}</span></td>
-              <td><a [routerLink]="[transfer.id]" class="btn-icon" [attr.aria-label]="'Voir le transfert ' + transfer.number"><i class="fas fa-eye" aria-hidden="true"></i></a></td>
+              <td><span class="status-badge" [ngClass]="transfer.statusCss">{{ transfer.statusDisplay | backendLabel }}</span></td>
+              <td><a [routerLink]="[transfer.id]" class="btn-icon" [attr.aria-label]="loc_ui_tern_voir_le_transfert_1ac89f + transfer.number"><i class="fas fa-eye" aria-hidden="true"></i></a></td>
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
-            <tr><td colspan="7" class="text-center py-4">Aucun transfert trouvé</td></tr>
+            <tr><td colspan="7" class="text-center py-4" i18n="@@transfers.transfer-list.aucun.transfert.trouve.7189631d">Aucun transfert trouvé</td></tr>
           </ng-template>
         </p-table>
       </div>
@@ -156,6 +158,7 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
   `]
 })
 export class TransferListComponent implements OnInit {
+  readonly loc_ui_tern_voir_le_transfert_1ac89f = $localize`:@@ui.tern.voir.le.transfert.1ac89f:Voir le transfert `;
   private transferService = inject(StockTransferService);
   private stockService = inject(StockService);
   private messageService = inject(MessageService);
@@ -172,10 +175,10 @@ export class TransferListComponent implements OnInit {
     const rows = this.transfers();
     const statusLower = (t: StockTransferListDto) => (t.status || '').toLowerCase();
     return [
-      { label: 'Transferts', value: rows.length, format: 'number', icon: 'pi-arrows-h', tone: 'primary' },
-      { label: 'Lignes', value: rows.reduce((acc, t) => acc + t.lineCount, 0), format: 'number', icon: 'pi-list', tone: 'cyan' },
-      { label: 'En transit', value: rows.filter(t => statusLower(t).includes('transit')).length, format: 'number', icon: 'pi-truck', tone: 'amber' },
-      { label: 'Terminés', value: rows.filter(t => statusLower(t).includes('complet')).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' }
+      { label: $localize`:@@transfers.transfer-list.ts.transferts.f2783f95:Transferts`, value: rows.length, format: 'number', icon: 'pi-arrows-h', tone: 'primary' },
+      { label: $localize`:@@transfers.transfer-list.ts.lignes.41c7025e:Lignes`, value: rows.reduce((acc, t) => acc + t.lineCount, 0), format: 'number', icon: 'pi-list', tone: 'cyan' },
+      { label: $localize`:@@transfers.transfer-list.ts.en.transit.5b090eba:En transit`, value: rows.filter(t => statusLower(t).includes('transit')).length, format: 'number', icon: 'pi-truck', tone: 'amber' },
+      { label: $localize`:@@transfers.transfer-list.ts.termines.3f49918f:Terminés`, value: rows.filter(t => statusLower(t).includes('complet')).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' }
     ];
   });
 
@@ -187,11 +190,11 @@ export class TransferListComponent implements OnInit {
   warehouseOptions: { label: string; value: string }[] = [];
 
   readonly statusOptions: { label: string; value: string }[] = [
-    { label: 'Brouillon', value: 'Draft' },
-    { label: 'Confirmé', value: 'Confirmed' },
-    { label: 'En transit', value: 'InTransit' },
-    { label: 'Terminé', value: 'Completed' },
-    { label: 'Annulé', value: 'Cancelled' }
+    { label: $localize`:@@transfers.list.filter.brouillon:Brouillon`, value: 'Draft' },
+    { label: $localize`:@@transfers.list.filter.confirme:Confirmé`, value: 'Confirmed' },
+    { label: $localize`:@@transfers.list.filter.transit:En transit`, value: 'InTransit' },
+    { label: $localize`:@@transfers.list.filter.termine:Terminé`, value: 'Completed' },
+    { label: $localize`:@@transfers.list.filter.annule:Annulé`, value: 'Cancelled' }
   ];
 
   ngOnInit() {
@@ -199,7 +202,7 @@ export class TransferListComponent implements OnInit {
       next: (res) => {
         const data = res.data as Warehouse[] | undefined;
         this.warehouseOptions = (data ?? []).map((w) => {
-          let label = `${w.name}${w.isDefault ? ' (défaut)' : ''}`;
+          let label = `${w.name}${w.isDefault ? $localize`:@@ui.tern.defaut.f21337: (défaut)` : ''}`;
           if (!w.isActive) {
             label += ' — Inactif';
           }
@@ -207,7 +210,7 @@ export class TransferListComponent implements OnInit {
         });
       },
       error: () => {
-        this.messageService.add({ severity: 'warn', summary: 'Entrepôts', detail: 'Impossible de charger la liste des entrepôts' });
+        this.messageService.add({ severity: 'warn', summary: $localize`:@@transfer-list.component.summary.Entrep_ts:Entrepôts`, detail: $localize`:@@transfer-list.component.detail.Impossible_de_ch:Impossible de charger la liste des entrepôts` });
       }
     });
     this.loadTransfers();
@@ -243,8 +246,8 @@ export class TransferListComponent implements OnInit {
         this.loading.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: err.error?.error || err.error?.message || 'Impossible de charger les transferts'
+          summary: $localize`:@@transfer-list.component.summary.Erreur:Erreur`,
+          detail: err.error?.error || err.error?.message || $localize`:@@transfers.transfer-list.ts.impossible.de.charger.les.transferts.064e2937:Impossible de charger les transferts`
         });
       }
     });

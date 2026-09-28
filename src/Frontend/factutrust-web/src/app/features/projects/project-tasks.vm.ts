@@ -1,3 +1,4 @@
+import { erpCollatorCompare } from '@core/i18n/erp-format';
 import { ProjectTask } from './project-api.service';
 import { computeTaskStatusBreakdown, isTaskCancelled } from './project-detail.vm';
 import {
@@ -36,19 +37,19 @@ export interface RootTaskStatusSummary {
 export const TASK_VIEW_STORAGE_KEY = 'ft.project-tasks.view';
 
 export const TASK_DUE_FILTER_OPTIONS: { label: string; value: TaskDueFilterKey }[] = [
-  { label: 'En retard', value: 'overdue' },
-  { label: "Aujourd'hui", value: 'today' },
-  { label: 'Cette semaine', value: 'week' },
-  { label: 'Ce mois', value: 'month' },
-  { label: 'Sans échéance', value: 'none' }
+  { label: $localize`:@@projects.project-tasks.ts.en.retard.40c1dde3:En retard`, value: 'overdue' },
+  { label: $localize`:@@projects.project-tasks.ts.aujourd.hui.baca97f6:Aujourd'hui`, value: 'today' },
+  { label: $localize`:@@projects.project-tasks.ts.cette.semaine.af7dc0a9:Cette semaine`, value: 'week' },
+  { label: $localize`:@@projects.project-tasks.ts.ce.mois.db74c560:Ce mois`, value: 'month' },
+  { label: $localize`:@@projects.project-tasks.ts.sans.echeance.4a0d4bf9:Sans échéance`, value: 'none' }
 ];
 
 export const TASK_SORT_OPTIONS: { label: string; value: TaskSortKey }[] = [
-  { label: 'Échéance (croissant)', value: 'dueAsc' },
-  { label: 'Échéance (décroissant)', value: 'dueDesc' },
-  { label: 'Priorité', value: 'priority' },
-  { label: 'Titre', value: 'title' },
-  { label: 'Avancement', value: 'progress' }
+  { label: $localize`:@@projects.project-tasks.ts.echeance.croissant.5f934944:Échéance (croissant)`, value: 'dueAsc' },
+  { label: $localize`:@@projects.project-tasks.ts.echeance.decroissant.44a032fe:Échéance (décroissant)`, value: 'dueDesc' },
+  { label: $localize`:@@projects.project-tasks.ts.priorite.eede91d2:Priorité`, value: 'priority' },
+  { label: $localize`:@@projects.project-tasks.ts.titre.eb97899a:Titre`, value: 'title' },
+  { label: $localize`:@@projects.project-tasks.ts.avancement.e1963fc4:Avancement`, value: 'progress' }
 ];
 
 const PRIORITY_RANK: Record<ProjectTaskPriorityCode, number> = {
@@ -146,11 +147,11 @@ export function sortRootTasks(tasks: ProjectTask[], sortKey: TaskSortKey): Proje
     case 'dueDesc':
       return list.sort((a, b) => dueSortKey(b, false) - dueSortKey(a, false));
     case 'priority':
-      return list.sort((a, b) => priorityRank(b) - priorityRank(a) || a.title.localeCompare(b.title, 'fr'));
+      return list.sort((a, b) => priorityRank(b) - priorityRank(a) || erpCollatorCompare(a.title, b.title));
     case 'title':
-      return list.sort((a, b) => a.title.localeCompare(b.title, 'fr'));
+      return list.sort((a, b) => erpCollatorCompare(a.title, b.title));
     case 'progress':
-      return list.sort((a, b) => b.progressPercent - a.progressPercent || a.title.localeCompare(b.title, 'fr'));
+      return list.sort((a, b) => b.progressPercent - a.progressPercent || erpCollatorCompare(a.title, b.title));
     default:
       return list;
   }

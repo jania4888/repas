@@ -114,7 +114,7 @@ import { StudioSystemExportDto } from '../studio-ai.models';
             type="button"
             data-action="download"
             icon="fa-solid fa-download"
-            [label]="labels.importExport.download + ' .json'"
+            [label]="labels.importExport.download + loc_ui_tern_json_9abd16"
             [disabled]="loading() || !result()"
             (click)="download()"></button>
         </div>
@@ -171,6 +171,7 @@ import { StudioSystemExportDto } from '../studio-ai.models';
   `]
 })
 export class StudioAiExportDialogComponent {
+  readonly loc_ui_tern_json_9abd16 = ' .json';
   private readonly builds = inject(StudioAiBuildService);
   private readonly studio = inject(StudioService);
 

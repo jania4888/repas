@@ -11,27 +11,27 @@ import { formatFiscalAmount } from './fiscal-schedule.view-model';
   template: `
     <div class="summary-grid" *ngIf="summary">
       <button class="summary-tile success" type="button" (click)="statusClick.emit(0)">
-        <span>A venir (&lt;= 7 jours)</span>
+        <span i18n="@@accounting.fiscal-schedule.a.venir.lt.7.jours.f4beddec">A venir (&lt;= 7 jours)</span>
         <strong>{{ summary.upcomingWithin7DaysCount }}</strong>
         <em>{{ amount(summary.upcomingWithin7DaysAmount) }} TND</em>
       </button>
       <button class="summary-tile warning" type="button" (click)="statusClick.emit(1)">
-        <span>A venir (&gt; 7 jours)</span>
+        <span i18n="@@accounting.fiscal-schedule.a.venir.gt.7.jours.87078399">A venir (&gt; 7 jours)</span>
         <strong>{{ summary.upcomingAfter7DaysCount }}</strong>
         <em>{{ amount(summary.upcomingAfter7DaysAmount) }} TND</em>
       </button>
       <button class="summary-tile danger" type="button" (click)="statusClick.emit(2)">
-        <span>En retard</span>
+        <span i18n="@@accounting.fiscal-schedule.en.retard.40c1dde3">En retard</span>
         <strong>{{ summary.overdueCount }}</strong>
         <em>{{ amount(summary.overdueAmount) }} TND</em>
       </button>
       <button class="summary-tile info" type="button" (click)="statusClick.emit(3)">
-        <span>Deposees ce mois</span>
+        <span i18n="@@accounting.fiscal-schedule.deposees.ce.mois.03dff7c7">Deposees ce mois</span>
         <strong>{{ summary.depositedThisMonthCount }}</strong>
         <em>{{ amount(summary.depositedThisMonthAmount) }} TND</em>
       </button>
       <button class="summary-tile neutral" type="button" (click)="clearStatus.emit()">
-        <span>Total echeances</span>
+        <span i18n="@@accounting.fiscal-schedule.total.echeances.0605ae24">Total echeances</span>
         <strong>{{ summary.totalCount }}</strong>
         <em>{{ amount(summary.totalAmount) }} TND</em>
       </button>

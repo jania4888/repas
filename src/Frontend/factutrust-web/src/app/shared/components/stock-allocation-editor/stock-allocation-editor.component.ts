@@ -76,10 +76,10 @@ import { catchError } from 'rxjs/operators';
                     [ngModelOptions]="{ standalone: true }"
                     optionLabel="label"
                     optionValue="value"
-                    placeholder="Lot"
+                    placeholder="Lot" i18n-placeholder="@@shared.components.stock-allocation-editor.stock-allocation-editor.lot.4a211932"
                     [filter]="true"
                     filterBy="label"
-                    filterPlaceholder="Rechercher un lot…"
+                    filterPlaceholder="Rechercher un lot…" i18n-filterPlaceholder="@@shared.components.stock-allocation-editor.stock-allocation-editor.rechercher.un.lot.c23d8d0f"
                     [showClear]="true"
                     appendTo="body"
                     (onChange)="onLotPicked(alloc, $event.value)">
@@ -97,34 +97,32 @@ import { catchError } from 'rxjs/operators';
                     [maxFractionDigits]="3"
                     (ngModelChange)="onExitLotQtyChange(alloc, ai)">
                   </p-inputNumber>
-                  <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer">
+                  <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer" i18n-aria-label="@@shared.components.stock-allocation-editor.stock-allocation-editor.retirer.54ec24a1">
                     <i class="pi pi-times"></i>
                   </button>
                 </div>
               }
-              <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addLotRow()">
-                Ajouter un lot
-              </app-button>
+              <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addLotRow()" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.ajouter.un.lot.5e4bc959"> Ajouter un lot </app-button>
             } @else if (lotsLoaded()) {
               <span class="alloc-empty">
-                @if (excludedExpiredCount() > 0) {
+                @if (excludedExpiredCount() > 0) {<ng-container i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.tous.les.lots.de.cet.entrepot.sont.perim.041b1395">
                   Tous les lots de cet entrepôt sont périmés et ne peuvent pas sortir.
-                } @else {
+                </ng-container>} @else {<ng-container i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.aucun.lot.disponible.dans.cet.entrepot.r.1323495e">
                   Aucun lot disponible dans cet entrepôt. Réceptionnez d'abord le stock avec un n° de lot.
-                }
+                </ng-container>}
               </span>
             }
           } @else {
             @for (alloc of allocations; track $index; let ai = $index) {
               <div class="alloc-row alloc-row--entry">
-                <input pInputText class="alloc-field-lot" placeholder="N° lot" [(ngModel)]="alloc.lotNumber" [ngModelOptions]="{ standalone: true }" />
+                <input pInputText class="alloc-field-lot" placeholder="N° lot" i18n-placeholder="@@shared.components.stock-allocation-editor.stock-allocation-editor.n.lot.487dbd0f" [(ngModel)]="alloc.lotNumber" [ngModelOptions]="{ standalone: true }" />
                 <p-datepicker
                   styleClass="alloc-field-dluo"
                   class="alloc-field-dluo"
                   [(ngModel)]="alloc.expiryDate"
                   [ngModelOptions]="{ standalone: true }"
                   dateFormat="dd/mm/yy"
-                  placeholder="DLUO"
+                  placeholder="DLUO" i18n-placeholder="@@shared.components.stock-allocation-editor.stock-allocation-editor.dluo.d342f6a4"
                   [showIcon]="true"
                   appendTo="body">
                 </p-datepicker>
@@ -138,14 +136,12 @@ import { catchError } from 'rxjs/operators';
                   [minFractionDigits]="0"
                   [maxFractionDigits]="3">
                 </p-inputNumber>
-                <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer">
+                <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer" i18n-aria-label="@@shared.components.stock-allocation-editor.stock-allocation-editor.retirer.54ec24a1">
                   <i class="pi pi-times"></i>
                 </button>
               </div>
             }
-            <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addLotRow()">
-              Ajouter un lot
-            </app-button>
+            <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addLotRow()" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.ajouter.un.lot.5e4bc959"> Ajouter un lot </app-button>
           }
         }
 
@@ -162,51 +158,47 @@ import { catchError } from 'rxjs/operators';
                     [ngModelOptions]="{ standalone: true }"
                     optionLabel="label"
                     optionValue="value"
-                    placeholder="N° série"
+                    placeholder="N° série" i18n-placeholder="@@shared.components.stock-allocation-editor.stock-allocation-editor.n.serie.8c333421"
                     [filter]="true"
                     filterBy="label"
-                    filterPlaceholder="Rechercher un n° de série…"
+                    filterPlaceholder="Rechercher un n° de série…" i18n-filterPlaceholder="@@shared.components.stock-allocation-editor.stock-allocation-editor.rechercher.un.n.de.serie.4d58c90c"
                     [showClear]="true"
                     appendTo="body"
                     (onChange)="onSerialPicked(alloc, $event.value)">
                   </p-select>
-                  <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer">
+                  <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer" i18n-aria-label="@@shared.components.stock-allocation-editor.stock-allocation-editor.retirer.54ec24a1">
                     <i class="pi pi-times"></i>
                   </button>
                 </div>
               }
             } @else if (serialsLoaded()) {
-              <span class="alloc-empty">
-                Aucun numéro de série disponible dans cet entrepôt.
-              </span>
+              <span class="alloc-empty" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.aucun.numero.de.serie.disponible.dans.cet.entrep.62ba2244"> Aucun numéro de série disponible dans cet entrepôt. </span>
             }
           } @else {
             @for (alloc of allocations; track $index; let ai = $index) {
               <div class="alloc-row alloc-row--serial">
-                <input pInputText class="alloc-field-lot" placeholder="N° série" [(ngModel)]="alloc.serialNumber" [ngModelOptions]="{ standalone: true }" />
-                <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer">
+                <input pInputText class="alloc-field-lot" placeholder="N° série" i18n-placeholder="@@shared.components.stock-allocation-editor.stock-allocation-editor.n.serie.8c333421" [(ngModel)]="alloc.serialNumber" [ngModelOptions]="{ standalone: true }" />
+                <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer" i18n-aria-label="@@shared.components.stock-allocation-editor.stock-allocation-editor.retirer.54ec24a1">
                   <i class="pi pi-times"></i>
                 </button>
               </div>
             }
-            <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addSerialRow()">
-              Ajouter un n° de série
-            </app-button>
+            <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addSerialRow()" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.ajouter.un.n.de.serie.e0aad4b5"> Ajouter un n° de série </app-button>
           }
         }
 
         @if (excludedExpiredCount() > 0 && lotOptions().length > 0) {
-          <span class="alloc-hint">
+          <span class="alloc-hint" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.lot.s.perime.s.exclus.de.la.sortie.fad026b7">
             {{ excludedExpiredCount() }} lot(s) périmé(s) exclus de la sortie
           </span>
         }
         @if (lotStockWarning(); as warn) {
-          <span class="alloc-over">
+          <span class="alloc-over" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.quantite.superieure.au.disponible.du.lot.125e0aee">
             Quantité supérieure au disponible du lot ({{ warn.available | number:'1.0-3' }})
           </span>
         }
         @if (showSumWarning()) {
-          <span class="alloc-warning">
+          <span class="alloc-warning" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.somme.quantite.ligne.33c3cef0">
             Somme {{ allocationSum(allocations) | number:'1.0-3' }} ≠ quantité ligne {{ lineQuantity | number:'1.0-3' }}
           </span>
         }
@@ -346,8 +338,8 @@ export class StockAllocationEditorComponent implements OnChanges {
   }
 
   labelText(): string {
-    if (this.serialMode()) return 'N° de série';
-    if (this.mode === 'entry') return 'Lots';
+    if (this.serialMode()) return $localize`:@@shared.stock-allocation-editor.ts.n.de.serie.6b826381:N° de série`;
+    if (this.mode === 'entry') return $localize`:@@shared.stock-allocation-editor.ts.lots.79029175:Lots`;
     if (this.optionalOverride || !needsManualLotPicker(this.pickingPolicy)) {
       return 'Lots (optionnel — sinon FEFO)';
     }

@@ -17,8 +17,8 @@ interface QuickAccessSectionGroup {
 }
 
 const SECTION_LABELS: Record<QuickAccessSection, string> = {
-  navigation: 'Navigation',
-  create: 'Créer'
+  navigation: $localize`:@@core.quickAccess.section.navigation:Navigation`,
+  create: $localize`:@@core.quickAccess.section.create:Créer`
 };
 
 const SECTION_ORDER: QuickAccessSection[] = ['navigation', 'create'];
@@ -42,9 +42,10 @@ const SECTION_ORDER: QuickAccessSection[] = ['navigation', 'create'];
           class="quick-access__trigger"
           id="quickAccessDropdown"
           aria-label="Accès rapide"
+          i18n-aria-label="@@core.quickAccess.label"
           aria-haspopup="menu">
           <i class="fa-solid fa-bolt quick-access__trigger-icon" aria-hidden="true"></i>
-          <span class="quick-access__trigger-label">Accès rapide</span>
+          <span class="quick-access__trigger-label" i18n="@@core.quickAccess.label">Accès rapide</span>
           <i class="fa-solid fa-chevron-down quick-access__trigger-chevron" aria-hidden="true"></i>
         </button>
         <div
@@ -199,7 +200,7 @@ const SECTION_ORDER: QuickAccessSection[] = ['navigation', 'create'];
       color: var(--color-neutral-700, #334155);
       text-decoration: none;
       width: 100%;
-      text-align: left;
+      text-align: start;
       font: inherit;
       cursor: pointer;
       transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -93,35 +94,31 @@ interface LineRow extends LinePromotionPreview {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <div class="form-container">
-      <h1 class="page-title">Créer un devis</h1>
-      <p class="page-subtitle">
-        Renseignez le client, les dates et les lignes. Vous pourrez envoyer le devis au client une fois créé.
-      </p>
-      <p class="page-hint">
-        Ce devis reste modifiable tant qu'il n'est pas envoyé au client.
-      </p>
+      <h1 class="page-title" i18n="@@quotes.quote-form.creer.un.devis.426c5610">Créer un devis</h1>
+      <p class="page-subtitle" i18n="@@quotes.quote-form.renseignez.le.client.les.dates.et.les.lignes.vou.c70a554b"> Renseignez le client, les dates et les lignes. Vous pourrez envoyer le devis au client une fois créé. </p>
+      <p class="page-hint" i18n="@@quotes.quote-form.ce.devis.reste.modifiable.tant.qu.il.n.est.pas.e.50c5144d"> Ce devis reste modifiable tant qu'il n'est pas envoyé au client. </p>
 
       <form (ngSubmit)="onSubmit()" class="quote-form">
-        <app-form-section title="Client et période" icon="pi-user" [number]="1">
+        <app-form-section title="Client et période" i18n-title="@@quotes.quote-form.client.et.periode.2efc2061" icon="pi-user" [number]="1">
           <div class="form-grid">
             <div class="field span-full">
-              <label for="quoteTemplate">Modèle de devis (optionnel)</label>
+              <label for="quoteTemplate" i18n="@@quotes.quote-form.modele.de.devis.optionnel.7efa30ee">Modèle de devis (optionnel)</label>
               <p-select
                 id="quoteTemplate"
                 [options]="quoteTemplateOptions()"
                 [(ngModel)]="selectedQuoteTemplateId"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Aucun — saisie libre"
+                placeholder="Aucun — saisie libre" i18n-placeholder="@@quotes.quote-form.aucun.saisie.libre.8ac0bcbf"
                 [showClear]="true"
                 name="quoteTemplate"
                 styleClass="w-full"
                 (onChange)="onQuoteTemplateChange()">
               </p-select>
-              <small class="field-hint">Préremplit les lignes, les notes, les conditions et la date de validité.</small>
+              <small class="field-hint" i18n="@@quotes.quote-form.preremplit.les.lignes.les.notes.les.conditions.e.f10dd8cd">Préremplit les lignes, les notes, les conditions et la date de validité.</small>
             </div>
             <div class="field">
-              <label for="client">Client <span class="required">*</span></label>
+              <label for="client"><ng-container i18n="@@quotes.quote-form.client.1bdd79b1">Client </ng-container> <span class="required" i18n="@@quotes.quote-form.text.df58248c">*</span></label>
               <div class="client-cell">
                 <div class="client-cell-input">
                   <p-select
@@ -131,7 +128,7 @@ interface LineRow extends LinePromotionPreview {
                     (onChange)="onClientChange()"
                     optionLabel="name"
                     optionValue="id"
-                    placeholder="Choisir un client"
+                    placeholder="Choisir un client" i18n-placeholder="@@quotes.quote-form.choisir.un.client.6521f9cd"
                     [filter]="true"
                     filterBy="name"
                     [showClear]="true"
@@ -145,14 +142,14 @@ interface LineRow extends LinePromotionPreview {
                     size="sm"
                     icon="pi-plus"
                     [iconOnly]="true"
-                    ariaLabel="Créer un client"
+                    ariaLabel="Créer un client" i18n-ariaLabel="@@quotes.quote-form.creer.un.client.2a38dd4a"
                     (click)="openQuickCreateClient()"
                     class="btn-add-client-circle" />
                 }
               </div>
             </div>
             <div class="field">
-              <label for="issueDate">Date d'émission <span class="required">*</span></label>
+              <label for="issueDate"><ng-container i18n="@@quotes.quote-form.date.d.emission.99f68857">Date d'émission </ng-container> <span class="required" i18n="@@quotes.quote-form.text.df58248c">*</span></label>
               <p-datepicker
                 id="issueDate"
                 [(ngModel)]="issueDate"
@@ -163,7 +160,7 @@ interface LineRow extends LinePromotionPreview {
               </p-datepicker>
             </div>
             <div class="field">
-              <label for="expiryDate">Valide jusqu'au <span class="required">*</span></label>
+              <label for="expiryDate"><ng-container i18n="@@quotes.quote-form.valide.jusqu.au.f5b757f8">Valide jusqu'au </ng-container> <span class="required" i18n="@@quotes.quote-form.text.df58248c">*</span></label>
               <p-datepicker
                 id="expiryDate"
                 [(ngModel)]="expiryDate"
@@ -172,23 +169,23 @@ interface LineRow extends LinePromotionPreview {
                 name="expiryDate"
                 styleClass="w-full">
               </p-datepicker>
-              <small class="field-hint">Date limite de validité de l'offre. Passée cette date, le devis ne pourra plus être accepté.</small>
+              <small class="field-hint" i18n="@@quotes.quote-form.date.limite.de.validite.de.l.offre.passee.cette..e771d10d">Date limite de validité de l'offre. Passée cette date, le devis ne pourra plus être accepté.</small>
             </div>
           </div>
           <div class="field mt-3">
-            <label for="reference">Référence</label>
+            <label for="reference" i18n="@@quotes.quote-form.reference.f8130bb0">Référence</label>
             <input pInputText id="reference" [(ngModel)]="reference" name="reference" class="w-full" />
           </div>
         </app-form-section>
 
-        <app-form-section title="Lignes du devis" icon="pi-list" [number]="2">
+        <app-form-section title="Lignes du devis" i18n-title="@@quotes.quote-form.lignes.du.devis.6649306a" icon="pi-list" [number]="2">
           <div class="lines-actions">
-            <app-button variant="secondary" icon="pi-plus" iconPos="left" (click)="addLine()">Ajouter une ligne</app-button>
+            <app-button variant="secondary" icon="pi-plus" iconPos="left" (click)="addLine()" i18n="@@quotes.quote-form.ajouter.une.ligne.ba241fd4">Ajouter une ligne</app-button>
           </div>
           @if (barcodeScanEnabled) {
             <div class="barcode-scan-row">
               <ft-barcode-scan-field
-                placeholder="Scanner un code-barres pour ajouter une ligne"
+                placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="@@quotes.quote-form.scanner.un.code.barres.pour.ajouter.une.ligne.3525ced5"
                 [autoFocus]="false"
                 (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
             </div>
@@ -198,15 +195,15 @@ interface LineRow extends LinePromotionPreview {
             <table class="lines-table">
               <thead>
                 <tr>
-                  <th style="width: 22%">Article (Recherche) *</th>
-                  <th style="width: 14%">Désignation</th>
-                  <th style="width: 8%">Qté *</th>
-                  <th style="width: 8%">Unité</th>
-                  <th style="width: 10%">Prix unit. HT *</th>
-                  <th style="width: 9%">Origine</th>
-                  <th style="width: 8%">TVA %</th>
-                  <th style="width: 8%">Remise %</th>
-                  <th style="width: 9%">Total HT</th>
+                  <th style="width: 22%" i18n="@@quotes.quote-form.article.recherche.8b736d6d">Article (Recherche) *</th>
+                  <th style="width: 14%" i18n="@@quotes.quote-form.designation.63a9062c">Désignation</th>
+                  <th style="width: 8%" i18n="@@quotes.quote-form.qte.f0c098af">Qté *</th>
+                  <th style="width: 8%" i18n="@@quotes.quote-form.unite.388fd9c4">Unité</th>
+                  <th style="width: 10%" i18n="@@quotes.quote-form.prix.unit.ht.bc9bcc29">Prix unit. HT *</th>
+                  <th style="width: 9%" i18n="@@quotes.quote-form.origine.62e96258">Origine</th>
+                  <th style="width: 8%" i18n="@@quotes.quote-form.tva.b984d709">TVA %</th>
+                  <th style="width: 8%" i18n="@@quotes.quote-form.remise.a39386b5">Remise %</th>
+                  <th style="width: 9%" i18n="@@quotes.quote-form.total.ht.2ca17ae6">Total HT</th>
                   <th style="width: 6%"></th>
                 </tr>
               </thead>
@@ -225,7 +222,7 @@ interface LineRow extends LinePromotionPreview {
                             [dropdown]="true"
                             [forceSelection]="true"
                             [ngModelOptions]="{ standalone: true }"
-                            placeholder="Rechercher un produit..."
+                            placeholder="Rechercher un produit..." i18n-placeholder="@@quotes.quote-form.rechercher.un.produit.0da008f6"
                             styleClass="w-full"
                             inputStyleClass="w-full">
                             <ng-template let-product pTemplate="item">
@@ -241,15 +238,15 @@ interface LineRow extends LinePromotionPreview {
                           size="sm"
                           icon="pi-th-large"
                           [iconOnly]="true"
-                          ariaLabel="Choisir une variante"
+                          ariaLabel="Choisir une variante" i18n-ariaLabel="@@quotes.quote-form.choisir.une.variante.8e914309"
                           (click)="openVariantPicker($index)"
-                          title="Choisir une variante" />
+                          title="Choisir une variante" i18n-title="@@quotes.quote-form.choisir.une.variante.c8ab137c" />
                         <app-button
                           variant="primary"
                           size="sm"
                           icon="pi-plus"
                           [iconOnly]="true"
-                          ariaLabel="Créer un produit"
+                          ariaLabel="Créer un produit" i18n-ariaLabel="@@quotes.quote-form.creer.un.produit.1ff296f3"
                           (click)="openQuickCreateProduct($index)"
                           class="btn-add-product-circle" />
                       </div>
@@ -259,7 +256,7 @@ interface LineRow extends LinePromotionPreview {
                         pInputText
                         [value]="line.designation"
                         disabled="true"
-                        placeholder="-"
+                        placeholder="-" i18n-placeholder="@@quotes.quote-form.text.3bc15c8a"
                         class="w-full bg-gray-50" />
                     </td>
                     <td>
@@ -279,7 +276,7 @@ interface LineRow extends LinePromotionPreview {
                         pInputText
                         [value]="line.unit"
                         disabled="true"
-                        placeholder="-"
+                        placeholder="-" i18n-placeholder="@@quotes.quote-form.text.3bc15c8a"
                         class="w-full bg-gray-50" />
                     </td>
                     <td>
@@ -295,7 +292,7 @@ interface LineRow extends LinePromotionPreview {
                     </td>
                     <td>
                       @if (linePricing.resolving()) {
-                        <i class="pi pi-spin pi-spinner" pTooltip="Résolution du prix…"></i>
+                        <i class="pi pi-spin pi-spinner" pTooltip="Résolution du prix…" i18n-pTooltip="@@quotes.quote-form.resolution.du.prix.38097b39"></i>
                       } @else if (line.priceOverridden) {
                         <p-tag severity="warning" value="Saisi"></p-tag>
                       } @else if (line.priceSource === 'ClientPrice') {
@@ -303,12 +300,12 @@ interface LineRow extends LinePromotionPreview {
                       } @else if (line.priceSource === 'PriceList') {
                         <p-tag severity="info" value="Grille"></p-tag>
                       } @else if (line.priceSource) {
-                        <span class="text-muted">Catalogue</span>
+                        <span class="text-muted" i18n="@@quotes.quote-form.catalogue.5a241023">Catalogue</span>
                       }
                       @if (line.promotionEligible && line.promotionName) {
-                        <p-tag severity="success" [value]="'Promo : ' + line.promotionName"></p-tag>
+                        <p-tag severity="success" [value]="loc_ui_tern_promo_84ac35 + line.promotionName"></p-tag>
                       } @else if (line.promotionMinQuantityRequired && line.promotionName) {
-                        <small class="promo-hint">{{ line.promotionName }} : qty min. {{ line.promotionMinQuantityRequired }}</small>
+                        <small class="promo-hint" i18n="@@quotes.quote-form.qty.min.881e3445">{{ line.promotionName }} : qty min. {{ line.promotionMinQuantityRequired }}</small>
                       }
                     </td>
                     <td>
@@ -346,7 +343,7 @@ interface LineRow extends LinePromotionPreview {
                         [iconOnly]="true"
                         (click)="removeLine($index)"
                         [disabled]="lines.length <= 1"
-                        ariaLabel="Supprimer la ligne">
+                        ariaLabel="Supprimer la ligne" i18n-ariaLabel="@@quotes.quote-form.supprimer.la.ligne.7e5f9ae0">
                       </app-button>
                     </td>
                   </tr>
@@ -356,7 +353,7 @@ interface LineRow extends LinePromotionPreview {
                         pInputText
                         [(ngModel)]="line.description"
                         [ngModelOptions]="{ standalone: true }"
-                        placeholder="Notes / description pour cette ligne (optionnel)"
+                        placeholder="Notes / description pour cette ligne (optionnel)" i18n-placeholder="@@quotes.quote-form.notes.description.pour.cette.ligne.optionnel.fc82e11d"
                         class="w-full text-sm" />
                     </td>
                   </tr>
@@ -364,34 +361,34 @@ interface LineRow extends LinePromotionPreview {
               </tbody>
               <tfoot>
                 <tr>
-                  <td colspan="8" class="text-right font-bold py-3">Total HT Estimé :</td>
+                  <td colspan="8" class="text-right font-bold py-3" i18n="@@quotes.quote-form.total.ht.estime.a621d615">Total HT Estimé :</td>
                   <td class="text-right font-bold py-3">{{ totals.subTotal | number:'1.3-3' }} {{ currency }}</td>
                   <td></td>
                 </tr>
               </tfoot>
             </table>
           </div>
-          <p class="lines-hint">{{ lines.length }} ligne(s) ajoutée(s)</p>
+          <p class="lines-hint" i18n="@@quotes.quote-form.ligne.s.ajoutee.s.2f58c459">{{ lines.length }} ligne(s) ajoutée(s)</p>
           <div class="totals-panel">
             <div class="totals-row">
-              <span>Total HT</span>
+              <span i18n="@@quotes.quote-form.total.ht.2ca17ae6">Total HT</span>
               <span class="mono">{{ totals.subTotal | number:'1.3-3' }} {{ currency }}</span>
             </div>
             <div class="totals-row">
-              <span>Total TVA</span>
+              <span i18n="@@quotes.quote-form.total.tva.605c4b2e">Total TVA</span>
               <span class="mono">{{ totals.totalVat | number:'1.3-3' }} {{ currency }}</span>
             </div>
             <div class="totals-row grand">
-              <span>Total TTC</span>
+              <span i18n="@@quotes.quote-form.total.ttc.9e80ff7c">Total TTC</span>
               <span class="mono">{{ totals.totalAmount | number:'1.3-3' }} {{ currency }}</span>
             </div>
           </div>
-          <p class="totals-hint">Les montants se mettent à jour automatiquement selon les lignes saisies.</p>
+          <p class="totals-hint" i18n="@@quotes.quote-form.les.montants.se.mettent.a.jour.automatiquement.s.d434580d">Les montants se mettent à jour automatiquement selon les lignes saisies.</p>
         </app-form-section>
 
-        <app-form-section title="Notes et conditions (optionnel)" icon="pi-file-edit" [number]="3">
+        <app-form-section title="Notes et conditions (optionnel)" i18n-title="@@quotes.quote-form.notes.et.conditions.optionnel.3f37209b" icon="pi-file-edit" [number]="3">
           <div class="field">
-            <label for="notes">Notes</label>
+            <label for="notes" i18n="@@quotes.quote-form.notes.70440046">Notes</label>
             <textarea
               pTextarea
               id="notes"
@@ -402,7 +399,7 @@ interface LineRow extends LinePromotionPreview {
             </textarea>
           </div>
           <div class="field mt-3">
-            <label for="terms">Conditions générales</label>
+            <label for="terms" i18n="@@quotes.quote-form.conditions.generales.0c152db4">Conditions générales</label>
             <textarea
               pTextarea
               id="terms"
@@ -429,16 +426,14 @@ interface LineRow extends LinePromotionPreview {
             variant="outline"
             icon="pi-times"
             iconPos="left"
-            routerLink="/quotes">
-            Annuler
-          </app-button>
+            routerLink="/quotes" i18n="@@quotes.quote-form.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             [icon]="submitting() ? 'pi-spin pi-spinner' : 'pi-check'"
             iconPos="left"
             type="submit"
             [disabled]="!canSubmit() || submitting() || linePricing.resolving()">
-            {{ submitting() ? 'Création...' : 'Créer le devis' }}
+            {{ submitting() ? loc_ui_tern_creation_dca950 : loc_ui_tern_creer_le_devis_db90aa }}
           </app-button>
         </div>
       </form>
@@ -540,7 +535,7 @@ interface LineRow extends LinePromotionPreview {
         min-width: 280px;
         max-width: 320px;
         margin-top: var(--spacing-4);
-        margin-left: auto;
+        margin-inline-start: auto;
         padding: var(--spacing-4);
         background: var(--color-primary-50);
         border-radius: var(--radius-lg);
@@ -587,7 +582,7 @@ interface LineRow extends LinePromotionPreview {
       .lines-table th,
       .lines-table td {
         padding: var(--spacing-4) var(--spacing-3);
-        text-align: left;
+        text-align: start;
         vertical-align: top;
       }
       .lines-table th {
@@ -603,7 +598,7 @@ interface LineRow extends LinePromotionPreview {
         background-color: #f9fafb;
       }
       .text-right {
-        text-align: right;
+        text-align: end;
       }
       .font-bold {
         font-weight: bold;
@@ -615,8 +610,8 @@ interface LineRow extends LinePromotionPreview {
         color: #6b7280;
       }
       .px-2 {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
+        padding-inline-start: 0.5rem;
+        padding-inline-end: 0.5rem;
       }
       .py-3 {
         padding-top: 0.75rem;
@@ -705,6 +700,9 @@ interface LineRow extends LinePromotionPreview {
   ],
 })
 export class QuoteFormComponent implements OnInit {
+  readonly loc_ui_tern_promo_84ac35 = $localize`:@@ui.tern.promo.84ac35:Promo : `;
+  readonly loc_ui_tern_creation_dca950 = $localize`:@@ui.tern.creation.dca950:Création...`;
+  readonly loc_ui_tern_creer_le_devis_db90aa = $localize`:@@ui.tern.creer.le.devis.db90aa:Créer le devis`;
   private quoteService = inject(QuoteService);
   private clientService = inject(ClientService);
   private auth = inject(AuthService);
@@ -721,9 +719,9 @@ export class QuoteFormComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Devis', route: '/quotes' },
-    { label: 'Nouveau devis' },
+    { label: $localize`:@@quotes.quote-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@quotes.quote-form.ts.devis.f7622f90:Devis`, route: '/quotes' },
+    { label: $localize`:@@quotes.quote-form.ts.nouveau.devis.4c3f0159:Nouveau devis` },
   ];
 
   clientOptions = signal<ClientListItem[]>([]);
@@ -1000,8 +998,8 @@ export class QuoteFormComponent implements OnInit {
     this.quickCreateClientVisible = false;
     this.toastService.add({
       severity: 'success',
-      summary: 'Client créé',
-      detail: 'Le client a été créé et sélectionné.',
+      summary: $localize`:@@quote-form.component.summary.Client_cr_:Client créé`,
+      detail: $localize`:@@quote-form.component.detail.Le_client_a_t_:Le client a été créé et sélectionné.`,
     });
   }
 
@@ -1024,8 +1022,8 @@ export class QuoteFormComponent implements OnInit {
     this.quickCreateProductVisible = false;
     this.toastService.add({
       severity: 'success',
-      summary: 'Produit créé',
-      detail: 'Le produit a été créé et ajouté à la ligne.',
+      summary: $localize`:@@quote-form.component.summary.Produit créé:Produit créé`,
+      detail: $localize`:@@quote-form.component.detail.Le_produit_a_t_:Le produit a été créé et ajouté à la ligne.`,
     });
   }
 
@@ -1058,8 +1056,8 @@ export class QuoteFormComponent implements OnInit {
     if (lineDtos.length === 0) {
       this.toastService.add({
         severity: 'warn',
-        summary: 'Lignes manquantes',
-        detail: 'Ajoutez au moins une ligne avec un produit sélectionné.',
+        summary: $localize`:@@quote-form.component.summary.Lignes_manquante:Lignes manquantes`,
+        detail: $localize`:@@quote-form.component.detail.Ajoutez_au_moins:Ajoutez au moins une ligne avec un produit sélectionné.`,
       });
       return;
     }
@@ -1073,8 +1071,8 @@ export class QuoteFormComponent implements OnInit {
       if (line.discountPercent > maxAllowed) {
         this.toastService.add({
           severity: 'error',
-          summary: 'Remise invalide',
-          detail: `La remise ne peut pas dépasser ${maxAllowed}% pour « ${line.designation} ».`,
+          summary: $localize`:@@quote-form.component.summary.Remise_invalide:Remise invalide`,
+          detail: $localize`:@@quotes.quote-form.ts.la.remise.ne.peut.pas.depasser.maxallowe.e2ad1763:La remise ne peut pas dépasser ${maxAllowed}:maxAllowed:% pour « ${line.designation}:designation: ».`,
         });
         return;
       }
@@ -1101,8 +1099,8 @@ export class QuoteFormComponent implements OnInit {
         if (res.success && res.data) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Devis créé',
-            detail: 'Redirection vers le devis...',
+            summary: $localize`:@@quote-form.component.summary.Devis créé:Devis créé`,
+            detail: $localize`:@@quote-form.component.detail.Redirection_vers:Redirection vers le devis...`,
           });
           this.router.navigate(['/quotes', res.data]);
         }
@@ -1113,7 +1111,7 @@ export class QuoteFormComponent implements OnInit {
         this.submitError.set(detail);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@quote-form.component.summary.Erreur:Erreur`,
           detail,
         });
       },

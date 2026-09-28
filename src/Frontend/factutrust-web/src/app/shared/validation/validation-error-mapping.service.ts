@@ -262,7 +262,7 @@ export class ValidationErrorMappingService {
     return {
       success: false,
       code: 'HTTP_ERROR',
-      message: httpError.message || 'Une erreur est survenue',
+      message: httpError.message || $localize`:@@shared.validation-error-mapping.ts.une.erreur.est.survenue.0419f56e:Une erreur est survenue`,
       fieldErrors: {},
       globalErrors: [httpError.message || 'Une erreur est survenue'],
       canProceed: false,

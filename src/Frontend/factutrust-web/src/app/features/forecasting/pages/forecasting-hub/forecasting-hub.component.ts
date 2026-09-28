@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
@@ -22,23 +23,21 @@ import { firstValueFrom } from 'rxjs';
     <div class="forecasting-hub">
       <header class="hub-header">
         <div class="title-block">
-          <h1>Prévisions IA — Ventes &amp; Stock</h1>
-          <p class="subtitle">
-            Module déterministe basé sur votre historique et le calendrier commercial tunisien
-            (Ramadan, Aïd, Soldes, Rentrée…). Aucune valeur n'est inventée par l'IA.
-          </p>
+          <h1 i18n="@@forecasting.pages.previsions.ia.ventes.amp.stock.f8e5b6be">Prévisions IA — Ventes & Stock</h1>
+          <p class="subtitle" i18n="@@forecasting.pages.module.deterministe.base.sur.votre.historique.et.704b8e0e"> Module déterministe basé sur votre historique et le calendrier commercial tunisien
+            (Ramadan, Aïd, Soldes, Rentrée…). Aucune valeur n'est inventée par l'IA. </p>
         </div>
         <div class="hub-actions">
           @if (canManage()) {
             <button class="btn btn-secondary" (click)="recomputeAll()" [disabled]="isRecomputing()">
               <i class="pi pi-refresh"></i>
-              {{ isRecomputing() ? 'Recalcul…' : 'Recalculer tout' }}
+              {{ isRecomputing() ? loc_ui_tern_recalcul_39088a : loc_ui_tern_recalculer_tout_c512c8 }}
             </button>
           }
         </div>
       </header>
 
-      <nav class="tabs" role="tablist">
+      <nav class="tabs" role="tablist"><ng-container i18n="@@forecasting.pages.prevision.ca.reapprovisionnement.promoti.71a1b88c">
         <a routerLink="revenue" routerLinkActive="active" role="tab">
           <i class="pi pi-chart-line"></i> Prévision CA
         </a>
@@ -51,15 +50,15 @@ import { firstValueFrom } from 'rxjs';
         <a routerLink="abc-xyz" routerLinkActive="active" role="tab">
           <i class="pi pi-th-large"></i> ABC / XYZ
         </a>
-        @if (canViewTreasuryForecast()) {
-          <a routerLink="treasury" routerLinkActive="active" role="tab">
+        </ng-container>@if (canViewTreasuryForecast()) {
+          <a routerLink="treasury" routerLinkActive="active" role="tab" i18n="@@forecasting.pages.tresorerie.c2aca9f4">
             <i class="pi pi-wallet"></i> Trésorerie
           </a>
         }
       </nav>
 
       @if (audit(); as a) {
-        <div class="audit-bar" [class.audit-error]="!a.success">
+        <div class="audit-bar" [class.audit-error]="!a.success"><ng-container i18n="@@forecasting.pages.dernier.calcul.s.classif.reappros.promos.f7f068fe">
           <i class="pi" [class.pi-check-circle]="a.success" [class.pi-exclamation-circle]="!a.success"></i>
           <span>Dernier calcul : {{ a.startedAt | date:'dd/MM/yyyy HH:mm' }}</span>
           <span class="audit-sep">·</span>
@@ -71,9 +70,9 @@ import { firstValueFrom } from 'rxjs';
           <span class="audit-sep">·</span>
           <span>{{ a.promotionsGenerated }} promos</span>
           <span class="audit-sep">·</span>
-          <span>{{ a.triggerType === 'manual' ? 'Manuel' : 'Automatique' }}</span>
-          @if (!a.success && a.errorMessage) {
-            <span class="audit-sep">·</span>
+          <span>{{ a.triggerType === 'manual' ? loc_ui_tern_manuel_6c1cc0 : loc_ui_tern_automatique_f8a3c3 }}</span>
+          </ng-container>@if (!a.success && a.errorMessage) {
+            <span class="audit-sep" i18n="@@forecasting.pages.text.1fdf0d90">·</span>
             <span class="audit-err-msg">{{ a.errorMessage }}</span>
           }
         </div>
@@ -108,6 +107,10 @@ import { firstValueFrom } from 'rxjs';
   `]
 })
 export class ForecastingHubComponent implements OnInit {
+  readonly loc_ui_tern_recalcul_39088a = $localize`:@@ui.tern.recalcul.39088a:Recalcul…`;
+  readonly loc_ui_tern_recalculer_tout_c512c8 = $localize`:@@ui.tern.recalculer.tout.c512c8:Recalculer tout`;
+  readonly loc_ui_tern_manuel_6c1cc0 = $localize`:@@ui.tern.manuel.6c1cc0:Manuel`;
+  readonly loc_ui_tern_automatique_f8a3c3 = $localize`:@@ui.tern.automatique.f8a3c3:Automatique`;
   private readonly forecastingService = inject(ForecastingService);
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
@@ -148,23 +151,21 @@ export class ForecastingHubComponent implements OnInit {
       if (result.success) {
         this.toast.add({
           severity: 'success',
-          summary: 'Recalcul terminé',
+          summary: $localize`:@@forecasting-hub.component.summary.Recalcul_termin_:Recalcul terminé`,
           detail:
-            `${(result.durationMs / 1000).toFixed(1)}s — ` +
-            `${result.classificationsUpdated} classifications, ` +
-            `${result.replenishmentsGenerated} réappros, ${result.promotionsGenerated} promos.`
+            $localize`:@@forecasting.forecasting-hub.ts.tofixed.s.classificationsupdated.classif.455d4085:${(result.durationMs / 1000).toFixed(1)}:toFixed:s — ${result.classificationsUpdated}:classificationsUpdated: classifications, ${result.replenishmentsGenerated}:replenishmentsGenerated: réappros, ${result.promotionsGenerated}:promotionsGenerated: promos.`
         });
         this.forecastingService.notifyRecomputeCompleted();
         await this.loadAudit();
       } else {
-        this.toast.add({ severity: 'error', summary: 'Recalcul échoué', detail: result.errorMessage ?? 'Erreur inconnue' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@forecasting-hub.component.summary.Recalcul éch:Recalcul échoué`, detail: result.errorMessage ?? $localize`:@@ui.tern.erreur.inconnue.c3ec73:Erreur inconnue` });
         await this.loadAudit();
       }
     } catch (err: any) {
       // 429 already shown as a modal dialog by HttpRateLimitDialogService — avoid duplicate UI.
       if (err?.status !== 429) {
-        const msg = err?.error?.message ?? 'Erreur inconnue';
-        this.toast.add({ severity: 'error', summary: 'Recalcul impossible', detail: msg });
+        const msg = err?.error?.message ?? $localize`:@@ui.tern.erreur.inconnue.c3ec73:Erreur inconnue`;
+        this.toast.add({ severity: 'error', summary: $localize`:@@forecasting-hub.component.summary.Recalcul imp:Recalcul impossible`, detail: msg });
       }
     } finally {
       this.isRecomputing.set(false);

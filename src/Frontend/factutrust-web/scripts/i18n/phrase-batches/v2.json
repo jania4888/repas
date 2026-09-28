@@ -1,0 +1,21 @@
+{
+  "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.": "يمكنكم الآن تسجيل الدخول بكلمة المرور الجديدة.",
+  "En continuant, j'accepte les": "بمتابعتي، أقبل",
+  "Étape": "خطوة",
+  "Étapes précédentes complétées.": "اكتملت الخطوات السابقة.",
+  "Création impossible.": "تعذّر الإنشاء.",
+  "Une erreur est survenue lors de l'inscription": "حدث خطأ أثناء التسجيل",
+  "Contacter le support": "الاتصال بالدعم",
+  "Vérifier mon matricule fiscal": "التحقق من معرّفي الجبائي",
+  "Continuer vers le tableau de bord": "المتابعة إلى لوحة القيادة",
+  "Impossible de joindre l'API plateforme.": "تعذّر الاتصال بواجهة المنصة.",
+  "Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur https://localhost:7001.": "تعذّر الاتصال بالخادم. تحقّقوا من أن الخادم يعمل على https://localhost:7001.",
+  "Erreur lors de la création ({$p0}).": "خطأ أثناء الإنشاء ({$p0}).",
+  "Une erreur est survenue lors de l'inscription ({$p0}). Veuillez réessayer.": "حدث خطأ أثناء التسجيل ({$p0}). أعيدوا المحاولة.",
+  "La création n'a pas pu être finalisée.": "تعذّر إتمام الإنشاء.",
+  "Une erreur est survenue lors de l'inscription. Veuillez réessayer.": "حدث خطأ أثناء التسجيل. أعيدوا المحاولة.",
+  "Activé automatiquement (requis par {$p0})": "مُفعّل تلقائيًا (مطلوب من {$p0})",
+  "Activé automatiquement": "مُفعّل تلقائيًا",
+  "Seul(e)": "شخص واحد",
+  "50 et plus": "50 فأكثر"
+}

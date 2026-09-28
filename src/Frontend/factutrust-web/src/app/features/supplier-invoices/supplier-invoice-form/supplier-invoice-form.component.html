@@ -1,32 +1,30 @@
 <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
 <app-page-header
-  title="Nouvelle facture fournisseur"
-  subtitle="Saisissez une facture de charges ou de services. Le stock n'est pas mis à jour.">
-  <app-button variant="outline" icon="pi-times" iconPos="left" (click)="cancel()">Annuler</app-button>
+  title="Nouvelle facture fournisseur" i18n-title="@@supplier-invoices.supplier-invoice-form.nouvelle.facture.fournisseur.9342d116"
+  subtitle="Saisissez une facture de charges ou de services. Le stock n'est pas mis à jour." i18n-subtitle="@@supplier-invoices.supplier-invoice-form.saisissez.une.facture.de.charges.ou.de.s.b5196fd5">
+  <app-button variant="outline" icon="pi-times" iconPos="left" (click)="cancel()" i18n="@@supplier-invoices.supplier-invoice-form.annuler.49ba3292">Annuler</app-button>
   <app-button
     variant="primary"
     [icon]="submitting() ? 'pi-spin pi-spinner' : 'pi-check'"
     iconPos="left"
     [disabled]="submitting() || !canSubmit()"
-    (click)="submit()">
-    Créer la facture
-  </app-button>
+    (click)="submit()" i18n="@@supplier-invoices.supplier-invoice-form.creer.la.facture.d28b4fd5"> Créer la facture </app-button>
 </app-page-header>
 
 <div class="info-banner" role="status">
   <i class="pi pi-info-circle" aria-hidden="true"></i>
   <div class="info-banner__content">
-    <p>Cette facture ne met pas à jour le stock. Pour les marchandises gérées en stock, passez par un bon de réception.</p>
-    <a routerLink="/purchase-receipts/new" class="info-banner__link">Créer un bon de réception</a>
+    <p i18n="@@supplier-invoices.supplier-invoice-form.cette.facture.ne.met.pas.a.jour.le.stock.pour.le.462a7345">Cette facture ne met pas à jour le stock. Pour les marchandises gérées en stock, passez par un bon de réception.</p>
+    <a routerLink="/purchase-receipts/new" class="info-banner__link" i18n="@@supplier-invoices.supplier-invoice-form.creer.un.bon.de.reception.0fe0f858">Créer un bon de réception</a>
   </div>
 </div>
 
 <div class="form-layout">
-  <app-form-section title="Informations générales" icon="pi-building" [number]="1">
+  <app-form-section title="Informations générales" i18n-title="@@supplier-invoices.supplier-invoice-form.informations.generales.be6ba6e5" icon="pi-building" [number]="1">
     <div class="ft-form-grid">
       <div class="ft-field">
-        <label for="supplier">Fournisseur <span class="ft-required">*</span></label>
+        <label for="supplier"><ng-container i18n="@@supplier-invoices.supplier-invoice-form.fournisseur.97d91d89">Fournisseur </ng-container> <span class="ft-required" i18n="@@supplier-invoices.supplier-invoice-form.text.df58248c">*</span></label>
         <p-select
           id="supplier"
           [options]="suppliers()"
@@ -34,7 +32,7 @@
           name="supplierId"
           optionLabel="name"
           optionValue="id"
-          placeholder="Sélectionnez un fournisseur"
+          placeholder="Sélectionnez un fournisseur" i18n-placeholder="@@supplier-invoices.supplier-invoice-form.selectionnez.un.fournisseur.7351a0fb"
           [filter]="true"
           filterBy="name"
           [showClear]="true"
@@ -43,7 +41,7 @@
       </div>
 
       <div class="ft-field">
-        <label for="invoiceDate">Date de facture <span class="ft-required">*</span></label>
+        <label for="invoiceDate"><ng-container i18n="@@supplier-invoices.supplier-invoice-form.date.de.facture.f1edd0d6">Date de facture </ng-container> <span class="ft-required" i18n="@@supplier-invoices.supplier-invoice-form.text.df58248c">*</span></label>
         <p-datepicker
           id="invoiceDate"
           [(ngModel)]="invoiceDate"
@@ -56,7 +54,7 @@
       </div>
 
       <div class="ft-field">
-        <label for="paymentTermDays">Conditions de paiement</label>
+        <label for="paymentTermDays" i18n="@@supplier-invoices.supplier-invoice-form.conditions.de.paiement.a9b1c917">Conditions de paiement</label>
         <p-select
           id="paymentTermDays"
           [options]="paymentTermOptions"
@@ -65,18 +63,18 @@
           optionLabel="label"
           optionValue="value">
         </p-select>
-        <small class="ft-hint">Échéance : {{ dueDate() | date:'dd/MM/yyyy' }}</small>
+        <small class="ft-hint" i18n="@@supplier-invoices.supplier-invoice-form.echeance.73be045b">Échéance : {{ dueDate() | date:'dd/MM/yyyy' }}</small>
       </div>
 
       <div class="ft-field ft-field--span2">
-        <label for="invoiceNumber">N° interne</label>
+        <label for="invoiceNumber" i18n="@@supplier-invoices.supplier-invoice-form.n.interne.23ca6d03">N° interne</label>
         <div class="input-group">
           <input
             pInputText
             id="invoiceNumber"
             [(ngModel)]="invoiceNumber"
             name="invoiceNumber"
-            placeholder="FS-2026-000001"
+            placeholder="FS-2026-000001" i18n-placeholder="@@supplier-invoices.supplier-invoice-form.fs.2026.000001.35a32054"
             [disabled]="useSuggestedNumber"
             (ngModelChange)="onInvoiceNumberEdited()">
           <app-button
@@ -86,9 +84,7 @@
             [icon]="regenerating() ? 'pi-spin pi-spinner' : 'pi-refresh'"
             iconPos="left"
             [disabled]="regenerating()"
-            (click)="generateInvoiceNumber()">
-            Générer
-          </app-button>
+            (click)="generateInvoiceNumber()" i18n="@@supplier-invoices.supplier-invoice-form.generer.bd221c07"> Générer </app-button>
         </div>
         <label class="hint-check">
           <p-checkbox
@@ -97,23 +93,23 @@
             [binary]="true"
             inputId="useSuggestedNumber"
             (ngModelChange)="onUseSuggestedChange()">
-          </p-checkbox>
+          </p-checkbox><ng-container i18n="@@supplier-invoices.supplier-invoice-form.utiliser.le.n.suggere.14d87bb1">
           Utiliser le n° suggéré
-        </label>
+        </ng-container></label>
       </div>
 
       <div class="ft-field">
-        <label for="externalReference">N° facture fournisseur</label>
+        <label for="externalReference" i18n="@@supplier-invoices.supplier-invoice-form.n.facture.fournisseur.a5440752">N° facture fournisseur</label>
         <input
           pInputText
           id="externalReference"
           [(ngModel)]="externalReference"
           name="externalReference"
-          placeholder="N° papier du fournisseur">
+          placeholder="N° papier du fournisseur" i18n-placeholder="@@supplier-invoices.supplier-invoice-form.n.papier.du.fournisseur.1ff1c874">
       </div>
 
       <div class="ft-field">
-        <label for="paymentMethod">Mode de paiement prévu</label>
+        <label for="paymentMethod" i18n="@@supplier-invoices.supplier-invoice-form.mode.de.paiement.prevu.c3d85a23">Mode de paiement prévu</label>
         <p-select
           id="paymentMethod"
           [options]="paymentMethodOptions"
@@ -122,7 +118,7 @@
           optionLabel="label"
           optionValue="value"
           [showClear]="true"
-          placeholder="Optionnel">
+          placeholder="Optionnel" i18n-placeholder="@@supplier-invoices.supplier-invoice-form.optionnel.879d6b16">
         </p-select>
       </div>
 
@@ -135,7 +131,7 @@
         nom accessible du select — les deux mécanismes sont exclusifs par construction.
       -->
       <div class="ft-field">
-        <label for="si-warehouse">Entrepôt</label>
+        <label for="si-warehouse" i18n="@@supplier-invoices.supplier-invoice-form.entrepot.c349c0bc">Entrepôt</label>
         <app-warehouse-selector
           inputId="si-warehouse"
           [showLabel]="false"
@@ -146,27 +142,23 @@
       </div>
 
       <div class="ft-field ft-field--full">
-        <label for="notes">Notes</label>
+        <label for="notes" i18n="@@supplier-invoices.supplier-invoice-form.notes.70440046">Notes</label>
         <textarea pTextarea id="notes" [(ngModel)]="notes" name="notes" rows="3"></textarea>
       </div>
     </div>
   </app-form-section>
 
-  <app-form-section title="Lignes" icon="pi-list" [number]="2">
+  <app-form-section title="Lignes" i18n-title="@@supplier-invoices.supplier-invoice-form.lignes.41c7025e" icon="pi-list" [number]="2">
     <div class="lines-toolbar">
-      <app-button type="button" variant="outline" size="sm" icon="pi-plus" iconPos="left" (click)="addLine()">
-        Ajouter une ligne
-      </app-button>
-      <app-button type="button" variant="ghost" size="sm" icon="pi-plus-circle" iconPos="left" (click)="quickCreateVisible = true">
-        Créer un article / service
-      </app-button>
+      <app-button type="button" variant="outline" size="sm" icon="pi-plus" iconPos="left" (click)="addLine()" i18n="@@supplier-invoices.supplier-invoice-form.ajouter.une.ligne.ba241fd4"> Ajouter une ligne </app-button>
+      <app-button type="button" variant="ghost" size="sm" icon="pi-plus-circle" iconPos="left" (click)="quickCreateVisible = true" i18n="@@supplier-invoices.supplier-invoice-form.creer.un.article.service.33b46eca"> Créer un article / service </app-button>
     </div>
 
     <!-- Doit rester HORS de .lines-table-wrap : l'overflow-x du conteneur le rognerait. -->
     @if (barcodeScanEnabled) {
       <div class="barcode-scan-row">
         <ft-barcode-scan-field
-          placeholder="Scanner un code-barres pour ajouter une ligne"
+          placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="@@supplier-invoices.supplier-invoice-form.scanner.un.code.barres.pour.ajouter.une.ligne.3525ced5"
           [autoFocus]="false"
           (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
       </div>
@@ -176,15 +168,15 @@
       <table class="lines-table">
         <thead>
           <tr>
-            <th class="col-row">#</th>
-            <th>Article</th>
-            <th class="col-qty ft-num">Qté</th>
-            <th class="col-price ft-num">PU HT</th>
-            <th class="col-disc ft-num">Remise %</th>
-            <th class="col-vat ft-num">TVA</th>
-            <th class="col-ht ft-num">HT</th>
+            <th class="col-row" i18n="@@supplier-invoices.supplier-invoice-form.text.d08f88df">#</th>
+            <th i18n="@@supplier-invoices.supplier-invoice-form.article.4360c2dc">Article</th>
+            <th class="col-qty ft-num" i18n="@@supplier-invoices.supplier-invoice-form.qte.a4772129">Qté</th>
+            <th class="col-price ft-num" i18n="@@supplier-invoices.supplier-invoice-form.pu.ht.79388cae">PU HT</th>
+            <th class="col-disc ft-num" i18n="@@supplier-invoices.supplier-invoice-form.remise.a39386b5">Remise %</th>
+            <th class="col-vat ft-num" i18n="@@supplier-invoices.supplier-invoice-form.tva.fb62cb5d">TVA</th>
+            <th class="col-ht ft-num" i18n="@@supplier-invoices.supplier-invoice-form.ht.64c38cf2">HT</th>
             @if (fixedAssetsEnabled()) {
-              <th class="col-immo">Immo</th>
+              <th class="col-immo" i18n="@@supplier-invoices.supplier-invoice-form.immo.b719c1f7">Immo</th>
             }
             <th class="col-actions"></th>
           </tr>
@@ -206,7 +198,7 @@
                   [minLength]="0"
                   appendTo="body"
                   panelStyleClass="si-line-product-panel"
-                  placeholder="Service ou charge (hors stock)">
+                  placeholder="Service ou charge (hors stock)" i18n-placeholder="@@supplier-invoices.supplier-invoice-form.service.ou.charge.hors.stock.881e7889">
                   <ng-template let-product pTemplate="item">
                     <div class="product-item">
                       <span class="product-item__code">{{ product.code }}</span>
@@ -232,14 +224,12 @@
                 </td>
               }
               <td class="col-actions">
-                <app-button type="button" variant="ghost" size="sm" icon="pi-trash" [iconOnly]="true" [ariaLabel]="'Supprimer la ligne ' + (i + 1)" (click)="removeLine(i)"></app-button>
+                <app-button type="button" variant="ghost" size="sm" icon="pi-trash" [iconOnly]="true" [ariaLabel]="loc_supprimer_la_ligne_i_48c1e3(i + 1)" (click)="removeLine(i)"></app-button>
               </td>
             </tr>
           } @empty {
             <tr>
-              <td class="lines-empty" [attr.colspan]="fixedAssetsEnabled() ? 9 : 8">
-                Aucune ligne. Utilisez « Ajouter une ligne » pour commencer.
-              </td>
+              <td class="lines-empty" [attr.colspan]="fixedAssetsEnabled() ? 9 : 8" i18n="@@supplier-invoices.supplier-invoice-form.aucune.ligne.utilisez.ajouter.une.ligne.pour.com.b4334189"> Aucune ligne. Utilisez « Ajouter une ligne » pour commencer. </td>
             </tr>
           }
         </tbody>
@@ -248,15 +238,15 @@
 
     <div class="ft-totals" aria-live="polite" aria-atomic="true">
       <div class="ft-totals__row">
-        <span>Total HT</span>
+        <span i18n="@@supplier-invoices.supplier-invoice-form.total.ht.2ca17ae6">Total HT</span>
         <strong>{{ totalHT() | currency:'TND':'symbol':'1.3-3' }}</strong>
       </div>
       <div class="ft-totals__row">
-        <span>TVA</span>
+        <span i18n="@@supplier-invoices.supplier-invoice-form.tva.fb62cb5d">TVA</span>
         <strong>{{ totalVat() | currency:'TND':'symbol':'1.3-3' }}</strong>
       </div>
       <div class="ft-totals__row ft-totals__row--grand">
-        <span>Total TTC</span>
+        <span i18n="@@supplier-invoices.supplier-invoice-form.total.ttc.9e80ff7c">Total TTC</span>
         <strong>{{ totalTTC() | currency:'TND':'symbol':'1.3-3' }}</strong>
       </div>
     </div>

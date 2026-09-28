@@ -47,7 +47,7 @@ import {
 export class AccountingJournalTabsComponent {
   @Input({ required: true }) tabs!: readonly AccountingJournalTab[];
   @Input() activeIndex = 0;
-  @Input() ariaLabel = 'Journaux auxiliaires';
+  @Input() ariaLabel = $localize`:@@accounting.accounting-journal-tabs.ts.journaux.auxiliaires.a7120594:Journaux auxiliaires`;
   @Input() panelIdPrefix = 'sub-journal-panel-';
 
   @Output() tabChange = new EventEmitter<AccountingJournalTabChange>();

@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -28,36 +30,37 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
   selector: 'app-contract-history-tab',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule, RouterModule, TableModule, TooltipModule,
     ButtonComponent, StatusBadgeComponent, SkeletonTableComponent,
     DraftAdjustDialogComponent
   ],
   template: `
     <section class="ft-card-block">
-      <h3 class="block-title"><i class="pi pi-receipt"></i> Facturations</h3>
+      <h3 class="block-title" i18n="@@recurring-contracts.tabs.facturations.a2346f3b"><i class="pi pi-receipt"></i> Facturations</h3>
       @if (loadingRuns()) {
         <app-skeleton-table [rows]="4" [columns]="runsSkeletonColumns"></app-skeleton-table>
       } @else if (runs().length === 0) {
-        <p class="placeholder-note">Aucune facturation pour l'instant.</p>
+        <p class="placeholder-note" i18n="@@recurring-contracts.tabs.aucune.facturation.pour.l.instant.07c838a6">Aucune facturation pour l'instant.</p>
       } @else {
         <p-table [value]="runs()" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>Période</th>
-              <th style="width: 150px">Statut</th>
-              <th style="width: 110px">Fixe</th>
-              <th style="width: 130px">Consommation</th>
-              <th style="width: 110px">Prorata</th>
-              <th style="width: 120px">Total</th>
-              <th style="width: 130px">Créé le</th>
-              <th style="width: 140px">Lien</th>
+              <th i18n="@@recurring-contracts.tabs.periode.de2110b7">Période</th>
+              <th style="width: 150px" i18n="@@recurring-contracts.tabs.statut.659499f3">Statut</th>
+              <th style="width: 110px" i18n="@@recurring-contracts.tabs.fixe.95d72643">Fixe</th>
+              <th style="width: 130px" i18n="@@recurring-contracts.tabs.consommation.fa3cc9c6">Consommation</th>
+              <th style="width: 110px" i18n="@@recurring-contracts.tabs.prorata.e2022a4e">Prorata</th>
+              <th style="width: 120px" i18n="@@recurring-contracts.tabs.total.b25928c6">Total</th>
+              <th style="width: 130px" i18n="@@recurring-contracts.tabs.cree.le.046c02a0">Créé le</th>
+              <th style="width: 140px" i18n="@@recurring-contracts.tabs.lien.e2639e1d">Lien</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
             <tr>
               <td>{{ r.periodFrom | date:'dd/MM/yyyy' }} — {{ r.periodTo | date:'dd/MM/yyyy' }}</td>
               <td>
-                <app-status-badge [status]="runBadgeStatus(r.status)" [label]="r.statusDisplay"></app-status-badge>
+                <app-status-badge [status]="runBadgeStatus(r.status)" [label]="r.statusDisplay | backendLabel"></app-status-badge>
                 @if (r.status === 'Failed' && r.errorMessage) {
                   <div class="run-error" [pTooltip]="r.errorMessage" tooltipPosition="top">
                     <i class="pi pi-exclamation-triangle"></i> {{ r.errorMessage }}
@@ -73,7 +76,7 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
                 @if (r.invoiceId) {
                   <app-button
                     variant="ghost" size="sm" icon="pi-receipt" [iconOnly]="true"
-                    [routerLink]="['/invoices', r.invoiceId]" ariaLabel="Voir la facture">
+                    [routerLink]="['/invoices', r.invoiceId]" ariaLabel="Voir la facture" i18n-ariaLabel="@@recurring-contracts.tabs.voir.la.facture.23283cea">
                   </app-button>
                 } @else if (r.status === 'DraftCreated' && r.invoiceDraftId) {
                   <div class="row-actions">
@@ -82,12 +85,12 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
                         variant="primary" size="sm" icon="pi-check" [iconOnly]="true"
                         [disabled]="issuingId() === r.id"
                         (clicked)="confirmIssue(r)"
-                        ariaLabel="Émettre la facture">
+                        ariaLabel="Émettre la facture" i18n-ariaLabel="@@recurring-contracts.tabs.emettre.la.facture.26cd342f">
                       </app-button>
                       <app-button
                         variant="ghost" size="sm" icon="pi-file-edit" [iconOnly]="true"
                         (clicked)="openAdjust(r)"
-                        ariaLabel="Ajuster le brouillon">
+                        ariaLabel="Ajuster le brouillon" i18n-ariaLabel="@@recurring-contracts.tabs.ajuster.le.brouillon.bbaa91b3">
                       </app-button>
                     }
                   </div>
@@ -103,9 +106,9 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
 
     <section class="ft-card-block">
       <div class="block-head">
-        <h3 class="block-title"><i class="pi pi-history"></i> Avenants et cycle de vie</h3>
+        <h3 class="block-title" i18n="@@recurring-contracts.tabs.avenants.et.cycle.de.vie.89e7097c"><i class="pi pi-history"></i> Avenants et cycle de vie</h3>
         @if (canAmend()) {
-          <app-button variant="primary" size="sm" icon="pi-file-plus" (clicked)="createAmend.emit()">
+          <app-button variant="primary" size="sm" icon="pi-file-plus" (clicked)="createAmend.emit()" i18n="@@recurring-contracts.tabs.nouvel.avenant.ab9cd1c0">
             Nouvel avenant
           </app-button>
         }
@@ -116,23 +119,23 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
           <div class="skeleton-line"></div>
         </div>
       } @else if (amendments() === null) {
-        <p class="placeholder-note">L'historique des avenants sera disponible après la mise à jour du serveur.</p>
+        <p class="placeholder-note" i18n="@@recurring-contracts.tabs.l.historique.des.avenants.sera.disponibl.85432c2b">L'historique des avenants sera disponible après la mise à jour du serveur.</p>
       } @else if (amendments()!.length === 0) {
-        <p class="placeholder-note">Aucun avenant enregistré.</p>
+        <p class="placeholder-note" i18n="@@recurring-contracts.tabs.aucun.avenant.enregistre.01b4369f">Aucun avenant enregistré.</p>
       } @else {
         <ul class="timeline">
           @for (a of amendments()!; track a.id) {
             <li class="timeline__item">
               <div class="timeline__date">{{ a.effectiveDate | date:'dd/MM/yyyy' }}</div>
               <div class="timeline__body">
-                <span class="timeline__type">{{ a.typeDisplay }}</span>
+                <span class="timeline__type">{{ a.typeDisplay | backendLabel }}</span>
                 @if (a.notes) {
                   <p class="timeline__notes">{{ a.notes }}</p>
                 }
-                <span class="timeline__meta">
+                <span class="timeline__meta"><ng-container i18n="@@recurring-contracts.tabs.enregistre.le.44207d14">
                   Enregistré le {{ a.createdAt | date:'dd/MM/yyyy HH:mm' }}
-                  @if (a.createdByUserName) { par {{ a.createdByUserName }} }
-                  · {{ a.prorationPolicyDisplay }}
+                  </ng-container>@if (a.createdByUserName) {<ng-container i18n="@@recurring-contracts.tabs.par.f60e18b3"> par {{ a.createdByUserName }} </ng-container>}
+                  · {{ a.prorationPolicyDisplay | backendLabel }}
                 </span>
               </div>
             </li>
@@ -315,7 +318,7 @@ export class ContractHistoryTabComponent implements OnInit, OnChanges {
       error: err => {
         this.loadingRuns.set(false);
         this.errorHandler.logError('RecurringContracts: billing runs', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-history.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }
@@ -335,7 +338,7 @@ export class ContractHistoryTabComponent implements OnInit, OnChanges {
       error: err => {
         this.loadingAmendments.set(false);
         this.errorHandler.logError('RecurringContracts: amendments', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-history.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }
@@ -347,11 +350,11 @@ export class ContractHistoryTabComponent implements OnInit, OnChanges {
 
   confirmIssue(run: RecurringContractBillingRun): void {
     this.confirmation.confirm({
-      header: 'Confirmer l\'émission',
-      message: 'Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l\'émission ?',
+      header: $localize`:@@recurring-contracts.contract-history.ts.confirmer.l.emission.15b190af:Confirmer l'émission`,
+      message: $localize`:@@recurring-contracts.contract-history.ts.une.fois.validee.cette.facture.ne.pourra.acdbf6bb:Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l'émission ?`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Émettre la facture',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@contract-history.tab.acceptLabel.Émettre la f:Émettre la facture`,
+      rejectLabel: $localize`:@@contract-history.tab.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-success',
       size: 'md',
       accept: () => this.issue(run.id)
@@ -365,8 +368,8 @@ export class ContractHistoryTabComponent implements OnInit, OnChanges {
         this.issuingId.set(null);
         this.toast.add({
           severity: 'success',
-          summary: 'Facture émise',
-          detail: `Facture ${issued.invoiceNumber} émise.`
+          summary: $localize`:@@contract-history.tab.summary.Facture émis:Facture émise`,
+          detail: $localize`:@@recurring-contracts.contract-history.ts.facture.invoicenumber.emise.07d601c8:Facture ${issued.invoiceNumber}:invoiceNumber: émise.`
         });
         this.loadRuns();
         this.draftChanged.emit();
@@ -376,7 +379,7 @@ export class ContractHistoryTabComponent implements OnInit, OnChanges {
         this.errorHandler.logError('RecurringContracts: issue from history', err);
         this.toast.add({
           severity: 'error',
-          summary: 'Émission impossible',
+          summary: $localize`:@@contract-history.tab.summary._mission_impossi:Émission impossible`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }

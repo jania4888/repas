@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -13,11 +14,11 @@ import {
 @Component({
   selector: 'app-project-dashboard-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterLink, DashboardPanelComponent],
+  imports: [BackendLabelPipe, CommonModule, RouterLink, DashboardPanelComponent],
   template: `
     @if (data) {
       <div class="proj-dash-sidebar">
-        <app-dashboard-panel title="Tâches à venir">
+        <app-dashboard-panel title="Tâches à venir" i18n-title="@@projects.components.taches.a.venir.dc667529">
           @if (data.upcomingTasks.length) {
             <ul class="proj-dash-task-list">
               @for (t of data.upcomingTasks; track t.id) {
@@ -36,11 +37,11 @@ import {
               }
             </ul>
           } @else {
-            <p class="text-sm text-color-secondary m-0">Aucune échéance.</p>
+            <p class="text-sm text-color-secondary m-0" i18n="@@projects.components.aucune.echeance.248d93b0">Aucune échéance.</p>
           }
         </app-dashboard-panel>
 
-        <app-dashboard-panel title="Membres actifs">
+        <app-dashboard-panel title="Membres actifs" i18n-title="@@projects.components.membres.actifs.10d36e2d">
           @if (data.activeMembers.length) {
             <ul class="proj-dash-member-list">
               @for (m of data.activeMembers; track m.userId) {
@@ -49,7 +50,7 @@ import {
                   <div class="proj-dash-member-body">
                     <strong>{{ m.displayName }}</strong>
                     @if (m.roleDisplay) {
-                      <span class="proj-dash-member-role">{{ m.roleDisplay }}</span>
+                      <span class="proj-dash-member-role">{{ m.roleDisplay | backendLabel }}</span>
                     }
                   </div>
                   <span
@@ -62,7 +63,7 @@ import {
               }
             </ul>
           } @else {
-            <p class="text-sm text-color-secondary m-0">Aucune activité récente.</p>
+            <p class="text-sm text-color-secondary m-0" i18n="@@projects.components.aucune.activite.recente.58d9c15c">Aucune activité récente.</p>
           }
         </app-dashboard-panel>
       </div>
@@ -83,8 +84,8 @@ export class ProjectDashboardSidebarComponent {
   }
 
   activityLabel(status: string | undefined): string {
-    if (status === 'online') return 'Actif récemment';
-    if (status === 'away') return 'Actif cette semaine';
-    return 'Inactif';
+    if (status === 'online') return $localize`:@@projects.project-dashboard-sidebar.ts.actif.recemment.45420db4:Actif récemment`;
+    if (status === 'away') return $localize`:@@projects.project-dashboard-sidebar.ts.actif.cette.semaine.68751ca1:Actif cette semaine`;
+    return $localize`:@@projects.project-dashboard-sidebar.ts.inactif.d2e03387:Inactif`;
   }
 }

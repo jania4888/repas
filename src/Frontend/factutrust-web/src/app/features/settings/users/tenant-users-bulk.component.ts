@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -64,16 +65,16 @@ interface BulkRow {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Ajouter des utilisateurs"
-      subtitle="Créez plusieurs comptes avec rôle et modules pour chacun">
-      <p-button label="Retour à la liste" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings/users"></p-button>
+      title="Ajouter des utilisateurs" i18n-title="@@settings.users.ajouter.des.utilisateurs.0f065e3f"
+      subtitle="Créez plusieurs comptes avec rôle et modules pour chacun" i18n-subtitle="@@settings.users.creez.plusieurs.comptes.avec.role.et.mod.4c9c7184">
+      <p-button label="Retour à la liste" i18n-label="@@settings.users.retour.a.la.liste.7753f531" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings/users"></p-button>
     </app-page-header>
 
     <p-card styleClass="bulk-card">
       <div class="toolbar">
-        <p-button label="Ajouter une ligne" icon="pi pi-plus" [outlined]="true" (onClick)="addRow()"></p-button>
+        <p-button label="Ajouter une ligne" i18n-label="@@settings.users.ajouter.une.ligne.ba241fd4" icon="pi pi-plus" [outlined]="true" (onClick)="addRow()"></p-button>
         <p-button
-          label="Dupliquer modules (ligne 1 → toutes)"
+          label="Dupliquer modules (ligne 1 → toutes)" i18n-label="@@settings.users.dupliquer.modules.ligne.1.toutes.6ebd1d76"
           icon="pi pi-copy"
           [outlined]="true"
           severity="secondary"
@@ -84,34 +85,34 @@ interface BulkRow {
       <p-table [value]="rows()" styleClass="bulk-table">
         <ng-template pTemplate="header">
           <tr>
-            <th scope="col">Prénom</th>
-            <th scope="col">Nom</th>
-            <th scope="col">Email</th>
-            <th scope="col">Mot de passe</th>
-            <th scope="col">Rôle</th>
-            <th scope="col" style="width: 12rem">Modules</th>
-            <th scope="col" class="actions-col" aria-label="Actions"></th>
+            <th scope="col" i18n="@@settings.users.prenom.e4387ade">Prénom</th>
+            <th scope="col" i18n="@@settings.users.nom.7ff20370">Nom</th>
+            <th scope="col" i18n="@@settings.users.email.84add5b2">Email</th>
+            <th scope="col" i18n="@@settings.users.mot.de.passe.94e2f3ee">Mot de passe</th>
+            <th scope="col" i18n="@@settings.users.role.8b824790">Rôle</th>
+            <th scope="col" style="width: 12rem" i18n="@@settings.users.modules.04e9462c">Modules</th>
+            <th scope="col" class="actions-col" aria-label="Actions" i18n-aria-label="@@settings.users.actions.c3cd636a"></th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row let-ri="rowIndex">
           <tr>
-            <td data-label="Prénom">
+            <td data-label="Prénom" i18n-data-label="@@settings.tenant-users-bulk.prenom.e4387ade">
               <input
                 pInputText
                 class="w-full"
                 [(ngModel)]="row.firstName"
                 [name]="'bulk-firstName-' + ri"
                 autocomplete="given-name"
-                placeholder="Prénom" />
+                placeholder="Prénom" i18n-placeholder="@@settings.users.prenom.e4387ade" />
             </td>
-            <td data-label="Nom">
+            <td data-label="Nom" i18n-data-label="@@settings.tenant-users-bulk.nom.7ff20370">
               <input
                 pInputText
                 class="w-full"
                 [(ngModel)]="row.lastName"
                 [name]="'bulk-lastName-' + ri"
                 autocomplete="family-name"
-                placeholder="Nom" />
+                placeholder="Nom" i18n-placeholder="@@settings.users.nom.7ff20370" />
             </td>
             <td data-label="Email">
               <input
@@ -121,20 +122,20 @@ interface BulkRow {
                 type="email"
                 [name]="'bulk-email-' + ri"
                 autocomplete="off"
-                placeholder="nom@entreprise.fr" />
+                placeholder="nom@entreprise.fr" i18n-placeholder="@@settings.users.nom.entreprise.fr.9626f884" />
             </td>
-            <td data-label="Mot de passe">
+            <td data-label="Mot de passe" i18n-data-label="@@settings.tenant-users-bulk.mot.de.passe.94e2f3ee">
               <p-password
                 [(ngModel)]="row.password"
                 [ngModelOptions]="{standalone: true}"
                 [inputId]="'bulk-password-' + ri"
                 [feedback]="false"
                 [toggleMask]="true"
-                placeholder="Mot de passe"
+                placeholder="Mot de passe" i18n-placeholder="@@settings.users.mot.de.passe.94e2f3ee"
                 styleClass="w-full"
                 inputStyleClass="w-full bulk-password-input"></p-password>
             </td>
-            <td data-label="Rôle">
+            <td data-label="Rôle" i18n-data-label="@@settings.tenant-users-bulk.role.8b824790">
               <p-select
                 [options]="roleOptions"
                 [ngModel]="row.role"
@@ -142,25 +143,25 @@ interface BulkRow {
                 [name]="'bulk-role-' + ri"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Rôle"
+                placeholder="Rôle" i18n-placeholder="@@settings.users.role.8b824790"
                 styleClass="w-full"></p-select>
             </td>
-            <td data-label="Modules">
+            <td data-label="Modules" i18n-data-label="@@settings.tenant-users-bulk.modules.04e9462c">
               <div class="module-cell">
                 <p-button
-                  label="Configurer"
+                  label="Configurer" i18n-label="@@settings.users.configurer.382efbe9"
                   icon="pi pi-sliders-h"
                   [outlined]="true"
                   (onClick)="openModules(ri)"></p-button>
               </div>
             </td>
-            <td data-label="Supprimer">
+            <td data-label="Supprimer" i18n-data-label="@@settings.tenant-users-bulk.supprimer.1acfc1c7">
               <p-button
                 icon="pi pi-trash"
                 [rounded]="true"
                 [text]="true"
                 severity="danger"
-                ariaLabel="Supprimer la ligne"
+                ariaLabel="Supprimer la ligne" i18n-ariaLabel="@@settings.users.supprimer.la.ligne.7e5f9ae0"
                 (onClick)="removeRow(ri)"
                 [disabled]="rows().length <= 1"></p-button>
             </td>
@@ -171,30 +172,26 @@ interface BulkRow {
       <p class="rows-hint">{{ bulkRowsHint() }}</p>
 
       <div class="footer-actions">
-        <p-button label="Enregistrer tout" icon="pi pi-check" (onClick)="submit()" [loading]="submitting()"></p-button>
+        <p-button label="Enregistrer tout" i18n-label="@@settings.users.enregistrer.tout.d16a3dcb" icon="pi pi-check" (onClick)="submit()" [loading]="submitting()"></p-button>
       </div>
     </p-card>
 
     <p-dialog
       [(visible)]="modulesVisible"
-      header="Modules autorisés"
+      header="Modules autorisés" i18n-header="@@settings.users.modules.autorises.2d0a003a"
       [modal]="true"
       [style]="{ width: 'min(480px, 96vw)' }"
       (onHide)="onModulesDialogHide()">
-      <p class="hint">
-        Les accès effectifs = éléments cochés, dans la limite du plafond autorisé pour le rôle.
-        Les éléments « Extension » élargissent les accès par défaut du rôle.
-      </p>
+      <p class="hint" i18n="@@settings.users.les.acces.effectifs.elements.coches.dans.la.limi.cbdf0e2d"> Les accès effectifs = éléments cochés, dans la limite du plafond autorisé pour le rôle.
+        Les éléments « Extension » élargissent les accès par défaut du rôle. </p>
       @if (bulkCatalogLoading()) {
-        <p class="catalog-state">Chargement du catalogue…</p>
+        <p class="catalog-state" i18n="@@settings.users.chargement.du.catalogue.2ae07afb">Chargement du catalogue…</p>
       } @else if (bulkCatalogError()) {
-        <div class="catalog-error">
-          Impossible de charger le catalogue des modules pour ce rôle. Fermez puis rouvrez la configuration pour réessayer.
-        </div>
+        <div class="catalog-error" i18n="@@settings.users.impossible.de.charger.le.catalogue.des.modules.p.b24c3ba2"> Impossible de charger le catalogue des modules pour ce rôle. Fermez puis rouvrez la configuration pour réessayer. </div>
       } @else {
         <div class="module-actions">
-          <p-button label="Tout activer" [text]="true" (onClick)="setAllModules(true)"></p-button>
-          <p-button label="Tout désactiver" [text]="true" (onClick)="setAllModules(false)"></p-button>
+          <p-button label="Tout activer" i18n-label="@@settings.users.tout.activer.ce34115c" [text]="true" (onClick)="setAllModules(true)"></p-button>
+          <p-button label="Tout désactiver" i18n-label="@@settings.users.tout.desactiver.f09b1c87" [text]="true" (onClick)="setAllModules(false)"></p-button>
         </div>
         <div class="module-list">
           @for (m of workingModules(); track m.module) {
@@ -203,7 +200,7 @@ interface BulkRow {
                 <span class="module-title">
                   {{ moduleLabel(m.module) }}
                   @if (isModuleDefaultIncluded(bulkCatalogModule(m.module))) {
-                    <span class="default-badge">Inclus par défaut</span>
+                    <span class="default-badge" i18n="@@settings.users.inclus.par.defaut.0d38cc2c">Inclus par défaut</span>
                   }
                 </span>
                 <p-inputSwitch
@@ -214,7 +211,7 @@ interface BulkRow {
                 <div
                   class="module-subfeatures"
                   role="group"
-                  [attr.aria-label]="'Sous-modules : ' + moduleLabel(m.module)">
+                  [attr.aria-label]="loc_ui_tern_sous_modules_6ad740 + moduleLabel(m.module)">
                   @for (f of catalogVisibleFeatures(bulkCatalogModule(m.module)); track f.key) {
                     <label class="subfeature-row">
                       <p-checkbox
@@ -224,7 +221,7 @@ interface BulkRow {
                         [inputId]="'bulkFeat-' + m.module + '-' + f.key"></p-checkbox>
                       <span class="subfeature-label-text">{{ featureLabel(m.module, f.key) }}</span>
                       @if (f.isExtension) {
-                        <span class="extension-badge">Extension</span>
+                        <span class="extension-badge" i18n="@@settings.users.extension.659087d3">Extension</span>
                       }
                     </label>
                   }
@@ -235,7 +232,7 @@ interface BulkRow {
         </div>
       }
       <div class="dialog-actions">
-        <p-button label="Fermer" (onClick)="modulesVisible = false"></p-button>
+        <p-button label="Fermer" i18n-label="@@settings.users.fermer.5ab4ec64" (onClick)="modulesVisible = false"></p-button>
       </div>
     </p-dialog>
   `,
@@ -354,7 +351,7 @@ interface BulkRow {
     .extension-badge {
       display: inline-flex;
       align-items: center;
-      margin-left: var(--spacing-2);
+      margin-inline-start: var(--spacing-2);
       padding: 0 var(--spacing-2);
       font-size: var(--font-size-xs, 0.7rem);
       font-weight: var(--font-weight-medium);
@@ -387,6 +384,7 @@ interface BulkRow {
   `]
 })
 export class TenantUsersBulkComponent {
+  readonly loc_ui_tern_sous_modules_6ad740 = $localize`:@@ui.tern.sous.modules.6ad740:Sous-modules : `;
   private readonly tenantUsers = inject(TenantUsersService);
   private readonly toast = inject(ToastService);
 
@@ -394,23 +392,23 @@ export class TenantUsersBulkComponent {
   readonly isSubFeatureOn = isSubFeatureOn;
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Utilisateurs', route: '/settings/users' },
-    { label: 'Ajout groupé' }
+    { label: $localize`:@@settings.tenant-users-bulk.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.utilisateurs.c661b3bc:Utilisateurs`, route: '/settings/users' },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.ajout.groupe.f72bec29:Ajout groupé` }
   ];
 
   readonly roleOptions = [
-    { label: 'Administrateur', value: 'Administrator' as UserRole },
-    { label: 'Comptable', value: 'Accountant' as UserRole },
-    { label: 'Commercial', value: 'SalesRep' as UserRole },
-    { label: 'Responsable Commercial', value: 'SalesManager' as UserRole },
-    { label: 'Magasinier', value: 'Warehouse' as UserRole },
-    { label: 'Acheteur', value: 'Purchaser' as UserRole },
-    { label: 'Caissier', value: 'Cashier' as UserRole },
-    { label: 'Auditeur', value: 'Auditor' as UserRole },
-    { label: 'Superviseur', value: 'Supervisor' as UserRole },
-    { label: 'Développeur', value: 'Developer' as UserRole }
+    { label: $localize`:@@settings.tenant-users-bulk.ts.administrateur.1d8141b2:Administrateur`, value: 'Administrator' as UserRole },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.comptable.36cf0a9e:Comptable`, value: 'Accountant' as UserRole },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.commercial.b48513e4:Commercial`, value: 'SalesRep' as UserRole },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.responsable.commercial.faf99310:Responsable Commercial`, value: 'SalesManager' as UserRole },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.magasinier.c61a86f7:Magasinier`, value: 'Warehouse' as UserRole },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.acheteur.0afc4f6e:Acheteur`, value: 'Purchaser' as UserRole },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.caissier.8d597a37:Caissier`, value: 'Cashier' as UserRole },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.auditeur.eac73f9c:Auditeur`, value: 'Auditor' as UserRole },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.superviseur.27e5f8da:Superviseur`, value: 'Supervisor' as UserRole },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.developpeur.4819232b:Développeur`, value: 'Developer' as UserRole }
   ];
 
   rows = signal<BulkRow[]>([this.emptyRow()]);
@@ -420,9 +418,9 @@ export class TenantUsersBulkComponent {
   bulkRowsHint(): string {
     const n = this.rows().length;
     if (n <= 1) {
-      return '1 ligne dans le formulaire — chaque ligne complète crée un utilisateur à l’enregistrement.';
+      return $localize`:@@settings.tenant-users-bulk.ts.1.ligne.dans.le.formulaire.chaque.ligne.c0a50277:1 ligne dans le formulaire — chaque ligne complète crée un utilisateur à l’enregistrement.`;
     }
-    return `${n} lignes dans le formulaire — chaque ligne complète crée un utilisateur à l’enregistrement.`;
+    return $localize`:@@settings.tenant-users-bulk.ts.n.lignes.dans.le.formulaire.chaque.ligne.b89f9eba:${n}:n: lignes dans le formulaire — chaque ligne complète crée un utilisateur à l’enregistrement.`;
   }
 
   modulesVisible = false;
@@ -647,14 +645,14 @@ export class TenantUsersBulkComponent {
         if (dropped > 0) {
           this.toast.add({
             severity: 'warn',
-            summary: 'Modules copiés',
-            detail: `Configuration appliquée. ${dropped} module(s) non disponible(s) pour certains rôles ont été écartés.`
+            summary: $localize`:@@tenant-users-bulk.component.summary.Modules copi:Modules copiés`,
+            detail: $localize`:@@settings.tenant-users-bulk.ts.configuration.appliquee.dropped.module.s.edb9d430:Configuration appliquée. ${dropped}:dropped: module(s) non disponible(s) pour certains rôles ont été écartés.`
           });
         } else {
           this.toast.add({
             severity: 'info',
-            summary: 'Modules copiés',
-            detail: 'Configuration de la première ligne appliquée aux autres.'
+            summary: $localize`:@@tenant-users-bulk.component.summary.Modules copi:Modules copiés`,
+            detail: $localize`:@@tenant-users-bulk.component.detail.Configuration_de:Configuration de la première ligne appliquée aux autres.`
           });
         }
       },
@@ -662,8 +660,8 @@ export class TenantUsersBulkComponent {
         this.submitting.set(false);
         this.toast.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de charger le catalogue pour la copie des modules.'
+          summary: $localize`:@@tenant-users-bulk.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@tenant-users-bulk.component.detail.Impossible d:Impossible de charger le catalogue pour la copie des modules.`
         });
       }
     });
@@ -684,8 +682,8 @@ export class TenantUsersBulkComponent {
       if (!r.email.trim() || !r.firstName.trim() || !r.lastName.trim() || !r.password.trim()) {
         this.toast.add({
           severity: 'warn',
-          summary: 'Formulaire incomplet',
-          detail: 'Chaque ligne renseignée doit avoir prénom, nom, email et mot de passe.'
+          summary: $localize`:@@tenant-users-bulk.component.summary.Formulaire_incom:Formulaire incomplet`,
+          detail: $localize`:@@tenant-users-bulk.component.detail.Chaque_ligne_ren:Chaque ligne renseignée doit avoir prénom, nom, email et mot de passe.`
         });
         return;
       }
@@ -699,7 +697,7 @@ export class TenantUsersBulkComponent {
       });
     }
     if (items.length === 0) {
-      this.toast.add({ severity: 'warn', summary: 'Aucune donnée', detail: 'Ajoutez au moins un utilisateur.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@tenant-users-bulk.component.summary.Aucune_donn_e:Aucune donnée`, detail: $localize`:@@tenant-users-bulk.component.detail.Ajoutez_au_moins:Ajoutez au moins un utilisateur.` });
       return;
     }
 
@@ -721,8 +719,8 @@ export class TenantUsersBulkComponent {
         this.submitting.set(false);
         this.toast.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de charger le catalogue des modules pour valider l’enregistrement.'
+          summary: $localize`:@@tenant-users-bulk.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@tenant-users-bulk.component.detail.Impossible_de_ch:Impossible de charger le catalogue des modules pour valider l’enregistrement.`
         });
       }
     });
@@ -741,15 +739,15 @@ export class TenantUsersBulkComponent {
       next: res => {
         this.submitting.set(false);
         if (res.success) {
-          this.toast.add({ severity: 'success', summary: 'Créé', detail: res.message ?? 'Utilisateurs créés' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@tenant-users-bulk.component.summary.Créé:Créé`, detail: res.message ?? $localize`:@@ui.tern.utilisateurs.crees.12083a:Utilisateurs créés` });
           this.rows.set([this.emptyRow()]);
         } else {
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.errors?.[0] ?? 'Échec' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@tenant-users-bulk.component.summary.Erreur:Erreur`, detail: res.errors?.[0] ?? $localize`:@@ui.tern.echec.0ff45f:Échec` });
         }
       },
       error: () => {
         this.submitting.set(false);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Échec de la création' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@tenant-users-bulk.component.summary.Erreur:Erreur`, detail: $localize`:@@tenant-users-bulk.component.detail._chec_de_la_cr_a:Échec de la création` });
       }
     });
   }

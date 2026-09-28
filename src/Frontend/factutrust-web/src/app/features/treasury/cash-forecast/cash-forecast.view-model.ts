@@ -9,6 +9,7 @@ import {
   CashPositionZone,
   CashFlowSourceType
 } from '../models/cash-forecast.models';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 /**
  * Fonctions pures de l'écran de trésorerie prévisionnelle.
@@ -69,11 +70,11 @@ export function positionZoneLabel(zone: CashPositionZone): string {
 export function scenarioLabel(kind: CashFlowScenarioKind): string {
   switch (kind) {
     case 'optimistic':
-      return 'Scénario optimiste';
+      return $localize`:@@treasury.cash-forecast.view-model.ts.scenario.optimiste.ffec2223:Scénario optimiste`;
     case 'realistic':
-      return 'Scénario réaliste';
+      return $localize`:@@treasury.cash-forecast.view-model.ts.scenario.realiste.4b8d48a3:Scénario réaliste`;
     default:
-      return 'Scénario pessimiste';
+      return $localize`:@@treasury.cash-forecast.view-model.ts.scenario.pessimiste.05d17bd7:Scénario pessimiste`;
   }
 }
 
@@ -122,19 +123,19 @@ export function severityTone(severity: CashFlowInsightSeverity): 'danger' | 'war
 /** Libellé français d'une source de flux. */
 export function sourceLabel(source: CashFlowSourceType): string {
   const labels: Record<CashFlowSourceType, string> = {
-    client_invoice: 'Facture client',
-    client_effet: 'Effet client',
-    sales_order_backlog: 'Carnet de commandes',
-    supplier_invoice: 'Facture fournisseur',
-    supplier_effet: 'Effet fournisseur',
-    purchase_order_commitment: 'Engagement sur commande',
+    client_invoice: $localize`:@@treasury.cash-forecast.view-model.ts.facture.client.83ca8a70:Facture client`,
+    client_effet: $localize`:@@treasury.cash-forecast.view-model.ts.effet.client.bd4599d7:Effet client`,
+    sales_order_backlog: $localize`:@@treasury.cash-forecast.view-model.ts.carnet.de.commandes.ec641454:Carnet de commandes`,
+    supplier_invoice: $localize`:@@treasury.cash-forecast.view-model.ts.facture.fournisseur.37c58151:Facture fournisseur`,
+    supplier_effet: $localize`:@@treasury.cash-forecast.view-model.ts.effet.fournisseur.605c18bc:Effet fournisseur`,
+    purchase_order_commitment: $localize`:@@treasury.cash-forecast.view-model.ts.engagement.sur.commande.e06c2361:Engagement sur commande`,
     payroll: 'Salaires',
     payroll_contribution: 'Charges sociales',
-    fiscal_obligation: 'Échéance fiscale',
-    loan_installment: 'Échéance d’emprunt',
-    recurring_commitment: 'Engagement récurrent',
-    recurring_journal_template: 'Écriture récurrente',
-    manual: 'Saisie manuelle'
+    fiscal_obligation: $localize`:@@treasury.cash-forecast.view-model.ts.echeance.fiscale.136a3c07:Échéance fiscale`,
+    loan_installment: $localize`:@@treasury.cash-forecast.view-model.ts.echeance.d.emprunt.854ae80a:Échéance d’emprunt`,
+    recurring_commitment: $localize`:@@treasury.cash-forecast.view-model.ts.engagement.recurrent.607377af:Engagement récurrent`,
+    recurring_journal_template: $localize`:@@treasury.cash-forecast.view-model.ts.ecriture.recurrente.898dbd99:Écriture récurrente`,
+    manual: $localize`:@@treasury.cash-forecast.view-model.ts.saisie.manuelle.da81002e:Saisie manuelle`
   };
   return labels[source] ?? 'Autre flux';
 }
@@ -142,7 +143,7 @@ export function sourceLabel(source: CashFlowSourceType): string {
 /** Étiquette d'axe d'un mois : « Juin 2026 ». */
 export function bucketLabel(bucket: CashFlowBucket): string {
   const date = new Date(bucket.periodStart);
-  const label = date.toLocaleDateString('fr-TN', { month: 'short', year: 'numeric' });
+  const label = date.toLocaleDateString(erpDateLocale('fr-TN'), { month: 'short', year: 'numeric' });
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 

@@ -107,11 +107,11 @@ export class ChatSpeechTranscriptionService {
     rec.onerror = (event: SpeechRecognitionErrorEventLike) => {
       const code = event.error;
       if (code === 'not-allowed') {
-        this.lastError.set('Accès au microphone refusé. Autorisez le micro dans les paramètres du navigateur.');
+        this.lastError.set($localize`:@@ai-assistant.chat-speech-transcription.ts.acces.au.microphone.refuse.autorisez.le.ddb1a61a:Accès au microphone refusé. Autorisez le micro dans les paramètres du navigateur.`);
       } else if (code === 'no-speech') {
         this.lastError.set(null);
       } else if (code !== 'aborted') {
-        this.lastError.set('Dictée interrompue. Réessayez.');
+        this.lastError.set($localize`:@@ai-assistant.chat-speech-transcription.ts.dictee.interrompue.reessayez.65e33ff5:Dictée interrompue. Réessayez.`);
       }
       this.finalizeFromEngine();
     };
@@ -125,7 +125,7 @@ export class ChatSpeechTranscriptionService {
     try {
       rec.start();
     } catch {
-      this.lastError.set('Impossible de démarrer la dictée.');
+      this.lastError.set($localize`:@@ai-assistant.chat-speech-transcription.ts.impossible.de.demarrer.la.dictee.2020ea7f:Impossible de démarrer la dictée.`);
       this.finalizeFromEngine();
     }
   }

@@ -48,9 +48,9 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
 })
 export class AccountingTableShellComponent {
   @Input() loadingOverlay = false;
-  @Input() loadingMessage = 'Chargement…';
+  @Input() loadingMessage = $localize`:@@accounting.accounting-table-shell.ts.chargement.01cba1df:Chargement…`;
   @Input() showEmpty = false;
-  @Input() emptyTitle = 'Aucune donnée';
+  @Input() emptyTitle = $localize`:@@accounting.accounting-table-shell.ts.aucune.donnee.434e5488:Aucune donnée`;
   @Input() emptyDescription = '';
   @Input() emptyIcon = 'pi-inbox';
 }

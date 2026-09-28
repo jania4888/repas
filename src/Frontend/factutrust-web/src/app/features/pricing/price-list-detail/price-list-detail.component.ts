@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
@@ -56,24 +57,20 @@ interface ProductOption {
     @if (priceList(); as pl) {
       <app-page-header [title]="pl.name" [subtitle]="headerSubtitle()">
         @if (canUpdate()) {
-          <app-button variant="secondary" icon="pi-cog" iconPos="left" (clicked)="openSettings()">
-            Paramètres
-          </app-button>
-          <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openAddItem()">
-            Ajouter un produit
-          </app-button>
+          <app-button variant="secondary" icon="pi-cog" iconPos="left" (clicked)="openSettings()" i18n="@@pricing.price-list-detail.parametres.ef8f0121"> Paramètres </app-button>
+          <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openAddItem()" i18n="@@pricing.price-list-detail.ajouter.un.produit.0f13c039"> Ajouter un produit </app-button>
         }
       </app-page-header>
 
       <!-- Bandeau d'état : une grille inapplicable ne sert aucun prix, il faut le dire fort. -->
       @if (!pl.isActive) {
-        <div class="ft-alert ft-alert--muted">
+        <div class="ft-alert ft-alert--muted" i18n="@@pricing.price-list-detail.cette.grille.est.desactivee.aucun.prix.n.7c86f095">
           <i class="pi pi-info-circle"></i>
           Cette grille est <strong>désactivée</strong> : aucun prix n'en est tiré. Les documents
           déjà émis conservent leur prix, qui a été figé à leur création.
         </div>
       } @else if (!pl.isApplicableToday) {
-        <div class="ft-alert ft-alert--warning">
+        <div class="ft-alert ft-alert--warning" i18n="@@pricing.price-list-detail.grille.active.mais.hors.de.sa.periode.de.04d8d6a2">
           <i class="pi pi-exclamation-triangle"></i>
           Grille active mais <strong>hors de sa période de validité</strong> : elle n'applique
           aucun prix aujourd'hui.
@@ -81,7 +78,7 @@ interface ProductOption {
       }
 
       @if (pl.assignedClientCount > 0) {
-        <div class="ft-alert ft-alert--info">
+        <div class="ft-alert ft-alert--info" i18n="@@pricing.price-list-detail.affectee.a.client.s.0fec0274">
           <i class="pi pi-users"></i>
           Affectée à <strong>{{ pl.assignedClientCount }}</strong> client(s).
         </div>
@@ -90,21 +87,21 @@ interface ProductOption {
       @if (pl.items.length === 0) {
         <app-empty-state
           icon="pi-tags"
-          title="Aucun prix dans cette grille"
-          message="Ajoutez des produits : ceux qui n'y figurent pas restent au prix catalogue.">
+          title="Aucun prix dans cette grille" i18n-title="@@pricing.price-list-detail.aucun.prix.dans.cette.grille.fa1b4a0a"
+          message="Ajoutez des produits : ceux qui n'y figurent pas restent au prix catalogue." i18n-message="@@pricing.price-list-detail.ajoutez.des.produits.ceux.qui.n.y.figure.446be17b">
         </app-empty-state>
       } @else {
         <div class="ft-table-card">
           <p-table [value]="pl.items" [rowHover]="true" styleClass="ft-table">
             <ng-template pTemplate="header">
               <tr>
-                <th>Code</th>
-                <th>Produit</th>
-                <th class="ft-num">Prix catalogue HT</th>
-                <th class="ft-num">Prix de la grille HT</th>
-                <th class="ft-num">Écart</th>
-                <th>Paliers</th>
-                <th class="ft-actions-col">Actions</th>
+                <th i18n="@@pricing.price-list-detail.code.adac6937">Code</th>
+                <th i18n="@@pricing.price-list-detail.produit.ff673dc2">Produit</th>
+                <th class="ft-num" i18n="@@pricing.price-list-detail.prix.catalogue.ht.045abe33">Prix catalogue HT</th>
+                <th class="ft-num" i18n="@@pricing.price-list-detail.prix.de.la.grille.ht.d24eff06">Prix de la grille HT</th>
+                <th class="ft-num" i18n="@@pricing.price-list-detail.ecart.6ae8dce8">Écart</th>
+                <th i18n="@@pricing.price-list-detail.paliers.d48097c3">Paliers</th>
+                <th class="ft-actions-col" i18n="@@pricing.price-list-detail.actions.c3cd636a">Actions</th>
               </tr>
             </ng-template>
 
@@ -121,13 +118,13 @@ interface ProductOption {
                 </td>
                 <td>
                   @if (item.tiers.length === 0) {
-                    <span class="ft-muted">Prix unique</span>
+                    <span class="ft-muted" i18n="@@pricing.price-list-detail.prix.unique.9fec32e6">Prix unique</span>
                   } @else {
                     @for (tier of item.tiers; track tier.minQuantity) {
                       <p-tag
                         severity="info"
                         [value]="tierLabel(tier)"
-                        [pTooltip]="canUpdate() ? 'Cliquer pour retirer ce palier' : ''"
+                        [pTooltip]="canUpdate() ? loc_ui_tern_cliquer_pour_retirer_ce_palier_a449fe : ''"
                         [style.cursor]="canUpdate() ? 'pointer' : 'default'"
                         (click)="onTierClick(item, tier)"></p-tag>
                     }
@@ -138,7 +135,7 @@ interface ProductOption {
                       type="button"
                       icon="pi pi-plus"
                       class="p-button-text p-button-sm"
-                      pTooltip="Ajouter un palier"
+                      pTooltip="Ajouter un palier" i18n-pTooltip="@@pricing.price-list-detail.ajouter.un.palier.716c9dc0"
                       (click)="openAddTier(item)"></button>
                   }
                 </td>
@@ -149,14 +146,14 @@ interface ProductOption {
                       type="button"
                       icon="pi pi-pencil"
                       class="p-button-text p-button-sm"
-                      pTooltip="Modifier le prix"
+                      pTooltip="Modifier le prix" i18n-pTooltip="@@pricing.price-list-detail.modifier.le.prix.20fbf571"
                       (click)="openEditItem(item)"></button>
                     <button
                       pButton
                       type="button"
                       icon="pi pi-trash"
                       class="p-button-text p-button-sm p-button-danger"
-                      pTooltip="Retirer de la grille"
+                      pTooltip="Retirer de la grille" i18n-pTooltip="@@pricing.price-list-detail.retirer.de.la.grille.92c887ff"
                       (click)="confirmRemove(item)"></button>
                   }
                 </td>
@@ -168,57 +165,53 @@ interface ProductOption {
     } @else if (!loading()) {
       <app-empty-state
         icon="pi-exclamation-circle"
-        title="Grille introuvable"
-        message="Cette grille tarifaire n'existe pas ou a été supprimée.">
+        title="Grille introuvable" i18n-title="@@pricing.price-list-detail.grille.introuvable.56e220cc"
+        message="Cette grille tarifaire n'existe pas ou a été supprimée." i18n-message="@@pricing.price-list-detail.cette.grille.tarifaire.n.existe.pas.ou.a.fc7d8a6b">
       </app-empty-state>
     }
 
     <!-- Paramètres de la grille -->
     <p-dialog
-      header="Paramètres de la grille"
+      header="Paramètres de la grille" i18n-header="@@pricing.price-list-detail.parametres.de.la.grille.e0229226"
       [(visible)]="settingsVisible"
       [modal]="true"
       [style]="{ width: '32rem' }"
       [draggable]="false">
       <div class="ft-form-grid">
         <div class="ft-field">
-          <label for="pl-name">Nom <span class="ft-required">*</span></label>
+          <label for="pl-name"><ng-container i18n="@@pricing.price-list-detail.nom.7ff20370">Nom </ng-container> <span class="ft-required" i18n="@@pricing.price-list-detail.text.df58248c">*</span></label>
           <input id="pl-name" pInputText [(ngModel)]="settingsForm.name" maxlength="100" />
         </div>
 
         <div class="ft-field">
-          <label for="pl-from">Début de validité</label>
+          <label for="pl-from" i18n="@@pricing.price-list-detail.debut.de.validite.10f1f74c">Début de validité</label>
           <input id="pl-from" type="date" pInputText [(ngModel)]="settingsForm.validFrom" />
         </div>
 
         <div class="ft-field">
-          <label for="pl-until">Fin de validité</label>
+          <label for="pl-until" i18n="@@pricing.price-list-detail.fin.de.validite.3cfa7402">Fin de validité</label>
           <input id="pl-until" type="date" pInputText [(ngModel)]="settingsForm.validUntil" />
         </div>
 
         <div class="ft-field ft-field--inline">
           <p-inputSwitch [(ngModel)]="settingsForm.isActive" inputId="pl-active"></p-inputSwitch>
-          <label for="pl-active">Grille active</label>
-          <small class="ft-hint">
-            Désactiver est réversible et n'affecte aucun document déjà émis.
-          </small>
+          <label for="pl-active" i18n="@@pricing.price-list-detail.grille.active.5fe0537d">Grille active</label>
+          <small class="ft-hint" i18n="@@pricing.price-list-detail.desactiver.est.reversible.et.n.affecte.aucun.doc.f76ea8fd"> Désactiver est réversible et n'affecte aucun document déjà émis. </small>
         </div>
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (clicked)="settingsVisible = false">Annuler</app-button>
+        <app-button variant="secondary" (clicked)="settingsVisible = false" i18n="@@pricing.price-list-detail.annuler.49ba3292">Annuler</app-button>
         <app-button
           variant="primary"
           [disabled]="!settingsForm.name.trim() || saving()"
-          (clicked)="saveSettings()">
-          Enregistrer
-        </app-button>
+          (clicked)="saveSettings()" i18n="@@pricing.price-list-detail.enregistrer.f7c8bcd8"> Enregistrer </app-button>
       </ng-template>
     </p-dialog>
 
     <!-- Ajout / modification d'un prix -->
     <p-dialog
-      [header]="editingItem ? 'Modifier le prix' : 'Ajouter un produit'"
+      [header]="editingItem ? loc_ui_tern_modifier_le_prix_20fbf5 : loc_ui_tern_ajouter_un_produit_0f13c0"
       [(visible)]="itemVisible"
       [modal]="true"
       [style]="{ width: '32rem' }"
@@ -226,12 +219,12 @@ interface ProductOption {
       <div class="ft-form-grid">
         @if (editingItem) {
           <div class="ft-field">
-            <label>Produit</label>
+            <label i18n="@@pricing.price-list-detail.produit.ff673dc2">Produit</label>
             <div class="ft-readonly">{{ editingItem.productCode }} — {{ editingItem.productName }}</div>
           </div>
         } @else {
           <div class="ft-field">
-            <label for="pl-product">Produit <span class="ft-required">*</span></label>
+            <label for="pl-product"><ng-container i18n="@@pricing.price-list-detail.produit.ff673dc2">Produit </ng-container> <span class="ft-required" i18n="@@pricing.price-list-detail.text.df58248c">*</span></label>
             <p-autoComplete
               inputId="pl-product"
               [(ngModel)]="selectedProduct"
@@ -240,13 +233,13 @@ interface ProductOption {
               field="label"
               [forceSelection]="true"
               [dropdown]="true"
-              placeholder="Rechercher par code ou nom"
+              placeholder="Rechercher par code ou nom" i18n-placeholder="@@pricing.price-list-detail.rechercher.par.code.ou.nom.46838c72"
               appendTo="body"></p-autoComplete>
           </div>
         }
 
         <div class="ft-field">
-          <label for="pl-price">Prix HT ({{ priceList()?.currency }}) <span class="ft-required">*</span></label>
+          <label for="pl-price" i18n="@@pricing.price-list-detail.prix.ht.08db238f">Prix HT ({{ priceList()?.currency }}) <span class="ft-required">*</span></label>
           <p-inputNumber
             inputId="pl-price"
             [(ngModel)]="itemPrice"
@@ -255,28 +248,26 @@ interface ProductOption {
             [maxFractionDigits]="3"
             [min]="0"></p-inputNumber>
           @if (catalogReference() !== null) {
-            <small class="ft-hint">Prix catalogue : {{ catalogReference() | number: '1.3-3' }}</small>
+            <small class="ft-hint" i18n="@@pricing.price-list-detail.prix.catalogue.bba7af9e">Prix catalogue : {{ catalogReference() | number: '1.3-3' }}</small>
           }
         </div>
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (clicked)="itemVisible = false">Annuler</app-button>
-        <app-button variant="primary" [disabled]="!canSaveItem() || saving()" (clicked)="saveItem()">
-          Enregistrer
-        </app-button>
+        <app-button variant="secondary" (clicked)="itemVisible = false" i18n="@@pricing.price-list-detail.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" [disabled]="!canSaveItem() || saving()" (clicked)="saveItem()" i18n="@@pricing.price-list-detail.enregistrer.f7c8bcd8"> Enregistrer </app-button>
       </ng-template>
     </p-dialog>
 
     <!-- Palier quantitatif -->
     <p-dialog
-      header="Ajouter un palier"
+      header="Ajouter un palier" i18n-header="@@pricing.price-list-detail.ajouter.un.palier.716c9dc0"
       [(visible)]="tierVisible"
       [modal]="true"
       [style]="{ width: '32rem' }"
       [draggable]="false">
       @if (tierTarget) {
-        <p class="ft-dialog-intro">
+        <p class="ft-dialog-intro" i18n="@@pricing.price-list-detail.prix.de.base.le.palier.remplace.ce.prix.d35e3b1e">
           <strong>{{ tierTarget.productCode }}</strong> — prix de base
           {{ tierTarget.unitPriceHT | number: '1.3-3' }}. Le palier remplace ce prix à partir
           de la quantité indiquée.
@@ -285,7 +276,7 @@ interface ProductOption {
 
       <div class="ft-form-grid">
         <div class="ft-field">
-          <label for="pl-tier-qty">À partir de la quantité <span class="ft-required">*</span></label>
+          <label for="pl-tier-qty"><ng-container i18n="@@pricing.price-list-detail.a.partir.de.la.quantite.80cb1477">À partir de la quantité </ng-container> <span class="ft-required" i18n="@@pricing.price-list-detail.text.df58248c">*</span></label>
           <p-inputNumber
             inputId="pl-tier-qty"
             [(ngModel)]="tierMinQuantity"
@@ -293,11 +284,11 @@ interface ProductOption {
             [minFractionDigits]="0"
             [maxFractionDigits]="4"
             [min]="2"></p-inputNumber>
-          <small class="ft-hint">Au moins 2 : en deçà, c'est le prix de base qui s'applique.</small>
+          <small class="ft-hint" i18n="@@pricing.price-list-detail.au.moins.2.en.deca.c.est.le.prix.de.base.qui.s.a.2d90a8c9">Au moins 2 : en deçà, c'est le prix de base qui s'applique.</small>
         </div>
 
         <div class="ft-field">
-          <label for="pl-tier-price">Prix HT du palier <span class="ft-required">*</span></label>
+          <label for="pl-tier-price"><ng-container i18n="@@pricing.price-list-detail.prix.ht.du.palier.740a3726">Prix HT du palier </ng-container> <span class="ft-required" i18n="@@pricing.price-list-detail.text.df58248c">*</span></label>
           <p-inputNumber
             inputId="pl-tier-price"
             [(ngModel)]="tierPrice"
@@ -309,15 +300,16 @@ interface ProductOption {
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (clicked)="tierVisible = false">Annuler</app-button>
-        <app-button variant="primary" [disabled]="!canSaveTier() || saving()" (clicked)="saveTier()">
-          Enregistrer
-        </app-button>
+        <app-button variant="secondary" (clicked)="tierVisible = false" i18n="@@pricing.price-list-detail.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" [disabled]="!canSaveTier() || saving()" (clicked)="saveTier()" i18n="@@pricing.price-list-detail.enregistrer.f7c8bcd8"> Enregistrer </app-button>
       </ng-template>
     </p-dialog>
   `
 })
 export class PriceListDetailComponent implements OnInit {
+  readonly loc_ui_tern_cliquer_pour_retirer_ce_palier_a449fe = $localize`:@@ui.tern.cliquer.pour.retirer.ce.palier.a449fe:Cliquer pour retirer ce palier`;
+  readonly loc_ui_tern_modifier_le_prix_20fbf5 = $localize`:@@ui.tern.modifier.le.prix.20fbf5:Modifier le prix`;
+  readonly loc_ui_tern_ajouter_un_produit_0f13c0 = $localize`:@@ui.tern.ajouter.un.produit.0f13c0:Ajouter un produit`;
   private readonly route = inject(ActivatedRoute);
   private readonly pricingService = inject(PricingService);
   private readonly productService = inject(ProductService);
@@ -349,16 +341,16 @@ export class PriceListDetailComponent implements OnInit {
   readonly canUpdate = computed(() => this.auth.hasPermission(PERMISSIONS.pricing.update));
 
   readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
-    { label: 'Ventes' },
-    { label: 'Grilles tarifaires', route: '/pricing' },
-    { label: this.priceList()?.name ?? 'Détail' }
+    { label: $localize`:@@pricing.price-list-detail.ts.ventes.9087fc4f:Ventes` },
+    { label: $localize`:@@pricing.price-list-detail.ts.grilles.tarifaires.21b96006:Grilles tarifaires`, route: '/pricing' },
+    { label: this.priceList()?.name ?? $localize`:@@ui.tern.detail.7ce06a:Détail` }
   ]);
 
   readonly headerSubtitle = computed(() => {
     const pl = this.priceList();
     if (!pl) return '';
     const count = pl.items.length;
-    return `${count} produit(s) tarifé(s) · devise ${pl.currency}. Les produits absents restent au prix catalogue.`;
+    return $localize`:@@pricing.price-list-detail.ts.count.produit.s.tarife.s.devise.currency.0163d28c:${count}:count: produit(s) tarifé(s) · devise ${pl.currency}:currency:. Les produits absents restent au prix catalogue.`;
   });
 
   /** Prix catalogue de référence dans la boîte de dialogue, pour situer la saisie. */
@@ -380,7 +372,7 @@ export class PriceListDetailComponent implements OnInit {
         this.loading.set(false);
       },
       error: err => {
-        this.showError(err, 'Impossible de charger la grille');
+        this.showError(err, $localize`:@@pricing.price-list-detail.ts.impossible.de.charger.la.grille.936a09ae:Impossible de charger la grille`);
         this.errorHandler.logError('Failed to load price list', err);
         this.priceList.set(null);
         this.loading.set(false);
@@ -428,15 +420,15 @@ export class PriceListDetailComponent implements OnInit {
         next: () => {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Grille mise à jour.'
+            summary: $localize`:@@price-list-detail.component.summary.Succ_s:Succès`,
+            detail: $localize`:@@price-list-detail.component.detail.Grille_mise_jo:Grille mise à jour.`
           });
           this.settingsVisible = false;
           this.saving.set(false);
           this.load();
         },
         error: err => {
-          this.showError(err, 'Mise à jour impossible');
+          this.showError(err, $localize`:@@pricing.price-list-detail.ts.mise.a.jour.impossible.56d51741:Mise à jour impossible`);
           this.errorHandler.logError('Update price list failed', err);
           this.saving.set(false);
         }
@@ -489,15 +481,15 @@ export class PriceListDetailComponent implements OnInit {
       next: () => {
         this.toastService.add({
           severity: 'success',
-          summary: 'Succès',
-          detail: 'Prix enregistré.'
+          summary: $localize`:@@price-list-detail.component.summary.Succ_s:Succès`,
+          detail: $localize`:@@price-list-detail.component.detail.Prix_enregistr_:Prix enregistré.`
         });
         this.itemVisible = false;
         this.saving.set(false);
         this.load();
       },
       error: err => {
-        this.showError(err, 'Enregistrement impossible');
+        this.showError(err, $localize`:@@pricing.price-list-detail.ts.enregistrement.impossible.1e5e1075:Enregistrement impossible`);
         this.errorHandler.logError('Set price list item failed', err);
         this.saving.set(false);
       }
@@ -506,11 +498,11 @@ export class PriceListDetailComponent implements OnInit {
 
   confirmRemove(item: PriceListItem): void {
     this.confirmationService.confirm({
-      header: 'Retirer de la grille',
-      message: `Retirer « ${item.productName} » de cette grille ? Il repassera au prix catalogue.`,
+      header: $localize`:@@pricing.price-list-detail.ts.retirer.de.la.grille.92c887ff:Retirer de la grille`,
+      message: $localize`:@@pricing.price-list-detail.ts.retirer.productname.de.cette.grille.il.r.e0441554:Retirer « ${item.productName}:productName: » de cette grille ? Il repassera au prix catalogue.`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Retirer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@price-list-detail.component.acceptLabel.Retirer:Retirer`,
+      rejectLabel: $localize`:@@price-list-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.removeItem(item)
     });
@@ -521,13 +513,13 @@ export class PriceListDetailComponent implements OnInit {
       next: () => {
         this.toastService.add({
           severity: 'success',
-          summary: 'Succès',
-          detail: 'Produit retiré de la grille.'
+          summary: $localize`:@@price-list-detail.component.summary.Succ_s:Succès`,
+          detail: $localize`:@@price-list-detail.component.detail.Produit_retir_d:Produit retiré de la grille.`
         });
         this.load();
       },
       error: err => {
-        this.showError(err, 'Retrait impossible');
+        this.showError(err, $localize`:@@pricing.price-list-detail.ts.retrait.impossible.d23945f6:Retrait impossible`);
         this.errorHandler.logError('Remove price list item failed', err);
       }
     });
@@ -576,15 +568,15 @@ export class PriceListDetailComponent implements OnInit {
         next: () => {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Palier enregistré.'
+            summary: $localize`:@@price-list-detail.component.summary.Succ_s:Succès`,
+            detail: $localize`:@@price-list-detail.component.detail.Palier_enregistr:Palier enregistré.`
           });
           this.tierVisible = false;
           this.saving.set(false);
           this.load();
         },
         error: err => {
-          this.showError(err, 'Enregistrement du palier impossible');
+          this.showError(err, $localize`:@@pricing.price-list-detail.ts.enregistrement.du.palier.impossible.105b11f6:Enregistrement du palier impossible`);
           this.errorHandler.logError('Set price list tier failed', err);
           this.saving.set(false);
         }
@@ -593,13 +585,12 @@ export class PriceListDetailComponent implements OnInit {
 
   confirmRemoveTier(item: PriceListItem, tier: PriceListTier): void {
     this.confirmationService.confirm({
-      header: 'Retirer le palier',
+      header: $localize`:@@pricing.price-list-detail.ts.retirer.le.palier.19beafcf:Retirer le palier`,
       message:
-        `Retirer le palier « à partir de ${tier.minQuantity} » sur ${item.productCode} ? ` +
-        'Ces quantités retomberont sur le palier inférieur, ou sur le prix de base.',
+        $localize`:@@pricing.price-list-detail.ts.retirer.le.palier.a.partir.de.minquantit.3ad6c6d1:Retirer le palier « à partir de ${tier.minQuantity}:minQuantity: » sur ${item.productCode}:productCode: ? Ces quantités retomberont sur le palier inférieur, ou sur le prix de base.`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Retirer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@price-list-detail.component.acceptLabel.Retirer:Retirer`,
+      rejectLabel: $localize`:@@price-list-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.removeTier(item, tier)
     });
@@ -612,13 +603,13 @@ export class PriceListDetailComponent implements OnInit {
         next: () => {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Palier retiré.'
+            summary: $localize`:@@price-list-detail.component.summary.Succ_s:Succès`,
+            detail: $localize`:@@price-list-detail.component.detail.Palier_retir_:Palier retiré.`
           });
           this.load();
         },
         error: err => {
-          this.showError(err, 'Retrait du palier impossible');
+          this.showError(err, $localize`:@@pricing.price-list-detail.ts.retrait.du.palier.impossible.9e414de5:Retrait du palier impossible`);
           this.errorHandler.logError('Remove price list tier failed', err);
         }
       });
@@ -628,7 +619,7 @@ export class PriceListDetailComponent implements OnInit {
     const msg = this.errorHandler.extractErrorMessage(err);
     this.toastService.add({
       severity: 'error',
-      summary: 'Erreur',
+      summary: $localize`:@@price-list-detail.component.summary.Erreur:Erreur`,
       detail: msg || fallback
     });
   }

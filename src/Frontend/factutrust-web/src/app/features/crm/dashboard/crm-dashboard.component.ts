@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -14,28 +15,28 @@ import { ToastService } from '@core/services/toast.service';
   providers: [DecimalPipe],
   imports: [CommonModule, RouterModule, PageHeaderComponent, StatCardComponent, DashboardPanelComponent],
   template: `
-    <app-page-header title="CRM Commercial" subtitle="Tableau de bord" />
+    <app-page-header title="CRM Commercial" i18n-title="@@crm.dashboard.crm.commercial.96a9fcf3" subtitle="Tableau de bord" i18n-subtitle="@@crm.dashboard.tableau.de.bord.d776a08d" />
 
     <div class="stats-wrapper">
       <div class="stats-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
-        <app-stat-card appearance="solid" label="Mes relances" [value]="reminders().length" icon="pi-bell"
+        <app-stat-card appearance="solid" label="Mes relances" i18n-label="@@crm.dashboard.mes.relances.05d28ed7" [value]="reminders().length" icon="pi-bell"
           [variant]="reminders().length > 0 ? 'warning' : 'success'" />
-        <app-stat-card appearance="solid" label="Pipeline pondéré" [value]="formatAmount(pipelineTotal())" icon="pi-chart-bar" variant="primary" />
-        <app-stat-card appearance="solid" label="Opportunités ouvertes" [value]="openOpps().length" icon="pi-bullseye" variant="primary" />
+        <app-stat-card appearance="solid" label="Pipeline pondéré" i18n-label="@@crm.dashboard.pipeline.pondere.506d4899" [value]="formatAmount(pipelineTotal())" icon="pi-chart-bar" variant="primary" />
+        <app-stat-card appearance="solid" label="Opportunités ouvertes" i18n-label="@@crm.dashboard.opportunites.ouvertes.37ea7471" [value]="openOpps().length" icon="pi-bullseye" variant="primary" />
       </div>
     </div>
 
     @if (reminders().length > 0) {
-      <app-dashboard-panel title="Relances à venir" [hasActions]="true" class="mb-4">
-        <a panel-actions routerLink="/crm/activities" [queryParams]="{ mine: 1, completed: 'false' }" class="crm-dash-link">Voir toutes mes activités</a>
+      <app-dashboard-panel title="Relances à venir" i18n-title="@@crm.dashboard.relances.a.venir.cf05a6ba" [hasActions]="true" class="mb-4">
+        <a panel-actions routerLink="/crm/activities" [queryParams]="{ mine: 1, completed: 'false' }" class="crm-dash-link" i18n="@@crm.dashboard.voir.toutes.mes.activites.c91dd96a">Voir toutes mes activités</a>
         <div class="reminder-list">
           @for (r of reminders(); track r.id) {
             <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid var(--border-subtle);">
               <div>
                 <strong>{{ r.subject }}</strong>
-                <span style="color:var(--text-muted); margin-left:0.5rem">{{ r.dueDate | date:'shortDate' }}</span>
+                <span style="color:var(--text-muted); margin-inline-start:0.5rem">{{ r.dueDate | date:'shortDate' }}</span>
               </div>
-              <button type="button" style="font-size:0.85rem" (click)="markDone(r.id)">Terminé</button>
+              <button type="button" style="font-size:0.85rem" (click)="markDone(r.id)" i18n="@@crm.dashboard.termine.3bc59720">Terminé</button>
             </div>
           }
         </div>
@@ -43,12 +44,12 @@ import { ToastService } from '@core/services/toast.service';
     }
 
     @if (openOpps().length > 0) {
-      <app-dashboard-panel title="Top opportunités">
+      <app-dashboard-panel title="Top opportunités" i18n-title="@@crm.dashboard.top.opportunites.b18e8f17">
         @for (o of openOpps().slice(0, 5); track o.id) {
           <div style="display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid var(--border-subtle);">
             <div>
               <a [routerLink]="['/crm/opportunities']" style="font-weight:600">{{ o.title }}</a>
-              <span style="margin-left:0.5rem; font-size:0.85rem; color:var(--text-muted)">{{ o.stageName }}</span>
+              <span style="margin-inline-start:0.5rem; font-size:0.85rem; color:var(--text-muted)">{{ o.stageName }}</span>
             </div>
             <span>{{ o.weightedAmount | number:'1.0-0' }} {{ o.currency }}</span>
           </div>
@@ -92,7 +93,7 @@ export class CrmDashboardComponent implements OnInit {
   }
 
   formatAmount(v: number): string {
-    return (this.decimalPipe.transform(v, '1.0-0') ?? '0') + ' TND';
+    return (this.decimalPipe.transform(v, '1.0-0') ?? '0') + $localize`:@@ui.tern.tnd.9aaf5c: TND`;
   }
 
   markDone(id: string): void {
@@ -101,12 +102,12 @@ export class CrmDashboardComponent implements OnInit {
         if (r.success) {
           this.reminders.update(list => list.filter(x => x.id !== id));
         } else {
-          const msg = r.errors?.[0] ?? r.message ?? r.error ?? 'Impossible de terminer l’activité';
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: msg, life: 6000 });
+          const msg = r.errors?.[0] ?? r.message ?? r.error ?? $localize`:@@ui.tern.impossible.de.terminer.l.activite.0da4cb:Impossible de terminer l’activité`;
+          this.toast.add({ severity: 'error', summary: $localize`:@@crm-dashboard.component.summary.Erreur:Erreur`, detail: msg, life: 6000 });
         }
       },
       error: () => {
-        this.toast.add({ severity: 'error', summary: 'Erreur réseau', life: 6000 });
+        this.toast.add({ severity: 'error', summary: $localize`:@@crm-dashboard.component.summary.Erreur résea:Erreur réseau`, life: 6000 });
       }
     });
   }

@@ -189,7 +189,7 @@
 
 .ledger-grand-total {
   margin: var(--spacing-4) 0 0;
-  text-align: right;
+  text-align: end;
   font-weight: var(--font-weight-bold);
   font-variant-numeric: tabular-nums;
 }
@@ -202,7 +202,7 @@
 }
 
 .ledger-currency-amount {
-  margin-left: var(--spacing-1);
+  margin-inline-start: var(--spacing-1);
   font-variant-numeric: tabular-nums;
   color: var(--color-text-secondary);
   font-size: var(--font-size-xs);

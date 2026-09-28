@@ -61,13 +61,13 @@ export function parseStorefrontWorkflowStatus(raw: unknown): ParseStorefrontWork
 export function workflowStatusLabel(value: StorefrontWorkflowStatus): string {
   switch (value) {
     case 'draft':
-      return 'Brouillon';
+      return $localize`:@@settings.storefront-workflow-status.ts.brouillon.57d2d7a7:Brouillon`;
     case 'pendingReview':
-      return 'En attente de validation';
+      return $localize`:@@settings.storefront-workflow-status.ts.en.attente.de.validation.a553ea16:En attente de validation`;
     case 'published':
-      return 'Publiée';
+      return $localize`:@@settings.storefront-workflow-status.ts.publiee.ebef6edc:Publiée`;
     case 'suspended':
-      return 'Suspendue';
+      return $localize`:@@settings.storefront-workflow-status.ts.suspendue.b6126c8f:Suspendue`;
     default: {
       const _exhaustive: never = value;
       return _exhaustive;
@@ -77,7 +77,7 @@ export function workflowStatusLabel(value: StorefrontWorkflowStatus): string {
 
 /** Libellé court pour tags table (back-office). */
 export function workflowStatusTagLabel(value: StorefrontWorkflowStatus): string {
-  return value === 'pendingReview' ? 'En attente' : workflowStatusLabel(value);
+  return value === 'pendingReview' ? $localize`:@@settings.storefront-workflow-status.ts.en.attente.5231158f:En attente` : workflowStatusLabel(value);
 }
 
 export function isDraft(s: StorefrontWorkflowStatus): boolean {

@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
   imports: [CommonModule, RouterModule],
   template: `
     <div class="purchases-analytics-hub">
-      <nav class="analytics-nav" aria-label="Navigation des états analytiques achats">
+      <nav class="analytics-nav" aria-label="Navigation des états analytiques achats" i18n-aria-label="@@reports.purchases-analytics.navigation.des.etats.analytiques.achats.a83eec15">
         <div class="nav-tabs">
           @for (tab of tabs; track tab.id) {
             <a
@@ -70,8 +70,8 @@ import { RouterModule } from '@angular/router';
       content: '';
       position: absolute;
       top: 0;
-      left: 0;
-      right: 0;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
       height: 3px;
       background: linear-gradient(90deg, #3b82f6, #60a5fa);
       transform: scaleX(0);
@@ -143,7 +143,7 @@ import { RouterModule } from '@angular/router';
       }
       .nav-tab {
         flex-direction: row;
-        text-align: left;
+        text-align: start;
         padding: var(--spacing-4);
         gap: var(--spacing-3);
       }
@@ -167,24 +167,24 @@ export class PurchasesAnalyticsHubComponent {
   tabs = [
     {
       id: 'expenses',
-      label: 'Dépenses',
-      description: 'Évolution des dépenses et comparaison par période',
+      label: $localize`:@@reports.purchases-analytics-hub.ts.depenses.fb667434:Dépenses`,
+      description: $localize`:@@reports.purchases-analytics-hub.ts.evolution.des.depenses.et.comparaison.pa.5ffbe878:Évolution des dépenses et comparaison par période`,
       icon: 'pi-dollar',
       route: '/reports/purchases-analytics/expenses',
       exact: false
     },
     {
       id: 'suppliers',
-      label: 'Analyse fournisseurs',
-      description: 'Classement, part des achats et indicateurs par fournisseur',
+      label: $localize`:@@reports.purchases-analytics-hub.ts.analyse.fournisseurs.496355ab:Analyse fournisseurs`,
+      description: $localize`:@@reports.purchases-analytics-hub.ts.classement.part.des.achats.et.indicateur.3cbbbd58:Classement, part des achats et indicateurs par fournisseur`,
       icon: 'pi-building',
       route: '/reports/purchases-analytics/suppliers',
       exact: false
     },
     {
       id: 'orders',
-      label: 'Analyse des commandes',
-      description: 'Taux de conversion bons de commande → facture, délais et panier moyen',
+      label: $localize`:@@reports.purchases-analytics-hub.ts.analyse.des.commandes.575afd26:Analyse des commandes`,
+      description: $localize`:@@reports.purchases-analytics-hub.ts.taux.de.conversion.bons.de.commande.fact.d22aedce:Taux de conversion bons de commande → facture, délais et panier moyen`,
       icon: 'pi-shopping-cart',
       route: '/reports/purchases-analytics/orders',
       exact: false

@@ -52,7 +52,7 @@ import {
               class="toggle-btn"
               (click)="toggleDetails(); $event.stopPropagation()"
               [attr.aria-expanded]="detailsExpanded">
-              <span>{{ detailsExpanded ? 'Masquer' : 'Voir le d&#233;tail' }}</span>
+              <span>{{ detailsExpanded ? loc_ui_tern_masquer_adb05f : loc_ui_tern_voir_le_d_233_tail_553c09 }}</span>
               <i
                 class="fa-solid fa-chevron-down toggle-icon"
                 [class.expanded]="detailsExpanded"
@@ -67,9 +67,7 @@ import {
           [attr.aria-hidden]="!showDetails()">
           <div class="progress-body">
             @if (showNote()) {
-              <div class="progress-note">
-                Nous affichons les grandes &#233;tapes pour expliquer l'attente, sans exposer le raisonnement interne.
-              </div>
+              <div class="progress-note" i18n="@@ai-assistant.components.nous.affichons.les.grandes.233.tapes.pour.expliq.8ab532c8"> Nous affichons les grandes &#233;tapes pour expliquer l'attente, sans exposer le raisonnement interne. </div>
             }
 
             @if (steps.length) {
@@ -104,7 +102,7 @@ import {
 
             @if (toolCalls.length) {
               <div class="tools-block">
-                <div class="tools-title">Consultations effectu&#233;es</div>
+                <div class="tools-title" i18n="@@ai-assistant.components.consultations.effectu.233.es.2202fec9">Consultations effectu&#233;es</div>
                 <div class="tools-list" role="list">
                   @for (toolCall of toolCalls; track toolCall.callId) {
                     <div
@@ -159,7 +157,7 @@ import {
     .progress-card.streaming::after {
       content: '';
       position: absolute;
-      left: 0;
+      inset-inline-start: 0;
       bottom: 0;
       height: 2px;
       width: 40%;
@@ -180,7 +178,7 @@ import {
       display: inline-flex;
       align-items: center;
       gap: 3px;
-      margin-right: 6px;
+      margin-inline-end: 6px;
       vertical-align: middle;
     }
 
@@ -480,6 +478,8 @@ import {
   `]
 })
 export class AssistantProgressTimelineComponent implements OnChanges, OnInit, OnDestroy {
+  readonly loc_ui_tern_masquer_adb05f = $localize`:@@ui.tern.masquer.adb05f:Masquer`;
+  readonly loc_ui_tern_voir_le_d_233_tail_553c09 = $localize`:@@ui.tern.voir.le.d.233.tail.553c09:Voir le d&#233;tail`;
   @Input() progress?: AssistantProgressTimeline;
   @Input() toolCalls: ActiveToolCall[] = [];
   @Input() isStreaming = false;
@@ -612,7 +612,7 @@ export class AssistantProgressTimelineComponent implements OnChanges, OnInit, On
       return 'Analyse en cours';
     }
 
-    return this.detailsExpanded ? '\u00c9tapes du traitement' : 'R\u00e9ponse pr\u00eate';
+    return this.detailsExpanded ? $localize`:@@ai-assistant.assistant-progress-timeline.ts.etapes.du.traitement.93c06168:Étapes du traitement` : $localize`:@@ai-assistant.assistant-progress-timeline.ts.reponse.prete.dcb81431:Réponse prête`;
   }
 
   currentStatusText(): string {
@@ -627,12 +627,12 @@ export class AssistantProgressTimelineComponent implements OnChanges, OnInit, On
 
       if (runningStep.code === 'llm_stream_round' && liveMs !== null && liveMs >= 5000) {
         const time = liveStr ? ` (${liveStr})` : '';
-        return `${composed}${time} \u2014 traitement en cours, merci de patienter`;
+        return $localize`:@@ai-assistant.assistant-progress-timeline.ts.composed.time.traitement.en.cours.merci.b1bf7987:${composed}:composed:${time}:time: \u2014 traitement en cours, merci de patienter`;
       }
 
       if (runningStep.code === 'ollama_queue_wait' && liveMs !== null && liveMs >= 1000) {
         const time = liveStr ? ` (${liveStr})` : '';
-        return `${composed}${time} \u2014 un autre traitement se termine`;
+        return $localize`:@@ai-assistant.assistant-progress-timeline.ts.composed.time.un.autre.traitement.se.ter.5988258d:${composed}:composed:${time}:time: \u2014 un autre traitement se termine`;
       }
 
       return liveStr ? `${composed} \u00b7 ${liveStr}` : composed;
@@ -642,15 +642,15 @@ export class AssistantProgressTimelineComponent implements OnChanges, OnInit, On
         ? Date.now() - this.connectingStartedAt
         : null;
       if (liveMs !== null && liveMs >= 3000) {
-        return `Chargement du mod\u00e8le local en cours (${formatDurationMs(liveMs)})`;
+        return $localize`:@@ai-assistant.assistant-progress-timeline.ts.chargement.du.modele.local.en.cours.form.b2ca052d:Chargement du mod\u00e8le local en cours (${formatDurationMs(liveMs)}:formatDurationMs:)`;
       }
-      return "L'assistant se pr\u00e9pare";
+      return $localize`:@@ai-assistant.assistant-progress-timeline.ts.l.assistant.se.prepare.7cb89b09:L'assistant se prépare`;
     }
-    return 'Pr\u00e9paration en cours';
+    return $localize`:@@ai-assistant.assistant-progress-timeline.ts.preparation.en.cours.28379fdb:Préparation en cours`;
   }
 
   completedStatusText(): string {
-    return getAssistantProgressSummary(this.progress, this.toolCalls) || 'R\u00e9ponse pr\u00e9par\u00e9e';
+    return getAssistantProgressSummary(this.progress, this.toolCalls) || $localize`:@@ai-assistant.assistant-progress-timeline.ts.reponse.preparee.f5fcf17b:Réponse préparée`;
   }
 
   stepMeta(step: AssistantProgressStep): string {

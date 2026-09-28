@@ -26,7 +26,7 @@ export class PosTtsService {
     }
     const total = this.posState.totals().totalTTC;
     const currency = this.posState.currency() ?? 'TND';
-    const text = `Total à payer : ${total.toFixed(3)} ${currency}.`;
+    const text = $localize`:@@pos.pos-tts.ts.total.a.payer.tofixed.currency.6b8a8056:Total à payer : ${total.toFixed(3)}:toFixed: ${currency}:currency:.`;
     this.speak(text);
   }
 

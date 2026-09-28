@@ -1,6 +1,7 @@
 import { AppModule as M } from '@core/models/app-module';
 import { PERMISSIONS } from './permission-keys';
 import { NavItem, NavSubItem } from './app-navigation.registry';
+import { NAV_ID } from './nav-item-ids';
 
 
 
@@ -10,7 +11,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
   {
 
-    label: 'Tableau de bord',
+    label: $localize`:@@core.firm-navigation.registry.ts.tableau.de.bord.a524057f:Tableau de bord`,
 
     icon: 'fa-solid fa-gauge-high',
 
@@ -24,7 +25,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
     // Agent « Chef de mission ». Volontairement hors du périmètre Gouvernance : il ne doit pas
     // disparaître avec ce flag, et ne perturbe pas l'ordre attendu des routes de gouvernance.
-    label: 'Chef de mission',
+    label: $localize`:@@core.firm-navigation.registry.ts.chef.de.mission.93d4fc86:Chef de mission`,
 
     icon: 'fa-solid fa-user-tie',
 
@@ -40,7 +41,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
     // Réviseur de portefeuille. Volontairement hors du périmètre Gouvernance, comme « Chef de
     // mission » : il a son propre drapeau et ne doit pas disparaître avec `firmGovernance`.
-    label: 'Révision du portefeuille',
+    label: $localize`:@@core.firm-navigation.registry.ts.revision.du.portefeuille.4b3f58da:Révision du portefeuille`,
 
     icon: 'fa-solid fa-clipboard-check',
 
@@ -54,7 +55,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
   {
 
-    label: 'Mes dossiers clients',
+    label: $localize`:@@core.firm-navigation.registry.ts.mes.dossiers.clients.7ad4d1c3:Mes dossiers clients`,
 
     icon: 'fa-solid fa-briefcase',
 
@@ -66,7 +67,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
   {
 
-    label: 'Échéancier fiscal',
+    label: $localize`:@@core.firm-navigation.registry.ts.echeancier.fiscal.193d9cef:Échéancier fiscal`,
 
     icon: 'fa-solid fa-calendar-days',
 
@@ -78,7 +79,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
   {
 
-    label: 'Dossiers permanents',
+    label: $localize`:@@core.firm-navigation.registry.ts.dossiers.permanents.eaddac81:Dossiers permanents`,
 
     route: '/firm/governance/permanent-files',
 
@@ -88,7 +89,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
   {
 
-    label: 'Affectation des dossiers',
+    label: $localize`:@@core.firm-navigation.registry.ts.affectation.des.dossiers.31b24b71:Affectation des dossiers`,
 
     route: '/firm/affectation',
 
@@ -100,7 +101,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
   {
 
-    label: 'Feuilles de temps',
+    label: $localize`:@@core.firm-navigation.registry.ts.feuilles.de.temps.679cea6a:Feuilles de temps`,
 
     route: '/firm/governance/time-sheets',
 
@@ -110,7 +111,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
   {
 
-    label: 'Congés & Absences',
+    label: $localize`:@@core.firm-navigation.registry.ts.conges.absences.0af7002a:Congés & Absences`,
 
     route: '/firm/governance/leaves',
 
@@ -120,7 +121,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
   {
 
-    label: 'Paie interne',
+    label: $localize`:@@core.firm-navigation.registry.ts.paie.interne.6bfc71d6:Paie interne`,
 
     route: '/firm/payroll',
 
@@ -134,7 +135,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
   {
 
-    label: 'Rentabilité de collaborateurs',
+    label: $localize`:@@core.firm-navigation.registry.ts.rentabilite.de.collaborateurs.e550b4b2:Rentabilité de collaborateurs`,
 
     icon: 'fa-solid fa-chart-pie',
 
@@ -144,7 +145,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
       {
 
-        label: 'Feuilles de temps et rentabilité',
+        label: $localize`:@@core.firm-navigation.registry.ts.feuilles.de.temps.et.rentabilite.6ef065a8:Feuilles de temps et rentabilité`,
 
         route: '/firm/governance/dossier-time-profitability',
 
@@ -156,7 +157,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
       {
 
-        label: 'Rentabilité collaborateurs',
+        label: $localize`:@@core.firm-navigation.registry.ts.rentabilite.collaborateurs.9804577e:Rentabilité collaborateurs`,
 
         route: '/firm/governance/collaborator-rentability',
 
@@ -168,7 +169,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
       {
 
-        label: 'Coûts collaborateurs',
+        label: $localize`:@@core.firm-navigation.registry.ts.couts.collaborateurs.f8ae9837:Coûts collaborateurs`,
 
         route: '/firm/governance/collaborator-costs',
 
@@ -184,7 +185,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
   {
 
-    label: 'Notes de frais dirigeants',
+    label: $localize`:@@core.firm-navigation.registry.ts.notes.de.frais.dirigeants.816474a3:Notes de frais dirigeants`,
 
     route: '/firm/governance/expense-notes',
 
@@ -193,14 +194,14 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
   },
 
   {
-    label: 'Facturation',
+    label: $localize`:@@core.firm-navigation.registry.ts.facturation.04716c6b:Facturation`,
     icon: 'fa-solid fa-file-invoice-dollar',
     managerOnly: true,
     modules: [M.Honoraires],
     permissionsAll: [PERMISSIONS.honorairesInvoices.read],
     children: [
       {
-        label: 'Factures',
+        label: $localize`:@@core.firm-navigation.registry.ts.factures.da35e4f2:Factures`,
         route: '/firm/billing/invoices',
         icon: 'fa-solid fa-file-invoice',
         managerOnly: true,
@@ -208,7 +209,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
         permissionsAll: [PERMISSIONS.honorairesInvoices.read]
       },
       {
-        label: 'Avoirs',
+        label: $localize`:@@core.firm-navigation.registry.ts.avoirs.38b0e7b7:Avoirs`,
         route: '/firm/billing/credit-notes',
         icon: 'fa-solid fa-file-circle-minus',
         managerOnly: true,
@@ -216,7 +217,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
         permissionsAll: [PERMISSIONS.honorairesInvoices.read]
       },
       {
-        label: 'Devis',
+        label: $localize`:@@core.firm-navigation.registry.ts.devis.f7622f90:Devis`,
         route: '/firm/billing/quotes',
         icon: 'fa-solid fa-file-lines',
         managerOnly: true,
@@ -224,7 +225,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
         permissionsAll: [PERMISSIONS.honorairesQuotes.read]
       },
       {
-        label: 'Encaissements',
+        label: $localize`:@@core.firm-navigation.registry.ts.encaissements.598f53c9:Encaissements`,
         route: '/firm/billing/payments',
         icon: 'fa-solid fa-hand-holding-dollar',
         managerOnly: true,
@@ -236,7 +237,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
   {
 
-    label: 'Invitations',
+    label: $localize`:@@core.firm-navigation.registry.ts.invitations.9b69a35a:Invitations`,
 
     icon: 'fa-solid fa-envelope-open-text',
 
@@ -248,7 +249,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
   {
 
-    label: 'Échanges',
+    label: $localize`:@@core.firm-navigation.registry.ts.echanges.79c1bbdb:Échanges`,
 
     icon: 'fa-solid fa-comments',
 
@@ -258,7 +259,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
   {
 
-    label: 'Mon cabinet',
+    label: $localize`:@@core.firm-navigation.registry.ts.mon.cabinet.20598fad:Mon cabinet`,
 
     icon: 'fa-solid fa-building-columns',
 
@@ -268,7 +269,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
       {
 
-        label: 'Collaborateurs',
+        label: $localize`:@@core.firm-navigation.registry.ts.collaborateurs.7eb2cd0e:Collaborateurs`,
 
         route: '/firm/collaborateurs',
 
@@ -280,7 +281,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
       {
 
-        label: 'Paramètres cabinet',
+        label: $localize`:@@core.firm-navigation.registry.ts.parametres.cabinet.ea488559:Paramètres cabinet`,
 
         route: '/firm/settings',
 
@@ -290,7 +291,7 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
       {
 
-        label: 'Mon profil',
+        label: $localize`:@@core.firm-navigation.registry.ts.mon.profil.faa6d321:Mon profil`,
 
         route: '/settings/profile',
 
@@ -306,36 +307,21 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
 
 
-/** Labels of top-level sections available in delegated client context. */
-
-export const DELEGATED_SECTION_LABELS = new Set([
-
-  'Comptabilité',
-
-  'Fiscal / TEJ',
-
-  'RH & Paie',
-
-  'Ventes',
-
-  'Achats',
-
-  'Trésorerie'
-
+/** Identifiants stables des sections visibles en contexte délégué. */
+export const DELEGATED_SECTION_IDS = new Set<string>([
+  NAV_ID.accounting,
+  NAV_ID.fiscalTej,
+  NAV_ID.hrPayroll,
+  NAV_ID.sales,
+  NAV_ID.purchases,
+  NAV_ID.treasury
 ]);
 
-
-
 /** Commercial sections hidden when the delegated dossier is firm-managed. */
-
-export const FIRM_MANAGED_HIDDEN_SECTION_LABELS = new Set([
-
-  'Ventes',
-
-  'Achats',
-
-  'Trésorerie'
-
+export const FIRM_MANAGED_HIDDEN_SECTION_IDS = new Set<string>([
+  NAV_ID.sales,
+  NAV_ID.purchases,
+  NAV_ID.treasury
 ]);
 
 
@@ -426,27 +412,16 @@ function pathMatchesPrefix(path: string, prefix: string): boolean {
 
 
 export function filterDelegatedFirmSectionChildren(
-
-  sectionLabel: string,
-
+  sectionId: string,
   children: NavSubItem[]
-
 ): NavSubItem[] {
-
-  if (sectionLabel === 'Ventes') {
-
+  if (sectionId === NAV_ID.sales) {
     return children.filter(c => c.route && DELEGATED_FIRM_VENTES_ALLOWED_ROUTES.has(c.route));
-
   }
-
-  if (sectionLabel === 'Achats') {
-
+  if (sectionId === NAV_ID.purchases) {
     return children.filter(c => c.route && DELEGATED_FIRM_ACHATS_ALLOWED_ROUTES.has(c.route));
-
   }
-
   return children;
-
 }
 
 
@@ -602,7 +577,7 @@ export const FIRM_NATIVE_QUICK_ACCESS = [
 
   {
 
-    label: 'Mes dossiers',
+    label: $localize`:@@core.firm-navigation.registry.ts.mes.dossiers.1eab2884:Mes dossiers`,
 
     icon: 'fa-solid fa-briefcase',
 
@@ -616,7 +591,7 @@ export const FIRM_NATIVE_QUICK_ACCESS = [
 
   {
 
-    label: 'Invitations en attente',
+    label: $localize`:@@core.firm-navigation.registry.ts.invitations.en.attente.901d7402:Invitations en attente`,
 
     icon: 'fa-solid fa-envelope-open-text',
 
@@ -638,7 +613,7 @@ export const FIRM_DELEGATED_QUICK_ACCESS = [
 
   {
 
-    label: 'Journal comptable',
+    label: $localize`:@@core.firm-navigation.registry.ts.journal.comptable.cc13c236:Journal comptable`,
 
     icon: 'fa-solid fa-book',
 
@@ -652,7 +627,7 @@ export const FIRM_DELEGATED_QUICK_ACCESS = [
 
   {
 
-    label: 'Plan comptable',
+    label: $localize`:@@core.firm-navigation.registry.ts.plan.comptable.b3f54c09:Plan comptable`,
 
     icon: 'fa-solid fa-sitemap',
 
@@ -666,7 +641,7 @@ export const FIRM_DELEGATED_QUICK_ACCESS = [
 
   {
 
-    label: 'Cycles de paie',
+    label: $localize`:@@core.firm-navigation.registry.ts.cycles.de.paie.ea07b457:Cycles de paie`,
 
     icon: 'fa-solid fa-calendar-check',
 
@@ -680,7 +655,7 @@ export const FIRM_DELEGATED_QUICK_ACCESS = [
 
   {
 
-    label: 'Livre de paie',
+    label: $localize`:@@core.firm-navigation.registry.ts.livre.de.paie.ccdfc623:Livre de paie`,
 
     icon: 'fa-solid fa-book',
 
@@ -694,7 +669,7 @@ export const FIRM_DELEGATED_QUICK_ACCESS = [
 
   {
 
-    label: 'Journal de paie',
+    label: $localize`:@@core.firm-navigation.registry.ts.journal.de.paie.240f3575:Journal de paie`,
 
     icon: 'fa-solid fa-list-check',
 
@@ -708,7 +683,7 @@ export const FIRM_DELEGATED_QUICK_ACCESS = [
 
   {
 
-    label: 'Régularisation IRPP',
+    label: $localize`:@@core.firm-navigation.registry.ts.regularisation.irpp.da08474d:Régularisation IRPP`,
 
     icon: 'fa-solid fa-scale-balanced',
 
@@ -722,7 +697,7 @@ export const FIRM_DELEGATED_QUICK_ACCESS = [
 
   {
 
-    label: 'Paramètres paie',
+    label: $localize`:@@core.firm-navigation.registry.ts.parametres.paie.89296f29:Paramètres paie`,
 
     icon: 'fa-solid fa-sliders',
 
@@ -736,7 +711,7 @@ export const FIRM_DELEGATED_QUICK_ACCESS = [
 
   {
 
-    label: 'Retour au cabinet',
+    label: $localize`:@@core.firm-navigation.registry.ts.retour.au.cabinet.ea23ac22:Retour au cabinet`,
 
     icon: 'fa-solid fa-arrow-left',
 
@@ -753,25 +728,26 @@ export const FIRM_DELEGATED_QUICK_ACCESS = [
 /** Footer utilitaire du sidemenu cabinet en mode délégué (Contrôle, Paramètres, Aide). */
 export const FIRM_DELEGATED_FOOTER_NAV: NavItem[] = [
   {
-    label: 'Contrôle & Audit',
+    id: 'firm-delegated-audit',
+    label: $localize`:@@core.firm-navigation.registry.ts.controle.audit.53f4026c:Contrôle & Audit`,
     icon: 'fa-solid fa-shield-halved',
     children: [
       {
-        label: "Contrôle d'intégrité",
+        label: $localize`:@@core.firm-navigation.registry.ts.controle.d.integrite.6a418f91:Contrôle d'intégrité`,
         route: '/accounting/health',
         icon: 'fa-solid fa-heart-pulse',
         modules: [M.Accounting],
         permissionsAll: [PERMISSIONS.accounting.read]
       },
       {
-        label: 'Contrôles de pré-clôture',
+        label: $localize`:@@core.firm-navigation.registry.ts.controles.de.pre.cloture.e6b9bc87:Contrôles de pré-clôture`,
         route: '/accounting/pre-closing',
         icon: 'fa-solid fa-list-check',
         modules: [M.Accounting],
         permissionsAll: [PERMISSIONS.accounting.read]
       },
       {
-        label: "Journal d'audit",
+        label: $localize`:@@core.firm-navigation.registry.ts.journal.d.audit.52309db1:Journal d'audit`,
         route: '/audit',
         icon: 'fa-solid fa-shield-halved',
         modules: [M.Accounting],
@@ -780,12 +756,12 @@ export const FIRM_DELEGATED_FOOTER_NAV: NavItem[] = [
     ]
   },
   {
-    label: 'Paramètres',
+    label: $localize`:@@core.firm-navigation.registry.ts.parametres.ef8f0121:Paramètres`,
     icon: 'fa-solid fa-gear',
     route: '/settings/profile'
   },
   {
-    label: "Centre d'aide",
+    label: $localize`:@@core.firm-navigation.registry.ts.centre.d.aide.469b4915:Centre d'aide`,
     icon: 'fa-solid fa-circle-question',
     externalUrl: '__FIRM_HELP_URL__'
   }

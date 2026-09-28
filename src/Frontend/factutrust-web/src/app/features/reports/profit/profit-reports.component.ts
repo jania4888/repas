@@ -25,17 +25,15 @@ import { ProfitTableComponent } from './profit-table.component';
   ],
   template: `
     <app-page-header
-      title="Rapport Bénéfices"
-      subtitle="Bénéfice commercial par pièce, mensuel, par ligne et par produit">
-      <app-button variant="secondary" icon="pi-download" iconPos="left" (click)="onExport()" [disabled]="loading()">
-        Exporter
-      </app-button>
+      title="Rapport Bénéfices" i18n-title="@@reports.profit.rapport.benefices.245eba08"
+      subtitle="Bénéfice commercial par pièce, mensuel, par ligne et par produit" i18n-subtitle="@@reports.profit.benefice.commercial.par.piece.mensuel.pa.129c3976">
+      <app-button variant="secondary" icon="pi-download" iconPos="left" (click)="onExport()" [disabled]="loading()" i18n="@@reports.profit.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
 
     <div class="filter-section">
       <div class="filter-group">
-        <label for="period" class="filter-label">Période</label>
-        <select id="period" [(ngModel)]="selectedPeriod" (ngModelChange)="onPeriodChange()" class="filter-select" aria-label="Période">
+        <label for="period" class="filter-label" i18n="@@reports.profit.periode.de2110b7">Période</label>
+        <select id="period" [(ngModel)]="selectedPeriod" (ngModelChange)="onPeriodChange()" class="filter-select" aria-label="Période" i18n-aria-label="@@reports.profit.periode.de2110b7">
           @for (p of periodOptions; track p.value) {
             <option [value]="p.value">{{ p.label }}</option>
           }
@@ -45,10 +43,10 @@ import { ProfitTableComponent } from './profit-table.component';
 
     <p-tabs class="ft-tabs" (valueChange)="onTabChange($event)" [lazy]="true">
       <p-tablist>
-        <p-tab [value]="0"><i class="pi pi-list"></i><span>Par ligne</span></p-tab>
-        <p-tab [value]="1"><i class="pi pi-box"></i><span>Par produit</span></p-tab>
-        <p-tab [value]="2"><i class="pi pi-calendar"></i><span>Mensuel</span></p-tab>
-        <p-tab [value]="3"><i class="pi pi-file"></i><span>Par pièce</span></p-tab>
+        <p-tab [value]="0"><i class="pi pi-list"></i><span i18n="@@reports.profit.par.ligne.26d2b61a">Par ligne</span></p-tab>
+        <p-tab [value]="1"><i class="pi pi-box"></i><span i18n="@@reports.profit.par.produit.069de81b">Par produit</span></p-tab>
+        <p-tab [value]="2"><i class="pi pi-calendar"></i><span i18n="@@reports.profit.mensuel.272c1b22">Mensuel</span></p-tab>
+        <p-tab [value]="3"><i class="pi pi-file"></i><span i18n="@@reports.profit.par.piece.d152a853">Par pièce</span></p-tab>
       </p-tablist>
       <p-tabpanels>
       <p-tabpanel [value]="0">
@@ -87,7 +85,7 @@ import { ProfitTableComponent } from './profit-table.component';
     </p-tabs>
 
     <div class="back-link-wrap">
-      <a routerLink="/reports" class="back-link">Retour aux rapports</a>
+      <a routerLink="/reports" class="back-link" i18n="@@reports.profit.retour.aux.rapports.48320a4f">Retour aux rapports</a>
     </div>
   `,
   styles: [`
@@ -121,10 +119,10 @@ export class ProfitReportsComponent implements OnInit {
   private requestSeq = 0;
 
   periodOptions = [
-    { label: 'Ce mois', value: 'month' },
-    { label: 'Ce trimestre', value: 'quarter' },
-    { label: 'Cette année', value: 'year' },
-    { label: 'Tout', value: 'all' }
+    { label: $localize`:@@reports.profit-reports.ts.ce.mois.db74c560:Ce mois`, value: 'month' },
+    { label: $localize`:@@reports.profit-reports.ts.ce.trimestre.4d9d129d:Ce trimestre`, value: 'quarter' },
+    { label: $localize`:@@reports.profit-reports.ts.cette.annee.052507a0:Cette année`, value: 'year' },
+    { label: $localize`:@@reports.profit-reports.ts.tout.6b0b09b8:Tout`, value: 'all' }
   ];
 
   private getPeriodDates(): { fromDate: string; toDate: string } {

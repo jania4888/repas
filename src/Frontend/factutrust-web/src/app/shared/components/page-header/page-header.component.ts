@@ -26,7 +26,7 @@ import { TooltipModule } from 'primeng/tooltip';
               class="page-title-hint"
               [pTooltip]="hint"
               tooltipPosition="bottom"
-              aria-label="Informations sur cette page">
+              aria-label="Informations sur cette page" i18n-aria-label="@@shared.components.page-header.page-header.informations.sur.cette.page.a2b6dd12">
               <i class="pi pi-info-circle" aria-hidden="true"></i>
             </button>
           }

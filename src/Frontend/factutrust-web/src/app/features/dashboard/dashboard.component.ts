@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -62,12 +63,15 @@ import { CompanyModulesService } from '@core/services/company-modules.service';
 import { ModuleRecommendationsService, ModuleRecommendationDto } from '@core/services/module-recommendations.service';
 import { ToastService } from '@core/services/toast.service';
 import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
+import { erpDateLocale } from '@core/i18n/erp-format';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   providers: [DecimalPipe, DatePipe, CurrencyPipe],
   imports: [
+    BackendLabelPipe,
     CommonModule,
     DragDropModule,
     RouterModule,
@@ -88,7 +92,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
   ],
   template: `
     <app-page-header 
-      title="Tableau de bord" 
+      title="Tableau de bord" i18n-title="@@dashboard.dashboard.tableau.de.bord.a524057f" 
       [subtitle]="greeting">
       <app-analyze-with-ai-button
         screenId="dashboard"
@@ -99,14 +103,10 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="/invoices/new">
-          Nouvelle facture
-        </app-button>
+          routerLink="/invoices/new" i18n="@@dashboard.dashboard.nouvelle.facture.cdf7e09c"> Nouvelle facture </app-button>
       }
       @if (!editMode()) {
-        <app-button variant="ghost" icon="pi-th-large" iconPos="left" (click)="enterEdit()">
-          Personnaliser
-        </app-button>
+        <app-button variant="ghost" icon="pi-th-large" iconPos="left" (click)="enterEdit()" i18n="@@dashboard.dashboard.personnaliser.b9d70818"> Personnaliser </app-button>
       }
     </app-page-header>
 
@@ -116,23 +116,21 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       <div class="dashboard-migration-banner" role="alert">
         <i class="pi pi-database" aria-hidden="true"></i>
         <span>{{ tenantMigrationMessage }}</span>
-        <button type="button" class="dashboard-migration-banner__retry" (click)="reloadAfterMigrationIssue()">
-          Réessayer
-        </button>
+        <button type="button" class="dashboard-migration-banner__retry" (click)="reloadAfterMigrationIssue()" i18n="@@dashboard.dashboard.reessayer.895d416b"> Réessayer </button>
       </div>
     }
 
     <!-- Barre de personnalisation (mode édition) -->
     @if (editMode()) {
-      <div class="dash-edit-toolbar" role="region" aria-label="Personnalisation du tableau de bord">
-        <span class="dash-edit-toolbar__hint">
+      <div class="dash-edit-toolbar" role="region" aria-label="Personnalisation du tableau de bord" i18n-aria-label="@@dashboard.dashboard.personnalisation.du.tableau.de.bord.836b1c07">
+        <span class="dash-edit-toolbar__hint" i18n="@@dashboard.dashboard.glissez.les.sections.ou.utilisez.les.fle.71f34524">
           <i class="pi pi-arrows-alt" aria-hidden="true"></i>
           Glissez les sections (ou utilisez les flèches) pour réorganiser votre tableau de bord.
         </span>
         <span class="dash-edit-toolbar__actions">
-          <app-button variant="ghost" icon="pi-undo" iconPos="left" (click)="resetLayout()">Réinitialiser</app-button>
-          <app-button variant="ghost" (click)="cancelEdit()">Annuler</app-button>
-          <app-button variant="primary" icon="pi-check" iconPos="left" [disabled]="savingLayout()" (click)="saveEdit()">Enregistrer</app-button>
+          <app-button variant="ghost" icon="pi-undo" iconPos="left" (click)="resetLayout()" i18n="@@dashboard.dashboard.reinitialiser.e0e2ad54">Réinitialiser</app-button>
+          <app-button variant="ghost" (click)="cancelEdit()" i18n="@@dashboard.dashboard.annuler.49ba3292">Annuler</app-button>
+          <app-button variant="primary" icon="pi-check" iconPos="left" [disabled]="savingLayout()" (click)="saveEdit()" i18n="@@dashboard.dashboard.enregistrer.f7c8bcd8">Enregistrer</app-button>
         </span>
       </div>
     }
@@ -150,10 +148,10 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
             <div class="dash-block__handle" cdkDragHandle>
               <span class="dash-block__handle-label"><i class="pi pi-bars" aria-hidden="true"></i> {{ block.label }}</span>
               <span class="dash-block__handle-controls">
-                <button type="button" class="dash-block__move" (click)="moveBlock(block.id, -1)" aria-label="Monter la section">
+                <button type="button" class="dash-block__move" (click)="moveBlock(block.id, -1)" aria-label="Monter la section" i18n-aria-label="@@dashboard.dashboard.monter.la.section.b45f03c8">
                   <i class="pi pi-chevron-up" aria-hidden="true"></i>
                 </button>
-                <button type="button" class="dash-block__move" (click)="moveBlock(block.id, 1)" aria-label="Descendre la section">
+                <button type="button" class="dash-block__move" (click)="moveBlock(block.id, 1)" aria-label="Descendre la section" i18n-aria-label="@@dashboard.dashboard.descendre.la.section.0681c72e">
                   <i class="pi pi-chevron-down" aria-hidden="true"></i>
                 </button>
               </span>
@@ -191,7 +189,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       <div class="kpi-row" data-tour="dash-kpi">
         @if (canReadInvoices()) {
         <app-stat-card
-          label="Chiffre d'affaires"
+          label="Chiffre d'affaires" i18n-label="@@dashboard.dashboard.chiffre.d.affaires.0a341b9f"
           [value]="totalRevenue()"
           icon="fa-solid fa-sack-dollar"
           variant="primary"
@@ -204,7 +202,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           [navigationAriaLabel]="drillDown('totalRevenue')?.ariaLabel">
         </app-stat-card>
         <app-stat-card
-          label="Ventes aujourd'hui"
+          label="Ventes aujourd'hui" i18n-label="@@dashboard.dashboard.ventes.aujourd.hui.d57f87e5"
           [value]="salesToday()"
           icon="fa-solid fa-cart-shopping"
           variant="primary"
@@ -216,7 +214,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           [navigationAriaLabel]="drillDown('salesToday')?.ariaLabel">
         </app-stat-card>
         <app-stat-card
-          label="CA du mois en cours"
+          label="CA du mois en cours" i18n-label="@@dashboard.dashboard.ca.du.mois.en.cours.c561d920"
           [value]="currentMonthRevenue()"
           icon="fa-solid fa-calendar-check"
           variant="success"
@@ -229,7 +227,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           [navigationAriaLabel]="drillDown('currentMonthRevenue')?.ariaLabel">
         </app-stat-card>
         <app-stat-card
-          label="Factures impayées"
+          label="Factures impayées" i18n-label="@@dashboard.dashboard.factures.impayees.dc3cffa5"
           [value]="pendingInvoicesCount()"
           icon="fa-solid fa-clock"
           variant="warning"
@@ -244,7 +242,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
         }
         @if (showStockUrgent()) {
         <app-stat-card
-          label="Produits en alerte"
+          label="Produits en alerte" i18n-label="@@dashboard.dashboard.produits.en.alerte.bb124592"
           [value]="stockAlertsCount()"
           icon="fa-solid fa-triangle-exclamation"
           [variant]="stockAlertsCount() > 0 ? 'error' : 'success'"
@@ -278,10 +276,10 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
         </div>
       }
       <div class="modules-block">
-        <div class="modules-block__header">
+        <div class="modules-block__header" i18n="@@dashboard.dashboard.modules.actifs.gerer.mes.modules.47ef2061">
           <span class="modules-block__title"><i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i> Modules actifs</span>
           <a routerLink="/settings/modules" class="modules-block__link">
-            Gérer mes modules <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            <ng-container> Gérer mes modules </ng-container> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
           </a>
         </div>
         <div class="modules-block__pills">
@@ -297,7 +295,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
     <!-- Recommandé pour vous (plan §3.3) — cartes d'activation en un clic -->
     @if (moduleRecommendations().length > 0) {
       <div class="recommendations-block">
-        <div class="recommendations-block__header">
+        <div class="recommendations-block__header" i18n="@@dashboard.dashboard.recommande.pour.vous.61462dbf">
           <span class="recommendations-block__title"><i class="pi pi-sparkles" aria-hidden="true"></i> Recommandé pour vous</span>
         </div>
         <div class="recommendations-block__cards">
@@ -312,15 +310,13 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
                 <button type="button" class="btn-activate"
                         (click)="activateRecommendation(rec.moduleId)"
                         [disabled]="activatingModuleId() !== null">
-                  @if (activatingModuleId() === rec.moduleId) {
+                  @if (activatingModuleId() === rec.moduleId) {<ng-container i18n="@@dashboard.dashboard.activation.f3af979a">
                     <i class="pi pi-spin pi-spinner" aria-hidden="true"></i> Activation…
-                  } @else {
+                  </ng-container>} @else {<ng-container i18n="@@dashboard.dashboard.activer.46b0b64d">
                     <i class="pi pi-check" aria-hidden="true"></i> Activer
-                  }
+                  </ng-container>}
                 </button>
-                <button type="button" class="btn-dismiss" (click)="dismissRecommendation(rec.moduleId)">
-                  Masquer
-                </button>
+                <button type="button" class="btn-dismiss" (click)="dismissRecommendation(rec.moduleId)" i18n="@@dashboard.dashboard.masquer.adb05f2b"> Masquer </button>
               </div>
             </div>
           }
@@ -335,12 +331,12 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       <div class="urgent-actions-banner">
         <div class="urgent-header">
           <i class="pi pi-bell"></i>
-          <span>Actions requises</span>
+          <span i18n="@@dashboard.dashboard.actions.requises.3ec278be">Actions requises</span>
         </div>
         <div class="urgent-items">
           @if (showStockUrgent() && stockAlertsCount() > 0) {
             @if (drillDown('urgentStock'); as stockTarget) {
-              <a [routerLink]="stockTarget.route" [queryParams]="stockTarget.queryParams" class="urgent-item urgent-danger" [attr.aria-label]="stockTarget.ariaLabel">
+              <a [routerLink]="stockTarget.route" [queryParams]="stockTarget.queryParams" class="urgent-item urgent-danger" [attr.aria-label]="stockTarget.ariaLabel" i18n="@@dashboard.dashboard.produit.s.en.rupture.ou.stock.faible.bbb6cd77">
                 <i class="pi pi-exclamation-triangle"></i>
                 <span>{{ stockAlertsCount() }} produit(s) en rupture ou stock faible</span>
                 <i class="pi pi-arrow-right urgent-arrow"></i>
@@ -349,7 +345,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           }
           @if (showDeliveryUrgent() && pendingDeliveriesCount() > 0) {
             @if (drillDown('urgentDeliveries'); as deliveryTarget) {
-              <a [routerLink]="deliveryTarget.route" [queryParams]="deliveryTarget.queryParams" class="urgent-item urgent-warning" [attr.aria-label]="deliveryTarget.ariaLabel">
+              <a [routerLink]="deliveryTarget.route" [queryParams]="deliveryTarget.queryParams" class="urgent-item urgent-warning" [attr.aria-label]="deliveryTarget.ariaLabel" i18n="@@dashboard.dashboard.livraison.s.en.attente.ba752255">
                 <i class="pi pi-truck"></i>
                 <span>{{ pendingDeliveriesCount() }} livraison(s) en attente</span>
                 <i class="pi pi-arrow-right urgent-arrow"></i>
@@ -358,7 +354,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           }
           @if (showInvoiceUrgent() && overdueInvoicesCount() > 0) {
             @if (drillDown('urgentOverdueInvoices'); as invoiceTarget) {
-              <a [routerLink]="invoiceTarget.route" [queryParams]="invoiceTarget.queryParams" class="urgent-item urgent-danger" [attr.aria-label]="invoiceTarget.ariaLabel">
+              <a [routerLink]="invoiceTarget.route" [queryParams]="invoiceTarget.queryParams" class="urgent-item urgent-danger" [attr.aria-label]="invoiceTarget.ariaLabel" i18n="@@dashboard.dashboard.facture.s.en.retard.c771d77d">
                 <i class="pi pi-exclamation-circle"></i>
                 <span>{{ overdueInvoicesCount() }} facture(s) en retard</span>
                 <i class="pi pi-arrow-right urgent-arrow"></i>
@@ -375,70 +371,70 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
     <!-- Actions rapides + cartes latérales (style maquette) -->
     <div class="dash-actions-row">
       <div class="section quick-actions-card" data-tour="dash-quick-actions">
-        <h3 class="qa-title"><i class="fa-solid fa-bolt"></i> Actions rapides</h3>
+        <h3 class="qa-title" i18n="@@dashboard.dashboard.actions.rapides.b29e3136"><i class="fa-solid fa-bolt"></i> Actions rapides</h3>
         @if (hasAnyQuickAction()) {
         <div class="quick-actions">
           @if (canCreateInvoice()) {
             <a routerLink="/invoices/new" class="quick-action-card">
               <div class="quick-action-icon qa-invoice"><i class="fa-solid fa-file-invoice"></i></div>
-              <span class="quick-action-label">Créer une facture</span>
+              <span class="quick-action-label" i18n="@@dashboard.dashboard.creer.une.facture.13a9becd">Créer une facture</span>
             </a>
           }
           @if (canReadQuotes()) {
             <a routerLink="/quotes" class="quick-action-card">
               <div class="quick-action-icon qa-quote"><i class="fa-solid fa-file-lines"></i></div>
-              <span class="quick-action-label">Nouveau devis</span>
+              <span class="quick-action-label" i18n="@@dashboard.dashboard.nouveau.devis.4c3f0159">Nouveau devis</span>
             </a>
           }
           @if (canCreateDeliveryNote()) {
             <a routerLink="/delivery-notes/new" class="quick-action-card">
               <div class="quick-action-icon qa-delivery"><i class="fa-solid fa-truck"></i></div>
-              <span class="quick-action-label">Bon de livraison</span>
+              <span class="quick-action-label" i18n="@@dashboard.dashboard.bon.de.livraison.1a60dc44">Bon de livraison</span>
             </a>
           }
           @if (canCreateReturnNote()) {
             <a routerLink="/return-notes/new" class="quick-action-card">
               <div class="quick-action-icon qa-return"><i class="fa-solid fa-rotate-left"></i></div>
-              <span class="quick-action-label">Bon de retour</span>
+              <span class="quick-action-label" i18n="@@dashboard.dashboard.bon.de.retour.58d2db35">Bon de retour</span>
             </a>
           }
           @if (canReadClients()) {
             <a routerLink="/clients" class="quick-action-card">
               <div class="quick-action-icon qa-client"><i class="fa-solid fa-users"></i></div>
-              <span class="quick-action-label">Mes clients</span>
+              <span class="quick-action-label" i18n="@@dashboard.dashboard.mes.clients.5d1deb5c">Mes clients</span>
             </a>
           }
           @if (canReadPayments()) {
             <a routerLink="/payments" class="quick-action-card">
               <div class="quick-action-icon qa-payment"><i class="fa-solid fa-credit-card"></i></div>
-              <span class="quick-action-label">Paiements</span>
+              <span class="quick-action-label" i18n="@@dashboard.dashboard.paiements.97ecc646">Paiements</span>
             </a>
           }
           @if (canReadReports()) {
             <a routerLink="/reports" class="quick-action-card">
               <div class="quick-action-icon qa-report"><i class="fa-solid fa-chart-column"></i></div>
-              <span class="quick-action-label">Rapports</span>
+              <span class="quick-action-label" i18n="@@dashboard.dashboard.rapports.db7d9fbb">Rapports</span>
             </a>
           }
           @if (canUseStockEntryQuickAction()) {
             <a routerLink="/stock/entries/new" class="quick-action-card">
               <div class="quick-action-icon qa-stock"><i class="fa-solid fa-box"></i></div>
-              <span class="quick-action-label">Entrée de stock</span>
+              <span class="quick-action-label" i18n="@@dashboard.dashboard.entree.de.stock.8c8e1df1">Entrée de stock</span>
             </a>
           }
           @if (canUseNewOpportunityQuickAction()) {
             <a routerLink="/crm/opportunities" class="quick-action-card">
               <div class="quick-action-icon qa-crm"><i class="fa-solid fa-heart"></i></div>
-              <span class="quick-action-label">Nouvelle opportunité</span>
+              <span class="quick-action-label" i18n="@@dashboard.dashboard.nouvelle.opportunite.ffadea57">Nouvelle opportunité</span>
             </a>
           }
         </div>
         } @else {
         <div class="quick-actions-empty">
           <i class="fa-solid fa-puzzle-piece quick-actions-empty-icon" aria-hidden="true"></i>
-          <p>Activez des modules pour voir vos actions rapides.</p>
+          <p i18n="@@dashboard.dashboard.activez.des.modules.pour.voir.vos.actions.rapide.a0632dc0">Activez des modules pour voir vos actions rapides.</p>
           <a routerLink="/settings/company" class="quick-actions-empty-link">
-            Gérer mon entreprise <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            <ng-container i18n="@@dashboard.dashboard.gerer.mon.entreprise.4af7f8ef"> Gérer mon entreprise </ng-container> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
           </a>
         </div>
         }
@@ -450,7 +446,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
             <a class="dash-side-card dash-side-card--clickable" [routerLink]="deliveriesTarget.route" [queryParams]="deliveriesTarget.queryParams" [attr.aria-label]="deliveriesTarget.ariaLabel">
               <span class="ft-icon-badge ft-icon-badge--lg ft-icon-badge--teal"><i class="fa-solid fa-truck-fast"></i></span>
               <div class="dash-side-text">
-                <span class="dash-side-label">Livraisons en attente</span>
+                <span class="dash-side-label" i18n="@@dashboard.dashboard.livraisons.en.attente.8a489de6">Livraisons en attente</span>
                 <span class="dash-side-value">{{ pendingDeliveriesCount() }}</span>
               </div>
             </a>
@@ -458,7 +454,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
             <div class="dash-side-card">
               <span class="ft-icon-badge ft-icon-badge--lg ft-icon-badge--teal"><i class="fa-solid fa-truck-fast"></i></span>
               <div class="dash-side-text">
-                <span class="dash-side-label">Livraisons en attente</span>
+                <span class="dash-side-label" i18n="@@dashboard.dashboard.livraisons.en.attente.8a489de6">Livraisons en attente</span>
                 <span class="dash-side-value">{{ pendingDeliveriesCount() }}</span>
               </div>
             </div>
@@ -469,7 +465,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
             <a class="dash-side-card dash-side-card--clickable" [routerLink]="quotesTarget.route" [queryParams]="quotesTarget.queryParams" [attr.aria-label]="quotesTarget.ariaLabel">
               <span class="ft-icon-badge ft-icon-badge--lg ft-icon-badge--indigo"><i class="fa-solid fa-file-contract"></i></span>
               <div class="dash-side-text">
-                <span class="dash-side-label">Devis en cours</span>
+                <span class="dash-side-label" i18n="@@dashboard.dashboard.devis.en.cours.ec2118b7">Devis en cours</span>
                 <span class="dash-side-value">{{ activeQuotesCount() }}</span>
               </div>
             </a>
@@ -477,7 +473,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
             <div class="dash-side-card">
               <span class="ft-icon-badge ft-icon-badge--lg ft-icon-badge--indigo"><i class="fa-solid fa-file-contract"></i></span>
               <div class="dash-side-text">
-                <span class="dash-side-label">Devis en cours</span>
+                <span class="dash-side-label" i18n="@@dashboard.dashboard.devis.en.cours.ec2118b7">Devis en cours</span>
                 <span class="dash-side-value">{{ activeQuotesCount() }}</span>
               </div>
             </div>
@@ -491,14 +487,14 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
 
     <ng-template #accountingTpl>
     @if (hasAccountingModule() && accountingKpis()) {
-      <div class="section accounting-kpis-section" aria-label="Indicateurs comptables">
+      <div class="section accounting-kpis-section" aria-label="Indicateurs comptables" i18n-aria-label="@@dashboard.dashboard.indicateurs.comptables.fd4900d5">
         <div class="section-header">
-          <h2 class="section-title">Comptabilité</h2>
-          <a routerLink="/accounting/journal" class="section-link">Voir le journal</a>
+          <h2 class="section-title" i18n="@@dashboard.dashboard.comptabilite.20af7266">Comptabilité</h2>
+          <a routerLink="/accounting/journal" class="section-link" i18n="@@dashboard.dashboard.voir.le.journal.2d6bf019">Voir le journal</a>
         </div>
         <div class="stats-grid">
           <app-stat-card
-            label="TVA due (estim.)"
+            label="TVA due (estim.)" i18n-label="@@dashboard.dashboard.tva.due.estim.fe3389ac"
             [value]="formatAccountingAmount(accountingKpis()!.vatDueEstimate)"
             icon="pi-percentage"
             variant="primary"
@@ -509,7 +505,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
             [navigationAriaLabel]="drillDown('accountingVat')?.ariaLabel">
           </app-stat-card>
           <app-stat-card
-            label="Créances +90 j."
+            label="Créances +90 j." i18n-label="@@dashboard.dashboard.creances.90.j.e06caa46"
             [value]="formatAccountingAmount(accountingKpis()!.overdueReceivablesOver90)"
             icon="pi-clock"
             variant="warning"
@@ -520,7 +516,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
             [navigationAriaLabel]="drillDown('accountingReceivables90')?.ariaLabel">
           </app-stat-card>
           <app-stat-card
-            label="Factures non comptabilisées"
+            label="Factures non comptabilisées" i18n-label="@@dashboard.dashboard.factures.non.comptabilisees.add0b7d1"
             [value]="accountingKpis()!.unpostedInvoiceCount"
             icon="pi-file-excel"
             variant="primary"
@@ -531,7 +527,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
             [navigationAriaLabel]="drillDown('accountingUnposted')?.ariaLabel">
           </app-stat-card>
           <app-stat-card
-            label="Prochaine échéance TVA"
+            label="Prochaine échéance TVA" i18n-label="@@dashboard.dashboard.prochaine.echeance.tva.828513e5"
             [value]="formatVatDeadline(accountingKpis()!.nextVatDeadline)"
             icon="pi-calendar"
             variant="primary"
@@ -549,14 +545,14 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
 
     <ng-template #crmTpl>
     @if (hasCrmModule()) {
-      <div class="section crm-kpis-section" aria-label="CRM">
+      <div class="section crm-kpis-section" aria-label="CRM" i18n-aria-label="@@dashboard.dashboard.crm.2a13d05e">
         <div class="section-header">
-          <h2 class="section-title">CRM Commercial</h2>
-          <a routerLink="/crm/dashboard" class="section-link">Voir le CRM</a>
+          <h2 class="section-title" i18n="@@dashboard.dashboard.crm.commercial.96a9fcf3">CRM Commercial</h2>
+          <a routerLink="/crm/dashboard" class="section-link" i18n="@@dashboard.dashboard.voir.le.crm.cef605de">Voir le CRM</a>
         </div>
         <div class="stats-grid">
           <app-stat-card
-            label="Mes relances"
+            label="Mes relances" i18n-label="@@dashboard.dashboard.mes.relances.05d28ed7"
             [value]="crmRemindersCount()"
             icon="pi-bell"
             [variant]="crmRemindersCount() > 0 ? 'warning' : 'success'"
@@ -567,7 +563,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
             [navigationAriaLabel]="drillDown('crmReminders')?.ariaLabel">
           </app-stat-card>
           <app-stat-card
-            label="Opportunités ouvertes"
+            label="Opportunités ouvertes" i18n-label="@@dashboard.dashboard.opportunites.ouvertes.37ea7471"
             [value]="crmOpenOppsCount()"
             icon="pi-bullseye"
             variant="primary"
@@ -587,14 +583,12 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
     <!-- Revenue Chart Section (Superieur chart-card + p-chart area) -->
     @if (!loading() && monthlyRevenue().length > 0) {
       <app-chart-card
-        title="Évolution du CA"
-        subtitle="6 derniers mois"
-        aria-label="Évolution du chiffre d'affaires sur 6 mois">
+        title="Évolution du CA" i18n-title="@@dashboard.dashboard.evolution.du.ca.ba7ac89b"
+        subtitle="6 derniers mois" i18n-subtitle="@@dashboard.dashboard.6.derniers.mois.d1f0b2a7"
+        aria-label="Évolution du chiffre d'affaires sur 6 mois" i18n-aria-label="@@dashboard.dashboard.evolution.du.chiffre.d.affaires.sur.6.mois.b7b26b8f">
         <div chart-actions>
           @if (drillDown('totalRevenue'); as revenueTarget) {
-            <a [routerLink]="revenueTarget.route" [queryParams]="revenueTarget.queryParams" class="section-link" [attr.aria-label]="revenueTarget.ariaLabel">
-              Détails
-            </a>
+            <a [routerLink]="revenueTarget.route" [queryParams]="revenueTarget.queryParams" class="section-link" [attr.aria-label]="revenueTarget.ariaLabel" i18n="@@dashboard.dashboard.details.aaa029e6"> Détails </a>
           }
         </div>
         <p-chart
@@ -603,7 +597,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           [options]="revenueChartOptions"
           [style]="{ height: '280px' }" />
         <!-- Fallback CSS bars kept for accessibility drill-down months -->
-        <div class="chart-month-links" role="navigation" aria-label="Mois du graphique">
+        <div class="chart-month-links" role="navigation" aria-label="Mois du graphique" i18n-aria-label="@@dashboard.dashboard.mois.du.graphique.720aac73">
           @for (month of monthlyRevenue(); track month.monthShort) {
             @if (drillDown('chartMonth', month); as monthTarget) {
               <button
@@ -628,8 +622,8 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       <div class="dashboard-col-left">
         <!-- Recent Invoices -->
         @if (canReadInvoices()) {
-        <app-dashboard-panel title="Factures récentes" [hasActions]="true">
-          <a panel-actions routerLink="/invoices" class="section-link">Voir tout</a>
+        <app-dashboard-panel title="Factures récentes" i18n-title="@@dashboard.dashboard.factures.recentes.e272128e" [hasActions]="true">
+          <a panel-actions routerLink="/invoices" class="section-link" i18n="@@dashboard.dashboard.voir.tout.7b7d86e8">Voir tout</a>
 
           @if (initialLoad()) {
       <app-skeleton-table 
@@ -644,11 +638,11 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
               [rows]="5">
             <ng-template pTemplate="header">
               <tr>
-                <th style="width: 180px">Numéro</th>
-                <th>Client</th>
-                <th style="width: 120px">Date</th>
-                <th style="width: 140px" class="text-right">Montant</th>
-                <th style="width: 130px">Statut</th>
+                <th style="width: 180px" i18n="@@dashboard.dashboard.numero.15e73db0">Numéro</th>
+                <th i18n="@@dashboard.dashboard.client.1bdd79b1">Client</th>
+                <th style="width: 120px" i18n="@@dashboard.dashboard.date.eb9a4bc1">Date</th>
+                <th style="width: 140px" class="text-right" i18n="@@dashboard.dashboard.montant.4adcd9fc">Montant</th>
+                <th style="width: 130px" i18n="@@dashboard.dashboard.statut.659499f3">Statut</th>
                 <th style="width: 60px"></th>
               </tr>
             </ng-template>
@@ -669,7 +663,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
                 <td>
                   <app-status-badge 
                     [status]="getStatusBadgeStatus(invoice.status)"
-                    [label]="invoice.status">
+                    [label]="invoice.status | backendLabel">
                   </app-status-badge>
                 </td>
                 <td>
@@ -679,7 +673,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
                     icon="pi-eye"
                     [iconOnly]="true"
                     [routerLink]="['/invoices', invoice.id]"
-                    ariaLabel="Voir la facture"
+                    ariaLabel="Voir la facture" i18n-ariaLabel="@@dashboard.dashboard.voir.la.facture.23283cea"
                     (click)="$event.stopPropagation()">
                   </app-button>
                 </td>
@@ -690,10 +684,10 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
                 <td colspan="6" class="text-center p-4" data-tour="dash-empty-invoice">
                   <app-empty-state
                     illustration="empty-invoices.svg"
-                    title="Aucune facture"
-                    description="Créez votre première facture pour commencer à facturer vos clients."
+                    title="Aucune facture" i18n-title="@@dashboard.dashboard.aucune.facture.72124217"
+                    description="Créez votre première facture pour commencer à facturer vos clients." i18n-description="@@dashboard.dashboard.creez.votre.premiere.facture.pour.commen.b84348c3"
                     [showAction]="canCreateInvoice()"
-                    actionLabel="Créer votre première facture"
+                    actionLabel="Créer votre première facture" i18n-actionLabel="@@dashboard.dashboard.creer.votre.premiere.facture.dc3ed09f"
                     actionRoute="/invoices/new">
                   </app-empty-state>
                 </td>
@@ -709,20 +703,18 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       <div class="dashboard-col-right">
         <!-- Top Clients -->
         @if (!loading() && topClients().length > 0 && canReadClients()) {
-          <div class="section" aria-label="Top 5 clients par chiffre d'affaires">
+          <div class="section" aria-label="Top 5 clients par chiffre d'affaires" i18n-aria-label="@@dashboard.dashboard.top.5.clients.par.chiffre.d.affaires.af9ec46c">
             <div class="section-header">
-              <h2 class="section-title">Top clients</h2>
-              <a routerLink="/clients" class="section-link">
-                Voir tout
-              </a>
+              <h2 class="section-title" i18n="@@dashboard.dashboard.top.clients.dd696714">Top clients</h2>
+              <a routerLink="/clients" class="section-link" i18n="@@dashboard.dashboard.voir.tout.7b7d86e8"> Voir tout </a>
             </div>
             <div class="top-clients-list">
               @for (client of topClients(); track client.id; let i = $index) {
                 <a [routerLink]="['/clients', client.id]" class="top-client-item">
                   <div class="top-client-rank">{{ i + 1 }}</div>
-                  <div class="top-client-info">
+                  <div class="top-client-info" i18n="@@dashboard.dashboard.facture.ebb8b8ef.pl">
                     <span class="top-client-name">{{ client.name }}</span>
-                    <span class="top-client-meta">{{ client.invoiceCount }} facture{{ client.invoiceCount > 1 ? 's' : '' }}</span>
+                    <span class="top-client-meta">{{ client.invoiceCount }} {client.invoiceCount, plural, =0 {facture} =1 {facture} other {factures}}</span>
                   </div>
                   <div class="top-client-revenue">
                     <span class="top-client-amount">{{ client.totalRevenue | number:'1.3-3' }} {{ client.currency }}</span>
@@ -738,18 +730,16 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
 
         <!-- Recent Quotes -->
         @if (!loading() && canReadQuotes()) {
-          <div class="section" aria-label="Devis récents">
+          <div class="section" aria-label="Devis récents" i18n-aria-label="@@dashboard.dashboard.devis.recents.4379bba9">
             <div class="section-header">
-              <h2 class="section-title">Devis récents</h2>
-              <a routerLink="/quotes" class="section-link">
-                Voir tout
-              </a>
+              <h2 class="section-title" i18n="@@dashboard.dashboard.devis.recents.4379bba9">Devis récents</h2>
+              <a routerLink="/quotes" class="section-link" i18n="@@dashboard.dashboard.voir.tout.7b7d86e8"> Voir tout </a>
             </div>
 
             @if (recentQuotes().length === 0) {
               <div class="empty-section-message">
                 <i class="pi pi-file"></i>
-                <p>Aucun devis pour le moment</p>
+                <p i18n="@@dashboard.dashboard.aucun.devis.pour.le.moment.d644469b">Aucun devis pour le moment</p>
               </div>
             } @else {
               <div class="quotes-list">
@@ -763,7 +753,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
                       <span class="quote-amount">{{ quote.totalAmount | number:'1.3-3' }} {{ quote.currency }}</span>
                       <app-status-badge
                         [status]="getStatusBadgeStatus(quote.status)"
-                        [label]="quote.status">
+                        [label]="quote.status | backendLabel">
                       </app-status-badge>
                     </div>
                   </a>
@@ -775,9 +765,9 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
 
         <!-- Activity Timeline -->
         @if (!loading() && recentActivity().length > 0) {
-          <div class="section" aria-label="Activité récente">
+          <div class="section" aria-label="Activité récente" i18n-aria-label="@@dashboard.dashboard.activite.recente.524eaf8e">
             <div class="section-header">
-              <h2 class="section-title">Activité récente</h2>
+              <h2 class="section-title" i18n="@@dashboard.dashboard.activite.recente.524eaf8e">Activité récente</h2>
             </div>
             <div class="timeline">
               @for (activity of recentActivity(); track activity.id + activity.type) {
@@ -812,7 +802,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
     }
 
     .dashboard-migration-banner__retry {
-      margin-left: auto;
+      margin-inline-start: auto;
       border: none;
       border-radius: var(--radius-md);
       background: var(--color-primary);
@@ -864,7 +854,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       padding: var(--spacing-4) var(--spacing-5);
       margin-bottom: var(--spacing-6);
       border: 1px solid var(--color-warning-200);
-      border-left: 4px solid var(--color-warning-600, #d97706);
+      border-inline-start: 4px solid var(--color-warning-600, #d97706);
       box-shadow: var(--shadow-soft-md, var(--shadow-sm));
       animation: fadeInUp 0.5s ease-out 0.1s both;
     }
@@ -909,7 +899,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
     }
 
     .urgent-item .urgent-arrow {
-      margin-left: auto;
+      margin-inline-start: auto;
       opacity: 0;
       transition: opacity var(--transition-fast);
     }
@@ -922,7 +912,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       background: var(--gradient-banner-danger, var(--color-error-50));
       color: var(--color-error-700);
       border: 1px solid var(--color-error-100);
-      border-left: 3px solid var(--color-error-600);
+      border-inline-start: 3px solid var(--color-error-600);
     }
 
     .urgent-danger:hover {
@@ -934,7 +924,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       background: var(--gradient-banner-warning, var(--color-warning-50));
       color: var(--color-warning-700);
       border: 1px solid var(--color-warning-100);
-      border-left: 3px solid var(--color-warning-600);
+      border-inline-start: 3px solid var(--color-warning-600);
     }
 
     .urgent-warning:hover {
@@ -1054,8 +1044,8 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       content: '';
       position: absolute;
       bottom: 0;
-      left: 0;
-      right: 0;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
       height: 3px;
       background: var(--gradient-primary, linear-gradient(90deg, #3b82f6, #6366f1));
       transform: scaleX(0);
@@ -1627,12 +1617,12 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       .p-datatable-tbody > tr.table-row {
         transition: all var(--transition-fast);
         cursor: pointer;
-        border-left: 3px solid transparent;
+        border-inline-start: 3px solid transparent;
       }
 
       .p-datatable-tbody > tr.table-row:hover {
         background: linear-gradient(90deg, var(--color-primary-50) 0%, transparent 100%);
-        border-left-color: var(--color-primary-500);
+        border-inline-start-color: var(--color-primary-500);
         transform: translateX(4px);
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
       }
@@ -1659,7 +1649,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
     }
 
     .text-right {
-      text-align: right;
+      text-align: end;
     }
 
     .invoice-link {
@@ -1757,7 +1747,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
     }
 
     .top-client-revenue {
-      text-align: right;
+      text-align: end;
       min-width: 120px;
       display: flex;
       flex-direction: column;
@@ -1879,7 +1869,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
     .timeline::before {
       content: '';
       position: absolute;
-      left: 15px;
+      inset-inline-start: 15px;
       top: 8px;
       bottom: 8px;
       width: 2px;
@@ -2323,13 +2313,13 @@ export class DashboardComponent implements OnInit {
   get greeting(): string {
     const user = this.authService.user();
     const hour = new Date().getHours();
-    let greeting = 'Bonjour';
+    let greeting = $localize`:@@dashboard.dashboard.ts.bonjour.f30ecbf5:Bonjour`;
 
-    if (hour < 12) greeting = 'Bonjour';
-    else if (hour < 18) greeting = 'Bon après-midi';
-    else greeting = 'Bonsoir';
+    if (hour < 12) greeting = $localize`:@@dashboard.dashboard.ts.bonjour.f30ecbf5:Bonjour`;
+    else if (hour < 18) greeting = $localize`:@@dashboard.dashboard.ts.bon.apres.midi.d523da21:Bon après-midi`;
+    else greeting = $localize`:@@dashboard.dashboard.ts.bonsoir.29192c62:Bonsoir`;
 
-    return user ? `${greeting}, ${user.firstName}` : greeting;
+    return user ? $localize`:@@dashboard.dashboard.salutation.prenom:${greeting}:greeting:, ${user.firstName}:firstName:` : greeting;
   }
 
   ngOnInit(): void {
@@ -2459,8 +2449,8 @@ export class DashboardComponent implements OnInit {
         if (!res.success || !res.data) {
           this.toastService.add({
             severity: 'error',
-            summary: 'Échec de l’activation',
-            detail: res.message || 'Impossible d’activer ce module.'
+            summary: $localize`:@@dashboard.component.summary._chec_de_l_activ:Échec de l’activation`,
+            detail: res.message || $localize`:@@dashboard.dashboard.ts.impossible.d.activer.ce.module.c4ca3c26:Impossible d’activer ce module.`
           });
           return;
         }
@@ -2470,15 +2460,15 @@ export class DashboardComponent implements OnInit {
         if (warnings.length > 0) {
           this.toastService.add({
             severity: 'warn',
-            summary: 'Module activé avec avertissements',
+            summary: $localize`:@@dashboard.component.summary.Module_activ_av:Module activé avec avertissements`,
             detail: warnings.join(' '),
             life: 8000
           });
         } else {
           this.toastService.add({
             severity: 'success',
-            summary: 'Module activé',
-            detail: 'Votre navigation a été actualisée.'
+            summary: $localize`:@@dashboard.component.summary.Module activ:Module activé`,
+            detail: $localize`:@@dashboard.component.detail.Votre_navigation:Votre navigation a été actualisée.`
           });
         }
         // Retire la reco localement (le backend ne la renverra plus non plus).
@@ -2488,7 +2478,7 @@ export class DashboardComponent implements OnInit {
         this.activatingModuleId.set(null);
         this.toastService.add({
           severity: 'error',
-          summary: 'Échec de l’activation',
+          summary: $localize`:@@dashboard.component.summary._chec_de_l_activ:Échec de l’activation`,
           detail: this.errorHandler.extractErrorMessage(err),
           life: 8000
         });
@@ -2514,7 +2504,7 @@ export class DashboardComponent implements OnInit {
     if (!isoDate) return '—';
     const d = new Date(isoDate);
     if (Number.isNaN(d.getTime())) return isoDate;
-    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    return d.toLocaleDateString(erpDateLocale('fr-FR'), { day: 'numeric', month: 'long', year: 'numeric' });
   }
 
   loadAccountingKpis(): void {
@@ -2806,7 +2796,7 @@ export class DashboardComponent implements OnInit {
       labels: months.map(m => m.monthShort),
       datasets: [
         {
-          label: 'CA (TND)',
+          label: $localize`:@@dashboard.dashboard.ts.ca.tnd.2da09e4f:CA (TND)`,
           data: months.map(m => m.revenue),
           fill: true,
           borderColor: '#3862f5',

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -60,10 +61,10 @@ import {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Mon entreprise" 
-      subtitle="Informations légales et paramètres de facturation">
+      title="Mon entreprise" i18n-title="@@settings.company.mon.entreprise.e950c285" 
+      subtitle="Informations légales et paramètres de facturation" i18n-subtitle="@@settings.company.informations.legales.et.parametres.de.fa.b16437d4">
       <p-button 
-        label="Retour" 
+        label="Retour" i18n-label="@@settings.company.retour.e5befb1f" 
         icon="pi pi-arrow-left" 
         [outlined]="true"
         routerLink="/settings">
@@ -73,7 +74,7 @@ import {
     @if (loading()) {
       <div class="loading-container">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-        <p>Chargement des informations...</p>
+        <p i18n="@@settings.company.chargement.des.informations.c52577f2">Chargement des informations...</p>
       </div>
     } @else {
     
@@ -82,12 +83,12 @@ import {
         <div class="error-content">
           <i class="pi pi-exclamation-triangle error-icon"></i>
           <div class="error-text">
-            <strong>Erreur</strong>
+            <strong i18n="@@settings.company.erreur.ab546c23">Erreur</strong>
             <p>{{ errorMessage() }}</p>
           </div>
         </div>
         <p-button 
-          label="Réessayer" 
+          label="Réessayer" i18n-label="@@settings.company.reessayer.895d416b" 
           icon="pi pi-refresh"
           [disabled]="loading()"
           (onClick)="loadCompanyData()"
@@ -100,11 +101,11 @@ import {
       <div class="profile-completion-banner" role="status" aria-live="polite">
         <div class="pcb-icon"><i class="pi pi-chart-line" aria-hidden="true"></i></div>
         <div class="pcb-body">
-          <div class="pcb-title">Profil complété à {{ profileCompletionPct() }} %</div>
+          <div class="pcb-title" i18n="@@settings.company.profil.complete.a.b6bc7d50">Profil complété à {{ profileCompletionPct() }} %</div>
           <div class="pcb-bar">
             <div class="pcb-bar__fill" [style.width.%]="profileCompletionPct()"></div>
           </div>
-          <p class="pcb-text">Complétez votre logo, RIB et coordonnées pour des documents plus professionnels.</p>
+          <p class="pcb-text" i18n="@@settings.company.completez.votre.logo.rib.et.coordonnees.pour.des.929a781f">Complétez votre logo, RIB et coordonnées pour des documents plus professionnels.</p>
         </div>
       </div>
     }
@@ -112,11 +113,11 @@ import {
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="form-grid">
         <!-- Company Identity -->
-        <p-card header="Identité de l'entreprise" styleClass="form-card">
+        <p-card header="Identité de l'entreprise" i18n-header="@@settings.company.identite.de.l.entreprise.cd961dae" styleClass="form-card">
           <div class="logo-section">
             <div class="logo-preview">
               @if (logoUrl()) {
-                <img [src]="logoUrl()" alt="Logo">
+                <img [src]="logoUrl()" alt="Logo" i18n-alt="@@settings.company.logo.83fce832">
               } @else {
                 <i class="pi pi-image"></i>
               }
@@ -126,17 +127,17 @@ import {
                 mode="basic"
                 accept="image/*"
                 [maxFileSize]="1000000"
-                chooseLabel="Choisir un logo"
+                chooseLabel="Choisir un logo" i18n-chooseLabel="@@settings.company.choisir.un.logo.846ee831"
                 (onSelect)="onLogoSelect($event)">
               </p-fileUpload>
-              <small>PNG, JPG. Max 1MB. Recommandé: 200x200px</small>
+              <small i18n="@@settings.company.png.jpg.max.1mb.recommande.200x200px.d501e6b5">PNG, JPG. Max 1MB. Recommandé: 200x200px</small>
             </div>
           </div>
 
           <p-divider></p-divider>
 
           <div class="form-group">
-            <label for="companyName">Raison sociale <span class="required">*</span></label>
+            <label for="companyName"><ng-container i18n="@@settings.company.raison.sociale.28eaf8b0">Raison sociale </ng-container> <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
             <input 
               pInputText 
               id="companyName" 
@@ -146,43 +147,43 @@ import {
           </div>
 
           <div class="form-group">
-            <label for="tradeName">Nom commercial</label>
+            <label for="tradeName" i18n="@@settings.company.nom.commercial.beb9d235">Nom commercial</label>
             <input 
               pInputText 
               id="tradeName" 
               formControlName="tradeName"
-              placeholder="Si différent de la raison sociale"
+              placeholder="Si différent de la raison sociale" i18n-placeholder="@@settings.company.si.different.de.la.raison.sociale.5e35b18c"
               class="w-full">
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label for="nif">Matricule fiscal <span class="required">*</span></label>
+              <label for="nif"><ng-container i18n="@@settings.company.matricule.fiscal.304096c4">Matricule fiscal </ng-container> <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
               <p-inputMask
                 id="nif"
                 formControlName="nif"
                 appNifMaskPaste
                 mask="9999999a/a/a/999"
-                placeholder="1772793W/A/M/000"
+                placeholder="1772793W/A/M/000" i18n-placeholder="@@settings.company.1772793w.a.m.000.e4c6f482"
                 styleClass="w-full"
                 (onBlur)="onNifBlur()">
               </p-inputMask>
             </div>
 
             <div class="form-group">
-              <label for="commerceRegistry">Registre de commerce</label>
+              <label for="commerceRegistry" i18n="@@settings.company.registre.de.commerce.240423de">Registre de commerce</label>
               <input 
                 pInputText 
                 id="commerceRegistry" 
                 formControlName="commerceRegistry"
-                placeholder="Ex: B123456789"
+                placeholder="Ex: B123456789" i18n-placeholder="@@settings.company.ex.b123456789.f5792375"
                 class="w-full">
             </div>
           </div>
 
           <div class="form-group">
             <label for="cnssEmployerNumber" class="label-with-tag">
-              <span>Matricule employeur CNSS</span>
+              <span i18n="@@settings.company.matricule.employeur.cnss.877c7c12">Matricule employeur CNSS</span>
               @if (!form.get('cnssEmployerNumber')?.value) {
                 <p-tag value="Recommandé" severity="warn" />
               }
@@ -191,27 +192,27 @@ import {
               pInputText
               id="cnssEmployerNumber"
               formControlName="cnssEmployerNumber"
-              placeholder="Numéro d'affiliation CNSS de l'entreprise"
+              placeholder="Numéro d'affiliation CNSS de l'entreprise" i18n-placeholder="@@settings.company.numero.d.affiliation.cnss.de.l.entreprise.c7aa9548"
               class="w-full">
-            <small class="form-hint">Requis pour générer le bordereau mensuel CNSS et enregistrer les versements de cotisations.</small>
+            <small class="form-hint" i18n="@@settings.company.requis.pour.generer.le.bordereau.mensuel.cnss.et.57c348d5">Requis pour générer le bordereau mensuel CNSS et enregistrer les versements de cotisations.</small>
           </div>
 
           <div class="form-group">
-            <label for="taxRegime">Régime fiscal <span class="required">*</span></label>
+            <label for="taxRegime"><ng-container i18n="@@settings.company.regime.fiscal.ddf8b3c2">Régime fiscal </ng-container> <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
             <p-select 
               id="taxRegime"
               [options]="taxRegimes" 
               formControlName="taxRegime"
-              placeholder="Sélectionner"
+              placeholder="Sélectionner" i18n-placeholder="@@settings.company.selectionner.ab31a36f"
               styleClass="w-full">
             </p-select>
           </div>
         </p-card>
 
         <!-- Contact & Address -->
-        <p-card header="Coordonnées" styleClass="form-card">
+        <p-card header="Coordonnées" i18n-header="@@settings.company.coordonnees.7c309d77" styleClass="form-card">
           <div class="form-group">
-            <label for="street">Adresse <span class="required">*</span></label>
+            <label for="street"><ng-container i18n="@@settings.company.adresse.522e1466">Adresse </ng-container> <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
             <input 
               pInputText 
               id="street" 
@@ -221,7 +222,7 @@ import {
           </div>
 
           <div class="form-group">
-            <label for="streetLine2">Complément d'adresse</label>
+            <label for="streetLine2" i18n="@@settings.company.complement.d.adresse.fba484a7">Complément d'adresse</label>
             <input 
               pInputText 
               id="streetLine2" 
@@ -231,7 +232,7 @@ import {
 
           <div class="form-row">
             <div class="form-group">
-              <label for="postalCode">Code postal</label>
+              <label for="postalCode" i18n="@@settings.company.code.postal.74779109">Code postal</label>
               <p-inputMask
                 id="postalCode"
                 formControlName="postalCode"
@@ -241,7 +242,7 @@ import {
             </div>
 
             <div class="form-group">
-              <label for="city">Ville <span class="required">*</span></label>
+              <label for="city"><ng-container i18n="@@settings.company.ville.97217611">Ville </ng-container> <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
               <input 
                 pInputText 
                 id="city" 
@@ -251,12 +252,12 @@ import {
           </div>
 
           <div class="form-group">
-            <label for="governorate">Gouvernorat <span class="required">*</span></label>
+            <label for="governorate"><ng-container i18n="@@settings.company.gouvernorat.b9cd1d99">Gouvernorat </ng-container> <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
             <p-select 
               id="governorate"
               [options]="governorates" 
               formControlName="governorate"
-              placeholder="Sélectionner"
+              placeholder="Sélectionner" i18n-placeholder="@@settings.company.selectionner.ab31a36f"
               [filter]="true"
               styleClass="w-full">
             </p-select>
@@ -266,7 +267,7 @@ import {
 
           <div class="form-row">
             <div class="form-group">
-              <label for="email">Email <span class="required">*</span></label>
+              <label for="email"><ng-container i18n="@@settings.company.email.84add5b2">Email </ng-container> <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
               <input 
                 pInputText 
                 id="email" 
@@ -276,7 +277,7 @@ import {
             </div>
 
             <div class="form-group">
-              <label for="phone">Téléphone <span class="required">*</span></label>
+              <label for="phone"><ng-container i18n="@@settings.company.telephone.d3b023ea">Téléphone </ng-container> <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
               <p-inputMask
                 id="phone"
                 formControlName="phone"
@@ -287,111 +288,109 @@ import {
           </div>
 
           <div class="form-group">
-            <label for="website">Site web</label>
+            <label for="website" i18n="@@settings.company.site.web.7e78af33">Site web</label>
             <input 
               pInputText 
               id="website" 
               formControlName="website"
-              placeholder="https://www.exemple.tn"
+              placeholder="https://www.exemple.tn" i18n-placeholder="@@settings.company.https.www.exemple.tn.7362c7f7"
               class="w-full">
           </div>
         </p-card>
 
         <!-- Bank Information -->
-        <p-card header="Informations bancaires" styleClass="form-card bank-card">
+        <p-card header="Informations bancaires" i18n-header="@@settings.company.informations.bancaires.1a7496a8" styleClass="form-card bank-card">
           <div class="form-group">
-            <label for="bankName">Nom de la banque</label>
+            <label for="bankName" i18n="@@settings.company.nom.de.la.banque.9848ce74">Nom de la banque</label>
             <input 
               pInputText 
               id="bankName" 
               formControlName="bankName"
-              placeholder="Ex: Banque Internationale Arabe de Tunisie"
+              placeholder="Ex: Banque Internationale Arabe de Tunisie" i18n-placeholder="@@settings.company.ex.banque.internationale.arabe.de.tunisie.bbdce49b"
               class="w-full">
           </div>
 
           <div class="form-group">
-            <label for="rib">RIB</label>
+            <label for="rib" i18n="@@settings.company.rib.61f3ea57">RIB</label>
             <p-inputMask
               id="rib"
               formControlName="rib"
               mask="99 999 9999999999999 99"
-              placeholder="XX XXX XXXXXXXXXXXXX XX"
+              placeholder="XX XXX XXXXXXXXXXXXX XX" i18n-placeholder="@@settings.company.xx.xxx.xxxxxxxxxxxxx.xx.88bae40a"
               styleClass="w-full">
             </p-inputMask>
-            <small class="form-hint">Relevé d'Identité Bancaire à 20 chiffres</small>
+            <small class="form-hint" i18n="@@settings.company.releve.d.identite.bancaire.a.20.chiffres.604e850f">Relevé d'Identité Bancaire à 20 chiffres</small>
           </div>
 
           <div class="form-group">
-            <label for="iban">IBAN</label>
+            <label for="iban" i18n="@@settings.company.iban.e81566a5">IBAN</label>
             <input 
               pInputText 
               id="iban" 
               formControlName="iban"
-              placeholder="TN59 XXXX XXXX XXXX XXXX XXXX"
+              placeholder="TN59 XXXX XXXX XXXX XXXX XXXX" i18n-placeholder="@@settings.company.tn59.xxxx.xxxx.xxxx.xxxx.xxxx.010b6a21"
               class="w-full">
           </div>
         </p-card>
 
         <!-- Invoice Settings -->
-        <p-card header="Paramètres de facturation" styleClass="form-card invoice-card">
+        <p-card header="Paramètres de facturation" i18n-header="@@settings.company.parametres.de.facturation.b89b8dd4" styleClass="form-card invoice-card">
           <div class="form-group numbering-link">
-            <label>Numérotation des documents</label>
-            <p class="form-hint">
-              Configurez le format et le début de numérotation de vos factures et autres documents.
-            </p>
-            <a routerLink="/settings/numbering" class="numbering-settings-link">
+            <label i18n="@@settings.company.numerotation.des.documents.6857c7f1">Numérotation des documents</label>
+            <p class="form-hint" i18n="@@settings.company.configurez.le.format.et.le.debut.de.numerotation.2d1005c7"> Configurez le format et le début de numérotation de vos factures et autres documents. </p>
+            <a routerLink="/settings/numbering" class="numbering-settings-link" i18n="@@settings.company.ouvrir.les.numerotations.09a179bb">
               <i class="pi pi-sort-numeric-down"></i>
               Ouvrir les numérotations
             </a>
           </div>
 
           <div class="form-group">
-            <label for="defaultPaymentTerms">Conditions de paiement par défaut</label>
+            <label for="defaultPaymentTerms" i18n="@@settings.company.conditions.de.paiement.par.defaut.3e7f9ec2">Conditions de paiement par défaut</label>
             <textarea 
               pTextarea 
               id="defaultPaymentTerms" 
               formControlName="defaultPaymentTerms"
-              placeholder="Ex: Paiement à 30 jours"
+              placeholder="Ex: Paiement à 30 jours" i18n-placeholder="@@settings.company.ex.paiement.a.30.jours.7b0ae978"
               [rows]="2"
               class="w-full">
             </textarea>
           </div>
 
           <div class="form-group">
-            <label for="invoiceFooter">Pied de page des factures</label>
+            <label for="invoiceFooter" i18n="@@settings.company.pied.de.page.des.factures.763a451a">Pied de page des factures</label>
             <textarea 
               pTextarea 
               id="invoiceFooter" 
               formControlName="invoiceFooter"
-              placeholder="Texte qui apparaîtra en bas de chaque facture"
+              placeholder="Texte qui apparaîtra en bas de chaque facture" i18n-placeholder="@@settings.company.texte.qui.apparaitra.en.bas.de.chaque.facture.348f766a"
               [rows]="3"
               class="w-full">
             </textarea>
           </div>
         </p-card>
 
-        <p-card header="Espace client" styleClass="form-card">
+        <p-card header="Espace client" i18n-header="@@settings.company.espace.client.997229dc" styleClass="form-card">
           <div class="form-group">
-            <label for="clientPortalEnabled">Activer l’espace client</label>
+            <label for="clientPortalEnabled" i18n="@@settings.company.activer.l.espace.client.d7a22239">Activer l’espace client</label>
             <p-inputSwitch inputId="clientPortalEnabled" formControlName="clientPortalEnabled"></p-inputSwitch>
-            <small class="form-hint">Permet d’inviter des contacts depuis la fiche client pour consulter leurs factures.</small>
+            <small class="form-hint" i18n="@@settings.company.permet.d.inviter.des.contacts.depuis.la.fiche.cl.a5481538">Permet d’inviter des contacts depuis la fiche client pour consulter leurs factures.</small>
           </div>
         </p-card>
 
         <!-- Stock Configuration -->
-        <p-card header="Configuration du Stock" styleClass="form-card stock-card">
+        <p-card header="Configuration du Stock" i18n-header="@@settings.company.configuration.du.stock.d42e7f9c" styleClass="form-card stock-card">
           <div class="form-group">
-            <label for="warehouseName">Nom de l'entrepôt principal</label>
+            <label for="warehouseName" i18n="@@settings.company.nom.de.l.entrepot.principal.2f77abf6">Nom de l'entrepôt principal</label>
             <input 
               pInputText 
               id="warehouseName" 
               formControlName="warehouseName"
-              placeholder="Entrepôt Principal"
+              placeholder="Entrepôt Principal" i18n-placeholder="@@settings.company.entrepot.principal.3a017cfb"
               class="w-full">
-            <small class="form-hint">Ce nom sera utilisé pour votre entrepôt par défaut.</small>
+            <small class="form-hint" i18n="@@settings.company.ce.nom.sera.utilise.pour.votre.entrepot.par.defa.fcaa6d42">Ce nom sera utilisé pour votre entrepôt par défaut.</small>
             <small class="form-hint warehouse-link">
-              Pour gérer plusieurs entrepôts ou leurs adresses,
-              <a routerLink="/settings/warehouses">ouvrez la gestion des entrepôts</a>.
+              <ng-container i18n="@@settings.company.pour.gerer.plusieurs.entrepots.ou.leurs.adresses.034f4fd9"> Pour gérer plusieurs entrepôts ou leurs adresses, </ng-container>
+              <a routerLink="/settings/warehouses" i18n="@@settings.company.ouvrez.la.gestion.des.entrepots.2d309303">ouvrez la gestion des entrepôts</a>.
             </small>
           </div>
         </p-card>
@@ -400,14 +399,14 @@ import {
       <!-- Actions -->
       <div class="form-actions">
         <p-button 
-          label="Annuler" 
+          label="Annuler" i18n-label="@@settings.company.annuler.49ba3292" 
           icon="pi pi-times" 
           [outlined]="true"
           routerLink="/settings">
         </p-button>
         <p-button 
           type="submit" 
-          label="Enregistrer" 
+          label="Enregistrer" i18n-label="@@settings.company.enregistrer.f7c8bcd8" 
           icon="pi pi-check"
           [loading]="saving()"
           [disabled]="form.invalid || saving()">
@@ -415,19 +414,17 @@ import {
       </div>
     </form>
 
-    <p-card header="Secteur d'activité" styleClass="form-card sector-card" id="secteur">
+    <p-card header="Secteur d'activité" i18n-header="@@settings.company.secteur.d.activite.eb3e69af" styleClass="form-card sector-card" id="secteur">
       @if (sectorLoading()) {
         <div class="loading-container">
           <i class="pi pi-spin pi-spinner" style="font-size: 1.5rem"></i>
-          <p>Chargement du secteur...</p>
+          <p i18n="@@settings.company.chargement.du.secteur.89ee32a8">Chargement du secteur...</p>
         </div>
       } @else {
-        <p class="form-hint">
-          Votre secteur d'activité permet de recommander automatiquement les modules et modèles de documents adaptés à votre métier. Ce changement peut être effectué une fois par jour.
-        </p>
+        <p class="form-hint" i18n="@@settings.company.votre.secteur.d.activite.permet.de.recommander.a.3c90238a"> Votre secteur d'activité permet de recommander automatiquement les modules et modèles de documents adaptés à votre métier. Ce changement peut être effectué une fois par jour. </p>
         <div class="form-grid sector-grid">
           <div class="form-group">
-            <label for="sectorSegment">Segment</label>
+            <label for="sectorSegment" i18n="@@settings.company.segment.44986cef">Segment</label>
             <p-select
               inputId="sectorSegment"
               [options]="availableSegments()"
@@ -435,12 +432,12 @@ import {
               optionValue="code"
               [(ngModel)]="selectedSegmentCode"
               [ngModelOptions]="{standalone: true}"
-              placeholder="Sélectionnez un segment"
+              placeholder="Sélectionnez un segment" i18n-placeholder="@@settings.company.selectionnez.un.segment.fa750c19"
               class="w-full">
             </p-select>
           </div>
           <div class="form-group">
-            <label for="sectorDomain">Domaine d'activité</label>
+            <label for="sectorDomain" i18n="@@settings.company.domaine.d.activite.2582f8ea">Domaine d'activité</label>
             <p-select
               inputId="sectorDomain"
               [options]="availableDomains()"
@@ -448,7 +445,7 @@ import {
               optionValue="code"
               [(ngModel)]="selectedDomainCode"
               [ngModelOptions]="{standalone: true}"
-              placeholder="Sélectionnez un domaine"
+              placeholder="Sélectionnez un domaine" i18n-placeholder="@@settings.company.selectionnez.un.domaine.3aea32d3"
               class="w-full">
             </p-select>
           </div>
@@ -460,7 +457,7 @@ import {
         }
         <div class="sector-actions">
           <p-button
-            label="Prévisualiser les changements"
+            label="Prévisualiser les changements" i18n-label="@@settings.company.previsualiser.les.changements.6df33362"
             icon="pi pi-eye"
             [outlined]="true"
             [disabled]="!isSectorChanged() || sectorPreviewLoading()"
@@ -472,7 +469,7 @@ import {
     </p-card>
 
     <p-dialog
-      header="Aperçu du changement de secteur"
+      header="Aperçu du changement de secteur" i18n-header="@@settings.company.apercu.du.changement.de.secteur.50ee52dc"
       [(visible)]="previewDialogVisible"
       [modal]="true"
       [style]="{ width: 'min(480px, 95vw)' }"
@@ -481,7 +478,7 @@ import {
       @if (sectorPreview(); as preview) {
         <div class="preview-content">
           @if (preview.modulesToEnable.length > 0) {
-            <p class="preview-section-title"><i class="pi pi-th-large"></i> Ce changement activera :</p>
+            <p class="preview-section-title" i18n="@@settings.company.ce.changement.activera.069e56e7"><i class="pi pi-th-large"></i> Ce changement activera :</p>
             <ul class="preview-list">
               @for (m of preview.modulesToEnable; track m.id) {
                 <li>{{ m.labelFr }}</li>
@@ -489,7 +486,7 @@ import {
             </ul>
           }
           @if (preview.templates.length > 0) {
-            <p class="preview-section-title"><i class="pi pi-file"></i> Modèles pré-remplis :</p>
+            <p class="preview-section-title" i18n="@@settings.company.modeles.pre.remplis.9ad8ea20"><i class="pi pi-file"></i> Modèles pré-remplis :</p>
             <ul class="preview-list">
               @for (t of preview.templates; track t) {
                 <li>{{ t }}</li>
@@ -504,14 +501,14 @@ import {
             </div>
           }
           @if (preview.modulesToEnable.length === 0 && preview.templates.length === 0) {
-            <p>Aucun module ou modèle supplémentaire ne sera activé.</p>
+            <p i18n="@@settings.company.aucun.module.ou.modele.supplementaire.ne.sera.ac.b059f7a6">Aucun module ou modèle supplémentaire ne sera activé.</p>
           }
         </div>
       }
       <div class="dialog-actions">
-        <p-button label="Annuler" [outlined]="true" severity="secondary" (onClick)="previewDialogVisible = false"></p-button>
+        <p-button label="Annuler" i18n-label="@@settings.company.annuler.49ba3292" [outlined]="true" severity="secondary" (onClick)="previewDialogVisible = false"></p-button>
         <p-button
-          label="Confirmer"
+          label="Confirmer" i18n-label="@@settings.company.confirmer.80a664c8"
           icon="pi pi-check"
           [loading]="sectorSaving()"
           (onClick)="confirmSectorChange()">
@@ -720,7 +717,7 @@ import {
       margin-top: var(--spacing-2);
 
       i {
-        margin-right: var(--spacing-1);
+        margin-inline-end: var(--spacing-1);
       }
     }
 
@@ -737,13 +734,13 @@ import {
         margin-bottom: var(--spacing-1);
 
         i {
-          margin-right: var(--spacing-1);
+          margin-inline-end: var(--spacing-1);
         }
       }
 
       .preview-list {
         margin: 0 0 var(--spacing-3);
-        padding-left: var(--spacing-5);
+        padding-inline-start: var(--spacing-5);
       }
 
       .preview-warnings {
@@ -797,7 +794,7 @@ import {
       background: var(--color-error-50);
       border: 1px solid var(--color-error-200);
       border-radius: var(--radius-md);
-      border-left: 4px solid var(--color-error-500);
+      border-inline-start: 4px solid var(--color-error-500);
       animation: slideIn 0.3s ease-out;
 
       .error-content {
@@ -881,9 +878,9 @@ export class CompanyComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Mon entreprise' }
+    { label: $localize`:@@settings.company.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.company.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.company.ts.mon.entreprise.e950c285:Mon entreprise` }
   ];
 
   saving = signal(false);
@@ -921,9 +918,9 @@ export class CompanyComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   taxRegimes = [
-    { label: 'Régime réel', value: 0 },
-    { label: 'Régime forfaitaire', value: 1 },
-    { label: 'Exonéré', value: 2 }
+    { label: $localize`:@@settings.company.ts.regime.reel.ef6ee424:Régime réel`, value: 0 },
+    { label: $localize`:@@settings.company.ts.regime.forfaitaire.a1dc2f7b:Régime forfaitaire`, value: 1 },
+    { label: $localize`:@@settings.company.ts.exonere.5d577ae9:Exonéré`, value: 2 }
   ];
 
   governorates = TUNISIAN_GOVERNORATE_OPTIONS;
@@ -1056,9 +1053,9 @@ export class CompanyComponent implements OnInit, OnDestroy {
             this.logoUrl.set(company.logoUrl);
           }
         } else {
-          const errorMsg = response.errors?.join(', ') || 'Impossible de charger les informations de l\'entreprise';
+          const errorMsg = response.errors?.join(', ') || $localize`:@@settings.company.ts.impossible.de.charger.les.informations.d.7b68d0c8:Impossible de charger les informations de l'entreprise`;
           this.errorMessage.set(errorMsg);
-          this.showErrorToast('Erreur', errorMsg);
+          this.showErrorToast($localize`:@@settings.company.ts.erreur.ab546c23:Erreur`, errorMsg);
         }
         this.isLoadingInProgress = false;
         this.loading.set(false);
@@ -1072,15 +1069,15 @@ export class CompanyComponent implements OnInit, OnDestroy {
         // On ne fait pas de retry supplémentaire ici pour éviter les boucles infinies
         if (err.status === 429) {
           this.isRateLimited.set(true);
-          const errorMsg = 'Trop de requêtes. Veuillez patienter avant de réessayer.';
+          const errorMsg = $localize`:@@settings.company.ts.trop.de.requetes.veuillez.patienter.avan.9523a9ea:Trop de requêtes. Veuillez patienter avant de réessayer.`;
           this.errorMessage.set(errorMsg);
           // Ne pas afficher de toast ici car l'intercepteur le gère déjà
           // Le composant affiche juste le message inline
         } else {
           const errorMessage = this.errorHandler.extractErrorMessage(err) ||
-            'Une erreur est survenue lors du chargement des informations';
+            $localize`:@@settings.company.ts.une.erreur.est.survenue.lors.du.chargeme.d29a12c6:Une erreur est survenue lors du chargement des informations`;
           this.errorMessage.set(errorMessage);
-          this.showErrorToast('Erreur', errorMessage);
+          this.showErrorToast($localize`:@@settings.company.ts.erreur.ab546c23:Erreur`, errorMessage);
         }
         this.errorHandler.logError('Failed to load company data', err);
       }
@@ -1172,8 +1169,8 @@ export class CompanyComponent implements OnInit, OnDestroy {
         if (response.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: response.message || 'Informations de l\'entreprise mises à jour',
+            summary: $localize`:@@company.component.summary.Succès:Succès`,
+            detail: response.message || $localize`:@@settings.company.ts.informations.de.l.entreprise.mises.a.jou.194ab89e:Informations de l'entreprise mises à jour`,
             life: 3000
           });
 
@@ -1196,16 +1193,16 @@ export class CompanyComponent implements OnInit, OnDestroy {
             ).subscribe({
               error: (err) => {
                 console.error('Failed to update warehouse', err);
-                this.showErrorToast('Attention', 'Entreprise mise à jour mais erreur lors de la mise à jour de l\'entrepôt');
+                this.showErrorToast($localize`:@@settings.company.ts.attention.74e0b9c8:Attention`, $localize`:@@settings.company.ts.entreprise.mise.a.jour.mais.erreur.lors.ef14573f:Entreprise mise à jour mais erreur lors de la mise à jour de l'entrepôt`);
               }
             });
           }
 
           this.saving.set(false);
         } else {
-          const errorMsg = response.errors?.join(', ') || 'Une erreur est survenue lors de la mise à jour';
+          const errorMsg = response.errors?.join(', ') || $localize`:@@settings.company.ts.une.erreur.est.survenue.lors.de.la.mise.0bf44f4f:Une erreur est survenue lors de la mise à jour`;
           this.errorMessage.set(errorMsg);
-          this.showErrorToast('Erreur', errorMsg);
+          this.showErrorToast($localize`:@@settings.company.ts.erreur.ab546c23:Erreur`, errorMsg);
         }
         this.saving.set(false);
       },
@@ -1217,15 +1214,15 @@ export class CompanyComponent implements OnInit, OnDestroy {
         // On ne fait pas de retry supplémentaire ici pour éviter les boucles infinies
         if (err.status === 429) {
           this.isRateLimited.set(true);
-          const errorMsg = 'Trop de requêtes. Veuillez patienter avant de réessayer.';
+          const errorMsg = $localize`:@@settings.company.ts.trop.de.requetes.veuillez.patienter.avan.9523a9ea:Trop de requêtes. Veuillez patienter avant de réessayer.`;
           this.errorMessage.set(errorMsg);
           // Ne pas afficher de toast ici car l'intercepteur le gère déjà
           // Le composant affiche juste le message inline
         } else {
           const errorMessage = this.errorHandler.extractErrorMessage(err) ||
-            'Une erreur est survenue lors de la mise à jour';
+            $localize`:@@settings.company.ts.une.erreur.est.survenue.lors.de.la.mise.0bf44f4f:Une erreur est survenue lors de la mise à jour`;
           this.errorMessage.set(errorMessage);
-          this.showErrorToast('Erreur', errorMessage);
+          this.showErrorToast($localize`:@@settings.company.ts.erreur.ab546c23:Erreur`, errorMessage);
         }
         this.errorHandler.logError('Failed to update company', err);
       }
@@ -1249,7 +1246,7 @@ export class CompanyComponent implements OnInit, OnDestroy {
           this.selectedSegmentCode = res.data.companySegment;
           this.selectedDomainCode = res.data.businessDomain;
         } else {
-          this.sectorError.set(res.message || 'Impossible de charger le secteur d\'activité.');
+          this.sectorError.set(res.message || $localize`:@@settings.company.ts.impossible.de.charger.le.secteur.d.activ.b438ff44:Impossible de charger le secteur d'activité.`);
         }
       },
       error: (err: HttpErrorResponse) => {
@@ -1289,12 +1286,12 @@ export class CompanyComponent implements OnInit, OnDestroy {
             this.sectorPreview.set(res.data);
             this.previewDialogVisible = true;
           } else {
-            this.showErrorToast('Erreur', res.message || 'Impossible de prévisualiser ce changement.');
+            this.showErrorToast($localize`:@@settings.company.ts.erreur.ab546c23:Erreur`, res.message || $localize`:@@settings.company.ts.impossible.de.previsualiser.ce.changemen.8831a95d:Impossible de prévisualiser ce changement.`);
           }
         },
         error: (err: HttpErrorResponse) => {
           this.sectorPreviewLoading.set(false);
-          this.showErrorToast('Erreur', this.errorHandler.extractErrorMessage(err));
+          this.showErrorToast($localize`:@@settings.company.ts.erreur.ab546c23:Erreur`, this.errorHandler.extractErrorMessage(err));
         }
       });
   }
@@ -1318,7 +1315,7 @@ export class CompanyComponent implements OnInit, OnDestroy {
           this.previewDialogVisible = false;
 
           if (!res.success || !res.data) {
-            this.showErrorToast('Erreur', res.message || 'Impossible de mettre à jour le secteur d\'activité.');
+            this.showErrorToast($localize`:@@settings.company.ts.erreur.ab546c23:Erreur`, res.message || $localize`:@@settings.company.ts.impossible.de.mettre.a.jour.le.secteur.d.3af3059a:Impossible de mettre à jour le secteur d'activité.`);
             return;
           }
 
@@ -1333,21 +1330,21 @@ export class CompanyComponent implements OnInit, OnDestroy {
           if (warnings.length > 0) {
             this.toastService.add({
               severity: 'warn',
-              summary: 'Secteur mis à jour avec avertissements',
+              summary: $localize`:@@company.component.summary.Secteur_mis_jo:Secteur mis à jour avec avertissements`,
               detail: warnings.join(' '),
               life: 8000
             });
           } else {
             this.toastService.add({
               severity: 'success',
-              summary: 'Secteur d\'activité mis à jour',
-              detail: 'Vos recommandations de modules ont été actualisées.'
+              summary: $localize`:@@company.component.summary.Secteur_d_activi:Secteur d'activité mis à jour`,
+              detail: $localize`:@@company.component.detail.Vos_recommandati:Vos recommandations de modules ont été actualisées.`
             });
           }
         },
         error: (err: HttpErrorResponse) => {
           this.sectorSaving.set(false);
-          this.showErrorToast('Erreur', this.errorHandler.extractErrorMessage(err));
+          this.showErrorToast($localize`:@@settings.company.ts.erreur.ab546c23:Erreur`, this.errorHandler.extractErrorMessage(err));
         }
       });
   }

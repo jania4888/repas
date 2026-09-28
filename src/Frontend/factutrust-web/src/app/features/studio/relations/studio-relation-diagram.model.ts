@@ -69,7 +69,7 @@ export function toDiagram(entities: CustomEntity[], relations: EntityRelationDto
     const ty = target ? PADDING + Math.floor(regular.indexOf(target) / 3) * ROW_HEIGHT : PADDING + ROW_HEIGHT;
     nodes.push({
       id: nodeId,
-      label: junctionEntity?.displayName ?? rel.junctionEntityKey ?? 'Jonction',
+      label: junctionEntity?.displayName ?? rel.junctionEntityKey ?? $localize`:@@studio.studio-relation-diagram.ts.jonction.1f6dc40a:Jonction`,
       kind: 'junction',
       // x/y sont des coordonnées de CENTRE (rendu `translate` + rect centré) : la jonction se
       // place au milieu exact de ses deux extrémités. Ne pas ajouter COL_WIDTH/2 — cela la

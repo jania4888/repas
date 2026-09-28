@@ -4,6 +4,7 @@ import { map, catchError } from 'rxjs/operators';
 import { InvoiceService, InvoiceListItem } from '@core/services/invoice.service';
 import { SupplierInvoiceService, SupplierInvoiceListItem, isSupplierInvoicePaid, isSupplierInvoicePending } from '@core/services/supplier-invoice.service';
 import { formatLocalDate } from '@core/utils/date.util';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 export type ReportPeriod = 'week' | 'month' | 'quarter' | 'year' | 'all';
 
@@ -34,8 +35,8 @@ export interface PaymentsReportsData {
 }
 
 const MONTH_SHORT_FR = [
-  'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin',
-  'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'
+  $localize`:@@reports.payments-reports.ts.jan.efed3690:Jan`, $localize`:@@reports.payments-reports.ts.fev.7b8852ec:Fév`, $localize`:@@reports.payments-reports.ts.mar.c4ba0822:Mar`, $localize`:@@reports.payments-reports.ts.avr.d648a3b7:Avr`, $localize`:@@reports.payments-reports.ts.mai.afe526a6:Mai`, $localize`:@@reports.payments-reports.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@reports.payments-reports.ts.juil.190b5d60:Juil`, $localize`:@@reports.payments-reports.ts.aout.460b6696:Août`, $localize`:@@reports.payments-reports.ts.sep.fdd289e3:Sep`, $localize`:@@reports.payments-reports.ts.oct.51327aef:Oct`, $localize`:@@reports.payments-reports.ts.nov.bb9bfefd:Nov`, $localize`:@@reports.payments-reports.ts.dec.2bc2249a:Déc`
 ];
 
 @Injectable({ providedIn: 'root' })
@@ -110,14 +111,14 @@ export class PaymentsReportsService {
 
     const summaryParts: string[] = [];
     if (pendingTotal > 0) {
-      summaryParts.push(`Vous avez ${pendingClientInvoices.length + pendingSupplierInvoices.length} facture(s) en attente pour ${fmt(pendingTotal)} ${currency}.`);
+      summaryParts.push($localize`:@@reports.payments-reports.ts.vous.avez.p.facture.s.en.attente.pour.fm.059de647:Vous avez ${pendingClientInvoices.length + pendingSupplierInvoices.length}:p: facture(s) en attente pour ${fmt(pendingTotal)}:fmt: ${currency}:currency:.`);
     }
     if (netCashFlow >= 0 && totalInflows + totalOutflows > 0) {
-      summaryParts.push(`Trésorerie nette positive : ${fmt(netCashFlow)} ${currency} sur la période.`);
+      summaryParts.push($localize`:@@reports.payments-reports.ts.tresorerie.nette.positive.fmt.currency.s.fba60240:Trésorerie nette positive : ${fmt(netCashFlow)}:fmt: ${currency}:currency: sur la période.`);
     } else if (netCashFlow < 0) {
-      summaryParts.push(`Trésorerie nette négative : ${fmt(netCashFlow)} ${currency} sur la période.`);
+      summaryParts.push($localize`:@@reports.payments-reports.ts.tresorerie.nette.negative.fmt.currency.s.4a9bbad2:Trésorerie nette négative : ${fmt(netCashFlow)}:fmt: ${currency}:currency: sur la période.`);
     }
-    const summaryText = summaryParts.length > 0 ? summaryParts.join(' ') : 'Aucun flux de trésorerie sur cette période.';
+    const summaryText = summaryParts.length > 0 ? summaryParts.join(' ') : $localize`:@@reports.payments-reports.ts.aucun.flux.de.tresorerie.sur.cette.perio.34f0f37c:Aucun flux de trésorerie sur cette période.`;
 
     return {
       totalInflows: fmt(totalInflows) + ' ' + currency,
@@ -169,7 +170,7 @@ export class PaymentsReportsService {
           .reduce((sum, inv) => sum + inv.totalTTC, 0);
 
         result.push({
-          label: dayStart.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' }),
+          label: dayStart.toLocaleDateString(erpDateLocale('fr-FR'), { weekday: 'short', day: 'numeric', month: 'short' }),
           labelShort: dayStart.getDate().toString(),
           inflows,
           outflows,

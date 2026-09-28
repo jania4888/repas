@@ -212,7 +212,7 @@ export class PowerPointExportService {
 
     if (status === 202 || this.isJsonBody(response, body)) {
       if (!body) {
-        return throwError(() => ({ status, message: 'Réponse de génération vide.' } satisfies PowerPointExportError));
+        return throwError(() => ({ status, message: $localize`:@@ai-assistant.powerpoint-export.ts.reponse.de.generation.vide.3ef9eede:Réponse de génération vide.` } satisfies PowerPointExportError));
       }
       return from(body.text()).pipe(map(text => this.parseDeferred(text)));
     }
@@ -293,18 +293,18 @@ export class PowerPointExportService {
 
       return this.localizeKnownExportError({ status, code, message, details });
     }
-    return { status: 0, message: 'Erreur réseau inattendue.' };
+    return { status: 0, message: $localize`:@@ai-assistant.powerpoint-export.ts.erreur.reseau.inattendue.540e83b7:Erreur réseau inattendue.` };
   }
 
   private friendlyHttpMessage(error: HttpErrorResponse): string {
-    if (error.status === 0) return 'Impossible de joindre le serveur. Vérifiez votre connexion.';
+    if (error.status === 0) return $localize`:@@ai-assistant.powerpoint-export.ts.impossible.de.joindre.le.serveur.verifie.8b75460a:Impossible de joindre le serveur. Vérifiez votre connexion.`;
     if (error.status === 400 && error.message === 'Http failure response for unknown url: 400 Unknown Error') {
-      return 'La requête d\'export a été rejetée par le serveur.';
+      return $localize`:@@ai-assistant.powerpoint-export.ts.la.requete.d.export.a.ete.rejetee.par.le.f478a4e4:La requête d'export a été rejetée par le serveur.`;
     }
     if (error.message?.includes('Unknown Error')) {
-      return 'Erreur serveur lors de l\'export PowerPoint.';
+      return $localize`:@@ai-assistant.powerpoint-export.ts.erreur.serveur.lors.de.l.export.powerpoi.42306a40:Erreur serveur lors de l'export PowerPoint.`;
     }
-    return error.message || 'Erreur inattendue.';
+    return error.message || $localize`:@@ai-assistant.powerpoint-export.ts.erreur.inattendue.f815b77e:Erreur inattendue.`;
   }
 
   private async readApiResponseFromBlob(blob: Blob): Promise<ApiResponse<unknown> | null> {
@@ -324,35 +324,35 @@ export class PowerPointExportService {
       case 'Validation':
         return {
           ...error,
-          message: error.details?.[0] ?? error.message ?? 'Données d\'export invalides.'
+          message: error.details?.[0] ?? error.message ?? $localize`:@@ai-assistant.powerpoint-export.ts.donnees.d.export.invalides.d3bbbcac:Données d'export invalides.`
         };
       case 'PowerPoint.GenerationFailed':
         return {
           ...error,
           message:
             error.message ||
-            'Impossible de générer la présentation. Réessayez avec un autre thème ou désactivez certaines options.'
+            $localize`:@@ai-assistant.powerpoint-export.ts.impossible.de.generer.la.presentation.re.48d20bf9:Impossible de générer la présentation. Réessayez avec un autre thème ou désactivez certaines options.`
         };
       case 'PowerPoint.MessageNotFound':
         return {
           ...error,
           message:
-            'Cette réponse n\'est pas encore synchronisée avec le serveur. Réessayez dans quelques secondes.'
+            $localize`:@@ai-assistant.powerpoint-export.ts.cette.reponse.n.est.pas.encore.synchroni.2644e801:Cette réponse n'est pas encore synchronisée avec le serveur. Réessayez dans quelques secondes.`
         };
       case 'PowerPoint.ConversationNotFound':
         return {
           ...error,
-          message: error.message || 'La conversation sélectionnée est introuvable.'
+          message: error.message || $localize`:@@ai-assistant.powerpoint-export.ts.la.conversation.selectionnee.est.introuv.bf62cb67:La conversation sélectionnée est introuvable.`
         };
       case 'Forbidden':
         return {
           ...error,
-          message: error.message || 'Vous n\'êtes pas autorisé à exporter cette conversation.'
+          message: error.message || $localize`:@@ai-assistant.powerpoint-export.ts.vous.n.etes.pas.autorise.a.exporter.cett.4b377da5:Vous n'êtes pas autorisé à exporter cette conversation.`
         };
       case 'Export.NotFound':
         return {
           ...error,
-          message: error.message || 'Le lien de téléchargement est invalide ou expiré.'
+          message: error.message || $localize`:@@ai-assistant.powerpoint-export.ts.le.lien.de.telechargement.est.invalide.o.c3cd05f1:Le lien de téléchargement est invalide ou expiré.`
         };
       default:
         return error;

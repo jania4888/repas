@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Routes } from '@angular/router';
 import { permissionGuard } from '@core/guards/permission.guard';
 import { PERMISSIONS } from '@core/config/permission-keys';
@@ -11,7 +12,7 @@ export const SALES_ORDERS_ROUTES: Routes = [
       import('@features/sales-orders/sales-order-list/sales-order-list.component').then(
         m => m.SalesOrderListComponent
       ),
-    title: 'Commandes clients - InstaFact'
+    title: $localize`:@@sales-orders.routes.title.Commandes_clients_Inst:Commandes clients - InstaFact`
   },
   {
     // Avant ':id', sinon « backlog » serait pris pour un identifiant.
@@ -22,7 +23,7 @@ export const SALES_ORDERS_ROUTES: Routes = [
       import('@features/sales-orders/sales-order-backlog/sales-order-backlog.component').then(
         m => m.SalesOrderBacklogComponent
       ),
-    title: 'Carnet de commandes - InstaFact'
+    title: $localize`:@@sales-orders.routes.title.Carnet_de_commandes_In:Carnet de commandes - InstaFact`
   },
   {
     path: 'new',
@@ -32,7 +33,7 @@ export const SALES_ORDERS_ROUTES: Routes = [
       import('@features/sales-orders/sales-order-create/sales-order-create.component').then(
         m => m.SalesOrderCreateComponent
       ),
-    title: 'Nouvelle commande - InstaFact'
+    title: $localize`:@@sales-orders.routes.title.Nouvelle_commande_Inst:Nouvelle commande - InstaFact`
   },
   {
     path: ':id',
@@ -42,6 +43,6 @@ export const SALES_ORDERS_ROUTES: Routes = [
       import('@features/sales-orders/sales-order-detail/sales-order-detail.component').then(
         m => m.SalesOrderDetailComponent
       ),
-    title: 'Détail commande - InstaFact'
+    title: $localize`:@@sales-orders.routes.title.D_tail_commande_InstaF:Détail commande - InstaFact`
   }
 ];

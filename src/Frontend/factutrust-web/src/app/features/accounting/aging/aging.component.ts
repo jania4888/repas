@@ -33,7 +33,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     `
       @use '../shared/accounting-layout';
       .text-right {
-        text-align: right;
+        text-align: end;
         font-variant-numeric: tabular-nums;
       }
       .aging-zero {
@@ -55,9 +55,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     `
   ],
   template: `
-    <app-page-header title="Balance âgée" subtitle="Créances et dettes par tranche" />
+    <app-page-header title="Balance âgée" i18n-title="@@accounting.aging.balance.agee.f6b2095b" subtitle="Créances et dettes par tranche" i18n-subtitle="@@accounting.aging.creances.et.dettes.par.tranche.37569f57" />
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Actualisation balance âgée">
+      <app-accounting-filter-bar ariaLabel="Actualisation balance âgée" i18n-ariaLabel="@@accounting.aging.actualisation.balance.agee.eaf82668">
         <div accountingFilterActions>
           <app-button
             variant="secondary"
@@ -66,12 +66,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="loadAll()"
             [disabled]="loadingClients() || loadingSuppliers()"
-            ariaLabel="Actualiser les balances clients et fournisseurs">
+            ariaLabel="Actualiser les balances clients et fournisseurs" i18n-ariaLabel="@@accounting.aging.actualiser.les.balances.clients.et.fourn.8e04ed28">
             @if (loadingClients() || loadingSuppliers()) {
               <p-progressSpinner strokeWidth="4" [style]="{ width: '1.1rem', height: '1.1rem', display: 'inline-block', verticalAlign: 'middle' }" />
-            } @else {
+            } @else {<ng-container i18n="@@accounting.aging.actualiser.9d3b2a7d">
               Actualiser
-            }
+            </ng-container>}
           </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-aging"
@@ -79,11 +79,11 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             [payloadBuilder]="buildAgingAnalyzePayload"
             [disabled]="loadingClients() || loadingSuppliers()" />
           <app-accounting-export-menu
-            label="Exporter clients"
+            label="Exporter clients" i18n-label="@@accounting.aging.exporter.clients.91e2ca94"
             [disabled]="loadingClients() || exportingClients() || clients().length === 0"
             (exportFormat)="onExportClients($event)" />
           <app-accounting-export-menu
-            label="Exporter fournisseurs"
+            label="Exporter fournisseurs" i18n-label="@@accounting.aging.exporter.fournisseurs.94fcbb72"
             [disabled]="loadingSuppliers() || exportingSuppliers() || suppliers().length === 0"
             (exportFormat)="onExportSuppliers($event)" />
         </div>
@@ -92,8 +92,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 
     <p-tabs class="ft-tabs aging-tabs" [lazy]="true">
       <p-tablist>
-        <p-tab [value]="0"><i class="pi pi-users"></i><span>Clients</span></p-tab>
-        <p-tab [value]="1"><i class="pi pi-truck"></i><span>Fournisseurs</span></p-tab>
+        <p-tab [value]="0"><i class="pi pi-users"></i><span i18n="@@accounting.aging.clients.28e22fe3">Clients</span></p-tab>
+        <p-tab [value]="1"><i class="pi pi-truck"></i><span i18n="@@accounting.aging.fournisseurs.06b6d88c">Fournisseurs</span></p-tab>
       </p-tablist>
       <p-tabpanels>
       <p-tabpanel [value]="0">
@@ -101,7 +101,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           variant="error"
           [message]="errClients() ?? ''"
           [showRetry]="!!errClients()"
-          retryLabel="Réessayer"
+          retryLabel="Réessayer" i18n-retryLabel="@@accounting.aging.reessayer.c4f78b12"
           (retry)="loadClients()"
         />
         <p-table
@@ -114,21 +114,21 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         >
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Client</th>
-              <th class="text-right" scope="col">Total</th>
-              <th class="text-right" scope="col">Non échu</th>
-              <th class="text-right" scope="col">0-30j</th>
-              <th class="text-right" scope="col">31-60j</th>
-              <th class="text-right" scope="col">61-90j</th>
-              <th class="text-right" scope="col">&gt;90j</th>
-              <th class="text-right" scope="col">DSO</th>
+              <th scope="col" i18n="@@accounting.aging.client.1bdd79b1">Client</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.total.b25928c6">Total</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.non.echu.cb5c1717">Non échu</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.0.30j.222b5f16">0-30j</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.31.60j.4e83222f">31-60j</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.61.90j.a4ba1dc5">61-90j</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.gt.90j.f2293c82">&gt;90j</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.dso.5684cca3">DSO</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
             <tr>
-              <td data-label="Client">{{ r.thirdPartyName }}</td>
-              <td class="text-right" data-label="Total">{{ formatAmount(r.total) }}</td>
-              <td class="text-right" data-label="Non échu">{{ formatAmount(r.notYetDue) }}</td>
+              <td data-label="Client" i18n-data-label="@@accounting.aging.client.1bdd79b1">{{ r.thirdPartyName }}</td>
+              <td class="text-right" data-label="Total" i18n-data-label="@@accounting.aging.total.b25928c6">{{ formatAmount(r.total) }}</td>
+              <td class="text-right" data-label="Non échu" i18n-data-label="@@accounting.aging.non.echu.cb5c1717">{{ formatAmount(r.notYetDue) }}</td>
               <td class="text-right" data-label="0-30j">{{ formatAmount(r.days0To30) }}</td>
               <td class="text-right" data-label="31-60j">{{ formatAmount(r.days31To60) }}</td>
               <td class="text-right aging-overdue-warn" data-label="61-90j">{{ formatAmount(r.days61To90) }}</td>
@@ -139,14 +139,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           <ng-template pTemplate="footer">
             @if (clients().length) {
               <tr class="aging-totals-row">
-                <td>Total</td>
+                <td i18n="@@accounting.aging.total.b25928c6">Total</td>
                 <td class="text-right">{{ totalsClients().total | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsClients().notYetDue | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsClients().d0 | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsClients().d31 | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsClients().d61 | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsClients().d90 | number : '1.3-3' }}</td>
-                <td class="text-right">—</td>
+                <td class="text-right" i18n="@@accounting.aging.text.1b93795b">—</td>
               </tr>
             }
           </ng-template>
@@ -157,7 +157,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           variant="error"
           [message]="errSup() ?? ''"
           [showRetry]="!!errSup()"
-          retryLabel="Réessayer"
+          retryLabel="Réessayer" i18n-retryLabel="@@accounting.aging.reessayer.c4f78b12"
           (retry)="loadSuppliers()"
         />
         <p-table
@@ -170,21 +170,21 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         >
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Fournisseur</th>
-              <th class="text-right" scope="col">Total</th>
-              <th class="text-right" scope="col">Non échu</th>
-              <th class="text-right" scope="col">0-30j</th>
-              <th class="text-right" scope="col">31-60j</th>
-              <th class="text-right" scope="col">61-90j</th>
-              <th class="text-right" scope="col">&gt;90j</th>
-              <th class="text-right" scope="col">DPO</th>
+              <th scope="col" i18n="@@accounting.aging.fournisseur.97d91d89">Fournisseur</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.total.b25928c6">Total</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.non.echu.cb5c1717">Non échu</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.0.30j.222b5f16">0-30j</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.31.60j.4e83222f">31-60j</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.61.90j.a4ba1dc5">61-90j</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.gt.90j.f2293c82">&gt;90j</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.dpo.ef51589e">DPO</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
             <tr>
-              <td data-label="Fournisseur">{{ r.thirdPartyName }}</td>
-              <td class="text-right" data-label="Total">{{ formatAmount(r.total) }}</td>
-              <td class="text-right" data-label="Non échu">{{ formatAmount(r.notYetDue) }}</td>
+              <td data-label="Fournisseur" i18n-data-label="@@accounting.aging.fournisseur.97d91d89">{{ r.thirdPartyName }}</td>
+              <td class="text-right" data-label="Total" i18n-data-label="@@accounting.aging.total.b25928c6">{{ formatAmount(r.total) }}</td>
+              <td class="text-right" data-label="Non échu" i18n-data-label="@@accounting.aging.non.echu.cb5c1717">{{ formatAmount(r.notYetDue) }}</td>
               <td class="text-right" data-label="0-30j">{{ formatAmount(r.days0To30) }}</td>
               <td class="text-right" data-label="31-60j">{{ formatAmount(r.days31To60) }}</td>
               <td class="text-right aging-overdue-warn" data-label="61-90j">{{ formatAmount(r.days61To90) }}</td>
@@ -195,14 +195,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           <ng-template pTemplate="footer">
             @if (suppliers().length) {
               <tr class="aging-totals-row">
-                <td>Total</td>
+                <td i18n="@@accounting.aging.total.b25928c6">Total</td>
                 <td class="text-right">{{ totalsSuppliers().total | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsSuppliers().notYetDue | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsSuppliers().d0 | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsSuppliers().d31 | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsSuppliers().d61 | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsSuppliers().d90 | number : '1.3-3' }}</td>
-                <td class="text-right">—</td>
+                <td class="text-right" i18n="@@accounting.aging.text.1b93795b">—</td>
               </tr>
             }
           </ng-template>
@@ -286,11 +286,11 @@ export class AgingComponent implements OnInit {
       next: r => {
         this.loadingClients.set(false);
         if (r.success && r.data) this.clients.set(r.data);
-        else this.errClients.set(r.error ?? 'Erreur de chargement.');
+        else this.errClients.set(r.error ?? $localize`:@@ui.tern.erreur.de.chargement.168d09:Erreur de chargement.`);
       },
       error: err => {
         this.loadingClients.set(false);
-        this.errClients.set(this.errors.extractErrorMessage(err, 'Erreur réseau. Réessayez plus tard.'));
+        this.errClients.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.aging.ts.erreur.reseau.reessayez.plus.tard.8e5647cd:Erreur réseau. Réessayez plus tard.`));
       }
     });
   }
@@ -302,11 +302,11 @@ export class AgingComponent implements OnInit {
       next: r => {
         this.loadingSuppliers.set(false);
         if (r.success && r.data) this.suppliers.set(r.data);
-        else this.errSup.set(r.error ?? 'Erreur de chargement.');
+        else this.errSup.set(r.error ?? $localize`:@@ui.tern.erreur.de.chargement.168d09:Erreur de chargement.`);
       },
       error: err => {
         this.loadingSuppliers.set(false);
-        this.errSup.set(this.errors.extractErrorMessage(err, 'Erreur réseau. Réessayez plus tard.'));
+        this.errSup.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.aging.ts.erreur.reseau.reessayez.plus.tard.8e5647cd:Erreur réseau. Réessayez plus tard.`));
       }
     });
   }
@@ -320,7 +320,7 @@ export class AgingComponent implements OnInit {
       },
       error: err => {
         this.exportingClients.set(false);
-        this.errClients.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+        this.errClients.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.aging.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
       }
     });
   }
@@ -334,7 +334,7 @@ export class AgingComponent implements OnInit {
       },
       error: err => {
         this.exportingSuppliers.set(false);
-        this.errSup.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+        this.errSup.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.aging.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
       }
     });
   }

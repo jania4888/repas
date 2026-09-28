@@ -30,6 +30,7 @@ import {
   applyQuoteListFiltersFromQuery,
   isActiveQuoteStatus
 } from '@core/utils/list-filter-from-query';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 interface StatusOption {
   label: string;
@@ -40,6 +41,7 @@ interface StatusOption {
   selector: 'app-quote-list',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -62,27 +64,25 @@ interface StatusOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Devis"
-      subtitle="Créez, envoyez et transformez vos devis en factures">
+      title="Devis" i18n-title="@@quotes.quote-list.devis.f7622f90"
+      subtitle="Créez, envoyez et transformez vos devis en factures" i18n-subtitle="@@quotes.quote-list.creez.envoyez.et.transformez.vos.devis.e.28fd542f">
       @if (canCreateQuote()) {
         <app-button
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new">
-          Créer un devis
-        </app-button>
+          routerLink="new" i18n="@@quotes.quote-list.creer.un.devis.426c5610"> Créer un devis </app-button>
       }
     </app-page-header>
 
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@quotes.quote-list.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@quotes.quote-list.reinitialiser.les.filtres.d8915f02" i18n="@@quotes.quote-list.reinitialiser.9637f51e">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -94,14 +94,14 @@ interface StatusOption {
           <input
             pInputText
             type="text"
-            placeholder="Rechercher..."
+            placeholder="Rechercher..." i18n-placeholder="@@quotes.quote-list.rechercher.8bd64daa"
             [(ngModel)]="searchTerm"
             (input)="onSearch()" />
         </span>
         <p-select
           [options]="statusOptions"
           [(ngModel)]="selectedStatus"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@quotes.quote-list.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onSearch()">
         </p-select>
@@ -109,7 +109,7 @@ interface StatusOption {
           [(ngModel)]="dateRange"
           selectionMode="range"
           [readonlyInput]="true"
-          placeholder="Période"
+          placeholder="Période" i18n-placeholder="@@quotes.quote-list.periode.de2110b7"
           dateFormat="dd/mm/yy"
           [showClear]="true"
           (onSelect)="onSearch()">
@@ -139,19 +139,19 @@ interface StatusOption {
           [rows]="pageSize"
           [totalRecords]="totalRecords()"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} devis"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} devis" i18n-currentPageReportTemplate="@@quotes.quote-list.affichage.de.first.a.last.sur.totalrecords.devis.358c3a4c"
           (onLazyLoad)="onPageChange($event)"
           [loading]="loading()"
           styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>Numéro</th>
-              <th>Client</th>
-              <th>Date</th>
-              <th>Validité jusqu'au</th>
-              <th>Montant</th>
-              <th>Statut</th>
-              <th style="width: 120px">Actions</th>
+              <th i18n="@@quotes.quote-list.numero.15e73db0">Numéro</th>
+              <th i18n="@@quotes.quote-list.client.1bdd79b1">Client</th>
+              <th i18n="@@quotes.quote-list.date.eb9a4bc1">Date</th>
+              <th i18n="@@quotes.quote-list.validite.jusqu.au.b8609845">Validité jusqu'au</th>
+              <th i18n="@@quotes.quote-list.montant.4adcd9fc">Montant</th>
+              <th i18n="@@quotes.quote-list.statut.659499f3">Statut</th>
+              <th style="width: 120px" i18n="@@quotes.quote-list.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-quote>
@@ -174,7 +174,7 @@ interface StatusOption {
               <td>
                 <app-status-badge
                   [status]="getStatusBadgeStatus(quote.status)"
-                  [label]="quote.status">
+                  [label]="quote.status | backendLabel">
                 </app-status-badge>
               </td>
               <td>
@@ -185,9 +185,9 @@ interface StatusOption {
                     icon="pi-eye"
                     [iconOnly]="true"
                     [iconAlwaysVisible]="true"
-                    pTooltip="Voir"
+                    pTooltip="Voir" i18n-pTooltip="@@quotes.quote-list.voir.8a754f1f"
                     [routerLink]="[quote.id]"
-                    ariaLabel="Voir le devis">
+                    ariaLabel="Voir le devis" i18n-ariaLabel="@@quotes.quote-list.voir.le.devis.50894eed">
                   </app-button>
                   <app-button
                     variant="ghost"
@@ -195,9 +195,9 @@ interface StatusOption {
                     icon="pi-download"
                     [iconOnly]="true"
                     [iconAlwaysVisible]="true"
-                    pTooltip="Télécharger PDF"
+                    pTooltip="Télécharger PDF" i18n-pTooltip="@@quotes.quote-list.telecharger.pdf.06b2eebe"
                     (click)="downloadPdf(quote)"
-                    ariaLabel="Télécharger le PDF">
+                    ariaLabel="Télécharger le PDF" i18n-ariaLabel="@@quotes.quote-list.telecharger.le.pdf.27f91e86">
                   </app-button>
                 </div>
               </td>
@@ -208,10 +208,10 @@ interface StatusOption {
               <td colspan="7" class="text-center p-6">
                 <app-empty-state
                   illustration="empty-quotes.svg"
-                  title="Aucun devis"
-                  description="Créez votre premier devis pour vos clients."
+                  title="Aucun devis" i18n-title="@@quotes.quote-list.aucun.devis.a42220c2"
+                  description="Créez votre premier devis pour vos clients." i18n-description="@@quotes.quote-list.creez.votre.premier.devis.pour.vos.clien.7eb1ad98"
                   [showAction]="canCreateQuote()"
-                  actionLabel="Créer un devis"
+                  actionLabel="Créer un devis" i18n-actionLabel="@@quotes.quote-list.creer.un.devis.3a56a7d7"
                   actionRoute="new">
                 </app-empty-state>
               </td>
@@ -270,11 +270,11 @@ export class QuoteListComponent implements OnInit {
     const s = this.summary();
     const currency = s?.currency ?? 'TND';
     return [
-      { label: 'Devis', value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
-      { label: 'Total TTC', value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
-      { label: 'Total HT', value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
-      { label: 'Acceptés', value: s?.acceptedCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-      { label: 'Expirés', value: s?.expiredCount, format: 'number', icon: 'pi-exclamation-triangle', tone: 'rose' }
+      { label: $localize`:@@quotes.quote-list.ts.devis.f7622f90:Devis`, value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
+      { label: $localize`:@@quotes.quote-list.ts.total.ttc.9e80ff7c:Total TTC`, value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
+      { label: $localize`:@@quotes.quote-list.ts.total.ht.2ca17ae6:Total HT`, value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
+      { label: $localize`:@@quotes.quote-list.ts.acceptes.8a72194f:Acceptés`, value: s?.acceptedCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+      { label: $localize`:@@quotes.quote-list.ts.expires.4b4940d1:Expirés`, value: s?.expiredCount, format: 'number', icon: 'pi-exclamation-triangle', tone: 'rose' }
     ];
   });
 
@@ -286,8 +286,8 @@ export class QuoteListComponent implements OnInit {
   pageSize = 20;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Devis' },
+    { label: $localize`:@@quotes.quote-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@quotes.quote-list.ts.devis.f7622f90:Devis` },
   ];
 
   skeletonColumns: SkeletonColumn[] = [
@@ -301,13 +301,13 @@ export class QuoteListComponent implements OnInit {
   ];
 
   statusOptions: StatusOption[] = [
-    { label: 'Brouillon', value: 0 },
-    { label: 'Envoyé', value: 1 },
-    { label: 'Accepté', value: 2 },
-    { label: 'Refusé', value: 3 },
-    { label: 'Expiré', value: 4 },
-    { label: 'Facturé', value: 5 },
-    { label: 'Annulé', value: 6 },
+    { label: $localize`:@@quotes.list.filter.brouillon:Brouillon`, value: 0 },
+    { label: $localize`:@@quotes.list.filter.envoye:Envoyé`, value: 1 },
+    { label: $localize`:@@quotes.list.filter.accepte:Accepté`, value: 2 },
+    { label: $localize`:@@quotes.list.filter.refuse:Refusé`, value: 3 },
+    { label: $localize`:@@quotes.list.filter.expire:Expiré`, value: 4 },
+    { label: $localize`:@@quotes.list.filter.facture:Facturé`, value: 5 },
+    { label: $localize`:@@quotes.list.filter.annule:Annulé`, value: 6 },
   ];
 
   private isLoadingQuotes = false;

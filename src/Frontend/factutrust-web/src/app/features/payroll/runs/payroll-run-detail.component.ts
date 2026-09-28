@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -26,7 +28,7 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
 @Component({
   selector: 'app-payroll-run-detail',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     TableModule,
@@ -49,25 +51,25 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
   ],
   template: `
     @if (run()) {
-      <app-page-header [title]="run()!.label" [subtitle]="run()!.statusDisplay">
+      <app-page-header [title]="run()!.label" [subtitle]="run()!.statusDisplay | backendLabel">
         @if (canRun() && (run()!.status === 'Draft' || run()!.status === 'Calculated')) {
-          <app-button variant="primary" icon="pi-calculator" iconPos="left" [disabled]="actionInProgress()" (click)="calculate()">Calculer</app-button>
+          <app-button variant="primary" icon="pi-calculator" iconPos="left" [disabled]="actionInProgress()" (click)="calculate()" i18n="@@payroll.runs.calculer.29705857">Calculer</app-button>
         }
         @if (canValidate() && run()!.status === 'Calculated') {
-          <app-button variant="primary" icon="pi-check" iconPos="left" [disabled]="actionInProgress()" (click)="validate()">Valider</app-button>
+          <app-button variant="primary" icon="pi-check" iconPos="left" [disabled]="actionInProgress()" (click)="validate()" i18n="@@payroll.runs.valider.be4220f7">Valider</app-button>
         }
         @if (canValidate() && run()!.status === 'Validated') {
-          <app-button variant="outline" icon="pi-replay" iconPos="left" [disabled]="actionInProgress()" (click)="reopen()">Rouvrir</app-button>
-          <app-button variant="primary" icon="pi-lock" iconPos="left" [disabled]="actionInProgress()" (click)="close()">Clôturer</app-button>
+          <app-button variant="outline" icon="pi-replay" iconPos="left" [disabled]="actionInProgress()" (click)="reopen()" i18n="@@payroll.runs.rouvrir.18f717af">Rouvrir</app-button>
+          <app-button variant="primary" icon="pi-lock" iconPos="left" [disabled]="actionInProgress()" (click)="close()" i18n="@@payroll.runs.cloturer.e9f075c1">Clôturer</app-button>
         }
         @if (showBankTransferExport()) {
-          <app-button variant="outline" icon="pi-building-columns" iconPos="left" [disabled]="actionInProgress()" (click)="openBankTransfer()">Export virement</app-button>
+          <app-button variant="outline" icon="pi-building-columns" iconPos="left" [disabled]="actionInProgress()" (click)="openBankTransfer()" i18n="@@payroll.runs.export.virement.0cf7f14c">Export virement</app-button>
         }
         @if (showRecordPayment()) {
-          <app-button variant="primary" icon="pi-wallet" iconPos="left" [disabled]="actionInProgress()" (click)="recordPaymentVisible.set(true)">Régler la paie</app-button>
+          <app-button variant="primary" icon="pi-wallet" iconPos="left" [disabled]="actionInProgress()" (click)="recordPaymentVisible.set(true)" i18n="@@payroll.runs.regler.la.paie.5ab3e218">Régler la paie</app-button>
         }
         @if (showCancelAllPayments()) {
-          <app-button variant="outline" icon="pi-times" iconPos="left" [disabled]="actionInProgress()" (click)="cancelAllPayments()">Annuler tous les paiements</app-button>
+          <app-button variant="outline" icon="pi-times" iconPos="left" [disabled]="actionInProgress()" (click)="cancelAllPayments()" i18n="@@payroll.runs.annuler.tous.les.paiements.7fdf7565">Annuler tous les paiements</app-button>
         }
       </app-page-header>
 
@@ -77,19 +79,19 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
 
       @if (run()!.status === 'Validated' || run()!.status === 'Closed') {
         <div class="mb-4">
-          <div class="treasury-banner" role="region" aria-label="État de trésorerie de la paie">
+          <div class="treasury-banner" role="region" aria-label="État de trésorerie de la paie" i18n-aria-label="@@payroll.runs.etat.de.tresorerie.de.la.paie.8d202d49">
             <div class="treasury-banner__item">
-              <span class="treasury-banner__label">Trésorerie</span>
-              <strong [class]="'treasury-banner__value ' + treasuryStatusClass()">
-                {{ run()!.paymentStatusDisplay ?? 'Non payé' }}
+              <span class="treasury-banner__label" i18n="@@payroll.runs.tresorerie.e0e75da7">Trésorerie</span>
+              <strong [class]="loc_ui_tern_treasury_banner_value_74a94b + treasuryStatusClass()">
+                {{ (run()!.paymentStatusDisplay | backendLabel) ?? loc_ui_tern_non_paye_00f2ac }}
               </strong>
             </div>
             <div class="treasury-banner__item">
-              <span class="treasury-banner__label">Payé</span>
+              <span class="treasury-banner__label" i18n="@@payroll.runs.paye.fa02fd68">Payé</span>
               <strong class="treasury-banner__value">{{ (run()!.totalPaid ?? 0) | payrollAmount }}</strong>
             </div>
             <div class="treasury-banner__item">
-              <span class="treasury-banner__label">Reste</span>
+              <span class="treasury-banner__label" i18n="@@payroll.runs.reste.68135bb8">Reste</span>
               <strong class="treasury-banner__value">{{ (run()!.remainingToPay ?? run()!.totalNet) | payrollAmount }}</strong>
             </div>
           </div>
@@ -127,15 +129,15 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
           [readOnly]="!canRun()" />
       }
 
-      <app-payroll-section title="Bulletins de paie" icon="pi-file">
+      <app-payroll-section title="Bulletins de paie" i18n-title="@@payroll.runs.bulletins.de.paie.c587c766" icon="pi-file">
         <div class="payroll-table-scroll">
         <p-table [value]="run()!.payslips" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>Salarié</th>
-              <th class="text-right">Brut</th>
-              <th class="text-right">Net</th>
-              <th>Statut paiement</th>
+              <th i18n="@@payroll.runs.salarie.27f97915">Salarié</th>
+              <th class="text-right" i18n="@@payroll.runs.brut.8fc72d21">Brut</th>
+              <th class="text-right" i18n="@@payroll.runs.net.9bb81c2e">Net</th>
+              <th i18n="@@payroll.runs.statut.paiement.3b17f23f">Statut paiement</th>
               <th></th>
             </tr>
           </ng-template>
@@ -146,17 +148,17 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
               <td class="text-right">{{ p.netSalary | payrollAmount }}</td>
               <td>
                 @if (p.paymentStatusDisplay) {
-                  <p-tag [value]="p.paymentStatusDisplay" [severity]="paymentTagSeverity(p.paymentStatus)" />
+                  <p-tag [value]="p.paymentStatusDisplay | backendLabel" [severity]="paymentTagSeverity(p.paymentStatus)" />
                 }
               </td>
               <td class="actions">
-                <app-button variant="ghost" size="sm" (click)="showPayslip(p.id)">Détail</app-button>
-                <app-button variant="ghost" size="sm" (click)="downloadPdf(p.id)">PDF</app-button>
+                <app-button variant="ghost" size="sm" (click)="showPayslip(p.id)" i18n="@@payroll.runs.detail.7ce06afc">Détail</app-button>
+                <app-button variant="ghost" size="sm" (click)="downloadPdf(p.id)" i18n="@@payroll.runs.pdf.d613d88c">PDF</app-button>
               </td>
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
-            <tr><td colspan="5">Aucun bulletin — lancez le calcul.</td></tr>
+            <tr><td colspan="5" i18n="@@payroll.runs.aucun.bulletin.lancez.le.calcul.a6c22606">Aucun bulletin — lancez le calcul.</td></tr>
           </ng-template>
         </p-table>
         </div>
@@ -170,7 +172,7 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
       }
     }
 
-    <p-dialog header="Détail du bulletin" [(visible)]="payslipDialogVisible" [modal]="true" [style]="{ width: '640px' }">
+    <p-dialog header="Détail du bulletin" i18n-header="@@payroll.runs.detail.du.bulletin.43ddb475" [(visible)]="payslipDialogVisible" [modal]="true" [style]="{ width: '640px' }">
       @if (selectedPayslip()) {
         <div class="mb-3">
           <strong>{{ selectedPayslip()!.employeeName }}</strong>
@@ -179,13 +181,13 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
             <span class="ml-2 text-secondary">CIN {{ selectedPayslip()!.cin }}</span>
           }
           @if (selectedPayslip()!.leaveBalanceRemaining != null) {
-            <span class="ml-2 text-secondary">Solde congés : {{ selectedPayslip()!.leaveBalanceRemaining }} j</span>
+            <span class="ml-2 text-secondary" i18n="@@payroll.runs.solde.conges.j.a2edfee2">Solde congés : {{ selectedPayslip()!.leaveBalanceRemaining }} j</span>
           }
         </div>
         @if ((selectedPayslip()!.prorataDeductionAmount ?? 0) > 0) {
           <div class="prorata-summary mb-3">
-            <strong>Prorata du mois</strong>
-            <div class="prorata-grid">
+            <strong i18n="@@payroll.runs.prorata.du.mois.b192ed38">Prorata du mois</strong>
+            <div class="prorata-grid" i18n="@@payroll.runs.jours.travailles.jours.non.travailles.re.2ce340fd">
               <span>Jours travaillés : {{ selectedPayslip()!.prorataWorkedDays }}</span>
               <span>Jours non travaillés : {{ selectedPayslip()!.prorataNonWorkedDays }}</span>
               <span>Retenue : {{ selectedPayslip()!.prorataDeductionAmount | payrollAmount }}</span>
@@ -195,10 +197,10 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
         <p-table [value]="selectedPayslip()!.lines" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>Libellé</th>
-              <th class="text-right">Base</th>
-              <th class="text-right">Taux</th>
-              <th class="text-right">Montant</th>
+              <th i18n="@@payroll.runs.libelle.f5485bba">Libellé</th>
+              <th class="text-right" i18n="@@payroll.runs.base.077fe9c5">Base</th>
+              <th class="text-right" i18n="@@payroll.runs.taux.18bc95b8">Taux</th>
+              <th class="text-right" i18n="@@payroll.runs.montant.4adcd9fc">Montant</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-line>
@@ -210,12 +212,12 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
             </tr>
           </ng-template>
         </p-table>
-        <div class="mt-3 text-right">
+        <div class="mt-3 text-right" i18n="@@payroll.runs.net.a.payer.cd1383cb">
           <strong>Net à payer : {{ selectedPayslip()!.netSalary | payrollAmount }}</strong>
         </div>
       }
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="payslipDialogVisible = false">Fermer</app-button>
+        <app-button variant="outline" (click)="payslipDialogVisible = false" i18n="@@payroll.runs.fermer.5ab4ec64">Fermer</app-button>
       </ng-template>
     </p-dialog>
 
@@ -273,7 +275,7 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
     .mb-3 { margin-bottom: var(--spacing-4); }
     .mb-4 { margin-bottom: var(--spacing-6); display: block; }
     .mt-3 { margin-top: var(--spacing-4); }
-    .ml-2 { margin-left: var(--spacing-2); }
+    .ml-2 { margin-inline-start: var(--spacing-2); }
     .text-secondary { color: var(--color-text-secondary); }
     .actions { display: flex; gap: var(--spacing-2); white-space: nowrap; }
     .prorata-summary {
@@ -286,6 +288,8 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
   `]
 })
 export class PayrollRunDetailComponent implements OnInit {
+  readonly loc_ui_tern_treasury_banner_value_74a94b = "treasury-banner__value ";
+  readonly loc_ui_tern_non_paye_00f2ac = $localize`:@@ui.tern.non.paye.00f2ac:Non payé`;
   private readonly route = inject(ActivatedRoute);
   private readonly payroll = inject(PayrollService);
   private readonly toast = inject(ToastService);
@@ -335,9 +339,9 @@ export class PayrollRunDetailComponent implements OnInit {
     const r = this.run();
     if (!r) return [];
     return [
-      { label: 'Brut', value: formatPayrollAmount(r.totalGross, false), icon: 'pi-money-bill', variant: 'primary' },
+      { label: $localize`:@@payroll.payroll-run-detail.ts.brut.8fc72d21:Brut`, value: formatPayrollAmount(r.totalGross, false), icon: 'pi-money-bill', variant: 'primary' },
       {
-        label: 'Net',
+        label: $localize`:@@payroll.payroll-run-detail.ts.net.9bb81c2e:Net`,
         value: formatPayrollAmount(r.totalNet, false),
         valueTitle: formatPayrollAmount(r.totalNet, true),
         icon: 'pi-wallet',
@@ -346,13 +350,13 @@ export class PayrollRunDetailComponent implements OnInit {
       },
       { label: 'IRPP', value: formatPayrollAmount(r.totalIrpp, false), icon: 'pi-percentage', variant: 'warning' },
       ...(r.totalIrppSmigExemption && r.totalIrppSmigExemption > 0
-        ? [{ label: 'Exon. IRPP SMIG', value: formatPayrollAmount(r.totalIrppSmigExemption, false), icon: 'pi-shield', variant: 'success' as const }]
+        ? [{ label: $localize`:@@payroll.payroll-run-detail.ts.exon.irpp.smig.2b5fcb00:Exon. IRPP SMIG`, value: formatPayrollAmount(r.totalIrppSmigExemption, false), icon: 'pi-shield', variant: 'success' as const }]
         : []),
-      { label: 'CNSS sal.', value: formatPayrollAmount(r.totalCnssEmployee, false), icon: 'pi-user', variant: 'primary' },
-      { label: 'CNSS pat.', value: formatPayrollAmount(r.totalCnssEmployer, false), icon: 'pi-building', variant: 'primary' },
+      { label: $localize`:@@payroll.payroll-run-detail.ts.cnss.sal.5d831d27:CNSS sal.`, value: formatPayrollAmount(r.totalCnssEmployee, false), icon: 'pi-user', variant: 'primary' },
+      { label: $localize`:@@payroll.payroll-run-detail.ts.cnss.pat.1d666774:CNSS pat.`, value: formatPayrollAmount(r.totalCnssEmployer, false), icon: 'pi-building', variant: 'primary' },
       { label: 'TFP', value: formatPayrollAmount(r.totalTfp, false), icon: 'pi-chart-line', variant: 'warning' },
       { label: 'FOPROLOS', value: formatPayrollAmount(r.totalFoprolos, false), icon: 'pi-briefcase', variant: 'warning' },
-      { label: 'CSS patronale', value: formatPayrollAmount(r.totalCssEmployer, false), icon: 'pi-shield', variant: 'warning' }
+      { label: $localize`:@@payroll.payroll-run-detail.ts.css.patronale.4130ab0d:CSS patronale`, value: formatPayrollAmount(r.totalCssEmployer, false), icon: 'pi-shield', variant: 'warning' }
     ];
   });
 
@@ -367,7 +371,7 @@ export class PayrollRunDetailComponent implements OnInit {
   reload(): void {
     this.payroll.getRun(this.runId).subscribe({
       next: res => this.run.set(res.data ?? null),
-      error: () => this.toast.add({ severity: 'error', summary: 'Paie', detail: 'Cycle introuvable.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`, detail: $localize`:@@payroll-run-detail.component.detail.Cycle_introuvabl:Cycle introuvable.` })
     });
   }
 
@@ -384,10 +388,10 @@ export class PayrollRunDetailComponent implements OnInit {
   async cancelAllPayments(): Promise<void> {
     if (this.actionInProgress()) return;
     const reason = await this.confirmation.prompt({
-      header: 'Annuler tous les paiements',
-      message: 'Saisissez le motif d\'annulation de tous les paiements du cycle :',
-      acceptLabel: 'Annuler les paiements',
-      rejectLabel: 'Conserver les paiements',
+      header: $localize`:@@payroll.payroll-run-detail.ts.annuler.tous.les.paiements.7fdf7565:Annuler tous les paiements`,
+      message: $localize`:@@payroll.payroll-run-detail.ts.saisissez.le.motif.d.annulation.de.tous.2933c1d1:Saisissez le motif d'annulation de tous les paiements du cycle :`,
+      acceptLabel: $localize`:@@payroll-run-detail.component.acceptLabel.Annuler_les_paie:Annuler les paiements`,
+      rejectLabel: $localize`:@@payroll-run-detail.component.rejectLabel.Conserver_les_pa:Conserver les paiements`,
       acceptButtonStyleClass: 'btn-danger',
       required: true
     });
@@ -396,15 +400,15 @@ export class PayrollRunDetailComponent implements OnInit {
     this.payroll.cancelAllRunPayments(this.runId, reason).subscribe({
       next: () => {
         this.actionInProgress.set(false);
-        this.toast.add({ severity: 'success', summary: 'Paie', detail: 'Tous les paiements ont été annulés.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`, detail: $localize`:@@payroll-run-detail.component.detail.Tous_les_paiemen:Tous les paiements ont été annulés.` });
         this.reload();
       },
       error: err => {
         this.actionInProgress.set(false);
         this.toast.add({
           severity: 'error',
-          summary: 'Paie',
-          detail: err?.error?.message ?? 'Annulation impossible.'
+          summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`,
+          detail: err?.error?.message ?? $localize`:@@ui.tern.annulation.impossible.814b7d:Annulation impossible.`
         });
       }
     });
@@ -433,12 +437,12 @@ export class PayrollRunDetailComponent implements OnInit {
         if (warnings.length > 0) {
           this.toast.add({
             severity: 'warn',
-            summary: 'Paie calculée',
+            summary: $localize`:@@payroll-run-detail.component.summary.Paie calculé:Paie calculée`,
             detail: warnings.map(w => w.message).join(' | '),
             life: 12000
           });
         } else {
-          this.toast.add({ severity: 'success', summary: 'Paie', detail: 'Cycle calculé.' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`, detail: $localize`:@@payroll-run-detail.component.detail.Cycle calcul:Cycle calculé.` });
         }
         this.reload();
       },
@@ -446,8 +450,8 @@ export class PayrollRunDetailComponent implements OnInit {
         this.actionInProgress.set(false);
         this.toast.add({
           severity: 'error',
-          summary: 'Paie',
-          detail: err?.error?.message ?? 'Calcul impossible.'
+          summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`,
+          detail: err?.error?.message ?? $localize`:@@ui.tern.calcul.impossible.4c6059:Calcul impossible.`
         });
       }
     });
@@ -456,10 +460,10 @@ export class PayrollRunDetailComponent implements OnInit {
   validate(): void {
     if (!this.canValidate() || this.actionInProgress()) return;
     this.confirmation.confirm({
-      header: 'Valider le cycle',
-      message: 'Confirmer la validation du cycle de paie ? Les écritures comptables seront générées et les avances/échéances soldées.',
-      acceptLabel: 'Valider',
-      rejectLabel: 'Annuler',
+      header: $localize`:@@payroll.payroll-run-detail.ts.valider.le.cycle.944a5d0b:Valider le cycle`,
+      message: $localize`:@@payroll.payroll-run-detail.ts.confirmer.la.validation.du.cycle.de.paie.8a61d101:Confirmer la validation du cycle de paie ? Les écritures comptables seront générées et les avances/échéances soldées.`,
+      acceptLabel: $localize`:@@payroll-run-detail.component.acceptLabel.Valider:Valider`,
+      rejectLabel: $localize`:@@payroll-run-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-primary',
       accept: () => this.executeValidate()
     });
@@ -471,7 +475,7 @@ export class PayrollRunDetailComponent implements OnInit {
     this.payroll.validateRun(this.runId).subscribe({
       next: () => {
         this.actionInProgress.set(false);
-        this.toast.add({ severity: 'success', summary: 'Paie', detail: 'Cycle validé.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`, detail: $localize`:@@payroll-run-detail.component.detail.Cycle validé:Cycle validé.` });
         if (this.firmInternal() && year != null) {
           this.firmGovernance.syncCollaboratorCosts(year, false).subscribe({
             next: res => {
@@ -479,8 +483,8 @@ export class PayrollRunDetailComponent implements OnInit {
               if (imported > 0) {
                 this.toast.add({
                   severity: 'info',
-                  summary: 'Coûts collaborateurs',
-                  detail: `${imported} coût(s) mis à jour depuis la paie validée.`
+                  summary: $localize`:@@payroll-run-detail.component.summary.Coûts collab:Coûts collaborateurs`,
+                  detail: $localize`:@@payroll.payroll-run-detail.ts.imported.cout.s.mis.a.jour.depuis.la.pai.6e2c6a2e:${imported}:imported: coût(s) mis à jour depuis la paie validée.`
                 });
               }
             }
@@ -490,7 +494,7 @@ export class PayrollRunDetailComponent implements OnInit {
       },
       error: err => {
         this.actionInProgress.set(false);
-        this.toast.add({ severity: 'error', summary: 'Paie', detail: err?.error?.message ?? 'Validation impossible.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`, detail: err?.error?.message ?? $localize`:@@ui.tern.validation.impossible.73f194:Validation impossible.` });
       }
     });
   }
@@ -498,10 +502,10 @@ export class PayrollRunDetailComponent implements OnInit {
   reopen(): void {
     if (!this.canValidate() || this.actionInProgress()) return;
     this.confirmation.confirm({
-      header: 'Rouvrir le cycle',
-      message: 'Confirmer la réouverture du cycle ? Les écritures seront extournées et les avances/échéances dé-soldées.',
-      acceptLabel: 'Rouvrir',
-      rejectLabel: 'Annuler',
+      header: $localize`:@@payroll.payroll-run-detail.ts.rouvrir.le.cycle.056d0cfc:Rouvrir le cycle`,
+      message: $localize`:@@payroll.payroll-run-detail.ts.confirmer.la.reouverture.du.cycle.les.ec.58920ace:Confirmer la réouverture du cycle ? Les écritures seront extournées et les avances/échéances dé-soldées.`,
+      acceptLabel: $localize`:@@payroll-run-detail.component.acceptLabel.Rouvrir:Rouvrir`,
+      rejectLabel: $localize`:@@payroll-run-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-primary',
       accept: () => this.executeReopen()
     });
@@ -510,18 +514,18 @@ export class PayrollRunDetailComponent implements OnInit {
   private executeReopen(): void {
     this.actionInProgress.set(true);
     this.payroll.reopenRun(this.runId).subscribe({
-      next: () => { this.actionInProgress.set(false); this.toast.add({ severity: 'success', summary: 'Paie', detail: 'Cycle rouvert.' }); this.reload(); },
-      error: err => { this.actionInProgress.set(false); this.toast.add({ severity: 'error', summary: 'Paie', detail: err?.error?.message ?? 'Réouverture impossible.' }); }
+      next: () => { this.actionInProgress.set(false); this.toast.add({ severity: 'success', summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`, detail: $localize`:@@payroll-run-detail.component.detail.Cycle rouver:Cycle rouvert.` }); this.reload(); },
+      error: err => { this.actionInProgress.set(false); this.toast.add({ severity: 'error', summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`, detail: err?.error?.message ?? $localize`:@@ui.tern.reouverture.impossible.91ee08:Réouverture impossible.` }); }
     });
   }
 
   close(): void {
     if (!this.canValidate() || this.actionInProgress()) return;
     this.confirmation.confirm({
-      header: 'Clôturer le cycle',
-      message: 'Confirmer la clôture définitive du cycle ? Cette opération est IRRÉVERSIBLE : la période sera verrouillée et ne pourra plus être rouverte.',
-      acceptLabel: 'Clôturer',
-      rejectLabel: 'Annuler',
+      header: $localize`:@@payroll.payroll-run-detail.ts.cloturer.le.cycle.d17ca05c:Clôturer le cycle`,
+      message: $localize`:@@payroll.payroll-run-detail.ts.confirmer.la.cloture.definitive.du.cycle.d38602a0:Confirmer la clôture définitive du cycle ? Cette opération est IRRÉVERSIBLE : la période sera verrouillée et ne pourra plus être rouverte.`,
+      acceptLabel: $localize`:@@payroll-run-detail.component.acceptLabel.Clôturer:Clôturer`,
+      rejectLabel: $localize`:@@payroll-run-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.executeClose()
     });
@@ -530,8 +534,8 @@ export class PayrollRunDetailComponent implements OnInit {
   private executeClose(): void {
     this.actionInProgress.set(true);
     this.payroll.closeRun(this.runId).subscribe({
-      next: () => { this.actionInProgress.set(false); this.toast.add({ severity: 'success', summary: 'Paie', detail: 'Cycle clôturé.' }); this.reload(); },
-      error: err => { this.actionInProgress.set(false); this.toast.add({ severity: 'error', summary: 'Paie', detail: err?.error?.message ?? 'Clôture impossible.' }); }
+      next: () => { this.actionInProgress.set(false); this.toast.add({ severity: 'success', summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`, detail: $localize`:@@payroll-run-detail.component.detail.Cycle clôtur:Cycle clôturé.` }); this.reload(); },
+      error: err => { this.actionInProgress.set(false); this.toast.add({ severity: 'error', summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`, detail: err?.error?.message ?? $localize`:@@ui.tern.cloture.impossible.f65658:Clôture impossible.` }); }
     });
   }
 
@@ -541,7 +545,7 @@ export class PayrollRunDetailComponent implements OnInit {
         this.selectedPayslip.set(res.data ?? null);
         this.payslipDialogVisible = true;
       },
-      error: () => this.toast.add({ severity: 'error', summary: 'Bulletin', detail: 'Impossible de charger le détail.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@payroll-run-detail.component.summary.Bulletin:Bulletin`, detail: $localize`:@@payroll-run-detail.component.detail.Impossible d:Impossible de charger le détail.` })
     });
   }
 
@@ -555,7 +559,7 @@ export class PayrollRunDetailComponent implements OnInit {
         a.click();
         URL.revokeObjectURL(url);
       },
-      error: () => this.toast.add({ severity: 'error', summary: 'PDF', detail: 'Export PDF impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@payroll-run-detail.component.summary.PDF:PDF`, detail: $localize`:@@payroll-run-detail.component.detail.Export PDF i:Export PDF impossible.` })
     });
   }
 }

@@ -12,6 +12,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { TableModule } from 'primeng/table';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonComponent } from '@shared/components/button/button.component';
+import { PAYMENT_TERM_DAY_OPTIONS, SUPPLIER_PAYMENT_METHOD_OPTIONS } from '@shared/constants/coded-option-labels';
 import { CurrencyPipe } from '@angular/common';
 import {
   SupplierInvoicePrefill,
@@ -89,22 +90,22 @@ interface LineClassificationRow {
             <span class="value">{{ sourceDocumentNumber }}</span>
           </div>
           <div class="po-info-item po-info-item--right">
-            <span class="label">Montant TTC sélectionné</span>
+            <span class="label" i18n="@@purchase-orders.components.montant.ttc.selectionne.73c4e7c9">Montant TTC sélectionné</span>
             <span class="value amount">{{ selectedTotalTTC | currency:'TND':'symbol':'1.3-3' }}</span>
           </div>
         </div>
 
         @if (invoiceLines.length > 0) {
           <div class="form-group">
-            <label>Quantités à facturer</label>
+            <label i18n="@@purchase-orders.components.quantites.a.facturer.4e6960e4">Quantités à facturer</label>
             <p-table [value]="invoiceLines" styleClass="p-datatable-sm invoice-lines-table">
               <ng-template pTemplate="header">
                 <tr>
-                  <th>#</th>
-                  <th>Article</th>
-                  <th class="text-right">Dispo.</th>
-                  <th class="text-right">Qté à facturer</th>
-                  <th class="text-right">HT ligne</th>
+                  <th i18n="@@purchase-orders.components.text.d08f88df">#</th>
+                  <th i18n="@@purchase-orders.components.article.4360c2dc">Article</th>
+                  <th class="text-right" i18n="@@purchase-orders.components.dispo.0499b6f5">Dispo.</th>
+                  <th class="text-right" i18n="@@purchase-orders.components.qte.a.facturer.9139dfc3">Qté à facturer</th>
+                  <th class="text-right" i18n="@@purchase-orders.components.ht.ligne.c6962e1e">HT ligne</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-row>
@@ -133,9 +134,7 @@ interface LineClassificationRow {
               </ng-template>
             </p-table>
             <div class="qty-actions">
-              <app-button type="button" variant="outline" size="sm" (click)="resetQuantitiesToMax()">
-                Tout facturer
-              </app-button>
+              <app-button type="button" variant="outline" size="sm" (click)="resetQuantitiesToMax()" i18n="@@purchase-orders.components.tout.facturer.580a60a2"> Tout facturer </app-button>
             </div>
           </div>
         }
@@ -146,15 +145,15 @@ interface LineClassificationRow {
             <i class="pi pi-info-circle"></i>
           </div>
           <div class="info-content">
-            <strong>Information importante</strong>
-            <p>Seules les quantités reçues et non encore facturées peuvent être imputées sur cette facture fournisseur.</p>
+            <strong i18n="@@purchase-orders.components.information.importante.117f2310">Information importante</strong>
+            <p i18n="@@purchase-orders.components.seules.les.quantites.recues.et.non.encore.factur.b23a5faa">Seules les quantités reçues et non encore facturées peuvent être imputées sur cette facture fournisseur.</p>
           </div>
         </div>
 
         <form #form="ngForm" (ngSubmit)="onSubmit()">
           <!-- Invoice Number -->
           <div class="form-group">
-            <label for="invoiceNumber">Numéro de facture <span class="required">*</span></label>
+            <label for="invoiceNumber"><ng-container i18n="@@purchase-orders.components.numero.de.facture.a19ac308">Numéro de facture </ng-container> <span class="required" i18n="@@purchase-orders.components.text.df58248c">*</span></label>
             <div class="input-group">
               <input
                 pInputText
@@ -162,7 +161,7 @@ interface LineClassificationRow {
                 [(ngModel)]="request.invoiceNumber"
                 name="invoiceNumber"
                 required
-                placeholder="FS-2026-000001"
+                placeholder="FS-2026-000001" i18n-placeholder="@@purchase-orders.components.fs.2026.000001.35a32054"
                 class="w-full"
                 (ngModelChange)="onInvoiceNumberEdited()">
               <app-button
@@ -173,15 +172,13 @@ interface LineClassificationRow {
                 iconPos="left"
                 [disabled]="regenerating"
                 (click)="generateInvoiceNumber()"
-                class="generate-btn">
-                Générer
-              </app-button>
+                class="generate-btn" i18n="@@purchase-orders.components.generer.bd221c07"> Générer </app-button>
             </div>
           </div>
 
           <!-- Invoice Date -->
           <div class="form-group">
-            <label for="invoiceDate">Date de facture <span class="required">*</span></label>
+            <label for="invoiceDate"><ng-container i18n="@@purchase-orders.components.date.de.facture.f1edd0d6">Date de facture </ng-container> <span class="required" i18n="@@purchase-orders.components.text.df58248c">*</span></label>
             <p-datepicker
               id="invoiceDate"
               [(ngModel)]="request.invoiceDate"
@@ -195,7 +192,7 @@ interface LineClassificationRow {
 
           <!-- Payment Terms -->
           <div class="form-group">
-            <label for="paymentTermDays">Conditions de paiement</label>
+            <label for="paymentTermDays" i18n="@@purchase-orders.components.conditions.de.paiement.a9b1c917">Conditions de paiement</label>
             <p-select
               id="paymentTermDays"
               [(ngModel)]="request.paymentTermDays"
@@ -209,7 +206,7 @@ interface LineClassificationRow {
 
           <!-- Payment Method (intended) -->
           <div class="form-group">
-            <label for="paymentMethod">Mode de paiement prévu</label>
+            <label for="paymentMethod" i18n="@@purchase-orders.components.mode.de.paiement.prevu.c3d85a23">Mode de paiement prévu</label>
             <p-select
               id="paymentMethod"
               [(ngModel)]="request.paymentMethod"
@@ -218,32 +215,32 @@ interface LineClassificationRow {
               optionLabel="label"
               optionValue="value"
               [showClear]="true"
-              placeholder="Optionnel"
+              placeholder="Optionnel" i18n-placeholder="@@purchase-orders.components.optionnel.879d6b16"
               class="w-full">
             </p-select>
           </div>
 
           <!-- External Reference -->
           <div class="form-group">
-            <label for="externalReference">Référence externe</label>
+            <label for="externalReference" i18n="@@purchase-orders.components.reference.externe.c09efd4a">Référence externe</label>
             <input 
               pInputText 
               id="externalReference"
               [(ngModel)]="request.externalReference"
               name="externalReference"
-              placeholder="Référence du fournisseur..."
+              placeholder="Référence du fournisseur..." i18n-placeholder="@@purchase-orders.components.reference.du.fournisseur.c097d08d"
               class="w-full">
           </div>
 
           <!-- Notes -->
           <div class="form-group">
-            <label for="notes">Notes</label>
+            <label for="notes" i18n="@@purchase-orders.components.notes.70440046">Notes</label>
             <textarea
               pTextarea
               id="notes"
               [(ngModel)]="request.notes"
               name="notes"
-              placeholder="Notes internes..."
+              placeholder="Notes internes..." i18n-placeholder="@@purchase-orders.components.notes.internes.1c700b68"
               [rows]="3"
               class="w-full">
             </textarea>
@@ -256,25 +253,23 @@ interface LineClassificationRow {
                 [(ngModel)]="request.sendEmail"
                 name="sendEmail"
                 binary="true"
-                label="Envoyer par email après création">
+                label="Envoyer par email après création" i18n-label="@@purchase-orders.components.envoyer.par.email.apres.creation.57b42d25">
               </p-checkbox>
               <i class="pi pi-envelope option-tile-icon"></i>
             </div>
           </div>
 
           <div class="form-group" *ngIf="showAssetClassification">
-            <label>Classification immobilisations (lignes reçues)</label>
-            <p class="asset-hint">
-              Cochez les lignes à comptabiliser en 21x / 43662. Un brouillon sera créé dans le registre immobilisations.
-            </p>
+            <label i18n="@@purchase-orders.components.classification.immobilisations.lignes.recues.38ff121c">Classification immobilisations (lignes reçues)</label>
+            <p class="asset-hint" i18n="@@purchase-orders.components.cochez.les.lignes.a.comptabiliser.en.21x.43662.u.c936d1d5"> Cochez les lignes à comptabiliser en 21x / 43662. Un brouillon sera créé dans le registre immobilisations. </p>
             <p-table [value]="lineClassifications" styleClass="p-datatable-sm asset-lines-table">
               <ng-template pTemplate="header">
                 <tr>
-                  <th>Ligne</th>
-                  <th>Article</th>
-                  <th class="text-right">HT</th>
-                  <th>Immo</th>
-                  <th>Catégorie (NC 22-5)</th>
+                  <th i18n="@@purchase-orders.components.ligne.5f02383a">Ligne</th>
+                  <th i18n="@@purchase-orders.components.article.4360c2dc">Article</th>
+                  <th class="text-right" i18n="@@purchase-orders.components.ht.64c38cf2">HT</th>
+                  <th i18n="@@purchase-orders.components.immo.b719c1f7">Immo</th>
+                  <th i18n="@@purchase-orders.components.categorie.nc.22.5.26740caa">Catégorie (NC 22-5)</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-row>
@@ -294,7 +289,7 @@ interface LineClassificationRow {
                       [options]="rateCategories"
                       optionLabel="label"
                       optionValue="id"
-                      placeholder="Catégorie"
+                      placeholder="Catégorie" i18n-placeholder="@@purchase-orders.components.categorie.6b38300a"
                       [style]="{ width: '100%' }"
                       (onChange)="onCategorySelected(row)">
                       <ng-template pTemplate="item" let-cat>
@@ -318,16 +313,14 @@ interface LineClassificationRow {
             variant="outline" 
             icon="pi-times"
             iconPos="left"
-            (click)="onHide()">
-            Annuler
-          </app-button>
+            (click)="onHide()" i18n="@@purchase-orders.components.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             icon="pi-check"
             iconPos="left"
             [disabled]="!isFormValid() || submitting || regenerating || !hasSelectedQuantity()"
             (click)="onSubmit()">
-            {{ submitting ? 'Création...' : regenerating ? 'Génération...' : 'Créer la facture' }}
+            {{ submitting ? loc_ui_tern_creation_dca950 : regenerating ? loc_ui_tern_generation_839b55 : loc_ui_tern_creer_la_facture_d28b4f }}
           </app-button>
         </div>
       </ng-template>
@@ -342,7 +335,7 @@ interface LineClassificationRow {
     .po-info {
       background: var(--color-background-elevated, #fff);
       border: 1px solid var(--color-border-subtle);
-      border-left: 4px solid var(--color-primary-500);
+      border-inline-start: 4px solid var(--color-primary-500);
       border-radius: var(--radius-xl);
       padding: var(--spacing-4) var(--spacing-5);
       margin-bottom: var(--spacing-5);
@@ -373,7 +366,7 @@ interface LineClassificationRow {
     }
 
     .po-info-item--right {
-      text-align: right;
+      text-align: end;
     }
 
     .po-info-item .amount {
@@ -452,7 +445,7 @@ interface LineClassificationRow {
 
     .required {
       color: var(--color-error-600);
-      margin-left: var(--spacing-1);
+      margin-inline-start: var(--spacing-1);
     }
 
     .input-group {
@@ -510,7 +503,7 @@ interface LineClassificationRow {
     }
 
     .text-right {
-      text-align: right;
+      text-align: end;
     }
 
     .product-cell {
@@ -536,7 +529,7 @@ interface LineClassificationRow {
     }
 
     :host ::ng-deep .invoice-lines-table .p-inputnumber-input {
-      text-align: right;
+      text-align: end;
     }
 
     :host ::ng-deep .asset-lines-table .p-select {
@@ -577,6 +570,9 @@ interface LineClassificationRow {
   `]
 })
 export class CreateSupplierInvoiceModalComponent implements OnInit {
+  readonly loc_ui_tern_creation_dca950 = $localize`:@@ui.tern.creation.dca950:Création...`;
+  readonly loc_ui_tern_generation_839b55 = $localize`:@@ui.tern.generation.839b55:Génération...`;
+  readonly loc_ui_tern_creer_la_facture_d28b4f = $localize`:@@ui.tern.creer.la.facture.d28b4f:Créer la facture`;
   @ViewChild('form') formRef?: NgForm;
 
   private readonly fixedAssetsApi = inject(FixedAssetsService);
@@ -589,7 +585,7 @@ export class CreateSupplierInvoiceModalComponent implements OnInit {
   regenerating = false;
   invoiceNumberManuallyEdited = false;
   sourceDocumentNumber = '';
-  sourceTypeLabel = 'Document';
+  sourceTypeLabel = $localize`:@@purchase-orders.create-supplier-invoice-modal.ts.document.e214b8a2:Document`;
   selectedTotalTTC = 0;
   showAssetClassification = false;
   invoiceLines: InvoiceLineRow[] = [];
@@ -605,19 +601,9 @@ export class CreateSupplierInvoiceModalComponent implements OnInit {
     sendEmail: false
   };
 
-  paymentTermOptions = [
-    { label: '30 jours', value: 30 },
-    { label: '60 jours', value: 60 },
-    { label: '90 jours', value: 90 }
-  ];
+  paymentTermOptions = [...PAYMENT_TERM_DAY_OPTIONS];
 
-  paymentMethodOptions = [
-    { label: 'Effet de commerce', value: 'Effet de commerce' },
-    { label: 'Virement bancaire', value: 'Virement bancaire' },
-    { label: 'Espèces', value: 'Espèces' },
-    { label: 'Chèque', value: 'Chèque' },
-    { label: 'Carte bancaire', value: 'Carte bancaire' }
-  ];
+  paymentMethodOptions = [...SUPPLIER_PAYMENT_METHOD_OPTIONS];
 
   private onClose?: () => void;
   private onConfirm?: (request: CreateSupplierInvoiceRequest) => void;
@@ -635,7 +621,7 @@ export class CreateSupplierInvoiceModalComponent implements OnInit {
   }): void {
     const prefill = config.prefill;
     this.sourceDocumentNumber = prefill.purchaseReceiptNumber ?? prefill.purchaseOrderNumber ?? '—';
-    this.sourceTypeLabel = config.sourceType === 'pr' ? 'Bon de réception' : 'Bon de commande';
+    this.sourceTypeLabel = config.sourceType === 'pr' ? $localize`:@@ui.tern.bon.de.reception.e02e17:Bon de réception` : $localize`:@@ui.tern.bon.de.commande.4b9aea:Bon de commande`;
     this.request.paymentTermDays = prefill.paymentTermDays ?? 30;
     this.onClose = config.onClose;
     this.onConfirm = config.onConfirm;
@@ -846,6 +832,6 @@ export class CreateSupplierInvoiceModalComponent implements OnInit {
   }
 
   get modalHeader(): string {
-    return `Créer facture fournisseur - ${this.sourceDocumentNumber}`;
+    return $localize`:@@purchase-orders.create-supplier-invoice-modal.ts.creer.facture.fournisseur.sourcedocument.a556c042:Créer facture fournisseur - ${this.sourceDocumentNumber}:sourceDocumentNumber:`;
   }
 }

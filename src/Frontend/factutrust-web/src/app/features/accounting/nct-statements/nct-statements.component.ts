@@ -1,5 +1,5 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, LOCALE_ID, OnInit, computed, inject, signal } from '@angular/core';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, of } from 'rxjs';
@@ -41,30 +41,30 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
     NctNoteOverridesDialogComponent
   ],
   template: `
-    <app-page-header title="États financiers NCT" subtitle="Liasse : bilan, résultat, flux de trésorerie, capitaux propres et notes" />
+    <app-page-header title="États financiers NCT" i18n-title="@@accounting.nct-statements.etats.financiers.nct.a11800a0" subtitle="Liasse : bilan, résultat, flux de trésorerie, capitaux propres et notes" i18n-subtitle="@@accounting.nct-statements.liasse.bilan.resultat.flux.de.tresorerie.5fbd0222" />
 
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Exercice de la liasse NCT">
+      <app-accounting-filter-bar ariaLabel="Exercice de la liasse NCT" i18n-ariaLabel="@@accounting.nct-statements.exercice.de.la.liasse.nct.d3042351">
         <div accountingFilterFields>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="nct-year">Exercice</label>
+            <label class="accounting-filter-label" for="nct-year" i18n="@@accounting.nct-statements.exercice.e171e2b0">Exercice</label>
             <input id="nct-year" type="number" [ngModel]="fiscalYear" (ngModelChange)="onYearInputChange($event)"
               class="accounting-filter-input nct-year-input" min="2000" max="2100"
               [attr.aria-invalid]="!isYearValid()" />
             @if (!isYearValid()) {
-              <span class="nct-year-error" role="alert">Exercice invalide : doit être compris entre 2000 et 2100.</span>
+              <span class="nct-year-error" role="alert" i18n="@@accounting.nct-statements.exercice.invalide.doit.etre.compris.entre.2000.e.db4c8a16">Exercice invalide : doit être compris entre 2000 et 2100.</span>
             }
           </div>
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="load()" [disabled]="loading() || !isYearValid()"
-            ariaLabel="Charger la liasse NCT">Charger</app-button>
+            ariaLabel="Charger la liasse NCT" i18n-ariaLabel="@@accounting.nct-statements.charger.la.liasse.nct.f6fc09c9" i18n="@@accounting.nct-statements.charger.8f860300">Charger</app-button>
           <app-button variant="secondary" icon="pi pi-eye" type="button" (click)="openExportDialog()" [disabled]="loading() || !data()"
-            ariaLabel="Aperçu et impression des états financiers">Aperçu / Impression</app-button>
+            ariaLabel="Aperçu et impression des états financiers" i18n-ariaLabel="@@accounting.nct-statements.apercu.et.impression.des.etats.financier.c7ea131c" i18n="@@accounting.nct-statements.apercu.impression.b2018ec0">Aperçu / Impression</app-button>
           <app-button variant="secondary" icon="pi pi-file-pdf" type="button" (click)="exportPdf()" [disabled]="loading() || !data()"
-            ariaLabel="Exporter la liasse NCT en PDF">Exporter PDF</app-button>
+            ariaLabel="Exporter la liasse NCT en PDF" i18n-ariaLabel="@@accounting.nct-statements.exporter.la.liasse.nct.en.pdf.0b15784e" i18n="@@accounting.nct-statements.exporter.pdf.9a2c3956">Exporter PDF</app-button>
           <app-button variant="secondary" icon="pi pi-pencil" type="button" (click)="overridesDialogVisible = true" [disabled]="loading()"
-            ariaLabel="Personnaliser les notes annexes">Personnaliser les annexes</app-button>
+            ariaLabel="Personnaliser les notes annexes" i18n-ariaLabel="@@accounting.nct-statements.personnaliser.les.notes.annexes.4acec9c1" i18n="@@accounting.nct-statements.personnaliser.les.annexes.05ae837d">Personnaliser les annexes</app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
@@ -79,13 +79,13 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
       [fiscalYear]="fiscalYear"
       (changed)="load()" />
 
-    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="load()" />
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.nct-statements.reessayer.c4f78b12" (retry)="load()" />
 
     @if (data(); as d) {
       @if (!d.nctStatementsEnabled) {
         <div class="nct-info-banner" role="status">
           <i class="pi pi-info-circle" aria-hidden="true"></i>
-          <span>La liasse NCT n'est pas activée pour ce dossier. L'aperçu ci-dessous est indicatif.</span>
+          <span i18n="@@accounting.nct-statements.la.liasse.nct.n.est.pas.activee.pour.ce.dossier..bc970082">La liasse NCT n'est pas activée pour ce dossier. L'aperçu ci-dessous est indicatif.</span>
         </div>
       }
 
@@ -93,7 +93,7 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
         <div class="nct-alert-banner" role="alert">
           <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
           <div>
-            <strong>Contrôles qualité de la liasse</strong>
+            <strong i18n="@@accounting.nct-statements.controles.qualite.de.la.liasse.602d2a38">Contrôles qualité de la liasse</strong>
             <ul class="nct-warn-list">
               @for (w of d.balanceSheet.warnings; track w) { <li>{{ w }}</li> }
             </ul>
@@ -102,11 +102,11 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
       }
 
       <div class="nct-tabs" role="tablist">
-        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'bilan'" (click)="tab.set('bilan')">Bilan</button>
-        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'resultat'" (click)="tab.set('resultat')">Compte de résultat</button>
-        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'flux'" (click)="tab.set('flux')">Flux de trésorerie</button>
-        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'capitaux'" (click)="tab.set('capitaux')">Capitaux propres</button>
-        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'notes'" (click)="tab.set('notes')">Notes</button>
+        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'bilan'" (click)="tab.set('bilan')" i18n="@@accounting.nct-statements.bilan.a80c4623">Bilan</button>
+        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'resultat'" (click)="tab.set('resultat')" i18n="@@accounting.nct-statements.compte.de.resultat.a292527b">Compte de résultat</button>
+        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'flux'" (click)="tab.set('flux')" i18n="@@accounting.nct-statements.flux.de.tresorerie.b60dc8b6">Flux de trésorerie</button>
+        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'capitaux'" (click)="tab.set('capitaux')" i18n="@@accounting.nct-statements.capitaux.propres.4245faa7">Capitaux propres</button>
+        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'notes'" (click)="tab.set('notes')" i18n="@@accounting.nct-statements.notes.70440046">Notes</button>
       </div>
 
       <div class="card nct-card">
@@ -114,12 +114,12 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
           @case ('bilan') {
             <div class="nct-balance-status">
               <span class="nct-badge" [class.nct-badge--ok]="d.balanceSheet.isBalanced" [class.nct-badge--ko]="!d.balanceSheet.isBalanced">
-                {{ d.balanceSheet.isBalanced ? 'Bilan équilibré' : 'Non équilibré (écart : ' + (d.balanceSheet.difference | number : '1.3-3') + ' TND)' }}
+                {{ d.balanceSheet.isBalanced ? loc_ui_tern_bilan_equilibre_8e3fbf : unbalancedLabel(d.balanceSheet.difference) }}
               </span>
             </div>
-            <h3 class="nct-section">ACTIF</h3>
+            <h3 class="nct-section" i18n="@@accounting.nct-statements.actif.0fc6c6b8">ACTIF</h3>
             <ng-container [ngTemplateOutlet]="tableTpl" [ngTemplateOutletContext]="{ lines: d.balanceSheet.assets }"></ng-container>
-            <h3 class="nct-section">CAPITAUX PROPRES ET PASSIFS</h3>
+            <h3 class="nct-section" i18n="@@accounting.nct-statements.capitaux.propres.et.passifs.4a6fc6d6">CAPITAUX PROPRES ET PASSIFS</h3>
             <ng-container [ngTemplateOutlet]="tableTpl" [ngTemplateOutletContext]="{ lines: d.balanceSheet.equityAndLiabilities }"></ng-container>
           }
           @case ('resultat') {
@@ -128,10 +128,10 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
           @case ('flux') {
             <div class="nct-balance-status">
               <span class="nct-badge" [class.nct-badge--ok]="d.cashFlow.isReconciled" [class.nct-badge--ko]="!d.cashFlow.isReconciled">
-                {{ d.cashFlow.isReconciled ? 'Flux de trésorerie rapproché' : 'Flux non rapproché (écart : ' + (cashFlowGap() | number : '1.3-3') + ' TND)' }}
+                {{ d.cashFlow.isReconciled ? loc_ui_tern_flux_de_tresorerie_rapproche_e8cb8d : unreconciledLabel(cashFlowGap()) }}
               </span>
             </div>
-            <p class="nct-hint">Méthode indirecte. La ligne « Écart de rapprochement » explicite tout résidu par rapport à la variation réelle de trésorerie.</p>
+            <p class="nct-hint" i18n="@@accounting.nct-statements.methode.indirecte.la.ligne.ecart.de.rapprochemen.ff0b4d3e">Méthode indirecte. La ligne « Écart de rapprochement » explicite tout résidu par rapport à la variation réelle de trésorerie.</p>
             <ng-container [ngTemplateOutlet]="tableTpl" [ngTemplateOutletContext]="{ lines: d.cashFlow.lines }"></ng-container>
           }
           @case ('capitaux') {
@@ -151,9 +151,9 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
       <table class="nct-table">
         <thead>
           <tr>
-            <th scope="col" class="nct-th-label">Rubrique</th>
-            <th scope="col" class="nct-th-amount">Exercice N</th>
-            <th scope="col" class="nct-th-amount">Exercice N-1</th>
+            <th scope="col" class="nct-th-label" i18n="@@accounting.nct-statements.rubrique.ef1b579b">Rubrique</th>
+            <th scope="col" class="nct-th-amount" i18n="@@accounting.nct-statements.exercice.n.6fef5d8f">Exercice N</th>
+            <th scope="col" class="nct-th-amount" i18n="@@accounting.nct-statements.exercice.n.1.2568d50f">Exercice N-1</th>
           </tr>
         </thead>
         <tbody>
@@ -181,15 +181,15 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
     .nct-badge--ok { background:var(--color-success-100,#dcfce7); color:var(--color-success-700,#15803d); }
     .nct-badge--ko { background:var(--color-danger-100,#fee2e2); color:var(--color-danger-700,#b91c1c); }
     .nct-alert-banner { display:flex; align-items:flex-start; gap:var(--spacing-2); margin-bottom:var(--spacing-4); padding:var(--spacing-3) var(--spacing-4); border-radius:var(--radius-md); font-size:var(--font-size-sm); background:var(--color-warning-50,#fffbeb); border:1px solid var(--color-warning-200,#fde68a); color:var(--color-warning-800,#92400e); }
-    .nct-warn-list { margin:0.25rem 0 0; padding-left:1.1rem; }
+    .nct-warn-list { margin:0.25rem 0 0; padding-inline-start:1.1rem; }
     .nct-warn-list li { margin:0.15rem 0; }
     .nct-section { font-size:var(--font-size-sm); font-weight:var(--font-weight-bold); text-transform:uppercase; letter-spacing:0.04em; color:var(--color-text-tertiary); margin:var(--spacing-4) 0 var(--spacing-2); }
     .nct-hint { font-size:var(--font-size-sm); color:var(--color-text-secondary); margin:0 0 var(--spacing-3); }
     .nct-table { width:100%; border-collapse:collapse; margin-bottom:var(--spacing-2); }
     .nct-th-label, .nct-th-amount { font-size:var(--font-size-xs); text-transform:uppercase; letter-spacing:0.04em; color:var(--color-text-tertiary); padding:var(--spacing-2) var(--spacing-3); border-bottom:1px solid var(--color-border-subtle); }
-    .nct-th-amount { text-align:right; }
+    .nct-th-amount { text-align:end; }
     .nct-td-label { padding:var(--spacing-2) var(--spacing-3); color:var(--color-text-secondary); }
-    .nct-td-amount { padding:var(--spacing-2) var(--spacing-3); text-align:right; font-variant-numeric:tabular-nums; font-weight:var(--font-weight-medium); }
+    .nct-td-amount { padding:var(--spacing-2) var(--spacing-3); text-align:end; font-variant-numeric:tabular-nums; font-weight:var(--font-weight-medium); }
     .nct-td-prev { color:var(--color-text-tertiary); }
     .nct-row--subtotal > td { font-weight:var(--font-weight-bold); color:var(--color-text-primary); border-top:1px solid var(--color-border-subtle); background:var(--color-background-subtle); }
     .nct-row--reconciliation > td { font-style:italic; color:var(--color-warning-700,#b45309); background:var(--color-warning-50,#fffbeb); }
@@ -197,7 +197,23 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
   `
 })
 export class NctStatementsComponent implements OnInit {
+  readonly loc_ui_tern_bilan_equilibre_8e3fbf = $localize`:@@ui.tern.bilan.equilibre.8e3fbf:Bilan équilibré`;
+  readonly loc_ui_tern_flux_de_tresorerie_rapproche_e8cb8d = $localize`:@@ui.tern.flux.de.tresorerie.rapproche.e8cb8d:Flux de trésorerie rapproché`;
   private readonly api = inject(AccountingService);
+  private readonly decimal = new DecimalPipe(inject(LOCALE_ID));
+
+  /** Badge d'écart du bilan : une seule phrase traduisible, montant au format du pipe number. */
+  unbalancedLabel(difference: number | null | undefined): string {
+    const amount = this.decimal.transform(difference, '1.3-3');
+    return $localize`:@@accounting.nct-statements.non.equilibre.ecart:Non équilibré (écart : ${amount}:amount: TND)`;
+  }
+
+  /** Badge d'écart du tableau de flux. */
+  unreconciledLabel(gap: number | null | undefined): string {
+    const amount = this.decimal.transform(gap, '1.3-3');
+    return $localize`:@@accounting.nct-statements.flux.non.rapproche.ecart:Flux non rapproché (écart : ${amount}:amount: TND)`;
+  }
+
   fiscalYear = new Date().getFullYear();
   exportDialogVisible = false;
   overridesDialogVisible = false;
@@ -221,7 +237,7 @@ export class NctStatementsComponent implements OnInit {
       .pipe(
         switchMap(year =>
           this.api.getNctStatements(year).pipe(
-            catchError(() => of<NctStatementsApiResponse>({ success: false, error: 'Erreur réseau' }))
+            catchError(() => of<NctStatementsApiResponse>({ success: false, error: $localize`:@@accounting.nct-statements.ts.erreur.reseau.0683007f:Erreur réseau` }))
           )
         ),
         takeUntilDestroyed()
@@ -229,7 +245,7 @@ export class NctStatementsComponent implements OnInit {
       .subscribe(res => {
         this.loading.set(false);
         if (res.success && res.data) this.data.set(res.data);
-        else this.error.set(res.error ?? 'Erreur');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       });
   }
 
@@ -274,7 +290,7 @@ export class NctStatementsComponent implements OnInit {
         a.click();
         URL.revokeObjectURL(url);
       },
-      error: () => this.error.set("L'export PDF a échoué.")
+      error: () => this.error.set($localize`:@@accounting.nct-statements.ts.l.export.pdf.a.echoue.fd0face2:L'export PDF a échoué.`)
     });
   }
 

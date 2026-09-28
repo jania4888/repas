@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -34,13 +35,13 @@ import {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Modèles de documents"
-      subtitle="Choisissez le modèle visuel utilisé pour imprimer chaque type de document">
+      title="Modèles de documents" i18n-title="@@settings.templates.modeles.de.documents.4875ffe8"
+      subtitle="Choisissez le modèle visuel utilisé pour imprimer chaque type de document" i18n-subtitle="@@settings.templates.choisissez.le.modele.visuel.utilise.pour.c824d73f">
       <div class="header-actions">
-        <p-button label="Retour" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
+        <p-button label="Retour" i18n-label="@@settings.templates.retour.e5befb1f" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
         @if (canUpdate()) {
           <p-button
-            label="Enregistrer"
+            label="Enregistrer" i18n-label="@@settings.templates.enregistrer.f7c8bcd8"
             icon="pi pi-check"
             (onClick)="save()"
             [loading]="saving()"
@@ -77,7 +78,7 @@ import {
               <div class="card-head">
                 <span class="card-name">{{ item.name }}</span>
                 @if (currentSavedKey() === item.key) {
-                  <span class="badge-current">Actuel</span>
+                  <span class="badge-current" i18n="@@settings.templates.actuel.8a432ab2">Actuel</span>
                 }
                 @if (selectedKey() === item.key) {
                   <i class="pi pi-check-circle check"></i>
@@ -91,15 +92,15 @@ import {
         <!-- Aperçu live -->
         <div class="preview-pane">
           <div class="preview-toolbar">
-            <span>Aperçu — {{ selectedTemplateName() }}</span>
+            <span i18n="@@settings.templates.apercu.d125936c">Aperçu — {{ selectedTemplateName() }}</span>
             @if (previewLoading()) { <i class="pi pi-spin pi-spinner"></i> }
           </div>
           @if (previewUrl()) {
-            <iframe [src]="previewUrl()" title="Aperçu du modèle" class="preview-frame"></iframe>
+            <iframe [src]="previewUrl()" title="Aperçu du modèle" i18n-title="@@settings.templates.apercu.du.modele.6826fd72" class="preview-frame"></iframe>
           } @else {
             <div class="preview-empty">
               <i class="pi pi-file-pdf"></i>
-              <p>Sélectionnez un modèle pour afficher l'aperçu.</p>
+              <p i18n="@@settings.templates.selectionnez.un.modele.pour.afficher.l.apercu.f9616fd1">Sélectionnez un modèle pour afficher l'aperçu.</p>
             </div>
           }
         </div>
@@ -129,7 +130,7 @@ import {
 
     .gallery { display: flex; flex-direction: column; gap: var(--spacing-3); }
     .template-card {
-      text-align: left; padding: var(--spacing-4); border-radius: var(--radius-xl);
+      text-align: start; padding: var(--spacing-4); border-radius: var(--radius-xl);
       border: 1px solid var(--color-neutral-200); background: white; cursor: pointer;
       transition: all var(--transition-fast);
     }
@@ -169,9 +170,9 @@ export class DocumentTemplatesComponent implements OnInit, OnDestroy {
 
   readonly tabs = DOCUMENT_TYPE_TABS;
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Modèles de documents' }
+    { label: $localize`:@@settings.templates.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.templates.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.templates.ts.modeles.de.documents.4875ffe8:Modèles de documents` }
   ];
 
   loading = signal(true);
@@ -207,7 +208,7 @@ export class DocumentTemplatesComponent implements OnInit, OnDestroy {
   }
 
   private showError(err: unknown): void {
-    this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+    this.toast.add({ severity: 'error', summary: $localize`:@@templates.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
   }
 
   private loadAll(): void {
@@ -298,9 +299,9 @@ export class DocumentTemplatesComponent implements OnInit, OnDestroy {
         this.saving.set(false);
         if (res.success && res.data) {
           this.preferences.update(m => ({ ...m, [type]: res.data!.templateKey }));
-          this.toast.add({ severity: 'success', summary: 'Modèle enregistré', detail: `Modèle « ${res.data.templateName} » appliqué.` });
+          this.toast.add({ severity: 'success', summary: $localize`:@@templates.component.summary.Mod_le_enregistr:Modèle enregistré`, detail: $localize`:@@settings.templates.ts.modele.templatename.applique.176ebd2c:Modèle « ${res.data.templateName}:templateName: » appliqué.` });
         } else {
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.message ?? "Échec de l'enregistrement." });
+          this.toast.add({ severity: 'error', summary: $localize`:@@templates.component.summary.Erreur:Erreur`, detail: res.message ?? $localize`:@@ui.tern.echec.de.l.enregistrement.92ba0d:Échec de l'enregistrement.` });
         }
       },
       error: (err) => { this.saving.set(false); this.showError(err); }

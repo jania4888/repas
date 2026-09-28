@@ -6,7 +6,7 @@ import { Component, input } from '@angular/core';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="proj-list-ring" role="img" [attr.aria-label]="'Avancement ' + value() + ' pour cent'">
+    <div class="proj-list-ring" role="img" [attr.aria-label]="loc_ui_tern_avancement_5143c0 + value() + loc_ui_tern_pour_cent_8f8638">
       <svg viewBox="0 0 36 36" class="proj-list-ring__svg" aria-hidden="true">
         <circle class="proj-list-ring__track" cx="18" cy="18" r="15.5" />
         <circle
@@ -57,6 +57,8 @@ import { Component, input } from '@angular/core';
   `]
 })
 export class ProjectListProgressRingComponent {
+  readonly loc_ui_tern_avancement_5143c0 = $localize`:@@ui.tern.avancement.5143c0:Avancement `;
+  readonly loc_ui_tern_pour_cent_8f8638 = $localize`:@@ui.tern.pour.cent.8f8638: pour cent`;
   readonly value = input(0);
   readonly circumference = 2 * Math.PI * 15.5;
 

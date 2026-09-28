@@ -37,19 +37,19 @@ import { StudioWorkflowsService } from './studio-workflows.service';
  * - les autres sont locaux ci-dessous. À centraliser si la partie B en a besoin.
  */
 const DETAIL_LABELS = {
-  notFound: 'Instance introuvable.',
-  forbidden: 'Détail indisponible.',
-  loadError: 'Chargement du détail impossible.',
-  retry: 'Réessayer',
-  remindHint: 'Possible quand l\'instance attend une approbation.',
-  readOnly: 'Lecture seule : votre rôle ne permet pas d\'agir sur cette instance.',
-  actionError: 'Action impossible.',
-  system: 'Système',
-  completedAt: 'Terminé le',
-  origin: 'Instance d\'origine',
-  open: 'Ouvrir',
-  confirmCancel: 'Confirmer l\'annulation',
-  back: 'Retour'
+  notFound: $localize`:@@studio.studio-workflow-instance-detail.ts.instance.introuvable.8c24b2fc:Instance introuvable.`,
+  forbidden: $localize`:@@studio.studio-workflow-instance-detail.ts.detail.indisponible.e834f2ce:Détail indisponible.`,
+  loadError: $localize`:@@studio.studio-workflow-instance-detail.ts.chargement.du.detail.impossible.71c25e57:Chargement du détail impossible.`,
+  retry: $localize`:@@studio.studio-workflow-instance-detail.ts.reessayer.895d416b:Réessayer`,
+  remindHint: $localize`:@@studio.studio-workflow-instance-detail.ts.possible.quand.l.instance.attend.une.app.756783e7:Possible quand l'instance attend une approbation.`,
+  readOnly: $localize`:@@studio.studio-workflow-instance-detail.ts.lecture.seule.votre.role.ne.permet.pas.d.a29ac6b4:Lecture seule : votre rôle ne permet pas d'agir sur cette instance.`,
+  actionError: $localize`:@@studio.studio-workflow-instance-detail.ts.action.impossible.cd57172c:Action impossible.`,
+  system: $localize`:@@studio.studio-workflow-instance-detail.ts.systeme.62d09520:Système`,
+  completedAt: $localize`:@@studio.studio-workflow-instance-detail.ts.termine.le.c07f32a6:Terminé le`,
+  origin: $localize`:@@studio.studio-workflow-instance-detail.ts.instance.d.origine.c6f91a5c:Instance d'origine`,
+  open: $localize`:@@studio.studio-workflow-instance-detail.ts.ouvrir.42c07747:Ouvrir`,
+  confirmCancel: $localize`:@@studio.studio-workflow-instance-detail.ts.confirmer.l.annulation.92040a54:Confirmer l'annulation`,
+  back: $localize`:@@studio.studio-workflow-instance-detail.ts.retour.e5befb1f:Retour`
 } as const;
 
 /**
@@ -258,7 +258,7 @@ const DETAIL_LABELS = {
     .wf-appr__l1 { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
     .wf-appr__title { font-weight: 600; font-size: .875rem; }
     .wf-appr__meta { font-size: .8125rem; color: var(--text-color-secondary); margin-top: .15rem; }
-    .wf-appr__comment { margin: .4rem 0 0; padding-left: .625rem; border-left: 3px solid var(--surface-300); font-size: .8125rem; font-style: italic; }
+    .wf-appr__comment { margin: .4rem 0 0; padding-inline-start: .625rem; border-inline-start: 3px solid var(--surface-300); font-size: .8125rem; font-style: italic; }
     .wf-inst-actions { display: flex; flex-direction: column; gap: .5rem; margin-top: 1.25rem; padding-top: .75rem; border-top: 1px solid var(--surface-200); }
     .wf-inst-actions__row { display: flex; gap: .5rem; }
     @media (max-width: 639.98px) { ::ng-deep .wf-instance-drawer.p-drawer { width: 100% !important; } }
@@ -318,7 +318,7 @@ export class StudioWorkflowInstanceDetailComponent {
   protected readonly approvals = computed(() => this.detail()?.approvals ?? []);
 
   /**
-   * Portée figée à l'ouverture (revue 4.5i★, D-45-29) : `{ entityKey, recordId }` lus quand `instanceId`
+   * Portée figée à l'ouverture (revue 4.5i★, D-45-29) : $localize`:@@ui.tern.entitykey.recordid.ed9193:{ entityKey, recordId }` lus quand `instanceId`
    * change, pour qu'un « Réessayer » ou un rechargement 409 garde la route runtime même si l'hôte
    * (« Mes approbations ») a perdu sa sélection entre-temps — sinon bascule vers la route de conception ⇒ 403 lecteur.
    */

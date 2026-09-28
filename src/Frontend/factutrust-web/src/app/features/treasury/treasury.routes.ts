@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Routes } from '@angular/router';
 import { permissionGuard } from '@core/guards/permission.guard';
 import { PERMISSIONS } from '@core/config/permission-keys';
@@ -20,6 +21,6 @@ export const TREASURY_ROUTES: Routes = [
       import('./cash-forecast/cash-forecast.component').then(m => m.CashForecastComponent),
     canActivate: [permissionGuard],
     data: { permissions: [PERMISSIONS.treasuryForecast.view] },
-    title: 'Trésorerie prévisionnelle — InstaFact'
+    title: $localize`:@@treasury.routes.title.Tr_sorerie_pr_visionnell:Trésorerie prévisionnelle — InstaFact`
   }
 ];

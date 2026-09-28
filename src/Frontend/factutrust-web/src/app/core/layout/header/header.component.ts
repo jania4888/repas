@@ -14,6 +14,7 @@ import { FirmContextService } from '../../services/firm-context.service';
 import { BreadcrumbService } from '../../services/breadcrumb.service';
 import { QuickAccessMenuComponent } from './quick-access-menu/quick-access-menu.component';
 import { GlobalSearchComponent } from '../global-search/global-search.component';
+import { ErpLanguageSwitcherComponent } from '../erp-language-switcher/erp-language-switcher.component';
 import { GlobalSearchService } from '../../services/global-search.service';
 import {
   isProductOnboardingUiEnabled,
@@ -23,7 +24,7 @@ import {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgbDropdownModule, QuickAccessMenuComponent, GlobalSearchComponent],
+  imports: [CommonModule, RouterModule, NgbDropdownModule, QuickAccessMenuComponent, GlobalSearchComponent, ErpLanguageSwitcherComponent],
   template: `
     <div class="topbar main-header">
       <nav class="navbar navbar-expand-lg">
@@ -34,7 +35,7 @@ import {
             class="sidebar_toggle"
             (click)="toggleSidebar.emit()"
             [attr.aria-expanded]="!sidebarCollapsed"
-            [attr.aria-label]="sidebarCollapsed ? 'Agrandir le menu latéral' : 'Réduire le menu latéral'">
+            [attr.aria-label]="sidebarCollapsed ? headerExpandSidebarLabel : headerCollapseSidebarLabel">
             <i class="fa fa-bars"></i>
           </button>
 
@@ -51,8 +52,8 @@ import {
           <div class="right_topbar">
             @if (authService.isDelegatedMode() && firmContext.activeClient(); as client) {
               <div class="main-header__firm-context">
-                <span>Dossier : <strong>{{ client.companyName }}</strong></span>
-                <button type="button" class="btn-link" (click)="returnToFirm()">Retour au cabinet</button>
+                <span><ng-container i18n="@@core.header.dossier">Dossier : </ng-container> <strong>{{ client.companyName }}</strong></span>
+                <button type="button" class="btn-link" (click)="returnToFirm()" i18n="@@core.header.returnToFirm">Retour au cabinet</button>
               </div>
             }
             @if (globalSearch.isEnabled()) {
@@ -60,7 +61,8 @@ import {
                 type="button"
                 class="header-mobile-search"
                 (click)="globalSearch.openPalette()"
-                aria-label="Rechercher">
+                aria-label="Rechercher"
+                i18n-aria-label="@@core.header.search">
                 <i class="fa-solid fa-magnifying-glass"></i>
               </button>
             }
@@ -70,8 +72,8 @@ import {
                 class="main-header__warehouse"
                 data-tour="header-warehouse"
                 role="status"
-                [attr.title]="'Entrepôt : ' + wh.name"
-                [attr.aria-label]="'Entrepôt actif : ' + wh.name">
+                [attr.title]="warehouseTitleAttr(wh.name)"
+                [attr.aria-label]="warehouseActiveAttr(wh.name)">
                 <i class="fa-solid fa-warehouse" aria-hidden="true"></i>
                 <span class="main-header__warehouse-name">{{ wh.name }}</span>
               </div>
@@ -81,19 +83,19 @@ import {
               <ul class="main-header__toolbar-icons">
                 @if (authService.canAccessPlatformSettings()) {
                   <li>
-                    <a routerLink="/settings" aria-label="Paramètres" data-tour="header-settings">
+                    <a routerLink="/settings" aria-label="Paramètres" i18n-aria-label="@@core.header.settings" data-tour="header-settings">
                       <i class="fa-solid fa-gear"></i>
                     </a>
                   </li>
                 } @else if (authService.isAccountingFirm() && !authService.isDelegatedMode()) {
                   <li>
-                    <a routerLink="/firm/settings" aria-label="Paramètres cabinet" data-tour="header-settings">
+                    <a routerLink="/firm/settings" aria-label="Paramètres cabinet" i18n-aria-label="@@core.header.firmSettings" data-tour="header-settings">
                       <i class="fa-solid fa-gear"></i>
                     </a>
                   </li>
                 }
                 <li>
-                  <a href="#" (click)="$event.preventDefault()" aria-label="Partager">
+                  <a href="#" (click)="$event.preventDefault()" aria-label="Partager" i18n-aria-label="@@core.header.share">
                     <i class="fa-solid fa-share-nodes"></i>
                   </a>
                 </li>
@@ -111,6 +113,7 @@ import {
                     class="notif-bell"
                     data-tour="header-notifications"
                     aria-label="Notifications"
+                    i18n-aria-label="@@core.header.notifications"
                     aria-haspopup="menu">
                     <i class="fa-regular fa-bell"></i>
                     @if (notifications.unreadCount() > 0) {
@@ -123,9 +126,9 @@ import {
                     class="notif-menu dropdown-menu"
                     role="menu">
                     <div class="notif-menu__header">
-                      <span class="notif-menu__title">Notifications</span>
+                      <span class="notif-menu__title" i18n="@@core.header.notifications">Notifications</span>
                       @if (notifications.unreadCount() > 0) {
-                        <button type="button" class="notif-menu__mark-all" (click)="markAllRead($event)">
+                        <button type="button" class="notif-menu__mark-all" (click)="markAllRead($event)" i18n="@@core.header.notificationsMarkAll">
                           Tout marquer comme lu
                         </button>
                       }
@@ -133,7 +136,7 @@ import {
                     @if (notifications.latest().length === 0) {
                       <div class="notif-menu__empty">
                         <i class="fa-regular fa-bell-slash" aria-hidden="true"></i>
-                        <p>Aucune notification</p>
+                        <p i18n="@@core.header.notificationsEmpty">Aucune notification</p>
                       </div>
                     } @else {
                       <div class="notif-menu__list">
@@ -156,6 +159,7 @@ import {
                   </div>
                 </li>
               </ul>
+              <app-erp-language-switcher class="main-header__lang-switcher" />
               <ul class="user_profile_dd">
                 <li
                   ngbDropdown
@@ -169,10 +173,11 @@ import {
                     class="dropdown-toggle main-header__user-trigger"
                     id="userDropdown"
                     aria-label="Menu utilisateur"
+                    i18n-aria-label="@@core.header.userMenu"
                     data-tour="header-profile"
                     aria-haspopup="menu">
                     <div class="user_avatar_image">
-                      <img src="assets/theme/pluto/images/layout_img/user_img.jpg" alt="User avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                      <img src="assets/theme/pluto/images/layout_img/user_img.jpg" alt="User avatar" i18n-alt="@@core.layout.header.header.user.avatar.900527c9" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                       <div class="user_avatar_circle" style="display: none;">{{ getInitials() }}</div>
                     </div>
                   </button>
@@ -181,20 +186,20 @@ import {
                     aria-labelledby="userDropdown"
                     class="main-header__user-menu dropdown-menu"
                     role="menu">
-                    <a ngbDropdownItem routerLink="/settings/profile">Mon profil</a>
+                    <a ngbDropdownItem routerLink="/settings/profile" i18n="@@core.header.myProfile">Mon profil</a>
                     @if (canReplayProductTour()) {
-                      <button type="button" ngbDropdownItem (click)="replayProductTour()">
+                      <button type="button" ngbDropdownItem (click)="replayProductTour()" i18n="@@core.header.replayProductTour">
                         Relancer la visite guidée
                       </button>
                     }
                     @if (authService.canAccessPlatformSettings()) {
-                      <a ngbDropdownItem routerLink="/settings">Paramètres</a>
+                      <a ngbDropdownItem routerLink="/settings" i18n="@@core.header.settings">Paramètres</a>
                     } @else if (authService.isAccountingFirm() && !authService.isDelegatedMode()) {
-                      <a ngbDropdownItem routerLink="/firm/settings">Paramètres cabinet</a>
+                      <a ngbDropdownItem routerLink="/firm/settings" i18n="@@core.header.firmSettings">Paramètres cabinet</a>
                     }
                     <div ngbDropdownDivider></div>
                     <a ngbDropdownItem (click)="authService.logout()">
-                      <span>Déconnexion</span>
+                      <span i18n="@@core.header.logout">Déconnexion</span>
                       <i class="fa-solid fa-arrow-right-from-bracket ms-2"></i>
                     </a>
                   </div>
@@ -235,8 +240,8 @@ import {
       font-size: 20px;
       cursor: pointer;
       padding: 6px 12px;
-      margin-right: 0;
-      border-right: 1px solid var(--topbar-divider);
+      margin-inline-end: 0;
+      border-inline-end: 1px solid var(--topbar-divider);
       border-radius: 0;
     }
 
@@ -251,9 +256,9 @@ import {
       display: flex;
       align-items: center;
       flex-shrink: 0;
-      padding-left: 12px;
-      margin-right: 12px;
-      border-right: 1px solid var(--topbar-divider);
+      padding-inline-start: 12px;
+      margin-inline-end: 12px;
+      border-inline-end: 1px solid var(--topbar-divider);
     }
 
     .header-mobile-search {
@@ -307,9 +312,9 @@ import {
       display: flex;
       align-items: center;
       gap: 16px;
-      margin-left: auto;
-      padding-left: 16px;
-      border-left: 1px solid var(--topbar-divider);
+      margin-inline-start: auto;
+      padding-inline-start: 16px;
+      border-inline-start: 1px solid var(--topbar-divider);
     }
 
     .main-header__icon-actions {
@@ -339,12 +344,12 @@ import {
         border-radius: 0;
         line-height: normal;
         overflow: visible;
-        text-align: left;
+        text-align: start;
         position: relative;
       }
 
       li + li {
-        border-left: 1px solid var(--topbar-divider);
+        border-inline-start: 1px solid var(--topbar-divider);
       }
 
       li a,
@@ -377,7 +382,7 @@ import {
         .badge {
           position: absolute;
           top: 6px;
-          right: 6px;
+          inset-inline-end: 6px;
           background: var(--topbar-badge);
           color: white;
           font-size: 10px;
@@ -471,7 +476,7 @@ import {
       border: none;
       border-bottom: 1px solid var(--color-neutral-100, #f1f5f9);
       background: transparent;
-      text-align: left;
+      text-align: start;
       cursor: pointer;
       transition: background 0.15s;
 
@@ -532,8 +537,8 @@ import {
       margin: 0;
       padding: 0;
       list-style: none;
-      border-left: 1px solid var(--topbar-divider);
-      margin-left: 0;
+      border-inline-start: 1px solid var(--topbar-divider);
+      margin-inline-start: 0;
       float: none;
       width: auto;
 
@@ -651,6 +656,9 @@ export class HeaderComponent {
   @Input() sidebarCollapsed = false;
   @Output() toggleSidebar = new EventEmitter<void>();
 
+  readonly headerExpandSidebarLabel = $localize`:@@core.header.expandSidebar:Agrandir le menu latéral`;
+  readonly headerCollapseSidebarLabel = $localize`:@@core.header.collapseSidebar:Réduire le menu latéral`;
+
   readonly globalSearch = inject(GlobalSearchService);
   readonly authService = inject(AuthService);
   readonly firmContext = inject(FirmContextService);
@@ -694,6 +702,14 @@ export class HeaderComponent {
 
   async clearFirmContext(): Promise<void> {
     await this.firmContext.navigateToClientList();
+  }
+
+  warehouseTitleAttr(name: string): string {
+    return $localize`:@@core.header.warehouseTitle:Entrepôt : ${name}:name:`;
+  }
+
+  warehouseActiveAttr(name: string): string {
+    return $localize`:@@core.header.warehouseActive:Entrepôt actif : ${name}:name:`;
   }
 
   getInitials(): string {

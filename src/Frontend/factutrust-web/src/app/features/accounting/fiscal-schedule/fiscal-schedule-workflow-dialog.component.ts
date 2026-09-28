@@ -20,38 +20,38 @@ export type FiscalWorkflowMode = 'deposit' | 'payment' | 'reminder' | 'validate'
       <form class="fiscal-modal fiscal-modal--narrow" (ngSubmit)="submit.emit()">
         <header>
           <h2 id="fiscal-workflow-dialog-title">{{ title }}</h2>
-          <button class="square-button" type="button" title="Fermer" (click)="cancel.emit()"><i class="fa-solid fa-xmark"></i></button>
+          <button class="square-button" type="button" title="Fermer" i18n-title="@@accounting.fiscal-schedule.fermer.5ab4ec64" (click)="cancel.emit()"><i class="fa-solid fa-xmark"></i></button>
         </header>
         <label *ngIf="mode === 'deposit'">
-          Date de depot
+          <ng-container i18n="@@accounting.fiscal-schedule.date.de.depot.a4aa4224"> Date de depot </ng-container>
           <input name="depositDate" type="date" required [(ngModel)]="workflowDate">
         </label>
         <label *ngIf="mode === 'payment'">
-          Date de paiement
+          <ng-container i18n="@@accounting.fiscal-schedule.date.de.paiement.bd0020ef"> Date de paiement </ng-container>
           <input name="paymentDate" type="date" required [(ngModel)]="workflowDate">
         </label>
         <label *ngIf="mode === 'validate'">
-          Date de validation
+          <ng-container i18n="@@accounting.fiscal-schedule.date.de.validation.a3a6e7af"> Date de validation </ng-container>
           <input name="validatedDate" type="date" required [(ngModel)]="workflowDate">
         </label>
         <label *ngIf="mode === 'reminder'">
-          Canal
+          <ng-container i18n="@@accounting.fiscal-schedule.canal.61f21e6f"> Canal </ng-container>
           <select name="reminderChannel" [(ngModel)]="reminderChannel">
             <option *ngFor="let option of reminderChannels" [ngValue]="option.value">{{ option.label }}</option>
           </select>
         </label>
         <label *ngIf="mode === 'reminder'">
-          Date du rappel
+          <ng-container i18n="@@accounting.fiscal-schedule.date.du.rappel.ca97806b"> Date du rappel </ng-container>
           <input name="reminderAt" type="datetime-local" [(ngModel)]="workflowDateTime">
         </label>
         <label>
-          Observations
+          <ng-container i18n="@@accounting.fiscal-schedule.observations.461ebaa1"> Observations </ng-container>
           <textarea name="workflowNotes" rows="3" [(ngModel)]="workflowObservations"></textarea>
         </label>
         <footer>
-          <button class="icon-button" type="button" (click)="cancel.emit()">Annuler</button>
+          <button class="icon-button" type="button" (click)="cancel.emit()" i18n="@@accounting.fiscal-schedule.annuler.49ba3292">Annuler</button>
           <button class="icon-button primary" type="submit" [disabled]="saving">
-            <i class="fa-solid fa-check"></i><span>Valider</span>
+            <i class="fa-solid fa-check"></i><span i18n="@@accounting.fiscal-schedule.valider.be4220f7">Valider</span>
           </button>
         </footer>
       </form>
@@ -107,8 +107,8 @@ export class FiscalScheduleWorkflowDialogComponent {
 
   get title(): string {
     switch (this.mode) {
-      case 'payment': return 'Saisir le paiement';
-      case 'reminder': return 'Planifier un rappel';
+      case 'payment': return $localize`:@@accounting.fiscal-schedule-workflow-dialog.ts.saisir.le.paiement.79ab0d86:Saisir le paiement`;
+      case 'reminder': return $localize`:@@accounting.fiscal-schedule-workflow-dialog.ts.planifier.un.rappel.3fb10fc8:Planifier un rappel`;
       case 'validate': return 'Marquer comme validee';
       default: return 'Marquer comme deposee';
     }

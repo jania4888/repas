@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -30,7 +32,7 @@ import {
 @Component({
   selector: 'app-purchase-order-detail',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule, RouterModule, FormsModule, CurrencyPipe, DatePipe,
     TagModule, TableModule, ToastModule, DialogModule, Textarea, TooltipModule,
     PageHeaderComponent, BreadcrumbComponent, ButtonComponent, CreateSupplierInvoiceModalComponent
@@ -41,19 +43,17 @@ import {
     @if (loading()) {
       <div class="loading-container">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-        <p>Chargement...</p>
+        <p i18n="@@purchase-orders.purchase-order-detail.chargement.a209b664">Chargement...</p>
       </div>
     } @else if (po()) {
 
 
       <app-page-header
-        [title]="'Commande ' + po()!.number"
+        [title]="loc_ui_tern_commande_9798ea + po()!.number"
         [subtitle]="po()!.supplier.name">
         <div class="header-actions">
           <app-button variant="outline" icon="pi-file-pdf" iconPos="left"
-            (click)="downloadPdf()">
-            Télécharger PDF
-          </app-button>
+            (click)="downloadPdf()" i18n="@@purchase-orders.purchase-order-detail.telecharger.pdf.06b2eebe"> Télécharger PDF </app-button>
           
 
           <!-- Conditional buttons with robust comparison -->
@@ -61,49 +61,39 @@ import {
             <ng-container *ngIf="po()!.status != PurchaseOrderStatus.Draft && po()!.status != PurchaseOrderStatus.Cancelled">
               <app-button variant="outline" icon="pi-envelope" iconPos="left"
                 [disabled]="sending() || !po()!.supplier.email"
-                pTooltip="Le fournisseur n'a pas d'adresse email."
+                pTooltip="Le fournisseur n'a pas d'adresse email." i18n-pTooltip="@@purchase-orders.purchase-order-detail.le.fournisseur.n.a.pas.d.adresse.email.97a1b097"
                 [tooltipDisabled]="!!po()!.supplier.email"
                 tooltipPosition="bottom"
                 (click)="sendByEmail()">
-                {{ sending() ? 'Envoi...' : 'Envoyer par email' }}
+                {{ sending() ? loc_ui_tern_envoi_5a377e : loc_ui_tern_envoyer_par_email_535086 }}
               </app-button>
             </ng-container>
             
             <ng-container *ngIf="isDraft()">
               <app-button variant="outline" icon="pi-pencil" iconPos="left"
-                [routerLink]="['/purchase-orders', po()!.id, 'edit']">
-                Modifier
-              </app-button>
+                [routerLink]="['/purchase-orders', po()!.id, 'edit']" i18n="@@purchase-orders.purchase-order-detail.modifier.f260e757"> Modifier </app-button>
               <app-button variant="primary" icon="pi-check" iconPos="left"
                 (click)="confirmOrder()"
                 [disabled]="confirming()"
-                pTooltip="Confirmer la commande pour pouvoir recevoir les marchandises et créer des factures"
+                pTooltip="Confirmer la commande pour pouvoir recevoir les marchandises et créer des factures" i18n-pTooltip="@@purchase-orders.purchase-order-detail.confirmer.la.commande.pour.pouvoir.recevoir.les.169ab29f"
                 tooltipPosition="bottom">
-                {{ confirming() ? 'Confirmation...' : 'Confirmer' }}
+                {{ confirming() ? loc_ui_tern_confirmation_a1e29f : loc_ui_tern_confirmer_80a664 }}
               </app-button>
               <app-button variant="outline" icon="pi-times" iconPos="left"
-                (click)="cancelOrder()">
-                Annuler
-              </app-button>
+                (click)="cancelOrder()" i18n="@@purchase-orders.purchase-order-detail.annuler.49ba3292"> Annuler </app-button>
               <app-button variant="danger" icon="pi-trash" iconPos="left"
-                (click)="deleteOrder()">
-                Supprimer
-              </app-button>
+                (click)="deleteOrder()" i18n="@@purchase-orders.purchase-order-detail.supprimer.1acfc1c7"> Supprimer </app-button>
             </ng-container>
             
             <ng-container *ngIf="canReceiveGoods()">
               <app-button variant="primary" icon="pi-box" iconPos="left"
                 [routerLink]="['/purchase-receipts', 'new']"
-                [queryParams]="{ purchaseOrderId: po()!.id }">
-                Réception marchandise
-              </app-button>
+                [queryParams]="{ purchaseOrderId: po()!.id }" i18n="@@purchase-orders.purchase-order-detail.reception.marchandise.61115c15"> Réception marchandise </app-button>
             </ng-container>
             
             <ng-container *ngIf="canCreateSupplierInvoice()">
               <app-button variant="primary" icon="pi-money-bill" iconPos="left"
-                (click)="openCreateSupplierInvoice()">
-                Créer facture fournisseur
-              </app-button>
+                (click)="openCreateSupplierInvoice()" i18n="@@purchase-orders.purchase-order-detail.creer.facture.fournisseur.4a82949b"> Créer facture fournisseur </app-button>
             </ng-container>
           </ng-container>
         </div>
@@ -115,11 +105,11 @@ import {
           <div class="guidance-content">
             <i class="pi pi-info-circle guidance-icon"></i>
             <div class="guidance-text">
-              <h4>Commande en brouillon</h4>
-              <p>Cette commande doit être confirmée avant de pouvoir recevoir les marchandises ou créer une facture fournisseur.</p>
+              <h4 i18n="@@purchase-orders.purchase-order-detail.commande.en.brouillon.5a415e9b">Commande en brouillon</h4>
+              <p i18n="@@purchase-orders.purchase-order-detail.cette.commande.doit.etre.confirmee.avant.de.pouv.7533cb5b">Cette commande doit être confirmée avant de pouvoir recevoir les marchandises ou créer une facture fournisseur.</p>
               <div class="next-steps">
-                <span class="step-label">Prochaine étape :</span>
-                <span class="step-action">Confirmer la commande</span>
+                <span class="step-label" i18n="@@purchase-orders.purchase-order-detail.prochaine.etape.a822d89b">Prochaine étape :</span>
+                <span class="step-action" i18n="@@purchase-orders.purchase-order-detail.confirmer.la.commande.3af7f44c">Confirmer la commande</span>
               </div>
             </div>
           </div>
@@ -131,11 +121,11 @@ import {
           <div class="guidance-content">
             <i class="pi pi-check-circle guidance-icon"></i>
             <div class="guidance-text">
-              <h4>Commande confirmée</h4>
-              <p>La commande est prête pour la réception des marchandises. Vous pouvez maintenant enregistrer les livraisons.</p>
+              <h4 i18n="@@purchase-orders.purchase-order-detail.commande.confirmee.7b08df9a">Commande confirmée</h4>
+              <p i18n="@@purchase-orders.purchase-order-detail.la.commande.est.prete.pour.la.reception.des.marc.1558ea9c">La commande est prête pour la réception des marchandises. Vous pouvez maintenant enregistrer les livraisons.</p>
               <div class="next-steps">
-                <span class="step-label">Prochaine étape :</span>
-                <span class="step-action">Réceptionner les marchandises</span>
+                <span class="step-label" i18n="@@purchase-orders.purchase-order-detail.prochaine.etape.a822d89b">Prochaine étape :</span>
+                <span class="step-action" i18n="@@purchase-orders.purchase-order-detail.receptionner.les.marchandises.8faeed7a">Réceptionner les marchandises</span>
               </div>
             </div>
           </div>
@@ -147,11 +137,11 @@ import {
           <div class="guidance-content">
             <i class="pi pi-exclamation-triangle guidance-icon"></i>
             <div class="guidance-text">
-              <h4>Réception partielle</h4>
-              <p>Certaines marchandises ont été reçues. Vous pouvez continuer la réception ou créer une facture pour les articles déjà livrés.</p>
+              <h4 i18n="@@purchase-orders.purchase-order-detail.reception.partielle.c5886c47">Réception partielle</h4>
+              <p i18n="@@purchase-orders.purchase-order-detail.certaines.marchandises.ont.ete.recues.vous.pouve.3e110c5c">Certaines marchandises ont été reçues. Vous pouvez continuer la réception ou créer une facture pour les articles déjà livrés.</p>
               <div class="next-steps">
-                <span class="step-label">Actions disponibles :</span>
-                <span class="step-action">Réceptionner / Créer facture</span>
+                <span class="step-label" i18n="@@purchase-orders.purchase-order-detail.actions.disponibles.76355671">Actions disponibles :</span>
+                <span class="step-action" i18n="@@purchase-orders.purchase-order-detail.receptionner.creer.facture.4883086f">Réceptionner / Créer facture</span>
               </div>
             </div>
           </div>
@@ -161,28 +151,28 @@ import {
       <div class="detail-grid">
         <!-- Order Info -->
         <div class="detail-card">
-          <h3 class="card-title"><i class="pi pi-file"></i> Informations commande</h3>
+          <h3 class="card-title" i18n="@@purchase-orders.purchase-order-detail.informations.commande.f79edb19"><i class="pi pi-file"></i> Informations commande</h3>
           <div class="info-grid">
             <div class="info-item">
-              <span class="label">Numéro</span>
+              <span class="label" i18n="@@purchase-orders.purchase-order-detail.numero.15e73db0">Numéro</span>
               <span class="value mono">{{ po()!.number }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Date</span>
+              <span class="label" i18n="@@purchase-orders.purchase-order-detail.date.eb9a4bc1">Date</span>
               <span class="value">{{ po()!.orderDate | date:'dd/MM/yyyy' }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Statut</span>
-              <p-tag [value]="po()!.statusDisplay"
+              <span class="label" i18n="@@purchase-orders.purchase-order-detail.statut.659499f3">Statut</span>
+              <p-tag [value]="po()!.statusDisplay | backendLabel"
                 [severity]="getStatusSeverity(po()!.status)"></p-tag>
             </div>
             <div class="info-item">
-              <span class="label">Livraison prévue</span>
+              <span class="label" i18n="@@purchase-orders.purchase-order-detail.livraison.prevue.dc15f458">Livraison prévue</span>
               <span class="value">{{ po()!.expectedDeliveryDate ? (po()!.expectedDeliveryDate | date:'dd/MM/yyyy') : '-' }}</span>
             </div>
             @if (po()!.reference) {
               <div class="info-item">
-                <span class="label">Référence</span>
+                <span class="label" i18n="@@purchase-orders.purchase-order-detail.reference.f8130bb0">Référence</span>
                 <span class="value">{{ po()!.reference }}</span>
               </div>
             }
@@ -191,26 +181,26 @@ import {
 
         <!-- Supplier Info -->
         <div class="detail-card">
-          <h3 class="card-title"><i class="pi pi-building"></i> Fournisseur</h3>
+          <h3 class="card-title" i18n="@@purchase-orders.purchase-order-detail.fournisseur.35691c73"><i class="pi pi-building"></i> Fournisseur</h3>
           <div class="info-grid">
             <div class="info-item">
-              <span class="label">Nom</span>
+              <span class="label" i18n="@@purchase-orders.purchase-order-detail.nom.7ff20370">Nom</span>
               <a [routerLink]="['/suppliers', po()!.supplier.id]" class="value link">{{ po()!.supplier.name }}</a>
             </div>
             @if (po()!.supplier.email) {
               <div class="info-item">
-                <span class="label">Email</span>
+                <span class="label" i18n="@@purchase-orders.purchase-order-detail.email.84add5b2">Email</span>
                 <a [href]="'mailto:' + po()!.supplier.email" class="value link">{{ po()!.supplier.email }}</a>
               </div>
             }
             @if (po()!.supplier.nif) {
               <div class="info-item">
-                <span class="label">NIF</span>
+                <span class="label" i18n="@@purchase-orders.purchase-order-detail.nif.77124a3a">NIF</span>
                 <span class="value mono">{{ po()!.supplier.nif }}</span>
               </div>
             }
             <div class="info-item full-width">
-              <span class="label">Adresse</span>
+              <span class="label" i18n="@@purchase-orders.purchase-order-detail.adresse.522e1466">Adresse</span>
               <span class="value">{{ po()!.supplier.address }}</span>
             </div>
           </div>
@@ -218,17 +208,17 @@ import {
 
         <!-- Lines -->
         <div class="detail-card full-width">
-          <h3 class="card-title"><i class="pi pi-list"></i> Lignes de commande</h3>
+          <h3 class="card-title" i18n="@@purchase-orders.purchase-order-detail.lignes.de.commande.7ce0f6c8"><i class="pi pi-list"></i> Lignes de commande</h3>
           <p-table [value]="po()!.lines" styleClass="p-datatable-sm" [rowHover]="true">
             <ng-template pTemplate="header">
               <tr>
-                <th style="width: 50px">#</th>
-                <th>Produit</th>
-                <th style="width: 100px">Qté commandée</th>
-                <th style="width: 100px">Qté reçue</th>
-                <th style="width: 120px">Prix unitaire HT</th>
-                <th style="width: 80px">TVA</th>
-                <th style="width: 130px">Total TTC</th>
+                <th style="width: 50px" i18n="@@purchase-orders.purchase-order-detail.text.d08f88df">#</th>
+                <th i18n="@@purchase-orders.purchase-order-detail.produit.ff673dc2">Produit</th>
+                <th style="width: 100px" i18n="@@purchase-orders.purchase-order-detail.qte.commandee.8c1ee02c">Qté commandée</th>
+                <th style="width: 100px" i18n="@@purchase-orders.purchase-order-detail.qte.recue.ec07cbe1">Qté reçue</th>
+                <th style="width: 120px" i18n="@@purchase-orders.purchase-order-detail.prix.unitaire.ht.bb3f8e39">Prix unitaire HT</th>
+                <th style="width: 80px" i18n="@@purchase-orders.purchase-order-detail.tva.fb62cb5d">TVA</th>
+                <th style="width: 130px" i18n="@@purchase-orders.purchase-order-detail.total.ttc.9e80ff7c">Total TTC</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-line>
@@ -248,7 +238,7 @@ import {
                   </span>
                 </td>
                 <td class="text-right">{{ line.unitPriceHT | currency:'TND':'symbol':'1.3-3' }}</td>
-                <td class="text-center">{{ line.vatRateDisplay }}</td>
+                <td class="text-center">{{ line.vatRateDisplay | backendLabel }}</td>
                 <td class="text-right amount">{{ line.total | currency:'TND':'symbol':'1.3-3' }}</td>
               </tr>
             </ng-template>
@@ -257,15 +247,15 @@ import {
           <!-- Totals -->
           <div class="totals-section">
             <div class="total-row">
-              <span>Sous-total HT</span>
+              <span i18n="@@purchase-orders.purchase-order-detail.sous.total.ht.724598f6">Sous-total HT</span>
               <span class="amount">{{ po()!.subTotal | currency:'TND':'symbol':'1.3-3' }}</span>
             </div>
             <div class="total-row">
-              <span>TVA</span>
+              <span i18n="@@purchase-orders.purchase-order-detail.tva.fb62cb5d">TVA</span>
               <span class="amount">{{ po()!.totalVat | currency:'TND':'symbol':'1.3-3' }}</span>
             </div>
             <div class="total-row grand-total">
-              <span>Total TTC</span>
+              <span i18n="@@purchase-orders.purchase-order-detail.total.ttc.9e80ff7c">Total TTC</span>
               <span class="amount">{{ po()!.totalTTC | currency:'TND':'symbol':'1.3-3' }}</span>
             </div>
           </div>
@@ -273,20 +263,20 @@ import {
 
         @if (po()!.notes) {
           <div class="detail-card full-width">
-            <h3 class="card-title"><i class="pi pi-file-edit"></i> Notes</h3>
+            <h3 class="card-title" i18n="@@purchase-orders.purchase-order-detail.notes.e4c25cd5"><i class="pi pi-file-edit"></i> Notes</h3>
             <p class="notes-text">{{ po()!.notes }}</p>
           </div>
         }
 
         @if (linkedReceipts().length > 0) {
           <div class="detail-card full-width">
-            <h3 class="card-title"><i class="pi pi-box"></i> Bons de réception liés</h3>
+            <h3 class="card-title" i18n="@@purchase-orders.purchase-order-detail.bons.de.reception.lies.7618fa87"><i class="pi pi-box"></i> Bons de réception liés</h3>
             <ul class="linked-receipts">
               @for (br of linkedReceipts(); track br.id) {
                 <li>
                   <a [routerLink]="['/purchase-receipts', br.id]" class="value link">{{ br.number }}</a>
                   <span class="date">{{ br.receiptDate | date:'dd/MM/yyyy' }}</span>
-                  <p-tag [value]="br.statusDisplay" [severity]="br.status === 1 ? 'success' : br.status === 2 ? 'danger' : 'secondary'"></p-tag>
+                  <p-tag [value]="br.statusDisplay | backendLabel" [severity]="br.status === 1 ? 'success' : br.status === 2 ? 'danger' : 'secondary'"></p-tag>
                   <span class="amount">{{ br.totalTTC | currency:'TND':'symbol':'1.3-3' }}</span>
                 </li>
               }
@@ -296,13 +286,13 @@ import {
 
         @if (po()!.linkedSupplierInvoices && po()!.linkedSupplierInvoices!.length > 0) {
           <div class="detail-card full-width">
-            <h3 class="card-title"><i class="pi pi-money-bill"></i> Factures fournisseur liées</h3>
+            <h3 class="card-title" i18n="@@purchase-orders.purchase-order-detail.factures.fournisseur.liees.7d6114da"><i class="pi pi-money-bill"></i> Factures fournisseur liées</h3>
             <ul class="linked-receipts">
               @for (inv of po()!.linkedSupplierInvoices!; track inv.id) {
                 <li>
                   <a [routerLink]="['/supplier-invoices', inv.id]" class="value link">{{ inv.invoiceNumber }}</a>
                   <span class="date">{{ inv.invoiceDate | date:'dd/MM/yyyy' }}</span>
-                  <p-tag [value]="inv.statusDisplay" severity="info"></p-tag>
+                  <p-tag [value]="inv.statusDisplay | backendLabel" severity="info"></p-tag>
                   <span class="amount">{{ inv.totalTTC | currency:'TND':'symbol':'1.3-3' }}</span>
                 </li>
               }
@@ -312,9 +302,9 @@ import {
 
         @if (po()!.cancellationReason) {
           <div class="detail-card full-width cancelled-card">
-            <h3 class="card-title"><i class="pi pi-exclamation-triangle"></i> Motif d'annulation</h3>
+            <h3 class="card-title" i18n="@@purchase-orders.purchase-order-detail.motif.d.annulation.8ea42493"><i class="pi pi-exclamation-triangle"></i> Motif d'annulation</h3>
             <p class="notes-text">{{ po()!.cancellationReason }}</p>
-            <p class="cancelled-date">Annulée le {{ po()!.cancelledAt | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p class="cancelled-date" i18n="@@purchase-orders.purchase-order-detail.annulee.le.7a735486">Annulée le {{ po()!.cancelledAt | date:'dd/MM/yyyy HH:mm' }}</p>
           </div>
         }
       </div>
@@ -322,31 +312,29 @@ import {
 
     <!-- Cancel order dialog -->
     <p-dialog
-      header="Annuler la commande"
+      header="Annuler la commande" i18n-header="@@purchase-orders.purchase-order-detail.annuler.la.commande.187515f7"
       [(visible)]="cancelDialogVisible"
       [modal]="true"
       [style]="{ width: '450px' }"
       [draggable]="false"
       [resizable]="false"
       (onHide)="closeCancelDialog()">
-      <p class="dialog-message">Êtes-vous sûr de vouloir annuler cette commande ? Indiquez le motif d'annulation (obligatoire).</p>
+      <p class="dialog-message" i18n="@@purchase-orders.purchase-order-detail.etes.vous.sur.de.vouloir.annuler.cette.commande..c86b953a">Êtes-vous sûr de vouloir annuler cette commande ? Indiquez le motif d'annulation (obligatoire).</p>
       <textarea
         pTextarea
         [(ngModel)]="cancellationReason"
-        placeholder="Motif d'annulation..."
+        placeholder="Motif d'annulation..." i18n-placeholder="@@purchase-orders.purchase-order-detail.motif.d.annulation.2ecc7f3a"
         [rows]="4"
         class="w-full cancellation-reason-input">
       </textarea>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="closeCancelDialog()">Retour</app-button>
+        <app-button variant="outline" (click)="closeCancelDialog()" i18n="@@purchase-orders.purchase-order-detail.retour.e5befb1f">Retour</app-button>
         <app-button
           variant="danger"
           icon="pi-times"
           iconPos="left"
           [disabled]="!cancellationReason.trim()"
-          (click)="submitCancelOrder()">
-          Annuler la commande
-        </app-button>
+          (click)="submitCancelOrder()" i18n="@@purchase-orders.purchase-order-detail.annuler.la.commande.187515f7"> Annuler la commande </app-button>
       </ng-template>
     </p-dialog>
 
@@ -539,12 +527,12 @@ import {
       margin-bottom: var(--spacing-4);
 
       &.draft-guidance {
-        border-left: 4px solid var(--color-warning-500);
+        border-inline-start: 4px solid var(--color-warning-500);
         background: var(--color-warning-50, #fef3c7);
       }
 
       &.confirmed-guidance {
-        border-left: 4px solid var(--color-info-500);
+        border-inline-start: 4px solid var(--color-info-500);
         background: var(--color-info-50, #eff6ff);
 
         .guidance-icon {
@@ -570,7 +558,7 @@ import {
       }
 
       &.partial-guidance {
-        border-left: 4px solid var(--color-warning-500);
+        border-inline-start: 4px solid var(--color-warning-500);
         background: var(--color-warning-50, #fef3c7);
 
         .guidance-icon {
@@ -651,6 +639,11 @@ import {
   `]
 })
 export class PurchaseOrderDetailComponent implements OnInit {
+  readonly loc_ui_tern_commande_9798ea = $localize`:@@ui.tern.commande.9798ea:Commande `;
+  readonly loc_ui_tern_envoi_5a377e = $localize`:@@ui.tern.envoi.5a377e:Envoi...`;
+  readonly loc_ui_tern_envoyer_par_email_535086 = $localize`:@@ui.tern.envoyer.par.email.535086:Envoyer par email`;
+  readonly loc_ui_tern_confirmation_a1e29f = $localize`:@@ui.tern.confirmation.a1e29f:Confirmation...`;
+  readonly loc_ui_tern_confirmer_80a664 = $localize`:@@ui.tern.confirmer.80a664:Confirmer`;
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly poService = inject(PurchaseOrderService);
@@ -674,9 +667,9 @@ export class PurchaseOrderDetailComponent implements OnInit {
   createSupplierInvoiceModal?: CreateSupplierInvoiceModalComponent;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Bons de commande', route: '/purchase-orders' },
-    { label: 'Détail' }
+    { label: $localize`:@@purchase-orders.purchase-order-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@purchase-orders.purchase-order-detail.ts.bons.de.commande.aae719f0:Bons de commande`, route: '/purchase-orders' },
+    { label: $localize`:@@purchase-orders.purchase-order-detail.ts.detail.7ce06afc:Détail` }
   ];
 
   ngOnInit(): void {
@@ -693,8 +686,8 @@ export class PurchaseOrderDetailComponent implements OnInit {
             this.loading.set(false);
             this.toastService.add({
               severity: 'warn',
-              summary: 'Statut inconnu',
-              detail: 'Le statut de cette commande est non reconnu. Veuillez actualiser ou contacter le support.'
+              summary: $localize`:@@purchase-order-detail.component.summary.Statut_inconnu:Statut inconnu`,
+              detail: $localize`:@@purchase-order-detail.component.detail.Le_statut_de_cet:Le statut de cette commande est non reconnu. Veuillez actualiser ou contacter le support.`
             });
             console.warn('[PurchaseOrderDetail] Unknown purchase order status received from API', {
               orderId: response.data.id,
@@ -705,8 +698,8 @@ export class PurchaseOrderDetailComponent implements OnInit {
 
           this.po.set(normalizedData);
           this.breadcrumbItems = [
-            { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-            { label: 'Bons de commande', route: '/purchase-orders' },
+            { label: $localize`:@@purchase-orders.purchase-order-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+            { label: $localize`:@@purchase-orders.purchase-order-detail.ts.bons.de.commande.aae719f0:Bons de commande`, route: '/purchase-orders' },
             { label: response.data.number }
           ];
           this.loadLinkedReceipts(normalizedData.id);
@@ -715,7 +708,7 @@ export class PurchaseOrderDetailComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toastService.add({ severity: 'error', summary: 'Erreur', detail: 'Commande introuvable' });
+        this.toastService.add({ severity: 'error', summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`, detail: $localize`:@@purchase-order-detail.component.detail.Commande_introuv:Commande introuvable` });
         this.router.navigate(['/purchase-orders']);
       }
     });
@@ -773,18 +766,18 @@ export class PurchaseOrderDetailComponent implements OnInit {
     if (!order || this.confirming() || order.status !== PurchaseOrderStatus.Draft) return;
 
     this.confirmationService.confirm({
-      message: `Êtes-vous sûr de vouloir confirmer la commande ${order.number} ? Cette action est irréversible.`,
-      header: 'Confirmer la commande',
+      message: $localize`:@@purchase-orders.purchase-order-detail.ts.etes.vous.sur.de.vouloir.confirmer.la.co.fe2ec3e1:Êtes-vous sûr de vouloir confirmer la commande ${order.number}:number: ? Cette action est irréversible.`,
+      header: $localize`:@@purchase-orders.purchase-order-detail.ts.confirmer.la.commande.3af7f44c:Confirmer la commande`,
       icon: 'pi pi-check-circle',
-      acceptLabel: 'Confirmer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@purchase-order-detail.component.acceptLabel.Confirmer:Confirmer`,
+      rejectLabel: $localize`:@@purchase-order-detail.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.confirming.set(true);
         this.poService.confirmPurchaseOrder(order.id).subscribe({
           next: (response) => {
             this.confirming.set(false);
             if (response.success) {
-              this.toastService.add({ severity: 'success', summary: 'Succès', detail: 'Commande confirmée' });
+              this.toastService.add({ severity: 'success', summary: $localize`:@@purchase-order-detail.component.summary.Succès:Succès`, detail: $localize`:@@purchase-order-detail.component.detail.Commande_confirm:Commande confirmée` });
               this.loadOrder(order.id);
             }
           },
@@ -815,12 +808,12 @@ export class PurchaseOrderDetailComponent implements OnInit {
       next: (response) => {
         if (response.success) {
           this.closeCancelDialog();
-          this.toastService.add({ severity: 'success', summary: 'Succès', detail: 'Commande annulée' });
+          this.toastService.add({ severity: 'success', summary: $localize`:@@purchase-order-detail.component.summary.Succès:Succès`, detail: $localize`:@@purchase-order-detail.component.detail.Commande_annul_e:Commande annulée` });
           this.loadOrder(order.id);
         }
       },
       error: (err) => {
-        this.toastService.add({ severity: 'error', summary: 'Erreur', detail: err?.error?.errors?.[0] || 'Erreur' });
+        this.toastService.add({ severity: 'error', summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`, detail: err?.error?.errors?.[0] || $localize`:@@purchase-orders.purchase-order-detail.ts.erreur.ab546c23:Erreur` });
       }
     });
   }
@@ -837,10 +830,10 @@ export class PurchaseOrderDetailComponent implements OnInit {
         link.download = `BC_${order.number}.pdf`;
         link.click();
         window.URL.revokeObjectURL(url);
-        this.toastService.add({ severity: 'success', summary: 'PDF', detail: 'Téléchargement lancé' });
+        this.toastService.add({ severity: 'success', summary: $localize`:@@purchase-order-detail.component.summary.PDF:PDF`, detail: $localize`:@@purchase-order-detail.component.detail.T_l_chargement_l:Téléchargement lancé` });
       },
       error: () => {
-        this.toastService.add({ severity: 'error', summary: 'Erreur', detail: 'Impossible de générer le PDF' });
+        this.toastService.add({ severity: 'error', summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`, detail: $localize`:@@purchase-order-detail.component.detail.impossible.de.generer.le.pdf.c4657cf1:Impossible de générer le PDF` });
       }
     });
   }
@@ -851,30 +844,30 @@ export class PurchaseOrderDetailComponent implements OnInit {
     if (!order.supplier.email) {
       this.toastService.add({
         severity: 'warn',
-        summary: 'Email manquant',
-        detail: "Le fournisseur n'a pas d'adresse email."
+        summary: $localize`:@@purchase-order-detail.component.summary.Email_manquant:Email manquant`,
+        detail: $localize`:@@purchase-order-detail.component.detail.Lefournisseurnapasd:Le fournisseur n'a pas d'adresse email.`
       });
       return;
     }
 
     this.confirmationService.confirm({
-      message: `Envoyer le bon de commande ${order.number} par email à ${order.supplier.email} ?`,
-      header: 'Envoi par email',
+      message: $localize`:@@purchase-orders.purchase-order-detail.ts.envoyer.le.bon.de.commande.number.par.em.0711897f:Envoyer le bon de commande ${order.number}:number: par email à ${order.supplier.email}:email: ?`,
+      header: $localize`:@@purchase-orders.purchase-order-detail.ts.envoi.par.email.65d7d5ad:Envoi par email`,
       icon: 'pi pi-envelope',
-      acceptLabel: 'Envoyer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@purchase-order-detail.component.acceptLabel.Envoyer:Envoyer`,
+      rejectLabel: $localize`:@@purchase-order-detail.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.sending.set(true);
         this.poService.sendByEmail(order.id).subscribe({
           next: (response) => {
             this.sending.set(false);
             if (response.success) {
-              this.toastService.add({ severity: 'success', summary: 'Envoyé', detail: `Email envoyé à ${order.supplier.email}` });
+              this.toastService.add({ severity: 'success', summary: $localize`:@@purchase-order-detail.component.summary.Envoy_:Envoyé`, detail: $localize`:@@purchase-orders.purchase-order-detail.ts.email.envoye.a.email.855da228:Email envoyé à ${order.supplier.email}:email:` });
             }
           },
           error: (err) => {
             this.sending.set(false);
-            this.toastService.add({ severity: 'error', summary: 'Erreur', detail: err?.error?.errors?.[0] || 'Erreur lors de l\'envoi' });
+            this.toastService.add({ severity: 'error', summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`, detail: err?.error?.errors?.[0] || $localize`:@@purchase-orders.purchase-order-detail.ts.erreur.lors.de.l.envoi.f5a1c0f0:Erreur lors de l'envoi` });
           }
         });
       }
@@ -890,8 +883,8 @@ export class PurchaseOrderDetailComponent implements OnInit {
         if (!prefillRes.success || !prefillRes.data) {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: prefillRes.message || 'Impossible de préparer la facture'
+            summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`,
+            detail: prefillRes.message || $localize`:@@purchase-orders.purchase-order-detail.ts.impossible.de.preparer.la.facture.a10c22ae:Impossible de préparer la facture`
           });
           return;
         }
@@ -907,8 +900,8 @@ export class PurchaseOrderDetailComponent implements OnInit {
       error: (err) => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: err?.error?.errors?.[0] || err?.error?.message || 'Impossible de préparer la facture'
+          summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`,
+          detail: err?.error?.errors?.[0] || err?.error?.message || $localize`:@@purchase-orders.purchase-order-detail.ts.impossible.de.preparer.la.facture.a10c22ae:Impossible de préparer la facture`
         });
       }
     });
@@ -947,8 +940,8 @@ export class PurchaseOrderDetailComponent implements OnInit {
           this.createSupplierInvoiceModal?.closeAfterSuccess();
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: `Facture fournisseur ${response.data.invoiceNumber} créée`
+            summary: $localize`:@@purchase-order-detail.component.summary.Succès:Succès`,
+            detail: $localize`:@@purchase-orders.purchase-order-detail.ts.facture.fournisseur.invoicenumber.creee.0fa763be:Facture fournisseur ${response.data.invoiceNumber}:invoiceNumber: créée`
           });
           void this.router.navigate(['/supplier-invoices', response.data.id]);
         }
@@ -963,12 +956,12 @@ export class PurchaseOrderDetailComponent implements OnInit {
         }
 
         this.createSupplierInvoiceModal?.setSubmitting(false);
-        const errorMsg = err?.error?.errors?.[0] ?? err?.error?.message ?? 'Erreur lors de la création';
+        const errorMsg = err?.error?.errors?.[0] ?? err?.error?.message ?? $localize`:@@ui.tern.erreur.lors.de.la.creation.18def0:Erreur lors de la création`;
         this.toastService.add({
           severity: 'error',
-          summary: isDuplicate ? 'Numéro en doublon' : 'Erreur',
+          summary: isDuplicate ? $localize`:@@ui.tern.numero.en.doublon.9aeb86:Numéro en doublon` : $localize`:@@ui.tern.erreur.ab546c:Erreur`,
           detail: isDuplicate
-            ? 'Impossible de créer la facture : le numéro proposé est également indisponible. Réessayez ou saisissez un numéro.'
+            ? $localize`:@@ui.tern.impossible.de.creer.la.facture.le.numero.p.379737:Impossible de créer la facture : le numéro proposé est également indisponible. Réessayez ou saisissez un numéro.`
             : errorMsg
         });
       }
@@ -993,8 +986,8 @@ export class PurchaseOrderDetailComponent implements OnInit {
       modal.setSubmitting(false);
       this.toastService.add({
         severity: 'error',
-        summary: 'Erreur',
-        detail: 'Impossible de générer un nouveau numéro de facture. Veuillez réessayer.'
+        summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`,
+        detail: $localize`:@@purchase-order-detail.component.detail.impossible.de.generer.un.nouveau.numero.de.factu.72ff9457:Impossible de générer un nouveau numéro de facture. Veuillez réessayer.`
       });
       return;
     }
@@ -1019,8 +1012,8 @@ export class PurchaseOrderDetailComponent implements OnInit {
     // For now, just show a success message
     this.toastService.add({
       severity: 'info',
-      summary: 'Email envoyé',
-      detail: 'La facture fournisseur a été envoyée par email'
+      summary: $localize`:@@purchase-order-detail.component.summary.Email_envoy_:Email envoyé`,
+      detail: $localize`:@@purchase-order-detail.component.detail.La_facture_fourn:La facture fournisseur a été envoyée par email`
     });
   }
 
@@ -1029,25 +1022,25 @@ export class PurchaseOrderDetailComponent implements OnInit {
     if (!order) return;
 
     this.confirmationService.confirm({
-      message: `Êtes-vous sûr de vouloir supprimer définitivement la commande brouillon ${order.number} ? Cette action est irréversible.`,
-      header: 'Supprimer la commande',
+      message: $localize`:@@purchase-orders.purchase-order-detail.ts.etes.vous.sur.de.vouloir.supprimer.defin.00e8751d:Êtes-vous sûr de vouloir supprimer définitivement la commande brouillon ${order.number}:number: ? Cette action est irréversible.`,
+      header: $localize`:@@purchase-orders.purchase-order-detail.ts.supprimer.la.commande.aa625d48:Supprimer la commande`,
       icon: 'pi pi-trash',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@purchase-order-detail.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@purchase-order-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.poService.deletePurchaseOrder(order.id).subscribe({
           next: (response) => {
             if (response.success) {
-              this.toastService.add({ severity: 'success', summary: 'Succès', detail: 'Commande supprimée' });
+              this.toastService.add({ severity: 'success', summary: $localize`:@@purchase-order-detail.component.summary.Succès:Succès`, detail: $localize`:@@purchase-order-detail.component.detail.Commande_supprim:Commande supprimée` });
               this.router.navigate(['/purchase-orders']);
             }
           },
           error: (err) => {
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
-              detail: err?.error?.errors?.[0] || 'Impossible de supprimer cette commande'
+              summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`,
+              detail: err?.error?.errors?.[0] || $localize`:@@purchase-orders.purchase-order-detail.ts.impossible.de.supprimer.cette.commande.e4d56c73:Impossible de supprimer cette commande`
             });
           }
         });

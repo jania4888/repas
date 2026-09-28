@@ -14,9 +14,9 @@ import { POS_PASSENGER_CLIENT_EMAIL } from '../../constants/pos-client.constants
   template: `
     <div class="client-selector">
       <div class="client-selector__header">
-        <span class="client-selector__label">Client</span>
+        <span class="client-selector__label" i18n="@@pos.components.client.1bdd79b1">Client</span>
         @if (posState.client()) {
-          <button class="client-selector__clear" (click)="clearClient()" title="Client passager">
+          <button class="client-selector__clear" (click)="clearClient()" title="Client passager" i18n-title="@@pos.components.client.passager.c0cf7273">
             <i class="pi pi-times"></i>
           </button>
         }
@@ -34,18 +34,18 @@ import { POS_PASSENGER_CLIENT_EMAIL } from '../../constants/pos-client.constants
               <span class="client-selector__client-nif">{{ client.nif }}</span>
             }
             @if (posState.clientOutstanding(); as out) {
-              <span class="client-selector__outstanding" [class.client-selector__outstanding--over]="out.isOverLimit">
+              <span class="client-selector__outstanding" [class.client-selector__outstanding--over]="out.isOverLimit"><ng-container i18n="@@pos.components.encours.tnd.41261043">
                 Encours {{ posState.formatAmount(out.totalOutstanding) }} TND
-                @if (out.creditLimit != null) {
+                </ng-container>@if (out.creditLimit != null) {<ng-container i18n="@@pos.components.plafond.61dd3dd1">
                   / plafond {{ posState.formatAmount(out.creditLimit) }}
-                }
-                @if (out.isOverLimit) {
+                </ng-container>}
+                @if (out.isOverLimit) {<ng-container i18n="@@pos.components.plafond.depasse.e83bd54a">
                   — plafond dépassé
-                }
+                </ng-container>}
               </span>
             }
           </div>
-          <button class="client-selector__edit" (click)="openSearch()" title="Changer de client">
+          <button class="client-selector__edit" (click)="openSearch()" title="Changer de client" i18n-title="@@pos.components.changer.de.client.b170ee3b">
             <i class="pi pi-pencil"></i>
           </button>
         </div>
@@ -55,8 +55,8 @@ import { POS_PASSENGER_CLIENT_EMAIL } from '../../constants/pos-client.constants
             <i class="pi pi-user"></i>
           </div>
           <div class="client-selector__walkin-info">
-            <span class="client-selector__walkin-label">Client passager</span>
-            <span class="client-selector__walkin-hint">Cliquez pour selectionner un client</span>
+            <span class="client-selector__walkin-label" i18n="@@pos.components.client.passager.c0cf7273">Client passager</span>
+            <span class="client-selector__walkin-hint" i18n="@@pos.components.cliquez.pour.selectionner.un.client.33e3e8cb">Cliquez pour selectionner un client</span>
           </div>
           <i class="pi pi-chevron-right client-selector__walkin-arrow"></i>
         </button>
@@ -70,7 +70,7 @@ import { POS_PASSENGER_CLIENT_EMAIL } from '../../constants/pos-client.constants
               <input
                 #clientSearchInput
                 type="text"
-                placeholder="Rechercher par nom, NIF, email ou code CLI-..."
+                placeholder="Rechercher par nom, NIF, email ou code CLI-..." i18n-placeholder="@@pos.components.rechercher.par.nom.nif.email.ou.code.cli.035fe923"
                 [ngModel]="searchQuery()"
                 (ngModelChange)="onSearchChange($event)"
                 (keydown.escape)="closeSearch()"
@@ -81,13 +81,13 @@ import { POS_PASSENGER_CLIENT_EMAIL } from '../../constants/pos-client.constants
               @if (searching()) {
                 <div class="client-selector__dropdown-loading">
                   <i class="pi pi-spin pi-spinner"></i>
-                  <span>Recherche en cours...</span>
+                  <span i18n="@@pos.components.recherche.en.cours.4d9c778d">Recherche en cours...</span>
                 </div>
               } @else if (results().length === 0 && searchQuery()) {
                 <div class="client-selector__dropdown-empty">
                   <i class="pi pi-users"></i>
-                  <span>Aucun client trouve</span>
-                  <span class="client-selector__dropdown-empty-hint">Essayez avec un autre terme de recherche</span>
+                  <span i18n="@@pos.components.aucun.client.trouve.75476dc7">Aucun client trouve</span>
+                  <span class="client-selector__dropdown-empty-hint" i18n="@@pos.components.essayez.avec.un.autre.terme.de.recherche.4a727703">Essayez avec un autre terme de recherche</span>
                 </div>
               } @else {
                 @for (client of results(); track client.id) {
@@ -240,7 +240,7 @@ import { POS_PASSENGER_CLIENT_EMAIL } from '../../constants/pos-client.constants
       background: var(--color-neutral-50);
       cursor: pointer;
       transition: all 300ms ease;
-      text-align: left;
+      text-align: start;
       font-family: var(--font-family);
     }
 
@@ -396,7 +396,7 @@ import { POS_PASSENGER_CLIENT_EMAIL } from '../../constants/pos-client.constants
       background: transparent;
       cursor: pointer;
       transition: background 200ms ease;
-      text-align: left;
+      text-align: start;
       font-family: var(--font-family);
     }
 

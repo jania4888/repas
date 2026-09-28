@@ -9,34 +9,34 @@ import { CommercialProfitReportRow } from '@core/services/reports-api.service';
   imports: [CommonModule, TableModule],
   template: `
     @if (loading) {
-      <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i> Chargement...</div>
+      <div class="loading-placeholder" i18n="@@reports.profit.chargement.4bf1fb6b"><i class="pi pi-spin pi-spinner"></i> Chargement...</div>
     } @else if (!rows.length) {
-      <div class="empty-placeholder"><i class="pi pi-info-circle"></i> Aucune donnée pour cette période.</div>
+      <div class="empty-placeholder" i18n="@@reports.profit.aucune.donnee.pour.cette.periode.174260ce"><i class="pi pi-info-circle"></i> Aucune donnée pour cette période.</div>
     } @else {
-      <div role="region" [attr.aria-label]="mode === 'line' ? 'Bénéfice par ligne' : mode === 'piece' ? 'Bénéfice par pièce' : mode === 'product' ? 'Bénéfice par produit' : 'Bénéfice mensuel'">
+      <div role="region" [attr.aria-label]="mode === 'line' ? loc_ui_tern_benefice_par_ligne_fbe640 : mode === 'piece' ? loc_ui_tern_benefice_par_piece_929041 : mode === 'product' ? loc_ui_tern_benefice_par_produit_2e34eb : loc_ui_tern_benefice_mensuel_65f82a">
         <p-table [value]="rows" styleClass="p-datatable-sm reports-table">
         <ng-template pTemplate="header">
           <tr>
             @if (mode === 'line') {
-              <th>Produit</th>
-              <th>Facture</th>
-              <th>Date</th>
+              <th i18n="@@reports.profit.produit.ff673dc2">Produit</th>
+              <th i18n="@@reports.profit.facture.3953b9f5">Facture</th>
+              <th i18n="@@reports.profit.date.eb9a4bc1">Date</th>
             }
             @if (mode === 'piece') {
-              <th>Facture</th>
-              <th>Date</th>
+              <th i18n="@@reports.profit.facture.3953b9f5">Facture</th>
+              <th i18n="@@reports.profit.date.eb9a4bc1">Date</th>
             }
             @if (mode === 'product') {
-              <th>Produit</th>
-              <th>Code</th>
+              <th i18n="@@reports.profit.produit.ff673dc2">Produit</th>
+              <th i18n="@@reports.profit.code.adac6937">Code</th>
             }
             @if (mode === 'month') {
-              <th>Période</th>
+              <th i18n="@@reports.profit.periode.de2110b7">Période</th>
             }
-            <th class="text-right">Quantité</th>
-            <th class="text-right">CA net HT</th>
-            <th class="text-right">Coût</th>
-            <th class="text-right">Bénéfice</th>
+            <th class="text-right" i18n="@@reports.profit.quantite.09a38fda">Quantité</th>
+            <th class="text-right" i18n="@@reports.profit.ca.net.ht.6fe960cc">CA net HT</th>
+            <th class="text-right" i18n="@@reports.profit.cout.4a4aa395">Coût</th>
+            <th class="text-right" i18n="@@reports.profit.benefice.111823af">Bénéfice</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row>
@@ -69,7 +69,7 @@ import { CommercialProfitReportRow } from '@core/services/reports-api.service';
   `,
   styles: [`
     .loading-placeholder, .empty-placeholder { padding: var(--spacing-8); text-align: center; color: var(--color-text-secondary); }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .amount { font-family: 'JetBrains Mono', monospace; font-weight: var(--font-weight-semibold); }
     .profit-negative { color: var(--color-error-600, #dc2626); }
     :host ::ng-deep .reports-table .p-datatable-thead > tr > th { background: var(--color-neutral-50); font-size: var(--font-size-sm); text-transform: uppercase; padding: var(--spacing-4) var(--spacing-3); }
@@ -77,6 +77,10 @@ import { CommercialProfitReportRow } from '@core/services/reports-api.service';
   `]
 })
 export class ProfitTableComponent {
+  readonly loc_ui_tern_benefice_par_ligne_fbe640 = $localize`:@@ui.tern.benefice.par.ligne.fbe640:Bénéfice par ligne`;
+  readonly loc_ui_tern_benefice_par_piece_929041 = $localize`:@@ui.tern.benefice.par.piece.929041:Bénéfice par pièce`;
+  readonly loc_ui_tern_benefice_par_produit_2e34eb = $localize`:@@ui.tern.benefice.par.produit.2e34eb:Bénéfice par produit`;
+  readonly loc_ui_tern_benefice_mensuel_65f82a = $localize`:@@ui.tern.benefice.mensuel.65f82a:Bénéfice mensuel`;
   @Input() rows: CommercialProfitReportRow[] = [];
   @Input() loading = false;
   @Input() mode: 'piece' | 'line' | 'product' | 'month' = 'product';

@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal, computed, ViewChild } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -29,6 +31,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
   selector: 'app-purchase-receipt-detail',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule, RouterModule, FormsModule, CurrencyPipe, DatePipe,
     TagModule, TableModule, ToastModule, DialogModule, Textarea,
     PageHeaderComponent, BreadcrumbComponent, ButtonComponent, StatusBadgeComponent,
@@ -40,94 +43,84 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
     @if (loading()) {
       <div class="loading-container">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-        <p>Chargement...</p>
+        <p i18n="@@purchase-receipts.pages.chargement.a209b664">Chargement...</p>
       </div>
     } @else if (receipt()) {
       <app-page-header
-        [title]="'Réception ' + receipt()!.number"
+        [title]="loc_reception_number_0f769f(receipt()!.number)"
         [subtitle]="receipt()!.supplier.name">
         <div class="header-actions">
           <app-button variant="outline" icon="pi-arrow-left" iconPos="left"
-            routerLink="/purchase-receipts">
-            Retour
-          </app-button>
+            routerLink="/purchase-receipts" i18n="@@purchase-receipts.pages.retour.e5befb1f"> Retour </app-button>
 
           <app-button variant="outline" icon="pi-file-pdf" iconPos="left"
             [disabled]="downloadingPdf()"
             (clicked)="downloadPdf()">
-            {{ downloadingPdf() ? 'PDF…' : 'PDF' }}
+            <ng-container i18n="@@purchase-receipts.pages.sel.pdf.pdf.a5f843cb">{!!(downloadingPdf()), select, true {PDF…} other {PDF}}</ng-container>
           </app-button>
 
           @if (canEdit()) {
             <app-button variant="outline" icon="pi-pencil" iconPos="left"
-              [routerLink]="['/purchase-receipts', receipt()!.id, 'edit']">
-              Modifier
-            </app-button>
+              [routerLink]="['/purchase-receipts', receipt()!.id, 'edit']" i18n="@@purchase-receipts.pages.modifier.f260e757"> Modifier </app-button>
           }
 
           @if (canValidate()) {
             <app-button variant="primary" icon="pi-verified" iconPos="left"
               [disabled]="validating()"
               (clicked)="validate()">
-              {{ validating() ? 'Validation…' : 'Valider' }}
+              <ng-container i18n="@@purchase-receipts.pages.sel.validation.valider.ed0aee37">{!!(validating()), select, true {Validation…} other {Valider}}</ng-container>
             </app-button>
           }
 
           @if (canCreateSupplierInvoice()) {
             <app-button variant="primary" icon="pi-money-bill" iconPos="left"
-              (clicked)="openCreateSupplierInvoice()">
-              Créer facture fournisseur
-            </app-button>
+              (clicked)="openCreateSupplierInvoice()" i18n="@@purchase-receipts.pages.creer.facture.fournisseur.4a82949b"> Créer facture fournisseur </app-button>
           }
 
           @if (canCancel()) {
             <app-button variant="outline" icon="pi-times" iconPos="left"
-              (clicked)="openCancelDialog()">
-              Annuler
-            </app-button>
+              (clicked)="openCancelDialog()" i18n="@@purchase-receipts.pages.annuler.49ba3292"> Annuler </app-button>
           }
 
           @if (canDelete()) {
             <app-button variant="danger" icon="pi-trash" iconPos="left"
-              (clicked)="deleteReceipt()">
-              Supprimer
-            </app-button>
+              (clicked)="deleteReceipt()" i18n="@@purchase-receipts.pages.supprimer.1acfc1c7"> Supprimer </app-button>
           }
         </div>
       </app-page-header>
 
       <div class="detail-grid">
         <div class="detail-card">
-          <h3 class="card-title"><i class="pi pi-file"></i> Informations générales</h3>
+          <h3 class="card-title" i18n="@@purchase-receipts.pages.informations.generales.b89a6e35"><i class="pi pi-file"></i> Informations générales</h3>
           <div class="info-grid">
             <div class="info-item">
-              <span class="label">Numéro</span>
+              <span class="label" i18n="@@purchase-receipts.pages.numero.15e73db0">Numéro</span>
               <span class="value mono">{{ receipt()!.number }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Date</span>
+              <span class="label" i18n="@@purchase-receipts.pages.date.eb9a4bc1">Date</span>
               <span class="value">{{ receipt()!.receiptDate | date:'dd/MM/yyyy' }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Statut</span>
+              <span class="label" i18n="@@purchase-receipts.pages.statut.659499f3">Statut</span>
               <app-status-badge
                 [status]="statusBadge()"
-                [label]="receipt()!.statusDisplay">
+                [label]="receipt()!.statusDisplay | backendLabel">
               </app-status-badge>
             </div>
             <div class="info-item">
-              <span class="label">Entrepôt</span>
+              <span class="label" i18n="@@purchase-receipts.pages.entrepot.c349c0bc">Entrepôt</span>
               <span class="value">{{ receipt()!.warehouseName || '—' }}</span>
             </div>
             @if (receipt()!.supplierReference) {
               <div class="info-item">
-                <span class="label">Réf. fournisseur</span>
+                <span class="label" i18n="@@purchase-receipts.pages.ref.fournisseur.98507c4b">Réf. fournisseur</span>
                 <span class="value">{{ receipt()!.supplierReference }}</span>
               </div>
             }
             @if (receipt()!.purchaseOrderId) {
               <div class="info-item">
-                <span class="label">Bon de commande</span>
+                <span class="label" i18n="@@purchase-receipts.pages.bon.de.commande.4b9aea29">Bon de commande</span>
                 <a [routerLink]="['/purchase-orders', receipt()!.purchaseOrderId]" class="value link">
                   {{ receipt()!.purchaseOrderNumber }}
                 </a>
@@ -135,7 +128,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
             }
             @if (receipt()!.isPartialRelativeToOrdered) {
               <div class="info-item">
-                <span class="label">Réception</span>
+                <span class="label" i18n="@@purchase-receipts.pages.reception.36e23897">Réception</span>
                 <p-tag value="Partielle" severity="warn"></p-tag>
               </div>
             }
@@ -143,17 +136,17 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
         </div>
 
         <div class="detail-card">
-          <h3 class="card-title"><i class="pi pi-building"></i> Fournisseur</h3>
+          <h3 class="card-title" i18n="@@purchase-receipts.pages.fournisseur.35691c73"><i class="pi pi-building"></i> Fournisseur</h3>
           <div class="info-grid">
             <div class="info-item">
-              <span class="label">Nom</span>
+              <span class="label" i18n="@@purchase-receipts.pages.nom.7ff20370">Nom</span>
               <a [routerLink]="['/suppliers', receipt()!.supplier.id]" class="value link">
                 {{ receipt()!.supplier.name }}
               </a>
             </div>
             @if (receipt()!.supplier.email) {
               <div class="info-item">
-                <span class="label">Email</span>
+                <span class="label" i18n="@@purchase-receipts.pages.email.84add5b2">Email</span>
                 <a [href]="'mailto:' + receipt()!.supplier.email" class="value link">
                   {{ receipt()!.supplier.email }}
                 </a>
@@ -161,13 +154,13 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
             }
             @if (receipt()!.transporterName) {
               <div class="info-item">
-                <span class="label">Transporteur</span>
+                <span class="label" i18n="@@purchase-receipts.pages.transporteur.7adadb36">Transporteur</span>
                 <span class="value">{{ receipt()!.transporterName }}</span>
               </div>
             }
             @if (receipt()!.deliveryNoteNumber) {
               <div class="info-item">
-                <span class="label">N° BL</span>
+                <span class="label" i18n="@@purchase-receipts.pages.n.bl.f3b7f6bc">N° BL</span>
                 <span class="value">{{ receipt()!.deliveryNoteNumber }}</span>
               </div>
             }
@@ -175,19 +168,19 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
         </div>
 
         <div class="detail-card full-width">
-          <h3 class="card-title"><i class="pi pi-list"></i> Articles reçus</h3>
+          <h3 class="card-title" i18n="@@purchase-receipts.pages.articles.recus.728eb9ac"><i class="pi pi-list"></i> Articles reçus</h3>
           <p-table [value]="receipt()!.lines" styleClass="p-datatable-sm" [rowHover]="true">
             <ng-template pTemplate="header">
               <tr>
-                <th style="width: 50px">#</th>
-                <th>Article</th>
-                <th style="width: 80px">Unité</th>
-                <th style="width: 100px">Qté commandée</th>
-                <th style="width: 100px">Qté reçue</th>
-                <th style="width: 120px">Prix unitaire HT</th>
-                <th style="width: 80px">Remise</th>
-                <th style="width: 80px">TVA</th>
-                <th style="width: 120px">Total HT</th>
+                <th style="width: 50px" i18n="@@purchase-receipts.pages.text.d08f88df">#</th>
+                <th i18n="@@purchase-receipts.pages.article.4360c2dc">Article</th>
+                <th style="width: 80px" i18n="@@purchase-receipts.pages.unite.388fd9c4">Unité</th>
+                <th style="width: 100px" i18n="@@purchase-receipts.pages.qte.commandee.8c1ee02c">Qté commandée</th>
+                <th style="width: 100px" i18n="@@purchase-receipts.pages.qte.recue.ec07cbe1">Qté reçue</th>
+                <th style="width: 120px" i18n="@@purchase-receipts.pages.prix.unitaire.ht.bb3f8e39">Prix unitaire HT</th>
+                <th style="width: 80px" i18n="@@purchase-receipts.pages.remise.ce12d942">Remise</th>
+                <th style="width: 80px" i18n="@@purchase-receipts.pages.tva.fb62cb5d">TVA</th>
+                <th style="width: 120px" i18n="@@purchase-receipts.pages.total.ht.2ca17ae6">Total HT</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-line>
@@ -206,7 +199,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
                 <td class="text-center">
                   {{ line.discountPercent ? (line.discountPercent | number:'1.0-2') + ' %' : '—' }}
                 </td>
-                <td class="text-center">{{ line.vatRateDisplay }}</td>
+                <td class="text-center">{{ line.vatRateDisplay | backendLabel }}</td>
                 <td class="text-right amount">{{ line.subTotal | currency:'TND':'symbol':'1.3-3' }}</td>
               </tr>
             </ng-template>
@@ -214,15 +207,15 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
 
           <div class="totals-section">
             <div class="total-row">
-              <span>Sous-total HT</span>
+              <span i18n="@@purchase-receipts.pages.sous.total.ht.724598f6">Sous-total HT</span>
               <span class="amount">{{ receipt()!.subTotal | currency:'TND':'symbol':'1.3-3' }}</span>
             </div>
             <div class="total-row">
-              <span>TVA</span>
+              <span i18n="@@purchase-receipts.pages.tva.fb62cb5d">TVA</span>
               <span class="amount">{{ receipt()!.totalVat | currency:'TND':'symbol':'1.3-3' }}</span>
             </div>
             <div class="total-row grand-total">
-              <span>Total TTC</span>
+              <span i18n="@@purchase-receipts.pages.total.ttc.9e80ff7c">Total TTC</span>
               <span class="amount">{{ receipt()!.totalTTC | currency:'TND':'symbol':'1.3-3' }}</span>
             </div>
           </div>
@@ -230,14 +223,14 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
 
         @if (receipt()!.notes) {
           <div class="detail-card full-width">
-            <h3 class="card-title"><i class="pi pi-file-edit"></i> Notes</h3>
+            <h3 class="card-title" i18n="@@purchase-receipts.pages.notes.e4c25cd5"><i class="pi pi-file-edit"></i> Notes</h3>
             <p class="notes-text">{{ receipt()!.notes }}</p>
           </div>
         }
 
         @if (receipt()!.attachments.length) {
           <div class="detail-card full-width">
-            <h3 class="card-title"><i class="pi pi-paperclip"></i> Pièces jointes</h3>
+            <h3 class="card-title" i18n="@@purchase-receipts.pages.pieces.jointes.85090279"><i class="pi pi-paperclip"></i> Pièces jointes</h3>
             <ul class="attachments-list">
               @for (att of receipt()!.attachments; track att.id) {
                 <li>
@@ -252,13 +245,13 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
 
         @if (receipt()!.linkedSupplierInvoices && receipt()!.linkedSupplierInvoices!.length > 0) {
           <div class="detail-card full-width">
-            <h3 class="card-title"><i class="pi pi-money-bill"></i> Factures fournisseur liées</h3>
+            <h3 class="card-title" i18n="@@purchase-receipts.pages.factures.fournisseur.liees.7d6114da"><i class="pi pi-money-bill"></i> Factures fournisseur liées</h3>
             <ul class="linked-invoices">
               @for (inv of receipt()!.linkedSupplierInvoices!; track inv.id) {
                 <li>
                   <a [routerLink]="['/supplier-invoices', inv.id]" class="value link">{{ inv.invoiceNumber }}</a>
                   <span class="date">{{ inv.invoiceDate | date:'dd/MM/yyyy' }}</span>
-                  <p-tag [value]="inv.statusDisplay" severity="info"></p-tag>
+                  <p-tag [value]="inv.statusDisplay | backendLabel" severity="info"></p-tag>
                   <span class="amount">{{ inv.totalTTC | currency:'TND':'symbol':'1.3-3' }}</span>
                 </li>
               }
@@ -268,10 +261,10 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
 
         @if (receipt()!.cancellationReason) {
           <div class="detail-card full-width cancelled-card">
-            <h3 class="card-title"><i class="pi pi-exclamation-triangle"></i> Motif d'annulation</h3>
+            <h3 class="card-title" i18n="@@purchase-receipts.pages.motif.d.annulation.8ea42493"><i class="pi pi-exclamation-triangle"></i> Motif d'annulation</h3>
             <p class="notes-text">{{ receipt()!.cancellationReason }}</p>
             @if (receipt()!.cancelledAt) {
-              <p class="cancelled-date">Annulé le {{ receipt()!.cancelledAt | date:'dd/MM/yyyy HH:mm' }}</p>
+              <p class="cancelled-date" i18n="@@purchase-receipts.pages.annule.le.947527e8">Annulé le {{ receipt()!.cancelledAt | date:'dd/MM/yyyy HH:mm' }}</p>
             }
           </div>
         }
@@ -279,32 +272,28 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
     }
 
     <p-dialog
-      header="Annuler le bon de réception"
+      header="Annuler le bon de réception" i18n-header="@@purchase-receipts.pages.annuler.le.bon.de.reception.8e64ea8c"
       [(visible)]="cancelDialogVisible"
       [modal]="true"
       [style]="{ width: '450px' }"
       [draggable]="false"
       [resizable]="false">
-      <p class="dialog-message">
-        Indiquez le motif d'annulation. Si le bon était validé, le stock et les quantités du BC seront contrepassés.
-      </p>
+      <p class="dialog-message" i18n="@@purchase-receipts.pages.indiquez.le.motif.d.annulation.si.le.bon.etait.v.0b7f771f"> Indiquez le motif d'annulation. Si le bon était validé, le stock et les quantités du BC seront contrepassés. </p>
       <textarea
         pTextarea
         [(ngModel)]="cancellationReason"
-        placeholder="Motif d'annulation…"
+        placeholder="Motif d'annulation…" i18n-placeholder="@@purchase-receipts.pages.motif.d.annulation.7df7a5ee"
         [rows]="4"
         class="w-full">
       </textarea>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (clicked)="cancelDialogVisible = false">Retour</app-button>
+        <app-button variant="outline" (clicked)="cancelDialogVisible = false" i18n="@@purchase-receipts.pages.retour.e5befb1f">Retour</app-button>
         <app-button
           variant="danger"
           icon="pi-times"
           iconPos="left"
           [disabled]="!cancellationReason.trim() || cancelling()"
-          (clicked)="submitCancel()">
-          Confirmer l'annulation
-        </app-button>
+          (clicked)="submitCancel()" i18n="@@purchase-receipts.pages.confirmer.l.annulation.92040a54"> Confirmer l'annulation </app-button>
       </ng-template>
     </p-dialog>
 
@@ -481,7 +470,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
     }
 
     .linked-invoices .amount {
-      margin-left: auto;
+      margin-inline-start: auto;
       font-family: 'JetBrains Mono', monospace;
     }
 
@@ -497,6 +486,10 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
   `]
 })
 export class PurchaseReceiptDetailComponent implements OnInit {
+  protected loc_reception_number_0f769f(p0: unknown): string {
+    return $localize`:@@purchase-receipts.purchase-receipt-detail.tpl.reception.number.0f769fdc:Réception ${p0}:number:`;
+  }
+
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private receiptService = inject(PurchaseReceiptService);
@@ -518,9 +511,9 @@ export class PurchaseReceiptDetailComponent implements OnInit {
   createSupplierInvoiceModal?: CreateSupplierInvoiceModalComponent;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Bons de réception', route: '/purchase-receipts' },
-    { label: 'Détail' }
+    { label: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.bons.de.reception.84d6ebb5:Bons de réception`, route: '/purchase-receipts' },
+    { label: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.detail.7ce06afc:Détail` }
   ];
 
   canEdit = computed(() => {
@@ -583,8 +576,8 @@ export class PurchaseReceiptDetailComponent implements OnInit {
         if (!res.success || !res.data) {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: 'Bon de réception introuvable'
+            summary: $localize`:@@purchase-receipt-detail.component.summary.Erreur:Erreur`,
+            detail: $localize`:@@purchase-receipt-detail.component.detail.bon.de.reception.introuvable.ddf6c47b:Bon de réception introuvable`
           });
           this.router.navigate(['/purchase-receipts']);
           return;
@@ -594,8 +587,8 @@ export class PurchaseReceiptDetailComponent implements OnInit {
         if (!mapped) {
           this.toastService.add({
             severity: 'warn',
-            summary: 'Statut inconnu',
-            detail: 'Impossible d\'afficher ce bon de réception.'
+            summary: $localize`:@@purchase-receipt-detail.component.summary.Statut_inconnu:Statut inconnu`,
+            detail: $localize`:@@purchase-receipt-detail.component.detail.Impossible_d_aff:Impossible d'afficher ce bon de réception.`
           });
           this.router.navigate(['/purchase-receipts']);
           return;
@@ -603,8 +596,8 @@ export class PurchaseReceiptDetailComponent implements OnInit {
 
         this.receipt.set(mapped);
         this.breadcrumbItems = [
-          { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-          { label: 'Bons de réception', route: '/purchase-receipts' },
+          { label: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+          { label: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.bons.de.reception.84d6ebb5:Bons de réception`, route: '/purchase-receipts' },
           { label: mapped.number }
         ];
         this.loading.set(false);
@@ -613,8 +606,8 @@ export class PurchaseReceiptDetailComponent implements OnInit {
         this.loading.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de charger le bon de réception'
+          summary: $localize`:@@purchase-receipt-detail.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@purchase-receipt-detail.component.detail.Impossible_de_ch:Impossible de charger le bon de réception`
         });
         this.router.navigate(['/purchase-receipts']);
       }
@@ -639,8 +632,8 @@ export class PurchaseReceiptDetailComponent implements OnInit {
         this.downloadingPdf.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de télécharger le PDF'
+          summary: $localize`:@@purchase-receipt-detail.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@purchase-receipt-detail.component.detail.Impossible d:Impossible de télécharger le PDF`
         });
       }
     });
@@ -653,19 +646,19 @@ export class PurchaseReceiptDetailComponent implements OnInit {
     if (this.hasTrackedLines(r)) {
       this.toastService.add({
         severity: 'info',
-        summary: 'Traçabilité requise',
-        detail: 'Renseignez les numéros de lot ou de série sur la page de modification avant validation.'
+        summary: $localize`:@@purchase-receipt-detail.component.summary.Traçabilité :Traçabilité requise`,
+        detail: $localize`:@@purchase-receipt-detail.component.detail.Renseignez_les_n:Renseignez les numéros de lot ou de série sur la page de modification avant validation.`
       });
       void this.router.navigate(['/purchase-receipts', r.id, 'edit']);
       return;
     }
 
     this.confirmationService.confirm({
-      message: 'Valider cette réception ? Le stock sera mis à jour et les quantités du bon de commande seront imputées.',
-      header: 'Valider la réception',
+      message: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.valider.cette.reception.le.stock.sera.mi.6c3a9af0:Valider cette réception ? Le stock sera mis à jour et les quantités du bon de commande seront imputées.`,
+      header: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.valider.la.reception.7e156958:Valider la réception`,
       icon: 'pi pi-verified',
-      acceptLabel: 'Valider',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@purchase-receipt-detail.component.acceptLabel.Valider:Valider`,
+      rejectLabel: $localize`:@@purchase-receipt-detail.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.validating.set(true);
         this.receiptService.validatePurchaseReceipt(r.id).subscribe({
@@ -674,8 +667,8 @@ export class PurchaseReceiptDetailComponent implements OnInit {
             if (res.success) {
               this.toastService.add({
                 severity: 'success',
-                summary: 'Validé',
-                detail: 'Bon de réception validé'
+                summary: $localize`:@@purchase-receipt-detail.component.summary.Validé:Validé`,
+                detail: $localize`:@@purchase-receipt-detail.component.detail.bon.de.reception.valide.afed974c:Bon de réception validé`
               });
               this.load(r.id);
             }
@@ -684,8 +677,8 @@ export class PurchaseReceiptDetailComponent implements OnInit {
             this.validating.set(false);
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
-              detail: this.errorHandler.extractErrorMessage(err) || 'Échec de la validation'
+              summary: $localize`:@@purchase-receipt-detail.component.summary.Erreur:Erreur`,
+              detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@purchase-receipts.purchase-receipt-detail.ts.echec.de.la.validation.d6fffafe:Échec de la validation`
             });
           }
         });
@@ -717,8 +710,8 @@ export class PurchaseReceiptDetailComponent implements OnInit {
         if (res.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Annulé',
-            detail: 'Bon de réception annulé'
+            summary: $localize`:@@purchase-receipt-detail.component.summary.Annul_:Annulé`,
+            detail: $localize`:@@purchase-receipt-detail.component.detail.bon.de.reception.annule.1b36efb2:Bon de réception annulé`
           });
           this.load(r.id);
         }
@@ -727,8 +720,8 @@ export class PurchaseReceiptDetailComponent implements OnInit {
         this.cancelling.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: err?.error?.errors?.[0] || 'Échec de l\'annulation'
+          summary: $localize`:@@purchase-receipt-detail.component.summary.Erreur:Erreur`,
+          detail: err?.error?.errors?.[0] || $localize`:@@purchase-receipts.purchase-receipt-detail.ts.echec.de.l.annulation.897a46f6:Échec de l'annulation`
         });
       }
     });
@@ -739,11 +732,11 @@ export class PurchaseReceiptDetailComponent implements OnInit {
     if (!r) return;
 
     this.confirmationService.confirm({
-      message: 'Supprimer définitivement ce brouillon ?',
-      header: 'Supprimer',
+      message: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.supprimer.definitivement.ce.brouillon.c9471a55:Supprimer définitivement ce brouillon ?`,
+      header: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.supprimer.1acfc1c7:Supprimer`,
       icon: 'pi pi-trash',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@purchase-receipt-detail.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@purchase-receipt-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.receiptService.deletePurchaseReceipt(r.id).subscribe({
@@ -751,8 +744,8 @@ export class PurchaseReceiptDetailComponent implements OnInit {
             if (res.success) {
               this.toastService.add({
                 severity: 'success',
-                summary: 'Supprimé',
-                detail: 'Bon de réception supprimé'
+                summary: $localize`:@@purchase-receipt-detail.component.summary.Supprimé:Supprimé`,
+                detail: $localize`:@@purchase-receipt-detail.component.detail.bon.de.reception.supprime.3fd82393:Bon de réception supprimé`
               });
               this.router.navigate(['/purchase-receipts']);
             }
@@ -760,8 +753,8 @@ export class PurchaseReceiptDetailComponent implements OnInit {
           error: (err) => {
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
-              detail: err?.error?.errors?.[0] || 'Échec de la suppression'
+              summary: $localize`:@@purchase-receipt-detail.component.summary.Erreur:Erreur`,
+              detail: err?.error?.errors?.[0] || $localize`:@@purchase-receipts.purchase-receipt-detail.ts.echec.de.la.suppression.bfcbda57:Échec de la suppression`
             });
           }
         });
@@ -778,8 +771,8 @@ export class PurchaseReceiptDetailComponent implements OnInit {
         if (!prefillRes.success || !prefillRes.data) {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: prefillRes.message || 'Impossible de préparer la facture'
+            summary: $localize`:@@purchase-receipt-detail.component.summary.Erreur:Erreur`,
+            detail: prefillRes.message || $localize`:@@purchase-receipts.purchase-receipt-detail.ts.impossible.de.preparer.la.facture.a10c22ae:Impossible de préparer la facture`
           });
           return;
         }
@@ -795,8 +788,8 @@ export class PurchaseReceiptDetailComponent implements OnInit {
       error: (err) => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: err?.error?.errors?.[0] || 'Impossible de préparer la facture'
+          summary: $localize`:@@purchase-receipt-detail.component.summary.Erreur:Erreur`,
+          detail: err?.error?.errors?.[0] || $localize`:@@purchase-receipts.purchase-receipt-detail.ts.impossible.de.preparer.la.facture.a10c22ae:Impossible de préparer la facture`
         });
       }
     });
@@ -838,8 +831,8 @@ export class PurchaseReceiptDetailComponent implements OnInit {
           this.createSupplierInvoiceModal?.closeAfterSuccess();
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: `Facture fournisseur ${response.data.invoiceNumber} créée`
+            summary: $localize`:@@purchase-receipt-detail.component.summary.Succès:Succès`,
+            detail: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.facture.fournisseur.invoicenumber.creee.0fa763be:Facture fournisseur ${response.data.invoiceNumber}:invoiceNumber: créée`
           });
           void this.router.navigate(['/supplier-invoices', response.data.id]);
         }
@@ -855,12 +848,12 @@ export class PurchaseReceiptDetailComponent implements OnInit {
         }
 
         this.createSupplierInvoiceModal?.setSubmitting(false);
-        const errorMsg = err?.error?.errors?.[0] ?? err?.error?.message ?? 'Erreur lors de la création';
+        const errorMsg = err?.error?.errors?.[0] ?? err?.error?.message ?? $localize`:@@purchase-receipts.purchase-receipt-detail.ts.erreur.lors.de.la.creation.18def0de:Erreur lors de la création`;
         this.toastService.add({
           severity: 'error',
-          summary: isDuplicate ? 'Numéro en doublon' : 'Erreur',
+          summary: isDuplicate ? $localize`:@@purchase-receipts.purchase-receipt-detail.ts.numero.en.doublon.9aeb86ca:Numéro en doublon` : $localize`:@@purchase-receipts.purchase-receipt-detail.ts.erreur.ab546c23:Erreur`,
           detail: isDuplicate
-            ? 'Impossible de créer la facture : le numéro proposé est également indisponible. Réessayez ou saisissez un numéro.'
+            ? $localize`:@@purchase-receipts.purchase-receipt-detail.ts.impossible.de.creer.la.facture.le.numero.379737f7:Impossible de créer la facture : le numéro proposé est également indisponible. Réessayez ou saisissez un numéro.`
             : errorMsg
         });
       }
@@ -885,8 +878,8 @@ export class PurchaseReceiptDetailComponent implements OnInit {
       modal.setSubmitting(false);
       this.toastService.add({
         severity: 'error',
-        summary: 'Erreur',
-        detail: 'Impossible de générer un nouveau numéro de facture. Veuillez réessayer.'
+        summary: $localize`:@@purchase-receipt-detail.component.summary.Erreur:Erreur`,
+        detail: $localize`:@@purchase-receipt-detail.component.detail.Impossible_de_g_:Impossible de générer un nouveau numéro de facture. Veuillez réessayer.`
       });
       return;
     }

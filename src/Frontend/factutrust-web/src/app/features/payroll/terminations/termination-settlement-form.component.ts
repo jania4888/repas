@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -15,14 +16,14 @@ import { ToastService } from '@core/services/toast.service';
 import { PayrollAmountPipe } from '../shared';
 
 const TERMINATION_REASONS = [
-  { label: 'Licenciement', value: 'Dismissal' },
-  { label: 'Démission', value: 'Resignation' },
-  { label: 'Retraite', value: 'Retirement' },
-  { label: 'Rupture conventionnelle', value: 'MutualAgreement' },
-  { label: 'Faute grave', value: 'GrossMisconduct' },
-  { label: 'Fin de CDD', value: 'EndOfCdd' },
-  { label: 'Fin de SIVP', value: 'EndOfSivp' },
-  { label: 'Décès', value: 'Death' }
+  { label: $localize`:@@payroll.termination-settlement-form.ts.licenciement.98b453ba:Licenciement`, value: 'Dismissal' },
+  { label: $localize`:@@payroll.termination-settlement-form.ts.demission.d349fc6a:Démission`, value: 'Resignation' },
+  { label: $localize`:@@payroll.termination-settlement-form.ts.retraite.016b1837:Retraite`, value: 'Retirement' },
+  { label: $localize`:@@payroll.termination-settlement-form.ts.rupture.conventionnelle.2411a14a:Rupture conventionnelle`, value: 'MutualAgreement' },
+  { label: $localize`:@@payroll.termination-settlement-form.ts.faute.grave.4defb954:Faute grave`, value: 'GrossMisconduct' },
+  { label: $localize`:@@payroll.termination-settlement-form.ts.fin.de.cdd.f9698c6a:Fin de CDD`, value: 'EndOfCdd' },
+  { label: $localize`:@@payroll.termination-settlement-form.ts.fin.de.sivp.5d4d37f3:Fin de SIVP`, value: 'EndOfSivp' },
+  { label: $localize`:@@payroll.termination-settlement-form.ts.deces.acee1bf3:Décès`, value: 'Death' }
 ];
 
 function toIsoDate(value: Date | null | undefined): string {
@@ -41,57 +42,57 @@ function toIsoDate(value: Date | null | undefined): string {
     PageHeaderComponent, ButtonComponent, FormSectionComponent, PayrollAmountPipe
   ],
   template: `
-    <app-page-header title="Solde de tout compte" subtitle="Calcul et enregistrement des indemnités de rupture.">
-      <app-button variant="outline" (click)="back()">Retour</app-button>
-      <app-button variant="outline" icon="pi-calculator" [disabled]="!employeeId" (click)="preview()">Calculer</app-button>
-      <app-button variant="primary" icon="pi-save" [disabled]="!previewData()" (click)="save(false)">Enregistrer</app-button>
-      <app-button variant="primary" icon="pi-check" [disabled]="!previewData()" (click)="save(true)">Enregistrer et approuver</app-button>
+    <app-page-header title="Solde de tout compte" i18n-title="@@payroll.terminations.solde.de.tout.compte.93fc3ea6" subtitle="Calcul et enregistrement des indemnités de rupture." i18n-subtitle="@@payroll.terminations.calcul.et.enregistrement.des.indemnites.bb3c1bbe">
+      <app-button variant="outline" (click)="back()" i18n="@@payroll.terminations.retour.e5befb1f">Retour</app-button>
+      <app-button variant="outline" icon="pi-calculator" [disabled]="!employeeId" (click)="preview()" i18n="@@payroll.terminations.calculer.29705857">Calculer</app-button>
+      <app-button variant="primary" icon="pi-save" [disabled]="!previewData()" (click)="save(false)" i18n="@@payroll.terminations.enregistrer.f7c8bcd8">Enregistrer</app-button>
+      <app-button variant="primary" icon="pi-check" [disabled]="!previewData()" (click)="save(true)" i18n="@@payroll.terminations.enregistrer.et.approuver.c70c70df">Enregistrer et approuver</app-button>
     </app-page-header>
 
-    <app-form-section title="Informations" icon="pi-user" [number]="1">
+    <app-form-section title="Informations" i18n-title="@@payroll.terminations.informations.54937b3a" icon="pi-user" [number]="1">
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Salarié</label>
+          <label i18n="@@payroll.terminations.salarie.27f97915">Salarié</label>
           <p-select [options]="employees()" optionLabel="fullName" optionValue="id" [(ngModel)]="employeeId" [filter]="true" styleClass="w-full" />
         </div>
         <div class="payroll-form-group">
-          <label>Date de sortie</label>
+          <label i18n="@@payroll.terminations.date.de.sortie.a963425d">Date de sortie</label>
           <p-datepicker [(ngModel)]="terminationDate" dateFormat="dd/mm/yy" [showIcon]="true" styleClass="w-full" />
         </div>
         <div class="payroll-form-group">
-          <label>Motif</label>
+          <label i18n="@@payroll.terminations.motif.2a198f47">Motif</label>
           <p-select [options]="reasonOptions" optionLabel="label" optionValue="value" [(ngModel)]="reason" styleClass="w-full" />
         </div>
       </div>
     </app-form-section>
 
     @if (previewData(); as p) {
-      <app-form-section title="Prévisualisation (art. 22bis CDT)" icon="pi-calculator" [number]="2">
+      <app-form-section title="Prévisualisation (art. 22bis CDT)" i18n-title="@@payroll.terminations.previsualisation.art.22bis.cdt.a60d1732" icon="pi-calculator" [number]="2">
         <dl class="payroll-detail-grid">
-          <dt>Ancienneté</dt><dd>{{ p.seniorityMonths }} mois ({{ p.indemnityDays }} jours)</dd>
-          <dt>Salaire de référence</dt><dd>{{ p.grossMonthlyReference | payrollAmount }}</dd>
-          <dt>Indemnité légale</dt><dd>{{ p.legalIndemnityAmount | payrollAmount }}</dd>
+          <dt i18n="@@payroll.terminations.anciennete.166e0461">Ancienneté</dt><dd i18n="@@payroll.terminations.mois.jours.b8e7ca69">{{ p.seniorityMonths }} mois ({{ p.indemnityDays }} jours)</dd>
+          <dt i18n="@@payroll.terminations.salaire.de.reference.6998cec5">Salaire de référence</dt><dd>{{ p.grossMonthlyReference | payrollAmount }}</dd>
+          <dt i18n="@@payroll.terminations.indemnite.legale.54c7c286">Indemnité légale</dt><dd>{{ p.legalIndemnityAmount | payrollAmount }}</dd>
         </dl>
         <div class="payroll-form-row mt-3">
           <div class="payroll-form-group">
-            <label>Indemnité légale (ajustée)</label>
+            <label i18n="@@payroll.terminations.indemnite.legale.ajustee.878b2302">Indemnité légale (ajustée)</label>
             <p-inputNumber [(ngModel)]="legalIndemnity" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
           </div>
           <div class="payroll-form-group">
-            <label>Indemnité de préavis</label>
+            <label i18n="@@payroll.terminations.indemnite.de.preavis.8c4bdc1d">Indemnité de préavis</label>
             <p-inputNumber [(ngModel)]="noticeIndemnity" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
           </div>
           <div class="payroll-form-group">
-            <label>Congés non consommés</label>
+            <label i18n="@@payroll.terminations.conges.non.consommes.1b9fed81">Congés non consommés</label>
             <p-inputNumber [(ngModel)]="unusedLeave" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
           </div>
           <div class="payroll-form-group">
-            <label>Autres indemnités</label>
+            <label i18n="@@payroll.terminations.autres.indemnites.d87ca5d2">Autres indemnités</label>
             <p-inputNumber [(ngModel)]="otherIndemnity" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
           </div>
         </div>
         <div class="payroll-form-group mt-2">
-          <label>Notes</label>
+          <label i18n="@@payroll.terminations.notes.70440046">Notes</label>
           <textarea pTextarea [(ngModel)]="notes" rows="3" class="w-full"></textarea>
         </div>
       </app-form-section>
@@ -130,7 +131,7 @@ export class TerminationSettlementFormComponent implements OnInit {
         this.previewData.set(res.data ?? null);
         if (res.data) this.legalIndemnity = res.data.legalIndemnityAmount;
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Solde de rupture', detail: err?.error?.message ?? 'Calcul impossible.' })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@termination-settlement-form.component.summary.Solde de rup:Solde de rupture`, detail: err?.error?.message ?? $localize`:@@ui.tern.calcul.impossible.4c6059:Calcul impossible.` })
     });
   }
 
@@ -151,8 +152,8 @@ export class TerminationSettlementFormComponent implements OnInit {
       notes: this.notes || undefined,
       approve
     }).subscribe({
-      next: () => { this.toast.add({ severity: 'success', summary: 'Solde de rupture', detail: 'Solde enregistré.' }); this.router.navigate(['/payroll/terminations']); },
-      error: err => this.toast.add({ severity: 'error', summary: 'Solde de rupture', detail: err?.error?.message ?? 'Enregistrement impossible.' })
+      next: () => { this.toast.add({ severity: 'success', summary: $localize`:@@termination-settlement-form.component.summary.Solde de rup:Solde de rupture`, detail: $localize`:@@termination-settlement-form.component.detail.Solde_enregistr_:Solde enregistré.` }); this.router.navigate(['/payroll/terminations']); },
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@termination-settlement-form.component.summary.Solde de rup:Solde de rupture`, detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.` })
     });
   }
 

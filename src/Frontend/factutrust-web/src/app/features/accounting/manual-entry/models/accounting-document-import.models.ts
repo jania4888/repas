@@ -143,12 +143,12 @@ export interface DocumentImportCapabilities {
 export function extractionMethodLabel(method: ExtractionMethod): string {
   switch (method) {
     case 'native-pdf':
-      return 'Lecture directe du PDF (aucune analyse IA nécessaire)';
+      return $localize`:@@accounting.accounting-document-import.ts.lecture.directe.du.pdf.aucune.analyse.ia.c260d0a2:Lecture directe du PDF (aucune analyse IA nécessaire)`;
     case 'llm-text':
-      return 'Analyse IA du texte du document';
+      return $localize`:@@accounting.accounting-document-import.ts.analyse.ia.du.texte.du.document.d5e78bfb:Analyse IA du texte du document`;
     case 'llm-vision':
-      return 'Analyse IA visuelle (document scanné ou photographié)';
+      return $localize`:@@accounting.accounting-document-import.ts.analyse.ia.visuelle.document.scanne.ou.p.3f8c2dca:Analyse IA visuelle (document scanné ou photographié)`;
     default:
-      return 'Méthode inconnue';
+      return $localize`:@@accounting.accounting-document-import.ts.methode.inconnue.a2ec5941:Méthode inconnue`;
   }
 }

@@ -46,7 +46,7 @@
 
         .required {
             color: var(--color-error-600);
-            margin-left: var(--spacing-1);
+            margin-inline-start: var(--spacing-1);
         }
     }
 
@@ -126,7 +126,7 @@
     th,
     td {
         padding: var(--spacing-4);
-        text-align: left;
+        text-align: start;
         border-bottom: 1px solid var(--color-border-subtle);
     }
 
@@ -139,7 +139,7 @@
     th.col-qty,
     td.col-qty {
         width: 140px;
-        text-align: right;
+        text-align: end;
     }
 
     td.theoretical {
@@ -182,7 +182,7 @@
 
     .p-inputnumber-input {
         width: 100%;
-        text-align: right;
+        text-align: end;
     }
 }
 

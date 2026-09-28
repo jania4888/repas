@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
     "resolveJsonModule": true,
-    "types": ["jasmine"]
+    "types": ["jasmine", "@angular/localize"]
   },
   "include": [
     "src/**/*.spec.ts",

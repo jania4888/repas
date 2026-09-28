@@ -1,14 +1,14 @@
 <div class="wizard-step" [formGroup]="form">
-  <h3 class="step-title">1. Type de société</h3>
+  <h3 class="step-title" i18n="@@auth.register-wizard.1.type.de.societe.55f9c122">1. Type de société</h3>
 
   <div class="choice-grid">
     <div class="choice-col">
       <div class="sec-head">
         <span class="sec-num">1</span>
-        <h4>Choisissez le segment de votre société</h4>
+        <h4 i18n="@@auth.register-wizard.choisissez.le.segment.de.votre.societe.6e6dd8bf">Choisissez le segment de votre société</h4>
       </div>
 
-      <div class="seg-grid" role="radiogroup" aria-label="Segment de société">
+      <div class="seg-grid" role="radiogroup" aria-label="Segment de société" i18n-aria-label="@@auth.register-wizard.segment.de.societe.57042228">
         @for (segment of segments; track segment.code) {
           <div
             class="seg-card"
@@ -30,7 +30,7 @@
       </div>
 
       @if (form.get('companySegment')?.invalid && form.get('companySegment')?.touched) {
-        <div class="field-error" role="alert" @fadeInOut>
+        <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register-wizard.veuillez.choisir.un.segment.de.societe.bd688761">
           <i class="pi pi-info-circle"></i> Veuillez choisir un segment de société
         </div>
       }
@@ -38,8 +38,8 @@
       <div class="hint-bar">
         <span class="hint-ico"><i class="pi pi-question-circle" aria-hidden="true"></i></span>
         <div>
-          <b>Vous ne trouvez pas votre segment&nbsp;?</b>
-          <p>Vous pourrez affiner le paramétrage et personnaliser les modules après l'inscription.</p>
+          <b i18n="@@auth.register-wizard.vous.ne.trouvez.pas.votre.segment.nbsp.1b9b4f30">Vous ne trouvez pas votre segment&nbsp;?</b>
+          <p i18n="@@auth.register-wizard.vous.pourrez.affiner.le.parametrage.et.personnal.bbae6fd9">Vous pourrez affiner le paramétrage et personnaliser les modules après l'inscription.</p>
         </div>
       </div>
     </div>
@@ -47,7 +47,7 @@
     <div class="choice-col">
       <div class="sec-head">
         <span class="sec-num">2</span>
-        <h4>Sélectionnez votre domaine d'activité</h4>
+        <h4 i18n="@@auth.register-wizard.selectionnez.votre.domaine.d.activite.c86e103d">Sélectionnez votre domaine d'activité</h4>
       </div>
 
       @if (filteredDomainsChipLabel) {
@@ -57,7 +57,7 @@
       @if (domainClearedNotice) {
         <div class="domain-notice" role="status" aria-live="polite" @fadeInOut>
           <span class="notice-ico"><i class="pi pi-info-circle" aria-hidden="true"></i></span>
-          <p>
+          <p i18n="@@auth.register-wizard.votre.domaine.precedent.n.est.plus.propo.0912f227">
             <b>Votre domaine précédent n'est plus proposé pour ce segment.</b>
             Votre sélection a été effacée — choisissez un domaine adapté au segment {{ selectedSegmentLabel }} ci-dessous.
           </p>
@@ -67,14 +67,14 @@
       @if (domainsDisabled) {
         <div class="dom-grid--placeholder" id="dom-placeholder-hint" role="status" aria-live="polite">
           <span class="ph-ico"><i class="pi pi-arrow-left" aria-hidden="true"></i></span>
-          <b>Choisissez d'abord un segment pour voir les domaines adaptés</b>
-          <p>La liste des domaines d'activité s'adaptera automatiquement au segment sélectionné.</p>
+          <b i18n="@@auth.register-wizard.choisissez.d.abord.un.segment.pour.voir.les.doma.4fa84741">Choisissez d'abord un segment pour voir les domaines adaptés</b>
+          <p i18n="@@auth.register-wizard.la.liste.des.domaines.d.activite.s.adaptera.auto.bf5434d8">La liste des domaines d'activité s'adaptera automatiquement au segment sélectionné.</p>
         </div>
       } @else {
         <div
           class="dom-grid"
           role="radiogroup"
-          aria-label="Domaine d'activité">
+          aria-label="Domaine d'activité" i18n-aria-label="@@auth.register-wizard.domaine.d.activite.2582f8ea">
           @for (domain of domains; track domain.code) {
             <label
               class="dom-item"
@@ -97,13 +97,13 @@
         @if (showNoSpecificDomainHint) {
           <div class="hint-bar hint-bar--muted" @fadeInOut>
             <span class="hint-ico"><i class="pi pi-info-circle" aria-hidden="true"></i></span>
-            <p>Aucun domaine spécifique — choisissez « Autre domaine ».</p>
+            <p i18n="@@auth.register-wizard.aucun.domaine.specifique.choisissez.autre.domain.c021d2cd">Aucun domaine spécifique — choisissez « Autre domaine ».</p>
           </div>
         }
       }
 
       @if (form.get('businessDomain')?.invalid && form.get('businessDomain')?.touched) {
-        <div class="field-error" role="alert" @fadeInOut>
+        <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register-wizard.veuillez.choisir.un.domaine.d.activite.69cdab85">
           <i class="pi pi-info-circle"></i> Veuillez choisir un domaine d'activité
         </div>
       }
@@ -111,8 +111,8 @@
       <div class="smart-callout">
         <span class="smart-ico"><i class="pi pi-sparkles" aria-hidden="true"></i></span>
         <div>
-          <div class="smart-title"><i class="pi pi-bolt" aria-hidden="true"></i> Configuration intelligente</div>
-          <p>En fonction de votre choix, nous activons automatiquement les modules et paramètres adaptés à votre secteur.</p>
+          <div class="smart-title" i18n="@@auth.register-wizard.configuration.intelligente.699dc027"><i class="pi pi-bolt" aria-hidden="true"></i> Configuration intelligente</div>
+          <p i18n="@@auth.register-wizard.en.fonction.de.votre.choix.nous.activons.automat.b021b04e">En fonction de votre choix, nous activons automatiquement les modules et paramètres adaptés à votre secteur.</p>
         </div>
       </div>
     </div>

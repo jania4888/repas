@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -27,19 +28,17 @@ import { DraftAdjustDialogComponent } from '../../components/draft-adjust-dialog
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Brouillons récurrents à valider"
-      subtitle="Factures générées automatiquement en attente d'émission">
+      title="Brouillons récurrents à valider" i18n-title="@@recurring-contracts.pages.brouillons.recurrents.a.valider.c7805948"
+      subtitle="Factures générées automatiquement en attente d'émission" i18n-subtitle="@@recurring-contracts.pages.factures.generees.automatiquement.en.att.6d6311e5">
       <div class="actions">
-        <app-button variant="outline" icon="pi-arrow-left" routerLink="/recurring-contracts">
-          Retour aux contrats
-        </app-button>
+        <app-button variant="outline" icon="pi-arrow-left" routerLink="/recurring-contracts" i18n="@@recurring-contracts.pages.retour.aux.contrats.9ac8a08b"> Retour aux contrats </app-button>
         @if (canTriggerBilling()) {
           <app-button
             variant="primary"
             icon="pi-bolt"
             [disabled]="generating()"
             (clicked)="generateDrafts()">
-            {{ generating() ? 'Génération…' : 'Générer les brouillons' }}
+            {{ generating() ? loc_ui_tern_generation_ce4e34 : loc_ui_tern_generer_les_brouillons_0079bf }}
           </app-button>
         }
       </div>
@@ -50,16 +49,16 @@ import { DraftAdjustDialogComponent } from '../../components/draft-adjust-dialog
     } @else if (loadError()) {
       <app-empty-state
         icon="pi-exclamation-triangle"
-        title="Impossible de charger les brouillons"
-        description="Une erreur est survenue lors du chargement."
-        actionLabel="Réessayer"
+        title="Impossible de charger les brouillons" i18n-title="@@recurring-contracts.pages.impossible.de.charger.les.brouillons.d7425042"
+        description="Une erreur est survenue lors du chargement." i18n-description="@@recurring-contracts.pages.une.erreur.est.survenue.lors.du.chargeme.1e0a5d6a"
+        actionLabel="Réessayer" i18n-actionLabel="@@recurring-contracts.pages.reessayer.b885e20c"
         (actionClick)="reload()">
       </app-empty-state>
     } @else if (drafts().length === 0) {
       <app-empty-state
         icon="pi-check-circle"
-        title="Aucun brouillon en attente"
-        description="Les prochaines factures générées automatiquement apparaîtront ici."
+        title="Aucun brouillon en attente" i18n-title="@@recurring-contracts.pages.aucun.brouillon.en.attente.35529f78"
+        description="Les prochaines factures générées automatiquement apparaîtront ici." i18n-description="@@recurring-contracts.pages.les.prochaines.factures.generees.automat.b4a66b17"
         [showAction]="false">
       </app-empty-state>
     } @else {
@@ -67,11 +66,11 @@ import { DraftAdjustDialogComponent } from '../../components/draft-adjust-dialog
         <p-table [value]="drafts()" styleClass="p-datatable-sm" [rowHover]="true">
           <ng-template pTemplate="header">
             <tr>
-              <th>Contrat</th>
-              <th>Client</th>
-              <th>Période</th>
-              <th style="width: 140px">Montant</th>
-              <th style="width: 280px">Actions</th>
+              <th i18n="@@recurring-contracts.pages.contrat.d008bdd9">Contrat</th>
+              <th i18n="@@recurring-contracts.pages.client.1bdd79b1">Client</th>
+              <th i18n="@@recurring-contracts.pages.periode.de2110b7">Période</th>
+              <th style="width: 140px" i18n="@@recurring-contracts.pages.montant.4adcd9fc">Montant</th>
+              <th style="width: 280px" i18n="@@recurring-contracts.pages.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-d>
@@ -93,23 +92,19 @@ import { DraftAdjustDialogComponent } from '../../components/draft-adjust-dialog
                       icon="pi-check"
                       [disabled]="issuingId() === d.billingRunId"
                       (clicked)="confirmIssue(d)">
-                      {{ issuingId() === d.billingRunId ? 'Émission…' : 'Valider' }}
+                      {{ issuingId() === d.billingRunId ? loc_ui_tern_emission_f2fa21 : loc_ui_tern_valider_be4220 }}
                     </app-button>
                     <app-button
                       variant="ghost"
                       size="sm"
                       icon="pi-file-edit"
-                      (clicked)="openAdjust(d)">
-                      Ajuster
-                    </app-button>
+                      (clicked)="openAdjust(d)" i18n="@@recurring-contracts.pages.ajuster.b65f8ead"> Ajuster </app-button>
                   }
                   <app-button
                     variant="ghost"
                     size="sm"
                     icon="pi-eye"
-                    [routerLink]="['/recurring-contracts', d.recurringContractId]">
-                    Voir le contrat
-                  </app-button>
+                    [routerLink]="['/recurring-contracts', d.recurringContractId]" i18n="@@recurring-contracts.pages.voir.le.contrat.db7e606d"> Voir le contrat </app-button>
                 </div>
               </td>
             </tr>
@@ -147,6 +142,10 @@ import { DraftAdjustDialogComponent } from '../../components/draft-adjust-dialog
   `]
 })
 export class PendingDraftsComponent implements OnInit {
+  readonly loc_ui_tern_generation_ce4e34 = $localize`:@@ui.tern.generation.ce4e34:Génération…`;
+  readonly loc_ui_tern_generer_les_brouillons_0079bf = $localize`:@@ui.tern.generer.les.brouillons.0079bf:Générer les brouillons`;
+  readonly loc_ui_tern_emission_f2fa21 = $localize`:@@ui.tern.emission.f2fa21:Émission…`;
+  readonly loc_ui_tern_valider_be4220 = $localize`:@@ui.tern.valider.be4220:Valider`;
   private readonly service = inject(RecurringContractService);
   private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
@@ -165,9 +164,9 @@ export class PendingDraftsComponent implements OnInit {
   readonly canValidateInvoice = computed(() => this.auth.hasPermission(PERMISSIONS.invoices.create));
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Accueil', route: '/', icon: 'pi-home' },
-    { label: 'Contrats récurrents', route: '/recurring-contracts' },
-    { label: 'Brouillons à valider' }
+    { label: $localize`:@@recurring-contracts.pending-drafts.ts.accueil.a8ff8fd2:Accueil`, route: '/', icon: 'pi-home' },
+    { label: $localize`:@@recurring-contracts.pending-drafts.ts.contrats.recurrents.e773e54a:Contrats récurrents`, route: '/recurring-contracts' },
+    { label: $localize`:@@recurring-contracts.pending-drafts.ts.brouillons.a.valider.3fabaa45:Brouillons à valider` }
   ];
 
   readonly skeletonColumns: SkeletonColumn[] = [
@@ -196,7 +195,7 @@ export class PendingDraftsComponent implements OnInit {
         this.errorHandler.logError('RecurringContracts: pending drafts', err);
         this.toast.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@pending-drafts.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -210,11 +209,11 @@ export class PendingDraftsComponent implements OnInit {
 
   confirmIssue(draft: PendingRecurringDraft): void {
     this.confirmation.confirm({
-      header: 'Confirmer l\'émission',
-      message: 'Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l\'émission ?',
+      header: $localize`:@@recurring-contracts.pending-drafts.ts.confirmer.l.emission.15b190af:Confirmer l'émission`,
+      message: $localize`:@@recurring-contracts.pending-drafts.ts.une.fois.validee.cette.facture.ne.pourra.acdbf6bb:Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l'émission ?`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Émettre la facture',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@pending-drafts.component.acceptLabel.Émettre la f:Émettre la facture`,
+      rejectLabel: $localize`:@@pending-drafts.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-success',
       size: 'md',
       accept: () => this.issue(draft)
@@ -228,8 +227,8 @@ export class PendingDraftsComponent implements OnInit {
         this.generating.set(false);
         this.toast.add({
           severity: 'success',
-          summary: 'Génération terminée',
-          detail: `${count} brouillon(s) généré(s).`
+          summary: $localize`:@@pending-drafts.component.summary.G_n_ration_termi:Génération terminée`,
+          detail: $localize`:@@recurring-contracts.pending-drafts.ts.count.brouillon.s.genere.s.54b29e4d:${count}:count: brouillon(s) généré(s).`
         });
         this.reload();
       },
@@ -238,7 +237,7 @@ export class PendingDraftsComponent implements OnInit {
         this.errorHandler.logError('RecurringContracts: trigger billing', err);
         this.toast.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@pending-drafts.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -252,8 +251,8 @@ export class PendingDraftsComponent implements OnInit {
         this.issuingId.set(null);
         this.toast.add({
           severity: 'success',
-          summary: 'Facture émise',
-          detail: `Facture ${issued.invoiceNumber} émise.`
+          summary: $localize`:@@pending-drafts.component.summary.Facture émis:Facture émise`,
+          detail: $localize`:@@recurring-contracts.pending-drafts.ts.facture.invoicenumber.emise.07d601c8:Facture ${issued.invoiceNumber}:invoiceNumber: émise.`
         });
         this.reload();
       },
@@ -262,7 +261,7 @@ export class PendingDraftsComponent implements OnInit {
         this.errorHandler.logError('RecurringContracts: issue billing run', err);
         this.toast.add({
           severity: 'error',
-          summary: 'Émission impossible',
+          summary: $localize`:@@pending-drafts.component.summary._mission_impossi:Émission impossible`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }

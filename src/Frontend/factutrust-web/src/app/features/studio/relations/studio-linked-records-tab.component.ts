@@ -85,7 +85,7 @@ interface TargetOption { id: string; label: string; }
             }
           </div>
         } @empty {
-          <p class="studio-muted" data-testid="linked-empty">Aucune fiche liée.</p>
+          <p class="studio-muted" data-testid="linked-empty" i18n="@@studio.relations.aucune.fiche.liee.7d973884">Aucune fiche liée.</p>
         }
       }
     </section>

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -17,6 +18,7 @@ import { CompanyModuleDto, CompanyModulesService } from '@core/services/company-
 import { ModuleRecommendationsService, ModuleRecommendationDto } from '@core/services/module-recommendations.service';
 import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
 import { TenantUsersService } from '@core/services/tenant-users.service';
+import { backendDisplayLabel } from '@shared/pipes/backend-label.pipe';
 
 /**
  * Paramètres > Modules (plan v1 §2.2). Lets a tenant admin activate/deactivate
@@ -40,6 +42,10 @@ import { TenantUsersService } from '@core/services/tenant-users.service';
   styleUrl: './modules-settings.component.scss'
 })
 export class ModulesSettingsComponent implements OnInit, OnDestroy {
+  protected loc_activer_labelfr_ed496d(p0: unknown): string {
+    return $localize`:@@settings.modules-settings.tpl.activer.labelfr.ed496db0:Activer ${p0}:labelFr:`;
+  }
+
   private readonly modulesService = inject(CompanyModulesService);
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
@@ -49,9 +55,9 @@ export class ModulesSettingsComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Modules' }
+    { label: $localize`:@@settings.modules-settings.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.modules-settings.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.modules-settings.ts.modules.04e9462c:Modules` }
   ];
 
   readonly loading = signal(true);
@@ -115,7 +121,7 @@ export class ModulesSettingsComponent implements OnInit, OnDestroy {
           this.modules.set(res.data.modules);
           this.selectedIds.set(res.data.modules.filter(m => m.isEnabled).map(m => m.id));
         } else {
-          this.loadError.set(res.message || 'Impossible de charger les modules.');
+          this.loadError.set(res.message || $localize`:@@settings.modules-settings.ts.impossible.de.charger.les.modules.e56b7f1e:Impossible de charger les modules.`);
         }
         this.loading.set(false);
       },
@@ -150,9 +156,15 @@ export class ModulesSettingsComponent implements OnInit, OnDestroy {
     return this.usageRecommendations().find(r => r.moduleId === id)?.reasonFr ?? '';
   }
 
-  /** Label français d'un module à partir de son id (pour l'affichage du bandeau de recos). */
+  /** Nom affiché d'un module : `labelFr` de l'API, traduit hors français (FR inchangé). */
+  displayName(module: CompanyModuleDto): string {
+    return backendDisplayLabel(module.labelFr);
+  }
+
+  /** Nom affiché d'un module à partir de son id (pour l'affichage du bandeau de recos). */
   moduleLabel(id: AppModule): string {
-    return this.byId().get(id)?.labelFr ?? String(id);
+    const module = this.byId().get(id);
+    return module ? this.displayName(module) : String(id);
   }
 
   moduleIcon(id: AppModule): string {
@@ -178,8 +190,8 @@ export class ModulesSettingsComponent implements OnInit, OnDestroy {
   }
 
   dependencyLockLabel(id: AppModule): string {
-    const labels = this.dependentsOf(id).map(m => m.labelFr).join(', ');
-    return `Requis par ${labels}`;
+    const labels = this.dependentsOf(id).map(m => this.displayName(m)).join(', ');
+    return $localize`:@@settings.modules-settings.ts.requis.par.labels.1cfd4a45:Requis par ${labels}:labels:`;
   }
 
   wasAutoEnabled(id: AppModule): boolean {
@@ -201,7 +213,7 @@ export class ModulesSettingsComponent implements OnInit, OnDestroy {
   }
 
   planLockLabel(module: CompanyModuleDto): string {
-    return this.isPremiumLock(module) ? 'Plan supérieur requis' : 'Temporairement indisponible';
+    return this.isPremiumLock(module) ? $localize`:@@ui.tern.plan.superieur.requis.d9c212:Plan supérieur requis` : $localize`:@@ui.tern.temporairement.indisponible.ca38b2:Temporairement indisponible`;
   }
 
   toggleModule(module: CompanyModuleDto): void {
@@ -273,8 +285,8 @@ export class ModulesSettingsComponent implements OnInit, OnDestroy {
         if (!res.success || !res.data) {
           this.toastService.add({
             severity: 'error',
-            summary: 'Échec de la mise à jour',
-            detail: res.message || 'Impossible de mettre à jour les modules.'
+            summary: $localize`:@@modules-settings.component.summary.Échec de la :Échec de la mise à jour`,
+            detail: res.message || $localize`:@@settings.modules-settings.ts.impossible.de.mettre.a.jour.les.modules.dc20d027:Impossible de mettre à jour les modules.`
           });
           return;
         }
@@ -290,15 +302,15 @@ export class ModulesSettingsComponent implements OnInit, OnDestroy {
         if (warnings.length > 0) {
           this.toastService.add({
             severity: 'warn',
-            summary: 'Modules mis à jour avec avertissements',
+            summary: $localize`:@@modules-settings.component.summary.Modules_mis_jo:Modules mis à jour avec avertissements`,
             detail: warnings.join(' '),
             life: 8000
           });
         } else {
           this.toastService.add({
             severity: 'success',
-            summary: 'Modules mis à jour',
-            detail: 'Votre navigation a été actualisée.'
+            summary: $localize`:@@modules-settings.component.summary.Modules mis :Modules mis à jour`,
+            detail: $localize`:@@modules-settings.component.detail.Votre_navigation:Votre navigation a été actualisée.`
           });
         }
 
@@ -308,7 +320,7 @@ export class ModulesSettingsComponent implements OnInit, OnDestroy {
         this.saving.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Échec de la mise à jour',
+          summary: $localize`:@@modules-settings.component.summary.Échec de la :Échec de la mise à jour`,
           detail: this.errorHandler.extractErrorMessage(err),
           life: 8000
         });

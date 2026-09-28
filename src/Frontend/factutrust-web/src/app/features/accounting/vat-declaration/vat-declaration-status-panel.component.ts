@@ -10,29 +10,29 @@ import { formatDateTimeFr, statusClass, statusLabel } from './vat-declaration.vi
   template: `
     @if (declaration; as d) {
       <div class="card vat-zone-card">
-        <h3 class="vat-zone-title">2. Statut de la déclaration</h3>
-        <div class="vat-status-header">
+        <h3 class="vat-zone-title" i18n="@@accounting.vat-declaration.2.statut.de.la.declaration.8455bb1d">2. Statut de la déclaration</h3>
+        <div class="vat-status-header"><ng-container i18n="@@accounting.vat-declaration.version.77603db3">
           <span class="vat-status-badge" [class]="badgeClass">{{ badgeLabel }}</span>
           <span class="vat-version">Version {{ d.version }}</span>
-          @if (d.isRectificative) {
-            <span class="vat-rectificative">RECTIFICATIVE</span>
+          </ng-container>@if (d.isRectificative) {
+            <span class="vat-rectificative" i18n="@@accounting.vat-declaration.rectificative.886aa2ba">RECTIFICATIVE</span>
           }
         </div>
         <div class="vat-status-grid">
           <div class="vat-status-item">
-            <span class="vat-status-label">Créé le</span>
+            <span class="vat-status-label" i18n="@@accounting.vat-declaration.cree.le.046c02a0">Créé le</span>
             <span>{{ formatDateTime(d.createdAt) }}</span>
           </div>
           <div class="vat-status-item">
-            <span class="vat-status-label">Dernière modification</span>
+            <span class="vat-status-label" i18n="@@accounting.vat-declaration.derniere.modification.76b7837a">Dernière modification</span>
             <span>{{ formatDateTime(d.updatedAt) }}</span>
           </div>
           <div class="vat-status-item">
-            <span class="vat-status-label">Soumis le</span>
+            <span class="vat-status-label" i18n="@@accounting.vat-declaration.soumis.le.7bcd611f">Soumis le</span>
             <span>{{ formatDateTime(d.submittedAt) }}</span>
           </div>
           <div class="vat-status-item">
-            <span class="vat-status-label">Créé par</span>
+            <span class="vat-status-label" i18n="@@accounting.vat-declaration.cree.par.cebcfaba">Créé par</span>
             <span>{{ d.createdBy ?? '—' }}</span>
           </div>
         </div>

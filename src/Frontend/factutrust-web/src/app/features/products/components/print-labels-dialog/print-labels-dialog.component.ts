@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import {
   ChangeDetectionStrategy,
   Component,
@@ -49,7 +50,7 @@ export interface LabelPrintTarget {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <p-dialog
-      header="Imprimer les étiquettes"
+      header="Imprimer les étiquettes" i18n-header="@@products.components.imprimer.les.etiquettes.ff40cf1e"
       [visible]="visible"
       (visibleChange)="onVisibleChange($event)"
       [modal]="true"
@@ -60,27 +61,27 @@ export interface LabelPrintTarget {
         <p class="target-name">{{ target.name }}</p>
 
         @if (!target.hasBarcode) {
-          <p class="hint hint--warn">
+          <p class="hint hint--warn" i18n="@@products.components.cet.article.n.a.pas.de.code.barres.l.eti.86e730f4">
             <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
             Cet article n'a pas de code-barres : l'étiquette portera son code interne en clair.
           </p>
         }
 
         <div class="field">
-          <label for="label-layout">Gabarit</label>
+          <label for="label-layout" i18n="@@products.components.gabarit.abd6ed45">Gabarit</label>
           <p-select
             inputId="label-layout"
             [options]="layouts()"
             [(ngModel)]="selectedLayout"
             optionLabel="label"
             optionValue="key"
-            placeholder="Choisir un gabarit"
+            placeholder="Choisir un gabarit" i18n-placeholder="@@products.components.choisir.un.gabarit.8b120da1"
             styleClass="w-full">
           </p-select>
         </div>
 
         <div class="field">
-          <label for="label-qty">Nombre d'étiquettes</label>
+          <label for="label-qty" i18n="@@products.components.nombre.d.etiquettes.cc444f8e">Nombre d'étiquettes</label>
           <p-inputNumber
             inputId="label-qty"
             [(ngModel)]="quantity"
@@ -93,7 +94,7 @@ export interface LabelPrintTarget {
 
         <div class="field field--check">
           <p-checkbox inputId="label-price" [(ngModel)]="includePrice" [binary]="true"></p-checkbox>
-          <label for="label-price">Imprimer le prix TTC</label>
+          <label for="label-price" i18n="@@products.components.imprimer.le.prix.ttc.360b03e0">Imprimer le prix TTC</label>
         </div>
 
         @if (sheetsLabel()) {
@@ -105,15 +106,13 @@ export interface LabelPrintTarget {
       }
 
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (clicked)="close()">Annuler</app-button>
+        <app-button variant="outline" (clicked)="close()" i18n="@@products.components.annuler.49ba3292">Annuler</app-button>
         <app-button
           variant="primary"
           icon="pi-download"
           iconPos="left"
           [disabled]="!selectedLayout || quantity < 1 || generating()"
-          (clicked)="generate()">
-          Générer le PDF
-        </app-button>
+          (clicked)="generate()" i18n="@@products.components.generer.le.pdf.09958b8a"> Générer le PDF </app-button>
       </ng-template>
     </p-dialog>
   `,
@@ -202,8 +201,8 @@ export class PrintLabelsDialogComponent {
     const sheets = Math.ceil(qty / Math.max(1, layout.labelsPerPage));
 
     return layout.isRoll
-      ? `${qty} étiquette(s) en continu.`
-      : `${qty} étiquette(s) sur ${sheets} planche(s) de ${layout.labelsPerPage}.`;
+      ? $localize`:@@ui.tern.ph.etiquette.s.en.continu.f42d7c:${qty}:p0: étiquette(s) en continu.`
+      : $localize`:@@ui.tern.ph.etiquette.s.sur.ph.planche.s.de.ph.761668:${qty}:p0: étiquette(s) sur ${sheets}:p1: planche(s) de ${layout.labelsPerPage}:p2:.`;
   });
 
   private ensureLayoutsLoaded(): void {
@@ -270,8 +269,8 @@ export class PrintLabelsDialogComponent {
 
     this.toastService.add({
       severity: 'success',
-      summary: 'Étiquettes',
-      detail: 'Le PDF a été téléchargé.'
+      summary: $localize`:@@print-labels-dialog.component.summary.Étiquettes:Étiquettes`,
+      detail: $localize`:@@print-labels-dialog.component.detail.Le PDF a été:Le PDF a été téléchargé.`
     });
   }
 }

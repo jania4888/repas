@@ -43,69 +43,69 @@ export interface DmFamilyTab {
 export const DM_FAMILY_TABS: readonly DmFamilyTab[] = [
   {
     family: MonthlyDeclarationFamily.Withholding,
-    label: 'Retenue à la source',
-    title: 'Retenue à la source',
-    hint: 'Articles 1 à 31 du formulaire officiel. Le code rapport porte le numéro d’article (ex. « 17.2 »).'
+    label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.retenue.a.la.source.340b5d5f:Retenue à la source`,
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.retenue.a.la.source.340b5d5f:Retenue à la source`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.articles.1.a.31.du.formulaire.officiel.l.b4f0f9c2:Articles 1 à 31 du formulaire officiel. Le code rapport porte le numéro d’article (ex. « 17.2 »).`
   },
   {
     family: MonthlyDeclarationFamily.Tfp,
     label: 'T.F.P',
-    title: 'Taxe de formation professionnelle',
-    hint: 'Assiette et taux repris du cycle de paie du mois, ou des comptes de charges de personnel.'
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.taxe.de.formation.professionnelle.70811e15:Taxe de formation professionnelle`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.assiette.et.taux.repris.du.cycle.de.paie.560851c3:Assiette et taux repris du cycle de paie du mois, ou des comptes de charges de personnel.`
   },
   {
     family: MonthlyDeclarationFamily.Foprolos,
     label: 'FOPROLOS',
-    title: 'Fonds de promotion des logements pour salariés',
-    hint: 'Même assiette que la T.F.P dans le cas général.'
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.fonds.de.promotion.des.logements.pour.sa.837ea8d6:Fonds de promotion des logements pour salariés`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.meme.assiette.que.la.t.f.p.dans.le.cas.g.aa5b5210:Même assiette que la T.F.P dans le cas général.`
   },
   {
     family: MonthlyDeclarationFamily.ConsumptionDuty,
-    label: 'Droit de consommation',
-    title: 'Droit de consommation',
-    hint: 'Aucune case de détail cartographiée en 2026 : le montant ne rejoint que le récapitulatif.'
+    label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.droit.de.consommation.97da36c0:Droit de consommation`,
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.droit.de.consommation.97da36c0:Droit de consommation`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.aucune.case.de.detail.cartographiee.en.2.58f44eac:Aucune case de détail cartographiée en 2026 : le montant ne rejoint que le récapitulatif.`
   },
   {
     family: MonthlyDeclarationFamily.Vat,
     label: 'T.V.A',
-    title: 'Taxe sur la valeur ajoutée',
-    hint: 'Affichée pour mémoire : la T.V.A reste dérivée des factures et du chaînage de crédit, hors moteur paramétré.'
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.taxe.sur.la.valeur.ajoutee.46687b10:Taxe sur la valeur ajoutée`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.affichee.pour.memoire.la.t.v.a.reste.der.094084ef:Affichée pour mémoire : la T.V.A reste dérivée des factures et du chaînage de crédit, hors moteur paramétré.`
   },
   {
     family: MonthlyDeclarationFamily.OtherTurnoverTaxes,
-    label: 'Autres taxes C.A',
-    title: 'Autres taxes sur le chiffre d’affaires',
-    hint: 'FODEC et assimilées.'
+    label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.autres.taxes.c.a.50a65ce8:Autres taxes C.A`,
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.autres.taxes.sur.le.chiffre.d.affaires.1775df3d:Autres taxes sur le chiffre d’affaires`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.fodec.et.assimilees.faa4d057:FODEC et assimilées.`
   },
   {
     family: MonthlyDeclarationFamily.StampDuty,
-    label: 'Droit de timbre',
-    title: 'Droit de timbre',
-    hint: 'Aucune case de détail cartographiée en 2026 : le montant ne rejoint que le récapitulatif.'
+    label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.droit.de.timbre.01f26054:Droit de timbre`,
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.droit.de.timbre.01f26054:Droit de timbre`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.aucune.case.de.detail.cartographiee.en.2.58f44eac:Aucune case de détail cartographiée en 2026 : le montant ne rejoint que le récapitulatif.`
   },
   {
     family: MonthlyDeclarationFamily.HotelTax,
-    label: 'Taxe hôtelière',
-    title: 'Taxe hôtelière',
-    hint: 'Aucune case de détail cartographiée en 2026 : le montant ne rejoint que le récapitulatif.'
+    label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.taxe.hoteliere.90f43822:Taxe hôtelière`,
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.taxe.hoteliere.90f43822:Taxe hôtelière`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.aucune.case.de.detail.cartographiee.en.2.58f44eac:Aucune case de détail cartographiée en 2026 : le montant ne rejoint que le récapitulatif.`
   },
   {
     family: MonthlyDeclarationFamily.Tcl,
     label: 'T.C.L',
-    title: 'Taxe sur les établissements à caractère industriel, commercial ou professionnel',
-    hint: 'Typiquement « brut = comptes de produits, sens créditeur » et « retenue = brut × taux ».'
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.taxe.sur.les.etablissements.a.caractere.416445d7:Taxe sur les établissements à caractère industriel, commercial ou professionnel`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.typiquement.brut.comptes.de.produits.sen.647d289b:Typiquement « brut = comptes de produits, sens créditeur » et « retenue = brut × taux ».`
   },
   {
     family: MonthlyDeclarationFamily.LicenceFee,
-    label: 'Droit de licence',
-    title: 'Droit de licence',
-    hint: 'Aucune case de détail cartographiée en 2026 : le montant ne rejoint que le récapitulatif.'
+    label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.droit.de.licence.925640a2:Droit de licence`,
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.droit.de.licence.925640a2:Droit de licence`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.aucune.case.de.detail.cartographiee.en.2.58f44eac:Aucune case de détail cartographiée en 2026 : le montant ne rejoint que le récapitulatif.`
   },
   {
     family: MonthlyDeclarationFamily.OtherInformation,
-    label: 'Autres informations',
-    title: 'Autres informations',
-    hint: 'Déclaratif : achats en suspension, exportations, chiffre d’affaires exonéré… Aucun montant à payer.'
+    label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.autres.informations.ac5ce77d:Autres informations`,
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.autres.informations.ac5ce77d:Autres informations`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.declaratif.achats.en.suspension.exportat.467f6b3a:Déclaratif : achats en suspension, exportations, chiffre d’affaires exonéré… Aucun montant à payer.`
   }
 ];
 
@@ -114,7 +114,7 @@ export function familyTab(family: MonthlyDeclarationFamily): DmFamilyTab | undef
 }
 
 export function familyLabel(family: MonthlyDeclarationFamily): string {
-  return familyTab(family)?.label ?? `Famille ${family}`;
+  return familyTab(family)?.label ?? $localize`:@@accounting.monthly-declaration-config.view-model.ts.famille.family.e5385090:Famille ${family}:family:`;
 }
 
 /**
@@ -133,34 +133,34 @@ export interface DmOption<T> {
 }
 
 export const DM_GROSS_KIND_OPTIONS: readonly DmOption<RubricGrossKind>[] = [
-  { label: 'Valeur fixe / saisie', value: RubricGrossKind.Fixed },
-  { label: 'Valeur de paie', value: RubricGrossKind.Payroll },
-  { label: 'Solde de comptes', value: RubricGrossKind.Account },
-  { label: 'Retenue ÷ taux', value: RubricGrossKind.WithheldOverRate }
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.valeur.fixe.saisie.5355f54c:Valeur fixe / saisie`, value: RubricGrossKind.Fixed },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.valeur.de.paie.00856faf:Valeur de paie`, value: RubricGrossKind.Payroll },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.solde.de.comptes.095ae5f3:Solde de comptes`, value: RubricGrossKind.Account },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.retenue.taux.53769d11:Retenue ÷ taux`, value: RubricGrossKind.WithheldOverRate }
 ];
 
 export const DM_WITHHELD_KIND_OPTIONS: readonly DmOption<RubricWithheldKind>[] = [
-  { label: 'Valeur fixe / saisie', value: RubricWithheldKind.Fixed },
-  { label: 'Solde de comptes', value: RubricWithheldKind.Account },
-  { label: 'Brut × taux', value: RubricWithheldKind.GrossTimesRate },
-  { label: 'Valeur de paie', value: RubricWithheldKind.Payroll },
-  { label: 'Retenue ÷ taux (non pris en charge)', value: RubricWithheldKind.WithheldOverRate }
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.valeur.fixe.saisie.5355f54c:Valeur fixe / saisie`, value: RubricWithheldKind.Fixed },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.solde.de.comptes.095ae5f3:Solde de comptes`, value: RubricWithheldKind.Account },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.brut.taux.adedfda6:Brut × taux`, value: RubricWithheldKind.GrossTimesRate },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.valeur.de.paie.00856faf:Valeur de paie`, value: RubricWithheldKind.Payroll },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.retenue.taux.non.pris.en.charge.180ce782:Retenue ÷ taux (non pris en charge)`, value: RubricWithheldKind.WithheldOverRate }
 ];
 
 export const DM_SIDE_OPTIONS: readonly DmOption<AccountBalanceSide>[] = [
-  { label: 'Débiteur', value: AccountBalanceSide.Debit },
-  { label: 'Créditeur', value: AccountBalanceSide.Credit }
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.debiteur.53ef5606:Débiteur`, value: AccountBalanceSide.Debit },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.crediteur.7bdc1af0:Créditeur`, value: AccountBalanceSide.Credit }
 ];
 
 export const DM_PAYROLL_COMPONENT_OPTIONS: readonly DmOption<PayrollContributionComponent>[] = [
-  { label: 'Masse salariale brute', value: PayrollContributionComponent.SalariesGrossBase },
-  { label: 'Net imposable', value: PayrollContributionComponent.SalariesNetTaxableBase },
-  { label: 'Assiette taxes sur salaires', value: PayrollContributionComponent.PayrollTaxBase },
-  { label: 'IRPP retenu', value: PayrollContributionComponent.WithholdingIrpp },
-  { label: 'CSS retenue', value: PayrollContributionComponent.WithholdingCss },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.masse.salariale.brute.7083b525:Masse salariale brute`, value: PayrollContributionComponent.SalariesGrossBase },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.net.imposable.2439110f:Net imposable`, value: PayrollContributionComponent.SalariesNetTaxableBase },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.assiette.taxes.sur.salaires.2f68e583:Assiette taxes sur salaires`, value: PayrollContributionComponent.PayrollTaxBase },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.irpp.retenu.7cc73d3d:IRPP retenu`, value: PayrollContributionComponent.WithholdingIrpp },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.css.retenue.034ee1f0:CSS retenue`, value: PayrollContributionComponent.WithholdingCss },
   { label: 'IRPP + CSS', value: PayrollContributionComponent.WithholdingTotal },
-  { label: 'T.F.P du cycle', value: PayrollContributionComponent.Tfp },
-  { label: 'FOPROLOS du cycle', value: PayrollContributionComponent.Foprolos }
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.t.f.p.du.cycle.d85aaf4d:T.F.P du cycle`, value: PayrollContributionComponent.Tfp },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.foprolos.du.cycle.3fa66678:FOPROLOS du cycle`, value: PayrollContributionComponent.Foprolos }
 ];
 
 function optionLabel<T>(options: readonly DmOption<T>[], value: T | null | undefined): string {
@@ -406,62 +406,62 @@ export function needsFixedWithheld(form: DmRubricForm): boolean {
 export function validateRubricForm(form: DmRubricForm): string | null {
   const code = form.code.trim().toUpperCase();
   if (!form.id && !code) {
-    return 'Le code de la rubrique est obligatoire.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.code.de.la.rubrique.est.obligatoire.b3ed4041:Le code de la rubrique est obligatoire.`;
   }
   if (!form.id && !DM_CODE_PATTERN.test(code)) {
-    return 'Le code est invalide : lettres majuscules, chiffres et « _ » uniquement, 20 caractères au plus.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.code.est.invalide.lettres.majuscules.37d55247:Le code est invalide : lettres majuscules, chiffres et « _ » uniquement, 20 caractères au plus.`;
   }
   if (!form.label.trim()) {
-    return 'Le libellé est obligatoire.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.libelle.est.obligatoire.e312d2ca:Le libellé est obligatoire.`;
   }
   if (form.label.trim().length > 200) {
-    return 'Le libellé ne peut pas dépasser 200 caractères.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.libelle.ne.peut.pas.depasser.200.cara.1c8b3c83:Le libellé ne peut pas dépasser 200 caractères.`;
   }
 
   const reportCode = form.reportCode.trim();
   if (!reportCode) {
-    return 'Le code rapport est obligatoire.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.code.rapport.est.obligatoire.060e5725:Le code rapport est obligatoire.`;
   }
   if (reportCode.length > 16 || !DM_REPORT_CODE_PATTERN.test(reportCode)) {
-    return 'Le code rapport doit être un numéro d’article (ex. « 17.2 »), ou « * » pour un repli de famille.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.code.rapport.doit.etre.un.numero.d.ar.68421715:Le code rapport doit être un numéro d’article (ex. « 17.2 »), ou « * » pour un repli de famille.`;
   }
 
   const rate = Number(form.ratePercent);
   if (!Number.isFinite(rate) || rate < 0 || rate > 100) {
-    return 'Le taux doit être compris entre 0 et 100 %.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.taux.doit.etre.compris.entre.0.et.100.af09f376:Le taux doit être compris entre 0 et 100 %.`;
   }
 
   if (
     form.grossKind === RubricGrossKind.WithheldOverRate &&
     form.withheldKind === RubricWithheldKind.GrossTimesRate
   ) {
-    return 'Combinaison impossible : le brut serait déduit de la retenue et la retenue déduite du brut. Fixez l’une des deux colonnes.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.combinaison.impossible.le.brut.serait.de.dcf5c4fd:Combinaison impossible : le brut serait déduit de la retenue et la retenue déduite du brut. Fixez l’une des deux colonnes.`;
   }
   if (needsRate(form) && rate <= 0) {
-    return 'Ce mode de calcul exige un taux strictement positif.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.ce.mode.de.calcul.exige.un.taux.strictem.296fbdde:Ce mode de calcul exige un taux strictement positif.`;
   }
   if (needsPayrollComponent(form) && form.payrollComponent === null) {
-    return 'Un brut issu de la paie doit désigner la valeur du cycle à reprendre.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.un.brut.issu.de.la.paie.doit.designer.la.14453e3a:Un brut issu de la paie doit désigner la valeur du cycle à reprendre.`;
   }
   if (needsWithheldPayrollComponent(form) && form.withheldPayrollComponent === null) {
-    return 'Une retenue issue de la paie doit désigner la valeur du cycle à reprendre.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.une.retenue.issue.de.la.paie.doit.design.330f35c5:Une retenue issue de la paie doit désigner la valeur du cycle à reprendre.`;
   }
 
   if (needsGrossAccounts(form) && countSelectedAccounts(form.grossAccounts) === 0) {
-    return 'Un montant brut calculé sur comptes exige au moins un compte ou une racine.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.un.montant.brut.calcule.sur.comptes.exig.f0d240e9:Un montant brut calculé sur comptes exige au moins un compte ou une racine.`;
   }
   if (needsWithheldAccounts(form) && countSelectedAccounts(form.withheldAccounts) === 0) {
-    return 'Une retenue calculée sur comptes exige au moins un compte ou une racine.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.une.retenue.calculee.sur.comptes.exige.a.193f0d0b:Une retenue calculée sur comptes exige au moins un compte ou une racine.`;
   }
   if (countSelectedAccounts(form.grossAccounts) > DM_MAX_ACCOUNTS_PER_ROLE) {
-    return `La colonne brut ne peut pas retenir plus de ${DM_MAX_ACCOUNTS_PER_ROLE} comptes.`;
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.la.colonne.brut.ne.peut.pas.retenir.plus.24963b2e:La colonne brut ne peut pas retenir plus de ${DM_MAX_ACCOUNTS_PER_ROLE}:DM_MAX_ACCOUNTS_PER_ROLE: comptes.`;
   }
   if (countSelectedAccounts(form.withheldAccounts) > DM_MAX_ACCOUNTS_PER_ROLE) {
-    return `La colonne retenue ne peut pas retenir plus de ${DM_MAX_ACCOUNTS_PER_ROLE} comptes.`;
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.la.colonne.retenue.ne.peut.pas.retenir.p.815d9745:La colonne retenue ne peut pas retenir plus de ${DM_MAX_ACCOUNTS_PER_ROLE}:DM_MAX_ACCOUNTS_PER_ROLE: comptes.`;
   }
 
   if (form.effectiveFrom && form.effectiveTo && form.effectiveFrom > form.effectiveTo) {
-    return 'La date maximale d’application précède la date de début.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.la.date.maximale.d.application.precede.l.7d934043:La date maximale d’application précède la date de début.`;
   }
 
   return null;
@@ -470,7 +470,7 @@ export function validateRubricForm(form: DmRubricForm): string | null {
 // ── Lecture d'une rubrique en clair ──────────────────────────────────────────
 
 function sideLabel(side: AccountBalanceSide): string {
-  return side === AccountBalanceSide.Debit ? 'débits' : 'crédits';
+  return side === AccountBalanceSide.Debit ? $localize`:@@accounting.monthly-declaration-config.view-model.ts.debits.259795bd:débits` : $localize`:@@accounting.monthly-declaration-config.view-model.ts.credits.8269ea49:crédits`;
 }
 
 function accountsSummary(
@@ -479,7 +479,7 @@ function accountsSummary(
 ): string {
   const ofRole = accounts.filter(a => a.role === role);
   if (ofRole.length === 0) {
-    return 'aucun compte';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.aucun.compte.9f74e0b8:aucun compte`;
   }
   return ofRole
     .map(a => (a.matchMode === RubricAccountMatchMode.Prefix ? `${a.accountNumber}…` : a.accountNumber))
@@ -492,11 +492,11 @@ export function describeGross(rubric: MonthlyDeclarationRubricDto): string {
     case RubricGrossKind.Fixed:
       return rubric.fixedGrossAmount === null
         ? 'Saisie au Calcul DM'
-        : `Valeur fixe ${rubric.fixedGrossAmount}`;
+        : $localize`:@@accounting.monthly-declaration-config.view-model.ts.valeur.fixe.fixedgrossamount.95780a00:Valeur fixe ${rubric.fixedGrossAmount}:fixedGrossAmount:`;
     case RubricGrossKind.Payroll:
       return `Paie — ${optionLabel(DM_PAYROLL_COMPONENT_OPTIONS, rubric.payrollComponent)}`;
     case RubricGrossKind.Account:
-      return `${sideLabel(rubric.grossSide)} de ${accountsSummary(rubric.accounts, RubricAccountRole.Gross)}`;
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.sidelabel.de.accountssummary.9c9031a1:${sideLabel(rubric.grossSide)}:sideLabel: de ${accountsSummary(rubric.accounts, RubricAccountRole.Gross)}:accountsSummary:`;
     case RubricGrossKind.WithheldOverRate:
       return `Retenue ÷ ${rubric.ratePercent} %`;
     default:
@@ -510,15 +510,15 @@ export function describeWithheld(rubric: MonthlyDeclarationRubricDto): string {
     case RubricWithheldKind.Fixed:
       return rubric.fixedWithheldAmount === null
         ? 'Saisie au Calcul DM'
-        : `Valeur fixe ${rubric.fixedWithheldAmount}`;
+        : $localize`:@@accounting.monthly-declaration-config.view-model.ts.valeur.fixe.fixedwithheldamount.994a92e3:Valeur fixe ${rubric.fixedWithheldAmount}:fixedWithheldAmount:`;
     case RubricWithheldKind.Account:
-      return `${sideLabel(rubric.withheldSide)} de ${accountsSummary(rubric.accounts, RubricAccountRole.Withheld)}`;
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.sidelabel.de.accountssummary.9c9031a1:${sideLabel(rubric.withheldSide)}:sideLabel: de ${accountsSummary(rubric.accounts, RubricAccountRole.Withheld)}:accountsSummary:`;
     case RubricWithheldKind.GrossTimesRate:
       return `Brut × ${rubric.ratePercent} %`;
     case RubricWithheldKind.Payroll:
       return `Paie — ${optionLabel(DM_PAYROLL_COMPONENT_OPTIONS, rubric.withheldPayrollComponent)}`;
     case RubricWithheldKind.WithheldOverRate:
-      return 'Non pris en charge';
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.non.pris.en.charge.2c0f420c:Non pris en charge`;
     default:
       return '—';
   }
@@ -536,12 +536,12 @@ export function describeApplicability(rubric: MonthlyDeclarationRubricDto): stri
   const from = toDateInputValue(rubric.effectiveFrom);
   const to = toDateInputValue(rubric.effectiveTo);
   if (!from && !to) {
-    return 'Toutes périodes';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.toutes.periodes.fa4932c5:Toutes périodes`;
   }
   if (from && to) {
     return `${from} → ${to}`;
   }
-  return from ? `À partir du ${from}` : `Jusqu’au ${to}`;
+  return from ? $localize`:@@accounting.monthly-declaration-config.view-model.ts.a.partir.du.from.802ed9bb:À partir du ${from}:from:` : $localize`:@@accounting.monthly-declaration-config.view-model.ts.jusqu.au.to.5b249dfe:Jusqu’au ${to}:to:`;
 }
 
 // ── Lecture de la configuration ──────────────────────────────────────────────
@@ -587,11 +587,11 @@ export function modeLabel(mode: MonthlyDeclarationMode): string {
     case MonthlyDeclarationMode.Legacy:
       return 'Calcul historique';
     case MonthlyDeclarationMode.Parity:
-      return 'Contrôle de parité';
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.controle.de.parite.815aad76:Contrôle de parité`;
     case MonthlyDeclarationMode.Configured:
-      return 'Calcul paramétré';
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.calcul.parametre.ff2c9c1a:Calcul paramétré`;
     default:
-      return 'Inconnu';
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.inconnu.f3cfc645:Inconnu`;
   }
 }
 
@@ -599,13 +599,13 @@ export function modeLabel(mode: MonthlyDeclarationMode): string {
 export function describeMode(settings: MonthlyDeclarationSettingsDto): string {
   switch (settings.mode) {
     case MonthlyDeclarationMode.Legacy:
-      return 'La déclaration est produite par le calcul historique. La configuration du dossier est enregistrée mais ne déplace aucun montant.';
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.la.declaration.est.produite.par.le.calcu.61acc8f4:La déclaration est produite par le calcul historique. La configuration du dossier est enregistrée mais ne déplace aucun montant.`;
     case MonthlyDeclarationMode.Parity:
-      return `Les deux calculs tournent ; les montants déclarés restent ceux du calcul historique. ${settings.parityCleanStreak} période(s) sans écart sur les ${settings.requiredCleanParityPeriods} requises.`;
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.les.deux.calculs.tournent.les.montants.d.7f0b4d36:Les deux calculs tournent ; les montants déclarés restent ceux du calcul historique. ${settings.parityCleanStreak}:parityCleanStreak: période(s) sans écart sur les ${settings.requiredCleanParityPeriods}:requiredCleanParityPeriods: requises.`;
     case MonthlyDeclarationMode.Configured:
       return settings.configuredSince
-        ? `Le calcul paramétré fait foi depuis le ${toDateInputValue(settings.configuredSince)}.`
-        : 'Le calcul paramétré fait foi.';
+        ? $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.calcul.parametre.fait.foi.depuis.le.t.4671ab9f:Le calcul paramétré fait foi depuis le ${toDateInputValue(settings.configuredSince)}:toDateInputValue:.`
+        : $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.calcul.parametre.fait.foi.42cd40ec:Le calcul paramétré fait foi.`;
     default:
       return '';
   }

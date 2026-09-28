@@ -25,29 +25,27 @@ export interface DmDuplicateSource {
   imports: [CommonModule, FormsModule, ButtonComponent],
   template: `
     <div class="dm-dup">
-      <h3 class="dm-dup__title">Dupliquer la configuration DM</h3>
-      <p class="dm-dup__lead">
-        Reprend les rubriques et les comptes d’un autre dossier du cabinet. Les rubriques existantes
-        de même code sont conservées, sauf remplacement explicite.
-      </p>
+      <h3 class="dm-dup__title" i18n="@@accounting.monthly-declaration.dupliquer.la.configuration.dm.15643153">Dupliquer la configuration DM</h3>
+      <p class="dm-dup__lead" i18n="@@accounting.monthly-declaration.reprend.les.rubriques.et.les.comptes.d.un.autre..a7968a42"> Reprend les rubriques et les comptes d’un autre dossier du cabinet. Les rubriques existantes
+        de même code sont conservées, sauf remplacement explicite. </p>
 
       <div class="dm-dup__row">
         <div class="dm-dup__field">
-          <label class="dm-lbl" for="dm-dup-source">Dossier source</label>
+          <label class="dm-lbl" for="dm-dup-source" i18n="@@accounting.monthly-declaration.dossier.source.de54ef81">Dossier source</label>
           <select id="dm-dup-source" class="dm-inp" [(ngModel)]="sourceTenantId" [disabled]="busy || readOnly">
-            <option [ngValue]="null">— Choisir un dossier —</option>
+            <option [ngValue]="null" i18n="@@accounting.monthly-declaration.choisir.un.dossier.4d651c91">— Choisir un dossier —</option>
             @for (s of sources; track s.companyTenantId) {
               <option [ngValue]="s.companyTenantId">{{ s.companyName }}</option>
             }
           </select>
           @if (!sources.length) {
-            <small class="dm-hint">Aucun autre dossier accessible dans le portefeuille du cabinet.</small>
+            <small class="dm-hint" i18n="@@accounting.monthly-declaration.aucun.autre.dossier.accessible.dans.le.portefeui.36b8bb67">Aucun autre dossier accessible dans le portefeuille du cabinet.</small>
           }
         </div>
 
         <label class="dm-dup__check">
           <input type="checkbox" [(ngModel)]="overwrite" [disabled]="busy || readOnly" />
-          <span>Remplacer les rubriques de même code</span>
+          <span i18n="@@accounting.monthly-declaration.remplacer.les.rubriques.de.meme.code.6146284b">Remplacer les rubriques de même code</span>
         </label>
 
         <app-button
@@ -56,18 +54,18 @@ export interface DmDuplicateSource {
           type="button"
           [disabled]="busy || readOnly || !sourceTenantId"
           (click)="emitDuplicate()">
-          {{ busy ? 'Duplication…' : 'Dupliquer' }}
+          {{ busy ? loc_ui_tern_duplication_bdf3c5 : loc_ui_tern_dupliquer_c5e1d3 }}
         </app-button>
       </div>
 
       @if (result; as r) {
         <div class="dm-dup__result" role="status">
-          <p class="dm-dup__counts">{{ r.inserted }} rubrique(s) insérée(s), {{ r.replaced }} remplacée(s).</p>
+          <p class="dm-dup__counts" i18n="@@accounting.monthly-declaration.rubrique.s.inseree.s.remplacee.s.3f1d24de">{{ r.inserted }} rubrique(s) insérée(s), {{ r.replaced }} remplacée(s).</p>
           @if (r.skippedCodes.length) {
-            <p class="dm-hint">Codes déjà présents et laissés intacts : {{ r.skippedCodes.join(', ') }}</p>
+            <p class="dm-hint" i18n="@@accounting.monthly-declaration.codes.deja.presents.et.laisses.intacts.c085a617">Codes déjà présents et laissés intacts : {{ r.skippedCodes.join(', ') }}</p>
           }
           @if (r.unknownAccounts.length) {
-            <p class="dm-hint dm-hint--warn">
+            <p class="dm-hint dm-hint--warn" i18n="@@accounting.monthly-declaration.comptes.absents.du.plan.de.ce.dossier.co.43c2e109">
               Comptes absents du plan de ce dossier, copiés tels quels :
               {{ r.unknownAccounts.join(', ') }}
             </p>
@@ -92,6 +90,8 @@ export interface DmDuplicateSource {
   `
 })
 export class DmDuplicatePanelComponent {
+  readonly loc_ui_tern_duplication_bdf3c5 = $localize`:@@ui.tern.duplication.bdf3c5:Duplication…`;
+  readonly loc_ui_tern_dupliquer_c5e1d3 = $localize`:@@ui.tern.dupliquer.c5e1d3:Dupliquer`;
   @Input() sources: DmDuplicateSource[] = [];
   @Input() busy = false;
   @Input() readOnly = false;

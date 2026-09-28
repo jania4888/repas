@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -37,15 +38,11 @@ import { ConfirmationService } from '@core/services/confirmation.service';
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Axes de variantes"
-      subtitle="Définissez les axes (taille, couleur, etc.) et leurs valeurs pour générer les SKU.">
-      <app-button variant="outline" icon="pi-arrow-left" iconPos="left" routerLink="/settings">
-        Retour
-      </app-button>
+      title="Axes de variantes" i18n-title="@@settings.variant-axes.axes.de.variantes.dcc95d91"
+      subtitle="Définissez les axes (taille, couleur, etc.) et leurs valeurs pour générer les SKU." i18n-subtitle="@@settings.variant-axes.definissez.les.axes.taille.couleur.etc.e.296792cc">
+      <app-button variant="outline" icon="pi-arrow-left" iconPos="left" routerLink="/settings" i18n="@@settings.variant-axes.retour.e5befb1f"> Retour </app-button>
       @if (canCreate()) {
-        <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new">
-          Nouvel axe
-        </app-button>
+        <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new" i18n="@@settings.variant-axes.nouvel.axe.09ff15dd"> Nouvel axe </app-button>
       }
     </app-page-header>
 
@@ -55,7 +52,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
         <input
           pInputText
           type="text"
-          placeholder="Rechercher par code ou nom..."
+          placeholder="Rechercher par code ou nom..." i18n-placeholder="@@settings.variant-axes.rechercher.par.code.ou.nom.5764fbc6"
           [(ngModel)]="searchTerm"
           class="w-full" />
       </span>
@@ -68,33 +65,29 @@ import { ConfirmationService } from '@core/services/confirmation.service';
       } @else if (filteredAttributes().length === 0) {
         <app-empty-state
           icon="pi-th-large"
-          title="Aucun axe de variantes"
-          description="Créez des axes (taille, couleur, etc.) pour générer des variantes de produits." />
+          title="Aucun axe de variantes" i18n-title="@@settings.variant-axes.aucun.axe.de.variantes.4eaf2472"
+          description="Créez des axes (taille, couleur, etc.) pour générer des variantes de produits." i18n-description="@@settings.variant-axes.creez.des.axes.taille.couleur.etc.pour.g.6a52ece6" />
       } @else {
         <p-table [value]="filteredAttributes()" [rowHover]="true" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>Code</th>
-              <th>Nom</th>
-              <th>Valeurs</th>
-              <th class="actions-col">Actions</th>
+              <th i18n="@@settings.variant-axes.code.adac6937">Code</th>
+              <th i18n="@@settings.variant-axes.nom.7ff20370">Nom</th>
+              <th i18n="@@settings.variant-axes.valeurs.1f2cbf36">Valeurs</th>
+              <th class="actions-col" i18n="@@settings.variant-axes.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-attr>
             <tr>
               <td><code>{{ attr.code }}</code></td>
               <td>{{ attr.name }}</td>
-              <td>{{ attr.values.length }} valeur(s)</td>
+              <td i18n="@@settings.variant-axes.valeur.s.7b227d5c">{{ attr.values.length }} valeur(s)</td>
               <td class="actions-col">
                 @if (canUpdate()) {
-                  <app-button variant="ghost" size="sm" icon="pi-pencil" [routerLink]="[attr.id, 'edit']">
-                    Modifier
-                  </app-button>
+                  <app-button variant="ghost" size="sm" icon="pi-pencil" [routerLink]="[attr.id, 'edit']" i18n="@@settings.variant-axes.modifier.f260e757"> Modifier </app-button>
                 }
                 @if (canDelete()) {
-                  <app-button variant="ghost" size="sm" icon="pi-trash" (clicked)="confirmDelete(attr)">
-                    Supprimer
-                  </app-button>
+                  <app-button variant="ghost" size="sm" icon="pi-trash" (clicked)="confirmDelete(attr)" i18n="@@settings.variant-axes.supprimer.1acfc1c7"> Supprimer </app-button>
                 }
               </td>
             </tr>
@@ -105,7 +98,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
   `,
   styles: [`
     .ft-filters { margin-bottom: 1rem; }
-    .actions-col { width: 200px; text-align: right; }
+    .actions-col { width: 200px; text-align: end; }
     .ft-table-card {
       background: var(--surface-card, #fff);
       border-radius: 8px;
@@ -125,9 +118,9 @@ export class ProductAttributeListComponent implements OnInit {
   searchTerm = '';
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Axes de variantes' }
+    { label: $localize`:@@settings.product-attribute-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.product-attribute-list.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.product-attribute-list.ts.axes.de.variantes.dcc95d91:Axes de variantes` }
   ];
 
   filteredAttributes = computed(() => {
@@ -158,7 +151,7 @@ export class ProductAttributeListComponent implements OnInit {
         this.loading.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@product-attribute-list.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -167,19 +160,19 @@ export class ProductAttributeListComponent implements OnInit {
 
   confirmDelete(attr: ProductAttributeDto): void {
     this.confirmationService.confirm({
-      header: 'Supprimer l\'axe',
-      message: `Supprimer l'axe « ${attr.name} » ? Cette action est irréversible.`,
+      header: $localize`:@@settings.product-attribute-list.ts.supprimer.l.axe.0c38a872:Supprimer l'axe`,
+      message: $localize`:@@settings.product-attribute-list.ts.supprimer.l.axe.name.cette.action.est.ir.69a23600:Supprimer l'axe « ${attr.name}:name: » ? Cette action est irréversible.`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@product-attribute-list.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@product-attribute-list.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.productService.deleteAttribute(attr.id).subscribe({
           next: res => {
             if (res.success) {
               this.toastService.add({
                 severity: 'success',
-                summary: 'Supprimé',
-                detail: 'Axe de variantes supprimé'
+                summary: $localize`:@@product-attribute-list.component.summary.Supprimé:Supprimé`,
+                detail: $localize`:@@product-attribute-list.component.detail.Axe_de_variantes:Axe de variantes supprimé`
               });
               this.loadAttributes();
             }
@@ -187,7 +180,7 @@ export class ProductAttributeListComponent implements OnInit {
           error: err => {
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@product-attribute-list.component.summary.Erreur:Erreur`,
               detail: this.errorHandler.extractErrorMessage(err)
             });
           }

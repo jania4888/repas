@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -47,8 +48,8 @@ import { ToastService } from '@core/services/toast.service';
             <i class="pi pi-building"></i>
           </div>
           <div class="dialog-header-text">
-            <h2 class="dialog-title">{{ editingAccount ? 'Modifier le compte bancaire' : 'Ajouter un compte bancaire' }}</h2>
-            <p class="dialog-subtitle">{{ editingAccount ? 'Mettez à jour les informations de votre compte.' : 'Renseignez les coordonnées de votre compte tunisien.' }}</p>
+            <h2 class="dialog-title">{{ editingAccount ? loc_ui_tern_modifier_le_compte_bancaire_84e73b : loc_ui_tern_ajouter_un_compte_bancaire_197db1 }}</h2>
+            <p class="dialog-subtitle">{{ editingAccount ? loc_ui_tern_mettez_a_jour_les_informations_de_votre_co_68e692 : loc_ui_tern_renseignez_les_coordonnees_de_votre_compte_562c3e }}</p>
           </div>
         </div>
       </ng-template>
@@ -67,18 +68,18 @@ import { ToastService } from '@core/services/toast.service';
             <div class="form-section">
               <div class="form-section-header">
                 <div class="form-section-icon" aria-hidden="true"><i class="pi pi-building"></i></div>
-                <h4 class="form-section-title">Établissement bancaire</h4>
+                <h4 class="form-section-title" i18n="@@payments.bank-accounts.etablissement.bancaire.9073e0e6">Établissement bancaire</h4>
               </div>
               <div class="form-section-body">
                 <div class="form-group">
-                  <label for="bankCode">Banque <span class="req" aria-hidden="true">*</span></label>
+                  <label for="bankCode"><ng-container i18n="@@payments.bank-accounts.banque.2a7302cd">Banque </ng-container> <span class="req" aria-hidden="true" i18n="@@payments.bank-accounts.text.df58248c">*</span></label>
                   <p-select
                     inputId="bankCode"
                     formControlName="bankCode"
                     [options]="bankOptions"
                     optionLabel="label"
                     optionValue="value"
-                    placeholder="Sélectionnez une banque"
+                    placeholder="Sélectionnez une banque" i18n-placeholder="@@payments.bank-accounts.selectionnez.une.banque.078f3330"
                     [filter]="true"
                     filterBy="label"
                     [showClear]="false"
@@ -87,12 +88,12 @@ import { ToastService } from '@core/services/toast.service';
                     (onChange)="onBankSelected($event.value)">
                   </p-select>
                   @if (form.controls.bankCode.touched && form.controls.bankCode.hasError('required')) {
-                    <small class="error-text">Banque est obligatoire</small>
+                    <small class="error-text" i18n="@@payments.bank-accounts.banque.est.obligatoire.9a262f81">Banque est obligatoire</small>
                   }
                 </div>
 
                 <div class="form-group">
-                  <label for="bankName">Nom de la banque <span class="req" aria-hidden="true">*</span></label>
+                  <label for="bankName"><ng-container i18n="@@payments.bank-accounts.nom.de.la.banque.9848ce74">Nom de la banque </ng-container> <span class="req" aria-hidden="true" i18n="@@payments.bank-accounts.text.df58248c">*</span></label>
                   <input
                     pInputText
                     id="bankName"
@@ -100,12 +101,12 @@ import { ToastService } from '@core/services/toast.service';
                     class="w-full"
                     [readOnly]="!isAutreBank()"
                     [attr.aria-readonly]="!isAutreBank()"
-                    placeholder="Nom de la banque" />
+                    placeholder="Nom de la banque" i18n-placeholder="@@payments.bank-accounts.nom.de.la.banque.9848ce74" />
                   @if (form.controls.bankCode.value && !isAutreBank()) {
-                    <small class="hint"><i class="pi pi-info-circle hint-icon" aria-hidden="true"></i> Renseigné automatiquement — modifiable si « Autre ».</small>
+                    <small class="hint" i18n="@@payments.bank-accounts.renseigne.automatiquement.modifiable.si.3ab4fd64"><i class="pi pi-info-circle hint-icon" aria-hidden="true"></i> Renseigné automatiquement — modifiable si « Autre ».</small>
                   }
                   @if (form.controls.bankName.touched && form.controls.bankName.hasError('required')) {
-                    <small class="error-text">Le nom de la banque est obligatoire</small>
+                    <small class="error-text" i18n="@@payments.bank-accounts.le.nom.de.la.banque.est.obligatoire.77516c5c">Le nom de la banque est obligatoire</small>
                   }
                 </div>
               </div>
@@ -114,42 +115,42 @@ import { ToastService } from '@core/services/toast.service';
             <div class="form-section">
               <div class="form-section-header">
                 <div class="form-section-icon section-icon-banking" aria-hidden="true"><i class="pi pi-credit-card"></i></div>
-                <h4 class="form-section-title">Coordonnées bancaires</h4>
+                <h4 class="form-section-title" i18n="@@payments.bank-accounts.coordonnees.bancaires.9d367d41">Coordonnées bancaires</h4>
               </div>
               <div class="form-section-body">
                 <div class="form-group">
-                  <label for="iban">IBAN <span class="req" aria-hidden="true">*</span></label>
+                  <label for="iban"><ng-container i18n="@@payments.bank-accounts.iban.e81566a5">IBAN </ng-container> <span class="req" aria-hidden="true" i18n="@@payments.bank-accounts.text.df58248c">*</span></label>
                   <input
                     pInputText
                     id="iban"
                     formControlName="iban"
                     class="w-full mono-input"
-                    placeholder="TN59 1000 0035 1835 8847 8831"
+                    placeholder="TN59 1000 0035 1835 8847 8831" i18n-placeholder="@@payments.bank-accounts.tn59.1000.0035.1835.8847.8831.b9af2b3b"
                     autocomplete="off"
                     (blur)="syncRibFromIban()" />
-                  <small class="hint">Exemple&nbsp;: TN59 1000 0035 1835 8847 8831</small>
+                  <small class="hint" i18n="@@payments.bank-accounts.exemple.nbsp.tn59.1000.0035.1835.8847.8831.6fe94886">Exemple&nbsp;: TN59 1000 0035 1835 8847 8831</small>
                 </div>
 
                 <div class="form-group">
-                  <label for="rib">RIB <span class="req" aria-hidden="true">*</span></label>
+                  <label for="rib"><ng-container i18n="@@payments.bank-accounts.rib.61f3ea57">RIB </ng-container> <span class="req" aria-hidden="true" i18n="@@payments.bank-accounts.text.df58248c">*</span></label>
                   <p-inputMask
                     inputId="rib"
                     formControlName="rib"
                     mask="99 999 9999999999999 99"
-                    placeholder="XX XXX XXXXXXXXXXXXX XX"
+                    placeholder="XX XXX XXXXXXXXXXXXX XX" i18n-placeholder="@@payments.bank-accounts.xx.xxx.xxxxxxxxxxxxx.xx.88bae40a"
                     styleClass="w-full mono-input-mask">
                   </p-inputMask>
-                  <small class="hint">20 chiffres — complété depuis l'IBAN</small>
+                  <small class="hint" i18n="@@payments.bank-accounts.20.chiffres.complete.depuis.l.iban.b167c224">20 chiffres — complété depuis l'IBAN</small>
                 </div>
 
                 <div class="form-group">
-                  <label for="swiftBic">SWIFT / BIC</label>
+                  <label for="swiftBic" i18n="@@payments.bank-accounts.swift.bic.d66efbd3">SWIFT / BIC</label>
                   <input
                     pInputText
                     id="swiftBic"
                     formControlName="swiftBic"
                     class="w-full mono-input"
-                    placeholder="Ex: BIATTNTT"
+                    placeholder="Ex: BIATTNTT" i18n-placeholder="@@payments.bank-accounts.ex.biattntt.4404ffb2"
                     maxlength="11" />
                 </div>
               </div>
@@ -158,26 +159,26 @@ import { ToastService } from '@core/services/toast.service';
             <div class="form-section">
               <div class="form-section-header">
                 <div class="form-section-icon section-icon-accounting" aria-hidden="true"><i class="pi pi-book"></i></div>
-                <h4 class="form-section-title">Comptabilité (532x)</h4>
+                <h4 class="form-section-title" i18n="@@payments.bank-accounts.comptabilite.532x.78487f19">Comptabilité (532x)</h4>
               </div>
               <div class="form-section-body">
                 <div class="default-account-option">
                   <p-checkbox formControlName="autoCreateChartAccount" inputId="autoCreateChartAccount" [binary]="true"></p-checkbox>
                   <label for="autoCreateChartAccount" class="checkbox-label">
-                    <span class="checkbox-label-text">Créer automatiquement un sous-compte banque 532x</span>
-                    <span class="checkbox-label-hint">Un compte auxiliaire sera créé sous 5321 (TND) lors de l'enregistrement.</span>
+                    <span class="checkbox-label-text" i18n="@@payments.bank-accounts.creer.automatiquement.un.sous.compte.banque.532x.889b1960">Créer automatiquement un sous-compte banque 532x</span>
+                    <span class="checkbox-label-hint" i18n="@@payments.bank-accounts.un.compte.auxiliaire.sera.cree.sous.5321.tnd.lor.dcc4282b">Un compte auxiliaire sera créé sous 5321 (TND) lors de l'enregistrement.</span>
                   </label>
                 </div>
                 @if (!form.controls.autoCreateChartAccount.value) {
                   <div class="form-group">
-                    <label for="chartOfAccountNumber">Compte comptable existant</label>
+                    <label for="chartOfAccountNumber" i18n="@@payments.bank-accounts.compte.comptable.existant.e93f4023">Compte comptable existant</label>
                     <p-select
                       inputId="chartOfAccountNumber"
                       formControlName="chartOfAccountNumber"
                       [options]="chartAccountOptions"
                       optionLabel="label"
                       optionValue="value"
-                      placeholder="5321…"
+                      placeholder="5321…" i18n-placeholder="@@payments.bank-accounts.5321.8d5bc024"
                       [filter]="true"
                       filterBy="label"
                       [showClear]="true"
@@ -191,18 +192,18 @@ import { ToastService } from '@core/services/toast.service';
             <div class="form-section">
               <div class="form-section-header">
                 <div class="form-section-icon section-icon-info" aria-hidden="true"><i class="pi pi-info-circle"></i></div>
-                <h4 class="form-section-title">Informations complémentaires</h4>
-                <span class="section-badge">Optionnel</span>
+                <h4 class="form-section-title" i18n="@@payments.bank-accounts.informations.complementaires.805470ce">Informations complémentaires</h4>
+                <span class="section-badge" i18n="@@payments.bank-accounts.optionnel.879d6b16">Optionnel</span>
               </div>
               <div class="form-section-body">
                 <div class="form-row">
                   <div class="form-group">
-                    <label for="designation">Libellé du compte</label>
-                    <input pInputText id="designation" formControlName="designation" class="w-full" placeholder="Ex: Compte principal" />
+                    <label for="designation" i18n="@@payments.bank-accounts.libelle.du.compte.7200e54f">Libellé du compte</label>
+                    <input pInputText id="designation" formControlName="designation" class="w-full" placeholder="Ex: Compte principal" i18n-placeholder="@@payments.bank-accounts.ex.compte.principal.56f72496" />
                   </div>
                   <div class="form-group">
-                    <label for="agencyName">Agence</label>
-                    <input pInputText id="agencyName" formControlName="agencyName" class="w-full" placeholder="Ex: Agence centre-ville" />
+                    <label for="agencyName" i18n="@@payments.bank-accounts.agence.37c58081">Agence</label>
+                    <input pInputText id="agencyName" formControlName="agencyName" class="w-full" placeholder="Ex: Agence centre-ville" i18n-placeholder="@@payments.bank-accounts.ex.agence.centre.ville.77664fc3" />
                   </div>
                 </div>
 
@@ -210,8 +211,8 @@ import { ToastService } from '@core/services/toast.service';
                   <div class="default-account-option">
                     <p-checkbox formControlName="setAsDefault" inputId="setAsDefault" [binary]="true"></p-checkbox>
                     <label for="setAsDefault" class="checkbox-label">
-                      <span class="checkbox-label-text">Définir comme compte par défaut</span>
-                      <span class="checkbox-label-hint">Ce compte sera utilisé automatiquement sur vos documents.</span>
+                      <span class="checkbox-label-text" i18n="@@payments.bank-accounts.definir.comme.compte.par.defaut.6a8425f5">Définir comme compte par défaut</span>
+                      <span class="checkbox-label-hint" i18n="@@payments.bank-accounts.ce.compte.sera.utilise.automatiquement.sur.vos.d.ee927bb1">Ce compte sera utilisé automatiquement sur vos documents.</span>
                     </label>
                   </div>
                 }
@@ -220,21 +221,21 @@ import { ToastService } from '@core/services/toast.service';
 
           </div>
 
-          <button type="submit" class="sr-only" tabindex="-1" aria-hidden="true">Valider</button>
+          <button type="submit" class="sr-only" tabindex="-1" aria-hidden="true" i18n="@@payments.bank-accounts.valider.be4220f7">Valider</button>
         </form>
       </div>
 
       <ng-template pTemplate="footer">
         <div class="dialog-footer">
-          <app-button type="button" variant="ghost" (click)="close()" ariaLabel="Annuler">Annuler</app-button>
+          <app-button type="button" variant="ghost" (click)="close()" ariaLabel="Annuler" i18n-ariaLabel="@@payments.bank-accounts.annuler.e063e8ff" i18n="@@payments.bank-accounts.annuler.49ba3292">Annuler</app-button>
           <app-button
             type="button"
             variant="primary"
             icon="pi pi-check"
             [disabled]="saving() || form.invalid"
-            ariaLabel="Valider"
+            ariaLabel="Valider" i18n-ariaLabel="@@payments.bank-accounts.valider.8ef67b67"
             (click)="submit()">
-            {{ saving() ? 'Enregistrement…' : 'Valider' }}
+            {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_valider_be4220 }}
           </app-button>
         </div>
       </ng-template>
@@ -544,6 +545,12 @@ import { ToastService } from '@core/services/toast.service';
   `]
 })
 export class AddBankAccountDialogComponent implements OnChanges {
+  readonly loc_ui_tern_modifier_le_compte_bancaire_84e73b = $localize`:@@ui.tern.modifier.le.compte.bancaire.84e73b:Modifier le compte bancaire`;
+  readonly loc_ui_tern_ajouter_un_compte_bancaire_197db1 = $localize`:@@ui.tern.ajouter.un.compte.bancaire.197db1:Ajouter un compte bancaire`;
+  readonly loc_ui_tern_mettez_a_jour_les_informations_de_votre_co_68e692 = $localize`:@@ui.tern.mettez.a.jour.les.informations.de.votre.co.68e692:Mettez à jour les informations de votre compte.`;
+  readonly loc_ui_tern_renseignez_les_coordonnees_de_votre_compte_562c3e = $localize`:@@ui.tern.renseignez.les.coordonnees.de.votre.compte.562c3e:Renseignez les coordonnées de votre compte tunisien.`;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_valider_be4220 = $localize`:@@ui.tern.valider.be4220:Valider`;
   private readonly fb = inject(FormBuilder);
   private readonly bankAccountService = inject(BankAccountService);
   private readonly accountingService = inject(AccountingService);
@@ -688,15 +695,15 @@ export class AddBankAccountDialogComponent implements OnChanges {
     const ribDigits = this.stripRib(v.rib);
     const ibanNorm = this.normalizeIban(v.iban);
     if (ribDigits.length !== 20) {
-      this.errorMessage.set('Le RIB doit contenir 20 chiffres.');
+      this.errorMessage.set($localize`:@@payments.add-bank-account-dialog.ts.le.rib.doit.contenir.20.chiffres.e2c5d79e:Le RIB doit contenir 20 chiffres.`);
       return;
     }
     if (!/^TN\d{22}$/.test(ibanNorm)) {
-      this.errorMessage.set("L'IBAN tunisien est invalide (TN + 22 chiffres).");
+      this.errorMessage.set($localize`:@@payments.add-bank-account-dialog.ts.l.iban.tunisien.est.invalide.tn.22.chiff.188cc4e7:L'IBAN tunisien est invalide (TN + 22 chiffres).`);
       return;
     }
     if (ibanNorm.slice(4) !== ribDigits) {
-      this.errorMessage.set("Le RIB ne correspond pas à l'IBAN.");
+      this.errorMessage.set($localize`:@@payments.add-bank-account-dialog.ts.le.rib.ne.correspond.pas.a.l.iban.ac6f47f4:Le RIB ne correspond pas à l'IBAN.`);
       return;
     }
 
@@ -721,13 +728,13 @@ export class AddBankAccountDialogComponent implements OnChanges {
           if (res.success) {
             this.toast.add({
               severity: 'success',
-              summary: 'Succès',
-              detail: res.message ?? 'Compte mis à jour.'
+              summary: $localize`:@@add-bank-account-dialog.component.summary.Succès:Succès`,
+              detail: res.message ?? $localize`:@@ui.tern.compte.mis.a.jour.34817f:Compte mis à jour.`
             });
             this.close();
             this.saved.emit();
           } else {
-            this.errorMessage.set(res.errors?.[0] ?? 'Échec de la mise à jour.');
+            this.errorMessage.set(res.errors?.[0] ?? $localize`:@@ui.tern.echec.de.la.mise.a.jour.29ae4d:Échec de la mise à jour.`);
           }
         },
         error: (err: HttpErrorResponse) => {
@@ -754,13 +761,13 @@ export class AddBankAccountDialogComponent implements OnChanges {
           if (res.success) {
             this.toast.add({
               severity: 'success',
-              summary: 'Succès',
-              detail: res.message ?? 'Compte créé.'
+              summary: $localize`:@@add-bank-account-dialog.component.summary.Succès:Succès`,
+              detail: res.message ?? $localize`:@@ui.tern.compte.cree.b6349d:Compte créé.`
             });
             this.close();
             this.saved.emit();
           } else {
-            this.errorMessage.set(res.errors?.[0] ?? 'Échec de la création.');
+            this.errorMessage.set(res.errors?.[0] ?? $localize`:@@ui.tern.echec.de.la.creation.23cd9c:Échec de la création.`);
           }
         },
         error: (err: HttpErrorResponse) => {
@@ -776,8 +783,8 @@ export class AddBankAccountDialogComponent implements OnChanges {
     // jamais le texte brut `err.message` (« Http failure response for … »).
     if (err.status === 403) {
       return this.editingAccount
-        ? 'Action refusée : autorisations insuffisantes (Trésorerie — mise à jour).'
-        : 'Action refusée : autorisations insuffisantes (Trésorerie — saisie).';
+        ? $localize`:@@ui.tern.action.refusee.autorisations.insuffisantes.86b982:Action refusée : autorisations insuffisantes (Trésorerie — mise à jour).`
+        : $localize`:@@ui.tern.action.refusee.autorisations.insuffisantes.c21aad:Action refusée : autorisations insuffisantes (Trésorerie — saisie).`;
     }
     const body = err.error;
     if (typeof body === 'string') return body;
@@ -786,7 +793,7 @@ export class AddBankAccountDialogComponent implements OnChanges {
       if (o.errors?.length) return o.errors[0];
       if (o.message) return o.message;
     }
-    return 'Erreur lors de l\u2019enregistrement du compte.';
+    return $localize`:@@payments.add-bank-account-dialog.ts.erreur.lors.de.l.enregistrement.du.compt.08e5eb61:Erreur lors de l’enregistrement du compte.`;
   }
 
   close(): void {

@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { isStudioPlanLimitError } from '@features/studio/shared/studio-api-errors';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
@@ -61,7 +63,7 @@ type HubWorkflow = WorkflowDefinitionDto & { entityName: string };
           [ngModel]="search()" (ngModelChange)="onSearchInput($event)" [attr.aria-label]="L.hub.search" />
         <span class="studio-toolbar__spacer"></span>
         @if (!loading()) {
-          <span class="studio-muted">{{ counter() }} workflow(s)</span>
+          <span class="studio-muted" i18n="@@studio.workflows.workflow.s.9031ff2f">{{ counter() }} workflow(s)</span>
         }
       </div>
 
@@ -106,7 +108,7 @@ type HubWorkflow = WorkflowDefinitionDto & { entityName: string };
                 @if (w.openInstances > 0) {
                   <p-tag severity="warn" [value]="w.openInstances.toString()" />
                 } @else {
-                  <span class="studio-muted">—</span>
+                  <span class="studio-muted" i18n="@@studio.workflows.text.1b93795b">—</span>
                 }
               </td>
               <td class="studio-actions">
@@ -197,7 +199,7 @@ export class StudioWorkflowsHubComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.L.hub.loadError });
+        this.toast.add({ severity: 'error', summary: $localize`:@@studio-workflows-hub.component.summary.Erreur:Erreur`, detail: this.L.hub.loadError });
       }
     });
   }
@@ -232,7 +234,7 @@ export class StudioWorkflowsHubComponent implements OnInit {
           total: r.data?.totalCount ?? 0
         })));
     src$.pipe(catchError(() => {
-      this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.L.hub.loadError });
+      this.toast.add({ severity: 'error', summary: $localize`:@@studio-workflows-hub.component.summary.Erreur:Erreur`, detail: this.L.hub.loadError });
       return of({ items: [] as HubWorkflow[], total: 0 });
     })).subscribe(({ items, total }) => {
       this.workflows.set(items);
@@ -281,7 +283,7 @@ export class StudioWorkflowsHubComponent implements OnInit {
       // Écriture en skipErrorUi ⇒ toast local (§0.5).
       error: (err: HttpErrorResponse) => {
         this.replace(w);
-        this.toast.add({ severity: err.status === 409 ? 'warn' : 'error', summary: 'Erreur', detail: err.status === 409 ? this.L.designer.conflict : (workflowErrorMessage(err) || this.L.hub.loadError) });
+        this.toast.add({ severity: err.status === 409 ? 'warn' : 'error', summary: $localize`:@@studio-workflows-hub.component.summary.Erreur:Erreur`, detail: err.status === 409 ? this.L.designer.conflict : (workflowErrorMessage(err) || this.L.hub.loadError) });
       }
     });
   }
@@ -295,7 +297,7 @@ export class StudioWorkflowsHubComponent implements OnInit {
         }
       },
       // 409 = clé `<key>_copy<n>` déjà prise (maxCopies 9) ; 400 « Limite du plan » = 20 workflows/table (WORKFLOW_LIMITS.maxWorkflowsPerEntity).
-      error: (err: HttpErrorResponse) => this.toast.add({ severity: 'warn', summary: 'Erreur', detail: err.status === 409 ? this.L.hub.duplicateKey : err.status === 400 && workflowErrorMessage(err).startsWith('Limite du plan') ? this.L.designer.quota : (workflowErrorMessage(err) || this.L.hub.loadError) })
+      error: (err: HttpErrorResponse) => this.toast.add({ severity: 'warn', summary: $localize`:@@studio-workflows-hub.component.summary.Erreur:Erreur`, detail: err.status === 409 ? this.L.hub.duplicateKey : err.status === 400 && isStudioPlanLimitError(err, workflowErrorMessage(err)) ? this.L.designer.quota : (workflowErrorMessage(err) || this.L.hub.loadError) })
     });
   }
 
@@ -313,7 +315,7 @@ export class StudioWorkflowsHubComponent implements OnInit {
           this.toast.add({ severity: 'success', summary: this.L.hub.title, detail: formatWorkflowLabel(this.L.hub.deleted, { count: r.data?.cancelledInstances ?? 0 }) });
           this.load();
         },
-        error: (err: HttpErrorResponse) => this.toast.add({ severity: 'error', summary: 'Erreur', detail: workflowErrorMessage(err) || this.L.hub.loadError })
+        error: (err: HttpErrorResponse) => this.toast.add({ severity: 'error', summary: $localize`:@@studio-workflows-hub.component.summary.Erreur:Erreur`, detail: workflowErrorMessage(err) || this.L.hub.loadError })
       })
     });
   }

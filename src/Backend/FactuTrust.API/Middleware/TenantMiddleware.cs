@@ -71,7 +71,7 @@ public sealed class TenantMiddleware
             if (!Guid.TryParse(homeTenantIdClaim, out var homeTenantId)
                 || !Guid.TryParse(contextTenantIdClaim, out var contextTenantId))
             {
-                await WriteForbiddenAsync(context, "Contexte dossier client invalide.");
+                await WriteForbiddenAsync(context, "Contexte dossier client invalide.", ValidationErrorCodes.DelegatedContextInvalid);
                 return;
             }
 
@@ -112,7 +112,7 @@ public sealed class TenantMiddleware
             _logger.LogWarning("No valid tenant ID found in claims for user {UserId}",
                 context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-            await WriteForbiddenAsync(context, "Contexte entreprise invalide. Veuillez vous reconnecter.");
+            await WriteForbiddenAsync(context, "Contexte entreprise invalide. Veuillez vous reconnecter.", ValidationErrorCodes.TenantContextInvalid);
             return;
         }
 
@@ -121,7 +121,7 @@ public sealed class TenantMiddleware
             _logger.LogWarning("Tenant ID is Guid.Empty for user {UserId}",
                 context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-            await WriteForbiddenAsync(context, "Contexte entreprise invalide. Veuillez vous reconnecter.");
+            await WriteForbiddenAsync(context, "Contexte entreprise invalide. Veuillez vous reconnecter.", ValidationErrorCodes.TenantContextInvalid);
             return;
         }
 
@@ -176,11 +176,13 @@ public sealed class TenantMiddleware
         }
     }
 
-    private static async Task WriteForbiddenAsync(HttpContext context, string message)
+    private static async Task WriteForbiddenAsync(HttpContext context, string message, string? code = null)
     {
         context.Response.StatusCode = StatusCodes.Status403Forbidden;
         context.Response.ContentType = "application/json; charset=utf-8";
-        var response = ApiResponse<object>.Fail(message);
+        var response = string.IsNullOrEmpty(code)
+            ? ApiResponse<object>.Fail(message)
+            : ApiResponse<object>.Fail(message, code);
         await context.Response.WriteAsync(JsonSerializer.Serialize(response, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
     }
 }

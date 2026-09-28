@@ -152,13 +152,13 @@ export function uniqueKey(base: string, taken: Iterable<string>): string {
  * d'écran) ; les jetons `{…}` sont remplacés par `formatLabel`.
  */
 const BOUND_MESSAGES = {
-  tooManyEntities: 'Trop de tables : {count} proposées, {max} au maximum.',
-  tooManyFields: 'La table « {entity} » a {count} champs : {max} au maximum.',
-  tooManySeedRecords: 'La table « {entity} » a {count} valeurs de référence : {max} au maximum.',
-  duplicateEntity: 'Deux tables portent la même clé « {ref} ».',
-  duplicateField: 'La table « {entity} » contient deux champs « {key} ».',
-  unknownRelationTarget: 'Le champ « {field} » de la table « {entity} » pointe vers une table inconnue « {target} ».',
-  missingRelationTarget: 'Le champ « {field} » de la table « {entity} » est une relation sans table cible.'
+  tooManyEntities: $localize`:@@studio.studio-ai-spec.ts.trop.de.tables.count.proposees.max.au.ma.4691ced4:Trop de tables : {count} proposées, {max} au maximum.`,
+  tooManyFields: $localize`:@@studio.studio-ai-spec.ts.la.table.entity.a.count.champs.max.au.ma.6d3f9ead:La table « {entity} » a {count} champs : {max} au maximum.`,
+  tooManySeedRecords: $localize`:@@studio.studio-ai-spec.ts.la.table.entity.a.count.valeurs.de.refer.d083148e:La table « {entity} » a {count} valeurs de référence : {max} au maximum.`,
+  duplicateEntity: $localize`:@@studio.studio-ai-spec.ts.deux.tables.portent.la.meme.cle.ref.7d412443:Deux tables portent la même clé « {ref} ».`,
+  duplicateField: $localize`:@@studio.studio-ai-spec.ts.la.table.entity.contient.deux.champs.key.c97ac8d0:La table « {entity} » contient deux champs « {key} ».`,
+  unknownRelationTarget: $localize`:@@studio.studio-ai-spec.ts.le.champ.field.de.la.table.entity.pointe.05e5dcdb:Le champ « {field} » de la table « {entity} » pointe vers une table inconnue « {target} ».`,
+  missingRelationTarget: $localize`:@@studio.studio-ai-spec.ts.le.champ.field.de.la.table.entity.est.un.857db5a0:Le champ « {field} » de la table « {entity} » est une relation sans table cible.`
 } as const;
 
 /**

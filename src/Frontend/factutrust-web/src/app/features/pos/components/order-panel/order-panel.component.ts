@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, inject, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,23 +14,23 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
 @Component({
   selector: 'app-order-panel',
   standalone: true,
-  imports: [CommonModule, FormsModule, ClientSelectorComponent, OrderLineComponent, PaymentActionsComponent],
+  imports: [BackendLabelPipe, CommonModule, FormsModule, ClientSelectorComponent, OrderLineComponent, PaymentActionsComponent],
   template: `
     <div class="order-panel">
       <div class="order-panel__scroll">
       @if (posState.isCreditNote()) {
-          <div class="order-panel__credit-bandeau">
+          <div class="order-panel__credit-bandeau" i18n="@@pos.components.mode.avoir.facture.33ecc3d7">
             <i class="pi pi-file-edit"></i>
             <span>Mode Avoir — Facture : {{ posState.linkedInvoiceNumber() || posState.linkedInvoiceId() }}</span>
           </div>
           }
       <!-- Header -->
       <div class="order-panel__header">
-        <h2 class="order-panel__title">Commande</h2>
+        <h2 class="order-panel__title" i18n="@@pos.components.commande.47844341">Commande</h2>
         @if (posState.lineCount() > 0) {
-          <span class="order-panel__badge order-panel__badge--animated">
+          <span class="order-panel__badge order-panel__badge--animated" i18n="@@pos.components.article.7ad8e07d.pl">
             <i class="pi pi-shopping-cart order-panel__badge-icon"></i>
-            {{ posState.totalItemsQuantity() }} article{{ posState.totalItemsQuantity() > 1 ? 's' : '' }}
+            {{ posState.totalItemsQuantity() }} {posState.totalItemsQuantity(), plural, =0 {article} =1 {article} other {articles}}
           </span>
         }
       </div>
@@ -48,8 +49,8 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             type="checkbox"
             [checked]="clientPrefService.getPreferReceiptByEmail(client.id)"
             (change)="clientPrefService.setPreferReceiptByEmail(client.id, $any($event.target).checked)"
-            aria-label="Toujours envoyer le recu par e-mail" />
-          <span>Reçu par e-mail pour ce client</span>
+            aria-label="Toujours envoyer le recu par e-mail" i18n-aria-label="@@pos.components.toujours.envoyer.le.recu.par.e.mail.98f490b9" />
+          <span i18n="@@pos.components.recu.par.e.mail.pour.ce.client.5c5d4ea6">Reçu par e-mail pour ce client</span>
         </label>
       </div>
       }
@@ -57,10 +58,10 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
       @if (frequentProducts.length > 0) {
       <!-- Historique client - produits frequents (40) -->
       <div class="order-panel__frequent">
-        <span class="order-panel__frequent-title">Ce client prend souvent :</span>
+        <span class="order-panel__frequent-title" i18n="@@pos.components.ce.client.prend.souvent.de74a569">Ce client prend souvent :</span>
         <div class="order-panel__frequent-btns">
           @for (p of frequentProducts; track p.id) {
-            <button type="button" class="order-panel__frequent-btn" (click)="onFrequentProductAdd.emit(p)" [attr.aria-label]="'Ajouter ' + p.name">
+            <button type="button" class="order-panel__frequent-btn" (click)="onFrequentProductAdd.emit(p)" [attr.aria-label]="loc_ui_tern_ajouter_778d9b + p.name">
               {{ p.name }}
             </button>
           }
@@ -76,7 +77,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
           (click)="showOrderNotes = !showOrderNotes"
           [attr.aria-expanded]="showOrderNotes">
           <i class="pi pi-pencil"></i>
-          <span>Notes de commande</span>
+          <span i18n="@@pos.components.notes.de.commande.6d66940b">Notes de commande</span>
           @if (posState.orderNotes()) {
             <span class="order-panel__notes-badge">1</span>
           }
@@ -86,15 +87,15 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             class="order-panel__notes-input"
             [ngModel]="posState.orderNotes()"
             (ngModelChange)="posState.setOrderNotes($event)"
-            placeholder="Ex: A emporter, livraison 14h..."
+            placeholder="Ex: A emporter, livraison 14h..." i18n-placeholder="@@pos.components.ex.a.emporter.livraison.14h.1eb4a9e6"
             rows="2"
-            aria-label="Notes de commande"></textarea>
+            aria-label="Notes de commande" i18n-aria-label="@@pos.components.notes.de.commande.6d66940b"></textarea>
         }
       </div>
       }
 
       @if (posState.isFirstPurchaseDiscount()) {
-      <div class="order-panel__first-purchase">
+      <div class="order-panel__first-purchase" i18n="@@pos.components.premier.achat.applique.b66f3b88">
         <i class="pi pi-gift"></i>
         <span>Premier achat : -{{ posState.firstPurchaseDiscountPercent() }}% applique</span>
       </div>
@@ -106,7 +107,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
       @if (posState.lines().length > 0 && showVisualCart) {
       <!-- Apercu visuel du panier (54) -->
       <div class="order-panel__visual-cart">
-        <button type="button" class="order-panel__visual-cart-toggle" (click)="showVisualCart = false" aria-label="Fermer apercu">&#9660;</button>
+        <button type="button" class="order-panel__visual-cart-toggle" (click)="showVisualCart = false" aria-label="Fermer apercu" i18n-aria-label="@@pos.components.fermer.apercu.32412ecd" i18n="@@pos.components.9660.cb2e2b05">&#9660;</button>
         <div class="order-panel__visual-cart-scroll">
           @for (line of posState.lines(); track line.id) {
             <div class="order-panel__visual-cart-item" [title]="line.designation + ' x' + line.quantity">
@@ -121,7 +122,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
         </div>
       </div>
       } @else if (posState.lines().length > 0) {
-      <button type="button" class="order-panel__visual-cart-open" (click)="showVisualCart = true">
+      <button type="button" class="order-panel__visual-cart-open" (click)="showVisualCart = true" i18n="@@pos.components.apercu.visuel.du.panier.9ca6544c">
         <i class="pi pi-images"></i> Apercu visuel du panier
       </button>
       }
@@ -130,8 +131,8 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
       @if (upsellService.hasSuggestions()) {
         <div class="order-panel__upsell">
           <div class="order-panel__upsell-header">
-            <span class="order-panel__upsell-title">Suggestions</span>
-            <button type="button" class="order-panel__upsell-close" (click)="upsellService.clearSuggestions()" aria-label="Fermer">
+            <span class="order-panel__upsell-title" i18n="@@pos.components.suggestions.861edba0">Suggestions</span>
+            <button type="button" class="order-panel__upsell-close" (click)="upsellService.clearSuggestions()" aria-label="Fermer" i18n-aria-label="@@pos.components.fermer.5ab4ec64">
               <i class="pi pi-times"></i>
             </button>
           </div>
@@ -140,7 +141,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
               <div class="order-panel__upsell-card">
                 <span class="order-panel__upsell-name">{{ product.name }}</span>
                 <span class="order-panel__upsell-price">{{ posState.formatAmountWithCurrency(product.unitPrice) }}</span>
-                <button type="button" class="order-panel__upsell-add" (click)="onSuggestionAdd.emit(product)" [attr.aria-label]="'Ajouter ' + product.name">
+                <button type="button" class="order-panel__upsell-add" (click)="onSuggestionAdd.emit(product)" [attr.aria-label]="loc_ui_tern_ajouter_778d9b + product.name">
                   <i class="pi pi-plus"></i>
                 </button>
               </div>
@@ -156,8 +157,8 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             <div class="order-panel__empty-icon">
               <i class="pi pi-shopping-cart"></i>
             </div>
-            <p class="order-panel__empty-title">Panier vide</p>
-            <p class="order-panel__empty-text">Selectionnez un produit dans le catalogue ou appuyez sur <kbd class="order-panel__empty-kbd">F2</kbd> pour rechercher</p>
+            <p class="order-panel__empty-title" i18n="@@pos.components.panier.vide.669bb72c">Panier vide</p>
+            <p class="order-panel__empty-text" i18n="@@pos.components.selectionnez.un.produit.dans.le.catalogu.a2cb34e4"><ng-container>Selectionnez un produit dans le catalogue ou appuyez sur </ng-container> <kbd class="order-panel__empty-kbd">F2</kbd> pour rechercher</p>
           </div>
         } @else {
           @for (line of posState.lines(); track line.id) {
@@ -182,13 +183,13 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
           <div class="order-panel__totals" [class.order-panel__totals--quick]="posState.isQuickMode()">
             @if (!posState.isQuickMode()) {
             <div class="order-panel__total-row">
-              <span class="order-panel__total-label">Total HT</span>
+              <span class="order-panel__total-label" i18n="@@pos.components.total.ht.2ca17ae6">Total HT</span>
               <span class="order-panel__total-value">{{ posState.formatAmountWithCurrency(posState.totals().subTotalHT) }}</span>
             </div>
 
             @if (posState.hasGlobalDiscount()) {
               <div class="order-panel__total-row order-panel__total-row--discount">
-                <span class="order-panel__total-label">Remise globale</span>
+                <span class="order-panel__total-label" i18n="@@pos.components.remise.globale.a87e11a6">Remise globale</span>
                 <span class="order-panel__total-value order-panel__total-value--discount">-{{ posState.formatAmountWithCurrency(posState.totals().totalDiscount) }}</span>
               </div>
             }
@@ -196,8 +197,8 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             @if (showGlobalDiscountForm) {
               <div class="order-panel__discount-form">
                 <select [(ngModel)]="globalDiscountType">
-                  <option value="PERCENT">Pourcentage</option>
-                  <option value="AMOUNT">Montant fixe</option>
+                  <option value="PERCENT" i18n="@@pos.components.pourcentage.e34218e3">Pourcentage</option>
+                  <option value="AMOUNT" i18n="@@pos.components.montant.fixe.b4a2ce45">Montant fixe</option>
                 </select>
                 <input
                   type="number"
@@ -205,9 +206,9 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
                   [min]="0"
                   [attr.max]="globalDiscountType === 'PERCENT' ? 100 : null"
                   step="0.001"
-                  placeholder="0" />
-                <button type="button" class="order-panel__discount-apply" (click)="applyGlobalDiscount()">Appliquer</button>
-                <button type="button" class="order-panel__discount-cancel" (click)="cancelGlobalDiscountForm()">Annuler</button>
+                  placeholder="0" i18n-placeholder="@@pos.components.0.b6589fc6" />
+                <button type="button" class="order-panel__discount-apply" (click)="applyGlobalDiscount()" i18n="@@pos.components.appliquer.a4d66139">Appliquer</button>
+                <button type="button" class="order-panel__discount-cancel" (click)="cancelGlobalDiscountForm()" i18n="@@pos.components.annuler.49ba3292">Annuler</button>
               </div>
             }
 
@@ -219,40 +220,38 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             }
             @for (vat of posState.totals().vatBreakdown; track vat.rate) {
               <div class="order-panel__total-row order-panel__total-row--vat">
-                <span class="order-panel__total-label">TVA {{ vat.rateDisplay }}</span>
+                <span class="order-panel__total-label">TVA {{ vat.rateDisplay | backendLabel }}</span>
                 <span class="order-panel__total-value">{{ posState.formatAmountWithCurrency(vat.vatAmount) }}</span>
               </div>
             }
             }
 
             <div class="order-panel__total-row order-panel__total-row--ttc" [class.order-panel__total-row--ttc-quick]="posState.isQuickMode()">
-              <span class="order-panel__total-label">Total TTC</span>
+              <span class="order-panel__total-label" i18n="@@pos.components.total.ttc.9e80ff7c">Total TTC</span>
               <span class="order-panel__total-value">{{ posState.formatAmountWithCurrency(posState.totals().totalTTC) }}</span>
             </div>
 
             @if (!posState.isQuickMode()) {
             @if (!posState.hasGlobalDiscount() && !showGlobalDiscountForm) {
-              <button type="button" class="order-panel__add-discount" (click)="openGlobalDiscountForm()">
+              <button type="button" class="order-panel__add-discount" (click)="openGlobalDiscountForm()" i18n="@@pos.components.ajouter.remise.92fdf439">
                 <i class="pi pi-percentage"></i> Ajouter remise
               </button>
             }
 
             @if (posState.hasGlobalDiscount() && !showGlobalDiscountForm) {
-              <button type="button" class="order-panel__remove-discount" (click)="posState.removeGlobalDiscount()">
-                Supprimer remise
-              </button>
+              <button type="button" class="order-panel__remove-discount" (click)="posState.removeGlobalDiscount()" i18n="@@pos.components.supprimer.remise.cabc76a7"> Supprimer remise </button>
             }
             }
 
             @if (posState.totals().firstPurchaseDiscount > 0) {
-              <div class="order-panel__total-row order-panel__total-row--first-purchase">
+              <div class="order-panel__total-row order-panel__total-row--first-purchase" i18n="@@pos.components.premier.achat.89a0b4f0">
                 <span class="order-panel__total-label">Premier achat -{{ posState.firstPurchaseDiscountPercent() }}%</span>
                 <span class="order-panel__total-value order-panel__total-value--discount">-{{ posState.formatAmountWithCurrency(posState.totals().firstPurchaseDiscount) }}</span>
               </div>
             }
 
             @if (posState.paymentSchedule() === 'onAccount') {
-              <div class="order-panel__schedule">
+              <div class="order-panel__schedule" i18n="@@pos.components.paiement.a.terme.echeance.j.0cb37e43">
                 <span class="order-panel__schedule-label">Paiement a terme</span>
                 <span class="order-panel__schedule-value">
                   Echeance {{ posState.client()?.defaultPaymentTermDays || 30 }} j
@@ -260,7 +259,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
               </div>
             }
 
-            <div class="order-panel__total-row order-panel__total-row--net">
+            <div class="order-panel__total-row order-panel__total-row--net" i18n="@@pos.components.net.a.payer.64737429">
               <span class="order-panel__total-label">
                 <i class="pi pi-receipt order-panel__total-net-icon"></i>
                 Net a payer
@@ -270,8 +269,8 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
 
             @if (!posState.isQuickMode()) {
             <div class="order-panel__schedule-btns">
-              <span class="order-panel__schedule-btns-label">Paiement :</span>
-              <button type="button" class="order-panel__schedule-btn" [class.order-panel__schedule-btn--active]="posState.paymentSchedule() === 'immediate'" (click)="posState.setPaymentSchedule('immediate')">
+              <span class="order-panel__schedule-btns-label" i18n="@@pos.components.paiement.7154f3bf">Paiement :</span>
+              <button type="button" class="order-panel__schedule-btn" [class.order-panel__schedule-btn--active]="posState.paymentSchedule() === 'immediate'" (click)="posState.setPaymentSchedule('immediate')" i18n="@@pos.components.comptant.ee47253b">
                 <i class="pi pi-wallet order-panel__schedule-btn-icon"></i> Comptant
               </button>
               <button
@@ -280,7 +279,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
                 [class.order-panel__schedule-btn--active]="posState.paymentSchedule() === 'onAccount'"
                 [disabled]="!posState.client()"
                 (click)="posState.client() && posState.setPaymentSchedule('onAccount')"
-                title="Facture a terme — client identifie obligatoire">
+                title="Facture a terme — client identifie obligatoire" i18n-title="@@pos.components.facture.a.terme.client.identifie.obligatoire.32f40c31" i18n="@@pos.components.a.terme.9cc3650a">
                 <i class="pi pi-calendar order-panel__schedule-btn-icon"></i> A terme
               </button>
             </div>
@@ -432,7 +431,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
     }
 
     .order-panel__notes-badge {
-      margin-left: auto;
+      margin-inline-start: auto;
       min-width: 18px;
       height: 18px;
       padding: 0 6px;
@@ -624,7 +623,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
     .order-panel__visual-cart-qty {
       position: absolute;
       bottom: 0;
-      right: 0;
+      inset-inline-end: 0;
       font-size: 0.65rem;
       font-weight: var(--font-weight-semibold);
       background: rgba(0,0,0,0.6);
@@ -667,7 +666,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
     .order-panel__schedule-btns-label {
       font-size: var(--font-size-xs);
       color: var(--color-text-tertiary);
-      margin-right: var(--spacing-2);
+      margin-inline-end: var(--spacing-2);
     }
 
     .order-panel__schedule-btn {
@@ -1075,13 +1074,13 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
     @media (max-width: 768px) {
       .order-panel__header,
       .order-panel__client {
-        padding-left: var(--spacing-4);
-        padding-right: var(--spacing-4);
+        padding-inline-start: var(--spacing-4);
+        padding-inline-end: var(--spacing-4);
       }
 
       .order-panel__divider {
-        margin-left: var(--spacing-4);
-        margin-right: var(--spacing-4);
+        margin-inline-start: var(--spacing-4);
+        margin-inline-end: var(--spacing-4);
       }
 
       .order-panel__totals {
@@ -1095,6 +1094,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
   `]
 })
 export class OrderPanelComponent {
+  readonly loc_ui_tern_ajouter_778d9b = $localize`:@@ui.tern.ajouter.778d9b:Ajouter `;
   @Input() frequentProducts: ProductListItem[] = [];
   @Output() onValidate = new EventEmitter<void>();
   @Output() onSaveDraft = new EventEmitter<void>();

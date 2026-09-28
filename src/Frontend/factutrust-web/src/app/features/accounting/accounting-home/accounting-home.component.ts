@@ -5,7 +5,7 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
 import { AuthService } from '@core/services/auth.service';
 import {
   ACCOUNTING_MODULES,
-  ACCOUNTING_HOME_HIDDEN_MODULE_TITLES,
+  ACCOUNTING_HOME_HIDDEN_MODULE_IDS,
   AccountingModuleDef
 } from '@core/config/accounting-modules.config';
 import { canSeeNavEntry } from '@core/utils/nav-visibility';
@@ -16,7 +16,7 @@ import { AppModule } from '@core/models/app-module';
   standalone: true,
   imports: [CommonModule, RouterLink, PageHeaderComponent],
   template: `
-    <app-page-header title="Comptabilité" subtitle="Modules et fonctions de la comptabilité générale" />
+    <app-page-header title="Comptabilité" i18n-title="@@accounting.accounting-home.comptabilite.20af7266" subtitle="Modules et fonctions de la comptabilité générale" i18n-subtitle="@@accounting.accounting-home.modules.et.fonctions.de.la.comptabilite.f7fee572" />
 
     <div class="acc-modules">
       @for (mod of visibleModules(); track mod.title) {
@@ -87,7 +87,7 @@ import { AppModule } from '@core/models/app-module';
     }
     .acc-link:hover { background: var(--color-background-subtle); color: var(--color-text-primary); }
     .acc-link > i:first-child { width: 1.1rem; text-align: center; color: var(--color-text-tertiary); }
-    .acc-link-arrow { margin-left: auto; font-size: 0.75rem; color: var(--color-text-tertiary); }
+    .acc-link-arrow { margin-inline-start: auto; font-size: 0.75rem; color: var(--color-text-tertiary); }
   `
 })
 export class AccountingHomeComponent {
@@ -104,7 +104,7 @@ export class AccountingHomeComponent {
             permissionsAll: link.perms
           }))
       }))
-      .filter(mod => !ACCOUNTING_HOME_HIDDEN_MODULE_TITLES.has(mod.title))
+      .filter(mod => !ACCOUNTING_HOME_HIDDEN_MODULE_IDS.has(mod.id))
       .filter(mod => mod.links.length > 0);
   });
 }

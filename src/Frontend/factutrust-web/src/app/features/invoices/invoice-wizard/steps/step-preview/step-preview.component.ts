@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, Output, EventEmitter, inject, signal } from '@angular/core';
 import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -41,7 +42,7 @@ import {
 @Component({
   selector: 'app-step-preview',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     ButtonModule,
@@ -60,20 +61,18 @@ import {
       <!-- Header -->
       <section class="preview-header">
         <div class="header-content">
-          <h2 class="section-title">
+          <h2 class="section-title" i18n="@@invoices.invoice-wizard.apercu.et.validation.5df3ee96">
             <i class="pi pi-eye"></i>
             Aperçu et validation
           </h2>
-          <p class="section-description">
-            Vérifiez les informations puis émettez la facture lorsque tout est conforme.
-          </p>
+          <p class="section-description" i18n="@@invoices.invoice-wizard.verifiez.les.informations.puis.emettez.la.factur.515bc47d"> Vérifiez les informations puis émettez la facture lorsque tout est conforme. </p>
         </div>
       </section>
 
       <p-tabs [lazy]="true">
         <p-tablist>
-          <p-tab [value]="0"><i class="pi pi-file"></i><span>Aperçu facture</span></p-tab>
-          <p-tab [value]="1"><i class="pi pi-check-circle"></i><span>Validation conformité</span></p-tab>
+          <p-tab [value]="0"><i class="pi pi-file"></i><span i18n="@@invoices.invoice-wizard.apercu.facture.c43032fb">Aperçu facture</span></p-tab>
+          <p-tab [value]="1"><i class="pi pi-check-circle"></i><span i18n="@@invoices.invoice-wizard.validation.conformite.59efbc17">Validation conformité</span></p-tab>
         </p-tablist>
         <p-tabpanels>
         <!-- Tab 1: Preview -->
@@ -83,7 +82,7 @@ import {
             <div class="invoice-header">
               <div class="invoice-header-left">
                 @if (seller?.logo) {
-                  <img [src]="seller!.logo" alt="Logo" class="company-logo">
+                  <img [src]="seller!.logo" alt="Logo" i18n-alt="@@invoices.invoice-wizard.logo.83fce832" class="company-logo">
                 }
                 <div class="company-info">
                   <h3>{{ seller?.companyName }}</h3>
@@ -93,7 +92,7 @@ import {
                 </div>
               </div>
               <div class="invoice-header-right">
-                <div class="facture-doc-title">{{ metadata.type === InvoiceType.CreditNote ? "FACTURE D'AVOIR" : 'FACTURE' }}</div>
+                <div class="facture-doc-title">{{ metadata.type === InvoiceType.CreditNote ? loc_ui_tern_facture_d_avoir_4c6fe8 : loc_ui_tern_facture_61fd01 }}</div>
                 <div class="invoice-type-badge" [class]="invoiceTypeBadgeClass">
                   {{ invoiceTypeLabel }}
                 </div>
@@ -107,7 +106,7 @@ import {
 
             <div class="client-and-meta-row">
               <div class="party-card client facture-client-block">
-                <h4>Facturé à :</h4>
+                <h4 i18n="@@invoices.invoice-wizard.facture.a.0fcf1964">Facturé à :</h4>
                 <div class="party-name">{{ client?.name }}</div>
                 <div class="party-address">
                   {{ client?.address?.street }}<br>
@@ -119,20 +118,20 @@ import {
                 </div>
                 @if (client?.nif) {
                   <div class="party-nif">
-                    <strong>N° Fisc. :</strong> {{ client!.nif }}
+                    <strong i18n="@@invoices.invoice-wizard.n.fisc.8d1eec44">N° Fisc. :</strong> {{ client!.nif }}
                   </div>
                 }
               </div>
               <div class="invoice-dates-block">
-                <div class="dates-block-line"><strong>{{ metadata.type === InvoiceType.CreditNote ? 'AVOIR n° :' : 'FACTURE n° :' }}</strong> {{ metadata.invoiceNumber || '—' }}</div>
-                <div class="dates-block-line"><strong>Date facture :</strong> {{ metadata.issueDate | date:'dd/MM/yyyy' }}</div>
+                <div class="dates-block-line"><strong>{{ metadata.type === InvoiceType.CreditNote ? loc_ui_tern_avoir_n_4d40ec : loc_ui_tern_facture_n_9d03d0 }}</strong> {{ metadata.invoiceNumber || '—' }}</div>
+                <div class="dates-block-line"><strong i18n="@@invoices.invoice-wizard.date.facture.6bf98d96">Date facture :</strong> {{ metadata.issueDate | date:'dd/MM/yyyy' }}</div>
                 @if (metadata.dueDate) {
-                  <div class="dates-block-line"><strong>Échéance :</strong> {{ metadata.dueDate | date:'dd/MM/yyyy' }}</div>
+                  <div class="dates-block-line"><strong i18n="@@invoices.invoice-wizard.echeance.0d63aefb">Échéance :</strong> {{ metadata.dueDate | date:'dd/MM/yyyy' }}</div>
                 }
                 @if (metadata.internalReference) {
-                  <div class="dates-block-line"><strong>Réf. :</strong> {{ metadata.internalReference }}</div>
+                  <div class="dates-block-line"><strong i18n="@@invoices.invoice-wizard.ref.2bbf9d70">Réf. :</strong> {{ metadata.internalReference }}</div>
                 }
-                <div class="dates-block-line text-muted"><strong>Devise :</strong> {{ metadata.currency }}</div>
+                <div class="dates-block-line text-muted"><strong i18n="@@invoices.invoice-wizard.devise.7f17f4ea">Devise :</strong> {{ metadata.currency }}</div>
               </div>
             </div>
 
@@ -142,15 +141,15 @@ import {
             <table class="lines-preview-table lines-preview-table--styled">
               <thead>
                 <tr>
-                  <th>N°</th>
-                  <th>RÉF.</th>
-                  <th>DESCRIPTION</th>
-                  <th class="text-right">QTÉ</th>
-                  <th>UNITÉ</th>
-                  <th class="text-right">PRIX U.</th>
-                  <th class="text-center">TAXES</th>
-                  <th class="text-right">REMISE</th>
-                  <th class="text-right">TOTAL</th>
+                  <th i18n="@@invoices.invoice-wizard.n.754e6095">N°</th>
+                  <th i18n="@@invoices.invoice-wizard.ref.6f04e404">RÉF.</th>
+                  <th i18n="@@invoices.invoice-wizard.description.0ceecbea">DESCRIPTION</th>
+                  <th class="text-right" i18n="@@invoices.invoice-wizard.qte.fcf8d1f1">QTÉ</th>
+                  <th i18n="@@invoices.invoice-wizard.unite.f40fb07b">UNITÉ</th>
+                  <th class="text-right" i18n="@@invoices.invoice-wizard.prix.u.d251c16f">PRIX U.</th>
+                  <th class="text-center" i18n="@@invoices.invoice-wizard.taxes.3101ff40">TAXES</th>
+                  <th class="text-right" i18n="@@invoices.invoice-wizard.remise.c3be01d2">REMISE</th>
+                  <th class="text-right" i18n="@@invoices.invoice-wizard.total.5c6505ae">TOTAL</th>
                 </tr>
               </thead>
               <tbody>
@@ -171,7 +170,7 @@ import {
                       <span class="tax-cell">
                         <span>TVA {{ line.vatRate }}%</span>
                         @if (line.isFodecApplicable) {
-                          <span class="fodec-badge">FODEC</span>
+                          <span class="fodec-badge" i18n="@@invoices.invoice-wizard.fodec.9a029080">FODEC</span>
                         }
                       </span>
                     </td>
@@ -193,19 +192,19 @@ import {
               <div class="totals-left">
                 <!-- VAT Breakdown -->
                 <div class="vat-summary">
-                  <h5>Taxes</h5>
+                  <h5 i18n="@@invoices.invoice-wizard.taxes.7e36e319">Taxes</h5>
                   <table class="vat-summary-table vat-summary-table--styled">
                     <thead>
                       <tr>
-                        <th>Taxe</th>
-                        <th class="text-right">Base imposable</th>
-                        <th class="text-right">Montant</th>
+                        <th i18n="@@invoices.invoice-wizard.taxe.7acfb8ad">Taxe</th>
+                        <th class="text-right" i18n="@@invoices.invoice-wizard.base.imposable.e1baa7e1">Base imposable</th>
+                        <th class="text-right" i18n="@@invoices.invoice-wizard.montant.4adcd9fc">Montant</th>
                       </tr>
                     </thead>
                     <tbody>
                       @for (item of totals.vatBreakdown; track item.rate) {
                         <tr>
-                          <td>{{ item.rateDisplay }}</td>
+                          <td>{{ item.rateDisplay | backendLabel }}</td>
                           <td class="text-right">{{ item.baseAmount | number:'1.3-3' }}</td>
                           <td class="text-right">{{ item.vatAmount | number:'1.3-3' }}</td>
                         </tr>
@@ -217,13 +216,13 @@ import {
 
               <div class="totals-right">
                 <div class="total-line">
-                  <span>Total HT</span>
+                  <span i18n="@@invoices.invoice-wizard.total.ht.2ca17ae6">Total HT</span>
                   <span class="amount">{{ totals.totalHT | number:'1.3-3' }} {{ metadata.currency }}</span>
                 </div>
                 @for (item of totals.vatBreakdown; track item.rate) {
                   @if (item.vatAmount > 0) {
                     <div class="total-line">
-                      <span>{{ item.rateDisplay }}</span>
+                      <span>{{ item.rateDisplay | backendLabel }}</span>
                       <span class="amount">{{ item.vatAmount | number:'1.3-3' }} {{ metadata.currency }}</span>
                     </div>
                   }
@@ -236,13 +235,13 @@ import {
                 }
                 @if (totals.totalDiscount && totals.totalDiscount > 0) {
                   <div class="total-line discount">
-                    <span>Remises</span>
+                    <span i18n="@@invoices.invoice-wizard.remises.e0700e8c">Remises</span>
                     <span class="amount">-{{ totals.totalDiscount | number:'1.3-3' }} {{ metadata.currency }}</span>
                   </div>
                 }
                 @if (totals.fiscalStampAmount > 0.0005 || totals.fiscalStampAmount < -0.0005) {
                   <div class="total-line">
-                    <span>Timbre fiscal</span>
+                    <span i18n="@@invoices.invoice-wizard.timbre.fiscal.1f8f7dd1">Timbre fiscal</span>
                     <span class="amount">{{ totals.fiscalStampAmount | number:'1.3-3' }} {{ metadata.currency }}</span>
                   </div>
                 }
@@ -250,11 +249,11 @@ import {
             </div>
 
             <div class="total-ttc-banner">
-              <span>TOTAL TTC</span>
+              <span i18n="@@invoices.invoice-wizard.total.ttc.b4fb9955">TOTAL TTC</span>
               <span class="amount">{{ totals.totalTTC | number:'1.3-3' }} {{ metadata.currency }}</span>
             </div>
 
-            <p class="thanks-line">Merci de votre confiance.</p>
+            <p class="thanks-line" i18n="@@invoices.invoice-wizard.merci.de.votre.confiance.e4293139">Merci de votre confiance.</p>
 
             <p-divider></p-divider>
 
@@ -271,21 +270,21 @@ import {
 
             <!-- Payment Info -->
             <div class="payment-info-preview">
-              <h5>Conditions de paiement</h5>
-              <p><strong>Mode:</strong> {{ paymentMethodLabel }}</p>
+              <h5 i18n="@@invoices.invoice-wizard.conditions.de.paiement.a9b1c917">Conditions de paiement</h5>
+              <p><strong i18n="@@invoices.invoice-wizard.mode.fbb6d6fc">Mode:</strong> {{ paymentMethodLabel }}</p>
               @if (payment.terms) {
                 <p>{{ payment.terms }}</p>
               }
               @if (payment.bankName || payment.rib) {
                 <div class="bank-details">
                   @if (payment.bankName) {
-                    <p><strong>Banque:</strong> {{ payment.bankName }}</p>
+                    <p><strong i18n="@@invoices.invoice-wizard.banque.877baf9a">Banque:</strong> {{ payment.bankName }}</p>
                   }
                   @if (payment.rib) {
-                    <p><strong>RIB:</strong> {{ payment.rib }}</p>
+                    <p><strong i18n="@@invoices.invoice-wizard.rib.e38e5dba">RIB:</strong> {{ payment.rib }}</p>
                   }
                   @if (payment.iban) {
-                    <p><strong>IBAN:</strong> {{ payment.iban }}</p>
+                    <p><strong i18n="@@invoices.invoice-wizard.iban.71c8c232">IBAN:</strong> {{ payment.iban }}</p>
                   }
                 </div>
               }
@@ -302,10 +301,10 @@ import {
                 <div class="error-content">
                   <i class="pi pi-times-circle"></i>
                   <div class="error-text">
-                    <strong>Erreur d'émission</strong>
+                    <strong i18n="@@invoices.invoice-wizard.erreur.d.emission.e55580f9">Erreur d'émission</strong>
                     <span>{{ submissionError }}</span>
                     @if (showSubscriptionCta) {
-                      <a routerLink="/settings/subscription" class="quota-cta-link">Gérer mon abonnement</a>
+                      <a routerLink="/settings/subscription" class="quota-cta-link" i18n="@@invoices.invoice-wizard.gerer.mon.abonnement.8ba8c9cd">Gérer mon abonnement</a>
                     }
                   </div>
                 </div>
@@ -313,7 +312,7 @@ import {
                   type="button"
                   class="error-dismiss"
                   (click)="dismissError()"
-                  aria-label="Fermer">
+                  aria-label="Fermer" i18n-aria-label="@@invoices.invoice-wizard.fermer.5ab4ec64">
                   <i class="pi pi-times"></i>
                 </button>
               </div>
@@ -325,7 +324,7 @@ import {
                   [style]="{ width: '50px', height: '50px' }"
                   strokeWidth="4">
                 </p-progressSpinner>
-                <p>Vérification de conformité en cours...</p>
+                <p i18n="@@invoices.invoice-wizard.verification.de.conformite.en.cours.f8f6617d">Vérification de conformité en cours...</p>
               </div>
             } @else if (validation) {
               <!-- Validation Summary -->
@@ -345,19 +344,19 @@ import {
                 </div>
                 <div class="summary-stats">
                   @if (validation.errorCount > 0) {
-                    <span class="stat error">
+                    <span class="stat error" i18n="@@invoices.invoice-wizard.erreur.s.1ad840e4">
                       <i class="pi pi-times"></i>
                       {{ validation.errorCount }} erreur(s)
                     </span>
                   }
                   @if (validation.warningCount > 0) {
-                    <span class="stat warning">
+                    <span class="stat warning" i18n="@@invoices.invoice-wizard.avertissement.s.b4e98bfe">
                       <i class="pi pi-exclamation-triangle"></i>
                       {{ validation.warningCount }} avertissement(s)
                     </span>
                   }
                   @if (validation.isValid) {
-                    <span class="stat success">
+                    <span class="stat success" i18n="@@invoices.invoice-wizard.tout.est.conforme.a06a751f">
                       <i class="pi pi-check"></i>
                       Tout est conforme
                     </span>
@@ -369,10 +368,10 @@ import {
               <div class="validation-details">
                 <p-accordion [multiple]="true">
                   <!-- Legal Checks -->
-                  <p-accordionTab header="Mentions légales" [selected]="hasErrorsInCategory('LEGAL')">
+                  <p-accordionTab header="Mentions légales" i18n-header="@@invoices.invoice-wizard.mentions.legales.414291e0" [selected]="hasErrorsInCategory('LEGAL')">
                     <ng-template pTemplate="header">
                       <div class="accordion-header">
-                        <span>Mentions légales</span>
+                        <span i18n="@@invoices.invoice-wizard.mentions.legales.414291e0">Mentions légales</span>
                         {{ getCategoryStatus('LEGAL') }}
                       </div>
                     </ng-template>
@@ -388,10 +387,10 @@ import {
                   </p-accordionTab>
 
                   <!-- Fiscal Checks -->
-                  <p-accordionTab header="Conformité fiscale" [selected]="hasErrorsInCategory('FISCAL')">
+                  <p-accordionTab header="Conformité fiscale" i18n-header="@@invoices.invoice-wizard.conformite.fiscale.f4dc5b52" [selected]="hasErrorsInCategory('FISCAL')">
                     <ng-template pTemplate="header">
                       <div class="accordion-header">
-                        <span>Conformité fiscale</span>
+                        <span i18n="@@invoices.invoice-wizard.conformite.fiscale.f4dc5b52">Conformité fiscale</span>
                         {{ getCategoryStatus('FISCAL') }}
                       </div>
                     </ng-template>
@@ -407,10 +406,10 @@ import {
                   </p-accordionTab>
 
                   <!-- Calculation Checks -->
-                  <p-accordionTab header="Calculs" [selected]="hasErrorsInCategory('CALCULATION')">
+                  <p-accordionTab header="Calculs" i18n-header="@@invoices.invoice-wizard.calculs.009b0e4f" [selected]="hasErrorsInCategory('CALCULATION')">
                     <ng-template pTemplate="header">
                       <div class="accordion-header">
-                        <span>Calculs</span>
+                        <span i18n="@@invoices.invoice-wizard.calculs.009b0e4f">Calculs</span>
                         {{ getCategoryStatus('CALCULATION') }}
                       </div>
                     </ng-template>
@@ -426,7 +425,7 @@ import {
                   </p-accordionTab>
 
                   <!-- Format Checks -->
-                  <p-accordionTab header="Format">
+                  <p-accordionTab header="Format" i18n-header="@@invoices.invoice-wizard.format.041a5dec">
                     @for (check of getChecksByCategory('FORMAT'); track check.id) {
                       <div class="check-item" [class]="check.status.toLowerCase()">
                         <i [class]="getCheckIcon(check)"></i>
@@ -451,10 +450,10 @@ import {
           <div class="error-content">
             <i class="pi pi-times-circle"></i>
             <div class="error-text">
-              <strong>Erreur</strong>
+              <strong i18n="@@invoices.invoice-wizard.erreur.ab546c23">Erreur</strong>
               <span>{{ submissionError }}</span>
               @if (showSubscriptionCta) {
-                <a routerLink="/settings/subscription" class="quota-cta-link">Gérer mon abonnement</a>
+                <a routerLink="/settings/subscription" class="quota-cta-link" i18n="@@invoices.invoice-wizard.gerer.mon.abonnement.8ba8c9cd">Gérer mon abonnement</a>
               }
             </div>
           </div>
@@ -462,7 +461,7 @@ import {
             type="button"
             class="error-dismiss"
             (click)="dismissError()"
-            aria-label="Fermer">
+            aria-label="Fermer" i18n-aria-label="@@invoices.invoice-wizard.fermer.5ab4ec64">
             <i class="pi pi-times"></i>
           </button>
         </div>
@@ -473,9 +472,9 @@ import {
           <div class="error-content">
             <i class="pi pi-exclamation-triangle"></i>
             <div class="error-text">
-              <strong>Quota factures</strong>
+              <strong i18n="@@invoices.invoice-wizard.quota.factures.dfc0fe56">Quota factures</strong>
               <span>{{ invoiceQuotaMessage }}</span>
-              <a routerLink="/settings/subscription" class="quota-cta-link">Gérer mon abonnement</a>
+              <a routerLink="/settings/subscription" class="quota-cta-link" i18n="@@invoices.invoice-wizard.gerer.mon.abonnement.8ba8c9cd">Gérer mon abonnement</a>
             </div>
           </div>
         </div>
@@ -488,7 +487,7 @@ import {
 
       <!-- Final Actions : émission unique -->
       <div class="final-actions">
-        <div class="actions-warning">
+        <div class="actions-warning" i18n="@@invoices.invoice-wizard.attention.une.fois.emise.cette.facture.n.fd20dbe7">
           <i class="pi pi-exclamation-triangle"></i>
           <span>
             <strong>Attention :</strong> Une fois émise, cette facture ne pourra plus être modifiée.
@@ -519,7 +518,7 @@ import {
         @if (featureFlags.pdfPreview()) {
           <div class="actions-pdf">
             <p-button
-              label="Télécharger aperçu PDF"
+              label="Télécharger aperçu PDF" i18n-label="@@invoices.invoice-wizard.telecharger.apercu.pdf.346b69f1"
               icon="pi pi-download"
               [text]="true"
               (click)="downloadPreview()">
@@ -605,7 +604,7 @@ import {
     }
 
     .invoice-header-right {
-      text-align: right;
+      text-align: end;
     }
 
     .facture-doc-title {
@@ -631,7 +630,7 @@ import {
 
     .invoice-dates-block {
       flex: 0 1 260px;
-      text-align: right;
+      text-align: end;
       font-size: var(--font-size-sm);
     }
 
@@ -803,7 +802,7 @@ import {
         font-weight: var(--font-weight-semibold);
         text-transform: uppercase;
         color: var(--color-neutral-500);
-        text-align: left;
+        text-align: start;
         border-bottom: 2px solid var(--color-neutral-200);
       }
 
@@ -1217,7 +1216,7 @@ import {
     }
 
     .text-right {
-      text-align: right;
+      text-align: end;
     }
 
     .text-center {
@@ -1360,6 +1359,10 @@ import {
   `]
 })
 export class StepPreviewComponent implements OnInit {
+  readonly loc_ui_tern_facture_d_avoir_4c6fe8 = $localize`:@@ui.tern.facture.d.avoir.4c6fe8:FACTURE D'AVOIR`;
+  readonly loc_ui_tern_facture_61fd01 = $localize`:@@ui.tern.facture.61fd01:FACTURE`;
+  readonly loc_ui_tern_avoir_n_4d40ec = $localize`:@@ui.tern.avoir.n.4d40ec:AVOIR n° :`;
+  readonly loc_ui_tern_facture_n_9d03d0 = $localize`:@@ui.tern.facture.n.9d03d0:FACTURE n° :`;
   @Output() validateAndSubmit = new EventEmitter<void>();
 
   readonly wizardService = inject(InvoiceWizardService);
@@ -1408,7 +1411,7 @@ export class StepPreviewComponent implements OnInit {
   }
 
   get invoiceTypeLabel(): string {
-    return this.metadata.type === InvoiceType.CreditNote ? "Facture d'avoir" : 'Facture';
+    return this.metadata.type === InvoiceType.CreditNote ? $localize`:@@ui.tern.facture.d.avoir.541e44:Facture d'avoir` : $localize`:@@ui.tern.facture.3953b9:Facture`;
   }
 
   get invoiceTypeBadgeClass(): string {
@@ -1420,17 +1423,17 @@ export class StepPreviewComponent implements OnInit {
   }
 
   get emitActionTitle(): string {
-    return this.isCreditNote ? "Émettre l'avoir" : 'Émettre la facture';
+    return this.isCreditNote ? $localize`:@@ui.tern.emettre.l.avoir.4155eb:Émettre l'avoir` : $localize`:@@ui.tern.emettre.la.facture.9ba0dd:Émettre la facture`;
   }
 
   get emitButtonLabel(): string {
-    return this.isCreditNote ? "Émettre l'avoir" : 'Émettre la facture';
+    return this.isCreditNote ? $localize`:@@ui.tern.emettre.l.avoir.4155eb:Émettre l'avoir` : $localize`:@@ui.tern.emettre.la.facture.9ba0dd:Émettre la facture`;
   }
 
   get emitActionHint(): string {
     return this.isCreditNote
-      ? "L'avoir est validé immédiatement avec un numéro attribué."
-      : 'La facture est créée ; vous pourrez la valider et la signer depuis sa fiche.';
+      ? $localize`:@@ui.tern.l.avoir.est.valide.immediatement.avec.un.n.0d7593:L'avoir est validé immédiatement avec un numéro attribué.`
+      : $localize`:@@ui.tern.la.facture.est.creee.vous.pourrez.la.valid.ef8ee6:La facture est créée ; vous pourrez la valider et la signer depuis sa fiche.`;
   }
 
   lineRefLabel(_line: InvoiceLine): string {
@@ -1439,11 +1442,11 @@ export class StepPreviewComponent implements OnInit {
 
   get paymentMethodLabel(): string {
     const labels: Record<PaymentMethod, string> = {
-      [PaymentMethod.BankTransfer]: 'Virement bancaire',
-      [PaymentMethod.Cash]: 'Espèces',
-      [PaymentMethod.Check]: 'Chèque',
-      [PaymentMethod.Card]: 'Carte bancaire',
-      [PaymentMethod.Effect]: 'Effet de commerce'
+      [PaymentMethod.BankTransfer]: $localize`:@@ui.tern.virement.bancaire.8306f0:Virement bancaire`,
+      [PaymentMethod.Cash]: $localize`:@@ui.tern.especes.b7679d:Espèces`,
+      [PaymentMethod.Check]: $localize`:@@ui.tern.cheque.8bbb89:Chèque`,
+      [PaymentMethod.Card]: $localize`:@@ui.tern.carte.bancaire.9e3d9b:Carte bancaire`,
+      [PaymentMethod.Effect]: $localize`:@@ui.tern.effet.de.commerce.9793a8:Effet de commerce`
     };
     return labels[this.payment.method] || '';
   }
@@ -1461,20 +1464,20 @@ export class StepPreviewComponent implements OnInit {
 
   get validationSummaryTitle(): string {
     if (!this.validation) return '';
-    if (this.validation.isValid) return 'Facture conforme';
-    if (this.validation.canProceed) return 'Avertissements détectés';
-    return 'Erreurs bloquantes';
+    if (this.validation.isValid) return $localize`:@@invoices.step-preview.ts.facture.conforme.cf5e698d:Facture conforme`;
+    if (this.validation.canProceed) return $localize`:@@invoices.step-preview.ts.avertissements.detectes.043faaef:Avertissements détectés`;
+    return $localize`:@@invoices.step-preview.ts.erreurs.bloquantes.f4604ece:Erreurs bloquantes`;
   }
 
   get validationSummaryMessage(): string {
     if (!this.validation) return '';
     if (this.validation.isValid) {
-      return 'Tous les contrôles de conformité sont passés avec succès.';
+      return $localize`:@@invoices.step-preview.ts.tous.les.controles.de.conformite.sont.pa.405e38b5:Tous les contrôles de conformité sont passés avec succès.`;
     }
     if (this.validation.canProceed) {
-      return 'La facture peut être émise mais certains éléments méritent votre attention.';
+      return $localize`:@@invoices.step-preview.ts.la.facture.peut.etre.emise.mais.certains.370d8676:La facture peut être émise mais certains éléments méritent votre attention.`;
     }
-    return 'Des erreurs doivent être corrigées avant de pouvoir émettre cette facture.';
+    return $localize`:@@invoices.step-preview.ts.des.erreurs.doivent.etre.corrigees.avant.9df1fb6b:Des erreurs doivent être corrigées avant de pouvoir émettre cette facture.`;
   }
 
   ngOnInit(): void {

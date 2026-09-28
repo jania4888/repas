@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -42,23 +43,23 @@ interface ProrationOption {
     <p-dialog
       [(visible)]="visible"
       [modal]="true"
-      header="Créer un avenant"
+      header="Créer un avenant" i18n-header="@@recurring-contracts.components.creer.un.avenant.676020ba"
       [style]="{ width: '56rem' }"
       (onShow)="onShow()">
       <div class="grid">
-        <label>Type d'avenant
-          <select class="ft-input" [(ngModel)]="amendmentType" name="amendmentType">
+        <label><ng-container i18n="@@recurring-contracts.components.type.d.avenant.2cd4f6cf">Type d'avenant
+          </ng-container><select class="ft-input" [(ngModel)]="amendmentType" name="amendmentType">
             @for (opt of typeOptions; track opt.value) {
               <option [ngValue]="opt.value">{{ opt.label }}</option>
             }
           </select>
         </label>
-        <label>Date d'effet
-          <input class="ft-input" [value]="today | date:'dd/MM/yyyy'" disabled />
-          <span class="field-hint">Effet immédiat (jour même) — non modifiable.</span>
+        <label><ng-container i18n="@@recurring-contracts.components.date.d.effet.45032d85">Date d'effet
+          </ng-container><input class="ft-input" [value]="today | date:'dd/MM/yyyy'" disabled />
+          <span class="field-hint" i18n="@@recurring-contracts.components.effet.immediat.jour.meme.non.modifiable.71bcc4a8">Effet immédiat (jour même) — non modifiable.</span>
         </label>
-        <label>Politique de prorata
-          <select class="ft-input" [(ngModel)]="prorationPolicy" name="prorationPolicy">
+        <label><ng-container i18n="@@recurring-contracts.components.politique.de.prorata.d2e9fad2">Politique de prorata
+          </ng-container><select class="ft-input" [(ngModel)]="prorationPolicy" name="prorationPolicy">
             @for (opt of prorationOptions; track opt.value) {
               <option [ngValue]="opt.value">{{ opt.label }}</option>
             }
@@ -66,76 +67,72 @@ interface ProrationOption {
         </label>
       </div>
 
-      <p class="info-line">
+      <p class="info-line" i18n="@@recurring-contracts.components.les.modifications.prennent.effet.immedia.02fe5f16">
         <i class="pi pi-info-circle"></i>
         Les modifications prennent effet immédiatement ; les lignes actuelles sont clôturées à la veille.
         Si un brouillon existe déjà pour la période en cours, il n'est pas modifié.
       </p>
 
-      <h4 class="lines-title">Lignes du contrat après avenant</h4>
+      <h4 class="lines-title" i18n="@@recurring-contracts.components.lignes.du.contrat.apres.avenant.707b103f">Lignes du contrat après avenant</h4>
       @for (line of lines; track $index; let i = $index) {
         <div class="line-card">
           <div class="line-card__head">
             <select class="ft-input" [(ngModel)]="line.lineType" [name]="'amendLineType' + i">
-              <option [ngValue]="'FixedRecurring'">Récurrent fixe</option>
-              <option [ngValue]="'UsageMetered'">À la consommation</option>
-              <option [ngValue]="'OneTimeSetup'">Frais d'installation</option>
+              <option [ngValue]="'FixedRecurring'" i18n="@@recurring-contracts.components.recurrent.fixe.9f36de5c">Récurrent fixe</option>
+              <option [ngValue]="'UsageMetered'" i18n="@@recurring-contracts.components.a.la.consommation.a9497352">À la consommation</option>
+              <option [ngValue]="'OneTimeSetup'" i18n="@@recurring-contracts.components.frais.d.installation.f39459df">Frais d'installation</option>
             </select>
-            <app-button type="button" variant="ghost" size="sm" icon="pi-trash" (clicked)="removeLine(i)">
-              Retirer
-            </app-button>
+            <app-button type="button" variant="ghost" size="sm" icon="pi-trash" (clicked)="removeLine(i)" i18n="@@recurring-contracts.components.retirer.54ec24a1"> Retirer </app-button>
           </div>
           <div class="grid">
-            <label class="span-2">Description
-              <input class="ft-input" placeholder="Description (optionnelle)" [(ngModel)]="line.description" [name]="'amendDesc' + i" />
+            <label class="span-2"><ng-container i18n="@@recurring-contracts.components.description.55f8ebc8">Description
+              </ng-container><input class="ft-input" placeholder="Description (optionnelle)" i18n-placeholder="@@recurring-contracts.components.description.optionnelle.27856f3e" [(ngModel)]="line.description" [name]="'amendDesc' + i" />
             </label>
-            <label>Qté
-              <input class="ft-input" type="number" [(ngModel)]="line.quantity" [name]="'amendQty' + i" />
+            <label><ng-container i18n="@@recurring-contracts.components.qte.a4772129">Qté
+              </ng-container><input class="ft-input" type="number" [(ngModel)]="line.quantity" [name]="'amendQty' + i" />
             </label>
-            <label>Prix unitaire HT
-              <input class="ft-input" type="number" step="0.001" min="0" [(ngModel)]="line.unitPriceHT" [name]="'amendPrice' + i" />
+            <label><ng-container i18n="@@recurring-contracts.components.prix.unitaire.ht.bb3f8e39">Prix unitaire HT
+              </ng-container><input class="ft-input" type="number" step="0.001" min="0" [(ngModel)]="line.unitPriceHT" [name]="'amendPrice' + i" />
             </label>
             <label>TVA %
               <input class="ft-input" type="number" step="0.001" min="0" [(ngModel)]="line.vatRate" [name]="'amendVat' + i" />
             </label>
             @if (line.lineType === 'UsageMetered') {
               <label>
-                <span class="field-label required">Métrique</span>
+                <span class="field-label required" i18n="@@recurring-contracts.components.metrique.066ebc60">Métrique</span>
                 <select class="ft-input" [(ngModel)]="line.usageMetricId" [name]="'amendMetric' + i">
-                  <option [ngValue]="null">— Sélectionner —</option>
+                  <option [ngValue]="null" i18n="@@recurring-contracts.components.selectionner.7ae1afc7">— Sélectionner —</option>
                   @for (m of usageMetrics; track m.id) {
                     <option [ngValue]="m.id">{{ m.name }} ({{ m.unit }})</option>
                   }
                 </select>
               </label>
-              <label>Quantité incluse
-                <input class="ft-input" type="number" min="0" [(ngModel)]="line.includedQuantity" [name]="'amendIncluded' + i" />
+              <label><ng-container i18n="@@recurring-contracts.components.quantite.incluse.a142ba58">Quantité incluse
+                </ng-container><input class="ft-input" type="number" min="0" [(ngModel)]="line.includedQuantity" [name]="'amendIncluded' + i" />
               </label>
-              <label>Prix dépassement HT
-                <input class="ft-input" type="number" step="0.001" min="0" [(ngModel)]="line.overageUnitPriceHT" [name]="'amendOverage' + i" />
+              <label><ng-container i18n="@@recurring-contracts.components.prix.depassement.ht.a0225a75">Prix dépassement HT
+                </ng-container><input class="ft-input" type="number" step="0.001" min="0" [(ngModel)]="line.overageUnitPriceHT" [name]="'amendOverage' + i" />
               </label>
             }
           </div>
         </div>
       }
-      <app-button type="button" variant="outline" size="sm" icon="pi-plus" (clicked)="addLine()">
-        Ajouter une ligne
-      </app-button>
+      <app-button type="button" variant="outline" size="sm" icon="pi-plus" (clicked)="addLine()" i18n="@@recurring-contracts.components.ajouter.une.ligne.ba241fd4"> Ajouter une ligne </app-button>
 
-      <label class="notes-label">Notes
-        <textarea
+      <label class="notes-label"><ng-container i18n="@@recurring-contracts.components.notes.70440046">Notes
+        </ng-container><textarea
           class="ft-input"
           rows="2"
           [(ngModel)]="notes"
           name="amendmentNotes"
-          placeholder="Motif de l'avenant (visible dans l'historique)…">
+          placeholder="Motif de l'avenant (visible dans l'historique)…" i18n-placeholder="@@recurring-contracts.components.motif.de.l.avenant.visible.dans.l.historique.1399d0f2">
         </textarea>
       </label>
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (clicked)="close()">Annuler</app-button>
+        <app-button variant="secondary" (clicked)="close()" i18n="@@recurring-contracts.components.annuler.49ba3292">Annuler</app-button>
         <app-button variant="primary" icon="pi-check" [disabled]="saving" (clicked)="submit()">
-          {{ saving ? 'Enregistrement…' : "Enregistrer l'avenant" }}
+          {{ saving ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_l_avenant_d671bc }}
         </app-button>
       </ng-template>
     </p-dialog>
@@ -222,6 +219,8 @@ interface ProrationOption {
   `]
 })
 export class ContractAmendDialogComponent {
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_l_avenant_d671bc = $localize`:@@ui.tern.enregistrer.l.avenant.d671bc:Enregistrer l'avenant`;
   @Input() visible = false;
   @Output() visibleChange = new EventEmitter<boolean>();
   @Input({ required: true }) contract!: RecurringContractDetail;
@@ -242,16 +241,16 @@ export class ContractAmendDialogComponent {
   readonly today = new Date();
 
   readonly typeOptions: AmendmentTypeOption[] = [
-    { label: 'Mise à niveau', value: 'Upgrade' },
-    { label: 'Déclassement', value: 'Downgrade' },
-    { label: 'Ajout de ligne', value: 'AddLine' },
-    { label: 'Retrait de ligne', value: 'RemoveLine' },
-    { label: 'Changement de prix', value: 'PriceChange' }
+    { label: $localize`:@@recurring-contracts.contract-amend-dialog.ts.mise.a.niveau.bf143a5a:Mise à niveau`, value: 'Upgrade' },
+    { label: $localize`:@@recurring-contracts.contract-amend-dialog.ts.declassement.8785fc4d:Déclassement`, value: 'Downgrade' },
+    { label: $localize`:@@recurring-contracts.contract-amend-dialog.ts.ajout.de.ligne.f090cae8:Ajout de ligne`, value: 'AddLine' },
+    { label: $localize`:@@recurring-contracts.contract-amend-dialog.ts.retrait.de.ligne.7baead4b:Retrait de ligne`, value: 'RemoveLine' },
+    { label: $localize`:@@recurring-contracts.contract-amend-dialog.ts.changement.de.prix.6838c14d:Changement de prix`, value: 'PriceChange' }
   ];
 
   readonly prorationOptions: ProrationOption[] = [
-    { label: 'Prorata journalier', value: 'DailyProration' },
-    { label: 'Aucun', value: 'None' }
+    { label: $localize`:@@recurring-contracts.contract-amend-dialog.ts.prorata.journalier.a5f54d21:Prorata journalier`, value: 'DailyProration' },
+    { label: $localize`:@@recurring-contracts.contract-amend-dialog.ts.aucun.b2ed82f1:Aucun`, value: 'None' }
   ];
 
   // Initialisation uniquement via (onShow) de p-dialog : après un avenant réussi le parent
@@ -292,12 +291,12 @@ export class ContractAmendDialogComponent {
 
   submit(): void {
     if (this.lines.length === 0) {
-      this.toast.add({ severity: 'warn', summary: 'Avenant incomplet', detail: 'Le contrat doit conserver au moins une ligne.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@contract-amend-dialog.component.summary.Avenant_incomple:Avenant incomplet`, detail: $localize`:@@contract-amend-dialog.component.detail.Le_contrat_doit_:Le contrat doit conserver au moins une ligne.` });
       return;
     }
     for (const line of this.lines) {
       if (line.lineType === 'UsageMetered' && !line.usageMetricId) {
-        this.toast.add({ severity: 'warn', summary: 'Avenant incomplet', detail: 'La métrique est obligatoire pour une ligne à la consommation.' });
+        this.toast.add({ severity: 'warn', summary: $localize`:@@contract-amend-dialog.component.summary.Avenant_incomple:Avenant incomplet`, detail: $localize`:@@contract-amend-dialog.component.detail.La_m_trique_est_:La métrique est obligatoire pour une ligne à la consommation.` });
         return;
       }
     }
@@ -314,14 +313,14 @@ export class ContractAmendDialogComponent {
     this.service.amend(this.contract.id, payload).subscribe({
       next: () => {
         this.saving = false;
-        this.toast.add({ severity: 'success', summary: 'Avenant enregistré', detail: 'L\'avenant a été pris en compte immédiatement.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@contract-amend-dialog.component.summary.Avenant_enregist:Avenant enregistré`, detail: $localize`:@@contract-amend-dialog.component.detail.L_avenant_a_t_:L'avenant a été pris en compte immédiatement.` });
         this.close();
         this.amended.emit();
       },
       error: err => {
         this.saving = false;
         this.errorHandler.logError('RecurringContracts: amend', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-amend-dialog.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }

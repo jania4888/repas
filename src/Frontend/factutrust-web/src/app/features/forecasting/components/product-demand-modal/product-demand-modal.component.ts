@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
@@ -15,29 +16,29 @@ import { ProductDemandForecast } from '../../models/forecasting.models';
         <header class="modal-header">
           <div>
             <h3>{{ productName }}</h3>
-            <span class="modal-subtitle">Prévision de demande produit</span>
+            <span class="modal-subtitle" i18n="@@forecasting.components.prevision.de.demande.produit.bf33950d">Prévision de demande produit</span>
           </div>
           <button class="close-btn" (click)="close.emit()"><i class="pi pi-times"></i></button>
         </header>
 
         @if (loading()) {
-          <div class="state">Calcul en cours…</div>
+          <div class="state" i18n="@@forecasting.components.calcul.en.cours.0721ac07">Calcul en cours…</div>
         } @else {
           @if (forecast(); as f) {
             <div class="kpi-row">
               <div class="kpi">
-                <span class="label">Qté prévue</span>
+                <span class="label" i18n="@@forecasting.components.qte.prevue.1e18ec77">Qté prévue</span>
                 <span class="value">{{ f.expectedQty | number:'1.0-2' }}</span>
                 <span class="hint">{{ f.lowQty | number:'1.0-2' }} – {{ f.highQty | number:'1.0-2' }}</span>
               </div>
               <div class="kpi">
-                <span class="label">Stock actuel</span>
+                <span class="label" i18n="@@forecasting.components.stock.actuel.294a897a">Stock actuel</span>
                 <span class="value" [class.low-stock]="isLowStock(f)">{{ f.currentStockOnHand | number:'1.0-2' }}</span>
                 @if (f.daysOfStockRemaining !== null) {
-                  <span class="hint">{{ f.daysOfStockRemaining | number:'1.0-0' }} jour(s) de stock</span>
+                  <span class="hint" i18n="@@forecasting.components.jour.s.de.stock.1d02a123">{{ f.daysOfStockRemaining | number:'1.0-0' }} jour(s) de stock</span>
                 }
               </div>
-              <div class="kpi">
+              <div class="kpi" i18n="@@forecasting.components.reappro.suggere.confiance.de7d70b4">
                 <span class="label">Réappro suggéré</span>
                 <span class="value accent">{{ f.suggestedReplenishmentQty | number:'1.0-2' }}</span>
                 <span class="hint">Confiance {{ f.confidencePercent | number:'1.0-1' }} %</span>
@@ -50,7 +51,7 @@ import { ProductDemandForecast } from '../../models/forecasting.models';
             </div>
 
             @if (isLowStock(f)) {
-              <div class="alert">
+              <div class="alert" i18n="@@forecasting.components.le.stock.actuel.est.inferieur.a.la.deman.7c6d1578">
                 <i class="pi pi-exclamation-triangle"></i>
                 Le stock actuel est inférieur à la demande prévue. Un réapprovisionnement est recommandé.
               </div>
@@ -59,14 +60,14 @@ import { ProductDemandForecast } from '../../models/forecasting.models';
             <footer class="modal-footer">
               <button class="btn btn-primary" (click)="triggerReplenishment()" [disabled]="generating()">
                 <i class="pi pi-shopping-cart"></i>
-                {{ generating() ? 'Génération…' : 'Créer une recommandation de réappro' }}
+                {{ generating() ? loc_ui_tern_generation_ce4e34 : loc_ui_tern_creer_une_recommandation_de_reappro_c9fa73 }}
               </button>
-              <button class="btn btn-secondary" (click)="close.emit()">Fermer</button>
+              <button class="btn btn-secondary" (click)="close.emit()" i18n="@@forecasting.components.fermer.5ab4ec64">Fermer</button>
             </footer>
           } @else if (error()) {
             <div class="state error">{{ error() }}</div>
             <footer class="modal-footer">
-              <button class="btn btn-secondary" (click)="close.emit()">Fermer</button>
+              <button class="btn btn-secondary" (click)="close.emit()" i18n="@@forecasting.components.fermer.5ab4ec64">Fermer</button>
             </footer>
           }
         }
@@ -104,6 +105,8 @@ import { ProductDemandForecast } from '../../models/forecasting.models';
   `]
 })
 export class ProductDemandModalComponent implements OnInit {
+  readonly loc_ui_tern_generation_ce4e34 = $localize`:@@ui.tern.generation.ce4e34:Génération…`;
+  readonly loc_ui_tern_creer_une_recommandation_de_reappro_c9fa73 = $localize`:@@ui.tern.creer.une.recommandation.de.reappro.c9fa73:Créer une recommandation de réappro`;
   @Input({ required: true }) productId!: string;
   @Input({ required: true }) productName!: string;
   @Output() close = new EventEmitter<void>();
@@ -133,7 +136,7 @@ export class ProductDemandModalComponent implements OnInit {
       const f = await firstValueFrom(this.forecastingService.getProductDemandForecast(this.productId, 'month'));
       this.forecast.set(f);
     } catch (err: any) {
-      this.error.set(err?.error?.message ?? 'Impossible de charger la prévision.');
+      this.error.set(err?.error?.message ?? $localize`:@@ui.tern.impossible.de.charger.la.prevision.d4c8c4:Impossible de charger la prévision.`);
     } finally {
       this.loading.set(false);
     }
@@ -150,16 +153,16 @@ export class ProductDemandModalComponent implements OnInit {
       );
       this.toast.add({
         severity: 'success',
-        summary: 'Recommandation créée',
+        summary: $localize`:@@product-demand-modal.component.summary.Recommandation_c:Recommandation créée`,
         detail: count > 0
-          ? `${count} recommandation(s) générée(s) pour ${this.productName}. Consultez le tableau de réapprovisionnement.`
-          : `Aucune nouvelle recommandation nécessaire pour ${this.productName} — stock suffisant.`
+          ? $localize`:@@ui.tern.ph.recommandation.s.generee.s.pour.ph.cons.763802:${count}:p0: recommandation(s) générée(s) pour ${this.productName}:p1:. Consultez le tableau de réapprovisionnement.`
+          : $localize`:@@ui.tern.aucune.nouvelle.recommandation.necessaire..4d87c3:Aucune nouvelle recommandation nécessaire pour ${this.productName}:p0: — stock suffisant.`
       });
       // Phase 6 review P6-m1: tell the parent that a regeneration happened so it can reload its data.
       this.regenerated.emit({ productId: this.productId, createdCount: count });
       this.close.emit();
     } catch (err: any) {
-      this.toast.add({ severity: 'error', summary: 'Échec', detail: err?.error?.message ?? 'Erreur inconnue.' });
+      this.toast.add({ severity: 'error', summary: $localize`:@@product-demand-modal.component.summary.Échec:Échec`, detail: err?.error?.message ?? $localize`:@@ui.tern.erreur.inconnue.2f49e3:Erreur inconnue.` });
     } finally {
       this.generating.set(false);
     }

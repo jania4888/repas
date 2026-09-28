@@ -37,31 +37,27 @@ import {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Solde par client"
-      subtitle="Solde commercial (facturé − payé) par client">
+      title="Solde par client" i18n-title="@@reports.client-balances.solde.par.client.dc39ad70"
+      subtitle="Solde commercial (facturé − payé) par client" i18n-subtitle="@@reports.client-balances.solde.commercial.facture.paye.par.client.fde9bbdf">
       <app-button
         variant="secondary"
         icon="pi-print"
         iconPos="left"
         (click)="onPrint()"
-        ariaLabel="Imprimer les soldes clients">
-        Imprimer
-      </app-button>
+        ariaLabel="Imprimer les soldes clients" i18n-ariaLabel="@@reports.client-balances.imprimer.les.soldes.clients.a58071ed" i18n="@@reports.client-balances.imprimer.5382c09d"> Imprimer </app-button>
       <app-button
         variant="secondary"
         icon="pi-download"
         iconPos="left"
         (click)="onExport()"
-        ariaLabel="Exporter les soldes clients en CSV">
-        Exporter
-      </app-button>
+        ariaLabel="Exporter les soldes clients en CSV" i18n-ariaLabel="@@reports.client-balances.exporter.les.soldes.clients.en.csv.95521e88" i18n="@@reports.client-balances.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
 
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@reports.client-balances.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
-          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres">
+          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="@@reports.client-balances.reinitialiser.les.filtres.d8915f02" i18n="@@reports.client-balances.reinitialiser.c77ef305">
             <i class="pi pi-times"></i>
             Réinitialiser
           </button>
@@ -74,18 +70,18 @@ import {
             type="text"
             pInputText
             class="filter-input"
-            placeholder="Rechercher un client..."
+            placeholder="Rechercher un client..." i18n-placeholder="@@reports.client-balances.rechercher.un.client.37880794"
             [ngModel]="search()"
             (ngModelChange)="search.set($event)"
-            aria-label="Rechercher un client" />
+            aria-label="Rechercher un client" i18n-aria-label="@@reports.client-balances.rechercher.un.client.723cebe6" />
         </span>
         <label class="filter-toggle">
           <input
             type="checkbox"
             [ngModel]="hideZeroBalances()"
-            (ngModelChange)="hideZeroBalances.set($event)" />
+            (ngModelChange)="hideZeroBalances.set($event)" /><ng-container i18n="@@reports.client-balances.masquer.les.soldes.a.zero.f97078e9">
           Masquer les soldes à zéro
-        </label>
+        </ng-container></label>
       </div>
     </div>
 
@@ -97,8 +93,8 @@ import {
         [loading]="loading()"
         partyLabel="Client"
         [showActions]="true"
-        emptyMessage="Aucun solde client"
-        ariaLabel="Soldes par client"
+        emptyMessage="Aucun solde client" i18n-emptyMessage="@@reports.client-balances.aucun.solde.client.adab3cf6"
+        ariaLabel="Soldes par client" i18n-ariaLabel="@@reports.client-balances.soldes.par.client.c72acad8"
         (viewInvoices)="onViewInvoices($event)"
         (viewParty)="onViewParty($event)">
       </app-party-balances-table>
@@ -110,18 +106,18 @@ import {
       avant, sans zone vide.
     -->
     <div class="ft-table-card aging-card">
-      <h3 class="aging-card__title">
+      <h3 class="aging-card__title" i18n="@@reports.client-balances.balance.agee.a.partir.de.la.date.d.echea.85b7d1e0">
         <i class="pi pi-clock"></i> Balance âgée
         <small>À partir de la date d'échéance (DueDate).</small>
       </h3>
-      <app-aging-table [rows]="filteredRows()" partyLabel="Client"></app-aging-table>
+      <app-aging-table [rows]="filteredRows()"></app-aging-table>
     </div>
   `,
   styles: [`
     .filter-input {
       width: 100%;
       min-width: 220px;
-      padding: var(--spacing-2) var(--spacing-3) var(--spacing-2) var(--spacing-8);
+      padding-block: var(--spacing-2); padding-inline: var(--spacing-8) var(--spacing-3);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-lg);
       font-size: var(--font-size-sm);
@@ -167,9 +163,9 @@ export class ClientBalancesComponent implements OnInit {
   private readonly router = inject(Router);
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Accueil', route: '/' },
-    { label: 'Ventes', route: '/invoices' },
-    { label: 'Solde par client' }
+    { label: $localize`:@@reports.client-balances.ts.accueil.a8ff8fd2:Accueil`, route: '/' },
+    { label: $localize`:@@reports.client-balances.ts.ventes.9087fc4f:Ventes`, route: '/invoices' },
+    { label: $localize`:@@reports.client-balances.ts.solde.par.client.dc39ad70:Solde par client` }
   ];
 
   loading = signal(true);

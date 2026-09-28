@@ -33,6 +33,7 @@ import {
 import { PROJECT_ROLE_OPTIONS, parseProjectMemberRole, showWorkload } from '../project-enums';
 
 import { ProjectDetail } from '../project-api.service';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 
 
@@ -43,6 +44,7 @@ import { ProjectDetail } from '../project-api.service';
   standalone: true,
 
   imports: [
+    BackendLabelPipe,
 
     CommonModule,
 
@@ -72,7 +74,7 @@ import { ProjectDetail } from '../project-api.service';
 
         <p-message severity="warn" styleClass="w-full mb-3"
 
-          text="Sans tarif de vente, la facturation régie est impossible." />
+          text="Sans tarif de vente, la facturation régie est impossible." i18n-text="@@projects.tabs.sans.tarif.de.vente.la.facturation.regie.322064c7" />
 
       }
 
@@ -80,13 +82,13 @@ import { ProjectDetail } from '../project-api.service';
 
         <section class="proj-detail-card proj-team-add-card mb-3">
 
-          <h3 class="proj-detail-card__title">Ajouter un membre</h3>
+          <h3 class="proj-detail-card__title" i18n="@@projects.tabs.ajouter.un.membre.7c75463f">Ajouter un membre</h3>
 
           <div class="proj-team-add-grid">
 
             <div class="proj-team-field proj-team-field--user">
 
-              <span class="proj-team-field__label">Utilisateur <span class="ft-required">*</span></span>
+              <span class="proj-team-field__label" i18n="@@projects.tabs.utilisateur.967e9ca8">Utilisateur <span class="ft-required">*</span></span>
 
               <p-select
 
@@ -100,13 +102,13 @@ import { ProjectDetail } from '../project-api.service';
 
                 optionValue="id"
 
-                placeholder="Utilisateur" />
+                placeholder="Utilisateur" i18n-placeholder="@@projects.tabs.utilisateur.c3b98973" />
 
             </div>
 
             <div class="proj-team-field">
 
-              <span class="proj-team-field__label">Rôle <span class="ft-required">*</span></span>
+              <span class="proj-team-field__label" i18n="@@projects.tabs.role.10918877">Rôle <span class="ft-required">*</span></span>
 
               <p-select
 
@@ -124,7 +126,7 @@ import { ProjectDetail } from '../project-api.service';
 
             <div class="proj-team-field">
 
-              <span class="proj-team-field__label">Tarif de vente</span>
+              <span class="proj-team-field__label" i18n="@@projects.tabs.tarif.de.vente.85df29e1">Tarif de vente</span>
 
               <p-inputNumber
 
@@ -144,7 +146,7 @@ import { ProjectDetail } from '../project-api.service';
 
             <div class="proj-team-field">
 
-              <span class="proj-team-field__label">Coût h</span>
+              <span class="proj-team-field__label" i18n="@@projects.tabs.cout.h.15db1311">Coût h</span>
 
               <p-inputNumber
 
@@ -164,7 +166,7 @@ import { ProjectDetail } from '../project-api.service';
 
             <div class="proj-team-field">
 
-              <span class="proj-team-field__label">Capacité h/sem <span class="ft-required">*</span></span>
+              <span class="proj-team-field__label" i18n="@@projects.tabs.capacite.h.sem.382f2449">Capacité h/sem <span class="ft-required">*</span></span>
 
               <p-inputNumber
 
@@ -180,7 +182,7 @@ import { ProjectDetail } from '../project-api.service';
 
             <div class="proj-team-add-actions">
 
-              <app-button (click)="add()">Ajouter</app-button>
+              <app-button (click)="add()" i18n="@@projects.tabs.ajouter.87c57ed1">Ajouter</app-button>
 
             </div>
 
@@ -220,15 +222,15 @@ import { ProjectDetail } from '../project-api.service';
 
           <tr>
 
-            <th>Nom</th>
+            <th i18n="@@projects.tabs.nom.7ff20370">Nom</th>
 
-            <th>Rôle</th>
+            <th i18n="@@projects.tabs.role.8b824790">Rôle</th>
 
-            <th>Tarif de vente</th>
+            <th i18n="@@projects.tabs.tarif.de.vente.f4fedbe5">Tarif de vente</th>
 
-            <th>Coût h</th>
+            <th i18n="@@projects.tabs.cout.h.69ed99e9">Coût h</th>
 
-            <th>Capacité</th>
+            <th i18n="@@projects.tabs.capacite.25bc0fbf">Capacité</th>
 
             @if (canManage) { <th></th> }
 
@@ -242,13 +244,13 @@ import { ProjectDetail } from '../project-api.service';
 
             <td>{{ m.userName }}</td>
 
-            <td>{{ m.roleDisplay }}</td>
+            <td>{{ m.roleDisplay | backendLabel }}</td>
 
             <td>{{ m.salesRate != null ? (m.salesRate | number:'1.0-3') : '—' }}</td>
 
             <td>{{ m.hourlyCost != null ? (m.hourlyCost | number:'1.0-3') : '—' }}</td>
 
-            <td>{{ m.weeklyCapacityHours }} h/sem</td>
+            <td i18n="@@projects.tabs.h.sem.e27a914f">{{ m.weeklyCapacityHours }} h/sem</td>
 
             @if (canManage) {
 
@@ -256,9 +258,9 @@ import { ProjectDetail } from '../project-api.service';
 
                 <div class="proj-team-row-actions">
 
-                  <app-button size="sm" variant="outline" (click)="openEdit(m)">Modifier</app-button>
+                  <app-button size="sm" variant="outline" (click)="openEdit(m)" i18n="@@projects.tabs.modifier.f260e757">Modifier</app-button>
 
-                  <app-button size="sm" variant="danger" (click)="remove.emit(m.id)">Retirer</app-button>
+                  <app-button size="sm" variant="danger" (click)="remove.emit(m.id)" i18n="@@projects.tabs.retirer.54ec24a1">Retirer</app-button>
 
                 </div>
 
@@ -280,9 +282,9 @@ import { ProjectDetail } from '../project-api.service';
 
                 icon="pi-users"
 
-                title="Aucun membre"
+                title="Aucun membre" i18n-title="@@projects.tabs.aucun.membre.4749b4d8"
 
-                description="Ajoutez des collaborateurs pour constituer l'équipe du projet."
+                description="Ajoutez des collaborateurs pour constituer l'équipe du projet." i18n-description="@@projects.tabs.ajoutez.des.collaborateurs.pour.constitu.112754e0"
 
                 [showAction]="false" />
 
@@ -298,13 +300,13 @@ import { ProjectDetail } from '../project-api.service';
 
         <section class="proj-detail-card mt-3">
 
-          <h3 class="proj-detail-card__title">Charge</h3>
+          <h3 class="proj-detail-card__title" i18n="@@projects.tabs.charge.d4e1aee4">Charge</h3>
 
           <p-table [value]="workload" styleClass="p-datatable-sm">
 
             <ng-template pTemplate="header">
 
-              <tr><th>Personne</th><th>Capacité</th><th>Planifié</th><th>Saisi</th></tr>
+              <tr><th i18n="@@projects.tabs.personne.6691d67a">Personne</th><th i18n="@@projects.tabs.capacite.25bc0fbf">Capacité</th><th i18n="@@projects.tabs.planifie.172deb14">Planifié</th><th i18n="@@projects.tabs.saisi.bcbb94e9">Saisi</th></tr>
 
             </ng-template>
 
@@ -330,13 +332,13 @@ import { ProjectDetail } from '../project-api.service';
 
       }
 
-      <p-dialog [(visible)]="editVisible" header="Modifier le membre" [modal]="true" [style]="{ width: '32rem' }">
+      <p-dialog [(visible)]="editVisible" header="Modifier le membre" i18n-header="@@projects.tabs.modifier.le.membre.e109c2f5" [modal]="true" [style]="{ width: '32rem' }">
 
         <div class="proj-team-edit-form flex flex-column gap-3">
 
           <div class="proj-team-field">
 
-            <span class="proj-team-field__label">Rôle</span>
+            <span class="proj-team-field__label" i18n="@@projects.tabs.role.0d616c09">Rôle</span>
 
             <p-select
 
@@ -354,7 +356,7 @@ import { ProjectDetail } from '../project-api.service';
 
           <div class="proj-team-field">
 
-            <span class="proj-team-field__label">Tarif de vente</span>
+            <span class="proj-team-field__label" i18n="@@projects.tabs.tarif.de.vente.85df29e1">Tarif de vente</span>
 
             <p-inputNumber
 
@@ -374,7 +376,7 @@ import { ProjectDetail } from '../project-api.service';
 
           <div class="proj-team-field">
 
-            <span class="proj-team-field__label">Coût h</span>
+            <span class="proj-team-field__label" i18n="@@projects.tabs.cout.h.15db1311">Coût h</span>
 
             <p-inputNumber
 
@@ -394,7 +396,7 @@ import { ProjectDetail } from '../project-api.service';
 
           <div class="proj-team-field">
 
-            <span class="proj-team-field__label">Capacité h/sem</span>
+            <span class="proj-team-field__label" i18n="@@projects.tabs.capacite.h.sem.c6f1f30b">Capacité h/sem</span>
 
             <p-inputNumber
 
@@ -412,9 +414,9 @@ import { ProjectDetail } from '../project-api.service';
 
         <ng-template pTemplate="footer">
 
-          <app-button variant="secondary" (click)="editVisible = false">Annuler</app-button>
+          <app-button variant="secondary" (click)="editVisible = false" i18n="@@projects.tabs.annuler.49ba3292">Annuler</app-button>
 
-          <app-button variant="primary" (click)="saveEdit()">Enregistrer</app-button>
+          <app-button variant="primary" (click)="saveEdit()" i18n="@@projects.tabs.enregistrer.f7c8bcd8">Enregistrer</app-button>
 
         </ng-template>
 

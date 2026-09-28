@@ -9,10 +9,10 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
   template: `
     <footer class="fiscal-footer">
       <button class="icon-button" type="button" (click)="close.emit()">
-        <i class="fa-solid fa-xmark"></i><span>Fermer</span>
+        <i class="fa-solid fa-xmark"></i><span i18n="@@accounting.fiscal-schedule.fermer.5ab4ec64">Fermer</span>
       </button>
       <button class="icon-button primary" type="button" (click)="newReminder.emit()">
-        <i class="fa-regular fa-bell"></i><span>Nouveau rappel</span>
+        <i class="fa-regular fa-bell"></i><span i18n="@@accounting.fiscal-schedule.nouveau.rappel.117c6b5b">Nouveau rappel</span>
       </button>
     </footer>
   `,

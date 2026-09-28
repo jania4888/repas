@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -38,6 +40,7 @@ interface ReceptionLine {
   selector: 'app-purchase-order-receive',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule, RouterModule, FormsModule,
     TableModule, InputNumberModule, ProgressBarModule, TagModule, ToastModule,
     PageHeaderComponent, BreadcrumbComponent, ButtonComponent, WarehouseSelectorComponent
@@ -48,28 +51,28 @@ interface ReceptionLine {
     @if (loading()) {
       <div class="loading-container">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-        <p>Chargement...</p>
+        <p i18n="@@purchase-orders.purchase-order-receive.chargement.a209b664">Chargement...</p>
       </div>
     } @else if (po()) {
       <app-page-header
-        [title]="'Réception — ' + po()!.number"
-        [subtitle]="'Fournisseur : ' + po()!.supplier.name">
+        [title]="loc_ui_tern_reception_9c4605 + po()!.number"
+        [subtitle]="loc_ui_tern_fournisseur_9f3ef9 + po()!.supplier.name">
       </app-page-header>
 
       <!-- Order Summary -->
       <div class="summary-card">
         <div class="summary-grid">
           <div class="summary-item">
-            <span class="summary-label">Statut</span>
-            <p-tag [value]="po()!.statusDisplay"
+            <span class="summary-label" i18n="@@purchase-orders.purchase-order-receive.statut.659499f3">Statut</span>
+            <p-tag [value]="po()!.statusDisplay | backendLabel"
               [severity]="getStatusSeverity(po()!.status)"></p-tag>
           </div>
           <div class="summary-item">
-            <span class="summary-label">Date commande</span>
+            <span class="summary-label" i18n="@@purchase-orders.purchase-order-receive.date.commande.d50824e9">Date commande</span>
             <span class="summary-value">{{ po()!.orderDate | date:'dd/MM/yyyy' }}</span>
           </div>
           <div class="summary-item">
-            <span class="summary-label">Progression globale</span>
+            <span class="summary-label" i18n="@@purchase-orders.purchase-order-receive.progression.globale.0e5c3dbd">Progression globale</span>
             <div class="progress-container">
               <p-progressBar
                 [value]="globalProgress()"
@@ -83,33 +86,31 @@ interface ReceptionLine {
         <div class="warehouse-row">
           <app-warehouse-selector
             inputId="po-receive-warehouse"
-            label="Entrepôt de réception"
+            label="Entrepôt de réception" i18n-label="@@purchase-orders.purchase-order-receive.entrepot.de.reception.e8cfc9df"
             [required]="true"
             [value]="receiveWarehouseId()"
             (valueChange)="onReceiveWarehouseChange($event)">
           </app-warehouse-selector>
           @if (!receiveWarehouseId()) {
-            <p class="warehouse-hint" role="status">
-              Sélectionnez l'entrepôt dans lequel le stock sera mis à jour.
-            </p>
+            <p class="warehouse-hint" role="status" i18n="@@purchase-orders.purchase-order-receive.selectionnez.l.entrepot.dans.lequel.le.stock.ser.97ae182d"> Sélectionnez l'entrepôt dans lequel le stock sera mis à jour. </p>
           }
         </div>
       </div>
 
       <!-- Reception Lines -->
       <div class="reception-card">
-        <h3 class="card-title"><i class="pi pi-box"></i> Lignes à réceptionner</h3>
+        <h3 class="card-title" i18n="@@purchase-orders.purchase-order-receive.lignes.a.receptionner.f5a46758"><i class="pi pi-box"></i> Lignes à réceptionner</h3>
 
         <div class="reception-table">
           <table>
             <thead>
               <tr>
-                <th>Produit</th>
-                <th style="width: 110px" class="text-center">Qté commandée</th>
-                <th style="width: 110px" class="text-center">Déjà reçue</th>
-                <th style="width: 110px" class="text-center">Restante</th>
-                <th style="width: 150px" class="text-center">Qté à réceptionner</th>
-                <th style="width: 100px" class="text-center">Statut</th>
+                <th i18n="@@purchase-orders.purchase-order-receive.produit.ff673dc2">Produit</th>
+                <th style="width: 110px" class="text-center" i18n="@@purchase-orders.purchase-order-receive.qte.commandee.8c1ee02c">Qté commandée</th>
+                <th style="width: 110px" class="text-center" i18n="@@purchase-orders.purchase-order-receive.deja.recue.03bcf3f9">Déjà reçue</th>
+                <th style="width: 110px" class="text-center" i18n="@@purchase-orders.purchase-order-receive.restante.b9dbe01c">Restante</th>
+                <th style="width: 150px" class="text-center" i18n="@@purchase-orders.purchase-order-receive.qte.a.receptionner.ac2fffa0">Qté à réceptionner</th>
+                <th style="width: 100px" class="text-center" i18n="@@purchase-orders.purchase-order-receive.statut.659499f3">Statut</th>
               </tr>
             </thead>
             <tbody>
@@ -145,7 +146,7 @@ interface ReceptionLine {
                         inputStyleClass="text-center">
                       </p-inputNumber>
                     } @else {
-                      <span class="fully-badge"><i class="pi pi-check-circle"></i> Complète</span>
+                      <span class="fully-badge" i18n="@@purchase-orders.purchase-order-receive.complete.dad7d442"><i class="pi pi-check-circle"></i> Complète</span>
                     }
                   </td>
                   <td class="text-center">
@@ -165,16 +166,14 @@ interface ReceptionLine {
 
         <!-- Actions -->
         <div class="form-actions">
-          <app-button variant="outline" [routerLink]="['/purchase-orders', po()!.id]">
-            Retour au détail
-          </app-button>
+          <app-button variant="outline" [routerLink]="['/purchase-orders', po()!.id]" i18n="@@purchase-orders.purchase-order-receive.retour.au.detail.1ee22560"> Retour au détail </app-button>
           <app-button
             variant="primary"
             icon="pi-check"
             iconPos="left"
             [disabled]="!hasLinesToReceive() || submitting() || !receiveWarehouseId()"
             (click)="submitReception()">
-            {{ submitting() ? 'Validation...' : 'Valider la réception' }}
+            {{ submitting() ? loc_ui_tern_validation_938b4a : loc_ui_tern_valider_la_reception_7e1569 }}
           </app-button>
         </div>
       </div>
@@ -273,7 +272,7 @@ interface ReceptionLine {
 
       th {
         padding: var(--spacing-3) var(--spacing-4);
-        text-align: left;
+        text-align: start;
         font-size: var(--font-size-xs);
         font-weight: var(--font-weight-semibold);
         color: var(--color-text-tertiary);
@@ -345,6 +344,10 @@ interface ReceptionLine {
   `]
 })
 export class PurchaseOrderReceiveComponent implements OnInit {
+  readonly loc_ui_tern_reception_9c4605 = $localize`:@@ui.tern.reception.9c4605:Réception — `;
+  readonly loc_ui_tern_fournisseur_9f3ef9 = $localize`:@@ui.tern.fournisseur.9f3ef9:Fournisseur : `;
+  readonly loc_ui_tern_validation_938b4a = $localize`:@@ui.tern.validation.938b4a:Validation...`;
+  readonly loc_ui_tern_valider_la_reception_7e1569 = $localize`:@@ui.tern.valider.la.reception.7e1569:Valider la réception`;
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private poService = inject(PurchaseOrderService);
@@ -361,9 +364,9 @@ export class PurchaseOrderReceiveComponent implements OnInit {
   receptionLines: ReceptionLine[] = [];
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Bons de commande', route: '/purchase-orders' },
-    { label: 'Réception' }
+    { label: $localize`:@@purchase-orders.purchase-order-receive.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@purchase-orders.purchase-order-receive.ts.bons.de.commande.aae719f0:Bons de commande`, route: '/purchase-orders' },
+    { label: $localize`:@@purchase-orders.purchase-order-receive.ts.reception.36e23897:Réception` }
   ];
 
   ngOnInit(): void {
@@ -387,8 +390,8 @@ export class PurchaseOrderReceiveComponent implements OnInit {
             this.loading.set(false);
             this.toastService.add({
               severity: 'warn',
-              summary: 'Statut inconnu',
-              detail: 'Le statut de cette commande est non reconnu. Veuillez actualiser ou contacter le support.'
+              summary: $localize`:@@purchase-order-receive.component.summary.Statut_inconnu:Statut inconnu`,
+              detail: $localize`:@@purchase-order-receive.component.detail.Le_statut_de_cet:Le statut de cette commande est non reconnu. Veuillez actualiser ou contacter le support.`
             });
             console.warn('[PurchaseOrderReceive] Unknown purchase order status received from API', {
               orderId: response.data.id,
@@ -401,18 +404,18 @@ export class PurchaseOrderReceiveComponent implements OnInit {
           // Verify the order can receive goods
           if (order.status !== PurchaseOrderStatus.Confirmed &&
             order.status !== PurchaseOrderStatus.PartiallyReceived) {
-            let message = 'Cette commande ne peut pas recevoir de marchandise';
+            let message = $localize`:@@purchase-orders.purchase-order-receive.ts.cette.commande.ne.peut.pas.recevoir.de.m.11ab2c41:Cette commande ne peut pas recevoir de marchandise`;
             if (order.status === PurchaseOrderStatus.Draft) {
-              message = 'Cette commande est en brouillon. Veuillez d\'abord la confirmer avant de pouvoir recevoir des marchandises.';
+              message = $localize`:@@purchase-orders.purchase-order-receive.ts.cette.commande.est.en.brouillon.veuillez.865b261e:Cette commande est en brouillon. Veuillez d'abord la confirmer avant de pouvoir recevoir des marchandises.`;
             } else if (order.status === PurchaseOrderStatus.Received) {
-              message = 'Cette commande a déjà été entièrement reçue.';
+              message = $localize`:@@purchase-orders.purchase-order-receive.ts.cette.commande.a.deja.ete.entierement.re.68fd90fc:Cette commande a déjà été entièrement reçue.`;
             } else if (order.status === PurchaseOrderStatus.Cancelled) {
-              message = 'Cette commande a été annulée.';
+              message = $localize`:@@purchase-orders.purchase-order-receive.ts.cette.commande.a.ete.annulee.fb0854cf:Cette commande a été annulée.`;
             }
 
             this.toastService.add({
               severity: 'warn',
-              summary: 'Action impossible',
+              summary: $localize`:@@purchase-order-receive.component.summary.Action_impossibl:Action impossible`,
               detail: message
             });
             this.router.navigate(['/purchase-orders', id]);
@@ -434,17 +437,17 @@ export class PurchaseOrderReceiveComponent implements OnInit {
           }));
 
           this.breadcrumbItems = [
-            { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-            { label: 'Bons de commande', route: '/purchase-orders' },
+            { label: $localize`:@@purchase-orders.purchase-order-receive.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+            { label: $localize`:@@purchase-orders.purchase-order-receive.ts.bons.de.commande.aae719f0:Bons de commande`, route: '/purchase-orders' },
             { label: order.number, route: '/purchase-orders/' + order.id },
-            { label: 'Réception' }
+            { label: $localize`:@@purchase-orders.purchase-order-receive.ts.reception.36e23897:Réception` }
           ];
         }
         this.loading.set(false);
       },
       error: () => {
         this.loading.set(false);
-        this.toastService.add({ severity: 'error', summary: 'Erreur', detail: 'Commande introuvable' });
+        this.toastService.add({ severity: 'error', summary: $localize`:@@purchase-order-receive.component.summary.Erreur:Erreur`, detail: $localize`:@@purchase-order-receive.component.detail.Commande_introuv:Commande introuvable` });
         this.router.navigate(['/purchase-orders']);
       }
     });
@@ -498,8 +501,8 @@ export class PurchaseOrderReceiveComponent implements OnInit {
         if (response.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Réception enregistrée avec succès. Le stock a été mis à jour.'
+            summary: $localize`:@@purchase-order-receive.component.summary.Succès:Succès`,
+            detail: $localize`:@@purchase-order-receive.component.detail.R_ception_enregi:Réception enregistrée avec succès. Le stock a été mis à jour.`
           });
           this.router.navigate(['/purchase-orders', order.id]);
         }
@@ -509,7 +512,7 @@ export class PurchaseOrderReceiveComponent implements OnInit {
         this.submitting.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@purchase-order-receive.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }

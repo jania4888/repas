@@ -36,22 +36,22 @@ interface ViewSwitcherOption {
         appendTo="body"
         panelStyleClass="studio-theme"
         styleClass="view-switcher-select"
-        [ariaLabel]="'Vue active'">
+        ariaLabel="Vue active" i18n-ariaLabel="@@studio.views.vue.active.b656cdb6">
         <ng-template let-opt pTemplate="selectedItem">
           <span class="view-switcher__mode">{{ opt.label }}</span>
           @if (opt.isDefault) {
-            <span class="view-switcher__star" title="Vue par défaut"><i class="fa-solid fa-star"></i></span>
+            <span class="view-switcher__star" title="Vue par défaut" i18n-title="@@studio.views.vue.par.defaut.5bc0aaaf"><i class="fa-solid fa-star"></i></span>
           }
         </ng-template>
         <ng-template let-opt pTemplate="item">
           <span>{{ opt.label }}</span>
           @if (opt.isDefault) {
-            <span class="view-switcher__star" title="Vue par défaut"><i class="fa-solid fa-star"></i></span>
+            <span class="view-switcher__star" title="Vue par défaut" i18n-title="@@studio.views.vue.par.defaut.5bc0aaaf"><i class="fa-solid fa-star"></i></span>
           }
         </ng-template>
       </p-select>
     } @else {
-      <div class="view-switcher" role="tablist" aria-label="Vue active">
+      <div class="view-switcher" role="tablist" aria-label="Vue active" i18n-aria-label="@@studio.views.vue.active.89414868">
         @for (opt of options(); track opt.id ?? 'list'; let i = $index) {
           <button
             #tabButton
@@ -65,7 +65,7 @@ interface ViewSwitcherOption {
             (keydown)="onKeydown($event, i)">
             <span>{{ opt.label }}</span>
             @if (opt.isDefault) {
-              <span class="view-switcher__star" title="Vue par défaut"><i class="fa-solid fa-star"></i></span>
+              <span class="view-switcher__star" title="Vue par défaut" i18n-title="@@studio.views.vue.par.defaut.5bc0aaaf"><i class="fa-solid fa-star"></i></span>
             }
           </button>
         }
@@ -107,7 +107,7 @@ interface ViewSwitcherOption {
       font-size: var(--font-size-xs);
     }
 
-    .view-switcher__mode { margin-right: var(--spacing-1, 0.25rem); }
+    .view-switcher__mode { margin-inline-end: var(--spacing-1, 0.25rem); }
 
     .view-switcher-select { min-width: 14rem; }
   `]
@@ -125,7 +125,7 @@ export class StudioViewSwitcherComponent {
   private readonly focusedIndex = signal<number | null>(null);
 
   protected readonly options = computed<ViewSwitcherOption[]>(() => [
-    { id: null, label: 'Liste', isDefault: false },
+    { id: null, label: $localize`:@@studio.studio-view-switcher.ts.liste.4231be17:Liste`, isDefault: false },
     ...this.views().map(v => ({ id: v.id, label: v.displayName, isDefault: v.isDefault }))
   ]);
 

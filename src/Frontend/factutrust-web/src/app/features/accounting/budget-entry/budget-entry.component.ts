@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -29,30 +30,30 @@ interface EditableBudgetRow {
   initialMonths: number[];
 }
 
-const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+const MONTH_LABELS = [$localize`:@@accounting.budget-entry.ts.jan.efed3690:Jan`, $localize`:@@accounting.budget-entry.ts.fev.7b8852ec:Fév`, $localize`:@@accounting.budget-entry.ts.mar.c4ba0822:Mar`, $localize`:@@accounting.budget-entry.ts.avr.d648a3b7:Avr`, $localize`:@@accounting.budget-entry.ts.mai.afe526a6:Mai`, $localize`:@@accounting.budget-entry.ts.juin.8b1e84b6:Juin`, $localize`:@@accounting.budget-entry.ts.juil.190b5d60:Juil`, $localize`:@@accounting.budget-entry.ts.aout.460b6696:Août`, $localize`:@@accounting.budget-entry.ts.sep.fdd289e3:Sep`, $localize`:@@accounting.budget-entry.ts.oct.51327aef:Oct`, $localize`:@@accounting.budget-entry.ts.nov.bb9bfefd:Nov`, $localize`:@@accounting.budget-entry.ts.dec.2bc2249a:Déc`];
 
 @Component({
   selector: 'app-budget-entry',
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent],
   template: `
-    <app-page-header title="Saisie des budgets" subtitle="Budgets annuels mensualisés par poste — versions Initial puis Révisé après validation" />
+    <app-page-header title="Saisie des budgets" i18n-title="@@accounting.budget-entry.saisie.des.budgets.0b3e253e" subtitle="Budgets annuels mensualisés par poste — versions Initial puis Révisé après validation" i18n-subtitle="@@accounting.budget-entry.budgets.annuels.mensualises.par.poste.ve.c818a7b7" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     <div class="card be-toolbar">
       <div class="be-year">
-        <button type="button" class="be-year-btn" (click)="changeYear(-1)" [disabled]="busy()" aria-label="Exercice précédent"><i class="pi pi-chevron-left"></i></button>
-        <span class="be-year-value">Exercice {{ fiscalYear() }}</span>
-        <button type="button" class="be-year-btn" (click)="changeYear(1)" [disabled]="busy()" aria-label="Exercice suivant"><i class="pi pi-chevron-right"></i></button>
+        <button type="button" class="be-year-btn" (click)="changeYear(-1)" [disabled]="busy()" aria-label="Exercice précédent" i18n-aria-label="@@accounting.budget-entry.exercice.precedent.b34f8172"><i class="pi pi-chevron-left"></i></button>
+        <span class="be-year-value" i18n="@@accounting.budget-entry.exercice.019abec6">Exercice {{ fiscalYear() }}</span>
+        <button type="button" class="be-year-btn" (click)="changeYear(1)" [disabled]="busy()" aria-label="Exercice suivant" i18n-aria-label="@@accounting.budget-entry.exercice.suivant.b90eb269"><i class="pi pi-chevron-right"></i></button>
       </div>
 
       @if (grid(); as g) {
         <span class="be-badge" [class.be-badge-draft]="g.status === 0" [class.be-badge-validated]="g.status === 1">
-          {{ g.status === 1 ? 'Initial validé' : 'Brouillon budgétaire' }}
+          {{ g.status === 1 ? loc_ui_tern_initial_valide_39455a : loc_ui_tern_brouillon_budgetaire_3977e5 }}
         </span>
         @if (g.status === 1) {
-          <span class="be-validated-info">
+          <span class="be-validated-info" i18n="@@accounting.budget-entry.valide.le.par.vous.modifiez.le.budget.re.1dd95663">
             validé le {{ g.validatedAt | date : 'shortDate' }} par {{ g.validatedBy }} — vous modifiez le <strong>budget révisé</strong>
           </span>
         }
@@ -60,22 +61,20 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
 
       <div class="be-actions">
         @if (grid()?.status === 0 && canValidate()) {
-          <app-button variant="secondary" icon="pi pi-lock" type="button" (click)="validateInitial()" [disabled]="busy()">
-            Valider le budget initial
-          </app-button>
+          <app-button variant="secondary" icon="pi pi-lock" type="button" (click)="validateInitial()" [disabled]="busy()" i18n="@@accounting.budget-entry.valider.le.budget.initial.ec885ae3"> Valider le budget initial </app-button>
         }
         <app-button variant="primary" icon="pi pi-save" type="button" (click)="save()" [disabled]="busy() || rows().length === 0">
-          {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+          {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_f7c8bc }}
         </app-button>
       </div>
     </div>
 
     @if (distributeFor(); as row) {
       <div class="card be-distribute">
-        <span>Répartir un montant annuel sur <strong>{{ row.code }} — {{ row.label }}</strong> (linéaire, reliquat sur décembre) :</span>
-        <input type="number" class="be-inp be-dist-inp" [(ngModel)]="distributeAmount" min="0" step="0.001" placeholder="Montant annuel" />
-        <button type="button" class="btn btn-primary" (click)="applyDistribution()">Répartir</button>
-        <button type="button" class="btn btn-secondary" (click)="distributeFor.set(null)">Annuler</button>
+        <span i18n="@@accounting.budget-entry.repartir.un.montant.annuel.sur.lineaire.f141d51e"><ng-container>Répartir un montant annuel sur </ng-container> <strong>{{ row.code }} — {{ row.label }}</strong> (linéaire, reliquat sur décembre) :</span>
+        <input type="number" class="be-inp be-dist-inp" [(ngModel)]="distributeAmount" min="0" step="0.001" placeholder="Montant annuel" i18n-placeholder="@@accounting.budget-entry.montant.annuel.7f48f8e0" />
+        <button type="button" class="btn btn-primary" (click)="applyDistribution()" i18n="@@accounting.budget-entry.repartir.d7593598">Répartir</button>
+        <button type="button" class="btn btn-secondary" (click)="distributeFor.set(null)" i18n="@@accounting.budget-entry.annuler.49ba3292">Annuler</button>
       </div>
     }
 
@@ -83,10 +82,10 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
       <p-table [value]="rows()" [loading]="loading()" [scrollable]="true" styleClass="p-datatable-sm accounting-datatable be-table" [rowHover]="true">
         <ng-template pTemplate="header">
           <tr>
-            <th scope="col" class="be-post-col">Poste</th>
+            <th scope="col" class="be-post-col" i18n="@@accounting.budget-entry.poste.86abf0cd">Poste</th>
             @for (m of monthLabels; track $index) { <th scope="col" class="be-amt">{{ m }}</th> }
-            <th scope="col" class="be-amt">Total</th>
-            @if (grid()?.status === 1) { <th scope="col" class="be-amt">Total initial</th> }
+            <th scope="col" class="be-amt" i18n="@@accounting.budget-entry.total.b25928c6">Total</th>
+            @if (grid()?.status === 1) { <th scope="col" class="be-amt" i18n="@@accounting.budget-entry.total.initial.37fc5d14">Total initial</th> }
             <th scope="col"></th>
           </tr>
         </ng-template>
@@ -105,7 +104,7 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
             <td class="be-amt be-row-total">{{ rowTotal(row) | number : '1.3-3' }}</td>
             @if (grid()?.status === 1) { <td class="be-amt be-muted">{{ sum(row.initialMonths) | number : '1.3-3' }}</td> }
             <td>
-              <button type="button" class="be-icon" (click)="startDistribution(row)" [disabled]="busy()" title="Répartir un montant annuel">
+              <button type="button" class="be-icon" (click)="startDistribution(row)" [disabled]="busy()" title="Répartir un montant annuel" i18n-title="@@accounting.budget-entry.repartir.un.montant.annuel.d176a745">
                 <i class="pi pi-calculator"></i>
               </button>
             </td>
@@ -114,7 +113,7 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
         <ng-template pTemplate="footer">
           @if (rows().length > 0) {
             <tr class="be-totals-row">
-              <td class="be-post-col">Totaux</td>
+              <td class="be-post-col" i18n="@@accounting.budget-entry.totaux.a1ca02f8">Totaux</td>
               @for (m of monthLabels; track m; let i = $index) {
                 <td class="be-amt">{{ monthTotals()[i] | number : '1.3-3' }}</td>
               }
@@ -125,7 +124,7 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
           }
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td [attr.colspan]="16" class="be-empty">Aucun poste budgétaire actif. Créez d'abord des postes dans « Postes budgétaires ».</td></tr>
+          <tr><td [attr.colspan]="16" class="be-empty" i18n="@@accounting.budget-entry.aucun.poste.budgetaire.actif.creez.d.abord.des.p.c9d46f49">Aucun poste budgétaire actif. Créez d'abord des postes dans « Postes budgétaires ».</td></tr>
         </ng-template>
       </p-table>
     </div>
@@ -141,16 +140,16 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
     .be-badge-draft { background: var(--color-warning-50, #fffbeb); color: var(--color-warning-700, #a16207); border: 1px solid var(--color-warning-200, #fde68a); }
     .be-badge-validated { background: var(--color-success-100, #dcfce7); color: var(--color-success-700, #15803d); }
     .be-validated-info { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
-    .be-actions { display: flex; gap: var(--spacing-2); margin-left: auto; }
+    .be-actions { display: flex; gap: var(--spacing-2); margin-inline-start: auto; }
     .be-distribute { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-3); border: 1px solid var(--color-primary-200, #bfdbfe); }
     .be-inp { padding: var(--spacing-1) var(--spacing-2); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-background-elevated); color: var(--color-text-primary); font-size: var(--font-size-sm); }
     .be-dist-inp { width: 10rem; }
-    .be-cell { width: 6.2rem; text-align: right; font-variant-numeric: tabular-nums; }
+    .be-cell { width: 6.2rem; text-align: end; font-variant-numeric: tabular-nums; }
     .be-post-col { min-width: 16rem; }
-    .be-code { font-family: ui-monospace, monospace; font-weight: var(--font-weight-semibold); margin-right: var(--spacing-1); }
-    .be-kind { display: inline-block; margin-left: var(--spacing-2); padding: 0 0.4rem; border-radius: var(--radius-sm, 4px); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); background: var(--color-warning-50, #fffbeb); color: var(--color-warning-700, #a16207); }
+    .be-code { font-family: ui-monospace, monospace; font-weight: var(--font-weight-semibold); margin-inline-end: var(--spacing-1); }
+    .be-kind { display: inline-block; margin-inline-start: var(--spacing-2); padding: 0 0.4rem; border-radius: var(--radius-sm, 4px); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); background: var(--color-warning-50, #fffbeb); color: var(--color-warning-700, #a16207); }
     .be-kind-rev { background: var(--color-success-100, #dcfce7); color: var(--color-success-700, #15803d); }
-    .be-amt { text-align: right; font-variant-numeric: tabular-nums; }
+    .be-amt { text-align: end; font-variant-numeric: tabular-nums; }
     .be-row-total { font-weight: var(--font-weight-semibold); }
     .be-muted { color: var(--color-text-tertiary); }
     .be-totals-row td { font-weight: var(--font-weight-semibold); border-top: 2px solid var(--color-border-default); }
@@ -164,6 +163,10 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
   `
 })
 export class BudgetEntryComponent implements OnInit {
+  readonly loc_ui_tern_initial_valide_39455a = $localize`:@@ui.tern.initial.valide.39455a:Initial validé`;
+  readonly loc_ui_tern_brouillon_budgetaire_3977e5 = $localize`:@@ui.tern.brouillon.budgetaire.3977e5:Brouillon budgétaire`;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly toast = inject(ToastService);
@@ -234,7 +237,7 @@ export class BudgetEntryComponent implements OnInit {
         if (!res.success || !res.data) {
           this.grid.set(null);
           this.rows.set([]);
-          this.error.set(res.error ?? 'Erreur de chargement de la grille budgétaire.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.de.chargement.de.la.grille.budgetai.b383de:Erreur de chargement de la grille budgétaire.`);
           return;
         }
         const g = res.data;
@@ -252,7 +255,7 @@ export class BudgetEntryComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors du chargement de la grille budgétaire.'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.budget-entry.ts.erreur.reseau.lors.du.chargement.de.la.g.d3ea77ca:Erreur réseau lors du chargement de la grille budgétaire.`));
       }
     });
   }
@@ -288,15 +291,15 @@ export class BudgetEntryComponent implements OnInit {
       next: res => {
         this.saving.set(false);
         if (!res.success) {
-          this.error.set(res.error ?? "L'enregistrement du budget a échoué.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.l.enregistrement.du.budget.a.echoue.7cabe0:L'enregistrement du budget a échoué.`);
           return;
         }
-        this.toast.add({ severity: 'success', summary: 'Budget enregistré', detail: `Exercice ${this.fiscalYear()}`, life: 4000 });
+        this.toast.add({ severity: 'success', summary: $localize`:@@budget-entry.component.summary.Budget_enregistr:Budget enregistré`, detail: $localize`:@@accounting.budget-entry.ts.exercice.fiscalyear.ed73b957:Exercice ${this.fiscalYear()}:fiscalYear:`, life: 4000 });
         this.load();
       },
       error: err => {
         this.saving.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur réseau lors de l'enregistrement du budget."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.budget-entry.ts.erreur.reseau.lors.de.l.enregistrement.d.b976f45a:Erreur réseau lors de l'enregistrement du budget.`));
       }
     });
   }
@@ -306,11 +309,10 @@ export class BudgetEntryComponent implements OnInit {
     if (this.busy()) return;
     this.confirmationService.confirm({
       message:
-        `Valider le budget initial ${this.fiscalYear()} ?\n\n` +
-        'Le budget initial sera figé (copié vers le budget révisé, seule version modifiable ensuite). Cette action est irréversible.',
-      header: 'Confirmation',
-      acceptLabel: 'Valider',
-      rejectLabel: 'Annuler',
+        $localize`:@@accounting.budget-entry.ts.valider.le.budget.initial.fiscalyear.le.0ce3d2a0:Valider le budget initial ${this.fiscalYear()}:fiscalYear: ?\n\nLe budget initial sera figé (copié vers le budget révisé, seule version modifiable ensuite). Cette action est irréversible.`,
+      header: $localize`:@@accounting.budget-entry.ts.confirmation.3424edc2:Confirmation`,
+      acceptLabel: $localize`:@@budget-entry.component.acceptLabel.Valider:Valider`,
+      rejectLabel: $localize`:@@budget-entry.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.validating.set(true);
         this.error.set(null);
@@ -318,15 +320,15 @@ export class BudgetEntryComponent implements OnInit {
           next: res => {
             this.validating.set(false);
             if (!res.success) {
-              this.error.set(res.error ?? 'La validation du budget initial a échoué.');
+              this.error.set(res.error ?? $localize`:@@ui.tern.la.validation.du.budget.initial.a.echoue.d3cadb:La validation du budget initial a échoué.`);
               return;
             }
-            this.toast.add({ severity: 'success', summary: 'Budget initial validé', detail: `Exercice ${this.fiscalYear()}`, life: 4000 });
+            this.toast.add({ severity: 'success', summary: $localize`:@@budget-entry.component.summary.Budget_initial_v:Budget initial validé`, detail: $localize`:@@accounting.budget-entry.ts.exercice.fiscalyear.ed73b957:Exercice ${this.fiscalYear()}:fiscalYear:`, life: 4000 });
             this.load();
           },
           error: err => {
             this.validating.set(false);
-            this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors de la validation du budget initial.'));
+            this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.budget-entry.ts.erreur.reseau.lors.de.la.validation.du.b.d1b484aa:Erreur réseau lors de la validation du budget initial.`));
           }
         });
       }

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
@@ -28,11 +29,13 @@ import { ClientOutstandingPanelComponent } from '../client-outstanding-panel/cli
 import { ClientPortalContactsPanelComponent } from '../client-portal-contacts-panel.component';
 import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 @Component({
   selector: 'app-client-detail',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     ButtonModule,
@@ -59,30 +62,24 @@ import { PERMISSIONS } from '@core/config/permission-keys';
     <app-breadcrumb [items]="breadcrumbItems()"></app-breadcrumb>
     
     <app-page-header 
-      [title]="client()?.name || 'Chargement...'" 
+      [title]="client()?.name || loc_chargement_a209b6" 
       [subtitle]="client()?.code">
       <app-button 
         variant="outline"
         icon="pi-arrow-left"
         iconPos="left"
-        routerLink="/clients">
-        Retour
-      </app-button>
+        routerLink="/clients" i18n="@@clients.client-detail.retour.e5befb1f"> Retour </app-button>
       @if (client()) {
         <app-button 
           variant="primary"
           icon="pi-pencil"
           iconPos="left"
-          [routerLink]="['edit']">
-          Modifier
-        </app-button>
+          [routerLink]="['edit']" i18n="@@clients.client-detail.modifier.f260e757"> Modifier </app-button>
         <app-button 
           variant="outline"
           icon="pi-trash"
           iconPos="left"
-          (click)="confirmDelete()">
-          Supprimer
-        </app-button>
+          (click)="confirmDelete()" i18n="@@clients.client-detail.supprimer.1acfc1c7"> Supprimer </app-button>
       }
     </app-page-header>
 
@@ -111,25 +108,25 @@ import { PERMISSIONS } from '@core/config/permission-keys';
       <!-- Stats -->
       <div class="stats-grid">
         <app-stat-card
-          label="Total factures"
+          label="Total factures" i18n-label="@@clients.client-detail.total.factures.4ef351ea"
           [value]="stats()?.totalInvoices || 0"
           icon="pi-file"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Factures payées"
+          label="Factures payées" i18n-label="@@clients.client-detail.factures.payees.587e5689"
           [value]="stats()?.paidInvoices || 0"
           icon="pi-check-circle"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="En attente"
+          label="En attente" i18n-label="@@clients.client-detail.en.attente.5231158f"
           [value]="stats()?.pendingInvoices || 0"
           icon="pi-clock"
           variant="warning">
         </app-stat-card>
         <app-stat-card
-          label="Chiffre d'affaires"
+          label="Chiffre d'affaires" i18n-label="@@clients.client-detail.chiffre.d.affaires.0a341b9f"
           [value]="formatCurrency(stats()?.totalRevenue || 0)"
           icon="pi-wallet"
           variant="primary">
@@ -141,11 +138,11 @@ import { PERMISSIONS } from '@core/config/permission-keys';
         <div class="main-content">
           <p-tabs class="ft-tabs" [lazy]="true">
             <p-tablist>
-              <p-tab [value]="0"><i class="pi pi-info-circle"></i><span>Informations</span></p-tab>
-              <p-tab [value]="1"><i class="pi pi-file"></i><span>Devis</span></p-tab>
-              <p-tab [value]="2"><i class="pi pi-receipt"></i><span>Factures</span></p-tab>
+              <p-tab [value]="0"><i class="pi pi-info-circle"></i><span i18n="@@clients.client-detail.informations.54937b3a">Informations</span></p-tab>
+              <p-tab [value]="1"><i class="pi pi-file"></i><span i18n="@@clients.client-detail.devis.f7622f90">Devis</span></p-tab>
+              <p-tab [value]="2"><i class="pi pi-receipt"></i><span i18n="@@clients.client-detail.factures.da35e4f2">Factures</span></p-tab>
               @if (canManagePortal()) {
-                <p-tab [value]="3"><i class="pi pi-users"></i><span>Espace client</span></p-tab>
+                <p-tab [value]="3"><i class="pi pi-users"></i><span i18n="@@clients.client-detail.espace.client.997229dc">Espace client</span></p-tab>
               }
             </p-tablist>
             <p-tabpanels>
@@ -153,66 +150,66 @@ import { PERMISSIONS } from '@core/config/permission-keys';
             <p-tabpanel [value]="0">
               <div class="info-grid">
                 <div class="info-section">
-                  <h3>Coordonnées</h3>
+                  <h3 i18n="@@clients.client-detail.coordonnees.7c309d77">Coordonnées</h3>
                   <div class="info-row">
-                    <span class="label">Email</span>
+                    <span class="label" i18n="@@clients.client-detail.email.84add5b2">Email</span>
                     @if (client()!.email) {
                       <a [href]="'mailto:' + client()!.email" class="value link">{{ client()!.email }}</a>
                     } @else {
-                      <span class="value">—</span>
+                      <span class="value" i18n="@@clients.client-detail.text.1b93795b">—</span>
                     }
                   </div>
                   <div class="info-row">
-                    <span class="label">Téléphone</span>
+                    <span class="label" i18n="@@clients.client-detail.telephone.d3b023ea">Téléphone</span>
                     <a [href]="'tel:' + client()!.phone" class="value link">{{ client()!.phone }}</a>
                   </div>
                 </div>
 
                 <div class="info-section">
-                  <h3>Informations fiscales</h3>
+                  <h3 i18n="@@clients.client-detail.informations.fiscales.b0156b88">Informations fiscales</h3>
                   <div class="info-row">
-                    <span class="label">Type</span>
+                    <span class="label" i18n="@@clients.client-detail.type.3deb7456">Type</span>
                     <app-status-badge 
                       [status]="getClientTypeStatus(client()!.type)"
-                      [label]="client()!.typeDisplay">
+                      [label]="client()!.typeDisplay | backendLabel">
                     </app-status-badge>
                   </div>
                   <div class="info-row">
-                    <span class="label">Matricule fiscal</span>
+                    <span class="label" i18n="@@clients.client-detail.matricule.fiscal.304096c4">Matricule fiscal</span>
                     <span class="value mono">{{ client()!.nif || 'Non renseigné' }}</span>
                   </div>
                 </div>
 
                 <div class="info-section">
-                  <h3>Conditions financières</h3>
+                  <h3 i18n="@@clients.client-detail.conditions.financieres.ae9a6ff2">Conditions financières</h3>
                   <div class="info-row">
-                    <span class="label">Délai de règlement</span>
+                    <span class="label" i18n="@@clients.client-detail.delai.de.reglement.052e3d66">Délai de règlement</span>
                     <span class="value">
-                      @if (client()!.defaultPaymentTermDays != null) {
+                      @if (client()!.defaultPaymentTermDays != null) {<ng-container i18n="@@clients.client-detail.jours.9970d523">
                         {{ client()!.defaultPaymentTermDays }} jours
-                      } @else {
+                      </ng-container>} @else {
                         —
                       }
                     </span>
                   </div>
                   <div class="info-row">
-                    <span class="label">Plafond d'encours</span>
+                    <span class="label" i18n="@@clients.client-detail.plafond.d.encours.d6965e27">Plafond d'encours</span>
                     <span class="value">
                       @if (outstanding()?.creditLimit != null) {
                         {{ formatCurrency(outstanding()!.creditLimit!) }}
-                      } @else {
+                      } @else {<ng-container i18n="@@clients.client-detail.aucun.b2ed82f1">
                         Aucun
-                      }
+                      </ng-container>}
                     </span>
                   </div>
                   <div class="info-row">
                     <span class="label"></span>
-                    <a class="value link" [routerLink]="['edit']">Modifier le plafond</a>
+                    <a class="value link" [routerLink]="['edit']" i18n="@@clients.client-detail.modifier.le.plafond.b4fd857f">Modifier le plafond</a>
                   </div>
                 </div>
 
                 <div class="info-section full-width">
-                  <h3>Adresse</h3>
+                  <h3 i18n="@@clients.client-detail.adresse.522e1466">Adresse</h3>
                   <div class="address-block">
                     <p>{{ client()!.address.street }}</p>
                     @if (client()!.address.streetLine2) {
@@ -230,7 +227,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
 
                 @if (client()!.notes) {
                   <div class="info-section full-width">
-                    <h3>Notes</h3>
+                    <h3 i18n="@@clients.client-detail.notes.70440046">Notes</h3>
                     <p class="notes">{{ client()!.notes }}</p>
                   </div>
                 }
@@ -241,16 +238,14 @@ import { PERMISSIONS } from '@core/config/permission-keys';
             <p-tabpanel [value]="1">
               <div class="invoices-section">
                 <div class="section-header">
-                  <h3>Historique des devis</h3>
+                  <h3 i18n="@@clients.client-detail.historique.des.devis.0d541e89">Historique des devis</h3>
                   <app-button 
                     variant="primary"
                     size="sm"
                     icon="pi-plus"
                     iconPos="left"
                     [routerLink]="['/quotes/new']"
-                    [queryParams]="{clientId: client()!.id}">
-                    Nouveau devis
-                  </app-button>
+                    [queryParams]="{clientId: client()!.id}" i18n="@@clients.client-detail.nouveau.devis.4c3f0159"> Nouveau devis </app-button>
                 </div>
 
                 @if (loadingQuotes()) {
@@ -260,11 +255,11 @@ import { PERMISSIONS } from '@core/config/permission-keys';
           [loading]="loading()" [value]="quotes()" [rows]="10" styleClass="p-datatable-sm">
                     <ng-template pTemplate="header">
                       <tr>
-                        <th>Numéro</th>
-                        <th>Date</th>
-                        <th>Montant</th>
-                        <th>Statut</th>
-                        <th style="width: 80px">Actions</th>
+                        <th i18n="@@clients.client-detail.numero.15e73db0">Numéro</th>
+                        <th i18n="@@clients.client-detail.date.eb9a4bc1">Date</th>
+                        <th i18n="@@clients.client-detail.montant.4adcd9fc">Montant</th>
+                        <th i18n="@@clients.client-detail.statut.659499f3">Statut</th>
+                        <th style="width: 80px" i18n="@@clients.client-detail.actions.c3cd636a">Actions</th>
                       </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-quote>
@@ -279,7 +274,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                         </td>
                         <td>
                           <app-button variant="ghost" size="sm" icon="pi-eye" [iconOnly]="true"
-                            pTooltip="Voir" [routerLink]="['/quotes', quote.id]" ariaLabel="Voir le devis">
+                            pTooltip="Voir" i18n-pTooltip="@@clients.client-detail.voir.8a754f1f" [routerLink]="['/quotes', quote.id]" ariaLabel="Voir le devis" i18n-ariaLabel="@@clients.client-detail.voir.le.devis.50894eed">
                           </app-button>
                         </td>
                       </tr>
@@ -290,9 +285,9 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                           <app-empty-state
                             icon="pi-file-edit"
                             iconSize="2rem"
-                            title="Aucun devis"
-                            description="Créez un devis pour ce client."
-                            actionLabel="Créer un devis"
+                            title="Aucun devis" i18n-title="@@clients.client-detail.aucun.devis.a42220c2"
+                            description="Créez un devis pour ce client." i18n-description="@@clients.client-detail.creez.un.devis.pour.ce.client.029c1a1c"
+                            actionLabel="Créer un devis" i18n-actionLabel="@@clients.client-detail.creer.un.devis.3a56a7d7"
                             (actionClick)="createQuoteForClient()">
                           </app-empty-state>
                         </td>
@@ -307,16 +302,14 @@ import { PERMISSIONS } from '@core/config/permission-keys';
             <p-tabpanel [value]="2">
               <div class="invoices-section">
                 <div class="section-header">
-                  <h3>Historique des factures</h3>
+                  <h3 i18n="@@clients.client-detail.historique.des.factures.6bab16bc">Historique des factures</h3>
                   <app-button 
                     variant="primary"
                     size="sm"
                     icon="pi-plus"
                     iconPos="left"
                     [routerLink]="['/invoices/new']"
-                    [queryParams]="{clientId: client()!.id}">
-                    Nouvelle facture
-                  </app-button>
+                    [queryParams]="{clientId: client()!.id}" i18n="@@clients.client-detail.nouvelle.facture.cdf7e09c"> Nouvelle facture </app-button>
                 </div>
 
                 @if (loadingInvoices()) {
@@ -333,11 +326,11 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                   
                   <ng-template pTemplate="header">
                     <tr>
-                      <th>Numéro</th>
-                      <th>Date</th>
-                      <th>Montant</th>
-                      <th>Statut</th>
-                      <th style="width: 80px">Actions</th>
+                      <th i18n="@@clients.client-detail.numero.15e73db0">Numéro</th>
+                      <th i18n="@@clients.client-detail.date.eb9a4bc1">Date</th>
+                      <th i18n="@@clients.client-detail.montant.4adcd9fc">Montant</th>
+                      <th i18n="@@clients.client-detail.statut.659499f3">Statut</th>
+                      <th style="width: 80px" i18n="@@clients.client-detail.actions.c3cd636a">Actions</th>
                     </tr>
                   </ng-template>
 
@@ -361,9 +354,9 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                           size="sm"
                           icon="pi-eye"
                           [iconOnly]="true"
-                          pTooltip="Voir"
+                          pTooltip="Voir" i18n-pTooltip="@@clients.client-detail.voir.8a754f1f"
                           [routerLink]="['/invoices', invoice.id]"
-                          ariaLabel="Voir la facture">
+                          ariaLabel="Voir la facture" i18n-ariaLabel="@@clients.client-detail.voir.la.facture.23283cea">
                         </app-button>
                       </td>
                     </tr>
@@ -375,9 +368,9 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                         <app-empty-state
                           icon="pi-file"
                           iconSize="2rem"
-                          title="Aucune facture"
-                          description="Créez une facture pour ce client."
-                          actionLabel="Créer une facture"
+                          title="Aucune facture" i18n-title="@@clients.client-detail.aucune.facture.72124217"
+                          description="Créez une facture pour ce client." i18n-description="@@clients.client-detail.creez.une.facture.pour.ce.client.91a6001c"
+                          actionLabel="Créer une facture" i18n-actionLabel="@@clients.client-detail.creer.une.facture.a3863c70"
                           (actionClick)="createInvoiceForClient()">
                         </app-empty-state>
                       </td>
@@ -398,11 +391,11 @@ import { PERMISSIONS } from '@core/config/permission-keys';
 
         <!-- Sidebar -->
         <div class="sidebar">
-          <p-card header="Statut" styleClass="status-card">
+          <p-card header="Statut" i18n-header="@@clients.client-detail.statut.659499f3" styleClass="status-card">
             <div class="status-content">
               <app-status-badge 
                 [status]="client()!.isActive ? 'active' : 'inactive'"
-                [label]="client()!.isActive ? 'Actif' : 'Inactif'"
+                [label]="client()!.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033"
                 style="margin-bottom: var(--spacing-3);">
               </app-status-badge>
               <app-button 
@@ -411,31 +404,31 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                 [icon]="client()!.isActive ? 'pi-ban' : 'pi-check'"
                 iconPos="left"
                 (click)="toggleActive()">
-                {{ client()!.isActive ? 'Désactiver le client' : 'Réactiver le client' }}
+                {{ client()!.isActive ? loc_ui_tern_desactiver_le_client_a9b066 : loc_ui_tern_reactiver_le_client_e892c4 }}
               </app-button>
             </div>
           </p-card>
 
-          <p-card header="Historique" styleClass="history-card">
+          <p-card header="Historique" i18n-header="@@clients.client-detail.historique.34f3a06a" styleClass="history-card">
             <div class="history-content">
               <div class="history-item">
-                <span class="label">Créé le</span>
+                <span class="label" i18n="@@clients.client-detail.cree.le.046c02a0">Créé le</span>
                 <span class="value">{{ client()!.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
               </div>
               <div class="history-item">
-                <span class="label">Modifié le</span>
+                <span class="label" i18n="@@clients.client-detail.modifie.le.8b181c38">Modifié le</span>
                 <span class="value">{{ client()!.updatedAt | date:'dd/MM/yyyy HH:mm' }}</span>
               </div>
               @if (stats()?.lastInvoiceDate) {
                 <div class="history-item">
-                  <span class="label">Dernière facture</span>
+                  <span class="label" i18n="@@clients.client-detail.derniere.facture.ab799db2">Dernière facture</span>
                   <span class="value">{{ stats()!.lastInvoiceDate | date:'dd/MM/yyyy' }}</span>
                 </div>
               }
             </div>
           </p-card>
 
-          <p-card header="Actions rapides" styleClass="actions-card">
+          <p-card header="Actions rapides" i18n-header="@@clients.client-detail.actions.rapides.abe69a9c" styleClass="actions-card">
             <div class="quick-actions">
               <app-button 
                 variant="outline"
@@ -443,26 +436,20 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                 iconPos="left"
                 routerLink="/quotes/new"
                 [queryParams]="{clientId: client()!.id}"
-                style="width: 100%; margin-bottom: var(--spacing-2);">
-                Nouveau devis
-              </app-button>
+                style="width: 100%; margin-bottom: var(--spacing-2);" i18n="@@clients.client-detail.nouveau.devis.4c3f0159"> Nouveau devis </app-button>
               <app-button 
                 variant="outline"
                 icon="pi-file"
                 iconPos="left"
                 routerLink="/invoices/new"
                 [queryParams]="{clientId: client()!.id}"
-                style="width: 100%; margin-bottom: var(--spacing-2);">
-                Nouvelle facture
-              </app-button>
+                style="width: 100%; margin-bottom: var(--spacing-2);" i18n="@@clients.client-detail.nouvelle.facture.cdf7e09c"> Nouvelle facture </app-button>
               <app-button 
                 variant="outline"
                 icon="pi-envelope"
                 iconPos="left"
                 (click)="sendEmail()"
-                style="width: 100%;">
-                Envoyer un email
-              </app-button>
+                style="width: 100%;" i18n="@@clients.client-detail.envoyer.un.email.48feacc4"> Envoyer un email </app-button>
             </div>
           </p-card>
         </div>
@@ -470,9 +457,9 @@ import { PERMISSIONS } from '@core/config/permission-keys';
     } @else {
       <div class="not-found">
         <i class="pi pi-exclamation-triangle"></i>
-        <h2>Client non trouvé</h2>
-        <p>Le client demandé n'existe pas ou a été supprimé.</p>
-        <app-button variant="primary" routerLink="/clients">Retour à la liste</app-button>
+        <h2 i18n="@@clients.client-detail.client.non.trouve.1323765f">Client non trouvé</h2>
+        <p i18n="@@clients.client-detail.le.client.demande.n.existe.pas.ou.a.ete.supprime.b283788b">Le client demandé n'existe pas ou a été supprimé.</p>
+        <app-button variant="primary" routerLink="/clients" i18n="@@clients.client-detail.retour.a.la.liste.7753f531">Retour à la liste</app-button>
       </div>
     }
 
@@ -698,6 +685,12 @@ import { PERMISSIONS } from '@core/config/permission-keys';
   `]
 })
 export class ClientDetailComponent implements OnInit {
+  protected readonly loc_chargement_a209b6 = $localize`:@@clients.client-detail.tpl.chargement.a209b664:Chargement...`;
+
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
+  readonly loc_ui_tern_desactiver_le_client_a9b066 = $localize`:@@ui.tern.desactiver.le.client.a9b066:Désactiver le client`;
+  readonly loc_ui_tern_reactiver_le_client_e892c4 = $localize`:@@ui.tern.reactiver.le.client.e892c4:Réactiver le client`;
   readonly outstanding = signal<ClientOutstanding | null>(null);
   readonly loadingOutstanding = signal(true);
 
@@ -725,9 +718,9 @@ export class ClientDetailComponent implements OnInit {
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const cli = this.client();
     return [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Clients', route: '/clients' },
-      { label: cli?.name || 'Client' }
+      { label: $localize`:@@clients.client-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@clients.client-detail.ts.clients.28e22fe3:Clients`, route: '/clients' },
+      { label: cli?.name || $localize`:@@clients.client-detail.ts.client.1bdd79b1:Client` }
     ];
   });
 
@@ -875,7 +868,7 @@ export class ClientDetailComponent implements OnInit {
       style: 'decimal',
       minimumFractionDigits: 3,
       maximumFractionDigits: 3
-    }).format(amount) + ' TND';
+    }).format(amount) + $localize`:@@ui.tern.tnd.9aaf5c: TND`;
   }
 
   toggleActive(): void {
@@ -888,16 +881,16 @@ export class ClientDetailComponent implements OnInit {
           this.client.set(response.data);
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: response.data.isActive ? 'Client activé' : 'Client désactivé'
+            summary: $localize`:@@client-detail.component.summary.Succès:Succès`,
+            detail: response.data.isActive ? $localize`:@@ui.tern.client.active.4c2918:Client activé` : $localize`:@@ui.tern.client.desactive.f0b4ab:Client désactivé`
           });
         }
       },
       error: () => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de modifier le statut'
+          summary: $localize`:@@client-detail.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@client-detail.component.detail.Impossible d:Impossible de modifier le statut`
         });
       }
     });
@@ -908,11 +901,11 @@ export class ClientDetailComponent implements OnInit {
     if (!client) return;
 
     this.confirmationService.confirm({
-      message: `Êtes-vous sûr de vouloir supprimer le client "${client.name}" ? Cette action est irréversible.`,
-      header: 'Confirmation de suppression',
+      message: $localize`:@@clients.client-detail.ts.etes.vous.sur.de.vouloir.supprimer.le.cl.df704d5e:Êtes-vous sûr de vouloir supprimer le client "${client.name}:name:" ? Cette action est irréversible.`,
+      header: $localize`:@@clients.client-detail.ts.confirmation.de.suppression.6a082d0b:Confirmation de suppression`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@client-detail.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@client-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.deleteClient();
@@ -929,15 +922,15 @@ export class ClientDetailComponent implements OnInit {
         if (response.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Client supprimé avec succès'
+            summary: $localize`:@@client-detail.component.summary.Succès:Succès`,
+            detail: $localize`:@@client-detail.component.detail.Client_supprim_:Client supprimé avec succès`
           });
           this.router.navigate(['/clients']);
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: response.errors[0] || 'Impossible de supprimer le client'
+            summary: $localize`:@@client-detail.component.summary.Erreur:Erreur`,
+            detail: response.errors[0] || $localize`:@@clients.client-detail.ts.impossible.de.supprimer.le.client.bd4e32c4:Impossible de supprimer le client`
           });
         }
       },
@@ -945,8 +938,8 @@ export class ClientDetailComponent implements OnInit {
         const errorMessage = this.errorHandler.extractErrorMessage(error);
         this.errorHandler.logError('Failed to delete client', error);
         this.confirmationService.alert({
-          message: errorMessage || 'Impossible de supprimer le client',
-          header: 'Impossible de supprimer',
+          message: errorMessage || $localize`:@@clients.client-detail.ts.impossible.de.supprimer.le.client.bd4e32c4:Impossible de supprimer le client`,
+          header: $localize`:@@clients.client-detail.ts.impossible.de.supprimer.0300380e:Impossible de supprimer`,
           icon: 'pi pi-exclamation-triangle'
         });
       }

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { DiagramModel, DiagramNode } from './studio-relation-diagram.model';
 
 /**
- * Diagramme SVG des relations (2.5g1) : `<svg [attr.viewBox]>` en template Angular, `<text>{{ node.label
+ * Diagramme SVG des relations (2.5g1) : $localize`:@@ui.tern.svg.attr.viewbox.b1c46b:<svg [attr.viewBox]>` en template Angular, `<text>{{ node.label
  * }}</text>` interpolé (échappé — jamais d'`innerHTML` ni de `bypassSecurityTrust*`), `role="img"` +
  * `aria-label`. `size` = 'compact' (page Relations) ou 'full' (réutilisé par 3.4e).
  */
@@ -15,7 +15,7 @@ let markerSeq = 0;
   template: `
     @if (model().nodes.length > 0) {
       <svg class="srd" [class.srd--compact]="size() === 'compact'" [attr.viewBox]="viewBox()" role="img"
-        [attr.aria-label]="'Diagramme des relations : ' + model().nodes.length + ' tables'" data-testid="relation-diagram">
+        [attr.aria-label]="loc_ui_tern_diagramme_des_relations_5cd91d + model().nodes.length + loc_ui_tern_tables_254f67" data-testid="relation-diagram">
         <defs>
           <marker [attr.id]="markerId" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
             <path d="M 0 0 L 10 5 L 0 10 z" class="srd__arrow" />
@@ -56,11 +56,13 @@ let markerSeq = 0;
   `]
 })
 export class StudioRelationDiagramComponent {
+  readonly loc_ui_tern_diagramme_des_relations_5cd91d = $localize`:@@ui.tern.diagramme.des.relations.5cd91d:Diagramme des relations : `;
+  readonly loc_ui_tern_tables_254f67 = $localize`:@@ui.tern.tables.254f67: tables`;
   /** Id unique par instance : deux diagrammes sur une même page (3.4e) ne doivent pas se partager `srd-arrow`. */
   protected readonly markerId = `srd-arrow-${++markerSeq}`;
   readonly model = input.required<DiagramModel>();
   readonly size = input<'compact' | 'full'>('full');
-  readonly emptyLabel = input('Relations non activées.');
+  readonly emptyLabel = input($localize`:@@studio.studio-relation-diagram.ts.relations.non.activees.eceb18c5:Relations non activées.`);
 
   readonly viewBox = computed(() => `0 0 ${this.model().width} ${this.model().height}`);
 

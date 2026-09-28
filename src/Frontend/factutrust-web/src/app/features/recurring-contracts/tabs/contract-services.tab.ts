@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, OnChanges, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -26,34 +28,34 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
 @Component({
   selector: 'app-contract-services-tab',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule, FormsModule, TableModule,
     ButtonComponent, SkeletonTableComponent, UsageMetricDialogComponent
   ],
   template: `
     <section class="ft-card-block">
-      <h3 class="block-title"><i class="pi pi-list"></i> Lignes du contrat</h3>
+      <h3 class="block-title" i18n="@@recurring-contracts.tabs.lignes.du.contrat.0cb8049f"><i class="pi pi-list"></i> Lignes du contrat</h3>
       @if (contract.lines.length === 0) {
-        <p class="placeholder-note">Aucune ligne de service.</p>
+        <p class="placeholder-note" i18n="@@recurring-contracts.tabs.aucune.ligne.de.service.3a4de59d">Aucune ligne de service.</p>
       } @else {
         <p-table [value]="contract.lines" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>Type</th>
-              <th>Produit</th>
-              <th>Description</th>
-              <th style="width: 70px">Qté</th>
-              <th style="width: 120px">Prix HT</th>
+              <th i18n="@@recurring-contracts.tabs.type.3deb7456">Type</th>
+              <th i18n="@@recurring-contracts.tabs.produit.ff673dc2">Produit</th>
+              <th i18n="@@recurring-contracts.tabs.description.55f8ebc8">Description</th>
+              <th style="width: 70px" i18n="@@recurring-contracts.tabs.qte.a4772129">Qté</th>
+              <th style="width: 120px" i18n="@@recurring-contracts.tabs.prix.ht.362207ca">Prix HT</th>
               <th style="width: 70px">TVA</th>
-              <th>Métrique / Inclus / Dépassement</th>
+              <th i18n="@@recurring-contracts.tabs.metrique.inclus.depassement.792ca199">Métrique / Inclus / Dépassement</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-line>
             <tr [class.line-inactive]="line.isActive === false">
               <td>
-                {{ line.lineTypeDisplay || line.lineType }}
+                {{ (line.lineTypeDisplay | backendLabel) || line.lineType }}
                 @if (line.isActive === false) {
-                  <span class="closed-tag">Clôturée</span>
+                  <span class="closed-tag" i18n="@@recurring-contracts.tabs.cloturee.d9addf51">Clôturée</span>
                 }
               </td>
               <td>{{ line.productName || '—' }}</td>
@@ -74,7 +76,7 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
           </ng-template>
           <ng-template pTemplate="footer">
             <tr class="lines-total">
-              <td colspan="7">
+              <td colspan="7" i18n="@@recurring-contracts.tabs.estimation.mensuelle.lignes.fixes.1e7d8676">
                 Estimation mensuelle (lignes fixes) :
                 <strong>{{ monthlyEstimate != null ? formatContractAmount(monthlyEstimate, contract.currency) : '—' }}</strong>
               </td>
@@ -86,9 +88,9 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
 
     <section class="ft-card-block">
       <div class="block-head">
-        <h3 class="block-title"><i class="pi pi-chart-bar"></i> Consommations</h3>
+        <h3 class="block-title" i18n="@@recurring-contracts.tabs.consommations.c76ecbd0"><i class="pi pi-chart-bar"></i> Consommations</h3>
         @if (canManage()) {
-          <app-button variant="outline" size="sm" icon="pi-sliders-h" (clicked)="metricsDialogVisible = true">
+          <app-button variant="outline" size="sm" icon="pi-sliders-h" (clicked)="metricsDialogVisible = true" i18n="@@recurring-contracts.tabs.gerer.les.metriques.40a2721c">
             Gérer les métriques
           </app-button>
         }
@@ -96,28 +98,28 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
 
       @if (canRecordUsage()) {
         <form class="usage-form" (ngSubmit)="submitUsage()">
-          <label>Métrique
-            <select class="ft-input" [(ngModel)]="usageMetricId" name="usageMetric" required>
-              <option value="">— Métrique —</option>
+          <label><ng-container i18n="@@recurring-contracts.tabs.metrique.066ebc60">Métrique
+            </ng-container><select class="ft-input" [(ngModel)]="usageMetricId" name="usageMetric" required>
+              <option value="" i18n="@@recurring-contracts.tabs.metrique.7ea96f47">— Métrique —</option>
               @for (m of activeMetrics(); track m.id) {
                 <option [value]="m.id">{{ m.name }} ({{ m.unit }})</option>
               }
             </select>
           </label>
-          <label>Du
-            <input class="ft-input" type="date" [(ngModel)]="usagePeriodFrom" name="usageFrom" required />
+          <label><ng-container i18n="@@recurring-contracts.tabs.du.84814985">Du
+            </ng-container><input class="ft-input" type="date" [(ngModel)]="usagePeriodFrom" name="usageFrom" required />
           </label>
-          <label>Au
-            <input class="ft-input" type="date" [(ngModel)]="usagePeriodTo" name="usageTo" required />
+          <label><ng-container i18n="@@recurring-contracts.tabs.au.7a1732d5">Au
+            </ng-container><input class="ft-input" type="date" [(ngModel)]="usagePeriodTo" name="usageTo" required />
           </label>
-          <label>Quantité
-            <input class="ft-input" type="number" min="0" step="any" [(ngModel)]="usageQuantity" name="usageQty" required />
+          <label><ng-container i18n="@@recurring-contracts.tabs.quantite.09a38fda">Quantité
+            </ng-container><input class="ft-input" type="number" min="0" step="any" [(ngModel)]="usageQuantity" name="usageQty" required />
           </label>
-          <label>Notes
-            <input class="ft-input" [(ngModel)]="usageNotes" name="usageNotes" placeholder="Optionnel" />
+          <label><ng-container i18n="@@recurring-contracts.tabs.notes.70440046">Notes
+            </ng-container><input class="ft-input" [(ngModel)]="usageNotes" name="usageNotes" placeholder="Optionnel" i18n-placeholder="@@recurring-contracts.tabs.optionnel.fcdd2927" />
           </label>
           <div class="usage-actions">
-            <app-button type="submit" variant="primary" size="sm" icon="pi-check" [disabled]="savingUsage()">
+            <app-button type="submit" variant="primary" size="sm" icon="pi-check" [disabled]="savingUsage()" i18n="@@recurring-contracts.tabs.enregistrer.f7c8bcd8">
               Enregistrer
             </app-button>
             <app-button
@@ -127,7 +129,7 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
               icon="pi-upload"
               [disabled]="importing()"
               (clicked)="fileInput.click()">
-              {{ importing() ? 'Import…' : 'Importer (CSV)' }}
+              <ng-container i18n="@@recurring-contracts.tabs.sel.import.importer.csv.d4370772">{!!(importing()), select, true {Import…} other {Importer (CSV)}}</ng-container>
             </app-button>
             <input
               #fileInput
@@ -137,32 +139,32 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
               (change)="onImportFile($event)" />
           </div>
         </form>
-        <p class="csv-hint">CSV « code métrique ; du ; au ; quantité ; notes » (séparateur « ; », dates ISO ou jj/mm/aaaa).</p>
+        <p class="csv-hint" i18n="@@recurring-contracts.tabs.csv.code.metrique.du.au.quantite.notes.s.cbe79360">CSV « code métrique ; du ; au ; quantité ; notes » (séparateur « ; », dates ISO ou jj/mm/aaaa).</p>
       }
 
       <div class="history-filter">
-        <label>Historique du
-          <input class="ft-input" type="date" [(ngModel)]="filterFrom" name="filterFrom" />
+        <label><ng-container i18n="@@recurring-contracts.tabs.historique.du.57b32314">Historique du
+          </ng-container><input class="ft-input" type="date" [(ngModel)]="filterFrom" name="filterFrom" />
         </label>
-        <label>au
-          <input class="ft-input" type="date" [(ngModel)]="filterTo" name="filterTo" />
+        <label><ng-container i18n="@@recurring-contracts.tabs.au.f095160c">au
+          </ng-container><input class="ft-input" type="date" [(ngModel)]="filterTo" name="filterTo" />
         </label>
-        <app-button variant="outline" size="sm" icon="pi-filter" (clicked)="loadRecords()">Filtrer</app-button>
+        <app-button variant="outline" size="sm" icon="pi-filter" (clicked)="loadRecords()" i18n="@@recurring-contracts.tabs.filtrer.a7a02ef5">Filtrer</app-button>
       </div>
 
       @if (loadingRecords()) {
         <app-skeleton-table [rows]="4" [columns]="recordsSkeletonColumns"></app-skeleton-table>
       } @else if (usageRecords().length === 0) {
-        <p class="placeholder-note">Aucune saisie de consommation sur la période.</p>
+        <p class="placeholder-note" i18n="@@recurring-contracts.tabs.aucune.saisie.de.consommation.sur.la.per.95810cdb">Aucune saisie de consommation sur la période.</p>
       } @else {
         <p-table [value]="usageRecords()" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>Métrique</th>
-              <th>Période</th>
-              <th style="width: 100px">Quantité</th>
-              <th style="width: 110px">Source</th>
-              <th>Notes</th>
+              <th i18n="@@recurring-contracts.tabs.metrique.066ebc60">Métrique</th>
+              <th i18n="@@recurring-contracts.tabs.periode.de2110b7">Période</th>
+              <th style="width: 100px" i18n="@@recurring-contracts.tabs.quantite.09a38fda">Quantité</th>
+              <th style="width: 110px" i18n="@@recurring-contracts.tabs.source.6da13add">Source</th>
+              <th i18n="@@recurring-contracts.tabs.notes.70440046">Notes</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
@@ -170,7 +172,7 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
               <td>{{ r.usageMetricName }}</td>
               <td>{{ r.periodFrom | date:'dd/MM/yyyy' }} — {{ r.periodTo | date:'dd/MM/yyyy' }}</td>
               <td>{{ r.quantity | number:'1.0-3' }}</td>
-              <td>{{ r.sourceDisplay }}</td>
+              <td>{{ r.sourceDisplay | backendLabel }}</td>
               <td>{{ r.notes || '—' }}</td>
             </tr>
           </ng-template>
@@ -229,7 +231,7 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
     .line-inactive td { color: var(--color-text-tertiary); }
 
     .closed-tag {
-      margin-left: var(--spacing-1);
+      margin-inline-start: var(--spacing-1);
       padding: 0 var(--spacing-2);
       border-radius: var(--radius-full);
       background: var(--color-neutral-100);
@@ -238,7 +240,7 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
     }
 
     .lines-total td {
-      text-align: right;
+      text-align: end;
       font-size: var(--font-size-sm);
       color: var(--color-text-secondary);
 
@@ -374,7 +376,7 @@ export class ContractServicesTabComponent implements OnInit, OnChanges {
       next: m => this.usageMetrics.set(m),
       error: err => {
         this.errorHandler.logError('RecurringContracts: usage metrics', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-services.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }
@@ -390,7 +392,7 @@ export class ContractServicesTabComponent implements OnInit, OnChanges {
         error: err => {
           this.loadingRecords.set(false);
           this.errorHandler.logError('RecurringContracts: usage records', err);
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+          this.toast.add({ severity: 'error', summary: $localize`:@@contract-services.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
         }
       });
   }
@@ -398,11 +400,11 @@ export class ContractServicesTabComponent implements OnInit, OnChanges {
   submitUsage(): void {
     if (!this.usageMetricId) return;
     if (!this.usageQuantity || this.usageQuantity <= 0) {
-      this.toast.add({ severity: 'warn', summary: 'Saisie invalide', detail: 'La quantité doit être supérieure à 0.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@contract-services.tab.summary.Saisie_invalide:Saisie invalide`, detail: $localize`:@@contract-services.tab.detail.La_quantit_doit:La quantité doit être supérieure à 0.` });
       return;
     }
     if (this.usagePeriodFrom && this.usagePeriodTo && this.usagePeriodTo < this.usagePeriodFrom) {
-      this.toast.add({ severity: 'warn', summary: 'Saisie invalide', detail: 'La fin de période doit être postérieure au début.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@contract-services.tab.summary.Saisie_invalide:Saisie invalide`, detail: $localize`:@@contract-services.tab.detail.La_fin_de_p_riod:La fin de période doit être postérieure au début.` });
       return;
     }
     this.savingUsage.set(true);
@@ -417,13 +419,13 @@ export class ContractServicesTabComponent implements OnInit, OnChanges {
         this.savingUsage.set(false);
         this.usageQuantity = null;
         this.usageNotes = '';
-        this.toast.add({ severity: 'success', summary: 'Consommation enregistrée', detail: 'La saisie a été prise en compte.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@contract-services.tab.summary.Consommation_enr:Consommation enregistrée`, detail: $localize`:@@contract-services.tab.detail.La_saisie_a_t_:La saisie a été prise en compte.` });
         this.loadRecords();
       },
       error: err => {
         this.savingUsage.set(false);
         this.errorHandler.logError('RecurringContracts: record usage', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-services.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }
@@ -441,7 +443,7 @@ export class ContractServicesTabComponent implements OnInit, OnChanges {
         const result = parseUsageRecordsCsv(String(reader.result ?? ''));
         if (result.error) {
           this.importing.set(false);
-          this.toast.add({ severity: 'error', summary: 'Import impossible', detail: result.error });
+          this.toast.add({ severity: 'error', summary: $localize`:@@contract-services.tab.summary.Import impos:Import impossible`, detail: result.error });
           return;
         }
         this.service.importUsageRecords(this.contract.id, result.rows).subscribe({
@@ -449,26 +451,26 @@ export class ContractServicesTabComponent implements OnInit, OnChanges {
             this.importing.set(false);
             this.toast.add({
               severity: 'success',
-              summary: 'Import terminé',
-              detail: `${count} ligne(s) importée(s).`
+              summary: $localize`:@@contract-services.tab.summary.Import_termin_:Import terminé`,
+              detail: $localize`:@@recurring-contracts.contract-services.ts.count.ligne.s.importee.s.ded96cc4:${count}:count: ligne(s) importée(s).`
             });
             this.loadRecords();
           },
           error: err => {
             this.importing.set(false);
             this.errorHandler.logError('RecurringContracts: import usage', err);
-            this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+            this.toast.add({ severity: 'error', summary: $localize`:@@contract-services.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
           }
         });
       } catch (e) {
         this.importing.set(false);
         this.errorHandler.logError('RecurringContracts: import parse', e);
-        this.toast.add({ severity: 'error', summary: 'Import impossible', detail: 'Le fichier CSV est illisible.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-services.tab.summary.Import impos:Import impossible`, detail: $localize`:@@contract-services.tab.detail.Le fichier C:Le fichier CSV est illisible.` });
       }
     };
     reader.onerror = () => {
       this.importing.set(false);
-      this.toast.add({ severity: 'error', summary: 'Import impossible', detail: 'Le fichier n\'a pas pu être lu.' });
+      this.toast.add({ severity: 'error', summary: $localize`:@@contract-services.tab.summary.Import impos:Import impossible`, detail: $localize`:@@contract-services.tab.detail.Le_fichier_n_a_p:Le fichier n'a pas pu être lu.` });
     };
     reader.readAsText(file);
   }

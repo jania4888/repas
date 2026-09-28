@@ -63,7 +63,7 @@ export type AccountingAmountSide = 'debit' | 'credit';
       padding: var(--spacing-1) var(--spacing-2);
       font-size: var(--font-size-sm);
       font-variant-numeric: tabular-nums;
-      text-align: right;
+      text-align: end;
       box-sizing: border-box;
     }
     :host ::ng-deep .accounting-amount-input--debit .p-inputnumber-input {
@@ -96,7 +96,7 @@ export class AccountingAmountInputComponent implements ControlValueAccessor {
   @Input() fractionDigits = ACCOUNTING_AMOUNT_FRACTION_DIGITS;
 
   @Input() inputId = '';
-  @Input() ariaLabel = 'Montant';
+  @Input() ariaLabel = $localize`:@@accounting.accounting-amount-input.ts.montant.4adcd9fc:Montant`;
   @Input() disabled = false;
   @Input() side: AccountingAmountSide = 'debit';
   @Input() compact = false;

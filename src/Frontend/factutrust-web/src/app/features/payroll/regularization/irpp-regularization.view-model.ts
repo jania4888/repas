@@ -1,4 +1,5 @@
 import { IrppRegularizationMonth, IrppRegularizationPreview } from '@core/services/payroll.service';
+import { erpPlural, erpPluralLocale } from '@core/i18n/erp-plural';
 
 /**
  * Fonctions pures de l'écran de régularisation IRPP.
@@ -31,8 +32,8 @@ export interface RegularizationSummaryRow {
 }
 
 const MONTH_LABELS = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  $localize`:@@payroll.irpp-regularization.view-model.ts.janvier.7a32ae0f:Janvier`, $localize`:@@payroll.irpp-regularization.view-model.ts.fevrier.63fc1803:Février`, $localize`:@@payroll.irpp-regularization.view-model.ts.mars.1778011d:Mars`, $localize`:@@payroll.irpp-regularization.view-model.ts.avril.4efeee46:Avril`, $localize`:@@payroll.irpp-regularization.view-model.ts.mai.afe526a6:Mai`, $localize`:@@payroll.irpp-regularization.view-model.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@payroll.irpp-regularization.view-model.ts.juillet.e8e0920c:Juillet`, $localize`:@@payroll.irpp-regularization.view-model.ts.aout.460b6696:Août`, $localize`:@@payroll.irpp-regularization.view-model.ts.septembre.08d23f31:Septembre`, $localize`:@@payroll.irpp-regularization.view-model.ts.octobre.0ed28485:Octobre`, $localize`:@@payroll.irpp-regularization.view-model.ts.novembre.632580af:Novembre`, $localize`:@@payroll.irpp-regularization.view-model.ts.decembre.03bcd9b0:Décembre`
 ];
 
 export function monthLabel(month: number): string {
@@ -48,9 +49,9 @@ export function resolveOutcome(totalDelta: number): RegularizationOutcome {
 
 export function outcomeLabel(outcome: RegularizationOutcome): string {
   switch (outcome) {
-    case 'rappel': return 'Rappel';
-    case 'restitution': return 'Restitution';
-    default: return 'Aucun écart';
+    case 'rappel': return $localize`:@@payroll.irpp-regularization.view-model.ts.rappel.a1ec24e4:Rappel`;
+    case 'restitution': return $localize`:@@payroll.irpp-regularization.view-model.ts.restitution.955cdde9:Restitution`;
+    default: return $localize`:@@payroll.irpp-regularization.view-model.ts.aucun.ecart.178a52ed:Aucun écart`;
   }
 }
 
@@ -66,11 +67,11 @@ export function outcomeSeverity(outcome: RegularizationOutcome): 'warn' | 'succe
 export function outcomeHint(outcome: RegularizationOutcome): string {
   switch (outcome) {
     case 'rappel':
-      return 'Un montant complémentaire sera retenu sur le bulletin du mois.';
+      return $localize`:@@payroll.irpp-regularization.view-model.ts.un.montant.complementaire.sera.retenu.su.ddef131f:Un montant complémentaire sera retenu sur le bulletin du mois.`;
     case 'restitution':
-      return 'Le trop-perçu d’impôt sera reversé au salarié sur le bulletin du mois.';
+      return $localize`:@@payroll.irpp-regularization.view-model.ts.le.trop.percu.d.impot.sera.reverse.au.sa.3a73a6d0:Le trop-perçu d’impôt sera reversé au salarié sur le bulletin du mois.`;
     default:
-      return 'La retenue mensuelle correspond déjà à l’impôt dû : rien à porter sur le bulletin.';
+      return $localize`:@@payroll.irpp-regularization.view-model.ts.la.retenue.mensuelle.correspond.deja.a.l.7fa49bc3:La retenue mensuelle correspond déjà à l’impôt dû : rien à porter sur le bulletin.`;
   }
 }
 
@@ -88,7 +89,7 @@ export function buildDetailRows(months: IrppRegularizationMonth[]): Regularizati
   }));
 
   rows.push({
-    label: 'Total',
+    label: $localize`:@@payroll.irpp-regularization.view-model.ts.total.b25928c6:Total`,
     netTaxable: sum(months, m => m.monthlyNetTaxable),
     irpp: sum(months, m => m.irpp),
     css: sum(months, m => m.css),
@@ -101,12 +102,12 @@ export function buildDetailRows(months: IrppRegularizationMonth[]): Regularizati
 /** Carte « Récapitulatif » : du cumul jusqu’à l’écart à porter. */
 export function buildSummaryRows(preview: IrppRegularizationPreview): RegularizationSummaryRow[] {
   return [
-    { label: 'Cumul net imposable', value: preview.cumulNetTaxable },
-    { label: 'IRPP dû sur le cumul', value: preview.irppDue },
-    { label: 'IRPP déjà retenu', value: preview.cumulIrppWithheld },
-    { label: 'Écart IRPP', value: preview.irppDelta, separator: true },
-    { label: 'Écart CSS', value: preview.cssDelta },
-    { label: 'Régularisation à porter', value: preview.totalDelta, highlight: true, separator: true }
+    { label: $localize`:@@payroll.irpp-regularization.view-model.ts.cumul.net.imposable.c17a5048:Cumul net imposable`, value: preview.cumulNetTaxable },
+    { label: $localize`:@@payroll.irpp-regularization.view-model.ts.irpp.du.sur.le.cumul.43a5b88d:IRPP dû sur le cumul`, value: preview.irppDue },
+    { label: $localize`:@@payroll.irpp-regularization.view-model.ts.irpp.deja.retenu.52296423:IRPP déjà retenu`, value: preview.cumulIrppWithheld },
+    { label: $localize`:@@payroll.irpp-regularization.view-model.ts.ecart.irpp.b4e086c7:Écart IRPP`, value: preview.irppDelta, separator: true },
+    { label: $localize`:@@payroll.irpp-regularization.view-model.ts.ecart.css.367c8a47:Écart CSS`, value: preview.cssDelta },
+    { label: $localize`:@@payroll.irpp-regularization.view-model.ts.regularisation.a.porter.1cf4ad8a:Régularisation à porter`, value: preview.totalDelta, highlight: true, separator: true }
   ];
 }
 
@@ -118,16 +119,21 @@ export function partialYearNotice(preview: IrppRegularizationPreview): string | 
   if (!preview.isPartialYear) return null;
 
   const count = preview.monthsCounted;
-  const plural = count > 1 ? 's' : '';
-  return `Année incomplète : ${count} bulletin${plural} arrêté${plural} sur ${preview.month}. `
-    + 'Le barème annuel s’applique au revenu réellement perçu, ce qui explique un écart important.';
+  const month = preview.month;
+  return erpPlural(count, {
+    zero: $localize`:@@payroll.irpp-regularization.annee.incomplete.zero:Année incomplète : ${count}:count: bulletins arrêtés sur ${month}:month:. Le barème annuel s’applique au revenu réellement perçu, ce qui explique un écart important.`,
+    one: $localize`:@@payroll.irpp-regularization.annee.incomplete.one:Année incomplète : ${count}:count: bulletin arrêté sur ${month}:month:. Le barème annuel s’applique au revenu réellement perçu, ce qui explique un écart important.`,
+    two: $localize`:@@payroll.irpp-regularization.annee.incomplete.two:Année incomplète : ${count}:count: bulletins arrêtés sur ${month}:month:. Le barème annuel s’applique au revenu réellement perçu, ce qui explique un écart important.`,
+    few: $localize`:@@payroll.irpp-regularization.annee.incomplete.few:Année incomplète : ${count}:count: bulletins arrêtés sur ${month}:month:. Le barème annuel s’applique au revenu réellement perçu, ce qui explique un écart important.`,
+    many: $localize`:@@payroll.irpp-regularization.annee.incomplete.many:Année incomplète : ${count}:count: bulletins arrêtés sur ${month}:month:. Le barème annuel s’applique au revenu réellement perçu, ce qui explique un écart important.`,
+    other: $localize`:@@payroll.irpp-regularization.annee.incomplete.other:Année incomplète : ${count}:count: bulletins arrêtés sur ${month}:month:. Le barème annuel s’applique au revenu réellement perçu, ce qui explique un écart important.`
+  }, erpPluralLocale());
 }
 
 /** Avertissement lorsque l’exercice n’a pas activé la fonctionnalité. */
 export function featureDisabledNotice(preview: IrppRegularizationPreview): string | null {
   if (!preview.isFeatureDisabled) return null;
-  return 'La régularisation IRPP n’est pas activée pour cet exercice : ce calcul reste indicatif '
-    + 'et ne sera pas porté sur les bulletins. Activez-la dans RH & Paie → Paramètres paie.';
+  return $localize`:@@payroll.irpp-regularization.view-model.ts.la.regularisation.irpp.n.est.pas.activee.5ce7a335:La régularisation IRPP n’est pas activée pour cet exercice : ce calcul reste indicatif et ne sera pas porté sur les bulletins. Activez-la dans RH & Paie → Paramètres paie.`;
 }
 
 /** Vrai si l’écart mérite d’être enregistré (au millime près). */

@@ -30,22 +30,22 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Contrôle d'intégrité"
-      subtitle="Diagnostics comptables en lecture seule — aucune modification des données" />
+      title="Contrôle d'intégrité" i18n-title="@@accounting.health.controle.d.integrite.6a418f91"
+      subtitle="Diagnostics comptables en lecture seule — aucune modification des données" i18n-subtitle="@@accounting.health.diagnostics.comptables.en.lecture.seule.f4929265" />
 
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Portée du diagnostic">
+      <app-accounting-filter-bar ariaLabel="Portée du diagnostic" i18n-ariaLabel="@@accounting.health.portee.du.diagnostic.d8564c44">
         <div accountingFilterFields class="hc-toolbar-fields">
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="hc-scope">Portée</label>
+            <label class="accounting-filter-label" for="hc-scope" i18n="@@accounting.health.portee.f42a1d5d">Portée</label>
             <select id="hc-scope" [(ngModel)]="scope" class="accounting-filter-input">
-              <option value="year">Exercice</option>
-              <option value="all">Tout l'historique</option>
+              <option value="year" i18n="@@accounting.health.exercice.e171e2b0">Exercice</option>
+              <option value="all" i18n="@@accounting.health.tout.l.historique.058b1093">Tout l'historique</option>
             </select>
           </div>
           @if (scope === 'year') {
             <div class="accounting-filter-field">
-              <label class="accounting-filter-label" for="hc-year">Exercice</label>
+              <label class="accounting-filter-label" for="hc-year" i18n="@@accounting.health.exercice.e171e2b0">Exercice</label>
               <input id="hc-year" type="number" min="2000" max="2100" [(ngModel)]="fiscalYear" class="accounting-filter-input" />
             </div>
           }
@@ -58,22 +58,20 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="run()"
             [disabled]="loading()"
-            ariaLabel="Lancer les contrôles d'intégrité">
-            Lancer les contrôles
-          </app-button>
+            ariaLabel="Lancer les contrôles d'intégrité" i18n-ariaLabel="@@accounting.health.lancer.les.controles.d.integrite.aa8ed997" i18n="@@accounting.health.lancer.les.controles.521d27dd"> Lancer les contrôles </app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
 
-    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="run()" />
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.health.reessayer.c4f78b12" (retry)="run()" />
 
     @if (report(); as rep) {
       <div class="hc-summary" [class.hc-summary--anomaly]="rep.hasAnomalies" [class.hc-summary--ok]="!rep.hasAnomalies" role="status">
         <i class="pi" [class.pi-exclamation-triangle]="rep.hasAnomalies" [class.pi-check-circle]="!rep.hasAnomalies" aria-hidden="true"></i>
         <span>
-          @if (rep.hasAnomalies) {
+          @if (rep.hasAnomalies) {<ng-container i18n="@@accounting.health.controle.s.signalent.des.anomalies.a.exa.875e860a">
             {{ anomalyCount() }} contrôle(s) signalent des anomalies à examiner. Ce centre est en lecture seule : corrigez depuis les écrans liés.
-          } @else {
+          </ng-container>} @else {
             {{ noAnomalyMessage(rep.fiscalYear) }}
           }
         </span>
@@ -82,11 +80,11 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <p-table [value]="rep.checks" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
         <ng-template pTemplate="header">
           <tr>
-            <th style="width:9rem">Sévérité</th>
-            <th>Contrôle</th>
-            <th style="width:6rem" class="text-right">Nombre</th>
-            <th>Détail</th>
-            <th style="width:7rem">Action</th>
+            <th style="width:9rem" i18n="@@accounting.health.severite.62fd4ae5">Sévérité</th>
+            <th i18n="@@accounting.health.controle.e988877e">Contrôle</th>
+            <th style="width:6rem" class="text-right" i18n="@@accounting.health.nombre.e68491e9">Nombre</th>
+            <th i18n="@@accounting.health.detail.7ce06afc">Détail</th>
+            <th style="width:7rem" i18n="@@accounting.health.action.97c89a4d">Action</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-c>
@@ -97,13 +95,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             <td class="hc-message">{{ c.message }}</td>
             <td>
               @if (c.deepLinkRoute && c.count > 0) {
-                <a class="hc-link" [routerLink]="c.deepLinkRoute">Voir <i class="pi pi-angle-right" aria-hidden="true"></i></a>
+                <a class="hc-link" [routerLink]="c.deepLinkRoute"><ng-container i18n="@@accounting.health.voir.8a754f1f">Voir </ng-container> <i class="pi pi-angle-right" aria-hidden="true"></i></a>
               }
             </td>
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td colspan="5" style="text-align:center;padding:2rem">Lancez les contrôles.</td></tr>
+          <tr><td colspan="5" style="text-align:center;padding:2rem" i18n="@@accounting.health.lancez.les.controles.d0416477">Lancez les contrôles.</td></tr>
         </ng-template>
       </p-table>
     }
@@ -111,7 +109,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   styles: `
     @use '../shared/accounting-layout';
     .hc-toolbar-fields { display:flex; flex-wrap:wrap; align-items:flex-end; gap:var(--spacing-4); }
-    .text-right { text-align:right; }
+    .text-right { text-align:end; }
     .hc-num { font-variant-numeric:tabular-nums; }
     .hc-count-nonzero { font-weight:var(--font-weight-bold); }
     .hc-message { color:var(--color-text-secondary); font-size:var(--font-size-sm); }
@@ -149,8 +147,8 @@ export class AccountingHealthComponent implements OnInit {
 
   noAnomalyMessage(fiscalYear: number | null): string {
     return fiscalYear
-      ? `Aucune anomalie détectée sur l'exercice ${fiscalYear}.`
-      : "Aucune anomalie détectée sur l'ensemble du dossier.";
+      ? $localize`:@@ui.tern.aucune.anomalie.detectee.sur.l.exercice.ph.f58da0:Aucune anomalie détectée sur l'exercice ${fiscalYear}:p0:.`
+      : $localize`:@@ui.tern.aucune.anomalie.detectee.sur.l.ensemble.du.86d2cf:Aucune anomalie détectée sur l'ensemble du dossier.`;
   }
 
   ngOnInit(): void {
@@ -165,11 +163,11 @@ export class AccountingHealthComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (res.success && res.data) this.report.set(res.data);
-        else this.error.set(res.error ?? 'Erreur');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.health.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }
@@ -177,7 +175,7 @@ export class AccountingHealthComponent implements OnInit {
   severityLabel(c: PreClosingCheckDto): string {
     if (c.count === 0) return 'OK';
     if (c.severity === 2) return 'Bloquant';
-    if (c.severity === 1) return 'Avertissement';
+    if (c.severity === 1) return $localize`:@@accounting.health.ts.avertissement.1b3e2777:Avertissement`;
     return 'Info';
   }
 

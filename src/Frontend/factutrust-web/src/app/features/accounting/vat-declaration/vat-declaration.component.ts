@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
@@ -12,6 +13,7 @@ import {
 } from '@core/config/company-accounting-nav.config';
 import { ToastService } from '@core/services/toast.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
+import { API_ERROR_CODE } from '@core/utils/api-error-code';
 import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen-payload.factory';
 import { AccountingStatusBannerComponent } from '../shared/accounting-status-banner.component';
 import { AccountingCorrectionBannerComponent } from '../shared/accounting-correction-banner.component';
@@ -39,11 +41,15 @@ import {
   shiftPeriod
 } from './vat-declaration.view-model';
 
-/** Message aligné sur VatDeclarationAccess.NotSubmittedMessage (backend). */
+/**
+ * Repli pour une API sans champ `code` : texte de VatDeclarationAccess.NotSubmittedMessage (français).
+ * Le cas nominal lit le code `VatDeclaration.NotSubmitted` — en arabe, l'API traduit le message.
+ * Valeur de comparaison : ne pas passer en $localize.
+ */
 const COMPANY_NOT_SUBMITTED_MARKER = 'Aucune déclaration soumise';
 
 const COMPANY_EMPTY_STATE_MESSAGE =
-  'Aucune déclaration mensuelle soumise par le cabinet pour cette période. Vous pourrez consulter et exporter le PDF dès qu’elle aura été soumise.';
+  $localize`:@@accounting.vat-declaration.ts.aucune.declaration.mensuelle.soumise.par.016c14ba:Aucune déclaration mensuelle soumise par le cabinet pour cette période. Vous pourrez consulter et exporter le PDF dès qu’elle aura été soumise.`;
 
 @Component({
   selector: 'app-vat-declaration',
@@ -64,10 +70,10 @@ const COMPANY_EMPTY_STATE_MESSAGE =
   ],
   template: `
     <app-page-header
-      title="Déclaration mensuelle des impôts et taxes"
+      title="Déclaration mensuelle des impôts et taxes" i18n-title="@@accounting.vat-declaration.declaration.mensuelle.des.impots.et.taxes.2ab684d8"
       [subtitle]="isCompanyReadOnly
-        ? 'Consultation des déclarations soumises par le cabinet'
-        : 'Préremplissage à partir des ventes et achats du mois'" />
+        ? loc_ui_tern_consultation_des_declarations_soumises_par_879645
+        : loc_ui_tern_preremplissage_a_partir_des_ventes_et_acha_bb3884" />
 
     <app-accounting-correction-banner />
 
@@ -95,7 +101,7 @@ const COMPANY_EMPTY_STATE_MESSAGE =
       variant="error"
       [message]="error() ?? ''"
       [showRetry]="!!error()"
-      retryLabel="Réessayer"
+      retryLabel="Réessayer" i18n-retryLabel="@@accounting.vat-declaration.reessayer.c4f78b12"
       (retry)="load()" />
 
     @if (unavailableReason(); as reason) {
@@ -185,6 +191,8 @@ const COMPANY_EMPTY_STATE_MESSAGE =
   `
 })
 export class VatDeclarationComponent implements OnInit {
+  readonly loc_ui_tern_consultation_des_declarations_soumises_par_879645 = $localize`:@@ui.tern.consultation.des.declarations.soumises.par.879645:Consultation des déclarations soumises par le cabinet`;
+  readonly loc_ui_tern_preremplissage_a_partir_des_ventes_et_acha_bb3884 = $localize`:@@ui.tern.preremplissage.a.partir.des.ventes.et.acha.bb3884:Préremplissage à partir des ventes et achats du mois`;
   private readonly api = inject(AccountingService);
   readonly auth = inject(AuthService);
   readonly showDocLinks = canShowVatDeclarationDocLinks(this.auth);
@@ -251,12 +259,10 @@ export class VatDeclarationComponent implements OnInit {
     const d = this.data();
     if (!d) return '';
     if (this.isCompanyReadOnly)
-      return 'Les montants déposés par le cabinet font foi. Rapprochez-vous de lui pour toute correction.';
+      return $localize`:@@accounting.vat-declaration.ts.les.montants.deposes.par.le.cabinet.font.fd505e4f:Les montants déposés par le cabinet font foi. Rapprochez-vous de lui pour toute correction.`;
     if (d.status === 0)
-      return 'Les montants enregistrés font foi et ne sont jamais réalignés automatiquement. '
-        + 'Resynchronisez puis enregistrez pour les mettre à jour.';
-    return 'Cette déclaration a été déposée : ses montants restent ceux du dépôt. '
-      + 'Pour la corriger, resynchronisez puis enregistrez une « Rectificative ».';
+      return $localize`:@@accounting.vat-declaration.ts.les.montants.enregistres.font.foi.et.ne.292696d5:Les montants enregistrés font foi et ne sont jamais réalignés automatiquement. Resynchronisez puis enregistrez pour les mettre à jour.`;
+    return $localize`:@@accounting.vat-declaration.ts.cette.declaration.a.ete.deposee.ses.mont.0eb66461:Cette déclaration a été déposée : ses montants restent ceux du dépôt. Pour la corriger, resynchronisez puis enregistrez une « Rectificative ».`;
   });
 
   /**
@@ -280,14 +286,14 @@ export class VatDeclarationComponent implements OnInit {
 
     this.toast.add({
       severity: 'info',
-      summary: 'Montants resynchronisés',
-      detail: 'Vérifiez les lignes, puis enregistrez pour que la déclaration les porte réellement.',
+      summary: $localize`:@@vat-declaration.component.summary.Montants_resynch:Montants resynchronisés`,
+      detail: $localize`:@@vat-declaration.component.detail.V_rifiez_les_lig:Vérifiez les lignes, puis enregistrez pour que la déclaration les porte réellement.`,
       life: 6000
     });
   }
 
   ngOnInit(): void {
-    this.title.setTitle('Déclaration mensuelle - InstaFact');
+    this.title.setTitle($localize`:@@accounting.vat-declaration.ts.declaration.mensuelle.instafact.fcce90f2:Déclaration mensuelle - InstaFact`);
     // Deep-link depuis l'échéancier fiscal : ?year=2026&month=7 ouvre la bonne période.
     const params = this.route.snapshot.queryParamMap;
     const year = Number(params.get('year'));
@@ -390,12 +396,12 @@ export class VatDeclarationComponent implements OnInit {
             acomptes: d.acomptes
           });
         } else {
-          this.handleLoadFailure(res.error ?? 'Erreur');
+          this.handleLoadFailure(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       },
       error: (err) => {
         this.loading.set(false);
-        this.handleLoadFailure(this.errorHandler.extractErrorMessage(err));
+        this.handleLoadFailure(this.errorHandler.extractErrorMessage(err), this.errorHandler.getApiErrorCode(err));
       }
     });
   }
@@ -413,15 +419,15 @@ export class VatDeclarationComponent implements OnInit {
         if (res.success) {
           this.toast.add({
             severity: 'success',
-            summary: rectificative ? 'Rectificative enregistrée' : (submit ? 'Déclaration soumise' : 'Brouillon enregistré'),
+            summary: rectificative ? $localize`:@@ui.tern.rectificative.enregistree.82a024:Rectificative enregistrée` : (submit ? $localize`:@@ui.tern.declaration.soumise.fba01b:Déclaration soumise` : $localize`:@@ui.tern.brouillon.enregistre.5b3c3a:Brouillon enregistré`),
             detail: rectificative
-              ? 'La déclaration rectificative a été enregistrée.'
-              : (submit ? 'La déclaration a été soumise.' : 'Le brouillon de déclaration a été enregistré.'),
+              ? $localize`:@@ui.tern.la.declaration.rectificative.a.ete.enregis.960df1:La déclaration rectificative a été enregistrée.`
+              : (submit ? $localize`:@@ui.tern.la.declaration.a.ete.soumise.c56b8d:La déclaration a été soumise.` : $localize`:@@ui.tern.le.brouillon.de.declaration.a.ete.enregist.7c0e32:Le brouillon de déclaration a été enregistré.`),
             life: 5000
           });
           this.load();
         } else {
-          this.error.set(res.error ?? 'Erreur');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       },
       error: (err) => {
@@ -435,8 +441,8 @@ export class VatDeclarationComponent implements OnInit {
     if (!this.data()) {
       this.toast.add({
         severity: 'warn',
-        summary: 'Export PDF',
-        detail: 'Aucune déclaration soumise à exporter pour cette période.',
+        summary: $localize`:@@vat-declaration.component.summary.Export PDF:Export PDF`,
+        detail: $localize`:@@vat-declaration.component.detail.Aucune_d_clarati:Aucune déclaration soumise à exporter pour cette période.`,
         life: 5000
       });
       return;
@@ -444,7 +450,7 @@ export class VatDeclarationComponent implements OnInit {
     this.clampPeriod();
     this.api.exportVatDeclarationPdf(this.year, this.month).subscribe({
       next: blob => this.downloadPdf(blob),
-      error: () => this.toast.add({ severity: 'error', summary: 'Export PDF', detail: "L'export PDF a échoué.", life: 5000 })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@vat-declaration.component.summary.Export PDF:Export PDF`, detail: $localize`:@@vat-declaration.component.detail.LexportPDFaéchoué:L'export PDF a échoué.`, life: 5000 })
     });
   }
 
@@ -453,8 +459,8 @@ export class VatDeclarationComponent implements OnInit {
     if (!this.data()) {
       this.toast.add({
         severity: 'warn',
-        summary: 'Formulaire officiel',
-        detail: 'Aucune déclaration soumise à exporter pour cette période.',
+        summary: $localize`:@@vat-declaration.component.summary.Formulaire o:Formulaire officiel`,
+        detail: $localize`:@@vat-declaration.component.detail.Aucune_d_clarati:Aucune déclaration soumise à exporter pour cette période.`,
         life: 5000
       });
       return;
@@ -464,8 +470,8 @@ export class VatDeclarationComponent implements OnInit {
       next: blob => downloadBlob(blob, `declaration_officielle_${this.year}_${String(this.month).padStart(2, '0')}.pdf`),
       error: () => this.toast.add({
         severity: 'error',
-        summary: 'Formulaire officiel',
-        detail: "L'export du formulaire officiel a échoué.",
+        summary: $localize`:@@vat-declaration.component.summary.Formulaire o:Formulaire officiel`,
+        detail: $localize`:@@vat-declaration.component.detail.Lexportduformulaireo:L'export du formulaire officiel a échoué.`,
         life: 5000
       })
     });
@@ -480,13 +486,16 @@ export class VatDeclarationComponent implements OnInit {
         window.open(url, '_blank', 'noopener,noreferrer');
         setTimeout(() => URL.revokeObjectURL(url), 60_000);
       },
-      error: () => this.toast.add({ severity: 'error', summary: 'Aperçu PDF', detail: "L'aperçu PDF a échoué.", life: 5000 })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@vat-declaration.component.summary.Aperçu PDF:Aperçu PDF`, detail: $localize`:@@vat-declaration.component.detail.LaperçuPDFaéchoué:L'aperçu PDF a échoué.`, life: 5000 })
     });
   }
 
-  private handleLoadFailure(message: string): void {
+  private handleLoadFailure(message: string, code?: string): void {
     this.data.set(null);
-    if (this.isCompanyReadOnly && this.isCompanyNotSubmittedMessage(message)) {
+    const notSubmitted = code
+      ? code === API_ERROR_CODE.vatDeclarationNotSubmitted
+      : this.isCompanyNotSubmittedMessage(message);
+    if (this.isCompanyReadOnly && notSubmitted) {
       this.unavailableReason.set(COMPANY_EMPTY_STATE_MESSAGE);
       this.error.set(null);
       return;

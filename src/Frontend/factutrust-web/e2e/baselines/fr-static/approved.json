@@ -1,0 +1,570 @@
+{
+  "src/app/core/layout/header/header.component.ts#HeaderComponent": {
+    "sha": "ead42268f84d72cdeb105e3b07df01b7649884ec92e4cc6d81e473fa8203accc",
+    "reason": "Attributs entrepôt via $localize (« Entrepôt actif : » / « Entrepôt : » + nom, texte identique) ; sélecteur de langue ajouté (masqué si erp.arabicEnabled est faux)."
+  },
+  "src/app/core/layout/secondary-nav/secondary-nav.component.html": {
+    "sha": "75c830c22123121c155b6045b30c57399a3b5e1fbf1c089c25ba5b61046917a2",
+    "reason": "Libellés via resolveSubNavLabel : texte source identique au registre (nav-labels.spec.ts)."
+  },
+  "src/app/core/layout/sidebar/sidebar.component.html": {
+    "sha": "5bbb3101685a8da0bcc09f8e330189beb39fbf9ed8ad194fe34dadcc9b01d12a",
+    "reason": "Libellés via resolveNavLabel/resolveSubNavLabel (nav-labels.spec.ts) ; aria-label marque et badge via $localize (même texte, doublon d'interpolation corrigé)."
+  },
+  "src/app/features/accounting/balance/balance.component.ts#BalanceComponent": {
+    "sha": "47237104018367066250425f55b3ea1ec105b60d5e5d9fe5a48e490597bc3607",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres."
+  },
+  "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts#BankReconciliationComponent": {
+    "sha": "bfaa4e6f8b968c2c47810f7e6c1f7f6aa40b8b2f672d4b033ba7c8f73da5ef16",
+    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
+  },
+  "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts#ChartOfAccountsComponent": {
+    "sha": "cf1667aeda670fbcd57064ba16cec3d9e432a1a7c60a8c39694cd4b72ce5c115",
+    "reason": "Pluriel « {{ n > 1 ? 'P' : 'S' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique."
+  },
+  "src/app/features/accounting/fiscal-result/fiscal-result.component.ts#FiscalResultComponent": {
+    "sha": "5e79ba5fca8491afc96fce110f2b84426a37abf661a4066147e62880f46a27a6",
+    "reason": "Deux fragments « Feuille finalisée{{ … ? ' le ' + date : '' }} » et « Impôt sur le résultat{{ … ? ' (IS ' + taux + ' %)' : ' (barème IRPP)' }} » réécrits en @if/@else de phrases complètes : mêmes textes rendus dans chaque branche, traduisibles d'un seul tenant."
+  },
+  "src/app/features/accounting/fiscal-schedule/fiscal-schedule-detail.component.ts#FiscalScheduleDetailComponent": {
+    "sha": "175012c588e1086778a525e7e87dc8562e2182bd454ee241df3a0902230748e9",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/accounting/fiscal-schedule/fiscal-schedule-table.component.ts#FiscalScheduleTableComponent": {
+    "sha": "5b0651060de991d22b4abe048c639dde3997ca1c66f2cc3a8d6df2597998696c",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/accounting/fixed-assets/fixed-asset-detail.component.ts#FixedAssetDetailComponent": {
+    "sha": "51f27b128da802d1bfbe9713fd728e8fa8ee0b218c8037fcd7825ac39246a16e",
+    "reason": "« {{ c ? 'Regénérer' : 'Générer' }} le tableau » remplacé par deux messages complets (« Regénérer le tableau », « Générer le tableau ») : texte rendu identique."
+  },
+  "src/app/features/accounting/fixed-assets/fixed-assets-amortization-table.component.ts#FixedAssetsAmortizationTableComponent": {
+    "sha": "b218eccd59cb906bb372705e1517b4333a0bf01ba49ad0ac454bb28af8a1dc2c",
+    "reason": "Date et heure séparées pour sortir « à » du format (date:'dd/MM/yyyy' + « à » + date:'HH:mm') : rendu français identique, phrase traduisible. Signature produit de l’API (« InstaFact Comptabilité ») via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/accounting/inventory-book/inventory-book.component.ts#InventoryBookComponent": {
+    "sha": "956642dba1ae7025d2fd3be3461f5496ebd25c14bc213231af6611062be5098d",
+    "reason": "Bandeau « Exercice verrouillé définitivement[ le {date}] — le livre d'inventaire est figé. » : trois fragments remplacés par deux phrases complètes (@if lockedAt) ; texte rendu identique (blancs repliés)."
+  },
+  "src/app/features/accounting/journal/journal.component.ts#JournalComponent": {
+    "sha": "b726bceb536fa7d227054dfa5b143ee0bd8098ee07accf8cf867da8b42485b5d",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
+  },
+  "src/app/features/accounting/ledger/ledger.component.html": {
+    "sha": "4b9b85630b1bfbd83006b2841f5fdaedbadf0cb683f3dbe06b03707478a2b991",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
+  },
+  "src/app/features/accounting/lettering/lettering.component.html": {
+    "sha": "3f96aff289bb16799b0a41ad921de7f8f70a27d651afd06f296f72587f3a7ca0",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
+  },
+  "src/app/features/accounting/loans/loans-list.component.ts#LoansListComponent": {
+    "sha": "09e469a0c14c0b06fc682a00eab850ecc18e0f42434e4be7aaac1341a7282426",
+    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
+  },
+  "src/app/features/accounting/manual-entry/components/template-picker-modal.component.ts#TemplatePickerModalComponent": {
+    "sha": "70ec975e4d37ce148ad8bfe9b968372f7d9fcb7e55396eef7878e29fa9f63797",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres."
+  },
+  "src/app/features/accounting/nct-statements/nct-statements.component.ts#NctStatementsComponent": {
+    "sha": "7d766578d5fb931ab0debbda13f7dc84cc1e14b876d08bad2cfd4578d6ac9ce3",
+    "reason": "Badges « Non équilibré (écart : X TND) » et « Flux non rapproché (écart : X TND) » : la concaténation fragment + montant + « TND) » devient une méthode renvoyant un seul message $localize à placeholder ; montant formaté par DecimalPipe(LOCALE_ID) '1.3-3', comme le pipe number d'avant."
+  },
+  "src/app/features/accounting/vat-declaration/vat-declaration-general-info.component.ts#VatDeclarationGeneralInfoComponent": {
+    "sha": "1eb3207edd122993181c652b28a2e4ba76cbc9f801a979ea42249f0e4706bed2",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/ai-assistant/components/chat-attachment-card/chat-attachment-card.component.ts#ChatAttachmentCardComponent": {
+    "sha": "a7577c648c48ff62f72fc16d3205cfe25439cc116f2d4d3b28849ae21c1de43b",
+    "reason": "« {{ expanded() ? 'Masquer' : 'Voir' }} le texte » remplacé par deux messages complets « Masquer le texte » / « Voir le texte » : texte rendu identique."
+  },
+  "src/app/features/ai-assistant/components/chat-panel/chat-panel.component.ts#ChatPanelComponent": {
+    "sha": "57c3e41c31615a883dd63b1ef50082555d1ae98a6c42d5b3c391d7f711fe57f9",
+    "reason": "Questions d'exemple de l'IA marquées lang=\"fr\" dir=\"auto\" (français voulu : routage d'intention) — texte FR inchangé"
+  },
+  "src/app/features/ai-assistant/components/suggestion-catalog/suggestion-catalog.component.ts#SuggestionCatalogComponent": {
+    "sha": "7717f0fbddc7c5bb003b832f3c76947a49f9a4594bd9ffddc71b503305cbb545",
+    "reason": "Questions d'exemple de l'IA marquées lang=\"fr\" dir=\"auto\" (français voulu : routage d'intention) — texte FR inchangé"
+  },
+  "src/app/features/auth/auth-shell/auth-shell.component.html": {
+    "sha": "aa933dbd3b1f31a0bb0488bbfd9e3fbcd8a8f4e9000fae46a9ee9a31eb5da0ad",
+    "reason": "Sélecteur de langue ajouté (masqué si erp.arabicEnabled est faux)."
+  },
+  "src/app/features/auth/register-wizard/steps/step-configuration/step-configuration.component.html": {
+    "sha": "8f716b25f701cde0a0b835de88249b66ee0dbde1f09978ebad7fcf83d98855a0",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
+  },
+  "src/app/features/auth/register/register.component.html": {
+    "sha": "0a3f88cb9f320c8918b7a468d3b6613d132da0be0e787a114c0f4062b9aa83e2",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
+  },
+  "src/app/features/clients/client-portal-contacts-panel.component.ts#ClientPortalContactsPanelComponent": {
+    "sha": "56aeccb15df32c49e4d93fc2bc41e267c3f7a566e66dc887351a275655f9281a",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/crm/activities/activity-list.component.ts#ActivityListComponent": {
+    "sha": "111260971998b0aeed960ff836c7ebbc62fc0ff82e877b5c33137a84eab2d086",
+    "reason": "Style en ligne physique → logique (identique en LTR, retourné en RTL) ; libellés inchangés"
+  },
+  "src/app/features/crm/dashboard/crm-dashboard.component.ts#CrmDashboardComponent": {
+    "sha": "9f48c074708d4a9aba720a399a87e4b01467d19c4df6c02787b7405bcfa46203",
+    "reason": "Style en ligne physique → logique (identique en LTR, retourné en RTL) ; libellés inchangés"
+  },
+  "src/app/features/dashboard/dashboard.component.ts#DashboardComponent": {
+    "sha": "257f6005563b533507f198bb1638e093fe8807fbdb52a8cdc05ec0bb96998ad3",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres. Factures et devis récents : statut renvoyé par l’API (libellé français) via | backendLabel dans le badge : valeur inchangée en français."
+  },
+  "src/app/features/delivery-notes/pages/delivery-note-detail/delivery-note-detail.component.ts#DeliveryNoteDetailComponent": {
+    "sha": "ac26e06502773ad9bc163fd2d2be3600d197a7b1ff33a84318fa14979d4ec5a8",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/delivery-notes/pages/delivery-note-list/delivery-note-list.component.ts#DeliveryNoteListComponent": {
+    "sha": "80b6d7ec83157658dba39bda6e10436be92fdbef7e9f80f5a2085296d1bb486b",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/exchanges/exchange-requests-panel.component.html": {
+    "sha": "aca97aa009def874c2621792d91188bb3a776eb6283aa8aca1e4d3000aabd7d2",
+    "reason": "Ternaire de libellés « {{ c ? 'A' : 'B' }} » remplacé par un ICU select {!!(c), select, true {A} other {B}} : même branche affichée (vérité JS), texte traduisible."
+  },
+  "src/app/features/exchanges/exchange-shell.component.html": {
+    "sha": "77c0f652f2fb5ad66718e9c3738e269630b48a644e013ca02f682ff169a01039",
+    "reason": "Ternaire de libellés « {{ c ? 'A' : 'B' }} » remplacé par un ICU select {!!(c), select, true {A} other {B}} : même branche affichée (vérité JS), texte traduisible."
+  },
+  "src/app/features/forecasting/pages/replenishment-board/replenishment-board.component.html": {
+    "sha": "bfa0ae2d964f0336d10fee800acddc7bfface004cda4157075269dbb65697ce6",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
+  },
+  "src/app/features/inventory/inventory-detail/inventory-detail.component.html": {
+    "sha": "d326560e3ad502c8c90f41dcec9cbc5fd3851c89302153030bdac642b4757634",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/inventory/inventory-form/inventory-form.component.html": {
+    "sha": "590ba43bb507b56a697db772b57c4d1b6764a26003b7ab15dcaa34452fad3302",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
+  },
+  "src/app/features/inventory/inventory-list/inventory-list.component.html": {
+    "sha": "58ee2f3553b23ca76831773293a931ed5235495c2f48563918f18dfe83fafcc1",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/inventory/inventory-wizard/inventory-wizard.component.html": {
+    "sha": "561ae68626fd845857c3bb2e6700f8c5a9cc31a83fe3e28cb82bbc421ad6125e",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/invoices/invoice-detail/invoice-detail.component.ts#InvoiceDetailComponent": {
+    "sha": "97f2752155172de72256e923face600c20bad0e9e1ffe63aa751a02a387bf07c",
+    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
+  },
+  "src/app/features/invoices/invoice-wizard/invoice-wizard.component.ts#InvoiceWizardComponent": {
+    "sha": "38ab9f2f89ea06ba2a0d599638630af23ef95f96f30faf7e561d4c5de233e96c",
+    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
+  },
+  "src/app/features/invoices/invoice-wizard/steps/step-lines/step-lines.component.ts#StepLinesComponent": {
+    "sha": "bfa06c4dec150cbcb3e29647fbae9f254049142326a71814509e4f2dd745bb63",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/invoices/invoice-wizard/steps/step-preview/step-preview.component.ts#StepPreviewComponent": {
+    "sha": "fc47e4a535323f1c0f8edd502de78369eb83558077187ceddccb36b690115533",
+    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
+  },
+  "src/app/features/payments/cash-desk/cash-desk.component.ts#CashDeskComponent": {
+    "sha": "983fc228f30630d04b7d63ceb30e453af2ea737877d7c45904fc1be059ae892e",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payments/cash-desk/components/bank-deposit-wizard/bank-deposit-wizard.component.html": {
+    "sha": "3198c30e0ceb81a20ae0845257860339d2e80d61d79f74d7a66b91f40b716f29",
+    "reason": "Ternaire de libellés « {{ c ? 'A' : 'B' }} » remplacé par un ICU select {!!(c), select, true {A} other {B}} : même branche affichée (vérité JS), texte traduisible."
+  },
+  "src/app/features/payroll/employees/employee-cnss-ij-claims-tab.component.ts#EmployeeCnssIjClaimsTabComponent": {
+    "sha": "81d2cefc60a6c02d1971d9c33dfe2e9565e46088af0f35bef78cc4f79574be11",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/employees/employee-detail.component.ts#EmployeeDetailComponent": {
+    "sha": "081dd27f989d2972aa1925846d84c10def713195fe1c90988e5f828687558a2c",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/employees/employee-garnishments-tab.component.ts#EmployeeGarnishmentsTabComponent": {
+    "sha": "86a743a4cd6a82cbeb591997d1c64c8378e2a24d29bb2ef476fba7aea818baf8",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/employees/employee-in-kind-benefits-tab.component.ts#EmployeeInKindBenefitsTabComponent": {
+    "sha": "006e27c5191db02f91891b4af4fae2b9e5fe2ccc22a7595c0b3c0ddf8d597241",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/employees/employee-leaves-tab.component.ts#EmployeeLeavesTabComponent": {
+    "sha": "e7a3ddeacffc0e8f0681ef51053dc0e21e6f0e49275f9d784ef85517edd39606",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/employees/employee-loans-tab.component.ts#EmployeeLoansTabComponent": {
+    "sha": "9dcf74b02e2fa20c4f8388e6d73dfbbc9d45ff803beb6fac94f9091a14573d47",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/employees/employee-suspensions-tab.component.ts#EmployeeSuspensionsTabComponent": {
+    "sha": "9d3d255c4cb57e808c20e827dd874a84111e6b2bf6df96ab77143aa45d0266a4",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/runs/payroll-bank-transfer-dialog.component.ts#PayrollBankTransferDialogComponent": {
+    "sha": "07055e8e4c57eeb11988f764ffddbdb364c4b113fc91503f736dd52c9f334b79",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/runs/payroll-overtime-grid.component.ts#PayrollOvertimeGridComponent": {
+    "sha": "ff1a2a5a33ae5577f605bc7db25df140ece766b0533efa5e92377eaf64eb767f",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/runs/payroll-payments-panel.component.ts#PayrollPaymentsPanelComponent": {
+    "sha": "6b03a2039d5ba36254e7c5e502386c48fdd8855be5a3dbbecb1f0e3fa26627f5",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/runs/payroll-run-detail.component.ts#PayrollRunDetailComponent": {
+    "sha": "20ca8d1147d97736b9109dacb2d213b4a6fe2a50f1f00225a506e187e9028d32",
+    "reason": "Ajout du pipe backendLabel : identité en français ; le pipe conserve null, donc « ?? 'Non payé' » s'applique comme avant. Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/payroll/runs/payroll-run-list.component.ts#PayrollRunListComponent": {
+    "sha": "12d74d7fe74d5a96ecd278f9d18945c334fcfe9b79b24db7e0aaf8566cedd350",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/settings/annual-bonuses.component.ts#AnnualBonusesSettingsComponent": {
+    "sha": "8d2bfad405e09b840cc19c6ffc87c7b41c0b03830acd84b97df23dfea013371c",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/settings/payroll-holidays.component.ts#PayrollHolidaysComponent": {
+    "sha": "093bfd41a2d224a96a6af85e047cde9d498e71170ff05dd155b6b2dc56dea228",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/settings/payroll-social-funds-settings.component.ts#PayrollSocialFundsSettingsComponent": {
+    "sha": "d11ff1aa0f8abf5a21ef42e3aa0867ba76f03049571a7d27c6dfc7616dce7cc3",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/terminations/termination-settlement-list.component.ts#TerminationSettlementListComponent": {
+    "sha": "6375ea1ec65c72e432528bc61b0dc94ca7ff31e960849ff3251ff2ce80baa2dd",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/pos/components/order-panel/order-panel.component.ts#OrderPanelComponent": {
+    "sha": "d13351ba6c26db13843210a6247234e359921445113f85f764ef8651cb26f57c",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres. Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/pos/components/pos-history-panel/pos-history-panel.component.ts#PosHistoryPanelComponent": {
+    "sha": "c78e1cacb939c0f9d55e4fe4059635ff230e333674773e657ae787566f07cbb9",
+    "reason": "Artefact d'outil : la référence échappait l'apostrophe dans le littéral TS (Angular lit le template brut) ; texte affiché identique « Aucune transaction aujourd'hui »."
+  },
+  "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts#PosReceiptComponent": {
+    "sha": "dcc46f7fff46465eb8ae770f88d0ea9810109a22a9cf6c982ac1dd3aa718eef3",
+    "reason": "Ticket POS : reste en français par décision (documents) — marqueurs i18n retirés, lang=\"fr\" dir=\"ltr\" posés sur la racine ; textes inchangés, rendu LTR identique en français."
+  },
+  "src/app/features/pos/pos.component.ts#PosComponent": {
+    "sha": "2454d80715ab0d47e15e487a8ab50fac88d7df0ef21593b58752400a615d589f",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/components/overview/project-overview-info-card.component.ts#ProjectOverviewInfoCardComponent": {
+    "sha": "9fcc30ffdb857b106ef595df56956e27005e8b568aa71a741489261bc603e00a",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/components/overview/project-team-preview-card.component.ts#ProjectTeamPreviewCardComponent": {
+    "sha": "4e38bc013f92db17e0491bfdf2ccab1e7549dea8b23d45d6c494f850dfe9b6cc",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/components/project-dashboard-charts.component.ts#ProjectDashboardChartsComponent": {
+    "sha": "17770523bd31741d46be40e9eb129ea03eef2d3c86cad494de5afa8365ef60f0",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/components/project-dashboard-sidebar.component.ts#ProjectDashboardSidebarComponent": {
+    "sha": "623354b4bb996270459b4609fb7ad09f19ed207895286fb967c48c8fa4d9f5c8",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/components/project-detail-hero.component.ts#ProjectDetailHeroComponent": {
+    "sha": "ad5d155d286eb40233d2e9f4c50683572a54d6b50f7af706f11cfe8e7b439931",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/components/project-invoices-section.component.ts#ProjectInvoicesSectionComponent": {
+    "sha": "93e59d322e173046ecc9c282f80cd6db84f30a16fd9825fe576fa6a48f082bd5",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/components/project-kanban-board.component.ts#ProjectKanbanBoardComponent": {
+    "sha": "3ae99a2e9edfa576efd638581bfc0ebe8fcadb7e2473998c05b162b2f2d9a630",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/components/project-recent-projects-panel.component.ts#ProjectRecentProjectsPanelComponent": {
+    "sha": "f4530ed54816e493327e9a99174843eef62bfc3df5e77d668f04a514f30efcbd",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/project-list.component.ts#ProjectListComponent": {
+    "sha": "1fcc3a4c4b8d2ae8f0bf86473c5f33d223e477f03fd3bc2a518139b4cf5b1d13",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/project-task-detail.component.ts#ProjectTaskDetailComponent": {
+    "sha": "f11549fd6b750e4ff6943fb47b72e8def2395af5ee2bbe0519e389de6a8a9273",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/tabs/project-billing.tab.ts#ProjectBillingTabComponent": {
+    "sha": "4e60b21f52cdf61a08d987314ea4b880a4e933f9ec0885ba432cf0d9f94be5cd",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/tabs/project-budget.tab.ts#ProjectBudgetTabComponent": {
+    "sha": "4af4224f179a64785fb872e0ec5a1588b5496819f17473191a14451e5747756d",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts). Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/projects/tabs/project-tasks.tab.ts#ProjectTasksTabComponent": {
+    "sha": "6869dcc3cba3c6d7e1e319faa26a279a8cc25eab85f8c0a9f3cd0127c76f9f56",
+    "reason": "Style en ligne physique → logique (identique en LTR, retourné en RTL) ; libellés inchangés Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/projects/tabs/project-time.tab.ts#ProjectTimeTabComponent": {
+    "sha": "99fb052ba41729887809c803f1dafce3173885113699397d77e783c740b5086f",
+    "reason": "Ternaire de libellés « {{ c ? 'A' : 'B' }} » remplacé par un ICU select {!!(c), select, true {A} other {B}} : même branche affichée (vérité JS), texte traduisible."
+  },
+  "src/app/features/purchase-orders/purchase-order-detail/purchase-order-detail.component.ts#PurchaseOrderDetailComponent": {
+    "sha": "330e7f5585c36ee7af78bc0491c4cb28be3b2f1b54b9532a32b4cbd10867cf3c",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/purchase-orders/purchase-order-list/purchase-order-list.component.ts#PurchaseOrderListComponent": {
+    "sha": "aefecaf334e5965f70b305b7e3d24f9e4433c955aab4e0cd0e68cd5201fe7ec1",
+    "reason": "Filtres de dates regroupés (.ft-filters__field) : même ordre et mêmes textes, le libellé ne se sépare plus de son champ au retour à la ligne (libellés arabes plus longs)."
+  },
+  "src/app/features/purchase-orders/purchase-order-receive/purchase-order-receive.component.ts#PurchaseOrderReceiveComponent": {
+    "sha": "b00e4a9783c3536a056d4e44c6e9e56e645aa1ca23c28cfc73ec712d51728ae3",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/purchase-receipts/pages/purchase-receipt-detail/purchase-receipt-detail.component.ts#PurchaseReceiptDetailComponent": {
+    "sha": "e1d49026093845a3c6eaf7dca6890c0a02f3275fc9d1a2c7a7627048931e37be",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts#PurchaseReceiptFormComponent": {
+    "sha": "f325d64fda2c3b4156235b114999b37eef46fbd0ba128967b961334934627c67",
+    "reason": "Ternaire de libellés « {{ c ? 'A' : 'B' }} » remplacé par un ICU select {!!(c), select, true {A} other {B}} : même branche affichée (vérité JS), texte traduisible. Ajout du pipe backendLabel : identité en français."
+  },
+  "src/app/features/purchase-receipts/pages/purchase-receipt-list/purchase-receipt-list.component.ts#PurchaseReceiptListComponent": {
+    "sha": "40d7eed5fffdc6d4be106b6ebb1348045c8944824f0342a62aa6e141aa88d324",
+    "reason": "Filtres de dates regroupés (.ft-filters__field) : même ordre et mêmes textes, le libellé ne se sépare plus de son champ au retour à la ligne (libellés arabes plus longs)."
+  },
+  "src/app/features/quotes/quote-detail/quote-detail.component.ts#QuoteDetailComponent": {
+    "sha": "5b4e238e99f7a97be1e5b6a3d8a7b459e2b11c97c1ef844c124365422cd464d5",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/recurring-contracts/components/contract-amend-dialog.component.ts#ContractAmendDialogComponent": {
+    "sha": "754be322b5b5fe9eb938354ea1362f262d35772dc8a8b7c9aabb63b86ebc46b7",
+    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
+  },
+  "src/app/features/recurring-contracts/pages/contract-detail/contract-detail.component.ts#ContractDetailComponent": {
+    "sha": "e4d60e4bf7f3e2fab2acd502ba07634579a60b75d56d1c6a5a9dc48bc3e57a38",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/recurring-contracts/pages/contract-list/contract-list.component.ts#ContractListComponent": {
+    "sha": "ff1e5fca7343e7172b0ac93dd7a50f34c3fccca110c3da4b6832cf69f59e3f91",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/recurring-contracts/tabs/contract-history.tab.ts#ContractHistoryTabComponent": {
+    "sha": "b84d5059e2907bad65a9e01d8232587f6e64c55b97a8f2757eaeb17e4e01560a",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts). Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/recurring-contracts/tabs/contract-invoices.tab.ts#ContractInvoicesTabComponent": {
+    "sha": "e30244ca02f39614ebb9eed089dceaf5a7dba83148e4728b837612a0425fc9c0",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/recurring-contracts/tabs/contract-notes.tab.ts#ContractNotesTabComponent": {
+    "sha": "0094216f18d1d192ae3d26538738bf28176d177232cea5a47993619e6c88eac5",
+    "reason": "Ternaire de libellés « {{ c ? 'A' : 'B' }} » remplacé par un ICU select {!!(c), select, true {A} other {B}} : même branche affichée (vérité JS), texte traduisible."
+  },
+  "src/app/features/recurring-contracts/tabs/contract-overview.tab.ts#ContractOverviewTabComponent": {
+    "sha": "a02fb3cfc51375d4ca2adb51a175967393442cc02404ae72f6ba4e8741572f17",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts). Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/recurring-contracts/tabs/contract-schedule.tab.ts#ContractScheduleTabComponent": {
+    "sha": "8f7f08f288bec4b85a6c4a2318de2d7142fc0eec5a7e06a05101b839c8f71b5c",
+    "reason": "Ternaire de libellés « {{ c ? 'A' : 'B' }} » remplacé par un ICU select {!!(c), select, true {A} other {B}} : même branche affichée (vérité JS), texte traduisible. Ajout du pipe backendLabel : identité en français."
+  },
+  "src/app/features/recurring-contracts/tabs/contract-services.tab.ts#ContractServicesTabComponent": {
+    "sha": "f2f935b1ed2be26c2cb7828923c0cb2969872fd7d88b4b911369965d7c3564e3",
+    "reason": "Ternaire de libellés « {{ c ? 'A' : 'B' }} » remplacé par un ICU select {!!(c), select, true {A} other {B}} : même branche affichée (vérité JS), texte traduisible. Ajout du pipe backendLabel : identité en français. Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/reports/analytics/clients/clients-analytics.component.ts#ClientsAnalyticsComponent": {
+    "sha": "c2c090e17e12b6ffddd16444078fad8ee9df899c03131ceabd00f573cf9b42ae",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres."
+  },
+  "src/app/features/reports/analytics/revenue/revenue-analytics.component.ts#RevenueAnalyticsComponent": {
+    "sha": "5c1953558ca0a634a8e00926c20feb98a6e299d131d1b3d85123226d39545449",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres."
+  },
+  "src/app/features/reports/payments/payments-reports.component.ts#PaymentsReportsComponent": {
+    "sha": "545ae601e582a4c01a8fd6b4861b59e33895815b3f97a4ef6fc4997992e7a25a",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/reports/purchases-analytics/expenses/expenses-analytics.component.ts#ExpensesAnalyticsComponent": {
+    "sha": "59ebe140fc26bbd48c12b86290290c2ce8e118f466fd4d8833a96ddd2e8a19ce",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres."
+  },
+  "src/app/features/reports/purchases/purchases-reports.component.ts#PurchasesReportsComponent": {
+    "sha": "50398e69c16e02bc58ccd3003bf984ebc4e3f0a2b809aaccda020149508e40b5",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres. Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/reports/sales/sales-reports.component.ts#SalesReportsComponent": {
+    "sha": "a3162588be8dc762b895eb0dd9d1bed26f1b8054a79a8738d62c9f6c75cef874",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres. Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/reports/stock/stock-reports.component.ts#StockReportsComponent": {
+    "sha": "01b67c9c79f91fef4e149655ab22f2f72a67e17df63b0fbd9d2095ad7a395f9a",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/sales-orders/sales-order-detail/sales-order-detail.component.ts#SalesOrderDetailComponent": {
+    "sha": "be17607f57aca2ce6c95dfae919a616cf16ce754cdd37fa905737ea856c4e4cd",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/sales-orders/sales-order-list/sales-order-list.component.ts#SalesOrderListComponent": {
+    "sha": "53f83b154fc568b49c1ce67d8df010c0f5df813f85764ee24d150830d0bf3185",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/sales-return-notes/pages/sales-return-note-detail.component.ts#SalesReturnNoteDetailComponent": {
+    "sha": "9614250cfa4d2786a3d7e5aa24438876cdc7fc5071ae07963ce340eb95da1a78",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/sales-return-notes/pages/sales-return-note-list.component.ts#SalesReturnNoteListComponent": {
+    "sha": "f8327c925f8a2ad271639069ecf528f442203056ab44309506b0cd6471ebf3d2",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/settings/channels/channels-settings.component.ts#ChannelsSettingsComponent": {
+    "sha": "cc50b4a6954094181db52c26e033e9cdae9df27fc65e7c42a3f06a5f03c7840b",
+    "reason": "Date et heure séparées pour sortir « à » du format (date:'dd/MM/yyyy' + « à » + date:'HH:mm') : rendu français identique, phrase traduisible."
+  },
+  "src/app/features/settings/modules/modules-settings.component.html": {
+    "sha": "965d0e7fd9182f4f28f31e1c76b96e4194e5fce967025d1b45a16ecb2742ebb7",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus Nom de module (labelFr de l’API) via displayName() = backendDisplayLabel : valeur inchangée en français."
+  },
+  "src/app/features/settings/profile/profile.component.ts#ProfileComponent": {
+    "sha": "5920a51914300c9df3c4d2f7c6c0a7ce346fd7763abb8341c9fc0ede39bcdb14",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/settings/subscription/subscription.component.ts#SubscriptionComponent": {
+    "sha": "071e0f98e94d620b190921407b8eb854816474f010af0cfdc4ca619b8b757879",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/settings/taxes/taxes.component.ts#TaxesComponent": {
+    "sha": "f11a9e938688245f401000f95c4ee04586b162a65c7b9a34460cce5ec529ea94",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/settings/users/tenant-users-list.component.ts#TenantUsersListComponent": {
+    "sha": "bf3999faa516d47c628cf5aca0a577821bf828cb12979bf13b336250da286ca7",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/settings/variant-axes/product-attribute-form/product-attribute-form.component.ts#ProductAttributeFormComponent": {
+    "sha": "919c44c34b95e01b2870d8b0dd5bb8d0400005339c44a3b863a41d3859ce1e4e",
+    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
+  },
+  "src/app/features/stock-vouchers/stock-voucher-detail.component.ts#StockVoucherDetailComponent": {
+    "sha": "92db1d68c2d846b3b92c851cc3e119015ec6d34cb594079939c4ca98349d2eba",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts). Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/stock-vouchers/stock-voucher-form.component.html": {
+    "sha": "64c7f72ea780fcbca8a1c8ab80a1aa4131e0a1cafa30acb5616b2bfbb7ea4de3",
+    "reason": "Ternaire de libellés « {{ c ? 'A' : 'B' }} » remplacé par un ICU select {!!(c), select, true {A} other {B}} : même branche affichée (vérité JS), texte traduisible."
+  },
+  "src/app/features/stock-vouchers/stock-voucher-list.component.ts#StockVoucherListComponent": {
+    "sha": "28b880ffabbfb43811373242b25d1d274c8130d827f79601cfbdce407885a66f",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/studio/ai/preview/studio-ai-menu-tab.component.ts#StudioAiMenuTabComponent": {
+    "sha": "9bb4b01f39e88bc038a594b411c6e868c278379426d4c140492b973614339fbf",
+    "reason": "Style en ligne physique → logique (identique en LTR, retourné en RTL) ; libellés inchangés"
+  },
+  "src/app/features/studio/ai/preview/studio-ai-relations-tab.component.ts#StudioAiRelationsTabComponent": {
+    "sha": "66f6e7dca703b9577f5a1df7f6bf24fb9f3887112e6ce999b1821b4e4263937f",
+    "reason": "Style en ligne physique → logique (identique en LTR, retourné en RTL) ; libellés inchangés"
+  },
+  "src/app/features/supplier-invoices/supplier-invoice-detail/supplier-invoice-detail.component.ts#SupplierInvoiceDetailComponent": {
+    "sha": "d73ded8463101fcc075c9da3d93d2361a2ca3b38e5d281ce2356d5d7af79d95c",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/supplier-invoices/supplier-invoice-form/supplier-invoice-form.component.html": {
+    "sha": "416d49434fa76efb5c7acaef6172c833179a7636724175fccd6d5937574e59fe",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
+  },
+  "src/app/features/supplier-invoices/supplier-invoice-list/supplier-invoice-list.component.ts#SupplierInvoiceListComponent": {
+    "sha": "587eae305720424557245e30ef749618677f6787c3db3397bdb0214549c8cee2",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/transfers/transfer-detail/transfer-detail.component.ts#TransferDetailComponent": {
+    "sha": "dd962e39dd15a4c061a379eb971a4e216b6cba7bffffa73972bdb6ef01213c30",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/transfers/transfer-list/transfer-list.component.ts#TransferListComponent": {
+    "sha": "0d46feb691593d058e43437dfaa9034b01b0c590084d5eed228dd7bf0642e2aa",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/treasury/cash-forecast/cash-forecast.component.ts#CashForecastComponent": {
+    "sha": "b19937efa8a26cdc9209219343f3a771f392418220159867d595a115b6c0a711",
+    "reason": "Date et heure séparées pour sortir « à » du format (date:'dd/MM/yyyy' + « à » + date:'HH:mm') : rendu français identique, phrase traduisible."
+  },
+  "src/app/shared/components/invoice-payments-panel/invoice-payments-panel.component.ts#InvoicePaymentsPanelComponent": {
+    "sha": "301dcf8bba9a1a02e1d9c96288fa28265b6da813ac0568f53324f1464ae7b5bb",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/shared/components/record-payment-dialog/record-payment-dialog.component.ts#RecordPaymentDialogComponent": {
+    "sha": "184dd4dcb908a7e86f9cb0e87147176333401b2d114425e90e48531f3fedd295",
+    "reason": "Artefact d'outil : la référence échappait l'apostrophe dans le littéral TS (Angular lit le template brut) ; texte affiché identique « N° de l'effet »."
+  },
+  "src/app/features/clients/client-detail/client-detail.component.ts#ClientDetailComponent": {
+    "sha": "cc6d5ce6546fbd9fbc296b32b0d8d9ace5bc27971615cbee1edcd23ef04e5e71",
+    "reason": "Type de client (typeDisplay de l’API) via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/invoices/invoice-list/invoice-list.component.ts#InvoiceListComponent": {
+    "sha": "44cdc749eb0afebe257469928276576d945947b4e287d970d1c0776670ed0bca",
+    "reason": "Statut renvoyé par l’API (libellé français) via | backendLabel dans le badge : valeur inchangée en français."
+  },
+  "src/app/features/payments/payments.component.ts#PaymentsComponent": {
+    "sha": "d62d67eb962848883a9d357ab7ffd212b9ee720599396b7cffb287feabcb2a86",
+    "reason": "Statut renvoyé par l’API (libellé français) via | backendLabel dans le badge : valeur inchangée en français."
+  },
+  "src/app/features/quotes/quote-list/quote-list.component.ts#QuoteListComponent": {
+    "sha": "777716569fe6511798b648e2fcd9a76e747fe4da7084470f77e5f14e3d2ee40b",
+    "reason": "Statut renvoyé par l’API (libellé français) via | backendLabel dans le badge : valeur inchangée en français."
+  },
+  "src/app/features/reports/client-balances/client-balances.component.ts#ClientBalancesComponent": {
+    "sha": "296b623a489e4ac828add323fe5580df7dae6cb096bbd84674e80145e176d77d",
+    "reason": "PartyLabel=\"Client\" retiré de <app-aging-table> : sa valeur par défaut est $localize « Client » (même texte)."
+  },
+  "src/app/features/reports/shared/party-balances-table.component.ts#PartyBalancesTableComponent": {
+    "sha": "e523f7b681a3f5a1201fe8a0f5f97e2ba4c9e2ee2aa03506c74291300d9db0a6",
+    "reason": "En-tête de la colonne tiers via le getter partyColumnLabel ($localize « Client » / « Fournisseur », même texte que partyLabel)."
+  },
+  "src/app/features/withholding-tax/withholding-types-settings/withholding-types-settings.component.ts#WithholdingTypesSettingsComponent": {
+    "sha": "c9cfb41f6cb867f11447a4790d8a5a0c9bba65c05723cfc1bd6eaecbffb9bfd6",
+    "reason": "Catégorie de retenue (categoryLabel de l’API) via | backendLabel à l’affichage seulement, filtre inchangé : valeur inchangée en français."
+  },
+  "src/app/features/clients/client-list/client-list.component.ts#ClientListComponent": {
+    "sha": "227dc26a138aed0d1ba62904fb5013bf4a6f22128ac837306ca9493a290fb7c0",
+    "reason": "Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/payroll/regularization/irpp-regularization.component.ts#IrppRegularizationComponent": {
+    "sha": "12bc524fd1805b45d40676d076a9b19a8749e1f55c842914eb369c2df6fb785b",
+    "reason": "Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/payroll/runs/payroll-regularization-grid.component.ts#PayrollRegularizationGridComponent": {
+    "sha": "0bd8b2b7d9c172e0dad1c55fa95185071790be566485b163cedbd1b71be392fb",
+    "reason": "Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/products/product-detail/product-detail.component.ts#ProductDetailComponent": {
+    "sha": "8b2950975bda8b7d7c062dd57087fbfbe1b6d0218d64e7e79f17700da21e096b",
+    "reason": "Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/products/product-list/product-list.component.ts#ProductListComponent": {
+    "sha": "b215938d8cf97a627bfec40111bec4f63097bc114de59aa6ca803ee65a0d0d8f",
+    "reason": "Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/projects/project-detail.component.ts#ProjectDetailComponent": {
+    "sha": "030c885c600a4b9e7893c05899d9027f59b12fe93a2847cc755aa08dcf51e772",
+    "reason": "Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/projects/tabs/project-settings.tab.ts#ProjectSettingsTabComponent": {
+    "sha": "6b38af9896606dacaf3eb9154d0b9f69a8c81ac99b49595ffb0a1c4945872bf7",
+    "reason": "Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/projects/tabs/project-team.tab.ts#ProjectTeamTabComponent": {
+    "sha": "93c828d460e341c81c6cd99d00a823c5c5caeb9724560929f73c66db54f58247",
+    "reason": "Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/suppliers/supplier-detail/supplier-detail.component.ts#SupplierDetailComponent": {
+    "sha": "ef7b580ceaa3751ca021d8a70a87eacf6f604a014a2799ea4091859c05f02498",
+    "reason": "Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/suppliers/supplier-list/supplier-list.component.ts#SupplierListComponent": {
+    "sha": "4bb8980f62ffed624d4af8baa35c7faf23e1644ee047216fb199be582cd286b2",
+    "reason": "Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  }
+}

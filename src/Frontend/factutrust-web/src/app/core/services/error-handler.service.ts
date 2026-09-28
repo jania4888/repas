@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { API_ERROR_CODE, apiErrorCode } from '@core/utils/api-error-code';
 
 /** Backend ValidationErrorResponse / similar (`VALIDATION_FAILED`, fieldErrors, globalErrors). */
 const VALIDATION_FAILED_CODE = 'VALIDATION_FAILED';
 const TENANT_MIGRATION_FAILED_CODE = 'TENANT_MIGRATION_FAILED';
+export const TENANT_CONTEXT_INVALID_CODE = API_ERROR_CODE.tenantContextInvalid;
+export const DELEGATED_CONTEXT_INVALID_CODE = API_ERROR_CODE.delegatedContextInvalid;
 
 export interface ApiErrorResponse {
   success?: boolean;
@@ -61,16 +64,18 @@ export class ErrorHandlerService {
     return this.getApiErrorCode(error) === TENANT_MIGRATION_FAILED_CODE;
   }
 
-  /** User-facing message for tenant migration / database upgrade failures. */
-  getTenantMigrationFailureMessage(): string {
-    return 'Mise à jour de la base de données en cours ou bloquée. Réessayez dans quelques instants ou contactez l\'administrateur si le problème persiste.';
+  isTenantContextInvalid(error: HttpErrorResponse | any): boolean {
+    return this.getApiErrorCode(error) === TENANT_CONTEXT_INVALID_CODE;
   }
 
-  private getApiErrorCode(error: HttpErrorResponse | any): string | undefined {
-    const payload = typeof error?.error === 'object' && error?.error !== null
-      ? error.error as ApiErrorResponse
-      : null;
-    return payload?.code;
+  /** User-facing message for tenant migration / database upgrade failures. */
+  getTenantMigrationFailureMessage(): string {
+    return $localize`:@@core.error-handler.ts.mise.a.jour.de.la.base.de.donnees.en.cou.70713096:Mise à jour de la base de données en cours ou bloquée. Réessayez dans quelques instants ou contactez l'administrateur si le problème persiste.`;
+  }
+
+  /** Code stable de l'erreur API (voir API_ERROR_CODE) : à tester à la place du texte du message. */
+  getApiErrorCode(error: HttpErrorResponse | any): string | undefined {
+    return apiErrorCode(error);
   }
 
   /**
@@ -99,12 +104,12 @@ export class ErrorHandlerService {
       (!error.status && !error.error) ||
       (error.status === undefined && error.error === undefined)
     ) {
-      return 'Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur https://localhost:7001 et que votre connexion est active.';
+      return $localize`:@@core.error-handler.ts.impossible.de.se.connecter.au.serveur.ve.a314b5cc:Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur https://localhost:7001 et que votre connexion est active.`;
     }
 
     // Handle case where error is not a proper HttpErrorResponse
     if (!error || (typeof error === 'object' && !error.status && !error.error && !error.message)) {
-      return 'Erreur de connexion. Le serveur ne répond pas. Vérifiez que le backend est démarré.';
+      return $localize`:@@core.error-handler.ts.erreur.de.connexion.le.serveur.ne.repond.572a6b33:Erreur de connexion. Le serveur ne répond pas. Vérifiez que le backend est démarré.`;
     }
 
     // Handle non-JSON responses (e.g., rate limiting text responses)
@@ -122,8 +127,9 @@ export class ErrorHandlerService {
     // If error.error is a string (non-JSON response), handle it directly
     if (typeof errorData === 'string') {
       // Check if it's a rate limiting message
+      // Le statut suffit ; le texte ne sert que de repli pour un corps sans statut exploitable.
       if (error.status === 429 || errorData.toLowerCase().includes('trop de requêtes')) {
-        return 'Trop de requêtes. Veuillez patienter avant de réessayer.';
+        return $localize`:@@core.error-handler.ts.trop.de.requetes.veuillez.patienter.avan.9523a9ea:Trop de requêtes. Veuillez patienter avant de réessayer.`;
       }
       return errorData;
     }
@@ -135,7 +141,7 @@ export class ErrorHandlerService {
 
     // No error data and no status - network issue
     if (!errorData && !error.status) {
-      return 'Erreur de connexion réseau. Vérifiez votre connexion et que le backend est démarré.';
+      return $localize`:@@core.error-handler.ts.erreur.de.connexion.reseau.verifiez.votr.bc90acdd:Erreur de connexion réseau. Vérifiez votre connexion et que le backend est démarré.`;
     }
 
     // String error
@@ -167,6 +173,20 @@ export class ErrorHandlerService {
       const globalErrors = (errorData as any).globalErrors ?? (errorData as any).GlobalErrors;
       if (Array.isArray(globalErrors) && globalErrors.length > 0) {
         return globalErrors.join(', ');
+      }
+    }
+
+    // Enveloppe d'échec (ApiResponse.Fail, ValidationErrorResponse, 500 métier) : le message
+    // serveur doit primer sur le libellé HTTP générique (« Erreur serveur… »).
+    if (errorData && typeof errorData === 'object') {
+      const envelopeMessage = (errorData as any).message ?? (errorData as any).Message;
+      const status = error.status ?? 0;
+      if (
+        typeof envelopeMessage === 'string' &&
+        envelopeMessage.trim() &&
+        ((errorData as any).success === false || status >= 500)
+      ) {
+        return envelopeMessage.trim();
       }
     }
 
@@ -289,7 +309,7 @@ export class ErrorHandlerService {
     // Add network-specific information
     if (error?.status === 0 || !error?.status) {
       errorDetails.networkError = true;
-      errorDetails.suggestion = 'Vérifiez que le backend est démarré et accessible sur https://localhost:7001';
+      errorDetails.suggestion = $localize`:@@core.error-handler.ts.verifiez.que.le.backend.est.demarre.et.a.66949b7f:Vérifiez que le backend est démarré et accessible sur https://localhost:7001`;
     }
 
     const level = options?.consoleLevel ?? 'error';
@@ -387,19 +407,19 @@ export class ErrorHandlerService {
    */
   private getDefaultMessage(status: number): string {
     const messages: Record<number, string> = {
-      0: 'Impossible de se connecter au serveur. Vérifiez votre connexion.',
-      400: 'Requête invalide. Veuillez vérifier les données saisies.',
-      401: 'Authentification requise. Veuillez vous connecter.',
-      403: 'Accès non autorisé.',
-      404: 'Ressource non trouvée.',
-      422: 'Données invalides. Veuillez corriger les erreurs indiquées.',
-      429: 'Trop de requêtes. Veuillez patienter avant de réessayer.',
-      409: 'Conflit de données : une autre modification a eu lieu. Actualisez la page et réessayez.',
-      500: 'Erreur serveur. Veuillez réessayer plus tard.',
+      0: $localize`:@@core.error-handler.ts.impossible.de.se.connecter.au.serveur.ve.22688d66:Impossible de se connecter au serveur. Vérifiez votre connexion.`,
+      400: $localize`:@@core.error-handler.ts.requete.invalide.veuillez.verifier.les.d.72b57e48:Requête invalide. Veuillez vérifier les données saisies.`,
+      401: $localize`:@@core.error-handler.ts.authentification.requise.veuillez.vous.c.98c250c5:Authentification requise. Veuillez vous connecter.`,
+      403: $localize`:@@core.error-handler.ts.acces.non.autorise.95c7fdf1:Accès non autorisé.`,
+      404: $localize`:@@core.error-handler.ts.ressource.non.trouvee.7f2a5c41:Ressource non trouvée.`,
+      422: $localize`:@@core.error-handler.ts.donnees.invalides.veuillez.corriger.les.0fc73c93:Données invalides. Veuillez corriger les erreurs indiquées.`,
+      429: $localize`:@@core.error-handler.ts.trop.de.requetes.veuillez.patienter.avan.9523a9ea:Trop de requêtes. Veuillez patienter avant de réessayer.`,
+      409: $localize`:@@core.error-handler.ts.conflit.de.donnees.une.autre.modificatio.78d2d03f:Conflit de données : une autre modification a eu lieu. Actualisez la page et réessayez.`,
+      500: $localize`:@@core.error-handler.ts.erreur.serveur.veuillez.reessayer.plus.t.e12ec1fc:Erreur serveur. Veuillez réessayer plus tard.`,
       502: 'Service temporairement indisponible.',
-      503: 'Service en maintenance. Veuillez réessayer plus tard.'
+      503: $localize`:@@core.error-handler.ts.service.en.maintenance.veuillez.reessaye.de588a8d:Service en maintenance. Veuillez réessayer plus tard.`
     };
 
-    return messages[status] || `Erreur ${status}. Veuillez réessayer.`;
+    return messages[status] || $localize`:@@core.error-handler.ts.erreur.status.veuillez.reessayer.6682a2c4:Erreur ${status}:status:. Veuillez réessayer.`;
   }
 }

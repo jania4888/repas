@@ -11,6 +11,7 @@ import { AccountingFeatureFlagsService } from '@features/accounting/shared/accou
 import { StudioNavService } from '@features/studio/studio-nav.service';
 import { StudioAiCapabilitiesService } from '@features/studio/ai/studio-ai-capabilities.service';
 import { StudioApprovalsBadgeService } from '@features/studio/approvals/studio-approvals-badge.service';
+import { NAV_ID } from '@core/config/nav-item-ids';
 import { SidebarComponent } from './sidebar.component';
 
 const firmUser: User = {
@@ -613,7 +614,7 @@ describe('SidebarComponent — collapse', () => {
     expect(parseFloat(getComputedStyle(icon).width)).toBeGreaterThanOrEqual(32);
   });
 
-  it('clears expandedParentLabel when collapsed becomes true', () => {
+  it('clears expandedParentId when collapsed becomes true', () => {
     const auth = TestBed.inject(AuthService);
     setUser(auth, delegatedUser);
     TestBed.inject(FirmContextService).syncFromUser();
@@ -625,11 +626,11 @@ describe('SidebarComponent — collapse', () => {
     const ventes = fixture.componentInstance.navItems().find(i => i.label === 'Ventes');
     expect(ventes).toBeTruthy();
     fixture.componentInstance.toggleSubmenu(ventes!);
-    expect(fixture.componentInstance.expandedParentLabel).toBe('Ventes');
+    expect(fixture.componentInstance.expandedParentId).toBe(NAV_ID.sales);
 
     fixture.componentRef.setInput('collapsed', true);
     fixture.detectChanges();
-    expect(fixture.componentInstance.expandedParentLabel).toBeNull();
+    expect(fixture.componentInstance.expandedParentId).toBeNull();
   });
 
   it('emits requestExpand and opens section when parent clicked in collapsed mode', () => {
@@ -649,7 +650,7 @@ describe('SidebarComponent — collapse', () => {
     fixture.componentInstance.toggleSubmenu(ventes!);
 
     expect(expandSpy).toHaveBeenCalled();
-    expect(fixture.componentInstance.expandedParentLabel).toBe('Ventes');
+    expect(fixture.componentInstance.expandedParentId).toBe(NAV_ID.sales);
   });
 
   it('toggles submenu section when expanded and parent clicked twice', () => {
@@ -663,9 +664,9 @@ describe('SidebarComponent — collapse', () => {
 
     const ventes = fixture.componentInstance.navItems().find(i => i.label === 'Ventes');
     fixture.componentInstance.toggleSubmenu(ventes!);
-    expect(fixture.componentInstance.expandedParentLabel).toBe('Ventes');
+    expect(fixture.componentInstance.expandedParentId).toBe(NAV_ID.sales);
     fixture.componentInstance.toggleSubmenu(ventes!);
-    expect(fixture.componentInstance.expandedParentLabel).toBeNull();
+    expect(fixture.componentInstance.expandedParentId).toBeNull();
   });
 
   it('applies sidebar--firm-delegated class only in delegated accounting-firm mode', () => {
@@ -737,11 +738,11 @@ describe('SidebarComponent — collapse', () => {
 
     fixture.componentInstance.toggleFooterSubmenu(audit!);
     expect(fixture.componentInstance.expandedFooterLabel).toBe('Contrôle & Audit');
-    expect(fixture.componentInstance.expandedParentLabel).toBeNull();
+    expect(fixture.componentInstance.expandedParentId).toBeNull();
 
     const ventes = fixture.componentInstance.navItems().find(i => i.label === 'Ventes');
     fixture.componentInstance.toggleSubmenu(ventes!);
-    expect(fixture.componentInstance.expandedParentLabel).toBe('Ventes');
+    expect(fixture.componentInstance.expandedParentId).toBe(NAV_ID.sales);
     expect(fixture.componentInstance.expandedFooterLabel).toBeNull();
   });
 
@@ -766,8 +767,8 @@ describe('SidebarComponent — collapse', () => {
     fixture.detectChanges();
 
     const previous = fixture.componentInstance.expandSectionForTour('ventes');
-    expect(fixture.componentInstance.expandedParentLabel).toBe('Ventes');
+    expect(fixture.componentInstance.expandedParentId).toBe(NAV_ID.sales);
     fixture.componentInstance.restoreSectionAfterTour(previous);
-    expect(fixture.componentInstance.expandedParentLabel).toBe(previous);
+    expect(fixture.componentInstance.expandedParentId).toBe(previous);
   });
 });

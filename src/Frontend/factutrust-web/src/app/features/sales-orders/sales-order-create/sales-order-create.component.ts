@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
@@ -77,9 +78,9 @@ interface DraftLine extends LinePromotionPreview {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Nouvelle commande client"
-      subtitle="Les prix sont ceux que le serveur appliquera : prix négocié, grille du client, ou catalogue.">
-      <app-button variant="secondary" routerLink="/sales-orders">Annuler</app-button>
+      title="Nouvelle commande client" i18n-title="@@sales-orders.sales-order-create.nouvelle.commande.client.8eb4415d"
+      subtitle="Les prix sont ceux que le serveur appliquera : prix négocié, grille du client, ou catalogue." i18n-subtitle="@@sales-orders.sales-order-create.les.prix.sont.ceux.que.le.serveur.appliq.51498028">
+      <app-button variant="secondary" routerLink="/sales-orders" i18n="@@sales-orders.sales-order-create.annuler.49ba3292">Annuler</app-button>
       <span
         class="create-btn-wrap"
         [pTooltip]="submitBlockersTooltip()"
@@ -91,47 +92,45 @@ interface DraftLine extends LinePromotionPreview {
           [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"
           iconPos="left"
           (clicked)="submit()">
-          {{ saving() ? 'Création…' : 'Créer la commande' }}
+          {{ saving() ? loc_ui_tern_creation_2a06d1 : loc_ui_tern_creer_la_commande_554f7d }}
         </app-button>
       </span>
     </app-page-header>
 
     <div class="submit-readiness" role="status" aria-live="polite">
-      <p class="submit-readiness__title">Étapes pour créer la commande</p>
+      <p class="submit-readiness__title" i18n="@@sales-orders.sales-order-create.etapes.pour.creer.la.commande.b75927d0">Étapes pour créer la commande</p>
       <ul class="submit-readiness__list">
         <li [class.submit-readiness__item--done]="hasClient()">
           <i class="pi" [class.pi-check-circle]="hasClient()" [class.pi-circle]="!hasClient()"></i>
           @if (hasClient()) {
-            <span>Client sélectionné</span>
+            <span i18n="@@sales-orders.sales-order-create.client.selectionne.f00810aa">Client sélectionné</span>
           } @else {
-            <span>Sélectionnez un client</span>
+            <span i18n="@@sales-orders.sales-order-create.selectionnez.un.client.fb1d3ea4">Sélectionnez un client</span>
           }
         </li>
         <li [class.submit-readiness__item--done]="hasOrderDate()">
           <i class="pi" [class.pi-check-circle]="hasOrderDate()" [class.pi-circle]="!hasOrderDate()"></i>
           @if (hasOrderDate()) {
-            <span>Date de commande renseignée</span>
+            <span i18n="@@sales-orders.sales-order-create.date.de.commande.renseignee.55a133b3">Date de commande renseignée</span>
           } @else {
-            <span>Indiquez la date de commande</span>
+            <span i18n="@@sales-orders.sales-order-create.indiquez.la.date.de.commande.6f92819c">Indiquez la date de commande</span>
           }
         </li>
         <li [class.submit-readiness__item--done]="hasLines()">
           <i class="pi" [class.pi-check-circle]="hasLines()" [class.pi-circle]="!hasLines()"></i>
           @if (hasLines()) {
-            <span>{{ lines().length }} ligne(s) produit ajoutée(s)</span>
+            <span i18n="@@sales-orders.sales-order-create.ligne.s.produit.ajoutee.s.58d8dbac">{{ lines().length }} ligne(s) produit ajoutée(s)</span>
           } @else {
-            <button type="button" class="submit-readiness__link" (click)="scrollToLines()">
-              Ajoutez au moins une ligne produit (section Lignes)
-            </button>
+            <button type="button" class="submit-readiness__link" (click)="scrollToLines()" i18n="@@sales-orders.sales-order-create.ajoutez.au.moins.une.ligne.produit.section.ligne.d5f1dfd9"> Ajoutez au moins une ligne produit (section Lignes) </button>
           }
         </li>
       </ul>
     </div>
 
-    <app-form-section title="Informations" icon="pi-user" [number]="1">
+    <app-form-section title="Informations" i18n-title="@@sales-orders.sales-order-create.informations.54937b3a" icon="pi-user" [number]="1">
       <div class="ft-form-grid ft-form-grid--compact">
         <div class="ft-field ft-field--full">
-          <label for="so-client">Client <span class="ft-required">*</span></label>
+          <label for="so-client"><ng-container i18n="@@sales-orders.sales-order-create.client.1bdd79b1">Client </ng-container> <span class="ft-required" i18n="@@sales-orders.sales-order-create.text.df58248c">*</span></label>
           <p-autoComplete
             inputId="so-client"
             [(ngModel)]="selectedClient"
@@ -142,16 +141,14 @@ interface DraftLine extends LinePromotionPreview {
             field="label"
             [forceSelection]="true"
             [dropdown]="true"
-            placeholder="Rechercher un client"
+            placeholder="Rechercher un client" i18n-placeholder="@@sales-orders.sales-order-create.rechercher.un.client.723cebe6"
             styleClass="w-full"
             appendTo="body"></p-autoComplete>
-          <small class="ft-hint">
-            Le client détermine la grille tarifaire appliquée aux lignes.
-          </small>
+          <small class="ft-hint" i18n="@@sales-orders.sales-order-create.le.client.determine.la.grille.tarifaire.applique.bd668e74"> Le client détermine la grille tarifaire appliquée aux lignes. </small>
         </div>
 
         <div class="ft-field">
-          <label for="so-date">Date de commande <span class="ft-required">*</span></label>
+          <label for="so-date"><ng-container i18n="@@sales-orders.sales-order-create.date.de.commande.f9b0df86">Date de commande </ng-container> <span class="ft-required" i18n="@@sales-orders.sales-order-create.text.df58248c">*</span></label>
           <p-datepicker
             inputId="so-date"
             [(ngModel)]="orderDateModel"
@@ -163,7 +160,7 @@ interface DraftLine extends LinePromotionPreview {
         </div>
 
         <div class="ft-field">
-          <label for="so-delivery">Livraison prévue</label>
+          <label for="so-delivery" i18n="@@sales-orders.sales-order-create.livraison.prevue.dc15f458">Livraison prévue</label>
           <p-datepicker
             inputId="so-delivery"
             [(ngModel)]="expectedDeliveryDateModel"
@@ -176,22 +173,22 @@ interface DraftLine extends LinePromotionPreview {
         </div>
 
         <div class="ft-field">
-          <label for="so-ref">Référence</label>
+          <label for="so-ref" i18n="@@sales-orders.sales-order-create.reference.f8130bb0">Référence</label>
           <input
             id="so-ref"
             pInputText
             [(ngModel)]="reference"
             maxlength="100"
-            placeholder="Bon de commande du client" />
+            placeholder="Bon de commande du client" i18n-placeholder="@@sales-orders.sales-order-create.bon.de.commande.du.client.c9a91825" />
         </div>
 
         <div class="ft-field ft-field--half">
-          <label for="so-terms">Conditions de règlement</label>
+          <label for="so-terms" i18n="@@sales-orders.sales-order-create.conditions.de.reglement.84c9c451">Conditions de règlement</label>
           <input id="so-terms" pInputText [(ngModel)]="paymentTerms" maxlength="500" />
         </div>
 
         <div class="ft-field ft-field--half">
-          <label for="so-notes">Notes</label>
+          <label for="so-notes" i18n="@@sales-orders.sales-order-create.notes.70440046">Notes</label>
           <textarea id="so-notes" pTextarea [(ngModel)]="notes" rows="2" maxlength="2000"></textarea>
         </div>
       </div>
@@ -201,10 +198,10 @@ interface DraftLine extends LinePromotionPreview {
       id="section-lignes"
       class="lines-section-wrap"
       [class.lines-section-wrap--empty]="lines().length === 0">
-      <app-form-section title="Lignes" icon="pi-list" [number]="2">
+      <app-form-section title="Lignes" i18n-title="@@sales-orders.sales-order-create.lignes.41c7025e" icon="pi-list" [number]="2">
         <div class="ft-form-grid ft-form-grid--inline">
           <div class="ft-field ft-field--grow">
-            <label for="so-product">Produit</label>
+            <label for="so-product" i18n="@@sales-orders.sales-order-create.produit.ff673dc2">Produit</label>
             <p-autoComplete
               inputId="so-product"
               [(ngModel)]="newProduct"
@@ -213,13 +210,13 @@ interface DraftLine extends LinePromotionPreview {
               field="label"
               [forceSelection]="true"
               [dropdown]="true"
-              placeholder="Rechercher par code ou nom"
+              placeholder="Rechercher par code ou nom" i18n-placeholder="@@sales-orders.sales-order-create.rechercher.par.code.ou.nom.46838c72"
               styleClass="w-full"
               appendTo="body"></p-autoComplete>
           </div>
 
           <div class="ft-field">
-            <label for="so-qty">Quantité</label>
+            <label for="so-qty" i18n="@@sales-orders.sales-order-create.quantite.09a38fda">Quantité</label>
             <p-inputNumber
               inputId="so-qty"
               [(ngModel)]="newQuantity"
@@ -236,16 +233,14 @@ interface DraftLine extends LinePromotionPreview {
               icon="pi-plus"
               iconPos="left"
               [disabled]="!newProduct || !newQuantity || newQuantity <= 0 || linePricing.resolving()"
-              (clicked)="addLine()">
-              Ajouter
-            </app-button>
+              (clicked)="addLine()" i18n="@@sales-orders.sales-order-create.ajouter.87c57ed1"> Ajouter </app-button>
           </div>
         </div>
 
         @if (barcodeScanEnabled) {
           <div class="barcode-scan-row">
             <ft-barcode-scan-field
-              placeholder="Scanner un code-barres pour ajouter une ligne"
+              placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="@@sales-orders.sales-order-create.scanner.un.code.barres.pour.ajouter.une.ligne.3525ced5"
               [autoFocus]="false"
               (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
           </div>
@@ -254,23 +249,21 @@ interface DraftLine extends LinePromotionPreview {
         @if (lines().length === 0) {
           <div class="ft-empty-inline">
             <i class="pi pi-inbox"></i>
-            <p>Aucune ligne ajoutée.</p>
-            <p class="ft-hint">
-              Commencez par rechercher un produit ci-dessus, saisissez une quantité puis cliquez
-              sur « Ajouter » — au moins une ligne est requise pour créer la commande.
-            </p>
+            <p i18n="@@sales-orders.sales-order-create.aucune.ligne.ajoutee.2b6077b4">Aucune ligne ajoutée.</p>
+            <p class="ft-hint" i18n="@@sales-orders.sales-order-create.commencez.par.rechercher.un.produit.ci.dessus.sa.c29eae40"> Commencez par rechercher un produit ci-dessus, saisissez une quantité puis cliquez
+              sur « Ajouter » — au moins une ligne est requise pour créer la commande. </p>
           </div>
         } @else {
           <p-table [value]="lines()" styleClass="ft-table">
             <ng-template pTemplate="header">
               <tr>
-                <th class="ft-row-number-col">#</th>
-                <th>Produit</th>
-                <th class="ft-num">Quantité</th>
-                <th class="ft-num">PU HT</th>
-                <th>Origine du prix</th>
-                <th class="ft-num">Remise %</th>
-                <th class="ft-num">Total HT</th>
+                <th class="ft-row-number-col" i18n="@@sales-orders.sales-order-create.text.d08f88df">#</th>
+                <th i18n="@@sales-orders.sales-order-create.produit.ff673dc2">Produit</th>
+                <th class="ft-num" i18n="@@sales-orders.sales-order-create.quantite.09a38fda">Quantité</th>
+                <th class="ft-num" i18n="@@sales-orders.sales-order-create.pu.ht.79388cae">PU HT</th>
+                <th i18n="@@sales-orders.sales-order-create.origine.du.prix.3b61b8a6">Origine du prix</th>
+                <th class="ft-num" i18n="@@sales-orders.sales-order-create.remise.a39386b5">Remise %</th>
+                <th class="ft-num" i18n="@@sales-orders.sales-order-create.total.ht.2ca17ae6">Total HT</th>
                 <th class="ft-actions-col"></th>
               </tr>
             </ng-template>
@@ -308,28 +301,28 @@ interface DraftLine extends LinePromotionPreview {
                   @if (linePricing.resolving()) {
                     <i
                       class="pi pi-spin pi-spinner ft-resolving"
-                      pTooltip="Résolution du prix en cours…"
+                      pTooltip="Résolution du prix en cours…" i18n-pTooltip="@@sales-orders.sales-order-create.resolution.du.prix.en.cours.9cec8ad3"
                       tooltipPosition="top"></i>
                   }
                   @if (line.priceOverridden) {
                     <p-tag
                       severity="warning"
                       value="Saisi"
-                      pTooltip="Prix imposé à la main : il remplace le prix résolu."></p-tag>
+                      pTooltip="Prix imposé à la main : il remplace le prix résolu." i18n-pTooltip="@@sales-orders.sales-order-create.prix.impose.a.la.main.il.remplace.le.prix.resolu.739be845"></p-tag>
                   } @else if (line.priceSource === 'ClientPrice') {
                     <p-tag severity="success" value="Prix négocié"></p-tag>
                   } @else if (line.priceSource === 'PriceList') {
                     <p-tag severity="info" value="Grille"></p-tag>
                   } @else {
-                    <span class="ft-muted">Catalogue</span>
+                    <span class="ft-muted" i18n="@@sales-orders.sales-order-create.catalogue.5a241023">Catalogue</span>
                   }
                   @if (line.promotionEligible && line.promotionName) {
                     <p-tag
                       severity="success"
-                      [value]="'Promo : ' + line.promotionName + ' (-' + line.promotionDiscountPercent + ' %)'"
+                      [value]="loc_ui_tern_promo_84ac35 + line.promotionName + ' (-' + line.promotionDiscountPercent + ' %)'"
                       class="promo-tag"></p-tag>
                   } @else if (line.promotionMinQuantityRequired && line.promotionName) {
-                    <small class="promo-hint">
+                    <small class="promo-hint" i18n="@@sales-orders.sales-order-create.qty.min.b392f9d2">
                       {{ line.promotionName }} : qty min. {{ line.promotionMinQuantityRequired }}
                     </small>
                   }
@@ -351,8 +344,8 @@ interface DraftLine extends LinePromotionPreview {
                     type="button"
                     icon="pi pi-trash"
                     class="p-button-text p-button-sm p-button-danger"
-                    pTooltip="Retirer"
-                    aria-label="Retirer la ligne"
+                    pTooltip="Retirer" i18n-pTooltip="@@sales-orders.sales-order-create.retirer.54ec24a1"
+                    aria-label="Retirer la ligne" i18n-aria-label="@@sales-orders.sales-order-create.retirer.la.ligne.d7b83e17"
                     (click)="removeLine(i)"></button>
                 </td>
               </tr>
@@ -361,24 +354,22 @@ interface DraftLine extends LinePromotionPreview {
 
           <div class="ft-totals">
             <div class="ft-totals__row ft-totals__row--grand">
-              <span>Total HT</span><span>{{ totalHt() | number: '1.3-3' }} TND</span>
+              <span i18n="@@sales-orders.sales-order-create.total.ht.2ca17ae6">Total HT</span><span>{{ totalHt() | number: '1.3-3' }} TND</span>
             </div>
-            <small class="ft-hint">
-              TVA, FODEC et timbre fiscal sont calculés par le serveur à la création.
-            </small>
+            <small class="ft-hint" i18n="@@sales-orders.sales-order-create.tva.fodec.et.timbre.fiscal.sont.calcules.par.le..ae8f7227"> TVA, FODEC et timbre fiscal sont calculés par le serveur à la création. </small>
           </div>
         }
       </app-form-section>
     </div>
 
     @if (lines().length > 0) {
-      <div class="sticky-action-bar" role="region" aria-label="Actions de création">
+      <div class="sticky-action-bar" role="region" aria-label="Actions de création" i18n-aria-label="@@sales-orders.sales-order-create.actions.de.creation.c4334038">
         <div class="sticky-action-bar__total">
-          <span class="sticky-action-bar__label">Total HT</span>
+          <span class="sticky-action-bar__label" i18n="@@sales-orders.sales-order-create.total.ht.2ca17ae6">Total HT</span>
           <span class="sticky-action-bar__amount">{{ totalHt() | number: '1.3-3' }} TND</span>
         </div>
         <div class="sticky-action-bar__actions">
-          <app-button variant="secondary" routerLink="/sales-orders">Annuler</app-button>
+          <app-button variant="secondary" routerLink="/sales-orders" i18n="@@sales-orders.sales-order-create.annuler.49ba3292">Annuler</app-button>
           <span
             [pTooltip]="submitBlockersTooltip()"
             [tooltipDisabled]="canSubmit() || saving()"
@@ -389,7 +380,7 @@ interface DraftLine extends LinePromotionPreview {
               [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"
               iconPos="left"
               (clicked)="submit()">
-              {{ saving() ? 'Création…' : 'Créer la commande' }}
+              {{ saving() ? loc_ui_tern_creation_2a06d1 : loc_ui_tern_creer_la_commande_554f7d }}
             </app-button>
           </span>
         </div>
@@ -399,6 +390,9 @@ interface DraftLine extends LinePromotionPreview {
   styleUrls: ['./sales-order-create.component.scss']
 })
 export class SalesOrderCreateComponent {
+  readonly loc_ui_tern_creation_2a06d1 = $localize`:@@ui.tern.creation.2a06d1:Création…`;
+  readonly loc_ui_tern_creer_la_commande_554f7d = $localize`:@@ui.tern.creer.la.commande.554f7d:Créer la commande`;
+  readonly loc_ui_tern_promo_84ac35 = $localize`:@@ui.tern.promo.84ac35:Promo : `;
   private readonly router = inject(Router);
   private readonly salesOrderService = inject(SalesOrderService);
   readonly linePricing = inject(DocumentLinePricingService);
@@ -426,9 +420,9 @@ export class SalesOrderCreateComponent {
   newQuantity: number | null = 1;
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Ventes' },
-    { label: 'Commandes clients', route: '/sales-orders' },
-    { label: 'Nouvelle' }
+    { label: $localize`:@@sales-orders.sales-order-create.ts.ventes.9087fc4f:Ventes` },
+    { label: $localize`:@@sales-orders.sales-order-create.ts.commandes.clients.928f824a:Commandes clients`, route: '/sales-orders' },
+    { label: $localize`:@@sales-orders.sales-order-create.ts.nouvelle.3278b098:Nouvelle` }
   ];
 
   readonly totalHt = computed(() =>
@@ -458,10 +452,10 @@ export class SalesOrderCreateComponent {
 
   submitBlockers(): string[] {
     const blockers: string[] = [];
-    if (!this.hasClient()) blockers.push('Sélectionnez un client');
-    if (!this.hasOrderDate()) blockers.push('Indiquez la date de commande');
-    if (!this.hasLines()) blockers.push('Ajoutez au moins une ligne produit');
-    if (this.linePricing.resolving()) blockers.push('Résolution des prix en cours');
+    if (!this.hasClient()) blockers.push($localize`:@@sales-orders.sales-order-create.ts.selectionnez.un.client.fb1d3ea4:Sélectionnez un client`);
+    if (!this.hasOrderDate()) blockers.push($localize`:@@sales-orders.sales-order-create.ts.indiquez.la.date.de.commande.6f92819c:Indiquez la date de commande`);
+    if (!this.hasLines()) blockers.push($localize`:@@sales-orders.sales-order-create.ts.ajoutez.au.moins.une.ligne.produit.bf3387b7:Ajoutez au moins une ligne produit`);
+    if (this.linePricing.resolving()) blockers.push($localize`:@@sales-orders.sales-order-create.ts.resolution.des.prix.en.cours.c87ba068:Résolution des prix en cours`);
     return blockers;
   }
 
@@ -631,8 +625,8 @@ export class SalesOrderCreateComponent {
     if (expectedDeliveryDate && expectedDeliveryDate < orderDate) {
       this.toastService.add({
         severity: 'warn',
-        summary: 'Date invalide',
-        detail: 'La date de livraison prévue ne peut pas être antérieure à la date de commande.'
+        summary: $localize`:@@sales-order-create.component.summary.Date_invalide:Date invalide`,
+        detail: $localize`:@@sales-order-create.component.detail.La_date_de_livra:La date de livraison prévue ne peut pas être antérieure à la date de commande.`
       });
       return;
     }
@@ -660,8 +654,8 @@ export class SalesOrderCreateComponent {
         next: res => {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Commande créée en brouillon.'
+            summary: $localize`:@@sales-order-create.component.summary.Succès:Succès`,
+            detail: $localize`:@@sales-order-create.component.detail.Commande_cr_e_e:Commande créée en brouillon.`
           });
           this.saving.set(false);
           const id = res.data;
@@ -671,8 +665,8 @@ export class SalesOrderCreateComponent {
           const msg = this.errorHandler.extractErrorMessage(err);
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: msg || 'Création impossible'
+            summary: $localize`:@@sales-order-create.component.summary.Erreur:Erreur`,
+            detail: msg || $localize`:@@sales-orders.sales-order-create.ts.creation.impossible.e15c59e7:Création impossible`
           });
           this.errorHandler.logError('Create sales order failed', err);
           this.saving.set(false);

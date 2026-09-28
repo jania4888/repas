@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -51,10 +52,10 @@ export function sceAccountDigitCount(accountNumber: string): number {
   ],
   providers: [ConfirmationService],
   template: `
-    <app-page-header title="Plan comptable" subtitle="NCT 01 + overlay métier — comptes système verrouillés" />
+    <app-page-header title="Plan comptable" i18n-title="@@accounting.chart-of-accounts.plan.comptable.b3f54c09" subtitle="NCT 01 + overlay métier — comptes système verrouillés" i18n-subtitle="@@accounting.chart-of-accounts.nct.01.overlay.metier.comptes.systeme.ve.7c97c14f" />
     <p-confirmDialog />
     <div class="card coa-card">
-      <app-accounting-filter-bar ariaLabel="Recherche et actualisation du plan comptable">
+      <app-accounting-filter-bar ariaLabel="Recherche et actualisation du plan comptable" i18n-ariaLabel="@@accounting.chart-of-accounts.recherche.et.actualisation.du.plan.compt.9e032a53">
         <div accountingFilterFields class="chart-accounts-toolbar-main">
           <span class="p-input-icon-left coa-search-wrap">
             <i class="pi pi-search" aria-hidden="true"></i>
@@ -64,8 +65,8 @@ export function sceAccountDigitCount(accountNumber: string): number {
               class="coa-search-input"
               [(ngModel)]="searchTerm"
               (ngModelChange)="onSearchChange()"
-              placeholder="Rechercher par n° de compte ou libellé…"
-              aria-label="Filtrer le plan comptable" />
+              placeholder="Rechercher par n° de compte ou libellé…" i18n-placeholder="@@accounting.chart-of-accounts.rechercher.par.n.de.compte.ou.libelle.d5cc9f44"
+              aria-label="Filtrer le plan comptable" i18n-aria-label="@@accounting.chart-of-accounts.filtrer.le.plan.comptable.f9c60a07" />
           </span>
         </div>
         <div accountingFilterActions class="coa-toolbar-right">
@@ -76,9 +77,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
               iconPos="left"
               type="button"
               (click)="openCreate()"
-              ariaLabel="Créer un nouveau compte comptable">
-              Nouveau compte
-            </app-button>
+              ariaLabel="Créer un nouveau compte comptable" i18n-ariaLabel="@@accounting.chart-of-accounts.creer.un.nouveau.compte.comptable.717dd6d9" i18n="@@accounting.chart-of-accounts.nouveau.compte.9c08a4c7"> Nouveau compte </app-button>
           }
           <app-button
             variant="secondary"
@@ -86,9 +85,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
             iconPos="left"
             type="button"
             (click)="load()"
-            ariaLabel="Actualiser le plan comptable">
-            Actualiser
-          </app-button>
+            ariaLabel="Actualiser le plan comptable" i18n-ariaLabel="@@accounting.chart-of-accounts.actualiser.le.plan.comptable.1eacb0f3" i18n="@@accounting.chart-of-accounts.actualiser.9d3b2a7d"> Actualiser </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-chart"
             density="toolbar"
@@ -101,12 +98,12 @@ export function sceAccountDigitCount(accountNumber: string): number {
                 [ngModel]="hideAuxiliary()"
                 (ngModelChange)="hideAuxiliary.set($event)"
                 [ngModelOptions]="{ standalone: true }" />
-              <span>Masquer les comptes auxiliaires ({{ auxiliaryCount() }})</span>
+              <span i18n="@@accounting.chart-of-accounts.masquer.les.comptes.auxiliaires.ca6a40b1">Masquer les comptes auxiliaires ({{ auxiliaryCount() }})</span>
             </label>
           }
-          <p class="coa-count" aria-live="polite">
+          <p class="coa-count" aria-live="polite" i18n="@@accounting.chart-of-accounts.compte.87c3614c.pl">
             <span class="coa-count-value">{{ visibleRows().length }}</span>
-            <span class="coa-count-label"> compte{{ visibleRows().length === 1 ? '' : 's' }}</span>
+            <span class="coa-count-label"> {visibleRows().length, plural, =1 {compte} other {comptes}}</span>
           </p>
         </div>
       </app-accounting-filter-bar>
@@ -114,7 +111,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
         variant="error"
         [message]="error() ?? ''"
         [showRetry]="!!error()"
-        retryLabel="Réessayer"
+        retryLabel="Réessayer" i18n-retryLabel="@@accounting.chart-of-accounts.reessayer.c4f78b12"
         (retry)="load()" />
       <p-table
         #dt
@@ -128,57 +125,57 @@ export function sceAccountDigitCount(accountNumber: string): number {
         [showCurrentPageReport]="true"
         [sortField]="'accountNumber'"
         [sortOrder]="1"
-        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} comptes"
+        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} comptes" i18n-currentPageReportTemplate="@@accounting.chart-of-accounts.affichage.de.first.a.last.sur.totalrecords.compt.4470e3a3"
         styleClass="p-datatable-sm coa-table accounting-datatable">
         <ng-template pTemplate="header">
           <tr>
             <th pSortableColumn="accountNumber" scope="col">
-              Compte <p-sortIcon field="accountNumber" />
+              <ng-container i18n="@@accounting.chart-of-accounts.compte.c45740bb"> Compte </ng-container> <p-sortIcon field="accountNumber" />
             </th>
             <th pSortableColumn="label" scope="col">
-              Libellé <p-sortIcon field="label" />
+              <ng-container i18n="@@accounting.chart-of-accounts.libelle.f5485bba"> Libellé </ng-container> <p-sortIcon field="label" />
             </th>
             <th pSortableColumn="accountClass" scope="col" class="coa-col-narrow">
-              Classe <p-sortIcon field="accountClass" />
+              <ng-container i18n="@@accounting.chart-of-accounts.classe.3c38412a"> Classe </ng-container> <p-sortIcon field="accountClass" />
             </th>
-            <th scope="col" class="coa-col-narrow">Système</th>
-            <th scope="col" class="coa-col-narrow">Auxiliaire</th>
-            <th scope="col" class="coa-col-narrow">Statut</th>
+            <th scope="col" class="coa-col-narrow" i18n="@@accounting.chart-of-accounts.systeme.62d09520">Système</th>
+            <th scope="col" class="coa-col-narrow" i18n="@@accounting.chart-of-accounts.auxiliaire.b8c6c266">Auxiliaire</th>
+            <th scope="col" class="coa-col-narrow" i18n="@@accounting.chart-of-accounts.statut.659499f3">Statut</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-r>
           <tr [class.coa-row-inactive]="!r.isActive">
-            <td class="coa-account-cell" data-label="Compte">
+            <td class="coa-account-cell" data-label="Compte" i18n-data-label="@@accounting.chart-of-accounts.compte.c45740bb">
               <span class="coa-account-code" [style.paddingInlineStart.rem]="indentRem(r.level)">{{ r.accountNumber }}</span>
             </td>
-            <td data-label="Libellé">{{ r.label }}</td>
-            <td class="coa-col-narrow coa-class-cell" data-label="Classe">{{ r.accountClass }}</td>
-            <td class="coa-col-narrow" data-label="Système">
+            <td data-label="Libellé" i18n-data-label="@@accounting.chart-of-accounts.libelle.f5485bba">{{ r.label }}</td>
+            <td class="coa-col-narrow coa-class-cell" data-label="Classe" i18n-data-label="@@accounting.chart-of-accounts.classe.3c38412a">{{ r.accountClass }}</td>
+            <td class="coa-col-narrow" data-label="Système" i18n-data-label="@@accounting.chart-of-accounts.systeme.62d09520">
               <span
                 class="coa-badge"
                 [class.coa-badge--yes]="r.isSystem"
                 [class.coa-badge--no]="!r.isSystem">
-                {{ r.isSystem ? 'Oui' : 'Non' }}
+                {{ r.isSystem ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}
               </span>
             </td>
-            <td class="coa-col-narrow" data-label="Auxiliaire">
+            <td class="coa-col-narrow" data-label="Auxiliaire" i18n-data-label="@@accounting.chart-of-accounts.auxiliaire.b8c6c266">
               @if (r.isAuxiliary) {
                 <span
                   class="coa-badge coa-badge--aux"
-                  [title]="r.affectationAccountNumber ? 'Rattaché au compte ' + r.affectationAccountNumber : ''">
+                  [title]="r.affectationAccountNumber ? loc_ui_tern_rattache_au_compte_324197 + r.affectationAccountNumber : ''">
                   {{ r.affectationAccountNumber || 'Oui' }}
                 </span>
               } @else {
-                <span class="coa-aux-none">—</span>
+                <span class="coa-aux-none" i18n="@@accounting.chart-of-accounts.text.1b93795b">—</span>
               }
             </td>
-            <td class="coa-col-narrow" data-label="Statut">
+            <td class="coa-col-narrow" data-label="Statut" i18n-data-label="@@accounting.chart-of-accounts.statut.659499f3">
               <span class="coa-status-cell">
                 <span
                   class="coa-badge"
                   [class.coa-badge--yes]="r.isActive"
                   [class.coa-badge--no]="!r.isActive">
-                  {{ r.isActive ? 'Actif' : 'Inactif' }}
+                  {{ r.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033 }}
                 </span>
                 @if (canCreate && !r.isSystem) {
                   <button
@@ -186,8 +183,8 @@ export function sceAccountDigitCount(accountNumber: string): number {
                     class="coa-toggle-btn"
                     [disabled]="togglingId() === r.id"
                     (click)="confirmToggleActive(r)"
-                    [attr.aria-label]="(r.isActive ? 'Désactiver' : 'Réactiver') + ' le compte ' + r.accountNumber">
-                    {{ r.isActive ? 'Désactiver' : 'Réactiver' }}
+                    [attr.aria-label]="(r.isActive ? loc_ui_tern_desactiver_d28397 : loc_ui_tern_reactiver_822dbd) + loc_ui_tern_le_compte_e8f216 + r.accountNumber">
+                    {{ r.isActive ? loc_ui_tern_desactiver_d28397 : loc_ui_tern_reactiver_822dbd }}
                   </button>
                 }
               </span>
@@ -197,8 +194,8 @@ export function sceAccountDigitCount(accountNumber: string): number {
         <ng-template pTemplate="emptymessage">
           <tr>
             <td colspan="5" class="coa-empty">
-              <p class="coa-empty-title">Aucun résultat</p>
-              <p class="coa-empty-hint">Ajustez la recherche ou actualisez la liste.</p>
+              <p class="coa-empty-title" i18n="@@accounting.chart-of-accounts.aucun.resultat.9e524fe1">Aucun résultat</p>
+              <p class="coa-empty-hint" i18n="@@accounting.chart-of-accounts.ajustez.la.recherche.ou.actualisez.la.liste.c28a5fae">Ajustez la recherche ou actualisez la liste.</p>
             </td>
           </tr>
         </ng-template>
@@ -208,29 +205,29 @@ export function sceAccountDigitCount(accountNumber: string): number {
     @if (showCreate()) {
       <div class="coa-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="coa-create-title">
         <div class="coa-modal">
-          <h2 id="coa-create-title" class="coa-modal-title">Nouveau compte comptable</h2>
-          <p class="coa-modal-sub">Plan comptable — Gestion des comptes</p>
+          <h2 id="coa-create-title" class="coa-modal-title" i18n="@@accounting.chart-of-accounts.nouveau.compte.comptable.c517e173">Nouveau compte comptable</h2>
+          <p class="coa-modal-sub" i18n="@@accounting.chart-of-accounts.plan.comptable.gestion.des.comptes.619b25d6">Plan comptable — Gestion des comptes</p>
 
-          <h3 class="coa-sec">Type de compte</h3>
+          <h3 class="coa-sec" i18n="@@accounting.chart-of-accounts.type.de.compte.b6544864">Type de compte</h3>
           <div class="coa-type-row">
-            <button type="button" class="coa-type" [class.coa-type--on]="form.accountType === 2" (click)="setType(2)"><i class="pi pi-truck"></i> Fournisseur</button>
-            <button type="button" class="coa-type" [class.coa-type--on]="form.accountType === 1" (click)="setType(1)"><i class="pi pi-user"></i> Client</button>
-            <button type="button" class="coa-type" [class.coa-type--on]="form.accountType === 3 || form.accountType === 0" (click)="setType(3)"><i class="pi pi-ellipsis-h"></i> Autre</button>
+            <button type="button" class="coa-type" [class.coa-type--on]="form.accountType === 2" (click)="setType(2)" i18n="@@accounting.chart-of-accounts.fournisseur.a1324303"><i class="pi pi-truck"></i> Fournisseur</button>
+            <button type="button" class="coa-type" [class.coa-type--on]="form.accountType === 1" (click)="setType(1)" i18n="@@accounting.chart-of-accounts.client.e9ef2d15"><i class="pi pi-user"></i> Client</button>
+            <button type="button" class="coa-type" [class.coa-type--on]="form.accountType === 3 || form.accountType === 0" (click)="setType(3)" i18n="@@accounting.chart-of-accounts.autre.9211ea87"><i class="pi pi-ellipsis-h"></i> Autre</button>
           </div>
 
-          <h3 class="coa-sec">Hiérarchie du compte</h3>
+          <h3 class="coa-sec" i18n="@@accounting.chart-of-accounts.hierarchie.du.compte.edd80076">Hiérarchie du compte</h3>
           <div class="coa-grid">
             <div class="coa-field">
-              <label class="coa-lbl" for="coa-aux">Type</label>
+              <label class="coa-lbl" for="coa-aux" i18n="@@accounting.chart-of-accounts.type.3deb7456">Type</label>
               <select id="coa-aux" class="coa-inp" [(ngModel)]="form.isAuxiliary">
-                <option [ngValue]="true">Auxiliaire</option>
-                <option [ngValue]="false">Général</option>
+                <option [ngValue]="true" i18n="@@accounting.chart-of-accounts.auxiliaire.b8c6c266">Auxiliaire</option>
+                <option [ngValue]="false" i18n="@@accounting.chart-of-accounts.general.5376df98">Général</option>
               </select>
             </div>
             <div class="coa-field coa-field-wide">
-              <label class="coa-lbl" for="coa-parent">Sous compte de</label>
+              <label class="coa-lbl" for="coa-parent" i18n="@@accounting.chart-of-accounts.sous.compte.de.7f47036e">Sous compte de</label>
               <select id="coa-parent" class="coa-inp" [(ngModel)]="form.parentAccountNumber" (ngModelChange)="onParentChange($event)">
-                <option [ngValue]="null">—</option>
+                <option [ngValue]="null" i18n="@@accounting.chart-of-accounts.text.1b93795b">—</option>
                 @for (a of parentOptions(); track a.accountNumber) {
                   <option [ngValue]="a.accountNumber">{{ a.accountNumber }} — {{ a.label }}</option>
                 }
@@ -238,9 +235,9 @@ export function sceAccountDigitCount(accountNumber: string): number {
             </div>
             @if (form.isAuxiliary) {
               <div class="coa-field coa-field-wide">
-                <label class="coa-lbl" for="coa-affect">Compte d'affectation</label>
+                <label class="coa-lbl" for="coa-affect" i18n="@@accounting.chart-of-accounts.compte.d.affectation.4a67171b">Compte d'affectation</label>
                 <select id="coa-affect" class="coa-inp" [(ngModel)]="form.affectationAccountNumber">
-                  <option [ngValue]="null">—</option>
+                  <option [ngValue]="null" i18n="@@accounting.chart-of-accounts.text.1b93795b">—</option>
                   @for (a of rows(); track a.accountNumber) {
                     <option [ngValue]="a.accountNumber">{{ a.accountNumber }} — {{ a.label }}</option>
                   }
@@ -249,18 +246,18 @@ export function sceAccountDigitCount(accountNumber: string): number {
             }
           </div>
 
-          <h3 class="coa-sec">Identification</h3>
+          <h3 class="coa-sec" i18n="@@accounting.chart-of-accounts.identification.9d2c7063">Identification</h3>
           <div class="coa-grid">
             <div class="coa-field">
-              <label class="coa-lbl" for="coa-num">Compte numéro</label>
-              <input id="coa-num" class="coa-inp" [(ngModel)]="form.accountNumber" (ngModelChange)="onAccountNumberChange()" [maxlength]="accountNumberMaxLength" placeholder="Ex. 428.3 ou 41100001" />
+              <label class="coa-lbl" for="coa-num" i18n="@@accounting.chart-of-accounts.compte.numero.f569fef7">Compte numéro</label>
+              <input id="coa-num" class="coa-inp" [(ngModel)]="form.accountNumber" (ngModelChange)="onAccountNumberChange()" [maxlength]="accountNumberMaxLength" placeholder="Ex. 428.3 ou 41100001" i18n-placeholder="@@accounting.chart-of-accounts.ex.428.3.ou.41100001.5e8b90c4" />
               @if (accountNumberError(); as numError) {
                 <p class="coa-create-error" role="alert">{{ numError }}</p>
               }
             </div>
             <div class="coa-field coa-field-wide">
-              <label class="coa-lbl" for="coa-label">Libellé</label>
-              <input id="coa-label" class="coa-inp" [(ngModel)]="form.label" placeholder="Ex. Client Société X" />
+              <label class="coa-lbl" for="coa-label" i18n="@@accounting.chart-of-accounts.libelle.f5485bba">Libellé</label>
+              <input id="coa-label" class="coa-inp" [(ngModel)]="form.label" placeholder="Ex. Client Société X" i18n-placeholder="@@accounting.chart-of-accounts.ex.client.societe.x.947766e4" />
             </div>
           </div>
 
@@ -269,9 +266,9 @@ export function sceAccountDigitCount(accountNumber: string): number {
           }
 
           <div class="coa-modal-actions">
-            <button type="button" class="btn btn-secondary" (click)="closeCreate()" [disabled]="creating()">Annuler</button>
+            <button type="button" class="btn btn-secondary" (click)="closeCreate()" [disabled]="creating()" i18n="@@accounting.chart-of-accounts.annuler.49ba3292">Annuler</button>
             <button type="button" class="btn btn-primary" (click)="create()" [disabled]="creating() || !canSubmit()">
-              {{ creating() ? 'Enregistrement…' : 'Enregistrer' }}
+              {{ creating() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_f7c8bc }}
             </button>
           </div>
         </div>
@@ -306,7 +303,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
     }
     .coa-search-wrap.p-input-icon-left i {
       position: absolute;
-      left: var(--spacing-3);
+      inset-inline-start: var(--spacing-3);
       top: 50%;
       transform: translateY(-50%);
       color: var(--color-text-secondary);
@@ -315,7 +312,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
     :host ::ng-deep .coa-search-wrap .p-inputtext,
     :host ::ng-deep .coa-search-input {
       width: 100%;
-      padding-left: var(--spacing-8);
+      padding-inline-start: var(--spacing-8);
     }
     .coa-count {
       margin: 0;
@@ -467,6 +464,16 @@ export function sceAccountDigitCount(accountNumber: string): number {
   `
 })
 export class ChartOfAccountsComponent implements OnInit {
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
+  readonly loc_ui_tern_rattache_au_compte_324197 = $localize`:@@ui.tern.rattache.au.compte.324197:Rattaché au compte `;
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
+  readonly loc_ui_tern_desactiver_d28397 = $localize`:@@ui.tern.desactiver.d28397:Désactiver`;
+  readonly loc_ui_tern_reactiver_822dbd = $localize`:@@ui.tern.reactiver.822dbd:Réactiver`;
+  readonly loc_ui_tern_le_compte_e8f216 = $localize`:@@ui.tern.le.compte.e8f216: le compte `;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
   private readonly api = inject(AccountingService);
   private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
@@ -605,7 +612,7 @@ export class ChartOfAccountsComponent implements OnInit {
   }
 
   formatDuplicateMessage(account: Pick<ChartOfAccountDto, 'accountNumber' | 'label'>): string {
-    return `Le compte ${account.accountNumber} existe déjà (${account.label}).`;
+    return $localize`:@@accounting.chart-of-accounts.ts.le.compte.accountnumber.existe.deja.labe.b94d0456:Le compte ${account.accountNumber}:accountNumber: existe déjà (${account.label}:label:).`;
   }
 
   /** Comptes proposés comme parent selon le type choisi. */
@@ -628,11 +635,11 @@ export class ChartOfAccountsComponent implements OnInit {
 
     const digits = sceAccountDigitCount(num);
     if (digits > SCE_ACCOUNT_MAX_DIGITS) {
-      return `Le compte ${num} comporte ${digits} chiffres : un numéro de compte ne peut pas en dépasser ${SCE_ACCOUNT_MAX_DIGITS}.`;
+      return $localize`:@@accounting.chart-of-accounts.ts.le.compte.num.comporte.digits.chiffres.u.421b5b16:Le compte ${num}:num: comporte ${digits}:digits: chiffres : un numéro de compte ne peut pas en dépasser ${SCE_ACCOUNT_MAX_DIGITS}:SCE_ACCOUNT_MAX_DIGITS:.`;
     }
 
     if (num.length >= 2 && !SCE_ACCOUNT_NUMBER_PATTERN.test(num)) {
-      return 'Le numéro doit être un compte SCE : chiffres, classe 1 à 7, points autorisés (ex. 428.3).';
+      return $localize`:@@accounting.chart-of-accounts.ts.le.numero.doit.etre.un.compte.sce.chiffr.37283b73:Le numéro doit être un compte SCE : chiffres, classe 1 à 7, points autorisés (ex. 428.3).`;
     }
 
     return null;
@@ -673,16 +680,16 @@ export class ChartOfAccountsComponent implements OnInit {
         this.creating.set(false);
         if (res.success) {
           this.createError.set(null);
-          this.toast.add({ severity: 'success', summary: 'Compte créé', detail: `${num} — ${request.label}`, life: 4000 });
+          this.toast.add({ severity: 'success', summary: $localize`:@@chart-of-accounts.component.summary.Comptecréé:Compte créé`, detail: `${num} — ${request.label}`, life: 4000 });
           this.showCreate.set(false);
           this.load();
         } else {
-          this.createError.set(res.error ?? 'La création du compte a échoué.');
+          this.createError.set(res.error ?? $localize`:@@ui.tern.la.creation.du.compte.a.echoue.f63cae:La création du compte a échoué.`);
         }
       },
       error: err => {
         this.creating.set(false);
-        this.createError.set(this.httpFailureMessage(err, 'Erreur réseau lors de la création du compte.'));
+        this.createError.set(this.httpFailureMessage(err, $localize`:@@accounting.chart-of-accounts.ts.erreur.reseau.lors.de.la.creation.du.com.5e2cfce1:Erreur réseau lors de la création du compte.`));
       }
     });
   }
@@ -702,14 +709,14 @@ export class ChartOfAccountsComponent implements OnInit {
   }
 
   confirmToggleActive(account: ChartOfAccountDto): void {
-    const action = account.isActive ? 'Désactiver' : 'Réactiver';
+    const action = account.isActive ? $localize`:@@ui.tern.desactiver.d28397:Désactiver` : $localize`:@@ui.tern.reactiver.822dbd:Réactiver`;
     this.confirmService.confirm({
-      header: `${action} le compte`,
+      header: $localize`:@@ui.tern.action.le.compte.9c1a20:${action}:action: le compte`,
       message: account.isActive
-        ? `Désactiver le compte ${account.accountNumber} — ${account.label} ? Il ne sera plus utilisable en saisie ni en génération automatique.`
-        : `Réactiver le compte ${account.accountNumber} — ${account.label} ?`,
+        ? $localize`:@@ui.tern.desactiver.le.compte.ph.ph.il.ne.sera.plus.b1104d:Désactiver le compte ${account.accountNumber}:p0: — ${account.label}:p1: ? Il ne sera plus utilisable en saisie ni en génération automatique.`
+        : $localize`:@@ui.tern.reactiver.le.compte.ph.ph.3c4d55:Réactiver le compte ${account.accountNumber}:p0: — ${account.label}:p1: ?`,
       acceptLabel: action,
-      rejectLabel: 'Annuler',
+      rejectLabel: $localize`:@@chart-of-accounts.component.rejectLabel.Annuler:Annuler`,
       accept: () => this.toggleActive(account)
     });
   }
@@ -722,18 +729,18 @@ export class ChartOfAccountsComponent implements OnInit {
         if (res.success) {
           this.toast.add({
             severity: 'success',
-            summary: account.isActive ? 'Compte désactivé' : 'Compte réactivé',
+            summary: account.isActive ? $localize`:@@ui.tern.compte.desactive.3ba8b2:Compte désactivé` : $localize`:@@ui.tern.compte.reactive.c00017:Compte réactivé`,
             detail: `${account.accountNumber} — ${account.label}`,
             life: 4000
           });
           this.load();
         } else {
-          this.error.set(res.error ?? 'Le changement de statut a échoué.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.le.changement.de.statut.a.echoue.aac7f0:Le changement de statut a échoué.`);
         }
       },
       error: (err: HttpErrorResponse) => {
         this.togglingId.set(null);
-        this.error.set(this.httpFailureMessage(err, 'Erreur réseau lors du changement de statut du compte.'));
+        this.error.set(this.httpFailureMessage(err, $localize`:@@accounting.chart-of-accounts.ts.erreur.reseau.lors.du.changement.de.stat.63ef6bc0:Erreur réseau lors du changement de statut du compte.`));
       }
     });
   }
@@ -748,12 +755,12 @@ export class ChartOfAccountsComponent implements OnInit {
           this.rows.set(res.data);
           this.reapplyGlobalFilter();
         } else {
-          this.error.set(res.error ?? 'Erreur de chargement');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.de.chargement.d75684:Erreur de chargement`);
         }
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errorHandler.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errorHandler.extractErrorMessage(err, $localize`:@@accounting.chart-of-accounts.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }

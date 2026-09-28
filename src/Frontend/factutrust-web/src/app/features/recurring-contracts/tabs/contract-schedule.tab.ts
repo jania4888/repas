@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -24,13 +26,14 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
   selector: 'app-contract-schedule-tab',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule, RouterModule, TableModule,
     ButtonComponent, EmptyStateComponent, StatusBadgeComponent, SkeletonTableComponent,
     DraftAdjustDialogComponent
   ],
   template: `
     <div class="section-header">
-      <h3>Échéancier prévisionnel</h3>
+      <h3 i18n="@@recurring-contracts.tabs.echeancier.previsionnel.634c7287">Échéancier prévisionnel</h3>
       @if (canGenerate()) {
         <app-button
           variant="primary"
@@ -38,7 +41,7 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
           icon="pi-bolt"
           [disabled]="generating()"
           (clicked)="generateNow()">
-          {{ generating() ? 'Génération…' : 'Générer maintenant' }}
+          <ng-container i18n="@@recurring-contracts.tabs.sel.generation.generer.maintenant.41264bb1">{!!(generating()), select, true {Génération…} other {Générer maintenant}}</ng-container>
         </app-button>
       }
     </div>
@@ -48,15 +51,15 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
     } @else if (entries() === null) {
       <app-empty-state
         icon="pi-calendar"
-        title="Échéancier disponible prochainement"
-        description="L'échéancier prévisionnel sera disponible après la mise à jour du serveur."
+        title="Échéancier disponible prochainement" i18n-title="@@recurring-contracts.tabs.echeancier.disponible.prochainement.4db0027e"
+        description="L'échéancier prévisionnel sera disponible après la mise à jour du serveur." i18n-description="@@recurring-contracts.tabs.l.echeancier.previsionnel.sera.disponibl.b5ed1082"
         [showAction]="false">
       </app-empty-state>
     } @else if (entries()!.length === 0) {
       <app-empty-state
         icon="pi-calendar-times"
-        title="Aucune échéance à venir"
-        description="Ce contrat est terminé ou résilié : aucune occurrence future."
+        title="Aucune échéance à venir" i18n-title="@@recurring-contracts.tabs.aucune.echeance.a.venir.7a395640"
+        description="Ce contrat est terminé ou résilié : aucune occurrence future." i18n-description="@@recurring-contracts.tabs.ce.contrat.est.termine.ou.resilie.aucune.62f7803f"
         [showAction]="false">
       </app-empty-state>
     } @else {
@@ -64,11 +67,11 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
         <p-table [value]="entries()!" styleClass="p-datatable-sm" [rowHover]="true">
           <ng-template pTemplate="header">
             <tr>
-              <th style="width: 120px">Échéance</th>
-              <th>Période</th>
-              <th style="width: 140px">Montant estimé HT</th>
-              <th style="width: 140px">Statut</th>
-              <th style="width: 240px">Action</th>
+              <th style="width: 120px" i18n="@@recurring-contracts.tabs.echeance.f9a77ff6">Échéance</th>
+              <th i18n="@@recurring-contracts.tabs.periode.de2110b7">Période</th>
+              <th style="width: 140px" i18n="@@recurring-contracts.tabs.montant.estime.ht.69c78901">Montant estimé HT</th>
+              <th style="width: 140px" i18n="@@recurring-contracts.tabs.statut.659499f3">Statut</th>
+              <th style="width: 240px" i18n="@@recurring-contracts.tabs.action.97c89a4d">Action</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-e>
@@ -77,12 +80,12 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
               <td>{{ e.description }}</td>
               <td class="amount">{{ e.estimatedAmountHT | currency:contract.currency:'symbol':'1.3-3' }}</td>
               <td>
-                <app-status-badge [status]="scheduleBadgeStatus(e.status)" [label]="e.statusDisplay">
+                <app-status-badge [status]="scheduleBadgeStatus(e.status)" [label]="e.statusDisplay | backendLabel">
                 </app-status-badge>
               </td>
               <td>
                 @if (e.invoiceId) {
-                  <app-button variant="ghost" size="sm" icon="pi-receipt" [routerLink]="['/invoices', e.invoiceId]">
+                  <app-button variant="ghost" size="sm" icon="pi-receipt" [routerLink]="['/invoices', e.invoiceId]" i18n="@@recurring-contracts.tabs.voir.la.facture.e4bddea0">
                     Voir la facture
                   </app-button>
                 } @else if (e.billingRunId && e.invoiceDraftId) {
@@ -94,13 +97,13 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
                         icon="pi-check"
                         [disabled]="issuingId() === e.billingRunId"
                         (clicked)="confirmIssue(e)">
-                        {{ issuingId() === e.billingRunId ? 'Émission…' : 'Émettre' }}
+                        <ng-container i18n="@@recurring-contracts.tabs.sel.emission.emettre.9f179bb7">{!!(issuingId() === e.billingRunId), select, true {Émission…} other {Émettre}}</ng-container>
                       </app-button>
                       <app-button
                         variant="ghost"
                         size="sm"
                         icon="pi-file-edit"
-                        (clicked)="openAdjust(e)">
+                        (clicked)="openAdjust(e)" i18n="@@recurring-contracts.tabs.ajuster.b65f8ead">
                         Ajuster
                       </app-button>
                     }
@@ -196,7 +199,7 @@ export class ContractScheduleTabComponent implements OnInit, OnChanges {
       error: err => {
         this.loading.set(false);
         this.errorHandler.logError('RecurringContracts: schedule', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-schedule.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }
@@ -213,15 +216,15 @@ export class ContractScheduleTabComponent implements OnInit, OnChanges {
         this.generating.set(false);
         this.toast.add({
           severity: 'success',
-          summary: 'Génération terminée',
-          detail: `${count} brouillon(s) généré(s).`
+          summary: $localize`:@@contract-schedule.tab.summary.G_n_ration_termi:Génération terminée`,
+          detail: $localize`:@@recurring-contracts.contract-schedule.ts.count.brouillon.s.genere.s.54b29e4d:${count}:count: brouillon(s) généré(s).`
         });
         this.load();
       },
       error: err => {
         this.generating.set(false);
         this.errorHandler.logError('RecurringContracts: trigger billing', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-schedule.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }
@@ -235,11 +238,11 @@ export class ContractScheduleTabComponent implements OnInit, OnChanges {
   confirmIssue(entry: ContractScheduleEntry): void {
     if (!entry.billingRunId) return;
     this.confirmation.confirm({
-      header: 'Confirmer l\'émission',
-      message: 'Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l\'émission ?',
+      header: $localize`:@@recurring-contracts.contract-schedule.ts.confirmer.l.emission.15b190af:Confirmer l'émission`,
+      message: $localize`:@@recurring-contracts.contract-schedule.ts.une.fois.validee.cette.facture.ne.pourra.acdbf6bb:Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l'émission ?`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Émettre la facture',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@contract-schedule.tab.acceptLabel.Émettre la f:Émettre la facture`,
+      rejectLabel: $localize`:@@contract-schedule.tab.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-success',
       size: 'md',
       accept: () => this.issue(entry.billingRunId!)
@@ -253,8 +256,8 @@ export class ContractScheduleTabComponent implements OnInit, OnChanges {
         this.issuingId.set(null);
         this.toast.add({
           severity: 'success',
-          summary: 'Facture émise',
-          detail: `Facture ${issued.invoiceNumber} émise.`
+          summary: $localize`:@@contract-schedule.tab.summary.Facture émis:Facture émise`,
+          detail: $localize`:@@recurring-contracts.contract-schedule.ts.facture.invoicenumber.emise.07d601c8:Facture ${issued.invoiceNumber}:invoiceNumber: émise.`
         });
         this.load();
         this.draftChanged.emit();
@@ -264,7 +267,7 @@ export class ContractScheduleTabComponent implements OnInit, OnChanges {
         this.errorHandler.logError('RecurringContracts: issue from schedule', err);
         this.toast.add({
           severity: 'error',
-          summary: 'Émission impossible',
+          summary: $localize`:@@contract-schedule.tab.summary._mission_impossi:Émission impossible`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }

@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LogoComponent } from '@shared/components/logo/logo.component';
+import { ErpLanguageSwitcherComponent } from '@core/layout/erp-language-switcher/erp-language-switcher.component';
 import { BRAND } from '@core/constants/brand';
 import {
   AUTH_HERO_OFFICE,
@@ -12,7 +13,7 @@ import {
 @Component({
   selector: 'app-auth-shell',
   standalone: true,
-  imports: [CommonModule, RouterModule, LogoComponent],
+  imports: [CommonModule, RouterModule, LogoComponent, ErpLanguageSwitcherComponent],
   templateUrl: './auth-shell.component.html',
   styleUrl: './auth-shell.component.scss',
 })

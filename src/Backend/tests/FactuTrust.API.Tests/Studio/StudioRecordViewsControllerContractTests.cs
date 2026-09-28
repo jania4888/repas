@@ -139,6 +139,20 @@ public sealed class StudioRecordViewsControllerContractTests
     }
 
     [Fact]
+    public async Task Create_returns_400_with_the_plan_code_when_the_quota_is_reached()
+    {
+        // Le client reconnaît la limite du plan au code, jamais au texte (traduisible).
+        var result = await CreateFailingWith(Error.Validation("Plan",
+            "Limite du plan atteinte : 10 vues par table maximum. Mettez à niveau votre abonnement pour en créer davantage."));
+
+        var bad = Assert.IsType<BadRequestObjectResult>(result);
+        var body = Assert.IsType<FactuTrust.API.Controllers.ApiResponse<string>>(bad.Value);
+        Assert.False(body.Success);
+        Assert.Equal("Validation.Plan", body.Code);
+        Assert.StartsWith("Limite du plan atteinte", body.Error);
+    }
+
+    [Fact]
     public async Task Preview_returns_400_for_a_validation_error()
     {
         // Miroir de Create_returns_400 : le 400 du validateur (définition du brouillon refusée)

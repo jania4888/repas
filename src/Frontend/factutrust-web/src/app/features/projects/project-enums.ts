@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 /**
  * Contrat JSON Projets : enums sérialisés en PascalCase via
  * JsonStringEnumConverter() (Program.cs). Accepte aussi les entiers 0..N
@@ -15,46 +16,46 @@ export type ProjectTimeEntryStatusCode = 'Draft' | 'Submitted' | 'Validated';
 export type ProjectSituationStatusCode = 'Draft' | 'Validated';
 
 export const PROJECT_STATUS_OPTIONS = [
-  { label: 'Brouillon', value: 'Draft' },
-  { label: 'Actif', value: 'Active' },
-  { label: 'En pause', value: 'OnHold' },
-  { label: 'Terminé', value: 'Completed' },
-  { label: 'Annulé', value: 'Cancelled' }
+  { label: $localize`:@@projects.filter.brouillon:Brouillon`, value: 'Draft' },
+  { label: $localize`:@@projects.filter.actif:Actif`, value: 'Active' },
+  { label: $localize`:@@projects.filter.en-pause:En pause`, value: 'OnHold' },
+  { label: $localize`:@@projects.filter.termine:Terminé`, value: 'Completed' },
+  { label: $localize`:@@projects.filter.annule:Annulé`, value: 'Cancelled' }
 ];
 
 export const PROJECT_KIND_OPTIONS = [
-  { label: 'Général', value: 'Generic' },
-  { label: 'ESN / Services', value: 'Esn' },
-  { label: 'BTP / Chantier', value: 'Btp' }
+  { label: $localize`:@@projects.project-enums.ts.general.5376df98:Général`, value: 'Generic' },
+  { label: $localize`:@@projects.project-enums.ts.esn.services.cdac16db:ESN / Services`, value: 'Esn' },
+  { label: $localize`:@@projects.project-enums.ts.btp.chantier.061c47fa:BTP / Chantier`, value: 'Btp' }
 ];
 
 export const PROJECT_BILLING_OPTIONS = [
-  { label: 'Aucune', value: 'None' },
-  { label: 'Régie (temps)', value: 'TimeAndMaterials' },
-  { label: 'Forfait', value: 'FixedPrice' },
-  { label: 'Jalons', value: 'Milestone' },
-  { label: 'Situations de travaux', value: 'ProgressSituations' }
+  { label: $localize`:@@projects.project-enums.ts.aucune.e8f88273:Aucune`, value: 'None' },
+  { label: $localize`:@@projects.project-enums.ts.regie.temps.22f435c8:Régie (temps)`, value: 'TimeAndMaterials' },
+  { label: $localize`:@@projects.project-enums.ts.forfait.e1dca3c1:Forfait`, value: 'FixedPrice' },
+  { label: $localize`:@@projects.project-enums.ts.jalons.4bb628c9:Jalons`, value: 'Milestone' },
+  { label: $localize`:@@projects.project-enums.ts.situations.de.travaux.0d67835b:Situations de travaux`, value: 'ProgressSituations' }
 ];
 
 export const PROJECT_ROLE_OPTIONS = [
-  { label: 'Lecteur', value: 'Viewer' },
-  { label: 'Membre', value: 'Member' },
-  { label: 'Responsable', value: 'Manager' }
+  { label: $localize`:@@projects.project-enums.ts.lecteur.f620206b:Lecteur`, value: 'Viewer' },
+  { label: $localize`:@@projects.project-enums.ts.membre.bbc7e799:Membre`, value: 'Member' },
+  { label: $localize`:@@projects.project-enums.ts.responsable.44b58814:Responsable`, value: 'Manager' }
 ];
 
 export const PROJECT_PRIORITY_OPTIONS = [
-  { label: 'Basse', value: 'Low' },
-  { label: 'Normale', value: 'Normal' },
-  { label: 'Haute', value: 'High' },
-  { label: 'Urgente', value: 'Urgent' }
+  { label: $localize`:@@projects.project-enums.ts.basse.66ecf01a:Basse`, value: 'Low' },
+  { label: $localize`:@@projects.project-enums.ts.normale.c82c13b2:Normale`, value: 'Normal' },
+  { label: $localize`:@@projects.project-enums.ts.haute.ab500e10:Haute`, value: 'High' },
+  { label: $localize`:@@projects.project-enums.ts.urgente.690da266:Urgente`, value: 'Urgent' }
 ];
 
 export const PROJECT_TASK_STATUS_OPTIONS = [
-  { label: 'À faire', value: 'Todo' },
-  { label: 'En cours', value: 'InProgress' },
-  { label: 'En attente', value: 'Waiting' },
-  { label: 'Terminé', value: 'Done' },
-  { label: 'Annulé', value: 'Cancelled' }
+  { label: $localize`:@@projects.filter.a-faire:À faire`, value: 'Todo' },
+  { label: $localize`:@@projects.filter.en-cours:En cours`, value: 'InProgress' },
+  { label: $localize`:@@projects.filter.en-attente:En attente`, value: 'Waiting' },
+  { label: $localize`:@@projects.filter.task-termine:Terminé`, value: 'Done' },
+  { label: $localize`:@@projects.filter.task-annule:Annulé`, value: 'Cancelled' }
 ];
 
 function parseMapped<T extends string>(
@@ -282,29 +283,29 @@ export function canProcessTimeEntries(project: ProjectTimeLoggingContext | null 
 }
 
 export function timesheetsDisabledMessage(): string {
-  return 'La saisie des temps est désactivée pour ce projet.';
+  return $localize`:@@projects.project-enums.ts.la.saisie.des.temps.est.desactivee.pour.7b19f276:La saisie des temps est désactivée pour ce projet.`;
 }
 
 export function cannotReceiveTimeMessage(raw: unknown): string {
   const s = parseProjectStatus(raw);
   switch (s) {
     case 'Draft':
-      return 'Activez le projet pour saisir du temps. La saisie est interdite en statut Brouillon.';
+      return $localize`:@@projects.project-enums.ts.activez.le.projet.pour.saisir.du.temps.l.ff98f0b0:Activez le projet pour saisir du temps. La saisie est interdite en statut Brouillon.`;
     case 'OnHold':
-      return 'La saisie de temps est interdite pour un projet en pause.';
+      return $localize`:@@projects.project-enums.ts.la.saisie.de.temps.est.interdite.pour.un.c822c75b:La saisie de temps est interdite pour un projet en pause.`;
     case 'Completed':
-      return 'Aucune nouvelle saisie de temps n\'est autorisée sur un projet terminé.';
+      return $localize`:@@projects.project-enums.ts.aucune.nouvelle.saisie.de.temps.n.est.au.2afac007:Aucune nouvelle saisie de temps n'est autorisée sur un projet terminé.`;
     case 'Cancelled':
-      return 'Aucune nouvelle saisie de temps n\'est autorisée sur un projet annulé.';
+      return $localize`:@@projects.project-enums.ts.aucune.nouvelle.saisie.de.temps.n.est.au.5a22abe9:Aucune nouvelle saisie de temps n'est autorisée sur un projet annulé.`;
     default:
-      return 'Activez le projet pour saisir du temps. La saisie est réservée aux projets Actif.';
+      return $localize`:@@projects.project-enums.ts.activez.le.projet.pour.saisir.du.temps.l.e6d64bde:Activez le projet pour saisir du temps. La saisie est réservée aux projets Actif.`;
   }
 }
 
 export function timeEntryCreationBlockedMessage(raw: unknown): string {
   const s = parseProjectStatus(raw);
   if (s === 'OnHold' || s === 'Completed') {
-    return 'La saisie de nouveaux temps est désactivée. Les temps déjà saisis restent consultables et traitables.';
+    return $localize`:@@projects.project-enums.ts.la.saisie.de.nouveaux.temps.est.desactiv.e0e96400:La saisie de nouveaux temps est désactivée. Les temps déjà saisis restent consultables et traitables.`;
   }
   return cannotReceiveTimeMessage(raw);
 }
@@ -350,7 +351,7 @@ export function canReopenValidatedTimeEntry(entry: TimeEntryActionContext): bool
 }
 
 export function timeEntryStatusLabel(entry: TimeEntryActionContext): string {
-  if (isInvoicedTimeEntry(entry)) return 'Facturé';
+  if (isInvoicedTimeEntry(entry)) return $localize`:@@projects.project-enums.ts.facture.55e253e6:Facturé`;
   if (entry.statusDisplay) return entry.statusDisplay;
   return parseProjectTimeStatus(entry.status) ?? 'Draft';
 }
@@ -539,12 +540,12 @@ export type TabKey = 'overview' | 'tasks' | 'time' | 'budget' | 'profitability' 
 
 export function projectUiProfile(kind: unknown): ProjectUiProfile {
   if (isBtp(kind)) {
-    return { kindLabel: 'BTP / Chantier', emphasizeTabs: ['budget', 'billing', 'tasks'], showSiteChip: true };
+    return { kindLabel: $localize`:@@projects.project-enums.ts.btp.chantier.061c47fa:BTP / Chantier`, emphasizeTabs: ['budget', 'billing', 'tasks'], showSiteChip: true };
   }
   if (isEsn(kind)) {
-    return { kindLabel: 'ESN / Services', emphasizeTabs: ['time', 'billing', 'team', 'tasks'], showSiteChip: false };
+    return { kindLabel: $localize`:@@projects.project-enums.ts.esn.services.cdac16db:ESN / Services`, emphasizeTabs: ['time', 'billing', 'team', 'tasks'], showSiteChip: false };
   }
-  return { kindLabel: 'Général', emphasizeTabs: ['overview', 'tasks'], showSiteChip: false };
+  return { kindLabel: $localize`:@@projects.project-enums.ts.general.5376df98:Général`, emphasizeTabs: ['overview', 'tasks'], showSiteChip: false };
 }
 
 export function computeProjectProgressPercent(completed: number, total: number): number {
@@ -595,11 +596,11 @@ export function daysUntilDue(dueDate: string | null | undefined): number | null 
 export function formatDaysUntilDue(dueDate: string | null | undefined): string | null {
   const days = daysUntilDue(dueDate);
   if (days === null) return null;
-  if (days === 0) return "Aujourd'hui";
+  if (days === 0) return $localize`:@@projects.project-enums.ts.aujourd.hui.baca97f6:Aujourd'hui`;
   if (days === 1) return 'Demain';
-  if (days > 1) return `Dans ${days} jours`;
-  if (days === -1) return 'En retard de 1 jour';
-  return `En retard de ${Math.abs(days)} jours`;
+  if (days > 1) return $localize`:@@projects.project-enums.ts.dans.days.jours.e071d77e:Dans ${days}:days: jours`;
+  if (days === -1) return $localize`:@@projects.project-enums.ts.en.retard.de.1.jour.a1d7110c:En retard de 1 jour`;
+  return $localize`:@@projects.project-enums.ts.en.retard.de.abs.jours.b26fdeb7:En retard de ${Math.abs(days)}:abs: jours`;
 }
 
 export function projectKindPillClass(kind: unknown): string {

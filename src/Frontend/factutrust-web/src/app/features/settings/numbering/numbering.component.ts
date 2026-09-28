@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -58,18 +59,18 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Numérotations"
+      title="Numérotations" i18n-title="@@settings.numbering.numerotations.f8fd8b5e"
       [subtitle]="pageSubtitle()">
       <div class="header-actions">
         <p-button
-          label="Retour"
+          label="Retour" i18n-label="@@settings.numbering.retour.e5befb1f"
           icon="pi pi-arrow-left"
           [outlined]="true"
           routerLink="/settings">
         </p-button>
         @if (canUpdate()) {
           <p-button
-            label="Réinitialiser"
+            label="Réinitialiser" i18n-label="@@settings.numbering.reinitialiser.e0e2ad54"
             icon="pi pi-refresh"
             [outlined]="true"
             severity="secondary"
@@ -77,7 +78,7 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
             [disabled]="loading() || saving()">
           </p-button>
           <p-button
-            label="Enregistrer"
+            label="Enregistrer" i18n-label="@@settings.numbering.enregistrer.f7c8bcd8"
             icon="pi pi-check"
             (onClick)="save()"
             [loading]="saving()"
@@ -90,7 +91,7 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
     @if (loading() && !schemes().length) {
       <div class="loading-container" role="status" aria-live="polite">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem" aria-hidden="true"></i>
-        <p>Chargement des numérotations...</p>
+        <p i18n="@@settings.numbering.chargement.des.numerotations.83350921">Chargement des numérotations...</p>
       </div>
     } @else {
       <app-numbering-doc-tabs
@@ -106,15 +107,15 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
         [attr.aria-labelledby]="'numbering-tab-' + currentDocumentType()">
         <div class="meta-row">
           <div class="meta-item">
-            <span class="meta-label">Année fiscale</span>
+            <span class="meta-label" i18n="@@settings.numbering.annee.fiscale.a3f33eb8">Année fiscale</span>
             <span class="meta-value">{{ fiscalYear() }}</span>
           </div>
           <div class="meta-item">
-            <span class="meta-label">Dernier numéro émis</span>
+            <span class="meta-label" i18n="@@settings.numbering.dernier.numero.emis.44a4a0db">Dernier numéro émis</span>
             <span class="meta-value">{{ currentSequence() }}</span>
           </div>
           <div class="meta-item">
-            <span class="meta-label">Prochain numéro</span>
+            <span class="meta-label" i18n="@@settings.numbering.prochain.numero.d628cf0d">Prochain numéro</span>
             <span class="meta-value">{{ previewSequence() }}</span>
           </div>
           @if (isFormatLocked() || hasIssuedDocuments()) {
@@ -132,8 +133,8 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
             class="panel palette-panel"
             [class.palette-panel--hidden]="isFormatLocked()"
             aria-labelledby="palette-title">
-              <h3 id="palette-title" class="panel-title">Blocs disponibles</h3>
-              <p class="panel-hint">Glissez un bloc vers le format ci-dessous.</p>
+              <h3 id="palette-title" class="panel-title" i18n="@@settings.numbering.blocs.disponibles.f8d62517">Blocs disponibles</h3>
+              <p class="panel-hint" i18n="@@settings.numbering.glissez.un.bloc.vers.le.format.ci.dessous.50f2d4b2">Glissez un bloc vers le format ci-dessous.</p>
               <div
                 class="palette-list"
                 cdkDropList
@@ -152,14 +153,12 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
             </section>
 
           <section class="panel builder-panel" aria-labelledby="builder-title">
-            <h3 id="builder-title" class="panel-title">Format de numérotation</h3>
+            <h3 id="builder-title" class="panel-title" i18n="@@settings.numbering.format.de.numerotation.7a70df22">Format de numérotation</h3>
             @if (isFormatLocked()) {
-              <p class="panel-hint">
-                Le format ne peut plus être modifié car des documents ont déjà été créés.
-                Vous pouvez uniquement ajuster le numéro de départ.
-              </p>
+              <p class="panel-hint" i18n="@@settings.numbering.le.format.ne.peut.plus.etre.modifie.car.des.docu.95baed70"> Le format ne peut plus être modifié car des documents ont déjà été créés.
+                Vous pouvez uniquement ajuster le numéro de départ. </p>
             } @else {
-              <p class="panel-hint">Réorganisez les blocs par glisser-déposer.</p>
+              <p class="panel-hint" i18n="@@settings.numbering.reorganisez.les.blocs.par.glisser.deposer.b5d0e34a">Réorganisez les blocs par glisser-déposer.</p>
             }
 
             <div
@@ -188,15 +187,15 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
                         [ngModel]="block.value ?? ''"
                         (ngModelChange)="onFreeTextChange(i, $event)"
                         maxlength="20"
-                        [attr.aria-label]="'Texte libre du bloc ' + (i + 1)" />
+                        [attr.aria-label]="loc_ui_tern_texte_libre_du_bloc_5705af + (i + 1)" />
                     } @else if (!isFormatLocked() && block.type === blockTypeEnum.Separator) {
                       <select
                         class="builder-block__select"
                         [ngModel]="block.value ?? '-'"
                         (ngModelChange)="onSeparatorChange(i, $event)"
-                        [attr.aria-label]="'Séparateur du bloc ' + (i + 1)">
+                        [attr.aria-label]="loc_ui_tern_separateur_du_bloc_c00677 + (i + 1)">
                         <option value="-">-</option>
-                        <option value="/">/</option>
+                        <option value="/" i18n="@@settings.numbering.text.42099b4a">/</option>
                       </select>
                     } @else if (block.value) {
                       <span class="builder-block__value">{{ block.value }}</span>
@@ -209,20 +208,18 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
                       [rounded]="true"
                       severity="danger"
                       (onClick)="removeBlock(i)"
-                      [attr.aria-label]="'Supprimer le bloc ' + (i + 1)">
+                      [attr.aria-label]="loc_ui_tern_supprimer_le_bloc_460dfb + (i + 1)">
                     </p-button>
                   }
                 </div>
               } @empty {
-                <div class="builder-empty">
-                  Aucun bloc. Glissez des éléments depuis la palette ou réinitialisez le format.
-                </div>
+                <div class="builder-empty" i18n="@@settings.numbering.aucun.bloc.glissez.des.elements.depuis.la.palett.2c3d0c0d"> Aucun bloc. Glissez des éléments depuis la palette ou réinitialisez le format. </div>
               }
             </div>
           </section>
 
           <section class="panel preview-panel" aria-labelledby="preview-title">
-            <h3 id="preview-title" class="panel-title">Aperçu en direct</h3>
+            <h3 id="preview-title" class="panel-title" i18n="@@settings.numbering.apercu.en.direct.da6d683e">Aperçu en direct</h3>
             <div class="preview-box" [class.preview-box--error]="!previewValid()">
               @if (previewValid()) {
                 <span class="preview-value">{{ previewText() }}</span>
@@ -230,16 +227,12 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
                 <span class="preview-error">{{ previewError() }}</span>
               }
             </div>
-            <p class="panel-hint preview-hint">
-              Aperçu du prochain numéro qui sera émis (selon le format et la séquence).
-            </p>
+            <p class="panel-hint preview-hint" i18n="@@settings.numbering.apercu.du.prochain.numero.qui.sera.emis.selon.le.4c15e340"> Aperçu du prochain numéro qui sera émis (selon le format et la séquence). </p>
           </section>
         </div>
 
         <div class="start-number-card">
-          <label class="start-number-label" for="start-number">
-            Numéro de départ
-          </label>
+          <label class="start-number-label" for="start-number" i18n="@@settings.numbering.numero.de.depart.d05888c4"> Numéro de départ </label>
           <p-inputNumber
             inputId="start-number"
             [ngModel]="startNumber()"
@@ -251,16 +244,16 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
             styleClass="start-number-field">
           </p-inputNumber>
           @if (!startNumberValid()) {
-            <p class="start-number-error">
+            <p class="start-number-error" i18n="@@settings.numbering.le.numero.de.depart.doit.etre.au.minimum.5cb7b6fa">
               Le numéro de départ doit être au minimum {{ minimumStartNumber() }}.
             </p>
           }
           <p class="panel-hint">
-            @if (hasIssuedDocuments() || isFormatLocked()) {
+            @if (hasIssuedDocuments() || isFormatLocked()) {<ng-container i18n="@@settings.numbering.des.documents.existent.deja.le.numero.de.1c1ca836">
               Des documents existent déjà : le numéro de départ doit être supérieur au dernier numéro émis.
-            } @else {
+            </ng-container>} @else {<ng-container i18n="@@settings.numbering.le.prochain.document.utilisera.au.minimu.b339b381">
               Le prochain document utilisera au minimum ce numéro de départ.
-            }
+            </ng-container>}
           </p>
         </div>
       </div>
@@ -319,7 +312,7 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
     }
 
   .lock-tag {
-      margin-left: auto;
+      margin-inline-start: auto;
     }
 
     .numbering-grid {
@@ -527,6 +520,9 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
   `]
 })
 export class NumberingComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_texte_libre_du_bloc_5705af = $localize`:@@ui.tern.texte.libre.du.bloc.5705af:Texte libre du bloc `;
+  readonly loc_ui_tern_separateur_du_bloc_c00677 = $localize`:@@ui.tern.separateur.du.bloc.c00677:Séparateur du bloc `;
+  readonly loc_ui_tern_supprimer_le_bloc_460dfb = $localize`:@@ui.tern.supprimer.le.bloc.460dfb:Supprimer le bloc `;
   private readonly numberingService = inject(NumberingService);
   private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
@@ -539,9 +535,9 @@ export class NumberingComponent implements OnInit, OnDestroy {
   readonly blockTypeEnum = NumberingBlockType;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Numérotations' }
+    { label: $localize`:@@settings.numbering.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.numbering.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.numbering.ts.numerotations.f8fd8b5e:Numérotations` }
   ];
 
   loading = signal(false);
@@ -562,8 +558,8 @@ export class NumberingComponent implements OnInit, OnDestroy {
   pageSubtitle = computed(() => {
     const tab = DOCUMENT_TYPE_TABS[this.activeTabIndex()];
     return tab
-      ? `Configuration : ${tab.label} — format et numéro de départ`
-      : 'Définissez le format et le numéro de départ pour chaque type de document';
+      ? $localize`:@@ui.tern.configuration.ph.format.et.numero.de.depar.ee4d8f:Configuration : ${tab.label}:p0: — format et numéro de départ`
+      : $localize`:@@ui.tern.definissez.le.format.et.le.numero.de.depar.b96754:Définissez le format et le numéro de départ pour chaque type de document`;
   });
 
   lockedTabFlags = computed(() =>
@@ -586,7 +582,7 @@ export class NumberingComponent implements OnInit, OnDestroy {
   });
 
   previewText = computed(() => this.previewResult().value);
-  previewError = computed(() => this.previewResult().error ?? 'Format invalide.');
+  previewError = computed(() => this.previewResult().error ?? $localize`:@@ui.tern.format.invalide.7c4729:Format invalide.`);
   previewValid = computed(() => validateBlocks(this.blocks()).valid && !!this.previewText());
 
   startNumberValid = computed(() => this.startNumber() >= this.minimumStartNumber());
@@ -615,8 +611,8 @@ export class NumberingComponent implements OnInit, OnDestroy {
           } else {
             this.toast.add({
               severity: 'error',
-              summary: 'Erreur',
-              detail: res.errors?.join(', ') || 'Chargement impossible'
+              summary: $localize`:@@numbering.component.summary.Erreur:Erreur`,
+              detail: res.errors?.join(', ') || $localize`:@@settings.numbering.ts.chargement.impossible.4c82ffbe:Chargement impossible`
             });
           }
           this.loading.set(false);
@@ -625,10 +621,10 @@ export class NumberingComponent implements OnInit, OnDestroy {
           this.errorHandler.logError('Failed to load numbering schemes', err);
           this.toast.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@numbering.component.summary.Erreur:Erreur`,
             detail:
               this.errorHandler.extractErrorMessage(err) ||
-              'Impossible de charger les numérotations'
+              $localize`:@@settings.numbering.ts.impossible.de.charger.les.numerotations.6f52d8ae:Impossible de charger les numérotations`
           });
           this.loading.set(false);
         }
@@ -678,7 +674,7 @@ export class NumberingComponent implements OnInit, OnDestroy {
 
   paletteLabel(template: PaletteBlockTemplate): string {
     if (template.type === NumberingBlockType.Separator) {
-      return `Séparateur « ${template.value ?? '-'} »`;
+      return $localize`:@@settings.numbering.ts.separateur.p.82bbc528:Séparateur « ${template.value ?? '-'}:p: »`;
     }
     return BLOCK_TYPE_LABELS[template.type];
   }
@@ -786,8 +782,8 @@ export class NumberingComponent implements OnInit, OnDestroy {
           if (res.success && res.data) {
             this.toast.add({
               severity: 'success',
-              summary: 'Succès',
-              detail: res.message || 'Numérotation enregistrée'
+              summary: $localize`:@@numbering.component.summary.Succès:Succès`,
+              detail: res.message || $localize`:@@settings.numbering.ts.numerotation.enregistree.8368ad19:Numérotation enregistrée`
             });
             this.schemes.update((list) => {
               const idx = list.findIndex((s) => s.documentType === res.data!.documentType);
@@ -802,8 +798,8 @@ export class NumberingComponent implements OnInit, OnDestroy {
           } else {
             this.toast.add({
               severity: 'error',
-              summary: 'Erreur',
-              detail: res.errors?.join(', ') || 'Échec de l\'enregistrement'
+              summary: $localize`:@@numbering.component.summary.Erreur:Erreur`,
+              detail: res.errors?.join(', ') || $localize`:@@settings.numbering.ts.echec.de.l.enregistrement.f21d2b1c:Échec de l'enregistrement`
             });
           }
         },
@@ -811,10 +807,10 @@ export class NumberingComponent implements OnInit, OnDestroy {
           this.saving.set(false);
           this.toast.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@numbering.component.summary.Erreur:Erreur`,
             detail:
               this.errorHandler.extractErrorMessage(err) ||
-              'Échec de l\'enregistrement'
+              $localize`:@@settings.numbering.ts.echec.de.l.enregistrement.f21d2b1c:Échec de l'enregistrement`
           });
         }
       });
@@ -822,12 +818,12 @@ export class NumberingComponent implements OnInit, OnDestroy {
 
   confirmReset(): void {
     this.confirmation.confirm({
-      header: 'Réinitialiser la numérotation',
+      header: $localize`:@@settings.numbering.ts.reinitialiser.la.numerotation.32c2252c:Réinitialiser la numérotation`,
       message:
-        'Réinitialiser le format et le numéro de départ pour ce type de document ? Cette action est irréversible si des documents existent.',
+        $localize`:@@settings.numbering.ts.reinitialiser.le.format.et.le.numero.de.9094a778:Réinitialiser le format et le numéro de départ pour ce type de document ? Cette action est irréversible si des documents existent.`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Réinitialiser',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@numbering.component.acceptLabel.R_initialiser:Réinitialiser`,
+      rejectLabel: $localize`:@@numbering.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.resetScheme()
     });
@@ -844,8 +840,8 @@ export class NumberingComponent implements OnInit, OnDestroy {
           if (res.success && res.data) {
             this.toast.add({
               severity: 'success',
-              summary: 'Succès',
-              detail: res.message || 'Numérotation réinitialisée'
+              summary: $localize`:@@numbering.component.summary.Succès:Succès`,
+              detail: res.message || $localize`:@@settings.numbering.ts.numerotation.reinitialisee.bb77b239:Numérotation réinitialisée`
             });
             this.schemes.update((list) => {
               const idx = list.findIndex((s) => s.documentType === res.data!.documentType);
@@ -860,8 +856,8 @@ export class NumberingComponent implements OnInit, OnDestroy {
           } else {
             this.toast.add({
               severity: 'error',
-              summary: 'Erreur',
-              detail: res.errors?.join(', ') || 'Échec de la réinitialisation'
+              summary: $localize`:@@numbering.component.summary.Erreur:Erreur`,
+              detail: res.errors?.join(', ') || $localize`:@@settings.numbering.ts.echec.de.la.reinitialisation.7b376ac0:Échec de la réinitialisation`
             });
           }
         },
@@ -869,10 +865,10 @@ export class NumberingComponent implements OnInit, OnDestroy {
           this.saving.set(false);
           this.toast.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@numbering.component.summary.Erreur:Erreur`,
             detail:
               this.errorHandler.extractErrorMessage(err) ||
-              'Échec de la réinitialisation'
+              $localize`:@@settings.numbering.ts.echec.de.la.reinitialisation.7b376ac0:Échec de la réinitialisation`
           });
         }
       });

@@ -32,7 +32,7 @@ import { PaymentMethod } from '../../models/invoice-wizard.models';
           [class.expanded]="paymentExpanded()"
           [attr.aria-expanded]="paymentExpanded()"
           aria-controls="billing-payment-panel"
-          (click)="togglePayment()">
+          (click)="togglePayment()" i18n="@@invoices.invoice-wizard.paiement.mentions.legales.d00b53d3">
           <i class="pi" [class.pi-chevron-right]="!paymentExpanded()" [class.pi-chevron-down]="paymentExpanded()"></i>
           <span class="payment-toggle-label">
             <i class="pi pi-money-bill"></i>
@@ -85,8 +85,8 @@ import { PaymentMethod } from '../../models/invoice-wizard.models';
     }
 
     .payment-toggle.expanded {
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
       border-bottom-color: transparent;
     }
 
@@ -99,7 +99,7 @@ import { PaymentMethod } from '../../models/invoice-wizard.models';
     }
 
     .payment-summary {
-      margin-left: auto;
+      margin-inline-start: auto;
       color: var(--color-neutral-500, #6b7280);
       font-size: var(--font-size-xs, 12px);
     }
@@ -122,13 +122,13 @@ export class StepBillingComponent {
   protected readonly paymentSummary = computed(() => {
     const payment = this.wizardService.payment();
     const labels: Record<PaymentMethod, string> = {
-      [PaymentMethod.BankTransfer]: 'Virement bancaire',
-      [PaymentMethod.Cash]: 'Espèces',
-      [PaymentMethod.Check]: 'Chèque',
-      [PaymentMethod.Card]: 'Carte bancaire',
-      [PaymentMethod.Effect]: 'Effet de commerce'
+      [PaymentMethod.BankTransfer]: $localize`:@@ui.tern.virement.bancaire.8306f0:Virement bancaire`,
+      [PaymentMethod.Cash]: $localize`:@@ui.tern.especes.b7679d:Espèces`,
+      [PaymentMethod.Check]: $localize`:@@ui.tern.cheque.8bbb89:Chèque`,
+      [PaymentMethod.Card]: $localize`:@@ui.tern.carte.bancaire.9e3d9b:Carte bancaire`,
+      [PaymentMethod.Effect]: $localize`:@@ui.tern.effet.de.commerce.9793a8:Effet de commerce`
     };
-    const method = labels[payment.method] ?? 'Non défini';
+    const method = labels[payment.method] ?? $localize`:@@ui.tern.non.defini.4ed844:Non défini`;
     const terms = payment.daysUntilDue != null ? ` · ${payment.daysUntilDue} j` : '';
     return `${method}${terms}`;
   });

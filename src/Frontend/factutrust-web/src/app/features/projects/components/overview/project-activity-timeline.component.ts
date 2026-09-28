@@ -36,12 +36,10 @@ import {
           }
         </ul>
         @if (compact && activities.length > limit) {
-          <button type="button" class="proj-detail-link proj-detail-link--block" (click)="viewAll.emit()">
-            Voir toute l'activité →
-          </button>
+          <button type="button" class="proj-detail-link proj-detail-link--block" (click)="viewAll.emit()" i18n="@@projects.components.voir.toute.l.activite.f006b3ea"> Voir toute l'activité → </button>
         }
       } @else {
-        <p class="proj-detail-card__desc proj-detail-card__desc--muted">Aucune activité pour l'instant.</p>
+        <p class="proj-detail-card__desc proj-detail-card__desc--muted" i18n="@@projects.components.aucune.activite.pour.l.instant.c875fc7a">Aucune activité pour l'instant.</p>
       }
     </section>
   `
@@ -52,7 +50,7 @@ export class ProjectActivityTimelineComponent {
   @Input() limit = 5;
   @Input() compact = false;
   @Input() showTitle = true;
-  @Input() title = 'Activité récente';
+  @Input() title = $localize`:@@projects.project-activity-timeline.ts.activite.recente.524eaf8e:Activité récente`;
   @Output() viewAll = new EventEmitter<void>();
 
   readonly visual = activityVisual;

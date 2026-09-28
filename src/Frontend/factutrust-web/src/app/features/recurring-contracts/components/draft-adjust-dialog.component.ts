@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, EventEmitter, Input, Output, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -45,14 +46,14 @@ interface EditableDraftLine {
     <p-dialog
       [(visible)]="visible"
       [modal]="true"
-      header="Ajustement du brouillon"
+      header="Ajustement du brouillon" i18n-header="@@recurring-contracts.components.ajustement.du.brouillon.f1a21cbf"
       [style]="{ width: '56rem' }"
       [draggable]="false"
       [resizable]="false"
       (onShow)="onShow()"
       (onHide)="close()">
       @if (loading()) {
-        <p class="status-line">Chargement du brouillon…</p>
+        <p class="status-line" i18n="@@recurring-contracts.components.chargement.du.brouillon.4c123bfd">Chargement du brouillon…</p>
       } @else if (loadError()) {
         <p class="status-line status-line--error">{{ loadError() }}</p>
       } @else {
@@ -60,18 +61,18 @@ interface EditableDraftLine {
           @for (line of lines; track line.index; let i = $index) {
             <div class="line-card">
               <div class="grid">
-                <label>Produit
-                  <input class="ft-input" [value]="line.productName || '— Aucun —'" disabled />
+                <label><ng-container i18n="@@recurring-contracts.components.produit.ff673dc2">Produit
+                  </ng-container><input class="ft-input" [value]="line.productName || '— Aucun —'" disabled />
                 </label>
-                <label class="span-2">Description
-                  <input
+                <label class="span-2"><ng-container i18n="@@recurring-contracts.components.description.55f8ebc8">Description
+                  </ng-container><input
                     class="ft-input"
-                    placeholder="Description"
+                    placeholder="Description" i18n-placeholder="@@recurring-contracts.components.description.55f8ebc8"
                     [(ngModel)]="line.designation"
                     [name]="'adjDesc' + i" />
                 </label>
-                <label>Qté
-                  <input
+                <label><ng-container i18n="@@recurring-contracts.components.qte.a4772129">Qté
+                  </ng-container><input
                     class="ft-input"
                     type="number"
                     min="0.001"
@@ -79,8 +80,8 @@ interface EditableDraftLine {
                     [(ngModel)]="line.quantity"
                     [name]="'adjQty' + i" />
                 </label>
-                <label>Prix unitaire HT
-                  <input
+                <label><ng-container i18n="@@recurring-contracts.components.prix.unitaire.ht.bb3f8e39">Prix unitaire HT
+                  </ng-container><input
                     class="ft-input"
                     type="number"
                     min="0"
@@ -107,20 +108,20 @@ interface EditableDraftLine {
       }
 
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (clicked)="close()" [disabled]="busy()">Annuler</app-button>
+        <app-button variant="outline" (clicked)="close()" [disabled]="busy()" i18n="@@recurring-contracts.components.annuler.49ba3292">Annuler</app-button>
         <app-button
           variant="secondary"
           icon="pi-save"
           [disabled]="!canPersist() || busy()"
           (clicked)="save()">
-          {{ saving() ? 'Enregistrement…' : 'Enregistrer les modifications' }}
+          {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_les_modifications_2a9459 }}
         </app-button>
         <app-button
           variant="primary"
           icon="pi-check"
           [disabled]="!canPersist() || busy()"
           (clicked)="confirmIssue()">
-          {{ issuing() ? 'Émission…' : 'Émettre' }}
+          {{ issuing() ? loc_ui_tern_emission_f2fa21 : loc_ui_tern_emettre_3819c4 }}
         </app-button>
       </ng-template>
     </p-dialog>
@@ -173,6 +174,10 @@ interface EditableDraftLine {
   `]
 })
 export class DraftAdjustDialogComponent {
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_les_modifications_2a9459 = $localize`:@@ui.tern.enregistrer.les.modifications.2a9459:Enregistrer les modifications`;
+  readonly loc_ui_tern_emission_f2fa21 = $localize`:@@ui.tern.emission.f2fa21:Émission…`;
+  readonly loc_ui_tern_emettre_3819c4 = $localize`:@@ui.tern.emettre.3819c4:Émettre`;
   @Input() billingRunId: string | null = null;
   @Input() visible = false;
   @Output() visibleChange = new EventEmitter<boolean>();
@@ -200,17 +205,17 @@ export class DraftAdjustDialogComponent {
     const currency = this.draft()?.currency ?? 'TND';
     const live = this.computeLiveTotals();
     return [
-      { label: 'Total HT', value: live.ht, format: 'currency', currency, icon: 'pi-calculator', tone: 'primary' },
+      { label: $localize`:@@recurring-contracts.draft-adjust-dialog.ts.total.ht.2ca17ae6:Total HT`, value: live.ht, format: 'currency', currency, icon: 'pi-calculator', tone: 'primary' },
       { label: 'TVA', value: live.vat, format: 'currency', currency, icon: 'pi-percentage', tone: 'cyan' },
-      { label: 'Total TTC', value: live.ttc, format: 'currency', currency, icon: 'pi-wallet', tone: 'emerald' },
+      { label: $localize`:@@recurring-contracts.draft-adjust-dialog.ts.total.ttc.9e80ff7c:Total TTC`, value: live.ttc, format: 'currency', currency, icon: 'pi-wallet', tone: 'emerald' },
       {
-        label: 'Estimation mensuelle',
+        label: $localize`:@@recurring-contracts.draft-adjust-dialog.ts.estimation.mensuelle.6c79e54e:Estimation mensuelle`,
         value: live.monthly,
         format: 'currency',
         currency,
         icon: 'pi-sync',
         tone: 'violet',
-        hint: 'Montant de cette échéance ramené au mois'
+        hint: $localize`:@@recurring-contracts.draft-adjust-dialog.ts.montant.de.cette.echeance.ramene.au.mois.83763ed7:Montant de cette échéance ramené au mois`
       }
     ];
   }
@@ -236,8 +241,8 @@ export class DraftAdjustDialogComponent {
       next: () => {
         this.toast.add({
           severity: 'success',
-          summary: 'Brouillon mis à jour',
-          detail: 'Les modifications ont été enregistrées. L\'échéance reste en brouillon.'
+          summary: $localize`:@@draft-adjust-dialog.component.summary.Brouillon_mis_:Brouillon mis à jour`,
+          detail: $localize`:@@draft-adjust-dialog.component.detail.Les_modification:Les modifications ont été enregistrées. L'échéance reste en brouillon.`
         });
         this.close();
         this.saved.emit();
@@ -249,11 +254,11 @@ export class DraftAdjustDialogComponent {
   confirmIssue(): void {
     if (!this.canPersist() || !this.billingRunId) return;
     this.confirmation.confirm({
-      header: 'Confirmer l\'émission',
-      message: 'Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l\'émission ?',
+      header: $localize`:@@recurring-contracts.draft-adjust-dialog.ts.confirmer.l.emission.15b190af:Confirmer l'émission`,
+      message: $localize`:@@recurring-contracts.draft-adjust-dialog.ts.une.fois.validee.cette.facture.ne.pourra.acdbf6bb:Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l'émission ?`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Émettre la facture',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@draft-adjust-dialog.component.acceptLabel.Émettre la f:Émettre la facture`,
+      rejectLabel: $localize`:@@draft-adjust-dialog.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-success',
       size: 'md',
       accept: () => this.issue()
@@ -262,7 +267,7 @@ export class DraftAdjustDialogComponent {
 
   private load(): void {
     if (!this.billingRunId) {
-      this.loadError.set('Échéance introuvable.');
+      this.loadError.set($localize`:@@recurring-contracts.draft-adjust-dialog.ts.echeance.introuvable.9b5c4726:Échéance introuvable.`);
       return;
     }
 
@@ -319,8 +324,8 @@ export class DraftAdjustDialogComponent {
           this.issuing.set(false);
           this.toast.add({
             severity: 'success',
-            summary: 'Facture émise',
-            detail: `Facture ${issued.invoiceNumber} émise.`
+            summary: $localize`:@@draft-adjust-dialog.component.summary.Facture émis:Facture émise`,
+            detail: $localize`:@@recurring-contracts.draft-adjust-dialog.ts.facture.invoicenumber.emise.07d601c8:Facture ${issued.invoiceNumber}:invoiceNumber: émise.`
           });
           this.close();
           this.issued.emit(issued);
@@ -330,7 +335,7 @@ export class DraftAdjustDialogComponent {
           this.errorHandler.logError('RecurringContracts: issue from adjust modal', err);
           this.toast.add({
             severity: 'error',
-            summary: 'Émission impossible',
+            summary: $localize`:@@draft-adjust-dialog.component.summary._mission_impossi:Émission impossible`,
             detail: this.errorHandler.extractErrorMessage(err)
           });
         }
@@ -401,7 +406,7 @@ export class DraftAdjustDialogComponent {
     this.errorHandler.logError(context, err);
     this.toast.add({
       severity: 'error',
-      summary: 'Enregistrement impossible',
+      summary: $localize`:@@draft-adjust-dialog.component.summary.Enregistrement_i:Enregistrement impossible`,
       detail: this.errorHandler.extractErrorMessage(err)
     });
   }

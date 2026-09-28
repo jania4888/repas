@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -26,17 +27,17 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
   template: `
     <p-toast></p-toast>
     <app-studio-page-shell
-      [title]="view()?.displayName ?? 'Vue (lecture seule)'"
-      subtitle="Consultation en lecture seule des données SQL."
+      [title]="view()?.displayName ?? loc_ui_tern_vue_lecture_seule_8649da"
+      subtitle="Consultation en lecture seule des données SQL." i18n-subtitle="@@studio.studio-view-runner.consultation.en.lecture.seule.des.donnee.43b49f5a"
       [breadcrumbs]="breadcrumbs()">
       @if (view()?.definition?.search !== false) {
         <div class="ft-filters">
           <div class="ft-filters__header">
-            <h3 class="ft-filters__title"><i class="pi pi-search"></i> Recherche</h3>
+            <h3 class="ft-filters__title" i18n="@@studio.studio-view-runner.recherche.5d0766ce"><i class="pi pi-search"></i> Recherche</h3>
           </div>
           <div class="studio-toolbar">
-            <input pInputText [(ngModel)]="search" (keyup.enter)="reload()" placeholder="Rechercher…" class="studio-search-input" />
-            <button pButton type="button" icon="fa-solid fa-magnifying-glass" label="Rechercher" class="p-button-sm" (click)="reload()"></button>
+            <input pInputText [(ngModel)]="search" (keyup.enter)="reload()" placeholder="Rechercher…" i18n-placeholder="@@studio.studio-view-runner.rechercher.1d12cdfb" class="studio-search-input" />
+            <button pButton type="button" icon="fa-solid fa-magnifying-glass" label="Rechercher" i18n-label="@@studio.studio-view-runner.rechercher.91f7d3e9" class="p-button-sm" (click)="reload()"></button>
           </div>
         </div>
       }
@@ -55,6 +56,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
   styleUrl: './shared/studio-layout.scss',
 })
 export class StudioViewRunnerComponent implements OnInit {
+  readonly loc_ui_tern_vue_lecture_seule_8649da = $localize`:@@ui.tern.vue.lecture.seule.8649da:Vue (lecture seule)`;
   private readonly studio = inject(StudioService);
   private readonly toast = inject(MessageService);
   private readonly route = inject(ActivatedRoute);
@@ -63,7 +65,7 @@ export class StudioViewRunnerComponent implements OnInit {
   readonly result = signal<ReportResult | null>(null);
   readonly loading = signal(true);
   readonly totalRecords = signal(0);
-  readonly breadcrumbs = signal<BreadcrumbItem[]>(STUDIO_BREADCRUMBS.viewRunner('Vue'));
+  readonly breadcrumbs = signal<BreadcrumbItem[]>(STUDIO_BREADCRUMBS.viewRunner($localize`:@@studio.studio-view-runner.ts.vue.09237dba:Vue`));
 
   private id = '';
   search = '';
@@ -113,7 +115,7 @@ export class StudioViewRunnerComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Vue introuvable.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@studio-view-runner.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-view-runner.component.detail.Vue_introuvable_:Vue introuvable.` });
       }
     });
   }

@@ -22,10 +22,10 @@ function optionalPattern(pattern: RegExp, message: string): ValidatorFn {
 }
 
 export const tunisianPayrollValidators = {
-  cin: optionalPattern(CIN_PATTERN, 'Le CIN doit comporter 8 chiffres.'),
-  cnss: optionalPattern(CNSS_PATTERN, 'Le numéro CNSS doit comporter 10 chiffres.'),
-  rib: optionalPattern(RIB_PATTERN, 'Le RIB doit comporter 20 chiffres.'),
-  phone: optionalPattern(TN_PHONE_PATTERN, 'Numéro de téléphone tunisien invalide.'),
+  cin: optionalPattern(CIN_PATTERN, $localize`:@@core.tunisian-payroll.validators.ts.le.cin.doit.comporter.8.chiffres.fd83b5c9:Le CIN doit comporter 8 chiffres.`),
+  cnss: optionalPattern(CNSS_PATTERN, $localize`:@@core.tunisian-payroll.validators.ts.le.numero.cnss.doit.comporter.10.chiffre.c2766358:Le numéro CNSS doit comporter 10 chiffres.`),
+  rib: optionalPattern(RIB_PATTERN, $localize`:@@core.tunisian-payroll.validators.ts.le.rib.doit.comporter.20.chiffres.47214575:Le RIB doit comporter 20 chiffres.`),
+  phone: optionalPattern(TN_PHONE_PATTERN, $localize`:@@core.tunisian-payroll.validators.ts.numero.de.telephone.tunisien.invalide.a973b508:Numéro de téléphone tunisien invalide.`),
   governorate: (control: AbstractControl): ValidationErrors | null => {
     const raw = control.value;
     if (raw == null || String(raw).trim() === '') return null;
@@ -42,15 +42,15 @@ export const tunisianPayrollValidators = {
     const disabled = Number(group.get('disabledChildren')?.value ?? 0);
     return students + disabled <= total
       ? null
-      : { familyCounts: 'Le total des enfants étudiants et infirmes ne peut pas dépasser le nombre d’enfants à charge.' };
+      : { familyCounts: $localize`:@@core.tunisian-payroll.validators.ts.le.total.des.enfants.etudiants.et.infirm.c4cba19a:Le total des enfants étudiants et infirmes ne peut pas dépasser le nombre d’enfants à charge.` };
   }
 };
 
 export function formatValidationError(errors: ValidationErrors | null): string | null {
   if (!errors) return null;
   if (errors['tunisianFormat']) return errors['tunisianFormat'] as string;
-  if (errors['required']) return 'Ce champ est obligatoire.';
+  if (errors['required']) return $localize`:@@core.tunisian-payroll.validators.ts.ce.champ.est.obligatoire.95840ee3:Ce champ est obligatoire.`;
   if (errors['email']) return 'Adresse e-mail invalide.';
-  if (errors['min']) return 'La valeur est trop faible.';
+  if (errors['min']) return $localize`:@@core.tunisian-payroll.validators.ts.la.valeur.est.trop.faible.687e393d:La valeur est trop faible.`;
   return 'Valeur invalide.';
 }

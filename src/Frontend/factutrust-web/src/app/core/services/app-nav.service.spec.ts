@@ -14,6 +14,7 @@ import { StudioAiCapabilitiesService } from '@features/studio/ai/studio-ai-capab
 import { StudioApprovalsBadgeService } from '@features/studio/approvals/studio-approvals-badge.service';
 import { AppModule } from '@core/models/app-module';
 import { SECONDARY_NAV_SECTION_ORDER } from '@core/config/secondary-nav.config';
+import { getNavId, NAV_ID, STUDIO_CHILD_NAV_ID, studioDynamicNavId } from '@core/config/nav-item-ids';
 import { AppNavService } from './app-nav.service';
 import { StockFeaturesStore } from './stock-features-store.service';
 import { VARIANT_AXES_PATH } from '@features/settings/variant-axes/variant-axes.paths';
@@ -148,10 +149,12 @@ function makeBadgeStub(): BadgeStub {
 describe('AppNavService — secondary nav parity', () => {
   let capsStub: CapsStub;
   let badgeStub: BadgeStub;
+  let studioNavItems: { key: string; label: string; icon: string | null; route: string }[];
 
   beforeEach(() => {
     capsStub = makeCapsStub();
     badgeStub = makeBadgeStub();
+    studioNavItems = [];
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
@@ -170,7 +173,7 @@ describe('AppNavService — secondary nav parity', () => {
         },
         {
           provide: StudioNavService,
-          useValue: { items: () => [] }
+          useValue: { items: () => studioNavItems }
         },
         {
           provide: StudioAiCapabilitiesService,
@@ -190,9 +193,9 @@ describe('AppNavService — secondary nav parity', () => {
     TestBed.inject(FirmContextService).syncFromUser();
 
     const nav = TestBed.inject(AppNavService);
-    const labels = nav.secondaryNavSections().map(s => s.label);
+    const sectionIds = nav.secondaryNavSections().map(s => getNavId(s));
 
-    expect(labels).toEqual([...SECONDARY_NAV_SECTION_ORDER]);
+    expect(sectionIds).toEqual([...SECONDARY_NAV_SECTION_ORDER]);
     expect(nav.hasSecondaryNav()).toBeTrue();
   });
 
@@ -519,6 +522,58 @@ describe('AppNavService — secondary nav parity', () => {
   function studioChildLabels(nav: AppNavService): string[] {
     return nav.navItems().find(i => i.label === 'Studio')?.children?.map(c => c.label) ?? [];
   }
+
+  it('donne un id stable à Studio pour que la barre secondaire ne plante pas', () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, {
+      ...studioDesignerUser,
+      effectivePermissions: [
+        ...studioDesignerUser.effectivePermissions!,
+        'studio:design_forms',
+        'studio:design_reports'
+      ]
+    });
+    TestBed.inject(FirmContextService).syncFromUser();
+    capsStub.workflowsEnabled.set(true);
+    studioNavItems.push({
+      key: 'chantiers',
+      label: 'Chantiers du client',
+      icon: null,
+      route: '/studio/d/chantiers'
+    });
+
+    const nav = TestBed.inject(AppNavService);
+
+    expect(() => nav.secondaryNavSections()).not.toThrow();
+    const sectionIds = nav.secondaryNavSections().map(s => getNavId(s));
+    expect(sectionIds).not.toContain(NAV_ID.studio);
+    expect(sectionIds).toContain('sales');
+
+    const studio = nav.navItems().find(i => i.label === 'Studio');
+    expect(studio?.id).toBe(NAV_ID.studio);
+    expect(studio?.children?.map(c => ({ id: c.id, label: c.label, route: c.route }))).toEqual([
+      { id: STUDIO_CHILD_NAV_ID.tables, label: 'Concepteur de tables', route: '/studio' },
+      { id: STUDIO_CHILD_NAV_ID.forms, label: 'Formulaires', route: '/studio/forms' },
+      { id: STUDIO_CHILD_NAV_ID.reports, label: 'Rapports', route: '/studio/reports' },
+      { id: STUDIO_CHILD_NAV_ID.ai, label: 'Assistant IA', route: '/studio/ai' },
+      { id: STUDIO_CHILD_NAV_ID.workflows, label: 'Workflows', route: '/studio/workflows' },
+      { id: STUDIO_CHILD_NAV_ID.approvals, label: 'Mes approbations', route: '/studio/approvals' },
+      { id: studioDynamicNavId('chantiers'), label: 'Chantiers du client', route: '/studio/d/chantiers' }
+    ]);
+  });
+
+  it("n'ajoute pas Studio au menu d'une société sans droit Studio", () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, companyUser);
+    TestBed.inject(FirmContextService).syncFromUser();
+
+    const nav = TestBed.inject(AppNavService);
+
+    expect(() => nav.secondaryNavSections()).not.toThrow();
+    expect(nav.navItems().map(i => i.label)).not.toContain('Studio');
+    expect(nav.secondaryNavSections().map(s => s.label)).toContain('Ventes');
+    expect(nav.secondaryNavSections().map(s => getNavId(s))).not.toContain(NAV_ID.studio);
+  });
 
   it('ajoute Workflows et Mes approbations à la section Studio quand workflowsEnabled est vrai', () => {
     const auth = TestBed.inject(AuthService);

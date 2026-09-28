@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -20,35 +21,35 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
   template: `
     <p-toast></p-toast>
     <app-studio-page-shell
-      title="Formulaires & vues"
-      subtitle="Concevez le formulaire de saisie ou une vue lecture seule sur une table SQL."
+      title="Formulaires & vues" i18n-title="@@studio.studio-form-hub.formulaires.vues.b08f8230"
+      subtitle="Concevez le formulaire de saisie ou une vue lecture seule sur une table SQL." i18n-subtitle="@@studio.studio-form-hub.concevez.le.formulaire.de.saisie.ou.une.302ba94b"
       [breadcrumbs]="breadcrumbs">
-      <button pButton type="button" label="Nouvelle vue" icon="fa-solid fa-database" class="p-button-outlined"
+      <button pButton type="button" label="Nouvelle vue" i18n-label="@@studio.studio-form-hub.nouvelle.vue.5c1894bc" icon="fa-solid fa-database" class="p-button-outlined"
         studioActions routerLink="/studio/views/new"></button>
 
       <div class="studio-section-card">
-        <h2 class="studio-section-title">Mes tables personnalisées</h2>
+        <h2 class="studio-section-title" i18n="@@studio.studio-form-hub.mes.tables.personnalisees.544bd9ef">Mes tables personnalisées</h2>
         <div class="ft-table-card">
           <p-table [value]="entities()" [loading]="loading()" styleClass="p-datatable-sm">
             <ng-template pTemplate="header">
-              <tr><th>Table</th><th class="studio-num">Champs</th><th style="width:22rem"></th></tr>
+              <tr><th i18n="@@studio.studio-form-hub.table.0424f6e7">Table</th><th class="studio-num" i18n="@@studio.studio-form-hub.champs.76943546">Champs</th><th style="width:22rem"></th></tr>
             </ng-template>
             <ng-template pTemplate="body" let-e>
               <tr>
                 <td><i [class]="e.icon || 'fa-solid fa-table'" class="studio-mr"></i><strong>{{ e.displayName }}</strong></td>
                 <td class="studio-num">{{ e.fieldCount }}</td>
                 <td class="studio-actions">
-                  <button pButton type="button" icon="fa-solid fa-table-cells-large" label="Formulaire"
+                  <button pButton type="button" icon="fa-solid fa-table-cells-large" label="Formulaire" i18n-label="@@studio.studio-form-hub.formulaire.87e4e76f"
                     class="p-button-sm" [routerLink]="['/studio', e.id, 'form']"></button>
-                  <button pButton type="button" icon="fa-solid fa-table-list" label="Données"
+                  <button pButton type="button" icon="fa-solid fa-table-list" label="Données" i18n-label="@@studio.studio-form-hub.donnees.e3e0c5ec"
                     class="p-button-sm p-button-text" [routerLink]="['/studio/d', e.key]"></button>
                 </td>
               </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage">
               <tr><td colspan="3">
-                <app-empty-state icon="pi-table" title="Aucune table" description="Créez une table personnalisée pour concevoir son formulaire."
-                  actionLabel="Créer une table" actionRoute="/studio" [showAction]="true" />
+                <app-empty-state icon="pi-table" title="Aucune table" i18n-title="@@studio.studio-form-hub.aucune.table.05210918" description="Créez une table personnalisée pour concevoir son formulaire." i18n-description="@@studio.studio-form-hub.creez.une.table.personnalisee.pour.conce.9030295d"
+                  actionLabel="Créer une table" i18n-actionLabel="@@studio.studio-form-hub.creer.une.table.15efa9ae" actionRoute="/studio" [showAction]="true" />
               </td></tr>
             </ng-template>
           </p-table>
@@ -56,27 +57,27 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
       </div>
 
       <div class="studio-section-card">
-        <h2 class="studio-section-title">Vues lecture seule</h2>
+        <h2 class="studio-section-title" i18n="@@studio.studio-form-hub.vues.lecture.seule.78adbdec">Vues lecture seule</h2>
         <div class="ft-table-card">
           <p-table [value]="views()" [loading]="loadingViews()" styleClass="p-datatable-sm">
             <ng-template pTemplate="header">
-              <tr><th>Vue</th><th>Table source</th><th style="width:16rem"></th></tr>
+              <tr><th i18n="@@studio.studio-form-hub.vue.09237dba">Vue</th><th i18n="@@studio.studio-form-hub.table.source.e8534ba8">Table source</th><th style="width:16rem"></th></tr>
             </ng-template>
             <ng-template pTemplate="body" let-v>
               <tr>
                 <td><i class="fa-solid fa-database studio-mr"></i><strong>{{ v.displayName }}</strong></td>
                 <td><code>{{ v.sourceTable }}</code></td>
                 <td class="studio-actions">
-                  <button pButton type="button" icon="fa-solid fa-eye" label="Voir" class="p-button-sm p-button-text" [routerLink]="['/studio/views', v.id, 'view']"></button>
-                  <button pButton type="button" icon="fa-solid fa-pen" class="p-button-sm p-button-text" [routerLink]="['/studio/views', v.id]" pTooltip="Modifier"></button>
+                  <button pButton type="button" icon="fa-solid fa-eye" label="Voir" i18n-label="@@studio.studio-form-hub.voir.8a754f1f" class="p-button-sm p-button-text" [routerLink]="['/studio/views', v.id, 'view']"></button>
+                  <button pButton type="button" icon="fa-solid fa-pen" class="p-button-sm p-button-text" [routerLink]="['/studio/views', v.id]" pTooltip="Modifier" i18n-pTooltip="@@studio.studio-form-hub.modifier.f260e757"></button>
                   <button pButton type="button" icon="fa-solid fa-trash" class="p-button-sm p-button-text p-button-danger" (click)="removeView(v)"></button>
                 </td>
               </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage">
               <tr><td colspan="3">
-                <app-empty-state icon="pi-database" title="Aucune vue" description="Créez une vue lecture seule sur une table existante."
-                  actionLabel="Nouvelle vue" actionRoute="/studio/views/new" [showAction]="true" />
+                <app-empty-state icon="pi-database" title="Aucune vue" i18n-title="@@studio.studio-form-hub.aucune.vue.6f4edeb8" description="Créez une vue lecture seule sur une table existante." i18n-description="@@studio.studio-form-hub.creez.une.vue.lecture.seule.sur.une.tabl.99d1ed07"
+                  actionLabel="Nouvelle vue" i18n-actionLabel="@@studio.studio-form-hub.nouvelle.vue.1753324a" actionRoute="/studio/views/new" [showAction]="true" />
               </td></tr>
             </ng-template>
           </p-table>
@@ -101,7 +102,7 @@ export class StudioFormHubComponent implements OnInit {
     this.loading.set(true);
     this.studio.listEntities(false).subscribe({
       next: res => { this.loading.set(false); if (res.success) this.entities.set(res.data ?? []); },
-      error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Chargement impossible.' }); }
+      error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: $localize`:@@studio-form-hub.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-form-hub.component.detail.Chargement_impos:Chargement impossible.` }); }
     });
     this.loadViews();
   }
@@ -116,14 +117,14 @@ export class StudioFormHubComponent implements OnInit {
 
   removeView(v: CustomView): void {
     this.confirmation.confirm({
-      message: `Supprimer la vue « ${v.displayName} » ?`,
-      header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      message: $localize`:@@studio.studio-form-hub.ts.supprimer.la.vue.displayname.493ea5a6:Supprimer la vue « ${v.displayName}:displayName: » ?`,
+      header: $localize`:@@studio.studio-form-hub.ts.confirmation.3424edc2:Confirmation`,
+      acceptLabel: $localize`:@@studio-form-hub.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@studio-form-hub.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.studio.deleteView(v.id).subscribe({
           next: res => { if (res.success) this.loadViews(); },
-          error: () => this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Suppression impossible.' })
+          error: () => this.toast.add({ severity: 'error', summary: $localize`:@@studio-form-hub.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-form-hub.component.detail.Suppression_impo:Suppression impossible.` })
         });
       }
     });

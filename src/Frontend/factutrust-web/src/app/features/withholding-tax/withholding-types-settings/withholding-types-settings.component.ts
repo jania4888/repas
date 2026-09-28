@@ -2,35 +2,36 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { WithholdingTaxService, WithholdingTaxTypeDto } from '@core/services/withholding-tax.service';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 @Component({
   selector: 'app-withholding-types-settings',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, BackendLabelPipe],
   template: `
     <div class="page-container">
       <div class="page-header">
         <div>
-          <h1>Types de retenue à la source</h1>
-          <p class="subtitle">Catalogue des codes d'opération conformes aux articles 52 et 53 du Code IRPP/IS</p>
+          <h1 i18n="@@withholding-tax.withholding-types-settings.types.de.retenue.a.la.source.0fd2fb62">Types de retenue à la source</h1>
+          <p class="subtitle" i18n="@@withholding-tax.withholding-types-settings.catalogue.des.codes.d.operation.conformes.aux.ar.3137d8c5">Catalogue des codes d'opération conformes aux articles 52 et 53 du Code IRPP/IS</p>
         </div>
-        <a routerLink="/withholding-tax/dashboard" class="btn btn-outline">
+        <a routerLink="/withholding-tax/dashboard" class="btn btn-outline" i18n="@@withholding-tax.withholding-types-settings.tableau.de.bord.817f7ae6">
           <i class="fa-solid fa-arrow-left"></i> Tableau de bord
         </a>
       </div>
 
       @if (loading) {
-        <div class="loading-state"><i class="fa-solid fa-spinner fa-spin"></i> Chargement…</div>
+        <div class="loading-state" i18n="@@withholding-tax.withholding-types-settings.chargement.fbee6e98"><i class="fa-solid fa-spinner fa-spin"></i> Chargement…</div>
       }
 
       @if (!loading) {
         <!-- Summary -->
         <div class="summary-bar">
-          <span>{{ types.length }} type(s) configuré(s)</span>
+          <span i18n="@@withholding-tax.withholding-types-settings.type.s.configure.s.781cc5e5">{{ types.length }} type(s) configuré(s)</span>
           <div class="filter-group">
-            <button class="chip" [class.active]="filter === ''" (click)="filter = ''">Tous</button>
+            <button class="chip" [class.active]="filter === ''" (click)="filter = ''" i18n="@@withholding-tax.withholding-types-settings.tous.b97ae3b4">Tous</button>
             @for (cat of categories; track cat) {
-              <button class="chip" [class.active]="filter === cat" (click)="filter = cat">{{ cat }}</button>
+              <button class="chip" [class.active]="filter === cat" (click)="filter = cat">{{ cat | backendLabel }}</button>
             }
           </div>
         </div>
@@ -40,13 +41,13 @@ import { WithholdingTaxService, WithholdingTaxTypeDto } from '@core/services/wit
             <table>
               <thead>
                 <tr>
-                  <th>Code</th>
-                  <th>Libellé</th>
-                  <th>Catégorie</th>
-                  <th class="right">Taux (%)</th>
-                  <th class="center">Résidents</th>
-                  <th class="center">Non-résidents</th>
-                  <th class="center">Actif</th>
+                  <th i18n="@@withholding-tax.withholding-types-settings.code.adac6937">Code</th>
+                  <th i18n="@@withholding-tax.withholding-types-settings.libelle.f5485bba">Libellé</th>
+                  <th i18n="@@withholding-tax.withholding-types-settings.categorie.6b38300a">Catégorie</th>
+                  <th class="right" i18n="@@withholding-tax.withholding-types-settings.taux.bb9a8c5a">Taux (%)</th>
+                  <th class="center" i18n="@@withholding-tax.withholding-types-settings.residents.d48bc77b">Résidents</th>
+                  <th class="center" i18n="@@withholding-tax.withholding-types-settings.non.residents.5d688ea2">Non-résidents</th>
+                  <th class="center" i18n="@@withholding-tax.withholding-types-settings.actif.2eb75f84">Actif</th>
                 </tr>
               </thead>
               <tbody>
@@ -54,20 +55,20 @@ import { WithholdingTaxService, WithholdingTaxTypeDto } from '@core/services/wit
                   <tr>
                     <td><code>{{ type.code }}</code></td>
                     <td>{{ type.label }}</td>
-                    <td><span class="category-badge">{{ type.categoryLabel }}</span></td>
+                    <td><span class="category-badge">{{ type.categoryLabel | backendLabel }}</span></td>
                     <td class="right">{{ type.defaultRate | number:'1.2-2' }}</td>
                     <td class="center">
                       @if (type.applicableToResident) {
                         <i class="fa-solid fa-check check-icon"></i>
                       } @else {
-                        <span class="dash">—</span>
+                        <span class="dash" i18n="@@withholding-tax.withholding-types-settings.text.1b93795b">—</span>
                       }
                     </td>
                     <td class="center">
                       @if (type.applicableToNonResident) {
                         <i class="fa-solid fa-check check-icon"></i>
                       } @else {
-                        <span class="dash">—</span>
+                        <span class="dash" i18n="@@withholding-tax.withholding-types-settings.text.1b93795b">—</span>
                       }
                     </td>
                     <td class="center">
@@ -80,7 +81,7 @@ import { WithholdingTaxService, WithholdingTaxTypeDto } from '@core/services/wit
                   </tr>
                 } @empty {
                   <tr>
-                    <td colspan="7" class="empty-state">Aucun type de retenue trouvé pour ce filtre.</td>
+                    <td colspan="7" class="empty-state" i18n="@@withholding-tax.withholding-types-settings.aucun.type.de.retenue.trouve.pour.ce.filtre.efc8bc97">Aucun type de retenue trouvé pour ce filtre.</td>
                   </tr>
                 }
               </tbody>
@@ -90,13 +91,11 @@ import { WithholdingTaxService, WithholdingTaxTypeDto } from '@core/services/wit
 
         <!-- Info card -->
         <div class="info-card">
-          <h3><i class="fa-solid fa-info-circle"></i> Référentiel fiscal</h3>
-          <p>
-            Les codes d'opération sont définis par l'administration fiscale tunisienne et correspondent aux
+          <h3 i18n="@@withholding-tax.withholding-types-settings.referentiel.fiscal.e7de616f"><i class="fa-solid fa-info-circle"></i> Référentiel fiscal</h3>
+          <p i18n="@@withholding-tax.withholding-types-settings.les.codes.d.operation.sont.definis.par.l.adminis.3dec3bd1"> Les codes d'opération sont définis par l'administration fiscale tunisienne et correspondent aux
             catégories prévues par les articles 52 et 53 du Code de l'IRPP et de l'IS.
             Les taux affichés sont les taux par défaut ; un taux réduit ou une exonération peut s'appliquer
-            en vertu d'une convention de non-double imposition (CNPC).
-          </p>
+            en vertu d'une convention de non-double imposition (CNPC). </p>
         </div>
       }
     </div>
@@ -114,9 +113,9 @@ import { WithholdingTaxService, WithholdingTaxTypeDto } from '@core/services/wit
     .table-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; }
     .table-wrapper { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-    th, td { padding: 0.625rem 0.75rem; border-bottom: 1px solid var(--border); text-align: left; }
+    th, td { padding: 0.625rem 0.75rem; border-bottom: 1px solid var(--border); text-align: start; }
     th { font-weight: 500; color: var(--text-secondary); font-size: 0.8125rem; background: var(--bg-secondary); }
-    .right { text-align: right; font-variant-numeric: tabular-nums; }
+    .right { text-align: end; font-variant-numeric: tabular-nums; }
     .center { text-align: center; }
     code { font-size: 0.8125rem; background: var(--bg-secondary); padding: 0.125rem 0.375rem; border-radius: 3px; }
     .category-badge { display: inline-block; padding: 0.125rem 0.5rem; background: #e0e7ff; color: #3730a3; border-radius: 999px; font-size: 0.75rem; font-weight: 500; }

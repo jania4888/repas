@@ -65,24 +65,24 @@ const FILE_BASE_BY_TAB: readonly string[] = [
   ],
   template: `
     <app-page-header
-      title="Récapitulatifs de journaux"
-      subtitle="Centralisateur, récapitulation et totaux journaux" />
+      title="Récapitulatifs de journaux" i18n-title="@@accounting.journal-summary.recapitulatifs.de.journaux.39863c76"
+      subtitle="Centralisateur, récapitulation et totaux journaux" i18n-subtitle="@@accounting.journal-summary.centralisateur.recapitulation.et.totaux.a68ca626" />
 
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Période et journal">
+      <app-accounting-filter-bar ariaLabel="Période et journal" i18n-ariaLabel="@@accounting.journal-summary.periode.et.journal.2147fcf5">
         <div accountingFilterFields class="js-fields">
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="js-from">Du</label>
+            <label class="accounting-filter-label" for="js-from" i18n="@@accounting.journal-summary.du.84814985">Du</label>
             <input id="js-from" type="date" [(ngModel)]="fromStr" class="accounting-filter-input" />
           </div>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="js-to">Au</label>
+            <label class="accounting-filter-label" for="js-to" i18n="@@accounting.journal-summary.au.7a1732d5">Au</label>
             <input id="js-to" type="date" [(ngModel)]="toStr" class="accounting-filter-input" />
           </div>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="js-journal">Journal</label>
+            <label class="accounting-filter-label" for="js-journal" i18n="@@accounting.journal-summary.journal.57d7f743">Journal</label>
             <select id="js-journal" [(ngModel)]="journalCode" class="accounting-filter-input">
-              <option value="">Tous</option>
+              <option value="" i18n="@@accounting.journal-summary.tous.b97ae3b4">Tous</option>
               @for (j of journals(); track j.code) {
                 <option [value]="j.code">{{ j.code }} — {{ j.label }}</option>
               }
@@ -97,9 +97,7 @@ const FILE_BASE_BY_TAB: readonly string[] = [
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Actualiser le récapitulatif pour la période sélectionnée">
-            Actualiser
-          </app-button>
+            ariaLabel="Actualiser le récapitulatif pour la période sélectionnée" i18n-ariaLabel="@@accounting.journal-summary.actualiser.le.recapitulatif.pour.la.peri.cfc22773" i18n="@@accounting.journal-summary.actualiser.9d3b2a7d"> Actualiser </app-button>
           <app-accounting-export-menu
             [disabled]="loading() || exporting() || !summary()"
             (exportFormat)="onExport($event)" />
@@ -111,22 +109,22 @@ const FILE_BASE_BY_TAB: readonly string[] = [
       variant="error"
       [message]="error() ?? ''"
       [showRetry]="!!error()"
-      retryLabel="Réessayer"
+      retryLabel="Réessayer" i18n-retryLabel="@@accounting.journal-summary.reessayer.c4f78b12"
       (retry)="load()" />
 
     @if (summary(); as s) {
       @if (!s.isBalanced) {
         <app-accounting-status-banner
           variant="warning"
-          message="Contrôle : total débit ≠ total crédit sur la période. Vérifiez les écritures avant d'exploiter cet état." />
+          message="Contrôle : total débit ≠ total crédit sur la période. Vérifiez les écritures avant d'exploiter cet état." i18n-message="@@accounting.journal-summary.controle.total.debit.total.credit.sur.la.1ea8752a" />
       }
     }
 
     <p-tabs [(value)]="activeTabIndex" (valueChange)="onTabChange()" [lazy]="true">
       <p-tablist>
-        <p-tab [value]="0">Centralisateur</p-tab>
-        <p-tab [value]="1">Récapitulation</p-tab>
-        <p-tab [value]="2">Totaux journaux</p-tab>
+        <p-tab [value]="0" i18n="@@accounting.journal-summary.centralisateur.3ed70b17">Centralisateur</p-tab>
+        <p-tab [value]="1" i18n="@@accounting.journal-summary.recapitulation.072c711a">Récapitulation</p-tab>
+        <p-tab [value]="2" i18n="@@accounting.journal-summary.totaux.journaux.2c1a92c9">Totaux journaux</p-tab>
       </p-tablist>
       <p-tabpanels>
       <!-- ══ Centralisateur : journaux × mois ══════════════════════════════ -->
@@ -136,20 +134,20 @@ const FILE_BASE_BY_TAB: readonly string[] = [
             <table class="js-matrix">
               <thead>
                 <tr>
-                  <th scope="col" class="js-sticky">Journal</th>
+                  <th scope="col" class="js-sticky" i18n="@@accounting.journal-summary.journal.57d7f743">Journal</th>
                   @for (p of s.periods; track p.label) {
                     <th scope="col" colspan="2" class="js-month">{{ p.label }}</th>
                   }
-                  <th scope="col" colspan="2" class="js-month js-total-col">Total</th>
+                  <th scope="col" colspan="2" class="js-month js-total-col" i18n="@@accounting.journal-summary.total.b25928c6">Total</th>
                 </tr>
                 <tr>
                   <th scope="col" class="js-sticky"></th>
                   @for (p of s.periods; track p.label) {
-                    <th scope="col" class="js-num js-sub">D</th>
-                    <th scope="col" class="js-num js-sub">C</th>
+                    <th scope="col" class="js-num js-sub" i18n="@@accounting.journal-summary.d.50c9e8d5">D</th>
+                    <th scope="col" class="js-num js-sub" i18n="@@accounting.journal-summary.c.32096c2e">C</th>
                   }
-                  <th scope="col" class="js-num js-sub js-total-col">D</th>
-                  <th scope="col" class="js-num js-sub js-total-col">C</th>
+                  <th scope="col" class="js-num js-sub js-total-col" i18n="@@accounting.journal-summary.d.50c9e8d5">D</th>
+                  <th scope="col" class="js-num js-sub js-total-col" i18n="@@accounting.journal-summary.c.32096c2e">C</th>
                 </tr>
               </thead>
               <tbody>
@@ -169,15 +167,13 @@ const FILE_BASE_BY_TAB: readonly string[] = [
                 }
                 @if (centralizerRows().length === 0) {
                   <tr>
-                    <td [attr.colspan]="s.periods.length * 2 + 3" class="js-empty">
-                      Aucun mouvement sur la période.
-                    </td>
+                    <td [attr.colspan]="s.periods.length * 2 + 3" class="js-empty" i18n="@@accounting.journal-summary.aucun.mouvement.sur.la.periode.9d40027a"> Aucun mouvement sur la période. </td>
                   </tr>
                 }
               </tbody>
               <tfoot>
                 <tr class="acc-totals-row">
-                  <td class="js-sticky">Total général</td>
+                  <td class="js-sticky" i18n="@@accounting.journal-summary.total.general.b6793855">Total général</td>
                   @for (cell of periodTotals(); track $index) {
                     <td class="js-num">{{ cell.debit ? (cell.debit | number : '1.3-3') : '' }}</td>
                     <td class="js-num">{{ cell.credit ? (cell.credit | number : '1.3-3') : '' }}</td>
@@ -202,36 +198,36 @@ const FILE_BASE_BY_TAB: readonly string[] = [
           [rowHover]="true"
           styleClass="p-datatable-sm accounting-datatable"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes">
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="@@accounting.journal-summary.affichage.de.first.a.last.sur.totalrecords.ligne.3b382824">
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Journal</th>
-              <th scope="col">Libellé</th>
-              <th scope="col">Compte</th>
-              <th scope="col">Intitulé</th>
-              <th scope="col" class="js-num">Débit</th>
-              <th scope="col" class="js-num">Crédit</th>
+              <th scope="col" i18n="@@accounting.journal-summary.journal.57d7f743">Journal</th>
+              <th scope="col" i18n="@@accounting.journal-summary.libelle.f5485bba">Libellé</th>
+              <th scope="col" i18n="@@accounting.journal-summary.compte.c45740bb">Compte</th>
+              <th scope="col" i18n="@@accounting.journal-summary.intitule.9f19d904">Intitulé</th>
+              <th scope="col" class="js-num" i18n="@@accounting.journal-summary.debit.f528224f">Débit</th>
+              <th scope="col" class="js-num" i18n="@@accounting.journal-summary.credit.19194bdf">Crédit</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-c>
             <tr>
-              <td data-label="Journal"><span class="js-code">{{ c.journalCode }}</span></td>
-              <td data-label="Libellé">{{ c.journalLabel }}</td>
-              <td data-label="Compte"><span class="js-code">{{ c.accountNumber }}</span></td>
-              <td data-label="Intitulé">{{ c.accountLabel }}</td>
-              <td data-label="Débit" class="js-num">{{ c.debit | number : '1.3-3' }}</td>
-              <td data-label="Crédit" class="js-num">{{ c.credit | number : '1.3-3' }}</td>
+              <td data-label="Journal" i18n-data-label="@@accounting.journal-summary.journal.57d7f743"><span class="js-code">{{ c.journalCode }}</span></td>
+              <td data-label="Libellé" i18n-data-label="@@accounting.journal-summary.libelle.f5485bba">{{ c.journalLabel }}</td>
+              <td data-label="Compte" i18n-data-label="@@accounting.journal-summary.compte.c45740bb"><span class="js-code">{{ c.accountNumber }}</span></td>
+              <td data-label="Intitulé" i18n-data-label="@@accounting.journal-summary.intitule.9f19d904">{{ c.accountLabel }}</td>
+              <td data-label="Débit" i18n-data-label="@@accounting.journal-summary.debit.f528224f" class="js-num">{{ c.debit | number : '1.3-3' }}</td>
+              <td data-label="Crédit" i18n-data-label="@@accounting.journal-summary.credit.19194bdf" class="js-num">{{ c.credit | number : '1.3-3' }}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="footer">
             <tr class="acc-totals-row">
-              <td colspan="4">Total général</td>
+              <td colspan="4" i18n="@@accounting.journal-summary.total.general.b6793855">Total général</td>
               <td class="js-num">{{ summary()?.totalDebit | number : '1.3-3' }}</td>
               <td class="js-num">{{ summary()?.totalCredit | number : '1.3-3' }}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
-            <tr><td colspan="6" class="js-empty">Aucun mouvement sur la période.</td></tr>
+            <tr><td colspan="6" class="js-empty" i18n="@@accounting.journal-summary.aucun.mouvement.sur.la.periode.9d40027a">Aucun mouvement sur la période.</td></tr>
           </ng-template>
         </p-table>
       </p-tabpanel>
@@ -245,31 +241,31 @@ const FILE_BASE_BY_TAB: readonly string[] = [
           styleClass="p-datatable-sm accounting-datatable">
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Journal</th>
-              <th scope="col">Libellé</th>
-              <th scope="col" class="js-num">Écritures</th>
-              <th scope="col" class="js-num">Total débit</th>
-              <th scope="col" class="js-num">Total crédit</th>
+              <th scope="col" i18n="@@accounting.journal-summary.journal.57d7f743">Journal</th>
+              <th scope="col" i18n="@@accounting.journal-summary.libelle.f5485bba">Libellé</th>
+              <th scope="col" class="js-num" i18n="@@accounting.journal-summary.ecritures.7bfac2f6">Écritures</th>
+              <th scope="col" class="js-num" i18n="@@accounting.journal-summary.total.debit.ea9c4853">Total débit</th>
+              <th scope="col" class="js-num" i18n="@@accounting.journal-summary.total.credit.98c95962">Total crédit</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-t>
             <tr>
-              <td data-label="Journal"><span class="js-code">{{ t.journalCode }}</span></td>
-              <td data-label="Libellé">{{ t.journalLabel }}</td>
-              <td data-label="Écritures" class="js-num">{{ t.entryCount }}</td>
-              <td data-label="Total débit" class="js-num">{{ t.debit | number : '1.3-3' }}</td>
-              <td data-label="Total crédit" class="js-num">{{ t.credit | number : '1.3-3' }}</td>
+              <td data-label="Journal" i18n-data-label="@@accounting.journal-summary.journal.57d7f743"><span class="js-code">{{ t.journalCode }}</span></td>
+              <td data-label="Libellé" i18n-data-label="@@accounting.journal-summary.libelle.f5485bba">{{ t.journalLabel }}</td>
+              <td data-label="Écritures" i18n-data-label="@@accounting.journal-summary.ecritures.7bfac2f6" class="js-num">{{ t.entryCount }}</td>
+              <td data-label="Total débit" i18n-data-label="@@accounting.journal-summary.total.debit.ea9c4853" class="js-num">{{ t.debit | number : '1.3-3' }}</td>
+              <td data-label="Total crédit" i18n-data-label="@@accounting.journal-summary.total.credit.98c95962" class="js-num">{{ t.credit | number : '1.3-3' }}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="footer">
             <tr class="acc-totals-row">
-              <td colspan="3">Total général</td>
+              <td colspan="3" i18n="@@accounting.journal-summary.total.general.b6793855">Total général</td>
               <td class="js-num">{{ summary()?.totalDebit | number : '1.3-3' }}</td>
               <td class="js-num">{{ summary()?.totalCredit | number : '1.3-3' }}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
-            <tr><td colspan="5" class="js-empty">Aucun mouvement sur la période.</td></tr>
+            <tr><td colspan="5" class="js-empty" i18n="@@accounting.journal-summary.aucun.mouvement.sur.la.periode.9d40027a">Aucun mouvement sur la période.</td></tr>
           </ng-template>
         </p-table>
       </p-tabpanel>
@@ -280,12 +276,12 @@ const FILE_BASE_BY_TAB: readonly string[] = [
     @use '../shared/accounting-layout';
 
     .js-fields { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--spacing-4); }
-    .js-num { text-align: right; font-variant-numeric: tabular-nums; }
+    .js-num { text-align: end; font-variant-numeric: tabular-nums; }
     .js-code {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-weight: var(--font-weight-medium);
     }
-    .js-label { margin-left: var(--spacing-2); color: var(--color-text-secondary); }
+    .js-label { margin-inline-start: var(--spacing-2); color: var(--color-text-secondary); }
     .js-empty { text-align: center; padding: var(--spacing-8) var(--spacing-4); }
 
     /* Le centralisateur est large par nature : il défile horizontalement dans son conteneur,
@@ -311,13 +307,13 @@ const FILE_BASE_BY_TAB: readonly string[] = [
       letter-spacing: 0.04em;
       text-align: center;
     }
-    .js-matrix thead th.js-sub { text-align: right; }
+    .js-matrix thead th.js-sub { text-align: end; }
     .js-sticky {
       position: sticky;
-      left: 0;
+      inset-inline-start: 0;
       z-index: 1;
       background: var(--color-background-elevated);
-      text-align: left;
+      text-align: start;
     }
     .js-matrix thead .js-sticky { background: var(--color-background-subtle); }
     .js-total-col { background: var(--color-background-subtle); }
@@ -413,11 +409,11 @@ export class JournalSummaryComponent implements OnInit {
         next: res => {
           this.loading.set(false);
           if (res.success && res.data) this.summary.set(res.data);
-          else this.error.set(res.error ?? 'Erreur');
+          else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         },
         error: err => {
           this.loading.set(false);
-          this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.journal-summary.ts.erreur.reseau.0683007f:Erreur réseau`));
         }
       });
   }
@@ -443,7 +439,7 @@ export class JournalSummaryComponent implements OnInit {
         },
         error: err => {
           this.exporting.set(false);
-          this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.journal-summary.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
         }
       });
   }
@@ -454,7 +450,7 @@ export class JournalSummaryComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return null;
     }
     return { from, to };

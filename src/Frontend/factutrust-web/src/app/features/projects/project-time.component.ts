@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -64,11 +65,11 @@ import {
 
 const TIME_STATUS_FILTER_OPTIONS = [
 
-  { label: 'Brouillon', value: 'Draft' },
+  { label: $localize`:@@projects.time.filter.brouillon:Brouillon`, value: 'Draft' },
 
-  { label: 'Soumis', value: 'Submitted' },
+  { label: $localize`:@@projects.time.filter.soumis:Soumis`, value: 'Submitted' },
 
-  { label: 'Validé', value: 'Validated' }
+  { label: $localize`:@@projects.time.filter.valide:Validé`, value: 'Validated' }
 
 ];
 
@@ -122,31 +123,31 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
-    <app-page-header title="Saisie des temps" subtitle="Temps projet (indépendant des feuilles cabinet)" />
+    <app-page-header title="Saisie des temps" i18n-title="@@projects.project-time.saisie.des.temps.86f92f4d" subtitle="Temps projet (indépendant des feuilles cabinet)" i18n-subtitle="@@projects.project-time.temps.projet.independant.des.feuilles.ca.b8a66a91" />
 
     <div class="card p-3 mb-3">
 
       <div class="proj-field-row">
 
-        <label>Projet
+        <label><ng-container i18n="@@projects.project-time.projet.a9de3a26">Projet
 
-          <p-select [options]="projects()" [(ngModel)]="projectId" optionLabel="name" optionValue="id" placeholder="Projet" [showClear]="true" (onChange)="onProjectChange()" />
-
-        </label>
-
-        <label>Période
-
-          <p-datepicker [(ngModel)]="dateRange" selectionMode="range" dateFormat="dd/mm/yy" placeholder="Filtrer" [showClear]="true" (onSelect)="load()" (onClear)="load()" />
+          </ng-container><p-select [options]="projects()" [(ngModel)]="projectId" optionLabel="name" optionValue="id" placeholder="Projet" i18n-placeholder="@@projects.project-time.projet.a9de3a26" [showClear]="true" (onChange)="onProjectChange()" />
 
         </label>
 
-        <label>Statut
+        <label><ng-container i18n="@@projects.project-time.periode.de2110b7">Période
 
-          <p-select [options]="statusFilterOptions" [(ngModel)]="statusFilter" optionLabel="label" optionValue="value" placeholder="Tous" [showClear]="true" (onChange)="load()" />
+          </ng-container><p-datepicker [(ngModel)]="dateRange" selectionMode="range" dateFormat="dd/mm/yy" placeholder="Filtrer" i18n-placeholder="@@projects.project-time.filtrer.a7a02ef5" [showClear]="true" (onSelect)="load()" (onClear)="load()" />
 
         </label>
 
-        <app-button variant="secondary" (click)="load()">Actualiser</app-button>
+        <label><ng-container i18n="@@projects.project-time.statut.659499f3">Statut
+
+          </ng-container><p-select [options]="statusFilterOptions" [(ngModel)]="statusFilter" optionLabel="label" optionValue="value" placeholder="Tous" i18n-placeholder="@@projects.project-time.tous.b97ae3b4" [showClear]="true" (onChange)="load()" />
+
+        </label>
+
+        <app-button variant="secondary" (click)="load()" i18n="@@projects.project-time.actualiser.9d3b2a7d">Actualiser</app-button>
 
       </div>
 
@@ -161,27 +162,27 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
       <div class="card p-3 mb-3">
 
-        <h3 class="mt-0">Nouvelle ligne</h3>
+        <h3 class="mt-0" i18n="@@projects.project-time.nouvelle.ligne.21957286">Nouvelle ligne</h3>
 
         <div class="proj-field-row">
 
-          <label>Date <p-datepicker [(ngModel)]="workDate" dateFormat="dd/mm/yy" /></label>
+          <label><ng-container i18n="@@projects.project-time.date.eb9a4bc1">Date </ng-container> <p-datepicker [(ngModel)]="workDate" dateFormat="dd/mm/yy" /></label>
 
-          <label>Tâche <p-select [options]="tasks()" [(ngModel)]="taskId" optionLabel="title" optionValue="id" placeholder="Tâche" [showClear]="true" /></label>
+          <label><ng-container i18n="@@projects.project-time.tache.43c8425c">Tâche </ng-container> <p-select [options]="tasks()" [(ngModel)]="taskId" optionLabel="title" optionValue="id" placeholder="Tâche" i18n-placeholder="@@projects.project-time.tache.43c8425c" [showClear]="true" /></label>
 
-          <label>Heures <p-inputNumber [(ngModel)]="hours" [min]="0.25" [max]="24" [step]="0.25" /></label>
+          <label><ng-container i18n="@@projects.project-time.heures.b4448c06">Heures </ng-container> <p-inputNumber [(ngModel)]="hours" [min]="0.25" [max]="24" [step]="0.25" /></label>
 
           <label class="flex-row align-items-center gap-2" style="flex-direction:row">
 
             <p-checkbox [(ngModel)]="isBillable" [binary]="true" inputId="billable" />
 
-            <span>Facturable</span>
+            <span i18n="@@projects.project-time.facturable.63134237">Facturable</span>
 
           </label>
 
-          <label>Notes <input pInputText [(ngModel)]="notes" /></label>
+          <label><ng-container i18n="@@projects.project-time.notes.70440046">Notes </ng-container> <input pInputText [(ngModel)]="notes" /></label>
 
-          <app-button variant="primary" [disabled]="!canSaveLine" (click)="create()">Enregistrer</app-button>
+          <app-button variant="primary" [disabled]="!canSaveLine" (click)="create()" i18n="@@projects.project-time.enregistrer.f7c8bcd8">Enregistrer</app-button>
 
         </div>
 
@@ -197,17 +198,17 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
         <tr>
 
-          <th>Date</th>
+          <th i18n="@@projects.project-time.date.eb9a4bc1">Date</th>
 
-          <th>Projet</th>
+          <th i18n="@@projects.project-time.projet.a9de3a26">Projet</th>
 
-          <th>Tâche</th>
+          <th i18n="@@projects.project-time.tache.43c8425c">Tâche</th>
 
-          <th>Heures</th>
+          <th i18n="@@projects.project-time.heures.b4448c06">Heures</th>
 
-          <th>Facturable</th>
+          <th i18n="@@projects.project-time.facturable.63134237">Facturable</th>
 
-          <th>Statut</th>
+          <th i18n="@@projects.project-time.statut.659499f3">Statut</th>
 
           <th></th>
 
@@ -227,7 +228,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
           <td>{{ e.hours }}</td>
 
-          <td>{{ e.isBillable ? 'Oui' : 'Non' }}</td>
+          <td>{{ e.isBillable ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
 
           <td>
             <app-status-badge [status]="timeEntryStatusBadge(e)" [label]="timeEntryStatusLabel(e)" />
@@ -237,38 +238,38 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
             @if (canEditTimeEntry(e) && canCreate) {
               <app-button size="sm" variant="ghost" icon="pi-pencil" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Modifier" tooltipPosition="top"
-                ariaLabel="Modifier" (click)="openEdit(e)" />
+                [iconAlwaysVisible]="true" pTooltip="Modifier" i18n-pTooltip="@@projects.project-time.modifier.f260e757" tooltipPosition="top"
+                ariaLabel="Modifier" i18n-ariaLabel="@@projects.project-time.modifier.ead890f7" (click)="openEdit(e)" />
             }
 
             @if (canDeleteTimeEntry(e) && canCreate) {
               <app-button size="sm" variant="ghost" icon="pi-trash" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Supprimer" tooltipPosition="top"
-                ariaLabel="Supprimer" (click)="deleteEntry(e.id)" />
+                [iconAlwaysVisible]="true" pTooltip="Supprimer" i18n-pTooltip="@@projects.project-time.supprimer.1acfc1c7" tooltipPosition="top"
+                ariaLabel="Supprimer" i18n-ariaLabel="@@projects.project-time.supprimer.d9f6d96e" (click)="deleteEntry(e.id)" />
             }
 
             @if (canSubmitTimeEntry(e) && canSubmit) {
               <app-button size="sm" variant="ghost" icon="pi-send" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Soumettre" tooltipPosition="top"
-                ariaLabel="Soumettre" (click)="submit(e.id)" />
+                [iconAlwaysVisible]="true" pTooltip="Soumettre" i18n-pTooltip="@@projects.project-time.soumettre.5597a63d" tooltipPosition="top"
+                ariaLabel="Soumettre" i18n-ariaLabel="@@projects.project-time.soumettre.6557d5be" (click)="submit(e.id)" />
             }
 
             @if (canValidateTimeEntry(e) && canValidate) {
               <app-button size="sm" variant="primary" icon="pi-check" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Valider" tooltipPosition="top"
-                ariaLabel="Valider" (click)="validate(e.id)" />
+                [iconAlwaysVisible]="true" pTooltip="Valider" i18n-pTooltip="@@projects.project-time.valider.be4220f7" tooltipPosition="top"
+                ariaLabel="Valider" i18n-ariaLabel="@@projects.project-time.valider.8ef67b67" (click)="validate(e.id)" />
             }
 
             @if (canReopenSubmittedTimeEntry(e) && canSubmit) {
               <app-button size="sm" variant="ghost" icon="pi-undo" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Rouvrir en brouillon" tooltipPosition="top"
-                ariaLabel="Rouvrir en brouillon" (click)="reopen(e.id)" />
+                [iconAlwaysVisible]="true" pTooltip="Rouvrir en brouillon" i18n-pTooltip="@@projects.project-time.rouvrir.en.brouillon.7acbda14" tooltipPosition="top"
+                ariaLabel="Rouvrir en brouillon" i18n-ariaLabel="@@projects.project-time.rouvrir.en.brouillon.000b775a" (click)="reopen(e.id)" />
             }
 
             @if (canReopenValidatedTimeEntry(e) && canValidate) {
               <app-button size="sm" variant="ghost" icon="pi-undo" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Rouvrir en brouillon" tooltipPosition="top"
-                ariaLabel="Rouvrir en brouillon" (click)="reopen(e.id)" />
+                [iconAlwaysVisible]="true" pTooltip="Rouvrir en brouillon" i18n-pTooltip="@@projects.project-time.rouvrir.en.brouillon.7acbda14" tooltipPosition="top"
+                ariaLabel="Rouvrir en brouillon" i18n-ariaLabel="@@projects.project-time.rouvrir.en.brouillon.000b775a" (click)="reopen(e.id)" />
             }
 
             @if (e.invoicedInvoiceId) {
@@ -280,9 +281,9 @@ const TIME_STATUS_FILTER_OPTIONS = [
                 [iconOnly]="true"
                 [iconAlwaysVisible]="true"
                 [routerLink]="['/invoices', e.invoicedInvoiceId]"
-                pTooltip="Voir la facture"
+                pTooltip="Voir la facture" i18n-pTooltip="@@projects.project-time.voir.la.facture.e4bddea0"
                 tooltipPosition="top"
-                ariaLabel="Voir la facture" />
+                ariaLabel="Voir la facture" i18n-ariaLabel="@@projects.project-time.voir.la.facture.23283cea" />
 
             }
 
@@ -296,7 +297,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
         <tr><td colspan="7">
 
-          <app-empty-state icon="pi-clock" title="Aucun temps" description="Choisissez un projet actif pour saisir une ligne." [showAction]="false" />
+          <app-empty-state icon="pi-clock" title="Aucun temps" i18n-title="@@projects.project-time.aucun.temps.6900002b" description="Choisissez un projet actif pour saisir une ligne." i18n-description="@@projects.project-time.choisissez.un.projet.actif.pour.saisir.u.08c44e71" [showAction]="false" />
 
         </td></tr>
 
@@ -306,33 +307,33 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
 
 
-    <p-dialog [(visible)]="editVisible" header="Modifier le temps" [modal]="true" [style]="{ width: '28rem' }">
+    <p-dialog [(visible)]="editVisible" header="Modifier le temps" i18n-header="@@projects.project-time.modifier.le.temps.2b0a5ab7" [modal]="true" [style]="{ width: '28rem' }">
 
       <div class="proj-field-stack">
 
-        <label>Date <p-datepicker [(ngModel)]="editWorkDate" dateFormat="dd/mm/yy" /></label>
+        <label><ng-container i18n="@@projects.project-time.date.eb9a4bc1">Date </ng-container> <p-datepicker [(ngModel)]="editWorkDate" dateFormat="dd/mm/yy" /></label>
 
-        <label>Tâche <p-select [options]="tasks()" [(ngModel)]="editTaskId" optionLabel="title" optionValue="id" [showClear]="true" /></label>
+        <label><ng-container i18n="@@projects.project-time.tache.43c8425c">Tâche </ng-container> <p-select [options]="tasks()" [(ngModel)]="editTaskId" optionLabel="title" optionValue="id" [showClear]="true" /></label>
 
-        <label>Heures <p-inputNumber [(ngModel)]="editHours" [min]="0.25" [max]="24" [step]="0.25" /></label>
+        <label><ng-container i18n="@@projects.project-time.heures.b4448c06">Heures </ng-container> <p-inputNumber [(ngModel)]="editHours" [min]="0.25" [max]="24" [step]="0.25" /></label>
 
         <label class="proj-field-stack__check">
 
           <p-checkbox [(ngModel)]="editBillable" [binary]="true" inputId="editBillableGlobal" />
 
-          <span>Facturable</span>
+          <span i18n="@@projects.project-time.facturable.63134237">Facturable</span>
 
         </label>
 
-        <label>Notes <input pInputText class="w-full" [(ngModel)]="editNotes" /></label>
+        <label><ng-container i18n="@@projects.project-time.notes.70440046">Notes </ng-container> <input pInputText class="w-full" [(ngModel)]="editNotes" /></label>
 
       </div>
 
       <ng-template pTemplate="footer">
 
-        <app-button variant="secondary" (click)="editVisible = false">Annuler</app-button>
+        <app-button variant="secondary" (click)="editVisible = false" i18n="@@projects.project-time.annuler.49ba3292">Annuler</app-button>
 
-        <app-button variant="primary" [disabled]="!canSaveEditLine" (click)="saveEdit()">Enregistrer</app-button>
+        <app-button variant="primary" [disabled]="!canSaveEditLine" (click)="saveEdit()" i18n="@@projects.project-time.enregistrer.f7c8bcd8">Enregistrer</app-button>
 
       </ng-template>
 
@@ -344,6 +345,8 @@ const TIME_STATUS_FILTER_OPTIONS = [
 })
 
 export class ProjectTimeComponent implements OnInit {
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
 
   private readonly api = inject(ProjectApiService);
 
@@ -357,11 +360,11 @@ export class ProjectTimeComponent implements OnInit {
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
 
-    { label: 'Accueil', route: '/' },
+    { label: $localize`:@@projects.project-time.ts.accueil.a8ff8fd2:Accueil`, route: '/' },
 
-    { label: 'Projets', route: '/projects' },
+    { label: $localize`:@@projects.project-time.ts.projets.b1e8cd4d:Projets`, route: '/projects' },
 
-    { label: 'Saisie des temps' }
+    { label: $localize`:@@projects.project-time.ts.saisie.des.temps.86f92f4d:Saisie des temps` }
 
   ];
 
@@ -532,7 +535,7 @@ export class ProjectTimeComponent implements OnInit {
 
     if (!this.projectId) {
 
-      this.error.set('Choisissez un projet');
+      this.error.set($localize`:@@projects.project-time.ts.choisissez.un.projet.533bb444:Choisissez un projet`);
 
       return;
 
@@ -564,13 +567,13 @@ export class ProjectTimeComponent implements OnInit {
 
         if (r.success) {
 
-          this.toast.add({ severity: 'success', summary: 'Temps enregistré' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@project-time.component.summary.Temps_enregistr_:Temps enregistré` });
 
           this.notes = '';
 
           this.load();
 
-        } else this.error.set(r.message || 'Enregistrement impossible');
+        } else this.error.set(r.message || $localize`:@@projects.project-time.ts.enregistrement.impossible.1e5e1075:Enregistrement impossible`);
 
       },
 
@@ -630,7 +633,7 @@ export class ProjectTimeComponent implements OnInit {
 
       next: () => {
 
-        this.toast.add({ severity: 'success', summary: 'Temps mis à jour' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-time.component.summary.Temps mis à :Temps mis à jour` });
 
         this.editVisible = false;
 
@@ -675,7 +678,7 @@ export class ProjectTimeComponent implements OnInit {
   deleteEntry(id: string): void {
     this.api.deleteTime(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Temps supprimé' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-time.component.summary.Temps suppri:Temps supprimé` });
         this.load();
       },
       error: err => this.error.set(this.errors.extractErrorMessage(err))
@@ -685,7 +688,7 @@ export class ProjectTimeComponent implements OnInit {
   reopen(id: string): void {
     this.api.reopenTime(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Temps rouvert en brouillon' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-time.component.summary.Temps_rouvert_en:Temps rouvert en brouillon` });
         this.load();
       },
       error: err => this.error.set(this.errors.extractErrorMessage(err))

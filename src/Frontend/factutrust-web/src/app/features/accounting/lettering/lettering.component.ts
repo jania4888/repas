@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -78,6 +79,20 @@ interface LetteringLine {
   styleUrl: './lettering.component.scss'
 })
 export class LetteringComponent implements OnInit {
+  protected loc_charger_les_ecritures_du_compte_acco_592654(p0: unknown): string {
+    return $localize`:@@accounting.lettering.tpl.charger.les.ecritures.du.compte.account.5926549d:Charger les écritures du compte ${p0}:account:`;
+  }
+  protected readonly loc_lettrer_la_selection_826ebb = $localize`:@@accounting.lettering.tpl.lettrer.la.selection.826ebb34:Lettrer la sélection`;
+  protected readonly loc_selection_non_equilibree_cochez_lett_b9e132 = $localize`:@@accounting.lettering.tpl.selection.non.equilibree.cochez.lettrage.b9e1322b:Sélection non équilibrée – cochez lettrage partiel ou équilibrez la sélection`;
+  protected loc_lettrer_les_count_lignes_selectionne_2f8a67(p0: unknown): string {
+    return $localize`:@@accounting.lettering.tpl.lettrer.les.count.lignes.selectionnees.2f8a674c:Lettrer les ${p0}:count: lignes sélectionnées`;
+  }
+  protected readonly loc_lettrage_cfcdd3 = $localize`:@@accounting.lettering.tpl.lettrage.cfcdd333:Lettrage`;
+  protected readonly loc_lettrage_partiel_fc201a = $localize`:@@accounting.lettering.tpl.lettrage.partiel.fc201a43:Lettrage partiel`;
+  protected loc_delettrer_le_groupe_letteringcode_0aecd2(p0: unknown): string {
+    return $localize`:@@accounting.lettering.tpl.delettrer.le.groupe.letteringcode.0aecd2b5:Délettrer le groupe ${p0}:letteringCode:`;
+  }
+
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly route = inject(ActivatedRoute);
@@ -212,7 +227,7 @@ export class LetteringComponent implements OnInit {
   load(): void {
     const acct = this.account.trim();
     if (!acct) {
-      this.error.set('Veuillez saisir un numéro de compte.');
+      this.error.set($localize`:@@accounting.lettering.ts.veuillez.saisir.un.numero.de.compte.7beae1c2:Veuillez saisir un numéro de compte.`);
       return;
     }
     this.error.set(null);
@@ -221,7 +236,7 @@ export class LetteringComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.loading.set(true);
@@ -239,10 +254,10 @@ export class LetteringComponent implements OnInit {
             }
             this.lines.set(result);
           } else {
-            this.error.set(res.error ?? 'Erreur lors du chargement des écritures.');
+            this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.chargement.des.ecritures.872dad:Erreur lors du chargement des écritures.`);
           }
         },
-        error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau. Vérifiez votre connexion.'))
+        error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.lettering.ts.erreur.reseau.verifiez.votre.connexion.39472e00:Erreur réseau. Vérifiez votre connexion.`))
       });
   }
 
@@ -300,15 +315,15 @@ export class LetteringComponent implements OnInit {
         next: res => {
           if (res.success) {
             this.successMessage.set(
-              `Écart de change apuré sur le compte ${account}, puis lettrage effectué.`);
+              $localize`:@@accounting.lettering.ts.ecart.de.change.apure.sur.le.compte.acco.662b4773:Écart de change apuré sur le compte ${account}:account:, puis lettrage effectué.`);
             this.settleOpen.set(false);
             this.selectedLines.set([]);
             this.load();
           } else {
-            this.error.set(res.error ?? "Erreur lors de l'équilibrage.");
+            this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.l.equilibrage.564a12:Erreur lors de l'équilibrage.`);
           }
         },
-        error: err => this.error.set(this.errors.extractErrorMessage(err, "Erreur réseau lors de l'équilibrage."))
+        error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.lettering.ts.erreur.reseau.lors.de.l.equilibrage.86743867:Erreur réseau lors de l'équilibrage.`))
       });
   }
 
@@ -328,16 +343,16 @@ export class LetteringComponent implements OnInit {
         next: res => {
           if (res.success) {
             this.successMessage.set(partial
-              ? `Lettrage partiel effectué sur ${ids.length} lignes (code « P »).`
-              : `Lettrage effectué avec succès sur ${ids.length} lignes.`);
+              ? $localize`:@@ui.tern.lettrage.partiel.effectue.sur.ph.lignes.co.2ed8b4:Lettrage partiel effectué sur ${ids.length}:p0: lignes (code « P »).`
+              : $localize`:@@ui.tern.lettrage.effectue.avec.succes.sur.ph.ligne.e8c8c6:Lettrage effectué avec succès sur ${ids.length}:p0: lignes.`);
             this.selectedLines.set([]);
             this.allowPartial = false;
             this.load();
           } else {
-            this.error.set(res.error ?? 'Erreur lors du lettrage.');
+            this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.lettrage.8e822f:Erreur lors du lettrage.`);
           }
         },
-        error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors du lettrage.'))
+        error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.lettering.ts.erreur.reseau.lors.du.lettrage.1358d80e:Erreur réseau lors du lettrage.`))
       });
   }
 
@@ -345,11 +360,11 @@ export class LetteringComponent implements OnInit {
   unletter(code: string): void {
     if (!code) return;
     this.confirmationService.confirm({
-      message: `Délettrer le groupe ${code} ? Toutes ses lignes redeviendront lettrables.`,
-      header: 'Confirmation de délettrage',
+      message: $localize`:@@accounting.lettering.ts.delettrer.le.groupe.code.toutes.ses.lign.aa9895a9:Délettrer le groupe ${code}:code: ? Toutes ses lignes redeviendront lettrables.`,
+      header: $localize`:@@accounting.lettering.ts.confirmation.de.delettrage.db4ca457:Confirmation de délettrage`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Délettrer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@lettering.component.acceptLabel.Délettrer:Délettrer`,
+      rejectLabel: $localize`:@@lettering.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.unlettering.set(code);
@@ -362,14 +377,14 @@ export class LetteringComponent implements OnInit {
           .subscribe({
             next: res => {
               if (res.success) {
-                this.successMessage.set(`Groupe ${code} délettré.`);
+                this.successMessage.set($localize`:@@accounting.lettering.ts.groupe.code.delettre.7a5b5fd3:Groupe ${code}:code: délettré.`);
                 this.selectedLines.set([]);
                 this.load();
               } else {
-                this.error.set(res.error ?? 'Erreur lors du délettrage.');
+                this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.delettrage.a7b9e5:Erreur lors du délettrage.`);
               }
             },
-            error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors du délettrage.'))
+            error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.lettering.ts.erreur.reseau.lors.du.delettrage.ae259626:Erreur réseau lors du délettrage.`))
           });
       }
     });

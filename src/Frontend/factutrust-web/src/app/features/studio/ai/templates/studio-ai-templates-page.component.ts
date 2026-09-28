@@ -149,7 +149,7 @@ export class StudioAiTemplatesPageComponent {
   readonly labels = STUDIO_AI_LABELS.templates;
   readonly retryLabel = STUDIO_AI_LABELS.conversation.retry;
   readonly viewLabels = STUDIO_AI_LABELS.views;
-  readonly breadcrumbs = studioBreadcrumb({ label: 'Assistant IA', route: '/studio/ai' }, { label: STUDIO_AI_LABELS.templates.title });
+  readonly breadcrumbs = studioBreadcrumb({ label: $localize`:@@studio.studio-ai-templates-page.ts.assistant.ia.94f6f208:Assistant IA`, route: '/studio/ai' }, { label: STUDIO_AI_LABELS.templates.title });
 
   readonly templates = signal<StudioTemplateListItemDto[]>([]);
   readonly loading = signal(false);

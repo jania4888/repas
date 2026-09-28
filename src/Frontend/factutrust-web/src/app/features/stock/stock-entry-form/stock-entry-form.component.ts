@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -40,29 +41,27 @@ import { ErrorMessageService } from '@core/services/error-message.service';
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Nouvelle entrée de stock" 
-      subtitle="Enregistrez une entrée de marchandise dans votre entrepôt">
+      title="Nouvelle entrée de stock" i18n-title="@@stock.stock-entry-form.nouvelle.entree.de.stock.0d9ac600" 
+      subtitle="Enregistrez une entrée de marchandise dans votre entrepôt" i18n-subtitle="@@stock.stock-entry-form.enregistrez.une.entree.de.marchandise.da.21b5c260">
       <app-button 
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/stock">
-        Annuler
-      </app-button>
+        routerLink="/stock" i18n="@@stock.stock-entry-form.annuler.49ba3292"> Annuler </app-button>
     </app-page-header>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="form-grid">
         <!-- Section 1: Entrepôt & Produit -->
-        <app-form-section title="Détails du Stock" icon="pi-box" [number]="1">
+        <app-form-section title="Détails du Stock" i18n-title="@@stock.stock-entry-form.details.du.stock.04fbfd18" icon="pi-box" [number]="1">
           <div class="form-group">
-            <label for="warehouse">Entrepôt <span class="required">*</span></label>
+            <label for="warehouse"><ng-container i18n="@@stock.stock-entry-form.entrepot.c349c0bc">Entrepôt </ng-container> <span class="required" i18n="@@stock.stock-entry-form.text.df58248c">*</span></label>
             <p-select 
               id="warehouse"
               [options]="warehouses" 
               formControlName="warehouse"
               optionLabel="name"
-              placeholder="Sélectionner un entrepôt"
+              placeholder="Sélectionner un entrepôt" i18n-placeholder="@@stock.stock-entry-form.selectionner.un.entrepot.2e4d1232"
               styleClass="w-full"
               [class.ng-invalid]="isInvalid('warehouse')">
             </p-select>
@@ -75,7 +74,7 @@ import { ErrorMessageService } from '@core/services/error-message.service';
           </div>
 
           <div class="form-group">
-            <label for="product">Produit <span class="required">*</span></label>
+            <label for="product"><ng-container i18n="@@stock.stock-entry-form.produit.ff673dc2">Produit </ng-container> <span class="required" i18n="@@stock.stock-entry-form.text.df58248c">*</span></label>
             <p-select 
               id="product"
               [options]="products" 
@@ -83,7 +82,7 @@ import { ErrorMessageService } from '@core/services/error-message.service';
               optionLabel="name"
               [filter]="true"
               filterBy="name,code"
-              placeholder="Chercher un produit"
+              placeholder="Chercher un produit" i18n-placeholder="@@stock.stock-entry-form.chercher.un.produit.44ee94b8"
               styleClass="w-full"
               [class.ng-invalid]="isInvalid('product')">
             </p-select>
@@ -94,8 +93,8 @@ import { ErrorMessageService } from '@core/services/error-message.service';
               </div>
             }
             @if (productsLoaded && products.length === 0) {
-              <small class="form-hint">
-                Aucun produit avec gestion de stock. 
+              <small class="form-hint" i18n="@@stock.stock-entry-form.aucun.produit.avec.gestion.de.stock.acti.249d40d8">
+                <ng-container> Aucun produit avec gestion de stock. </ng-container>
                 <a routerLink="/products">Activer sur un produit existant</a> ou
                 <a routerLink="/products/new">créer un produit</a>.
               </small>
@@ -104,10 +103,10 @@ import { ErrorMessageService } from '@core/services/error-message.service';
         </app-form-section>
 
         <!-- Section 2: Quantité & Coût -->
-        <app-form-section title="Quantité & Valorisation" icon="pi-dollar" [number]="2">
+        <app-form-section title="Quantité & Valorisation" i18n-title="@@stock.stock-entry-form.quantite.valorisation.905a2065" icon="pi-dollar" [number]="2">
            <div class="form-row">
             <div class="form-group">
-              <label for="quantity">Quantité <span class="required">*</span></label>
+              <label for="quantity"><ng-container i18n="@@stock.stock-entry-form.quantite.09a38fda">Quantité </ng-container> <span class="required" i18n="@@stock.stock-entry-form.text.df58248c">*</span></label>
               <p-inputNumber 
                 id="quantity" 
                 formControlName="quantity"
@@ -127,7 +126,7 @@ import { ErrorMessageService } from '@core/services/error-message.service';
             </div>
 
             <div class="form-group">
-              <label for="unitCost">Coût Unitaire <span class="required">*</span></label>
+              <label for="unitCost"><ng-container i18n="@@stock.stock-entry-form.cout.unitaire.96a46113">Coût Unitaire </ng-container> <span class="required" i18n="@@stock.stock-entry-form.text.df58248c">*</span></label>
               <p-inputNumber 
                 id="unitCost" 
                 formControlName="unitCost"
@@ -150,23 +149,23 @@ import { ErrorMessageService } from '@core/services/error-message.service';
            <!-- Calculated Total -->
           <div class="price-preview">
             <div class="preview-row total">
-               <span>Valeur Totale Entrée</span>
+               <span i18n="@@stock.stock-entry-form.valeur.totale.entree.5465bd99">Valeur Totale Entrée</span>
                <span class="value">{{ calculateTotal() | currency:'TND':'symbol':'1.3-3' }}</span>
             </div>
           </div>
         </app-form-section>
         
         <!-- Section 3: Motif & Notes -->
-        <app-form-section title="Informations Complémentaires" icon="pi-file-edit" [number]="3">
+        <app-form-section title="Informations Complémentaires" i18n-title="@@stock.stock-entry-form.informations.complementaires.5ce46026" icon="pi-file-edit" [number]="3">
            <div class="form-group">
-              <label for="reason">Motif <span class="required">*</span></label>
+              <label for="reason"><ng-container i18n="@@stock.stock-entry-form.motif.2a198f47">Motif </ng-container> <span class="required" i18n="@@stock.stock-entry-form.text.df58248c">*</span></label>
               <p-select 
                 id="reason"
                 [options]="entryReasons" 
                 formControlName="reason"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Raison de l'entrée"
+                placeholder="Raison de l'entrée" i18n-placeholder="@@stock.stock-entry-form.raison.de.l.entree.31c00fbb"
                 styleClass="w-full"
                 [class.ng-invalid]="isInvalid('reason')">
               </p-select>
@@ -179,12 +178,12 @@ import { ErrorMessageService } from '@core/services/error-message.service';
             </div>
 
             <div class="form-group">
-              <label for="notes">Notes / Référence</label>
+              <label for="notes" i18n="@@stock.stock-entry-form.notes.reference.682d0de7">Notes / Référence</label>
               <textarea 
                 pTextarea 
                 id="notes" 
                 formControlName="notes"
-                placeholder="Ex: BL-2024-001"
+                placeholder="Ex: BL-2024-001" i18n-placeholder="@@stock.stock-entry-form.ex.bl.2024.001.b51e17b1"
                 [rows]="3"
                 class="w-full">
               </textarea>
@@ -198,17 +197,13 @@ import { ErrorMessageService } from '@core/services/error-message.service';
           variant="outline"
           icon="pi-times"
           iconPos="left"
-          routerLink="/stock">
-          Annuler
-        </app-button>
+          routerLink="/stock" i18n="@@stock.stock-entry-form.annuler.49ba3292"> Annuler </app-button>
         <app-button 
           variant="primary"
           type="submit"
           [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"
           iconPos="left"
-          [disabled]="form.invalid || saving()">
-          Enregistrer l'entrée
-        </app-button>
+          [disabled]="form.invalid || saving()" i18n="@@stock.stock-entry-form.enregistrer.l.entree.290540ec"> Enregistrer l'entrée </app-button>
       </div>
     </form>
   `,
@@ -247,7 +242,7 @@ import { ErrorMessageService } from '@core/services/error-message.service';
 
       .required {
         color: var(--color-error-600);
-        margin-left: var(--spacing-1);
+        margin-inline-start: var(--spacing-1);
       }
     }
 
@@ -323,15 +318,15 @@ export class StockEntryFormComponent implements OnInit {
     productsLoaded = false;
 
     breadcrumbItems: BreadcrumbItem[] = [
-        { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-        { label: 'Gestion du Stock', route: '/stock' },
-        { label: 'Nouvelle Entrée' }
+        { label: $localize`:@@stock.stock-entry-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+        { label: $localize`:@@stock.stock-entry-form.ts.gestion.du.stock.72df5586:Gestion du Stock`, route: '/stock' },
+        { label: $localize`:@@stock.stock-entry-form.ts.nouvelle.entree.cdf0001c:Nouvelle Entrée` }
     ];
 
     entryReasons = [
-        { label: 'Achat hors réception', value: MovementReason.Purchase },
-        { label: 'Retour Client', value: MovementReason.CustomerReturn },
-        { label: 'Stock Initial', value: MovementReason.InitialStock }
+        { label: $localize`:@@stock.stock-entry-form.ts.achat.hors.reception.09085b94:Achat hors réception`, value: MovementReason.Purchase },
+        { label: $localize`:@@stock.stock-entry-form.ts.retour.client.3f562cfa:Retour Client`, value: MovementReason.CustomerReturn },
+        { label: $localize`:@@stock.stock-entry-form.ts.stock.initial.3a397b7d:Stock Initial`, value: MovementReason.InitialStock }
     ];
 
     form: FormGroup = this.fb.group({
@@ -409,12 +404,12 @@ export class StockEntryFormComponent implements OnInit {
             next: (res) => {
                 if (res.success) {
                     this.toastService.add({
-                        severity: 'success', summary: 'Succès', detail: 'Entrée de stock enregistrée'
+                        severity: 'success', summary: $localize`:@@stock-entry-form.component.summary.Succès:Succès`, detail: $localize`:@@stock-entry-form.component.detail.Entr_e_de_stock_:Entrée de stock enregistrée`
                     });
                     this.router.navigate(['/stock']);
                 } else {
                     this.toastService.add({
-                        severity: 'error', summary: 'Erreur', detail: res.errors?.join(', ') || 'Erreur'
+                        severity: 'error', summary: $localize`:@@stock-entry-form.component.summary.Erreur:Erreur`, detail: res.errors?.join(', ') || $localize`:@@stock.stock-entry-form.ts.erreur.ab546c23:Erreur`
                     });
                     this.saving.set(false);
                 }
@@ -423,8 +418,8 @@ export class StockEntryFormComponent implements OnInit {
                 const errorMessage = this.errorHandler.extractErrorMessage(err);
                 this.toastService.add({
                     severity: 'error',
-                    summary: 'Erreur',
-                    detail: errorMessage || 'Une erreur est survenue'
+                    summary: $localize`:@@stock-entry-form.component.summary.Erreur:Erreur`,
+                    detail: errorMessage || $localize`:@@stock.stock-entry-form.ts.une.erreur.est.survenue.0419f56e:Une erreur est survenue`
                 });
                 this.errorHandler.logError('Stock entry failed', err);
                 this.saving.set(false);

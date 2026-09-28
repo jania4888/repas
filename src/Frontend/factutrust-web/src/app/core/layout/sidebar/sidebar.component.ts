@@ -23,6 +23,8 @@ import { isNavChildActive, isNavSubItemActive } from '@core/utils/nav-path-match
 import { getNavIconKey } from '@core/utils/nav-icon-key.util';
 import { AiAssistantShellService } from '@features/ai-assistant/services/ai-assistant-shell.service';
 import { canUseAiAssistant } from '@features/ai-assistant/utils/ai-access.util';
+import { resolveNavLabel, resolveSubNavLabel } from '@core/i18n/erp-nav-label.util';
+import { getNavId, NAV_ID } from '@core/config/nav-item-ids';
 
 @Component({
   selector: 'app-sidebar',
@@ -38,11 +40,30 @@ export class SidebarComponent implements OnInit {
 
   readonly brand = BRAND;
 
+  readonly sidebarExpandTitle = $localize`:@@core.header.expandSidebar:Agrandir le menu latéral`;
+  readonly sidebarCollapseTitle = $localize`:@@core.header.collapseSidebar:Réduire le menu latéral`;
+
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   private readonly firmContext = inject(FirmContextService);
   private readonly appNav = inject(AppNavService);
   private readonly aiShell = inject(AiAssistantShellService);
+  navLabel(item: NavItem): string {
+    return resolveNavLabel(item);
+  }
+
+  subNavLabel(item: NavSubItem): string {
+    return resolveSubNavLabel(item);
+  }
+
+  brandDashboardAriaLabel(): string {
+    return $localize`:@@core.sidebar.brandDashboardAria:${this.brand.name}:brand: — Tableau de bord`;
+  }
+
+  pendingBadgeAriaLabel(count: number | undefined): string {
+    const n = count ?? 0;
+    return $localize`:@@core.sidebar.badgePending:${n}:count: en attente`;
+  }
 
   readonly dashboardHomeLink = this.appNav.dashboardHomeLink;
   readonly navItems = this.appNav.navItems;
@@ -53,7 +74,7 @@ export class SidebarComponent implements OnInit {
   );
 
   /** At most one parent section with its submenu open; closed after each navigation. */
-  expandedParentLabel: string | null = null;
+  expandedParentId: string | null = null;
 
   /** Inline expansion for footer items (Contrôle & Audit). */
   expandedFooterLabel: string | null = null;
@@ -61,7 +82,7 @@ export class SidebarComponent implements OnInit {
   constructor() {
     effect(() => {
       if (this.collapsed()) {
-        this.expandedParentLabel = null;
+        this.expandedParentId = null;
         this.expandedFooterLabel = null;
       }
     });
@@ -78,10 +99,10 @@ export class SidebarComponent implements OnInit {
 
     effect(() => {
       const items = this.navItems();
-      if (this.expandedParentLabel !== null) {
-        const parent = items.find(i => i.label === this.expandedParentLabel);
+      if (this.expandedParentId !== null) {
+        const parent = items.find(i => getNavId(i) === this.expandedParentId);
         if (!parent?.children?.length) {
-          this.expandedParentLabel = null;
+          this.expandedParentId = null;
         }
       }
     });
@@ -98,11 +119,11 @@ export class SidebarComponent implements OnInit {
   }
 
   private collapseSubmenuPanel(): void {
-    this.expandedParentLabel = null;
+    this.expandedParentId = null;
   }
 
   isExpanded(item: NavItem): boolean {
-    return this.expandedParentLabel === item.label;
+    return this.expandedParentId === getNavId(item);
   }
 
   isFooterExpanded(item: NavItem): boolean {
@@ -116,37 +137,37 @@ export class SidebarComponent implements OnInit {
     this.expandedFooterLabel = null;
     if (this.collapsed()) {
       this.requestExpand.emit();
-      this.expandedParentLabel = item.label;
+      this.expandedParentId = getNavId(item);
       return;
     }
-    this.expandedParentLabel =
-      this.expandedParentLabel === item.label ? null : item.label;
+    const id = getNavId(item);
+    this.expandedParentId = this.expandedParentId === id ? null : id;
   }
 
   /**
    * Opens the rail section that matches a product-tour id. Returns the previous
-   * expanded label so the tour can restore it afterwards.
+   * expanded section id so the tour can restore it afterwards.
    */
   expandSectionForTour(tourId: string): string | null {
-    const previous = this.expandedParentLabel;
+    const previous = this.expandedParentId;
     const item = this.navItems().find(i => i.tourId === tourId);
     if (!item?.children?.length) {
       return previous;
     }
     this.expandedFooterLabel = null;
-    this.expandedParentLabel = item.label;
+    this.expandedParentId = getNavId(item);
     return previous;
   }
 
-  restoreSectionAfterTour(label: string | null): void {
-    this.expandedParentLabel = label;
+  restoreSectionAfterTour(sectionId: string | null): void {
+    this.expandedParentId = sectionId;
   }
 
   toggleFooterSubmenu(item: NavItem): void {
     if (!item.children?.length) {
       return;
     }
-    this.expandedParentLabel = null;
+    this.expandedParentId = null;
     this.expandedFooterLabel =
       this.expandedFooterLabel === item.label ? null : item.label;
   }
@@ -199,7 +220,7 @@ export class SidebarComponent implements OnInit {
     if (!item.children?.length) {
       return false;
     }
-    return this.expandedParentLabel === item.label && !this.isChildActive(item);
+    return this.expandedParentId === getNavId(item) && !this.isChildActive(item);
   }
 
   isDossierContextItem(item: NavItem): boolean {
@@ -207,7 +228,7 @@ export class SidebarComponent implements OnInit {
   }
 
   isFooterAuditItem(item: NavItem): boolean {
-    return item.label === 'Contrôle & Audit';
+    return getNavId(item) === NAV_ID.firmDelegatedAudit;
   }
 
   /** Font Awesome suffix for pastel icon-box styling (e.g. fa-bag-shopping). */

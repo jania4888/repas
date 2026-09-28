@@ -16,7 +16,7 @@
   max-width: unset !important;
   box-shadow: none !important;
   border: none !important;
-  margin-left: 0 !important;
+  margin-inline-start: 0 !important;
   position: relative !important;
 }
 
@@ -51,7 +51,7 @@
   font-size: inherit;
   font-weight: inherit;
   line-height: inherit;
-  text-align: left;
+  text-align: start;
   color: var(--sidebar-rail-item-default);
   background: transparent;
   border: none;
@@ -68,7 +68,7 @@
     float: none;
     flex-shrink: 0;
     width: var(--sidebar-rail-icon-slot-width);
-    margin-right: 0;
+    margin-inline-end: 0;
     margin-bottom: 0;
     text-align: center;
     font-size: var(--sidebar-rail-icon-size);
@@ -160,7 +160,7 @@
   font-size: var(--sidebar-submenu-link-size);
   font-weight: 500;
   line-height: inherit;
-  text-align: left;
+  text-align: start;
   color: var(--sidebar-submenu-link);
   background: transparent;
   text-decoration: none;
@@ -172,7 +172,7 @@
 
   i {
     float: none;
-    margin-right: 0;
+    margin-inline-end: 0;
     width: var(--sidebar-submenu-icon-width);
     font-size: var(--sidebar-submenu-icon-size);
     opacity: 0.75;
@@ -318,7 +318,7 @@
   font-size: 10px;
   padding: 3px 6px;
   top: 5px;
-  right: 5px;
+  inset-inline-end: 5px;
   border-radius: 50%;
 }
 
@@ -388,7 +388,7 @@
   border-radius: 0;
   line-height: normal;
   overflow: visible;
-  text-align: left;
+  text-align: start;
   position: relative;
 }
 
@@ -417,16 +417,16 @@
 .main-header .icon_info ul.user_profile_dd li > button.main-header__user-trigger::after {
   position: static;
   top: auto;
-  right: auto;
+  inset-inline-end: auto;
   display: none;
-  margin-left: 0.2rem;
+  margin-inline-start: 0.2rem;
   vertical-align: middle;
   transform: none;
   content: "";
   border-top: 0.35em solid var(--topbar-fg, #fff);
-  border-right: 0.35em solid transparent;
+  border-inline-end: 0.35em solid transparent;
   border-bottom: 0;
-  border-left: 0.35em solid transparent;
+  border-inline-start: 0.35em solid transparent;
   font-family: inherit;
   font-size: 0;
   line-height: 0;

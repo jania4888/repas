@@ -1,4 +1,6 @@
 ﻿using FactuTrust.Application.Configuration;
+using FactuTrust.Application.Localization;
+using FactuTrust.Infrastructure.Localization;
 using FactuTrust.Infrastructure.Services.Barcodes;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Forecasting;
@@ -42,6 +44,7 @@ public static class DependencyInjection
     {
         services.AddMemoryCache();
         services.AddSingleton(TimeProvider.System);
+        services.AddSingleton<IMessageLocalizer, MessageLocalizer>();
 
         // Interceptor de diagnostic (Dev uniquement) — trace toute commande sur
         // MasterDbContext avec threadId/activityId et détecte les accès concurrents

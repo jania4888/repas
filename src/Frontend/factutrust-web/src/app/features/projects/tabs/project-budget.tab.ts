@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -22,6 +23,7 @@ export interface ProductOption {
   selector: 'app-project-budget-tab',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     FormsModule,
     RouterLink,
@@ -37,70 +39,70 @@ export interface ProductOption {
     @if (budget) {
       <div class="card p-3 mb-3">
         <dl class="budget-summary m-0 mb-2">
-          <dt>Budget HT</dt><dd>{{ budget.budgetHt | number:'1.3-3' }}</dd>
-          <dt>Réalisé</dt><dd>{{ budget.actualCostHt | number:'1.3-3' }}</dd>
-          <dt>Coût temps</dt><dd>{{ budget.timeCostHt | number:'1.3-3' }}</dd>
-          <dt>Reste</dt><dd>{{ budget.remainingHt | number:'1.3-3' }}</dd>
+          <dt i18n="@@projects.tabs.budget.ht.0374a3ad">Budget HT</dt><dd>{{ budget.budgetHt | number:'1.3-3' }}</dd>
+          <dt i18n="@@projects.tabs.realise.eed7fe3a">Réalisé</dt><dd>{{ budget.actualCostHt | number:'1.3-3' }}</dd>
+          <dt i18n="@@projects.tabs.cout.temps.91eada0d">Coût temps</dt><dd>{{ budget.timeCostHt | number:'1.3-3' }}</dd>
+          <dt i18n="@@projects.tabs.reste.68135bb8">Reste</dt><dd>{{ budget.remainingHt | number:'1.3-3' }}</dd>
         </dl>
         <p-progressBar [value]="usedPercent" [showValue]="true" />
-        <p class="mt-2 mb-0">Heures : {{ budget.loggedHours }} · à facturer {{ budget.billableUninvoicedHours }}</p>
+        <p class="mt-2 mb-0" i18n="@@projects.tabs.heures.a.facturer.b248279e">Heures : {{ budget.loggedHours }} · à facturer {{ budget.billableUninvoicedHours }}</p>
       </div>
     }
 
     @if (canUpdate) {
       <div class="proj-field-row mb-3">
         <label>
-          <span>Description <span class="ft-required">*</span></span>
-          <input pInputText [(ngModel)]="costDesc" placeholder="Libellé coût" />
+          <span i18n="@@projects.tabs.description.90dfe3b8">Description <span class="ft-required">*</span></span>
+          <input pInputText [(ngModel)]="costDesc" placeholder="Libellé coût" i18n-placeholder="@@projects.tabs.libelle.cout.5e1fc3e6" />
         </label>
         <label>
-          <span>Montant HT <span class="ft-required">*</span></span>
+          <span i18n="@@projects.tabs.montant.ht.8292ce36">Montant HT <span class="ft-required">*</span></span>
           <p-inputNumber [(ngModel)]="costAmount" mode="decimal" />
         </label>
-        <app-button (click)="addCost()">Ajouter un coût</app-button>
+        <app-button (click)="addCost()" i18n="@@projects.tabs.ajouter.un.cout.16b135c5">Ajouter un coût</app-button>
       </div>
     }
 
     <p-table [value]="costs" styleClass="p-datatable-sm">
-      <ng-template pTemplate="header"><tr><th>Date</th><th>Source</th><th>Libellé</th><th>HT</th></tr></ng-template>
+      <ng-template pTemplate="header"><tr><th i18n="@@projects.tabs.date.eb9a4bc1">Date</th><th i18n="@@projects.tabs.source.6da13add">Source</th><th i18n="@@projects.tabs.libelle.f5485bba">Libellé</th><th>HT</th></tr></ng-template>
       <ng-template pTemplate="body" let-c>
-        <tr><td>{{ c.occurredOn | date:'shortDate' }}</td><td>{{ c.sourceDisplay }}</td><td>{{ c.description }}</td><td>{{ c.amountHt | number:'1.3-3' }}</td></tr>
+        <tr><td>{{ c.occurredOn | date:'shortDate' }}</td><td>{{ c.sourceDisplay | backendLabel }}</td><td>{{ c.description }}</td><td>{{ c.amountHt | number:'1.3-3' }}</td></tr>
       </ng-template>
     </p-table>
 
     @if (project && isBtp(project.kind) && canUpdate) {
-      <h3>Sortie stock chantier</h3>
+      <h3 i18n="@@projects.tabs.sortie.stock.chantier.37070f5e">Sortie stock chantier</h3>
       <div class="proj-field-row">
-        <label>Produit
-          <p-select [options]="products" [(ngModel)]="productId" optionLabel="name" optionValue="id" placeholder="Produit" [filter]="true" />
+        <label><ng-container i18n="@@projects.tabs.produit.ff673dc2">Produit
+          </ng-container><p-select [options]="products" [(ngModel)]="productId" optionLabel="name" optionValue="id" placeholder="Produit" i18n-placeholder="@@projects.tabs.produit.fd4a4517" [filter]="true" />
         </label>
-        <label>Quantité
-          <p-inputNumber [(ngModel)]="qty" [min]="0.001" />
+        <label><ng-container i18n="@@projects.tabs.quantite.09a38fda">Quantité
+          </ng-container><p-inputNumber [(ngModel)]="qty" [min]="0.001" />
         </label>
-        <label>Entrepôt
-          <input pInputText [(ngModel)]="warehouseId" placeholder="Optionnel" />
+        <label><ng-container i18n="@@projects.tabs.entrepot.c349c0bc">Entrepôt
+          </ng-container><input pInputText [(ngModel)]="warehouseId" placeholder="Optionnel" i18n-placeholder="@@projects.tabs.optionnel.fcdd2927" />
         </label>
-        <label>Notes
-          <input pInputText [(ngModel)]="stockNotes" />
+        <label><ng-container i18n="@@projects.tabs.notes.70440046">Notes
+          </ng-container><input pInputText [(ngModel)]="stockNotes" />
         </label>
-        <app-button (click)="stock()">Sortir</app-button>
+        <app-button (click)="stock()" i18n="@@projects.tabs.sortir.a1ae4b77">Sortir</app-button>
       </div>
     }
 
-    <h3>Bons de commande</h3>
+    <h3 i18n="@@projects.tabs.bons.de.commande.aae719f0">Bons de commande</h3>
     @if (canUpdate) {
       <div class="proj-field-row mb-2">
-        <label>Bon de commande
-          <p-select
+        <label><ng-container i18n="@@projects.tabs.bon.de.commande.4b9aea29">Bon de commande
+          </ng-container><p-select
             [options]="purchaseOrders"
             [(ngModel)]="purchaseOrderId"
             optionLabel="name"
             optionValue="id"
-            placeholder="Sélectionner un bon de commande"
+            placeholder="Sélectionner un bon de commande" i18n-placeholder="@@projects.tabs.selectionner.un.bon.de.commande.39e1aa56"
             [filter]="true"
             [showClear]="true" />
         </label>
-        <app-button (click)="assignPo()">Associer</app-button>
+        <app-button (click)="assignPo()" i18n="@@projects.tabs.associer.e9f6a162">Associer</app-button>
       </div>
     }
 
@@ -108,8 +110,8 @@ export interface ProductOption {
       <ng-template pTemplate="header">
         <tr>
           <th>N°</th>
-          <th>Fournisseur</th>
-          <th>Statut</th>
+          <th i18n="@@projects.tabs.fournisseur.97d91d89">Fournisseur</th>
+          <th i18n="@@projects.tabs.statut.659499f3">Statut</th>
           <th>HT</th>
         </tr>
       </ng-template>
@@ -117,12 +119,12 @@ export interface ProductOption {
         <tr>
           <td><a [routerLink]="['/purchase-orders', po.id]">{{ po.number }}</a></td>
           <td>{{ po.supplierName }}</td>
-          <td><p-tag [value]="po.statusDisplay" [severity]="poStatusSeverity(po.status)" /></td>
+          <td><p-tag [value]="po.statusDisplay | backendLabel" [severity]="poStatusSeverity(po.status)" /></td>
           <td>{{ po.totalHt | number:'1.3-3' }}</td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
-        <tr><td colspan="4">Aucun bon de commande associé</td></tr>
+        <tr><td colspan="4" i18n="@@projects.tabs.aucun.bon.de.commande.associe.c3b18d74">Aucun bon de commande associé</td></tr>
       </ng-template>
     </p-table>
   `,

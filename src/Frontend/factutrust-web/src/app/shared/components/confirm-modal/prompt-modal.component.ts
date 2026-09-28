@@ -15,10 +15,10 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   template: `
     <div class="modal-header prompt-modal-header">
       @if (icon) {
-        <i [class]="icon + ' prompt-modal-icon'" aria-hidden="true"></i>
+        <i [class]="icon + loc_ui_tern_prompt_modal_icon_d0bfa1" aria-hidden="true"></i>
       }
       <h5 class="modal-title" id="promptModalTitle">{{ header }}</h5>
-      <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer"></button>
+      <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer" i18n-aria-label="@@shared.components.confirm-modal.prompt-modal.fermer.5ab4ec64"></button>
     </div>
     <div class="modal-body prompt-modal-body">
       @if (message) {
@@ -38,7 +38,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
       <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">{{ rejectLabel }}</button>
       <button
         type="button"
-        [class]="'btn ' + acceptButtonStyleClass"
+        [class]="loc_ui_tern_btn_6a21bb + acceptButtonStyleClass"
         [disabled]="required && !value.trim()"
         (click)="accept()">{{ acceptLabel }}</button>
     </div>
@@ -81,12 +81,14 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   `]
 })
 export class PromptModalComponent {
+  readonly loc_ui_tern_prompt_modal_icon_d0bfa1 = " prompt-modal-icon";
+  readonly loc_ui_tern_btn_6a21bb = "btn ";
   @Input() message = '';
-  @Input() header = 'Saisie';
+  @Input() header = $localize`:@@shared.prompt-modal.ts.saisie.3e86f8d7:Saisie`;
   @Input() icon = '';
   @Input() placeholder = '';
-  @Input() acceptLabel = 'Confirmer';
-  @Input() rejectLabel = 'Annuler';
+  @Input() acceptLabel = $localize`:@@shared.prompt-modal.ts.confirmer.80a664c8:Confirmer`;
+  @Input() rejectLabel = $localize`:@@shared.prompt-modal.ts.annuler.49ba3292:Annuler`;
   @Input() acceptButtonStyleClass = 'btn-primary';
   @Input() required = true;
   @Input() maxLength = 500;

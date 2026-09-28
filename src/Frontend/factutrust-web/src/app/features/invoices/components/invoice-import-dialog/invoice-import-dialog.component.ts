@@ -33,7 +33,7 @@ type ImportPhase = 'idle' | 'extracting' | 'error';
   imports: [DialogModule, ButtonComponent],
   template: `
     <p-dialog
-      header="Importer une facture"
+      header="Importer une facture" i18n-header="@@invoices.components.importer.une.facture.66ed8807"
       [(visible)]="visible"
       [modal]="true"
       [style]="{ width: '520px', maxWidth: '95vw' }"
@@ -41,7 +41,7 @@ type ImportPhase = 'idle' | 'extracting' | 'error';
       [resizable]="false"
       [closable]="true"
       (onHide)="onHide()"
-      ariaLabel="Importer une facture depuis un fichier">
+      ariaLabel="Importer une facture depuis un fichier" i18n-ariaLabel="@@invoices.components.importer.une.facture.depuis.un.fichier.95405877">
 
       <input
         #fileInput
@@ -62,56 +62,48 @@ type ImportPhase = 'idle' | 'extracting' | 'error';
                 @if (selectedFileName()) {
                   <span class="iid-filename">{{ selectedFileName() }}</span>
                 }
-                @if (elapsedSeconds() < 30) {
+                @if (elapsedSeconds() < 30) {<ng-container i18n="@@invoices.components.lecture.et.preparation.du.document.80e2b53a">
                   Lecture et préparation du document…
-                } @else {
+                </ng-container>} @else {<ng-container i18n="@@invoices.components.l.analyse.peut.prendre.jusqu.a.3.minutes.7ca553dc">
                   L'analyse peut prendre jusqu'à 3 minutes la première fois.
-                }
+                </ng-container>}
               </p>
               <app-button
                 variant="secondary"
                 icon="pi-times"
                 iconPos="left"
                 (click)="cancelImport()"
-                ariaLabel="Annuler l'import">
-                Annuler
-              </app-button>
+                ariaLabel="Annuler l'import" i18n-ariaLabel="@@invoices.components.annuler.l.import.8c2b45d2" i18n="@@invoices.components.annuler.49ba3292"> Annuler </app-button>
             </div>
           }
           @case ('error') {
             <div class="iid-state" role="alert">
               <i class="pi pi-exclamation-triangle iid-icon iid-icon-error" aria-hidden="true"></i>
-              <p class="iid-title">L'import a échoué</p>
+              <p class="iid-title" i18n="@@invoices.components.l.import.a.echoue.613ae19d">L'import a échoué</p>
               <p class="iid-text">{{ errorMessage() }}</p>
               <app-button
                 variant="primary"
                 icon="pi-refresh"
                 iconPos="left"
                 (click)="chooseFile()"
-                ariaLabel="Choisir un autre fichier">
-                Réessayer
-              </app-button>
+                ariaLabel="Choisir un autre fichier" i18n-ariaLabel="@@invoices.components.choisir.un.autre.fichier.c0cbec19" i18n="@@invoices.components.reessayer.895d416b"> Réessayer </app-button>
             </div>
           }
           @default {
             <div class="iid-state">
               <i class="pi pi-file-import iid-icon iid-icon-idle" aria-hidden="true"></i>
-              <p class="iid-title">Importez une facture existante</p>
-              <p class="iid-text">
-                Facture, bon de livraison ou devis (PDF recommandé ; photos acceptées).
-                L'IA en extraira les données ; vous pourrez tout vérifier avant de valider.
-              </p>
+              <p class="iid-title" i18n="@@invoices.components.importez.une.facture.existante.92f95412">Importez une facture existante</p>
+              <p class="iid-text" i18n="@@invoices.components.facture.bon.de.livraison.ou.devis.pdf.recommande.0a63dc73"> Facture, bon de livraison ou devis (PDF recommandé ; photos acceptées).
+                L'IA en extraira les données ; vous pourrez tout vérifier avant de valider. </p>
               <app-button
                 variant="primary"
                 icon="pi-upload"
                 iconPos="left"
                 (click)="chooseFile()"
-                ariaLabel="Choisir un fichier à importer">
-                Choisir un fichier
-              </app-button>
-              <p class="iid-hint">Taille maximale : 10 Mo</p>
+                ariaLabel="Choisir un fichier à importer" i18n-ariaLabel="@@invoices.components.choisir.un.fichier.a.importer.6d6c3a02" i18n="@@invoices.components.choisir.un.fichier.75c27e25"> Choisir un fichier </app-button>
+              <p class="iid-hint" i18n="@@invoices.components.taille.maximale.10.mo.8166532b">Taille maximale : 10 Mo</p>
               @if (modelReady() === true) {
-                <p class="iid-hint iid-hint-ready">
+                <p class="iid-hint iid-hint-ready" i18n="@@invoices.components.modele.ia.pret.ff2820a1">
                   <i class="pi pi-check-circle" aria-hidden="true"></i> Modèle IA prêt
                 </p>
               } @else if (modelReady() === false && warmUpMessage()) {
@@ -218,7 +210,7 @@ export class InvoiceImportDialogComponent implements OnDestroy {
       this.elapsedSeconds.set(0);
       this.modelReady.set(null);
       this.warmUpMessage.set(null);
-      this.progressLabel.set('Lecture du document…');
+      this.progressLabel.set($localize`:@@invoices.invoice-import-dialog.ts.lecture.du.document.f74989d0:Lecture du document…`);
       this.warmUpSub?.unsubscribe();
       this.warmUpSub = this.importService.warmUpModel().subscribe({
         next: (res) => {
@@ -229,7 +221,7 @@ export class InvoiceImportDialogComponent implements OnDestroy {
             this.warmUpMessage.set(res.error);
           } else {
             this.warmUpMessage.set(
-              'Le préchauffage du modèle IA a échoué. L\'import peut être plus long.');
+              $localize`:@@invoices.invoice-import-dialog.ts.le.prechauffage.du.modele.ia.a.echoue.l.64220d3e:Le préchauffage du modèle IA a échoué. L'import peut être plus long.`);
           }
         },
         error: (err) => {
@@ -255,7 +247,7 @@ export class InvoiceImportDialogComponent implements OnDestroy {
   readonly errorMessage = signal<string | null>(null);
   readonly selectedFileName = signal<string | null>(null);
   readonly elapsedSeconds = signal(0);
-  readonly progressLabel = signal('Lecture du document…');
+  readonly progressLabel = signal($localize`:@@invoices.invoice-import-dialog.ts.lecture.du.document.f74989d0:Lecture du document…`);
   readonly modelReady = signal<boolean | null>(null);
   readonly warmUpMessage = signal<string | null>(null);
 
@@ -289,7 +281,7 @@ export class InvoiceImportDialogComponent implements OnDestroy {
   private startImport(file: File): void {
     if (file.size > InvoiceImportDialogComponent.MaxBytes) {
       this.phase.set('error');
-      this.errorMessage.set('Fichier trop volumineux (maximum 10 Mo).');
+      this.errorMessage.set($localize`:@@invoices.invoice-import-dialog.ts.fichier.trop.volumineux.maximum.10.mo.717ddc82:Fichier trop volumineux (maximum 10 Mo).`);
       return;
     }
 
@@ -321,7 +313,7 @@ export class InvoiceImportDialogComponent implements OnDestroy {
     this.elapsedTimer = setInterval(() => {
       const next = this.elapsedSeconds() + 1;
       this.elapsedSeconds.set(next);
-      this.progressLabel.set(next < 8 ? 'Lecture du document…' : 'Analyse IA…');
+      this.progressLabel.set(next < 8 ? $localize`:@@ui.tern.lecture.du.document.f74989:Lecture du document…` : $localize`:@@ui.tern.analyse.ia.258a68:Analyse IA…`);
     }, 1000);
   }
 
@@ -331,7 +323,7 @@ export class InvoiceImportDialogComponent implements OnDestroy {
     this.stopElapsedTimer();
     this.phase.set('idle');
     this.selectedFileName.set(null);
-    this.progressLabel.set('Lecture du document…');
+    this.progressLabel.set($localize`:@@invoices.invoice-import-dialog.ts.lecture.du.document.f74989d0:Lecture du document…`);
   }
 
   private stopElapsedTimer(): void {
@@ -348,10 +340,10 @@ export class InvoiceImportDialogComponent implements OnDestroy {
       return apiMessage;
     }
     if (e?.status === 0 || e?.message?.includes('Http failure')) {
-      return 'Impossible de joindre le serveur pour précharger le modèle IA. Vérifiez que l\'API est démarrée.';
+      return $localize`:@@invoices.invoice-import-dialog.ts.impossible.de.joindre.le.serveur.pour.pr.b7c89a5e:Impossible de joindre le serveur pour précharger le modèle IA. Vérifiez que l'API est démarrée.`;
     }
     return e?.message?.trim()
-      || 'Le préchauffage du modèle IA a échoué. L\'import reste possible mais peut être plus long.';
+      || $localize`:@@invoices.invoice-import-dialog.ts.le.prechauffage.du.modele.ia.a.echoue.l.44ce5352:Le préchauffage du modèle IA a échoué. L'import reste possible mais peut être plus long.`;
   }
 
   private resolveErrorMessage(err: unknown): string {
@@ -361,7 +353,7 @@ export class InvoiceImportDialogComponent implements OnDestroy {
         return apiMessage;
       }
       if (err.status === 0) {
-        return 'Impossible de joindre le serveur. Vérifiez que l\'API est démarrée.';
+        return $localize`:@@invoices.invoice-import-dialog.ts.impossible.de.joindre.le.serveur.verifie.3a324a40:Impossible de joindre le serveur. Vérifiez que l'API est démarrée.`;
       }
     }
 
@@ -378,11 +370,10 @@ export class InvoiceImportDialogComponent implements OnDestroy {
     }
 
     if (err instanceof HttpErrorResponse && err.status === 0) {
-      return 'Impossible de joindre le serveur. Vérifiez que l\'API est démarrée.';
+      return $localize`:@@invoices.invoice-import-dialog.ts.impossible.de.joindre.le.serveur.verifie.3a324a40:Impossible de joindre le serveur. Vérifiez que l'API est démarrée.`;
     }
 
-    return "Impossible d'extraire la facture de ce fichier. "
-      + 'Vérifiez le document ou saisissez la facture manuellement.';
+    return $localize`:@@invoices.invoice-import-dialog.ts.impossible.d.extraire.la.facture.de.ce.f.bc4649ce:Impossible d'extraire la facture de ce fichier. Vérifiez le document ou saisissez la facture manuellement.`;
   }
 
   /** Déclenché par la fermeture native de p-dialog (croix, Échap, clic backdrop). */

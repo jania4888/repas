@@ -31,26 +31,26 @@ import { formatDateTimeFr } from '../vat-declaration/vat-declaration.view-model'
   template: `
     @if (settings; as s) {
       <section class="card dm-mode">
-        <h3 class="dm-mode__title">Régime de calcul</h3>
+        <h3 class="dm-mode__title" i18n="@@accounting.monthly-declaration.regime.de.calcul.392297bd">Régime de calcul</h3>
         <p class="dm-mode__ramp">{{ ramp }}</p>
 
         <dl class="dm-mode__facts">
           <div>
-            <dt>Dernier contrôle</dt>
+            <dt i18n="@@accounting.monthly-declaration.dernier.controle.9f050453">Dernier contrôle</dt>
             <dd>{{ s.lastParityRunAt ? lastRun : 'aucun' }}</dd>
           </div>
           <div>
-            <dt>Dernier écart</dt>
+            <dt i18n="@@accounting.monthly-declaration.dernier.ecart.7947e822">Dernier écart</dt>
             <dd>{{ s.lastParityRunAt ? lastGap : '—' }}</dd>
           </div>
           <div>
-            <dt>Série sans écart</dt>
+            <dt i18n="@@accounting.monthly-declaration.serie.sans.ecart.f7dfdfcc">Série sans écart</dt>
             <dd>{{ s.parityCleanStreak }} / {{ s.requiredCleanParityPeriods }}</dd>
           </div>
         </dl>
 
         @if (s.parityOverrideReason) {
-          <p class="dm-mode__override">
+          <p class="dm-mode__override" i18n="@@accounting.monthly-declaration.bascule.par.derogation.de.ee695e54">
             Bascule par dérogation de {{ s.parityOverrideBy }} : « {{ s.parityOverrideReason }} »
           </p>
         }
@@ -58,7 +58,7 @@ import { formatDateTimeFr } from '../vat-declaration/vat-declaration.view-model'
         @if (form; as f) {
           <div class="dm-mode__form">
             <div class="dm-field">
-              <label class="dm-lbl" for="dm-mode">Passer en</label>
+              <label class="dm-lbl" for="dm-mode" i18n="@@accounting.monthly-declaration.passer.en.4dcb22a1">Passer en</label>
               <select id="dm-mode" class="dm-inp" [(ngModel)]="f.mode" [disabled]="disabled">
                 @for (o of modes; track o.value) {
                   <option [ngValue]="o.value">{{ o.label }}</option>
@@ -68,23 +68,21 @@ import { formatDateTimeFr } from '../vat-declaration/vat-declaration.view-model'
 
             @if (showConfiguredSince) {
               <div class="dm-field">
-                <label class="dm-lbl" for="dm-since">Date d’effet</label>
+                <label class="dm-lbl" for="dm-since" i18n="@@accounting.monthly-declaration.date.d.effet.ebfb317e">Date d’effet</label>
                 <input
                   id="dm-since"
                   type="date"
                   class="dm-inp"
                   [(ngModel)]="f.configuredSince"
                   [disabled]="disabled" />
-                <span class="dm-hint">
-                  Premier jour du mois à partir duquel le calcul paramétré fait foi. Les périodes
-                  antérieures restent calculées à l’ancienne.
-                </span>
+                <span class="dm-hint" i18n="@@accounting.monthly-declaration.premier.jour.du.mois.a.partir.duquel.le.calcul.p.83201e1c"> Premier jour du mois à partir duquel le calcul paramétré fait foi. Les périodes
+                  antérieures restent calculées à l’ancienne. </span>
               </div>
             }
 
             @if (showOverrideReason) {
               <div class="dm-field dm-grow">
-                <label class="dm-lbl" for="dm-override">Motif de dérogation</label>
+                <label class="dm-lbl" for="dm-override" i18n="@@accounting.monthly-declaration.motif.de.derogation.38926796">Motif de dérogation</label>
                 <textarea
                   id="dm-override"
                   class="dm-inp"
@@ -92,10 +90,8 @@ import { formatDateTimeFr } from '../vat-declaration/vat-declaration.view-model'
                   [maxlength]="maxReasonLength"
                   [(ngModel)]="f.overrideReason"
                   [disabled]="disabled"></textarea>
-                <span class="dm-hint">
-                  La série de contrôles sans écart n’est pas atteinte. Le motif est conservé dans
-                  l’audit avec le nom de son auteur.
-                </span>
+                <span class="dm-hint" i18n="@@accounting.monthly-declaration.la.serie.de.controles.sans.ecart.n.est.pas.attei.f05c8902"> La série de contrôles sans écart n’est pas atteinte. Le motif est conservé dans
+                  l’audit avec le nom de son auteur. </span>
               </div>
             }
 
@@ -110,7 +106,7 @@ import { formatDateTimeFr } from '../vat-declaration/vat-declaration.view-model'
                 type="button"
                 [disabled]="disabled || saving || !!validationError"
                 (click)="apply.emit()">
-                {{ saving ? 'Application…' : 'Appliquer' }}
+                {{ saving ? loc_ui_tern_application_01a96a : loc_ui_tern_appliquer_a4d661 }}
               </app-button>
             </div>
           </div>
@@ -137,6 +133,8 @@ import { formatDateTimeFr } from '../vat-declaration/vat-declaration.view-model'
   `
 })
 export class DmModePanelComponent {
+  readonly loc_ui_tern_application_01a96a = $localize`:@@ui.tern.application.01a96a:Application…`;
+  readonly loc_ui_tern_appliquer_a4d661 = $localize`:@@ui.tern.appliquer.a4d661:Appliquer`;
   @Input({ required: true }) settings!: MonthlyDeclarationSettingsDto | null;
   @Input() form: DmModeForm | null = null;
   @Input() disabled = false;

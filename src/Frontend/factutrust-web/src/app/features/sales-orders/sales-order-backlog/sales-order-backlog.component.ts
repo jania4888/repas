@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -40,23 +41,21 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Carnet de commandes"
-      subtitle="Ce qui est engagé et pas encore livré, ligne par ligne. Seules les commandes confirmées ou partiellement livrées y figurent.">
-      <app-button variant="secondary" icon="pi-arrow-left" iconPos="left" routerLink="/sales-orders">
-        Retour aux commandes
-      </app-button>
+      title="Carnet de commandes" i18n-title="@@sales-orders.sales-order-backlog.carnet.de.commandes.ec641454"
+      subtitle="Ce qui est engagé et pas encore livré, ligne par ligne. Seules les commandes confirmées ou partiellement livrées y figurent." i18n-subtitle="@@sales-orders.sales-order-backlog.ce.qui.est.engage.et.pas.encore.livre.li.73c66779">
+      <app-button variant="secondary" icon="pi-arrow-left" iconPos="left" routerLink="/sales-orders" i18n="@@sales-orders.sales-order-backlog.retour.aux.commandes.68a21472"> Retour aux commandes </app-button>
     </app-page-header>
 
     <div class="ft-filters">
       <div class="ft-filters__row">
         <div class="ft-field">
-          <label for="bl-due">Échéance avant le</label>
+          <label for="bl-due" i18n="@@sales-orders.sales-order-backlog.echeance.avant.le.35f3bb29">Échéance avant le</label>
           <input id="bl-due" type="date" pInputText [(ngModel)]="dueBefore" (change)="load()" />
-          <small class="ft-hint">Ne garder que ce qui doit être livré avant cette date.</small>
+          <small class="ft-hint" i18n="@@sales-orders.sales-order-backlog.ne.garder.que.ce.qui.doit.etre.livre.avant.cette.28428eae">Ne garder que ce qui doit être livré avant cette date.</small>
         </div>
 
         <div class="ft-field ft-field--actions">
-          <app-button variant="secondary" (clicked)="resetFilters()">Réinitialiser</app-button>
+          <app-button variant="secondary" (clicked)="resetFilters()" i18n="@@sales-orders.sales-order-backlog.reinitialiser.e0e2ad54">Réinitialiser</app-button>
         </div>
       </div>
     </div>
@@ -70,22 +69,22 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     } @else if (rows().length === 0) {
       <app-empty-state
         icon="pi-check-circle"
-        title="Carnet vide"
-        message="Aucune quantité engagée ne reste à livrer.">
+        title="Carnet vide" i18n-title="@@sales-orders.sales-order-backlog.carnet.vide.28ec78c4"
+        message="Aucune quantité engagée ne reste à livrer." i18n-message="@@sales-orders.sales-order-backlog.aucune.quantite.engagee.ne.reste.a.livre.238594a0">
       </app-empty-state>
     } @else {
       <div class="ft-table-card">
         <p-table [value]="rows()" [rowHover]="true" [paginator]="true" [rows]="25" styleClass="ft-table">
           <ng-template pTemplate="header">
             <tr>
-              <th>Commande</th>
-              <th>Livraison prévue</th>
-              <th>Client</th>
-              <th>Produit</th>
-              <th class="ft-num">Commandé</th>
-              <th class="ft-num">Livré</th>
-              <th class="ft-num">Reste</th>
-              <th class="ft-num">Valeur HT</th>
+              <th i18n="@@sales-orders.sales-order-backlog.commande.47844341">Commande</th>
+              <th i18n="@@sales-orders.sales-order-backlog.livraison.prevue.dc15f458">Livraison prévue</th>
+              <th i18n="@@sales-orders.sales-order-backlog.client.1bdd79b1">Client</th>
+              <th i18n="@@sales-orders.sales-order-backlog.produit.ff673dc2">Produit</th>
+              <th class="ft-num" i18n="@@sales-orders.sales-order-backlog.commande.e460aa50">Commandé</th>
+              <th class="ft-num" i18n="@@sales-orders.sales-order-backlog.livre.0a1317e9">Livré</th>
+              <th class="ft-num" i18n="@@sales-orders.sales-order-backlog.reste.68135bb8">Reste</th>
+              <th class="ft-num" i18n="@@sales-orders.sales-order-backlog.valeur.ht.8807b7ab">Valeur HT</th>
             </tr>
           </ng-template>
 
@@ -100,10 +99,10 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                 @if (row.expectedDeliveryDate) {
                   {{ row.expectedDeliveryDate | date: 'dd/MM/yyyy' }}
                   @if (row.isLate) {
-                    <p-tag severity="danger" value="En retard" pTooltip="Échéance dépassée."></p-tag>
+                    <p-tag severity="danger" value="En retard" pTooltip="Échéance dépassée." i18n-pTooltip="@@sales-orders.sales-order-backlog.echeance.depassee.528917a7"></p-tag>
                   }
                 } @else {
-                  <span class="ft-muted">Non datée</span>
+                  <span class="ft-muted" i18n="@@sales-orders.sales-order-backlog.non.datee.5a5eade0">Non datée</span>
                 }
               </td>
               <td>{{ row.clientName }}</td>
@@ -132,9 +131,9 @@ export class SalesOrderBacklogComponent implements OnInit {
   dueBefore = '';
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Ventes' },
-    { label: 'Commandes clients', route: '/sales-orders' },
-    { label: 'Carnet' }
+    { label: $localize`:@@sales-orders.sales-order-backlog.ts.ventes.9087fc4f:Ventes` },
+    { label: $localize`:@@sales-orders.sales-order-backlog.ts.commandes.clients.928f824a:Commandes clients`, route: '/sales-orders' },
+    { label: $localize`:@@sales-orders.sales-order-backlog.ts.carnet.5e843afe:Carnet` }
   ];
 
   readonly skeletonColumns: SkeletonColumn[] = [
@@ -156,17 +155,17 @@ export class SalesOrderBacklogComponent implements OnInit {
     const lateValue = late.reduce((sum, r) => sum + r.pendingAmountHt, 0);
 
     return [
-      { label: 'Lignes en attente', value: all.length, format: 'number', icon: 'pi-list' },
-      { label: 'Valeur du carnet', value: totalValue, format: 'currency', tone: 'primary' },
+      { label: $localize`:@@sales-orders.sales-order-backlog.ts.lignes.en.attente.a7206ff9:Lignes en attente`, value: all.length, format: 'number', icon: 'pi-list' },
+      { label: $localize`:@@sales-orders.sales-order-backlog.ts.valeur.du.carnet.681b29e1:Valeur du carnet`, value: totalValue, format: 'currency', tone: 'primary' },
       {
-        label: 'Lignes en retard',
+        label: $localize`:@@sales-orders.sales-order-backlog.ts.lignes.en.retard.93f7ff67:Lignes en retard`,
         value: late.length,
         format: 'number',
         tone: late.length > 0 ? 'rose' : 'emerald',
         icon: 'pi-exclamation-triangle'
       },
       {
-        label: 'Valeur en retard',
+        label: $localize`:@@sales-orders.sales-order-backlog.ts.valeur.en.retard.b4c148a0:Valeur en retard`,
         value: lateValue,
         format: 'currency',
         tone: lateValue > 0 ? 'rose' : 'emerald'
@@ -189,8 +188,8 @@ export class SalesOrderBacklogComponent implements OnInit {
         const msg = this.errorHandler.extractErrorMessage(err);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: msg || 'Impossible de charger le carnet de commandes'
+          summary: $localize`:@@sales-order-backlog.component.summary.Erreur:Erreur`,
+          detail: msg || $localize`:@@sales-orders.sales-order-backlog.ts.impossible.de.charger.le.carnet.de.comma.ddb2d8de:Impossible de charger le carnet de commandes`
         });
         this.errorHandler.logError('Failed to load sales order backlog', err);
         this.rows.set([]);

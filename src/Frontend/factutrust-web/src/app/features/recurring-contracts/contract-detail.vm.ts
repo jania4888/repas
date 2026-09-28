@@ -4,6 +4,7 @@ import {
   RecurringContractDetail
 } from '@core/services/recurring-contract.service';
 import { fixedLinesMonthlyEstimate } from './recurring-contracts.ui-utils';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 /**
  * Calculs purs de la page détail contrat (pattern cash-forecast.view-model.ts) :
@@ -96,7 +97,7 @@ export function buildKpiVm(c: RecurringContractDetail, s: ContractFinancialSumma
     durationMonths: months,
     periodLabel: c.endDate
       ? `${formatDateShort(c.startDate)} → ${formatDateShort(c.endDate)}`
-      : `Depuis le ${formatDateShort(c.startDate)} (sans fin)`,
+      : $localize`:@@recurring-contracts.contract-detail.ts.depuis.le.formatdateshort.sans.fin.9c7bfd9d:Depuis le ${formatDateShort(c.startDate)}:formatDateShort: (sans fin)`,
     autoRenew: c.autoRenew,
     noticePeriodDays: c.noticePeriodDays,
     renewalDeadline: renewalDeadlineOf(c)
@@ -106,7 +107,7 @@ export function buildKpiVm(c: RecurringContractDetail, s: ContractFinancialSumma
 /** Données du donut « Résumé financier » : facturé vs reste à facturer (somme = total). */
 export function donutChartData(s: ContractFinancialSummary): { labels: string[]; datasets: unknown[] } {
   return {
-    labels: ['Déjà facturé', 'Reste à facturer'],
+    labels: [$localize`:@@recurring-contracts.contract-detail.ts.deja.facture.363ed4bc:Déjà facturé`, $localize`:@@recurring-contracts.contract-detail.ts.reste.a.facturer.401f18d8:Reste à facturer`],
     datasets: [
       {
         // remainingAmount peut être négatif en cas de surfacturation (D4) — chart.js exige ≥ 0.
@@ -123,7 +124,7 @@ export function donutChartData(s: ContractFinancialSummary): { labels: string[];
 export function evolutionMonthLabel(month: string): string {
   const d = new Date(`${month}-01T00:00:00`);
   if (Number.isNaN(d.getTime())) return month;
-  return new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(d);
+  return new Intl.DateTimeFormat(erpDateLocale('fr-FR'), { month: 'long', year: 'numeric' }).format(d);
 }
 
 /** Série pour le graphique ligne « Évolution » (ordre chronologique déjà garanti par l'API). */
@@ -132,7 +133,7 @@ export function evolutionChartData(points: ContractEvolutionPoint[]): { labels: 
     labels: points.map(p => evolutionMonthLabel(p.month)),
     datasets: [
       {
-        label: 'Montant facturé',
+        label: $localize`:@@recurring-contracts.contract-detail.ts.montant.facture.5129f82a:Montant facturé`,
         data: points.map(p => p.amount),
         borderColor: '#3862f5',
         backgroundColor: 'rgba(56, 98, 245, 0.08)',

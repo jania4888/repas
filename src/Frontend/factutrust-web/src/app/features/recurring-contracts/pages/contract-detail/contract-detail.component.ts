@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
@@ -48,6 +50,7 @@ type ContractAction = 'activate' | 'suspend' | 'resume' | 'cancel' | 'renew' | '
   selector: 'app-contract-detail',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule, RouterModule, TabsModule,
     PageHeaderComponent, BreadcrumbComponent, ButtonComponent, StatusBadgeComponent,
     EmptyStateComponent, SkeletonComponent, DocumentActionsMenuComponent,
@@ -70,74 +73,60 @@ type ContractAction = 'activate' | 'suspend' | 'resume' | 'cancel' | 'renew' | '
     } @else if (loadError()) {
       <app-empty-state
         icon="pi-exclamation-triangle"
-        title="Impossible de charger le contrat"
-        description="Le contrat est introuvable ou une erreur est survenue."
-        actionLabel="Réessayer"
+        title="Impossible de charger le contrat" i18n-title="@@recurring-contracts.pages.impossible.de.charger.le.contrat.d4646382"
+        description="Le contrat est introuvable ou une erreur est survenue." i18n-description="@@recurring-contracts.pages.le.contrat.est.introuvable.ou.une.erreur.7fdf9198"
+        actionLabel="Réessayer" i18n-actionLabel="@@recurring-contracts.pages.reessayer.b885e20c"
         (actionClick)="reload()">
       </app-empty-state>
     } @else {
       @if (contract(); as c) {
       <app-page-header
-        [title]="c.number ? 'Contrat ' + c.number : 'Contrat récurrent'"
+        [title]="c.number ? loc_ui_tern_contrat_f06722 + c.number : loc_contrat_recurrent_883a81"
         [subtitle]="c.clientName">
         <app-status-badge
           title-addon
           [status]="contractBadgeStatus(c.status)"
-          [label]="contractStatusLabel(c.status, c.statusDisplay)">
+          [label]="contractStatusLabel(c.status, c.statusDisplay) | backendLabel">
         </app-status-badge>
         <div class="actions">
           @if (c.status === 'Draft' && canManage()) {
             <app-button
               variant="primary" icon="pi-play"
               [disabled]="!!actionInProgress()"
-              (clicked)="confirmActivate()">
-              Activer
-            </app-button>
+              (clicked)="confirmActivate()" i18n="@@recurring-contracts.pages.activer.b96fa78d"> Activer </app-button>
           }
           @if (c.status === 'Active' && canManage()) {
             <app-button
               variant="outline" icon="pi-pause"
               [disabled]="!!actionInProgress()"
-              (clicked)="confirmSuspend()">
-              Suspendre
-            </app-button>
+              (clicked)="confirmSuspend()" i18n="@@recurring-contracts.pages.suspendre.1e34ab4e"> Suspendre </app-button>
           }
           @if (c.status === 'Suspended' && canManage()) {
             <app-button
               variant="primary" icon="pi-play"
               [disabled]="!!actionInProgress()"
-              (clicked)="confirmResume()">
-              Reprendre
-            </app-button>
+              (clicked)="confirmResume()" i18n="@@recurring-contracts.pages.reprendre.1c56710b"> Reprendre </app-button>
           }
           @if (canRenew(c) && canManage()) {
             <app-button
               variant="secondary" icon="pi-refresh"
               [disabled]="!!actionInProgress()"
-              (clicked)="confirmRenew()">
-              Renouveler maintenant
-            </app-button>
+              (clicked)="confirmRenew()" i18n="@@recurring-contracts.pages.renouveler.maintenant.698440b4"> Renouveler maintenant </app-button>
           }
           @if (c.status === 'Active' && canTriggerBilling()) {
             <app-button
               variant="outline" icon="pi-file-edit"
               [disabled]="!!actionInProgress()"
-              (clicked)="generateDraft()">
-              Générer brouillon
-            </app-button>
+              (clicked)="generateDraft()" i18n="@@recurring-contracts.pages.generer.brouillon.e5010c97"> Générer brouillon </app-button>
           }
           @if ((c.status === 'Active' || c.status === 'Suspended') && canManage()) {
             <app-button
               variant="danger" icon="pi-times"
               [disabled]="!!actionInProgress()"
-              (clicked)="confirmCancel()">
-              Résilier
-            </app-button>
+              (clicked)="confirmCancel()" i18n="@@recurring-contracts.pages.resilier.1b922dae"> Résilier </app-button>
           }
           @if (c.status === 'Draft' && canUpdate()) {
-            <app-button variant="outline" icon="pi-pencil" [routerLink]="['edit']">
-              Modifier
-            </app-button>
+            <app-button variant="outline" icon="pi-pencil" [routerLink]="['edit']" i18n="@@recurring-contracts.pages.modifier.f260e757"> Modifier </app-button>
           }
           <app-document-actions-menu [items]="actionsMenuItems()"></app-document-actions-menu>
         </div>
@@ -151,13 +140,13 @@ type ContractAction = 'activate' | 'suspend' | 'resume' | 'cancel' | 'renew' | '
         <div class="main-content">
           <p-tabs class="ft-tabs" [lazy]="true" [(value)]="activeTab">
             <p-tablist>
-              <p-tab [value]="0"><i class="pi pi-eye"></i><span>Aperçu</span></p-tab>
-              <p-tab [value]="1"><i class="pi pi-calendar"></i><span>Échéances</span></p-tab>
-              <p-tab [value]="2"><i class="pi pi-receipt"></i><span>Factures</span></p-tab>
-              <p-tab [value]="3"><i class="pi pi-list"></i><span>Services</span></p-tab>
-              <p-tab [value]="4"><i class="pi pi-folder"></i><span>Documents</span></p-tab>
-              <p-tab [value]="5"><i class="pi pi-history"></i><span>Historique</span></p-tab>
-              <p-tab [value]="6"><i class="pi pi-comment"></i><span>Notes</span></p-tab>
+              <p-tab [value]="0"><i class="pi pi-eye"></i><span i18n="@@recurring-contracts.pages.apercu.f0f53004">Aperçu</span></p-tab>
+              <p-tab [value]="1"><i class="pi pi-calendar"></i><span i18n="@@recurring-contracts.pages.echeances.c2079408">Échéances</span></p-tab>
+              <p-tab [value]="2"><i class="pi pi-receipt"></i><span i18n="@@recurring-contracts.pages.factures.da35e4f2">Factures</span></p-tab>
+              <p-tab [value]="3"><i class="pi pi-list"></i><span i18n="@@recurring-contracts.pages.services.5cbd5840">Services</span></p-tab>
+              <p-tab [value]="4"><i class="pi pi-folder"></i><span i18n="@@recurring-contracts.pages.documents.687c8286">Documents</span></p-tab>
+              <p-tab [value]="5"><i class="pi pi-history"></i><span i18n="@@recurring-contracts.pages.historique.34f3a06a">Historique</span></p-tab>
+              <p-tab [value]="6"><i class="pi pi-comment"></i><span i18n="@@recurring-contracts.pages.notes.70440046">Notes</span></p-tab>
             </p-tablist>
             <p-tabpanels>
               <p-tabpanel [value]="0">
@@ -265,6 +254,9 @@ type ContractAction = 'activate' | 'suspend' | 'resume' | 'cancel' | 'renew' | '
   `]
 })
 export class ContractDetailComponent implements OnInit {
+  protected readonly loc_contrat_recurrent_883a81 = $localize`:@@recurring-contracts.contract-detail.tpl.contrat.recurrent.883a818c:Contrat récurrent`;
+
+  readonly loc_ui_tern_contrat_f06722 = $localize`:@@ui.tern.contrat.f06722:Contrat `;
   private readonly service = inject(RecurringContractService);
   private readonly auth = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
@@ -299,9 +291,9 @@ export class ContractDetailComponent implements OnInit {
   readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const c = this.contract();
     return [
-      { label: 'Accueil', route: '/', icon: 'pi-home' },
-      { label: 'Contrats récurrents', route: '/recurring-contracts' },
-      { label: c?.number ? `Contrat ${c.number}` : 'Contrat' }
+      { label: $localize`:@@recurring-contracts.contract-detail.ts.accueil.a8ff8fd2:Accueil`, route: '/', icon: 'pi-home' },
+      { label: $localize`:@@recurring-contracts.contract-detail.ts.contrats.recurrents.e773e54a:Contrats récurrents`, route: '/recurring-contracts' },
+      { label: c?.number ? $localize`:@@ui.tern.contrat.ph.396b9e:Contrat ${c.number}:p0:` : $localize`:@@ui.tern.contrat.d008bd:Contrat` }
     ];
   });
 
@@ -364,20 +356,20 @@ export class ContractDetailComponent implements OnInit {
     if (!c) return [];
     return [
       {
-        label: 'Créer un avenant',
+        label: $localize`:@@recurring-contracts.contract-detail.ts.creer.un.avenant.676020ba:Créer un avenant`,
         icon: 'pi pi-file-plus',
         visible: c.status === 'Active' && this.canManage(),
         command: () => { this.amendDialogVisible = true; }
       },
       {
-        label: 'Cloner',
+        label: $localize`:@@recurring-contracts.contract-detail.ts.cloner.1a9fa729:Cloner`,
         icon: 'pi pi-copy',
         visible: this.canCreate(),
         command: () => this.cloneContract()
       },
       { separator: true },
       {
-        label: 'Voir les brouillons',
+        label: $localize`:@@recurring-contracts.contract-detail.ts.voir.les.brouillons.c69e12e7:Voir les brouillons`,
         icon: 'pi pi-file-edit',
         routerLink: '/recurring-contracts/pending-drafts'
       }
@@ -417,57 +409,57 @@ export class ContractDetailComponent implements OnInit {
 
   confirmActivate(): void {
     this.confirmationService.confirm({
-      header: 'Activer le contrat',
-      message: 'Le contrat sera activé et la facturation démarrera à la prochaine échéance.',
+      header: $localize`:@@recurring-contracts.contract-detail.ts.activer.le.contrat.9474c318:Activer le contrat`,
+      message: $localize`:@@recurring-contracts.contract-detail.ts.le.contrat.sera.active.et.la.facturation.2bb33b68:Le contrat sera activé et la facturation démarrera à la prochaine échéance.`,
       icon: 'pi pi-play',
-      acceptLabel: 'Activer',
-      rejectLabel: 'Annuler',
-      accept: () => this.runAction('activate', 'Contrat activé', 'La facturation reprendra à la prochaine échéance.')
+      acceptLabel: $localize`:@@contract-detail.component.acceptLabel.Activer:Activer`,
+      rejectLabel: $localize`:@@contract-detail.component.rejectLabel.Annuler:Annuler`,
+      accept: () => this.runAction('activate', $localize`:@@recurring-contracts.contract-detail.ts.contrat.active.e63e8e4e:Contrat activé`, $localize`:@@recurring-contracts.contract-detail.ts.la.facturation.reprendra.a.la.prochaine.ddd9456c:La facturation reprendra à la prochaine échéance.`)
     });
   }
 
   confirmSuspend(): void {
     this.confirmationService.confirm({
-      header: 'Suspendre le contrat',
-      message: 'Les prochaines factures ne seront plus générées tant que le contrat est suspendu.',
+      header: $localize`:@@recurring-contracts.contract-detail.ts.suspendre.le.contrat.d43dfca2:Suspendre le contrat`,
+      message: $localize`:@@recurring-contracts.contract-detail.ts.les.prochaines.factures.ne.seront.plus.g.cfe433df:Les prochaines factures ne seront plus générées tant que le contrat est suspendu.`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Suspendre',
-      rejectLabel: 'Annuler',
-      accept: () => this.runAction('suspend', 'Contrat suspendu', 'La génération de factures est interrompue.')
+      acceptLabel: $localize`:@@contract-detail.component.acceptLabel.Suspendre:Suspendre`,
+      rejectLabel: $localize`:@@contract-detail.component.rejectLabel.Annuler:Annuler`,
+      accept: () => this.runAction('suspend', 'Contrat suspendu', $localize`:@@recurring-contracts.contract-detail.ts.la.generation.de.factures.est.interrompu.9745ef9e:La génération de factures est interrompue.`)
     });
   }
 
   confirmResume(): void {
     this.confirmationService.confirm({
-      header: 'Reprendre le contrat',
-      message: 'Le contrat redeviendra actif et la facturation reprendra.',
+      header: $localize`:@@recurring-contracts.contract-detail.ts.reprendre.le.contrat.edff7e03:Reprendre le contrat`,
+      message: $localize`:@@recurring-contracts.contract-detail.ts.le.contrat.redeviendra.actif.et.la.factu.aef399a7:Le contrat redeviendra actif et la facturation reprendra.`,
       icon: 'pi pi-play',
-      acceptLabel: 'Reprendre',
-      rejectLabel: 'Annuler',
-      accept: () => this.runAction('resume', 'Contrat repris', 'La facturation reprendra à la prochaine échéance.')
+      acceptLabel: $localize`:@@contract-detail.component.acceptLabel.Reprendre:Reprendre`,
+      rejectLabel: $localize`:@@contract-detail.component.rejectLabel.Annuler:Annuler`,
+      accept: () => this.runAction('resume', 'Contrat repris', $localize`:@@recurring-contracts.contract-detail.ts.la.facturation.reprendra.a.la.prochaine.ddd9456c:La facturation reprendra à la prochaine échéance.`)
     });
   }
 
   confirmCancel(): void {
     this.confirmationService.confirm({
-      header: 'Résilier le contrat',
-      message: 'Cette action est irréversible : le contrat sera définitivement résilié.',
+      header: $localize`:@@recurring-contracts.contract-detail.ts.resilier.le.contrat.aa98822d:Résilier le contrat`,
+      message: $localize`:@@recurring-contracts.contract-detail.ts.cette.action.est.irreversible.le.contrat.ebe87177:Cette action est irréversible : le contrat sera définitivement résilié.`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Résilier',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@contract-detail.component.acceptLabel.Résilier:Résilier`,
+      rejectLabel: $localize`:@@contract-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       size: 'md',
-      accept: () => this.runAction('cancel', 'Contrat résilié', 'Le contrat a été résilié.')
+      accept: () => this.runAction('cancel', $localize`:@@recurring-contracts.contract-detail.ts.contrat.resilie.5111febb:Contrat résilié`, $localize`:@@recurring-contracts.contract-detail.ts.le.contrat.a.ete.resilie.44a883e1:Le contrat a été résilié.`)
     });
   }
 
   confirmRenew(): void {
     this.confirmationService.confirm({
-      header: 'Renouveler le contrat',
-      message: 'Le contrat sera prolongé d\'une durée identique à la durée initiale.',
+      header: $localize`:@@recurring-contracts.contract-detail.ts.renouveler.le.contrat.1e20cca2:Renouveler le contrat`,
+      message: $localize`:@@recurring-contracts.contract-detail.ts.le.contrat.sera.prolonge.d.une.duree.ide.57797cfd:Le contrat sera prolongé d'une durée identique à la durée initiale.`,
       icon: 'pi pi-refresh',
-      acceptLabel: 'Renouveler',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@contract-detail.component.acceptLabel.Renouveler:Renouveler`,
+      rejectLabel: $localize`:@@contract-detail.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.actionInProgress.set('renew');
         this.service.renewNow(this.contractId, {}).subscribe({
@@ -475,8 +467,8 @@ export class ContractDetailComponent implements OnInit {
             this.actionInProgress.set(null);
             this.toast.add({
               severity: 'success',
-              summary: 'Contrat renouvelé',
-              detail: `Nouvelle date de fin : ${new Date(result.newEndDate).toLocaleDateString('fr-FR')}.`
+              summary: $localize`:@@contract-detail.component.summary.Contrat_renouvel:Contrat renouvelé`,
+              detail: $localize`:@@recurring-contracts.contract-detail.ts.nouvelle.date.de.fin.tolocaledatestring.61aefc26:Nouvelle date de fin : ${new Date(result.newEndDate).toLocaleDateString('fr-FR')}:toLocaleDateString:.`
             });
             this.reload();
             this.refreshToken.update(t => t + 1);
@@ -486,13 +478,13 @@ export class ContractDetailComponent implements OnInit {
             if (err?.status === 404) {
               this.toast.add({
                 severity: 'info',
-                summary: 'Fonction indisponible',
-                detail: 'Fonction disponible après la mise à jour du serveur.'
+                summary: $localize`:@@contract-detail.component.summary.Fonction_indispo:Fonction indisponible`,
+                detail: $localize`:@@contract-detail.component.detail.Fonction_disponi:Fonction disponible après la mise à jour du serveur.`
               });
               return;
             }
             this.errorHandler.logError('RecurringContracts: renew', err);
-            this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+            this.toast.add({ severity: 'error', summary: $localize`:@@contract-detail.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
           }
         });
       }
@@ -506,15 +498,15 @@ export class ContractDetailComponent implements OnInit {
         this.actionInProgress.set(null);
         this.toast.add({
           severity: 'success',
-          summary: 'Génération terminée',
-          detail: `${count} brouillon(s) généré(s) — visibles dans « Brouillons à valider ».`
+          summary: $localize`:@@contract-detail.component.summary.G_n_ration_termi:Génération terminée`,
+          detail: $localize`:@@recurring-contracts.contract-detail.ts.count.brouillon.s.genere.s.visibles.dans.0c88fdb0:${count}:count: brouillon(s) généré(s) — visibles dans « Brouillons à valider ».`
         });
         this.refreshToken.update(t => t + 1);
       },
       error: err => {
         this.actionInProgress.set(null);
         this.errorHandler.logError('RecurringContracts: trigger billing', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-detail.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }
@@ -524,7 +516,7 @@ export class ContractDetailComponent implements OnInit {
     this.service.clone(this.contractId).subscribe({
       next: newId => {
         this.actionInProgress.set(null);
-        this.toast.add({ severity: 'success', summary: 'Contrat cloné', detail: 'Le nouveau brouillon a été créé.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@contract-detail.component.summary.Contrat_clon_:Contrat cloné`, detail: $localize`:@@contract-detail.component.detail.Le_nouveau_broui:Le nouveau brouillon a été créé.` });
         void this.router.navigate(['/recurring-contracts', newId]);
       },
       error: err => {
@@ -532,13 +524,13 @@ export class ContractDetailComponent implements OnInit {
         if (err?.status === 404) {
           this.toast.add({
             severity: 'info',
-            summary: 'Fonction indisponible',
-            detail: 'Fonction disponible après la mise à jour du serveur.'
+            summary: $localize`:@@contract-detail.component.summary.Fonction_indispo:Fonction indisponible`,
+            detail: $localize`:@@contract-detail.component.detail.Fonction_disponi:Fonction disponible après la mise à jour du serveur.`
           });
           return;
         }
         this.errorHandler.logError('RecurringContracts: clone', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-detail.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }
@@ -555,7 +547,7 @@ export class ContractDetailComponent implements OnInit {
       error: err => {
         this.actionInProgress.set(null);
         this.errorHandler.logError(`RecurringContracts: ${action}`, err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-detail.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }
@@ -569,7 +561,7 @@ export class ContractDetailComponent implements OnInit {
     this.loading.set(false);
     this.loadError.set(true);
     this.errorHandler.logError('RecurringContracts: load detail', err);
-    this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+    this.toast.add({ severity: 'error', summary: $localize`:@@contract-detail.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
   }
 
   /** Recharge sans skeleton pleine page (après avenant, notes, actions de cycle de vie). */
@@ -593,7 +585,7 @@ export class ContractDetailComponent implements OnInit {
       next: s => this.summary.set(s),
       error: err => {
         this.errorHandler.logError('RecurringContracts: financial summary', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-detail.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
 
@@ -606,7 +598,7 @@ export class ContractDetailComponent implements OnInit {
       error: err => {
         this.scheduleLoading.set(false);
         this.errorHandler.logError('RecurringContracts: schedule (overview)', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-detail.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
 
@@ -619,7 +611,7 @@ export class ContractDetailComponent implements OnInit {
       error: err => {
         this.evolutionLoading.set(false);
         this.errorHandler.logError('RecurringContracts: evolution', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-detail.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }

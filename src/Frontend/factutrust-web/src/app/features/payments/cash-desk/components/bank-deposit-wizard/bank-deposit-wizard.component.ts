@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -50,6 +51,9 @@ const DEPOSIT_TO_METHOD: Record<BankDepositType, number> = {
   styleUrl: './bank-deposit-wizard.component.scss'
 })
 export class BankDepositWizardComponent implements OnChanges, OnInit {
+  protected readonly loc_precedent_a527f1 = $localize`:@@payments.bank-deposit-wizard.tpl.precedent.a527f171:Précédent`;
+  protected readonly loc_fermer_5ab4ec = $localize`:@@payments.bank-deposit-wizard.tpl.fermer.5ab4ec64:Fermer`;
+
   @Input() visible = false;
   @Input() year = new Date().getFullYear();
   @Input() month = new Date().getMonth() + 1;
@@ -69,10 +73,10 @@ export class BankDepositWizardComponent implements OnChanges, OnInit {
   readonly canCreate = computed(() => this.auth.hasPermission(PERMISSIONS.payments.create));
 
   steps: MenuItem[] = [
-    { label: 'Type de remise' },
-    { label: 'Infos basiques' },
-    { label: 'Montant' },
-    { label: 'Validation' }
+    { label: $localize`:@@payments.bank-deposit-wizard.ts.type.de.remise.81515d34:Type de remise` },
+    { label: $localize`:@@payments.bank-deposit-wizard.ts.infos.basiques.4081af61:Infos basiques` },
+    { label: $localize`:@@payments.bank-deposit-wizard.ts.montant.4adcd9fc:Montant` },
+    { label: $localize`:@@payments.bank-deposit-wizard.ts.validation.dd74d182:Validation` }
   ];
 
   currentStep = 0;
@@ -163,8 +167,8 @@ export class BankDepositWizardComponent implements OnChanges, OnInit {
         this.serverAvailableByMethod.set({ 0: 0, 1: 0, 2: 0 });
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de charger les soldes disponibles pour cette date.'
+          summary: $localize`:@@bank-deposit-wizard.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@bank-deposit-wizard.component.detail.impossible.de.charger.les.soldes.disponibles.pou.de02da90:Impossible de charger les soldes disponibles pour cette date.`
         });
       }
     });
@@ -187,8 +191,8 @@ export class BankDepositWizardComponent implements OnChanges, OnInit {
       error: () => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de charger les comptes bancaires.'
+          summary: $localize`:@@bank-deposit-wizard.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@bank-deposit-wizard.component.detail.impossible.de.charger.les.comptes.bancaires.f5455f1d:Impossible de charger les comptes bancaires.`
         });
       }
     });
@@ -263,46 +267,46 @@ export class BankDepositWizardComponent implements OnChanges, OnInit {
     this.stepError.set('');
     if (this.currentStep === 0) {
       if (this.serverBalancesLoading()) {
-        this.stepError.set('Chargement des soldes…');
+        this.stepError.set($localize`:@@payments.bank-deposit-wizard.ts.chargement.des.soldes.2d28cd7e:Chargement des soldes…`);
         return false;
       }
       if (this.depositType === null) {
-        this.stepError.set('Sélectionnez un type de dépôt.');
+        this.stepError.set($localize`:@@payments.bank-deposit-wizard.ts.selectionnez.un.type.de.depot.98f63bd1:Sélectionnez un type de dépôt.`);
         return false;
       }
       if (this.availableForSelectedType() <= 0) {
-        this.stepError.set('Aucun solde disponible pour ce type à la date de remise choisie.');
+        this.stepError.set($localize`:@@payments.bank-deposit-wizard.ts.aucun.solde.disponible.pour.ce.type.a.la.d0c754ea:Aucun solde disponible pour ce type à la date de remise choisie.`);
         return false;
       }
       return true;
     }
     if (this.currentStep === 1) {
       if (!this.bankAccountId) {
-        this.stepError.set('Sélectionnez un compte destinataire.');
+        this.stepError.set($localize`:@@payments.bank-deposit-wizard.ts.selectionnez.un.compte.destinataire.97e77ed5:Sélectionnez un compte destinataire.`);
         return false;
       }
       if (!this.depositSlipReference.trim()) {
-        this.stepError.set('Le numéro de la remise en banque est obligatoire.');
+        this.stepError.set($localize`:@@payments.bank-deposit-wizard.ts.le.numero.de.la.remise.en.banque.est.obl.77142b03:Le numéro de la remise en banque est obligatoire.`);
         return false;
       }
       return true;
     }
     if (this.currentStep === 2) {
       if (this.serverBalancesLoading()) {
-        this.stepError.set('Chargement des soldes…');
+        this.stepError.set($localize`:@@payments.bank-deposit-wizard.ts.chargement.des.soldes.2d28cd7e:Chargement des soldes…`);
         return false;
       }
       const avail = this.availableForSelectedType();
       if (this.amount <= 0) {
-        this.stepError.set('Le montant doit être positif.');
+        this.stepError.set($localize`:@@payments.bank-deposit-wizard.ts.le.montant.doit.etre.positif.aea12344:Le montant doit être positif.`);
         return false;
       }
       if (this.amount > avail) {
-        this.stepError.set('Le montant dépasse le solde disponible.');
+        this.stepError.set($localize`:@@payments.bank-deposit-wizard.ts.le.montant.depasse.le.solde.disponible.95f54536:Le montant dépasse le solde disponible.`);
         return false;
       }
       if (this.quantity < 1) {
-        this.stepError.set('La quantité doit être au moins 1.');
+        this.stepError.set($localize`:@@payments.bank-deposit-wizard.ts.la.quantite.doit.etre.au.moins.1.9ad20414:La quantité doit être au moins 1.`);
         return false;
       }
       return true;
@@ -338,7 +342,7 @@ export class BankDepositWizardComponent implements OnChanges, OnInit {
     if (this.depositType === null || !this.bankAccountId) return;
     if (this.submitting()) return;
     if (!this.canCreate()) {
-      this.stepError.set('Action refusée : autorisations insuffisantes (Trésorerie — saisie).');
+      this.stepError.set($localize`:@@payments.bank-deposit-wizard.ts.action.refusee.autorisations.insuffisant.c21aade8:Action refusée : autorisations insuffisantes (Trésorerie — saisie).`);
       return;
     }
 
@@ -364,14 +368,14 @@ export class BankDepositWizardComponent implements OnChanges, OnInit {
         if (res.success && res.data) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Remise en banque enregistrée.'
+            summary: $localize`:@@bank-deposit-wizard.component.summary.Succès:Succès`,
+            detail: $localize`:@@bank-deposit-wizard.component.detail.Remise_en_banque:Remise en banque enregistrée.`
           });
           this.depositCreated.emit(res.data);
           this.onHide();
         } else {
           const r = res as ApiResponse<BankDepositListItem> & { error?: string };
-          this.stepError.set(r.message ?? r.error ?? 'Impossible d\u2019enregistrer la remise.');
+          this.stepError.set(r.message ?? r.error ?? $localize`:@@payments.bank-deposit-wizard.ts.impossible.d.enregistrer.la.remise.fe68a83f:Impossible d’enregistrer la remise.`);
         }
         this.submitting.set(false);
       },
@@ -379,7 +383,7 @@ export class BankDepositWizardComponent implements OnChanges, OnInit {
         // 403 (payments:create) → message métier français ; autres erreurs → extraction francisée.
         this.stepError.set(
           err.status === 403
-            ? 'Action refusée : autorisations insuffisantes (Trésorerie — saisie).'
+            ? $localize`:@@ui.tern.action.refusee.autorisations.insuffisantes.c21aad:Action refusée : autorisations insuffisantes (Trésorerie — saisie).`
             : this.errorHandler.extractErrorMessage(err)
         );
         this.submitting.set(false);

@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
@@ -39,6 +41,7 @@ interface TimelineEvent {
   selector: 'app-quote-detail',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -63,49 +66,39 @@ interface TimelineEvent {
     <app-breadcrumb [items]="breadcrumbItems()"></app-breadcrumb>
 
     <app-page-header
-      [title]="quote()?.number ?? 'Chargement...'"
-      [subtitle]="'Devis du ' + (quote()?.issueDate | date:'dd/MM/yyyy')">
+      [title]="quote()?.number ?? loc_ui_tern_chargement_a209b6"
+      [subtitle]="loc_ui_tern_devis_du_677eb4 + (quote()?.issueDate | date:'dd/MM/yyyy')">
       <app-button
         variant="outline"
         icon="pi-arrow-left"
         iconPos="left"
-        routerLink="/quotes">
-        Retour aux devis
-      </app-button>
+        routerLink="/quotes" i18n="@@quotes.quote-detail.retour.aux.devis.be1faec1"> Retour aux devis </app-button>
       @if (quote()) {
         <app-button
           variant="outline"
           icon="pi-download"
           iconPos="left"
-          (click)="downloadPdf()">
-          Télécharger PDF
-        </app-button>
+          (click)="downloadPdf()" i18n="@@quotes.quote-detail.telecharger.pdf.06b2eebe"> Télécharger PDF </app-button>
         @if (canConvert()) {
           <app-button
             variant="primary"
             icon="pi-file-export"
             iconPos="left"
-            (click)="confirmConvertToInvoice()">
-            Créer la facture finale
-          </app-button>
+            (click)="confirmConvertToInvoice()" i18n="@@quotes.quote-detail.creer.la.facture.finale.a86b9a9e"> Créer la facture finale </app-button>
         }
         @if (canConvertToOrder()) {
           <app-button
             variant="primary"
             icon="pi-shopping-cart"
             iconPos="left"
-            (click)="confirmConvertToSalesOrder()">
-            Transformer en commande
-          </app-button>
+            (click)="confirmConvertToSalesOrder()" i18n="@@quotes.quote-detail.transformer.en.commande.cd762203"> Transformer en commande </app-button>
         }
         @if (canConvertToRecurringContract()) {
           <app-button
             variant="outline"
             icon="pi-refresh"
             iconPos="left"
-            (click)="confirmConvertToRecurringContract()">
-            Créer un contrat récurrent
-          </app-button>
+            (click)="confirmConvertToRecurringContract()" i18n="@@quotes.quote-detail.creer.un.contrat.recurrent.705884e7"> Créer un contrat récurrent </app-button>
         }
       }
     </app-page-header>
@@ -132,16 +125,16 @@ interface TimelineEvent {
                 <h2>{{ quote()!.number }}</h2>
                 <app-status-badge
                   [status]="getStatusBadgeStatus(quote()!.status)"
-                  [label]="quote()!.statusDisplay">
+                  [label]="quote()!.statusDisplay | backendLabel">
                 </app-status-badge>
               </div>
               <div class="quote-dates">
                 <div class="date-item">
-                  <span class="label">Date d'émission</span>
+                  <span class="label" i18n="@@quotes.quote-detail.date.d.emission.99f68857">Date d'émission</span>
                   <span class="value">{{ quote()!.issueDate | date:'dd/MM/yyyy' }}</span>
                 </div>
                 <div class="date-item">
-                  <span class="label">Valide jusqu'au</span>
+                  <span class="label" i18n="@@quotes.quote-detail.valide.jusqu.au.f5b757f8">Valide jusqu'au</span>
                   <span class="value" [class.expired]="isExpired()">
                     {{ quote()!.expiryDate | date:'dd/MM/yyyy' }}
                   </span>
@@ -153,7 +146,7 @@ interface TimelineEvent {
 
             <div class="parties-grid">
               <div class="party-card">
-                <h4>Client</h4>
+                <h4 i18n="@@quotes.quote-detail.client.1bdd79b1">Client</h4>
                 <p class="party-name">{{ quote()!.client.name }}</p>
                 <p class="party-address">{{ quote()!.client.address }}</p>
                 @if (quote()!.client.nif) {
@@ -166,16 +159,16 @@ interface TimelineEvent {
             <p-divider></p-divider>
 
             <div class="lines-section">
-              <h4>Lignes</h4>
+              <h4 i18n="@@quotes.quote-detail.lignes.41c7025e">Lignes</h4>
               <table class="lines-table">
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th>Désignation</th>
-                    <th class="text-right">Quantité</th>
-                    <th class="text-right">Prix unitaire</th>
-                    <th class="text-center">TVA</th>
-                    <th class="text-right">Total HT</th>
+                    <th i18n="@@quotes.quote-detail.text.d08f88df">#</th>
+                    <th i18n="@@quotes.quote-detail.designation.63a9062c">Désignation</th>
+                    <th class="text-right" i18n="@@quotes.quote-detail.quantite.09a38fda">Quantité</th>
+                    <th class="text-right" i18n="@@quotes.quote-detail.prix.unitaire.3e848c96">Prix unitaire</th>
+                    <th class="text-center" i18n="@@quotes.quote-detail.tva.fb62cb5d">TVA</th>
+                    <th class="text-right" i18n="@@quotes.quote-detail.total.ht.2ca17ae6">Total HT</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -200,27 +193,27 @@ interface TimelineEvent {
 
             <div class="totals-box">
               <div class="total-row">
-                <span>Total HT</span>
+                <span i18n="@@quotes.quote-detail.total.ht.2ca17ae6">Total HT</span>
                 <span class="mono">{{ quote()!.subTotal | number:'1.3-3' }} {{ quote()!.currency }}</span>
               </div>
               @if (quote()!.fodecAmount) {
                 <div class="total-row">
-                  <span>FODEC</span>
+                  <span i18n="@@quotes.quote-detail.fodec.9a029080">FODEC</span>
                   <span class="mono">{{ quote()!.fodecAmount | number:'1.3-3' }} {{ quote()!.currency }}</span>
                 </div>
               }
               <div class="total-row">
-                <span>Total TVA</span>
+                <span i18n="@@quotes.quote-detail.total.tva.605c4b2e">Total TVA</span>
                 <span class="mono">{{ quote()!.totalVat | number:'1.3-3' }} {{ quote()!.currency }}</span>
               </div>
               @if (quote()!.fiscalStampAmount) {
                 <div class="total-row">
-                  <span>Timbre fiscal</span>
+                  <span i18n="@@quotes.quote-detail.timbre.fiscal.1f8f7dd1">Timbre fiscal</span>
                   <span class="mono">{{ quote()!.fiscalStampAmount | number:'1.3-3' }} {{ quote()!.currency }}</span>
                 </div>
               }
               <div class="total-row grand">
-                <span>Total TTC</span>
+                <span i18n="@@quotes.quote-detail.total.ttc.9e80ff7c">Total TTC</span>
                 <span class="mono">{{ quote()!.totalAmount | number:'1.3-3' }} {{ quote()!.currency }}</span>
               </div>
             </div>
@@ -230,12 +223,12 @@ interface TimelineEvent {
               <div class="notes-section">
                 @if (quote()!.termsAndConditions) {
                   <div class="note">
-                    <strong>Conditions générales:</strong> {{ quote()!.termsAndConditions }}
+                    <strong i18n="@@quotes.quote-detail.conditions.generales.07ed78a1">Conditions générales:</strong> {{ quote()!.termsAndConditions }}
                   </div>
                 }
                 @if (quote()!.notes) {
                   <div class="note">
-                    <strong>Notes:</strong> {{ quote()!.notes }}
+                    <strong i18n="@@quotes.quote-detail.notes.9c3befe7">Notes:</strong> {{ quote()!.notes }}
                   </div>
                 }
               </div>
@@ -244,10 +237,10 @@ interface TimelineEvent {
         </div>
 
         <div class="sidebar">
-          <p-card header="Statut" styleClass="status-card">
+          <p-card header="Statut" i18n-header="@@quotes.quote-detail.statut.659499f3" styleClass="status-card">
             <app-status-badge
               [status]="getStatusBadgeStatus(quote()!.status)"
-              [label]="quote()!.statusDisplay"
+              [label]="quote()!.statusDisplay | backendLabel"
               style="margin-bottom: var(--spacing-4);">
             </app-status-badge>
             @if (canSend()) {
@@ -257,9 +250,7 @@ interface TimelineEvent {
                 icon="pi-send"
                 iconPos="left"
                 (click)="sendQuote()"
-                style="width: 100%; margin-bottom: var(--spacing-3);">
-                Envoyer au client
-              </app-button>
+                style="width: 100%; margin-bottom: var(--spacing-3);" i18n="@@quotes.quote-detail.envoyer.au.client.409bc8e1"> Envoyer au client </app-button>
             }
             @if (canAccept()) {
               <div class="status-actions">
@@ -268,22 +259,18 @@ interface TimelineEvent {
                   size="sm"
                   icon="pi-check"
                   iconPos="left"
-                  (click)="acceptQuote()">
-                  Accepter
-                </app-button>
+                  (click)="acceptQuote()" i18n="@@quotes.quote-detail.accepter.f8b9b80e"> Accepter </app-button>
                 <app-button
                   variant="outline"
                   size="sm"
                   icon="pi-times"
                   iconPos="left"
-                  (click)="rejectQuote()">
-                  Refuser
-                </app-button>
+                  (click)="rejectQuote()" i18n="@@quotes.quote-detail.refuser.62897154"> Refuser </app-button>
               </div>
             }
           </p-card>
 
-          <p-card header="Historique" styleClass="timeline-card">
+          <p-card header="Historique" i18n-header="@@quotes.quote-detail.historique.34f3a06a" styleClass="timeline-card">
             <p-timeline [value]="timeline" styleClass="custom-timeline">
               <ng-template pTemplate="content" let-event>
                 <div class="timeline-event">
@@ -301,33 +288,27 @@ interface TimelineEvent {
             </p-timeline>
           </p-card>
 
-          <p-card header="Actions" styleClass="actions-card">
+          <p-card header="Actions" i18n-header="@@quotes.quote-detail.actions.c3cd636a" styleClass="actions-card">
             <div class="quick-actions">
               <app-button
                 variant="outline"
                 icon="pi-download"
                 iconPos="left"
                 (click)="downloadPdf()"
-                style="width: 100%; margin-bottom: var(--spacing-2);">
-                Télécharger PDF
-              </app-button>
+                style="width: 100%; margin-bottom: var(--spacing-2);" i18n="@@quotes.quote-detail.telecharger.pdf.06b2eebe"> Télécharger PDF </app-button>
               <app-button
                 variant="outline"
                 icon="pi-copy"
                 iconPos="left"
                 (click)="duplicateQuote()"
-                style="width: 100%; margin-bottom: var(--spacing-2);">
-                Dupliquer
-              </app-button>
+                style="width: 100%; margin-bottom: var(--spacing-2);" i18n="@@quotes.quote-detail.dupliquer.c5e1d3f1"> Dupliquer </app-button>
               @if (convertedInvoiceId()) {
                 <app-button
                   variant="outline"
                   icon="pi-file"
                   iconPos="left"
                   [routerLink]="['/invoices', convertedInvoiceId()!]"
-                  style="width: 100%; margin-bottom: var(--spacing-2);">
-                  Voir la facture
-                </app-button>
+                  style="width: 100%; margin-bottom: var(--spacing-2);" i18n="@@quotes.quote-detail.voir.la.facture.e4bddea0"> Voir la facture </app-button>
               }
               @if (convertedSalesOrderId()) {
                 <app-button
@@ -335,9 +316,7 @@ interface TimelineEvent {
                   icon="pi-shopping-cart"
                   iconPos="left"
                   [routerLink]="['/sales-orders', convertedSalesOrderId()!]"
-                  style="width: 100%;">
-                  Voir la commande
-                </app-button>
+                  style="width: 100%;" i18n="@@quotes.quote-detail.voir.la.commande.31cf49ea"> Voir la commande </app-button>
               }
               @if (canCancel()) {
                 <app-button
@@ -345,9 +324,7 @@ interface TimelineEvent {
                   icon="pi-times"
                   iconPos="left"
                   (click)="cancelQuote()"
-                  style="width: 100%; margin-top: var(--spacing-2);">
-                  Annuler le devis
-                </app-button>
+                  style="width: 100%; margin-top: var(--spacing-2);" i18n="@@quotes.quote-detail.annuler.le.devis.98b229a4"> Annuler le devis </app-button>
               }
             </div>
           </p-card>
@@ -356,55 +333,55 @@ interface TimelineEvent {
     } @else {
       <div class="not-found">
         <i class="pi pi-exclamation-triangle"></i>
-        <h2>Devis non trouvé</h2>
-        <p>Le devis demandé n'existe pas ou a été supprimé.</p>
-        <app-button variant="primary" routerLink="/quotes">Retour aux devis</app-button>
+        <h2 i18n="@@quotes.quote-detail.devis.non.trouve.b8455cbe">Devis non trouvé</h2>
+        <p i18n="@@quotes.quote-detail.le.devis.demande.n.existe.pas.ou.a.ete.supprime.1cfc0dc1">Le devis demandé n'existe pas ou a été supprimé.</p>
+        <app-button variant="primary" routerLink="/quotes" i18n="@@quotes.quote-detail.retour.aux.devis.be1faec1">Retour aux devis</app-button>
       </div>
     }
 
     <p-dialog
-      header="Refuser ce devis"
+      header="Refuser ce devis" i18n-header="@@quotes.quote-detail.refuser.ce.devis.b601cc3c"
       [(visible)]="rejectDialogVisible"
       [modal]="true"
       [style]="{ width: '420px' }"
       [draggable]="false"
       [resizable]="false"
       (onHide)="rejectReason = ''">
-      <p class="dialog-message">Vous êtes sur le point de refuser ce devis. Un motif est optionnel mais recommandé pour l'historique.</p>
+      <p class="dialog-message" i18n="@@quotes.quote-detail.vous.etes.sur.le.point.de.refuser.ce.devis.un.mo.57e548c2">Vous êtes sur le point de refuser ce devis. Un motif est optionnel mais recommandé pour l'historique.</p>
       <div class="dialog-field">
-        <label for="reject-reason">Motif de refus (optionnel)</label>
+        <label for="reject-reason" i18n="@@quotes.quote-detail.motif.de.refus.optionnel.543c4cff">Motif de refus (optionnel)</label>
         <textarea
           pTextarea
           id="reject-reason"
           [(ngModel)]="rejectReason"
           [rows]="3"
-          placeholder="Ex. : budget insuffisant, délais inadaptés…"
+          placeholder="Ex. : budget insuffisant, délais inadaptés…" i18n-placeholder="@@quotes.quote-detail.ex.budget.insuffisant.delais.inadaptes.c7670e0e"
           class="w-full">
         </textarea>
       </div>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="rejectDialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" icon="pi-times" iconPos="left" (click)="doReject()">Refuser le devis</app-button>
+        <app-button variant="outline" (click)="rejectDialogVisible = false" i18n="@@quotes.quote-detail.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" icon="pi-times" iconPos="left" (click)="doReject()" i18n="@@quotes.quote-detail.refuser.le.devis.c9c3e549">Refuser le devis</app-button>
       </ng-template>
     </p-dialog>
 
     <p-dialog
-      header="Annuler le devis"
+      header="Annuler le devis" i18n-header="@@quotes.quote-detail.annuler.le.devis.98b229a4"
       [(visible)]="cancelDialogVisible"
       [modal]="true"
       [style]="{ width: '420px' }"
       [draggable]="false"
       [resizable]="false"
       (onHide)="cancelReason = ''">
-      <p class="dialog-message">L'annulation est définitive. Le motif est obligatoire pour la traçabilité.</p>
+      <p class="dialog-message" i18n="@@quotes.quote-detail.l.annulation.est.definitive.le.motif.est.obligat.e2534c49">L'annulation est définitive. Le motif est obligatoire pour la traçabilité.</p>
       <div class="dialog-field">
-        <label for="cancel-reason">Motif d'annulation <span class="required">*</span></label>
+        <label for="cancel-reason"><ng-container i18n="@@quotes.quote-detail.motif.d.annulation.f627914d">Motif d'annulation </ng-container> <span class="required" i18n="@@quotes.quote-detail.text.df58248c">*</span></label>
         <textarea
           pTextarea
           id="cancel-reason"
           [(ngModel)]="cancelReason"
           [rows]="3"
-          placeholder="Ex. : projet abandonné, commande annulée…"
+          placeholder="Ex. : projet abandonné, commande annulée…" i18n-placeholder="@@quotes.quote-detail.ex.projet.abandonne.commande.annulee.c262fa9b"
           class="w-full">
         </textarea>
         @if (cancelError()) {
@@ -412,8 +389,8 @@ interface TimelineEvent {
         }
       </div>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="cancelDialogVisible = false">Retour</app-button>
-        <app-button variant="primary" icon="pi-times" iconPos="left" (click)="doCancel()">Annuler le devis</app-button>
+        <app-button variant="outline" (click)="cancelDialogVisible = false" i18n="@@quotes.quote-detail.retour.e5befb1f">Retour</app-button>
+        <app-button variant="primary" icon="pi-times" iconPos="left" (click)="doCancel()" i18n="@@quotes.quote-detail.annuler.le.devis.98b229a4">Annuler le devis</app-button>
       </ng-template>
     </p-dialog>
 
@@ -512,7 +489,7 @@ interface TimelineEvent {
       .lines-table td {
         padding: var(--spacing-3) var(--spacing-2);
         font-size: var(--font-size-sm);
-        text-align: left;
+        text-align: start;
         border-bottom: 1px solid var(--color-neutral-100);
       }
       .lines-table th {
@@ -520,7 +497,7 @@ interface TimelineEvent {
         color: var(--color-neutral-500);
       }
       .lines-table .text-right {
-        text-align: right;
+        text-align: end;
       }
       .lines-table .text-center {
         text-align: center;
@@ -535,7 +512,7 @@ interface TimelineEvent {
         min-width: 280px;
         max-width: 320px;
         margin-top: var(--spacing-4);
-        margin-left: auto;
+        margin-inline-start: auto;
         padding: var(--spacing-4);
         background: var(--color-primary-50);
         border-radius: var(--radius-lg);
@@ -676,6 +653,8 @@ interface TimelineEvent {
   ],
 })
 export class QuoteDetailComponent implements OnInit {
+  readonly loc_ui_tern_chargement_a209b6 = $localize`:@@ui.tern.chargement.a209b6:Chargement...`;
+  readonly loc_ui_tern_devis_du_677eb4 = $localize`:@@ui.tern.devis.du.677eb4:Devis du `;
   private quoteService = inject(QuoteService);
   private recurringContractService = inject(RecurringContractService);
   private auth = inject(AuthService);
@@ -697,9 +676,9 @@ export class QuoteDetailComponent implements OnInit {
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const q = this.quote();
     return [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Devis', route: '/quotes' },
-      { label: q?.number ?? 'Devis' },
+      { label: $localize`:@@quotes.quote-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@quotes.quote-detail.ts.devis.f7622f90:Devis`, route: '/quotes' },
+      { label: q?.number ?? $localize`:@@ui.tern.devis.f7622f:Devis` },
     ];
   });
 
@@ -744,7 +723,7 @@ export class QuoteDetailComponent implements OnInit {
         color: q.sentAt ? 'var(--color-info-500)' : 'var(--color-neutral-300)',
       },
       {
-        status: q.status === 'Rejected' ? 'Refusé' : 'Accepté',
+        status: q.status === 'Rejected' ? $localize`:@@ui.tern.refuse.340218:Refusé` : $localize`:@@ui.tern.accepte.8cf098:Accepté`,
         date: q.acceptedAt ?? q.rejectedAt,
         icon: q.status === 'Rejected' ? 'pi pi-times' : 'pi pi-check',
         color:
@@ -755,7 +734,7 @@ export class QuoteDetailComponent implements OnInit {
             : 'var(--color-neutral-300)',
       },
       {
-        status: q.convertedSalesOrderId ? 'Commande créée' : 'Facture créée',
+        status: q.convertedSalesOrderId ? $localize`:@@ui.tern.commande.creee.99c2a3:Commande créée` : $localize`:@@ui.tern.facture.creee.a77fc4:Facture créée`,
         date: q.convertedAt ?? null,
         icon: q.convertedSalesOrderId ? 'pi pi-shopping-cart' : 'pi pi-file-export',
         color: q.convertedInvoiceId || q.convertedSalesOrderId ? 'var(--color-primary-500)' : 'var(--color-neutral-300)',
@@ -836,12 +815,12 @@ export class QuoteDetailComponent implements OnInit {
 
   confirmConvertToRecurringContract(): void {
     this.confirmationService.confirm({
-      header: 'Créer un contrat récurrent',
+      header: $localize`:@@quotes.quote-detail.ts.creer.un.contrat.recurrent.705884e7:Créer un contrat récurrent`,
       message:
-        'Un contrat récurrent sera créé à partir de ce devis (lignes et client repris). Vous pourrez ajuster la périodicité avant activation.',
+        $localize`:@@quotes.quote-detail.ts.un.contrat.recurrent.sera.cree.a.partir.2dd6fe44:Un contrat récurrent sera créé à partir de ce devis (lignes et client repris). Vous pourrez ajuster la périodicité avant activation.`,
       icon: 'pi pi-refresh',
-      acceptLabel: 'Créer le contrat',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@quote-detail.component.acceptLabel.Cr_er_le_contrat:Créer le contrat`,
+      rejectLabel: $localize`:@@quote-detail.component.rejectLabel.Annuler:Annuler`,
       accept: () => this.convertToRecurringContract(),
     });
   }
@@ -863,16 +842,16 @@ export class QuoteDetailComponent implements OnInit {
       next: (contractId) => {
         this.toastService.add({
           severity: 'success',
-          summary: 'Contrat créé',
-          detail: 'Le contrat récurrent a été créé depuis le devis.',
+          summary: $localize`:@@quote-detail.component.summary.Contrat_cr_:Contrat créé`,
+          detail: $localize`:@@quote-detail.component.detail.Le_contrat_r_cur:Le contrat récurrent a été créé depuis le devis.`,
         });
         void this.router.navigate(['/recurring-contracts', contractId]);
       },
       error: (err) => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Échec',
-          detail: err?.error?.message ?? 'Impossible de créer le contrat.',
+          summary: $localize`:@@quote-detail.component.summary.Échec:Échec`,
+          detail: err?.error?.message ?? $localize`:@@ui.tern.impossible.de.creer.le.contrat.8aee6d:Impossible de créer le contrat.`,
         });
       },
     });
@@ -880,12 +859,12 @@ export class QuoteDetailComponent implements OnInit {
 
   confirmConvertToInvoice(): void {
     this.confirmationService.confirm({
-      header: 'Créer la facture finale',
+      header: $localize`:@@quotes.quote-detail.ts.creer.la.facture.finale.a86b9a9e:Créer la facture finale`,
       message:
-        'Une facture définitive sera créée à partir de ce devis. Elle aura un nouveau numéro et ne pourra plus être modifiée après signature. Souhaitez-vous continuer ?',
+        $localize`:@@quotes.quote-detail.ts.une.facture.definitive.sera.creee.a.part.8306f0dd:Une facture définitive sera créée à partir de ce devis. Elle aura un nouveau numéro et ne pourra plus être modifiée après signature. Souhaitez-vous continuer ?`,
       icon: 'pi pi-file-export',
-      acceptLabel: 'Créer la facture',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@quote-detail.component.acceptLabel.Créer la fac:Créer la facture`,
+      rejectLabel: $localize`:@@quote-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-success',
       accept: () => this.convertToInvoice(),
     });
@@ -893,12 +872,12 @@ export class QuoteDetailComponent implements OnInit {
 
   confirmConvertToSalesOrder(): void {
     this.confirmationService.confirm({
-      header: 'Transformer en commande',
+      header: $localize`:@@quotes.quote-detail.ts.transformer.en.commande.cd762203:Transformer en commande`,
       message:
-        'Une commande client sera créée à partir de ce devis. Le devis sera ensuite verrouillé et ne pourra plus être converti. Souhaitez-vous continuer ?',
+        $localize`:@@quotes.quote-detail.ts.une.commande.client.sera.creee.a.partir.233127fe:Une commande client sera créée à partir de ce devis. Le devis sera ensuite verrouillé et ne pourra plus être converti. Souhaitez-vous continuer ?`,
       icon: 'pi pi-shopping-cart',
-      acceptLabel: 'Créer la commande',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@quote-detail.component.acceptLabel.Cr_er_la_command:Créer la commande`,
+      rejectLabel: $localize`:@@quote-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-success',
       accept: () => this.convertToSalesOrder(),
     });
@@ -912,24 +891,24 @@ export class QuoteDetailComponent implements OnInit {
         if (res.success && res.data) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Facture créée',
-            detail: 'La facture a été générée. Redirection...',
+            summary: $localize`:@@quote-detail.component.summary.Facture créé:Facture créée`,
+            detail: $localize`:@@quote-detail.component.detail.La_facture_a_t_:La facture a été générée. Redirection...`,
             life: 3000,
           });
           this.router.navigate(['/invoices', res.data]);
         } else if (!res.success) {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: res.message || 'Impossible de créer la facture à partir du devis.',
+            summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
+            detail: res.message || $localize`:@@quotes.quote-detail.ts.impossible.de.creer.la.facture.a.partir.697f599a:Impossible de créer la facture à partir du devis.`,
           });
         }
       },
       error: () => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de créer la facture à partir du devis.',
+          summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@quote-detail.component.detail.impossible.de.creer.la.facture.a.partir.du.devis.697f599a:Impossible de créer la facture à partir du devis.`,
         });
       },
     });
@@ -943,24 +922,24 @@ export class QuoteDetailComponent implements OnInit {
         if (res.success && res.data) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Commande créée',
-            detail: 'La commande a été générée. Redirection...',
+            summary: $localize`:@@quote-detail.component.summary.Commande_cr_e:Commande créée`,
+            detail: $localize`:@@quote-detail.component.detail.La_commande_a_t:La commande a été générée. Redirection...`,
             life: 3000,
           });
           this.router.navigate(['/sales-orders', res.data]);
         } else if (!res.success) {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: res.message || 'Impossible de créer la commande à partir du devis.',
+            summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
+            detail: res.message || $localize`:@@quotes.quote-detail.ts.impossible.de.creer.la.commande.a.partir.c1d66ecd:Impossible de créer la commande à partir du devis.`,
           });
         }
       },
       error: () => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de créer la commande à partir du devis.',
+          summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@quote-detail.component.detail.Impossible_de_cr:Impossible de créer la commande à partir du devis.`,
         });
       },
     });
@@ -974,23 +953,23 @@ export class QuoteDetailComponent implements OnInit {
         if (res.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Devis envoyé',
-            detail: 'Le devis a été marqué comme envoyé.',
+            summary: $localize`:@@quote-detail.component.summary.Devis_envoy_:Devis envoyé`,
+            detail: $localize`:@@quote-detail.component.detail.Le_devis_a_t_m:Le devis a été marqué comme envoyé.`,
           });
           this.loadQuote(q.id);
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: res.message || 'Impossible d\'envoyer le devis.',
+            summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
+            detail: res.message || $localize`:@@quotes.quote-detail.ts.impossible.d.envoyer.le.devis.43be5fd2:Impossible d'envoyer le devis.`,
           });
         }
       },
       error: () => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible d\'envoyer le devis.',
+          summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@quote-detail.component.detail.Impossible_d_env:Impossible d'envoyer le devis.`,
         });
       },
     });
@@ -1004,23 +983,23 @@ export class QuoteDetailComponent implements OnInit {
         if (res.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Devis accepté',
-            detail: 'Vous pouvez maintenant créer la facture finale.',
+            summary: $localize`:@@quote-detail.component.summary.Devis accept:Devis accepté`,
+            detail: $localize`:@@quote-detail.component.detail.Vous_pouvez_main:Vous pouvez maintenant créer la facture finale.`,
           });
           this.loadQuote(q.id);
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: res.message || 'Impossible d\'accepter le devis.',
+            summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
+            detail: res.message || $localize`:@@quotes.quote-detail.ts.impossible.d.accepter.le.devis.be2fea5d:Impossible d'accepter le devis.`,
           });
         }
       },
       error: () => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible d\'accepter le devis.',
+          summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@quote-detail.component.detail.Impossible_d_acc:Impossible d'accepter le devis.`,
         });
       },
     });
@@ -1042,22 +1021,22 @@ export class QuoteDetailComponent implements OnInit {
           this.rejectReason = '';
           this.toastService.add({
             severity: 'info',
-            summary: 'Devis refusé',
+            summary: $localize`:@@quote-detail.component.summary.Devis refusé:Devis refusé`,
           });
           this.loadQuote(q.id);
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: res.message || 'Impossible de refuser le devis.',
+            summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
+            detail: res.message || $localize`:@@quotes.quote-detail.ts.impossible.de.refuser.le.devis.46e4735d:Impossible de refuser le devis.`,
           });
         }
       },
       error: () => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de refuser le devis.',
+          summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@quote-detail.component.detail.impossible.de.refuser.le.devis.46e4735d:Impossible de refuser le devis.`,
         });
       },
     });
@@ -1074,7 +1053,7 @@ export class QuoteDetailComponent implements OnInit {
     if (!q) return;
     const reason = this.cancelReason?.trim();
     if (!reason) {
-      this.cancelError.set('Le motif d\'annulation est obligatoire.');
+      this.cancelError.set($localize`:@@quotes.quote-detail.ts.le.motif.d.annulation.est.obligatoire.5393301d:Le motif d'annulation est obligatoire.`);
       return;
     }
     this.cancelError.set(null);
@@ -1083,21 +1062,21 @@ export class QuoteDetailComponent implements OnInit {
         if (res.success) {
           this.cancelDialogVisible = false;
           this.cancelReason = '';
-          this.toastService.add({ severity: 'info', summary: 'Devis annulé' });
+          this.toastService.add({ severity: 'info', summary: $localize`:@@quote-detail.component.summary.Devis_annul_:Devis annulé` });
           this.loadQuote(q.id);
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: res.message || 'Impossible d\'annuler le devis.',
+            summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
+            detail: res.message || $localize`:@@quotes.quote-detail.ts.impossible.d.annuler.le.devis.6eb8e49c:Impossible d'annuler le devis.`,
           });
         }
       },
       error: () => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible d\'annuler le devis.',
+          summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@quote-detail.component.detail.Impossible_d_ann:Impossible d'annuler le devis.`,
         });
       },
     });
@@ -1111,23 +1090,23 @@ export class QuoteDetailComponent implements OnInit {
         if (res.success && res.data) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Devis dupliqué',
-            detail: 'Redirection vers le nouveau devis.',
+            summary: $localize`:@@quote-detail.component.summary.Devis dupliq:Devis dupliqué`,
+            detail: $localize`:@@quote-detail.component.detail.Redirection_vers:Redirection vers le nouveau devis.`,
           });
           this.router.navigate(['/quotes', res.data]);
         } else if (!res.success) {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: res.message || 'Impossible de dupliquer le devis.',
+            summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
+            detail: res.message || $localize`:@@quotes.quote-detail.ts.impossible.de.dupliquer.le.devis.08875edc:Impossible de dupliquer le devis.`,
           });
         }
       },
       error: () => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de dupliquer le devis.',
+          summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@quote-detail.component.detail.impossible.de.dupliquer.le.devis.08875edc:Impossible de dupliquer le devis.`,
         });
       },
     });
@@ -1148,8 +1127,8 @@ export class QuoteDetailComponent implements OnInit {
       error: () => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de télécharger le PDF.',
+          summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@quote-detail.component.detail.impossible.de.telecharger.le.pdf.d3467aba:Impossible de télécharger le PDF.`,
         });
       },
     });

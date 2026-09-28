@@ -76,7 +76,7 @@ import { LandingCopyBase } from '../shared/landing-copy-base';
 
         <div class="footer-bottom">
           <div class="copyright">
-            <span>{{ copyright }}</span>
+            <span>{{ copyright() }}</span>
           </div>
         </div>
       </div>

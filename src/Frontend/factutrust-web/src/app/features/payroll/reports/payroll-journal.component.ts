@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -54,8 +55,8 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
   ],
   template: `
     <app-page-header
-      title="Journal de paie"
-      subtitle="Détail mensuel par salarié et ventilation comptable de l'écriture de paie.">
+      title="Journal de paie" i18n-title="@@payroll.reports.journal.de.paie.240f3575"
+      subtitle="Détail mensuel par salarié et ventilation comptable de l'écriture de paie." i18n-subtitle="@@payroll.reports.detail.mensuel.par.salarie.et.ventilatio.23eaf8bb">
       @if (canExport()) {
         <app-accounting-export-menu
           [disabled]="loading() || exporting() || !journal()"
@@ -69,22 +70,22 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
         [(ngModel)]="year"
         optionLabel="label"
         optionValue="value"
-        placeholder="Année"
+        placeholder="Année" i18n-placeholder="@@payroll.reports.annee.1f910d98"
         styleClass="w-10rem"
-        ariaLabel="Année" />
+        ariaLabel="Année" i18n-ariaLabel="@@payroll.reports.annee.64155901" />
       <p-select
         [options]="months"
         [(ngModel)]="month"
         optionLabel="label"
         optionValue="value"
-        placeholder="Mois"
+        placeholder="Mois" i18n-placeholder="@@payroll.reports.mois.0d304bea"
         styleClass="w-10rem"
-        ariaLabel="Mois" />
+        ariaLabel="Mois" i18n-ariaLabel="@@payroll.reports.mois.cb4e6ce5" />
       <label class="payroll-report-check">
         <p-checkbox [(ngModel)]="includeCalculated" [binary]="true" inputId="includeCalculatedJournal" />
-        <span>Inclure les cycles calculés (provisoire)</span>
+        <span i18n="@@payroll.reports.inclure.les.cycles.calcules.provisoire.316e039e">Inclure les cycles calculés (provisoire)</span>
       </label>
-      <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()">Afficher</app-button>
+      <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()" i18n="@@payroll.reports.afficher.5e802040">Afficher</app-button>
     </div>
 
     @if (error()) {
@@ -95,13 +96,13 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
       @if (j.isProvisional) {
         <p-message
           severity="error"
-          text="État provisoire : le cycle est calculé mais pas encore validé."
+          text="État provisoire : le cycle est calculé mais pas encore validé." i18n-text="@@payroll.reports.etat.provisoire.le.cycle.est.calcule.mai.4708047b"
           styleClass="mb-3 w-full" />
       }
       @if (!j.isBalanced) {
         <p-message
           severity="error"
-          text="Contrôle : total débit ≠ total crédit sur la ventilation comptable. Vérifiez les totaux du cycle."
+          text="Contrôle : total débit ≠ total crédit sur la ventilation comptable. Vérifiez les totaux du cycle." i18n-text="@@payroll.reports.controle.total.debit.total.credit.sur.la.7e476a59"
           styleClass="mb-3 w-full" />
       }
     }
@@ -111,18 +112,18 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
     } @else if (!journal()) {
       <app-payroll-empty-state
         icon="pi-file"
-        title="Aucun journal disponible"
-        [description]="error() ?? 'Sélectionnez une période disposant d\\'un cycle de paie.'"
+        title="Aucun journal disponible" i18n-title="@@payroll.reports.aucun.journal.disponible.690b5900"
+        [description]="error() ?? loc_selectionnez_une_periode_disposant_d_53f3bd"
         [showAction]="true"
-        actionLabel="Voir les cycles de paie"
+        actionLabel="Voir les cycles de paie" i18n-actionLabel="@@payroll.reports.voir.les.cycles.de.paie.fd141467"
         actionRoute="/payroll/runs" />
     } @else {
       <app-payroll-stat-grid [items]="summaryStats()" class="mb-4" />
 
       <p-tabs [(value)]="activeTabIndex" [lazy]="true">
         <p-tablist>
-          <p-tab [value]="0">Par salarié</p-tab>
-          <p-tab [value]="1">Ventilation comptable</p-tab>
+          <p-tab [value]="0" i18n="@@payroll.reports.par.salarie.02075338">Par salarié</p-tab>
+          <p-tab [value]="1" i18n="@@payroll.reports.ventilation.comptable.00194489">Ventilation comptable</p-tab>
         </p-tablist>
         <p-tabpanels>
         <p-tabpanel [value]="0">
@@ -130,37 +131,37 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
             <p-table [value]="journal()!.lines" styleClass="p-datatable-sm" [rowHover]="true">
               <ng-template pTemplate="header">
                 <tr>
-                  <th scope="col">Matricule</th>
-                  <th scope="col">Salarié</th>
-                  <th scope="col" class="text-right">Brut</th>
-                  <th scope="col" class="text-right">CNSS sal.</th>
-                  <th scope="col" class="text-right">Net imposable</th>
-                  <th scope="col" class="text-right">IRPP</th>
-                  <th scope="col" class="text-right">CSS</th>
-                  <th scope="col" class="text-right">Autres ret.</th>
-                  <th scope="col" class="text-right">Net à payer</th>
-                  <th scope="col" class="text-right">Charges pat.</th>
-                  <th scope="col" class="text-right">Coût employeur</th>
+                  <th scope="col" i18n="@@payroll.reports.matricule.8f74c132">Matricule</th>
+                  <th scope="col" i18n="@@payroll.reports.salarie.27f97915">Salarié</th>
+                  <th scope="col" class="text-right" i18n="@@payroll.reports.brut.8fc72d21">Brut</th>
+                  <th scope="col" class="text-right" i18n="@@payroll.reports.cnss.sal.5d831d27">CNSS sal.</th>
+                  <th scope="col" class="text-right" i18n="@@payroll.reports.net.imposable.2439110f">Net imposable</th>
+                  <th scope="col" class="text-right" i18n="@@payroll.reports.irpp.d47a1edc">IRPP</th>
+                  <th scope="col" class="text-right" i18n="@@payroll.reports.css.194e13da">CSS</th>
+                  <th scope="col" class="text-right" i18n="@@payroll.reports.autres.ret.47401df2">Autres ret.</th>
+                  <th scope="col" class="text-right" i18n="@@payroll.reports.net.a.payer.7835df38">Net à payer</th>
+                  <th scope="col" class="text-right" i18n="@@payroll.reports.charges.pat.81ada456">Charges pat.</th>
+                  <th scope="col" class="text-right" i18n="@@payroll.reports.cout.employeur.99313d1f">Coût employeur</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-l>
                 <tr>
-                  <td data-label="Matricule">{{ l.employeeNumber }}</td>
-                  <td data-label="Salarié">{{ l.employeeName }}</td>
-                  <td data-label="Brut" class="text-right">{{ l.grossSalary | payrollAmount }}</td>
-                  <td data-label="CNSS sal." class="text-right">{{ l.cnssEmployee | payrollAmount }}</td>
-                  <td data-label="Net imposable" class="text-right">{{ l.monthlyNetTaxable | payrollAmount }}</td>
+                  <td data-label="Matricule" i18n-data-label="@@payroll.payroll-journal.matricule.8f74c132">{{ l.employeeNumber }}</td>
+                  <td data-label="Salarié" i18n-data-label="@@payroll.payroll-journal.salarie.27f97915">{{ l.employeeName }}</td>
+                  <td data-label="Brut" i18n-data-label="@@payroll.payroll-journal.brut.8fc72d21" class="text-right">{{ l.grossSalary | payrollAmount }}</td>
+                  <td data-label="CNSS sal." i18n-data-label="@@payroll.payroll-journal.cnss.sal.5d831d27" class="text-right">{{ l.cnssEmployee | payrollAmount }}</td>
+                  <td data-label="Net imposable" i18n-data-label="@@payroll.payroll-journal.net.imposable.2439110f" class="text-right">{{ l.monthlyNetTaxable | payrollAmount }}</td>
                   <td data-label="IRPP" class="text-right">{{ l.irpp + l.irppRegularization | payrollAmount }}</td>
                   <td data-label="CSS" class="text-right">{{ l.css + l.cssRegularization | payrollAmount }}</td>
-                  <td data-label="Autres ret." class="text-right">{{ l.otherDeductions | payrollAmount }}</td>
-                  <td data-label="Net à payer" class="text-right">{{ l.netSalary | payrollAmount }}</td>
-                  <td data-label="Charges pat." class="text-right">{{ l.totalEmployerCharges | payrollAmount }}</td>
-                  <td data-label="Coût employeur" class="text-right">{{ l.totalCost | payrollAmount }}</td>
+                  <td data-label="Autres ret." i18n-data-label="@@payroll.payroll-journal.autres.ret.47401df2" class="text-right">{{ l.otherDeductions | payrollAmount }}</td>
+                  <td data-label="Net à payer" i18n-data-label="@@payroll.payroll-journal.net.a.payer.7835df38" class="text-right">{{ l.netSalary | payrollAmount }}</td>
+                  <td data-label="Charges pat." i18n-data-label="@@payroll.payroll-journal.charges.pat.81ada456" class="text-right">{{ l.totalEmployerCharges | payrollAmount }}</td>
+                  <td data-label="Coût employeur" i18n-data-label="@@payroll.payroll-journal.cout.employeur.99313d1f" class="text-right">{{ l.totalCost | payrollAmount }}</td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="footer">
                 <tr class="acc-totals-row">
-                  <td colspan="2">Totaux — {{ journal()!.employeeCount }} salarié(s)</td>
+                  <td colspan="2" i18n="@@payroll.reports.totaux.salarie.s.a3f99c62">Totaux — {{ journal()!.employeeCount }} salarié(s)</td>
                   <td class="text-right">{{ journal()!.totalGross | payrollAmount }}</td>
                   <td class="text-right">{{ journal()!.totalCnssEmployee | payrollAmount }}</td>
                   <td class="text-right">{{ journal()!.totalNetTaxable | payrollAmount }}</td>
@@ -185,30 +186,30 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
           @if (journal()!.accountingLines.length === 0) {
             <app-payroll-empty-state
               icon="pi-book"
-              title="Aucune ventilation comptable"
-              description="Le cycle ne produit pas d'écriture exploitable." />
+              title="Aucune ventilation comptable" i18n-title="@@payroll.reports.aucune.ventilation.comptable.d850aeb3"
+              description="Le cycle ne produit pas d'écriture exploitable." i18n-description="@@payroll.reports.le.cycle.ne.produit.pas.d.ecriture.explo.b26f7314" />
           } @else {
             <div class="payroll-table-scroll">
               <p-table [value]="journal()!.accountingLines" styleClass="p-datatable-sm" [rowHover]="true">
                 <ng-template pTemplate="header">
                   <tr>
-                    <th scope="col">Compte</th>
-                    <th scope="col">Libellé</th>
-                    <th scope="col" class="text-right">Débit</th>
-                    <th scope="col" class="text-right">Crédit</th>
+                    <th scope="col" i18n="@@payroll.reports.compte.c45740bb">Compte</th>
+                    <th scope="col" i18n="@@payroll.reports.libelle.f5485bba">Libellé</th>
+                    <th scope="col" class="text-right" i18n="@@payroll.reports.debit.f528224f">Débit</th>
+                    <th scope="col" class="text-right" i18n="@@payroll.reports.credit.19194bdf">Crédit</th>
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-l>
                   <tr>
-                    <td data-label="Compte">{{ l.accountNumber }}</td>
-                    <td data-label="Libellé">{{ l.accountLabel || l.label }}</td>
-                    <td data-label="Débit" class="text-right">{{ l.debit ? (l.debit | payrollAmount) : '—' }}</td>
-                    <td data-label="Crédit" class="text-right">{{ l.credit ? (l.credit | payrollAmount) : '—' }}</td>
+                    <td data-label="Compte" i18n-data-label="@@payroll.payroll-journal.compte.c45740bb">{{ l.accountNumber }}</td>
+                    <td data-label="Libellé" i18n-data-label="@@payroll.payroll-journal.libelle.f5485bba">{{ l.accountLabel || l.label }}</td>
+                    <td data-label="Débit" i18n-data-label="@@payroll.payroll-journal.debit.f528224f" class="text-right">{{ l.debit ? (l.debit | payrollAmount) : '—' }}</td>
+                    <td data-label="Crédit" i18n-data-label="@@payroll.payroll-journal.credit.19194bdf" class="text-right">{{ l.credit ? (l.credit | payrollAmount) : '—' }}</td>
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="footer">
                   <tr class="acc-totals-row">
-                    <td colspan="2">Totaux</td>
+                    <td colspan="2" i18n="@@payroll.reports.totaux.a1ca02f8">Totaux</td>
                     <td class="text-right">{{ journal()!.totalDebit | payrollAmount }}</td>
                     <td class="text-right">{{ journal()!.totalCredit | payrollAmount }}</td>
                   </tr>
@@ -234,6 +235,8 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
   `]
 })
 export class PayrollJournalComponent implements OnInit {
+  protected readonly loc_selectionnez_une_periode_disposant_d_53f3bd = $localize`:@@payroll.payroll-journal.tpl.selectionnez.une.periode.disposant.d.un.53f3bd68:Sélectionnez une période disposant d'un cycle de paie.`;
+
   private readonly payroll = inject(PayrollService);
   private readonly toast = inject(ToastService);
   private readonly errorHandler = inject(ErrorHandlerService);
@@ -259,19 +262,19 @@ export class PayrollJournalComponent implements OnInit {
     const j = this.journal();
     if (!j) return '';
     return j.accountingLinesArePosted
-      ? `Écriture comptabilisée n° ${j.accountingEntryNumber} — journal ${j.accountingJournalCode}.`
-      : "Ventilation simulée : le cycle n'est pas encore comptabilisé.";
+      ? $localize`:@@ui.tern.ecriture.comptabilisee.n.ph.journal.ph.41db32:Écriture comptabilisée n° ${j.accountingEntryNumber}:p0: — journal ${j.accountingJournalCode}:p1:.`
+      : $localize`:@@ui.tern.ventilation.simulee.le.cycle.n.est.pas.enc.5d3f88:Ventilation simulée : le cycle n'est pas encore comptabilisé.`;
   });
 
   summaryStats = computed((): PayrollStatItem[] => {
     const j = this.journal();
     if (!j) return [];
     return [
-      { label: 'Salariés', value: j.employeeCount, icon: 'pi-users', variant: 'primary' },
-      { label: 'Masse brute', value: formatPayrollAmount(j.totalGross, false), icon: 'pi-chart-bar', variant: 'primary' },
-      { label: 'Net à payer', value: formatPayrollAmount(j.totalNetSalary, false), icon: 'pi-wallet', variant: 'success', featured: true },
-      { label: 'Charges patronales', value: formatPayrollAmount(j.totalEmployerCharges, false), icon: 'pi-building', variant: 'warning' },
-      { label: 'Coût employeur', value: formatPayrollAmount(j.totalEmployerCost, false), icon: 'pi-briefcase', variant: 'warning' }
+      { label: $localize`:@@payroll.payroll-journal.ts.salaries.ce68387d:Salariés`, value: j.employeeCount, icon: 'pi-users', variant: 'primary' },
+      { label: $localize`:@@payroll.payroll-journal.ts.masse.brute.4700a550:Masse brute`, value: formatPayrollAmount(j.totalGross, false), icon: 'pi-chart-bar', variant: 'primary' },
+      { label: $localize`:@@payroll.payroll-journal.ts.net.a.payer.7835df38:Net à payer`, value: formatPayrollAmount(j.totalNetSalary, false), icon: 'pi-wallet', variant: 'success', featured: true },
+      { label: $localize`:@@payroll.payroll-journal.ts.charges.patronales.a7e5e0ee:Charges patronales`, value: formatPayrollAmount(j.totalEmployerCharges, false), icon: 'pi-building', variant: 'warning' },
+      { label: $localize`:@@payroll.payroll-journal.ts.cout.employeur.99313d1f:Coût employeur`, value: formatPayrollAmount(j.totalEmployerCost, false), icon: 'pi-briefcase', variant: 'warning' }
     ];
   });
 
@@ -297,7 +300,7 @@ export class PayrollJournalComponent implements OnInit {
         error: err => {
           this.journal.set(null);
           this.error.set(
-            this.errorHandler.extractErrorMessage(err) || 'Impossible de générer le journal de paie.'
+            this.errorHandler.extractErrorMessage(err) || $localize`:@@payroll.payroll-journal.ts.impossible.de.generer.le.journal.de.paie.780d573a:Impossible de générer le journal de paie.`
           );
         }
       });
@@ -325,8 +328,8 @@ export class PayrollJournalComponent implements OnInit {
         error: err =>
           this.toast.add({
             severity: 'error',
-            summary: 'Journal de paie',
-            detail: this.errorHandler.extractErrorMessage(err) || 'Export impossible.'
+            summary: $localize`:@@payroll-journal.component.summary.Journal_de_paie:Journal de paie`,
+            detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@payroll.payroll-journal.ts.export.impossible.a061adcb:Export impossible.`
           })
       });
   }

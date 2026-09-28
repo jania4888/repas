@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnDestroy, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -99,6 +101,7 @@ interface ReceiptLineRow {
   selector: 'app-purchase-receipt-form',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule, RouterModule, FormsModule, CurrencyPipe,
     SelectModule, InputTextModule, InputNumberModule, DatePickerModule,
     Textarea, AutoCompleteModule, TagModule, FileUploadModule,
@@ -111,32 +114,32 @@ interface ReceiptLineRow {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      [title]="isEdit() ? 'Modifier le bon de réception' : 'Nouveau bon de réception'"
-      [subtitle]="isEdit() ? (receiptNumber() || '') : 'Enregistrez une réception de marchandises fournisseur.'">
+      [title]="isEdit() ? loc_modifier_le_bon_de_reception_61e244 : loc_nouveau_bon_de_reception_479ec8"
+      [subtitle]="isEdit() ? (receiptNumber() || '') : loc_enregistrez_une_reception_de_marchan_49a116">
       @if (statusDisplay()) {
-        <p-tag [value]="statusDisplay()!" [severity]="statusSeverity()"></p-tag>
+        <p-tag [value]="statusDisplay()! | backendLabel" [severity]="statusSeverity()"></p-tag>
       }
     </app-page-header>
 
     @if (loading()) {
       <div class="loading-container">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-        <p>Chargement...</p>
+        <p i18n="@@purchase-receipts.pages.chargement.a209b664">Chargement...</p>
       </div>
     } @else {
       <div class="form-layout">
         <div class="form-main">
-          <app-form-section title="Informations générales" icon="pi-building" [number]="1">
+          <app-form-section title="Informations générales" i18n-title="@@purchase-receipts.pages.informations.generales.be6ba6e5" icon="pi-building" [number]="1">
             <div class="form-grid-3">
               <div class="form-group">
-                <label for="supplier">Fournisseur <span class="required">*</span></label>
+                <label for="supplier" i18n="@@purchase-receipts.pages.fournisseur.bc374fa5">Fournisseur <span class="required">*</span></label>
                 <p-select
                   id="supplier"
                   [options]="suppliers()"
                   [(ngModel)]="selectedSupplierId"
                   optionLabel="name"
                   optionValue="id"
-                  placeholder="Sélectionnez un fournisseur"
+                  placeholder="Sélectionnez un fournisseur" i18n-placeholder="@@purchase-receipts.pages.selectionnez.un.fournisseur.7351a0fb"
                   [filter]="true"
                   filterBy="name"
                   [showClear]="true"
@@ -147,14 +150,14 @@ interface ReceiptLineRow {
               </div>
 
               <div class="form-group">
-                <label for="purchaseOrder">Bon de commande</label>
+                <label for="purchaseOrder" i18n="@@purchase-receipts.pages.bon.de.commande.4b9aea29">Bon de commande</label>
                 <p-select
                   id="purchaseOrder"
                   [options]="purchaseOrderOptions()"
                   [(ngModel)]="selectedPurchaseOrderId"
                   optionLabel="label"
                   optionValue="id"
-                  placeholder="Sélectionnez un BC (optionnel)"
+                  placeholder="Sélectionnez un BC (optionnel)" i18n-placeholder="@@purchase-receipts.pages.selectionnez.un.bc.optionnel.418875b7"
                   [filter]="true"
                   filterBy="label"
                   [showClear]="true"
@@ -167,7 +170,7 @@ interface ReceiptLineRow {
               <div class="form-group">
                 <app-warehouse-selector
                   inputId="receipt-warehouse"
-                  label="Entrepôt"
+                  label="Entrepôt" i18n-label="@@purchase-receipts.pages.entrepot.64a6a11c"
                   [required]="true"
                   [value]="selectedWarehouseId"
                   (valueChange)="onWarehouseSelected($event)">
@@ -175,7 +178,7 @@ interface ReceiptLineRow {
               </div>
 
               <div class="form-group">
-                <label for="receiptNumber">N° bon de réception</label>
+                <label for="receiptNumber" i18n="@@purchase-receipts.pages.n.bon.de.reception.ad3cf1bd">N° bon de réception</label>
                 <input
                   pInputText
                   id="receiptNumber"
@@ -185,7 +188,7 @@ interface ReceiptLineRow {
               </div>
 
               <div class="form-group">
-                <label for="receiptDate">Date de réception <span class="required">*</span></label>
+                <label for="receiptDate" i18n="@@purchase-receipts.pages.date.de.reception.9a9c1f22">Date de réception <span class="required">*</span></label>
                 <p-datepicker
                   id="receiptDate"
                   [(ngModel)]="receiptDate"
@@ -196,45 +199,37 @@ interface ReceiptLineRow {
               </div>
 
               <div class="form-group">
-                <label for="supplierRef">Réf. fournisseur</label>
+                <label for="supplierRef" i18n="@@purchase-receipts.pages.ref.fournisseur.98507c4b">Réf. fournisseur</label>
                 <input
                   pInputText
                   id="supplierRef"
                   [(ngModel)]="supplierReference"
-                  placeholder="N° BL fournisseur…"
+                  placeholder="N° BL fournisseur…" i18n-placeholder="@@purchase-receipts.pages.n.bl.fournisseur.56f543c6"
                   class="w-full">
               </div>
             </div>
           </app-form-section>
 
-          <app-form-section title="Articles" icon="pi-list" [number]="2">
+          <app-form-section title="Articles" i18n-title="@@purchase-receipts.pages.articles.7c422841" icon="pi-list" [number]="2">
             <div class="lines-actions">
               <app-button variant="secondary" icon="pi-plus" iconPos="left" size="sm"
-                (clicked)="addLine()">
-                Ajouter une ligne
-              </app-button>
+                (clicked)="addLine()" i18n="@@purchase-receipts.pages.ajouter.une.ligne.ba241fd4"> Ajouter une ligne </app-button>
             @if (barcodeScanEnabled) {
               <app-button variant="outline" icon="pi-barcode" iconPos="left" size="sm"
-                (clicked)="focusBarcodeField()">
-                Scanner un code-barres
-              </app-button>
+                (clicked)="focusBarcodeField()" i18n="@@purchase-receipts.pages.scanner.un.code.barres.6f3f91b0"> Scanner un code-barres </app-button>
             }
               <app-button variant="outline" icon="pi-file-import" iconPos="left" size="sm"
-                (clicked)="openImportBlDialog()">
-                Importer depuis BL
-              </app-button>
+                (clicked)="openImportBlDialog()" i18n="@@purchase-receipts.pages.importer.depuis.bl.8f5d1823"> Importer depuis BL </app-button>
               <app-button class="lines-actions__danger" variant="ghost" icon="pi-trash" iconPos="left" size="sm"
                 [disabled]="lines.length === 0"
-                (clicked)="clearAllLines()">
-                Supprimer toutes les lignes
-              </app-button>
+                (clicked)="clearAllLines()" i18n="@@purchase-receipts.pages.supprimer.toutes.les.lignes.0ec45964"> Supprimer toutes les lignes </app-button>
             </div>
 
             @if (barcodeScanEnabled) {
               <div class="barcode-scan-row">
                 <ft-barcode-scan-field
                   #barcodeField
-                  placeholder="Scanner un code-barres pour ajouter une ligne"
+                  placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="@@purchase-receipts.pages.scanner.un.code.barres.pour.ajouter.une.ligne.3525ced5"
                   [autoFocus]="false"
                   [disabled]="barcodeLookingUp()"
                   (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
@@ -258,16 +253,16 @@ interface ReceiptLineRow {
                 </colgroup>
                 <thead>
                   <tr>
-                    <th class="col-idx">#</th>
-                    <th class="col-article">Article</th>
-                    <th class="col-designation">Désignation</th>
-                    <th class="col-unit">Unité</th>
-                    <th class="col-qty-ord" title="Quantité commandée">Qté cmd.</th>
-                    <th class="col-qty-rec" title="Quantité reçue">Qté reçue</th>
-                    <th class="col-qty-pend" title="Quantité en attente">Qté attente</th>
-                    <th class="col-price" title="Prix unitaire HT">P.U. HT</th>
-                    <th class="col-disc">Remise %</th>
-                    <th class="col-total">Total HT</th>
+                    <th class="col-idx" i18n="@@purchase-receipts.pages.text.d08f88df">#</th>
+                    <th class="col-article" i18n="@@purchase-receipts.pages.article.4360c2dc">Article</th>
+                    <th class="col-designation" i18n="@@purchase-receipts.pages.designation.63a9062c">Désignation</th>
+                    <th class="col-unit" i18n="@@purchase-receipts.pages.unite.388fd9c4">Unité</th>
+                    <th class="col-qty-ord" title="Quantité commandée" i18n-title="@@purchase-receipts.pages.quantite.commandee.0ebfdfe6" i18n="@@purchase-receipts.pages.qte.cmd.b39159f2">Qté cmd.</th>
+                    <th class="col-qty-rec" title="Quantité reçue" i18n-title="@@purchase-receipts.pages.quantite.recue.ed1e82c6" i18n="@@purchase-receipts.pages.qte.recue.ec07cbe1">Qté reçue</th>
+                    <th class="col-qty-pend" title="Quantité en attente" i18n-title="@@purchase-receipts.pages.quantite.en.attente.487f9a68" i18n="@@purchase-receipts.pages.qte.attente.6142616c">Qté attente</th>
+                    <th class="col-price" title="Prix unitaire HT" i18n-title="@@purchase-receipts.pages.prix.unitaire.ht.bb3f8e39" i18n="@@purchase-receipts.pages.p.u.ht.63f60414">P.U. HT</th>
+                    <th class="col-disc" i18n="@@purchase-receipts.pages.remise.a39386b5">Remise %</th>
+                    <th class="col-total" i18n="@@purchase-receipts.pages.total.ht.2ca17ae6">Total HT</th>
                     <th class="col-actions"></th>
                   </tr>
                 </thead>
@@ -290,11 +285,11 @@ interface ReceiptLineRow {
                           [panelStyle]="{ minWidth: '280px' }"
                           [ngModelOptions]="{ standalone: true }"
                           [disabled]="!!line.purchaseOrderLineId"
-                          placeholder="Rechercher…"
+                          placeholder="Rechercher…" i18n-placeholder="@@purchase-receipts.pages.rechercher.1d12cdfb"
                           styleClass="w-full"
                           inputStyleClass="w-full">
                           <ng-template let-product pTemplate="item">
-                            <div class="product-item">
+                            <div class="product-item" i18n="@@purchase-receipts.pages.dt.cbd698ad">
                               <span class="product-item__code">{{ product.code }}</span>
                               <span class="product-item__name">{{ product.name }}</span>
                               <span class="product-item__price">
@@ -306,9 +301,9 @@ interface ReceiptLineRow {
                             <div class="product-empty">
                               @if (isLoadingProducts()) {
                                 <i class="pi pi-spin pi-spinner"></i>
-                                <span>Chargement des produits…</span>
+                                <span i18n="@@purchase-receipts.pages.chargement.des.produits.912b5e70">Chargement des produits…</span>
                               } @else {
-                                <span>Aucun produit trouvé</span>
+                                <span i18n="@@purchase-receipts.pages.aucun.produit.trouve.5edf7149">Aucun produit trouvé</span>
                               }
                             </div>
                           </ng-template>
@@ -361,7 +356,7 @@ interface ReceiptLineRow {
                           [minFractionDigits]="0"
                           [maxFractionDigits]="2"
                           mode="decimal"
-                          placeholder="0"
+                          placeholder="0" i18n-placeholder="@@purchase-receipts.pages.0.b6589fc6"
                           (onInput)="recalculateTotals()"
                           styleClass="w-full"
                           inputStyleClass="text-center">
@@ -377,7 +372,7 @@ interface ReceiptLineRow {
                           icon="pi-trash"
                           [iconOnly]="true"
                           (clicked)="removeLine(i)"
-                          ariaLabel="Supprimer la ligne">
+                          ariaLabel="Supprimer la ligne" i18n-ariaLabel="@@purchase-receipts.pages.supprimer.la.ligne.7e5f9ae0">
                         </app-button>
                       </td>
                     </tr>
@@ -399,9 +394,7 @@ interface ReceiptLineRow {
                     }
                   } @empty {
                     <tr>
-                      <td colspan="11" class="empty-lines">
-                        Aucune ligne. Ajoutez des articles ou sélectionnez un bon de commande.
-                      </td>
+                      <td colspan="11" class="empty-lines" i18n="@@purchase-receipts.pages.aucune.ligne.ajoutez.des.articles.ou.selectionne.51f5a9bd"> Aucune ligne. Ajoutez des articles ou sélectionnez un bon de commande. </td>
                     </tr>
                   }
                 </tbody>
@@ -409,39 +402,37 @@ interface ReceiptLineRow {
             </div>
           </app-form-section>
 
-          <app-form-section title="Informations complémentaires" icon="pi-file-edit" [number]="3">
+          <app-form-section title="Informations complémentaires" i18n-title="@@purchase-receipts.pages.informations.complementaires.805470ce" icon="pi-file-edit" [number]="3">
             <div class="form-grid-2">
               <div class="form-group">
-                <label for="transporter">Transporteur</label>
+                <label for="transporter" i18n="@@purchase-receipts.pages.transporteur.7adadb36">Transporteur</label>
                 <input pInputText id="transporter" [(ngModel)]="transporterName" class="w-full" />
               </div>
               <div class="form-group">
-                <label for="dnNumber">N° bon de livraison</label>
+                <label for="dnNumber" i18n="@@purchase-receipts.pages.n.bon.de.livraison.626cc0e6">N° bon de livraison</label>
                 <input pInputText id="dnNumber" [(ngModel)]="deliveryNoteNumber" class="w-full" />
               </div>
               <div class="form-group span-full">
-                <label for="notes">Notes</label>
+                <label for="notes" i18n="@@purchase-receipts.pages.notes.70440046">Notes</label>
                 <textarea
                   pTextarea
                   id="notes"
                   [(ngModel)]="notes"
                   [rows]="3"
                   class="w-full"
-                  placeholder="Notes internes…">
+                  placeholder="Notes internes…" i18n-placeholder="@@purchase-receipts.pages.notes.internes.09e2ee05">
                 </textarea>
               </div>
             </div>
           </app-form-section>
 
-          <app-form-section title="Pièces jointes" icon="pi-paperclip" [number]="4">
+          <app-form-section title="Pièces jointes" i18n-title="@@purchase-receipts.pages.pieces.jointes.98d89a25" icon="pi-paperclip" [number]="4">
             @if (!savedId()) {
-              <p class="attachments-hint">
-                Enregistrez d'abord le bon de réception pour ajouter des pièces jointes (PDF, JPG, PNG — max 10 Mo).
-              </p>
+              <p class="attachments-hint" i18n="@@purchase-receipts.pages.enregistrez.d.abord.le.bon.de.reception.pour.ajo.d44608bf"> Enregistrez d'abord le bon de réception pour ajouter des pièces jointes (PDF, JPG, PNG — max 10 Mo). </p>
             } @else {
               <p-fileUpload
                 mode="basic"
-                chooseLabel="Ajouter un fichier"
+                chooseLabel="Ajouter un fichier" i18n-chooseLabel="@@purchase-receipts.pages.ajouter.un.fichier.02b74bc9"
                 [auto]="true"
                 accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
                 [maxFileSize]="10000000"
@@ -463,7 +454,7 @@ interface ReceiptLineRow {
                         icon="pi-trash"
                         [iconOnly]="true"
                         (clicked)="deleteAttachment(att.id)"
-                        ariaLabel="Supprimer la pièce jointe">
+                        ariaLabel="Supprimer la pièce jointe" i18n-ariaLabel="@@purchase-receipts.pages.supprimer.la.piece.jointe.9b073c7b">
                       </app-button>
                     </li>
                   }
@@ -474,30 +465,30 @@ interface ReceiptLineRow {
         </div>
 
         <aside class="totals-panel">
-          <h3>Totaux</h3>
+          <h3 i18n="@@purchase-receipts.pages.totaux.a1ca02f8">Totaux</h3>
           <div class="total-row">
-            <span>Total HT</span>
+            <span i18n="@@purchase-receipts.pages.total.ht.2ca17ae6">Total HT</span>
             <span>{{ totalHT() | currency:'TND':'symbol':'1.3-3' }}</span>
           </div>
           <div class="total-row">
-            <span>TVA</span>
+            <span i18n="@@purchase-receipts.pages.tva.fb62cb5d">TVA</span>
             <span>{{ totalVat() | currency:'TND':'symbol':'1.3-3' }}</span>
           </div>
           <div class="total-row grand">
-            <span>Total TTC</span>
+            <span i18n="@@purchase-receipts.pages.total.ttc.9e80ff7c">Total TTC</span>
             <span>{{ totalTTC() | currency:'TND':'symbol':'1.3-3' }}</span>
           </div>
           <div class="divider"></div>
           <div class="total-row">
-            <span>Total commandé HT</span>
+            <span i18n="@@purchase-receipts.pages.total.commande.ht.e5a5e984">Total commandé HT</span>
             <span>{{ totalOrderedHT() | currency:'TND':'symbol':'1.3-3' }}</span>
           </div>
           <div class="total-row">
-            <span>Total reçu HT</span>
+            <span i18n="@@purchase-receipts.pages.total.recu.ht.aef476e2">Total reçu HT</span>
             <span>{{ totalHT() | currency:'TND':'symbol':'1.3-3' }}</span>
           </div>
           <div class="total-row pending-total">
-            <span>Reste à recevoir HT</span>
+            <span i18n="@@purchase-receipts.pages.reste.a.recevoir.ht.b1ff628f">Reste à recevoir HT</span>
             <span>{{ remainingHT() | currency:'TND':'symbol':'1.3-3' }}</span>
           </div>
         </aside>
@@ -505,51 +496,45 @@ interface ReceiptLineRow {
 
       <div class="form-actions">
         <app-button variant="outline" icon="pi-times" iconPos="left"
-          routerLink="/purchase-receipts">
-          Annuler
-        </app-button>
+          routerLink="/purchase-receipts" i18n="@@purchase-receipts.pages.annuler.49ba3292"> Annuler </app-button>
         <app-button variant="secondary" icon="pi-save" iconPos="left"
           [disabled]="!canSave() || submitting()"
           (clicked)="save('draft')">
-          {{ submitting() && submitMode() === 'draft' ? 'Enregistrement…' : 'Enregistrer en brouillon' }}
+          <ng-container i18n="@@purchase-receipts.pages.sel.enregistrement.enregistrer.en.brouillon.cd8328f3">{!!(submitting() && submitMode() === 'draft'), select, true {Enregistrement…} other {Enregistrer en brouillon}}</ng-container>
         </app-button>
         <app-button variant="primary" icon="pi-check" iconPos="left"
           [disabled]="!canSave() || submitting()"
           (clicked)="save('save')">
-          {{ submitting() && submitMode() === 'save' ? 'Enregistrement…' : 'Enregistrer' }}
+          <ng-container i18n="@@purchase-receipts.pages.sel.enregistrement.enregistrer.1317c42c">{!!(submitting() && submitMode() === 'save'), select, true {Enregistrement…} other {Enregistrer}}</ng-container>
         </app-button>
         <app-button variant="primary" icon="pi-verified" iconPos="left"
           [disabled]="!canValidate() || submitting()"
           (clicked)="save('validate')">
-          {{ submitting() && submitMode() === 'validate' ? 'Validation…' : 'Valider la réception' }}
+          <ng-container i18n="@@purchase-receipts.pages.sel.validation.valider.la.reception.21433cdd">{!!(submitting() && submitMode() === 'validate'), select, true {Validation…} other {Valider la réception}}</ng-container>
         </app-button>
       </div>
     }
 
     <p-dialog
-      header="Importer depuis BL fournisseur"
+      header="Importer depuis BL fournisseur" i18n-header="@@purchase-receipts.pages.importer.depuis.bl.fournisseur.3e304217"
       [(visible)]="importBlDialogVisible"
       [modal]="true"
       [style]="{ width: '420px' }"
       [draggable]="false">
-      <p class="dialog-hint">
-        Saisissez le numéro du bon de livraison fournisseur. Il sera reporté
-        dans les champs « N° BL » et « Réf. fournisseur ».
-      </p>
+      <p class="dialog-hint" i18n="@@purchase-receipts.pages.saisissez.le.numero.du.bon.de.livraison.fourniss.fa91a642"> Saisissez le numéro du bon de livraison fournisseur. Il sera reporté
+        dans les champs « N° BL » et « Réf. fournisseur ». </p>
       <input
         pInputText
         [(ngModel)]="importBlNumber"
         (keyup.enter)="applyImportBl()"
-        placeholder="Ex. BL-4587"
+        placeholder="Ex. BL-4587" i18n-placeholder="@@purchase-receipts.pages.ex.bl.4587.25995f69"
         class="w-full"
         autofocus />
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (clicked)="importBlDialogVisible = false">Annuler</app-button>
+        <app-button variant="outline" (clicked)="importBlDialogVisible = false" i18n="@@purchase-receipts.pages.annuler.49ba3292">Annuler</app-button>
         <app-button variant="primary" icon="pi-check" iconPos="left"
           [disabled]="!importBlNumber.trim()"
-          (clicked)="applyImportBl()">
-          Appliquer
-        </app-button>
+          (clicked)="applyImportBl()" i18n="@@purchase-receipts.pages.appliquer.a4d66139"> Appliquer </app-button>
       </ng-template>
     </p-dialog>
   `,
@@ -561,7 +546,7 @@ interface ReceiptLineRow {
       align-items: center;
       padding: 0.5rem 0;
     }
-    .lot-alloc-label { font-size: 0.75rem; font-weight: 600; color: #64748b; margin-right: 0.5rem; }
+    .lot-alloc-label { font-size: 0.75rem; font-weight: 600; color: #64748b; margin-inline-end: 0.5rem; }
     .btn-icon { background: none; border: none; cursor: pointer; color: #64748b; }
 
     .loading-container {
@@ -627,7 +612,7 @@ interface ReceiptLineRow {
     .w-full { width: 100%; }
     .bg-muted { background: var(--color-background-subtle, #f9fafb); }
     .text-center { text-align: center; }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .font-bold { font-weight: var(--font-weight-bold); }
 
     .lines-actions {
@@ -639,7 +624,7 @@ interface ReceiptLineRow {
     }
 
     .lines-actions__danger {
-      margin-left: auto;
+      margin-inline-start: auto;
     }
 
     .lines-table-wrap {
@@ -671,7 +656,7 @@ interface ReceiptLineRow {
     .lines-table th,
     .lines-table td {
       padding: var(--spacing-2);
-      text-align: left;
+      text-align: start;
       vertical-align: middle;
       border-bottom: 1px solid var(--color-border-subtle);
     }
@@ -699,7 +684,7 @@ interface ReceiptLineRow {
     }
 
     .lines-table th.col-total,
-    .lines-table td.col-total { text-align: right; }
+    .lines-table td.col-total { text-align: end; }
 
     .lines-table th.col-qty-ord,
     .lines-table th.col-qty-rec,
@@ -891,6 +876,10 @@ interface ReceiptLineRow {
   `]
 })
 export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
+  protected readonly loc_nouveau_bon_de_reception_479ec8 = $localize`:@@purchase-receipts.purchase-receipt-form.tpl.nouveau.bon.de.reception.479ec866:Nouveau bon de réception`;
+  protected readonly loc_modifier_le_bon_de_reception_61e244 = $localize`:@@purchase-receipts.purchase-receipt-form.tpl.modifier.le.bon.de.reception.61e244a1:Modifier le bon de réception`;
+  protected readonly loc_enregistrez_une_reception_de_marchan_49a116 = $localize`:@@purchase-receipts.purchase-receipt-form.tpl.enregistrez.une.reception.de.marchandise.49a116a9:Enregistrez une réception de marchandises fournisseur.`;
+
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private receiptService = inject(PurchaseReceiptService);
@@ -913,7 +902,7 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
   isEdit = signal(false);
   savedId = signal<string | null>(null);
   receiptNumber = signal<string | null>(null);
-  statusDisplay = signal<string | null>('Brouillon');
+  statusDisplay = signal<string | null>($localize`:@@purchase-receipts.purchase-receipt-form.ts.brouillon.57d2d7a7:Brouillon`);
   statusSeverity = signal<'secondary' | 'success' | 'danger'>('secondary');
 
   suppliers = signal<SupplierListItem[]>([]);
@@ -949,9 +938,9 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
   importBlNumber = '';
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Bons de réception', route: '/purchase-receipts' },
-    { label: 'Nouveau' }
+    { label: $localize`:@@purchase-receipts.purchase-receipt-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@purchase-receipts.purchase-receipt-form.ts.bons.de.reception.84d6ebb5:Bons de réception`, route: '/purchase-receipts' },
+    { label: $localize`:@@purchase-receipts.purchase-receipt-form.ts.nouveau.b9676c8f:Nouveau` }
   ];
 
   ngOnInit(): void {
@@ -974,9 +963,9 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
       this.isEdit.set(true);
       this.savedId.set(id);
       this.breadcrumbItems = [
-        { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-        { label: 'Bons de réception', route: '/purchase-receipts' },
-        { label: 'Modifier' }
+        { label: $localize`:@@purchase-receipts.purchase-receipt-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+        { label: $localize`:@@purchase-receipts.purchase-receipt-form.ts.bons.de.reception.84d6ebb5:Bons de réception`, route: '/purchase-receipts' },
+        { label: $localize`:@@purchase-receipts.purchase-receipt-form.ts.modifier.f260e757:Modifier` }
       ];
       this.loadReceipt(id);
     } else if (poId) {
@@ -1064,8 +1053,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
         if (!res.success || !res.data) {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: 'Bon de réception introuvable'
+            summary: $localize`:@@purchase-receipt-form.component.summary.Erreur:Erreur`,
+            detail: $localize`:@@purchase-receipt-form.component.detail.bon.de.reception.introuvable.ddf6c47b:Bon de réception introuvable`
           });
           this.router.navigate(['/purchase-receipts']);
           return;
@@ -1075,8 +1064,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
         if (!detail) {
           this.toastService.add({
             severity: 'warn',
-            summary: 'Statut inconnu',
-            detail: 'Impossible de charger ce bon de réception.'
+            summary: $localize`:@@purchase-receipt-form.component.summary.Statut_inconnu:Statut inconnu`,
+            detail: $localize`:@@purchase-receipt-form.component.detail.impossible.de.charger.ce.bon.de.reception.de7497ba:Impossible de charger ce bon de réception.`
           });
           this.router.navigate(['/purchase-receipts']);
           return;
@@ -1085,8 +1074,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
         if (detail.status !== PurchaseReceiptStatus.Draft) {
           this.toastService.add({
             severity: 'warn',
-            summary: 'Non modifiable',
-            detail: 'Seuls les brouillons peuvent être modifiés.'
+            summary: $localize`:@@purchase-receipt-form.component.summary.Non_modifiable:Non modifiable`,
+            detail: $localize`:@@purchase-receipt-form.component.detail.Seuls_les_brouil:Seuls les brouillons peuvent être modifiés.`
           });
           this.router.navigate(['/purchase-receipts', id]);
           return;
@@ -1147,8 +1136,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
         this.loading.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de charger le bon de réception'
+          summary: $localize`:@@purchase-receipt-form.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@purchase-receipt-form.component.detail.impossible.de.charger.le.bon.de.reception.355e99c7:Impossible de charger le bon de réception`
         });
         this.router.navigate(['/purchase-receipts']);
       }
@@ -1161,8 +1150,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
         if (!res.success || !res.data) {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: res.message || 'Impossible de préremplir depuis le bon de commande'
+            summary: $localize`:@@purchase-receipt-form.component.summary.Erreur:Erreur`,
+            detail: res.message || $localize`:@@purchase-receipts.purchase-receipt-form.ts.impossible.de.preremplir.depuis.le.bon.d.0b96b652:Impossible de préremplir depuis le bon de commande`
           });
           this.loading.set(false);
           return;
@@ -1226,8 +1215,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
         this.loading.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: err?.error?.errors?.[0] || 'Impossible de préremplir depuis le bon de commande'
+          summary: $localize`:@@purchase-receipt-form.component.summary.Erreur:Erreur`,
+          detail: err?.error?.errors?.[0] || $localize`:@@purchase-receipts.purchase-receipt-form.ts.impossible.de.preremplir.depuis.le.bon.d.0b96b652:Impossible de préremplir depuis le bon de commande`
         });
       }
     });
@@ -1459,8 +1448,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
     if (mode === 'validate' && this.hasTrackedLines() && !this.canValidate()) {
       this.toastService.add({
         severity: 'warn',
-        summary: 'Traçabilité incomplète',
-        detail: 'Renseignez les numéros de lot ou de série pour chaque article suivi.'
+        summary: $localize`:@@purchase-receipt-form.component.summary.Tra_abilit_inco:Traçabilité incomplète`,
+        detail: $localize`:@@purchase-receipt-form.component.detail.Renseignez_les_n:Renseignez les numéros de lot ou de série pour chaque article suivi.`
       });
       return;
     }
@@ -1533,8 +1522,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
         if (!id) {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: 'Échec de l\'enregistrement'
+            summary: $localize`:@@purchase-receipt-form.component.summary.Erreur:Erreur`,
+            detail: $localize`:@@purchase-receipt-form.component.detail._chec_de_l_enreg:Échec de l'enregistrement`
           });
           return;
         }
@@ -1546,8 +1535,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
           if (validated) {
             this.toastService.add({
               severity: 'success',
-              summary: 'Validé',
-              detail: 'Bon de réception validé avec succès'
+              summary: $localize`:@@purchase-receipt-form.component.summary.Validé:Validé`,
+              detail: $localize`:@@purchase-receipt-form.component.detail.bon.de.reception.valide.avec.succes.23132924:Bon de réception validé avec succès`
             });
             this.router.navigate(['/purchase-receipts', id]);
             return;
@@ -1555,10 +1544,10 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
 
           this.toastService.add({
             severity: 'warn',
-            summary: 'Enregistré',
+            summary: $localize`:@@purchase-receipt-form.component.summary.Enregistr_:Enregistré`,
             detail: error
               ? this.errorHandler.extractErrorMessage(error)
-              : 'Enregistré, mais la validation a échoué'
+              : $localize`:@@purchase-receipts.purchase-receipt-form.ts.enregistre.mais.la.validation.a.echoue.93d8c18d:Enregistré, mais la validation a échoué`
           });
           this.ensureEditUrl(id);
           return;
@@ -1566,8 +1555,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
 
         this.toastService.add({
           severity: 'success',
-          summary: 'Succès',
-          detail: 'Bon de réception enregistré'
+          summary: $localize`:@@purchase-receipt-form.component.summary.Succès:Succès`,
+          detail: $localize`:@@purchase-receipt-form.component.detail.bon.de.reception.enregistre.4fb74cab:Bon de réception enregistré`
         });
 
         if (mode === 'save') {
@@ -1581,8 +1570,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
         this.submitMode.set(null);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: this.errorHandler.extractErrorMessage(err) || 'Erreur lors de l\'enregistrement'
+          summary: $localize`:@@purchase-receipt-form.component.summary.Erreur:Erreur`,
+          detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@purchase-receipts.purchase-receipt-form.ts.erreur.lors.de.l.enregistrement.28411a5e:Erreur lors de l'enregistrement`
         });
       }
     });
@@ -1613,8 +1602,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
     this.importBlDialogVisible = false;
     this.toastService.add({
       severity: 'success',
-      summary: 'BL importé',
-      detail: `Référence fournisseur : ${bl}`
+      summary: $localize`:@@purchase-receipt-form.component.summary.BL importé:BL importé`,
+      detail: $localize`:@@purchase-receipts.purchase-receipt-form.ts.reference.fournisseur.bl.cfc63ba2:Référence fournisseur : ${bl}:bl:`
     });
   }
 
@@ -1673,8 +1662,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
         if (res.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Pièce jointe',
-            detail: 'Fichier ajouté'
+            summary: $localize`:@@purchase-receipt-form.component.summary.Pi_ce_jointe:Pièce jointe`,
+            detail: $localize`:@@purchase-receipt-form.component.detail.Fichier ajou:Fichier ajouté`
           });
           this.reloadAttachments(id);
         }
@@ -1682,8 +1671,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
       error: (err) => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: err?.error?.errors?.[0] || 'Échec de l\'upload'
+          summary: $localize`:@@purchase-receipt-form.component.summary.Erreur:Erreur`,
+          detail: err?.error?.errors?.[0] || $localize`:@@purchase-receipts.purchase-receipt-form.ts.echec.de.l.upload.68e0c9ab:Échec de l'upload`
         });
       }
     });
@@ -1701,8 +1690,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
       error: () => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de supprimer la pièce jointe'
+          summary: $localize`:@@purchase-receipt-form.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@purchase-receipt-form.component.detail.Impossible_de_su:Impossible de supprimer la pièce jointe`
         });
       }
     });

@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -18,6 +20,7 @@ import { PayrollConsultBannerComponent, PayrollEmptyStateComponent, PayrollAmoun
   selector: 'app-payroll-run-list',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -32,10 +35,10 @@ import { PayrollConsultBannerComponent, PayrollEmptyStateComponent, PayrollAmoun
   ],
   template: `
     <app-page-header
-      [title]="firmInternal() ? 'Cycles de paie cabinet' : 'Cycles de paie'"
-      [subtitle]="firmInternal() ? 'Paie interne du cabinet : calcul et validation.' : 'Paie mensuelle : brouillon → calcul → validation → clôture.'">
+      [title]="firmInternal() ? loc_ui_tern_cycles_de_paie_cabinet_9210b7 : loc_ui_tern_cycles_de_paie_ea07b4"
+      [subtitle]="firmInternal() ? loc_ui_tern_paie_interne_du_cabinet_calcul_et_validati_cdd1da : loc_ui_tern_paie_mensuelle_brouillon_calcul_validation_6c9ee2">
       @if (canRun() && !currentMonthExists()) {
-        <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="createCurrentMonth()">Nouveau cycle (mois courant)</app-button>
+        <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="createCurrentMonth()" i18n="@@payroll.runs.nouveau.cycle.mois.courant.0f512e23">Nouveau cycle (mois courant)</app-button>
       }
     </app-page-header>
 
@@ -50,7 +53,7 @@ import { PayrollConsultBannerComponent, PayrollEmptyStateComponent, PayrollAmoun
         (ngModelChange)="reload()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Exercice"
+        placeholder="Exercice" i18n-placeholder="@@payroll.runs.exercice.e171e2b0"
         styleClass="w-10rem" />
     </div>
 
@@ -59,10 +62,10 @@ import { PayrollConsultBannerComponent, PayrollEmptyStateComponent, PayrollAmoun
         [loading]="loading()"
         [skeletonColumns]="6"
         icon="pi-calendar"
-        title="Aucun cycle de paie"
+        title="Aucun cycle de paie" i18n-title="@@payroll.runs.aucun.cycle.de.paie.a0557f41"
         [description]="emptyDescription()"
         [showAction]="canRun() && !loading() && !currentMonthExists()"
-        actionLabel="Créer le cycle du mois courant"
+        actionLabel="Créer le cycle du mois courant" i18n-actionLabel="@@payroll.runs.creer.le.cycle.du.mois.courant.98f6496d"
         (actionClick)="createCurrentMonth()" />
     }
 
@@ -70,23 +73,23 @@ import { PayrollConsultBannerComponent, PayrollEmptyStateComponent, PayrollAmoun
       <p-table [value]="runs()" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Période</th>
-            <th>Statut</th>
-            <th class="text-right">Bulletins</th>
-            <th class="text-right">Brut</th>
-            <th class="text-right">Net</th>
+            <th i18n="@@payroll.runs.periode.de2110b7">Période</th>
+            <th i18n="@@payroll.runs.statut.659499f3">Statut</th>
+            <th class="text-right" i18n="@@payroll.runs.bulletins.652cc5e0">Bulletins</th>
+            <th class="text-right" i18n="@@payroll.runs.brut.8fc72d21">Brut</th>
+            <th class="text-right" i18n="@@payroll.runs.net.9bb81c2e">Net</th>
             <th></th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-r>
           <tr>
             <td>{{ r.label }}</td>
-            <td><p-tag [value]="r.statusDisplay" /></td>
+            <td><p-tag [value]="r.statusDisplay | backendLabel" /></td>
             <td class="text-right">{{ r.payslipCount }}</td>
             <td class="text-right">{{ r.totalGross | payrollAmount }}</td>
             <td class="text-right">{{ r.totalNet | payrollAmount }}</td>
             <td>
-              <app-button variant="outline" size="sm" icon="pi-external-link" iconPos="left" [routerLink]="[routeBase() + '/runs', r.id]">Ouvrir</app-button>
+              <app-button variant="outline" size="sm" icon="pi-external-link" iconPos="left" [routerLink]="[routeBase() + '/runs', r.id]" i18n="@@payroll.runs.ouvrir.42c07747">Ouvrir</app-button>
             </td>
           </tr>
         </ng-template>
@@ -95,6 +98,10 @@ import { PayrollConsultBannerComponent, PayrollEmptyStateComponent, PayrollAmoun
   `
 })
 export class PayrollRunListComponent implements OnInit {
+  readonly loc_ui_tern_cycles_de_paie_cabinet_9210b7 = $localize`:@@ui.tern.cycles.de.paie.cabinet.9210b7:Cycles de paie cabinet`;
+  readonly loc_ui_tern_cycles_de_paie_ea07b4 = $localize`:@@ui.tern.cycles.de.paie.ea07b4:Cycles de paie`;
+  readonly loc_ui_tern_paie_interne_du_cabinet_calcul_et_validati_cdd1da = $localize`:@@ui.tern.paie.interne.du.cabinet.calcul.et.validati.cdd1da:Paie interne du cabinet : calcul et validation.`;
+  readonly loc_ui_tern_paie_mensuelle_brouillon_calcul_validation_6c9ee2 = $localize`:@@ui.tern.paie.mensuelle.brouillon.calcul.validation.6c9ee2:Paie mensuelle : brouillon → calcul → validation → clôture.`;
   private readonly payroll = inject(PayrollService);
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
@@ -119,7 +126,7 @@ export class PayrollRunListComponent implements OnInit {
     isCompanyPayrollReadOnly(this.auth) ? PAYROLL_FIRM_MANAGED_COMPANY_BANNER : PAYROLL_FIRM_CONSULT_BANNER);
   currentMonthExists = computed(() => this.currentMonthRun() !== null);
 
-  emptyDescription = computed(() => this.loading() ? undefined : 'Aucun cycle pour cet exercice.');
+  emptyDescription = computed(() => this.loading() ? undefined : $localize`:@@payroll.payroll-run-list.ts.aucun.cycle.pour.cet.exercice.d7a3e7cf:Aucun cycle pour cet exercice.`);
 
   ngOnInit(): void {
     const data = this.route.snapshot.data;
@@ -144,7 +151,7 @@ export class PayrollRunListComponent implements OnInit {
         }
       },
       error: () => {
-        this.toast.add({ severity: 'error', summary: 'Paie', detail: 'Impossible de charger les cycles.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@payroll-run-list.component.summary.Paie:Paie`, detail: $localize`:@@payroll-run-list.component.detail.Impossible d:Impossible de charger les cycles.` });
         this.loading.set(false);
         this.refreshCurrentMonthRun();
       }
@@ -165,14 +172,14 @@ export class PayrollRunListComponent implements OnInit {
     const now = new Date();
     this.payroll.createRun(now.getFullYear(), now.getMonth() + 1).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Paie', detail: 'Cycle créé.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-run-list.component.summary.Paie:Paie`, detail: $localize`:@@payroll-run-list.component.detail.Cycle créé.:Cycle créé.` });
         this.selectedYear = now.getFullYear();
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Paie',
-        detail: this.errorHandler.extractErrorMessage(err) || 'Création impossible.'
+        summary: $localize`:@@payroll-run-list.component.summary.Paie:Paie`,
+        detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@payroll.payroll-run-list.ts.creation.impossible.5661a598:Création impossible.`
       })
     });
   }

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -63,13 +64,11 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
     <div class="step-client">
       <!-- Mode Selection -->
       <section class="section">
-        <h2 class="section-title">
+        <h2 class="section-title" i18n="@@invoices.invoice-wizard.client.destinataire.4bd7d212">
           <i class="pi pi-user"></i>
           Client destinataire
         </h2>
-        <p class="section-description">
-          Sélectionnez un client existant ou créez-en un nouveau
-        </p>
+        <p class="section-description" i18n="@@invoices.invoice-wizard.selectionnez.un.client.existant.ou.creez.en.un.n.ef74ccaf"> Sélectionnez un client existant ou créez-en un nouveau </p>
 
         <div class="mode-selector">
           <button
@@ -78,7 +77,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
             [class.active]="mode === 'existing'"
             (click)="setMode('existing')">
             <i class="pi pi-search"></i>
-            <span>Client existant</span>
+            <span i18n="@@invoices.invoice-wizard.client.existant.842ea3f8">Client existant</span>
           </button>
           <button
             type="button"
@@ -86,7 +85,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
             [class.active]="mode === 'new'"
             (click)="setMode('new')">
             <i class="pi pi-plus"></i>
-            <span>Nouveau client</span>
+            <span i18n="@@invoices.invoice-wizard.nouveau.client.9e7edfed">Nouveau client</span>
           </button>
         </div>
       </section>
@@ -97,9 +96,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
       @if (mode === 'existing') {
         <section class="section">
           <div class="form-group">
-            <label for="clientSearch" class="required">
-              Rechercher un client
-            </label>
+            <label for="clientSearch" class="required" i18n="@@invoices.invoice-wizard.rechercher.un.client.723cebe6"> Rechercher un client </label>
             <p-autoComplete
               inputId="clientSearch"
               [(ngModel)]="selectedClient"
@@ -109,9 +106,9 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
               [dropdown]="true"
               [forceSelection]="true"
               field="name"
-              placeholder="Nom, matricule fiscal ou email..."
+              placeholder="Nom, matricule fiscal ou email..." i18n-placeholder="@@invoices.invoice-wizard.nom.matricule.fiscal.ou.email.270e5b5e"
               [minLength]="2"
-              emptyMessage="Aucun client trouvé"
+              emptyMessage="Aucun client trouvé" i18n-emptyMessage="@@invoices.invoice-wizard.aucun.client.trouve.ef55e6be"
               appendTo="body"
               [style]="{ width: '100%' }"
               [showEmptyMessage]="true">
@@ -130,9 +127,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
                 </div>
               </ng-template>
             </p-autoComplete>
-            <small class="form-hint">
-              Recherchez par nom, matricule fiscal ou adresse email
-            </small>
+            <small class="form-hint" i18n="@@invoices.invoice-wizard.recherchez.par.nom.matricule.fiscal.ou.adresse.e.7ee4dece"> Recherchez par nom, matricule fiscal ou adresse email </small>
           </div>
 
           @if (selectedClient && selectedClient.id) {
@@ -150,7 +145,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
                 <button 
                   type="button" 
                   class="clear-btn"
-                  pTooltip="Changer de client"
+                  pTooltip="Changer de client" i18n-pTooltip="@@invoices.invoice-wizard.changer.de.client.b170ee3b"
                   (click)="clearSelection()">
                   <i class="pi pi-times"></i>
                 </button>
@@ -197,7 +192,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
           <form [formGroup]="clientForm" class="new-client-form">
             <!-- Tax Type Selection -->
             <div class="form-group">
-              <label class="required">Type de client</label>
+              <label class="required" i18n="@@invoices.invoice-wizard.type.de.client.b2406987">Type de client</label>
               <div class="tax-type-cards">
                 @for (option of taxTypeOptions; track option.value) {
                   <div 
@@ -216,37 +211,37 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
             <p-divider></p-divider>
 
             <!-- Identity -->
-            <h3 class="form-section-title">Identité</h3>
+            <h3 class="form-section-title" i18n="@@invoices.invoice-wizard.identite.3138be1c">Identité</h3>
             
             <div class="form-grid">
               <div class="form-group full-width">
-                <label for="name" class="required">Raison sociale / Nom</label>
+                <label for="name" class="required" i18n="@@invoices.invoice-wizard.raison.sociale.nom.0cbfb1bd">Raison sociale / Nom</label>
                 <input 
                   pInputText 
                   id="name" 
                   formControlName="name"
-                  placeholder="Ex: ABC Industries SARL"
+                  placeholder="Ex: ABC Industries SARL" i18n-placeholder="@@invoices.invoice-wizard.ex.abc.industries.sarl.8d1bc722"
                   [class.ng-invalid]="isFieldInvalid('name')">
                 @if (isFieldInvalid('name')) {
-                  <small class="form-error">La raison sociale est obligatoire</small>
+                  <small class="form-error" i18n="@@invoices.invoice-wizard.la.raison.sociale.est.obligatoire.59e5aeb0">La raison sociale est obligatoire</small>
                 }
               </div>
 
               @if (isTaxSubject()) {
                 <div class="form-group">
-                  <label for="nif" class="required">Matricule fiscal</label>
+                  <label for="nif" class="required" i18n="@@invoices.invoice-wizard.matricule.fiscal.304096c4">Matricule fiscal</label>
                   <p-inputMask
                     id="nif"
                     formControlName="nif"
                     appNifMaskPaste
                     mask="9999999a/a/a/999"
-                    placeholder="Ex. 1772793W/A/M/000"
+                    placeholder="Ex. 1772793W/A/M/000" i18n-placeholder="@@invoices.invoice-wizard.ex.1772793w.a.m.000.f3190bfc"
                     styleClass="w-full"
                     [style]="{'text-transform': 'uppercase'}"
                     [class.ng-invalid]="isFieldInvalid('nif')"
                     (onBlur)="normalizeNif()">
                   </p-inputMask>
-                  <small class="form-hint">Format : 1772793W/A/M/000</small>
+                  <small class="form-hint" i18n="@@invoices.invoice-wizard.format.1772793w.a.m.000.953218ad">Format : 1772793W/A/M/000</small>
                   @if (isFieldInvalid('nif')) {
                     <small class="form-error">{{ getNifErrorMessage() }}</small>
                   }
@@ -257,59 +252,59 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
             <p-divider></p-divider>
 
             <!-- Address -->
-            <h3 class="form-section-title">Adresse</h3>
+            <h3 class="form-section-title" i18n="@@invoices.invoice-wizard.adresse.522e1466">Adresse</h3>
             
             <div class="form-grid">
               <div class="form-group full-width">
-                <label for="street" class="required">Adresse</label>
+                <label for="street" class="required" i18n="@@invoices.invoice-wizard.adresse.522e1466">Adresse</label>
                 <input 
                   pInputText 
                   id="street" 
                   formControlName="street"
-                  placeholder="Numéro et nom de rue"
+                  placeholder="Numéro et nom de rue" i18n-placeholder="@@invoices.invoice-wizard.numero.et.nom.de.rue.a6fd8173"
                   [class.ng-invalid]="isFieldInvalid('street')">
               </div>
 
               <div class="form-group full-width">
-                <label for="streetLine2">Complément d'adresse</label>
+                <label for="streetLine2" i18n="@@invoices.invoice-wizard.complement.d.adresse.fba484a7">Complément d'adresse</label>
                 <input 
                   pInputText 
                   id="streetLine2" 
                   formControlName="streetLine2"
-                  placeholder="Appartement, étage, bâtiment...">
+                  placeholder="Appartement, étage, bâtiment..." i18n-placeholder="@@invoices.invoice-wizard.appartement.etage.batiment.15503019">
               </div>
 
               <div class="form-group">
-                <label for="postalCode">Code postal</label>
+                <label for="postalCode" i18n="@@invoices.invoice-wizard.code.postal.74779109">Code postal</label>
                 <input 
                   pInputText 
                   id="postalCode" 
                   formControlName="postalCode"
-                  placeholder="1000"
+                  placeholder="1000" i18n-placeholder="@@invoices.invoice-wizard.1000.e3cbba88"
                   maxlength="5">
               </div>
 
               <div class="form-group">
-                <label for="city" class="required">Ville</label>
+                <label for="city" class="required" i18n="@@invoices.invoice-wizard.ville.97217611">Ville</label>
                 <input 
                   pInputText 
                   id="city" 
                   formControlName="city"
-                  placeholder="Tunis"
+                  placeholder="Tunis" i18n-placeholder="@@invoices.invoice-wizard.tunis.e58b2d54"
                   [class.ng-invalid]="isFieldInvalid('city')">
               </div>
 
               <div class="form-group">
-                <label for="governorate" class="required">Gouvernorat</label>
+                <label for="governorate" class="required" i18n="@@invoices.invoice-wizard.gouvernorat.b9cd1d99">Gouvernorat</label>
                 <p-select
                   inputId="governorate"
                   formControlName="governorate"
                   [options]="governorateOptions"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="Sélectionner..."
+                  placeholder="Sélectionner..." i18n-placeholder="@@invoices.invoice-wizard.selectionner.01ea04b3"
                   [filter]="true"
-                  filterPlaceholder="Rechercher..."
+                  filterPlaceholder="Rechercher..." i18n-filterPlaceholder="@@invoices.invoice-wizard.rechercher.a3c28969"
                   appendTo="body"
                   [class.ng-invalid]="isFieldInvalid('governorate')">
                 </p-select>
@@ -319,40 +314,40 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
             <p-divider></p-divider>
 
             <!-- Contact -->
-            <h3 class="form-section-title">Contact</h3>
+            <h3 class="form-section-title" i18n="@@invoices.invoice-wizard.contact.b37456c4">Contact</h3>
             
             <div class="form-grid">
               <div class="form-group">
-                <label for="email">Email</label>
+                <label for="email" i18n="@@invoices.invoice-wizard.email.84add5b2">Email</label>
                 <input 
                   pInputText 
                   type="email"
                   id="email" 
                   formControlName="email"
-                  placeholder="contact@exemple.tn"
+                  placeholder="contact@exemple.tn" i18n-placeholder="@@invoices.invoice-wizard.contact.exemple.tn.c035c2ff"
                   [class.ng-invalid]="isFieldInvalid('email')">
                 @if (isFieldInvalid('email')) {
-                  <small class="form-error">Email invalide</small>
+                  <small class="form-error" i18n="@@invoices.invoice-wizard.email.invalide.e09b961a">Email invalide</small>
                 }
               </div>
 
               <div class="form-group">
-                <label for="phone">Téléphone</label>
+                <label for="phone" i18n="@@invoices.invoice-wizard.telephone.d3b023ea">Téléphone</label>
                 <p-inputMask
                   id="phone"
                   formControlName="phone"
                   mask="+216 99 999 999"
-                  placeholder="+216 XX XXX XXX">
+                  placeholder="+216 XX XXX XXX" i18n-placeholder="@@invoices.invoice-wizard.216.xx.xxx.xxx.e336394e">
                 </p-inputMask>
               </div>
 
               <div class="form-group">
-                <label for="contactPerson">Personne de contact</label>
+                <label for="contactPerson" i18n="@@invoices.invoice-wizard.personne.de.contact.148fdd96">Personne de contact</label>
                 <input 
                   pInputText 
                   id="contactPerson" 
                   formControlName="contactPerson"
-                  placeholder="Nom du responsable">
+                  placeholder="Nom du responsable" i18n-placeholder="@@invoices.invoice-wizard.nom.du.responsable.45818ee5">
               </div>
             </div>
           </form>
@@ -366,11 +361,9 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
             <i class="pi pi-exclamation-triangle"></i>
           </div>
           <div class="warning-content">
-            <strong>Client exonéré de TVA</strong>
-            <p>
-              Une mention légale d'exonération sera automatiquement ajoutée à la facture 
-              conformément à la réglementation tunisienne.
-            </p>
+            <strong i18n="@@invoices.invoice-wizard.client.exonere.de.tva.ce8a68fa">Client exonéré de TVA</strong>
+            <p i18n="@@invoices.invoice-wizard.une.mention.legale.d.exoneration.sera.automatiqu.903e9d06"> Une mention légale d'exonération sera automatiquement ajoutée à la facture 
+              conformément à la réglementation tunisienne. </p>
           </div>
         </div>
       }
@@ -381,28 +374,28 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
           <div class="compliance-header">
             @if (isClientValid()) {
               <i class="pi pi-check-circle"></i>
-              <span>Informations conformes</span>
+              <span i18n="@@invoices.invoice-wizard.informations.conformes.7517e50f">Informations conformes</span>
             } @else {
               <i class="pi pi-exclamation-circle"></i>
-              <span>Informations incomplètes</span>
+              <span i18n="@@invoices.invoice-wizard.informations.incompletes.593a626c">Informations incomplètes</span>
             }
           </div>
           <ul class="compliance-list">
-            <li [class.valid]="hasClientName()" [class.invalid]="!hasClientName()">
+            <li [class.valid]="hasClientName()" [class.invalid]="!hasClientName()" i18n="@@invoices.invoice-wizard.raison.sociale.presente.c56c3a50">
               <i [class]="hasClientName() ? 'pi pi-check' : 'pi pi-times'"></i>
               Raison sociale présente
             </li>
-            <li [class.valid]="hasClientAddress()" [class.invalid]="!hasClientAddress()">
+            <li [class.valid]="hasClientAddress()" [class.invalid]="!hasClientAddress()" i18n="@@invoices.invoice-wizard.adresse.complete.f8e9dd2a">
               <i [class]="hasClientAddress() ? 'pi pi-check' : 'pi pi-times'"></i>
               Adresse complète
             </li>
             @if (isTaxSubjectSelected()) {
-              <li [class.valid]="hasValidNif()" [class.invalid]="!hasValidNif()">
+              <li [class.valid]="hasValidNif()" [class.invalid]="!hasValidNif()" i18n="@@invoices.invoice-wizard.matricule.fiscal.valide.obligatoire.pour.3497d6d2">
                 <i [class]="hasValidNif() ? 'pi pi-check' : 'pi pi-times'"></i>
                 Matricule fiscal valide (obligatoire pour assujetti)
               </li>
             } @else {
-              <li class="valid">
+              <li class="valid" i18n="@@invoices.invoice-wizard.matricule.fiscal.non.requis.e3ad5393">
                 <i class="pi pi-check"></i>
                 Matricule fiscal non requis
               </li>
@@ -1019,9 +1012,9 @@ export class StepClientComponent implements OnInit {
     if (!resolvedId) {
       this.toastService.add({
         severity: 'error',
-        summary: 'Client invalide',
+        summary: $localize`:@@step-client.component.summary.Client_invalide:Client invalide`,
         detail:
-          'Ce client n\'a pas d\'identifiant serveur. Veuillez le resélectionner dans la liste ou utiliser l\'onglet « Nouveau client ».',
+          $localize`:@@step-client.component.detail.Ce_client_n_a_pa:Ce client n'a pas d'identifiant serveur. Veuillez le resélectionner dans la liste ou utiliser l'onglet « Nouveau client ».`,
         life: 6000
       });
       return;
@@ -1198,10 +1191,10 @@ export class StepClientComponent implements OnInit {
     const control = this.clientForm.get('nif');
     if (!control?.errors) return '';
     if (control.errors['required']) {
-      return 'Le matricule fiscal est obligatoire pour un client assujetti';
+      return $localize`:@@invoices.step-client.ts.le.matricule.fiscal.est.obligatoire.pour.51ef6b29:Le matricule fiscal est obligatoire pour un client assujetti`;
     }
     if (control.errors['pattern']) {
-      return 'Matricule fiscal invalide. Format attendu: 1772793W/A/M/000';
+      return $localize`:@@invoices.step-client.ts.matricule.fiscal.invalide.format.attendu.7da88009:Matricule fiscal invalide. Format attendu: 1772793W/A/M/000`;
     }
     return '';
   }

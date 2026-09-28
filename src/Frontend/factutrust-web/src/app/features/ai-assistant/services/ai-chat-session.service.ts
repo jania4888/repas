@@ -416,7 +416,7 @@ export class AiChatSessionService {
 
   private resolveConfirmReminderErrorMessage(err: unknown): string {
     const e = err as { error?: { message?: string }; message?: string } | null;
-    return e?.error?.message || e?.message || 'La confirmation de la relance a échoué.';
+    return e?.error?.message || e?.message || $localize`:@@ai-assistant.ai-chat-session.ts.la.confirmation.de.la.relance.a.echoue.a8e4be33:La confirmation de la relance a échoué.`;
   }
 
   sendMessage(
@@ -583,18 +583,18 @@ export class AiChatSessionService {
     const status = (err as { httpStatus?: number } | null)?.httpStatus;
     const message = (err as Error | null)?.message;
     if (status === 401) {
-      return 'Session expirée. Veuillez vous reconnecter, puis renvoyer votre message.';
+      return $localize`:@@ai-assistant.ai-chat-session.ts.session.expiree.veuillez.vous.reconnecte.be32677a:Session expirée. Veuillez vous reconnecter, puis renvoyer votre message.`;
     }
     if (status === 403) {
       if (message && !message.startsWith('HTTP 403')) {
         return message;
       }
-      return 'Action non autorisée en mode dossier client.';
+      return $localize`:@@ai-assistant.ai-chat-session.ts.action.non.autorisee.en.mode.dossier.cli.e08597d7:Action non autorisée en mode dossier client.`;
     }
     if (status === 429) {
-      return 'Trop de requêtes vers l’assistant IA. Patientez un instant avant de réessayer.';
+      return $localize`:@@ai-assistant.ai-chat-session.ts.trop.de.requetes.vers.l.assistant.ia.pat.ebb869db:Trop de requêtes vers l’assistant IA. Patientez un instant avant de réessayer.`;
     }
-    return 'Une erreur est survenue. Veuillez essayer de nouveau.';
+    return $localize`:@@ai-assistant.ai-chat-session.ts.une.erreur.est.survenue.veuillez.essayer.431c8d83:Une erreur est survenue. Veuillez essayer de nouveau.`;
   }
 
   /**
@@ -723,7 +723,7 @@ export class AiChatSessionService {
         this.flushContentBatch();
         this.awaitingFirstToken.set(false);
         this.finalizeAssistantMessage(assistantMsgId, 'failed', {
-          content: event.error || 'Erreur inconnue',
+          content: event.error || $localize`:@@ai-assistant.ai-chat-session.ts.erreur.inconnue.c3ec7363:Erreur inconnue`,
           generationInterrupted: true
         });
         this.isStreaming.set(false);

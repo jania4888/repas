@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule, CurrencyPipe } from '@angular/common';
@@ -122,11 +123,11 @@ export class StockVoucherFormComponent implements OnInit {
   readonly kind: StockVoucherKindName = this.isEntry ? 'Entry' : 'Issue';
   readonly listRoute = this.isEntry ? '/stock/entries' : '/stock/issues';
   readonly pageTitle = this.route.snapshot.paramMap.get('id')
-    ? (this.isEntry ? 'Modifier le bon d’entrée' : 'Modifier le bon de sortie')
-    : (this.isEntry ? 'Nouveau bon d’entrée' : 'Nouveau bon de sortie');
+    ? (this.isEntry ? $localize`:@@ui.tern.modifier.le.bon.d.entree.193403:Modifier le bon d’entrée` : $localize`:@@ui.tern.modifier.le.bon.de.sortie.3c4091:Modifier le bon de sortie`)
+    : (this.isEntry ? $localize`:@@ui.tern.nouveau.bon.d.entree.4b0d6e:Nouveau bon d’entrée` : $localize`:@@ui.tern.nouveau.bon.de.sortie.39e890:Nouveau bon de sortie`);
   readonly pageSubtitle = this.isEntry
-    ? 'Le stock n’est mis à jour qu’à la validation.'
-    : 'La sortie est refusée si la quantité dépasse le disponible.';
+    ? $localize`:@@ui.tern.le.stock.n.est.mis.a.jour.qu.a.la.validati.55158b:Le stock n’est mis à jour qu’à la validation.`
+    : $localize`:@@ui.tern.la.sortie.est.refusee.si.la.quantite.depas.9808e7:La sortie est refusée si la quantité dépasse le disponible.`;
 
   breadcrumbItems: BreadcrumbItem[] = [];
   editId: string | null = null;
@@ -148,16 +149,16 @@ export class StockVoucherFormComponent implements OnInit {
 
   readonly reasonOptions = this.isEntry
     ? [
-        { label: 'Stock initial', value: 'InitialStock' },
-        { label: 'Retour client (hors BRT / avoir)', value: 'CustomerReturn' },
-        { label: 'Achat hors réception', value: 'Purchase' },
-        { label: 'Trouvé / autre', value: 'FoundOrOther' }
+        { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.stock.initial.99fd1599:Stock initial`, value: 'InitialStock' },
+        { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.retour.client.hors.brt.avoir.325560a5:Retour client (hors BRT / avoir)`, value: 'CustomerReturn' },
+        { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.achat.hors.reception.09085b94:Achat hors réception`, value: 'Purchase' },
+        { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.trouve.autre.4666fcbc:Trouvé / autre`, value: 'FoundOrOther' }
       ]
     : [
-        { label: 'Dommage / perte', value: 'Damage' },
-        { label: 'Retour fournisseur (hors flux achat)', value: 'SupplierReturn' },
-        { label: 'Consommation interne', value: 'InternalUse' },
-        { label: 'Don / échantillon', value: 'GiftOrSample' }
+        { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.dommage.perte.e616c1da:Dommage / perte`, value: 'Damage' },
+        { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.retour.fournisseur.hors.flux.achat.47160484:Retour fournisseur (hors flux achat)`, value: 'SupplierReturn' },
+        { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.consommation.interne.d1e627e1:Consommation interne`, value: 'InternalUse' },
+        { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.don.echantillon.01c5b7a7:Don / échantillon`, value: 'GiftOrSample' }
       ];
 
   get totalQuantity(): number {
@@ -171,10 +172,10 @@ export class StockVoucherFormComponent implements OnInit {
   ngOnInit(): void {
     this.editId = this.route.snapshot.paramMap.get('id');
     this.breadcrumbItems = [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Stock', route: '/stock' },
-      { label: this.isEntry ? "Bons d'entrée" : 'Bons de sortie', route: this.listRoute },
-      { label: this.editId ? 'Modifier' : 'Nouveau' }
+      { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.stock.bcecf456:Stock`, route: '/stock' },
+      { label: this.isEntry ? $localize`:@@ui.tern.bons.d.entree.c04705:Bons d'entrée` : $localize`:@@ui.tern.bons.de.sortie.ccd59b:Bons de sortie`, route: this.listRoute },
+      { label: this.editId ? $localize`:@@ui.tern.modifier.f260e7:Modifier` : $localize`:@@ui.tern.nouveau.b9676c:Nouveau` }
     ];
 
     this.stockService.getFeatures().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -198,8 +199,8 @@ export class StockVoucherFormComponent implements OnInit {
             catchError(() => {
               this.messageService.add({
                 severity: 'error',
-                summary: 'Produits',
-                detail: 'Impossible de charger les produits'
+                summary: $localize`:@@stock-voucher-form.component.summary.Produits:Produits`,
+                detail: $localize`:@@stock-voucher-form.component.detail.Impossible d:Impossible de charger les produits`
               });
               return of({ success: false as const, data: undefined });
             }),
@@ -283,11 +284,11 @@ export class StockVoucherFormComponent implements OnInit {
     const product = this.selectedProduct;
     if (!product || this.selectedQuantity <= 0) return;
     if (!product.isStockManaged) {
-      this.messageService.add({ severity: 'warn', summary: 'Produit', detail: 'Seuls les produits gérés en stock sont autorisés.' });
+      this.messageService.add({ severity: 'warn', summary: $localize`:@@stock-voucher-form.component.summary.Produit:Produit`, detail: $localize`:@@stock-voucher-form.component.detail.Seuls_les_produi:Seuls les produits gérés en stock sont autorisés.` });
       return;
     }
     if (this.lines.some(l => l.productId === product.id)) {
-      this.messageService.add({ severity: 'warn', summary: 'Attention', detail: 'Ce produit est déjà sur le bon.' });
+      this.messageService.add({ severity: 'warn', summary: $localize`:@@stock-voucher-form.component.summary.Attention:Attention`, detail: $localize`:@@stock-voucher-form.component.detail.Ce_produit_est_d:Ce produit est déjà sur le bon.` });
       return;
     }
     const stock = this.stockByProductId().get(product.id);
@@ -384,10 +385,10 @@ export class StockVoucherFormComponent implements OnInit {
 
   submitBlockers(): string[] {
     const blockers: string[] = [];
-    if (!this.hasWarehouse()) blockers.push('Sélectionnez un dépôt');
-    if (!this.hasDate()) blockers.push('Indiquez la date');
-    if (!this.hasReason()) blockers.push('Sélectionnez un motif');
-    if (!this.hasLines()) blockers.push('Ajoutez au moins une ligne produit');
+    if (!this.hasWarehouse()) blockers.push($localize`:@@stock-vouchers.stock-voucher-form.ts.selectionnez.un.depot.30eab6e8:Sélectionnez un dépôt`);
+    if (!this.hasDate()) blockers.push($localize`:@@stock-vouchers.stock-voucher-form.ts.indiquez.la.date.c44f1641:Indiquez la date`);
+    if (!this.hasReason()) blockers.push($localize`:@@stock-vouchers.stock-voucher-form.ts.selectionnez.un.motif.7ae40cb5:Sélectionnez un motif`);
+    if (!this.hasLines()) blockers.push($localize`:@@stock-vouchers.stock-voucher-form.ts.ajoutez.au.moins.une.ligne.produit.bf3387b7:Ajoutez au moins une ligne produit`);
     if (this.submitting()) blockers.push('Enregistrement en cours');
     return blockers;
   }
@@ -411,8 +412,8 @@ export class StockVoucherFormComponent implements OnInit {
     if (andValidate && !this.isEntry && this.lines.some(l => this.qtyExceedsAvailable(l))) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Stock insuffisant',
-        detail: 'Une quantité dépasse le disponible. Ajustez les lignes avant validation.'
+        summary: $localize`:@@stock-voucher-form.component.summary.Stock_insuffisan:Stock insuffisant`,
+        detail: $localize`:@@stock-voucher-form.component.detail.Une_quantit_d_p:Une quantité dépasse le disponible. Ajustez les lignes avant validation.`
       });
       return;
     }
@@ -465,7 +466,7 @@ export class StockVoucherFormComponent implements OnInit {
   private afterSave(id: string, andValidate: boolean): void {
     if (!andValidate) {
       this.submitting.set(false);
-      this.messageService.add({ severity: 'success', summary: 'Enregistré', detail: 'Brouillon enregistré.' });
+      this.messageService.add({ severity: 'success', summary: $localize`:@@stock-voucher-form.component.summary.Enregistr_:Enregistré`, detail: $localize`:@@stock-voucher-form.component.detail.Brouillon_enregi:Brouillon enregistré.` });
       void this.router.navigate([this.listRoute, id]);
       return;
     }
@@ -478,14 +479,14 @@ export class StockVoucherFormComponent implements OnInit {
     validate$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.submitting.set(false);
-        this.messageService.add({ severity: 'success', summary: 'Validé', detail: 'Le stock a été mis à jour.' });
+        this.messageService.add({ severity: 'success', summary: $localize`:@@stock-voucher-form.component.summary.Validé:Validé`, detail: $localize`:@@stock-voucher-form.component.detail.Le stock a é:Le stock a été mis à jour.` });
         void this.router.navigate([this.listRoute, id]);
       },
       error: (err) => {
         this.submitting.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Enregistré, validation refusée',
+          summary: $localize`:@@stock-voucher-form.component.summary.Enregistr_vali:Enregistré, validation refusée`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
         void this.router.navigate([this.listRoute, id]);
@@ -497,7 +498,7 @@ export class StockVoucherFormComponent implements OnInit {
     this.submitting.set(false);
     this.messageService.add({
       severity: 'error',
-      summary: 'Erreur',
+      summary: $localize`:@@stock-voucher-form.component.summary.Erreur:Erreur`,
       detail: this.errorHandler.extractErrorMessage(err)
     });
   }
@@ -507,7 +508,7 @@ export class StockVoucherFormComponent implements OnInit {
       next: (res) => {
         const v = res.data;
         if (!v || !isStockVoucherDraft(v.status)) {
-          this.messageService.add({ severity: 'warn', summary: 'Lecture seule', detail: 'Seuls les brouillons sont modifiables.' });
+          this.messageService.add({ severity: 'warn', summary: $localize`:@@stock-voucher-form.component.summary.Lecture seul:Lecture seule`, detail: $localize`:@@stock-voucher-form.component.detail.Seuls_les_brouil:Seuls les brouillons sont modifiables.` });
           void this.router.navigate([this.listRoute, id]);
           return;
         }
@@ -533,7 +534,7 @@ export class StockVoucherFormComponent implements OnInit {
       error: (err) => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@stock-voucher-form.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
         void this.router.navigate([this.listRoute]);

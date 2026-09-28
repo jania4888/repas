@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -65,7 +67,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
 @Component({
   selector: 'app-project-task-detail',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     RouterLink,
@@ -91,26 +93,26 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
     @if (task(); as t) {
       <app-breadcrumb [items]="crumbs(t)"></app-breadcrumb>
       <app-page-header [title]="t.title" [subtitle]="t.phaseName">
-        <app-status-badge [status]="taskStatusBadge(t.status)" [label]="t.statusDisplay" />
+        <app-status-badge [status]="taskStatusBadge(t.status)" [label]="t.statusDisplay | backendLabel" />
         @if (canCreateTimeEntry) {
-          <app-button variant="outline" (click)="goToTimeTab()">Saisir du temps</app-button>
+          <app-button variant="outline" (click)="goToTimeTab()" i18n="@@projects.project-task-detail.saisir.du.temps.829487f5">Saisir du temps</app-button>
         }
         @if (canUpdate) {
-          <app-button variant="outline" (click)="openStatusDialog()">Changer statut</app-button>
-          <app-button variant="primary" (click)="save()">Enregistrer</app-button>
-          <app-button variant="danger" (click)="deleteTask()">Supprimer</app-button>
+          <app-button variant="outline" (click)="openStatusDialog()" i18n="@@projects.project-task-detail.changer.statut.3db910c4">Changer statut</app-button>
+          <app-button variant="primary" (click)="save()" i18n="@@projects.project-task-detail.enregistrer.f7c8bcd8">Enregistrer</app-button>
+          <app-button variant="danger" (click)="deleteTask()" i18n="@@projects.project-task-detail.supprimer.1acfc1c7">Supprimer</app-button>
         }
-        <a routerLink="/projects/{{ t.projectId }}" [queryParams]="{ tab: 'tasks' }" class="p-button p-button-outlined p-button-sm">Retour au projet</a>
+        <a routerLink="/projects/{{ t.projectId }}" [queryParams]="{ tab: 'tasks' }" class="p-button p-button-outlined p-button-sm" i18n="@@projects.project-task-detail.retour.au.projet.c83aebd1">Retour au projet</a>
       </app-page-header>
 
       <div class="proj-meta-chips mb-2">
         @if (canUpdate) {
-          <p-select [options]="statusOptions" [(ngModel)]="status" optionLabel="label" optionValue="value" placeholder="Statut" />
+          <p-select [options]="statusOptions" [(ngModel)]="status" optionLabel="label" optionValue="value" placeholder="Statut" i18n-placeholder="@@projects.project-task-detail.statut.659499f3" />
           <p-select [options]="priorityOptions" [(ngModel)]="priority" optionLabel="label" optionValue="value" />
         }
         <span class="proj-chip">
           <i class="pi pi-calendar"></i>
-          {{ dueDate ? (dueDate | date:'shortDate') : 'Sans échéance' }}
+          {{ dueDate ? (dueDate | date:'shortDate') : loc_ui_tern_sans_echeance_4a0d4b }}
           @if (daysLeft() !== null && daysLeft()! <= 5 && daysLeft()! >= 0) {
             <span class="text-danger"> · J{{ daysLeft() }}</span>
           }
@@ -121,24 +123,24 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
         <div class="task-detail-main-tabs">
           <p-tabs [value]="tab()" (valueChange)="tab.set($any($event))">
             <p-tablist>
-              <p-tab value="overview">Aperçu</p-tab>
-              <p-tab value="subtasks">Sous-tâches {{ doneSubtasks() }}/{{ subtasks().length }}</p-tab>
-              <p-tab value="files">Fichiers {{ taskFiles().length }}</p-tab>
+              <p-tab value="overview" i18n="@@projects.project-task-detail.apercu.f0f53004">Aperçu</p-tab>
+              <p-tab value="subtasks" i18n="@@projects.project-task-detail.sous.taches.454c93dd">Sous-tâches {{ doneSubtasks() }}/{{ subtasks().length }}</p-tab>
+              <p-tab value="files" i18n="@@projects.project-task-detail.fichiers.a41fa3d0">Fichiers {{ taskFiles().length }}</p-tab>
               @if (showTaskTimeTab(project(), t)) {
-              <p-tab value="time">Temps passé</p-tab>
+              <p-tab value="time" i18n="@@projects.project-task-detail.temps.passe.94914a53">Temps passé</p-tab>
               }
-              <p-tab value="history">Historique</p-tab>
+              <p-tab value="history" i18n="@@projects.project-task-detail.historique.34f3a06a">Historique</p-tab>
             </p-tablist>
             <p-tabpanels>
               <p-tabpanel value="overview">
                 <div class="card p-3">
                   @if (canUpdate) {
                     <input pInputText class="w-full mb-2" [(ngModel)]="title" />
-                    <textarea pTextarea class="w-full" [(ngModel)]="description" rows="4" placeholder="Description"></textarea>
+                    <textarea pTextarea class="w-full" [(ngModel)]="description" rows="4" placeholder="Description" i18n-placeholder="@@projects.project-task-detail.description.55f8ebc8"></textarea>
                     <div class="flex flex-wrap gap-2 mt-2">
-                      <p-select [options]="users()" [(ngModel)]="assigneeId" optionLabel="displayName" optionValue="id" placeholder="Assigné" [showClear]="true" />
-                      <p-datepicker [(ngModel)]="dueDate" dateFormat="dd/mm/yy" placeholder="Échéance" />
-                      <p-inputNumber [(ngModel)]="estimatedHours" [min]="0" placeholder="Estimé h" />
+                      <p-select [options]="users()" [(ngModel)]="assigneeId" optionLabel="displayName" optionValue="id" placeholder="Assigné" i18n-placeholder="@@projects.project-task-detail.assigne.be552b5f" [showClear]="true" />
+                      <p-datepicker [(ngModel)]="dueDate" dateFormat="dd/mm/yy" placeholder="Échéance" i18n-placeholder="@@projects.project-task-detail.echeance.f9a77ff6" />
+                      <p-inputNumber [(ngModel)]="estimatedHours" [min]="0" placeholder="Estimé h" i18n-placeholder="@@projects.project-task-detail.estime.h.e7abfae2" />
                     </div>
                   } @else {
                     <p>{{ t.description || 'Pas de description.' }}</p>
@@ -146,27 +148,27 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                   <div class="mt-3">
                     <strong>{{ t.progressPercent }} %</strong>
                     <p-progressBar [value]="t.progressPercent" />
-                    <p class="text-sm text-color-secondary m-0">{{ doneSubtasks() }}/{{ subtasks().length }} sous-tâches terminées</p>
+                    <p class="text-sm text-color-secondary m-0" i18n="@@projects.project-task-detail.sous.taches.terminees.329a08ad">{{ doneSubtasks() }}/{{ subtasks().length }} sous-tâches terminées</p>
                   </div>
                   <div class="flex gap-3 mt-3">
                     <div class="proj-kpi-card flex-1">
-                      <span class="proj-kpi-label">Temps estimé</span>
+                      <span class="proj-kpi-label" i18n="@@projects.project-task-detail.temps.estime.b398ea0b">Temps estimé</span>
                       <strong>{{ t.estimatedHours | number:'1.0-1' }} h</strong>
                     </div>
                     <div class="proj-kpi-card flex-1">
-                      <span class="proj-kpi-label">Temps passé</span>
+                      <span class="proj-kpi-label" i18n="@@projects.project-task-detail.temps.passe.94914a53">Temps passé</span>
                       <strong>{{ t.loggedHours | number:'1.0-1' }} h</strong>
                       @if (canCreateTimeEntry) {
-                        <button type="button" class="proj-tasks-link-btn" (click)="goToTimeTab()">Saisir du temps</button>
+                        <button type="button" class="proj-tasks-link-btn" (click)="goToTimeTab()" i18n="@@projects.project-task-detail.saisir.du.temps.829487f5">Saisir du temps</button>
                       }
                     </div>
                   </div>
                 </div>
                 <div class="card p-3 mt-3">
-                  <h3 class="mt-0">Commentaires</h3>
+                  <h3 class="mt-0" i18n="@@projects.project-task-detail.commentaires.dbdeccaf">Commentaires</h3>
                   @if (canUpdate) {
                     <textarea pTextarea class="w-full" [(ngModel)]="body" rows="3"></textarea>
-                    <app-button class="mt-2" variant="primary" (click)="comment()">Ajouter</app-button>
+                    <app-button class="mt-2" variant="primary" (click)="comment()" i18n="@@projects.project-task-detail.ajouter.87c57ed1">Ajouter</app-button>
                   }
                   <ul class="proj-sidebar-list">
                     @for (c of comments(); track c.id) {
@@ -178,19 +180,19 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
               <p-tabpanel value="subtasks">
                 <div class="card p-3">
                   <p-table [value]="subtasks()" styleClass="p-datatable-sm">
-                    <ng-template pTemplate="header"><tr><th>Titre</th><th>Statut</th><th>Avancement</th></tr></ng-template>
+                    <ng-template pTemplate="header"><tr><th i18n="@@projects.project-task-detail.titre.eb97899a">Titre</th><th i18n="@@projects.project-task-detail.statut.659499f3">Statut</th><th i18n="@@projects.project-task-detail.avancement.e1963fc4">Avancement</th></tr></ng-template>
                     <ng-template pTemplate="body" let-s>
                       <tr [routerLink]="['/projects', s.projectId, 'tasks', s.id]" style="cursor:pointer">
                         <td>{{ s.title }}</td>
-                        <td><app-status-badge [status]="taskStatusBadge(s.status)" [label]="s.statusDisplay" /></td>
+                        <td><app-status-badge [status]="taskStatusBadge(s.status)" [label]="s.statusDisplay | backendLabel" /></td>
                         <td>{{ s.progressPercent }}%</td>
                       </tr>
                     </ng-template>
                   </p-table>
                   @if (canUpdate) {
                     <div class="flex gap-2 mt-2">
-                      <input pInputText [(ngModel)]="subTitle" placeholder="Nouvelle sous-tâche" class="flex-1" />
-                      <app-button (click)="addSub()">Ajouter</app-button>
+                      <input pInputText [(ngModel)]="subTitle" placeholder="Nouvelle sous-tâche" i18n-placeholder="@@projects.project-task-detail.nouvelle.sous.tache.fd2dd779" class="flex-1" />
+                      <app-button (click)="addSub()" i18n="@@projects.project-task-detail.ajouter.87c57ed1">Ajouter</app-button>
                     </div>
                   }
                 </div>
@@ -203,12 +205,12 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                         <li>
                           <strong>{{ f.fileName }}</strong>
                           <span class="text-sm text-color-secondary">{{ formatSize(f.sizeBytes) }} · {{ f.createdAt | date:'shortDate' }}</span>
-                          <app-button size="sm" variant="outline" (click)="downloadFile(f)">Télécharger</app-button>
+                          <app-button size="sm" variant="outline" (click)="downloadFile(f)" i18n="@@projects.project-task-detail.telecharger.b332d06d">Télécharger</app-button>
                         </li>
                       }
                     </ul>
                   } @else {
-                    <p class="text-color-secondary m-0">Aucun fichier rattaché à cette tâche.</p>
+                    <p class="text-color-secondary m-0" i18n="@@projects.project-task-detail.aucun.fichier.rattache.a.cette.tache.8af2d734">Aucun fichier rattaché à cette tâche.</p>
                   }
                 </div>
               </p-tabpanel>
@@ -217,7 +219,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                 <div class="card p-3">
                   @if (!canReadTime) {
                     <p-message severity="info" styleClass="w-full mb-3"
-                      text="Vous n'avez pas l'accès aux feuilles de temps." />
+                      text="Vous n'avez pas l'accès aux feuilles de temps." i18n-text="@@projects.project-task-detail.vous.n.avez.pas.l.acces.aux.feuilles.de.a10f480b" />
                   }
                   @if (project() && !canCreateTimeEntry && !editTimeId) {
                     <p-message severity="warn" styleClass="w-full mb-3"
@@ -227,25 +229,25 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                   @if (canCreateTimeEntry || editTimeId) {
                     <div class="task-create-form mb-3">
                       <p class="task-create-intro">
-                        @if (editTimeId) {
+                        @if (editTimeId) {<ng-container i18n="@@projects.project-task-detail.modifier.la.ligne.de.temps.54da75bf">
                           Modifier la ligne de temps
-                        } @else {
+                        </ng-container>} @else {<ng-container i18n="@@projects.project-task-detail.nouvelle.ligne.de.temps.7a865326">
                           Nouvelle ligne de temps
-                        }
+                        </ng-container>}
                       </p>
                       <div class="task-create-field">
-                        <label for="task-time-date">Date <span class="ft-required">*</span></label>
+                        <label for="task-time-date"><ng-container i18n="@@projects.project-task-detail.date.eb9a4bc1">Date </ng-container> <span class="ft-required" i18n="@@projects.project-task-detail.text.df58248c">*</span></label>
                         <p-datepicker
                           inputId="task-time-date"
                           class="w-full"
                           [(ngModel)]="logWorkDate"
                           dateFormat="dd/mm/yy"
-                          placeholder="jj/mm/aa"
+                          placeholder="jj/mm/aa" i18n-placeholder="@@projects.project-task-detail.jj.mm.aa.82616990"
                           [showIcon]="true"
                           appendTo="body" />
                       </div>
                       <div class="task-create-field">
-                        <label for="task-time-hours">Heures <span class="ft-required">*</span></label>
+                        <label for="task-time-hours"><ng-container i18n="@@projects.project-task-detail.heures.b4448c06">Heures </ng-container> <span class="ft-required" i18n="@@projects.project-task-detail.text.df58248c">*</span></label>
                         <p-inputNumber
                           inputId="task-time-hours"
                           class="w-full"
@@ -259,23 +261,23 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                       </div>
                       <div class="task-create-check">
                         <p-checkbox [(ngModel)]="logBillable" [binary]="true" inputId="taskTimeBillable" />
-                        <label for="taskTimeBillable">Facturable</label>
+                        <label for="taskTimeBillable" i18n="@@projects.project-task-detail.facturable.63134237">Facturable</label>
                       </div>
                       <div class="task-create-field">
-                        <label for="task-time-notes">Notes</label>
+                        <label for="task-time-notes" i18n="@@projects.project-task-detail.notes.70440046">Notes</label>
                         <textarea
                           id="task-time-notes"
                           pTextarea
                           class="w-full"
                           [(ngModel)]="logNotes"
                           rows="3"
-                          placeholder="Détails, contexte…"></textarea>
+                          placeholder="Détails, contexte…" i18n-placeholder="@@projects.project-task-detail.details.contexte.18aa02a6"></textarea>
                       </div>
                       <div class="task-create-actions">
                         @if (editTimeId) {
-                          <app-button variant="secondary" (click)="cancelEditTime()">Annuler la modification</app-button>
+                          <app-button variant="secondary" (click)="cancelEditTime()" i18n="@@projects.project-task-detail.annuler.la.modification.a5ded982">Annuler la modification</app-button>
                         }
-                        <app-button variant="primary" [disabled]="!canSubmitLogTime" (click)="submitLogTime()">Enregistrer</app-button>
+                        <app-button variant="primary" [disabled]="!canSubmitLogTime" (click)="submitLogTime()" i18n="@@projects.project-task-detail.enregistrer.f7c8bcd8">Enregistrer</app-button>
                       </div>
                     </div>
                   }
@@ -283,11 +285,11 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                   <p-table [value]="timeEntries()" styleClass="p-datatable-sm">
                     <ng-template pTemplate="header">
                       <tr>
-                        <th>Date</th>
-                        <th>Heures</th>
-                        <th>Statut</th>
-                        <th>Facturable</th>
-                        <th>Notes</th>
+                        <th i18n="@@projects.project-task-detail.date.eb9a4bc1">Date</th>
+                        <th i18n="@@projects.project-task-detail.heures.b4448c06">Heures</th>
+                        <th i18n="@@projects.project-task-detail.statut.659499f3">Statut</th>
+                        <th i18n="@@projects.project-task-detail.facturable.63134237">Facturable</th>
+                        <th i18n="@@projects.project-task-detail.notes.70440046">Notes</th>
                         <th></th>
                       </tr>
                     </ng-template>
@@ -298,41 +300,41 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                         <td>
                           <app-status-badge [status]="timeEntryStatusBadge(e)" [label]="timeEntryStatusLabel(e)" />
                         </td>
-                        <td>{{ e.isBillable ? 'Oui' : 'Non' }}</td>
+                        <td>{{ e.isBillable ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
                         <td>{{ e.notes || '—' }}</td>
                         <td class="proj-time-row-actions">
                           @if (canEditTimeEntry(e) && canCreateTime) {
-                            <app-button size="sm" variant="outline" (click)="startEditTime(e)">Modifier</app-button>
+                            <app-button size="sm" variant="outline" (click)="startEditTime(e)" i18n="@@projects.project-task-detail.modifier.f260e757">Modifier</app-button>
                           }
                           @if (canDeleteTimeEntry(e) && canCreateTime) {
                             <app-button size="sm" variant="ghost" icon="pi-trash" [iconOnly]="true"
-                              pTooltip="Supprimer" tooltipPosition="top" ariaLabel="Supprimer"
+                              pTooltip="Supprimer" i18n-pTooltip="@@projects.project-task-detail.supprimer.1acfc1c7" tooltipPosition="top" ariaLabel="Supprimer" i18n-ariaLabel="@@projects.project-task-detail.supprimer.d9f6d96e"
                               (click)="deleteTimeEntry(e.id)" />
                           }
                           @if (canSubmitTimeEntry(e) && canSubmitTime) {
                             <app-button size="sm" variant="ghost" icon="pi-send" [iconOnly]="true"
-                              pTooltip="Soumettre" tooltipPosition="top" ariaLabel="Soumettre"
+                              pTooltip="Soumettre" i18n-pTooltip="@@projects.project-task-detail.soumettre.5597a63d" tooltipPosition="top" ariaLabel="Soumettre" i18n-ariaLabel="@@projects.project-task-detail.soumettre.6557d5be"
                               (click)="submitTimeEntry(e.id)" />
                           }
                           @if (canValidateTimeEntry(e) && canValidateTime) {
                             <app-button size="sm" variant="primary" icon="pi-check" [iconOnly]="true"
-                              pTooltip="Valider" tooltipPosition="top" ariaLabel="Valider"
+                              pTooltip="Valider" i18n-pTooltip="@@projects.project-task-detail.valider.be4220f7" tooltipPosition="top" ariaLabel="Valider" i18n-ariaLabel="@@projects.project-task-detail.valider.8ef67b67"
                               (click)="validateTimeEntry(e.id)" />
                           }
                           @if (canReopenSubmittedTimeEntry(e) && canSubmitTime) {
                             <app-button size="sm" variant="ghost" icon="pi-undo" [iconOnly]="true"
-                              pTooltip="Rouvrir en brouillon" tooltipPosition="top" ariaLabel="Rouvrir en brouillon"
+                              pTooltip="Rouvrir en brouillon" i18n-pTooltip="@@projects.project-task-detail.rouvrir.en.brouillon.7acbda14" tooltipPosition="top" ariaLabel="Rouvrir en brouillon" i18n-ariaLabel="@@projects.project-task-detail.rouvrir.en.brouillon.000b775a"
                               (click)="reopenTimeEntry(e.id)" />
                           }
                           @if (canReopenValidatedTimeEntry(e) && canValidateTime) {
                             <app-button size="sm" variant="ghost" icon="pi-undo" [iconOnly]="true"
-                              pTooltip="Rouvrir en brouillon" tooltipPosition="top" ariaLabel="Rouvrir en brouillon"
+                              pTooltip="Rouvrir en brouillon" i18n-pTooltip="@@projects.project-task-detail.rouvrir.en.brouillon.7acbda14" tooltipPosition="top" ariaLabel="Rouvrir en brouillon" i18n-ariaLabel="@@projects.project-task-detail.rouvrir.en.brouillon.000b775a"
                               (click)="reopenTimeEntry(e.id)" />
                           }
                         </td>
                       </tr>
                     </ng-template>
-                    <ng-template pTemplate="emptymessage"><tr><td colspan="6">Aucun temps saisi sur cette tâche.</td></tr></ng-template>
+                    <ng-template pTemplate="emptymessage"><tr><td colspan="6" i18n="@@projects.project-task-detail.aucun.temps.saisi.sur.cette.tache.620a133d">Aucun temps saisi sur cette tâche.</td></tr></ng-template>
                   </p-table>
                 </div>
               </p-tabpanel>
@@ -346,7 +348,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                         <time>{{ a.createdAt | date:'short' }}</time>
                       </li>
                     } @empty {
-                      <li class="text-color-secondary">Aucun historique.</li>
+                      <li class="text-color-secondary" i18n="@@projects.project-task-detail.aucun.historique.b806a0d9">Aucun historique.</li>
                     }
                   </ul>
                 </div>
@@ -357,17 +359,17 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
 
         <aside class="proj-sidebar-panel">
           <section class="proj-sidebar-section">
-            <h3 class="proj-sidebar-title">Informations</h3>
+            <h3 class="proj-sidebar-title" i18n="@@projects.project-task-detail.informations.54937b3a">Informations</h3>
             <dl class="proj-sidebar-dl">
-              <dt>ID</dt><dd>{{ t.id.slice(0, 8) }}</dd>
-              <dt>Projet</dt><dd><a [routerLink]="['/projects', t.projectId]">Voir le projet</a></dd>
-              <dt>Colonne</dt><dd>{{ t.phaseName }}</dd>
-              <dt>Assigné</dt><dd>{{ t.assigneeUserName || '—' }}</dd>
-              <dt>Priorité</dt><dd>{{ t.priorityDisplay }}</dd>
+              <dt i18n="@@projects.project-task-detail.id.89f89c02">ID</dt><dd>{{ t.id.slice(0, 8) }}</dd>
+              <dt i18n="@@projects.project-task-detail.projet.a9de3a26">Projet</dt><dd><a [routerLink]="['/projects', t.projectId]" i18n="@@projects.project-task-detail.voir.le.projet.4dfb4818">Voir le projet</a></dd>
+              <dt i18n="@@projects.project-task-detail.colonne.064b24f9">Colonne</dt><dd>{{ t.phaseName }}</dd>
+              <dt i18n="@@projects.project-task-detail.assigne.be552b5f">Assigné</dt><dd>{{ t.assigneeUserName || '—' }}</dd>
+              <dt i18n="@@projects.project-task-detail.priorite.eede91d2">Priorité</dt><dd>{{ t.priorityDisplay | backendLabel }}</dd>
             </dl>
           </section>
           <section class="proj-sidebar-section">
-            <h3 class="proj-sidebar-title">Activité</h3>
+            <h3 class="proj-sidebar-title" i18n="@@projects.project-task-detail.activite.8fe12048">Activité</h3>
             <ul class="proj-sidebar-activity">
               @for (a of taskActivity().slice(0, 5); track a.id) {
                 <li>
@@ -388,6 +390,9 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
   `
 })
 export class ProjectTaskDetailComponent implements OnInit {
+  readonly loc_ui_tern_sans_echeance_4a0d4b = $localize`:@@ui.tern.sans.echeance.4a0d4b:Sans échéance`;
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
   private readonly api = inject(ProjectApiService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -466,9 +471,9 @@ export class ProjectTaskDetailComponent implements OnInit {
 
   crumbs(t: ProjectTask): BreadcrumbItem[] {
     return [
-      { label: 'Accueil', route: '/' },
-      { label: 'Projets', route: '/projects' },
-      { label: 'Projet', route: `/projects/${t.projectId}` },
+      { label: $localize`:@@projects.project-task-detail.ts.accueil.a8ff8fd2:Accueil`, route: '/' },
+      { label: $localize`:@@projects.project-task-detail.ts.projets.b1e8cd4d:Projets`, route: '/projects' },
+      { label: $localize`:@@projects.project-task-detail.ts.projet.a9de3a26:Projet`, route: `/projects/${t.projectId}` },
       { label: t.title }
     ];
   }
@@ -492,7 +497,7 @@ export class ProjectTaskDetailComponent implements OnInit {
       }
     }
     if (payload.notifyCollaborators) {
-      this.toast.add({ severity: 'info', summary: 'Notification', detail: 'Les collaborateurs seront notifiés prochainement.' });
+      this.toast.add({ severity: 'info', summary: $localize`:@@project-task-detail.component.summary.Notification:Notification`, detail: $localize`:@@project-task-detail.component.detail.Les_collaborateu:Les collaborateurs seront notifiés prochainement.` });
     }
     this.save();
   }
@@ -547,22 +552,22 @@ export class ProjectTaskDetailComponent implements OnInit {
       if (!this.canCreateTime) return;
       this.api.updateTime(this.editTimeId, payload).subscribe({
         next: () => {
-          this.toast.add({ severity: 'success', summary: 'Temps mis à jour' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@project-task-detail.component.summary.Temps mis à :Temps mis à jour` });
           this.resetLogForm();
           this.reload(t.id);
         },
-        error: err => this.toast.add({ severity: 'error', summary: 'Mise à jour du temps', detail: this.errors.extractErrorMessage(err) })
+        error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Mise à jour :Mise à jour du temps`, detail: this.errors.extractErrorMessage(err) })
       });
       return;
     }
     if (!this.canCreateTimeEntry) return;
     this.api.createTime(payload).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Temps enregistré' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-task-detail.component.summary.Temps_enregistr_:Temps enregistré` });
         this.resetLogForm();
         this.reload(t.id);
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Saisie des temps', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Saisie des t:Saisie des temps`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -570,10 +575,10 @@ export class ProjectTaskDetailComponent implements OnInit {
     const t = this.task();
     this.api.deleteTime(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Temps supprimé' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-task-detail.component.summary.Temps suppri:Temps supprimé` });
         if (t) this.reload(t.id);
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Suppression impossible', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Suppression_impo:Suppression impossible`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -581,10 +586,10 @@ export class ProjectTaskDetailComponent implements OnInit {
     const t = this.task();
     this.api.submitTime(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Temps soumis' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-task-detail.component.summary.Temps soumis:Temps soumis` });
         if (t) this.reload(t.id);
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Soumission impossible', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Soumission_impos:Soumission impossible`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -592,10 +597,10 @@ export class ProjectTaskDetailComponent implements OnInit {
     const t = this.task();
     this.api.validateTime(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Temps validé' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-task-detail.component.summary.Temps validé:Temps validé` });
         if (t) this.reload(t.id);
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Validation impossible', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Validation_impos:Validation impossible`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -603,10 +608,10 @@ export class ProjectTaskDetailComponent implements OnInit {
     const t = this.task();
     this.api.reopenTime(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Temps rouvert en brouillon' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-task-detail.component.summary.Temps_rouvert_en:Temps rouvert en brouillon` });
         if (t) this.reload(t.id);
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Réouverture impossible', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Réouverture :Réouverture impossible`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -651,7 +656,7 @@ export class ProjectTaskDetailComponent implements OnInit {
           });
         }
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Tâche', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Tâche:Tâche`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -672,10 +677,10 @@ export class ProjectTaskDetailComponent implements OnInit {
     };
     this.api.updateTask(t.id, payload).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Tâche enregistrée' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-task-detail.component.summary.T_che_enregistr_:Tâche enregistrée` });
         this.reload(t.id);
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Enregistrement', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Enregistrement:Enregistrement`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -691,7 +696,7 @@ export class ProjectTaskDetailComponent implements OnInit {
       progressPercent: 0
     }).subscribe({
       next: () => { this.subTitle = ''; this.reload(t.id); },
-      error: err => this.toast.add({ severity: 'error', summary: 'Sous-tâche', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Sous-tâche:Sous-tâche`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -705,7 +710,7 @@ export class ProjectTaskDetailComponent implements OnInit {
           if (c.success && c.data) this.comments.set(c.data);
         });
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Commentaire', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Commentaire:Commentaire`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -721,7 +726,7 @@ export class ProjectTaskDetailComponent implements OnInit {
         a.click();
         URL.revokeObjectURL(url);
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Téléchargement', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.T_l_chargement:Téléchargement`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -734,14 +739,14 @@ export class ProjectTaskDetailComponent implements OnInit {
     const t = this.task();
     if (!t) return;
     this.confirm.confirm({
-      header: 'Supprimer la tâche',
-      message: 'Cette action est irréversible. Supprimer cette tâche ?',
+      header: $localize`:@@projects.project-task-detail.ts.supprimer.la.tache.3ca1ed4e:Supprimer la tâche`,
+      message: $localize`:@@projects.project-task-detail.ts.cette.action.est.irreversible.supprimer.f57f310e:Cette action est irréversible. Supprimer cette tâche ?`,
       accept: () => this.api.deleteTask(t.id).subscribe({
         next: () => {
-          this.toast.add({ severity: 'success', summary: 'Tâche supprimée' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@project-task-detail.component.summary.Tâche suppri:Tâche supprimée` });
           void this.router.navigate(['/projects', t.projectId], { queryParams: { tab: 'tasks' } });
         },
-        error: err => this.toast.add({ severity: 'error', summary: 'Suppression', detail: this.errors.extractErrorMessage(err) })
+        error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Suppression:Suppression`, detail: this.errors.extractErrorMessage(err) })
       })
     });
   }

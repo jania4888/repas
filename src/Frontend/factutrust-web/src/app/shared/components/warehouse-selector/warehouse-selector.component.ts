@@ -56,8 +56,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   `]
 })
 export class WarehouseSelectorComponent implements OnInit, OnChanges {
-  @Input() label = 'Entrepôt';
-  @Input() placeholder = 'Entrepôt par défaut';
+  @Input() label = $localize`:@@shared.warehouse-selector.ts.entrepot.c349c0bc:Entrepôt`;
+  @Input() placeholder = $localize`:@@shared.warehouse-selector.ts.entrepot.par.defaut.5dc0b8c6:Entrepôt par défaut`;
   @Input() required = false;
   @Input() showLabel = true;
   @Input() value: string | null = null;
@@ -103,7 +103,7 @@ export class WarehouseSelectorComponent implements OnInit, OnChanges {
       },
       error: () => {
         this.loading.set(false);
-        this.loadError.set('Impossible de charger les entrepôts.');
+        this.loadError.set($localize`:@@shared.warehouse-selector.ts.impossible.de.charger.les.entrepots.d55a4e3c:Impossible de charger les entrepôts.`);
       }
     });
   }
@@ -117,7 +117,7 @@ export class WarehouseSelectorComponent implements OnInit, OnChanges {
 
     this.warehouses.set(
       list.map((w) => {
-        let displayLabel = `${w.name}${w.isDefault ? ' (par défaut)' : ''}`;
+        let displayLabel = `${w.name}${w.isDefault ? $localize`:@@ui.tern.par.defaut.27c480: (par défaut)` : ''}`;
         if (!w.isActive) {
           displayLabel += ' — Inactif';
         }

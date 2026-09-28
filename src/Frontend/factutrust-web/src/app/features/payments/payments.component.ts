@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
@@ -23,6 +24,7 @@ import { ToastService } from '@core/services/toast.service';
 import { AuthService } from '@core/services/auth.service';
 import { formatLocalDate } from '@core/utils/date.util';
 import { Subscription } from 'rxjs';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 export type PaymentViewType = 'client' | 'supplier';
 
@@ -45,27 +47,28 @@ export interface PaymentListItem {
 }
 
 const CLIENT_STATUS_OPTIONS: { label: string; value: string | null }[] = [
-  { label: 'Tous les statuts', value: null },
-  { label: 'Payée', value: 'Payée' },
-  { label: 'Partiellement payée', value: 'Partiellement payée' },
-  { label: 'En attente', value: 'En attente' },
-  { label: 'Signée', value: 'Signée' },
-  { label: 'Validée', value: 'Validée' },
-  { label: 'Brouillon', value: 'Brouillon' },
-  { label: 'En retard', value: 'En retard' }
+  { label: $localize`:@@payments.client.filter.tous:Tous les statuts`, value: null },
+  { label: $localize`:@@payments.client.filter.payee:Payée`, value: 'Payée' },
+  { label: $localize`:@@payments.client.filter.partielle:Partiellement payée`, value: 'Partiellement payée' },
+  { label: $localize`:@@payments.client.filter.attente:En attente`, value: 'En attente' },
+  { label: $localize`:@@payments.client.filter.signee:Signée`, value: 'Signée' },
+  { label: $localize`:@@payments.client.filter.validee:Validée`, value: 'Validée' },
+  { label: $localize`:@@payments.client.filter.brouillon:Brouillon`, value: 'Brouillon' },
+  { label: $localize`:@@payments.client.filter.retard:En retard`, value: 'En retard' }
 ];
 
 const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
-  { label: 'Tous les statuts', value: null },
-  { label: 'Payée', value: 'Payée' },
-  { label: 'Partiellement payée', value: 'Partiellement payée' },
-  { label: 'En attente', value: 'En attente' }
+  { label: $localize`:@@payments.supplier.filter.tous:Tous les statuts`, value: null },
+  { label: $localize`:@@payments.supplier.filter.payee:Payée`, value: 'Payée' },
+  { label: $localize`:@@payments.supplier.filter.partielle:Partiellement payée`, value: 'Partiellement payée' },
+  { label: $localize`:@@payments.supplier.filter.attente:En attente`, value: 'En attente' }
 ];
 
 @Component({
   selector: 'app-payments',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -102,25 +105,25 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
     } @else {
       <div class="stats-grid">
         <app-stat-card
-          label="Total payé"
+          label="Total payé" i18n-label="@@payments.payments.total.paye.57d30be5"
           [value]="totalPaid()"
           icon="pi-dollar"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="En attente"
+          label="En attente" i18n-label="@@payments.payments.en.attente.5231158f"
           [value]="pendingAmount()"
           icon="pi-clock"
           variant="warning">
         </app-stat-card>
         <app-stat-card
-          label="Factures payées"
+          label="Factures payées" i18n-label="@@payments.payments.factures.payees.587e5689"
           [value]="paidCount()"
           icon="pi-check-circle"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="En retard"
+          label="En retard" i18n-label="@@payments.payments.en.retard.40c1dde3"
           [value]="overdueCount()"
           icon="pi-exclamation-triangle"
           variant="error">
@@ -131,12 +134,12 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
     <!-- Filters -->
     <div class="filters-card">
       <div class="filters-header">
-        <h3 class="filters-title">Filtres</h3>
+        <h3 class="filters-title" i18n="@@payments.payments.filtres.2a8e76e0">Filtres</h3>
         @if (hasActiveFilters()) {
           <button 
             class="filters-reset" 
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@payments.payments.reinitialiser.les.filtres.d8915f02" i18n="@@payments.payments.reinitialiser.c77ef305">
             <i class="pi pi-times"></i>
             Réinitialiser
           </button>
@@ -156,7 +159,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
         <p-select 
           [options]="statusOptions()" 
           [(ngModel)]="selectedStatus"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@payments.payments.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -165,7 +168,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
           [(ngModel)]="dateRange" 
           selectionMode="range"
           [readonlyInput]="true"
-          placeholder="Période"
+          placeholder="Période" i18n-placeholder="@@payments.payments.periode.de2110b7"
           dateFormat="dd/mm/yy"
           (onSelect)="onFilterChange()"
           [showClear]="true">
@@ -192,13 +195,13 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
         [lazy]="false">
         <ng-template pTemplate="header">
           <tr>
-            <th style="width: 160px">Numéro facture</th>
-            <th>Contrepartie</th>
-            <th style="width: 110px">Date émission</th>
-            <th style="width: 110px">Date échéance</th>
-            <th style="width: 130px" class="text-right">Montant</th>
-            <th style="width: 120px">Statut</th>
-            <th style="width: 110px">Date paiement</th>
+            <th style="width: 160px" i18n="@@payments.payments.numero.facture.3b95a188">Numéro facture</th>
+            <th i18n="@@payments.payments.contrepartie.3dc41f76">Contrepartie</th>
+            <th style="width: 110px" i18n="@@payments.payments.date.emission.ce5148a7">Date émission</th>
+            <th style="width: 110px" i18n="@@payments.payments.date.echeance.ca5badb1">Date échéance</th>
+            <th style="width: 130px" class="text-right" i18n="@@payments.payments.montant.4adcd9fc">Montant</th>
+            <th style="width: 120px" i18n="@@payments.payments.statut.659499f3">Statut</th>
+            <th style="width: 110px" i18n="@@payments.payments.date.paiement.715f33be">Date paiement</th>
             <th style="width: 100px"></th>
           </tr>
         </ng-template>
@@ -224,7 +227,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
             <td>
               <app-status-badge 
                 [status]="getStatusBadgeStatus(payment.status)"
-                [label]="payment.status">
+                [label]="payment.status | backendLabel">
               </app-status-badge>
             </td>
             <td>
@@ -241,8 +244,8 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
                   icon="pi-list"
                   [iconOnly]="true"
                   [iconAlwaysVisible]="true"
-                  pTooltip="Voir les paiements"
-                  ariaLabel="Voir les paiements de la facture"
+                  pTooltip="Voir les paiements" i18n-pTooltip="@@payments.payments.voir.les.paiements.ab67c668"
+                  ariaLabel="Voir les paiements de la facture" i18n-ariaLabel="@@payments.payments.voir.les.paiements.de.la.facture.d9c67ab7"
                   (click)="openPaymentsPanel(payment); $event.stopPropagation()">
                 </app-button>
                 @if (canRecordPayment(payment)) {
@@ -251,8 +254,8 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
                     size="sm"
                     icon="pi-wallet"
                     [iconOnly]="true"
-                    pTooltip="Enregistrer un paiement"
-                    ariaLabel="Enregistrer un paiement"
+                    pTooltip="Enregistrer un paiement" i18n-pTooltip="@@payments.payments.enregistrer.un.paiement.72dddba2"
+                    ariaLabel="Enregistrer un paiement" i18n-ariaLabel="@@payments.payments.enregistrer.un.paiement.7687bcfb"
                     (click)="openRecordPaymentDialog(payment); $event.stopPropagation()">
                   </app-button>
                 }
@@ -263,8 +266,8 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
                   [iconOnly]="true"
                   [iconAlwaysVisible]="true"
                   [routerLink]="payment.detailRoute"
-                  pTooltip="Voir la facture"
-                  ariaLabel="Voir la facture"
+                  pTooltip="Voir la facture" i18n-pTooltip="@@payments.payments.voir.la.facture.e4bddea0"
+                  ariaLabel="Voir la facture" i18n-ariaLabel="@@payments.payments.voir.la.facture.23283cea"
                   (click)="$event.stopPropagation()">
                 </app-button>
               </div>
@@ -276,9 +279,9 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
             <td [attr.colspan]="8" class="text-center p-4">
               <app-empty-state
                 illustration="empty-payments.svg"
-                title="Aucun paiement trouvé"
-                description="Aucun paiement ne correspond à vos critères de recherche."
-                actionLabel="Voir toutes les factures"
+                title="Aucun paiement trouvé" i18n-title="@@payments.payments.aucun.paiement.trouve.99ac3ffa"
+                description="Aucun paiement ne correspond à vos critères de recherche." i18n-description="@@payments.payments.aucun.paiement.ne.correspond.a.vos.crite.41f5a674"
+                actionLabel="Voir toutes les factures" i18n-actionLabel="@@payments.payments.voir.toutes.les.factures.17662051"
                 [actionRoute]="emptyStateActionRoute()">
               </app-empty-state>
             </td>
@@ -302,7 +305,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
       [totalAmount]="selectedPaymentForDialog()?.totalAmount ?? 0"
       [totalPaid]="selectedPaymentForDialog()?.totalPaid ?? 0"
       [remainingAmount]="selectedPaymentForDialog()?.remainingAmount ?? selectedPaymentForDialog()?.totalAmount ?? 0"
-      [currency]="selectedPaymentForDialog()?.currency ?? 'TND'"
+      [currency]="selectedPaymentForDialog()?.currency ?? loc_ui_tern_tnd_51da21"
       [invoiceType]="selectedPaymentForDialog()?.type ?? 'client'"
       (paymentRecorded)="onPaymentRecorded()">
     </app-record-payment-dialog>
@@ -401,7 +404,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
 
     .p-input-icon-left i {
       position: absolute;
-      left: var(--spacing-3);
+      inset-inline-start: var(--spacing-3);
       top: 50%;
       transform: translateY(-50%);
       color: var(--color-text-secondary);
@@ -409,7 +412,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
 
     .p-input-icon-left input {
       width: 100%;
-      padding-left: var(--spacing-8);
+      padding-inline-start: var(--spacing-8);
     }
 
     /* Table improvements */
@@ -437,12 +440,12 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
       .p-datatable-tbody > tr.table-row {
         transition: all var(--transition-fast);
         cursor: pointer;
-        border-left: 3px solid transparent;
+        border-inline-start: 3px solid transparent;
       }
 
       .p-datatable-tbody > tr.table-row:hover {
         background: linear-gradient(90deg, var(--color-primary-50) 0%, transparent 100%);
-        border-left-color: var(--color-primary-500);
+        border-inline-start-color: var(--color-primary-500);
         transform: translateX(4px);
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
       }
@@ -480,7 +483,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
     }
 
     .text-right {
-      text-align: right;
+      text-align: end;
     }
 
     .invoice-link {
@@ -542,6 +545,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
   `]
 })
 export class PaymentsComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_tnd_51da21 = 'TND';
   private invoiceService = inject(InvoiceService);
   private supplierInvoiceService = inject(SupplierInvoiceService);
   private toastService = inject(ToastService);
@@ -564,19 +568,19 @@ export class PaymentsComponent implements OnInit, OnDestroy {
   selectedPaymentForPanel = signal<PaymentListItem | null>(null);
 
   pageTitle = computed(() =>
-    this.paymentType() === 'client' ? 'Paiements clients' : 'Paiements fournisseurs'
+    this.paymentType() === 'client' ? $localize`:@@ui.tern.paiements.clients.79a7e3:Paiements clients` : $localize`:@@ui.tern.paiements.fournisseurs.416577:Paiements fournisseurs`
   );
 
   pageSubtitle = computed(() =>
     this.paymentType() === 'client'
-      ? 'Suivez et gérez les paiements de vos factures clients. Cliquez sur une facture pour voir les détails, ou sur l\'icône paiement pour enregistrer directement.'
-      : 'Suivez et gérez les paiements de vos factures fournisseurs. Cliquez sur une facture pour voir les détails, ou sur l\'icône paiement pour enregistrer directement.'
+      ? $localize`:@@ui.tern.suivez.et.gerez.les.paiements.de.vos.factu.e2c239:Suivez et gérez les paiements de vos factures clients. Cliquez sur une facture pour voir les détails, ou sur l'icône paiement pour enregistrer directement.`
+      : $localize`:@@ui.tern.suivez.et.gerez.les.paiements.de.vos.factu.14dc96:Suivez et gérez les paiements de vos factures fournisseurs. Cliquez sur une facture pour voir les détails, ou sur l'icône paiement pour enregistrer directement.`
   );
 
   searchPlaceholder = computed(() =>
     this.paymentType() === 'client'
-      ? 'Rechercher par numéro, client...'
-      : 'Rechercher par numéro, fournisseur...'
+      ? $localize`:@@ui.tern.rechercher.par.numero.client.3adaec:Rechercher par numéro, client...`
+      : $localize`:@@ui.tern.rechercher.par.numero.fournisseur.ee355a:Rechercher par numéro, fournisseur...`
   );
 
   statusOptions = computed(() =>
@@ -828,8 +832,8 @@ export class PaymentsComponent implements OnInit, OnDestroy {
   onPaymentRecordedFromPanel(): void {
     this.toastService.add({
       severity: 'success',
-      summary: 'Succès',
-      detail: 'Paiement enregistré avec succès'
+      summary: $localize`:@@payments.component.summary.Succès:Succès`,
+      detail: $localize`:@@payments.component.detail.Paiement_enregis:Paiement enregistré avec succès`
     });
     this.loadPayments();
   }
@@ -837,8 +841,8 @@ export class PaymentsComponent implements OnInit, OnDestroy {
   onPaymentRecorded(): void {
     this.toastService.add({
       severity: 'success',
-      summary: 'Succès',
-      detail: 'Paiement enregistré avec succès'
+      summary: $localize`:@@payments.component.summary.Succès:Succès`,
+      detail: $localize`:@@payments.component.detail.Paiement_enregis:Paiement enregistré avec succès`
     });
     this.selectedPaymentForDialog.set(null);
     this.loadPayments();

@@ -63,7 +63,7 @@ interface SetRow { field: string; value: string }
       </header>
 
       <div class="wf-prop" data-testid="wf-prop-key">
-        <label class="wf-prop__label" for="wf-step-key">{{ L.steps.key }} <span class="ft-req">*</span></label>
+        <label class="wf-prop__label" for="wf-step-key">{{ L.steps.key }} <span class="ft-req" i18n="@@studio.workflows.text.df58248c">*</span></label>
         <input id="wf-step-key" pInputText [ngModel]="step().key" (ngModelChange)="set('key', $event)"
           [pattern]="keyPattern" [disabled]="disabled()" [attr.aria-label]="L.steps.key" autocomplete="off" />
         <small class="studio-muted">{{ L.designer.keyHint }}</small>
@@ -79,7 +79,7 @@ interface SetRow { field: string; value: string }
 
       @for (p of visibleProperties(); track p.name) {
         <div class="wf-prop" [attr.data-testid]="'wf-prop-' + p.name">
-          <label class="wf-prop__label"><code class="wf-prop__name">{{ p.name }}</code> @if (p.required) { <span class="ft-req">*</span> }</label>
+          <label class="wf-prop__label"><code class="wf-prop__name">{{ p.name }}</code> @if (p.required) { <span class="ft-req" i18n="@@studio.workflows.text.df58248c">*</span> }</label>
           @switch (p.kind) {
             @case ('filters') {
               <app-studio-filter-builder [fields]="filterFields()" [filters]="filterModel()"
@@ -124,9 +124,9 @@ interface SetRow { field: string; value: string }
                 <div class="wf-set" [attr.data-testid]="'wf-set-row-' + ri">
                   <p-select [options]="setFieldOptions()" [ngModel]="row.field" (ngModelChange)="patchSetRow(p, ri, $event, row.value)"
                     optionLabel="label" optionValue="value" [filter]="true" [disabled]="disabled()" appendTo="body"
-                    panelStyleClass="studio-theme" [attr.aria-label]="p.name + ' · champ'" />
+                    panelStyleClass="studio-theme" [attr.aria-label]="p.name + loc_ui_tern_champ_6a4c7b" />
                   <textarea pTextarea rows="1" [ngModel]="row.value" (ngModelChange)="patchSetRow(p, ri, row.field, $event)"
-                    [disabled]="disabled()" [attr.aria-label]="p.name + ' · valeur'"></textarea>
+                    [disabled]="disabled()" [attr.aria-label]="p.name + loc_ui_tern_valeur_5488c3"></textarea>
                   <button pButton type="button" icon="pi pi-times" class="p-button-text p-button-sm p-button-danger"
                     [disabled]="disabled()" (click)="removeSetRow(p, ri)" [attr.aria-label]="L.steps.remove"></button>
                 </div>
@@ -184,6 +184,8 @@ interface SetRow { field: string; value: string }
   `]
 })
 export class StudioWorkflowStepEditorComponent {
+  readonly loc_ui_tern_champ_6a4c7b = $localize`:@@ui.tern.champ.6a4c7b: · champ`;
+  readonly loc_ui_tern_valeur_5488c3 = $localize`:@@ui.tern.valeur.5488c3: · valeur`;
   readonly step = model.required<WorkflowStepSpec>();
   readonly index = input.required<number>();                 // position dans steps (pour gotoKey et contexte)
   readonly steps = input.required<WorkflowStepSpec[]>();

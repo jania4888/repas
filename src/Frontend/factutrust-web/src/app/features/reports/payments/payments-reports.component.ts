@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -22,7 +23,7 @@ interface PeriodOption {
 @Component({
   selector: 'app-payments-reports',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     FormsModule,
@@ -33,26 +34,24 @@ interface PeriodOption {
   ],
   template: `
     <app-page-header 
-      title="Rapports Paiements" 
-      subtitle="Encaissements, décaissements et trésorerie nette">
+      title="Rapports Paiements" i18n-title="@@reports.payments.rapports.paiements.187514db" 
+      subtitle="Encaissements, décaissements et trésorerie nette" i18n-subtitle="@@reports.payments.encaissements.decaissements.et.tresoreri.fecd254b">
       <app-button 
         variant="secondary"
         icon="pi-download"
         iconPos="left"
-        (click)="onExport()">
-        Exporter
-      </app-button>
+        (click)="onExport()" i18n="@@reports.payments.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
 
     <div class="filter-section">
       <div class="filter-group">
-        <label for="period" class="filter-label">Période</label>
+        <label for="period" class="filter-label" i18n="@@reports.payments.periode.de2110b7">Période</label>
         <select 
           id="period"
           [(ngModel)]="selectedPeriod" 
           (ngModelChange)="onPeriodChange()"
           class="filter-select"
-          aria-label="Sélectionner la période">
+          aria-label="Sélectionner la période" i18n-aria-label="@@reports.payments.selectionner.la.periode.1ab9797d">
           @for (period of periodOptions; track period.value) {
             <option [value]="period.value">{{ period.label }}</option>
           }
@@ -78,31 +77,31 @@ interface PeriodOption {
     } @else if (reportsData()) {
       <div class="stats-grid">
         <app-stat-card
-          label="Encaissements"
+          label="Encaissements" i18n-label="@@reports.payments.encaissements.598f53c9"
           [value]="reportsData()!.totalInflows"
           icon="pi-arrow-down"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Décaissements"
+          label="Décaissements" i18n-label="@@reports.payments.decaissements.566a79f1"
           [value]="reportsData()!.totalOutflows"
           icon="pi-arrow-up"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Trésorerie nette"
+          label="Trésorerie nette" i18n-label="@@reports.payments.tresorerie.nette.bc09be1b"
           [value]="reportsData()!.netCashFlow"
           icon="pi-wallet"
           [variant]="getNetVariant()">
         </app-stat-card>
         <app-stat-card
-          label="Factures clients en attente"
+          label="Factures clients en attente" i18n-label="@@reports.payments.factures.clients.en.attente.765cbddf"
           [value]="reportsData()!.pendingClientAmount"
           icon="pi-clock"
           variant="warning">
         </app-stat-card>
         <app-stat-card
-          label="Factures fournisseurs en attente"
+          label="Factures fournisseurs en attente" i18n-label="@@reports.payments.factures.fournisseurs.en.attente.707fd2df"
           [value]="reportsData()!.pendingSupplierAmount"
           icon="pi-clock"
           variant="warning">
@@ -112,35 +111,35 @@ interface PeriodOption {
 
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Évolution des flux de trésorerie</h2>
-        <span class="section-subtitle">Encaissements et décaissements sur la période</span>
+        <h2 class="section-title" i18n="@@reports.payments.evolution.des.flux.de.tresorerie.13a2fbc2">Évolution des flux de trésorerie</h2>
+        <span class="section-subtitle" i18n="@@reports.payments.encaissements.et.decaissements.sur.la.periode.b2825171">Encaissements et décaissements sur la période</span>
       </div>
       @if (loading()) {
         <div class="chart-placeholder">
           <div class="loading-placeholder">
             <i class="pi pi-spin pi-spinner"></i>
-            <span>Chargement...</span>
+            <span i18n="@@reports.payments.chargement.a209b664">Chargement...</span>
           </div>
         </div>
       } @else if (reportsData()?.cashFlowChartData && reportsData()!.cashFlowChartData.length > 0) {
-        <div class="chart-container" role="img" aria-label="Graphique des flux de trésorerie">
+        <div class="chart-container" role="img" aria-label="Graphique des flux de trésorerie" i18n-aria-label="@@reports.payments.graphique.des.flux.de.tresorerie.242e6656">
           <div class="chart-bars">
             @for (item of reportsData()!.cashFlowChartData; track item.label) {
               <div class="chart-bar-group">
                 <div class="chart-tooltip" aria-hidden="true">
-                  <strong>Encaissements:</strong> {{ formatCurrency(item.inflows) }}<br>
-                  <strong>Décaissements:</strong> {{ formatCurrency(item.outflows) }}<br>
-                  <strong>Net:</strong> {{ formatCurrency(item.net) }}
+                  <strong i18n="@@reports.payments.encaissements.f7c9178b">Encaissements:</strong> {{ formatCurrency(item.inflows) }}<br>
+                  <strong i18n="@@reports.payments.decaissements.fbcf9c92">Décaissements:</strong> {{ formatCurrency(item.outflows) }}<br>
+                  <strong i18n="@@reports.payments.net.0bf95aa3">Net:</strong> {{ formatCurrency(item.net) }}
                 </div>
                 <div class="chart-bar-wrapper">
-                  <div class="chart-bar chart-bar-in" [style.height.%]="getBarHeight(item.inflows, 'in')" title="Encaissements"></div>
-                  <div class="chart-bar chart-bar-out" [style.height.%]="getBarHeight(item.outflows, 'out')" title="Décaissements"></div>
+                  <div class="chart-bar chart-bar-in" [style.height.%]="getBarHeight(item.inflows, 'in')" title="Encaissements" i18n-title="@@reports.payments.encaissements.598f53c9"></div>
+                  <div class="chart-bar chart-bar-out" [style.height.%]="getBarHeight(item.outflows, 'out')" title="Décaissements" i18n-title="@@reports.payments.decaissements.566a79f1"></div>
                 </div>
                 <span class="chart-label">{{ item.labelShort }}</span>
               </div>
             }
           </div>
-          <div class="chart-legend">
+          <div class="chart-legend" i18n="@@reports.payments.encaissements.decaissements.65b382de">
             <span class="legend-item"><span class="legend-color in"></span> Encaissements</span>
             <span class="legend-item"><span class="legend-color out"></span> Décaissements</span>
           </div>
@@ -149,8 +148,8 @@ interface PeriodOption {
         <div class="chart-placeholder">
           <div class="chart-content">
             <i class="pi pi-chart-line chart-icon"></i>
-            <p class="chart-text">Aucune donnée pour cette période</p>
-            <p class="chart-subtext">Les flux de trésorerie apparaîtront ici une fois que vous aurez des factures payées (clients et fournisseurs).</p>
+            <p class="chart-text" i18n="@@reports.payments.aucune.donnee.pour.cette.periode.b2a99770">Aucune donnée pour cette période</p>
+            <p class="chart-subtext" i18n="@@reports.payments.les.flux.de.tresorerie.apparaitront.ici.une.fois.180134f5">Les flux de trésorerie apparaîtront ici une fois que vous aurez des factures payées (clients et fournisseurs).</p>
           </div>
         </div>
       }
@@ -158,31 +157,31 @@ interface PeriodOption {
 
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Paiements clients</h2>
-        <span class="section-subtitle">Liste des encaissements sur la période</span>
+        <h2 class="section-title" i18n="@@reports.payments.paiements.clients.79a7e359">Paiements clients</h2>
+        <span class="section-subtitle" i18n="@@reports.payments.liste.des.encaissements.sur.la.periode.4dbc1f45">Liste des encaissements sur la période</span>
       </div>
       @if (clientPaymentsLoading()) {
         <div class="loading-placeholder">
           <i class="pi pi-spin pi-spinner"></i>
-          <span>Chargement...</span>
+          <span i18n="@@reports.payments.chargement.a209b664">Chargement...</span>
         </div>
       } @else if (!clientPayments().length) {
         <div class="empty-placeholder">
           <i class="pi pi-info-circle"></i>
-          <p>Aucun paiement client sur cette période</p>
+          <p i18n="@@reports.payments.aucun.paiement.client.sur.cette.periode.bd78e238">Aucun paiement client sur cette période</p>
         </div>
       } @else {
         <p-table
           [value]="clientPayments()"
           styleClass="p-datatable-sm reports-table"
-          aria-label="Paiements clients">
+          aria-label="Paiements clients" i18n-aria-label="@@reports.payments.paiements.clients.79a7e359">
           <ng-template pTemplate="header">
             <tr>
-              <th>Date</th>
-              <th>Client</th>
-              <th>Facture</th>
-              <th class="text-right">Montant</th>
-              <th>Mode</th>
+              <th i18n="@@reports.payments.date.eb9a4bc1">Date</th>
+              <th i18n="@@reports.payments.client.1bdd79b1">Client</th>
+              <th i18n="@@reports.payments.facture.3953b9f5">Facture</th>
+              <th class="text-right" i18n="@@reports.payments.montant.4adcd9fc">Montant</th>
+              <th i18n="@@reports.payments.mode.a7b93d21">Mode</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-row>
@@ -191,7 +190,7 @@ interface PeriodOption {
               <td>{{ row.clientName }}</td>
               <td>{{ row.invoiceNumber }}</td>
               <td class="text-right amount">{{ row.amount | number:'1.3-3' }} {{ row.currency }}</td>
-              <td>{{ row.methodDisplay }}</td>
+              <td>{{ row.methodDisplay | backendLabel }}</td>
             </tr>
           </ng-template>
         </p-table>
@@ -200,31 +199,31 @@ interface PeriodOption {
 
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Paiements fournisseurs</h2>
-        <span class="section-subtitle">Liste des décaissements sur la période</span>
+        <h2 class="section-title" i18n="@@reports.payments.paiements.fournisseurs.416577a5">Paiements fournisseurs</h2>
+        <span class="section-subtitle" i18n="@@reports.payments.liste.des.decaissements.sur.la.periode.29711947">Liste des décaissements sur la période</span>
       </div>
       @if (supplierPaymentsLoading()) {
         <div class="loading-placeholder">
           <i class="pi pi-spin pi-spinner"></i>
-          <span>Chargement...</span>
+          <span i18n="@@reports.payments.chargement.a209b664">Chargement...</span>
         </div>
       } @else if (!supplierPayments().length) {
         <div class="empty-placeholder">
           <i class="pi pi-info-circle"></i>
-          <p>Aucun paiement fournisseur sur cette période</p>
+          <p i18n="@@reports.payments.aucun.paiement.fournisseur.sur.cette.periode.5891af97">Aucun paiement fournisseur sur cette période</p>
         </div>
       } @else {
         <p-table
           [value]="supplierPayments()"
           styleClass="p-datatable-sm reports-table"
-          aria-label="Paiements fournisseurs">
+          aria-label="Paiements fournisseurs" i18n-aria-label="@@reports.payments.paiements.fournisseurs.416577a5">
           <ng-template pTemplate="header">
             <tr>
-              <th>Date</th>
-              <th>Fournisseur</th>
-              <th>Facture</th>
-              <th class="text-right">Montant</th>
-              <th>Mode</th>
+              <th i18n="@@reports.payments.date.eb9a4bc1">Date</th>
+              <th i18n="@@reports.payments.fournisseur.97d91d89">Fournisseur</th>
+              <th i18n="@@reports.payments.facture.3953b9f5">Facture</th>
+              <th class="text-right" i18n="@@reports.payments.montant.4adcd9fc">Montant</th>
+              <th i18n="@@reports.payments.mode.a7b93d21">Mode</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-row>
@@ -233,7 +232,7 @@ interface PeriodOption {
               <td>{{ row.supplierName }}</td>
               <td>{{ row.invoiceNumber }}</td>
               <td class="text-right amount">{{ row.amount | number:'1.3-3' }} {{ row.currency }}</td>
-              <td>{{ row.methodDisplay }}</td>
+              <td>{{ row.methodDisplay | backendLabel }}</td>
             </tr>
           </ng-template>
         </p-table>
@@ -322,7 +321,7 @@ interface PeriodOption {
       height: 24px;
       background: linear-gradient(180deg, #14b8a6, #0d9488);
       border-radius: var(--radius-full);
-      margin-right: var(--spacing-2);
+      margin-inline-end: var(--spacing-2);
       vertical-align: middle;
     }
 
@@ -401,7 +400,7 @@ interface PeriodOption {
       pointer-events: none;
       transition: opacity var(--transition-fast);
       z-index: 10;
-      text-align: left;
+      text-align: start;
       line-height: 1.5;
     }
 
@@ -430,7 +429,7 @@ interface PeriodOption {
     }
 
     .empty-placeholder p { margin: 0; }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .amount { font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Consolas', monospace; font-weight: var(--font-weight-semibold); }
 
     :host ::ng-deep .reports-table .p-datatable-thead > tr > th {
@@ -472,11 +471,11 @@ export class PaymentsReportsComponent implements OnInit {
   private maxOutflow = 0;
 
   periodOptions: PeriodOption[] = [
-    { label: 'Cette semaine', value: 'week' },
-    { label: 'Ce mois', value: 'month' },
-    { label: 'Ce trimestre', value: 'quarter' },
-    { label: 'Cette année', value: 'year' },
-    { label: 'Tout', value: 'all' }
+    { label: $localize`:@@reports.payments-reports.ts.cette.semaine.af7dc0a9:Cette semaine`, value: 'week' },
+    { label: $localize`:@@reports.payments-reports.ts.ce.mois.db74c560:Ce mois`, value: 'month' },
+    { label: $localize`:@@reports.payments-reports.ts.ce.trimestre.4d9d129d:Ce trimestre`, value: 'quarter' },
+    { label: $localize`:@@reports.payments-reports.ts.cette.annee.052507a0:Cette année`, value: 'year' },
+    { label: $localize`:@@reports.payments-reports.ts.tout.6b0b09b8:Tout`, value: 'all' }
   ];
 
   ngOnInit(): void {

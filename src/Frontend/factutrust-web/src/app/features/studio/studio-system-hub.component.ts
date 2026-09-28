@@ -21,7 +21,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
     @if (detail(); as d) {
       <app-studio-page-shell
         [title]="d.system.displayName"
-        [subtitle]="d.system.description ?? (d.entities.length + ' table(s)')"
+        [subtitle]="d.system.description ?? (d.entities.length + loc_ui_tern_table_s_e50877)"
         [breadcrumbs]="breadcrumbs()">
         @if (exportEnabled()) {
           <div studioActions class="studio-head-actions">
@@ -35,7 +35,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
         <div class="hub">
           @if (d.system.onboardingSteps?.length) {
             <section class="hub-onboard">
-              <h3>Pour démarrer</h3>
+              <h3 i18n="@@studio.studio-system-hub.pour.demarrer.fc8965d8">Pour démarrer</h3>
               <ol>
                 @for (step of d.system.onboardingSteps; track step) {
                   <li>{{ step }}</li>
@@ -47,11 +47,11 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
             @for (e of d.entities; track e.id) {
               <article class="hub-card">
                 <h4><i [class]="e.icon || 'fa-solid fa-table'"></i> {{ e.displayName }}</h4>
-                <p>{{ e.fieldCount }} champ(s)</p>
+                <p i18n="@@studio.studio-system-hub.champ.s.a4c262b8">{{ e.fieldCount }} champ(s)</p>
                 <div class="hub-card__actions">
-                  <a pButton class="p-button-sm" icon="fa-solid fa-table" label="Données"
+                  <a pButton class="p-button-sm" icon="fa-solid fa-table" label="Données" i18n-label="@@studio.studio-system-hub.donnees.e3e0c5ec"
                     [routerLink]="['/studio/d', e.key]"></a>
-                  <a pButton class="p-button-sm p-button-outlined" icon="fa-solid fa-wrench" label="Concevoir"
+                  <a pButton class="p-button-sm p-button-outlined" icon="fa-solid fa-wrench" label="Concevoir" i18n-label="@@studio.studio-system-hub.concevoir.0fef9efb"
                     [routerLink]="['/studio', e.id]"></a>
                 </div>
               </article>
@@ -69,7 +69,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
     .hub { display: flex; flex-direction: column; gap: 1.5rem; }
     .hub-onboard { background: var(--surface-50); border: 1px solid var(--surface-200); border-radius: 10px; padding: 1rem 1.25rem; }
     .hub-onboard h3 { margin: 0 0 .5rem; font-size: 1rem; }
-    .hub-onboard ol { margin: 0; padding-left: 1.25rem; }
+    .hub-onboard ol { margin: 0; padding-inline-start: 1.25rem; }
     .hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
     .hub-card { border: 1px solid var(--surface-200); border-radius: 10px; padding: 1rem; background: var(--surface-0); }
     .hub-card h4 { margin: 0 0 .35rem; display: flex; align-items: center; gap: .5rem; }
@@ -78,6 +78,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
   `]
 })
 export class StudioSystemHubComponent implements OnInit {
+  readonly loc_ui_tern_table_s_e50877 = $localize`:@@ui.tern.table.s.e50877: table(s)`;
   private readonly route = inject(ActivatedRoute);
   private readonly studio = inject(StudioService);
   private readonly capabilities = inject(StudioAiCapabilitiesService);
@@ -86,7 +87,7 @@ export class StudioSystemHubComponent implements OnInit {
   protected readonly labels = STUDIO_AI_LABELS;
 
   readonly detail = signal<CustomSystemDetail | null>(null);
-  readonly breadcrumbs = signal<BreadcrumbItem[]>(STUDIO_BREADCRUMBS.systemHub('Système'));
+  readonly breadcrumbs = signal<BreadcrumbItem[]>(STUDIO_BREADCRUMBS.systemHub($localize`:@@studio.studio-system-hub.ts.systeme.62d09520:Système`));
   readonly exportVisible = signal(false);
 
   /**

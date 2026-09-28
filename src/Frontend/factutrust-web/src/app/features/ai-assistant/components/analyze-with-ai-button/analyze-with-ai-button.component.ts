@@ -18,8 +18,8 @@ import { canUseAiAssistant } from '../../utils/ai-access.util';
         [disabled]="disabled()"
         (click)="run()"
         [ariaLabel]="ariaLabelText()">
-        <span class="analyze-label-full">Analyser avec l'assistant IA</span>
-        <span class="analyze-label-compact">Analyser avec l'IA</span>
+        <span class="analyze-label-full" i18n="@@ai-assistant.components.analyser.avec.l.assistant.ia.48bd0ffb">Analyser avec l'assistant IA</span>
+        <span class="analyze-label-compact" i18n="@@ai-assistant.components.analyser.avec.l.ia.78ea80a9">Analyser avec l'IA</span>
       </app-button>
     }
   `,
@@ -52,7 +52,7 @@ export class AnalyzeWithAiButtonComponent {
 
   readonly canUse = computed(() => canUseAiAssistant(this.auth));
 
-  readonly ariaLabelText = computed(() => `Analyser l'écran ${this.screenId()} avec l'assistant IA`);
+  readonly ariaLabelText = computed(() => $localize`:@@ai-assistant.analyze-with-ai-button.ts.analyser.l.ecran.screenid.avec.l.assista.acf5035d:Analyser l'écran ${this.screenId()}:screenId: avec l'assistant IA`);
 
   run(): void {
     if (!this.canUse() || this.disabled()) {

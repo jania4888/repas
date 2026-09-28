@@ -38,13 +38,13 @@ interface CategoryTab {
               #searchInput
               type="text"
               class="catalog__search-input"
-              placeholder="Rechercher un produit (F2)"
+              placeholder="Rechercher un produit (F2)" i18n-placeholder="@@pos.components.rechercher.un.produit.f2.a5e21a19"
               [ngModel]="searchQuery()"
               (ngModelChange)="onSearchChange($event)"
               (keydown.enter)="onSearchEnter($event)"
-              aria-label="Rechercher un produit" />
+              aria-label="Rechercher un produit" i18n-aria-label="@@pos.components.rechercher.un.produit.3ce811dc" />
             @if (searchQuery()) {
-              <button class="catalog__search-clear" (click)="clearSearch()" [attr.aria-label]="'Effacer la recherche'">
+              <button class="catalog__search-clear" (click)="clearSearch()" [attr.aria-label]="loc_effacer_la_recherche_189351">
                 <i class="pi pi-times"></i>
               </button>
             }
@@ -56,7 +56,7 @@ interface CategoryTab {
                 class="catalog__search-voice"
                 [class.catalog__search-voice--listening]="listening()"
                 (click)="toggleVoiceSearch()"
-                [attr.aria-label]="listening() ? 'Arreter la recherche vocale' : 'Recherche vocale'">
+                [attr.aria-label]="listening() ? loc_ui_tern_arreter_la_recherche_vocale_00b388 : loc_ui_tern_recherche_vocale_c929e9">
                 <i class="pi" [class.pi-microphone]="!listening()" [class.pi-stop]="listening()"></i>
               </button>
             }
@@ -64,8 +64,8 @@ interface CategoryTab {
               type="button"
               class="catalog__variant-btn"
               (click)="variantPickerVisible = true"
-              title="Choisir une variante"
-              aria-label="Choisir une variante">
+              title="Choisir une variante" i18n-title="@@pos.components.choisir.une.variante.c8ab137c"
+              aria-label="Choisir une variante" i18n-aria-label="@@pos.components.choisir.une.variante.c8ab137c">
               <i class="pi pi-th-large"></i>
             </button>
           </div>
@@ -73,14 +73,14 @@ interface CategoryTab {
       </div>
 
       <!-- Category Tabs -->
-      <div class="catalog__categories" role="tablist" aria-label="Filtrer par categorie">
+      <div class="catalog__categories" role="tablist" aria-label="Filtrer par categorie" i18n-aria-label="@@pos.components.filtrer.par.categorie.f4dcce51">
         <button
           class="catalog__category-tab"
           [class.catalog__category-tab--active]="selectedCategory() === 'all'"
           (click)="selectCategory('all')"
           role="tab"
           [attr.aria-selected]="selectedCategory() === 'all'">
-          <span class="catalog__category-name">Tous</span>
+          <span class="catalog__category-name" i18n="@@pos.components.tous.b97ae3b4">Tous</span>
           <span class="catalog__category-count">{{ totalCount() }}</span>
         </button>
         @if (favoritesService.favoriteIds().length > 0) {
@@ -90,7 +90,7 @@ interface CategoryTab {
             (click)="selectCategory('favorites')"
             role="tab"
             [attr.aria-selected]="selectedCategory() === 'favorites'">
-            <span class="catalog__category-name">Favoris</span>
+            <span class="catalog__category-name" i18n="@@pos.components.favoris.1020d908">Favoris</span>
             <span class="catalog__category-count">{{ favoritesService.favoriteIds().length }}</span>
           </button>
         }
@@ -101,7 +101,7 @@ interface CategoryTab {
             (click)="selectCategory('recents')"
             role="tab"
             [attr.aria-selected]="selectedCategory() === 'recents'">
-            <span class="catalog__category-name">Recents</span>
+            <span class="catalog__category-name" i18n="@@pos.components.recents.84380106">Recents</span>
           </button>
         }
         @for (cat of categories(); track cat.id) {
@@ -133,20 +133,20 @@ interface CategoryTab {
             <div class="catalog__empty-icon">
               <i class="pi pi-inbox"></i>
             </div>
-            <p class="catalog__empty-title">Aucun produit trouve</p>
+            <p class="catalog__empty-title" i18n="@@pos.components.aucun.produit.trouve.1537e5ac">Aucun produit trouve</p>
             <p class="catalog__empty-text">
-              @if (selectedCategory() === 'favorites') {
+              @if (selectedCategory() === 'favorites') {<ng-container i18n="@@pos.components.ajoutez.des.produits.aux.favoris.en.cliq.db1dea04">
                 Ajoutez des produits aux favoris en cliquant sur l'etoile.
-              } @else if (selectedCategory() === 'recents') {
+              </ng-container>} @else if (selectedCategory() === 'recents') {<ng-container i18n="@@pos.components.les.produits.recemment.ajoutes.apparaiss.e506c4d5">
                 Les produits recemment ajoutes apparaissent ici.
-              } @else if (searchQuery()) {
+              </ng-container>} @else if (searchQuery()) {<ng-container i18n="@@pos.components.essayez.avec.d.autres.termes.de.recherch.b5975444">
                 Essayez avec d'autres termes de recherche.
-              } @else {
+              </ng-container>} @else {<ng-container i18n="@@pos.components.aucun.produit.disponible.dans.cette.cate.e35ac279">
                 Aucun produit disponible dans cette categorie.
-              }
+              </ng-container>}
             </p>
             @if (searchQuery()) {
-              <button class="catalog__empty-action" (click)="clearSearch()">Effacer la recherche</button>
+              <button class="catalog__empty-action" (click)="clearSearch()" i18n="@@pos.components.effacer.la.recherche.189351c0">Effacer la recherche</button>
             }
           </div>
         } @else {
@@ -169,9 +169,9 @@ interface CategoryTab {
               <button class="catalog__load-more-btn" (click)="loadMore()" [disabled]="loadingMore()">
                 @if (loadingMore()) {
                   <i class="pi pi-spin pi-spinner"></i>
-                } @else {
+                } @else {<ng-container i18n="@@pos.components.afficher.plus.de.produits.033e0d1f">
                   Afficher plus de produits
-                }
+                </ng-container>}
               </button>
             </div>
           }
@@ -244,7 +244,7 @@ interface CategoryTab {
 
     .catalog__search-icon {
       position: absolute;
-      left: var(--spacing-5);
+      inset-inline-start: var(--spacing-5);
       color: var(--color-text-tertiary);
       font-size: 1.15rem;
       pointer-events: none;
@@ -254,7 +254,7 @@ interface CategoryTab {
     .catalog__search-input {
       width: 100%;
       height: 52px;
-      padding: 0 var(--spacing-10) 0 3.5rem;
+      padding-block: 0; padding-inline: 3.5rem var(--spacing-10);
       border: none;
       border-radius: 20px;
       font-size: var(--font-size-base);
@@ -280,7 +280,7 @@ interface CategoryTab {
 
     .catalog__search-clear {
       position: absolute;
-      right: var(--spacing-3);
+      inset-inline-end: var(--spacing-3);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -368,18 +368,18 @@ interface CategoryTab {
 
     @media (max-width: 1024px) {
       .catalog__search {
-        padding-left: var(--spacing-4);
-        padding-right: var(--spacing-4);
+        padding-inline-start: var(--spacing-4);
+        padding-inline-end: var(--spacing-4);
       }
 
       .catalog__categories {
-        padding-left: var(--spacing-4);
-        padding-right: var(--spacing-4);
+        padding-inline-start: var(--spacing-4);
+        padding-inline-end: var(--spacing-4);
       }
 
       .catalog__grid-container {
-        padding-left: var(--spacing-4);
-        padding-right: var(--spacing-4);
+        padding-inline-start: var(--spacing-4);
+        padding-inline-end: var(--spacing-4);
       }
     }
 
@@ -625,13 +625,13 @@ interface CategoryTab {
       }
 
       .catalog__search {
-        padding-left: var(--spacing-3);
-        padding-right: var(--spacing-3);
+        padding-inline-start: var(--spacing-3);
+        padding-inline-end: var(--spacing-3);
       }
 
       .catalog__categories {
-        padding-left: var(--spacing-3);
-        padding-right: var(--spacing-3);
+        padding-inline-start: var(--spacing-3);
+        padding-inline-end: var(--spacing-3);
       }
 
       .catalog__grid-container {
@@ -650,6 +650,10 @@ interface CategoryTab {
   `]
 })
 export class ProductCatalogComponent implements OnInit, OnDestroy {
+  protected readonly loc_effacer_la_recherche_189351 = $localize`:@@pos.product-catalog.tpl.effacer.la.recherche.189351c0:Effacer la recherche`;
+
+  readonly loc_ui_tern_arreter_la_recherche_vocale_00b388 = $localize`:@@ui.tern.arreter.la.recherche.vocale.00b388:Arreter la recherche vocale`;
+  readonly loc_ui_tern_recherche_vocale_c929e9 = $localize`:@@ui.tern.recherche.vocale.c929e9:Recherche vocale`;
   @Output() onProductAdd = new EventEmitter<ProductListItem>();
   @Output() onProductAddWithQuantity = new EventEmitter<{ product: ProductListItem; quantity: number }>();
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;

@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, finalize, map, shareReplay, tap } from 'rxjs/operators';
 import { environment } from '@environments/environment';
+import { erpCollatorCompare } from '@core/i18n/erp-format';
 import {
   ProductSelectItem,
   ProductService
@@ -192,7 +193,7 @@ export class ProductAutocompleteService {
       ];
     } else {
       this.cachedActiveProducts = [...this.cachedActiveProducts, item].sort((a, b) =>
-        a.name.localeCompare(b.name, 'fr')
+        erpCollatorCompare(a.name, b.name)
       );
     }
   }

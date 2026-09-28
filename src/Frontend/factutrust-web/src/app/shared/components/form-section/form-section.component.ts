@@ -28,7 +28,7 @@ import { CommonModule } from '@angular/common';
       padding: var(--card-padding);
       margin-bottom: var(--spacing-6);
       border: 1px solid var(--color-border-subtle);
-      border-left: 4px solid var(--color-primary-500);
+      border-inline-start: 4px solid var(--color-primary-500);
       box-shadow: var(--shadow-md);
     }
 

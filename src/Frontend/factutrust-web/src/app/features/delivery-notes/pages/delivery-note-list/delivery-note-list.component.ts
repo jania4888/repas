@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
@@ -28,6 +29,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { ClientService, ClientListItem } from '@core/services/client.service';
 import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 interface StatusOption {
   label: string;
@@ -54,43 +56,40 @@ interface StatusOption {
     EmptyStateComponent,
     ButtonComponent,
     StatusBadgeComponent,
-    TableTotalsBarComponent
+    TableTotalsBarComponent,
+    BackendLabelPipe
   ],
   template: `
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Bons de Livraison" 
-      subtitle="Créez, envoyez et transformez vos bons de livraison en factures">
+      title="Bons de Livraison" i18n-title="@@delivery-notes.pages.bons.de.livraison.a42b9518" 
+      subtitle="Créez, envoyez et transformez vos bons de livraison en factures" i18n-subtitle="@@delivery-notes.pages.creez.envoyez.et.transformez.vos.bons.de.b8671c0b">
       <app-button 
         variant="secondary"
         icon="pi-print"
         iconPos="left"
         [disabled]="printingReport()"
         (click)="printDeliveryNoteReport()"
-        ariaLabel="Imprimer l'état des bons de livraison (période et client optionnels)">
-        Imprimer l'état
-      </app-button>
+        ariaLabel="Imprimer l'état des bons de livraison (période et client optionnels)" i18n-ariaLabel="@@delivery-notes.pages.imprimer.l.etat.des.bons.de.livraison.pe.5e9a3cfc" i18n="@@delivery-notes.pages.imprimer.l.etat.389e5da9"> Imprimer l'état </app-button>
       @if (canCreateDeliveryNote()) {
         <app-button 
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new">
-          Nouveau bon de livraison
-        </app-button>
+          routerLink="new" i18n="@@delivery-notes.pages.nouveau.bon.de.livraison.85eb7bab"> Nouveau bon de livraison </app-button>
       }
     </app-page-header>
 
     <!-- Filters -->
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@delivery-notes.pages.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@delivery-notes.pages.reinitialiser.les.filtres.d8915f02" i18n="@@delivery-notes.pages.reinitialiser.9637f51e">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -102,7 +101,7 @@ interface StatusOption {
           <input 
             pInputText 
             type="text" 
-            placeholder="Rechercher..." 
+            placeholder="Rechercher..." i18n-placeholder="@@delivery-notes.pages.rechercher.8bd64daa" 
             [(ngModel)]="searchTerm"
             (input)="onSearch()">
         </span>
@@ -110,7 +109,7 @@ interface StatusOption {
         <p-select 
           [options]="statusOptions" 
           [(ngModel)]="selectedStatus"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@delivery-notes.pages.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -119,7 +118,7 @@ interface StatusOption {
           [(ngModel)]="dateRange" 
           selectionMode="range" 
           [readonlyInput]="true"
-          placeholder="Période"
+          placeholder="Période" i18n-placeholder="@@delivery-notes.pages.periode.de2110b7"
           dateFormat="dd/mm/yy"
           [showClear]="true"
           (onSelect)="onFilterChange()">
@@ -129,7 +128,7 @@ interface StatusOption {
           [options]="clientOptions" 
           [(ngModel)]="selectedClient"
           optionLabel="name"
-          placeholder="Tous les clients"
+          placeholder="Tous les clients" i18n-placeholder="@@delivery-notes.pages.tous.les.clients.56f5092c"
           [showClear]="true"
           [filter]="true"
           filterBy="name,code"
@@ -144,7 +143,7 @@ interface StatusOption {
         <div class="error-content">
           <i class="pi pi-exclamation-triangle"></i>
           <div class="error-text">
-            <strong>Erreur de chargement</strong>
+            <strong i18n="@@delivery-notes.pages.erreur.de.chargement.d7568404">Erreur de chargement</strong>
             <p>{{ errorMessage() }}</p>
           </div>
           <app-button 
@@ -152,9 +151,7 @@ interface StatusOption {
             size="sm"
             icon="pi-refresh"
             (click)="loadDeliveryNotes()"
-            [disabled]="loading()">
-            Réessayer
-          </app-button>
+            [disabled]="loading()" i18n="@@delivery-notes.pages.reessayer.895d416b"> Réessayer </app-button>
         </div>
       </div>
     }
@@ -181,18 +178,18 @@ interface StatusOption {
           [rows]="pageSize"
           [totalRecords]="totalRecords()"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} bons de livraison"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} bons de livraison" i18n-currentPageReportTemplate="@@delivery-notes.pages.affichage.de.first.a.last.sur.totalrecords.bons.a59b315a"
           (onLazyLoad)="onPageChange($event)"
           styleClass="p-datatable-sm">
         
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="number">Numéro <p-sortIcon field="number"></p-sortIcon></th>
-            <th>Client</th>
-            <th pSortableColumn="issueDate">Date <p-sortIcon field="issueDate"></p-sortIcon></th>
-            <th class="text-right">Montant TTC</th>
-            <th>Statut</th>
-            <th style="width: 100px">Actions</th>
+            <th pSortableColumn="number"><ng-container i18n="@@delivery-notes.pages.numero.15e73db0">Numéro </ng-container> <p-sortIcon field="number"></p-sortIcon></th>
+            <th i18n="@@delivery-notes.pages.client.1bdd79b1">Client</th>
+            <th pSortableColumn="issueDate"><ng-container i18n="@@delivery-notes.pages.date.eb9a4bc1">Date </ng-container> <p-sortIcon field="issueDate"></p-sortIcon></th>
+            <th class="text-right" i18n="@@delivery-notes.pages.montant.ttc.a742433a">Montant TTC</th>
+            <th i18n="@@delivery-notes.pages.statut.659499f3">Statut</th>
+            <th style="width: 100px" i18n="@@delivery-notes.pages.actions.c3cd636a">Actions</th>
           </tr>
         </ng-template>
 
@@ -209,7 +206,7 @@ interface StatusOption {
             <td>
               <app-status-badge 
                 [status]="getStatusBadgeStatus(note.status)"
-                [label]="note.statusDisplay">
+                [label]="note.statusDisplay | backendLabel">
               </app-status-badge>
             </td>
             <td>
@@ -221,7 +218,7 @@ interface StatusOption {
                   [iconOnly]="true"
                   [iconAlwaysVisible]="true"
                   [routerLink]="note.id"
-                  ariaLabel="Voir le bon de livraison">
+                  ariaLabel="Voir le bon de livraison" i18n-ariaLabel="@@delivery-notes.pages.voir.le.bon.de.livraison.5047463f">
                 </app-button>
               </div>
             </td>
@@ -233,10 +230,10 @@ interface StatusOption {
             <td colspan="6" class="text-center p-6">
               <app-empty-state
                 illustration="empty-invoices.svg"
-                title="Aucun bon de livraison"
-                description="Créez votre premier bon de livraison pour gérer vos expéditions."
+                title="Aucun bon de livraison" i18n-title="@@delivery-notes.pages.aucun.bon.de.livraison.e7dcd4f7"
+                description="Créez votre premier bon de livraison pour gérer vos expéditions." i18n-description="@@delivery-notes.pages.creez.votre.premier.bon.de.livraison.pou.9c2a06e6"
                 [showAction]="canCreateDeliveryNote()"
-                actionLabel="Créer un bon"
+                actionLabel="Créer un bon" i18n-actionLabel="@@delivery-notes.pages.creer.un.bon.da06defa"
                 actionRoute="new">
               </app-empty-state>
             </td>
@@ -264,7 +261,7 @@ interface StatusOption {
     }
 
     .text-right {
-      text-align: right;
+      text-align: end;
     }
 
     .error-banner {
@@ -331,11 +328,11 @@ export class DeliveryNoteListComponent implements OnInit, OnDestroy {
     const s = this.summary();
     const currency = s?.currency ?? 'TND';
     return [
-      { label: 'Bons', value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
-      { label: 'Total TTC', value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
-      { label: 'Total HT', value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
-      { label: 'Livrés', value: s?.deliveredCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-      { label: 'Facturés', value: s?.invoicedCount, format: 'number', icon: 'pi-money-bill', tone: 'violet' }
+      { label: $localize`:@@delivery-notes.delivery-note-list.ts.bons.050c19c5:Bons`, value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
+      { label: $localize`:@@delivery-notes.delivery-note-list.ts.total.ttc.9e80ff7c:Total TTC`, value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
+      { label: $localize`:@@delivery-notes.delivery-note-list.ts.total.ht.2ca17ae6:Total HT`, value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
+      { label: $localize`:@@delivery-notes.delivery-note-list.ts.livres.e0602de9:Livrés`, value: s?.deliveredCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+      { label: $localize`:@@delivery-notes.delivery-note-list.ts.factures.60d4818b:Facturés`, value: s?.invoicedCount, format: 'number', icon: 'pi-money-bill', tone: 'violet' }
     ];
   });
 
@@ -355,8 +352,8 @@ export class DeliveryNoteListComponent implements OnInit, OnDestroy {
   private readonly SEARCH_DEBOUNCE_MS = 500;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Bons de Livraison' }
+    { label: $localize`:@@delivery-notes.delivery-note-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@delivery-notes.delivery-note-list.ts.bons.de.livraison.a42b9518:Bons de Livraison` }
   ];
 
   skeletonColumns: SkeletonColumn[] = [
@@ -369,14 +366,14 @@ export class DeliveryNoteListComponent implements OnInit, OnDestroy {
   ];
 
   statusOptions: StatusOption[] = [
-    { label: 'Brouillon', value: DeliveryNoteStatus.Draft },
-    { label: 'Confirmé', value: DeliveryNoteStatus.Confirmed },
-    { label: 'En cours', value: DeliveryNoteStatus.InTransit },
-    { label: 'Livré', value: DeliveryNoteStatus.Delivered },
-    { label: 'Partiellement livré', value: DeliveryNoteStatus.PartiallyDelivered },
-    { label: 'Échoué', value: DeliveryNoteStatus.Failed },
-    { label: 'Annulé', value: DeliveryNoteStatus.Cancelled },
-    { label: 'Facturé', value: DeliveryNoteStatus.Invoiced }
+    { label: $localize`:@@delivery-notes.list.filter.brouillon:Brouillon`, value: DeliveryNoteStatus.Draft },
+    { label: $localize`:@@delivery-notes.list.filter.confirme:Confirmé`, value: DeliveryNoteStatus.Confirmed },
+    { label: $localize`:@@delivery-notes.list.filter.en-cours:En cours`, value: DeliveryNoteStatus.InTransit },
+    { label: $localize`:@@delivery-notes.list.filter.livre:Livré`, value: DeliveryNoteStatus.Delivered },
+    { label: $localize`:@@delivery-notes.list.filter.partiel:Partiellement livré`, value: DeliveryNoteStatus.PartiallyDelivered },
+    { label: $localize`:@@delivery-notes.list.filter.echoue:Échoué`, value: DeliveryNoteStatus.Failed },
+    { label: $localize`:@@delivery-notes.list.filter.annule:Annulé`, value: DeliveryNoteStatus.Cancelled },
+    { label: $localize`:@@delivery-notes.list.filter.facture:Facturé`, value: DeliveryNoteStatus.Invoiced }
   ];
 
   ngOnInit(): void {
@@ -447,7 +444,7 @@ export class DeliveryNoteListComponent implements OnInit, OnDestroy {
           this.deliveryNotes.set(response.data.items);
           this.totalRecords.set(response.data.totalCount);
         } else {
-          const errorMsg = response.errors?.join(', ') || 'Impossible de charger les bons de livraison';
+          const errorMsg = response.errors?.join(', ') || $localize`:@@delivery-notes.delivery-note-list.ts.impossible.de.charger.les.bons.de.livrai.fd61c761:Impossible de charger les bons de livraison`;
           this.errorMessage.set(errorMsg);
           this.showErrorToast(errorMsg);
         }
@@ -460,7 +457,7 @@ export class DeliveryNoteListComponent implements OnInit, OnDestroy {
         this.initialLoad.set(false);
         this.isLoadingInProgress = false;
 
-        const errorMsg = this.errorHandler.extractErrorMessage(error) || 'Impossible de charger les bons de livraison';
+        const errorMsg = this.errorHandler.extractErrorMessage(error) || $localize`:@@delivery-notes.delivery-note-list.ts.impossible.de.charger.les.bons.de.livrai.fd61c761:Impossible de charger les bons de livraison`;
         this.errorMessage.set(errorMsg);
         this.showErrorToast(errorMsg);
       }
@@ -501,7 +498,7 @@ export class DeliveryNoteListComponent implements OnInit, OnDestroy {
     this.toastService.add({
       key: 'delivery-note-list-error',
       severity: 'error',
-      summary: 'Erreur',
+      summary: $localize`:@@delivery-note-list.component.summary.Erreur:Erreur`,
       detail: message,
       life: 5000
     });
@@ -530,8 +527,8 @@ export class DeliveryNoteListComponent implements OnInit, OnDestroy {
         this.toastService.add({
           key: 'delivery-note-list-print',
           severity: 'error',
-          summary: 'Erreur',
-          detail: error.message || 'Impossible de générer le rapport PDF',
+          summary: $localize`:@@delivery-note-list.component.summary.Erreur:Erreur`,
+          detail: error.message || $localize`:@@delivery-notes.delivery-note-list.ts.impossible.de.generer.le.rapport.pdf.e2243d7a:Impossible de générer le rapport PDF`,
           life: 5000
         });
       }

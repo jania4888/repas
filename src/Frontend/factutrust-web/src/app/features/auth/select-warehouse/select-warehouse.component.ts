@@ -23,6 +23,8 @@ import { WarehouseContextService } from '@core/services/warehouse-context.servic
   styleUrl: './select-warehouse.component.scss'
 })
 export class SelectWarehouseComponent implements OnInit {
+  protected readonly loc_choisir_un_entrepot_actif_0e7804 = $localize`:@@auth.select-warehouse.tpl.choisir.un.entrepot.actif.0e7804eb:Choisir un entrepôt actif`;
+
   readonly shellConfig = SELECT_WAREHOUSE_AUTH_SHELL_CONFIG;
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -49,12 +51,12 @@ export class SelectWarehouseComponent implements OnInit {
           const def = list.find((w) => w.isDefault);
           this.selectedId = def?.id ?? list[0].id;
         } else {
-          this.error.set('Aucun entrepôt actif trouvé. Contactez votre administrateur.');
+          this.error.set($localize`:@@auth.select-warehouse.ts.aucun.entrepot.actif.trouve.contactez.vo.cc3a5c0a:Aucun entrepôt actif trouvé. Contactez votre administrateur.`);
         }
       },
       error: () => {
         this.loading.set(false);
-        this.error.set('Impossible de charger les entrepôts. Réessayez plus tard.');
+        this.error.set($localize`:@@auth.select-warehouse.ts.impossible.de.charger.les.entrepots.rees.5b5d2271:Impossible de charger les entrepôts. Réessayez plus tard.`);
       }
     });
   }

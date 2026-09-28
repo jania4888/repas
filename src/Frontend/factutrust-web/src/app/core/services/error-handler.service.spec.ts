@@ -152,6 +152,37 @@ describe('ErrorHandlerService', () => {
       expect(message).toContain('Erreur serveur');
     });
 
+    it('should surface ApiResponse message on 500 instead of generic server error', () => {
+      const error = new HttpErrorResponse({
+        status: 500,
+        error: {
+          success: false,
+          message:
+            "L'inscription n'a pas pu être finalisée. Réessayez plus tard ou contactez le support. (réf. REG-abc123def456)",
+          error:
+            "L'inscription n'a pas pu être finalisée. Réessayez plus tard ou contactez le support. (réf. REG-abc123def456)"
+        }
+      });
+
+      const message = service.extractErrorMessage(error);
+      expect(message).toContain('REG-abc123def456');
+      expect(message).not.toBe('Erreur serveur. Veuillez réessayer plus tard.');
+    });
+
+    it('should surface ValidationErrorResponse message on INTERNAL_ERROR 500', () => {
+      const error = new HttpErrorResponse({
+        status: 500,
+        error: {
+          code: 'INTERNAL_ERROR',
+          message: 'Détail technique en développement.',
+          globalErrors: ['Détail technique en développement.']
+        }
+      });
+
+      const message = service.extractErrorMessage(error);
+      expect(message).toContain('Détail technique');
+    });
+
     it('should handle 404 error', () => {
       const error = new HttpErrorResponse({ status: 404 });
       const message = service.extractErrorMessage(error);

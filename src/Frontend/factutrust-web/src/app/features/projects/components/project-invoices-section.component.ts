@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, OnChanges, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -19,6 +21,7 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
   selector: 'app-project-invoices-section',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     TableModule,
@@ -29,7 +32,7 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
   ],
   template: `
     <div class="section-header">
-      <h3>Factures du projet</h3>
+      <h3 i18n="@@projects.components.factures.du.projet.69bf2d0d">Factures du projet</h3>
     </div>
 
     @if (loading()) {
@@ -37,15 +40,15 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
     } @else if (invoices() === null) {
       <app-empty-state
         icon="pi-receipt"
-        title="Factures indisponibles"
-        description="Impossible de charger la liste des factures pour ce projet."
+        title="Factures indisponibles" i18n-title="@@projects.components.factures.indisponibles.d67140b4"
+        description="Impossible de charger la liste des factures pour ce projet." i18n-description="@@projects.components.impossible.de.charger.la.liste.des.factu.145dc7b5"
         [showAction]="false">
       </app-empty-state>
     } @else if (invoices()!.length === 0) {
       <app-empty-state
         icon="pi-receipt"
-        title="Aucune facture"
-        description="Aucune facture n'a encore été générée pour ce projet."
+        title="Aucune facture" i18n-title="@@projects.components.aucune.facture.72124217"
+        description="Aucune facture n'a encore été générée pour ce projet." i18n-description="@@projects.components.aucune.facture.n.a.encore.ete.generee.po.12477089"
         [showAction]="false">
       </app-empty-state>
     } @else {
@@ -53,15 +56,15 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
         <p-table [value]="invoices()!" styleClass="p-datatable-sm" [rowHover]="true">
           <ng-template pTemplate="header">
             <tr>
-              <th>Numéro</th>
-              <th style="width: 110px">Date</th>
-              <th>Client</th>
-              <th style="width: 120px">Montant HT</th>
-              <th style="width: 110px">TVA</th>
-              <th style="width: 120px">Montant TTC</th>
-              <th style="width: 140px">Statut</th>
-              <th style="width: 130px">Date de création</th>
-              <th style="width: 100px">Actions</th>
+              <th i18n="@@projects.components.numero.15e73db0">Numéro</th>
+              <th style="width: 110px" i18n="@@projects.components.date.eb9a4bc1">Date</th>
+              <th i18n="@@projects.components.client.1bdd79b1">Client</th>
+              <th style="width: 120px" i18n="@@projects.components.montant.ht.3df1d6fe">Montant HT</th>
+              <th style="width: 110px" i18n="@@projects.components.tva.fb62cb5d">TVA</th>
+              <th style="width: 120px" i18n="@@projects.components.montant.ttc.a742433a">Montant TTC</th>
+              <th style="width: 140px" i18n="@@projects.components.statut.659499f3">Statut</th>
+              <th style="width: 130px" i18n="@@projects.components.date.de.creation.d5e8d1af">Date de création</th>
+              <th style="width: 100px" i18n="@@projects.components.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-inv>
@@ -73,7 +76,7 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
                   <span class="invoice-number-static">{{ inv.number }}</span>
                 }
                 @if (inv.isCreditNote) {
-                  <span class="credit-note-tag">Avoir</span>
+                  <span class="credit-note-tag" i18n="@@projects.components.avoir.8ee24717">Avoir</span>
                 }
               </td>
               <td>{{ inv.issueDate | date:'dd/MM/yyyy' }}</td>
@@ -82,7 +85,7 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
               <td class="amount">{{ inv.amountVat | currency:currency:'symbol':'1.3-3' }}</td>
               <td class="amount">{{ inv.amountTTC | currency:currency:'symbol':'1.3-3' }}</td>
               <td>
-                <app-status-badge [status]="invoiceBadgeStatus(inv.status)" [label]="inv.statusDisplay">
+                <app-status-badge [status]="invoiceBadgeStatus(inv.status)" [label]="inv.statusDisplay | backendLabel">
                 </app-status-badge>
               </td>
               <td>{{ inv.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
@@ -95,7 +98,7 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
                       icon="pi-eye"
                       [iconOnly]="true"
                       [routerLink]="['/invoices', inv.invoiceId]"
-                      ariaLabel="Voir la facture">
+                      ariaLabel="Voir la facture" i18n-ariaLabel="@@projects.components.voir.la.facture.23283cea">
                     </app-button>
                     <app-button
                       variant="ghost"
@@ -104,7 +107,7 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
                       [iconOnly]="true"
                       [disabled]="downloadingId() === inv.invoiceId"
                       (click)="downloadPdf(inv)"
-                      ariaLabel="Télécharger le PDF">
+                      ariaLabel="Télécharger le PDF" i18n-ariaLabel="@@projects.components.telecharger.le.pdf.27f91e86">
                     </app-button>
                   </div>
                 }
@@ -147,7 +150,7 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
     .invoice-number-static { color: var(--color-neutral-800); }
 
     .credit-note-tag {
-      margin-left: var(--spacing-2);
+      margin-inline-start: var(--spacing-2);
       padding: 0 var(--spacing-2);
       border-radius: var(--radius-full);
       background: var(--color-warning-50, #fffbeb);
@@ -219,7 +222,7 @@ export class ProjectInvoicesSectionComponent implements OnInit, OnChanges {
         this.errorHandler.logError('Projects: linked invoices', err);
         this.toast.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@project-invoices-section.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -236,7 +239,7 @@ export class ProjectInvoicesSectionComponent implements OnInit, OnChanges {
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `${inv.isCreditNote ? 'Avoir' : 'Facture'}_${inv.number}.pdf`;
+          a.download = `${inv.isCreditNote ? $localize`:@@ui.tern.avoir.8ee247:Avoir` : $localize`:@@ui.tern.facture.3953b9:Facture`}_${inv.number}.pdf`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
@@ -249,7 +252,7 @@ export class ProjectInvoicesSectionComponent implements OnInit, OnChanges {
         this.downloadingId.set(null);
         this.toast.add({
           severity: 'error',
-          summary: 'Téléchargement impossible',
+          summary: $localize`:@@project-invoices-section.component.summary.T_l_chargement_i:Téléchargement impossible`,
           detail: this.errorHandler.extractErrorMessage(error)
         });
       }

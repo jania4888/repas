@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, Input, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
@@ -31,21 +32,19 @@ import {
     PayrollAmountPipe
   ],
   template: `
-    <app-payroll-section title="Prorata du mois" icon="pi-calendar-minus">
+    <app-payroll-section title="Prorata du mois" i18n-title="@@payroll.runs.prorata.du.mois.b192ed38" icon="pi-calendar-minus">
       <div class="payroll-toolbar mb-3">
-        <app-button variant="primary" icon="pi-eye" iconPos="left" (click)="load()" [disabled]="loading()">
-          Prévisualiser le prorata
-        </app-button>
+        <app-button variant="primary" icon="pi-eye" iconPos="left" (click)="load()" [disabled]="loading()" i18n="@@payroll.runs.previsualiser.le.prorata.61ca30ac"> Prévisualiser le prorata </app-button>
       </div>
 
       @if (!preview() && !loading() && !loadedOnce()) {
-        <p class="payroll-info-text">Cliquez sur « Prévisualiser le prorata » pour estimer les retenues avant calcul.</p>
+        <p class="payroll-info-text" i18n="@@payroll.runs.cliquez.sur.previsualiser.le.prorata.pour.estime.d6014bd6">Cliquez sur « Prévisualiser le prorata » pour estimer les retenues avant calcul.</p>
       }
 
       @if (preview() && !preview()!.isEnabled) {
         <p-message
           severity="warn"
-          text="Le prorata automatique est désactivé sur l'exercice. Activez-le dans Paramètres de paie → Conformité."
+          text="Le prorata automatique est désactivé sur l'exercice. Activez-le dans Paramètres de paie → Conformité." i18n-text="@@payroll.runs.le.prorata.automatique.est.desactive.sur.f8e73ffd"
           styleClass="mb-3 w-full" />
       }
 
@@ -57,17 +56,17 @@ import {
         @if (preview()!.lines.length === 0) {
           <app-payroll-empty-state
             icon="pi-check-circle"
-            title="Aucune retenue prorata"
-            description="Aucun salarié concerné par une absence, suspension ou sortie sur ce mois." />
+            title="Aucune retenue prorata" i18n-title="@@payroll.runs.aucune.retenue.prorata.c74d6508"
+            description="Aucun salarié concerné par une absence, suspension ou sortie sur ce mois." i18n-description="@@payroll.runs.aucun.salarie.concerne.par.une.absence.s.b434247d" />
         } @else {
           <p-table [value]="preview()!.lines" styleClass="p-datatable-sm">
             <ng-template pTemplate="header">
               <tr>
-                <th>Salarié</th>
-                <th class="text-right">Jours travaillés</th>
-                <th class="text-right">Jours non travaillés</th>
-                <th class="text-right">Retenue</th>
-                <th>Motif</th>
+                <th i18n="@@payroll.runs.salarie.27f97915">Salarié</th>
+                <th class="text-right" i18n="@@payroll.runs.jours.travailles.4687ee29">Jours travaillés</th>
+                <th class="text-right" i18n="@@payroll.runs.jours.non.travailles.e52f44e9">Jours non travaillés</th>
+                <th class="text-right" i18n="@@payroll.runs.retenue.88cf18f4">Retenue</th>
+                <th i18n="@@payroll.runs.motif.2a198f47">Motif</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-l>
@@ -95,7 +94,7 @@ import {
   styles: [`
     .mb-3 { margin-bottom: var(--spacing-4); }
     .mb-4 { margin-bottom: var(--spacing-6); display: block; }
-    .ml-2 { margin-left: var(--spacing-2); }
+    .ml-2 { margin-inline-start: var(--spacing-2); }
     .text-secondary { color: var(--color-text-secondary); font-size: var(--font-size-sm); }
     .text-warning { color: var(--color-warning-600); }
   `]
@@ -114,8 +113,8 @@ export class PayrollProrataPreviewPanelComponent {
     const p = this.preview();
     if (!p) return [];
     return [
-      { label: 'Salariés', value: p.employeeCount, icon: 'pi-users', variant: 'primary' },
-      { label: 'Total retenues', value: formatPayrollAmount(p.totalDeduction, false), icon: 'pi-minus-circle', variant: 'warning', featured: true }
+      { label: $localize`:@@payroll.payroll-prorata-preview-panel.ts.salaries.ce68387d:Salariés`, value: p.employeeCount, icon: 'pi-users', variant: 'primary' },
+      { label: $localize`:@@payroll.payroll-prorata-preview-panel.ts.total.retenues.b2cd335c:Total retenues`, value: formatPayrollAmount(p.totalDeduction, false), icon: 'pi-minus-circle', variant: 'warning', featured: true }
     ];
   });
 
@@ -131,7 +130,7 @@ export class PayrollProrataPreviewPanelComponent {
       next: res => this.preview.set(res.data ?? null),
       error: () => {
         this.preview.set(null);
-        this.toast.add({ severity: 'error', summary: 'Prorata', detail: 'Prévisualisation impossible.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@payroll-prorata-preview-panel.component.summary.Prorata:Prorata`, detail: $localize`:@@payroll-prorata-preview-panel.component.detail.Pr_visualisation:Prévisualisation impossible.` });
       }
     });
   }

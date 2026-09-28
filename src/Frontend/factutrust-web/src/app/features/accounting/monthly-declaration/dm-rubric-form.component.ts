@@ -35,49 +35,49 @@ import {
     @if (form; as f) {
       <div class="dm-form">
         <h3 class="dm-form__title">
-          {{ f.id ? 'Modifier la rubrique ' + f.code : 'Nouvelle rubrique' }}
+          {{ f.id ? loc_ui_tern_modifier_la_rubrique_035400 + f.code : 'Nouvelle rubrique' }}
         </h3>
 
         <div class="dm-grid">
           <div class="dm-field">
-            <label class="dm-lbl" for="dm-code">Code</label>
+            <label class="dm-lbl" for="dm-code" i18n="@@accounting.monthly-declaration.code.adac6937">Code</label>
             <input
               id="dm-code"
               class="dm-inp dm-mono"
               [(ngModel)]="f.code"
               [disabled]="!!f.id || disabled"
               maxlength="20"
-              placeholder="Ex. F9_TCL" />
+              placeholder="Ex. F9_TCL" i18n-placeholder="@@accounting.monthly-declaration.ex.f9.tcl.0451422f" />
             @if (f.id) {
-              <small class="dm-hint">Le code relie la rubrique aux déclarations déposées : il ne se modifie pas.</small>
+              <small class="dm-hint" i18n="@@accounting.monthly-declaration.le.code.relie.la.rubrique.aux.declarations.depos.68063285">Le code relie la rubrique aux déclarations déposées : il ne se modifie pas.</small>
             }
           </div>
 
           <div class="dm-field dm-grow">
-            <label class="dm-lbl" for="dm-label">Libellé</label>
+            <label class="dm-lbl" for="dm-label" i18n="@@accounting.monthly-declaration.libelle.f5485bba">Libellé</label>
             <input
               id="dm-label"
               class="dm-inp"
               [(ngModel)]="f.label"
               [disabled]="disabled"
               maxlength="200"
-              placeholder="Ex. Taxe sur les établissements…" />
+              placeholder="Ex. Taxe sur les établissements…" i18n-placeholder="@@accounting.monthly-declaration.ex.taxe.sur.les.etablissements.8f8a59d9" />
           </div>
 
           <div class="dm-field">
-            <label class="dm-lbl" for="dm-report">Code rapport</label>
+            <label class="dm-lbl" for="dm-report" i18n="@@accounting.monthly-declaration.code.rapport.149223b0">Code rapport</label>
             <input
               id="dm-report"
               class="dm-inp dm-mono dm-narrow"
               [(ngModel)]="f.reportCode"
               [disabled]="disabled"
               maxlength="16"
-              placeholder="17.2" />
-            <small class="dm-hint">Numéro d’article du formulaire, ou « * » (aucune case de détail).</small>
+              placeholder="17.2" i18n-placeholder="@@accounting.monthly-declaration.17.2.70b1b12e" />
+            <small class="dm-hint" i18n="@@accounting.monthly-declaration.numero.d.article.du.formulaire.ou.aucune.case.de.8b9c53ce">Numéro d’article du formulaire, ou « * » (aucune case de détail).</small>
           </div>
 
           <div class="dm-field">
-            <label class="dm-lbl" for="dm-order">Ordre</label>
+            <label class="dm-lbl" for="dm-order" i18n="@@accounting.monthly-declaration.ordre.5c32e631">Ordre</label>
             <input
               id="dm-order"
               type="number"
@@ -90,10 +90,10 @@ import {
 
         <div class="dm-columns">
           <fieldset class="dm-col">
-            <legend class="dm-col__legend">Montant brut</legend>
+            <legend class="dm-col__legend" i18n="@@accounting.monthly-declaration.montant.brut.6c8cf046">Montant brut</legend>
 
             <div class="dm-field">
-              <label class="dm-lbl" for="dm-gross-kind">Type de calcul</label>
+              <label class="dm-lbl" for="dm-gross-kind" i18n="@@accounting.monthly-declaration.type.de.calcul.67778e9f">Type de calcul</label>
               <select id="dm-gross-kind" class="dm-inp" [(ngModel)]="f.grossKind" [disabled]="disabled">
                 @for (o of grossKinds; track o.value) {
                   <option [ngValue]="o.value">{{ o.label }}</option>
@@ -103,7 +103,7 @@ import {
 
             @if (showGrossAccounts) {
               <div class="dm-field">
-                <label class="dm-lbl" for="dm-gross-side">Sens</label>
+                <label class="dm-lbl" for="dm-gross-side" i18n="@@accounting.monthly-declaration.sens.55928a79">Sens</label>
                 <select id="dm-gross-side" class="dm-inp" [(ngModel)]="f.grossSide" [disabled]="disabled">
                   @for (o of sides; track o.value) {
                     <option [ngValue]="o.value">{{ o.label }}</option>
@@ -111,7 +111,7 @@ import {
                 </select>
               </div>
               <div class="dm-field">
-                <label class="dm-lbl" for="dm-gross-accounts">Comptes</label>
+                <label class="dm-lbl" for="dm-gross-accounts" i18n="@@accounting.monthly-declaration.comptes.f778ac95">Comptes</label>
                 <p-multiSelect
                   inputId="dm-gross-accounts"
                   [options]="accountOptions"
@@ -119,7 +119,7 @@ import {
                   [ngModelOptions]="{ standalone: true }"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="Choisir des comptes"
+                  placeholder="Choisir des comptes" i18n-placeholder="@@accounting.monthly-declaration.choisir.des.comptes.41dd7f27"
                   [filter]="true"
                   [disabled]="disabled"
                   display="chip"
@@ -127,22 +127,22 @@ import {
                   styleClass="dm-ms" />
               </div>
               <div class="dm-field">
-                <label class="dm-lbl" for="dm-gross-prefixes">Racines</label>
+                <label class="dm-lbl" for="dm-gross-prefixes" i18n="@@accounting.monthly-declaration.racines.ac83d6b7">Racines</label>
                 <input
                   id="dm-gross-prefixes"
                   class="dm-inp dm-mono"
                   [(ngModel)]="f.grossAccounts.prefixes"
                   [disabled]="disabled"
-                  placeholder="Ex. 70;71" />
-                <small class="dm-hint">Le compte et toute sa descendance. Séparées par « ; ».</small>
+                  placeholder="Ex. 70;71" i18n-placeholder="@@accounting.monthly-declaration.ex.70.71.70a9cf39" />
+                <small class="dm-hint" i18n="@@accounting.monthly-declaration.le.compte.et.toute.sa.descendance.separees.par.a2e82592">Le compte et toute sa descendance. Séparées par « ; ».</small>
               </div>
             }
 
             @if (showPayrollComponent) {
               <div class="dm-field">
-                <label class="dm-lbl" for="dm-payroll">Valeur de paie</label>
+                <label class="dm-lbl" for="dm-payroll" i18n="@@accounting.monthly-declaration.valeur.de.paie.00856faf">Valeur de paie</label>
                 <select id="dm-payroll" class="dm-inp" [(ngModel)]="f.payrollComponent" [disabled]="disabled">
-                  <option [ngValue]="null">— Choisir —</option>
+                  <option [ngValue]="null" i18n="@@accounting.monthly-declaration.choisir.413c3acc">— Choisir —</option>
                   @for (o of payrollComponents; track o.value) {
                     <option [ngValue]="o.value">{{ o.label }}</option>
                   }
@@ -152,7 +152,7 @@ import {
 
             @if (showFixedGross) {
               <div class="dm-field">
-                <label class="dm-lbl" for="dm-fixed-gross">Valeur fixe</label>
+                <label class="dm-lbl" for="dm-fixed-gross" i18n="@@accounting.monthly-declaration.valeur.fixe.84e10831">Valeur fixe</label>
                 <input
                   id="dm-fixed-gross"
                   type="number"
@@ -160,17 +160,17 @@ import {
                   class="dm-inp"
                   [(ngModel)]="f.fixedGrossAmount"
                   [disabled]="disabled"
-                  placeholder="Laisser vide pour saisir au Calcul DM" />
-                <small class="dm-hint">Vide ne vaut pas zéro : la ligne attendra une saisie.</small>
+                  placeholder="Laisser vide pour saisir au Calcul DM" i18n-placeholder="@@accounting.monthly-declaration.laisser.vide.pour.saisir.au.calcul.dm.e9748ced" />
+                <small class="dm-hint" i18n="@@accounting.monthly-declaration.vide.ne.vaut.pas.zero.la.ligne.attendra.une.sais.49c6d03c">Vide ne vaut pas zéro : la ligne attendra une saisie.</small>
               </div>
             }
           </fieldset>
 
           <fieldset class="dm-col">
-            <legend class="dm-col__legend">Retenue</legend>
+            <legend class="dm-col__legend" i18n="@@accounting.monthly-declaration.retenue.88cf18f4">Retenue</legend>
 
             <div class="dm-field">
-              <label class="dm-lbl" for="dm-withheld-kind">Type de calcul</label>
+              <label class="dm-lbl" for="dm-withheld-kind" i18n="@@accounting.monthly-declaration.type.de.calcul.67778e9f">Type de calcul</label>
               <select id="dm-withheld-kind" class="dm-inp" [(ngModel)]="f.withheldKind" [disabled]="disabled">
                 @for (o of withheldKinds; track o.value) {
                   <option [ngValue]="o.value">{{ o.label }}</option>
@@ -180,7 +180,7 @@ import {
 
             @if (showWithheldAccounts) {
               <div class="dm-field">
-                <label class="dm-lbl" for="dm-withheld-side">Sens</label>
+                <label class="dm-lbl" for="dm-withheld-side" i18n="@@accounting.monthly-declaration.sens.55928a79">Sens</label>
                 <select id="dm-withheld-side" class="dm-inp" [(ngModel)]="f.withheldSide" [disabled]="disabled">
                   @for (o of sides; track o.value) {
                     <option [ngValue]="o.value">{{ o.label }}</option>
@@ -188,7 +188,7 @@ import {
                 </select>
               </div>
               <div class="dm-field">
-                <label class="dm-lbl" for="dm-withheld-accounts">Comptes</label>
+                <label class="dm-lbl" for="dm-withheld-accounts" i18n="@@accounting.monthly-declaration.comptes.f778ac95">Comptes</label>
                 <p-multiSelect
                   inputId="dm-withheld-accounts"
                   [options]="accountOptions"
@@ -196,7 +196,7 @@ import {
                   [ngModelOptions]="{ standalone: true }"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="Choisir des comptes"
+                  placeholder="Choisir des comptes" i18n-placeholder="@@accounting.monthly-declaration.choisir.des.comptes.41dd7f27"
                   [filter]="true"
                   [disabled]="disabled"
                   display="chip"
@@ -204,26 +204,26 @@ import {
                   styleClass="dm-ms" />
               </div>
               <div class="dm-field">
-                <label class="dm-lbl" for="dm-withheld-prefixes">Racines</label>
+                <label class="dm-lbl" for="dm-withheld-prefixes" i18n="@@accounting.monthly-declaration.racines.ac83d6b7">Racines</label>
                 <input
                   id="dm-withheld-prefixes"
                   class="dm-inp dm-mono"
                   [(ngModel)]="f.withheldAccounts.prefixes"
                   [disabled]="disabled"
-                  placeholder="Ex. 436" />
-                <small class="dm-hint">Le compte et toute sa descendance. Séparées par « ; ».</small>
+                  placeholder="Ex. 436" i18n-placeholder="@@accounting.monthly-declaration.ex.436.2ee608c3" />
+                <small class="dm-hint" i18n="@@accounting.monthly-declaration.le.compte.et.toute.sa.descendance.separees.par.a2e82592">Le compte et toute sa descendance. Séparées par « ; ».</small>
               </div>
             }
 
             @if (showWithheldPayrollComponent) {
               <div class="dm-field">
-                <label class="dm-lbl" for="dm-withheld-payroll">Valeur de paie</label>
+                <label class="dm-lbl" for="dm-withheld-payroll" i18n="@@accounting.monthly-declaration.valeur.de.paie.00856faf">Valeur de paie</label>
                 <select
                   id="dm-withheld-payroll"
                   class="dm-inp"
                   [(ngModel)]="f.withheldPayrollComponent"
                   [disabled]="disabled">
-                  <option [ngValue]="null">— Choisir —</option>
+                  <option [ngValue]="null" i18n="@@accounting.monthly-declaration.choisir.413c3acc">— Choisir —</option>
                   @for (o of payrollComponents; track o.value) {
                     <option [ngValue]="o.value">{{ o.label }}</option>
                   }
@@ -233,7 +233,7 @@ import {
 
             @if (showFixedWithheld) {
               <div class="dm-field">
-                <label class="dm-lbl" for="dm-fixed-withheld">Valeur fixe</label>
+                <label class="dm-lbl" for="dm-fixed-withheld" i18n="@@accounting.monthly-declaration.valeur.fixe.84e10831">Valeur fixe</label>
                 <input
                   id="dm-fixed-withheld"
                   type="number"
@@ -241,14 +241,14 @@ import {
                   class="dm-inp"
                   [(ngModel)]="f.fixedWithheldAmount"
                   [disabled]="disabled"
-                  placeholder="Laisser vide pour saisir au Calcul DM" />
-                <small class="dm-hint">Vide ne vaut pas zéro : la ligne attendra une saisie.</small>
+                  placeholder="Laisser vide pour saisir au Calcul DM" i18n-placeholder="@@accounting.monthly-declaration.laisser.vide.pour.saisir.au.calcul.dm.e9748ced" />
+                <small class="dm-hint" i18n="@@accounting.monthly-declaration.vide.ne.vaut.pas.zero.la.ligne.attendra.une.sais.49c6d03c">Vide ne vaut pas zéro : la ligne attendra une saisie.</small>
               </div>
             }
 
             @if (showRate) {
               <div class="dm-field">
-                <label class="dm-lbl" for="dm-rate">Taux (%)</label>
+                <label class="dm-lbl" for="dm-rate" i18n="@@accounting.monthly-declaration.taux.bb9a8c5a">Taux (%)</label>
                 <input
                   id="dm-rate"
                   type="number"
@@ -265,17 +265,15 @@ import {
 
         <div class="dm-grid">
           <div class="dm-field">
-            <label class="dm-lbl" for="dm-from">Date de début</label>
+            <label class="dm-lbl" for="dm-from" i18n="@@accounting.monthly-declaration.date.de.debut.706438ab">Date de début</label>
             <input id="dm-from" type="date" class="dm-inp" [(ngModel)]="f.effectiveFrom" [disabled]="disabled" />
           </div>
           <div class="dm-field">
-            <label class="dm-lbl" for="dm-to">Date maximale d’application</label>
+            <label class="dm-lbl" for="dm-to" i18n="@@accounting.monthly-declaration.date.maximale.d.application.9f9a67dd">Date maximale d’application</label>
             <input id="dm-to" type="date" class="dm-inp" [(ngModel)]="f.effectiveTo" [disabled]="disabled" />
           </div>
-          <small class="dm-hint dm-hint--block">
-            La rubrique s’applique au mois entier de la date maximale : le formulaire officiel n’a pas
-            de case pour un mois proratisé.
-          </small>
+          <small class="dm-hint dm-hint--block" i18n="@@accounting.monthly-declaration.la.rubrique.s.applique.au.mois.entier.de.la.date.0b581591"> La rubrique s’applique au mois entier de la date maximale : le formulaire officiel n’a pas
+            de case pour un mois proratisé. </small>
         </div>
 
         @if (validationMessage; as message) {
@@ -283,16 +281,14 @@ import {
         }
 
         <div class="dm-actions">
-          <app-button variant="secondary" size="sm" type="button" [disabled]="saving" (click)="cancel.emit()">
-            Annuler
-          </app-button>
+          <app-button variant="secondary" size="sm" type="button" [disabled]="saving" (click)="cancel.emit()" i18n="@@accounting.monthly-declaration.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             size="sm"
             type="button"
             [disabled]="saving || disabled || !!validationMessage"
             (click)="save.emit()">
-            {{ saving ? 'Enregistrement…' : 'Enregistrer' }}
+            {{ saving ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_f7c8bc }}
           </app-button>
         </div>
       </div>
@@ -319,6 +315,9 @@ import {
   `
 })
 export class DmRubricFormComponent {
+  readonly loc_ui_tern_modifier_la_rubrique_035400 = $localize`:@@ui.tern.modifier.la.rubrique.035400:Modifier la rubrique `;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
   /** Brouillon modifié en place ; le conteneur en garde la propriété. */
   @Input({ required: true }) form!: DmRubricForm;
   @Input() accountOptions: DmOption<string>[] = [];

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -15,6 +16,7 @@ import { TagModule } from 'primeng/tag';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.component';
 import { ToastService } from '@core/services/toast.service';
+import { erpCollatorCompare } from '@core/i18n/erp-format';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import {
   StockService,
@@ -46,18 +48,18 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Entrepôts"
-      subtitle="Lieux de stockage utilisés pour le stock, les transferts et les documents">
+      title="Entrepôts" i18n-title="@@settings.warehouses.entrepots.c0906d10"
+      subtitle="Lieux de stockage utilisés pour le stock, les transferts et les documents" i18n-subtitle="@@settings.warehouses.lieux.de.stockage.utilises.pour.le.stock.0b3fad57">
       <div class="header-actions">
         <p-button
-          label="Retour"
+          label="Retour" i18n-label="@@settings.warehouses.retour.e5befb1f"
           icon="pi pi-arrow-left"
           [outlined]="true"
           severity="secondary"
           routerLink="/settings">
         </p-button>
         <p-button
-          label="Ajouter"
+          label="Ajouter" i18n-label="@@settings.warehouses.ajouter.87c57ed1"
           icon="pi pi-plus"
           severity="primary"
           (onClick)="openCreateDialog()"
@@ -70,21 +72,21 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
       <div class="error-banner" role="alert">
         <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
         <p>{{ loadError() }}</p>
-        <p-button label="Réessayer" icon="pi pi-refresh" [outlined]="true" (onClick)="loadWarehouses()"></p-button>
+        <p-button label="Réessayer" i18n-label="@@settings.warehouses.reessayer.895d416b" icon="pi pi-refresh" [outlined]="true" (onClick)="loadWarehouses()"></p-button>
       </div>
     }
 
     @if (loading() && !warehouses().length && !loadError()) {
       <div class="loading-container" role="status" aria-live="polite">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem" aria-hidden="true"></i>
-        <p>Chargement des entrepôts...</p>
+        <p i18n="@@settings.warehouses.chargement.des.entrepots.d1d834ab">Chargement des entrepôts...</p>
       </div>
     } @else if (!loadError()) {
       <div class="warehouses-page">
-        <p-card header="Liste des entrepôts" styleClass="warehouses-card">
+        <p-card header="Liste des entrepôts" i18n-header="@@settings.warehouses.liste.des.entrepots.e4e1d3be" styleClass="warehouses-card">
           <div class="card-toolbar">
             <div class="search-field">
-              <label class="sr-only" for="warehouse-search">Rechercher un entrepôt</label>
+              <label class="sr-only" for="warehouse-search" i18n="@@settings.warehouses.rechercher.un.entrepot.80fc0c59">Rechercher un entrepôt</label>
               <span class="search-input-wrap">
                 <i class="pi pi-search search-icon" aria-hidden="true"></i>
                 <input
@@ -92,7 +94,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
                   type="text"
                   pInputText
                   class="search-input"
-                  placeholder="Rechercher par code, nom ou adresse…"
+                  placeholder="Rechercher par code, nom ou adresse…" i18n-placeholder="@@settings.warehouses.rechercher.par.code.nom.ou.adresse.5be498b3"
                   [value]="searchQuery()"
                   (input)="onSearchInput($event)"
                   autocomplete="off" />
@@ -100,7 +102,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
               @if (searchQuery().trim()) {
                 <p-button
                   type="button"
-                  label="Effacer"
+                  label="Effacer" i18n-label="@@settings.warehouses.effacer.fe23de7b"
                   icon="pi pi-times"
                   [text]="true"
                   (onClick)="clearSearch()"
@@ -113,8 +115,8 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
           @if (warehouses().length > 0 && filteredWarehouses().length === 0 && searchQuery().trim()) {
             <div class="filter-empty" role="status">
               <i class="pi pi-filter-slash" aria-hidden="true"></i>
-              <p>Aucun résultat pour cette recherche.</p>
-              <p-button label="Réinitialiser le filtre" [outlined]="true" (onClick)="clearSearch()"></p-button>
+              <p i18n="@@settings.warehouses.aucun.resultat.pour.cette.recherche.7e7f8c98">Aucun résultat pour cette recherche.</p>
+              <p-button label="Réinitialiser le filtre" i18n-label="@@settings.warehouses.reinitialiser.le.filtre.d3da2f54" [outlined]="true" (onClick)="clearSearch()"></p-button>
             </div>
           } @else {
             <p-table
@@ -125,12 +127,12 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
               styleClass="p-datatable-sm warehouses-table">
               <ng-template pTemplate="header">
                 <tr>
-                  <th scope="col">Code</th>
-                  <th scope="col">Nom</th>
-                  <th scope="col">Adresse</th>
-                  <th scope="col">Par défaut</th>
-                  <th scope="col">État</th>
-                  <th scope="col" class="col-actions">Actions</th>
+                  <th scope="col" i18n="@@settings.warehouses.code.adac6937">Code</th>
+                  <th scope="col" i18n="@@settings.warehouses.nom.7ff20370">Nom</th>
+                  <th scope="col" i18n="@@settings.warehouses.adresse.522e1466">Adresse</th>
+                  <th scope="col" i18n="@@settings.warehouses.par.defaut.4550c68e">Par défaut</th>
+                  <th scope="col" i18n="@@settings.warehouses.etat.d3b28a2a">État</th>
+                  <th scope="col" class="col-actions" i18n="@@settings.warehouses.actions.c3cd636a">Actions</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-row>
@@ -140,13 +142,13 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
                   <td class="address-cell">{{ row.address || '—' }}</td>
                   <td>
                     <p-tag
-                      [value]="row.isDefault ? 'Oui' : 'Non'"
+                      [value]="row.isDefault ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199"
                       [severity]="row.isDefault ? 'success' : 'secondary'">
                     </p-tag>
                   </td>
                   <td>
                     <p-tag
-                      [value]="row.isActive ? 'Actif' : 'Inactif'"
+                      [value]="row.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033"
                       [severity]="row.isActive ? 'success' : 'warn'">
                     </p-tag>
                   </td>
@@ -156,23 +158,21 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
                       [text]="true"
                       [rounded]="true"
                       (onClick)="openRegistersDialog(row)"
-                      [attr.aria-label]="'Caisses POS ' + row.name">
+                      [attr.aria-label]="loc_ui_tern_caisses_pos_891ab7 + row.name">
                     </p-button>
                     <p-button
                       icon="pi pi-pencil"
                       [text]="true"
                       [rounded]="true"
                       (onClick)="openEditDialog(row)"
-                      [attr.aria-label]="'Modifier ' + row.name">
+                      [attr.aria-label]="loc_ui_tern_modifier_6efdfe + row.name">
                     </p-button>
                   </td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="emptymessage">
                 <tr>
-                  <td colspan="6" class="empty-cell">
-                    Aucun entrepôt. Utilisez « Ajouter » pour créer votre premier lieu de stockage.
-                  </td>
+                  <td colspan="6" class="empty-cell" i18n="@@settings.warehouses.aucun.entrepot.utilisez.ajouter.pour.creer.votre.0bda79b8"> Aucun entrepôt. Utilisez « Ajouter » pour créer votre premier lieu de stockage. </td>
                 </tr>
               </ng-template>
             </p-table>
@@ -192,14 +192,14 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
       (onHide)="onDialogHide()"
       [attr.aria-modal]="true"
       styleClass="warehouses-dialog">
-      <p class="dialog-intro">
-        Indiquez un <strong>nom</strong> court (libellé interne : magasin, dépôt principal, etc.).
+      <p class="dialog-intro" i18n="@@settings.warehouses.indiquez.un.nom.court.libelle.interne.ma.1653cc24">
+        <ng-container> Indiquez un </ng-container> <strong>nom</strong> court (libellé interne : magasin, dépôt principal, etc.).
         L’<strong>adresse</strong>, facultative, peut reprendre rue, ville, code postal et pays sur plusieurs lignes.
       </p>
       <form [formGroup]="form" (ngSubmit)="onSubmitForm()" class="wh-form">
         @if (isEditMode()) {
           <label class="form-field" for="wh-code-readonly">
-            <span class="label-text">Code</span>
+            <span class="label-text" i18n="@@settings.warehouses.code.adac6937">Code</span>
             <input
               pInputText
               id="wh-code-readonly"
@@ -207,11 +207,11 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
               class="w-full"
               readonly
               tabindex="-1" />
-            <small class="hint">Le code ne peut pas être modifié après la création.</small>
+            <small class="hint" i18n="@@settings.warehouses.le.code.ne.peut.pas.etre.modifie.apres.la.creati.fa3d64d7">Le code ne peut pas être modifié après la création.</small>
           </label>
         } @else {
           <label class="form-field" for="wh-code">
-            <span class="label-text">Code <span class="required" aria-hidden="true">*</span></span>
+            <span class="label-text"><ng-container i18n="@@settings.warehouses.code.adac6937">Code </ng-container> <span class="required" aria-hidden="true" i18n="@@settings.warehouses.text.df58248c">*</span></span>
             <input
               pInputText
               id="wh-code"
@@ -227,7 +227,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
         }
 
         <label class="form-field" for="wh-name">
-          <span class="label-text">Nom <span class="required" aria-hidden="true">*</span></span>
+          <span class="label-text"><ng-container i18n="@@settings.warehouses.nom.7ff20370">Nom </ng-container> <span class="required" aria-hidden="true" i18n="@@settings.warehouses.text.df58248c">*</span></span>
           <input
             pInputText
             id="wh-name"
@@ -242,42 +242,40 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
         </label>
 
         <label class="form-field" for="wh-address">
-          <span class="label-text">Adresse</span>
+          <span class="label-text" i18n="@@settings.warehouses.adresse.522e1466">Adresse</span>
           <textarea
             pTextarea
             id="wh-address"
             formControlName="address"
             class="w-full"
             [rows]="3"
-            placeholder="Rue, ville, code postal, pays…">
+            placeholder="Rue, ville, code postal, pays…" i18n-placeholder="@@settings.warehouses.rue.ville.code.postal.pays.d89c1b2e">
           </textarea>
         </label>
 
         <div class="form-field switch-block">
           <div class="switch-field">
-            <span class="label-text" id="wh-default-label">Entrepôt par défaut</span>
+            <span class="label-text" id="wh-default-label" i18n="@@settings.warehouses.entrepot.par.defaut.5dc0b8c6">Entrepôt par défaut</span>
             <p-inputSwitch
               formControlName="isDefault"
               inputId="wh-default"
               [attr.aria-labelledby]="'wh-default-label'">
             </p-inputSwitch>
           </div>
-          <small class="hint switch-hint">
-            Utilisé par défaut pour le stock et les documents lorsqu’aucun autre entrepôt n’est précisé.
-          </small>
+          <small class="hint switch-hint" i18n="@@settings.warehouses.utilise.par.defaut.pour.le.stock.et.les.document.b0aef0d3"> Utilisé par défaut pour le stock et les documents lorsqu’aucun autre entrepôt n’est précisé. </small>
         </div>
 
         <div class="dialog-actions">
           <p-button
             type="button"
-            label="Annuler"
+            label="Annuler" i18n-label="@@settings.warehouses.annuler.49ba3292"
             [outlined]="true"
             severity="secondary"
             (onClick)="dialogVisible = false">
           </p-button>
           <p-button
             type="submit"
-            label="Enregistrer"
+            label="Enregistrer" i18n-label="@@settings.warehouses.enregistrer.f7c8bcd8"
             icon="pi pi-check"
             severity="primary"
             [loading]="saving()"
@@ -288,18 +286,18 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
     </p-dialog>
 
     <p-dialog
-      header="Caisses POS"
+      header="Caisses POS" i18n-header="@@settings.warehouses.caisses.pos.4ec932cb"
       [(visible)]="registersDialogVisible"
       [modal]="true"
       [style]="{ width: 'min(560px, 95vw)' }"
       [draggable]="false"
       [dismissableMask]="true">
-      <p class="dialog-intro">
-        Caisses du magasin <strong>{{ registersWarehouse()?.name }}</strong>. Une seule caisse est
+      <p class="dialog-intro" i18n="@@settings.warehouses.caisses.du.magasin.une.seule.caisse.est.baee9d8d">
+        <ng-container> Caisses du magasin </ng-container> <strong>{{ registersWarehouse()?.name }}</strong>. Une seule caisse est
         marquée défaut (utilisée si aucune caisse n'est choisie).
       </p>
       @if (registersLoading()) {
-        <p>Chargement…</p>
+        <p i18n="@@settings.warehouses.chargement.01cba1df">Chargement…</p>
       } @else {
         <ul class="registers-list">
           @for (reg of warehouseRegisters(); track reg.id) {
@@ -314,20 +312,20 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
       }
       <form [formGroup]="registerForm" (ngSubmit)="submitCreateRegister()" class="wh-form">
         <label class="form-field" for="reg-code">
-          <span class="label-text">Code</span>
+          <span class="label-text" i18n="@@settings.warehouses.code.adac6937">Code</span>
           <input pInputText id="reg-code" formControlName="code" class="w-full" maxlength="20" />
         </label>
         <label class="form-field" for="reg-name">
-          <span class="label-text">Nom</span>
+          <span class="label-text" i18n="@@settings.warehouses.nom.7ff20370">Nom</span>
           <input pInputText id="reg-name" formControlName="name" class="w-full" maxlength="100" />
         </label>
         <div class="switch-field">
-          <span>Caisse par défaut</span>
+          <span i18n="@@settings.warehouses.caisse.par.defaut.f4c511df">Caisse par défaut</span>
           <p-inputSwitch formControlName="isDefault"></p-inputSwitch>
         </div>
         <div class="dialog-actions">
-          <p-button type="button" label="Fermer" [outlined]="true" (onClick)="registersDialogVisible = false"></p-button>
-          <p-button type="submit" label="Ajouter une caisse" icon="pi pi-plus" [loading]="registerSaving()"></p-button>
+          <p-button type="button" label="Fermer" i18n-label="@@settings.warehouses.fermer.5ab4ec64" [outlined]="true" (onClick)="registersDialogVisible = false"></p-button>
+          <p-button type="submit" label="Ajouter une caisse" i18n-label="@@settings.warehouses.ajouter.une.caisse.b0733ef1" icon="pi pi-plus" [loading]="registerSaving()"></p-button>
         </div>
       </form>
     </p-dialog>
@@ -388,7 +386,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
 
     .search-icon {
       position: absolute;
-      left: 0.75rem;
+      inset-inline-start: 0.75rem;
       top: 50%;
       transform: translateY(-50%);
       color: var(--color-neutral-400);
@@ -399,7 +397,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
 
     .search-input {
       width: 100%;
-      padding-left: 2.25rem !important;
+      padding-inline-start: 2.25rem !important;
     }
 
     .filter-empty {
@@ -550,7 +548,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
     }
     .col-actions {
       white-space: nowrap;
-      text-align: right;
+      text-align: end;
     }
     .registers-list {
       list-style: none;
@@ -576,6 +574,12 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
   `]
 })
 export class WarehousesComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
+  readonly loc_ui_tern_caisses_pos_891ab7 = $localize`:@@ui.tern.caisses.pos.891ab7:Caisses POS `;
+  readonly loc_ui_tern_modifier_6efdfe = $localize`:@@ui.tern.modifier.6efdfe:Modifier `;
   private readonly stockService = inject(StockService);
   private readonly toast = inject(ToastService);
   private readonly errorHandler = inject(ErrorHandlerService);
@@ -584,9 +588,9 @@ export class WarehousesComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Entrepôts' }
+    { label: $localize`:@@settings.warehouses.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.warehouses.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.warehouses.ts.entrepots.c0906d10:Entrepôts` }
   ];
 
   loading = signal(false);
@@ -615,7 +619,7 @@ export class WarehousesComponent implements OnInit, OnDestroy {
 
   isEditMode = computed(() => this.editingWarehouse() !== null);
 
-  dialogTitle = computed(() => (this.editingWarehouse() ? 'Modifier l’entrepôt' : 'Nouvel entrepôt'));
+  dialogTitle = computed(() => (this.editingWarehouse() ? $localize`:@@ui.tern.modifier.l.entrepot.141e5c:Modifier l’entrepôt` : $localize`:@@ui.tern.nouvel.entrepot.4829f5:Nouvel entrepôt`));
 
   form = this.fb.nonNullable.group({
     code: ['', [Validators.required, Validators.maxLength(20)]],
@@ -673,14 +677,14 @@ export class WarehousesComponent implements OnInit, OnDestroy {
           this.registerSaving.set(false);
           this.warehouseRegisters.update(list => [...list, created]);
           this.registerForm.reset({ code: '', name: '', isDefault: false });
-          this.toast.add({ severity: 'success', summary: 'Caisse créée', detail: created.code, life: 3000 });
+          this.toast.add({ severity: 'success', summary: $localize`:@@warehouses.component.summary.Caisse créée:Caisse créée`, detail: created.code, life: 3000 });
         },
         error: (err: HttpErrorResponse) => {
           this.registerSaving.set(false);
           this.toast.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: this.errorHandler.extractErrorMessage(err) || 'Création de caisse impossible'
+            summary: $localize`:@@warehouses.component.summary.Erreur:Erreur`,
+            detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@settings.warehouses.ts.creation.de.caisse.impossible.49a448a0:Création de caisse impossible`
           });
         }
       });
@@ -713,16 +717,16 @@ export class WarehousesComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           if (res.success && res.data) {
-            this.warehouses.set([...res.data].sort((a, b) => a.name.localeCompare(b.name, 'fr')));
+            this.warehouses.set([...res.data].sort((a, b) => erpCollatorCompare(a.name, b.name)));
           } else {
-            this.loadError.set(res.errors?.join(', ') || res.message || 'Chargement impossible');
+            this.loadError.set(res.errors?.join(', ') || res.message || $localize`:@@settings.warehouses.ts.chargement.impossible.4c82ffbe:Chargement impossible`);
           }
           this.loading.set(false);
         },
         error: (err: HttpErrorResponse) => {
           this.errorHandler.logError('Failed to load warehouses', err);
           this.loadError.set(
-            this.errorHandler.extractErrorMessage(err) || 'Impossible de charger les entrepôts'
+            this.errorHandler.extractErrorMessage(err) || $localize`:@@settings.warehouses.ts.impossible.de.charger.les.entrepots.3492459c:Impossible de charger les entrepôts`
           );
           this.loading.set(false);
         }
@@ -766,8 +770,8 @@ export class WarehousesComponent implements OnInit, OnDestroy {
   fieldError(name: 'code' | 'name'): string {
     const c = this.form.get(name);
     if (!c?.errors) return '';
-    if (c.errors['required']) return 'Ce champ est obligatoire';
-    if (c.errors['maxlength']) return 'Longueur maximale dépassée';
+    if (c.errors['required']) return $localize`:@@settings.warehouses.ts.ce.champ.est.obligatoire.17061b6a:Ce champ est obligatoire`;
+    if (c.errors['maxlength']) return $localize`:@@settings.warehouses.ts.longueur.maximale.depassee.eef9b613:Longueur maximale dépassée`;
     return '';
   }
 
@@ -790,7 +794,7 @@ export class WarehousesComponent implements OnInit, OnDestroy {
     const code = v.code.trim();
     const name = v.name.trim();
     if (!code || !name) {
-      this.toast.add({ severity: 'warn', summary: 'Validation', detail: 'Code et nom sont obligatoires' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@warehouses.component.summary.Validation:Validation`, detail: $localize`:@@warehouses.component.detail.Code_et_nom_sont:Code et nom sont obligatoires` });
       return;
     }
 
@@ -811,8 +815,8 @@ export class WarehousesComponent implements OnInit, OnDestroy {
           if (res.success) {
             this.toast.add({
               severity: 'success',
-              summary: 'Succès',
-              detail: res.message || 'Entrepôt créé',
+              summary: $localize`:@@warehouses.component.summary.Succès:Succès`,
+              detail: res.message || $localize`:@@settings.warehouses.ts.entrepot.cree.506e2410:Entrepôt créé`,
               life: 3000
             });
             this.dialogVisible = false;
@@ -820,8 +824,8 @@ export class WarehousesComponent implements OnInit, OnDestroy {
           } else {
             this.toast.add({
               severity: 'error',
-              summary: 'Erreur',
-              detail: res.errors?.join(', ') || res.message || 'Création impossible'
+              summary: $localize`:@@warehouses.component.summary.Erreur:Erreur`,
+              detail: res.errors?.join(', ') || res.message || $localize`:@@settings.warehouses.ts.creation.impossible.e15c59e7:Création impossible`
             });
           }
         },
@@ -830,8 +834,8 @@ export class WarehousesComponent implements OnInit, OnDestroy {
           this.errorHandler.logError('Create warehouse failed', err);
           this.toast.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: this.errorHandler.extractErrorMessage(err) || 'Création impossible'
+            summary: $localize`:@@warehouses.component.summary.Erreur:Erreur`,
+            detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@settings.warehouses.ts.creation.impossible.e15c59e7:Création impossible`
           });
         }
       });
@@ -841,7 +845,7 @@ export class WarehousesComponent implements OnInit, OnDestroy {
     const v = this.form.getRawValue();
     const name = v.name.trim();
     if (!name) {
-      this.toast.add({ severity: 'warn', summary: 'Validation', detail: 'Le nom est obligatoire' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@warehouses.component.summary.Validation:Validation`, detail: $localize`:@@warehouses.component.detail.Le_nom_est_oblig:Le nom est obligatoire` });
       return;
     }
 
@@ -861,8 +865,8 @@ export class WarehousesComponent implements OnInit, OnDestroy {
           this.saving.set(false);
           this.toast.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Entrepôt mis à jour',
+            summary: $localize`:@@warehouses.component.summary.Succès:Succès`,
+            detail: $localize`:@@warehouses.component.detail.Entrep_t_mis_j:Entrepôt mis à jour`,
             life: 3000
           });
           this.dialogVisible = false;
@@ -873,8 +877,8 @@ export class WarehousesComponent implements OnInit, OnDestroy {
           this.errorHandler.logError('Update warehouse failed', err);
           this.toast.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: this.errorHandler.extractErrorMessage(err) || 'Mise à jour impossible'
+            summary: $localize`:@@warehouses.component.summary.Erreur:Erreur`,
+            detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@settings.warehouses.ts.mise.a.jour.impossible.56d51741:Mise à jour impossible`
           });
         }
       });

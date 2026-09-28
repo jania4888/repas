@@ -17,7 +17,7 @@ export class HttpRateLimitDialogService {
    * @param dedupeKey Clé stable pour fusionner les 429 identiques (ex. méthode + URL).
    */
   showRateLimitExceeded(message: string, dedupeKey: string): void {
-    const trimmed = (message || '').trim() || 'Trop de requêtes. Réessayez dans quelques instants.';
+    const trimmed = (message || '').trim() || $localize`:@@core.http-rate-limit-dialog.ts.trop.de.requetes.reessayez.dans.quelques.03b4ab7e:Trop de requêtes. Réessayez dans quelques instants.`;
     const now = Date.now();
     if (dedupeKey === this.lastDedupeKey && now - this.lastShownAt < this.dedupWindowMs) {
       return;
@@ -27,7 +27,7 @@ export class HttpRateLimitDialogService {
 
     this.confirmation.alert({
       message: trimmed,
-      header: 'Limite atteinte',
+      header: $localize`:@@core.http-rate-limit-dialog.ts.limite.atteinte.df38c459:Limite atteinte`,
       icon: 'pi pi-clock',
       size: 'sm'
     });

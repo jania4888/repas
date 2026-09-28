@@ -1,31 +1,33 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChartModule } from 'primeng/chart';
 import { ChartCardComponent } from '@shared/components/dashboard/chart-card.component';
 import { ProjectDashboardExtended, ProjectStatusBreakdown } from '../project-api.service';
 import { ProjectProgressGaugeComponent } from './project-progress-gauge.component';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 @Component({
   selector: 'app-project-dashboard-charts',
   standalone: true,
-  imports: [CommonModule, ChartModule, ChartCardComponent, ProjectProgressGaugeComponent],
+  imports: [BackendLabelPipe, CommonModule, ChartModule, ChartCardComponent, ProjectProgressGaugeComponent],
   template: `
     @if (data) {
       <div class="proj-dash-charts">
-        <app-chart-card title="Avancement des projets" subtitle="Répartition par statut">
+        <app-chart-card title="Avancement des projets" i18n-title="@@projects.components.avancement.des.projets.2192527c" subtitle="Répartition par statut" i18n-subtitle="@@projects.components.repartition.par.statut.9e02f458">
           <div class="proj-dash-donut-wrap">
             <div class="proj-dash-donut-chart">
               <p-chart type="doughnut" [data]="statusChart()" [options]="doughnutOptions" [style]="{ height: '220px' }" />
               <div class="proj-dash-donut-center" aria-hidden="true">
                 <strong>{{ data.averageProgressPercent }} %</strong>
-                <span>Avancement moyen</span>
+                <span i18n="@@projects.components.avancement.moyen.06267bd4">Avancement moyen</span>
               </div>
             </div>
             <ul class="proj-dash-donut-legend">
               @for (item of legendItems(); track item.statusDisplay) {
                 <li>
                   <span class="proj-dash-legend-dot" [style.background]="item.color"></span>
-                  <span class="proj-dash-legend-label">{{ item.statusDisplay }}</span>
+                  <span class="proj-dash-legend-label">{{ item.statusDisplay | backendLabel }}</span>
                   <span class="proj-dash-legend-meta">{{ item.percent }} % · {{ item.count }}</span>
                 </li>
               }
@@ -34,8 +36,8 @@ import { ProjectProgressGaugeComponent } from './project-progress-gauge.componen
         </app-chart-card>
 
         <app-chart-card
-          title="Évolution des tâches"
-          [subtitle]="period === 'month' ? '30 derniers jours' : '7 derniers jours'">
+          title="Évolution des tâches" i18n-title="@@projects.components.evolution.des.taches.1cb8b4bb"
+          [subtitle]="period === 'month' ? loc_ui_tern_30_derniers_jours_edd8ab : loc_ui_tern_7_derniers_jours_4ea89a">
           <p-chart type="line" [data]="trendChart()" [options]="lineOptions" [style]="{ height: '260px' }" />
         </app-chart-card>
 
@@ -47,6 +49,8 @@ import { ProjectProgressGaugeComponent } from './project-progress-gauge.componen
   `
 })
 export class ProjectDashboardChartsComponent {
+  readonly loc_ui_tern_30_derniers_jours_edd8ab = $localize`:@@ui.tern.30.derniers.jours.edd8ab:30 derniers jours`;
+  readonly loc_ui_tern_7_derniers_jours_4ea89a = $localize`:@@ui.tern.7.derniers.jours.4ea89a:7 derniers jours`;
   @Input() data: ProjectDashboardExtended | null = null;
   @Input() period: 'week' | 'month' = 'week';
 
@@ -95,12 +99,12 @@ export class ProjectDashboardChartsComponent {
     const d = this.data;
     const trend = d?.taskTrend ?? [];
     return {
-      labels: trend.map(p => new Date(p.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })),
+      labels: trend.map(p => new Date(p.date).toLocaleDateString(erpDateLocale('fr-FR'), { weekday: 'short', day: 'numeric' })),
       datasets: [
-        { label: 'Créées', data: trend.map(p => p.created), borderColor: '#2563eb', tension: 0.3 },
-        { label: 'Terminées', data: trend.map(p => p.completed), borderColor: '#16a34a', tension: 0.3 },
-        { label: 'En attente', data: trend.map(p => p.pending ?? 0), borderColor: '#d97706', tension: 0.3 },
-        { label: 'En retard', data: trend.map(p => p.overdue), borderColor: '#dc2626', tension: 0.3 }
+        { label: $localize`:@@projects.project-dashboard-charts.ts.creees.4b3f024a:Créées`, data: trend.map(p => p.created), borderColor: '#2563eb', tension: 0.3 },
+        { label: $localize`:@@projects.project-dashboard-charts.ts.terminees.7d7f40ab:Terminées`, data: trend.map(p => p.completed), borderColor: '#16a34a', tension: 0.3 },
+        { label: $localize`:@@projects.project-dashboard-charts.ts.en.attente.5231158f:En attente`, data: trend.map(p => p.pending ?? 0), borderColor: '#d97706', tension: 0.3 },
+        { label: $localize`:@@projects.project-dashboard-charts.ts.en.retard.40c1dde3:En retard`, data: trend.map(p => p.overdue), borderColor: '#dc2626', tension: 0.3 }
       ]
     };
   });

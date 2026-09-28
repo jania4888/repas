@@ -34,15 +34,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      [title]="'Historique des Mouvements'"
-      [subtitle]="productName() ? 'Produit: ' + productName() : 'Chargement...'">
+      title="Historique des Mouvements" i18n-title="@@stock.stock-history.historique.des.mouvements.37a95095"
+      [subtitle]="productName() ? loc_ui_tern_produit_fe4d4d + productName() : loc_ui_tern_chargement_a209b6">
       <app-button 
         variant="outline"
         icon="pi-arrow-left"
         iconPos="left"
-        routerLink="/stock">
-        Retour au Stock
-      </app-button>
+        routerLink="/stock" i18n="@@stock.stock-history.retour.au.stock.5b0f5b07"> Retour au Stock </app-button>
     </app-page-header>
 
     <div class="history-card">
@@ -51,9 +49,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       } @else if (movements().length === 0) {
         <app-empty-state
           illustration="empty-box.svg"
-          title="Aucun mouvement"
-          description="Aucun mouvement de stock n'a été enregistré pour ce produit."
-          actionLabel="Retour au stock"
+          title="Aucun mouvement" i18n-title="@@stock.stock-history.aucun.mouvement.e4e42303"
+          description="Aucun mouvement de stock n'a été enregistré pour ce produit." i18n-description="@@stock.stock-history.aucun.mouvement.de.stock.n.a.ete.enregis.f39f4f75"
+          actionLabel="Retour au stock" i18n-actionLabel="@@stock.stock-history.retour.au.stock.298e4e65"
           actionRoute="/stock">
         </app-empty-state>
       } @else {
@@ -63,20 +61,20 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           [paginator]="true" 
           [rows]="20"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} mouvements"
+          currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} mouvements" i18n-currentPageReportTemplate="@@stock.stock-history.affichage.first.a.last.sur.totalrecords.mouvemen.2251bca4"
           [rowHover]="true"
           styleClass="p-datatable-striped">
           
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Date</th>
-              <th scope="col">Type</th>
-              <th scope="col">Motif</th>
-              <th scope="col" class="text-right">Quantité</th>
-              <th scope="col" class="text-right">Coût Unit.</th>
-              <th scope="col" class="text-right">Total</th>
-              <th scope="col" class="text-right">Solde</th>
-              <th scope="col">Référence</th>
+              <th scope="col" i18n="@@stock.stock-history.date.eb9a4bc1">Date</th>
+              <th scope="col" i18n="@@stock.stock-history.type.3deb7456">Type</th>
+              <th scope="col" i18n="@@stock.stock-history.motif.2a198f47">Motif</th>
+              <th scope="col" class="text-right" i18n="@@stock.stock-history.quantite.09a38fda">Quantité</th>
+              <th scope="col" class="text-right" i18n="@@stock.stock-history.cout.unit.aa73bc92">Coût Unit.</th>
+              <th scope="col" class="text-right" i18n="@@stock.stock-history.total.b25928c6">Total</th>
+              <th scope="col" class="text-right" i18n="@@stock.stock-history.solde.e5977cf9">Solde</th>
+              <th scope="col" i18n="@@stock.stock-history.reference.f8130bb0">Référence</th>
             </tr>
           </ng-template>
           
@@ -85,7 +83,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
               <td>{{ movement.occurredAt | date:'dd/MM/yyyy HH:mm' }}</td>
               <td>
                 <p-tag 
-                  [value]="movement.type === 'Entry' ? 'Entrée' : 'Sortie'" 
+                  [value]="movement.type === 'Entry' ? loc_ui_tern_entree_0ab59c : loc_ui_tern_sortie_fbd00e" 
                   [severity]="movement.type === 'Entry' ? 'success' : 'danger'">
                 </p-tag>
               </td>
@@ -119,7 +117,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       border: 1px solid var(--color-border-subtle, #e5e7eb);
     }
 
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .font-mono { font-family: 'JetBrains Mono', monospace; }
     .font-semibold { font-weight: 600; }
     .text-green-600 { color: #16a34a; }
@@ -146,6 +144,10 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `]
 })
 export class StockHistoryComponent implements OnInit {
+  readonly loc_ui_tern_produit_fe4d4d = $localize`:@@ui.tern.produit.fe4d4d:Produit: `;
+  readonly loc_ui_tern_chargement_a209b6 = $localize`:@@ui.tern.chargement.a209b6:Chargement...`;
+  readonly loc_ui_tern_entree_0ab59c = $localize`:@@ui.tern.entree.0ab59c:Entrée`;
+  readonly loc_ui_tern_sortie_fbd00e = $localize`:@@ui.tern.sortie.fbd00e:Sortie`;
   private route = inject(ActivatedRoute);
   private stockService = inject(StockService);
   private errorHandler = inject(ErrorHandlerService);
@@ -157,20 +159,20 @@ export class StockHistoryComponent implements OnInit {
   stockItemId: string | null = null;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Gestion du Stock', route: '/stock' },
-    { label: 'Historique' }
+    { label: $localize`:@@stock.stock-history.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@stock.stock-history.ts.gestion.du.stock.72df5586:Gestion du Stock`, route: '/stock' },
+    { label: $localize`:@@stock.stock-history.ts.historique.34f3a06a:Historique` }
   ];
 
   skeletonColumns = [
-    { header: 'Date', width: '15%' },
-    { header: 'Type', width: '10%' },
-    { header: 'Motif', width: '15%' },
-    { header: 'Quantité', width: '12%' },
-    { header: 'Coût', width: '12%' },
-    { header: 'Avant', width: '10%' },
-    { header: 'Après', width: '10%' },
-    { header: 'Référence', width: '16%' }
+    { header: $localize`:@@stock.stock-history.ts.date.eb9a4bc1:Date`, width: '15%' },
+    { header: $localize`:@@stock.stock-history.ts.type.3deb7456:Type`, width: '10%' },
+    { header: $localize`:@@stock.stock-history.ts.motif.2a198f47:Motif`, width: '15%' },
+    { header: $localize`:@@stock.stock-history.ts.quantite.09a38fda:Quantité`, width: '12%' },
+    { header: $localize`:@@stock.stock-history.ts.cout.4a4aa395:Coût`, width: '12%' },
+    { header: $localize`:@@stock.stock-history.ts.avant.5315d949:Avant`, width: '10%' },
+    { header: $localize`:@@stock.stock-history.ts.apres.546e1c41:Après`, width: '10%' },
+    { header: $localize`:@@stock.stock-history.ts.reference.f8130bb0:Référence`, width: '16%' }
   ];
 
   ngOnInit() {

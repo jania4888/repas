@@ -323,9 +323,9 @@
     content: '';
     position: absolute;
     top: 0;
-    right: 0;
+    inset-inline-end: 0;
     bottom: 0;
-    left: 0;
+    inset-inline-start: 0;
     background: linear-gradient(
       90deg,
       transparent 0%,
@@ -429,7 +429,7 @@
       &::before {
         content: '';
         position: absolute;
-        left: 0;
+        inset-inline-start: 0;
         top: 25%;
         bottom: 25%;
         width: 3px;
@@ -445,7 +445,7 @@
 }
 
 .text-right {
-  text-align: right;
+  text-align: end;
 }
 
 .text-center {

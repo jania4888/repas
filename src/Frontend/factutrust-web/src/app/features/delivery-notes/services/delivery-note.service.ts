@@ -229,7 +229,7 @@ export class DeliveryNoteService {
                                     errorResponse?.message ||
                                     errorResponse?.error?.description ||
                                     errorResponse?.error?.message ||
-                                    'Impossible de générer le rapport PDF';
+                                    $localize`:@@delivery-notes.delivery-note.ts.impossible.de.generer.le.rapport.pdf.e2243d7a:Impossible de générer le rapport PDF`;
                                 return throwError(() => new Error(errorMessage));
                             } catch {
                                 return throwError(() => new Error('Impossible de générer le rapport PDF'));
@@ -267,7 +267,7 @@ export class DeliveryNoteService {
                                     errorResponse?.message ||
                                     errorResponse?.error?.description ||
                                     errorResponse?.error?.message ||
-                                    `Erreur ${error.status}: Impossible de générer le rapport PDF`;
+                                    $localize`:@@delivery-notes.delivery-note.ts.erreur.status.impossible.de.generer.le.r.b2e87c10:Erreur ${error.status}:status:: Impossible de générer le rapport PDF`;
                                 return throwError(() => new Error(errorMessage));
                             } catch {
                                 return throwError(() => new Error(`Erreur ${error.status || 'inconnue'}: Impossible de générer le rapport PDF`));
@@ -284,7 +284,7 @@ export class DeliveryNoteService {
                 const errorMessage = httpError.error?.message ||
                     httpError.error?.errors?.[0] ||
                     httpError.error?.error?.description ||
-                    `Erreur ${httpError.status || 'inconnue'}: Impossible de générer le rapport PDF`;
+                    $localize`:@@delivery-notes.delivery-note.ts.erreur.p.impossible.de.generer.le.rappor.edfa5a5c:Erreur ${httpError.status || 'inconnue'}:p:: Impossible de générer le rapport PDF`;
                 return throwError(() => new Error(errorMessage));
             })
         );

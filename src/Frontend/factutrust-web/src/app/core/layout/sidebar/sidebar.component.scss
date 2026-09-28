@@ -100,7 +100,7 @@
   flex-direction: column;
   background: var(--sidebar-rail-bg-gradient, var(--sidebar-rail-bg));
   height: 100%;
-  border-right: 1px solid var(--sidebar-rail-edge);
+  border-inline-end: 1px solid var(--sidebar-rail-edge);
   z-index: 10;
   transition:
     width var(--transition-slow, 0.3s ease),
@@ -345,7 +345,7 @@
   .rail-link .badge {
     position: absolute;
     top: 4px;
-    right: 4px;
+    right: 4px; /* rtl-ok */
     margin: 0;
     font-size: 9px;
     padding: 2px 4px;
@@ -362,7 +362,7 @@
 .rail-beta-badge {
   position: static;
   flex-shrink: 0;
-  margin-left: 4px;
+  margin-inline-start: 4px;
   padding: 1px 5px;
   font-size: var(--sidebar-beta-font-size);
   font-weight: 700;
@@ -457,7 +457,7 @@
   min-width: var(--sidebar-submenu-width);
   background: var(--sidebar-submenu-bg);
   height: 100%;
-  border-right: 1px solid var(--sidebar-submenu-border);
+  border-inline-end: 1px solid var(--sidebar-submenu-border);
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
@@ -472,7 +472,7 @@
 #sidebar:not(:has(.submenu-group)) .sidebar-submenu-panel {
   width: 0;
   min-width: 0;
-  border-right: none;
+  border-inline-end: none;
 }
 
 .submenu-scroll-area {
@@ -516,7 +516,7 @@
   border: none;
   background: transparent;
   width: 100%;
-  text-align: left;
+  text-align: start;
   font: inherit;
   cursor: pointer;
   color: var(--sidebar-submenu-link);
@@ -590,11 +590,11 @@
 #sidebar.sidebar--firm-delegated {
   border-radius: var(--sidebar-delegated-radius);
   box-shadow: var(--sidebar-delegated-shadow);
-  margin: 8px 0 8px 8px;
+  margin-block: 8px; margin-inline: 8px 0;
   height: calc(100% - 16px);
 
   .sidebar-icon-rail {
-    border-right-color: var(--sidebar-rail-edge);
+    border-inline-end-color: var(--sidebar-rail-edge);
     border-radius: var(--sidebar-delegated-radius);
     overflow: hidden;
   }
@@ -603,7 +603,7 @@
     background: var(--sidebar-delegated-navy);
     border-bottom: none;
     justify-content: flex-start;
-    padding: 0 44px 0 12px;
+    padding-block: 0; padding-inline: 12px 44px;
 
     a {
       justify-content: flex-start;
@@ -619,7 +619,7 @@
 
   .rail-collapse-btn--header {
     position: absolute;
-    right: 6px;
+    right: 6px; /* rtl-ok */
     top: 50%;
     transform: translateY(-50%);
     width: 32px;
@@ -701,7 +701,7 @@
     content: '\f054';
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
-    margin-left: auto;
+    margin-inline-start: auto;
     flex-shrink: 0;
     color: #94a3b8;
     font-size: 0.7rem;
@@ -709,7 +709,7 @@
   }
 
   .rail-chevron {
-    margin-left: auto;
+    margin-inline-start: auto;
     flex-shrink: 0;
     color: #94a3b8;
     font-size: 0.7rem;
@@ -745,8 +745,8 @@
   .sidebar-delegated-footer-wave {
     position: absolute;
     top: -12px;
-    left: 0;
-    right: 0;
+    left: 0; /* rtl-ok */
+    right: 0; /* rtl-ok */
     height: 12px;
     background: var(--sidebar-delegated-navy);
     clip-path: ellipse(55% 100% at 50% 100%);
@@ -777,7 +777,7 @@
     font-size: var(--sidebar-rail-label-size);
     font-weight: 600;
     cursor: pointer;
-    text-align: left;
+    text-align: start;
     transition: background 0.2s ease;
 
     .rail-label {
@@ -827,7 +827,7 @@
   .delegated-footer-submenu {
     list-style: none;
     margin: 4px 0 6px;
-    padding: 0 0 0 38px;
+    padding-block: 0; padding-inline: 38px 0;
   }
 
   .delegated-footer-sublink {
@@ -854,7 +854,7 @@
   }
 
   .sidebar-submenu-panel {
-    border-right-color: var(--sidebar-submenu-border);
+    border-inline-end-color: var(--sidebar-submenu-border);
     box-shadow: none;
   }
 

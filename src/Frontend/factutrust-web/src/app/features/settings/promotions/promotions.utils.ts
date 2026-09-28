@@ -110,27 +110,27 @@ export function buildScopePreview(
   if (productLabel) {
     parts.push(`« ${productLabel} »`);
   } else if (categoryLabel) {
-    parts.push(`Catégorie « ${categoryLabel} »`);
+    parts.push($localize`:@@settings.promotions.ts.categorie.categorylabel.2c1a1b02:Catégorie « ${categoryLabel}:categoryLabel: »`);
   } else {
-    parts.push('Tous les produits');
+    parts.push($localize`:@@settings.promotions.ts.tous.les.produits.02d62f0a:Tous les produits`);
   }
 
-  parts.push(clientLabel ? `Client « ${clientLabel} »` : 'Tous les clients');
+  parts.push(clientLabel ? $localize`:@@settings.promotions.ts.client.clientlabel.eff7d8d2:Client « ${clientLabel}:clientLabel: »` : $localize`:@@settings.promotions.ts.tous.les.clients.56f5092c:Tous les clients`);
   return parts.join(' · ');
 }
 
 export function lifecycleLabel(lifecycle: PromotionLifecycle): string {
   switch (lifecycle) {
     case 'running':
-      return 'En cours';
+      return $localize`:@@settings.promotions.ts.en.cours.bc9b533a:En cours`;
     case 'upcoming':
-      return 'À venir';
+      return $localize`:@@settings.promotions.ts.a.venir.5ae4e587:À venir`;
     case 'expired':
-      return 'Expirée';
+      return $localize`:@@settings.promotions.ts.expiree.1f0808dc:Expirée`;
     case 'disabled':
-      return 'Désactivée';
+      return $localize`:@@settings.promotions.ts.desactivee.74cc3b9b:Désactivée`;
     case 'outOfWindow':
-      return 'Hors période';
+      return $localize`:@@settings.promotions.ts.hors.periode.eb84848b:Hors période`;
   }
 }
 

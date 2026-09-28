@@ -23,7 +23,7 @@ import {
         <div class="proj-detail-kpi-card">
           <span class="proj-detail-kpi-icon"><i class="pi pi-calendar"></i></span>
           <div>
-            <span class="proj-detail-kpi-label">Période</span>
+            <span class="proj-detail-kpi-label" i18n="@@projects.components.periode.de2110b7">Période</span>
             <strong class="proj-detail-kpi-value proj-detail-kpi-value--sm">
               {{ project.startDate ? (project.startDate | date:'shortDate') : '—' }}
               → {{ project.endDate ? (project.endDate | date:'shortDate') : '—' }}
@@ -37,13 +37,13 @@ import {
         <div class="proj-detail-kpi-card">
           <span class="proj-detail-kpi-icon"><i class="pi pi-wallet"></i></span>
           <div class="proj-detail-kpi-grow">
-            <span class="proj-detail-kpi-label">Budget total</span>
+            <span class="proj-detail-kpi-label" i18n="@@projects.components.budget.total.b930ffdc">Budget total</span>
             <strong class="proj-detail-kpi-value">
               {{ (budget?.budgetHt ?? project.budgetHt) | number:'1.3-3' }} {{ project.currency }}
             </strong>
             @if (usedPercent > 0 || (budget?.budgetHt ?? project.budgetHt) > 0) {
               <p-progressBar [value]="usedPercent" [showValue]="false" styleClass="proj-detail-kpi-bar" />
-              <span class="proj-detail-kpi-sub">{{ usedPercent }} % consommé</span>
+              <span class="proj-detail-kpi-sub" i18n="@@projects.components.consomme.ad87ae4b">{{ usedPercent }} % consommé</span>
             }
           </div>
         </div>
@@ -51,7 +51,7 @@ import {
         <div class="proj-detail-kpi-card">
           <span class="proj-detail-kpi-icon"><i class="pi pi-clock"></i></span>
           <div>
-            <span class="proj-detail-kpi-label">Heures à facturer</span>
+            <span class="proj-detail-kpi-label" i18n="@@projects.components.heures.a.facturer.7757d0a3">Heures à facturer</span>
             <strong class="proj-detail-kpi-value">
               {{ budget?.billableUninvoicedHours ?? 0 | number:'1.0-1' }} / {{ hoursDenominator | number:'1.0-1' }} h
             </strong>
@@ -61,7 +61,7 @@ import {
         <div class="proj-detail-kpi-card">
           <span class="proj-detail-kpi-icon"><i class="pi pi-check-square"></i></span>
           <div>
-            <span class="proj-detail-kpi-label">Tâches ouvertes</span>
+            <span class="proj-detail-kpi-label" i18n="@@projects.components.taches.ouvertes.639d6d23">Tâches ouvertes</span>
             <strong class="proj-detail-kpi-value">{{ openCount }} / {{ totalCount }}</strong>
           </div>
         </div>
@@ -69,17 +69,17 @@ import {
         <div class="proj-detail-kpi-card" [class.proj-detail-kpi-card--danger]="overdueCount > 0">
           <span class="proj-detail-kpi-icon"><i class="pi pi-exclamation-triangle"></i></span>
           <div>
-            <span class="proj-detail-kpi-label">En retard</span>
+            <span class="proj-detail-kpi-label" i18n="@@projects.components.en.retard.40c1dde3">En retard</span>
             <strong class="proj-detail-kpi-value">{{ overdueCount }}</strong>
           </div>
         </div>
 
         <div class="proj-detail-kpi-card proj-detail-kpi-card--gauge">
-          <span class="proj-detail-kpi-label">Avancement global</span>
+          <span class="proj-detail-kpi-label" i18n="@@projects.components.avancement.global.5f0ee62d">Avancement global</span>
           <div class="proj-detail-gauge" [style.background]="gaugeBackground">
             <div class="proj-detail-gauge__inner">
               <strong>{{ progressPercent }} %</strong>
-              <span [class]="'proj-detail-health proj-detail-health--' + health.tone">{{ health.text }}</span>
+              <span [class]="loc_ui_tern_proj_detail_health_proj_detail_health_990a19 + health.tone">{{ health.text }}</span>
             </div>
           </div>
         </div>
@@ -88,6 +88,7 @@ import {
   `
 })
 export class ProjectDetailKpiStripComponent {
+  readonly loc_ui_tern_proj_detail_health_proj_detail_health_990a19 = "proj-detail-health proj-detail-health--";
   @Input() project: ProjectDetail | null = null;
   @Input() budget: ProjectBudget | null = null;
   @Input() tasks: ProjectTask[] = [];

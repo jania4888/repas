@@ -45,12 +45,12 @@ type JournalFlatRow = {
     AccountingJournalTabsComponent
   ],
   template: `
-    <app-page-header title="Journaux auxiliaires" subtitle="Consultation par journal" />
+    <app-page-header title="Journaux auxiliaires" i18n-title="@@accounting.sub-journals.journaux.auxiliaires.a7120594" subtitle="Consultation par journal" i18n-subtitle="@@accounting.sub-journals.consultation.par.journal.47ac69a9" />
 
     <div class="card sub-journals-filters-card">
       <div class="sub-journals-toolbar">
         <div class="form-field sub-journals-field-date">
-          <label class="field-label" for="sj-from">Du</label>
+          <label class="field-label" for="sj-from" i18n="@@accounting.sub-journals.du.84814985">Du</label>
           <input
             id="sj-from"
             type="date"
@@ -60,7 +60,7 @@ type JournalFlatRow = {
             [disabled]="loading()" />
         </div>
         <div class="form-field sub-journals-field-date">
-          <label class="field-label" for="sj-to">Au</label>
+          <label class="field-label" for="sj-to" i18n="@@accounting.sub-journals.au.7a1732d5">Au</label>
           <input
             id="sj-to"
             type="date"
@@ -88,13 +88,13 @@ type JournalFlatRow = {
       role="tabpanel"
       [attr.id]="'sub-journal-panel-' + activeJournalCode"
       [attr.aria-labelledby]="'accounting-journal-tab-' + activeJournalCode">
-      <div class="accounting-kpi-row" aria-label="Totaux du journal">
+      <div class="accounting-kpi-row" aria-label="Totaux du journal" i18n-aria-label="@@accounting.sub-journals.totaux.du.journal.e65826b3">
         <div class="accounting-kpi-item">
-          <span class="accounting-kpi-label">Total débit</span>
+          <span class="accounting-kpi-label" i18n="@@accounting.sub-journals.total.debit.ea9c4853">Total débit</span>
           <span class="accounting-kpi-value">{{ tabTotals().debit | number : '1.3-3' }}</span>
         </div>
         <div class="accounting-kpi-item">
-          <span class="accounting-kpi-label">Total crédit</span>
+          <span class="accounting-kpi-label" i18n="@@accounting.sub-journals.total.credit.98c95962">Total crédit</span>
           <span class="accounting-kpi-value">{{ tabTotals().credit | number : '1.3-3' }}</span>
         </div>
       </div>
@@ -103,7 +103,7 @@ type JournalFlatRow = {
         variant="error"
         [message]="error() ?? ''"
         [showRetry]="!!error()"
-        retryLabel="Réessayer"
+        retryLabel="Réessayer" i18n-retryLabel="@@accounting.sub-journals.reessayer.c4f78b12"
         (retry)="loadJournal(activeJournalCode)" />
 
       <p-table
@@ -114,37 +114,37 @@ type JournalFlatRow = {
         [loading]="loading()"
         [rowHover]="true"
         [showCurrentPageReport]="true"
-        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes"
+        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="@@accounting.sub-journals.affichage.de.first.a.last.sur.totalrecords.ligne.3b382824"
         styleClass="p-datatable-sm sub-journals-table accounting-datatable">
         <ng-template pTemplate="header">
           <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Journal</th>
-            <th scope="col" class="sub-journals-col-narrow">N°</th>
-            <th scope="col">Libellé</th>
-            <th scope="col" class="sub-journals-col-account">Compte</th>
-            <th scope="col" class="sub-journals-col-amount">Débit</th>
-            <th scope="col" class="sub-journals-col-amount">Crédit</th>
+            <th scope="col" i18n="@@accounting.sub-journals.date.eb9a4bc1">Date</th>
+            <th scope="col" i18n="@@accounting.sub-journals.journal.57d7f743">Journal</th>
+            <th scope="col" class="sub-journals-col-narrow" i18n="@@accounting.sub-journals.n.754e6095">N°</th>
+            <th scope="col" i18n="@@accounting.sub-journals.libelle.f5485bba">Libellé</th>
+            <th scope="col" class="sub-journals-col-account" i18n="@@accounting.sub-journals.compte.c45740bb">Compte</th>
+            <th scope="col" class="sub-journals-col-amount" i18n="@@accounting.sub-journals.debit.f528224f">Débit</th>
+            <th scope="col" class="sub-journals-col-amount" i18n="@@accounting.sub-journals.credit.19194bdf">Crédit</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-r>
           <tr>
-            <td data-label="Date">{{ r.date | date : 'shortDate' }}</td>
-            <td data-label="Journal">{{ r.journal }}</td>
+            <td data-label="Date" i18n-data-label="@@accounting.sub-journals.date.eb9a4bc1">{{ r.date | date : 'shortDate' }}</td>
+            <td data-label="Journal" i18n-data-label="@@accounting.sub-journals.journal.57d7f743">{{ r.journal }}</td>
             <td class="sub-journals-col-narrow sub-journals-cell-num" data-label="N°">{{ r.piece }}</td>
-            <td data-label="Libellé">{{ r.label }}</td>
-            <td class="sub-journals-col-account" data-label="Compte">
+            <td data-label="Libellé" i18n-data-label="@@accounting.sub-journals.libelle.f5485bba">{{ r.label }}</td>
+            <td class="sub-journals-col-account" data-label="Compte" i18n-data-label="@@accounting.sub-journals.compte.c45740bb">
               <span class="sub-journals-account-code">{{ r.account }}</span>
             </td>
-            <td class="sub-journals-col-amount" data-label="Débit">{{ r.debit | number : '1.3-3' }}</td>
-            <td class="sub-journals-col-amount" data-label="Crédit">{{ r.credit | number : '1.3-3' }}</td>
+            <td class="sub-journals-col-amount" data-label="Débit" i18n-data-label="@@accounting.sub-journals.debit.f528224f">{{ r.debit | number : '1.3-3' }}</td>
+            <td class="sub-journals-col-amount" data-label="Crédit" i18n-data-label="@@accounting.sub-journals.credit.19194bdf">{{ r.credit | number : '1.3-3' }}</td>
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
             <td colspan="7" class="sub-journals-empty">
-              <p class="sub-journals-empty-title">Aucune écriture</p>
-              <p class="sub-journals-empty-hint">
+              <p class="sub-journals-empty-title" i18n="@@accounting.sub-journals.aucune.ecriture.c5660ccc">Aucune écriture</p>
+              <p class="sub-journals-empty-hint" i18n="@@accounting.sub-journals.aucune.ecriture.trouvee.pour.le.journal.af67fd0a">
                 Aucune écriture trouvée pour le journal {{ activeJournalCode }} sur la période sélectionnée.
               </p>
             </td>
@@ -211,12 +211,12 @@ type JournalFlatRow = {
       font-weight: var(--font-weight-medium);
     }
     .sub-journals-col-amount {
-      text-align: right;
+      text-align: end;
       font-variant-numeric: tabular-nums;
     }
     .sub-journals-cell-num {
       font-variant-numeric: tabular-nums;
-      text-align: right;
+      text-align: end;
     }
     .sub-journals-empty {
       text-align: center;
@@ -329,7 +329,7 @@ export class SubJournalsComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.loading.set(true);
@@ -338,14 +338,14 @@ export class SubJournalsComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (!res.success || !res.data) {
-          this.error.set(res.error ?? 'Erreur');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
           return;
         }
         this.flatRows.set(this.flatten(res.data));
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.sub-journals.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }

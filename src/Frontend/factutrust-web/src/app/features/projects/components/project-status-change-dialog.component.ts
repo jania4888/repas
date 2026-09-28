@@ -22,15 +22,15 @@ export interface ProjectStatusChangePayload {
     <p-dialog
       [(visible)]="visible"
       [modal]="true"
-      header="Modifier le statut de la tâche"
+      header="Modifier le statut de la tâche" i18n-header="@@projects.components.modifier.le.statut.de.la.tache.21dd934f"
       [style]="{ width: '32rem' }"
       [draggable]="false"
       (onHide)="cancel.emit()">
-      <p class="task-create-intro">Sélectionnez un nouveau statut et ajoutez un commentaire si nécessaire.</p>
+      <p class="task-create-intro" i18n="@@projects.components.selectionnez.un.nouveau.statut.et.ajoutez.un.com.7f152ef9">Sélectionnez un nouveau statut et ajoutez un commentaire si nécessaire.</p>
 
       <div class="task-create-form">
         <div class="task-create-field">
-          <label for="status-change-target">Nouveau statut <span class="ft-required">*</span></label>
+          <label for="status-change-target"><ng-container i18n="@@projects.components.nouveau.statut.3e47f423">Nouveau statut </ng-container> <span class="ft-required" i18n="@@projects.components.text.df58248c">*</span></label>
           <p-select
             inputId="status-change-target"
             class="w-full"
@@ -42,7 +42,7 @@ export interface ProjectStatusChangePayload {
         </div>
 
         <div class="task-create-field">
-          <label for="status-change-comment">Commentaire</label>
+          <label for="status-change-comment" i18n="@@projects.components.commentaire.bcb916ab">Commentaire</label>
           <div class="status-change-comment">
             <textarea
               id="status-change-comment"
@@ -51,20 +51,20 @@ export interface ProjectStatusChangePayload {
               [(ngModel)]="comment"
               rows="4"
               maxlength="500"
-              placeholder="Justification du changement…"></textarea>
+              placeholder="Justification du changement…" i18n-placeholder="@@projects.components.justification.du.changement.37acd745"></textarea>
             <span class="status-change-comment__count">{{ comment.length }}/500</span>
           </div>
         </div>
 
         <div class="status-change-notify">
           <p-checkbox [(ngModel)]="notifyCollaborators" [binary]="true" inputId="notifyCollab" />
-          <label for="notifyCollab">Notifier les collaborateurs concernés</label>
+          <label for="notifyCollab" i18n="@@projects.components.notifier.les.collaborateurs.concernes.51a55247">Notifier les collaborateurs concernés</label>
         </div>
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (click)="visible = false; cancel.emit()">Annuler</app-button>
-        <app-button variant="primary" (click)="confirm()">Confirmer le changement</app-button>
+        <app-button variant="secondary" (click)="visible = false; cancel.emit()" i18n="@@projects.components.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="confirm()" i18n="@@projects.components.confirmer.le.changement.58e2f7cb">Confirmer le changement</app-button>
       </ng-template>
     </p-dialog>
   `,

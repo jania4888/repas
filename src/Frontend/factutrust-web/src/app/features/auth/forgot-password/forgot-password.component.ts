@@ -60,7 +60,7 @@ export class ForgotPasswordComponent {
         if (response.success) {
           this.submitted.set(true);
         } else {
-          this.error.set(response.errors[0] || 'Une erreur est survenue');
+          this.error.set(response.errors[0] || $localize`:@@auth.forgot-password.ts.une.erreur.est.survenue.0419f56e:Une erreur est survenue`);
         }
         this.loading.set(false);
       },

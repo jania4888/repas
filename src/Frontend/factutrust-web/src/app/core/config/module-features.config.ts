@@ -9,66 +9,66 @@ export interface ModuleFeatureOption {
 /** Mirrors backend <c>ModuleFeatureCatalog</c> keys + French labels for the UI. */
 const MODULE_FEATURE_OPTIONS: Record<AppModule, ModuleFeatureOption[]> = {
   [AppModule.Clients]: [
-    { key: 'read', label: 'Consultation' },
-    { key: 'manage', label: 'Création / modification / suppression' }
+    { key: 'read', label: $localize`:@@core.module-features.ts.consultation.54b87b92:Consultation` },
+    { key: 'manage', label: $localize`:@@core.module-features.ts.creation.modification.suppression.7b9b9ec6:Création / modification / suppression` }
   ],
   [AppModule.Products]: [
-    { key: 'read', label: 'Consultation' },
-    { key: 'manage', label: 'Création / modification / suppression' }
+    { key: 'read', label: $localize`:@@core.module-features.ts.consultation.54b87b92:Consultation` },
+    { key: 'manage', label: $localize`:@@core.module-features.ts.creation.modification.suppression.7b9b9ec6:Création / modification / suppression` }
   ],
   [AppModule.Sales]: [
-    { key: 'sales_orders', label: 'Commandes clients' },
-    { key: 'quotes', label: 'Devis' },
-    { key: 'delivery_notes', label: 'Bons de livraison' },
-    { key: 'return_notes', label: 'Bons de retour' },
-    { key: 'invoices', label: 'Factures' },
-    { key: 'pricing', label: 'Tarification' }
+    { key: 'sales_orders', label: $localize`:@@core.module-features.ts.commandes.clients.928f824a:Commandes clients` },
+    { key: 'quotes', label: $localize`:@@core.module-features.ts.devis.f7622f90:Devis` },
+    { key: 'delivery_notes', label: $localize`:@@core.module-features.ts.bons.de.livraison.a283129d:Bons de livraison` },
+    { key: 'return_notes', label: $localize`:@@core.module-features.ts.bons.de.retour.d9f7ad6c:Bons de retour` },
+    { key: 'invoices', label: $localize`:@@core.module-features.ts.factures.da35e4f2:Factures` },
+    { key: 'pricing', label: $localize`:@@core.module-features.ts.tarification.5dc310ae:Tarification` }
   ],
   [AppModule.Treasury]: [
-    { key: 'read', label: 'Consultation' },
-    { key: 'manage', label: 'Saisie et mise à jour' },
-    { key: 'forecast_read', label: 'Trésorerie prévisionnelle — consultation' },
-    { key: 'forecast_manage', label: 'Trésorerie prévisionnelle — recalcul et engagements' }
+    { key: 'read', label: $localize`:@@core.module-features.ts.consultation.54b87b92:Consultation` },
+    { key: 'manage', label: $localize`:@@core.module-features.ts.saisie.et.mise.a.jour.a1590232:Saisie et mise à jour` },
+    { key: 'forecast_read', label: $localize`:@@core.module-features.ts.tresorerie.previsionnelle.consultation.5aa48958:Trésorerie prévisionnelle — consultation` },
+    { key: 'forecast_manage', label: $localize`:@@core.module-features.ts.tresorerie.previsionnelle.recalcul.et.en.c98680fb:Trésorerie prévisionnelle — recalcul et engagements` }
   ],
   [AppModule.Reports]: [
-    { key: 'sales', label: 'Ventes' },
-    { key: 'purchases', label: 'Achats' },
-    { key: 'stock', label: 'Stock' },
-    { key: 'fiches', label: 'Fiches' },
-    { key: 'payments', label: 'Paiements' }
+    { key: 'sales', label: $localize`:@@core.module-features.ts.ventes.9087fc4f:Ventes` },
+    { key: 'purchases', label: $localize`:@@core.module-features.ts.achats.ee5b078c:Achats` },
+    { key: 'stock', label: $localize`:@@core.module-features.ts.stock.bcecf456:Stock` },
+    { key: 'fiches', label: $localize`:@@core.module-features.ts.fiches.c513967c:Fiches` },
+    { key: 'payments', label: $localize`:@@core.module-features.ts.paiements.97ecc646:Paiements` }
   ],
   [AppModule.Administration]: [
-    { key: 'users', label: 'Utilisateurs' },
-    { key: 'settings', label: 'Paramètres' }
+    { key: 'users', label: $localize`:@@core.module-features.ts.utilisateurs.c661b3bc:Utilisateurs` },
+    { key: 'settings', label: $localize`:@@core.module-features.ts.parametres.ef8f0121:Paramètres` }
   ],
   [AppModule.Purchases]: [
-    { key: 'suppliers', label: 'Fournisseurs' },
-    { key: 'purchase_orders', label: 'Bons de commande' },
-    { key: 'purchase_receipts', label: 'Bons de réception' },
-    { key: 'supplier_invoices', label: 'Factures fournisseurs' }
+    { key: 'suppliers', label: $localize`:@@core.module-features.ts.fournisseurs.06b6d88c:Fournisseurs` },
+    { key: 'purchase_orders', label: $localize`:@@core.module-features.ts.bons.de.commande.aae719f0:Bons de commande` },
+    { key: 'purchase_receipts', label: $localize`:@@core.module-features.ts.bons.de.reception.84d6ebb5:Bons de réception` },
+    { key: 'supplier_invoices', label: $localize`:@@core.module-features.ts.factures.fournisseurs.1dcbc2ed:Factures fournisseurs` }
   ],
   [AppModule.Stock]: [
-    { key: 'stock', label: 'Mouvements de stock' },
-    { key: 'stock_transfers', label: 'Transferts' },
-    { key: 'inventory', label: 'Inventaires' },
-    { key: 'stock_vouchers', label: 'Bons d’entrée / sortie' },
-    { key: 'stock_lots', label: 'Lots de stock' }
+    { key: 'stock', label: $localize`:@@core.module-features.ts.mouvements.de.stock.b5ee405b:Mouvements de stock` },
+    { key: 'stock_transfers', label: $localize`:@@core.module-features.ts.transferts.f2783f95:Transferts` },
+    { key: 'inventory', label: $localize`:@@core.module-features.ts.inventaires.81598a9f:Inventaires` },
+    { key: 'stock_vouchers', label: $localize`:@@core.module-features.ts.bons.d.entree.sortie.d3aa127b:Bons d’entrée / sortie` },
+    { key: 'stock_lots', label: $localize`:@@core.module-features.ts.lots.de.stock.5db8d0f4:Lots de stock` }
   ],
   [AppModule.Accounting]: [
-    { key: 'journal', label: 'Journal / écritures' },
-    { key: 'ledger', label: 'Grand livre' },
-    { key: 'aging', label: 'Balance âgée' },
-    { key: 'vat_declaration', label: 'Déclaration TVA' },
-    { key: 'closing', label: 'Clôture' },
-    { key: 'audit_log', label: 'Journal d\'audit' },
-    { key: 'fixed_assets', label: 'Immobilisations' }
+    { key: 'journal', label: $localize`:@@core.module-features.ts.journal.ecritures.f74eaa36:Journal / écritures` },
+    { key: 'ledger', label: $localize`:@@core.module-features.ts.grand.livre.7eef7547:Grand livre` },
+    { key: 'aging', label: $localize`:@@core.module-features.ts.balance.agee.f6b2095b:Balance âgée` },
+    { key: 'vat_declaration', label: $localize`:@@core.module-features.ts.declaration.tva.4358470d:Déclaration TVA` },
+    { key: 'closing', label: $localize`:@@core.module-features.ts.cloture.eb133909:Clôture` },
+    { key: 'audit_log', label: $localize`:@@core.module-features.ts.journal.d.audit.52309db1:Journal d'audit` },
+    { key: 'fixed_assets', label: $localize`:@@core.module-features.ts.immobilisations.1e4cbe01:Immobilisations` }
   ],
   [AppModule.CRM]: [
-    { key: 'opportunities', label: 'Opportunités' },
-    { key: 'activities', label: 'Activités' },
-    { key: 'targets', label: 'Objectifs commerciaux' },
-    { key: 'templates', label: 'Modèles de devis' },
-    { key: 'dashboard', label: 'Tableau de bord commercial' }
+    { key: 'opportunities', label: $localize`:@@core.module-features.ts.opportunites.0dbfa3c5:Opportunités` },
+    { key: 'activities', label: $localize`:@@core.module-features.ts.activites.9c1f6186:Activités` },
+    { key: 'targets', label: $localize`:@@core.module-features.ts.objectifs.commerciaux.48084d31:Objectifs commerciaux` },
+    { key: 'templates', label: $localize`:@@core.module-features.ts.modeles.de.devis.b90f004d:Modèles de devis` },
+    { key: 'dashboard', label: $localize`:@@core.module-features.ts.tableau.de.bord.commercial.1d7454c7:Tableau de bord commercial` }
   ],
   [AppModule.Fiscal]: [],
   [AppModule.AI]: [],
@@ -76,22 +76,22 @@ const MODULE_FEATURE_OPTIONS: Record<AppModule, ModuleFeatureOption[]> = {
   [AppModule.Studio]: [],
   [AppModule.Payroll]: [],
   [AppModule.Honoraires]: [
-    { key: 'invoices', label: 'Factures' },
-    { key: 'quotes', label: 'Devis' },
-    { key: 'payments', label: 'Encaissements' }
+    { key: 'invoices', label: $localize`:@@core.module-features.ts.factures.da35e4f2:Factures` },
+    { key: 'quotes', label: $localize`:@@core.module-features.ts.devis.f7622f90:Devis` },
+    { key: 'payments', label: $localize`:@@core.module-features.ts.encaissements.598f53c9:Encaissements` }
   ],
   [AppModule.Projects]: [
-    { key: 'core', label: 'Projets et équipe' },
-    { key: 'tasks', label: 'Tâches' },
-    { key: 'time', label: 'Temps' },
-    { key: 'billing', label: 'Facturation projet' },
-    { key: 'esn', label: 'Pack ESN (régie / jalons)' },
-    { key: 'btp', label: 'Pack BTP (situations / chantier)' }
+    { key: 'core', label: $localize`:@@core.module-features.ts.projets.et.equipe.b00217e5:Projets et équipe` },
+    { key: 'tasks', label: $localize`:@@core.module-features.ts.taches.1b018f86:Tâches` },
+    { key: 'time', label: $localize`:@@core.module-features.ts.temps.2986a8c2:Temps` },
+    { key: 'billing', label: $localize`:@@core.module-features.ts.facturation.projet.12931a9e:Facturation projet` },
+    { key: 'esn', label: $localize`:@@core.module-features.ts.pack.esn.regie.jalons.41f28247:Pack ESN (régie / jalons)` },
+    { key: 'btp', label: $localize`:@@core.module-features.ts.pack.btp.situations.chantier.92bb06f8:Pack BTP (situations / chantier)` }
   ],
   [AppModule.RecurringContracts]: [
-    { key: 'contracts', label: 'Contrats' },
-    { key: 'usage', label: 'Consommation' },
-    { key: 'billing', label: 'Facturation' }
+    { key: 'contracts', label: $localize`:@@core.module-features.ts.contrats.d35fbb32:Contrats` },
+    { key: 'usage', label: $localize`:@@core.module-features.ts.consommation.fa3cc9c6:Consommation` },
+    { key: 'billing', label: $localize`:@@core.module-features.ts.facturation.04716c6b:Facturation` }
   ]
 };
 

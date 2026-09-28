@@ -10,8 +10,8 @@ interface BridgeRowState { source: BridgeParamMapping['source']; value: string; 
 
 /** Sources proposées par défaut (copie de l'ancien `sourceOptions` d'Automations). */
 const BASE_SOURCES: ReadonlyArray<{ label: string; value: BridgeParamMapping['source'] }> = [
-  { label: 'Champ', value: 'field' },
-  { label: 'Constante', value: 'const' }
+  { label: $localize`:@@studio.studio-bridge-action-picker.ts.champ.e1472010:Champ`, value: 'field' },
+  { label: $localize`:@@studio.studio-bridge-action-picker.ts.constante.685c7c8f:Constante`, value: 'const' }
 ];
 
 /**
@@ -27,25 +27,25 @@ const BASE_SOURCES: ReadonlyArray<{ label: string; value: BridgeParamMapping['so
   imports: [FormsModule, SelectModule, InputTextModule, TextareaModule],
   template: `
     <div class="bap">
-      <label class="bap__lbl">Action ERP *</label>
+      <label class="bap__lbl" i18n="@@studio.shared.action.erp.cbd82106">Action ERP *</label>
       <p-select [options]="actions()" [ngModel]="action()" (ngModelChange)="onActionChange($event)" optionLabel="name" optionValue="name"
-        [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="bap__w-full" placeholder="Choisir une action"
-        [disabled]="disabled()" [attr.aria-label]="'Action ERP'" />
+        [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="bap__w-full" placeholder="Choisir une action" i18n-placeholder="@@studio.shared.choisir.une.action.c17f1360"
+        [disabled]="disabled()" [attr.aria-label]="loc_action_erp_37fe60" />
       @if (selectedAction(); as act) {
         <small class="bap__hint">{{ act.description }}</small>
-        <label class="bap__section">Correspondance des paramètres</label>
+        <label class="bap__section" i18n="@@studio.shared.correspondance.des.parametres.f8d90751">Correspondance des paramètres</label>
         @for (p of act.parameters; track p.name) {
           <div class="ft-map" [attr.data-testid]="'bap-row-' + p.name">
-            <div class="ft-map-name">{{ p.name }} @if (p.required) { <span class="ft-req">*</span> }</div>
+            <div class="ft-map-name">{{ p.name }} @if (p.required) { <span class="ft-req" i18n="@@studio.shared.text.df58248c">*</span> }</div>
             <p-select [options]="sourceOptions()" [ngModel]="rowSource(p.name)" (ngModelChange)="setSource(p.name, $event)" optionLabel="label" optionValue="value"
               appendTo="body" panelStyleClass="studio-theme" styleClass="ft-map-src" [disabled]="disabled()" />
             @switch (rowSource(p.name)) {
               @case ('field') { <p-select [options]="fieldOptions()" [ngModel]="rowValue(p.name)" (ngModelChange)="setValue(p.name, $event)" optionLabel="label" optionValue="value"
-                [showClear]="true" [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="ft-map-val" placeholder="Champ…" [disabled]="disabled()" /> }
+                [showClear]="true" [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="ft-map-val" placeholder="Champ…" i18n-placeholder="@@studio.shared.champ.ff508878" [disabled]="disabled()" /> }
               @case ('template') { <textarea pTextarea rows="2" class="ft-map-val" [ngModel]="rowValue(p.name)" (ngModelChange)="setValue(p.name, $event)"
                 placeholder="{{ '{{record.champ}}' }}" [disabled]="disabled()"></textarea> }
               @default { <input pInputText class="ft-map-val" [ngModel]="rowValue(p.name)" (ngModelChange)="setValue(p.name, $event)"
-                [placeholder]="p.allowedValues?.length ? p.allowedValues!.join(' | ') : 'Valeur fixe'" [disabled]="disabled()" /> }
+                [placeholder]="p.allowedValues?.length ? p.allowedValues!.join(' | ') : loc_ui_tern_valeur_fixe_84e108" [disabled]="disabled()" /> }
             }
             <small class="ft-map-desc">{{ p.description }}</small>
           </div>
@@ -60,6 +60,9 @@ const BASE_SOURCES: ReadonlyArray<{ label: string; value: BridgeParamMapping['so
     :host ::ng-deep .bap__w-full, :host ::ng-deep .ft-map-src, :host ::ng-deep .ft-map-val { width: 100%; }`]
 })
 export class StudioBridgeActionPickerComponent {
+  protected readonly loc_action_erp_37fe60 = $localize`:@@studio.studio-bridge-action-picker.tpl.action.erp.37fe6093:Action ERP`;
+
+  readonly loc_ui_tern_valeur_fixe_84e108 = $localize`:@@ui.tern.valeur.fixe.84e108:Valeur fixe`;
   readonly actions = input.required<AutomationAction[]>();
   readonly fields = input.required<CustomField[]>();
   readonly action = model<string | null>(null);
@@ -69,7 +72,7 @@ export class StudioBridgeActionPickerComponent {
 
   protected readonly selectedAction = computed(() => this.actions().find(a => a.name === this.action()) ?? null);
   protected readonly sourceOptions = computed(() =>
-    this.allowTemplate() ? [...BASE_SOURCES, { label: 'Modèle de texte', value: 'template' as const }] : [...BASE_SOURCES]);
+    this.allowTemplate() ? [...BASE_SOURCES, { label: $localize`:@@studio.studio-bridge-action-picker.ts.modele.de.texte.95807c98:Modèle de texte`, value: 'template' as const }] : [...BASE_SOURCES]);
   protected readonly fieldOptions = computed(() =>
     this.fields().filter(f => f.isActive).map(f => ({ label: `${f.label} (${f.key})`, value: f.key })));
 

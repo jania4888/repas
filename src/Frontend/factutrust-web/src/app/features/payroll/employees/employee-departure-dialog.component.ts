@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -33,7 +34,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
   ],
   template: `
     <p-dialog
-      header="Déclarer un départ"
+      header="Déclarer un départ" i18n-header="@@payroll.employees.declarer.un.depart.97498276"
       [(visible)]="visible"
       [modal]="true"
       [style]="{ width: '480px' }"
@@ -41,25 +42,25 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
       (onHide)="onHide()">
       <p-message
         severity="info"
-        text="La date de sortie sera enregistrée sur le dossier salarié. Le contrat actif peut être clôturé à cette date. Pensez à lancer la régularisation IRPP (solde de tout compte) si l'option est activée."
+        text="La date de sortie sera enregistrée sur le dossier salarié. Le contrat actif peut être clôturé à cette date. Pensez à lancer la régularisation IRPP (solde de tout compte) si l'option est activée." i18n-text="@@payroll.employees.la.date.de.sortie.sera.enregistree.sur.l.9779e2ae"
         styleClass="mb-3 w-full" />
 
       <div class="payroll-form-group mb-2">
-        <label>Date de sortie</label>
+        <label i18n="@@payroll.employees.date.de.sortie.a963425d">Date de sortie</label>
         <p-datepicker [(ngModel)]="terminationDate" dateFormat="dd/mm/yy" [showIcon]="true" appendTo="body" styleClass="w-full" [maxDate]="today" />
       </div>
       <div class="payroll-form-group mb-2">
-        <label>Motif</label>
-        <textarea pTextarea [(ngModel)]="reason" rows="2" class="w-full" placeholder="Optionnel"></textarea>
+        <label i18n="@@payroll.employees.motif.2a198f47">Motif</label>
+        <textarea pTextarea [(ngModel)]="reason" rows="2" class="w-full" placeholder="Optionnel" i18n-placeholder="@@payroll.employees.optionnel.879d6b16"></textarea>
       </div>
       <div class="payroll-form-group checkbox-row mb-2">
         <p-checkbox inputId="closeContract" [(ngModel)]="closeActiveContract" [binary]="true" />
-        <label for="closeContract">Clôturer le contrat actif à la date de sortie</label>
+        <label for="closeContract" i18n="@@payroll.employees.cloturer.le.contrat.actif.a.la.date.de.sortie.4227d3d4">Clôturer le contrat actif à la date de sortie</label>
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="visible = false">Annuler</app-button>
-        <app-button variant="primary" (click)="submit()" [disabled]="saving || !terminationDate">Enregistrer</app-button>
+        <app-button variant="outline" (click)="visible = false" i18n="@@payroll.employees.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="submit()" [disabled]="saving || !terminationDate" i18n="@@payroll.employees.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
   `,
@@ -103,8 +104,8 @@ export class EmployeeDepartureDialogComponent {
         const warning = res.data?.warning;
         this.toast.add({
           severity: 'success',
-          summary: 'Départ',
-          detail: warning ?? 'Départ enregistré.',
+          summary: $localize`:@@employee-departure-dialog.component.summary.Départ:Départ`,
+          detail: warning ?? $localize`:@@ui.tern.depart.enregistre.89698d:Départ enregistré.`,
           life: warning ? 10000 : 3000
         });
         this.visible = false;
@@ -115,8 +116,8 @@ export class EmployeeDepartureDialogComponent {
         this.saving = false;
         this.toast.add({
           severity: 'error',
-          summary: 'Départ',
-          detail: err.error?.message ?? 'Enregistrement impossible.'
+          summary: $localize`:@@employee-departure-dialog.component.summary.Départ:Départ`,
+          detail: err.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`
         });
       }
     });

@@ -61,8 +61,8 @@ export interface VatChartSegment {
 }
 
 const MONTH_NAMES_FR = [
-  '', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  '', $localize`:@@accounting.vat-declaration.view-model.ts.janvier.7a32ae0f:Janvier`, $localize`:@@accounting.vat-declaration.view-model.ts.fevrier.63fc1803:Février`, $localize`:@@accounting.vat-declaration.view-model.ts.mars.1778011d:Mars`, $localize`:@@accounting.vat-declaration.view-model.ts.avril.4efeee46:Avril`, $localize`:@@accounting.vat-declaration.view-model.ts.mai.afe526a6:Mai`, $localize`:@@accounting.vat-declaration.view-model.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@accounting.vat-declaration.view-model.ts.juillet.e8e0920c:Juillet`, $localize`:@@accounting.vat-declaration.view-model.ts.aout.460b6696:Août`, $localize`:@@accounting.vat-declaration.view-model.ts.septembre.08d23f31:Septembre`, $localize`:@@accounting.vat-declaration.view-model.ts.octobre.0ed28485:Octobre`, $localize`:@@accounting.vat-declaration.view-model.ts.novembre.632580af:Novembre`, $localize`:@@accounting.vat-declaration.view-model.ts.decembre.03bcd9b0:Décembre`
 ];
 
 export function formatPeriodLabel(year: number, month: number): string {
@@ -111,9 +111,9 @@ export function computeTotalDeductible(d: VatDeclarationDto): number {
 
 export function statusLabel(status: number): string {
   switch (status) {
-    case 1: return 'Soumise';
-    case 2: return 'Verrouillée';
-    default: return 'Brouillon';
+    case 1: return $localize`:@@accounting.vat-declaration.view-model.ts.soumise.4e6697f7:Soumise`;
+    case 2: return $localize`:@@accounting.vat-declaration.view-model.ts.verrouillee.af142775:Verrouillée`;
+    default: return $localize`:@@accounting.vat-declaration.view-model.ts.brouillon.57d2d7a7:Brouillon`;
   }
 }
 
@@ -171,18 +171,18 @@ export function buildDivergenceRows(d: VatDeclarationDto): VatDivergenceRow[] {
   if (!s || !d.monthlyDeclarationV2Enabled) return [];
 
   const candidates: VatDivergenceRow[] = [
-    { label: 'TVA collectée 19 %', declared: d.collectedVat19, computed: s.collectedVat19 },
-    { label: 'TVA collectée 13 %', declared: d.collectedVat13, computed: s.collectedVat13 },
-    { label: 'TVA collectée 7 %', declared: d.collectedVat7, computed: s.collectedVat7 },
-    { label: 'TVA déductible — biens et services', declared: d.deductibleVatGoods, computed: s.deductibleVatGoods },
-    { label: 'TVA déductible — immobilisations', declared: d.deductibleVatAssets, computed: s.deductibleVatAssets },
-    { label: 'Crédit antérieur', declared: d.previousCredit, computed: s.previousCredit },
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.tva.collectee.19.4fb0b2e4:TVA collectée 19 %`, declared: d.collectedVat19, computed: s.collectedVat19 },
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.tva.collectee.13.4a1e8169:TVA collectée 13 %`, declared: d.collectedVat13, computed: s.collectedVat13 },
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.tva.collectee.7.f619e8c4:TVA collectée 7 %`, declared: d.collectedVat7, computed: s.collectedVat7 },
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.tva.deductible.biens.et.services.1af09997:TVA déductible — biens et services`, declared: d.deductibleVatGoods, computed: s.deductibleVatGoods },
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.tva.deductible.immobilisations.4bb099e3:TVA déductible — immobilisations`, declared: d.deductibleVatAssets, computed: s.deductibleVatAssets },
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.credit.anterieur.cd16b0d7:Crédit antérieur`, declared: d.previousCredit, computed: s.previousCredit },
     { label: 'FODEC', declared: d.fodec, computed: s.fodec },
-    { label: 'Droit de timbre', declared: d.droitTimbre, computed: s.droitTimbre },
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.droit.de.timbre.01f26054:Droit de timbre`, declared: d.droitTimbre, computed: s.droitTimbre },
     { label: 'TCL', declared: d.tcl, computed: s.tcl },
     { label: 'TFP', declared: d.tfp, computed: s.tfp },
     { label: 'FOPROLOS', declared: d.foprolos, computed: s.foprolos },
-    { label: 'Retenues à la source (RS)', declared: d.withholdingTax, computed: s.withholdingTax }
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.retenues.a.la.source.rs.04dda5ef:Retenues à la source (RS)`, declared: d.withholdingTax, computed: s.withholdingTax }
   ];
 
   return candidates.filter(r => hasSuggestionMismatch(r.declared, r.computed));
@@ -197,11 +197,10 @@ export function payrollHint(d: VatDeclarationDto): string | null {
   if (!s || !d.monthlyDeclarationV2Enabled) return null;
 
   if (!s.payrollRunExists)
-    return 'Aucun cycle de paie pour cette période : la TFP et le FOPROLOS restent à saisir manuellement.';
+    return $localize`:@@accounting.vat-declaration.view-model.ts.aucun.cycle.de.paie.pour.cette.periode.l.e1691c85:Aucun cycle de paie pour cette période : la TFP et le FOPROLOS restent à saisir manuellement.`;
 
   if (!s.payrollRunUsable) {
-    return `Le cycle de paie de la période est au statut « ${s.payrollRunStatusDisplay ?? 'Brouillon'} » : `
-      + 'ses montants TFP et FOPROLOS ne sont pas repris. Validez le cycle pour les intégrer.';
+    return $localize`:@@accounting.vat-declaration.view-model.ts.le.cycle.de.paie.de.la.periode.est.au.st.81b23f76:Le cycle de paie de la période est au statut « ${s.payrollRunStatusDisplay ?? 'Brouillon'}:p: » : ses montants TFP et FOPROLOS ne sont pas repris. Validez le cycle pour les intégrer.`;
   }
 
   return null;
@@ -231,7 +230,7 @@ export function buildTaxRows(
     const breakdown = d.collectedVatBreakdown?.find(r => r.ratePercent === rate);
     const vat = rate === 19 ? d.collectedVat19 : rate === 13 ? d.collectedVat13 : d.collectedVat7;
     rows.push({
-      taxLabel: `TVA collectée ${rate} %`,
+      taxLabel: $localize`:@@accounting.vat-declaration.view-model.ts.tva.collectee.rate.0ae02ce3:TVA collectée ${rate}:rate: %`,
       taxableBase: breakdown?.taxableBase ?? null,
       ratePercent: rate,
       amountToPay: vat,
@@ -241,7 +240,7 @@ export function buildTaxRows(
   }
 
   rows.push({
-    taxLabel: 'TVA déductible — biens et services',
+    taxLabel: $localize`:@@accounting.vat-declaration.view-model.ts.tva.deductible.biens.et.services.1af09997:TVA déductible — biens et services`,
     taxableBase: d.deductiblePurchasesTaxableBase ?? null,
     ratePercent: null,
     amountToPay: null,
@@ -250,7 +249,7 @@ export function buildTaxRows(
   });
 
   rows.push({
-    taxLabel: 'TVA déductible — immobilisations',
+    taxLabel: $localize`:@@accounting.vat-declaration.view-model.ts.tva.deductible.immobilisations.4bb099e3:TVA déductible — immobilisations`,
     taxableBase: null,
     ratePercent: null,
     amountToPay: null,
@@ -259,7 +258,7 @@ export function buildTaxRows(
   });
 
   rows.push({
-    taxLabel: 'Crédit antérieur',
+    taxLabel: $localize`:@@accounting.vat-declaration.view-model.ts.credit.anterieur.cd16b0d7:Crédit antérieur`,
     taxableBase: null,
     ratePercent: null,
     amountToPay: null,
@@ -268,7 +267,7 @@ export function buildTaxRows(
   });
 
   rows.push({
-    taxLabel: 'TVA due',
+    taxLabel: $localize`:@@accounting.vat-declaration.view-model.ts.tva.due.dcfce644:TVA due`,
     taxableBase: null,
     ratePercent: null,
     amountToPay: d.vatDue,
@@ -282,7 +281,7 @@ export function buildTaxRows(
   // crédit reporté sur la période suivante : le rendre visible à l'écran (jusqu'ici seul le PDF le montrait).
   if (d.creditToCarry > 0) {
     rows.push({
-      taxLabel: 'Crédit de TVA à reporter',
+      taxLabel: $localize`:@@accounting.vat-declaration.view-model.ts.credit.de.tva.a.reporter.ad66be6a:Crédit de TVA à reporter`,
       taxableBase: null,
       ratePercent: null,
       amountToPay: null,
@@ -307,7 +306,7 @@ export function buildTaxRows(
       suggestedAmount: s?.fodec ?? null
     });
     rows.push({
-      taxLabel: 'Droit de timbre',
+      taxLabel: $localize`:@@accounting.vat-declaration.view-model.ts.droit.de.timbre.01f26054:Droit de timbre`,
       taxableBase: null,
       ratePercent: null,
       amountToPay: extras.droitTimbre,
@@ -349,7 +348,7 @@ export function buildTaxRows(
       suggestedAmount: s?.foprolos ?? null
     });
     rows.push({
-      taxLabel: 'Retenues à la source (RS)',
+      taxLabel: $localize`:@@accounting.vat-declaration.view-model.ts.retenues.a.la.source.rs.04dda5ef:Retenues à la source (RS)`,
       taxableBase: null,
       ratePercent: null,
       amountToPay: extras.withholdingTax,
@@ -360,7 +359,7 @@ export function buildTaxRows(
       suggestedAmount: s?.withholdingTax ?? null
     });
     rows.push({
-      taxLabel: 'Acomptes provisionnels (déduits)',
+      taxLabel: $localize`:@@accounting.vat-declaration.view-model.ts.acomptes.provisionnels.deduits.e190ddc4:Acomptes provisionnels (déduits)`,
       taxableBase: null,
       ratePercent: null,
       amountToPay: null,
@@ -371,7 +370,7 @@ export function buildTaxRows(
   }
 
   rows.push({
-    taxLabel: 'TOTAL À PAYER',
+    taxLabel: $localize`:@@accounting.vat-declaration.view-model.ts.total.a.payer.d5d23e83:TOTAL À PAYER`,
     taxableBase: null,
     ratePercent: null,
     amountToPay: null,
@@ -390,12 +389,12 @@ export function buildChartSegments(
   totalToPay: number
 ): VatChartSegment[] {
   if (!d.monthlyDeclarationV2Enabled) {
-    return [{ label: 'TVA due', value: d.vatDue }];
+    return [{ label: $localize`:@@accounting.vat-declaration.view-model.ts.tva.due.dcfce644:TVA due`, value: d.vatDue }];
   }
   const segments: VatChartSegment[] = [
-    { label: 'TVA due', value: d.vatDue },
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.tva.due.dcfce644:TVA due`, value: d.vatDue },
     { label: 'FODEC', value: extras.fodec },
-    { label: 'Droit de timbre', value: extras.droitTimbre },
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.droit.de.timbre.01f26054:Droit de timbre`, value: extras.droitTimbre },
     { label: 'TCL', value: extras.tcl },
     { label: 'TFP', value: extras.tfp },
     { label: 'FOPROLOS', value: extras.foprolos },
@@ -403,7 +402,7 @@ export function buildChartSegments(
   ];
   return segments.filter(s => s.value > 0).length > 0
     ? segments.filter(s => s.value > 0)
-    : [{ label: 'Total', value: totalToPay }];
+    : [{ label: $localize`:@@accounting.vat-declaration.view-model.ts.total.b25928c6:Total`, value: totalToPay }];
 }
 
 export function buildDocLinks(d: VatDeclarationDto, year: number, month: number): VatDocLinkRow[] {
@@ -413,34 +412,34 @@ export function buildDocLinks(d: VatDeclarationDto, year: number, month: number)
 
   return [
     {
-      label: 'Journal des ventes',
+      label: $localize`:@@accounting.vat-declaration.view-model.ts.journal.des.ventes.923d6129:Journal des ventes`,
       route: '/accounting/journal',
       queryParams: { from: range.from, to: range.to },
       status: totalCollected > 0 ? 'ok' : 'neutral',
       statusLabel: totalCollected > 0 ? 'OK' : '—'
     },
     {
-      label: 'Journal des achats',
+      label: $localize`:@@accounting.vat-declaration.view-model.ts.journal.des.achats.c6758504:Journal des achats`,
       route: '/accounting/journal',
       queryParams: { from: range.from, to: range.to },
       status: hasPurchases ? 'ok' : 'neutral',
       statusLabel: hasPurchases ? 'OK' : '—'
     },
     {
-      label: 'Retenues à la source',
+      label: $localize`:@@accounting.vat-declaration.view-model.ts.retenues.a.la.source.d52de9c1:Retenues à la source`,
       route: '/withholding-tax',
       status: d.withholdingTax > 0 ? 'ok' : 'neutral',
       statusLabel: d.withholdingTax > 0 ? 'OK' : '—'
     },
     {
-      label: 'Échéancier fiscal',
+      label: $localize`:@@accounting.vat-declaration.view-model.ts.echeancier.fiscal.193d9cef:Échéancier fiscal`,
       route: '/accounting/fiscal-schedule',
       queryParams: { fiscalYear: String(year), periodMonth: String(month) },
       status: d.status === 1 ? 'ok' : 'neutral',
-      statusLabel: d.status === 1 ? 'Déposée' : 'À suivre'
+      statusLabel: d.status === 1 ? $localize`:@@accounting.vat-declaration.view-model.ts.deposee.8d55a917:Déposée` : $localize`:@@accounting.vat-declaration.view-model.ts.a.suivre.f47e7e5b:À suivre`
     },
     {
-      label: 'Contrôles de pré-clôture',
+      label: $localize`:@@accounting.vat-declaration.view-model.ts.controles.de.pre.cloture.e6b9bc87:Contrôles de pré-clôture`,
       route: '/accounting/pre-closing',
       status: 'neutral',
       statusLabel: 'Info'

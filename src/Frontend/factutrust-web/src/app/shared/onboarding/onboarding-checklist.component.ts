@@ -19,15 +19,13 @@ import {
   imports: [CommonModule, RouterModule],
   template: `
     @if (visible()) {
-      <section class="onboarding-checklist" data-tour="onboarding-checklist" aria-label="Premiers pas">
+      <section class="onboarding-checklist" data-tour="onboarding-checklist" aria-label="Premiers pas" i18n-aria-label="@@shared.onboarding.onboarding-checklist.premiers.pas.975acb5a">
         <header class="onboarding-checklist__header">
           <div>
-            <h2 class="onboarding-checklist__title">Premiers pas</h2>
+            <h2 class="onboarding-checklist__title" i18n="@@shared.onboarding.onboarding-checklist.premiers.pas.975acb5a">Premiers pas</h2>
             <p class="onboarding-checklist__subtitle">{{ progressLabel() }}</p>
           </div>
-          <button type="button" class="onboarding-checklist__dismiss" (click)="dismiss()">
-            Masquer
-          </button>
+          <button type="button" class="onboarding-checklist__dismiss" (click)="dismiss()" i18n="@@shared.onboarding.onboarding-checklist.masquer.adb05f2b"> Masquer </button>
         </header>
         <ul class="onboarding-checklist__list">
           @for (item of visibleItems(); track item.id) {
@@ -37,7 +35,7 @@ import {
                 class="onboarding-checklist__check"
                 [class.onboarding-checklist__check--done]="isDone(item.id)"
                 [attr.aria-pressed]="isDone(item.id)"
-                [attr.aria-label]="isDone(item.id) ? item.label + ' — fait' : 'Marquer comme fait : ' + item.label"
+                [attr.aria-label]="isDone(item.id) ? item.label + loc_ui_tern_fait_9007d0 : loc_ui_tern_marquer_comme_fait_75108d + item.label"
                 (click)="markDone(item.id)">
                 @if (isDone(item.id)) {
                   <i class="fa-solid fa-check" aria-hidden="true"></i>
@@ -151,6 +149,8 @@ import {
   `]
 })
 export class OnboardingChecklistComponent implements OnInit {
+  readonly loc_ui_tern_fait_9007d0 = $localize`:@@ui.tern.fait.9007d0: — fait`;
+  readonly loc_ui_tern_marquer_comme_fait_75108d = $localize`:@@ui.tern.marquer.comme.fait.75108d:Marquer comme fait : `;
   private readonly auth = inject(AuthService);
   private readonly api = inject(ProductOnboardingApiService);
 
@@ -171,7 +171,7 @@ export class OnboardingChecklistComponent implements OnInit {
   readonly progressLabel = computed(() => {
     const list = this.items();
     const done = list.filter(i => this.doneIds().has(i.id)).length;
-    return `${done} / ${list.length} étapes terminées`;
+    return $localize`:@@shared.onboarding-checklist.etapes.terminees:${done}:done: / ${list.length}:total: étapes terminées`;
   });
 
   ngOnInit(): void {

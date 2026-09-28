@@ -76,7 +76,7 @@
 
 // ─── Section lignes vide (mise en évidence) ─────────────────────────────────
 .lines-section-wrap--empty ::ng-deep app-form-section .form-section {
-  border-left-color: var(--color-warning-400, #fbbf24);
+  border-inline-start-color: var(--color-warning-400, #fbbf24);
   background: var(--color-warning-50, #fffbeb);
 }
 
@@ -249,7 +249,7 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--color-text-secondary, #475569);
-  text-align: left;
+  text-align: start;
   white-space: nowrap;
 }
 
@@ -272,7 +272,7 @@
 }
 
 .ft-num {
-  text-align: right;
+  text-align: end;
   font-variant-numeric: tabular-nums;
 }
 
@@ -287,7 +287,7 @@
 
 :host ::ng-deep .lines-table .ft-inline-input .p-inputnumber-input {
   width: 100%;
-  text-align: right;
+  text-align: end;
 }
 
 .product-suggestion {

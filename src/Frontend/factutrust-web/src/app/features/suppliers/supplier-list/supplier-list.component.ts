@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
@@ -22,6 +23,7 @@ import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { applySupplierListFiltersFromQuery } from '@core/utils/list-filter-from-query';
 import { take } from 'rxjs/operators';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 interface TypeOption {
     label: string;
@@ -37,6 +39,7 @@ interface StatusOption {
     selector: 'app-supplier-list',
     standalone: true,
     imports: [
+        BackendLabelPipe,
         CommonModule,
         RouterModule,
         FormsModule,
@@ -58,28 +61,26 @@ interface StatusOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Fournisseurs"
-      subtitle="Gérez vos fournisseurs pour les bons de commande.">
+      title="Fournisseurs" i18n-title="@@suppliers.supplier-list.fournisseurs.06b6d88c"
+      subtitle="Gérez vos fournisseurs pour les bons de commande." i18n-subtitle="@@suppliers.supplier-list.gerez.vos.fournisseurs.pour.les.bons.de.561fe7a4">
       @if (canCreateSupplier()) {
         <app-button
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new">
-          Ajouter un fournisseur
-        </app-button>
+          routerLink="new" i18n="@@suppliers.supplier-list.ajouter.un.fournisseur.cfb5e618"> Ajouter un fournisseur </app-button>
       }
     </app-page-header>
 
     <!-- Filters -->
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@suppliers.supplier-list.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@suppliers.supplier-list.reinitialiser.les.filtres.d8915f02" i18n="@@suppliers.supplier-list.reinitialiser.9637f51e">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -91,7 +92,7 @@ interface StatusOption {
           <input
             pInputText
             type="text"
-            placeholder="Rechercher par nom, email ou NIF…"
+            placeholder="Rechercher par nom, email ou NIF…" i18n-placeholder="@@suppliers.supplier-list.rechercher.par.nom.email.ou.nif.e25e488c"
             [(ngModel)]="searchTerm"
             (input)="onSearchInput($event)"
             class="w-full">
@@ -102,7 +103,7 @@ interface StatusOption {
           [(ngModel)]="selectedType"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les types"
+          placeholder="Tous les types" i18n-placeholder="@@suppliers.supplier-list.tous.les.types.5a6be24d"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -112,7 +113,7 @@ interface StatusOption {
           [(ngModel)]="selectedStatus"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@suppliers.supplier-list.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -137,7 +138,7 @@ interface StatusOption {
           [rows]="pageSize"
           [totalRecords]="totalRecords()"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} fournisseurs"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} fournisseurs" i18n-currentPageReportTemplate="@@suppliers.supplier-list.affichage.de.first.a.last.sur.totalrecords.fourn.72f8264d"
           (onLazyLoad)="onPageChange($event)"
           [loading]="loading()"
           [first]="(page - 1) * pageSize"
@@ -146,14 +147,14 @@ interface StatusOption {
 
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="name">Nom <p-sortIcon field="name"></p-sortIcon></th>
-            <th>Contact</th>
-            <th>NIF</th>
-            <th>Type</th>
-            <th>Localisation</th>
-            <th style="width: 120px">Délai paiement</th>
-            <th style="width: 80px">Statut</th>
-            <th style="width: 100px">Actions</th>
+            <th pSortableColumn="name"><ng-container i18n="@@suppliers.supplier-list.nom.7ff20370">Nom </ng-container> <p-sortIcon field="name"></p-sortIcon></th>
+            <th i18n="@@suppliers.supplier-list.contact.b37456c4">Contact</th>
+            <th i18n="@@suppliers.supplier-list.nif.77124a3a">NIF</th>
+            <th i18n="@@suppliers.supplier-list.type.3deb7456">Type</th>
+            <th i18n="@@suppliers.supplier-list.localisation.84e3d483">Localisation</th>
+            <th style="width: 120px" i18n="@@suppliers.supplier-list.delai.paiement.bfca1de5">Délai paiement</th>
+            <th style="width: 80px" i18n="@@suppliers.supplier-list.statut.659499f3">Statut</th>
+            <th style="width: 100px" i18n="@@suppliers.supplier-list.actions.c3cd636a">Actions</th>
           </tr>
         </ng-template>
 
@@ -172,7 +173,7 @@ interface StatusOption {
                 @if (supplier.email) {
                   <a [href]="'mailto:' + supplier.email" class="email">{{ supplier.email }}</a>
                 } @else {
-                  <span class="email">—</span>
+                  <span class="email" i18n="@@suppliers.supplier-list.text.1b93795b">—</span>
                 }
                 <span class="phone">{{ supplier.phone || '-' }}</span>
               </div>
@@ -182,7 +183,7 @@ interface StatusOption {
             </td>
             <td>
               <p-tag
-                [value]="supplier.typeDisplay"
+                [value]="supplier.typeDisplay | backendLabel"
                 [severity]="getTypeSeverity(supplier.type)">
               </p-tag>
             </td>
@@ -194,7 +195,7 @@ interface StatusOption {
             </td>
             <td>
               <p-tag
-                [value]="supplier.isActive ? 'Actif' : 'Inactif'"
+                [value]="supplier.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033"
                 [severity]="supplier.isActive ? 'success' : 'secondary'">
               </p-tag>
             </td>
@@ -206,7 +207,7 @@ interface StatusOption {
                   icon="pi-eye"
                   [iconOnly]="true"
                   [routerLink]="supplier.id"
-                  ariaLabel="Voir le fournisseur">
+                  ariaLabel="Voir le fournisseur" i18n-ariaLabel="@@suppliers.supplier-list.voir.le.fournisseur.f9af0e37">
                 </app-button>
                 @if (canEditSupplier()) {
                   <app-button
@@ -215,7 +216,7 @@ interface StatusOption {
                     icon="pi-pencil"
                     [iconOnly]="true"
                     [routerLink]="[supplier.id, 'edit']"
-                    ariaLabel="Modifier le fournisseur">
+                    ariaLabel="Modifier le fournisseur" i18n-ariaLabel="@@suppliers.supplier-list.modifier.le.fournisseur.df265ac3">
                   </app-button>
                 }
               </div>
@@ -227,10 +228,10 @@ interface StatusOption {
           <tr>
             <td colspan="8" class="text-center p-6">
               <app-empty-state
-                title="Aucun fournisseur"
-                description="Ajoutez votre premier fournisseur pour créer des bons de commande."
+                title="Aucun fournisseur" i18n-title="@@suppliers.supplier-list.aucun.fournisseur.44a1e39f"
+                description="Ajoutez votre premier fournisseur pour créer des bons de commande." i18n-description="@@suppliers.supplier-list.ajoutez.votre.premier.fournisseur.pour.c.a43e54d7"
                 [showAction]="canCreateSupplier()"
-                actionLabel="Ajouter un fournisseur"
+                actionLabel="Ajouter un fournisseur" i18n-actionLabel="@@suppliers.supplier-list.ajouter.un.fournisseur.e17d0606"
                 actionRoute="new">
               </app-empty-state>
             </td>
@@ -301,6 +302,8 @@ interface StatusOption {
   `]
 })
 export class SupplierListComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
     private supplierService = inject(SupplierService);
     private toastService = inject(ToastService);
     private auth = inject(AuthService);
@@ -326,9 +329,9 @@ export class SupplierListComponent implements OnInit, OnDestroy {
     summaryMetrics = computed<TotalMetric[]>(() => {
         const s = this.summary();
         return [
-            { label: 'Fournisseurs', value: s?.count, format: 'number', icon: 'pi-truck', tone: 'primary' },
-            { label: 'Actifs', value: s?.activeCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-            { label: 'Inactifs', value: s?.inactiveCount, format: 'number', icon: 'pi-ban', tone: 'neutral' }
+            { label: $localize`:@@suppliers.supplier-list.ts.fournisseurs.06b6d88c:Fournisseurs`, value: s?.count, format: 'number', icon: 'pi-truck', tone: 'primary' },
+            { label: $localize`:@@suppliers.supplier-list.ts.actifs.4fc3a980:Actifs`, value: s?.activeCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+            { label: $localize`:@@suppliers.supplier-list.ts.inactifs.41c2d03e:Inactifs`, value: s?.inactiveCount, format: 'number', icon: 'pi-ban', tone: 'neutral' }
         ];
     });
 
@@ -339,9 +342,9 @@ export class SupplierListComponent implements OnInit, OnDestroy {
     pageSize = 20;
 
     breadcrumbItems: BreadcrumbItem[] = [
-        { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-        { label: 'Achats' },
-        { label: 'Fournisseurs' }
+        { label: $localize`:@@suppliers.supplier-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+        { label: $localize`:@@suppliers.supplier-list.ts.achats.ee5b078c:Achats` },
+        { label: $localize`:@@suppliers.supplier-list.ts.fournisseurs.06b6d88c:Fournisseurs` }
     ];
 
     skeletonColumns: SkeletonColumn[] = [
@@ -356,13 +359,13 @@ export class SupplierListComponent implements OnInit, OnDestroy {
     ];
 
     typeOptions: TypeOption[] = [
-        { label: 'Particulier', value: SupplierType.Individual },
-        { label: 'Entreprise', value: SupplierType.Business }
+        { label: $localize`:@@suppliers.supplier-list.ts.particulier.281680dd:Particulier`, value: SupplierType.Individual },
+        { label: $localize`:@@suppliers.supplier-list.ts.entreprise.d03e74b6:Entreprise`, value: SupplierType.Business }
     ];
 
     statusOptions: StatusOption[] = [
-        { label: 'Actifs', value: true },
-        { label: 'Inactifs', value: false }
+        { label: $localize`:@@suppliers.supplier-list.ts.actifs.4fc3a980:Actifs`, value: true },
+        { label: $localize`:@@suppliers.supplier-list.ts.inactifs.41c2d03e:Inactifs`, value: false }
     ];
 
     ngOnInit(): void {
@@ -437,8 +440,8 @@ export class SupplierListComponent implements OnInit, OnDestroy {
         this.initialLoad.set(false);
                 this.toastService.add({
                     severity: 'error',
-                    summary: 'Erreur',
-                    detail: error?.error?.errors?.[0] || 'Impossible de charger les fournisseurs'
+                    summary: $localize`:@@supplier-list.component.summary.Erreur:Erreur`,
+                    detail: error?.error?.errors?.[0] || $localize`:@@suppliers.supplier-list.ts.impossible.de.charger.les.fournisseurs.33d5b97f:Impossible de charger les fournisseurs`
                 });
             }
         });

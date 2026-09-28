@@ -34,17 +34,15 @@ import { RevenueTableComponent } from '../sales-by-line/revenue-table.component'
   ],
   template: `
     <app-page-header
-      title="Rapports décisionnels ventes produits"
-      subtitle="Performance, tendances, panier moyen et produits à mettre en avant">
-      <app-button variant="secondary" icon="pi-download" iconPos="left" (click)="onExport()">
-        Exporter
-      </app-button>
+      title="Rapports décisionnels ventes produits" i18n-title="@@reports.product-sales-analytics.rapports.decisionnels.ventes.produits.3f8c6fdc"
+      subtitle="Performance, tendances, panier moyen et produits à mettre en avant" i18n-subtitle="@@reports.product-sales-analytics.performance.tendances.panier.moyen.et.pr.042dc686">
+      <app-button variant="secondary" icon="pi-download" iconPos="left" (click)="onExport()" i18n="@@reports.product-sales-analytics.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
 
     <div class="filter-section">
       <div class="filter-group">
-        <label for="period" class="filter-label">Période</label>
-        <select id="period" [(ngModel)]="selectedPeriod" (ngModelChange)="onPeriodChange()" class="filter-select" aria-label="Période">
+        <label for="period" class="filter-label" i18n="@@reports.product-sales-analytics.periode.de2110b7">Période</label>
+        <select id="period" [(ngModel)]="selectedPeriod" (ngModelChange)="onPeriodChange()" class="filter-select" aria-label="Période" i18n-aria-label="@@reports.product-sales-analytics.periode.de2110b7">
           @for (p of periodOptions; track p.value) {
             <option [value]="p.value">{{ p.label }}</option>
           }
@@ -54,32 +52,32 @@ import { RevenueTableComponent } from '../sales-by-line/revenue-table.component'
 
     <p-tabs class="ft-tabs" (valueChange)="onTabChange($event)" [lazy]="true">
       <p-tablist>
-        <p-tab [value]="0"><i class="pi pi-chart-bar"></i><span>Performance produits</span></p-tab>
-        <p-tab [value]="1"><i class="pi pi-chart-line"></i><span>Évolution ventes par produit</span></p-tab>
-        <p-tab [value]="2"><i class="pi pi-shopping-cart"></i><span>Indicateurs panier</span></p-tab>
-        <p-tab [value]="3"><i class="pi pi-box"></i><span>Produits jamais vendus</span></p-tab>
-        <p-tab [value]="4"><i class="pi pi-tag"></i><span>CA par catégorie</span></p-tab>
+        <p-tab [value]="0"><i class="pi pi-chart-bar"></i><span i18n="@@reports.product-sales-analytics.performance.produits.fc69303c">Performance produits</span></p-tab>
+        <p-tab [value]="1"><i class="pi pi-chart-line"></i><span i18n="@@reports.product-sales-analytics.evolution.ventes.par.produit.703fd446">Évolution ventes par produit</span></p-tab>
+        <p-tab [value]="2"><i class="pi pi-shopping-cart"></i><span i18n="@@reports.product-sales-analytics.indicateurs.panier.1d499282">Indicateurs panier</span></p-tab>
+        <p-tab [value]="3"><i class="pi pi-box"></i><span i18n="@@reports.product-sales-analytics.produits.jamais.vendus.607efbe9">Produits jamais vendus</span></p-tab>
+        <p-tab [value]="4"><i class="pi pi-tag"></i><span i18n="@@reports.product-sales-analytics.ca.par.categorie.e22fee46">CA par catégorie</span></p-tab>
       </p-tablist>
       <p-tabpanels>
       <p-tabpanel [value]="0">
         <div class="tab-content">
-          <p class="tab-desc">Classement par CA avec marge et part du chiffre d'affaires.</p>
+          <p class="tab-desc" i18n="@@reports.product-sales-analytics.classement.par.ca.avec.marge.et.part.du.chiffre..8232e13e">Classement par CA avec marge et part du chiffre d'affaires.</p>
           @if (loading()) {
-            <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i> Chargement...</div>
+            <div class="loading-placeholder" i18n="@@reports.product-sales-analytics.chargement.4bf1fb6b"><i class="pi pi-spin pi-spinner"></i> Chargement...</div>
           } @else if (!productPerformance().length) {
-            <div class="empty-placeholder"><i class="pi pi-info-circle"></i> Aucune donnée pour cette période.</div>
+            <div class="empty-placeholder" i18n="@@reports.product-sales-analytics.aucune.donnee.pour.cette.periode.174260ce"><i class="pi pi-info-circle"></i> Aucune donnée pour cette période.</div>
           } @else {
             <p-table [value]="productPerformance()" styleClass="p-datatable-sm reports-table">
               <ng-template pTemplate="header">
                 <tr>
-                  <th>Produit</th>
-                  <th>Catégorie</th>
-                  <th class="text-right">Quantité</th>
-                  <th class="text-right">CA</th>
-                  <th class="text-right">Coût</th>
-                  <th class="text-right">Marge</th>
-                  <th class="text-right">Marge %</th>
-                  <th class="text-right">Part CA %</th>
+                  <th i18n="@@reports.product-sales-analytics.produit.ff673dc2">Produit</th>
+                  <th i18n="@@reports.product-sales-analytics.categorie.6b38300a">Catégorie</th>
+                  <th class="text-right" i18n="@@reports.product-sales-analytics.quantite.09a38fda">Quantité</th>
+                  <th class="text-right" i18n="@@reports.product-sales-analytics.ca.09acbb7d">CA</th>
+                  <th class="text-right" i18n="@@reports.product-sales-analytics.cout.4a4aa395">Coût</th>
+                  <th class="text-right" i18n="@@reports.product-sales-analytics.marge.d9ef1a1d">Marge</th>
+                  <th class="text-right" i18n="@@reports.product-sales-analytics.marge.143c2670">Marge %</th>
+                  <th class="text-right" i18n="@@reports.product-sales-analytics.part.ca.e28d941d">Part CA %</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-row>
@@ -101,20 +99,20 @@ import { RevenueTableComponent } from '../sales-by-line/revenue-table.component'
 
       <p-tabpanel [value]="1">
         <div class="tab-content">
-          <p class="tab-desc">Ventes par produit et par mois (période sélectionnée).</p>
+          <p class="tab-desc" i18n="@@reports.product-sales-analytics.ventes.par.produit.et.par.mois.periode.selection.b8271a75">Ventes par produit et par mois (période sélectionnée).</p>
           @if (loading()) {
-            <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i> Chargement...</div>
+            <div class="loading-placeholder" i18n="@@reports.product-sales-analytics.chargement.4bf1fb6b"><i class="pi pi-spin pi-spinner"></i> Chargement...</div>
           } @else if (!productSalesTrend().length) {
-            <div class="empty-placeholder"><i class="pi pi-info-circle"></i> Aucune donnée pour cette période.</div>
+            <div class="empty-placeholder" i18n="@@reports.product-sales-analytics.aucune.donnee.pour.cette.periode.174260ce"><i class="pi pi-info-circle"></i> Aucune donnée pour cette période.</div>
           } @else {
             <p-table [value]="productSalesTrend()" [rows]="20" [paginator]="productSalesTrend().length > 20" styleClass="p-datatable-sm reports-table">
               <ng-template pTemplate="header">
                 <tr>
-                  <th>Période</th>
-                  <th>Produit</th>
-                  <th>Catégorie</th>
-                  <th class="text-right">Quantité</th>
-                  <th class="text-right">CA</th>
+                  <th i18n="@@reports.product-sales-analytics.periode.de2110b7">Période</th>
+                  <th i18n="@@reports.product-sales-analytics.produit.ff673dc2">Produit</th>
+                  <th i18n="@@reports.product-sales-analytics.categorie.6b38300a">Catégorie</th>
+                  <th class="text-right" i18n="@@reports.product-sales-analytics.quantite.09a38fda">Quantité</th>
+                  <th class="text-right" i18n="@@reports.product-sales-analytics.ca.09acbb7d">CA</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-row>
@@ -133,56 +131,56 @@ import { RevenueTableComponent } from '../sales-by-line/revenue-table.component'
 
       <p-tabpanel [value]="2">
         <div class="tab-content">
-          <p class="tab-desc">Panier moyen et nombre de lignes par facture sur la période.</p>
+          <p class="tab-desc" i18n="@@reports.product-sales-analytics.panier.moyen.et.nombre.de.lignes.par.facture.sur.1621b9e8">Panier moyen et nombre de lignes par facture sur la période.</p>
           @if (loading()) {
-            <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i> Chargement...</div>
+            <div class="loading-placeholder" i18n="@@reports.product-sales-analytics.chargement.4bf1fb6b"><i class="pi pi-spin pi-spinner"></i> Chargement...</div>
           } @else if (basketMetrics()) {
             <div class="kpi-grid">
               <app-stat-card
-                label="Panier moyen"
+                label="Panier moyen" i18n-label="@@reports.product-sales-analytics.panier.moyen.e9ce57ee"
                 [value]="formatAmount(basketMetrics()!.averageBasket, basketMetrics()!.currency)"
                 icon="pi-shopping-cart"
                 variant="primary">
               </app-stat-card>
               <app-stat-card
-                label="Lignes moy. / facture"
+                label="Lignes moy. / facture" i18n-label="@@reports.product-sales-analytics.lignes.moy.facture.471f033e"
                 [value]="(basketMetrics()!.averageLinesPerInvoice | number:'1.1-1') + ''"
                 icon="pi-list"
                 variant="success">
               </app-stat-card>
               <app-stat-card
-                label="Factures"
+                label="Factures" i18n-label="@@reports.product-sales-analytics.factures.da35e4f2"
                 [value]="basketMetrics()!.totalInvoices + ''"
                 icon="pi-file"
                 variant="primary">
               </app-stat-card>
               <app-stat-card
-                label="CA total"
+                label="CA total" i18n-label="@@reports.product-sales-analytics.ca.total.c324bfa2"
                 [value]="formatAmount(basketMetrics()!.totalRevenue, basketMetrics()!.currency)"
                 icon="pi-dollar"
                 variant="success">
               </app-stat-card>
             </div>
           } @else {
-            <div class="empty-placeholder"><i class="pi pi-info-circle"></i> Aucune donnée pour cette période.</div>
+            <div class="empty-placeholder" i18n="@@reports.product-sales-analytics.aucune.donnee.pour.cette.periode.174260ce"><i class="pi pi-info-circle"></i> Aucune donnée pour cette période.</div>
           }
         </div>
       </p-tabpanel>
 
       <p-tabpanel [value]="3">
         <div class="tab-content">
-          <p class="tab-desc">Produits actifs sans vente sur la période sélectionnée (opportunités de mise en avant).</p>
+          <p class="tab-desc" i18n="@@reports.product-sales-analytics.produits.actifs.sans.vente.sur.la.periode.select.2c2e047f">Produits actifs sans vente sur la période sélectionnée (opportunités de mise en avant).</p>
           @if (loading()) {
-            <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i> Chargement...</div>
+            <div class="loading-placeholder" i18n="@@reports.product-sales-analytics.chargement.4bf1fb6b"><i class="pi pi-spin pi-spinner"></i> Chargement...</div>
           } @else if (!productsNeverSold().length) {
-            <div class="empty-placeholder"><i class="pi pi-check-circle"></i> Tous vos produits actifs ont été vendus sur cette période.</div>
+            <div class="empty-placeholder" i18n="@@reports.product-sales-analytics.tous.vos.produits.actifs.ont.ete.vendus.89f12622"><i class="pi pi-check-circle"></i> Tous vos produits actifs ont été vendus sur cette période.</div>
           } @else {
             <p-table [value]="productsNeverSold()" styleClass="p-datatable-sm reports-table">
               <ng-template pTemplate="header">
                 <tr>
-                  <th>Produit</th>
-                  <th>Catégorie</th>
-                  <th class="text-right">Prix unitaire</th>
+                  <th i18n="@@reports.product-sales-analytics.produit.ff673dc2">Produit</th>
+                  <th i18n="@@reports.product-sales-analytics.categorie.6b38300a">Catégorie</th>
+                  <th class="text-right" i18n="@@reports.product-sales-analytics.prix.unitaire.3e848c96">Prix unitaire</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-row>
@@ -199,7 +197,7 @@ import { RevenueTableComponent } from '../sales-by-line/revenue-table.component'
 
       <p-tabpanel [value]="4">
         <div class="tab-content">
-          <p class="tab-desc">Répartition du chiffre d'affaires par catégorie.</p>
+          <p class="tab-desc" i18n="@@reports.product-sales-analytics.repartition.du.chiffre.d.affaires.par.categorie.766851c4">Répartition du chiffre d'affaires par catégorie.</p>
           <app-revenue-table
             [rows]="revenueByCategory()"
             [loading]="loading()"
@@ -210,7 +208,7 @@ import { RevenueTableComponent } from '../sales-by-line/revenue-table.component'
     </p-tabs>
 
     <div class="back-link-wrap">
-      <a routerLink="/reports" class="back-link">Retour aux rapports</a>
+      <a routerLink="/reports" class="back-link" i18n="@@reports.product-sales-analytics.retour.aux.rapports.48320a4f">Retour aux rapports</a>
     </div>
   `,
   styles: [`
@@ -229,7 +227,7 @@ import { RevenueTableComponent } from '../sales-by-line/revenue-table.component'
     .tab-content { padding: var(--spacing-4) 0; }
     .tab-desc { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--spacing-4); }
     .loading-placeholder, .empty-placeholder { padding: var(--spacing-8); text-align: center; color: var(--color-text-secondary); }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .amount { font-family: 'JetBrains Mono', monospace; font-weight: var(--font-weight-semibold); }
     .code { font-size: var(--font-size-xs); color: var(--color-text-secondary); }
     .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-4); margin-bottom: var(--spacing-4); }
@@ -253,10 +251,10 @@ export class ProductSalesAnalyticsComponent implements OnInit {
   activeTabIndex = 0;
 
   periodOptions = [
-    { label: 'Ce mois', value: 'month' },
-    { label: 'Ce trimestre', value: 'quarter' },
-    { label: 'Cette année', value: 'year' },
-    { label: 'Tout', value: 'all' }
+    { label: $localize`:@@reports.product-sales-analytics.ts.ce.mois.db74c560:Ce mois`, value: 'month' },
+    { label: $localize`:@@reports.product-sales-analytics.ts.ce.trimestre.4d9d129d:Ce trimestre`, value: 'quarter' },
+    { label: $localize`:@@reports.product-sales-analytics.ts.cette.annee.052507a0:Cette année`, value: 'year' },
+    { label: $localize`:@@reports.product-sales-analytics.ts.tout.6b0b09b8:Tout`, value: 'all' }
   ];
 
   private getPeriodDates(): { fromDate: string; toDate: string } {

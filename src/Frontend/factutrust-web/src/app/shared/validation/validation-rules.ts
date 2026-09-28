@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 /**
  * Centralized Validation Rules for InstaFact
  * Tunisian fiscal compliance - Single source of truth
@@ -86,9 +87,37 @@ export const TUNISIAN_GOVERNORATES = [
   'Sousse', 'Tataouine', 'Tozeur', 'Tunis', 'Zaghouan'
 ] as const;
 
+/** Libellé affiché ; la valeur envoyée à l'API reste le nom latin officiel. */
+const GOVERNORATE_LABELS: Record<(typeof TUNISIAN_GOVERNORATES)[number], string> = {
+  Ariana: $localize`:@@gov.ariana:Ariana`,
+  'Béja': $localize`:@@gov.beja:Béja`,
+  'Ben Arous': $localize`:@@gov.benArous:Ben Arous`,
+  Bizerte: $localize`:@@gov.bizerte:Bizerte`,
+  'Gabès': $localize`:@@gov.gabes:Gabès`,
+  Gafsa: $localize`:@@gov.gafsa:Gafsa`,
+  Jendouba: $localize`:@@gov.jendouba:Jendouba`,
+  Kairouan: $localize`:@@gov.kairouan:Kairouan`,
+  Kasserine: $localize`:@@gov.kasserine:Kasserine`,
+  'Kébili': $localize`:@@gov.kebili:Kébili`,
+  'Le Kef': $localize`:@@gov.kef:Le Kef`,
+  Mahdia: $localize`:@@gov.mahdia:Mahdia`,
+  'La Manouba': $localize`:@@gov.manouba:La Manouba`,
+  'Médenine': $localize`:@@gov.medenine:Médenine`,
+  Monastir: $localize`:@@gov.monastir:Monastir`,
+  Nabeul: $localize`:@@gov.nabeul:Nabeul`,
+  Sfax: $localize`:@@gov.sfax:Sfax`,
+  'Sidi Bouzid': $localize`:@@gov.sidiBouzid:Sidi Bouzid`,
+  Siliana: $localize`:@@gov.siliana:Siliana`,
+  Sousse: $localize`:@@gov.sousse:Sousse`,
+  Tataouine: $localize`:@@gov.tataouine:Tataouine`,
+  Tozeur: $localize`:@@gov.tozeur:Tozeur`,
+  Tunis: $localize`:@@gov.tunis:Tunis`,
+  Zaghouan: $localize`:@@gov.zaghouan:Zaghouan`
+};
+
 /** PrimeNG dropdown options for Tunisian governorates. */
 export const TUNISIAN_GOVERNORATE_OPTIONS = TUNISIAN_GOVERNORATES.map(g => ({
-  label: g,
+  label: GOVERNORATE_LABELS[g],
   value: g
 }));
 
@@ -411,20 +440,20 @@ export const VALIDATION_RULES = {
 // ============================================
 
 export const ERROR_MESSAGES = {
-  required: (field: string) => `${field} est obligatoire`,
-  minLength: (field: string, min: number) => `${field} doit contenir au moins ${min} caractères`,
-  maxLength: (field: string, max: number) => `${field} ne peut pas dépasser ${max} caractères`,
-  min: (field: string, min: number) => `${field} doit être supérieur ou égal à ${min}`,
-  max: (field: string, max: number) => `${field} doit être inférieur ou égal à ${max}`,
-  pattern: (field: string) => `Format invalide pour ${field}`,
+  required: (field: string) => $localize`:@@shared.validation-rules.ts.field.est.obligatoire.c6d452cd:${field}:field: est obligatoire`,
+  minLength: (field: string, min: number) => $localize`:@@shared.validation-rules.ts.field.doit.contenir.au.moins.min.caracte.aa92ad30:${field}:field: doit contenir au moins ${min}:min: caractères`,
+  maxLength: (field: string, max: number) => $localize`:@@shared.validation-rules.ts.field.ne.peut.pas.depasser.max.caractere.650212c0:${field}:field: ne peut pas dépasser ${max}:max: caractères`,
+  min: (field: string, min: number) => $localize`:@@shared.validation-rules.ts.field.doit.etre.superieur.ou.egal.a.min.25317166:${field}:field: doit être supérieur ou égal à ${min}:min:`,
+  max: (field: string, max: number) => $localize`:@@shared.validation-rules.ts.field.doit.etre.inferieur.ou.egal.a.max.4664cf44:${field}:field: doit être inférieur ou égal à ${max}:max:`,
+  pattern: (field: string) => $localize`:@@shared.validation-rules.ts.format.invalide.pour.field.68a8afd3:Format invalide pour ${field}:field:`,
   email: () => 'Adresse email invalide',
   nif: () => 'Matricule fiscal invalide. Format attendu: 1772793W/A/M/000',
-  phone: () => 'Numéro de téléphone invalide. Format attendu: +216 XX XXX XXX',
+  phone: () => $localize`:@@shared.validation-rules.ts.numero.de.telephone.invalide.format.atte.5902825a:Numéro de téléphone invalide. Format attendu: +216 XX XXX XXX`,
   postalCode: () => 'Code postal invalide. 4 chiffres attendus',
   iban: () => 'IBAN invalide. Format tunisien attendu: TN59XXXX...',
   rib: () => 'RIB invalide. 20 chiffres attendus',
-  vatRate: () => 'Taux de TVA invalide (0%, 7%, 13% ou 19% autorisés)',
+  vatRate: () => $localize`:@@shared.validation-rules.ts.taux.de.tva.invalide.0.7.13.ou.19.autori.87dd5872:Taux de TVA invalide (0%, 7%, 13% ou 19% autorisés)`,
   governorate: () => 'Gouvernorat invalide',
-  discountExceedsTotal: () => 'La remise ne peut pas dépasser le montant de la ligne',
-  linkedInvoiceRequired: () => "Une facture d'avoir doit être liée à une facture existante"
+  discountExceedsTotal: () => $localize`:@@shared.validation-rules.ts.la.remise.ne.peut.pas.depasser.le.montan.08bca2a6:La remise ne peut pas dépasser le montant de la ligne`,
+  linkedInvoiceRequired: () => $localize`:@@shared.validation-rules.ts.une.facture.d.avoir.doit.etre.liee.a.une.6f9c798f:Une facture d'avoir doit être liée à une facture existante`
 } as const;

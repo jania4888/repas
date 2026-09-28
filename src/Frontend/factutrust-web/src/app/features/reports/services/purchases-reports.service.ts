@@ -3,6 +3,8 @@ import { Observable, forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { SupplierInvoiceService, SupplierInvoiceListItem, isSupplierInvoicePaid, isSupplierInvoicePending } from '@core/services/supplier-invoice.service';
 import { formatLocalDate } from '@core/utils/date.util';
+import { erpPlural, erpPluralLocale } from '@core/i18n/erp-plural';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 export type ReportPeriod = 'week' | 'month' | 'quarter' | 'year' | 'all';
 
@@ -64,16 +66,16 @@ export interface PurchasesReportsData {
 }
 
 const MONTH_NAMES_FR = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  $localize`:@@reports.purchases-reports.ts.janvier.7a32ae0f:Janvier`, $localize`:@@reports.purchases-reports.ts.fevrier.63fc1803:Février`, $localize`:@@reports.purchases-reports.ts.mars.1778011d:Mars`, $localize`:@@reports.purchases-reports.ts.avril.4efeee46:Avril`, $localize`:@@reports.purchases-reports.ts.mai.afe526a6:Mai`, $localize`:@@reports.purchases-reports.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@reports.purchases-reports.ts.juillet.e8e0920c:Juillet`, $localize`:@@reports.purchases-reports.ts.aout.460b6696:Août`, $localize`:@@reports.purchases-reports.ts.septembre.08d23f31:Septembre`, $localize`:@@reports.purchases-reports.ts.octobre.0ed28485:Octobre`, $localize`:@@reports.purchases-reports.ts.novembre.632580af:Novembre`, $localize`:@@reports.purchases-reports.ts.decembre.03bcd9b0:Décembre`
 ];
 
 const MONTH_SHORT_FR = [
-  'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin',
-  'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'
+  $localize`:@@reports.purchases-reports.ts.jan.efed3690:Jan`, $localize`:@@reports.purchases-reports.ts.fev.7b8852ec:Fév`, $localize`:@@reports.purchases-reports.ts.mar.c4ba0822:Mar`, $localize`:@@reports.purchases-reports.ts.avr.d648a3b7:Avr`, $localize`:@@reports.purchases-reports.ts.mai.afe526a6:Mai`, $localize`:@@reports.purchases-reports.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@reports.purchases-reports.ts.juil.190b5d60:Juil`, $localize`:@@reports.purchases-reports.ts.aout.460b6696:Août`, $localize`:@@reports.purchases-reports.ts.sep.fdd289e3:Sep`, $localize`:@@reports.purchases-reports.ts.oct.51327aef:Oct`, $localize`:@@reports.purchases-reports.ts.nov.bb9bfefd:Nov`, $localize`:@@reports.purchases-reports.ts.dec.2bc2249a:Déc`
 ];
 
-const DAY_NAMES_FR = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+const DAY_NAMES_FR = ['Lun', $localize`:@@reports.purchases-reports.ts.mar.c4ba0822:Mar`, 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
 const CROSS_TAB_YEARS_WINDOW = 5;
 
@@ -233,7 +235,7 @@ export class PurchasesReportsService {
           return invDate >= dayStart && invDate <= dayEnd;
         }).length;
         result.push({
-          label: dayStart.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'short' }),
+          label: dayStart.toLocaleDateString(erpDateLocale('fr-FR'), { weekday: 'long', day: 'numeric', month: 'short' }),
           labelShort: DAY_NAMES_FR[dayStart.getDay() === 0 ? 6 : dayStart.getDay() - 1],
           amount,
           invoiceCount,
@@ -264,7 +266,7 @@ export class PurchasesReportsService {
           return invDate >= weekStart && invDate <= weekEnd;
         }).length;
         result.push({
-          label: `Sem. ${i + 1}`,
+          label: $localize`:@@reports.purchases-reports.ts.sem.p.884bf8ca:Sem. ${i + 1}:p:`,
           labelShort: `S${i + 1}`,
           amount,
           invoiceCount,
@@ -341,13 +343,20 @@ export class PurchasesReportsService {
 
   private buildSummaryText(pendingCount: number, amountToPay: number, currency: string): string {
     if (pendingCount === 0) {
-      return 'Toutes vos factures fournisseurs sont à jour.';
+      return $localize`:@@reports.purchases-reports.ts.toutes.vos.factures.fournisseurs.sont.a.07650a2d:Toutes vos factures fournisseurs sont à jour.`;
     }
     const amountStr = new Intl.NumberFormat('fr-FR', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(amountToPay);
-    return `Vous avez ${pendingCount} facture${pendingCount > 1 ? 's' : ''} fournisseur${pendingCount > 1 ? 's' : ''} à payer pour ${amountStr} ${currency}.`;
+    return erpPlural(pendingCount, {
+      zero: $localize`:@@reports.purchases-reports.factures.a.payer.zero:Vous avez ${pendingCount}:pendingCount: factures fournisseurs à payer pour ${amountStr}:amountStr: ${currency}:currency:.`,
+      one: $localize`:@@reports.purchases-reports.factures.a.payer.one:Vous avez ${pendingCount}:pendingCount: facture fournisseur à payer pour ${amountStr}:amountStr: ${currency}:currency:.`,
+      two: $localize`:@@reports.purchases-reports.factures.a.payer.two:Vous avez ${pendingCount}:pendingCount: factures fournisseurs à payer pour ${amountStr}:amountStr: ${currency}:currency:.`,
+      few: $localize`:@@reports.purchases-reports.factures.a.payer.few:Vous avez ${pendingCount}:pendingCount: factures fournisseurs à payer pour ${amountStr}:amountStr: ${currency}:currency:.`,
+      many: $localize`:@@reports.purchases-reports.factures.a.payer.many:Vous avez ${pendingCount}:pendingCount: factures fournisseurs à payer pour ${amountStr}:amountStr: ${currency}:currency:.`,
+      other: $localize`:@@reports.purchases-reports.factures.a.payer.other:Vous avez ${pendingCount}:pendingCount: factures fournisseurs à payer pour ${amountStr}:amountStr: ${currency}:currency:.`
+    }, erpPluralLocale());
   }
 
   loadExpenseCrossTabData(): Observable<ExpenseCrossTabData | null> {

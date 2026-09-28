@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -83,8 +84,8 @@ export class StockSimpleComponent implements OnInit {
 
     // Breadcrumb
     breadcrumbItems: BreadcrumbItem[] = [
-        { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-        { label: 'Mon Stock' }
+        { label: $localize`:@@stock.stock-simple.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+        { label: $localize`:@@stock.stock-simple.ts.mon.stock.7d1adf31:Mon Stock` }
     ];
 
     private pendingAlertsScroll = false;
@@ -138,8 +139,8 @@ export class StockSimpleComponent implements OnInit {
                 console.error('Error loading stock overview', err);
                 this.messageService.add({
                     severity: 'error',
-                    summary: 'Erreur',
-                    detail: 'Impossible de charger le stock'
+                    summary: $localize`:@@stock-simple.component.summary.Erreur:Erreur`,
+                    detail: $localize`:@@stock-simple.component.detail.impossible.de.charger.le.stock.4b95c144:Impossible de charger le stock`
                 });
                 this.loading.set(false);
             }
@@ -194,7 +195,7 @@ export class StockSimpleComponent implements OnInit {
                     this.countResult = response.data;
                     this.messageService.add({
                         severity: 'success',
-                        summary: 'Stock mis à jour',
+                        summary: $localize`:@@stock-simple.component.summary.Stock mis à :Stock mis à jour`,
                         detail: response.data.humanMessage
                     });
                     // Reload after showing result
@@ -207,8 +208,8 @@ export class StockSimpleComponent implements OnInit {
                 this.submitting = false;
                 this.messageService.add({
                     severity: 'error',
-                    summary: 'Erreur',
-                    detail: 'Impossible de mettre à jour le stock'
+                    summary: $localize`:@@stock-simple.component.summary.Erreur:Erreur`,
+                    detail: $localize`:@@stock-simple.component.detail.impossible.de.mettre.a.jour.le.stock.d4d50f5b:Impossible de mettre à jour le stock`
                 });
             }
         });

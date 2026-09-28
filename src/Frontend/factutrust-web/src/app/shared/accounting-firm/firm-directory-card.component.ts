@@ -36,7 +36,7 @@ import {
         </div>
 
         @if (item.sameGovernorate) {
-          <p class="fdc__match">
+          <p class="fdc__match" i18n="@@shared.accounting-firm.firm-directory-card.meme.gouvernorat.a95a67ce">
             <i class="pi pi-check-circle" aria-hidden="true"></i>
             Même gouvernorat
           </p>
@@ -58,13 +58,13 @@ import {
             <span>{{ languageLabels(item) }}</span>
           }
           @if (item.acceptsRemote) {
-            <span>Accepte le distanciel</span>
+            <span i18n="@@shared.accounting-firm.firm-directory-card.accepte.le.distanciel.eabce959">Accepte le distanciel</span>
           }
           @if (item.teamSizeBand) {
             <span>{{ teamLabel(item.teamSizeBand) }}</span>
           }
           @if (item.yearsOfExperience != null) {
-            <span>{{ item.yearsOfExperience }} ans d’expérience</span>
+            <span i18n="@@shared.accounting-firm.firm-directory-card.ans.d.experience.50b3e410">{{ item.yearsOfExperience }} ans d’expérience</span>
           }
         </p>
 
@@ -73,11 +73,11 @@ import {
         }
 
         @if (item.professionalRegistrationNumber) {
-          <p class="fdc__reg">N° d’inscription : {{ item.professionalRegistrationNumber }}</p>
+          <p class="fdc__reg" i18n="@@shared.accounting-firm.firm-directory-card.n.d.inscription.3df22522">N° d’inscription : {{ item.professionalRegistrationNumber }}</p>
         }
 
         @if (selectable()) {
-          <span class="fdc__cta">{{ selected() ? 'Cabinet choisi' : 'Choisir ce cabinet' }}</span>
+          <span class="fdc__cta">{{ selected() ? loc_ui_tern_cabinet_choisi_0863e3 : loc_ui_tern_choisir_ce_cabinet_bdb0f5 }}</span>
         }
       </article>
     }
@@ -92,7 +92,7 @@ import {
       background: var(--color-surface, #fff);
       border: 1px solid var(--color-border-subtle, #e2e8f0);
       border-radius: var(--radius-xl, 16px);
-      text-align: left;
+      text-align: start;
       color: inherit;
     }
     .fdc[role="button"] { cursor: pointer; width: 100%; font: inherit; }
@@ -117,7 +117,7 @@ import {
     }
     .fdc__name { margin: 0; font-size: 1rem; font-weight: 650; color: var(--color-text-primary, #0f172a); }
     .fdc__place { margin: 2px 0 0; font-size: 0.85rem; color: var(--color-text-secondary, #64748b); }
-    .fdc__place i { margin-right: 4px; }
+    .fdc__place i { margin-inline-end: 4px; }
     .fdc__match {
       display: inline-flex;
       align-items: center;
@@ -150,6 +150,8 @@ import {
   `]
 })
 export class FirmDirectoryCardComponent {
+  readonly loc_ui_tern_cabinet_choisi_0863e3 = $localize`:@@ui.tern.cabinet.choisi.0863e3:Cabinet choisi`;
+  readonly loc_ui_tern_choisir_ce_cabinet_bdb0f5 = $localize`:@@ui.tern.choisir.ce.cabinet.bdb0f5:Choisir ce cabinet`;
   readonly firm = input.required<AccountingFirmDirectoryItem>();
   readonly selected = input(false);
   readonly selectable = input(false);

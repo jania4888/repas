@@ -1,5 +1,5 @@
 <p-dialog
-  header="Remise en banque"
+  header="Remise en banque" i18n-header="@@payments.cash-desk.remise.en.banque.f42e5169"
   [visible]="visible"
   (visibleChange)="handleVisibleChange($event)"
   [modal]="true"
@@ -20,7 +20,7 @@
     <!-- Step 0 -->
     @if (currentStep === 0) {
       <div class="step-panel">
-        <h3 class="step-title">Type de dépôt <span class="req">*</span></h3>
+        <h3 class="step-title"><ng-container i18n="@@payments.cash-desk.type.de.depot.29517a83">Type de dépôt </ng-container> <span class="req" i18n="@@payments.cash-desk.text.df58248c">*</span></h3>
         <div class="type-cards" role="list">
           <button
             type="button"
@@ -29,7 +29,7 @@
             [disabled]="serverBalancesLoading() || getBalanceMethod(1) <= 0"
             (click)="selectDepositType(BankDepositType.Draft)">
             <i class="pi pi-briefcase" aria-hidden="true"></i>
-            <span class="type-label">Traites</span>
+            <span class="type-label" i18n="@@payments.cash-desk.traites.740213ed">Traites</span>
             <span class="type-amount">{{ formatCurrency(getBalanceMethod(1)) }} TND</span>
           </button>
           <button
@@ -39,7 +39,7 @@
             [disabled]="serverBalancesLoading() || getBalanceMethod(2) <= 0"
             (click)="selectDepositType(BankDepositType.Check)">
             <i class="pi pi-file" aria-hidden="true"></i>
-            <span class="type-label">Chèques</span>
+            <span class="type-label" i18n="@@payments.cash-desk.cheques.e01849ae">Chèques</span>
             <span class="type-amount">{{ formatCurrency(getBalanceMethod(2)) }} TND</span>
           </button>
           <button
@@ -49,7 +49,7 @@
             [disabled]="serverBalancesLoading() || getBalanceMethod(0) <= 0"
             (click)="selectDepositType(BankDepositType.Cash)">
             <i class="pi pi-money-bill" aria-hidden="true"></i>
-            <span class="type-label">Espèce</span>
+            <span class="type-label" i18n="@@payments.cash-desk.espece.8a1b4eda">Espèce</span>
             <span class="type-amount">{{ formatCurrency(getBalanceMethod(0)) }} TND</span>
           </button>
         </div>
@@ -60,11 +60,11 @@
     @if (currentStep === 1) {
       <div class="step-panel">
         <div class="field">
-          <label for="slipRef">Numéro de la remise en banque <span class="req">*</span></label>
+          <label for="slipRef"><ng-container i18n="@@payments.cash-desk.numero.de.la.remise.en.banque.38998db8">Numéro de la remise en banque </ng-container> <span class="req" i18n="@@payments.cash-desk.text.df58248c">*</span></label>
           <input pInputText id="slipRef" [(ngModel)]="depositSlipReference" class="w-full" maxlength="100" autocomplete="off" />
         </div>
         <div class="field">
-          <label for="depDate">Date de remise</label>
+          <label for="depDate" i18n="@@payments.cash-desk.date.de.remise.602248d9">Date de remise</label>
           <p-datepicker
             inputId="depDate"
             [(ngModel)]="depositDate"
@@ -77,7 +77,7 @@
           </p-datepicker>
         </div>
         <div class="field">
-          <span class="field-label">Compte destinataire <span class="req">*</span></span>
+          <span class="field-label"><ng-container i18n="@@payments.cash-desk.compte.destinataire.4709f5e3">Compte destinataire </ng-container> <span class="req" i18n="@@payments.cash-desk.text.df58248c">*</span></span>
           <div class="account-row">
             <div class="account-pick">
               @for (a of bankAccounts; track a.id) {
@@ -98,13 +98,13 @@
             @if (!auth.isFirmDelegatedReadonly()) {
               <button type="button" class="add-bank-tile" (click)="openAddBank()">
                 <i class="pi pi-plus" aria-hidden="true"></i>
-                <span>Ajouter une nouvelle banque</span>
+                <span i18n="@@payments.cash-desk.ajouter.une.nouvelle.banque.ebf1972d">Ajouter une nouvelle banque</span>
               </button>
             }
           </div>
         </div>
         @if (previewNumber) {
-          <p class="hint mono">Prochain n° système : {{ previewNumber }}</p>
+          <p class="hint mono" i18n="@@payments.cash-desk.prochain.n.systeme.6b020bc8">Prochain n° système : {{ previewNumber }}</p>
         }
       </div>
     }
@@ -113,12 +113,12 @@
     @if (currentStep === 2) {
       <div class="step-panel">
         <div class="field">
-          <label for="depAmount">Solde déposé <span class="req">*</span></label>
+          <label for="depAmount"><ng-container i18n="@@payments.cash-desk.solde.depose.d68801d5">Solde déposé </ng-container> <span class="req" i18n="@@payments.cash-desk.text.df58248c">*</span></label>
           <div class="amount-available">
-            <span class="avail-label">Solde disponible (à la date de remise)</span>
-            <span class="avail-value">{{ formatCurrency(availableForSelectedType()) }} <sup>TND</sup></span>
+            <span class="avail-label" i18n="@@payments.cash-desk.solde.disponible.a.la.date.de.remise.bf057c45">Solde disponible (à la date de remise)</span>
+            <span class="avail-value">{{ formatCurrency(availableForSelectedType()) }} <sup i18n="@@payments.cash-desk.tnd.51da21a7">TND</sup></span>
           </div>
-          <p class="field-hint">Basé sur les opérations de caisse enregistrées jusqu’à cette date, par moyen de paiement.</p>
+          <p class="field-hint" i18n="@@payments.cash-desk.base.sur.les.operations.de.caisse.enregistrees.j.c007f7c8">Basé sur les opérations de caisse enregistrées jusqu’à cette date, par moyen de paiement.</p>
           <p-inputNumber
             inputId="depAmount"
             [(ngModel)]="amount"
@@ -127,15 +127,15 @@
             [maxFractionDigits]="3"
             [minFractionDigits]="3"
             mode="decimal"
-            placeholder="0,000"
+            placeholder="0,000" i18n-placeholder="@@payments.cash-desk.0.000.6f5ad69d"
             styleClass="w-full">
           </p-inputNumber>
         </div>
         @if (depositType !== BankDepositType.Cash) {
           <div class="field">
-            <span class="field-label">Quantité (bordereaux)</span>
+            <span class="field-label" i18n="@@payments.cash-desk.quantite.bordereaux.6dae621a">Quantité (bordereaux)</span>
             <div class="qty-row">
-              <button type="button" class="step-btn" (click)="decQty()">−</button>
+              <button type="button" class="step-btn" (click)="decQty()" i18n="@@payments.cash-desk.text.6a4e6e72">−</button>
               <span class="qty-val">{{ quantity }}</span>
               <button type="button" class="step-btn" (click)="incQty()">+</button>
             </div>
@@ -148,45 +148,45 @@
     @if (currentStep === 3) {
       <div class="step-panel validation-grid">
         <div class="v-col">
-          <h4 class="v-title">Coordonnées bancaires</h4>
+          <h4 class="v-title" i18n="@@payments.cash-desk.coordonnees.bancaires.9d367d41">Coordonnées bancaires</h4>
           @if (selectedBankAccount(); as acc) {
             <dl class="v-dl">
-              <dt>Nom du compte</dt>
+              <dt i18n="@@payments.cash-desk.nom.du.compte.81c92070">Nom du compte</dt>
               <dd>{{ acc.designation || acc.bankName }}</dd>
-              <dt>Nom de la banque</dt>
+              <dt i18n="@@payments.cash-desk.nom.de.la.banque.9848ce74">Nom de la banque</dt>
               <dd>{{ acc.bankName }}</dd>
-              <dt>Code bancaire</dt>
+              <dt i18n="@@payments.cash-desk.code.bancaire.a69aac75">Code bancaire</dt>
               <dd>{{ acc.bankCode }}</dd>
-              <dt>IBAN</dt>
+              <dt i18n="@@payments.cash-desk.iban.e81566a5">IBAN</dt>
               <dd class="mono">{{ formatIban(acc.iban) }}</dd>
             </dl>
           }
         </div>
         <div class="v-col">
-          <h4 class="v-title">Détails du dépôt</h4>
+          <h4 class="v-title" i18n="@@payments.cash-desk.details.du.depot.0712560a">Détails du dépôt</h4>
           <dl class="v-dl">
-            <dt>Type</dt>
+            <dt i18n="@@payments.cash-desk.type.3deb7456">Type</dt>
             <dd>
               @switch (depositType) {
-                @case (BankDepositType.Cash) { En espèces }
-                @case (BankDepositType.Check) { Chèques }
-                @case (BankDepositType.Draft) { Traites }
+                @case (BankDepositType.Cash) {<ng-container i18n="@@payments.cash-desk.en.especes.ea92ad54"> En espèces </ng-container>}
+                @case (BankDepositType.Check) {<ng-container i18n="@@payments.cash-desk.cheques.e01849ae"> Chèques </ng-container>}
+                @case (BankDepositType.Draft) {<ng-container i18n="@@payments.cash-desk.traites.740213ed"> Traites </ng-container>}
               }
             </dd>
-            <dt>Numéro de la remise</dt>
+            <dt i18n="@@payments.cash-desk.numero.de.la.remise.039254ac">Numéro de la remise</dt>
             <dd>{{ depositSlipReference }}</dd>
-            <dt>Montant</dt>
-            <dd class="amount-highlight">{{ formatCurrency(amount) }} <sup>TND</sup></dd>
-            <dt>Date de remise en banque</dt>
+            <dt i18n="@@payments.cash-desk.montant.4adcd9fc">Montant</dt>
+            <dd class="amount-highlight">{{ formatCurrency(amount) }} <sup i18n="@@payments.cash-desk.tnd.51da21a7">TND</sup></dd>
+            <dt i18n="@@payments.cash-desk.date.de.remise.en.banque.2130a95d">Date de remise en banque</dt>
             <dd>{{ depositDate | date: 'dd MMMM yyyy' }}</dd>
             @if (depositType !== BankDepositType.Cash) {
-              <dt>Quantité</dt>
+              <dt i18n="@@payments.cash-desk.quantite.09a38fda">Quantité</dt>
               <dd>{{ quantity }}</dd>
             }
           </dl>
         </div>
         <div class="field full">
-          <label for="notes">Note</label>
+          <label for="notes" i18n="@@payments.cash-desk.note.2c924e30">Note</label>
           <textarea
             id="notes"
             pTextarea
@@ -202,8 +202,8 @@
 
   <ng-template pTemplate="footer">
     <div class="wizard-footer">
-      <app-button variant="outline" (click)="currentStep === 0 ? onHide() : prev()" [attr.aria-label]="currentStep === 0 ? 'Fermer' : 'Précédent'">
-        {{ currentStep === 0 ? 'Annuler' : 'Précédent' }}
+      <app-button variant="outline" (click)="currentStep === 0 ? onHide() : prev()" [attr.aria-label]="currentStep === 0 ? loc_fermer_5ab4ec : loc_precedent_a527f1">
+        <ng-container i18n="@@payments.cash-desk.sel.annuler.precedent.8d63cb1d">{!!(currentStep === 0), select, true {Annuler} other {Précédent}}</ng-container>
       </app-button>
       @if (currentStep < 3) {
         <app-button
@@ -211,9 +211,7 @@
           icon="pi pi-arrow-right"
           iconPos="right"
           [disabled]="(currentStep === 0 || currentStep === 2) && serverBalancesLoading()"
-          (click)="next()">
-          Continuer
-        </app-button>
+          (click)="next()" i18n="@@payments.cash-desk.continuer.129ffff9"> Continuer </app-button>
       } @else {
         <app-button
           variant="primary"
@@ -221,7 +219,7 @@
           iconPos="right"
           [disabled]="submitting()"
           (click)="submit()">
-          {{ submitting() ? 'Validation...' : 'Valider' }}
+          <ng-container i18n="@@payments.cash-desk.sel.validation.valider.65f3eb48">{!!(submitting()), select, true {Validation...} other {Valider}}</ng-container>
         </app-button>
       }
     </div>

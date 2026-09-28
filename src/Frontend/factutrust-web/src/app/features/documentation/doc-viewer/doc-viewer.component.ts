@@ -13,10 +13,10 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcru
     <app-breadcrumb [items]="breadcrumbItems()"></app-breadcrumb>
 
     <div class="doc-layout">
-      <nav class="doc-sidebar" aria-label="Navigation documentation">
+      <nav class="doc-sidebar" aria-label="Navigation documentation" i18n-aria-label="@@documentation.doc-viewer.navigation.documentation.69061820">
         <a routerLink="/documentation" class="doc-sidebar-home">
           <i class="fa fa-home"></i>
-          <span>Guide utilisateur</span>
+          <span i18n="@@documentation.doc-viewer.guide.utilisateur.4808a56f">Guide utilisateur</span>
         </a>
         <ul class="doc-sidebar-list">
           @for (chapter of chapters; track chapter.id) {
@@ -38,14 +38,14 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcru
         @if (loading()) {
           <div class="doc-loading">
             <i class="fa fa-spinner fa-spin"></i>
-            <p>Chargement...</p>
+            <p i18n="@@documentation.doc-viewer.chargement.a209b664">Chargement...</p>
           </div>
         } @else if (error()) {
           <div class="doc-error">
             <i class="fa fa-exclamation-triangle"></i>
-            <h2>Document introuvable</h2>
+            <h2 i18n="@@documentation.doc-viewer.document.introuvable.0eec5453">Document introuvable</h2>
             <p>{{ error() }}</p>
-            <a routerLink="/documentation" class="doc-back-link">Retour au guide</a>
+            <a routerLink="/documentation" class="doc-back-link" i18n="@@documentation.doc-viewer.retour.au.guide.231431d3">Retour au guide</a>
           </div>
         } @else if (content()) {
           <article class="doc-article markdown-body">
@@ -168,11 +168,11 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcru
     .markdown-body :deep(h2) { font-size: 1.35rem; margin-top: 1.5rem; margin-bottom: 0.75rem; border-bottom: 1px solid var(--color-neutral-200); padding-bottom: 0.25rem; }
     .markdown-body :deep(h3) { font-size: 1.15rem; margin-top: 1.25rem; margin-bottom: 0.5rem; }
     .markdown-body :deep(p) { margin-bottom: 1rem; line-height: 1.6; }
-    .markdown-body :deep(ul), .markdown-body :deep(ol) { margin-bottom: 1rem; padding-left: 1.5rem; }
+    .markdown-body :deep(ul), .markdown-body :deep(ol) { margin-bottom: 1rem; padding-inline-start: 1.5rem; }
     .markdown-body :deep(table) { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
-    .markdown-body :deep(th), .markdown-body :deep(td) { border: 1px solid var(--color-neutral-200); padding: 0.5rem 0.75rem; text-align: left; }
+    .markdown-body :deep(th), .markdown-body :deep(td) { border: 1px solid var(--color-neutral-200); padding: 0.5rem 0.75rem; text-align: start; }
     .markdown-body :deep(th) { background: var(--color-neutral-50); font-weight: 600; }
-    .markdown-body :deep(blockquote) { border-left: 4px solid var(--color-primary-300); padding-left: 1rem; margin: 1rem 0; color: var(--color-neutral-600); }
+    .markdown-body :deep(blockquote) { border-inline-start: 4px solid var(--color-primary-300); padding-inline-start: 1rem; margin: 1rem 0; color: var(--color-neutral-600); }
     .markdown-body :deep(img) { max-width: 100%; height: auto; border-radius: var(--radius-md); }
     .markdown-body :deep(a) { color: var(--color-primary-600); text-decoration: none; }
     .markdown-body :deep(a:hover) { text-decoration: underline; }
@@ -192,8 +192,8 @@ export class DocViewerComponent implements OnInit {
   readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const chapter = this.currentChapter();
     const items: BreadcrumbItem[] = [
-      { label: 'Accueil', route: '/dashboard' },
-      { label: 'Documentation', route: '/documentation' }
+      { label: $localize`:@@documentation.doc-viewer.ts.accueil.a8ff8fd2:Accueil`, route: '/dashboard' },
+      { label: $localize`:@@documentation.doc-viewer.ts.documentation.9e9cf322:Documentation`, route: '/documentation' }
     ];
     if (chapter) {
       items.push({ label: chapter.title });
@@ -216,7 +216,7 @@ export class DocViewerComponent implements OnInit {
     const chapter = getChapterById(id);
     if (!chapter) {
       this.loading.set(false);
-      this.error.set('Chapitre non trouvé.');
+      this.error.set($localize`:@@documentation.doc-viewer.ts.chapitre.non.trouve.aac43b19:Chapitre non trouvé.`);
       this.currentChapter.set(null);
       return;
     }
@@ -232,7 +232,7 @@ export class DocViewerComponent implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.error.set('Impossible de charger ce document.');
+        this.error.set($localize`:@@documentation.doc-viewer.ts.impossible.de.charger.ce.document.2cf67ef2:Impossible de charger ce document.`);
         this.loading.set(false);
       }
     });

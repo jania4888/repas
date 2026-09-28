@@ -23,20 +23,18 @@ import {
   ],
   template: `
     <app-page-header
-      title="Dépenses"
-      subtitle="Suivez l'évolution de vos dépenses et comparez par période">
+      title="Dépenses" i18n-title="@@reports.purchases-analytics.depenses.fb667434"
+      subtitle="Suivez l'évolution de vos dépenses et comparez par période" i18n-subtitle="@@reports.purchases-analytics.suivez.l.evolution.de.vos.depenses.et.co.06cdb173">
       <app-button
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()">
-        Imprimer
-      </app-button>
+        (click)="onPrint()" i18n="@@reports.purchases-analytics.imprimer.5382c09d"> Imprimer </app-button>
     </app-page-header>
 
     <div class="filter-bar">
       <div class="filter-group">
-        <label class="filter-label">Période</label>
+        <label class="filter-label" i18n="@@reports.purchases-analytics.periode.de2110b7">Période</label>
         <div class="period-tabs">
           @for (p of periodOptions; track p.value) {
             <button
@@ -73,20 +71,20 @@ import {
     } @else if (data()) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Dépenses totales"
+          label="Dépenses totales" i18n-label="@@reports.purchases-analytics.depenses.totales.7f280e4e"
           [value]="formatAmount(data()!.totalExpenses)"
           icon="pi-dollar"
           variant="primary"
           [change]="-data()!.comparison.changePercent">
         </app-stat-card>
         <app-stat-card
-          label="Factures fournisseurs"
+          label="Factures fournisseurs" i18n-label="@@reports.purchases-analytics.factures.fournisseurs.1dcbc2ed"
           [value]="data()!.totalInvoices"
           icon="pi-file"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Période précédente"
+          label="Période précédente" i18n-label="@@reports.purchases-analytics.periode.precedente.5e420e76"
           [value]="formatAmount(data()!.comparison.previousValue)"
           icon="pi-history"
           variant="warning">
@@ -96,8 +94,8 @@ import {
 
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Évolution des dépenses</h2>
-        <span class="section-hint">
+        <h2 class="section-title" i18n="@@reports.purchases-analytics.evolution.des.depenses.55b93cad">Évolution des dépenses</h2>
+        <span class="section-hint" i18n="@@reports.purchases-analytics.depenses.factures.payees.sur.la.periode.365d7f1b">
           <i class="pi pi-info-circle"></i>
           Dépenses (factures payées) sur la période sélectionnée
         </span>
@@ -106,11 +104,11 @@ import {
         <div class="chart-placeholder">
           <div class="loading-spinner">
             <i class="pi pi-spin pi-spinner"></i>
-            <span>Chargement...</span>
+            <span i18n="@@reports.purchases-analytics.chargement.a209b664">Chargement...</span>
           </div>
         </div>
       } @else if (data()?.chartData && hasChartData()) {
-        <div class="chart-container" role="img" aria-label="Graphique des dépenses">
+        <div class="chart-container" role="img" aria-label="Graphique des dépenses" i18n-aria-label="@@reports.purchases-analytics.graphique.des.depenses.7f62dfb4">
           <div class="chart-y-axis">
             <span class="y-label">{{ formatAmountShort(maxAmount) }}</span>
             <span class="y-label">{{ formatAmountShort(maxAmount / 2) }}</span>
@@ -125,9 +123,9 @@ import {
             <div class="chart-bars">
               @for (item of getVisibleChartData(); track item.label) {
                 <div class="bar-group">
-                  <div class="bar-tooltip">
+                  <div class="bar-tooltip" i18n="@@reports.purchases-analytics.facture.32ef91f8.pl">
                     <strong>{{ formatAmount(item.amount) }}</strong><br>
-                    <small>{{ item.invoiceCount }} facture{{ item.invoiceCount > 1 ? 's' : '' }}</small>
+                    <small>{{ item.invoiceCount }} {item.invoiceCount, plural, =0 {facture} =1 {facture} other {factures}}</small>
                   </div>
                   <div class="bar-wrapper">
                     <div
@@ -146,8 +144,8 @@ import {
         <div class="chart-placeholder">
           <div class="empty-state">
             <i class="pi pi-chart-line empty-icon"></i>
-            <p class="empty-title">Aucune donnée pour cette période</p>
-            <p class="empty-subtitle">Les dépenses apparaîtront ici une fois que vous aurez des factures fournisseurs payées. Créez des bons de commande et des factures fournisseurs.</p>
+            <p class="empty-title" i18n="@@reports.purchases-analytics.aucune.donnee.pour.cette.periode.b2a99770">Aucune donnée pour cette période</p>
+            <p class="empty-subtitle" i18n="@@reports.purchases-analytics.les.depenses.apparaitront.ici.une.fois.que.vous..631790aa">Les dépenses apparaîtront ici une fois que vous aurez des factures fournisseurs payées. Créez des bons de commande et des factures fournisseurs.</p>
           </div>
         </div>
       }
@@ -156,18 +154,18 @@ import {
     <div class="grid-2-cols">
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Dépenses par fournisseur</h2>
-          <span class="section-hint">
+          <h2 class="section-title" i18n="@@reports.purchases-analytics.depenses.par.fournisseur.e216e654">Dépenses par fournisseur</h2>
+          <span class="section-hint" i18n="@@reports.purchases-analytics.top.fournisseurs.par.montant.total.factu.4b22797c">
             <i class="pi pi-info-circle"></i>
             Top fournisseurs par montant total (factures payées)
           </span>
         </div>
         @if (loading()) {
-          <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+          <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.purchases-analytics.chargement.a209b664">Chargement...</span></div>
         } @else if (!data()?.bySupplier?.length) {
           <div class="empty-state-sm">
             <i class="pi pi-building"></i>
-            <p>Aucune donnée disponible</p>
+            <p i18n="@@reports.purchases-analytics.aucune.donnee.disponible.78c36aa1">Aucune donnée disponible</p>
           </div>
         } @else {
           <div class="ranking-list">
@@ -176,9 +174,9 @@ import {
                 <div class="rank-badge" [class]="'rank-' + (i < 3 ? i + 1 : 'default')">
                   {{ i + 1 }}
                 </div>
-                <div class="rank-info">
+                <div class="rank-info" i18n="@@reports.purchases-analytics.facture.ae46de43.pl">
                   <span class="rank-name">{{ supplier.supplierName }}</span>
-                  <span class="rank-detail">{{ supplier.invoiceCount }} facture{{ supplier.invoiceCount > 1 ? 's' : '' }}</span>
+                  <span class="rank-detail">{{ supplier.invoiceCount }} {supplier.invoiceCount, plural, =0 {facture} =1 {facture} other {factures}}</span>
                 </div>
                 <div class="rank-value">
                   <span class="rank-amount">{{ formatAmount(supplier.totalAmount) }}</span>
@@ -194,8 +192,8 @@ import {
       </div>
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Résumé</h2>
-          <span class="section-hint">
+          <h2 class="section-title" i18n="@@reports.purchases-analytics.resume.9fb58963">Résumé</h2>
+          <span class="section-hint" i18n="@@reports.purchases-analytics.vue.d.ensemble.de.la.periode.8048985e">
             <i class="pi pi-info-circle"></i>
             Vue d'ensemble de la période
           </span>
@@ -207,9 +205,9 @@ import {
                 <i class="pi pi-dollar"></i>
               </div>
               <div class="summary-content">
-                <span class="summary-label">Total dépensé</span>
+                <span class="summary-label" i18n="@@reports.purchases-analytics.total.depense.8bd8cc9d">Total dépensé</span>
                 <span class="summary-value">{{ formatAmount(data()!.totalExpenses) }}</span>
-                <span class="summary-desc">Factures fournisseurs payées sur la période</span>
+                <span class="summary-desc" i18n="@@reports.purchases-analytics.factures.fournisseurs.payees.sur.la.periode.f7cd96dd">Factures fournisseurs payées sur la période</span>
               </div>
             </div>
             <div class="summary-item">
@@ -217,9 +215,9 @@ import {
                 <i class="pi pi-file"></i>
               </div>
               <div class="summary-content">
-                <span class="summary-label">Factures</span>
+                <span class="summary-label" i18n="@@reports.purchases-analytics.factures.da35e4f2">Factures</span>
                 <span class="summary-value">{{ data()!.totalInvoices }}</span>
-                <span class="summary-desc">Nombre total de factures sur la période</span>
+                <span class="summary-desc" i18n="@@reports.purchases-analytics.nombre.total.de.factures.sur.la.periode.9c4fbfde">Nombre total de factures sur la période</span>
               </div>
             </div>
             <div class="summary-item">
@@ -227,9 +225,9 @@ import {
                 <i class="pi pi-chart-line"></i>
               </div>
               <div class="summary-content">
-                <span class="summary-label">Moyenne par facture</span>
+                <span class="summary-label" i18n="@@reports.purchases-analytics.moyenne.par.facture.b3785f82">Moyenne par facture</span>
                 <span class="summary-value">{{ data()!.totalInvoices > 0 ? formatAmount(data()!.totalExpenses / data()!.totalInvoices) : '0' }}</span>
-                <span class="summary-desc">Montant moyen par facture payée</span>
+                <span class="summary-desc" i18n="@@reports.purchases-analytics.montant.moyen.par.facture.payee.4c9910ff">Montant moyen par facture payée</span>
               </div>
             </div>
           </div>
@@ -279,10 +277,10 @@ import {
 
     .chart-placeholder { min-height: 280px; display: flex; align-items: center; justify-content: center; background: var(--color-neutral-50); border-radius: var(--radius-lg); border: 2px dashed var(--color-border-subtle); }
     .chart-container { display: flex; gap: var(--spacing-2); padding: var(--spacing-4) 0; }
-    .chart-y-axis { display: flex; flex-direction: column; justify-content: space-between; padding-bottom: 28px; min-width: 60px; text-align: right; }
+    .chart-y-axis { display: flex; flex-direction: column; justify-content: space-between; padding-bottom: 28px; min-width: 60px; text-align: end; }
     .y-label { font-size: var(--font-size-xs); color: var(--color-text-secondary); font-family: 'JetBrains Mono', monospace; }
     .chart-area { flex: 1; position: relative; min-height: 250px; }
-    .chart-grid-lines { position: absolute; top: 0; left: 0; right: 0; bottom: 28px; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
+    .chart-grid-lines { position: absolute; top: 0; inset-inline-start: 0; inset-inline-end: 0; bottom: 28px; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
     .grid-line { height: 1px; background: var(--color-border-subtle); }
     .chart-bars { display: flex; align-items: flex-end; height: calc(100% - 28px); gap: 2px; padding: 0; }
     .bar-group { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 0; position: relative; height: 100%; justify-content: flex-end; }
@@ -346,9 +344,9 @@ export class ExpensesAnalyticsComponent implements OnInit {
   private readonly maxBars = 31;
 
   periodOptions: { label: string; value: PurchasesAnalyticsPeriod }[] = [
-    { label: 'Jour', value: 'day' },
-    { label: 'Mois', value: 'month' },
-    { label: 'Année', value: 'year' }
+    { label: $localize`:@@reports.expenses-analytics.ts.jour.240ce85d:Jour`, value: 'day' },
+    { label: $localize`:@@reports.expenses-analytics.ts.mois.0d304bea:Mois`, value: 'month' },
+    { label: $localize`:@@reports.expenses-analytics.ts.annee.1f910d98:Année`, value: 'year' }
   ];
 
   ngOnInit(): void {
@@ -394,7 +392,7 @@ export class ExpensesAnalyticsComponent implements OnInit {
   }
 
   formatAmount(value: number): string {
-    return new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(value) + ' TND';
+    return new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(value) + $localize`:@@ui.tern.tnd.9aaf5c: TND`;
   }
 
   formatAmountShort(value: number): string {

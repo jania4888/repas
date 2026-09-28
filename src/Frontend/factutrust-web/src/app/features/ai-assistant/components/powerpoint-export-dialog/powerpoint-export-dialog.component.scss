@@ -57,7 +57,7 @@
 
 .ppt-slide-outline {
   margin: 8px 0 0;
-  padding-left: 18px;
+  padding-inline-start: 18px;
   font-size: 12px;
   color: var(--color-neutral-600, #4b5563);
 }
@@ -136,7 +136,7 @@
 .ppt-dialog-body {
   max-height: 60vh;
   overflow-y: auto;
-  padding-right: 4px;
+  padding-inline-end: 4px;
 }
 
 .ppt-grid {
@@ -234,7 +234,7 @@
   border: 1px solid var(--color-neutral-200, #e5e7eb);
   border-radius: 12px;
   background: #fff;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
@@ -487,7 +487,7 @@
 
 .ppt-error ul {
   margin: 6px 0 0;
-  padding-left: 18px;
+  padding-inline-start: 18px;
   font-size: 12px;
 }
 

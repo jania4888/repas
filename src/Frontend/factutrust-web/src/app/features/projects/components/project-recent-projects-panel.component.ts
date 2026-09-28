@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, ViewChild, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -19,7 +20,7 @@ import {
 @Component({
   selector: 'app-project-recent-projects-panel',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     RouterLink,
@@ -31,14 +32,14 @@ import {
     EmptyStateComponent
   ],
   template: `
-    <app-dashboard-panel title="Projets récents" [subtitle]="tableSubtitle()" [flush]="true">
+    <app-dashboard-panel title="Projets récents" i18n-title="@@projects.components.projets.recents.dd30bc80" [subtitle]="tableSubtitle()" [flush]="true">
       <div panel-actions class="proj-dash-table-search">
         <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
         <input
           type="search"
           [(ngModel)]="searchQuery"
-          placeholder="Rechercher…"
-          aria-label="Rechercher dans les projets récents" />
+          placeholder="Rechercher…" i18n-placeholder="@@projects.components.rechercher.1d12cdfb"
+          aria-label="Rechercher dans les projets récents" i18n-aria-label="@@projects.components.rechercher.dans.les.projets.recents.a46be4ca" />
       </div>
 
       <p-table
@@ -48,15 +49,15 @@ import {
         [paginator]="filteredRows().length > rowsPerPage"
         [rows]="rowsPerPage"
         [showCurrentPageReport]="true"
-        currentPageReportTemplate="Afficher {first} à {last} sur {totalRecords} projets">
+        currentPageReportTemplate="Afficher {first} à {last} sur {totalRecords} projets" i18n-currentPageReportTemplate="@@projects.components.afficher.first.a.last.sur.totalrecords.projets.4fdca48e">
         <ng-template pTemplate="header">
           <tr>
-            <th>Projet</th>
-            <th>Client</th>
-            <th>Chef de projet</th>
-            <th>Avancement</th>
-            <th>Statut</th>
-            <th>Échéance</th>
+            <th i18n="@@projects.components.projet.a9de3a26">Projet</th>
+            <th i18n="@@projects.components.client.1bdd79b1">Client</th>
+            <th i18n="@@projects.components.chef.de.projet.7a1d6008">Chef de projet</th>
+            <th i18n="@@projects.components.avancement.e1963fc4">Avancement</th>
+            <th i18n="@@projects.components.statut.659499f3">Statut</th>
+            <th i18n="@@projects.components.echeance.f9a77ff6">Échéance</th>
             <th class="proj-dash-actions-col"></th>
           </tr>
         </ng-template>
@@ -72,7 +73,7 @@ import {
                   @if (p.description) {
                     <span class="proj-dash-project-desc">{{ p.description }}</span>
                   } @else if (p.kindDisplay) {
-                    <span class="proj-dash-project-desc">{{ p.kindDisplay }}</span>
+                    <span class="proj-dash-project-desc">{{ p.kindDisplay | backendLabel }}</span>
                   }
                 </div>
               </div>
@@ -88,13 +89,13 @@ import {
               <p-progressBar [value]="p.progressPercent" [showValue]="false" />
               <span class="proj-dash-progress-pct">{{ p.progressPercent }} %</span>
             </td>
-            <td><app-status-badge [status]="statusBadge(p.status)" [label]="p.statusDisplay" /></td>
+            <td><app-status-badge [status]="statusBadge(p.status)" [label]="p.statusDisplay | backendLabel" /></td>
             <td>{{ p.endDate ? (p.endDate | date:'shortDate') : '—' }}</td>
             <td class="proj-dash-actions-col" (click)="$event.stopPropagation()">
               <button
                 type="button"
                 class="proj-dash-row-menu-btn"
-                [attr.aria-label]="'Actions pour ' + p.name"
+                [attr.aria-label]="loc_ui_tern_actions_pour_cf433f + p.name"
                 (click)="onMenuClick($event, p)">
                 <i class="pi pi-ellipsis-v"></i>
               </button>
@@ -104,7 +105,7 @@ import {
         <ng-template pTemplate="emptymessage">
           <tr>
             <td colspan="7">
-              <app-empty-state icon="pi-briefcase" title="Aucun projet" [showAction]="false" />
+              <app-empty-state icon="pi-briefcase" title="Aucun projet" i18n-title="@@projects.components.aucun.projet.c77f3894" [showAction]="false" />
             </td>
           </tr>
         </ng-template>
@@ -114,6 +115,7 @@ import {
   `
 })
 export class ProjectRecentProjectsPanelComponent {
+  readonly loc_ui_tern_actions_pour_cf433f = $localize`:@@ui.tern.actions.pour.cf433f:Actions pour `;
   @ViewChild('rowMenu') rowMenu?: Menu;
 
   @Input() data: ProjectDashboardExtended | null = null;
@@ -139,7 +141,7 @@ export class ProjectRecentProjectsPanelComponent {
 
   tableSubtitle(): string | undefined {
     const total = this.data?.totalProjects;
-    return total != null ? `${total} projet(s) au total` : undefined;
+    return total != null ? $localize`:@@ui.tern.ph.projet.s.au.total.4cba89:${total}:p0: projet(s) au total` : undefined;
   }
 
   projectInitial(name: string): string {
@@ -157,9 +159,9 @@ export class ProjectRecentProjectsPanelComponent {
     const p = this.activeRow();
     if (!p) return [];
     return [
-      { label: 'Voir le projet', icon: 'pi pi-eye', routerLink: ['/projects', p.id] },
-      { label: 'Tâches', icon: 'pi pi-list', routerLink: ['/projects', p.id], fragment: 'tasks' },
-      { label: 'Liste des projets', icon: 'pi pi-briefcase', routerLink: ['/projects'] }
+      { label: $localize`:@@projects.project-recent-projects-panel.ts.voir.le.projet.4dfb4818:Voir le projet`, icon: 'pi pi-eye', routerLink: ['/projects', p.id] },
+      { label: $localize`:@@projects.project-recent-projects-panel.ts.taches.1b018f86:Tâches`, icon: 'pi pi-list', routerLink: ['/projects', p.id], fragment: 'tasks' },
+      { label: $localize`:@@projects.project-recent-projects-panel.ts.liste.des.projets.7f394c5f:Liste des projets`, icon: 'pi pi-briefcase', routerLink: ['/projects'] }
     ];
   });
 }

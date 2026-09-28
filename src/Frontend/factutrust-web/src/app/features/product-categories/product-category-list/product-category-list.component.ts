@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -51,28 +52,26 @@ interface StatusOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Catégories"
-      subtitle="Gérez les catégories de vos produits pour les classer dans le catalogue.">
+      title="Catégories" i18n-title="@@product-categories.product-category-list.categories.d463d7d2"
+      subtitle="Gérez les catégories de vos produits pour les classer dans le catalogue." i18n-subtitle="@@product-categories.product-category-list.gerez.les.categories.de.vos.produits.pou.cb58d006">
       @if (canCreateCategory()) {
         <app-button
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new">
-          Nouvelle catégorie
-        </app-button>
+          routerLink="new" i18n="@@product-categories.product-category-list.nouvelle.categorie.8c5f928e"> Nouvelle catégorie </app-button>
       }
     </app-page-header>
 
     <!-- Filters -->
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@product-categories.product-category-list.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@product-categories.product-category-list.reinitialiser.les.filtres.d8915f02" i18n="@@product-categories.product-category-list.reinitialiser.9637f51e">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -84,7 +83,7 @@ interface StatusOption {
           <input
             pInputText
             type="text"
-            placeholder="Rechercher par code ou nom..."
+            placeholder="Rechercher par code ou nom..." i18n-placeholder="@@product-categories.product-category-list.rechercher.par.code.ou.nom.5764fbc6"
             [(ngModel)]="searchTerm"
             (input)="onFilterChange()"
             class="w-full">
@@ -94,7 +93,7 @@ interface StatusOption {
           [(ngModel)]="selectedStatus"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@product-categories.product-category-list.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -122,11 +121,11 @@ interface StatusOption {
 
           <ng-template pTemplate="header">
             <tr>
-              <th pSortableColumn="code" style="width: 140px">Code <p-sortIcon field="code"></p-sortIcon></th>
-              <th pSortableColumn="name">Nom <p-sortIcon field="name"></p-sortIcon></th>
-              <th pSortableColumn="displayOrder" style="width: 140px">Ordre d'affichage <p-sortIcon field="displayOrder"></p-sortIcon></th>
-              <th style="width: 100px">Statut</th>
-              <th style="width: 140px" class="text-right">Actions</th>
+              <th pSortableColumn="code" style="width: 140px"><ng-container i18n="@@product-categories.product-category-list.code.adac6937">Code </ng-container> <p-sortIcon field="code"></p-sortIcon></th>
+              <th pSortableColumn="name"><ng-container i18n="@@product-categories.product-category-list.nom.7ff20370">Nom </ng-container> <p-sortIcon field="name"></p-sortIcon></th>
+              <th pSortableColumn="displayOrder" style="width: 140px"><ng-container i18n="@@product-categories.product-category-list.ordre.d.affichage.6978b883">Ordre d'affichage </ng-container> <p-sortIcon field="displayOrder"></p-sortIcon></th>
+              <th style="width: 100px" i18n="@@product-categories.product-category-list.statut.659499f3">Statut</th>
+              <th style="width: 140px" class="text-right" i18n="@@product-categories.product-category-list.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
 
@@ -141,7 +140,7 @@ interface StatusOption {
               <td>{{ cat.displayOrder }}</td>
               <td>
                 <p-tag
-                  [value]="cat.isActive ? 'Actif' : 'Inactif'"
+                  [value]="cat.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033"
                   [severity]="cat.isActive ? 'success' : 'secondary'">
                 </p-tag>
               </td>
@@ -155,10 +154,10 @@ interface StatusOption {
                       size="sm"
                       [icon]="cat.isActive ? 'pi-ban' : 'pi-check-circle'"
                       [iconOnly]="true"
-                      [pTooltip]="cat.isActive ? 'Désactiver' : 'Activer'"
+                      [pTooltip]="cat.isActive ? loc_ui_tern_desactiver_d28397 : loc_ui_tern_activer_b96fa7"
                       tooltipPosition="top"
                       (click)="toggleActive(cat)"
-                      [attr.aria-label]="cat.isActive ? 'Désactiver' : 'Activer'">
+                      [attr.aria-label]="cat.isActive ? loc_ui_tern_desactiver_d28397 : loc_ui_tern_activer_b96fa7">
                     </app-button>
                   }
                   @if (canUpdateCategory()) {
@@ -168,7 +167,7 @@ interface StatusOption {
                       icon="pi-pencil"
                       [iconOnly]="true"
                       [routerLink]="[cat.id, 'edit']"
-                      ariaLabel="Modifier la catégorie">
+                      ariaLabel="Modifier la catégorie" i18n-ariaLabel="@@product-categories.product-category-list.modifier.la.categorie.23404212">
                     </app-button>
                   }
                 </div>
@@ -181,10 +180,10 @@ interface StatusOption {
               <td colspan="5" class="text-center p-6">
                 <app-empty-state
                   [icon]="'pi-tags'"
-                  title="Aucune catégorie"
-                  description="Créez des catégories pour classer vos produits (ex. General, Services, Marchandises)."
+                  title="Aucune catégorie" i18n-title="@@product-categories.product-category-list.aucune.categorie.33bf71cf"
+                  description="Créez des catégories pour classer vos produits (ex. General, Services, Marchandises)." i18n-description="@@product-categories.product-category-list.creez.des.categories.pour.classer.vos.pr.bdc32a9f"
                   [showAction]="canCreateCategory()"
-                  actionLabel="Nouvelle catégorie"
+                  actionLabel="Nouvelle catégorie" i18n-actionLabel="@@product-categories.product-category-list.nouvelle.categorie.6f837723"
                   actionRoute="new">
                 </app-empty-state>
               </td>
@@ -220,11 +219,15 @@ interface StatusOption {
     }
 
     .text-right {
-      text-align: right;
+      text-align: end;
     }
   `]
 })
 export class ProductCategoryListComponent implements OnInit {
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
+  readonly loc_ui_tern_desactiver_d28397 = $localize`:@@ui.tern.desactiver.d28397:Désactiver`;
+  readonly loc_ui_tern_activer_b96fa7 = $localize`:@@ui.tern.activer.b96fa7:Activer`;
   private productCategoryService = inject(ProductCategoryService);
   private toastService = inject(ToastService);
   private errorHandler = inject(ErrorHandlerService);
@@ -241,8 +244,8 @@ export class ProductCategoryListComponent implements OnInit {
   selectedStatus: boolean | null = null;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Catégories' }
+    { label: $localize`:@@product-categories.product-category-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@product-categories.product-category-list.ts.categories.d463d7d2:Catégories` }
   ];
 
   skeletonColumns: SkeletonColumn[] = [
@@ -254,8 +257,8 @@ export class ProductCategoryListComponent implements OnInit {
   ];
 
   statusOptions: StatusOption[] = [
-    { label: 'Actifs', value: true },
-    { label: 'Inactifs', value: false }
+    { label: $localize`:@@product-categories.product-category-list.ts.actifs.4fc3a980:Actifs`, value: true },
+    { label: $localize`:@@product-categories.product-category-list.ts.inactifs.41c2d03e:Inactifs`, value: false }
   ];
 
   hasActiveFilters = computed(() => {
@@ -288,9 +291,9 @@ export class ProductCategoryListComponent implements OnInit {
   summaryMetrics = computed<TotalMetric[]>(() => {
     const rows = this.filteredCategories();
     return [
-      { label: 'Catégories', value: rows.length, format: 'number', icon: 'pi-tags', tone: 'primary' },
-      { label: 'Actives', value: rows.filter(c => c.isActive).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-      { label: 'Inactives', value: rows.filter(c => !c.isActive).length, format: 'number', icon: 'pi-ban', tone: 'neutral' }
+      { label: $localize`:@@product-categories.product-category-list.ts.categories.d463d7d2:Catégories`, value: rows.length, format: 'number', icon: 'pi-tags', tone: 'primary' },
+      { label: $localize`:@@product-categories.product-category-list.ts.actives.f13a33c0:Actives`, value: rows.filter(c => c.isActive).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+      { label: $localize`:@@product-categories.product-category-list.ts.inactives.c316433a:Inactives`, value: rows.filter(c => !c.isActive).length, format: 'number', icon: 'pi-ban', tone: 'neutral' }
     ];
   });
 
@@ -307,8 +310,8 @@ export class ProductCategoryListComponent implements OnInit {
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: response.errors?.join(', ') || 'Impossible de charger les catégories'
+            summary: $localize`:@@product-category-list.component.summary.Erreur:Erreur`,
+            detail: response.errors?.join(', ') || $localize`:@@product-categories.product-category-list.ts.impossible.de.charger.les.categories.cd231434:Impossible de charger les catégories`
           });
           this.categories.set([]);
         }
@@ -318,8 +321,8 @@ export class ProductCategoryListComponent implements OnInit {
         const msg = this.errorHandler.extractErrorMessage(err);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: msg || 'Impossible de charger les catégories'
+          summary: $localize`:@@product-category-list.component.summary.Erreur:Erreur`,
+          detail: msg || $localize`:@@product-categories.product-category-list.ts.impossible.de.charger.les.categories.cd231434:Impossible de charger les catégories`
         });
         this.errorHandler.logError('Failed to load product categories', err);
         this.categories.set([]);
@@ -352,14 +355,14 @@ export class ProductCategoryListComponent implements OnInit {
           );
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: body.isActive ? 'Catégorie activée.' : 'Catégorie désactivée.'
+            summary: $localize`:@@product-category-list.component.summary.Succès:Succès`,
+            detail: body.isActive ? $localize`:@@ui.tern.categorie.activee.c0381e:Catégorie activée.` : $localize`:@@ui.tern.categorie.desactivee.a1e015:Catégorie désactivée.`
           });
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: response.errors?.join(', ') || response.message || 'Action impossible'
+            summary: $localize`:@@product-category-list.component.summary.Erreur:Erreur`,
+            detail: response.errors?.join(', ') || response.message || $localize`:@@product-categories.product-category-list.ts.action.impossible.f9002b5e:Action impossible`
           });
         }
         this.toggleLoading.update(s => { const n = new Set(s); n.delete(cat.id); return n; });
@@ -368,8 +371,8 @@ export class ProductCategoryListComponent implements OnInit {
         const msg = this.errorHandler.extractErrorMessage(err);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: msg || 'Action impossible'
+          summary: $localize`:@@product-category-list.component.summary.Erreur:Erreur`,
+          detail: msg || $localize`:@@product-categories.product-category-list.ts.action.impossible.f9002b5e:Action impossible`
         });
         this.errorHandler.logError('Toggle category active failed', err);
         this.toggleLoading.update(s => { const n = new Set(s); n.delete(cat.id); return n; });

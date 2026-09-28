@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
@@ -46,44 +47,42 @@ interface NewValueRow {
     <app-page-header
       [title]="formTitle()"
       [subtitle]="formSubtitle()">
-      <app-button variant="outline" icon="pi-times" iconPos="left" [routerLink]="variantAxesPath">
-        Annuler
-      </app-button>
+      <app-button variant="outline" icon="pi-times" iconPos="left" [routerLink]="variantAxesPath" i18n="@@settings.variant-axes.annuler.49ba3292"> Annuler </app-button>
     </app-page-header>
 
     @if (loading()) {
       <div class="loading-container">
         <i class="pi pi-spin pi-spinner"></i>
-        <p>Chargement...</p>
+        <p i18n="@@settings.variant-axes.chargement.a209b664">Chargement...</p>
       </div>
     } @else {
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <app-form-section title="Informations" icon="pi-tag" [number]="1">
+        <app-form-section title="Informations" i18n-title="@@settings.variant-axes.informations.54937b3a" icon="pi-tag" [number]="1">
           @if (isEditMode()) {
             <div class="form-group">
-              <label>Code</label>
+              <label i18n="@@settings.variant-axes.code.adac6937">Code</label>
               <input pInputText [value]="attributeCode()" class="w-full" readonly disabled />
-              <small class="form-hint">Le code n'est pas modifiable.</small>
+              <small class="form-hint" i18n="@@settings.variant-axes.le.code.n.est.pas.modifiable.366c19a3">Le code n'est pas modifiable.</small>
             </div>
           } @else {
             <div class="form-group">
-              <label for="code">Code <span class="required">*</span></label>
-              <input pInputText id="code" formControlName="code" placeholder="Ex: SIZE" class="w-full" maxlength="50" />
+              <label for="code"><ng-container i18n="@@settings.variant-axes.code.adac6937">Code </ng-container> <span class="required" i18n="@@settings.variant-axes.text.df58248c">*</span></label>
+              <input pInputText id="code" formControlName="code" placeholder="Ex: SIZE" i18n-placeholder="@@settings.variant-axes.ex.size.394fd236" class="w-full" maxlength="50" />
             </div>
           }
           <div class="form-group">
-            <label for="name">Nom <span class="required">*</span></label>
-            <input pInputText id="name" formControlName="name" placeholder="Ex: Taille" class="w-full" maxlength="100" />
+            <label for="name"><ng-container i18n="@@settings.variant-axes.nom.7ff20370">Nom </ng-container> <span class="required" i18n="@@settings.variant-axes.text.df58248c">*</span></label>
+            <input pInputText id="name" formControlName="name" placeholder="Ex: Taille" i18n-placeholder="@@settings.variant-axes.ex.taille.eafec36e" class="w-full" maxlength="100" />
           </div>
         </app-form-section>
 
-        <app-form-section title="Valeurs" icon="pi-list" [number]="2">
+        <app-form-section title="Valeurs" i18n-title="@@settings.variant-axes.valeurs.1f2cbf36" icon="pi-list" [number]="2">
           @if (isEditMode()) {
             <table class="values-table">
               <thead>
                 <tr>
-                  <th>Code</th>
-                  <th>Nom</th>
+                  <th i18n="@@settings.variant-axes.code.adac6937">Code</th>
+                  <th i18n="@@settings.variant-axes.nom.7ff20370">Nom</th>
                   <th></th>
                 </tr>
               </thead>
@@ -95,46 +94,38 @@ interface NewValueRow {
                       <input pInputText [(ngModel)]="value.name" [ngModelOptions]="{ standalone: true }" class="w-full" />
                     </td>
                     <td class="actions">
-                      <app-button type="button" variant="ghost" size="sm" icon="pi-check" (clicked)="saveValue(value)">
-                        Enregistrer
-                      </app-button>
-                      <app-button type="button" variant="ghost" size="sm" icon="pi-trash" (clicked)="deleteValue(value)">
-                        Supprimer
-                      </app-button>
+                      <app-button type="button" variant="ghost" size="sm" icon="pi-check" (clicked)="saveValue(value)" i18n="@@settings.variant-axes.enregistrer.f7c8bcd8"> Enregistrer </app-button>
+                      <app-button type="button" variant="ghost" size="sm" icon="pi-trash" (clicked)="deleteValue(value)" i18n="@@settings.variant-axes.supprimer.1acfc1c7"> Supprimer </app-button>
                     </td>
                   </tr>
                 }
               </tbody>
             </table>
 
-            <h4 class="sub-title">Ajouter une valeur</h4>
+            <h4 class="sub-title" i18n="@@settings.variant-axes.ajouter.une.valeur.8ea96adb">Ajouter une valeur</h4>
             <div class="form-row">
-              <input pInputText [(ngModel)]="newValueCode" [ngModelOptions]="{ standalone: true }" placeholder="Code" class="w-full" />
-              <input pInputText [(ngModel)]="newValueName" [ngModelOptions]="{ standalone: true }" placeholder="Nom" class="w-full" />
-              <app-button type="button" variant="outline" icon="pi-plus" (clicked)="addValue()" [disabled]="savingValue()">
-                Ajouter
-              </app-button>
+              <input pInputText [(ngModel)]="newValueCode" [ngModelOptions]="{ standalone: true }" placeholder="Code" i18n-placeholder="@@settings.variant-axes.code.adac6937" class="w-full" />
+              <input pInputText [(ngModel)]="newValueName" [ngModelOptions]="{ standalone: true }" placeholder="Nom" i18n-placeholder="@@settings.variant-axes.nom.7ff20370" class="w-full" />
+              <app-button type="button" variant="outline" icon="pi-plus" (clicked)="addValue()" [disabled]="savingValue()" i18n="@@settings.variant-axes.ajouter.87c57ed1"> Ajouter </app-button>
             </div>
           } @else {
-            <p class="form-hint">Ajoutez les valeurs initiales (ex. S, M, L pour Taille).</p>
+            <p class="form-hint" i18n="@@settings.variant-axes.ajoutez.les.valeurs.initiales.ex.s.m.l.pour.tail.dc1f2157">Ajoutez les valeurs initiales (ex. S, M, L pour Taille).</p>
             @for (row of newValues; track $index; let i = $index) {
               <div class="form-row">
-                <input pInputText [(ngModel)]="row.code" [ngModelOptions]="{ standalone: true }" placeholder="Code" class="w-full" />
-                <input pInputText [(ngModel)]="row.name" [ngModelOptions]="{ standalone: true }" placeholder="Nom" class="w-full" />
-                <button type="button" class="btn-icon" (click)="removeNewValue(i)" aria-label="Retirer">
+                <input pInputText [(ngModel)]="row.code" [ngModelOptions]="{ standalone: true }" placeholder="Code" i18n-placeholder="@@settings.variant-axes.code.adac6937" class="w-full" />
+                <input pInputText [(ngModel)]="row.name" [ngModelOptions]="{ standalone: true }" placeholder="Nom" i18n-placeholder="@@settings.variant-axes.nom.7ff20370" class="w-full" />
+                <button type="button" class="btn-icon" (click)="removeNewValue(i)" aria-label="Retirer" i18n-aria-label="@@settings.variant-axes.retirer.54ec24a1">
                   <i class="pi pi-times"></i>
                 </button>
               </div>
             }
-            <app-button type="button" variant="ghost" size="sm" icon="pi-plus" (clicked)="addNewValueRow()">
-              Ajouter une valeur
-            </app-button>
+            <app-button type="button" variant="ghost" size="sm" icon="pi-plus" (clicked)="addNewValueRow()" i18n="@@settings.variant-axes.ajouter.une.valeur.8ea96adb"> Ajouter une valeur </app-button>
           }
         </app-form-section>
 
         <div class="form-actions">
           <app-button type="submit" variant="primary" icon="pi-check" [disabled]="saving() || form.invalid">
-            {{ isEditMode() ? 'Enregistrer' : "Créer l'axe" }}
+            {{ isEditMode() ? loc_ui_tern_enregistrer_f7c8bc : loc_ui_tern_creer_l_axe_8d2cb9 }}
           </app-button>
         </div>
       </form>
@@ -158,9 +149,9 @@ interface NewValueRow {
     .values-table th, .values-table td {
       padding: 0.5rem;
       border-bottom: 1px solid #e2e8f0;
-      text-align: left;
+      text-align: start;
     }
-    .actions { text-align: right; white-space: nowrap; }
+    .actions { text-align: end; white-space: nowrap; }
     .sub-title { margin: 1rem 0 0.5rem; font-size: 0.95rem; }
     .form-actions { margin-top: 1.5rem; }
     .loading-container {
@@ -177,6 +168,8 @@ interface NewValueRow {
   `]
 })
 export class ProductAttributeFormComponent implements OnInit {
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_creer_l_axe_8d2cb9 = $localize`:@@ui.tern.creer.l.axe.8d2cb9:Créer l'axe`;
   readonly variantAxesPath = VARIANT_AXES_PATH;
   private fb = inject(FormBuilder);
   private productService = inject(ProductService);
@@ -204,19 +197,19 @@ export class ProductAttributeFormComponent implements OnInit {
   isEditMode = computed(() => this.attributeId() !== null);
 
   formTitle = computed(() =>
-    this.isEditMode() ? "Modifier l'axe de variantes" : 'Nouvel axe de variantes'
+    this.isEditMode() ? $localize`:@@ui.tern.modifier.l.axe.de.variantes.08ffd6:Modifier l'axe de variantes` : $localize`:@@ui.tern.nouvel.axe.de.variantes.4610a3:Nouvel axe de variantes`
   );
   formSubtitle = computed(() =>
     this.isEditMode()
-      ? 'Modifiez le nom et les valeurs de cet axe.'
-      : 'Définissez un axe (taille, couleur, etc.) et ses valeurs pour générer les SKU.'
+      ? $localize`:@@ui.tern.modifiez.le.nom.et.les.valeurs.de.cet.axe.82548a:Modifiez le nom et les valeurs de cet axe.`
+      : $localize`:@@ui.tern.definissez.un.axe.taille.couleur.etc.et.se.3f2274:Définissez un axe (taille, couleur, etc.) et ses valeurs pour générer les SKU.`
   );
 
   breadcrumbItems = computed<BreadcrumbItem[]>(() => [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Axes de variantes', route: VARIANT_AXES_PATH },
-    { label: this.isEditMode() ? "Modifier l'axe de variantes" : 'Nouvel axe de variantes' }
+    { label: $localize`:@@settings.product-attribute-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.product-attribute-form.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.product-attribute-form.ts.axes.de.variantes.dcc95d91:Axes de variantes`, route: VARIANT_AXES_PATH },
+    { label: this.isEditMode() ? $localize`:@@ui.tern.modifier.l.axe.de.variantes.08ffd6:Modifier l'axe de variantes` : $localize`:@@ui.tern.nouvel.axe.de.variantes.4610a3:Nouvel axe de variantes` }
   ]);
 
   ngOnInit(): void {
@@ -242,7 +235,7 @@ export class ProductAttributeFormComponent implements OnInit {
         this.loading.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@product-attribute-form.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -272,14 +265,14 @@ export class ProductAttributeFormComponent implements OnInit {
           this.newValueCode = '';
           this.newValueName = '';
           this.loadAttribute(id);
-          this.toastService.add({ severity: 'success', summary: 'Ajouté', detail: 'Valeur ajoutée' });
+          this.toastService.add({ severity: 'success', summary: $localize`:@@product-attribute-form.component.summary.Ajouté:Ajouté`, detail: $localize`:@@product-attribute-form.component.detail.Valeur ajout:Valeur ajoutée` });
         }
       },
       error: err => {
         this.savingValue.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@product-attribute-form.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -295,14 +288,14 @@ export class ProductAttributeFormComponent implements OnInit {
       next: res => {
         this.savingValue.set(false);
         if (res.success) {
-          this.toastService.add({ severity: 'success', summary: 'Enregistré', detail: 'Valeur mise à jour' });
+          this.toastService.add({ severity: 'success', summary: $localize`:@@product-attribute-form.component.summary.Enregistr_:Enregistré`, detail: $localize`:@@product-attribute-form.component.detail.Valeur mise :Valeur mise à jour` });
         }
       },
       error: err => {
         this.savingValue.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@product-attribute-form.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -314,23 +307,23 @@ export class ProductAttributeFormComponent implements OnInit {
     if (!id) return;
 
     this.confirmationService.confirm({
-      header: 'Supprimer la valeur',
-      message: `Supprimer « ${value.name} » ?`,
+      header: $localize`:@@settings.product-attribute-form.ts.supprimer.la.valeur.1d19860c:Supprimer la valeur`,
+      message: $localize`:@@settings.product-attribute-form.ts.supprimer.name.6978d779:Supprimer « ${value.name}:name: » ?`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@product-attribute-form.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@product-attribute-form.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.productService.deleteAttributeValue(id, value.id).subscribe({
           next: res => {
             if (res.success) {
               this.loadAttribute(id);
-              this.toastService.add({ severity: 'success', summary: 'Supprimé', detail: 'Valeur supprimée' });
+              this.toastService.add({ severity: 'success', summary: $localize`:@@product-attribute-form.component.summary.Supprimé:Supprimé`, detail: $localize`:@@product-attribute-form.component.detail.Valeur suppr:Valeur supprimée` });
             }
           },
           error: err => {
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@product-attribute-form.component.summary.Erreur:Erreur`,
               detail: this.errorHandler.extractErrorMessage(err)
             });
           }
@@ -349,7 +342,7 @@ export class ProductAttributeFormComponent implements OnInit {
         next: res => {
           this.saving.set(false);
           if (res.success) {
-            this.toastService.add({ severity: 'success', summary: 'Enregistré', detail: 'Axe de variantes mis à jour' });
+            this.toastService.add({ severity: 'success', summary: $localize`:@@product-attribute-form.component.summary.Enregistr_:Enregistré`, detail: $localize`:@@product-attribute-form.component.detail.axe.de.variantes.mis.a.jour.2224b7ff:Axe de variantes mis à jour` });
             this.router.navigate([VARIANT_AXES_PATH]);
           }
         },
@@ -357,7 +350,7 @@ export class ProductAttributeFormComponent implements OnInit {
           this.saving.set(false);
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@product-attribute-form.component.summary.Erreur:Erreur`,
             detail: this.errorHandler.extractErrorMessage(err)
           });
         }
@@ -373,8 +366,8 @@ export class ProductAttributeFormComponent implements OnInit {
       this.saving.set(false);
       this.toastService.add({
         severity: 'warn',
-        summary: 'Valeurs requises',
-        detail: 'Ajoutez au moins une valeur (ex. S, M, L).'
+        summary: $localize`:@@product-attribute-form.component.summary.Valeurs requ:Valeurs requises`,
+        detail: $localize`:@@product-attribute-form.component.detail.Ajoutez_au_moins:Ajoutez au moins une valeur (ex. S, M, L).`
       });
       return;
     }
@@ -389,7 +382,7 @@ export class ProductAttributeFormComponent implements OnInit {
       next: res => {
         this.saving.set(false);
         if (res.success) {
-          this.toastService.add({ severity: 'success', summary: 'Créé', detail: 'Axe de variantes créé' });
+          this.toastService.add({ severity: 'success', summary: $localize`:@@product-attribute-form.component.summary.Créé:Créé`, detail: $localize`:@@product-attribute-form.component.detail.axe.de.variantes.cree.8000945d:Axe de variantes créé` });
           this.router.navigate([VARIANT_AXES_PATH]);
         }
       },
@@ -397,7 +390,7 @@ export class ProductAttributeFormComponent implements OnInit {
         this.saving.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@product-attribute-form.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }

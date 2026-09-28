@@ -36,8 +36,8 @@ export const AGENT_SCOPE_CONFIGS: readonly AgentScopeConfig[] = [
   {
     scope: AssistantAgentScope.Sales,
     slug: 'ventes',
-    title: 'Assistant IA Ventes',
-    expertName: 'Expert Ventes',
+    title: $localize`:@@ai-assistant.agent-scopes.ts.assistant.ia.ventes.8797c882:Assistant IA Ventes`,
+    expertName: $localize`:@@ai-assistant.agent-scopes.ts.expert.ventes.645e64af:Expert Ventes`,
     icon: 'fa-solid fa-bag-shopping',
     suggestions: [
       "Quel est mon chiffre d'affaires ce mois-ci ?",
@@ -50,8 +50,8 @@ export const AGENT_SCOPE_CONFIGS: readonly AgentScopeConfig[] = [
   {
     scope: AssistantAgentScope.Purchases,
     slug: 'achats',
-    title: 'Assistant IA Achats',
-    expertName: 'Expert Achats',
+    title: $localize`:@@ai-assistant.agent-scopes.ts.assistant.ia.achats.cb6a295f:Assistant IA Achats`,
+    expertName: $localize`:@@ai-assistant.agent-scopes.ts.expert.achats.d6ec1f8e:Expert Achats`,
     icon: 'fa-solid fa-cart-shopping',
     suggestions: [
       'Quelles factures fournisseurs ai-je payées ce mois-ci ?',
@@ -64,8 +64,8 @@ export const AGENT_SCOPE_CONFIGS: readonly AgentScopeConfig[] = [
   {
     scope: AssistantAgentScope.Stock,
     slug: 'stock',
-    title: 'Assistant IA Stock',
-    expertName: 'Expert Stock',
+    title: $localize`:@@ai-assistant.agent-scopes.ts.assistant.ia.stock.2e2231a4:Assistant IA Stock`,
+    expertName: $localize`:@@ai-assistant.agent-scopes.ts.expert.stock.fc9adbf2:Expert Stock`,
     icon: 'fa-solid fa-boxes-stacked',
     suggestions: [
       "Affiche-moi l'état du stock actuel",
@@ -78,8 +78,8 @@ export const AGENT_SCOPE_CONFIGS: readonly AgentScopeConfig[] = [
   {
     scope: AssistantAgentScope.Accounting,
     slug: 'comptabilite',
-    title: 'Assistant IA Comptabilité',
-    expertName: 'Expert Comptabilité',
+    title: $localize`:@@ai-assistant.agent-scopes.ts.assistant.ia.comptabilite.2ed53fa2:Assistant IA Comptabilité`,
+    expertName: $localize`:@@ai-assistant.agent-scopes.ts.expert.comptabilite.23a93595:Expert Comptabilité`,
     icon: 'fa-solid fa-calculator',
     suggestions: [
       'Montre-moi le tableau de bord comptable',
@@ -92,8 +92,8 @@ export const AGENT_SCOPE_CONFIGS: readonly AgentScopeConfig[] = [
   {
     scope: AssistantAgentScope.Treasury,
     slug: 'tresorerie',
-    title: 'Assistant IA Trésorerie',
-    expertName: 'Expert Trésorerie',
+    title: $localize`:@@ai-assistant.agent-scopes.ts.assistant.ia.tresorerie.f655f0f1:Assistant IA Trésorerie`,
+    expertName: $localize`:@@ai-assistant.agent-scopes.ts.expert.tresorerie.de8f3ba4:Expert Trésorerie`,
     icon: 'fa-solid fa-credit-card',
     // Exactement quatre suggestions, comme tous les experts : la barre de suggestions a une
     // hauteur fixe et le contrat est verrouillé par agent-scopes.config.spec.ts.
@@ -108,8 +108,8 @@ export const AGENT_SCOPE_CONFIGS: readonly AgentScopeConfig[] = [
   {
     scope: AssistantAgentScope.Crm,
     slug: 'crm',
-    title: 'Assistant IA CRM',
-    expertName: 'Expert CRM',
+    title: $localize`:@@ai-assistant.agent-scopes.ts.assistant.ia.crm.d5b38665:Assistant IA CRM`,
+    expertName: $localize`:@@ai-assistant.agent-scopes.ts.expert.crm.6d9d41f3:Expert CRM`,
     icon: 'fa-solid fa-handshake',
     suggestions: [
       'Quelles opportunités sont ouvertes actuellement ?',
@@ -128,7 +128,7 @@ export const AGENT_SCOPE_CONFIGS: readonly AgentScopeConfig[] = [
 export const FIRM_MISSION_SUGGESTION_CATEGORIES: readonly AgentSuggestionCategory[] = [
   {
     id: 'overview',
-    label: "Vue d'ensemble",
+    label: $localize`:@@ai-assistant.agent-scopes.ts.vue.d.ensemble.23bca783:Vue d'ensemble`,
     questions: [
       "Où en est le portefeuille du cabinet aujourd'hui ?",
       "Combien d'échéances sont en retard, pour quel montant, et chez combien de clients ?",
@@ -138,7 +138,7 @@ export const FIRM_MISSION_SUGGESTION_CATEGORIES: readonly AgentSuggestionCategor
   },
   {
     id: 'deadlines',
-    label: 'Échéances fiscales',
+    label: $localize`:@@ai-assistant.agent-scopes.ts.echeances.fiscales.cbcbb519:Échéances fiscales`,
     questions: [
       'Quelles échéances sont en retard et chez quels clients ?',
       'Quelles échéances tombent cette semaine ?',
@@ -148,7 +148,7 @@ export const FIRM_MISSION_SUGGESTION_CATEGORIES: readonly AgentSuggestionCategor
   },
   {
     id: 'risk',
-    label: 'Risque et activité des dossiers',
+    label: $localize`:@@ai-assistant.agent-scopes.ts.risque.et.activite.des.dossiers.60158f72:Risque et activité des dossiers`,
     questions: [
       'Quels dossiers sont les plus à risque cette semaine ?',
       "Quels dossiers n'ont pas eu d'écriture depuis un mois ?",
@@ -158,7 +158,7 @@ export const FIRM_MISSION_SUGGESTION_CATEGORIES: readonly AgentSuggestionCategor
   },
   {
     id: 'workload',
-    label: 'Charge des collaborateurs',
+    label: $localize`:@@ai-assistant.agent-scopes.ts.charge.des.collaborateurs.ea594410:Charge des collaborateurs`,
     questions: [
       'Comment se répartit la charge entre mes collaborateurs ?',
       'Qui est le plus chargé en échéances en retard ?',
@@ -168,7 +168,7 @@ export const FIRM_MISSION_SUGGESTION_CATEGORIES: readonly AgentSuggestionCategor
   },
   {
     id: 'review',
-    label: 'Revue et priorités',
+    label: $localize`:@@ai-assistant.agent-scopes.ts.revue.et.priorites.27b8bdc1:Revue et priorités`,
     questions: [
       'Prépare-moi la revue hebdomadaire du cabinet.',
       'Quelles sont les 3 actions prioritaires cette semaine ?',
@@ -189,8 +189,8 @@ export const FIRM_MISSION_SUGGESTION_CATEGORIES: readonly AgentSuggestionCategor
 export const FIRM_AGENT_SCOPE_CONFIG: AgentScopeConfig = {
   scope: AssistantAgentScope.FirmMission,
   slug: 'chef-de-mission',
-  title: 'Assistant Chef de mission',
-  expertName: 'Chef de mission',
+  title: $localize`:@@ai-assistant.agent-scopes.ts.assistant.chef.de.mission.1d92fc76:Assistant Chef de mission`,
+  expertName: $localize`:@@ai-assistant.agent-scopes.ts.chef.de.mission.93d4fc86:Chef de mission`,
   icon: 'fa-solid fa-user-tie',
   suggestionCategories: FIRM_MISSION_SUGGESTION_CATEGORIES,
   suggestions: FIRM_MISSION_SUGGESTION_CATEGORIES.flatMap(c => [...c.questions]),

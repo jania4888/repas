@@ -33,13 +33,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     AccountingExportMenuComponent
   ],
   template: `
-    <app-page-header title="Compte de résultat" subtitle="Produits et charges de l'exercice" />
+    <app-page-header title="Compte de résultat" i18n-title="@@accounting.income-statement.compte.de.resultat.a292527b" subtitle="Produits et charges de l'exercice" i18n-subtitle="@@accounting.income-statement.produits.et.charges.de.l.exercice.9b20c5dd" />
 
     <div class="card is-filters-card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Exercice fiscal">
+      <app-accounting-filter-bar ariaLabel="Exercice fiscal" i18n-ariaLabel="@@accounting.income-statement.exercice.fiscal.7b79fa50">
         <div accountingFilterFields>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="is-year">Exercice fiscal</label>
+            <label class="accounting-filter-label" for="is-year" i18n="@@accounting.income-statement.exercice.fiscal.25ea5f92">Exercice fiscal</label>
             <input id="is-year" type="number" [(ngModel)]="fiscalYear" class="accounting-filter-input is-input-narrow" min="2000" max="2099" />
           </div>
         </div>
@@ -51,9 +51,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Charger le compte de résultat">
-            Charger
-          </app-button>
+            ariaLabel="Charger le compte de résultat" i18n-ariaLabel="@@accounting.income-statement.charger.le.compte.de.resultat.c3d41795" i18n="@@accounting.income-statement.charger.8f860300"> Charger </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-income-statement"
             density="toolbar"
@@ -70,24 +68,24 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       variant="error"
       [message]="error() ?? ''"
       [showRetry]="!!error()"
-      retryLabel="Réessayer"
+      retryLabel="Réessayer" i18n-retryLabel="@@accounting.income-statement.reessayer.c4f78b12"
       (retry)="load()"
     />
 
     @if (data(); as d) {
       <!-- Produits -->
       <div class="card is-section-card">
-        <h3 class="is-section-title">
+        <h3 class="is-section-title" i18n="@@accounting.income-statement.produits.454348a9">
           <i class="pi pi-trending-up is-icon is-icon--revenue"></i>
           Produits
         </h3>
         <p-table [value]="d.revenue" [rowHover]="true" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>Compte</th>
-              <th>Libellé</th>
-              <th class="text-right">Montant</th>
-              <th class="text-right">N-1</th>
+              <th i18n="@@accounting.income-statement.compte.c45740bb">Compte</th>
+              <th i18n="@@accounting.income-statement.libelle.f5485bba">Libellé</th>
+              <th class="text-right" i18n="@@accounting.income-statement.montant.4adcd9fc">Montant</th>
+              <th class="text-right" i18n="@@accounting.income-statement.n.1.4f927fbf">N-1</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
@@ -100,30 +98,30 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </ng-template>
           <ng-template pTemplate="footer">
             <tr class="is-total-row">
-              <td colspan="2">Total Produits</td>
+              <td colspan="2" i18n="@@accounting.income-statement.total.produits.0a1a9e7c">Total Produits</td>
               <td class="text-right tabnum">{{ d.totalRevenue | number : '1.3-3' }}</td>
               <td></td>
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
-            <tr><td colspan="4" class="is-empty">Aucun produit enregistré.</td></tr>
+            <tr><td colspan="4" class="is-empty" i18n="@@accounting.income-statement.aucun.produit.enregistre.7424f061">Aucun produit enregistré.</td></tr>
           </ng-template>
         </p-table>
       </div>
 
       <!-- Charges -->
       <div class="card is-section-card">
-        <h3 class="is-section-title">
+        <h3 class="is-section-title" i18n="@@accounting.income-statement.charges.b2c0c69b">
           <i class="pi pi-trending-down is-icon is-icon--expenses"></i>
           Charges
         </h3>
         <p-table [value]="d.expenses" [rowHover]="true" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>Compte</th>
-              <th>Libellé</th>
-              <th class="text-right">Montant</th>
-              <th class="text-right">N-1</th>
+              <th i18n="@@accounting.income-statement.compte.c45740bb">Compte</th>
+              <th i18n="@@accounting.income-statement.libelle.f5485bba">Libellé</th>
+              <th class="text-right" i18n="@@accounting.income-statement.montant.4adcd9fc">Montant</th>
+              <th class="text-right" i18n="@@accounting.income-statement.n.1.4f927fbf">N-1</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
@@ -136,13 +134,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </ng-template>
           <ng-template pTemplate="footer">
             <tr class="is-total-row">
-              <td colspan="2">Total Charges</td>
+              <td colspan="2" i18n="@@accounting.income-statement.total.charges.621ad2d8">Total Charges</td>
               <td class="text-right tabnum">{{ d.totalExpenses | number : '1.3-3' }}</td>
               <td></td>
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
-            <tr><td colspan="4" class="is-empty">Aucune charge enregistrée.</td></tr>
+            <tr><td colspan="4" class="is-empty" i18n="@@accounting.income-statement.aucune.charge.enregistree.f28b8d4f">Aucune charge enregistrée.</td></tr>
           </ng-template>
         </p-table>
       </div>
@@ -150,14 +148,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <!-- Résultat Net -->
       <div class="card is-result-card">
         <div class="is-result-content">
-          <span class="is-result-label">Résultat Net</span>
+          <span class="is-result-label" i18n="@@accounting.income-statement.resultat.net.6adc7311">Résultat Net</span>
           <span class="is-result-value" [class.is-positive]="d.netResult >= 0" [class.is-negative]="d.netResult < 0">
             {{ d.netResult | number : '1.3-3' }}
           </span>
         </div>
-        <div class="is-result-badge-row">
+        <div class="is-result-badge-row" i18n="@@accounting.income-statement.produits.charges.58b0532c">
           <span class="is-result-badge" [class.is-badge--profit]="d.netResult >= 0" [class.is-badge--loss]="d.netResult < 0">
-            {{ d.netResult >= 0 ? 'Bénéfice' : 'Déficit' }}
+            {{ d.netResult >= 0 ? loc_ui_tern_benefice_111823 : loc_ui_tern_deficit_3a8608 }}
           </span>
           <span class="is-result-detail tabnum">
             Produits {{ d.totalRevenue | number : '1.3-3' }} − Charges {{ d.totalExpenses | number : '1.3-3' }}
@@ -180,7 +178,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     .is-icon--revenue { background:var(--color-success-50,#f0fdf4); color:var(--color-success-600,#16a34a); }
     .is-icon--expenses { background:var(--color-danger-50,#fef2f2); color:var(--color-danger-600,#dc2626); }
     .is-account-num { font-family:monospace; font-weight:500; }
-    .text-right { text-align:right; }
+    .text-right { text-align:end; }
     .tabnum { font-variant-numeric:tabular-nums; }
     .is-prev-year { color:var(--color-text-tertiary); }
     .is-total-row { font-weight:700; }
@@ -199,6 +197,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `
 })
 export class IncomeStatementComponent implements OnInit {
+  readonly loc_ui_tern_benefice_111823 = $localize`:@@ui.tern.benefice.111823:Bénéfice`;
+  readonly loc_ui_tern_deficit_3a8608 = $localize`:@@ui.tern.deficit.3a8608:Déficit`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   fiscalYear = new Date().getFullYear();
@@ -285,11 +285,11 @@ export class IncomeStatementComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (res.success && res.data) this.data.set(res.data);
-        else this.error.set(res.error ?? 'Erreur lors du chargement du compte de résultat');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.chargement.du.compte.de.res.b877bf:Erreur lors du chargement du compte de résultat`);
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.income-statement.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }
@@ -303,7 +303,7 @@ export class IncomeStatementComponent implements OnInit {
       },
       error: err => {
         this.exporting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.income-statement.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
       }
     });
   }

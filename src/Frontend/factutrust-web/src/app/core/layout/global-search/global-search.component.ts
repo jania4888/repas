@@ -81,9 +81,9 @@ export function computeGlobalSearchDropdownPosition(
             role="combobox"
             aria-autocomplete="list"
             [attr.aria-expanded]="dropdownOpen() || paletteOpen()"
-            aria-label="Rechercher" />
+            aria-label="Rechercher" i18n-aria-label="@@core.layout.global-search.global-search.rechercher.91f7d3e9" />
           @if (mode === 'header') {
-            <kbd class="global-search__hint" aria-hidden="true">Ctrl+K</kbd>
+            <kbd class="global-search__hint" aria-hidden="true" i18n="@@core.layout.global-search.global-search.ctrl.k.769b0d96">Ctrl+K</kbd>
           }
         </div>
       </div>
@@ -104,7 +104,7 @@ export function computeGlobalSearchDropdownPosition(
 
       @if (paletteOpen()) {
         <div class="global-search__backdrop" (click)="closeAll()" aria-hidden="true"></div>
-        <div class="global-search__palette" role="dialog" aria-modal="true" aria-label="Recherche globale">
+        <div class="global-search__palette" role="dialog" aria-modal="true" aria-label="Recherche globale" i18n-aria-label="@@core.layout.global-search.global-search.recherche.globale.5de4b3c4">
           <div class="global-search__palette-inner">
             <div class="global-search__input-wrap global-search__input-wrap--palette">
               <i class="fa-solid fa-magnifying-glass global-search__icon" aria-hidden="true"></i>
@@ -112,7 +112,7 @@ export function computeGlobalSearchDropdownPosition(
                 #paletteInput
                 type="search"
                 class="global-search__input global-search__input--palette"
-                placeholder="Rechercher une page, un document, un client…"
+                placeholder="Rechercher une page, un document, un client…" i18n-placeholder="@@core.layout.global-search.global-search.rechercher.une.page.un.document.un.client.b502d55c"
                 [(ngModel)]="query"
                 (input)="onQueryChange()"
                 (keydown)="onInputKeydown($event)"
@@ -128,14 +128,14 @@ export function computeGlobalSearchDropdownPosition(
 
     <ng-template #resultsTemplate>
       @if (loading()) {
-        <div class="global-search__empty">Recherche en cours…</div>
+        <div class="global-search__empty" i18n="@@core.layout.global-search.global-search.recherche.en.cours.a16747f0">Recherche en cours…</div>
       } @else if (displayResults().length === 0) {
         <div class="global-search__empty">
-          @if (query.trim().length >= 2) {
+          @if (query.trim().length >= 2) {<ng-container i18n="@@core.layout.global-search.global-search.aucun.resultat.pour.5191921e">
             Aucun résultat pour « {{ query.trim() }} »
-          } @else {
+          </ng-container>} @else {<ng-container i18n="@@core.layout.global-search.global-search.tapez.pour.rechercher.ou.parcourez.les.r.967f77a8">
             Tapez pour rechercher ou parcourez les raccourcis
-          }
+          </ng-container>}
         </div>
       } @else {
         @for (group of groupedResults(); track group.label) {
@@ -167,15 +167,15 @@ export function computeGlobalSearchDropdownPosition(
     .global-search { position: relative; flex: 1; max-width: 560px; }
     .global-search--header { margin: 0 auto; flex: 1; padding: 0 16px; }
     .global-search__input-wrap { position: relative; display: flex; align-items: center; }
-    .global-search__icon { position: absolute; left: 14px; color: var(--color-text-secondary, #64748b); font-size: 14px; pointer-events: none; }
+    .global-search__icon { position: absolute; inset-inline-start: 14px; color: var(--color-text-secondary, #64748b); font-size: 14px; pointer-events: none; }
     .global-search__input {
       width: 100%; border: 1px solid var(--color-border-subtle, #e2e8f0); border-radius: 999px;
-      padding: 10px 72px 10px 40px; background: rgba(255,255,255,0.9); font-size: 14px;
+      padding-block: 10px; padding-inline: 40px 72px; background: rgba(255,255,255,0.9); font-size: 14px;
     }
     .global-search__input--header { min-width: 280px; }
-    .global-search__input--palette { border-radius: 12px; padding-left: 40px; font-size: 16px; }
+    .global-search__input--palette { border-radius: 12px; padding-inline-start: 40px; font-size: 16px; }
     .global-search__hint {
-      position: absolute; right: 12px; font-size: 11px; padding: 2px 6px; border-radius: 6px;
+      position: absolute; inset-inline-end: 12px; font-size: 11px; padding: 2px 6px; border-radius: 6px;
       border: 1px solid var(--color-border-subtle, #e2e8f0); color: var(--color-text-secondary, #64748b); background: #fff;
     }
 
@@ -188,7 +188,7 @@ export function computeGlobalSearchDropdownPosition(
       border: none;
       border-radius: 0;
       color: var(--topbar-fg, #fff);
-      padding: 6px 72px 6px 40px;
+      padding-block: 6px; padding-inline: 40px 72px;
     }
     .global-search--header .global-search__input::placeholder {
       color: var(--topbar-fg-muted, rgba(255, 255, 255, 0.75));
@@ -233,7 +233,7 @@ export function computeGlobalSearchDropdownPosition(
     }
     .global-search__item {
       width: 100%; display: flex; align-items: flex-start; gap: 10px; border: none; background: transparent;
-      text-align: left; padding: 10px; border-radius: 10px; cursor: pointer; color: inherit;
+      text-align: start; padding: 10px; border-radius: 10px; cursor: pointer; color: inherit;
     }
     .global-search__item--active, .global-search__item:hover { background: var(--color-primary-50, #eff6ff); }
     .global-search__item i { width: 18px; margin-top: 2px; color: var(--color-primary-600, #2563eb); }
@@ -249,7 +249,7 @@ export function computeGlobalSearchDropdownPosition(
 })
 export class GlobalSearchComponent implements OnInit, OnDestroy {
   @Input() mode: 'header' | 'mobile' = 'header';
-  @Input() placeholder = 'Rechercher…';
+  @Input() placeholder = $localize`:@@core.global-search.ts.rechercher.1d12cdfb:Rechercher…`;
   @ViewChild('searchInput') searchInput?: ElementRef<HTMLInputElement>;
   @ViewChild('paletteInput') paletteInput?: ElementRef<HTMLInputElement>;
   @ViewChild('inputWrap') inputWrap?: ElementRef<HTMLElement>;
@@ -412,7 +412,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
   groupedResults(): { label: string; items: GlobalSearchResult[] }[] {
     const groups = new Map<string, GlobalSearchResult[]>();
     for (const item of this.displayResults()) {
-      const label = item.group || 'Autres';
+      const label = item.group || $localize`:@@core.global-search.ts.autres.2f0dd042:Autres`;
       const list = groups.get(label) ?? [];
       list.push(item);
       groups.set(label, list);

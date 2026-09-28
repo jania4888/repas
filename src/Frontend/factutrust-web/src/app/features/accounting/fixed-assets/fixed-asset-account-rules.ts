@@ -83,7 +83,7 @@ export function validateAccountTriplet(
       valid: false,
       field: 'assetAccount',
       message:
-        "Compte d'actif invalide : chiffres uniquement, préfixe attendu 21x ou 22x (271 toléré), jamais 28x ni 29x."
+        $localize`:@@accounting.fixed-asset-account-rules.ts.compte.d.actif.invalide.chiffres.uniquem.42f02442:Compte d'actif invalide : chiffres uniquement, préfixe attendu 21x ou 22x (271 toléré), jamais 28x ni 29x.`
     };
   }
 
@@ -92,7 +92,7 @@ export function validateAccountTriplet(
       valid: false,
       field: 'depreciationAccount',
       message:
-        "Compte d'amortissement invalide : chiffres uniquement, préfixe attendu 281x ou 282x."
+        $localize`:@@accounting.fixed-asset-account-rules.ts.compte.d.amortissement.invalide.chiffres.da667d4b:Compte d'amortissement invalide : chiffres uniquement, préfixe attendu 281x ou 282x.`
     };
   }
 
@@ -101,7 +101,7 @@ export function validateAccountTriplet(
       valid: false,
       field: 'expenseAccount',
       message:
-        'Compte de dotation invalide : chiffres uniquement, préfixe attendu 68111/68112 (6811 toléré).'
+        $localize`:@@accounting.fixed-asset-account-rules.ts.compte.de.dotation.invalide.chiffres.uni.d91de68c:Compte de dotation invalide : chiffres uniquement, préfixe attendu 68111/68112 (6811 toléré).`
     };
   }
 
@@ -110,7 +110,7 @@ export function validateAccountTriplet(
       valid: false,
       field: 'assetAccount',
       message:
-        'Incohérence comptable : un actif 21x doit être amorti en 281x avec une dotation 68111 ; un actif 22x doit être amorti en 282x avec une dotation 68112.'
+        $localize`:@@accounting.fixed-asset-account-rules.ts.incoherence.comptable.un.actif.21x.doit.1e6937d9:Incohérence comptable : un actif 21x doit être amorti en 281x avec une dotation 68111 ; un actif 22x doit être amorti en 282x avec une dotation 68112.`
     };
   }
 

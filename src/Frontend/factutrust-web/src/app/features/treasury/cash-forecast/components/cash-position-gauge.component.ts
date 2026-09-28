@@ -44,15 +44,15 @@ import {
 
       <dl class="gauge__thresholds">
         <div>
-          <dt>Seuil critique</dt>
+          <dt i18n="@@treasury.cash-forecast.seuil.critique.2bf6d0b2">Seuil critique</dt>
           <dd>{{ formatted(thresholds().criticalThreshold) }}</dd>
         </div>
         <div>
-          <dt>Seuil d'alerte</dt>
+          <dt i18n="@@treasury.cash-forecast.seuil.d.alerte.02c9c885">Seuil d'alerte</dt>
           <dd>{{ formatted(thresholds().alertThreshold) }}</dd>
         </div>
         <div>
-          <dt>Seuil de confort</dt>
+          <dt i18n="@@treasury.cash-forecast.seuil.de.confort.e897eeaf">Seuil de confort</dt>
           <dd>{{ formatted(thresholds().comfortThreshold) }}</dd>
         </div>
       </dl>
@@ -97,7 +97,7 @@ export class CashPositionGaugeComponent {
   });
 
   readonly ariaLabel = computed(
-    () => `Position de trésorerie : ${formatAmount(this.balance(), this.currency())}, zone ${this.zoneLabel()}`
+    () => $localize`:@@treasury.cash-position-gauge.ts.position.de.tresorerie.formatamount.zone.76ac27af:Position de trésorerie : ${formatAmount(this.balance(), this.currency())}:formatAmount:, zone ${this.zoneLabel()}:zoneLabel:`
   );
 
   /**

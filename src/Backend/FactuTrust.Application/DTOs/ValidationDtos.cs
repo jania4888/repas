@@ -263,12 +263,19 @@ public static class ValidationErrorCodes
     /// this code (<c>ErrorHandlerService.isTenantMigrationFailure</c>), regardless of status code.
     /// </summary>
     public const string TenantMigrationFailed = "TENANT_MIGRATION_FAILED";
+    /// <summary>JWT tenant / company context invalid (middleware).</summary>
+    public const string TenantContextInvalid = "TENANT_CONTEXT_INVALID";
+    /// <summary>Delegated dossier JWT claims malformed (change dossier — not a full logout).</summary>
+    public const string DelegatedContextInvalid = "DELEGATED_CONTEXT_INVALID";
 
     // Security
     public const string Tampering = "TAMPERING_DETECTED";
     public const string IdempotencyViolation = "IDEMPOTENCY_VIOLATION";
     public const string RateLimitExceeded = "RATE_LIMIT_EXCEEDED";
     public const string Unauthorized = "UNAUTHORIZED";
+
+    /// <summary>Unicode bidi control characters in user text (spoofing).</summary>
+    public const string BidiControls = "BIDI_CONTROLS";
 }
 
 /// <summary>

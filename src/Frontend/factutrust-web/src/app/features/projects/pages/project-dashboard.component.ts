@@ -33,7 +33,7 @@ import { ProjectPerformanceBannerComponent } from '../components/project-perform
       [canCreate]="canCreate" />
 
     @if (loading()) {
-      <p class="text-color-secondary proj-dash-loading">Chargement…</p>
+      <p class="text-color-secondary proj-dash-loading" i18n="@@projects.pages.chargement.01cba1df">Chargement…</p>
     } @else if (error()) {
       <p class="text-danger proj-dash-loading" role="alert">{{ error() }}</p>
     } @else {
@@ -63,9 +63,9 @@ export class ProjectDashboardComponent implements OnInit {
   private readonly errors = inject(ErrorHandlerService);
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Accueil', route: '/' },
-    { label: 'Projets', route: '/projects' },
-    { label: 'Tableau de bord' }
+    { label: $localize`:@@projects.project-dashboard.ts.accueil.a8ff8fd2:Accueil`, route: '/' },
+    { label: $localize`:@@projects.project-dashboard.ts.projets.b1e8cd4d:Projets`, route: '/projects' },
+    { label: $localize`:@@projects.project-dashboard.ts.tableau.de.bord.a524057f:Tableau de bord` }
   ];
 
   period: 'week' | 'month' = 'week';
@@ -75,7 +75,7 @@ export class ProjectDashboardComponent implements OnInit {
 
   get greeting(): string {
     const name = this.auth.user()?.firstName ?? '';
-    return name ? `Bonjour, ${name}` : 'Bonjour';
+    return name ? $localize`:@@ui.tern.bonjour.ph.abdeee:Bonjour, ${name}:p0:` : $localize`:@@ui.tern.bonjour.f30ecb:Bonjour`;
   }
 
   get canCreate(): boolean {
@@ -98,7 +98,7 @@ export class ProjectDashboardComponent implements OnInit {
       next: r => {
         this.loading.set(false);
         if (r.success && r.data) this.data.set(r.data);
-        else this.error.set(r.message || 'Chargement impossible');
+        else this.error.set(r.message || $localize`:@@projects.project-dashboard.ts.chargement.impossible.4c82ffbe:Chargement impossible`);
       },
       error: err => {
         this.loading.set(false);

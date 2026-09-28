@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,8 +21,8 @@ import {
 
 const MONTH_LABELS = [
   '',
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  $localize`:@@payroll.withholding-certificates-tab.ts.janvier.7a32ae0f:Janvier`, $localize`:@@payroll.withholding-certificates-tab.ts.fevrier.63fc1803:Février`, $localize`:@@payroll.withholding-certificates-tab.ts.mars.1778011d:Mars`, $localize`:@@payroll.withholding-certificates-tab.ts.avril.4efeee46:Avril`, $localize`:@@payroll.withholding-certificates-tab.ts.mai.afe526a6:Mai`, $localize`:@@payroll.withholding-certificates-tab.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@payroll.withholding-certificates-tab.ts.juillet.e8e0920c:Juillet`, $localize`:@@payroll.withholding-certificates-tab.ts.aout.460b6696:Août`, $localize`:@@payroll.withholding-certificates-tab.ts.septembre.08d23f31:Septembre`, $localize`:@@payroll.withholding-certificates-tab.ts.octobre.0ed28485:Octobre`, $localize`:@@payroll.withholding-certificates-tab.ts.novembre.632580af:Novembre`, $localize`:@@payroll.withholding-certificates-tab.ts.decembre.03bcd9b0:Décembre`
 ];
 
 @Component({
@@ -48,21 +49,21 @@ const MONTH_LABELS = [
         (ngModelChange)="load()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Exercice"
+        placeholder="Exercice" i18n-placeholder="@@payroll.declarations.exercice.e171e2b0"
         styleClass="w-10rem" />
-      <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()">Générer</app-button>
+      <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()" i18n="@@payroll.declarations.generer.bd221c07">Générer</app-button>
       <app-button
         variant="outline"
         icon="pi-download"
         iconPos="left"
         (click)="exportCsv()"
-        [disabled]="!canExport()">Exporter CSV</app-button>
+        [disabled]="!canExport()" i18n="@@payroll.declarations.exporter.csv.d4fc31cb">Exporter CSV</app-button>
       <app-button
         variant="outline"
         icon="pi-file-export"
         iconPos="left"
         (click)="exportZip()"
-        [disabled]="!canExport()">Exporter ZIP (PDF)</app-button>
+        [disabled]="!canExport()" i18n="@@payroll.declarations.exporter.zip.pdf.6bd22aa3">Exporter ZIP (PDF)</app-button>
     </div>
 
     @if (batch() && !batch()!.isComplete) {
@@ -77,18 +78,18 @@ const MONTH_LABELS = [
     } @else if (!batch()) {
       <app-payroll-empty-state
         icon="pi-exclamation-circle"
-        title="Impossible de charger les certificats"
-        description="Une erreur est survenue lors de la génération. Vérifiez le NIF de la société et vos droits."
+        title="Impossible de charger les certificats" i18n-title="@@payroll.declarations.impossible.de.charger.les.certificats.9e902ae6"
+        description="Une erreur est survenue lors de la génération. Vérifiez le NIF de la société et vos droits." i18n-description="@@payroll.declarations.une.erreur.est.survenue.lors.de.la.gener.5f296646"
         [showAction]="true"
-        actionLabel="Réessayer"
+        actionLabel="Réessayer" i18n-actionLabel="@@payroll.declarations.reessayer.b885e20c"
         (actionClick)="load()" />
     } @else if (batch()!.lines.length === 0) {
       <app-payroll-empty-state
         icon="pi-file"
-        title="Aucun certificat à générer"
+        title="Aucun certificat à générer" i18n-title="@@payroll.declarations.aucun.certificat.a.generer.2997d642"
         [description]="emptyDescription()"
         [showAction]="true"
-        actionLabel="Voir les cycles de paie"
+        actionLabel="Voir les cycles de paie" i18n-actionLabel="@@payroll.declarations.voir.les.cycles.de.paie.fd141467"
         actionRoute="/payroll/runs" />
     } @else {
       <app-payroll-stat-grid [items]="summaryStats()" class="mb-4" />
@@ -96,14 +97,14 @@ const MONTH_LABELS = [
       <p-table [value]="batch()!.lines" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Salarié</th>
-            <th>CIN</th>
-            <th class="text-right">Mois</th>
-            <th class="text-right">Net imposable</th>
-            <th class="text-right">IRPP retenu</th>
-            <th class="text-right">CSS retenue</th>
-            <th class="text-right">Total retenues</th>
-            <th class="text-center">PDF</th>
+            <th i18n="@@payroll.declarations.salarie.27f97915">Salarié</th>
+            <th i18n="@@payroll.declarations.cin.748d5d16">CIN</th>
+            <th class="text-right" i18n="@@payroll.declarations.mois.0d304bea">Mois</th>
+            <th class="text-right" i18n="@@payroll.declarations.net.imposable.2439110f">Net imposable</th>
+            <th class="text-right" i18n="@@payroll.declarations.irpp.retenu.7cc73d3d">IRPP retenu</th>
+            <th class="text-right" i18n="@@payroll.declarations.css.retenue.034ee1f0">CSS retenue</th>
+            <th class="text-right" i18n="@@payroll.declarations.total.retenues.b2cd335c">Total retenues</th>
+            <th class="text-center" i18n="@@payroll.declarations.pdf.d613d88c">PDF</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-l>
@@ -134,7 +135,7 @@ const MONTH_LABELS = [
                 icon="pi-file-pdf"
                 size="sm"
                 (click)="downloadPdf(l.employeeId)"
-                [attr.aria-label]="'Télécharger le certificat de ' + l.employeeName" />
+                [attr.aria-label]="loc_ui_tern_telecharger_le_certificat_de_36ca16 + l.employeeName" />
             </td>
           </tr>
         </ng-template>
@@ -144,11 +145,12 @@ const MONTH_LABELS = [
   styles: [`
     .mb-3 { margin-bottom: var(--spacing-4); }
     .mb-4 { margin-bottom: var(--spacing-6); display: block; }
-    .ml-2 { margin-left: var(--spacing-2); }
+    .ml-2 { margin-inline-start: var(--spacing-2); }
     .text-warning { color: var(--color-warning-600); }
   `]
 })
 export class WithholdingCertificatesTabComponent implements OnInit {
+  readonly loc_ui_tern_telecharger_le_certificat_de_36ca16 = $localize`:@@ui.tern.telecharger.le.certificat.de.36ca16:Télécharger le certificat de `;
   private readonly payroll = inject(PayrollService);
   private readonly toast = inject(ToastService);
 
@@ -171,27 +173,27 @@ export class WithholdingCertificatesTabComponent implements OnInit {
     const b = this.batch();
     if (!b || b.isComplete) return '';
     const months = formatMonthList(b.missingMonths);
-    return `Exercice incomplet : cycles Validé/Clôturé manquants pour ${months}. Seuls les mois validés sont inclus.`;
+    return $localize`:@@payroll.withholding-certificates-tab.ts.exercice.incomplet.cycles.valide.cloture.885e015a:Exercice incomplet : cycles Validé/Clôturé manquants pour ${months}:months:. Seuls les mois validés sont inclus.`;
   });
 
   emptyDescription = computed(() => {
     const b = this.batch();
-    const base = 'Seuls les cycles de paie validés ou clôturés sont inclus.';
+    const base = $localize`:@@payroll.withholding-certificates-tab.ts.seuls.les.cycles.de.paie.valides.ou.clot.aa455691:Seuls les cycles de paie validés ou clôturés sont inclus.`;
     if (!b || b.isComplete || b.missingMonths.length === 0) {
-      return `${base} Aucun bulletin éligible pour cet exercice.`;
+      return $localize`:@@payroll.withholding-certificates-tab.ts.base.aucun.bulletin.eligible.pour.cet.ex.c6e20a50:${base}:base: Aucun bulletin éligible pour cet exercice.`;
     }
-    return `${base} Mois manquants : ${formatMonthList(b.missingMonths)}.`;
+    return $localize`:@@payroll.withholding-certificates-tab.ts.base.mois.manquants.formatmonthlist.74062777:${base}:base: Mois manquants : ${formatMonthList(b.missingMonths)}:formatMonthList:.`;
   });
 
   summaryStats = computed((): PayrollStatItem[] => {
     const b = this.batch();
     if (!b) return [];
     return [
-      { label: 'Salariés', value: b.employeeCount, icon: 'pi-users', variant: 'primary' },
-      { label: 'Net imposable', value: formatPayrollAmount(b.totalAnnualNetTaxable, false), icon: 'pi-chart-bar', variant: 'primary' },
-      { label: 'IRPP retenu', value: formatPayrollAmount(b.totalIrppWithheld, false), icon: 'pi-percentage', variant: 'warning' },
-      { label: 'CSS retenue', value: formatPayrollAmount(b.totalCssWithheld, false), icon: 'pi-percentage', variant: 'warning' },
-      { label: 'Total retenues', value: formatPayrollAmount(b.totalWithholding, false), icon: 'pi-wallet', variant: 'success', featured: true }
+      { label: $localize`:@@payroll.withholding-certificates-tab.ts.salaries.ce68387d:Salariés`, value: b.employeeCount, icon: 'pi-users', variant: 'primary' },
+      { label: $localize`:@@payroll.withholding-certificates-tab.ts.net.imposable.2439110f:Net imposable`, value: formatPayrollAmount(b.totalAnnualNetTaxable, false), icon: 'pi-chart-bar', variant: 'primary' },
+      { label: $localize`:@@payroll.withholding-certificates-tab.ts.irpp.retenu.7cc73d3d:IRPP retenu`, value: formatPayrollAmount(b.totalIrppWithheld, false), icon: 'pi-percentage', variant: 'warning' },
+      { label: $localize`:@@payroll.withholding-certificates-tab.ts.css.retenue.034ee1f0:CSS retenue`, value: formatPayrollAmount(b.totalCssWithheld, false), icon: 'pi-percentage', variant: 'warning' },
+      { label: $localize`:@@payroll.withholding-certificates-tab.ts.total.retenues.b2cd335c:Total retenues`, value: formatPayrollAmount(b.totalWithholding, false), icon: 'pi-wallet', variant: 'success', featured: true }
     ];
   });
 
@@ -209,7 +211,7 @@ export class WithholdingCertificatesTabComponent implements OnInit {
       next: res => this.batch.set(res.data ?? null),
       error: () => {
         this.batch.set(null);
-        this.toast.add({ severity: 'error', summary: 'Certificats RS', detail: 'Impossible de générer les certificats.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@withholding-certificates-tab.component.summary.Certificats :Certificats RS`, detail: $localize`:@@withholding-certificates-tab.component.detail.Impossible_de_g_:Impossible de générer les certificats.` });
       }
     });
   }
@@ -218,7 +220,7 @@ export class WithholdingCertificatesTabComponent implements OnInit {
     if (!this.canExport()) return;
     this.payroll.exportWithholdingCertificatesCsv(this.year).subscribe({
       next: blob => downloadBlob(blob, `certificats_rs_${this.year}.csv`),
-      error: () => this.toast.add({ severity: 'error', summary: 'Certificats RS', detail: 'Export CSV impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@withholding-certificates-tab.component.summary.Certificats :Certificats RS`, detail: $localize`:@@withholding-certificates-tab.component.detail.Export CSV i:Export CSV impossible.` })
     });
   }
 
@@ -226,14 +228,14 @@ export class WithholdingCertificatesTabComponent implements OnInit {
     if (!this.canExport()) return;
     this.payroll.exportWithholdingCertificatesZip(this.year).subscribe({
       next: blob => downloadBlob(blob, `certificats_rs_${this.year}.zip`),
-      error: () => this.toast.add({ severity: 'error', summary: 'Certificats RS', detail: 'Export ZIP impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@withholding-certificates-tab.component.summary.Certificats :Certificats RS`, detail: $localize`:@@withholding-certificates-tab.component.detail.Export ZIP i:Export ZIP impossible.` })
     });
   }
 
   downloadPdf(employeeId: string): void {
     this.payroll.downloadWithholdingCertificatePdf(this.year, employeeId).subscribe({
       next: blob => downloadBlob(blob, `certificat_rs_${this.year}_${employeeId}.pdf`),
-      error: () => this.toast.add({ severity: 'error', summary: 'Certificats RS', detail: 'Téléchargement PDF impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@withholding-certificates-tab.component.summary.Certificats :Certificats RS`, detail: $localize`:@@withholding-certificates-tab.component.detail.T_l_chargement_P:Téléchargement PDF impossible.` })
     });
   }
 }

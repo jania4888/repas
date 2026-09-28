@@ -23,16 +23,16 @@ type ChartType = 'bar' | 'line' | 'pie';
   ],
   template: `
     @if (loading && !result) {
-      <div class="dr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Chargement…</div>
+      <div class="dr-loading" i18n="@@shared.studio-runtime.dynamic-report.chargement.fbee6e98"><i class="fa-solid fa-spinner fa-spin"></i> Chargement…</div>
     } @else if (!result || result.rows.length === 0) {
       <app-empty-state
         icon="pi-chart-bar"
-        title="Aucune donnée"
-        description="Aucune donnée pour ce rapport ou cette vue."
+        title="Aucune donnée" i18n-title="@@shared.studio-runtime.dynamic-report.aucune.donnee.434e5488"
+        description="Aucune donnée pour ce rapport ou cette vue." i18n-description="@@shared.studio-runtime.dynamic-report.aucune.donnee.pour.ce.rapport.ou.cette.v.10fb24b3"
       />
     } @else {
       @if (result.truncated) {
-        <div class="dr-truncated" role="status">
+        <div class="dr-truncated" role="status" i18n="@@shared.studio-runtime.dynamic-report.resultat.tronque.a.ligne.s.sur.les.totau.740818f2">
           <i class="fa-solid fa-triangle-exclamation"></i>
           Résultat tronqué à {{ result.rows.length }} ligne(s) sur {{ result.totalRows }}.
           Les totaux ne portent pas sur la totalité des données — affinez la période ou les filtres.
@@ -41,14 +41,14 @@ type ChartType = 'bar' | 'line' | 'pie';
       <div class="dr-bar">
         @if (chartable()) {
           <div class="dr-modes">
-            <button pButton type="button" icon="fa-solid fa-table" label="Tableau" class="p-button-sm"
+            <button pButton type="button" icon="fa-solid fa-table" label="Tableau" i18n-label="@@shared.studio-runtime.dynamic-report.tableau.bb6d7e52" class="p-button-sm"
               [class.p-button-outlined]="view !== 'table'" (click)="view = 'table'"></button>
-            <button pButton type="button" icon="fa-solid fa-chart-simple" label="Graphique" class="p-button-sm"
+            <button pButton type="button" icon="fa-solid fa-chart-simple" label="Graphique" i18n-label="@@shared.studio-runtime.dynamic-report.graphique.fad32c3f" class="p-button-sm"
               [class.p-button-outlined]="view !== 'chart'" (click)="view = 'chart'"></button>
           </div>
         }
         <span class="dr-spacer"></span>
-        <button pButton type="button" icon="fa-solid fa-download" label="Exporter" class="p-button-sm p-button-outlined"
+        <button pButton type="button" icon="fa-solid fa-download" label="Exporter" i18n-label="@@shared.studio-runtime.dynamic-report.exporter.0cd84bdc" class="p-button-sm p-button-outlined"
           (click)="exportMenu.toggle($event)"></button>
         <p-menu #exportMenu [popup]="true" [model]="exportItems" appendTo="body"></p-menu>
       </div>
@@ -89,15 +89,15 @@ type ChartType = 'bar' | 'line' | 'pie';
             </ng-template>
           </p-table>
         </div>
-        <p class="dr-count">{{ result.totalRows }} ligne(s)</p>
+        <p class="dr-count" i18n="@@shared.studio-runtime.dynamic-report.ligne.s.6df35b9f">{{ result.totalRows }} ligne(s)</p>
       }
 
       @if (view === 'chart' && chartable()) {
         <div class="dr-chart-wrap">
           <div class="dr-types">
-            <button pButton type="button" label="Barres" class="p-button-sm" [class.p-button-outlined]="chartType !== 'bar'" (click)="chartType = 'bar'"></button>
-            <button pButton type="button" label="Lignes" class="p-button-sm" [class.p-button-outlined]="chartType !== 'line'" (click)="chartType = 'line'"></button>
-            <button pButton type="button" label="Camembert" class="p-button-sm" [class.p-button-outlined]="chartType !== 'pie'" (click)="chartType = 'pie'"></button>
+            <button pButton type="button" label="Barres" i18n-label="@@shared.studio-runtime.dynamic-report.barres.b51306e1" class="p-button-sm" [class.p-button-outlined]="chartType !== 'bar'" (click)="chartType = 'bar'"></button>
+            <button pButton type="button" label="Lignes" i18n-label="@@shared.studio-runtime.dynamic-report.lignes.41c7025e" class="p-button-sm" [class.p-button-outlined]="chartType !== 'line'" (click)="chartType = 'line'"></button>
+            <button pButton type="button" label="Camembert" i18n-label="@@shared.studio-runtime.dynamic-report.camembert.f15c2595" class="p-button-sm" [class.p-button-outlined]="chartType !== 'pie'" (click)="chartType = 'pie'"></button>
           </div>
           <p-chart [type]="chartType" [data]="buildChartData()" [options]="chartOptions" [style]="{ height: '340px' }"></p-chart>
         </div>
@@ -107,7 +107,7 @@ type ChartType = 'bar' | 'line' | 'pie';
   styles: [`
     .dr-bar { display: flex; align-items: center; gap: var(--spacing-2); margin-bottom: var(--spacing-3); flex-wrap: wrap; }
     .dr-spacer { flex: 1; }
-    .dr-measure { text-align: right; }
+    .dr-measure { text-align: end; }
     .dr-count { color: var(--color-neutral-500); font-size: var(--font-size-sm); margin-top: var(--spacing-2); }
     .dr-chart-wrap { padding: var(--spacing-2) 0; }
     .dr-types { display: flex; gap: var(--spacing-2); margin-bottom: var(--spacing-3); }
@@ -146,10 +146,10 @@ export class DynamicReportComponent {
   };
 
   readonly exportItems: MenuItem[] = [
-    { label: 'CSV — page courante', icon: 'fa-solid fa-file-csv', command: () => this.exportCsv(false) },
-    { label: 'Excel — page courante', icon: 'fa-solid fa-file-excel', command: () => this.exportXlsx(false) },
-    { label: 'CSV — toutes les lignes', icon: 'fa-solid fa-file-csv', command: () => this.exportCsv(true) },
-    { label: 'Excel — toutes les lignes', icon: 'fa-solid fa-file-excel', command: () => this.exportXlsx(true) },
+    { label: $localize`:@@shared.dynamic-report.ts.csv.page.courante.2f0e6273:CSV — page courante`, icon: 'fa-solid fa-file-csv', command: () => this.exportCsv(false) },
+    { label: $localize`:@@shared.dynamic-report.ts.excel.page.courante.84d32d06:Excel — page courante`, icon: 'fa-solid fa-file-excel', command: () => this.exportXlsx(false) },
+    { label: $localize`:@@shared.dynamic-report.ts.csv.toutes.les.lignes.42fbba25:CSV — toutes les lignes`, icon: 'fa-solid fa-file-csv', command: () => this.exportCsv(true) },
+    { label: $localize`:@@shared.dynamic-report.ts.excel.toutes.les.lignes.084ab1f3:Excel — toutes les lignes`, icon: 'fa-solid fa-file-excel', command: () => this.exportXlsx(true) },
   ];
 
   private readonly palette = [

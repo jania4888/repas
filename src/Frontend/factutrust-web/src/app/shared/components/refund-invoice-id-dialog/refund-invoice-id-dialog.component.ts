@@ -34,22 +34,18 @@ export const REFUND_INVOICE_DIALOG_OPTIONS: NgbModalOptions = {
   template: `
     <div class="refund-dialog-header">
       <i class="pi pi-file-edit refund-dialog-icon" aria-hidden="true"></i>
-      <h5 class="refund-dialog-title" id="refundDialogTitle">Créer un avoir</h5>
+      <h5 class="refund-dialog-title" id="refundDialogTitle" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.creer.un.avoir.d6e9259a">Créer un avoir</h5>
       <button
         type="button"
         class="refund-dialog-close"
         (click)="modal.dismiss()"
-        aria-label="Fermer"
-        tabindex="0"><span aria-hidden="true">&times;</span>
+        aria-label="Fermer" i18n-aria-label="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.fermer.5ab4ec64"
+        tabindex="0"><span aria-hidden="true" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.times.77d7c977">&times;</span>
       </button>
     </div>
     <div class="refund-dialog-body">
-      <p class="refund-dialog-message">
-        Recherchez la facture d'origine par numéro, nom de client ou référence POS (POS-…).
-      </p>
-      <label for="refundInvoiceSearch" class="refund-dialog-label">
-        Facture à rembourser
-      </label>
+      <p class="refund-dialog-message" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.recherchez.la.facture.d.origine.par.numero.nom.d.c5cb585e"> Recherchez la facture d'origine par numéro, nom de client ou référence POS (POS-…). </p>
+      <label for="refundInvoiceSearch" class="refund-dialog-label" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.facture.a.rembourser.4bf45deb"> Facture à rembourser </label>
       <div
         class="refund-dialog-search"
         [class.refund-dialog-search--open]="suggestions.length > 0">
@@ -63,7 +59,7 @@ export const REFUND_INVOICE_DIALOG_OPTIONS: NgbModalOptions = {
           field="number"
           [dropdown]="false"
           [minLength]="1"
-          placeholder="Ex. FAC-2026-000042 ou POS-…"
+          placeholder="Ex. FAC-2026-000042 ou POS-…" i18n-placeholder="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.ex.fac.2026.000042.ou.pos.3c339c9e"
           appendTo="body"
           panelStyleClass="refund-invoice-autocomplete-panel"
           scrollHeight="200px"
@@ -71,7 +67,7 @@ export const REFUND_INVOICE_DIALOG_OPTIONS: NgbModalOptions = {
           [baseZIndex]="modalPrimeBaseZIndex"
           [inputStyle]="{ width: '100%' }"
           [style]="{ width: '100%' }"
-          aria-label="Rechercher une facture à rembourser"
+          aria-label="Rechercher une facture à rembourser" i18n-aria-label="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.rechercher.une.facture.a.rembourser.e1bac7a3"
           aria-describedby="refundDialogTitle">
           <ng-template let-invoice pTemplate="item">
             <div class="invoice-suggestion">
@@ -85,7 +81,7 @@ export const REFUND_INVOICE_DIALOG_OPTIONS: NgbModalOptions = {
           </ng-template>
           <ng-template pTemplate="empty">
             <div class="invoice-empty">
-              <span>Aucune facture trouvée</span>
+              <span i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.aucune.facture.trouvee.9821dcce">Aucune facture trouvée</span>
             </div>
           </ng-template>
         </p-autoComplete>
@@ -94,7 +90,7 @@ export const REFUND_INVOICE_DIALOG_OPTIONS: NgbModalOptions = {
         <p class="refund-dialog-error" role="alert">{{ errorMessage() }}</p>
       }
       @if (isResolving()) {
-        <p class="refund-dialog-loading">Recherche en cours…</p>
+        <p class="refund-dialog-loading" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.recherche.en.cours.a16747f0">Recherche en cours…</p>
       }
     </div>
     <div class="refund-dialog-footer">
@@ -102,18 +98,14 @@ export const REFUND_INVOICE_DIALOG_OPTIONS: NgbModalOptions = {
         type="button"
         class="refund-dialog-btn reject"
         (click)="modal.dismiss()"
-        aria-label="Annuler"
-        tabindex="0">
-        Annuler
-      </button>
+        aria-label="Annuler" i18n-aria-label="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.annuler.49ba3292"
+        tabindex="0" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.annuler.49ba3292"> Annuler </button>
       <button
         type="button"
         class="refund-dialog-btn accept"
         [disabled]="!canSubmit()"
         (click)="onSubmit()"
-        aria-label="Valider">
-        Valider
-      </button>
+        aria-label="Valider" i18n-aria-label="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.valider.be4220f7" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.valider.be4220f7"> Valider </button>
     </div>
   `,
   styles: [`
@@ -347,7 +339,7 @@ export class RefundInvoiceIdDialogComponent implements AfterViewInit {
 
     const query = this.searchText?.trim();
     if (!query) {
-      this.errorMessage.set('Veuillez saisir ou sélectionner une facture.');
+      this.errorMessage.set($localize`:@@shared.refund-invoice-id-dialog.ts.veuillez.saisir.ou.selectionner.une.fact.5ce9103e:Veuillez saisir ou sélectionner une facture.`);
       return;
     }
 
@@ -360,7 +352,7 @@ export class RefundInvoiceIdDialogComponent implements AfterViewInit {
       },
       error: err => {
         this.isResolving.set(false);
-        this.errorMessage.set(err?.message ?? 'Facture introuvable.');
+        this.errorMessage.set(err?.message ?? $localize`:@@ui.tern.facture.introuvable.ab2a43:Facture introuvable.`);
       }
     });
   }

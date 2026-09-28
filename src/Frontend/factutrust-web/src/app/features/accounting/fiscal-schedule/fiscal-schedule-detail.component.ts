@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
@@ -11,73 +12,73 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
 @Component({
   selector: 'app-fiscal-schedule-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [BackendLabelPipe, CommonModule],
   template: `
     <section class="detail-panel" *ngIf="selected">
       <div class="detail-group">
-        <h2>Detail</h2>
+        <h2 i18n="@@accounting.fiscal-schedule.detail.7c9a7c06">Detail</h2>
         <dl>
-          <div><dt>Type d'obligation</dt><dd>{{ selected.obligationTypeDisplay }}</dd></div>
-          <div><dt>Periode</dt><dd>{{ selected.periodDisplay }}</dd></div>
-          <div><dt>Date d'echeance</dt><dd>{{ date(selected.dueDate) }}</dd></div>
-          <div><dt>Societe</dt><dd>{{ selected.companyName || companyLabel }}</dd></div>
-          <div><dt>Montant estime</dt><dd>{{ amount(selected.estimatedAmount, selected.currency) }}</dd></div>
-          <div><dt>Statut</dt><dd><span class="status-pill" [ngClass]="statusClassName(selected.status)">{{ selected.statusDisplay }}</span></dd></div>
-          <div><dt>Responsable</dt><dd>{{ selected.responsibleName || '-' }}</dd></div>
-          <div><dt>Observations</dt><dd>{{ selected.observations || '-' }}</dd></div>
+          <div><dt i18n="@@accounting.fiscal-schedule.type.d.obligation.790fbe09">Type d'obligation</dt><dd>{{ selected.obligationTypeDisplay | backendLabel }}</dd></div>
+          <div><dt i18n="@@accounting.fiscal-schedule.periode.85e181b5">Periode</dt><dd>{{ selected.periodDisplay | backendLabel }}</dd></div>
+          <div><dt i18n="@@accounting.fiscal-schedule.date.d.echeance.e0e8b824">Date d'echeance</dt><dd>{{ date(selected.dueDate) }}</dd></div>
+          <div><dt i18n="@@accounting.fiscal-schedule.societe.45c9ec04">Societe</dt><dd>{{ selected.companyName || companyLabel }}</dd></div>
+          <div><dt i18n="@@accounting.fiscal-schedule.montant.estime.b496eba3">Montant estime</dt><dd>{{ amount(selected.estimatedAmount, selected.currency) }}</dd></div>
+          <div><dt i18n="@@accounting.fiscal-schedule.statut.659499f3">Statut</dt><dd><span class="status-pill" [ngClass]="statusClassName(selected.status)">{{ selected.statusDisplay | backendLabel }}</span></dd></div>
+          <div><dt i18n="@@accounting.fiscal-schedule.responsable.44b58814">Responsable</dt><dd>{{ selected.responsibleName || '-' }}</dd></div>
+          <div><dt i18n="@@accounting.fiscal-schedule.observations.461ebaa1">Observations</dt><dd>{{ selected.observations || '-' }}</dd></div>
         </dl>
       </div>
       <div class="detail-group">
-        <h2>Pieces jointes</h2>
-        <div *ngIf="readOnlyAttachments" class="muted">Ouvrir le dossier client pour consulter ou joindre les documents.</div>
+        <h2 i18n="@@accounting.fiscal-schedule.pieces.jointes.c523abdf">Pieces jointes</h2>
+        <div *ngIf="readOnlyAttachments" class="muted" i18n="@@accounting.fiscal-schedule.ouvrir.le.dossier.client.pour.consulter.ou.joind.f317e250">Ouvrir le dossier client pour consulter ou joindre les documents.</div>
         <ng-container *ngIf="!readOnlyAttachments">
           <label class="file-input">
             <i class="fa-solid fa-paperclip"></i>
-            <span>Joindre un document</span>
+            <span i18n="@@accounting.fiscal-schedule.joindre.un.document.5fb7d976">Joindre un document</span>
             <input type="file" (change)="fileSelected.emit($event)">
           </label>
           <div class="attachment-row" *ngFor="let attachment of attachments">
             <button class="link-row" type="button" (click)="downloadAttachment.emit(attachment)">
               <i class="fa-regular fa-file-lines"></i>{{ attachment.fileName }}
             </button>
-            <button class="square-button danger-btn" type="button" title="Supprimer" (click)="deleteAttachment.emit(attachment)">
+            <button class="square-button danger-btn" type="button" title="Supprimer" i18n-title="@@accounting.fiscal-schedule.supprimer.1acfc1c7" (click)="deleteAttachment.emit(attachment)">
               <i class="fa-solid fa-trash"></i>
             </button>
           </div>
-          <div class="muted" *ngIf="attachments.length === 0">Aucune piece jointe</div>
+          <div class="muted" *ngIf="attachments.length === 0" i18n="@@accounting.fiscal-schedule.aucune.piece.jointe.3ef4f99b">Aucune piece jointe</div>
         </ng-container>
       </div>
       <div class="detail-group">
-        <h2>Actions rapides</h2>
+        <h2 i18n="@@accounting.fiscal-schedule.actions.rapides.abe69a9c">Actions rapides</h2>
         <button class="quick-action" type="button" (click)="openSource.emit()">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i>{{ isFirmScope ? 'Ouvrir le dossier' : 'Ouvrir la declaration' }}
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>{{ isFirmScope ? loc_ui_tern_ouvrir_le_dossier_48592a : loc_ui_tern_ouvrir_la_declaration_666cb2 }}
         </button>
-        <button class="quick-action" type="button" (click)="deposit.emit()" [disabled]="!canMutate">
+        <button class="quick-action" type="button" (click)="deposit.emit()" [disabled]="!canMutate" i18n="@@accounting.fiscal-schedule.marquer.comme.deposee.d6a17793">
           <i class="fa-regular fa-circle-check"></i>Marquer comme deposee
         </button>
-        <button class="quick-action" type="button" (click)="validate.emit()" [disabled]="!canMutate || !canValidate">
+        <button class="quick-action" type="button" (click)="validate.emit()" [disabled]="!canMutate || !canValidate" i18n="@@accounting.fiscal-schedule.marquer.comme.validee.cd9dc991">
           <i class="fa-solid fa-stamp"></i>Marquer comme validee
         </button>
-        <button class="quick-action" type="button" (click)="payment.emit()" [disabled]="!canMutate">
+        <button class="quick-action" type="button" (click)="payment.emit()" [disabled]="!canMutate" i18n="@@accounting.fiscal-schedule.saisir.le.paiement.d04c4a55">
           <i class="fa-solid fa-coins"></i>Saisir le paiement
         </button>
-        <button class="quick-action" type="button" (click)="reminder.emit()" [disabled]="!canMutate">
+        <button class="quick-action" type="button" (click)="reminder.emit()" [disabled]="!canMutate" i18n="@@accounting.fiscal-schedule.planifier.un.rappel.3af1b877">
           <i class="fa-regular fa-bell"></i>Planifier un rappel
         </button>
       </div>
       <div class="detail-group">
-        <h2>Historique</h2>
+        <h2 i18n="@@accounting.fiscal-schedule.historique.34f3a06a">Historique</h2>
         <div class="meta-history">
-          <div>Créé le : {{ date(selected.createdAt) }} par {{ selected.createdBy || '-' }}</div>
-          <div>Modifié le : {{ date(selected.updatedAt) }} par {{ selected.updatedBy || '-' }}</div>
-          <div>Dernier rappel : {{ date(selected.lastReminderAt) }} via {{ reminderChannelLabel(selected.lastReminderChannel) }}</div>
+          <div i18n="@@accounting.fiscal-schedule.cree.le.par.70571777">Créé le : {{ date(selected.createdAt) }} par {{ selected.createdBy || '-' }}</div>
+          <div i18n="@@accounting.fiscal-schedule.modifie.le.par.bc4f07f2">Modifié le : {{ date(selected.updatedAt) }} par {{ selected.updatedBy || '-' }}</div>
+          <div i18n="@@accounting.fiscal-schedule.dernier.rappel.via.73ebd817">Dernier rappel : {{ date(selected.lastReminderAt) }} via {{ reminderChannelLabel(selected.lastReminderChannel) }}</div>
         </div>
         <div class="history-row" *ngFor="let item of history">
           <strong>{{ date(item.createdAt) }}</strong>
           <span>{{ item.summary }}</span>
         </div>
-        <div class="muted" *ngIf="readOnlyHistory">Historique detaille disponible dans le dossier client.</div>
-        <div class="muted" *ngIf="!readOnlyHistory && history.length === 0">Aucun historique.</div>
+        <div class="muted" *ngIf="readOnlyHistory" i18n="@@accounting.fiscal-schedule.historique.detaille.disponible.dans.le.dossier.c.ca1dce63">Historique detaille disponible dans le dossier client.</div>
+        <div class="muted" *ngIf="!readOnlyHistory && history.length === 0" i18n="@@accounting.fiscal-schedule.aucun.historique.b806a0d9">Aucun historique.</div>
       </div>
     </section>
   `,
@@ -156,6 +157,8 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
   `]
 })
 export class FiscalScheduleDetailComponent {
+  readonly loc_ui_tern_ouvrir_le_dossier_48592a = $localize`:@@ui.tern.ouvrir.le.dossier.48592a:Ouvrir le dossier`;
+  readonly loc_ui_tern_ouvrir_la_declaration_666cb2 = $localize`:@@ui.tern.ouvrir.la.declaration.666cb2:Ouvrir la declaration`;
   @Input() selected: FiscalScheduleEntryDto | null = null;
   @Input() history: FiscalScheduleHistoryDto[] = [];
   @Input() attachments: FiscalScheduleAttachmentDto[] = [];

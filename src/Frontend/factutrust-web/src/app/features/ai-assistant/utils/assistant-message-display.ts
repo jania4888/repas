@@ -132,13 +132,13 @@ function humanizeJsonObject(obj: Record<string, unknown>): string | null {
       const periodSuffix = formatEnvelopePeriod(obj);
       if (rows.length === 0) {
         return periodSuffix
-          ? `Aucune vente sur la période ${periodSuffix}.`
-          : 'Aucune vente sur la période.';
+          ? $localize`:@@ai-assistant.assistant-message-display.ts.aucune.vente.sur.la.periode.periodsuffix.8b004855:Aucune vente sur la période ${periodSuffix}:periodSuffix:.`
+          : $localize`:@@ai-assistant.assistant-message-display.ts.aucune.vente.sur.la.periode.97743ef9:Aucune vente sur la période.`;
       }
       const rowCount = pickNumber(obj, ['rowCount']) ?? rows.length;
       const header = periodSuffix
-        ? `CA total ${periodSuffix} : **${formatTnd(total)}** (${rowCount} ligne(s)).`
-        : `CA total : **${formatTnd(total)}** (${rowCount} ligne(s)).`;
+        ? $localize`:@@ai-assistant.assistant-message-display.ts.ca.total.periodsuffix.formattnd.rowcount.b793fa1b:CA total ${periodSuffix}:periodSuffix: : **${formatTnd(total)}:formatTnd:** (${rowCount}:rowCount: ligne(s)).`
+        : $localize`:@@ai-assistant.assistant-message-display.ts.ca.total.formattnd.rowcount.ligne.s.88e6effe:CA total : **${formatTnd(total)}:formatTnd:** (${rowCount}:rowCount: ligne(s)).`;
       const breakdown = humanizeJsonArray(rows);
       return breakdown ? `${header}\n${breakdown}` : header;
     }
@@ -147,15 +147,15 @@ function humanizeJsonObject(obj: Record<string, unknown>): string | null {
   const parts: string[] = [];
   const amount = pickNumber(obj, ['ca', 'montant', 'amount', 'total', 'totalAmount', 'revenue']);
   if (amount !== null) {
-    parts.push(`Montant : **${formatTnd(amount)}**.`);
+    parts.push($localize`:@@ai-assistant.assistant-message-display.ts.montant.formattnd.464501b0:Montant : **${formatTnd(amount)}:formatTnd:**.`);
   }
   const period = pickString(obj, ['periode', 'period', 'periodLabel', 'label']);
   if (period) {
-    parts.push(`Période : ${period}.`);
+    parts.push($localize`:@@ai-assistant.assistant-message-display.ts.periode.period.018726d5:Période : ${period}:period:.`);
   }
   const count = pickNumber(obj, ['count', 'nombre', 'totalCount']);
   if (count !== null && amount === null) {
-    parts.push(`Nombre d'éléments : ${count}.`);
+    parts.push($localize`:@@ai-assistant.assistant-message-display.ts.nombre.d.elements.count.de004c86:Nombre d'éléments : ${count}:count:.`);
   }
   if (parts.length === 0) {
     const preview = Object.entries(obj)
@@ -169,7 +169,7 @@ function humanizeJsonObject(obj: Record<string, unknown>): string | null {
 
 function humanizeJsonArray(items: unknown[]): string | null {
   if (items.length === 0) {
-    return 'Aucune donnée pour cette période.';
+    return $localize`:@@ai-assistant.assistant-message-display.ts.aucune.donnee.pour.cette.periode.254e84f4:Aucune donnée pour cette période.`;
   }
   const lines: string[] = [];
   for (const item of items.slice(0, HUMANIZE_MAX_ROWS)) {
@@ -196,7 +196,7 @@ function humanizeJsonArray(items: unknown[]): string | null {
     return null;
   }
   const suffix = items.length > HUMANIZE_MAX_ROWS
-    ? `\n\n… et ${items.length - HUMANIZE_MAX_ROWS} autre(s) ligne(s).`
+    ? $localize`:@@ai-assistant.assistant-message-display.ts.et.p.autre.s.ligne.s.d794c9ab:\n\n… et ${items.length - HUMANIZE_MAX_ROWS}:p: autre(s) ligne(s).`
     : '';
   return lines.join('\n') + suffix;
 }
@@ -213,7 +213,7 @@ function formatEnvelopePeriod(obj: Record<string, unknown>): string | null {
   if (!from || !to) {
     return null;
   }
-  return `du ${formatIsoDateFr(from)} au ${formatIsoDateFr(to)}`;
+  return $localize`:@@ai-assistant.assistant-message-display.ts.du.formatisodatefr.au.formatisodatefr1.dc016cd4:du ${formatIsoDateFr(from)}:formatIsoDateFr: au ${formatIsoDateFr(to)}:formatIsoDateFr1:`;
 }
 
 function formatIsoDateFr(isoDate: string): string {
@@ -255,10 +255,10 @@ function formatScalar(value: unknown): string {
     return formatTnd(value);
   }
   if (typeof value === 'boolean') {
-    return value ? 'oui' : 'non';
+    return value ? $localize`:@@ai-assistant.assistant-message-display.ts.oui.5898fc86:oui` : $localize`:@@ai-assistant.assistant-message-display.ts.non.37031f99:non`;
   }
   if (Array.isArray(value)) {
-    return `${value.length} élément(s)`;
+    return $localize`:@@ai-assistant.assistant-message-display.ts.length.element.s.25d37380:${value.length}:length: élément(s)`;
   }
   return String(value);
 }
@@ -692,8 +692,8 @@ export function resolveAssistantDisplayState(
     if (options?.hasParsedDashboard && renderedLen < minChars) {
       // Le tableau de bord se rend AU-DESSUS du texte dans chat-message : « ci-dessus ».
       const hint = renderedMarkdown.trim()
-        ? `${renderedMarkdown.trim()}\n\n_Analyse complémentaire dans le tableau de bord ci-dessus._`
-        : 'Analyse disponible dans le tableau de bord ci-dessus.';
+        ? $localize`:@@ai-assistant.assistant-message-display.ts.trim.analyse.complementaire.dans.le.tabl.29930d10:${renderedMarkdown.trim()}:trim:\n\n_Analyse complémentaire dans le tableau de bord ci-dessus._`
+        : $localize`:@@ai-assistant.assistant-message-display.ts.analyse.disponible.dans.le.tableau.de.bo.7e908280:Analyse disponible dans le tableau de bord ci-dessus.`;
       return { renderedMarkdown: hint, displayFallbackText: '' };
     }
     return { renderedMarkdown, displayFallbackText: '' };
@@ -702,7 +702,7 @@ export function resolveAssistantDisplayState(
   if (options?.hasParsedDashboard) {
     return {
       renderedMarkdown: '',
-      displayFallbackText: 'Analyse disponible dans le tableau de bord ci-dessus.'
+      displayFallbackText: $localize`:@@ai-assistant.assistant-message-display.ts.analyse.disponible.dans.le.tableau.de.bo.7e908280:Analyse disponible dans le tableau de bord ci-dessus.`
     };
   }
 

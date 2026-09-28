@@ -342,7 +342,8 @@ public class ProductsController : ControllerBase
         {
             if (result.Error.Code == "NotFound" || result.Error.Code == "Product.NotFound")
                 return NotFound(ApiResponse<ProductDetailDto>.Fail(result.Error.Description));
-            return BadRequest(ApiResponse<ProductDetailDto>.Fail(result.Error.Description));
+            // Le code (ex. couche d'ouverture requise) est lu par le client : le message peut être traduit.
+            return BadRequest(ApiResponse<ProductDetailDto>.FailWithCode(result.Error.Description, result.Error.Code));
         }
 
         return Ok(ApiResponse<ProductDetailDto>.Ok(result.Value, "Produit mis à jour."));

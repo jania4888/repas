@@ -21,15 +21,13 @@ import {
   ],
   template: `
     <app-page-header
-      title="Analyse des ventes"
-      subtitle="Comprenez vos performances commerciales en un coup d'œil">
+      title="Analyse des ventes" i18n-title="@@reports.analytics.analyse.des.ventes.74e19454"
+      subtitle="Comprenez vos performances commerciales en un coup d'œil" i18n-subtitle="@@reports.analytics.comprenez.vos.performances.commerciales.ddb60141">
       <app-button
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()">
-        Imprimer
-      </app-button>
+        (click)="onPrint()" i18n="@@reports.analytics.imprimer.5382c09d"> Imprimer </app-button>
     </app-page-header>
 
     <!-- Alerts -->
@@ -60,31 +58,31 @@ import {
     } @else if (data()) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Taux de conversion"
+          label="Taux de conversion" i18n-label="@@reports.analytics.taux.de.conversion.296dbcee"
           [value]="data()!.conversionRate.toFixed(1) + ' %'"
           icon="pi-sync"
           [variant]="data()!.conversionRate >= 50 ? 'success' : data()!.conversionRate >= 30 ? 'warning' : 'error'">
         </app-stat-card>
         <div class="kpi-explained">
           <app-stat-card
-            label="Panier moyen"
+            label="Panier moyen" i18n-label="@@reports.analytics.panier.moyen.e9ce57ee"
             [value]="formatAmount(data()!.averageBasket)"
             icon="pi-shopping-cart"
             variant="primary">
           </app-stat-card>
-          <span class="kpi-definition">
+          <span class="kpi-definition" i18n="@@reports.analytics.le.panier.moyen.correspond.au.montant.mo.087ab05b">
             <i class="pi pi-info-circle"></i>
             Le panier moyen correspond au montant moyen dépensé par client.
           </span>
         </div>
         <app-stat-card
-          label="Devis convertis"
+          label="Devis convertis" i18n-label="@@reports.analytics.devis.convertis.e8e2b1c5"
           [value]="data()!.convertedQuotes + ' / ' + data()!.totalQuotes"
           icon="pi-check-square"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Factures payées"
+          label="Factures payées" i18n-label="@@reports.analytics.factures.payees.587e5689"
           [value]="data()!.totalInvoices"
           icon="pi-file"
           variant="primary">
@@ -96,8 +94,8 @@ import {
     @if (!loading() && data()) {
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Taux de transformation devis → facture</h2>
-          <span class="section-hint">
+          <h2 class="section-title" i18n="@@reports.analytics.taux.de.transformation.devis.facture.cdf4fcd5">Taux de transformation devis → facture</h2>
+          <span class="section-hint" i18n="@@reports.analytics.ce.pourcentage.montre.combien.de.vos.dev.fa88b98f">
             <i class="pi pi-info-circle"></i>
             Ce pourcentage montre combien de vos devis sont devenus des factures
           </span>
@@ -111,11 +109,11 @@ import {
             </div>
           </div>
           <div class="conversion-legend">
-            <div class="legend-item">
+            <div class="legend-item" i18n="@@reports.analytics.convertis.421c3384">
               <span class="legend-dot converted"></span>
               <span>Convertis ({{ data()!.convertedQuotes }})</span>
             </div>
-            <div class="legend-item">
+            <div class="legend-item" i18n="@@reports.analytics.non.convertis.ca946e69">
               <span class="legend-dot not-converted"></span>
               <span>Non convertis ({{ data()!.totalQuotes - data()!.convertedQuotes }})</span>
             </div>
@@ -129,23 +127,23 @@ import {
       <!-- Top Products -->
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">
+          <h2 class="section-title" i18n="@@reports.analytics.produits.avec.les.meilleures.marges.139de499">
             <i class="pi pi-star-fill" style="color: #fbbf24; font-size: 0.9rem;"></i>
             Produits avec les meilleures marges
           </h2>
-          <span class="section-hint">
+          <span class="section-hint" i18n="@@reports.analytics.classement.de.vos.produits.par.marge.ben.816b22a2">
             <i class="pi pi-info-circle"></i>
             Classement de vos produits par marge bénéficiaire
           </span>
         </div>
 
         @if (loading()) {
-          <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+          <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.analytics.chargement.a209b664">Chargement...</span></div>
         } @else if (!data()?.topProducts?.length) {
           <div class="empty-state-sm">
             <i class="pi pi-box"></i>
-            <p>Aucun produit enregistré</p>
-            <p class="empty-hint">Ajoutez des produits avec un prix d'achat pour voir les marges.</p>
+            <p i18n="@@reports.analytics.aucun.produit.enregistre.786c098d">Aucun produit enregistré</p>
+            <p class="empty-hint" i18n="@@reports.analytics.ajoutez.des.produits.avec.un.prix.d.achat.pour.v.2f7717d9">Ajoutez des produits avec un prix d'achat pour voir les marges.</p>
           </div>
         } @else {
           <div class="product-list">
@@ -161,7 +159,7 @@ import {
                 <div class="product-prices">
                   <span class="product-sell">{{ formatAmountRaw(product.unitPrice) }}</span>
                   @if (product.purchasePrice !== null) {
-                    <span class="product-buy">Achat : {{ formatAmountRaw(product.purchasePrice) }}</span>
+                    <span class="product-buy" i18n="@@reports.analytics.achat.1dd67f0c">Achat : {{ formatAmountRaw(product.purchasePrice) }}</span>
                   }
                 </div>
                 <div class="product-margin">
@@ -172,10 +170,10 @@ import {
                       [class.margin-low]="product.marginPercent < 15">
                       {{ product.marginPercent | number:'1.1-1' }} %
                     </span>
-                    <span class="margin-label">marge</span>
+                    <span class="margin-label" i18n="@@reports.analytics.marge.c424ae3c">marge</span>
                   } @else {
-                    <span class="margin-badge margin-na">N/A</span>
-                    <span class="margin-label">pas de prix d'achat</span>
+                    <span class="margin-badge margin-na" i18n="@@reports.analytics.n.a.08d2e98e">N/A</span>
+                    <span class="margin-label" i18n="@@reports.analytics.pas.de.prix.d.achat.caa759dc">pas de prix d'achat</span>
                   }
                 </div>
               </div>
@@ -187,22 +185,22 @@ import {
       <!-- Worst Products -->
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">
+          <h2 class="section-title" i18n="@@reports.analytics.marges.les.plus.faibles.e68f1976">
             <i class="pi pi-exclamation-triangle" style="color: var(--color-warning-500); font-size: 0.9rem;"></i>
             Marges les plus faibles
           </h2>
-          <span class="section-hint">
+          <span class="section-hint" i18n="@@reports.analytics.produits.dont.la.marge.est.la.plus.basse.1dbb478a">
             <i class="pi pi-info-circle"></i>
             Produits dont la marge est la plus basse — à surveiller
           </span>
         </div>
 
         @if (loading()) {
-          <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+          <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.analytics.chargement.a209b664">Chargement...</span></div>
         } @else if (!data()?.worstProducts?.length) {
           <div class="empty-state-sm">
             <i class="pi pi-check-circle" style="color: var(--color-success-500);"></i>
-            <p>Aucun produit à faible marge détecté</p>
+            <p i18n="@@reports.analytics.aucun.produit.a.faible.marge.detecte.918ba19d">Aucun produit à faible marge détecté</p>
           </div>
         } @else {
           <div class="product-list">
@@ -230,11 +228,11 @@ import {
     @if (!loading() && data()?.recommendations?.length) {
       <div class="section recommendations-section">
         <div class="section-header">
-          <h2 class="section-title">
+          <h2 class="section-title" i18n="@@reports.analytics.recommandations.78fe9c34">
             <i class="pi pi-lightbulb" style="color: #fbbf24; font-size: 0.9rem;"></i>
             Recommandations
           </h2>
-          <span class="section-hint">
+          <span class="section-hint" i18n="@@reports.analytics.suggestions.pour.ameliorer.vos.performan.88c8d7f8">
             <i class="pi pi-info-circle"></i>
             Suggestions pour améliorer vos performances
           </span>
@@ -253,34 +251,34 @@ import {
     <!-- Print-only section -->
     <div class="print-only print-report">
       <div class="print-header">
-        <h1 class="print-title">Analyse Des Ventes</h1>
-        <div class="print-logo">Logo</div>
+        <h1 class="print-title" i18n="@@reports.analytics.analyse.des.ventes.35adf138">Analyse Des Ventes</h1>
+        <div class="print-logo" i18n="@@reports.analytics.logo.83fce832">Logo</div>
       </div>
       <div class="print-separator"></div>
       @if (data()) {
         <div class="print-kpis">
           <div class="print-kpi">
-            <strong>Taux de conversion</strong>
+            <strong i18n="@@reports.analytics.taux.de.conversion.296dbcee">Taux de conversion</strong>
             <span>{{ data()!.conversionRate.toFixed(1) }} %</span>
           </div>
           <div class="print-kpi">
-            <strong>Panier moyen</strong>
+            <strong i18n="@@reports.analytics.panier.moyen.e9ce57ee">Panier moyen</strong>
             <span>{{ formatAmount(data()!.averageBasket) }}</span>
           </div>
           <div class="print-kpi">
-            <strong>Devis convertis</strong>
+            <strong i18n="@@reports.analytics.devis.convertis.e8e2b1c5">Devis convertis</strong>
             <span>{{ data()!.convertedQuotes }} / {{ data()!.totalQuotes }}</span>
           </div>
         </div>
-        <h3 class="print-subtitle">Produits - Marges</h3>
+        <h3 class="print-subtitle" i18n="@@reports.analytics.produits.marges.f4fc65aa">Produits - Marges</h3>
         <table class="print-table">
           <thead>
             <tr>
-              <th>Produit</th>
-              <th>Code</th>
-              <th>Prix vente</th>
-              <th>Prix achat</th>
-              <th>Marge</th>
+              <th i18n="@@reports.analytics.produit.ff673dc2">Produit</th>
+              <th i18n="@@reports.analytics.code.adac6937">Code</th>
+              <th i18n="@@reports.analytics.prix.vente.620ba2f4">Prix vente</th>
+              <th i18n="@@reports.analytics.prix.achat.22f9864c">Prix achat</th>
+              <th i18n="@@reports.analytics.marge.d9ef1a1d">Marge</th>
             </tr>
           </thead>
           <tbody>
@@ -528,7 +526,7 @@ import {
     }
 
     .product-item--warning {
-      border-left: 3px solid var(--color-warning-400);
+      border-inline-start: 3px solid var(--color-warning-400);
     }
 
     .product-rank {
@@ -693,10 +691,10 @@ import {
       .print-kpi span { font-size: 14pt; font-weight: bold; color: #333; }
       .print-subtitle { font-size: 14pt; margin: 16px 0 8px; color: #2bbcb3; }
       .print-table { width: 100%; border-collapse: collapse; font-size: 11pt; }
-      .print-table thead th { text-align: left; padding: 12px 16px; font-weight: 600; color: #333; border-bottom: 2px solid #2bbcb3; font-size: 10pt; }
+      .print-table thead th { text-align: start; padding: 12px 16px; font-weight: 600; color: #333; border-bottom: 2px solid #2bbcb3; font-size: 10pt; }
       .print-table tbody td { padding: 14px 16px; border-bottom: 1px solid #eee; color: #555; }
       .print-table tbody tr:nth-child(even) { background: #fafafa; }
-      .print-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 12px; background: #2bbcb3; }
+      .print-footer { position: fixed; bottom: 0; inset-inline-start: 0; inset-inline-end: 0; height: 12px; background: #2bbcb3; }
     }
 
     /* ── Responsive ─────────────────────────────────────────── */

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -12,8 +13,8 @@ import { AccountingAmountPipe } from '../shared/accounting-amount.pipe';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 
 const MONTHS = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  $localize`:@@accounting.closing-revaluation.ts.janvier.7a32ae0f:Janvier`, $localize`:@@accounting.closing-revaluation.ts.fevrier.63fc1803:Février`, $localize`:@@accounting.closing-revaluation.ts.mars.1778011d:Mars`, $localize`:@@accounting.closing-revaluation.ts.avril.4efeee46:Avril`, $localize`:@@accounting.closing-revaluation.ts.mai.afe526a6:Mai`, $localize`:@@accounting.closing-revaluation.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@accounting.closing-revaluation.ts.juillet.e8e0920c:Juillet`, $localize`:@@accounting.closing-revaluation.ts.aout.460b6696:Août`, $localize`:@@accounting.closing-revaluation.ts.septembre.08d23f31:Septembre`, $localize`:@@accounting.closing-revaluation.ts.octobre.0ed28485:Octobre`, $localize`:@@accounting.closing-revaluation.ts.novembre.632580af:Novembre`, $localize`:@@accounting.closing-revaluation.ts.decembre.03bcd9b0:Décembre`
 ];
 
 @Component({
@@ -21,13 +22,13 @@ const MONTHS = [
   standalone: true,
   imports: [AccountingAmountPipe, CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent],
   template: `
-    <app-page-header title="Réévaluation de clôture"
-                     subtitle="Écarts de conversion sur les positions en devise, à la clôture d'une période" />
+    <app-page-header title="Réévaluation de clôture" i18n-title="@@accounting.currencies.reevaluation.de.cloture.4e052044"
+                     subtitle="Écarts de conversion sur les positions en devise, à la clôture d'une période" i18n-subtitle="@@accounting.currencies.ecarts.de.conversion.sur.les.positions.e.dbcde668" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     <div class="card cr-block">
-      <p class="cr-doctrine">
+      <p class="cr-doctrine" i18n="@@accounting.currencies.les.positions.en.devise.encore.ouvertes.0ef911ac">
         Les positions en devise encore ouvertes — comptes de tiers et de trésorerie non lettrés —
         sont réévaluées au taux de clôture. L'écart va en <strong>écarts de conversion</strong>,
         comptes de régularisation du bilan, et l'écriture est
@@ -37,11 +38,11 @@ const MONTHS = [
 
       <div class="cr-grid">
         <div class="cr-field">
-          <label class="cr-lbl" for="cr-year">Exercice</label>
+          <label class="cr-lbl" for="cr-year" i18n="@@accounting.currencies.exercice.e171e2b0">Exercice</label>
           <input id="cr-year" class="cr-inp" type="number" [(ngModel)]="fiscalYear" [min]="2000" [max]="2100" />
         </div>
         <div class="cr-field">
-          <label class="cr-lbl" for="cr-month">Mois</label>
+          <label class="cr-lbl" for="cr-month" i18n="@@accounting.currencies.mois.0d304bea">Mois</label>
           <select id="cr-month" class="cr-inp" [(ngModel)]="month">
             @for (label of months; track $index) {
               <option [ngValue]="$index + 1">{{ label }}</option>
@@ -52,39 +53,35 @@ const MONTHS = [
     </div>
 
     <div class="card cr-block">
-      <h3 class="cr-title">Comptes d'imputation</h3>
-      <p class="cr-hint">
-        Saisis à chaque exécution, sans valeur mémorisée : le plan NCT 01 fournit 185, 275 et 1515,
-        mais un dossier non migré peut ne pas les avoir.
-      </p>
+      <h3 class="cr-title" i18n="@@accounting.currencies.comptes.d.imputation.9bc1ccb6">Comptes d'imputation</h3>
+      <p class="cr-hint" i18n="@@accounting.currencies.saisis.a.chaque.execution.sans.valeur.memorisee..6a41fcf0"> Saisis à chaque exécution, sans valeur mémorisée : le plan NCT 01 fournit 185, 275 et 1515,
+        mais un dossier non migré peut ne pas les avoir. </p>
 
       <div class="cr-grid">
         <div class="cr-field">
-          <label class="cr-lbl" for="cr-gain">Écarts de conversion — passif</label>
-          <input id="cr-gain" class="cr-inp" [(ngModel)]="gainAccount" placeholder="Ex. 185" />
-          <span class="cr-sub">Gains latents</span>
+          <label class="cr-lbl" for="cr-gain" i18n="@@accounting.currencies.ecarts.de.conversion.passif.d0ac7c2b">Écarts de conversion — passif</label>
+          <input id="cr-gain" class="cr-inp" [(ngModel)]="gainAccount" placeholder="Ex. 185" i18n-placeholder="@@accounting.currencies.ex.185.aa0d7e85" />
+          <span class="cr-sub" i18n="@@accounting.currencies.gains.latents.dbd8c915">Gains latents</span>
         </div>
         <div class="cr-field">
-          <label class="cr-lbl" for="cr-loss">Écarts de conversion — actif</label>
-          <input id="cr-loss" class="cr-inp" [(ngModel)]="lossAccount" placeholder="Ex. 275" />
-          <span class="cr-sub">Pertes latentes</span>
+          <label class="cr-lbl" for="cr-loss" i18n="@@accounting.currencies.ecarts.de.conversion.actif.5744833c">Écarts de conversion — actif</label>
+          <input id="cr-loss" class="cr-inp" [(ngModel)]="lossAccount" placeholder="Ex. 275" i18n-placeholder="@@accounting.currencies.ex.275.0c5660b6" />
+          <span class="cr-sub" i18n="@@accounting.currencies.pertes.latentes.7c4dbdbb">Pertes latentes</span>
         </div>
       </div>
 
-      <h3 class="cr-title cr-title--sub">Provision pour pertes de change <span class="cr-optional">facultatif</span></h3>
-      <p class="cr-hint">
-        Principe de prudence : seule la perte latente se provisionne, le gain latent ne se constate pas.
-        Laissez ces deux champs vides pour ne constater aucune provision.
-      </p>
+      <h3 class="cr-title cr-title--sub"><ng-container i18n="@@accounting.currencies.provision.pour.pertes.de.change.dde90ec9">Provision pour pertes de change </ng-container> <span class="cr-optional" i18n="@@accounting.currencies.facultatif.1f84e92e">facultatif</span></h3>
+      <p class="cr-hint" i18n="@@accounting.currencies.principe.de.prudence.seule.la.perte.latente.se.p.4246cee4"> Principe de prudence : seule la perte latente se provisionne, le gain latent ne se constate pas.
+        Laissez ces deux champs vides pour ne constater aucune provision. </p>
 
       <div class="cr-grid">
         <div class="cr-field">
-          <label class="cr-lbl" for="cr-expense">Dotation aux provisions</label>
-          <input id="cr-expense" class="cr-inp" [(ngModel)]="provisionExpenseAccount" placeholder="Classe 6" />
+          <label class="cr-lbl" for="cr-expense" i18n="@@accounting.currencies.dotation.aux.provisions.2a479425">Dotation aux provisions</label>
+          <input id="cr-expense" class="cr-inp" [(ngModel)]="provisionExpenseAccount" placeholder="Classe 6" i18n-placeholder="@@accounting.currencies.classe.6.4be770e5" />
         </div>
         <div class="cr-field">
-          <label class="cr-lbl" for="cr-provision">Provision</label>
-          <input id="cr-provision" class="cr-inp" [(ngModel)]="provisionAccount" placeholder="Ex. 1515" />
+          <label class="cr-lbl" for="cr-provision" i18n="@@accounting.currencies.provision.e11d5b69">Provision</label>
+          <input id="cr-provision" class="cr-inp" [(ngModel)]="provisionAccount" placeholder="Ex. 1515" i18n-placeholder="@@accounting.currencies.ex.1515.6f297269" />
         </div>
       </div>
 
@@ -92,24 +89,24 @@ const MONTHS = [
         <div class="cr-actions">
           <app-button variant="primary" icon="pi pi-play" type="button"
                       (click)="run()" [disabled]="running() || !gainAccount.trim() || !lossAccount.trim()">
-            {{ running() ? 'Traitement…' : 'Lancer la réévaluation' }}
+            {{ running() ? loc_ui_tern_traitement_2f66d9 : loc_ui_tern_lancer_la_reevaluation_ca8de5 }}
           </app-button>
         </div>
       } @else {
-        <p class="cr-hint">La réévaluation de clôture requiert le droit de clôture comptable.</p>
+        <p class="cr-hint" i18n="@@accounting.currencies.la.reevaluation.de.cloture.requiert.le.droit.de..cb9dcd39">La réévaluation de clôture requiert le droit de clôture comptable.</p>
       }
     </div>
 
     @if (result(); as res) {
       <div class="card cr-block cr-result" role="status">
-        <h3 class="cr-title">Réévaluation effectuée</h3>
+        <h3 class="cr-title" i18n="@@accounting.currencies.reevaluation.effectuee.72b6d6a2">Réévaluation effectuée</h3>
         <dl class="cr-result-list">
-          <div class="cr-result-row"><dt>Positions réévaluées</dt><dd>{{ res.positionCount }}</dd></div>
-          <div class="cr-result-row"><dt>Total gains latents</dt><dd class="cr-mono">{{ res.totalLatentGain | accountingAmount }}</dd></div>
-          <div class="cr-result-row"><dt>Total pertes latentes</dt><dd class="cr-mono">{{ res.totalLatentLoss | accountingAmount }}</dd></div>
-          <div class="cr-result-row"><dt>Écriture de contre-passation</dt><dd>générée au {{ nextPeriodStart() | date : 'shortDate' }}</dd></div>
+          <div class="cr-result-row"><dt i18n="@@accounting.currencies.positions.reevaluees.3b1cbe6d">Positions réévaluées</dt><dd>{{ res.positionCount }}</dd></div>
+          <div class="cr-result-row"><dt i18n="@@accounting.currencies.total.gains.latents.2c087428">Total gains latents</dt><dd class="cr-mono">{{ res.totalLatentGain | accountingAmount }}</dd></div>
+          <div class="cr-result-row"><dt i18n="@@accounting.currencies.total.pertes.latentes.ec6f82b1">Total pertes latentes</dt><dd class="cr-mono">{{ res.totalLatentLoss | accountingAmount }}</dd></div>
+          <div class="cr-result-row"><dt i18n="@@accounting.currencies.ecriture.de.contre.passation.cca3e2a8">Écriture de contre-passation</dt><dd i18n="@@accounting.currencies.generee.au.4d5d70ac">générée au {{ nextPeriodStart() | date : 'shortDate' }}</dd></div>
           @if (res.provisionEntryId) {
-            <div class="cr-result-row"><dt>Provision</dt><dd>constatée</dd></div>
+            <div class="cr-result-row"><dt i18n="@@accounting.currencies.provision.e11d5b69">Provision</dt><dd i18n="@@accounting.currencies.constatee.b4961337">constatée</dd></div>
           }
         </dl>
       </div>
@@ -136,6 +133,8 @@ const MONTHS = [
   `
 })
 export class ClosingRevaluationComponent {
+  readonly loc_ui_tern_traitement_2f66d9 = $localize`:@@ui.tern.traitement.2f66d9:Traitement…`;
+  readonly loc_ui_tern_lancer_la_reevaluation_ca8de5 = $localize`:@@ui.tern.lancer.la.reevaluation.ca8de5:Lancer la réévaluation`;
   private readonly api = inject(AccountingService);
   // Le 400 metier porte un message precis ; extractErrorMessage le lit et
   // distingue au passage la vraie panne reseau (status 0).
@@ -185,15 +184,15 @@ export class ClosingRevaluationComponent {
           this.result.set(res.data);
           this.toast.add({
             severity: 'success',
-            summary: 'Réévaluation effectuée',
-            detail: `${res.data.positionCount} position(s) réévaluée(s)`,
+            summary: $localize`:@@closing-revaluation.component.summary.R_valuation_eff:Réévaluation effectuée`,
+            detail: $localize`:@@accounting.closing-revaluation.ts.positioncount.position.s.reevaluee.s.b74b20ba:${res.data.positionCount}:positionCount: position(s) réévaluée(s)`,
             life: 5000
           });
         } else {
-          this.error.set(res.error ?? 'Erreur');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       },
-      error: err => { this.running.set(false); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau')); }
+      error: err => { this.running.set(false); this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.closing-revaluation.ts.erreur.reseau.0683007f:Erreur réseau`)); }
     });
   }
 }

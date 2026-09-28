@@ -1,4 +1,5 @@
 using FactuTrust.Domain.Enums;
+using FactuTrust.Infrastructure.Tests;
 using FactuTrust.Infrastructure.Persistence;
 using FactuTrust.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +28,7 @@ public sealed class NotificationServiceTests
     public async Task Create_then_unread_count_scopes_by_tenant_and_role()
     {
         await using var db = BuildMaster();
-        var service = new NotificationService(db);
+        var service = new NotificationService(db, new PassthroughMessageLocalizer());
 
         await service.CreateAsync(TenantA, "FirmManager", NotificationType.FirmAssignmentRequested, "Titre", "Corps", "/firm/invitations");
         await service.CreateAsync(TenantA, null, NotificationType.FirmAssignmentAccepted, "Générale", "Corps");
@@ -45,7 +46,7 @@ public sealed class NotificationServiceTests
     public async Task GetList_orders_desc_and_filters_unread_only()
     {
         await using var db = BuildMaster();
-        var service = new NotificationService(db);
+        var service = new NotificationService(db, new PassthroughMessageLocalizer());
 
         await service.CreateAsync(TenantA, null, NotificationType.FirmAssignmentRequested, "Première", "Corps");
         await service.CreateAsync(TenantA, null, NotificationType.FirmAssignmentAccepted, "Seconde", "Corps");
@@ -66,7 +67,7 @@ public sealed class NotificationServiceTests
     public async Task MarkRead_is_fail_closed_on_tenant_and_role()
     {
         await using var db = BuildMaster();
-        var service = new NotificationService(db);
+        var service = new NotificationService(db, new PassthroughMessageLocalizer());
 
         await service.CreateAsync(TenantA, "FirmManager", NotificationType.FirmAssignmentRequested, "Titre", "Corps");
         var id = (await service.GetListAsync(TenantA, "FirmManager", false, 1, 10)).Items[0].Id;
@@ -84,7 +85,7 @@ public sealed class NotificationServiceTests
     public async Task MarkAllRead_only_marks_visible_notifications()
     {
         await using var db = BuildMaster();
-        var service = new NotificationService(db);
+        var service = new NotificationService(db, new PassthroughMessageLocalizer());
 
         await service.CreateAsync(TenantA, "FirmManager", NotificationType.FirmAssignmentRequested, "Ciblée manager", "Corps");
         await service.CreateAsync(TenantA, "FirmAccountant", NotificationType.FirmAssignmentRequested, "Ciblée accountant", "Corps");
@@ -101,7 +102,7 @@ public sealed class NotificationServiceTests
     public async Task User_targeted_notification_is_visible_only_to_that_user()
     {
         await using var db = BuildMaster();
-        var service = new NotificationService(db);
+        var service = new NotificationService(db, new PassthroughMessageLocalizer());
         var collabA = Guid.Parse("aaaaaaaa-1111-1111-1111-aaaaaaaaaaaa");
         var collabB = Guid.Parse("bbbbbbbb-1111-1111-1111-bbbbbbbbbbbb");
 
@@ -124,7 +125,7 @@ public sealed class NotificationServiceTests
     public async Task MarkRead_of_user_targeted_notification_is_fail_closed_for_other_user()
     {
         await using var db = BuildMaster();
-        var service = new NotificationService(db);
+        var service = new NotificationService(db, new PassthroughMessageLocalizer());
         var collabA = Guid.Parse("aaaaaaaa-1111-1111-1111-aaaaaaaaaaaa");
         var collabB = Guid.Parse("bbbbbbbb-1111-1111-1111-bbbbbbbbbbbb");
 
@@ -143,7 +144,7 @@ public sealed class NotificationServiceTests
     public async Task MarkAllRead_does_not_mark_another_users_targeted_notification()
     {
         await using var db = BuildMaster();
-        var service = new NotificationService(db);
+        var service = new NotificationService(db, new PassthroughMessageLocalizer());
         var collabA = Guid.Parse("aaaaaaaa-1111-1111-1111-aaaaaaaaaaaa");
         var collabB = Guid.Parse("bbbbbbbb-1111-1111-1111-bbbbbbbbbbbb");
 
@@ -163,7 +164,7 @@ public sealed class NotificationServiceTests
     public async Task Role_targeted_notification_without_user_id_still_scopes_by_role()
     {
         await using var db = BuildMaster();
-        var service = new NotificationService(db);
+        var service = new NotificationService(db, new PassthroughMessageLocalizer());
         var managerId = Guid.Parse("cccccccc-1111-1111-1111-cccccccccccc");
 
         await service.CreateAsync(TenantA, "FirmManager", NotificationType.FirmAssignmentRequested, "Liaison", "Corps");

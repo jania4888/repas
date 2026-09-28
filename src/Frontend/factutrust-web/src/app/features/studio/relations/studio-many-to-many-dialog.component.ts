@@ -26,25 +26,25 @@ import { slugifyKey } from '../shared/studio-text.util';
     <p-dialog [header]="labels.relations.addManyToMany" [(visible)]="visible" [modal]="true" [style]="{ width: '30rem' }"
       (onHide)="reset()" data-testid="m2m-dialog">
       <div class="ft-form">
-        <label for="m2m-target">Table cible *</label>
+        <label for="m2m-target" i18n="@@studio.relations.table.cible.d81d2d36">Table cible *</label>
         <p-select inputId="m2m-target" class="studio-w-full" [options]="targetOptions()" [ngModel]="targetEntityId()"
           (ngModelChange)="targetEntityId.set($event)" optionLabel="label" optionValue="value" appendTo="body"
           panelStyleClass="studio-theme" data-testid="m2m-target" />
 
-        <label for="m2m-label">Libellé affiché</label>
+        <label for="m2m-label" i18n="@@studio.relations.libelle.affiche.39f5ced2">Libellé affiché</label>
         <input pInputText id="m2m-label" class="studio-w-full" [ngModel]="label()" (ngModelChange)="label.set($event)"
-          [placeholder]="selectedTargetLabel() || 'Tels que nommés'" maxlength="120" data-testid="m2m-label" />
+          [placeholder]="selectedTargetLabel() || loc_tels_que_nommes_d8d8b1" maxlength="120" data-testid="m2m-label" />
 
-        <label for="m2m-jkey">Clé de la table de liaison</label>
+        <label for="m2m-jkey" i18n="@@studio.relations.cle.de.la.table.de.liaison.02619902">Clé de la table de liaison</label>
         <input pInputText id="m2m-jkey" class="studio-w-full" [ngModel]="junctionKey()" (ngModelChange)="junctionKey.set($event)"
           [placeholder]="defaultJunctionKey()" maxlength="64" data-testid="m2m-junction-key" />
         @if (junctionKey() && !junctionKeyValid()) {
-          <small class="studio-hint" data-testid="m2m-key-invalid">Clé invalide : minuscule initiale, lettres, chiffres ou « _ » (2 à 64 caractères).</small>
+          <small class="studio-hint" data-testid="m2m-key-invalid" i18n="@@studio.relations.cle.invalide.minuscule.initiale.lettres.chiffres.af9a773b">Clé invalide : minuscule initiale, lettres, chiffres ou « _ » (2 à 64 caractères).</small>
         }
 
-        <label for="m2m-attribute">Attribut de liaison</label>
+        <label for="m2m-attribute" i18n="@@studio.relations.attribut.de.liaison.401d5ca6">Attribut de liaison</label>
         <input pInputText id="m2m-attribute" class="studio-w-full" [ngModel]="junctionAttribute()"
-          (ngModelChange)="junctionAttribute.set($event)" placeholder="Quantité" maxlength="120"
+          (ngModelChange)="junctionAttribute.set($event)" placeholder="Quantité" i18n-placeholder="@@studio.relations.quantite.09a38fda" maxlength="120"
           data-testid="m2m-attribute" />
         <small class="studio-hint">{{ labels.relations.junctionAttributeHint }}</small>
 
@@ -53,8 +53,8 @@ import { slugifyKey } from '../shared/studio-text.util';
         }
       </div>
       <ng-template pTemplate="footer">
-        <p-button label="Annuler" [text]="true" (onClick)="visible.set(false)" />
-        <p-button label="Créer" icon="pi pi-check" [loading]="saving()" [disabled]="!canSubmit()" (onClick)="submit()" data-testid="m2m-submit" />
+        <p-button label="Annuler" i18n-label="@@studio.relations.annuler.49ba3292" [text]="true" (onClick)="visible.set(false)" />
+        <p-button label="Créer" i18n-label="@@studio.relations.creer.1a686172" icon="pi pi-check" [loading]="saving()" [disabled]="!canSubmit()" (onClick)="submit()" data-testid="m2m-submit" />
       </ng-template>
     </p-dialog>
   `,
@@ -63,6 +63,8 @@ import { slugifyKey } from '../shared/studio-text.util';
   styleUrl: '../shared/studio-layout.scss'
 })
 export class StudioManyToManyDialogComponent {
+  protected readonly loc_tels_que_nommes_d8d8b1 = $localize`:@@studio.studio-many-to-many-dialog.tpl.tels.que.nommes.d8d8b121:Tels que nommés`;
+
   readonly sourceEntity = input.required<CustomEntity>();
   readonly entities = input.required<CustomEntity[]>();
   readonly visible = model(false);
@@ -115,14 +117,14 @@ export class StudioManyToManyDialogComponent {
     }).subscribe({
       next: res => {
         this.saving.set(false);
-        if (!res.success) { this.error.set(res.message || 'Création impossible.'); return; }
+        if (!res.success) { this.error.set(res.message || $localize`:@@studio.studio-many-to-many-dialog.ts.creation.impossible.5661a598:Création impossible.`); return; }
         this.created.emit(res.data);
         this.visible.set(false);
       },
       error: (err: HttpErrorResponse) => {
         this.saving.set(false);
         if (err.status === 409) { this.error.set(this.labels.relations.duplicateKey); return; }
-        this.error.set(typeof err.error?.message === 'string' ? err.error.message : 'Création impossible.');
+        this.error.set(typeof err.error?.message === 'string' ? err.error.message : $localize`:@@studio.studio-many-to-many-dialog.ts.creation.impossible.5661a598:Création impossible.`);
       }
     });
   }

@@ -74,7 +74,7 @@ interface ResponseLine {
   imports: [CommonModule, FormsModule, DialogModule, ButtonComponent, PowerPointThemePickerComponent],
   template: `
     <p-dialog
-      header="Exporter en PowerPoint"
+      header="Exporter en PowerPoint" i18n-header="@@ai-assistant.components.exporter.en.powerpoint.1032c468"
       [(visible)]="visibleInternal"
       [modal]="true"
       [style]="{ width: '900px', maxWidth: '96vw' }"
@@ -82,9 +82,9 @@ interface ResponseLine {
       [resizable]="false"
       [closable]="!isGenerating()"
       (onHide)="onHide()"
-      ariaLabel="Exporter en PowerPoint">
+      ariaLabel="Exporter en PowerPoint" i18n-ariaLabel="@@ai-assistant.components.exporter.en.powerpoint.ac2ac00f">
 
-      <nav class="ppt-stepper" aria-label="Étapes de l'export">
+      <nav class="ppt-stepper" aria-label="Étapes de l'export" i18n-aria-label="@@ai-assistant.components.etapes.de.l.export.5cbdb578">
         @for (s of stepDefs; track s.id) {
           <button
             type="button"
@@ -106,9 +106,9 @@ interface ResponseLine {
           @case ('configure') {
             <div class="ppt-grid">
               <div class="ppt-card">
-                <h4>Informations générales</h4>
+                <h4 i18n="@@ai-assistant.components.informations.generales.be6ba6e5">Informations générales</h4>
                 <label class="ppt-field">
-                  <span>Titre de la présentation <em>*</em></span>
+                  <span><ng-container i18n="@@ai-assistant.components.titre.de.la.presentation.c3df8df5">Titre de la présentation </ng-container> <em i18n="@@ai-assistant.components.text.df58248c">*</em></span>
                   <input
                     type="text"
                     name="title"
@@ -116,59 +116,57 @@ interface ResponseLine {
                     maxlength="200"
                     required
                     aria-required="true"
-                    placeholder="Synthèse hebdomadaire — Ventes Q4" />
+                    placeholder="Synthèse hebdomadaire — Ventes Q4" i18n-placeholder="@@ai-assistant.components.synthese.hebdomadaire.ventes.q4.4c4c43b5" />
                 </label>
                 <label class="ppt-field">
-                  <span>Sous-titre (optionnel)</span>
+                  <span i18n="@@ai-assistant.components.sous.titre.optionnel.9e0b8fa9">Sous-titre (optionnel)</span>
                   <input type="text" name="subtitle" [(ngModel)]="subtitle" maxlength="250" />
                 </label>
                 <label class="ppt-field">
-                  <span>Auteur affiché sur la couverture</span>
+                  <span i18n="@@ai-assistant.components.auteur.affiche.sur.la.couverture.d6eaf75f">Auteur affiché sur la couverture</span>
                   <input type="text" name="author" [(ngModel)]="authorName" maxlength="200" />
                 </label>
               </div>
 
               <div class="ppt-card">
                 <div class="ppt-card-header-row">
-                  <h4>Slides à inclure</h4>
-                  <button type="button" class="ppt-preset-link" (click)="applyExecutivePreset()">
-                    Preset « Deck exécutif »
-                  </button>
+                  <h4 i18n="@@ai-assistant.components.slides.a.inclure.71d6b043">Slides à inclure</h4>
+                  <button type="button" class="ppt-preset-link" (click)="applyExecutivePreset()" i18n="@@ai-assistant.components.preset.deck.executif.c2d0a8dd"> Preset « Deck exécutif » </button>
                 </div>
                 <div class="ppt-options-grid">
                   <label class="ppt-check">
                     <input type="checkbox" name="cover" [(ngModel)]="includeCoverSlide" />
-                    <span>Slide de couverture</span>
+                    <span i18n="@@ai-assistant.components.slide.de.couverture.1ff99904">Slide de couverture</span>
                   </label>
                   <label class="ppt-check">
                     <input type="checkbox" name="agenda" [(ngModel)]="includeAgenda" />
-                    <span>Agenda</span>
+                    <span i18n="@@ai-assistant.components.agenda.891e9d6d">Agenda</span>
                   </label>
                   <label class="ppt-check">
                     <input type="checkbox" name="toc" [(ngModel)]="includeTableOfContents" />
-                    <span>Sommaire numéroté</span>
+                    <span i18n="@@ai-assistant.components.sommaire.numerote.0c75bebc">Sommaire numéroté</span>
                   </label>
                   <label class="ppt-check">
                     <input type="checkbox" name="notes" [(ngModel)]="includeSpeakerNotes" />
-                    <span>Notes du présentateur</span>
+                    <span i18n="@@ai-assistant.components.notes.du.presentateur.1e2e486d">Notes du présentateur</span>
                   </label>
                   <label class="ppt-check">
                     <input type="checkbox" name="sources" [(ngModel)]="includeSources" />
-                    <span>Page « Sources »</span>
+                    <span i18n="@@ai-assistant.components.page.sources.6e642190">Page « Sources »</span>
                   </label>
                   <label class="ppt-check">
                     <input type="checkbox" name="appendix" [(ngModel)]="includeAppendix" />
-                    <span>Annexe (texte brut)</span>
+                    <span i18n="@@ai-assistant.components.annexe.texte.brut.05b5a314">Annexe (texte brut)</span>
                   </label>
                 </div>
               </div>
 
               <div class="ppt-card">
-                <h4>Format</h4>
+                <h4 i18n="@@ai-assistant.components.format.041a5dec">Format</h4>
                 <label class="ppt-field">
-                  <span>Orientation des slides</span>
+                  <span i18n="@@ai-assistant.components.orientation.des.slides.108d44bf">Orientation des slides</span>
                   <select name="orientation" [(ngModel)]="orientation">
-                    <option [ngValue]="SlideOrientation.Widescreen16x9">16:9 (recommandé)</option>
+                    <option [ngValue]="SlideOrientation.Widescreen16x9" i18n="@@ai-assistant.components.16.9.recommande.dd88e126">16:9 (recommandé)</option>
                     <option [ngValue]="SlideOrientation.Standard4x3">4:3</option>
                   </select>
                 </label>
@@ -179,13 +177,13 @@ interface ResponseLine {
           @case ('theme') {
             <div class="ppt-card ppt-card-theme-step">
               <header class="ppt-theme-step-header">
-                <h4>Choisissez un thème visuel</h4>
-                <p class="ppt-muted">Aperçu fidèle des slides de couverture — recherche et filtres disponibles.</p>
+                <h4 i18n="@@ai-assistant.components.choisissez.un.theme.visuel.917e8b7d">Choisissez un thème visuel</h4>
+                <p class="ppt-muted" i18n="@@ai-assistant.components.apercu.fidele.des.slides.de.couverture.recherche.7c9f793e">Aperçu fidèle des slides de couverture — recherche et filtres disponibles.</p>
               </header>
               @if (loadingTemplates()) {
-                <p class="ppt-muted">Chargement des thèmes…</p>
+                <p class="ppt-muted" i18n="@@ai-assistant.components.chargement.des.themes.1310aeb5">Chargement des thèmes…</p>
               } @else if (templates().length === 0) {
-                <p class="ppt-muted">Aucun thème disponible.</p>
+                <p class="ppt-muted" i18n="@@ai-assistant.components.aucun.theme.disponible.d7f7ca4d">Aucun thème disponible.</p>
               } @else {
                 <app-powerpoint-theme-picker
                   [templates]="templates()"
@@ -197,17 +195,13 @@ interface ResponseLine {
           @case ('review') {
             <div class="ppt-card ppt-review">
               <header class="ppt-review-header">
-                <h4>Réponses sélectionnées ({{ responseLines().length }})</h4>
-                <small class="ppt-muted">
-                  Personnalisez le titre, filtrez les blocs ou retirez une réponse avant l'export.
-                </small>
+                <h4 i18n="@@ai-assistant.components.reponses.selectionnees.2ae928a8">Réponses sélectionnées ({{ responseLines().length }})</h4>
+                <small class="ppt-muted" i18n="@@ai-assistant.components.personnalisez.le.titre.filtrez.les.blocs.ou.reti.2c6a8200"> Personnalisez le titre, filtrez les blocs ou retirez une réponse avant l'export. </small>
               </header>
 
               @if (responseLines().length === 0) {
-                <p class="ppt-empty">
-                  Aucune réponse sélectionnée. Activez le mode sélection dans la barre de l'assistant
-                  pour cocher les réponses à inclure.
-                </p>
+                <p class="ppt-empty" i18n="@@ai-assistant.components.aucune.reponse.selectionnee.activez.le.mode.sele.2ab2d239"> Aucune réponse sélectionnée. Activez le mode sélection dans la barre de l'assistant
+                  pour cocher les réponses à inclure. </p>
               } @else {
                 <ul class="ppt-response-list" role="list">
                   @for (line of responseLines(); track line.messageId; let i = $index) {
@@ -217,20 +211,20 @@ interface ResponseLine {
                         <div class="ppt-response-title">{{ line.conversationTitle || 'Conversation' }}</div>
                         <p class="ppt-response-preview">{{ line.preview }}</p>
                         <label class="ppt-field ppt-field-inline">
-                          <span>Titre personnalisé du slide</span>
+                          <span i18n="@@ai-assistant.components.titre.personnalise.du.slide.74470fbe">Titre personnalisé du slide</span>
                           <input
                             type="text"
                             [(ngModel)]="line.customTitle"
                             maxlength="200"
                             [name]="'cust-' + line.messageId"
-                            placeholder="Hériter du titre auto-détecté" />
+                            placeholder="Hériter du titre auto-détecté" i18n-placeholder="@@ai-assistant.components.heriter.du.titre.auto.detecte.2ee69f9a" />
                         </label>
-                        <div class="ppt-block-filters" role="group" [attr.aria-label]="'Filtrer le contenu pour la réponse ' + (i + 1)">
-                          <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeText" [name]="'txt-' + line.messageId" /> Texte</label>
+                        <div class="ppt-block-filters" role="group" [attr.aria-label]="loc_ui_tern_filtrer_le_contenu_pour_la_reponse_7da43f + (i + 1)">
+                          <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeText" [name]="'txt-' + line.messageId" /><ng-container i18n="@@ai-assistant.components.texte.ff9afef1"> Texte</ng-container></label>
                           <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeKpis" [name]="'kpi-' + line.messageId" /> KPI</label>
-                          <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeTables" [name]="'tbl-' + line.messageId" /> Tableaux</label>
-                          <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeCharts" [name]="'cht-' + line.messageId" /> Graphiques</label>
-                          <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeSources" [name]="'src-' + line.messageId" /> Sources</label>
+                          <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeTables" [name]="'tbl-' + line.messageId" /><ng-container i18n="@@ai-assistant.components.tableaux.c0501eb6"> Tableaux</ng-container></label>
+                          <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeCharts" [name]="'cht-' + line.messageId" /><ng-container i18n="@@ai-assistant.components.graphiques.a5050c7d"> Graphiques</ng-container></label>
+                          <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeSources" [name]="'src-' + line.messageId" /><ng-container i18n="@@ai-assistant.components.sources.2eb56be3"> Sources</ng-container></label>
                         </div>
                         @if (line.previewMeta) {
                           <div class="ppt-preview-badges" [attr.aria-describedby]="'preview-desc-' + line.messageId">
@@ -238,13 +232,13 @@ interface ResponseLine {
                               <span class="ppt-badge">{{ line.previewMeta.kpiCount }} KPI</span>
                             }
                             @if (line.previewMeta.tableCount) {
-                              <span class="ppt-badge">{{ line.previewMeta.tableCount }} tableau(x)</span>
+                              <span class="ppt-badge" i18n="@@ai-assistant.components.tableau.x.994346ac">{{ line.previewMeta.tableCount }} tableau(x)</span>
                             }
                             @if (line.previewMeta.chartCount) {
-                              <span class="ppt-badge">{{ line.previewMeta.chartCount }} graphique(s)</span>
+                              <span class="ppt-badge" i18n="@@ai-assistant.components.graphique.s.12fab29d">{{ line.previewMeta.chartCount }} graphique(s)</span>
                             }
                             @if (line.previewMeta.sectionCount) {
-                              <span class="ppt-badge">{{ line.previewMeta.sectionCount }} section(s)</span>
+                              <span class="ppt-badge" i18n="@@ai-assistant.components.section.s.6377fc71">{{ line.previewMeta.sectionCount }} section(s)</span>
                             }
                           </div>
                           @if (line.previewMeta.slideOutline.length) {
@@ -255,19 +249,13 @@ interface ResponseLine {
                             </ol>
                           }
                         } @else if (line.previewLoading) {
-                          <p class="ppt-muted ppt-preview-loading">Analyse du contenu…</p>
+                          <p class="ppt-muted ppt-preview-loading" i18n="@@ai-assistant.components.analyse.du.contenu.3b98a85a">Analyse du contenu…</p>
                         }
                       </div>
                       <div class="ppt-response-actions">
-                        <button type="button" class="ppt-icon" (click)="moveUp(i)" [disabled]="i === 0" aria-label="Monter">
-                          ↑
-                        </button>
-                        <button type="button" class="ppt-icon" (click)="moveDown(i)" [disabled]="i === responseLines().length - 1" aria-label="Descendre">
-                          ↓
-                        </button>
-                        <button type="button" class="ppt-icon ppt-icon-danger" (click)="removeLine(i)" aria-label="Retirer cette réponse">
-                          ×
-                        </button>
+                        <button type="button" class="ppt-icon" (click)="moveUp(i)" [disabled]="i === 0" aria-label="Monter" i18n-aria-label="@@ai-assistant.components.monter.dd1b79d9" i18n="@@ai-assistant.components.text.9555ffd7"> ↑ </button>
+                        <button type="button" class="ppt-icon" (click)="moveDown(i)" [disabled]="i === responseLines().length - 1" aria-label="Descendre" i18n-aria-label="@@ai-assistant.components.descendre.383f2e3e" i18n="@@ai-assistant.components.text.fc486696"> ↓ </button>
+                        <button type="button" class="ppt-icon ppt-icon-danger" (click)="removeLine(i)" aria-label="Retirer cette réponse" i18n-aria-label="@@ai-assistant.components.retirer.cette.reponse.daf692c8" i18n="@@ai-assistant.components.text.67fba2f3"> × </button>
                       </div>
                     </li>
                   }
@@ -279,8 +267,8 @@ interface ResponseLine {
           @case ('generating') {
             <div class="ppt-loading" role="status" aria-live="polite">
               <div class="ppt-spinner" aria-hidden="true"></div>
-              <p class="ppt-loading-title">Génération de la présentation…</p>
-              <p class="ppt-muted">
+              <p class="ppt-loading-title" i18n="@@ai-assistant.components.generation.de.la.presentation.a17c3590">Génération de la présentation…</p>
+              <p class="ppt-muted" i18n="@@ai-assistant.components.pour.une.presentation.contenant.reponse.2be441ec">
                 Pour une présentation contenant {{ responseLines().length }} réponse(s), comptez quelques secondes.
               </p>
             </div>
@@ -292,7 +280,7 @@ interface ResponseLine {
                 <div class="ppt-error">
                   <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
                   <div>
-                    <strong>L'export a échoué.</strong>
+                    <strong i18n="@@ai-assistant.components.l.export.a.echoue.d3506fe9">L'export a échoué.</strong>
                     <p>{{ lastError()!.message }}</p>
                     @if (lastError()!.details?.length) {
                       <ul>
@@ -308,7 +296,7 @@ interface ResponseLine {
                   <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
                   <div>
                     <strong>{{ lastResult()!.fileName }}</strong>
-                    <p>{{ lastResult()!.slideCount }} slide(s) générée(s). Le lien de téléchargement expire après une heure.</p>
+                    <p i18n="@@ai-assistant.components.slide.s.generee.s.le.lien.de.telechargem.76da2a07">{{ lastResult()!.slideCount }} slide(s) générée(s). Le lien de téléchargement expire après une heure.</p>
                   </div>
                 </div>
               }
@@ -320,31 +308,29 @@ interface ResponseLine {
       <ng-template pTemplate="footer">
         <div class="ppt-footer">
           @if (currentStep() === 'configure') {
-            <app-button variant="secondary" (click)="onHide()">Annuler</app-button>
-            <app-button [disabled]="!isConfigValid()" (click)="goToTheme()">Suivant : thème</app-button>
+            <app-button variant="secondary" (click)="onHide()" i18n="@@ai-assistant.components.annuler.49ba3292">Annuler</app-button>
+            <app-button [disabled]="!isConfigValid()" (click)="goToTheme()" i18n="@@ai-assistant.components.suivant.theme.9ac5d3ea">Suivant : thème</app-button>
           }
           @if (currentStep() === 'theme') {
-            <app-button variant="secondary" (click)="setStep('configure')">Retour</app-button>
-            <app-button (click)="goToReview()">Suivant : réponses</app-button>
+            <app-button variant="secondary" (click)="setStep('configure')" i18n="@@ai-assistant.components.retour.e5befb1f">Retour</app-button>
+            <app-button (click)="goToReview()" i18n="@@ai-assistant.components.suivant.reponses.b32fbbe1">Suivant : réponses</app-button>
           }
           @if (currentStep() === 'review') {
-            <app-button variant="secondary" (click)="setStep('theme')">Retour</app-button>
+            <app-button variant="secondary" (click)="setStep('theme')" i18n="@@ai-assistant.components.retour.e5befb1f">Retour</app-button>
             <app-button
               [disabled]="!isReviewValid()"
-              (click)="startGeneration()">
-              Générer la présentation
-            </app-button>
+              (click)="startGeneration()" i18n="@@ai-assistant.components.generer.la.presentation.69409076"> Générer la présentation </app-button>
           }
           @if (currentStep() === 'generating') {
-            <app-button variant="secondary" [disabled]="true">Génération en cours…</app-button>
+            <app-button variant="secondary" [disabled]="true" i18n="@@ai-assistant.components.generation.en.cours.46fb6bcf">Génération en cours…</app-button>
           }
           @if (currentStep() === 'done') {
-            <app-button variant="secondary" (click)="onHide()">Fermer</app-button>
+            <app-button variant="secondary" (click)="onHide()" i18n="@@ai-assistant.components.fermer.5ab4ec64">Fermer</app-button>
             @if (lastResult()) {
-              <app-button (click)="downloadAgain()">Télécharger à nouveau</app-button>
+              <app-button (click)="downloadAgain()" i18n="@@ai-assistant.components.telecharger.a.nouveau.3f2fef3c">Télécharger à nouveau</app-button>
             }
             @if (lastError()) {
-              <app-button (click)="retryAfterError()">Réessayer</app-button>
+              <app-button (click)="retryAfterError()" i18n="@@ai-assistant.components.reessayer.895d416b">Réessayer</app-button>
             }
           }
         </div>
@@ -355,6 +341,7 @@ interface ResponseLine {
   styleUrls: ['./powerpoint-export-dialog.component.scss']
 })
 export class PowerPointExportDialogComponent implements OnInit, OnChanges {
+  readonly loc_ui_tern_filtrer_le_contenu_pour_la_reponse_7da43f = $localize`:@@ui.tern.filtrer.le.contenu.pour.la.reponse.7da43f:Filtrer le contenu pour la réponse `;
   private static readonly LAST_THEME_KEY = 'factutrust.ppt.lastTheme';
 
   @Input() visible = false;
@@ -371,11 +358,11 @@ export class PowerPointExportDialogComponent implements OnInit, OnChanges {
   protected readonly PowerPointTemplate = PowerPointTemplate;
 
   protected readonly stepDefs: ReadonlyArray<{ id: DialogStep; index: number; label: string }> = [
-    { id: 'configure', index: 1, label: 'Configurer' },
-    { id: 'theme', index: 2, label: 'Thème' },
-    { id: 'review', index: 3, label: 'Réponses' },
-    { id: 'generating', index: 4, label: 'Générer' },
-    { id: 'done', index: 5, label: 'Terminer' }
+    { id: 'configure', index: 1, label: $localize`:@@ai-assistant.powerpoint-export-dialog.ts.configurer.382efbe9:Configurer` },
+    { id: 'theme', index: 2, label: $localize`:@@ai-assistant.powerpoint-export-dialog.ts.theme.f366ea6e:Thème` },
+    { id: 'review', index: 3, label: $localize`:@@ai-assistant.powerpoint-export-dialog.ts.reponses.9b8e2c96:Réponses` },
+    { id: 'generating', index: 4, label: $localize`:@@ai-assistant.powerpoint-export-dialog.ts.generer.bd221c07:Générer` },
+    { id: 'done', index: 5, label: $localize`:@@ai-assistant.powerpoint-export-dialog.ts.terminer.6bf1bd74:Terminer` }
   ];
 
   protected readonly currentStep = signal<DialogStep>('configure');
@@ -467,7 +454,7 @@ export class PowerPointExportDialogComponent implements OnInit, OnChanges {
   private buildDefaultTitle(): string {
     const now = new Date();
     const pad = (n: number) => String(n).padStart(2, '0');
-    return `Synthèse Assistant IA — ${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()}`;
+    return $localize`:@@ai-assistant.powerpoint-export-dialog.ts.synthese.assistant.ia.pad.pad1.getfullye.b84f60a8:Synthèse Assistant IA — ${pad(now.getDate())}:pad:/${pad(now.getMonth() + 1)}:pad1:/${now.getFullYear()}:getFullYear:`;
   }
 
   private buildLines(input: SelectedAssistantMessage[]): ResponseLine[] {
@@ -725,7 +712,7 @@ export class PowerPointExportDialogComponent implements OnInit, OnChanges {
       return e as PowerPointExportError;
     }
     if (e instanceof Error) return { status: 0, message: e.message };
-    return { status: 0, message: 'Erreur inattendue.' };
+    return { status: 0, message: $localize`:@@ai-assistant.powerpoint-export-dialog.ts.erreur.inattendue.f815b77e:Erreur inattendue.` };
   }
 
   protected onHide(): void {

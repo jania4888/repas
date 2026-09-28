@@ -50,6 +50,10 @@ export const environment = {
   /** Base absolue (sans slash final) des `canonical` / `hreflang` / `og:url` / sitemap de la landing. */
   publicSiteOrigin: 'https://instafact.shop',
   /** Landing publique (`features/home`). */
+  erp: {
+    /** OFF en production jusqu'à recette arabe complète (plan i18n ERP). */
+    arabicEnabled: false
+  },
   landing: {
     /** OFF tant que le texte arabe n'a pas été validé par le client (plan § 8.4). */
     arabicEnabled: false,

@@ -1,0 +1,181 @@
+/**
+ * Surcharges RTL ERP (bundle non injecté — chargé uniquement en locale AR).
+ * Scope : [dir="rtl"] pour ne pas affecter le français.
+ */
+@import 'styles/rtl/pluto-rtl.generated.css';
+
+[dir='rtl'] {
+  --font-family: 'Noto Sans Arabic', 'Inter', system-ui, sans-serif;
+
+  body.erp-rtl {
+    font-family: var(--font-family);
+  }
+
+  .rtl-flip,
+  .fa-arrow-right,
+  .fa-arrow-left,
+  .fa-chevron-right,
+  .fa-chevron-left,
+  .fa-arrow-right-from-bracket,
+  .pi-arrow-right,
+  .pi-arrow-left,
+  .pi-angle-right,
+  .pi-angle-left,
+  .pi-chevron-right,
+  .pi-chevron-left,
+  .pi-sign-out {
+    transform: scaleX(-1);
+  }
+
+  input[type='email'],
+  input[type='password'],
+  input[type='tel'],
+  input[type='url'],
+  .p-password-input,
+  .p-inputnumber-input,
+  .erp-amount,
+  .erp-ltr-isolate,
+  [dir='ltr'] {
+    direction: ltr;
+    unicode-bidi: isolate;
+    text-align: start;
+  }
+
+  // Identifiants saisis en caractères latins (NIF 1772793W/A/M/000, RIB, IBAN, CNSS, codes…) : un champ
+  // texte RTL réordonnerait chiffres et barres obliques. Valeur en LTR ; le placeholder arabe garde son
+  // sens (plaintext). Les références restent hors liste : elles peuvent être saisies en arabe.
+  $ltr-identifiers: nif, rib, iban, swift, bic, cnss, cin, rne, barcode, ean, sku, bankcode, accountnumber, postalcode,
+    email, phone, code;
+  @each $token in $ltr-identifiers {
+    input[formcontrolname*='#{$token}' i]:not([type='checkbox']):not([type='radio']),
+    input[id*='#{$token}' i]:not([type='checkbox']):not([type='radio']),
+    input[name*='#{$token}' i]:not([type='checkbox']):not([type='radio']),
+    // Composants PrimeNG (p-inputMask…) : l'attribut est sur l'hôte, pas sur l'<input> interne.
+    :is(p-inputmask, p-inputnumber, p-autocomplete)[formcontrolname*='#{$token}' i] input,
+    :is(p-inputmask, p-inputnumber, p-autocomplete)[id*='#{$token}' i] input {
+      direction: ltr;
+      text-align: start;
+
+      &::placeholder {
+        unicode-bidi: plaintext;
+      }
+    }
+  }
+
+  .stat-value,
+  .total-value {
+    direction: ltr;
+    unicode-bidi: isolate;
+    display: inline-block;
+  }
+
+  .main-header .sidebar_toggle {
+    margin-inline-end: 0.75rem;
+    margin-inline-start: 0;
+  }
+
+  .sidebar {
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+  }
+
+  #sidebar {
+    left: auto;
+    right: 0;
+  }
+
+  .right_topbar {
+    margin-inline-start: auto;
+    margin-inline-end: 0;
+  }
+
+  .p-toast {
+    inset-inline-end: auto !important;
+    inset-inline-start: 1.25rem !important;
+  }
+
+  .text-end {
+    text-align: end !important;
+  }
+
+  .text-start {
+    text-align: start !important;
+  }
+
+  .text-left {
+    text-align: start !important;
+  }
+
+  .text-right {
+    text-align: end !important;
+  }
+
+  .amount,
+  .erp-amount,
+  .currency-value,
+  .p-inputnumber,
+  td.col-amount,
+  th.col-amount,
+  .panel-total,
+  .method-amount,
+  .balance-credit,
+  .balance-debit {
+    direction: ltr;
+    unicode-bidi: isolate;
+    text-align: end;
+  }
+
+  .secondary-nav__submenu-panel {
+    left: auto;
+    right: 100%;
+  }
+
+  .p-input-icon-left > i,
+  .p-input-icon-left > .pi {
+    left: auto;
+    right: auto;
+    inset-inline-start: 0.75rem;
+  }
+
+  .p-input-icon-left > .p-inputtext,
+  .p-input-icon-left > input {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-inline-start: 2.5rem;
+    padding-inline-end: 0.75rem;
+  }
+
+  // Police arabe : sur body (héritée) et sur les contrôles qui n'héritent pas de la police. Jamais sur
+  // tous les éléments : `<i class="fa-…">` / `.pi` perdraient leur police d'icônes (cases vides).
+  body.erp-rtl input,
+  body.erp-rtl textarea,
+  body.erp-rtl select,
+  body.erp-rtl button {
+    font-family: var(--font-family);
+  }
+
+  :lang(ar) {
+    letter-spacing: 0;
+    text-transform: none;
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      line-height: 1.45;
+      font-weight: 700;
+    }
+
+    p,
+    li,
+    label,
+    button,
+    input,
+    textarea,
+    select {
+      line-height: 1.75;
+    }
+  }
+}

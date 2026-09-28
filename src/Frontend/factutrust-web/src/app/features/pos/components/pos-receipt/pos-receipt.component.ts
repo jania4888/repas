@@ -53,7 +53,7 @@ function escapeHtml(text: string): string {
   imports: [CommonModule],
   template: `
     @if (receipt) {
-      <div class="pos-receipt" #receiptEl>
+      <div class="pos-receipt" #receiptEl lang="fr" dir="ltr">
         <div class="pos-receipt__content">
           @if (receipt.logoUrl) {
             <div class="pos-receipt__logo-wrap">
@@ -165,7 +165,7 @@ function escapeHtml(text: string): string {
     @media screen {
       .pos-receipt {
         position: absolute;
-        left: -9999px;
+        inset-inline-start: -9999px;
         top: 0;
         width: 58mm;
       }
@@ -233,7 +233,7 @@ function escapeHtml(text: string): string {
     }
 
     .pos-receipt__meta-col--right {
-      text-align: right;
+      text-align: end;
     }
 
     .pos-receipt__label {
@@ -257,7 +257,7 @@ function escapeHtml(text: string): string {
     .pos-receipt__rule--short {
       margin: 4px 0;
       max-width: 70%;
-      margin-left: auto;
+      margin-inline-start: auto;
     }
 
     .pos-receipt__table {
@@ -268,7 +268,7 @@ function escapeHtml(text: string): string {
     }
 
     .pos-receipt__table th {
-      text-align: left;
+      text-align: start;
       font-weight: bold;
       padding: 2px 0;
       border-bottom: 1px dashed #000;
@@ -276,11 +276,11 @@ function escapeHtml(text: string): string {
 
     .pos-receipt__th-qty { width: 14%; }
     .pos-receipt__th-art { width: 38%; }
-    .pos-receipt__th-num { width: 24%; text-align: right; }
+    .pos-receipt__th-num { width: 24%; text-align: end; }
 
     .pos-receipt__td-qty {
       vertical-align: top;
-      padding: 3px 2px 3px 0;
+      padding-block: 3px; padding-inline: 0 2px;
     }
 
     .pos-receipt__td-art {
@@ -290,14 +290,14 @@ function escapeHtml(text: string): string {
     }
 
     .pos-receipt__td-num {
-      text-align: right;
+      text-align: end;
       white-space: nowrap;
       vertical-align: top;
       padding: 3px 0;
     }
 
     .pos-receipt__totals {
-      text-align: right;
+      text-align: end;
       font-size: 9px;
     }
 
@@ -349,7 +349,7 @@ function escapeHtml(text: string): string {
       .pos-receipt, .pos-receipt * { visibility: visible; }
       .pos-receipt {
         position: absolute;
-        left: 0;
+        inset-inline-start: 0;
         top: 0;
         width: 58mm;
       }

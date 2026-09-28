@@ -16,5 +16,5 @@ import { MessageModule } from 'primeng/message';
 })
 export class PayrollConsultBannerComponent {
   @Input() visible = false;
-  @Input() message = 'Mode consultation — certaines actions sont réservées à la société cliente.';
+  @Input() message = $localize`:@@payroll.payroll-consult-banner.ts.mode.consultation.certaines.actions.sont.a9976490:Mode consultation — certaines actions sont réservées à la société cliente.`;
 }

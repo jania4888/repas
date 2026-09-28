@@ -21,28 +21,24 @@ const MAX_BYTES = 10 * 1024 * 1024;
   template: `
     <p-tabs class="ft-tabs entry-bottom-tabs" [lazy]="true">
       <p-tablist>
-        <p-tab [value]="0">Pièces jointes ({{ pendingFiles.length }})</p-tab>
-        <p-tab [value]="1">Notes</p-tab>
-        <p-tab [value]="2">Ventilation analytique</p-tab>
-        <p-tab [value]="3">Historique</p-tab>
+        <p-tab [value]="0" i18n="@@accounting.manual-entry.pieces.jointes.894a3774">Pièces jointes ({{ pendingFiles.length }})</p-tab>
+        <p-tab [value]="1" i18n="@@accounting.manual-entry.notes.70440046">Notes</p-tab>
+        <p-tab [value]="2" i18n="@@accounting.manual-entry.ventilation.analytique.779559f6">Ventilation analytique</p-tab>
+        <p-tab [value]="3" i18n="@@accounting.manual-entry.historique.34f3a06a">Historique</p-tab>
       </p-tablist>
       <p-tabpanels>
       <p-tabpanel [value]="0">
-        <p class="bottom-tab-hint">
-          Les fichiers seront téléversés après l'enregistrement de l'écriture (max 10 Mo, PDF/images/Office).
-        </p>
+        <p class="bottom-tab-hint" i18n="@@accounting.manual-entry.les.fichiers.seront.televerses.apres.l.enregistr.1bb91483"> Les fichiers seront téléversés après l'enregistrement de l'écriture (max 10 Mo, PDF/images/Office). </p>
         <div class="attach-zone" (dragover)="$event.preventDefault()" (drop)="onDrop($event)">
           <input type="file" #fileInput multiple hidden (change)="onFilesSelected($event)" />
-          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="fileInput.click()">
-            Ajouter un fichier
-          </button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="fileInput.click()" i18n="@@accounting.manual-entry.ajouter.un.fichier.2651b7a1"> Ajouter un fichier </button>
         </div>
         @if (pendingFiles.length > 0) {
           <ul class="attach-list">
             @for (f of pendingFiles; track f.name; let i = $index) {
               <li>
                 <span>{{ f.name }} ({{ formatSize(f.size) }})</span>
-                <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeFile(i)">✕</button>
+                <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeFile(i)" i18n="@@accounting.manual-entry.text.0951b9a0">✕</button>
               </li>
             }
           </ul>
@@ -53,22 +49,22 @@ const MAX_BYTES = 10 * 1024 * 1024;
       </p-tabpanel>
 
       <p-tabpanel [value]="1">
-        <label class="field-label" for="work-notes">Note de travail (non comptabilisée)</label>
+        <label class="field-label" for="work-notes" i18n="@@accounting.manual-entry.note.de.travail.non.comptabilisee.b9b1000f">Note de travail (non comptabilisée)</label>
         <textarea id="work-notes" class="notes-area" rows="4"
                   [ngModel]="notes" (ngModelChange)="notesChange.emit($event)"
-                  placeholder="Notes internes pour cette saisie…"></textarea>
+                  placeholder="Notes internes pour cette saisie…" i18n-placeholder="@@accounting.manual-entry.notes.internes.pour.cette.saisie.57ce68d7"></textarea>
       </p-tabpanel>
 
       <p-tabpanel [value]="2">
         <div class="locked-panel">
-          <p>Le module de ventilation analytique n'est pas encore disponible dans ce dossier.</p>
-          <p class="locked-panel__sub">Cette fonctionnalité sera proposée dans une prochaine version.</p>
+          <p i18n="@@accounting.manual-entry.le.module.de.ventilation.analytique.n.est.pas.en.4c084952">Le module de ventilation analytique n'est pas encore disponible dans ce dossier.</p>
+          <p class="locked-panel__sub" i18n="@@accounting.manual-entry.cette.fonctionnalite.sera.proposee.dans.une.proc.c71a6744">Cette fonctionnalité sera proposée dans une prochaine version.</p>
         </div>
       </p-tabpanel>
 
       <p-tabpanel [value]="3">
         <div class="locked-panel">
-          <p>L'historique des modifications sera disponible après l'enregistrement de l'écriture.</p>
+          <p i18n="@@accounting.manual-entry.l.historique.des.modifications.sera.disponible.a.48142acd">L'historique des modifications sera disponible après l'enregistrement de l'écriture.</p>
         </div>
       </p-tabpanel>
       </p-tabpanels>
@@ -114,11 +110,11 @@ export class EntryBottomTabsComponent {
     const valid: File[] = [];
     for (const f of files) {
       if (f.size > MAX_BYTES) {
-        this.attachError = `${f.name} dépasse 10 Mo.`;
+        this.attachError = $localize`:@@accounting.entry-bottom-tabs.ts.name.depasse.10.mo.8052874c:${f.name}:name: dépasse 10 Mo.`;
         continue;
       }
       if (!ALLOWED_TYPES.includes(f.type) && !f.name.match(/\.(pdf|jpe?g|png|webp|xlsx|docx)$/i)) {
-        this.attachError = `Type non autorisé : ${f.name}`;
+        this.attachError = $localize`:@@accounting.entry-bottom-tabs.ts.type.non.autorise.name.8ababe02:Type non autorisé : ${f.name}:name:`;
         continue;
       }
       valid.push(f);

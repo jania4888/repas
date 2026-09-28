@@ -48,7 +48,7 @@ export class TunisianValidators {
       if (!isValidNif(value)) {
         return {
           [ValidationErrorCodes.INVALID_NIF]: {
-            message: 'Matricule fiscal invalide. Format attendu: 1772793W/A/M/000',
+            message: $localize`:@@shared.tunisian-validators.ts.matricule.fiscal.invalide.format.attendu.7da88009:Matricule fiscal invalide. Format attendu: 1772793W/A/M/000`,
             actualValue: value
           }
         };
@@ -74,7 +74,7 @@ export class TunisianValidators {
       if (!value) {
         return {
           [ValidationErrorCodes.REQUIRED]: {
-            message: 'Le matricule fiscal est obligatoire pour un client assujetti'
+            message: $localize`:@@shared.tunisian-validators.ts.le.matricule.fiscal.est.obligatoire.pour.51ef6b29:Le matricule fiscal est obligatoire pour un client assujetti`
           }
         };
       }
@@ -82,7 +82,7 @@ export class TunisianValidators {
       if (!isValidNif(value)) {
         return {
           [ValidationErrorCodes.INVALID_NIF]: {
-            message: 'Matricule fiscal invalide. Format attendu: 1772793W/A/M/000'
+            message: $localize`:@@shared.tunisian-validators.ts.matricule.fiscal.invalide.format.attendu.7da88009:Matricule fiscal invalide. Format attendu: 1772793W/A/M/000`
           }
         };
       }
@@ -107,7 +107,7 @@ export class TunisianValidators {
       if (!isValidTunisianPhone(value)) {
         return {
           [ValidationErrorCodes.INVALID_PHONE]: {
-            message: 'Numéro de téléphone invalide. Format attendu: +216 XX XXX XXX',
+            message: $localize`:@@shared.tunisian-validators.ts.numero.de.telephone.invalide.format.atte.5902825a:Numéro de téléphone invalide. Format attendu: +216 XX XXX XXX`,
             actualValue: value
           }
         };
@@ -133,7 +133,7 @@ export class TunisianValidators {
       if (!isValidPostalCode(value)) {
         return {
           [ValidationErrorCodes.INVALID_POSTAL_CODE]: {
-            message: 'Code postal invalide. 4 chiffres attendus',
+            message: $localize`:@@shared.tunisian-validators.ts.code.postal.invalide.4.chiffres.attendus.83c4543c:Code postal invalide. 4 chiffres attendus`,
             actualValue: value
           }
         };
@@ -155,7 +155,7 @@ export class TunisianValidators {
       if (!isValidGovernorate(value)) {
         return {
           [ValidationErrorCodes.INVALID_GOVERNORATE]: {
-            message: 'Gouvernorat invalide',
+            message: $localize`:@@shared.tunisian-validators.ts.gouvernorat.invalide.0e6f2281:Gouvernorat invalide`,
             actualValue: value,
             validValues: TUNISIAN_GOVERNORATES
           }
@@ -182,7 +182,7 @@ export class TunisianValidators {
       if (!isValidTunisianIban(value)) {
         return {
           [ValidationErrorCodes.INVALID_IBAN]: {
-            message: 'IBAN invalide. Format tunisien attendu: TN59XXXX...',
+            message: $localize`:@@shared.tunisian-validators.ts.iban.invalide.format.tunisien.attendu.tn.49f4bc47:IBAN invalide. Format tunisien attendu: TN59XXXX...`,
             actualValue: value
           }
         };
@@ -204,7 +204,7 @@ export class TunisianValidators {
       if (!isValidRib(value)) {
         return {
           [ValidationErrorCodes.INVALID_RIB]: {
-            message: 'RIB invalide. 20 chiffres attendus',
+            message: $localize`:@@shared.tunisian-validators.ts.rib.invalide.20.chiffres.attendus.c64ee0ff:RIB invalide. 20 chiffres attendus`,
             actualValue: value
           }
         };
@@ -230,7 +230,7 @@ export class TunisianValidators {
       if (!isValidVatRate(Number(value))) {
         return {
           [ValidationErrorCodes.INVALID_VAT_RATE]: {
-            message: 'Taux de TVA invalide (0%, 7%, 13% ou 19% autorisés)',
+            message: $localize`:@@shared.tunisian-validators.ts.taux.de.tva.invalide.0.7.13.ou.19.autori.87dd5872:Taux de TVA invalide (0%, 7%, 13% ou 19% autorisés)`,
             actualValue: value,
             validValues: VALID_VAT_RATES
           }
@@ -260,7 +260,7 @@ export class TunisianValidators {
       if (discountType === 'PERCENT' && value > NUMERIC_LIMITS.maxDiscountPercent) {
         return {
           [ValidationErrorCodes.MAX_VALUE]: {
-            message: 'La remise en pourcentage ne peut pas dépasser 100%',
+            message: $localize`:@@shared.tunisian-validators.ts.la.remise.en.pourcentage.ne.peut.pas.dep.68d92d07:La remise en pourcentage ne peut pas dépasser 100%`,
             max: NUMERIC_LIMITS.maxDiscountPercent,
             actualValue: value
           }
@@ -272,7 +272,7 @@ export class TunisianValidators {
         if (value > subtotal) {
           return {
             [ValidationErrorCodes.DISCOUNT_EXCEEDS_TOTAL]: {
-              message: 'La remise ne peut pas dépasser le montant de la ligne',
+              message: $localize`:@@shared.tunisian-validators.ts.la.remise.ne.peut.pas.depasser.le.montan.08bca2a6:La remise ne peut pas dépasser le montant de la ligne`,
               max: subtotal,
               actualValue: value
             }
@@ -296,7 +296,7 @@ export class TunisianValidators {
       if (Number(value) < NUMERIC_LIMITS.minQuantity) {
         return {
           [ValidationErrorCodes.MIN_VALUE]: {
-            message: `La quantité minimum est ${NUMERIC_LIMITS.minQuantity}`,
+            message: $localize`:@@shared.tunisian-validators.ts.la.quantite.minimum.est.minquantity.5bbce311:La quantité minimum est ${NUMERIC_LIMITS.minQuantity}:minQuantity:`,
             min: NUMERIC_LIMITS.minQuantity,
             actualValue: value
           }
@@ -325,7 +325,7 @@ export class TunisianValidators {
       if (numValue < 0 || numValue > NUMERIC_LIMITS.maxPaymentDays) {
         return {
           [ValidationErrorCodes.INVALID_FORMAT]: {
-            message: `Le délai de paiement doit être entre 0 et ${NUMERIC_LIMITS.maxPaymentDays} jours`,
+            message: $localize`:@@shared.tunisian-validators.ts.le.delai.de.paiement.doit.etre.entre.0.e.ea140021:Le délai de paiement doit être entre 0 et ${NUMERIC_LIMITS.maxPaymentDays}:maxPaymentDays: jours`,
             min: 0,
             max: NUMERIC_LIMITS.maxPaymentDays,
             actualValue: value
@@ -357,7 +357,7 @@ export class TunisianValidators {
       if (!value || value.trim().length === 0) {
         return {
           [ValidationErrorCodes.REQUIRED]: {
-            message: "Une mention d'exonération est requise pour ce client"
+            message: $localize`:@@shared.tunisian-validators.ts.une.mention.d.exoneration.est.requise.po.e773ce77:Une mention d'exonération est requise pour ce client`
           }
         };
       }
@@ -386,7 +386,7 @@ export class TunisianValidators {
       if (!value) {
         return {
           [ValidationErrorCodes.REQUIRED]: {
-            message: "Une facture d'avoir doit être liée à une facture existante"
+            message: $localize`:@@shared.tunisian-validators.ts.une.facture.d.avoir.doit.etre.liee.a.une.6f9c798f:Une facture d'avoir doit être liée à une facture existante`
           }
         };
       }
@@ -413,7 +413,7 @@ export class TunisianValidators {
       if (value.length > maxLen) {
         return {
           [ValidationErrorCodes.MAX_LENGTH]: {
-            message: `${fieldLabel} ne peut pas dépasser ${maxLen} caractères`,
+            message: $localize`:@@shared.tunisian-validators.ts.fieldlabel.ne.peut.pas.depasser.maxlen.c.ec0b7c01:${fieldLabel}:fieldLabel: ne peut pas dépasser ${maxLen}:maxLen: caractères`,
             maxLength: maxLen,
             actualLength: value.length
           }
@@ -438,7 +438,7 @@ export class TunisianValidators {
       if (value.length < minLen) {
         return {
           [ValidationErrorCodes.MIN_LENGTH]: {
-            message: `${fieldLabel} doit contenir au moins ${minLen} caractères`,
+            message: $localize`:@@shared.tunisian-validators.ts.fieldlabel.doit.contenir.au.moins.minlen.71562127:${fieldLabel}:fieldLabel: doit contenir au moins ${minLen}:minLen: caractères`,
             minLength: minLen,
             actualLength: value.length
           }
@@ -470,7 +470,7 @@ export class TunisianValidators {
       if (date > tomorrow) {
         return {
           [ValidationErrorCodes.FUTURE_DATE]: {
-            message: "La date ne peut pas être dans le futur",
+            message: $localize`:@@shared.tunisian-validators.ts.la.date.ne.peut.pas.etre.dans.le.futur.705ea735:La date ne peut pas être dans le futur`,
             actualValue: value
           }
         };
@@ -500,7 +500,7 @@ export class TunisianValidators {
       if (due < issue) {
         return {
           [ValidationErrorCodes.DATE_RANGE]: {
-            message: "La date d'échéance doit être postérieure ou égale à la date d'émission",
+            message: $localize`:@@shared.tunisian-validators.ts.la.date.d.echeance.doit.etre.posterieure.a1cea6c3:La date d'échéance doit être postérieure ou égale à la date d'émission`,
             issueDate,
             dueDate
           }
@@ -527,7 +527,7 @@ export class TunisianValidators {
       if (!isValidEmail(value)) {
         return {
           [ValidationErrorCodes.INVALID_EMAIL]: {
-            message: 'Adresse email invalide',
+            message: $localize`:@@shared.tunisian-validators.ts.adresse.email.invalide.393d7440:Adresse email invalide`,
             actualValue: value
           }
         };
@@ -564,17 +564,17 @@ export function getFirstValidationError(errors: ValidationErrors | null): string
   // Default messages for standard validators
   switch (firstKey) {
     case 'required':
-      return 'Ce champ est obligatoire';
+      return $localize`:@@shared.tunisian-validators.ts.ce.champ.est.obligatoire.17061b6a:Ce champ est obligatoire`;
     case 'minlength':
-      return `Minimum ${error.requiredLength} caractères requis`;
+      return $localize`:@@shared.tunisian-validators.ts.minimum.requiredlength.caracteres.requis.74eda4f6:Minimum ${error.requiredLength}:requiredLength: caractères requis`;
     case 'maxlength':
-      return `Maximum ${error.requiredLength} caractères autorisés`;
+      return $localize`:@@shared.tunisian-validators.ts.maximum.requiredlength.caracteres.autori.f9fb6c0b:Maximum ${error.requiredLength}:requiredLength: caractères autorisés`;
     case 'min':
-      return `La valeur minimum est ${error.min}`;
+      return $localize`:@@shared.tunisian-validators.ts.la.valeur.minimum.est.min.fdb5a870:La valeur minimum est ${error.min}:min:`;
     case 'max':
-      return `La valeur maximum est ${error.max}`;
+      return $localize`:@@shared.tunisian-validators.ts.la.valeur.maximum.est.max.4a02a3c7:La valeur maximum est ${error.max}:max:`;
     case 'email':
-      return 'Adresse email invalide';
+      return $localize`:@@shared.tunisian-validators.ts.adresse.email.invalide.393d7440:Adresse email invalide`;
     case 'pattern':
       return 'Format invalide';
     default:

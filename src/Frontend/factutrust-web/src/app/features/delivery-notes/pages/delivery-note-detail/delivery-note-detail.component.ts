@@ -1,3 +1,6 @@
+/// <reference types="@angular/localize" />
+import { API_ERROR_CODE } from '@core/utils/api-error-code';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal, computed, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -71,7 +74,7 @@ import {
 @Component({
   selector: 'app-delivery-note-detail',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     RouterModule,
@@ -99,23 +102,19 @@ import {
     <app-breadcrumb [items]="breadcrumbItems()"></app-breadcrumb>
     
     <app-page-header 
-      [title]="deliveryNote()?.number || 'Chargement...'" 
-      [subtitle]="'Bon de livraison du ' + (deliveryNote()?.issueDate | date:'dd/MM/yyyy')">
+      [title]="deliveryNote()?.number || loc_chargement_a209b6" 
+      [subtitle]="loc_ui_tern_bon_de_livraison_du_b10ffc + (deliveryNote()?.issueDate | date:'dd/MM/yyyy')">
       <app-button 
         variant="outline"
         icon="pi-arrow-left"
         iconPos="left"
-        routerLink="/delivery-notes">
-        Retour
-      </app-button>
+        routerLink="/delivery-notes" i18n="@@delivery-notes.pages.retour.e5befb1f"> Retour </app-button>
       @if (canCreateReturnNote()) {
         <app-button
           variant="outline"
           icon="pi-replay"
           iconPos="left"
-          (clicked)="createReturnNote()">
-          Créer un bon de retour
-        </app-button>
+          (clicked)="createReturnNote()" i18n="@@delivery-notes.pages.creer.un.bon.de.retour.a9261008"> Créer un bon de retour </app-button>
       }
       @if (primaryAction(); as action) {
         <app-button
@@ -158,17 +157,17 @@ import {
                 <h2>{{ deliveryNote()!.number }}</h2>
                 <app-status-badge 
                   [status]="getStatusBadgeStatus(deliveryNote()!.status)"
-                  [label]="deliveryNote()!.statusDisplay">
+                  [label]="deliveryNote()!.statusDisplay | backendLabel">
                 </app-status-badge>
               </div>
               <div class="delivery-note-dates">
                 <div class="date-item">
-                  <span class="label">Date d'émission</span>
+                  <span class="label" i18n="@@delivery-notes.pages.date.d.emission.99f68857">Date d'émission</span>
                   <span class="value">{{ deliveryNote()!.issueDate | date:'dd/MM/yyyy' }}</span>
                 </div>
                 @if (deliveryNote()!.deliveryDate) {
                   <div class="date-item">
-                    <span class="label">Date de livraison</span>
+                    <span class="label" i18n="@@delivery-notes.pages.date.de.livraison.39361f0f">Date de livraison</span>
                     <span class="value">{{ deliveryNote()!.deliveryDate | date:'dd/MM/yyyy' }}</span>
                   </div>
                 }
@@ -180,20 +179,20 @@ import {
             <!-- Client Info -->
             <div class="parties-grid">
               <div class="party-card">
-                <h4>Client</h4>
+                <h4 i18n="@@delivery-notes.pages.client.1bdd79b1">Client</h4>
                 <p class="party-name">{{ deliveryNote()!.clientName }}</p>
                 @if (deliveryNote()!.clientEmail) {
                   <p class="party-email">{{ deliveryNote()!.clientEmail }}</p>
                 }
               </div>
               <div class="party-card">
-                <h4>Adresse de livraison</h4>
+                <h4 i18n="@@delivery-notes.pages.adresse.de.livraison.31eac756">Adresse de livraison</h4>
                 <p class="party-address">{{ deliveryNote()!.deliveryAddress }}</p>
                 @if (deliveryNote()!.deliveryCity) {
                   <p class="party-address">{{ deliveryNote()!.deliveryPostalCode }} {{ deliveryNote()!.deliveryCity }}</p>
                 }
                 @if (deliveryNote()!.recipientName) {
-                  <p class="party-recipient"><strong>Destinataire:</strong> {{ deliveryNote()!.recipientName }}</p>
+                  <p class="party-recipient"><strong i18n="@@delivery-notes.pages.destinataire.2935a4d5">Destinataire:</strong> {{ deliveryNote()!.recipientName }}</p>
                 }
               </div>
             </div>
@@ -202,22 +201,22 @@ import {
 
             <!-- Lines -->
             <div class="lines-section">
-              <h4>Lignes du bon de livraison</h4>
+              <h4 i18n="@@delivery-notes.pages.lignes.du.bon.de.livraison.f2475b32">Lignes du bon de livraison</h4>
               <table class="lines-table">
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th>Désignation</th>
-                    <th class="text-right">Prix U. HT</th>
-                    <th class="text-right">Qté Comm.</th>
-                    <th class="text-right">Qté Livrée</th>
-                    <th class="text-right">Retourné</th>
-                    <th class="text-right">À facturer</th>
-                    <th class="text-right">Qté Rejetée</th>
-                    <th class="text-right">Remise</th>
-                    <th class="text-right">TVA</th>
-                    <th class="text-right">Total HT</th>
-                    <th class="text-right">Total TTC</th>
+                    <th i18n="@@delivery-notes.pages.text.d08f88df">#</th>
+                    <th i18n="@@delivery-notes.pages.designation.63a9062c">Désignation</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.prix.u.ht.8bf47793">Prix U. HT</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.qte.comm.3bd32f16">Qté Comm.</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.qte.livree.22a60015">Qté Livrée</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.retourne.4027bfdd">Retourné</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.a.facturer.acd40e67">À facturer</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.qte.rejetee.c6ab2d5a">Qté Rejetée</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.remise.ce12d942">Remise</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.tva.fb62cb5d">TVA</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.total.ht.2ca17ae6">Total HT</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.total.ttc.9e80ff7c">Total TTC</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -229,9 +228,9 @@ import {
                         @if (line.description) {
                           <br><small class="line-desc">{{ line.description }}</small>
                         }
-                        @if (line.productCode) {
+                        @if (line.productCode) {<ng-container i18n="@@delivery-notes.pages.code.229d37db">
                           <br><small class="line-code">Code: {{ line.productCode }}</small>
-                        }
+                        </ng-container>}
                       </td>
                       <td class="text-right mono">{{ line.unitPriceHT | number:'1.3-3' }} TND / {{ line.unit }}</td>
                       <td class="text-right mono">{{ line.orderedQuantity | number:'1.0-3' }}</td>
@@ -261,21 +260,21 @@ import {
               
               <div class="totals-section">
                 <div class="total-row">
-                  <span>Total HT</span>
+                  <span i18n="@@delivery-notes.pages.total.ht.2ca17ae6">Total HT</span>
                   <span class="mono">{{ deliveryNote()!.totalHT | number:'1.3-3' }} TND</span>
                 </div>
                 @if (totalFodec() > 0) {
                   <div class="total-row">
-                    <span>FODEC</span>
+                    <span i18n="@@delivery-notes.pages.fodec.9a029080">FODEC</span>
                     <span class="mono">{{ totalFodec() | number:'1.3-3' }} TND</span>
                   </div>
                 }
                 <div class="total-row">
-                  <span>Total TVA</span>
+                  <span i18n="@@delivery-notes.pages.total.tva.605c4b2e">Total TVA</span>
                   <span class="mono">{{ deliveryNote()!.totalVAT | number:'1.3-3' }} TND</span>
                 </div>
                 <div class="total-row total-ttc">
-                  <span>Total TTC</span>
+                  <span i18n="@@delivery-notes.pages.total.ttc.9e80ff7c">Total TTC</span>
                   <span class="mono">{{ deliveryNote()!.totalTTC | number:'1.3-3' }} TND</span>
                 </div>
               </div>
@@ -283,21 +282,19 @@ import {
 
             @if (isFullyReturned()) {
               <p-divider></p-divider>
-              <p class="return-info">
-                Toutes les quantités livrées ont été retournées — impossible de facturer.
-                Ce n'est pas un avoir : le stock a déjà été réintégré via le bon de retour.
-              </p>
+              <p class="return-info" i18n="@@delivery-notes.pages.toutes.les.quantites.livrees.ont.ete.retournees..812a9aee"> Toutes les quantités livrées ont été retournées — impossible de facturer.
+                Ce n'est pas un avoir : le stock a déjà été réintégré via le bon de retour. </p>
             }
 
             @if (deliveryNote()!.returnNotes?.length) {
               <p-divider></p-divider>
               <div class="return-notes-section">
-                <h4>Bons de retour liés</h4>
+                <h4 i18n="@@delivery-notes.pages.bons.de.retour.lies.fedece91">Bons de retour liés</h4>
                 <ul class="return-notes-list">
                   @for (rtn of deliveryNote()!.returnNotes!; track rtn.id) {
-                    <li>
+                    <li i18n="@@delivery-notes.pages.qte.777e87ad">
                       <a [routerLink]="['/return-notes', rtn.id]">{{ rtn.number }}</a>
-                      <span> — {{ rtn.statusDisplay }} · {{ rtn.returnDate | date:'dd/MM/yyyy' }} · qté {{ rtn.totalReturnedQuantity | number:'1.0-3' }}</span>
+                      <span> — {{ rtn.statusDisplay | backendLabel }} · {{ rtn.returnDate | date:'dd/MM/yyyy' }} · qté {{ rtn.totalReturnedQuantity | number:'1.0-3' }}</span>
                     </li>
                   }
                 </ul>
@@ -309,12 +306,12 @@ import {
               <div class="notes-section">
                 @if (deliveryNote()!.reference) {
                   <div class="note">
-                    <strong>Référence:</strong> {{ deliveryNote()!.reference }}
+                    <strong i18n="@@delivery-notes.pages.reference.b55d2a20">Référence:</strong> {{ deliveryNote()!.reference }}
                   </div>
                 }
                 @if (deliveryNote()!.notes) {
                   <div class="note">
-                    <strong>Notes:</strong> {{ deliveryNote()!.notes }}
+                    <strong i18n="@@delivery-notes.pages.notes.9c3befe7">Notes:</strong> {{ deliveryNote()!.notes }}
                   </div>
                 }
               </div>
@@ -325,16 +322,16 @@ import {
         <!-- Sidebar -->
         <div class="sidebar">
           <!-- Status Card -->
-          <p-card header="Statut" styleClass="status-card">
+          <p-card header="Statut" i18n-header="@@delivery-notes.pages.statut.659499f3" styleClass="status-card">
             <div class="status-content">
               <app-status-badge 
                 [status]="getStatusBadgeStatus(deliveryNote()!.status)"
-                [label]="deliveryNote()!.statusDisplay">
+                [label]="deliveryNote()!.statusDisplay | backendLabel">
               </app-status-badge>
             </div>
           </p-card>
 
-          <p-card header="Entrepôt" styleClass="status-card">
+          <p-card header="Entrepôt" i18n-header="@@delivery-notes.pages.entrepot.c349c0bc" styleClass="status-card">
             <div class="status-content">
               <span>{{ deliveryNote()!.warehouseName || 'Entrepôt par défaut' }}</span>
             </div>
@@ -342,15 +339,15 @@ import {
 
           <!-- Signature Info -->
           @if (deliveryNote()!.signedAt) {
-            <p-card header="Signature" styleClass="signature-card">
+            <p-card header="Signature" i18n-header="@@delivery-notes.pages.signature.2f32be1d" styleClass="signature-card">
               <div class="signature-info">
                 <div class="info-row">
                   <i class="pi pi-verified"></i>
-                  <span>Livraison signée</span>
+                  <span i18n="@@delivery-notes.pages.livraison.signee.9fb4ab89">Livraison signée</span>
                 </div>
-                <small>Signé le {{ deliveryNote()!.signedAt | date:'dd/MM/yyyy HH:mm' }}</small>
+                <small i18n="@@delivery-notes.pages.signe.le.71c9e3e1">Signé le {{ deliveryNote()!.signedAt | date:'dd/MM/yyyy HH:mm' }}</small>
                 @if (deliveryNote()!.recipientName) {
-                  <small>Par: {{ deliveryNote()!.recipientName }}</small>
+                  <small i18n="@@delivery-notes.pages.par.4a4180cc">Par: {{ deliveryNote()!.recipientName }}</small>
                 }
               </div>
             </p-card>
@@ -360,7 +357,7 @@ import {
 
       <!-- Delivery Recording Dialog -->
       <p-dialog 
-        header="Enregistrer la livraison" 
+        header="Enregistrer la livraison" i18n-header="@@delivery-notes.pages.enregistrer.la.livraison.689980db" 
         [(visible)]="showDeliveryDialog" 
         [modal]="true"
         styleClass="ft-dialog-scrollable"
@@ -372,15 +369,15 @@ import {
             <span class="delivery-context-number">{{ deliveryNote()!.number }}</span>
             @if (deliveryWarehouseLabel()) {
               <span class="delivery-context-warehouse">
-                Déduction depuis <strong>{{ deliveryWarehouseLabel() }}</strong>
+                <ng-container i18n="@@delivery-notes.pages.deduction.depuis.35c6b781"> Déduction depuis </ng-container> <strong>{{ deliveryWarehouseLabel() }}</strong>
                 @if (deliveryWarehouseIsDefault()) {
-                  <span class="delivery-default-badge">par défaut</span>
+                  <span class="delivery-default-badge" i18n="@@delivery-notes.pages.par.defaut.feee7660">par défaut</span>
                 }
               </span>
             }
           </div>
           @if (deliveryContextLoading()) {
-            <p class="delivery-loading muted">
+            <p class="delivery-loading muted" i18n="@@delivery-notes.pages.verification.du.stock.0ae6d17a">
               <i class="pi pi-spin pi-spinner"></i>
               Vérification du stock…
             </p>
@@ -395,8 +392,8 @@ import {
                 <i class="pi pi-times-circle"></i>
                 <div>
                   <p>{{ deliveryStockCheck()?.summaryMessage || 'Aucun stock trouvé pour un produit dans cet entrepôt.' }}</p>
-                  <p>Ajoutez du stock dans cet entrepôt avant de valider.</p>
-                  <a routerLink="/stock" (click)="showDeliveryDialog = false">Ajouter du stock</a>
+                  <p i18n="@@delivery-notes.pages.ajoutez.du.stock.dans.cet.entrepot.avant.de.vali.0fa91ed7">Ajoutez du stock dans cet entrepôt avant de valider.</p>
+                  <a routerLink="/stock" (click)="showDeliveryDialog = false" i18n="@@delivery-notes.pages.ajouter.du.stock.b3d3468f">Ajouter du stock</a>
                 </div>
               </div>
             } @else if (hasMissingWarehouseLots()) {
@@ -404,11 +401,11 @@ import {
                 <i class="pi pi-times-circle"></i>
                 <div>
                   @if (hasOnlyExpiredWarehouseLots()) {
-                    <p>Tous les lots disponibles sont périmés pour au moins un article suivi. Ils ne peuvent pas sortir.</p>
-                    <p>Choisissez un lot non périmé, ou réceptionnez un lot valide avant de valider.</p>
+                    <p i18n="@@delivery-notes.pages.tous.les.lots.disponibles.sont.perimes.pour.au.m.d7718b50">Tous les lots disponibles sont périmés pour au moins un article suivi. Ils ne peuvent pas sortir.</p>
+                    <p i18n="@@delivery-notes.pages.choisissez.un.lot.non.perime.ou.receptionnez.un..89ff9112">Choisissez un lot non périmé, ou réceptionnez un lot valide avant de valider.</p>
                   } @else {
-                    <p>Le stock de cet entrepôt n'a pas de lots (ou de n° de série) pour au moins un article suivi.</p>
-                    <p>Réceptionnez d'abord le stock avec un n° de lot, ou faites un inventaire d'ouverture.</p>
+                    <p i18n="@@delivery-notes.pages.le.stock.de.cet.entrepot.n.a.pas.de.lots.ou.de.n.de44cfd5">Le stock de cet entrepôt n'a pas de lots (ou de n° de série) pour au moins un article suivi.</p>
+                    <p i18n="@@delivery-notes.pages.receptionnez.d.abord.le.stock.avec.un.n.de.lot.o.2b6eba9f">Réceptionnez d'abord le stock avec un n° de lot, ou faites un inventaire d'ouverture.</p>
                   }
                 </div>
               </div>
@@ -422,35 +419,35 @@ import {
 
           <div class="delivery-form-grid">
             <div class="delivery-form-group">
-              <label for="recipientName">Nom du réceptionnaire <span class="required">*</span></label>
+              <label for="recipientName"><ng-container i18n="@@delivery-notes.pages.nom.du.receptionnaire.9b14b159">Nom du réceptionnaire </ng-container> <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
               <input pInputText id="recipientName" [(ngModel)]="deliveryForm.recipientName" 
-                placeholder="Personne ayant signé la réception" class="w-full delivery-header-input" />
+                placeholder="Personne ayant signé la réception" i18n-placeholder="@@delivery-notes.pages.personne.ayant.signe.la.reception.f5966786" class="w-full delivery-header-input" />
             </div>
             <div class="delivery-form-group">
-              <label for="deliveryDate">Date de livraison <span class="required">*</span></label>
+              <label for="deliveryDate"><ng-container i18n="@@delivery-notes.pages.date.de.livraison.39361f0f">Date de livraison </ng-container> <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
               <p-datepicker
                 id="deliveryDate"
                 [(ngModel)]="deliveryForm.deliveryDate"
                 name="deliveryDate"
                 dateFormat="dd/mm/yy"
                 [showIcon]="true"
-                placeholder="Date effective de réception"
+                placeholder="Date effective de réception" i18n-placeholder="@@delivery-notes.pages.date.effective.de.reception.078d93ec"
                 styleClass="w-full delivery-header-datepicker"
                 appendTo="body">
               </p-datepicker>
             </div>
           </div>
           
-          <h4 class="delivery-lines-title">Quantités livrées par ligne</h4>
+          <h4 class="delivery-lines-title" i18n="@@delivery-notes.pages.quantites.livrees.par.ligne.66d9901f">Quantités livrées par ligne</h4>
           <div class="delivery-lines-table-wrap">
             <table class="delivery-lines-form">
               <thead>
                 <tr>
-                  <th>Produit</th>
-                  <th class="text-right">Qté commandée</th>
-                  <th class="text-right">Qté livrée</th>
-                  <th class="text-right">Qté rejetée</th>
-                  <th class="motif-col">Motif refus</th>
+                  <th i18n="@@delivery-notes.pages.produit.ff673dc2">Produit</th>
+                  <th class="text-right" i18n="@@delivery-notes.pages.qte.commandee.8c1ee02c">Qté commandée</th>
+                  <th class="text-right" i18n="@@delivery-notes.pages.qte.livree.c6320ced">Qté livrée</th>
+                  <th class="text-right" i18n="@@delivery-notes.pages.qte.rejetee.bf3a66b4">Qté rejetée</th>
+                  <th class="motif-col" i18n="@@delivery-notes.pages.motif.refus.2b32c88a">Motif refus</th>
                 </tr>
               </thead>
               <tbody>
@@ -476,9 +473,9 @@ import {
                     <td class="motif-col">
                       @if (lineForm.rejectedQuantity > 0) {
                         <input pInputText [(ngModel)]="lineForm.rejectionReason" 
-                          placeholder="Motif du refus" class="motif-input w-full" />
+                          placeholder="Motif du refus" i18n-placeholder="@@delivery-notes.pages.motif.du.refus.e4d6bc0b" class="motif-input w-full" />
                       } @else {
-                        <span class="motif-empty">—</span>
+                        <span class="motif-empty" i18n="@@delivery-notes.pages.text.1b93795b">—</span>
                       }
                     </td>
                   </tr>
@@ -513,20 +510,18 @@ import {
         }
         <ng-template pTemplate="footer">
           <div class="dialog-footer">
-            <app-button variant="outline" icon="pi-times" iconPos="left" (click)="showDeliveryDialog = false">Annuler</app-button>
+            <app-button variant="outline" icon="pi-times" iconPos="left" (click)="showDeliveryDialog = false" i18n="@@delivery-notes.pages.annuler.49ba3292">Annuler</app-button>
             <app-button variant="primary" icon="pi-check" iconPos="left"
-              [disabled]="!isDeliveryFormValid()" (click)="submitDelivery()">
-              Valider la livraison
-            </app-button>
+              [disabled]="!isDeliveryFormValid()" (click)="submitDelivery()" i18n="@@delivery-notes.pages.valider.la.livraison.f8f247be"> Valider la livraison </app-button>
           </div>
         </ng-template>
       </p-dialog>
     } @else {
       <div class="not-found">
         <i class="pi pi-exclamation-triangle"></i>
-        <h2>Bon de livraison non trouvé</h2>
-        <p>Le bon de livraison demandé n'existe pas ou a été supprimé.</p>
-        <app-button variant="primary" routerLink="/delivery-notes">Retour à la liste</app-button>
+        <h2 i18n="@@delivery-notes.pages.bon.de.livraison.non.trouve.0be2aaed">Bon de livraison non trouvé</h2>
+        <p i18n="@@delivery-notes.pages.le.bon.de.livraison.demande.n.existe.pas.ou.a.et.f1651ba0">Le bon de livraison demandé n'existe pas ou a été supprimé.</p>
+        <app-button variant="primary" routerLink="/delivery-notes" i18n="@@delivery-notes.pages.retour.a.la.liste.7753f531">Retour à la liste</app-button>
       </div>
     }
   `,
@@ -644,7 +639,7 @@ import {
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: var(--color-text-secondary);
-        text-align: left;
+        text-align: start;
         border-bottom: 2px solid var(--color-border-default);
         background: var(--color-background-subtle);
       }
@@ -675,7 +670,7 @@ import {
       }
 
       .text-right {
-        text-align: right;
+        text-align: end;
       }
 
       .text-center {
@@ -804,7 +799,7 @@ import {
       padding: var(--spacing-2) var(--spacing-3);
       background: var(--color-background-subtle, #f8fafc);
       border: 1px solid var(--color-border-subtle, #e2e8f0);
-      border-left: 4px solid var(--color-primary-500);
+      border-inline-start: 4px solid var(--color-primary-500);
       border-radius: var(--radius-md);
       font-size: var(--font-size-sm);
       color: var(--color-text-primary);
@@ -821,7 +816,7 @@ import {
 
     .delivery-default-badge {
       display: inline-block;
-      margin-left: 0.5rem;
+      margin-inline-start: 0.5rem;
       padding: 0.1rem 0.45rem;
       border-radius: var(--radius-md);
       font-size: var(--font-size-xs);
@@ -915,7 +910,7 @@ import {
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: var(--color-text-secondary);
-        text-align: left;
+        text-align: start;
         border-bottom: 2px solid var(--color-border-default);
         background: var(--color-background-subtle);
         font-weight: var(--font-weight-semibold);
@@ -954,7 +949,7 @@ import {
 
       tr.delivery-alloc-row td {
         background: var(--color-background-subtle);
-        padding: var(--spacing-2) var(--spacing-3) var(--spacing-2) var(--spacing-6);
+        padding-block: var(--spacing-2); padding-inline: var(--spacing-6) var(--spacing-3);
         vertical-align: top;
       }
     }
@@ -1000,7 +995,7 @@ import {
 
       .p-inputnumber-input {
         width: 100%;
-        text-align: right;
+        text-align: end;
       }
     }
 
@@ -1067,11 +1062,14 @@ import {
 
     .return-notes-list {
       margin: 0.5rem 0 0;
-      padding-left: 1.25rem;
+      padding-inline-start: 1.25rem;
     }
   `]
 })
 export class DeliveryNoteDetailComponent implements OnInit {
+  protected readonly loc_chargement_a209b6 = $localize`:@@delivery-notes.delivery-note-detail.tpl.chargement.a209b664:Chargement...`;
+
+  readonly loc_ui_tern_bon_de_livraison_du_b10ffc = $localize`:@@ui.tern.bon.de.livraison.du.b10ffc:Bon de livraison du `;
   private deliveryNoteService = inject(DeliveryNoteService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -1125,9 +1123,9 @@ export class DeliveryNoteDetailComponent implements OnInit {
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const note = this.deliveryNote();
     return [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Bons de Livraison', route: '/delivery-notes' },
-      { label: note?.number || 'Bon de livraison' }
+      { label: $localize`:@@delivery-notes.delivery-note-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@delivery-notes.delivery-note-detail.ts.bons.de.livraison.a42b9518:Bons de Livraison`, route: '/delivery-notes' },
+      { label: note?.number || $localize`:@@delivery-notes.delivery-note-detail.ts.bon.de.livraison.1a60dc44:Bon de livraison` }
     ];
   });
 
@@ -1136,16 +1134,16 @@ export class DeliveryNoteDetailComponent implements OnInit {
     const note = this.deliveryNote();
     if (!note) return null;
     if (note.status === DeliveryNoteStatus.Draft) {
-      return { label: 'Valider', icon: 'pi-check', variant: 'primary' as const, command: () => this.confirmDeliveryNote() };
+      return { label: $localize`:@@delivery-notes.delivery-note-detail.ts.valider.be4220f7:Valider`, icon: 'pi-check', variant: 'primary' as const, command: () => this.confirmDeliveryNote() };
     }
     if (note.status === DeliveryNoteStatus.Confirmed) {
-      return { label: 'Démarrer livraison', icon: 'pi-truck', variant: 'primary' as const, command: () => this.startDelivery() };
+      return { label: $localize`:@@delivery-notes.delivery-note-detail.ts.demarrer.livraison.c36c79cb:Démarrer livraison`, icon: 'pi-truck', variant: 'primary' as const, command: () => this.startDelivery() };
     }
     if (note.status === DeliveryNoteStatus.InTransit) {
-      return { label: 'Enregistrer livraison', icon: 'pi-check-circle', variant: 'primary' as const, command: () => this.openRecordDeliveryDialog() };
+      return { label: $localize`:@@delivery-notes.delivery-note-detail.ts.enregistrer.livraison.537b2e28:Enregistrer livraison`, icon: 'pi-check-circle', variant: 'primary' as const, command: () => this.openRecordDeliveryDialog() };
     }
     if (canGenerateInvoiceFromDeliveryNote(note)) {
-      return { label: 'Générer facture', icon: 'pi-file', variant: 'primary' as const, command: () => this.generateInvoice() };
+      return { label: $localize`:@@delivery-notes.delivery-note-detail.ts.generer.facture.ef238ac2:Générer facture`, icon: 'pi-file', variant: 'primary' as const, command: () => this.generateInvoice() };
     }
     return null;
   });
@@ -1204,7 +1202,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
 
     if (note.status === DeliveryNoteStatus.Draft || note.status === DeliveryNoteStatus.Confirmed) {
       this.menuItems.push({
-        label: 'Annuler',
+        label: $localize`:@@delivery-notes.delivery-note-detail.ts.annuler.49ba3292:Annuler`,
         icon: 'pi pi-times',
         command: () => this.cancelDeliveryNote()
       });
@@ -1212,7 +1210,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
 
     if (note.invoiceId) {
       this.menuItems.push({
-        label: note.invoiceNumber ? `Voir la facture ${note.invoiceNumber}` : 'Voir la facture',
+        label: note.invoiceNumber ? $localize`:@@ui.tern.voir.la.facture.ph.f92328:Voir la facture ${note.invoiceNumber}:p0:` : $localize`:@@ui.tern.voir.la.facture.e4bdde:Voir la facture`,
         icon: 'pi pi-file',
         routerLink: ['/invoices', note.invoiceId]
       });
@@ -1223,7 +1221,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
       && canCreateReturnNoteFromDeliveryNote(note)
     ) {
       this.menuItems.push({
-        label: 'Créer un bon de retour',
+        label: $localize`:@@delivery-notes.delivery-note-detail.ts.creer.un.bon.de.retour.a9261008:Créer un bon de retour`,
         icon: 'pi pi-replay',
         command: () => this.createReturnNote()
       });
@@ -1241,10 +1239,10 @@ export class DeliveryNoteDetailComponent implements OnInit {
     if (!note || this.workflowActionInProgress() || note.status !== DeliveryNoteStatus.Draft) return;
 
     this.confirmationService.confirm({
-      header: 'Confirmer le bon de livraison',
-      message: `Êtes-vous sûr de vouloir confirmer le bon de livraison ${note.number} ?`,
-      acceptLabel: 'Confirmer',
-      rejectLabel: 'Annuler',
+      header: $localize`:@@delivery-notes.delivery-note-detail.ts.confirmer.le.bon.de.livraison.dba10848:Confirmer le bon de livraison`,
+      message: $localize`:@@delivery-notes.delivery-note-detail.ts.etes.vous.sur.de.vouloir.confirmer.le.bo.5b854320:Êtes-vous sûr de vouloir confirmer le bon de livraison ${note.number}:number: ?`,
+      acceptLabel: $localize`:@@delivery-note-detail.component.acceptLabel.Confirmer:Confirmer`,
+      rejectLabel: $localize`:@@delivery-note-detail.component.rejectLabel.Annuler:Annuler`,
       icon: 'pi pi-check-circle',
       accept: () => {
         this.workflowActionInProgress.set(true);
@@ -1254,33 +1252,33 @@ export class DeliveryNoteDetailComponent implements OnInit {
             if (response.success) {
               this.toastService.add({
                 severity: 'success',
-                summary: 'Succès',
-                detail: 'Bon de livraison confirmé avec succès'
+                summary: $localize`:@@delivery-note-detail.component.summary.Succès:Succès`,
+                detail: $localize`:@@delivery-note-detail.component.detail.bon.de.livraison.confirme.avec.succes.d52ec9b8:Bon de livraison confirmé avec succès`
               });
               this.loadDeliveryNote(note.id);
             } else {
               this.toastService.add({
                 severity: 'error',
-                summary: 'Erreur',
-                detail: (response as any).message || 'Impossible de confirmer le bon de livraison'
+                summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
+                detail: (response as any).message || $localize`:@@delivery-notes.delivery-note-detail.ts.impossible.de.confirmer.le.bon.de.livrai.da23e28d:Impossible de confirmer le bon de livraison`
               });
             }
           },
           error: (err) => {
             this.workflowActionInProgress.set(false);
             const message = this.errorHandler.extractErrorMessage(err);
-            if (this.isAlreadyConfirmedError(message)) {
+            if (this.isAlreadyConfirmedError(err, message)) {
               this.toastService.add({
                 severity: 'info',
-                summary: 'Information',
-                detail: 'Ce bon est déjà confirmé. Utilisez « Démarrer livraison » pour continuer.'
+                summary: $localize`:@@delivery-note-detail.component.summary.Information:Information`,
+                detail: $localize`:@@delivery-note-detail.component.detail.Ce_bon_est_d_j_:Ce bon est déjà confirmé. Utilisez « Démarrer livraison » pour continuer.`
               });
               this.loadDeliveryNote(note.id);
               return;
             }
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
               detail: message
             });
           }
@@ -1294,10 +1292,10 @@ export class DeliveryNoteDetailComponent implements OnInit {
     if (!note || this.workflowActionInProgress() || note.status !== DeliveryNoteStatus.Confirmed) return;
 
     this.confirmationService.confirm({
-      header: 'Démarrer la livraison',
-      message: `Êtes-vous sûr de vouloir démarrer la livraison du bon ${note.number} ?`,
-      acceptLabel: 'Démarrer',
-      rejectLabel: 'Annuler',
+      header: $localize`:@@delivery-notes.delivery-note-detail.ts.demarrer.la.livraison.03cb1e3f:Démarrer la livraison`,
+      message: $localize`:@@delivery-notes.delivery-note-detail.ts.etes.vous.sur.de.vouloir.demarrer.la.liv.31f3da9e:Êtes-vous sûr de vouloir démarrer la livraison du bon ${note.number}:number: ?`,
+      acceptLabel: $localize`:@@delivery-note-detail.component.acceptLabel.Démarrer:Démarrer`,
+      rejectLabel: $localize`:@@delivery-note-detail.component.rejectLabel.Annuler:Annuler`,
       icon: 'pi pi-truck',
       accept: () => {
         this.workflowActionInProgress.set(true);
@@ -1307,15 +1305,15 @@ export class DeliveryNoteDetailComponent implements OnInit {
             if (response.success) {
               this.toastService.add({
                 severity: 'success',
-                summary: 'Succès',
-                detail: 'Livraison démarrée avec succès'
+                summary: $localize`:@@delivery-note-detail.component.summary.Succès:Succès`,
+                detail: $localize`:@@delivery-note-detail.component.detail.Livraison_d_marr:Livraison démarrée avec succès`
               });
               this.loadDeliveryNote(note.id);
             } else {
               this.toastService.add({
                 severity: 'error',
-                summary: 'Erreur',
-                detail: (response as any).message || 'Impossible de démarrer la livraison'
+                summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
+                detail: (response as any).message || $localize`:@@delivery-notes.delivery-note-detail.ts.impossible.de.demarrer.la.livraison.4bd0d101:Impossible de démarrer la livraison`
               });
             }
           },
@@ -1323,7 +1321,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
             this.workflowActionInProgress.set(false);
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
               detail: this.errorHandler.extractErrorMessage(err)
             });
           }
@@ -1422,7 +1420,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
 
           if (!warehouse) {
             this.deliveryContextError.set(
-              'Aucun entrepôt n\'est configuré. Impossible de vérifier le stock.'
+              $localize`:@@delivery-notes.delivery-note-detail.ts.aucun.entrepot.n.est.configure.impossibl.e521608b:Aucun entrepôt n'est configuré. Impossible de vérifier le stock.`
             );
             this.deliveryContextLoading.set(false);
             return EMPTY;
@@ -1524,7 +1522,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
         },
         error: () => {
           if (loadSeq !== this.deliveryLoadSeq) return;
-          this.deliveryContextError.set('Impossible de vérifier le stock.');
+          this.deliveryContextError.set($localize`:@@delivery-notes.delivery-note-detail.ts.impossible.de.verifier.le.stock.ae1fcaab:Impossible de vérifier le stock.`);
           this.deliveryContextLoading.set(false);
         }
       });
@@ -1692,16 +1690,16 @@ export class DeliveryNoteDetailComponent implements OnInit {
           this.showDeliveryDialog = false;
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Livraison enregistrée avec succès'
+            summary: $localize`:@@delivery-note-detail.component.summary.Succès:Succès`,
+            detail: $localize`:@@delivery-note-detail.component.detail.Livraison_enregi:Livraison enregistrée avec succès`
           });
           this.loadDeliveryNote(note.id);
         } else {
-          const message = (response as any).message || 'Impossible d\'enregistrer la livraison';
+          const message = (response as any).message || $localize`:@@delivery-notes.delivery-note-detail.ts.impossible.d.enregistrer.la.livraison.d625e48a:Impossible d'enregistrer la livraison`;
           this.deliverySubmitError.set(message);
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
             detail: message
           });
         }
@@ -1722,10 +1720,10 @@ export class DeliveryNoteDetailComponent implements OnInit {
     ) return;
 
     this.confirmationService.confirm({
-      header: 'Annuler le bon de livraison',
-      message: `Êtes-vous sûr de vouloir annuler le bon de livraison ${note.number} ?`,
-      acceptLabel: 'Annuler le bon',
-      rejectLabel: 'Retour',
+      header: $localize`:@@delivery-notes.delivery-note-detail.ts.annuler.le.bon.de.livraison.f42c4ca4:Annuler le bon de livraison`,
+      message: $localize`:@@delivery-notes.delivery-note-detail.ts.etes.vous.sur.de.vouloir.annuler.le.bon.10898243:Êtes-vous sûr de vouloir annuler le bon de livraison ${note.number}:number: ?`,
+      acceptLabel: $localize`:@@delivery-note-detail.component.acceptLabel.Annuler_le_bon:Annuler le bon`,
+      rejectLabel: $localize`:@@delivery-note-detail.component.rejectLabel.Retour:Retour`,
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
@@ -1736,15 +1734,15 @@ export class DeliveryNoteDetailComponent implements OnInit {
             if (response.success) {
               this.toastService.add({
                 severity: 'success',
-                summary: 'Succès',
-                detail: 'Bon de livraison annulé'
+                summary: $localize`:@@delivery-note-detail.component.summary.Succès:Succès`,
+                detail: $localize`:@@delivery-note-detail.component.detail.bon.de.livraison.annule.94728b09:Bon de livraison annulé`
               });
               this.loadDeliveryNote(note.id);
             } else {
               this.toastService.add({
                 severity: 'error',
-                summary: 'Erreur',
-                detail: (response as any).message || 'Impossible d\'annuler le bon de livraison'
+                summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
+                detail: (response as any).message || $localize`:@@delivery-notes.delivery-note-detail.ts.impossible.d.annuler.le.bon.de.livraison.a0913741:Impossible d'annuler le bon de livraison`
               });
             }
           },
@@ -1752,7 +1750,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
             this.workflowActionInProgress.set(false);
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
               detail: this.errorHandler.extractErrorMessage(err)
             });
           }
@@ -1767,17 +1765,17 @@ export class DeliveryNoteDetailComponent implements OnInit {
     if (!canGenerateInvoiceFromDeliveryNote(note)) {
       this.toastService.add({
         severity: 'warn',
-        summary: 'Facturation impossible',
-        detail: 'Toutes les quantités livrées ont été retournées — impossible de facturer.'
+        summary: $localize`:@@delivery-note-detail.component.summary.Facturation_impo:Facturation impossible`,
+        detail: $localize`:@@delivery-note-detail.component.detail.Toutes_les_quant:Toutes les quantités livrées ont été retournées — impossible de facturer.`
       });
       return;
     }
 
     this.confirmationService.confirm({
-      header: 'Générer facture',
-      message: `Voulez-vous générer une facture pour le bon de livraison ${note.number} ?`,
-      acceptLabel: 'Générer',
-      rejectLabel: 'Annuler',
+      header: $localize`:@@delivery-notes.delivery-note-detail.ts.generer.facture.ef238ac2:Générer facture`,
+      message: $localize`:@@delivery-notes.delivery-note-detail.ts.voulez.vous.generer.une.facture.pour.le.2e3983d9:Voulez-vous générer une facture pour le bon de livraison ${note.number}:number: ?`,
+      acceptLabel: $localize`:@@delivery-note-detail.component.acceptLabel.G_n_rer:Générer`,
+      rejectLabel: $localize`:@@delivery-note-detail.component.rejectLabel.Annuler:Annuler`,
       icon: 'pi pi-file',
       accept: () => {
         this.workflowActionInProgress.set(true);
@@ -1787,8 +1785,8 @@ export class DeliveryNoteDetailComponent implements OnInit {
             if (response.success) {
               this.toastService.add({
                 severity: 'success',
-                summary: 'Succès',
-                detail: 'Facture générée avec succès'
+                summary: $localize`:@@delivery-note-detail.component.summary.Succès:Succès`,
+                detail: $localize`:@@delivery-note-detail.component.detail.Facture_g_n_r_e_:Facture générée avec succès`
               });
               this.loadDeliveryNote(note.id);
               if (response.data) {
@@ -1797,8 +1795,8 @@ export class DeliveryNoteDetailComponent implements OnInit {
             } else {
               this.toastService.add({
                 severity: 'error',
-                summary: 'Erreur',
-                detail: (response as any).message || 'Impossible de générer la facture'
+                summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
+                detail: (response as any).message || $localize`:@@delivery-notes.delivery-note-detail.ts.impossible.de.generer.la.facture.56d8d59c:Impossible de générer la facture`
               });
             }
           },
@@ -1806,7 +1804,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
             this.workflowActionInProgress.set(false);
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
               detail: this.errorHandler.extractErrorMessage(err)
             });
           }
@@ -1815,7 +1813,12 @@ export class DeliveryNoteDetailComponent implements OnInit {
     });
   }
 
-  private isAlreadyConfirmedError(message: string): boolean {
+  /** Refus de confirmation lié au statut : code d'abord (message traduisible), texte en repli sans code. */
+  private isAlreadyConfirmedError(err: unknown, message: string): boolean {
+    const code = this.errorHandler.getApiErrorCode(err);
+    if (code) {
+      return code === API_ERROR_CODE.statusNotAllowed;
+    }
     const normalized = message.toLowerCase();
     return normalized.includes('déjà confirmé') || normalized.includes('ne peut pas être confirmé');
   }

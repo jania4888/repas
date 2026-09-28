@@ -32,51 +32,41 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Immobilisations"
-      subtitle="Registre des actifs et suivi des amortissements (norme tunisienne)" />
+      title="Immobilisations" i18n-title="@@accounting.fixed-assets.immobilisations.1e4cbe01"
+      subtitle="Registre des actifs et suivi des amortissements (norme tunisienne)" i18n-subtitle="@@accounting.fixed-assets.registre.des.actifs.et.suivi.des.amortis.087acaf5" />
 
     <div class="card accounting-filters-card">
       <div class="accounting-filter-row">
         <input
           type="search"
           class="accounting-filter-input"
-          placeholder="Rechercher (désignation, n° inventaire)"
+          placeholder="Rechercher (désignation, n° inventaire)" i18n-placeholder="@@accounting.fixed-assets.rechercher.designation.n.inventaire.cc557d2d"
           [(ngModel)]="search"
           (keyup.enter)="reload()" />
         <select class="accounting-filter-input" [(ngModel)]="statusFilter" (ngModelChange)="reload()">
-          <option [ngValue]="null">Tous les statuts</option>
-          <option [ngValue]="FixedAssetStatus.Draft">Brouillon</option>
-          <option [ngValue]="FixedAssetStatus.InService">En service</option>
-          <option [ngValue]="FixedAssetStatus.FullyDepreciated">Totalement amorti</option>
-          <option [ngValue]="FixedAssetStatus.Disposed">Cédé</option>
+          <option [ngValue]="null" i18n="@@accounting.fixed-assets.tous.les.statuts.2d5088af">Tous les statuts</option>
+          <option [ngValue]="FixedAssetStatus.Draft" i18n="@@accounting.fixed-assets.brouillon.57d2d7a7">Brouillon</option>
+          <option [ngValue]="FixedAssetStatus.InService" i18n="@@accounting.fixed-assets.en.service.0b067773">En service</option>
+          <option [ngValue]="FixedAssetStatus.FullyDepreciated" i18n="@@accounting.fixed-assets.totalement.amorti.ede655ed">Totalement amorti</option>
+          <option [ngValue]="FixedAssetStatus.Disposed" i18n="@@accounting.fixed-assets.cede.51eca68c">Cédé</option>
         </select>
         <select class="accounting-filter-input" [(ngModel)]="categoryFilter" (ngModelChange)="reload()">
-          <option [ngValue]="null">Toutes les catégories</option>
+          <option [ngValue]="null" i18n="@@accounting.fixed-assets.toutes.les.categories.ac8ab261">Toutes les catégories</option>
           <option *ngFor="let c of categories()" [ngValue]="c.id">{{ c.label }}</option>
         </select>
         <input
           type="number"
           class="accounting-filter-input year-input"
-          placeholder="Exercice"
+          placeholder="Exercice" i18n-placeholder="@@accounting.fixed-assets.exercice.e171e2b0"
           min="2000"
           max="2100"
           [(ngModel)]="fiscalYearFilter"
           (keyup.enter)="reload()" />
-        <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="reload()" [disabled]="loading()">
-          Actualiser
-        </app-button>
-        <app-button variant="primary" icon="pi pi-plus" type="button" routerLink="/accounting/fixed-assets/new">
-          Nouvelle immobilisation
-        </app-button>
-        <app-button variant="secondary" icon="pi pi-calculator" type="button" routerLink="/accounting/fixed-assets/depreciation-run">
-          Dotations
-        </app-button>
-        <app-button variant="secondary" icon="pi pi-table" type="button" routerLink="/accounting/fixed-assets/amortization-table">
-          Tableau amortissements
-        </app-button>
-        <app-button variant="secondary" icon="pi pi-cog" type="button" routerLink="/accounting/fixed-assets/settings">
-          Exercice comptable
-        </app-button>
+        <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="reload()" [disabled]="loading()" i18n="@@accounting.fixed-assets.actualiser.9d3b2a7d"> Actualiser </app-button>
+        <app-button variant="primary" icon="pi pi-plus" type="button" routerLink="/accounting/fixed-assets/new" i18n="@@accounting.fixed-assets.nouvelle.immobilisation.477db87f"> Nouvelle immobilisation </app-button>
+        <app-button variant="secondary" icon="pi pi-calculator" type="button" routerLink="/accounting/fixed-assets/depreciation-run" i18n="@@accounting.fixed-assets.dotations.751a01e7"> Dotations </app-button>
+        <app-button variant="secondary" icon="pi pi-table" type="button" routerLink="/accounting/fixed-assets/amortization-table" i18n="@@accounting.fixed-assets.tableau.amortissements.0ddccc41"> Tableau amortissements </app-button>
+        <app-button variant="secondary" icon="pi pi-cog" type="button" routerLink="/accounting/fixed-assets/settings" i18n="@@accounting.fixed-assets.exercice.comptable.7d7b9297"> Exercice comptable </app-button>
       </div>
     </div>
 
@@ -85,23 +75,23 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <div class="card" *ngIf="!loading() && items().length === 0">
       <app-empty-state
         icon="pi pi-building"
-        title="Aucune immobilisation"
-        message="Créez votre premier actif pour générer un tableau d'amortissement." />
+        title="Aucune immobilisation" i18n-title="@@accounting.fixed-assets.aucune.immobilisation.f9c26485"
+        message="Créez votre premier actif pour générer un tableau d'amortissement." i18n-message="@@accounting.fixed-assets.creez.votre.premier.actif.pour.generer.u.09ff9ba8" />
     </div>
 
     <div class="card" *ngIf="items().length > 0">
       <p-table [value]="items()" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>N° inventaire</th>
-            <th>Désignation</th>
-            <th>Catégorie</th>
-            <th>Méthode</th>
-            <th class="text-right">Valeur origine</th>
-            <th class="text-right">Amort. cumulés</th>
-            <th class="text-right">VNC</th>
-            <th>Taux</th>
-            <th>Statut</th>
+            <th i18n="@@accounting.fixed-assets.n.inventaire.160c8b37">N° inventaire</th>
+            <th i18n="@@accounting.fixed-assets.designation.63a9062c">Désignation</th>
+            <th i18n="@@accounting.fixed-assets.categorie.6b38300a">Catégorie</th>
+            <th i18n="@@accounting.fixed-assets.methode.2e94172a">Méthode</th>
+            <th class="text-right" i18n="@@accounting.fixed-assets.valeur.origine.785a30c3">Valeur origine</th>
+            <th class="text-right" i18n="@@accounting.fixed-assets.amort.cumules.885e6cf3">Amort. cumulés</th>
+            <th class="text-right" i18n="@@accounting.fixed-assets.vnc.8a77613b">VNC</th>
+            <th i18n="@@accounting.fixed-assets.taux.18bc95b8">Taux</th>
+            <th i18n="@@accounting.fixed-assets.statut.659499f3">Statut</th>
             <th></th>
           </tr>
         </ng-template>
@@ -117,13 +107,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             <td>{{ row.depreciationRatePercent | number: '1.2-2' }} %</td>
             <td><span class="status-pill">{{ statusLabel(row) }}</span></td>
             <td>
-              <a [routerLink]="['/accounting/fixed-assets', row.id]" class="link-action">Ouvrir</a>
+              <a [routerLink]="['/accounting/fixed-assets', row.id]" class="link-action" i18n="@@accounting.fixed-assets.ouvrir.42c07747">Ouvrir</a>
             </td>
           </tr>
         </ng-template>
         <ng-template pTemplate="footer">
           <tr class="totals-row">
-            <td colspan="4"><strong>Totaux page {{ page() }} / {{ totalPages() }}</strong></td>
+            <td colspan="4" i18n="@@accounting.fixed-assets.totaux.page.bab590e3"><strong>Totaux page {{ page() }} / {{ totalPages() }}</strong></td>
             <td class="text-right"><strong>{{ totals().origin | number: '1.3-3' }}</strong></td>
             <td class="text-right"><strong>{{ totals().accumulated | number: '1.3-3' }}</strong></td>
             <td class="text-right"><strong>{{ totals().nbv | number: '1.3-3' }}</strong></td>
@@ -133,16 +123,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       </p-table>
 
       <div class="pagination-bar">
-        <span class="page-info">
+        <span class="page-info" i18n="@@accounting.fixed-assets.immobilisation.s.page.5e90e05f">
           {{ totalCount() }} immobilisation(s) — page {{ page() }} / {{ totalPages() }}
         </span>
         <div class="page-actions">
-          <app-button variant="secondary" type="button" (click)="prevPage()" [disabled]="loading() || page() <= 1">
-            Précédent
-          </app-button>
-          <app-button variant="secondary" type="button" (click)="nextPage()" [disabled]="loading() || page() >= totalPages()">
-            Suivant
-          </app-button>
+          <app-button variant="secondary" type="button" (click)="prevPage()" [disabled]="loading() || page() <= 1" i18n="@@accounting.fixed-assets.precedent.a527f171"> Précédent </app-button>
+          <app-button variant="secondary" type="button" (click)="nextPage()" [disabled]="loading() || page() >= totalPages()" i18n="@@accounting.fixed-assets.suivant.596d29a7"> Suivant </app-button>
         </div>
       </div>
     </div>
@@ -159,7 +145,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         max-width: 110px;
       }
       .text-right {
-        text-align: right;
+        text-align: end;
       }
       .status-pill {
         display: inline-block;
@@ -273,7 +259,7 @@ export class FixedAssetsListComponent implements OnInit {
           this.loading.set(false);
         },
         error: err => {
-          this.error.set(this.errors.extractErrorMessage(err, 'Impossible de charger le registre des immobilisations.'));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.fixed-assets-list.ts.impossible.de.charger.le.registre.des.im.82b892b0:Impossible de charger le registre des immobilisations.`));
           this.loading.set(false);
         }
       });
@@ -284,6 +270,6 @@ export class FixedAssetsListComponent implements OnInit {
   }
 
   methodLabel(row: FixedAssetDto): string {
-    return DEPRECIATION_METHOD_LABELS[row.depreciationMethod] ?? 'Linéaire';
+    return DEPRECIATION_METHOD_LABELS[row.depreciationMethod] ?? $localize`:@@ui.tern.lineaire.a5db4c:Linéaire`;
   }
 }

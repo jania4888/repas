@@ -9,8 +9,8 @@ import { VatDocLinkRow } from './vat-declaration.view-model';
   imports: [CommonModule, RouterModule],
   template: `
     <div class="card vat-zone-card">
-      <h3 class="vat-zone-title">5. Pièces justificatives</h3>
-      <p class="vat-zone-hint">Accès lecture seule aux journaux et modules sources. Les pièces jointes seront disponibles dans une prochaine version.</p>
+      <h3 class="vat-zone-title" i18n="@@accounting.vat-declaration.5.pieces.justificatives.a464a293">5. Pièces justificatives</h3>
+      <p class="vat-zone-hint" i18n="@@accounting.vat-declaration.acces.lecture.seule.aux.journaux.et.modules.sour.c1b13fc8">Accès lecture seule aux journaux et modules sources. Les pièces jointes seront disponibles dans une prochaine version.</p>
       <ul class="vat-doc-list">
         @for (link of links; track link.label) {
           <li class="vat-doc-item">

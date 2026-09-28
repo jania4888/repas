@@ -25,20 +25,20 @@ import { StockService } from '@core/services/stock.service';
     <section class="revenue-forecast">
       <header class="filters">
         <label>
-          Périmètre
+          <ng-container i18n="@@forecasting.pages.perimetre.b5d08ec3"> Périmètre </ng-container>
           <select [(ngModel)]="scope" (ngModelChange)="onScopeChange()">
-            <option value="global">Global (toute la société)</option>
-            <option value="category">Catégorie</option>
-            <option value="product">Produit</option>
-            <option value="warehouse">Entrepôt</option>
-            <option value="client">Client</option>
+            <option value="global" i18n="@@forecasting.pages.global.toute.la.societe.84c4471a">Global (toute la société)</option>
+            <option value="category" i18n="@@forecasting.pages.categorie.6b38300a">Catégorie</option>
+            <option value="product" i18n="@@forecasting.pages.produit.ff673dc2">Produit</option>
+            <option value="warehouse" i18n="@@forecasting.pages.entrepot.c349c0bc">Entrepôt</option>
+            <option value="client" i18n="@@forecasting.pages.client.1bdd79b1">Client</option>
           </select>
         </label>
         @if (needsScopeId()) {
           <label>
             {{ scopeEntityLabel() }}
             <select [(ngModel)]="scopeId" (ngModelChange)="onScopeIdChange()" [disabled]="optionsLoading()">
-              <option [ngValue]="null">{{ optionsLoading() ? 'Chargement…' : '— Sélectionner —' }}</option>
+              <option [ngValue]="null">{{ optionsLoading() ? loc_ui_tern_chargement_01cba1 : loc_ui_tern_selectionner_7ae1af }}</option>
               @for (opt of currentOptions(); track opt.value) {
                 <option [ngValue]="opt.value">{{ opt.label }}</option>
               }
@@ -46,11 +46,11 @@ import { StockService } from '@core/services/stock.service';
           </label>
         }
         <label>
-          Horizon
+          <ng-container i18n="@@forecasting.pages.horizon.eda24363"> Horizon </ng-container>
           <select [(ngModel)]="horizon" (ngModelChange)="loadForecast()">
-            <option value="week">Semaine (7 j)</option>
-            <option value="month">Mois (30 j)</option>
-            <option value="quarter">Trimestre (90 j)</option>
+            <option value="week" i18n="@@forecasting.pages.semaine.7.j.eb7024dd">Semaine (7 j)</option>
+            <option value="month" i18n="@@forecasting.pages.mois.30.j.de101fcd">Mois (30 j)</option>
+            <option value="quarter" i18n="@@forecasting.pages.trimestre.90.j.26bc6b51">Trimestre (90 j)</option>
           </select>
         </label>
         <div class="filters-actions">
@@ -62,29 +62,29 @@ import { StockService } from '@core/services/stock.service';
       </header>
 
       @if (needsScopeId() && !scopeId()) {
-        <div class="state hint">
+        <div class="state hint" i18n="@@forecasting.pages.selectionnez.un.e.pour.calculer.la.previ.4dc6ecfd">
           Sélectionnez un(e) {{ scopeEntityLabel() | lowercase }} pour calculer la prévision.
         </div>
       } @else if (loading()) {
-        <div class="state">Calcul en cours…</div>
+        <div class="state" i18n="@@forecasting.pages.calcul.en.cours.0721ac07">Calcul en cours…</div>
       } @else if (errorMessage()) {
         <div class="state error">{{ errorMessage() }}</div>
       } @else if (forecast() !== null) {
         <div class="kpi-row">
-          <div class="kpi">
+          <div class="kpi" i18n="@@forecasting.pages.ca.prevu.sur.01837ca5">
             <span class="label">CA prévu</span>
             <span class="value">{{ forecast()!.expected | number:'1.3-3' }} {{ forecast()!.currency }}</span>
             <span class="hint">Sur {{ forecast()!.periodStart | date:'dd/MM/yyyy' }} → {{ forecast()!.periodEnd | date:'dd/MM/yyyy' }}</span>
           </div>
-          <div class="kpi">
+          <div class="kpi" i18n="@@forecasting.pages.intervalle.95.confiance.fe2a140f">
             <span class="label">Intervalle 95 %</span>
             <span class="value small">{{ forecast()!.low | number:'1.3-3' }} – {{ forecast()!.high | number:'1.3-3' }} {{ forecast()!.currency }}</span>
             <span class="hint">Confiance {{ forecast()!.confidencePercent | number:'1.0-1' }} %</span>
           </div>
           <div class="kpi">
-            <span class="label">Méthode</span>
+            <span class="label" i18n="@@forecasting.pages.methode.2e94172a">Méthode</span>
             <span class="value small">{{ methodLabel(forecast()!.methodUsed) }}</span>
-            <span class="hint">{{ forecast()!.scopeLabel ?? 'Global' }}</span>
+            <span class="hint">{{ forecast()!.scopeLabel ?? loc_ui_tern_global_5f1184 }}</span>
           </div>
         </div>
 
@@ -94,7 +94,7 @@ import { StockService } from '@core/services/stock.service';
 
         @if (forecast()!.breakdown.length > 0) {
           <div class="chart-card">
-            <div class="chart-header">
+            <div class="chart-header" i18n="@@forecasting.pages.tendance.ic.95.attendu.f39be920">
               <span class="chart-title">Tendance — {{ horizonLabel() }}</span>
               <span class="chart-legend">
                 <span class="legend-ci"></span> IC 95 %
@@ -119,14 +119,14 @@ import { StockService } from '@core/services/stock.service';
           </div>
         }
 
-        <h3>Détail mensuel</h3>
+        <h3 i18n="@@forecasting.pages.detail.mensuel.0a058ece">Détail mensuel</h3>
         <table class="table">
           <thead>
             <tr>
-              <th>Période</th>
-              <th class="num">Attendu</th>
-              <th class="num">Bas (95 %)</th>
-              <th class="num">Haut (95 %)</th>
+              <th i18n="@@forecasting.pages.periode.de2110b7">Période</th>
+              <th class="num" i18n="@@forecasting.pages.attendu.5e3bd350">Attendu</th>
+              <th class="num" i18n="@@forecasting.pages.bas.95.c6271777">Bas (95 %)</th>
+              <th class="num" i18n="@@forecasting.pages.haut.95.28837146">Haut (95 %)</th>
             </tr>
           </thead>
           <tbody>
@@ -148,7 +148,7 @@ import { StockService } from '@core/services/stock.service';
     .filters { display: flex; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; align-items: flex-end; }
     .filters label { display: flex; flex-direction: column; gap: .25rem; font-size: .85rem; color: var(--color-neutral-600, #6b7280); }
     .filters select { padding: .45rem .6rem; border-radius: 6px; border: 1px solid var(--color-neutral-300, #d1d5db); }
-    .filters-actions { margin-left: auto; display: flex; align-items: flex-end; }
+    .filters-actions { margin-inline-start: auto; display: flex; align-items: flex-end; }
     .state { padding: 1rem; color: var(--color-neutral-600, #6b7280); font-style: italic; }
     .state.error { color: var(--color-danger-700, #b91c1c); }
     .state.hint { color: var(--color-neutral-500, #6b7280); font-style: italic; }
@@ -170,21 +170,24 @@ import { StockService } from '@core/services/stock.service';
     .chart-wrap { overflow-x: auto; }
     .chart-bars { display: flex; align-items: flex-end; height: 160px; gap: 4px; min-width: 100%; padding-bottom: 1.5rem; position: relative; }
     .bar-col { flex: 1; min-width: 24px; position: relative; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
-    .ci-band { position: absolute; left: 0; right: 0; background: rgba(37,99,235,.15); border-radius: 3px; pointer-events: none; }
+    .ci-band { position: absolute; inset-inline-start: 0; inset-inline-end: 0; background: rgba(37,99,235,.15); border-radius: 3px; pointer-events: none; }
     .bar-fill { position: relative; width: 100%; border-radius: 4px 4px 0 0; transition: height .3s ease; min-height: 4px; }
     .bar-label { position: absolute; bottom: -1.3rem; left: 50%; transform: translateX(-50%); font-size: .65rem; color: var(--color-neutral-500, #9ca3af); white-space: nowrap; }
 
     .table { width: 100%; border-collapse: collapse; }
-    .table th, .table td { padding: .55rem .75rem; border-bottom: 1px solid var(--color-neutral-200, #e5e7eb); text-align: left; font-size: .9rem; }
+    .table th, .table td { padding: .55rem .75rem; border-bottom: 1px solid var(--color-neutral-200, #e5e7eb); text-align: start; font-size: .9rem; }
     .table th { background: var(--color-neutral-50, #f9fafb); font-weight: 600; }
-    .table .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .table .num { text-align: end; font-variant-numeric: tabular-nums; }
 
     @media (max-width: 768px) {
-      .filters-actions { margin-left: 0; width: 100%; }
+      .filters-actions { margin-inline-start: 0; width: 100%; }
     }
   `]
 })
 export class RevenueForecastComponent implements OnInit {
+  readonly loc_ui_tern_chargement_01cba1 = $localize`:@@ui.tern.chargement.01cba1:Chargement…`;
+  readonly loc_ui_tern_selectionner_7ae1af = $localize`:@@ui.tern.selectionner.7ae1af:— Sélectionner —`;
+  readonly loc_ui_tern_global_5f1184 = $localize`:@@ui.tern.global.5f1184:Global`;
   private readonly forecastingService = inject(ForecastingService);
   private readonly categoryService = inject(ProductCategoryService);
   private readonly productService = inject(ProductService);
@@ -220,10 +223,10 @@ export class RevenueForecastComponent implements OnInit {
 
   readonly scopeEntityLabel = computed<string>(() => {
     switch (this.scope()) {
-      case 'category': return 'Catégorie';
-      case 'product': return 'Produit';
-      case 'client': return 'Client';
-      case 'warehouse': return 'Entrepôt';
+      case 'category': return $localize`:@@forecasting.revenue-forecast.ts.categorie.6b38300a:Catégorie`;
+      case 'product': return $localize`:@@forecasting.revenue-forecast.ts.produit.ff673dc2:Produit`;
+      case 'client': return $localize`:@@forecasting.revenue-forecast.ts.client.1bdd79b1:Client`;
+      case 'warehouse': return $localize`:@@forecasting.revenue-forecast.ts.entrepot.c349c0bc:Entrepôt`;
       default: return '';
     }
   });
@@ -247,10 +250,10 @@ export class RevenueForecastComponent implements OnInit {
 
   readonly horizonLabel = computed(() => {
     switch (this.horizon()) {
-      case 'week': return '7 jours';
-      case 'month': return '30 jours';
-      case 'quarter': return '90 jours';
-      default: return 'Personnalisé';
+      case 'week': return $localize`:@@forecasting.revenue-forecast.ts.7.jours.a0f70b5c:7 jours`;
+      case 'month': return $localize`:@@forecasting.revenue-forecast.ts.30.jours.c13f82c8:30 jours`;
+      case 'quarter': return $localize`:@@forecasting.revenue-forecast.ts.90.jours.b2506836:90 jours`;
+      default: return $localize`:@@forecasting.revenue-forecast.ts.personnalise.8504dffc:Personnalisé`;
     }
   });
 
@@ -277,7 +280,7 @@ export class RevenueForecastComponent implements OnInit {
       }));
       this.forecast.set(dto);
     } catch (err: any) {
-      this.errorMessage.set(err?.error?.message ?? 'Impossible de calculer la prévision.');
+      this.errorMessage.set(err?.error?.message ?? $localize`:@@ui.tern.impossible.de.calculer.la.prevision.159413:Impossible de calculer la prévision.`);
       this.forecast.set(null);
     } finally {
       this.loading.set(false);
@@ -390,7 +393,7 @@ export class RevenueForecastComponent implements OnInit {
       case 'sma': return 'Moyenne mobile (SMA)';
       case 'holt': return 'Lissage exponentiel double (Holt)';
       case 'holtWinters': return 'Holt-Winters multiplicatif';
-      case 'calendarHeuristic': return 'Heuristique calendaire (historique limité)';
+      case 'calendarHeuristic': return $localize`:@@forecasting.revenue-forecast.ts.heuristique.calendaire.historique.limite.eaa82a2c:Heuristique calendaire (historique limité)`;
       default: return method;
     }
   }

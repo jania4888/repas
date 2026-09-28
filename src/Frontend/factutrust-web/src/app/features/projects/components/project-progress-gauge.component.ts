@@ -8,17 +8,17 @@ import { RouterLink } from '@angular/router';
   imports: [CommonModule, RouterLink],
   template: `
     <div class="proj-dash-gauge" role="img" [attr.aria-label]="ariaLabel()">
-      <h3 class="proj-dash-gauge__title">Avancement global</h3>
+      <h3 class="proj-dash-gauge__title" i18n="@@projects.components.avancement.global.5f0ee62d">Avancement global</h3>
       <svg viewBox="0 0 200 118" class="proj-dash-gauge__svg" aria-hidden="true">
         <path [attr.d]="trackPath()" class="proj-dash-gauge__track" />
         <path [attr.d]="valuePath()" class="proj-dash-gauge__fill" />
         <circle [attr.cx]="targetDot().x" [attr.cy]="targetDot().y" r="4" class="proj-dash-gauge__target-dot" />
       </svg>
-      <div class="proj-dash-gauge__readout">
+      <div class="proj-dash-gauge__readout" i18n="@@projects.components.objectif.d07f894b">
         <strong class="proj-dash-gauge__value">{{ value() }} %</strong>
         <span class="proj-dash-gauge__target">Objectif : {{ target() }} %</span>
       </div>
-      <a routerLink="/projects" class="proj-dash-gauge__link">Voir le rapport complet →</a>
+      <a routerLink="/projects" class="proj-dash-gauge__link" i18n="@@projects.components.voir.le.rapport.complet.9f039147">Voir le rapport complet →</a>
     </div>
   `,
   styles: [`
@@ -66,7 +66,7 @@ export class ProjectProgressGaugeComponent {
   readonly target = input(90);
 
   readonly ariaLabel = computed(
-    () => `Avancement global ${this.value()} pour cent, objectif ${this.target()} pour cent`
+    () => $localize`:@@projects.project-progress-gauge.ts.avancement.global.value.pour.cent.object.82b5f2a4:Avancement global ${this.value()}:value: pour cent, objectif ${this.target()}:target: pour cent`
   );
 
   private readonly cx = 100;

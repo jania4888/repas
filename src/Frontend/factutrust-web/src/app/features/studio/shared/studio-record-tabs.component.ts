@@ -61,7 +61,7 @@ export interface StudioRecordTab {
     .studio-tab:disabled { opacity: .55; cursor: not-allowed; }
     .studio-tab__badge {
       display: inline-block;
-      margin-left: var(--spacing-1);
+      margin-inline-start: var(--spacing-1);
       padding: 0 var(--spacing-1);
       border-radius: var(--radius-full, 999px);
       background: var(--color-primary-50, #eff6ff);

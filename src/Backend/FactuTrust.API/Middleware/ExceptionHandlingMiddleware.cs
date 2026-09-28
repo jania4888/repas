@@ -4,8 +4,10 @@ using System.Text.Json;
 using FluentValidation;
 using FactuTrust.Application.Common;
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Localization;
 using FactuTrust.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Nodes;
 
 namespace FactuTrust.API.Middleware;
 
@@ -18,6 +20,7 @@ public sealed class ExceptionHandlingMiddleware
     private readonly RequestDelegate _next;
     private readonly ILogger<ExceptionHandlingMiddleware> _logger;
     private readonly IHostEnvironment _environment;
+    private readonly IMessageLocalizer _localizer;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -33,11 +36,13 @@ public sealed class ExceptionHandlingMiddleware
     public ExceptionHandlingMiddleware(
         RequestDelegate next,
         ILogger<ExceptionHandlingMiddleware> logger,
-        IHostEnvironment environment)
+        IHostEnvironment environment,
+        IMessageLocalizer localizer)
     {
         _next = next;
         _logger = logger;
         _environment = environment;
+        _localizer = localizer;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -49,6 +54,58 @@ public sealed class ExceptionHandlingMiddleware
         catch (Exception ex)
         {
             await HandleExceptionAsync(context, ex);
+        }
+    }
+
+    /// <summary>
+    /// Traduit uniquement l'enveloppe (message, erreurs). Data, code et attemptedValue restent intacts.
+    /// En culture française, IMessageLocalizer renvoie l'entrée telle quelle.
+    /// </summary>
+    private string LocalizeEnvelope(string json)
+    {
+        var node = JsonNode.Parse(json);
+        if (node is not JsonObject obj)
+        {
+            return json;
+        }
+
+        LocalizeString(obj, "message");
+        LocalizeString(obj, "title");
+        LocalizeString(obj, "detail");
+        LocalizeStringArray(obj, "errors");
+        LocalizeStringArray(obj, "globalErrors");
+        if (obj["fieldErrors"] is JsonObject fields)
+        {
+            foreach (var prop in fields)
+            {
+                if (prop.Value is not JsonArray arr) continue;
+                foreach (var item in arr)
+                {
+                    if (item is JsonObject field) LocalizeString(field, "message");
+                }
+            }
+        }
+
+        return obj.ToJsonString(JsonOptions);
+    }
+
+    private void LocalizeString(JsonObject obj, string name)
+    {
+        if (obj[name] is JsonValue value && value.TryGetValue<string>(out var text) && text is not null)
+        {
+            obj[name] = _localizer.Localize(text);
+        }
+    }
+
+    private void LocalizeStringArray(JsonObject obj, string name)
+    {
+        if (obj[name] is not JsonArray arr) return;
+        for (var i = 0; i < arr.Count; i++)
+        {
+            if (arr[i] is JsonValue value && value.TryGetValue<string>(out var text) && text is not null)
+            {
+                arr[i] = _localizer.Localize(text);
+            }
         }
     }
 
@@ -77,7 +134,7 @@ public sealed class ExceptionHandlingMiddleware
         context.Response.ContentType = "application/json; charset=utf-8";
         context.Response.StatusCode = statusCode;
 
-        var json = JsonSerializer.Serialize(response, JsonOptions);
+        var json = LocalizeEnvelope(JsonSerializer.Serialize(response, JsonOptions));
         await context.Response.WriteAsync(json);
     }
 

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -70,14 +71,12 @@ interface FilterOption<T extends string> {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Promotions"
-      subtitle="Remises temporaires appliquées après le prix. Elles ne remplacent pas les grilles : un document émis garde sa remise quand la promotion se termine.">
+      title="Promotions" i18n-title="@@settings.promotions.promotions.086e09b4"
+      subtitle="Remises temporaires appliquées après le prix. Elles ne remplacent pas les grilles : un document émis garde sa remise quand la promotion se termine." i18n-subtitle="@@settings.promotions.remises.temporaires.appliquees.apres.le.ab36b931">
       <div class="header-actions">
-        <p-button label="Retour" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
+        <p-button label="Retour" i18n-label="@@settings.promotions.retour.e5befb1f" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
         @if (canCreate()) {
-          <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openCreate()">
-            Nouvelle promotion
-          </app-button>
+          <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openCreate()" i18n="@@settings.promotions.nouvelle.promotion.32d11180"> Nouvelle promotion </app-button>
         }
       </div>
     </app-page-header>
@@ -89,10 +88,10 @@ interface FilterOption<T extends string> {
           <input
             pInputText
             type="search"
-            placeholder="Rechercher par nom ou portée…"
+            placeholder="Rechercher par nom ou portée…" i18n-placeholder="@@settings.promotions.rechercher.par.nom.ou.portee.1e787156"
             [(ngModel)]="searchQueryModel"
             (ngModelChange)="searchQuery.set($event)"
-            aria-label="Rechercher une promotion" />
+            aria-label="Rechercher une promotion" i18n-aria-label="@@settings.promotions.rechercher.une.promotion.4dc198a1" />
         </p-iconfield>
         <p-select
           [options]="statusOptions"
@@ -100,7 +99,7 @@ interface FilterOption<T extends string> {
           (ngModelChange)="statusFilter.set($event)"
           optionLabel="label"
           optionValue="value"
-          placeholder="État"
+          placeholder="État" i18n-placeholder="@@settings.promotions.etat.d3b28a2a"
           appendTo="body"></p-select>
         <p-select
           [options]="scopeOptions"
@@ -108,10 +107,10 @@ interface FilterOption<T extends string> {
           (ngModelChange)="scopeFilter.set($event)"
           optionLabel="label"
           optionValue="value"
-          placeholder="Portée"
+          placeholder="Portée" i18n-placeholder="@@settings.promotions.portee.f42a1d5d"
           appendTo="body"></p-select>
         @if (hasActiveFilters()) {
-          <button type="button" class="ft-filters__reset" (click)="resetFilters()">
+          <button type="button" class="ft-filters__reset" (click)="resetFilters()" i18n="@@settings.promotions.reinitialiser.319b1817">
             <i class="pi pi-times" aria-hidden="true"></i>
             Réinitialiser
           </button>
@@ -124,14 +123,14 @@ interface FilterOption<T extends string> {
     } @else if (promotions().length === 0) {
       <app-empty-state
         icon="pi-megaphone"
-        title="Aucune promotion"
-        message="Créez une promotion datée pour appliquer une remise temporaire.">
+        title="Aucune promotion" i18n-title="@@settings.promotions.aucune.promotion.99506024"
+        message="Créez une promotion datée pour appliquer une remise temporaire." i18n-message="@@settings.promotions.creez.une.promotion.datee.pour.appliquer.258e6e1d">
       </app-empty-state>
     } @else if (filteredPromotions().length === 0) {
       <app-empty-state
         icon="pi-filter-slash"
-        title="Aucun résultat"
-        message="Aucune promotion ne correspond à vos filtres.">
+        title="Aucun résultat" i18n-title="@@settings.promotions.aucun.resultat.9e524fe1"
+        message="Aucune promotion ne correspond à vos filtres." i18n-message="@@settings.promotions.aucune.promotion.ne.correspond.a.vos.fil.fc656f39">
       </app-empty-state>
     } @else {
       <div class="ft-table-card">
@@ -143,18 +142,18 @@ interface FilterOption<T extends string> {
           [sortOrder]="-1">
           <ng-template pTemplate="header">
             <tr>
-              <th pSortableColumn="name">Nom <p-sortIcon field="name"></p-sortIcon></th>
-              <th>Portée</th>
-              <th pSortableColumn="startsOn">Période <p-sortIcon field="startsOn"></p-sortIcon></th>
-              <th class="ft-num">Remise</th>
+              <th pSortableColumn="name"><ng-container i18n="@@settings.promotions.nom.7ff20370">Nom </ng-container> <p-sortIcon field="name"></p-sortIcon></th>
+              <th i18n="@@settings.promotions.portee.f42a1d5d">Portée</th>
+              <th pSortableColumn="startsOn"><ng-container i18n="@@settings.promotions.periode.de2110b7">Période </ng-container> <p-sortIcon field="startsOn"></p-sortIcon></th>
+              <th class="ft-num" i18n="@@settings.promotions.remise.ce12d942">Remise</th>
               <th class="ft-num" pSortableColumn="minQuantity">
-                Qté min. <p-sortIcon field="minQuantity"></p-sortIcon>
+                <ng-container i18n="@@settings.promotions.qte.min.ebdef318"> Qté min. </ng-container> <p-sortIcon field="minQuantity"></p-sortIcon>
               </th>
               <th class="ft-num" pSortableColumn="priority">
-                Priorité <p-sortIcon field="priority"></p-sortIcon>
+                <ng-container i18n="@@settings.promotions.priorite.eede91d2"> Priorité </ng-container> <p-sortIcon field="priority"></p-sortIcon>
               </th>
-              <th>État</th>
-              <th class="ft-actions-col">Actions</th>
+              <th i18n="@@settings.promotions.etat.d3b28a2a">État</th>
+              <th class="ft-actions-col" i18n="@@settings.promotions.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
 
@@ -185,7 +184,7 @@ interface FilterOption<T extends string> {
                     type="button"
                     icon="pi pi-pencil"
                     class="p-button-text p-button-sm"
-                    pTooltip="Modifier"
+                    pTooltip="Modifier" i18n-pTooltip="@@settings.promotions.modifier.f260e757"
                     (click)="openEdit(promo)"></button>
                 }
                 @if (canDelete()) {
@@ -194,7 +193,7 @@ interface FilterOption<T extends string> {
                     type="button"
                     icon="pi pi-trash"
                     class="p-button-text p-button-sm p-button-danger"
-                    pTooltip="Supprimer"
+                    pTooltip="Supprimer" i18n-pTooltip="@@settings.promotions.supprimer.1acfc1c7"
                     (click)="confirmDelete(promo)"></button>
                 }
               </td>
@@ -261,25 +260,25 @@ export class PromotionsPageComponent implements OnInit {
   readonly canDelete = computed(() => this.auth.hasPermission(PERMISSIONS.pricing.delete));
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Promotions' }
+    { label: $localize`:@@settings.promotions-page.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.promotions-page.ts.promotions.086e09b4:Promotions` }
   ];
 
   readonly statusOptions: FilterOption<PromotionStatusFilter>[] = [
-    { label: 'Tous les états', value: 'all' },
-    { label: 'En cours', value: 'running' },
-    { label: 'À venir', value: 'upcoming' },
-    { label: 'Expirées', value: 'expired' },
-    { label: 'Désactivées', value: 'disabled' },
-    { label: 'Hors période', value: 'outOfWindow' }
+    { label: $localize`:@@settings.promotions-page.ts.tous.les.etats.7da63670:Tous les états`, value: 'all' },
+    { label: $localize`:@@settings.promotions-page.ts.en.cours.bc9b533a:En cours`, value: 'running' },
+    { label: $localize`:@@settings.promotions-page.ts.a.venir.5ae4e587:À venir`, value: 'upcoming' },
+    { label: $localize`:@@settings.promotions-page.ts.expirees.a8e7929a:Expirées`, value: 'expired' },
+    { label: $localize`:@@settings.promotions-page.ts.desactivees.c29edddb:Désactivées`, value: 'disabled' },
+    { label: $localize`:@@settings.promotions-page.ts.hors.periode.eb84848b:Hors période`, value: 'outOfWindow' }
   ];
 
   readonly scopeOptions: FilterOption<PromotionScopeFilter>[] = [
-    { label: 'Toutes les portées', value: 'all' },
-    { label: 'Produit ciblé', value: 'product' },
-    { label: 'Catégorie ciblée', value: 'category' },
-    { label: 'Client ciblé', value: 'client' },
-    { label: 'Globale', value: 'global' }
+    { label: $localize`:@@settings.promotions-page.ts.toutes.les.portees.649e382b:Toutes les portées`, value: 'all' },
+    { label: $localize`:@@settings.promotions-page.ts.produit.cible.c6d2e59c:Produit ciblé`, value: 'product' },
+    { label: $localize`:@@settings.promotions-page.ts.categorie.ciblee.252ed895:Catégorie ciblée`, value: 'category' },
+    { label: $localize`:@@settings.promotions-page.ts.client.cible.1cadea0b:Client ciblé`, value: 'client' },
+    { label: $localize`:@@settings.promotions-page.ts.globale.45a263e9:Globale`, value: 'global' }
   ];
 
   readonly skeletonColumns: SkeletonColumn[] = [
@@ -316,7 +315,7 @@ export class PromotionsPageComponent implements OnInit {
   lifecycleTooltip(promo: Promotion): string {
     const lifecycle = promotionLifecycle(promo);
     if (lifecycle === 'outOfWindow') {
-      return 'Promotion active mais en dehors de sa fenêtre : elle n\'applique aucune remise aujourd\'hui.';
+      return $localize`:@@settings.promotions-page.ts.promotion.active.mais.en.dehors.de.sa.fe.9aac1184:Promotion active mais en dehors de sa fenêtre : elle n'applique aucune remise aujourd'hui.`;
     }
     return '';
   }
@@ -342,7 +341,7 @@ export class PromotionsPageComponent implements OnInit {
         this.loading.set(false);
       },
       error: err => {
-        this.showError(err, 'Impossible de charger les promotions');
+        this.showError(err, $localize`:@@settings.promotions-page.ts.impossible.de.charger.les.promotions.d4f19af0:Impossible de charger les promotions`);
         this.errorHandler.logError('Failed to load promotions', err);
         this.promotions.set([]);
         this.loading.set(false);
@@ -367,15 +366,15 @@ export class PromotionsPageComponent implements OnInit {
       next: () => {
         this.toastService.add({
           severity: 'success',
-          summary: 'Succès',
-          detail: this.editing ? 'Promotion mise à jour.' : 'Promotion créée.'
+          summary: $localize`:@@promotions-page.component.summary.Succès:Succès`,
+          detail: this.editing ? $localize`:@@ui.tern.promotion.mise.a.jour.3ccdcf:Promotion mise à jour.` : $localize`:@@ui.tern.promotion.creee.f84ced:Promotion créée.`
         });
         this.dialogVisible = false;
         this.saving.set(false);
         this.load();
       },
       error: (err: unknown) => {
-        this.showError(err, 'Enregistrement impossible');
+        this.showError(err, $localize`:@@settings.promotions-page.ts.enregistrement.impossible.1e5e1075:Enregistrement impossible`);
         this.errorHandler.logError('Save promotion failed', err);
         this.saving.set(false);
       }
@@ -390,11 +389,11 @@ export class PromotionsPageComponent implements OnInit {
 
   confirmDelete(promo: Promotion): void {
     this.confirmationService.confirm({
-      header: 'Supprimer la promotion',
-      message: `Supprimer « ${promo.name} » ? Les documents déjà émis gardent leur remise.`,
+      header: $localize`:@@settings.promotions-page.ts.supprimer.la.promotion.60855324:Supprimer la promotion`,
+      message: $localize`:@@settings.promotions-page.ts.supprimer.name.les.documents.deja.emis.g.96fdfab5:Supprimer « ${promo.name}:name: » ? Les documents déjà émis gardent leur remise.`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@promotions-page.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@promotions-page.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.remove(promo)
     });
@@ -403,11 +402,11 @@ export class PromotionsPageComponent implements OnInit {
   private remove(promo: Promotion): void {
     this.pricingService.deletePromotion(promo.id).subscribe({
       next: () => {
-        this.toastService.add({ severity: 'success', summary: 'Succès', detail: 'Promotion supprimée.' });
+        this.toastService.add({ severity: 'success', summary: $localize`:@@promotions-page.component.summary.Succès:Succès`, detail: $localize`:@@promotions-page.component.detail.Promotion_suppri:Promotion supprimée.` });
         this.load();
       },
       error: err => {
-        this.showError(err, 'Suppression impossible');
+        this.showError(err, $localize`:@@settings.promotions-page.ts.suppression.impossible.55762ff2:Suppression impossible`);
         this.errorHandler.logError('Delete promotion failed', err);
       }
     });
@@ -415,6 +414,6 @@ export class PromotionsPageComponent implements OnInit {
 
   private showError(err: unknown, fallback: string): void {
     const msg = this.errorHandler.extractErrorMessage(err);
-    this.toastService.add({ severity: 'error', summary: 'Erreur', detail: msg || fallback });
+    this.toastService.add({ severity: 'error', summary: $localize`:@@promotions-page.component.summary.Erreur:Erreur`, detail: msg || fallback });
   }
 }

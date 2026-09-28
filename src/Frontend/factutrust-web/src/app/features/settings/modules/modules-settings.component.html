@@ -1,10 +1,10 @@
 <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
 <app-page-header
-  title="Modules"
-  subtitle="Activez ou désactivez les fonctionnalités de votre espace. Les changements sont appliqués immédiatement dans la navigation.">
+  title="Modules" i18n-title="@@settings.modules.modules.04e9462c"
+  subtitle="Activez ou désactivez les fonctionnalités de votre espace. Les changements sont appliqués immédiatement dans la navigation." i18n-subtitle="@@settings.modules.activez.ou.desactivez.les.fonctionnalite.ae478390">
   <p-button
-    label="Retour"
+    label="Retour" i18n-label="@@settings.modules.retour.e5befb1f"
     icon="pi pi-arrow-left"
     [outlined]="true"
     routerLink="/settings">
@@ -15,38 +15,38 @@
   <div class="error-banner" role="alert">
     <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
     <p>{{ loadError() }}</p>
-    <p-button label="Réessayer" icon="pi pi-refresh" [outlined]="true" (onClick)="load()"></p-button>
+    <p-button label="Réessayer" i18n-label="@@settings.modules.reessayer.895d416b" icon="pi pi-refresh" [outlined]="true" (onClick)="load()"></p-button>
   </div>
 } @else if (loading()) {
   <div class="loading-container" role="status" aria-live="polite">
     <i class="pi pi-spin pi-spinner" style="font-size: 2rem" aria-hidden="true"></i>
-    <p>Chargement des modules...</p>
+    <p i18n="@@settings.modules.chargement.des.modules.2da65a9c">Chargement des modules...</p>
   </div>
 } @else {
-  <section class="sector-note" aria-label="Origine des recommandations">
+  <section class="sector-note" aria-label="Origine des recommandations" i18n-aria-label="@@settings.modules.origine.des.recommandations.c26ba0c9">
     <span class="sn-ico"><i class="pi pi-bolt" aria-hidden="true"></i></span>
     <div>
-      <div class="sn-title">Recommandations personnalisées</div>
+      <div class="sn-title" i18n="@@settings.modules.recommandations.personnalisees.543ffb05">Recommandations personnalisées</div>
       <p class="sn-text">
-        @if (companySegmentLabel()) {
+        @if (companySegmentLabel()) {<ng-container i18n="@@settings.modules.les.modules.recommandes.sont.bases.sur.v.5d71d017">
           Les modules recommandés sont basés sur votre profil : <b>{{ companySegmentLabel() }}</b>. Si votre activité évolue, mettez à jour votre secteur pour recalculer les recommandations.
-        } @else {
+        </ng-container>} @else {<ng-container i18n="@@settings.modules.activez.ou.desactivez.librement.les.modu.6421c44d">
           Activez ou désactivez librement les modules ci-dessous ; renseignez votre secteur d'activité pour obtenir des recommandations personnalisées.
-        }
+        </ng-container>}
       </p>
     </div>
-    <a routerLink="/settings/company" fragment="secteur" class="sn-link">
+    <a routerLink="/settings/company" fragment="secteur" class="sn-link" i18n="@@settings.modules.modifier.mon.secteur.c08afe06">
       <i class="pi pi-pencil" aria-hidden="true"></i> Modifier mon secteur
     </a>
   </section>
 
   @if (usageRecommendations().length > 0) {
-    <section class="usage-recos-banner" aria-label="Recommandé pour vous">
+    <section class="usage-recos-banner" aria-label="Recommandé pour vous" i18n-aria-label="@@settings.modules.recommande.pour.vous.46f2c609">
       <div class="urb-head">
         <span class="urb-ico"><i class="pi pi-sparkles" aria-hidden="true"></i></span>
         <div>
-          <div class="urb-title">Recommandé pour vous</div>
-          <p class="urb-subtitle">Basé sur votre utilisation récente — activez en un clic ci-dessous.</p>
+          <div class="urb-title" i18n="@@settings.modules.recommande.pour.vous.46f2c609">Recommandé pour vous</div>
+          <p class="urb-subtitle" i18n="@@settings.modules.base.sur.votre.utilisation.recente.activez.en.un.27f14e02">Basé sur votre utilisation récente — activez en un clic ci-dessous.</p>
         </div>
       </div>
       <div class="urb-list">
@@ -59,26 +59,26 @@
     </section>
   }
 
-  <section class="mod-group" aria-label="Modules inclus dans votre espace">
-    <p class="mod-group-title">
+  <section class="mod-group" aria-label="Modules inclus dans votre espace" i18n-aria-label="@@settings.modules.modules.inclus.dans.votre.espace.057520d9">
+    <p class="mod-group-title" i18n="@@settings.modules.inclus.dans.votre.espace.module.s.b259e52d">
       <i class="pi pi-lock" aria-hidden="true"></i> Inclus dans votre espace <span class="cnt">{{ coreModules().length }} module(s)</span>
     </p>
     <div class="mod-grid">
       @for (module of coreModules(); track module.id) {
         <div class="mod-card on locked" aria-disabled="true">
-          <div class="mod-top">
+          <div class="mod-top" i18n="@@settings.modules.c.ur.e97a6e57">
             <span class="mod-ico" [ngClass]="moduleTone(module.id)"><i [class]="'pi ' + moduleIcon(module.id)" aria-hidden="true"></i></span>
             <span class="mod-locked-badge"><i class="pi pi-lock" aria-hidden="true"></i> Cœur</span>
           </div>
-          <span class="mod-name">{{ module.labelFr }}</span>
+          <span class="mod-name">{{ displayName(module) }}</span>
         </div>
       }
     </div>
   </section>
 
   @if (recommendedModules().length > 0) {
-    <section class="mod-group" aria-label="Modules recommandés pour votre secteur">
-      <p class="mod-group-title">
+    <section class="mod-group" aria-label="Modules recommandés pour votre secteur" i18n-aria-label="@@settings.modules.modules.recommandes.pour.votre.secteur.aa144e14">
+      <p class="mod-group-title" i18n="@@settings.modules.recommandes.pour.votre.secteur.module.s.346d26d0">
         <i class="pi pi-star" aria-hidden="true"></i> Recommandés pour votre secteur <span class="cnt">{{ recommendedModules().length }} module(s)</span>
       </p>
       <div class="mod-grid">
@@ -95,18 +95,18 @@
                     (onChange)="toggleModule(module)"
                     [ngModelOptions]="{standalone: true}"
                     [disabled]="isLockedByDependency(module.id)"
-                    [attr.aria-label]="'Activer ' + module.labelFr">
+                    [attr.aria-label]="loc_activer_labelfr_ed496d(displayName(module))">
                   </p-inputSwitch>
                 </span>
               }
-            </div>
-            <span class="mod-name">{{ module.labelFr }}</span>
+            </div><ng-container i18n="@@settings.modules.recommande.pour.votre.secteur.8eed0fab">
+            <span class="mod-name">{{ displayName(module) }}</span>
             <span class="mod-badge"><i class="pi pi-check" aria-hidden="true"></i> Recommandé pour votre secteur</span>
-            @if (isLockedByDependency(module.id)) {
+            </ng-container>@if (isLockedByDependency(module.id)) {
               <span class="mod-badge dep"><i class="pi pi-link" aria-hidden="true"></i> {{ dependencyLockLabel(module.id) }}</span>
             }
             @if (wasAutoEnabled(module.id)) {
-              <p class="dep-hint" role="status" aria-live="polite"><i class="pi pi-info-circle" aria-hidden="true"></i> Activé automatiquement (dépendance)</p>
+              <p class="dep-hint" role="status" aria-live="polite" i18n="@@settings.modules.active.automatiquement.dependance.da445b3c"><i class="pi pi-info-circle" aria-hidden="true"></i> Activé automatiquement (dépendance)</p>
             }
           </div>
         }
@@ -115,8 +115,8 @@
   }
 
   @if (otherModules().length > 0) {
-    <section class="mod-group" aria-label="Autres modules">
-      <p class="mod-group-title">
+    <section class="mod-group" aria-label="Autres modules" i18n-aria-label="@@settings.modules.autres.modules.87a819e2">
+      <p class="mod-group-title" i18n="@@settings.modules.autres.modules.module.s.b21cdeec">
         <i class="pi pi-th-large" aria-hidden="true"></i> Autres modules <span class="cnt">{{ otherModules().length }} module(s)</span>
       </p>
       <div class="mod-grid">
@@ -133,14 +133,14 @@
                     (onChange)="toggleModule(module)"
                     [ngModelOptions]="{standalone: true}"
                     [disabled]="isLockedByDependency(module.id)"
-                    [attr.aria-label]="'Activer ' + module.labelFr">
+                    [attr.aria-label]="loc_activer_labelfr_ed496d(displayName(module))">
                   </p-inputSwitch>
                 </span>
               }
             </div>
-            <span class="mod-name">{{ module.labelFr }}</span>
+            <span class="mod-name">{{ displayName(module) }}</span>
             @if (hasUsageRecommendation(module.id)) {
-              <span class="mod-badge usage" [pTooltip]="usageRecommendationReason(module.id)" tooltipPosition="top">
+              <span class="mod-badge usage" [pTooltip]="usageRecommendationReason(module.id)" tooltipPosition="top" i18n="@@settings.modules.recommande.pour.vous.9704ce25">
                 <i class="pi pi-sparkles" aria-hidden="true"></i> Recommandé pour vous
               </span>
             }
@@ -148,7 +148,7 @@
               <span class="mod-badge dep"><i class="pi pi-link" aria-hidden="true"></i> {{ dependencyLockLabel(module.id) }}</span>
             }
             @if (wasAutoEnabled(module.id)) {
-              <p class="dep-hint" role="status" aria-live="polite"><i class="pi pi-info-circle" aria-hidden="true"></i> Activé automatiquement (dépendance)</p>
+              <p class="dep-hint" role="status" aria-live="polite" i18n="@@settings.modules.active.automatiquement.dependance.da445b3c"><i class="pi pi-info-circle" aria-hidden="true"></i> Activé automatiquement (dépendance)</p>
             }
           </div>
         }
@@ -158,19 +158,19 @@
 
   <div class="note-bar" role="note">
     <span class="note-ico"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i></span>
-    <p>Désactiver un module requis par un autre module actif est bloqué : désactivez d'abord le module dépendant. <b>Offre actuelle : {{ planCode() }}.</b></p>
+    <p i18n="@@settings.modules.desactiver.un.module.requis.par.un.autre.8e6df26b"><ng-container>Désactiver un module requis par un autre module actif est bloqué : désactivez d'abord le module dépendant. </ng-container> <b>Offre actuelle : {{ planCode() }}.</b></p>
   </div>
 
   <div class="page-actions">
     <p-button
-      label="Annuler les modifications"
+      label="Annuler les modifications" i18n-label="@@settings.modules.annuler.les.modifications.dff27bb0"
       icon="pi pi-undo"
       [outlined]="true"
       [disabled]="!isDirty() || saving()"
       (onClick)="resetChanges()">
     </p-button>
     <p-button
-      label="Enregistrer"
+      label="Enregistrer" i18n-label="@@settings.modules.enregistrer.f7c8bcd8"
       icon="pi pi-check"
       [loading]="saving()"
       [disabled]="!isDirty() || saving()"

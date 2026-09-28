@@ -21,12 +21,12 @@ import { DestroyRef } from '@angular/core';
 type GuidedStep = 1 | 2 | 3 | 4;
 
 const PAYMENT_METHODS = [
-  { value: 1, label: 'Virement bancaire' },
-  { value: 0, label: 'Espèces' },
-  { value: 2, label: 'Chèque' },
-  { value: 3, label: 'Carte bancaire' },
-  { value: 4, label: 'Paiement mobile' },
-  { value: 5, label: 'Traite' }
+  { value: 1, label: $localize`:@@accounting.guided-entry.ts.virement.bancaire.8306f08e:Virement bancaire` },
+  { value: 0, label: $localize`:@@accounting.guided-entry.ts.especes.b7679d62:Espèces` },
+  { value: 2, label: $localize`:@@accounting.guided-entry.ts.cheque.8bbb89a9:Chèque` },
+  { value: 3, label: $localize`:@@accounting.guided-entry.ts.carte.bancaire.9e3d9bfa:Carte bancaire` },
+  { value: 4, label: $localize`:@@accounting.guided-entry.ts.paiement.mobile.fdc8f501:Paiement mobile` },
+  { value: 5, label: $localize`:@@accounting.guided-entry.ts.traite.511ec106:Traite` }
 ];
 
 @Component({
@@ -42,7 +42,7 @@ const PAYMENT_METHODS = [
   ],
   template: `
     <div class="guided-entry">
-      <nav class="guided-stepper" aria-label="Étapes de la saisie guidée">
+      <nav class="guided-stepper" aria-label="Étapes de la saisie guidée" i18n-aria-label="@@accounting.manual-entry.etapes.de.la.saisie.guidee.5ea432fb">
         @for (s of steps; track s.num) {
           <button type="button" class="guided-step"
                   [class.guided-step--active]="step() === s.num"
@@ -58,30 +58,30 @@ const PAYMENT_METHODS = [
       @switch (step()) {
         @case (1) {
           <section class="guided-panel card">
-            <p class="guided-intro">Choisissez le type d'écriture que vous souhaitez saisir parmi les modèles guidés disponibles.</p>
+            <p class="guided-intro" i18n="@@accounting.manual-entry.choisissez.le.type.d.ecriture.que.vous.souhaitez.eb087e6a">Choisissez le type d'écriture que vous souhaitez saisir parmi les modèles guidés disponibles.</p>
             <div class="scenario-grid">
               @for (sc of scenarios; track sc.id) {
                 <button type="button" class="scenario-card"
                         [class.scenario-card--selected]="selectedScenario()?.id === sc.id"
                         (click)="selectScenario(sc)">
-                  <i [class]="'scenario-card__icon ' + sc.icon" aria-hidden="true"></i>
+                  <i [class]="loc_ui_tern_scenario_card_icon_8fea02 + sc.icon" aria-hidden="true"></i>
                   <strong>{{ sc.label }}</strong>
                   <span class="scenario-card__desc">{{ sc.description }}</span>
                 </button>
               }
             </div>
-            <div class="guided-info">La saisie guidée vous accompagne pas à pas et propose les comptes adaptés à chaque opération.</div>
+            <div class="guided-info" i18n="@@accounting.manual-entry.la.saisie.guidee.vous.accompagne.pas.a.pas.et.pr.e4e13f23">La saisie guidée vous accompagne pas à pas et propose les comptes adaptés à chaque opération.</div>
             <div class="guided-actions">
-              <button type="button" class="btn btn-primary" [disabled]="!selectedScenario()" (click)="nextStep()">Suivant</button>
+              <button type="button" class="btn btn-primary" [disabled]="!selectedScenario()" (click)="nextStep()" i18n="@@accounting.manual-entry.suivant.596d29a7">Suivant</button>
             </div>
           </section>
         }
         @case (2) {
           <section class="guided-panel card">
-            <p class="guided-banner">Renseignez les informations générales. Elles permettront de préremplir certaines valeurs lors de la saisie des lignes.</p>
+            <p class="guided-banner" i18n="@@accounting.manual-entry.renseignez.les.informations.generales.elles.perm.b969909d">Renseignez les informations générales. Elles permettront de préremplir certaines valeurs lors de la saisie des lignes.</p>
             <div class="guided-form-grid">
               <div class="form-field">
-                <label>Journal *</label>
+                <label i18n="@@accounting.manual-entry.journal.d4d0b33f">Journal *</label>
                 <select [ngModel]="store.journalCode()" (ngModelChange)="store.journalCode.set($event)">
                   @for (j of store.journalOptions(); track j.code) {
                     <option [value]="j.code">{{ j.code }} — {{ j.label }}</option>
@@ -89,33 +89,33 @@ const PAYMENT_METHODS = [
                 </select>
               </div>
               <div class="form-field">
-                <label>Date d'écriture *</label>
+                <label i18n="@@accounting.manual-entry.date.d.ecriture.fb8ff34e">Date d'écriture *</label>
                 <input type="date" [ngModel]="store.entryDate()" (ngModelChange)="store.setEntryDate($event)" />
               </div>
               <div class="form-field">
-                <label>Période *</label>
+                <label i18n="@@accounting.manual-entry.periode.2be15f92">Période *</label>
                 <select [ngModel]="store.periodId()" (ngModelChange)="store.setPeriodId($event || null)">
-                  <option [ngValue]="null">—</option>
+                  <option [ngValue]="null" i18n="@@accounting.manual-entry.text.1b93795b">—</option>
                   @for (p of refs.openPeriods(); track p.id) {
                     <option [ngValue]="p.id">{{ periodLabel(p) }}</option>
                   }
                 </select>
               </div>
               <div class="form-field">
-                <label>Référence</label>
+                <label i18n="@@accounting.manual-entry.reference.f8130bb0">Référence</label>
                 <input type="text" [ngModel]="store.pieceRef()" (ngModelChange)="store.pieceRef.set($event)" />
               </div>
               <div class="form-field form-field--wide">
-                <label>Libellé général *</label>
+                <label i18n="@@accounting.manual-entry.libelle.general.b05df8c4">Libellé général *</label>
                 <input type="text" [ngModel]="store.entryLabel()" (ngModelChange)="store.entryLabel.set($event)" />
               </div>
               <div class="form-field form-field--wide">
-                <label>Description</label>
+                <label i18n="@@accounting.manual-entry.description.55f8ebc8">Description</label>
                 <textarea rows="2" [ngModel]="store.description()" (ngModelChange)="store.description.set($event)"></textarea>
               </div>
               @if (selectedScenario()?.thirdPartyKind) {
                 <div class="form-field form-field--wide">
-                  <label>Tiers</label>
+                  <label i18n="@@accounting.manual-entry.tiers.435080ba">Tiers</label>
                   <p-autoComplete
                     [(ngModel)]="guidedThirdParty"
                     [suggestions]="thirdPartySuggestions"
@@ -124,85 +124,85 @@ const PAYMENT_METHODS = [
                     [minLength]="2"
                     [forceSelection]="true"
                     [showClear]="true"
-                    placeholder="Client ou fournisseur"
+                    placeholder="Client ou fournisseur" i18n-placeholder="@@accounting.manual-entry.client.ou.fournisseur.7a06baa3"
                     appendTo="body"
                     panelStyleClass="me-autocomplete-panel"
                   />
                 </div>
               }
               <div class="form-field">
-                <label>Devise</label>
+                <label i18n="@@accounting.manual-entry.devise.eb2e42c4">Devise</label>
                 <!-- Lecture seule : la devise se choisit dans l'en-tête de l'onglet standard,
                      mais l'état est partagé — l'afficher en dur mentirait dès qu'elle change. -->
                 <input type="text" [value]="currencyLabel()" readonly class="readonly" />
               </div>
               @if (store.isForeignCurrency()) {
                 <div class="form-field">
-                  <label>Taux</label>
+                  <label i18n="@@accounting.manual-entry.taux.18bc95b8">Taux</label>
                   <input type="text" [value]="store.exchangeRate() ?? '—'" readonly class="readonly" />
                 </div>
               }
               <div class="form-field">
-                <label>Date d'échéance</label>
+                <label i18n="@@accounting.manual-entry.date.d.echeance.4f9893d7">Date d'échéance</label>
                 <input type="date" [ngModel]="store.headerDueDate()" (ngModelChange)="store.headerDueDate.set($event)" />
               </div>
               <div class="form-field">
-                <label>Mode de règlement</label>
+                <label i18n="@@accounting.manual-entry.mode.de.reglement.c82ec4a6">Mode de règlement</label>
                 <select [ngModel]="store.paymentMethod()" (ngModelChange)="store.paymentMethod.set($event)">
-                  <option [ngValue]="null">—</option>
+                  <option [ngValue]="null" i18n="@@accounting.manual-entry.text.1b93795b">—</option>
                   @for (pm of paymentMethods; track pm.value) {
                     <option [ngValue]="pm.value">{{ pm.label }}</option>
                   }
                 </select>
               </div>
               <div class="form-field">
-                <label>Compte bancaire</label>
+                <label i18n="@@accounting.manual-entry.compte.bancaire.485b42ca">Compte bancaire</label>
                 <select [ngModel]="store.bankAccountId()" (ngModelChange)="onBankSelect($event)">
-                  <option [ngValue]="null">—</option>
+                  <option [ngValue]="null" i18n="@@accounting.manual-entry.text.1b93795b">—</option>
                   @for (b of refs.bankAccounts(); track b.id) {
                     <option [ngValue]="b.id">{{ b.chartOfAccountNumber }} — {{ b.designation || b.bankName }}</option>
                   }
                 </select>
               </div>
               <div class="form-field">
-                <label>Montant TTC</label>
+                <label i18n="@@accounting.manual-entry.montant.ttc.a742433a">Montant TTC</label>
                 <app-accounting-amount-input
                   [ngModel]="store.amountTtc()"
                   (ngModelChange)="onTtcChange($event)"
                   side="debit"
                   [fractionDigits]="store.currencyDecimals()"
                   inputId="guided-amount-ttc"
-                  ariaLabel="Montant TTC" />
+                  ariaLabel="Montant TTC" i18n-ariaLabel="@@accounting.manual-entry.montant.ttc.237411f5" />
               </div>
               <div class="form-field">
-                <label>Montant HT</label>
+                <label i18n="@@accounting.manual-entry.montant.ht.3df1d6fe">Montant HT</label>
                 <app-accounting-amount-input
                   [ngModel]="store.amountHt()"
                   (ngModelChange)="onHtChange($event)"
                   side="debit"
                   [fractionDigits]="store.currencyDecimals()"
                   inputId="guided-amount-ht"
-                  ariaLabel="Montant HT" />
+                  ariaLabel="Montant HT" i18n-ariaLabel="@@accounting.manual-entry.montant.ht.b95914cb" />
               </div>
               <div class="form-field">
-                <label>Montant TVA</label>
+                <label i18n="@@accounting.manual-entry.montant.tva.f0c1b7cc">Montant TVA</label>
                 <app-accounting-amount-input
                   [ngModel]="store.amountVat()"
                   (ngModelChange)="store.amountVat.set($event)"
                   side="credit"
                   [fractionDigits]="store.currencyDecimals()"
                   inputId="guided-amount-vat"
-                  ariaLabel="Montant TVA" />
+                  ariaLabel="Montant TVA" i18n-ariaLabel="@@accounting.manual-entry.montant.tva.d1afc4f8" />
               </div>
             </div>
             <div class="guided-options">
-              <label><input type="checkbox" [checked]="store.isBalanced()" disabled /> Écriture équilibrée (vérification auto)</label>
-              <label><input type="checkbox" [checked]="store.autoSuggestAccounts()" (change)="store.autoSuggestAccounts.set($any($event.target).checked)" /> Proposition automatique des comptes</label>
-              <label><input type="checkbox" [checked]="store.rememberGuidedPrefs()" (change)="store.rememberGuidedPrefs.set($any($event.target).checked)" /> Mémoriser ces informations</label>
+              <label><input type="checkbox" [checked]="store.isBalanced()" disabled /><ng-container i18n="@@accounting.manual-entry.ecriture.equilibree.verification.auto.255148e6"> Écriture équilibrée (vérification auto)</ng-container></label>
+              <label><input type="checkbox" [checked]="store.autoSuggestAccounts()" (change)="store.autoSuggestAccounts.set($any($event.target).checked)" /><ng-container i18n="@@accounting.manual-entry.proposition.automatique.des.comptes.8776cce0"> Proposition automatique des comptes</ng-container></label>
+              <label><input type="checkbox" [checked]="store.rememberGuidedPrefs()" (change)="store.rememberGuidedPrefs.set($any($event.target).checked)" /><ng-container i18n="@@accounting.manual-entry.memoriser.ces.informations.087e4f98"> Mémoriser ces informations</ng-container></label>
             </div>
             <div class="guided-actions">
-              <button type="button" class="btn btn-outline-secondary" (click)="prevStep()">Précédent</button>
-              <button type="button" class="btn btn-primary" (click)="applyGeneralAndNext()">Suivant</button>
+              <button type="button" class="btn btn-outline-secondary" (click)="prevStep()" i18n="@@accounting.manual-entry.precedent.a527f171">Précédent</button>
+              <button type="button" class="btn btn-primary" (click)="applyGeneralAndNext()" i18n="@@accounting.manual-entry.suivant.596d29a7">Suivant</button>
             </div>
           </section>
         }
@@ -210,18 +210,18 @@ const PAYMENT_METHODS = [
           <app-entry-lines-grid [vatSide]="vatSide()">
           </app-entry-lines-grid>
           <div class="guided-actions">
-            <button type="button" class="btn btn-outline-secondary" (click)="prevStep()">Précédent</button>
-            <button type="button" class="btn btn-outline-secondary" (click)="store.autoBalance()">Vérifier l'équilibre</button>
-            <button type="button" class="btn btn-primary" [disabled]="!store.isBalanced()" (click)="nextStep()">Suivant</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="prevStep()" i18n="@@accounting.manual-entry.precedent.a527f171">Précédent</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="store.autoBalance()" i18n="@@accounting.manual-entry.verifier.l.equilibre.5e8c448c">Vérifier l'équilibre</button>
+            <button type="button" class="btn btn-primary" [disabled]="!store.isBalanced()" (click)="nextStep()" i18n="@@accounting.manual-entry.suivant.596d29a7">Suivant</button>
           </div>
         }
         @case (4) {
           <section class="guided-panel card">
-            <h3>Récapitulatif de l'écriture</h3>
+            <h3 i18n="@@accounting.manual-entry.recapitulatif.de.l.ecriture.cf97dcf0">Récapitulatif de l'écriture</h3>
             <app-entry-summary-panel />
             <div class="guided-actions">
-              <button type="button" class="btn btn-outline-secondary" (click)="prevStep()">Précédent</button>
-              <button type="button" class="btn btn-primary" [disabled]="!store.canSubmit()" (click)="finish.emit()">Enregistrer l'écriture</button>
+              <button type="button" class="btn btn-outline-secondary" (click)="prevStep()" i18n="@@accounting.manual-entry.precedent.a527f171">Précédent</button>
+              <button type="button" class="btn btn-primary" [disabled]="!store.canSubmit()" (click)="finish.emit()" i18n="@@accounting.manual-entry.enregistrer.l.ecriture.8fef0dc9">Enregistrer l'écriture</button>
             </div>
           </section>
         }
@@ -229,7 +229,7 @@ const PAYMENT_METHODS = [
 
       @if (step() === 1 && recentTemplates().length > 0) {
         <aside class="recent-templates card">
-          <h4>Modèles récemment utilisés</h4>
+          <h4 i18n="@@accounting.manual-entry.modeles.recemment.utilises.ada49d50">Modèles récemment utilisés</h4>
           <ul>
             @for (t of recentTemplates(); track t.id) {
               <li><button type="button" class="link-btn" (click)="applyTemplate(t)">{{ t.name }}</button></li>
@@ -250,7 +250,7 @@ const PAYMENT_METHODS = [
     .guided-intro, .guided-banner { font-size:var(--font-size-sm); color:var(--color-text-secondary); margin-bottom:var(--spacing-4); }
     .guided-banner { padding:var(--spacing-3); background:var(--color-primary-50); border-radius:var(--radius-md); }
     .scenario-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:var(--spacing-3); margin-bottom:var(--spacing-4); }
-    .scenario-card { display:flex; flex-direction:column; align-items:flex-start; gap:var(--spacing-2); padding:var(--spacing-4); border:2px solid var(--color-border-default); border-radius:var(--radius-lg); background:var(--color-background-elevated); cursor:pointer; text-align:left; transition:border-color 150ms; }
+    .scenario-card { display:flex; flex-direction:column; align-items:flex-start; gap:var(--spacing-2); padding:var(--spacing-4); border:2px solid var(--color-border-default); border-radius:var(--radius-lg); background:var(--color-background-elevated); cursor:pointer; text-align:start; transition:border-color 150ms; }
     .scenario-card:hover, .scenario-card--selected { border-color:var(--color-primary-500); }
     .scenario-card__desc { font-size:var(--font-size-xs); color:var(--color-text-secondary); }
     .scenario-card__icon { font-size:1.75rem; color:var(--color-success-600); line-height:1; flex-shrink:0; }
@@ -270,6 +270,7 @@ const PAYMENT_METHODS = [
   `
 })
 export class GuidedEntryComponent {
+  readonly loc_ui_tern_scenario_card_icon_8fea02 = "scenario-card__icon ";
   readonly store = inject(EntryFormStore);
   readonly refs = inject(EntryReferenceStore);
   private readonly api = inject(AccountingService);
@@ -287,10 +288,10 @@ export class GuidedEntryComponent {
   readonly scenarios = GUIDED_SCENARIOS;
   readonly paymentMethods = PAYMENT_METHODS;
   readonly steps = [
-    { num: 1 as GuidedStep, label: 'Type d\'écriture' },
-    { num: 2 as GuidedStep, label: 'Informations générales' },
-    { num: 3 as GuidedStep, label: 'Saisie des lignes' },
-    { num: 4 as GuidedStep, label: 'Récapitulatif' }
+    { num: 1 as GuidedStep, label: $localize`:@@accounting.guided-entry.ts.type.d.ecriture.23a10bdd:Type d'écriture` },
+    { num: 2 as GuidedStep, label: $localize`:@@accounting.guided-entry.ts.informations.generales.be6ba6e5:Informations générales` },
+    { num: 3 as GuidedStep, label: $localize`:@@accounting.guided-entry.ts.saisie.des.lignes.b1deca2e:Saisie des lignes` },
+    { num: 4 as GuidedStep, label: $localize`:@@accounting.guided-entry.ts.recapitulatif.d5b5de6d:Récapitulatif` }
   ];
 
   readonly step = signal<GuidedStep>(1);

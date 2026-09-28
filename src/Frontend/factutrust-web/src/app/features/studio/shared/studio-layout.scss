@@ -26,9 +26,9 @@
 
 .studio-toolbar__spacer { flex: 1; }
 .studio-search-input { min-width: 16rem; max-width: 24rem; flex: 1 1 16rem; }
-.studio-num { text-align: right; }
-.studio-actions { text-align: right; white-space: nowrap; }
-.studio-mr { margin-right: var(--spacing-2); color: var(--color-primary-600); }
+.studio-num { text-align: end; }
+.studio-actions { text-align: end; white-space: nowrap; }
+.studio-mr { margin-inline-end: var(--spacing-2); color: var(--color-primary-600); }
 
 .studio-form {
   display: flex;

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -29,41 +30,37 @@ interface EditableLine extends SalesReturnNotePrefillLineDto {
   template: `
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     <app-page-header
-      title="Nouveau bon de retour"
-      subtitle="Document logistique : réintègre le stock et réduit la quantité facturable du BL. Ce n'est pas un avoir.">
-      <app-button variant="secondary" routerLink="/return-notes">Annuler</app-button>
-      <app-button variant="outline" [disabled]="saving() || !canSave()" (clicked)="save(false)">
-        Enregistrer le brouillon
-      </app-button>
+      title="Nouveau bon de retour" i18n-title="@@sales-return-notes.pages.nouveau.bon.de.retour.362bee47"
+      subtitle="Document logistique : réintègre le stock et réduit la quantité facturable du BL. Ce n'est pas un avoir." i18n-subtitle="@@sales-return-notes.pages.document.logistique.reintegre.le.stock.e.ab800030">
+      <app-button variant="secondary" routerLink="/return-notes" i18n="@@sales-return-notes.pages.annuler.49ba3292">Annuler</app-button>
+      <app-button variant="outline" [disabled]="saving() || !canSave()" (clicked)="save(false)" i18n="@@sales-return-notes.pages.enregistrer.le.brouillon.6a319595"> Enregistrer le brouillon </app-button>
       @if (canConfirm()) {
-        <app-button variant="primary" [disabled]="saving() || !canSave()" (clicked)="save(true)">
-          Enregistrer et confirmer
-        </app-button>
+        <app-button variant="primary" [disabled]="saving() || !canSave()" (clicked)="save(true)" i18n="@@sales-return-notes.pages.enregistrer.et.confirmer.cbe52895"> Enregistrer et confirmer </app-button>
       }
     </app-page-header>
 
-    <p class="help">
-      Un bon de retour s'applique uniquement aux articles <strong>livrés et non encore facturés</strong>.
+    <p class="help" i18n="@@sales-return-notes.pages.un.bon.de.retour.s.applique.uniquement.a.5a69b9d7">
+      <ng-container> Un bon de retour s'applique uniquement aux articles </ng-container> <strong>livrés et non encore facturés</strong>.
       Après facture, utilisez un <strong>avoir de vente</strong>.
       Le stock n’est réintégré qu’après confirmation sur la fiche.
     </p>
 
     <section class="card">
-      <label>Bon de livraison éligible</label>
+      <label i18n="@@sales-return-notes.pages.bon.de.livraison.eligible.1a977bce">Bon de livraison éligible</label>
       <select class="form-control" [ngModel]="selectedBlId()" (ngModelChange)="onBlSelected($event)">
-        <option value="">— Choisir un BL livré non facturé —</option>
+        <option value="" i18n="@@sales-return-notes.pages.choisir.un.bl.livre.non.facture.948c909d">— Choisir un BL livré non facturé —</option>
         @for (bl of eligible(); track bl.id) {
-          <option [value]="bl.id">{{ bl.number }} — {{ bl.clientName }} (reste {{ bl.totalInvoiceableQuantity }})</option>
+          <option [value]="bl.id" i18n="@@sales-return-notes.pages.reste.953dfa53">{{ bl.number }} — {{ bl.clientName }} (reste {{ bl.totalInvoiceableQuantity }})</option>
         }
       </select>
     </section>
 
     @if (prefill(); as p) {
       <section class="card">
-        <p><strong>Client :</strong> {{ p.clientName }} · <strong>BL :</strong> {{ p.deliveryNoteNumber }}</p>
-        <label>Date de retour</label>
+        <p><strong i18n="@@sales-return-notes.pages.client.9c5b4ff1">Client :</strong> {{ p.clientName }} · <strong i18n="@@sales-return-notes.pages.bl.4fa58d85">BL :</strong> {{ p.deliveryNoteNumber }}</p>
+        <label i18n="@@sales-return-notes.pages.date.de.retour.f1d5eba0">Date de retour</label>
         <input class="form-control" type="date" [ngModel]="returnDate()" (ngModelChange)="returnDate.set($event)" />
-        <label for="return-reason">Motif (obligatoire)</label>
+        <label for="return-reason" i18n="@@sales-return-notes.pages.motif.obligatoire.14e480c5">Motif (obligatoire)</label>
         <input
           id="return-reason"
           class="form-control"
@@ -73,27 +70,27 @@ interface EditableLine extends SalesReturnNotePrefillLineDto {
           [attr.aria-invalid]="showErrors() && !hasValidReason()"
           [ngModel]="reason()"
           (ngModelChange)="reason.set($event)"
-          placeholder="Ex. marchandise endommagée, erreur de commande" />
+          placeholder="Ex. marchandise endommagée, erreur de commande" i18n-placeholder="@@sales-return-notes.pages.ex.marchandise.endommagee.erreur.de.commande.3bc77544" />
         @if (showErrors() && !hasValidReason()) {
-          <p class="field-error">Indiquez un motif d’au moins 3 caractères.</p>
+          <p class="field-error" i18n="@@sales-return-notes.pages.indiquez.un.motif.d.au.moins.3.caracteres.f93a617f">Indiquez un motif d’au moins 3 caractères.</p>
         }
-        <label>Notes</label>
+        <label i18n="@@sales-return-notes.pages.notes.70440046">Notes</label>
         <textarea class="form-control" rows="2" [ngModel]="notes()" (ngModelChange)="notes.set($event)"></textarea>
       </section>
 
       <section class="card">
-        <h3>Quantités à retourner</h3>
+        <h3 i18n="@@sales-return-notes.pages.quantites.a.retourner.5dc26617">Quantités à retourner</h3>
         @if (showErrors() && !hasPositiveQty()) {
-          <p class="field-error">Saisissez au moins une quantité à retourner.</p>
+          <p class="field-error" i18n="@@sales-return-notes.pages.saisissez.au.moins.une.quantite.a.retourner.d54e588e">Saisissez au moins une quantité à retourner.</p>
         }
         <table class="data-table">
           <thead>
             <tr>
-              <th>Article</th>
-              <th class="text-right">Livré</th>
-              <th class="text-right">Déjà retourné</th>
-              <th class="text-right">Restant</th>
-              <th class="text-right">À retourner</th>
+              <th i18n="@@sales-return-notes.pages.article.4360c2dc">Article</th>
+              <th class="text-right" i18n="@@sales-return-notes.pages.livre.0a1317e9">Livré</th>
+              <th class="text-right" i18n="@@sales-return-notes.pages.deja.retourne.ac47573d">Déjà retourné</th>
+              <th class="text-right" i18n="@@sales-return-notes.pages.restant.8df32592">Restant</th>
+              <th class="text-right" i18n="@@sales-return-notes.pages.a.retourner.84c99781">À retourner</th>
             </tr>
           </thead>
           <tbody>
@@ -121,10 +118,10 @@ interface EditableLine extends SalesReturnNotePrefillLineDto {
     label { display: block; font-weight: 600; margin: 0.75rem 0 0.35rem; }
     .form-control, .qty { width: 100%; padding: 0.45rem 0.6rem; }
     .form-control.invalid { border-color: var(--color-danger-500, #dc2626); }
-    .qty { max-width: 8rem; text-align: right; }
+    .qty { max-width: 8rem; text-align: end; }
     .data-table { width: 100%; border-collapse: collapse; }
     .data-table th, .data-table td { padding: 0.5rem; border-bottom: 1px solid var(--surface-border, #e5e7eb); }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .mono { font-variant-numeric: tabular-nums; }
     .muted { color: var(--text-muted, #64748b); }
     .field-error { margin: 0.35rem 0 0; color: var(--color-danger-600, #dc2626); font-size: 0.875rem; }
@@ -138,9 +135,9 @@ export class SalesReturnNoteFormComponent implements OnInit {
   private readonly auth = inject(AuthService);
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Bons de retour', route: '/return-notes' },
-    { label: 'Nouveau' }
+    { label: $localize`:@@sales-return-notes.sales-return-note-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@sales-return-notes.sales-return-note-form.ts.bons.de.retour.d9f7ad6c:Bons de retour`, route: '/return-notes' },
+    { label: $localize`:@@sales-return-notes.sales-return-note-form.ts.nouveau.b9676c8f:Nouveau` }
   ];
 
   eligible = signal<EligibleDeliveryNoteDto[]>([]);
@@ -199,10 +196,10 @@ export class SalesReturnNoteFormComponent implements OnInit {
     if (!this.canSave()) {
       this.toast.add({
         severity: 'warn',
-        summary: 'Formulaire incomplet',
+        summary: $localize`:@@sales-return-note-form.component.summary.Formulaire_incom:Formulaire incomplet`,
         detail: !this.hasValidReason()
-          ? 'Indiquez un motif d’au moins 3 caractères.'
-          : 'Saisissez au moins une quantité à retourner.'
+          ? $localize`:@@ui.tern.indiquez.un.motif.d.au.moins.3.caracteres.f93a61:Indiquez un motif d’au moins 3 caractères.`
+          : $localize`:@@ui.tern.saisissez.au.moins.une.quantite.a.retourne.d54e58:Saisissez au moins une quantité à retourner.`
       });
       return;
     }
@@ -227,15 +224,15 @@ export class SalesReturnNoteFormComponent implements OnInit {
           this.saving.set(false);
           this.toast.add({
             severity: 'error',
-            summary: 'Enregistrement impossible',
-            detail: res.message || 'Le brouillon n’a pas pu être créé.'
+            summary: $localize`:@@sales-return-note-form.component.summary.Enregistrement_i:Enregistrement impossible`,
+            detail: res.message || $localize`:@@sales-return-notes.sales-return-note-form.ts.le.brouillon.n.a.pas.pu.etre.cree.36627d9b:Le brouillon n’a pas pu être créé.`
           });
           return;
         }
         const id = res.data;
         if (!confirmAfterCreate) {
           this.saving.set(false);
-          this.toast.add({ severity: 'success', summary: 'Brouillon créé', detail: 'Le stock n’est pas encore réintégré.' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@sales-return-note-form.component.summary.Brouillon_cr_:Brouillon créé`, detail: $localize`:@@sales-return-note-form.component.detail.Le_stock_n_est_p:Le stock n’est pas encore réintégré.` });
           this.router.navigate(['/return-notes', id]);
           return;
         }
@@ -245,14 +242,14 @@ export class SalesReturnNoteFormComponent implements OnInit {
             if (confirmRes.success) {
               this.toast.add({
                 severity: 'success',
-                summary: 'Confirmé',
-                detail: 'Stock réintégré, quantité facturable du BL mise à jour.'
+                summary: $localize`:@@sales-return-note-form.component.summary.Confirm_:Confirmé`,
+                detail: $localize`:@@sales-return-note-form.component.detail.Stock_r_int_gr_:Stock réintégré, quantité facturable du BL mise à jour.`
               });
             } else {
               this.toast.add({
                 severity: 'warn',
-                summary: 'Brouillon enregistré, confirmation refusée',
-                detail: confirmRes.message || 'Ouvrez la fiche pour réessayer.'
+                summary: $localize`:@@sales-return-note-form.component.summary.Brouillon_enregi:Brouillon enregistré, confirmation refusée`,
+                detail: confirmRes.message || $localize`:@@sales-return-notes.sales-return-note-form.ts.ouvrez.la.fiche.pour.reessayer.8bd5b0fb:Ouvrez la fiche pour réessayer.`
               });
             }
             this.router.navigate(['/return-notes', id]);
@@ -261,7 +258,7 @@ export class SalesReturnNoteFormComponent implements OnInit {
             this.saving.set(false);
             this.toast.add({
               severity: 'warn',
-              summary: 'Brouillon enregistré, confirmation refusée',
+              summary: $localize`:@@sales-return-note-form.component.summary.Brouillon_enregi:Brouillon enregistré, confirmation refusée`,
               detail: this.apiError(err)
             });
             this.router.navigate(['/return-notes', id]);
@@ -272,7 +269,7 @@ export class SalesReturnNoteFormComponent implements OnInit {
         this.saving.set(false);
         this.toast.add({
           severity: 'error',
-          summary: 'Enregistrement impossible',
+          summary: $localize`:@@sales-return-note-form.component.summary.Enregistrement_i:Enregistrement impossible`,
           detail: this.apiError(err)
         });
       }
@@ -280,7 +277,7 @@ export class SalesReturnNoteFormComponent implements OnInit {
   }
 
   private apiError(err: { error?: { message?: string } }): string {
-    return err?.error?.message || 'Une erreur est survenue. Réessayez.';
+    return err?.error?.message || $localize`:@@sales-return-notes.sales-return-note-form.ts.une.erreur.est.survenue.reessayez.ea88be8d:Une erreur est survenue. Réessayez.`;
   }
 
   private loadPrefill(deliveryNoteId: string): void {
@@ -296,7 +293,7 @@ export class SalesReturnNoteFormComponent implements OnInit {
       error: err => {
         this.toast.add({
           severity: 'error',
-          summary: 'BL non éligible',
+          summary: $localize`:@@sales-return-note-form.component.summary.BL_non_ligible:BL non éligible`,
           detail: this.apiError(err)
         });
       }

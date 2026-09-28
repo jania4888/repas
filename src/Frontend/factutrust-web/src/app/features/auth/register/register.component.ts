@@ -97,6 +97,11 @@ interface TaxRegime {
   styleUrl: './register.component.scss'
 })
 export class RegisterComponent implements OnInit, OnDestroy {
+  protected loc_progression_etape_stephumanindex_sur_39558c(p0: unknown): string {
+    return $localize`:@@auth.register.tpl.progression.etape.stephumanindex.sur.3.39558c7d:Progression : étape ${p0}:stepHumanIndex: sur 3`;
+  }
+  protected readonly loc_force_du_mot_de_passe_de0bbe = $localize`:@@auth.register.tpl.force.du.mot.de.passe.de0bbe05:Force du mot de passe`;
+
   readonly environment = environment;
   readonly shellConfig = REGISTER_AUTH_SHELL_CONFIG;
 
@@ -110,7 +115,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   errorMessageService = inject(ErrorMessageService);
 
   loading = signal(false);
-  loadingMessage = signal('Création de votre espace...');
+  loadingMessage = signal($localize`:@@auth.register.ts.creation.de.votre.espace.07866544:Création de votre espace...`);
   error = signal<string | null>(null);
   currentStep = signal(0);
 
@@ -119,25 +124,25 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   /** Libellé ARIA pour le formulaire multi-étapes (progression + contexte). */
   registrationFormAriaLabel = computed(() => {
-    const stepNames = ['Compte', 'Entreprise', 'Adresse'];
+    const stepNames = [$localize`:@@auth.register.ts.compte.c45740bb:Compte`, $localize`:@@auth.register.ts.entreprise.d03e74b6:Entreprise`, $localize`:@@auth.register.ts.adresse.522e1466:Adresse`];
     const cur = this.currentStep();
-    const prev = cur > 0 ? `Étapes précédentes complétées. ` : '';
-    return `${prev}Étape ${cur + 1} sur 3 : ${stepNames[cur]}.`;
+    const prev = cur > 0 ? $localize`:@@ui.tern.etapes.precedentes.completees.b92c63:Étapes précédentes complétées. ` : '';
+    return $localize`:@@auth.register.ts.prev.etape.p.sur.3.p1.fed1fb4f:${prev}:prev:Étape ${cur + 1}:p: sur 3 : ${stepNames[cur]}:p1:.`;
   });
 
   steps: MenuItem[] = [
-    { label: 'Compte' },
-    { label: 'Entreprise' },
-    { label: 'Adresse' }
+    { label: $localize`:@@auth.register.ts.compte.c45740bb:Compte` },
+    { label: $localize`:@@auth.register.ts.entreprise.d03e74b6:Entreprise` },
+    { label: $localize`:@@auth.register.ts.adresse.522e1466:Adresse` }
   ];
 
   /** Segments de la barre de force (5 critères). */
   readonly strengthSegments: readonly number[] = [1, 2, 3, 4, 5];
 
   taxRegimes: TaxRegime[] = [
-    { label: 'Régime réel', value: 0 },
-    { label: 'Régime forfaitaire', value: 1 },
-    { label: 'Exonéré', value: 2 }
+    { label: $localize`:@@auth.register.ts.regime.reel.ef6ee424:Régime réel`, value: 0 },
+    { label: $localize`:@@auth.register.ts.regime.forfaitaire.a1dc2f7b:Régime forfaitaire`, value: 1 },
+    { label: $localize`:@@auth.register.ts.exonere.5d577ae9:Exonéré`, value: 2 }
   ];
 
   readonly governorates = GOVERNORATE_OPTIONS;
@@ -287,14 +292,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
     // Check password mismatch
     if (this.passwordMismatch()) {
-      this.error.set('Les mots de passe ne correspondent pas');
+      this.error.set($localize`:@@auth.register.ts.les.mots.de.passe.ne.correspondent.pas.c1a3d196:Les mots de passe ne correspondent pas`);
       this.form.get('confirmPassword')?.markAsTouched();
       return;
     }
 
     this.loading.set(true);
     this.error.set(null);
-    this.loadingMessage.set('Création de votre espace...');
+    this.loadingMessage.set($localize`:@@auth.register.ts.creation.de.votre.espace.07866544:Création de votre espace...`);
     this.loadingStartedAt = Date.now();
     this.startLoadingMessageTimer();
 
@@ -356,7 +361,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         if (err instanceof TimeoutError) {
           return throwError(() => ({
             status: 0,
-            message: 'La création du compte prend plus de temps que prévu. Veuillez patienter ou réessayer dans quelques instants.'
+            message: $localize`:@@auth.register.ts.la.creation.du.compte.prend.plus.de.temp.b880214b:La création du compte prend plus de temps que prévu. Veuillez patienter ou réessayer dans quelques instants.`
           }));
         }
         return throwError(() => err);
@@ -369,7 +374,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         } else {
           const errorMessage = response.errors?.length > 0
             ? response.errors.join(', ')
-            : response.message || 'Une erreur est survenue lors de l\'inscription';
+            : response.message || $localize`:@@auth.register.ts.une.erreur.est.survenue.lors.de.l.inscri.c27c4975:Une erreur est survenue lors de l'inscription`;
           this.error.set(errorMessage);
           this.errorHandler.logError('Registration failed (success: false)', { response });
         }
@@ -383,14 +388,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
         if (!errorMessage || errorMessage === 'undefined' || errorMessage.trim() === '' || errorMessage.includes('undefined')) {
           const status = 'status' in err ? err.status : (err as HttpErrorResponse)?.status;
           if (!status) {
-            errorMessage = 'Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur https://localhost:7001.';
+            errorMessage = $localize`:@@auth.register.ts.impossible.de.se.connecter.au.serveur.ve.81a4b133:Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur https://localhost:7001.`;
           } else {
-            errorMessage = `Une erreur est survenue lors de l'inscription (${status || 'erreur inconnue'}). Veuillez réessayer.`;
+            errorMessage = $localize`:@@auth.register.ts.une.erreur.est.survenue.lors.de.l.inscri.12bd2764:Une erreur est survenue lors de l'inscription (${status || 'erreur inconnue'}:p:). Veuillez réessayer.`;
           }
         }
 
         if (!errorMessage || errorMessage === 'undefined') {
-          errorMessage = 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.';
+          errorMessage = $localize`:@@auth.register.ts.une.erreur.est.survenue.lors.de.l.inscri.5876878f:Une erreur est survenue lors de l'inscription. Veuillez réessayer.`;
         }
 
         this.error.set(errorMessage);
@@ -405,11 +410,11 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.loadingMessageTimer = setInterval(() => {
       const elapsed = Date.now() - this.loadingStartedAt;
       if (elapsed < 5_000) {
-        this.loadingMessage.set('Création de votre espace...');
+        this.loadingMessage.set($localize`:@@auth.register.ts.creation.de.votre.espace.07866544:Création de votre espace...`);
       } else if (elapsed < 30_000) {
-        this.loadingMessage.set('Configuration de la base de données, cela peut prendre une minute...');
+        this.loadingMessage.set($localize`:@@auth.register.ts.configuration.de.la.base.de.donnees.cela.6fb93f3b:Configuration de la base de données, cela peut prendre une minute...`);
       } else {
-        this.loadingMessage.set('Finalisation en cours, merci de patienter...');
+        this.loadingMessage.set($localize`:@@auth.register.ts.finalisation.en.cours.merci.de.patienter.d4489dba:Finalisation en cours, merci de patienter...`);
       }
     }, 1_000);
   }

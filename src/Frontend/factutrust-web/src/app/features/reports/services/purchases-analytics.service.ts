@@ -82,13 +82,13 @@ export interface OrdersAnalyticsData {
 }
 
 const MONTH_NAMES_FR = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  $localize`:@@reports.purchases-analytics.ts.janvier.7a32ae0f:Janvier`, $localize`:@@reports.purchases-analytics.ts.fevrier.63fc1803:Février`, $localize`:@@reports.purchases-analytics.ts.mars.1778011d:Mars`, $localize`:@@reports.purchases-analytics.ts.avril.4efeee46:Avril`, $localize`:@@reports.purchases-analytics.ts.mai.afe526a6:Mai`, $localize`:@@reports.purchases-analytics.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@reports.purchases-analytics.ts.juillet.e8e0920c:Juillet`, $localize`:@@reports.purchases-analytics.ts.aout.460b6696:Août`, $localize`:@@reports.purchases-analytics.ts.septembre.08d23f31:Septembre`, $localize`:@@reports.purchases-analytics.ts.octobre.0ed28485:Octobre`, $localize`:@@reports.purchases-analytics.ts.novembre.632580af:Novembre`, $localize`:@@reports.purchases-analytics.ts.decembre.03bcd9b0:Décembre`
 ];
 
 const MONTH_SHORT_FR = [
-  'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin',
-  'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'
+  $localize`:@@reports.purchases-analytics.ts.jan.efed3690:Jan`, $localize`:@@reports.purchases-analytics.ts.fev.7b8852ec:Fév`, $localize`:@@reports.purchases-analytics.ts.mar.c4ba0822:Mar`, $localize`:@@reports.purchases-analytics.ts.avr.d648a3b7:Avr`, $localize`:@@reports.purchases-analytics.ts.mai.afe526a6:Mai`, $localize`:@@reports.purchases-analytics.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@reports.purchases-analytics.ts.juil.190b5d60:Juil`, $localize`:@@reports.purchases-analytics.ts.aout.460b6696:Août`, $localize`:@@reports.purchases-analytics.ts.sep.fdd289e3:Sep`, $localize`:@@reports.purchases-analytics.ts.oct.51327aef:Oct`, $localize`:@@reports.purchases-analytics.ts.nov.bb9bfefd:Nov`, $localize`:@@reports.purchases-analytics.ts.dec.2bc2249a:Déc`
 ];
 
 // ── Service ────────────────────────────────────────────────────────────
@@ -148,16 +148,16 @@ export class PurchasesAnalyticsService {
     const direction: 'up' | 'down' | 'stable' =
       changePercent > 1 ? 'up' : changePercent < -1 ? 'down' : 'stable';
 
-    const periodLabel = period === 'day' ? 'aujourd\'hui' : period === 'month' ? 'ce mois-ci' : 'cette année';
-    const prevLabel = period === 'day' ? 'hier' : period === 'month' ? 'le mois dernier' : 'l\'année dernière';
+    const periodLabel = period === 'day' ? 'aujourd\'hui' : period === 'month' ? $localize`:@@reports.purchases-analytics.ts.ce.mois.ci.f30c2ac7:ce mois-ci` : $localize`:@@reports.purchases-analytics.ts.cette.annee.9909e9db:cette année`;
+    const prevLabel = period === 'day' ? 'hier' : period === 'month' ? $localize`:@@reports.purchases-analytics.ts.le.mois.dernier.15ecb0a2:le mois dernier` : $localize`:@@reports.purchases-analytics.ts.l.annee.derniere.372514a8:l'année dernière`;
 
     let message: string;
     if (direction === 'up') {
-      message = `Vos dépenses ont augmenté de ${Math.abs(changePercent).toFixed(1)} % ${periodLabel} par rapport à ${prevLabel}.`;
+      message = $localize`:@@reports.purchases-analytics.ts.vos.depenses.ont.augmente.de.tofixed.per.9c5d089b:Vos dépenses ont augmenté de ${Math.abs(changePercent).toFixed(1)}:toFixed: % ${periodLabel}:periodLabel: par rapport à ${prevLabel}:prevLabel:.`;
     } else if (direction === 'down') {
-      message = `Vos dépenses ont diminué de ${Math.abs(changePercent).toFixed(1)} % ${periodLabel} par rapport à ${prevLabel}.`;
+      message = $localize`:@@reports.purchases-analytics.ts.vos.depenses.ont.diminue.de.tofixed.peri.8ee99686:Vos dépenses ont diminué de ${Math.abs(changePercent).toFixed(1)}:toFixed: % ${periodLabel}:periodLabel: par rapport à ${prevLabel}:prevLabel:.`;
     } else {
-      message = `Vos dépenses sont stables ${periodLabel} par rapport à ${prevLabel}.`;
+      message = $localize`:@@reports.purchases-analytics.ts.vos.depenses.sont.stables.periodlabel.pa.90f1d63b:Vos dépenses sont stables ${periodLabel}:periodLabel: par rapport à ${prevLabel}:prevLabel:.`;
     }
 
     return { currentValue: current, previousValue: previous, changePercent, changeDirection: direction, message };
@@ -347,8 +347,8 @@ export class PurchasesAnalyticsService {
           alerts.push({
             type: 'danger',
             icon: 'pi-exclamation-circle',
-            title: 'Factures en retard',
-            message: `${overdueInvoices.length} facture(s) en retard concernant ${overdueSuppliers.size} fournisseur(s).`
+            title: $localize`:@@reports.purchases-analytics.ts.factures.en.retard.7fc4c2c8:Factures en retard`,
+            message: $localize`:@@reports.purchases-analytics.ts.length.facture.s.en.retard.concernant.si.4be2dacd:${overdueInvoices.length}:length: facture(s) en retard concernant ${overdueSuppliers.size}:size: fournisseur(s).`
           });
         }
 
@@ -428,16 +428,16 @@ export class PurchasesAnalyticsService {
           alerts.push({
             type: 'warning',
             icon: 'pi-exclamation-triangle',
-            title: 'Taux de conversion faible',
-            message: `Seulement ${conversionRate.toFixed(1)} % de vos bons de commande sont passés en facture. Vérifiez les commandes en attente.`
+            title: $localize`:@@reports.purchases-analytics.ts.taux.de.conversion.faible.eda966dc:Taux de conversion faible`,
+            message: $localize`:@@reports.purchases-analytics.ts.seulement.tofixed.de.vos.bons.de.command.1654c482:Seulement ${conversionRate.toFixed(1)}:toFixed: % de vos bons de commande sont passés en facture. Vérifiez les commandes en attente.`
           });
         }
         if (conversionRate >= 70 && totalOrders > 0) {
           alerts.push({
             type: 'success',
             icon: 'pi-check-circle',
-            title: 'Bon taux de conversion',
-            message: `${conversionRate.toFixed(1)} % de vos bons de commande ont été facturés.`
+            title: $localize`:@@reports.purchases-analytics.ts.bon.taux.de.conversion.209bee0b:Bon taux de conversion`,
+            message: $localize`:@@reports.purchases-analytics.ts.tofixed.de.vos.bons.de.commande.ont.ete.a068af2e:${conversionRate.toFixed(1)}:toFixed: % de vos bons de commande ont été facturés.`
           });
         }
 

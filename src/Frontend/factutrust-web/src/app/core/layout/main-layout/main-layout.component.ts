@@ -131,7 +131,7 @@ import { ProductOnboardingApiService } from '../../onboarding/product-onboarding
         (click)="openAiWorkspaceTab()"
         [hidden]="tourRunning()"
         [attr.inert]="tourRunning() ? '' : null"
-        title="Assistant IA">
+        title="Assistant IA" i18n-title="@@core.layout.main-layout.main-layout.assistant.ia.94f6f208">
         <img
           [src]="aiMarkSrc"
           alt=""
@@ -171,7 +171,7 @@ import { ProductOnboardingApiService } from '../../onboarding/product-onboarding
       overflow-y: auto;
       padding: var(--spacing-6) var(--shell-content-padding-inline);
       background-color: #fff;
-      border-top-left-radius: 16px;
+      border-start-start-radius: 16px;
       box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
     }
 
@@ -217,7 +217,7 @@ import { ProductOnboardingApiService } from '../../onboarding/product-onboarding
 
     .midde_cont.layout-full-width {
       padding: 0;
-      border-top-left-radius: 0;
+      border-start-start-radius: 0;
       box-shadow: none;
     }
 
@@ -233,7 +233,7 @@ import { ProductOnboardingApiService } from '../../onboarding/product-onboarding
     .ai-fab {
       position: fixed;
       bottom: 24px;
-      right: 24px;
+      inset-inline-end: 24px;
       width: 52px;
       height: 52px;
       border-radius: 16px;
@@ -284,7 +284,7 @@ import { ProductOnboardingApiService } from '../../onboarding/product-onboarding
 
       .ai-fab {
         bottom: 16px;
-        right: 16px;
+        inset-inline-end: 16px;
         width: 48px;
         height: 48px;
       }
@@ -457,8 +457,8 @@ export class MainLayoutComponent implements OnInit {
 
   private updateWorkTabTitle(): void {
     const items = this.breadcrumb.items();
-    const last = items.length > 0 ? items[items.length - 1]?.label : 'Accueil';
-    this.aiAssistantShell.setWorkTabTitle(last ?? 'Accueil');
+    const last = items.length > 0 ? items[items.length - 1]?.label : $localize`:@@core.main-layout.ts.accueil.a8ff8fd2:Accueil`;
+    this.aiAssistantShell.setWorkTabTitle(last ?? $localize`:@@ui.tern.accueil.a8ff8f:Accueil`);
   }
 
   private notifyWorkPaneResize(): void {

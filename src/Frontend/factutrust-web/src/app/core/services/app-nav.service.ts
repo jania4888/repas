@@ -7,9 +7,9 @@ import {
   NavSubItem
 } from '@core/config/app-navigation.registry';
 import {
-  DELEGATED_SECTION_LABELS,
+  DELEGATED_SECTION_IDS,
+  FIRM_MANAGED_HIDDEN_SECTION_IDS,
   FIRM_DELEGATED_FOOTER_NAV,
-  FIRM_MANAGED_HIDDEN_SECTION_LABELS,
   FIRM_NATIVE_NAV,
   filterFirmGovernanceNav,
   filterFirmRevisionNav,
@@ -40,9 +40,10 @@ import { StudioApprovalsBadgeService } from '@features/studio/approvals/studio-a
 import { StockFeaturesStore } from '@core/services/stock-features-store.service';
 import { VARIANT_AXES_PATH } from '@features/settings/variant-axes/variant-axes.paths';
 import {
-  ACCOUNTING_FIRM_SECONDARY_EXCLUDED_LABELS,
+  ACCOUNTING_FIRM_SECONDARY_EXCLUDED_IDS,
   SECONDARY_NAV_SECTION_ORDER
 } from '@core/config/secondary-nav.config';
+import { CONTEXT_NAV_ID, getNavId, NAV_ID, STUDIO_CHILD_NAV_ID, studioDynamicNavId } from '@core/config/nav-item-ids';
 
 /**
  * Source unique du graphe de navigation filtré (sidebar + 2e barre).
@@ -115,7 +116,7 @@ export class AppNavService {
     items = filterNavItems(this.auth, items);
     if (!fixedAssetsEnabled) {
       items = items.map(item =>
-        item.children?.length && item.label === 'Comptabilité'
+        item.children?.length && getNavId(item) === NAV_ID.accounting
           ? {
               ...item,
               children: item.children.filter(
@@ -138,17 +139,20 @@ export class AppNavService {
    * - Cabinet natif : vide (pas de sections métier company).
    */
   readonly secondaryNavSections = computed((): NavItem[] => {
+    if (this.auth.isAccountingFirm() && !this.auth.isDelegatedMode()) {
+      return [];
+    }
     if (this.auth.isAccountingFirm() && this.auth.isDelegatedMode()) {
       const moduleSections = filterNavItems(this.auth, buildAccountingModuleNavItems());
       return moduleSections
-        .filter(item => !ACCOUNTING_FIRM_SECONDARY_EXCLUDED_LABELS.has(item.label))
+        .filter(item => !ACCOUNTING_FIRM_SECONDARY_EXCLUDED_IDS.has(getNavId(item)))
         .filter(item => !!item.route || !!item.children?.length);
     }
 
-    const byLabel = new Map(this.navItems().map(item => [item.label, item]));
+    const byId = new Map(this.navItems().map(item => [getNavId(item), item]));
     const sections: NavItem[] = [];
-    for (const label of SECONDARY_NAV_SECTION_ORDER) {
-      const item = byLabel.get(label);
+    for (const sectionId of SECONDARY_NAV_SECTION_ORDER) {
+      const item = byId.get(sectionId);
       if (!item) {
         continue;
       }
@@ -195,13 +199,15 @@ export class AppNavService {
   private buildFirmNativeNav(): NavItem[] {
     const clients = this.activeClients();
     const dossierChildren: NavSubItem[] = clients.slice(0, 8).map(c => ({
+      id: `firm-dossier--${c.companyTenantId}`,
       label: c.companyName,
       route: `/firm/open/${c.companyTenantId}`,
       icon: 'fa-solid fa-building'
     }));
     if (clients.length > 0) {
       dossierChildren.push({
-        label: 'Voir tous les dossiers',
+        id: CONTEXT_NAV_ID.allDossiers,
+        label: $localize`:@@core.app-nav.ts.voir.tous.les.dossiers.1c370e1e:Voir tous les dossiers`,
         route: '/firm/clients',
         icon: 'fa-solid fa-list'
       });
@@ -231,14 +237,15 @@ export class AppNavService {
     const items: NavItem[] = [
       dashboard,
       {
-        label: 'Mes dossiers clients',
+        id: CONTEXT_NAV_ID.myDossiers,
+        label: $localize`:@@core.app-nav.ts.mes.dossiers.clients.7ad4d1c3:Mes dossiers clients`,
         icon: 'fa-solid fa-briefcase',
         children: dossierChildren.length
           ? dossierChildren
           : [{
               label: this.auth.isFirmAccountant()
-                ? 'Aucun dossier affecté'
-                : 'Aucun dossier actif',
+                ? $localize`:@@core.app-nav.ts.aucun.dossier.affecte.48bb6111:Aucun dossier affecté`
+                : $localize`:@@core.app-nav.ts.aucun.dossier.actif.4214c9a3:Aucun dossier actif`,
               route: '/firm/clients',
               icon: 'fa-solid fa-inbox'
             }]
@@ -276,7 +283,7 @@ export class AppNavService {
       this.auth.isAdmin() &&
       !this.auth.isAccountingFirm();
     if (show) return items;
-    return items.filter(i => i.label !== 'Échanges');
+    return items.filter(i => getNavId(i) !== NAV_ID.exchanges);
   }
 
   private filterCompanyAssistanceNav(items: NavItem[]): NavItem[] {
@@ -286,7 +293,7 @@ export class AppNavService {
       !this.auth.isDelegatedMode() &&
       !this.auth.isClientPortal();
     if (show) return items;
-    return items.filter(i => i.label !== 'Assistance');
+    return items.filter(i => getNavId(i) !== NAV_ID.assistance);
   }
 
   private applyAssistanceBadge(items: NavItem[]): NavItem[] {
@@ -301,22 +308,24 @@ export class AppNavService {
   private buildDelegatedNav(): NavItem[] {
     const client = this.firmContext.activeClient();
     let items = filterNavItems(this.auth, ALL_NAV_ITEMS);
-    items = items.filter(i => DELEGATED_SECTION_LABELS.has(i.label));
+    items = items.filter(i => DELEGATED_SECTION_IDS.has(getNavId(i)));
     if (this.auth.isFirmManagedDelegated()) {
-      items = items.filter(i => !FIRM_MANAGED_HIDDEN_SECTION_LABELS.has(i.label));
+      items = items.filter(i => !FIRM_MANAGED_HIDDEN_SECTION_IDS.has(getNavId(i)));
     }
     items = items
       .map(item =>
-        item.children?.length && (item.label === 'Ventes' || item.label === 'Achats')
-          ? { ...item, children: filterDelegatedFirmSectionChildren(item.label, item.children) }
+        item.children?.length && (getNavId(item) === NAV_ID.sales || getNavId(item) === NAV_ID.purchases)
+          ? { ...item, children: filterDelegatedFirmSectionChildren(getNavId(item), item.children) }
           : item
       )
       .filter(item => !item.children?.length || item.children.length > 0);
 
-    const comptaIndex = items.findIndex(i => i.label === 'Comptabilité');
+    const comptaIndex = items.findIndex(i => getNavId(i) === NAV_ID.accounting);
     if (comptaIndex >= 0) {
+      // Remplace la section Comptabilité : même id, pour que les règles par section s'appliquent.
       const comptaHub: NavItem = {
-        label: 'Comptabilité',
+        id: NAV_ID.accounting,
+        label: $localize`:@@core.app-nav.ts.comptabilite.20af7266:Comptabilité`,
         icon: 'fa-solid fa-table-cells-large',
         route: '/accounting/home',
         modules: [AppModule.Accounting],
@@ -332,16 +341,19 @@ export class AppNavService {
     }
 
     const contextHeader: NavItem = {
-      label: client ? `Dossier : ${client.companyName}` : 'Dossier client',
+      id: CONTEXT_NAV_ID.firmDossierHeader,
+      label: client ? $localize`:@@core.app-nav.ts.dossier.companyname.f0a59ef1:Dossier : ${client.companyName}:companyName:` : $localize`:@@core.app-nav.ts.dossier.client.52cd904a:Dossier client`,
       icon: 'fa-solid fa-folder-open',
       children: [
         {
-          label: 'Retour au cabinet',
+          id: CONTEXT_NAV_ID.returnToFirm,
+          label: $localize`:@@core.app-nav.ts.retour.au.cabinet.ea23ac22:Retour au cabinet`,
           icon: 'fa-solid fa-arrow-left',
           action: 'returnToFirm'
         },
         {
-          label: 'Changer de dossier',
+          id: CONTEXT_NAV_ID.changeDossier,
+          label: $localize`:@@core.app-nav.ts.changer.de.dossier.c849871f:Changer de dossier`,
           icon: 'fa-solid fa-right-left',
           action: 'changeDossier'
         }
@@ -364,28 +376,32 @@ export class AppNavService {
   private buildStudioNavSection(): NavItem {
     const children: NavSubItem[] = [
       {
-        label: 'Concepteur de tables',
+        id: STUDIO_CHILD_NAV_ID.tables,
+        label: $localize`:@@core.app-nav.ts.concepteur.de.tables.26aa941d:Concepteur de tables`,
         route: '/studio',
         icon: 'fa-solid fa-screwdriver-wrench',
         modules: [AppModule.Studio],
         permissionsAll: [PERMISSIONS.studio.designEntities]
       },
       {
-        label: 'Formulaires',
+        id: STUDIO_CHILD_NAV_ID.forms,
+        label: $localize`:@@core.app-nav.ts.formulaires.edb3637f:Formulaires`,
         route: '/studio/forms',
         icon: 'fa-solid fa-table-cells-large',
         modules: [AppModule.Studio],
         permissionsAll: [PERMISSIONS.studio.designForms]
       },
       {
-        label: 'Rapports',
+        id: STUDIO_CHILD_NAV_ID.reports,
+        label: $localize`:@@core.app-nav.ts.rapports.db7d9fbb:Rapports`,
         route: '/studio/reports',
         icon: 'fa-solid fa-chart-column',
         modules: [AppModule.Studio],
         permissionsAll: [PERMISSIONS.studio.designReports]
       },
       {
-        label: 'Assistant IA',
+        id: STUDIO_CHILD_NAV_ID.ai,
+        label: $localize`:@@core.app-nav.ts.assistant.ia.94f6f208:Assistant IA`,
         route: '/studio/ai',
         icon: 'fa-solid fa-wand-magic-sparkles',
         modules: [AppModule.Studio],
@@ -394,7 +410,8 @@ export class AppNavService {
       ...(this.studioCapabilities.workflowsEnabled()
         ? ([
             {
-              label: 'Workflows',
+              id: STUDIO_CHILD_NAV_ID.workflows,
+              label: $localize`:@@core.app-nav.ts.workflows.825ce9e9:Workflows`,
               route: '/studio/workflows',
               icon: 'fa-solid fa-route',
               modules: [AppModule.Studio],
@@ -405,7 +422,8 @@ export class AppNavService {
       ...(this.approvalsVisible()
         ? ([
             {
-              label: 'Mes approbations',
+              id: STUDIO_CHILD_NAV_ID.approvals,
+              label: $localize`:@@core.app-nav.ts.mes.approbations.8f2a2f56:Mes approbations`,
               route: '/studio/approvals',
               icon: 'fa-solid fa-inbox',
               modules: [AppModule.Studio],
@@ -415,6 +433,7 @@ export class AppNavService {
           ] satisfies NavSubItem[])
         : []),
       ...this.studioNav.items().map<NavSubItem>(e => ({
+        id: studioDynamicNavId(e.key),
         label: e.label,
         route: e.route.startsWith('/') ? e.route : `/studio/d/${e.key}`,
         icon: e.icon || (e.label.trimStart() !== e.label ? 'fa-solid fa-table' : 'fa-solid fa-folder-tree'),
@@ -422,6 +441,6 @@ export class AppNavService {
         permissionsAll: [PERMISSIONS.customData.recordsRead]
       }))
     ];
-    return { label: 'Studio', icon: 'fa-solid fa-shapes', children };
+    return { id: NAV_ID.studio, label: $localize`:@@core.app-nav.ts.studio.5b23bd71:Studio`, icon: 'fa-solid fa-shapes', children };
   }
 }

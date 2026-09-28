@@ -21,5 +21,5 @@ import { CommonModule } from '@angular/common';
   styleUrl: './studio-layout.scss',
 })
 export class StudioDesignerShellComponent {
-  @Input() previewTitle = 'Aperçu';
+  @Input() previewTitle = $localize`:@@studio.studio-designer-shell.ts.apercu.f0f53004:Aperçu`;
 }

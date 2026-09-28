@@ -9,33 +9,33 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
   standalone: true,
   imports: [CommonModule, MenuModule],
   template: `
-    <div class="toolbar" role="toolbar" aria-label="Actions echeancier fiscal">
-      <button class="icon-button primary" type="button" title="Creer" (click)="create.emit()" [disabled]="!canCreate">
-        <i class="fa-solid fa-plus"></i><span>Creer</span>
+    <div class="toolbar" role="toolbar" aria-label="Actions echeancier fiscal" i18n-aria-label="@@accounting.fiscal-schedule.actions.echeancier.fiscal.cc35e7bf">
+      <button class="icon-button primary" type="button" title="Creer" i18n-title="@@accounting.fiscal-schedule.creer.2bd00521" (click)="create.emit()" [disabled]="!canCreate">
+        <i class="fa-solid fa-plus"></i><span i18n="@@accounting.fiscal-schedule.creer.2bd00521">Creer</span>
       </button>
-      <button class="icon-button" type="button" title="Modifier" (click)="edit.emit()" [disabled]="!canEdit || !hasSelection">
-        <i class="fa-solid fa-pen"></i><span>Modifier</span>
+      <button class="icon-button" type="button" title="Modifier" i18n-title="@@accounting.fiscal-schedule.modifier.f260e757" (click)="edit.emit()" [disabled]="!canEdit || !hasSelection">
+        <i class="fa-solid fa-pen"></i><span i18n="@@accounting.fiscal-schedule.modifier.f260e757">Modifier</span>
       </button>
-      <button class="icon-button danger" type="button" title="Supprimer" (click)="delete.emit()" [disabled]="!canDelete || !hasSelection">
-        <i class="fa-solid fa-trash"></i><span>Supprimer</span>
+      <button class="icon-button danger" type="button" title="Supprimer" i18n-title="@@accounting.fiscal-schedule.supprimer.1acfc1c7" (click)="delete.emit()" [disabled]="!canDelete || !hasSelection">
+        <i class="fa-solid fa-trash"></i><span i18n="@@accounting.fiscal-schedule.supprimer.1acfc1c7">Supprimer</span>
       </button>
-      <button class="icon-button" type="button" title="Actualiser" (click)="refresh.emit()">
-        <i class="fa-solid fa-rotate"></i><span>Actualiser</span>
+      <button class="icon-button" type="button" title="Actualiser" i18n-title="@@accounting.fiscal-schedule.actualiser.9d3b2a7d" (click)="refresh.emit()">
+        <i class="fa-solid fa-rotate"></i><span i18n="@@accounting.fiscal-schedule.actualiser.9d3b2a7d">Actualiser</span>
       </button>
       <div class="menu-wrap">
-        <button class="icon-button" type="button" title="Imprimer" (click)="printMenu.toggle($event)">
-          <i class="fa-solid fa-print"></i><span>Imprimer</span><i class="fa-solid fa-caret-down caret"></i>
+        <button class="icon-button" type="button" title="Imprimer" i18n-title="@@accounting.fiscal-schedule.imprimer.5382c09d" (click)="printMenu.toggle($event)">
+          <i class="fa-solid fa-print"></i><span i18n="@@accounting.fiscal-schedule.imprimer.5382c09d">Imprimer</span><i class="fa-solid fa-caret-down caret"></i>
         </button>
         <p-menu #printMenu [popup]="true" [model]="printItems" appendTo="body"></p-menu>
       </div>
       <div class="menu-wrap">
-        <button class="icon-button" type="button" title="Exporter" (click)="exportMenu.toggle($event)">
-          <i class="fa-solid fa-file-export"></i><span>Exporter</span><i class="fa-solid fa-caret-down caret"></i>
+        <button class="icon-button" type="button" title="Exporter" i18n-title="@@accounting.fiscal-schedule.exporter.0cd84bdc" (click)="exportMenu.toggle($event)">
+          <i class="fa-solid fa-file-export"></i><span i18n="@@accounting.fiscal-schedule.exporter.0cd84bdc">Exporter</span><i class="fa-solid fa-caret-down caret"></i>
         </button>
         <p-menu #exportMenu [popup]="true" [model]="exportItems" appendTo="body"></p-menu>
       </div>
-      <button class="icon-button" type="button" title="Planifier les rappels" (click)="planReminder.emit()" [disabled]="!canCreate || !hasSelection">
-        <i class="fa-regular fa-bell"></i><span>Planifier les rappels</span>
+      <button class="icon-button" type="button" title="Planifier les rappels" i18n-title="@@accounting.fiscal-schedule.planifier.les.rappels.7acb81ad" (click)="planReminder.emit()" [disabled]="!canCreate || !hasSelection">
+        <i class="fa-regular fa-bell"></i><span i18n="@@accounting.fiscal-schedule.planifier.les.rappels.7acb81ad">Planifier les rappels</span>
       </button>
     </div>
   `,
@@ -71,12 +71,12 @@ export class FiscalScheduleToolbarComponent implements OnChanges {
 
   ngOnChanges(_changes: SimpleChanges): void {
     this.printItems = [
-      { label: 'Vue courante', icon: 'fa-solid fa-table', command: () => this.printCurrent.emit() },
-      { label: 'Echeance selectionnee', icon: 'fa-solid fa-file-lines', command: () => this.printSelected.emit(), disabled: !this.hasSelection }
+      { label: $localize`:@@accounting.fiscal-schedule-toolbar.ts.vue.courante.13d0e46e:Vue courante`, icon: 'fa-solid fa-table', command: () => this.printCurrent.emit() },
+      { label: $localize`:@@accounting.fiscal-schedule-toolbar.ts.echeance.selectionnee.c4312235:Echeance selectionnee`, icon: 'fa-solid fa-file-lines', command: () => this.printSelected.emit(), disabled: !this.hasSelection }
     ];
     this.exportItems = [
-      { label: 'CSV filtres courants', icon: 'fa-solid fa-filter', command: () => this.exportFiltered.emit() },
-      { label: 'CSV page courante', icon: 'fa-solid fa-file-csv', command: () => this.exportPage.emit() }
+      { label: $localize`:@@accounting.fiscal-schedule-toolbar.ts.csv.filtres.courants.f0d39d5c:CSV filtres courants`, icon: 'fa-solid fa-filter', command: () => this.exportFiltered.emit() },
+      { label: $localize`:@@accounting.fiscal-schedule-toolbar.ts.csv.page.courante.778f488e:CSV page courante`, icon: 'fa-solid fa-file-csv', command: () => this.exportPage.emit() }
     ];
   }
 }

@@ -56,7 +56,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
         <!-- Header -->
         <div class="panel-header">
           <div class="header-left">
-            <button class="icon-btn" (click)="session.toggleSidebar()" title="Conversations">
+            <button class="icon-btn" (click)="session.toggleSidebar()" title="Conversations" i18n-title="@@ai-assistant.components.conversations.07c59b44">
               <i class="fa-solid fa-clock-rotate-left"></i>
             </button>
             <div class="ai-avatar" aria-hidden="true">
@@ -73,9 +73,9 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                    activeModel reste chargé côté session pour vision et warm-up Ollama. -->
               <div class="ai-status" [class.offline]="session.aiAvailable() === false">
                 <span class="ai-status-dot"></span>
-                <span class="ai-status-text">{{ session.aiAvailable() === false ? 'Hors ligne' : 'Modèle prêt' }}</span>
+                <span class="ai-status-text">{{ session.aiAvailable() === false ? loc_ui_tern_hors_ligne_2b3e7d : loc_ui_tern_modele_pret_0df9a1 }}</span>
                 @if (scopeConfig(); as sc) {
-                  <span class="scope-badge" [attr.title]="'Assistant expert du module — catalogue et persona ' + sc.expertName">
+                  <span class="scope-badge" [attr.title]="loc_ui_tern_assistant_expert_du_module_catalogue_et_pe_a73956 + sc.expertName">
                     <i [class]="sc.icon" aria-hidden="true"></i>
                     {{ sc.expertName }}
                   </span>
@@ -89,27 +89,21 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                 type="button"
                 class="mode-chip"
                 (click)="switchToGlobalAssistant()"
-                title="Revenir à l'assistant global (tous les domaines)">
-                Assistant global
-              </button>
+                title="Revenir à l'assistant global (tous les domaines)" i18n-title="@@ai-assistant.components.revenir.a.l.assistant.global.tous.les.domaines.28083c00" i18n="@@ai-assistant.components.assistant.global.0dc5a3f0"> Assistant global </button>
             } @else {
               <button
                 type="button"
                 class="mode-chip"
                 [class.active]="session.assistantComplianceMode()"
                 (click)="session.setAssistantComplianceMode(!session.assistantComplianceMode())"
-                title="Mode conformité : sous-ensemble d’outils et consignes renforcées">
-                Conformité
-              </button>
+                title="Mode conformité : sous-ensemble d’outils et consignes renforcées" i18n-title="@@ai-assistant.components.mode.conformite.sous.ensemble.d.outils.et.consig.c82156d3" i18n="@@ai-assistant.components.conformite.905cab8c"> Conformité </button>
             }
             @if (session.lastStreamTraceId(); as tid) {
               <button
                 type="button"
                 class="trace-chip"
                 (click)="copyTraceId(tid)"
-                [title]="screenAnalysisTraceTitle()">
-                Trace
-              </button>
+                [title]="screenAnalysisTraceTitle()" i18n="@@ai-assistant.components.trace.2f38169a"> Trace </button>
             }
             <button
               type="button"
@@ -117,10 +111,8 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
               [class.active]="selection.isSelectionMode()"
               (click)="toggleSelectionMode()"
               [attr.aria-pressed]="selection.isSelectionMode()"
-              title="Sélection multi-réponses (export PowerPoint)">
-              Sélection
-            </button>
-            <button class="icon-btn" (click)="onCloseClick()" title="Fermer">
+              title="Sélection multi-réponses (export PowerPoint)" i18n-title="@@ai-assistant.components.selection.multi.reponses.export.powerpoint.8e60cffd" i18n="@@ai-assistant.components.selection.ac0002b0"> Sélection </button>
+            <button class="icon-btn" (click)="onCloseClick()" title="Fermer" i18n-title="@@ai-assistant.components.fermer.5ab4ec64">
               <i class="fa-solid fa-xmark"></i>
             </button>
           </div>
@@ -130,11 +122,11 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
           <div
             class="selection-bar"
             role="toolbar"
-            aria-label="Barre d'actions pour la sélection multi-réponses">
-            <span class="selection-count">
+            aria-label="Barre d'actions pour la sélection multi-réponses" i18n-aria-label="@@ai-assistant.components.barre.d.actions.pour.la.selection.multi.reponses.3ffb0105">
+            <span class="selection-count"><ng-container i18n="@@ai-assistant.components.reponse.s.selectionnee.s.272c8013">
               {{ selection.count() }} réponse(s) sélectionnée(s)
-              @if (selection.atLimit()) {
-                <em class="selection-limit">— limite atteinte</em>
+              </ng-container>@if (selection.atLimit()) {
+                <em class="selection-limit" i18n="@@ai-assistant.components.limite.atteinte.206cd640">— limite atteinte</em>
               }
             </span>
             <div class="selection-actions">
@@ -143,15 +135,13 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                 class="selection-btn"
                 (click)="selection.clear()"
                 [disabled]="!selection.hasSelection()"
-                aria-label="Vider la sélection">
-                Effacer
-              </button>
+                aria-label="Vider la sélection" i18n-aria-label="@@ai-assistant.components.vider.la.selection.834a3e51" i18n="@@ai-assistant.components.effacer.fe23de7b"> Effacer </button>
               <button
                 type="button"
                 class="selection-btn primary"
                 (click)="openExportDialog()"
                 [disabled]="!selection.hasSelection()"
-                aria-label="Exporter en PowerPoint">
+                aria-label="Exporter en PowerPoint" i18n-aria-label="@@ai-assistant.components.exporter.en.powerpoint.1032c468" i18n="@@ai-assistant.components.exporter.powerpoint.c0a138d4">
                 <i class="fa-solid fa-file-powerpoint" aria-hidden="true"></i>
                 Exporter PowerPoint
               </button>
@@ -190,20 +180,20 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                   <h4>{{ welcomeTitle() }}</h4>
                   <p>{{ welcomeDescription() }}</p>
                   @if (!scopeConfig() && session.dailyBriefing(); as b) {
-                    <div class="briefing-card" role="region" aria-label="Aperçu du jour">
-                      <div class="briefing-title">Aperçu du jour</div>
+                    <div class="briefing-card" role="region" aria-label="Aperçu du jour" i18n-aria-label="@@ai-assistant.components.apercu.du.jour.be116976">
+                      <div class="briefing-title" i18n="@@ai-assistant.components.apercu.du.jour.be116976">Aperçu du jour</div>
                       <ul class="briefing-list">
                         <li>
-                          Relances à venir (7 j.) :
+                          <ng-container i18n="@@ai-assistant.components.relances.a.venir.7.j.b31a456b"> Relances à venir (7 j.) : </ng-container>
                           <strong>{{ b.upcomingRemindersCount }}</strong>
                         </li>
-                        <li>
-                          Soldes clients :
+                        <li i18n="@@ai-assistant.components.soldes.clients.comptes.7f786698">
+                          <ng-container> Soldes clients : </ng-container>
                           <strong>{{ b.totalClientBalances | number: '1.3-3' }} {{ b.currency }}</strong>
                           ({{ b.clientsWithBalanceCount }} comptes)
                         </li>
                         <li>
-                          Créances +90 j. :
+                          <ng-container i18n="@@ai-assistant.components.creances.90.j.280f2d0f"> Créances +90 j. : </ng-container>
                           <strong>{{ b.agingOver90 | number: '1.3-3' }}</strong>
                         </li>
                       </ul>
@@ -216,27 +206,25 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                   } @else {
                     <div class="suggestions">
                       @for (s of scopedSuggestions(); track s) {
-                        <button class="suggestion-chip" (click)="session.sendMessage(s)">
+                        <button class="suggestion-chip" lang="fr" dir="auto" (click)="session.sendMessage(s)">
                           {{ s }}
                         </button>
                       }
                     </div>
                   }
-                  <div class="favorite-add" role="group" aria-label="Enregistrer une question favorite">
+                  <div class="favorite-add" role="group" aria-label="Enregistrer une question favorite" i18n-aria-label="@@ai-assistant.components.enregistrer.une.question.favorite.c2d5ac73">
                     <input
                       #favInput
                       type="text"
                       class="favorite-input"
-                      placeholder="Enregistrer une question favorite…"
+                      placeholder="Enregistrer une question favorite…" i18n-placeholder="@@ai-assistant.components.enregistrer.une.question.favorite.bd0517d1"
                       maxlength="500"
                       (keydown.enter)="addFavorite(favInput); $event.preventDefault()" />
-                    <button type="button" class="favorite-save-btn" (click)="addFavorite(favInput)">
-                      Enregistrer
-                    </button>
+                    <button type="button" class="favorite-save-btn" (click)="addFavorite(favInput)" i18n="@@ai-assistant.components.enregistrer.f7c8bcd8"> Enregistrer </button>
                   </div>
                   @if (promptFavorites.favorites().length) {
-                    <div class="favorites-block" role="region" aria-label="Questions enregistrées">
-                      <div class="favorites-title">Questions enregistrées</div>
+                    <div class="favorites-block" role="region" aria-label="Questions enregistrées" i18n-aria-label="@@ai-assistant.components.questions.enregistrees.b4f9d0eb">
+                      <div class="favorites-title" i18n="@@ai-assistant.components.questions.enregistrees.b4f9d0eb">Questions enregistrées</div>
                       @for (f of promptFavorites.favorites(); track f.id) {
                         <div class="favorite-row">
                           <button type="button" class="favorite-chip" (click)="session.sendMessage(f.text)">
@@ -246,9 +234,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                             type="button"
                             class="favorite-remove"
                             (click)="promptFavorites.remove(f.id)"
-                            [attr.aria-label]="'Retirer « ' + f.text.slice(0, 40) + ' »'">
-                            ×
-                          </button>
+                            [attr.aria-label]="loc_ui_tern_retirer_b55802 + f.text.slice(0, 40) + ' »'" i18n="@@ai-assistant.components.text.67fba2f3"> × </button>
                         </div>
                       }
                     </div>
@@ -304,9 +290,9 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
     .chat-panel {
       position: fixed;
       top: 0;
-      right: 0;
+      inset-inline-end: 0;
       bottom: 0;
-      left: 0;
+      inset-inline-start: 0;
       z-index: 1000;
       pointer-events: none;
       opacity: 0;
@@ -357,7 +343,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
 
     .panel-container {
       position: absolute;
-      right: 0;
+      inset-inline-end: 0;
       top: 0;
       bottom: 0;
       width: min(520px, 100vw);
@@ -468,7 +454,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      margin-left: 6px;
+      margin-inline-start: 6px;
       padding: 1px 8px;
       border-radius: 999px;
       font-size: 11px;
@@ -529,7 +515,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
 
     .sidebar-pane {
       width: 240px;
-      border-right: 1px solid var(--color-neutral-200, #e5e7eb);
+      border-inline-end: 1px solid var(--color-neutral-200, #e5e7eb);
       flex-shrink: 0;
       overflow-y: auto;
     }
@@ -619,7 +605,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
       border: 1px solid var(--color-neutral-200, #e5e7eb);
       border-radius: 10px;
       background: #fff;
-      text-align: left;
+      text-align: start;
       font-size: 13px;
       color: var(--color-neutral-700, #374151);
       cursor: pointer;
@@ -665,7 +651,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
       width: 100%;
       max-width: 400px;
       margin-top: 14px;
-      text-align: left;
+      text-align: start;
     }
 
     .favorites-title {
@@ -686,7 +672,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
 
     .favorite-chip {
       flex: 1;
-      text-align: left;
+      text-align: start;
       padding: 6px 10px;
       border-radius: 8px;
       border: 1px solid var(--color-neutral-200, #e5e7eb);
@@ -722,7 +708,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
       border-radius: 12px;
       border: 1px solid var(--color-neutral-200, #e5e7eb);
       background: var(--color-neutral-50, #f9fafb);
-      text-align: left;
+      text-align: start;
     }
 
     .briefing-title {
@@ -736,7 +722,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
 
     .briefing-list {
       margin: 0;
-      padding-left: 1.1rem;
+      padding-inline-start: 1.1rem;
       font-size: 13px;
       color: var(--color-neutral-700, #374151);
       line-height: 1.5;
@@ -792,7 +778,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
     .selection-limit {
       font-style: italic;
       font-weight: 500;
-      margin-left: 4px;
+      margin-inline-start: 4px;
       color: var(--color-warning-700, #92400e);
     }
 
@@ -843,6 +829,10 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
   `]
 })
 export class ChatPanelComponent implements AfterViewInit, OnInit, OnChanges, OnDestroy {
+  readonly loc_ui_tern_hors_ligne_2b3e7d = $localize`:@@ui.tern.hors.ligne.2b3e7d:Hors ligne`;
+  readonly loc_ui_tern_modele_pret_0df9a1 = $localize`:@@ui.tern.modele.pret.0df9a1:Modèle prêt`;
+  readonly loc_ui_tern_assistant_expert_du_module_catalogue_et_pe_a73956 = $localize`:@@ui.tern.assistant.expert.du.module.catalogue.et.pe.a73956:Assistant expert du module — catalogue et persona `;
+  readonly loc_ui_tern_retirer_b55802 = $localize`:@@ui.tern.retirer.b55802:Retirer « `;
   @HostBinding('class.chat-panel-host--fill')
   get hostFillClass(): boolean {
     return this.embedded;
@@ -878,22 +868,22 @@ export class ChatPanelComponent implements AfterViewInit, OnInit, OnChanges, OnD
     () => this.session.agentScope() === AssistantAgentScope.FirmMission
   );
 
-  readonly headerTitle = computed(() => this.scopeConfig()?.title ?? 'Assistant IA InstaFact');
+  readonly headerTitle = computed(() => this.scopeConfig()?.title ?? $localize`:@@ui.tern.assistant.ia.instafact.f7d399:Assistant IA InstaFact`);
 
   readonly welcomeTitle = computed(() => {
     const sc = this.scopeConfig();
-    return sc ? `Bienvenue dans l'${sc.title}` : "Bienvenue dans l'Assistant IA";
+    return sc ? $localize`:@@ui.tern.bienvenue.dans.l.ph.0ff1ca:Bienvenue dans l'${sc.title}:p0:` : $localize`:@@ui.tern.bienvenue.dans.l.assistant.ia.618a15:Bienvenue dans l'Assistant IA`;
   });
 
   readonly welcomeDescription = computed(() => {
     const sc = this.scopeConfig();
     if (!sc) {
-      return 'Posez des questions sur vos données commerciales, financières ou de stock. Quelques exemples :';
+      return $localize`:@@ai-assistant.chat-panel.ts.posez.des.questions.sur.vos.donnees.comm.0a9a5c21:Posez des questions sur vos données commerciales, financières ou de stock. Quelques exemples :`;
     }
     const themed = (sc.suggestionCategories?.length ?? 0) > 0;
     return themed
-      ? `Votre ${sc.expertName} répond aux questions de son domaine. Quelques exemples, classés par thème :`
-      : `Votre ${sc.expertName} répond aux questions de son domaine. Quelques exemples :`;
+      ? $localize`:@@ui.tern.votre.ph.repond.aux.questions.de.son.domai.b85c50:Votre ${sc.expertName}:p0: répond aux questions de son domaine. Quelques exemples, classés par thème :`
+      : $localize`:@@ui.tern.votre.ph.repond.aux.questions.de.son.domai.d94ff9:Votre ${sc.expertName}:p0: répond aux questions de son domaine. Quelques exemples :`;
   });
 
   readonly scopedSuggestions = computed(() => this.scopeConfig()?.suggestions ?? this.suggestions);
@@ -1033,11 +1023,11 @@ export class ChatPanelComponent implements AfterViewInit, OnInit, OnChanges, OnD
 
   screenAnalysisTraceTitle(): string {
     const trace = this.session.lastScreenAnalysisTrace();
-    const base = 'Copier l’identifiant de corrélation (support / logs)';
+    const base = $localize`:@@ai-assistant.chat-panel.ts.copier.l.identifiant.de.correlation.supp.8c60e2eb:Copier l’identifiant de corrélation (support / logs)`;
     if (!trace) {
       return base;
     }
-    return `${base} — écran: ${trace.screenId}, schema: ${trace.schemaVersion}, payload: ${trace.payloadBytes} o${trace.truncated ? ' (tronqué)' : ''}`;
+    return $localize`:@@ai-assistant.chat-panel.ts.base.ecran.screenid.schema.schemaversion.464e5861:${base}:base: — écran: ${trace.screenId}:screenId:, schema: ${trace.schemaVersion}:schemaVersion:, payload: ${trace.payloadBytes}:payloadBytes: o${trace.truncated ? $localize`:@@ui.tern.tronque.d0a5cd: (tronqué)` : ''}:p:`;
   }
 
   /** Stream SSE continues in AiChatSessionService when this panel is destroyed (route change). */
@@ -1144,7 +1134,7 @@ export class ChatPanelComponent implements AfterViewInit, OnInit, OnChanges, OnD
     const conversationId = this.session.activeConversationId() ?? '';
     const conversationTitle = this.session.conversations()
       .find(c => c.id === conversationId)?.title
-      ?? 'Conversation';
+      ?? $localize`:@@ui.tern.conversation.2a20c7:Conversation`;
 
     const previewSource = buildAssistantMarkdownForDisplay(message.content) || message.content;
     const preview = previewSource.replace(/\s+/g, ' ').trim().slice(0, 140);

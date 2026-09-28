@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -39,8 +40,8 @@ interface ContractLineForm extends ContractLinePayloadSource {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      [title]="isEdit() ? 'Modifier le contrat' : 'Nouveau contrat récurrent'"
-      subtitle="Définissez la périodicité, les lignes et les conditions de facturation">
+      [title]="isEdit() ? loc_ui_tern_modifier_le_contrat_2ed431 : loc_ui_tern_nouveau_contrat_recurrent_811d0c"
+      subtitle="Définissez la périodicité, les lignes et les conditions de facturation" i18n-subtitle="@@recurring-contracts.pages.definissez.la.periodicite.les.lignes.et.69faf224">
     </app-page-header>
 
     @if (pageLoading()) {
@@ -51,48 +52,48 @@ interface ContractLineForm extends ContractLinePayloadSource {
       </div>
     } @else {
     <form (ngSubmit)="save()">
-      <app-form-section [number]="1" title="Client et référence" icon="pi-user">
+      <app-form-section [number]="1" title="Client et référence" i18n-title="@@recurring-contracts.pages.client.et.reference.72896cf8" icon="pi-user">
         <div class="grid">
           <label>
-            <span class="field-label required">Client</span>
+            <span class="field-label required" i18n="@@recurring-contracts.pages.client.1bdd79b1">Client</span>
             <select class="ft-input" [(ngModel)]="clientId" name="clientId" required [disabled]="!!quoteId">
-              <option value="">— Sélectionner —</option>
+              <option value="" i18n="@@recurring-contracts.pages.selectionner.7ae1afc7">— Sélectionner —</option>
               @for (c of clients(); track c.id) {
                 <option [value]="c.id">{{ c.name }}</option>
               }
             </select>
             @if (quoteId) {
-              <span class="field-hint">Client et lignes repris du devis d'origine (ajustables avant enregistrement).</span>
+              <span class="field-hint" i18n="@@recurring-contracts.pages.client.et.lignes.repris.du.devis.d.origine.ajust.674eda11">Client et lignes repris du devis d'origine (ajustables avant enregistrement).</span>
             }
           </label>
-          <label>Référence
-            <input class="ft-input" [(ngModel)]="reference" name="reference" placeholder="Référence interne ou client" />
+          <label><ng-container i18n="@@recurring-contracts.pages.reference.f8130bb0">Référence
+            </ng-container><input class="ft-input" [(ngModel)]="reference" name="reference" placeholder="Référence interne ou client" i18n-placeholder="@@recurring-contracts.pages.reference.interne.ou.client.b661bb17" />
           </label>
         </div>
       </app-form-section>
 
-      <app-form-section [number]="2" title="Facturation" icon="pi-calendar">
+      <app-form-section [number]="2" title="Facturation" i18n-title="@@recurring-contracts.pages.facturation.04716c6b" icon="pi-calendar">
         <div class="grid">
-          <label>Périodicité
-            <select class="ft-input" [(ngModel)]="billingFrequency" name="billingFrequency">
-              <option [ngValue]="'Monthly'">Mensuel</option>
-              <option [ngValue]="'Quarterly'">Trimestriel</option>
-              <option [ngValue]="'Annual'">Annuel</option>
+          <label><ng-container i18n="@@recurring-contracts.pages.periodicite.0eb1b4d4">Périodicité
+            </ng-container><select class="ft-input" [(ngModel)]="billingFrequency" name="billingFrequency">
+              <option [ngValue]="'Monthly'" i18n="@@recurring-contracts.pages.mensuel.272c1b22">Mensuel</option>
+              <option [ngValue]="'Quarterly'" i18n="@@recurring-contracts.pages.trimestriel.d6432184">Trimestriel</option>
+              <option [ngValue]="'Annual'" i18n="@@recurring-contracts.pages.annuel.11aad2fa">Annuel</option>
             </select>
           </label>
-          <label>Jour de facturation
-            <input class="ft-input" type="number" min="1" max="31" [(ngModel)]="billingDayOfMonth" name="billingDay" />
+          <label><ng-container i18n="@@recurring-contracts.pages.jour.de.facturation.307796ba">Jour de facturation
+            </ng-container><input class="ft-input" type="number" min="1" max="31" [(ngModel)]="billingDayOfMonth" name="billingDay" />
           </label>
           <label>
-            <span class="field-label required">Date de début</span>
+            <span class="field-label required" i18n="@@recurring-contracts.pages.date.de.debut.706438ab">Date de début</span>
             <input class="ft-input" type="date" [(ngModel)]="startDate" name="startDate" required />
           </label>
-          <label>Date de fin
-            <input class="ft-input" type="date" [(ngModel)]="endDate" name="endDate" />
+          <label><ng-container i18n="@@recurring-contracts.pages.date.de.fin.716a6d8d">Date de fin
+            </ng-container><input class="ft-input" type="date" [(ngModel)]="endDate" name="endDate" />
           </label>
-          <label>Condition de règlement
-            <select class="ft-input" [(ngModel)]="paymentTermTemplateId" name="paymentTermTemplateId">
-              <option [ngValue]="null">— Par défaut —</option>
+          <label><ng-container i18n="@@recurring-contracts.pages.condition.de.reglement.33241b25">Condition de règlement
+            </ng-container><select class="ft-input" [(ngModel)]="paymentTermTemplateId" name="paymentTermTemplateId">
+              <option [ngValue]="null" i18n="@@recurring-contracts.pages.par.defaut.84534de7">— Par défaut —</option>
               @for (pt of paymentTerms(); track pt.id) {
                 <option [ngValue]="pt.id">{{ pt.name }}</option>
               }
@@ -101,92 +102,90 @@ interface ContractLineForm extends ContractLinePayloadSource {
         </div>
       </app-form-section>
 
-      <app-form-section [number]="3" title="Renouvellement" icon="pi-refresh">
+      <app-form-section [number]="3" title="Renouvellement" i18n-title="@@recurring-contracts.pages.renouvellement.5b961f3a" icon="pi-refresh">
         <div class="grid">
           <label class="checkbox-label">
-            <input type="checkbox" [(ngModel)]="autoRenew" name="autoRenew" />
+            <input type="checkbox" [(ngModel)]="autoRenew" name="autoRenew" /><ng-container i18n="@@recurring-contracts.pages.renouvellement.automatique.ebd3fe7f">
             Renouvellement automatique
-          </label>
-          <label>Préavis (jours)
-            <input class="ft-input" type="number" min="0" [(ngModel)]="noticePeriodDays" name="noticePeriodDays" />
+          </ng-container></label>
+          <label><ng-container i18n="@@recurring-contracts.pages.preavis.jours.f309bb60">Préavis (jours)
+            </ng-container><input class="ft-input" type="number" min="0" [(ngModel)]="noticePeriodDays" name="noticePeriodDays" />
           </label>
         </div>
       </app-form-section>
 
-      <app-form-section [number]="4" title="Lignes du contrat" icon="pi-list">
+      <app-form-section [number]="4" title="Lignes du contrat" i18n-title="@@recurring-contracts.pages.lignes.du.contrat.b39acc9e" icon="pi-list">
         @for (line of lines; track $index; let i = $index) {
           <div class="line-card">
             <div class="line-card__head">
-              <label>Type
-                <select class="ft-input" [(ngModel)]="line.lineType" [name]="'lineType' + i">
-                  <option [ngValue]="'FixedRecurring'">Récurrent fixe</option>
-                  <option [ngValue]="'UsageMetered'">À la consommation</option>
-                  <option [ngValue]="'OneTimeSetup'">Frais d'installation</option>
+              <label><ng-container i18n="@@recurring-contracts.pages.type.3deb7456">Type
+                </ng-container><select class="ft-input" [(ngModel)]="line.lineType" [name]="'lineType' + i">
+                  <option [ngValue]="'FixedRecurring'" i18n="@@recurring-contracts.pages.recurrent.fixe.9f36de5c">Récurrent fixe</option>
+                  <option [ngValue]="'UsageMetered'" i18n="@@recurring-contracts.pages.a.la.consommation.a9497352">À la consommation</option>
+                  <option [ngValue]="'OneTimeSetup'" i18n="@@recurring-contracts.pages.frais.d.installation.f39459df">Frais d'installation</option>
                 </select>
               </label>
-              <app-button type="button" variant="ghost" size="sm" icon="pi-trash" (clicked)="removeLine(i)">
-                Supprimer
-              </app-button>
+              <app-button type="button" variant="ghost" size="sm" icon="pi-trash" (clicked)="removeLine(i)" i18n="@@recurring-contracts.pages.supprimer.1acfc1c7"> Supprimer </app-button>
             </div>
             <div class="grid">
-              <label class="span-2">Description
-                <input class="ft-input" placeholder="Description (optionnelle)" [(ngModel)]="line.description" [name]="'desc' + i" />
+              <label class="span-2"><ng-container i18n="@@recurring-contracts.pages.description.55f8ebc8">Description
+                </ng-container><input class="ft-input" placeholder="Description (optionnelle)" i18n-placeholder="@@recurring-contracts.pages.description.optionnelle.27856f3e" [(ngModel)]="line.description" [name]="'desc' + i" />
               </label>
               @if (line.lineType !== 'OneTimeSetup') {
                 <label>
-                  <span class="field-label required">Produit</span>
+                  <span class="field-label required" i18n="@@recurring-contracts.pages.produit.ff673dc2">Produit</span>
                   <select class="ft-input" [(ngModel)]="line.productId" [name]="'product' + i">
-                    <option [ngValue]="null" disabled>— Sélectionner —</option>
+                    <option [ngValue]="null" disabled i18n="@@recurring-contracts.pages.selectionner.7ae1afc7">— Sélectionner —</option>
                     @for (p of products(); track p.id) {
                       <option [ngValue]="p.id">{{ p.code }} — {{ p.name }}</option>
                     }
                   </select>
                 </label>
               }
-              <label>Qté
-                <input class="ft-input" type="number" placeholder="Qté" [(ngModel)]="line.quantity" [name]="'qty' + i" />
+              <label><ng-container i18n="@@recurring-contracts.pages.qte.a4772129">Qté
+                </ng-container><input class="ft-input" type="number" placeholder="Qté" i18n-placeholder="@@recurring-contracts.pages.qte.a4772129" [(ngModel)]="line.quantity" [name]="'qty' + i" />
               </label>
-              <label>Prix unitaire HT
-                <input class="ft-input" type="number" step="0.001" min="0" placeholder="Prix HT" [(ngModel)]="line.unitPriceHT" [name]="'price' + i" />
+              <label><ng-container i18n="@@recurring-contracts.pages.prix.unitaire.ht.bb3f8e39">Prix unitaire HT
+                </ng-container><input class="ft-input" type="number" step="0.001" min="0" placeholder="Prix HT" i18n-placeholder="@@recurring-contracts.pages.prix.ht.362207ca" [(ngModel)]="line.unitPriceHT" [name]="'price' + i" />
               </label>
               <label>TVA %
-                <input class="ft-input" type="number" step="0.001" min="0" placeholder="TVA %" [(ngModel)]="line.vatRate" [name]="'vat' + i" />
+                <input class="ft-input" type="number" step="0.001" min="0" placeholder="TVA %" i18n-placeholder="@@recurring-contracts.pages.tva.b984d709" [(ngModel)]="line.vatRate" [name]="'vat' + i" />
               </label>
               @if (line.lineType === 'UsageMetered') {
                 <label>
-                  <span class="field-label required">Métrique</span>
+                  <span class="field-label required" i18n="@@recurring-contracts.pages.metrique.066ebc60">Métrique</span>
                   <select class="ft-input" [(ngModel)]="line.usageMetricId" [name]="'metric' + i">
-                    <option [ngValue]="null">— Sélectionner —</option>
+                    <option [ngValue]="null" i18n="@@recurring-contracts.pages.selectionner.7ae1afc7">— Sélectionner —</option>
                     @for (m of usageMetrics(); track m.id) {
                       <option [ngValue]="m.id">{{ m.name }} ({{ m.unit }})</option>
                     }
                   </select>
                 </label>
-                <label>Quantité incluse
-                  <input class="ft-input" type="number" min="0" [(ngModel)]="line.includedQuantity" [name]="'includedQty' + i" />
+                <label><ng-container i18n="@@recurring-contracts.pages.quantite.incluse.a142ba58">Quantité incluse
+                  </ng-container><input class="ft-input" type="number" min="0" [(ngModel)]="line.includedQuantity" [name]="'includedQty' + i" />
                 </label>
-                <label>Prix unitaire dépassement HT
-                  <input class="ft-input" type="number" step="0.001" min="0" [(ngModel)]="line.overageUnitPriceHT" [name]="'overagePrice' + i" />
+                <label><ng-container i18n="@@recurring-contracts.pages.prix.unitaire.depassement.ht.dcf9e7f7">Prix unitaire dépassement HT
+                  </ng-container><input class="ft-input" type="number" step="0.001" min="0" [(ngModel)]="line.overageUnitPriceHT" [name]="'overagePrice' + i" />
                 </label>
               }
             </div>
           </div>
         }
-        <app-button type="button" variant="outline" icon="pi-plus" (clicked)="addLine()">Ajouter une ligne</app-button>
+        <app-button type="button" variant="outline" icon="pi-plus" (clicked)="addLine()" i18n="@@recurring-contracts.pages.ajouter.une.ligne.ba241fd4">Ajouter une ligne</app-button>
 
         <app-table-totals-bar [metrics]="totalsMetrics()"></app-table-totals-bar>
       </app-form-section>
 
-      <app-form-section [number]="5" title="Notes" icon="pi-comment">
-        <label>Notes internes
-          <textarea class="ft-input" rows="3" [(ngModel)]="notes" name="notes"></textarea>
+      <app-form-section [number]="5" title="Notes" i18n-title="@@recurring-contracts.pages.notes.70440046" icon="pi-comment">
+        <label><ng-container i18n="@@recurring-contracts.pages.notes.internes.1a81fb4e">Notes internes
+          </ng-container><textarea class="ft-input" rows="3" [(ngModel)]="notes" name="notes"></textarea>
         </label>
       </app-form-section>
 
       <div class="actions">
-        <app-button type="button" variant="outline" [routerLink]="cancelRoute">Annuler</app-button>
+        <app-button type="button" variant="outline" [routerLink]="cancelRoute" i18n="@@recurring-contracts.pages.annuler.49ba3292">Annuler</app-button>
         <app-button type="submit" variant="primary" icon="pi-check" [disabled]="saving() || !canSave">
-          {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+          {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_f7c8bc }}
         </app-button>
       </div>
     </form>
@@ -270,6 +269,10 @@ interface ContractLineForm extends ContractLinePayloadSource {
   `]
 })
 export class ContractFormComponent implements OnInit {
+  readonly loc_ui_tern_modifier_le_contrat_2ed431 = $localize`:@@ui.tern.modifier.le.contrat.2ed431:Modifier le contrat`;
+  readonly loc_ui_tern_nouveau_contrat_recurrent_811d0c = $localize`:@@ui.tern.nouveau.contrat.recurrent.811d0c:Nouveau contrat récurrent`;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
   private readonly service = inject(RecurringContractService);
   private readonly clientService = inject(ClientService);
   private readonly pricingService = inject(PricingService);
@@ -304,9 +307,9 @@ export class ContractFormComponent implements OnInit {
 
   get breadcrumbItems(): BreadcrumbItem[] {
     return [
-      { label: 'Accueil', route: '/', icon: 'pi-home' },
-      { label: 'Contrats récurrents', route: '/recurring-contracts' },
-      { label: this.isEdit() ? 'Modifier le contrat' : 'Nouveau contrat' }
+      { label: $localize`:@@recurring-contracts.contract-form.ts.accueil.a8ff8fd2:Accueil`, route: '/', icon: 'pi-home' },
+      { label: $localize`:@@recurring-contracts.contract-form.ts.contrats.recurrents.e773e54a:Contrats récurrents`, route: '/recurring-contracts' },
+      { label: this.isEdit() ? $localize`:@@ui.tern.modifier.le.contrat.2ed431:Modifier le contrat` : $localize`:@@ui.tern.nouveau.contrat.13fabd:Nouveau contrat` }
     ];
   }
 
@@ -331,10 +334,10 @@ export class ContractFormComponent implements OnInit {
 
   totalsMetrics(): TotalMetric[] {
     return [
-      { label: 'Total HT', value: this.totalHT, format: 'currency', currency: 'TND', icon: 'pi-calculator', tone: 'primary' },
+      { label: $localize`:@@recurring-contracts.contract-form.ts.total.ht.2ca17ae6:Total HT`, value: this.totalHT, format: 'currency', currency: 'TND', icon: 'pi-calculator', tone: 'primary' },
       { label: 'TVA', value: this.totalVAT, format: 'currency', currency: 'TND', icon: 'pi-percentage', tone: 'cyan' },
-      { label: 'Total TTC', value: this.totalHT + this.totalVAT, format: 'currency', currency: 'TND', icon: 'pi-wallet', tone: 'emerald' },
-      { label: 'Estimation mensuelle', value: this.monthlyEstimate, format: 'currency', currency: 'TND', icon: 'pi-sync', tone: 'violet', hint: 'Lignes fixes ramenées au mois' }
+      { label: $localize`:@@recurring-contracts.contract-form.ts.total.ttc.9e80ff7c:Total TTC`, value: this.totalHT + this.totalVAT, format: 'currency', currency: 'TND', icon: 'pi-wallet', tone: 'emerald' },
+      { label: $localize`:@@recurring-contracts.contract-form.ts.estimation.mensuelle.6c79e54e:Estimation mensuelle`, value: this.monthlyEstimate, format: 'currency', currency: 'TND', icon: 'pi-sync', tone: 'violet', hint: $localize`:@@recurring-contracts.contract-form.ts.lignes.fixes.ramenees.au.mois.6efa031c:Lignes fixes ramenées au mois` }
     ];
   }
 
@@ -354,7 +357,7 @@ export class ContractFormComponent implements OnInit {
         error: err => {
           this.pageLoading.set(false);
           this.errorHandler.logError('RecurringContracts: form load', err);
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+          this.toast.add({ severity: 'error', summary: $localize`:@@contract-form.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
           void this.router.navigate(['/recurring-contracts']);
         }
       });
@@ -401,13 +404,13 @@ export class ContractFormComponent implements OnInit {
       this.service.update(this.contractId, payload).subscribe({
         next: () => {
           this.saving.set(false);
-          this.toast.add({ severity: 'success', summary: 'Contrat enregistré', detail: 'Les modifications ont été enregistrées.' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@contract-form.component.summary.Contrat_enregist:Contrat enregistré`, detail: $localize`:@@contract-form.component.detail.Les_modification:Les modifications ont été enregistrées.` });
           void this.router.navigate(['/recurring-contracts', this.contractId!]);
         },
         error: err => {
           this.saving.set(false);
           this.errorHandler.logError('RecurringContracts: update', err);
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+          this.toast.add({ severity: 'error', summary: $localize`:@@contract-form.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
         }
       });
       return;
@@ -417,13 +420,13 @@ export class ContractFormComponent implements OnInit {
       this.service.convertFromQuote(this.quoteId, payload).subscribe({
         next: id => {
           this.saving.set(false);
-          this.toast.add({ severity: 'success', summary: 'Contrat créé', detail: 'Contrat créé depuis le devis.' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@contract-form.component.summary.Contrat_cr_:Contrat créé`, detail: $localize`:@@contract-form.component.detail.Contrat_cr_dep:Contrat créé depuis le devis.` });
           void this.router.navigate(['/recurring-contracts', id]);
         },
         error: err => {
           this.saving.set(false);
           this.errorHandler.logError('RecurringContracts: convertFromQuote', err);
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+          this.toast.add({ severity: 'error', summary: $localize`:@@contract-form.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
         }
       });
       return;
@@ -432,13 +435,13 @@ export class ContractFormComponent implements OnInit {
     this.service.create(payload).subscribe({
       next: id => {
         this.saving.set(false);
-        this.toast.add({ severity: 'success', summary: 'Contrat créé', detail: 'Le brouillon de contrat a été créé.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@contract-form.component.summary.Contrat_cr_:Contrat créé`, detail: $localize`:@@contract-form.component.detail.Le_brouillon_de_:Le brouillon de contrat a été créé.` });
         void this.router.navigate(['/recurring-contracts', id]);
       },
       error: err => {
         this.saving.set(false);
         this.errorHandler.logError('RecurringContracts: create', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-form.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }
@@ -449,24 +452,24 @@ export class ContractFormComponent implements OnInit {
    * du bouton Enregistrer) et par `validate()` (filet de sécurité à la soumission).
    */
   private firstValidationError(): string | null {
-    if (!this.clientId) return 'Sélectionnez un client.';
+    if (!this.clientId) return $localize`:@@recurring-contracts.contract-form.ts.selectionnez.un.client.8fb40ef8:Sélectionnez un client.`;
     if (this.billingDayOfMonth < 1 || this.billingDayOfMonth > 31) {
-      return 'Le jour de facturation doit être compris entre 1 et 31.';
+      return $localize`:@@recurring-contracts.contract-form.ts.le.jour.de.facturation.doit.etre.compris.4880c24e:Le jour de facturation doit être compris entre 1 et 31.`;
     }
-    if (!this.startDate) return 'La date de début est obligatoire.';
+    if (!this.startDate) return $localize`:@@recurring-contracts.contract-form.ts.la.date.de.debut.est.obligatoire.f5872ef0:La date de début est obligatoire.`;
     if (this.endDate && this.endDate < this.startDate) {
-      return 'La date de fin doit être postérieure ou égale à la date de début.';
+      return $localize`:@@recurring-contracts.contract-form.ts.la.date.de.fin.doit.etre.posterieure.ou.79fde34f:La date de fin doit être postérieure ou égale à la date de début.`;
     }
-    if (this.lines.length === 0) return 'Ajoutez au moins une ligne au contrat.';
+    if (this.lines.length === 0) return $localize`:@@recurring-contracts.contract-form.ts.ajoutez.au.moins.une.ligne.au.contrat.ac749562:Ajoutez au moins une ligne au contrat.`;
     for (const line of this.lines) {
       if (line.lineType !== 'OneTimeSetup' && !line.productId) {
         if (this.products().length === 0) {
-          return 'Le catalogue produits est indisponible : impossible d\'enregistrer une ligne sans produit.';
+          return $localize`:@@recurring-contracts.contract-form.ts.le.catalogue.produits.est.indisponible.i.0bc88022:Le catalogue produits est indisponible : impossible d'enregistrer une ligne sans produit.`;
         }
-        return 'Le produit est obligatoire pour chaque ligne (sauf frais d\'installation).';
+        return $localize`:@@recurring-contracts.contract-form.ts.le.produit.est.obligatoire.pour.chaque.l.6b93ce74:Le produit est obligatoire pour chaque ligne (sauf frais d'installation).`;
       }
       if (line.lineType === 'UsageMetered' && !line.usageMetricId) {
-        return 'La métrique est obligatoire pour une ligne à la consommation.';
+        return $localize`:@@recurring-contracts.contract-form.ts.la.metrique.est.obligatoire.pour.une.lig.8cd3c2c1:La métrique est obligatoire pour une ligne à la consommation.`;
       }
     }
     return null;
@@ -481,7 +484,7 @@ export class ContractFormComponent implements OnInit {
   private validate(): boolean {
     const error = this.firstValidationError();
     if (error) {
-      this.toast.add({ severity: 'warn', summary: 'Formulaire incomplet', detail: error });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@contract-form.component.summary.Formulaire_incom:Formulaire incomplet`, detail: error });
       return false;
     }
     return true;

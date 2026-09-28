@@ -20,22 +20,22 @@ import { CnssRemittanceTabComponent } from './cnss-remittance-tab.component';
   ],
   template: `
     <app-page-header
-      title="Déclarations paie"
-      subtitle="DTS CNSS trimestrielle, bordereau mensuel CNSS et certificats de retenue à la source (IRPP/CSS). Seuls les cycles validés ou clôturés sont inclus." />
+      title="Déclarations paie" i18n-title="@@payroll.declarations.declarations.paie.135c2aa8"
+      subtitle="DTS CNSS trimestrielle, bordereau mensuel CNSS et certificats de retenue à la source (IRPP/CSS). Seuls les cycles validés ou clôturés sont inclus." i18n-subtitle="@@payroll.declarations.dts.cnss.trimestrielle.bordereau.mensuel.05d7c7bd" />
 
     <p-tabs class="ft-tabs" [(value)]="activeTabIndex" [lazy]="true">
       <p-tablist>
         <p-tab [value]="0">
           <i class="pi pi-building-columns mr-2"></i>
-          <span>DTS CNSS</span>
+          <span i18n="@@payroll.declarations.dts.cnss.3686f2d1">DTS CNSS</span>
         </p-tab>
         <p-tab [value]="1">
           <i class="pi pi-wallet mr-2"></i>
-          <span>Bordereau CNSS</span>
+          <span i18n="@@payroll.declarations.bordereau.cnss.ab61ae28">Bordereau CNSS</span>
         </p-tab>
         <p-tab [value]="2">
           <i class="pi pi-file-export mr-2"></i>
-          <span>Certificats RS</span>
+          <span i18n="@@payroll.declarations.certificats.rs.2de5cc57">Certificats RS</span>
         </p-tab>
       </p-tablist>
       <p-tabpanels>

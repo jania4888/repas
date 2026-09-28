@@ -4,6 +4,8 @@ import { map, catchError } from 'rxjs/operators';
 import { InvoiceService, InvoiceListItem } from '@core/services/invoice.service';
 import { QuoteService, QuoteListItem } from '@core/services/quote.service';
 import { formatLocalDate } from '@core/utils/date.util';
+import { erpPlural, erpPluralLocale } from '@core/i18n/erp-plural';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 export type ReportPeriod = 'week' | 'month' | 'quarter' | 'year' | 'all';
 
@@ -76,16 +78,16 @@ export interface SalesReportsData {
 }
 
 const MONTH_NAMES_FR = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  $localize`:@@reports.sales-reports.ts.janvier.7a32ae0f:Janvier`, $localize`:@@reports.sales-reports.ts.fevrier.63fc1803:Février`, $localize`:@@reports.sales-reports.ts.mars.1778011d:Mars`, $localize`:@@reports.sales-reports.ts.avril.4efeee46:Avril`, $localize`:@@reports.sales-reports.ts.mai.afe526a6:Mai`, $localize`:@@reports.sales-reports.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@reports.sales-reports.ts.juillet.e8e0920c:Juillet`, $localize`:@@reports.sales-reports.ts.aout.460b6696:Août`, $localize`:@@reports.sales-reports.ts.septembre.08d23f31:Septembre`, $localize`:@@reports.sales-reports.ts.octobre.0ed28485:Octobre`, $localize`:@@reports.sales-reports.ts.novembre.632580af:Novembre`, $localize`:@@reports.sales-reports.ts.decembre.03bcd9b0:Décembre`
 ];
 
 const MONTH_SHORT_FR = [
-  'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin',
-  'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'
+  $localize`:@@reports.sales-reports.ts.jan.efed3690:Jan`, $localize`:@@reports.sales-reports.ts.fev.7b8852ec:Fév`, $localize`:@@reports.sales-reports.ts.mar.c4ba0822:Mar`, $localize`:@@reports.sales-reports.ts.avr.d648a3b7:Avr`, $localize`:@@reports.sales-reports.ts.mai.afe526a6:Mai`, $localize`:@@reports.sales-reports.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@reports.sales-reports.ts.juil.190b5d60:Juil`, $localize`:@@reports.sales-reports.ts.aout.460b6696:Août`, $localize`:@@reports.sales-reports.ts.sep.fdd289e3:Sep`, $localize`:@@reports.sales-reports.ts.oct.51327aef:Oct`, $localize`:@@reports.sales-reports.ts.nov.bb9bfefd:Nov`, $localize`:@@reports.sales-reports.ts.dec.2bc2249a:Déc`
 ];
 
-const DAY_NAMES_FR = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+const DAY_NAMES_FR = ['Lun', $localize`:@@reports.sales-reports.ts.mar.c4ba0822:Mar`, 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
 const CROSS_TAB_YEARS_WINDOW = 5;
 
@@ -277,7 +279,7 @@ export class SalesReportsService {
           return invDate >= dayStart && invDate <= dayEnd;
         }).length;
         result.push({
-          label: dayStart.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'short' }),
+          label: dayStart.toLocaleDateString(erpDateLocale('fr-FR'), { weekday: 'long', day: 'numeric', month: 'short' }),
           labelShort: DAY_NAMES_FR[dayStart.getDay() === 0 ? 6 : dayStart.getDay() - 1],
           revenue,
           invoiceCount,
@@ -309,10 +311,10 @@ export class SalesReportsService {
         }).length;
         const d1 = weekStart.getDate();
         const d2 = weekEnd.getDate();
-        const monthShort = weekStart.toLocaleDateString('fr-FR', { month: 'short' });
+        const monthShort = weekStart.toLocaleDateString(erpDateLocale('fr-FR'), { month: 'short' });
         const labelShort = `${d1}-${d2} ${monthShort}`;
         result.push({
-          label: `Semaine du ${weekStart.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} au ${weekEnd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}`,
+          label: $localize`:@@reports.sales-reports.ts.semaine.du.tolocaledatestring.au.tolocal.f7dcfdfa:Semaine du ${weekStart.toLocaleDateString(erpDateLocale('fr-FR'), { day: 'numeric', month: 'short' })}:toLocaleDateString: au ${weekEnd.toLocaleDateString(erpDateLocale('fr-FR'), { day: 'numeric', month: 'short', year: 'numeric' })}:toLocaleDateString1:`,
           labelShort,
           revenue,
           invoiceCount,
@@ -405,13 +407,27 @@ export class SalesReportsService {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       }).format(amountToCollect);
-      parts.push(`Vous avez ${pendingCount} facture${pendingCount > 1 ? 's' : ''} à encaisser pour ${amountStr} ${currency}.`);
+      parts.push(erpPlural(pendingCount, {
+        zero: $localize`:@@reports.sales-reports.factures.a.encaisser.zero:Vous avez ${pendingCount}:pendingCount: factures à encaisser pour ${amountStr}:amountStr: ${currency}:currency:.`,
+        one: $localize`:@@reports.sales-reports.factures.a.encaisser.one:Vous avez ${pendingCount}:pendingCount: facture à encaisser pour ${amountStr}:amountStr: ${currency}:currency:.`,
+        two: $localize`:@@reports.sales-reports.factures.a.encaisser.two:Vous avez ${pendingCount}:pendingCount: factures à encaisser pour ${amountStr}:amountStr: ${currency}:currency:.`,
+        few: $localize`:@@reports.sales-reports.factures.a.encaisser.few:Vous avez ${pendingCount}:pendingCount: factures à encaisser pour ${amountStr}:amountStr: ${currency}:currency:.`,
+        many: $localize`:@@reports.sales-reports.factures.a.encaisser.many:Vous avez ${pendingCount}:pendingCount: factures à encaisser pour ${amountStr}:amountStr: ${currency}:currency:.`,
+        other: $localize`:@@reports.sales-reports.factures.a.encaisser.other:Vous avez ${pendingCount}:pendingCount: factures à encaisser pour ${amountStr}:amountStr: ${currency}:currency:.`
+      }, erpPluralLocale()));
     }
     if (overdueCount > 0) {
-      parts.push(`${overdueCount} facture${overdueCount > 1 ? 's' : ''} ${overdueCount > 1 ? 'sont' : 'est'} en retard.`);
+      parts.push(erpPlural(overdueCount, {
+        zero: $localize`:@@reports.sales-reports.factures.en.retard.zero:${overdueCount}:overdueCount: factures sont en retard.`,
+        one: $localize`:@@reports.sales-reports.factures.en.retard.one:${overdueCount}:overdueCount: facture est en retard.`,
+        two: $localize`:@@reports.sales-reports.factures.en.retard.two:${overdueCount}:overdueCount: factures sont en retard.`,
+        few: $localize`:@@reports.sales-reports.factures.en.retard.few:${overdueCount}:overdueCount: factures sont en retard.`,
+        many: $localize`:@@reports.sales-reports.factures.en.retard.many:${overdueCount}:overdueCount: factures sont en retard.`,
+        other: $localize`:@@reports.sales-reports.factures.en.retard.other:${overdueCount}:overdueCount: factures sont en retard.`
+      }, erpPluralLocale()));
     }
     if (parts.length === 0) {
-      return 'Toutes vos factures sont à jour.';
+      return $localize`:@@reports.sales-reports.ts.toutes.vos.factures.sont.a.jour.a34df1da:Toutes vos factures sont à jour.`;
     }
     return parts.join(' ');
   }
@@ -444,9 +460,9 @@ export class SalesReportsService {
       : `${crossTab.years[0]} - ${crossTab.years[crossTab.years.length - 1]}`;
     insights.push({
       type: 'period',
-      label: 'Période couverte',
+      label: $localize`:@@reports.sales-reports.ts.periode.couverte.e1083b69:Période couverte`,
       value: periodValue,
-      detail: `${CROSS_TAB_YEARS_WINDOW} dernières années`
+      detail: $localize`:@@reports.sales-reports.ts.cross.tab.years.window.dernieres.annees.a0329585:${CROSS_TAB_YEARS_WINDOW}:CROSS_TAB_YEARS_WINDOW: dernières années`
     });
 
     const monthsWithData = crossTab.columnTotals
@@ -457,15 +473,15 @@ export class SalesReportsService {
       const worst = monthsWithData.reduce((a, b) => (a.total <= b.total ? a : b));
       insights.push({
         type: 'best_month',
-        label: 'Meilleur mois',
+        label: $localize`:@@reports.sales-reports.ts.meilleur.mois.2a7d82b0:Meilleur mois`,
         value: crossTab.monthLabels[best.month],
-        detail: `${fmt(best.total)} ${crossTab.currency} (total cumulé)`
+        detail: $localize`:@@reports.sales-reports.ts.fmt.currency.total.cumule.b3eb82a2:${fmt(best.total)}:fmt: ${crossTab.currency}:currency: (total cumulé)`
       });
       insights.push({
         type: 'worst_month',
-        label: 'Mois le plus faible',
+        label: $localize`:@@reports.sales-reports.ts.mois.le.plus.faible.ca012fe9:Mois le plus faible`,
         value: crossTab.monthLabels[worst.month],
-        detail: `${fmt(worst.total)} ${crossTab.currency} (total cumulé)`
+        detail: $localize`:@@reports.sales-reports.ts.fmt.currency.total.cumule.b3eb82a2:${fmt(worst.total)}:fmt: ${crossTab.currency}:currency: (total cumulé)`
       });
     }
 
@@ -480,9 +496,9 @@ export class SalesReportsService {
       const sign = growth >= 0 ? '+' : '';
       insights.push({
         type: 'yoy_growth',
-        label: `Évolution ${prevYear} → ${lastYear}`,
+        label: $localize`:@@reports.sales-reports.ts.evolution.prevyear.lastyear.af131747:Évolution ${prevYear}:prevYear: → ${lastYear}:lastYear:`,
         value: `${sign}${growth.toFixed(1)}%`,
-        detail: `${fmt(lastTotal)} vs ${fmt(prevTotal)} ${crossTab.currency}`
+        detail: $localize`:@@reports.sales-reports.ts.fmt.vs.fmt1.currency.f10e4d91:${fmt(lastTotal)}:fmt: vs ${fmt(prevTotal)}:fmt1: ${crossTab.currency}:currency:`
       });
     }
 
@@ -497,9 +513,9 @@ export class SalesReportsService {
         .join(', ');
       insights.push({
         type: 'seasonality',
-        label: 'Saisonnalité (top 3 mois)',
+        label: $localize`:@@reports.sales-reports.ts.saisonnalite.top.3.mois.a6c7b50a:Saisonnalité (top 3 mois)`,
         value: seasonalityText,
-        detail: `Part du CA par mois sur les ${CROSS_TAB_YEARS_WINDOW} dernières années`
+        detail: $localize`:@@reports.sales-reports.ts.part.du.ca.par.mois.sur.les.cross.tab.ye.bb7791cd:Part du CA par mois sur les ${CROSS_TAB_YEARS_WINDOW}:CROSS_TAB_YEARS_WINDOW: dernières années`
       });
     }
 

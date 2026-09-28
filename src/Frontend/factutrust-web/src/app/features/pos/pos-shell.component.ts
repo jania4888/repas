@@ -18,7 +18,7 @@ import { AuthService } from '@core/services/auth.service';
     .pos-ai-link {
       position: fixed;
       top: 12px;
-      right: 12px;
+      inset-inline-end: 12px;
       z-index: 1000;
       padding: 0.5rem 0.75rem;
       font-size: var(--font-size-sm, 0.875rem);

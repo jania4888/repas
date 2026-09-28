@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
@@ -12,13 +13,13 @@ import { ToastService } from '@core/services/toast.service';
   imports: [CommonModule, TableModule],
   template: `
     @if (data(); as p) {
-      <h3>Rentabilité (Expected / To invoice / Invoiced)</h3>
-      <p>Marge facturée : <strong>{{ p.marginInvoiced | number:'1.3-3' }} HT</strong></p>
+      <h3 i18n="@@projects.tabs.rentabilite.expected.to.invoice.invoiced.5918894f">Rentabilité (Expected / To invoice / Invoiced)</h3>
+      <p i18n="@@projects.tabs.marge.facturee.ht.8258205d">Marge facturée : <strong>{{ p.marginInvoiced | number:'1.3-3' }} HT</strong></p>
 
-      <h4>Revenus</h4>
+      <h4 i18n="@@projects.tabs.revenus.a08a099a">Revenus</h4>
       <p-table [value]="p.revenues">
         <ng-template pTemplate="header">
-          <tr><th>Catégorie</th><th>Expected</th><th>To invoice</th><th>Invoiced</th></tr>
+          <tr><th i18n="@@projects.tabs.categorie.6b38300a">Catégorie</th><th i18n="@@projects.tabs.expected.6ac87f34">Expected</th><th i18n="@@projects.tabs.to.invoice.1b919714">To invoice</th><th i18n="@@projects.tabs.invoiced.4da40d1d">Invoiced</th></tr>
         </ng-template>
         <ng-template pTemplate="body" let-r>
           <tr>
@@ -30,10 +31,10 @@ import { ToastService } from '@core/services/toast.service';
         </ng-template>
       </p-table>
 
-      <h4>Coûts</h4>
+      <h4 i18n="@@projects.tabs.couts.517e3006">Coûts</h4>
       <p-table [value]="p.costs">
         <ng-template pTemplate="header">
-          <tr><th>Catégorie</th><th>Expected</th><th>To bill</th><th>Billed</th></tr>
+          <tr><th i18n="@@projects.tabs.categorie.6b38300a">Catégorie</th><th i18n="@@projects.tabs.expected.6ac87f34">Expected</th><th i18n="@@projects.tabs.to.bill.a9d72ed0">To bill</th><th i18n="@@projects.tabs.billed.763fe55e">Billed</th></tr>
         </ng-template>
         <ng-template pTemplate="body" let-c>
           <tr>
@@ -45,7 +46,7 @@ import { ToastService } from '@core/services/toast.service';
         </ng-template>
       </p-table>
     } @else {
-      <p>Chargement rentabilité…</p>
+      <p i18n="@@projects.tabs.chargement.rentabilite.3ee275d0">Chargement rentabilité…</p>
     }
   `,
   styles: [`h3, h4 { margin: 1rem 0 .5rem; }`]
@@ -62,7 +63,7 @@ export class ProjectProfitabilityTabComponent implements OnInit {
       next: r => { if (r.success && r.data) this.data.set(r.data); },
       error: e => this.toast.add({
         severity: 'error',
-        summary: 'Rentabilité',
+        summary: $localize`:@@project-profitability.tab.summary.Rentabilit_:Rentabilité`,
         detail: this.errors.extractErrorMessage(e)
       })
     });

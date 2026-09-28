@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,12 +17,12 @@ import { ProjectApiService, ProjectListItem } from '../projects/project-api.serv
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, TableModule, SelectModule, PageHeaderComponent, ButtonComponent],
   template: `
-    <app-page-header title="Mes feuilles de temps" subtitle="Vue grille — alignée Odoo Timesheets">
-      <app-button variant="secondary" routerLink="/timesheets/validation">Validation équipe</app-button>
+    <app-page-header title="Mes feuilles de temps" i18n-title="@@timesheets.my-timesheets.mes.feuilles.de.temps.50923fd1" subtitle="Vue grille — alignée Odoo Timesheets" i18n-subtitle="@@timesheets.my-timesheets.vue.grille.alignee.odoo.timesheets.6995411d">
+      <app-button variant="secondary" routerLink="/timesheets/validation" i18n="@@timesheets.my-timesheets.validation.equipe.104ff195">Validation équipe</app-button>
     </app-page-header>
 
     @if (kpi(); as k) {
-      <div class="kpi-banner" [class.reached]="k.targetReached">
+      <div class="kpi-banner" [class.reached]="k.targetReached" i18n="@@timesheets.my-timesheets.h.h.objectif.facturable.total.periode.h.8e69ad34">
         <strong>{{ k.billableLoggedHours | number:'1.2-2' }} h</strong>
         <span>/ {{ k.targetHours | number:'1.2-2' }} h objectif facturable</span>
         <span class="pct">({{ k.completionPercent | number:'1.0-0' }} %)</span>
@@ -31,7 +32,7 @@ import { ProjectApiService, ProjectListItem } from '../projects/project-api.serv
 
     @if (leaderboard(); as lb) {
       <aside class="leaderboard">
-        <h3>Classement (top 3)</h3>
+        <h3 i18n="@@timesheets.my-timesheets.classement.top.3.d01a1b89">Classement (top 3)</h3>
         <ol>
           @for (e of lb.topThree; track e.userId) {
             <li>{{ e.userName }} — {{ e.completionPercent | number:'1.0-0' }} % ({{ e.billableLoggedHours | number:'1.1-1' }} h)</li>
@@ -44,14 +45,14 @@ import { ProjectApiService, ProjectListItem } from '../projects/project-api.serv
     }
 
     <div class="toolbar">
-      <app-button (clicked)="toggleTimer()">{{ timer() ? 'Stop timer' : 'Start timer' }}</app-button>
+      <app-button (clicked)="toggleTimer()">{{ timer() ? loc_ui_tern_stop_timer_4e04d8 : loc_ui_tern_start_timer_4f207a }}</app-button>
       @if (timer(); as t) {
-        <span class="timer-info">{{ t.projectName }} — depuis {{ t.startedAtUtc | date:'HH:mm' }}</span>
+        <span class="timer-info" i18n="@@timesheets.my-timesheets.depuis.8109461d">{{ t.projectName }} — depuis {{ t.startedAtUtc | date:'HH:mm' }}</span>
       }
-      <label>Période
-        <select [(ngModel)]="periodMode" (ngModelChange)="reload()">
-          <option value="week">Semaine</option>
-          <option value="month">Mois</option>
+      <label><ng-container i18n="@@timesheets.my-timesheets.periode.de2110b7">Période
+        </ng-container><select [(ngModel)]="periodMode" (ngModelChange)="reload()">
+          <option value="week" i18n="@@timesheets.my-timesheets.semaine.33703a8c">Semaine</option>
+          <option value="month" i18n="@@timesheets.my-timesheets.mois.0d304bea">Mois</option>
         </select>
       </label>
     </div>
@@ -60,11 +61,11 @@ import { ProjectApiService, ProjectListItem } from '../projects/project-api.serv
       <p-table [value]="g.rows" [scrollable]="true" styleClass="timesheet-grid">
         <ng-template pTemplate="header">
           <tr>
-            <th>Projet</th>
+            <th i18n="@@timesheets.my-timesheets.projet.a9de3a26">Projet</th>
             @for (d of g.dailyTotals; track d.date) {
               <th>{{ d.date | date:'EEE dd' }}</th>
             }
-            <th>Total</th>
+            <th i18n="@@timesheets.my-timesheets.total.b25928c6">Total</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row>
@@ -78,7 +79,7 @@ import { ProjectApiService, ProjectListItem } from '../projects/project-api.serv
         </ng-template>
         <ng-template pTemplate="footer">
           <tr>
-            <td><strong>Jour</strong></td>
+            <td><strong i18n="@@timesheets.my-timesheets.jour.240ce85d">Jour</strong></td>
             @for (d of g.dailyTotals; track d.date) {
               <td [class]="'cell-' + d.colorCode"><strong>{{ d.hours | number:'1.2-2' }}</strong></td>
             }
@@ -96,12 +97,14 @@ import { ProjectApiService, ProjectListItem } from '../projects/project-api.serv
     }
     .kpi-banner.reached { background: #ecfdf5; border-color: #a7f3d0; }
     .kpi-banner .pct { font-weight: 600; }
-    .kpi-banner .total { margin-left: auto; opacity: .85; }
+    .kpi-banner .total { margin-inline-start: auto; opacity: .85; }
     .leaderboard {
-      float: right; width: 260px; margin: 0 0 1rem 1rem; padding: .75rem;
+      float: right; /* rtl-ok : retourné en arabe par la règle :host-context ci-dessous */
+      width: 260px; margin-block: 0 1rem; margin-inline: 1rem 0; padding: .75rem;
       border: 1px solid var(--color-border-subtle, #e2e8f0); border-radius: 12px;
     }
-    .leaderboard ol { margin: 0; padding-left: 1.2rem; }
+    :host-context([dir='rtl']) .leaderboard { float: left; } /* rtl-ok */
+    .leaderboard ol { margin: 0; padding-inline-start: 1.2rem; }
     .tip { font-size: .85rem; color: #64748b; margin-top: .5rem; }
     .toolbar { display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; }
     .timer-info { font-size: .9rem; color: #475569; }
@@ -111,6 +114,8 @@ import { ProjectApiService, ProjectListItem } from '../projects/project-api.serv
   `]
 })
 export class MyTimesheetsComponent implements OnInit {
+  readonly loc_ui_tern_stop_timer_4e04d8 = $localize`:@@ui.tern.stop.timer.4e04d8:Stop timer`;
+  readonly loc_ui_tern_start_timer_4f207a = $localize`:@@ui.tern.start.timer.4f207a:Start timer`;
   private readonly api = inject(TimesheetApiService);
   private readonly projects = inject(ProjectApiService);
   private readonly toast = inject(ToastService);
@@ -127,7 +132,7 @@ export class MyTimesheetsComponent implements OnInit {
     this.reload();
     this.api.getActiveTimer().subscribe({
       next: r => { if (r.success && r.data) this.timer.set(r.data); },
-      error: e => this.fail(e, 'Chronomètre')
+      error: e => this.fail(e, $localize`:@@timesheets.my-timesheets.ts.chronometre.bd269631:Chronomètre`)
     });
   }
 
@@ -140,7 +145,7 @@ export class MyTimesheetsComponent implements OnInit {
         this.kpi.set(r.data.billingRateKpi ?? null);
         this.leaderboard.set(r.data.leaderboard ?? null);
       },
-      error: e => this.fail(e, 'Feuille de temps')
+      error: e => this.fail(e, $localize`:@@timesheets.my-timesheets.ts.feuille.de.temps.560597f1:Feuille de temps`)
     });
   }
 
@@ -151,28 +156,28 @@ export class MyTimesheetsComponent implements OnInit {
         next: r => {
           if (r.success) {
             this.timer.set(null);
-            this.toast.add({ severity: 'success', summary: 'Chronomètre arrêté' });
+            this.toast.add({ severity: 'success', summary: $localize`:@@my-timesheets.component.summary.Chronom_tre_arr_:Chronomètre arrêté` });
             this.reload();
           }
         },
-        error: e => this.fail(e, 'Arrêt du chronomètre')
+        error: e => this.fail(e, $localize`:@@timesheets.my-timesheets.ts.arret.du.chronometre.452ede41:Arrêt du chronomètre`)
       });
       return;
     }
     this.ensureProjects(() => {
       const project = this.projectList.find(p => p.timesheetsEnabled);
       if (!project) {
-        this.toast.add({ severity: 'warn', summary: 'Aucun projet avec timesheets activés' });
+        this.toast.add({ severity: 'warn', summary: $localize`:@@my-timesheets.component.summary.Aucun_projet_ave:Aucun projet avec timesheets activés` });
         return;
       }
       this.api.startTimer({ projectId: project.id }).subscribe({
         next: r => {
           if (r.success && r.data) {
             this.timer.set(r.data);
-            this.toast.add({ severity: 'success', summary: 'Chronomètre démarré' });
+            this.toast.add({ severity: 'success', summary: $localize`:@@my-timesheets.component.summary.Chronom_tre_d_ma:Chronomètre démarré` });
           }
         },
-        error: e => this.fail(e, 'Démarrage du chronomètre')
+        error: e => this.fail(e, $localize`:@@timesheets.my-timesheets.ts.demarrage.du.chronometre.00c01d6a:Démarrage du chronomètre`)
       });
     });
   }
@@ -186,7 +191,7 @@ export class MyTimesheetsComponent implements OnInit {
           cb();
         }
       },
-      error: e => this.fail(e, 'Projets')
+      error: e => this.fail(e, $localize`:@@timesheets.my-timesheets.ts.projets.b1e8cd4d:Projets`)
     });
   }
 

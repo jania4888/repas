@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -56,6 +57,8 @@ export interface User {
    * field existed — consumers must treat it as optional and fail open (show, don't hide).
    */
   tenantCreatedAtUtc?: string | null;
+  /** UI locale preference (`fr` | `ar`). Absent ⇒ French. */
+  preferredLanguage?: string | null;
 }
 
 /** Codes stables d'avertissement d'inscription (miroir de `RegistrationWarningCodes` côté API). */
@@ -610,8 +613,8 @@ export class AuthService {
 
     this.toast.add({
       severity: 'warn',
-      summary: 'Dossier fermé',
-      detail: "Votre accès à ce dossier client n'est plus actif. Retour à l'espace cabinet."
+      summary: $localize`:@@auth.service.summary.dossierFerme:Dossier fermé`,
+      detail: $localize`:@@auth.service.detail.accesDossierInactif:Votre accès à ce dossier client n'est plus actif. Retour à l'espace cabinet.`
     });
 
     void this.router.navigate(['/firm/dashboard']);

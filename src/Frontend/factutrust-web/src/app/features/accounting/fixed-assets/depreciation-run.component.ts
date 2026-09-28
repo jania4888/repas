@@ -33,58 +33,48 @@ import { AccountingAmountPipe } from '../shared/accounting-amount.pipe';
   ],
   template: `
     <app-page-header
-      title="Dotations immobilisations"
-      subtitle="Comptabiliser les amortissements de l'exercice (écritures 681 / 281 — journal JIM)" />
+      title="Dotations immobilisations" i18n-title="@@accounting.fixed-assets.dotations.immobilisations.a4c57aa0"
+      subtitle="Comptabiliser les amortissements de l'exercice (écritures 681 / 281 — journal JIM)" i18n-subtitle="@@accounting.fixed-assets.comptabiliser.les.amortissements.de.l.ex.0b28d56d" />
 
     <app-accounting-correction-banner />
 
     <div class="card">
-      <p class="hint">
-        Le tableau d'amortissement est généré automatiquement à la mise en service de chaque actif.
-        Si une dotation attendue n'apparaît pas, ouvrez la fiche de l'actif et générez son tableau.
-      </p>
+      <p class="hint" i18n="@@accounting.fixed-assets.le.tableau.d.amortissement.est.genere.automatiqu.e3b052ae"> Le tableau d'amortissement est généré automatiquement à la mise en service de chaque actif.
+        Si une dotation attendue n'apparaît pas, ouvrez la fiche de l'actif et générez son tableau. </p>
       <app-accounting-status-banner
         *ngIf="isOffset()"
-        title="Exercice décalé"
+        title="Exercice décalé" i18n-title="@@accounting.fixed-assets.exercice.decale.e52f5dfd"
         [message]="offsetHint"
         variant="warning" />
       <label>
-        Exercice fiscal
+        <ng-container i18n="@@accounting.fixed-assets.exercice.fiscal.25ea5f92"> Exercice fiscal </ng-container>
         <select class="accounting-filter-input" [(ngModel)]="fiscalYear" [disabled]="loading()">
           <option *ngFor="let opt of fiscalYearOptions()" [ngValue]="opt.key">{{ opt.label }}</option>
         </select>
-        <span class="hint" *ngIf="!settingsLoaded()">Chargement des exercices…</span>
+        <span class="hint" *ngIf="!settingsLoaded()" i18n="@@accounting.fixed-assets.chargement.des.exercices.ade10a7b">Chargement des exercices…</span>
       </label>
       <div class="actions">
-        <app-button variant="primary" type="button" (click)="run()" [disabled]="loading()">
-          Comptabiliser les dotations
-        </app-button>
-        <app-button variant="outline" type="button" icon="pi-download" (click)="exportReport()" [disabled]="loading()">
-          Export Excel dotations
-        </app-button>
-        <app-button variant="secondary" type="button" routerLink="/accounting/fixed-assets">Retour au registre</app-button>
+        <app-button variant="primary" type="button" (click)="run()" [disabled]="loading()" i18n="@@accounting.fixed-assets.comptabiliser.les.dotations.e264ad6f"> Comptabiliser les dotations </app-button>
+        <app-button variant="outline" type="button" icon="pi-download" (click)="exportReport()" [disabled]="loading()" i18n="@@accounting.fixed-assets.export.excel.dotations.b3950169"> Export Excel dotations </app-button>
+        <app-button variant="secondary" type="button" routerLink="/accounting/fixed-assets" i18n="@@accounting.fixed-assets.retour.au.registre.aa646cbf">Retour au registre</app-button>
         <app-button
           variant="secondary"
           type="button"
           routerLink="/accounting/fixed-assets/amortization-table"
-          [queryParams]="{ refresh: 1 }">
-          Voir tableau amortissements
-        </app-button>
-        <app-button variant="secondary" type="button" icon="pi pi-cog" routerLink="/accounting/fixed-assets/settings">
-          Paramètres d'exercice
-        </app-button>
+          [queryParams]="{ refresh: 1 }" i18n="@@accounting.fixed-assets.voir.tableau.amortissements.52f1668b"> Voir tableau amortissements </app-button>
+        <app-button variant="secondary" type="button" icon="pi pi-cog" routerLink="/accounting/fixed-assets/settings" i18n="@@accounting.fixed-assets.parametres.d.exercice.7fa4b6fc"> Paramètres d'exercice </app-button>
       </div>
     </div>
 
     <app-accounting-status-banner [message]="error() ?? ''" variant="error" *ngIf="error()" />
 
     <div class="card result" *ngIf="result()">
-      <h3>Résultat — exercice {{ resultLabel() }}</h3>
+      <h3 i18n="@@accounting.fixed-assets.resultat.exercice.ff1bbdd3">Résultat — exercice {{ resultLabel() }}</h3>
       <p *ngIf="rerunMessage() as msg"><strong>{{ msg }}</strong></p>
       <ng-container *ngIf="!rerunMessage()">
-        <p><strong>Dotations comptabilisées :</strong> {{ result()!.postedCount }}</p>
-        <p><strong>Ignorées / en erreur :</strong> {{ result()!.skippedCount }}</p>
-        <p><strong>Total dotations :</strong> {{ result()!.totalDepreciationAmount | accountingAmount }}</p>
+        <p><strong i18n="@@accounting.fixed-assets.dotations.comptabilisees.c94eb1ab">Dotations comptabilisées :</strong> {{ result()!.postedCount }}</p>
+        <p><strong i18n="@@accounting.fixed-assets.ignorees.en.erreur.ced67bdb">Ignorées / en erreur :</strong> {{ result()!.skippedCount }}</p>
+        <p><strong i18n="@@accounting.fixed-assets.total.dotations.91dee0b7">Total dotations :</strong> {{ result()!.totalDepreciationAmount | accountingAmount }}</p>
         <ul *ngIf="result()!.errors?.length">
           <li *ngFor="let e of result()!.errors">{{ e }}</li>
         </ul>
@@ -135,8 +125,7 @@ export class DepreciationRunComponent implements OnInit {
   readonly isOffset = computed(() => this.settings().fiscalYearStartMonth !== 1);
 
   readonly offsetHint =
-    "Le dossier est en exercice décalé : les dotations sont rattachées à l'exercice sélectionné " +
-    "(clé = année de début). Le Grand-Livre reste en année civile (limitation transitoire).";
+    $localize`:@@accounting.depreciation-run.ts.le.dossier.est.en.exercice.decale.les.do.0c4f8f70:Le dossier est en exercice décalé : les dotations sont rattachées à l'exercice sélectionné (clé = année de début). Le Grand-Livre reste en année civile (limitation transitoire).`;
 
   /** Liste des exercices proposés au sélecteur (calculée côté client depuis le paramétrage). */
   readonly fiscalYearOptions = computed<FiscalYearOption[]>(() => {
@@ -160,7 +149,7 @@ export class DepreciationRunComponent implements OnInit {
     if (!r) return null;
     const alreadyPosted = r.alreadyPostedCount ?? 0;
     if (r.postedCount === 0 && alreadyPosted > 0) {
-      return `Aucune nouvelle dotation — ${alreadyPosted} dotation(s) déjà comptabilisée(s) pour cet exercice.`;
+      return $localize`:@@accounting.depreciation-run.ts.aucune.nouvelle.dotation.alreadyposted.d.9441df74:Aucune nouvelle dotation — ${alreadyPosted}:alreadyPosted: dotation(s) déjà comptabilisée(s) pour cet exercice.`;
     }
     return null;
   });
@@ -213,7 +202,7 @@ export class DepreciationRunComponent implements OnInit {
         this.loading.set(false);
       },
       error: err => {
-        this.error.set(err?.error?.message ?? 'Erreur lors de la comptabilisation des dotations.');
+        this.error.set(err?.error?.message ?? $localize`:@@ui.tern.erreur.lors.de.la.comptabilisation.des.dot.fc608d:Erreur lors de la comptabilisation des dotations.`);
         this.loading.set(false);
       }
     });
@@ -234,7 +223,7 @@ export class DepreciationRunComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(err?.error?.message ?? 'Erreur export Excel.');
+        this.error.set(err?.error?.message ?? $localize`:@@ui.tern.erreur.export.excel.dd1ee1:Erreur export Excel.`);
       }
     });
   }

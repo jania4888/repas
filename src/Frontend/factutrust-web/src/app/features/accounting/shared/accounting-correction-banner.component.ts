@@ -10,10 +10,8 @@ import { ActivatedRoute, Router } from '@angular/router';
     @if (returnUrl) {
       <div class="acct-correction-banner" role="note">
         <i class="pi pi-compass" aria-hidden="true"></i>
-        <span>Correction guidée depuis le contrôle d'intégrité.</span>
-        <button type="button" class="acct-correction-banner__btn" (click)="goBack()">
-          Retour au contrôle
-        </button>
+        <span i18n="@@accounting.shared.correction.guidee.depuis.le.controle.d.integrite.6cdda52d">Correction guidée depuis le contrôle d'intégrité.</span>
+        <button type="button" class="acct-correction-banner__btn" (click)="goBack()" i18n="@@accounting.shared.retour.au.controle.d839261e"> Retour au contrôle </button>
       </div>
     }
   `,
@@ -32,7 +30,7 @@ import { ActivatedRoute, Router } from '@angular/router';
       font-size: var(--font-size-sm);
     }
     .acct-correction-banner__btn {
-      margin-left: auto;
+      margin-inline-start: auto;
       padding: 0.35rem 0.75rem;
       border-radius: var(--radius-md);
       border: 1px solid var(--color-info-300, #93c5fd);

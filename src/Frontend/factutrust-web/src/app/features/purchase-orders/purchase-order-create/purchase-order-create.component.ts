@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
@@ -49,28 +50,26 @@ interface OrderLine {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Nouveau bon de commande"
-      subtitle="Créez une commande fournisseur en sélectionnant les produits et quantités.">
+      title="Nouveau bon de commande" i18n-title="@@purchase-orders.purchase-order-create.nouveau.bon.de.commande.589cb8eb"
+      subtitle="Créez une commande fournisseur en sélectionnant les produits et quantités." i18n-subtitle="@@purchase-orders.purchase-order-create.creez.une.commande.fournisseur.en.select.800125ed">
       <app-button 
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/purchase-orders">
-        Annuler
-      </app-button>
+        routerLink="/purchase-orders" i18n="@@purchase-orders.purchase-order-create.annuler.49ba3292"> Annuler </app-button>
     </app-page-header>
 
     <div class="form-grid">
       <!-- Section 1: Informations générales -->
-      <app-form-section title="Informations générales" icon="pi-building" [number]="1">
+      <app-form-section title="Informations générales" i18n-title="@@purchase-orders.purchase-order-create.informations.generales.be6ba6e5" icon="pi-building" [number]="1">
         <div class="form-group">
-          <label for="supplier">Fournisseur <span class="required">*</span></label>
+          <label for="supplier"><ng-container i18n="@@purchase-orders.purchase-order-create.fournisseur.97d91d89">Fournisseur </ng-container> <span class="required" i18n="@@purchase-orders.purchase-order-create.text.df58248c">*</span></label>
           <p-select
             id="supplier"
             [options]="suppliers()"
             [(ngModel)]="selectedSupplier"
             optionLabel="name"
-            placeholder="Sélectionnez un fournisseur"
+            placeholder="Sélectionnez un fournisseur" i18n-placeholder="@@purchase-orders.purchase-order-create.selectionnez.un.fournisseur.7351a0fb"
             [filter]="true"
             filterBy="name"
             [showClear]="true"
@@ -80,7 +79,7 @@ interface OrderLine {
 
         <div class="form-row">
           <div class="form-group">
-            <label for="orderDate">Date de commande <span class="required">*</span></label>
+            <label for="orderDate"><ng-container i18n="@@purchase-orders.purchase-order-create.date.de.commande.f9b0df86">Date de commande </ng-container> <span class="required" i18n="@@purchase-orders.purchase-order-create.text.df58248c">*</span></label>
             <p-datepicker
               id="orderDate"
               [(ngModel)]="orderDate"
@@ -91,7 +90,7 @@ interface OrderLine {
           </div>
 
           <div class="form-group">
-            <label for="deliveryDate">Date de livraison prévue</label>
+            <label for="deliveryDate" i18n="@@purchase-orders.purchase-order-create.date.de.livraison.prevue.3ea95a1d">Date de livraison prévue</label>
             <p-datepicker
               id="deliveryDate"
               [(ngModel)]="expectedDeliveryDate"
@@ -104,53 +103,51 @@ interface OrderLine {
         </div>
 
         <div class="form-group">
-          <label for="reference">Référence fournisseur</label>
+          <label for="reference" i18n="@@purchase-orders.purchase-order-create.reference.fournisseur.5fbc4823">Référence fournisseur</label>
           <input
             pInputText
             id="reference"
             [(ngModel)]="reference"
-            placeholder="Ex: DEV-2024-001"
+            placeholder="Ex: DEV-2024-001" i18n-placeholder="@@purchase-orders.purchase-order-create.ex.dev.2024.001.9e0e07b8"
             class="w-full">
         </div>
       </app-form-section>
 
       <!-- Section 2: Notes & Entrepôt -->
-      <app-form-section title="Notes et entrepôt" icon="pi-file-edit" [number]="2" class="notes-card">
+      <app-form-section title="Notes et entrepôt" i18n-title="@@purchase-orders.purchase-order-create.notes.et.entrepot.89df1c38" icon="pi-file-edit" [number]="2" class="notes-card">
         <div class="form-group">
-          <label for="notes">Notes internes</label>
+          <label for="notes" i18n="@@purchase-orders.purchase-order-create.notes.internes.1a81fb4e">Notes internes</label>
           <textarea
             pTextarea
             id="notes"
             [(ngModel)]="notes"
-            placeholder="Notes internes pour cette commande..."
+            placeholder="Notes internes pour cette commande..." i18n-placeholder="@@purchase-orders.purchase-order-create.notes.internes.pour.cette.commande.2507da2c"
             [rows]="4"
             class="w-full">
           </textarea>
-          <small class="form-hint">Non visibles par le fournisseur.</small>
+          <small class="form-hint" i18n="@@purchase-orders.purchase-order-create.non.visibles.par.le.fournisseur.03ee7227">Non visibles par le fournisseur.</small>
         </div>
         <div class="form-group" style="margin-top: 1rem;">
           <app-warehouse-selector
-            label="Entrepôt de réception"
-            placeholder="Entrepôt par défaut"
+            label="Entrepôt de réception" i18n-label="@@purchase-orders.purchase-order-create.entrepot.de.reception.e8cfc9df"
+            placeholder="Entrepôt par défaut" i18n-placeholder="@@purchase-orders.purchase-order-create.entrepot.par.defaut.5dc0b8c6"
             [value]="selectedWarehouseId"
             (valueChange)="selectedWarehouseId = $event">
           </app-warehouse-selector>
-          <small class="form-hint">Entrepôt dans lequel la marchandise sera réceptionnée (optionnel)</small>
+          <small class="form-hint" i18n="@@purchase-orders.purchase-order-create.entrepot.dans.lequel.la.marchandise.sera.recepti.09418c89">Entrepôt dans lequel la marchandise sera réceptionnée (optionnel)</small>
         </div>
       </app-form-section>
     </div>
 
     <!-- Section 3: Lignes de commande (full width) -->
-    <app-form-section title="Lignes de commande" icon="pi-list" [number]="3" class="lines-section">
+    <app-form-section title="Lignes de commande" i18n-title="@@purchase-orders.purchase-order-create.lignes.de.commande.ca1d2a94" icon="pi-list" [number]="3" class="lines-section">
       <div class="section-header-actions">
         <app-button variant="secondary" icon="pi-plus" iconPos="left" size="sm"
-          (click)="addLine()">
-          Ajouter une ligne
-        </app-button>
+          (click)="addLine()" i18n="@@purchase-orders.purchase-order-create.ajouter.une.ligne.ba241fd4"> Ajouter une ligne </app-button>
         @if (barcodeScanEnabled) {
           <div class="barcode-scan-row">
             <ft-barcode-scan-field
-              placeholder="Scanner un code-barres pour ajouter une ligne"
+              placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="@@purchase-orders.purchase-order-create.scanner.un.code.barres.pour.ajouter.une.ligne.3525ced5"
               [autoFocus]="false"
               (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
           </div>
@@ -160,19 +157,19 @@ interface OrderLine {
       @if (lines.length === 0) {
         <div class="empty-lines">
           <i class="pi pi-inbox"></i>
-          <p>Aucune ligne ajoutée. Cliquez sur "Ajouter une ligne" pour commencer.</p>
+          <p i18n="@@purchase-orders.purchase-order-create.aucune.ligne.ajoutee.cliquez.sur.ajouter.une.lig.6e62345a">Aucune ligne ajoutée. Cliquez sur "Ajouter une ligne" pour commencer.</p>
         </div>
       } @else {
         <div class="lines-table">
           <table>
             <thead>
               <tr>
-                <th style="width: 40px">#</th>
-                <th>Produit <span class="required">*</span></th>
-                <th style="width: 120px">Quantité <span class="required">*</span></th>
-                <th style="width: 140px">Prix unitaire HT</th>
-                <th style="width: 80px">TVA</th>
-                <th style="width: 140px">Total TTC</th>
+                <th style="width: 40px" i18n="@@purchase-orders.purchase-order-create.text.d08f88df">#</th>
+                <th><ng-container i18n="@@purchase-orders.purchase-order-create.produit.ff673dc2">Produit </ng-container> <span class="required" i18n="@@purchase-orders.purchase-order-create.text.df58248c">*</span></th>
+                <th style="width: 120px"><ng-container i18n="@@purchase-orders.purchase-order-create.quantite.09a38fda">Quantité </ng-container> <span class="required" i18n="@@purchase-orders.purchase-order-create.text.df58248c">*</span></th>
+                <th style="width: 140px" i18n="@@purchase-orders.purchase-order-create.prix.unitaire.ht.bb3f8e39">Prix unitaire HT</th>
+                <th style="width: 80px" i18n="@@purchase-orders.purchase-order-create.tva.fb62cb5d">TVA</th>
+                <th style="width: 140px" i18n="@@purchase-orders.purchase-order-create.total.ttc.9e80ff7c">Total TTC</th>
                 <th style="width: 50px"></th>
               </tr>
             </thead>
@@ -185,7 +182,7 @@ interface OrderLine {
                       [options]="products()"
                       [(ngModel)]="line.product"
                       optionLabel="name"
-                      placeholder="Sélectionnez un produit"
+                      placeholder="Sélectionnez un produit" i18n-placeholder="@@purchase-orders.purchase-order-create.selectionnez.un.produit.fec907fb"
                       [filter]="true"
                       filterBy="name,code"
                       [showClear]="false"
@@ -232,7 +229,7 @@ interface OrderLine {
                   </td>
                   <td class="text-center">
                     <button class="remove-btn" (click)="removeLine($index)"
-                      aria-label="Supprimer la ligne">
+                      aria-label="Supprimer la ligne" i18n-aria-label="@@purchase-orders.purchase-order-create.supprimer.la.ligne.17611368">
                       <i class="pi pi-trash"></i>
                     </button>
                   </td>
@@ -245,18 +242,18 @@ interface OrderLine {
     </app-form-section>
 
     <!-- Section 4: Récapitulatif -->
-    <app-form-section title="Récapitulatif" icon="pi-calculator" [number]="4" class="summary-section">
+    <app-form-section title="Récapitulatif" i18n-title="@@purchase-orders.purchase-order-create.recapitulatif.d5b5de6d" icon="pi-calculator" [number]="4" class="summary-section">
       <div class="totals-section">
         <div class="total-row">
-          <span>Sous-total HT</span>
+          <span i18n="@@purchase-orders.purchase-order-create.sous.total.ht.724598f6">Sous-total HT</span>
           <span class="amount">{{ subTotalHT | currency:'TND':'symbol':'1.3-3' }}</span>
         </div>
         <div class="total-row">
-          <span>TVA</span>
+          <span i18n="@@purchase-orders.purchase-order-create.tva.fb62cb5d">TVA</span>
           <span class="amount">{{ totalVat | currency:'TND':'symbol':'1.3-3' }}</span>
         </div>
         <div class="total-row grand-total">
-          <span>Total TTC</span>
+          <span i18n="@@purchase-orders.purchase-order-create.total.ttc.9e80ff7c">Total TTC</span>
           <span class="amount">{{ totalTTC | currency:'TND':'symbol':'1.3-3' }}</span>
         </div>
       </div>
@@ -268,17 +265,13 @@ interface OrderLine {
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/purchase-orders">
-        Annuler
-      </app-button>
+        routerLink="/purchase-orders" i18n="@@purchase-orders.purchase-order-create.annuler.49ba3292"> Annuler </app-button>
       <app-button
         variant="primary"
         [icon]="submitting() ? 'pi-spin pi-spinner' : 'pi-check'"
         iconPos="left"
         [disabled]="!isFormValid() || submitting()"
-        (click)="submitOrder()">
-        Créer en brouillon
-      </app-button>
+        (click)="submitOrder()" i18n="@@purchase-orders.purchase-order-create.creer.en.brouillon.a3210155"> Créer en brouillon </app-button>
     </div>
   `,
   styles: [`
@@ -327,7 +320,7 @@ interface OrderLine {
 
       .required {
         color: var(--color-error-600);
-        margin-left: var(--spacing-1);
+        margin-inline-start: var(--spacing-1);
       }
     }
 
@@ -370,7 +363,7 @@ interface OrderLine {
 
       th {
         padding: var(--spacing-3) var(--spacing-4);
-        text-align: left;
+        text-align: start;
         font-size: var(--font-size-xs);
         font-weight: var(--font-weight-semibold);
         color: var(--color-text-tertiary);
@@ -381,7 +374,7 @@ interface OrderLine {
 
         .required {
           color: var(--color-error-600);
-          margin-left: var(--spacing-1);
+          margin-inline-start: var(--spacing-1);
         }
       }
 
@@ -451,7 +444,7 @@ interface OrderLine {
       background: var(--color-background-subtle);
       border-radius: var(--radius-lg);
       max-width: 350px;
-      margin-left: auto;
+      margin-inline-start: auto;
     }
 
     .total-row {
@@ -529,9 +522,9 @@ export class PurchaseOrderCreateComponent implements OnInit {
   totalTTC = 0;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Bons de commande', route: '/purchase-orders' },
-    { label: 'Nouveau' }
+    { label: $localize`:@@purchase-orders.purchase-order-create.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@purchase-orders.purchase-order-create.ts.bons.de.commande.aae719f0:Bons de commande`, route: '/purchase-orders' },
+    { label: $localize`:@@purchase-orders.purchase-order-create.ts.nouveau.b9676c8f:Nouveau` }
   ];
 
   ngOnInit(): void {
@@ -635,8 +628,8 @@ export class PurchaseOrderCreateComponent implements OnInit {
         if (response.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Bon de commande créé avec succès'
+            summary: $localize`:@@purchase-order-create.component.summary.Succès:Succès`,
+            detail: $localize`:@@purchase-order-create.component.detail.Bon_de_commande_:Bon de commande créé avec succès`
           });
           this.router.navigate(['/purchase-orders', response.data]);
         }
@@ -646,8 +639,8 @@ export class PurchaseOrderCreateComponent implements OnInit {
         this.submitting.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: err?.error?.errors?.[0] || 'Erreur lors de la création'
+          summary: $localize`:@@purchase-order-create.component.summary.Erreur:Erreur`,
+          detail: err?.error?.errors?.[0] || $localize`:@@purchase-orders.purchase-order-create.ts.erreur.lors.de.la.creation.18def0de:Erreur lors de la création`
         });
       }
     });

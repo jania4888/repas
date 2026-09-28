@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -57,8 +58,8 @@ import {
   ],
   template: `
     <app-page-header
-      title="Calcul DM"
-      subtitle="Évalue la configuration du dossier sur une période et rend le détail obtenu. Rien n’est déposé." />
+      title="Calcul DM" i18n-title="@@accounting.monthly-declaration.calcul.dm.7af61bf4"
+      subtitle="Évalue la configuration du dossier sur une période et rend le détail obtenu. Rien n’est déposé." i18n-subtitle="@@accounting.monthly-declaration.evalue.la.configuration.du.dossier.sur.u.9ae8e552" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
@@ -66,20 +67,20 @@ import {
       @if (!s.configurableLinesEnabled) {
         <app-accounting-status-banner
           variant="info"
-          title="Calcul paramétré non activé"
-          message="Le calcul et le changement de régime sont indisponibles pour tous les dossiers tant que l’administrateur de la plateforme n’a pas activé cette fonctionnalité." />
+          title="Calcul paramétré non activé" i18n-title="@@accounting.monthly-declaration.calcul.parametre.non.active.504c61d8"
+          message="Le calcul et le changement de régime sont indisponibles pour tous les dossiers tant que l’administrateur de la plateforme n’a pas activé cette fonctionnalité." i18n-message="@@accounting.monthly-declaration.le.calcul.et.le.changement.de.regime.son.04a1c379" />
       }
     }
 
     @if (!canWrite()) {
       <app-accounting-status-banner
         variant="info"
-        message="Calcul réservé au cabinet comptable ouvrant le dossier : une société ne recalcule pas sa propre déclaration." />
+        message="Calcul réservé au cabinet comptable ouvrant le dossier : une société ne recalcule pas sa propre déclaration." i18n-message="@@accounting.monthly-declaration.calcul.reserve.au.cabinet.comptable.ouvr.febfac41" />
     }
 
     <div class="card dm-period">
       <div class="dm-field">
-        <label class="dm-lbl" for="dm-year">Exercice</label>
+        <label class="dm-lbl" for="dm-year" i18n="@@accounting.monthly-declaration.exercice.e171e2b0">Exercice</label>
         <input
           id="dm-year"
           type="number"
@@ -90,7 +91,7 @@ import {
           [disabled]="!canCompute()" />
       </div>
       <div class="dm-field">
-        <label class="dm-lbl" for="dm-month">Mois</label>
+        <label class="dm-lbl" for="dm-month" i18n="@@accounting.monthly-declaration.mois.0d304bea">Mois</label>
         <input
           id="dm-month"
           type="number"
@@ -106,7 +107,7 @@ import {
         type="button"
         [disabled]="!canCompute() || !periodValid() || computing()"
         (click)="compute()">
-        {{ computing() ? 'Calcul…' : 'Calculer' }}
+        {{ computing() ? loc_ui_tern_calcul_c289e9 : loc_ui_tern_calculer_297058 }}
       </app-button>
     </div>
 
@@ -118,17 +119,15 @@ import {
         </div>
         <p class="dm-outcome__text">{{ outcome(r) }}</p>
         @if (cleanRun()) {
-          <p class="dm-outcome__text">
-            Ce contrôle allonge la série qui ouvre la bascule vers le calcul paramétré.
-          </p>
+          <p class="dm-outcome__text" i18n="@@accounting.monthly-declaration.ce.controle.allonge.la.serie.qui.ouvre.la.bascul.b289ec8b"> Ce contrôle allonge la série qui ouvre la bascule vers le calcul paramétré. </p>
         }
       </div>
 
       @if (diagnostics(r); as list) {
         @if (list.length) {
           <section class="card dm-diags">
-            <h3 class="dm-diags__title">
-              Signalements du calcul
+            <h3 class="dm-diags__title" i18n="@@accounting.monthly-declaration.signalements.du.calcul.erreur.s.avertiss.dacdbbf8">
+              <ng-container> Signalements du calcul </ng-container>
               <span class="dm-diags__counts">
                 {{ errorCount(r) }} erreur(s), {{ warningCount(r) }} avertissement(s)
               </span>
@@ -158,8 +157,8 @@ import {
     .dm-lbl { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
     .dm-inp { padding: var(--spacing-2) var(--spacing-3); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-background-elevated); color: var(--color-text-primary); font-size: var(--font-size-sm); }
     .dm-narrow { width: 7rem; }
-    .dm-outcome { display: flex; flex-direction: column; gap: var(--spacing-2); border-left: 3px solid var(--color-border-default); }
-    .dm-outcome--clean { border-left-color: var(--color-success-500, #22c55e); }
+    .dm-outcome { display: flex; flex-direction: column; gap: var(--spacing-2); border-inline-start: 3px solid var(--color-border-default); }
+    .dm-outcome--clean { border-inline-start-color: var(--color-success-500, #22c55e); }
     .dm-outcome__head { display: flex; flex-wrap: wrap; gap: var(--spacing-3); align-items: center; justify-content: space-between; }
     .dm-outcome__title { margin: 0; font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); }
     .dm-outcome__text { margin: 0; font-size: var(--font-size-sm); color: var(--color-text-secondary); }
@@ -167,11 +166,13 @@ import {
     .dm-diags { margin-bottom: var(--spacing-4); }
     .dm-diags__title { margin: 0 0 var(--spacing-2); font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); display: flex; flex-wrap: wrap; gap: var(--spacing-2); align-items: baseline; }
     .dm-diags__counts { font-size: var(--font-size-xs); font-weight: var(--font-weight-normal); color: var(--color-text-tertiary); }
-    .dm-diags__list { margin: 0; padding-left: var(--spacing-5); font-size: var(--font-size-sm); color: var(--color-warning-700, #a16207); }
+    .dm-diags__list { margin: 0; padding-inline-start: var(--spacing-5); font-size: var(--font-size-sm); color: var(--color-warning-700, #a16207); }
     .dm-diags__item--error { color: var(--color-error-700, #b91c1c); }
   `
 })
 export class MonthlyDeclarationComputeComponent implements OnInit {
+  readonly loc_ui_tern_calcul_c289e9 = $localize`:@@ui.tern.calcul.c289e9:Calcul…`;
+  readonly loc_ui_tern_calculer_297058 = $localize`:@@ui.tern.calculer.297058:Calculer`;
   private readonly api = inject(AccountingService);
   private readonly auth = inject(AuthService);
   private readonly errors = inject(ErrorHandlerService);
@@ -271,12 +272,12 @@ export class MonthlyDeclarationComputeComponent implements OnInit {
           this.settings.set(res.data.settings);
           this.modeForm.set(newModeForm(res.data.settings, new Date()));
         } else if (clearError) {
-          this.error.set(res.error ?? 'Erreur de chargement des réglages de la déclaration.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.de.chargement.des.reglages.de.la.de.3d201b:Erreur de chargement des réglages de la déclaration.`);
         }
       },
       error: err => {
         if (clearError) {
-          this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-compute.ts.erreur.reseau.0683007f:Erreur réseau`));
         }
       }
     });
@@ -298,13 +299,13 @@ export class MonthlyDeclarationComputeComponent implements OnInit {
           this.loadSettings(false);
         } else {
           this.result.set(null);
-          this.error.set(res.error ?? 'Le calcul a échoué.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.le.calcul.a.echoue.353312:Le calcul a échoué.`);
         }
       },
       error: err => {
         this.computing.set(false);
         this.result.set(null);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-compute.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }
@@ -329,19 +330,19 @@ export class MonthlyDeclarationComputeComponent implements OnInit {
         if (res.success) {
           this.toast.add({
             severity: 'success',
-            summary: 'Régime de calcul modifié',
+            summary: $localize`:@@monthly-declaration-compute.component.summary.Régime de ca:Régime de calcul modifié`,
             detail: modeLabel(form.mode),
             life: 4000
           });
           this.loadSettings();
         } else {
-          this.error.set(res.error ?? 'Le changement de régime a été refusé.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.le.changement.de.regime.a.ete.refuse.e7a8db:Le changement de régime a été refusé.`);
           this.loadSettings(false);
         }
       },
       error: err => {
         this.savingMode.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-compute.ts.erreur.reseau.0683007f:Erreur réseau`));
         this.loadSettings(false);
       }
     });

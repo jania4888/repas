@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Injectable, inject } from '@angular/core';
 import { Observable, concatMap, from, of, toArray, catchError, map } from 'rxjs';
 import { AccountingService } from '../../services/accounting.service';
@@ -26,7 +27,7 @@ export class EntrySubmitService {
   ): Observable<SubmitResult> {
     const validation = store.validateSubmit();
     if (!validation.valid) {
-      store.error.set(validation.error ?? 'Validation échouée.');
+      store.error.set(validation.error ?? $localize`:@@accounting.entry-submit.ts.validation.echouee.25fb9035:Validation échouée.`);
       return of({
         success: false,
         journalCode: store.journalCode(),
@@ -62,7 +63,7 @@ export class EntrySubmitService {
       concatMap(res => {
         if (!res.ok || !res.entryId) {
           store.loading.set(false);
-          store.error.set(res.error ?? "Erreur lors de l'enregistrement.");
+          store.error.set(res.error ?? $localize`:@@accounting.entry-submit.ts.erreur.lors.de.l.enregistrement.e952ae18:Erreur lors de l'enregistrement.`);
           return of({
             success: false,
             journalCode,
@@ -122,28 +123,28 @@ export class EntrySubmitService {
 
     const wasEdit = !!store.editingEntryId();
     store.successMsg.set(wasEdit
-      ? 'Écriture mise à jour avec succès.'
-      : 'Écriture enregistrée avec succès.');
+      ? $localize`:@@accounting.entry-submit.ts.ecriture.mise.a.jour.avec.succes.8a72ce65:Écriture mise à jour avec succès.`
+      : $localize`:@@accounting.entry-submit.ts.ecriture.enregistree.avec.succes.099699d8:Écriture enregistrée avec succès.`);
     const detailSuffix = afterSuccess === 'reset'
-      ? ' Le formulaire est prêt pour une nouvelle saisie.'
+      ? $localize`:@@accounting.entry-submit.ts.le.formulaire.est.pret.pour.une.nouvelle.46aa27d6: Le formulaire est prêt pour une nouvelle saisie.`
       : afterSuccess === 'duplicate'
-        ? ' Les données sont conservées pour duplication.'
-        : ' Redirection vers le journal…';
+        ? $localize`:@@accounting.entry-submit.ts.les.donnees.sont.conservees.pour.duplica.048103e4: Les données sont conservées pour duplication.`
+        : $localize`:@@accounting.entry-submit.ts.redirection.vers.le.journal.4cfdb4cf: Redirection vers le journal…`;
 
     this.toast.add({
       severity: 'success',
-      summary: wasEdit ? 'Écriture mise à jour' : 'Écriture enregistrée',
+      summary: wasEdit ? $localize`:@@accounting.entry-submit.ts.ecriture.mise.a.jour.249bbe36:Écriture mise à jour` : $localize`:@@accounting.entry-submit.ts.ecriture.enregistree.74a583b4:Écriture enregistrée`,
       detail: wasEdit
-        ? `L'écriture du journal ${result.journalCode} a été mise à jour.${detailSuffix}`
-        : `L'écriture du journal ${result.journalCode} a été enregistrée.${detailSuffix}`,
+        ? $localize`:@@accounting.entry-submit.ts.l.ecriture.du.journal.journalcode.a.ete.584a4aef:L'écriture du journal ${result.journalCode}:journalCode: a été mise à jour.${detailSuffix}:detailSuffix:`
+        : $localize`:@@accounting.entry-submit.ts.l.ecriture.du.journal.journalcode.a.ete.c78ccdac:L'écriture du journal ${result.journalCode}:journalCode: a été enregistrée.${detailSuffix}:detailSuffix:`,
       life: 5000
     });
 
     if (result.attachmentFailures && result.attachmentFailures.length > 0) {
       this.toast.add({
         severity: 'warn',
-        summary: 'Pièces jointes partielles',
-        detail: `Échec pour : ${result.attachmentFailures.join(', ')}. Vous pouvez les ajouter depuis le journal.`,
+        summary: $localize`:@@entry-submit.service.summary.Pi_ces_jointes_p:Pièces jointes partielles`,
+        detail: $localize`:@@accounting.entry-submit.ts.echec.pour.join.vous.pouvez.les.ajouter.f3eea701:Échec pour : ${result.attachmentFailures.join(', ')}:join:. Vous pouvez les ajouter depuis le journal.`,
         life: 8000
       });
     }

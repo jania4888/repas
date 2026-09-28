@@ -35,7 +35,7 @@ export function sanitizeUserMessageForDisplay(content: string): string {
   }
   const screenId = extractScreenIdFromPersistedMessage(content);
   if (!screenId) {
-    return "Analyse de l'écran : écran";
+    return $localize`:@@ai-assistant.sanitizer.analyse.ecran.generique:Analyse de l'écran : écran`;
   }
   return buildScreenAnalysisDisplayLabel(screenId);
 }

@@ -4,16 +4,16 @@
 <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
 <!-- Page Header -->
-<app-page-header title="Gestion du Stock" subtitle="Suivez l'état de vos stocks en temps réel">
+<app-page-header title="Gestion du Stock" i18n-title="@@stock.stock-list.gestion.du.stock.72df5586" subtitle="Suivez l'état de vos stocks en temps réel" i18n-subtitle="@@stock.stock-list.suivez.l.etat.de.vos.stocks.en.temps.ree.0283255f">
   <div class="stock-actions">
     @if (canCreateStockVoucher()) {
       <a routerLink="/stock/entries/new" class="stock-btn stock-btn-entry">
         <i class="pi pi-arrow-down"></i>
-        <span>Entrée Stock</span>
+        <span i18n="@@stock.stock-list.entree.stock.16ab6222">Entrée Stock</span>
       </a>
       <a routerLink="/stock/issues/new" class="stock-btn stock-btn-exit">
         <i class="pi pi-arrow-up"></i>
-        <span>Sortie Stock</span>
+        <span i18n="@@stock.stock-list.sortie.stock.e914cdfc">Sortie Stock</span>
       </a>
     }
   </div>
@@ -23,7 +23,7 @@
 <div class="stats-grid">
   <div class="stat-card stat-primary">
     <div class="stat-content">
-      <span class="stat-label">Valeur Totale</span>
+      <span class="stat-label" i18n="@@stock.stock-list.valeur.totale.03c9b412">Valeur Totale</span>
       <span class="stat-value">{{ calculateTotalValue() | currency:'TND':'symbol':'1.3-3' }}</span>
     </div>
     <div class="stat-icon">
@@ -33,7 +33,7 @@
 
   <div class="stat-card stat-success">
     <div class="stat-content">
-      <span class="stat-label">Produits en Stock</span>
+      <span class="stat-label" i18n="@@stock.stock-list.produits.en.stock.bdce6715">Produits en Stock</span>
       <span class="stat-value">{{ countInStock() }}</span>
     </div>
     <div class="stat-icon">
@@ -43,7 +43,7 @@
 
   <div class="stat-card stat-warning">
     <div class="stat-content">
-      <span class="stat-label">Articles en Alerte</span>
+      <span class="stat-label" i18n="@@stock.stock-list.articles.en.alerte.0bc37b80">Articles en Alerte</span>
       <span class="stat-value">{{ countLowStock() }}</span>
     </div>
     <div class="stat-icon">
@@ -53,7 +53,7 @@
 
   <div class="stat-card stat-danger">
     <div class="stat-content">
-      <span class="stat-label">Ruptures de Stock</span>
+      <span class="stat-label" i18n="@@stock.stock-list.ruptures.de.stock.9698bf99">Ruptures de Stock</span>
       <span class="stat-value">{{ countOutOfStock() }}</span>
     </div>
     <div class="stat-icon">
@@ -65,9 +65,9 @@
 <!-- Filters -->
 <div class="filters-card">
   <div class="filters-header">
-    <h3 class="filters-title">Filtres</h3>
+    <h3 class="filters-title" i18n="@@stock.stock-list.filtres.2a8e76e0">Filtres</h3>
     @if (hasActiveFilters()) {
-    <button class="filters-reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres">
+    <button class="filters-reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="@@stock.stock-list.reinitialiser.les.filtres.d8915f02" i18n="@@stock.stock-list.reinitialiser.9637f51e">
       <i class="pi pi-times"></i>
       Réinitialiser ({{ activeFiltersCount() }})
     </button>
@@ -76,16 +76,16 @@
   <div class="filters-row">
     <span class="p-input-icon-left flex-1">
       <i class="pi pi-search"></i>
-      <input pInputText type="text" placeholder="Rechercher par produit ou code..." [(ngModel)]="searchTerm"
+      <input pInputText type="text" placeholder="Rechercher par produit ou code..." i18n-placeholder="@@stock.stock-list.rechercher.par.produit.ou.code.5d13f223" [(ngModel)]="searchTerm"
         (input)="applyFilters()" class="w-full">
     </span>
 
     <p-select [options]="warehouses" [(ngModel)]="selectedWarehouse" optionLabel="name"
-      placeholder="Tous les entrepôts" [showClear]="true" (onChange)="applyFilters()">
+      placeholder="Tous les entrepôts" i18n-placeholder="@@stock.stock-list.tous.les.entrepots.2c918ad1" [showClear]="true" (onChange)="applyFilters()">
     </p-select>
 
     <p-select [options]="statusOptions" [(ngModel)]="selectedStatus" optionLabel="label" optionValue="value"
-      placeholder="Tous les statuts" [showClear]="true" (onChange)="applyFilters()">
+      placeholder="Tous les statuts" i18n-placeholder="@@stock.stock-list.tous.les.statuts.2d5088af" [showClear]="true" (onChange)="applyFilters()">
     </p-select>
   </div>
 </div>
@@ -95,10 +95,10 @@
 
 @if (expiryAlerts().length > 0) {
 <div class="filters-card" style="margin-bottom: 1rem; border-color: #f59e0b;">
-  <h3 class="filters-title">Alertes DLUO</h3>
+  <h3 class="filters-title" i18n="@@stock.stock-list.alertes.dluo.351b62de">Alertes DLUO</h3>
   <ul>
     @for (alert of expiryAlerts(); track alert.lotNumber + alert.productId) {
-      <li>{{ alert.productName }} — lot {{ alert.lotNumber }} ({{ alert.daysRemaining }} j, {{ alert.quantityOnHand }} u.)</li>
+      <li i18n="@@stock.stock-list.lot.j.u.fb2faa0d">{{ alert.productName }} — lot {{ alert.lotNumber }} ({{ alert.daysRemaining }} j, {{ alert.quantityOnHand }} u.)</li>
     }
   </ul>
 </div>
@@ -112,20 +112,20 @@
   } @else {
   <p-table 
           [loading]="loading()" [value]="filteredItems()" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
-    currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} éléments" [rowHover]="true"
+    currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} éléments" i18n-currentPageReportTemplate="@@stock.stock-list.affichage.first.a.last.sur.totalrecords.elements.c41bb317" [rowHover]="true"
     styleClass="p-datatable-striped">
 
     <ng-template pTemplate="header">
       <tr>
-        <th pSortableColumn="productName">Produit <p-sortIcon field="productName"></p-sortIcon></th>
-        <th pSortableColumn="warehouseName">Entrepôt <p-sortIcon field="warehouseName"></p-sortIcon></th>
-        <th pSortableColumn="quantityOnHand" class="text-right">Quantité <p-sortIcon
+        <th pSortableColumn="productName"><ng-container i18n="@@stock.stock-list.produit.ff673dc2">Produit </ng-container> <p-sortIcon field="productName"></p-sortIcon></th>
+        <th pSortableColumn="warehouseName"><ng-container i18n="@@stock.stock-list.entrepot.c349c0bc">Entrepôt </ng-container> <p-sortIcon field="warehouseName"></p-sortIcon></th>
+        <th pSortableColumn="quantityOnHand" class="text-right"><ng-container i18n="@@stock.stock-list.quantite.09a38fda">Quantité </ng-container> <p-sortIcon
             field="quantityOnHand"></p-sortIcon></th>
-        <th pSortableColumn="averageCost" class="text-right">Coût unitaire <p-sortIcon field="averageCost"></p-sortIcon>
+        <th pSortableColumn="averageCost" class="text-right"><ng-container i18n="@@stock.stock-list.cout.unitaire.3735acf6">Coût unitaire </ng-container> <p-sortIcon field="averageCost"></p-sortIcon>
         </th>
-        <th pSortableColumn="stockValue" class="text-right">Valeur <p-sortIcon field="stockValue"></p-sortIcon></th>
-        <th class="text-center">Statut</th>
-        <th class="text-center">Actions</th>
+        <th pSortableColumn="stockValue" class="text-right"><ng-container i18n="@@stock.stock-list.valeur.68f92b0d">Valeur </ng-container> <p-sortIcon field="stockValue"></p-sortIcon></th>
+        <th class="text-center" i18n="@@stock.stock-list.statut.659499f3">Statut</th>
+        <th class="text-center" i18n="@@stock.stock-list.actions.c3cd636a">Actions</th>
       </tr>
     </ng-template>
 
@@ -145,10 +145,10 @@
         </td>
         <td>
           <div class="stock-progress">
-            <span class="stock-value">{{ item.quantityOnHand }} <span class="text-gray-500 text-xs">U</span></span>
+            <span class="stock-value">{{ item.quantityOnHand }} <span class="text-gray-500 text-xs" i18n="@@stock.stock-list.u.b2c7c0ca">U</span></span>
             <p-progressBar [value]="getStockPercentage(item)" [showValue]="false" [style]="{'height': '6px'}">
             </p-progressBar>
-            <span class="text-xs text-gray-500">Min: {{ item.minimumStock }}</span>
+            <span class="text-xs text-gray-500" i18n="@@stock.stock-list.min.485471ea">Min: {{ item.minimumStock }}</span>
           </div>
         </td>
         <td class="value-cell">{{ item.averageCost | currency:'TND':'symbol':'1.3-3' }}</td>
@@ -164,21 +164,21 @@
         </td>
         <td>
           <div class="actions-cell">
-            <app-button variant="ghost" size="sm" icon="pi-history" [iconOnly]="true" pTooltip="Historique mouvements"
-              tooltipPosition="top" [routerLink]="[item.id, 'history']" ariaLabel="Voir l'historique">
+            <app-button variant="ghost" size="sm" icon="pi-history" [iconOnly]="true" pTooltip="Historique mouvements" i18n-pTooltip="@@stock.stock-list.historique.mouvements.ad6facc6"
+              tooltipPosition="top" [routerLink]="[item.id, 'history']" ariaLabel="Voir l'historique" i18n-ariaLabel="@@stock.stock-list.voir.l.historique.2397c32a">
             </app-button>
             @if (lotTrackingEnabled()) {
-            <app-button variant="ghost" size="sm" icon="pi-tags" [iconOnly]="true" pTooltip="Lots"
-              tooltipPosition="top" (click)="toggleLots(item)" ariaLabel="Voir les lots">
+            <app-button variant="ghost" size="sm" icon="pi-tags" [iconOnly]="true" pTooltip="Lots" i18n-pTooltip="@@stock.stock-list.lots.79029175"
+              tooltipPosition="top" (click)="toggleLots(item)" ariaLabel="Voir les lots" i18n-ariaLabel="@@stock.stock-list.voir.les.lots.2c6a9c48">
             </app-button>
             }
             @if (fifoLifoValuationEnabled() && (item.costingMethod === 1 || item.costingMethod === 2)) {
-            <app-button variant="ghost" size="sm" icon="pi-list" [iconOnly]="true" pTooltip="Couches FIFO/LIFO"
-              tooltipPosition="top" (click)="toggleLayers(item)" ariaLabel="Voir les couches de valorisation">
+            <app-button variant="ghost" size="sm" icon="pi-list" [iconOnly]="true" pTooltip="Couches FIFO/LIFO" i18n-pTooltip="@@stock.stock-list.couches.fifo.lifo.cf47038e"
+              tooltipPosition="top" (click)="toggleLayers(item)" ariaLabel="Voir les couches de valorisation" i18n-ariaLabel="@@stock.stock-list.voir.les.couches.de.valorisation.e1a6f43f">
             </app-button>
             }
-            <app-button variant="ghost" size="sm" icon="pi-sliders-h" [iconOnly]="true" pTooltip="Ajuster le stock"
-              tooltipPosition="top" (click)="openAdjustDialog(item)" ariaLabel="Ajuster le stock">
+            <app-button variant="ghost" size="sm" icon="pi-sliders-h" [iconOnly]="true" pTooltip="Ajuster le stock" i18n-pTooltip="@@stock.stock-list.ajuster.le.stock.b3559cfb"
+              tooltipPosition="top" (click)="openAdjustDialog(item)" ariaLabel="Ajuster le stock" i18n-ariaLabel="@@stock.stock-list.ajuster.le.stock.79899bad">
             </app-button>
           </div>
         </td>
@@ -187,14 +187,14 @@
       <tr>
         <td colspan="7">
           @if (lots.length === 0) {
-            <span class="text-xs text-gray-500">Aucun lot pour cet article.</span>
+            <span class="text-xs text-gray-500" i18n="@@stock.stock-list.aucun.lot.pour.cet.article.868ff46e">Aucun lot pour cet article.</span>
           } @else {
             <table class="w-full">
               <thead>
                 <tr>
-                  <th>Lot</th>
-                  <th>DLUO</th>
-                  <th class="text-right">Qté</th>
+                  <th i18n="@@stock.stock-list.lot.4a211932">Lot</th>
+                  <th i18n="@@stock.stock-list.dluo.d342f6a4">DLUO</th>
+                  <th class="text-right" i18n="@@stock.stock-list.qte.a4772129">Qté</th>
                 </tr>
               </thead>
               <tbody>
@@ -215,18 +215,18 @@
       <tr>
         <td colspan="7">
           @if (layers.length === 0) {
-            <span class="text-xs text-gray-500">Aucune couche de valorisation restante.</span>
+            <span class="text-xs text-gray-500" i18n="@@stock.stock-list.aucune.couche.de.valorisation.restante.f5eae8c4">Aucune couche de valorisation restante.</span>
           } @else {
             <table class="w-full">
               <thead>
                 <tr>
-                  <th>Reçu le</th>
-                  <th>Lot</th>
-                  <th class="text-right">Restant</th>
-                  <th class="text-right">Origine</th>
-                  <th class="text-right">Coût</th>
-                  <th class="text-right">Valeur</th>
-                  <th>Référence</th>
+                  <th i18n="@@stock.stock-list.recu.le.8390222a">Reçu le</th>
+                  <th i18n="@@stock.stock-list.lot.4a211932">Lot</th>
+                  <th class="text-right" i18n="@@stock.stock-list.restant.8df32592">Restant</th>
+                  <th class="text-right" i18n="@@stock.stock-list.origine.62e96258">Origine</th>
+                  <th class="text-right" i18n="@@stock.stock-list.cout.4a4aa395">Coût</th>
+                  <th class="text-right" i18n="@@stock.stock-list.valeur.68f92b0d">Valeur</th>
+                  <th i18n="@@stock.stock-list.reference.f8130bb0">Référence</th>
                 </tr>
               </thead>
               <tbody>
@@ -252,9 +252,9 @@
     <ng-template pTemplate="emptymessage">
       <tr>
         <td colspan="7" class="text-center p-6">
-          <app-empty-state illustration="empty-box.svg" title="Aucun article en stock"
-            description="Ajoutez votre première entrée de stock pour commencer à gérer votre inventaire."
-            actionLabel="Ajouter une entrée de stock" actionRoute="entry">
+          <app-empty-state illustration="empty-box.svg" title="Aucun article en stock" i18n-title="@@stock.stock-list.aucun.article.en.stock.5a3a8111"
+            description="Ajoutez votre première entrée de stock pour commencer à gérer votre inventaire." i18n-description="@@stock.stock-list.ajoutez.votre.premiere.entree.de.stock.p.ffbbcd1e"
+            actionLabel="Ajouter une entrée de stock" i18n-actionLabel="@@stock.stock-list.ajouter.une.entree.de.stock.d41de046" actionRoute="entry">
           </app-empty-state>
         </td>
       </tr>
@@ -264,7 +264,7 @@
 </div>
 
 <!-- Adjustment Dialog -->
-<p-dialog header="Ajuster le stock" [(visible)]="adjustDialogVisible" [modal]="true" [style]="{width: '480px'}"
+<p-dialog header="Ajuster le stock" i18n-header="@@stock.stock-list.ajuster.le.stock.b3559cfb" [(visible)]="adjustDialogVisible" [modal]="true" [style]="{width: '480px'}"
   [draggable]="false" [resizable]="false" styleClass="adjust-dialog">
 
   @if (selectedItemForAdjust) {
@@ -280,15 +280,15 @@
       </div>
     </div>
     <div class="current-stock">
-      <span class="label">Stock actuel</span>
-      <span class="value">{{ selectedItemForAdjust.quantityOnHand }} <span class="unit">unités</span></span>
+      <span class="label" i18n="@@stock.stock-list.stock.actuel.294a897a">Stock actuel</span>
+      <span class="value">{{ selectedItemForAdjust.quantityOnHand }} <span class="unit" i18n="@@stock.stock-list.unites.b2ec0bf5">unités</span></span>
     </div>
   </div>
 
   <!-- Adjustment Form Section -->
   <div class="adjust-form">
     <div class="form-field quantity-field">
-      <label for="newQuantity">Nouvelle quantité *</label>
+      <label for="newQuantity" i18n="@@stock.stock-list.nouvelle.quantite.98d68785">Nouvelle quantité *</label>
       <p-inputNumber id="newQuantity" [(ngModel)]="adjustmentForm.newQuantity" [min]="0" [showButtons]="true"
         buttonLayout="horizontal" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
         [inputStyle]="{'width': '100%'}" styleClass="w-full quantity-input">
@@ -298,7 +298,7 @@
       @if (selectedItemForAdjust && adjustmentForm.newQuantity !== selectedItemForAdjust.quantityOnHand) {
       <div class="quantity-delta"
         [class.delta-positive]="adjustmentForm.newQuantity > selectedItemForAdjust.quantityOnHand"
-        [class.delta-negative]="adjustmentForm.newQuantity < selectedItemForAdjust.quantityOnHand">
+        [class.delta-negative]="adjustmentForm.newQuantity < selectedItemForAdjust.quantityOnHand" i18n="@@stock.stock-list.unites.a30d2c1d">
         <i
           [class]="adjustmentForm.newQuantity > selectedItemForAdjust.quantityOnHand ? 'pi pi-arrow-up' : 'pi pi-arrow-down'"></i>
         <span>{{ adjustmentForm.newQuantity > selectedItemForAdjust.quantityOnHand ? '+' : '' }}{{
@@ -308,18 +308,18 @@
     </div>
 
     <div class="form-field">
-      <label for="adjustNotes">Notes (optionnel)</label>
+      <label for="adjustNotes" i18n="@@stock.stock-list.notes.optionnel.c4bb754a">Notes (optionnel)</label>
       <textarea pInputText id="adjustNotes" [(ngModel)]="adjustmentForm.notes" rows="3"
-        placeholder="Raison de l'ajustement..." class="w-full"></textarea>
+        placeholder="Raison de l'ajustement..." i18n-placeholder="@@stock.stock-list.raison.de.l.ajustement.617ebe1a" class="w-full"></textarea>
     </div>
   </div>
   }
 
   <ng-template pTemplate="footer">
     <div class="dialog-actions">
-      <button pButton type="button" label="Annuler" class="p-button-text p-button-secondary"
+      <button pButton type="button" label="Annuler" i18n-label="@@stock.stock-list.annuler.49ba3292" class="p-button-text p-button-secondary"
         (click)="adjustDialogVisible = false" [disabled]="adjustSubmitting"></button>
-      <button pButton type="button" label="Confirmer" icon="pi pi-check" (click)="submitAdjust()"
+      <button pButton type="button" label="Confirmer" i18n-label="@@stock.stock-list.confirmer.80a664c8" icon="pi pi-check" (click)="submitAdjust()"
         [disabled]="!isValidAdjust() || adjustSubmitting" [loading]="adjustSubmitting"></button>
     </div>
   </ng-template>

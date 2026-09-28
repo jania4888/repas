@@ -26,7 +26,7 @@ export interface DynamicRow {
   template: `
     @if (columnPicker && allFields.length > columns.length) {
       <div class="dt-picker">
-        <label>Colonnes visibles</label>
+        <label i18n="@@shared.studio-runtime.dynamic-table.colonnes.visibles.1dcf1ca0">Colonnes visibles</label>
         <p-multiSelect
           [options]="allFields"
           [(ngModel)]="visibleKeys"
@@ -36,7 +36,7 @@ export interface DynamicRow {
           [maxSelectedLabels]="3"
           appendTo="body"
           styleClass="dt-ms"
-          placeholder="Colonnes…" />
+          placeholder="Colonnes…" i18n-placeholder="@@shared.studio-runtime.dynamic-table.colonnes.972c1743" />
       </div>
     }
 
@@ -57,7 +57,7 @@ export interface DynamicRow {
                 <th>{{ f.label }}</th>
               }
               @if (showActions || showView) {
-                <th class="dt-actions-col">Actions</th>
+                <th class="dt-actions-col" i18n="@@shared.studio-runtime.dynamic-table.actions.c3cd636a">Actions</th>
               }
             </tr>
           </ng-template>
@@ -75,9 +75,9 @@ export interface DynamicRow {
                           (click)="openFile(v)" (keyup.enter)="openFile(v)">
                           @if (isImageValue(row, f)) {
                             <img [attr.src]="fileSrc(v) | async" class="dt-file-thumb" alt="" />
-                          } @else {
+                          } @else {<ng-container i18n="@@shared.studio-runtime.dynamic-table.fichier.146240ba">
                             <i class="fa-solid fa-paperclip"></i> Fichier
-                          }
+                          </ng-container>}
                         </a>
                       } @else {
                         —
@@ -94,13 +94,13 @@ export interface DynamicRow {
                   <!-- 4.7 suite (D-47-94) : œil « Voir » pour un lecteur pur (showView sans showActions). -->
                   @if (showView) {
                     <button pButton type="button" icon="fa-solid fa-eye" class="p-button-text p-button-sm"
-                      pTooltip="Voir" (click)="viewRow.emit(row)"></button>
+                      pTooltip="Voir" i18n-pTooltip="@@shared.studio-runtime.dynamic-table.voir.8a754f1f" (click)="viewRow.emit(row)"></button>
                   }
                   @if (showActions) {
                     <button pButton type="button" icon="fa-solid fa-pen" class="p-button-text p-button-sm"
-                      pTooltip="Modifier" (click)="editRow.emit(row)"></button>
+                      pTooltip="Modifier" i18n-pTooltip="@@shared.studio-runtime.dynamic-table.modifier.f260e757" (click)="editRow.emit(row)"></button>
                     <button pButton type="button" icon="fa-solid fa-trash" class="p-button-text p-button-sm p-button-danger"
-                      pTooltip="Supprimer" (click)="deleteRow.emit(row)"></button>
+                      pTooltip="Supprimer" i18n-pTooltip="@@shared.studio-runtime.dynamic-table.supprimer.1acfc1c7" (click)="deleteRow.emit(row)"></button>
                   }
                 </td>
               }
@@ -109,7 +109,7 @@ export interface DynamicRow {
           <ng-template pTemplate="emptymessage">
             <tr>
               <td [attr.colspan]="visibleColumns.length + (showActions || showView ? 1 : 0)">
-                <app-empty-state icon="pi-table" title="Aucun enregistrement" description="Aucune donnée ne correspond à votre recherche." />
+                <app-empty-state icon="pi-table" title="Aucun enregistrement" i18n-title="@@shared.studio-runtime.dynamic-table.aucun.enregistrement.4827291e" description="Aucune donnée ne correspond à votre recherche." i18n-description="@@shared.studio-runtime.dynamic-table.aucune.donnee.ne.correspond.a.votre.rech.4fe7228a" />
               </td>
             </tr>
           </ng-template>
@@ -119,8 +119,8 @@ export interface DynamicRow {
   styles: [`
     .dt-picker { display: flex; align-items: center; gap: var(--spacing-3); margin-bottom: var(--spacing-3); }
     .dt-picker label { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-600); }
-    .dt-actions { text-align: right; white-space: nowrap; display: flex; gap: var(--spacing-1); justify-content: flex-end; }
-    .dt-actions-col { width: 8rem; text-align: right; }
+    .dt-actions { text-align: end; white-space: nowrap; display: flex; gap: var(--spacing-1); justify-content: flex-end; }
+    .dt-actions-col { width: 8rem; text-align: end; }
     .dt-file-cell { display: inline-flex; align-items: center; gap: .35rem; color: var(--color-primary-600); cursor: pointer; }
     .dt-file-thumb { max-height: 36px; border-radius: var(--radius-sm); border: 1px solid var(--color-border-subtle); }
     :host ::ng-deep .dt-ms { min-width: 14rem; }
@@ -233,7 +233,7 @@ export class DynamicTableComponent implements OnChanges {
     const value = row.data?.[field.key];
     if (value === null || value === undefined || value === '') return '—';
     switch (field.fieldType) {
-      case CustomFieldType.Boolean: return value ? 'Oui' : 'Non';
+      case CustomFieldType.Boolean: return value ? $localize`:@@ui.tern.oui.eaa02f:Oui` : $localize`:@@ui.tern.non.a72199:Non`;
       case CustomFieldType.MultiSelect: return Array.isArray(value) ? value.join(', ') : String(value);
       case CustomFieldType.Date:
         return this.formatDate(value, false);

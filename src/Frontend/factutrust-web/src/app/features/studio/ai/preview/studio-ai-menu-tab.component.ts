@@ -29,7 +29,7 @@ import { StudioSystemSpec } from '../studio-ai.models';
         </li>
         @for (entity of spec().entities; track entity.ref) {
           <li>
-            <div class="sai-list__item sai-list__item--static" style="padding-left: 1.75rem">
+            <div class="sai-list__item sai-list__item--static" style="padding-inline-start: 1.75rem">
               <i [class]="entity.icon || 'fa-solid fa-table'" aria-hidden="true"></i>
               <span>{{ entity.displayNamePlural || entity.displayName }}</span>
             </div>

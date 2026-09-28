@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -52,31 +53,31 @@ interface EditOrderLine {
     @if (loading()) {
       <div class="loading-container">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-        <p>Chargement...</p>
+        <p i18n="@@purchase-orders.purchase-order-edit.chargement.a209b664">Chargement...</p>
       </div>
     } @else if (po()) {
       <app-page-header
-        [title]="'Modifier — ' + po()!.number"
-        subtitle="Modifiez les informations et les lignes de cette commande brouillon.">
+        [title]="loc_ui_tern_modifier_042082 + po()!.number"
+        subtitle="Modifiez les informations et les lignes de cette commande brouillon." i18n-subtitle="@@purchase-orders.purchase-order-edit.modifiez.les.informations.et.les.lignes.aa5689c1">
       </app-page-header>
 
       <div class="form-container">
         <!-- Section 1: Header -->
         <div class="form-card">
-          <h3 class="card-title"><i class="pi pi-building"></i> En-tête de commande</h3>
+          <h3 class="card-title" i18n="@@purchase-orders.purchase-order-edit.en.tete.de.commande.0b2e4158"><i class="pi pi-building"></i> En-tête de commande</h3>
           <div class="form-grid">
             <div class="form-group">
-              <label>Fournisseur</label>
+              <label i18n="@@purchase-orders.purchase-order-edit.fournisseur.97d91d89">Fournisseur</label>
               <span class="readonly-value">{{ po()!.supplier.name }}</span>
             </div>
 
             <div class="form-group">
-              <label>Date de commande</label>
+              <label i18n="@@purchase-orders.purchase-order-edit.date.de.commande.f9b0df86">Date de commande</label>
               <span class="readonly-value">{{ po()!.orderDate | date:'dd/MM/yyyy' }}</span>
             </div>
 
             <div class="form-group">
-              <label for="deliveryDate">Date de livraison prévue</label>
+              <label for="deliveryDate" i18n="@@purchase-orders.purchase-order-edit.date.de.livraison.prevue.3ea95a1d">Date de livraison prévue</label>
               <p-datepicker
                 id="deliveryDate"
                 [(ngModel)]="expectedDeliveryDate"
@@ -87,12 +88,12 @@ interface EditOrderLine {
             </div>
 
             <div class="form-group">
-              <label for="reference">Référence fournisseur</label>
+              <label for="reference" i18n="@@purchase-orders.purchase-order-edit.reference.fournisseur.5fbc4823">Référence fournisseur</label>
               <input
                 pInputText
                 id="reference"
                 [(ngModel)]="reference"
-                placeholder="Ex: DEV-2024-001"
+                placeholder="Ex: DEV-2024-001" i18n-placeholder="@@purchase-orders.purchase-order-edit.ex.dev.2024.001.9e0e07b8"
                 class="w-full">
             </div>
           </div>
@@ -101,29 +102,27 @@ interface EditOrderLine {
         <!-- Section 2: Lines -->
         <div class="form-card">
           <div class="card-header">
-            <h3 class="card-title"><i class="pi pi-list"></i> Lignes de commande</h3>
+            <h3 class="card-title" i18n="@@purchase-orders.purchase-order-edit.lignes.de.commande.7ce0f6c8"><i class="pi pi-list"></i> Lignes de commande</h3>
             <app-button variant="secondary" icon="pi-plus" iconPos="left" size="sm"
-              (click)="addLine()">
-              Ajouter une ligne
-            </app-button>
+              (click)="addLine()" i18n="@@purchase-orders.purchase-order-edit.ajouter.une.ligne.ba241fd4"> Ajouter une ligne </app-button>
           </div>
 
           @if (lines.length === 0) {
             <div class="empty-lines">
               <i class="pi pi-inbox"></i>
-              <p>Aucune ligne. Cliquez sur "Ajouter une ligne" pour commencer.</p>
+              <p i18n="@@purchase-orders.purchase-order-edit.aucune.ligne.cliquez.sur.ajouter.une.ligne.pour..bbab98ba">Aucune ligne. Cliquez sur "Ajouter une ligne" pour commencer.</p>
             </div>
           } @else {
             <div class="lines-table">
               <table>
                 <thead>
                   <tr>
-                    <th style="width: 40px">#</th>
-                    <th>Produit *</th>
-                    <th style="width: 120px">Quantité *</th>
-                    <th style="width: 140px">Prix unitaire HT</th>
-                    <th style="width: 80px">TVA</th>
-                    <th style="width: 140px">Total TTC</th>
+                    <th style="width: 40px" i18n="@@purchase-orders.purchase-order-edit.text.d08f88df">#</th>
+                    <th i18n="@@purchase-orders.purchase-order-edit.produit.12b1aa43">Produit *</th>
+                    <th style="width: 120px" i18n="@@purchase-orders.purchase-order-edit.quantite.d8a4d5eb">Quantité *</th>
+                    <th style="width: 140px" i18n="@@purchase-orders.purchase-order-edit.prix.unitaire.ht.bb3f8e39">Prix unitaire HT</th>
+                    <th style="width: 80px" i18n="@@purchase-orders.purchase-order-edit.tva.fb62cb5d">TVA</th>
+                    <th style="width: 140px" i18n="@@purchase-orders.purchase-order-edit.total.ttc.9e80ff7c">Total TTC</th>
                     <th style="width: 50px"></th>
                   </tr>
                 </thead>
@@ -141,7 +140,7 @@ interface EditOrderLine {
                             [options]="products()"
                             [(ngModel)]="line.product"
                             optionLabel="name"
-                            placeholder="Sélectionnez un produit"
+                            placeholder="Sélectionnez un produit" i18n-placeholder="@@purchase-orders.purchase-order-edit.selectionnez.un.produit.fec907fb"
                             [filter]="true"
                             filterBy="name,code"
                             [showClear]="false"
@@ -189,7 +188,7 @@ interface EditOrderLine {
                       </td>
                       <td class="text-center">
                         <button class="remove-btn" (click)="removeLine($index)"
-                          aria-label="Supprimer la ligne">
+                          aria-label="Supprimer la ligne" i18n-aria-label="@@purchase-orders.purchase-order-edit.supprimer.la.ligne.17611368">
                           <i class="pi pi-trash"></i>
                         </button>
                       </td>
@@ -203,16 +202,16 @@ interface EditOrderLine {
 
         <!-- Section 3: Summary -->
         <div class="form-card">
-          <h3 class="card-title"><i class="pi pi-calculator"></i> Récapitulatif</h3>
+          <h3 class="card-title" i18n="@@purchase-orders.purchase-order-edit.recapitulatif.fc426033"><i class="pi pi-calculator"></i> Récapitulatif</h3>
 
           <div class="summary-layout">
             <div class="notes-section">
-              <label for="notes">Notes</label>
+              <label for="notes" i18n="@@purchase-orders.purchase-order-edit.notes.70440046">Notes</label>
               <textarea
                 pTextarea
                 id="notes"
                 [(ngModel)]="notes"
-                placeholder="Notes internes pour cette commande..."
+                placeholder="Notes internes pour cette commande..." i18n-placeholder="@@purchase-orders.purchase-order-edit.notes.internes.pour.cette.commande.2507da2c"
                 [rows]="4"
                 class="w-full">
               </textarea>
@@ -220,15 +219,15 @@ interface EditOrderLine {
 
             <div class="totals-section">
               <div class="total-row">
-                <span>Sous-total HT</span>
+                <span i18n="@@purchase-orders.purchase-order-edit.sous.total.ht.724598f6">Sous-total HT</span>
                 <span class="amount">{{ subTotalHT | currency:'TND':'symbol':'1.3-3' }}</span>
               </div>
               <div class="total-row">
-                <span>TVA</span>
+                <span i18n="@@purchase-orders.purchase-order-edit.tva.fb62cb5d">TVA</span>
                 <span class="amount">{{ totalVat | currency:'TND':'symbol':'1.3-3' }}</span>
               </div>
               <div class="total-row grand-total">
-                <span>Total TTC</span>
+                <span i18n="@@purchase-orders.purchase-order-edit.total.ttc.9e80ff7c">Total TTC</span>
                 <span class="amount">{{ totalTTC | currency:'TND':'symbol':'1.3-3' }}</span>
               </div>
             </div>
@@ -237,16 +236,14 @@ interface EditOrderLine {
 
         <!-- Actions -->
         <div class="form-actions">
-          <app-button variant="outline" [routerLink]="['/purchase-orders', po()!.id]">
-            Annuler
-          </app-button>
+          <app-button variant="outline" [routerLink]="['/purchase-orders', po()!.id]" i18n="@@purchase-orders.purchase-order-edit.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             icon="pi-check"
             iconPos="left"
             [disabled]="!isFormValid()"
             (click)="submitUpdate()">
-            {{ submitting() ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+            {{ submitting() ? loc_ui_tern_enregistrement_9bf105 : loc_ui_tern_enregistrer_les_modifications_2a9459 }}
           </app-button>
         </div>
       </div>
@@ -350,7 +347,7 @@ interface EditOrderLine {
 
       th {
         padding: var(--spacing-3) var(--spacing-4);
-        text-align: left;
+        text-align: start;
         font-size: var(--font-size-xs);
         font-weight: var(--font-weight-semibold);
         color: var(--color-text-tertiary);
@@ -484,6 +481,9 @@ interface EditOrderLine {
   `]
 })
 export class PurchaseOrderEditComponent implements OnInit {
+  readonly loc_ui_tern_modifier_042082 = $localize`:@@ui.tern.modifier.042082:Modifier — `;
+  readonly loc_ui_tern_enregistrement_9bf105 = $localize`:@@ui.tern.enregistrement.9bf105:Enregistrement...`;
+  readonly loc_ui_tern_enregistrer_les_modifications_2a9459 = $localize`:@@ui.tern.enregistrer.les.modifications.2a9459:Enregistrer les modifications`;
     private route = inject(ActivatedRoute);
     private router = inject(Router);
     private poService = inject(PurchaseOrderService);
@@ -505,9 +505,9 @@ export class PurchaseOrderEditComponent implements OnInit {
     totalTTC = 0;
 
     breadcrumbItems: BreadcrumbItem[] = [
-        { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-        { label: 'Bons de commande', route: '/purchase-orders' },
-        { label: 'Modifier' }
+        { label: $localize`:@@purchase-orders.purchase-order-edit.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+        { label: $localize`:@@purchase-orders.purchase-order-edit.ts.bons.de.commande.aae719f0:Bons de commande`, route: '/purchase-orders' },
+        { label: $localize`:@@purchase-orders.purchase-order-edit.ts.modifier.f260e757:Modifier` }
     ];
 
     ngOnInit(): void {
@@ -535,8 +535,8 @@ export class PurchaseOrderEditComponent implements OnInit {
                         this.loading.set(false);
                         this.toastService.add({
                             severity: 'warn',
-                            summary: 'Statut inconnu',
-                            detail: 'Le statut de cette commande est non reconnu. Veuillez actualiser ou contacter le support.'
+                            summary: $localize`:@@purchase-order-edit.component.summary.Statut_inconnu:Statut inconnu`,
+                            detail: $localize`:@@purchase-order-edit.component.detail.Le_statut_de_cet:Le statut de cette commande est non reconnu. Veuillez actualiser ou contacter le support.`
                         });
                         console.warn('[PurchaseOrderEdit] Unknown purchase order status received from API', {
                             orderId: response.data.id,
@@ -550,8 +550,8 @@ export class PurchaseOrderEditComponent implements OnInit {
                     if (order.status !== PurchaseOrderStatus.Draft) {
                         this.toastService.add({
                             severity: 'warn',
-                            summary: 'Action impossible',
-                            detail: 'Seuls les brouillons peuvent être modifiés.'
+                            summary: $localize`:@@purchase-order-edit.component.summary.Action_impossibl:Action impossible`,
+                            detail: $localize`:@@purchase-order-edit.component.detail.Seuls_les_brouil:Seuls les brouillons peuvent être modifiés.`
                         });
                         this.router.navigate(['/purchase-orders', id]);
                         return;
@@ -583,17 +583,17 @@ export class PurchaseOrderEditComponent implements OnInit {
                     this.recalculateTotals();
 
                     this.breadcrumbItems = [
-                        { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-                        { label: 'Bons de commande', route: '/purchase-orders' },
+                        { label: $localize`:@@purchase-orders.purchase-order-edit.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+                        { label: $localize`:@@purchase-orders.purchase-order-edit.ts.bons.de.commande.aae719f0:Bons de commande`, route: '/purchase-orders' },
                         { label: order.number, route: '/purchase-orders/' + order.id },
-                        { label: 'Modifier' }
+                        { label: $localize`:@@purchase-orders.purchase-order-edit.ts.modifier.f260e757:Modifier` }
                     ];
                 }
                 this.loading.set(false);
             },
             error: () => {
                 this.loading.set(false);
-                this.toastService.add({ severity: 'error', summary: 'Erreur', detail: 'Commande introuvable' });
+                this.toastService.add({ severity: 'error', summary: $localize`:@@purchase-order-edit.component.summary.Erreur:Erreur`, detail: $localize`:@@purchase-order-edit.component.detail.Commande_introuv:Commande introuvable` });
                 this.router.navigate(['/purchase-orders']);
             }
         });
@@ -671,8 +671,8 @@ export class PurchaseOrderEditComponent implements OnInit {
                 if (response.success) {
                     this.toastService.add({
                         severity: 'success',
-                        summary: 'Succès',
-                        detail: 'Bon de commande mis à jour avec succès'
+                        summary: $localize`:@@purchase-order-edit.component.summary.Succès:Succès`,
+                        detail: $localize`:@@purchase-order-edit.component.detail.Bon_de_commande_:Bon de commande mis à jour avec succès`
                     });
                     this.router.navigate(['/purchase-orders', order.id]);
                 }
@@ -682,8 +682,8 @@ export class PurchaseOrderEditComponent implements OnInit {
                 this.submitting.set(false);
                 this.toastService.add({
                     severity: 'error',
-                    summary: 'Erreur',
-                    detail: err?.error?.errors?.[0] || 'Erreur lors de la mise à jour'
+                    summary: $localize`:@@purchase-order-edit.component.summary.Erreur:Erreur`,
+                    detail: err?.error?.errors?.[0] || $localize`:@@purchase-orders.purchase-order-edit.ts.erreur.lors.de.la.mise.a.jour.29a27975:Erreur lors de la mise à jour`
                 });
             }
         });

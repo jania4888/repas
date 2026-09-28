@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import {
   Component,
   Input,
@@ -45,41 +46,41 @@ interface PaymentRow {
 @Component({
   selector: 'app-invoice-payments-panel',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, RecordPaymentDialogComponent],
+  imports: [BackendLabelPipe, CommonModule, ButtonComponent, RecordPaymentDialogComponent],
   template: `
     <div class="panel-overlay" (click)="onClose()" role="presentation">
       <div
         class="panel-content"
         (click)="$event.stopPropagation()"
         role="dialog"
-        [attr.aria-label]="'Paiements de la facture ' + (invoice?.number ?? '')"
+        [attr.aria-label]="loc_ui_tern_paiements_de_la_facture_c5d629 + (invoice?.number ?? '')"
         [attr.aria-modal]="'true'">
         <div class="panel-header">
-          <h2 class="panel-title" id="invoice-payments-panel-title">
+          <h2 class="panel-title" id="invoice-payments-panel-title" i18n="@@shared.components.invoice-payments-panel.invoice-payments-panel.paiements.facture.d90f5199">
             Paiements — Facture {{ invoice?.number ?? '' }}
           </h2>
           <button
             type="button"
             class="panel-close"
             (click)="onClose()"
-            aria-label="Fermer le panneau">
+            aria-label="Fermer le panneau" i18n-aria-label="@@shared.components.invoice-payments-panel.invoice-payments-panel.fermer.le.panneau.e1210a2f">
             <i class="pi pi-times"></i>
           </button>
         </div>
 
         @if (invoice && !loading()) {
           <div class="panel-summary" id="invoice-payments-summary" role="region" aria-labelledby="invoice-payments-summary-title">
-            <h3 class="panel-summary-title" id="invoice-payments-summary-title">Récapitulatif</h3>
+            <h3 class="panel-summary-title" id="invoice-payments-summary-title" i18n="@@shared.components.invoice-payments-panel.invoice-payments-panel.recapitulatif.d5b5de6d">Récapitulatif</h3>
             <div class="panel-summary-row">
-              <span class="panel-summary-label">Montant total</span>
+              <span class="panel-summary-label" i18n="@@shared.components.invoice-payments-panel.invoice-payments-panel.montant.total.dd001537">Montant total</span>
               <span class="panel-summary-value">{{ formatAmount(invoice.totalAmount) }} {{ invoice.currency }}</span>
             </div>
             <div class="panel-summary-row">
-              <span class="panel-summary-label">Total payé</span>
+              <span class="panel-summary-label" i18n="@@shared.components.invoice-payments-panel.invoice-payments-panel.total.paye.57d30be5">Total payé</span>
               <span class="panel-summary-value">{{ formatAmount(effectiveTotalPaid()) }} {{ invoice.currency }}</span>
             </div>
             <div class="panel-summary-row panel-summary-row--remaining">
-              <span class="panel-summary-label">Reste à payer</span>
+              <span class="panel-summary-label" i18n="@@shared.components.invoice-payments-panel.invoice-payments-panel.reste.a.payer.968444fc">Reste à payer</span>
               <span class="panel-summary-value panel-summary-value--remaining">{{ formatAmount(effectiveRemainingAmount()) }} {{ invoice.currency }}</span>
             </div>
           </div>
@@ -89,12 +90,12 @@ interface PaymentRow {
           @if (loading()) {
             <div class="panel-loading">
               <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
-              <p>Chargement des paiements…</p>
+              <p i18n="@@shared.components.invoice-payments-panel.invoice-payments-panel.chargement.des.paiements.23bdaf2d">Chargement des paiements…</p>
             </div>
           } @else if (paymentRows().length === 0) {
             <div class="panel-empty">
               <i class="pi pi-wallet" aria-hidden="true"></i>
-              <p>Aucun paiement enregistré pour cette facture.</p>
+              <p i18n="@@shared.components.invoice-payments-panel.invoice-payments-panel.aucun.paiement.enregistre.pour.cette.facture.088793e0">Aucun paiement enregistré pour cette facture.</p>
             </div>
           } @else {
             <div class="panel-list">
@@ -106,7 +107,7 @@ interface PaymentRow {
                   </div>
                   <div class="panel-item-meta">
                     @if (row.methodDisplay) {
-                      <span class="panel-item-method">{{ row.methodDisplay }}</span>
+                      <span class="panel-item-method">{{ row.methodDisplay | backendLabel }}</span>
                     }
                     @if (row.reference) {
                       <span class="panel-item-ref">{{ row.reference }}</span>
@@ -126,10 +127,10 @@ interface PaymentRow {
                 variant="primary"
                 size="md"
                 icon="pi-plus"
-                label="Ajouter un paiement"
+                label="Ajouter un paiement" i18n-label="@@shared.components.invoice-payments-panel.invoice-payments-panel.ajouter.un.paiement.e23c30ff"
                 (click)="openRecordPaymentDialog()"
                 [disabled]="effectiveRemainingAmount() <= 0"
-                ariaLabel="Ajouter un paiement pour cette facture">
+                ariaLabel="Ajouter un paiement pour cette facture" i18n-ariaLabel="@@shared.components.invoice-payments-panel.invoice-payments-panel.ajouter.un.paiement.pour.cette.facture.bd9afee3">
               </app-button>
             </div>
           }
@@ -144,7 +145,7 @@ interface PaymentRow {
       [totalAmount]="invoice?.totalAmount ?? 0"
       [totalPaid]="effectiveTotalPaid()"
       [remainingAmount]="effectiveRemainingAmount()"
-      [currency]="invoice?.currency ?? 'TND'"
+      [currency]="invoice?.currency ?? loc_ui_tern_tnd_51da21"
       [invoiceType]="invoice?.type ?? 'client'"
       (paymentRecorded)="onPaymentRecorded()">
     </app-record-payment-dialog>
@@ -346,6 +347,8 @@ interface PaymentRow {
   `]
 })
 export class InvoicePaymentsPanelComponent implements OnChanges {
+  readonly loc_ui_tern_paiements_de_la_facture_c5d629 = $localize`:@@ui.tern.paiements.de.la.facture.c5d629:Paiements de la facture `;
+  readonly loc_ui_tern_tnd_51da21 = 'TND';
   @Input() invoice: InvoicePaymentsPanelContext | null = null;
   @Input() allowRecordPayment = true;
   @Output() closed = new EventEmitter<void>();

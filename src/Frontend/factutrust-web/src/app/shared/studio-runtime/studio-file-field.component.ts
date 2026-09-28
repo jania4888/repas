@@ -24,12 +24,12 @@ interface UploadResponse { success: boolean; data: string | null; message?: stri
       <div *ngSwitchCase="'attachment'" class="ft-file-row">
         <a *ngIf="value" role="button" tabindex="0" class="ft-file-link"
           (click)="openFile()" (keyup.enter)="openFile()">
-          <img *ngIf="isImage" [attr.src]="fileSrc$ | async" class="ft-file-thumb" alt="" />
+          <img *ngIf="isImage" [attr.src]="fileSrc$ | async" class="ft-file-thumb" alt="" /><ng-container i18n="@@shared.studio-runtime.studio-file-field.voir.le.fichier.fa2d36ec">
           <span *ngIf="!isImage"><i class="fa-solid fa-file"></i> Voir le fichier</span>
-        </a>
+        </ng-container></a>
         <input #fileInput type="file" (change)="onFile($event)" hidden />
         <button pButton type="button" class="p-button-outlined p-button-sm" icon="fa-solid fa-upload"
-          [label]="value ? 'Remplacer' : 'Téléverser'" [disabled]="uploading" (click)="fileInput.click()"></button>
+          [label]="value ? loc_ui_tern_remplacer_db2c67 : loc_ui_tern_televerser_e9e72d" [disabled]="uploading" (click)="fileInput.click()"></button>
         <button *ngIf="value" pButton type="button" icon="fa-solid fa-xmark"
           class="p-button-text p-button-sm p-button-danger" (click)="clear()"></button>
       </div>
@@ -37,9 +37,9 @@ interface UploadResponse { success: boolean; data: string | null; message?: stri
       <!-- Signature -->
       <div *ngSwitchCase="'signature'" class="ft-file-col">
         <ng-container *ngIf="value && !editing">
-          <img [attr.src]="fileSrc$ | async" class="ft-sign-img" alt="signature" />
+          <img [attr.src]="fileSrc$ | async" class="ft-sign-img" alt="signature" i18n-alt="@@shared.studio-runtime.studio-file-field.signature.fab5f628" />
           <div class="ft-sign-actions">
-            <button pButton type="button" label="Refaire" class="p-button-text p-button-sm" (click)="editing = true"></button>
+            <button pButton type="button" label="Refaire" i18n-label="@@shared.studio-runtime.studio-file-field.refaire.afd304f0" class="p-button-text p-button-sm" (click)="editing = true"></button>
             <button pButton type="button" icon="fa-solid fa-xmark" class="p-button-text p-button-sm p-button-danger" (click)="clear()"></button>
           </div>
         </ng-container>
@@ -47,13 +47,13 @@ interface UploadResponse { success: boolean; data: string | null; message?: stri
           <canvas #canvas width="320" height="120" class="ft-sign-pad"
             (pointerdown)="start($event)" (pointermove)="move($event)" (pointerup)="end()" (pointerleave)="end()"></canvas>
           <div class="ft-sign-actions">
-            <button pButton type="button" label="Effacer" class="p-button-text p-button-sm" (click)="clearPad()"></button>
-            <button pButton type="button" label="Enregistrer" class="p-button-sm" [disabled]="uploading" (click)="savePad()"></button>
+            <button pButton type="button" label="Effacer" i18n-label="@@shared.studio-runtime.studio-file-field.effacer.fe23de7b" class="p-button-text p-button-sm" (click)="clearPad()"></button>
+            <button pButton type="button" label="Enregistrer" i18n-label="@@shared.studio-runtime.studio-file-field.enregistrer.f7c8bcd8" class="p-button-sm" [disabled]="uploading" (click)="savePad()"></button>
           </div>
         </ng-container>
       </div>
 
-      <small class="ft-file-up" *ngIf="uploading">Téléversement…</small>
+      <small class="ft-file-up" *ngIf="uploading" i18n="@@shared.studio-runtime.studio-file-field.televersement.15038033">Téléversement…</small>
       <small class="ft-file-err" *ngIf="error">{{ error }}</small>
     </div>
   `,
@@ -71,6 +71,8 @@ interface UploadResponse { success: boolean; data: string | null; message?: stri
   `]
 })
 export class StudioFileFieldComponent {
+  readonly loc_ui_tern_remplacer_db2c67 = $localize`:@@ui.tern.remplacer.db2c67:Remplacer`;
+  readonly loc_ui_tern_televerser_e9e72d = $localize`:@@ui.tern.televerser.e9e72d:Téléverser`;
   private readonly http = inject(HttpClient);
   private readonly studioFiles = inject(StudioFileService);
 
@@ -146,7 +148,7 @@ export class StudioFileFieldComponent {
 
   savePad(): void {
     const canvas = this.canvasRef?.nativeElement;
-    if (!canvas || !this.hasInk) { this.error = 'Veuillez signer avant d\'enregistrer.'; return; }
+    if (!canvas || !this.hasInk) { this.error = $localize`:@@shared.studio-file-field.ts.veuillez.signer.avant.d.enregistrer.480a8e85:Veuillez signer avant d'enregistrer.`; return; }
     canvas.toBlob(blob => {
       if (!blob) return;
       this.upload(new File([blob], 'signature.png', { type: 'image/png' }));
@@ -159,7 +161,7 @@ export class StudioFileFieldComponent {
 
   // ---- Upload ----
   private upload(file: File): void {
-    if (!this.entityKey) { this.error = 'Table inconnue.'; return; }
+    if (!this.entityKey) { this.error = $localize`:@@shared.studio-file-field.ts.table.inconnue.dabdd009:Table inconnue.`; return; }
     this.uploading = true;
     this.error = null;
     const form = new FormData();
@@ -172,12 +174,12 @@ export class StudioFileFieldComponent {
           this.editing = false;
           this.valueChange.emit(res.data);
         } else {
-          this.error = res.errors?.[0] ?? res.message ?? 'Échec du téléversement.';
+          this.error = res.errors?.[0] ?? res.message ?? $localize`:@@ui.tern.echec.du.televersement.bf7802:Échec du téléversement.`;
         }
       },
       error: err => {
         this.uploading = false;
-        this.error = err?.error?.message ?? 'Échec du téléversement.';
+        this.error = err?.error?.message ?? $localize`:@@ui.tern.echec.du.televersement.bf7802:Échec du téléversement.`;
       }
     });
   }

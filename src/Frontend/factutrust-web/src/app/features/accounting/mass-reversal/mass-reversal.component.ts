@@ -37,31 +37,29 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Correction en lot par extourne"
-      subtitle="Contre-passer des écritures validées — la piste d'audit est préservée, rien n'est modifié" />
+      title="Correction en lot par extourne" i18n-title="@@accounting.mass-reversal.correction.en.lot.par.extourne.a8fc388a"
+      subtitle="Contre-passer des écritures validées — la piste d'audit est préservée, rien n'est modifié" i18n-subtitle="@@accounting.mass-reversal.contre.passer.des.ecritures.validees.la.61e35c3b" />
 
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Période des écritures à corriger">
+      <app-accounting-filter-bar ariaLabel="Période des écritures à corriger" i18n-ariaLabel="@@accounting.mass-reversal.periode.des.ecritures.a.corriger.fb377df4">
         <div accountingFilterFields class="mr-fields">
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="mr-from">Du</label>
+            <label class="accounting-filter-label" for="mr-from" i18n="@@accounting.mass-reversal.du.84814985">Du</label>
             <input id="mr-from" type="date" [(ngModel)]="fromStr" class="accounting-filter-input" />
           </div>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="mr-to">Au</label>
+            <label class="accounting-filter-label" for="mr-to" i18n="@@accounting.mass-reversal.au.7a1732d5">Au</label>
             <input id="mr-to" type="date" [(ngModel)]="toStr" class="accounting-filter-input" />
           </div>
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" type="button"
-            (click)="load()" [disabled]="busy()" ariaLabel="Charger les écritures validées">
-            Charger
-          </app-button>
+            (click)="load()" [disabled]="busy()" ariaLabel="Charger les écritures validées" i18n-ariaLabel="@@accounting.mass-reversal.charger.les.ecritures.validees.36cc82a5" i18n="@@accounting.mass-reversal.charger.8f860300"> Charger </app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
 
-    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="load()" />
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.mass-reversal.reessayer.c4f78b12" (retry)="load()" />
 
     @if (successMessage(); as msg) {
       <div class="mr-success" role="status"><i class="pi pi-check-circle" aria-hidden="true"></i><span>{{ msg }}</span></div>
@@ -70,33 +68,33 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <div class="card mr-actions-card">
       <div class="mr-actions">
         <div class="mr-field mr-field-grow">
-          <label class="accounting-filter-label" for="mr-reason">Motif de correction (obligatoire)</label>
+          <label class="accounting-filter-label" for="mr-reason" i18n="@@accounting.mass-reversal.motif.de.correction.obligatoire.10f7e33a">Motif de correction (obligatoire)</label>
           <input id="mr-reason" type="text" [(ngModel)]="reason" class="accounting-filter-input"
-            placeholder="Ex. erreur d'imputation sur le compte 607" [disabled]="busy()" />
+            placeholder="Ex. erreur d'imputation sur le compte 607" i18n-placeholder="@@accounting.mass-reversal.ex.erreur.d.imputation.sur.le.compte.607.c37cab5a" [disabled]="busy()" />
         </div>
         <div class="mr-action-buttons">
           <app-button variant="danger" icon="pi pi-replay" type="button"
             (click)="confirmReversal()" [disabled]="busy() || selectedIds().length === 0 || !reason.trim()"
-            ariaLabel="Extourner les écritures sélectionnées">
+            ariaLabel="Extourner les écritures sélectionnées" i18n-ariaLabel="@@accounting.mass-reversal.extourner.les.ecritures.selectionnees.096d149f" i18n="@@accounting.mass-reversal.extourner.92243f6c">
             Extourner ({{ selectedIds().length }})
           </app-button>
         </div>
       </div>
-      <p class="mr-help">
-        Chaque écriture sélectionnée reçoit une <strong>écriture miroir</strong> qui l'annule ; l'originale
+      <p class="mr-help" i18n="@@accounting.mass-reversal.chaque.ecriture.selectionnee.recoit.une.7552cf93">
+        <ng-container> Chaque écriture sélectionnée reçoit une </ng-container> <strong>écriture miroir</strong> qui l'annule ; l'originale
         reste intacte et marquée « extournée ». Les brouillons et les écritures déjà extournées sont ignorés.
       </p>
     </div>
 
     @if (pendingConfirm()) {
       <div class="card mr-confirm" role="alertdialog">
-        <p class="mr-confirm-text">
-          Extourner <strong>{{ selectedIds().length }}</strong> écriture(s) avec le motif
+        <p class="mr-confirm-text" i18n="@@accounting.mass-reversal.extourner.ecriture.s.avec.le.motif.cette.19fb813e">
+          <ng-container> Extourner </ng-container> <strong>{{ selectedIds().length }}</strong> écriture(s) avec le motif
           « {{ reason.trim() }} » ? <strong>Cette opération n'est pas annulable.</strong>
         </p>
         <div class="mr-confirm-actions">
-          <app-button variant="secondary" type="button" (click)="pendingConfirm.set(false)" [disabled]="busy()">Annuler</app-button>
-          <app-button variant="danger" type="button" (click)="applyReversal()" [disabled]="busy()">Confirmer l'extourne</app-button>
+          <app-button variant="secondary" type="button" (click)="pendingConfirm.set(false)" [disabled]="busy()" i18n="@@accounting.mass-reversal.annuler.49ba3292">Annuler</app-button>
+          <app-button variant="danger" type="button" (click)="applyReversal()" [disabled]="busy()" i18n="@@accounting.mass-reversal.confirmer.l.extourne.e80c2b00">Confirmer l'extourne</app-button>
         </div>
       </div>
     }
@@ -107,17 +105,17 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <ng-template pTemplate="header">
           <tr>
             <th style="width:3rem">
-              <input type="checkbox" [checked]="allSelected()" (change)="toggleAll($event)" aria-label="Tout sélectionner" />
+              <input type="checkbox" [checked]="allSelected()" (change)="toggleAll($event)" aria-label="Tout sélectionner" i18n-aria-label="@@accounting.mass-reversal.tout.selectionner.06f2c1c0" />
             </th>
-            <th scope="col">Journal</th>
-            <th scope="col">N°</th>
-            <th scope="col">Date</th>
-            <th scope="col">Libellé</th>
+            <th scope="col" i18n="@@accounting.mass-reversal.journal.57d7f743">Journal</th>
+            <th scope="col" i18n="@@accounting.mass-reversal.n.754e6095">N°</th>
+            <th scope="col" i18n="@@accounting.mass-reversal.date.eb9a4bc1">Date</th>
+            <th scope="col" i18n="@@accounting.mass-reversal.libelle.f5485bba">Libellé</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-e>
           <tr>
-            <td><input type="checkbox" [checked]="isSelected(e.id)" (change)="toggle(e.id)" [attr.aria-label]="'Sélectionner ' + e.journalCode + ' ' + e.entryNumber" /></td>
+            <td><input type="checkbox" [checked]="isSelected(e.id)" (change)="toggle(e.id)" [attr.aria-label]="loc_ui_tern_selectionner_aaed53 + e.journalCode + ' ' + e.entryNumber" /></td>
             <td><span class="mr-code">{{ e.journalCode }}</span></td>
             <td>{{ e.entryNumber }}</td>
             <td>{{ e.entryDate | date : 'shortDate' }}</td>
@@ -125,7 +123,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td colspan="5" style="text-align:center;padding:2rem">Aucune écriture validée extournable sur la période.</td></tr>
+          <tr><td colspan="5" style="text-align:center;padding:2rem" i18n="@@accounting.mass-reversal.aucune.ecriture.validee.extournable.sur.la.perio.84101d06">Aucune écriture validée extournable sur la période.</td></tr>
         </ng-template>
       </p-table>
     </div>
@@ -155,6 +153,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `
 })
 export class MassReversalComponent implements OnInit {
+  readonly loc_ui_tern_selectionner_aaed53 = $localize`:@@ui.tern.selectionner.aaed53:Sélectionner `;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
 
@@ -208,7 +207,7 @@ export class MassReversalComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.error.set(null);
@@ -223,12 +222,12 @@ export class MassReversalComponent implements OnInit {
           // Seules les écritures validées et NON déjà extournées sont extournables.
           this.entries.set(res.data.filter(e => !e.isDraft && !e.isReversed));
         } else {
-          this.error.set(res.error ?? 'Erreur');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.mass-reversal.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }
@@ -249,17 +248,17 @@ export class MassReversalComponent implements OnInit {
         this.acting.set(false);
         this.pendingConfirm.set(false);
         if (res.success && res.data) {
-          this.successMessage.set(`${res.data.reversed} écriture(s) extournée(s), ${res.data.skipped} ignorée(s).`);
+          this.successMessage.set($localize`:@@accounting.mass-reversal.ts.reversed.ecriture.s.extournee.s.skipped.63901506:${res.data.reversed}:reversed: écriture(s) extournée(s), ${res.data.skipped}:skipped: ignorée(s).`);
           this.reason = '';
           this.load();
         } else {
-          this.error.set(res.error ?? "L'extourne a échoué.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.l.extourne.a.echoue.0069fe:L'extourne a échoué.`);
         }
       },
       error: err => {
         this.acting.set(false);
         this.pendingConfirm.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur réseau lors de l'extourne."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.mass-reversal.ts.erreur.reseau.lors.de.l.extourne.f214327e:Erreur réseau lors de l'extourne.`));
       }
     });
   }

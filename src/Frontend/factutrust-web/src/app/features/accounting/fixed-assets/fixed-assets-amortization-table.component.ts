@@ -25,6 +25,7 @@ import {
 import { fiscalYearLabel } from '../services/fiscal-year.util';
 import { AccountingStatusBannerComponent } from '../shared/accounting-status-banner.component';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 @Component({
   selector: 'app-fixed-assets-amortization-table',
@@ -36,83 +37,76 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     PageHeaderComponent,
     ButtonComponent,
     EmptyStateComponent,
-    AccountingStatusBannerComponent
+    AccountingStatusBannerComponent,
+    BackendLabelPipe
   ],
   template: `
     <app-page-header
-      title="Tableau des amortissements"
-      subtitle="État comptable complet de l'exercice (format Sage)" />
+      title="Tableau des amortissements" i18n-title="@@accounting.fixed-assets.tableau.des.amortissements.c23d3f29"
+      subtitle="État comptable complet de l'exercice (format Sage)" i18n-subtitle="@@accounting.fixed-assets.etat.comptable.complet.de.l.exercice.for.727bbf56" />
 
     <div class="card accounting-filters-card no-print">
       <div class="accounting-filter-row">
         <input
           type="search"
           class="accounting-filter-input"
-          placeholder="Rechercher (désignation, n° inventaire)"
+          placeholder="Rechercher (désignation, n° inventaire)" i18n-placeholder="@@accounting.fixed-assets.rechercher.designation.n.inventaire.cc557d2d"
           [(ngModel)]="search"
           (keyup.enter)="reload()" />
         <select class="accounting-filter-input" [(ngModel)]="statusFilter" (ngModelChange)="reload()">
-          <option [ngValue]="null">Tous les statuts</option>
-          <option [ngValue]="FixedAssetStatus.Draft">Brouillon</option>
-          <option [ngValue]="FixedAssetStatus.InService">En service</option>
-          <option [ngValue]="FixedAssetStatus.FullyDepreciated">Totalement amorti</option>
-          <option [ngValue]="FixedAssetStatus.Disposed">Cédé</option>
+          <option [ngValue]="null" i18n="@@accounting.fixed-assets.tous.les.statuts.2d5088af">Tous les statuts</option>
+          <option [ngValue]="FixedAssetStatus.Draft" i18n="@@accounting.fixed-assets.brouillon.57d2d7a7">Brouillon</option>
+          <option [ngValue]="FixedAssetStatus.InService" i18n="@@accounting.fixed-assets.en.service.0b067773">En service</option>
+          <option [ngValue]="FixedAssetStatus.FullyDepreciated" i18n="@@accounting.fixed-assets.totalement.amorti.ede655ed">Totalement amorti</option>
+          <option [ngValue]="FixedAssetStatus.Disposed" i18n="@@accounting.fixed-assets.cede.51eca68c">Cédé</option>
         </select>
         <select class="accounting-filter-input" [(ngModel)]="categoryFilter" (ngModelChange)="reload()">
-          <option [ngValue]="null">Toutes les catégories</option>
+          <option [ngValue]="null" i18n="@@accounting.fixed-assets.toutes.les.categories.ac8ab261">Toutes les catégories</option>
           <option *ngFor="let c of categories()" [ngValue]="c.id">{{ c.label }}</option>
         </select>
         <input
           type="number"
           class="accounting-filter-input year-input"
-          placeholder="Exercice"
+          placeholder="Exercice" i18n-placeholder="@@accounting.fixed-assets.exercice.e171e2b0"
           min="2000"
           max="2100"
           [(ngModel)]="fiscalYearFilter"
           (keyup.enter)="reload()" />
         <select class="accounting-filter-input" [(ngModel)]="groupingMode" (ngModelChange)="reload()">
-          <option value="AssetAccount">Compte immobilisation</option>
-          <option value="FiscalCategory">Catégorie fiscale</option>
+          <option value="AssetAccount" i18n="@@accounting.fixed-assets.compte.immobilisation.c2d44c21">Compte immobilisation</option>
+          <option value="FiscalCategory" i18n="@@accounting.fixed-assets.categorie.fiscale.a9a54a0a">Catégorie fiscale</option>
         </select>
-        <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="reload()" [disabled]="loading()">
-          Actualiser
-        </app-button>
-        <app-button variant="secondary" icon="pi pi-print" type="button" (click)="printReport()" [disabled]="loading() || !report()">
-          Imprimer
-        </app-button>
-        <app-button variant="secondary" icon="pi pi-file-excel" type="button" (click)="exportXlsx()" [disabled]="loading()">
-          Export XLSX
-        </app-button>
-        <app-button variant="secondary" icon="pi pi-download" type="button" (click)="exportCsv()" [disabled]="loading() || !report()">
-          Export CSV
-        </app-button>
+        <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="reload()" [disabled]="loading()" i18n="@@accounting.fixed-assets.actualiser.9d3b2a7d"> Actualiser </app-button>
+        <app-button variant="secondary" icon="pi pi-print" type="button" (click)="printReport()" [disabled]="loading() || !report()" i18n="@@accounting.fixed-assets.imprimer.5382c09d"> Imprimer </app-button>
+        <app-button variant="secondary" icon="pi pi-file-excel" type="button" (click)="exportXlsx()" [disabled]="loading()" i18n="@@accounting.fixed-assets.export.xlsx.93f3f8f5"> Export XLSX </app-button>
+        <app-button variant="secondary" icon="pi pi-download" type="button" (click)="exportCsv()" [disabled]="loading() || !report()" i18n="@@accounting.fixed-assets.export.csv.5755f9ac"> Export CSV </app-button>
       </div>
     </div>
 
     <app-accounting-status-banner [message]="error() ?? ''" variant="error" *ngIf="error()" />
     <app-accounting-status-banner
       class="no-print"
-      [message]="'Exercice affiché : ' + fiscalYearDisplay(fiscalYearFilter)"
+      [message]="loc_ui_tern_exercice_affiche_6dd078 + fiscalYearDisplay(fiscalYearFilter)"
       variant="info"
       *ngIf="!error()" />
 
     <div class="card" *ngIf="!loading() && !report()?.groups?.length">
       <app-empty-state
         icon="pi pi-table"
-        title="Aucune immobilisation"
-        message="Aucune immobilisation ne correspond aux filtres pour cet exercice." />
+        title="Aucune immobilisation" i18n-title="@@accounting.fixed-assets.aucune.immobilisation.f9c26485"
+        message="Aucune immobilisation ne correspond aux filtres pour cet exercice." i18n-message="@@accounting.fixed-assets.aucune.immobilisation.ne.correspond.aux.bb33e4fa" />
     </div>
 
     <div class="card report-container" *ngIf="report() as r">
       <div class="print-only print-report">
         <header class="sage-report-header">
           <div class="sage-company">{{ displayCompanyName(r) }}</div>
-          <h2 class="sage-title">TABLEAU DES AMORTISSEMENTS</h2>
-          <div class="sage-period">
+          <h2 class="sage-title" i18n="@@accounting.fixed-assets.tableau.des.amortissements.44e28861">TABLEAU DES AMORTISSEMENTS</h2>
+          <div class="sage-period" i18n="@@accounting.fixed-assets.exercice.du.au.c4eb641a">
             Exercice du {{ r.header.periodStart | date: 'dd/MM/yyyy' }} au {{ r.header.periodEnd | date: 'dd/MM/yyyy' }}
           </div>
-          <div class="sage-meta">
-            <span>Le {{ r.header.generatedAtUtc | date: 'dd/MM/yyyy à HH:mm' }}</span>
+          <div class="sage-meta" i18n="@@accounting.fixed-assets.le.a.exercice.8e2c09d4">
+            <span>Le {{ r.header.generatedAtUtc | date: 'dd/MM/yyyy' }} à {{ r.header.generatedAtUtc | date: 'HH:mm' }}</span>
             <span>Exercice : {{ fiscalYearDisplay(r.header.fiscalYear) }}</span>
           </div>
         </header>
@@ -121,19 +115,19 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           <table class="sage-main-table">
             <thead>
               <tr>
-                <th>Code immobilisation</th>
-                <th>Désignation immobilisation</th>
-                <th>Date acquisition</th>
-                <th class="text-right">Valeur d'origine</th>
-                <th class="text-right">Durée (ans)</th>
-                <th>Mode</th>
-                <th class="text-right">Amort. ant. 31/12/{{ priorYear() }}</th>
-                <th class="text-right">Dotation calculée</th>
-                <th class="text-right">Dotation comptabilisée</th>
-                <th class="text-right">Écart</th>
-                <th class="text-right">Fin exercice 31/12/{{ r.header.fiscalYear }}</th>
+                <th i18n="@@accounting.fixed-assets.code.immobilisation.4463772b">Code immobilisation</th>
+                <th i18n="@@accounting.fixed-assets.designation.immobilisation.8f97d390">Désignation immobilisation</th>
+                <th i18n="@@accounting.fixed-assets.date.acquisition.455ed480">Date acquisition</th>
+                <th class="text-right" i18n="@@accounting.fixed-assets.valeur.d.origine.b74f9474">Valeur d'origine</th>
+                <th class="text-right" i18n="@@accounting.fixed-assets.duree.ans.21e6f820">Durée (ans)</th>
+                <th i18n="@@accounting.fixed-assets.mode.a7b93d21">Mode</th>
+                <th class="text-right" i18n="@@accounting.fixed-assets.amort.ant.31.12.0533f910">Amort. ant. 31/12/{{ priorYear() }}</th>
+                <th class="text-right" i18n="@@accounting.fixed-assets.dotation.calculee.3c1b6780">Dotation calculée</th>
+                <th class="text-right" i18n="@@accounting.fixed-assets.dotation.comptabilisee.03b8d6ab">Dotation comptabilisée</th>
+                <th class="text-right" i18n="@@accounting.fixed-assets.ecart.6ae8dce8">Écart</th>
+                <th class="text-right" i18n="@@accounting.fixed-assets.fin.exercice.31.12.881ce8e9">Fin exercice 31/12/{{ r.header.fiscalYear }}</th>
                 <th class="text-right">VNC 31/12/{{ r.header.fiscalYear }}</th>
-                <th>Statut compta</th>
+                <th i18n="@@accounting.fixed-assets.statut.compta.949575d9">Statut compta</th>
               </tr>
             </thead>
             <tbody>
@@ -160,7 +154,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   <td><span class="status-pill">{{ postingStatusLabel(row.postingStatus) }}</span></td>
                 </tr>
                 <tr class="subtotal-row">
-                  <td colspan="3"><strong>Total {{ group.groupLabel }}</strong></td>
+                  <td colspan="3" i18n="@@accounting.fixed-assets.total.0c8136b7"><strong>Total {{ group.groupLabel }}</strong></td>
                   <td class="text-right"><strong>{{ group.subtotal.originValue | number: '1.3-3' }}</strong></td>
                   <td colspan="2"></td>
                   <td class="text-right"><strong>{{ group.subtotal.priorAccumulatedDepreciation | number: '1.3-3' }}</strong></td>
@@ -173,7 +167,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                 </tr>
               </ng-container>
               <tr class="grand-total-row">
-                <td colspan="3"><strong>TOTAL GÉNÉRAL</strong></td>
+                <td colspan="3"><strong i18n="@@accounting.fixed-assets.total.general.f6821c15">TOTAL GÉNÉRAL</strong></td>
                 <td class="text-right"><strong>{{ r.grandTotal.originValue | number: '1.3-3' }}</strong></td>
                 <td colspan="2"></td>
                 <td class="text-right"><strong>{{ r.grandTotal.priorAccumulatedDepreciation | number: '1.3-3' }}</strong></td>
@@ -190,14 +184,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 
         <div class="sage-bottom-panels">
           <div class="sage-summary-panel">
-            <h3>RÉCAPITULATIF PAR NATURE D'IMMOBILISATIONS</h3>
+            <h3 i18n="@@accounting.fixed-assets.recapitulatif.par.nature.d.immobilisations.37a44209">RÉCAPITULATIF PAR NATURE D'IMMOBILISATIONS</h3>
             <table class="sage-summary-table">
               <thead>
                 <tr>
-                  <th>Nature</th>
-                  <th class="text-right">Valeur d'origine</th>
-                  <th class="text-right">Amort. cumulés 31/12/{{ priorYear() }}</th>
-                  <th class="text-right">Dotation {{ fiscalYearDisplay(r.header.fiscalYear) }}</th>
+                  <th i18n="@@accounting.fixed-assets.nature.bddc7adb">Nature</th>
+                  <th class="text-right" i18n="@@accounting.fixed-assets.valeur.d.origine.b74f9474">Valeur d'origine</th>
+                  <th class="text-right" i18n="@@accounting.fixed-assets.amort.cumules.31.12.1f75aaeb">Amort. cumulés 31/12/{{ priorYear() }}</th>
+                  <th class="text-right" i18n="@@accounting.fixed-assets.dotation.7590e696">Dotation {{ fiscalYearDisplay(r.header.fiscalYear) }}</th>
                   <th class="text-right">VNC 31/12/{{ r.header.fiscalYear }}</th>
                 </tr>
               </thead>
@@ -210,7 +204,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   <td class="text-right">{{ s.endOfYearNetBookValue | number: '1.3-3' }}</td>
                 </tr>
                 <tr class="summary-total-row">
-                  <td><strong>TOTAL GÉNÉRAL</strong></td>
+                  <td><strong i18n="@@accounting.fixed-assets.total.general.f6821c15">TOTAL GÉNÉRAL</strong></td>
                   <td class="text-right"><strong>{{ r.grandTotal.originValue | number: '1.3-3' }}</strong></td>
                   <td class="text-right"><strong>{{ r.grandTotal.priorAccumulatedDepreciation | number: '1.3-3' }}</strong></td>
                   <td class="text-right"><strong>{{ r.grandTotal.dotationCalculeeExercice | number: '1.3-3' }}</strong></td>
@@ -221,13 +215,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </div>
 
           <div class="sage-info-panel">
-            <h3>INFORMATIONS</h3>
-            <p><strong>Linéaire</strong> : dotation constante sur la durée d'amortissement.</p>
-            <p><strong>Accéléré</strong> : application du taux majoré fiscal.</p>
-            <p><strong>Intégral</strong> : dotation unique l'année de mise en service.</p>
-            <p>Devise : {{ r.infoBox.currencyCode }}</p>
-            <p>Édité le {{ r.infoBox.generatedAtUtc | date: 'dd/MM/yyyy à HH:mm' }}</p>
-            <p>{{ r.infoBox.productName }}</p>
+            <h3 i18n="@@accounting.fixed-assets.informations.08c80be1">INFORMATIONS</h3>
+            <p i18n="@@accounting.fixed-assets.lineaire.dotation.constante.sur.la.duree.c82164a5"><strong>Linéaire</strong> : dotation constante sur la durée d'amortissement.</p>
+            <p i18n="@@accounting.fixed-assets.accelere.application.du.taux.majore.fisc.8ef1d44b"><strong>Accéléré</strong> : application du taux majoré fiscal.</p>
+            <p i18n="@@accounting.fixed-assets.integral.dotation.unique.l.annee.de.mise.ba977829"><strong>Intégral</strong> : dotation unique l'année de mise en service.</p>
+            <p i18n="@@accounting.fixed-assets.devise.09c46e8b">Devise : {{ r.infoBox.currencyCode }}</p>
+            <p i18n="@@accounting.fixed-assets.edite.le.date.heure">Édité le {{ r.infoBox.generatedAtUtc | date: 'dd/MM/yyyy' }} à {{ r.infoBox.generatedAtUtc | date: 'HH:mm' }}</p>
+            <p>{{ r.infoBox.productName | backendLabel }}</p>
           </div>
         </div>
       </div>
@@ -245,7 +239,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         max-width: 110px;
       }
       .text-right {
-        text-align: right;
+        text-align: end;
       }
       .report-container {
         overflow: hidden;
@@ -386,6 +380,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ]
 })
 export class FixedAssetsAmortizationTableComponent implements OnInit {
+  readonly loc_ui_tern_exercice_affiche_6dd078 = $localize`:@@ui.tern.exercice.affiche.6dd078:Exercice affiché : `;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(FixedAssetsService);
   private readonly auth = inject(AuthService);
@@ -459,18 +454,18 @@ export class FixedAssetsAmortizationTableComponent implements OnInit {
           this.loading.set(false);
         },
         error: err => {
-          this.error.set(this.errors.extractErrorMessage(err, "Impossible de charger le tableau des amortissements de l'exercice."));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.fixed-assets-amortization-table.ts.impossible.de.charger.le.tableau.des.amo.1292a2dd:Impossible de charger le tableau des amortissements de l'exercice.`));
           this.loading.set(false);
         }
       });
   }
 
   displayCompanyName(report: AmortizationReportResponse): string {
-    return report.header.companyName || this.auth.user()?.companyName || 'Société';
+    return report.header.companyName || this.auth.user()?.companyName || $localize`:@@accounting.fixed-assets-amortization-table.ts.societe.2c3fdad8:Société`;
   }
 
   methodLabel(row: AmortizationReportAssetRowDto): string {
-    return DEPRECIATION_METHOD_LABELS[row.depreciationMethod] ?? 'Linéaire';
+    return DEPRECIATION_METHOD_LABELS[row.depreciationMethod] ?? $localize`:@@ui.tern.lineaire.a5db4c:Linéaire`;
   }
 
   // C4 : n'affiche le code de groupe qu'une seule fois — certaines réponses API renvoient déjà le
@@ -485,7 +480,7 @@ export class FixedAssetsAmortizationTableComponent implements OnInit {
   }
 
   postingStatusLabel(status: keyof typeof CURRENT_YEAR_POSTING_STATUS_LABELS): string {
-    return CURRENT_YEAR_POSTING_STATUS_LABELS[status] ?? 'Non comptabilisée';
+    return CURRENT_YEAR_POSTING_STATUS_LABELS[status] ?? $localize`:@@ui.tern.non.comptabilisee.5e1470:Non comptabilisée`;
   }
 
   gap(row: { dotationCalculeeExercice: number; dotationComptabiliseeExercice: number }): number {
@@ -510,7 +505,7 @@ export class FixedAssetsAmortizationTableComponent implements OnInit {
       .subscribe({
         next: blob =>
           this.downloadBlob(blob, `tableau-amortissements-sage-${this.fiscalYearFilter}.xlsx`),
-        error: () => this.error.set("Export XLSX impossible pour le tableau des amortissements.")
+        error: () => this.error.set($localize`:@@accounting.fixed-assets-amortization-table.ts.export.xlsx.impossible.pour.le.tableau.d.3157935a:Export XLSX impossible pour le tableau des amortissements.`)
       });
   }
 

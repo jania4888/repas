@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
@@ -17,11 +18,13 @@ import {
   InventoryStatus
 } from '@core/services/inventory.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 @Component({
   selector: 'app-inventory-detail',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     ButtonModule,
@@ -39,6 +42,17 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   styleUrl: './inventory-detail.component.scss'
 })
 export class InventoryDetailComponent implements OnInit {
+  protected readonly loc_chargement_a209b6 = $localize`:@@inventory.inventory-detail.tpl.chargement.a209b664:Chargement...`;
+  protected loc_inventaire_du_startedat_bd168f(p0: unknown): string {
+    return $localize`:@@inventory.inventory-detail.tpl.inventaire.du.startedat.bd168f35:Inventaire du ${p0}:startedAt:`;
+  }
+  protected readonly loc_produit_ff673d = $localize`:@@inventory.inventory-detail.tpl.produit.ff673dc2:Produit`;
+  protected readonly loc_code_adac69 = $localize`:@@inventory.inventory-detail.tpl.code.adac6937:Code`;
+  protected readonly loc_quantite_theorique_e6370b = $localize`:@@inventory.inventory-detail.tpl.quantite.theorique.e6370bd9:Quantité théorique`;
+  protected readonly loc_quantite_comptee_9aee07 = $localize`:@@inventory.inventory-detail.tpl.quantite.comptee.9aee073b:Quantité comptée`;
+  protected readonly loc_ecart_6ae8dc = $localize`:@@inventory.inventory-detail.tpl.ecart.6ae8dce8:Écart`;
+  protected readonly loc_statut_659499 = $localize`:@@inventory.inventory-detail.tpl.statut.659499f3:Statut`;
+
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private inventoryService = inject(InventoryService);
@@ -51,9 +65,9 @@ export class InventoryDetailComponent implements OnInit {
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const inv = this.inventory();
     return [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Inventaire', route: '/inventory' },
-      { label: inv?.reference ?? 'Détail' }
+      { label: $localize`:@@inventory.inventory-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@inventory.inventory-detail.ts.inventaire.10ad1a54:Inventaire`, route: '/inventory' },
+      { label: inv?.reference ?? $localize`:@@ui.tern.detail.7ce06a:Détail` }
     ];
   });
 
@@ -101,13 +115,13 @@ export class InventoryDetailComponent implements OnInit {
   formatDate(dateStr: string | null): string {
     if (!dateStr) return '—';
     const d = new Date(dateStr);
-    return isNaN(d.getTime()) ? '—' : d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+    return isNaN(d.getTime()) ? '—' : d.toLocaleDateString(erpDateLocale('fr-FR'), { day: '2-digit', month: 'long', year: 'numeric' });
   }
 
   getDiffAriaLabel(difference: number): string {
-    if (difference > 0) return `Écart: surplus ${difference}`;
-    if (difference < 0) return `Écart: manquant ${Math.abs(difference)}`;
-    return 'Écart: nul';
+    if (difference > 0) return $localize`:@@inventory.inventory-detail.ts.ecart.surplus.difference.6dd516eb:Écart: surplus ${difference}:difference:`;
+    if (difference < 0) return $localize`:@@inventory.inventory-detail.ts.ecart.manquant.abs.43d8b199:Écart: manquant ${Math.abs(difference)}:abs:`;
+    return $localize`:@@inventory.inventory-detail.ts.ecart.nul.4609d379:Écart: nul`;
   }
 
   goToList(): void {

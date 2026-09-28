@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Routes } from '@angular/router';
 import { permissionGuard } from '@core/guards/permission.guard';
 
@@ -11,7 +12,7 @@ export const FORECASTING_ROUTES: Routes = [
       import('./pages/forecasting-hub/forecasting-hub.component').then(m => m.ForecastingHubComponent),
     canActivate: [permissionGuard],
     data: { permissions: [FORECASTING_VIEW] },
-    title: 'Prévisions IA — InstaFact',
+    title: $localize`:@@forecasting.routes.title.Pr_visions_IA_InstaFac:Prévisions IA — InstaFact`,
     children: [
       {
         path: '',

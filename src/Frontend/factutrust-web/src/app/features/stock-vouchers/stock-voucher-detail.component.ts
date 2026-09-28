@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, computed, inject, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
@@ -30,7 +32,7 @@ import {
 @Component({
   selector: 'app-stock-voucher-detail',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     FormsModule,
@@ -57,76 +59,72 @@ import {
     } @else {
       @if (voucher(); as v) {
       <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
-      <app-page-header [title]="v.kindDisplay + ' ' + v.number" [subtitle]="v.reasonDisplay">
+      <app-page-header [title]="(v.kindDisplay | backendLabel) + ' ' + v.number" [subtitle]="v.reasonDisplay | backendLabel">
         <div class="header-actions">
-          <span class="status-badge" [ngClass]="v.statusCss">{{ v.statusDisplay }}</span>
-          <button pButton type="button" label="PDF" icon="pi pi-file-pdf" class="p-button-outlined"
+          <span class="status-badge" [ngClass]="v.statusCss">{{ v.statusDisplay | backendLabel }}</span>
+          <button pButton type="button" label="PDF" i18n-label="@@stock-vouchers.stock-voucher-detail.pdf.d613d88c" icon="pi pi-file-pdf" class="p-button-outlined"
                   (click)="downloadPdf()" [loading]="pdfLoading()"></button>
           @if (canUpdate() && isDraft(v.status)) {
-            <app-button variant="outline" icon="pi-pencil" iconPos="left" [routerLink]="editRoute">
-              Modifier
-            </app-button>
-            <button pButton type="button" label="Valider" icon="pi pi-check"
+            <app-button variant="outline" icon="pi-pencil" iconPos="left" [routerLink]="editRoute" i18n="@@stock-vouchers.stock-voucher-detail.modifier.f260e757"> Modifier </app-button>
+            <button pButton type="button" label="Valider" i18n-label="@@stock-vouchers.stock-voucher-detail.valider.be4220f7" icon="pi pi-check"
                     (click)="validate()" [loading]="processing()"></button>
           }
           @if (canCreate() && !isDraft(v.status)) {
-            <button pButton type="button" label="Dupliquer" icon="pi pi-copy" class="p-button-outlined"
+            <button pButton type="button" label="Dupliquer" i18n-label="@@stock-vouchers.stock-voucher-detail.dupliquer.c5e1d3f1" icon="pi pi-copy" class="p-button-outlined"
                     (click)="duplicate()" [loading]="duplicating()"></button>
           }
           @if (canUpdate() && (isDraft(v.status) || isValidated(v.status))) {
-            <button pButton type="button" label="Annuler" icon="pi pi-times"
+            <button pButton type="button" label="Annuler" i18n-label="@@stock-vouchers.stock-voucher-detail.annuler.49ba3292" icon="pi pi-times"
                     class="p-button-danger p-button-outlined" (click)="showCancelDialog = true"></button>
           }
           @if (canDelete() && isDraft(v.status)) {
-            <button pButton type="button" label="Supprimer" icon="pi pi-trash"
+            <button pButton type="button" label="Supprimer" i18n-label="@@stock-vouchers.stock-voucher-detail.supprimer.1acfc1c7" icon="pi pi-trash"
                     class="p-button-danger" (click)="confirmDelete()"></button>
           }
-          <app-button variant="outline" icon="pi-arrow-left" iconPos="left" [routerLink]="listRoute">
-            Retour
-          </app-button>
+          <app-button variant="outline" icon="pi-arrow-left" iconPos="left" [routerLink]="listRoute" i18n="@@stock-vouchers.stock-voucher-detail.retour.e5befb1f"> Retour </app-button>
         </div>
       </app-page-header>
 
       <div class="info-grid">
         <div class="card">
-          <h3>Dépôt</h3>
+          <h3 i18n="@@stock-vouchers.stock-voucher-detail.depot.4c1c61c7">Dépôt</h3>
           <p class="warehouse-name">{{ v.warehouseName || '—' }}</p>
         </div>
         <div class="card">
-          <h3>Informations</h3>
-          <p><strong>Date :</strong> {{ v.voucherDate | date:'dd/MM/yyyy' }}</p>
+          <h3 i18n="@@stock-vouchers.stock-voucher-detail.informations.54937b3a">Informations</h3>
+          <p><strong i18n="@@stock-vouchers.stock-voucher-detail.date.2e4c6fc1">Date :</strong> {{ v.voucherDate | date:'dd/MM/yyyy' }}</p>
           @if (v.externalReference) {
-            <p><strong>Référence :</strong> {{ v.externalReference }}</p>
+            <p><strong i18n="@@stock-vouchers.stock-voucher-detail.reference.d3ebb895">Référence :</strong> {{ v.externalReference }}</p>
           }
           @if (v.notes) {
-            <p><strong>Notes :</strong> {{ v.notes }}</p>
+            <p><strong i18n="@@stock-vouchers.stock-voucher-detail.notes.4ef03540">Notes :</strong> {{ v.notes }}</p>
           }
         </div>
         <div class="card">
-          <h3>Totaux</h3>
-          <p><strong>Quantité :</strong> {{ v.totalQuantity | number:'1.0-3' }}</p>
-          <p><strong>Valorisation :</strong> {{ v.totalValue | currency:'TND':'symbol':'1.3-3' }}</p>
+          <h3 i18n="@@stock-vouchers.stock-voucher-detail.totaux.a1ca02f8">Totaux</h3>
+          <p><strong i18n="@@stock-vouchers.stock-voucher-detail.quantite.ee1b5bf5">Quantité :</strong> {{ v.totalQuantity | number:'1.0-3' }}</p>
+          <p><strong i18n="@@stock-vouchers.stock-voucher-detail.valorisation.84e1cbf3">Valorisation :</strong> {{ v.totalValue | currency:'TND':'symbol':'1.3-3' }}</p>
           @if (v.validatedAt) {
-            <p><strong>Validé le :</strong> {{ v.validatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p><strong i18n="@@stock-vouchers.stock-voucher-detail.valide.le.308fce50">Validé le :</strong> {{ v.validatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
           }
           @if (v.cancellationReason) {
-            <p><strong>Annulation :</strong> {{ v.cancellationReason }}</p>
+            <p><strong i18n="@@stock-vouchers.stock-voucher-detail.annulation.90e294c3">Annulation :</strong> {{ v.cancellationReason }}</p>
           }
         </div>
       </div>
 
       <div class="card">
-        <h3>Lignes</h3>
+        <h3 i18n="@@stock-vouchers.stock-voucher-detail.lignes.41c7025e">Lignes</h3>
         <table class="lines-table">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Code</th>
-              <th>Produit</th>
-              <th>Unité</th>
-              <th>Qté</th>
-              <th>Coût</th>
-              <th>Valorisation</th>
+              <th i18n="@@stock-vouchers.stock-voucher-detail.text.d08f88df">#</th>
+              <th i18n="@@stock-vouchers.stock-voucher-detail.code.adac6937">Code</th>
+              <th i18n="@@stock-vouchers.stock-voucher-detail.produit.ff673dc2">Produit</th>
+              <th i18n="@@stock-vouchers.stock-voucher-detail.unite.388fd9c4">Unité</th>
+              <th i18n="@@stock-vouchers.stock-voucher-detail.qte.a4772129">Qté</th>
+              <th i18n="@@stock-vouchers.stock-voucher-detail.cout.4a4aa395">Coût</th>
+              <th i18n="@@stock-vouchers.stock-voucher-detail.valorisation.61fcd7cd">Valorisation</th>
             </tr>
           </thead>
           <tbody>
@@ -145,14 +143,14 @@ import {
         </table>
       </div>
 
-      <p-dialog header="Annuler le bon" [(visible)]="showCancelDialog" [modal]="true" [style]="{width:'450px'}">
+      <p-dialog header="Annuler le bon" i18n-header="@@stock-vouchers.stock-voucher-detail.annuler.le.bon.608615c8" [(visible)]="showCancelDialog" [modal]="true" [style]="{width:'450px'}">
         <div class="field">
-          <label class="field-label">Motif d'annulation</label>
+          <label class="field-label" i18n="@@stock-vouchers.stock-voucher-detail.motif.d.annulation.f627914d">Motif d'annulation</label>
           <textarea pTextarea [(ngModel)]="cancelReason" rows="3" style="width:100%"></textarea>
         </div>
         <ng-template pTemplate="footer">
-          <button pButton type="button" label="Fermer" class="p-button-text" (click)="showCancelDialog = false"></button>
-          <button pButton type="button" label="Confirmer l'annulation" class="p-button-danger"
+          <button pButton type="button" label="Fermer" i18n-label="@@stock-vouchers.stock-voucher-detail.fermer.5ab4ec64" class="p-button-text" (click)="showCancelDialog = false"></button>
+          <button pButton type="button" label="Confirmer l'annulation" i18n-label="@@stock-vouchers.stock-voucher-detail.confirmer.l.annulation.92040a54" class="p-button-danger"
                   (click)="cancelVoucher()" [disabled]="!cancelReason.trim()" [loading]="processing()"></button>
         </ng-template>
       </p-dialog>
@@ -168,7 +166,7 @@ import {
     .card h3 { font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase; margin: 0 0 0.75rem 0; }
     .warehouse-name { font-size: 1.125rem; font-weight: 600; margin: 0; }
     .lines-table { width: 100%; border-collapse: collapse; }
-    .lines-table th, .lines-table td { padding: 0.625rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    .lines-table th, .lines-table td { padding: 0.625rem; text-align: start; border-bottom: 1px solid #e2e8f0; }
     .status-badge { padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 500; }
     .status-draft { background: #f1f5f9; color: #475569; }
     .status-validated { background: #dcfce7; color: #166534; }
@@ -233,10 +231,10 @@ export class StockVoucherDetailComponent implements OnInit {
         const data = res.data ?? null;
         this.voucher.set(data);
         if (data) {
-          const listLabel = isStockVoucherEntry(data.kind) ? "Bons d'entrée" : 'Bons de sortie';
+          const listLabel = isStockVoucherEntry(data.kind) ? $localize`:@@ui.tern.bons.d.entree.c04705:Bons d'entrée` : $localize`:@@ui.tern.bons.de.sortie.ccd59b:Bons de sortie`;
           this.breadcrumbItems = [
-            { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-            { label: 'Stock', route: '/stock' },
+            { label: $localize`:@@stock-vouchers.stock-voucher-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+            { label: $localize`:@@stock-vouchers.stock-voucher-detail.ts.stock.bcecf456:Stock`, route: '/stock' },
             { label: listLabel, route: this.listRoute },
             { label: data.number }
           ];
@@ -247,7 +245,7 @@ export class StockVoucherDetailComponent implements OnInit {
         this.initialLoading.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@stock-voucher-detail.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
         void this.router.navigate([this.listRoute]);
@@ -259,24 +257,24 @@ export class StockVoucherDetailComponent implements OnInit {
     const v = this.voucher();
     if (!v) return;
     this.confirmationService.confirm({
-      header: 'Valider le bon',
-      message: 'Le stock sera mis à jour. Continuer ?',
+      header: $localize`:@@stock-vouchers.stock-voucher-detail.ts.valider.le.bon.d6de966e:Valider le bon`,
+      message: $localize`:@@stock-vouchers.stock-voucher-detail.ts.le.stock.sera.mis.a.jour.continuer.614f0abf:Le stock sera mis à jour. Continuer ?`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Valider',
-      rejectLabel: 'Retour',
+      acceptLabel: $localize`:@@stock-voucher-detail.component.acceptLabel.Valider:Valider`,
+      rejectLabel: $localize`:@@stock-voucher-detail.component.rejectLabel.Retour:Retour`,
       accept: () => {
         this.processing.set(true);
         this.voucherService.validate(v.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           next: () => {
             this.processing.set(false);
-            this.messageService.add({ severity: 'success', summary: 'Validé', detail: 'Le stock a été mis à jour.' });
+            this.messageService.add({ severity: 'success', summary: $localize`:@@stock-voucher-detail.component.summary.Validé:Validé`, detail: $localize`:@@stock-voucher-detail.component.detail.Le stock a é:Le stock a été mis à jour.` });
             this.load(v.id);
           },
           error: (err) => {
             this.processing.set(false);
             this.messageService.add({
               severity: 'error',
-              summary: 'Validation refusée',
+              summary: $localize`:@@stock-voucher-detail.component.summary.Validation_refus:Validation refusée`,
               detail: this.errorHandler.extractErrorMessage(err)
             });
           }
@@ -293,14 +291,14 @@ export class StockVoucherDetailComponent implements OnInit {
       next: () => {
         this.processing.set(false);
         this.showCancelDialog = false;
-        this.messageService.add({ severity: 'info', summary: 'Annulé', detail: 'Bon de stock annulé.' });
+        this.messageService.add({ severity: 'info', summary: $localize`:@@stock-voucher-detail.component.summary.Annul_:Annulé`, detail: $localize`:@@stock-voucher-detail.component.detail.Bon_de_stock_ann:Bon de stock annulé.` });
         this.load(v.id);
       },
       error: (err) => {
         this.processing.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Annulation refusée',
+          summary: $localize`:@@stock-voucher-detail.component.summary.Annulation_refus:Annulation refusée`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -311,21 +309,21 @@ export class StockVoucherDetailComponent implements OnInit {
     const v = this.voucher();
     if (!v) return;
     this.confirmationService.confirm({
-      header: 'Supprimer le brouillon',
-      message: `Supprimer définitivement ${v.number} ?`,
+      header: $localize`:@@stock-vouchers.stock-voucher-detail.ts.supprimer.le.brouillon.15c633f2:Supprimer le brouillon`,
+      message: $localize`:@@stock-vouchers.stock-voucher-detail.ts.supprimer.definitivement.number.da3c726b:Supprimer définitivement ${v.number}:number: ?`,
       icon: 'pi pi-trash',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@stock-voucher-detail.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@stock-voucher-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.voucherService.delete(v.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           next: () => {
-            this.messageService.add({ severity: 'success', summary: 'Supprimé', detail: 'Brouillon supprimé.' });
+            this.messageService.add({ severity: 'success', summary: $localize`:@@stock-voucher-detail.component.summary.Supprimé:Supprimé`, detail: $localize`:@@stock-voucher-detail.component.detail.Brouillon_suppri:Brouillon supprimé.` });
             void this.router.navigate([this.listRoute]);
           },
           error: (err) => this.messageService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@stock-voucher-detail.component.summary.Erreur:Erreur`,
             detail: this.errorHandler.extractErrorMessage(err)
           })
         });
@@ -355,14 +353,14 @@ export class StockVoucherDetailComponent implements OnInit {
       next: (res) => {
         this.duplicating.set(false);
         const id = res.data;
-        this.messageService.add({ severity: 'success', summary: 'Dupliqué', detail: 'Un brouillon a été créé.' });
+        this.messageService.add({ severity: 'success', summary: $localize`:@@stock-voucher-detail.component.summary.Dupliqué:Dupliqué`, detail: $localize`:@@stock-voucher-detail.component.detail.Un_brouillon_a_:Un brouillon a été créé.` });
         if (id) void this.router.navigate([this.listRoute, id, 'edit']);
       },
       error: (err) => {
         this.duplicating.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@stock-voucher-detail.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -387,7 +385,7 @@ export class StockVoucherDetailComponent implements OnInit {
         this.pdfLoading.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@stock-voucher-detail.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }

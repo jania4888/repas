@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -35,29 +36,27 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <app-breadcrumb [items]="breadcrumbItems()"></app-breadcrumb>
 
     <app-page-header
-      [title]="isEditMode() ? 'Modifier la catégorie' : 'Nouvelle catégorie'"
-      [subtitle]="isEditMode() ? 'Modifiez les informations de la catégorie.' : 'Créez une catégorie pour classer vos produits.'">
+      [title]="isEditMode() ? loc_ui_tern_modifier_la_categorie_b9c31a : loc_ui_tern_nouvelle_categorie_8c5f92"
+      [subtitle]="isEditMode() ? loc_ui_tern_modifiez_les_informations_de_la_categorie_1c40c7 : loc_ui_tern_creez_une_categorie_pour_classer_vos_produ_c1599a">
       <app-button
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/product-categories">
-        Annuler
-      </app-button>
+        routerLink="/product-categories" i18n="@@product-categories.product-category-form.annuler.49ba3292"> Annuler </app-button>
     </app-page-header>
 
     @if (loading()) {
       <div class="loading-container">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
-        <p>Chargement...</p>
+        <p i18n="@@product-categories.product-category-form.chargement.a209b664">Chargement...</p>
       </div>
     } @else {
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="form-grid">
-          <app-form-section title="Informations générales" icon="pi-tag" [number]="1">
+          <app-form-section title="Informations générales" i18n-title="@@product-categories.product-category-form.informations.generales.be6ba6e5" icon="pi-tag" [number]="1">
             @if (isEditMode()) {
               <div class="form-group">
-                <label for="code">Code</label>
+                <label for="code" i18n="@@product-categories.product-category-form.code.adac6937">Code</label>
                 <input
                   pInputText
                   id="code"
@@ -65,16 +64,16 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   class="w-full"
                   readonly
                   disabled>
-                <small class="form-hint">Le code n'est pas modifiable.</small>
+                <small class="form-hint" i18n="@@product-categories.product-category-form.le.code.n.est.pas.modifiable.366c19a3">Le code n'est pas modifiable.</small>
               </div>
             } @else {
               <div class="form-group">
-                <label for="code">Code <span class="required">*</span></label>
+                <label for="code"><ng-container i18n="@@product-categories.product-category-form.code.adac6937">Code </ng-container> <span class="required" i18n="@@product-categories.product-category-form.text.df58248c">*</span></label>
                 <input
                   pInputText
                   id="code"
                   formControlName="code"
-                  placeholder="Ex: SERVICES"
+                  placeholder="Ex: SERVICES" i18n-placeholder="@@product-categories.product-category-form.ex.services.14082c60"
                   maxlength="50"
                   class="w-full"
                   [class.ng-invalid]="isInvalid('code')">
@@ -84,17 +83,17 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                     <span>{{ errorMessageService.getErrorMessage(form.get('code')) }}</span>
                   </div>
                 }
-                <small class="form-hint">Code unique, en majuscules (max. 50 caractères).</small>
+                <small class="form-hint" i18n="@@product-categories.product-category-form.code.unique.en.majuscules.max.50.caracteres.e9a39e13">Code unique, en majuscules (max. 50 caractères).</small>
               </div>
             }
 
             <div class="form-group">
-              <label for="name">Nom <span class="required">*</span></label>
+              <label for="name"><ng-container i18n="@@product-categories.product-category-form.nom.7ff20370">Nom </ng-container> <span class="required" i18n="@@product-categories.product-category-form.text.df58248c">*</span></label>
               <input
                 pInputText
                 id="name"
                 formControlName="name"
-                placeholder="Ex: Services"
+                placeholder="Ex: Services" i18n-placeholder="@@product-categories.product-category-form.ex.services.a72bb800"
                 maxlength="100"
                 class="w-full"
                 [class.ng-invalid]="isInvalid('name')">
@@ -104,18 +103,18 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   <span>{{ errorMessageService.getErrorMessage(form.get('name')) }}</span>
                 </div>
               }
-              <small class="form-hint">Nom affiché dans les listes et le formulaire produit (max. 100 caractères).</small>
+              <small class="form-hint" i18n="@@product-categories.product-category-form.nom.affiche.dans.les.listes.et.le.formulaire.pro.a4010abb">Nom affiché dans les listes et le formulaire produit (max. 100 caractères).</small>
             </div>
 
             <div class="form-group">
-              <label for="displayOrder">Ordre d'affichage</label>
+              <label for="displayOrder" i18n="@@product-categories.product-category-form.ordre.d.affichage.6978b883">Ordre d'affichage</label>
               <p-inputNumber
                 id="displayOrder"
                 formControlName="displayOrder"
                 [min]="0"
                 [max]="9999"
                 [showButtons]="false"
-                placeholder="0"
+                placeholder="0" i18n-placeholder="@@product-categories.product-category-form.0.b6589fc6"
                 styleClass="w-full">
               </p-inputNumber>
               @if (isInvalid('displayOrder')) {
@@ -124,22 +123,22 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   <span>{{ errorMessageService.getErrorMessage(form.get('displayOrder')) }}</span>
                 </div>
               }
-              <small class="form-hint">Plus le nombre est petit, plus la catégorie apparaît en premier.</small>
+              <small class="form-hint" i18n="@@product-categories.product-category-form.plus.le.nombre.est.petit.plus.la.categorie.appar.df443502">Plus le nombre est petit, plus la catégorie apparaît en premier.</small>
             </div>
 
             @if (isEditMode()) {
               <div class="form-group">
-                <label for="isActive">Statut</label>
+                <label for="isActive" i18n="@@product-categories.product-category-form.statut.659499f3">Statut</label>
                 <div class="status-switch">
                   <p-inputSwitch
                     id="isActive"
                     formControlName="isActive">
                   </p-inputSwitch>
                   <span [class.active]="form.get('isActive')?.value">
-                    {{ form.get('isActive')?.value ? 'Actif' : 'Inactif' }}
+                    {{ form.get('isActive')?.value ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033 }}
                   </span>
                 </div>
-                <small class="form-hint">Une catégorie inactive n'apparaît plus dans le choix du formulaire produit.</small>
+                <small class="form-hint" i18n="@@product-categories.product-category-form.une.categorie.inactive.n.apparait.plus.dans.le.c.ae1fa8e6">Une catégorie inactive n'apparaît plus dans le choix du formulaire produit.</small>
               </div>
             }
           </app-form-section>
@@ -150,16 +149,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             variant="outline"
             icon="pi-times"
             iconPos="left"
-            routerLink="/product-categories">
-            Annuler
-          </app-button>
+            routerLink="/product-categories" i18n="@@product-categories.product-category-form.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             type="submit"
             [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"
             iconPos="left"
             [disabled]="form.invalid || saving()">
-            {{ isEditMode() ? 'Enregistrer' : 'Créer la catégorie' }}
+            {{ isEditMode() ? loc_ui_tern_enregistrer_f7c8bc : loc_ui_tern_creer_la_categorie_e150d5 }}
           </app-button>
         </div>
       </form>
@@ -200,7 +197,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 
     .required {
       color: var(--color-error-600);
-      margin-left: var(--spacing-1);
+      margin-inline-start: var(--spacing-1);
     }
 
     .form-error {
@@ -259,6 +256,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `]
 })
 export class ProductCategoryFormComponent implements OnInit {
+  readonly loc_ui_tern_modifier_la_categorie_b9c31a = $localize`:@@ui.tern.modifier.la.categorie.b9c31a:Modifier la catégorie`;
+  readonly loc_ui_tern_nouvelle_categorie_8c5f92 = $localize`:@@ui.tern.nouvelle.categorie.8c5f92:Nouvelle catégorie`;
+  readonly loc_ui_tern_modifiez_les_informations_de_la_categorie_1c40c7 = $localize`:@@ui.tern.modifiez.les.informations.de.la.categorie.1c40c7:Modifiez les informations de la catégorie.`;
+  readonly loc_ui_tern_creez_une_categorie_pour_classer_vos_produ_c1599a = $localize`:@@ui.tern.creez.une.categorie.pour.classer.vos.produ.c1599a:Créez une catégorie pour classer vos produits.`;
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_creer_la_categorie_e150d5 = $localize`:@@ui.tern.creer.la.categorie.e150d5:Créer la catégorie`;
   private fb = inject(FormBuilder);
   private productCategoryService = inject(ProductCategoryService);
   private router = inject(Router);
@@ -276,13 +281,13 @@ export class ProductCategoryFormComponent implements OnInit {
 
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const base: BreadcrumbItem[] = [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Catégories', route: '/product-categories' }
+      { label: $localize`:@@product-categories.product-category-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@product-categories.product-category-form.ts.categories.d463d7d2:Catégories`, route: '/product-categories' }
     ];
     if (this.isEditMode()) {
-      base.push({ label: 'Modifier la catégorie' });
+      base.push({ label: $localize`:@@product-categories.product-category-form.ts.modifier.la.categorie.b9c31a75:Modifier la catégorie` });
     } else {
-      base.push({ label: 'Nouvelle catégorie' });
+      base.push({ label: $localize`:@@product-categories.product-category-form.ts.nouvelle.categorie.8c5f928e:Nouvelle catégorie` });
     }
     return base;
   });
@@ -318,8 +323,8 @@ export class ProductCategoryFormComponent implements OnInit {
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: 'Catégorie non trouvée'
+            summary: $localize`:@@product-category-form.component.summary.Erreur:Erreur`,
+            detail: $localize`:@@product-category-form.component.detail.Cat_gorie_non_tr:Catégorie non trouvée`
           });
           this.router.navigate(['/product-categories']);
         }
@@ -329,8 +334,8 @@ export class ProductCategoryFormComponent implements OnInit {
         const msg = this.errorHandler.extractErrorMessage(err);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: msg || 'Impossible de charger la catégorie'
+          summary: $localize`:@@product-category-form.component.summary.Erreur:Erreur`,
+          detail: msg || $localize`:@@product-categories.product-category-form.ts.impossible.de.charger.la.categorie.e756ad05:Impossible de charger la catégorie`
         });
         this.router.navigate(['/product-categories']);
         this.loading.set(false);
@@ -363,15 +368,15 @@ export class ProductCategoryFormComponent implements OnInit {
           if (response.success) {
             this.toastService.add({
               severity: 'success',
-              summary: 'Succès',
-              detail: response.message || 'Catégorie mise à jour.'
+              summary: $localize`:@@product-category-form.component.summary.Succès:Succès`,
+              detail: response.message || $localize`:@@product-categories.product-category-form.ts.categorie.mise.a.jour.6c887ee2:Catégorie mise à jour.`
             });
             this.router.navigate(['/product-categories']);
           } else {
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
-              detail: response.errors?.join(', ') || response.message || 'Impossible de mettre à jour la catégorie'
+              summary: $localize`:@@product-category-form.component.summary.Erreur:Erreur`,
+              detail: response.errors?.join(', ') || response.message || $localize`:@@product-categories.product-category-form.ts.impossible.de.mettre.a.jour.la.categorie.25dbddc0:Impossible de mettre à jour la catégorie`
             });
           }
           this.saving.set(false);
@@ -380,8 +385,8 @@ export class ProductCategoryFormComponent implements OnInit {
           const msg = this.errorHandler.extractErrorMessage(err);
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: msg || 'Impossible de mettre à jour la catégorie'
+            summary: $localize`:@@product-category-form.component.summary.Erreur:Erreur`,
+            detail: msg || $localize`:@@product-categories.product-category-form.ts.impossible.de.mettre.a.jour.la.categorie.25dbddc0:Impossible de mettre à jour la catégorie`
           });
           this.saving.set(false);
         }
@@ -398,15 +403,15 @@ export class ProductCategoryFormComponent implements OnInit {
           if (response.success && response.data) {
             this.toastService.add({
               severity: 'success',
-              summary: 'Succès',
-              detail: response.message || 'Catégorie créée avec succès.'
+              summary: $localize`:@@product-category-form.component.summary.Succès:Succès`,
+              detail: response.message || $localize`:@@product-categories.product-category-form.ts.categorie.creee.avec.succes.1cd52beb:Catégorie créée avec succès.`
             });
             this.router.navigate(['/product-categories']);
           } else {
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
-              detail: response.errors?.join(', ') || response.message || 'Impossible de créer la catégorie'
+              summary: $localize`:@@product-category-form.component.summary.Erreur:Erreur`,
+              detail: response.errors?.join(', ') || response.message || $localize`:@@product-categories.product-category-form.ts.impossible.de.creer.la.categorie.1ee25d75:Impossible de créer la catégorie`
             });
           }
           this.saving.set(false);
@@ -417,14 +422,14 @@ export class ProductCategoryFormComponent implements OnInit {
           if (status === 409) {
             this.toastService.add({
               severity: 'error',
-              summary: 'Conflit',
-              detail: msg || 'Une catégorie existe déjà avec ce code.'
+              summary: $localize`:@@product-category-form.component.summary.Conflit:Conflit`,
+              detail: msg || $localize`:@@product-categories.product-category-form.ts.une.categorie.existe.deja.avec.ce.code.f3791d5d:Une catégorie existe déjà avec ce code.`
             });
           } else {
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
-              detail: msg || 'Impossible de créer la catégorie'
+              summary: $localize`:@@product-category-form.component.summary.Erreur:Erreur`,
+              detail: msg || $localize`:@@product-categories.product-category-form.ts.impossible.de.creer.la.categorie.1ee25d75:Impossible de créer la catégorie`
             });
           }
           this.saving.set(false);

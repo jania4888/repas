@@ -1,5 +1,6 @@
 import { Component, computed, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { erpPlural, erpPluralLocale } from '@core/i18n/erp-plural';
 
 @Component({
   selector: 'app-draft-banner',
@@ -7,19 +8,15 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `
     @if (visible()) {
-      <div class="db-banner" role="region" aria-label="Brouillon disponible">
-        <span class="db-icon" aria-hidden="true">📝</span>
+      <div class="db-banner" role="region" aria-label="Brouillon disponible" i18n-aria-label="@@accounting.manual-entry.brouillon.disponible.d1d2f606">
+        <span class="db-icon" aria-hidden="true" i18n="@@accounting.manual-entry.text.edc47290">📝</span>
         <span class="db-message">
-          Un brouillon d'écriture a été sauvegardé automatiquement
+          <ng-container i18n="@@accounting.manual-entry.un.brouillon.d.ecriture.a.ete.sauvegarde.automat.1930ed4a"> Un brouillon d'écriture a été sauvegardé automatiquement </ng-container>
           <strong>{{ relative() }}</strong>.
         </span>
         <div class="db-actions">
-          <button type="button" class="btn btn-sm btn-primary" (click)="restore.emit()">
-            Restaurer le brouillon
-          </button>
-          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="discard.emit()">
-            Ignorer
-          </button>
+          <button type="button" class="btn btn-sm btn-primary" (click)="restore.emit()" i18n="@@accounting.manual-entry.restaurer.le.brouillon.6208ee6f"> Restaurer le brouillon </button>
+          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="discard.emit()" i18n="@@accounting.manual-entry.ignorer.b0d64e49"> Ignorer </button>
         </div>
       </div>
     }
@@ -39,20 +36,41 @@ export class DraftBannerComponent {
 
   readonly relative = computed(() => {
     const iso = this.savedAt();
-    if (!iso) return 'récemment';
+    if (!iso) return $localize`:@@accounting.draft-banner.ts.recemment.b326495c:récemment`;
     const saved = new Date(iso);
     const now = Date.now();
     const diffSec = Math.max(0, Math.round((now - saved.getTime()) / 1000));
-    if (diffSec < 60) return "il y a quelques secondes";
+    if (diffSec < 60) return $localize`:@@accounting.draft-banner.il.y.a.quelques.secondes:il y a quelques secondes`;
     if (diffSec < 3600) {
       const m = Math.floor(diffSec / 60);
-      return `il y a ${m} minute${m > 1 ? 's' : ''}`;
+      return erpPlural(m, {
+        zero: $localize`:@@accounting.draft-banner.il.y.a.minutes.zero:il y a ${m}:m: minutes`,
+        one: $localize`:@@accounting.draft-banner.il.y.a.minutes.one:il y a ${m}:m: minute`,
+        two: $localize`:@@accounting.draft-banner.il.y.a.minutes.two:il y a ${m}:m: minutes`,
+        few: $localize`:@@accounting.draft-banner.il.y.a.minutes.few:il y a ${m}:m: minutes`,
+        many: $localize`:@@accounting.draft-banner.il.y.a.minutes.many:il y a ${m}:m: minutes`,
+        other: $localize`:@@accounting.draft-banner.il.y.a.minutes.other:il y a ${m}:m: minutes`
+      }, erpPluralLocale());
     }
     if (diffSec < 86400) {
       const h = Math.floor(diffSec / 3600);
-      return `il y a ${h} heure${h > 1 ? 's' : ''}`;
+      return erpPlural(h, {
+        zero: $localize`:@@accounting.draft-banner.il.y.a.heures.zero:il y a ${h}:h: heures`,
+        one: $localize`:@@accounting.draft-banner.il.y.a.heures.one:il y a ${h}:h: heure`,
+        two: $localize`:@@accounting.draft-banner.il.y.a.heures.two:il y a ${h}:h: heures`,
+        few: $localize`:@@accounting.draft-banner.il.y.a.heures.few:il y a ${h}:h: heures`,
+        many: $localize`:@@accounting.draft-banner.il.y.a.heures.many:il y a ${h}:h: heures`,
+        other: $localize`:@@accounting.draft-banner.il.y.a.heures.other:il y a ${h}:h: heures`
+      }, erpPluralLocale());
     }
     const d = Math.floor(diffSec / 86400);
-    return `il y a ${d} jour${d > 1 ? 's' : ''}`;
+    return erpPlural(d, {
+      zero: $localize`:@@accounting.draft-banner.il.y.a.jours.zero:il y a ${d}:d: jours`,
+      one: $localize`:@@accounting.draft-banner.il.y.a.jours.one:il y a ${d}:d: jour`,
+      two: $localize`:@@accounting.draft-banner.il.y.a.jours.two:il y a ${d}:d: jours`,
+      few: $localize`:@@accounting.draft-banner.il.y.a.jours.few:il y a ${d}:d: jours`,
+      many: $localize`:@@accounting.draft-banner.il.y.a.jours.many:il y a ${d}:d: jours`,
+      other: $localize`:@@accounting.draft-banner.il.y.a.jours.other:il y a ${d}:d: jours`
+    }, erpPluralLocale());
   });
 }

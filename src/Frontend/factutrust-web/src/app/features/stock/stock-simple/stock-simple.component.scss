@@ -135,12 +135,12 @@
 
     &.alert-warning {
         background: #fffbeb;
-        border-left: 4px solid #f59e0b;
+        border-inline-start: 4px solid #f59e0b;
     }
 
     &.alert-danger {
         background: #fef2f2;
-        border-left: 4px solid #ef4444;
+        border-inline-start: 4px solid #ef4444;
     }
 
     .alert-message {
@@ -169,8 +169,8 @@
 
     .search-input {
         width: 100%;
-        padding-left: 2.5rem;
-        padding-right: 2.5rem;
+        padding-inline-start: 2.5rem;
+        padding-inline-end: 2.5rem;
         height: 48px;
         font-size: 1rem;
     }
@@ -310,7 +310,7 @@
 .action-hint {
     position: absolute;
     bottom: 0.75rem;
-    right: 1rem;
+    inset-inline-end: 1rem;
     display: flex;
     align-items: center;
     gap: 0.375rem;
@@ -335,7 +335,7 @@
     padding: var(--spacing-5, 1.25rem);
     margin-bottom: var(--spacing-5, 1.25rem);
     border: 1px solid var(--color-primary-100, #dbeafe);
-    border-left: 4px solid var(--color-primary-500, #3b82f6);
+    border-inline-start: 4px solid var(--color-primary-500, #3b82f6);
     box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
 
     .product-header {

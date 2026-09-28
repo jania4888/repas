@@ -18,7 +18,7 @@ import { ButtonComponent } from '@shared/components/button/button.component';
       (onHide)="cancelled.emit()">
       <ng-content></ng-content>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="onCancel()">Annuler</app-button>
+        <app-button variant="outline" (click)="onCancel()" i18n="@@payroll.shared.annuler.49ba3292">Annuler</app-button>
         <app-button
           variant="primary"
           [disabled]="saveDisabled || saving"
@@ -33,7 +33,7 @@ export class PayrollFormDialogComponent {
   @Input({ required: true }) title = '';
   @Input() visible = false;
   @Input() width = '32rem';
-  @Input() saveLabel = 'Enregistrer';
+  @Input() saveLabel = $localize`:@@payroll.payroll-form-dialog.ts.enregistrer.f7c8bcd8:Enregistrer`;
   @Input() saveDisabled = false;
   @Input() saving = false;
   @Output() visibleChange = new EventEmitter<boolean>();

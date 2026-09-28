@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { isStudioPlanLimitError } from '@features/studio/shared/studio-api-errors';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject } from 'rxjs';
@@ -36,7 +38,7 @@ interface FieldOption { key: string; label: string; }
 /** Bandeau d'erreur métier (409 clé / vue périmée, 400 quota ou validation serveur). */
 interface DesignerError { message: string; stale: boolean; }
 
-const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé le', updatedAt: 'Modifié le' };
+const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: $localize`:@@studio.studio-record-view-designer.ts.cree.le.046c02a0:Créé le`, updatedAt: $localize`:@@studio.studio-record-view-designer.ts.modifie.le.8b181c38:Modifié le` };
 
 /**
  * Concepteur de vue enregistrée (2.5d) : routes `d/:key/views/new` (création) et
@@ -68,14 +70,14 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
       </div>
 
       @if (loading()) {
-        <p class="studio-muted">Chargement…</p>
+        <p class="studio-muted" i18n="@@studio.views.chargement.01cba1df">Chargement…</p>
       } @else {
         @if (error(); as err) {
           <div class="studio-row studio-row-section" role="alert" data-testid="designer-error">
             <i class="pi pi-exclamation-triangle studio-mr"></i>
             <span class="studio-grow">{{ err.message }}</span>
             @if (err.stale) {
-              <p-button label="Recharger" icon="pi pi-refresh" size="small" [text]="true" (onClick)="reload()" data-testid="designer-reload" />
+              <p-button label="Recharger" i18n-label="@@studio.views.recharger.b10ee511" icon="pi pi-refresh" size="small" [text]="true" (onClick)="reload()" data-testid="designer-reload" />
             }
           </div>
         }
@@ -101,44 +103,44 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
 
             @if (mode() === 'Kanban') {
               <div class="studio-row-section rvd-mode-section" data-testid="designer-kanban">
-                <h3 class="studio-section-title">Kanban</h3>
+                <h3 class="studio-section-title" i18n="@@studio.views.kanban.38955467">Kanban</h3>
                 <label class="studio-lbl" for="rvd-kanban-group">{{ labels.designer.kanbanGroupBy }} *</label>
                 <p-select inputId="rvd-kanban-group" class="studio-w-full" [options]="kanbanGroupByOptions()" [ngModel]="kanban().groupByFieldKey"
                   (ngModelChange)="patchKanban({ groupByFieldKey: $event })" optionLabel="label" optionValue="key"
                   [disabled]="!canDesign()" appendTo="body" panelStyleClass="studio-theme" data-testid="designer-kanban-group" />
-                <label class="studio-lbl" for="rvd-kanban-title">Champ de titre</label>
+                <label class="studio-lbl" for="rvd-kanban-title" i18n="@@studio.views.champ.de.titre.ab856965">Champ de titre</label>
                 <p-select inputId="rvd-kanban-title" class="studio-w-full" [options]="fieldOptions()" [ngModel]="kanban().titleFieldKey"
                   (ngModelChange)="patchKanban({ titleFieldKey: $event })" optionLabel="label" optionValue="key" [showClear]="true"
                   [disabled]="!canDesign()" appendTo="body" panelStyleClass="studio-theme" />
-                <label class="studio-lbl">Champs de la carte ({{ kanban().cardFieldKeys?.length ?? 0 }}/{{ limits.maxCardFields }})</label>
+                <label class="studio-lbl" i18n="@@studio.views.champs.de.la.carte.788c8204">Champs de la carte ({{ kanban().cardFieldKeys?.length ?? 0 }}/{{ limits.maxCardFields }})</label>
                 <p-multiSelect class="studio-w-full" [options]="fieldOptions()" [ngModel]="kanban().cardFieldKeys ?? []"
                   (ngModelChange)="patchKanban({ cardFieldKeys: ($event ?? []).slice(0, limits.maxCardFields) })"
-                  optionLabel="label" optionValue="key" [maxSelectedLabels]="3" [selectedItemsLabel]="'{0} champs'"
+                  optionLabel="label" optionValue="key" [maxSelectedLabels]="3" selectedItemsLabel="{0} champs" i18n-selectedItemsLabel="@@studio.views.0.champs.5a68afcf"
                   [disabled]="!canDesign()" appendTo="body" panelStyleClass="studio-theme" data-testid="designer-kanban-cards" />
                 <div class="studio-line">
                   <p-inputSwitch inputId="rvd-kanban-empty" [ngModel]="kanban().showEmptyGroup"
                     (ngModelChange)="patchKanban({ showEmptyGroup: $event })" [disabled]="!canDesign()" />
-                  <label for="rvd-kanban-empty">Afficher la colonne « {{ labels.kanban.emptyGroup }} »</label>
+                  <label for="rvd-kanban-empty" i18n="@@studio.views.afficher.la.colonne.0f3cc32c">Afficher la colonne « {{ labels.kanban.emptyGroup }} »</label>
                 </div>
               </div>
             }
 
             @if (mode() === 'Calendar') {
               <div class="studio-row-section rvd-mode-section" data-testid="designer-calendar">
-                <h3 class="studio-section-title">Calendrier</h3>
+                <h3 class="studio-section-title" i18n="@@studio.views.calendrier.4c83736b">Calendrier</h3>
                 <label class="studio-lbl" for="rvd-cal-start">{{ labels.designer.calendarStart }} *</label>
                 <p-select inputId="rvd-cal-start" class="studio-w-full" [options]="dateOptions()" [ngModel]="calendar().startFieldKey"
                   (ngModelChange)="patchCalendar({ startFieldKey: $event })" optionLabel="label" optionValue="key"
                   [disabled]="!canDesign()" appendTo="body" panelStyleClass="studio-theme" data-testid="designer-calendar-start" />
-                <label class="studio-lbl" for="rvd-cal-end">Champ de fin</label>
+                <label class="studio-lbl" for="rvd-cal-end" i18n="@@studio.views.champ.de.fin.2f6d5bda">Champ de fin</label>
                 <p-select inputId="rvd-cal-end" class="studio-w-full" [options]="dateOptions()" [ngModel]="calendar().endFieldKey"
                   (ngModelChange)="patchCalendar({ endFieldKey: $event })" optionLabel="label" optionValue="key" [showClear]="true"
                   [disabled]="!canDesign()" appendTo="body" panelStyleClass="studio-theme" />
-                <label class="studio-lbl" for="rvd-cal-title">Champ de titre</label>
+                <label class="studio-lbl" for="rvd-cal-title" i18n="@@studio.views.champ.de.titre.ab856965">Champ de titre</label>
                 <p-select inputId="rvd-cal-title" class="studio-w-full" [options]="fieldOptions()" [ngModel]="calendar().titleFieldKey"
                   (ngModelChange)="patchCalendar({ titleFieldKey: $event })" optionLabel="label" optionValue="key" [showClear]="true"
                   [disabled]="!canDesign()" appendTo="body" panelStyleClass="studio-theme" />
-                <label class="studio-lbl" for="rvd-cal-color">Champ de couleur</label>
+                <label class="studio-lbl" for="rvd-cal-color" i18n="@@studio.views.champ.de.couleur.e1e1a519">Champ de couleur</label>
                 <p-select inputId="rvd-cal-color" class="studio-w-full" [options]="optionColorOptions()" [ngModel]="calendar().colorFieldKey"
                   (ngModelChange)="patchCalendar({ colorFieldKey: $event })" optionLabel="label" optionValue="key" [showClear]="true"
                   [disabled]="!canDesign()" appendTo="body" panelStyleClass="studio-theme" />
@@ -148,7 +150,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
             <div class="studio-block-head">
               <span class="studio-lbl">{{ labels.designer.columns }} ({{ columns().length }}/{{ limits.maxColumns }})</span>
               <p-select [options]="availableColumnOptions()" [ngModel]="null" (ngModelChange)="addColumn($event)"
-                optionLabel="label" optionValue="key" placeholder="Ajouter une colonne" appendTo="body" panelStyleClass="studio-theme"
+                optionLabel="label" optionValue="key" placeholder="Ajouter une colonne" i18n-placeholder="@@studio.views.ajouter.une.colonne.7292e539" appendTo="body" panelStyleClass="studio-theme"
                 [disabled]="!canDesign() || columns().length >= limits.maxColumns" data-testid="designer-add-column" />
             </div>
             @if (columns().length >= limits.maxColumns) {
@@ -159,15 +161,15 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
                 <div class="studio-col-row" [class.studio-col-row--off]="col.hidden" [attr.data-testid]="'designer-column-' + i">
                   <span class="studio-grow">{{ fieldLabel(col.fieldKey) }}</span>
                   <span class="studio-row-move">
-                    <p-button icon="pi pi-chevron-up" [text]="true" size="small" [disabled]="first" (onClick)="moveColumn(i, -1)" ariaLabel="Monter" />
-                    <p-button icon="pi pi-chevron-down" [text]="true" size="small" [disabled]="last" (onClick)="moveColumn(i, 1)" ariaLabel="Descendre" />
+                    <p-button icon="pi pi-chevron-up" [text]="true" size="small" [disabled]="first" (onClick)="moveColumn(i, -1)" ariaLabel="Monter" i18n-ariaLabel="@@studio.views.monter.98a777fa" />
+                    <p-button icon="pi pi-chevron-down" [text]="true" size="small" [disabled]="last" (onClick)="moveColumn(i, 1)" ariaLabel="Descendre" i18n-ariaLabel="@@studio.views.descendre.0cd390e4" />
                   </span>
                   <p-button [icon]="col.hidden ? 'pi pi-eye-slash' : 'pi pi-eye'" [text]="true" size="small"
-                    (onClick)="toggleColumnHidden(i)" [ariaLabel]="col.hidden ? 'Afficher' : 'Masquer'" />
-                  <p-button icon="pi pi-times" [text]="true" size="small" severity="danger" (onClick)="removeColumn(i)" ariaLabel="Retirer" />
+                    (onClick)="toggleColumnHidden(i)" [ariaLabel]="col.hidden ? loc_ui_tern_afficher_5e8020 : loc_ui_tern_masquer_adb05f" />
+                  <p-button icon="pi pi-times" [text]="true" size="small" severity="danger" (onClick)="removeColumn(i)" ariaLabel="Retirer" i18n-ariaLabel="@@studio.views.retirer.46cb56a8" />
                 </div>
               } @empty {
-                <p class="studio-muted">Aucune colonne : toutes les colonnes actives seront affichées.</p>
+                <p class="studio-muted" i18n="@@studio.views.aucune.colonne.toutes.les.colonnes.actives.seron.62985248">Aucune colonne : toutes les colonnes actives seront affichées.</p>
               }
             </div>
 
@@ -177,7 +179,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
             <div class="studio-block-head">
               <span class="studio-lbl">{{ labels.designer.sort }} ({{ sort().length }}/{{ limits.maxSorts }})</span>
               <p-select [options]="availableSortOptions()" [ngModel]="null" (ngModelChange)="addSort($event)"
-                optionLabel="label" optionValue="key" placeholder="Ajouter un tri" appendTo="body" panelStyleClass="studio-theme"
+                optionLabel="label" optionValue="key" placeholder="Ajouter un tri" i18n-placeholder="@@studio.views.ajouter.un.tri.74aa0d7e" appendTo="body" panelStyleClass="studio-theme"
                 [disabled]="!canDesign() || sort().length >= limits.maxSorts" data-testid="designer-add-sort" />
             </div>
             @if (sort().length >= limits.maxSorts) {
@@ -186,9 +188,9 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
             @for (s of sort(); track s.fieldKey; let i = $index) {
               <div class="studio-row" [attr.data-testid]="'designer-sort-' + i">
                 <span class="studio-grow">{{ fieldLabel(s.fieldKey) }}</span>
-                <p-button [label]="s.descending ? 'Décroissant' : 'Croissant'" [icon]="s.descending ? 'pi pi-sort-amount-down' : 'pi pi-sort-amount-up'"
+                <p-button [label]="s.descending ? loc_ui_tern_decroissant_7e8886 : loc_ui_tern_croissant_c4f64a" [icon]="s.descending ? 'pi pi-sort-amount-down' : 'pi pi-sort-amount-up'"
                   [text]="true" size="small" (onClick)="toggleSortDirection(i)" />
-                <p-button icon="pi pi-times" [text]="true" size="small" severity="danger" (onClick)="removeSort(i)" ariaLabel="Retirer" />
+                <p-button icon="pi pi-times" [text]="true" size="small" severity="danger" (onClick)="removeSort(i)" ariaLabel="Retirer" i18n-ariaLabel="@@studio.views.retirer.46cb56a8" />
               </div>
             }
 
@@ -199,7 +201,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
             </div>
             <div class="studio-line">
               <p-inputSwitch inputId="rvd-search" [ngModel]="searchEnabled()" (ngModelChange)="searchEnabled.set($event)" [disabled]="!canDesign()" />
-              <label for="rvd-search">Recherche plein texte</label>
+              <label for="rvd-search" i18n="@@studio.views.recherche.plein.texte.0c174b56">Recherche plein texte</label>
             </div>
             <div class="studio-line">
               <p-inputSwitch inputId="rvd-default" [ngModel]="isDefault()" (ngModelChange)="isDefault.set($event)" [disabled]="!canDesign()" />
@@ -207,16 +209,16 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
             </div>
 
             <div class="studio-form-actions">
-              <p-button label="Annuler" [text]="true" (onClick)="backToList()" />
+              <p-button label="Annuler" i18n-label="@@studio.views.annuler.49ba3292" [text]="true" (onClick)="backToList()" />
               <p-button [label]="labels.designer.save" icon="pi pi-check" [loading]="saving()" [disabled]="!canSave()" (onClick)="save()" data-testid="designer-save" />
             </div>
           </section>
 
           <aside class="studio-preview rvd-preview">
             <div class="studio-block-head">
-              <h3 class="studio-preview-title">Aperçu</h3>
+              <h3 class="studio-preview-title" i18n="@@studio.views.apercu.f0f53004">Aperçu</h3>
               @if (canDesign()) {
-                <p-button label="Actualiser l’aperçu" icon="pi pi-refresh" [text]="true" size="small"
+                <p-button label="Actualiser l’aperçu" i18n-label="@@studio.views.actualiser.l.apercu.a42e3c0b" icon="pi pi-refresh" [text]="true" size="small"
                   [disabled]="saving() || !previewEligible()" (onClick)="refreshPreview()" data-testid="designer-preview-refresh" />
               }
             </div>
@@ -237,6 +239,10 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
   styleUrls: ['../shared/studio-layout.scss', './studio-record-view-designer.component.scss']
 })
 export class StudioRecordViewDesignerComponent implements OnInit {
+  readonly loc_ui_tern_afficher_5e8020 = $localize`:@@ui.tern.afficher.5e8020:Afficher`;
+  readonly loc_ui_tern_masquer_adb05f = $localize`:@@ui.tern.masquer.adb05f:Masquer`;
+  readonly loc_ui_tern_decroissant_7e8886 = $localize`:@@ui.tern.decroissant.7e8886:Décroissant`;
+  readonly loc_ui_tern_croissant_c4f64a = $localize`:@@ui.tern.croissant.c4f64a:Croissant`;
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly studio = inject(StudioService);
@@ -248,7 +254,7 @@ export class StudioRecordViewDesignerComponent implements OnInit {
   readonly labels = STUDIO_RUNTIME_LABELS;
   readonly limits = RECORD_VIEW_LIMITS;
   readonly modeOptions: { label: string; value: RecordViewMode }[] = [
-    { label: 'Liste', value: 'List' }, { label: 'Kanban', value: 'Kanban' }, { label: 'Calendrier', value: 'Calendar' }
+    { label: $localize`:@@studio.studio-record-view-designer.ts.liste.4231be17:Liste`, value: 'List' }, { label: $localize`:@@studio.studio-record-view-designer.ts.kanban.38955467:Kanban`, value: 'Kanban' }, { label: $localize`:@@studio.studio-record-view-designer.ts.calendrier.4c83736b:Calendrier`, value: 'Calendar' }
   ];
 
   readonly entityKey = this.route.snapshot.paramMap.get('key') ?? '';
@@ -291,7 +297,7 @@ export class StudioRecordViewDesignerComponent implements OnInit {
     this.activeFields()
       .filter(f => f.fieldType === CustomFieldType.Select || f.fieldType === CustomFieldType.MultiSelect)
       .map(f => ({ key: f.key, label: f.label })));
-  readonly subtitle = computed(() => this.entityName() ? `Table « ${this.entityName()} »` : null);
+  readonly subtitle = computed(() => this.entityName() ? $localize`:@@ui.tern.table.ph.798a94:Table « ${this.entityName()}:p0: »` : null);
   readonly breadcrumbs = computed<BreadcrumbItem[]>(() => this.editing
     ? STUDIO_BREADCRUMBS.recordViewEdit(this.entityName(), this.entityKey, this.view()?.displayName)
     : STUDIO_BREADCRUMBS.recordViewNew(this.entityName(), this.entityKey));
@@ -346,7 +352,7 @@ export class StudioRecordViewDesignerComponent implements OnInit {
     return {
       id: this.viewId ?? 'apercu',
       key: this.key() || current?.key || 'apercu',
-      displayName: this.displayName().trim() || current?.displayName || 'Aperçu',
+      displayName: this.displayName().trim() || current?.displayName || $localize`:@@studio.studio-record-view-designer.ts.apercu.f0f53004:Aperçu`,
       mode: this.mode(),
       definition: this.definition(),
       isDefault: this.isDefault(),
@@ -571,10 +577,10 @@ export class StudioRecordViewDesignerComponent implements OnInit {
   delete(): void {
     if (!this.editing || !this.canDesign()) return;
     this.confirmation.confirm({
-      message: 'Supprimer cette vue ? Cette action est irréversible.',
-      header: 'Confirmation',
+      message: $localize`:@@studio.studio-record-view-designer.ts.supprimer.cette.vue.cette.action.est.irr.598ead70:Supprimer cette vue ? Cette action est irréversible.`,
+      header: $localize`:@@studio.studio-record-view-designer.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: this.labels.designer.delete,
-      rejectLabel: 'Annuler',
+      rejectLabel: $localize`:@@studio-record-view-designer.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.saving.set(true);
         this.views.deleteRecordView(this.entityKey, this.viewId!).subscribe({
@@ -607,7 +613,7 @@ export class StudioRecordViewDesignerComponent implements OnInit {
         return;
       case 400:
         this.error.set({
-          message: serverMessage.startsWith('Limite du plan') ? this.labels.designer.planLimit : (serverMessage || this.labels.views.error),
+          message: isStudioPlanLimitError(err, serverMessage) ? this.labels.designer.planLimit : (serverMessage || this.labels.views.error),
           stale: false
         });
         return;

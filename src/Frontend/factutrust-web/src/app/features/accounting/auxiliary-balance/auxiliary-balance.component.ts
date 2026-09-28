@@ -39,23 +39,23 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     AccountingExportMenuComponent
   ],
   template: `
-    <app-page-header title="Balance auxiliaire" subtitle="Soldes par tiers — clients ou fournisseurs" />
+    <app-page-header title="Balance auxiliaire" i18n-title="@@accounting.auxiliary-balance.balance.auxiliaire.e2a90270" subtitle="Soldes par tiers — clients ou fournisseurs" i18n-subtitle="@@accounting.auxiliary-balance.soldes.par.tiers.clients.ou.fournisseurs.0bc362c1" />
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Type de tiers et période">
+      <app-accounting-filter-bar ariaLabel="Type de tiers et période" i18n-ariaLabel="@@accounting.auxiliary-balance.type.de.tiers.et.periode.a209f6c9">
         <div accountingFilterFields class="auxbal-toolbar-fields">
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="auxbal-kind">Tiers</label>
+            <label class="accounting-filter-label" for="auxbal-kind" i18n="@@accounting.auxiliary-balance.tiers.435080ba">Tiers</label>
             <select id="auxbal-kind" [(ngModel)]="kind" class="accounting-filter-input">
-              <option [ngValue]="1">Clients</option>
-              <option [ngValue]="2">Fournisseurs</option>
+              <option [ngValue]="1" i18n="@@accounting.auxiliary-balance.clients.28e22fe3">Clients</option>
+              <option [ngValue]="2" i18n="@@accounting.auxiliary-balance.fournisseurs.06b6d88c">Fournisseurs</option>
             </select>
           </div>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="auxbal-from">Du</label>
+            <label class="accounting-filter-label" for="auxbal-from" i18n="@@accounting.auxiliary-balance.du.84814985">Du</label>
             <input id="auxbal-from" type="date" [(ngModel)]="fromStr" class="accounting-filter-input" />
           </div>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="auxbal-to">Au</label>
+            <label class="accounting-filter-label" for="auxbal-to" i18n="@@accounting.auxiliary-balance.au.7a1732d5">Au</label>
             <input id="auxbal-to" type="date" [(ngModel)]="toStr" class="accounting-filter-input" />
           </div>
         </div>
@@ -67,9 +67,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Actualiser la balance auxiliaire">
-            Actualiser
-          </app-button>
+            ariaLabel="Actualiser la balance auxiliaire" i18n-ariaLabel="@@accounting.auxiliary-balance.actualiser.la.balance.auxiliaire.70fe9de8" i18n="@@accounting.auxiliary-balance.actualiser.9d3b2a7d"> Actualiser </app-button>
           <app-accounting-export-menu
             [disabled]="loading() || exporting() || rows().length === 0"
             (exportFormat)="onExport($event)" />
@@ -80,45 +78,45 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       variant="error"
       [message]="error() ?? ''"
       [showRetry]="!!error()"
-      retryLabel="Réessayer"
+      retryLabel="Réessayer" i18n-retryLabel="@@accounting.auxiliary-balance.reessayer.c4f78b12"
       (retry)="load()" />
     <p-table [value]="rows()" [paginator]="true" [rows]="25" [rowsPerPageOptions]="[25, 50, 100]"
       [loading]="loading()" [rowHover]="true" [scrollable]="true" scrollHeight="flex"
       styleClass="p-datatable-sm accounting-datatable auxbal-table"
-      [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} tiers">
+      [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} tiers" i18n-currentPageReportTemplate="@@accounting.auxiliary-balance.affichage.de.first.a.last.sur.totalrecords.tiers.05aff86a">
       <ng-template pTemplate="header">
         <tr>
-          <th>Tiers</th>
-          <th class="text-right" pTooltip="Ouverture débit" tooltipPosition="top">Ouv. D</th>
-          <th class="text-right" pTooltip="Ouverture crédit" tooltipPosition="top">Ouv. C</th>
-          <th class="text-right" pTooltip="Mouvement débit" tooltipPosition="top">Mouv. D</th>
-          <th class="text-right" pTooltip="Mouvement crédit" tooltipPosition="top">Mouv. C</th>
-          <th class="text-right" pTooltip="Clôture débit" tooltipPosition="top">Clôture D</th>
-          <th class="text-right" pTooltip="Clôture crédit" tooltipPosition="top">Clôture C</th>
+          <th i18n="@@accounting.auxiliary-balance.tiers.435080ba">Tiers</th>
+          <th class="text-right" pTooltip="Ouverture débit" i18n-pTooltip="@@accounting.auxiliary-balance.ouverture.debit.3235ca23" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.ouv.d.1a1c3306">Ouv. D</th>
+          <th class="text-right" pTooltip="Ouverture crédit" i18n-pTooltip="@@accounting.auxiliary-balance.ouverture.credit.7b3ac906" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.ouv.c.95e30fd9">Ouv. C</th>
+          <th class="text-right" pTooltip="Mouvement débit" i18n-pTooltip="@@accounting.auxiliary-balance.mouvement.debit.b7720deb" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.mouv.d.0f50458a">Mouv. D</th>
+          <th class="text-right" pTooltip="Mouvement crédit" i18n-pTooltip="@@accounting.auxiliary-balance.mouvement.credit.ff1df20a" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.mouv.c.87e48868">Mouv. C</th>
+          <th class="text-right" pTooltip="Clôture débit" i18n-pTooltip="@@accounting.auxiliary-balance.cloture.debit.c64629a9" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.cloture.d.edb6d923">Clôture D</th>
+          <th class="text-right" pTooltip="Clôture crédit" i18n-pTooltip="@@accounting.auxiliary-balance.cloture.credit.b9f511f5" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.cloture.c.2be08431">Clôture C</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-r>
         <tr>
-          <td data-label="Tiers">
+          <td data-label="Tiers" i18n-data-label="@@accounting.auxiliary-balance.tiers.435080ba">
             <a
               class="auxbal-tiers-link"
               [routerLink]="['/accounting/third-party-ledger']"
               [queryParams]="{ thirdPartyId: r.thirdPartyId, kind: kind, from: fromStr, to: toStr, name: r.thirdPartyName }"
-              title="Voir le grand livre de ce tiers">
+              title="Voir le grand livre de ce tiers" i18n-title="@@accounting.auxiliary-balance.voir.le.grand.livre.de.ce.tiers.0fed4715">
               {{ r.thirdPartyName }}
             </a>
           </td>
-          <td class="text-right auxbal-num" data-label="Ouv. D">{{ r.openingDebit | number : '1.3-3' }}</td>
-          <td class="text-right auxbal-num" data-label="Ouv. C">{{ r.openingCredit | number : '1.3-3' }}</td>
-          <td class="text-right auxbal-num" data-label="Mouv. D">{{ r.movementDebit | number : '1.3-3' }}</td>
-          <td class="text-right auxbal-num" data-label="Mouv. C">{{ r.movementCredit | number : '1.3-3' }}</td>
-          <td class="text-right auxbal-num" data-label="Clôture D">{{ r.closingDebit | number : '1.3-3' }}</td>
-          <td class="text-right auxbal-num" data-label="Clôture C">{{ r.closingCredit | number : '1.3-3' }}</td>
+          <td class="text-right auxbal-num" data-label="Ouv. D" i18n-data-label="@@accounting.auxiliary-balance.ouv.d.1a1c3306">{{ r.openingDebit | number : '1.3-3' }}</td>
+          <td class="text-right auxbal-num" data-label="Ouv. C" i18n-data-label="@@accounting.auxiliary-balance.ouv.c.95e30fd9">{{ r.openingCredit | number : '1.3-3' }}</td>
+          <td class="text-right auxbal-num" data-label="Mouv. D" i18n-data-label="@@accounting.auxiliary-balance.mouv.d.0f50458a">{{ r.movementDebit | number : '1.3-3' }}</td>
+          <td class="text-right auxbal-num" data-label="Mouv. C" i18n-data-label="@@accounting.auxiliary-balance.mouv.c.87e48868">{{ r.movementCredit | number : '1.3-3' }}</td>
+          <td class="text-right auxbal-num" data-label="Clôture D" i18n-data-label="@@accounting.auxiliary-balance.cloture.d.edb6d923">{{ r.closingDebit | number : '1.3-3' }}</td>
+          <td class="text-right auxbal-num" data-label="Clôture C" i18n-data-label="@@accounting.auxiliary-balance.cloture.c.2be08431">{{ r.closingCredit | number : '1.3-3' }}</td>
         </tr>
       </ng-template>
       <ng-template pTemplate="footer">
         <tr class="acc-totals-row">
-          <td>Totaux ({{ rows().length }} tiers)</td>
+          <td i18n="@@accounting.auxiliary-balance.totaux.tiers.7c4dc209">Totaux ({{ rows().length }} tiers)</td>
           <td class="text-right auxbal-num">{{ totals().openingDebit | number : '1.3-3' }}</td>
           <td class="text-right auxbal-num">{{ totals().openingCredit | number : '1.3-3' }}</td>
           <td class="text-right auxbal-num">{{ totals().movementDebit | number : '1.3-3' }}</td>
@@ -128,14 +126,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
-        <tr><td colspan="7" style="text-align:center;padding:2rem">Aucun mouvement de tiers sur la période.</td></tr>
+        <tr><td colspan="7" style="text-align:center;padding:2rem" i18n="@@accounting.auxiliary-balance.aucun.mouvement.de.tiers.sur.la.periode.d9368d68">Aucun mouvement de tiers sur la période.</td></tr>
       </ng-template>
     </p-table>
   `,
   styles: `
     @use '../shared/accounting-layout';
     .auxbal-toolbar-fields { display:flex; flex-wrap:wrap; align-items:flex-end; gap:var(--spacing-4); }
-    .text-right { text-align:right; }
+    .text-right { text-align:end; }
     .auxbal-num { font-variant-numeric:tabular-nums; }
     .acc-totals-row td { font-weight:var(--font-weight-bold); background:var(--color-background-subtle); border-top:2px solid var(--color-border-default); }
     .auxbal-tiers-link { font-weight:500; color:var(--color-primary-500); cursor:pointer; text-decoration:none; }
@@ -180,7 +178,7 @@ export class AuxiliaryBalanceComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.loading.set(true);
@@ -188,11 +186,11 @@ export class AuxiliaryBalanceComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (res.success && res.data) this.rows.set(res.data);
-        else this.error.set(res.error ?? 'Erreur');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.auxiliary-balance.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }
@@ -202,7 +200,7 @@ export class AuxiliaryBalanceComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.exporting.set(true);
@@ -214,7 +212,7 @@ export class AuxiliaryBalanceComponent implements OnInit {
       },
       error: err => {
         this.exporting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.auxiliary-balance.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
       }
     });
   }

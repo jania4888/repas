@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -17,7 +19,7 @@ import { AuthService } from '@core/services/auth.service';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     ReactiveFormsModule,
     RouterModule,
@@ -34,10 +36,10 @@ import { AuthService } from '@core/services/auth.service';
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Mon profil" 
-      subtitle="Gérez vos informations personnelles">
+      title="Mon profil" i18n-title="@@settings.profile.mon.profil.faa6d321" 
+      subtitle="Gérez vos informations personnelles" i18n-subtitle="@@settings.profile.gerez.vos.informations.personnelles.add55929">
       <p-button 
-        label="Retour" 
+        label="Retour" i18n-label="@@settings.profile.retour.e5befb1f" 
         icon="pi pi-arrow-left" 
         [outlined]="true"
         routerLink="/settings">
@@ -46,7 +48,7 @@ import { AuthService } from '@core/services/auth.service';
 
     <div class="profile-grid">
       <!-- Profile Info -->
-      <p-card header="Informations personnelles" styleClass="profile-card">
+      <p-card header="Informations personnelles" i18n-header="@@settings.profile.informations.personnelles.e1e05861" styleClass="profile-card">
         <div class="profile-header">
           <p-avatar 
             [label]="getInitials()"
@@ -56,7 +58,7 @@ import { AuthService } from '@core/services/auth.service';
           <div class="profile-info">
             <h3>{{ user()?.fullName }}</h3>
             <p>{{ user()?.email }}</p>
-            <span class="role-badge">{{ user()?.roleDisplay }}</span>
+            <span class="role-badge">{{ user()?.roleDisplay | backendLabel }}</span>
           </div>
         </div>
 
@@ -65,7 +67,7 @@ import { AuthService } from '@core/services/auth.service';
         <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
           <div class="form-row">
             <div class="form-group">
-              <label for="firstName">Prénom</label>
+              <label for="firstName" i18n="@@settings.profile.prenom.e4387ade">Prénom</label>
               <input 
                 pInputText 
                 id="firstName" 
@@ -74,7 +76,7 @@ import { AuthService } from '@core/services/auth.service';
             </div>
 
             <div class="form-group">
-              <label for="lastName">Nom</label>
+              <label for="lastName" i18n="@@settings.profile.nom.7ff20370">Nom</label>
               <input 
                 pInputText 
                 id="lastName" 
@@ -84,7 +86,7 @@ import { AuthService } from '@core/services/auth.service';
           </div>
 
           <div class="form-group">
-            <label for="email">Adresse email</label>
+            <label for="email" i18n="@@settings.profile.adresse.email.bdf1cc95">Adresse email</label>
             <input 
               pInputText 
               id="email" 
@@ -96,7 +98,7 @@ import { AuthService } from '@core/services/auth.service';
           <div class="form-actions">
             <p-button 
               type="submit"
-              label="Enregistrer" 
+              label="Enregistrer" i18n-label="@@settings.profile.enregistrer.f7c8bcd8" 
               icon="pi pi-check"
               [loading]="savingProfile()"
               [disabled]="profileForm.invalid">
@@ -106,10 +108,10 @@ import { AuthService } from '@core/services/auth.service';
       </p-card>
 
       <!-- Security -->
-      <p-card header="Sécurité" styleClass="security-card">
+      <p-card header="Sécurité" i18n-header="@@settings.profile.securite.33e96f02" styleClass="security-card">
         <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
           <div class="form-group">
-            <label for="currentPassword">Mot de passe actuel</label>
+            <label for="currentPassword" i18n="@@settings.profile.mot.de.passe.actuel.f9242976">Mot de passe actuel</label>
             <p-password 
               id="currentPassword" 
               formControlName="currentPassword"
@@ -121,23 +123,23 @@ import { AuthService } from '@core/services/auth.service';
           </div>
 
           <div class="form-group">
-            <label for="newPassword">Nouveau mot de passe</label>
+            <label for="newPassword" i18n="@@settings.profile.nouveau.mot.de.passe.3a713829">Nouveau mot de passe</label>
             <p-password 
               id="newPassword" 
               formControlName="newPassword"
               [toggleMask]="true"
               styleClass="w-full"
               inputStyleClass="w-full"
-              promptLabel="Saisissez un nouveau mot de passe"
+              promptLabel="Saisissez un nouveau mot de passe" i18n-promptLabel="@@settings.profile.saisissez.un.nouveau.mot.de.passe.701e23cd"
               weakLabel="Faible"
-              mediumLabel="Moyen"
+              mediumLabel="Moyen" i18n-mediumLabel="@@settings.profile.moyen.de03c108"
               strongLabel="Fort">
             </p-password>
-            <small class="form-hint">Minimum 8 caractères avec majuscule et chiffre</small>
+            <small class="form-hint" i18n="@@settings.profile.minimum.8.caracteres.avec.majuscule.et.chiffre.3751ab62">Minimum 8 caractères avec majuscule et chiffre</small>
           </div>
 
           <div class="form-group">
-            <label for="confirmPassword">Confirmer le mot de passe</label>
+            <label for="confirmPassword" i18n="@@settings.profile.confirmer.le.mot.de.passe.88362d0d">Confirmer le mot de passe</label>
             <p-password 
               id="confirmPassword" 
               formControlName="confirmPassword"
@@ -151,7 +153,7 @@ import { AuthService } from '@core/services/auth.service';
           <div class="form-actions">
             <p-button 
               type="submit"
-              label="Changer le mot de passe" 
+              label="Changer le mot de passe" i18n-label="@@settings.profile.changer.le.mot.de.passe.4ad8d631" 
               icon="pi pi-lock"
               [loading]="savingPassword()"
               [disabled]="passwordForm.invalid">
@@ -163,11 +165,11 @@ import { AuthService } from '@core/services/auth.service';
 
         <div class="two-factor-section">
           <div class="two-factor-info">
-            <h4>Authentification à deux facteurs</h4>
-            <p>Ajoutez une couche de sécurité supplémentaire à votre compte</p>
+            <h4 i18n="@@settings.profile.authentification.a.deux.facteurs.96e8851a">Authentification à deux facteurs</h4>
+            <p i18n="@@settings.profile.ajoutez.une.couche.de.securite.supplementaire.a..d93ba706">Ajoutez une couche de sécurité supplémentaire à votre compte</p>
           </div>
           <p-button 
-            [label]="user()?.twoFactorEnabled ? 'Désactiver' : 'Activer'"
+            [label]="user()?.twoFactorEnabled ? loc_ui_tern_desactiver_d28397 : loc_ui_tern_activer_b96fa7"
             [outlined]="true"
             [severity]="user()?.twoFactorEnabled ? 'danger' : 'success'"
             icon="pi pi-shield">
@@ -298,15 +300,17 @@ import { AuthService } from '@core/services/auth.service';
   `]
 })
 export class ProfileComponent implements OnInit {
+  readonly loc_ui_tern_desactiver_d28397 = $localize`:@@ui.tern.desactiver.d28397:Désactiver`;
+  readonly loc_ui_tern_activer_b96fa7 = $localize`:@@ui.tern.activer.b96fa7:Activer`;
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   errorMessageService = inject(ErrorMessageService);
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Mon profil' }
+    { label: $localize`:@@settings.profile.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.profile.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.profile.ts.mon.profil.faa6d321:Mon profil` }
   ];
 
   user = this.authService.user;
@@ -351,8 +355,8 @@ export class ProfileComponent implements OnInit {
     setTimeout(() => {
       this.toastService.add({
         severity: 'success',
-        summary: 'Succès',
-        detail: 'Profil mis à jour avec succès'
+        summary: $localize`:@@profile.component.summary.Succès:Succès`,
+        detail: $localize`:@@profile.component.detail.Profil mis à:Profil mis à jour avec succès`
       });
       this.savingProfile.set(false);
     }, 1000);
@@ -365,8 +369,8 @@ export class ProfileComponent implements OnInit {
     if (newPassword !== confirmPassword) {
       this.toastService.add({
         severity: 'error',
-        summary: 'Erreur',
-        detail: 'Les mots de passe ne correspondent pas'
+        summary: $localize`:@@profile.component.summary.Erreur:Erreur`,
+        detail: $localize`:@@profile.component.detail.Les_mots_de_pass:Les mots de passe ne correspondent pas`
       });
       return;
     }
@@ -377,8 +381,8 @@ export class ProfileComponent implements OnInit {
     setTimeout(() => {
       this.toastService.add({
         severity: 'success',
-        summary: 'Succès',
-        detail: 'Mot de passe modifié avec succès'
+        summary: $localize`:@@profile.component.summary.Succès:Succès`,
+        detail: $localize`:@@profile.component.detail.Mot de passe:Mot de passe modifié avec succès`
       });
       this.passwordForm.reset();
       this.savingPassword.set(false);

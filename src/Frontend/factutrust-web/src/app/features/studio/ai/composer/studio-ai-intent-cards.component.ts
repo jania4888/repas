@@ -86,7 +86,7 @@ export interface StudioAiIntentCardView {
       gap: var(--spacing-3);
       width: 100%;
       height: 100%;
-      text-align: left;
+      text-align: start;
       align-items: flex-start;
       padding: var(--spacing-3);
       border: 1px solid var(--color-border-subtle, #e2e8f0);

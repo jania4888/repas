@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, HostListener, Input, Output, OnChanges, OnInit, SimpleChanges, inject, signal } from '@angular/core';
@@ -23,12 +24,12 @@ import {
 } from '@core/services/cash-desk.service';
 
 const PAYMENT_METHOD_OPTIONS: { label: string; value: number; icon?: string }[] = [
-  { label: 'Espèces', value: 0, icon: 'pi pi-money-bill' },
-  { label: 'Virement bancaire', value: 1, icon: 'pi pi-building' },
-  { label: 'Chèque', value: 2, icon: 'pi pi-file' },
-  { label: 'Carte bancaire', value: 3, icon: 'pi pi-credit-card' },
-  { label: 'Paiement mobile', value: 4, icon: 'pi pi-mobile' },
-  { label: 'Autre', value: 99, icon: 'pi pi-question' }
+  { label: $localize`:@@pay.cash:Espèces`, value: 0, icon: 'pi pi-money-bill' },
+  { label: $localize`:@@pay.transfer:Virement bancaire`, value: 1, icon: 'pi pi-building' },
+  { label: $localize`:@@pay.check:Chèque`, value: 2, icon: 'pi pi-file' },
+  { label: $localize`:@@pay.card:Carte bancaire`, value: 3, icon: 'pi pi-credit-card' },
+  { label: $localize`:@@pay.mobile:Paiement mobile`, value: 4, icon: 'pi pi-mobile' },
+  { label: $localize`:@@pay.other:Autre`, value: 99, icon: 'pi pi-question' }
 ];
 
 /** Arrondi comptable à 3 décimales (millimes), aligné sur l'arrondi backend (MidpointRounding.AwayFromZero). */
@@ -59,7 +60,7 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
   ],
   template: `
     <p-dialog
-      header="Enregistrer l'opération"
+      header="Enregistrer l'opération" i18n-header="@@payments.cash-desk.enregistrer.l.operation.f94a3886"
       [(visible)]="visible"
       [modal]="true"
       [position]="dialogPosition"
@@ -80,8 +81,8 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
 
         <!-- Operation Type Toggle -->
         <div class="form-group">
-          <label>Type d'opération <span class="required">*</span></label>
-          <div class="type-toggle" role="radiogroup" aria-label="Type d'opération">
+          <label><ng-container i18n="@@payments.cash-desk.type.d.operation.265961ab">Type d'opération </ng-container> <span class="required" i18n="@@payments.cash-desk.text.df58248c">*</span></label>
+          <div class="type-toggle" role="radiogroup" aria-label="Type d'opération" i18n-aria-label="@@payments.cash-desk.type.d.operation.265961ab">
             <div
               class="type-card"
               [class.selected]="operationType === CashOperationType.Debit"
@@ -91,7 +92,7 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
               tabindex="0"
               role="radio"
               [attr.aria-checked]="operationType === CashOperationType.Debit">
-              <span class="type-label">Décaissement</span>
+              <span class="type-label" i18n="@@payments.cash-desk.decaissement.de3611ca">Décaissement</span>
             </div>
             <div
               class="type-card type-card-credit"
@@ -102,16 +103,16 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
               tabindex="0"
               role="radio"
               [attr.aria-checked]="operationType === CashOperationType.Credit">
-              <span class="type-label">Encaissement</span>
+              <span class="type-label" i18n="@@payments.cash-desk.encaissement.b71c7458">Encaissement</span>
             </div>
           </div>
         </div>
 
         <!-- Category (changes based on operation type) -->
         <div class="form-group">
-          <label [for]="operationType === CashOperationType.Debit ? 'expenseCategory' : 'revenueCategory'">
-            {{ operationType === CashOperationType.Debit ? 'Catégorie de dépense' : 'Catégorie de revenu' }}
-            <span class="required">*</span>
+          <label [for]="operationType === CashOperationType.Debit ? loc_ui_tern_expensecategory_d48904 : loc_ui_tern_revenuecategory_21cd74">
+            {{ operationType === CashOperationType.Debit ? loc_ui_tern_categorie_de_depense_652cf2 : loc_ui_tern_categorie_de_revenu_ed807b }}
+            <span class="required" i18n="@@payments.cash-desk.text.df58248c">*</span>
           </label>
           @if (operationType === CashOperationType.Debit) {
             <p-select
@@ -123,21 +124,21 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
               optionGroupLabel="label"
               optionGroupChildren="items"
               optionValue="value"
-              placeholder="Sélectionnez une catégorie"
+              placeholder="Sélectionnez une catégorie" i18n-placeholder="@@payments.cash-desk.selectionnez.une.categorie.8fd04bf3"
               [filter]="true"
               filterBy="label"
               [showClear]="false"
-              filterPlaceholder="Rechercher…"
+              filterPlaceholder="Rechercher…" i18n-filterPlaceholder="@@payments.cash-desk.rechercher.ed75dcce"
               appendTo="body"
               styleClass="w-full category-dropdown">
               <ng-template let-item pTemplate="selectedItem">
                 @if (item) {
-                  <span [class]="item.icon + ' category-option-icon'" aria-hidden="true"></span>
+                  <span [class]="item.icon + loc_ui_tern_category_option_icon_e996ce" aria-hidden="true"></span>
                   <span class="category-option-label">{{ item.label }}</span>
                 }
               </ng-template>
               <ng-template let-item pTemplate="item">
-                <span [class]="item.icon + ' category-option-icon'" aria-hidden="true"></span>
+                <span [class]="item.icon + loc_ui_tern_category_option_icon_e996ce" aria-hidden="true"></span>
                 <span class="category-option-label">{{ item.label }}</span>
               </ng-template>
             </p-select>
@@ -151,19 +152,19 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
               optionGroupLabel="label"
               optionGroupChildren="items"
               optionValue="value"
-              placeholder="Sélectionnez une catégorie"
+              placeholder="Sélectionnez une catégorie" i18n-placeholder="@@payments.cash-desk.selectionnez.une.categorie.8fd04bf3"
               [filter]="false"
               [showClear]="false"
               appendTo="body"
               styleClass="w-full category-dropdown">
               <ng-template let-item pTemplate="selectedItem">
                 @if (item) {
-                  <span [class]="item.icon + ' category-option-icon'" aria-hidden="true"></span>
+                  <span [class]="item.icon + loc_ui_tern_category_option_icon_e996ce" aria-hidden="true"></span>
                   <span class="category-option-label">{{ item.label }}</span>
                 }
               </ng-template>
               <ng-template let-item pTemplate="item">
-                <span [class]="item.icon + ' category-option-icon'" aria-hidden="true"></span>
+                <span [class]="item.icon + loc_ui_tern_category_option_icon_e996ce" aria-hidden="true"></span>
                 <span class="category-option-label">{{ item.label }}</span>
               </ng-template>
             </p-select>
@@ -172,8 +173,8 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
 
         <!-- Payment Method -->
         <div class="form-group">
-          <label for="method">Méthode de paiement <span class="required">*</span></label>
-          <div class="method-toggle" role="radiogroup" aria-label="Méthode de paiement">
+          <label for="method"><ng-container i18n="@@payments.cash-desk.methode.de.paiement.b111f83e">Méthode de paiement </ng-container> <span class="required" i18n="@@payments.cash-desk.text.df58248c">*</span></label>
+          <div class="method-toggle" role="radiogroup" aria-label="Méthode de paiement" i18n-aria-label="@@payments.cash-desk.methode.de.paiement.b111f83e">
             @for (method of paymentMethodOptions; track method.value) {
               <div
                 class="method-card"
@@ -195,9 +196,9 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
         <!-- Amount + Date row -->
         <div class="form-row">
           <div class="form-group">
-            <label for="amount">Montant <span class="required">*</span></label>
+            <label for="amount"><ng-container i18n="@@payments.cash-desk.montant.4adcd9fc">Montant </ng-container> <span class="required" i18n="@@payments.cash-desk.text.df58248c">*</span></label>
             <div class="amount-input-wrap">
-              <span class="amount-currency">TND</span>
+              <span class="amount-currency" i18n="@@payments.cash-desk.tnd.51da21a7">TND</span>
               <p-inputNumber
                 id="amount"
                 [(ngModel)]="amount"
@@ -205,21 +206,21 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
                 [maxFractionDigits]="3"
                 [minFractionDigits]="3"
                 mode="decimal"
-                placeholder="0,000"
+                placeholder="0,000" i18n-placeholder="@@payments.cash-desk.0.000.6f5ad69d"
                 styleClass="w-full">
               </p-inputNumber>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="operationDate">Date de règlement <span class="required">*</span></label>
+            <label for="operationDate"><ng-container i18n="@@payments.cash-desk.date.de.reglement.65e1210f">Date de règlement </ng-container> <span class="required" i18n="@@payments.cash-desk.text.df58248c">*</span></label>
             <p-datepicker
               id="operationDate"
               [(ngModel)]="operationDate"
               [showIcon]="true"
               dateFormat="dd/mm/yy"
               [maxDate]="maxDate"
-              placeholder="Sélectionnez la date"
+              placeholder="Sélectionnez la date" i18n-placeholder="@@payments.cash-desk.selectionnez.la.date.b9d5a16a"
               appendTo="body"
               styleClass="w-full">
             </p-datepicker>
@@ -229,20 +230,20 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
         <!-- VAT rate (cash sales receipts only, behind feature flag) -->
         @if (vatSelectorVisible) {
           <div class="form-group">
-            <label for="vatRate">Taux de TVA</label>
+            <label for="vatRate" i18n="@@payments.cash-desk.taux.de.tva.e704ceaf">Taux de TVA</label>
             <p-select
               inputId="vatRate"
               [options]="vatRateOptions"
               [(ngModel)]="selectedVatRate"
               optionLabel="label"
               optionValue="value"
-              placeholder="Sélectionnez un taux"
+              placeholder="Sélectionnez un taux" i18n-placeholder="@@payments.cash-desk.selectionnez.un.taux.a9297d9e"
               [showClear]="false"
               appendTo="body"
               styleClass="w-full">
             </p-select>
             @if (vatPreview) {
-              <div class="vat-preview" role="note" aria-label="Détail HT / TVA">
+              <div class="vat-preview" role="note" aria-label="Détail HT / TVA" i18n-aria-label="@@payments.cash-desk.detail.ht.tva.1f495c67">
                 <span>HT : {{ vatPreview.ht | number:'1.3-3' }} TND</span>
                 <span>TVA : {{ vatPreview.vat | number:'1.3-3' }} TND</span>
               </div>
@@ -252,42 +253,42 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
 
         <!-- Label -->
         <div class="form-group">
-          <label for="label">Libellé <span class="required">*</span></label>
+          <label for="label"><ng-container i18n="@@payments.cash-desk.libelle.f5485bba">Libellé </ng-container> <span class="required" i18n="@@payments.cash-desk.text.df58248c">*</span></label>
           <input
             id="label"
             pInputText
             [(ngModel)]="label"
-            placeholder="Ex: Achat fournitures"
+            placeholder="Ex: Achat fournitures" i18n-placeholder="@@payments.cash-desk.ex.achat.fournitures.78820e11"
             class="w-full"
             [maxLength]="500"
-            aria-label="Libellé de l'opération" />
+            aria-label="Libellé de l'opération" i18n-aria-label="@@payments.cash-desk.libelle.de.l.operation.3f2030d4" />
         </div>
 
         <!-- Reference -->
         <div class="form-group">
-          <label for="reference">Référence <span class="optional-tag">(optionnel)</span></label>
+          <label for="reference"><ng-container i18n="@@payments.cash-desk.reference.f8130bb0">Référence </ng-container> <span class="optional-tag" i18n="@@payments.cash-desk.optionnel.6f73b232">(optionnel)</span></label>
           <input
             id="reference"
             pInputText
             [(ngModel)]="reference"
-            placeholder="Ex: N° chèque, virement n°…"
+            placeholder="Ex: N° chèque, virement n°…" i18n-placeholder="@@payments.cash-desk.ex.n.cheque.virement.n.73a36d88"
             class="w-full"
             [maxLength]="100"
-            aria-label="Référence" />
+            aria-label="Référence" i18n-aria-label="@@payments.cash-desk.reference.f8130bb0" />
         </div>
 
         <!-- Notes -->
         <div class="form-group">
-          <label for="notes">Note <span class="optional-tag">(optionnel)</span></label>
+          <label for="notes"><ng-container i18n="@@payments.cash-desk.note.2c924e30">Note </ng-container> <span class="optional-tag" i18n="@@payments.cash-desk.optionnel.6f73b232">(optionnel)</span></label>
           <textarea
             id="notes"
             pTextarea
             [(ngModel)]="notes"
-            placeholder="Notes internes"
+            placeholder="Notes internes" i18n-placeholder="@@payments.cash-desk.notes.internes.1a81fb4e"
             [rows]="3"
             class="w-full"
             [maxLength]="500"
-            aria-label="Notes">
+            aria-label="Notes" i18n-aria-label="@@payments.cash-desk.notes.70440046">
           </textarea>
         </div>
       </div>
@@ -298,17 +299,15 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
             variant="outline"
             [disabled]="submitting()"
             (click)="onHide()"
-            ariaLabel="Annuler">
-            Annuler
-          </app-button>
+            ariaLabel="Annuler" i18n-ariaLabel="@@payments.cash-desk.annuler.e063e8ff" i18n="@@payments.cash-desk.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             [disabled]="submitting()"
             icon="pi pi-check"
             iconPos="right"
             (click)="submit()"
-            ariaLabel="Valider l'opération">
-            {{ submitting() ? 'Enregistrement...' : 'Valider' }}
+            ariaLabel="Valider l'opération" i18n-ariaLabel="@@payments.cash-desk.valider.l.operation.b4f660f7">
+            {{ submitting() ? loc_ui_tern_enregistrement_9bf105 : loc_ui_tern_valider_be4220 }}
           </app-button>
         </div>
       </ng-template>
@@ -567,6 +566,13 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
   `]
 })
 export class AddCashOperationDialogComponent implements OnChanges, OnInit {
+  readonly loc_ui_tern_expensecategory_d48904 = 'expenseCategory';
+  readonly loc_ui_tern_revenuecategory_21cd74 = 'revenueCategory';
+  readonly loc_ui_tern_categorie_de_depense_652cf2 = $localize`:@@ui.tern.categorie.de.depense.652cf2:Catégorie de dépense`;
+  readonly loc_ui_tern_categorie_de_revenu_ed807b = $localize`:@@ui.tern.categorie.de.revenu.ed807b:Catégorie de revenu`;
+  readonly loc_ui_tern_category_option_icon_e996ce = " category-option-icon";
+  readonly loc_ui_tern_enregistrement_9bf105 = $localize`:@@ui.tern.enregistrement.9bf105:Enregistrement...`;
+  readonly loc_ui_tern_valider_be4220 = $localize`:@@ui.tern.valider.be4220:Valider`;
   @Input() visible = false;
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() operationCreated = new EventEmitter<CashOperationListItem>();
@@ -686,31 +692,31 @@ export class AddCashOperationDialogComponent implements OnChanges, OnInit {
 
   private validate(): string | null {
     if (this.operationType === CashOperationType.Debit && this.selectedExpenseCategory === null)
-      return 'Sélectionnez une catégorie de dépense.';
+      return $localize`:@@payments.add-cash-operation-dialog.ts.selectionnez.une.categorie.de.depense.b2412267:Sélectionnez une catégorie de dépense.`;
 
     if (this.operationType === CashOperationType.Credit && this.selectedRevenueCategory === null)
-      return 'Catégorie de revenu est obligatoire.';
+      return $localize`:@@payments.add-cash-operation-dialog.ts.categorie.de.revenu.est.obligatoire.13cf0733:Catégorie de revenu est obligatoire.`;
 
     if (this.selectedMethod === null)
-      return 'Sélectionnez une méthode de paiement.';
+      return $localize`:@@payments.add-cash-operation-dialog.ts.selectionnez.une.methode.de.paiement.9b6e1e03:Sélectionnez une méthode de paiement.`;
 
     if (this.amount <= 0)
-      return 'Le montant doit être strictement positif.';
+      return $localize`:@@payments.add-cash-operation-dialog.ts.le.montant.doit.etre.strictement.positif.199d1b27:Le montant doit être strictement positif.`;
 
     if (!this.operationDate)
-      return 'La date de règlement est obligatoire.';
+      return $localize`:@@payments.add-cash-operation-dialog.ts.la.date.de.reglement.est.obligatoire.61c0c3e7:La date de règlement est obligatoire.`;
 
     if (!this.label.trim())
-      return 'Le libellé est obligatoire.';
+      return $localize`:@@payments.add-cash-operation-dialog.ts.le.libelle.est.obligatoire.e312d2ca:Le libellé est obligatoire.`;
 
     if (this.label.trim().length > 500)
-      return 'Le libellé ne peut pas dépasser 500 caractères.';
+      return $localize`:@@payments.add-cash-operation-dialog.ts.le.libelle.ne.peut.pas.depasser.500.cara.c4d87466:Le libellé ne peut pas dépasser 500 caractères.`;
 
     if (this.reference?.trim() && this.reference.trim().length > 100)
-      return 'La référence ne peut pas dépasser 100 caractères.';
+      return $localize`:@@payments.add-cash-operation-dialog.ts.la.reference.ne.peut.pas.depasser.100.ca.36418b46:La référence ne peut pas dépasser 100 caractères.`;
 
     if (this.notes?.trim() && this.notes.trim().length > 500)
-      return 'Les notes ne peuvent pas dépasser 500 caractères.';
+      return $localize`:@@payments.add-cash-operation-dialog.ts.les.notes.ne.peuvent.pas.depasser.500.ca.5cd748fb:Les notes ne peuvent pas dépasser 500 caractères.`;
 
     return null;
   }
@@ -743,16 +749,16 @@ export class AddCashOperationDialogComponent implements OnChanges, OnInit {
     this.cashDeskService.createOperation(payload).subscribe({
       next: (res) => {
         if (res.success && res.data) {
-          const typeLabel = this.operationType === CashOperationType.Credit ? 'Encaissement' : 'Décaissement';
+          const typeLabel = this.operationType === CashOperationType.Credit ? $localize`:@@ui.tern.encaissement.b71c74:Encaissement` : $localize`:@@ui.tern.decaissement.de3611:Décaissement`;
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: `${typeLabel} enregistré avec succès`
+            summary: $localize`:@@add-cash-operation-dialog.component.summary.Succès:Succès`,
+            detail: $localize`:@@payments.add-cash-operation-dialog.ts.typelabel.enregistre.avec.succes.018d1291:${typeLabel}:typeLabel: enregistré avec succès`
           });
           this.operationCreated.emit(res.data);
           this.onHide();
         } else {
-          const msg = res.message ?? 'Impossible d\u2019enregistrer l\u2019opération.';
+          const msg = res.message ?? $localize`:@@payments.add-cash-operation-dialog.ts.impossible.d.enregistrer.l.operation.86fecb67:Impossible d’enregistrer l’opération.`;
           this.errorMessage.set(msg);
         }
         this.submitting.set(false);
@@ -761,11 +767,11 @@ export class AddCashOperationDialogComponent implements OnChanges, OnInit {
         // 403 (payments:create) → message métier français ; jamais le texte brut `err?.message`
         // (« Http failure response for … 403 Forbidden »). Les autres erreurs → message générique francisé.
         const msg = err.status === 403
-          ? 'Action refusée : autorisations insuffisantes (Trésorerie — saisie).'
+          ? $localize`:@@ui.tern.action.refusee.autorisations.insuffisantes.c21aad:Action refusée : autorisations insuffisantes (Trésorerie — saisie).`
           : err?.error?.errors?.[0] ??
             err?.error?.message ??
             err?.error?.error?.description ??
-            'Erreur lors de l\u2019enregistrement de l\u2019opération.';
+            $localize`:@@payments.add-cash-operation-dialog.ts.erreur.lors.de.l.enregistrement.de.l.ope.2ea3dd53:Erreur lors de l’enregistrement de l’opération.`;
         this.errorMessage.set(msg);
         this.submitting.set(false);
       }

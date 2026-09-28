@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -44,23 +45,21 @@ interface PayslipPaymentRow {
   ],
   template: `
     <p-dialog
-      header="Régler la paie"
+      header="Régler la paie" i18n-header="@@payroll.runs.regler.la.paie.5ab3e218"
       [(visible)]="visibleProxy"
       [modal]="true"
       [style]="{ width: '760px' }"
       (onShow)="onOpen()"
       (onHide)="closed.emit()">
-      <p class="hint mb-3">
-        Enregistrez le décaissement après confirmation bancaire. Une écriture JB et un lettrage 421 seront générés.
-      </p>
+      <p class="hint mb-3" i18n="@@payroll.runs.enregistrez.le.decaissement.apres.confirmation.b.e5561856"> Enregistrez le décaissement après confirmation bancaire. Une écriture JB et un lettrage 421 seront générés. </p>
 
       <div class="form-grid mb-3">
         <div class="field">
-          <label for="pp-date">Date de paiement</label>
+          <label for="pp-date" i18n="@@payroll.runs.date.de.paiement.bd0020ef">Date de paiement</label>
           <input pInputText id="pp-date" type="date" class="w-full" [(ngModel)]="paymentDate" />
         </div>
         <div class="field">
-          <label for="pp-method">Mode</label>
+          <label for="pp-method" i18n="@@payroll.runs.mode.a7b93d21">Mode</label>
           <p-select
             inputId="pp-method"
             [options]="methodOptions"
@@ -71,30 +70,30 @@ interface PayslipPaymentRow {
         </div>
         @if (method !== 0) {
           <div class="field span-2">
-            <label for="pp-bank">Compte débiteur</label>
+            <label for="pp-bank" i18n="@@payroll.runs.compte.debiteur.b7abcb4f">Compte débiteur</label>
             <p-select
               inputId="pp-bank"
               [options]="accountOptions()"
               [(ngModel)]="bankAccountId"
               optionLabel="label"
               optionValue="value"
-              placeholder="Sélectionner un compte"
+              placeholder="Sélectionner un compte" i18n-placeholder="@@payroll.runs.selectionner.un.compte.9009d2c1"
               styleClass="w-full" />
           </div>
         }
         <div class="field">
-          <label for="pp-ref">Référence</label>
+          <label for="pp-ref" i18n="@@payroll.runs.reference.f8130bb0">Référence</label>
           <input pInputText id="pp-ref" class="w-full" [(ngModel)]="reference" />
         </div>
         <div class="field">
-          <label for="pp-notes">Notes</label>
+          <label for="pp-notes" i18n="@@payroll.runs.notes.70440046">Notes</label>
           <input pInputText id="pp-notes" class="w-full" [(ngModel)]="notes" />
         </div>
       </div>
 
       <div class="toolbar mb-2">
-        <app-button variant="ghost" size="sm" (click)="selectAll()">Tout sélectionner</app-button>
-        <strong>Total : {{ totalSelected() | payrollAmount }}</strong>
+        <app-button variant="ghost" size="sm" (click)="selectAll()" i18n="@@payroll.runs.tout.selectionner.06f2c1c0">Tout sélectionner</app-button>
+        <strong i18n="@@payroll.runs.total.a86e9581">Total : {{ totalSelected() | payrollAmount }}</strong>
       </div>
 
       <div class="payroll-table-scroll">
@@ -102,9 +101,9 @@ interface PayslipPaymentRow {
           <ng-template pTemplate="header">
             <tr>
               <th style="width: 3rem"></th>
-              <th>Salarié</th>
-              <th class="text-right">Reste à payer</th>
-              <th class="text-right">Montant</th>
+              <th i18n="@@payroll.runs.salarie.27f97915">Salarié</th>
+              <th class="text-right" i18n="@@payroll.runs.reste.a.payer.968444fc">Reste à payer</th>
+              <th class="text-right" i18n="@@payroll.runs.montant.4adcd9fc">Montant</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
@@ -129,9 +128,9 @@ interface PayslipPaymentRow {
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="visibleProxy = false">Annuler</app-button>
+        <app-button variant="outline" (click)="visibleProxy = false" i18n="@@payroll.runs.annuler.49ba3292">Annuler</app-button>
         <app-button variant="primary" [disabled]="!isValid() || saving()" (click)="submit()">
-          {{ saving() ? 'Enregistrement…' : 'Enregistrer le paiement' }}
+          {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_le_paiement_6495b8 }}
         </app-button>
       </ng-template>
     </p-dialog>
@@ -145,10 +144,12 @@ interface PayslipPaymentRow {
     .span-2 { grid-column: span 2; }
     .toolbar { display: flex; justify-content: space-between; align-items: center; }
     .w-full { width: 100%; }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
   `]
 })
 export class PayrollRecordPaymentDialogComponent implements OnInit {
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_le_paiement_6495b8 = $localize`:@@ui.tern.enregistrer.le.paiement.6495b8:Enregistrer le paiement`;
   private readonly payroll = inject(PayrollService);
   private readonly banks = inject(BankAccountService);
   private readonly toast = inject(ToastService);
@@ -170,11 +171,11 @@ export class PayrollRecordPaymentDialogComponent implements OnInit {
   accountOptions = signal<{ label: string; value: string }[]>([]);
 
   readonly methodOptions = [
-    { label: 'Virement', value: 1 },
-    { label: 'Chèque', value: 2 },
-    { label: 'Espèces', value: 0 },
-    { label: 'Carte', value: 3 },
-    { label: 'Autre', value: 99 }
+    { label: $localize`:@@payroll.payroll-record-payment-dialog.ts.virement.afbaf950:Virement`, value: 1 },
+    { label: $localize`:@@payroll.payroll-record-payment-dialog.ts.cheque.8bbb89a9:Chèque`, value: 2 },
+    { label: $localize`:@@payroll.payroll-record-payment-dialog.ts.especes.b7679d62:Espèces`, value: 0 },
+    { label: $localize`:@@payroll.payroll-record-payment-dialog.ts.carte.8bb68357:Carte`, value: 3 },
+    { label: $localize`:@@payroll.payroll-record-payment-dialog.ts.autre.43dacf9e:Autre`, value: 99 }
   ];
 
   totalSelected = computed(() =>
@@ -249,15 +250,15 @@ export class PayrollRecordPaymentDialogComponent implements OnInit {
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
         next: () => {
-          this.toast.add({ severity: 'success', summary: 'Paie', detail: 'Paiement enregistré.' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@payroll-record-payment-dialog.component.summary.Paie:Paie`, detail: $localize`:@@payroll-record-payment-dialog.component.detail.Paiement_enregis:Paiement enregistré.` });
           this.visibleProxy = false;
           this.paymentRecorded.emit();
         },
         error: err =>
           this.toast.add({
             severity: 'error',
-            summary: 'Paie',
-            detail: err?.error?.message ?? 'Enregistrement impossible.'
+            summary: $localize`:@@payroll-record-payment-dialog.component.summary.Paie:Paie`,
+            detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`
           })
       });
   }

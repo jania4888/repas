@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, inject, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PosHeldOrdersService, HeldOrder } from '../../services/pos-held-orders.service';
@@ -12,8 +13,8 @@ import { ConfirmationService } from '@core/services/confirmation.service';
     <div class="held-panel" (click)="onClose.emit()">
       <div class="held-panel__content" (click)="$event.stopPropagation()">
         <div class="held-panel__header">
-          <h3 class="held-panel__title">Commandes en attente</h3>
-          <button class="held-panel__close" (click)="onClose.emit()" aria-label="Fermer">
+          <h3 class="held-panel__title" i18n="@@pos.components.commandes.en.attente.d424a2c1">Commandes en attente</h3>
+          <button class="held-panel__close" (click)="onClose.emit()" aria-label="Fermer" i18n-aria-label="@@pos.components.fermer.5ab4ec64">
             <i class="pi pi-times"></i>
           </button>
         </div>
@@ -21,7 +22,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
         @if (heldService.heldOrdersList().length === 0) {
           <div class="held-panel__empty">
             <i class="pi pi-inbox"></i>
-            <p>Aucune commande en attente</p>
+            <p i18n="@@pos.components.aucune.commande.en.attente.3fe91d62">Aucune commande en attente</p>
           </div>
         } @else {
           <div class="held-panel__list">
@@ -36,14 +37,14 @@ import { ConfirmationService } from '@core/services/confirmation.service';
                   <button
                     class="held-panel__btn held-panel__btn--primary"
                     (click)="recallOrder(order)"
-                    type="button">
+                    type="button" i18n="@@pos.components.rappeler.4d1bad90">
                     <i class="pi pi-replay"></i> Rappeler
                   </button>
                   <button
                     class="held-panel__btn held-panel__btn--danger"
                     (click)="deleteOrder(order.id)"
                     type="button"
-                    aria-label="Supprimer">
+                    aria-label="Supprimer" i18n-aria-label="@@pos.components.supprimer.1acfc1c7">
                     <i class="pi pi-trash"></i>
                   </button>
                 </div>
@@ -233,11 +234,11 @@ export class HeldOrdersPanelComponent {
 
     if (this.posState.isDirty() && this.posState.lines().length > 0) {
       this.confirmationService.confirm({
-        header: 'Remplacer la commande ?',
-        message: 'La commande en cours sera remplacée. Continuer ?',
+        header: $localize`:@@pos.held-orders-panel.ts.remplacer.la.commande.53d35914:Remplacer la commande ?`,
+        message: $localize`:@@pos.held-orders-panel.ts.la.commande.en.cours.sera.remplacee.cont.3908d784:La commande en cours sera remplacée. Continuer ?`,
         icon: 'pi pi-exclamation-triangle',
-        acceptLabel: 'Continuer',
-        rejectLabel: 'Annuler',
+        acceptLabel: $localize`:@@held-orders-panel.component.acceptLabel.Continuer:Continuer`,
+        rejectLabel: $localize`:@@held-orders-panel.component.rejectLabel.Annuler:Annuler`,
         accept: apply
       });
       return;
@@ -247,12 +248,12 @@ export class HeldOrdersPanelComponent {
 
   deleteOrder(id: string): void {
     this.confirmationService.confirm({
-      header: 'Supprimer la commande ?',
-      message: 'Supprimer cette commande en attente ?',
+      header: $localize`:@@pos.held-orders-panel.ts.supprimer.la.commande.ef175a35:Supprimer la commande ?`,
+      message: $localize`:@@pos.held-orders-panel.ts.supprimer.cette.commande.en.attente.4cfc8238:Supprimer cette commande en attente ?`,
       icon: 'pi pi-trash',
       acceptButtonStyleClass: 'btn-danger',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@held-orders-panel.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@held-orders-panel.component.rejectLabel.Annuler:Annuler`,
       accept: () => this.heldService.deleteHeldOrder(id)
     });
   }

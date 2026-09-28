@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -78,6 +79,10 @@ import { ReplenishmentExportService } from '../../services/replenishment-export.
   styleUrls: ['./replenishment-board.component.scss']
 })
 export class ReplenishmentBoardComponent implements OnInit {
+  protected loc_selectionner_productname_e7942c(p0: unknown): string {
+    return $localize`:@@forecasting.replenishment-board.tpl.selectionner.productname.e7942c04:Sélectionner ${p0}:productName:`;
+  }
+
   private readonly forecastingService = inject(ForecastingService);
   private readonly exportService = inject(ReplenishmentExportService);
   private readonly toast = inject(ToastService);
@@ -193,8 +198,8 @@ export class ReplenishmentBoardComponent implements OnInit {
     } catch (err: any) {
       this.toast.add({
         severity: 'error',
-        summary: 'Erreur',
-        detail: err?.error?.message ?? 'Chargement des recommandations échoué.'
+        summary: $localize`:@@replenishment-board.component.summary.Erreur:Erreur`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.chargement.des.recommandations.echoue.ba9b44:Chargement des recommandations échoué.`
       });
     } finally {
       this.loading.set(false);
@@ -275,15 +280,15 @@ export class ReplenishmentBoardComponent implements OnInit {
     this.dismissModal.set(null);
     try {
       await firstValueFrom(this.forecastingService.dismissReplenishment(rec.id, reason));
-      this.toast.add({ severity: 'info', summary: 'Écartée', detail: `${rec.productName} écartée.` });
+      this.toast.add({ severity: 'info', summary: $localize`:@@replenishment-board.component.summary.Écartée:Écartée`, detail: $localize`:@@forecasting.replenishment-board.ts.productname.ecartee.0227caee:${rec.productName}:productName: écartée.` });
       this.rows.update(rows => rows.filter(x => x.id !== rec.id));
       this.unselect(rec.id);
       void this.refreshKpi();
     } catch (err: any) {
       this.toast.add({
         severity: 'error',
-        summary: 'Échec',
-        detail: err?.error?.message ?? 'Le rejet a échoué.'
+        summary: $localize`:@@replenishment-board.component.summary.Échec:Échec`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.le.rejet.a.echoue.c3d6a3:Le rejet a échoué.`
       });
     }
   }
@@ -295,8 +300,8 @@ export class ReplenishmentBoardComponent implements OnInit {
       this.unselect(r.id);
       this.toast.add({
         severity: 'success',
-        summary: 'Approuvée',
-        detail: `${r.productName} approuvée.`
+        summary: $localize`:@@replenishment-board.component.summary.Approuvée:Approuvée`,
+        detail: $localize`:@@forecasting.replenishment-board.ts.productname.approuvee.ab8867f3:${r.productName}:productName: approuvée.`
       });
       // If the current filter is "pending", the row exits the view immediately.
       if (this.filters().status === 'pending') {
@@ -310,8 +315,8 @@ export class ReplenishmentBoardComponent implements OnInit {
     } catch (err: any) {
       this.toast.add({
         severity: 'error',
-        summary: 'Échec',
-        detail: err?.error?.message ?? 'Approbation échouée.'
+        summary: $localize`:@@replenishment-board.component.summary.Échec:Échec`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.approbation.echouee.b12630:Approbation échouée.`
       });
     }
   }
@@ -328,15 +333,15 @@ export class ReplenishmentBoardComponent implements OnInit {
       const updated = await firstValueFrom(this.forecastingService.overrideReplenishment(rec.id, payload));
       this.toast.add({
         severity: 'success',
-        summary: 'Modifié',
-        detail: `${rec.productName} mis à jour.`
+        summary: $localize`:@@replenishment-board.component.summary.Modifié:Modifié`,
+        detail: $localize`:@@forecasting.replenishment-board.ts.productname.mis.a.jour.bd1287ec:${rec.productName}:productName: mis à jour.`
       });
       this.rows.update(rows => rows.map(x => x.id === updated.id ? updated : x));
     } catch (err: any) {
       this.toast.add({
         severity: 'error',
-        summary: 'Échec',
-        detail: err?.error?.message ?? 'La modification a échoué.'
+        summary: $localize`:@@replenishment-board.component.summary.Échec:Échec`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.la.modification.a.echoue.5f6a29:La modification a échoué.`
       });
     }
   }
@@ -346,16 +351,16 @@ export class ReplenishmentBoardComponent implements OnInit {
       const updated = await firstValueFrom(this.forecastingService.undoReplenishment(r.id));
       this.toast.add({
         severity: 'success',
-        summary: 'Annulée',
-        detail: `Décision sur ${r.productName} annulée.`
+        summary: $localize`:@@replenishment-board.component.summary.Annul_e:Annulée`,
+        detail: $localize`:@@forecasting.replenishment-board.ts.decision.sur.productname.annulee.22caf756:Décision sur ${r.productName}:productName: annulée.`
       });
       this.rows.update(rows => rows.map(x => x.id === updated.id ? updated : x));
       void this.refreshKpi();
     } catch (err: any) {
       this.toast.add({
         severity: 'error',
-        summary: 'Annulation impossible',
-        detail: err?.error?.message ?? 'L\'annulation a échoué.'
+        summary: $localize`:@@replenishment-board.component.summary.Annulation_impos:Annulation impossible`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.l.annulation.a.echoue.47819e:L'annulation a échoué.`
       });
     }
   }
@@ -375,8 +380,8 @@ export class ReplenishmentBoardComponent implements OnInit {
     if (ignored > 0) {
       this.toast.add({
         severity: 'info',
-        summary: 'Sélection partielle',
-        detail: `${ignored} recommandation(s) déjà traitée(s) (non-Pending) seront ignorée(s).`
+        summary: $localize`:@@replenishment-board.component.summary.S_lection_partie:Sélection partielle`,
+        detail: $localize`:@@forecasting.replenishment-board.ts.ignored.recommandation.s.deja.traitee.s.b7f382c3:${ignored}:ignored: recommandation(s) déjà traitée(s) (non-Pending) seront ignorée(s).`
       });
     }
     if (targets.length === 0) return;
@@ -394,21 +399,21 @@ export class ReplenishmentBoardComponent implements OnInit {
       if (ok > 0 && ko === 0) {
         this.toast.add({
           severity: 'success',
-          summary: 'Approbations',
-          detail: `${ok} recommandation(s) approuvée(s).`
+          summary: $localize`:@@replenishment-board.component.summary.Approbations:Approbations`,
+          detail: $localize`:@@forecasting.replenishment-board.ts.ok.recommandation.s.approuvee.s.e3d59858:${ok}:ok: recommandation(s) approuvée(s).`
         });
       } else if (ok > 0 && ko > 0) {
         this.toast.add({
           severity: 'warn',
-          summary: 'Approbations partielles',
-          detail: `${ok} approuvée(s), ${ko} en échec.`,
+          summary: $localize`:@@replenishment-board.component.summary.Approbations_par:Approbations partielles`,
+          detail: $localize`:@@forecasting.replenishment-board.ts.ok.approuvee.s.ko.en.echec.9ed9dff3:${ok}:ok: approuvée(s), ${ko}:ko: en échec.`,
           life: 6000
         });
       } else {
         this.toast.add({
           severity: 'error',
-          summary: 'Échec',
-          detail: `Aucune approbation n'a réussi (${ko} échec(s)).`
+          summary: $localize`:@@replenishment-board.component.summary.Échec:Échec`,
+          detail: $localize`:@@forecasting.replenishment-board.ts.aucune.approbation.n.a.reussi.ko.echec.s.1b2f14c1:Aucune approbation n'a réussi (${ko}:ko: échec(s)).`
         });
       }
     } finally {
@@ -423,8 +428,8 @@ export class ReplenishmentBoardComponent implements OnInit {
     if (targets.length === 0) {
       this.toast.add({
         severity: 'warn',
-        summary: 'Sélection vide',
-        detail: 'Aucune recommandation éligible (statut Pending ou Approved) dans la sélection.'
+        summary: $localize`:@@replenishment-board.component.summary.S_lection_vide:Sélection vide`,
+        detail: $localize`:@@replenishment-board.component.detail.Aucune_recommand:Aucune recommandation éligible (statut Pending ou Approved) dans la sélection.`
       });
       return;
     }
@@ -451,8 +456,8 @@ export class ReplenishmentBoardComponent implements OnInit {
         if (failed > 0) {
           this.toast.add({
             severity: 'warn',
-            summary: 'Enregistrement partiel',
-            detail: `${failed} ligne(s) : quantité ou fournisseur non enregistré(s) — vérifiez avant de renvoyer.`,
+            summary: $localize`:@@replenishment-board.component.summary.Enregistrement_p:Enregistrement partiel`,
+            detail: $localize`:@@forecasting.replenishment-board.ts.failed.ligne.s.quantite.ou.fournisseur.n.19ab2b5f:${failed}:failed: ligne(s) : quantité ou fournisseur non enregistré(s) — vérifiez avant de renvoyer.`,
             life: 6000
           });
         }
@@ -470,18 +475,18 @@ export class ReplenishmentBoardComponent implements OnInit {
       const unlinkedCount = result.unlinkedRecommendationIds?.length ?? 0;
       const detail = result.createdPurchaseOrdersCount === 0
         ? (unlinkedCount > 0
-            ? `Aucun BC créé : ${unlinkedCount} recommandation(s) sans fournisseur. Assignez un fournisseur puis réessayez.`
-            : 'Aucun BC créé. Vérifiez les avertissements.')
-        : `${result.createdPurchaseOrdersCount} BC créé(s), ${result.linkedRecommendationsCount} recommandation(s) liée(s).`;
+            ? $localize`:@@ui.tern.aucun.bc.cree.ph.recommandation.s.sans.fou.7efa06:Aucun BC créé : ${unlinkedCount}:p0: recommandation(s) sans fournisseur. Assignez un fournisseur puis réessayez.`
+            : $localize`:@@ui.tern.aucun.bc.cree.verifiez.les.avertissements.9603df:Aucun BC créé. Vérifiez les avertissements.`)
+        : $localize`:@@ui.tern.ph.bc.cree.s.ph.recommandation.s.liee.s.9328d1:${result.createdPurchaseOrdersCount}:p0: BC créé(s), ${result.linkedRecommendationsCount}:p1: recommandation(s) liée(s).`;
       this.toast.add({
         severity: result.createdPurchaseOrdersCount === 0 ? 'warn' : 'success',
-        summary: 'Bons de commande',
+        summary: $localize`:@@replenishment-board.component.summary.Bons_de_commande:Bons de commande`,
         detail,
         life: 8000
       });
       // Surface backend warnings (recos without supplier, etc.)
       for (const w of result.warnings ?? []) {
-        this.toast.add({ severity: 'warn', summary: 'Avertissement', detail: w, life: 6000 });
+        this.toast.add({ severity: 'warn', summary: $localize`:@@replenishment-board.component.summary.Avertissement:Avertissement`, detail: w, life: 6000 });
       }
       this.selectedIds.set(new Set());
       await this.load();
@@ -489,8 +494,8 @@ export class ReplenishmentBoardComponent implements OnInit {
     } catch (err: any) {
       this.toast.add({
         severity: 'error',
-        summary: 'Échec',
-        detail: err?.error?.message ?? 'La création des bons de commande a échoué.'
+        summary: $localize`:@@replenishment-board.component.summary.Échec:Échec`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.la.creation.des.bons.de.commande.a.echoue.b14709:La création des bons de commande a échoué.`
       });
     } finally {
       this.bulkActionInFlight.set(false);
@@ -507,16 +512,16 @@ export class ReplenishmentBoardComponent implements OnInit {
       );
       this.toast.add({
         severity: 'success',
-        summary: 'Régénération terminée',
-        detail: `${count} recommandation(s).`
+        summary: $localize`:@@replenishment-board.component.summary.R_g_n_ration_ter:Régénération terminée`,
+        detail: $localize`:@@forecasting.replenishment-board.ts.count.recommandation.s.d20ca4bc:${count}:count: recommandation(s).`
       });
       await this.load();
       void this.refreshKpi();
     } catch (err: any) {
       this.toast.add({
         severity: 'error',
-        summary: 'Échec',
-        detail: err?.error?.message ?? 'La régénération a échoué.'
+        summary: $localize`:@@replenishment-board.component.summary.Échec:Échec`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.la.regeneration.a.echoue.2e1fcb:La régénération a échoué.`
       });
     } finally {
       this.generating.set(false);
@@ -529,14 +534,14 @@ export class ReplenishmentBoardComponent implements OnInit {
       const fileName = await this.exportService.downloadCsv(this.filters());
       this.toast.add({
         severity: 'success',
-        summary: 'Export',
-        detail: `Fichier ${fileName} téléchargé.`
+        summary: $localize`:@@replenishment-board.component.summary.Export:Export`,
+        detail: $localize`:@@forecasting.replenishment-board.ts.fichier.filename.telecharge.5979ed5f:Fichier ${fileName}:fileName: téléchargé.`
       });
     } catch (err: any) {
       this.toast.add({
         severity: 'error',
-        summary: 'Export échoué',
-        detail: err?.error?.message ?? 'Le téléchargement CSV a échoué.'
+        summary: $localize`:@@replenishment-board.component.summary.Export échou:Export échoué`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.le.telechargement.csv.a.echoue.1e13c1:Le téléchargement CSV a échoué.`
       });
     } finally {
       this.exporting.set(false);
@@ -547,11 +552,11 @@ export class ReplenishmentBoardComponent implements OnInit {
 
   statusLabel(s: ReplenishmentRecommendation['status']): string {
     return ({
-      pending: 'En attente',
-      approved: 'Approuvée',
-      dismissed: 'Écartée',
-      ordered: 'Commandée',
-      superseded: 'Remplacée'
+      pending: $localize`:@@forecasting.replenishment-board.ts.en.attente.5231158f:En attente`,
+      approved: $localize`:@@forecasting.replenishment-board.ts.approuvee.7d606a51:Approuvée`,
+      dismissed: $localize`:@@forecasting.replenishment-board.ts.ecartee.42bd51f7:Écartée`,
+      ordered: $localize`:@@forecasting.replenishment-board.ts.commandee.15f2b9a3:Commandée`,
+      superseded: $localize`:@@forecasting.replenishment-board.ts.remplacee.a82c0233:Remplacée`
     } as Record<string, string>)[s] ?? s;
   }
 
@@ -561,10 +566,10 @@ export class ReplenishmentBoardComponent implements OnInit {
 
   urgencyLabel(level: ReplenishmentUrgency): string {
     switch (level) {
-      case 'OutOfStock': return 'Rupture';
-      case 'Urgent':     return 'Urgent';
-      case 'Warning':    return 'Attention';
-      case 'Normal':     return 'Normal';
+      case 'OutOfStock': return $localize`:@@forecasting.replenishment-board.ts.rupture.fda77001:Rupture`;
+      case 'Urgent':     return $localize`:@@forecasting.replenishment-board.ts.urgent.ecb26f46:Urgent`;
+      case 'Warning':    return $localize`:@@forecasting.replenishment-board.ts.attention.74e0b9c8:Attention`;
+      case 'Normal':     return $localize`:@@forecasting.replenishment-board.ts.normal.45e118d0:Normal`;
     }
   }
 

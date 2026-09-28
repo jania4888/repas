@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Injectable, inject } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModalComponent } from '@shared/components/confirm-modal/confirm-modal.component';
@@ -77,8 +78,8 @@ export class ConfirmationService {
    *   message: 'Êtes-vous sûr de vouloir supprimer cet élément ?',
    *   header: 'Confirmation de suppression',
    *   icon: 'pi pi-exclamation-triangle',
-   *   acceptLabel: 'Supprimer',
-   *   rejectLabel: 'Annuler',
+   *   acceptLabel: $localize`:@@confirmation.service.acceptLabel.Supprimer:Supprimer`,
+   *   rejectLabel: $localize`:@@confirmation.service.rejectLabel.Annuler:Annuler`,
    *   acceptButtonStyleClass: 'btn-danger',
    *   accept: () => { this.deleteItem(); },
    *   reject: () => { console.log('Cancelled'); }
@@ -87,8 +88,8 @@ export class ConfirmationService {
    * @example Long labels (inventory cancel) — use size `md` so both actions fit side-by-side
    * confirmationService.confirm({
    *   header: 'Annuler l\'inventaire',
-   *   acceptLabel: 'Annuler l\'inventaire',
-   *   rejectLabel: 'Continuer le comptage',
+   *   acceptLabel: $localize`:@@confirmation.service.acceptLabel.Annuler_l_invent:Annuler l'inventaire`,
+   *   rejectLabel: $localize`:@@confirmation.service.rejectLabel.Continuer_le_com:Continuer le comptage`,
    *   size: 'md',
    *   acceptButtonStyleClass: 'btn-danger',
    *   accept: () => { this.cancelInventory(); }
@@ -107,11 +108,11 @@ export class ConfirmationService {
     });
 
     // Configuration du composant modal
-    ref.componentInstance.message = confirmation.message ?? 'Êtes-vous sûr ?';
-    ref.componentInstance.header = confirmation.header ?? 'Confirmation';
+    ref.componentInstance.message = confirmation.message ?? $localize`:@@core.confirmation.ts.etes.vous.sur.25c63265:Êtes-vous sûr ?`;
+    ref.componentInstance.header = confirmation.header ?? $localize`:@@core.confirmation.ts.confirmation.3424edc2:Confirmation`;
     ref.componentInstance.icon = confirmation.icon ?? '';
-    ref.componentInstance.acceptLabel = confirmation.acceptLabel ?? 'Oui';
-    ref.componentInstance.rejectLabel = confirmation.rejectLabel ?? 'Non';
+    ref.componentInstance.acceptLabel = confirmation.acceptLabel ?? $localize`:@@core.confirmation.ts.oui.eaa02f3f:Oui`;
+    ref.componentInstance.rejectLabel = confirmation.rejectLabel ?? $localize`:@@core.confirmation.ts.non.a7219939:Non`;
     ref.componentInstance.acceptButtonStyleClass = normalizeConfirmButtonClass(confirmation.acceptButtonStyleClass) ?? 'btn-primary';
 
     // Gestion des résultats
@@ -160,9 +161,9 @@ export class ConfirmationService {
     });
 
     ref.componentInstance.message = config.message;
-    ref.componentInstance.header = config.header ?? 'Erreur';
+    ref.componentInstance.header = config.header ?? $localize`:@@core.confirmation.ts.erreur.ab546c23:Erreur`;
     ref.componentInstance.icon = config.icon ?? 'pi pi-exclamation-triangle';
-    ref.componentInstance.acceptLabel = 'OK';
+    ref.componentInstance.acceptLabel = $localize`:@@core.confirmation.ts.ok.9ce3bd42:OK`;
     ref.componentInstance.acceptButtonStyleClass = 'btn-primary';
     ref.componentInstance.showRejectButton = false;
 
@@ -180,7 +181,7 @@ export class ConfirmationService {
    * const reason = await confirmationService.prompt({
    *   header: 'Annuler les paiements',
    *   message: 'Motif d\\'annulation :',
-   *   acceptLabel: 'Annuler les paiements',
+   *   acceptLabel: $localize`:@@confirmation.service.acceptLabel.Annuler_les_paie:Annuler les paiements`,
    *   acceptButtonStyleClass: 'btn-danger',
    *   required: true
    * });
@@ -199,11 +200,11 @@ export class ConfirmationService {
     });
 
     ref.componentInstance.message = config.message ?? '';
-    ref.componentInstance.header = config.header ?? 'Saisie';
+    ref.componentInstance.header = config.header ?? $localize`:@@core.confirmation.ts.saisie.3e86f8d7:Saisie`;
     ref.componentInstance.icon = config.icon ?? '';
     ref.componentInstance.placeholder = config.placeholder ?? '';
-    ref.componentInstance.acceptLabel = config.acceptLabel ?? 'Confirmer';
-    ref.componentInstance.rejectLabel = config.rejectLabel ?? 'Annuler';
+    ref.componentInstance.acceptLabel = config.acceptLabel ?? $localize`:@@core.confirmation.ts.confirmer.80a664c8:Confirmer`;
+    ref.componentInstance.rejectLabel = config.rejectLabel ?? $localize`:@@core.confirmation.ts.annuler.49ba3292:Annuler`;
     ref.componentInstance.acceptButtonStyleClass = normalizeConfirmButtonClass(config.acceptButtonStyleClass) ?? 'btn-primary';
     ref.componentInstance.required = config.required ?? true;
     ref.componentInstance.maxLength = config.maxLength ?? 500;

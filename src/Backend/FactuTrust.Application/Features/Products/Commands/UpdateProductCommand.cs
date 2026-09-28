@@ -211,7 +211,7 @@ public sealed class UpdateProductCommandHandler : IRequestHandler<UpdateProductC
                 var stocks = await _stockItemRepository.GetByProductAsync(product.Id, cancellationToken);
                 if (stocks.Any(s => s.QuantityOnHand > 0))
                 {
-                    return Result.Failure<ProductDetailDto>(Error.Validation("CostingMethod",
+                    return Result.Failure<ProductDetailDto>(Error.Validation(ProductErrorCodes.OpeningLayerRequiredField,
                         "Le passage CMUP → FIFO/LIFO exige une couche d'ouverture (inventaire). Stock physique non nul."));
                 }
             }

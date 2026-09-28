@@ -1,4 +1,5 @@
 using FactuTrust.Application.Common.Interfaces;
+using FactuTrust.Application.Localization;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
@@ -11,10 +12,12 @@ namespace FactuTrust.Infrastructure.Services;
 public sealed class NotificationService : INotificationService
 {
     private readonly MasterDbContext _masterContext;
+    private readonly IMessageLocalizer _localizer;
 
-    public NotificationService(MasterDbContext masterContext)
+    public NotificationService(MasterDbContext masterContext, IMessageLocalizer localizer)
     {
         _masterContext = masterContext;
+        _localizer = localizer;
     }
 
     public Task<Result> CreateAsync(
@@ -79,9 +82,17 @@ public sealed class NotificationService : INotificationService
             })
             .ToListAsync(cancellationToken);
 
+        var localized = items
+            .Select(n => n with
+            {
+                Title = _localizer.Localize(n.Title),
+                Body = _localizer.Localize(n.Body)
+            })
+            .ToList();
+
         return new NotificationListDto
         {
-            Items = items,
+            Items = localized,
             TotalCount = totalCount,
             UnreadCount = unreadCount,
             Page = page,

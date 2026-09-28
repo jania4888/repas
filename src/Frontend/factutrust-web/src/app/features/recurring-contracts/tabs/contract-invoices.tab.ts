@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, OnChanges, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -20,12 +22,13 @@ import { invoiceBadgeStatus } from '../recurring-contracts.ui-utils';
   selector: 'app-contract-invoices-tab',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule, RouterModule, TableModule,
     ButtonComponent, EmptyStateComponent, StatusBadgeComponent, SkeletonTableComponent
   ],
   template: `
     <div class="section-header">
-      <h3>Factures liées</h3>
+      <h3 i18n="@@recurring-contracts.tabs.factures.liees.11b5bd1a">Factures liées</h3>
     </div>
 
     @if (loading()) {
@@ -33,15 +36,15 @@ import { invoiceBadgeStatus } from '../recurring-contracts.ui-utils';
     } @else if (invoices() === null) {
       <app-empty-state
         icon="pi-receipt"
-        title="Factures liées disponibles prochainement"
-        description="La liste des factures liées sera disponible après la mise à jour du serveur."
+        title="Factures liées disponibles prochainement" i18n-title="@@recurring-contracts.tabs.factures.liees.disponibles.prochainement.7049c988"
+        description="La liste des factures liées sera disponible après la mise à jour du serveur." i18n-description="@@recurring-contracts.tabs.la.liste.des.factures.liees.sera.disponi.99d9276a"
         [showAction]="false">
       </app-empty-state>
     } @else if (invoices()!.length === 0) {
       <app-empty-state
         icon="pi-receipt"
-        title="Aucune facture"
-        description="Aucune facture n'a encore été émise depuis ce contrat. Les factures de période s'émettent depuis Brouillons à valider."
+        title="Aucune facture" i18n-title="@@recurring-contracts.tabs.aucune.facture.2cb23501"
+        description="Aucune facture n'a encore été émise depuis ce contrat. Les factures de période s'émettent depuis Brouillons à valider." i18n-description="@@recurring-contracts.tabs.aucune.facture.n.a.encore.ete.emise.depu.2ddf241a"
         [showAction]="false">
       </app-empty-state>
     } @else {
@@ -49,13 +52,13 @@ import { invoiceBadgeStatus } from '../recurring-contracts.ui-utils';
         <p-table [value]="invoices()!" styleClass="p-datatable-sm" [rowHover]="true">
           <ng-template pTemplate="header">
             <tr>
-              <th>Numéro</th>
-              <th style="width: 120px">Date émission</th>
-              <th style="width: 120px">Échéance</th>
-              <th style="width: 130px">Total HT</th>
-              <th style="width: 130px">Total TTC</th>
-              <th style="width: 150px">Statut</th>
-              <th style="width: 80px">Actions</th>
+              <th i18n="@@recurring-contracts.tabs.numero.15e73db0">Numéro</th>
+              <th style="width: 120px" i18n="@@recurring-contracts.tabs.date.emission.ce5148a7">Date émission</th>
+              <th style="width: 120px" i18n="@@recurring-contracts.tabs.echeance.f9a77ff6">Échéance</th>
+              <th style="width: 130px" i18n="@@recurring-contracts.tabs.total.ht.2ca17ae6">Total HT</th>
+              <th style="width: 130px" i18n="@@recurring-contracts.tabs.total.ttc.9e80ff7c">Total TTC</th>
+              <th style="width: 150px" i18n="@@recurring-contracts.tabs.statut.659499f3">Statut</th>
+              <th style="width: 80px" i18n="@@recurring-contracts.tabs.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-inv>
@@ -63,7 +66,7 @@ import { invoiceBadgeStatus } from '../recurring-contracts.ui-utils';
               <td>
                 <a [routerLink]="['/invoices', inv.invoiceId]" class="invoice-number">{{ inv.number }}</a>
                 @if (inv.isCreditNote) {
-                  <span class="credit-note-tag">Avoir</span>
+                  <span class="credit-note-tag" i18n="@@recurring-contracts.tabs.avoir.f4848c45">Avoir</span>
                 }
               </td>
               <td>{{ inv.date | date:'dd/MM/yyyy' }}</td>
@@ -71,7 +74,7 @@ import { invoiceBadgeStatus } from '../recurring-contracts.ui-utils';
               <td class="amount">{{ inv.amountHT | currency:contract.currency:'symbol':'1.3-3' }}</td>
               <td class="amount">{{ inv.amountTTC | currency:contract.currency:'symbol':'1.3-3' }}</td>
               <td>
-                <app-status-badge [status]="invoiceBadgeStatus(inv.status)" [label]="inv.statusDisplay">
+                <app-status-badge [status]="invoiceBadgeStatus(inv.status)" [label]="inv.statusDisplay | backendLabel">
                 </app-status-badge>
               </td>
               <td>
@@ -81,7 +84,7 @@ import { invoiceBadgeStatus } from '../recurring-contracts.ui-utils';
                   icon="pi-eye"
                   [iconOnly]="true"
                   [routerLink]="['/invoices', inv.invoiceId]"
-                  ariaLabel="Voir la facture">
+                  ariaLabel="Voir la facture" i18n-ariaLabel="@@recurring-contracts.tabs.voir.la.facture.23283cea">
                 </app-button>
               </td>
             </tr>
@@ -111,7 +114,7 @@ import { invoiceBadgeStatus } from '../recurring-contracts.ui-utils';
     .invoice-number:hover { text-decoration: underline; }
 
     .credit-note-tag {
-      margin-left: var(--spacing-2);
+      margin-inline-start: var(--spacing-2);
       padding: 0 var(--spacing-2);
       border-radius: var(--radius-full);
       background: var(--color-warning-50, #fffbeb);
@@ -164,7 +167,7 @@ export class ContractInvoicesTabComponent implements OnInit, OnChanges {
       error: err => {
         this.loading.set(false);
         this.errorHandler.logError('RecurringContracts: linked invoices', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-invoices.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }

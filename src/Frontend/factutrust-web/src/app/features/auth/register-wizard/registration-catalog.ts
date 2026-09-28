@@ -143,43 +143,43 @@ export type CatalogLoadState = 'idle' | 'loading' | 'remote' | 'fallback';
 export const SEGMENT_OPTIONS: readonly SegmentOption[] = [
   {
     code: 'entreprise',
-    label: 'Entreprise',
-    subtitle: 'Sociétés commerciales et de services aux entreprises',
+    label: $localize`:@@auth.registration-catalog.ts.entreprise.d03e74b6:Entreprise`,
+    subtitle: $localize`:@@auth.registration-catalog.ts.societes.commerciales.et.de.services.aux.090bd8fc:Sociétés commerciales et de services aux entreprises`,
     icon: 'pi-building',
     tone: 'tone-blue'
   },
   {
     code: 'commerce',
-    label: 'Commerce',
-    subtitle: 'Négoce et distribution',
+    label: $localize`:@@auth.registration-catalog.ts.commerce.d3440a61:Commerce`,
+    subtitle: $localize`:@@auth.registration-catalog.ts.negoce.et.distribution.8fe6ca95:Négoce et distribution`,
     icon: 'pi-shopping-cart',
     tone: 'tone-green'
   },
   {
     code: 'services',
-    label: 'Prestations de services',
-    subtitle: 'Services et conseils',
+    label: $localize`:@@auth.registration-catalog.ts.prestations.de.services.484e1a2e:Prestations de services`,
+    subtitle: $localize`:@@auth.registration-catalog.ts.services.et.conseils.28b061db:Services et conseils`,
     icon: 'pi-briefcase',
     tone: 'tone-orange'
   },
   {
     code: 'btp-construction',
-    label: 'BTP & Construction',
-    subtitle: 'Bâtiment et travaux publics',
+    label: $localize`:@@auth.registration-catalog.ts.btp.construction.90a8ed11:BTP & Construction`,
+    subtitle: $localize`:@@auth.registration-catalog.ts.batiment.et.travaux.publics.f9aaa2de:Bâtiment et travaux publics`,
     icon: 'pi-hammer',
     tone: 'tone-yellow'
   },
   {
     code: 'association',
-    label: 'Association',
-    subtitle: 'Organismes à but non lucratif',
+    label: $localize`:@@auth.registration-catalog.ts.association.1948b8a7:Association`,
+    subtitle: $localize`:@@auth.registration-catalog.ts.organismes.a.but.non.lucratif.3dc77687:Organismes à but non lucratif`,
     icon: 'pi-heart',
     tone: 'tone-pink'
   },
   {
     code: 'etablissement-educatif',
-    label: 'Établissement éducatif',
-    subtitle: 'Écoles, universités, centres de formation',
+    label: $localize`:@@auth.registration-catalog.ts.etablissement.educatif.43715b4e:Établissement éducatif`,
+    subtitle: $localize`:@@auth.registration-catalog.ts.ecoles.universites.centres.de.formation.4fbdbc45:Écoles, universités, centres de formation`,
     icon: 'pi-graduation-cap',
     tone: 'tone-indigo'
   }
@@ -187,16 +187,16 @@ export const SEGMENT_OPTIONS: readonly SegmentOption[] = [
 
 /** Domains — order matches the reference design (5×2 grid). */
 export const DOMAIN_OPTIONS: readonly DomainOption[] = [
-  { code: 'technologie-informatique', label: 'Technologie & Informatique', icon: 'pi-desktop', tone: 'tone-blue' },
-  { code: 'alimentation-agroalimentaire', label: 'Alimentation & Agroalimentaire', icon: 'pi-apple', tone: 'tone-green' },
-  { code: 'sante-paramedical', label: 'Santé & Paramédical', icon: 'pi-heart-fill', tone: 'tone-purple' },
-  { code: 'textile-habillement', label: 'Textile & Habillement', icon: 'pi-tag', tone: 'tone-blue' },
-  { code: 'transport-logistique', label: 'Transport & Logistique', icon: 'pi-truck', tone: 'tone-orange' },
-  { code: 'immobilier', label: 'Immobilier', icon: 'pi-home', tone: 'tone-indigo' },
-  { code: 'energie-environnement', label: 'Énergie & Environnement', icon: 'pi-bolt', tone: 'tone-teal' },
-  { code: 'communication-marketing', label: 'Communication & Marketing', icon: 'pi-megaphone', tone: 'tone-pink' },
-  { code: 'artisanat', label: 'Artisanat', icon: 'pi-palette', tone: 'tone-yellow' },
-  { code: 'autre', label: 'Autre domaine', icon: 'pi-ellipsis-h', tone: 'tone-gray' }
+  { code: 'technologie-informatique', label: $localize`:@@auth.registration-catalog.ts.technologie.informatique.c3df87ca:Technologie & Informatique`, icon: 'pi-desktop', tone: 'tone-blue' },
+  { code: 'alimentation-agroalimentaire', label: $localize`:@@auth.registration-catalog.ts.alimentation.agroalimentaire.7a2bb17d:Alimentation & Agroalimentaire`, icon: 'pi-apple', tone: 'tone-green' },
+  { code: 'sante-paramedical', label: $localize`:@@auth.registration-catalog.ts.sante.paramedical.ec26e67f:Santé & Paramédical`, icon: 'pi-heart-fill', tone: 'tone-purple' },
+  { code: 'textile-habillement', label: $localize`:@@auth.registration-catalog.ts.textile.habillement.abc7dc02:Textile & Habillement`, icon: 'pi-tag', tone: 'tone-blue' },
+  { code: 'transport-logistique', label: $localize`:@@auth.registration-catalog.ts.transport.logistique.a099a5fb:Transport & Logistique`, icon: 'pi-truck', tone: 'tone-orange' },
+  { code: 'immobilier', label: $localize`:@@auth.registration-catalog.ts.immobilier.94b16f03:Immobilier`, icon: 'pi-home', tone: 'tone-indigo' },
+  { code: 'energie-environnement', label: $localize`:@@auth.registration-catalog.ts.energie.environnement.f21c5480:Énergie & Environnement`, icon: 'pi-bolt', tone: 'tone-teal' },
+  { code: 'communication-marketing', label: $localize`:@@auth.registration-catalog.ts.communication.marketing.f3718563:Communication & Marketing`, icon: 'pi-megaphone', tone: 'tone-pink' },
+  { code: 'artisanat', label: $localize`:@@auth.registration-catalog.ts.artisanat.c045fdd5:Artisanat`, icon: 'pi-palette', tone: 'tone-yellow' },
+  { code: 'autre', label: $localize`:@@auth.registration-catalog.ts.autre.domaine.aa839997:Autre domaine`, icon: 'pi-ellipsis-h', tone: 'tone-gray' }
 ] as const;
 
 /** Core modules — always on, never deselectable, never sent as "optional". */

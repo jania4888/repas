@@ -1,3 +1,5 @@
+import { erpDateLocale } from '@core/i18n/erp-format';
+
 /**
  * Contrat JSON Exchange : enums sérialisés en PascalCase via
  * JsonStringEnumConverter() (Program.cs). Accepte aussi les entiers 0..N.
@@ -151,26 +153,26 @@ export function canCompleteTask(raw: unknown): boolean {
 
 export function threadStatusLabel(raw: unknown): string {
   const s = parseExchangeThreadStatus(raw);
-  if (s === 'Open') return 'En cours';
-  if (s === 'Closed') return 'Clos';
-  return 'Inconnu';
+  if (s === 'Open') return $localize`:@@exchanges.exchange-status.ts.en.cours.bc9b533a:En cours`;
+  if (s === 'Closed') return $localize`:@@exchanges.exchange-status.ts.clos.189812eb:Clos`;
+  return $localize`:@@exchanges.exchange-status.ts.inconnu.f3cfc645:Inconnu`;
 }
 
 export function requestStatusLabel(raw: unknown): string {
   const s = parseExchangeRequestStatus(raw);
   switch (s) {
     case 'Open':
-      return 'Ouverte';
+      return $localize`:@@exchanges.exchange-status.ts.ouverte.61589002:Ouverte`;
     case 'InProgress':
-      return 'En cours';
+      return $localize`:@@exchanges.exchange-status.ts.en.cours.bc9b533a:En cours`;
     case 'WaitingClient':
-      return 'Attente client';
+      return $localize`:@@exchanges.exchange-status.ts.attente.client.6b243335:Attente client`;
     case 'WaitingFirm':
-      return 'Attente cabinet';
+      return $localize`:@@exchanges.exchange-status.ts.attente.cabinet.9986eb84:Attente cabinet`;
     case 'Resolved':
-      return 'Résolue';
+      return $localize`:@@exchanges.exchange-status.ts.resolue.29df7ce6:Résolue`;
     case 'Closed':
-      return 'Clôturée';
+      return $localize`:@@exchanges.exchange-status.ts.cloturee.da2e2bc8:Clôturée`;
     default:
       return '';
   }
@@ -180,13 +182,13 @@ export function categoryLabel(raw: unknown): string {
   const c = parseExchangeRequestCategory(raw);
   switch (c) {
     case 'Reclamation':
-      return 'Réclamation';
+      return $localize`:@@exchanges.exchange-status.ts.reclamation.33d37f8b:Réclamation`;
     case 'Information':
-      return 'Information';
+      return $localize`:@@exchanges.exchange-status.ts.information.0eb5ed50:Information`;
     case 'DocumentManquant':
-      return 'Document manquant';
+      return $localize`:@@exchanges.exchange-status.ts.document.manquant.854cb44d:Document manquant`;
     case 'Autre':
-      return 'Autre';
+      return $localize`:@@exchanges.exchange-status.ts.autre.43dacf9e:Autre`;
     default:
       return '';
   }
@@ -196,13 +198,13 @@ export function taskStatusLabel(raw: unknown): string {
   const s = parseExchangeTaskStatus(raw);
   switch (s) {
     case 'Todo':
-      return 'À faire';
+      return $localize`:@@exchanges.exchange-status.ts.a.faire.262bf4ea:À faire`;
     case 'Doing':
-      return 'En cours';
+      return $localize`:@@exchanges.exchange-status.ts.en.cours.bc9b533a:En cours`;
     case 'Done':
-      return 'Terminée';
+      return $localize`:@@exchanges.exchange-status.ts.terminee.45936892:Terminée`;
     case 'Cancelled':
-      return 'Annulée';
+      return $localize`:@@exchanges.exchange-status.ts.annulee.2776573b:Annulée`;
     default:
       return '';
   }
@@ -221,9 +223,9 @@ export function messageDayLabel(iso: string, now = new Date()): string {
   const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const startMsg = new Date(d.getFullYear(), d.getMonth(), d.getDate());
   const diffDays = Math.round((startToday.getTime() - startMsg.getTime()) / 86_400_000);
-  if (diffDays === 0) return "Aujourd'hui";
-  if (diffDays === 1) return 'Hier';
-  return d.toLocaleDateString('fr-FR', {
+  if (diffDays === 0) return $localize`:@@exchanges.exchange-status.ts.aujourd.hui.baca97f6:Aujourd'hui`;
+  if (diffDays === 1) return $localize`:@@exchanges.exchange-status.ts.hier.e6faf8c2:Hier`;
+  return d.toLocaleDateString(erpDateLocale('fr-FR'), {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
@@ -289,20 +291,20 @@ const AUDIT_INT: Record<number, ExchangeAuditEventTypeCode> = {
 };
 
 const AUDIT_LABELS: Record<ExchangeAuditEventTypeCode, string> = {
-  ThreadOpened: 'Échange ouvert',
-  MessageSent: 'Message envoyé',
-  InternalNoteAdded: 'Note interne ajoutée',
-  RequestCreated: 'Demande créée',
-  RequestStatusChanged: 'Statut de demande modifié',
-  TaskCreated: 'Tâche créée',
-  TaskCompleted: 'Tâche terminée',
-  DocumentShared: 'Document partagé',
-  ThreadClosed: 'Échange clos',
-  ThreadReopened: 'Échange rouvert',
-  AppointmentSuggested: 'Rendez-vous suggéré',
-  TaskStatusChanged: 'Statut de tâche modifié',
-  RequestCommented: 'Commentaire sur une demande',
-  RequestAssigned: 'Demande assignée'
+  ThreadOpened: $localize`:@@exchanges.exchange-status.ts.echange.ouvert.09a217d7:Échange ouvert`,
+  MessageSent: $localize`:@@exchanges.exchange-status.ts.message.envoye.3414873e:Message envoyé`,
+  InternalNoteAdded: $localize`:@@exchanges.exchange-status.ts.note.interne.ajoutee.68b6b52b:Note interne ajoutée`,
+  RequestCreated: $localize`:@@exchanges.exchange-status.ts.demande.creee.a251dbcc:Demande créée`,
+  RequestStatusChanged: $localize`:@@exchanges.exchange-status.ts.statut.de.demande.modifie.862bd42a:Statut de demande modifié`,
+  TaskCreated: $localize`:@@exchanges.exchange-status.ts.tache.creee.80944c5c:Tâche créée`,
+  TaskCompleted: $localize`:@@exchanges.exchange-status.ts.tache.terminee.c076ace1:Tâche terminée`,
+  DocumentShared: $localize`:@@exchanges.exchange-status.ts.document.partage.7743e6ac:Document partagé`,
+  ThreadClosed: $localize`:@@exchanges.exchange-status.ts.echange.clos.0c2b7790:Échange clos`,
+  ThreadReopened: $localize`:@@exchanges.exchange-status.ts.echange.rouvert.2edbb79d:Échange rouvert`,
+  AppointmentSuggested: $localize`:@@exchanges.exchange-status.ts.rendez.vous.suggere.e7ba6e42:Rendez-vous suggéré`,
+  TaskStatusChanged: $localize`:@@exchanges.exchange-status.ts.statut.de.tache.modifie.00fb8356:Statut de tâche modifié`,
+  RequestCommented: $localize`:@@exchanges.exchange-status.ts.commentaire.sur.une.demande.ddea6460:Commentaire sur une demande`,
+  RequestAssigned: $localize`:@@exchanges.exchange-status.ts.demande.assignee.339a3efd:Demande assignée`
 };
 
 export function parseExchangeAuditEventType(raw: unknown): ExchangeAuditEventTypeCode | null {
@@ -312,18 +314,18 @@ export function parseExchangeAuditEventType(raw: unknown): ExchangeAuditEventTyp
 export function auditEventLabel(raw: unknown): string {
   const code = parseExchangeAuditEventType(raw);
   if (code) return AUDIT_LABELS[code];
-  if (raw == null || raw === '') return 'Événement';
-  return `Événement ${raw}`;
+  if (raw == null || raw === '') return $localize`:@@exchanges.exchange-status.ts.evenement.c040c1a9:Événement`;
+  return $localize`:@@exchanges.exchange-status.ts.evenement.raw.9e9bc6f2:Événement ${raw}:raw:`;
 }
 
 const ROLE_LABELS: Record<string, string> = {
-  Administrator: 'Administrateur',
-  FirmManager: 'Responsable cabinet',
-  FirmAccountant: 'Comptable cabinet',
-  Accountant: 'Comptable',
-  Manager: 'Manager',
-  User: 'Utilisateur',
-  Employee: 'Collaborateur'
+  Administrator: $localize`:@@exchanges.exchange-status.ts.administrateur.1d8141b2:Administrateur`,
+  FirmManager: $localize`:@@exchanges.exchange-status.ts.responsable.cabinet.887948b9:Responsable cabinet`,
+  FirmAccountant: $localize`:@@exchanges.exchange-status.ts.comptable.cabinet.d12d50ed:Comptable cabinet`,
+  Accountant: $localize`:@@exchanges.exchange-status.ts.comptable.36cf0a9e:Comptable`,
+  Manager: $localize`:@@exchanges.exchange-status.ts.manager.babe3050:Manager`,
+  User: $localize`:@@exchanges.exchange-status.ts.utilisateur.0b20cd7f:Utilisateur`,
+  Employee: $localize`:@@exchanges.exchange-status.ts.collaborateur.a66377cf:Collaborateur`
 };
 
 export function participantRoleLabel(role: string | null | undefined): string {
@@ -434,11 +436,11 @@ export function priorityLabel(raw: unknown): string {
   const p = parseExchangeRequestPriority(raw);
   switch (p) {
     case 'Low':
-      return 'Basse';
+      return $localize`:@@exchanges.exchange-status.ts.basse.66ecf01a:Basse`;
     case 'Normal':
-      return 'Normale';
+      return $localize`:@@exchanges.exchange-status.ts.normale.c82c13b2:Normale`;
     case 'High':
-      return 'Haute';
+      return $localize`:@@exchanges.exchange-status.ts.haute.ab500e10:Haute`;
     default:
       return '';
   }
@@ -512,15 +514,15 @@ export function assigneeDisplayName(
   participants: { userId: string; displayName: string }[] | null | undefined,
   assigneeUserId?: string | null
 ): string {
-  if (!assigneeUserId) return 'Non assignée';
+  if (!assigneeUserId) return $localize`:@@exchanges.exchange-status.ts.non.assignee.493d0bb2:Non assignée`;
   const name = participants?.find(p => p.userId === assigneeUserId)?.displayName?.trim();
-  return name || 'Participant';
+  return name || $localize`:@@exchanges.exchange-status.ts.participant.a77366e9:Participant`;
 }
 
 export function formatFileSize(n: number): string {
   if (n < 1024) return `${n} o`;
-  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} Ko`;
-  return `${(n / (1024 * 1024)).toFixed(1)} Mo`;
+  if (n < 1024 * 1024) return $localize`:@@exchanges.exchange-status.ts.tofixed.ko.fc4c85dc:${(n / 1024).toFixed(1)}:toFixed: Ko`;
+  return $localize`:@@exchanges.exchange-status.ts.tofixed.mo.66e70c71:${(n / (1024 * 1024)).toFixed(1)}:toFixed: Mo`;
 }
 
 export interface RequestAuditPayload {

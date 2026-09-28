@@ -199,7 +199,7 @@ import {
     }
     .sair__warnings { font-size: var(--font-size-sm); color: var(--color-warning-700, #b45309); }
     .sair__warnings-title { margin: 0 0 var(--spacing-2); font-weight: var(--font-weight-semibold); }
-    .sair__warnings ul { margin: 0; padding-left: var(--spacing-4); display: flex; flex-direction: column; gap: 2px; }
+    .sair__warnings ul { margin: 0; padding-inline-start: var(--spacing-4); display: flex; flex-direction: column; gap: 2px; }
     .sair__actions { display: flex; flex-wrap: wrap; gap: var(--spacing-2); }
   `]
 })

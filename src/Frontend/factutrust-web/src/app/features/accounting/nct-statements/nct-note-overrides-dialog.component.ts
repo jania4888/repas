@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, EventEmitter, Input, OnChanges, Output, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -35,7 +36,7 @@ interface NoteEditRow {
   imports: [CommonModule, FormsModule, DialogModule, ButtonComponent],
   template: `
     <p-dialog
-      header="Personnaliser les annexes"
+      header="Personnaliser les annexes" i18n-header="@@accounting.nct-statements.personnaliser.les.annexes.05ae837d"
       [visible]="visible"
       (visibleChange)="onVisibleChange($event)"
       [modal]="true"
@@ -43,24 +44,24 @@ interface NoteEditRow {
       [draggable]="false"
       [closable]="true"
       styleClass="nno-dialog">
-      <p class="nno-help">
-        Exercice <strong>{{ fiscalYear }}</strong>. Un champ laissé vide conserve le libellé du
+      <p class="nno-help" i18n="@@accounting.nct-statements.exercice.un.champ.laisse.vide.conserve.l.2867cbec">
+        <ng-container> Exercice </ng-container> <strong>{{ fiscalYear }}</strong>. Un champ laissé vide conserve le libellé du
         catalogue. Une note masquée disparaît de la liasse <em>et</em> de l'export PDF.
       </p>
 
       @if (loading()) {
-        <p class="nno-help">Chargement…</p>
+        <p class="nno-help" i18n="@@accounting.nct-statements.chargement.01cba1df">Chargement…</p>
       } @else {
         <div class="nno-list">
           @for (row of rows(); track row.number) {
             <div class="nno-row" [class.nno-row--hidden]="row.isHidden">
-              <div class="nno-row-head">
+              <div class="nno-row-head"><ng-container i18n="@@accounting.nct-statements.note.a098cd6f">
                 <span class="nno-num">Note {{ row.number }}</span>
                 <span class="nno-default">{{ row.defaultTitle }}</span>
-                <label class="nno-hide">
-                  <input type="checkbox" [(ngModel)]="row.isHidden" [disabled]="row.saving" />
+                </ng-container><label class="nno-hide">
+                  <input type="checkbox" [(ngModel)]="row.isHidden" [disabled]="row.saving" /><ng-container i18n="@@accounting.nct-statements.masquer.adb05f2b">
                   Masquer
-                </label>
+                </ng-container></label>
               </div>
               <input
                 type="text"
@@ -73,19 +74,15 @@ interface NoteEditRow {
                 rows="2"
                 [(ngModel)]="row.customDescription"
                 [disabled]="row.saving || row.isHidden"
-                placeholder="Texte narratif (facultatif)"></textarea>
+                placeholder="Texte narratif (facultatif)" i18n-placeholder="@@accounting.nct-statements.texte.narratif.facultatif.ca5e35a4"></textarea>
               <div class="nno-row-actions">
                 <app-button variant="secondary" size="sm" type="button"
                   (click)="save(row)" [disabled]="row.saving"
-                  [ariaLabel]="'Enregistrer la note ' + row.number">
-                  Enregistrer
-                </app-button>
+                  [ariaLabel]="loc_ui_tern_enregistrer_la_note_b39ca7 + row.number" i18n="@@accounting.nct-statements.enregistrer.f7c8bcd8"> Enregistrer </app-button>
                 @if (row.hasOverride) {
                   <app-button variant="ghost" size="sm" type="button"
                     (click)="reset(row)" [disabled]="row.saving"
-                    [ariaLabel]="'Rétablir la note ' + row.number">
-                    Rétablir
-                  </app-button>
+                    [ariaLabel]="loc_ui_tern_retablir_la_note_f1b0b0 + row.number" i18n="@@accounting.nct-statements.retablir.91f08ee4"> Rétablir </app-button>
                 }
               </div>
             </div>
@@ -109,6 +106,8 @@ interface NoteEditRow {
   `
 })
 export class NctNoteOverridesDialogComponent implements OnChanges {
+  readonly loc_ui_tern_enregistrer_la_note_b39ca7 = $localize`:@@ui.tern.enregistrer.la.note.b39ca7:Enregistrer la note `;
+  readonly loc_ui_tern_retablir_la_note_f1b0b0 = $localize`:@@ui.tern.retablir.la.note.f1b0b0:Rétablir la note `;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly toast = inject(ToastService);
@@ -150,7 +149,7 @@ export class NctNoteOverridesDialogComponent implements OnChanges {
       },
       error: err => {
         this.loading.set(false);
-        this.notify('error', this.errors.extractErrorMessage(err, 'Impossible de charger le catalogue des annexes.'));
+        this.notify('error', this.errors.extractErrorMessage(err, $localize`:@@accounting.nct-note-overrides-dialog.ts.impossible.de.charger.le.catalogue.des.a.db589247:Impossible de charger le catalogue des annexes.`));
       }
     });
   }
@@ -186,15 +185,15 @@ export class NctNoteOverridesDialogComponent implements OnChanges {
         row.saving = false;
         if (res.success) {
           row.hasOverride = true;
-          this.notify('success', `Note ${row.number} personnalisée.`);
+          this.notify('success', $localize`:@@accounting.nct-note-overrides-dialog.ts.note.number.personnalisee.053fa9f0:Note ${row.number}:number: personnalisée.`);
           this.changed.emit();
         } else {
-          this.notify('error', res.error ?? "L'enregistrement a échoué.");
+          this.notify('error', res.error ?? $localize`:@@ui.tern.l.enregistrement.a.echoue.3f69ec:L'enregistrement a échoué.`);
         }
       },
       error: err => {
         row.saving = false;
-        this.notify('error', this.errors.extractErrorMessage(err, "Erreur réseau lors de l'enregistrement."));
+        this.notify('error', this.errors.extractErrorMessage(err, $localize`:@@accounting.nct-note-overrides-dialog.ts.erreur.reseau.lors.de.l.enregistrement.e5ca0048:Erreur réseau lors de l'enregistrement.`));
       }
     });
   }
@@ -208,17 +207,17 @@ export class NctNoteOverridesDialogComponent implements OnChanges {
         row.customDescription = '';
         row.isHidden = false;
         row.hasOverride = false;
-        this.notify('success', `Note ${row.number} rétablie.`);
+        this.notify('success', $localize`:@@accounting.nct-note-overrides-dialog.ts.note.number.retablie.859d0b8b:Note ${row.number}:number: rétablie.`);
         this.changed.emit();
       },
       error: err => {
         row.saving = false;
-        this.notify('error', this.errors.extractErrorMessage(err, 'Erreur réseau lors du rétablissement.'));
+        this.notify('error', this.errors.extractErrorMessage(err, $localize`:@@accounting.nct-note-overrides-dialog.ts.erreur.reseau.lors.du.retablissement.75f7b2c9:Erreur réseau lors du rétablissement.`));
       }
     });
   }
 
   private notify(severity: 'success' | 'error', detail: string): void {
-    this.toast.add({ severity, summary: 'Annexes NCT', detail, life: 4000 });
+    this.toast.add({ severity, summary: $localize`:@@nct-note-overrides-dialog.component.summary.Annexes_NCT:Annexes NCT`, detail, life: 4000 });
   }
 }

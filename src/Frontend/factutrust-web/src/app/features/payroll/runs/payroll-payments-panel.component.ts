@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PayrollService, type PayrollPayment } from '@core/services/payroll.service';
@@ -9,13 +11,13 @@ import { PayrollAmountPipe, PayrollSectionComponent } from '../shared';
 @Component({
   selector: 'app-payroll-payments-panel',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, PayrollAmountPipe, PayrollSectionComponent],
+  imports: [BackendLabelPipe, CommonModule, ButtonComponent, PayrollAmountPipe, PayrollSectionComponent],
   template: `
-    <app-payroll-section title="Paiements enregistrés" icon="pi-wallet">
+    <app-payroll-section title="Paiements enregistrés" i18n-title="@@payroll.runs.paiements.enregistres.1ae9a974" icon="pi-wallet">
       @if (loading()) {
-        <p>Chargement…</p>
+        <p i18n="@@payroll.runs.chargement.01cba1df">Chargement…</p>
       } @else if (payments().length === 0) {
-        <p class="text-secondary">Aucun paiement enregistré pour ce cycle.</p>
+        <p class="text-secondary" i18n="@@payroll.runs.aucun.paiement.enregistre.pour.ce.cycle.d471868c">Aucun paiement enregistré pour ce cycle.</p>
       } @else {
         <div class="payments-list">
           @for (p of payments(); track p.id) {
@@ -23,15 +25,15 @@ import { PayrollAmountPipe, PayrollSectionComponent } from '../shared';
               <div class="payment-header">
                 <div>
                   <strong>{{ p.paymentDate | date:'dd/MM/yyyy' }}</strong>
-                  <span class="ml-2">{{ p.methodDisplay }}</span>
+                  <span class="ml-2">{{ p.methodDisplay | backendLabel }}</span>
                   @if (p.isCancelled) {
-                    <span class="badge-cancelled">Annulé</span>
+                    <span class="badge-cancelled" i18n="@@payroll.runs.annule.34cd87cc">Annulé</span>
                   }
                 </div>
                 <strong>{{ p.amount | payrollAmount }}</strong>
               </div>
               @if (p.reference) {
-                <div class="text-secondary">Réf. {{ p.reference }}</div>
+                <div class="text-secondary" i18n="@@payroll.runs.ref.ed57a16b">Réf. {{ p.reference }}</div>
               }
               <ul class="lines">
                 @for (l of p.lines; track l.id) {
@@ -39,7 +41,7 @@ import { PayrollAmountPipe, PayrollSectionComponent } from '../shared';
                 }
               </ul>
               @if (!p.isCancelled && canCancel()) {
-                <app-button variant="ghost" size="sm" (click)="cancelOne(p)">Annuler ce paiement</app-button>
+                <app-button variant="ghost" size="sm" (click)="cancelOne(p)" i18n="@@payroll.runs.annuler.ce.paiement.9c2d376a">Annuler ce paiement</app-button>
               }
             </div>
           }
@@ -49,13 +51,13 @@ import { PayrollAmountPipe, PayrollSectionComponent } from '../shared';
   `,
   styles: [`
     .text-secondary { color: var(--color-text-secondary); font-size: var(--font-size-sm); }
-    .ml-2 { margin-left: var(--spacing-2); }
+    .ml-2 { margin-inline-start: var(--spacing-2); }
     .payments-list { display: flex; flex-direction: column; gap: var(--spacing-3); }
     .payment-card { border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--spacing-3); }
     .payment-card.cancelled { opacity: 0.7; }
     .payment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-2); }
-    .badge-cancelled { margin-left: var(--spacing-2); color: var(--color-danger); font-size: var(--font-size-sm); }
-    .lines { margin: var(--spacing-2) 0; padding-left: var(--spacing-4); font-size: var(--font-size-sm); }
+    .badge-cancelled { margin-inline-start: var(--spacing-2); color: var(--color-danger); font-size: var(--font-size-sm); }
+    .lines { margin: var(--spacing-2) 0; padding-inline-start: var(--spacing-4); font-size: var(--font-size-sm); }
   `]
 })
 export class PayrollPaymentsPanelComponent implements OnInit {
@@ -83,32 +85,32 @@ export class PayrollPaymentsPanelComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toast.add({ severity: 'error', summary: 'Paie', detail: 'Impossible de charger les paiements.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@payroll-payments-panel.component.summary.Paie:Paie`, detail: $localize`:@@payroll-payments-panel.component.detail.Impossible_de_ch:Impossible de charger les paiements.` });
       }
     });
   }
 
   async cancelOne(p: PayrollPayment): Promise<void> {
     const reason = await this.confirmation.prompt({
-      header: 'Annuler le paiement',
-      message: 'Saisissez le motif d\'annulation du paiement :',
-      acceptLabel: 'Annuler le paiement',
-      rejectLabel: 'Conserver',
+      header: $localize`:@@payroll.payroll-payments-panel.ts.annuler.le.paiement.6a672eb2:Annuler le paiement`,
+      message: $localize`:@@payroll.payroll-payments-panel.ts.saisissez.le.motif.d.annulation.du.paiem.e9153bbd:Saisissez le motif d'annulation du paiement :`,
+      acceptLabel: $localize`:@@payroll-payments-panel.component.acceptLabel.Annuler_le_paiem:Annuler le paiement`,
+      rejectLabel: $localize`:@@payroll-payments-panel.component.rejectLabel.Conserver:Conserver`,
       acceptButtonStyleClass: 'btn-danger',
       required: true
     });
     if (!reason) return;
     this.payroll.cancelPayment(p.id, reason).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Paie', detail: 'Paiement annulé.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-payments-panel.component.summary.Paie:Paie`, detail: $localize`:@@payroll-payments-panel.component.detail.Paiement_annul_:Paiement annulé.` });
         this.load();
         this.refreshed.emit();
       },
       error: err =>
         this.toast.add({
           severity: 'error',
-          summary: 'Paie',
-          detail: err?.error?.message ?? 'Annulation impossible.'
+          summary: $localize`:@@payroll-payments-panel.component.summary.Paie:Paie`,
+          detail: err?.error?.message ?? $localize`:@@ui.tern.annulation.impossible.814b7d:Annulation impossible.`
         })
     });
   }

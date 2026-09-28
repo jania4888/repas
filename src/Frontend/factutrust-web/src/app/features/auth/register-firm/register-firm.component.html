@@ -1,9 +1,9 @@
 <app-auth-shell [config]="shellConfig">
       @if (!environment.accountingFirmsEnabled) {
-        <p-message severity="warn" text="Fonctionnalité non disponible."></p-message>
-        <p class="login-prompt"><a routerLink="/auth/login" class="link-primary fw-semibold">Retour à la connexion</a></p>
+        <p-message severity="warn" text="Fonctionnalité non disponible." i18n-text="@@auth.register-firm.fonctionnalite.non.disponible.dd550035"></p-message>
+        <p class="login-prompt"><a routerLink="/auth/login" class="link-primary fw-semibold" i18n="@@auth.register-firm.retour.a.la.connexion.dfad5972">Retour à la connexion</a></p>
       } @else {
-        <div class="form-top-bar">
+        <div class="form-top-bar" i18n="@@auth.register-firm.deja.un.compte.connexion.2f694382">
           <span class="form-top-bar__spacer" aria-hidden="true"></span>
           <a routerLink="/auth/login" class="form-top-bar__link">
             <i class="pi pi-sign-in" aria-hidden="true"></i>
@@ -12,8 +12,8 @@
         </div>
 
         <div class="form-header-text">
-          <h2>Inscription cabinet comptable</h2>
-          <p>Créez votre espace cabinet pour gérer les dossiers de vos clients sociétés.</p>
+          <h2 i18n="@@auth.register-firm.inscription.cabinet.comptable.faae6c7c">Inscription cabinet comptable</h2>
+          <p i18n="@@auth.register-firm.creez.votre.espace.cabinet.pour.gerer.les.dossie.befec378">Créez votre espace cabinet pour gérer les dossiers de vos clients sociétés.</p>
         </div>
 
         <div class="stepper-wrapper" [attr.data-current-step]="currentStep()" role="group" [attr.aria-label]="'Progression : étape ' + stepHumanIndex() + ' sur 3'">
@@ -25,10 +25,10 @@
             <div class="global-error" role="alert" @fadeInOut>
               <div class="error-icon"><i class="pi pi-exclamation-triangle"></i></div>
               <div class="error-content">
-                <h4>Erreur lors de l'inscription</h4>
+                <h4 i18n="@@auth.register-firm.erreur.lors.de.l.inscription.db5ac287">Erreur lors de l'inscription</h4>
                 <p>{{ error() }}</p>
               </div>
-              <button type="button" class="close-btn" (click)="error.set(null)" aria-label="Fermer">
+              <button type="button" class="close-btn" (click)="error.set(null)" aria-label="Fermer" i18n-aria-label="@@auth.register-firm.fermer.5ab4ec64">
                 <i class="pi pi-times"></i>
               </button>
             </div>
@@ -37,14 +37,14 @@
           <div class="steps-container">
             @if (currentStep() === 0) {
               <div class="step-pane" @stepSlide>
-                <h3 class="step-title">1. Informations de connexion</h3>
+                <h3 class="step-title" i18n="@@auth.register-firm.1.informations.de.connexion.0a36dd88">1. Informations de connexion</h3>
 
                 <div class="form-row">
                   <div class="form-group flex-1">
-                    <label for="firstName" class="sr-only">Prénom</label>
+                    <label for="firstName" class="sr-only" i18n="@@auth.register-firm.prenom.e4387ade">Prénom</label>
                     <div class="input-icon-wrapper">
                       <i class="pi pi-user icon"></i>
-                      <input pInputText id="firstName" formControlName="firstName" placeholder="Prénom *"
+                      <input pInputText id="firstName" formControlName="firstName" placeholder="Prénom *" i18n-placeholder="@@auth.register-firm.prenom.72fe3505"
                              autocomplete="given-name" [attr.aria-required]="true"
                              [class.ng-invalid]="isInvalid('firstName')"
                              [attr.aria-describedby]="isInvalid('firstName') ? 'firstName-error' : null">
@@ -57,10 +57,10 @@
                   </div>
 
                   <div class="form-group flex-1">
-                    <label for="lastName" class="sr-only">Nom</label>
+                    <label for="lastName" class="sr-only" i18n="@@auth.register-firm.nom.7ff20370">Nom</label>
                     <div class="input-icon-wrapper">
                       <i class="pi pi-user icon"></i>
-                      <input pInputText id="lastName" formControlName="lastName" placeholder="Nom *"
+                      <input pInputText id="lastName" formControlName="lastName" placeholder="Nom *" i18n-placeholder="@@auth.register-firm.nom.463a6959"
                              autocomplete="family-name" [attr.aria-required]="true"
                              [class.ng-invalid]="isInvalid('lastName')"
                              [attr.aria-describedby]="isInvalid('lastName') ? 'lastName-error' : null">
@@ -74,10 +74,10 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="email" class="sr-only">Email connexion</label>
+                  <label for="email" class="sr-only" i18n="@@auth.register-firm.email.connexion.0ed4b8a0">Email connexion</label>
                   <div class="input-icon-wrapper">
                     <i class="pi pi-envelope icon"></i>
-                    <input pInputText id="email" type="email" formControlName="email" placeholder="Email connexion *"
+                    <input pInputText id="email" type="email" formControlName="email" placeholder="Email connexion *" i18n-placeholder="@@auth.register-firm.email.connexion.0a256919"
                            autocomplete="email" [attr.aria-required]="true"
                            [class.ng-invalid]="isInvalid('email')"
                            [attr.aria-describedby]="isInvalid('email') ? 'email-error' : null">
@@ -92,17 +92,17 @@
                 <div class="password-section">
                   <div class="form-row">
                     <div class="form-group flex-1">
-                      <label for="password" class="sr-only">Mot de passe</label>
+                      <label for="password" class="sr-only" i18n="@@auth.register-firm.mot.de.passe.94e2f3ee">Mot de passe</label>
                       <div class="input-icon-wrapper p-password-wrapper">
                         <i class="pi pi-lock icon"></i>
                         <p-password id="password" formControlName="password" [toggleMask]="true" [feedback]="false"
-                                    placeholder="Mot de passe *" styleClass="w-full" inputStyleClass="w-full"
+                                    placeholder="Mot de passe *" i18n-placeholder="@@auth.register-firm.mot.de.passe.e20d20af" styleClass="w-full" inputStyleClass="w-full"
                                     [attr.aria-required]="true"
                                     [attr.aria-describedby]="passwordFieldAriaDescribedBy()"
                                     autocomplete="new-password">
                         </p-password>
                       </div>
-                      <small class="field-hint">12 caractères minimum</small>
+                      <small class="field-hint" i18n="@@auth.register-firm.12.caracteres.minimum.c48567cd">12 caractères minimum</small>
                       @if (isInvalid('password')) {
                         <div class="field-error" id="password-error" role="alert" @fadeInOut>
                           <i class="pi pi-info-circle"></i> {{ errorMessageService.getErrorMessage(form.get('password')) }}
@@ -111,11 +111,11 @@
                     </div>
 
                     <div class="form-group flex-1">
-                      <label for="confirmPassword" class="sr-only">Confirmer mot de passe</label>
+                      <label for="confirmPassword" class="sr-only" i18n="@@auth.register-firm.confirmer.mot.de.passe.f618b3a6">Confirmer mot de passe</label>
                       <div class="input-icon-wrapper p-password-wrapper">
                         <i class="pi pi-check-circle icon"></i>
                         <p-password id="confirmPassword" formControlName="confirmPassword" [toggleMask]="true" [feedback]="false"
-                                    placeholder="Confirmer mot de passe *" styleClass="w-full" inputStyleClass="w-full"
+                                    placeholder="Confirmer mot de passe *" i18n-placeholder="@@auth.register-firm.confirmer.mot.de.passe.19885836" styleClass="w-full" inputStyleClass="w-full"
                                     [class.ng-invalid]="isInvalid('confirmPassword') || passwordMismatch()"
                                     [attr.aria-required]="true"
                                     [attr.aria-describedby]="confirmPasswordAriaDescribedBy()"
@@ -127,24 +127,22 @@
                           <i class="pi pi-info-circle"></i> {{ errorMessageService.getErrorMessage(form.get('confirmPassword')) }}
                         </div>
                       } @else if (passwordMismatch()) {
-                        <div class="field-error" id="confirmPassword-error" role="alert" @fadeInOut>
+                        <div class="field-error" id="confirmPassword-error" role="alert" @fadeInOut i18n="@@auth.register-firm.les.mots.de.passe.ne.correspondent.pas.ba67f6c5">
                           <i class="pi pi-info-circle"></i> Les mots de passe ne correspondent pas.
                         </div>
                       } @else if (passwordMatches() && form.get('confirmPassword')?.value) {
-                        <div class="field-success" id="confirmPassword-success" role="status" @fadeInOut>
+                        <div class="field-success" id="confirmPassword-success" role="status" @fadeInOut i18n="@@auth.register-firm.correspondance.exacte.f72c9dd2">
                           <i class="pi pi-check-circle"></i> Correspondance exacte
                         </div>
                       }
                     </div>
                   </div>
 
-                  <span id="password-strength-hint" class="sr-only">
-                    Exigences : au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.
-                  </span>
+                  <span id="password-strength-hint" class="sr-only" i18n="@@auth.register-firm.exigences.au.moins.12.caracteres.une.majuscule.u.86d13e2b"> Exigences : au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial. </span>
 
                   <div class="password-criteria-card">
                     <div class="criteria-header-row">
-                      <div class="criteria-header">Critères de sécurité</div>
+                      <div class="criteria-header" i18n="@@auth.register-firm.criteres.de.securite.a5acc627">Critères de sécurité</div>
                       @if (passwordStrengthLevel() !== 'empty') {
                         <span class="password-strength-label" [attr.data-level]="passwordStrengthLevel()">{{ passwordStrengthLabel() }}</span>
                       }
@@ -156,7 +154,7 @@
                         <span class="password-strength-segment" [class.filled]="passwordStrengthMetCount() >= seg" [attr.data-level]="passwordStrengthLevel()"></span>
                       }
                     </div>
-                    <div class="criteria-grid">
+                    <div class="criteria-grid" i18n="@@auth.register-firm.12.caracteres.majuscule.minuscule.chiffr.4f5fb930">
                       <span class="criterion" [class.met]="passwordCriteria().minLength" [class.unmet]="!passwordCriteria().minLength && form.get('password')?.value">
                         <i class="pi" [class.pi-check-circle]="passwordCriteria().minLength" [class.pi-circle]="!passwordCriteria().minLength"></i> 12+ caractères
                       </span>
@@ -178,12 +176,12 @@
 
                 <div class="terms-group">
                   <p-checkbox inputId="acceptTerms" formControlName="acceptTerms" [binary]="true"></p-checkbox>
-                  <label for="acceptTerms">
-                    En continuant, j'accepte les <a routerLink="/legal/terms" target="_blank" class="link-primary">Conditions d'Utilisation</a> et la <a routerLink="/legal/privacy" target="_blank" class="link-primary">Politique de Confidentialité</a>.
+                  <label for="acceptTerms" i18n="@@auth.register-firm.en.continuant.j.accepte.les.conditions.d.92b02206">
+                    <ng-container> En continuant, j'accepte les </ng-container> <a routerLink="/legal/terms" target="_blank" class="link-primary">Conditions d'Utilisation</a> et la <a routerLink="/legal/privacy" target="_blank" class="link-primary">Politique de Confidentialité</a>.
                   </label>
                 </div>
                 @if (form.get('acceptTerms')?.invalid && form.get('acceptTerms')?.touched) {
-                  <div class="field-error block mt-2" role="alert" @fadeInOut>
+                  <div class="field-error block mt-2" role="alert" @fadeInOut i18n="@@auth.register-firm.vous.devez.accepter.les.conditions.pour.b557635d">
                     <i class="pi pi-info-circle"></i> Vous devez accepter les conditions pour continuer.
                   </div>
                 }
@@ -192,13 +190,13 @@
 
             @if (currentStep() === 1) {
               <div class="step-pane" @stepSlide>
-                <h3 class="step-title">2. Votre cabinet</h3>
+                <h3 class="step-title" i18n="@@auth.register-firm.2.votre.cabinet.06390f35">2. Votre cabinet</h3>
 
                 <div class="form-group">
-                  <label for="firmName" class="sr-only">Raison sociale du cabinet</label>
+                  <label for="firmName" class="sr-only" i18n="@@auth.register-firm.raison.sociale.du.cabinet.b088ea25">Raison sociale du cabinet</label>
                   <div class="input-icon-wrapper">
                     <i class="pi pi-building icon"></i>
-                    <input pInputText id="firmName" formControlName="firmName" placeholder="Raison sociale du cabinet *"
+                    <input pInputText id="firmName" formControlName="firmName" placeholder="Raison sociale du cabinet *" i18n-placeholder="@@auth.register-firm.raison.sociale.du.cabinet.10a06bd9"
                            autocomplete="organization" [attr.aria-required]="true"
                            [class.ng-invalid]="isInvalid('firmName')">
                   </div>
@@ -211,26 +209,26 @@
 
                 <div class="form-row">
                   <div class="form-group flex-1">
-                    <label for="nif" class="sr-only">NIF</label>
+                    <label for="nif" class="sr-only" i18n="@@auth.register-firm.nif.77124a3a">NIF</label>
                     <div class="input-icon-wrapper p-inputmask-wrapper">
                       <i class="pi pi-hashtag icon"></i>
-                      <p-inputMask id="nif" formControlName="nif" appNifMaskPaste mask="9999999a/a/a/999" placeholder="NIF : 1772793W/A/M/000"
+                      <p-inputMask id="nif" formControlName="nif" appNifMaskPaste mask="9999999a/a/a/999" placeholder="NIF : 1772793W/A/M/000" i18n-placeholder="@@auth.register-firm.nif.1772793w.a.m.000.d609d8b8"
                                    styleClass="w-full uppercase" (onBlur)="onNifBlur()"
                                    [attr.aria-required]="true" [class.ng-invalid]="isInvalid('nif')">
                       </p-inputMask>
                     </div>
                     @if (isInvalid('nif')) {
-                      <div class="field-error" role="alert" @fadeInOut>
+                      <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register-firm.format.attendu.1772793w.a.m.000.513ef2e7">
                         <i class="pi pi-info-circle"></i> Format attendu: 1772793W/A/M/000
                       </div>
                     }
                   </div>
 
                   <div class="form-group flex-1">
-                    <label for="phone" class="sr-only">Téléphone</label>
+                    <label for="phone" class="sr-only" i18n="@@auth.register-firm.telephone.d3b023ea">Téléphone</label>
                     <div class="input-icon-wrapper p-inputmask-wrapper">
                       <i class="pi pi-phone icon"></i>
-                      <p-inputMask id="phone" formControlName="phone" mask="99 999 999" placeholder="Téléphone *"
+                      <p-inputMask id="phone" formControlName="phone" mask="99 999 999" placeholder="Téléphone *" i18n-placeholder="@@auth.register-firm.telephone.f846c67a"
                                    styleClass="w-full" [attr.aria-required]="true" [class.ng-invalid]="isInvalid('phone')">
                       </p-inputMask>
                     </div>
@@ -243,10 +241,10 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="firmEmail" class="sr-only">Email cabinet</label>
+                  <label for="firmEmail" class="sr-only" i18n="@@auth.register-firm.email.cabinet.36c2894a">Email cabinet</label>
                   <div class="input-icon-wrapper">
                     <i class="pi pi-envelope icon"></i>
-                    <input pInputText id="firmEmail" type="email" formControlName="firmEmail" placeholder="Email cabinet *"
+                    <input pInputText id="firmEmail" type="email" formControlName="firmEmail" placeholder="Email cabinet *" i18n-placeholder="@@auth.register-firm.email.cabinet.17e04609"
                            autocomplete="email" [attr.aria-required]="true" [class.ng-invalid]="isInvalid('firmEmail')">
                   </div>
                   @if (isInvalid('firmEmail')) {
@@ -260,7 +258,7 @@
                   <div class="toggle-group" (click)="showOptionalProfile.set(!showOptionalProfile())" [attr.aria-expanded]="showOptionalProfile()">
                     <div class="toggle-info">
                       <i class="pi pi-id-card text-primary-600" aria-hidden="true"></i>
-                      <span id="profile-label">Profil cabinet (optionnel)</span>
+                      <span id="profile-label" i18n="@@auth.register-firm.profil.cabinet.optionnel.3b62b186">Profil cabinet (optionnel)</span>
                     </div>
                     <p-inputSwitch inputId="profile-toggle" [ngModel]="showOptionalProfile()"
                                    (ngModelChange)="showOptionalProfile.set($event)"
@@ -269,31 +267,31 @@
                                    (click)="$event.stopPropagation()">
                     </p-inputSwitch>
                   </div>
-                  <p class="optional-hint">Ces informations enrichissent votre fiche dans l'annuaire des cabinets.</p>
+                  <p class="optional-hint" i18n="@@auth.register-firm.ces.informations.enrichissent.votre.fiche.dans.l.82c66819">Ces informations enrichissent votre fiche dans l'annuaire des cabinets.</p>
 
                   @if (showOptionalProfile()) {
                     <div class="slide-down mt-3" @fadeInOut>
                       <div class="form-group">
-                        <label for="website" class="sr-only">Site web</label>
+                        <label for="website" class="sr-only" i18n="@@auth.register-firm.site.web.7e78af33">Site web</label>
                         <div class="input-icon-wrapper">
                           <i class="pi pi-globe icon"></i>
-                          <input pInputText id="website" formControlName="website" placeholder="Site web (optionnel)">
+                          <input pInputText id="website" formControlName="website" placeholder="Site web (optionnel)" i18n-placeholder="@@auth.register-firm.site.web.optionnel.1a8425f6">
                         </div>
                       </div>
 
                       <div class="form-group">
-                        <label for="professionalRegistrationNumber" class="sr-only">N° inscription professionnelle</label>
+                        <label for="professionalRegistrationNumber" class="sr-only" i18n="@@auth.register-firm.n.inscription.professionnelle.f79a3098">N° inscription professionnelle</label>
                         <div class="input-icon-wrapper">
                           <i class="pi pi-bookmark icon"></i>
                           <input pInputText id="professionalRegistrationNumber" formControlName="professionalRegistrationNumber"
-                                 placeholder="N° inscription professionnelle (optionnel)">
+                                 placeholder="N° inscription professionnelle (optionnel)" i18n-placeholder="@@auth.register-firm.n.inscription.professionnelle.optionnel.769760b6">
                         </div>
                       </div>
 
                       <div class="form-group">
-                        <label for="description" class="sr-only">Description</label>
+                        <label for="description" class="sr-only" i18n="@@auth.register-firm.description.55f8ebc8">Description</label>
                         <textarea pTextarea id="description" formControlName="description" rows="3"
-                                  placeholder="Description du cabinet (optionnel)" class="w-full"></textarea>
+                                  placeholder="Description du cabinet (optionnel)" i18n-placeholder="@@auth.register-firm.description.du.cabinet.optionnel.2282392a" class="w-full"></textarea>
                       </div>
                     </div>
                   }
@@ -303,52 +301,52 @@
 
             @if (currentStep() === 2) {
               <div class="step-pane" @stepSlide>
-                <h3 class="step-title">3. Adresse & visibilité</h3>
+                <h3 class="step-title" i18n="@@auth.register-firm.3.adresse.visibilite.69ba48f8">3. Adresse & visibilité</h3>
 
                 <div class="form-group">
-                  <label for="street" class="sr-only">Adresse</label>
+                  <label for="street" class="sr-only" i18n="@@auth.register-firm.adresse.522e1466">Adresse</label>
                   <div class="input-icon-wrapper">
                     <i class="pi pi-map-marker icon"></i>
-                    <input pInputText id="street" formControlName="street" placeholder="Adresse *"
+                    <input pInputText id="street" formControlName="street" placeholder="Adresse *" i18n-placeholder="@@auth.register-firm.adresse.6e2e32e1"
                            autocomplete="street-address" [attr.aria-required]="true" [class.ng-invalid]="isInvalid('street')">
                   </div>
                   @if (isInvalid('street')) {
-                    <div class="field-error" role="alert" @fadeInOut>
+                    <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register-firm.l.adresse.est.requise.8cb87bb0">
                       <i class="pi pi-info-circle"></i> L'adresse est requise
                     </div>
                   }
                 </div>
 
                 <div class="form-group">
-                  <label for="streetLine2" class="sr-only">Complément d'adresse</label>
+                  <label for="streetLine2" class="sr-only" i18n="@@auth.register-firm.complement.d.adresse.fba484a7">Complément d'adresse</label>
                   <div class="input-icon-wrapper">
                     <i class="pi pi-building icon"></i>
-                    <input pInputText id="streetLine2" formControlName="streetLine2" placeholder="Complément d'adresse (optionnel)">
+                    <input pInputText id="streetLine2" formControlName="streetLine2" placeholder="Complément d'adresse (optionnel)" i18n-placeholder="@@auth.register-firm.complement.d.adresse.optionnel.96815464">
                   </div>
                 </div>
 
                 <div class="form-row address-row">
                   <div class="form-group flex-2">
-                    <label for="city" class="sr-only">Ville</label>
+                    <label for="city" class="sr-only" i18n="@@auth.register-firm.ville.97217611">Ville</label>
                     <div class="input-icon-wrapper">
                       <i class="pi pi-map icon"></i>
-                      <input pInputText id="city" formControlName="city" placeholder="Ville *"
+                      <input pInputText id="city" formControlName="city" placeholder="Ville *" i18n-placeholder="@@auth.register-firm.ville.e23c3241"
                              autocomplete="address-level2" [attr.aria-required]="true" [class.ng-invalid]="isInvalid('city')">
                     </div>
                     @if (isInvalid('city')) {
-                      <div class="field-error" role="alert" @fadeInOut>
+                      <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register-firm.requis.b67a214e">
                         <i class="pi pi-info-circle"></i> Requis
                       </div>
                     }
                   </div>
 
                   <div class="form-group flex-1">
-                    <label for="postalCode" class="sr-only">Code postal</label>
-                    <p-inputMask id="postalCode" formControlName="postalCode" mask="9999" placeholder="Code postal" styleClass="w-full"
+                    <label for="postalCode" class="sr-only" i18n="@@auth.register-firm.code.postal.74779109">Code postal</label>
+                    <p-inputMask id="postalCode" formControlName="postalCode" mask="9999" placeholder="Code postal" i18n-placeholder="@@auth.register-firm.code.postal.74779109" styleClass="w-full"
                                  [class.ng-invalid]="isInvalid('postalCode')">
                     </p-inputMask>
                     @if (isInvalid('postalCode')) {
-                      <div class="field-error" role="alert" @fadeInOut>
+                      <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register-firm.code.postal.invalide.4.chiffres.dd72176f">
                         <i class="pi pi-info-circle"></i> Code postal invalide (4 chiffres)
                       </div>
                     }
@@ -356,15 +354,15 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="governorate" class="sr-only">Gouvernorat</label>
+                  <label for="governorate" class="sr-only" i18n="@@auth.register-firm.gouvernorat.b9cd1d99">Gouvernorat</label>
                   <p-select id="governorate" [options]="governorates" formControlName="governorate"
-                              optionLabel="label" optionValue="value" placeholder="Gouvernorat *"
+                              optionLabel="label" optionValue="value" placeholder="Gouvernorat *" i18n-placeholder="@@auth.register-firm.gouvernorat.9e0d8ac0"
                               [filter]="true" filterBy="label" appendTo="body"
                               styleClass="w-full custom-dropdown"
                               [class.ng-invalid]="isInvalid('governorate')" [attr.aria-required]="true">
                   </p-select>
                   @if (isInvalid('governorate')) {
-                    <div class="field-error" role="alert" @fadeInOut>
+                    <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register-firm.le.gouvernorat.est.requis.28928588">
                       <i class="pi pi-info-circle"></i> Le gouvernorat est requis
                     </div>
                   }
@@ -373,11 +371,9 @@
                 <div class="directory-visibility">
                   <div class="terms-group" style="margin-top: 0">
                     <p-checkbox formControlName="isPublicInDirectory" [binary]="true" inputId="pub"></p-checkbox>
-                    <label for="pub">Visible dans l'annuaire des cabinets</label>
+                    <label for="pub" i18n="@@auth.register-firm.visible.dans.l.annuaire.des.cabinets.87d4575d">Visible dans l'annuaire des cabinets</label>
                   </div>
-                  <p class="directory-visibility__hint">
-                    Les sociétés pourront vous trouver et vous adresser une demande de prise en charge comptable.
-                  </p>
+                  <p class="directory-visibility__hint" i18n="@@auth.register-firm.les.societes.pourront.vous.trouver.et.vous.adres.61c78337"> Les sociétés pourront vous trouver et vous adresser une demande de prise en charge comptable. </p>
                 </div>
               </div>
             }
@@ -385,29 +381,29 @@
 
           <div class="navigation-footer">
             @if (currentStep() > 0) {
-              <button type="button" class="btn-back" (click)="previousStep()" aria-label="Étape précédente">
+              <button type="button" class="btn-back" (click)="previousStep()" aria-label="Étape précédente" i18n-aria-label="@@auth.register-firm.etape.precedente.4b2bab32" i18n="@@auth.register-firm.retour.c9dd9148">
                 <i class="pi pi-arrow-left" aria-hidden="true"></i> Retour
               </button>
             } @else {
               <div class="spacer"></div>
             }
 
-            <p class="step-indicator" aria-live="polite">
-              Étape <span class="step-indicator__num">{{ stepHumanIndex() }}</span> sur 3
+            <p class="step-indicator" aria-live="polite" i18n="@@auth.register-firm.etape.sur.3.56d3bfc4">
+              <ng-container> Étape </ng-container> <span class="step-indicator__num">{{ stepHumanIndex() }}</span> sur 3
             </p>
 
             @if (currentStep() < 2) {
               <button type="button" class="btn-next" [class.btn-next--ready]="isCurrentStepValid()"
-                      [disabled]="!isCurrentStepValid()" (click)="nextStep()" aria-label="Étape suivante">
+                      [disabled]="!isCurrentStepValid()" (click)="nextStep()" aria-label="Étape suivante" i18n-aria-label="@@auth.register-firm.etape.suivante.992dbd53" i18n="@@auth.register-firm.continuer.db48292c">
                 Continuer <i class="pi pi-arrow-right" aria-hidden="true"></i>
               </button>
             } @else {
               <button type="submit" class="btn-submit" [disabled]="form.invalid || loading()" [class.is-loading]="loading()">
                 @if (loading()) {
                   <i class="pi pi-spin pi-spinner mr-2" aria-hidden="true"></i> {{ loadingMessage() }}
-                } @else {
+                } @else {<ng-container i18n="@@auth.register-firm.creer.le.cabinet.17d64418">
                   <i class="pi pi-check mr-2" aria-hidden="true"></i> Créer le cabinet
-                }
+                </ng-container>}
               </button>
             }
           </div>
@@ -415,7 +411,7 @@
 
         <div class="login-prompt">
           @if (!hidePublicCrossLinks()) {
-            <p>Inscription société ? <a routerLink="/auth/register" class="link-primary fw-semibold">Créer un compte entreprise</a></p>
+            <p><ng-container i18n="@@auth.register-firm.inscription.societe.b4a3c5f0">Inscription société ? </ng-container> <a routerLink="/auth/register" class="link-primary fw-semibold" i18n="@@auth.register-firm.creer.un.compte.entreprise.6b60d1e4">Créer un compte entreprise</a></p>
           }
         </div>
       }

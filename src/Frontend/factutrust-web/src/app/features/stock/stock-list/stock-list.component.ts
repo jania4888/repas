@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -83,11 +84,11 @@ export class StockListComponent implements OnInit {
   summaryMetrics = computed<TotalMetric[]>(() => {
     const items = this.filteredItems();
     return [
-      { label: 'Produits', value: items.length, format: 'number', icon: 'pi-box', tone: 'primary' },
-      { label: 'Quantité', value: items.reduce((acc, i) => acc + i.quantityOnHand, 0), format: 'number', icon: 'pi-database', tone: 'cyan' },
-      { label: 'Valeur stock', value: items.reduce((acc, i) => acc + i.stockValue, 0), format: 'currency', icon: 'pi-wallet', tone: 'primary' },
-      { label: 'En alerte', value: items.filter(i => i.isLowStock && !i.isOutOfStock).length, format: 'number', icon: 'pi-exclamation-triangle', tone: 'amber' },
-      { label: 'Rupture', value: items.filter(i => i.isOutOfStock).length, format: 'number', icon: 'pi-ban', tone: 'rose' }
+      { label: $localize`:@@stock.stock-list.ts.produits.48000473:Produits`, value: items.length, format: 'number', icon: 'pi-box', tone: 'primary' },
+      { label: $localize`:@@stock.stock-list.ts.quantite.09a38fda:Quantité`, value: items.reduce((acc, i) => acc + i.quantityOnHand, 0), format: 'number', icon: 'pi-database', tone: 'cyan' },
+      { label: $localize`:@@stock.stock-list.ts.valeur.stock.73676303:Valeur stock`, value: items.reduce((acc, i) => acc + i.stockValue, 0), format: 'currency', icon: 'pi-wallet', tone: 'primary' },
+      { label: $localize`:@@stock.stock-list.ts.en.alerte.79f4b44b:En alerte`, value: items.filter(i => i.isLowStock && !i.isOutOfStock).length, format: 'number', icon: 'pi-exclamation-triangle', tone: 'amber' },
+      { label: $localize`:@@stock.stock-list.ts.rupture.fda77001:Rupture`, value: items.filter(i => i.isOutOfStock).length, format: 'number', icon: 'pi-ban', tone: 'rose' }
     ];
   });
   warehouses: Warehouse[] = [];
@@ -114,15 +115,15 @@ export class StockListComponent implements OnInit {
   selectedStatus: string | null = null;
 
   statusOptions: StatusOption[] = [
-    { label: 'En stock', value: 'inStock' },
-    { label: 'Stock faible', value: 'lowStock' },
-    { label: 'Rupture', value: 'outOfStock' }
+    { label: $localize`:@@stock.list.filter.en-stock:En stock`, value: 'inStock' },
+    { label: $localize`:@@stock.list.filter.faible:Stock faible`, value: 'lowStock' },
+    { label: $localize`:@@stock.list.filter.rupture:Rupture`, value: 'outOfStock' }
   ];
 
   // Breadcrumb
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Gestion du Stock' }
+    { label: $localize`:@@stock.stock-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@stock.stock-list.ts.gestion.du.stock.72df5586:Gestion du Stock` }
   ];
 
   // Skeleton columns for loading state
@@ -146,8 +147,8 @@ export class StockListComponent implements OnInit {
   };
 
   exitReasons = [
-    { label: 'Retour Fournisseur', value: MovementReason.SupplierReturn },
-    { label: 'Dommage / Perte', value: MovementReason.Damage }
+    { label: $localize`:@@stock.stock-list.ts.retour.fournisseur.371de2a8:Retour Fournisseur`, value: MovementReason.SupplierReturn },
+    { label: $localize`:@@stock.stock-list.ts.dommage.perte.4a8ecd42:Dommage / Perte`, value: MovementReason.Damage }
   ];
 
   // Adjustment Form Model
@@ -226,7 +227,7 @@ export class StockListComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading stock items', err);
-        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Impossible de charger le stock' });
+        this.messageService.add({ severity: 'error', summary: $localize`:@@stock-list.component.summary.Erreur:Erreur`, detail: $localize`:@@stock-list.component.detail.Impossible d:Impossible de charger le stock` });
         this.loading.set(false);
         this.initialLoad.set(false);
       }
@@ -378,13 +379,13 @@ export class StockListComponent implements OnInit {
       next: (res) => {
         this.submitting = false;
         if (res.success) {
-          this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Sortie de stock enregistrée' });
+          this.messageService.add({ severity: 'success', summary: $localize`:@@stock-list.component.summary.Succès:Succès`, detail: $localize`:@@stock-list.component.detail.Sortie_de_stock_:Sortie de stock enregistrée` });
           this.exitDialogVisible = false;
           this.loadData(); // Refresh
         } else {
-          const detail = res.errors?.join(', ') || res.message || 'Erreur';
+          const detail = res.errors?.join(', ') || res.message || $localize`:@@stock.stock-list.ts.erreur.ab546c23:Erreur`;
           this.confirmationService.alert({
-            header: 'Sortie de stock impossible',
+            header: $localize`:@@stock.stock-list.ts.sortie.de.stock.impossible.803e3955:Sortie de stock impossible`,
             message: detail,
             icon: 'pi pi-exclamation-triangle'
           });
@@ -394,8 +395,8 @@ export class StockListComponent implements OnInit {
         this.submitting = false;
         const msg = this.errorHandler.extractErrorMessage(err);
         this.confirmationService.alert({
-          header: 'Sortie de stock impossible',
-          message: msg || 'Echec de la sortie de stock',
+          header: $localize`:@@stock.stock-list.ts.sortie.de.stock.impossible.803e3955:Sortie de stock impossible`,
+          message: msg || $localize`:@@stock.stock-list.ts.echec.de.la.sortie.de.stock.d947ab02:Echec de la sortie de stock`,
           icon: 'pi pi-exclamation-triangle'
         });
         this.errorHandler.logError('Stock list exit failed', err, { consoleLevel: 'warn' });
@@ -433,7 +434,7 @@ export class StockListComponent implements OnInit {
       next: (res) => {
         this.adjustSubmitting = false;
         if (res.success) {
-          this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Stock ajusté avec succès' });
+          this.messageService.add({ severity: 'success', summary: $localize`:@@stock-list.component.summary.Succès:Succès`, detail: $localize`:@@stock-list.component.detail.Stock ajusté:Stock ajusté avec succès` });
           this.adjustDialogVisible = false;
           this.selectedItemForAdjust = null;
           this.loadData(); // Refresh
@@ -441,7 +442,7 @@ export class StockListComponent implements OnInit {
       },
       error: (err) => {
         this.adjustSubmitting = false;
-        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Echec de l\'ajustement du stock' });
+        this.messageService.add({ severity: 'error', summary: $localize`:@@stock-list.component.summary.Erreur:Erreur`, detail: $localize`:@@stock-list.component.detail.Echec_de_l_ajust:Echec de l'ajustement du stock` });
       }
     });
   }

@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -13,7 +14,7 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
 @Component({
   selector: 'app-stock-reports',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     FormsModule,
@@ -24,15 +25,13 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
   ],
   template: `
     <app-page-header 
-      title="Rapports Stock" 
-      subtitle="Vue d'ensemble de votre stock, sa valeur et les alertes de rupture">
+      title="Rapports Stock" i18n-title="@@reports.stock.rapports.stock.00f72cdf" 
+      subtitle="Vue d'ensemble de votre stock, sa valeur et les alertes de rupture" i18n-subtitle="@@reports.stock.vue.d.ensemble.de.votre.stock.sa.valeur.088e4413">
       <app-button 
         variant="secondary"
         icon="pi-download"
         iconPos="left"
-        (click)="onExport()">
-        Exporter
-      </app-button>
+        (click)="onExport()" i18n="@@reports.stock.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
 
     @if (!loading() && reportsData()?.summaryText) {
@@ -52,25 +51,25 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
     } @else if (reportsData()) {
       <div class="stats-grid">
         <app-stat-card
-          label="Valeur totale du stock"
+          label="Valeur totale du stock" i18n-label="@@reports.stock.valeur.totale.du.stock.c8ecd08b"
           [value]="reportsData()!.totalStockValue"
           icon="pi-dollar"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Produits en stock"
+          label="Produits en stock" i18n-label="@@reports.stock.produits.en.stock.3254e52b"
           [value]="reportsData()!.productCount"
           icon="pi-cubes"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Alertes rupture"
+          label="Alertes rupture" i18n-label="@@reports.stock.alertes.rupture.5a3c5b24"
           [value]="reportsData()!.alertCount"
           icon="pi-exclamation-triangle"
           [variant]="reportsData()!.alertCount > 0 ? 'error' : 'success'">
         </app-stat-card>
         <app-stat-card
-          label="Produits en rupture"
+          label="Produits en rupture" i18n-label="@@reports.stock.produits.en.rupture.7407ec48"
           [value]="reportsData()!.outOfStockCount"
           icon="pi-times-circle"
           [variant]="reportsData()!.outOfStockCount > 0 ? 'error' : 'success'">
@@ -81,30 +80,30 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
     <div class="reports-grid">
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Valeur par entrepôt</h2>
-          <span class="section-subtitle">Répartition de la valeur du stock par emplacement</span>
+          <h2 class="section-title" i18n="@@reports.stock.valeur.par.entrepot.1386a343">Valeur par entrepôt</h2>
+          <span class="section-subtitle" i18n="@@reports.stock.repartition.de.la.valeur.du.stock.par.emplacemen.6e0fcbc3">Répartition de la valeur du stock par emplacement</span>
         </div>
         @if (loading()) {
           <div class="loading-placeholder">
             <i class="pi pi-spin pi-spinner"></i>
-            <span>Chargement...</span>
+            <span i18n="@@reports.stock.chargement.a209b664">Chargement...</span>
           </div>
         } @else if (!reportsData()?.warehouseValues?.length) {
           <div class="empty-placeholder">
             <i class="pi pi-info-circle"></i>
-            <p>Aucun entrepôt avec du stock</p>
-            <p class="empty-hint">Créez des entrepôts et enregistrez des mouvements de stock pour voir les données ici.</p>
+            <p i18n="@@reports.stock.aucun.entrepot.avec.du.stock.d33473d5">Aucun entrepôt avec du stock</p>
+            <p class="empty-hint" i18n="@@reports.stock.creez.des.entrepots.et.enregistrez.des.mouvement.7e4736a4">Créez des entrepôts et enregistrez des mouvements de stock pour voir les données ici.</p>
           </div>
         } @else {
           <p-table 
             [value]="reportsData()!.warehouseValues" 
             styleClass="p-datatable-sm reports-table"
-            aria-label="Tableau de la valeur par entrepôt">
+            aria-label="Tableau de la valeur par entrepôt" i18n-aria-label="@@reports.stock.tableau.de.la.valeur.par.entrepot.a66c0c28">
             <ng-template pTemplate="header">
               <tr>
-                <th>Entrepôt</th>
-                <th class="text-right">Produits</th>
-                <th class="text-right">Valeur totale</th>
+                <th i18n="@@reports.stock.entrepot.c349c0bc">Entrepôt</th>
+                <th class="text-right" i18n="@@reports.stock.produits.48000473">Produits</th>
+                <th class="text-right" i18n="@@reports.stock.valeur.totale.9927915b">Valeur totale</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-row>
@@ -120,31 +119,31 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
 
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Produits en rupture</h2>
-          <span class="section-subtitle">Produits sans stock disponible</span>
+          <h2 class="section-title" i18n="@@reports.stock.produits.en.rupture.7407ec48">Produits en rupture</h2>
+          <span class="section-subtitle" i18n="@@reports.stock.produits.sans.stock.disponible.24b3b108">Produits sans stock disponible</span>
         </div>
         @if (loading()) {
           <div class="loading-placeholder">
             <i class="pi pi-spin pi-spinner"></i>
-            <span>Chargement...</span>
+            <span i18n="@@reports.stock.chargement.a209b664">Chargement...</span>
           </div>
         } @else if (!reportsData()?.outOfStockItems?.length) {
           <div class="empty-placeholder success-msg">
             <i class="pi pi-check-circle"></i>
-            <p>Aucun produit en rupture</p>
-            <p class="empty-hint">Tous vos produits ont du stock disponible.</p>
+            <p i18n="@@reports.stock.aucun.produit.en.rupture.c77371ae">Aucun produit en rupture</p>
+            <p class="empty-hint" i18n="@@reports.stock.tous.vos.produits.ont.du.stock.disponible.830160b7">Tous vos produits ont du stock disponible.</p>
           </div>
         } @else {
           <p-table 
             [value]="reportsData()!.outOfStockItems" 
             styleClass="p-datatable-sm reports-table"
-            aria-label="Tableau des produits en rupture">
+            aria-label="Tableau des produits en rupture" i18n-aria-label="@@reports.stock.tableau.des.produits.en.rupture.972c1bb5">
             <ng-template pTemplate="header">
               <tr>
-                <th>Produit</th>
-                <th>Entrepôt</th>
-                <th class="text-right">Stock actuel</th>
-                <th class="text-right">Seuil min.</th>
+                <th i18n="@@reports.stock.produit.ff673dc2">Produit</th>
+                <th i18n="@@reports.stock.entrepot.c349c0bc">Entrepôt</th>
+                <th class="text-right" i18n="@@reports.stock.stock.actuel.294a897a">Stock actuel</th>
+                <th class="text-right" i18n="@@reports.stock.seuil.min.fef8bbc7">Seuil min.</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-alert>
@@ -166,20 +165,20 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
     @if (!loading() && reportsData()?.lowStockItems?.length) {
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Produits en stock faible</h2>
-          <span class="section-subtitle">Produits proches du seuil minimum</span>
+          <h2 class="section-title" i18n="@@reports.stock.produits.en.stock.faible.c4569df4">Produits en stock faible</h2>
+          <span class="section-subtitle" i18n="@@reports.stock.produits.proches.du.seuil.minimum.9d589f5d">Produits proches du seuil minimum</span>
         </div>
         <p-table 
           [value]="reportsData()!.lowStockItems" 
           styleClass="p-datatable-sm reports-table"
-          aria-label="Tableau des produits en stock faible">
+          aria-label="Tableau des produits en stock faible" i18n-aria-label="@@reports.stock.tableau.des.produits.en.stock.faible.6a06ce88">
           <ng-template pTemplate="header">
             <tr>
-              <th>Produit</th>
-              <th>Entrepôt</th>
-              <th class="text-right">Stock actuel</th>
-              <th class="text-right">Seuil min.</th>
-              <th class="text-right">Manquant</th>
+              <th i18n="@@reports.stock.produit.ff673dc2">Produit</th>
+              <th i18n="@@reports.stock.entrepot.c349c0bc">Entrepôt</th>
+              <th class="text-right" i18n="@@reports.stock.stock.actuel.294a897a">Stock actuel</th>
+              <th class="text-right" i18n="@@reports.stock.seuil.min.fef8bbc7">Seuil min.</th>
+              <th class="text-right" i18n="@@reports.stock.manquant.1bdbb1bb">Manquant</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-alert>
@@ -200,22 +199,22 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
 
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Mouvement détaillé de stock</h2>
-        <span class="section-subtitle">Historique des mouvements avec filtre période et entrepôt</span>
+        <h2 class="section-title" i18n="@@reports.stock.mouvement.detaille.de.stock.89c0156d">Mouvement détaillé de stock</h2>
+        <span class="section-subtitle" i18n="@@reports.stock.historique.des.mouvements.avec.filtre.periode.et.19f5aecd">Historique des mouvements avec filtre période et entrepôt</span>
       </div>
       <div class="filter-row">
         <div class="filter-group">
-          <label for="movFrom" class="filter-label">Du</label>
+          <label for="movFrom" class="filter-label" i18n="@@reports.stock.du.84814985">Du</label>
           <input type="date" id="movFrom" [(ngModel)]="movementsFrom" (ngModelChange)="onMovementsFilterChange()" class="filter-input" />
         </div>
         <div class="filter-group">
-          <label for="movTo" class="filter-label">Au</label>
+          <label for="movTo" class="filter-label" i18n="@@reports.stock.au.7a1732d5">Au</label>
           <input type="date" id="movTo" [(ngModel)]="movementsTo" (ngModelChange)="onMovementsFilterChange()" class="filter-input" />
         </div>
         <div class="filter-group">
-          <label for="movWh" class="filter-label">Entrepôt</label>
+          <label for="movWh" class="filter-label" i18n="@@reports.stock.entrepot.c349c0bc">Entrepôt</label>
           <select id="movWh" [(ngModel)]="movementsWarehouseId" (ngModelChange)="onMovementsFilterChange()" class="filter-select">
-            <option value="">Tous</option>
+            <option value="" i18n="@@reports.stock.tous.b97ae3b4">Tous</option>
             @for (w of reportsData()?.warehouseValues ?? []; track w.warehouseId) {
               <option [value]="w.warehouseId">{{ w.warehouseName }}</option>
             }
@@ -223,21 +222,21 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
         </div>
       </div>
       @if (stockMovementsLoading()) {
-        <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+        <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.stock.chargement.a209b664">Chargement...</span></div>
       } @else if (!stockMovementsResult()?.items?.length) {
-        <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p>Aucun mouvement sur la période</p></div>
+        <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p i18n="@@reports.stock.aucun.mouvement.sur.la.periode.0c965385">Aucun mouvement sur la période</p></div>
       } @else {
-        <p-table [value]="stockMovementsResult()!.items" styleClass="p-datatable-sm reports-table" aria-label="Mouvements de stock">
+        <p-table [value]="stockMovementsResult()!.items" styleClass="p-datatable-sm reports-table" aria-label="Mouvements de stock" i18n-aria-label="@@reports.stock.mouvements.de.stock.b5ee405b">
           <ng-template pTemplate="header">
             <tr>
-              <th>Date</th>
-              <th>Produit</th>
-              <th>Entrepôt</th>
-              <th>Type</th>
-              <th>Motif</th>
-              <th class="text-right">Quantité</th>
-              <th class="text-right">Coût unit.</th>
-              <th>Référence</th>
+              <th i18n="@@reports.stock.date.eb9a4bc1">Date</th>
+              <th i18n="@@reports.stock.produit.ff673dc2">Produit</th>
+              <th i18n="@@reports.stock.entrepot.c349c0bc">Entrepôt</th>
+              <th i18n="@@reports.stock.type.3deb7456">Type</th>
+              <th i18n="@@reports.stock.motif.2a198f47">Motif</th>
+              <th class="text-right" i18n="@@reports.stock.quantite.09a38fda">Quantité</th>
+              <th class="text-right" i18n="@@reports.stock.cout.unit.3b6db3fe">Coût unit.</th>
+              <th i18n="@@reports.stock.reference.f8130bb0">Référence</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-row>
@@ -245,8 +244,8 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
               <td>{{ row.occurredAt | date:'dd/MM/yyyy HH:mm' }}</td>
               <td>{{ row.productName }} <span class="product-code">({{ row.productCode }})</span></td>
               <td>{{ row.warehouseName }}</td>
-              <td>{{ row.typeDisplay }}</td>
-              <td>{{ row.reasonDisplay }}</td>
+              <td>{{ row.typeDisplay | backendLabel }}</td>
+              <td>{{ row.reasonDisplay | backendLabel }}</td>
               <td class="text-right">{{ row.quantity | number:'1.3-3' }}</td>
               <td class="text-right amount">{{ row.unitCost | number:'1.3-3' }}</td>
               <td>{{ row.reference ?? '-' }}</td>
@@ -254,10 +253,10 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
           </ng-template>
         </p-table>
         <div class="pagination-row">
-          <span class="pagination-info">Page {{ stockMovementsResult()!.page }} / {{ totalMovementPages() }}</span>
+          <span class="pagination-info" i18n="@@reports.stock.page.35d494ca">Page {{ stockMovementsResult()!.page }} / {{ totalMovementPages() }}</span>
           <div class="pagination-btns">
-            <button type="button" class="pagination-btn" [disabled]="stockMovementsResult()!.page <= 1" (click)="movementsPagePrev()">Préc.</button>
-            <button type="button" class="pagination-btn" [disabled]="stockMovementsResult()!.page >= totalMovementPages()" (click)="movementsPageNext()">Suiv.</button>
+            <button type="button" class="pagination-btn" [disabled]="stockMovementsResult()!.page <= 1" (click)="movementsPagePrev()" i18n="@@reports.stock.prec.92be5b53">Préc.</button>
+            <button type="button" class="pagination-btn" [disabled]="stockMovementsResult()!.page >= totalMovementPages()" (click)="movementsPageNext()" i18n="@@reports.stock.suiv.284b830f">Suiv.</button>
           </div>
         </div>
       }
@@ -265,12 +264,12 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
 
     <div class="section" id="stock-snapshot">
       <div class="section-header">
-        <h2 class="section-title">État de stock à une date antérieure</h2>
-        <span class="section-subtitle">Snapshot des quantités à une date donnée</span>
+        <h2 class="section-title" i18n="@@reports.stock.etat.de.stock.a.une.date.anterieure.7165a79c">État de stock à une date antérieure</h2>
+        <span class="section-subtitle" i18n="@@reports.stock.snapshot.des.quantites.a.une.date.donnee.7f79facb">Snapshot des quantités à une date donnée</span>
       </div>
       <div class="filter-row">
         <div class="filter-group">
-          <label for="snapshotDate" class="filter-label">Date</label>
+          <label for="snapshotDate" class="filter-label" i18n="@@reports.stock.date.eb9a4bc1">Date</label>
           <input
             type="date"
             id="snapshotDate"
@@ -278,19 +277,19 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
             [max]="maxSnapshotDate"
             class="filter-input"
             aria-describedby="snapshotDateHint" />
-          <span id="snapshotDateHint" class="filter-hint">Date au soir de laquelle afficher l'état du stock</span>
+          <span id="snapshotDateHint" class="filter-hint" i18n="@@reports.stock.date.au.soir.de.laquelle.afficher.l.etat.du.stoc.10f2da4e">Date au soir de laquelle afficher l'état du stock</span>
         </div>
         <div class="filter-group">
-          <label for="snapshotWh" class="filter-label">Entrepôt</label>
-          <select id="snapshotWh" [(ngModel)]="snapshotWarehouseId" class="filter-select" aria-label="Filtrer par entrepôt">
-            <option value="">Tous</option>
+          <label for="snapshotWh" class="filter-label" i18n="@@reports.stock.entrepot.c349c0bc">Entrepôt</label>
+          <select id="snapshotWh" [(ngModel)]="snapshotWarehouseId" class="filter-select" aria-label="Filtrer par entrepôt" i18n-aria-label="@@reports.stock.filtrer.par.entrepot.89121026">
+            <option value="" i18n="@@reports.stock.tous.b97ae3b4">Tous</option>
             @for (w of reportsData()?.warehouseValues ?? []; track w.warehouseId) {
               <option [value]="w.warehouseId">{{ w.warehouseName }}</option>
             }
           </select>
         </div>
         <div class="filter-group">
-          <app-button variant="primary" icon="pi-search" iconPos="left" (click)="loadStockSnapshot()">Voir le rapport</app-button>
+          <app-button variant="primary" icon="pi-search" iconPos="left" (click)="loadStockSnapshot()" i18n="@@reports.stock.voir.le.rapport.3537fe96">Voir le rapport</app-button>
         </div>
       </div>
       @if (snapshotError()) {
@@ -299,27 +298,27 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
       @if (snapshotLoading()) {
         <div class="loading-placeholder">
           <i class="pi pi-spin pi-spinner"></i>
-          <span>Chargement du snapshot...</span>
+          <span i18n="@@reports.stock.chargement.du.snapshot.d092827d">Chargement du snapshot...</span>
         </div>
       } @else if (snapshotRows() !== null && snapshotRows()!.length === 0) {
         <div class="empty-placeholder">
           <i class="pi pi-info-circle"></i>
-          <p>Aucun stock à cette date</p>
-          <p class="empty-hint">Aucun mouvement enregistré avant le {{ snapshotDate | date:'dd/MM/yyyy' }} pour les critères choisis.</p>
+          <p i18n="@@reports.stock.aucun.stock.a.cette.date.c7e91d37">Aucun stock à cette date</p>
+          <p class="empty-hint" i18n="@@reports.stock.aucun.mouvement.enregistre.avant.le.pour.6dc47f0c">Aucun mouvement enregistré avant le {{ snapshotDate | date:'dd/MM/yyyy' }} pour les critères choisis.</p>
         </div>
       } @else if (snapshotRows() !== null && snapshotRows()!.length > 0) {
         <p-table
           [value]="snapshotRows()!"
           styleClass="p-datatable-sm reports-table"
-          aria-label="État de stock à la date sélectionnée">
+          aria-label="État de stock à la date sélectionnée" i18n-aria-label="@@reports.stock.etat.de.stock.a.la.date.selectionnee.cd17d10f">
           <ng-template pTemplate="header">
             <tr>
-              <th>Produit</th>
-              <th>Code</th>
-              <th>Entrepôt</th>
-              <th class="text-right">Quantité</th>
-              <th class="text-right">Coût unitaire</th>
-              <th class="text-right">Valeur totale</th>
+              <th i18n="@@reports.stock.produit.ff673dc2">Produit</th>
+              <th i18n="@@reports.stock.code.adac6937">Code</th>
+              <th i18n="@@reports.stock.entrepot.c349c0bc">Entrepôt</th>
+              <th class="text-right" i18n="@@reports.stock.quantite.09a38fda">Quantité</th>
+              <th class="text-right" i18n="@@reports.stock.cout.unitaire.3735acf6">Coût unitaire</th>
+              <th class="text-right" i18n="@@reports.stock.valeur.totale.9927915b">Valeur totale</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-row>
@@ -336,8 +335,8 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
       } @else {
         <div class="empty-placeholder">
           <i class="pi pi-calendar"></i>
-          <p>Choisissez une date et cliquez sur « Voir le rapport »</p>
-          <p class="empty-hint">La date doit être antérieure ou égale à aujourd'hui.</p>
+          <p i18n="@@reports.stock.choisissez.une.date.et.cliquez.sur.voir.le.rappo.1d8c8663">Choisissez une date et cliquez sur « Voir le rapport »</p>
+          <p class="empty-hint" i18n="@@reports.stock.la.date.doit.etre.anterieure.ou.egale.a.aujourd..8e5fea12">La date doit être antérieure ou égale à aujourd'hui.</p>
         </div>
       }
     </div>
@@ -415,7 +414,7 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
       height: 24px;
       background: linear-gradient(180deg, #f59e0b, #d97706);
       border-radius: var(--radius-full);
-      margin-right: var(--spacing-2);
+      margin-inline-end: var(--spacing-2);
       vertical-align: middle;
     }
 
@@ -434,8 +433,8 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
     .warehouse-code { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
     .product-link { font-weight: var(--font-weight-semibold); color: var(--color-primary-600); text-decoration: none; }
     .product-link:hover { text-decoration: underline; }
-    .product-code { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-left: var(--spacing-1); }
-    .text-right { text-align: right; }
+    .product-code { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-inline-start: var(--spacing-1); }
+    .text-right { text-align: end; }
     .amount { font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Consolas', monospace; font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
     .amount-error { color: var(--color-error-600); font-weight: var(--font-weight-semibold); }
     .amount-warning { color: var(--color-warning-600); font-weight: var(--font-weight-semibold); }
@@ -463,7 +462,7 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
     .pagination-btns { display: flex; gap: var(--spacing-2); }
     .pagination-btn { padding: var(--spacing-2) var(--spacing-3); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-background); cursor: pointer; font-size: var(--font-size-sm); }
     .pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .filter-hint { font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-left: var(--spacing-2); }
+    .filter-hint { font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-inline-start: var(--spacing-2); }
     .snapshot-error { color: var(--color-error-600); font-size: var(--font-size-sm); margin: var(--spacing-2) 0; }
 
     @media (max-width: 1024px) { .reports-grid { grid-template-columns: 1fr; } }
@@ -578,7 +577,7 @@ export class StockReportsComponent implements OnInit {
     this.snapshotError.set(null);
     const dateStr = this.snapshotDate?.trim();
     if (!dateStr) {
-      this.snapshotError.set('Choisissez une date.');
+      this.snapshotError.set($localize`:@@reports.stock-reports.ts.choisissez.une.date.2e7cd53c:Choisissez une date.`);
       return;
     }
     const chosen = new Date(dateStr);
@@ -586,7 +585,7 @@ export class StockReportsComponent implements OnInit {
     today.setHours(23, 59, 59, 999);
     chosen.setHours(23, 59, 59, 999);
     if (chosen > today) {
-      this.snapshotError.set('Choisissez une date antérieure ou égale à aujourd\'hui.');
+      this.snapshotError.set($localize`:@@reports.stock-reports.ts.choisissez.une.date.anterieure.ou.egale.387306b7:Choisissez une date antérieure ou égale à aujourd'hui.`);
       return;
     }
     this.snapshotLoading.set(true);
@@ -604,7 +603,7 @@ export class StockReportsComponent implements OnInit {
       },
       error: () => {
         this.snapshotRows.set(null);
-        this.snapshotError.set('Impossible de charger le rapport. Réessayez plus tard.');
+        this.snapshotError.set($localize`:@@reports.stock-reports.ts.impossible.de.charger.le.rapport.reessay.9d506e66:Impossible de charger le rapport. Réessayez plus tard.`);
         this.snapshotLoading.set(false);
       }
     });

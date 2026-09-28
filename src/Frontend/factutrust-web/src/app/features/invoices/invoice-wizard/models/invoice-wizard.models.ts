@@ -364,81 +364,81 @@ export interface SelectOption<T = string> {
 
 export const INVOICE_TYPE_OPTIONS: SelectOption<InvoiceType>[] = [
   { 
-    label: 'Facture', 
+    label: $localize`:@@invoices.invoice-wizard.ts.facture.3953b9f5:Facture`, 
     value: InvoiceType.Invoice,
     icon: 'pi pi-file',
-    description: 'Facture de vente standard'
+    description: $localize`:@@invoices.invoice-wizard.ts.facture.de.vente.standard.3f8e51cd:Facture de vente standard`
   },
   { 
-    label: "Facture d'avoir", 
+    label: $localize`:@@invoices.invoice-wizard.ts.facture.d.avoir.541e4451:Facture d'avoir`, 
     value: InvoiceType.CreditNote,
     icon: 'pi pi-file-edit',
-    description: 'Pour correction ou remboursement'
+    description: $localize`:@@invoices.invoice-wizard.ts.pour.correction.ou.remboursement.c6cb6293:Pour correction ou remboursement`
   }
 ];
 
 export const CLIENT_TAX_TYPE_OPTIONS: SelectOption<ClientTaxType>[] = [
   { 
-    label: 'Assujetti à la TVA', 
+    label: $localize`:@@invoices.invoice-wizard.ts.assujetti.a.la.tva.8ec85b01:Assujetti à la TVA`, 
     value: ClientTaxType.TaxSubject,
-    description: 'Client soumis à la TVA - Matricule fiscal obligatoire'
+    description: $localize`:@@invoices.invoice-wizard.ts.client.soumis.a.la.tva.matricule.fiscal.9faeeba3:Client soumis à la TVA - Matricule fiscal obligatoire`
   },
   { 
-    label: 'Non assujetti', 
+    label: $localize`:@@invoices.invoice-wizard.ts.non.assujetti.c686966b:Non assujetti`, 
     value: ClientTaxType.NonTaxSubject,
-    description: 'Client non soumis à la TVA'
+    description: $localize`:@@invoices.invoice-wizard.ts.client.non.soumis.a.la.tva.3412dd9a:Client non soumis à la TVA`
   },
   { 
-    label: 'Exonéré de TVA', 
+    label: $localize`:@@invoices.invoice-wizard.ts.exonere.de.tva.be6ac1a9:Exonéré de TVA`, 
     value: ClientTaxType.TaxExempt,
-    description: 'Bénéficie d\'une exonération légale'
+    description: $localize`:@@invoices.invoice-wizard.ts.beneficie.d.une.exoneration.legale.abdecb34:Bénéficie d'une exonération légale`
   }
 ];
 
 export const VAT_RATE_OPTIONS: SelectOption<TunisianVatRate>[] = [
-  { label: '19% - Taux normal', value: TunisianVatRate.Standard },
-  { label: '13% - Taux intermédiaire', value: TunisianVatRate.Intermediate },
-  { label: '7% - Taux réduit', value: TunisianVatRate.Reduced },
-  { label: '0% - Exonéré', value: TunisianVatRate.Exempt }
+  { label: $localize`:@@invoices.invoice-wizard.ts.19.taux.normal.1dc12a7c:19% - Taux normal`, value: TunisianVatRate.Standard },
+  { label: $localize`:@@invoices.invoice-wizard.ts.13.taux.intermediaire.f50bb2e0:13% - Taux intermédiaire`, value: TunisianVatRate.Intermediate },
+  { label: $localize`:@@invoices.invoice-wizard.ts.7.taux.reduit.e464d7cf:7% - Taux réduit`, value: TunisianVatRate.Reduced },
+  { label: $localize`:@@invoices.invoice-wizard.ts.0.exonere.45b95f13:0% - Exonéré`, value: TunisianVatRate.Exempt }
 ];
 
 export const PAYMENT_METHOD_OPTIONS: SelectOption<PaymentMethod>[] = [
-  { label: 'Virement bancaire', value: PaymentMethod.BankTransfer, icon: 'pi pi-building' },
-  { label: 'Espèces', value: PaymentMethod.Cash, icon: 'pi pi-money-bill' },
-  { label: 'Chèque', value: PaymentMethod.Check, icon: 'pi pi-credit-card' },
-  { label: 'Carte bancaire', value: PaymentMethod.Card, icon: 'pi pi-credit-card' },
-  { label: 'Effet de commerce', value: PaymentMethod.Effect, icon: 'pi pi-file' }
+  { label: $localize`:@@invoices.invoice-wizard.ts.virement.bancaire.8306f08e:Virement bancaire`, value: PaymentMethod.BankTransfer, icon: 'pi pi-building' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.especes.b7679d62:Espèces`, value: PaymentMethod.Cash, icon: 'pi pi-money-bill' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.cheque.8bbb89a9:Chèque`, value: PaymentMethod.Check, icon: 'pi pi-credit-card' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.carte.bancaire.9e3d9bfa:Carte bancaire`, value: PaymentMethod.Card, icon: 'pi pi-credit-card' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.effet.de.commerce.9793a8f7:Effet de commerce`, value: PaymentMethod.Effect, icon: 'pi pi-file' }
 ];
 
 export const CURRENCY_OPTIONS: SelectOption<Currency>[] = [
-  { label: 'TND - Dinar Tunisien', value: Currency.TND },
-  { label: 'EUR - Euro', value: Currency.EUR },
-  { label: 'USD - Dollar américain', value: Currency.USD }
+  { label: $localize`:@@invoices.invoice-wizard.ts.tnd.dinar.tunisien.ecb6c7c0:TND - Dinar Tunisien`, value: Currency.TND },
+  { label: $localize`:@@invoices.invoice-wizard.ts.eur.euro.dd8e746b:EUR - Euro`, value: Currency.EUR },
+  { label: $localize`:@@invoices.invoice-wizard.ts.usd.dollar.americain.c7ec61f6:USD - Dollar américain`, value: Currency.USD }
 ];
 
 export const TUNISIAN_GOVERNORATES: SelectOption<string>[] = [
-  { label: 'Ariana', value: 'Ariana' },
-  { label: 'Béja', value: 'Béja' },
-  { label: 'Ben Arous', value: 'Ben Arous' },
-  { label: 'Bizerte', value: 'Bizerte' },
-  { label: 'Gabès', value: 'Gabès' },
-  { label: 'Gafsa', value: 'Gafsa' },
-  { label: 'Jendouba', value: 'Jendouba' },
-  { label: 'Kairouan', value: 'Kairouan' },
-  { label: 'Kasserine', value: 'Kasserine' },
-  { label: 'Kébili', value: 'Kébili' },
-  { label: 'Le Kef', value: 'Le Kef' },
-  { label: 'Mahdia', value: 'Mahdia' },
-  { label: 'La Manouba', value: 'La Manouba' },
-  { label: 'Médenine', value: 'Médenine' },
-  { label: 'Monastir', value: 'Monastir' },
-  { label: 'Nabeul', value: 'Nabeul' },
-  { label: 'Sfax', value: 'Sfax' },
-  { label: 'Sidi Bouzid', value: 'Sidi Bouzid' },
-  { label: 'Siliana', value: 'Siliana' },
-  { label: 'Sousse', value: 'Sousse' },
-  { label: 'Tataouine', value: 'Tataouine' },
-  { label: 'Tozeur', value: 'Tozeur' },
-  { label: 'Tunis', value: 'Tunis' },
-  { label: 'Zaghouan', value: 'Zaghouan' }
+  { label: $localize`:@@invoices.invoice-wizard.ts.ariana.4787a016:Ariana`, value: 'Ariana' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.beja.603d1fac:Béja`, value: 'Béja' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.ben.arous.3fab69ae:Ben Arous`, value: 'Ben Arous' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.bizerte.2e83a969:Bizerte`, value: 'Bizerte' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.gabes.e4b74f5d:Gabès`, value: 'Gabès' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.gafsa.eae1e5d1:Gafsa`, value: 'Gafsa' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.jendouba.c6f39067:Jendouba`, value: 'Jendouba' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.kairouan.62201cff:Kairouan`, value: 'Kairouan' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.kasserine.2ac4b4c3:Kasserine`, value: 'Kasserine' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.kebili.5c50d601:Kébili`, value: 'Kébili' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.le.kef.6dfe486f:Le Kef`, value: 'Le Kef' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.mahdia.00f1b39b:Mahdia`, value: 'Mahdia' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.la.manouba.25ff50d2:La Manouba`, value: 'La Manouba' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.medenine.0e0d3c6a:Médenine`, value: 'Médenine' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.monastir.aef3b69f:Monastir`, value: 'Monastir' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.nabeul.43036f00:Nabeul`, value: 'Nabeul' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.sfax.7f5b35de:Sfax`, value: 'Sfax' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.sidi.bouzid.923cd336:Sidi Bouzid`, value: 'Sidi Bouzid' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.siliana.279c3c64:Siliana`, value: 'Siliana' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.sousse.e45910eb:Sousse`, value: 'Sousse' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.tataouine.d3f11bd9:Tataouine`, value: 'Tataouine' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.tozeur.0c755425:Tozeur`, value: 'Tozeur' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.tunis.e58b2d54:Tunis`, value: 'Tunis' },
+  { label: $localize`:@@invoices.invoice-wizard.ts.zaghouan.65a3dc81:Zaghouan`, value: 'Zaghouan' }
 ];

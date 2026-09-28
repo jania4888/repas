@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, DestroyRef, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Subject, catchError, of, switchMap, tap, timer } from 'rxjs';
@@ -42,37 +43,37 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
     <app-studio-page-shell
       *ngIf="entity() as e"
       [title]="e.displayName"
-      [subtitle]="'Clé : ' + e.key + ' — ' + fields().length + ' champ(s)'"
+      [subtitle]="loc_ui_tern_cle_df29c6 + e.key + ' — ' + fields().length + loc_ui_tern_champ_s_f2c969"
       [breadcrumbs]="breadcrumbs">
       <div studioActions class="studio-head-actions">
-        <button pButton type="button" label="Rapports" icon="fa-solid fa-chart-column"
+        <button pButton type="button" label="Rapports" i18n-label="@@studio.studio-entity-designer.rapports.db7d9fbb" icon="fa-solid fa-chart-column"
           class="p-button-outlined p-button-sm" routerLink="/studio/reports/new" [queryParams]="{ source: e.key }"></button>
-        <button pButton type="button" label="Mise en page" icon="fa-solid fa-table-cells-large"
+        <button pButton type="button" label="Mise en page" i18n-label="@@studio.studio-entity-designer.mise.en.page.f09e7eee" icon="fa-solid fa-table-cells-large"
           class="p-button-outlined p-button-sm" [routerLink]="['/studio', e.id, 'form']"></button>
-        <button pButton type="button" label="Données" icon="fa-solid fa-table-list"
+        <button pButton type="button" label="Données" i18n-label="@@studio.studio-entity-designer.donnees.e3e0c5ec" icon="fa-solid fa-table-list"
           class="p-button-outlined p-button-sm" [routerLink]="['/studio/d', e.key]"></button>
-        <button pButton type="button" label="Pont ERP" icon="fa-solid fa-bolt"
+        <button pButton type="button" label="Pont ERP" i18n-label="@@studio.studio-entity-designer.pont.erp.3f55804e" icon="fa-solid fa-bolt"
           class="p-button-outlined p-button-sm" [routerLink]="['/studio', e.id, 'automations']"></button>
         @if (workflowsEnabled()) {
-          <button pButton type="button" label="Workflows" icon="fa-solid fa-route"
+          <button pButton type="button" label="Workflows" i18n-label="@@studio.studio-entity-designer.workflows.825ce9e9" icon="fa-solid fa-route"
             class="p-button-outlined p-button-sm" [routerLink]="['/studio', 'workflows']" [queryParams]="{ entity: e.id }" data-testid="wf-open"></button>
         }
         @if (manyToManyEnabled()) {
           <button pButton type="button" [label]="runtimeLabels.relations.addManyToMany" icon="fa-solid fa-diagram-project"
             class="p-button-outlined p-button-sm" (click)="m2mVisible.set(true)" data-testid="m2m-open"></button>
         }
-        <button pButton type="button" label="Ajouter un champ" icon="fa-solid fa-plus" (click)="openAdd()"></button>
+        <button pButton type="button" label="Ajouter un champ" i18n-label="@@studio.studio-entity-designer.ajouter.un.champ.b653a98c" icon="fa-solid fa-plus" (click)="openAdd()"></button>
       </div>
 
       <div class="ft-table-card">
       <p-table [value]="fields()" [loading]="loading()" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th style="width:6rem">Ordre</th>
-            <th>Libellé</th>
-            <th>Clé</th>
-            <th>Type</th>
-            <th>Requis</th>
+            <th style="width:6rem" i18n="@@studio.studio-entity-designer.ordre.5c32e631">Ordre</th>
+            <th i18n="@@studio.studio-entity-designer.libelle.f5485bba">Libellé</th>
+            <th i18n="@@studio.studio-entity-designer.cle.24a01bef">Clé</th>
+            <th i18n="@@studio.studio-entity-designer.type.3deb7456">Type</th>
+            <th i18n="@@studio.studio-entity-designer.requis.9a33b681">Requis</th>
             <th style="width:10rem"></th>
           </tr>
         </ng-template>
@@ -95,7 +96,7 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td colspan="6" class="ft-empty">Aucun champ. Ajoutez le premier champ de cette table.</td></tr>
+          <tr><td colspan="6" class="ft-empty" i18n="@@studio.studio-entity-designer.aucun.champ.ajoutez.le.premier.champ.de.cette.ta.e419990b">Aucun champ. Ajoutez le premier champ de cette table.</td></tr>
         </ng-template>
       </p-table>
       </div>
@@ -105,7 +106,7 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
           <h3 class="studio-section-title">{{ runtimeLabels.relations.title }}</h3>
           <p-table [value]="relations()" [loading]="relationsLoading()" styleClass="p-datatable-sm">
             <ng-template pTemplate="header">
-              <tr><th>Type</th><th>Cible</th><th>Jonction</th></tr>
+              <tr><th i18n="@@studio.studio-entity-designer.type.3deb7456">Type</th><th i18n="@@studio.studio-entity-designer.cible.bebdb9b8">Cible</th><th i18n="@@studio.studio-entity-designer.jonction.1f6dc40a">Jonction</th></tr>
             </ng-template>
             <ng-template pTemplate="body" let-rel>
               <tr>
@@ -131,15 +132,15 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
         [(visible)]="m2mVisible" (created)="onRelationCreated()" />
     }
 
-    <p-dialog [header]="editing() ? 'Modifier le champ' : 'Nouveau champ'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '34rem' }" (onHide)="resetTypeCheck()">
+    <p-dialog [header]="editing() ? loc_ui_tern_modifier_le_champ_9287d6 : loc_ui_tern_nouveau_champ_e9de4d" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '34rem' }" (onHide)="resetTypeCheck()">
       <div class="ft-form">
-        <label>Libellé *</label>
+        <label i18n="@@studio.studio-entity-designer.libelle.059cd7f3">Libellé *</label>
         <input pInputText [(ngModel)]="fLabel" (ngModelChange)="onLabelChange($event)" />
 
-        <label>Clé technique *</label>
+        <label i18n="@@studio.studio-entity-designer.cle.technique.46172421">Clé technique *</label>
         <input pInputText [(ngModel)]="fKey" [disabled]="editing()" />
 
-        <label>Type *</label>
+        <label i18n="@@studio.studio-entity-designer.type.9a8e753c">Type *</label>
         <p-select [options]="typeOptions" [(ngModel)]="fType" (ngModelChange)="onTypeChange($event)" optionLabel="label" optionValue="value"
           appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" data-testid="field-type-select"></p-select>
         @if (editing() && typeChecking()) {
@@ -149,148 +150,150 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
         }
 
         <div class="ft-row">
-          <div><p-inputSwitch [(ngModel)]="fRequired"></p-inputSwitch> <span>Obligatoire</span></div>
-          <div><p-inputSwitch [(ngModel)]="fUnique"></p-inputSwitch> <span>Unique</span></div>
+          <div><p-inputSwitch [(ngModel)]="fRequired"></p-inputSwitch> <span i18n="@@studio.studio-entity-designer.obligatoire.389b678a">Obligatoire</span></div>
+          <div><p-inputSwitch [(ngModel)]="fUnique"></p-inputSwitch> <span i18n="@@studio.studio-entity-designer.unique.87c6f410">Unique</span></div>
         </div>
 
         <ng-container *ngIf="isSelect()">
-          <label>Options (une par ligne, format <code>valeur|libellé</code>)</label>
+          <label><ng-container i18n="@@studio.studio-entity-designer.options.une.par.ligne.format.0322f9b6">Options (une par ligne, format </ng-container> <code i18n="@@studio.studio-entity-designer.valeur.libelle.e14efa4a">valeur|libellé</code>)</label>
           <textarea class="ft-textarea" [(ngModel)]="fOptionsText" rows="4"
-            placeholder="open|Ouvert&#10;closed|Fermé"></textarea>
+            placeholder="open|Ouvert&#10;closed|Fermé" i18n-placeholder="@@studio.studio-entity-designer.open.ouvert.closed.ferme.22501d68"></textarea>
         </ng-container>
 
         <ng-container *ngIf="isRelationCustom()">
-          <label>Table cible *</label>
+          <label i18n="@@studio.studio-entity-designer.table.cible.d81d2d36">Table cible *</label>
           <p-select [options]="otherEntities()" [(ngModel)]="fRelationRef" optionLabel="displayName" optionValue="key"
-            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir une table"></p-select>
-          <small class="ft-hint">Le champ référencera un enregistrement de cette table.</small>
+            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir une table" i18n-placeholder="@@studio.studio-entity-designer.choisir.une.table.9ec20a6a"></p-select>
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.le.champ.referencera.un.enregistrement.de.cette..77a4f1e1">Le champ référencera un enregistrement de cette table.</small>
         </ng-container>
 
         <ng-container *ngIf="isRelationExisting()">
-          <label>Donnée existante cible *</label>
+          <label i18n="@@studio.studio-entity-designer.donnee.existante.cible.eb7f8753">Donnée existante cible *</label>
           <p-select [options]="existingRelationSources" [(ngModel)]="fRelationRef" optionLabel="label" optionValue="value"
-            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir une source"></p-select>
-          <small class="ft-hint">Référence en lecture seule vers une fiche existante.</small>
+            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir une source" i18n-placeholder="@@studio.studio-entity-designer.choisir.une.source.b3847a60"></p-select>
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.reference.en.lecture.seule.vers.une.fiche.exista.d7fcd2e5">Référence en lecture seule vers une fiche existante.</small>
         </ng-container>
 
         <ng-container *ngIf="isText()">
           <div class="ft-row">
-            <div><label>Longueur min</label><p-inputNumber [(ngModel)]="fMinLen"></p-inputNumber></div>
-            <div><label>Longueur max</label><p-inputNumber [(ngModel)]="fMaxLen"></p-inputNumber></div>
+            <div><label i18n="@@studio.studio-entity-designer.longueur.min.b63b8acb">Longueur min</label><p-inputNumber [(ngModel)]="fMinLen"></p-inputNumber></div>
+            <div><label i18n="@@studio.studio-entity-designer.longueur.max.0b07b1fd">Longueur max</label><p-inputNumber [(ngModel)]="fMaxLen"></p-inputNumber></div>
           </div>
         </ng-container>
 
         <ng-container *ngIf="isNumeric()">
           <div class="ft-row">
-            <div><label>Valeur min</label><p-inputNumber [(ngModel)]="fMin"></p-inputNumber></div>
-            <div><label>Valeur max</label><p-inputNumber [(ngModel)]="fMax"></p-inputNumber></div>
+            <div><label i18n="@@studio.studio-entity-designer.valeur.min.b13c2cab">Valeur min</label><p-inputNumber [(ngModel)]="fMin"></p-inputNumber></div>
+            <div><label i18n="@@studio.studio-entity-designer.valeur.max.e5c54fb5">Valeur max</label><p-inputNumber [(ngModel)]="fMax"></p-inputNumber></div>
           </div>
         </ng-container>
 
         <ng-container *ngIf="isMoney()">
-          <label>Devise</label>
-          <input pInputText [(ngModel)]="fCurrency" maxlength="8" placeholder="TND" />
-          <small class="ft-hint">Code ISO de la devise (ex. TND, EUR, USD).</small>
+          <label i18n="@@studio.studio-entity-designer.devise.eb2e42c4">Devise</label>
+          <input pInputText [(ngModel)]="fCurrency" maxlength="8" placeholder="TND" i18n-placeholder="@@studio.studio-entity-designer.tnd.51da21a7" />
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.code.iso.de.la.devise.ex.tnd.eur.usd.e953cb11">Code ISO de la devise (ex. TND, EUR, USD).</small>
           <div class="ft-row">
-            <div><label>Valeur min</label><p-inputNumber [(ngModel)]="fMin"></p-inputNumber></div>
-            <div><label>Valeur max</label><p-inputNumber [(ngModel)]="fMax"></p-inputNumber></div>
+            <div><label i18n="@@studio.studio-entity-designer.valeur.min.b13c2cab">Valeur min</label><p-inputNumber [(ngModel)]="fMin"></p-inputNumber></div>
+            <div><label i18n="@@studio.studio-entity-designer.valeur.max.e5c54fb5">Valeur max</label><p-inputNumber [(ngModel)]="fMax"></p-inputNumber></div>
           </div>
         </ng-container>
 
         <ng-container *ngIf="isPercentage()">
           <div class="ft-row">
-            <div><label>Valeur min</label><p-inputNumber [(ngModel)]="fMin"></p-inputNumber></div>
-            <div><label>Valeur max</label><p-inputNumber [(ngModel)]="fMax"></p-inputNumber></div>
+            <div><label i18n="@@studio.studio-entity-designer.valeur.min.b13c2cab">Valeur min</label><p-inputNumber [(ngModel)]="fMin"></p-inputNumber></div>
+            <div><label i18n="@@studio.studio-entity-designer.valeur.max.e5c54fb5">Valeur max</label><p-inputNumber [(ngModel)]="fMax"></p-inputNumber></div>
           </div>
         </ng-container>
 
         <ng-container *ngIf="isRating()">
-          <label>Nombre d'étoiles</label>
+          <label i18n="@@studio.studio-entity-designer.nombre.d.etoiles.3e5b9197">Nombre d'étoiles</label>
           <p-inputNumber [(ngModel)]="fRatingMax" [min]="1" [max]="10"></p-inputNumber>
-          <small class="ft-hint">Note maximale (1 à 10).</small>
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.note.maximale.1.a.10.992633aa">Note maximale (1 à 10).</small>
         </ng-container>
 
         <ng-container *ngIf="isBarcode()">
-          <label>Symbologie</label>
+          <label i18n="@@studio.studio-entity-designer.symbologie.a84398d8">Symbologie</label>
           <p-select [options]="barcodeFormats" [(ngModel)]="fCodeFormat" optionLabel="label" optionValue="value"
             appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full"></p-select>
-          <small class="ft-hint">EAN-13 attend 12 à 13 chiffres ; CODE128 accepte tout texte.</small>
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.ean.13.attend.12.a.13.chiffres.code128.accepte.t.f1cc813d">EAN-13 attend 12 à 13 chiffres ; CODE128 accepte tout texte.</small>
         </ng-container>
 
         <ng-container *ngIf="isQr()">
-          <small class="ft-hint">La valeur saisie sera encodée en QR code.</small>
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.la.valeur.saisie.sera.encodee.en.qr.code.ad30938f">La valeur saisie sera encodée en QR code.</small>
         </ng-container>
 
         <ng-container *ngIf="isFormula()">
-          <label>Expression *</label>
+          <label i18n="@@studio.studio-entity-designer.expression.f00f565b">Expression *</label>
           <textarea class="ft-textarea" [(ngModel)]="fFormulaExpr" rows="3"
-            placeholder="montant_ht * 1.19"></textarea>
-          <small class="ft-hint">
-            Fonctions : ROUND, ABS, MIN, MAX, IF, COALESCE, CONCAT, LEN, LOWER, UPPER, TRIM.
-            Opérateurs : + - * / % , comparaisons, AND/OR/NOT.
-          </small>
+            placeholder="montant_ht * 1.19" i18n-placeholder="@@studio.studio-entity-designer.montant.ht.1.19.42f5b1a7"></textarea>
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.fonctions.round.abs.min.max.if.coalesce.concat.l.d26e54db"> Fonctions : ROUND, ABS, MIN, MAX, IF, COALESCE, CONCAT, LEN, LOWER, UPPER, TRIM.
+            Opérateurs : + - * / % , comparaisons, AND/OR/NOT. </small>
           <small class="ft-hint" *ngIf="otherFieldKeys() as keys">
-            Champs disponibles : <code *ngFor="let k of keys">{{ k }}</code>
+            <ng-container i18n="@@studio.studio-entity-designer.champs.disponibles.18772a02"> Champs disponibles : </ng-container> <code *ngFor="let k of keys">{{ k }}</code>
           </small>
         </ng-container>
 
         <ng-container *ngIf="isLookup()">
-          <label>Champ relation (via) *</label>
+          <label i18n="@@studio.studio-entity-designer.champ.relation.via.8aa18540">Champ relation (via) *</label>
           <p-select [options]="relationFields()" [(ngModel)]="fLookupVia" optionLabel="label" optionValue="value"
-            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir un champ relation"></p-select>
-          <label>Champ cible *</label>
-          <input pInputText [(ngModel)]="fLookupTarget" placeholder="clé du champ à afficher" />
-          <small class="ft-hint">Affiche un champ de l'enregistrement/fiche liée par le champ relation.</small>
+            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir un champ relation" i18n-placeholder="@@studio.studio-entity-designer.choisir.un.champ.relation.ea675858"></p-select>
+          <label i18n="@@studio.studio-entity-designer.champ.cible.639048f6">Champ cible *</label>
+          <input pInputText [(ngModel)]="fLookupTarget" placeholder="clé du champ à afficher" i18n-placeholder="@@studio.studio-entity-designer.cle.du.champ.a.afficher.4b1bdc6f" />
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.affiche.un.champ.de.l.enregistrement.fiche.liee..171873f3">Affiche un champ de l'enregistrement/fiche liée par le champ relation.</small>
         </ng-container>
 
         <ng-container *ngIf="isRollup()">
-          <label>Table enfant *</label>
+          <label i18n="@@studio.studio-entity-designer.table.enfant.a50a0c7c">Table enfant *</label>
           <p-select [options]="otherEntities()" [(ngModel)]="fRollupEntity" optionLabel="displayName" optionValue="key"
-            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir une table"></p-select>
-          <label>Champ relation de l'enfant *</label>
-          <input pInputText [(ngModel)]="fRollupRelationField" placeholder="clé du champ relation pointant vers cette table" />
-          <label>Agrégat *</label>
+            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir une table" i18n-placeholder="@@studio.studio-entity-designer.choisir.une.table.9ec20a6a"></p-select>
+          <label i18n="@@studio.studio-entity-designer.champ.relation.de.l.enfant.d338d402">Champ relation de l'enfant *</label>
+          <input pInputText [(ngModel)]="fRollupRelationField" placeholder="clé du champ relation pointant vers cette table" i18n-placeholder="@@studio.studio-entity-designer.cle.du.champ.relation.pointant.vers.cette.table.77fef3db" />
+          <label i18n="@@studio.studio-entity-designer.agregat.1ed60823">Agrégat *</label>
           <p-select [options]="aggOptions" [(ngModel)]="fRollupAgg" optionLabel="label" optionValue="value"
             appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full"></p-select>
           <ng-container *ngIf="fRollupAgg !== 'count'">
-            <label>Champ à agréger *</label>
-            <input pInputText [(ngModel)]="fRollupField" placeholder="clé du champ numérique de l'enfant" />
+            <label i18n="@@studio.studio-entity-designer.champ.a.agreger.a3a552a7">Champ à agréger *</label>
+            <input pInputText [(ngModel)]="fRollupField" placeholder="clé du champ numérique de l'enfant" i18n-placeholder="@@studio.studio-entity-designer.cle.du.champ.numerique.de.l.enfant.4fcc1688" />
           </ng-container>
-          <small class="ft-hint">Agrège les enregistrements de la table enfant qui référencent cette fiche.</small>
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.agrege.les.enregistrements.de.la.table.enfant.qu.04c263b9">Agrège les enregistrements de la table enfant qui référencent cette fiche.</small>
         </ng-container>
 
         <ng-container *ngIf="isAutoNumber()">
-          <small class="ft-hint">Référence séquentielle générée à la création, en lecture seule.</small>
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.reference.sequentielle.generee.a.la.creation.en..ea3c9e00">Référence séquentielle générée à la création, en lecture seule.</small>
           <div class="ft-row">
-            <div><label>Préfixe</label><input pInputText [(ngModel)]="fNumPrefix" maxlength="16" placeholder="FACT-" /></div>
-            <div><label>Longueur (zéros)</label><p-inputNumber [(ngModel)]="fNumPadding" [min]="0" [max]="12"></p-inputNumber></div>
-            <div><label>Suffixe</label><input pInputText [(ngModel)]="fNumSuffix" maxlength="16" placeholder="/2026" /></div>
+            <div><label i18n="@@studio.studio-entity-designer.prefixe.2fe0a6db">Préfixe</label><input pInputText [(ngModel)]="fNumPrefix" maxlength="16" placeholder="FACT-" i18n-placeholder="@@studio.studio-entity-designer.fact.b565d22e" /></div>
+            <div><label i18n="@@studio.studio-entity-designer.longueur.zeros.4491a083">Longueur (zéros)</label><p-inputNumber [(ngModel)]="fNumPadding" [min]="0" [max]="12"></p-inputNumber></div>
+            <div><label i18n="@@studio.studio-entity-designer.suffixe.9c70a252">Suffixe</label><input pInputText [(ngModel)]="fNumSuffix" maxlength="16" placeholder="/2026" i18n-placeholder="@@studio.studio-entity-designer.2026.5e98d8b1" /></div>
           </div>
-          <small class="ft-hint">Aperçu : <code>{{ autoNumberPreview() }}</code></small>
+          <small class="ft-hint"><ng-container i18n="@@studio.studio-entity-designer.apercu.33c24358">Aperçu : </ng-container> <code>{{ autoNumberPreview() }}</code></small>
         </ng-container>
       </div>
       <ng-template pTemplate="footer">
-        <button pButton type="button" label="Annuler" class="p-button-text" (click)="closeDialog()"></button>
-        <button pButton type="button" label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving() || typeBlocked() || typeChecking()" (click)="save()" data-testid="field-save"></button>
+        <button pButton type="button" label="Annuler" i18n-label="@@studio.studio-entity-designer.annuler.49ba3292" class="p-button-text" (click)="closeDialog()"></button>
+        <button pButton type="button" label="Enregistrer" i18n-label="@@studio.studio-entity-designer.enregistrer.f7c8bcd8" icon="fa-solid fa-check" [disabled]="saving() || typeBlocked() || typeChecking()" (click)="save()" data-testid="field-save"></button>
       </ng-template>
     </p-dialog>
   `,
   styles: [`
     .studio-head-actions { display: flex; flex-wrap: wrap; gap: var(--spacing-2); }
-    .ft-actions { text-align: right; white-space: nowrap; }
+    .ft-actions { text-align: end; white-space: nowrap; }
     .ft-empty { text-align: center; color: var(--color-neutral-500); padding: 2rem; }
     .ft-inactive { opacity: .5; }
     .ft-form { display: flex; flex-direction: column; gap: .35rem; }
     .ft-form label { font-weight: 600; font-size: .85rem; margin-top: .5rem; }
     .ft-row { display: flex; gap: 1rem; align-items: center; margin-top: .5rem; }
     .ft-row > div { display: flex; flex-direction: column; gap: .25rem; }
-    .ft-row span { margin-left: .35rem; }
+    .ft-row span { margin-inline-start: .35rem; }
     .ft-textarea { width: 100%; font-family: monospace; padding: .5rem; border: 1px solid var(--surface-300); border-radius: 6px; }
     :host ::ng-deep .ft-w-full { width: 100%; }
   `],
   styleUrl: './shared/studio-layout.scss',
 })
 export class StudioEntityDesignerComponent implements OnInit {
+  readonly loc_ui_tern_cle_df29c6 = $localize`:@@ui.tern.cle.df29c6:Clé : `;
+  readonly loc_ui_tern_champ_s_f2c969 = $localize`:@@ui.tern.champ.s.f2c969: champ(s)`;
+  readonly loc_ui_tern_modifier_le_champ_9287d6 = $localize`:@@ui.tern.modifier.le.champ.9287d6:Modifier le champ`;
+  readonly loc_ui_tern_nouveau_champ_e9de4d = $localize`:@@ui.tern.nouveau.champ.e9de4d:Nouveau champ`;
   private readonly studio = inject(StudioService);
   private readonly toast = inject(MessageService);
   private readonly confirmation = inject(ConfirmationService);
@@ -381,19 +384,19 @@ export class StudioEntityDesignerComponent implements OnInit {
   readonly allEntities = signal<CustomEntity[]>([]);
   readonly otherEntities = computed(() => this.allEntities().filter(e => e.id !== this.entityId));
   readonly existingRelationSources = [
-    { label: 'Clients', value: 'clients' },
-    { label: 'Produits', value: 'products' }
+    { label: $localize`:@@studio.studio-entity-designer.ts.clients.28e22fe3:Clients`, value: 'clients' },
+    { label: $localize`:@@studio.studio-entity-designer.ts.produits.48000473:Produits`, value: 'products' }
   ];
   readonly barcodeFormats = [
-    { label: 'CODE128 (texte)', value: 'code128' },
-    { label: 'EAN-13 (chiffres)', value: 'ean13' }
+    { label: $localize`:@@studio.studio-entity-designer.ts.code128.texte.3862d703:CODE128 (texte)`, value: 'code128' },
+    { label: $localize`:@@studio.studio-entity-designer.ts.ean.13.chiffres.9cc2dfc2:EAN-13 (chiffres)`, value: 'ean13' }
   ];
   readonly aggOptions = [
-    { label: 'Nombre (count)', value: 'count' },
-    { label: 'Somme (sum)', value: 'sum' },
-    { label: 'Moyenne (avg)', value: 'avg' },
-    { label: 'Minimum (min)', value: 'min' },
-    { label: 'Maximum (max)', value: 'max' }
+    { label: $localize`:@@studio.studio-entity-designer.ts.nombre.count.2067339c:Nombre (count)`, value: 'count' },
+    { label: $localize`:@@studio.studio-entity-designer.ts.somme.sum.c9535c2f:Somme (sum)`, value: 'sum' },
+    { label: $localize`:@@studio.studio-entity-designer.ts.moyenne.avg.7ee6e623:Moyenne (avg)`, value: 'avg' },
+    { label: $localize`:@@studio.studio-entity-designer.ts.minimum.min.195a7eab:Minimum (min)`, value: 'min' },
+    { label: $localize`:@@studio.studio-entity-designer.ts.maximum.max.c5c3dc0a:Maximum (max)`, value: 'max' }
   ];
   private entityId = '';
 
@@ -464,7 +467,7 @@ export class StudioEntityDesignerComponent implements OnInit {
     this.loading.set(true);
     this.studio.listFields(this.entityId, true).subscribe({
       next: res => { this.loading.set(false); if (res.success) this.fields.set(res.data ?? []); },
-      error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Chargement des champs impossible.' }); }
+      error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: $localize`:@@studio-entity-designer.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-entity-designer.component.detail.Chargement_des_c:Chargement des champs impossible.` }); }
     });
   }
 
@@ -609,29 +612,29 @@ export class StudioEntityDesignerComponent implements OnInit {
   save(): void {
     if (this.typeBlocked() || this.typeChecking()) return;
     if (!this.fLabel.trim() || (!this.editing() && !this.fKey.trim())) {
-      this.toast.add({ severity: 'warn', summary: 'Champs requis', detail: 'Libellé et clé obligatoires.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-entity-designer.component.summary.Champs requi:Champs requis`, detail: $localize`:@@studio-entity-designer.component.detail.Libellé et c:Libellé et clé obligatoires.` });
       return;
     }
     const options = this.isSelect() ? this.parseOptions() : null;
     if (this.isSelect() && (!options || options.length === 0)) {
-      this.toast.add({ severity: 'warn', summary: 'Options requises', detail: 'Ajoutez au moins une option.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-entity-designer.component.summary.Options_requises:Options requises`, detail: $localize`:@@studio-entity-designer.component.detail.Ajoutez_au_moins:Ajoutez au moins une option.` });
       return;
     }
     if (this.isRelation() && !this.fRelationRef) {
-      this.toast.add({ severity: 'warn', summary: 'Cible requise', detail: 'Choisissez la cible de la relation.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-entity-designer.component.summary.Cible requis:Cible requise`, detail: $localize`:@@studio-entity-designer.component.detail.Choisissez_la_ci:Choisissez la cible de la relation.` });
       return;
     }
     if (this.isFormula() && !this.fFormulaExpr.trim()) {
-      this.toast.add({ severity: 'warn', summary: 'Expression requise', detail: 'Saisissez l\'expression de la formule.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-entity-designer.component.summary.Expression_requi:Expression requise`, detail: $localize`:@@studio-entity-designer.component.detail.Saisissez_l_expr:Saisissez l'expression de la formule.` });
       return;
     }
     if (this.isLookup() && (!this.fLookupVia || !this.fLookupTarget.trim())) {
-      this.toast.add({ severity: 'warn', summary: 'Recherche incomplète', detail: 'Choisissez le champ relation et le champ cible.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-entity-designer.component.summary.Recherche_incomp:Recherche incomplète`, detail: $localize`:@@studio-entity-designer.component.detail.Choisissez_le_ch:Choisissez le champ relation et le champ cible.` });
       return;
     }
     if (this.isRollup() && (!this.fRollupEntity || !this.fRollupRelationField.trim()
         || (this.fRollupAgg !== 'count' && !this.fRollupField.trim()))) {
-      this.toast.add({ severity: 'warn', summary: 'Agrégat incomplet', detail: 'Renseignez la table enfant, le champ relation et le champ à agréger.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-entity-designer.component.summary.Agr_gat_incomple:Agrégat incomplet`, detail: $localize`:@@studio-entity-designer.component.detail.Renseignez_la_ta:Renseignez la table enfant, le champ relation et le champ à agréger.` });
       return;
     }
     const relation = this.isRelationCustom()
@@ -650,7 +653,7 @@ export class StudioEntityDesignerComponent implements OnInit {
         this.loadFields();
         this.loadEntity();
       } else {
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: detail ?? 'Échec.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@studio-entity-designer.component.summary.Erreur:Erreur`, detail: detail ?? $localize`:@@ui.tern.echec.0238a9:Échec.` });
       }
     };
 
@@ -692,14 +695,14 @@ export class StudioEntityDesignerComponent implements OnInit {
 
   remove(f: CustomField): void {
     this.confirmation.confirm({
-      message: `Supprimer le champ « ${f.label} » ? Les données existantes sont conservées.`,
-      header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      message: $localize`:@@studio.studio-entity-designer.ts.supprimer.le.champ.label.les.donnees.exi.6918565e:Supprimer le champ « ${f.label}:label: » ? Les données existantes sont conservées.`,
+      header: $localize`:@@studio.studio-entity-designer.ts.confirmation.3424edc2:Confirmation`,
+      acceptLabel: $localize`:@@studio-entity-designer.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@studio-entity-designer.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.studio.deleteField(this.entityId, f.id).subscribe({
           next: res => { if (res.success) this.loadFields(); },
-          error: () => this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Suppression impossible.' })
+          error: () => this.toast.add({ severity: 'error', summary: $localize`:@@studio-entity-designer.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-entity-designer.component.detail.Suppression_impo:Suppression impossible.` })
         });
       }
     });
@@ -712,7 +715,7 @@ export class StudioEntityDesignerComponent implements OnInit {
     [arr[index], arr[target]] = [arr[target], arr[index]];
     this.fields.set(arr);
     this.studio.reorderFields(this.entityId, arr.map(f => f.id)).subscribe({
-      error: () => { this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Réordonnancement impossible.' }); this.loadFields(); }
+      error: () => { this.toast.add({ severity: 'error', summary: $localize`:@@studio-entity-designer.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-entity-designer.component.detail.R_ordonnancement:Réordonnancement impossible.` }); this.loadFields(); }
     });
   }
 }

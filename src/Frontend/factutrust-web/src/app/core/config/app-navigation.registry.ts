@@ -14,6 +14,8 @@ import {
 export type NavSubItemAction = 'returnToFirm' | 'changeDossier';
 
 export interface NavSubItem {
+  /** Stable key for logic / i18n. */
+  id?: string;
   label: string;
   icon?: string;
   railIconAsset?: string;
@@ -31,6 +33,8 @@ export interface NavSubItem {
 }
 
 export interface NavItem {
+  /** Stable key for logic / i18n. */
+  id?: string;
   label: string;
   icon?: string;
   railIconAsset?: string;
@@ -69,9 +73,10 @@ interface NavVisibilityFields {
 const M = AppModule;
 
 export const ALL_NAV_ITEMS: NavItem[] = [
-  { label: 'Tableau de bord', icon: 'fa-solid fa-gauge-high', route: '/dashboard', tourId: 'dashboard' },
+  { id: 'dashboard', label: $localize`:@@core.app-navigation.registry.ts.tableau.de.bord.a524057f:Tableau de bord`, icon: 'fa-solid fa-gauge-high', route: '/dashboard', tourId: 'dashboard' },
   {
-    label: 'Assistant IA',
+    id: 'ai-assistant',
+    label: $localize`:@@core.app-navigation.registry.ts.assistant.ia.94f6f208:Assistant IA`,
     railIconAsset: AI_ASSISTANT_MARK_SRC,
     route: '/ai-assistant',
     tourId: 'ai-assistant',
@@ -79,34 +84,39 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     permissionsAll: ['ai:chat']
   },
   {
-    label: 'Prévisions IA',
+    id: 'forecasting',
+    label: $localize`:@@core.app-navigation.registry.ts.previsions.ia.2cbfbe7a:Prévisions IA`,
     icon: 'fa-solid fa-chart-line',
     modules: [M.Forecasting],
     permissionsAll: ['forecasting:view'],
     children: [
       {
-        label: 'Prévisions CA',
+        id: 'forecasting--forecasting-revenue',
+        label: $localize`:@@core.app-navigation.registry.ts.previsions.ca.94d0bab1:Prévisions CA`,
         route: '/forecasting/revenue',
         icon: 'fa-solid fa-chart-line',
         modules: [M.Forecasting],
         permissionsAll: ['forecasting:view']
       },
       {
-        label: 'Réapprovisionnement',
+        id: 'forecasting--forecasting-replenishment',
+        label: $localize`:@@core.app-navigation.registry.ts.reapprovisionnement.77e72f0b:Réapprovisionnement`,
         route: '/forecasting/replenishment',
         icon: 'fa-solid fa-truck-ramp-box',
         modules: [M.Forecasting],
         permissionsAll: ['forecasting:view']
       },
       {
-        label: 'Promotions suggérées',
+        id: 'forecasting--forecasting-promotions',
+        label: $localize`:@@core.app-navigation.registry.ts.promotions.suggerees.ff46ad11:Promotions suggérées`,
         route: '/forecasting/promotions',
         icon: 'fa-solid fa-tags',
         modules: [M.Forecasting],
         permissionsAll: ['forecasting:view']
       },
       {
-        label: 'Matrice ABC × XYZ',
+        id: 'forecasting--forecasting-abc-xyz',
+        label: $localize`:@@core.app-navigation.registry.ts.matrice.abc.xyz.8f41fc5c:Matrice ABC × XYZ`,
         route: '/forecasting/abc-xyz',
         icon: 'fa-solid fa-table-cells',
         modules: [M.Forecasting],
@@ -115,103 +125,118 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
-    label: 'Point de Vente',
+    id: 'pos',
+    label: $localize`:@@core.app-navigation.registry.ts.point.de.vente.420a8974:Point de Vente`,
     icon: 'fa-solid fa-cash-register',
     route: '/pos',
     modules: [M.Sales, M.Products, M.Stock],
     permissionsAll: ['invoices:create', 'products:read', 'stock:read']
   },
   {
-    label: 'Ventes',
+    id: 'sales',
+    label: $localize`:@@core.app-navigation.registry.ts.ventes.9087fc4f:Ventes`,
     icon: 'fa-solid fa-bag-shopping',
     tourId: 'ventes',
     children: [
       {
-        label: 'Assistant Ventes',
+        id: 'sales--ai-assistant-ventes',
+        label: $localize`:@@core.app-navigation.registry.ts.assistant.ventes.7390d945:Assistant Ventes`,
         route: '/ai-assistant/ventes',
         icon: 'fa-solid fa-wand-magic-sparkles',
         modules: [M.Sales, M.AI],
         permissionsAll: ['ai:chat', 'invoices:read']
       },
       {
-        label: 'Devis',
+        id: 'sales--quotes',
+        label: $localize`:@@core.app-navigation.registry.ts.devis.f7622f90:Devis`,
         route: '/quotes',
         icon: 'fa-solid fa-file-lines',
         modules: [M.Sales],
         permissionsAll: ['quotes:read']
       },
       {
-        label: 'Commandes clients',
+        id: 'sales--sales-orders',
+        label: $localize`:@@core.app-navigation.registry.ts.commandes.clients.928f824a:Commandes clients`,
         route: '/sales-orders',
         icon: 'fa-solid fa-cart-shopping',
         modules: [M.Sales],
         permissionsAll: ['sales_orders:read']
       },
       {
-        label: 'Bon de Livraison',
+        id: 'sales--delivery-notes',
+        label: $localize`:@@core.app-navigation.registry.ts.bon.de.livraison.439bfda9:Bon de Livraison`,
         route: '/delivery-notes',
         icon: 'fa-solid fa-truck',
         modules: [M.Sales],
         permissionsAll: ['delivery_notes:read']
       },
       {
-        label: 'Bon de retour',
+        id: 'sales--return-notes',
+        label: $localize`:@@core.app-navigation.registry.ts.bon.de.retour.58d2db35:Bon de retour`,
         route: '/return-notes',
         icon: 'fa-solid fa-rotate-left',
         modules: [M.Sales],
         permissionsAll: ['return_notes:read']
       },
       {
-        label: 'Factures',
+        id: 'sales--invoices',
+        label: $localize`:@@core.app-navigation.registry.ts.factures.da35e4f2:Factures`,
         route: '/invoices',
         icon: 'fa-solid fa-file',
         modules: [M.Sales],
         permissionsAll: ['invoices:read']
       },
       {
-        label: 'Avoir de vente',
+        id: 'sales--invoices-credit-notes',
+        label: $localize`:@@core.app-navigation.registry.ts.avoir.de.vente.2c744bf7:Avoir de vente`,
         route: '/invoices/credit-notes',
         icon: 'fa-solid fa-receipt',
         modules: [M.Sales],
         permissionsAll: ['invoices:read']
       },
       {
-        label: 'Factures impayées',
+        id: 'sales--invoices-unpaid',
+        label: $localize`:@@core.app-navigation.registry.ts.factures.impayees.dc3cffa5:Factures impayées`,
         route: '/invoices/unpaid',
         icon: 'fa-solid fa-circle-exclamation',
         modules: [M.Sales],
         permissionsAll: ['invoices:read']
       },
       {
-        label: 'Contrats récurrents',
+        id: 'sales--recurring-contracts',
+        label: $localize`:@@core.app-navigation.registry.ts.contrats.recurrents.e773e54a:Contrats récurrents`,
         route: '/recurring-contracts',
         icon: 'fa-solid fa-arrows-rotate',
         modules: [M.RecurringContracts],
         permissionsAll: [PERMISSIONS.recurringContracts.read]
       },
       {
-        label: 'Solde par client',
+        id: 'sales--reports-client-balances',
+        label: $localize`:@@core.app-navigation.registry.ts.solde.par.client.dc39ad70:Solde par client`,
         route: '/reports/client-balances',
         icon: 'fa-solid fa-wallet',
         modules: [M.Reports, M.Sales],
         permissionsAll: ['reports:view', 'invoices:read']
       },
       {
-        label: 'États analytiques',
+        id: 'sales--reports-analytics',
+        label: $localize`:@@core.app-navigation.registry.ts.etats.analytiques.23bcc707:États analytiques`,
         route: '/reports/analytics',
         icon: 'fa-solid fa-chart-line',
         modules: [M.Reports, M.Sales],
         permissionsAll: ['reports:view', 'invoices:read']
       },
       {
-        label: 'Rapports',
+        id: 'sales--reports-sales',
+        label: $localize`:@@core.app-navigation.registry.ts.rapports.db7d9fbb:Rapports`,
         route: '/reports/sales',
         icon: 'fa-solid fa-chart-column',
         modules: [M.Reports, M.Sales],
         permissionsAll: ['reports:view', 'invoices:read']
       },
       {
-        label: 'Rapport Bénéfices',
+        id: 'sales--reports-profit',
+        label: $localize`:@@core.app-navigation.registry.ts.rapport.benefices.245eba08:Rapport Bénéfices`,
         route: '/reports/profit',
         icon: 'fa-solid fa-percent',
         modules: [M.Reports, M.Sales],
@@ -220,68 +245,78 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
-    label: 'Achats',
+    id: 'purchases',
+    label: $localize`:@@core.app-navigation.registry.ts.achats.ee5b078c:Achats`,
     icon: 'fa-solid fa-cart-shopping',
     tourId: 'achats',
     children: [
       {
-        label: 'Assistant Achats',
+        id: 'purchases--ai-assistant-achats',
+        label: $localize`:@@core.app-navigation.registry.ts.assistant.achats.47e3b98a:Assistant Achats`,
         route: '/ai-assistant/achats',
         icon: 'fa-solid fa-wand-magic-sparkles',
         modules: [M.Purchases, M.AI],
         permissionsAll: ['ai:chat', 'purchase_orders:read']
       },
       {
-        label: 'Fournisseurs',
+        id: 'purchases--suppliers',
+        label: $localize`:@@core.app-navigation.registry.ts.fournisseurs.06b6d88c:Fournisseurs`,
         route: '/suppliers',
         icon: 'fa-solid fa-building',
         modules: [M.Purchases],
         permissionsAll: ['suppliers:read']
       },
       {
-        label: 'Bons de commande',
+        id: 'purchases--purchase-orders',
+        label: $localize`:@@core.app-navigation.registry.ts.bons.de.commande.aae719f0:Bons de commande`,
         route: '/purchase-orders',
         icon: 'fa-solid fa-file-lines',
         modules: [M.Purchases],
         permissionsAll: ['purchase_orders:read']
       },
       {
-        label: 'Bons de réception',
+        id: 'purchases--purchase-receipts',
+        label: $localize`:@@core.app-navigation.registry.ts.bons.de.reception.84d6ebb5:Bons de réception`,
         route: '/purchase-receipts',
         icon: 'fa-solid fa-dolly',
         modules: [M.Purchases],
         permissionsAll: ['purchase_receipts:read']
       },
       {
-        label: 'Factures fournisseurs',
+        id: 'purchases--supplier-invoices',
+        label: $localize`:@@core.app-navigation.registry.ts.factures.fournisseurs.1dcbc2ed:Factures fournisseurs`,
         route: '/supplier-invoices',
         icon: 'fa-solid fa-money-bill-wave',
         modules: [M.Purchases],
         permissionsAll: ['supplier_invoices:read']
       },
       {
-        label: 'Factures impayées',
+        id: 'purchases--invoices-unpaid',
+        label: $localize`:@@core.app-navigation.registry.ts.factures.impayees.dc3cffa5:Factures impayées`,
         route: '/supplier-invoices/unpaid',
         icon: 'fa-solid fa-circle-exclamation',
         modules: [M.Purchases],
         permissionsAll: ['supplier_invoices:read']
       },
       {
-        label: 'Solde par fournisseur',
+        id: 'purchases--reports-supplier-balances',
+        label: $localize`:@@core.app-navigation.registry.ts.solde.par.fournisseur.7b26b81c:Solde par fournisseur`,
         route: '/reports/supplier-balances',
         icon: 'fa-solid fa-wallet',
         modules: [M.Reports, M.Purchases],
         permissionsAll: ['reports:view', 'supplier_invoices:read']
       },
       {
-        label: 'États analytiques',
+        id: 'purchases--reports-analytics',
+        label: $localize`:@@core.app-navigation.registry.ts.etats.analytiques.23bcc707:États analytiques`,
         route: '/reports/purchases-analytics',
         icon: 'fa-solid fa-chart-line',
         modules: [M.Reports, M.Purchases],
         permissionsAll: ['reports:view', 'suppliers:read']
       },
       {
-        label: 'Rapports',
+        id: 'purchases--reports-sales',
+        label: $localize`:@@core.app-navigation.registry.ts.rapports.db7d9fbb:Rapports`,
         route: '/reports/purchases',
         icon: 'fa-solid fa-chart-column',
         modules: [M.Reports, M.Purchases],
@@ -290,33 +325,38 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
-    label: 'Fiches',
+    id: 'records',
+    label: $localize`:@@core.app-navigation.registry.ts.fiches.c513967c:Fiches`,
     icon: 'fa-regular fa-folder-open',
     tourId: 'fiches',
     children: [
       {
-        label: 'Clients',
+        id: 'records--clients',
+        label: $localize`:@@core.app-navigation.registry.ts.clients.28e22fe3:Clients`,
         route: '/clients',
         icon: 'fa-solid fa-users',
         modules: [M.Clients],
         permissionsAll: ['clients:read']
       },
       {
-        label: 'Produits',
+        id: 'records--products',
+        label: $localize`:@@core.app-navigation.registry.ts.produits.48000473:Produits`,
         route: '/products',
         icon: 'fa-solid fa-cube',
         modules: [M.Products],
         permissionsAll: ['products:read']
       },
       {
-        label: 'Catégories',
+        id: 'records--product-categories',
+        label: $localize`:@@core.app-navigation.registry.ts.categories.d463d7d2:Catégories`,
         route: '/product-categories',
         icon: 'fa-solid fa-tags',
         modules: [M.Products],
         permissionsAll: ['products:read']
       },
       {
-        label: 'Rapports',
+        id: 'records--reports-sales',
+        label: $localize`:@@core.app-navigation.registry.ts.rapports.db7d9fbb:Rapports`,
         route: '/reports/fiches',
         icon: 'fa-solid fa-chart-column',
         modules: [M.Reports],
@@ -325,61 +365,70 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
-    label: 'Stock',
+    id: 'stock',
+    label: $localize`:@@core.app-navigation.registry.ts.stock.bcecf456:Stock`,
     icon: 'fa-solid fa-boxes-stacked',
     tourId: 'stock',
     children: [
       {
-        label: 'Assistant Stock',
+        id: 'stock--ai-assistant-stock',
+        label: $localize`:@@core.app-navigation.registry.ts.assistant.stock.b01a4439:Assistant Stock`,
         route: '/ai-assistant/stock',
         icon: 'fa-solid fa-wand-magic-sparkles',
         modules: [M.Stock, M.AI],
         permissionsAll: ['ai:chat', 'stock:read']
       },
       {
-        label: 'Gestion de stock',
+        id: 'stock--stock',
+        label: $localize`:@@core.app-navigation.registry.ts.gestion.de.stock.3f196b66:Gestion de stock`,
         route: '/stock',
         icon: 'fa-solid fa-boxes-stacked',
         modules: [M.Stock],
         permissionsAll: ['stock:read']
       },
       {
-        label: "Bons d'entrée",
+        id: 'stock--stock-entries',
+        label: $localize`:@@core.app-navigation.registry.ts.bons.d.entree.c04705f1:Bons d'entrée`,
         route: '/stock/entries',
         icon: 'fa-solid fa-arrow-down',
         modules: [M.Stock],
         permissionsAll: ['stock_vouchers:read']
       },
       {
-        label: 'Bons de sortie',
+        id: 'stock--stock-issues',
+        label: $localize`:@@core.app-navigation.registry.ts.bons.de.sortie.ccd59bed:Bons de sortie`,
         route: '/stock/issues',
         icon: 'fa-solid fa-arrow-up',
         modules: [M.Stock],
         permissionsAll: ['stock_vouchers:read']
       },
       {
-        label: 'Transferts',
+        id: 'stock--transfers',
+        label: $localize`:@@core.app-navigation.registry.ts.transferts.f2783f95:Transferts`,
         route: '/transfers',
         icon: 'fa-solid fa-right-left',
         modules: [M.Stock],
         permissionsAll: ['stock_transfers:read']
       },
       {
-        label: 'Inventaire',
+        id: 'stock--inventory',
+        label: $localize`:@@core.app-navigation.registry.ts.inventaire.10ad1a54:Inventaire`,
         route: '/inventory',
         icon: 'fa-solid fa-clipboard-list',
         modules: [M.Stock],
         permissionsAll: ['inventory:read']
       },
       {
-        label: 'Mode assistant',
+        id: 'stock--inventory-wizard',
+        label: $localize`:@@core.app-navigation.registry.ts.mode.assistant.3e961eb5:Mode assistant`,
         route: '/inventory/wizard',
         icon: 'fa-solid fa-list-ol',
         modules: [M.Stock],
         permissionsAll: ['inventory:read']
       },
       {
-        label: 'Rapports',
+        id: 'stock--reports-sales',
+        label: $localize`:@@core.app-navigation.registry.ts.rapports.db7d9fbb:Rapports`,
         route: '/reports/stock',
         icon: 'fa-solid fa-chart-column',
         modules: [M.Reports, M.Stock],
@@ -388,54 +437,62 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
-    label: 'Trésorerie',
+    id: 'treasury',
+    label: $localize`:@@core.app-navigation.registry.ts.tresorerie.e0e75da7:Trésorerie`,
     icon: 'fa-solid fa-credit-card',
     tourId: 'tresorerie',
     children: [
       {
-        label: 'Trésorerie prévisionnelle',
+        id: 'treasury--treasury-cash-forecast',
+        label: $localize`:@@core.app-navigation.registry.ts.tresorerie.previsionnelle.0fa48711:Trésorerie prévisionnelle`,
         route: '/treasury/cash-forecast',
         icon: 'fa-solid fa-chart-line',
         modules: [M.Treasury],
         permissionsAll: [PERMISSIONS.treasuryForecast.view]
       },
       {
-        label: 'Assistant Trésorerie',
+        id: 'treasury--ai-assistant-tresorerie',
+        label: $localize`:@@core.app-navigation.registry.ts.assistant.tresorerie.8300f9a9:Assistant Trésorerie`,
         route: '/ai-assistant/tresorerie',
         icon: 'fa-solid fa-wand-magic-sparkles',
         modules: [M.Treasury, M.AI],
         permissionsAll: ['ai:chat', 'payments:read']
       },
       {
-        label: 'Caisse',
+        id: 'treasury--payments-cash-desk',
+        label: $localize`:@@core.app-navigation.registry.ts.caisse.ce5a5c98:Caisse`,
         route: '/payments/cash-desk',
         icon: 'fa-solid fa-building-columns',
         modules: [M.Treasury],
         permissionsAll: ['payments:read']
       },
       {
-        label: 'Comptes bancaires',
+        id: 'treasury--payments-bank-accounts',
+        label: $localize`:@@core.app-navigation.registry.ts.comptes.bancaires.3af6caeb:Comptes bancaires`,
         route: '/payments/bank-accounts',
         icon: 'fa-solid fa-building-columns',
         modules: [M.Treasury],
         permissionsAll: ['payments:read']
       },
       {
-        label: 'Paiements clients',
+        id: 'treasury--payments-clients',
+        label: $localize`:@@core.app-navigation.registry.ts.paiements.clients.79a7e359:Paiements clients`,
         route: '/payments/clients',
         icon: 'fa-solid fa-credit-card',
         modules: [M.Treasury],
         permissionsAll: ['payments:read']
       },
       {
-        label: 'Paiements fournisseurs',
+        id: 'treasury--payments-suppliers',
+        label: $localize`:@@core.app-navigation.registry.ts.paiements.fournisseurs.416577a5:Paiements fournisseurs`,
         route: '/payments/suppliers',
         icon: 'fa-solid fa-building',
         modules: [M.Treasury],
         permissionsAll: ['payments:read']
       },
       {
-        label: 'Rapports',
+        id: 'treasury--reports-sales',
+        label: $localize`:@@core.app-navigation.registry.ts.rapports.db7d9fbb:Rapports`,
         route: '/reports/payments',
         icon: 'fa-solid fa-chart-column',
         modules: [M.Reports, M.Treasury],
@@ -444,46 +501,53 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
-    label: 'CRM Commercial',
+    id: 'crm',
+    label: $localize`:@@core.app-navigation.registry.ts.crm.commercial.96a9fcf3:CRM Commercial`,
     icon: 'fa-solid fa-handshake',
     children: [
       {
-        label: 'Assistant CRM',
+        id: 'crm--ai-assistant-crm',
+        label: $localize`:@@core.app-navigation.registry.ts.assistant.crm.a6f233a6:Assistant CRM`,
         route: '/ai-assistant/crm',
         icon: 'fa-solid fa-wand-magic-sparkles',
         modules: [M.CRM, M.AI],
         permissionsAll: ['ai:chat', 'crm:read']
       },
       {
-        label: 'Tableau de bord',
+        id: 'crm--crm-dashboard',
+        label: $localize`:@@core.app-navigation.registry.ts.tableau.de.bord.a524057f:Tableau de bord`,
         route: '/crm/dashboard',
         icon: 'fa-solid fa-gauge-high',
         modules: [M.CRM],
         permissionsAll: ['crm:read']
       },
       {
-        label: 'Opportunités',
+        id: 'crm--crm-opportunities',
+        label: $localize`:@@core.app-navigation.registry.ts.opportunites.0dbfa3c5:Opportunités`,
         route: '/crm/opportunities',
         icon: 'fa-solid fa-filter-circle-dollar',
         modules: [M.CRM],
         permissionsAll: ['crm:read']
       },
       {
-        label: 'Activités',
+        id: 'crm--crm-activities',
+        label: $localize`:@@core.app-navigation.registry.ts.activites.9c1f6186:Activités`,
         route: '/crm/activities',
         icon: 'fa-solid fa-list-check',
         modules: [M.CRM],
         permissionsAll: ['crm:read']
       },
       {
-        label: 'Objectifs',
+        id: 'crm--crm-targets',
+        label: $localize`:@@core.app-navigation.registry.ts.objectifs.57028307:Objectifs`,
         route: '/crm/targets',
         icon: 'fa-solid fa-chart-line',
         modules: [M.CRM],
         permissionsAll: ['sales_targets:read']
       },
       {
-        label: 'Modèles de devis',
+        id: 'crm--crm-quote-templates',
+        label: $localize`:@@core.app-navigation.registry.ts.modeles.de.devis.b90f004d:Modèles de devis`,
         route: '/crm/quote-templates',
         icon: 'fa-solid fa-file-lines',
         modules: [M.CRM],
@@ -492,25 +556,29 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
-    label: 'Projets',
+    id: 'projects',
+    label: $localize`:@@core.app-navigation.registry.ts.projets.b1e8cd4d:Projets`,
     icon: 'fa-solid fa-diagram-project',
     children: [
       {
-        label: 'Tableau de bord',
+        id: 'projects--crm-dashboard',
+        label: $localize`:@@core.app-navigation.registry.ts.tableau.de.bord.a524057f:Tableau de bord`,
         route: '/projects/dashboard',
         icon: 'fa-solid fa-chart-pie',
         modules: [M.Projects],
         permissionsAll: [PERMISSIONS.projects.read]
       },
       {
-        label: 'Liste des projets',
+        id: 'projects--projects',
+        label: $localize`:@@core.app-navigation.registry.ts.liste.des.projets.7f394c5f:Liste des projets`,
         route: '/projects',
         icon: 'fa-solid fa-list',
         modules: [M.Projects],
         permissionsAll: [PERMISSIONS.projects.read]
       },
       {
-        label: 'Mes feuilles de temps',
+        id: 'projects--timesheets',
+        label: $localize`:@@core.app-navigation.registry.ts.mes.feuilles.de.temps.50923fd1:Mes feuilles de temps`,
         route: '/timesheets',
         icon: 'fa-solid fa-clock',
         modules: [M.Projects],
@@ -519,25 +587,29 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
-    label: 'Fiscal / TEJ',
+    id: 'fiscal-tej',
+    label: $localize`:@@core.app-navigation.registry.ts.fiscal.tej.1a1e125b:Fiscal / TEJ`,
     icon: 'fa-solid fa-file-invoice-dollar',
     children: [
       {
-        label: 'Tableau de bord',
+        id: 'fiscal-tej--crm-dashboard',
+        label: $localize`:@@core.app-navigation.registry.ts.tableau.de.bord.a524057f:Tableau de bord`,
         route: '/withholding-tax/dashboard',
         icon: 'fa-solid fa-gauge-high',
         modules: [M.Fiscal],
         permissionsAll: ['withholding_tax:read']
       },
       {
-        label: 'Export TEJ',
+        id: 'fiscal-tej--withholding-tax-tej-export',
+        label: $localize`:@@core.app-navigation.registry.ts.export.tej.c237f45b:Export TEJ`,
         route: '/withholding-tax/tej-export',
         icon: 'fa-solid fa-file-export',
         modules: [M.Fiscal],
         permissionsAll: ['withholding_tax:export']
       },
       {
-        label: 'Types de retenue',
+        id: 'fiscal-tej--withholding-tax-settings',
+        label: $localize`:@@core.app-navigation.registry.ts.types.de.retenue.b0d657ed:Types de retenue`,
         route: '/withholding-tax/settings',
         icon: 'fa-solid fa-sliders',
         modules: [M.Fiscal],
@@ -546,74 +618,85 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
-    label: 'RH & Paie',
+    id: 'hr-payroll',
+    label: $localize`:@@core.app-navigation.registry.ts.rh.paie.615f4eb1:RH & Paie`,
     icon: 'fa-solid fa-users-gear',
     children: [
       {
-        label: 'Salariés',
+        id: 'hr-payroll--payroll-employees',
+        label: $localize`:@@core.app-navigation.registry.ts.salaries.ce68387d:Salariés`,
         route: '/payroll/employees',
         icon: 'fa-solid fa-id-card',
         modules: [M.Payroll],
         permissionsAll: [PERMISSIONS.payroll.read]
       },
       {
-        label: 'Cycles de paie',
+        id: 'hr-payroll--payroll-runs',
+        label: $localize`:@@core.app-navigation.registry.ts.cycles.de.paie.ea07b457:Cycles de paie`,
         route: '/payroll/runs',
         icon: 'fa-solid fa-calendar-check',
         modules: [M.Payroll],
         permissionsAll: [PERMISSIONS.payroll.read]
       },
       {
-        label: 'Régularisation IRPP',
+        id: 'hr-payroll--payroll-regularization',
+        label: $localize`:@@core.app-navigation.registry.ts.regularisation.irpp.da08474d:Régularisation IRPP`,
         route: '/payroll/regularization',
         icon: 'fa-solid fa-scale-balanced',
         modules: [M.Payroll],
         permissionsAll: [PERMISSIONS.payroll.read]
       },
       {
-        label: 'Soldes de tout compte',
+        id: 'hr-payroll--payroll-terminations',
+        label: $localize`:@@core.app-navigation.registry.ts.soldes.de.tout.compte.afe34b92:Soldes de tout compte`,
         route: '/payroll/terminations',
         icon: 'fa-solid fa-file-signature',
         modules: [M.Payroll],
         permissionsAll: [PERMISSIONS.payroll.read]
       },
       {
-        label: 'Livre de paie',
+        id: 'hr-payroll--payroll-reports-payroll-book',
+        label: $localize`:@@core.app-navigation.registry.ts.livre.de.paie.ccdfc623:Livre de paie`,
         route: '/payroll/reports/payroll-book',
         icon: 'fa-solid fa-book',
         modules: [M.Payroll],
         permissionsAll: [PERMISSIONS.payroll.read]
       },
       {
-        label: 'Journal de paie',
+        id: 'hr-payroll--payroll-reports-payroll-journal',
+        label: $localize`:@@core.app-navigation.registry.ts.journal.de.paie.240f3575:Journal de paie`,
         route: '/payroll/reports/payroll-journal',
         icon: 'fa-solid fa-list-check',
         modules: [M.Payroll],
         permissionsAll: [PERMISSIONS.payroll.read]
       },
       {
-        label: 'Déclarations paie',
+        id: 'hr-payroll--payroll-declarations',
+        label: $localize`:@@core.app-navigation.registry.ts.declarations.paie.135c2aa8:Déclarations paie`,
         route: '/payroll/declarations',
         icon: 'fa-solid fa-file-export',
         modules: [M.Payroll],
         permissionsAll: [PERMISSIONS.payroll.declare]
       },
       {
-        label: 'Paramètres paie',
+        id: 'hr-payroll--payroll-settings',
+        label: $localize`:@@core.app-navigation.registry.ts.parametres.paie.89296f29:Paramètres paie`,
         route: '/payroll/settings',
         icon: 'fa-solid fa-sliders',
         modules: [M.Payroll],
         permissionsAll: [PERMISSIONS.payroll.settings]
       },
       {
-        label: 'Jours fériés',
+        id: 'hr-payroll--payroll-settings-holidays',
+        label: $localize`:@@core.app-navigation.registry.ts.jours.feries.6ba43434:Jours fériés`,
         route: '/payroll/settings/holidays',
         icon: 'fa-solid fa-calendar-day',
         modules: [M.Payroll],
         permissionsAll: [PERMISSIONS.payroll.settings]
       },
       {
-        label: 'Primes annuelles',
+        id: 'hr-payroll--payroll-settings-annual-bonuses',
+        label: $localize`:@@core.app-navigation.registry.ts.primes.annuelles.c20c4756:Primes annuelles`,
         route: '/payroll/settings/annual-bonuses',
         icon: 'fa-solid fa-gift',
         modules: [M.Payroll],
@@ -622,166 +705,190 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
-    label: 'Comptabilité',
+    id: 'accounting',
+    label: $localize`:@@core.app-navigation.registry.ts.comptabilite.20af7266:Comptabilité`,
     icon: 'fa-solid fa-calculator',
     tourId: 'comptabilite',
     children: [
       {
-        label: 'Assistant Comptabilité',
+        id: 'accounting--ai-assistant-comptabilite',
+        label: $localize`:@@core.app-navigation.registry.ts.assistant.comptabilite.74a43398:Assistant Comptabilité`,
         route: '/ai-assistant/comptabilite',
         icon: 'fa-solid fa-wand-magic-sparkles',
         modules: [M.Accounting, M.AI],
         permissionsAll: ['ai:chat', 'accounting:read']
       },
       {
-        label: 'Accueil comptabilité',
+        id: 'accounting--accounting-home',
+        label: $localize`:@@core.app-navigation.registry.ts.accueil.comptabilite.c3659c63:Accueil comptabilité`,
         route: '/accounting/home',
         icon: 'fa-solid fa-table-cells-large',
         modules: [M.Accounting],
         permissionsAll: ['accounting:read']
       },
       {
-        label: 'Plan comptable',
+        id: 'accounting--accounting-chart',
+        label: $localize`:@@core.app-navigation.registry.ts.plan.comptable.b3f54c09:Plan comptable`,
         route: '/accounting/chart',
         icon: 'fa-solid fa-sitemap',
         modules: [M.Accounting],
         permissionsAll: ['accounting:read']
       },
       {
-        label: 'Journaux & familles',
+        id: 'accounting--accounting-journals',
+        label: $localize`:@@core.app-navigation.registry.ts.journaux.familles.31f7dca1:Journaux & familles`,
         route: '/accounting/journals',
         icon: 'fa-solid fa-book-bookmark',
         modules: [M.Accounting],
         permissionsAll: ['accounting:read']
       },
       {
-        label: "Modèles d'écriture",
+        id: 'accounting--accounting-entry-templates',
+        label: $localize`:@@core.app-navigation.registry.ts.modeles.d.ecriture.a2fb584f:Modèles d'écriture`,
         route: '/accounting/entry-templates',
         icon: 'fa-solid fa-clone',
         modules: [M.Accounting],
         permissionsAll: ['accounting:read']
       },
       {
-        label: 'Journal',
+        id: 'accounting--accounting-journal',
+        label: $localize`:@@core.app-navigation.registry.ts.journal.57d7f743:Journal`,
         route: '/accounting/journal',
         icon: 'fa-solid fa-book',
         modules: [M.Accounting],
         permissionsAll: ['accounting:read']
       },
       {
-        label: 'Grand livre',
+        id: 'accounting--accounting-ledger',
+        label: $localize`:@@core.app-navigation.registry.ts.grand.livre.7eef7547:Grand livre`,
         route: '/accounting/ledger',
         icon: 'fa-solid fa-book-open',
         modules: [M.Accounting],
         permissionsAll: ['accounting:read']
       },
       {
-        label: 'Journaux auxiliaires',
+        id: 'accounting--accounting-sub-journals',
+        label: $localize`:@@core.app-navigation.registry.ts.journaux.auxiliaires.a7120594:Journaux auxiliaires`,
         route: '/accounting/sub-journals',
         icon: 'fa-solid fa-book-bookmark',
         modules: [M.Accounting],
         permissionsAll: ['accounting:read']
       },
       {
-        label: 'Balance',
+        id: 'accounting--accounting-balance',
+        label: $localize`:@@core.app-navigation.registry.ts.balance.90eef613:Balance`,
         route: '/accounting/balance',
         icon: 'fa-solid fa-scale-balanced',
         modules: [M.Accounting],
         permissionsAll: ['accounting:read']
       },
       {
-        label: 'Balance âgée',
+        id: 'accounting--accounting-aging',
+        label: $localize`:@@core.app-navigation.registry.ts.balance.agee.f6b2095b:Balance âgée`,
         route: '/accounting/aging',
         icon: 'fa-solid fa-clock',
         modules: [M.Accounting],
         permissionsAll: ['accounting:read']
       },
       {
-        label: 'Lettrage',
+        id: 'accounting--accounting-lettering',
+        label: $localize`:@@core.app-navigation.registry.ts.lettrage.cfcdd333:Lettrage`,
         route: '/accounting/lettering',
         icon: 'fa-solid fa-link',
         modules: [M.Accounting],
         permissionsAll: ['accounting:create']
       },
       {
-        label: "Recherche d'écriture",
+        id: 'accounting--accounting-entry-search',
+        label: $localize`:@@core.app-navigation.registry.ts.recherche.d.ecriture.0a69c5f4:Recherche d'écriture`,
         route: '/accounting/entry-search',
         icon: 'fa-solid fa-magnifying-glass',
         modules: [M.Accounting],
         permissionsAll: ['accounting:read']
       },
       {
-        label: 'Remplacement de compte',
+        id: 'accounting--accounting-account-replacement',
+        label: $localize`:@@core.app-navigation.registry.ts.remplacement.de.compte.2fb8886e:Remplacement de compte`,
         route: '/accounting/account-replacement',
         icon: 'fa-solid fa-right-left',
         modules: [M.Accounting],
         permissionsAll: ['accounting:create']
       },
       {
-        label: 'Saisie manuelle',
+        id: 'accounting--accounting-manual-entry',
+        label: $localize`:@@core.app-navigation.registry.ts.saisie.manuelle.da81002e:Saisie manuelle`,
         route: '/accounting/manual-entry',
         icon: 'fa-solid fa-pen-to-square',
         modules: [M.Accounting],
         permissionsAll: ['accounting:create']
       },
       {
-        label: 'Reprise (import)',
+        id: 'accounting--accounting-import',
+        label: $localize`:@@core.app-navigation.registry.ts.reprise.import.7f18694d:Reprise (import)`,
         route: '/accounting/import',
         icon: 'fa-solid fa-file-import',
         modules: [M.Accounting],
         permissionsAll: ['accounting:import']
       },
       {
-        label: 'Immobilisations',
+        id: 'accounting--accounting-fixed-assets',
+        label: $localize`:@@core.app-navigation.registry.ts.immobilisations.1e4cbe01:Immobilisations`,
         route: '/accounting/fixed-assets',
         icon: 'fa-solid fa-building',
         modules: [M.Accounting],
         permissionsAll: ['accounting:read']
       },
       {
-        label: 'Tableau amortissements',
+        id: 'accounting--accounting-fixed-assets-amortization-table',
+        label: $localize`:@@core.app-navigation.registry.ts.tableau.amortissements.0ddccc41:Tableau amortissements`,
         route: '/accounting/fixed-assets/amortization-table',
         icon: 'fa-solid fa-table-list',
         modules: [M.Accounting],
         permissionsAll: ['accounting:read']
       },
       {
-        label: 'Bilan',
+        id: 'accounting--accounting-balance-sheet',
+        label: $localize`:@@core.app-navigation.registry.ts.bilan.a80c4623:Bilan`,
         route: '/accounting/balance-sheet',
         icon: 'fa-solid fa-chart-pie',
         modules: [M.Accounting],
         permissionsAll: ['accounting:read']
       },
       {
-        label: 'Compte de résultat',
+        id: 'accounting--accounting-income-statement',
+        label: $localize`:@@core.app-navigation.registry.ts.compte.de.resultat.a292527b:Compte de résultat`,
         route: '/accounting/income-statement',
         icon: 'fa-solid fa-chart-line',
         modules: [M.Accounting],
         permissionsAll: ['accounting:read']
       },
       {
-        label: 'États financiers NCT',
+        id: 'accounting--accounting-nct-statements',
+        label: $localize`:@@core.app-navigation.registry.ts.etats.financiers.nct.a11800a0:États financiers NCT`,
         route: '/accounting/nct-statements',
         icon: 'fa-solid fa-file-contract',
         modules: [M.Accounting],
         permissionsAll: ['accounting:read']
       },
       {
-        label: 'Declarations · TVA',
+        id: 'accounting--accounting-vat-declaration',
+        label: $localize`:@@core.app-navigation.registry.ts.declarations.tva.aa8cc92d:Declarations · TVA`,
         route: '/accounting/vat-declaration',
         icon: 'fa-solid fa-file-invoice',
         modules: [M.Accounting],
         permissionsAll: ['accounting:read']
       },
       {
-        label: 'Declarations · Echeancier',
+        id: 'accounting--accounting-fiscal-schedule',
+        label: $localize`:@@core.app-navigation.registry.ts.declarations.echeancier.84cc36cc:Declarations · Echeancier`,
         route: '/accounting/fiscal-schedule',
         icon: 'fa-solid fa-calendar-days',
         modules: [M.Accounting],
         permissionsAll: ['accounting:read']
       },
       {
-        label: 'Declarations · Paiements',
+        id: 'accounting--treasury',
+        label: $localize`:@@core.app-navigation.registry.ts.declarations.paiements.623d2441:Declarations · Paiements`,
         route: '/treasury',
         icon: 'fa-solid fa-money-check-dollar',
         modules: [M.Treasury],
@@ -791,14 +898,16 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: [PERMISSIONS.treasuryForecast.view]
       },
       {
-        label: 'Clôture',
+        id: 'accounting--accounting-closing',
+        label: $localize`:@@core.app-navigation.registry.ts.cloture.eb133909:Clôture`,
         route: '/accounting/closing',
         icon: 'fa-solid fa-lock',
         modules: [M.Accounting],
         permissionsAll: ['accounting:close']
       },
       {
-        label: "Journal d'audit",
+        id: 'accounting--audit',
+        label: $localize`:@@core.app-navigation.registry.ts.journal.d.audit.52309db1:Journal d'audit`,
         route: '/audit',
         icon: 'fa-solid fa-shield-halved',
         modules: [M.Accounting],
@@ -807,23 +916,27 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
-    label: 'Échanges',
+    id: 'exchanges',
+    label: $localize`:@@core.app-navigation.registry.ts.echanges.79c1bbdb:Échanges`,
     icon: 'fa-solid fa-comments',
     route: '/exchanges'
   },
   {
-    label: 'Assistance',
+    id: 'assistance',
+    label: $localize`:@@core.app-navigation.registry.ts.assistance.be6b37ba:Assistance`,
     icon: 'fa-solid fa-headset',
     route: '/assistance'
   },
   {
-    label: 'Paramètres',
+    id: 'settings',
+    label: $localize`:@@core.app-navigation.registry.ts.parametres.ef8f0121:Paramètres`,
     icon: 'fa-solid fa-gear',
     tourId: 'settings',
     modules: [M.Administration],
     children: [
       {
-        label: 'Paramètres généraux',
+        id: 'settings--settings',
+        label: $localize`:@@core.app-navigation.registry.ts.parametres.generaux.23e36e56:Paramètres généraux`,
         route: '/settings',
         icon: 'fa-solid fa-sliders',
         modules: [M.Administration],
@@ -831,7 +944,8 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         platformSettingsOnly: true
       },
       {
-        label: 'Modules',
+        id: 'settings--settings-modules',
+        label: $localize`:@@core.app-navigation.registry.ts.modules.04e9462c:Modules`,
         route: '/settings/modules',
         icon: 'fa-solid fa-th-large',
         modules: [M.Administration],
@@ -839,14 +953,16 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         platformSettingsOnly: true
       },
       {
-        label: 'Promotions',
+        id: 'settings--settings-promotions',
+        label: $localize`:@@core.app-navigation.registry.ts.promotions.086e09b4:Promotions`,
         route: '/settings/promotions',
         icon: 'fa-solid fa-bullhorn',
         modules: [M.Sales],
         permissionsAll: ['pricing:read']
       },
       {
-        label: 'Axes de variantes',
+        id: 'settings--settings-variant-axes',
+        label: $localize`:@@core.app-navigation.registry.ts.axes.de.variantes.dcc95d91:Axes de variantes`,
         route: VARIANT_AXES_PATH,
         icon: 'fa-solid fa-th-large',
         modules: [M.Products],
@@ -1067,7 +1183,7 @@ export function filterNavItems(auth: AuthService, items: NavItem[]): NavItem[] {
 export const EXTRA_CREATE_ROUTES: NavSearchEntry[] = [
   {
     id: 'clients-new',
-    label: 'Ajouter un client',
+    label: $localize`:@@core.app-navigation.registry.ts.ajouter.un.client.1b5b4358:Ajouter un client`,
     route: '/clients/new',
     icon: 'fa-solid fa-user-plus',
     group: 'create',
@@ -1076,7 +1192,7 @@ export const EXTRA_CREATE_ROUTES: NavSearchEntry[] = [
   },
   {
     id: 'products-new',
-    label: 'Ajouter un produit',
+    label: $localize`:@@core.app-navigation.registry.ts.ajouter.un.produit.0f13c039:Ajouter un produit`,
     route: '/products/new',
     icon: 'fa-solid fa-plus',
     group: 'create',
@@ -1085,7 +1201,7 @@ export const EXTRA_CREATE_ROUTES: NavSearchEntry[] = [
   },
   {
     id: 'suppliers-new',
-    label: 'Ajouter un fournisseur',
+    label: $localize`:@@core.app-navigation.registry.ts.ajouter.un.fournisseur.cfb5e618:Ajouter un fournisseur`,
     route: '/suppliers/new',
     icon: 'fa-solid fa-building-circle-arrow-right',
     group: 'create',

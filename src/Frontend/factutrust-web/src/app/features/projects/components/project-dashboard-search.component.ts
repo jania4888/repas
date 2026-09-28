@@ -37,7 +37,7 @@ type ProjectSearchKind = 'Project' | 'Task' | 'Attachment';
           #searchInput
           type="search"
           class="proj-dash-search__input"
-          placeholder="Rechercher un projet, une tâche, un document…"
+          placeholder="Rechercher un projet, une tâche, un document…" i18n-placeholder="@@projects.components.rechercher.un.projet.une.tache.un.document.3d5a34e8"
           [(ngModel)]="query"
           (focus)="onFocus()"
           (input)="onQueryInput()"
@@ -45,18 +45,18 @@ type ProjectSearchKind = 'Project' | 'Task' | 'Attachment';
           role="combobox"
           aria-autocomplete="list"
           [attr.aria-expanded]="dropdownOpen()"
-          aria-label="Rechercher un projet, une tâche ou un document" />
-        <kbd class="proj-dash-search__hint" aria-hidden="true">Ctrl+K</kbd>
+          aria-label="Rechercher un projet, une tâche ou un document" i18n-aria-label="@@projects.components.rechercher.un.projet.une.tache.ou.un.document.3ab9c426" />
+        <kbd class="proj-dash-search__hint" aria-hidden="true" i18n="@@projects.components.ctrl.k.769b0d96">Ctrl+K</kbd>
       </div>
 
       @if (dropdownOpen()) {
         <div class="proj-dash-search__dropdown" role="listbox">
           @if (loading()) {
-            <div class="proj-dash-search__empty">Recherche en cours…</div>
+            <div class="proj-dash-search__empty" i18n="@@projects.components.recherche.en.cours.a16747f0">Recherche en cours…</div>
           } @else if (query.trim().length < 2) {
-            <div class="proj-dash-search__empty">Saisissez au moins 2 caractères</div>
+            <div class="proj-dash-search__empty" i18n="@@projects.components.saisissez.au.moins.2.caracteres.4196f7ef">Saisissez au moins 2 caractères</div>
           } @else if (groupedResults().length === 0) {
-            <div class="proj-dash-search__empty">Aucun résultat dans vos projets</div>
+            <div class="proj-dash-search__empty" i18n="@@projects.components.aucun.resultat.dans.vos.projets.af8cf1ea">Aucun résultat dans vos projets</div>
           } @else {
             @for (group of groupedResults(); track group.label) {
               <div class="proj-dash-search__group">
@@ -102,17 +102,18 @@ export class ProjectDashboardSearchComponent implements OnInit, OnDestroy {
   readonly activeId = signal<string | null>(null);
 
   readonly groupedResults = computed(() => {
-    const groups = new Map<string, ProjectSearchResult[]>();
+    // Regroupement par nature (valeur stable), libellé calculé ensuite : il est traduit.
+    const groups = new Map<ProjectSearchKind, ProjectSearchResult[]>();
     for (const item of this.results()) {
-      const label = this.groupLabel(item);
-      const list = groups.get(label) ?? [];
+      const kind = this.normalizeKind(item.kind);
+      const list = groups.get(kind) ?? [];
       list.push(item);
-      groups.set(label, list);
+      groups.set(kind, list);
     }
-    const order = ['Projets', 'Tâches', 'Documents'];
+    const order: ProjectSearchKind[] = ['Project', 'Task', 'Attachment'];
     return order
-      .filter(label => groups.has(label))
-      .map(label => ({ label, items: groups.get(label)! }));
+      .filter(kind => groups.has(kind))
+      .map(kind => ({ label: this.groupLabel(kind), items: groups.get(kind)! }));
   });
 
   ngOnInit(): void {
@@ -236,11 +237,10 @@ export class ProjectDashboardSearchComponent implements OnInit, OnDestroy {
     this.activeId.set(items[idx].id);
   }
 
-  private groupLabel(item: ProjectSearchResult): string {
-    const kind = this.normalizeKind(item.kind);
-    if (kind === 'Task') return 'Tâches';
-    if (kind === 'Attachment') return 'Documents';
-    return 'Projets';
+  private groupLabel(kind: ProjectSearchKind): string {
+    if (kind === 'Task') return $localize`:@@projects.project-dashboard-search.ts.taches.1b018f86:Tâches`;
+    if (kind === 'Attachment') return $localize`:@@projects.project-dashboard-search.ts.documents.687c8286:Documents`;
+    return $localize`:@@projects.project-dashboard-search.ts.projets.b1e8cd4d:Projets`;
   }
 
   private normalizeKind(kind: ProjectSearchResult['kind']): ProjectSearchKind {

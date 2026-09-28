@@ -58,7 +58,7 @@ export interface ChatInputSubmission {
       }
 
       @if (extractingFileName()) {
-        <div class="extracting" role="status" aria-live="polite">
+        <div class="extracting" role="status" aria-live="polite" i18n="@@ai-assistant.components.extraction.de.1fd182f6">
           <i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i>
           Extraction de {{ extractingFileName() }}…
         </div>
@@ -72,7 +72,7 @@ export interface ChatInputSubmission {
           (keydown)="onTextareaKeydown($event)"
           (input)="onTextareaInput($event)"
           [disabled]="disabled"
-          placeholder="Posez une question sur vos données..."
+          placeholder="Posez une question sur vos données..." i18n-placeholder="@@ai-assistant.components.posez.une.question.sur.vos.donnees.e5155ffe"
           rows="1"
           [attr.aria-busy]="speech.listening()"
           [attr.aria-describedby]="speech.listening() ? 'ft-ai-dictation-hint' : null"
@@ -82,7 +82,7 @@ export interface ChatInputSubmission {
           class="attach-btn"
           [disabled]="disabled || isStreaming"
           (click)="openFilePicker()"
-          aria-label="Joindre un document texte ou PDF pour extraction">
+          aria-label="Joindre un document texte ou PDF pour extraction" i18n-aria-label="@@ai-assistant.components.joindre.un.document.texte.ou.pdf.pour.extraction.e066082e">
           <i class="fa-solid fa-paperclip" aria-hidden="true"></i>
         </button>
         @if (speechSupported) {
@@ -92,7 +92,7 @@ export interface ChatInputSubmission {
             [class.mic-btn--active]="speech.listening()"
             [disabled]="disabled"
             [attr.aria-pressed]="speech.listening()"
-            [attr.aria-label]="speech.listening() ? 'Arrêter la dictée vocale' : 'Démarrer la dictée vocale'"
+            [attr.aria-label]="speech.listening() ? loc_ui_tern_arreter_la_dictee_vocale_b1047b : loc_ui_tern_demarrer_la_dictee_vocale_5198f7"
             (click)="toggleDictation()"
           >
             <i class="fa-solid fa-microphone" aria-hidden="true"></i>
@@ -103,7 +103,7 @@ export interface ChatInputSubmission {
             type="button"
             class="stop-btn"
             (click)="emitStop()"
-            aria-label="Arrêter la génération"
+            aria-label="Arrêter la génération" i18n-aria-label="@@ai-assistant.components.arreter.la.generation.4aaf99b4"
           >
             <i class="fa-solid fa-stop" aria-hidden="true"></i>
           </button>
@@ -113,16 +113,14 @@ export interface ChatInputSubmission {
             class="send-btn"
             [disabled]="disabled || (!text.trim() && pendingAttachments().length === 0)"
             (click)="send()"
-            aria-label="Envoyer le message"
+            aria-label="Envoyer le message" i18n-aria-label="@@ai-assistant.components.envoyer.le.message.64990849"
           >
             <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
           </button>
         }
       </div>
       @if (speech.listening()) {
-        <div id="ft-ai-dictation-hint" class="dictation-hint" role="status" aria-live="polite">
-          Dictée active — vérifiez le texte dans le champ avant d’envoyer.
-        </div>
+        <div id="ft-ai-dictation-hint" class="dictation-hint" role="status" aria-live="polite" i18n="@@ai-assistant.components.dictee.active.verifiez.le.texte.dans.le.champ.av.b6da1861"> Dictée active — vérifiez le texte dans le champ avant d’envoyer. </div>
       }
       @if (speech.lastError(); as err) {
         <div class="speech-error" role="status" aria-live="polite">{{ err }}</div>
@@ -131,18 +129,16 @@ export interface ChatInputSubmission {
         <div class="speech-error" role="status" aria-live="polite">{{ extractError() }}</div>
       }
       <div class="input-hint">
-        @if (isStreaming) {
+        @if (isStreaming) {<ng-container i18n="@@ai-assistant.components.generation.en.cours.echap.pour.arreter.336f3a2c">
           Génération en cours &middot; Échap pour arrêter
-        } @else {
+        </ng-container>} @else {<ng-container i18n="@@ai-assistant.components.entree.pour.envoyer.shift.entree.pour.un.a8e85099">
           Entrée pour envoyer &middot; Shift+Entrée pour un retour à la ligne
-          @if (speechSupported) {
-            <span> &middot; Dictée via le micro (Chrome / Edge recommandés)</span>
+          </ng-container>@if (speechSupported) {
+            <span i18n="@@ai-assistant.components.middot.dictee.via.le.micro.chrome.edge.recommand.32a2d645"> &middot; Dictée via le micro (Chrome / Edge recommandés)</span>
           }
         }
       </div>
-      <p class="input-disclaimer" role="note">
-        L’IA peut se tromper. Vérifiez les réponses et les montants avant toute décision.
-      </p>
+      <p class="input-disclaimer" role="note" i18n="@@ai-assistant.components.l.ia.peut.se.tromper.verifiez.les.reponses.et.le.7d4fa22f"> L’IA peut se tromper. Vérifiez les réponses et les montants avant toute décision. </p>
     </div>
   `,
   styles: [`
@@ -382,6 +378,8 @@ export interface ChatInputSubmission {
   `]
 })
 export class ChatInputComponent implements OnDestroy, OnChanges, AfterViewChecked {
+  readonly loc_ui_tern_arreter_la_dictee_vocale_b1047b = $localize`:@@ui.tern.arreter.la.dictee.vocale.b1047b:Arrêter la dictée vocale`;
+  readonly loc_ui_tern_demarrer_la_dictee_vocale_5198f7 = $localize`:@@ui.tern.demarrer.la.dictee.vocale.5198f7:Démarrer la dictée vocale`;
   @Input() disabled = false;
   /** When true, show stop control instead of send (typically mirrors assistant streaming). */
   @Input() isStreaming = false;
@@ -489,7 +487,7 @@ export class ChatInputComponent implements OnDestroy, OnChanges, AfterViewChecke
       },
       error: () => {
         this.extractingFileName.set(null);
-        this.extractError.set("Impossible d'extraire le document. Formats acceptés : .txt, .csv, .pdf, .png, .jpg, .jpeg, .webp, .docx, .xlsx (max 10 Mo).");
+        this.extractError.set($localize`:@@ai-assistant.chat-input.ts.impossible.d.extraire.le.document.format.f1f4397a:Impossible d'extraire le document. Formats acceptés : .txt, .csv, .pdf, .png, .jpg, .jpeg, .webp, .docx, .xlsx (max 10 Mo).`);
       }
     });
   }

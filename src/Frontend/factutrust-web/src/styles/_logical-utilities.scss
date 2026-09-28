@@ -1,0 +1,19 @@
+/* Bootstrap 4 lacks logical utilities — mirror LTR/RTL for ERP. */
+.text-start {
+  text-align: start !important;
+}
+.text-end {
+  text-align: end !important;
+}
+.ms-1 {
+  margin-inline-start: 0.25rem !important;
+}
+.ms-2 {
+  margin-inline-start: 0.5rem !important;
+}
+.me-1 {
+  margin-inline-end: 0.25rem !important;
+}
+.me-2 {
+  margin-inline-end: 0.5rem !important;
+}

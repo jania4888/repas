@@ -9,14 +9,14 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   template: `
     <div class="modal-header confirm-modal-header">
       @if (icon) {
-        <i [class]="icon + ' confirm-modal-icon'" aria-hidden="true"></i>
+        <i [class]="icon + loc_ui_tern_confirm_modal_icon_e3a84f" aria-hidden="true"></i>
       }
       <h5 class="modal-title" id="confirmModalTitle">{{ header }}</h5>
       <button 
         type="button" 
         class="btn-close" 
         (click)="modal.dismiss()"
-        [attr.aria-label]="'Fermer'"
+        [attr.aria-label]="loc_fermer_5ab4ec"
         tabindex="0">
       </button>
     </div>
@@ -36,7 +36,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
       }
       <button 
         type="button" 
-        [class]="'btn confirm-modal-btn-accept ' + acceptButtonStyleClass"
+        [class]="loc_ui_tern_btn_confirm_modal_btn_accept_23fde5 + acceptButtonStyleClass"
         (click)="modal.close()"
         [attr.aria-label]="acceptLabel"
         tabindex="0">
@@ -211,11 +211,15 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   `]
 })
 export class ConfirmModalComponent {
-  @Input() message = 'Êtes-vous sûr ?';
-  @Input() header = 'Confirmation';
+  protected readonly loc_fermer_5ab4ec = $localize`:@@shared.confirm-modal.tpl.fermer.5ab4ec64:Fermer`;
+
+  readonly loc_ui_tern_confirm_modal_icon_e3a84f = " confirm-modal-icon";
+  readonly loc_ui_tern_btn_confirm_modal_btn_accept_23fde5 = "btn confirm-modal-btn-accept ";
+  @Input() message = $localize`:@@shared.confirm-modal.ts.etes.vous.sur.25c63265:Êtes-vous sûr ?`;
+  @Input() header = $localize`:@@shared.confirm-modal.ts.confirmation.3424edc2:Confirmation`;
   @Input() icon = '';
-  @Input() acceptLabel = 'Oui';
-  @Input() rejectLabel = 'Non';
+  @Input() acceptLabel = $localize`:@@shared.confirm-modal.ts.oui.eaa02f3f:Oui`;
+  @Input() rejectLabel = $localize`:@@shared.confirm-modal.ts.non.a7219939:Non`;
   @Input() acceptButtonStyleClass = 'btn-primary';
   /** When false, only the accept button is shown (alert mode). */
   @Input() showRejectButton = true;

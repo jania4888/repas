@@ -112,7 +112,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
   );
 
   loading = signal(false);
-  loadingMessage = signal('Création de votre espace...');
+  loadingMessage = signal($localize`:@@auth.register-wizard.ts.creation.de.votre.espace.07866544:Création de votre espace...`);
   error = signal<string | null>(null);
   /**
    * Avertissements non bloquants renvoyés par le backend après une inscription
@@ -178,61 +178,61 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
 
   readonly stepsMeta: WizardStepMeta[] = [
     {
-      name: 'Type de société',
-      desc: 'Segment et domaine',
+      name: $localize`:@@auth.register-wizard.ts.type.de.societe.68ad1468:Type de société`,
+      desc: $localize`:@@auth.register-wizard.ts.segment.et.domaine.236abb94:Segment et domaine`,
       icon: 'pi-sitemap',
       why: [
-        'Configuration adaptée à votre activité',
-        'Plan comptable tunisien personnalisé',
-        'Modules et workflows sur mesure',
-        'Gain de temps dès le démarrage'
+        $localize`:@@auth.register-wizard.ts.configuration.adaptee.a.votre.activite.c6aac6bd:Configuration adaptée à votre activité`,
+        $localize`:@@auth.register-wizard.ts.plan.comptable.tunisien.personnalise.431a8ec2:Plan comptable tunisien personnalisé`,
+        $localize`:@@auth.register-wizard.ts.modules.et.workflows.sur.mesure.bae0ed18:Modules et workflows sur mesure`,
+        $localize`:@@auth.register-wizard.ts.gain.de.temps.des.le.demarrage.885c8c2f:Gain de temps dès le démarrage`
       ]
     },
     {
-      name: 'Informations générales',
-      desc: 'Compte et société',
+      name: $localize`:@@auth.register-wizard.ts.informations.generales.be6ba6e5:Informations générales`,
+      desc: $localize`:@@auth.register-wizard.ts.compte.et.societe.700362e3:Compte et société`,
       icon: 'pi-id-card',
       why: [
-        'Vos informations restent confidentielles',
-        'Un seul compte administrateur créé',
-        'Coordonnées utilisées pour les factures',
-        'Modifiable à tout moment plus tard'
+        $localize`:@@auth.register-wizard.ts.vos.informations.restent.confidentielles.322c07ae:Vos informations restent confidentielles`,
+        $localize`:@@auth.register-wizard.ts.un.seul.compte.administrateur.cree.af097d59:Un seul compte administrateur créé`,
+        $localize`:@@auth.register-wizard.ts.coordonnees.utilisees.pour.les.factures.bc36f615:Coordonnées utilisées pour les factures`,
+        $localize`:@@auth.register-wizard.ts.modifiable.a.tout.moment.plus.tard.5589ed4a:Modifiable à tout moment plus tard`
       ]
     },
     {
-      name: 'Configuration',
-      desc: 'Modules recommandés',
+      name: $localize`:@@auth.register-wizard.ts.configuration.75416485:Configuration`,
+      desc: $localize`:@@auth.register-wizard.ts.modules.recommandes.53b9fc7a:Modules recommandés`,
       icon: 'pi-cog',
       why: [
-        'Modules déjà présélectionnés pour vous',
-        'Rien n’est figé : tout reste modifiable',
-        'Activez uniquement ce qui vous sert',
-        'Paramètres tunisiens préconfigurés'
+        $localize`:@@auth.register-wizard.ts.modules.deja.preselectionnes.pour.vous.b3dcbda6:Modules déjà présélectionnés pour vous`,
+        $localize`:@@auth.register-wizard.ts.rien.n.est.fige.tout.reste.modifiable.627a2f23:Rien n’est figé : tout reste modifiable`,
+        $localize`:@@auth.register-wizard.ts.activez.uniquement.ce.qui.vous.sert.73bd9600:Activez uniquement ce qui vous sert`,
+        $localize`:@@auth.register-wizard.ts.parametres.tunisiens.preconfigures.cb647e73:Paramètres tunisiens préconfigurés`
       ]
     },
     {
-      name: 'Finalisation',
-      desc: 'Adresse et récapitulatif',
+      name: $localize`:@@auth.register-wizard.ts.finalisation.672d5be7:Finalisation`,
+      desc: $localize`:@@auth.register-wizard.ts.adresse.et.recapitulatif.d4bb7b00:Adresse et récapitulatif`,
       icon: 'pi-check-circle',
       why: [
-        'Vérifiez votre espace avant de le créer',
-        'Modifiez toute étape en un clic',
-        'Adresse utilisée pour vos documents',
-        'Votre espace est prêt en quelques secondes'
+        $localize`:@@auth.register-wizard.ts.verifiez.votre.espace.avant.de.le.creer.4fe0f690:Vérifiez votre espace avant de le créer`,
+        $localize`:@@auth.register-wizard.ts.modifiez.toute.etape.en.un.clic.cc6bee3b:Modifiez toute étape en un clic`,
+        $localize`:@@auth.register-wizard.ts.adresse.utilisee.pour.vos.documents.0214b555:Adresse utilisée pour vos documents`,
+        $localize`:@@auth.register-wizard.ts.votre.espace.est.pret.en.quelques.second.5a314732:Votre espace est prêt en quelques secondes`
       ]
     }
   ];
 
   registrationFormAriaLabel = computed(() => {
     const cur = this.currentStep();
-    const prev = cur > 0 ? `Étapes précédentes complétées. ` : '';
-    return `${prev}Étape ${cur + 1} sur ${this.stepsMeta.length} : ${this.stepsMeta[cur].name}.`;
+    const prev = cur > 0 ? $localize`:@@ui.tern.etapes.precedentes.completees.b92c63:Étapes précédentes complétées. ` : '';
+    return $localize`:@@auth.register-wizard.ts.prev.etape.p.sur.length.name.07f58086:${prev}:prev:Étape ${cur + 1}:p: sur ${this.stepsMeta.length}:length: : ${this.stepsMeta[cur].name}:name:.`;
   });
 
   taxRegimes: TaxRegime[] = [
-    { label: 'Régime réel', value: 0 },
-    { label: 'Régime forfaitaire', value: 1 },
-    { label: 'Exonéré', value: 2 }
+    { label: $localize`:@@auth.register-wizard.ts.regime.reel.ef6ee424:Régime réel`, value: 0 },
+    { label: $localize`:@@auth.register-wizard.ts.regime.forfaitaire.a1dc2f7b:Régime forfaitaire`, value: 1 },
+    { label: $localize`:@@auth.register-wizard.ts.exonere.5d577ae9:Exonéré`, value: 2 }
   ];
 
   readonly governorates = GOVERNORATE_OPTIONS;
@@ -587,7 +587,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
     }
 
     if (this.passwordMismatch()) {
-      this.error.set('Les mots de passe ne correspondent pas');
+      this.error.set($localize`:@@auth.register-wizard.ts.les.mots.de.passe.ne.correspondent.pas.c1a3d196:Les mots de passe ne correspondent pas`);
       this.form.get('confirmPassword')?.markAsTouched();
       return;
     }
@@ -596,7 +596,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
     this.error.set(null);
     // Sans cela, une nouvelle tentative affichait encore le bandeau « espace créé » de la précédente.
     this.registrationWarningDetails.set([]);
-    this.loadingMessage.set('Création de votre espace...');
+    this.loadingMessage.set($localize`:@@auth.register-wizard.ts.creation.de.votre.espace.07866544:Création de votre espace...`);
     this.loadingStartedAt = Date.now();
     this.startLoadingMessageTimer();
 
@@ -645,7 +645,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
         if (err instanceof TimeoutError) {
           return throwError(() => ({
             status: 0,
-            message: 'La création du compte prend plus de temps que prévu. Veuillez patienter ou réessayer dans quelques instants.'
+            message: $localize`:@@auth.register-wizard.ts.la.creation.du.compte.prend.plus.de.temp.b880214b:La création du compte prend plus de temps que prévu. Veuillez patienter ou réessayer dans quelques instants.`
           }));
         }
         return throwError(() => err);
@@ -665,7 +665,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
         } else {
           const errorMessage = response.errors?.length > 0
             ? response.errors.join(', ')
-            : response.message || 'Une erreur est survenue lors de l\'inscription';
+            : response.message || $localize`:@@auth.register-wizard.ts.une.erreur.est.survenue.lors.de.l.inscri.c27c4975:Une erreur est survenue lors de l'inscription`;
           this.error.set(errorMessage);
           this.errorHandler.logError('Registration failed (success: false)', { response });
         }
@@ -682,7 +682,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
   private submitPlatformCompany(request: RegisterRequest): void {
     const handler = this.wizardMode.submitCompany;
     if (!handler) {
-      this.error.set('Configuration plateforme manquante pour la création d\'entreprise.');
+      this.error.set($localize`:@@auth.register-wizard.ts.configuration.plateforme.manquante.pour.f373acda:Configuration plateforme manquante pour la création d'entreprise.`);
       this.stopLoading();
       return;
     }
@@ -695,7 +695,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
           if (err instanceof TimeoutError) {
             return throwError(() => ({
               status: 0,
-              message: 'La création prend plus de temps que prévu. Veuillez patienter ou réessayer.'
+              message: $localize`:@@auth.register-wizard.ts.la.creation.prend.plus.de.temps.que.prev.f9d6475f:La création prend plus de temps que prévu. Veuillez patienter ou réessayer.`
             }));
           }
           return throwError(() => err);
@@ -717,7 +717,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
             this.navigateAfterCompanySuccess(result.tenantId);
           } else {
             this.error.set(
-              result.errors?.length ? result.errors.join(', ') : result.message ?? 'Création impossible.'
+              result.errors?.length ? result.errors.join(', ') : result.message ?? $localize`:@@ui.tern.creation.impossible.5661a5:Création impossible.`
             );
           }
           this.stopLoading();
@@ -744,19 +744,19 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
       const status = 'status' in err ? err.status : (err as HttpErrorResponse)?.status;
       if (!status) {
         errorMessage = platform
-          ? 'Impossible de joindre l\'API plateforme.'
-          : 'Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur https://localhost:7001.';
+          ? $localize`:@@ui.tern.impossible.de.joindre.l.api.plateforme.c1ad8f:Impossible de joindre l'API plateforme.`
+          : $localize`:@@ui.tern.impossible.de.se.connecter.au.serveur.veri.81a4b1:Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur https://localhost:7001.`;
       } else {
         errorMessage = platform
-          ? `Erreur lors de la création (${status}).`
-          : `Une erreur est survenue lors de l'inscription (${status || 'erreur inconnue'}). Veuillez réessayer.`;
+          ? $localize`:@@ui.tern.erreur.lors.de.la.creation.ph.ea3e06:Erreur lors de la création (${status}:p0:).`
+          : $localize`:@@ui.tern.une.erreur.est.survenue.lors.de.l.inscript.32f480:Une erreur est survenue lors de l'inscription (${status || 'erreur inconnue'}:p0:). Veuillez réessayer.`;
       }
     }
 
     if (!errorMessage || errorMessage === 'undefined') {
       errorMessage = platform
-        ? 'La création n\'a pas pu être finalisée.'
-        : 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.';
+        ? $localize`:@@ui.tern.la.creation.n.a.pas.pu.etre.finalisee.d36b40:La création n'a pas pu être finalisée.`
+        : $localize`:@@ui.tern.une.erreur.est.survenue.lors.de.l.inscript.587687:Une erreur est survenue lors de l'inscription. Veuillez réessayer.`;
     }
     return errorMessage;
   }
@@ -774,11 +774,11 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
     this.loadingMessageTimer = setInterval(() => {
       const elapsed = Date.now() - this.loadingStartedAt;
       if (elapsed < 5_000) {
-        this.loadingMessage.set('Création de votre espace...');
+        this.loadingMessage.set($localize`:@@auth.register-wizard.ts.creation.de.votre.espace.07866544:Création de votre espace...`);
       } else if (elapsed < 30_000) {
-        this.loadingMessage.set('Configuration de la base de données, cela peut prendre une minute...');
+        this.loadingMessage.set($localize`:@@auth.register-wizard.ts.configuration.de.la.base.de.donnees.cela.6fb93f3b:Configuration de la base de données, cela peut prendre une minute...`);
       } else {
-        this.loadingMessage.set('Finalisation en cours, merci de patienter...');
+        this.loadingMessage.set($localize`:@@auth.register-wizard.ts.finalisation.en.cours.merci.de.patienter.d4489dba:Finalisation en cours, merci de patienter...`);
       }
     }, 1_000);
   }

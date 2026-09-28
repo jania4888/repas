@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, OnDestroy, inject, signal, computed, ViewChildren, ElementRef, QueryList, effect } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
@@ -78,14 +79,14 @@ import { LayoutRouteService } from '@core/layout/layout-route.service';
             <button 
               type="button" 
               class="back-button"
-              pTooltip="Retour aux factures"
+              pTooltip="Retour aux factures" i18n-pTooltip="@@invoices.invoice-wizard.retour.aux.factures.eed1cdaa"
               tooltipPosition="right"
               (click)="onCancel()">
               <i class="pi pi-arrow-left"></i>
             </button>
             <div>
               <h1 class="wizard-title">
-                {{ wizardService.metadata().type === 'CREDIT_NOTE' ? "Nouvelle facture d'avoir" : 'Nouvelle facture' }}
+                {{ wizardService.metadata().type === 'CREDIT_NOTE' ? loc_ui_tern_nouvelle_facture_d_avoir_7736b6 : loc_ui_tern_nouvelle_facture_cdf7e0 }}
               </h1>
               <p class="wizard-subtitle">
                 {{ getCurrentStepDescription() }}
@@ -95,19 +96,19 @@ import { LayoutRouteService } from '@core/layout/layout-route.service';
 
           <div class="wizard-actions-header">
             @if (wizardService.isDirty() && !wizardService.isSaving()) {
-              <span class="unsaved-indicator">
+              <span class="unsaved-indicator" i18n="@@invoices.invoice-wizard.non.enregistre.e830b5ce">
                 <i class="pi pi-circle-fill"></i>
                 Non enregistré
               </span>
             }
             @if (wizardService.isSaving()) {
-              <span class="saving-indicator">
+              <span class="saving-indicator" i18n="@@invoices.invoice-wizard.enregistrement.32f31357">
                 <i class="pi pi-spin pi-spinner"></i>
                 Enregistrement...
               </span>
             }
             @if (wizardService.wizardState().lastSaved) {
-              <span class="saved-indicator">
+              <span class="saved-indicator" i18n="@@invoices.invoice-wizard.progression.sauvegardee.a.6bdd2d71">
                 <i class="pi pi-check"></i>
                 Progression sauvegardée à {{ wizardService.wizardState().lastSaved | date:'HH:mm' }}
               </span>
@@ -126,7 +127,7 @@ import { LayoutRouteService } from '@core/layout/layout-route.service';
       </header>
 
       <!-- Stepper -->
-      <nav class="wizard-stepper" role="tablist" aria-label="Étapes de création de facture">
+      <nav class="wizard-stepper" role="tablist" aria-label="Étapes de création de facture" i18n-aria-label="@@invoices.invoice-wizard.etapes.de.creation.de.facture.ab0ac46e">
         @for (step of wizardService.steps(); track step.key) {
           <button
             #stepItem
@@ -198,7 +199,7 @@ import { LayoutRouteService } from '@core/layout/layout-route.service';
         <div class="wizard-footer-content">
           <div class="footer-left">
             <p-button
-              label="Annuler"
+              label="Annuler" i18n-label="@@invoices.invoice-wizard.annuler.49ba3292"
               [text]="true"
               severity="secondary"
               icon="pi pi-times"
@@ -209,7 +210,7 @@ import { LayoutRouteService } from '@core/layout/layout-route.service';
           <div class="footer-right">
             @if (wizardService.canGoPrev()) {
               <p-button
-                label="Précédent"
+                label="Précédent" i18n-label="@@invoices.invoice-wizard.precedent.a527f171"
                 [outlined]="true"
                 icon="pi pi-arrow-left"
                 (click)="onPrevious()">
@@ -218,7 +219,7 @@ import { LayoutRouteService } from '@core/layout/layout-route.service';
 
             @if (!wizardService.isLastStep()) {
               <p-button
-                label="Suivant"
+                label="Suivant" i18n-label="@@invoices.invoice-wizard.suivant.596d29a7"
                 icon="pi pi-arrow-right"
                 iconPos="right"
                 [disabled]="!wizardService.canGoNext()"
@@ -449,7 +450,7 @@ import { LayoutRouteService } from '@core/layout/layout-route.service';
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      text-align: left;
+      text-align: start;
     }
 
     .step-label {
@@ -565,6 +566,8 @@ import { LayoutRouteService } from '@core/layout/layout-route.service';
   `]
 })
 export class InvoiceWizardComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_nouvelle_facture_d_avoir_7736b6 = $localize`:@@ui.tern.nouvelle.facture.d.avoir.7736b6:Nouvelle facture d'avoir`;
+  readonly loc_ui_tern_nouvelle_facture_cdf7e0 = $localize`:@@ui.tern.nouvelle.facture.cdf7e0:Nouvelle facture`;
   @ViewChildren('stepItem', { read: ElementRef }) stepButtons!: QueryList<ElementRef>;
 
   readonly wizardService = inject(InvoiceWizardService);
@@ -611,9 +614,9 @@ export class InvoiceWizardComponent implements OnInit, OnDestroy {
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const isCreditNote = this.wizardService.metadata().type === 'CREDIT_NOTE';
     return [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Factures', route: '/invoices' },
-      { label: isCreditNote ? "Facture d'avoir" : 'Nouvelle facture' }
+      { label: $localize`:@@invoices.invoice-wizard.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@invoices.invoice-wizard.ts.factures.da35e4f2:Factures`, route: '/invoices' },
+      { label: isCreditNote ? $localize`:@@ui.tern.facture.d.avoir.541e44:Facture d'avoir` : $localize`:@@ui.tern.nouvelle.facture.cdf7e0:Nouvelle facture` }
     ];
   });
 
@@ -636,8 +639,8 @@ export class InvoiceWizardComponent implements OnInit, OnDestroy {
             console.error('[InvoiceWizard] Failed to init credit note:', err);
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
-              detail: 'Impossible de charger la facture. Retour à la liste.',
+              summary: $localize`:@@invoice-wizard.component.summary.Erreur:Erreur`,
+              detail: $localize`:@@invoice-wizard.component.detail.Impossible d:Impossible de charger la facture. Retour à la liste.`,
               life: 5000
             });
             this.router.navigate(['/invoices']);
@@ -652,8 +655,8 @@ export class InvoiceWizardComponent implements OnInit, OnDestroy {
             console.error('[InvoiceWizard] Failed to load draft:', err);
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
-              detail: 'Impossible de charger le brouillon.',
+              summary: $localize`:@@invoice-wizard.component.summary.Erreur:Erreur`,
+              detail: $localize`:@@invoice-wizard.component.detail.Impossible_de_ch:Impossible de charger le brouillon.`,
               life: 5000
             });
             this.router.navigate(['/invoices/new']);
@@ -698,15 +701,15 @@ export class InvoiceWizardComponent implements OnInit, OnDestroy {
           if (isDeliveryNote) {
             this.toastService.add({
               severity: 'warn',
-              summary: 'Import depuis un bon de livraison',
-              detail: 'Vérifiez la TVA, le numéro de facture et les montants avant validation.',
+              summary: $localize`:@@invoice-wizard.component.summary.Import_depuis_un:Import depuis un bon de livraison`,
+              detail: $localize`:@@invoice-wizard.component.detail.V_rifiez_la_TVA_:Vérifiez la TVA, le numéro de facture et les montants avant validation.`,
               life: 9000
             });
           } else if ((imported.warnings?.length ?? 0) > 0 || imported.confidence !== 'high') {
             this.toastService.add({
               severity: 'info',
-              summary: 'Facture pré-remplie par l\'IA',
-              detail: 'Vérifiez attentivement les montants, le client et les lignes avant de valider.',
+              summary: $localize`:@@invoice-wizard.component.summary.Facture_pr_remp:Facture pré-remplie par l'IA`,
+              detail: $localize`:@@invoice-wizard.component.detail.V_rifiez_attenti:Vérifiez attentivement les montants, le client et les lignes avant de valider.`,
               life: 7000
             });
           }
@@ -753,7 +756,7 @@ export class InvoiceWizardComponent implements OnInit, OnDestroy {
   getCurrentStepDescription(): string {
     const steps = this.wizardService.steps();
     const step = steps[this.wizardService.currentStep()];
-    return step ? `Étape ${step.index + 1} sur ${steps.length} - ${step.description}` : '';
+    return step ? $localize`:@@ui.tern.etape.ph.sur.ph.ph.d374ec:Étape ${step.index + 1}:p0: sur ${steps.length}:p1: - ${step.description}:p2:` : '';
   }
 
   onStepClick(step: WizardStep): void {
@@ -789,8 +792,8 @@ export class InvoiceWizardComponent implements OnInit, OnDestroy {
           const quotaCheck = validation.checks.find(c => c.id === 'invoice-quota' && c.status === 'ERROR');
           this.toastService.add({
             severity: 'error',
-            summary: quotaCheck ? 'Quota atteint' : 'Validation échouée',
-            detail: quotaCheck?.description ?? `${validation.errorCount} erreur(s) bloquante(s) détectée(s)`,
+            summary: quotaCheck ? $localize`:@@ui.tern.quota.atteint.a204f9:Quota atteint` : $localize`:@@ui.tern.validation.echouee.250442:Validation échouée`,
+            detail: quotaCheck?.description ?? $localize`:@@ui.tern.ph.erreur.s.bloquante.s.detectee.s.5be851:${validation.errorCount}:p0: erreur(s) bloquante(s) détectée(s)`,
             life: 5000
           });
           return;
@@ -799,12 +802,12 @@ export class InvoiceWizardComponent implements OnInit, OnDestroy {
         const isCreditNote = this.wizardService.metadata().type === 'CREDIT_NOTE';
         this.confirmationService.confirm({
           message: isCreditNote
-            ? "Une fois validée, cette facture d'avoir ne pourra plus être modifiée. Confirmer l'émission ?"
-            : 'Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l\'émission ?',
-          header: 'Confirmer l\'émission',
+            ? $localize`:@@ui.tern.avoir.confirm.emission:Une fois validée, cette facture d'avoir ne pourra plus être modifiée. Confirmer l'émission ?`
+            : $localize`:@@ui.tern.une.fois.validee.cette.facture.ne.pourra.p.acdbf6:Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l'émission ?`,
+          header: $localize`:@@invoices.invoice-wizard.ts.confirmer.l.emission.15b190af:Confirmer l'émission`,
           icon: 'pi pi-exclamation-triangle',
-          acceptLabel: isCreditNote ? "Émettre l'avoir" : 'Émettre la facture',
-          rejectLabel: 'Annuler',
+          acceptLabel: isCreditNote ? $localize`:@@ui.tern.emettre.l.avoir.4155eb:Émettre l'avoir` : $localize`:@@ui.tern.emettre.la.facture.9ba0dd:Émettre la facture`,
+          rejectLabel: $localize`:@@invoice-wizard.component.rejectLabel.Annuler:Annuler`,
           acceptButtonStyleClass: 'btn-success',
           accept: () => {
             this.submitInvoice();
@@ -821,10 +824,10 @@ export class InvoiceWizardComponent implements OnInit, OnDestroy {
           const isCreditNote = this.wizardService.metadata().type === 'CREDIT_NOTE';
           this.toastService.add({
             severity: 'success',
-            summary: isCreditNote ? "Avoir émis" : 'Facture émise',
+            summary: isCreditNote ? $localize`:@@ui.tern.avoir.emis.254612:Avoir émis` : $localize`:@@ui.tern.facture.emise.dec16f:Facture émise`,
             detail: isCreditNote
-              ? "La facture d'avoir a été créée et validée avec succès"
-              : 'La facture a été créée et validée avec succès',
+              ? $localize`:@@ui.tern.la.facture.d.avoir.a.ete.creee.et.validee..a5e639:La facture d'avoir a été créée et validée avec succès`
+              : $localize`:@@ui.tern.la.facture.a.ete.creee.et.validee.avec.suc.d91f26:La facture a été créée et validée avec succès`,
             life: 3000
           });
           
@@ -834,11 +837,11 @@ export class InvoiceWizardComponent implements OnInit, OnDestroy {
         error: (error) => {
           // The error message is already stored in the service state and displayed in the preview component
           // We still show a toast for immediate feedback, but the detailed error is in the preview
-          const errorMessage = error.message || this.wizardService.submissionError() || "Impossible d'émettre la facture";
+          const errorMessage = error.message || this.wizardService.submissionError() || $localize`:@@invoices.invoice-wizard.ts.impossible.d.emettre.la.facture.973e03c0:Impossible d'émettre la facture`;
           
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@invoice-wizard.component.summary.Erreur:Erreur`,
             detail: errorMessage,
             life: 5000
           });
@@ -849,11 +852,11 @@ export class InvoiceWizardComponent implements OnInit, OnDestroy {
   onCancel(): void {
     if (this.wizardService.isDirty()) {
       this.confirmationService.confirm({
-        message: 'Vous avez des modifications non enregistrées. Voulez-vous quitter sans sauvegarder ?',
-        header: 'Quitter le wizard',
+        message: $localize`:@@invoices.invoice-wizard.ts.vous.avez.des.modifications.non.enregist.409fb864:Vous avez des modifications non enregistrées. Voulez-vous quitter sans sauvegarder ?`,
+        header: $localize`:@@invoices.invoice-wizard.ts.quitter.le.wizard.74fe7dc7:Quitter le wizard`,
         icon: 'pi pi-exclamation-triangle',
-        acceptLabel: 'Quitter',
-        rejectLabel: 'Rester',
+        acceptLabel: $localize`:@@invoice-wizard.component.acceptLabel.Quitter:Quitter`,
+        rejectLabel: $localize`:@@invoice-wizard.component.rejectLabel.Rester:Rester`,
         acceptButtonStyleClass: 'btn-danger',
         accept: () => {
           this.router.navigate(['/invoices']);

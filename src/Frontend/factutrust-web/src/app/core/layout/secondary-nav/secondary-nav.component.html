@@ -2,7 +2,8 @@
   class="secondary-nav"
   [class.secondary-nav--firm-delegated]="isFirmDelegatedSkin()"
   role="navigation"
-  aria-label="Modules métier">
+  aria-label="Modules métier"
+  i18n-aria-label="@@core.secondaryNav.ariaLabel">
   <ul class="secondary-nav__list">
     @for (section of sections(); track section.label) {
       <li
@@ -64,14 +65,14 @@
                       @if (child.icon) {
                         <i class="secondary-nav__icon" [ngClass]="child.icon" aria-hidden="true"></i>
                       }
-                      <span class="secondary-nav__submenu-label">{{ child.label }}</span>
+                      <span class="secondary-nav__submenu-label">{{ childDisplayLabel(child) }}</span>
                       <i class="fa-solid fa-chevron-right secondary-nav__submenu-chevron" aria-hidden="true"></i>
                     </button>
                     <div
                       class="secondary-nav__submenu-panel"
                       [id]="submenuId(child)"
                       role="menu"
-                      [attr.aria-label]="child.label"
+                      [attr.aria-label]="childDisplayLabel(child)"
                       [attr.aria-hidden]="!isSubmenuOpen(child)">
                       <a
                         role="menuitem"
@@ -83,7 +84,7 @@
                         @if (child.icon) {
                           <i class="secondary-nav__icon" [ngClass]="child.icon" aria-hidden="true"></i>
                         }
-                        <span>Tous les états</span>
+                        <span i18n="@@core.secondaryNav.allStates">Tous les états</span>
                       </a>
                       @for (grand of child.children; track grand.route ?? grand.label) {
                         <a
@@ -96,7 +97,7 @@
                           @if (grand.icon) {
                             <i class="secondary-nav__icon" [ngClass]="grand.icon" aria-hidden="true"></i>
                           }
-                          <span>{{ grand.label }}</span>
+                          <span>{{ childDisplayLabel(grand) }}</span>
                         </a>
                       }
                     </div>
@@ -112,7 +113,7 @@
                     @if (child.icon) {
                       <i class="secondary-nav__icon" [ngClass]="child.icon" aria-hidden="true"></i>
                     }
-                    <span>{{ child.label }}</span>
+                    <span>{{ childDisplayLabel(child) }}</span>
                   </a>
                 }
               }

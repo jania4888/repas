@@ -59,13 +59,13 @@ export function passwordPolicyMissingRules(password: string | null | undefined):
   const p = password ?? '';
   const criteria = passwordCriteria(p);
   const missing: string[] = [];
-  if (!criteria.minLength) missing.push(`${AUTH_PASSWORD_MIN_LENGTH} caractères minimum`);
-  if (!criteria.hasUpper) missing.push('une majuscule');
-  if (!criteria.hasLower) missing.push('une minuscule');
-  if (!criteria.hasDigit) missing.push('un chiffre');
-  if (!criteria.hasSpecial) missing.push('un caractère spécial');
+  if (!criteria.minLength) missing.push($localize`:@@auth.auth-password.helpers.ts.auth.password.min.length.caracteres.mini.a9533917:${AUTH_PASSWORD_MIN_LENGTH}:AUTH_PASSWORD_MIN_LENGTH: caractères minimum`);
+  if (!criteria.hasUpper) missing.push($localize`:@@auth.auth-password.helpers.ts.une.majuscule.707c869a:une majuscule`);
+  if (!criteria.hasLower) missing.push($localize`:@@auth.auth-password.helpers.ts.une.minuscule.39f40740:une minuscule`);
+  if (!criteria.hasDigit) missing.push($localize`:@@auth.auth-password.helpers.ts.un.chiffre.feda3574:un chiffre`);
+  if (!criteria.hasSpecial) missing.push($localize`:@@auth.auth-password.helpers.ts.un.caractere.special.3cddad47:un caractère spécial`);
   if (new Set(p.split('')).size < AUTH_PASSWORD_MIN_UNIQUE_CHARS) {
-    missing.push(`${AUTH_PASSWORD_MIN_UNIQUE_CHARS} caractères différents`);
+    missing.push($localize`:@@auth.auth-password.helpers.ts.auth.password.min.unique.chars.caractere.f8e71249:${AUTH_PASSWORD_MIN_UNIQUE_CHARS}:AUTH_PASSWORD_MIN_UNIQUE_CHARS: caractères différents`);
   }
   return missing;
 }
@@ -86,10 +86,10 @@ export function optionalAuthPasswordValidator(): ValidatorFn {
 export function passwordStrengthLabel(level: PasswordStrengthLevel): string {
   switch (level) {
     case 'empty': return '';
-    case 'weak': return 'Force du mot de passe : faible';
-    case 'fair': return 'Force du mot de passe : moyenne';
-    case 'good': return 'Force du mot de passe : bonne';
-    case 'strong': return 'Force du mot de passe : forte';
+    case 'weak': return $localize`:@@auth.auth-password.helpers.ts.force.du.mot.de.passe.faible.ef369fa3:Force du mot de passe : faible`;
+    case 'fair': return $localize`:@@auth.auth-password.helpers.ts.force.du.mot.de.passe.moyenne.c8d67cee:Force du mot de passe : moyenne`;
+    case 'good': return $localize`:@@auth.auth-password.helpers.ts.force.du.mot.de.passe.bonne.1bc2e600:Force du mot de passe : bonne`;
+    case 'strong': return $localize`:@@auth.auth-password.helpers.ts.force.du.mot.de.passe.forte.0ea699a1:Force du mot de passe : forte`;
     default: return '';
   }
 }

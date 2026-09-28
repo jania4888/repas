@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
@@ -25,6 +26,7 @@ import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { applyClientListFiltersFromQuery } from '@core/utils/list-filter-from-query';
 import { take } from 'rxjs/operators';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 interface TypeOption {
   label: string;
@@ -40,6 +42,7 @@ interface StatusOption {
   selector: 'app-client-list',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -62,28 +65,26 @@ interface StatusOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Clients" 
-      subtitle="Gérez vos clients et facturez plus vite.">
+      title="Clients" i18n-title="@@clients.client-list.clients.28e22fe3" 
+      subtitle="Gérez vos clients et facturez plus vite." i18n-subtitle="@@clients.client-list.gerez.vos.clients.et.facturez.plus.vite.fb45edba">
       @if (canCreateClient()) {
         <app-button 
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new">
-          Ajouter un client pour facturer plus vite
-        </app-button>
+          routerLink="new" i18n="@@clients.client-list.ajouter.un.client.pour.facturer.plus.vite.74cf9d67"> Ajouter un client pour facturer plus vite </app-button>
       }
     </app-page-header>
 
     <!-- Filters -->
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@clients.client-list.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@clients.client-list.reinitialiser.les.filtres.d8915f02" i18n="@@clients.client-list.reinitialiser.9637f51e">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -95,7 +96,7 @@ interface StatusOption {
           <input 
             pInputText 
             type="text" 
-            placeholder="Rechercher par nom, email ou NIF…" 
+            placeholder="Rechercher par nom, email ou NIF…" i18n-placeholder="@@clients.client-list.rechercher.par.nom.email.ou.nif.e25e488c" 
             [(ngModel)]="searchTerm"
             (input)="onSearchInput($event)"
             class="w-full">
@@ -106,7 +107,7 @@ interface StatusOption {
           [(ngModel)]="selectedType"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les types"
+          placeholder="Tous les types" i18n-placeholder="@@clients.client-list.tous.les.types.5a6be24d"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -116,7 +117,7 @@ interface StatusOption {
           [(ngModel)]="selectedStatus"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@clients.client-list.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -141,7 +142,7 @@ interface StatusOption {
           [rows]="pageSize"
           [totalRecords]="totalRecords()"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} clients"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} clients" i18n-currentPageReportTemplate="@@clients.client-list.affichage.de.first.a.last.sur.totalrecords.clien.a4c2b3ad"
           (onLazyLoad)="onPageChange($event)"
           [loading]="loading()"
           [first]="(page - 1) * pageSize"
@@ -150,15 +151,15 @@ interface StatusOption {
         
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="code" style="width: 100px">Code <p-sortIcon field="code"></p-sortIcon></th>
-            <th pSortableColumn="name">Nom <p-sortIcon field="name"></p-sortIcon></th>
-            <th>Contact</th>
-            <th>NIF</th>
-            <th>Type</th>
-            <th>Localisation</th>
-            <th pSortableColumn="totalInvoices" style="width: 100px">Factures <p-sortIcon field="totalInvoices"></p-sortIcon></th>
-            <th style="width: 80px">Statut</th>
-            <th style="width: 120px">Actions</th>
+            <th pSortableColumn="code" style="width: 100px"><ng-container i18n="@@clients.client-list.code.adac6937">Code </ng-container> <p-sortIcon field="code"></p-sortIcon></th>
+            <th pSortableColumn="name"><ng-container i18n="@@clients.client-list.nom.7ff20370">Nom </ng-container> <p-sortIcon field="name"></p-sortIcon></th>
+            <th i18n="@@clients.client-list.contact.b37456c4">Contact</th>
+            <th i18n="@@clients.client-list.nif.77124a3a">NIF</th>
+            <th i18n="@@clients.client-list.type.3deb7456">Type</th>
+            <th i18n="@@clients.client-list.localisation.84e3d483">Localisation</th>
+            <th pSortableColumn="totalInvoices" style="width: 100px"><ng-container i18n="@@clients.client-list.factures.da35e4f2">Factures </ng-container> <p-sortIcon field="totalInvoices"></p-sortIcon></th>
+            <th style="width: 80px" i18n="@@clients.client-list.statut.659499f3">Statut</th>
+            <th style="width: 120px" i18n="@@clients.client-list.actions.c3cd636a">Actions</th>
           </tr>
         </ng-template>
 
@@ -179,7 +180,7 @@ interface StatusOption {
                 @if (client.email) {
                   <a [href]="'mailto:' + client.email" class="email">{{ client.email }}</a>
                 } @else {
-                  <span class="email">—</span>
+                  <span class="email" i18n="@@clients.client-list.text.1b93795b">—</span>
                 }
                 <span class="phone">{{ client.phone || '-' }}</span>
               </div>
@@ -189,7 +190,7 @@ interface StatusOption {
             </td>
             <td>
               <p-tag 
-                [value]="client.typeDisplay" 
+                [value]="client.typeDisplay | backendLabel" 
                 [severity]="getTypeSeverity(client.type)">
               </p-tag>
             </td>
@@ -201,7 +202,7 @@ interface StatusOption {
             </td>
             <td>
               <p-tag 
-                [value]="client.isActive ? 'Actif' : 'Inactif'" 
+                [value]="client.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033" 
                 [severity]="client.isActive ? 'success' : 'secondary'">
               </p-tag>
             </td>
@@ -213,7 +214,7 @@ interface StatusOption {
                   icon="pi-eye"
                   [iconOnly]="true"
                   [routerLink]="client.id"
-                  ariaLabel="Voir le client">
+                  ariaLabel="Voir le client" i18n-ariaLabel="@@clients.client-list.voir.le.client.fd1e4588">
                 </app-button>
                 @if (canEditClient()) {
                   <app-button 
@@ -222,7 +223,7 @@ interface StatusOption {
                     icon="pi-pencil"
                     [iconOnly]="true"
                     [routerLink]="[client.id, 'edit']"
-                    ariaLabel="Modifier le client">
+                    ariaLabel="Modifier le client" i18n-ariaLabel="@@clients.client-list.modifier.le.client.4eab4088">
                   </app-button>
                 }
                 @if (canDeleteClient()) {
@@ -232,7 +233,7 @@ interface StatusOption {
                     icon="pi-trash"
                     [iconOnly]="true"
                     (click)="confirmDelete(client)"
-                    ariaLabel="Supprimer le client">
+                    ariaLabel="Supprimer le client" i18n-ariaLabel="@@clients.client-list.supprimer.le.client.ecd5c5e1">
                   </app-button>
                 }
               </div>
@@ -245,10 +246,10 @@ interface StatusOption {
             <td colspan="9" class="text-center p-6">
               <app-empty-state
                 illustration="empty-clients.svg"
-                title="Aucun client"
-                description="Ajoutez votre premier client pour créer des devis et des factures en quelques clics."
+                title="Aucun client" i18n-title="@@clients.client-list.aucun.client.667e69de"
+                description="Ajoutez votre premier client pour créer des devis et des factures en quelques clics." i18n-description="@@clients.client-list.ajoutez.votre.premier.client.pour.creer.7fe662ba"
                 [showAction]="canCreateClient()"
-                actionLabel="Ajouter un client pour facturer plus vite"
+                actionLabel="Ajouter un client pour facturer plus vite" i18n-actionLabel="@@clients.client-list.ajouter.un.client.pour.facturer.plus.vit.63aedb21"
                 actionRoute="new">
               </app-empty-state>
             </td>
@@ -313,6 +314,8 @@ interface StatusOption {
   `]
 })
 export class ClientListComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
   private clientService = inject(ClientService);
   private confirmationService = inject(ConfirmationService);
   private toastService = inject(ToastService);
@@ -342,9 +345,9 @@ export class ClientListComponent implements OnInit, OnDestroy {
   summaryMetrics = computed<TotalMetric[]>(() => {
     const s = this.summary();
     return [
-      { label: 'Clients', value: s?.count, format: 'number', icon: 'pi-users', tone: 'primary' },
-      { label: 'Actifs', value: s?.activeCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-      { label: 'Inactifs', value: s?.inactiveCount, format: 'number', icon: 'pi-ban', tone: 'neutral' }
+      { label: $localize`:@@clients.client-list.ts.clients.28e22fe3:Clients`, value: s?.count, format: 'number', icon: 'pi-users', tone: 'primary' },
+      { label: $localize`:@@clients.client-list.ts.actifs.4fc3a980:Actifs`, value: s?.activeCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+      { label: $localize`:@@clients.client-list.ts.inactifs.41c2d03e:Inactifs`, value: s?.inactiveCount, format: 'number', icon: 'pi-ban', tone: 'neutral' }
     ];
   });
 
@@ -355,8 +358,8 @@ export class ClientListComponent implements OnInit, OnDestroy {
   pageSize = 20;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Clients' }
+    { label: $localize`:@@clients.client-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@clients.client-list.ts.clients.28e22fe3:Clients` }
   ];
 
   skeletonColumns: SkeletonColumn[] = [
@@ -372,13 +375,13 @@ export class ClientListComponent implements OnInit, OnDestroy {
   ];
 
   typeOptions: TypeOption[] = [
-    { label: 'Particulier', value: ClientType.Individual },
-    { label: 'Entreprise', value: ClientType.Business }
+    { label: $localize`:@@clients.client-list.ts.particulier.281680dd:Particulier`, value: ClientType.Individual },
+    { label: $localize`:@@clients.client-list.ts.entreprise.d03e74b6:Entreprise`, value: ClientType.Business }
   ];
 
   statusOptions: StatusOption[] = [
-    { label: 'Actifs', value: true },
-    { label: 'Inactifs', value: false }
+    { label: $localize`:@@clients.client-list.ts.actifs.4fc3a980:Actifs`, value: true },
+    { label: $localize`:@@clients.client-list.ts.inactifs.41c2d03e:Inactifs`, value: false }
   ];
 
   ngOnInit(): void {
@@ -463,7 +466,7 @@ export class ClientListComponent implements OnInit, OnDestroy {
         } else {
           // Gérer les erreurs de réponse API
           console.error('[ClientList] API returned success=false:', response.errors);
-          this.handleError(response.errors?.[0] || 'Impossible de charger les clients');
+          this.handleError(response.errors?.[0] || $localize`:@@clients.client-list.ts.impossible.de.charger.les.clients.9a6137e9:Impossible de charger les clients`);
         }
         this.loading.set(false);
         this.initialLoad.set(false);
@@ -475,13 +478,13 @@ export class ClientListComponent implements OnInit, OnDestroy {
         
         // Gérer spécifiquement les erreurs 429 (rate limiting)
         if (error?.status === 429) {
-          this.handleError('Trop de requêtes. Veuillez patienter quelques instants avant de réessayer.');
+          this.handleError($localize`:@@clients.client-list.ts.trop.de.requetes.veuillez.patienter.quel.1b3f5597:Trop de requêtes. Veuillez patienter quelques instants avant de réessayer.`);
           // Ne pas bloquer l'affichage, juste afficher un message
           return;
         }
         
         // Extraire le message d'erreur si disponible
-        const errorMessage = error?.error?.errors?.[0] || error?.error?.message || error?.message || 'Impossible de charger les clients';
+        const errorMessage = error?.error?.errors?.[0] || error?.error?.message || error?.message || $localize`:@@clients.client-list.ts.impossible.de.charger.les.clients.9a6137e9:Impossible de charger les clients`;
         this.handleError(errorMessage);
       }
     });
@@ -498,7 +501,7 @@ export class ClientListComponent implements OnInit, OnDestroy {
     this.toastService.add({
       key: 'client-list-error', // Clé unique pour éviter les doublons
       severity: 'error',
-      summary: 'Erreur',
+      summary: $localize`:@@client-list.component.summary.Erreur:Erreur`,
       detail: message,
       life: 5000, // Durée d'affichage de 5 secondes
       closable: true
@@ -557,11 +560,11 @@ export class ClientListComponent implements OnInit, OnDestroy {
 
   confirmDelete(client: ClientListItem): void {
     this.confirmationService.confirm({
-      message: `Êtes-vous sûr de vouloir supprimer le client "${client.name}" ?`,
-      header: 'Confirmation de suppression',
+      message: $localize`:@@clients.client-list.ts.etes.vous.sur.de.vouloir.supprimer.le.cl.68d22a96:Êtes-vous sûr de vouloir supprimer le client "${client.name}:name:" ?`,
+      header: $localize`:@@clients.client-list.ts.confirmation.de.suppression.6a082d0b:Confirmation de suppression`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@client-list.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@client-list.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.deleteClient(client.id);
@@ -575,15 +578,15 @@ export class ClientListComponent implements OnInit, OnDestroy {
         if (response.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Client supprimé avec succès'
+            summary: $localize`:@@client-list.component.summary.Succès:Succès`,
+            detail: $localize`:@@client-list.component.detail.Client_supprim_:Client supprimé avec succès`
           });
           this.loadClients();
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: response.errors[0] || 'Impossible de supprimer le client'
+            summary: $localize`:@@client-list.component.summary.Erreur:Erreur`,
+            detail: response.errors[0] || $localize`:@@clients.client-list.ts.impossible.de.supprimer.le.client.bd4e32c4:Impossible de supprimer le client`
           });
         }
       },
@@ -591,8 +594,8 @@ export class ClientListComponent implements OnInit, OnDestroy {
         const errorMessage = this.errorHandler.extractErrorMessage(error);
         this.errorHandler.logError('Failed to delete client', error);
         this.confirmationService.alert({
-          message: errorMessage || 'Impossible de supprimer le client',
-          header: 'Impossible de supprimer',
+          message: errorMessage || $localize`:@@clients.client-list.ts.impossible.de.supprimer.le.client.bd4e32c4:Impossible de supprimer le client`,
+          header: $localize`:@@clients.client-list.ts.impossible.de.supprimer.0300380e:Impossible de supprimer`,
           icon: 'pi pi-exclamation-triangle'
         });
       }

@@ -21,7 +21,7 @@ import { AgentSuggestionCategory } from '../../config/agent-scopes.config';
         #tabList
         class="suggestion-catalog-tabs"
         role="tablist"
-        aria-label="Thèmes de questions"
+        aria-label="Thèmes de questions" i18n-aria-label="@@ai-assistant.components.themes.de.questions.5cfda301"
         (keydown)="onKeydown($event)">
         @for (cat of categories(); track cat.id) {
           <button
@@ -47,7 +47,7 @@ import { AgentSuggestionCategory } from '../../config/agent-scopes.config';
           [attr.id]="'sug-panel-' + active.id"
           [attr.aria-labelledby]="'sug-tab-' + active.id">
           @for (q of active.questions; track q) {
-            <button type="button" class="suggestion-chip" (click)="questionSelected.emit(q)">
+            <button type="button" class="suggestion-chip" lang="fr" dir="auto" (click)="questionSelected.emit(q)">
               {{ q }}
             </button>
           }
@@ -65,7 +65,7 @@ import { AgentSuggestionCategory } from '../../config/agent-scopes.config';
 
       .suggestion-catalog {
         width: 100%;
-        text-align: left;
+        text-align: start;
       }
 
       .suggestion-catalog-tabs {
@@ -122,7 +122,7 @@ import { AgentSuggestionCategory } from '../../config/agent-scopes.config';
         border: 1px solid var(--color-neutral-200, #e5e7eb);
         border-radius: 10px;
         background: #fff;
-        text-align: left;
+        text-align: start;
         font-size: 13px;
         color: var(--color-neutral-700, #374151);
         cursor: pointer;

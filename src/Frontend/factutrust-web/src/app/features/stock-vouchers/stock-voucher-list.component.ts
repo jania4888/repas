@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, computed, inject, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
@@ -28,7 +30,7 @@ import {
 @Component({
   selector: 'app-stock-voucher-list',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     FormsModule,
@@ -60,38 +62,38 @@ import {
     <div class="card filters-card">
       <div class="filters-grid" role="search">
         <div class="filter-field">
-          <label class="filter-label" for="voucher-search">Recherche</label>
+          <label class="filter-label" for="voucher-search" i18n="@@stock-vouchers.stock-voucher-list.recherche.787b5492">Recherche</label>
           <input
             id="voucher-search"
             pInputText
             type="text"
             [(ngModel)]="searchTerm"
-            placeholder="Numéro, référence…"
+            placeholder="Numéro, référence…" i18n-placeholder="@@stock-vouchers.stock-voucher-list.numero.reference.201b347e"
             (keyup.enter)="reload()" />
         </div>
         <div class="filter-field">
-          <label class="filter-label" for="filter-status">Statut</label>
+          <label class="filter-label" for="filter-status" i18n="@@stock-vouchers.stock-voucher-list.statut.659499f3">Statut</label>
           <p-select
             inputId="filter-status"
             [options]="statusOptions"
             [(ngModel)]="statusFilter"
             optionLabel="label"
             optionValue="value"
-            placeholder="Tous les statuts"
+            placeholder="Tous les statuts" i18n-placeholder="@@stock-vouchers.stock-voucher-list.tous.les.statuts.2d5088af"
             [showClear]="true"
             [style]="{ width: '100%' }"
             appendTo="body">
           </p-select>
         </div>
         <div class="filter-field">
-          <label class="filter-label" for="filter-warehouse">Dépôt</label>
+          <label class="filter-label" for="filter-warehouse" i18n="@@stock-vouchers.stock-voucher-list.depot.4c1c61c7">Dépôt</label>
           <p-select
             inputId="filter-warehouse"
             [options]="warehouseOptions"
             [(ngModel)]="warehouseFilter"
             optionLabel="label"
             optionValue="value"
-            placeholder="Tous les dépôts"
+            placeholder="Tous les dépôts" i18n-placeholder="@@stock-vouchers.stock-voucher-list.tous.les.depots.7221e7b1"
             [showClear]="true"
             [filter]="warehouseOptions.length > 8"
             filterBy="label"
@@ -100,16 +102,16 @@ import {
           </p-select>
         </div>
         <div class="filter-field">
-          <label class="filter-label" for="filter-from">Du</label>
+          <label class="filter-label" for="filter-from" i18n="@@stock-vouchers.stock-voucher-list.du.84814985">Du</label>
           <input id="filter-from" type="date" class="date-input" [(ngModel)]="fromDate" />
         </div>
         <div class="filter-field">
-          <label class="filter-label" for="filter-to">Au</label>
+          <label class="filter-label" for="filter-to" i18n="@@stock-vouchers.stock-voucher-list.au.7a1732d5">Au</label>
           <input id="filter-to" type="date" class="date-input" [(ngModel)]="toDate" />
         </div>
         <div class="filter-actions">
-          <button pButton type="button" label="Appliquer" icon="pi pi-filter" (click)="reload()"></button>
-          <button pButton type="button" label="Réinitialiser" class="p-button-outlined" (click)="resetFilters()"></button>
+          <button pButton type="button" label="Appliquer" i18n-label="@@stock-vouchers.stock-voucher-list.appliquer.a4d66139" icon="pi pi-filter" (click)="reload()"></button>
+          <button pButton type="button" label="Réinitialiser" i18n-label="@@stock-vouchers.stock-voucher-list.reinitialiser.e0e2ad54" class="p-button-outlined" (click)="resetFilters()"></button>
         </div>
       </div>
     </div>
@@ -126,20 +128,20 @@ import {
         [loading]="loading()"
         [rowHover]="true"
         [showCurrentPageReport]="true"
-        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} bons"
+        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} bons" i18n-currentPageReportTemplate="@@stock-vouchers.stock-voucher-list.affichage.de.first.a.last.sur.totalrecords.bons.7cce8044"
         (onLazyLoad)="onLazyLoad($event)"
         styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Numéro</th>
-            <th>Date</th>
-            <th>Dépôt</th>
-            <th>Motif</th>
-            <th>Lignes</th>
-            <th>Quantité</th>
-            <th>Valorisation</th>
-            <th>Statut</th>
-            <th>Actions</th>
+            <th i18n="@@stock-vouchers.stock-voucher-list.numero.15e73db0">Numéro</th>
+            <th i18n="@@stock-vouchers.stock-voucher-list.date.eb9a4bc1">Date</th>
+            <th i18n="@@stock-vouchers.stock-voucher-list.depot.4c1c61c7">Dépôt</th>
+            <th i18n="@@stock-vouchers.stock-voucher-list.motif.2a198f47">Motif</th>
+            <th i18n="@@stock-vouchers.stock-voucher-list.lignes.41c7025e">Lignes</th>
+            <th i18n="@@stock-vouchers.stock-voucher-list.quantite.09a38fda">Quantité</th>
+            <th i18n="@@stock-vouchers.stock-voucher-list.valorisation.61fcd7cd">Valorisation</th>
+            <th i18n="@@stock-vouchers.stock-voucher-list.statut.659499f3">Statut</th>
+            <th i18n="@@stock-vouchers.stock-voucher-list.actions.c3cd636a">Actions</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row>
@@ -149,15 +151,15 @@ import {
             </td>
             <td>{{ row.voucherDate | date:'dd/MM/yyyy' }}</td>
             <td>{{ row.warehouseName || '—' }}</td>
-            <td>{{ row.reasonDisplay }}</td>
+            <td>{{ row.reasonDisplay | backendLabel }}</td>
             <td>{{ row.lineCount }}</td>
             <td>{{ row.totalQuantity | number:'1.0-3' }}</td>
             <td>{{ row.totalValue | currency:'TND':'symbol':'1.3-3' }}</td>
             <td>
-              <span class="status-badge" [ngClass]="row.statusCss">{{ row.statusDisplay }}</span>
+              <span class="status-badge" [ngClass]="row.statusCss">{{ row.statusDisplay | backendLabel }}</span>
             </td>
             <td>
-              <a [routerLink]="[row.id]" class="btn-icon" [attr.aria-label]="'Voir ' + row.number">
+              <a [routerLink]="[row.id]" class="btn-icon" [attr.aria-label]="loc_ui_tern_voir_ab3de7 + row.number">
                 <i class="fas fa-eye" aria-hidden="true"></i>
               </a>
             </td>
@@ -199,6 +201,7 @@ import {
   `]
 })
 export class StockVoucherListComponent implements OnInit {
+  readonly loc_ui_tern_voir_ab3de7 = $localize`:@@ui.tern.voir.ab3de7:Voir `;
   private voucherService = inject(StockVoucherService);
   private stockService = inject(StockService);
   private route = inject(ActivatedRoute);
@@ -208,20 +211,20 @@ export class StockVoucherListComponent implements OnInit {
 
   readonly isEntry = (this.route.snapshot.data['kind'] as StockVoucherKindName) !== 'Issue';
   readonly kind: StockVoucherKindName = this.isEntry ? 'Entry' : 'Issue';
-  readonly title = this.isEntry ? "Bons d'entrée" : 'Bons de sortie';
+  readonly title = this.isEntry ? $localize`:@@ui.tern.bons.d.entree.c04705:Bons d'entrée` : $localize`:@@ui.tern.bons.de.sortie.ccd59b:Bons de sortie`;
   readonly subtitle = this.isEntry
-    ? 'Documents d’entrée de stock (stock initial, retours hors BRT, achats hors réception).'
-    : 'Documents de sortie de stock (casse, usage interne, dons, retours hors flux achat).';
-  readonly createLabel = this.isEntry ? 'Nouveau bon d’entrée' : 'Nouveau bon de sortie';
+    ? $localize`:@@ui.tern.documents.d.entree.de.stock.stock.initial..1b12ca:Documents d’entrée de stock (stock initial, retours hors BRT, achats hors réception).`
+    : $localize`:@@ui.tern.documents.de.sortie.de.stock.casse.usage.i.718eff:Documents de sortie de stock (casse, usage interne, dons, retours hors flux achat).`;
+  readonly createLabel = this.isEntry ? $localize`:@@ui.tern.nouveau.bon.d.entree.4b0d6e:Nouveau bon d’entrée` : $localize`:@@ui.tern.nouveau.bon.de.sortie.39e890:Nouveau bon de sortie`;
   readonly newRoute = this.isEntry ? '/stock/entries/new' : '/stock/issues/new';
-  readonly emptyTitle = this.isEntry ? "Aucun bon d'entrée" : 'Aucun bon de sortie';
+  readonly emptyTitle = this.isEntry ? $localize`:@@ui.tern.aucun.bon.d.entree.adae22:Aucun bon d'entrée` : $localize`:@@ui.tern.aucun.bon.de.sortie.1cf680:Aucun bon de sortie`;
   readonly emptyHint = this.isEntry
-    ? 'Pour un achat fournisseur, utilisez Achats > Bons de réception.'
-    : 'Les ventes et livraisons sortent le stock via la facture ou le bon de livraison.';
+    ? $localize`:@@ui.tern.pour.un.achat.fournisseur.utilisez.achats..08c2cf:Pour un achat fournisseur, utilisez Achats > Bons de réception.`
+    : $localize`:@@ui.tern.les.ventes.et.livraisons.sortent.le.stock..41667a:Les ventes et livraisons sortent le stock via la facture ou le bon de livraison.`;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Stock', route: '/stock' },
+    { label: $localize`:@@stock-vouchers.stock-voucher-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@stock-vouchers.stock-voucher-list.ts.stock.bcecf456:Stock`, route: '/stock' },
     { label: this.title }
   ];
 
@@ -236,10 +239,10 @@ export class StockVoucherListComponent implements OnInit {
   summaryMetrics = computed<TotalMetric[]>(() => {
     const s = this.summary();
     return [
-      { label: 'Bons', value: s?.count ?? 0, format: 'number', icon: 'pi-box', tone: 'primary' },
-      { label: 'Brouillons', value: s?.draftCount ?? 0, format: 'number', icon: 'pi-pencil', tone: 'cyan' },
-      { label: 'Validés', value: s?.validatedCount ?? 0, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-      { label: 'Valorisation', value: s?.totalValue ?? 0, format: 'currency', icon: 'pi-wallet', tone: 'primary' }
+      { label: $localize`:@@stock-vouchers.stock-voucher-list.ts.bons.050c19c5:Bons`, value: s?.count ?? 0, format: 'number', icon: 'pi-box', tone: 'primary' },
+      { label: $localize`:@@stock-vouchers.stock-voucher-list.ts.brouillons.a55f3cd9:Brouillons`, value: s?.draftCount ?? 0, format: 'number', icon: 'pi-pencil', tone: 'cyan' },
+      { label: $localize`:@@stock-vouchers.stock-voucher-list.ts.valides.f9664fcf:Validés`, value: s?.validatedCount ?? 0, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+      { label: $localize`:@@stock-vouchers.stock-voucher-list.ts.valorisation.61fcd7cd:Valorisation`, value: s?.totalValue ?? 0, format: 'currency', icon: 'pi-wallet', tone: 'primary' }
     ];
   });
 
@@ -253,9 +256,9 @@ export class StockVoucherListComponent implements OnInit {
   warehouseOptions: { label: string; value: string }[] = [];
 
   readonly statusOptions: { label: string; value: StockVoucherStatusName }[] = [
-    { label: 'Brouillon', value: 'Draft' },
-    { label: 'Validé', value: 'Validated' },
-    { label: 'Annulé', value: 'Cancelled' }
+    { label: $localize`:@@stock-vouchers.list.filter.brouillon:Brouillon`, value: 'Draft' },
+    { label: $localize`:@@stock-vouchers.list.filter.valide:Validé`, value: 'Validated' },
+    { label: $localize`:@@stock-vouchers.list.filter.annule:Annulé`, value: 'Cancelled' }
   ];
 
   ngOnInit(): void {
@@ -313,7 +316,7 @@ export class StockVoucherListComponent implements OnInit {
         },
         error: () => {
           this.loading.set(false);
-          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Impossible de charger les bons' });
+          this.messageService.add({ severity: 'error', summary: $localize`:@@stock-voucher-list.component.summary.Erreur:Erreur`, detail: $localize`:@@stock-voucher-list.component.detail.Impossible_de_ch:Impossible de charger les bons` });
         }
       });
   }

@@ -20,70 +20,70 @@ export interface QuickAccessItem {
 
 export const QUICK_ACCESS_ITEMS: QuickAccessItem[] = [
   {
-    label: 'Ajouter une facture de vente',
+    label: $localize`:@@core.quick-access.ts.ajouter.une.facture.de.vente.392b670d:Ajouter une facture de vente`,
     icon: 'fa-solid fa-file-invoice',
     route: '/invoices/new',
     permission: PERMISSIONS.invoices.create,
     section: 'create'
   },
   {
-    label: 'Ajouter un avoir de vente',
+    label: $localize`:@@core.quick-access.ts.ajouter.un.avoir.de.vente.aff07d23:Ajouter un avoir de vente`,
     icon: 'fa-solid fa-receipt',
     route: '/invoices/credit-note/new',
     permission: PERMISSIONS.invoices.create,
     section: 'create'
   },
   {
-    label: 'Mes clients',
+    label: $localize`:@@core.quick-access.ts.mes.clients.5d1deb5c:Mes clients`,
     icon: 'fa-solid fa-users',
     route: '/clients',
     permission: PERMISSIONS.clients.read,
     section: 'navigation'
   },
   {
-    label: 'Rapports',
+    label: $localize`:@@core.quick-access.ts.rapports.db7d9fbb:Rapports`,
     icon: 'fa-solid fa-chart-column',
     route: '/reports',
     permission: PERMISSIONS.reports.view,
     section: 'navigation'
   },
   {
-    label: 'Ajouter un devis',
+    label: $localize`:@@core.quick-access.ts.ajouter.un.devis.69fbfe79:Ajouter un devis`,
     icon: 'fa-solid fa-file-lines',
     route: '/quotes/new',
     permission: PERMISSIONS.quotes.create,
     section: 'create'
   },
   {
-    label: 'Ajouter un bon de livraison',
+    label: $localize`:@@core.quick-access.ts.ajouter.un.bon.de.livraison.f422f509:Ajouter un bon de livraison`,
     icon: 'fa-solid fa-truck',
     route: '/delivery-notes/new',
     permission: PERMISSIONS.deliveryNotes.create,
     section: 'create'
   },
   {
-    label: 'Ajouter un bon de retour',
+    label: $localize`:@@core.quick-access.ts.ajouter.un.bon.de.retour.7dba2f41:Ajouter un bon de retour`,
     icon: 'fa-solid fa-rotate-left',
     route: '/return-notes/new',
     permission: PERMISSIONS.returnNotes.create,
     section: 'create'
   },
   {
-    label: "Ajouter un bon d'entrée",
+    label: $localize`:@@core.quick-access.ts.ajouter.un.bon.d.entree.6c3ae8b1:Ajouter un bon d'entrée`,
     icon: 'fa-solid fa-arrow-down',
     route: '/stock/entries/new',
     permission: PERMISSIONS.stockVouchers.create,
     section: 'create'
   },
   {
-    label: 'Ajouter un bon de sortie',
+    label: $localize`:@@core.quick-access.ts.ajouter.un.bon.de.sortie.d73c4edf:Ajouter un bon de sortie`,
     icon: 'fa-solid fa-arrow-up',
     route: '/stock/issues/new',
     permission: PERMISSIONS.stockVouchers.create,
     section: 'create'
   },
   {
-    label: 'Paiements',
+    label: $localize`:@@core.quick-access.ts.paiements.97ecc646:Paiements`,
     icon: 'fa-solid fa-credit-card',
     route: '/payments',
     permission: PERMISSIONS.payments.read,

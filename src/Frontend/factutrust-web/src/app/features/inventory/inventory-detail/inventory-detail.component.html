@@ -5,24 +5,20 @@
     <div class="not-found-icon">
       <i class="pi pi-search" aria-hidden="true"></i>
     </div>
-    <h2>Inventaire introuvable</h2>
-    <p>L'inventaire demandé n'existe pas ou vous n'avez pas les droits pour le consulter.</p>
-    <app-button variant="primary" icon="pi-arrow-left" iconPos="left" (click)="goToList()" ariaLabel="Retour à la liste des inventaires">
-      Retour à la liste
-    </app-button>
+    <h2 i18n="@@inventory.inventory-detail.inventaire.introuvable.58ba8c22">Inventaire introuvable</h2>
+    <p i18n="@@inventory.inventory-detail.l.inventaire.demande.n.existe.pas.ou.vous.n.avez.02e353aa">L'inventaire demandé n'existe pas ou vous n'avez pas les droits pour le consulter.</p>
+    <app-button variant="primary" icon="pi-arrow-left" iconPos="left" (click)="goToList()" ariaLabel="Retour à la liste des inventaires" i18n-ariaLabel="@@inventory.inventory-detail.retour.a.la.liste.des.inventaires.9efba5fd" i18n="@@inventory.inventory-detail.retour.a.la.liste.7753f531"> Retour à la liste </app-button>
   </div>
 } @else {
   <app-page-header
-    [title]="inventory()?.reference ?? 'Chargement...'"
-    [subtitle]="inventory() ? 'Inventaire du ' + formatDate(inventory()?.startedAt ?? null) : ''">
+    [title]="inventory()?.reference ?? loc_chargement_a209b6"
+    [subtitle]="inventory() ? loc_inventaire_du_startedat_bd168f(formatDate(inventory()?.startedAt ?? null)) : ''">
     <app-button
       variant="outline"
       icon="pi-arrow-left"
       iconPos="left"
       routerLink="/inventory"
-      ariaLabel="Retour à la liste des inventaires">
-      Retour
-    </app-button>
+      ariaLabel="Retour à la liste des inventaires" i18n-ariaLabel="@@inventory.inventory-detail.retour.a.la.liste.des.inventaires.9efba5fd" i18n="@@inventory.inventory-detail.retour.e5befb1f"> Retour </app-button>
     @if (inventory()?.status === 1) {
       <app-button
         variant="primary"
@@ -30,9 +26,7 @@
         iconPos="left"
         routerLink="/inventory/new"
         [queryParams]="{ warehouseId: inventory()?.warehouseId }"
-        ariaLabel="Continuer le comptage de cet inventaire">
-        Continuer l'inventaire
-      </app-button>
+        ariaLabel="Continuer le comptage de cet inventaire" i18n-ariaLabel="@@inventory.inventory-detail.continuer.le.comptage.de.cet.inventaire.065e6eea" i18n="@@inventory.inventory-detail.continuer.l.inventaire.9964ec39"> Continuer l'inventaire </app-button>
     }
   </app-page-header>
 
@@ -64,13 +58,13 @@
       <div class="main-content inventory-detail-cards">
 
         <!-- KPI Stats Row -->
-        <div class="stats-row" role="region" aria-label="Statistiques de l'inventaire">
+        <div class="stats-row" role="region" aria-label="Statistiques de l'inventaire" i18n-aria-label="@@inventory.inventory-detail.statistiques.de.l.inventaire.04aad570">
           <div class="stat-card stat-card--primary">
             <div class="stat-card__icon">
               <i class="pi pi-box" aria-hidden="true"></i>
             </div>
             <div class="stat-card__content">
-              <span class="stat-card__label">Total produits</span>
+              <span class="stat-card__label" i18n="@@inventory.inventory-detail.total.produits.e59ab731">Total produits</span>
               <span class="stat-card__value">{{ inventory()!.totalProducts }}</span>
             </div>
           </div>
@@ -79,7 +73,7 @@
               <i class="pi pi-check-circle" aria-hidden="true"></i>
             </div>
             <div class="stat-card__content">
-              <span class="stat-card__label">Produits comptés</span>
+              <span class="stat-card__label" i18n="@@inventory.inventory-detail.produits.comptes.84b75f77">Produits comptés</span>
               <span class="stat-card__value">{{ inventory()!.countedProducts }}</span>
             </div>
           </div>
@@ -88,7 +82,7 @@
               <i class="pi" [class.pi-chart-pie]="progressPercent() < 100" [class.pi-verified]="progressPercent() === 100" aria-hidden="true"></i>
             </div>
             <div class="stat-card__content">
-              <span class="stat-card__label">Progression</span>
+              <span class="stat-card__label" i18n="@@inventory.inventory-detail.progression.685e2622">Progression</span>
               <span class="stat-card__value">{{ progressPercent() | number:'1.0-0' }}%</span>
             </div>
           </div>
@@ -101,22 +95,22 @@
             role="region"
             aria-labelledby="inventory-summary-heading">
             <div class="card-header-row">
-              <h3 class="card-section-title">
+              <h3 class="card-section-title" i18n="@@inventory.inventory-detail.resume.de.l.inventaire.620c282a">
                 <i class="pi pi-info-circle" aria-hidden="true"></i>
                 Résumé de l'inventaire
               </h3>
               <app-status-badge
                 [status]="getStatusBadgeStatus(inventory()!.status)"
-                [label]="inventory()!.statusDisplay">
+                [label]="inventory()!.statusDisplay | backendLabel">
               </app-status-badge>
             </div>
-            <h2 id="inventory-summary-heading" class="visually-hidden">Résumé de l'inventaire</h2>
+            <h2 id="inventory-summary-heading" class="visually-hidden" i18n="@@inventory.inventory-detail.resume.de.l.inventaire.6ce44d41">Résumé de l'inventaire</h2>
 
             <div class="summary-meta">
               <div class="meta-item">
                 <div class="meta-icon"><i class="pi pi-calendar"></i></div>
                 <div class="meta-content">
-                  <span class="label">Début</span>
+                  <span class="label" i18n="@@inventory.inventory-detail.debut.f0955314">Début</span>
                   <span class="value">{{ formatDate(inventory()!.startedAt) }}</span>
                 </div>
               </div>
@@ -124,7 +118,7 @@
                 <div class="meta-item">
                   <div class="meta-icon meta-icon--success"><i class="pi pi-calendar-times"></i></div>
                   <div class="meta-content">
-                    <span class="label">Fin</span>
+                    <span class="label" i18n="@@inventory.inventory-detail.fin.4251065f">Fin</span>
                     <span class="value">{{ formatDate(inventory()!.completedAt) }}</span>
                   </div>
                 </div>
@@ -132,30 +126,30 @@
               <div class="meta-item">
                 <div class="meta-icon meta-icon--info"><i class="pi pi-building"></i></div>
                 <div class="meta-content">
-                  <span class="label">Entrepôt</span>
+                  <span class="label" i18n="@@inventory.inventory-detail.entrepot.c349c0bc">Entrepôt</span>
                   <span class="value">{{ inventory()!.warehouseName }}</span>
                 </div>
               </div>
               <div class="meta-item">
                 <div class="meta-icon meta-icon--purple"><i class="pi pi-tags"></i></div>
                 <div class="meta-content">
-                  <span class="label">Type</span>
-                  <span class="value">{{ inventory()!.typeLabel }}</span>
+                  <span class="label" i18n="@@inventory.inventory-detail.type.3deb7456">Type</span>
+                  <span class="value">{{ inventory()!.typeLabel | backendLabel }}</span>
                 </div>
               </div>
               @if (inventory()!.notes) {
                 <div class="meta-item meta-item--full">
                   <div class="meta-icon meta-icon--neutral"><i class="pi pi-file-edit"></i></div>
                   <div class="meta-content">
-                    <span class="label">Notes</span>
+                    <span class="label" i18n="@@inventory.inventory-detail.notes.70440046">Notes</span>
                     <span class="value notes-value">{{ inventory()!.notes }}</span>
                   </div>
                 </div>
               }
             </div>
 
-            <div class="progress-block" role="status" [attr.aria-valuenow]="inventory()!.countedProducts" [attr.aria-valuemin]="0" [attr.aria-valuemax]="inventory()!.totalProducts" aria-label="Progression du comptage">
-              <div class="progress-label">
+            <div class="progress-block" role="status" [attr.aria-valuenow]="inventory()!.countedProducts" [attr.aria-valuemin]="0" [attr.aria-valuemax]="inventory()!.totalProducts" aria-label="Progression du comptage" i18n-aria-label="@@inventory.inventory-detail.progression.du.comptage.b87098a6">
+              <div class="progress-label" i18n="@@inventory.inventory-detail.produits.comptes.ab793b07">
                 <span>
                   <i class="pi pi-spinner" aria-hidden="true"></i>
                   {{ inventory()!.countedProducts }} / {{ inventory()!.totalProducts }} produits comptés
@@ -175,44 +169,44 @@
         <!-- Inventory Lines Card -->
         <p-card styleClass="lines-card p-card--static">
           <div class="card-header-row">
-            <h3 class="card-section-title">
+            <h3 class="card-section-title" i18n="@@inventory.inventory-detail.lignes.d.inventaire.d0c5534f">
               <i class="pi pi-list" aria-hidden="true"></i>
               Lignes d'inventaire
             </h3>
-            <span class="lines-count-badge">
-              {{ inventory()!.lines.length }} {{ inventory()!.lines.length > 1 ? 'lignes' : 'ligne' }}
+            <span class="lines-count-badge" i18n="@@inventory.inventory-detail.nombre.de.lignes.pl">
+              {{ inventory()!.lines.length }} {inventory()!.lines.length, plural, =0 {ligne} =1 {ligne} other {lignes}}
             </span>
           </div>
-          <div class="table-wrapper" role="region" aria-label="Lignes d'inventaire">
+          <div class="table-wrapper" role="region" aria-label="Lignes d'inventaire" i18n-aria-label="@@inventory.inventory-detail.lignes.d.inventaire.454d192f">
             <p-table
               [value]="inventory()!.lines"
               styleClass="p-datatable-sm p-datatable-striped"
               [tableStyle]="{ 'min-width': '50rem' }"
-              aria-label="Lignes d'inventaire">
+              aria-label="Lignes d'inventaire" i18n-aria-label="@@inventory.inventory-detail.lignes.d.inventaire.454d192f">
               <ng-template pTemplate="header">
                 <tr>
-                  <th scope="col">Produit</th>
-                  <th scope="col">Code</th>
-                  <th scope="col" class="text-right">Quantité théorique</th>
-                  <th scope="col" class="text-right">Quantité comptée</th>
-                  <th scope="col" class="text-right">Écart</th>
-                  <th scope="col" class="text-center">Statut</th>
+                  <th scope="col" i18n="@@inventory.inventory-detail.produit.ff673dc2">Produit</th>
+                  <th scope="col" i18n="@@inventory.inventory-detail.code.adac6937">Code</th>
+                  <th scope="col" class="text-right" i18n="@@inventory.inventory-detail.quantite.theorique.e6370bd9">Quantité théorique</th>
+                  <th scope="col" class="text-right" i18n="@@inventory.inventory-detail.quantite.comptee.9aee073b">Quantité comptée</th>
+                  <th scope="col" class="text-right" i18n="@@inventory.inventory-detail.ecart.6ae8dce8">Écart</th>
+                  <th scope="col" class="text-center" i18n="@@inventory.inventory-detail.statut.659499f3">Statut</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-line>
                 <tr [class.row-has-diff]="line.difference !== 0">
-                  <td [attr.data-label]="'Produit'">
+                  <td [attr.data-label]="loc_produit_ff673d">
                     <span class="product-name">{{ line.productName }}</span>
                     @if (line.lotNumber) {
-                      <span class="lot-label">Lot {{ line.lotNumber }}</span>
+                      <span class="lot-label" i18n="@@inventory.inventory-detail.lot.f7358f58">Lot {{ line.lotNumber }}</span>
                     }
                   </td>
-                  <td [attr.data-label]="'Code'">
+                  <td [attr.data-label]="loc_code_adac69">
                     <code class="product-code">{{ line.productCode ?? '—' }}</code>
                   </td>
-                  <td class="text-right mono-number" [attr.data-label]="'Quantité théorique'">{{ line.theoreticalQuantity | number:'1.2-2' }}</td>
-                  <td class="text-right mono-number" [attr.data-label]="'Quantité comptée'">{{ line.countedQuantity != null ? (line.countedQuantity | number:'1.2-2') : '—' }}</td>
-                  <td class="text-right" [attr.data-label]="'Écart'" [attr.aria-label]="getDiffAriaLabel(line.difference)">
+                  <td class="text-right mono-number" [attr.data-label]="loc_quantite_theorique_e6370b">{{ line.theoreticalQuantity | number:'1.2-2' }}</td>
+                  <td class="text-right mono-number" [attr.data-label]="loc_quantite_comptee_9aee07">{{ line.countedQuantity != null ? (line.countedQuantity | number:'1.2-2') : '—' }}</td>
+                  <td class="text-right" [attr.data-label]="loc_ecart_6ae8dc" [attr.aria-label]="getDiffAriaLabel(line.difference)">
                     <span
                       class="diff-pill"
                       [class.diff-pill--positive]="line.difference > 0"
@@ -227,7 +221,7 @@
                       <span>{{ line.difference !== 0 ? (line.difference > 0 ? '+' : '') + (line.difference | number:'1.2-2') : '0' }}</span>
                     </span>
                   </td>
-                  <td class="text-center" [attr.data-label]="'Statut'">
+                  <td class="text-center" [attr.data-label]="loc_statut_659499">
                     <span
                       class="line-status-badge"
                       [class.line-status-badge--counted]="line.isCounted"
@@ -237,7 +231,7 @@
                       } @else {
                         <i class="pi pi-clock" aria-hidden="true"></i>
                       }
-                      {{ line.isCounted ? 'Compté' : 'Non compté' }}
+                      <ng-container i18n="@@inventory.inventory-detail.sel.compte.non.compte.cc8a603c">{!!(line.isCounted), select, true {Compté} other {Non compté}}</ng-container>
                     </span>
                   </td>
                 </tr>
@@ -247,8 +241,8 @@
                   <td colspan="6" role="status">
                     <app-empty-state
                       icon="pi-inbox"
-                      title="Aucune ligne d'inventaire"
-                      description="Aucun produit n'est associé à cet enregistrement."></app-empty-state>
+                      title="Aucune ligne d'inventaire" i18n-title="@@inventory.inventory-detail.aucune.ligne.d.inventaire.3854ee6e"
+                      description="Aucun produit n'est associé à cet enregistrement." i18n-description="@@inventory.inventory-detail.aucun.produit.n.est.associe.a.cet.enregi.8f14de07"></app-empty-state>
                   </td>
                 </tr>
               </ng-template>

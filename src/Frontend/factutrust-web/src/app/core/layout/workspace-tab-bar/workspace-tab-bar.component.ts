@@ -7,7 +7,7 @@ import type { WorkspacePane } from '@features/ai-assistant/services/ai-assistant
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="workspace-tab-bar" role="tablist" aria-label="Onglets de travail">
+    <div class="workspace-tab-bar" role="tablist" aria-label="Onglets de travail" i18n-aria-label="@@core.layout.workspace-tab-bar.workspace-tab-bar.onglets.de.travail.56b70fa7">
       <button
         type="button"
         class="workspace-tab"
@@ -36,7 +36,7 @@ import type { WorkspacePane } from '@features/ai-assistant/services/ai-assistant
         <button
           type="button"
           class="workspace-tab__close"
-          aria-label="Fermer l'assistant IA"
+          aria-label="Fermer l'assistant IA" i18n-aria-label="@@core.layout.workspace-tab-bar.workspace-tab-bar.fermer.l.assistant.ia.bd647d76"
           (click)="onCloseAi($event)">
           <i class="fa-solid fa-xmark" aria-hidden="true"></i>
         </button>
@@ -142,8 +142,8 @@ import type { WorkspacePane } from '@features/ai-assistant/services/ai-assistant
   `]
 })
 export class WorkspaceTabBarComponent {
-  readonly workTitle = input('Accueil');
-  readonly aiTitle = input('Assistant IA');
+  readonly workTitle = input($localize`:@@core.workspace-tab-bar.ts.accueil.a8ff8fd2:Accueil`);
+  readonly aiTitle = input($localize`:@@core.workspace-tab-bar.ts.assistant.ia.94f6f208:Assistant IA`);
   readonly activePane = input<WorkspacePane>('work');
 
   readonly selectPane = output<WorkspacePane>();

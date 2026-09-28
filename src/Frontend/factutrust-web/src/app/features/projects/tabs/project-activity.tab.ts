@@ -12,7 +12,7 @@ import { ProjectActivityTimelineComponent } from '../components/overview/project
       [users]="users"
       [compact]="false"
       [limit]="100"
-      title="Historique d'activité" />
+      title="Historique d'activité" i18n-title="@@projects.tabs.historique.d.activite.2c445950" />
   `
 })
 export class ProjectActivityTabComponent {

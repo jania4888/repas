@@ -5,11 +5,11 @@ import { PosStateService } from '../../services/pos-state.service';
 import { PaymentMethod } from '../../../invoices/invoice-wizard/models/invoice-wizard.models';
 
 const METHOD_LABELS: Record<PaymentMethod, string> = {
-  [PaymentMethod.Cash]: 'Especes',
-  [PaymentMethod.Card]: 'Carte',
-  [PaymentMethod.BankTransfer]: 'Virement',
-  [PaymentMethod.Check]: 'Cheque',
-  [PaymentMethod.Effect]: 'Effet'
+  [PaymentMethod.Cash]: $localize`:@@ui.tern.especes.958d74:Especes`,
+  [PaymentMethod.Card]: $localize`:@@ui.tern.carte.8bb683:Carte`,
+  [PaymentMethod.BankTransfer]: $localize`:@@ui.tern.virement.afbaf9:Virement`,
+  [PaymentMethod.Check]: $localize`:@@ui.tern.cheque.6c0a13:Cheque`,
+  [PaymentMethod.Effect]: $localize`:@@ui.tern.effet.3b25c0:Effet`
 };
 
 @Component({
@@ -20,17 +20,17 @@ const METHOD_LABELS: Record<PaymentMethod, string> = {
     <div class="split-payment">
       <div class="split-payment__header">
         <div class="split-payment__header-text">
-          <span class="split-payment__title">Paiement fractionné</span>
-          <span class="split-payment__hint">Répartir le montant entre plusieurs moyens de paiement</span>
+          <span class="split-payment__title" i18n="@@pos.components.paiement.fractionne.fe60f8f8">Paiement fractionné</span>
+          <span class="split-payment__hint" i18n="@@pos.components.repartir.le.montant.entre.plusieurs.moyens.de.pa.7454250d">Répartir le montant entre plusieurs moyens de paiement</span>
         </div>
-        <span class="split-payment__remaining" [class.split-payment__remaining--ok]="posState.remainingAmount() <= 0">
+        <span class="split-payment__remaining" [class.split-payment__remaining--ok]="posState.remainingAmount() <= 0" i18n="@@pos.components.reste.b47d15f8">
           Reste : {{ posState.formatAmountWithCurrency(maxRemaining()) }}
         </span>
       </div>
 
       <div class="split-payment__list">
         @if (posState.paymentSplits().length === 0) {
-          <p class="split-payment__empty">Aucun paiement ajouté. Choisissez un moyen et un montant ci-dessous.</p>
+          <p class="split-payment__empty" i18n="@@pos.components.aucun.paiement.ajoute.choisissez.un.moyen.et.un..71e82d27">Aucun paiement ajouté. Choisissez un moyen et un montant ci-dessous.</p>
         }
         @for (split of posState.paymentSplits(); track split; let i = $index) {
           <div class="split-payment__row">
@@ -42,7 +42,7 @@ const METHOD_LABELS: Record<PaymentMethod, string> = {
               min="0"
               step="0.001"
               class="split-payment__input" />
-            <button type="button" class="split-payment__remove" (click)="posState.removePaymentSplit(i)" aria-label="Supprimer">
+            <button type="button" class="split-payment__remove" (click)="posState.removePaymentSplit(i)" aria-label="Supprimer" i18n-aria-label="@@pos.components.supprimer.1acfc1c7">
               <i class="pi pi-times"></i>
             </button>
           </div>
@@ -55,15 +55,13 @@ const METHOD_LABELS: Record<PaymentMethod, string> = {
             <option [value]="m.value">{{ m.label }}</option>
           }
         </select>
-        <input #amountInput type="number" min="0" step="0.001" placeholder="Montant" class="split-payment__input" />
-        <button type="button" class="split-payment__add-btn" (click)="addSplit(methodSelect.value, amountInput.value)">
+        <input #amountInput type="number" min="0" step="0.001" placeholder="Montant" i18n-placeholder="@@pos.components.montant.4adcd9fc" class="split-payment__input" />
+        <button type="button" class="split-payment__add-btn" (click)="addSplit(methodSelect.value, amountInput.value)" i18n="@@pos.components.ajouter.33e2b019">
           <i class="pi pi-plus"></i> Ajouter
         </button>
       </div>
 
-      <button type="button" class="split-payment__cancel" (click)="posState.disableSplitPayment()">
-        Annuler le paiement fractionné
-      </button>
+      <button type="button" class="split-payment__cancel" (click)="posState.disableSplitPayment()" i18n="@@pos.components.annuler.le.paiement.fractionne.82548779"> Annuler le paiement fractionné </button>
     </div>
   `,
   styles: [`
@@ -208,10 +206,10 @@ export class SplitPaymentComponent {
   readonly METHOD_LABELS = METHOD_LABELS;
 
   readonly availableMethods = [
-    { value: PaymentMethod.Cash, label: 'Especes' },
-    { value: PaymentMethod.Card, label: 'Carte' },
-    { value: PaymentMethod.BankTransfer, label: 'Virement' },
-    { value: PaymentMethod.Check, label: 'Cheque' }
+    { value: PaymentMethod.Cash, label: $localize`:@@pos.split-payment.ts.especes.958d74b6:Especes` },
+    { value: PaymentMethod.Card, label: $localize`:@@pos.split-payment.ts.carte.8bb68357:Carte` },
+    { value: PaymentMethod.BankTransfer, label: $localize`:@@pos.split-payment.ts.virement.afbaf950:Virement` },
+    { value: PaymentMethod.Check, label: $localize`:@@pos.split-payment.ts.cheque.6c0a1363:Cheque` }
   ];
 
   maxRemaining(): number {

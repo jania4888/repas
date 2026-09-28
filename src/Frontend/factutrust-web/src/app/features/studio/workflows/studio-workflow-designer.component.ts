@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { isStudioPlanLimitError } from '@features/studio/shared/studio-api-errors';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, HostListener, OnInit, computed, effect, inject, linkedSignal, signal, untracked } from '@angular/core';
@@ -73,10 +75,10 @@ const COMPUTED: ReadonlySet<CustomFieldType> = new Set(COMPUTED_FIELD_TYPES);
  * n'existent pas : remplacés par `saveError` et `L.instances.history` (4.7a2).
  */
 const DESIGNER_LABELS = {
-  description: 'Description',
-  tableFixed: 'La table ne peut plus être changée après la création.',
-  saveError: 'Enregistrement impossible.',
-  triggerConfigTooLarge: 'La configuration du déclencheur dépasse 2 Ko.'
+  description: $localize`:@@studio.studio-workflow-designer.ts.description.55f8ebc8:Description`,
+  tableFixed: $localize`:@@studio.studio-workflow-designer.ts.la.table.ne.peut.plus.etre.changee.apres.144a3110:La table ne peut plus être changée après la création.`,
+  saveError: $localize`:@@studio.studio-workflow-designer.ts.enregistrement.impossible.206044e2:Enregistrement impossible.`,
+  triggerConfigTooLarge: $localize`:@@studio.studio-workflow-designer.ts.la.configuration.du.declencheur.depasse.aaf1c2d3:La configuration du déclencheur dépasse 2 Ko.`
 } as const;
 
 /** Bannière d'erreur d'écriture (400/409) ; `reload` affiche le bouton « Recharger » (409 édition). */
@@ -184,18 +186,18 @@ interface ValidationState { isValid: boolean; errors: WorkflowValidationIssueDto
         <section class="wf-head" aria-labelledby="wf-trigger-lbl">
           <div class="wf-head__grid">
             <div class="wf-field">
-              <label for="wf-name">{{ L.designer.name }} <span class="wf-req">*</span></label>
+              <label for="wf-name">{{ L.designer.name }} <span class="wf-req" i18n="@@studio.workflows.text.df58248c">*</span></label>
               <input id="wf-name" pInputText maxlength="120" [ngModel]="name()" (ngModelChange)="onNameChange($event)"
                 autocomplete="off" data-testid="wf-name" />
             </div>
             <div class="wf-field">
-              <label for="wf-key">{{ L.designer.key }} <span class="wf-req">*</span></label>
+              <label for="wf-key">{{ L.designer.key }} <span class="wf-req" i18n="@@studio.workflows.text.df58248c">*</span></label>
               <input id="wf-key" pInputText [ngModel]="key()" (ngModelChange)="onKeyChange($event)"
                 [disabled]="!!id" autocomplete="off" data-testid="wf-key" />
               <small class="studio-muted">{{ id ? L.designer.keyImmutable : L.designer.keyHint }}</small>
             </div>
             <div class="wf-field">
-              <label for="wf-entity">{{ L.designer.table }} <span class="wf-req">*</span></label>
+              <label for="wf-entity">{{ L.designer.table }} <span class="wf-req" i18n="@@studio.workflows.text.df58248c">*</span></label>
               <input id="wf-entity" pInputText [value]="entity()?.displayName ?? ''" disabled data-testid="wf-entity" />
               <small class="studio-muted">{{ localLabels.tableFixed }}</small>
             </div>
@@ -211,7 +213,7 @@ interface ValidationState { isValid: boolean; errors: WorkflowValidationIssueDto
               (ngModelChange)="description.set($event)" data-testid="wf-description"></textarea>
           </div>
 
-          <span class="wf-lbl" id="wf-trigger-lbl">{{ L.designer.trigger }} <span class="wf-req">*</span></span>
+          <span class="wf-lbl" id="wf-trigger-lbl">{{ L.designer.trigger }} <span class="wf-req" i18n="@@studio.workflows.text.df58248c">*</span></span>
           <div class="wf-triggers" role="radiogroup" aria-labelledby="wf-trigger-lbl">
             @for (t of triggers; track t.value) {
               <div class="wf-trigger" role="radio" [attr.aria-checked]="trigger() === t.value"
@@ -234,7 +236,7 @@ interface ValidationState { isValid: boolean; errors: WorkflowValidationIssueDto
           @if (trigger() === 'field_changed') {
             <div class="wf-sub" data-testid="wf-trigger-config">
               <div class="wf-field">
-                <label for="wf-watched">{{ L.designer.watchedField }} <span class="wf-req">*</span></label>
+                <label for="wf-watched">{{ L.designer.watchedField }} <span class="wf-req" i18n="@@studio.workflows.text.df58248c">*</span></label>
                 <p-select inputId="wf-watched" [options]="watchableFields()" [ngModel]="triggerConfig()?.field ?? null"
                   (ngModelChange)="patchTriggerConfig({ field: $event ?? undefined })" optionLabel="label" optionValue="value"
                   [showClear]="true" [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="wf-w"
@@ -263,9 +265,9 @@ interface ValidationState { isValid: boolean; errors: WorkflowValidationIssueDto
                   data-testid="wf-cron-preset" [attr.aria-label]="L.designer.cronPreset" />
               </div>
               <div class="wf-field">
-                <label for="wf-cron">{{ L.designer.cron }} <span class="wf-req">*</span></label>
+                <label for="wf-cron">{{ L.designer.cron }} <span class="wf-req" i18n="@@studio.workflows.text.df58248c">*</span></label>
                 <input id="wf-cron" pInputText [ngModel]="triggerConfig()?.cron ?? ''"
-                  (ngModelChange)="onCronInput($event)" autocomplete="off" placeholder="0 6 * * *" data-testid="wf-cron" />
+                  (ngModelChange)="onCronInput($event)" autocomplete="off" placeholder="0 6 * * *" i18n-placeholder="@@studio.workflows.0.6.50487944" data-testid="wf-cron" />
                 <small class="wf-hint">{{ L.designer.cronHint }}</small>
               </div>
               <div class="wf-field wf-field--filters">
@@ -622,7 +624,7 @@ export class StudioWorkflowDesignerComponent implements OnInit {
     } else if (err.status === 400) {
       this.banner.set({
         severity: 'error',
-        text: msg.startsWith('Limite du plan') ? formatWorkflowLabel(this.L.designer.quota, { max: WORKFLOW_LIMITS.maxWorkflowsPerEntity }) : (msg || DESIGNER_LABELS.saveError),
+        text: isStudioPlanLimitError(err, msg) ? formatWorkflowLabel(this.L.designer.quota, { max: WORKFLOW_LIMITS.maxWorkflowsPerEntity }) : (msg || DESIGNER_LABELS.saveError),
         reload: false
       });
     } else if (err.status === 404) {
@@ -657,9 +659,9 @@ export class StudioWorkflowDesignerComponent implements OnInit {
       },
       // Mêmes erreurs que le hub : 409 clé `_copy<n>` prise (maxCopies 9), 400 quota 20/table.
       error: (err: HttpErrorResponse) => this.toast.add({
-        severity: 'warn', summary: 'Erreur',
+        severity: 'warn', summary: $localize`:@@studio-workflow-designer.component.summary.Erreur:Erreur`,
         detail: err.status === 409 ? this.L.hub.duplicateKey
-          : err.status === 400 && workflowErrorMessage(err).startsWith('Limite du plan')
+          : err.status === 400 && isStudioPlanLimitError(err, workflowErrorMessage(err))
             ? formatWorkflowLabel(this.L.designer.quota, { max: WORKFLOW_LIMITS.maxWorkflowsPerEntity })
             : (workflowErrorMessage(err) || this.L.hub.loadError)
       })
@@ -681,7 +683,7 @@ export class StudioWorkflowDesignerComponent implements OnInit {
           this.toast.add({ severity: 'success', summary: this.L.hub.title, detail: formatWorkflowLabel(this.L.hub.deleted, { count: r.data?.cancelledInstances ?? 0 }) });
           void this.router.navigate(['/studio/workflows']);
         },
-        error: (err: HttpErrorResponse) => this.toast.add({ severity: 'error', summary: 'Erreur', detail: workflowErrorMessage(err) || this.L.hub.loadError })
+        error: (err: HttpErrorResponse) => this.toast.add({ severity: 'error', summary: $localize`:@@studio-workflow-designer.component.summary.Erreur:Erreur`, detail: workflowErrorMessage(err) || this.L.hub.loadError })
       })
     });
   }

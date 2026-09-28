@@ -18,7 +18,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
   template: `
     <div class="credit-note-entry">
       <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
-      <p>Sélection de la facture d'origine…</p>
+      <p i18n="@@invoices.credit-note-entry.selection.de.la.facture.d.origine.df630bab">Sélection de la facture d'origine…</p>
     </div>
   `,
   styles: [`

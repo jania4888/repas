@@ -108,6 +108,7 @@ describe('company-accounting-nav.config', () => {
   it('replaces Comptabilité children with the 4 company submenu entries', () => {
     const items: NavItem[] = [
       {
+        id: 'accounting',
         label: 'Comptabilité',
         icon: 'fa-solid fa-calculator',
         children: [

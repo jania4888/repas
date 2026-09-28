@@ -25,7 +25,7 @@ import { periodLabel, promotionPeriodProgress } from './promotions.utils';
         <span class="period-bar__percent">{{ progress().percent }} %</span>
         <span class="period-bar__dates">{{ periodText() }}</span>
         @if (progress().daysRemaining > 0 && progress().tone !== 'secondary') {
-          <span class="period-bar__remaining">{{ progress().daysRemaining }} j restants</span>
+          <span class="period-bar__remaining" i18n="@@settings.promotions.j.restants.20b22806">{{ progress().daysRemaining }} j restants</span>
         }
       </div>
     </div>
@@ -88,10 +88,10 @@ export class PromotionPeriodBarComponent {
 
   tooltip(): string {
     const p = this.progress();
-    return `${p.daysElapsed} jour(s) sur ${p.daysTotal} écoulé(s)`;
+    return $localize`:@@settings.promotion-period-bar.ts.dayselapsed.jour.s.sur.daystotal.ecoule.f5c8e6df:${p.daysElapsed}:daysElapsed: jour(s) sur ${p.daysTotal}:daysTotal: écoulé(s)`;
   }
 
   ariaLabel(): string {
-    return `Progression de la période : ${this.progress().percent} pour cent`;
+    return $localize`:@@settings.promotion-period-bar.ts.progression.de.la.periode.percent.pour.c.ac7c40ed:Progression de la période : ${this.progress().percent}:percent: pour cent`;
   }
 }

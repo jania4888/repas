@@ -36,21 +36,21 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
         aria-labelledby="history-modal-title">
         <header class="modal-header">
           <div>
-            <h3 id="history-modal-title">Historique des décisions</h3>
+            <h3 id="history-modal-title" i18n="@@forecasting.components.historique.des.decisions.af5ea832">Historique des décisions</h3>
             <span class="modal-subtitle" *ngIf="productName">{{ productName }}</span>
           </div>
-          <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer">
+          <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer" i18n-aria-label="@@forecasting.components.fermer.5ab4ec64">
             <i class="pi pi-times" aria-hidden="true"></i>
           </button>
         </header>
 
         <div class="modal-body">
           @if (loading()) {
-            <div class="state">Chargement…</div>
+            <div class="state" i18n="@@forecasting.components.chargement.01cba1df">Chargement…</div>
           } @else if (rows().length === 0) {
-            <div class="state empty">Aucune décision enregistrée pour cette recommandation.</div>
+            <div class="state empty" i18n="@@forecasting.components.aucune.decision.enregistree.pour.cette.recommand.236fa87f">Aucune décision enregistrée pour cette recommandation.</div>
           } @else {
-            <ol class="timeline" aria-label="Historique des actions">
+            <ol class="timeline" aria-label="Historique des actions" i18n-aria-label="@@forecasting.components.historique.des.actions.863ad2e3">
               @for (row of rows(); track row.id) {
                 <li class="entry" [class.entry-revert]="row.actionType === 'Revert'">
                   <div class="badge action" [attr.data-action]="row.actionType">
@@ -63,15 +63,15 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
                       <i class="pi pi-arrow-right" aria-hidden="true"></i>
                       <span class="status status-{{ row.toStatus }}">{{ statusLabel(row.toStatus) }}</span>
                     </div>
-                    <div class="who">
-                      par <strong>{{ row.actorUserId }}</strong>
+                    <div class="who" i18n="@@forecasting.components.par.le.a8d26bad">
+                      <ng-container> par </ng-container> <strong>{{ row.actorUserId }}</strong>
                       <span class="when">le {{ row.actedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
                     </div>
                     @if (row.reason) {
                       <div class="reason">« {{ row.reason }} »</div>
                     }
                     @if (row.payloadJson) {
-                      <pre class="payload" aria-label="Détails de l'action">{{ formatPayload(row.payloadJson) }}</pre>
+                      <pre class="payload" aria-label="Détails de l'action" i18n-aria-label="@@forecasting.components.details.de.l.action.0e8634f6">{{ formatPayload(row.payloadJson) }}</pre>
                     }
                   </div>
                 </li>
@@ -81,7 +81,7 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
         </div>
 
         <footer class="modal-footer">
-          <button class="btn btn-secondary" type="button" (click)="onCancel()">Fermer</button>
+          <button class="btn btn-secondary" type="button" (click)="onCancel()" i18n="@@forecasting.components.fermer.5ab4ec64">Fermer</button>
         </footer>
       </div>
     </div>
@@ -114,7 +114,7 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
     .status-ordered { background: #dbeafe; color: #1e40af; }
     .status-superseded { background: #fce7f3; color: #831843; }
     .who { color: var(--color-neutral-600, #6b7280); }
-    .when { margin-left: .25rem; }
+    .when { margin-inline-start: .25rem; }
     .reason { color: var(--color-neutral-700, #374151); font-style: italic; }
     .payload { background: var(--color-neutral-50, #f9fafb); border: 1px solid var(--color-neutral-200, #e5e7eb); border-radius: 4px; padding: .35rem .55rem; font-size: .7rem; color: var(--color-neutral-700, #374151); white-space: pre-wrap; margin: 0; overflow-x: auto; }
     .modal-footer { display: flex; justify-content: flex-end; gap: .5rem; padding: .75rem 1.25rem 1rem; border-top: 1px solid var(--color-neutral-200, #e5e7eb); }
@@ -156,23 +156,23 @@ export class DecisionHistoryModalComponent implements OnInit {
 
   statusLabel(s: ReplenishmentStatus): string {
     return ({
-      pending: 'En attente',
-      approved: 'Approuvée',
-      dismissed: 'Écartée',
-      ordered: 'Commandée',
-      superseded: 'Remplacée'
+      pending: $localize`:@@forecasting.decision-history-modal.ts.en.attente.5231158f:En attente`,
+      approved: $localize`:@@forecasting.decision-history-modal.ts.approuvee.7d606a51:Approuvée`,
+      dismissed: $localize`:@@forecasting.decision-history-modal.ts.ecartee.42bd51f7:Écartée`,
+      ordered: $localize`:@@forecasting.decision-history-modal.ts.commandee.15f2b9a3:Commandée`,
+      superseded: $localize`:@@forecasting.decision-history-modal.ts.remplacee.a82c0233:Remplacée`
     } as Record<ReplenishmentStatus, string>)[s] ?? s;
   }
 
   actionLabel(actionType: string): string {
     switch (actionType) {
-      case 'Approve':     return 'Approuvée';
-      case 'Dismiss':     return 'Écartée';
-      case 'Override':    return 'Modifiée';
-      case 'LinkPO':      return 'BC créé';
-      case 'Revert':      return 'Annulée';
-      case 'AttachNotes': return 'Notes';
-      case 'Generate':    return 'Générée';
+      case 'Approve':     return $localize`:@@forecasting.decision-history-modal.ts.approuvee.7d606a51:Approuvée`;
+      case 'Dismiss':     return $localize`:@@forecasting.decision-history-modal.ts.ecartee.42bd51f7:Écartée`;
+      case 'Override':    return $localize`:@@forecasting.decision-history-modal.ts.modifiee.69d9d54f:Modifiée`;
+      case 'LinkPO':      return $localize`:@@forecasting.decision-history-modal.ts.bc.cree.c314b8c1:BC créé`;
+      case 'Revert':      return $localize`:@@forecasting.decision-history-modal.ts.annulee.2776573b:Annulée`;
+      case 'AttachNotes': return $localize`:@@forecasting.decision-history-modal.ts.notes.70440046:Notes`;
+      case 'Generate':    return $localize`:@@forecasting.decision-history-modal.ts.generee.0eaadba4:Générée`;
       default:            return actionType;
     }
   }

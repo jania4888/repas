@@ -44,7 +44,7 @@ interface RenderSection {
         <h3 class="ft-section-title" *ngIf="s.title">{{ s.title }}</h3>
         <div class="ft-grid">
           <div class="ft-cell" [class.ft-half]="cell.width === 'half'" *ngFor="let cell of s.cells">
-            <label>{{ cell.label }} <span *ngIf="cell.field.isRequired" class="ft-req">*</span></label>
+            <label>{{ cell.label }} <span *ngIf="cell.field.isRequired" class="ft-req" i18n="@@shared.studio-runtime.dynamic-form.text.df58248c">*</span></label>
 
             <ng-container [ngSwitch]="cell.field.fieldType">
               <input *ngSwitchCase="FT.Text" pInputText [formControlName]="cell.field.key" />
@@ -55,17 +55,17 @@ interface RenderSection {
               <p-inputNumber *ngSwitchCase="FT.Percentage" [formControlName]="cell.field.key" mode="decimal" suffix=" %" [minFractionDigits]="0" [maxFractionDigits]="2"></p-inputNumber>
               <p-rating *ngSwitchCase="FT.Rating" [formControlName]="cell.field.key" [stars]="ratingStars(cell.field)"></p-rating>
               <ng-container *ngSwitchCase="FT.QrCode">
-                <input pInputText [formControlName]="cell.field.key" placeholder="Valeur à encoder" />
+                <input pInputText [formControlName]="cell.field.key" placeholder="Valeur à encoder" i18n-placeholder="@@shared.studio-runtime.dynamic-form.valeur.a.encoder.1a01f25b" />
                 <app-studio-code-image class="ft-code-preview" [fieldType]="FT.QrCode" [value]="form.get(cell.field.key)?.value"></app-studio-code-image>
               </ng-container>
               <ng-container *ngSwitchCase="FT.Barcode">
-                <input pInputText [formControlName]="cell.field.key" placeholder="Valeur à encoder" />
+                <input pInputText [formControlName]="cell.field.key" placeholder="Valeur à encoder" i18n-placeholder="@@shared.studio-runtime.dynamic-form.valeur.a.encoder.1a01f25b" />
                 <app-studio-code-image class="ft-code-preview" [fieldType]="FT.Barcode" [config]="cell.field.config" [value]="form.get(cell.field.key)?.value"></app-studio-code-image>
               </ng-container>
-              <input *ngSwitchCase="FT.AutoNumber" pInputText [formControlName]="cell.field.key" placeholder="Généré automatiquement" />
-              <input *ngSwitchCase="FT.Formula" pInputText [formControlName]="cell.field.key" placeholder="Calculé automatiquement" />
-              <input *ngSwitchCase="FT.Lookup" pInputText [formControlName]="cell.field.key" placeholder="Champ lié" />
-              <input *ngSwitchCase="FT.Rollup" pInputText [formControlName]="cell.field.key" placeholder="Agrégat" />
+              <input *ngSwitchCase="FT.AutoNumber" pInputText [formControlName]="cell.field.key" placeholder="Généré automatiquement" i18n-placeholder="@@shared.studio-runtime.dynamic-form.genere.automatiquement.e3fd77d1" />
+              <input *ngSwitchCase="FT.Formula" pInputText [formControlName]="cell.field.key" placeholder="Calculé automatiquement" i18n-placeholder="@@shared.studio-runtime.dynamic-form.calcule.automatiquement.a236530f" />
+              <input *ngSwitchCase="FT.Lookup" pInputText [formControlName]="cell.field.key" placeholder="Champ lié" i18n-placeholder="@@shared.studio-runtime.dynamic-form.champ.lie.858c81eb" />
+              <input *ngSwitchCase="FT.Rollup" pInputText [formControlName]="cell.field.key" placeholder="Agrégat" i18n-placeholder="@@shared.studio-runtime.dynamic-form.agregat.0ccfe907" />
               <app-studio-file-field *ngSwitchCase="FT.Attachment" mode="attachment" [entityKey]="entityKey"
                 [value]="form.get(cell.field.key)?.value" (valueChange)="setFileValue(cell.field.key, $event)"></app-studio-file-field>
               <app-studio-file-field *ngSwitchCase="FT.Signature" mode="signature" [entityKey]="entityKey"
@@ -82,19 +82,19 @@ interface RenderSection {
               <p-select *ngSwitchCase="FT.RelationExisting" [formControlName]="cell.field.key" [options]="cell.field.options || []"
                 optionLabel="label" optionValue="value" [showClear]="true" [filter]="true" appendTo="body" styleClass="ft-w-full"></p-select>
               <input *ngSwitchDefault pInputText [formControlName]="cell.field.key" />
-            </ng-container>
+            </ng-container><ng-container i18n="@@shared.studio-runtime.dynamic-form.valeur.invalide.pour.a07843bb">
 
             <small class="ft-error" *ngIf="invalid(cell.field.key)">Valeur invalide pour « {{ cell.label }} ».</small>
-          </div>
+          </ng-container></div>
         </div>
       </div>
 
-      <p *ngIf="sections.length === 0" class="ft-empty">Aucun champ à afficher.</p>
+      <p *ngIf="sections.length === 0" class="ft-empty" i18n="@@shared.studio-runtime.dynamic-form.aucun.champ.a.afficher.6cb4088c">Aucun champ à afficher.</p>
 
       <!-- 4.7 suite (D-47-94) : en lecture seule, les actions d'écriture disparaissent. -->
       <div class="ft-form-actions" *ngIf="sections.length > 0 && !readOnly">
-        <button pButton type="button" label="Annuler" class="p-button-text" (click)="formCancel.emit()"></button>
-        <button pButton type="submit" label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving"></button>
+        <button pButton type="button" label="Annuler" i18n-label="@@shared.studio-runtime.dynamic-form.annuler.49ba3292" class="p-button-text" (click)="formCancel.emit()"></button>
+        <button pButton type="submit" label="Enregistrer" i18n-label="@@shared.studio-runtime.dynamic-form.enregistrer.f7c8bcd8" icon="fa-solid fa-check" [disabled]="saving"></button>
       </div>
     </form>
   `,

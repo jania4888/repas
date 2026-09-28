@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -39,26 +40,26 @@ type StatusFilter = 'all' | 'active' | 'inactive';
   ],
   template: `
     <app-page-header
-      [title]="firmInternal() ? 'Salariés du cabinet' : 'Salariés'"
-      [subtitle]="firmInternal() ? 'Paie interne — collaborateurs du cabinet.' : 'Dossiers salariés et contrats de travail.'">
+      [title]="firmInternal() ? loc_ui_tern_salaries_du_cabinet_791140 : loc_ui_tern_salaries_ce6838"
+      [subtitle]="firmInternal() ? loc_ui_tern_paie_interne_collaborateurs_du_cabinet_74de5b : loc_ui_tern_dossiers_salaries_et_contrats_de_travail_b70e08">
       @if (canManage()) {
-        <app-button variant="primary" icon="pi-plus" iconPos="left" [routerLink]="routeBase() + '/employees/new'">Nouveau salarié</app-button>
+        <app-button variant="primary" icon="pi-plus" iconPos="left" [routerLink]="routeBase() + '/employees/new'" i18n="@@payroll.employees.nouveau.salarie.c5cbf8b1">Nouveau salarié</app-button>
       }
     </app-page-header>
 
     <app-payroll-consult-banner
       [visible]="showConsultBanner()"
-      message="Mode consultation — la gestion des dossiers salariés est réservée à la société cliente." />
+      message="Mode consultation — la gestion des dossiers salariés est réservée à la société cliente." i18n-message="@@payroll.employees.mode.consultation.la.gestion.des.dossier.70b001ac" />
 
     <div class="payroll-toolbar">
-      <input pInputText type="text" placeholder="Rechercher…" [(ngModel)]="search" (ngModelChange)="load()" class="w-full md:w-20rem" />
+      <input pInputText type="text" placeholder="Rechercher…" i18n-placeholder="@@payroll.employees.rechercher.1d12cdfb" [(ngModel)]="search" (ngModelChange)="load()" class="w-full md:w-20rem" />
       <p-select
         [options]="statusOptions"
         [(ngModel)]="statusFilter"
         (ngModelChange)="load()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Statut"
+        placeholder="Statut" i18n-placeholder="@@payroll.employees.statut.659499f3"
         styleClass="w-12rem" />
     </div>
 
@@ -67,10 +68,10 @@ type StatusFilter = 'all' | 'active' | 'inactive';
         [loading]="loading()"
         [skeletonColumns]="7"
         icon="pi-users"
-        title="Aucun salarié"
-        [description]="loading() ? undefined : 'Aucun salarié ne correspond à vos critères.'"
+        title="Aucun salarié" i18n-title="@@payroll.employees.aucun.salarie.a1567c77"
+        [description]="loading() ? undefined : loc_aucun_salarie_ne_correspond_a_vos_cr_8e81e0"
         [showAction]="canManage() && !loading()"
-        actionLabel="Nouveau salarié"
+        actionLabel="Nouveau salarié" i18n-actionLabel="@@payroll.employees.nouveau.salarie.04ef16d7"
         [actionRoute]="routeBase() + '/employees/new'" />
     }
 
@@ -78,12 +79,12 @@ type StatusFilter = 'all' | 'active' | 'inactive';
       <p-table [value]="items()" [paginator]="true" [rows]="20" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Matricule</th>
-            <th>Nom</th>
-            <th>CNSS</th>
-            <th>Poste</th>
-            <th class="text-right">Salaire base</th>
-            <th>Statut</th>
+            <th i18n="@@payroll.employees.matricule.8f74c132">Matricule</th>
+            <th i18n="@@payroll.employees.nom.7ff20370">Nom</th>
+            <th i18n="@@payroll.employees.cnss.a04d171a">CNSS</th>
+            <th i18n="@@payroll.employees.poste.86abf0cd">Poste</th>
+            <th class="text-right" i18n="@@payroll.employees.salaire.base.6035beae">Salaire base</th>
+            <th i18n="@@payroll.employees.statut.659499f3">Statut</th>
             <th></th>
           </tr>
         </ng-template>
@@ -101,7 +102,7 @@ type StatusFilter = 'all' | 'active' | 'inactive';
             <td>{{ e.jobTitle || '—' }}</td>
             <td class="text-right">{{ e.currentBaseSalary | payrollAmount }}</td>
             <td>
-              <p-tag [value]="e.isActive ? 'Actif' : 'Inactif'" [severity]="e.isActive ? 'success' : 'secondary'" />
+              <p-tag [value]="e.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033" [severity]="e.isActive ? 'success' : 'secondary'" />
               @if (e.parentClaimsStatus === 'Incomplete') {
                 <p-tag value="Parents à compléter" severity="warn" class="ml-1" />
               }
@@ -110,7 +111,7 @@ type StatusFilter = 'all' | 'active' | 'inactive';
               }
             </td>
             <td>
-              <app-button variant="outline" size="sm" icon="pi-eye" iconPos="left" [routerLink]="[routeBase() + '/employees', e.id]">Voir</app-button>
+              <app-button variant="outline" size="sm" icon="pi-eye" iconPos="left" [routerLink]="[routeBase() + '/employees', e.id]" i18n="@@payroll.employees.voir.8a754f1f">Voir</app-button>
             </td>
           </tr>
         </ng-template>
@@ -119,6 +120,14 @@ type StatusFilter = 'all' | 'active' | 'inactive';
   `
 })
 export class EmployeeListComponent implements OnInit {
+  protected readonly loc_aucun_salarie_ne_correspond_a_vos_cr_8e81e0 = $localize`:@@payroll.employee-list.tpl.aucun.salarie.ne.correspond.a.vos.criter.8e81e068:Aucun salarié ne correspond à vos critères.`;
+
+  readonly loc_ui_tern_salaries_du_cabinet_791140 = $localize`:@@ui.tern.salaries.du.cabinet.791140:Salariés du cabinet`;
+  readonly loc_ui_tern_salaries_ce6838 = $localize`:@@ui.tern.salaries.ce6838:Salariés`;
+  readonly loc_ui_tern_paie_interne_collaborateurs_du_cabinet_74de5b = $localize`:@@ui.tern.paie.interne.collaborateurs.du.cabinet.74de5b:Paie interne — collaborateurs du cabinet.`;
+  readonly loc_ui_tern_dossiers_salaries_et_contrats_de_travail_b70e08 = $localize`:@@ui.tern.dossiers.salaries.et.contrats.de.travail.b70e08:Dossiers salariés et contrats de travail.`;
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
   private readonly employees = inject(EmployeeService);
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
@@ -133,9 +142,9 @@ export class EmployeeListComponent implements OnInit {
   items = signal<EmployeeListItem[]>([]);
 
   readonly statusOptions = [
-    { value: 'all' as const, label: 'Tous' },
-    { value: 'active' as const, label: 'Actifs' },
-    { value: 'inactive' as const, label: 'Inactifs' }
+    { value: 'all' as const, label: $localize`:@@payroll.employee-list.ts.tous.b97ae3b4:Tous` },
+    { value: 'active' as const, label: $localize`:@@payroll.employee-list.ts.actifs.4fc3a980:Actifs` },
+    { value: 'inactive' as const, label: $localize`:@@payroll.employee-list.ts.inactifs.41c2d03e:Inactifs` }
   ];
 
   canManage = computed(() => canManagePayrollEmployees(this.auth));
@@ -157,7 +166,7 @@ export class EmployeeListComponent implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.toast.add({ severity: 'error', summary: 'Salariés', detail: 'Impossible de charger les salariés.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@employee-list.component.summary.Salariés:Salariés`, detail: $localize`:@@employee-list.component.detail.Impossible d:Impossible de charger les salariés.` });
         this.loading.set(false);
       }
     });

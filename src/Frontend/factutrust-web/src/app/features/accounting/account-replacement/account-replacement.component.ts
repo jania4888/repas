@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,38 +14,38 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   standalone: true,
   imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent],
   template: `
-    <app-page-header title="Remplacement de compte" subtitle="Remplacer un compte par un autre sur les écritures des périodes ouvertes" />
+    <app-page-header title="Remplacement de compte" i18n-title="@@accounting.account-replacement.remplacement.de.compte.2fb8886e" subtitle="Remplacer un compte par un autre sur les écritures des périodes ouvertes" i18n-subtitle="@@accounting.account-replacement.remplacer.un.compte.par.un.autre.sur.les.3d9696c5" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     <div class="card ar-card">
-      <div class="ar-warn" role="note">
+      <div class="ar-warn" role="note" i18n="@@accounting.account-replacement.operation.de.maintenance.seules.les.ecri.41153326">
         <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
-        <span>Opération de maintenance. Seules les écritures des <strong>périodes ouvertes</strong> sont modifiées ; l'action est journalisée.</span>
+        <span><ng-container>Opération de maintenance. Seules les écritures des </ng-container> <strong>périodes ouvertes</strong> sont modifiées ; l'action est journalisée.</span>
       </div>
 
       <div class="ar-grid">
         <div class="ar-field">
-          <label class="ar-lbl" for="ar-old">Ancien compte</label>
-          <input id="ar-old" class="ar-inp" [(ngModel)]="oldAccount" (ngModelChange)="onOldChange()" placeholder="Ex. 41100001" [disabled]="replacing()" />
+          <label class="ar-lbl" for="ar-old" i18n="@@accounting.account-replacement.ancien.compte.b188eb3d">Ancien compte</label>
+          <input id="ar-old" class="ar-inp" [(ngModel)]="oldAccount" (ngModelChange)="onOldChange()" placeholder="Ex. 41100001" i18n-placeholder="@@accounting.account-replacement.ex.41100001.d4119d77" [disabled]="replacing()" />
         </div>
         <div class="ar-arrow"><i class="pi pi-arrow-right" aria-hidden="true"></i></div>
         <div class="ar-field">
-          <label class="ar-lbl" for="ar-new">Nouveau compte</label>
-          <input id="ar-new" class="ar-inp" [(ngModel)]="newAccount" placeholder="Ex. 41100002" [disabled]="replacing()" />
+          <label class="ar-lbl" for="ar-new" i18n="@@accounting.account-replacement.nouveau.compte.9c08a4c7">Nouveau compte</label>
+          <input id="ar-new" class="ar-inp" [(ngModel)]="newAccount" placeholder="Ex. 41100002" i18n-placeholder="@@accounting.account-replacement.ex.41100002.96d21ae5" [disabled]="replacing()" />
         </div>
       </div>
 
       <div class="ar-actions">
-        <app-button variant="secondary" icon="pi pi-eye" type="button" (click)="preview()" [disabled]="!oldAccount.trim() || replacing()">Aperçu</app-button>
+        <app-button variant="secondary" icon="pi pi-eye" type="button" (click)="preview()" [disabled]="!oldAccount.trim() || replacing()" i18n="@@accounting.account-replacement.apercu.f0f53004">Aperçu</app-button>
         <app-button variant="primary" icon="pi pi-check" type="button" (click)="replace()"
           [disabled]="!canReplace() || replacing()">
-          {{ replacing() ? 'Remplacement…' : 'Remplacer' }}
+          {{ replacing() ? loc_ui_tern_remplacement_d3e8d9 : loc_ui_tern_remplacer_db2c67 }}
         </app-button>
       </div>
 
       @if (previewCount() !== null) {
-        <p class="ar-preview">
+        <p class="ar-preview" i18n="@@accounting.account-replacement.ligne.s.d.ecriture.porteraient.l.ancien.2fd3fffd">
           <strong>{{ previewCount() }}</strong> ligne(s) d'écriture porteraient l'ancien compte
           <code>{{ previewedAccount() }}</code> dans les périodes ouvertes.
         </p>
@@ -65,6 +66,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `
 })
 export class AccountReplacementComponent {
+  readonly loc_ui_tern_remplacement_d3e8d9 = $localize`:@@ui.tern.remplacement.d3e8d9:Remplacement…`;
+  readonly loc_ui_tern_remplacer_db2c67 = $localize`:@@ui.tern.remplacer.db2c67:Remplacer`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly toast = inject(ToastService);
@@ -95,9 +98,9 @@ export class AccountReplacementComponent {
         if (res.success && res.data !== undefined && res.data !== null) {
           this.previewedAccount.set(acc);
           this.previewCount.set(res.data);
-        } else this.error.set(res.error ?? 'Erreur');
+        } else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
-      error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
+      error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.account-replacement.ts.erreur.reseau.0683007f:Erreur réseau`))
     });
   }
 
@@ -111,13 +114,13 @@ export class AccountReplacementComponent {
       next: res => {
         this.replacing.set(false);
         if (res.success) {
-          this.toast.add({ severity: 'success', summary: 'Compte remplacé', detail: `${res.data} ligne(s) — ${o} → ${n}`, life: 5000 });
+          this.toast.add({ severity: 'success', summary: $localize`:@@account-replacement.component.summary.Compte rempl:Compte remplacé`, detail: $localize`:@@accounting.account-replacement.ts.data.ligne.s.o.n.e86d414d:${res.data}:data: ligne(s) — ${o}:o: → ${n}:n:`, life: 5000 });
           this.previewCount.set(null);
           this.oldAccount = '';
           this.newAccount = '';
-        } else this.error.set(res.error ?? 'Le remplacement a échoué.');
+        } else this.error.set(res.error ?? $localize`:@@ui.tern.le.remplacement.a.echoue.cdb82e:Le remplacement a échoué.`);
       },
-      error: err => { this.replacing.set(false); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau')); }
+      error: err => { this.replacing.set(false); this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.account-replacement.ts.erreur.reseau.0683007f:Erreur réseau`)); }
     });
   }
 }

@@ -235,34 +235,34 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
   template: `
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     <app-page-header
-      title="Vitrine publique & rue 3D"
-      subtitle="Exposez une vitrine modérée sur la Rue InstaFact (opt-in, données publiques uniquement).">
+      title="Vitrine publique & rue 3D" i18n-title="@@settings.storefront.vitrine.publique.rue.3d.2f3995b8"
+      subtitle="Exposez une vitrine modérée sur la Rue InstaFact (opt-in, données publiques uniquement)." i18n-subtitle="@@settings.storefront.exposez.une.vitrine.moderee.sur.la.rue.i.cf1cc278">
     </app-page-header>
 
     @if (!enabled) {
-      <p-message severity="warn" text="La fonctionnalité est désactivée côté client (environment)."></p-message>
+      <p-message severity="warn" text="La fonctionnalité est désactivée côté client (environment)." i18n-text="@@settings.storefront.la.fonctionnalite.est.desactivee.cote.cl.05346ca8"></p-message>
     } @else {
       @if (error()) {
         <p-message severity="error" [text]="error()!" role="alert"></p-message>
       }
       @if (profile()) {
-        <p-card header="Vitrine configurée">
-          <p><strong>Slug :</strong> {{ profile()!.slug }}</p>
-          <p><strong>Nom public :</strong> {{ profile()!.displayName }}</p>
-          <p><strong>Statut :</strong> {{ workflowStatusLabel(profile()!.workflowStatus) }}</p>
+        <p-card header="Vitrine configurée" i18n-header="@@settings.storefront.vitrine.configuree.23f52efd">
+          <p><strong i18n="@@settings.storefront.slug.c22372b0">Slug :</strong> {{ profile()!.slug }}</p>
+          <p><strong i18n="@@settings.storefront.nom.public.3e9fc9db">Nom public :</strong> {{ profile()!.displayName }}</p>
+          <p><strong i18n="@@settings.storefront.statut.b20e7fc2">Statut :</strong> {{ workflowStatusLabel(profile()!.workflowStatus) }}</p>
           @if (profile()!.rejectionReason) {
-            <p><strong>Motif refus :</strong> {{ profile()!.rejectionReason }}</p>
+            <p><strong i18n="@@settings.storefront.motif.refus.cd5d8a22">Motif refus :</strong> {{ profile()!.rejectionReason }}</p>
           }
           @if (isPendingReview(profile()!.workflowStatus)) {
             <p-message
               class="block mt-3"
               severity="info"
-              text="Votre vitrine a été transmise à la modération plateforme. Vous serez informé après décision (publication ou retour en brouillon avec motif)." />
+              text="Votre vitrine a été transmise à la modération plateforme. Vous serez informé après décision (publication ou retour en brouillon avec motif)." i18n-text="@@settings.storefront.votre.vitrine.a.ete.transmise.a.la.moder.93edffec" />
           }
           <p class="mt-3">
             @if (isPublished(profile()!.workflowStatus)) {
               <a routerLink="/visite-virtuelle/{{ profile()!.slug }}" target="_blank" rel="noopener"
-                >Ouvrir la vitrine publique</a
+                 i18n="@@settings.storefront.ouvrir.la.vitrine.publique.dc25a21d">Ouvrir la vitrine publique</a
               >
             } @else {
               <p-message severity="info" [text]="publicUrlBlockedMessage(profile()!.slug)" />
@@ -277,7 +277,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
           <div class="workflow-actions mt-3">
             @if (isDraft(profile()!.workflowStatus)) {
               <p-button
-                label="Soumettre à la modération"
+                label="Soumettre à la modération" i18n-label="@@settings.storefront.soumettre.a.la.moderation.1018d7e2"
                 icon="pi pi-send"
                 (onClick)="submitForReview()"
                 [loading]="workflowBusy()"
@@ -285,7 +285,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
             }
             @if (isPublished(profile()!.workflowStatus)) {
               <p-button
-                label="Dépublier (retour brouillon)"
+                label="Dépublier (retour brouillon)" i18n-label="@@settings.storefront.depublier.retour.brouillon.1e94578c"
                 icon="pi pi-eye-slash"
                 severity="secondary"
                 [outlined]="true"
@@ -296,9 +296,9 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
         </p-card>
 
         @if (canEditProfileFields()) {
-          <p-card header="Contenu et habillage publics" class="mt-3">
-            <p class="lede mb-3">
-              Ces champs sont visibles après modération et publication. Une
+          <p-card header="Contenu et habillage publics" i18n-header="@@settings.storefront.contenu.et.habillage.publics.482238e3" class="mt-3">
+            <p class="lede mb-3" i18n="@@settings.storefront.ces.champs.sont.visibles.apres.moderatio.eb75ca47">
+              <ng-container> Ces champs sont visibles après modération et publication. Une </ng-container>
               <strong>description</strong> et une <strong>URL de logo public</strong> sont obligatoires pour soumettre
               la vitrine.
             </p>
@@ -306,7 +306,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
               <p-message
                 class="block mb-3"
                 severity="info"
-                [text]="'À compléter avant soumission : ' + moderationChecklistItems().join(' · ') + '.'"></p-message>
+                [text]="loc_ui_tern_a_completer_avant_soumission_688cf2 + moderationChecklistItems().join(' · ') + '.'"></p-message>
             }
             @if (fieldErrors().length > 0) {
               <p-message
@@ -316,11 +316,11 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
                 [text]="fieldErrors().join(' ')"></p-message>
             }
             <div class="field">
-              <label for="sf-displayName">Nom public</label>
+              <label for="sf-displayName" i18n="@@settings.storefront.nom.public.38b747b0">Nom public</label>
               <input id="sf-displayName" pInputText [(ngModel)]="editForm.displayName" autocomplete="organization" />
             </div>
             <div class="field">
-              <label for="sf-tagline">Slogan (optionnel, max. {{ taglineMax }} car.)</label>
+              <label for="sf-tagline" i18n="@@settings.storefront.slogan.optionnel.max.car.8ef9ab4c">Slogan (optionnel, max. {{ taglineMax }} car.)</label>
               <input
                 id="sf-tagline"
                 pInputText
@@ -330,7 +330,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
               <small id="sf-tagline-hint" class="hint">{{ editForm.tagline.length }} / {{ taglineMax }}</small>
             </div>
             <div class="field">
-              <label for="sf-desc">Description (Markdown, obligatoire pour soumission)</label>
+              <label for="sf-desc" i18n="@@settings.storefront.description.markdown.obligatoire.pour.soumission.fa4a35be">Description (Markdown, obligatoire pour soumission)</label>
               <textarea
                 id="sf-desc"
                 pTextarea
@@ -343,38 +343,38 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
             </div>
             <div class="field-row">
               <div class="field grow">
-                <label for="sf-primary">Couleur primaire (#RRGGBB)</label>
+                <label for="sf-primary" i18n="@@settings.storefront.couleur.primaire.rrggbb.af10a08e">Couleur primaire (#RRGGBB)</label>
                 <input id="sf-primary" pInputText [(ngModel)]="editForm.brandPrimaryColorHex" maxlength="7" />
               </div>
               <div class="field grow">
-                <label for="sf-secondary">Couleur secondaire (#RRGGBB)</label>
+                <label for="sf-secondary" i18n="@@settings.storefront.couleur.secondaire.rrggbb.3084d45f">Couleur secondaire (#RRGGBB)</label>
                 <input id="sf-secondary" pInputText [(ngModel)]="editForm.brandSecondaryColorHex" maxlength="7" />
               </div>
             </div>
             <div class="field">
-              <label for="sf-email">Email public de contact</label>
+              <label for="sf-email" i18n="@@settings.storefront.email.public.de.contact.221f0cf6">Email public de contact</label>
               <input id="sf-email" pInputText [(ngModel)]="editForm.publicContactEmail" type="email" autocomplete="email" />
             </div>
             <div class="field-row">
               <div class="field grow">
-                <label for="sf-phone">Téléphone (optionnel)</label>
+                <label for="sf-phone" i18n="@@settings.storefront.telephone.optionnel.23768a3e">Téléphone (optionnel)</label>
                 <input id="sf-phone" pInputText [(ngModel)]="editForm.publicContactPhone" />
               </div>
               <div class="field grow">
-                <label for="sf-wa">WhatsApp (optionnel)</label>
+                <label for="sf-wa" i18n="@@settings.storefront.whatsapp.optionnel.7f2f84d5">WhatsApp (optionnel)</label>
                 <input id="sf-wa" pInputText [(ngModel)]="editForm.publicContactWhatsApp" />
               </div>
             </div>
             <div class="field">
-              <label for="sf-logo">URL du logo public (obligatoire pour soumission, max. {{ urlMax }} car.)</label>
+              <label for="sf-logo" i18n="@@settings.storefront.url.du.logo.public.obligatoire.pour.soum.e74984d1">URL du logo public (obligatoire pour soumission, max. {{ urlMax }} car.)</label>
               <input id="sf-logo" pInputText [(ngModel)]="editForm.publicLogoUrl" [maxlength]="urlMax" />
             </div>
             <div class="field">
-              <label for="sf-cover">URL image de couverture (optionnel, max. {{ urlMax }} car.)</label>
+              <label for="sf-cover" i18n="@@settings.storefront.url.image.de.couverture.optionnel.max.ca.1e3e25bc">URL image de couverture (optionnel, max. {{ urlMax }} car.)</label>
               <input id="sf-cover" pInputText [(ngModel)]="editForm.publicCoverImageUrl" [maxlength]="urlMax" />
             </div>
             <div class="field">
-              <label for="sf-cat">Catégorie</label>
+              <label for="sf-cat" i18n="@@settings.storefront.categorie.6b38300a">Catégorie</label>
               <p-select
                 inputId="sf-cat"
                 [options]="categories"
@@ -383,7 +383,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
                 optionValue="value" />
             </div>
             <div class="field">
-              <label for="sf-theme">Thème façade</label>
+              <label for="sf-theme" i18n="@@settings.storefront.theme.facade.8db2163f">Thème façade</label>
               <p-select
                 inputId="sf-theme"
                 [options]="themes"
@@ -392,44 +392,44 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
                 optionValue="value" />
             </div>
             <div class="field switch-field">
-              <label for="sf-orders">Autoriser les commandes depuis la vitrine publique</label>
+              <label for="sf-orders" i18n="@@settings.storefront.autoriser.les.commandes.depuis.la.vitrine.publiq.054fb621">Autoriser les commandes depuis la vitrine publique</label>
               <p-inputSwitch inputId="sf-orders" [(ngModel)]="editForm.orderSubmissionEnabled" />
             </div>
-            <p-button label="Enregistrer" icon="pi pi-save" (onClick)="saveProfile()" [loading]="saveBusy()" />
+            <p-button label="Enregistrer" i18n-label="@@settings.storefront.enregistrer.f7c8bcd8" icon="pi pi-save" (onClick)="saveProfile()" [loading]="saveBusy()" />
           </p-card>
         }
       } @else if (!loading() && profile() === null && !invalidStatusFromServer()) {
-        <p-card header="Activer la vitrine (brouillon)">
-          <p class="mb-3">
-            Les CGU de publication version <strong>{{ termsVersion }}</strong> seront enregistrées pour votre
+        <p-card header="Activer la vitrine (brouillon)" i18n-header="@@settings.storefront.activer.la.vitrine.brouillon.c4b94584">
+          <p class="mb-3" i18n="@@settings.storefront.les.cgu.de.publication.version.seront.en.c4be9557">
+            <ng-container> Les CGU de publication version </ng-container> <strong>{{ termsVersion }}</strong> seront enregistrées pour votre
             entreprise.
           </p>
           <div class="field">
-            <label for="slug">Slug URL (minuscules, tirets)</label>
+            <label for="slug" i18n="@@settings.storefront.slug.url.minuscules.tirets.9a01339c">Slug URL (minuscules, tirets)</label>
             <input id="slug" pInputText [(ngModel)]="draft.slug" />
           </div>
           <div class="field">
-            <label for="dn">Nom affiché</label>
+            <label for="dn" i18n="@@settings.storefront.nom.affiche.c3c2717f">Nom affiché</label>
             <input id="dn" pInputText [(ngModel)]="draft.displayName" />
           </div>
           <div class="field">
-            <label for="mail">Email public</label>
+            <label for="mail" i18n="@@settings.storefront.email.public.497079b4">Email public</label>
             <input id="mail" pInputText [(ngModel)]="draft.publicContactEmail" />
           </div>
           <div class="field">
-            <label>Catégorie</label>
+            <label i18n="@@settings.storefront.categorie.6b38300a">Catégorie</label>
             <p-select [options]="categories" [(ngModel)]="draft.category" optionLabel="label" optionValue="value" />
           </div>
           <div class="field">
-            <label>Thème façade</label>
+            <label i18n="@@settings.storefront.theme.facade.8db2163f">Thème façade</label>
             <p-select [options]="themes" [(ngModel)]="draft.facadeTheme" optionLabel="label" optionValue="value" />
           </div>
-          <p-button label="Créer la vitrine (brouillon)" (onClick)="optIn()" [loading]="saving()" />
+          <p-button label="Créer la vitrine (brouillon)" i18n-label="@@settings.storefront.creer.la.vitrine.brouillon.89285cd7" (onClick)="optIn()" [loading]="saving()" />
         </p-card>
       } @else if (!loading() && invalidStatusFromServer()) {
-        <p class="sr-only">Réponse serveur incohérente (statut vitrine).</p>
+        <p class="sr-only" i18n="@@settings.storefront.reponse.serveur.incoherente.statut.vitrine.68d1e8a9">Réponse serveur incohérente (statut vitrine).</p>
       } @else {
-        <p>Chargement du profil vitrine…</p>
+        <p i18n="@@settings.storefront.chargement.du.profil.vitrine.9373dcfc">Chargement du profil vitrine…</p>
       }
     }
   `,
@@ -483,6 +483,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
   ]
 })
 export class StorefrontSettingsComponent implements OnInit {
+  readonly loc_ui_tern_a_completer_avant_soumission_688cf2 = $localize`:@@ui.tern.a.completer.avant.soumission.688cf2:À compléter avant soumission : `;
   private readonly http = inject(HttpClient);
   private readonly errorHandler = inject(ErrorHandlerService);
 
@@ -493,9 +494,9 @@ export class StorefrontSettingsComponent implements OnInit {
   readonly urlMax = STOREFRONT_PUBLIC_URL_MAX_LENGTH;
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Vitrine publique' }
+    { label: $localize`:@@settings.storefront-settings.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.storefront-settings.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.storefront-settings.ts.vitrine.publique.6c85a709:Vitrine publique` }
   ];
 
   readonly profile = signal<StorefrontProfileView | null | undefined>(undefined);
@@ -525,22 +526,22 @@ export class StorefrontSettingsComponent implements OnInit {
   };
 
   categories = [
-    { label: 'Commerce général', value: 0 },
-    { label: 'Alimentation', value: 1 },
-    { label: 'Mode', value: 2 },
-    { label: 'Livres', value: 3 },
-    { label: 'Électronique', value: 4 },
-    { label: 'Services', value: 5 },
-    { label: 'Artisanat', value: 6 },
-    { label: 'Autre', value: 99 }
+    { label: $localize`:@@settings.storefront-settings.ts.commerce.general.ab2303a3:Commerce général`, value: 0 },
+    { label: $localize`:@@settings.storefront-settings.ts.alimentation.fa6170f4:Alimentation`, value: 1 },
+    { label: $localize`:@@settings.storefront-settings.ts.mode.a7b93d21:Mode`, value: 2 },
+    { label: $localize`:@@settings.storefront-settings.ts.livres.612cda92:Livres`, value: 3 },
+    { label: $localize`:@@settings.storefront-settings.ts.electronique.15ff3d0d:Électronique`, value: 4 },
+    { label: $localize`:@@settings.storefront-settings.ts.services.5cbd5840:Services`, value: 5 },
+    { label: $localize`:@@settings.storefront-settings.ts.artisanat.c045fdd5:Artisanat`, value: 6 },
+    { label: $localize`:@@settings.storefront-settings.ts.autre.43dacf9e:Autre`, value: 99 }
   ];
 
   themes = [
-    { label: 'Classique', value: 0 },
-    { label: 'Moderne', value: 1 },
-    { label: 'Vintage', value: 2 },
-    { label: 'Minimal', value: 3 },
-    { label: 'Artisan', value: 4 }
+    { label: $localize`:@@settings.storefront-settings.ts.classique.21d58b2b:Classique`, value: 0 },
+    { label: $localize`:@@settings.storefront-settings.ts.moderne.1c491805:Moderne`, value: 1 },
+    { label: $localize`:@@settings.storefront-settings.ts.vintage.eceabeee:Vintage`, value: 2 },
+    { label: $localize`:@@settings.storefront-settings.ts.minimal.a711cca9:Minimal`, value: 3 },
+    { label: $localize`:@@settings.storefront-settings.ts.artisan.fd2f8eb2:Artisan`, value: 4 }
   ];
 
   ngOnInit(): void {
@@ -567,7 +568,7 @@ export class StorefrontSettingsComponent implements OnInit {
       missing.push('description');
     }
     if (!(this.editForm.publicLogoUrl ?? '').trim()) {
-      missing.push('URL du logo public');
+      missing.push($localize`:@@settings.storefront-settings.ts.url.du.logo.public.a0b6ecd4:URL du logo public`);
     }
     return missing;
   }
@@ -586,7 +587,7 @@ export class StorefrontSettingsComponent implements OnInit {
         }
         const view = mapApiDtoToView(raw);
         if (!view) {
-          this.error.set('Réponse serveur inattendue (statut vitrine). Contactez le support.');
+          this.error.set($localize`:@@settings.storefront-settings.ts.reponse.serveur.inattendue.statut.vitrin.5f691abe:Réponse serveur inattendue (statut vitrine). Contactez le support.`);
           this.profile.set(null);
           this.invalidStatusFromServer.set(true);
           this.editForm = emptyEditForm();
@@ -606,15 +607,14 @@ export class StorefrontSettingsComponent implements OnInit {
 
   publicUrlBlockedMessage(slug: string): string {
     return (
-      `L’URL publique (/visite-virtuelle/${slug}) ne sera active qu’après publication sur la Rue InstaFact ` +
-      '(validation plateforme). En brouillon, en attente ou suspendue, cette adresse ne renvoie pas la vitrine côté public.'
+      $localize`:@@settings.storefront-settings.ts.l.url.publique.visite.virtuelle.slug.ne.c97a9f70:L’URL publique (/visite-virtuelle/${slug}:slug:) ne sera active qu’après publication sur la Rue InstaFact (validation plateforme). En brouillon, en attente ou suspendue, cette adresse ne renvoie pas la vitrine côté public.`
     );
   }
 
   private applyProfileFromApiDto(dto: StorefrontProfileApiDto): boolean {
     const view = mapApiDtoToView(dto);
     if (!view) {
-      this.error.set('Réponse serveur inattendue (statut vitrine). Contactez le support.');
+      this.error.set($localize`:@@settings.storefront-settings.ts.reponse.serveur.inattendue.statut.vitrin.5f691abe:Réponse serveur inattendue (statut vitrine). Contactez le support.`);
       this.invalidStatusFromServer.set(true);
       return false;
     }
@@ -627,30 +627,30 @@ export class StorefrontSettingsComponent implements OnInit {
   private validateEditFormBeforeSave(): string[] {
     const errs: string[] = [];
     if (!this.editForm.displayName?.trim()) {
-      errs.push('Le nom public est obligatoire.');
+      errs.push($localize`:@@settings.storefront-settings.ts.le.nom.public.est.obligatoire.15b89a36:Le nom public est obligatoire.`);
     }
     if (!this.editForm.publicContactEmail?.trim()) {
-      errs.push("L'email public de contact est obligatoire.");
+      errs.push($localize`:@@settings.storefront-settings.ts.l.email.public.de.contact.est.obligatoir.42388dd4:L'email public de contact est obligatoire.`);
     }
     const p1 = (this.editForm.brandPrimaryColorHex ?? '').trim();
     const p2 = (this.editForm.brandSecondaryColorHex ?? '').trim();
     if (!isValidStorefrontHexColor(p1)) {
-      errs.push('La couleur primaire doit être au format #RRGGBB.');
+      errs.push($localize`:@@settings.storefront-settings.ts.la.couleur.primaire.doit.etre.au.format.f9e8973f:La couleur primaire doit être au format #RRGGBB.`);
     }
     if (!isValidStorefrontHexColor(p2)) {
-      errs.push('La couleur secondaire doit être au format #RRGGBB.');
+      errs.push($localize`:@@settings.storefront-settings.ts.la.couleur.secondaire.doit.etre.au.forma.57f382a4:La couleur secondaire doit être au format #RRGGBB.`);
     }
     if ((this.editForm.publicLogoUrl ?? '').length > STOREFRONT_PUBLIC_URL_MAX_LENGTH) {
-      errs.push(`L'URL du logo ne peut pas dépasser ${STOREFRONT_PUBLIC_URL_MAX_LENGTH} caractères.`);
+      errs.push($localize`:@@settings.storefront-settings.ts.l.url.du.logo.ne.peut.pas.depasser.store.7508f463:L'URL du logo ne peut pas dépasser ${STOREFRONT_PUBLIC_URL_MAX_LENGTH}:STOREFRONT_PUBLIC_URL_MAX_LENGTH: caractères.`);
     }
     if ((this.editForm.publicCoverImageUrl ?? '').length > STOREFRONT_PUBLIC_URL_MAX_LENGTH) {
-      errs.push(`L'URL de couverture ne peut pas dépasser ${STOREFRONT_PUBLIC_URL_MAX_LENGTH} caractères.`);
+      errs.push($localize`:@@settings.storefront-settings.ts.l.url.de.couverture.ne.peut.pas.depasser.1a79955c:L'URL de couverture ne peut pas dépasser ${STOREFRONT_PUBLIC_URL_MAX_LENGTH}:STOREFRONT_PUBLIC_URL_MAX_LENGTH: caractères.`);
     }
     if ((this.editForm.tagline ?? '').length > STOREFRONT_TAGLINE_MAX_LENGTH) {
-      errs.push(`Le slogan ne peut pas dépasser ${STOREFRONT_TAGLINE_MAX_LENGTH} caractères.`);
+      errs.push($localize`:@@settings.storefront-settings.ts.le.slogan.ne.peut.pas.depasser.storefron.2ced7fc5:Le slogan ne peut pas dépasser ${STOREFRONT_TAGLINE_MAX_LENGTH}:STOREFRONT_TAGLINE_MAX_LENGTH: caractères.`);
     }
     if ((this.editForm.descriptionMarkdown ?? '').length > STOREFRONT_DESCRIPTION_MAX_LENGTH) {
-      errs.push(`La description ne peut pas dépasser ${STOREFRONT_DESCRIPTION_MAX_LENGTH} caractères.`);
+      errs.push($localize`:@@settings.storefront-settings.ts.la.description.ne.peut.pas.depasser.stor.990003b9:La description ne peut pas dépasser ${STOREFRONT_DESCRIPTION_MAX_LENGTH}:STOREFRONT_DESCRIPTION_MAX_LENGTH: caractères.`);
     }
     return errs;
   }
@@ -689,12 +689,12 @@ export class StorefrontSettingsComponent implements OnInit {
       next: res => {
         this.saveBusy.set(false);
         if (!res.success || !res.data) {
-          this.error.set(res.errors?.join(' ') ?? res.message ?? 'Enregistrement impossible.');
+          this.error.set(res.errors?.join(' ') ?? res.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`);
           return;
         }
         if (this.applyProfileFromApiDto(res.data)) {
           this.fieldErrors.set([]);
-          this.saveMessage.set(res.message ?? 'Vitrine mise à jour.');
+          this.saveMessage.set(res.message ?? $localize`:@@ui.tern.vitrine.mise.a.jour.ed7ec2:Vitrine mise à jour.`);
         }
       },
       error: (err: HttpErrorResponse) => {
@@ -715,11 +715,11 @@ export class StorefrontSettingsComponent implements OnInit {
         next: res => {
           this.workflowBusy.set(false);
           if (!res.success || !res.data) {
-            this.error.set(res.errors?.join(' ') ?? res.message ?? 'Soumission impossible.');
+            this.error.set(res.errors?.join(' ') ?? res.message ?? $localize`:@@ui.tern.soumission.impossible.543f0c:Soumission impossible.`);
             return;
           }
           if (this.applyProfileFromApiDto(res.data)) {
-            this.workflowMessage.set(res.message ?? 'Soumise à la modération.');
+            this.workflowMessage.set(res.message ?? $localize`:@@ui.tern.soumise.a.la.moderation.c769d8:Soumise à la modération.`);
           }
         },
         error: (err: HttpErrorResponse) => {
@@ -740,11 +740,11 @@ export class StorefrontSettingsComponent implements OnInit {
         next: res => {
           this.workflowBusy.set(false);
           if (!res.success || !res.data) {
-            this.error.set(res.errors?.join(' ') ?? res.message ?? 'Dépublication impossible.');
+            this.error.set(res.errors?.join(' ') ?? res.message ?? $localize`:@@ui.tern.depublication.impossible.0d9c38:Dépublication impossible.`);
             return;
           }
           if (this.applyProfileFromApiDto(res.data)) {
-            this.workflowMessage.set(res.message ?? 'Vitrine dépubliée.');
+            this.workflowMessage.set(res.message ?? $localize`:@@ui.tern.vitrine.depubliee.93f44b:Vitrine dépubliée.`);
           }
         },
         error: (err: HttpErrorResponse) => {
@@ -768,7 +768,7 @@ export class StorefrontSettingsComponent implements OnInit {
     this.http.post<ApiResponse<StorefrontProfileApiDto>>(`${environment.apiUrl}/storefront/tenant/profile`, body).subscribe({
       next: res => {
         if (!res.success || !res.data) {
-          this.error.set(res.errors?.join(' ') ?? res.message ?? 'Erreur');
+          this.error.set(res.errors?.join(' ') ?? res.message ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         } else if (!this.applyProfileFromApiDto(res.data)) {
           // erreur statut déjà posée
         }

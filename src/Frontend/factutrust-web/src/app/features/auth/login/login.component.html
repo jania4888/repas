@@ -3,8 +3,8 @@
     <div class="auth-form-card-header__logo">
       <app-logo size="medium" variant="icon-only" routerLink="/"></app-logo>
     </div>
-    <h2>Bienvenue !</h2>
-    <p>Connectez-vous à votre espace InstaFact.</p>
+    <h2 i18n="@@auth.login.bienvenue.bf663666">Bienvenue !</h2>
+    <p i18n="@@auth.login.connectez.vous.a.votre.espace.instafact.38660609">Connectez-vous à votre espace InstaFact.</p>
     <span class="auth-form-card-header__accent" aria-hidden="true"></span>
   </div>
 
@@ -12,7 +12,7 @@
     [formGroup]="form"
     (ngSubmit)="onSubmit()"
     class="login-form"
-    [attr.aria-label]="'Connexion à InstaFact'"
+    [attr.aria-label]="loc_connexion_a_instafact_643e92"
     novalidate
   >
     @if (error()) {
@@ -20,7 +20,7 @@
     }
 
     <div class="form-group">
-      <label for="email">Adresse email</label>
+      <label for="email" i18n="@@auth.login.adresse.email.bdf1cc95">Adresse email</label>
       <div class="input-icon-wrapper">
         <i class="pi pi-envelope icon" aria-hidden="true"></i>
         <input
@@ -28,7 +28,7 @@
           id="email"
           type="email"
           formControlName="email"
-          placeholder="Entrez votre adresse email"
+          placeholder="Entrez votre adresse email" i18n-placeholder="@@auth.login.entrez.votre.adresse.email.f0d096b5"
           class="w-full"
           autocomplete="email"
           [attr.aria-invalid]="isEmailInvalid()"
@@ -50,7 +50,7 @@
     </div>
 
     <div class="form-group">
-      <label for="password">Mot de passe</label>
+      <label for="password" i18n="@@auth.login.mot.de.passe.94e2f3ee">Mot de passe</label>
       <div class="input-icon-wrapper p-password-wrapper">
         <i class="pi pi-lock icon" aria-hidden="true"></i>
         <p-password
@@ -58,7 +58,7 @@
           formControlName="password"
           [feedback]="false"
           [toggleMask]="true"
-          placeholder="Entrez votre mot de passe"
+          placeholder="Entrez votre mot de passe" i18n-placeholder="@@auth.login.entrez.votre.mot.de.passe.9f4b3380"
           styleClass="w-full"
           inputStyleClass="w-full"
           autocomplete="current-password"
@@ -81,19 +81,19 @@
           formControlName="rememberMe"
           [binary]="true"
           inputId="rememberMe"
-          label="Se souvenir de moi"
+          label="Se souvenir de moi" i18n-label="@@auth.login.se.souvenir.de.moi.0c8f8391"
           [attr.title]="rememberMeHint"
           [attr.aria-describedby]="'rememberMe-hint'"
         >
         </p-checkbox>
         <span class="sr-only" id="rememberMe-hint">{{ rememberMeHint }}</span>
       </div>
-      <a class="forgot-link" routerLink="/auth/forgot-password">Mot de passe oublié ?</a>
+      <a class="forgot-link" routerLink="/auth/forgot-password" i18n="@@auth.login.mot.de.passe.oublie.d95cb56a">Mot de passe oublié ?</a>
     </div>
 
     <p-button
       type="submit"
-      label="Se connecter"
+      label="Se connecter" i18n-label="@@auth.login.se.connecter.fedf2439"
       icon="pi pi-arrow-right"
       iconPos="right"
       styleClass="w-full login-submit-btn"
@@ -105,7 +105,7 @@
 
     <div class="auth-data-protection" role="note">
       <i class="pi pi-shield" aria-hidden="true"></i>
-      <span>Vos données sont protégées</span>
+      <span i18n="@@auth.login.vos.donnees.sont.protegees.1e1c3bd4">Vos données sont protégées</span>
     </div>
   </form>
 
@@ -113,19 +113,17 @@
     <p-message severity="info" [text]="registrationClosedNotice()!" styleClass="w-full mt-3" />
   }
   @if (showPublicRegistrationLinks()) {
-    <div class="login-footer" aria-label="Création de compte">
-      <p class="login-footer__intro">Pas encore de compte ?</p>
+    <div class="login-footer" aria-label="Création de compte" i18n-aria-label="@@auth.login.creation.de.compte.b7497961">
+      <p class="login-footer__intro" i18n="@@auth.login.pas.encore.de.compte.91e00b13">Pas encore de compte ?</p>
       @if (environment.publicRegistration.companyEnabled) {
-        <a routerLink="/auth/register" class="login-footer__cta">Créer un compte gratuitement</a>
+        <a routerLink="/auth/register" class="login-footer__cta" i18n="@@auth.login.creer.un.compte.gratuitement.ef0b3609">Créer un compte gratuitement</a>
       }
       @if (environment.accountingFirmsEnabled && environment.publicRegistration.firmEnabled) {
-        <p class="login-footer__intro login-footer__intro--block">Vous êtes un cabinet comptable ?</p>
-        <a routerLink="/auth/register-firm" class="login-footer__cta login-footer__cta--secondary">Créer un compte cabinet</a>
+        <p class="login-footer__intro login-footer__intro--block" i18n="@@auth.login.vous.etes.un.cabinet.comptable.f7c13dbb">Vous êtes un cabinet comptable ?</p>
+        <a routerLink="/auth/register-firm" class="login-footer__cta login-footer__cta--secondary" i18n="@@auth.login.creer.un.compte.cabinet.27455d57">Créer un compte cabinet</a>
       }
     </div>
   } @else if (!registrationClosedNotice()) {
-    <p class="login-footer__intro login-footer__intro--block">
-      L’ouverture de compte est réservée à l’équipe InstaFact. Contactez le support pour accéder à la plateforme.
-    </p>
+    <p class="login-footer__intro login-footer__intro--block" i18n="@@auth.login.l.ouverture.de.compte.est.reservee.a.l.equipe.in.c35eaf05"> L’ouverture de compte est réservée à l’équipe InstaFact. Contactez le support pour accéder à la plateforme. </p>
   }
 </app-auth-shell>

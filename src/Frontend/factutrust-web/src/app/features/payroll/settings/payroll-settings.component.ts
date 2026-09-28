@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -35,23 +36,23 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
     PayrollSocialFundsSettingsComponent
   ],
   template: `
-    <app-page-header title="Paramètres de paie" subtitle="Barème IRPP, taux légaux et conformité par exercice." />
+    <app-page-header title="Paramètres de paie" i18n-title="@@payroll.settings.parametres.de.paie.bdda7686" subtitle="Barème IRPP, taux légaux et conformité par exercice." i18n-subtitle="@@payroll.settings.bareme.irpp.taux.legaux.et.conformite.pa.88cf0295" />
 
     <div class="payroll-toolbar mb-3">
-      <label for="fiscalYear">Exercice</label>
+      <label for="fiscalYear" i18n="@@payroll.settings.exercice.e171e2b0">Exercice</label>
       <p-inputNumber id="fiscalYear" [(ngModel)]="fiscalYear" (ngModelChange)="load()" [useGrouping]="false" [min]="2000" [max]="2100" styleClass="w-8rem" />
-      <app-button type="button" variant="secondary" label="Recharger défauts LF" icon="pi pi-refresh" (clicked)="reloadLegalPreset()" class="ml-3" />
+      <app-button type="button" variant="secondary" label="Recharger défauts LF" i18n-label="@@payroll.settings.recharger.defauts.lf.0c7024bd" icon="pi pi-refresh" (clicked)="reloadLegalPreset()" class="ml-3" />
     </div>
 
     @if (accountingForm(); as acc) {
       <div class="sce-config-card mb-3">
-        <div class="sce-config-card__title">
+        <div class="sce-config-card__title" i18n="@@payroll.settings.comptabilisation.de.la.paie.imputation.c.897b3085">
           <i class="pi pi-calculator"></i>
           Comptabilisation de la paie — imputation comptable du dossier
         </div>
         <div class="sce-config-card__grid">
           <div>
-            <label class="sce-config-card__label" for="sceProfile">Profil de comptabilisation</label>
+            <label class="sce-config-card__label" for="sceProfile" i18n="@@payroll.settings.profil.de.comptabilisation.b4b5d82d">Profil de comptabilisation</label>
             <p-select
               inputId="sceProfile"
               [options]="accountProfileOptions"
@@ -64,7 +65,7 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
               styleClass="w-full" />
           </div>
           <div>
-            <label class="sce-config-card__label" for="sceEffectiveDate">Date de bascule (1er du mois)</label>
+            <label class="sce-config-card__label" for="sceEffectiveDate" i18n="@@payroll.settings.date.de.bascule.1er.du.mois.faf864ed">Date de bascule (1er du mois)</label>
             <input
               id="sceEffectiveDate"
               type="month"
@@ -74,15 +75,15 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
               (ngModelChange)="onEffectiveMonthChange($event)"
               [min]="earliestMonth()" />
             <small class="sce-config-card__hint">
-              @if (accountingSettings()?.lastSettledPeriod) {
+              @if (accountingSettings()?.lastSettledPeriod) {<ng-container i18n="@@payroll.settings.dernier.cycle.arrete.1a01a895">
                 Dernier cycle arrêté : {{ accountingSettings()?.lastSettledPeriod }}.
-              } @else {
+              </ng-container>} @else {<ng-container i18n="@@payroll.settings.aucun.cycle.arrete.a.ce.jour.add4b7f7">
                 Aucun cycle arrêté à ce jour.
-              }
+              </ng-container>}
             </small>
           </div>
           <div>
-            <label class="sce-config-card__label" for="sceInKindAccount">Compte de compensation avantage en nature</label>
+            <label class="sce-config-card__label" for="sceInKindAccount" i18n="@@payroll.settings.compte.de.compensation.avantage.en.nature.dcbd8630">Compte de compensation avantage en nature</label>
             <input
               id="sceInKindAccount"
               type="text"
@@ -92,15 +93,15 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
               [ngModelOptions]="{ standalone: true }" />
           </div>
           <div>
-            <span class="sce-config-card__label">Règlement strict (avances/prêts/saisies)</span>
-            <span class="sce-config-card__value">{{ featureFlags()?.payrollStrictSettlementEnabled ? 'Activé' : 'Désactivé' }}</span>
+            <span class="sce-config-card__label" i18n="@@payroll.settings.reglement.strict.avances.prets.saisies.8f4f09d5">Règlement strict (avances/prêts/saisies)</span>
+            <span class="sce-config-card__value">{{ featureFlags()?.payrollStrictSettlementEnabled ? loc_ui_tern_active_42ce0b : loc_ui_tern_desactive_2d32fa }}</span>
           </div>
           <div>
-            <label class="sce-config-card__label" for="sceDisbursement">Écritures de décaissement (avances/prêts)</label>
+            <label class="sce-config-card__label" for="sceDisbursement" i18n="@@payroll.settings.ecritures.de.decaissement.avances.prets.fc6fcade">Écritures de décaissement (avances/prêts)</label>
             <p-inputSwitch inputId="sceDisbursement" [(ngModel)]="acc.disbursementEntriesEnabled" [ngModelOptions]="{ standalone: true }" />
           </div>
           <div>
-            <label class="sce-config-card__label" for="sceSalarySplit">Ventilation détaillée des salaires (640)</label>
+            <label class="sce-config-card__label" for="sceSalarySplit" i18n="@@payroll.settings.ventilation.detaillee.des.salaires.640.2cd2becc">Ventilation détaillée des salaires (640)</label>
             <p-inputSwitch inputId="sceSalarySplit" [(ngModel)]="acc.detailedSalarySplitEnabled" [ngModelOptions]="{ standalone: true }" />
           </div>
         </div>
@@ -108,27 +109,25 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
         @if (acc.accountProfile === 'Sce2026' && !acc.accountProfileEffectiveDate) {
           <p class="sce-warn-panel mt-2" role="alert">
             <i class="pi pi-exclamation-triangle"></i>
-            <span>
-              Le profil SCE 2026 exige une date de bascule. Sans elle, il s'appliquerait aussi aux cycles
-              antérieurs : rouvrir puis revalider l'un d'eux en réécrirait l'imputation.
-            </span>
+            <span i18n="@@payroll.settings.le.profil.sce.2026.exige.une.date.de.bascule.san.01ad32a6"> Le profil SCE 2026 exige une date de bascule. Sans elle, il s'appliquerait aussi aux cycles
+              antérieurs : rouvrir puis revalider l'un d'eux en réécrirait l'imputation. </span>
           </p>
         }
 
         <p class="sce-config-card__note">
-          @if (accountingSettings()?.isTenantOverride) {
+          @if (accountingSettings()?.isTenantOverride) {<ng-container i18n="@@payroll.settings.reglage.propre.a.ce.dossier.4929cd5b">
             Réglage propre à ce dossier.
-          } @else {
+          </ng-container>} @else {<ng-container i18n="@@payroll.settings.ce.dossier.herite.de.la.configuration.gl.908301ef">
             Ce dossier hérite de la configuration globale ; enregistrer créera son réglage propre.
-          }
+          </ng-container>}<ng-container i18n="@@payroll.settings.les.cycles.anterieurs.a.la.date.de.bascu.9daa86dd">
           Les cycles antérieurs à la date de bascule conservent leur imputation d'origine.
           Les comptes SCE par régime de fonds social (part salarié / part employeur) sont configurés ci-dessous.
-        </p>
+        </ng-container></p>
         <div class="sce-config-card__actions">
           <app-button
             type="button"
             variant="primary"
-            label="Enregistrer l'imputation"
+            label="Enregistrer l'imputation" i18n-label="@@payroll.settings.enregistrer.l.imputation.12a551f1"
             icon="pi pi-save"
             [disabled]="savingAccounting()"
             (clicked)="saveAccountingSettings()" />
@@ -138,17 +137,17 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
 
     @if (presetDrift().length > 0) {
       <div class="preset-drift-banner mb-3" role="alert" aria-live="polite">
-        <div class="preset-drift-banner__title">
+        <div class="preset-drift-banner__title" i18n="@@payroll.settings.ecart.preset.legal.les.parametres.de.l.e.9f1527d6">
           <i class="pi pi-exclamation-triangle"></i>
           Écart preset légal — les paramètres de l'exercice {{ fiscalYear }} divergent du défaut LF
         </div>
         <ul class="preset-drift-banner__list">
           @for (d of presetDrift(); track d.label) {
-            <li><strong>{{ d.label }}</strong> : tenant {{ d.current }} → LF {{ d.expected }}</li>
+            <li i18n="@@payroll.settings.tenant.lf.e603a191"><strong>{{ d.label }}</strong> : tenant {{ d.current }} → LF {{ d.expected }}</li>
           }
         </ul>
         <div class="preset-drift-banner__actions">
-          <app-button type="button" variant="secondary" label="Recharger défauts LF" icon="pi pi-refresh" (clicked)="reloadLegalPreset()" />
+          <app-button type="button" variant="secondary" label="Recharger défauts LF" i18n-label="@@payroll.settings.recharger.defauts.lf.0c7024bd" icon="pi pi-refresh" (clicked)="reloadLegalPreset()" />
         </div>
       </div>
     }
@@ -157,105 +156,105 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
       <form (ngSubmit)="save()">
         <p-tabs class="ft-tabs" [lazy]="true">
           <p-tablist>
-            <p-tab [value]="0"><i class="pi pi-percentage mr-2"></i><span>Taux légaux</span></p-tab>
-            <p-tab [value]="1"><i class="pi pi-table mr-2"></i><span>Barème IRPP</span></p-tab>
-            <p-tab [value]="2"><i class="pi pi-users mr-2"></i><span>Déductions familiales</span></p-tab>
-            <p-tab [value]="3"><i class="pi pi-shield mr-2"></i><span>Conformité</span></p-tab>
-            <p-tab [value]="4"><i class="pi pi-exclamation-triangle mr-2"></i><span>Saisies</span></p-tab>
-            <p-tab [value]="5"><i class="pi pi-heart mr-2"></i><span>Mutuelles</span></p-tab>
+            <p-tab [value]="0"><i class="pi pi-percentage mr-2"></i><span i18n="@@payroll.settings.taux.legaux.1f4d328a">Taux légaux</span></p-tab>
+            <p-tab [value]="1"><i class="pi pi-table mr-2"></i><span i18n="@@payroll.settings.bareme.irpp.b6da2fe0">Barème IRPP</span></p-tab>
+            <p-tab [value]="2"><i class="pi pi-users mr-2"></i><span i18n="@@payroll.settings.deductions.familiales.ebcbf9e4">Déductions familiales</span></p-tab>
+            <p-tab [value]="3"><i class="pi pi-shield mr-2"></i><span i18n="@@payroll.settings.conformite.905cab8c">Conformité</span></p-tab>
+            <p-tab [value]="4"><i class="pi pi-exclamation-triangle mr-2"></i><span i18n="@@payroll.settings.saisies.1b5fdae4">Saisies</span></p-tab>
+            <p-tab [value]="5"><i class="pi pi-heart mr-2"></i><span i18n="@@payroll.settings.mutuelles.5a091ac3">Mutuelles</span></p-tab>
           </p-tablist>
           <p-tabpanels>
           <p-tabpanel [value]="0">
-            <app-form-section title="CNSS" icon="pi-building" variant="compact">
+            <app-form-section title="CNSS" i18n-title="@@payroll.settings.cnss.a04d171a" icon="pi-building" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-4">
                 <div class="payroll-form-group">
-                  <label>CNSS salarié (%)</label>
+                  <label i18n="@@payroll.settings.cnss.salarie.b1cf7b5e">CNSS salarié (%)</label>
                   <p-inputNumber [(ngModel)]="params()!.cnssEmployeeRate" name="cnssEmployeeRate" [minFractionDigits]="2" [maxFractionDigits]="4" [min]="0" [max]="100" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label>CNSS employeur (%)</label>
+                  <label i18n="@@payroll.settings.cnss.employeur.b5fc90d8">CNSS employeur (%)</label>
                   <p-inputNumber [(ngModel)]="params()!.cnssEmployerRate" name="cnssEmployerRate" [minFractionDigits]="2" [maxFractionDigits]="4" [min]="0" [max]="100" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label>CNSS salarié RSA (%)</label>
+                  <label i18n="@@payroll.settings.cnss.salarie.rsa.cf0f2f35">CNSS salarié RSA (%)</label>
                   <p-inputNumber [(ngModel)]="params()!.cnssEmployeeRateRsa" name="cnssEmployeeRateRsa" [minFractionDigits]="2" [maxFractionDigits]="4" [min]="0" [max]="100" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label>CNSS employeur RSA (%)</label>
+                  <label i18n="@@payroll.settings.cnss.employeur.rsa.b82fd870">CNSS employeur RSA (%)</label>
                   <p-inputNumber [(ngModel)]="params()!.cnssEmployerRateRsa" name="cnssEmployerRateRsa" [minFractionDigits]="2" [maxFractionDigits]="4" [min]="0" [max]="100" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
               </div>
             </app-form-section>
 
-            <app-form-section title="CSS" icon="pi-percentage" variant="compact">
+            <app-form-section title="CSS" i18n-title="@@payroll.settings.css.194e13da" icon="pi-percentage" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-3">
                 <div class="payroll-form-group">
-                  <label>CSS (%)</label>
+                  <label i18n="@@payroll.settings.css.651e5f38">CSS (%)</label>
                   <p-inputNumber [(ngModel)]="params()!.cssRate" name="cssRate" [minFractionDigits]="2" [maxFractionDigits]="4" [min]="0" [max]="100" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label pTooltip="Seuil d'exonération CSS annuel">Seuil exonération CSS (TND/an)</label>
+                  <label pTooltip="Seuil d'exonération CSS annuel" i18n-pTooltip="@@payroll.settings.seuil.d.exoneration.css.annuel.0048d5a7" i18n="@@payroll.settings.seuil.exoneration.css.tnd.an.a37b383d">Seuil exonération CSS (TND/an)</label>
                   <p-inputNumber [(ngModel)]="params()!.cssAnnualExemptionThreshold" name="cssExemption" [minFractionDigits]="3" [min]="0" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label>CSS patronale (%)</label>
+                  <label i18n="@@payroll.settings.css.patronale.860c17e1">CSS patronale (%)</label>
                   <p-inputNumber [(ngModel)]="params()!.cssEmployerRate" name="cssEmployerRate" [minFractionDigits]="2" [maxFractionDigits]="4" [min]="0" [max]="100" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
               </div>
             </app-form-section>
 
-            <app-form-section title="TFP &amp; FOPROLOS" icon="pi-briefcase" variant="compact">
+            <app-form-section title="TFP &amp; FOPROLOS" i18n-title="@@payroll.settings.tfp.foprolos.64fa1b47" icon="pi-briefcase" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-3">
                 <div class="payroll-form-group">
-                  <label>TFP industrie (%)</label>
+                  <label i18n="@@payroll.settings.tfp.industrie.f955848c">TFP industrie (%)</label>
                   <p-inputNumber [(ngModel)]="params()!.tfpRateIndustry" name="tfpIndustry" [minFractionDigits]="2" [maxFractionDigits]="4" [min]="0" [max]="100" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label>TFP autres (%)</label>
+                  <label i18n="@@payroll.settings.tfp.autres.43f0734a">TFP autres (%)</label>
                   <p-inputNumber [(ngModel)]="params()!.tfpRateOther" name="tfpOther" [minFractionDigits]="2" [maxFractionDigits]="4" [min]="0" [max]="100" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label>FOPROLOS (%)</label>
+                  <label i18n="@@payroll.settings.foprolos.7ae9da03">FOPROLOS (%)</label>
                   <p-inputNumber [(ngModel)]="params()!.foprolosRate" name="foprolos" [minFractionDigits]="2" [maxFractionDigits]="4" [min]="0" [max]="100" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
               </div>
             </app-form-section>
 
-            <app-form-section title="SMIG &amp; avantages" icon="pi-wallet" variant="compact">
+            <app-form-section title="SMIG &amp; avantages" i18n-title="@@payroll.settings.smig.avantages.1a084908" icon="pi-wallet" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-2">
                 <div class="payroll-form-group">
-                  <label>SMIG mensuel (TND)</label>
+                  <label i18n="@@payroll.settings.smig.mensuel.tnd.81332ee6">SMIG mensuel (TND)</label>
                   <p-inputNumber [(ngModel)]="params()!.monthlySmig" name="smig" [minFractionDigits]="3" [min]="0" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label pTooltip="Plafond exonération ticket restaurant / jour (TND)">Plafond ticket resto. / jour (TND)</label>
+                  <label pTooltip="Plafond exonération ticket restaurant / jour (TND)" i18n-pTooltip="@@payroll.settings.plafond.exoneration.ticket.restaurant.jour.tnd.42da821e" i18n="@@payroll.settings.plafond.ticket.resto.jour.tnd.d6820062">Plafond ticket resto. / jour (TND)</label>
                   <p-inputNumber [(ngModel)]="params()!.mealVoucherDailyExemptionCap" name="mealVoucherCap" [minFractionDigits]="3" [min]="0" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
               </div>
             </app-form-section>
 
-            <app-form-section title="Frais professionnels" icon="pi-calculator" variant="compact">
+            <app-form-section title="Frais professionnels" i18n-title="@@payroll.settings.frais.professionnels.21e6559e" icon="pi-calculator" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-2">
                 <div class="payroll-form-group">
-                  <label>Frais pro. (%)</label>
+                  <label i18n="@@payroll.settings.frais.pro.80090a41">Frais pro. (%)</label>
                   <p-inputNumber [(ngModel)]="params()!.professionalExpensesRate" name="proExpRate" [minFractionDigits]="2" [maxFractionDigits]="4" [min]="0" [max]="100" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label>Plafond frais pro. (annuel)</label>
+                  <label i18n="@@payroll.settings.plafond.frais.pro.annuel.cdca3768">Plafond frais pro. (annuel)</label>
                   <p-inputNumber [(ngModel)]="params()!.professionalExpensesAnnualCap" name="proExpCap" [minFractionDigits]="3" [min]="0" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
               </div>
             </app-form-section>
 
-            <p class="payroll-info-panel">Références légales tunisiennes : CNSS 9,18 % / 16,57 % — CSS 0,5 % (seuil 5 000 TND/an) — TFP 1 % industrie, 2 % autres — FOPROLOS 1 % — frais professionnels 10 % plafonnés à 2 000 TND/an.</p>
+            <p class="payroll-info-panel" i18n="@@payroll.settings.references.legales.tunisiennes.cnss.9.18.16.57.c.84e653d6">Références légales tunisiennes : CNSS 9,18 % / 16,57 % — CSS 0,5 % (seuil 5 000 TND/an) — TFP 1 % industrie, 2 % autres — FOPROLOS 1 % — frais professionnels 10 % plafonnés à 2 000 TND/an.</p>
           </p-tabpanel>
 
           <p-tabpanel [value]="1">
             <p-table [value]="params()!.irppBrackets" styleClass="p-datatable-sm mb-3">
               <ng-template pTemplate="header">
                 <tr>
-                  <th>Seuil inférieur (TND)</th>
-                  <th>Taux (%)</th>
+                  <th i18n="@@payroll.settings.seuil.inferieur.tnd.ff1ecd2c">Seuil inférieur (TND)</th>
+                  <th i18n="@@payroll.settings.taux.bb9a8c5a">Taux (%)</th>
                   <th></th>
                 </tr>
               </ng-template>
@@ -273,91 +272,91 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
                 </tr>
               </ng-template>
             </p-table>
-            <app-button type="button" variant="outline" icon="pi-plus" iconPos="left" (click)="addBracket()">Ajouter une tranche</app-button>
-            <p class="payroll-info-text mt-2">Barème LF 2025 : 0 % jusqu'à 5 000 — 15 % — 25 % — 30 % — 33 % — 36 % — 38 % — 40 % au-delà de 70 000 TND/an. La première tranche doit démarrer à 0 et les seuils être strictement croissants.</p>
+            <app-button type="button" variant="outline" icon="pi-plus" iconPos="left" (click)="addBracket()" i18n="@@payroll.settings.ajouter.une.tranche.8b0e5f5b">Ajouter une tranche</app-button>
+            <p class="payroll-info-text mt-2" i18n="@@payroll.settings.bareme.lf.2025.0.jusqu.a.5.000.15.25.30.33.36.38.010647b1">Barème LF 2025 : 0 % jusqu'à 5 000 — 15 % — 25 % — 30 % — 33 % — 36 % — 38 % — 40 % au-delà de 70 000 TND/an. La première tranche doit démarrer à 0 et les seuils être strictement croissants.</p>
           </p-tabpanel>
 
           <p-tabpanel [value]="2">
-            <app-form-section title="Déductions de base" icon="pi-home" variant="compact">
+            <app-form-section title="Déductions de base" i18n-title="@@payroll.settings.deductions.de.base.954cfa41" icon="pi-home" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-3">
                 <div class="payroll-form-group">
-                  <label>Chef de famille (annuel, TND)</label>
+                  <label i18n="@@payroll.settings.chef.de.famille.annuel.tnd.783f610d">Chef de famille (annuel, TND)</label>
                   <p-inputNumber [(ngModel)]="params()!.headOfFamilyAnnualDeduction" name="headDeduction" [minFractionDigits]="3" [min]="0" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label>Enfant à charge (annuel, TND)</label>
+                  <label i18n="@@payroll.settings.enfant.a.charge.annuel.tnd.168ddbe7">Enfant à charge (annuel, TND)</label>
                   <p-inputNumber [(ngModel)]="params()!.childAnnualDeduction" name="childDeduction" [minFractionDigits]="3" [min]="0" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label>Enfants déductibles max.</label>
+                  <label i18n="@@payroll.settings.enfants.deductibles.max.b270f5a1">Enfants déductibles max.</label>
                   <p-inputNumber [(ngModel)]="params()!.maxDeductibleChildren" name="maxChildren" [min]="0" [useGrouping]="false" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
               </div>
             </app-form-section>
 
-            <app-form-section title="Enfants à cas particulier" icon="pi-user-plus" variant="compact">
+            <app-form-section title="Enfants à cas particulier" i18n-title="@@payroll.settings.enfants.a.cas.particulier.bb2e4f3f" icon="pi-user-plus" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-2">
                 <div class="payroll-form-group">
-                  <label pTooltip="Non boursier, âge &lt; 25 ans">Enfant étudiant (annuel, TND)</label>
+                  <label pTooltip="Non boursier, âge &lt; 25 ans" i18n-pTooltip="@@payroll.settings.non.boursier.age.25.ans.71c74648" i18n="@@payroll.settings.enfant.etudiant.annuel.tnd.6d3a6cad">Enfant étudiant (annuel, TND)</label>
                   <p-inputNumber [(ngModel)]="params()!.studentChildAnnualDeduction" name="studentDeduction" [minFractionDigits]="3" [min]="0" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label pTooltip="Hors plafond du nombre d'enfants déductibles">Enfant infirme (annuel, TND)</label>
+                  <label pTooltip="Hors plafond du nombre d'enfants déductibles" i18n-pTooltip="@@payroll.settings.hors.plafond.du.nombre.d.enfants.deductibles.a1cd7c51" i18n="@@payroll.settings.enfant.infirme.annuel.tnd.cd3c0c1d">Enfant infirme (annuel, TND)</label>
                   <p-inputNumber [(ngModel)]="params()!.disabledChildAnnualDeduction" name="disabledDeduction" [minFractionDigits]="3" [min]="0" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
               </div>
             </app-form-section>
 
-            <app-form-section title="Parents à charge" icon="pi-users" variant="compact">
+            <app-form-section title="Parents à charge" i18n-title="@@payroll.settings.parents.a.charge.ce5fcb65" icon="pi-users" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-2">
                 <div class="payroll-form-group">
-                  <label pTooltip="Pourcentage du revenu net imposable">Parent à charge — taux (%)</label>
+                  <label pTooltip="Pourcentage du revenu net imposable" i18n-pTooltip="@@payroll.settings.pourcentage.du.revenu.net.imposable.633aa3de" i18n="@@payroll.settings.parent.a.charge.taux.15ff076b">Parent à charge — taux (%)</label>
                   <p-inputNumber [(ngModel)]="params()!.parentDeductionRatePercent" name="parentRate" [minFractionDigits]="2" [maxFractionDigits]="4" [min]="0" [max]="100" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label>Parent à charge — plafond annuel (TND)</label>
+                  <label i18n="@@payroll.settings.parent.a.charge.plafond.annuel.tnd.de006f6e">Parent à charge — plafond annuel (TND)</label>
                   <p-inputNumber [(ngModel)]="params()!.parentAnnualDeductionCap" name="parentCap" [minFractionDigits]="3" [min]="0" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
               </div>
             </app-form-section>
 
-            <p class="payroll-info-panel">Déductions familiales annuelles (art. 40 code IRPP), mensualisées lors du calcul de paie. Les montants s'appliquent par exercice fiscal.</p>
+            <p class="payroll-info-panel" i18n="@@payroll.settings.deductions.familiales.annuelles.art.40.code.irpp.15829783">Déductions familiales annuelles (art. 40 code IRPP), mensualisées lors du calcul de paie. Les montants s'appliquent par exercice fiscal.</p>
           </p-tabpanel>
 
           <p-tabpanel [value]="3">
-            <app-form-section title="Options de calcul" icon="pi-cog" variant="compact">
+            <app-form-section title="Options de calcul" i18n-title="@@payroll.settings.options.de.calcul.f82369cb" icon="pi-cog" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-2">
                 <div class="payroll-form-group switch-row">
-                  <label for="enforceSmig">Contrôle SMIG sur les contrats</label>
+                  <label for="enforceSmig" i18n="@@payroll.settings.controle.smig.sur.les.contrats.120f8cc7">Contrôle SMIG sur les contrats</label>
                   <p-inputSwitch inputId="enforceSmig" [(ngModel)]="params()!.enforceSmigOnContracts" name="enforceSmig" />
                 </div>
                 <div class="payroll-form-group switch-row">
-                  <label for="extendedOvertime">Taux HS étendus (175 %, 200 %)</label>
+                  <label for="extendedOvertime" i18n="@@payroll.settings.taux.hs.etendus.175.200.001e8643">Taux HS étendus (175 %, 200 %)</label>
                   <p-inputSwitch inputId="extendedOvertime" [(ngModel)]="params()!.enableExtendedOvertimeRates" name="extendedOvertime" />
                 </div>
                 <div class="payroll-form-group switch-row">
-                  <label for="allowanceMatrix">Matrice primes (imposable × CNSS)</label>
+                  <label for="allowanceMatrix" i18n="@@payroll.settings.matrice.primes.imposable.cnss.b517a503">Matrice primes (imposable × CNSS)</label>
                   <p-inputSwitch inputId="allowanceMatrix" [(ngModel)]="params()!.enableAllowanceQuadrantMatrix" name="allowanceMatrix" />
                 </div>
                 <div class="payroll-form-group switch-row">
-                  <label for="industrialSector">Secteur industriel (TFP 1 % au lieu de 2 %)</label>
+                  <label for="industrialSector" i18n="@@payroll.settings.secteur.industriel.tfp.1.au.lieu.de.2.080374b6">Secteur industriel (TFP 1 % au lieu de 2 %)</label>
                   <p-inputSwitch inputId="industrialSector" [(ngModel)]="params()!.isIndustrialSector" name="industrialSector" />
                 </div>
                 <div class="payroll-form-group switch-row">
-                  <label for="irppRegularization">Régularisation IRPP annuelle (solde de tout compte)</label>
+                  <label for="irppRegularization" i18n="@@payroll.settings.regularisation.irpp.annuelle.solde.de.tout.compt.6ba9bbeb">Régularisation IRPP annuelle (solde de tout compte)</label>
                   <p-inputSwitch inputId="irppRegularization" [(ngModel)]="params()!.enableIrppRegularization" name="irppRegularization" />
                 </div>
                 <div class="payroll-form-group switch-row">
-                  <label for="automaticProrata">Prorata automatique (absences, suspensions, départs)</label>
+                  <label for="automaticProrata" i18n="@@payroll.settings.prorata.automatique.absences.suspensions.departs.1a4ac29b">Prorata automatique (absences, suspensions, départs)</label>
                   <p-inputSwitch inputId="automaticProrata" [(ngModel)]="params()!.enableAutomaticProrata" name="automaticProrata" />
                 </div>
               </div>
             </app-form-section>
 
-            <app-form-section title="Exonération IRPP SMIG" icon="pi-shield" variant="compact">
+            <app-form-section title="Exonération IRPP SMIG" i18n-title="@@payroll.settings.exoneration.irpp.smig.6ac040e7" icon="pi-shield" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-2">
                 <div class="payroll-form-group">
-                  <label for="smigExemptionMode">Exonération IRPP SMIG</label>
+                  <label for="smigExemptionMode" i18n="@@payroll.settings.exoneration.irpp.smig.6ac040e7">Exonération IRPP SMIG</label>
                   <p-select
                     inputId="smigExemptionMode"
                     [(ngModel)]="params()!.smigIrppExemptionMode"
@@ -369,7 +368,7 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
                 </div>
                 @if (params()!.smigIrppExemptionMode === 'SmigPortion') {
                   <div class="payroll-form-group">
-                    <label>Taux applicable à la portion SMIG (%)</label>
+                    <label i18n="@@payroll.settings.taux.applicable.a.la.portion.smig.8bfa3778">Taux applicable à la portion SMIG (%)</label>
                     <p-inputNumber
                       [(ngModel)]="params()!.smigIrppExemptionRateOverride"
                       name="smigExemptionRate"
@@ -378,14 +377,14 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
                       [min]="0"
                       [max]="100"
                       [locale]="'fr-TN'"
-                      placeholder="15 (barème)"
+                      placeholder="15 (barème)" i18n-placeholder="@@payroll.settings.15.bareme.cbb1f5b4"
                       styleClass="w-full" />
-                    <small class="field-hint">Laisser vide pour utiliser le premier taux non nul du barème IRPP.</small>
+                    <small class="field-hint" i18n="@@payroll.settings.laisser.vide.pour.utiliser.le.premier.taux.non.n.e9efc786">Laisser vide pour utiliser le premier taux non nul du barème IRPP.</small>
                   </div>
                 }
               </div>
               @if (params()!.smigIrppExemptionMode === 'SmigPortion') {
-                <p class="sce-warn-panel" role="alert">
+                <p class="sce-warn-panel" role="alert" i18n="@@payroll.settings.ce.mode.n.a.pas.de.base.legale.verifiee.d29a7204">
                   <i class="pi pi-exclamation-triangle"></i>
                   Ce mode n'a pas de base légale vérifiée et sous-déclare l'IRPP pour l'ensemble des salariés
                   lorsqu'il est actif. Pour la conformité, préférez le mode « Déduction annuelle 500 TND (SMIG/SMAG) »
@@ -395,28 +394,24 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
               }
             </app-form-section>
 
-            <p class="payroll-info-panel">
-              La déduction annuelle de 500 TND (mode conforme) s'applique à l'assiette imposable des salariés payés
+            <p class="payroll-info-panel" i18n="@@payroll.settings.la.deduction.annuelle.de.500.tnd.mode.conforme.s.804f6691"> La déduction annuelle de 500 TND (mode conforme) s'applique à l'assiette imposable des salariés payés
               au SMIG/SMAG et s'intègre naturellement à la projection mensuelle et à la régularisation IRPP.
               Le mode « Portion SMIG exonérée » est conservé pour les tenants qui l'utilisent mais n'a pas de base
               légale vérifiée ; le mode « Exonération totale » ne concerne que les salaires de base ≤ SMIG.
-              La CSS n'est pas impactée.
-            </p>
-            <p class="payroll-info-panel">Le taux TFP appliqué aux cycles de paie de cet exercice suit ce paramètre ; recalculez les cycles en brouillon pour l'appliquer.</p>
-            <p class="payroll-info-panel">
-              La régularisation IRPP calcule l'écart annuel IRPP/CSS lors d'un départ ou en fin d'exercice.
+              La CSS n'est pas impactée. </p>
+            <p class="payroll-info-panel" i18n="@@payroll.settings.le.taux.tfp.applique.aux.cycles.de.paie.de.cet.e.e62a13a5">Le taux TFP appliqué aux cycles de paie de cet exercice suit ce paramètre ; recalculez les cycles en brouillon pour l'appliquer.</p>
+            <p class="payroll-info-panel" i18n="@@payroll.settings.la.regularisation.irpp.calcule.l.ecart.annuel.ir.8bfa88ab"> La régularisation IRPP calcule l'écart annuel IRPP/CSS lors d'un départ ou en fin d'exercice.
               Le prorata automatique réduit le brut des jours non travaillés (congés sans solde, suspensions non rémunérées, sortie en cours de mois).
-              Les deux options s'appliquent aux cycles recalculés après modification.
-            </p>
+              Les deux options s'appliquent aux cycles recalculés après modification. </p>
           </p-tabpanel>
 
           <p-tabpanel [value]="4">
-            <p class="payroll-info-text mb-3">Barème de quotité saisissable sur le net mensuel (fraction saisissable par tranche). Si vide, 33 % du net s'applique par défaut.</p>
+            <p class="payroll-info-text mb-3" i18n="@@payroll.settings.bareme.de.quotite.saisissable.sur.le.net.mensuel.833f05b4">Barème de quotité saisissable sur le net mensuel (fraction saisissable par tranche). Si vide, 33 % du net s'applique par défaut.</p>
             <p-table [value]="garnishmentBrackets()" styleClass="p-datatable-sm mb-3">
               <ng-template pTemplate="header">
                 <tr>
-                  <th>Seuil net mensuel (TND)</th>
-                  <th>Fraction saisissable (%)</th>
+                  <th i18n="@@payroll.settings.seuil.net.mensuel.tnd.b1e03e5b">Seuil net mensuel (TND)</th>
+                  <th i18n="@@payroll.settings.fraction.saisissable.f7b2fe2b">Fraction saisissable (%)</th>
                   <th></th>
                 </tr>
               </ng-template>
@@ -434,9 +429,9 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
                 </tr>
               </ng-template>
             </p-table>
-            <app-button type="button" variant="outline" icon="pi-plus" iconPos="left" (click)="addGarnishmentBracket()">Ajouter une tranche</app-button>
+            <app-button type="button" variant="outline" icon="pi-plus" iconPos="left" (click)="addGarnishmentBracket()" i18n="@@payroll.settings.ajouter.une.tranche.8b0e5f5b">Ajouter une tranche</app-button>
             <div class="form-actions mt-4">
-              <app-button type="button" variant="primary" icon="pi-check" iconPos="left" (click)="saveGarnishmentBrackets()">Enregistrer le barème saisies</app-button>
+              <app-button type="button" variant="primary" icon="pi-check" iconPos="left" (click)="saveGarnishmentBrackets()" i18n="@@payroll.settings.enregistrer.le.bareme.saisies.d8700aea">Enregistrer le barème saisies</app-button>
             </div>
           </p-tabpanel>
 
@@ -447,7 +442,7 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
         </p-tabs>
 
         <div class="form-actions mt-4">
-          <app-button type="submit" variant="primary" icon="pi-check" iconPos="left">Enregistrer</app-button>
+          <app-button type="submit" variant="primary" icon="pi-check" iconPos="left" i18n="@@payroll.settings.enregistrer.f7c8bcd8">Enregistrer</app-button>
         </div>
       </form>
     }
@@ -456,7 +451,7 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
     .mb-3 { margin-bottom: var(--spacing-4); }
     .mt-2 { margin-top: var(--spacing-2); }
     .mt-4 { margin-top: var(--spacing-6); }
-    .mr-2 { margin-right: var(--spacing-2); }
+    .mr-2 { margin-inline-end: var(--spacing-2); }
     .w-full { width: 100%; }
     .w-8rem { width: 8rem; }
     .form-actions { display: flex; gap: var(--spacing-3); }
@@ -482,11 +477,13 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
     }
     .preset-drift-banner__title { display: flex; align-items: center; gap: var(--spacing-2); font-weight: 600; color: var(--color-warning-800, #92400e); margin-bottom: var(--spacing-2); }
     .preset-drift-banner__title i { color: var(--color-warning-600, #d97706); }
-    .preset-drift-banner__list { margin: 0 0 var(--spacing-2); padding-left: var(--spacing-4); font-size: .85rem; color: var(--color-warning-900, #78350f); }
+    .preset-drift-banner__list { margin: 0 0 var(--spacing-2); padding-inline-start: var(--spacing-4); font-size: .85rem; color: var(--color-warning-900, #78350f); }
     .preset-drift-banner__actions { display: flex; justify-content: flex-end; }
   `]
 })
 export class PayrollSettingsComponent implements OnInit {
+  readonly loc_ui_tern_active_42ce0b = $localize`:@@ui.tern.active.42ce0b:Activé`;
+  readonly loc_ui_tern_desactive_2d32fa = $localize`:@@ui.tern.desactive.2d32fa:Désactivé`;
   private readonly payroll = inject(PayrollService);
   private readonly toast = inject(ToastService);
   private readonly confirmation = inject(ConfirmationService);
@@ -502,8 +499,8 @@ export class PayrollSettingsComponent implements OnInit {
   savingAccounting = signal(false);
 
   readonly accountProfileOptions = [
-    { label: 'Legacy (historique)', value: 'Legacy' },
-    { label: 'SCE 2026 (comptes NCT 01)', value: 'Sce2026' }
+    { label: $localize`:@@payroll.payroll-settings.ts.legacy.historique.72367461:Legacy (historique)`, value: 'Legacy' },
+    { label: $localize`:@@payroll.payroll-settings.ts.sce.2026.comptes.nct.01.1fd32824:SCE 2026 (comptes NCT 01)`, value: 'Sce2026' }
   ];
 
   /** Date de bascule au format `yyyy-MM` attendu par l'input `type="month"`. */
@@ -520,10 +517,10 @@ export class PayrollSettingsComponent implements OnInit {
   /** Preset légal officiel de l'exercice (pour la bannière de dérive preset vs tenant). */
   legalPreset = signal<PayrollLegalPreset | null>(null);
   readonly smigExemptionModeOptions = [
-    { label: 'Désactivée', value: 'None' },
-    { label: 'Déduction annuelle 500 TND (SMIG/SMAG)', value: 'SmigAnnualDeduction' },
-    { label: 'Portion SMIG exonérée', value: 'SmigPortion' },
-    { label: 'Exonération totale si salaire ≤ SMIG', value: 'FullIfBelow' }
+    { label: $localize`:@@payroll.payroll-settings.ts.desactivee.74cc3b9b:Désactivée`, value: 'None' },
+    { label: $localize`:@@payroll.payroll-settings.ts.deduction.annuelle.500.tnd.smig.smag.be5a5e54:Déduction annuelle 500 TND (SMIG/SMAG)`, value: 'SmigAnnualDeduction' },
+    { label: $localize`:@@payroll.payroll-settings.ts.portion.smig.exoneree.7222d0c1:Portion SMIG exonérée`, value: 'SmigPortion' },
+    { label: $localize`:@@payroll.payroll-settings.ts.exoneration.totale.si.salaire.smig.683cacaa:Exonération totale si salaire ≤ SMIG`, value: 'FullIfBelow' }
   ];
 
   /** Écarts entre les paramètres persistés du tenant et le preset légal de l'exercice (plan §4 WS-3). */
@@ -537,8 +534,8 @@ export class PayrollSettingsComponent implements OnInit {
         drift.push({ label, current: `${current.toFixed(2)} ${unit}`, expected: `${expected.toFixed(2)} ${unit}` });
       }
     };
-    rate('CNSS salarié', p.cnssEmployeeRate, preset.cnssEmployeeRate);
-    rate('CNSS employeur', p.cnssEmployerRate, preset.cnssEmployerRate);
+    rate($localize`:@@payroll.payroll-settings.ts.cnss.salarie.e8528052:CNSS salarié`, p.cnssEmployeeRate, preset.cnssEmployeeRate);
+    rate($localize`:@@payroll.payroll-settings.ts.cnss.employeur.ae3ac0eb:CNSS employeur`, p.cnssEmployerRate, preset.cnssEmployerRate);
     rate('CSS', p.cssRate, preset.cssRate);
     rate('SMIG mensuel', p.monthlySmig, preset.monthlySmig, 'TND');
     const pb = [...preset.irppBrackets].sort((a, b) => a.lowerBound - b.lowerBound);
@@ -546,7 +543,7 @@ export class PayrollSettingsComponent implements OnInit {
     const bracketsDiffer = cb.length !== pb.length
       || cb.some((b, i) => Math.abs(b.lowerBound - pb[i].lowerBound) > 0.01 || Math.abs(b.rate - pb[i].rate) > 0.0001);
     if (bracketsDiffer) {
-      drift.push({ label: 'Barème IRPP', current: `${cb.length} tranche(s)`, expected: `${pb.length} tranche(s) LF` });
+      drift.push({ label: $localize`:@@payroll.payroll-settings.ts.bareme.irpp.b6da2fe0:Barème IRPP`, current: `${cb.length} tranche(s)`, expected: `${pb.length} tranche(s) LF` });
     }
     return drift;
   });
@@ -623,14 +620,12 @@ export class PayrollSettingsComponent implements OnInit {
         ? new Date(form.accountProfileEffectiveDate).toLocaleDateString('fr-TN')
         : '—';
       this.confirmation.confirm({
-        header: 'Basculer en imputation SCE 2026',
+        header: $localize`:@@payroll.payroll-settings.ts.basculer.en.imputation.sce.2026.a017cae0:Basculer en imputation SCE 2026`,
         message:
-          `À partir du ${from}, les écritures de paie utiliseront les comptes NCT 01 : TFP en 6611, `
-          + 'FOPROLOS en 6612, taxes patronales en 437, indemnités de rupture en 64602. Les cycles '
-          + 'antérieurs à cette date conservent leur imputation actuelle et ne sont pas réécrits. Continuer ?',
+          $localize`:@@payroll.payroll-settings.ts.a.partir.du.from.les.ecritures.de.paie.u.99f73af0:À partir du ${from}:from:, les écritures de paie utiliseront les comptes NCT 01 : TFP en 6611, FOPROLOS en 6612, taxes patronales en 437, indemnités de rupture en 64602. Les cycles antérieurs à cette date conservent leur imputation actuelle et ne sont pas réécrits. Continuer ?`,
         icon: 'pi pi-exclamation-triangle',
-        acceptLabel: 'Basculer',
-        rejectLabel: 'Annuler',
+        acceptLabel: $localize`:@@payroll-settings.component.acceptLabel.Basculer:Basculer`,
+        rejectLabel: $localize`:@@payroll-settings.component.rejectLabel.Annuler:Annuler`,
         size: 'md',
         accept: () => this.submitAccountingSettings(form)
       });
@@ -657,16 +652,16 @@ export class PayrollSettingsComponent implements OnInit {
         this.loadFeatureFlags();
         this.toast.add({
           severity: 'success',
-          summary: 'Comptabilisation',
-          detail: "Profil d'imputation comptable enregistré."
+          summary: $localize`:@@payroll-settings.component.summary.Comptabilisation:Comptabilisation`,
+          detail: $localize`:@@payroll-settings.component.detail.Profildimputationcomp:Profil d'imputation comptable enregistré.`
         });
       },
       error: err => {
         this.savingAccounting.set(false);
         this.toast.add({
           severity: 'error',
-          summary: 'Comptabilisation',
-          detail: err?.error?.message ?? "Profil d'imputation non enregistré."
+          summary: $localize`:@@payroll-settings.component.summary.Comptabilisation:Comptabilisation`,
+          detail: err?.error?.message ?? $localize`:@@ui.tern.profil.d.imputation.non.enregistre.3934f4:Profil d'imputation non enregistré.`
         });
       }
     });
@@ -689,7 +684,7 @@ export class PayrollSettingsComponent implements OnInit {
             enableIrppRegularization: data.enableIrppRegularization ?? false,
             enableAutomaticProrata: data.enableAutomaticProrata ?? false,
             smigIrppExemptionMode: data.smigIrppExemptionMode ?? 'None',
-            smigIrppExemptionModeDisplay: data.smigIrppExemptionModeDisplay ?? 'Désactivée',
+            smigIrppExemptionModeDisplay: data.smigIrppExemptionModeDisplay ?? $localize`:@@ui.tern.desactivee.74cc3b:Désactivée`,
             smigIrppExemptionRateOverride: data.smigIrppExemptionRateOverride ?? null,
             mealVoucherDailyExemptionCap: data.mealVoucherDailyExemptionCap ?? 0,
             irppBrackets: data.irppBrackets.map(b => ({ ...b }))
@@ -698,7 +693,7 @@ export class PayrollSettingsComponent implements OnInit {
           this.params.set(null);
         }
       },
-      error: () => this.toast.add({ severity: 'error', summary: 'Paramètres', detail: 'Paramètres introuvables.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@payroll-settings.component.summary.Paramètres:Paramètres`, detail: $localize`:@@payroll-settings.component.detail.Param_tres_intro:Paramètres introuvables.` })
     });
     this.loadGarnishmentBrackets();
     this.loadLegalPreset();
@@ -729,7 +724,7 @@ export class PayrollSettingsComponent implements OnInit {
     const rows = this.garnishmentBrackets();
     const sorted = [...rows].sort((a, b) => a.lowerBoundMonthlyNet - b.lowerBoundMonthlyNet);
     if (sorted.some(b => b.seizableFractionPercent < 0 || b.seizableFractionPercent > 100)) {
-      this.toast.add({ severity: 'error', summary: 'Barème saisies', detail: 'Les fractions doivent être entre 0 et 100 %.' });
+      this.toast.add({ severity: 'error', summary: $localize`:@@payroll-settings.component.summary.Barème saisi:Barème saisies`, detail: $localize`:@@payroll-settings.component.detail.Les_fractions_do:Les fractions doivent être entre 0 et 100 %.` });
       return;
     }
     const payload: PayrollGarnishmentBracket[] = sorted.map(b => ({
@@ -737,11 +732,11 @@ export class PayrollSettingsComponent implements OnInit {
       seizableFraction: b.seizableFractionPercent / 100
     }));
     this.payroll.updateGarnishmentBrackets(this.fiscalYear, payload).subscribe({
-      next: () => this.toast.add({ severity: 'success', summary: 'Barème saisies', detail: 'Barème enregistré.' }),
+      next: () => this.toast.add({ severity: 'success', summary: $localize`:@@payroll-settings.component.summary.Barème saisi:Barème saisies`, detail: $localize`:@@payroll-settings.component.detail.Bar_me_enregistr:Barème enregistré.` }),
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Barème saisies',
-        detail: err?.error?.message ?? 'Enregistrement impossible.'
+        summary: $localize`:@@payroll-settings.component.summary.Barème saisi:Barème saisies`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`
       })
     });
   }
@@ -762,14 +757,14 @@ export class PayrollSettingsComponent implements OnInit {
 
   /** Contrôle client du barème IRPP ; renvoie null si valide, sinon le message d'erreur. */
   private validateBrackets(brackets: { lowerBound: number; rate: number }[]): string | null {
-    if (!brackets.length) return 'Le barème IRPP doit comporter au moins une tranche.';
+    if (!brackets.length) return $localize`:@@payroll.payroll-settings.ts.le.bareme.irpp.doit.comporter.au.moins.u.810d955f:Le barème IRPP doit comporter au moins une tranche.`;
     const sorted = [...brackets].sort((a, b) => a.lowerBound - b.lowerBound);
-    if (sorted[0].lowerBound !== 0) return 'La première tranche IRPP doit démarrer à 0.';
+    if (sorted[0].lowerBound !== 0) return $localize`:@@payroll.payroll-settings.ts.la.premiere.tranche.irpp.doit.demarrer.a.94cefaa6:La première tranche IRPP doit démarrer à 0.`;
     for (let i = 1; i < sorted.length; i++) {
       if (sorted[i].lowerBound === sorted[i - 1].lowerBound)
-        return 'Deux tranches IRPP ne peuvent pas avoir le même seuil inférieur.';
+        return $localize`:@@payroll.payroll-settings.ts.deux.tranches.irpp.ne.peuvent.pas.avoir.79448c6a:Deux tranches IRPP ne peuvent pas avoir le même seuil inférieur.`;
     }
-    if (sorted.some(b => b.rate < 0 || b.rate > 100)) return 'Les taux IRPP doivent être compris entre 0 et 100 %.';
+    if (sorted.some(b => b.rate < 0 || b.rate > 100)) return $localize`:@@payroll.payroll-settings.ts.les.taux.irpp.doivent.etre.compris.entre.e09704e4:Les taux IRPP doivent être compris entre 0 et 100 %.`;
     return null;
   }
 
@@ -789,11 +784,11 @@ export class PayrollSettingsComponent implements OnInit {
         });
         this.toast.add({
           severity: 'info',
-          summary: 'Preset LF',
-          detail: `${preset.label} chargé — enregistrez pour appliquer.`
+          summary: $localize`:@@payroll-settings.component.summary.Preset LF:Preset LF`,
+          detail: $localize`:@@payroll.payroll-settings.ts.label.charge.enregistrez.pour.appliquer.f1753a4f:${preset.label}:label: chargé — enregistrez pour appliquer.`
         });
       },
-      error: () => this.toast.add({ severity: 'error', summary: 'Preset LF', detail: 'Chargement impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@payroll-settings.component.summary.Preset LF:Preset LF`, detail: $localize`:@@payroll-settings.component.detail.Chargement_impos:Chargement impossible.` })
     });
   }
 
@@ -802,16 +797,16 @@ export class PayrollSettingsComponent implements OnInit {
     if (!p) return;
     const bracketError = this.validateBrackets(p.irppBrackets);
     if (bracketError) {
-      this.toast.add({ severity: 'error', summary: 'Barème IRPP', detail: bracketError });
+      this.toast.add({ severity: 'error', summary: $localize`:@@payroll-settings.component.summary.Barème IRPP:Barème IRPP`, detail: bracketError });
       return;
     }
     const { id, fiscalYear, ...body } = p;
     this.payroll.updateParameters(this.fiscalYear, body).subscribe({
-      next: () => this.toast.add({ severity: 'success', summary: 'Paramètres', detail: 'Paramètres enregistrés.' }),
+      next: () => this.toast.add({ severity: 'success', summary: $localize`:@@payroll-settings.component.summary.Paramètres:Paramètres`, detail: $localize`:@@payroll-settings.component.detail.Param_tres_enreg:Paramètres enregistrés.` }),
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Paramètres',
-        detail: err?.error?.message ?? 'Enregistrement impossible.'
+        summary: $localize`:@@payroll-settings.component.summary.Paramètres:Paramètres`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`
       })
     });
   }

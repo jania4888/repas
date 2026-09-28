@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -66,9 +67,9 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
     <app-payroll-section
 
-      title="Tickets restaurant"
+      title="Tickets restaurant" i18n-title="@@payroll.runs.tickets.restaurant.72ed5294"
 
-      subtitle="Saisie mensuelle par salarié. Recalculez le cycle pour intégrer les retenues au bulletin."
+      subtitle="Saisie mensuelle par salarié. Recalculez le cycle pour intégrer les retenues au bulletin." i18n-subtitle="@@payroll.runs.saisie.mensuelle.par.salarie.recalculez.fa59ee0c"
 
       icon="pi-shopping-bag">
 
@@ -76,7 +77,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
         <div class="payroll-toolbar mb-3">
 
-          <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()">Ajouter une ligne</app-button>
+          <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()" i18n="@@payroll.runs.ajouter.une.ligne.ba241fd4">Ajouter une ligne</app-button>
 
         </div>
 
@@ -92,17 +93,17 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
           <tr>
 
-            <th>Salarié</th>
+            <th i18n="@@payroll.runs.salarie.27f97915">Salarié</th>
 
-            <th class="text-right">Jours</th>
+            <th class="text-right" i18n="@@payroll.runs.jours.57960dfb">Jours</th>
 
-            <th class="text-right">Valeur faciale</th>
+            <th class="text-right" i18n="@@payroll.runs.valeur.faciale.7eb109c8">Valeur faciale</th>
 
-            <th class="text-right">Part employeur</th>
+            <th class="text-right" i18n="@@payroll.runs.part.employeur.af021705">Part employeur</th>
 
-            <th class="text-right">Part salarié</th>
+            <th class="text-right" i18n="@@payroll.runs.part.salarie.93060d7c">Part salarié</th>
 
-            <th class="text-right">Total</th>
+            <th class="text-right" i18n="@@payroll.runs.total.b25928c6">Total</th>
 
             @if (!readOnly) { <th></th> }
 
@@ -130,9 +131,9 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
               <td class="actions">
 
-                <button type="button" class="p-button p-button-text p-button-sm" (click)="editLine(line)">Modifier</button>
+                <button type="button" class="p-button p-button-text p-button-sm" (click)="editLine(line)" i18n="@@payroll.runs.modifier.f260e757">Modifier</button>
 
-                <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(line)">Supprimer</button>
+                <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(line)" i18n="@@payroll.runs.supprimer.1acfc1c7">Supprimer</button>
 
               </td>
 
@@ -144,7 +145,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
         <ng-template pTemplate="emptymessage">
 
-          <tr><td [attr.colspan]="readOnly ? 6 : 7">Aucun ticket restaurant saisi pour ce mois.</td></tr>
+          <tr><td [attr.colspan]="readOnly ? 6 : 7" i18n="@@payroll.runs.aucun.ticket.restaurant.saisi.pour.ce.mois.ad9d1b5d">Aucun ticket restaurant saisi pour ce mois.</td></tr>
 
         </ng-template>
 
@@ -156,11 +157,11 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
 
 
-    <p-dialog [header]="editingId ? 'Modifier les tickets restaurant' : 'Nouveaux tickets restaurant'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '520px' }">
+    <p-dialog [header]="editingId ? loc_ui_tern_modifier_les_tickets_restaurant_622ff7 : loc_ui_tern_nouveaux_tickets_restaurant_f9c7a9" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '520px' }">
 
       <div class="payroll-form-group mb-2">
 
-        <label>Salarié</label>
+        <label i18n="@@payroll.runs.salarie.27f97915">Salarié</label>
 
         <p-select [options]="employees()" optionLabel="fullName" optionValue="id" [(ngModel)]="formEmployeeId" appendTo="body" styleClass="w-full" [disabled]="!!editingId" />
 
@@ -170,7 +171,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
         <div class="payroll-form-group">
 
-          <label>Jours travaillés</label>
+          <label i18n="@@payroll.runs.jours.travailles.4687ee29">Jours travaillés</label>
 
           <p-inputNumber [(ngModel)]="formDays" [min]="1" [max]="31" styleClass="w-full" />
 
@@ -178,7 +179,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
         <div class="payroll-form-group">
 
-          <label>Valeur faciale (TND)</label>
+          <label i18n="@@payroll.runs.valeur.faciale.tnd.41da4ad5">Valeur faciale (TND)</label>
 
           <p-inputNumber [(ngModel)]="formFaceValue" [min]="0.001" [minFractionDigits]="3" [maxFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
 
@@ -188,7 +189,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
       <div class="payroll-form-group mb-2">
 
-        <label>Part employeur (%)</label>
+        <label i18n="@@payroll.runs.part.employeur.37c96a45">Part employeur (%)</label>
 
         <p-inputNumber [(ngModel)]="formEmployerRate" [min]="0" [max]="100" [minFractionDigits]="0" [maxFractionDigits]="2" [locale]="'fr-TN'" styleClass="w-full" />
 
@@ -196,9 +197,9 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
       <ng-template pTemplate="footer">
 
-        <app-button variant="outline" (click)="dialogVisible = false">Annuler</app-button>
+        <app-button variant="outline" (click)="dialogVisible = false" i18n="@@payroll.runs.annuler.49ba3292">Annuler</app-button>
 
-        <app-button variant="primary" (click)="save()">Enregistrer</app-button>
+        <app-button variant="primary" (click)="save()" i18n="@@payroll.runs.enregistrer.f7c8bcd8">Enregistrer</app-button>
 
       </ng-template>
 
@@ -216,13 +217,15 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
     .w-full { width: 100%; }
 
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
 
   `]
 
 })
 
 export class PayrollMealVoucherGridComponent implements OnInit {
+  readonly loc_ui_tern_modifier_les_tickets_restaurant_622ff7 = $localize`:@@ui.tern.modifier.les.tickets.restaurant.622ff7:Modifier les tickets restaurant`;
+  readonly loc_ui_tern_nouveaux_tickets_restaurant_f9c7a9 = $localize`:@@ui.tern.nouveaux.tickets.restaurant.f9c7a9:Nouveaux tickets restaurant`;
 
   @Input({ required: true }) year!: number;
 
@@ -306,7 +309,7 @@ export class PayrollMealVoucherGridComponent implements OnInit {
 
       next: res => this.lines.set(res.data ?? []),
 
-      error: () => this.toast.add({ severity: 'error', summary: 'Tickets restaurant', detail: 'Chargement impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@payroll-meal-voucher-grid.component.summary.Tickets_restaura:Tickets restaurant`, detail: $localize`:@@payroll-meal-voucher-grid.component.detail.Chargement_impos:Chargement impossible.` })
 
     });
 
@@ -408,9 +411,9 @@ export class PayrollMealVoucherGridComponent implements OnInit {
 
           severity: 'success',
 
-          summary: 'Tickets restaurant',
+          summary: $localize`:@@payroll-meal-voucher-grid.component.summary.Tickets_restaura:Tickets restaurant`,
 
-          detail: 'Enregistré. Recalculez le cycle pour mettre à jour les bulletins.'
+          detail: $localize`:@@payroll-meal-voucher-grid.component.detail.Enregistr_Reca:Enregistré. Recalculez le cycle pour mettre à jour les bulletins.`
 
         });
 
@@ -424,9 +427,9 @@ export class PayrollMealVoucherGridComponent implements OnInit {
 
         severity: 'error',
 
-        summary: 'Tickets restaurant',
+        summary: $localize`:@@payroll-meal-voucher-grid.component.summary.Tickets_restaura:Tickets restaurant`,
 
-        detail: err?.error?.message ?? 'Enregistrement impossible.'
+        detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`
 
       })
 
@@ -442,13 +445,13 @@ export class PayrollMealVoucherGridComponent implements OnInit {
 
     this.confirmation.confirm({
 
-      message: `Supprimer les tickets restaurant de ${line.employeeName} ?`,
+      message: $localize`:@@payroll.payroll-meal-voucher-grid.ts.supprimer.les.tickets.restaurant.de.empl.6860ad45:Supprimer les tickets restaurant de ${line.employeeName}:employeeName: ?`,
 
-      header: 'Confirmation',
+      header: $localize`:@@payroll.payroll-meal-voucher-grid.ts.confirmation.3424edc2:Confirmation`,
 
-      acceptLabel: 'Supprimer',
+      acceptLabel: $localize`:@@payroll-meal-voucher-grid.component.acceptLabel.Supprimer:Supprimer`,
 
-      rejectLabel: 'Annuler',
+      rejectLabel: $localize`:@@payroll-meal-voucher-grid.component.rejectLabel.Annuler:Annuler`,
 
       acceptButtonStyleClass: 'btn-danger',
 
@@ -466,7 +469,7 @@ export class PayrollMealVoucherGridComponent implements OnInit {
 
       next: () => {
 
-        this.toast.add({ severity: 'success', summary: 'Tickets restaurant', detail: 'Supprimé.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-meal-voucher-grid.component.summary.Tickets_restaura:Tickets restaurant`, detail: $localize`:@@payroll-meal-voucher-grid.component.detail.Supprimé.:Supprimé.` });
 
         this.reload();
 
@@ -476,9 +479,9 @@ export class PayrollMealVoucherGridComponent implements OnInit {
 
         severity: 'error',
 
-        summary: 'Tickets restaurant',
+        summary: $localize`:@@payroll-meal-voucher-grid.component.summary.Tickets_restaura:Tickets restaurant`,
 
-        detail: err?.error?.message ?? 'Suppression impossible.'
+        detail: err?.error?.message ?? $localize`:@@ui.tern.suppression.impossible.0dffe4:Suppression impossible.`
 
       })
 

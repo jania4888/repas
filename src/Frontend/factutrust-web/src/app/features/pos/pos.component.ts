@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, inject, OnDestroy, OnInit, HostListener, ViewChild, effect, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -52,7 +54,7 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
 @Component({
   selector: 'app-pos',
   standalone: true,
-  imports: [CommonModule, FormsModule, PosHeaderComponent, ProductCatalogComponent, OrderPanelComponent, HeldOrdersPanelComponent, ChangeCalculatorComponent, PosHistoryPanelComponent, PosReceiptComponent],
+  imports: [BackendLabelPipe, CommonModule, FormsModule, PosHeaderComponent, ProductCatalogComponent, OrderPanelComponent, HeldOrdersPanelComponent, ChangeCalculatorComponent, PosHistoryPanelComponent, PosReceiptComponent],
   template: `
     <div class="pos-layout">
       <app-pos-header
@@ -94,9 +96,9 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
         <div class="pos-session-gate">
           <div class="pos-session-gate__box">
             <i class="pi pi-lock"></i>
-            <h2>Ouvrir la caisse</h2>
-            <p>Une session de caisse doit être ouverte pour vendre.</p>
-            <button type="button" class="pos-idle-btn" (click)="openRegisterModal()">Ouvrir la caisse</button>
+            <h2 i18n="@@pos.pos.ouvrir.la.caisse.7e98a335">Ouvrir la caisse</h2>
+            <p i18n="@@pos.pos.une.session.de.caisse.doit.etre.ouverte.pour.ven.c03daecb">Une session de caisse doit être ouverte pour vendre.</p>
+            <button type="button" class="pos-idle-btn" (click)="openRegisterModal()" i18n="@@pos.pos.ouvrir.la.caisse.7e98a335">Ouvrir la caisse</button>
           </div>
         </div>
       }
@@ -145,7 +147,7 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
               <i class="pi pi-check-circle"></i>
             </div>
             <div class="pos-toast__text">
-              <span class="pos-toast__title">Facture creee avec succes</span>
+              <span class="pos-toast__title" i18n="@@pos.pos.facture.creee.avec.succes.af22457e">Facture creee avec succes</span>
               <span class="pos-toast__subtitle">{{ successMessage }}</span>
             </div>
           </div>
@@ -157,19 +159,19 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
         <div class="pos-idle-overlay">
           <div class="pos-idle-box">
             <i class="pi pi-lock"></i>
-            <h2>Session verrouillee</h2>
-            <p>Inactivite de {{ idleService.idleMinutes() }} min. Saisissez votre mot de passe pour reprendre.</p>
+            <h2 i18n="@@pos.pos.session.verrouillee.f1549c06">Session verrouillee</h2>
+            <p i18n="@@pos.pos.inactivite.de.min.saisissez.votre.mot.de.939f220f">Inactivite de {{ idleService.idleMinutes() }} min. Saisissez votre mot de passe pour reprendre.</p>
             <input
               type="password"
               [(ngModel)]="idleUnlockPassword"
               (keydown.enter)="unlockIdle()"
-              placeholder="Mot de passe"
+              placeholder="Mot de passe" i18n-placeholder="@@pos.pos.mot.de.passe.94e2f3ee"
               class="pos-idle-input"
-              aria-label="Mot de passe" />
+              aria-label="Mot de passe" i18n-aria-label="@@pos.pos.mot.de.passe.94e2f3ee" />
             @if (idleUnlockError) {
               <p class="pos-idle-error">{{ idleUnlockError }}</p>
             }
-            <button type="button" class="pos-idle-btn" (click)="unlockIdle()">Reprendre</button>
+            <button type="button" class="pos-idle-btn" (click)="unlockIdle()" i18n="@@pos.pos.reprendre.1c56710b">Reprendre</button>
           </div>
         </div>
       }
@@ -177,11 +179,11 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
       @if (showRestoreDraftModal) {
         <div class="pos-modal-overlay" (click)="showRestoreDraftModal = false">
           <div class="pos-modal pos-modal--draft" (click)="$event.stopPropagation()">
-            <h3>Reprendre la commande ?</h3>
-            <p>Une commande enregistree localement a ete trouvee. Voulez-vous la reprendre ?</p>
+            <h3 i18n="@@pos.pos.reprendre.la.commande.7c6faab9">Reprendre la commande ?</h3>
+            <p i18n="@@pos.pos.une.commande.enregistree.localement.a.ete.trouve.4cad41c4">Une commande enregistree localement a ete trouvee. Voulez-vous la reprendre ?</p>
             <div class="pos-modal-actions">
-              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="restoreDraft()">Reprendre</button>
-              <button type="button" class="pos-modal-btn" (click)="dismissDraft(); showRestoreDraftModal = false">Nouvelle commande</button>
+              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="restoreDraft()" i18n="@@pos.pos.reprendre.1c56710b">Reprendre</button>
+              <button type="button" class="pos-modal-btn" (click)="dismissDraft(); showRestoreDraftModal = false" i18n="@@pos.pos.nouvelle.commande.061f365b">Nouvelle commande</button>
             </div>
           </div>
         </div>
@@ -190,11 +192,11 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
       @if (showRestoreCloudModal) {
         <div class="pos-modal-overlay" (click)="showRestoreCloudModal = false">
           <div class="pos-modal pos-modal--cloud" (click)="$event.stopPropagation()">
-            <h3>Reprendre sur cet appareil ?</h3>
-            <p>Une commande enregistree sur un autre poste est disponible.</p>
+            <h3 i18n="@@pos.pos.reprendre.sur.cet.appareil.dfabe137">Reprendre sur cet appareil ?</h3>
+            <p i18n="@@pos.pos.une.commande.enregistree.sur.un.autre.poste.est..72a3665a">Une commande enregistree sur un autre poste est disponible.</p>
             <div class="pos-modal-actions">
-              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="restoreCloudSession()">Reprendre</button>
-              <button type="button" class="pos-modal-btn" (click)="dismissCloudSession(); showRestoreCloudModal = false">Ignorer</button>
+              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="restoreCloudSession()" i18n="@@pos.pos.reprendre.1c56710b">Reprendre</button>
+              <button type="button" class="pos-modal-btn" (click)="dismissCloudSession(); showRestoreCloudModal = false" i18n="@@pos.pos.ignorer.b0d64e49">Ignorer</button>
             </div>
           </div>
         </div>
@@ -203,21 +205,21 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
       @if (showOpenSessionModal) {
         <div class="pos-modal-overlay" (click)="showOpenSessionModal = false">
           <div class="pos-modal" (click)="$event.stopPropagation()">
-            <h3>Ouvrir la caisse</h3>
-            <p>Saisissez le fond de caisse déclaré (espèces). Ce montant n'écrit pas d'opération de trésorerie.</p>
+            <h3 i18n="@@pos.pos.ouvrir.la.caisse.7e98a335">Ouvrir la caisse</h3>
+            <p i18n="@@pos.pos.saisissez.le.fond.de.caisse.declare.especes.ce.m.c250b8be">Saisissez le fond de caisse déclaré (espèces). Ce montant n'écrit pas d'opération de trésorerie.</p>
             @if (availableRegisters.length > 1) {
-              <label class="pos-modal-label" for="pos-register-select">Caisse</label>
+              <label class="pos-modal-label" for="pos-register-select" i18n="@@pos.pos.caisse.ce5a5c98">Caisse</label>
               <select id="pos-register-select" class="pos-idle-input" [(ngModel)]="selectedRegisterIdForOpen">
                 @for (reg of availableRegisters; track reg.id) {
-                  <option [value]="reg.id">{{ reg.code }} — {{ reg.name }}{{ reg.isDefault ? ' (défaut)' : '' }}</option>
+                  <option [value]="reg.id">{{ reg.code }} — {{ reg.name }}{{ reg.isDefault ? loc_ui_tern_defaut_f21337 : '' }}</option>
                 }
               </select>
             }
-            <label class="pos-modal-label" for="pos-opening-float">Fond de caisse (TND)</label>
+            <label class="pos-modal-label" for="pos-opening-float" i18n="@@pos.pos.fond.de.caisse.tnd.987425b1">Fond de caisse (TND)</label>
             <input id="pos-opening-float" type="number" min="0" step="0.001" class="pos-idle-input" [(ngModel)]="openingFloatInput" />
             <div class="pos-modal-actions">
-              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="confirmOpenSession()">Ouvrir</button>
-              <button type="button" class="pos-modal-btn" (click)="showOpenSessionModal = false">Annuler</button>
+              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="confirmOpenSession()" i18n="@@pos.pos.ouvrir.42c07747">Ouvrir</button>
+              <button type="button" class="pos-modal-btn" (click)="showOpenSessionModal = false" i18n="@@pos.pos.annuler.49ba3292">Annuler</button>
             </div>
           </div>
         </div>
@@ -226,23 +228,23 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
       @if (showCloseZModal) {
         <div class="pos-modal-overlay" (click)="showCloseZModal = false">
           <div class="pos-modal pos-modal--wide" (click)="$event.stopPropagation()">
-            <h3>Clôture Z</h3>
+            <h3 i18n="@@pos.pos.cloture.z.e93fcfd6">Clôture Z</h3>
             @if (closePreview) {
-              <p>Théorique espèces : <strong>{{ formatSessionAmount(closePreview.expectedCash) }} TND</strong></p>
+              <p><ng-container i18n="@@pos.pos.theorique.especes.4b60f776">Théorique espèces : </ng-container> <strong>{{ formatSessionAmount(closePreview.expectedCash) }} TND</strong></p>
               @if (closePreview.heldTicketCount > 0) {
-                <p>Attention : {{ closePreview.heldTicketCount }} ticket(s) encore en attente. Ils ne bloquent pas la clôture.</p>
+                <p i18n="@@pos.pos.attention.ticket.s.encore.en.attente.ils.68530859">Attention : {{ closePreview.heldTicketCount }} ticket(s) encore en attente. Ils ne bloquent pas la clôture.</p>
               }
             }
-            <label class="pos-modal-label" for="pos-counted-cash">Comptage espèces (TND)</label>
+            <label class="pos-modal-label" for="pos-counted-cash" i18n="@@pos.pos.comptage.especes.tnd.9cc856ec">Comptage espèces (TND)</label>
             <input id="pos-counted-cash" type="number" min="0" step="0.001" class="pos-idle-input" [(ngModel)]="countedCashInput" />
             @if (closePreview) {
-              <p [class.pos-variance-zero]="closeVariance() === 0" [class.pos-variance-nonzero]="closeVariance() !== 0">
+              <p [class.pos-variance-zero]="closeVariance() === 0" [class.pos-variance-nonzero]="closeVariance() !== 0" i18n="@@pos.pos.ecart.tnd.c1be9fa3">
                 Écart : {{ formatSessionAmount(closeVariance()) }} TND
               </p>
             }
             <div class="pos-modal-actions">
-              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="confirmCloseZ()">Clôturer</button>
-              <button type="button" class="pos-modal-btn" (click)="showCloseZModal = false">Annuler</button>
+              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="confirmCloseZ()" i18n="@@pos.pos.cloturer.e9f075c1">Clôturer</button>
+              <button type="button" class="pos-modal-btn" (click)="showCloseZModal = false" i18n="@@pos.pos.annuler.49ba3292">Annuler</button>
             </div>
           </div>
         </div>
@@ -251,21 +253,21 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
       @if (sessionReport) {
         <div class="pos-modal-overlay" (click)="sessionReport = null">
           <div class="pos-modal pos-modal--wide pos-z-print" (click)="$event.stopPropagation()">
-            <h3>{{ sessionReport.zReportNumber ? ('Clôture ' + sessionReport.zReportNumber) : 'Rapport X' }}</h3>
-            <p>{{ sessionReport.cashRegisterName }} — fond {{ formatSessionAmount(sessionReport.openingFloat) }} TND</p>
-            <p>Tickets : {{ sessionReport.invoiceCount }} — Avoirs : {{ sessionReport.creditNoteCount }}</p>
-            <p>Théorique : {{ formatSessionAmount(sessionReport.expectedCash) }} TND</p>
+            <h3>{{ sessionReport.zReportNumber ? (loc_ui_tern_cloture_248bfe + sessionReport.zReportNumber) : loc_ui_tern_rapport_x_5a5924 }}</h3>
+            <p i18n="@@pos.pos.fond.tnd.bd9049a4">{{ sessionReport.cashRegisterName }} — fond {{ formatSessionAmount(sessionReport.openingFloat) }} TND</p>
+            <p i18n="@@pos.pos.tickets.avoirs.5780f599">Tickets : {{ sessionReport.invoiceCount }} — Avoirs : {{ sessionReport.creditNoteCount }}</p>
+            <p i18n="@@pos.pos.theorique.tnd.ce72c0f1">Théorique : {{ formatSessionAmount(sessionReport.expectedCash) }} TND</p>
             @if (sessionReport.countedCash != null) {
-              <p>Compté : {{ formatSessionAmount(sessionReport.countedCash) }} TND — écart {{ formatSessionAmount(sessionReport.cashVariance ?? 0) }} TND</p>
+              <p i18n="@@pos.pos.compte.tnd.ecart.tnd.5ad109bb">Compté : {{ formatSessionAmount(sessionReport.countedCash) }} TND — écart {{ formatSessionAmount(sessionReport.cashVariance ?? 0) }} TND</p>
             }
             <ul>
               @for (row of sessionReport.totalsByMethod; track row.method) {
-                <li>{{ row.methodDisplay }} : {{ formatSessionAmount(row.amount) }} TND</li>
+                <li>{{ row.methodDisplay | backendLabel }} : {{ formatSessionAmount(row.amount) }} TND</li>
               }
             </ul>
             <div class="pos-modal-actions">
-              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="printSessionReport()">Imprimer</button>
-              <button type="button" class="pos-modal-btn" (click)="sessionReport = null">Fermer</button>
+              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="printSessionReport()" i18n="@@pos.pos.imprimer.5382c09d">Imprimer</button>
+              <button type="button" class="pos-modal-btn" (click)="sessionReport = null" i18n="@@pos.pos.fermer.5ab4ec64">Fermer</button>
             </div>
           </div>
         </div>
@@ -318,13 +320,13 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
     .pos-toast {
       position: fixed;
       top: calc(var(--pos-header-height, 64px) + 16px);
-      right: 24px;
+      inset-inline-end: 24px;
       z-index: 600;
       min-width: 360px;
       border-radius: var(--radius-xl);
       overflow: hidden;
       box-shadow: var(--shadow-2xl);
-      border-left: 3px solid var(--color-success-500);
+      border-inline-start: 3px solid var(--color-success-500);
       animation: slideInToastRight 350ms cubic-bezier(0.34, 1.2, 0.64, 1) forwards,
                  slideOutToastRight 250ms ease-in 2700ms forwards;
     }
@@ -338,7 +340,7 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--color-success-200);
-      border-left: none;
+      border-inline-start: none;
     }
 
     .pos-toast__icon {
@@ -382,7 +384,7 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
       content: '';
       position: absolute;
       top: 0;
-      left: 0;
+      inset-inline-start: 0;
       bottom: 0;
       width: 100%;
       background: var(--color-success-400);
@@ -472,8 +474,8 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
       }
 
       .pos-toast {
-        right: 16px;
-        left: 16px;
+        inset-inline-end: 16px;
+        inset-inline-start: 16px;
       }
 
       .pos-toast__content {
@@ -525,7 +527,7 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
       max-width: 280px;
       padding: var(--spacing-3) var(--spacing-4);
       font-size: 1rem;
-      text-align: left;
+      text-align: start;
       letter-spacing: normal;
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-lg);
@@ -645,6 +647,9 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
   `]
 })
 export class PosComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_defaut_f21337 = $localize`:@@ui.tern.defaut.f21337: (défaut)`;
+  readonly loc_ui_tern_cloture_248bfe = $localize`:@@ui.tern.cloture.248bfe:Clôture `;
+  readonly loc_ui_tern_rapport_x_5a5924 = $localize`:@@ui.tern.rapport.x.5a5924:Rapport X`;
   @ViewChild('catalog') catalogComponent!: ProductCatalogComponent;
   @ViewChild('receiptRef') receiptRef!: PosReceiptComponent;
 
@@ -719,16 +724,16 @@ export class PosComponent implements OnInit, OnDestroy {
       if (!result) return;
       this.barcodeToastType = result;
       if (result === 'added') {
-        this.barcodeToastMessage = 'Produit ajoute par scan';
+        this.barcodeToastMessage = $localize`:@@pos.pos.ts.produit.ajoute.par.scan.ace05abe:Produit ajoute par scan`;
         this.audioService.beepScan();
       } else if (result === 'not_found') {
         this.audioService.beepError();
-        this.barcodeToastMessage = 'Produit non trouve';
+        this.barcodeToastMessage = $localize`:@@pos.pos.ts.produit.non.trouve.91e3db45:Produit non trouve`;
       } else if (result === 'out_of_stock') {
         this.audioService.beepError();
-        this.barcodeToastMessage = 'Produit en rupture de stock';
+        this.barcodeToastMessage = $localize`:@@pos.pos.ts.produit.en.rupture.de.stock.e9dbdcda:Produit en rupture de stock`;
       } else {
-        this.barcodeToastMessage = 'Plusieurs produits correspondent - selectionnez dans le catalogue';
+        this.barcodeToastMessage = $localize`:@@pos.pos.ts.plusieurs.produits.correspondent.selecti.1667c366:Plusieurs produits correspondent - selectionnez dans le catalogue`;
         const code = this.barcodeService.lastScannedCode();
         if (code) {
           setTimeout(() => this.catalogComponent?.searchWithCode(code), 0);
@@ -899,7 +904,7 @@ export class PosComponent implements OnInit, OnDestroy {
     const email = this.authService.user()?.email?.trim();
     const password = this.idleUnlockPassword;
     if (!email || !password) {
-      this.idleUnlockError = 'Saisissez votre mot de passe.';
+      this.idleUnlockError = $localize`:@@pos.pos.ts.saisissez.votre.mot.de.passe.1916c0ee:Saisissez votre mot de passe.`;
       return;
     }
     this.idleUnlockError = '';
@@ -910,10 +915,10 @@ export class PosComponent implements OnInit, OnDestroy {
           this.idleUnlockPassword = '';
           return;
         }
-        this.idleUnlockError = res.message || 'Mot de passe incorrect.';
+        this.idleUnlockError = res.message || $localize`:@@pos.pos.ts.mot.de.passe.incorrect.c4b8638f:Mot de passe incorrect.`;
       },
       error: () => {
-        this.idleUnlockError = 'Mot de passe incorrect.';
+        this.idleUnlockError = $localize`:@@pos.pos.ts.mot.de.passe.incorrect.c4b8638f:Mot de passe incorrect.`;
       }
     });
   }
@@ -998,11 +1003,11 @@ export class PosComponent implements OnInit, OnDestroy {
   newOrder(): void {
     if (this.posState.isDirty() && this.posState.lines().length > 0) {
       this.confirmationService.confirm({
-        header: 'Abandonner la commande ?',
-        message: 'La commande en cours sera perdue. Voulez-vous continuer ?',
+        header: $localize`:@@pos.pos.ts.abandonner.la.commande.39b13386:Abandonner la commande ?`,
+        message: $localize`:@@pos.pos.ts.la.commande.en.cours.sera.perdue.voulez.ec0bd7d3:La commande en cours sera perdue. Voulez-vous continuer ?`,
         icon: 'pi pi-exclamation-triangle',
-        acceptLabel: 'Abandonner',
-        rejectLabel: 'Annuler',
+        acceptLabel: $localize`:@@pos.component.acceptLabel.Abandonner:Abandonner`,
+        rejectLabel: $localize`:@@pos.component.rejectLabel.Annuler:Annuler`,
         accept: () => {
           this.upsellService.clearSuggestions();
           this.posState.resetOrder();
@@ -1046,13 +1051,13 @@ export class PosComponent implements OnInit, OnDestroy {
     if (!this.registerSession.canSell()) {
       this.showOpenSessionModal = true;
       this.loadRegistersForOpen();
-      this.posState.setError('Ouvrez la caisse avant de vendre.');
+      this.posState.setError($localize`:@@pos.pos.ts.ouvrez.la.caisse.avant.de.vendre.ed6e5ad3:Ouvrez la caisse avant de vendre.`);
       this.audioService.beepError();
       return;
     }
 
     if (this.posState.paymentSchedule() === 'onAccount' && !this.posState.client()) {
-      this.posState.setError('Le paiement a terme exige un client identifie.');
+      this.posState.setError($localize`:@@pos.pos.ts.le.paiement.a.terme.exige.un.client.iden.10bb6820:Le paiement a terme exige un client identifie.`);
       this.audioService.beepError();
       return;
     }
@@ -1060,11 +1065,11 @@ export class PosComponent implements OnInit, OnDestroy {
     const outstanding = this.posState.clientOutstanding();
     if (outstanding?.isOverLimit && !this.posState.overLimitAcknowledged()) {
       this.confirmationService.confirm({
-        header: 'Plafond d\'encours depasse',
-        message: 'Le plafond client est depasse. Continuer quand meme ? (avertissement, la vente n\'est pas bloquee)',
+        header: $localize`:@@pos.pos.ts.plafond.d.encours.depasse.182d2a10:Plafond d'encours depasse`,
+        message: $localize`:@@pos.pos.ts.le.plafond.client.est.depasse.continuer.992db4af:Le plafond client est depasse. Continuer quand meme ? (avertissement, la vente n'est pas bloquee)`,
         icon: 'pi pi-exclamation-triangle',
-        acceptLabel: 'Continuer quand meme',
-        rejectLabel: 'Annuler',
+        acceptLabel: $localize`:@@pos.component.acceptLabel.Continuer_quand_:Continuer quand meme`,
+        rejectLabel: $localize`:@@pos.component.rejectLabel.Annuler:Annuler`,
         accept: () => {
           this.posState.acknowledgeOverLimit();
           this.validateAndPrint();
@@ -1074,13 +1079,13 @@ export class PosComponent implements OnInit, OnDestroy {
     }
 
     if (this.posState.isDemoMode()) {
-      this.showToast('Mode demo : facture simulee (aucune ecriture)');
+      this.showToast($localize`:@@pos.pos.ts.mode.demo.facture.simulee.aucune.ecritur.8eef4513:Mode demo : facture simulee (aucune ecriture)`);
       this.audioService.beepSuccess();
       return;
     }
 
     if (!this.sellerLoaded) {
-      this.posState.setError('Chargement des informations entreprise en cours. Veuillez reessayer.');
+      this.posState.setError($localize`:@@pos.pos.ts.chargement.des.informations.entreprise.e.9c3691a0:Chargement des informations entreprise en cours. Veuillez reessayer.`);
       this.audioService.beepError();
       this.loadSeller();
       return;
@@ -1096,7 +1101,7 @@ export class PosComponent implements OnInit, OnDestroy {
           return;
         }
         if (!check) {
-          this.posState.setError('Impossible de vérifier le stock. Réessayez.');
+          this.posState.setError($localize`:@@pos.pos.ts.impossible.de.verifier.le.stock.reessaye.94c6d8e4:Impossible de vérifier le stock. Réessayez.`);
           this.audioService.beepError();
           this.posState.setProcessing(false);
           return;
@@ -1106,7 +1111,7 @@ export class PosComponent implements OnInit, OnDestroy {
             .filter(d => !d.isAvailable)
             .map(d => buildInsufficientStockMessage(d.productName, d.requestedQuantity, d.availableQuantity))
             .join('\n');
-          this.posState.setError(msg || 'Stock insuffisant pour certains produits.');
+          this.posState.setError(msg || $localize`:@@pos.pos.ts.stock.insuffisant.pour.certains.produits.358e5f63:Stock insuffisant pour certains produits.`);
           this.audioService.beepError();
           this.posState.setProcessing(false);
           return;
@@ -1114,7 +1119,7 @@ export class PosComponent implements OnInit, OnDestroy {
         this.doValidateAndPrint(false);
       },
       error: () => {
-        this.posState.setError('Impossible de vérifier le stock. Réessayez.');
+        this.posState.setError($localize`:@@pos.pos.ts.impossible.de.verifier.le.stock.reessaye.94c6d8e4:Impossible de vérifier le stock. Réessayez.`);
         this.audioService.beepError();
         this.posState.setProcessing(false);
       }
@@ -1126,11 +1131,11 @@ export class PosComponent implements OnInit, OnDestroy {
 
     if (this.posState.lines().length > 0) {
       this.confirmationService.confirm({
-        header: 'Remplacer le panier ?',
-        message: 'Le panier actuel sera remplacé par les lignes de la facture sélectionnée.',
+        header: $localize`:@@pos.pos.ts.remplacer.le.panier.4f7abe74:Remplacer le panier ?`,
+        message: $localize`:@@pos.pos.ts.le.panier.actuel.sera.remplace.par.les.l.84680c56:Le panier actuel sera remplacé par les lignes de la facture sélectionnée.`,
         icon: 'pi pi-exclamation-triangle',
-        acceptLabel: 'Continuer',
-        rejectLabel: 'Annuler',
+        acceptLabel: $localize`:@@pos.component.acceptLabel.Continuer:Continuer`,
+        rejectLabel: $localize`:@@pos.component.rejectLabel.Annuler:Annuler`,
         accept: activate
       });
       return;
@@ -1148,12 +1153,12 @@ export class PosComponent implements OnInit, OnDestroy {
       next: () => {
         this.populatePosCartFromWizardLines();
         this.posState.setProcessing(false);
-        this.showToast('Panier pré-rempli — modifiez les quantités pour un avoir partiel');
+        this.showToast($localize`:@@pos.pos.ts.panier.pre.rempli.modifiez.les.quantites.e8e885fd:Panier pré-rempli — modifiez les quantités pour un avoir partiel`);
       },
       error: err => {
         this.posState.setProcessing(false);
         this.posState.disableCreditNoteMode();
-        const message = this.extractErrorMessage(err, 'Impossible de charger la facture liée.');
+        const message = this.extractErrorMessage(err, $localize`:@@pos.pos.ts.impossible.de.charger.la.facture.liee.53f3a0f5:Impossible de charger la facture liée.`);
         this.posState.setError(message);
         this.audioService.beepError();
       }
@@ -1164,14 +1169,14 @@ export class PosComponent implements OnInit, OnDestroy {
     const linked = this.posState.linkedInvoice();
     if (!linked?.id) {
       this.posState.setProcessing(false);
-      this.posState.setError('Facture liée invalide. Veuillez sélectionner une facture.');
+      this.posState.setError($localize`:@@pos.pos.ts.facture.liee.invalide.veuillez.selection.5c545a48:Facture liée invalide. Veuillez sélectionner une facture.`);
       this.audioService.beepError();
       return;
     }
 
     if (this.posState.lines().length === 0) {
       this.posState.setProcessing(false);
-      this.posState.setError('Ajoutez au moins une ligne à rembourser.');
+      this.posState.setError($localize`:@@pos.pos.ts.ajoutez.au.moins.une.ligne.a.rembourser.59d6d169:Ajoutez au moins une ligne à rembourser.`);
       this.audioService.beepError();
       return;
     }
@@ -1181,7 +1186,7 @@ export class PosComponent implements OnInit, OnDestroy {
       switchMap(() => this.checkoutService.submitCurrentDraft()),
       catchError(err => {
         this.posState.setProcessing(false);
-        const message = this.extractErrorMessage(err, 'Erreur lors de la création de l\'avoir');
+        const message = this.extractErrorMessage(err, $localize`:@@pos.pos.ts.erreur.lors.de.la.creation.de.l.avoir.1c0f4923:Erreur lors de la création de l'avoir`);
         this.posState.setError(message);
         this.audioService.beepError();
         return throwError(() => err);
@@ -1229,7 +1234,7 @@ export class PosComponent implements OnInit, OnDestroy {
       this.checkoutService.submitCurrentDraft().pipe(
         catchError(err => {
           this.posState.setProcessing(false);
-          const message = this.extractErrorMessage(err, 'Erreur lors de la creation de la facture');
+          const message = this.extractErrorMessage(err, $localize`:@@pos.pos.ts.erreur.lors.de.la.creation.de.la.facture.01f7e6d5:Erreur lors de la creation de la facture`);
           this.posState.setError(message);
           this.audioService.beepError();
           return throwError(() => err);
@@ -1271,11 +1276,11 @@ export class PosComponent implements OnInit, OnDestroy {
 
     if (this.posState.lines().length > 0) {
       this.confirmationService.confirm({
-        header: 'Changer de magasin ?',
-        message: 'Le panier est lie au magasin precedent. Continuer videra le panier.',
+        header: $localize`:@@pos.pos.ts.changer.de.magasin.33744235:Changer de magasin ?`,
+        message: $localize`:@@pos.pos.ts.le.panier.est.lie.au.magasin.precedent.c.20de7d7f:Le panier est lie au magasin precedent. Continuer videra le panier.`,
         icon: 'pi pi-exclamation-triangle',
-        acceptLabel: 'Vider et continuer',
-        rejectLabel: 'Annuler',
+        acceptLabel: $localize`:@@pos.component.acceptLabel.Vider_et_continu:Vider et continuer`,
+        rejectLabel: $localize`:@@pos.component.rejectLabel.Annuler:Annuler`,
         accept: () => {
           this.posState.resetOrder();
           apply();
@@ -1359,7 +1364,7 @@ export class PosComponent implements OnInit, OnDestroy {
       },
       error: err => {
         this.posState.setProcessing(false);
-        const message = this.extractErrorMessage(err, 'Erreur lors de la sauvegarde');
+        const message = this.extractErrorMessage(err, $localize`:@@pos.pos.ts.erreur.lors.de.la.sauvegarde.4a2bbdd4:Erreur lors de la sauvegarde`);
         this.posState.setError(message);
         this.audioService.beepError();
       }
@@ -1438,7 +1443,7 @@ export class PosComponent implements OnInit, OnDestroy {
       this.maybeSendInvoiceEmail(sendEmail, invoiceId);
     } else {
       const label = invoiceNumber?.trim() || invoiceId.substring(0, 8);
-      this.showToast(`Facture a terme N° ${label}`);
+      this.showToast($localize`:@@pos.pos.ts.facture.a.terme.n.label.c547838f:Facture a terme N° ${label}:label:`);
       this.maybeSendInvoiceEmail(sendEmail, invoiceId);
     }
   }
@@ -1457,7 +1462,7 @@ export class PosComponent implements OnInit, OnDestroy {
     const clientName = posClient?.name?.trim() || 'Client passager';
     const clientIdDisplay = posClient?.id
       ? `#${posClient.id.replace(/-/g, '').slice(0, 8).toUpperCase()}`
-      : '#PASSAGER';
+      : $localize`:@@ui.tern.passager.b5e3a4:#PASSAGER`;
 
     const num = invoiceNumber?.trim();
     const displayInvoiceNumber = num || invoiceId.replace(/-/g, '').slice(0, 12).toUpperCase();
@@ -1470,8 +1475,8 @@ export class PosComponent implements OnInit, OnDestroy {
 
     const isCredit = this.posState.isCreditNote();
     const documentBanner = isCredit
-      ? '---------- AVOIR (DÉTAIL) ----------'
-      : '---------- REÇU DE DÉTAIL ----------';
+      ? $localize`:@@ui.tern.avoir.detail.011371:---------- AVOIR (DÉTAIL) ----------`
+      : $localize`:@@ui.tern.recu.de.detail.2e79d7:---------- REÇU DE DÉTAIL ----------`;
 
     const remise = totals.totalDiscount + totals.firstPurchaseDiscount;
     const footerLegal =
@@ -1552,11 +1557,11 @@ export class PosComponent implements OnInit, OnDestroy {
           this.showChangeCalculator = false;
           this.changeCalculatorTotal = 0;
           this.isRecordingPayment = false;
-          this.showToast('Paiement enregistré');
+          this.showToast($localize`:@@pos.pos.ts.paiement.enregistre.caf52809:Paiement enregistré`);
         },
         error: err => {
           this.isRecordingPayment = false;
-          const message = this.extractErrorMessage(err, "Erreur lors de l'enregistrement du paiement");
+          const message = this.extractErrorMessage(err, $localize`:@@pos.pos.ts.erreur.lors.de.l.enregistrement.du.paiem.e23b0f61:Erreur lors de l'enregistrement du paiement`);
           this.posState.setError(message);
           this.audioService.beepError();
         }
@@ -1588,12 +1593,12 @@ export class PosComponent implements OnInit, OnDestroy {
     this.invoiceService.recordPayments(invoiceId, requests).subscribe({
       next: () => {
         this.isRecordingPayment = false;
-        this.showToast(`Encaissement fractionné enregistré (${splits.length} règlements)`);
+        this.showToast($localize`:@@pos.pos.ts.encaissement.fractionne.enregistre.lengt.48305673:Encaissement fractionné enregistré (${splits.length}:length: règlements)`);
       },
       error: err => {
         this.isRecordingPayment = false;
         const message = this.extractErrorMessage(
-          err, "Erreur lors de l'enregistrement de l'encaissement fractionné");
+          err, $localize`:@@pos.pos.ts.erreur.lors.de.l.enregistrement.de.l.enc.64664de1:Erreur lors de l'enregistrement de l'encaissement fractionné`);
         this.posState.setError(message);
         this.audioService.beepError();
       }
@@ -1604,7 +1609,7 @@ export class PosComponent implements OnInit, OnDestroy {
     this.invoiceService.downloadPdf(invoiceId).subscribe({
       next: blob => this.printPreviewService.openPdfForPrintPreview(blob, `facture-${invoiceId}.pdf`),
       error: err => {
-        const message = this.extractErrorMessage(err, 'Impossible de telecharger le PDF');
+        const message = this.extractErrorMessage(err, $localize`:@@pos.pos.ts.impossible.de.telecharger.le.pdf.1944a2e7:Impossible de telecharger le PDF`);
         this.posState.setError(message);
         this.audioService.beepError();
       }
@@ -1616,9 +1621,9 @@ export class PosComponent implements OnInit, OnDestroy {
       return;
     }
     this.checkoutService.sendInvoiceEmail(invoiceId).subscribe({
-      next: () => this.showToast('Facture envoyee par e-mail'),
+      next: () => this.showToast($localize`:@@pos.pos.ts.facture.envoyee.par.e.mail.0d173052:Facture envoyee par e-mail`),
       error: err => {
-        const message = this.extractErrorMessage(err, "Impossible d'envoyer la facture par e-mail");
+        const message = this.extractErrorMessage(err, $localize`:@@pos.pos.ts.impossible.d.envoyer.la.facture.par.e.ma.2e9a3c5e:Impossible d'envoyer la facture par e-mail`);
         this.posState.setError(message);
         this.audioService.beepError();
       }
@@ -1656,11 +1661,11 @@ export class PosComponent implements OnInit, OnDestroy {
     }).subscribe({
       next: () => {
         this.isRecordingPayment = false;
-        this.showToast('Paiement enregistré');
+        this.showToast($localize`:@@pos.pos.ts.paiement.enregistre.caf52809:Paiement enregistré`);
       },
       error: err => {
         this.isRecordingPayment = false;
-        const message = this.extractErrorMessage(err, "Erreur lors de l'enregistrement du paiement");
+        const message = this.extractErrorMessage(err, $localize`:@@pos.pos.ts.erreur.lors.de.l.enregistrement.du.paiem.e23b0f61:Erreur lors de l'enregistrement du paiement`);
         this.posState.setError(message);
         this.audioService.beepError();
       }
@@ -1677,10 +1682,10 @@ export class PosComponent implements OnInit, OnDestroy {
     this.registerSession.open(warehouseId, floatValue, registerId).subscribe({
       next: () => {
         this.showOpenSessionModal = false;
-        this.showToast('Caisse ouverte');
+        this.showToast($localize`:@@pos.pos.ts.caisse.ouverte.72457d60:Caisse ouverte`);
       },
       error: err => {
-        this.posState.setError(this.extractErrorMessage(err, "Impossible d'ouvrir la caisse"));
+        this.posState.setError(this.extractErrorMessage(err, $localize`:@@pos.pos.ts.impossible.d.ouvrir.la.caisse.1dc009cf:Impossible d'ouvrir la caisse`));
         this.audioService.beepError();
       }
     });
@@ -1696,7 +1701,7 @@ export class PosComponent implements OnInit, OnDestroy {
         this.sessionReport = report;
       },
       error: err => {
-        this.posState.setError(this.extractErrorMessage(err, 'Rapport X indisponible'));
+        this.posState.setError(this.extractErrorMessage(err, $localize`:@@pos.pos.ts.rapport.x.indisponible.c1080668:Rapport X indisponible`));
       }
     });
   }
@@ -1713,7 +1718,7 @@ export class PosComponent implements OnInit, OnDestroy {
         this.showCloseZModal = true;
       },
       error: err => {
-        this.posState.setError(this.extractErrorMessage(err, 'Impossible de préparer la clôture Z'));
+        this.posState.setError(this.extractErrorMessage(err, $localize`:@@pos.pos.ts.impossible.de.preparer.la.cloture.z.9eb8ddf2:Impossible de préparer la clôture Z`));
       }
     });
   }
@@ -1735,10 +1740,10 @@ export class PosComponent implements OnInit, OnDestroy {
         this.showCloseZModal = false;
         this.closePreview = null;
         this.sessionReport = report;
-        this.showToast(report.zReportNumber ? `Clôture ${report.zReportNumber}` : 'Caisse clôturée');
+        this.showToast(report.zReportNumber ? $localize`:@@ui.tern.cloture.ph.fba751:Clôture ${report.zReportNumber}:p0:` : $localize`:@@ui.tern.caisse.cloturee.6b484e:Caisse clôturée`);
       },
       error: err => {
-        this.posState.setError(this.extractErrorMessage(err, 'Clôture Z impossible'));
+        this.posState.setError(this.extractErrorMessage(err, $localize`:@@pos.pos.ts.cloture.z.impossible.8bbab029:Clôture Z impossible`));
         this.audioService.beepError();
       }
     });

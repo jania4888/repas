@@ -1,0 +1,7 @@
+{
+  "shared.pageHeader.hintAria": "معلومات عن هذه الصفحة",
+  "shared.emptyState.defaultTitle": "لا توجد عناصر",
+  "shared.accessDenied.title": "تم رفض الوصول",
+  "shared.accessDenied.message": "حسابك لا يتضمن الصلاحيات اللازمة لهذا القسم. تواصل مع مسؤول إذا كنت تعتقد أن هذا خطأ.",
+  "shared.accessDenied.dashboard": "لوحة التحكم"
+}

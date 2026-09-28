@@ -27,7 +27,7 @@ export function lineImpactDisplay(
   if (!detail.isAvailable) {
     return {
       tone: 'error',
-      text: 'Stock insuffisant',
+      text: $localize`:@@shared.invoice-validate-display.ts.stock.insuffisant.995fd9ad:Stock insuffisant`,
       quantity: detail.availableQuantity,
       quantityKind: 'available'
     };
@@ -45,7 +45,7 @@ export function lineImpactDisplay(
   if (detail.alertLevel === 'error') {
     return {
       tone: 'error',
-      text: detail.humanMessage || 'Stock insuffisant',
+      text: detail.humanMessage || $localize`:@@shared.invoice-validate-display.ts.stock.insuffisant.995fd9ad:Stock insuffisant`,
       quantity: null,
       quantityKind: 'none'
     };
@@ -53,7 +53,7 @@ export function lineImpactDisplay(
 
   return {
     tone: 'ok',
-    text: 'Restera',
+    text: $localize`:@@shared.invoice-validate-display.ts.restera.a725d6b8:Restera`,
     quantity: detail.remainingAfterSale,
     quantityKind: 'remaining'
   };

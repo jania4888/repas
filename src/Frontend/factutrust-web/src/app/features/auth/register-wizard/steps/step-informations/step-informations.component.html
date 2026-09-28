@@ -1,18 +1,18 @@
 <div class="wizard-step" [formGroup]="form">
-  <h3 class="step-title">2. Informations générales</h3>
+  <h3 class="step-title" i18n="@@auth.register-wizard.2.informations.generales.295c7130">2. Informations générales</h3>
 
   <div class="form-section">
     <div class="sec-head">
       <span class="sec-num">1</span>
-      <h4>Votre compte</h4>
+      <h4 i18n="@@auth.register-wizard.votre.compte.d46f5a4d">Votre compte</h4>
     </div>
 
     <div class="form-row">
       <div class="form-group flex-1">
-        <label for="wiz-firstName" class="sr-only">Prénom</label>
+        <label for="wiz-firstName" class="sr-only" i18n="@@auth.register-wizard.prenom.e4387ade">Prénom</label>
         <div class="input-icon-wrapper">
           <i class="pi pi-user icon"></i>
-          <input pInputText id="wiz-firstName" formControlName="firstName" placeholder="Prénom *"
+          <input pInputText id="wiz-firstName" formControlName="firstName" placeholder="Prénom *" i18n-placeholder="@@auth.register-wizard.prenom.72fe3505"
                  autocomplete="given-name"
                  [attr.aria-required]="true"
                  [class.ng-invalid]="isInvalid('firstName')"
@@ -26,10 +26,10 @@
       </div>
 
       <div class="form-group flex-1">
-        <label for="wiz-lastName" class="sr-only">Nom</label>
+        <label for="wiz-lastName" class="sr-only" i18n="@@auth.register-wizard.nom.7ff20370">Nom</label>
         <div class="input-icon-wrapper">
           <i class="pi pi-user icon"></i>
-          <input pInputText id="wiz-lastName" formControlName="lastName" placeholder="Nom *"
+          <input pInputText id="wiz-lastName" formControlName="lastName" placeholder="Nom *" i18n-placeholder="@@auth.register-wizard.nom.463a6959"
                  autocomplete="family-name"
                  [attr.aria-required]="true"
                  [class.ng-invalid]="isInvalid('lastName')"
@@ -44,16 +44,16 @@
     </div>
 
     <div class="form-group">
-      <label for="wiz-email" class="sr-only">Adresse email professionnelle</label>
+      <label for="wiz-email" class="sr-only" i18n="@@auth.register-wizard.adresse.email.professionnelle.5eaf7eb0">Adresse email professionnelle</label>
       <div class="input-icon-wrapper">
         <i class="pi pi-envelope icon"></i>
-        <input pInputText id="wiz-email" type="email" formControlName="email" placeholder="Adresse email professionnelle *"
+        <input pInputText id="wiz-email" type="email" formControlName="email" placeholder="Adresse email professionnelle *" i18n-placeholder="@@auth.register-wizard.adresse.email.professionnelle.b9a65170"
                autocomplete="email"
                [attr.aria-required]="true"
                [class.ng-invalid]="isInvalid('email')"
                [attr.aria-describedby]="isInvalid('email') ? 'wiz-email-error' : null">
       </div>
-      <small class="field-hint">Cette adresse servira à vous connecter</small>
+      <small class="field-hint" i18n="@@auth.register-wizard.cette.adresse.servira.a.vous.connecter.c417c04a">Cette adresse servira à vous connecter</small>
       @if (isInvalid('email')) {
         <div class="field-error" id="wiz-email-error" role="alert" @fadeInOut>
           <i class="pi pi-info-circle"></i> {{ errorMessageService.getErrorMessage(form.get('email')) }}
@@ -64,17 +64,17 @@
     <div class="password-section">
       <div class="form-row">
         <div class="form-group flex-1">
-          <label for="wiz-password" class="sr-only">Mot de passe</label>
+          <label for="wiz-password" class="sr-only" i18n="@@auth.register-wizard.mot.de.passe.94e2f3ee">Mot de passe</label>
           <div class="input-icon-wrapper p-password-wrapper">
             <i class="pi pi-lock icon"></i>
             <p-password id="wiz-password" formControlName="password" [toggleMask]="true" [feedback]="false"
-                      placeholder="Mot de passe *" styleClass="w-full" inputStyleClass="w-full"
+                      placeholder="Mot de passe *" i18n-placeholder="@@auth.register-wizard.mot.de.passe.e20d20af" styleClass="w-full" inputStyleClass="w-full"
                       [attr.aria-required]="true"
                       [attr.aria-describedby]="passwordFieldAriaDescribedBy()"
                       autocomplete="new-password">
             </p-password>
           </div>
-          <small class="field-hint">12 caractères minimum</small>
+          <small class="field-hint" i18n="@@auth.register-wizard.12.caracteres.minimum.c48567cd">12 caractères minimum</small>
           @if (isInvalid('password')) {
             <div class="field-error" id="wiz-password-error" role="alert" @fadeInOut>
               <i class="pi pi-info-circle"></i> {{ errorMessageService.getErrorMessage(form.get('password')) }}
@@ -83,51 +83,49 @@
         </div>
 
         <div class="form-group flex-1">
-          <label for="wiz-confirmPassword" class="sr-only">Confirmer mot de passe</label>
+          <label for="wiz-confirmPassword" class="sr-only" i18n="@@auth.register-wizard.confirmer.mot.de.passe.f618b3a6">Confirmer mot de passe</label>
           <div class="input-icon-wrapper p-password-wrapper">
             <i class="pi pi-check-circle icon"></i>
             <p-password id="wiz-confirmPassword" formControlName="confirmPassword" [toggleMask]="true" [feedback]="false"
-                      placeholder="Confirmer mot de passe *" styleClass="w-full" inputStyleClass="w-full"
+                      placeholder="Confirmer mot de passe *" i18n-placeholder="@@auth.register-wizard.confirmer.mot.de.passe.19885836" styleClass="w-full" inputStyleClass="w-full"
                       [class.ng-invalid]="isInvalid('confirmPassword') || passwordMismatch()"
                       [attr.aria-required]="true"
                       [attr.aria-describedby]="confirmPasswordAriaDescribedBy()"
                       autocomplete="new-password">
             </p-password>
           </div>
-          <small class="field-hint">Saisir à nouveau le mot de passe</small>
+          <small class="field-hint" i18n="@@auth.register-wizard.saisir.a.nouveau.le.mot.de.passe.fe9f6651">Saisir à nouveau le mot de passe</small>
           @if (isInvalid('confirmPassword')) {
             <div class="field-error" id="wiz-confirmPassword-error" role="alert" @fadeInOut>
               <i class="pi pi-info-circle"></i> {{ errorMessageService.getErrorMessage(form.get('confirmPassword')) }}
             </div>
           } @else if (passwordMismatch()) {
-            <div class="field-error" id="wiz-confirmPassword-error" role="alert" @fadeInOut>
+            <div class="field-error" id="wiz-confirmPassword-error" role="alert" @fadeInOut i18n="@@auth.register-wizard.les.mots.de.passe.ne.correspondent.pas.ba67f6c5">
               <i class="pi pi-info-circle"></i> Les mots de passe ne correspondent pas.
             </div>
           } @else if (passwordMatches() && form.get('confirmPassword')?.value) {
-            <div class="field-success" id="wiz-confirmPassword-success" role="status" @fadeInOut>
+            <div class="field-success" id="wiz-confirmPassword-success" role="status" @fadeInOut i18n="@@auth.register-wizard.correspondance.exacte.f72c9dd2">
               <i class="pi pi-check-circle"></i> Correspondance exacte
             </div>
           }
         </div>
       </div>
 
-      <span id="wiz-password-strength-hint" class="sr-only">
-        Exigences : au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.
-      </span>
+      <span id="wiz-password-strength-hint" class="sr-only" i18n="@@auth.register-wizard.exigences.au.moins.12.caracteres.une.majuscule.u.86d13e2b"> Exigences : au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial. </span>
 
       <div class="password-criteria-card">
         <div class="criteria-header-row">
-          <div class="criteria-header">Critères de sécurité</div>
+          <div class="criteria-header" i18n="@@auth.register-wizard.criteres.de.securite.a5acc627">Critères de sécurité</div>
           @if (passwordStrengthLevel() !== 'empty') {
             <span class="password-strength-label" [attr.data-level]="passwordStrengthLevel()">{{ passwordStrengthLabel() }}</span>
           }
         </div>
-        <div class="password-strength-meter" role="progressbar" aria-live="polite" [attr.aria-valuenow]="passwordStrengthMetCount()" aria-valuemin="0" aria-valuemax="5" [attr.aria-label]="passwordStrengthLabel() || 'Force du mot de passe'">
+        <div class="password-strength-meter" role="progressbar" aria-live="polite" [attr.aria-valuenow]="passwordStrengthMetCount()" aria-valuemin="0" aria-valuemax="5" [attr.aria-label]="passwordStrengthLabel() || loc_force_du_mot_de_passe_de0bbe">
           @for (seg of strengthSegments; track seg) {
             <span class="password-strength-segment" [class.filled]="passwordStrengthMetCount() >= seg" [attr.data-level]="passwordStrengthLevel()"></span>
           }
         </div>
-        <div class="criteria-grid">
+        <div class="criteria-grid" i18n="@@auth.register-wizard.12.caracteres.majuscule.minuscule.chiffr.4f5fb930">
           <span class="criterion" [class.met]="passwordCriteria().minLength" [class.unmet]="!passwordCriteria().minLength && form.get('password')?.value">
             <i class="pi" [class.pi-check-circle]="passwordCriteria().minLength" [class.pi-circle]="!passwordCriteria().minLength"></i> 12+ caractères
           </span>
@@ -152,14 +150,14 @@
   <div class="form-section">
     <div class="sec-head">
       <span class="sec-num">2</span>
-      <h4>Votre société</h4>
+      <h4 i18n="@@auth.register-wizard.votre.societe.63a1f3f3">Votre société</h4>
     </div>
 
     <div class="form-group">
-      <label for="wiz-companyName" class="sr-only">Raison sociale</label>
+      <label for="wiz-companyName" class="sr-only" i18n="@@auth.register-wizard.raison.sociale.28eaf8b0">Raison sociale</label>
       <div class="input-icon-wrapper">
         <i class="pi pi-building icon"></i>
-        <input pInputText id="wiz-companyName" formControlName="companyName" placeholder="Raison sociale *"
+        <input pInputText id="wiz-companyName" formControlName="companyName" placeholder="Raison sociale *" i18n-placeholder="@@auth.register-wizard.raison.sociale.69e804e0"
                autocomplete="organization"
                [attr.aria-required]="true"
                [class.ng-invalid]="isInvalid('companyName')"
@@ -174,22 +172,22 @@
 
     <div class="form-row">
       <div class="form-group flex-1">
-        <label for="wiz-nif" class="sr-only">Matricule fiscal (NIF)</label>
+        <label for="wiz-nif" class="sr-only" i18n="@@auth.register-wizard.matricule.fiscal.nif.099b0268">Matricule fiscal (NIF)</label>
         <div class="input-icon-wrapper p-inputmask-wrapper">
           <i class="pi pi-hashtag icon"></i>
-          <p-inputMask id="wiz-nif" formControlName="nif" appNifMaskPaste mask="9999999a/a/a/999" placeholder="NIF : 1772793W/A/M/000"
+          <p-inputMask id="wiz-nif" formControlName="nif" appNifMaskPaste mask="9999999a/a/a/999" placeholder="NIF : 1772793W/A/M/000" i18n-placeholder="@@auth.register-wizard.nif.1772793w.a.m.000.d609d8b8"
                        styleClass="w-full uppercase" (onBlur)="onNifBlur()"
                        [attr.aria-required]="true"
                        [class.ng-invalid]="isInvalid('nif')">
           </p-inputMask>
         </div>
         @if (isInvalid('nif')) {
-          <div class="field-error" id="wiz-nif-error" role="alert" @fadeInOut>
+          <div class="field-error" id="wiz-nif-error" role="alert" @fadeInOut i18n="@@auth.register-wizard.format.attendu.1772793w.a.m.000.513ef2e7">
             <i class="pi pi-info-circle"></i> Format attendu: 1772793W/A/M/000
           </div>
         }
         @if (nifSegmentSuggestion()?.category) {
-          <small class="field-hint nif-category-hint">
+          <small class="field-hint nif-category-hint" i18n="@@auth.register-wizard.nif.detecte.categorie.38366eb9">
             NIF détecté : catégorie {{ nifSegmentSuggestion()!.category.categoryLabelFr }}
           </small>
         }
@@ -201,33 +199,31 @@
               <!-- Le cas miroir (segment « Association » + catégorie NIF autre) n'a pas de segment
                    cible à proposer : on n'affiche alors que la confirmation. -->
               @if (nifSegmentSuggestion()?.category?.suggestedSegmentCode) {
-                <button type="button" class="btn-link" (click)="applySuggestedSegmentFromNif()">
+                <button type="button" class="btn-link" (click)="applySuggestedSegmentFromNif()" i18n="@@auth.register-wizard.changer.pour.14c32bf7">
                   Changer pour {{ suggestedSegmentLabelFromNif() }}
                 </button>
               }
-              <button type="button" class="btn-link btn-link--muted" (click)="dismissNifSegmentHint()">
-                Confirmer mon segment
-              </button>
+              <button type="button" class="btn-link btn-link--muted" (click)="dismissNifSegmentHint()" i18n="@@auth.register-wizard.confirmer.mon.segment.a056ffdc"> Confirmer mon segment </button>
             </div>
           </div>
         }
       </div>
 
       <div class="form-group flex-1">
-        <label for="wiz-taxRegime" class="sr-only">Régime fiscal</label>
+        <label for="wiz-taxRegime" class="sr-only" i18n="@@auth.register-wizard.regime.fiscal.ddf8b3c2">Régime fiscal</label>
         <p-select id="wiz-taxRegime" [options]="taxRegimes" formControlName="taxRegime"
-                    optionLabel="label" optionValue="value" placeholder="Régime fiscal *"
+                    optionLabel="label" optionValue="value" placeholder="Régime fiscal *" i18n-placeholder="@@auth.register-wizard.regime.fiscal.d8042f43"
                     appendTo="body"
                     styleClass="w-full custom-dropdown" [class.ng-invalid]="isInvalid('taxRegime')"
                     [attr.aria-required]="true">
         </p-select>
         @if (isInvalid('taxRegime')) {
-          <div class="field-error" id="wiz-taxRegime-error" role="alert" @fadeInOut>
+          <div class="field-error" id="wiz-taxRegime-error" role="alert" @fadeInOut i18n="@@auth.register-wizard.le.regime.fiscal.est.requis.15a8d12f">
             <i class="pi pi-info-circle"></i> Le régime fiscal est requis
           </div>
         }
         @if (isSuggestedTaxRegimeActive()) {
-          <small class="field-hint suggestion-hint">
+          <small class="field-hint suggestion-hint" i18n="@@auth.register-wizard.suggere.pour.votre.secteur.b2dd1a94">
             <i class="pi pi-sparkles"></i> Suggéré pour votre secteur — {{ suggestedTaxRegime!.noteFr }}
           </small>
         }
@@ -236,33 +232,33 @@
 
     <div class="form-row">
       <div class="form-group flex-1">
-        <label for="wiz-companyEmail" class="sr-only">Email professionnel</label>
+        <label for="wiz-companyEmail" class="sr-only" i18n="@@auth.register-wizard.email.professionnel.0496fd95">Email professionnel</label>
         <div class="input-icon-wrapper">
           <i class="pi pi-envelope icon"></i>
-          <input pInputText id="wiz-companyEmail" type="email" formControlName="companyEmail" placeholder="Email professionnel *"
+          <input pInputText id="wiz-companyEmail" type="email" formControlName="companyEmail" placeholder="Email professionnel *" i18n-placeholder="@@auth.register-wizard.email.professionnel.26f8e47c"
                  autocomplete="email"
                  [attr.aria-required]="true"
                  [class.ng-invalid]="isInvalid('companyEmail')">
         </div>
         @if (isInvalid('companyEmail')) {
-          <div class="field-error" role="alert" @fadeInOut>
+          <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register-wizard.email.invalide.991ed190">
             <i class="pi pi-info-circle"></i> Email invalide
           </div>
         }
       </div>
 
       <div class="form-group flex-1">
-        <label for="wiz-phone" class="sr-only">Téléphone</label>
+        <label for="wiz-phone" class="sr-only" i18n="@@auth.register-wizard.telephone.d3b023ea">Téléphone</label>
         <div class="input-icon-wrapper p-inputmask-wrapper">
           <i class="pi pi-phone icon"></i>
-          <p-inputMask id="wiz-phone" formControlName="phone" mask="99 999 999" placeholder="Téléphone *" styleClass="w-full"
+          <p-inputMask id="wiz-phone" formControlName="phone" mask="99 999 999" placeholder="Téléphone *" i18n-placeholder="@@auth.register-wizard.telephone.f846c67a" styleClass="w-full"
                        [attr.aria-required]="true"
                        [class.ng-invalid]="isInvalid('phone')">
           </p-inputMask>
         </div>
-        <small class="field-hint">8 chiffres — commence par 2, 3, 4, 5, 7 ou 9</small>
+        <small class="field-hint" i18n="@@auth.register-wizard.8.chiffres.commence.par.2.3.4.5.7.ou.9.e854f61f">8 chiffres — commence par 2, 3, 4, 5, 7 ou 9</small>
         @if (isInvalid('phone')) {
-          <div class="field-error" role="alert" @fadeInOut>
+          <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register-wizard.le.telephone.est.requis.8168e3d7">
             <i class="pi pi-info-circle"></i> Le téléphone est requis
           </div>
         }
@@ -271,21 +267,21 @@
 
     <div class="form-row form-row--deferred">
       <div class="form-group flex-1">
-        <label for="wiz-website" class="sr-only">Site web</label>
+        <label for="wiz-website" class="sr-only" i18n="@@auth.register-wizard.site.web.7e78af33">Site web</label>
         <div class="input-icon-wrapper">
           <i class="pi pi-globe icon"></i>
-          <input pInputText id="wiz-website" formControlName="website" placeholder="Site web (optionnel)">
+          <input pInputText id="wiz-website" formControlName="website" placeholder="Site web (optionnel)" i18n-placeholder="@@auth.register-wizard.site.web.optionnel.1a8425f6">
         </div>
-        <small class="field-hint">Vous pourrez compléter plus tard</small>
+        <small class="field-hint" i18n="@@auth.register-wizard.vous.pourrez.completer.plus.tard.483b386b">Vous pourrez compléter plus tard</small>
       </div>
 
       <div class="form-group flex-1">
-        <label for="wiz-warehouseName" class="sr-only">Nom de l'entrepôt principal</label>
+        <label for="wiz-warehouseName" class="sr-only" i18n="@@auth.register-wizard.nom.de.l.entrepot.principal.2f77abf6">Nom de l'entrepôt principal</label>
         <div class="input-icon-wrapper">
           <i class="pi pi-box icon"></i>
-          <input pInputText id="wiz-warehouseName" formControlName="warehouseName" placeholder="Entrepôt principal (optionnel)">
+          <input pInputText id="wiz-warehouseName" formControlName="warehouseName" placeholder="Entrepôt principal (optionnel)" i18n-placeholder="@@auth.register-wizard.entrepot.principal.optionnel.e0c7f550">
         </div>
-        <small class="field-hint">Un nom par défaut adapté à votre secteur sera utilisé si laissé vide — vous pourrez compléter plus tard</small>
+        <small class="field-hint" i18n="@@auth.register-wizard.un.nom.par.defaut.adapte.a.votre.secteur.sera.ut.4c9c9e14">Un nom par défaut adapté à votre secteur sera utilisé si laissé vide — vous pourrez compléter plus tard</small>
       </div>
     </div>
   </div>

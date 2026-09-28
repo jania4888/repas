@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, EventEmitter, Input, OnChanges, Output, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -19,13 +20,13 @@ import { PERMISSIONS } from '@core/config/permission-keys';
   imports: [CommonModule, FormsModule, ButtonComponent],
   template: `
     <section class="ft-card-block">
-      <h3 class="block-title"><i class="pi pi-comment"></i> Notes internes</h3>
+      <h3 class="block-title" i18n="@@recurring-contracts.tabs.notes.internes.8ecf0a7e"><i class="pi pi-comment"></i> Notes internes</h3>
 
       @if (readOnly()) {
         @if (notes) {
           <p class="notes">{{ notes }}</p>
         } @else {
-          <p class="placeholder-note">Aucune note sur ce contrat.</p>
+          <p class="placeholder-note" i18n="@@recurring-contracts.tabs.aucune.note.sur.ce.contrat.e39987c0">Aucune note sur ce contrat.</p>
         }
       } @else {
         <textarea
@@ -33,7 +34,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
           rows="6"
           [(ngModel)]="notes"
           name="contractNotes"
-          placeholder="Notes internes sur le contrat…">
+          placeholder="Notes internes sur le contrat…" i18n-placeholder="@@recurring-contracts.contract-notes.notes.internes.sur.le.contrat.d43eb060">
         </textarea>
         <div class="actions">
           <app-button
@@ -42,7 +43,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
             icon="pi-check"
             [disabled]="saving()"
             (clicked)="save()">
-            {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+            <ng-container i18n="@@recurring-contracts.tabs.sel.enregistrement.enregistrer.1317c42c">{!!(saving()), select, true {Enregistrement…} other {Enregistrer}}</ng-container>
           </app-button>
         </div>
       }
@@ -141,18 +142,18 @@ export class ContractNotesTabComponent implements OnChanges {
           this.unavailable.set(true);
           this.toast.add({
             severity: 'info',
-            summary: 'Fonction indisponible',
-            detail: 'Fonction disponible après la mise à jour du serveur. Notes en lecture seule pour le moment.'
+            summary: $localize`:@@contract-notes.tab.summary.Fonction_indispo:Fonction indisponible`,
+            detail: $localize`:@@contract-notes.tab.detail.Fonction_disponi:Fonction disponible après la mise à jour du serveur. Notes en lecture seule pour le moment.`
           });
           return;
         }
-        this.toast.add({ severity: 'success', summary: 'Notes enregistrées', detail: 'Les notes du contrat ont été mises à jour.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@contract-notes.tab.summary.Notes_enregistr_:Notes enregistrées`, detail: $localize`:@@contract-notes.tab.detail.Les_notes_du_con:Les notes du contrat ont été mises à jour.` });
         this.notesSaved.emit(this.notes || null);
       },
       error: err => {
         this.saving.set(false);
         this.errorHandler.logError('RecurringContracts: update notes', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-notes.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }

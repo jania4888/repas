@@ -19,27 +19,27 @@ export interface ProjectInvoiceTargetChoice {
     <p-dialog
       [(visible)]="visible"
       [modal]="true"
-      header="Facturer la sélection"
+      header="Facturer la sélection" i18n-header="@@projects.components.facturer.la.selection.37788e00"
       [style]="{ width: '34rem' }"
       [draggable]="false"
       (onShow)="reset()"
       (onHide)="cancelled.emit()">
       @if (step === 'mode') {
-        <p class="intro">Choisissez comment facturer les éléments sélectionnés.</p>
+        <p class="intro" i18n="@@projects.components.choisissez.comment.facturer.les.elements.selecti.e12b687e">Choisissez comment facturer les éléments sélectionnés.</p>
         <div class="mode-options">
           <div class="mode-option">
             <p-radiobutton name="invoiceTargetMode" value="new" [(ngModel)]="mode" inputId="inv-target-new" />
-            <label for="inv-target-new">Créer une nouvelle facture</label>
+            <label for="inv-target-new" i18n="@@projects.components.creer.une.nouvelle.facture.e51d1303">Créer une nouvelle facture</label>
           </div>
           <div class="mode-option">
             <p-radiobutton name="invoiceTargetMode" value="existing" [(ngModel)]="mode" inputId="inv-target-existing" />
-            <label for="inv-target-existing">Ajouter à une facture brouillon existante</label>
+            <label for="inv-target-existing" i18n="@@projects.components.ajouter.a.une.facture.brouillon.existante.d090e3f0">Ajouter à une facture brouillon existante</label>
           </div>
         </div>
       } @else {
-        <p class="intro">Sélectionnez une facture brouillon du même client et du même projet.</p>
+        <p class="intro" i18n="@@projects.components.selectionnez.une.facture.brouillon.du.meme.clien.522bcb6f">Sélectionnez une facture brouillon du même client et du même projet.</p>
         @if (!drafts.length) {
-          <p-message severity="warn" text="Aucune facture brouillon compatible." styleClass="w-full" />
+          <p-message severity="warn" text="Aucune facture brouillon compatible." i18n-text="@@projects.components.aucune.facture.brouillon.compatible.06ca82e6" styleClass="w-full" />
         } @else {
           <div class="draft-list">
             @for (d of drafts; track d.invoiceId) {
@@ -49,7 +49,7 @@ export interface ProjectInvoiceTargetChoice {
                   [value]="d.invoiceId"
                   [(ngModel)]="selectedDraftId"
                   [inputId]="'draft-' + d.invoiceId" />
-                <label [for]="'draft-' + d.invoiceId">
+                <label [for]="'draft-' + d.invoiceId" i18n="@@projects.components.ht.ligne.s.a3a0b7c1">
                   <span class="draft-number">{{ d.number }}</span>
                   <span class="draft-meta">{{ d.issueDate | date:'dd/MM/yyyy' }} — {{ d.amountHT | number:'1.3-3' }} HT — {{ d.lineCount }} ligne(s)</span>
                 </label>
@@ -63,11 +63,11 @@ export interface ProjectInvoiceTargetChoice {
       }
       <ng-template pTemplate="footer">
         @if (step === 'mode') {
-          <app-button variant="secondary" (click)="close()">Annuler</app-button>
-          <app-button variant="primary" (click)="continueFromMode()">Continuer</app-button>
+          <app-button variant="secondary" (click)="close()" i18n="@@projects.components.annuler.49ba3292">Annuler</app-button>
+          <app-button variant="primary" (click)="continueFromMode()" i18n="@@projects.components.continuer.129ffff9">Continuer</app-button>
         } @else {
-          <app-button variant="secondary" (click)="backToMode()">Retour</app-button>
-          <app-button variant="primary" [disabled]="!selectedDraftId" (click)="confirmExisting()">Ajouter à la facture</app-button>
+          <app-button variant="secondary" (click)="backToMode()" i18n="@@projects.components.retour.e5befb1f">Retour</app-button>
+          <app-button variant="primary" [disabled]="!selectedDraftId" (click)="confirmExisting()" i18n="@@projects.components.ajouter.a.la.facture.b56e1738">Ajouter à la facture</app-button>
         }
       </ng-template>
     </p-dialog>
@@ -155,7 +155,7 @@ export class ProjectInvoiceTargetDialogComponent {
     this.step = 'pick';
     this.drafts = [...this.preloadedDrafts];
     if (!this.drafts.length) {
-      this.error = 'Aucune facture brouillon compatible pour ce projet.';
+      this.error = $localize`:@@projects.project-invoice-target-dialog.ts.aucune.facture.brouillon.compatible.pour.a3f7da14:Aucune facture brouillon compatible pour ce projet.`;
     }
   }
 

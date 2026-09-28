@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -71,8 +72,8 @@ import {
   ],
   template: `
     <app-page-header
-      title="Configuration DM"
-      subtitle="Calcul de chaque rubrique de la déclaration mensuelle : comptes, valeurs de paie, taux et période d’application" />
+      title="Configuration DM" i18n-title="@@accounting.monthly-declaration.configuration.dm.b438b9c2"
+      subtitle="Calcul de chaque rubrique de la déclaration mensuelle : comptes, valeurs de paie, taux et période d’application" i18n-subtitle="@@accounting.monthly-declaration.calcul.de.chaque.rubrique.de.la.declarat.8c09a978" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
@@ -80,8 +81,8 @@ import {
       @if (!config.settings.configurableLinesEnabled) {
         <app-accounting-status-banner
           variant="info"
-          title="Calcul paramétré non activé"
-          message="La configuration reste consultable. Sa modification sera possible dès l’activation par l’administrateur de la plateforme ; aucun montant n’en dépend pour l’instant." />
+          title="Calcul paramétré non activé" i18n-title="@@accounting.monthly-declaration.calcul.parametre.non.active.504c61d8"
+          message="La configuration reste consultable. Sa modification sera possible dès l’activation par l’administrateur de la plateforme ; aucun montant n’en dépend pour l’instant." i18n-message="@@accounting.monthly-declaration.la.configuration.reste.consultable.sa.mo.dea661f7" />
       }
 
       <div class="card dm-state">
@@ -97,15 +98,13 @@ import {
           icon="pi-refresh"
           type="button"
           [disabled]="loading()"
-          (click)="load()">
-          Actualiser
-        </app-button>
+          (click)="load()" i18n="@@accounting.monthly-declaration.actualiser.9d3b2a7d"> Actualiser </app-button>
       </div>
 
       @if (!canWrite()) {
         <app-accounting-status-banner
           variant="info"
-          message="Configuration en lecture seule : sa modification est réservée au cabinet comptable ouvrant le dossier." />
+          message="Configuration en lecture seule : sa modification est réservée au cabinet comptable ouvrant le dossier." i18n-message="@@accounting.monthly-declaration.configuration.en.lecture.seule.sa.modifi.698a149c" />
       }
 
       <div class="card dm-panel">
@@ -116,7 +115,7 @@ import {
               <p-tab [value]="tab.family">
                 {{ tab.label }}
                 @if (needsAttention(tab.family)) {
-                  <span class="dm-dot" title="Famille incluse sans rubrique active">●</span>
+                  <span class="dm-dot" title="Famille incluse sans rubrique active" i18n-title="@@accounting.monthly-declaration.famille.incluse.sans.rubrique.active.00192701" i18n="@@accounting.monthly-declaration.text.02b4ebd4">●</span>
                 }
               </p-tab>
             }
@@ -136,20 +135,20 @@ import {
                   [checked]="included()"
                   [disabled]="!editable() || savingFamily()"
                   (change)="toggleFamily($event)" />
-                <span>Inclure cette famille dans la déclaration mensuelle</span>
+                <span i18n="@@accounting.monthly-declaration.inclure.cette.famille.dans.la.declaration.mensue.4fe1eab3">Inclure cette famille dans la déclaration mensuelle</span>
               </label>
             </div>
 
             @if (outOfEngineScope()) {
               <app-accounting-status-banner
                 variant="info"
-                message="La T.V.A reste calculée depuis les factures et le chaînage de crédit : ces rubriques s’enregistrent mais ne déplacent aucun montant." />
+                message="La T.V.A reste calculée depuis les factures et le chaînage de crédit : ces rubriques s’enregistrent mais ne déplacent aucun montant." i18n-message="@@accounting.monthly-declaration.la.t.v.a.reste.calculee.depuis.les.factu.2910b91f" />
             }
 
             @if (needsAttention(tab.family)) {
               <app-accounting-status-banner
                 variant="warning"
-                message="Famille incluse sans rubrique active : en mode paramétré, l’enregistrement de la déclaration sera refusé plutôt que de produire un zéro silencieux." />
+                message="Famille incluse sans rubrique active : en mode paramétré, l’enregistrement de la déclaration sera refusé plutôt que de produire un zéro silencieux." i18n-message="@@accounting.monthly-declaration.famille.incluse.sans.rubrique.active.en.dd389647" />
             }
 
             <div class="dm-family__toolbar">
@@ -159,10 +158,8 @@ import {
                 icon="pi pi-plus"
                 type="button"
                 [disabled]="!editable() || loading()"
-                (click)="startCreate()">
-                Nouvelle rubrique
-              </app-button>
-              <span class="dm-family__count">{{ activeCount() }} rubrique(s) active(s)</span>
+                (click)="startCreate()" i18n="@@accounting.monthly-declaration.nouvelle.rubrique.f16710ee"> Nouvelle rubrique </app-button>
+              <span class="dm-family__count" i18n="@@accounting.monthly-declaration.rubrique.s.active.s.2f5fcdaa">{{ activeCount() }} rubrique(s) active(s)</span>
             </div>
 
             @if (form(); as draft) {
@@ -177,7 +174,7 @@ import {
               </div>
             }
 
-            <app-accounting-table-shell [loadingOverlay]="loading()" loadingMessage="Chargement de la configuration…">
+            <app-accounting-table-shell [loadingOverlay]="loading()" loadingMessage="Chargement de la configuration…" i18n-loadingMessage="@@accounting.monthly-declaration-config.chargement.de.la.configuration.55f25203">
               <app-dm-rubric-table
                 [rubrics]="visibleRubrics()"
                 [loading]="loading()"
@@ -217,7 +214,7 @@ import {
     .dm-family__toolbar { display: flex; gap: var(--spacing-3); align-items: center; }
     .dm-family__count { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
     .dm-editor { border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); padding: var(--spacing-4); }
-    .dm-dot { margin-left: var(--spacing-1); color: var(--color-warning-600, #d97706); }
+    .dm-dot { margin-inline-start: var(--spacing-1); color: var(--color-warning-600, #d97706); }
   `
 })
 export class MonthlyDeclarationConfigComponent implements OnInit {
@@ -324,12 +321,12 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
         if (res.success && res.data) {
           this.configuration.set(res.data);
         } else {
-          this.error.set(res.error ?? 'Erreur de chargement de la configuration DM.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.de.chargement.de.la.configuration.d.15ff2d:Erreur de chargement de la configuration DM.`);
         }
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-config.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }
@@ -405,12 +402,12 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
     const done = (ok: boolean, message?: string) => {
       this.savingRubric.set(false);
       if (!ok) {
-        this.error.set(message ?? 'Erreur lors de l’enregistrement de la rubrique.');
+        this.error.set(message ?? $localize`:@@ui.tern.erreur.lors.de.l.enregistrement.de.la.rubr.d150ee:Erreur lors de l’enregistrement de la rubrique.`);
         return;
       }
       this.toast.add({
         severity: 'success',
-        summary: 'Rubrique enregistrée',
+        summary: $localize`:@@monthly-declaration-config.component.summary.Rubrique_enregis:Rubrique enregistrée`,
         detail: draft.code.toUpperCase(),
         life: 4000
       });
@@ -422,7 +419,7 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
     // booléen) : on branche l'abonnement plutôt que d'unir deux observables inconciliables.
     const handlers = {
       next: (res: { success: boolean; error?: string }) => done(res.success, res.error),
-      error: (err: unknown) => done(false, this.errors.extractErrorMessage(err, 'Erreur réseau'))
+      error: (err: unknown) => done(false, this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-config.ts.erreur.reseau.0683007f:Erreur réseau`))
     };
 
     if (draft.id) {
@@ -449,13 +446,13 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
           } else {
             // La case reflète l'état du serveur : la recharger est la seule façon de ne pas
             // laisser l'écran afficher une inclusion qui n'a pas été enregistrée.
-            this.error.set(res.error ?? 'Erreur lors de la mise à jour de la famille.');
+            this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.mise.a.jour.de.la.famill.f72ba5:Erreur lors de la mise à jour de la famille.`);
             this.load(false);
           }
         },
         error: err => {
           this.savingFamily.set(false);
-          this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-config.ts.erreur.reseau.0683007f:Erreur réseau`));
           this.load(false);
         }
       });
@@ -470,10 +467,10 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
         if (res.success) {
           this.load();
         } else {
-          this.error.set(res.error ?? 'Erreur lors du changement d’état de la rubrique.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.changement.d.etat.de.la.rub.3fdf4d:Erreur lors du changement d’état de la rubrique.`);
         }
       },
-      error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
+      error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-config.ts.erreur.reseau.0683007f:Erreur réseau`))
     });
   }
 
@@ -482,10 +479,10 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
       return;
     }
     this.confirmation.confirm({
-      header: 'Supprimer la rubrique',
-      message: `Supprimer définitivement « ${rubric.code} — ${rubric.label} » ? Les déclarations déjà déposées gardent leurs lignes ; les périodes suivantes ne la calculeront plus.`,
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      header: $localize`:@@accounting.monthly-declaration-config.ts.supprimer.la.rubrique.3c14cf90:Supprimer la rubrique`,
+      message: $localize`:@@accounting.monthly-declaration-config.ts.supprimer.definitivement.code.label.les.fadf16cc:Supprimer définitivement « ${rubric.code}:code: — ${rubric.label}:label: » ? Les déclarations déjà déposées gardent leurs lignes ; les périodes suivantes ne la calculeront plus.`,
+      acceptLabel: $localize`:@@monthly-declaration-config.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@monthly-declaration-config.component.rejectLabel.Annuler:Annuler`,
       size: 'md',
       accept: () => this.remove(rubric)
     });
@@ -497,17 +494,17 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
         if (res.success) {
           this.toast.add({
             severity: 'success',
-            summary: 'Rubrique supprimée',
+            summary: $localize`:@@monthly-declaration-config.component.summary.Rubrique sup:Rubrique supprimée`,
             detail: rubric.code,
             life: 4000
           });
           this.form.set(null);
           this.load();
         } else {
-          this.error.set(res.error ?? 'Erreur lors de la suppression de la rubrique.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.suppression.de.la.rubriq.389719:Erreur lors de la suppression de la rubrique.`);
         }
       },
-      error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
+      error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-config.ts.erreur.reseau.0683007f:Erreur réseau`))
     });
   }
 
@@ -525,18 +522,18 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
           this.duplicationResult.set(res.data);
           this.toast.add({
             severity: 'success',
-            summary: 'Configuration dupliquée',
-            detail: `${res.data.inserted} insérée(s), ${res.data.replaced} remplacée(s)`,
+            summary: $localize`:@@monthly-declaration-config.component.summary.Configuration_du:Configuration dupliquée`,
+            detail: $localize`:@@accounting.monthly-declaration-config.ts.inserted.inseree.s.replaced.remplacee.s.79085127:${res.data.inserted}:inserted: insérée(s), ${res.data.replaced}:replaced: remplacée(s)`,
             life: 5000
           });
           this.load();
         } else {
-          this.error.set(res.error ?? 'Erreur lors de la duplication de la configuration.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.duplication.de.la.config.837517:Erreur lors de la duplication de la configuration.`);
         }
       },
       error: err => {
         this.duplicating.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-config.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }

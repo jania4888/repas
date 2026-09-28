@@ -8,7 +8,7 @@ import {
   AccountingModuleDef,
   AccountingModuleLink
 } from '@core/config/accounting-modules.config';
-import { COMPANY_ACCOUNTING_ETATS_MODULE_TITLE } from '@core/config/company-accounting-nav.config';
+import { COMPANY_ACCOUNTING_ETATS_MODULE_ID } from '@core/config/company-accounting-nav.config';
 import { canSeeNavEntry } from '@core/utils/nav-visibility';
 import { AppModule } from '@core/models/app-module';
 
@@ -68,18 +68,18 @@ import { AppModule } from '@core/models/app-module';
     }
     .acc-link:hover { background: var(--color-background-subtle); color: var(--color-text-primary); }
     .acc-link > i:first-child { width: 1.1rem; text-align: center; color: var(--color-text-tertiary); }
-    .acc-link-arrow { margin-left: auto; font-size: 0.75rem; color: var(--color-text-tertiary); }
+    .acc-link-arrow { margin-inline-start: auto; font-size: 0.75rem; color: var(--color-text-tertiary); }
   `
 })
 export class AccountingFinancialStatementsComponent {
   private readonly auth = inject(AuthService);
 
   private readonly etatsModule = computed<AccountingModuleDef | undefined>(() =>
-    ACCOUNTING_MODULES.find(m => m.title === COMPANY_ACCOUNTING_ETATS_MODULE_TITLE)
+    ACCOUNTING_MODULES.find(m => m.id === COMPANY_ACCOUNTING_ETATS_MODULE_ID)
   );
 
-  readonly pageTitle = computed(() => 'États comptables');
-  readonly pageSubtitle = computed(() => this.etatsModule()?.description ?? 'Journal, grand livre, balance et bilans');
+  readonly pageTitle = computed(() => $localize`:@@accounting.accounting-financial-statements.ts.etats.comptables.00e46d74:États comptables`);
+  readonly pageSubtitle = computed(() => this.etatsModule()?.description ?? $localize`:@@ui.tern.journal.grand.livre.balance.et.bilans.94bb71:Journal, grand livre, balance et bilans`);
 
   readonly visibleLinks = computed<AccountingModuleLink[]>(() => {
     const mod = this.etatsModule();

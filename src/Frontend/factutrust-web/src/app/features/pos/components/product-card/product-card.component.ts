@@ -14,8 +14,8 @@ import { PosStateService } from '../../services/pos-state.service';
       <button
         class="product-card__favorite"
         (click)="toggleFavorite($event)"
-        [attr.aria-label]="isFavorite() ? 'Retirer des favoris' : 'Ajouter aux favoris'"
-        [title]="isFavorite() ? 'Retirer des favoris' : 'Ajouter aux favoris'"
+        [attr.aria-label]="isFavorite() ? loc_ui_tern_retirer_des_favoris_dcaac8 : loc_ui_tern_ajouter_aux_favoris_721554"
+        [title]="isFavorite() ? loc_ui_tern_retirer_des_favoris_dcaac8 : loc_ui_tern_ajouter_aux_favoris_721554"
         type="button">
         <i [class]="isFavorite() ? 'pi pi-star-fill' : 'pi pi-star'"></i>
       </button>
@@ -31,10 +31,10 @@ import { PosStateService } from '../../services/pos-state.service';
         type="button">
 
       @if (showRuptureStockBadge()) {
-        <span class="product-card__stock-badge product-card__stock-badge--insufficient">Rupture</span>
+        <span class="product-card__stock-badge product-card__stock-badge--insufficient" i18n="@@pos.components.rupture.fda77001">Rupture</span>
       }
       @if (showLowStockBadge()) {
-        <span class="product-card__stock-badge product-card__stock-badge--warning">Stock faible</span>
+        <span class="product-card__stock-badge product-card__stock-badge--warning" i18n="@@pos.components.stock.faible.051fbda0">Stock faible</span>
       }
 
       <div class="product-card__image">
@@ -59,9 +59,9 @@ import { PosStateService } from '../../services/pos-state.service';
         <span class="product-card__name" [title]="product.name">{{ product.name }}</span>
         <span class="product-card__code">{{ product.code }}</span>
         @if (product.isStockManaged && product.quantityAvailable != null) {
-          <span class="product-card__stock-line" aria-hidden="true">
+          <span class="product-card__stock-line" aria-hidden="true"><ng-container i18n="@@pos.components.dispo.47531188">
             Dispo : {{ formatQuantity(product.quantityAvailable) }}
-            @if (product.unit) {
+            </ng-container>@if (product.unit) {
               <span class="product-card__stock-unit">{{ product.unit }}</span>
             }
           </span>
@@ -91,7 +91,7 @@ import { PosStateService } from '../../services/pos-state.service';
       padding: var(--spacing-3);
       cursor: pointer;
       transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 300ms ease, border-color 300ms ease;
-      text-align: left;
+      text-align: start;
       position: relative;
       overflow: hidden;
       font-family: var(--font-family);
@@ -206,7 +206,7 @@ import { PosStateService } from '../../services/pos-state.service';
     .product-card__add-badge {
       position: absolute;
       top: 8px;
-      right: 8px;
+      inset-inline-end: 8px;
       width: 32px;
       height: 32px;
       border-radius: var(--radius-full);
@@ -269,7 +269,7 @@ import { PosStateService } from '../../services/pos-state.service';
     }
 
     .product-card__stock-unit {
-      margin-left: 0.25rem;
+      margin-inline-start: 0.25rem;
       color: var(--color-text-tertiary);
       font-weight: var(--font-weight-regular);
     }
@@ -313,7 +313,7 @@ import { PosStateService } from '../../services/pos-state.service';
     .product-card__favorite {
       position: absolute;
       top: 8px;
-      left: 8px;
+      inset-inline-start: 8px;
       width: 32px;
       height: 32px;
       border: none;
@@ -346,7 +346,7 @@ import { PosStateService } from '../../services/pos-state.service';
     .product-card__stock-badge {
       position: absolute;
       top: 8px;
-      right: 44px;
+      inset-inline-end: 44px;
       padding: 4px 8px;
       border-radius: var(--radius-full);
       font-size: 0.65rem;
@@ -366,6 +366,8 @@ import { PosStateService } from '../../services/pos-state.service';
   `]
 })
 export class ProductCardComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
+  readonly loc_ui_tern_retirer_des_favoris_dcaac8 = $localize`:@@ui.tern.retirer.des.favoris.dcaac8:Retirer des favoris`;
+  readonly loc_ui_tern_ajouter_aux_favoris_721554 = $localize`:@@ui.tern.ajouter.aux.favoris.721554:Ajouter aux favoris`;
   @Input({ required: true }) product!: ProductListItem;
   @Input() loadImageOnDemand = true;
   @Input() stockAlert: ProductStockAlert | null = null;
@@ -482,7 +484,7 @@ export class ProductCardComponent implements OnInit, OnChanges, OnDestroy, After
     return price.toLocaleString('fr-TN', {
       minimumFractionDigits: 3,
       maximumFractionDigits: 3
-    }) + ' TND';
+    }) + $localize`:@@ui.tern.tnd.9aaf5c: TND`;
   }
 
   formatQuantity(value: number): string {
@@ -493,19 +495,19 @@ export class ProductCardComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   cardAriaLabel(): string {
-    const base = 'Ajouter ' + this.product.name + ' au panier';
+    const base = $localize`:@@pos.product-card.ts.ajouter.name.au.panier.6b783056:Ajouter ${this.product.name}:name: au panier`;
     if (this.isAddDisabled()) {
-      return `${this.product.name} indisponible, rupture de stock`;
+      return $localize`:@@pos.product-card.ts.name.indisponible.rupture.de.stock.4c6fbcc6:${this.product.name}:name: indisponible, rupture de stock`;
     }
     if (this.product.isStockManaged && this.product.quantityAvailable != null) {
       const n = this.product.quantityAvailable;
       const unitPart = this.product.unit ? ` ${this.product.unit}` : '';
       if (n === 0) {
-        return `${base}, rupture de stock`;
+        return $localize`:@@pos.product-card.ts.base.rupture.de.stock.ef232cff:${base}:base:, rupture de stock`;
       }
-      let label = `${base}, stock disponible : ${this.formatQuantity(n)}${unitPart}`;
+      let label = $localize`:@@pos.product-card.ts.base.stock.disponible.formatquantity.uni.a2bed4d7:${base}:base:, stock disponible : ${this.formatQuantity(n)}:formatQuantity:${unitPart}:unitPart:`;
       if (this.showLowStockBadge()) {
-        label += ', stock faible';
+        label += $localize`:@@pos.product-card.ts.stock.faible.280678dd:, stock faible`;
       }
       return label;
     }

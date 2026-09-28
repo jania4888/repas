@@ -10,10 +10,10 @@ import {
 import { CompanySupportBadgeService } from '@core/services/company-support-badge.service';
 
 const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
-  Question: 'Question',
-  Proposal: 'Proposition',
-  Complaint: 'Réclamation',
-  Reply: 'Réponse'
+  Question: $localize`:@@assistance.assistance-page.ts.question.002ff598:Question`,
+  Proposal: $localize`:@@assistance.assistance-page.ts.proposition.3e2cf2d2:Proposition`,
+  Complaint: $localize`:@@assistance.assistance-page.ts.reclamation.33d37f8b:Réclamation`,
+  Reply: $localize`:@@assistance.assistance-page.ts.reponse.e777631b:Réponse`
 };
 
 @Component({
@@ -23,8 +23,8 @@ const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
   template: `
     <section class="assist">
       <header class="assist-head">
-        <h1>Assistance</h1>
-        <p>Posez une question, envoyez une proposition ou une réclamation à l'équipe InstaFact.</p>
+        <h1 i18n="@@assistance.assistance-page.assistance.be6b37ba">Assistance</h1>
+        <p i18n="@@assistance.assistance-page.posez.une.question.envoyez.une.proposition.ou.un.db9ac792">Posez une question, envoyez une proposition ou une réclamation à l'équipe InstaFact.</p>
       </header>
 
       @if (error()) {
@@ -33,12 +33,12 @@ const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
 
       <div class="assist-thread" role="log" aria-live="polite">
         @if (!loading() && messages().length === 0) {
-          <p class="assist-empty">Aucun message. Posez une question, envoyez une proposition ou une réclamation.</p>
+          <p class="assist-empty" i18n="@@assistance.assistance-page.aucun.message.posez.une.question.envoyez.une.pro.0dad613d">Aucun message. Posez une question, envoyez une proposition ou une réclamation.</p>
         }
         @for (message of messages(); track message.id) {
           <article class="bubble" [class.mine]="message.authorSide === 'Company'" [class.theirs]="message.authorSide === 'Platform'">
             <header>
-              <strong>{{ message.authorSide === 'Platform' ? 'Assistance' : message.authorDisplayName }}</strong>
+              <strong>{{ message.authorSide === 'Platform' ? loc_ui_tern_assistance_be6b37 : message.authorDisplayName }}</strong>
               <span class="chip">{{ label(message.category) }}</span>
               <time>{{ message.sentAt | date: 'dd/MM/yyyy HH:mm' }}</time>
             </header>
@@ -58,25 +58,25 @@ const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
 
       <form class="composer" (ngSubmit)="send()">
         <label>
-          Type
+          <ng-container i18n="@@assistance.assistance-page.type.3deb7456"> Type </ng-container>
           <select name="category" [(ngModel)]="category" required>
-            <option value="Question">Question</option>
-            <option value="Proposal">Proposition</option>
-            <option value="Complaint">Réclamation</option>
+            <option value="Question" i18n="@@assistance.assistance-page.question.002ff598">Question</option>
+            <option value="Proposal" i18n="@@assistance.assistance-page.proposition.3e2cf2d2">Proposition</option>
+            <option value="Complaint" i18n="@@assistance.assistance-page.reclamation.33d37f8b">Réclamation</option>
           </select>
         </label>
         <label class="grow">
-          Message
-          <textarea name="body" rows="3" maxlength="4000" [(ngModel)]="body" placeholder="Votre message"></textarea>
+          <ng-container i18n="@@assistance.assistance-page.message.68f4145f"> Message </ng-container>
+          <textarea name="body" rows="3" maxlength="4000" [(ngModel)]="body" placeholder="Votre message" i18n-placeholder="@@assistance.assistance-page.votre.message.65d92a68"></textarea>
         </label>
         <label>
-          Fichiers
+          <ng-container i18n="@@assistance.assistance-page.fichiers.23a9d9fc"> Fichiers </ng-container>
           <input type="file" multiple (change)="onFiles($event)" />
         </label>
         @if (files.length) {
-          <p class="files">{{ files.length }} fichier(s) sélectionné(s)</p>
+          <p class="files" i18n="@@assistance.assistance-page.fichier.s.selectionne.s.d143cce6">{{ files.length }} fichier(s) sélectionné(s)</p>
         }
-        <button type="submit" [disabled]="!canSend() || sending()">Envoyer</button>
+        <button type="submit" [disabled]="!canSend() || sending()" i18n="@@assistance.assistance-page.envoyer.e9ce243b">Envoyer</button>
       </form>
     </section>
   `,
@@ -87,8 +87,8 @@ const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
     .assist-error { color: #991b1b; }
     .assist-thread { display: flex; flex-direction: column; gap: 0.75rem; min-height: 16rem; }
     .bubble { border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 0.75rem 1rem; background: #fff; }
-    .bubble.mine { margin-left: 2rem; }
-    .bubble.theirs { margin-right: 2rem; background: #f8fafc; }
+    .bubble.mine { margin-inline-start: 2rem; }
+    .bubble.theirs { margin-inline-end: 2rem; background: #f8fafc; }
     .bubble header { display: flex; gap: 0.5rem; align-items: baseline; flex-wrap: wrap; font-size: 0.85rem; }
     .chip { background: #eef2ff; color: #3730a3; border-radius: 999px; padding: 0.1rem 0.5rem; }
     .body { white-space: pre-wrap; margin: 0.5rem 0 0; }
@@ -98,6 +98,7 @@ const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
   `]
 })
 export class AssistancePageComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_assistance_be6b37 = $localize`:@@ui.tern.assistance.be6b37:Assistance`;
   private readonly support = inject(CompanySupportService);
   private readonly badge = inject(CompanySupportBadgeService);
 
@@ -118,7 +119,7 @@ export class AssistancePageComponent implements OnInit, OnDestroy {
       next: r => {
         this.loading.set(false);
         if (!r.success || !r.data) {
-          this.error.set('Impossible de charger la conversation.');
+          this.error.set($localize`:@@assistance.assistance-page.ts.impossible.de.charger.la.conversation.46fe4578:Impossible de charger la conversation.`);
           return;
         }
         this.messages.set(r.data.messages ?? []);
@@ -127,7 +128,7 @@ export class AssistancePageComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.loading.set(false);
-        this.error.set('Impossible de charger la conversation.');
+        this.error.set($localize`:@@assistance.assistance-page.ts.impossible.de.charger.la.conversation.46fe4578:Impossible de charger la conversation.`);
       }
     });
 
@@ -175,7 +176,7 @@ export class AssistancePageComponent implements OnInit, OnDestroy {
         link.click();
         URL.revokeObjectURL(url);
       },
-      error: () => this.error.set('Téléchargement impossible.')
+      error: () => this.error.set($localize`:@@assistance.assistance-page.ts.telechargement.impossible.49e7d29d:Téléchargement impossible.`)
     });
   }
 
@@ -188,7 +189,7 @@ export class AssistancePageComponent implements OnInit, OnDestroy {
       next: r => {
         this.sending.set(false);
         if (!r.success || !r.data) {
-          this.error.set(r.message || 'Envoi impossible.');
+          this.error.set(r.message || $localize`:@@assistance.assistance-page.ts.envoi.impossible.87446704:Envoi impossible.`);
           return;
         }
         this.messages.update(list => list.some(m => m.id === r.data.id) ? list : [...list, r.data]);
@@ -199,7 +200,7 @@ export class AssistancePageComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.sending.set(false);
-        this.error.set('Envoi impossible.');
+        this.error.set($localize`:@@assistance.assistance-page.ts.envoi.impossible.87446704:Envoi impossible.`);
       }
     });
   }

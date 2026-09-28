@@ -64,7 +64,7 @@ import { ApprovalDueState, ApprovalRow, approvalKpis, dueLabel, dueState, toAppr
       </div>
       <p-toast styleClass="studio-theme" />
 
-      <section class="sap-kpis" aria-label="Indicateurs">
+      <section class="sap-kpis" aria-label="Indicateurs" i18n-aria-label="@@studio.approvals.indicateurs.bc7196d0">
         <article class="sap-kpi" data-testid="sap-kpi-pending">
           <span class="sap-kpi__value">{{ kpis().pending }}</span>
           <span class="sap-kpi__label">{{ labels.kpiPending }}</span>
@@ -269,13 +269,13 @@ import { ApprovalDueState, ApprovalRow, approvalKpis, dueLabel, dueState, toAppr
     .sap-kpi--late .sap-kpi__value { color: var(--p-red-600, #dc2626); }
     .sap-kpi--soon .sap-kpi__value { color: var(--p-amber-600, #d97706); }
     .sap-actions-col { white-space: nowrap; width: 1%; }
-    .sap-actions-col p-button + p-button { margin-left: .5rem; }
+    .sap-actions-col p-button + p-button { margin-inline-start: .5rem; }
     .sap-readonly { color: var(--studio-muted, var(--color-neutral-500)); }
     .sai-banner { display: flex; align-items: center; gap: .75rem; padding: .75rem 1rem; border-radius: .5rem; margin-bottom: 1rem; }
     .sai-banner--error { background: #fef2f2; color: #991b1b; }
     .ft-empty { text-align: center; color: var(--text-color-secondary); padding: 2rem; }
     .sap-dialog__context { margin-top: 0; font-weight: 600; }
-    .sap-dialog__message { border-left: 3px solid var(--studio-border, var(--color-border-subtle, #e2e8f0)); margin: .5rem 0; padding: .25rem .75rem; color: var(--studio-muted, var(--color-neutral-500)); }
+    .sap-dialog__message { border-inline-start: 3px solid var(--studio-border, var(--color-border-subtle, #e2e8f0)); margin: .5rem 0; padding: .25rem .75rem; color: var(--studio-muted, var(--color-neutral-500)); }
     .sap-dialog__label { display: block; font-weight: 600; font-size: var(--font-size-sm); margin: .75rem 0 .375rem; }
     .sap-dialog__error { display: block; color: var(--p-red-600, #dc2626); margin-top: .375rem; }
     .sap-dialog__actions { display: flex; justify-content: flex-end; gap: .5rem; margin-top: 1rem; }

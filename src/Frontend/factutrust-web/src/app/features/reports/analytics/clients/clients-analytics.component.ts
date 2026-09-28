@@ -26,15 +26,13 @@ import {
     ],
     template: `
     <app-page-header
-      title="Analyse clients"
-      subtitle="Identifiez vos meilleurs clients et ceux qui nécessitent votre attention">
+      title="Analyse clients" i18n-title="@@reports.analytics.analyse.clients.f6f71bbe"
+      subtitle="Identifiez vos meilleurs clients et ceux qui nécessitent votre attention" i18n-subtitle="@@reports.analytics.identifiez.vos.meilleurs.clients.et.ceux.3f3be040">
       <app-button
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()">
-        Imprimer
-      </app-button>
+        (click)="onPrint()" i18n="@@reports.analytics.imprimer.5382c09d"> Imprimer </app-button>
     </app-page-header>
 
     <!-- Alerts -->
@@ -62,19 +60,19 @@ import {
     } @else if (data()) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Clients total"
+          label="Clients total" i18n-label="@@reports.analytics.clients.total.7c655b08"
           [value]="data()!.totalClients"
           icon="pi-users"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Clients actifs"
+          label="Clients actifs" i18n-label="@@reports.analytics.clients.actifs.c6ec334f"
           [value]="data()!.activeCount"
           icon="pi-check-circle"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Clients inactifs"
+          label="Clients inactifs" i18n-label="@@reports.analytics.clients.inactifs.995a475e"
           [value]="data()!.inactiveCount"
           icon="pi-user-minus"
           [variant]="data()!.inactiveCount > data()!.activeCount ? 'error' : 'warning'">
@@ -84,8 +82,8 @@ import {
       <!-- Active/Inactive visual bar -->
       <div class="section activity-section">
         <div class="section-header">
-          <h2 class="section-title">Répartition actifs / inactifs</h2>
-          <span class="section-hint">
+          <h2 class="section-title" i18n="@@reports.analytics.repartition.actifs.inactifs.8882d0b8">Répartition actifs / inactifs</h2>
+          <span class="section-hint" i18n="@@reports.analytics.un.client.actif.est.un.client.qui.est.ma.1c3a352e">
             <i class="pi pi-info-circle"></i>
             Un client actif est un client qui est marqué comme actif dans votre base
           </span>
@@ -93,16 +91,16 @@ import {
         <div class="activity-bar-bg">
           <div class="activity-bar-active" [style.width.%]="data()!.activePercent">
             @if (data()!.activePercent > 15) {
-              <span class="activity-label">{{ data()!.activeCount }} actifs</span>
+              <span class="activity-label" i18n="@@reports.analytics.actifs.990ea293">{{ data()!.activeCount }} actifs</span>
             }
           </div>
           <div class="activity-bar-inactive" [style.width.%]="100 - data()!.activePercent">
             @if ((100 - data()!.activePercent) > 15) {
-              <span class="activity-label">{{ data()!.inactiveCount }} inactifs</span>
+              <span class="activity-label" i18n="@@reports.analytics.inactifs.e1cd6d2b">{{ data()!.inactiveCount }} inactifs</span>
             }
           </div>
         </div>
-        <div class="activity-legend">
+        <div class="activity-legend" i18n="@@reports.analytics.actifs.inactifs.86cbc346">
           <span class="legend-item"><span class="legend-dot active"></span> Actifs ({{ data()!.activePercent | number:'1.0-0' }} %)</span>
           <span class="legend-item"><span class="legend-dot inactive"></span> Inactifs ({{ 100 - data()!.activePercent | number:'1.0-0' }} %)</span>
         </div>
@@ -117,22 +115,16 @@ import {
           <input
             type="text"
             class="search-input"
-            placeholder="Rechercher un client..."
+            placeholder="Rechercher un client..." i18n-placeholder="@@reports.analytics.rechercher.un.client.37880794"
             [(ngModel)]="searchQuery"
             (ngModelChange)="onSearch()"
-            aria-label="Rechercher un client">
+            aria-label="Rechercher un client" i18n-aria-label="@@reports.analytics.rechercher.un.client.723cebe6">
         </div>
         <div class="filter-tabs">
-          <button class="filter-tab" [class.active]="filter === 'all'" (click)="onFilter('all')">
-            Tous
-          </button>
-          <button class="filter-tab" [class.active]="filter === 'active'" (click)="onFilter('active')">
-            Actifs
-          </button>
-          <button class="filter-tab" [class.active]="filter === 'inactive'" (click)="onFilter('inactive')">
-            Inactifs
-          </button>
-          <button class="filter-tab" [class.active]="filter === 'unpaid'" (click)="onFilter('unpaid')">
+          <button class="filter-tab" [class.active]="filter === 'all'" (click)="onFilter('all')" i18n="@@reports.analytics.tous.b97ae3b4"> Tous </button>
+          <button class="filter-tab" [class.active]="filter === 'active'" (click)="onFilter('active')" i18n="@@reports.analytics.actifs.4fc3a980"> Actifs </button>
+          <button class="filter-tab" [class.active]="filter === 'inactive'" (click)="onFilter('inactive')" i18n="@@reports.analytics.inactifs.41c2d03e"> Inactifs </button>
+          <button class="filter-tab" [class.active]="filter === 'unpaid'" (click)="onFilter('unpaid')" i18n="@@reports.analytics.impayes.7aa7551c">
             <i class="pi pi-exclamation-circle" style="font-size: 0.7rem;"></i>
             Impayés
           </button>
@@ -153,27 +145,27 @@ import {
       </div>
 
       @if (loading()) {
-        <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+        <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.analytics.chargement.a209b664">Chargement...</span></div>
       } @else if (!filteredClients().length) {
         <div class="empty-state-sm">
           <i class="pi pi-users"></i>
-          <p>Aucun client trouvé</p>
-          <p class="empty-hint">{{ searchQuery ? 'Aucun résultat pour votre recherche.' : 'Aucune donnée disponible.' }}</p>
+          <p i18n="@@reports.analytics.aucun.client.trouve.ef55e6be">Aucun client trouvé</p>
+          <p class="empty-hint">{{ searchQuery ? loc_ui_tern_aucun_resultat_pour_votre_recherche_2cb219 : loc_ui_tern_aucune_donnee_disponible_279625 }}</p>
         </div>
       } @else {
         <div class="clients-table-wrapper">
-          <table class="clients-table" aria-label="Tableau de classement des clients">
+          <table class="clients-table" aria-label="Tableau de classement des clients" i18n-aria-label="@@reports.analytics.tableau.de.classement.des.clients.85685e36">
             <thead>
               <tr>
-                <th class="col-rank">#</th>
-                <th>Client</th>
-                <th class="text-center">Statut</th>
-                <th class="text-right" title="Nombre de factures">Nb factures</th>
-                <th class="text-right">Chiffre d'affaires</th>
+                <th class="col-rank" i18n="@@reports.analytics.text.d08f88df">#</th>
+                <th i18n="@@reports.analytics.client.1bdd79b1">Client</th>
+                <th class="text-center" i18n="@@reports.analytics.statut.659499f3">Statut</th>
+                <th class="text-right" title="Nombre de factures" i18n-title="@@reports.analytics.nombre.de.factures.53d3152f" i18n="@@reports.analytics.nb.factures.973edc99">Nb factures</th>
+                <th class="text-right" i18n="@@reports.analytics.chiffre.d.affaires.0a341b9f">Chiffre d'affaires</th>
                 @if (filter === 'unpaid' || filter === 'all') {
-                  <th class="text-right">Impayés</th>
+                  <th class="text-right" i18n="@@reports.analytics.impayes.1545a134">Impayés</th>
                 }
-                <th class="col-actions">Actions</th>
+                <th class="col-actions" i18n="@@reports.analytics.actions.c3cd636a">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -192,7 +184,7 @@ import {
                   </td>
                   <td class="text-center">
                     <span class="status-badge" [class.active]="client.isActive" [class.inactive]="!client.isActive">
-                      {{ client.isActive ? 'Actif' : 'Inactif' }}
+                      {{ client.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033 }}
                     </span>
                   </td>
                   <td class="text-right">
@@ -209,7 +201,7 @@ import {
                           <span class="unpaid-amount">{{ formatAmount(client.unpaidAmount) }}</span>
                         </div>
                       } @else {
-                        <span class="no-unpaid">Aucun impayé</span>
+                        <span class="no-unpaid" i18n="@@reports.analytics.aucun.impaye.137feeeb">Aucun impayé</span>
                       }
                     </td>
                   }
@@ -220,9 +212,7 @@ import {
                       icon="pi-eye"
                       [routerLink]="['/invoices']"
                       [queryParams]="{ search: client.name }"
-                      ariaLabel="Voir les factures de ce client">
-                      Factures
-                    </app-button>
+                      ariaLabel="Voir les factures de ce client" i18n-ariaLabel="@@reports.analytics.voir.les.factures.de.ce.client.558dcfb3" i18n="@@reports.analytics.factures.da35e4f2"> Factures </app-button>
                   </td>
                 </tr>
               }
@@ -231,8 +221,8 @@ import {
         </div>
 
         <!-- Results count -->
-        <div class="results-count">
-          {{ filteredClients().length }} client{{ filteredClients().length > 1 ? 's' : '' }} affiché{{ filteredClients().length > 1 ? 's' : '' }}
+        <div class="results-count" i18n="@@reports.analytics.client.affiche.169b2144.pl">
+          {{ filteredClients().length }} {filteredClients().length, plural, =0 {client affiché} =1 {client affiché} other {clients affichés}}
         </div>
       }
     </div>
@@ -240,26 +230,26 @@ import {
     <!-- Print-only section -->
     <div class="print-only print-report">
       <div class="print-header">
-        <h1 class="print-title">Analyse Clients</h1>
-        <div class="print-logo">Logo</div>
+        <h1 class="print-title" i18n="@@reports.analytics.analyse.clients.8c024114">Analyse Clients</h1>
+        <div class="print-logo" i18n="@@reports.analytics.logo.83fce832">Logo</div>
       </div>
       <div class="print-separator"></div>
       @if (data()) {
         <div class="print-kpis">
-          <div class="print-kpi"><strong>Total clients</strong><span>{{ data()!.totalClients }}</span></div>
-          <div class="print-kpi"><strong>Actifs</strong><span>{{ data()!.activeCount }}</span></div>
-          <div class="print-kpi"><strong>Inactifs</strong><span>{{ data()!.inactiveCount }}</span></div>
+          <div class="print-kpi"><strong i18n="@@reports.analytics.total.clients.9c969efc">Total clients</strong><span>{{ data()!.totalClients }}</span></div>
+          <div class="print-kpi"><strong i18n="@@reports.analytics.actifs.4fc3a980">Actifs</strong><span>{{ data()!.activeCount }}</span></div>
+          <div class="print-kpi"><strong i18n="@@reports.analytics.inactifs.41c2d03e">Inactifs</strong><span>{{ data()!.inactiveCount }}</span></div>
         </div>
-        <h3 class="print-subtitle">Classement par chiffre d'affaires</h3>
+        <h3 class="print-subtitle" i18n="@@reports.analytics.classement.par.chiffre.d.affaires.a7553a74">Classement par chiffre d'affaires</h3>
         <table class="print-table">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Client</th>
-              <th>Statut</th>
-              <th>Nb factures</th>
-              <th>Chiffre d'affaires</th>
-              <th>Impayés</th>
+              <th i18n="@@reports.analytics.text.d08f88df">#</th>
+              <th i18n="@@reports.analytics.client.1bdd79b1">Client</th>
+              <th i18n="@@reports.analytics.statut.659499f3">Statut</th>
+              <th i18n="@@reports.analytics.nb.factures.973edc99">Nb factures</th>
+              <th i18n="@@reports.analytics.chiffre.d.affaires.0a341b9f">Chiffre d'affaires</th>
+              <th i18n="@@reports.analytics.impayes.1545a134">Impayés</th>
             </tr>
           </thead>
           <tbody>
@@ -267,10 +257,10 @@ import {
               <tr>
                 <td>{{ i + 1 }}</td>
                 <td>{{ client.name }}</td>
-                <td>{{ client.isActive ? 'Actif' : 'Inactif' }}</td>
+                <td>{{ client.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033 }}</td>
                 <td>{{ client.totalInvoices }}</td>
                 <td>{{ formatAmount(client.totalRevenue) }}</td>
-                <td>{{ client.unpaidCount > 0 ? client.unpaidCount + ' (' + formatAmount(client.unpaidAmount) + ')' : 'Aucun impayé' }}</td>
+                <td>{{ client.unpaidCount > 0 ? client.unpaidCount + ' (' + formatAmount(client.unpaidAmount) + ')' : loc_ui_tern_aucun_impaye_137fee }}</td>
               </tr>
             }
           </tbody>
@@ -473,7 +463,7 @@ import {
 
     .search-icon {
       position: absolute;
-      left: 12px;
+      inset-inline-start: 12px;
       top: 50%;
       transform: translateY(-50%);
       color: var(--color-text-secondary);
@@ -482,7 +472,7 @@ import {
 
     .search-input {
       width: 100%;
-      padding: var(--spacing-2) var(--spacing-3) var(--spacing-2) 36px;
+      padding-block: var(--spacing-2); padding-inline: 36px var(--spacing-3);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-lg);
       background: var(--color-background);
@@ -569,13 +559,13 @@ import {
     }
 
     .row-unpaid {
-      border-left: 3px solid var(--color-error-400);
+      border-inline-start: 3px solid var(--color-error-400);
     }
 
     .col-rank { width: 48px; text-align: center; }
     .col-actions { width: 120px; }
     .text-center { text-align: center; }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
 
     .rank-num {
       display: inline-flex;
@@ -656,7 +646,7 @@ import {
       margin-top: var(--spacing-4);
       font-size: var(--font-size-sm);
       color: var(--color-text-secondary);
-      text-align: right;
+      text-align: end;
     }
 
     /* ── Empty & Loading ────────────────────────────────────── */
@@ -700,10 +690,10 @@ import {
       .print-kpi span { font-size: 14pt; font-weight: bold; color: #333; }
       .print-subtitle { font-size: 14pt; margin: 16px 0 8px; color: #2bbcb3; }
       .print-table { width: 100%; border-collapse: collapse; font-size: 11pt; }
-      .print-table thead th { text-align: left; padding: 12px 16px; font-weight: 600; color: #333; border-bottom: 2px solid #2bbcb3; font-size: 10pt; }
+      .print-table thead th { text-align: start; padding: 12px 16px; font-weight: 600; color: #333; border-bottom: 2px solid #2bbcb3; font-size: 10pt; }
       .print-table tbody td { padding: 14px 16px; border-bottom: 1px solid #eee; color: #555; }
       .print-table tbody tr:nth-child(even) { background: #fafafa; }
-      .print-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 12px; background: #2bbcb3; }
+      .print-footer { position: fixed; bottom: 0; inset-inline-start: 0; inset-inline-end: 0; height: 12px; background: #2bbcb3; }
     }
 
     /* ── Responsive ─────────────────────────────────────────── */
@@ -716,6 +706,11 @@ import {
   `]
 })
 export class ClientsAnalyticsComponent implements OnInit {
+  readonly loc_ui_tern_aucun_resultat_pour_votre_recherche_2cb219 = $localize`:@@ui.tern.aucun.resultat.pour.votre.recherche.2cb219:Aucun résultat pour votre recherche.`;
+  readonly loc_ui_tern_aucune_donnee_disponible_279625 = $localize`:@@ui.tern.aucune.donnee.disponible.279625:Aucune donnée disponible.`;
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
+  readonly loc_ui_tern_aucun_impaye_137fee = $localize`:@@ui.tern.aucun.impaye.137fee:Aucun impayé`;
     private readonly analyticsService = inject(AnalyticsService);
 
     loading = signal(true);
@@ -755,14 +750,14 @@ export class ClientsAnalyticsComponent implements OnInit {
 
     get sectionTitle(): string {
         return this.filter === 'unpaid'
-            ? 'Clients avec impayés'
-            : 'Classement clients par chiffre d\'affaires';
+            ? $localize`:@@ui.tern.clients.avec.impayes.ef5206:Clients avec impayés`
+            : $localize`:@@ui.tern.classement.clients.par.chiffre.d.affaires.75f08d:Classement clients par chiffre d'affaires`;
     }
 
     get sectionSubtitle(): string {
         return this.filter === 'unpaid'
-            ? 'Clients ayant des factures en attente ou en retard de paiement'
-            : 'Vos clients triés par le montant total des factures payées';
+            ? $localize`:@@ui.tern.clients.ayant.des.factures.en.attente.ou.e.bc094a:Clients ayant des factures en attente ou en retard de paiement`
+            : $localize`:@@ui.tern.vos.clients.tries.par.le.montant.total.des.f76795:Vos clients triés par le montant total des factures payées`;
     }
 
     private applyFilters(): void {

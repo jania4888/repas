@@ -87,12 +87,31 @@ jobs:
         working-directory: src/Frontend/factutrust-web
     steps:
       - uses: actions/checkout@v7
+        with:
+          # Historique complet : la parité du français se mesure au point de divergence avec main.
+          fetch-depth: 0
       - uses: actions/setup-node@v7
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: src/Frontend/factutrust-web/package-lock.json
       - run: npm ci --legacy-peer-deps
+      - name: i18n — ID uniques, catalogue arabe validé (placeholders, taille), traductions
+        run: npm run i18n:ids && node scripts/i18n/build-runtime-translations.mjs --strict && npm run i18n:check
+      - name: i18n — règles, codemods, phrases découpées, payloads IA, valeurs, CSS RTL, attributs de templates
+        run: |
+          node --test scripts/i18n/translation-rules.test.mjs scripts/i18n/review-csv.test.mjs
+          npm run i18n:codemod:test
+          node scripts/i18n/gate/check-concat-messages.mjs
+          node scripts/i18n/gate/check-ai-payload-messages.mjs
+          npm run i18n:values
+          npm run i18n:rtl:check
+          node scripts/i18n/codemod/localize-bound-literals.mjs --check
+      - name: i18n — parité du français (branches i18n/*)
+        if: startsWith(github.head_ref || github.ref_name, 'i18n/')
+        run: |
+          export I18N_FR_REFERENCE="$(git merge-base HEAD origin/main)"
+          npm run i18n:parity:template && npm run i18n:parity:ts
       - name: Audit npm (critical)
         run: npm audit --audit-level=critical
       # Ferme la 2e moitié du contrat de parité : sector-catalog-parity.spec.ts épingle le

@@ -36,7 +36,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
         <button
           type="button"
           class="payment-actions__split-toggle"
-          (click)="posState.enableSplitPayment()">
+          (click)="posState.enableSplitPayment()" i18n="@@pos.components.paiement.fractionne.10e17a92">
           <i class="pi pi-wallet"></i> Paiement fractionné
         </button>
         }
@@ -46,8 +46,8 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             class="payment-actions__print-btn"
             [class.payment-actions__print-btn--active]="posState.printMode() === 'pdf'"
             (click)="posState.setPrintMode('pdf')"
-            title="PDF"
-            aria-label="Mode PDF">
+            title="PDF" i18n-title="@@pos.components.pdf.d613d88c"
+            aria-label="Mode PDF" i18n-aria-label="@@pos.components.mode.pdf.71aedaf4">
             <i class="pi pi-file-pdf"></i>
           </button>
           <button
@@ -55,8 +55,8 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             class="payment-actions__print-btn"
             [class.payment-actions__print-btn--active]="posState.printMode() === 'receipt'"
             (click)="posState.setPrintMode('receipt')"
-            title="Ticket thermique"
-            aria-label="Ticket thermique">
+            title="Ticket thermique" i18n-title="@@pos.components.ticket.thermique.9012a27b"
+            aria-label="Ticket thermique" i18n-aria-label="@@pos.components.ticket.thermique.9012a27b">
             <i class="pi pi-list"></i>
           </button>
           <button
@@ -64,8 +64,8 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             class="payment-actions__print-btn"
             [class.payment-actions__print-btn--active]="posState.printMode() === 'both'"
             (click)="posState.setPrintMode('both')"
-            title="PDF + Ticket"
-            aria-label="PDF et ticket">
+            title="PDF + Ticket" i18n-title="@@pos.components.pdf.ticket.be8c87a4"
+            aria-label="PDF et ticket" i18n-aria-label="@@pos.components.pdf.et.ticket.a3f9d079">
             <i class="pi pi-print"></i>
           </button>
         </div>
@@ -85,13 +85,13 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
         type="button">
         @if (posState.isProcessing()) {
           <i class="pi pi-spin pi-spinner"></i>
-          <span>Traitement en cours...</span>
+          <span i18n="@@pos.components.traitement.en.cours.7acd4176">Traitement en cours...</span>
         } @else if (posState.isCreditNote()) {
           <i class="pi pi-file-edit payment-actions__primary-icon"></i>
-          <span class="payment-actions__primary-text">Creer Avoir (F5)</span>
+          <span class="payment-actions__primary-text" i18n="@@pos.components.creer.avoir.f5.46aefca5">Creer Avoir (F5)</span>
         } @else {
           <i class="pi pi-print payment-actions__primary-icon"></i>
-          <span class="payment-actions__primary-text">Valider & Imprimer (F5)</span>
+          <span class="payment-actions__primary-text" i18n="@@pos.components.valider.imprimer.f5.a59cb971">Valider & Imprimer (F5)</span>
           <span class="payment-actions__primary-check">
             <i class="pi pi-check"></i>
           </span>
@@ -107,7 +107,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
           (click)="onSaveDraft.emit()"
           type="button">
           <i class="pi pi-save"></i>
-          <span>Brouillon</span>
+          <span i18n="@@pos.components.brouillon.57d2d7a7">Brouillon</span>
         </button>
         <button
           class="payment-actions__btn-secondary"
@@ -115,7 +115,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
           (click)="onSendEmail.emit()"
           type="button">
           <i class="pi pi-envelope"></i>
-          <span>Email</span>
+          <span i18n="@@pos.components.email.84add5b2">Email</span>
         </button>
         }
         <button
@@ -124,7 +124,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
           (click)="onHold.emit()"
           type="button">
           <i class="pi pi-pause"></i>
-          <span>Mettre en attente</span>
+          <span i18n="@@pos.components.mettre.en.attente.3adee259">Mettre en attente</span>
         </button>
         <button
           class="payment-actions__btn-danger"
@@ -132,7 +132,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
           (click)="onCancel.emit()"
           type="button">
           <i class="pi pi-trash"></i>
-          <span>Vider</span>
+          <span i18n="@@pos.components.vider.13901111">Vider</span>
         </button>
         @if (posState.isCreditNote()) {
           <button
@@ -140,7 +140,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             type="button"
             (click)="posState.disableCreditNoteMode()">
             <i class="pi pi-times"></i>
-            <span>Annuler avoir</span>
+            <span i18n="@@pos.components.annuler.avoir.0c4de98d">Annuler avoir</span>
           </button>
         } @else {
           <button
@@ -148,7 +148,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             type="button"
             (click)="openRefundInvoiceIdDialog()">
             <i class="pi pi-file-edit"></i>
-            <span>Avoir</span>
+            <span i18n="@@pos.components.avoir.8ee24717">Avoir</span>
           </button>
         }
       </div>
@@ -394,7 +394,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
       content: '';
       position: absolute;
       bottom: 0;
-      left: 0;
+      inset-inline-start: 0;
       height: 3px;
       background: rgba(255, 255, 255, 0.6);
       animation: paymentPrimaryProgress 3s linear infinite;
@@ -583,7 +583,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
       padding: var(--spacing-3) var(--spacing-4);
       background: var(--color-error-100);
       border: 1px solid var(--color-error-200);
-      border-left: 3px solid var(--color-error-500);
+      border-inline-start: 3px solid var(--color-error-500);
       border-radius: var(--radius-xl);
       animation: paymentErrorShake 400ms ease-out forwards;
     }
@@ -674,11 +674,11 @@ export class PaymentActionsComponent {
   private readonly ngbModal = inject(NgbModal);
 
   readonly paymentMethods = [
-    { value: PaymentMethod.Cash, label: 'Espèces', shortLabel: 'Espèces', icon: 'pi pi-money-bill' },
-    { value: PaymentMethod.Card, label: 'Carte bancaire', shortLabel: 'Carte', icon: 'pi pi-credit-card' },
-    { value: PaymentMethod.BankTransfer, label: 'Virement', shortLabel: 'Virement', icon: 'pi pi-building' },
-    { value: PaymentMethod.Check, label: 'Chèque', shortLabel: 'Chèque', icon: 'pi pi-file' },
-    { value: PaymentMethod.Effect, label: 'Effet', shortLabel: 'Effet', icon: 'pi pi-book' }
+    { value: PaymentMethod.Cash, label: $localize`:@@pos.payment-actions.ts.especes.b7679d62:Espèces`, shortLabel: $localize`:@@pos.payment-actions.ts.especes.b7679d62:Espèces`, icon: 'pi pi-money-bill' },
+    { value: PaymentMethod.Card, label: $localize`:@@pos.payment-actions.ts.carte.bancaire.9e3d9bfa:Carte bancaire`, shortLabel: $localize`:@@pos.payment-actions.ts.carte.8bb68357:Carte`, icon: 'pi pi-credit-card' },
+    { value: PaymentMethod.BankTransfer, label: $localize`:@@pos.payment-actions.ts.virement.afbaf950:Virement`, shortLabel: $localize`:@@pos.payment-actions.ts.virement.afbaf950:Virement`, icon: 'pi pi-building' },
+    { value: PaymentMethod.Check, label: $localize`:@@pos.payment-actions.ts.cheque.8bbb89a9:Chèque`, shortLabel: $localize`:@@pos.payment-actions.ts.cheque.8bbb89a9:Chèque`, icon: 'pi pi-file' },
+    { value: PaymentMethod.Effect, label: $localize`:@@pos.payment-actions.ts.effet.3b25c07d:Effet`, shortLabel: $localize`:@@pos.payment-actions.ts.effet.3b25c07d:Effet`, icon: 'pi pi-book' }
   ];
 
   openRefundInvoiceIdDialog(): void {

@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
@@ -17,39 +18,39 @@ import {
 @Component({
   selector: 'app-project-detail-hero',
   standalone: true,
-  imports: [CommonModule, StatusBadgeComponent, ButtonComponent, DocumentActionsMenuComponent],
+  imports: [BackendLabelPipe, CommonModule, StatusBadgeComponent, ButtonComponent, DocumentActionsMenuComponent],
   template: `
     @if (project) {
       <header class="proj-detail-hero">
         <div class="proj-detail-hero__main">
           <div class="proj-detail-hero__title-row">
             <h1 class="proj-detail-hero__title">{{ project.name }}</h1>
-            <app-status-badge [status]="statusBadge(project.status)" [label]="project.statusDisplay" />
+            <app-status-badge [status]="statusBadge(project.status)" [label]="project.statusDisplay | backendLabel" />
           </div>
           <p class="proj-detail-hero__meta">
             <span><i class="pi pi-building"></i> {{ project.clientName }}</span>
-            <span class="proj-detail-hero__dot">·</span>
-            <span>{{ project.kindDisplay }}</span>
+            <span class="proj-detail-hero__dot" i18n="@@projects.components.text.1fdf0d90">·</span>
+            <span>{{ project.kindDisplay | backendLabel }}</span>
             @if (showSiteChip && project.siteAddress) {
-              <span class="proj-detail-hero__dot">·</span>
+              <span class="proj-detail-hero__dot" i18n="@@projects.components.text.1fdf0d90">·</span>
               <span><i class="pi pi-map-marker"></i> {{ project.siteAddress }}</span>
             }
           </p>
         </div>
         <div class="proj-detail-hero__actions">
           @if (canUpdate && canActivate(project.status)) {
-            <app-button variant="secondary" icon="pi-play" (click)="activate.emit()">Activer</app-button>
+            <app-button variant="secondary" icon="pi-play" (click)="activate.emit()" i18n="@@projects.components.activer.b96fa78d">Activer</app-button>
           }
           @if (canUpdate && canHold(project.status)) {
-            <app-button variant="secondary" icon="pi-pause" (click)="hold.emit()">Mettre en pause</app-button>
+            <app-button variant="secondary" icon="pi-pause" (click)="hold.emit()" i18n="@@projects.components.mettre.en.pause.4515da4b">Mettre en pause</app-button>
           }
           @if (canUpdate && canComplete(project.status)) {
-            <app-button variant="secondary" icon="pi-check" (click)="complete.emit()">Clôturer</app-button>
+            <app-button variant="secondary" icon="pi-check" (click)="complete.emit()" i18n="@@projects.components.cloturer.e9f075c1">Clôturer</app-button>
           }
           @if (canUpdate && canEditProject(project.status)) {
-            <app-button variant="primary" icon="pi-pencil" (click)="edit.emit()">Modifier le projet</app-button>
+            <app-button variant="primary" icon="pi-pencil" (click)="edit.emit()" i18n="@@projects.components.modifier.le.projet.64e99f20">Modifier le projet</app-button>
           }
-          <app-document-actions-menu [items]="menuItems" label="" ariaLabel="Actions du projet" />
+          <app-document-actions-menu [items]="menuItems" label="" ariaLabel="Actions du projet" i18n-ariaLabel="@@projects.components.actions.du.projet.dfe2e4d4" />
         </div>
       </header>
     }
@@ -80,20 +81,20 @@ export class ProjectDetailHeroComponent {
     const p = this.project;
     const items: MenuItem[] = [
       {
-        label: this.favorite ? 'Retirer des favoris' : 'Ajouter aux favoris',
+        label: this.favorite ? $localize`:@@ui.tern.retirer.des.favoris.dcaac8:Retirer des favoris` : $localize`:@@ui.tern.ajouter.aux.favoris.721554:Ajouter aux favoris`,
         icon: this.favorite ? 'pi pi-star-fill' : 'pi pi-star',
         command: () => this.toggleFavorite.emit()
       },
       { separator: true },
       {
-        label: 'Retour à la liste',
+        label: $localize`:@@projects.project-detail-hero.ts.retour.a.la.liste.7753f531:Retour à la liste`,
         icon: 'pi pi-arrow-left',
         command: () => this.goList.emit()
       }
     ];
     if (this.canUpdate && p && canCancel(p.status)) {
       items.unshift({
-        label: 'Annuler le projet',
+        label: $localize`:@@projects.project-detail-hero.ts.annuler.le.projet.492bf989:Annuler le projet`,
         icon: 'pi pi-times-circle',
         command: () => this.cancel.emit()
       });

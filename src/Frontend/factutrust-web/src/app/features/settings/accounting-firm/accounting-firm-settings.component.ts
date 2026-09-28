@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -42,8 +43,8 @@ const NOTES_MAX = 1000;
   ],
   template: `
     <app-page-header
-      title="Cabinet comptable"
-      subtitle="Confiez la gestion comptable de votre société à un cabinet partenaire">
+      title="Cabinet comptable" i18n-title="@@settings.accounting-firm.cabinet.comptable.0b9c6d02"
+      subtitle="Confiez la gestion comptable de votre société à un cabinet partenaire" i18n-subtitle="@@settings.accounting-firm.confiez.la.gestion.comptable.de.votre.so.13e62730">
     </app-page-header>
 
     @if (loading()) {
@@ -66,11 +67,11 @@ const NOTES_MAX = 1000;
             </div>
 
             @if (isActive(assignment.status)) {
-              <button type="button" class="af-btn af-btn--danger" (click)="revoke()" [disabled]="acting()">
+              <button type="button" class="af-btn af-btn--danger" (click)="revoke()" [disabled]="acting()" i18n="@@settings.accounting-firm.revoquer.l.affectation.398e894c">
                 <i class="pi pi-times-circle"></i> Révoquer l'affectation
               </button>
             } @else if (isPending(assignment.status)) {
-              <button type="button" class="af-btn af-btn--danger-outline" (click)="cancelPending()" [disabled]="acting()">
+              <button type="button" class="af-btn af-btn--danger-outline" (click)="cancelPending()" [disabled]="acting()" i18n="@@settings.accounting-firm.annuler.la.demande.05ba01cd">
                 <i class="pi pi-ban"></i> Annuler la demande
               </button>
             }
@@ -79,43 +80,43 @@ const NOTES_MAX = 1000;
           <dl class="af-meta">
             @if (isActive(assignment.status) && assignment.respondedAt) {
               <div class="af-meta__row">
-                <dt>Actif depuis</dt>
+                <dt i18n="@@settings.accounting-firm.actif.depuis.bcdceff3">Actif depuis</dt>
                 <dd>{{ assignment.respondedAt | date: 'dd/MM/yyyy' }}</dd>
               </div>
             } @else {
               <div class="af-meta__row">
-                <dt>Demandée le</dt>
+                <dt i18n="@@settings.accounting-firm.demandee.le.c52dbe79">Demandée le</dt>
                 <dd>{{ assignment.requestedAt | date: 'dd/MM/yyyy HH:mm' }}</dd>
               </div>
             }
             @if (isActive(assignment.status) && (assignment.firmCity || assignment.firmGovernorate)) {
               <div class="af-meta__row">
-                <dt>Localisation</dt>
+                <dt i18n="@@settings.accounting-firm.localisation.84e3d483">Localisation</dt>
                 <dd>{{ assignment.firmCity }}{{ assignment.firmCity && assignment.firmGovernorate ? ', ' : '' }}{{ assignment.firmGovernorate }}</dd>
               </div>
             }
             @if (isActive(assignment.status) && assignment.firmPracticeAreas?.length) {
               <div class="af-meta__row">
-                <dt>Domaines</dt>
+                <dt i18n="@@settings.accounting-firm.domaines.244b02f9">Domaines</dt>
                 <dd>{{ practiceLabels(assignment.firmPracticeAreas) }}</dd>
               </div>
             }
             @if (isActive(assignment.status) && (assignment.firmContactPhone || assignment.firmContactEmail)) {
               <div class="af-meta__row">
-                <dt>Contact</dt>
+                <dt i18n="@@settings.accounting-firm.contact.b37456c4">Contact</dt>
                 <dd>{{ assignment.firmContactPhone }}{{ assignment.firmContactPhone && assignment.firmContactEmail ? ' · ' : '' }}{{ assignment.firmContactEmail }}</dd>
               </div>
             }
             @if (assignment.notes) {
               <div class="af-meta__row">
-                <dt>Message envoyé</dt>
+                <dt i18n="@@settings.accounting-firm.message.envoye.3414873e">Message envoyé</dt>
                 <dd class="af-meta__notes">{{ assignment.notes }}</dd>
               </div>
             }
           </dl>
 
           @if (isPending(assignment.status)) {
-            <p class="af-hint">
+            <p class="af-hint" i18n="@@settings.accounting-firm.votre.demande.a.ete.transmise.au.cabinet.10c3ff89">
               <i class="pi pi-info-circle"></i>
               Votre demande a été transmise au cabinet. Vous serez notifié dès qu'elle sera acceptée ou refusée.
             </p>
@@ -132,68 +133,68 @@ const NOTES_MAX = 1000;
             <strong>{{ closed.firmDisplayName }} — {{ statusView(closed.status).label }}</strong>
             <span class="af-banner__date">{{ (closed.respondedAt || closed.revokedAt || closed.requestedAt) | date: 'dd/MM/yyyy' }}</span>
             @if (closed.rejectionReason) {
-              <p class="af-banner__reason">Motif : {{ closed.rejectionReason }}</p>
+              <p class="af-banner__reason" i18n="@@settings.accounting-firm.motif.ac1c6c0e">Motif : {{ closed.rejectionReason }}</p>
             }
-            <span class="af-banner__cta">Vous pouvez adresser une nouvelle demande à un cabinet ci-dessous.</span>
+            <span class="af-banner__cta" i18n="@@settings.accounting-firm.vous.pouvez.adresser.une.nouvelle.demande.a.un.c.20d16262">Vous pouvez adresser une nouvelle demande à un cabinet ci-dessous.</span>
           </div>
         </div>
       }
 
       <div class="af-card">
-        <h2 class="af-card__title">Rechercher un cabinet</h2>
-        <p class="af-card__subtitle">Comparez les cabinets, puis envoyez une seule demande.</p>
+        <h2 class="af-card__title" i18n="@@settings.accounting-firm.rechercher.un.cabinet.77bb1df8">Rechercher un cabinet</h2>
+        <p class="af-card__subtitle" i18n="@@settings.accounting-firm.comparez.les.cabinets.puis.envoyez.une.seule.dem.8d99a9af">Comparez les cabinets, puis envoyez une seule demande.</p>
 
-        <button type="button" class="af-filters__toggle" (click)="filtersOpen.set(!filtersOpen())">
+        <button type="button" class="af-filters__toggle" (click)="filtersOpen.set(!filtersOpen())" i18n="@@settings.accounting-firm.filtres.0e268f4a">
           <i class="pi" [ngClass]="filtersOpen() ? 'pi-chevron-down' : 'pi-chevron-right'"></i>
           Filtres
         </button>
 
           <div class="af-filters" [class.af-filters--open]="filtersOpen()">
             <div class="af-field">
-              <label for="firmSearch">Nom, ville ou présentation</label>
-              <input id="firmSearch" class="af-input" [(ngModel)]="searchText" (ngModelChange)="onFilterChange()" placeholder="Ex. TVA, Sousse, cabinet" />
+              <label for="firmSearch" i18n="@@settings.accounting-firm.nom.ville.ou.presentation.8204364c">Nom, ville ou présentation</label>
+              <input id="firmSearch" class="af-input" [(ngModel)]="searchText" (ngModelChange)="onFilterChange()" placeholder="Ex. TVA, Sousse, cabinet" i18n-placeholder="@@settings.accounting-firm.ex.tva.sousse.cabinet.3a049865" />
             </div>
             <div class="af-field">
-              <label for="firmGovernorate">Gouvernorat</label>
+              <label for="firmGovernorate" i18n="@@settings.accounting-firm.gouvernorat.b9cd1d99">Gouvernorat</label>
               <select id="firmGovernorate" class="af-input" [(ngModel)]="governorate" (ngModelChange)="onFilterChange()">
-                <option value="">Tous les gouvernorats</option>
+                <option value="" i18n="@@settings.accounting-firm.tous.les.gouvernorats.ae8b0ecb">Tous les gouvernorats</option>
                 @for (g of governorates; track g.value) {
                   <option [value]="g.value">{{ g.label }}</option>
                 }
               </select>
             </div>
             <div class="af-field">
-              <label for="firmPractice">Domaine</label>
+              <label for="firmPractice" i18n="@@settings.accounting-firm.domaine.b6eb3da6">Domaine</label>
               <select id="firmPractice" class="af-input" [(ngModel)]="practiceArea" (ngModelChange)="onFilterChange()">
-                <option value="">Tous les domaines</option>
+                <option value="" i18n="@@settings.accounting-firm.tous.les.domaines.9d24299c">Tous les domaines</option>
                 @for (o of practiceOptions; track o.value) {
                   <option [value]="o.value">{{ o.label }}</option>
                 }
               </select>
             </div>
             <div class="af-field">
-              <label for="firmLanguage">Langue</label>
+              <label for="firmLanguage" i18n="@@settings.accounting-firm.langue.6619264a">Langue</label>
               <select id="firmLanguage" class="af-input" [(ngModel)]="language" (ngModelChange)="onFilterChange()">
-                <option value="">Toutes les langues</option>
+                <option value="" i18n="@@settings.accounting-firm.toutes.les.langues.18c88470">Toutes les langues</option>
                 @for (o of languageOptions; track o.value) {
                   <option [value]="o.value">{{ o.label }}</option>
                 }
               </select>
             </div>
             <div class="af-field">
-              <label for="firmSegment">Type de société</label>
+              <label for="firmSegment" i18n="@@settings.accounting-firm.type.de.societe.68ad1468">Type de société</label>
               <select id="firmSegment" class="af-input" [(ngModel)]="clientSegment" (ngModelChange)="onFilterChange()">
-                <option value="">Tous</option>
+                <option value="" i18n="@@settings.accounting-firm.tous.b97ae3b4">Tous</option>
                 @for (o of segmentOptions; track o.value) {
                   <option [value]="o.value">{{ o.label }}</option>
                 }
               </select>
             </div>
             <label class="af-check" for="firmRemote">
-              <input id="firmRemote" type="checkbox" [(ngModel)]="remoteOnly" (ngModelChange)="onFilterChange()" />
+              <input id="firmRemote" type="checkbox" [(ngModel)]="remoteOnly" (ngModelChange)="onFilterChange()" /><ng-container i18n="@@settings.accounting-firm.accepte.le.distanciel.eabce959">
               Accepte le distanciel
-            </label>
-            <button type="button" class="af-btn af-btn--ghost" (click)="resetFilters()">Réinitialiser</button>
+            </ng-container></label>
+            <button type="button" class="af-btn af-btn--ghost" (click)="resetFilters()" i18n="@@settings.accounting-firm.reinitialiser.e0e2ad54">Réinitialiser</button>
           </div>
 
         @if (directoryLoading()) {
@@ -202,11 +203,11 @@ const NOTES_MAX = 1000;
             <app-skeleton height="9rem" shape="rounded"></app-skeleton>
           </div>
         } @else if (directoryError()) {
-          <p class="af-empty">La liste des cabinets n’a pas pu être chargée.</p>
-          <button type="button" class="af-btn af-btn--ghost" (click)="loadDirectory(true)">Réessayer</button>
+          <p class="af-empty" i18n="@@settings.accounting-firm.la.liste.des.cabinets.n.a.pas.pu.etre.chargee.5e761efc">La liste des cabinets n’a pas pu être chargée.</p>
+          <button type="button" class="af-btn af-btn--ghost" (click)="loadDirectory(true)" i18n="@@settings.accounting-firm.reessayer.895d416b">Réessayer</button>
         } @else if (firms().length === 0) {
           <p class="af-empty">
-            {{ hasActiveFilters() ? 'Aucun cabinet ne correspond à ces filtres. Élargissez la recherche.' : 'Aucun cabinet public n’est disponible pour le moment.' }}
+            {{ hasActiveFilters() ? loc_ui_tern_aucun_cabinet_ne_correspond_a_ces_filtres_356261 : loc_ui_tern_aucun_cabinet_public_n_est_disponible_pour_a0691a }}
           </p>
         } @else {
           <div class="af-grid">
@@ -220,20 +221,20 @@ const NOTES_MAX = 1000;
             }
           </div>
           @if (canLoadMore()) {
-            <button type="button" class="af-btn af-btn--ghost" (click)="loadMore()" [disabled]="directoryLoading()">Afficher plus</button>
+            <button type="button" class="af-btn af-btn--ghost" (click)="loadMore()" [disabled]="directoryLoading()" i18n="@@settings.accounting-firm.afficher.plus.5cc35957">Afficher plus</button>
           }
         }
 
         @if (selectedFirm) {
         <div class="af-field">
-          <label for="firmNotes">Message au cabinet <span class="af-optional">(facultatif)</span></label>
+          <label for="firmNotes"><ng-container i18n="@@settings.accounting-firm.message.au.cabinet.9019b579">Message au cabinet </ng-container> <span class="af-optional" i18n="@@settings.accounting-firm.facultatif.6d7d6db4">(facultatif)</span></label>
           <textarea
             id="firmNotes"
             [(ngModel)]="notes"
             [maxlength]="NOTES_MAX"
             rows="3"
             class="af-textarea"
-            placeholder="Précisez votre demande (période, contexte, attentes...)"></textarea>
+            placeholder="Précisez votre demande (période, contexte, attentes...)" i18n-placeholder="@@settings.accounting-firm.precisez.votre.demande.periode.contexte.attentes.61f8a78c"></textarea>
           <small class="af-hint-inline">{{ notes.length }} / {{ NOTES_MAX }}</small>
         </div>
 
@@ -242,7 +243,7 @@ const NOTES_MAX = 1000;
             type="button"
             class="af-btn af-btn--primary"
             (click)="confirmAndSubmit()"
-            [disabled]="!selectedFirm || acting()">
+            [disabled]="!selectedFirm || acting()" i18n="@@settings.accounting-firm.envoyer.la.demande.b3cb4a78">
             <i class="pi pi-send"></i> Envoyer la demande
           </button>
         </div>
@@ -251,7 +252,7 @@ const NOTES_MAX = 1000;
 
       @if (history().length > 0) {
         <div class="af-card">
-          <button type="button" class="af-history__toggle" (click)="historyOpen.set(!historyOpen())">
+          <button type="button" class="af-history__toggle" (click)="historyOpen.set(!historyOpen())" i18n="@@settings.accounting-firm.historique.des.demandes.e82eff43">
             <i class="pi" [ngClass]="historyOpen() ? 'pi-chevron-down' : 'pi-chevron-right'"></i>
             Historique des demandes ({{ history().length }})
           </button>
@@ -266,7 +267,7 @@ const NOTES_MAX = 1000;
                   <div class="af-history__side">
                     <span class="af-history__date">{{ h.requestedAt | date: 'dd/MM/yyyy' }}</span>
                     @if (h.rejectionReason) {
-                      <span class="af-history__reason">Motif : {{ h.rejectionReason }}</span>
+                      <span class="af-history__reason" i18n="@@settings.accounting-firm.motif.8d3d4b69">Motif : {{ h.rejectionReason }}</span>
                     }
                   </div>
                 </li>
@@ -407,7 +408,7 @@ const NOTES_MAX = 1000;
       font-size: var(--font-size-xs, 0.75rem);
       color: var(--color-text-secondary, #64748b);
     }
-    .af-suggestion__meta i { margin-right: 4px; }
+    .af-suggestion__meta i { margin-inline-end: 4px; }
 
     .af-actions { display: flex; justify-content: flex-end; }
     .af-filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; align-items: end; }
@@ -504,6 +505,8 @@ const NOTES_MAX = 1000;
   `]
 })
 export class AccountingFirmSettingsComponent implements OnInit {
+  readonly loc_ui_tern_aucun_cabinet_ne_correspond_a_ces_filtres_356261 = $localize`:@@ui.tern.aucun.cabinet.ne.correspond.a.ces.filtres..356261:Aucun cabinet ne correspond à ces filtres. Élargissez la recherche.`;
+  readonly loc_ui_tern_aucun_cabinet_public_n_est_disponible_pour_a0691a = $localize`:@@ui.tern.aucun.cabinet.public.n.est.disponible.pour.a0691a:Aucun cabinet public n’est disponible pour le moment.`;
   private readonly assignments = inject(FirmAssignmentService);
   private readonly toast = inject(ToastService);
   private readonly confirmation = inject(ConfirmationService);
@@ -648,11 +651,11 @@ export class AccountingFirmSettingsComponent implements OnInit {
     const firm = this.selectedFirm;
     if (!firm) return;
     this.confirmation.confirm({
-      header: 'Envoyer la demande',
-      message: `Confirmez-vous l'envoi d'une demande de liaison au cabinet « ${firm.displayName} » ?`,
+      header: $localize`:@@settings.accounting-firm-settings.ts.envoyer.la.demande.345e1b6d:Envoyer la demande`,
+      message: $localize`:@@settings.accounting-firm-settings.ts.confirmez.vous.l.envoi.d.une.demande.de.85d90471:Confirmez-vous l'envoi d'une demande de liaison au cabinet « ${firm.displayName}:displayName: » ?`,
       icon: 'pi pi-send',
-      acceptLabel: 'Envoyer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@accounting-firm-settings.component.acceptLabel.Envoyer:Envoyer`,
+      rejectLabel: $localize`:@@accounting-firm-settings.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-primary',
       accept: () => this.submit(firm)
     });
@@ -665,28 +668,28 @@ export class AccountingFirmSettingsComponent implements OnInit {
       next: r => {
         this.acting.set(false);
         if (r.success) {
-          this.toast.add({ severity: 'success', summary: 'Demande envoyée', detail: `Votre demande a été transmise à ${firm.displayName}.` });
+          this.toast.add({ severity: 'success', summary: $localize`:@@accounting-firm-settings.component.summary.Demande_envoy_e:Demande envoyée`, detail: $localize`:@@settings.accounting-firm-settings.ts.votre.demande.a.ete.transmise.a.displayn.594ac70f:Votre demande a été transmise à ${firm.displayName}:displayName:.` });
           this.selectedFirm = null;
           this.notes = '';
           this.current.set(r.data);
         } else {
-          this.toast.add({ severity: 'error', summary: 'Envoi impossible', detail: r.message ?? 'Une erreur est survenue.' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@accounting-firm-settings.component.summary.Envoi_impossible:Envoi impossible`, detail: r.message ?? $localize`:@@ui.tern.une.erreur.est.survenue.9a1331:Une erreur est survenue.` });
         }
       },
       error: err => {
         this.acting.set(false);
-        this.toast.add({ severity: 'error', summary: 'Envoi impossible', detail: this.errorText(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@accounting-firm-settings.component.summary.Envoi_impossible:Envoi impossible`, detail: this.errorText(err) });
       }
     });
   }
 
   cancelPending(): void {
     this.confirmation.confirm({
-      header: 'Annuler la demande',
-      message: 'Voulez-vous vraiment annuler votre demande en attente ? Le cabinet en sera informé.',
+      header: $localize`:@@settings.accounting-firm-settings.ts.annuler.la.demande.dafe7e62:Annuler la demande`,
+      message: $localize`:@@settings.accounting-firm-settings.ts.voulez.vous.vraiment.annuler.votre.deman.7165d248:Voulez-vous vraiment annuler votre demande en attente ? Le cabinet en sera informé.`,
       icon: 'pi pi-ban',
-      acceptLabel: 'Annuler la demande',
-      rejectLabel: 'Retour',
+      acceptLabel: $localize`:@@accounting-firm-settings.component.acceptLabel.Annuler_la_deman:Annuler la demande`,
+      rejectLabel: $localize`:@@accounting-firm-settings.component.rejectLabel.Retour:Retour`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.acting.set(true);
@@ -694,15 +697,15 @@ export class AccountingFirmSettingsComponent implements OnInit {
           next: r => {
             this.acting.set(false);
             if (r.success) {
-              this.toast.add({ severity: 'success', summary: 'Demande annulée' });
+              this.toast.add({ severity: 'success', summary: $localize`:@@accounting-firm-settings.component.summary.Demande_annul_e:Demande annulée` });
               this.reload();
             } else {
-              this.toast.add({ severity: 'error', summary: 'Annulation impossible', detail: r.message ?? 'Une erreur est survenue.' });
+              this.toast.add({ severity: 'error', summary: $localize`:@@accounting-firm-settings.component.summary.Annulation_impos:Annulation impossible`, detail: r.message ?? $localize`:@@ui.tern.une.erreur.est.survenue.9a1331:Une erreur est survenue.` });
             }
           },
           error: err => {
             this.acting.set(false);
-            this.toast.add({ severity: 'error', summary: 'Annulation impossible', detail: this.errorText(err) });
+            this.toast.add({ severity: 'error', summary: $localize`:@@accounting-firm-settings.component.summary.Annulation_impos:Annulation impossible`, detail: this.errorText(err) });
           }
         });
       }
@@ -711,11 +714,11 @@ export class AccountingFirmSettingsComponent implements OnInit {
 
   revoke(): void {
     this.confirmation.confirm({
-      header: "Révoquer l'affectation",
-      message: 'Voulez-vous vraiment révoquer la liaison avec ce cabinet ? Il perdra l\'accès à votre comptabilité.',
+      header: $localize`:@@settings.accounting-firm-settings.ts.revoquer.l.affectation.0dbc1d1c:Révoquer l'affectation`,
+      message: $localize`:@@settings.accounting-firm-settings.ts.voulez.vous.vraiment.revoquer.la.liaison.a4a5b8c5:Voulez-vous vraiment révoquer la liaison avec ce cabinet ? Il perdra l'accès à votre comptabilité.`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Révoquer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@accounting-firm-settings.component.acceptLabel.Révoquer:Révoquer`,
+      rejectLabel: $localize`:@@accounting-firm-settings.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.acting.set(true);
@@ -723,15 +726,15 @@ export class AccountingFirmSettingsComponent implements OnInit {
           next: r => {
             this.acting.set(false);
             if (r.success) {
-              this.toast.add({ severity: 'success', summary: 'Affectation révoquée' });
+              this.toast.add({ severity: 'success', summary: $localize`:@@accounting-firm-settings.component.summary.Affectation_r_vo:Affectation révoquée` });
               this.reload();
             } else {
-              this.toast.add({ severity: 'error', summary: 'Révocation impossible', detail: r.message ?? 'Une erreur est survenue.' });
+              this.toast.add({ severity: 'error', summary: $localize`:@@accounting-firm-settings.component.summary.R_vocation_impos:Révocation impossible`, detail: r.message ?? $localize`:@@ui.tern.une.erreur.est.survenue.9a1331:Une erreur est survenue.` });
             }
           },
           error: err => {
             this.acting.set(false);
-            this.toast.add({ severity: 'error', summary: 'Révocation impossible', detail: this.errorText(err) });
+            this.toast.add({ severity: 'error', summary: $localize`:@@accounting-firm-settings.component.summary.R_vocation_impos:Révocation impossible`, detail: this.errorText(err) });
           }
         });
       }
@@ -769,6 +772,6 @@ export class AccountingFirmSettingsComponent implements OnInit {
 
   private errorText(err: unknown): string {
     const msg = (err as { error?: { message?: string } })?.error?.message;
-    return msg ?? 'Une erreur est survenue. Veuillez réessayer.';
+    return msg ?? $localize`:@@ui.tern.une.erreur.est.survenue.veuillez.reessayer.51f64e:Une erreur est survenue. Veuillez réessayer.`;
   }
 }

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
@@ -29,21 +30,19 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
   ],
   template: `
     <app-page-header
-      title="Comptes bancaires"
-      subtitle="Gérez vos comptes tunisiens (RIB / IBAN) pour la trésorerie.">
+      title="Comptes bancaires" i18n-title="@@payments.bank-accounts.comptes.bancaires.3af6caeb"
+      subtitle="Gérez vos comptes tunisiens (RIB / IBAN) pour la trésorerie." i18n-subtitle="@@payments.bank-accounts.gerez.vos.comptes.tunisiens.rib.iban.pou.21e878c1">
     </app-page-header>
 
     @if (!auth.isFirmDelegatedReadonly() && canCreate()) {
       <div class="page-actions">
-        <app-button variant="primary" icon="pi pi-plus" (click)="openCreate()" ariaLabel="Ajouter un compte bancaire">
-          Ajouter un compte
-        </app-button>
+        <app-button variant="primary" icon="pi pi-plus" (click)="openCreate()" ariaLabel="Ajouter un compte bancaire" i18n-ariaLabel="@@payments.bank-accounts.ajouter.un.compte.bancaire.64427e80" i18n="@@payments.bank-accounts.ajouter.un.compte.351ab0a7"> Ajouter un compte </app-button>
       </div>
     }
 
     <div class="content-card">
       @if (loading()) {
-        <div class="skeleton-grid" aria-busy="true" aria-label="Chargement">
+        <div class="skeleton-grid" aria-busy="true" aria-label="Chargement" i18n-aria-label="@@payments.bank-accounts.chargement.c7ac0481">
           @for (i of [1, 2, 3]; track i) {
             <p-skeleton height="180px" styleClass="skeleton-card"></p-skeleton>
           }
@@ -52,22 +51,22 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
         @if (auth.isFirmDelegatedReadonly()) {
           <app-empty-state
             icon="pi pi-building"
-            title="Vous n'avez pas encore de compte bancaire"
-            description="Aucun compte bancaire n'est configuré pour ce dossier.">
+            title="Vous n'avez pas encore de compte bancaire" i18n-title="@@payments.bank-accounts.vous.n.avez.pas.encore.de.compte.bancaire.e6e57039"
+            description="Aucun compte bancaire n'est configuré pour ce dossier." i18n-description="@@payments.bank-accounts.aucun.compte.bancaire.n.est.configure.po.09887b0b">
           </app-empty-state>
         } @else if (canCreate()) {
           <app-empty-state
             icon="pi pi-building"
-            title="Vous n'avez pas encore de compte bancaire"
-            description="Ajoutez un compte pour suivre vos virements et votre trésorerie."
-            actionLabel="Ajouter un compte"
+            title="Vous n'avez pas encore de compte bancaire" i18n-title="@@payments.bank-accounts.vous.n.avez.pas.encore.de.compte.bancaire.e6e57039"
+            description="Ajoutez un compte pour suivre vos virements et votre trésorerie." i18n-description="@@payments.bank-accounts.ajoutez.un.compte.pour.suivre.vos.vireme.ff8b3076"
+            actionLabel="Ajouter un compte" i18n-actionLabel="@@payments.bank-accounts.ajouter.un.compte.f478ef40"
             (actionClick)="openCreate()">
           </app-empty-state>
         } @else {
           <app-empty-state
             icon="pi pi-building"
-            title="Vous n'avez pas encore de compte bancaire"
-            description="Autorisation « Trésorerie — saisie » requise pour ajouter un compte.">
+            title="Vous n'avez pas encore de compte bancaire" i18n-title="@@payments.bank-accounts.vous.n.avez.pas.encore.de.compte.bancaire.e6e57039"
+            description="Autorisation « Trésorerie — saisie » requise pour ajouter un compte." i18n-description="@@payments.bank-accounts.autorisation.tresorerie.saisie.requise.p.7dad37ab">
           </app-empty-state>
         }
       } @else {
@@ -82,26 +81,26 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
               </div>
               <p class="bank-sub">{{ a.bankName }}</p>
               @if (a.agencyName) {
-                <p class="bank-meta"><span class="label">Agence</span> {{ a.agencyName }}</p>
+                <p class="bank-meta"><span class="label" i18n="@@payments.bank-accounts.agence.37c58081">Agence</span> {{ a.agencyName }}</p>
               }
               <div class="bank-lines">
                 <div>
-                  <span class="label">IBAN</span>
+                  <span class="label" i18n="@@payments.bank-accounts.iban.e81566a5">IBAN</span>
                   <span class="mono">{{ formatIban(a.iban) }}</span>
                 </div>
                 <div>
-                  <span class="label">RIB</span>
+                  <span class="label" i18n="@@payments.bank-accounts.rib.61f3ea57">RIB</span>
                   <span class="mono">{{ formatRib(a.rib) }}</span>
                 </div>
                 @if (a.chartOfAccountNumber) {
                   <div>
-                    <span class="label">Compte comptable</span>
+                    <span class="label" i18n="@@payments.bank-accounts.compte.comptable.6d979a32">Compte comptable</span>
                     <span class="mono">{{ a.chartOfAccountNumber }}</span>
                   </div>
                 }
                 @if (a.swiftBic) {
                   <div>
-                    <span class="label">SWIFT</span>
+                    <span class="label" i18n="@@payments.bank-accounts.swift.19e6802b">SWIFT</span>
                     <span class="mono">{{ a.swiftBic }}</span>
                   </div>
                 }
@@ -114,27 +113,21 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
                       size="sm"
                       icon="pi pi-star"
                       (click)="setDefault(a)"
-                      pTooltip="Définir comme compte par défaut"
-                      ariaLabel="Définir comme compte par défaut">
-                      Défaut
-                    </app-button>
+                      pTooltip="Définir comme compte par défaut" i18n-pTooltip="@@payments.bank-accounts.definir.comme.compte.par.defaut.6a8425f5"
+                      ariaLabel="Définir comme compte par défaut" i18n-ariaLabel="@@payments.bank-accounts.definir.comme.compte.par.defaut.ed2b1b7f" i18n="@@payments.bank-accounts.defaut.47456751"> Défaut </app-button>
                   }
                   <app-button
                     variant="outline"
                     size="sm"
                     icon="pi pi-pencil"
                     (click)="openEdit(a)"
-                    ariaLabel="Modifier le compte">
-                    Modifier
-                  </app-button>
+                    ariaLabel="Modifier le compte" i18n-ariaLabel="@@payments.bank-accounts.modifier.le.compte.78ea5a74" i18n="@@payments.bank-accounts.modifier.f260e757"> Modifier </app-button>
                   <app-button
                     variant="danger"
                     size="sm"
                     icon="pi pi-trash"
                     (click)="confirmDelete(a)"
-                    ariaLabel="Supprimer le compte">
-                    Supprimer
-                  </app-button>
+                    ariaLabel="Supprimer le compte" i18n-ariaLabel="@@payments.bank-accounts.supprimer.le.compte.c0b3f815" i18n="@@payments.bank-accounts.supprimer.1acfc1c7"> Supprimer </app-button>
                 </div>
               }
             </article>
@@ -276,8 +269,8 @@ export class BankAccountsComponent implements OnInit {
         this.accounts.set([]);
         this.toast.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de charger les comptes bancaires.'
+          summary: $localize`:@@bank-accounts.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@bank-accounts.component.detail.Impossible_de_ch:Impossible de charger les comptes bancaires.`
         });
       }
     });
@@ -314,24 +307,24 @@ export class BankAccountsComponent implements OnInit {
         if (res.success) {
           this.toast.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: res.message ?? 'Compte par défaut mis à jour.'
+            summary: $localize`:@@bank-accounts.component.summary.Succès:Succès`,
+            detail: res.message ?? $localize`:@@ui.tern.compte.par.defaut.mis.a.jour.02dd1f:Compte par défaut mis à jour.`
           });
           this.load();
         } else {
           this.toast.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: res.errors?.[0] ?? 'Action impossible.'
+            summary: $localize`:@@bank-accounts.component.summary.Erreur:Erreur`,
+            detail: res.errors?.[0] ?? $localize`:@@ui.tern.action.impossible.cd5717:Action impossible.`
           });
         }
       },
       error: (err: HttpErrorResponse) => {
         // 403 (payments:update) → message métier français ; autre → message générique.
         const detail = err.status === 403
-          ? 'Action refusée : autorisations insuffisantes (Trésorerie — mise à jour).'
-          : 'Action impossible.';
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail });
+          ? $localize`:@@ui.tern.action.refusee.autorisations.insuffisantes.86b982:Action refusée : autorisations insuffisantes (Trésorerie — mise à jour).`
+          : $localize`:@@ui.tern.action.impossible.cd5717:Action impossible.`;
+        this.toast.add({ severity: 'error', summary: $localize`:@@bank-accounts.component.summary.Erreur:Erreur`, detail });
       }
     });
   }
@@ -339,11 +332,11 @@ export class BankAccountsComponent implements OnInit {
   confirmDelete(a: BankAccountDto): void {
     if (this.auth.isFirmDelegatedReadonly() || !this.canUpdate()) return;
     this.confirmation.confirm({
-      header: 'Supprimer le compte',
-      message: `Supprimer le compte ${a.designation || a.bankName} ? Cette action est irréversible.`,
+      header: $localize`:@@payments.bank-accounts.ts.supprimer.le.compte.ced10049:Supprimer le compte`,
+      message: $localize`:@@payments.bank-accounts.ts.supprimer.le.compte.p.cette.action.est.i.43c54a18:Supprimer le compte ${a.designation || a.bankName}:p: ? Cette action est irréversible.`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@bank-accounts.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@bank-accounts.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.bankAccountService.delete(a.id).subscribe({
@@ -351,24 +344,24 @@ export class BankAccountsComponent implements OnInit {
             if (res.success) {
               this.toast.add({
                 severity: 'success',
-                summary: 'Succès',
-                detail: res.message ?? 'Compte supprimé.'
+                summary: $localize`:@@bank-accounts.component.summary.Succès:Succès`,
+                detail: res.message ?? $localize`:@@ui.tern.compte.supprime.f2d6e9:Compte supprimé.`
               });
               this.load();
             } else {
               this.toast.add({
                 severity: 'error',
-                summary: 'Erreur',
-                detail: res.errors?.[0] ?? 'Suppression impossible.'
+                summary: $localize`:@@bank-accounts.component.summary.Erreur:Erreur`,
+                detail: res.errors?.[0] ?? $localize`:@@ui.tern.suppression.impossible.0dffe4:Suppression impossible.`
               });
             }
           },
           error: (err: HttpErrorResponse) => {
             // 403 (payments:update) → message métier français ; autre → message générique.
             const detail = err.status === 403
-              ? 'Action refusée : autorisations insuffisantes (Trésorerie — mise à jour).'
-              : 'Suppression impossible.';
-            this.toast.add({ severity: 'error', summary: 'Erreur', detail });
+              ? $localize`:@@ui.tern.action.refusee.autorisations.insuffisantes.86b982:Action refusée : autorisations insuffisantes (Trésorerie — mise à jour).`
+              : $localize`:@@ui.tern.suppression.impossible.0dffe4:Suppression impossible.`;
+            this.toast.add({ severity: 'error', summary: $localize`:@@bank-accounts.component.summary.Erreur:Erreur`, detail });
           }
         });
       }

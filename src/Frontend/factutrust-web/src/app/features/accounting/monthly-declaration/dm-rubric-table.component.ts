@@ -30,14 +30,14 @@ import {
       [rowHover]="true">
       <ng-template pTemplate="header">
         <tr>
-          <th scope="col">Code</th>
-          <th scope="col">Libellé</th>
-          <th scope="col">Code rapport</th>
-          <th scope="col">Montant brut</th>
-          <th scope="col">Retenue</th>
-          <th scope="col">Application</th>
-          <th scope="col">Actif</th>
-          <th scope="col">Actions</th>
+          <th scope="col" i18n="@@accounting.monthly-declaration.code.adac6937">Code</th>
+          <th scope="col" i18n="@@accounting.monthly-declaration.libelle.f5485bba">Libellé</th>
+          <th scope="col" i18n="@@accounting.monthly-declaration.code.rapport.149223b0">Code rapport</th>
+          <th scope="col" i18n="@@accounting.monthly-declaration.montant.brut.6c8cf046">Montant brut</th>
+          <th scope="col" i18n="@@accounting.monthly-declaration.retenue.88cf18f4">Retenue</th>
+          <th scope="col" i18n="@@accounting.monthly-declaration.application.b291beb8">Application</th>
+          <th scope="col" i18n="@@accounting.monthly-declaration.actif.2eb75f84">Actif</th>
+          <th scope="col" i18n="@@accounting.monthly-declaration.actions.c3cd636a">Actions</th>
         </tr>
       </ng-template>
 
@@ -47,15 +47,11 @@ import {
           <td>
             {{ r.label }}
             @if (unsupported(r)) {
-              <span class="dm-flag dm-flag--warn" title="Le moteur rendra 0 pour cette rubrique.">
-                non pris en charge
-              </span>
+              <span class="dm-flag dm-flag--warn" title="Le moteur rendra 0 pour cette rubrique." i18n-title="@@accounting.monthly-declaration.le.moteur.rendra.0.pour.cette.rubrique.a02d901c" i18n="@@accounting.monthly-declaration.non.pris.en.charge.0d01bf4b"> non pris en charge </span>
             }
             @if (unknownAccounts(r); as missing) {
               @if (missing.length) {
-                <span class="dm-flag dm-flag--warn" [title]="'Comptes absents du plan : ' + missing.join(', ')">
-                  compte inconnu
-                </span>
+                <span class="dm-flag dm-flag--warn" [title]="loc_ui_tern_comptes_absents_du_plan_dce877 + missing.join(', ')" i18n="@@accounting.monthly-declaration.compte.inconnu.84fbe64e"> compte inconnu </span>
               }
             }
           </td>
@@ -63,7 +59,7 @@ import {
           <td class="dm-rule">{{ gross(r) }}</td>
           <td class="dm-rule">{{ withheld(r) }}</td>
           <td>{{ applicability(r) }}</td>
-          <td>{{ r.isActive ? 'Oui' : 'Non' }}</td>
+          <td>{{ r.isActive ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
           <td>
             <app-accounting-table-actions>
               <app-button
@@ -75,7 +71,7 @@ import {
                 type="button"
                 [disabled]="readOnly"
                 (click)="edit.emit(r)"
-                ariaLabel="Modifier" />
+                ariaLabel="Modifier" i18n-ariaLabel="@@accounting.monthly-declaration.modifier.ead890f7" />
               <app-button
                 variant="ghost"
                 size="sm"
@@ -85,7 +81,7 @@ import {
                 type="button"
                 [disabled]="readOnly"
                 (click)="toggle.emit(r)"
-                [attr.aria-label]="r.isActive ? 'Désactiver' : 'Activer'" />
+                [attr.aria-label]="r.isActive ? loc_ui_tern_desactiver_d28397 : loc_ui_tern_activer_b96fa7" />
               <app-button
                 variant="ghost"
                 size="sm"
@@ -95,7 +91,7 @@ import {
                 type="button"
                 [disabled]="readOnly"
                 (click)="remove.emit(r)"
-                ariaLabel="Supprimer" />
+                ariaLabel="Supprimer" i18n-ariaLabel="@@accounting.monthly-declaration.supprimer.d9f6d96e" />
             </app-accounting-table-actions>
           </td>
         </tr>
@@ -103,7 +99,7 @@ import {
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="8" class="dm-empty">Aucune rubrique configurée pour cette famille.</td>
+          <td colspan="8" class="dm-empty" i18n="@@accounting.monthly-declaration.aucune.rubrique.configuree.pour.cette.famille.e8d268a4">Aucune rubrique configurée pour cette famille.</td>
         </tr>
       </ng-template>
     </p-table>
@@ -112,12 +108,17 @@ import {
     .dm-mono { font-family: ui-monospace, monospace; }
     .dm-rule { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
     .dm-row--inactive { opacity: 0.6; }
-    .dm-flag { display: inline-block; margin-left: var(--spacing-2); padding: 0.1rem 0.45rem; border-radius: var(--radius-pill, 999px); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); }
+    .dm-flag { display: inline-block; margin-inline-start: var(--spacing-2); padding: 0.1rem 0.45rem; border-radius: var(--radius-pill, 999px); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); }
     .dm-flag--warn { background: var(--color-warning-50, #fffbeb); color: var(--color-warning-700, #a16207); border: 1px solid var(--color-warning-200, #fde68a); }
     .dm-empty { text-align: center; padding: var(--spacing-6); color: var(--color-text-tertiary); }
   `
 })
 export class DmRubricTableComponent {
+  readonly loc_ui_tern_comptes_absents_du_plan_dce877 = $localize`:@@ui.tern.comptes.absents.du.plan.dce877:Comptes absents du plan : `;
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
+  readonly loc_ui_tern_desactiver_d28397 = $localize`:@@ui.tern.desactiver.d28397:Désactiver`;
+  readonly loc_ui_tern_activer_b96fa7 = $localize`:@@ui.tern.activer.b96fa7:Activer`;
   @Input() rubrics: MonthlyDeclarationRubricDto[] = [];
   @Input() loading = false;
   @Input() readOnly = false;

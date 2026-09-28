@@ -16,6 +16,7 @@ import {
   CalendarMode, colorScaleIndex, eventsForDay, isMultiDay, isSameDay,
   parseIsoDate, rangeDays, rangeForMode, shiftAnchor, toIsoDate
 } from './studio-calendar.util';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 const DOW_LABELS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 const PALETTE_SIZE = 6;
@@ -60,11 +61,11 @@ interface LegendItem {
     <div class="cal">
       <div class="cal__toolbar">
         <div class="cal__nav">
-          <button type="button" class="p-button p-button-text p-button-sm" (click)="go(-1)" aria-label="Période précédente">
+          <button type="button" class="p-button p-button-text p-button-sm" (click)="go(-1)" aria-label="Période précédente" i18n-aria-label="@@studio.views.periode.precedente.5e420e76">
             <i class="fa-solid fa-chevron-left"></i>
           </button>
           <button type="button" class="p-button p-button-text p-button-sm" (click)="goToday()">{{ labels.calendar.today }}</button>
-          <button type="button" class="p-button p-button-text p-button-sm" (click)="go(1)" aria-label="Période suivante">
+          <button type="button" class="p-button p-button-text p-button-sm" (click)="go(1)" aria-label="Période suivante" i18n-aria-label="@@studio.views.periode.suivante.0f0cc843">
             <i class="fa-solid fa-chevron-right"></i>
           </button>
         </div>
@@ -76,14 +77,14 @@ interface LegendItem {
             (ngModelChange)="setMode($event)"
             optionLabel="label"
             optionValue="value"
-            [attr.aria-label]="'Basculer entre vue mois et semaine'">
+            [attr.aria-label]="loc_basculer_entre_vue_mois_et_semaine_cb2f06">
           </p-selectbutton>
         }
       </div>
 
       @if (legend().length > 0) {
         <div class="cal__legend">
-          <span class="cal__legend-title">Légende</span>
+          <span class="cal__legend-title" i18n="@@studio.views.legende.758710c1">Légende</span>
           @for (item of legend(); track item.value) {
             <span class="cal__legend-item">
               <span class="swatch" [class]="'sw-' + item.colorIndex"></span>
@@ -94,7 +95,7 @@ interface LegendItem {
       }
 
       @if (effectiveMode() === 'month') {
-        <div class="cal-grid" role="grid" [attr.aria-label]="'Grille du mois, ' + title()">
+        <div class="cal-grid" role="grid" [attr.aria-label]="loc_ui_tern_grille_du_mois_c58c99 + title()">
           <div class="cal-grid__dow" role="row">
             @for (d of dowLabels; track d) {
               <span role="columnheader">{{ d }}</span>
@@ -123,7 +124,7 @@ interface LegendItem {
                     </button>
                   }
                   @if (day.overflow > 0) {
-                    <button type="button" class="cal-day__more" (click)="toggleExpand(day.iso)">
+                    <button type="button" class="cal-day__more" (click)="toggleExpand(day.iso)" i18n="@@studio.views.autre.s.7e168178">
                       +{{ day.overflow }} autre(s)
                     </button>
                   }
@@ -133,7 +134,7 @@ interface LegendItem {
           }
         </div>
       } @else {
-        <div class="week-grid" role="grid" [attr.aria-label]="'Grille de la semaine, ' + title()">
+        <div class="week-grid" role="grid" [attr.aria-label]="loc_ui_tern_grille_de_la_semaine_4975b6 + title()">
           @for (day of weekDays(); track day.iso) {
             <div class="week-day" role="row" [class.week-day--weekend]="day.isWeekend" [class.week-day--today]="day.isToday">
               <div class="week-day__head" role="columnheader">
@@ -156,7 +157,7 @@ interface LegendItem {
                   </button>
                 }
                 @if (day.overflow > 0) {
-                  <button type="button" class="cal-day__more" (click)="toggleExpand(day.iso)">
+                  <button type="button" class="cal-day__more" (click)="toggleExpand(day.iso)" i18n="@@studio.views.autre.s.7e168178">
                     +{{ day.overflow }} autre(s)
                   </button>
                 }
@@ -183,6 +184,10 @@ interface LegendItem {
   styleUrl: './studio-calendar.component.scss'
 })
 export class StudioCalendarComponent {
+  protected readonly loc_basculer_entre_vue_mois_et_semaine_cb2f06 = $localize`:@@studio.studio-calendar.tpl.basculer.entre.vue.mois.et.semaine.cb2f0605:Basculer entre vue mois et semaine`;
+
+  readonly loc_ui_tern_grille_du_mois_c58c99 = $localize`:@@ui.tern.grille.du.mois.c58c99:Grille du mois, `;
+  readonly loc_ui_tern_grille_de_la_semaine_4975b6 = $localize`:@@ui.tern.grille.de.la.semaine.4975b6:Grille de la semaine, `;
   private readonly router = inject(Router);
 
   readonly entityKey = input('');
@@ -218,9 +223,9 @@ export class StudioCalendarComponent {
   protected readonly title = computed(() => {
     const r = this.range();
     if (this.effectiveMode() === 'week') {
-      return `${r.start.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} – ${r.end.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}`;
+      return `${r.start.toLocaleDateString(erpDateLocale('fr-FR'), { day: 'numeric', month: 'short' })} – ${r.end.toLocaleDateString(erpDateLocale('fr-FR'), { day: 'numeric', month: 'short', year: 'numeric' })}`;
     }
-    return this.anchor().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+    return this.anchor().toLocaleDateString(erpDateLocale('fr-FR'), { month: 'long', year: 'numeric' });
   });
 
   protected readonly weeks = computed<DayVm[][]>(() => {
@@ -309,8 +314,8 @@ export class StudioCalendarComponent {
 
   formatEventDates(ev: RecordViewCalendarEventDto): string {
     const start = parseIsoDate(ev.start).toLocaleDateString('fr-FR');
-    if (!ev.end || ev.end === ev.start) return `le ${start}`;
-    return `du ${start} au ${parseIsoDate(ev.end).toLocaleDateString('fr-FR')}`;
+    if (!ev.end || ev.end === ev.start) return $localize`:@@studio.studio-calendar.ts.le.start.23c3798e:le ${start}:start:`;
+    return $localize`:@@studio.studio-calendar.ts.du.start.au.tolocaledatestring.1f74bee0:du ${start}:start: au ${parseIsoDate(ev.end).toLocaleDateString('fr-FR')}:toLocaleDateString:`;
   }
 
   /** Libellé accessible d'un événement : titre + dates (+ couleur si configurée). */

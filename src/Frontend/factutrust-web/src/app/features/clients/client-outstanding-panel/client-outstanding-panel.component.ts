@@ -20,7 +20,7 @@ import { ClientOutstanding } from '@core/services/client.service';
     @if (loading) {
       <div class="ft-panel encours-panel">
         <div class="ft-panel__header">
-          <h3 class="ft-panel__title">Encours</h3>
+          <h3 class="ft-panel__title" i18n="@@clients.client-outstanding-panel.encours.ba3d7159">Encours</h3>
         </div>
         <div class="encours-kpi-grid">
           @for (i of [1, 2, 3, 4]; track i) {
@@ -32,18 +32,18 @@ import { ClientOutstanding } from '@core/services/client.service';
     } @else if (outstanding) {
       <div class="ft-panel encours-panel" [class.encours-panel--over]="outstanding.isOverLimit">
         <div class="ft-panel__header">
-          <h3 class="ft-panel__title">Encours</h3>
-          <a class="encours-edit-link" [routerLink]="editLink" aria-label="Modifier le plafond">
+          <h3 class="ft-panel__title" i18n="@@clients.client-outstanding-panel.encours.ba3d7159">Encours</h3>
+          <a class="encours-edit-link" [routerLink]="editLink" aria-label="Modifier le plafond" i18n-aria-label="@@clients.client-outstanding-panel.modifier.le.plafond.b4fd857f" i18n="@@clients.client-outstanding-panel.modifier.le.plafond.04a7025f">
             <i class="pi pi-pencil" aria-hidden="true"></i>
             Modifier le plafond
           </a>
         </div>
 
         @if (outstanding.isOverLimit) {
-          <div class="ft-alert ft-alert--warning">
+          <div class="ft-alert ft-alert--warning" i18n="@@clients.client-outstanding-panel.encours.de.au.dela.du.plafond.de.informa.5f1ee5f6">
             <i class="pi pi-exclamation-triangle"></i>
             <span>
-              Encours de <strong>{{ formatAmount(outstanding.totalOutstanding) }} {{ outstanding.currency }}</strong>
+              <ng-container> Encours de </ng-container> <strong>{{ formatAmount(outstanding.totalOutstanding) }} {{ outstanding.currency }}</strong>
               au-delà du plafond de {{ formatAmount(outstanding.creditLimit!) }} {{ outstanding.currency }}.
               <span class="ft-muted">Information seulement : aucune vente n'est bloquée.</span>
             </span>
@@ -51,7 +51,7 @@ import { ClientOutstanding } from '@core/services/client.service';
         }
 
         @if (outstanding.overdueAmount > 0) {
-          <div class="ft-alert ft-alert--danger">
+          <div class="ft-alert ft-alert--danger" i18n="@@clients.client-outstanding-panel.echus.depuis.plus.de.30.jours.49d412ed">
             <i class="pi pi-clock"></i>
             <span>
               <strong>{{ formatAmount(outstanding.overdueAmount) }} {{ outstanding.currency }}</strong>
@@ -62,22 +62,22 @@ import { ClientOutstanding } from '@core/services/client.service';
 
         <div class="encours-kpi-grid">
           <app-stat-card
-            label="Factures non soldées"
+            label="Factures non soldées" i18n-label="@@clients.client-outstanding-panel.factures.non.soldees.aa076d48"
             [value]="formatAmount(outstanding.unpaidInvoicesAmount) + ' ' + outstanding.currency"
             icon="pi-file"
-            variant="primary">
+            variant="primary" i18n="@@clients.client-outstanding-panel.facture.s.33f7f1a0">
             <span class="encours-kpi-sub">{{ outstanding.unpaidInvoiceCount }} facture(s)</span>
           </app-stat-card>
 
           <app-stat-card
-            label="Commandes non facturées"
+            label="Commandes non facturées" i18n-label="@@clients.client-outstanding-panel.commandes.non.facturees.09643889"
             [value]="formatAmount(outstanding.confirmedOrdersAmount) + ' ' + outstanding.currency"
             icon="pi-shopping-cart"
             variant="warning">
           </app-stat-card>
 
           <app-stat-card
-            label="Encours total"
+            label="Encours total" i18n-label="@@clients.client-outstanding-panel.encours.total.de6fe91a"
             [value]="formatAmount(outstanding.totalOutstanding) + ' ' + outstanding.currency"
             icon="pi-wallet"
             [variant]="outstanding.isOverLimit ? 'error' : 'primary'"
@@ -85,7 +85,7 @@ import { ClientOutstanding } from '@core/services/client.service';
           </app-stat-card>
 
           <app-stat-card
-            label="Marge restante"
+            label="Marge restante" i18n-label="@@clients.client-outstanding-panel.marge.restante.6f956963"
             [value]="marginDisplay"
             icon="pi-shield"
             [variant]="marginVariant">
@@ -95,11 +95,11 @@ import { ClientOutstanding } from '@core/services/client.service';
         <div class="encours-plafond">
           @if (outstanding.creditLimit === null) {
             <div class="encours-plafond__empty">
-              <span class="ft-muted">Aucun plafond défini.</span>
-              <a class="encours-edit-link" [routerLink]="editLink">Définir un plafond</a>
+              <span class="ft-muted" i18n="@@clients.client-outstanding-panel.aucun.plafond.defini.f42b48bf">Aucun plafond défini.</span>
+              <a class="encours-edit-link" [routerLink]="editLink" i18n="@@clients.client-outstanding-panel.definir.un.plafond.75174fc0">Définir un plafond</a>
             </div>
           } @else {
-            <div class="encours-plafond__meta">
+            <div class="encours-plafond__meta" i18n="@@clients.client-outstanding-panel.plafond.utilise.63212816">
               <span class="ft-info__label">Plafond</span>
               <span class="encours-plafond__value ft-mono">
                 {{ formatAmount(outstanding.creditLimit) }} {{ outstanding.currency }}
@@ -111,7 +111,7 @@ import { ClientOutstanding } from '@core/services/client.service';
             <p-progressBar
               [value]="utilizationBarValue()"
               [showValue]="false"
-              [styleClass]="outstanding.isOverLimit ? 'encours-progress encours-progress--over' : 'encours-progress'">
+              [styleClass]="outstanding.isOverLimit ? loc_ui_tern_encours_progress_encours_progress_over_b0a1e5 : 'encours-progress'">
             </p-progressBar>
           }
         </div>
@@ -124,7 +124,7 @@ import { ClientOutstanding } from '@core/services/client.service';
     }
 
     .encours-panel--over {
-      border-left-color: var(--color-warning-500, #f59e0b);
+      border-inline-start-color: var(--color-warning-500, #f59e0b);
     }
 
     .encours-edit-link {
@@ -194,7 +194,7 @@ import { ClientOutstanding } from '@core/services/client.service';
     }
 
     .encours-plafond__pct {
-      margin-left: var(--spacing-2, 0.5rem);
+      margin-inline-start: var(--spacing-2, 0.5rem);
       color: var(--color-text-secondary, #64748b);
       font-weight: var(--font-weight-medium, 500);
     }
@@ -227,6 +227,7 @@ import { ClientOutstanding } from '@core/services/client.service';
   `]
 })
 export class ClientOutstandingPanelComponent {
+  readonly loc_ui_tern_encours_progress_encours_progress_over_b0a1e5 = "encours-progress encours-progress--over";
   @Input() outstanding: ClientOutstanding | null = null;
   @Input() loading = false;
   /** Relative router link to the client edit form (default: sibling "edit"). */

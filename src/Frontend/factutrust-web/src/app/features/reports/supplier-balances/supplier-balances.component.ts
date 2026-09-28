@@ -35,31 +35,27 @@ import {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Solde par fournisseur"
-      subtitle="Solde commercial (facturé − payé) par fournisseur">
+      title="Solde par fournisseur" i18n-title="@@reports.supplier-balances.solde.par.fournisseur.7b26b81c"
+      subtitle="Solde commercial (facturé − payé) par fournisseur" i18n-subtitle="@@reports.supplier-balances.solde.commercial.facture.paye.par.fourni.7c604f20">
       <app-button
         variant="secondary"
         icon="pi-print"
         iconPos="left"
         (click)="onPrint()"
-        ariaLabel="Imprimer les soldes fournisseurs">
-        Imprimer
-      </app-button>
+        ariaLabel="Imprimer les soldes fournisseurs" i18n-ariaLabel="@@reports.supplier-balances.imprimer.les.soldes.fournisseurs.70d0790d" i18n="@@reports.supplier-balances.imprimer.5382c09d"> Imprimer </app-button>
       <app-button
         variant="secondary"
         icon="pi-download"
         iconPos="left"
         (click)="onExport()"
-        ariaLabel="Exporter les soldes fournisseurs en CSV">
-        Exporter
-      </app-button>
+        ariaLabel="Exporter les soldes fournisseurs en CSV" i18n-ariaLabel="@@reports.supplier-balances.exporter.les.soldes.fournisseurs.en.csv.eb2336eb" i18n="@@reports.supplier-balances.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
 
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@reports.supplier-balances.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
-          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres">
+          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="@@reports.supplier-balances.reinitialiser.les.filtres.d8915f02" i18n="@@reports.supplier-balances.reinitialiser.c77ef305">
             <i class="pi pi-times"></i>
             Réinitialiser
           </button>
@@ -71,18 +67,18 @@ import {
           <input
             type="text"
             class="filter-input"
-            placeholder="Rechercher un fournisseur..."
+            placeholder="Rechercher un fournisseur..." i18n-placeholder="@@reports.supplier-balances.rechercher.un.fournisseur.95eafd92"
             [ngModel]="search()"
             (ngModelChange)="search.set($event)"
-            aria-label="Rechercher un fournisseur" />
+            aria-label="Rechercher un fournisseur" i18n-aria-label="@@reports.supplier-balances.rechercher.un.fournisseur.c3611217" />
         </span>
         <label class="filter-toggle">
           <input
             type="checkbox"
             [ngModel]="hideZeroBalances()"
-            (ngModelChange)="hideZeroBalances.set($event)" />
+            (ngModelChange)="hideZeroBalances.set($event)" /><ng-container i18n="@@reports.supplier-balances.masquer.les.soldes.a.zero.f97078e9">
           Masquer les soldes à zéro
-        </label>
+        </ng-container></label>
       </div>
     </div>
 
@@ -94,8 +90,8 @@ import {
         [loading]="loading()"
         partyLabel="Fournisseur"
         [showActions]="true"
-        emptyMessage="Aucun solde fournisseur"
-        ariaLabel="Soldes par fournisseur"
+        emptyMessage="Aucun solde fournisseur" i18n-emptyMessage="@@reports.supplier-balances.aucun.solde.fournisseur.6ed70d5f"
+        ariaLabel="Soldes par fournisseur" i18n-ariaLabel="@@reports.supplier-balances.soldes.par.fournisseur.590d3a47"
         (viewInvoices)="onViewInvoices($event)"
         (viewParty)="onViewParty($event)">
       </app-party-balances-table>
@@ -105,7 +101,7 @@ import {
     .filter-input {
       width: 100%;
       min-width: 220px;
-      padding: var(--spacing-2) var(--spacing-3) var(--spacing-2) var(--spacing-8);
+      padding-block: var(--spacing-2); padding-inline: var(--spacing-8) var(--spacing-3);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-lg);
       font-size: var(--font-size-sm);
@@ -139,9 +135,9 @@ export class SupplierBalancesComponent implements OnInit {
   private readonly router = inject(Router);
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Accueil', route: '/' },
-    { label: 'Achats', route: '/supplier-invoices' },
-    { label: 'Solde par fournisseur' }
+    { label: $localize`:@@reports.supplier-balances.ts.accueil.a8ff8fd2:Accueil`, route: '/' },
+    { label: $localize`:@@reports.supplier-balances.ts.achats.ee5b078c:Achats`, route: '/supplier-invoices' },
+    { label: $localize`:@@reports.supplier-balances.ts.solde.par.fournisseur.7b26b81c:Solde par fournisseur` }
   ];
 
   loading = signal(true);

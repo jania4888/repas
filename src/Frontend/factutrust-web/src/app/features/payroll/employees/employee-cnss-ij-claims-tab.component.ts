@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,18 +22,17 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
 @Component({
   selector: 'app-employee-cnss-ij-claims-tab',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, TagModule, DatePickerModule, DialogModule, ButtonComponent],
+  imports: [
+    BackendLabelPipe,CommonModule, FormsModule, TableModule, TagModule, DatePickerModule, DialogModule, ButtonComponent],
   template: `
-    <p class="payroll-info-text mb-3">
-      Créances IJ CNSS générées lors de la paie (subrogation maladie ou indemnisation maternité).
-    </p>
+    <p class="payroll-info-text mb-3" i18n="@@payroll.employees.creances.ij.cnss.generees.lors.de.la.paie.subrog.6d51992e"> Créances IJ CNSS générées lors de la paie (subrogation maladie ou indemnisation maternité). </p>
 
     <p-table [value]="items()" styleClass="p-datatable-sm">
       <ng-template pTemplate="header">
         <tr>
-          <th>Période</th>
-          <th class="text-right">Montant</th>
-          <th>Statut</th>
+          <th i18n="@@payroll.employees.periode.de2110b7">Période</th>
+          <th class="text-right" i18n="@@payroll.employees.montant.4adcd9fc">Montant</th>
+          <th i18n="@@payroll.employees.statut.659499f3">Statut</th>
           @if (!readOnly) { <th></th> }
         </tr>
       </ng-template>
@@ -41,33 +42,31 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
           <td class="text-right">{{ c.amount | number:'1.3-3' }} TND</td>
           <td>
             <p-tag
-              [value]="c.statusDisplay"
+              [value]="c.statusDisplay | backendLabel"
               [severity]="c.status === 'Paid' ? 'success' : c.status === 'Rejected' ? 'danger' : 'warn'" />
           </td>
           @if (!readOnly) {
             <td>
               @if (c.status === 'Pending') {
-                <button type="button" class="p-button p-button-text p-button-sm" (click)="openMarkPaid(c)">
-                  Marquer réglée
-                </button>
+                <button type="button" class="p-button p-button-text p-button-sm" (click)="openMarkPaid(c)" i18n="@@payroll.employees.marquer.reglee.08e95b04"> Marquer réglée </button>
               }
             </td>
           }
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
-        <tr><td [attr.colspan]="readOnly ? 3 : 4">Aucune créance IJ CNSS.</td></tr>
+        <tr><td [attr.colspan]="readOnly ? 3 : 4" i18n="@@payroll.employees.aucune.creance.ij.cnss.2f845cb6">Aucune créance IJ CNSS.</td></tr>
       </ng-template>
     </p-table>
 
-    <p-dialog header="Règlement IJ CNSS" [(visible)]="markPaidVisible" [modal]="true" [style]="{ width: '360px' }">
+    <p-dialog header="Règlement IJ CNSS" i18n-header="@@payroll.employees.reglement.ij.cnss.e76c2dfb" [(visible)]="markPaidVisible" [modal]="true" [style]="{ width: '360px' }">
       <div class="payroll-form-group">
-        <label>Date de règlement</label>
+        <label i18n="@@payroll.employees.date.de.reglement.65e1210f">Date de règlement</label>
         <p-datepicker [(ngModel)]="paidAt" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
       </div>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="markPaidVisible = false">Annuler</app-button>
-        <app-button variant="primary" (click)="confirmMarkPaid()">Confirmer</app-button>
+        <app-button variant="outline" (click)="markPaidVisible = false" i18n="@@payroll.employees.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="confirmMarkPaid()" i18n="@@payroll.employees.confirmer.80a664c8">Confirmer</app-button>
       </ng-template>
     </p-dialog>
   `,
@@ -95,7 +94,7 @@ export class EmployeeCnssIjClaimsTabComponent implements OnInit {
   reload(): void {
     this.payroll.listCnssIjClaims(this.employeeId).subscribe({
       next: res => this.items.set(res.data ?? []),
-      error: () => this.toast.add({ severity: 'error', summary: 'IJ CNSS', detail: 'Chargement impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@employee-cnss-ij-claims-tab.component.summary.IJ CNSS:IJ CNSS`, detail: $localize`:@@employee-cnss-ij-claims-tab.component.detail.Chargement_impos:Chargement impossible.` })
     });
   }
 
@@ -112,14 +111,14 @@ export class EmployeeCnssIjClaimsTabComponent implements OnInit {
 
     this.payroll.markCnssIjClaimPaid(this.selectedClaim.id, paidAt).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'IJ CNSS', detail: 'Créance marquée comme réglée.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-cnss-ij-claims-tab.component.summary.IJ CNSS:IJ CNSS`, detail: $localize`:@@employee-cnss-ij-claims-tab.component.detail.Cr_ance_marqu_e_:Créance marquée comme réglée.` });
         this.markPaidVisible = false;
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'IJ CNSS',
-        detail: err?.error?.message ?? 'Mise à jour impossible.'
+        summary: $localize`:@@employee-cnss-ij-claims-tab.component.summary.IJ CNSS:IJ CNSS`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.mise.a.jour.impossible.84076d:Mise à jour impossible.`
       })
     });
   }

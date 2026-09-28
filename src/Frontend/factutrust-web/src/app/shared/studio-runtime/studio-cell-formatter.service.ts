@@ -31,7 +31,7 @@ export class StudioCellFormatterService {
     if (value === null || value === undefined || value === '') return '-';
     const format = meta?.format ?? this.inferFormat(value, meta?.key);
     switch (format) {
-      case 'boolean': return value === true || value === 'true' || value === 1 || value === '1' ? 'Oui' : 'Non';
+      case 'boolean': return value === true || value === 'true' || value === 1 || value === '1' ? $localize`:@@shared.studio-cell-formatter.ts.oui.eaa02f3f:Oui` : $localize`:@@shared.studio-cell-formatter.ts.non.a7219939:Non`;
       case 'date': return this.formatDate(value, false);
       case 'datetime': return this.formatDate(value, true);
       case 'number': return this.formatNumber(value);

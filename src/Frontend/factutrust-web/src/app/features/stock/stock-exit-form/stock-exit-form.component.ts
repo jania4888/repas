@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -41,29 +42,27 @@ import { ConfirmationService } from '@core/services/confirmation.service';
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Nouvelle sortie de stock" 
-      subtitle="Enregistrez une sortie de marchandise de votre entrepôt">
+      title="Nouvelle sortie de stock" i18n-title="@@stock.stock-exit-form.nouvelle.sortie.de.stock.8989c4d6" 
+      subtitle="Enregistrez une sortie de marchandise de votre entrepôt" i18n-subtitle="@@stock.stock-exit-form.enregistrez.une.sortie.de.marchandise.de.954f60f4">
       <app-button 
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/stock">
-        Annuler
-      </app-button>
+        routerLink="/stock" i18n="@@stock.stock-exit-form.annuler.49ba3292"> Annuler </app-button>
     </app-page-header>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="form-grid">
         <!-- Section 1: Entrepôt & Produit -->
-        <app-form-section title="Détails du Stock" icon="pi-box" [number]="1">
+        <app-form-section title="Détails du Stock" i18n-title="@@stock.stock-exit-form.details.du.stock.04fbfd18" icon="pi-box" [number]="1">
           <div class="form-group">
-            <label for="warehouse">Entrepôt <span class="required">*</span></label>
+            <label for="warehouse"><ng-container i18n="@@stock.stock-exit-form.entrepot.c349c0bc">Entrepôt </ng-container> <span class="required" i18n="@@stock.stock-exit-form.text.df58248c">*</span></label>
             <p-select 
               id="warehouse"
               [options]="warehouses" 
               formControlName="warehouse"
               optionLabel="name"
-              placeholder="Sélectionner un entrepôt"
+              placeholder="Sélectionner un entrepôt" i18n-placeholder="@@stock.stock-exit-form.selectionner.un.entrepot.2e4d1232"
               styleClass="w-full"
               [class.ng-invalid]="isInvalid('warehouse')">
             </p-select>
@@ -76,7 +75,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
           </div>
 
           <div class="form-group">
-            <label for="product">Produit <span class="required">*</span></label>
+            <label for="product"><ng-container i18n="@@stock.stock-exit-form.produit.ff673dc2">Produit </ng-container> <span class="required" i18n="@@stock.stock-exit-form.text.df58248c">*</span></label>
             <p-select 
               id="product"
               [options]="products" 
@@ -84,7 +83,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
               optionLabel="name"
               [filter]="true"
               filterBy="name,code"
-              placeholder="Chercher un produit"
+              placeholder="Chercher un produit" i18n-placeholder="@@stock.stock-exit-form.chercher.un.produit.44ee94b8"
               styleClass="w-full"
               [class.ng-invalid]="isInvalid('product')">
             </p-select>
@@ -95,8 +94,8 @@ import { ConfirmationService } from '@core/services/confirmation.service';
               </div>
             }
             @if (productsLoaded && products.length === 0) {
-              <small class="form-hint">
-                Aucun produit avec gestion de stock. 
+              <small class="form-hint" i18n="@@stock.stock-exit-form.aucun.produit.avec.gestion.de.stock.acti.792ada2c">
+                <ng-container> Aucun produit avec gestion de stock. </ng-container>
                 <a routerLink="/products">Activer sur un produit existant</a> ou
                 <a routerLink="/products/new">créer un produit</a>.
               </small>
@@ -105,9 +104,9 @@ import { ConfirmationService } from '@core/services/confirmation.service';
         </app-form-section>
 
         <!-- Section 2: Quantité -->
-        <app-form-section title="Quantité à Sortir" icon="pi-minus-circle" [number]="2">
+        <app-form-section title="Quantité à Sortir" i18n-title="@@stock.stock-exit-form.quantite.a.sortir.bab0682e" icon="pi-minus-circle" [number]="2">
            <div class="form-group">
-              <label for="quantity">Quantité <span class="required">*</span></label>
+              <label for="quantity"><ng-container i18n="@@stock.stock-exit-form.quantite.09a38fda">Quantité </ng-container> <span class="required" i18n="@@stock.stock-exit-form.text.df58248c">*</span></label>
               <p-inputNumber 
                 id="quantity" 
                 formControlName="quantity"
@@ -129,21 +128,21 @@ import { ConfirmationService } from '@core/services/confirmation.service';
            <!-- Warning panel -->
            <div class="exit-warning">
              <i class="pi pi-exclamation-triangle"></i>
-             <span>Cette opération réduira le stock disponible du produit sélectionné.</span>
+             <span i18n="@@stock.stock-exit-form.cette.operation.reduira.le.stock.disponible.du.p.43c58548">Cette opération réduira le stock disponible du produit sélectionné.</span>
            </div>
         </app-form-section>
         
         <!-- Section 3: Motif & Notes -->
-        <app-form-section title="Informations Complémentaires" icon="pi-file-edit" [number]="3">
+        <app-form-section title="Informations Complémentaires" i18n-title="@@stock.stock-exit-form.informations.complementaires.5ce46026" icon="pi-file-edit" [number]="3">
            <div class="form-group">
-              <label for="reason">Motif <span class="required">*</span></label>
+              <label for="reason"><ng-container i18n="@@stock.stock-exit-form.motif.2a198f47">Motif </ng-container> <span class="required" i18n="@@stock.stock-exit-form.text.df58248c">*</span></label>
               <p-select 
                 id="reason"
                 [options]="exitReasons" 
                 formControlName="reason"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Raison de la sortie"
+                placeholder="Raison de la sortie" i18n-placeholder="@@stock.stock-exit-form.raison.de.la.sortie.23c4a027"
                 styleClass="w-full"
                 [class.ng-invalid]="isInvalid('reason')">
               </p-select>
@@ -156,12 +155,12 @@ import { ConfirmationService } from '@core/services/confirmation.service';
             </div>
 
             <div class="form-group">
-              <label for="notes">Notes / Référence</label>
+              <label for="notes" i18n="@@stock.stock-exit-form.notes.reference.682d0de7">Notes / Référence</label>
               <textarea 
                 pTextarea 
                 id="notes" 
                 formControlName="notes"
-                placeholder="Ex: Ajustement inventaire"
+                placeholder="Ex: Ajustement inventaire" i18n-placeholder="@@stock.stock-exit-form.ex.ajustement.inventaire.153b5f1e"
                 [rows]="3"
                 class="w-full">
               </textarea>
@@ -175,18 +174,14 @@ import { ConfirmationService } from '@core/services/confirmation.service';
           variant="outline"
           icon="pi-times"
           iconPos="left"
-          routerLink="/stock">
-          Annuler
-        </app-button>
+          routerLink="/stock" i18n="@@stock.stock-exit-form.annuler.49ba3292"> Annuler </app-button>
         <app-button 
           variant="primary"
           type="submit"
           [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"
           iconPos="left"
           [disabled]="form.invalid || saving()"
-          class="danger-button">
-          Enregistrer la sortie
-        </app-button>
+          class="danger-button" i18n="@@stock.stock-exit-form.enregistrer.la.sortie.478823d2"> Enregistrer la sortie </app-button>
       </div>
     </form>
   `,
@@ -225,7 +220,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
 
       .required {
         color: var(--color-error-600);
-        margin-left: var(--spacing-1);
+        margin-inline-start: var(--spacing-1);
       }
     }
 
@@ -306,14 +301,14 @@ export class StockExitFormComponent implements OnInit {
   productsLoaded = false;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Gestion du Stock', route: '/stock' },
-    { label: 'Nouvelle Sortie' }
+    { label: $localize`:@@stock.stock-exit-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@stock.stock-exit-form.ts.gestion.du.stock.72df5586:Gestion du Stock`, route: '/stock' },
+    { label: $localize`:@@stock.stock-exit-form.ts.nouvelle.sortie.dd4db0bf:Nouvelle Sortie` }
   ];
 
   exitReasons = [
-    { label: 'Retour Fournisseur', value: MovementReason.SupplierReturn },
-    { label: 'Dommage / Perte', value: MovementReason.Damage }
+    { label: $localize`:@@stock.stock-exit-form.ts.retour.fournisseur.371de2a8:Retour Fournisseur`, value: MovementReason.SupplierReturn },
+    { label: $localize`:@@stock.stock-exit-form.ts.dommage.perte.4a8ecd42:Dommage / Perte`, value: MovementReason.Damage }
   ];
 
   form: FormGroup = this.fb.group({
@@ -383,13 +378,13 @@ export class StockExitFormComponent implements OnInit {
       next: (res) => {
         if (res.success) {
           this.toastService.add({
-            severity: 'success', summary: 'Succès', detail: 'Sortie de stock enregistrée'
+            severity: 'success', summary: $localize`:@@stock-exit-form.component.summary.Succès:Succès`, detail: $localize`:@@stock-exit-form.component.detail.Sortie_de_stock_:Sortie de stock enregistrée`
           });
           this.router.navigate(['/stock']);
         } else {
-          const detail = res.errors?.join(', ') || res.message || 'Erreur';
+          const detail = res.errors?.join(', ') || res.message || $localize`:@@stock.stock-exit-form.ts.erreur.ab546c23:Erreur`;
           this.confirmationService.alert({
-            header: 'Sortie de stock impossible',
+            header: $localize`:@@stock.stock-exit-form.ts.sortie.de.stock.impossible.803e3955:Sortie de stock impossible`,
             message: detail,
             icon: 'pi pi-exclamation-triangle'
           });
@@ -399,8 +394,8 @@ export class StockExitFormComponent implements OnInit {
       error: (err) => {
         const errorMessage = this.errorHandler.extractErrorMessage(err);
         this.confirmationService.alert({
-          header: 'Sortie de stock impossible',
-          message: errorMessage || 'Une erreur est survenue',
+          header: $localize`:@@stock.stock-exit-form.ts.sortie.de.stock.impossible.803e3955:Sortie de stock impossible`,
+          message: errorMessage || $localize`:@@stock.stock-exit-form.ts.une.erreur.est.survenue.0419f56e:Une erreur est survenue`,
           icon: 'pi pi-exclamation-triangle'
         });
         this.errorHandler.logError('Stock exit failed', err, { consoleLevel: 'warn' });

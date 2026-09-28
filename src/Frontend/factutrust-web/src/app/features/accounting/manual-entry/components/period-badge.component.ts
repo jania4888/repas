@@ -12,21 +12,21 @@ export type PeriodStatus = 'open' | 'closed' | 'none';
     @switch (status()) {
       @case ('open') {
         <span class="me-period-badge me-period-open" role="status"
-              [attr.title]="'Cette date appartient à une période comptable ouverte'">
+              [attr.title]="loc_cette_date_appartient_a_une_periode__29a992" i18n="@@accounting.manual-entry.periode.ouverte.5919f319">
           <span class="me-period-dot" aria-hidden="true"></span>
           Période ouverte
         </span>
       }
       @case ('closed') {
         <span class="me-period-badge me-period-closed" role="status"
-              [attr.title]="'Cette date appartient à une période comptable clôturée — l’enregistrement sera refusé'">
+              [attr.title]="loc_cette_date_appartient_a_une_periode__94cb03" i18n="@@accounting.manual-entry.periode.fermee.640f9aa5">
           <span class="me-period-dot" aria-hidden="true"></span>
           Période fermée
         </span>
       }
       @default {
         <span class="me-period-badge me-period-none" role="status"
-              [attr.title]="'Aucune période comptable n’existe pour cette date — elle sera créée automatiquement à l’enregistrement'">
+              [attr.title]="loc_aucune_periode_comptable_n_existe_po_da09e9" i18n="@@accounting.manual-entry.aucune.periode.e4c0fc05">
           <span class="me-period-dot" aria-hidden="true"></span>
           Aucune période
         </span>
@@ -42,6 +42,10 @@ export type PeriodStatus = 'open' | 'closed' | 'none';
   `
 })
 export class PeriodBadgeComponent {
+  protected readonly loc_cette_date_appartient_a_une_periode__29a992 = $localize`:@@accounting.period-badge.tpl.cette.date.appartient.a.une.periode.comp.29a992b1:Cette date appartient à une période comptable ouverte`;
+  protected readonly loc_cette_date_appartient_a_une_periode__94cb03 = $localize`:@@accounting.period-badge.tpl.cette.date.appartient.a.une.periode.comp.94cb034e:Cette date appartient à une période comptable clôturée — l’enregistrement sera refusé`;
+  protected readonly loc_aucune_periode_comptable_n_existe_po_da09e9 = $localize`:@@accounting.period-badge.tpl.aucune.periode.comptable.n.existe.pour.c.da09e9e1:Aucune période comptable n’existe pour cette date — elle sera créée automatiquement à l’enregistrement`;
+
   readonly date = input.required<string>();
   readonly periods = input.required<AccountingPeriodDto[]>();
 

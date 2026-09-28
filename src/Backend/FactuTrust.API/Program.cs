@@ -238,6 +238,17 @@ builder.Services.AddRateLimiter(options =>
                 Window = TimeSpan.FromMinutes(1)
             }));
 
+    options.AddPolicy("user-preferences", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+            ?? context.Connection.RemoteIpAddress?.ToString()
+            ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = isDevelopment ? 100 : 20,
+                Window = TimeSpan.FromMinutes(1)
+            }));
+
     // L'inscription anonyme provisionne une base SQL complète : limite stricte par IP.
     options.AddPolicy("register", context =>
         RateLimitPartition.GetFixedWindowLimiter(
@@ -394,11 +405,17 @@ builder.Services.AddRateLimiter(options =>
                 Math.Max(1, (int)Math.Ceiling(retryAfter.TotalSeconds)).ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
 
+        // Réponse écrite hors MVC : ni LocalizeApiResponseFilter ni ExceptionHandlingMiddleware ne la voient.
+        // UiLanguageMiddleware s'exécute avant le limiteur : le localiseur connaît déjà la langue de l'interface.
+        var localizer = context.HttpContext.RequestServices
+            .GetService<FactuTrust.Application.Localization.IMessageLocalizer>();
+        string Localize(string text) => localizer?.Localize(text) ?? text;
         var response = System.Text.Json.JsonSerializer.Serialize(new
         {
             success = false,
-            message = "Trop de requêtes. Veuillez réessayer plus tard.",
-            errors = new[] { "Trop de requêtes. Veuillez patienter avant de réessayer." }
+            code = FactuTrust.Application.DTOs.ValidationErrorCodes.RateLimitExceeded,
+            message = Localize("Trop de requêtes. Veuillez réessayer plus tard."),
+            errors = new[] { Localize("Trop de requêtes. Veuillez patienter avant de réessayer.") }
         });
         
         await context.HttpContext.Response.WriteAsync(response);
@@ -433,7 +450,10 @@ builder.Services.AddCors(options =>
 });
 
 // Controllers with JSON options
-builder.Services.AddControllers()
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<FactuTrust.API.Filters.LocalizeApiResponseFilter>();
+})
     .AddJsonOptions(options =>
     {
         // Property names follow camelCase for TypeScript ergonomics (e.g. "totalAmount", "issueDate").
@@ -562,7 +582,7 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline
 
-// Exception handling
+app.UseMiddleware<UiLanguageMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Swagger (development only) - before security headers to avoid CSP blocking

@@ -12,21 +12,21 @@ import { AccountingService, JournalEntryTemplateDto } from '../../services/accou
   template: `
     <section class="template-tab card">
       <div class="template-tab__search">
-        <input type="search" class="me-input" placeholder="Rechercher un modèle…"
+        <input type="search" class="me-input" placeholder="Rechercher un modèle…" i18n-placeholder="@@accounting.manual-entry.rechercher.un.modele.57af3d5f"
                [(ngModel)]="search" (ngModelChange)="load()" />
       </div>
       @if (loading()) {
-        <p>Chargement…</p>
+        <p i18n="@@accounting.manual-entry.chargement.01cba1df">Chargement…</p>
       } @else if (templates().length === 0) {
-        <p class="empty">Aucun modèle d'écriture disponible.</p>
+        <p class="empty" i18n="@@accounting.manual-entry.aucun.modele.d.ecriture.disponible.33f3056c">Aucun modèle d'écriture disponible.</p>
       } @else {
         <table class="template-table">
           <thead>
             <tr>
-              <th>Modèle</th>
-              <th>Description</th>
-              <th>Journal conseillé</th>
-              <th>Action</th>
+              <th i18n="@@accounting.manual-entry.modele.9853170f">Modèle</th>
+              <th i18n="@@accounting.manual-entry.description.55f8ebc8">Description</th>
+              <th i18n="@@accounting.manual-entry.journal.conseille.0a43106d">Journal conseillé</th>
+              <th i18n="@@accounting.manual-entry.action.97c89a4d">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -36,14 +36,14 @@ import { AccountingService, JournalEntryTemplateDto } from '../../services/accou
                 <td>{{ t.description || '—' }}</td>
                 <td>{{ t.journalCode }}</td>
                 <td>
-                  <button type="button" class="btn btn-sm btn-primary" (click)="apply.emit(t)">Utiliser</button>
+                  <button type="button" class="btn btn-sm btn-primary" (click)="apply.emit(t)" i18n="@@accounting.manual-entry.utiliser.fb5e43ce">Utiliser</button>
                 </td>
               </tr>
             }
           </tbody>
         </table>
       }
-      <a routerLink="/accounting/entry-templates" class="template-tab__link">Voir tous les modèles →</a>
+      <a routerLink="/accounting/entry-templates" class="template-tab__link" i18n="@@accounting.manual-entry.voir.tous.les.modeles.d9194c68">Voir tous les modèles →</a>
     </section>
   `,
   styles: `
@@ -51,7 +51,7 @@ import { AccountingService, JournalEntryTemplateDto } from '../../services/accou
     .template-tab__search { margin-bottom:var(--spacing-4); max-width:24rem; }
     .me-input { width:100%; padding:var(--spacing-2) var(--spacing-3); border:1px solid var(--color-border-default); border-radius:var(--radius-md); }
     .template-table { width:100%; border-collapse:collapse; font-size:var(--font-size-sm); }
-    .template-table th, .template-table td { padding:var(--spacing-2) var(--spacing-3); border-bottom:1px solid var(--color-border-subtle); text-align:left; }
+    .template-table th, .template-table td { padding:var(--spacing-2) var(--spacing-3); border-bottom:1px solid var(--color-border-subtle); text-align:start; }
     .template-tab__link { display:inline-block; margin-top:var(--spacing-4); font-size:var(--font-size-sm); color:var(--color-primary-600); }
     .empty { color:var(--color-text-secondary); }
   `

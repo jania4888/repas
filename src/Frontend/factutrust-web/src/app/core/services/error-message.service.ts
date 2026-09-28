@@ -1,18 +1,22 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
+import { CORE_VALIDATION } from '@core/i18n/core-localize';
 
 @Injectable({ providedIn: 'root' })
 export class ErrorMessageService {
-  private errorMessages: Record<string, string> = {
-    'required': 'Ce champ est obligatoire',
-    'email': 'Veuillez saisir une adresse email valide',
-    'minlength': 'Ce champ doit contenir au moins {minLength} caractères',
-    'maxlength': 'Ce champ ne doit pas dépasser {maxLength} caractères',
-    'pattern': 'Le format saisi est incorrect',
-    'min': 'La valeur minimale est {min}',
-    'max': 'La valeur maximale est {max}',
-    'passwordMismatch': 'Les mots de passe ne correspondent pas'
-  };
+  private errorMessages(): Record<string, string> {
+    const v = CORE_VALIDATION;
+    return {
+      required: v.required,
+      email: v.email,
+      minlength: v.minlength,
+      maxlength: v.maxlength,
+      pattern: v.pattern,
+      min: v.min,
+      max: v.max,
+      passwordMismatch: v.passwordMismatch
+    };
+  }
 
   getErrorMessage(control: AbstractControl | null): string {
     if (!control || !control.errors) return '';
@@ -28,48 +32,40 @@ export class ErrorMessageService {
         return error.message;
       }
     }
-    
-    let message = this.errorMessages[firstError] || 'Ce champ contient une erreur';
-    
-    // Remplacer les placeholders
+
+    let message = this.errorMessages()[firstError] || CORE_VALIDATION.generic;
+
     if (firstError === 'minlength' && error.requiredLength) {
       message = message.replace('{minLength}', error.requiredLength.toString());
     }
-    
+
     if (firstError === 'maxlength' && error.requiredLength) {
       message = message.replace('{maxLength}', error.requiredLength.toString());
     }
-    
+
     if (firstError === 'min' && error.min !== undefined) {
       message = message.replace('{min}', error.min.toString());
     }
-    
+
     if (firstError === 'max' && error.max !== undefined) {
       message = message.replace('{max}', error.max.toString());
     }
-    
+
     return message;
   }
 
   getFieldSuggestion(fieldName: string, errorType: string): string {
+    const nifFormat = $localize`:@@core.validation.suggestion.nif:Format attendu : 1772793W/A/M/000`;
+    const phoneFormat = $localize`:@@core.validation.suggestion.phone:Format attendu : XX XXX XXX (8 chiffres)`;
+    const passwordRule = $localize`:@@core.validation.suggestion.password:Le mot de passe doit contenir au moins 12 caractères avec majuscule, minuscule, chiffre et caractère spécial`;
     const suggestions: Record<string, Record<string, string>> = {
-      'email': {
-        'email': 'Exemple : votre@email.com'
+      email: {
+        email: $localize`:@@core.validation.suggestion.email:Exemple : votre@email.com`
       },
-      'nif': {
-        'pattern': 'Format attendu : 1772793W/A/M/000',
-        'required': 'Format attendu : 1772793W/A/M/000'
-      },
-      'phone': {
-        'pattern': 'Format attendu : XX XXX XXX (8 chiffres)',
-        'required': 'Format attendu : XX XXX XXX (8 chiffres)'
-      },
-      'password': {
-        'minlength': 'Le mot de passe doit contenir au moins 12 caractères avec majuscule, minuscule, chiffre et caractère spécial',
-        'pattern': 'Le mot de passe doit contenir au moins 12 caractères avec majuscule, minuscule, chiffre et caractère spécial'
-      }
+      nif: { pattern: nifFormat, required: nifFormat },
+      phone: { pattern: phoneFormat, required: phoneFormat },
+      password: { minlength: passwordRule, pattern: passwordRule }
     };
-    
     return suggestions[fieldName]?.[errorType] || '';
   }
 }

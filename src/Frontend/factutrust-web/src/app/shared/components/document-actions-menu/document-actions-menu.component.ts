@@ -55,13 +55,13 @@ export class DocumentActionsMenuComponent {
   /** Éléments du menu (séparateurs et `visible: false` supportés). */
   @Input() items: MenuItem[] = [];
   /** Libellé du bouton déclencheur. */
-  @Input() label = 'Actions';
+  @Input() label = $localize`:@@shared.document-actions-menu.ts.actions.c3cd636a:Actions`;
   /**
    * Alignement horizontal du panneau par rapport au bouton.
    * `'end'` est le défaut (header à droite). PrimeNG 19 n'expose pas `popupAlignment`.
    */
   @Input() align: 'start' | 'end' | 'center' = 'end';
-  @Input() ariaLabel = 'Menu des actions';
+  @Input() ariaLabel = $localize`:@@shared.document-actions-menu.ts.menu.des.actions.0fec830f:Menu des actions`;
 
   readonly menuVisible = signal(false);
 

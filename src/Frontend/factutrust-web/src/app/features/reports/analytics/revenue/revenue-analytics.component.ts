@@ -25,21 +25,19 @@ import {
     ],
     template: `
     <app-page-header
-      title="Chiffre d'affaires"
-      subtitle="Suivez l'évolution de votre chiffre d'affaires au fil du temps">
+      title="Chiffre d'affaires" i18n-title="@@reports.analytics.chiffre.d.affaires.0a341b9f"
+      subtitle="Suivez l'évolution de votre chiffre d'affaires au fil du temps" i18n-subtitle="@@reports.analytics.suivez.l.evolution.de.votre.chiffre.d.af.76e29594">
       <app-button
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()">
-        Imprimer
-      </app-button>
+        (click)="onPrint()" i18n="@@reports.analytics.imprimer.5382c09d"> Imprimer </app-button>
     </app-page-header>
 
     <!-- Period Filter -->
     <div class="filter-bar">
       <div class="filter-group">
-        <label class="filter-label">Période</label>
+        <label class="filter-label" i18n="@@reports.analytics.periode.de2110b7">Période</label>
         <div class="period-tabs">
           @for (p of periodOptions; track p.value) {
             <button
@@ -78,20 +76,20 @@ import {
     } @else if (data()) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Chiffre d'affaires"
+          label="Chiffre d'affaires" i18n-label="@@reports.analytics.chiffre.d.affaires.0a341b9f"
           [value]="formatAmount(data()!.totalRevenue)"
           icon="pi-dollar"
           variant="success"
           [change]="data()!.comparison.changePercent">
         </app-stat-card>
         <app-stat-card
-          label="Factures émises"
+          label="Factures émises" i18n-label="@@reports.analytics.factures.emises.25238c12"
           [value]="data()!.totalInvoices"
           icon="pi-file"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Période précédente"
+          label="Période précédente" i18n-label="@@reports.analytics.periode.precedente.5e420e76"
           [value]="formatAmount(data()!.comparison.previousValue)"
           icon="pi-history"
           variant="warning">
@@ -102,8 +100,8 @@ import {
     <!-- Revenue Chart -->
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Évolution du chiffre d'affaires</h2>
-        <span class="section-hint">
+        <h2 class="section-title" i18n="@@reports.analytics.evolution.du.chiffre.d.affaires.59b2f451">Évolution du chiffre d'affaires</h2>
+        <span class="section-hint" i18n="@@reports.analytics.ce.graphique.montre.vos.revenus.sur.la.p.a0a9ea52">
           <i class="pi pi-info-circle"></i>
           Ce graphique montre vos revenus sur la période sélectionnée
         </span>
@@ -113,11 +111,11 @@ import {
         <div class="chart-placeholder">
           <div class="loading-spinner">
             <i class="pi pi-spin pi-spinner"></i>
-            <span>Chargement...</span>
+            <span i18n="@@reports.analytics.chargement.a209b664">Chargement...</span>
           </div>
         </div>
       } @else if (data()?.chartData && hasChartData()) {
-        <div class="chart-container" role="img" aria-label="Graphique en barres du chiffre d'affaires">
+        <div class="chart-container" role="img" aria-label="Graphique en barres du chiffre d'affaires" i18n-aria-label="@@reports.analytics.graphique.en.barres.du.chiffre.d.affaires.7fbaa86e">
           <div class="chart-y-axis">
             <span class="y-label">{{ formatAmountShort(maxRevenue) }}</span>
             <span class="y-label">{{ formatAmountShort(maxRevenue / 2) }}</span>
@@ -132,9 +130,9 @@ import {
             <div class="chart-bars">
               @for (item of getVisibleChartData(); track item.label) {
                 <div class="bar-group">
-                  <div class="bar-tooltip">
+                  <div class="bar-tooltip" i18n="@@reports.analytics.facture.a81448ce.pl">
                     <strong>{{ formatAmount(item.revenue) }}</strong><br>
-                    <small>{{ item.invoiceCount }} facture{{ item.invoiceCount > 1 ? 's' : '' }}</small>
+                    <small>{{ item.invoiceCount }} {item.invoiceCount, plural, =0 {facture} =1 {facture} other {factures}}</small>
                   </div>
                   <div class="bar-wrapper">
                     <div
@@ -153,8 +151,8 @@ import {
         <div class="chart-placeholder">
           <div class="empty-state">
             <i class="pi pi-chart-bar empty-icon"></i>
-            <p class="empty-title">Aucune donnée pour cette période</p>
-            <p class="empty-subtitle">Les revenus apparaîtront ici une fois que vous aurez des factures payées.</p>
+            <p class="empty-title" i18n="@@reports.analytics.aucune.donnee.pour.cette.periode.b2a99770">Aucune donnée pour cette période</p>
+            <p class="empty-subtitle" i18n="@@reports.analytics.les.revenus.apparaitront.ici.une.fois.que.vous.a.2eb84cc9">Les revenus apparaîtront ici une fois que vous aurez des factures payées.</p>
           </div>
         </div>
       }
@@ -164,19 +162,19 @@ import {
     <div class="grid-2-cols">
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">CA par client</h2>
-          <span class="section-hint">
+          <h2 class="section-title" i18n="@@reports.analytics.ca.par.client.ffe5c6ae">CA par client</h2>
+          <span class="section-hint" i18n="@@reports.analytics.vos.meilleurs.clients.par.montant.total.b23d587d">
             <i class="pi pi-info-circle"></i>
             Vos meilleurs clients par montant total des factures payées
           </span>
         </div>
 
         @if (loading()) {
-          <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+          <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.analytics.chargement.a209b664">Chargement...</span></div>
         } @else if (!data()?.byClient?.length) {
           <div class="empty-state-sm">
             <i class="pi pi-users"></i>
-            <p>Aucune donnée disponible</p>
+            <p i18n="@@reports.analytics.aucune.donnee.disponible.78c36aa1">Aucune donnée disponible</p>
           </div>
         } @else {
           <div class="ranking-list">
@@ -185,9 +183,9 @@ import {
                 <div class="rank-badge" [class]="'rank-' + (i < 3 ? i + 1 : 'default')">
                   {{ i + 1 }}
                 </div>
-                <div class="rank-info">
+                <div class="rank-info" i18n="@@reports.analytics.facture.e9fce0d2.pl">
                   <span class="rank-name">{{ client.clientName }}</span>
-                  <span class="rank-detail">{{ client.invoiceCount }} facture{{ client.invoiceCount > 1 ? 's' : '' }}</span>
+                  <span class="rank-detail">{{ client.invoiceCount }} {client.invoiceCount, plural, =0 {facture} =1 {facture} other {factures}}</span>
                 </div>
                 <div class="rank-value">
                   <span class="rank-amount">{{ formatAmount(client.totalAmount) }}</span>
@@ -205,8 +203,8 @@ import {
       <!-- Revenue summary table for print -->
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Résumé chiffré</h2>
-          <span class="section-hint">
+          <h2 class="section-title" i18n="@@reports.analytics.resume.chiffre.682deb74">Résumé chiffré</h2>
+          <span class="section-hint" i18n="@@reports.analytics.vue.d.ensemble.de.la.periode.selectionne.02b283eb">
             <i class="pi pi-info-circle"></i>
             Vue d'ensemble de la période sélectionnée
           </span>
@@ -219,9 +217,9 @@ import {
                 <i class="pi pi-check-circle"></i>
               </div>
               <div class="summary-content">
-                <span class="summary-label">Total encaissé</span>
+                <span class="summary-label" i18n="@@reports.analytics.total.encaisse.1d142e41">Total encaissé</span>
                 <span class="summary-value">{{ formatAmount(data()!.totalRevenue) }}</span>
-                <span class="summary-desc">Montant total des factures payées sur la période</span>
+                <span class="summary-desc" i18n="@@reports.analytics.montant.total.des.factures.payees.sur.la.periode.8354cb1d">Montant total des factures payées sur la période</span>
               </div>
             </div>
             <div class="summary-item">
@@ -229,9 +227,9 @@ import {
                 <i class="pi pi-file"></i>
               </div>
               <div class="summary-content">
-                <span class="summary-label">Factures émises</span>
+                <span class="summary-label" i18n="@@reports.analytics.factures.emises.25238c12">Factures émises</span>
                 <span class="summary-value">{{ data()!.totalInvoices }}</span>
-                <span class="summary-desc">Nombre total de factures sur la période</span>
+                <span class="summary-desc" i18n="@@reports.analytics.nombre.total.de.factures.sur.la.periode.9c4fbfde">Nombre total de factures sur la période</span>
               </div>
             </div>
             <div class="summary-item">
@@ -239,9 +237,9 @@ import {
                 <i class="pi pi-chart-line"></i>
               </div>
               <div class="summary-content">
-                <span class="summary-label">Moyenne par facture</span>
+                <span class="summary-label" i18n="@@reports.analytics.moyenne.par.facture.b3785f82">Moyenne par facture</span>
                 <span class="summary-value">{{ data()!.totalInvoices > 0 ? formatAmount(data()!.totalRevenue / data()!.totalInvoices) : '0' }}</span>
-                <span class="summary-desc">Montant moyen par facture payée</span>
+                <span class="summary-desc" i18n="@@reports.analytics.montant.moyen.par.facture.payee.4c9910ff">Montant moyen par facture payée</span>
               </div>
             </div>
           </div>
@@ -252,18 +250,18 @@ import {
     <!-- Print-only section -->
     <div class="print-only print-report">
       <div class="print-header">
-        <h1 class="print-title">Chiffre d'Affaires</h1>
-        <div class="print-logo">Logo</div>
+        <h1 class="print-title" i18n="@@reports.analytics.chiffre.d.affaires.c2a496b1">Chiffre d'Affaires</h1>
+        <div class="print-logo" i18n="@@reports.analytics.logo.83fce832">Logo</div>
       </div>
       <div class="print-separator"></div>
       @if (data()) {
         <table class="print-table">
           <thead>
             <tr>
-              <th>Client</th>
-              <th>Factures</th>
-              <th>Montant total</th>
-              <th>Part du CA</th>
+              <th i18n="@@reports.analytics.client.1bdd79b1">Client</th>
+              <th i18n="@@reports.analytics.factures.da35e4f2">Factures</th>
+              <th i18n="@@reports.analytics.montant.total.dd001537">Montant total</th>
+              <th i18n="@@reports.analytics.part.du.ca.da3a868c">Part du CA</th>
             </tr>
           </thead>
           <tbody>
@@ -497,7 +495,7 @@ import {
       justify-content: space-between;
       padding-bottom: 28px;
       min-width: 60px;
-      text-align: right;
+      text-align: end;
     }
 
     .y-label {
@@ -515,8 +513,8 @@ import {
     .chart-grid-lines {
       position: absolute;
       top: 0;
-      left: 0;
-      right: 0;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
       bottom: 28px;
       display: flex;
       flex-direction: column;
@@ -878,7 +876,7 @@ import {
       }
 
       .print-table thead th {
-        text-align: left;
+        text-align: start;
         padding: 12px 16px;
         font-weight: 600;
         color: #333;
@@ -899,8 +897,8 @@ import {
       .print-footer {
         position: fixed;
         bottom: 0;
-        left: 0;
-        right: 0;
+        inset-inline-start: 0;
+        inset-inline-end: 0;
         height: 12px;
         background: #2bbcb3;
       }
@@ -942,10 +940,10 @@ export class RevenueAnalyticsComponent implements OnInit {
     maxRevenue = 0;
 
     periodOptions = [
-        { label: 'Aujourd\'hui', value: 'day' as AnalyticsPeriod },
-        { label: 'Ce mois', value: 'month' as AnalyticsPeriod },
-        { label: 'Cette année', value: 'year' as AnalyticsPeriod },
-        { label: 'Cumulé', value: 'all' as AnalyticsPeriod }
+        { label: $localize`:@@reports.revenue-analytics.ts.aujourd.hui.baca97f6:Aujourd'hui`, value: 'day' as AnalyticsPeriod },
+        { label: $localize`:@@reports.revenue-analytics.ts.ce.mois.db74c560:Ce mois`, value: 'month' as AnalyticsPeriod },
+        { label: $localize`:@@reports.revenue-analytics.ts.cette.annee.052507a0:Cette année`, value: 'year' as AnalyticsPeriod },
+        { label: $localize`:@@reports.revenue-analytics.ts.cumule.39d4fcc6:Cumulé`, value: 'all' as AnalyticsPeriod }
     ];
 
     ngOnInit(): void {

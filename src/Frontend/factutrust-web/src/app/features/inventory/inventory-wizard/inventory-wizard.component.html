@@ -4,20 +4,20 @@
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-        title="Inventaire physique"
-        subtitle="Comptez vos produits et ajustez votre stock en quelques minutes">
+        title="Inventaire physique" i18n-title="@@inventory.inventory-wizard.inventaire.physique.38b526c7"
+        subtitle="Comptez vos produits et ajustez votre stock en quelques minutes" i18n-subtitle="@@inventory.inventory-wizard.comptez.vos.produits.et.ajustez.votre.st.c899cec6">
     </app-page-header>
 
     <!-- Wizard step indicator -->
     @if (!loading()) {
-    <nav class="wizard-steps" aria-label="Étapes de l'inventaire">
+    <nav class="wizard-steps" aria-label="Étapes de l'inventaire" i18n-aria-label="@@inventory.inventory-wizard.etapes.de.l.inventaire.a08db1b2">
         @for (s of wizardSteps(); track s.key; let i = $index; let last = $last) {
         <div class="wizard-step" [class.active]="s.active" [class.done]="s.done">
             <span class="step-index" aria-hidden="true">{{ i + 1 }}</span>
             <span class="step-label">{{ s.label }}</span>
         </div>
         @if (!last) {
-        <span class="step-separator" aria-hidden="true">→</span>
+        <span class="step-separator" aria-hidden="true" i18n="@@inventory.inventory-wizard.text.213edd25">→</span>
         }
         }
     </nav>
@@ -27,37 +27,35 @@
     @if (loading()) {
     <div class="loading-container" role="status" aria-live="polite">
         <p-progressSpinner></p-progressSpinner>
-        <p>Chargement en cours...</p>
+        <p i18n="@@inventory.inventory-wizard.chargement.en.cours.7b2b4440">Chargement en cours...</p>
     </div>
     } @else {
     <!-- STEP 1: START -->
     @if (step() === 'start') {
-    <app-form-section title="Lancer un inventaire" icon="pi-play" [number]="1">
+    <app-form-section title="Lancer un inventaire" i18n-title="@@inventory.inventory-wizard.lancer.un.inventaire.e333a5d0" icon="pi-play" [number]="1">
         <div class="start-card">
-            <p class="subtitle">
-                Comptez vos produits un par un, nous nous occupons du reste.
-            </p>
+            <p class="subtitle" i18n="@@inventory.inventory-wizard.comptez.vos.produits.un.par.un.nous.nous.occupon.06cb9283"> Comptez vos produits un par un, nous nous occupons du reste. </p>
 
             @if (showWarehousePicker()) {
             <div class="warehouse-picker">
-                <label for="wizard-warehouse" class="field-label">Entrepôt <span class="required">*</span></label>
+                <label for="wizard-warehouse" class="field-label"><ng-container i18n="@@inventory.inventory-wizard.entrepot.c349c0bc">Entrepôt </ng-container> <span class="required" i18n="@@inventory.inventory-wizard.text.df58248c">*</span></label>
                 <p-select
                     id="wizard-warehouse"
                     [options]="warehouses"
                     [ngModel]="selectedWarehouse()"
                     (ngModelChange)="onWarehouseChange($event)"
                     optionLabel="name"
-                    placeholder="Sélectionner un entrepôt"
+                    placeholder="Sélectionner un entrepôt" i18n-placeholder="@@inventory.inventory-wizard.selectionner.un.entrepot.2e4d1232"
                     styleClass="w-full"
-                    ariaLabel="Choisir l'entrepôt">
+                    ariaLabel="Choisir l'entrepôt" i18n-ariaLabel="@@inventory.inventory-wizard.choisir.l.entrepot.bc5f453b">
                 </p-select>
             </div>
             }
 
             <div class="type-selection">
-                <h3>Type d'inventaire</h3>
+                <h3 i18n="@@inventory.inventory-wizard.type.d.inventaire.1e378c77">Type d'inventaire</h3>
 
-                <div class="type-options" role="radiogroup" aria-label="Type d'inventaire">
+                <div class="type-options" role="radiogroup" aria-label="Type d'inventaire" i18n-aria-label="@@inventory.inventory-wizard.type.d.inventaire.1e378c77">
                     <div
                         class="type-option"
                         [class.selected]="inventoryType() === InventoryType.Complete"
@@ -71,8 +69,8 @@
                             <i class="pi pi-list" aria-hidden="true"></i>
                         </div>
                         <div class="type-content">
-                            <strong>Inventaire complet</strong>
-                            <span>Tous vos produits</span>
+                            <strong i18n="@@inventory.inventory-wizard.inventaire.complet.a298eded">Inventaire complet</strong>
+                            <span i18n="@@inventory.inventory-wizard.tous.vos.produits.582ebb26">Tous vos produits</span>
                         </div>
                         @if (inventoryType() === InventoryType.Complete) {
                         <i class="pi pi-check-circle check-icon" aria-hidden="true"></i>
@@ -92,8 +90,8 @@
                             <i class="pi pi-filter" aria-hidden="true"></i>
                         </div>
                         <div class="type-content">
-                            <strong>Inventaire partiel</strong>
-                            <span>Produits sélectionnés</span>
+                            <strong i18n="@@inventory.inventory-wizard.inventaire.partiel.681697f4">Inventaire partiel</strong>
+                            <span i18n="@@inventory.inventory-wizard.produits.selectionnes.878221f7">Produits sélectionnés</span>
                         </div>
                         @if (inventoryType() === InventoryType.Partial) {
                         <i class="pi pi-check-circle check-icon" aria-hidden="true"></i>
@@ -105,12 +103,12 @@
             <!-- Product Selection for Partial Inventory -->
             @if (inventoryType() === InventoryType.Partial) {
             <div class="product-selection-section">
-                <h3>Sélectionnez les produits à inventorier</h3>
+                <h3 i18n="@@inventory.inventory-wizard.selectionnez.les.produits.a.inventorier.aab6597d">Sélectionnez les produits à inventorier</h3>
 
                 @if (loadingProducts()) {
                 <div class="loading-products">
                     <p-progressSpinner [style]="{width: '30px', height: '30px'}"></p-progressSpinner>
-                    <span>Chargement des produits...</span>
+                    <span i18n="@@inventory.inventory-wizard.chargement.des.produits.98b02485">Chargement des produits...</span>
                 </div>
                 } @else {
                 <div class="product-selection-controls">
@@ -119,22 +117,22 @@
                         <input
                             type="text"
                             pInputText
-                            placeholder="Rechercher un produit..."
+                            placeholder="Rechercher un produit..." i18n-placeholder="@@inventory.inventory-wizard.rechercher.un.produit.0da008f6"
                             [ngModel]="productSearchTerm()"
                             (ngModelChange)="productSearchTerm.set($event)"
-                            aria-label="Rechercher un produit" />
+                            aria-label="Rechercher un produit" i18n-aria-label="@@inventory.inventory-wizard.rechercher.un.produit.3ce811dc" />
                     </div>
                     <div class="selection-actions">
-                        <button pButton pRipple type="button" label="Tout sélectionner"
+                        <button pButton pRipple type="button" label="Tout sélectionner" i18n-label="@@inventory.inventory-wizard.tout.selectionner.06f2c1c0"
                             class="p-button-text p-button-sm" icon="pi pi-check-square"
                             (click)="selectAllProducts()"></button>
-                        <button pButton pRipple type="button" label="Tout désélectionner"
+                        <button pButton pRipple type="button" label="Tout désélectionner" i18n-label="@@inventory.inventory-wizard.tout.deselectionner.d17ec0b7"
                             class="p-button-text p-button-sm p-button-secondary" icon="pi pi-times"
                             (click)="clearProductSelection()"></button>
                     </div>
                 </div>
 
-                <div class="selected-count">
+                <div class="selected-count" i18n="@@inventory.inventory-wizard.produit.s.selectionne.s.03e58dc2">
                     <i class="pi pi-box" aria-hidden="true"></i>
                     <span>{{ selectedProductIds().size }} produit(s) sélectionné(s)</span>
                 </div>
@@ -159,7 +157,7 @@
                             }
                         </div>
                         <div class="product-select-quantity">
-                            <span class="qty-label">Dispo:</span>
+                            <span class="qty-label" i18n="@@inventory.inventory-wizard.dispo.496d9188">Dispo:</span>
                             <span class="qty-value" [class]="product.status.toLowerCase()">
                                 {{ product.quantityAvailable }}
                             </span>
@@ -168,7 +166,7 @@
                     } @empty {
                     <div class="no-products">
                         <i class="pi pi-inbox" aria-hidden="true"></i>
-                        <p>Aucun produit trouvé</p>
+                        <p i18n="@@inventory.inventory-wizard.aucun.produit.trouve.5edf7149">Aucun produit trouvé</p>
                     </div>
                     }
                 </div>
@@ -183,12 +181,12 @@
                 iconPos="left"
                 [disabled]="!canStartPartialInventory() || submitting() || (showWarehousePicker() && !selectedWarehouse())"
                 (click)="startInventory()"
-                ariaLabel="Commencer l'inventaire">
-                @if (submitting()) {
+                ariaLabel="Commencer l'inventaire" i18n-ariaLabel="@@inventory.inventory-wizard.commencer.l.inventaire.5356a9f5">
+                @if (submitting()) {<ng-container i18n="@@inventory.inventory-wizard.demarrage.8deb95ab">
                 Démarrage...
-                } @else {
+                </ng-container>} @else {<ng-container i18n="@@inventory.inventory-wizard.commencer.l.inventaire.c9591df5">
                 Commencer l'inventaire
-                }
+                </ng-container>}
             </app-button>
         </div>
     </app-form-section>
@@ -204,14 +202,14 @@
             </span>
             <span class="meta-item">
                 <i class="pi pi-tag" aria-hidden="true"></i>
-                {{ activeInventory()?.typeLabel }}
+                {{ activeInventory()?.typeLabel | backendLabel }}
             </span>
         </div>
 
         @if (barcodeScanEnabled) {
             <div class="barcode-scan-row">
                 <ft-barcode-scan-field
-                    placeholder="Scanner un code-barres pour aller à l'article"
+                    placeholder="Scanner un code-barres pour aller à l'article" i18n-placeholder="@@inventory.inventory-wizard.scanner.un.code.barres.pour.aller.a.l.article.5bed44b0"
                     [autoFocus]="false"
                     (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
             </div>
@@ -221,7 +219,7 @@
             <!-- Left: progress + product list -->
             <aside class="count-sidebar">
                 <div class="progress-compact">
-                    <div class="progress-compact-text">
+                    <div class="progress-compact-text" i18n="@@inventory.inventory-wizard.produits.b19ab5a4">
                         <strong>{{ activeInventory()?.countedProducts }}</strong>
                         <span>/ {{ activeInventory()?.totalProducts }} produits</span>
                         <span class="progress-pct">{{ activeInventory()?.progressPercent }}%</span>
@@ -229,7 +227,7 @@
                     <p-progressBar [value]="progress()" [showValue]="false"></p-progressBar>
                 </div>
 
-                <div class="products-list" role="list" aria-label="Liste des produits à compter">
+                <div class="products-list" role="list" aria-label="Liste des produits à compter" i18n-aria-label="@@inventory.inventory-wizard.liste.des.produits.a.compter.ff63d2cf">
                     @for (product of activeInventory()?.products; track lineKey(product); let i = $index) {
                     <div
                         class="product-item"
@@ -255,12 +253,12 @@
                             <span class="product-code">{{ product.productCode }}</span>
                             }
                             @if (product.lotNumber) {
-                            <span class="product-code">Lot {{ product.lotNumber }}</span>
+                            <span class="product-code" i18n="@@inventory.inventory-wizard.lot.7d76895f">Lot {{ product.lotNumber }}</span>
                             }
                         </div>
                         <div class="product-quantity">
                             <div class="quantity-expected">
-                                <span class="quantity-label">Dispo</span>
+                                <span class="quantity-label" i18n="@@inventory.inventory-wizard.dispo.027d16c5">Dispo</span>
                                 <span class="quantity-value">{{ product.theoreticalQuantity }}</span>
                             </div>
                             @if (product.isCounted && product.countedQuantity !== null) {
@@ -268,7 +266,7 @@
                                 class="quantity-counted"
                                 [class.match]="product.countedQuantity === product.theoreticalQuantity"
                                 [class.difference]="product.countedQuantity !== product.theoreticalQuantity">
-                                <span class="quantity-label">Compté</span>
+                                <span class="quantity-label" i18n="@@inventory.inventory-wizard.compte.4ca87b63">Compté</span>
                                 <span class="quantity-value">{{ product.countedQuantity }}</span>
                             </div>
                             }
@@ -287,18 +285,18 @@
                     variant="compact">
                     <div class="count-form" (keydown)="onCountKeydown($event)">
                         @if (currentProduct()?.productCode) {
-                        <span class="product-sku">REF: {{ currentProduct()?.productCode }}</span>
+                        <span class="product-sku" i18n="@@inventory.inventory-wizard.ref.18fb8aeb">REF: {{ currentProduct()?.productCode }}</span>
                         }
                         @if (currentProduct()?.lotNumber && currentProduct()?.productLotId) {
-                        <span class="product-sku">Lot {{ currentProduct()?.lotNumber }}</span>
+                        <span class="product-sku" i18n="@@inventory.inventory-wizard.lot.46e7e36f">Lot {{ currentProduct()?.lotNumber }}</span>
                         }
 
                         @if (needsOpeningLotNumber()) {
                         <div class="lot-input-zone">
-                            <label class="count-question" for="opening-lot-number">
+                            <label class="count-question" for="opening-lot-number"><ng-container i18n="@@inventory.inventory-wizard.n.de.lot.f5d14bdd">
                                 N° de lot
-                                @if (requiresLotNumberForCurrentCount()) {
-                                <span class="required">*</span>
+                                </ng-container>@if (requiresLotNumberForCurrentCount()) {
+                                <span class="required" i18n="@@inventory.inventory-wizard.text.df58248c">*</span>
                                 }
                             </label>
                             <input
@@ -308,17 +306,17 @@
                                 class="lot-input"
                                 [ngModel]="lotNumber()"
                                 (ngModelChange)="lotNumber.set($event ?? '')"
-                                placeholder="Ex. LOT-2026-001"
+                                placeholder="Ex. LOT-2026-001" i18n-placeholder="@@inventory.inventory-wizard.ex.lot.2026.001.48400037"
                                 [attr.aria-required]="requiresLotNumberForCurrentCount()"
-                                [attr.aria-label]="'Numéro de lot pour ' + (currentProduct()?.productName ?? '')" />
+                                [attr.aria-label]="loc_numero_de_lot_pour_productname_859ef2(currentProduct()?.productName ?? '')" />
                             @if (requiresLotNumberForCurrentCount()) {
-                            <p class="lot-hint">Obligatoire pour un article suivi par lot avec écart de stock.</p>
+                            <p class="lot-hint" i18n="@@inventory.inventory-wizard.obligatoire.pour.un.article.suivi.par.lot.avec.e.5e953602">Obligatoire pour un article suivi par lot avec écart de stock.</p>
                             }
                         </div>
                         }
 
                         <div class="count-input-zone">
-                            <label class="count-question" for="counted-quantity">Quantité comptée</label>
+                            <label class="count-question" for="counted-quantity" i18n="@@inventory.inventory-wizard.quantite.comptee.9aee073b">Quantité comptée</label>
                             <div class="input-spotlight" #countInput>
                                 <p-inputNumber
                                     [ngModel]="countedQuantity()"
@@ -327,7 +325,7 @@
                                     [maxFractionDigits]="2"
                                     inputId="counted-quantity"
                                     styleClass="count-input"
-                                    [attr.aria-label]="'Quantité comptée pour ' + (currentProduct()?.productName ?? '')">
+                                    [attr.aria-label]="loc_quantite_comptee_pour_productname_4e025d(currentProduct()?.productName ?? '')">
                                 </p-inputNumber>
                             </div>
 
@@ -338,16 +336,16 @@
                                 [class.positive]="countDifference()! > 0"
                                 [class.negative]="countDifference()! < 0"
                                 role="status">
-                                @if (countDifference() === 0) {
+                                @if (countDifference() === 0) {<ng-container i18n="@@inventory.inventory-wizard.conforme.disponibles.110aef51">
                                 <i class="pi pi-check-circle" aria-hidden="true"></i>
                                 Conforme ({{ currentProduct()?.theoreticalQuantity }} disponibles)
-                                } @else if (countDifference()! > 0) {
+                                </ng-container>} @else if (countDifference()! > 0) {<ng-container i18n="@@inventory.inventory-wizard.par.rapport.au.stock.8ddf9764">
                                 <i class="pi pi-arrow-up" aria-hidden="true"></i>
                                 +{{ countDifference() }} par rapport au stock ({{ currentProduct()?.theoreticalQuantity }})
-                                } @else {
+                                </ng-container>} @else {<ng-container i18n="@@inventory.inventory-wizard.par.rapport.au.stock.e5e1a6f7">
                                 <i class="pi pi-arrow-down" aria-hidden="true"></i>
                                 {{ countDifference() }} par rapport au stock ({{ currentProduct()?.theoreticalQuantity }})
-                                }
+                                </ng-container>}
                             </div>
                             }
                         </div>
@@ -360,14 +358,14 @@
                                 iconPos="left"
                                 [disabled]="submitting()"
                                 (click)="submitCount()"
-                                ariaLabel="Enregistrer ce comptage et passer au suivant">
-                                @if (submitting()) {
+                                ariaLabel="Enregistrer ce comptage et passer au suivant" i18n-ariaLabel="@@inventory.inventory-wizard.enregistrer.ce.comptage.et.passer.au.sui.7798fe0f">
+                                @if (submitting()) {<ng-container i18n="@@inventory.inventory-wizard.enregistrement.9bf1058a">
                                 Enregistrement...
-                                } @else {
+                                </ng-container>} @else {<ng-container i18n="@@inventory.inventory-wizard.enregistrer.ce.comptage.cb0a1e4b">
                                 Enregistrer ce comptage
-                                }
+                                </ng-container>}
                             </app-button>
-                            <span class="action-hint">Entrée pour valider · produit suivant</span>
+                            <span class="action-hint" i18n="@@inventory.inventory-wizard.entree.pour.valider.produit.suivant.0cacfec0">Entrée pour valider · produit suivant</span>
                         </div>
                     </div>
                 </app-form-section>
@@ -379,11 +377,11 @@
                         icon="pi-arrow-right"
                         iconPos="right"
                         (click)="goToSummary()">
-                        @if (activeInventory()?.remainingProducts === 0) {
+                        @if (activeInventory()?.remainingProducts === 0) {<ng-container i18n="@@inventory.inventory-wizard.voir.le.resume.9f91bb0f">
                         Voir le résumé
-                        } @else {
+                        </ng-container>} @else {<ng-container i18n="@@inventory.inventory-wizard.terminer.voir.le.recapitulatif.10f3bcdc">
                         Terminer / voir le récapitulatif
-                        }
+                        </ng-container>}
                     </app-button>
                     <app-button
                         variant="ghost"
@@ -391,9 +389,7 @@
                         iconPos="left"
                         [disabled]="submitting()"
                         (click)="confirmCancelInventory()"
-                        ariaLabel="Annuler l'inventaire">
-                        Annuler l'inventaire
-                    </app-button>
+                        ariaLabel="Annuler l'inventaire" i18n-ariaLabel="@@inventory.inventory-wizard.annuler.l.inventaire.b255066b" i18n="@@inventory.inventory-wizard.annuler.l.inventaire.a78bf0e5"> Annuler l'inventaire </app-button>
                 </div>
             </div>
         </div>
@@ -402,7 +398,7 @@
 
     <!-- STEP 3: SUMMARY -->
     @if (step() === 'summary' && inventorySummary()) {
-    <app-form-section title="Résumé de l'inventaire" icon="pi-list-check" [number]="3">
+    <app-form-section title="Résumé de l'inventaire" i18n-title="@@inventory.inventory-wizard.resume.de.l.inventaire.6ce44d41" icon="pi-list-check" [number]="3">
         <div class="summary-section">
             <div class="summary-header">
                 <h2>{{ inventorySummary()?.statusMessage }}</h2>
@@ -410,18 +406,16 @@
 
             @if (productsMissingLot().length) {
             <div class="summary-group missing-lot-group" role="alert">
-                <h3>
+                <h3 i18n="@@inventory.inventory-wizard.n.de.lot.manquant.b9b1b15f">
                     <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
                     N° de lot manquant
                 </h3>
                 <p class="not-counted-hint">
-                    Saisissez un numéro de lot pour
-                    @if (productsMissingLot().length === 1) {
-                    cet article suivi par lot
-                    } @else {
-                    ces articles suivis par lot
-                    }
-                    avant de valider.
+                    @if (productsMissingLot().length === 1) {<ng-container i18n="@@inventory.inventory-wizard.lot.manquant.un.article">
+                    Saisissez un numéro de lot pour cet article suivi par lot avant de valider.
+                    </ng-container>} @else {<ng-container i18n="@@inventory.inventory-wizard.lot.manquant.plusieurs.articles">
+                    Saisissez un numéro de lot pour ces articles suivis par lot avant de valider.
+                    </ng-container>}
                 </p>
                 <div class="summary-items">
                     @for (item of productsMissingLot(); track lineKey(item)) {
@@ -435,23 +429,21 @@
                         variant="primary"
                         icon="pi-pencil"
                         iconPos="left"
-                        (click)="goToFirstMissingLot()">
-                        Saisir le n° de lot
-                    </app-button>
+                        (click)="goToFirstMissingLot()" i18n="@@inventory.inventory-wizard.saisir.le.n.de.lot.6574e1a2"> Saisir le n° de lot </app-button>
                 </div>
             </div>
             }
 
             @if (inventorySummary()?.productsOkList?.length) {
             <div class="summary-group ok-group">
-                <h3>
+                <h3 i18n="@@inventory.inventory-wizard.stock.conforme.produits.bb33e753">
                     <i class="pi pi-check-circle" aria-hidden="true"></i>
                     Stock conforme ({{ inventorySummary()?.productsOk }} produits)
                 </h3>
                 <div class="summary-items">
                     @for (item of inventorySummary()?.productsOkList; track lineKey(item)) {
                     <div class="summary-item ok">
-                        <span class="item-name">{{ item.productName }}@if (item.lotNumber) { <span class="item-lot"> · Lot {{ item.lotNumber }}</span> }</span>
+                        <span class="item-name">{{ item.productName }}@if (item.lotNumber) { <span class="item-lot" i18n="@@inventory.inventory-wizard.lot.b67c026f"> · Lot {{ item.lotNumber }}</span> }</span>
                         <span class="item-message">{{ item.humanMessage }}</span>
                     </div>
                     }
@@ -461,14 +453,14 @@
 
             @if (inventorySummary()?.productsWithDifferenceList?.length) {
             <div class="summary-group diff-group">
-                <h3>
+                <h3 i18n="@@inventory.inventory-wizard.differences.detectees.produits.3941b88b">
                     <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
                     Différences détectées ({{ inventorySummary()?.productsWithDifference }} produits)
                 </h3>
                 <div class="summary-items">
                     @for (item of inventorySummary()?.productsWithDifferenceList; track lineKey(item)) {
                     <div class="summary-item {{ item.differenceClass }}">
-                        <span class="item-name">{{ item.productName }}@if (item.lotNumber) { <span class="item-lot"> · Lot {{ item.lotNumber }}</span> }</span>
+                        <span class="item-name">{{ item.productName }}@if (item.lotNumber) { <span class="item-lot" i18n="@@inventory.inventory-wizard.lot.b67c026f"> · Lot {{ item.lotNumber }}</span> }</span>
                         <span
                             class="item-difference"
                             [class.positive]="item.difference > 0"
@@ -483,17 +475,15 @@
 
             @if (inventorySummary()?.productsNotCountedList?.length) {
             <div class="summary-group not-counted-group">
-                <h3>
+                <h3 i18n="@@inventory.inventory-wizard.non.saisis.produits.85b4aa12">
                     <i class="pi pi-clock" aria-hidden="true"></i>
                     Non saisis ({{ inventorySummary()?.productsNotCounted }} produits)
                 </h3>
-                <p class="not-counted-hint">
-                    Ces articles seront confirmés à la quantité système. Aucun ajustement de stock pour ces lignes.
-                </p>
+                <p class="not-counted-hint" i18n="@@inventory.inventory-wizard.ces.articles.seront.confirmes.a.la.quantite.syst.c34518d6"> Ces articles seront confirmés à la quantité système. Aucun ajustement de stock pour ces lignes. </p>
                 <div class="summary-items">
                     @for (item of inventorySummary()?.productsNotCountedList; track lineKey(item)) {
                     <div class="summary-item not-counted">
-                        <span class="item-name">{{ item.productName }}@if (item.lotNumber) { <span class="item-lot"> · Lot {{ item.lotNumber }}</span> }</span>
+                        <span class="item-name">{{ item.productName }}@if (item.lotNumber) { <span class="item-lot" i18n="@@inventory.inventory-wizard.lot.b67c026f"> · Lot {{ item.lotNumber }}</span> }</span>
                         <span class="item-message">{{ item.humanMessage || 'Non compté' }}</span>
                     </div>
                     }
@@ -509,19 +499,17 @@
                     iconPos="left"
                     [disabled]="!inventorySummary()?.canValidate || submitting()"
                     (click)="validateInventory()">
-                    @if (submitting()) {
+                    @if (submitting()) {<ng-container i18n="@@inventory.inventory-wizard.validation.938b4aa3">
                     Validation...
-                    } @else {
+                    </ng-container>} @else {<ng-container i18n="@@inventory.inventory-wizard.valider.et.ajuster.le.stock.045c4721">
                     Valider et ajuster le stock
-                    }
+                    </ng-container>}
                 </app-button>
                 <app-button
                     variant="ghost"
                     icon="pi-arrow-left"
                     iconPos="left"
-                    (click)="step.set('count')">
-                    Retourner au comptage
-                </app-button>
+                    (click)="step.set('count')" i18n="@@inventory.inventory-wizard.retourner.au.comptage.a3440378"> Retourner au comptage </app-button>
             </div>
         </div>
     </app-form-section>
@@ -529,25 +517,19 @@
 
     <!-- STEP 4: SUCCESS -->
     @if (step() === 'success') {
-    <app-form-section title="Inventaire terminé" icon="pi-verified">
+    <app-form-section title="Inventaire terminé" i18n-title="@@inventory.inventory-wizard.inventaire.termine.5adca5d0" icon="pi-verified">
         <div class="success-section">
             <div class="success-card">
                 <div class="success-icon">
                     <i class="pi pi-verified" aria-hidden="true"></i>
                 </div>
-                <h2>Inventaire terminé !</h2>
-                <p>Votre stock a été mis à jour avec succès.</p>
+                <h2 i18n="@@inventory.inventory-wizard.inventaire.termine.48a509af">Inventaire terminé !</h2>
+                <p i18n="@@inventory.inventory-wizard.votre.stock.a.ete.mis.a.jour.avec.succes.bfb9acb2">Votre stock a été mis à jour avec succès.</p>
 
                 <div class="success-actions">
-                    <app-button variant="primary" icon="pi-list" iconPos="left" (click)="goToList()">
-                        Voir la liste des inventaires
-                    </app-button>
-                    <app-button variant="outline" icon="pi-box" iconPos="left" (click)="goToStock()">
-                        Voir mon stock
-                    </app-button>
-                    <app-button variant="ghost" icon="pi-refresh" iconPos="left" (click)="startNew()">
-                        Nouvel inventaire
-                    </app-button>
+                    <app-button variant="primary" icon="pi-list" iconPos="left" (click)="goToList()" i18n="@@inventory.inventory-wizard.voir.la.liste.des.inventaires.018e4d4a"> Voir la liste des inventaires </app-button>
+                    <app-button variant="outline" icon="pi-box" iconPos="left" (click)="goToStock()" i18n="@@inventory.inventory-wizard.voir.mon.stock.be2d81ae"> Voir mon stock </app-button>
+                    <app-button variant="ghost" icon="pi-refresh" iconPos="left" (click)="startNew()" i18n="@@inventory.inventory-wizard.nouvel.inventaire.3497f22e"> Nouvel inventaire </app-button>
                 </div>
             </div>
         </div>

@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -31,7 +33,7 @@ function parseIsoDate(value?: string): Date | null {
 @Component({
   selector: 'app-employee-suspensions-tab',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     TableModule,
@@ -44,83 +46,81 @@ function parseIsoDate(value?: string): Date | null {
     ButtonComponent
   ],
   template: `
-    <p class="payroll-info-text">
-      Les suspensions approuvées réduisent le brut du mois (prorata) lorsque l'option est activée sur l'exercice.
-      Une suspension rémunérée n'entraîne pas de retenue.
-    </p>
+    <p class="payroll-info-text" i18n="@@payroll.employees.les.suspensions.approuvees.reduisent.le.brut.du..a4d1ac0a"> Les suspensions approuvées réduisent le brut du mois (prorata) lorsque l'option est activée sur l'exercice.
+      Une suspension rémunérée n'entraîne pas de retenue. </p>
 
     @if (!readOnly) {
       <div class="payroll-toolbar mb-3">
-        <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()">Ajouter une suspension</app-button>
+        <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()" i18n="@@payroll.employees.ajouter.une.suspension.e7da62de">Ajouter une suspension</app-button>
       </div>
     }
 
     <p-table [value]="items()" styleClass="p-datatable-sm">
       <ng-template pTemplate="header">
         <tr>
-          <th>Type</th>
-          <th>Début</th>
-          <th>Fin</th>
-          <th>Rémunérée</th>
-          <th>Statut</th>
+          <th i18n="@@payroll.employees.type.3deb7456">Type</th>
+          <th i18n="@@payroll.employees.debut.f0955314">Début</th>
+          <th i18n="@@payroll.employees.fin.4251065f">Fin</th>
+          <th i18n="@@payroll.employees.remuneree.e95340ce">Rémunérée</th>
+          <th i18n="@@payroll.employees.statut.659499f3">Statut</th>
           @if (!readOnly) { <th></th> }
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-s>
         <tr>
-          <td>{{ s.typeDisplay }}</td>
+          <td>{{ s.typeDisplay | backendLabel }}</td>
           <td>{{ s.startDate | date:'dd/MM/yyyy' }}</td>
           <td>{{ s.endDate ? (s.endDate | date:'dd/MM/yyyy') : '—' }}</td>
-          <td>{{ s.isPaid ? 'Oui' : 'Non' }}</td>
+          <td>{{ s.isPaid ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
           <td>
-            <p-tag [value]="s.isApproved ? 'Approuvée' : 'En attente'" [severity]="s.isApproved ? 'success' : 'warn'" />
+            <p-tag [value]="s.isApproved ? loc_ui_tern_approuvee_7d606a : loc_ui_tern_en_attente_523115" [severity]="s.isApproved ? 'success' : 'warn'" />
           </td>
           @if (!readOnly) {
             <td class="actions">
-              <button type="button" class="p-button p-button-text p-button-sm" (click)="openDialog(s)">Modifier</button>
+              <button type="button" class="p-button p-button-text p-button-sm" (click)="openDialog(s)" i18n="@@payroll.employees.modifier.f260e757">Modifier</button>
               @if (!s.isApproved) {
-                <button type="button" class="p-button p-button-text p-button-sm" (click)="approve(s)">Approuver</button>
+                <button type="button" class="p-button p-button-text p-button-sm" (click)="approve(s)" i18n="@@payroll.employees.approuver.3033e7d6">Approuver</button>
               }
-              <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(s)">Supprimer</button>
+              <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(s)" i18n="@@payroll.employees.supprimer.1acfc1c7">Supprimer</button>
             </td>
           }
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
-        <tr><td [attr.colspan]="readOnly ? 5 : 6">Aucune suspension enregistrée.</td></tr>
+        <tr><td [attr.colspan]="readOnly ? 5 : 6" i18n="@@payroll.employees.aucune.suspension.enregistree.7e48283d">Aucune suspension enregistrée.</td></tr>
       </ng-template>
     </p-table>
 
     <p-dialog
-      [header]="editingId ? 'Modifier la suspension' : 'Nouvelle suspension'"
+      [header]="editingId ? loc_ui_tern_modifier_la_suspension_654454 : loc_ui_tern_nouvelle_suspension_fe6ff0"
       [(visible)]="dialogVisible"
       [modal]="true"
       [style]="{ width: '480px' }">
       <div class="payroll-form-group mb-2">
-        <label>Type</label>
+        <label i18n="@@payroll.employees.type.3deb7456">Type</label>
         <p-select [options]="suspensionTypeOptions" [(ngModel)]="formType" optionLabel="label" optionValue="value" appendTo="body" styleClass="w-full" />
       </div>
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Début</label>
+          <label i18n="@@payroll.employees.debut.f0955314">Début</label>
           <p-datepicker [(ngModel)]="formStart" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
         </div>
         <div class="payroll-form-group">
-          <label>Fin</label>
+          <label i18n="@@payroll.employees.fin.4251065f">Fin</label>
           <p-datepicker [(ngModel)]="formEnd" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
         </div>
       </div>
       <div class="payroll-form-group switch-row mb-2">
-        <label for="isPaid">Suspension rémunérée</label>
+        <label for="isPaid" i18n="@@payroll.employees.suspension.remuneree.fe8572b6">Suspension rémunérée</label>
         <p-inputSwitch inputId="isPaid" [(ngModel)]="formIsPaid" />
       </div>
       <div class="payroll-form-group mb-2">
-        <label>Motif</label>
+        <label i18n="@@payroll.employees.motif.2a198f47">Motif</label>
         <textarea pTextarea [(ngModel)]="formReason" rows="2" class="w-full"></textarea>
       </div>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="dialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" (click)="save()">Enregistrer</app-button>
+        <app-button variant="outline" (click)="dialogVisible = false" i18n="@@payroll.employees.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="save()" i18n="@@payroll.employees.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
   `,
@@ -133,6 +133,12 @@ function parseIsoDate(value?: string): Date | null {
   `]
 })
 export class EmployeeSuspensionsTabComponent implements OnInit {
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
+  readonly loc_ui_tern_approuvee_7d606a = $localize`:@@ui.tern.approuvee.7d606a:Approuvée`;
+  readonly loc_ui_tern_en_attente_523115 = $localize`:@@ui.tern.en.attente.523115:En attente`;
+  readonly loc_ui_tern_modifier_la_suspension_654454 = $localize`:@@ui.tern.modifier.la.suspension.654454:Modifier la suspension`;
+  readonly loc_ui_tern_nouvelle_suspension_fe6ff0 = $localize`:@@ui.tern.nouvelle.suspension.fe6ff0:Nouvelle suspension`;
   @Input({ required: true }) employeeId!: string;
   @Input() readOnly = false;
 
@@ -157,7 +163,7 @@ export class EmployeeSuspensionsTabComponent implements OnInit {
   reload(): void {
     this.payroll.listSuspensions(this.employeeId).subscribe({
       next: res => this.items.set(res.data ?? []),
-      error: () => this.toast.add({ severity: 'error', summary: 'Suspensions', detail: 'Chargement impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@employee-suspensions-tab.component.summary.Suspensions:Suspensions`, detail: $localize`:@@employee-suspensions-tab.component.detail.Chargement_impos:Chargement impossible.` })
     });
   }
 
@@ -197,16 +203,16 @@ export class EmployeeSuspensionsTabComponent implements OnInit {
       next: () => {
         this.toast.add({
           severity: 'success',
-          summary: 'Suspensions',
-          detail: this.editingId ? 'Suspension mise à jour.' : 'Suspension enregistrée.'
+          summary: $localize`:@@employee-suspensions-tab.component.summary.Suspensions:Suspensions`,
+          detail: this.editingId ? $localize`:@@ui.tern.suspension.mise.a.jour.45fd9a:Suspension mise à jour.` : $localize`:@@ui.tern.suspension.enregistree.c7c7a4:Suspension enregistrée.`
         });
         this.dialogVisible = false;
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Suspensions',
-        detail: err.error?.message ?? 'Enregistrement impossible.'
+        summary: $localize`:@@employee-suspensions-tab.component.summary.Suspensions:Suspensions`,
+        detail: err.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`
       })
     });
   }
@@ -215,13 +221,13 @@ export class EmployeeSuspensionsTabComponent implements OnInit {
     if (this.readOnly) return;
     this.payroll.approveSuspension(suspension.id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Suspensions', detail: 'Suspension approuvée.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-suspensions-tab.component.summary.Suspensions:Suspensions`, detail: $localize`:@@employee-suspensions-tab.component.detail.Suspension_appro:Suspension approuvée.` });
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Suspensions',
-        detail: err.error?.message ?? 'Approbation impossible.'
+        summary: $localize`:@@employee-suspensions-tab.component.summary.Suspensions:Suspensions`,
+        detail: err.error?.message ?? $localize`:@@ui.tern.approbation.impossible.7d6318:Approbation impossible.`
       })
     });
   }
@@ -229,10 +235,10 @@ export class EmployeeSuspensionsTabComponent implements OnInit {
   confirmDelete(suspension: EmployeePayrollSuspension): void {
     if (this.readOnly) return;
     this.confirmation.confirm({
-      message: `Supprimer la suspension du ${suspension.startDate} ?`,
-      header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      message: $localize`:@@payroll.employee-suspensions-tab.ts.supprimer.la.suspension.du.startdate.72e8077a:Supprimer la suspension du ${suspension.startDate}:startDate: ?`,
+      header: $localize`:@@payroll.employee-suspensions-tab.ts.confirmation.3424edc2:Confirmation`,
+      acceptLabel: $localize`:@@employee-suspensions-tab.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@employee-suspensions-tab.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.delete(suspension.id)
     });
@@ -241,13 +247,13 @@ export class EmployeeSuspensionsTabComponent implements OnInit {
   private delete(id: string): void {
     this.payroll.deleteSuspension(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Suspensions', detail: 'Suspension supprimée.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-suspensions-tab.component.summary.Suspensions:Suspensions`, detail: $localize`:@@employee-suspensions-tab.component.detail.Suspension_suppr:Suspension supprimée.` });
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Suspensions',
-        detail: err.error?.message ?? 'Suppression impossible.'
+        summary: $localize`:@@employee-suspensions-tab.component.summary.Suspensions:Suspensions`,
+        detail: err.error?.message ?? $localize`:@@ui.tern.suppression.impossible.0dffe4:Suppression impossible.`
       })
     });
   }

@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { API_ERROR_CODE } from '@core/utils/api-error-code';
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
@@ -93,19 +95,15 @@ interface LineRow extends LinePromotionPreview {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <div class="form-container">
-      <h1 class="page-title">Créer un bon de livraison</h1>
-      <p class="page-subtitle">
-        Renseignez le client, l'adresse de livraison et les articles à livrer.
-      </p>
-      <p class="page-hint">
-        Le bon de livraison sera créé en brouillon. Vous pourrez le confirmer ensuite.
-      </p>
+      <h1 class="page-title" i18n="@@delivery-notes.pages.creer.un.bon.de.livraison.628f7b6b">Créer un bon de livraison</h1>
+      <p class="page-subtitle" i18n="@@delivery-notes.pages.renseignez.le.client.l.adresse.de.livraison.et.l.301a7477"> Renseignez le client, l'adresse de livraison et les articles à livrer. </p>
+      <p class="page-hint" i18n="@@delivery-notes.pages.le.bon.de.livraison.sera.cree.en.brouillon.vous..375f0fce"> Le bon de livraison sera créé en brouillon. Vous pourrez le confirmer ensuite. </p>
 
       <form (ngSubmit)="onSubmit()" class="dn-form">
-        <app-form-section title="Client et informations" icon="pi-user" [number]="1">
+        <app-form-section title="Client et informations" i18n-title="@@delivery-notes.pages.client.et.informations.988a7c72" icon="pi-user" [number]="1">
           <div class="form-grid">
             <div class="field">
-              <label for="client">Client <span class="required">*</span></label>
+              <label for="client"><ng-container i18n="@@delivery-notes.pages.client.1bdd79b1">Client </ng-container> <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
               <div class="client-cell">
                 <div class="client-cell-input">
                   <p-select
@@ -115,7 +113,7 @@ interface LineRow extends LinePromotionPreview {
                     (onChange)="onClientChange()"
                     optionLabel="name"
                     optionValue="id"
-                    placeholder="Choisir un client"
+                    placeholder="Choisir un client" i18n-placeholder="@@delivery-notes.pages.choisir.un.client.6521f9cd"
                     [filter]="true"
                     filterBy="name"
                     [showClear]="true"
@@ -129,14 +127,14 @@ interface LineRow extends LinePromotionPreview {
                     size="sm"
                     icon="pi-plus"
                     [iconOnly]="true"
-                    ariaLabel="Créer un client"
+                    ariaLabel="Créer un client" i18n-ariaLabel="@@delivery-notes.pages.creer.un.client.2a38dd4a"
                     (click)="openQuickCreateClient()"
                     class="btn-add-client-circle" />
                 }
               </div>
             </div>
             <div class="field">
-              <label for="issueDate">Date d'émission <span class="required">*</span></label>
+              <label for="issueDate"><ng-container i18n="@@delivery-notes.pages.date.d.emission.99f68857">Date d'émission </ng-container> <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
               <p-datepicker
                 id="issueDate"
                 [(ngModel)]="issueDate"
@@ -148,37 +146,37 @@ interface LineRow extends LinePromotionPreview {
               </p-datepicker>
             </div>
             <div class="field">
-              <label for="reference">Référence</label>
+              <label for="reference" i18n="@@delivery-notes.pages.reference.f8130bb0">Référence</label>
               <input pInputText id="reference" [(ngModel)]="reference" name="reference" class="w-full" />
             </div>
           </div>
         </app-form-section>
 
-        <app-form-section title="Adresse de livraison" icon="pi-map-marker" [number]="2">
+        <app-form-section title="Adresse de livraison" i18n-title="@@delivery-notes.pages.adresse.de.livraison.31eac756" icon="pi-map-marker" [number]="2">
           <div class="form-grid">
             <div class="field span-full">
-              <label for="deliveryAddress">Adresse <span class="required">*</span></label>
-              <input pInputText id="deliveryAddress" [(ngModel)]="deliveryAddress" name="deliveryAddress" class="w-full" placeholder="Adresse complète" />
+              <label for="deliveryAddress"><ng-container i18n="@@delivery-notes.pages.adresse.522e1466">Adresse </ng-container> <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
+              <input pInputText id="deliveryAddress" [(ngModel)]="deliveryAddress" name="deliveryAddress" class="w-full" placeholder="Adresse complète" i18n-placeholder="@@delivery-notes.pages.adresse.complete.ac51a43d" />
             </div>
             <div class="field">
-              <label for="deliveryCity">Ville</label>
+              <label for="deliveryCity" i18n="@@delivery-notes.pages.ville.97217611">Ville</label>
               <input pInputText id="deliveryCity" [(ngModel)]="deliveryCity" name="deliveryCity" class="w-full" />
             </div>
             <div class="field">
-              <label for="deliveryPostalCode">Code postal</label>
+              <label for="deliveryPostalCode" i18n="@@delivery-notes.pages.code.postal.74779109">Code postal</label>
               <input pInputText id="deliveryPostalCode" [(ngModel)]="deliveryPostalCode" name="deliveryPostalCode" class="w-full" />
             </div>
           </div>
         </app-form-section>
 
-        <app-form-section title="Lignes du bon de livraison" icon="pi-list" [number]="3">
+        <app-form-section title="Lignes du bon de livraison" i18n-title="@@delivery-notes.pages.lignes.du.bon.de.livraison.f2475b32" icon="pi-list" [number]="3">
           <div class="lines-actions">
-            <app-button variant="secondary" icon="pi-plus" iconPos="left" (click)="addLine()">Ajouter une ligne</app-button>
+            <app-button variant="secondary" icon="pi-plus" iconPos="left" (click)="addLine()" i18n="@@delivery-notes.pages.ajouter.une.ligne.ba241fd4">Ajouter une ligne</app-button>
           </div>
           @if (barcodeScanEnabled) {
             <div class="barcode-scan-row">
               <ft-barcode-scan-field
-                placeholder="Scanner un code-barres pour ajouter une ligne"
+                placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="@@delivery-notes.pages.scanner.un.code.barres.pour.ajouter.une.ligne.3525ced5"
                 [autoFocus]="false"
                 (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
             </div>
@@ -199,14 +197,14 @@ interface LineRow extends LinePromotionPreview {
               </colgroup>
               <thead>
                 <tr>
-                  <th>Article (Recherche) *</th>
-                  <th>Désignation</th>
-                  <th>Qté *</th>
-                  <th>Unité</th>
-                  <th>P.U. HT</th>
-                  <th>Origine</th>
-                  <th>Remise %</th>
-                  <th>Total HT</th>
+                  <th i18n="@@delivery-notes.pages.article.recherche.8b736d6d">Article (Recherche) *</th>
+                  <th i18n="@@delivery-notes.pages.designation.63a9062c">Désignation</th>
+                  <th i18n="@@delivery-notes.pages.qte.f0c098af">Qté *</th>
+                  <th i18n="@@delivery-notes.pages.unite.388fd9c4">Unité</th>
+                  <th i18n="@@delivery-notes.pages.p.u.ht.63f60414">P.U. HT</th>
+                  <th i18n="@@delivery-notes.pages.origine.62e96258">Origine</th>
+                  <th i18n="@@delivery-notes.pages.remise.a39386b5">Remise %</th>
+                  <th i18n="@@delivery-notes.pages.total.ht.2ca17ae6">Total HT</th>
                   <th></th>
                 </tr>
               </thead>
@@ -226,7 +224,7 @@ interface LineRow extends LinePromotionPreview {
                             [forceSelection]="true"
                             appendTo="body"
                             [ngModelOptions]="{ standalone: true }"
-                            placeholder="Rechercher un produit..."
+                            placeholder="Rechercher un produit..." i18n-placeholder="@@delivery-notes.pages.rechercher.un.produit.0da008f6"
                             styleClass="w-full"
                             inputStyleClass="w-full">
                             <ng-template let-product pTemplate="item">
@@ -242,15 +240,15 @@ interface LineRow extends LinePromotionPreview {
                           size="sm"
                           icon="pi-th-large"
                           [iconOnly]="true"
-                          ariaLabel="Choisir une variante"
+                          ariaLabel="Choisir une variante" i18n-ariaLabel="@@delivery-notes.pages.choisir.une.variante.8e914309"
                           (click)="openVariantPicker($index)"
-                          title="Choisir une variante" />
+                          title="Choisir une variante" i18n-title="@@delivery-notes.pages.choisir.une.variante.c8ab137c" />
                         <app-button
                           variant="primary"
                           size="sm"
                           icon="pi-plus"
                           [iconOnly]="true"
-                          ariaLabel="Créer un produit"
+                          ariaLabel="Créer un produit" i18n-ariaLabel="@@delivery-notes.pages.creer.un.produit.1ff296f3"
                           (click)="openQuickCreateProduct($index)"
                           class="btn-add-product-circle" />
                       </div>
@@ -261,7 +259,7 @@ interface LineRow extends LinePromotionPreview {
                         [value]="line.designation"
                         [title]="line.designation"
                         disabled="true"
-                        placeholder="-"
+                        placeholder="-" i18n-placeholder="@@delivery-notes.pages.text.3bc15c8a"
                         class="w-full bg-gray-50 line-readonly-input" />
                     </td>
                     <td>
@@ -283,7 +281,7 @@ interface LineRow extends LinePromotionPreview {
                         [value]="line.unit"
                         [title]="line.unit"
                         disabled="true"
-                        placeholder="-"
+                        placeholder="-" i18n-placeholder="@@delivery-notes.pages.text.3bc15c8a"
                         class="w-full bg-gray-50 line-readonly-input" />
                     </td>
                     <td>
@@ -294,20 +292,20 @@ interface LineRow extends LinePromotionPreview {
                     <td class="cell-origin">
                       <div class="origin-stack">
                         @if (linePricing.resolving()) {
-                          <i class="pi pi-spin pi-spinner" pTooltip="Résolution du prix…"></i>
+                          <i class="pi pi-spin pi-spinner" pTooltip="Résolution du prix…" i18n-pTooltip="@@delivery-notes.pages.resolution.du.prix.38097b39"></i>
                         } @else if (line.priceSource === 'ClientPrice') {
                           <p-tag severity="success" value="Prix négocié"></p-tag>
                         } @else if (line.priceSource === 'PriceList') {
                           <p-tag severity="info" value="Grille"></p-tag>
                         } @else if (line.priceSource) {
-                          <span class="text-muted">Catalogue</span>
+                          <span class="text-muted" i18n="@@delivery-notes.pages.catalogue.5a241023">Catalogue</span>
                         }
                         @if (line.promotionEligible && line.promotionName) {
-                          <p-tag severity="success" [value]="'Promo : ' + line.promotionName"></p-tag>
+                          <p-tag severity="success" [value]="loc_ui_tern_promo_84ac35 + line.promotionName"></p-tag>
                         } @else if (line.promotionMinQuantityRequired && line.promotionName) {
                           <small
                             class="promo-hint"
-                            [pTooltip]="line.promotionName + ' : qty min. ' + line.promotionMinQuantityRequired">
+                            [pTooltip]="line.promotionName + loc_ui_tern_qty_min_f7ccc3 + line.promotionMinQuantityRequired" i18n="@@delivery-notes.pages.qty.min.aac0b192">
                             {{ line.promotionName }} : qty min. {{ line.promotionMinQuantityRequired }}
                           </small>
                         }
@@ -322,7 +320,7 @@ interface LineRow extends LinePromotionPreview {
                         [minFractionDigits]="0"
                         [maxFractionDigits]="2"
                         mode="decimal"
-                        placeholder="0"
+                        placeholder="0" i18n-placeholder="@@delivery-notes.pages.0.b6589fc6"
                         class="w-full"
                         [inputStyle]="{ width: '100%' }">
                       </p-inputNumber>
@@ -340,7 +338,7 @@ interface LineRow extends LinePromotionPreview {
                         [iconOnly]="true"
                         (click)="removeLine($index)"
                         [disabled]="lines.length <= 1"
-                        ariaLabel="Supprimer la ligne">
+                        ariaLabel="Supprimer la ligne" i18n-ariaLabel="@@delivery-notes.pages.supprimer.la.ligne.7e5f9ae0">
                       </app-button>
                     </td>
                   </tr>
@@ -350,7 +348,7 @@ interface LineRow extends LinePromotionPreview {
                           pInputText
                           [(ngModel)]="line.notes"
                           [ngModelOptions]="{ standalone: true }"
-                          placeholder="Notes internes pour cette ligne (optionnel)"
+                          placeholder="Notes internes pour cette ligne (optionnel)" i18n-placeholder="@@delivery-notes.pages.notes.internes.pour.cette.ligne.optionnel.5e6f0059"
                           class="w-full text-sm" />
                      </td>
                   </tr>
@@ -358,19 +356,19 @@ interface LineRow extends LinePromotionPreview {
               </tbody>
               <tfoot>
                  <tr>
-                    <td colspan="7" class="text-right font-bold py-3">Total HT Estimé :</td>
+                    <td colspan="7" class="text-right font-bold py-3" i18n="@@delivery-notes.pages.total.ht.estime.a621d615">Total HT Estimé :</td>
                     <td class="text-right font-bold py-3">{{ totalHT() | number:'1.3-3' }} TND</td>
                     <td></td>
                  </tr>
               </tfoot>
             </table>
           </div>
-          <p class="lines-hint">{{ lines.length }} ligne(s) ajoutée(s)</p>
+          <p class="lines-hint" i18n="@@delivery-notes.pages.ligne.s.ajoutee.s.2f58c459">{{ lines.length }} ligne(s) ajoutée(s)</p>
         </app-form-section>
 
-        <app-form-section title="Options et notes (optionnel)" icon="pi-file-edit" [number]="4">
+        <app-form-section title="Options et notes (optionnel)" i18n-title="@@delivery-notes.pages.options.et.notes.optionnel.f9541c9b" icon="pi-file-edit" [number]="4">
           <div class="field">
-            <label for="notes">Notes générales</label>
+            <label for="notes" i18n="@@delivery-notes.pages.notes.generales.3f6ad7ac">Notes générales</label>
             <textarea
               pTextarea
               id="notes"
@@ -386,19 +384,19 @@ interface LineRow extends LinePromotionPreview {
               [binary]="true"
               name="allowGroupInvoicing"
               inputId="allowGroupInvoicing"
-              label="Autoriser la facturation groupée">
+              label="Autoriser la facturation groupée" i18n-label="@@delivery-notes.pages.autoriser.la.facturation.groupee.6f2f16c9">
             </p-checkbox>
-            <small class="field-hint">Si activé, ce bon de livraison pourra être regroupé avec d'autres pour une facturation unique.</small>
+            <small class="field-hint" i18n="@@delivery-notes.pages.si.active.ce.bon.de.livraison.pourra.etre.regrou.01efd4ff">Si activé, ce bon de livraison pourra être regroupé avec d'autres pour une facturation unique.</small>
           </div>
 
           <div class="field mt-3">
             <app-warehouse-selector
-              label="Entrepôt source"
-              placeholder="Entrepôt par défaut"
+              label="Entrepôt source" i18n-label="@@delivery-notes.pages.entrepot.source.07ac9f4d"
+              placeholder="Entrepôt par défaut" i18n-placeholder="@@delivery-notes.pages.entrepot.par.defaut.5dc0b8c6"
               [value]="selectedWarehouseId"
               (valueChange)="selectedWarehouseId = $event">
             </app-warehouse-selector>
-            <small class="field-hint">Entrepôt utilisé pour la sortie de stock lors de la livraison (optionnel)</small>
+            <small class="field-hint" i18n="@@delivery-notes.pages.entrepot.utilise.pour.la.sortie.de.stock.lors.de.db7194a1">Entrepôt utilisé pour la sortie de stock lors de la livraison (optionnel)</small>
           </div>
         </app-form-section>
 
@@ -407,16 +405,14 @@ interface LineRow extends LinePromotionPreview {
             variant="outline"
             icon="pi-times"
             iconPos="left"
-            routerLink="/delivery-notes">
-            Annuler
-          </app-button>
+            routerLink="/delivery-notes" i18n="@@delivery-notes.pages.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             [icon]="submitting() ? 'pi-spin pi-spinner' : 'pi-check'"
             iconPos="left"
             type="submit"
             [disabled]="!canSubmit() || submitting() || linePricing.resolving()">
-            {{ submitting() ? 'Création...' : 'Créer le bon de livraison' }}
+            {{ submitting() ? loc_ui_tern_creation_dca950 : loc_ui_tern_creer_le_bon_de_livraison_cac142 }}
           </app-button>
         </div>
       </form>
@@ -510,7 +506,7 @@ interface LineRow extends LinePromotionPreview {
         background-color: #f9fafb;
     }
     .text-right {
-        text-align: right;
+        text-align: end;
     }
     .font-bold {
         font-weight: bold;
@@ -522,8 +518,8 @@ interface LineRow extends LinePromotionPreview {
         color: #6b7280;
     }
     .px-2 {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
+        padding-inline-start: 0.5rem;
+        padding-inline-end: 0.5rem;
     }
     .py-3 {
         padding-top: 0.75rem;
@@ -564,7 +560,7 @@ interface LineRow extends LinePromotionPreview {
     .lines-table th,
     .lines-table td {
       padding: var(--spacing-2) var(--spacing-2);
-      text-align: left;
+      text-align: start;
       vertical-align: middle;
       min-width: 0;
     }
@@ -696,6 +692,10 @@ interface LineRow extends LinePromotionPreview {
   `]
 })
 export class DeliveryNoteFormComponent implements OnInit {
+  readonly loc_ui_tern_promo_84ac35 = $localize`:@@ui.tern.promo.84ac35:Promo : `;
+  readonly loc_ui_tern_qty_min_f7ccc3 = $localize`:@@ui.tern.qty.min.f7ccc3: : qty min. `;
+  readonly loc_ui_tern_creation_dca950 = $localize`:@@ui.tern.creation.dca950:Création...`;
+  readonly loc_ui_tern_creer_le_bon_de_livraison_cac142 = $localize`:@@ui.tern.creer.le.bon.de.livraison.cac142:Créer le bon de livraison`;
   private deliveryNoteService = inject(DeliveryNoteService);
   private clientService = inject(ClientService);
   private auth = inject(AuthService);
@@ -710,9 +710,9 @@ export class DeliveryNoteFormComponent implements OnInit {
   readonly linePricing = inject(DocumentLinePricingService);
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Bons de Livraison', route: '/delivery-notes' },
-    { label: 'Nouveau bon de livraison' },
+    { label: $localize`:@@delivery-notes.delivery-note-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@delivery-notes.delivery-note-form.ts.bons.de.livraison.a42b9518:Bons de Livraison`, route: '/delivery-notes' },
+    { label: $localize`:@@delivery-notes.delivery-note-form.ts.nouveau.bon.de.livraison.85eb7bab:Nouveau bon de livraison` },
   ];
 
   clientOptions = signal<ClientListItem[]>([]);
@@ -881,8 +881,8 @@ export class DeliveryNoteFormComponent implements OnInit {
 
     this.toastService.add({
       severity: 'success',
-      summary: 'Client créé',
-      detail: 'Le client a été créé et sélectionné.',
+      summary: $localize`:@@delivery-note-form.component.summary.Client_cr_:Client créé`,
+      detail: $localize`:@@delivery-note-form.component.detail.Le_client_a_t_:Le client a été créé et sélectionné.`,
     });
   }
 
@@ -902,8 +902,8 @@ export class DeliveryNoteFormComponent implements OnInit {
     this.quickCreateProductVisible = false;
     this.toastService.add({
       severity: 'success',
-      summary: 'Produit créé',
-      detail: 'Le produit a été créé et ajouté à la ligne.',
+      summary: $localize`:@@delivery-note-form.component.summary.Produit créé:Produit créé`,
+      detail: $localize`:@@delivery-note-form.component.detail.Le_produit_a_t_:Le produit a été créé et ajouté à la ligne.`,
     });
   }
 
@@ -962,8 +962,8 @@ export class DeliveryNoteFormComponent implements OnInit {
     if (lineDtos.length === 0) {
       this.toastService.add({
         severity: 'warn',
-        summary: 'Lignes manquantes',
-        detail: 'Ajoutez au moins une ligne avec un produit sélectionné.',
+        summary: $localize`:@@delivery-note-form.component.summary.Lignes_manquante:Lignes manquantes`,
+        detail: $localize`:@@delivery-note-form.component.detail.Ajoutez_au_moins:Ajoutez au moins une ligne avec un produit sélectionné.`,
       });
       return;
     }
@@ -988,8 +988,8 @@ export class DeliveryNoteFormComponent implements OnInit {
         if (res.success && res.data) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Bon de livraison créé',
-            detail: 'Redirection vers le bon de livraison...',
+            summary: $localize`:@@delivery-note-form.component.summary.Bon_de_livraison:Bon de livraison créé`,
+            detail: $localize`:@@delivery-note-form.component.detail.Redirection_vers:Redirection vers le bon de livraison...`,
           });
           this.router.navigate(['/delivery-notes', res.data]);
         }
@@ -997,14 +997,18 @@ export class DeliveryNoteFormComponent implements OnInit {
       error: (err) => {
         this.submitting.set(false);
         const detail = this.errorHandler.extractErrorMessage(err);
+        const code = this.errorHandler.getApiErrorCode(err);
+        // Code d'abord (le message peut être traduit) ; texte en repli pour une réponse sans code.
         const isContextError =
-          detail.toLowerCase().includes('contexte') || detail.toLowerCase().includes('entreprise valide');
+          code === API_ERROR_CODE.tenantContextInvalid ||
+          code === API_ERROR_CODE.delegatedContextInvalid ||
+          (!code && (detail.toLowerCase().includes('contexte') || detail.toLowerCase().includes('entreprise valide')));
         const fullDetail = isContextError
-          ? `${detail} Déconnectez-vous et reconnectez-vous, ou contactez l'administrateur pour vérifier votre rattachement à une entreprise.`
+          ? $localize`:@@ui.tern.ph.deconnectez.vous.et.reconnectez.vous.ou.325880:${detail}:p0: Déconnectez-vous et reconnectez-vous, ou contactez l'administrateur pour vérifier votre rattachement à une entreprise.`
           : detail;
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@delivery-note-form.component.summary.Erreur:Erreur`,
           detail: fullDetail,
         });
       },

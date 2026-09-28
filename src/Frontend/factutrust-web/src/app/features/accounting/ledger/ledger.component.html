@@ -1,80 +1,80 @@
-<app-page-header title="Grand livre" subtitle="Mouvements et solde progressif par compte" />
+<app-page-header title="Grand livre" i18n-title="@@accounting.ledger.grand.livre.7eef7547" subtitle="Mouvements et solde progressif par compte" i18n-subtitle="@@accounting.ledger.mouvements.et.solde.progressif.par.compt.e1474893" />
 
 <div class="ledger-page accounting-page">
   <p-card
     styleClass="p-card--static ledger-filters-card"
-    header="Critères de consultation"
-    subheader="Compte et période — les mêmes paramètres déclenchent l’appel au serveur qu’auparavant.">
+    header="Critères de consultation" i18n-header="@@accounting.ledger.criteres.de.consultation.92faee0d"
+    subheader="Compte et période — les mêmes paramètres déclenchent l’appel au serveur qu’auparavant." i18n-subheader="@@accounting.ledger.compte.et.periode.les.memes.parametres.d.79712846">
     <p-toolbar styleClass="ledger-toolbar accounting-prime-toolbar">
       <ng-template pTemplate="start">
         <div class="ledger-filters-grid accounting-filters-grid">
           <div class="ledger-field">
-            <label class="ledger-label" for="ledger-mode">Édition</label>
+            <label class="ledger-label" for="ledger-mode" i18n="@@accounting.ledger.edition.b8056d29">Édition</label>
             <select id="ledger-mode" class="p-inputtext" [(ngModel)]="mode" (ngModelChange)="onModeChange()">
-              <option value="single">Compte unique</option>
-              <option value="range">Plage de comptes</option>
-              <option value="recap">Récapitulatif</option>
+              <option value="single" i18n="@@accounting.ledger.compte.unique.1e1e7690">Compte unique</option>
+              <option value="range" i18n="@@accounting.ledger.plage.de.comptes.da1b3e78">Plage de comptes</option>
+              <option value="recap" i18n="@@accounting.ledger.recapitulatif.d5b5de6d">Récapitulatif</option>
             </select>
           </div>
           @if (mode === 'single') {
             <div class="ledger-field">
-              <label class="ledger-label" for="ledger-account">Compte</label>
+              <label class="ledger-label" for="ledger-account" i18n="@@accounting.ledger.compte.c45740bb">Compte</label>
               <p-autoComplete
                 [(ngModel)]="account"
                 [suggestions]="accountSuggestions"
                 (completeMethod)="filterAccounts($event)"
                 [minLength]="1"
                 [forceSelection]="false"
-                placeholder="Ex: 4111"
+                placeholder="Ex: 4111" i18n-placeholder="@@accounting.ledger.ex.4111.a0b05b0e"
                 inputId="ledger-account"
                 [inputStyle]="{'width':'100%'}"
                 [style]="{'width':'100%'}"
               />
-              <span id="ledger-account-hint" class="sr-only">Numéro de compte du grand livre, par exemple 4111</span>
+              <span id="ledger-account-hint" class="sr-only" i18n="@@accounting.ledger.numero.de.compte.du.grand.livre.par.exemple.4111.2c0d86aa">Numéro de compte du grand livre, par exemple 4111</span>
             </div>
           }
           @if (mode === 'range') {
             <div class="ledger-field">
-              <label class="ledger-label" for="ledger-account-from">Du compte</label>
-              <input id="ledger-account-from" type="text" class="p-inputtext" [(ngModel)]="accountFrom" placeholder="Début" />
+              <label class="ledger-label" for="ledger-account-from" i18n="@@accounting.ledger.du.compte.e97591b0">Du compte</label>
+              <input id="ledger-account-from" type="text" class="p-inputtext" [(ngModel)]="accountFrom" placeholder="Début" i18n-placeholder="@@accounting.ledger.debut.f0955314" />
             </div>
             <div class="ledger-field">
-              <label class="ledger-label" for="ledger-account-to">Au compte</label>
-              <input id="ledger-account-to" type="text" class="p-inputtext" [(ngModel)]="accountTo" placeholder="Fin" />
+              <label class="ledger-label" for="ledger-account-to" i18n="@@accounting.ledger.au.compte.42405969">Au compte</label>
+              <input id="ledger-account-to" type="text" class="p-inputtext" [(ngModel)]="accountTo" placeholder="Fin" i18n-placeholder="@@accounting.ledger.fin.4251065f" />
             </div>
             <div class="ledger-field ledger-field-check">
               <label class="ledger-label" for="ledger-unmoved">
-                <input id="ledger-unmoved" type="checkbox" [(ngModel)]="includeUnmoved" />
+                <input id="ledger-unmoved" type="checkbox" [(ngModel)]="includeUnmoved" /><ng-container i18n="@@accounting.ledger.comptes.non.mouvementes.805a7e09">
                 Comptes non mouvementés
-              </label>
+              </ng-container></label>
             </div>
           }
           @if (mode === 'recap') {
             <div class="ledger-field">
-              <label class="ledger-label" for="ledger-level">Racine</label>
+              <label class="ledger-label" for="ledger-level" i18n="@@accounting.ledger.racine.393755ab">Racine</label>
               <select id="ledger-level" class="p-inputtext" [(ngModel)]="recapLevel">
                 @for (l of [1, 2, 3, 4, 5, 6]; track l) {
-                  <option [ngValue]="l">{{ l }} chiffre{{ l > 1 ? 's' : '' }}</option>
+                  <option [ngValue]="l" i18n="@@accounting.ledger.chiffre.232d7b60.pl">{{ l }} {l, plural, =0 {chiffre} =1 {chiffre} other {chiffres}}</option>
                 }
               </select>
             </div>
           }
           <div class="ledger-field">
-            <label class="ledger-label" for="ledger-from">Du</label>
+            <label class="ledger-label" for="ledger-from" i18n="@@accounting.ledger.du.84814985">Du</label>
             <input id="ledger-from" type="date" class="p-inputtext" [(ngModel)]="fromStr" />
           </div>
           <div class="ledger-field">
-            <label class="ledger-label" for="ledger-to">Au</label>
+            <label class="ledger-label" for="ledger-to" i18n="@@accounting.ledger.au.7a1732d5">Au</label>
             <input id="ledger-to" type="date" class="p-inputtext" [(ngModel)]="toStr" />
           </div>
           @if (hasForeignCurrency()) {
             <!-- Dans la grille de filtres, pas dans la barre d'outils : celle-ci est surveillée par
                  un test de non-chevauchement à 1280 px. -->
             <div class="ledger-field">
-              <label class="ledger-label" for="ledger-currency">Devise</label>
+              <label class="ledger-label" for="ledger-currency" i18n="@@accounting.ledger.devise.eb2e42c4">Devise</label>
               <select id="ledger-currency" class="p-inputtext"
                       [ngModel]="currencyFilter()" (ngModelChange)="currencyFilter.set($event)">
-                <option value="">Toutes</option>
+                <option value="" i18n="@@accounting.ledger.toutes.c5f641e4">Toutes</option>
                 @for (code of availableCurrencies(); track code) {
                   <option [value]="code">{{ code }}</option>
                 }
@@ -92,9 +92,7 @@
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            [attr.aria-label]="'Afficher les mouvements du compte ' + account">
-            Afficher
-          </app-button>
+            [attr.aria-label]="loc_afficher_les_mouvements_du_compte_ac_02e9c2(account)" i18n="@@accounting.ledger.afficher.5e802040"> Afficher </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-ledger"
             density="toolbar"
@@ -112,14 +110,14 @@
     variant="error"
     [message]="error() ?? ''"
     [showRetry]="!!error()"
-    retryLabel="Réessayer"
+    retryLabel="Réessayer" i18n-retryLabel="@@accounting.ledger.reessayer.c4f78b12"
     (retry)="load()"
   />
 
   <p-card
     styleClass="p-card--static ledger-table-card"
-    header="Mouvements"
-    subheader="Écritures et solde progressif sur la période sélectionnée.">
+    header="Mouvements" i18n-header="@@accounting.ledger.mouvements.604505fb"
+    subheader="Écritures et solde progressif sur la période sélectionnée." i18n-subheader="@@accounting.ledger.ecritures.et.solde.progressif.sur.la.per.104d1050">
     @if (mode === 'range') {
       <!-- Grand livre général : les comptes en séquence, chacun avec report et sous-total. -->
       @if (generalLedger(); as gl) {
@@ -131,39 +129,39 @@
             <p-table [value]="acc.rows" [rowHover]="true" styleClass="ledger-table accounting-datatable p-datatable-sm">
               <ng-template pTemplate="header">
                 <tr>
-                  <th scope="col">Date</th>
-                  <th scope="col">Journal</th>
-                  <th scope="col">Pièce</th>
-                  <th scope="col">Libellé</th>
-                  <th scope="col" class="text-right">Débit</th>
-                  <th scope="col" class="text-right">Crédit</th>
-                  <th scope="col" class="text-right">Solde</th>
+                  <th scope="col" i18n="@@accounting.ledger.date.eb9a4bc1">Date</th>
+                  <th scope="col" i18n="@@accounting.ledger.journal.57d7f743">Journal</th>
+                  <th scope="col" i18n="@@accounting.ledger.piece.954bbc8c">Pièce</th>
+                  <th scope="col" i18n="@@accounting.ledger.libelle.f5485bba">Libellé</th>
+                  <th scope="col" class="text-right" i18n="@@accounting.ledger.debit.f528224f">Débit</th>
+                  <th scope="col" class="text-right" i18n="@@accounting.ledger.credit.19194bdf">Crédit</th>
+                  <th scope="col" class="text-right" i18n="@@accounting.ledger.solde.e5977cf9">Solde</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-r>
                 <tr>
-                  <td data-label="Date">{{ r.entryDate | date : 'shortDate' }}</td>
-                  <td data-label="Journal"><span class="ledger-code">{{ r.journalCode }}</span></td>
-                  <td data-label="Pièce"><span class="ledger-code">{{ r.pieceNumber }}</span></td>
-                  <td class="ledger-label-cell" data-label="Libellé">{{ r.label }}</td>
-                  <td class="text-right ledger-amount" data-label="Débit">{{ r.debit | number : '1.3-3' }}</td>
-                  <td class="text-right ledger-amount" data-label="Crédit">{{ r.credit | number : '1.3-3' }}</td>
-                  <td class="text-right ledger-amount" data-label="Solde"
+                  <td data-label="Date" i18n-data-label="@@accounting.ledger.date.eb9a4bc1">{{ r.entryDate | date : 'shortDate' }}</td>
+                  <td data-label="Journal" i18n-data-label="@@accounting.ledger.journal.57d7f743"><span class="ledger-code">{{ r.journalCode }}</span></td>
+                  <td data-label="Pièce" i18n-data-label="@@accounting.ledger.piece.954bbc8c"><span class="ledger-code">{{ r.pieceNumber }}</span></td>
+                  <td class="ledger-label-cell" data-label="Libellé" i18n-data-label="@@accounting.ledger.libelle.f5485bba">{{ r.label }}</td>
+                  <td class="text-right ledger-amount" data-label="Débit" i18n-data-label="@@accounting.ledger.debit.f528224f">{{ r.debit | number : '1.3-3' }}</td>
+                  <td class="text-right ledger-amount" data-label="Crédit" i18n-data-label="@@accounting.ledger.credit.19194bdf">{{ r.credit | number : '1.3-3' }}</td>
+                  <td class="text-right ledger-amount" data-label="Solde" i18n-data-label="@@accounting.ledger.solde.e5977cf9"
                     [class.ledger-balance-negative]="r.runningBalance < 0">
                     {{ r.runningBalance | number : '1.3-3' }}
                   </td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="emptymessage">
-                <tr><td colspan="7" class="ledger-account-empty">Aucun mouvement — report seul.</td></tr>
+                <tr><td colspan="7" class="ledger-account-empty" i18n="@@accounting.ledger.aucun.mouvement.report.seul.07d33da4">Aucun mouvement — report seul.</td></tr>
               </ng-template>
               <ng-template pTemplate="footer">
                 <tr class="ledger-report-row">
-                  <td colspan="6">Report à nouveau</td>
+                  <td colspan="6" i18n="@@accounting.ledger.report.a.nouveau.6dfce8a1">Report à nouveau</td>
                   <td class="text-right ledger-amount">{{ acc.openingBalance | number : '1.3-3' }}</td>
                 </tr>
                 <tr class="acc-totals-row">
-                  <td colspan="4">Total {{ acc.accountNumber }}</td>
+                  <td colspan="4" i18n="@@accounting.ledger.total.9da975f9">Total {{ acc.accountNumber }}</td>
                   <td class="text-right ledger-amount">{{ acc.totalDebit | number : '1.3-3' }}</td>
                   <td class="text-right ledger-amount">{{ acc.totalCredit | number : '1.3-3' }}</td>
                   <td class="text-right ledger-amount"
@@ -178,11 +176,11 @@
         @if (gl.accounts.length === 0) {
           <app-empty-state
             icon="pi-book"
-            title="Aucun compte mouvementé sur la période"
-            description="Élargissez la plage de comptes ou les dates, puis cliquez sur Afficher."
+            title="Aucun compte mouvementé sur la période" i18n-title="@@accounting.ledger.aucun.compte.mouvemente.sur.la.periode.32d11b75"
+            description="Élargissez la plage de comptes ou les dates, puis cliquez sur Afficher." i18n-description="@@accounting.ledger.elargissez.la.plage.de.comptes.ou.les.da.6373ddf2"
             [showAction]="false" />
         } @else {
-          <p class="ledger-grand-total">
+          <p class="ledger-grand-total" i18n="@@accounting.ledger.total.general.debit.credit.d4cf09dd">
             Total général — débit {{ gl.totalDebit | number : '1.3-3' }} ·
             crédit {{ gl.totalCredit | number : '1.3-3' }}
           </p>
@@ -194,42 +192,42 @@
         styleClass="ledger-table accounting-datatable p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th scope="col">Racine</th>
-            <th scope="col">Libellé</th>
-            <th scope="col" class="text-right">Ouv. D</th>
-            <th scope="col" class="text-right">Ouv. C</th>
-            <th scope="col" class="text-right">Mouv. D</th>
-            <th scope="col" class="text-right">Mouv. C</th>
-            <th scope="col" class="text-right">Clôture D</th>
-            <th scope="col" class="text-right">Clôture C</th>
+            <th scope="col" i18n="@@accounting.ledger.racine.393755ab">Racine</th>
+            <th scope="col" i18n="@@accounting.ledger.libelle.f5485bba">Libellé</th>
+            <th scope="col" class="text-right" i18n="@@accounting.ledger.ouv.d.1a1c3306">Ouv. D</th>
+            <th scope="col" class="text-right" i18n="@@accounting.ledger.ouv.c.95e30fd9">Ouv. C</th>
+            <th scope="col" class="text-right" i18n="@@accounting.ledger.mouv.d.0f50458a">Mouv. D</th>
+            <th scope="col" class="text-right" i18n="@@accounting.ledger.mouv.c.87e48868">Mouv. C</th>
+            <th scope="col" class="text-right" i18n="@@accounting.ledger.cloture.d.edb6d923">Clôture D</th>
+            <th scope="col" class="text-right" i18n="@@accounting.ledger.cloture.c.2be08431">Clôture C</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-r>
           <tr>
-            <td data-label="Racine"><span class="ledger-code">{{ r.accountNumber }}</span></td>
-            <td data-label="Libellé">{{ r.label }}</td>
-            <td class="text-right ledger-amount" data-label="Ouv. D">{{ r.openingDebit | number : '1.3-3' }}</td>
-            <td class="text-right ledger-amount" data-label="Ouv. C">{{ r.openingCredit | number : '1.3-3' }}</td>
-            <td class="text-right ledger-amount" data-label="Mouv. D">{{ r.movementDebit | number : '1.3-3' }}</td>
-            <td class="text-right ledger-amount" data-label="Mouv. C">{{ r.movementCredit | number : '1.3-3' }}</td>
-            <td class="text-right ledger-amount" data-label="Clôture D">{{ r.closingDebit | number : '1.3-3' }}</td>
-            <td class="text-right ledger-amount" data-label="Clôture C">{{ r.closingCredit | number : '1.3-3' }}</td>
+            <td data-label="Racine" i18n-data-label="@@accounting.ledger.racine.393755ab"><span class="ledger-code">{{ r.accountNumber }}</span></td>
+            <td data-label="Libellé" i18n-data-label="@@accounting.ledger.libelle.f5485bba">{{ r.label }}</td>
+            <td class="text-right ledger-amount" data-label="Ouv. D" i18n-data-label="@@accounting.ledger.ouv.d.1a1c3306">{{ r.openingDebit | number : '1.3-3' }}</td>
+            <td class="text-right ledger-amount" data-label="Ouv. C" i18n-data-label="@@accounting.ledger.ouv.c.95e30fd9">{{ r.openingCredit | number : '1.3-3' }}</td>
+            <td class="text-right ledger-amount" data-label="Mouv. D" i18n-data-label="@@accounting.ledger.mouv.d.0f50458a">{{ r.movementDebit | number : '1.3-3' }}</td>
+            <td class="text-right ledger-amount" data-label="Mouv. C" i18n-data-label="@@accounting.ledger.mouv.c.87e48868">{{ r.movementCredit | number : '1.3-3' }}</td>
+            <td class="text-right ledger-amount" data-label="Clôture D" i18n-data-label="@@accounting.ledger.cloture.d.edb6d923">{{ r.closingDebit | number : '1.3-3' }}</td>
+            <td class="text-right ledger-amount" data-label="Clôture C" i18n-data-label="@@accounting.ledger.cloture.c.2be08431">{{ r.closingCredit | number : '1.3-3' }}</td>
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td colspan="8" class="ledger-account-empty">Aucun mouvement sur la période.</td></tr>
+          <tr><td colspan="8" class="ledger-account-empty" i18n="@@accounting.ledger.aucun.mouvement.sur.la.periode.9d40027a">Aucun mouvement sur la période.</td></tr>
         </ng-template>
       </p-table>
     } @else if (loading() && rows().length === 0) {
       <div class="ledger-loading" role="status" aria-live="polite">
         <p-progressSpinner strokeWidth="4" />
-        <span class="sr-only">Chargement…</span>
+        <span class="sr-only" i18n="@@accounting.ledger.chargement.01cba1df">Chargement…</span>
       </div>
     } @else if (showEmpty()) {
       <app-empty-state
         icon="pi-book"
-        title="Aucun mouvement sur la période"
-        description="Vérifiez le numéro de compte ou élargissez les dates, puis cliquez sur Afficher."
+        title="Aucun mouvement sur la période" i18n-title="@@accounting.ledger.aucun.mouvement.sur.la.periode.0c965385"
+        description="Vérifiez le numéro de compte ou élargissez les dates, puis cliquez sur Afficher." i18n-description="@@accounting.ledger.verifiez.le.numero.de.compte.ou.elargiss.dcc61d4e"
         [showAction]="false"
       />
     } @else {
@@ -240,53 +238,51 @@
           [rows]="20"
           [rowsPerPageOptions]="[10, 20, 50]"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="@@accounting.ledger.affichage.de.first.a.last.sur.totalrecords.ligne.3b382824"
           [rowHover]="true"
           [scrollable]="true"
           scrollHeight="min(52vh, 28rem)"
           styleClass="ledger-table accounting-datatable"
         >
           <ng-template pTemplate="caption">
-            <span class="sr-only">
-              Écritures du grand livre : date, journal, numéro de pièce, libellé, débit, crédit et solde
-              progressif pour la période sélectionnée.
-            </span>
+            <span class="sr-only" i18n="@@accounting.ledger.ecritures.du.grand.livre.date.journal.numero.de..9bdcacba"> Écritures du grand livre : date, journal, numéro de pièce, libellé, débit, crédit et solde
+              progressif pour la période sélectionnée. </span>
           </ng-template>
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Date</th>
-              <th scope="col">Journal</th>
-              <th scope="col">Pièce</th>
-              <th scope="col">Libellé</th>
+              <th scope="col" i18n="@@accounting.ledger.date.eb9a4bc1">Date</th>
+              <th scope="col" i18n="@@accounting.ledger.journal.57d7f743">Journal</th>
+              <th scope="col" i18n="@@accounting.ledger.piece.954bbc8c">Pièce</th>
+              <th scope="col" i18n="@@accounting.ledger.libelle.f5485bba">Libellé</th>
               @if (hasForeignCurrency()) {
-                <th scope="col">Devise</th>
+                <th scope="col" i18n="@@accounting.ledger.devise.eb2e42c4">Devise</th>
               }
-              <th scope="col" class="text-right">Débit</th>
-              <th scope="col" class="text-right">Crédit</th>
-              <th scope="col" class="text-right">Solde</th>
+              <th scope="col" class="text-right" i18n="@@accounting.ledger.debit.f528224f">Débit</th>
+              <th scope="col" class="text-right" i18n="@@accounting.ledger.credit.19194bdf">Crédit</th>
+              <th scope="col" class="text-right" i18n="@@accounting.ledger.solde.e5977cf9">Solde</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
             <tr>
-              <td data-label="Date">{{ r.entryDate | date : 'shortDate' }}</td>
-              <td data-label="Journal"><span class="ledger-code">{{ r.journalCode }}</span></td>
-              <td data-label="Pièce"><span class="ledger-code">{{ r.pieceNumber }}</span></td>
-              <td class="ledger-label-cell" data-label="Libellé">{{ r.label }}</td>
+              <td data-label="Date" i18n-data-label="@@accounting.ledger.date.eb9a4bc1">{{ r.entryDate | date : 'shortDate' }}</td>
+              <td data-label="Journal" i18n-data-label="@@accounting.ledger.journal.57d7f743"><span class="ledger-code">{{ r.journalCode }}</span></td>
+              <td data-label="Pièce" i18n-data-label="@@accounting.ledger.piece.954bbc8c"><span class="ledger-code">{{ r.pieceNumber }}</span></td>
+              <td class="ledger-label-cell" data-label="Libellé" i18n-data-label="@@accounting.ledger.libelle.f5485bba">{{ r.label }}</td>
               @if (hasForeignCurrency()) {
-                <td data-label="Devise">
+                <td data-label="Devise" i18n-data-label="@@accounting.ledger.devise.eb2e42c4">
                   @if (r.currencyCode && r.currencyCode !== functionalCurrency) {
                     <span class="ledger-code">{{ r.currencyCode }}</span>
                     <span class="ledger-currency-amount">{{ r.amountInCurrency | number : '1.2-2' }}</span>
                   } @else {
-                    <span class="ledger-currency-none">—</span>
+                    <span class="ledger-currency-none" i18n="@@accounting.ledger.text.1b93795b">—</span>
                   }
                 </td>
               }
-              <td class="text-right ledger-amount" data-label="Débit">{{ r.debit | number : '1.3-3' }}</td>
-              <td class="text-right ledger-amount" data-label="Crédit">{{ r.credit | number : '1.3-3' }}</td>
+              <td class="text-right ledger-amount" data-label="Débit" i18n-data-label="@@accounting.ledger.debit.f528224f">{{ r.debit | number : '1.3-3' }}</td>
+              <td class="text-right ledger-amount" data-label="Crédit" i18n-data-label="@@accounting.ledger.credit.19194bdf">{{ r.credit | number : '1.3-3' }}</td>
               <td
                 class="text-right ledger-amount"
-                data-label="Solde"
+                data-label="Solde" i18n-data-label="@@accounting.ledger.solde.e5977cf9"
                 [class.ledger-balance-negative]="r.runningBalance < 0"
               >
                 {{ r.runningBalance | number : '1.3-3' }}
@@ -295,7 +291,7 @@
           </ng-template>
           <ng-template pTemplate="footer">
             <tr class="acc-totals-row">
-              <td [attr.colspan]="hasForeignCurrency() ? 5 : 4">Totaux</td>
+              <td [attr.colspan]="hasForeignCurrency() ? 5 : 4" i18n="@@accounting.ledger.totaux.a1ca02f8">Totaux</td>
               <td class="text-right ledger-amount">{{ totals().debit | number : '1.3-3' }}</td>
               <td class="text-right ledger-amount">{{ totals().credit | number : '1.3-3' }}</td>
               <td class="text-right ledger-amount"

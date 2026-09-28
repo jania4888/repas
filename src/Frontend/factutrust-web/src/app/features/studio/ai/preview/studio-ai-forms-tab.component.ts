@@ -75,7 +75,7 @@ export class StudioAiFormsTabComponent {
 
   private toView(entity: StudioSpecEntity, section: StudioSpecFormSection, index: number): StudioAiFormSectionView {
     return {
-      title: section.title?.trim() || `Section ${index + 1}`,
+      title: section.title?.trim() || $localize`:@@studio.studio-ai-forms-tab.ts.section.p.1dbbb668:Section ${index + 1}:p:`,
       fields: (section.fields ?? []).map(ref => ({
         key: ref.field,
         label: ref.label || entity.fields.find(f => f.key === ref.field)?.label || ref.field,

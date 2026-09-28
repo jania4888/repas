@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -32,14 +33,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Livre d'inventaire"
-      subtitle="Édition légale figée de l'exercice — états financiers, provisions et balance de clôture" />
+      title="Livre d'inventaire" i18n-title="@@accounting.inventory-book.livre.d.inventaire.a93c3a9a"
+      subtitle="Édition légale figée de l'exercice — états financiers, provisions et balance de clôture" i18n-subtitle="@@accounting.inventory-book.edition.legale.figee.de.l.exercice.etats.01d25abf" />
 
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Exercice du livre d'inventaire">
+      <app-accounting-filter-bar ariaLabel="Exercice du livre d'inventaire" i18n-ariaLabel="@@accounting.inventory-book.exercice.du.livre.d.inventaire.78500264">
         <div accountingFilterFields class="ib-fields">
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="ib-year">Exercice</label>
+            <label class="accounting-filter-label" for="ib-year" i18n="@@accounting.inventory-book.exercice.e171e2b0">Exercice</label>
             <input id="ib-year" type="number" min="2000" max="2100" [(ngModel)]="fiscalYear" class="accounting-filter-input" />
           </div>
         </div>
@@ -51,9 +52,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Charger le livre d'inventaire">
-            Charger
-          </app-button>
+            ariaLabel="Charger le livre d'inventaire" i18n-ariaLabel="@@accounting.inventory-book.charger.le.livre.d.inventaire.2236c5b1" i18n="@@accounting.inventory-book.charger.8f860300"> Charger </app-button>
           <app-accounting-export-menu
             [disabled]="loading() || exporting() || !book()"
             (exportFormat)="onExport($event)" />
@@ -61,55 +60,57 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       </app-accounting-filter-bar>
     </div>
 
-    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="load()" />
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.inventory-book.reessayer.c4f78b12" (retry)="load()" />
 
     @if (book(); as b) {
       <div class="ib-lock" [class.ib-lock--locked]="b.isYearLocked" [class.ib-lock--provisional]="!b.isYearLocked" role="status">
         <i class="pi" [class.pi-lock]="b.isYearLocked" [class.pi-lock-open]="!b.isYearLocked" aria-hidden="true"></i>
         <span>
-          @if (b.isYearLocked) {
-            Exercice verrouillé définitivement@if (b.lockedAt) { le {{ b.lockedAt | date : 'shortDate' }} } — le livre d'inventaire est figé.
-          } @else {
+          @if (b.isYearLocked) {@if (b.lockedAt) {<ng-container i18n="@@accounting.inventory-book.verrouille.le.date.livre.fige">
+            Exercice verrouillé définitivement le {{ b.lockedAt | date : 'shortDate' }} — le livre d'inventaire est figé.
+          </ng-container>} @else {<ng-container i18n="@@accounting.inventory-book.verrouille.livre.fige">
+            Exercice verrouillé définitivement — le livre d'inventaire est figé.
+          </ng-container>}} @else {<ng-container i18n="@@accounting.inventory-book.exercice.non.verrouille.edition.provisoi.61deeec9">
             Exercice non verrouillé — édition <strong>provisoire</strong> (les données peuvent encore évoluer). Verrouillez l'exercice pour figer le livre.
-          }
+          </ng-container>}
         </span>
       </div>
 
       <div class="card ib-card">
-        <h2 class="ib-section-title">Provisions et dépréciations (détail par compte)</h2>
+        <h2 class="ib-section-title" i18n="@@accounting.inventory-book.provisions.et.depreciations.detail.par.compte.68bb815f">Provisions et dépréciations (détail par compte)</h2>
         <p-table [value]="b.detailedProvisions" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Compte</th>
-              <th scope="col">Libellé</th>
-              <th scope="col" class="text-right">Montant</th>
+              <th scope="col" i18n="@@accounting.inventory-book.compte.c45740bb">Compte</th>
+              <th scope="col" i18n="@@accounting.inventory-book.libelle.f5485bba">Libellé</th>
+              <th scope="col" class="text-right" i18n="@@accounting.inventory-book.montant.4adcd9fc">Montant</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
             <tr>
-              <td data-label="Compte"><span class="ib-code">{{ r.code }}</span></td>
-              <td data-label="Libellé">{{ r.label }}</td>
-              <td data-label="Montant" class="text-right" [class.ib-neg]="r.amount < 0">{{ r.amount | number : '1.3-3' }}</td>
+              <td data-label="Compte" i18n-data-label="@@accounting.inventory-book.compte.c45740bb"><span class="ib-code">{{ r.code }}</span></td>
+              <td data-label="Libellé" i18n-data-label="@@accounting.inventory-book.libelle.f5485bba">{{ r.label }}</td>
+              <td data-label="Montant" i18n-data-label="@@accounting.inventory-book.montant.4adcd9fc" class="text-right" [class.ib-neg]="r.amount < 0">{{ r.amount | number : '1.3-3' }}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="footer">
             <tr class="acc-totals-row">
-              <td colspan="2">Total des provisions</td>
+              <td colspan="2" i18n="@@accounting.inventory-book.total.des.provisions.2647629b">Total des provisions</td>
               <td class="text-right">{{ provisionsTotal() | number : '1.3-3' }}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
-            <tr><td colspan="3" class="ib-empty">Aucune provision ni dépréciation à la clôture.</td></tr>
+            <tr><td colspan="3" class="ib-empty" i18n="@@accounting.inventory-book.aucune.provision.ni.depreciation.a.la.cloture.43a83a56">Aucune provision ni dépréciation à la clôture.</td></tr>
           </ng-template>
         </p-table>
-        <p class="ib-hint">Le document complet (états NCT + balance de clôture) est disponible en export PDF.</p>
+        <p class="ib-hint" i18n="@@accounting.inventory-book.le.document.complet.etats.nct.balance.de.cloture.03bf0860">Le document complet (états NCT + balance de clôture) est disponible en export PDF.</p>
       </div>
     }
   `,
   styles: `
     @use '../shared/accounting-layout';
     .ib-fields { display:flex; flex-wrap:wrap; align-items:flex-end; gap:var(--spacing-4); }
-    .text-right { text-align:right; font-variant-numeric:tabular-nums; }
+    .text-right { text-align:end; font-variant-numeric:tabular-nums; }
     .ib-code { font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-weight:500; }
     .ib-section-title { margin:0 0 var(--spacing-3); font-size:var(--font-size-md); font-weight:var(--font-weight-semibold); }
     .ib-card { padding:var(--spacing-5); }
@@ -159,18 +160,18 @@ export class InventoryBookComponent implements OnInit {
           if (!wasLocked && res.data.isYearLocked) {
             this.toast.add({
               severity: 'warn',
-              summary: "Livre d'inventaire",
-              detail: "L'exercice a été verrouillé depuis le dernier chargement.",
+              summary: $localize`:@@inventory-book.component.summary.Livredinventaire:Livre d'inventaire`,
+              detail: $localize`:@@inventory-book.component.detail.Lexerciceaétéverroui:L'exercice a été verrouillé depuis le dernier chargement.`,
               life: 6000
             });
           }
         } else {
-          this.error.set(res.error ?? 'Erreur');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.inventory-book.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }
@@ -184,7 +185,7 @@ export class InventoryBookComponent implements OnInit {
       },
       error: err => {
         this.exporting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.inventory-book.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
       }
     });
   }

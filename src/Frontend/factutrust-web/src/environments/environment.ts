@@ -90,6 +90,10 @@ export const environment = {
   /** Base absolue (sans slash final) des `canonical` / `hreflang` / `og:url` / sitemap de la landing. */
   publicSiteOrigin: 'http://localhost:4200',
   /** Landing publique (`features/home`). */
+  /** ERP société : interface arabe + RTL (hors landing). Prod : `true` après revue client. */
+  erp: {
+    arabicEnabled: true
+  },
   landing: {
     /** Route `/ar`, sélecteur FR/AR, hreflang `ar-TN`, feuille RTL. Prod : `true` seulement après revue client du texte AR. */
     arabicEnabled: true,

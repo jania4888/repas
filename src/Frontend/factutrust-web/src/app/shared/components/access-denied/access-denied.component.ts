@@ -10,12 +10,10 @@ import { ButtonModule } from 'primeng/button';
     <div class="access-denied">
       <div class="access-denied-content">
         <h1 class="code">403</h1>
-        <h2 class="title">Accès refusé</h2>
-        <p class="message">
-          Votre compte n’inclut pas les droits nécessaires pour cette section. Contactez un administrateur
-          si vous pensez qu’il s’agit d’une erreur.
-        </p>
-        <p-button label="Tableau de bord" icon="pi pi-home" routerLink="/dashboard" />
+        <h2 class="title" i18n="@@shared.components.access-denied.access-denied.acces.refuse.db4ecaf4">Accès refusé</h2>
+        <p class="message" i18n="@@shared.components.access-denied.access-denied.votre.compte.n.inclut.pas.les.droits.necessaires.ab8053df"> Votre compte n’inclut pas les droits nécessaires pour cette section. Contactez un administrateur
+          si vous pensez qu’il s’agit d’une erreur. </p>
+        <p-button label="Tableau de bord" i18n-label="@@shared.components.access-denied.access-denied.tableau.de.bord.a524057f" icon="pi pi-home" routerLink="/dashboard" />
       </div>
     </div>
   `,

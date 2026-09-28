@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnInit, inject, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -33,24 +35,24 @@ import { forkJoin } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 const MONTH_OPTIONS: { label: string; value: number }[] = [
-  { label: 'Janvier', value: 1 },
-  { label: 'Février', value: 2 },
-  { label: 'Mars', value: 3 },
-  { label: 'Avril', value: 4 },
-  { label: 'Mai', value: 5 },
-  { label: 'Juin', value: 6 },
-  { label: 'Juillet', value: 7 },
-  { label: 'Août', value: 8 },
-  { label: 'Septembre', value: 9 },
-  { label: 'Octobre', value: 10 },
-  { label: 'Novembre', value: 11 },
-  { label: 'Décembre', value: 12 }
+  { label: $localize`:@@payments.cash-desk.ts.janvier.7a32ae0f:Janvier`, value: 1 },
+  { label: $localize`:@@payments.cash-desk.ts.fevrier.63fc1803:Février`, value: 2 },
+  { label: $localize`:@@payments.cash-desk.ts.mars.1778011d:Mars`, value: 3 },
+  { label: $localize`:@@payments.cash-desk.ts.avril.4efeee46:Avril`, value: 4 },
+  { label: $localize`:@@payments.cash-desk.ts.mai.afe526a6:Mai`, value: 5 },
+  { label: $localize`:@@payments.cash-desk.ts.juin.8b1e84b6:Juin`, value: 6 },
+  { label: $localize`:@@payments.cash-desk.ts.juillet.e8e0920c:Juillet`, value: 7 },
+  { label: $localize`:@@payments.cash-desk.ts.aout.460b6696:Août`, value: 8 },
+  { label: $localize`:@@payments.cash-desk.ts.septembre.08d23f31:Septembre`, value: 9 },
+  { label: $localize`:@@payments.cash-desk.ts.octobre.0ed28485:Octobre`, value: 10 },
+  { label: $localize`:@@payments.cash-desk.ts.novembre.632580af:Novembre`, value: 11 },
+  { label: $localize`:@@payments.cash-desk.ts.decembre.03bcd9b0:Décembre`, value: 12 }
 ];
 
 @Component({
   selector: 'app-cash-desk',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     FormsModule,
@@ -71,8 +73,8 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
   ],
   template: `
     <app-page-header
-      title="Caisse de trésorerie"
-      subtitle="Enregistrez et gérez vos opérations de caisse (encaissements et décaissements).">
+      title="Caisse de trésorerie" i18n-title="@@payments.cash-desk.caisse.de.tresorerie.eeba43e2"
+      subtitle="Enregistrez et gérez vos opérations de caisse (encaissements et décaissements)." i18n-subtitle="@@payments.cash-desk.enregistrez.et.gerez.vos.operations.de.c.077842dd">
       <app-analyze-with-ai-button
         screenId="cash-desk"
         [payloadBuilder]="buildCashDeskAnalyzePayload"
@@ -82,11 +84,11 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
     <div class="page-grid">
       <div class="filters-card">
         <div class="filters-header">
-          <h3 class="filters-title">Période</h3>
+          <h3 class="filters-title" i18n="@@payments.cash-desk.periode.de2110b7">Période</h3>
         </div>
         <div class="filters-row">
           <div class="filter-field">
-            <label for="month">Mois</label>
+            <label for="month" i18n="@@payments.cash-desk.mois.0d304bea">Mois</label>
             <p-select
               id="month"
               [options]="monthOptions"
@@ -99,7 +101,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
             </p-select>
           </div>
           <div class="filter-field">
-            <label for="year">Année</label>
+            <label for="year" i18n="@@payments.cash-desk.annee.1f910d98">Année</label>
             <p-select
               id="year"
               [options]="yearOptions"
@@ -118,18 +120,14 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                   variant="outline"
                   icon="pi pi-building"
                   (click)="openBankDepositWizard()"
-                  ariaLabel="Remise en banque">
-                  Remise en banque
-                </app-button>
+                  ariaLabel="Remise en banque" i18n-ariaLabel="@@payments.cash-desk.remise.en.banque.50f823a1" i18n="@@payments.cash-desk.remise.en.banque.f42e5169"> Remise en banque </app-button>
                 <app-button
                   variant="primary"
                   icon="pi pi-plus"
                   (click)="openAddDialog()"
-                  ariaLabel="Enregistrer une opération">
-                  Enregistrer une opération
-                </app-button>
+                  ariaLabel="Enregistrer une opération" i18n-ariaLabel="@@payments.cash-desk.enregistrer.une.operation.ffa51487" i18n="@@payments.cash-desk.enregistrer.une.operation.f45e95b6"> Enregistrer une opération </app-button>
               } @else {
-                <span class="perm-hint" role="note">Autorisation « Trésorerie — saisie » requise.</span>
+                <span class="perm-hint" role="note" i18n="@@payments.cash-desk.autorisation.tresorerie.saisie.requise.93829a0d">Autorisation « Trésorerie — saisie » requise.</span>
               }
             </div>
           }
@@ -139,7 +137,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
       <div class="balances-card" *ngIf="!loading()">
         <div class="balances-grid">
           <div class="balance-panel">
-            <h3 class="panel-title">Solde primaire (mois)</h3>
+            <h3 class="panel-title" i18n="@@payments.cash-desk.solde.primaire.mois.c5cf744d">Solde primaire (mois)</h3>
             <div class="panel-total" [class.negative]="(balances()?.primaryTotal ?? 0) < 0">
               {{ balances()?.primaryTotal | number:'1.3-3' }} {{ balances()?.currency }}
             </div>
@@ -156,7 +154,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
             <div class="method-list">
               @for (row of balances()?.primary ?? []; track row.method) {
                 <div class="method-row">
-                  <span class="method-name">{{ row.methodDisplay }}</span>
+                  <span class="method-name">{{ row.methodDisplay | backendLabel }}</span>
                   <span class="method-amount mono" [class.negative]="row.amount < 0">{{ row.amount | number:'1.3-3' }}</span>
                 </div>
               }
@@ -164,7 +162,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
           </div>
 
           <div class="balance-panel">
-            <h3 class="panel-title">Solde secondaire (YTD)</h3>
+            <h3 class="panel-title" i18n="@@payments.cash-desk.solde.secondaire.ytd.b385fc21">Solde secondaire (YTD)</h3>
             <div class="panel-total" [class.negative]="(balances()?.secondaryTotal ?? 0) < 0">
               {{ balances()?.secondaryTotal | number:'1.3-3' }} {{ balances()?.currency }}
             </div>
@@ -181,7 +179,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
             <div class="method-list">
               @for (row of balances()?.secondary ?? []; track row.method) {
                 <div class="method-row">
-                  <span class="method-name">{{ row.methodDisplay }}</span>
+                  <span class="method-name">{{ row.methodDisplay | backendLabel }}</span>
                   <span class="method-amount mono" [class.negative]="row.amount < 0">{{ row.amount | number:'1.3-3' }}</span>
                 </div>
               }
@@ -201,15 +199,15 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
             @if (auth.isFirmDelegatedReadonly()) {
               <app-empty-state
                 illustration="empty-payments.svg"
-                title="Aucune opération"
-                description="Aucune opération trouvée pour la période sélectionnée.">
+                title="Aucune opération" i18n-title="@@payments.cash-desk.aucune.operation.5e70746f"
+                description="Aucune opération trouvée pour la période sélectionnée." i18n-description="@@payments.cash-desk.aucune.operation.trouvee.pour.la.periode.cd290cb0">
               </app-empty-state>
             } @else {
               <app-empty-state
                 illustration="empty-payments.svg"
-                title="Aucune opération"
-                description="Aucune opération trouvée pour la période sélectionnée."
-                actionLabel="Enregistrer une opération"
+                title="Aucune opération" i18n-title="@@payments.cash-desk.aucune.operation.5e70746f"
+                description="Aucune opération trouvée pour la période sélectionnée." i18n-description="@@payments.cash-desk.aucune.operation.trouvee.pour.la.periode.cd290cb0"
+                actionLabel="Enregistrer une opération" i18n-actionLabel="@@payments.cash-desk.enregistrer.une.operation.afe7362d"
                 (actionClick)="openAddDialog()">
               </app-empty-state>
             }
@@ -225,14 +223,14 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
 
               <ng-template pTemplate="header">
                 <tr>
-                  <th style="width:130px">Date</th>
-                  <th style="width:100px">Type</th>
-                  <th style="width:170px">Moyen</th>
-                  <th style="min-width:200px">Catégorie</th>
-                  <th>Libellé</th>
-                  <th style="width:200px">Document</th>
-                  <th style="width:140px" class="text-right">Débit</th>
-                  <th style="width:140px" class="text-right">Crédit</th>
+                  <th style="width:130px" i18n="@@payments.cash-desk.date.eb9a4bc1">Date</th>
+                  <th style="width:100px" i18n="@@payments.cash-desk.type.3deb7456">Type</th>
+                  <th style="width:170px" i18n="@@payments.cash-desk.moyen.de03c108">Moyen</th>
+                  <th style="min-width:200px" i18n="@@payments.cash-desk.categorie.6b38300a">Catégorie</th>
+                  <th i18n="@@payments.cash-desk.libelle.f5485bba">Libellé</th>
+                  <th style="width:200px" i18n="@@payments.cash-desk.document.e214b8a2">Document</th>
+                  <th style="width:140px" class="text-right" i18n="@@payments.cash-desk.debit.f528224f">Débit</th>
+                  <th style="width:140px" class="text-right" i18n="@@payments.cash-desk.credit.19194bdf">Crédit</th>
                   @if (!auth.isFirmDelegatedReadonly()) {
                     <th style="width:80px"></th>
                   }
@@ -244,19 +242,19 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                   <td>{{ op.operationDate | date:'dd/MM/yyyy' }}</td>
                   <td>
                     <span class="type-badge" [class.credit]="op.operationType === CashOperationType.Credit" [class.debit]="op.operationType === CashOperationType.Debit">
-                      {{ op.operationTypeDisplay }}
+                      {{ op.operationTypeDisplay | backendLabel }}
                     </span>
                   </td>
-                  <td>{{ op.methodDisplay }}</td>
-                  <td class="category-cell">{{ op.categoryDisplay || op.revenueCategoryDisplay }}</td>
+                  <td>{{ op.methodDisplay | backendLabel }}</td>
+                  <td class="category-cell">{{ (op.categoryDisplay | backendLabel) || (op.revenueCategoryDisplay | backendLabel) }}</td>
                   <td>
                     <div class="label-cell">
                       <span>{{ op.label }}</span>
                       @if (op.origin === CashOperationOrigin.InvoicePayment) {
-                        <span class="origin-badge">Encaissement facture</span>
+                        <span class="origin-badge" i18n="@@payments.cash-desk.encaissement.facture.a795c370">Encaissement facture</span>
                       }
                       @if (op.origin === CashOperationOrigin.SupplierPayment) {
-                        <span class="origin-badge">Paiement fournisseur</span>
+                        <span class="origin-badge" i18n="@@payments.cash-desk.paiement.fournisseur.1dd14397">Paiement fournisseur</span>
                       }
                       @if (op.vatRatePercent !== null && op.vatRatePercent !== undefined) {
                         <span class="vat-badge">TVA {{ op.vatRatePercent }} %</span>
@@ -265,7 +263,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                         <a
                           [routerLink]="['/invoices', op.sourceInvoiceId]"
                           class="source-link"
-                          [attr.aria-label]="'Voir la facture ' + (op.sourceInvoiceNumber || '')">
+                          [attr.aria-label]="loc_ui_tern_voir_la_facture_fb6bca + (op.sourceInvoiceNumber || '')">
                           {{ op.sourceInvoiceNumber || 'Voir facture' }}
                         </a>
                       }
@@ -273,7 +271,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                         <a
                           [routerLink]="['/supplier-invoices', op.sourceSupplierInvoiceId]"
                           class="source-link"
-                          [attr.aria-label]="'Voir la facture fournisseur ' + (op.sourceSupplierInvoiceNumber || '')">
+                          [attr.aria-label]="loc_ui_tern_voir_la_facture_fournisseur_6bee70 + (op.sourceSupplierInvoiceNumber || '')">
                           {{ op.sourceSupplierInvoiceNumber || 'Voir facture fournisseur' }}
                         </a>
                       }
@@ -304,16 +302,16 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                               icon="pi pi-trash"
                               [iconOnly]="true"
                               [iconAlwaysVisible]="true"
-                              pTooltip="Annuler l'opération"
-                              ariaLabel="Annuler l'opération"
+                              pTooltip="Annuler l'opération" i18n-pTooltip="@@payments.cash-desk.annuler.l.operation.dbf1fd18"
+                              ariaLabel="Annuler l'opération" i18n-ariaLabel="@@payments.cash-desk.annuler.l.operation.c17440af"
                               (click)="openCancelDialog(op); $event.stopPropagation()">
                             </app-button>
                           } @else {
                             <span
                               class="perm-lock"
                               role="note"
-                              pTooltip="Autorisation « Trésorerie — mise à jour » requise."
-                              aria-label="Autorisation « Trésorerie — mise à jour » requise.">
+                              pTooltip="Autorisation « Trésorerie — mise à jour » requise." i18n-pTooltip="@@payments.cash-desk.autorisation.tresorerie.mise.a.jour.requise.8574135e"
+                              aria-label="Autorisation « Trésorerie — mise à jour » requise." i18n-aria-label="@@payments.cash-desk.autorisation.tresorerie.mise.a.jour.requise.8574135e">
                               <i class="pi pi-lock" aria-hidden="true"></i>
                             </span>
                           }
@@ -327,8 +325,8 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                             [iconOnly]="true"
                             [iconAlwaysVisible]="true"
                             [disabled]="true"
-                            pTooltip="Géré via la facture"
-                            ariaLabel="Opération gérée via la facture">
+                            pTooltip="Géré via la facture" i18n-pTooltip="@@payments.cash-desk.gere.via.la.facture.940cb8fb"
+                            ariaLabel="Opération gérée via la facture" i18n-ariaLabel="@@payments.cash-desk.operation.geree.via.la.facture.75edfd7d">
                           </app-button>
                         }
                       </div>
@@ -356,7 +354,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
 
     <!-- Cancel dialog -->
     <p-dialog
-      header="Annuler l'opération"
+      header="Annuler l'opération" i18n-header="@@payments.cash-desk.annuler.l.operation.dbf1fd18"
       [(visible)]="cancelDialogVisible"
       [modal]="true"
       [position]="dialogPosition"
@@ -367,16 +365,14 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
       (onHide)="closeCancelDialog()">
 
       <div class="dialog-body">
-        <p class="dialog-message">
-          Indiquez le motif d'annulation (obligatoire).
-        </p>
+        <p class="dialog-message" i18n="@@payments.cash-desk.indiquez.le.motif.d.annulation.obligatoire.ac8edb83"> Indiquez le motif d'annulation (obligatoire). </p>
         <textarea
           pTextarea
           [(ngModel)]="cancelReason"
           rows="4"
           class="w-full"
           [maxLength]="500"
-          aria-label="Motif d'annulation">
+          aria-label="Motif d'annulation" i18n-aria-label="@@payments.cash-desk.motif.d.annulation.f627914d">
         </textarea>
         @if (cancelError()) {
           <div class="alert" role="alert">{{ cancelError() }}</div>
@@ -385,15 +381,13 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
 
       <ng-template pTemplate="footer">
         <div class="dialog-footer">
-          <app-button variant="outline" (click)="closeCancelDialog()" ariaLabel="Retour">Retour</app-button>
+          <app-button variant="outline" (click)="closeCancelDialog()" ariaLabel="Retour" i18n-ariaLabel="@@payments.cash-desk.retour.3179a2b1" i18n="@@payments.cash-desk.retour.e5befb1f">Retour</app-button>
           <app-button
             variant="danger"
             icon="pi pi-times"
             iconPos="left"
             [disabled]="!cancelReason.trim() || cancelling()"
-            (click)="submitCancel()" ariaLabel="Annuler l'opération">
-            Annuler
-          </app-button>
+            (click)="submitCancel()" ariaLabel="Annuler l'opération" i18n-ariaLabel="@@payments.cash-desk.annuler.l.operation.c17440af" i18n="@@payments.cash-desk.annuler.49ba3292"> Annuler </app-button>
         </div>
       </ng-template>
     </p-dialog>
@@ -443,7 +437,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
       }
       .p-datatable-tbody > tr.table-row > td { border-bottom: 1px solid var(--color-border-subtle); }
     }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .amount { font-family: var(--font-family-mono, 'JetBrains Mono', monospace); font-weight: var(--font-weight-semibold); }
     .debit-col { color: var(--color-danger-600); }
     .credit-col { color: var(--color-success-600); }
@@ -530,6 +524,8 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
   `]
 })
 export class CashDeskComponent implements OnInit {
+  readonly loc_ui_tern_voir_la_facture_fb6bca = $localize`:@@ui.tern.voir.la.facture.fb6bca:Voir la facture `;
+  readonly loc_ui_tern_voir_la_facture_fournisseur_6bee70 = $localize`:@@ui.tern.voir.la.facture.fournisseur.6bee70:Voir la facture fournisseur `;
   private readonly cashDeskService = inject(CashDeskService);
   private readonly toastService = inject(ToastService);
   readonly auth = inject(AuthService);
@@ -562,10 +558,10 @@ export class CashDeskComponent implements OnInit {
     const b = this.balances();
     const currency = b?.currency ?? 'TND';
     return [
-      { label: 'Solde caisse (mois)', value: b?.primaryTotal, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
-      { label: 'Encaissements', value: b?.primaryCreditsTotal, format: 'currency', currency, icon: 'pi-arrow-down-left', tone: 'emerald' },
-      { label: 'Décaissements', value: b?.primaryDebitsTotal, format: 'currency', currency, icon: 'pi-arrow-up-right', tone: 'rose' },
-      { label: 'Opérations', value: this.totalRecords(), format: 'number', icon: 'pi-list', tone: 'cyan' }
+      { label: $localize`:@@payments.cash-desk.ts.solde.caisse.mois.1596003c:Solde caisse (mois)`, value: b?.primaryTotal, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
+      { label: $localize`:@@payments.cash-desk.ts.encaissements.598f53c9:Encaissements`, value: b?.primaryCreditsTotal, format: 'currency', currency, icon: 'pi-arrow-down-left', tone: 'emerald' },
+      { label: $localize`:@@payments.cash-desk.ts.decaissements.566a79f1:Décaissements`, value: b?.primaryDebitsTotal, format: 'currency', currency, icon: 'pi-arrow-up-right', tone: 'rose' },
+      { label: $localize`:@@payments.cash-desk.ts.operations.8d02bd5b:Opérations`, value: this.totalRecords(), format: 'number', icon: 'pi-list', tone: 'cyan' }
     ];
   });
 
@@ -633,8 +629,8 @@ export class CashDeskComponent implements OnInit {
       error: () => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de charger les opérations.'
+          summary: $localize`:@@cash-desk.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@cash-desk.component.detail.Impossible_de_ch:Impossible de charger les opérations.`
         });
       }
     });
@@ -663,8 +659,8 @@ export class CashDeskComponent implements OnInit {
         this.initialLoad.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de charger la caisse de trésorerie.'
+          summary: $localize`:@@cash-desk.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@cash-desk.component.detail.Impossible d:Impossible de charger la caisse de trésorerie.`
         });
       },
       complete: () => {
@@ -807,7 +803,7 @@ export class CashDeskComponent implements OnInit {
 
     const reason = this.cancelReason.trim();
     if (!reason) {
-      this.cancelError.set('Le motif d\u2019annulation est obligatoire.');
+      this.cancelError.set($localize`:@@payments.cash-desk.ts.le.motif.d.annulation.est.obligatoire.82fbaf81:Le motif d’annulation est obligatoire.`);
       return;
     }
 
@@ -820,24 +816,24 @@ export class CashDeskComponent implements OnInit {
         if (res.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Opération annulée.'
+            summary: $localize`:@@cash-desk.component.summary.Succès:Succès`,
+            detail: $localize`:@@cash-desk.component.detail.Op_ration_annul_:Opération annulée.`
           });
           this.loadAll();
           this.cancelDialogVisible = false;
         } else {
-          this.cancelError.set(res.message ?? 'Impossible d\u2019annuler l\u2019opération.');
+          this.cancelError.set(res.message ?? $localize`:@@payments.cash-desk.ts.impossible.d.annuler.l.operation.7a3e0387:Impossible d’annuler l’opération.`);
         }
         this.cancelling.set(false);
       },
       error: (err: HttpErrorResponse) => {
         // 403 (payments:update) → message métier français ; autres erreurs → message générique francisé.
         const msg = err.status === 403
-          ? 'Action refusée : autorisations insuffisantes (Trésorerie — mise à jour).'
+          ? $localize`:@@ui.tern.action.refusee.autorisations.insuffisantes.86b982:Action refusée : autorisations insuffisantes (Trésorerie — mise à jour).`
           : (err.error as any)?.errors?.[0] ??
             (err.error as any)?.message ??
             (err.error as any)?.error?.description ??
-            'Erreur lors de l\u2019annulation.';
+            $localize`:@@payments.cash-desk.ts.erreur.lors.de.l.annulation.0ba57921:Erreur lors de l’annulation.`;
         this.cancelError.set(msg);
         this.cancelling.set(false);
       }

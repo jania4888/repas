@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, Input, OnChanges, SimpleChanges, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -29,29 +30,25 @@ import { ToastService } from '@core/services/toast.service';
   ],
   template: `
     @if (loading()) {
-      <p class="form-hint"><i class="pi pi-spin pi-spinner"></i> Chargement des SKU…</p>
+      <p class="form-hint" i18n="@@shared.components.product-variant-matrix.product-variant-matrix.chargement.des.sku.4f181a40"><i class="pi pi-spin pi-spinner"></i> Chargement des SKU…</p>
     } @else if (variants().length === 0) {
-      <p class="form-hint">Aucun SKU enfant généré pour ce modèle.</p>
+      <p class="form-hint" i18n="@@shared.components.product-variant-matrix.product-variant-matrix.aucun.sku.enfant.genere.pour.ce.modele.b60126e5">Aucun SKU enfant généré pour ce modèle.</p>
     } @else {
       <div class="matrix-toolbar">
         <app-button type="button" variant="outline" size="sm" icon="pi-copy"
-                    (clicked)="copyPricesFromParent()" [disabled]="saving()">
-          Appliquer les prix du modèle
-        </app-button>
+                    (clicked)="copyPricesFromParent()" [disabled]="saving()" i18n="@@shared.components.product-variant-matrix.product-variant-matrix.appliquer.les.prix.du.modele.b6e3445d"> Appliquer les prix du modèle </app-button>
         <app-button type="button" variant="secondary" size="sm" icon="pi-save"
-                    (clicked)="saveAllPrices()" [disabled]="saving()">
-          Enregistrer les prix
-        </app-button>
+                    (clicked)="saveAllPrices()" [disabled]="saving()" i18n="@@shared.components.product-variant-matrix.product-variant-matrix.enregistrer.les.prix.e06faf29"> Enregistrer les prix </app-button>
       </div>
       <p-table [value]="variants()" styleClass="variant-matrix-table" [scrollable]="true" scrollHeight="320px">
         <ng-template pTemplate="header">
           <tr>
-            <th>Code</th>
-            <th>Axes</th>
-            <th>Prix HT</th>
-            <th>Prix TTC</th>
-            <th>Stock</th>
-            <th>Code-barres</th>
+            <th i18n="@@shared.components.product-variant-matrix.product-variant-matrix.code.adac6937">Code</th>
+            <th i18n="@@shared.components.product-variant-matrix.product-variant-matrix.axes.d75f36f8">Axes</th>
+            <th i18n="@@shared.components.product-variant-matrix.product-variant-matrix.prix.ht.362207ca">Prix HT</th>
+            <th i18n="@@shared.components.product-variant-matrix.product-variant-matrix.prix.ttc.c48d80e8">Prix TTC</th>
+            <th i18n="@@shared.components.product-variant-matrix.product-variant-matrix.stock.bcecf456">Stock</th>
+            <th i18n="@@shared.components.product-variant-matrix.product-variant-matrix.code.barres.a5ce859a">Code-barres</th>
             <th></th>
           </tr>
         </ng-template>
@@ -66,13 +63,11 @@ import { ToastService } from '@core/services/toast.service';
             <td>{{ row.salePriceTtc | number:'1.3-3' }}</td>
             <td>{{ row.quantityAvailable ?? '—' }}</td>
             <td>
-              <input pInputText [(ngModel)]="row.barcode" class="w-full" placeholder="EAN" />
+              <input pInputText [(ngModel)]="row.barcode" class="w-full" placeholder="EAN" i18n-placeholder="@@shared.components.product-variant-matrix.product-variant-matrix.ean.057d1674" />
             </td>
             <td>
               <app-button type="button" variant="ghost" size="sm" icon="pi-external-link"
-                          [routerLink]="['/products', row.id, 'edit']">
-                Fiche
-              </app-button>
+                          [routerLink]="['/products', row.id, 'edit']" i18n="@@shared.components.product-variant-matrix.product-variant-matrix.fiche.6ad30343"> Fiche </app-button>
             </td>
           </tr>
         </ng-template>
@@ -132,7 +127,7 @@ export class ProductVariantMatrixComponent implements OnChanges {
       next: res => {
         this.saving.set(false);
         if (res.success) {
-          this.toastService.add({ severity: 'success', summary: 'Prix', detail: 'Prix du modèle appliqués aux variantes.' });
+          this.toastService.add({ severity: 'success', summary: $localize`:@@product-variant-matrix.component.summary.Prix:Prix`, detail: $localize`:@@product-variant-matrix.component.detail.Prix_du_mod_le_a:Prix du modèle appliqués aux variantes.` });
           this.load();
         }
       },
@@ -154,8 +149,8 @@ export class ProductVariantMatrixComponent implements OnChanges {
         if (res.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Prix',
-            detail: `${res.data ?? 0} variante(s) mise(s) à jour.`
+            summary: $localize`:@@product-variant-matrix.component.summary.Prix:Prix`,
+            detail: $localize`:@@shared.product-variant-matrix.ts.p.variante.s.mise.s.a.jour.5947452a:${res.data ?? 0}:p: variante(s) mise(s) à jour.`
           });
           this.load();
           return;
@@ -166,8 +161,8 @@ export class ProductVariantMatrixComponent implements OnChanges {
         // que le serveur refuse un code-barres en doublon ou d'une symbologie non activée.
         this.toastService.add({
           severity: 'warn',
-          summary: 'Enregistrement refusé',
-          detail: res.message || res.errors?.[0] || 'Vérifiez les prix et les codes-barres saisis.'
+          summary: $localize`:@@product-variant-matrix.component.summary.Enregistrement_r:Enregistrement refusé`,
+          detail: res.message || res.errors?.[0] || $localize`:@@shared.product-variant-matrix.ts.verifiez.les.prix.et.les.codes.barres.sa.e1f0fba8:Vérifiez les prix et les codes-barres saisis.`
         });
       },
       error: (err: unknown) => {
@@ -175,10 +170,10 @@ export class ProductVariantMatrixComponent implements OnChanges {
         const detail =
           (err as { error?: { message?: string; error?: string } })?.error?.message ??
           (err as { error?: { message?: string; error?: string } })?.error?.error ??
-          'Vérifiez les prix et les codes-barres saisis.';
+          $localize`:@@ui.tern.verifiez.les.prix.et.les.codes.barres.sais.e1f0fb:Vérifiez les prix et les codes-barres saisis.`;
         this.toastService.add({
           severity: 'error',
-          summary: 'Enregistrement refusé',
+          summary: $localize`:@@product-variant-matrix.component.summary.Enregistrement_r:Enregistrement refusé`,
           detail
         });
       }

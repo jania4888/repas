@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -44,32 +45,32 @@ interface DesignColumn {
   template: `
     <p-toast></p-toast>
     <app-studio-page-shell
-      [title]="(viewId ? 'Modifier' : 'Nouvelle') + ' vue (lecture seule)'"
-      subtitle="Configurez les colonnes affichées depuis une table SQL existante."
+      [title]="(viewId ? loc_ui_tern_modifier_f260e7 : loc_ui_tern_nouvelle_3278b0) + loc_ui_tern_vue_lecture_seule_485638"
+      subtitle="Configurez les colonnes affichées depuis une table SQL existante." i18n-subtitle="@@studio.studio-view-designer.configurez.les.colonnes.affichees.depuis.d412ac7a"
       [breadcrumbs]="breadcrumbs()">
       <div studioActions class="studio-head-actions">
-        <button pButton type="button" label="Aperçu" icon="fa-solid fa-play" class="p-button-outlined" (click)="preview()"></button>
-        <button pButton type="button" label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving()" (click)="save()"></button>
+        <button pButton type="button" label="Aperçu" i18n-label="@@studio.studio-view-designer.apercu.f0f53004" icon="fa-solid fa-play" class="p-button-outlined" (click)="preview()"></button>
+        <button pButton type="button" label="Enregistrer" i18n-label="@@studio.studio-view-designer.enregistrer.f7c8bcd8" icon="fa-solid fa-check" [disabled]="saving()" (click)="save()"></button>
       </div>
 
-      <app-studio-designer-shell previewTitle="Aperçu (lecture seule)">
+      <app-studio-designer-shell previewTitle="Aperçu (lecture seule)" i18n-previewTitle="@@studio.studio-view-designer.apercu.lecture.seule.cc77c764">
         <div studioEditor>
-          <label class="studio-lbl">Nom de la vue *</label>
-          <input pInputText [(ngModel)]="displayName" class="studio-w-full" placeholder="Ex. Liste clients" (ngModelChange)="schedulePreview()" />
+          <label class="studio-lbl" i18n="@@studio.studio-view-designer.nom.de.la.vue.86ef855c">Nom de la vue *</label>
+          <input pInputText [(ngModel)]="displayName" class="studio-w-full" placeholder="Ex. Liste clients" i18n-placeholder="@@studio.studio-view-designer.ex.liste.clients.509e94e2" (ngModelChange)="schedulePreview()" />
 
-          <label class="studio-lbl">Table SQL existante *</label>
+          <label class="studio-lbl" i18n="@@studio.studio-view-designer.table.sql.existante.69202119">Table SQL existante *</label>
           <p-select [options]="tables()" [(ngModel)]="sourceTable" (ngModelChange)="onTableChange()"
             optionLabel="name" optionValue="name" [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="studio-w-full"
-            placeholder="Choisir une table"></p-select>
-          <small class="studio-hint">Lecture seule : aucune donnée n'est modifiée par une vue.</small>
+            placeholder="Choisir une table" i18n-placeholder="@@studio.studio-view-designer.choisir.une.table.9ec20a6a"></p-select>
+          <small class="studio-hint" i18n="@@studio.studio-view-designer.lecture.seule.aucune.donnee.n.est.modifiee.par.u.6baf5fab">Lecture seule : aucune donnée n'est modifiée par une vue.</small>
 
           <div class="studio-block-head" style="margin-top: 1rem">
-            <label class="studio-lbl" style="margin:0">Recherche activée</label>
+            <label class="studio-lbl" style="margin:0" i18n="@@studio.studio-view-designer.recherche.activee.4d16ddb9">Recherche activée</label>
             <p-inputSwitch [(ngModel)]="searchEnabled"></p-inputSwitch>
           </div>
 
           @if (columns().length > 0) {
-            <label class="studio-lbl">Colonnes</label>
+            <label class="studio-lbl" i18n="@@studio.studio-view-designer.colonnes.53a2544c">Colonnes</label>
             <div class="studio-cols" cdkDropList (cdkDropListDropped)="drop($event)">
               @for (c of columns(); track c.name) {
                 <div class="studio-col-row" cdkDrag [class.studio-col-row--off]="!c.included">
@@ -81,12 +82,12 @@ interface DesignColumn {
                   <p-select [options]="formatOptions" [(ngModel)]="c.format" optionLabel="label" optionValue="value"
                     appendTo="body" panelStyleClass="studio-theme" [disabled]="!c.included" (ngModelChange)="schedulePreview()"></p-select>
                   @if (c.included && c.format === 'status') {
-                    <input pInputText [(ngModel)]="c.statusMapText" placeholder="1=Brouillon,3=Validé"
+                    <input pInputText [(ngModel)]="c.statusMapText" placeholder="1=Brouillon,3=Validé" i18n-placeholder="@@studio.studio-view-designer.1.brouillon.3.valide.6e930b25"
                       class="studio-grow" (ngModelChange)="schedulePreview()" />
                   }
                   @if (c.included && c.format === 'fk') {
-                    <input pInputText [(ngModel)]="c.lookupTable" placeholder="Table" class="studio-grow" (ngModelChange)="schedulePreview()" />
-                    <input pInputText [(ngModel)]="c.lookupDisplayColumn" placeholder="Colonne" (ngModelChange)="schedulePreview()" />
+                    <input pInputText [(ngModel)]="c.lookupTable" placeholder="Table" i18n-placeholder="@@studio.studio-view-designer.table.0424f6e7" class="studio-grow" (ngModelChange)="schedulePreview()" />
+                    <input pInputText [(ngModel)]="c.lookupDisplayColumn" placeholder="Colonne" i18n-placeholder="@@studio.studio-view-designer.colonne.064b24f9" (ngModelChange)="schedulePreview()" />
                   }
                 </div>
               }
@@ -106,6 +107,9 @@ interface DesignColumn {
   styleUrl: './shared/studio-layout.scss',
 })
 export class StudioViewDesignerComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_modifier_f260e7 = $localize`:@@ui.tern.modifier.f260e7:Modifier`;
+  readonly loc_ui_tern_nouvelle_3278b0 = $localize`:@@ui.tern.nouvelle.3278b0:Nouvelle`;
+  readonly loc_ui_tern_vue_lecture_seule_485638 = $localize`:@@ui.tern.vue.lecture.seule.485638: vue (lecture seule)`;
   private readonly studio = inject(StudioService);
   private readonly toast = inject(MessageService);
   private readonly route = inject(ActivatedRoute);
@@ -126,25 +130,25 @@ export class StudioViewDesignerComponent implements OnInit, OnDestroy {
   searchEnabled = true;
 
   readonly formatOptions = [
-    { label: 'Auto', value: 'auto' },
-    { label: 'Texte', value: 'text' },
-    { label: 'Date', value: 'date' },
-    { label: 'Date/heure', value: 'datetime' },
-    { label: 'Nombre', value: 'number' },
-    { label: 'Monétaire', value: 'money' },
-    { label: 'Booléen', value: 'boolean' },
-    { label: 'Statut', value: 'status' },
-    { label: 'Clé étrangère', value: 'fk' },
+    { label: $localize`:@@studio.studio-view-designer.ts.auto.c614ba7c:Auto`, value: 'auto' },
+    { label: $localize`:@@studio.studio-view-designer.ts.texte.ff9afef1:Texte`, value: 'text' },
+    { label: $localize`:@@studio.studio-view-designer.ts.date.eb9a4bc1:Date`, value: 'date' },
+    { label: $localize`:@@studio.studio-view-designer.ts.date.heure.3c4dd1be:Date/heure`, value: 'datetime' },
+    { label: $localize`:@@studio.studio-view-designer.ts.nombre.e68491e9:Nombre`, value: 'number' },
+    { label: $localize`:@@studio.studio-view-designer.ts.monetaire.5b9130b4:Monétaire`, value: 'money' },
+    { label: $localize`:@@studio.studio-view-designer.ts.booleen.76d7ac23:Booléen`, value: 'boolean' },
+    { label: $localize`:@@studio.studio-view-designer.ts.statut.659499f3:Statut`, value: 'status' },
+    { label: $localize`:@@studio.studio-view-designer.ts.cle.etrangere.57b1da1f:Clé étrangère`, value: 'fk' },
   ];
 
-  readonly widthOptions = [{ label: 'Pleine', value: 'full' }, { label: 'Demi', value: 'half' }];
+  readonly widthOptions = [{ label: $localize`:@@studio.studio-view-designer.ts.pleine.7c970f6b:Pleine`, value: 'full' }, { label: $localize`:@@studio.studio-view-designer.ts.demi.2afabf13:Demi`, value: 'half' }];
 
   ngOnInit(): void {
     this.previewTrigger$.pipe(debounceTime(300), takeUntil(this.destroy$)).subscribe(() => this.preview());
     this.viewId = this.route.snapshot.paramMap.get('id');
     this.studio.listSchemaTables().subscribe({
       next: res => { if (res.success) this.tables.set(res.data ?? []); },
-      error: () => this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Tables introuvables.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@studio-view-designer.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-view-designer.component.detail.Tables_introuvab:Tables introuvables.` })
     });
     if (this.viewId) this.loadView();
   }
@@ -203,7 +207,7 @@ export class StudioViewDesignerComponent implements OnInit, OnDestroy {
           this.schedulePreview();
         }
       },
-      error: () => this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Colonnes introuvables.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@studio-view-designer.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-view-designer.component.detail.Colonnes_introuv:Colonnes introuvables.` })
     });
   }
 
@@ -266,11 +270,11 @@ export class StudioViewDesignerComponent implements OnInit, OnDestroy {
 
   save(): void {
     if (!this.displayName.trim()) {
-      this.toast.add({ severity: 'warn', summary: 'Nom requis', detail: 'Donnez un nom à la vue.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-view-designer.component.summary.Nom requis:Nom requis`, detail: $localize`:@@studio-view-designer.component.detail.Donnez_un_nom_:Donnez un nom à la vue.` });
       return;
     }
     if (!this.sourceTable) {
-      this.toast.add({ severity: 'warn', summary: 'Table requise', detail: 'Choisissez une table.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-view-designer.component.summary.Table requis:Table requise`, detail: $localize`:@@studio-view-designer.component.detail.Choisissez_une_t:Choisissez une table.` });
       return;
     }
     const cols = this.columns().filter(c => c.included).map(c => ({
@@ -281,7 +285,7 @@ export class StudioViewDesignerComponent implements OnInit, OnDestroy {
       formatOptions: this.buildFormatOptions(c)
     }));
     if (cols.length === 0) {
-      this.toast.add({ severity: 'warn', summary: 'Colonnes requises', detail: 'Cochez au moins une colonne.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-view-designer.component.summary.Colonnes_requise:Colonnes requises`, detail: $localize`:@@studio-view-designer.component.detail.Cochez_au_moins_:Cochez au moins une colonne.` });
       return;
     }
 
@@ -296,15 +300,15 @@ export class StudioViewDesignerComponent implements OnInit, OnDestroy {
       next: res => {
         this.saving.set(false);
         if (res.success) {
-          this.toast.add({ severity: 'success', summary: 'Vue enregistrée' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@studio-view-designer.component.summary.Vue_enregistr_e:Vue enregistrée` });
           this.router.navigate(['/studio/forms']);
         } else {
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.errors?.[0] ?? res.message ?? 'Échec.' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@studio-view-designer.component.summary.Erreur:Erreur`, detail: res.errors?.[0] ?? res.message ?? $localize`:@@ui.tern.echec.0238a9:Échec.` });
         }
       },
       error: err => {
         this.saving.set(false);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: err?.error?.message ?? 'Enregistrement impossible.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@studio-view-designer.component.summary.Erreur:Erreur`, detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.` });
       }
     });
   }

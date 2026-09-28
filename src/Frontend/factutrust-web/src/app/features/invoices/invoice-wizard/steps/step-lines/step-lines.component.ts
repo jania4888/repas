@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, OnDestroy, inject, signal, computed, effect } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -74,7 +76,7 @@ interface WizardProductSuggestion {
 @Component({
   selector: 'app-step-lines',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     BarcodeScanFieldComponent,
     CommonModule,
     FormsModule,
@@ -101,13 +103,11 @@ interface WizardProductSuggestion {
       <section class="section">
         <div class="section-header">
           <div>
-            <h2 class="section-title">
+            <h2 class="section-title" i18n="@@invoices.invoice-wizard.lignes.de.facturation.73e92d24">
               <i class="pi pi-list"></i>
               Lignes de facturation
             </h2>
-            <p class="section-description">
-              Ajoutez les produits ou services à facturer
-            </p>
+            <p class="section-description" i18n="@@invoices.invoice-wizard.ajoutez.les.produits.ou.services.a.facturer.6b89b6a1"> Ajoutez les produits ou services à facturer </p>
           </div>
           <div class="header-actions">
             <button 
@@ -115,12 +115,12 @@ interface WizardProductSuggestion {
               class="mode-toggle"
               [class.active]="!simpleMode()"
               (click)="toggleSimpleMode()"
-              pTooltip="Afficher/masquer les colonnes avancées (Unité, Remise, TVA détaillée)">
+              pTooltip="Afficher/masquer les colonnes avancées (Unité, Remise, TVA détaillée)" i18n-pTooltip="@@invoices.invoice-wizard.afficher.masquer.les.colonnes.avancees.unite.rem.2761bdf3">
               <i class="pi" [class.pi-eye]="simpleMode()" [class.pi-eye-slash]="!simpleMode()"></i>
-              {{ simpleMode() ? 'Mode avancé' : 'Mode simple' }}
+              {{ simpleMode() ? loc_ui_tern_mode_avance_f0a7a0 : loc_ui_tern_mode_simple_c08361 }}
             </button>
             <p-button
-              label="Ajouter une ligne"
+              label="Ajouter une ligne" i18n-label="@@invoices.invoice-wizard.ajouter.une.ligne.ba241fd4"
               icon="pi pi-plus"
               (click)="addNewLine()">
             </p-button>
@@ -128,7 +128,7 @@ interface WizardProductSuggestion {
           @if (barcodeScanEnabled) {
             <div class="barcode-scan-row">
               <ft-barcode-scan-field
-                placeholder="Scanner un code-barres pour ajouter une ligne"
+                placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="@@invoices.invoice-wizard.scanner.un.code.barres.pour.ajouter.une.ligne.3525ced5"
                 [autoFocus]="false"
                 (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
             </div>
@@ -141,11 +141,11 @@ interface WizardProductSuggestion {
         <div class="unmatched-banner" role="alert">
           <i class="pi pi-exclamation-triangle"></i>
           <div class="unmatched-content">
-            <strong>{{ unmatchedLines().length }} ligne(s) à associer à un produit</strong>
-            <p>Ces articles ne sont pas reliés à votre catalogue. Liez chaque ligne à un produit existant ou créez un nouveau produit pour pouvoir émettre la facture.</p>
+            <strong i18n="@@invoices.invoice-wizard.ligne.s.a.associer.a.un.produit.291ee553">{{ unmatchedLines().length }} ligne(s) à associer à un produit</strong>
+            <p i18n="@@invoices.invoice-wizard.ces.articles.ne.sont.pas.relies.a.votre.catalogu.77ca4c77">Ces articles ne sont pas reliés à votre catalogue. Liez chaque ligne à un produit existant ou créez un nouveau produit pour pouvoir émettre la facture.</p>
           </div>
           <p-button
-            label="Résoudre la première"
+            label="Résoudre la première" i18n-label="@@invoices.invoice-wizard.resoudre.la.premiere.893bfabd"
             icon="pi pi-arrow-right"
             iconPos="right"
             severity="warn"
@@ -166,22 +166,22 @@ interface WizardProductSuggestion {
             
             <ng-template pTemplate="header">
               <tr>
-                <th style="width: 3%">#</th>
-                <th style="width: 28%">Désignation</th>
-                <th style="width: 8%" class="text-right">Quantité</th>
+                <th style="width: 3%" i18n="@@invoices.invoice-wizard.text.d08f88df">#</th>
+                <th style="width: 28%" i18n="@@invoices.invoice-wizard.designation.63a9062c">Désignation</th>
+                <th style="width: 8%" class="text-right" i18n="@@invoices.invoice-wizard.quantite.09a38fda">Quantité</th>
                 @if (!simpleMode()) {
-                  <th style="width: 7%">Unité</th>
+                  <th style="width: 7%" i18n="@@invoices.invoice-wizard.unite.388fd9c4">Unité</th>
                 }
-                <th style="width: 10%" class="text-right">Prix unit. HT</th>
-                <th style="width: 9%">Origine</th>
+                <th style="width: 10%" class="text-right" i18n="@@invoices.invoice-wizard.prix.unit.ht.5fbbfe6f">Prix unit. HT</th>
+                <th style="width: 9%" i18n="@@invoices.invoice-wizard.origine.62e96258">Origine</th>
                 @if (!simpleMode()) {
-                  <th style="width: 10%">Remise</th>
-                  <th style="width: 8%" class="col-vat-rate">TVA</th>
-                  <th style="width: 9%" class="text-right">Total HT</th>
-                  <th style="width: 6%" class="text-right">TVA</th>
+                  <th style="width: 10%" i18n="@@invoices.invoice-wizard.remise.ce12d942">Remise</th>
+                  <th style="width: 8%" class="col-vat-rate" i18n="@@invoices.invoice-wizard.tva.fb62cb5d">TVA</th>
+                  <th style="width: 9%" class="text-right" i18n="@@invoices.invoice-wizard.total.ht.2ca17ae6">Total HT</th>
+                  <th style="width: 6%" class="text-right" i18n="@@invoices.invoice-wizard.tva.fb62cb5d">TVA</th>
                 }
-                <th style="width: 10%" class="text-right">Total TTC</th>
-                <th style="width: 7%">Actions</th>
+                <th style="width: 10%" class="text-right" i18n="@@invoices.invoice-wizard.total.ttc.9e80ff7c">Total TTC</th>
+                <th style="width: 7%" i18n="@@invoices.invoice-wizard.actions.c3cd636a">Actions</th>
               </tr>
             </ng-template>
 
@@ -205,7 +205,7 @@ interface WizardProductSuggestion {
                             [forceSelection]="false"
                             [dropdown]="true"
                             [minLength]="0"
-                            placeholder="Rechercher un produit..."
+                            placeholder="Rechercher un produit..." i18n-placeholder="@@invoices.invoice-wizard.rechercher.un.produit.0da008f6"
                             appendTo="body"
                             [style]="{ width: '100%' }">
                             <ng-template let-product pTemplate="item">
@@ -213,7 +213,7 @@ interface WizardProductSuggestion {
                                 <span class="product-code">{{ product.code }}</span>
                                 <span class="product-name">{{ product.name }}</span>
                                 @if (product.isFodecApplicable) {
-                                  <span class="fodec-badge fodec-badge--suggestion">FODEC</span>
+                                  <span class="fodec-badge fodec-badge--suggestion" i18n="@@invoices.invoice-wizard.fodec.9a029080">FODEC</span>
                                 }
                                 <span class="product-price">{{ product.unitPrice | number:'1.3-3' }} TND</span>
                               </div>
@@ -222,16 +222,16 @@ interface WizardProductSuggestion {
                               <div class="product-empty">
                                 @if (isLoadingProducts()) {
                                   <i class="pi pi-spin pi-spinner"></i>
-                                  <span>Chargement des produits...</span>
+                                  <span i18n="@@invoices.invoice-wizard.chargement.des.produits.98b02485">Chargement des produits...</span>
                                 } @else {
                                   <div class="product-empty-content">
-                                    <span>Aucun produit trouvé</span>
+                                    <span i18n="@@invoices.invoice-wizard.aucun.produit.trouve.5edf7149">Aucun produit trouvé</span>
                                     <app-button
                                       variant="primary"
                                       size="sm"
                                       icon="pi-plus"
                                       [iconOnly]="true"
-                                      ariaLabel="Créer un produit"
+                                      ariaLabel="Créer un produit" i18n-ariaLabel="@@invoices.invoice-wizard.creer.un.produit.1ff296f3"
                                       (click)="openQuickCreateProduct(); $event.stopPropagation()"
                                       class="btn-add-product-circle btn-add-product-circle--dropdown" />
                                   </div>
@@ -244,22 +244,22 @@ interface WizardProductSuggestion {
                           variant="outline"
                           size="sm"
                           icon="pi-th-large"
-                          ariaLabel="Choisir une variante"
+                          ariaLabel="Choisir une variante" i18n-ariaLabel="@@invoices.invoice-wizard.choisir.une.variante.8e914309"
                           (click)="variantPickerVisible = true; $event.stopPropagation()"
-                          title="Choisir une variante" />
+                          title="Choisir une variante" i18n-title="@@invoices.invoice-wizard.choisir.une.variante.c8ab137c" />
                         <app-button
                           variant="primary"
                           size="sm"
                           icon="pi-plus"
                           [iconOnly]="true"
-                          ariaLabel="Créer un produit"
+                          ariaLabel="Créer un produit" i18n-ariaLabel="@@invoices.invoice-wizard.creer.un.produit.1ff296f3"
                           (click)="openQuickCreateProduct(); $event.stopPropagation()"
                           class="btn-add-product-circle" />
                       </div>
                       <textarea
                         pTextarea
                         [(ngModel)]="editLine.description"
-                        placeholder="Description (optionnel)"
+                        placeholder="Description (optionnel)" i18n-placeholder="@@invoices.invoice-wizard.description.optionnel.d1a39655"
                         rows="2"
                         class="description-input">
                       </textarea>
@@ -269,12 +269,12 @@ interface WizardProductSuggestion {
                       <div class="designation-main-row">
                         <span class="designation-main">{{ line.designation }}</span>
                         @if (!line.productId) {
-                          <span class="unmatched-badge" pTooltip="Cette ligne n'est pas associée à un produit du catalogue">
+                          <span class="unmatched-badge" pTooltip="Cette ligne n'est pas associée à un produit du catalogue" i18n-pTooltip="@@invoices.invoice-wizard.cette.ligne.n.est.pas.associee.a.un.produit.du.c.051aa385" i18n="@@invoices.invoice-wizard.a.lier.7027e5e5">
                             <i class="pi pi-exclamation-circle"></i> À lier
                           </span>
                         }
                         @if (simpleMode() && line.isFodecApplicable) {
-                          <span class="fodec-badge" pTooltip="FODEC applicable (1%)">FODEC</span>
+                          <span class="fodec-badge" pTooltip="FODEC applicable (1%)" i18n-pTooltip="@@invoices.invoice-wizard.fodec.applicable.1.01c61523" i18n="@@invoices.invoice-wizard.fodec.9a029080">FODEC</span>
                         }
                       </div>
                       @if (line.description) {
@@ -308,7 +308,7 @@ interface WizardProductSuggestion {
                     <input
                       pInputText
                       [(ngModel)]="editLine.unit"
-                      placeholder="Unité"
+                      placeholder="Unité" i18n-placeholder="@@invoices.invoice-wizard.unite.388fd9c4"
                       [style]="{ width: '80px' }">
                   } @else {
                     {{ line.unit || 'Unité' }}
@@ -321,7 +321,7 @@ interface WizardProductSuggestion {
                   @if (editingLineId === line.id) {
                     <div class="price-cell">
                       @if (linePricing.resolving()) {
-                        <i class="pi pi-spin pi-spinner price-resolving" pTooltip="Résolution du prix…"></i>
+                        <i class="pi pi-spin pi-spinner price-resolving" pTooltip="Résolution du prix…" i18n-pTooltip="@@invoices.invoice-wizard.resolution.du.prix.38097b39"></i>
                       }
                       <p-inputNumber
                         [(ngModel)]="editLine.unitPriceHT"
@@ -349,7 +349,7 @@ interface WizardProductSuggestion {
                     } @else if (editLine.priceSource === 'PriceList') {
                       <p-tag severity="info" value="Grille"></p-tag>
                     } @else if (editLine.priceSource === 'Catalog') {
-                      <span class="text-muted">Catalogue</span>
+                      <span class="text-muted" i18n="@@invoices.invoice-wizard.catalogue.5a241023">Catalogue</span>
                     }
                   } @else {
                     @if (line.priceOverridden) {
@@ -359,7 +359,7 @@ interface WizardProductSuggestion {
                     } @else if (line.priceSource === 'PriceList') {
                       <p-tag severity="info" value="Grille"></p-tag>
                     } @else if (line.priceSource) {
-                      <span class="text-muted">Catalogue</span>
+                      <span class="text-muted" i18n="@@invoices.invoice-wizard.catalogue.5a241023">Catalogue</span>
                     }
                   }
                 </td>
@@ -390,7 +390,7 @@ interface WizardProductSuggestion {
                   } @else {
                     @if (line.discountAmount > 0) {
                       <span class="discount-badge">
-                        -{{ line.discountValue }}{{ line.discountType === 'PERCENT' ? '%' : ' TND' }}
+                        -{{ line.discountValue }}{{ line.discountType === 'PERCENT' ? '%' : loc_ui_tern_tnd_9aaf5c }}
                       </span>
                     } @else {
                       <span class="text-muted">-</span>
@@ -418,7 +418,7 @@ interface WizardProductSuggestion {
                       {{ line.vatRate }}%
                     </span>
                     @if (line.isFodecApplicable) {
-                      <span class="fodec-badge" pTooltip="FODEC applicable (1%)">FODEC</span>
+                      <span class="fodec-badge" pTooltip="FODEC applicable (1%)" i18n-pTooltip="@@invoices.invoice-wizard.fodec.applicable.1.01c61523" i18n="@@invoices.invoice-wizard.fodec.9a029080">FODEC</span>
                     }
                   }
                 </td>
@@ -450,7 +450,7 @@ interface WizardProductSuggestion {
                         [text]="true"
                         [rounded]="true"
                         severity="success"
-                        pTooltip="Valider"
+                        pTooltip="Valider" i18n-pTooltip="@@invoices.invoice-wizard.valider.be4220f7"
                         (click)="saveLineEdit()">
                       </p-button>
                       <p-button
@@ -458,7 +458,7 @@ interface WizardProductSuggestion {
                         [text]="true"
                         [rounded]="true"
                         severity="secondary"
-                        pTooltip="Annuler"
+                        pTooltip="Annuler" i18n-pTooltip="@@invoices.invoice-wizard.annuler.49ba3292"
                         (click)="cancelLineEdit()">
                       </p-button>
                     } @else {
@@ -466,7 +466,7 @@ interface WizardProductSuggestion {
                         icon="pi pi-pencil"
                         [text]="true"
                         [rounded]="true"
-                        pTooltip="Modifier"
+                        pTooltip="Modifier" i18n-pTooltip="@@invoices.invoice-wizard.modifier.f260e757"
                         (click)="startEditLine(line)">
                       </p-button>
                       <p-button
@@ -474,7 +474,7 @@ interface WizardProductSuggestion {
                         [text]="true"
                         [rounded]="true"
                         severity="danger"
-                        pTooltip="Supprimer"
+                        pTooltip="Supprimer" i18n-pTooltip="@@invoices.invoice-wizard.supprimer.1acfc1c7"
                         (click)="deleteLine(line)">
                       </p-button>
                     }
@@ -488,9 +488,9 @@ interface WizardProductSuggestion {
                 <td colspan="12">
                   <div class="empty-lines">
                     <i class="pi pi-inbox"></i>
-                    <p>Aucune ligne de facturation</p>
+                    <p i18n="@@invoices.invoice-wizard.aucune.ligne.de.facturation.02e2114a">Aucune ligne de facturation</p>
                     <p-button
-                      label="Ajouter votre première ligne"
+                      label="Ajouter votre première ligne" i18n-label="@@invoices.invoice-wizard.ajouter.votre.premiere.ligne.f4087e0c"
                       icon="pi pi-plus"
                       (click)="addNewLine()">
                     </p-button>
@@ -503,10 +503,10 @@ interface WizardProductSuggestion {
       } @else {
         <div class="empty-state-card">
           <i class="pi pi-inbox"></i>
-          <h3>Aucune ligne de facturation</h3>
-          <p>Ajoutez des produits ou services pour continuer</p>
+          <h3 i18n="@@invoices.invoice-wizard.aucune.ligne.de.facturation.02e2114a">Aucune ligne de facturation</h3>
+          <p i18n="@@invoices.invoice-wizard.ajoutez.des.produits.ou.services.pour.continuer.cf42cd33">Ajoutez des produits ou services pour continuer</p>
           <p-button
-            label="Ajouter une ligne"
+            label="Ajouter une ligne" i18n-label="@@invoices.invoice-wizard.ajouter.une.ligne.ba241fd4"
             icon="pi pi-plus"
             (click)="addNewLine()">
           </p-button>
@@ -521,13 +521,13 @@ interface WizardProductSuggestion {
           <div class="totals-grid">
             <!-- VAT Breakdown -->
             <div class="vat-breakdown-card">
-              <h3>Récapitulatif TVA</h3>
+              <h3 i18n="@@invoices.invoice-wizard.recapitulatif.tva.0918d3bc">Récapitulatif TVA</h3>
               <table class="vat-breakdown-table">
                 <thead>
                   <tr>
-                    <th>Taux</th>
-                    <th class="text-right">Base imposable</th>
-                    <th class="text-right">TVA</th>
+                    <th i18n="@@invoices.invoice-wizard.taux.18bc95b8">Taux</th>
+                    <th class="text-right" i18n="@@invoices.invoice-wizard.base.imposable.e1baa7e1">Base imposable</th>
+                    <th class="text-right" i18n="@@invoices.invoice-wizard.tva.fb62cb5d">TVA</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -535,7 +535,7 @@ interface WizardProductSuggestion {
                     <tr>
                       <td>
                         <span class="vat-badge" [class]="'vat-' + item.rate">
-                          {{ item.rateDisplay }}
+                          {{ item.rateDisplay | backendLabel }}
                         </span>
                       </td>
                       <td class="text-right amount">{{ item.baseAmount | number:'1.3-3' }}</td>
@@ -549,21 +549,21 @@ interface WizardProductSuggestion {
             <!-- Grand Total -->
             <div class="grand-total-card">
               <div class="total-row">
-                <span class="total-label">Sous-total HT</span>
+                <span class="total-label" i18n="@@invoices.invoice-wizard.sous.total.ht.724598f6">Sous-total HT</span>
                 <span class="total-value">{{ totals().subTotalHT | number:'1.3-3' }} {{ currency }}</span>
               </div>
               @if (totals().totalDiscount > 0) {
                 <div class="total-row discount">
-                  <span class="total-label">Remises</span>
+                  <span class="total-label" i18n="@@invoices.invoice-wizard.remises.e0700e8c">Remises</span>
                   <span class="total-value">-{{ totals().totalDiscount | number:'1.3-3' }} {{ currency }}</span>
                 </div>
               }
               <div class="total-row">
-                <span class="total-label">Total HT</span>
+                <span class="total-label" i18n="@@invoices.invoice-wizard.total.ht.2ca17ae6">Total HT</span>
                 <span class="total-value">{{ totals().totalHT | number:'1.3-3' }} {{ currency }}</span>
               </div>
               <div class="total-row">
-                <span class="total-label">Total TVA</span>
+                <span class="total-label" i18n="@@invoices.invoice-wizard.total.tva.605c4b2e">Total TVA</span>
                 <span class="total-value">{{ totals().totalVat | number:'1.3-3' }} {{ currency }}</span>
               </div>
               @if (totals().totalFodec > 0.0005 || totals().totalFodec < -0.0005) {
@@ -574,13 +574,13 @@ interface WizardProductSuggestion {
               }
               @if (totals().fiscalStampAmount > 0.0005 || totals().fiscalStampAmount < -0.0005) {
                 <div class="total-row">
-                  <span class="total-label">Timbre fiscal</span>
+                  <span class="total-label" i18n="@@invoices.invoice-wizard.timbre.fiscal.1f8f7dd1">Timbre fiscal</span>
                   <span class="total-value">{{ totals().fiscalStampAmount | number:'1.3-3' }} {{ currency }}</span>
                 </div>
               }
               <p-divider></p-divider>
               <div class="total-row grand">
-                <span class="total-label">Total TTC</span>
+                <span class="total-label" i18n="@@invoices.invoice-wizard.total.ttc.9e80ff7c">Total TTC</span>
                 <span class="total-value">{{ totals().totalTTC | number:'1.3-3' }} {{ currency }}</span>
               </div>
             </div>
@@ -591,9 +591,7 @@ interface WizardProductSuggestion {
       <!-- Compliance Info -->
       <div class="compliance-info">
         <i class="pi pi-info-circle"></i>
-        <span>
-          Taux de TVA conformes à la législation tunisienne : 0% (exonéré), 7% (réduit), 13% (intermédiaire), 19% (normal)
-        </span>
+        <span i18n="@@invoices.invoice-wizard.taux.de.tva.conformes.a.la.legislation.tunisienn.54fefbf1"> Taux de TVA conformes à la législation tunisienne : 0% (exonéré), 7% (réduit), 13% (intermédiaire), 19% (normal) </span>
       </div>
 
       <app-quick-create-product-dialog
@@ -812,11 +810,11 @@ interface WizardProductSuggestion {
 
     /* Espacement entre colonne Remise et colonne TVA (taux) */
     ::ng-deep .lines-table .col-discount {
-      padding-right: 2.25rem;
+      padding-inline-end: 2.25rem;
     }
 
     ::ng-deep .lines-table .p-datatable-tbody > tr > td.col-vat {
-      padding-left: 0.75rem;
+      padding-inline-start: 0.75rem;
     }
 
     .line-number {
@@ -927,12 +925,12 @@ interface WizardProductSuggestion {
       background: var(--color-warning-100);
       padding: 0 var(--spacing-1);
       border-radius: var(--radius-sm);
-      margin-left: var(--spacing-1);
+      margin-inline-start: var(--spacing-1);
       vertical-align: middle;
     }
 
     .fodec-badge--suggestion {
-      margin-left: 0;
+      margin-inline-start: 0;
       flex-shrink: 0;
     }
 
@@ -1100,7 +1098,7 @@ interface WizardProductSuggestion {
         text-transform: uppercase;
         color: var(--color-neutral-500);
         padding: var(--spacing-2);
-        text-align: left;
+        text-align: start;
         border-bottom: 1px solid var(--color-neutral-200);
       }
 
@@ -1178,7 +1176,7 @@ interface WizardProductSuggestion {
     }
 
     .text-right {
-      text-align: right;
+      text-align: end;
     }
 
     .text-muted {
@@ -1199,6 +1197,9 @@ interface WizardProductSuggestion {
   `]
 })
 export class StepLinesComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_mode_avance_f0a7a0 = $localize`:@@ui.tern.mode.avance.f0a7a0:Mode avancé`;
+  readonly loc_ui_tern_mode_simple_c08361 = $localize`:@@ui.tern.mode.simple.c08361:Mode simple`;
+  readonly loc_ui_tern_tnd_9aaf5c = $localize`:@@ui.tern.tnd.9aaf5c: TND`;
   readonly wizardService = inject(InvoiceWizardService);
   private readonly productAutocomplete = inject(ProductAutocompleteService);
   private readonly pricingService = inject(PricingService);
@@ -1481,11 +1482,11 @@ export class StepLinesComponent implements OnInit, OnDestroy {
 
   deleteLine(line: InvoiceLine): void {
     this.confirmationService.confirm({
-      message: `Supprimer la ligne "${line.designation}" ?`,
-      header: 'Confirmation',
+      message: $localize`:@@invoices.step-lines.ts.supprimer.la.ligne.designation.9a640b5f:Supprimer la ligne "${line.designation}:designation:" ?`,
+      header: $localize`:@@invoices.step-lines.ts.confirmation.3424edc2:Confirmation`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@step-lines.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@step-lines.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.wizardService.removeLine(line.id);
@@ -1614,8 +1615,8 @@ export class StepLinesComponent implements OnInit, OnDestroy {
     this.quickCreateProductVisible = false;
     this.toastService.add({
       severity: 'success',
-      summary: 'Produit créé',
-      detail: 'Le produit a été créé et ajouté à la ligne.',
+      summary: $localize`:@@step-lines.component.summary.Produit créé:Produit créé`,
+      detail: $localize`:@@step-lines.component.detail.Le_produit_a_t_:Le produit a été créé et ajouté à la ligne.`,
     });
   }
 

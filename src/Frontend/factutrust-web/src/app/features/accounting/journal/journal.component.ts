@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -89,13 +90,13 @@ type JournalFlatRow = {
     AccountingCorrectionBannerComponent
   ],
   template: `
-    <app-page-header title="Journal comptable" subtitle="Écritures par période" />
+    <app-page-header title="Journal comptable" i18n-title="@@accounting.journal.journal.comptable.cc13c236" subtitle="Écritures par période" i18n-subtitle="@@accounting.journal.ecritures.par.periode.03078ddc" />
     <app-accounting-correction-banner />
     <div class="card journal-filters-card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Période et journal">
+      <app-accounting-filter-bar ariaLabel="Période et journal" i18n-ariaLabel="@@accounting.journal.periode.et.journal.2147fcf5">
         <div accountingFilterFields class="journal-toolbar-fields">
           <div class="form-field journal-field-date">
-            <label class="field-label" for="jrn-from">Du</label>
+            <label class="field-label" for="jrn-from" i18n="@@accounting.journal.du.84814985">Du</label>
             <input
               id="jrn-from"
               type="date"
@@ -104,7 +105,7 @@ type JournalFlatRow = {
               [disabled]="loading()" />
           </div>
           <div class="form-field journal-field-date">
-            <label class="field-label" for="jrn-to">Au</label>
+            <label class="field-label" for="jrn-to" i18n="@@accounting.journal.au.7a1732d5">Au</label>
             <input
               id="jrn-to"
               type="date"
@@ -113,13 +114,13 @@ type JournalFlatRow = {
               [disabled]="loading()" />
           </div>
           <div class="form-field journal-field-journal">
-            <label class="field-label" for="jrn-code">Journal</label>
+            <label class="field-label" for="jrn-code" i18n="@@accounting.journal.journal.57d7f743">Journal</label>
             <select
               id="jrn-code"
               [(ngModel)]="journalCode"
               class="journal-date-input"
               [disabled]="loading()">
-              <option value="">Tous</option>
+              <option value="" i18n="@@accounting.journal.tous.b97ae3b4">Tous</option>
               @for (j of journals(); track j.code) {
                 <option [value]="j.code">{{ j.code }} — {{ j.label }}</option>
               }
@@ -136,9 +137,7 @@ type JournalFlatRow = {
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Actualiser le journal comptable pour la période sélectionnée">
-            Actualiser
-          </app-button>
+            ariaLabel="Actualiser le journal comptable pour la période sélectionnée" i18n-ariaLabel="@@accounting.journal.actualiser.le.journal.comptable.pour.la.455578ca" i18n="@@accounting.journal.actualiser.9d3b2a7d"> Actualiser </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-journal"
             density="toolbar"
@@ -152,13 +151,13 @@ type JournalFlatRow = {
       </app-accounting-filter-bar>
     </div>
 
-    <div class="accounting-kpi-row" aria-label="Totaux sur la période chargée">
+    <div class="accounting-kpi-row" aria-label="Totaux sur la période chargée" i18n-aria-label="@@accounting.journal.totaux.sur.la.periode.chargee.5f242d4c">
       <div class="accounting-kpi-item">
-        <span class="accounting-kpi-label">Total débit</span>
+        <span class="accounting-kpi-label" i18n="@@accounting.journal.total.debit.ea9c4853">Total débit</span>
         <span class="accounting-kpi-value">{{ totals().debit | number : '1.3-3' }}</span>
       </div>
       <div class="accounting-kpi-item">
-        <span class="accounting-kpi-label">Total crédit</span>
+        <span class="accounting-kpi-label" i18n="@@accounting.journal.total.credit.98c95962">Total crédit</span>
         <span class="accounting-kpi-value">{{ totals().credit | number : '1.3-3' }}</span>
       </div>
     </div>
@@ -167,11 +166,11 @@ type JournalFlatRow = {
       <div class="journal-draft-banner" role="status" aria-live="polite">
         <i class="pi pi-pencil" aria-hidden="true"></i>
         <span>
-          @if (canValidate()) {
-            {{ draftEntryCount() }} écriture{{ draftEntryCount() === 1 ? '' : 's' }} en brouillard sur la période — à valider avant clôture ou export.
-          } @else {
-            {{ draftEntryCount() }} écriture{{ draftEntryCount() === 1 ? '' : 's' }} en brouillard — en attente de validation par votre cabinet comptable.
-          }
+          @if (canValidate()) {<ng-container i18n="@@accounting.journal.ecriture.en.brouillard.sur.la.periode.a.0ba1cf47.pl">
+            {{ draftEntryCount() }} {draftEntryCount(), plural, =1 {écriture} other {écritures}} en brouillard sur la période — à valider avant clôture ou export.
+          </ng-container>} @else {<ng-container i18n="@@accounting.journal.ecriture.en.brouillard.en.attente.de.val.70e53073.pl">
+            {{ draftEntryCount() }} {draftEntryCount(), plural, =1 {écriture} other {écritures}} en brouillard — en attente de validation par votre cabinet comptable.
+          </ng-container>}
         </span>
       </div>
     }
@@ -180,7 +179,7 @@ type JournalFlatRow = {
       variant="error"
       [message]="error() ?? ''"
       [showRetry]="!!error()"
-      retryLabel="Réessayer"
+      retryLabel="Réessayer" i18n-retryLabel="@@accounting.journal.reessayer.c4f78b12"
       (retry)="load()" />
 
     <div class="card journal-table-card">
@@ -193,12 +192,12 @@ type JournalFlatRow = {
             class="journal-search-input"
             [(ngModel)]="searchTerm"
             (ngModelChange)="onSearchChange()"
-            placeholder="Filtrer journal, libellé, compte, date…"
-            aria-label="Filtrer les lignes du journal" />
+            placeholder="Filtrer journal, libellé, compte, date…" i18n-placeholder="@@accounting.journal.filtrer.journal.libelle.compte.date.a3d2e50b"
+            aria-label="Filtrer les lignes du journal" i18n-aria-label="@@accounting.journal.filtrer.les.lignes.du.journal.7d436ef3" />
         </span>
-        <p class="journal-count" aria-live="polite">
+        <p class="journal-count" aria-live="polite" i18n="@@accounting.journal.ligne.sur.la.periode.3219962d.pl">
           <span class="journal-count-value">{{ flatRows().length }}</span>
-          <span class="journal-count-label"> ligne{{ flatRows().length === 1 ? '' : 's' }} sur la période</span>
+          <span class="journal-count-label"> {flatRows().length, plural, =1 {ligne} other {lignes}} sur la période</span>
         </p>
       </div>
       <p-table
@@ -211,65 +210,65 @@ type JournalFlatRow = {
         [loading]="loading()"
         [rowHover]="true"
         [showCurrentPageReport]="true"
-        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes"
+        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="@@accounting.journal.affichage.de.first.a.last.sur.totalrecords.ligne.3b382824"
         styleClass="p-datatable-sm journal-table accounting-datatable">
         <ng-template pTemplate="header">
           <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Journal</th>
-            <th scope="col" class="journal-col-narrow">N°</th>
-            <th scope="col">Libellé</th>
-            <th scope="col" class="journal-col-account">Compte</th>
+            <th scope="col" i18n="@@accounting.journal.date.eb9a4bc1">Date</th>
+            <th scope="col" i18n="@@accounting.journal.journal.57d7f743">Journal</th>
+            <th scope="col" class="journal-col-narrow" i18n="@@accounting.journal.n.754e6095">N°</th>
+            <th scope="col" i18n="@@accounting.journal.libelle.f5485bba">Libellé</th>
+            <th scope="col" class="journal-col-account" i18n="@@accounting.journal.compte.c45740bb">Compte</th>
             @if (hasForeignCurrency()) {
-              <th scope="col" class="journal-col-narrow">Devise</th>
+              <th scope="col" class="journal-col-narrow" i18n="@@accounting.journal.devise.eb2e42c4">Devise</th>
             }
-            <th scope="col" class="journal-col-amount">Débit</th>
-            <th scope="col" class="journal-col-amount">Crédit</th>
-            <th scope="col" class="journal-col-narrow">Statut</th>
-            <th scope="col" class="journal-col-narrow">Actions</th>
+            <th scope="col" class="journal-col-amount" i18n="@@accounting.journal.debit.f528224f">Débit</th>
+            <th scope="col" class="journal-col-amount" i18n="@@accounting.journal.credit.19194bdf">Crédit</th>
+            <th scope="col" class="journal-col-narrow" i18n="@@accounting.journal.statut.659499f3">Statut</th>
+            <th scope="col" class="journal-col-narrow" i18n="@@accounting.journal.actions.c3cd636a">Actions</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-r>
           <tr [class.journal-row-draft]="r.isDraft">
-            <td data-label="Date">{{ r.date | date : 'shortDate' }}</td>
-            <td data-label="Journal">{{ r.journal }}</td>
+            <td data-label="Date" i18n-data-label="@@accounting.journal.date.eb9a4bc1">{{ r.date | date : 'shortDate' }}</td>
+            <td data-label="Journal" i18n-data-label="@@accounting.journal.journal.57d7f743">{{ r.journal }}</td>
             <td class="journal-col-narrow journal-cell-num" data-label="N°">{{ r.piece }}</td>
-            <td data-label="Libellé">
+            <td data-label="Libellé" i18n-data-label="@@accounting.journal.libelle.f5485bba">
               {{ r.label }}
               @if (r.firstOfEntry && r.pieceRef) {
-                <span class="journal-piece-ref" [title]="'Pièce : ' + r.pieceRef">Pièce {{ r.pieceRef }}</span>
+                <span class="journal-piece-ref" [title]="loc_ui_tern_piece_aa1746 + r.pieceRef" i18n="@@accounting.journal.piece.f865dfce">Pièce {{ r.pieceRef }}</span>
               }
             </td>
-            <td class="journal-col-account" data-label="Compte">
+            <td class="journal-col-account" data-label="Compte" i18n-data-label="@@accounting.journal.compte.c45740bb">
               <span class="journal-account-code">{{ r.account }}</span>
             </td>
             @if (hasForeignCurrency()) {
-              <td class="journal-col-narrow" data-label="Devise">
+              <td class="journal-col-narrow" data-label="Devise" i18n-data-label="@@accounting.journal.devise.eb2e42c4">
                 @if (r.currency !== functionalCurrency) {
                   <span class="journal-account-code">{{ r.currency }}</span>
                   <span class="journal-currency-amount">{{ r.amountInCurrency | number : '1.2-2' }}</span>
                 } @else {
-                  <span class="journal-currency-none">—</span>
+                  <span class="journal-currency-none" i18n="@@accounting.journal.text.1b93795b">—</span>
                 }
               </td>
             }
-            <td class="journal-col-amount" data-label="Débit">{{ r.debit | number : '1.3-3' }}</td>
-            <td class="journal-col-amount" data-label="Crédit">{{ r.credit | number : '1.3-3' }}</td>
-            <td class="journal-col-narrow" data-label="Statut">
+            <td class="journal-col-amount" data-label="Débit" i18n-data-label="@@accounting.journal.debit.f528224f">{{ r.debit | number : '1.3-3' }}</td>
+            <td class="journal-col-amount" data-label="Crédit" i18n-data-label="@@accounting.journal.credit.19194bdf">{{ r.credit | number : '1.3-3' }}</td>
+            <td class="journal-col-narrow" data-label="Statut" i18n-data-label="@@accounting.journal.statut.659499f3">
               @if (r.firstOfEntry) {
                 <span class="journal-badge" [class.journal-badge-draft]="r.isDraft" [class.journal-badge-valid]="!r.isDraft"
-                      [title]="isPayrollSourced(r.sourceEntityType) ? 'Écriture générée par le module Paie — corrigez via « Rouvrir le cycle » ou « Annuler le paiement ». Non supprimable ni extournable depuis la comptabilité.' : ''">
-                  {{ r.isDraft ? 'Brouillon' : r.status === 2 ? 'Clôturée' : 'Validée' }}
+                      [title]="isPayrollSourced(r.sourceEntityType) ? loc_ui_tern_ecriture_generee_par_le_module_paie_corrig_af7d4a : ''">
+                  {{ r.isDraft ? loc_ui_tern_brouillon_57d2d7 : r.status === 2 ? loc_ui_tern_cloturee_da2e2b : loc_ui_tern_validee_2cc6c3 }}
                 </span>
                 @if (isPayrollSourced(r.sourceEntityType)) {
-                  <span class="journal-badge journal-badge-reversed" title="Écriture générée par le module Paie">Paie</span>
+                  <span class="journal-badge journal-badge-reversed" title="Écriture générée par le module Paie" i18n-title="@@accounting.journal.ecriture.generee.par.le.module.paie.a2daa06d" i18n="@@accounting.journal.paie.6ca885f3">Paie</span>
                 }
                 @if (r.isReversed) {
-                  <span class="journal-badge journal-badge-reversed" title="Écriture extournée">Extournée</span>
+                  <span class="journal-badge journal-badge-reversed" title="Écriture extournée" i18n-title="@@accounting.journal.ecriture.extournee.85db3ad3" i18n="@@accounting.journal.extournee.a84e7737">Extournée</span>
                 }
               }
             </td>
-            <td class="journal-col-narrow" data-label="Actions">
+            <td class="journal-col-narrow" data-label="Actions" i18n-data-label="@@accounting.journal.actions.c3cd636a">
               <app-accounting-table-actions>
               @if (r.firstOfEntry && r.isDraft && canEdit()) {
                 <app-button
@@ -280,8 +279,8 @@ type JournalFlatRow = {
                   [iconAlwaysVisible]="true"
                   type="button"
                   (click)="editEntry(r)"
-                  [attr.aria-label]="'Modifier l\\'écriture ' + r.journal + ' n° ' + r.piece"
-                  title="Modifier" />
+                  [attr.aria-label]="loc_modifier_l_ecriture_journal_n_piece_47cdfa(r.journal, r.piece)"
+                  title="Modifier" i18n-title="@@accounting.journal.modifier.f260e757" />
               }
               @if (r.firstOfEntry && r.isDraft && canValidate()) {
                 <app-button
@@ -292,9 +291,7 @@ type JournalFlatRow = {
                   type="button"
                   (click)="validateEntry(r.entryId)"
                   [disabled]="validatingId() === r.entryId"
-                  [attr.aria-label]="'Valider l\\'écriture ' + r.journal + ' n° ' + r.piece">
-                  Valider
-                </app-button>
+                  [attr.aria-label]="loc_valider_l_ecriture_journal_n_piece_eb96ff(r.journal, r.piece)" i18n="@@accounting.journal.valider.be4220f7"> Valider </app-button>
               }
               @if (r.firstOfEntry && r.isDraft && canDelete() && !isPayrollSourced(r.sourceEntityType)) {
                 <app-button
@@ -306,8 +303,8 @@ type JournalFlatRow = {
                   type="button"
                   (click)="deleteEntry(r.entryId, r.journal, r.piece)"
                   [disabled]="deletingId() === r.entryId"
-                  [attr.aria-label]="'Supprimer l\\'écriture ' + r.journal + ' n° ' + r.piece"
-                  title="Supprimer" />
+                  [attr.aria-label]="loc_supprimer_l_ecriture_journal_n_piece_45c87a(r.journal, r.piece)"
+                  title="Supprimer" i18n-title="@@accounting.journal.supprimer.1acfc1c7" />
               }
               @if (r.firstOfEntry && !r.isDraft && !r.isReversed && !isPayrollSourced(r.sourceEntityType)) {
                 <app-button
@@ -317,9 +314,7 @@ type JournalFlatRow = {
                   iconPos="left"
                   type="button"
                   (click)="openReverse(r)"
-                  [attr.aria-label]="'Extourner l\\'écriture ' + r.journal + ' n° ' + r.piece">
-                  Extourner
-                </app-button>
+                  [attr.aria-label]="loc_extourner_l_ecriture_journal_n_piece_0c4c79(r.journal, r.piece)" i18n="@@accounting.journal.extourner.8884c9cd"> Extourner </app-button>
               }
               @if (r.firstOfEntry) {
                 <app-button
@@ -330,8 +325,8 @@ type JournalFlatRow = {
                   [iconAlwaysVisible]="true"
                   type="button"
                   (click)="openAttachments(r)"
-                  [attr.aria-label]="'Pièces jointes de l\\'écriture ' + r.journal + ' n° ' + r.piece + (r.attachmentCount > 0 ? ' (' + r.attachmentCount + ')' : '')"
-                  title="Pièces justificatives" />
+                  [attr.aria-label]="loc_pieces_jointes_de_l_ecriture_journal_0168c3(r.journal, r.piece, r.attachmentCount > 0 ? ' (' + r.attachmentCount + ')' : '')"
+                  title="Pièces justificatives" i18n-title="@@accounting.journal.pieces.justificatives.db547f24" />
                 @if (r.attachmentCount > 0) {
                   <span class="journal-attach-count">{{ r.attachmentCount }}</span>
                 }
@@ -343,8 +338,8 @@ type JournalFlatRow = {
         <ng-template pTemplate="emptymessage">
           <tr>
             <td [attr.colspan]="hasForeignCurrency() ? 10 : 9" class="journal-empty">
-              <p class="journal-empty-title">Aucune ligne</p>
-              <p class="journal-empty-hint">Élargissez la période, actualisez ou modifiez le filtre de recherche.</p>
+              <p class="journal-empty-title" i18n="@@accounting.journal.aucune.ligne.bc2bbdc3">Aucune ligne</p>
+              <p class="journal-empty-hint" i18n="@@accounting.journal.elargissez.la.periode.actualisez.ou.modifiez.le..89606b44">Élargissez la période, actualisez ou modifiez le filtre de recherche.</p>
             </td>
           </tr>
         </ng-template>
@@ -354,35 +349,31 @@ type JournalFlatRow = {
     @if (reverseTarget(); as target) {
       <div class="journal-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="reverse-title">
         <div class="journal-modal">
-          <h2 id="reverse-title" class="journal-modal-title">
+          <h2 id="reverse-title" class="journal-modal-title" i18n="@@accounting.journal.extourner.l.ecriture.n.54418c84">
             Extourner l'écriture {{ target.journal }} n° {{ target.piece }}
           </h2>
-          <p class="journal-modal-desc">
-            Une écriture inverse (contre-passation) sera créée dans la période d'origine si elle est ouverte,
-            sinon à la date du jour. Indiquez le motif de la correction.
-          </p>
-          <label class="field-label" for="reverse-reason">Motif</label>
+          <p class="journal-modal-desc" i18n="@@accounting.journal.une.ecriture.inverse.contre.passation.sera.creee.fe29588f"> Une écriture inverse (contre-passation) sera créée dans la période d'origine si elle est ouverte,
+            sinon à la date du jour. Indiquez le motif de la correction. </p>
+          <label class="field-label" for="reverse-reason" i18n="@@accounting.journal.motif.2a198f47">Motif</label>
           <textarea
             id="reverse-reason"
             class="journal-modal-textarea"
             rows="3"
             [(ngModel)]="reverseReason"
             [disabled]="reversing()"
-            placeholder="Ex. erreur d'imputation, montant erroné…"></textarea>
+            placeholder="Ex. erreur d'imputation, montant erroné…" i18n-placeholder="@@accounting.journal.ex.erreur.d.imputation.montant.errone.1add0981"></textarea>
           <div class="journal-modal-actions">
             <button
               type="button"
               class="journal-modal-btn journal-modal-btn-cancel"
               (click)="cancelReverse()"
-              [disabled]="reversing()">
-              Annuler
-            </button>
+              [disabled]="reversing()" i18n="@@accounting.journal.annuler.49ba3292"> Annuler </button>
             <button
               type="button"
               class="journal-modal-btn journal-modal-btn-confirm"
               (click)="confirmReverse()"
               [disabled]="reversing() || !reverseReason.trim()">
-              {{ reversing() ? 'Extourne…' : "Confirmer l'extourne" }}
+              {{ reversing() ? loc_ui_tern_extourne_a58c5c : loc_ui_tern_confirmer_l_extourne_e80c2b }}
             </button>
           </div>
         </div>
@@ -392,22 +383,20 @@ type JournalFlatRow = {
     @if (attachTarget(); as target) {
       <div class="journal-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="attach-title">
         <div class="journal-modal journal-attach-modal">
-          <h2 id="attach-title" class="journal-modal-title">
+          <h2 id="attach-title" class="journal-modal-title" i18n="@@accounting.journal.pieces.justificatives.n.b1fc0889">
             Pièces justificatives — {{ target.journal }} n° {{ target.piece }}
           </h2>
-          <p class="journal-modal-desc">
-            PDF, images, Excel ou Word — 10 Mo maximum. Les pièces d'une période clôturée
-            restent consultables mais ne peuvent plus être supprimées.
-          </p>
+          <p class="journal-modal-desc" i18n="@@accounting.journal.pdf.images.excel.ou.word.10.mo.maximum.les.piece.da269237"> PDF, images, Excel ou Word — 10 Mo maximum. Les pièces d'une période clôturée
+            restent consultables mais ne peuvent plus être supprimées. </p>
 
           @if (attachError()) {
             <p class="journal-attach-error" role="alert">{{ attachError() }}</p>
           }
 
           @if (attachLoading()) {
-            <p class="journal-attach-loading">Chargement…</p>
+            <p class="journal-attach-loading" i18n="@@accounting.journal.chargement.01cba1df">Chargement…</p>
           } @else if (attachments().length === 0) {
-            <p class="journal-attach-empty">Aucune pièce jointe pour cette écriture.</p>
+            <p class="journal-attach-empty" i18n="@@accounting.journal.aucune.piece.jointe.pour.cette.ecriture.9d5f88f7">Aucune pièce jointe pour cette écriture.</p>
           } @else {
             <ul class="journal-attach-list" role="list">
               @for (a of attachments(); track a.id) {
@@ -420,8 +409,8 @@ type JournalFlatRow = {
                     class="journal-attach-action"
                     (click)="downloadAttachment(a)"
                     [disabled]="attachBusyId() === a.id"
-                    [attr.aria-label]="'Télécharger ' + a.fileName"
-                    title="Télécharger">
+                    [attr.aria-label]="loc_ui_tern_telecharger_6ac5d8 + a.fileName"
+                    title="Télécharger" i18n-title="@@accounting.journal.telecharger.b332d06d">
                     <i class="pi pi-download" aria-hidden="true"></i>
                   </button>
                   <button
@@ -429,8 +418,8 @@ type JournalFlatRow = {
                     class="journal-attach-action journal-attach-action-danger"
                     (click)="deleteAttachment(a)"
                     [disabled]="attachBusyId() === a.id"
-                    [attr.aria-label]="'Supprimer ' + a.fileName"
-                    title="Supprimer">
+                    [attr.aria-label]="loc_ui_tern_supprimer_52af4f + a.fileName"
+                    title="Supprimer" i18n-title="@@accounting.journal.supprimer.1acfc1c7">
                     <i class="pi pi-trash" aria-hidden="true"></i>
                   </button>
                 </li>
@@ -447,14 +436,12 @@ type JournalFlatRow = {
                 (change)="onAttachmentSelected($event)"
                 [disabled]="uploading()" />
               <i class="pi pi-upload" aria-hidden="true"></i>
-              {{ uploading() ? 'Envoi…' : 'Ajouter une pièce' }}
+              {{ uploading() ? loc_ui_tern_envoi_a62561 : loc_ui_tern_ajouter_une_piece_91839b }}
             </label>
             <button
               type="button"
               class="journal-modal-btn journal-modal-btn-cancel"
-              (click)="closeAttachments()">
-              Fermer
-            </button>
+              (click)="closeAttachments()" i18n="@@accounting.journal.fermer.5ab4ec64"> Fermer </button>
           </div>
         </div>
       </div>
@@ -529,7 +516,7 @@ type JournalFlatRow = {
     }
     .journal-search-wrap.p-input-icon-left i {
       position: absolute;
-      left: var(--spacing-3);
+      inset-inline-start: var(--spacing-3);
       top: 50%;
       transform: translateY(-50%);
       color: var(--color-text-secondary);
@@ -538,7 +525,7 @@ type JournalFlatRow = {
     :host ::ng-deep .journal-search-wrap .p-inputtext,
     :host ::ng-deep .journal-search-input {
       width: 100%;
-      padding-left: var(--spacing-8);
+      padding-inline-start: var(--spacing-8);
     }
     .journal-count {
       margin: 0;
@@ -558,7 +545,7 @@ type JournalFlatRow = {
       width: 1%;
       white-space: nowrap;
     }
-    .journal-currency-amount { margin-left:var(--spacing-1); font-variant-numeric:tabular-nums; color:var(--color-text-secondary); font-size:var(--font-size-xs); }
+    .journal-currency-amount { margin-inline-start:var(--spacing-1); font-variant-numeric:tabular-nums; color:var(--color-text-secondary); font-size:var(--font-size-xs); }
     .journal-currency-none { color:var(--color-text-tertiary); }
     .journal-account-code {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -566,12 +553,12 @@ type JournalFlatRow = {
       font-weight: var(--font-weight-medium);
     }
     .journal-col-amount {
-      text-align: right;
+      text-align: end;
       font-variant-numeric: tabular-nums;
     }
     .journal-cell-num {
       font-variant-numeric: tabular-nums;
-      text-align: right;
+      text-align: end;
     }
     .journal-draft-banner {
       display: flex;
@@ -647,7 +634,7 @@ type JournalFlatRow = {
       background: var(--color-warning-50, #fffbeb);
     }
     .journal-badge-reversed {
-      margin-left: var(--spacing-1);
+      margin-inline-start: var(--spacing-1);
       background: var(--color-neutral-100, #f1f5f9);
       color: var(--color-text-secondary);
     }
@@ -744,6 +731,33 @@ type JournalFlatRow = {
   `
 })
 export class JournalComponent implements OnInit {
+  protected loc_modifier_l_ecriture_journal_n_piece_47cdfa(p0: unknown, p1: unknown): string {
+    return $localize`:@@accounting.journal.tpl.modifier.l.ecriture.journal.n.piece.47cdfad6:Modifier l'écriture ${p0}:journal: n° ${p1}:piece:`;
+  }
+  protected loc_valider_l_ecriture_journal_n_piece_eb96ff(p0: unknown, p1: unknown): string {
+    return $localize`:@@accounting.journal.tpl.valider.l.ecriture.journal.n.piece.eb96ffd1:Valider l'écriture ${p0}:journal: n° ${p1}:piece:`;
+  }
+  protected loc_supprimer_l_ecriture_journal_n_piece_45c87a(p0: unknown, p1: unknown): string {
+    return $localize`:@@accounting.journal.tpl.supprimer.l.ecriture.journal.n.piece.45c87af2:Supprimer l'écriture ${p0}:journal: n° ${p1}:piece:`;
+  }
+  protected loc_extourner_l_ecriture_journal_n_piece_0c4c79(p0: unknown, p1: unknown): string {
+    return $localize`:@@accounting.journal.tpl.extourner.l.ecriture.journal.n.piece.0c4c795d:Extourner l'écriture ${p0}:journal: n° ${p1}:piece:`;
+  }
+  protected loc_pieces_jointes_de_l_ecriture_journal_0168c3(p0: unknown, p1: unknown, p2: unknown): string {
+    return $localize`:@@accounting.journal.tpl.pieces.jointes.de.l.ecriture.journal.n.p.0168c3b0:Pièces jointes de l'écriture ${p0}:journal: n° ${p1}:piece:${p2}:attachmentCount:`;
+  }
+
+  readonly loc_ui_tern_piece_aa1746 = $localize`:@@ui.tern.piece.aa1746:Pièce : `;
+  readonly loc_ui_tern_ecriture_generee_par_le_module_paie_corrig_af7d4a = $localize`:@@ui.tern.ecriture.generee.par.le.module.paie.corrig.af7d4a:Écriture générée par le module Paie — corrigez via « Rouvrir le cycle » ou « Annuler le paiement ». Non supprimable ni extournable depuis la comptabilité.`;
+  readonly loc_ui_tern_brouillon_57d2d7 = $localize`:@@ui.tern.brouillon.57d2d7:Brouillon`;
+  readonly loc_ui_tern_cloturee_da2e2b = $localize`:@@ui.tern.cloturee.da2e2b:Clôturée`;
+  readonly loc_ui_tern_validee_2cc6c3 = $localize`:@@ui.tern.validee.2cc6c3:Validée`;
+  readonly loc_ui_tern_extourne_a58c5c = $localize`:@@ui.tern.extourne.a58c5c:Extourne…`;
+  readonly loc_ui_tern_confirmer_l_extourne_e80c2b = $localize`:@@ui.tern.confirmer.l.extourne.e80c2b:Confirmer l'extourne`;
+  readonly loc_ui_tern_telecharger_6ac5d8 = $localize`:@@ui.tern.telecharger.6ac5d8:Télécharger `;
+  readonly loc_ui_tern_supprimer_52af4f = $localize`:@@ui.tern.supprimer.52af4f:Supprimer `;
+  readonly loc_ui_tern_envoi_a62561 = $localize`:@@ui.tern.envoi.a62561:Envoi…`;
+  readonly loc_ui_tern_ajouter_une_piece_91839b = $localize`:@@ui.tern.ajouter.une.piece.91839b:Ajouter une pièce`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly monitoring = inject(AccountingMonitoringService);
@@ -843,7 +857,7 @@ export class JournalComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.exporting.set(true);
@@ -854,7 +868,7 @@ export class JournalComponent implements OnInit {
       },
       error: err => {
         this.exporting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.journal.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
       }
     });
   }
@@ -865,7 +879,7 @@ export class JournalComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.loading.set(true);
@@ -873,7 +887,7 @@ export class JournalComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (!res.success || !res.data) {
-          this.error.set(res.error ?? 'Erreur');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
           return;
         }
         let flat: JournalFlatRow[] = [];
@@ -914,7 +928,7 @@ export class JournalComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set('Erreur réseau');
+        this.error.set($localize`:@@accounting.journal.ts.erreur.reseau.0683007f:Erreur réseau`);
         this.monitoring.logError('journal.load', err);
       }
     });
@@ -968,14 +982,14 @@ export class JournalComponent implements OnInit {
       next: res => {
         this.validatingId.set(null);
         if (!res.success) {
-          this.error.set(res.error ?? 'La validation a échoué.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.la.validation.a.echoue.b2bfca:La validation a échoué.`);
           return;
         }
         this.load();
       },
       error: err => {
         this.validatingId.set(null);
-        this.error.set('Erreur réseau lors de la validation.');
+        this.error.set($localize`:@@accounting.journal.ts.erreur.reseau.lors.de.la.validation.1f8828e9:Erreur réseau lors de la validation.`);
         this.monitoring.logError('journal.validate', err);
       }
     });
@@ -985,11 +999,11 @@ export class JournalComponent implements OnInit {
   deleteEntry(entryId: string, journal: string, piece: number): void {
     if (!this.canDelete()) return;
     this.confirmationService.confirm({
-      message: `Supprimer l'écriture ${journal} n° ${piece} ? Cette action est irréversible.`,
-      header: 'Confirmation de suppression',
+      message: $localize`:@@accounting.journal.ts.supprimer.l.ecriture.journal.n.piece.cet.e71472eb:Supprimer l'écriture ${journal}:journal: n° ${piece}:piece: ? Cette action est irréversible.`,
+      header: $localize`:@@accounting.journal.ts.confirmation.de.suppression.6a082d0b:Confirmation de suppression`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@journal.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@journal.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         if (this.deletingId()) return;
@@ -998,14 +1012,14 @@ export class JournalComponent implements OnInit {
           next: res => {
             this.deletingId.set(null);
             if (!res.success) {
-              this.error.set(res.error ?? 'La suppression a échoué.');
+              this.error.set(res.error ?? $localize`:@@ui.tern.la.suppression.a.echoue.2be4e0:La suppression a échoué.`);
               return;
             }
             this.load();
           },
           error: err => {
             this.deletingId.set(null);
-            this.error.set('Erreur réseau lors de la suppression.');
+            this.error.set($localize`:@@accounting.journal.ts.erreur.reseau.lors.de.la.suppression.4d591e3c:Erreur réseau lors de la suppression.`);
             this.monitoring.logError('journal.delete', err);
           }
         });
@@ -1035,11 +1049,11 @@ export class JournalComponent implements OnInit {
       next: res => {
         this.attachLoading.set(false);
         if (res.success && res.data) this.attachments.set(res.data);
-        else this.attachError.set(res.error ?? 'Erreur de chargement des pièces.');
+        else this.attachError.set(res.error ?? $localize`:@@ui.tern.erreur.de.chargement.des.pieces.1f16c7:Erreur de chargement des pièces.`);
       },
       error: err => {
         this.attachLoading.set(false);
-        this.attachError.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors du chargement des pièces.'));
+        this.attachError.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.journal.ts.erreur.reseau.lors.du.chargement.des.pie.483577d6:Erreur réseau lors du chargement des pièces.`));
       }
     });
   }
@@ -1057,11 +1071,11 @@ export class JournalComponent implements OnInit {
       next: res => {
         this.uploading.set(false);
         if (res.success) this.reloadAttachments(target.entryId);
-        else this.attachError.set(res.error ?? "Erreur lors de l'ajout de la pièce.");
+        else this.attachError.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.l.ajout.de.la.piece.fc52f8:Erreur lors de l'ajout de la pièce.`);
       },
       error: err => {
         this.uploading.set(false);
-        this.attachError.set(this.errors.extractErrorMessage(err, "Erreur réseau lors de l'ajout de la pièce."));
+        this.attachError.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.journal.ts.erreur.reseau.lors.de.l.ajout.de.la.piec.dc42512e:Erreur réseau lors de l'ajout de la pièce.`));
       }
     });
   }
@@ -1080,18 +1094,18 @@ export class JournalComponent implements OnInit {
       },
       error: err => {
         this.attachBusyId.set(null);
-        this.attachError.set(this.errors.extractErrorMessage(err, 'Erreur lors du téléchargement.'));
+        this.attachError.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.journal.ts.erreur.lors.du.telechargement.614ed7c3:Erreur lors du téléchargement.`));
       }
     });
   }
 
   deleteAttachment(a: JournalEntryAttachmentDto): void {
     this.confirmationService.confirm({
-      message: `Supprimer la pièce « ${a.fileName} » ?`,
-      header: 'Confirmation de suppression',
+      message: $localize`:@@accounting.journal.ts.supprimer.la.piece.filename.1be166be:Supprimer la pièce « ${a.fileName}:fileName: » ?`,
+      header: $localize`:@@accounting.journal.ts.confirmation.de.suppression.6a082d0b:Confirmation de suppression`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@journal.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@journal.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.attachBusyId.set(a.id);
@@ -1100,11 +1114,11 @@ export class JournalComponent implements OnInit {
           next: res => {
             this.attachBusyId.set(null);
             if (res.success) this.reloadAttachments(a.journalEntryId);
-            else this.attachError.set(res.error ?? 'Erreur lors de la suppression.');
+            else this.attachError.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.suppression.54158e:Erreur lors de la suppression.`);
           },
           error: err => {
             this.attachBusyId.set(null);
-            this.attachError.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors de la suppression.'));
+            this.attachError.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.journal.ts.erreur.reseau.lors.de.la.suppression.4d591e3c:Erreur réseau lors de la suppression.`));
           }
         });
       }
@@ -1134,7 +1148,7 @@ export class JournalComponent implements OnInit {
     if (!target || this.reversing()) return;
     const reason = this.reverseReason.trim();
     if (!reason) {
-      this.error.set("Le motif de l'extourne est obligatoire.");
+      this.error.set($localize`:@@accounting.journal.ts.le.motif.de.l.extourne.est.obligatoire.5fa82ae0:Le motif de l'extourne est obligatoire.`);
       return;
     }
     this.reversing.set(true);
@@ -1142,7 +1156,7 @@ export class JournalComponent implements OnInit {
       next: res => {
         this.reversing.set(false);
         if (!res.success) {
-          this.error.set(res.error ?? "L'extourne a échoué.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.l.extourne.a.echoue.0069fe:L'extourne a échoué.`);
           return;
         }
         this.reverseTarget.set(null);
@@ -1151,7 +1165,7 @@ export class JournalComponent implements OnInit {
       },
       error: err => {
         this.reversing.set(false);
-        this.error.set("Erreur réseau lors de l'extourne.");
+        this.error.set($localize`:@@accounting.journal.ts.erreur.reseau.lors.de.l.extourne.f214327e:Erreur réseau lors de l'extourne.`);
         this.monitoring.logError('journal.reverse', err);
       }
     });

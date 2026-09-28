@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, DestroyRef, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,28 +17,28 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <div class="tpm-backdrop" (click)="onBackdropClick($event)" role="presentation">
         <div class="tpm-modal" role="dialog" aria-modal="true" aria-labelledby="tpm-title" (click)="$event.stopPropagation()">
           <header class="tpm-header">
-            <h2 id="tpm-title" class="tpm-title">Charger un modèle d'écriture</h2>
-            <button type="button" class="tpm-close" (click)="onClose()" aria-label="Fermer la modale">✕</button>
+            <h2 id="tpm-title" class="tpm-title" i18n="@@accounting.manual-entry.charger.un.modele.d.ecriture.f370a44a">Charger un modèle d'écriture</h2>
+            <button type="button" class="tpm-close" (click)="onClose()" aria-label="Fermer la modale" i18n-aria-label="@@accounting.manual-entry.fermer.la.modale.7e5fc47f" i18n="@@accounting.manual-entry.text.0951b9a0">✕</button>
           </header>
 
           <div class="tpm-search">
             <input type="search"
                    class="tpm-input"
-                   placeholder="Rechercher par nom, description ou code journal…"
+                   placeholder="Rechercher par nom, description ou code journal…" i18n-placeholder="@@accounting.manual-entry.rechercher.par.nom.description.ou.code.journal.bdefd4e3"
                    [ngModel]="search()"
                    (ngModelChange)="search.set($event)"
-                   aria-label="Recherche dans les modèles" />
+                   aria-label="Recherche dans les modèles" i18n-aria-label="@@accounting.manual-entry.recherche.dans.les.modeles.2f715207" />
           </div>
 
           <div class="tpm-body">
             @if (loading()) {
-              <p class="tpm-state" role="status">Chargement des modèles…</p>
+              <p class="tpm-state" role="status" i18n="@@accounting.manual-entry.chargement.des.modeles.6f00e426">Chargement des modèles…</p>
             } @else if (error()) {
               <p class="tpm-state tpm-state-error" role="alert">{{ error() }}</p>
             } @else if (filtered().length === 0) {
-              <p class="tpm-state">Aucun modèle ne correspond à votre recherche.</p>
+              <p class="tpm-state" i18n="@@accounting.manual-entry.aucun.modele.ne.correspond.a.votre.recherche.9a10fd92">Aucun modèle ne correspond à votre recherche.</p>
             } @else {
-              <ul class="tpm-list" role="listbox" aria-label="Liste des modèles">
+              <ul class="tpm-list" role="listbox" aria-label="Liste des modèles" i18n-aria-label="@@accounting.manual-entry.liste.des.modeles.855969f9">
                 @for (t of filtered(); track t.id) {
                   <li class="tpm-item"
                       [class.tpm-item-selected]="selected()?.id === t.id"
@@ -54,7 +55,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                     @if (t.description) {
                       <span class="tpm-item-desc">{{ t.description }}</span>
                     }
-                    <span class="tpm-item-meta">{{ t.lines.length }} ligne{{ t.lines.length > 1 ? 's' : '' }} · utilisé {{ t.usageCount }} fois</span>
+                    <span class="tpm-item-meta" i18n="@@accounting.manual-entry.ligne.utilise.fois.510be3e7.pl">{{ t.lines.length }} {t.lines.length, plural, =0 {ligne} =1 {ligne} other {lignes}} · utilisé {{ t.usageCount }} fois</span>
                   </li>
                 }
               </ul>
@@ -62,19 +63,19 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </div>
 
           @if (selected(); as sel) {
-            <div class="tpm-preview" aria-label="Aperçu du modèle sélectionné">
-              <h3 class="tpm-preview-title">Aperçu : {{ sel.name }}</h3>
+            <div class="tpm-preview" aria-label="Aperçu du modèle sélectionné" i18n-aria-label="@@accounting.manual-entry.apercu.du.modele.selectionne.6503af4e">
+              <h3 class="tpm-preview-title" i18n="@@accounting.manual-entry.apercu.5d4eb34b">Aperçu : {{ sel.name }}</h3>
               @if (sel.labelTemplate) {
-                <p class="tpm-preview-label"><em>Libellé par défaut :</em> {{ sel.labelTemplate }}</p>
+                <p class="tpm-preview-label"><em i18n="@@accounting.manual-entry.libelle.par.defaut.2bc34c67">Libellé par défaut :</em> {{ sel.labelTemplate }}</p>
               }
               <table class="tpm-preview-table">
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th>Compte</th>
-                    <th>Libellé</th>
-                    <th class="text-right">Débit</th>
-                    <th class="text-right">Crédit</th>
+                    <th i18n="@@accounting.manual-entry.text.d08f88df">#</th>
+                    <th i18n="@@accounting.manual-entry.compte.c45740bb">Compte</th>
+                    <th i18n="@@accounting.manual-entry.libelle.f5485bba">Libellé</th>
+                    <th class="text-right" i18n="@@accounting.manual-entry.debit.f528224f">Débit</th>
+                    <th class="text-right" i18n="@@accounting.manual-entry.credit.19194bdf">Crédit</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -99,18 +100,16 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                         class="btn btn-outline-danger btn-sm"
                         (click)="onDelete()"
                         [disabled]="deleting()">
-                  {{ deleting() ? 'Suppression…' : '🗑 Supprimer ce modèle' }}
+                  {{ deleting() ? loc_ui_tern_suppression_a620db : loc_ui_tern_supprimer_ce_modele_6a6201 }}
                 </button>
               }
             </div>
             <div class="tpm-footer-right">
-              <button type="button" class="btn btn-outline-secondary" (click)="onClose()">Annuler</button>
+              <button type="button" class="btn btn-outline-secondary" (click)="onClose()" i18n="@@accounting.manual-entry.annuler.49ba3292">Annuler</button>
               <button type="button"
                       class="btn btn-primary"
                       (click)="onApply()"
-                      [disabled]="!selected()">
-                Charger ce modèle
-              </button>
+                      [disabled]="!selected()" i18n="@@accounting.manual-entry.charger.ce.modele.ef52dc55"> Charger ce modèle </button>
             </div>
           </footer>
         </div>
@@ -132,7 +131,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     .tpm-list { list-style:none; margin:0; padding:0; }
     .tpm-item { padding:var(--spacing-3) var(--spacing-4); border-bottom:1px solid var(--color-border-subtle); cursor:pointer; display:flex; flex-direction:column; gap:var(--spacing-1); }
     .tpm-item:hover { background:var(--color-background-subtle,#f1f5f9); }
-    .tpm-item-selected { background:var(--color-primary-50,#eff6ff); border-left:3px solid var(--color-primary-500,#3b82f6); }
+    .tpm-item-selected { background:var(--color-primary-50,#eff6ff); border-inline-start:3px solid var(--color-primary-500,#3b82f6); }
     .tpm-item-main { display:flex; justify-content:space-between; align-items:center; gap:var(--spacing-3); }
     .tpm-item-name { font-size:var(--font-size-md); }
     .tpm-item-journal { font-family:monospace; background:var(--color-background-subtle); padding:0.125rem var(--spacing-2); border-radius:var(--radius-sm); font-size:var(--font-size-xs); font-weight:var(--font-weight-semibold); }
@@ -144,12 +143,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     .tpm-preview-table { width:100%; font-size:var(--font-size-xs); border-collapse:collapse; }
     .tpm-preview-table th, .tpm-preview-table td { padding:var(--spacing-1) var(--spacing-2); border-bottom:1px solid var(--color-border-subtle); }
     .tpm-mono { font-family:monospace; font-variant-numeric:tabular-nums; }
-    .text-right { text-align:right; }
+    .text-right { text-align:end; }
     .tpm-footer { display:flex; justify-content:space-between; align-items:center; gap:var(--spacing-3); padding:var(--spacing-4); border-top:1px solid var(--color-border-subtle); }
     .tpm-footer-right { display:flex; gap:var(--spacing-2); }
   `
 })
 export class TemplatePickerModalComponent implements OnInit {
+  readonly loc_ui_tern_suppression_a620db = $localize`:@@ui.tern.suppression.a620db:Suppression…`;
+  readonly loc_ui_tern_supprimer_ce_modele_6a6201 = $localize`:@@ui.tern.supprimer.ce.modele.6a6201:🗑 Supprimer ce modèle`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly toast = inject(ToastService);
@@ -192,12 +193,12 @@ export class TemplatePickerModalComponent implements OnInit {
           if (res.success && res.data) {
             this.templates.set(res.data);
           } else {
-            this.error.set(res.error ?? 'Erreur lors du chargement des modèles.');
+            this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.chargement.des.modeles.d6d566:Erreur lors du chargement des modèles.`);
           }
         },
         error: err => {
           this.loading.set(false);
-          this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors du chargement des modèles.'));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.template-picker-modal.ts.erreur.reseau.lors.du.chargement.des.mod.7cd95bf0:Erreur réseau lors du chargement des modèles.`));
         }
       });
   }
@@ -225,11 +226,11 @@ export class TemplatePickerModalComponent implements OnInit {
     const sel = this.selected();
     if (!sel) return;
     this.confirmationService.confirm({
-      message: `Voulez-vous vraiment supprimer le modèle « ${sel.name} » ? Cette action est irréversible.`,
-      header: 'Confirmation de suppression',
+      message: $localize`:@@accounting.template-picker-modal.ts.voulez.vous.vraiment.supprimer.le.modele.b2477773:Voulez-vous vraiment supprimer le modèle « ${sel.name}:name: » ? Cette action est irréversible.`,
+      header: $localize`:@@accounting.template-picker-modal.ts.confirmation.de.suppression.6a082d0b:Confirmation de suppression`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@template-picker-modal.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@template-picker-modal.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.deleting.set(true);
@@ -241,8 +242,8 @@ export class TemplatePickerModalComponent implements OnInit {
               if (res.success) {
                 this.toast.add({
                   severity: 'success',
-                  summary: 'Modèle supprimé',
-                  detail: `Le modèle « ${sel.name} » a été supprimé.`,
+                  summary: $localize`:@@template-picker-modal.component.summary.Modèle suppr:Modèle supprimé`,
+                  detail: $localize`:@@accounting.template-picker-modal.ts.le.modele.name.a.ete.supprime.c1d4c11d:Le modèle « ${sel.name}:name: » a été supprimé.`,
                   life: 4000
                 });
                 this.templates.update(list => list.filter(t => t.id !== sel.id));
@@ -250,8 +251,8 @@ export class TemplatePickerModalComponent implements OnInit {
               } else {
                 this.toast.add({
                   severity: 'error',
-                  summary: 'Échec de la suppression',
-                  detail: res.error ?? 'Erreur lors de la suppression.',
+                  summary: $localize`:@@template-picker-modal.component.summary._chec_de_la_supp:Échec de la suppression`,
+                  detail: res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.suppression.54158e:Erreur lors de la suppression.`,
                   life: 6000
                 });
               }
@@ -260,8 +261,8 @@ export class TemplatePickerModalComponent implements OnInit {
               this.deleting.set(false);
               this.toast.add({
                 severity: 'error',
-                summary: 'Impossible de supprimer le modèle.',
-                detail: this.errors.extractErrorMessage(err, 'Erreur réseau'),
+                summary: $localize`:@@template-picker-modal.component.summary.Impossible d:Impossible de supprimer le modèle.`,
+                detail: this.errors.extractErrorMessage(err, $localize`:@@accounting.template-picker-modal.ts.erreur.reseau.0683007f:Erreur réseau`),
                 life: 6000
               });
             }

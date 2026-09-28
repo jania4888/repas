@@ -29,12 +29,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     ButtonComponent
   ],
   template: `
-    <app-page-header title="Contrôles de pré-clôture" subtitle="Diagnostic de révision avant clôture de l'exercice" />
+    <app-page-header title="Contrôles de pré-clôture" i18n-title="@@accounting.pre-closing.controles.de.pre.cloture.e6b9bc87" subtitle="Diagnostic de révision avant clôture de l'exercice" i18n-subtitle="@@accounting.pre-closing.diagnostic.de.revision.avant.cloture.de.4cbd828d" />
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Exercice à contrôler">
+      <app-accounting-filter-bar ariaLabel="Exercice à contrôler" i18n-ariaLabel="@@accounting.pre-closing.exercice.a.controler.67a9f4c0">
         <div accountingFilterFields class="pc-toolbar-fields">
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="pc-year">Exercice</label>
+            <label class="accounting-filter-label" for="pc-year" i18n="@@accounting.pre-closing.exercice.e171e2b0">Exercice</label>
             <input id="pc-year" type="number" min="2000" max="2100" [(ngModel)]="fiscalYear" class="accounting-filter-input" />
           </div>
         </div>
@@ -46,24 +46,22 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="run()"
             [disabled]="loading()"
-            ariaLabel="Lancer les contrôles de pré-clôture">
-            Lancer les contrôles
-          </app-button>
+            ariaLabel="Lancer les contrôles de pré-clôture" i18n-ariaLabel="@@accounting.pre-closing.lancer.les.controles.de.pre.cloture.ee200e15" i18n="@@accounting.pre-closing.lancer.les.controles.521d27dd"> Lancer les contrôles </app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
 
-    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="run()" />
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.pre-closing.reessayer.c4f78b12" (retry)="run()" />
 
     @if (checklist(); as cl) {
       <div class="pc-summary" [class.pc-summary--blocking]="cl.hasBlocking" [class.pc-summary--ok]="!cl.hasBlocking" role="status">
         <i class="pi" [class.pi-times-circle]="cl.hasBlocking" [class.pi-check-circle]="!cl.hasBlocking" aria-hidden="true"></i>
         <span>
-          @if (cl.hasBlocking) {
+          @if (cl.hasBlocking) {<ng-container i18n="@@accounting.pre-closing.des.controles.bloquants.subsistent.la.cl.1ee3c6cc">
             Des contrôles <strong>bloquants</strong> subsistent : la clôture annuelle et le verrouillage définitif sont refusés tant qu'ils ne sont pas résolus.
-          } @else {
+          </ng-container>} @else {<ng-container i18n="@@accounting.pre-closing.aucun.controle.bloquant.la.cloture.de.l.bcefdbb7">
             Aucun contrôle bloquant. La clôture de l'exercice {{ cl.fiscalYear }} est autorisée
-            @if (warningCount() > 0) { (mais {{ warningCount() }} avertissement(s) à examiner). }
+            </ng-container>@if (warningCount() > 0) {<ng-container i18n="@@accounting.pre-closing.mais.avertissement.s.a.examiner.7f2bb318"> (mais {{ warningCount() }} avertissement(s) à examiner). </ng-container>}
           }
         </span>
       </div>
@@ -71,11 +69,11 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <p-table [value]="cl.checks" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
         <ng-template pTemplate="header">
           <tr>
-            <th style="width:9rem">Sévérité</th>
-            <th>Contrôle</th>
-            <th style="width:6rem" class="text-right">Nombre</th>
-            <th>Détail</th>
-            <th style="width:7rem">Action</th>
+            <th style="width:9rem" i18n="@@accounting.pre-closing.severite.62fd4ae5">Sévérité</th>
+            <th i18n="@@accounting.pre-closing.controle.e988877e">Contrôle</th>
+            <th style="width:6rem" class="text-right" i18n="@@accounting.pre-closing.nombre.e68491e9">Nombre</th>
+            <th i18n="@@accounting.pre-closing.detail.7ce06afc">Détail</th>
+            <th style="width:7rem" i18n="@@accounting.pre-closing.action.97c89a4d">Action</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-c>
@@ -88,13 +86,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             <td class="pc-message">{{ c.message }}</td>
             <td>
               @if (c.deepLinkRoute && c.count > 0) {
-                <a class="pc-link" [routerLink]="c.deepLinkRoute">Voir <i class="pi pi-angle-right" aria-hidden="true"></i></a>
+                <a class="pc-link" [routerLink]="c.deepLinkRoute"><ng-container i18n="@@accounting.pre-closing.voir.8a754f1f">Voir </ng-container> <i class="pi pi-angle-right" aria-hidden="true"></i></a>
               }
             </td>
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td colspan="5" style="text-align:center;padding:2rem">Lancez les contrôles pour un exercice.</td></tr>
+          <tr><td colspan="5" style="text-align:center;padding:2rem" i18n="@@accounting.pre-closing.lancez.les.controles.pour.un.exercice.4e60b416">Lancez les contrôles pour un exercice.</td></tr>
         </ng-template>
       </p-table>
     }
@@ -102,7 +100,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   styles: `
     @use '../shared/accounting-layout';
     .pc-toolbar-fields { display:flex; flex-wrap:wrap; align-items:flex-end; gap:var(--spacing-4); }
-    .text-right { text-align:right; }
+    .text-right { text-align:end; }
     .pc-num { font-variant-numeric:tabular-nums; }
     .pc-count-nonzero { font-weight:var(--font-weight-bold); }
     .pc-message { color:var(--color-text-secondary); font-size:var(--font-size-sm); }
@@ -148,11 +146,11 @@ export class PreClosingComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (res.success && res.data) this.checklist.set(res.data);
-        else this.error.set(res.error ?? 'Erreur');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.pre-closing.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }
@@ -160,7 +158,7 @@ export class PreClosingComponent implements OnInit {
   severityLabel(c: PreClosingCheckDto): string {
     if (c.count === 0) return 'OK';
     if (c.severity === 2) return 'Bloquant';
-    if (c.severity === 1) return 'Avertissement';
+    if (c.severity === 1) return $localize`:@@accounting.pre-closing.ts.avertissement.1b3e2777:Avertissement`;
     return 'Info';
   }
 

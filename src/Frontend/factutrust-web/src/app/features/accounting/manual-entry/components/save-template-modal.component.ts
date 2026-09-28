@@ -19,70 +19,68 @@ export interface SaveTemplatePayload {
       <div class="stm-backdrop" (click)="onBackdropClick($event)" role="presentation">
         <div class="stm-modal" role="dialog" aria-modal="true" aria-labelledby="stm-title" (click)="$event.stopPropagation()">
           <header class="stm-header">
-            <h2 id="stm-title" class="stm-title">Sauvegarder comme modèle</h2>
-            <button type="button" class="stm-close" (click)="onClose()" aria-label="Fermer">✕</button>
+            <h2 id="stm-title" class="stm-title" i18n="@@accounting.manual-entry.sauvegarder.comme.modele.80b765f8">Sauvegarder comme modèle</h2>
+            <button type="button" class="stm-close" (click)="onClose()" aria-label="Fermer" i18n-aria-label="@@accounting.manual-entry.fermer.5ab4ec64" i18n="@@accounting.manual-entry.text.0951b9a0">✕</button>
           </header>
 
           <div class="stm-body">
-            <p class="stm-intro">
+            <p class="stm-intro" i18n="@@accounting.manual-entry.sauvegardez.les.comptes.et.libelles.de.c.db826c62">
               Sauvegardez les comptes et libellés de cette écriture pour les réutiliser rapidement.
               L'écriture en cours sera enregistrée comme modèle <strong>{{ defaultName() || '(sans nom)' }}</strong>.
             </p>
 
             <div class="form-field">
-              <label class="field-label" for="stm-name">Nom du modèle <span class="stm-req">*</span></label>
+              <label class="field-label" for="stm-name"><ng-container i18n="@@accounting.manual-entry.nom.du.modele.68d49f67">Nom du modèle </ng-container> <span class="stm-req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
               <input id="stm-name" type="text" class="stm-input"
                      [ngModel]="name()" (ngModelChange)="name.set($event)"
-                     placeholder="Ex: Paiement client par virement"
+                     placeholder="Ex: Paiement client par virement" i18n-placeholder="@@accounting.manual-entry.ex.paiement.client.par.virement.3b98d267"
                      maxlength="200" required />
               @if (showValidation() && !nameTrimmed()) {
-                <p class="stm-error">Le nom est obligatoire.</p>
+                <p class="stm-error" i18n="@@accounting.manual-entry.le.nom.est.obligatoire.c4331d4d">Le nom est obligatoire.</p>
               }
             </div>
 
             <div class="form-field">
-              <label class="field-label" for="stm-desc">Description (optionnelle)</label>
+              <label class="field-label" for="stm-desc" i18n="@@accounting.manual-entry.description.optionnelle.27856f3e">Description (optionnelle)</label>
               <textarea id="stm-desc" class="stm-input stm-textarea"
                         [ngModel]="description()" (ngModelChange)="description.set($event)"
                         rows="2"
                         maxlength="1000"
-                        placeholder="À quoi sert ce modèle ?"></textarea>
+                        placeholder="À quoi sert ce modèle ?" i18n-placeholder="@@accounting.save-template-modal.a.quoi.sert.ce.modele.d13b0177"></textarea>
             </div>
 
             <div class="form-field stm-row">
               <div style="flex:0 0 8rem">
-                <label class="field-label" for="stm-journal">Journal</label>
+                <label class="field-label" for="stm-journal" i18n="@@accounting.manual-entry.journal.57d7f743">Journal</label>
                 <input id="stm-journal" type="text" class="stm-input stm-input-readonly" readonly
                        [value]="journalCode()" />
               </div>
               <div style="flex:1 1 200px">
-                <label class="field-label" for="stm-label">Libellé par défaut (optionnel)</label>
+                <label class="field-label" for="stm-label" i18n="@@accounting.manual-entry.libelle.par.defaut.optionnel.5cf9a2e5">Libellé par défaut (optionnel)</label>
                 <input id="stm-label" type="text" class="stm-input"
                        [ngModel]="labelTemplate()" (ngModelChange)="labelTemplate.set($event)"
                        maxlength="500"
-                       placeholder="Pré-remplit le libellé à l'application" />
+                       placeholder="Pré-remplit le libellé à l'application" i18n-placeholder="@@accounting.manual-entry.pre.remplit.le.libelle.a.l.application.b5af33c3" />
               </div>
             </div>
 
             <div class="form-field">
               <label class="stm-checkbox">
                 <input type="checkbox"
-                       [ngModel]="keepAmounts()" (ngModelChange)="keepAmounts.set($event)" />
+                       [ngModel]="keepAmounts()" (ngModelChange)="keepAmounts.set($event)" /><ng-container i18n="@@accounting.manual-entry.conserver.les.montants.actuels.comme.val.7da1ad77">
                 Conserver les montants actuels comme valeurs par défaut du modèle
-              </label>
-              <p class="stm-hint">
-                Décoché : seuls les comptes et libellés sont sauvegardés (montants vides à l'application).
-                Coché : les montants actuels seront pré-remplis.
-              </p>
+              </ng-container></label>
+              <p class="stm-hint" i18n="@@accounting.manual-entry.decoche.seuls.les.comptes.et.libelles.sont.sauve.3d8cd4e8"> Décoché : seuls les comptes et libellés sont sauvegardés (montants vides à l'application).
+                Coché : les montants actuels seront pré-remplis. </p>
             </div>
           </div>
 
           <footer class="stm-footer">
-            <button type="button" class="btn btn-outline-secondary" (click)="onClose()">Annuler</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="onClose()" i18n="@@accounting.manual-entry.annuler.49ba3292">Annuler</button>
             <button type="button" class="btn btn-primary"
                     (click)="onSave()"
                     [disabled]="saving() || !nameTrimmed()">
-              {{ saving() ? 'Sauvegarde…' : 'Sauvegarder le modèle' }}
+              {{ saving() ? loc_ui_tern_sauvegarde_853081 : loc_ui_tern_sauvegarder_le_modele_c6623f }}
             </button>
           </footer>
         </div>
@@ -108,12 +106,14 @@ export interface SaveTemplatePayload {
     .stm-textarea { resize:vertical; min-height:3rem; font-family:inherit; }
     .stm-checkbox { display:flex; align-items:center; gap:var(--spacing-2); font-size:var(--font-size-sm); cursor:pointer; }
     .stm-checkbox input { cursor:pointer; }
-    .stm-hint { font-size:var(--font-size-xs); color:var(--color-text-tertiary); margin:0; padding-left:1.5rem; }
+    .stm-hint { font-size:var(--font-size-xs); color:var(--color-text-tertiary); margin:0; padding-inline-start:1.5rem; }
     .stm-error { color:var(--color-error-700,#b91c1c); font-size:var(--font-size-xs); margin:0; }
     .stm-footer { display:flex; justify-content:flex-end; gap:var(--spacing-2); padding:var(--spacing-4); border-top:1px solid var(--color-border-subtle); }
   `
 })
 export class SaveTemplateModalComponent {
+  readonly loc_ui_tern_sauvegarde_853081 = $localize`:@@ui.tern.sauvegarde.853081:Sauvegarde…`;
+  readonly loc_ui_tern_sauvegarder_le_modele_c6623f = $localize`:@@ui.tern.sauvegarder.le.modele.c6623f:Sauvegarder le modèle`;
   readonly visible = input<boolean>(false);
   readonly defaultName = input<string>('');
   readonly journalCode = input<string>('JOD');

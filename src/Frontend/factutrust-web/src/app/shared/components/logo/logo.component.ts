@@ -142,7 +142,7 @@ export class LogoComponent {
   }
 
   get ariaLabelValue(): string {
-    return this.ariaLabel || `${BRAND.name} — Retour à l'accueil`;
+    return this.ariaLabel || $localize`:@@shared.logo.ts.name.retour.a.l.accueil.ca103ba9:${BRAND.name}:name: — Retour à l'accueil`;
   }
 
   get titleValue(): string {

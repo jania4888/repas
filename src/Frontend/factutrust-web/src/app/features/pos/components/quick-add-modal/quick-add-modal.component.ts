@@ -17,8 +17,8 @@ import { ProductListItem } from '@core/services/product.service';
         aria-labelledby="quick-add-title"
         aria-describedby="quick-add-product">
         <div class="quick-add__header">
-          <h3 id="quick-add-title" class="quick-add__title">Quantité</h3>
-          <button class="quick-add__close" (click)="onCancel()" type="button" aria-label="Fermer">
+          <h3 id="quick-add-title" class="quick-add__title" i18n="@@pos.components.quantite.09a38fda">Quantité</h3>
+          <button class="quick-add__close" (click)="onCancel()" type="button" aria-label="Fermer" i18n-aria-label="@@pos.components.fermer.5ab4ec64">
             <i class="pi pi-times"></i>
           </button>
         </div>
@@ -28,7 +28,7 @@ import { ProductListItem } from '@core/services/product.service';
             <span class="quick-add__price">{{ product.unitPrice | number:'1.2-2' }} TND</span>
           }
           <div class="quick-add__field">
-            <label for="quick-add-qty">Quantité</label>
+            <label for="quick-add-qty" i18n="@@pos.components.quantite.09a38fda">Quantité</label>
             <input
               #qtyInput
               id="quick-add-qty"
@@ -39,16 +39,12 @@ import { ProductListItem } from '@core/services/product.service';
               min="0.001"
               step="0.001"
               class="quick-add__input"
-              aria-label="Quantité" />
+              aria-label="Quantité" i18n-aria-label="@@pos.components.quantite.09a38fda" />
           </div>
         </div>
         <div class="quick-add__actions">
-          <button class="quick-add__btn quick-add__btn--secondary" type="button" (click)="onCancel()">
-            Annuler
-          </button>
-          <button class="quick-add__btn quick-add__btn--primary" type="button" (click)="onConfirm()" [disabled]="!isValid()">
-            Ajouter
-          </button>
+          <button class="quick-add__btn quick-add__btn--secondary" type="button" (click)="onCancel()" i18n="@@pos.components.annuler.49ba3292"> Annuler </button>
+          <button class="quick-add__btn quick-add__btn--primary" type="button" (click)="onConfirm()" [disabled]="!isValid()" i18n="@@pos.components.ajouter.87c57ed1"> Ajouter </button>
         </div>
       </div>
     </div>

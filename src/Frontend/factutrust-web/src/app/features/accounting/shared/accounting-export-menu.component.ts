@@ -34,7 +34,7 @@ export class AccountingExportMenuComponent {
   /** Désactive le bouton (chargement en cours, données vides, période invalide). */
   @Input() disabled = false;
   /** Libellé du bouton. */
-  @Input() label = 'Exporter';
+  @Input() label = $localize`:@@accounting.accounting-export-menu.ts.exporter.0cd84bdc:Exporter`;
 
   /** Format choisi par l'utilisateur. */
   @Output() exportFormat = new EventEmitter<AccountingExportFormat>();

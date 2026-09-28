@@ -15,8 +15,8 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
   template: `
     <app-empty-state
       icon="pi-folder-open"
-      title="Aucun document"
-      description="Le dépôt de documents contractuels arrive en phase 2."
+      title="Aucun document" i18n-title="@@recurring-contracts.tabs.aucun.document.ceec9bd3"
+      description="Le dépôt de documents contractuels arrive en phase 2." i18n-description="@@recurring-contracts.tabs.le.depot.de.documents.contractuels.arriv.6e69b987"
       [showAction]="false">
     </app-empty-state>
     <div class="center">
@@ -25,7 +25,7 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
         size="sm"
         icon="pi-plus"
         [disabled]="true"
-        pTooltip="Disponible prochainement">
+        pTooltip="Disponible prochainement" i18n-pTooltip="@@recurring-contracts.tabs.disponible.prochainement.dd388b37" i18n="@@recurring-contracts.tabs.ajouter.un.document.16690036">
         Ajouter un document
       </app-button>
     </div>

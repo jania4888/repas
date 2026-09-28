@@ -42,14 +42,14 @@ interface StageOption {
     TableTotalsBarComponent
   ],
   template: `
-    <app-page-header title="Opportunités" subtitle="Pipeline commercial" />
+    <app-page-header title="Opportunités" i18n-title="@@crm.opportunities.opportunites.0dbfa3c5" subtitle="Pipeline commercial" i18n-subtitle="@@crm.opportunities.pipeline.commercial.01e507ba" />
     <div class="card p-3 mb-3 opportunity-toolbar">
       <div class="toolbar-row">
         <p-select
           [options]="stageOptions"
           [(ngModel)]="selectedStageOption"
           optionLabel="label"
-          placeholder="Stage"
+          placeholder="Stage" i18n-placeholder="@@crm.opportunities.stage.ca6d0e3a"
           [showClear]="true"
           styleClass="toolbar-dropdown"
           inputId="oppStageFilter"
@@ -62,14 +62,10 @@ interface StageOption {
             [(ngModel)]="myOpportunitiesOnly"
             [binary]="true"
             (ngModelChange)="load()"></p-checkbox>
-          <label for="oppMineOnly">Mes opportunités</label>
+          <label for="oppMineOnly" i18n="@@crm.opportunities.mes.opportunites.a7f22363">Mes opportunités</label>
         </div>
-        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="load()" ariaLabel="Actualiser la liste">
-          Actualiser
-        </app-button>
-        <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvelle opportunité">
-          Nouvelle opportunité
-        </app-button>
+        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="load()" ariaLabel="Actualiser la liste" i18n-ariaLabel="@@crm.opportunities.actualiser.la.liste.fefe8aed" i18n="@@crm.opportunities.actualiser.9d3b2a7d"> Actualiser </app-button>
+        <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvelle opportunité" i18n-ariaLabel="@@crm.opportunities.nouvelle.opportunite.a3db79da" i18n="@@crm.opportunities.nouvelle.opportunite.ffadea57"> Nouvelle opportunité </app-button>
       </div>
     </div>
     @if (error()) {
@@ -79,14 +75,14 @@ interface StageOption {
     <p-table [value]="items()" [paginator]="true" [rows]="15" styleClass="p-datatable-sm opportunity-table">
       <ng-template pTemplate="header">
         <tr>
-          <th scope="col">Titre</th>
-          <th scope="col">Commercial</th>
-          <th scope="col">Stage</th>
-          <th scope="col">Montant</th>
-          <th scope="col">Prob.</th>
-          <th scope="col">Pondéré</th>
-          <th scope="col">Échéance</th>
-          <th scope="col" class="col-actions">Actions</th>
+          <th scope="col" i18n="@@crm.opportunities.titre.eb97899a">Titre</th>
+          <th scope="col" i18n="@@crm.opportunities.commercial.b48513e4">Commercial</th>
+          <th scope="col" i18n="@@crm.opportunities.stage.ca6d0e3a">Stage</th>
+          <th scope="col" i18n="@@crm.opportunities.montant.4adcd9fc">Montant</th>
+          <th scope="col" i18n="@@crm.opportunities.prob.9690cb4f">Prob.</th>
+          <th scope="col" i18n="@@crm.opportunities.pondere.c48371c8">Pondéré</th>
+          <th scope="col" i18n="@@crm.opportunities.echeance.f9a77ff6">Échéance</th>
+          <th scope="col" class="col-actions" i18n="@@crm.opportunities.actions.c3cd636a">Actions</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-o>
@@ -106,8 +102,8 @@ interface StageOption {
                   size="sm"
                   [iconOnly]="true"
                   icon="pi pi-angle-right"
-                  ariaLabel="Avancer l’opportunité"
-                  title="Avancer"
+                  ariaLabel="Avancer l’opportunité" i18n-ariaLabel="@@crm.opportunities.avancer.l.opportunite.bca2a08d"
+                  title="Avancer" i18n-title="@@crm.opportunities.avancer.ddc5c41f"
                   [iconAlwaysVisible]="true"
                   (click)="advance(o.id)"></app-button>
                 <app-button
@@ -115,8 +111,8 @@ interface StageOption {
                   size="sm"
                   [iconOnly]="true"
                   icon="pi pi-check"
-                  ariaLabel="Marquer comme gagnée"
-                  title="Gagnée"
+                  ariaLabel="Marquer comme gagnée" i18n-ariaLabel="@@crm.opportunities.marquer.comme.gagnee.ff0cfe6d"
+                  title="Gagnée" i18n-title="@@crm.opportunities.gagnee.7dffc692"
                   [iconAlwaysVisible]="true"
                   (click)="win(o.id)"></app-button>
                 <app-button
@@ -124,8 +120,8 @@ interface StageOption {
                   size="sm"
                   [iconOnly]="true"
                   icon="pi pi-times"
-                  ariaLabel="Marquer comme perdue"
-                  title="Perdue"
+                  ariaLabel="Marquer comme perdue" i18n-ariaLabel="@@crm.opportunities.marquer.comme.perdue.b62a03f3"
+                  title="Perdue" i18n-title="@@crm.opportunities.perdue.2b13797b"
                   [iconAlwaysVisible]="true"
                   (click)="openLose(o)"></app-button>
               }
@@ -134,8 +130,8 @@ interface StageOption {
                 size="sm"
                 [iconOnly]="true"
                 icon="pi pi-pencil"
-                ariaLabel="Modifier l’opportunité"
-                title="Modifier"
+                ariaLabel="Modifier l’opportunité" i18n-ariaLabel="@@crm.opportunities.modifier.l.opportunite.ae33501b"
+                title="Modifier" i18n-title="@@crm.opportunities.modifier.f260e757"
                 (click)="openEdit(o)"></app-button>
             </div>
           </td>
@@ -145,11 +141,9 @@ interface StageOption {
         <tr>
           <td colspan="8" class="empty-cell">
             <div class="empty-state">
-              <p class="empty-title">Aucune opportunité pour ces critères</p>
-              <p class="empty-hint">Créez une opportunité pour suivre un deal dans le pipeline.</p>
-              <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer une opportunité">
-                Nouvelle opportunité
-              </app-button>
+              <p class="empty-title" i18n="@@crm.opportunities.aucune.opportunite.pour.ces.criteres.56b4694e">Aucune opportunité pour ces critères</p>
+              <p class="empty-hint" i18n="@@crm.opportunities.creez.une.opportunite.pour.suivre.un.deal.dans.l.5ed28c3c">Créez une opportunité pour suivre un deal dans le pipeline.</p>
+              <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer une opportunité" i18n-ariaLabel="@@crm.opportunities.creer.une.opportunite.2cbd295d" i18n="@@crm.opportunities.nouvelle.opportunite.ffadea57"> Nouvelle opportunité </app-button>
             </div>
           </td>
         </tr>
@@ -162,27 +156,27 @@ interface StageOption {
       [draggable]="false"
       styleClass="opp-form-dialog"
       [contentStyle]="{ overflow: 'visible', padding: 0 }"
-      [header]="editingId ? 'Modifier l’opportunité' : 'Nouvelle opportunité'"
+      [header]="editingId ? loc_ui_tern_modifier_l_opportunite_c169c9 : loc_ui_tern_nouvelle_opportunite_ffadea"
       [style]="{ width: 'min(560px, 96vw)' }"
       (onHide)="resetFormDialog()"
       [attr.aria-describedby]="'opp-form-desc'">
       <p id="opp-form-desc" class="sr-only">
-        {{ editingId ? 'Modifiez les champs puis enregistrez.' : 'Renseignez le client, le montant et la date de clôture attendue.' }}
+        {{ editingId ? loc_ui_tern_modifiez_les_champs_puis_enregistrez_d6b04c : loc_ui_tern_renseignez_le_client_le_montant_et_la_date_e8d113 }}
       </p>
       <div class="opp-dialog-body">
         <form [formGroup]="oppForm" (ngSubmit)="saveOpportunity()" class="opp-form">
           <section class="opp-form-section" aria-labelledby="opp-section-deal">
-            <h3 id="opp-section-deal" class="form-block-title">Deal</h3>
+            <h3 id="opp-section-deal" class="form-block-title" i18n="@@crm.opportunities.deal.87078fc0">Deal</h3>
             @if (!editingId) {
               <div class="form-field">
-                <label class="field-label" for="oppClient">Client <span class="required" aria-hidden="true">*</span></label>
+                <label class="field-label" for="oppClient"><ng-container i18n="@@crm.opportunities.client.1bdd79b1">Client </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
                 <p-select
                   inputId="oppClient"
                   formControlName="clientId"
                   [options]="clients"
                   optionLabel="name"
                   optionValue="id"
-                  placeholder="Sélectionner un client"
+                  placeholder="Sélectionner un client" i18n-placeholder="@@crm.opportunities.selectionner.un.client.20f49a7a"
                   [filter]="true"
                   filterBy="name,code"
                   styleClass="w-full"
@@ -191,12 +185,12 @@ interface StageOption {
                   [attr.aria-invalid]="oppForm.get('clientId')?.invalid && oppForm.get('clientId')?.touched ? true : null"
                   [attr.aria-describedby]="oppForm.get('clientId')?.invalid && oppForm.get('clientId')?.touched ? 'opp-client-error' : null"></p-select>
                 @if (oppForm.get('clientId')?.invalid && oppForm.get('clientId')?.touched) {
-                  <small id="opp-client-error" class="field-error" role="alert">Sélectionnez un client.</small>
+                  <small id="opp-client-error" class="field-error" role="alert" i18n="@@crm.opportunities.selectionnez.un.client.8fb40ef8">Sélectionnez un client.</small>
                 }
               </div>
             }
             <div class="form-field">
-              <label class="field-label" for="oppTitle">Titre <span class="required" aria-hidden="true">*</span></label>
+              <label class="field-label" for="oppTitle"><ng-container i18n="@@crm.opportunities.titre.eb97899a">Titre </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
               <input
                 pInputText
                 id="oppTitle"
@@ -206,12 +200,12 @@ interface StageOption {
                 [attr.aria-invalid]="oppForm.get('title')?.invalid && oppForm.get('title')?.touched ? true : null"
                 [attr.aria-describedby]="oppForm.get('title')?.invalid && oppForm.get('title')?.touched ? 'opp-title-error' : null" />
               @if (oppForm.get('title')?.invalid && oppForm.get('title')?.touched) {
-                <small id="opp-title-error" class="field-error" role="alert">Le titre est obligatoire.</small>
+                <small id="opp-title-error" class="field-error" role="alert" i18n="@@crm.opportunities.le.titre.est.obligatoire.27415fac">Le titre est obligatoire.</small>
               }
             </div>
             <div class="form-grid-2">
               <div class="form-field">
-                <label class="field-label" for="oppAmount">Montant attendu (TND) <span class="required" aria-hidden="true">*</span></label>
+                <label class="field-label" for="oppAmount"><ng-container i18n="@@crm.opportunities.montant.attendu.tnd.05d34754">Montant attendu (TND) </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
                 <p-inputNumber
                   inputId="oppAmount"
                   formControlName="expectedAmount"
@@ -221,7 +215,7 @@ interface StageOption {
                   styleClass="w-full"></p-inputNumber>
               </div>
               <div class="form-field">
-                <label class="field-label" for="oppProb">Probabilité (%) <span class="required" aria-hidden="true">*</span></label>
+                <label class="field-label" for="oppProb"><ng-container i18n="@@crm.opportunities.probabilite.0871fb8b">Probabilité (%) </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
                 <p-inputNumber
                   inputId="oppProb"
                   formControlName="probability"
@@ -231,7 +225,7 @@ interface StageOption {
               </div>
             </div>
             <div class="form-field">
-              <label class="field-label" for="oppClose">Date de clôture attendue <span class="required" aria-hidden="true">*</span></label>
+              <label class="field-label" for="oppClose"><ng-container i18n="@@crm.opportunities.date.de.cloture.attendue.f610b7d3">Date de clôture attendue </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
               <p-datepicker
                 inputId="oppClose"
                 formControlName="expectedCloseDate"
@@ -243,19 +237,19 @@ interface StageOption {
                 [attr.aria-invalid]="oppForm.get('expectedCloseDate')?.invalid && oppForm.get('expectedCloseDate')?.touched ? true : null"
                 [attr.aria-describedby]="oppForm.get('expectedCloseDate')?.invalid && oppForm.get('expectedCloseDate')?.touched ? 'opp-close-error' : null"></p-datepicker>
               @if (oppForm.get('expectedCloseDate')?.invalid && oppForm.get('expectedCloseDate')?.touched) {
-                <small id="opp-close-error" class="field-error" role="alert">La date de clôture est obligatoire.</small>
+                <small id="opp-close-error" class="field-error" role="alert" i18n="@@crm.opportunities.la.date.de.cloture.est.obligatoire.2cc53478">La date de clôture est obligatoire.</small>
               }
             </div>
           </section>
 
           <section class="opp-form-section opp-form-section-secondary" aria-labelledby="opp-section-extra">
-            <h3 id="opp-section-extra" class="form-block-title">Compléments</h3>
+            <h3 id="opp-section-extra" class="form-block-title" i18n="@@crm.opportunities.complements.31a9dae2">Compléments</h3>
             <div class="form-field">
-              <label class="field-label" for="oppSource">Source (optionnel)</label>
+              <label class="field-label" for="oppSource" i18n="@@crm.opportunities.source.optionnel.f8f1af37">Source (optionnel)</label>
               <input pInputText id="oppSource" class="w-full" formControlName="source" />
             </div>
             <div class="form-field">
-              <label class="field-label" for="oppNotes">Notes (optionnel)</label>
+              <label class="field-label" for="oppNotes" i18n="@@crm.opportunities.notes.optionnel.c4bb754a">Notes (optionnel)</label>
               <textarea
                 pTextarea
                 id="oppNotes"
@@ -273,9 +267,7 @@ interface StageOption {
       </div>
       <ng-template pTemplate="footer">
         <div class="opp-dialog-footer-actions">
-          <app-button variant="outline" icon="pi-times" iconPos="left" type="button" (click)="formDialogVisible = false" ariaLabel="Annuler">
-            Annuler
-          </app-button>
+          <app-button variant="outline" icon="pi-times" iconPos="left" type="button" (click)="formDialogVisible = false" ariaLabel="Annuler" i18n-ariaLabel="@@crm.opportunities.annuler.e063e8ff" i18n="@@crm.opportunities.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"
@@ -283,8 +275,8 @@ interface StageOption {
             type="button"
             (click)="saveOpportunity()"
             [disabled]="oppForm.invalid || saving()"
-            [attr.aria-label]="editingId ? 'Enregistrer l’opportunité' : 'Créer l’opportunité'">
-            {{ saving() ? (editingId ? 'Enregistrement...' : 'Création...') : (editingId ? 'Enregistrer' : 'Créer') }}
+            [attr.aria-label]="editingId ? loc_ui_tern_enregistrer_l_opportunite_62ea6f : loc_ui_tern_creer_l_opportunite_19bea5">
+            {{ saving() ? (editingId ? loc_ui_tern_enregistrement_9bf105 : loc_ui_tern_creation_dca950) : (editingId ? loc_ui_tern_enregistrer_f7c8bc : loc_ui_tern_creer_1a6861) }}
           </app-button>
         </div>
       </ng-template>
@@ -296,28 +288,26 @@ interface StageOption {
       [draggable]="false"
       styleClass="opp-lose-dialog"
       [contentStyle]="{ overflow: 'auto', padding: 0 }"
-      header="Motif de perte"
+      header="Motif de perte" i18n-header="@@crm.opportunities.motif.de.perte.943b55a1"
       [style]="{ width: 'min(420px, 96vw)' }"
       (onHide)="resetLoseDialog()">
       <div class="opp-dialog-body opp-dialog-body--lose">
         <form [formGroup]="loseForm" (ngSubmit)="confirmLose()" class="opp-form opp-form-lose">
-          <p id="lose-reason-hint" class="lose-dialog-hint">
-            Décrivez brièvement pourquoi l’opportunité est perdue (prix, concurrent, report, absence de budget…). Réservé à
-            l’équipe interne.
-          </p>
+          <p id="lose-reason-hint" class="lose-dialog-hint" i18n="@@crm.opportunities.decrivez.brievement.pourquoi.l.opportunite.est.p.a98518e5"> Décrivez brièvement pourquoi l’opportunité est perdue (prix, concurrent, report, absence de budget…). Réservé à
+            l’équipe interne. </p>
           <div class="form-field">
-            <label class="field-label" for="loseReason">Motif <span class="required" aria-hidden="true">*</span></label>
+            <label class="field-label" for="loseReason"><ng-container i18n="@@crm.opportunities.motif.2a198f47">Motif </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
             <textarea
               pTextarea
               id="loseReason"
               class="w-full lose-reason-textarea"
               rows="5"
               formControlName="reason"
-              placeholder="Ex. : offre concurrente moins chère, projet gelé par le client…"
+              placeholder="Ex. : offre concurrente moins chère, projet gelé par le client…" i18n-placeholder="@@crm.opportunities.ex.offre.concurrente.moins.chere.projet.gele.par.2466d0a6"
               [attr.aria-describedby]="loseReasonAriaDescribedBy()"
               [attr.aria-invalid]="loseForm.get('reason')?.invalid && loseForm.get('reason')?.touched ? true : null"></textarea>
             @if (loseForm.get('reason')?.invalid && loseForm.get('reason')?.touched) {
-              <small id="lose-reason-error" class="field-error" role="alert">Indiquez un motif (au moins 2 caractères).</small>
+              <small id="lose-reason-error" class="field-error" role="alert" i18n="@@crm.opportunities.indiquez.un.motif.au.moins.2.caracteres.31534665">Indiquez un motif (au moins 2 caractères).</small>
             }
           </div>
           @if (loseError()) {
@@ -327,9 +317,7 @@ interface StageOption {
       </div>
       <ng-template pTemplate="footer">
         <div class="opp-dialog-footer-actions opp-dialog-footer-actions--lose">
-          <app-button variant="ghost" size="sm" type="button" (click)="loseDialogVisible = false" ariaLabel="Annuler">
-            Annuler
-          </app-button>
+          <app-button variant="ghost" size="sm" type="button" (click)="loseDialogVisible = false" ariaLabel="Annuler" i18n-ariaLabel="@@crm.opportunities.annuler.e063e8ff" i18n="@@crm.opportunities.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             [icon]="loseSaving() ? 'pi-spin pi-spinner' : 'pi-check'"
@@ -337,8 +325,8 @@ interface StageOption {
             type="button"
             (click)="confirmLose()"
             [disabled]="loseForm.invalid || loseSaving()"
-            ariaLabel="Confirmer la perte du deal">
-            {{ loseSaving() ? 'Envoi...' : 'Confirmer' }}
+            ariaLabel="Confirmer la perte du deal" i18n-ariaLabel="@@crm.opportunities.confirmer.la.perte.du.deal.0d88db6e">
+            {{ loseSaving() ? loc_ui_tern_envoi_5a377e : loc_ui_tern_confirmer_80a664 }}
           </app-button>
         </div>
       </ng-template>
@@ -456,7 +444,7 @@ interface StageOption {
     }
     .required {
       color: var(--color-error-600);
-      margin-left: var(--spacing-1);
+      margin-inline-start: var(--spacing-1);
     }
     .field-error {
       display: block;
@@ -585,6 +573,18 @@ interface StageOption {
   `
 })
 export class OpportunityListComponent implements OnInit {
+  readonly loc_ui_tern_modifier_l_opportunite_c169c9 = $localize`:@@ui.tern.modifier.l.opportunite.c169c9:Modifier l’opportunité`;
+  readonly loc_ui_tern_nouvelle_opportunite_ffadea = $localize`:@@ui.tern.nouvelle.opportunite.ffadea:Nouvelle opportunité`;
+  readonly loc_ui_tern_modifiez_les_champs_puis_enregistrez_d6b04c = $localize`:@@ui.tern.modifiez.les.champs.puis.enregistrez.d6b04c:Modifiez les champs puis enregistrez.`;
+  readonly loc_ui_tern_renseignez_le_client_le_montant_et_la_date_e8d113 = $localize`:@@ui.tern.renseignez.le.client.le.montant.et.la.date.e8d113:Renseignez le client, le montant et la date de clôture attendue.`;
+  readonly loc_ui_tern_enregistrer_l_opportunite_62ea6f = $localize`:@@ui.tern.enregistrer.l.opportunite.62ea6f:Enregistrer l’opportunité`;
+  readonly loc_ui_tern_creer_l_opportunite_19bea5 = $localize`:@@ui.tern.creer.l.opportunite.19bea5:Créer l’opportunité`;
+  readonly loc_ui_tern_enregistrement_9bf105 = $localize`:@@ui.tern.enregistrement.9bf105:Enregistrement...`;
+  readonly loc_ui_tern_creation_dca950 = $localize`:@@ui.tern.creation.dca950:Création...`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_creer_1a6861 = $localize`:@@ui.tern.creer.1a6861:Créer`;
+  readonly loc_ui_tern_envoi_5a377e = $localize`:@@ui.tern.envoi.5a377e:Envoi...`;
+  readonly loc_ui_tern_confirmer_80a664 = $localize`:@@ui.tern.confirmer.80a664:Confirmer`;
   private readonly crm = inject(CrmService);
   private readonly clientsApi = inject(ClientService);
   private readonly auth = inject(AuthService);
@@ -601,11 +601,11 @@ export class OpportunityListComponent implements OnInit {
   readonly summaryMetrics = computed<TotalMetric[]>(() => {
     const rows = this.items();
     return [
-      { label: 'Opportunités', value: rows.length, format: 'number', icon: 'pi-briefcase', tone: 'primary' },
-      { label: 'Montant attendu', value: rows.reduce((acc, o) => acc + (o.expectedAmount ?? 0), 0), format: 'currency', icon: 'pi-wallet', tone: 'primary' },
-      { label: 'Pondéré', value: rows.reduce((acc, o) => acc + (o.weightedAmount ?? 0), 0), format: 'currency', icon: 'pi-percentage', tone: 'cyan' },
-      { label: 'Ouvertes', value: rows.filter(o => o.stage < 4).length, format: 'number', icon: 'pi-clock', tone: 'amber' },
-      { label: 'Gagnées', value: rows.filter(o => o.stage === 4).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' }
+      { label: $localize`:@@crm.opportunity-list.ts.opportunites.0dbfa3c5:Opportunités`, value: rows.length, format: 'number', icon: 'pi-briefcase', tone: 'primary' },
+      { label: $localize`:@@crm.opportunity-list.ts.montant.attendu.1826d86f:Montant attendu`, value: rows.reduce((acc, o) => acc + (o.expectedAmount ?? 0), 0), format: 'currency', icon: 'pi-wallet', tone: 'primary' },
+      { label: $localize`:@@crm.opportunity-list.ts.pondere.c48371c8:Pondéré`, value: rows.reduce((acc, o) => acc + (o.weightedAmount ?? 0), 0), format: 'currency', icon: 'pi-percentage', tone: 'cyan' },
+      { label: $localize`:@@crm.opportunity-list.ts.ouvertes.b8fe259a:Ouvertes`, value: rows.filter(o => o.stage < 4).length, format: 'number', icon: 'pi-clock', tone: 'amber' },
+      { label: $localize`:@@crm.opportunity-list.ts.gagnees.97d1ec76:Gagnées`, value: rows.filter(o => o.stage === 4).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' }
     ];
   });
 
@@ -617,13 +617,13 @@ export class OpportunityListComponent implements OnInit {
   loseTargetId: string | null = null;
 
   stageOptions: StageOption[] = [
-    { label: 'Tous les stages', value: null },
-    { label: 'Prospection', value: 0 },
-    { label: 'Qualification', value: 1 },
-    { label: 'Proposition', value: 2 },
-    { label: 'Négociation', value: 3 },
-    { label: 'Gagnée', value: 4 },
-    { label: 'Perdue', value: 5 }
+    { label: $localize`:@@crm.opportunity-list.ts.tous.les.stages.59d7f5a1:Tous les stages`, value: null },
+    { label: $localize`:@@crm.opportunity-list.ts.prospection.2f8b56f9:Prospection`, value: 0 },
+    { label: $localize`:@@crm.opportunity-list.ts.qualification.2ffe44e5:Qualification`, value: 1 },
+    { label: $localize`:@@crm.opportunity-list.ts.proposition.3e2cf2d2:Proposition`, value: 2 },
+    { label: $localize`:@@crm.opportunity-list.ts.negociation.bcc6c081:Négociation`, value: 3 },
+    { label: $localize`:@@crm.opportunity-list.ts.gagnee.7dffc692:Gagnée`, value: 4 },
+    { label: $localize`:@@crm.opportunity-list.ts.perdue.2b13797b:Perdue`, value: 5 }
   ];
   selectedStageOption: StageOption | null = this.stageOptions[0];
 
@@ -674,10 +674,10 @@ export class OpportunityListComponent implements OnInit {
         if (r.success && r.data) {
           this.items.set(r.data);
         } else {
-          this.error.set(r.error ?? 'Erreur');
+          this.error.set(r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       },
-      error: () => this.error.set('Erreur réseau')
+      error: () => this.error.set($localize`:@@crm.opportunity-list.ts.erreur.reseau.0683007f:Erreur réseau`)
     });
   }
 
@@ -733,12 +733,12 @@ export class OpportunityListComponent implements OnInit {
     const v = this.oppForm.getRawValue();
     const title = (v.title ?? '').trim();
     if (!title) {
-      this.formError.set('Le titre est obligatoire.');
+      this.formError.set($localize`:@@crm.opportunity-list.ts.le.titre.est.obligatoire.27415fac:Le titre est obligatoire.`);
       return;
     }
     const close = v.expectedCloseDate;
     if (!close) {
-      this.formError.set('La date de clôture est obligatoire.');
+      this.formError.set($localize`:@@crm.opportunity-list.ts.la.date.de.cloture.est.obligatoire.2cc53478:La date de clôture est obligatoire.`);
       return;
     }
     const iso = close instanceof Date ? close.toISOString() : new Date(close).toISOString();
@@ -761,12 +761,12 @@ export class OpportunityListComponent implements OnInit {
               this.formDialogVisible = false;
               this.load();
             } else {
-              this.formError.set(r.error ?? 'Enregistrement impossible');
+              this.formError.set(r.error ?? $localize`:@@ui.tern.enregistrement.impossible.1e5e10:Enregistrement impossible`);
             }
           },
           error: () => {
             this.saving.set(false);
-            this.formError.set('Erreur réseau');
+            this.formError.set($localize`:@@crm.opportunity-list.ts.erreur.reseau.0683007f:Erreur réseau`);
           }
         });
       return;
@@ -775,7 +775,7 @@ export class OpportunityListComponent implements OnInit {
     const clientId = v.clientId?.trim();
     if (!clientId) {
       this.saving.set(false);
-      this.formError.set('Sélectionnez un client.');
+      this.formError.set($localize`:@@crm.opportunity-list.ts.selectionnez.un.client.8fb40ef8:Sélectionnez un client.`);
       return;
     }
 
@@ -796,12 +796,12 @@ export class OpportunityListComponent implements OnInit {
             this.formDialogVisible = false;
             this.load();
           } else {
-            this.formError.set(r.error ?? 'Création impossible');
+            this.formError.set(r.error ?? $localize`:@@ui.tern.creation.impossible.e15c59:Création impossible`);
           }
         },
         error: () => {
           this.saving.set(false);
-          this.formError.set('Erreur réseau');
+          this.formError.set($localize`:@@crm.opportunity-list.ts.erreur.reseau.0683007f:Erreur réseau`);
         }
       });
   }
@@ -810,11 +810,11 @@ export class OpportunityListComponent implements OnInit {
     this.crm.advanceOpportunity(id).subscribe({
       next: r => {
         if (!r.success) {
-          this.error.set(r.error ?? 'Action impossible');
+          this.error.set(r.error ?? $localize`:@@ui.tern.action.impossible.f9002b:Action impossible`);
         }
         this.load();
       },
-      error: () => this.error.set('Erreur réseau')
+      error: () => this.error.set($localize`:@@crm.opportunity-list.ts.erreur.reseau.0683007f:Erreur réseau`)
     });
   }
 
@@ -822,11 +822,11 @@ export class OpportunityListComponent implements OnInit {
     this.crm.winOpportunity(id).subscribe({
       next: r => {
         if (!r.success) {
-          this.error.set(r.error ?? 'Action impossible');
+          this.error.set(r.error ?? $localize`:@@ui.tern.action.impossible.f9002b:Action impossible`);
         }
         this.load();
       },
-      error: () => this.error.set('Erreur réseau')
+      error: () => this.error.set($localize`:@@crm.opportunity-list.ts.erreur.reseau.0683007f:Erreur réseau`)
     });
   }
 
@@ -858,12 +858,12 @@ export class OpportunityListComponent implements OnInit {
           this.loseTargetId = null;
           this.load();
         } else {
-          this.loseError.set(r.error ?? 'Action impossible');
+          this.loseError.set(r.error ?? $localize`:@@ui.tern.action.impossible.f9002b:Action impossible`);
         }
       },
       error: () => {
         this.loseSaving.set(false);
-        this.loseError.set('Erreur réseau');
+        this.loseError.set($localize`:@@crm.opportunity-list.ts.erreur.reseau.0683007f:Erreur réseau`);
       }
     });
   }

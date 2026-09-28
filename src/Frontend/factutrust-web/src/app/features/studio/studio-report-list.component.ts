@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -20,15 +21,15 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
   template: `
     <p-toast></p-toast>
     <app-studio-page-shell
-      title="Rapports"
-      subtitle="Analysez vos tables personnalisées et vos données existantes."
+      title="Rapports" i18n-title="@@studio.studio-report-list.rapports.db7d9fbb"
+      subtitle="Analysez vos tables personnalisées et vos données existantes." i18n-subtitle="@@studio.studio-report-list.analysez.vos.tables.personnalisees.et.vo.9e2d26cf"
       [breadcrumbs]="breadcrumbs">
-      <button pButton type="button" label="Nouveau rapport" icon="fa-solid fa-plus" studioActions routerLink="/studio/reports/new"></button>
+      <button pButton type="button" label="Nouveau rapport" i18n-label="@@studio.studio-report-list.nouveau.rapport.98bed007" icon="fa-solid fa-plus" studioActions routerLink="/studio/reports/new"></button>
 
       <div class="ft-table-card">
         <p-table [value]="reports()" [loading]="loading()" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
-            <tr><th>Nom</th><th>Source</th><th>Type</th><th style="width:9rem"></th></tr>
+            <tr><th i18n="@@studio.studio-report-list.nom.7ff20370">Nom</th><th i18n="@@studio.studio-report-list.source.6da13add">Source</th><th i18n="@@studio.studio-report-list.type.3deb7456">Type</th><th style="width:9rem"></th></tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
             <tr>
@@ -37,18 +38,18 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
                 <i [class]="r.dataSourceKind === ExistingKind ? 'fa-solid fa-database' : 'fa-solid fa-table'" class="studio-mr"></i>
                 {{ r.dataSourceRef }}
               </td>
-              <td>{{ r.definition.grouping.length > 0 ? 'Agrégé' : 'Détail' }}</td>
+              <td>{{ r.definition.grouping.length > 0 ? loc_ui_tern_agrege_a31b89 : loc_ui_tern_detail_7ce06a }}</td>
               <td class="studio-actions">
-                <button pButton type="button" icon="fa-solid fa-eye" class="p-button-text p-button-sm" [routerLink]="['/studio/reports', r.id, 'view']" pTooltip="Voir"></button>
-                <button pButton type="button" icon="fa-solid fa-pen" class="p-button-text p-button-sm" [routerLink]="['/studio/reports', r.id]" pTooltip="Modifier"></button>
+                <button pButton type="button" icon="fa-solid fa-eye" class="p-button-text p-button-sm" [routerLink]="['/studio/reports', r.id, 'view']" pTooltip="Voir" i18n-pTooltip="@@studio.studio-report-list.voir.8a754f1f"></button>
+                <button pButton type="button" icon="fa-solid fa-pen" class="p-button-text p-button-sm" [routerLink]="['/studio/reports', r.id]" pTooltip="Modifier" i18n-pTooltip="@@studio.studio-report-list.modifier.f260e757"></button>
                 <button pButton type="button" icon="fa-solid fa-trash" class="p-button-text p-button-sm p-button-danger" (click)="remove(r)"></button>
               </td>
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
             <tr><td colspan="4">
-              <app-empty-state icon="pi-chart-bar" title="Aucun rapport" description="Créez votre premier rapport analytique."
-                actionLabel="Nouveau rapport" actionRoute="/studio/reports/new" [showAction]="true" />
+              <app-empty-state icon="pi-chart-bar" title="Aucun rapport" i18n-title="@@studio.studio-report-list.aucun.rapport.9cd6890f" description="Créez votre premier rapport analytique." i18n-description="@@studio.studio-report-list.creez.votre.premier.rapport.analytique.af78b670"
+                actionLabel="Nouveau rapport" i18n-actionLabel="@@studio.studio-report-list.nouveau.rapport.ffe9db40" actionRoute="/studio/reports/new" [showAction]="true" />
             </td></tr>
           </ng-template>
         </p-table>
@@ -58,6 +59,8 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
   styleUrl: './shared/studio-layout.scss',
 })
 export class StudioReportListComponent implements OnInit {
+  readonly loc_ui_tern_agrege_a31b89 = $localize`:@@ui.tern.agrege.a31b89:Agrégé`;
+  readonly loc_ui_tern_detail_7ce06a = $localize`:@@ui.tern.detail.7ce06a:Détail`;
   private readonly studio = inject(StudioService);
   private readonly toast = inject(MessageService);
   private readonly confirmation = inject(ConfirmationService);
@@ -73,20 +76,20 @@ export class StudioReportListComponent implements OnInit {
     this.loading.set(true);
     this.studio.listReports().subscribe({
       next: res => { this.loading.set(false); if (res.success) this.reports.set(res.data ?? []); },
-      error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Chargement impossible.' }); }
+      error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: $localize`:@@studio-report-list.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-report-list.component.detail.Chargement_impos:Chargement impossible.` }); }
     });
   }
 
   remove(r: CustomReport): void {
     this.confirmation.confirm({
-      message: `Supprimer le rapport « ${r.displayName} » ?`,
-      header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      message: $localize`:@@studio.studio-report-list.ts.supprimer.le.rapport.displayname.c93ff24a:Supprimer le rapport « ${r.displayName}:displayName: » ?`,
+      header: $localize`:@@studio.studio-report-list.ts.confirmation.3424edc2:Confirmation`,
+      acceptLabel: $localize`:@@studio-report-list.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@studio-report-list.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.studio.deleteReport(r.id).subscribe({
           next: res => { if (res.success) this.load(); },
-          error: () => this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Suppression impossible.' })
+          error: () => this.toast.add({ severity: 'error', summary: $localize`:@@studio-report-list.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-report-list.component.detail.Suppression_impo:Suppression impossible.` })
         });
       }
     });

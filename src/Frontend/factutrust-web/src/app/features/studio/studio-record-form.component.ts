@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -35,8 +36,8 @@ function linkedTabKey(r: { junctionEntityKey?: string | null; targetEntityKey: s
     <p-toast></p-toast>
     @if (entity(); as e) {
       <app-studio-page-shell
-        [title]="(recordId ? (readOnly() ? 'Consulter' : 'Modifier') : 'Nouveau') + ' — ' + e.displayName"
-        [subtitle]="recordId ? (readOnly() ? 'Consultation en lecture seule.' : 'Modifiez les champs ci-dessous.') : 'Remplissez le formulaire pour créer un enregistrement.'"
+        [title]="(recordId ? (readOnly() ? loc_ui_tern_consulter_48eb49 : loc_ui_tern_modifier_f260e7) : loc_ui_tern_nouveau_b9676c) + ' — ' + e.displayName"
+        [subtitle]="recordId ? (readOnly() ? loc_ui_tern_consultation_en_lecture_seule_d97a1f : loc_ui_tern_modifiez_les_champs_ci_dessous_68197b) : loc_ui_tern_remplissez_le_formulaire_pour_creer_un_enr_20b7e3"
         [breadcrumbs]="breadcrumbs()">
         @if (showTabs()) {
           <app-studio-record-tabs [tabs]="tabs()" [(active)]="activeTab" />
@@ -58,8 +59,8 @@ function linkedTabKey(r: { junctionEntityKey?: string | null; targetEntityKey: s
                   (formCancel)="cancel()" />
               </div>
             } @else {
-              <p class="studio-hint">
-                Cette table n'a pas encore de champ.
+              <p class="studio-hint" i18n="@@studio.studio-record-form.cette.table.n.a.pas.encore.de.champ.ajou.fe4d19a5">
+                <ng-container> Cette table n'a pas encore de champ. </ng-container>
                 <a [routerLink]="['/studio', e.id]">Ajoutez des champs</a> avant de saisir des données.
               </p>
             }
@@ -92,6 +93,12 @@ function linkedTabKey(r: { junctionEntityKey?: string | null; targetEntityKey: s
   styleUrl: './shared/studio-layout.scss',
 })
 export class StudioRecordFormComponent implements OnInit {
+  readonly loc_ui_tern_consulter_48eb49 = $localize`:@@ui.tern.consulter.48eb49:Consulter`;
+  readonly loc_ui_tern_modifier_f260e7 = $localize`:@@ui.tern.modifier.f260e7:Modifier`;
+  readonly loc_ui_tern_nouveau_b9676c = $localize`:@@ui.tern.nouveau.b9676c:Nouveau`;
+  readonly loc_ui_tern_consultation_en_lecture_seule_d97a1f = $localize`:@@ui.tern.consultation.en.lecture.seule.d97a1f:Consultation en lecture seule.`;
+  readonly loc_ui_tern_modifiez_les_champs_ci_dessous_68197b = $localize`:@@ui.tern.modifiez.les.champs.ci.dessous.68197b:Modifiez les champs ci-dessous.`;
+  readonly loc_ui_tern_remplissez_le_formulaire_pour_creer_un_enr_20b7e3 = $localize`:@@ui.tern.remplissez.le.formulaire.pour.creer.un.enr.20b7e3:Remplissez le formulaire pour créer un enregistrement.`;
   private readonly studio = inject(StudioService);
   private readonly toast = inject(MessageService);
   private readonly route = inject(ActivatedRoute);
@@ -124,7 +131,7 @@ export class StudioRecordFormComponent implements OnInit {
   /** 4.7h5 / D-B2 : toute fiche existante porte la barre d'onglets (l'onglet « Historique » est toujours présent en édition). */
   readonly showTabs = computed(() => !!this.recordId);
   readonly tabs = computed<StudioRecordTab[]>(() => [
-    { key: 'form', label: 'Fiche' },
+    { key: 'form', label: $localize`:@@studio.studio-record-form.ts.fiche.6ad30343:Fiche` },
     ...this.manyToMany().map(r => ({
       key: linkedTabKey(r),
       label: `${this.runtimeLabels.linked.tabLabel} — ${r.targetLabel}`
@@ -160,7 +167,7 @@ export class StudioRecordFormComponent implements OnInit {
         if (this.recordId) {
           this.studio.getRecord(this.entityKey, this.recordId).subscribe({
             next: r => { this.loading.set(false); if (r.success) this.model.set(r.data.data ?? {}); },
-            error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Enregistrement introuvable.' }); }
+            error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: $localize`:@@studio-record-form.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-record-form.component.detail.Enregistrement_i:Enregistrement introuvable.` }); }
           });
           // Sonde « Workflows » en parallèle de getRecord (D-44-59 : pas de latence ajoutée à la fiche).
           this.loadWorkflowInstances();
@@ -171,7 +178,7 @@ export class StudioRecordFormComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Schéma introuvable.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@studio-record-form.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-record-form.component.detail.Sch_ma_introuvab:Schéma introuvable.` });
       }
     });
   }
@@ -195,15 +202,15 @@ export class StudioRecordFormComponent implements OnInit {
       next: res => {
         this.saving.set(false);
         if (res.success) {
-          this.toast.add({ severity: 'success', summary: 'Enregistré' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@studio-record-form.component.summary.Enregistr_:Enregistré` });
           this.router.navigate(['/studio/d', this.entityKey]);
         } else {
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.errors?.[0] ?? res.message ?? 'Échec.' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@studio-record-form.component.summary.Erreur:Erreur`, detail: res.errors?.[0] ?? res.message ?? $localize`:@@ui.tern.echec.0238a9:Échec.` });
         }
       },
       error: err => {
         this.saving.set(false);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: err?.error?.message ?? 'Enregistrement impossible.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@studio-record-form.component.summary.Erreur:Erreur`, detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.` });
       }
     });
   }

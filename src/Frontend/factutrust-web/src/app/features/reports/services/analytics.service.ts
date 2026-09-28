@@ -113,16 +113,16 @@ export interface ClientsData {
 // ── French labels ──────────────────────────────────────────────────────
 
 const MONTH_NAMES_FR = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  $localize`:@@reports.analytics.ts.janvier.7a32ae0f:Janvier`, $localize`:@@reports.analytics.ts.fevrier.63fc1803:Février`, $localize`:@@reports.analytics.ts.mars.1778011d:Mars`, $localize`:@@reports.analytics.ts.avril.4efeee46:Avril`, $localize`:@@reports.analytics.ts.mai.afe526a6:Mai`, $localize`:@@reports.analytics.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@reports.analytics.ts.juillet.e8e0920c:Juillet`, $localize`:@@reports.analytics.ts.aout.460b6696:Août`, $localize`:@@reports.analytics.ts.septembre.08d23f31:Septembre`, $localize`:@@reports.analytics.ts.octobre.0ed28485:Octobre`, $localize`:@@reports.analytics.ts.novembre.632580af:Novembre`, $localize`:@@reports.analytics.ts.decembre.03bcd9b0:Décembre`
 ];
 
 const MONTH_SHORT_FR = [
-  'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin',
-  'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'
+  $localize`:@@reports.analytics.ts.jan.efed3690:Jan`, $localize`:@@reports.analytics.ts.fev.7b8852ec:Fév`, $localize`:@@reports.analytics.ts.mar.c4ba0822:Mar`, $localize`:@@reports.analytics.ts.avr.d648a3b7:Avr`, $localize`:@@reports.analytics.ts.mai.afe526a6:Mai`, $localize`:@@reports.analytics.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@reports.analytics.ts.juil.190b5d60:Juil`, $localize`:@@reports.analytics.ts.aout.460b6696:Août`, $localize`:@@reports.analytics.ts.sep.fdd289e3:Sep`, $localize`:@@reports.analytics.ts.oct.51327aef:Oct`, $localize`:@@reports.analytics.ts.nov.bb9bfefd:Nov`, $localize`:@@reports.analytics.ts.dec.2bc2249a:Déc`
 ];
 
-const DAY_NAMES_FR = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+const DAY_NAMES_FR = ['Dim', 'Lun', $localize`:@@reports.analytics.ts.mar.c4ba0822:Mar`, 'Mer', 'Jeu', 'Ven', 'Sam'];
 
 // ── Service ────────────────────────────────────────────────────────────
 
@@ -219,7 +219,7 @@ export class AnalyticsService {
         previousValue: 0,
         changePercent: 0,
         changeDirection: 'stable',
-        message: 'Chiffre d\'affaires cumulé depuis l\'origine.'
+        message: $localize`:@@reports.analytics.ts.chiffre.d.affaires.cumule.depuis.l.origi.11ee98f2:Chiffre d'affaires cumulé depuis l'origine.`
       };
     }
 
@@ -233,16 +233,16 @@ export class AnalyticsService {
     const direction: 'up' | 'down' | 'stable' =
       changePercent > 1 ? 'up' : changePercent < -1 ? 'down' : 'stable';
 
-    const periodLabel = period === 'day' ? 'aujourd\'hui' : period === 'month' ? 'ce mois-ci' : 'cette année';
-    const prevLabel = period === 'day' ? 'hier' : period === 'month' ? 'le mois dernier' : 'l\'année dernière';
+    const periodLabel = period === 'day' ? 'aujourd\'hui' : period === 'month' ? $localize`:@@reports.analytics.ts.ce.mois.ci.f30c2ac7:ce mois-ci` : $localize`:@@reports.analytics.ts.cette.annee.9909e9db:cette année`;
+    const prevLabel = period === 'day' ? 'hier' : period === 'month' ? $localize`:@@reports.analytics.ts.le.mois.dernier.15ecb0a2:le mois dernier` : $localize`:@@reports.analytics.ts.l.annee.derniere.372514a8:l'année dernière`;
 
     let message: string;
     if (direction === 'up') {
-      message = `Votre chiffre d'affaires a augmenté de ${Math.abs(changePercent).toFixed(1)} % ${periodLabel} par rapport à ${prevLabel}.`;
+      message = $localize`:@@reports.analytics.ts.votre.chiffre.d.affaires.a.augmente.de.t.14e75341:Votre chiffre d'affaires a augmenté de ${Math.abs(changePercent).toFixed(1)}:toFixed: % ${periodLabel}:periodLabel: par rapport à ${prevLabel}:prevLabel:.`;
     } else if (direction === 'down') {
-      message = `Votre chiffre d'affaires a baissé de ${Math.abs(changePercent).toFixed(1)} % ${periodLabel} par rapport à ${prevLabel}.`;
+      message = $localize`:@@reports.analytics.ts.votre.chiffre.d.affaires.a.baisse.de.tof.bc243bee:Votre chiffre d'affaires a baissé de ${Math.abs(changePercent).toFixed(1)}:toFixed: % ${periodLabel}:periodLabel: par rapport à ${prevLabel}:prevLabel:.`;
     } else {
-      message = `Votre chiffre d'affaires est stable ${periodLabel} par rapport à ${prevLabel}.`;
+      message = $localize`:@@reports.analytics.ts.votre.chiffre.d.affaires.est.stable.peri.85052562:Votre chiffre d'affaires est stable ${periodLabel}:periodLabel: par rapport à ${prevLabel}:prevLabel:.`;
     }
 
     return { currentValue: current, previousValue: previous, changePercent, changeDirection: direction, message };
@@ -406,18 +406,18 @@ export class AnalyticsService {
           alerts.push({
             type: 'warning',
             icon: 'pi-exclamation-triangle',
-            title: 'Taux de conversion faible',
-            message: `Seulement ${conversionRate.toFixed(1)} % de vos devis sont transformés en factures. Pensez à relancer vos prospects.`
+            title: $localize`:@@reports.analytics.ts.taux.de.conversion.faible.eda966dc:Taux de conversion faible`,
+            message: $localize`:@@reports.analytics.ts.seulement.tofixed.de.vos.devis.sont.tran.5a3c6d1c:Seulement ${conversionRate.toFixed(1)}:toFixed: % de vos devis sont transformés en factures. Pensez à relancer vos prospects.`
           });
-          recommendations.push('Relancez les devis en attente pour améliorer votre taux de conversion.');
+          recommendations.push($localize`:@@reports.analytics.ts.relancez.les.devis.en.attente.pour.ameli.986a4f8a:Relancez les devis en attente pour améliorer votre taux de conversion.`);
         }
 
         if (conversionRate >= 60) {
           alerts.push({
             type: 'success',
             icon: 'pi-check-circle',
-            title: 'Excellent taux de conversion',
-            message: `${conversionRate.toFixed(1)} % de vos devis deviennent des factures. Continuez ainsi !`
+            title: $localize`:@@reports.analytics.ts.excellent.taux.de.conversion.45a62af6:Excellent taux de conversion`,
+            message: $localize`:@@reports.analytics.ts.tofixed.de.vos.devis.deviennent.des.fact.debd51c4:${conversionRate.toFixed(1)}:toFixed: % de vos devis deviennent des factures. Continuez ainsi !`
           });
         }
 
@@ -426,14 +426,14 @@ export class AnalyticsService {
           alerts.push({
             type: 'danger',
             icon: 'pi-exclamation-circle',
-            title: 'Marges faibles détectées',
-            message: `${lowMarginProducts.length} produit(s) ont une marge inférieure à 15 %. Vérifiez vos prix de vente.`
+            title: $localize`:@@reports.analytics.ts.marges.faibles.detectees.b836ff0e:Marges faibles détectées`,
+            message: $localize`:@@reports.analytics.ts.length.produit.s.ont.une.marge.inferieur.a10ca376:${lowMarginProducts.length}:length: produit(s) ont une marge inférieure à 15 %. Vérifiez vos prix de vente.`
           });
-          recommendations.push('Revoyez les prix de vente des produits à faible marge pour améliorer votre rentabilité.');
+          recommendations.push($localize`:@@reports.analytics.ts.revoyez.les.prix.de.vente.des.produits.a.1a55053d:Revoyez les prix de vente des produits à faible marge pour améliorer votre rentabilité.`);
         }
 
         if (averageBasket > 0) {
-          recommendations.push(`Votre panier moyen est de ${this.fmt(averageBasket)} ${currency}. Proposez des produits complémentaires pour l'augmenter.`);
+          recommendations.push($localize`:@@reports.analytics.ts.votre.panier.moyen.est.de.fmt.currency.p.504f78fd:Votre panier moyen est de ${this.fmt(averageBasket)}:fmt: ${currency}:currency:. Proposez des produits complémentaires pour l'augmenter.`);
         }
 
         return {
@@ -511,8 +511,8 @@ export class AnalyticsService {
           alerts.push({
             type: 'danger',
             icon: 'pi-exclamation-circle',
-            title: 'Impayés détectés',
-            message: `${clientsWithUnpaid.length} client(s) ont des factures impayées pour un total de ${this.fmt(totalUnpaid)} ${currency}.`
+            title: $localize`:@@reports.analytics.ts.impayes.detectes.f85261c0:Impayés détectés`,
+            message: $localize`:@@reports.analytics.ts.length.client.s.ont.des.factures.impayee.d65918cd:${clientsWithUnpaid.length}:length: client(s) ont des factures impayées pour un total de ${this.fmt(totalUnpaid)}:fmt: ${currency}:currency:.`
           });
         }
 
@@ -520,8 +520,8 @@ export class AnalyticsService {
           alerts.push({
             type: 'warning',
             icon: 'pi-exclamation-triangle',
-            title: 'Beaucoup de clients inactifs',
-            message: `${inactiveCount} de vos clients sont inactifs. Pensez à les relancer.`
+            title: $localize`:@@reports.analytics.ts.beaucoup.de.clients.inactifs.8a0e4af1:Beaucoup de clients inactifs`,
+            message: $localize`:@@reports.analytics.ts.inactivecount.de.vos.clients.sont.inacti.1576e3ff:${inactiveCount}:inactiveCount: de vos clients sont inactifs. Pensez à les relancer.`
           });
         }
 

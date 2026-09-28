@@ -11,7 +11,7 @@ import { ToastService } from '@core/services/toast.service';
       @for (msg of toastService.messagesValue; track msg.id!) {
         <div class="toast-item alert alert-dismissible fade show" [ngClass]="getAlertClass(msg)" role="alert">
           <strong *ngIf="msg.summary">{{ msg.summary }}: </strong>{{ msg.detail }}
-          <button type="button" class="btn-close" (click)="toastService.remove(msg.id!)" aria-label="Fermer"></button>
+          <button type="button" class="btn-close" (click)="toastService.remove(msg.id!)" aria-label="Fermer" i18n-aria-label="@@shared.components.toast.toast.fermer.5ab4ec64"></button>
         </div>
       }
     </div>

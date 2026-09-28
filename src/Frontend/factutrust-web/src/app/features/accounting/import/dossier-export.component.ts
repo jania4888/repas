@@ -19,19 +19,19 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <div class="card de-card">
       <div class="de-fields">
         <div class="form-field">
-          <label class="field-label" for="de-year">Exercice</label>
+          <label class="field-label" for="de-year" i18n="@@accounting.import.exercice.e171e2b0">Exercice</label>
           <input id="de-year" type="number" min="2000" max="2100" class="de-input" [(ngModel)]="fiscalYear" [disabled]="busy()" />
         </div>
         <div class="de-actions">
           <app-button variant="primary" icon="pi pi-download" type="button"
             (click)="download()" [disabled]="busy()"
-            ariaLabel="Télécharger l'archive ZIP du dossier">
-            {{ busy() ? 'Préparation…' : 'Télécharger le dossier (ZIP)' }}
+            ariaLabel="Télécharger l'archive ZIP du dossier" i18n-ariaLabel="@@accounting.import.telecharger.l.archive.zip.du.dossier.53238a25">
+            {{ busy() ? loc_ui_tern_preparation_47305e : loc_ui_tern_telecharger_le_dossier_zip_485761 }}
           </app-button>
         </div>
       </div>
-      <p class="de-help">
-        L'archive réunit <code>plan_comptable.csv</code>, <code>journal_general.csv</code>,
+      <p class="de-help" i18n="@@accounting.import.l.archive.reunit.plan.comptable.csv.jour.0e2f3714">
+        <ng-container> L'archive réunit </ng-container> <code>plan_comptable.csv</code>, <code>journal_general.csv</code>,
         <code>balance.csv</code>, <code>tiers.csv</code>, <code>fec.txt</code> et un manifeste.
         Export en <strong>lecture seule</strong> — aucune donnée n'est modifiée.
       </p>
@@ -55,6 +55,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `
 })
 export class DossierExportComponent {
+  readonly loc_ui_tern_preparation_47305e = $localize`:@@ui.tern.preparation.47305e:Préparation…`;
+  readonly loc_ui_tern_telecharger_le_dossier_zip_485761 = $localize`:@@ui.tern.telecharger.le.dossier.zip.485761:Télécharger le dossier (ZIP)`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
 
@@ -76,11 +78,11 @@ export class DossierExportComponent {
       next: blob => {
         this.exporting.set(false);
         downloadBlob(blob, `dossier_${this.fiscalYear}.zip`);
-        this.successMessage.set(`Archive du dossier ${this.fiscalYear} téléchargée.`);
+        this.successMessage.set($localize`:@@accounting.dossier-export.ts.archive.du.dossier.fiscalyear.telecharge.b9692329:Archive du dossier ${this.fiscalYear}:fiscalYear: téléchargée.`);
       },
       error: err => {
         this.exporting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de la préparation de l'archive."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.dossier-export.ts.erreur.lors.de.la.preparation.de.l.archi.ae349217:Erreur lors de la préparation de l'archive.`));
       }
     });
   }

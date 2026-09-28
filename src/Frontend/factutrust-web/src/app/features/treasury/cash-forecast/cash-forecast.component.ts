@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -59,16 +60,16 @@ import {
   template: `
     <div class="cash-forecast">
       <app-page-header
-        title="Trésorerie prévisionnelle par IA"
-        subtitle="Prévisions basées sur vos échéances clients, dettes fournisseurs, paie et obligations fiscales">
+        title="Trésorerie prévisionnelle par IA" i18n-title="@@treasury.cash-forecast.tresorerie.previsionnelle.par.ia.a595f345"
+        subtitle="Prévisions basées sur vos échéances clients, dettes fournisseurs, paie et obligations fiscales" i18n-subtitle="@@treasury.cash-forecast.previsions.basees.sur.vos.echeances.clie.a41baaad">
         <div class="header-actions">
           <label class="horizon">
-            <span>Horizon de prévision</span>
+            <span i18n="@@treasury.cash-forecast.horizon.de.prevision.c1cfc9dd">Horizon de prévision</span>
             <select [ngModel]="horizonMonths()" (ngModelChange)="onHorizonChange($event)" [disabled]="loading()">
-              <option [ngValue]="3">3 mois</option>
-              <option [ngValue]="6">6 mois</option>
-              <option [ngValue]="9">9 mois</option>
-              <option [ngValue]="12">12 mois</option>
+              <option [ngValue]="3" i18n="@@treasury.cash-forecast.3.mois.d07765c5">3 mois</option>
+              <option [ngValue]="6" i18n="@@treasury.cash-forecast.6.mois.1242b310">6 mois</option>
+              <option [ngValue]="9" i18n="@@treasury.cash-forecast.9.mois.aefb1a50">9 mois</option>
+              <option [ngValue]="12" i18n="@@treasury.cash-forecast.12.mois.3cbeea57">12 mois</option>
             </select>
           </label>
 
@@ -84,54 +85,52 @@ import {
               (click)="recompute()"
               [disabled]="recomputing() || loading()">
               <i class="pi pi-refresh" aria-hidden="true"></i>
-              {{ recomputing() ? 'Recalcul…' : 'Rafraîchir les prévisions' }}
+              {{ recomputing() ? loc_ui_tern_recalcul_39088a : loc_ui_tern_rafraichir_les_previsions_6d1d32 }}
             </button>
           }
         </div>
       </app-page-header>
 
       @if (loading()) {
-        <div class="state" aria-busy="true">Calcul de la projection en cours…</div>
+        <div class="state" aria-busy="true" i18n="@@treasury.cash-forecast.calcul.de.la.projection.en.cours.62d75b0e">Calcul de la projection en cours…</div>
       } @else if (moduleDisabled()) {
-        <div class="state state--info">
-          Le module Trésorerie prévisionnelle n'est pas activé pour cet espace.
-          Contactez votre administrateur pour l'activer.
-        </div>
+        <div class="state state--info" i18n="@@treasury.cash-forecast.le.module.tresorerie.previsionnelle.n.est.pas.ac.f894b1ab"> Le module Trésorerie prévisionnelle n'est pas activé pour cet espace.
+          Contactez votre administrateur pour l'activer. </div>
       } @else if (errorMessage()) {
         <div class="state state--error">
           {{ errorMessage() }}
-          <button type="button" class="btn btn-secondary" (click)="load()">Réessayer</button>
+          <button type="button" class="btn btn-secondary" (click)="load()" i18n="@@treasury.cash-forecast.reessayer.895d416b">Réessayer</button>
         </div>
       } @else if (forecast()) {
         <!-- KPI -->
-        <section class="kpi-row" aria-label="Indicateurs de trésorerie">
+        <section class="kpi-row" aria-label="Indicateurs de trésorerie" i18n-aria-label="@@treasury.cash-forecast.indicateurs.de.tresorerie.2281ae22">
           <app-stat-card
-            label="Solde de trésorerie"
+            label="Solde de trésorerie" i18n-label="@@treasury.cash-forecast.solde.de.tresorerie.2eb9bf52"
             [value]="amount(data().openingBalance)"
             icon="pi-wallet"
             variant="primary" />
           <app-stat-card
-            [label]="'Solde prévisionnel au ' + (data().periodEnd | date: 'dd/MM/yyyy')"
+            [label]="loc_ui_tern_solde_previsionnel_au_73c6a9 + (data().periodEnd | date: 'dd/MM/yyyy')"
             [value]="amount(data().closingBalance)"
             icon="pi-chart-line"
             [variant]="data().closingBalance < 0 ? 'error' : 'primary'" />
           <app-stat-card
-            label="Encaissements prévus"
+            label="Encaissements prévus" i18n-label="@@treasury.cash-forecast.encaissements.prevus.4c99e461"
             [value]="amount(data().totalInflows)"
             icon="pi-arrow-down-left"
             variant="success" />
           <app-stat-card
-            label="Décaissements prévus"
+            label="Décaissements prévus" i18n-label="@@treasury.cash-forecast.decaissements.prevus.4541219d"
             [value]="amount(data().totalOutflows)"
             icon="pi-arrow-up-right"
             variant="warning" />
           <app-stat-card
-            label="Flux net prévisionnel"
+            label="Flux net prévisionnel" i18n-label="@@treasury.cash-forecast.flux.net.previsionnel.aea44606"
             [value]="amount(data().netFlow)"
             icon="pi-arrows-v"
             [variant]="data().netFlow < 0 ? 'error' : 'success'" />
           <app-stat-card
-            label="Indice de confiance"
+            label="Indice de confiance" i18n-label="@@treasury.cash-forecast.indice.de.confiance.0dfd5098"
             [value]="(data().confidencePercent | number: '1.0-0') + ' %'"
             icon="pi-sparkles"
             variant="primary" />
@@ -140,21 +139,21 @@ import {
         <div class="main-grid">
           <div class="main-grid__left">
             <app-chart-card
-              title="Évolution de la trésorerie prévisionnelle"
-              subtitle="Solde de fin de mois et intervalle de prévision">
+              title="Évolution de la trésorerie prévisionnelle" i18n-title="@@treasury.cash-forecast.evolution.de.la.tresorerie.previsionnelle.d0cdb430"
+              subtitle="Solde de fin de mois et intervalle de prévision" i18n-subtitle="@@treasury.cash-forecast.solde.de.fin.de.mois.et.intervalle.de.pr.b50ffd57">
               <div chart-actions>
                 <button
                   type="button"
                   class="toggle"
                   [class.toggle--active]="view() === 'chart'"
-                  (click)="view.set('chart')">
+                  (click)="view.set('chart')" i18n="@@treasury.cash-forecast.graphique.295411c5">
                   <i class="pi pi-chart-line" aria-hidden="true"></i> Graphique
                 </button>
                 <button
                   type="button"
                   class="toggle"
                   [class.toggle--active]="view() === 'table'"
-                  (click)="view.set('table')">
+                  (click)="view.set('table')" i18n="@@treasury.cash-forecast.tableau.1bae17dd">
                   <i class="pi pi-table" aria-hidden="true"></i> Tableau
                 </button>
               </div>
@@ -165,12 +164,12 @@ import {
                 <p-table [value]="data().buckets" responsiveLayout="scroll" styleClass="p-datatable-sm">
                   <ng-template pTemplate="header">
                     <tr>
-                      <th scope="col">Mois</th>
-                      <th scope="col" class="num">Solde initial</th>
-                      <th scope="col" class="num">Encaissements</th>
-                      <th scope="col" class="num">Décaissements</th>
-                      <th scope="col" class="num">Flux net</th>
-                      <th scope="col" class="num">Solde final</th>
+                      <th scope="col" i18n="@@treasury.cash-forecast.mois.0d304bea">Mois</th>
+                      <th scope="col" class="num" i18n="@@treasury.cash-forecast.solde.initial.78a4e543">Solde initial</th>
+                      <th scope="col" class="num" i18n="@@treasury.cash-forecast.encaissements.598f53c9">Encaissements</th>
+                      <th scope="col" class="num" i18n="@@treasury.cash-forecast.decaissements.566a79f1">Décaissements</th>
+                      <th scope="col" class="num" i18n="@@treasury.cash-forecast.flux.net.1fc309e5">Flux net</th>
+                      <th scope="col" class="num" i18n="@@treasury.cash-forecast.solde.final.eafcc35f">Solde final</th>
                     </tr>
                   </ng-template>
                   <ng-template pTemplate="body" let-b>
@@ -187,8 +186,8 @@ import {
                   </ng-template>
                   <ng-template pTemplate="footer">
                     <tr class="totals">
-                      <td>Total</td>
-                      <td class="num">—</td>
+                      <td i18n="@@treasury.cash-forecast.total.b25928c6">Total</td>
+                      <td class="num" i18n="@@treasury.cash-forecast.text.1b93795b">—</td>
                       <td class="num pos">{{ amount(totals().inflows) }}</td>
                       <td class="num neg">{{ amount(totals().outflows) }}</td>
                       <td class="num" [class.neg]="totals().netFlow < 0">{{ amount(totals().netFlow) }}</td>
@@ -200,10 +199,10 @@ import {
             </app-chart-card>
 
             <app-dashboard-panel
-              title="Scénarios de prévision"
+              title="Scénarios de prévision" i18n-title="@@treasury.cash-forecast.scenarios.de.prevision.e330353d"
               [subtitle]="data().aiAdjustmentApplied
-                ? 'Probabilités pondérées par l’IA autour des valeurs du moteur'
-                : 'Probabilités issues du moteur déterministe'">
+                ? loc_ui_tern_probabilites_ponderees_par_l_ia_autour_des_42688a
+                : loc_ui_tern_probabilites_issues_du_moteur_deterministe_9e9fa3">
               <div class="scenarios">
                 @for (s of scenarios(); track s.kind) {
                   <article class="scenario" [class]="'scenario--' + s.kind">
@@ -212,19 +211,19 @@ import {
                       @if (s.probabilitySource === 'ai_adjusted') {
                         <span
                           class="ai-badge"
-                          [title]="'Valeur du moteur : ' + s.deterministicProbabilityPercent + ' %'">
+                          [title]="loc_ui_tern_valeur_du_moteur_16e0b3 + s.deterministicProbabilityPercent + ' %'">
                           <i class="pi pi-sparkles" aria-hidden="true"></i> IA
                         </span>
                       }
                     </header>
                     <dl>
-                      <dt>Solde final</dt>
+                      <dt i18n="@@treasury.cash-forecast.solde.final.eafcc35f">Solde final</dt>
                       <dd class="scenario__value" [class.neg]="s.closingBalance < 0">
                         {{ amount(s.closingBalance) }}
                       </dd>
-                      <dt>Flux net</dt>
+                      <dt i18n="@@treasury.cash-forecast.flux.net.1fc309e5">Flux net</dt>
                       <dd [class.neg]="s.netFlow < 0">{{ amount(s.netFlow) }}</dd>
-                      <dt>Probabilité</dt>
+                      <dt i18n="@@treasury.cash-forecast.probabilite.b46293be">Probabilité</dt>
                       <dd>{{ s.probabilityPercent | number: '1.0-0' }} %</dd>
                     </dl>
                     @if (s.aiRationale) {
@@ -236,10 +235,10 @@ import {
             </app-dashboard-panel>
 
             <app-dashboard-panel
-              title="Facteurs d'influence détectés"
-              subtitle="Structure des flux de la période">
+              title="Facteurs d'influence détectés" i18n-title="@@treasury.cash-forecast.facteurs.d.influence.detectes.c5abdb89"
+              subtitle="Structure des flux de la période" i18n-subtitle="@@treasury.cash-forecast.structure.des.flux.de.la.periode.d229a647">
               @if (influenceFactors().length === 0) {
-                <p class="muted">Aucun facteur marquant sur la période.</p>
+                <p class="muted" i18n="@@treasury.cash-forecast.aucun.facteur.marquant.sur.la.periode.d70a6e1f">Aucun facteur marquant sur la période.</p>
               } @else {
                 <ul class="drivers">
                   @for (d of influenceFactors(); track d.title) {
@@ -266,25 +265,25 @@ import {
           </div>
 
           <aside class="main-grid__right">
-            <app-dashboard-panel title="Position de trésorerie" subtitle="Solde projeté en fin d'horizon">
+            <app-dashboard-panel title="Position de trésorerie" i18n-title="@@treasury.cash-forecast.position.de.tresorerie.c8a0928a" subtitle="Solde projeté en fin d'horizon" i18n-subtitle="@@treasury.cash-forecast.solde.projete.en.fin.d.horizon.8768ac9b">
               <app-cash-position-gauge
                 [balance]="data().closingBalance"
                 [thresholds]="data().thresholds"
                 [currency]="data().currency" />
             </app-dashboard-panel>
 
-            <app-dashboard-panel title="Alertes & recommandations">
+            <app-dashboard-panel title="Alertes & recommandations" i18n-title="@@treasury.cash-forecast.alertes.recommandations.d9eac212">
               @if (alerts().length === 0 && advice().length === 0) {
-                <p class="muted">Aucune tension détectée sur la période.</p>
+                <p class="muted" i18n="@@treasury.cash-forecast.aucune.tension.detectee.sur.la.periode.240256f7">Aucune tension détectée sur la période.</p>
               } @else {
                 <ul class="alerts">
                   @for (a of alerts(); track a.title) {
-                    <li [class]="'alerts__item alerts__item--' + a.severity">
+                    <li [class]="loc_ui_tern_alerts_item_alerts_item_73da9b + a.severity">
                       <div>
                         <strong>{{ a.title }}</strong>
                         @if (a.detail) { <p class="muted">{{ a.detail }}</p> }
                         @if (a.estimatedBalance !== null && a.estimatedBalance !== undefined) {
-                          <p class="muted">Solde estimé : {{ amount(a.estimatedBalance) }}</p>
+                          <p class="muted" i18n="@@treasury.cash-forecast.solde.estime.c7f638fa">Solde estimé : {{ amount(a.estimatedBalance) }}</p>
                         }
                       </div>
                       <p-tag [value]="severityLabel(a.severity)" [severity]="tone(a.severity)" />
@@ -303,16 +302,16 @@ import {
               }
             </app-dashboard-panel>
 
-            <app-dashboard-panel title="Encaissements à venir" subtitle="Les cinq plus proches">
+            <app-dashboard-panel title="Encaissements à venir" i18n-title="@@treasury.cash-forecast.encaissements.a.venir.71835f34" subtitle="Les cinq plus proches" i18n-subtitle="@@treasury.cash-forecast.les.cinq.plus.proches.6ddf55c7">
               @if (data().upcomingInflows.length === 0) {
-                <p class="muted">Aucun encaissement attendu sur la période.</p>
+                <p class="muted" i18n="@@treasury.cash-forecast.aucun.encaissement.attendu.sur.la.periode.49910747">Aucun encaissement attendu sur la période.</p>
               } @else {
                 <table class="upcoming">
                   <thead>
                     <tr>
-                      <th scope="col">Échéance</th>
-                      <th scope="col">Tiers</th>
-                      <th scope="col" class="num">Montant</th>
+                      <th scope="col" i18n="@@treasury.cash-forecast.echeance.f9a77ff6">Échéance</th>
+                      <th scope="col" i18n="@@treasury.cash-forecast.tiers.435080ba">Tiers</th>
+                      <th scope="col" class="num" i18n="@@treasury.cash-forecast.montant.4adcd9fc">Montant</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -331,47 +330,47 @@ import {
               }
             </app-dashboard-panel>
 
-            <app-dashboard-panel title="Actions rapides">
+            <app-dashboard-panel title="Actions rapides" i18n-title="@@treasury.cash-forecast.actions.rapides.abe69a9c">
               <div class="quick-actions">
                 <button type="button" class="quick" (click)="goToBankImport()">
                   <i class="pi pi-upload" aria-hidden="true"></i>
                   <span>
-                    <strong>Importer un relevé bancaire</strong>
-                    <em>Actualiser le solde de départ</em>
+                    <strong i18n="@@treasury.cash-forecast.importer.un.releve.bancaire.6e7ea0df">Importer un relevé bancaire</strong>
+                    <em i18n="@@treasury.cash-forecast.actualiser.le.solde.de.depart.f44f6005">Actualiser le solde de départ</em>
                   </span>
                 </button>
                 @if (canManage()) {
                   <button type="button" class="quick" (click)="recompute()" [disabled]="recomputing()">
                     <i class="pi pi-refresh" aria-hidden="true"></i>
                     <span>
-                      <strong>Rafraîchir les prévisions</strong>
-                      <em>Relancer le calcul</em>
+                      <strong i18n="@@treasury.cash-forecast.rafraichir.les.previsions.6d1d3299">Rafraîchir les prévisions</strong>
+                      <em i18n="@@treasury.cash-forecast.relancer.le.calcul.da88bd57">Relancer le calcul</em>
                     </span>
                   </button>
                 }
                 <button type="button" class="quick" (click)="exportCsv()">
                   <i class="pi pi-download" aria-hidden="true"></i>
                   <span>
-                    <strong>Exporter le rapport</strong>
-                    <em>CSV des flux attendus</em>
+                    <strong i18n="@@treasury.cash-forecast.exporter.le.rapport.42ceb35a">Exporter le rapport</strong>
+                    <em i18n="@@treasury.cash-forecast.csv.des.flux.attendus.ce934820">CSV des flux attendus</em>
                   </span>
                 </button>
               </div>
             </app-dashboard-panel>
 
             <p class="computed-at">
-              Calculé le {{ data().computedAt | date: 'dd/MM/yyyy à HH:mm' }}
-              @if (data().aiAdjustmentApplied) { · pondéré par l'IA }
+              <ng-container i18n="@@treasury.cash-forecast.calcule.le.date.heure"> Calculé le {{ data().computedAt | date: 'dd/MM/yyyy' }} à {{ data().computedAt | date: 'HH:mm' }} </ng-container>
+              @if (data().aiAdjustmentApplied) {<ng-container i18n="@@treasury.cash-forecast.pondere.par.l.ia.f657428b"> · pondéré par l'IA </ng-container>}
             </p>
           </aside>
         </div>
       } @else {
         <app-empty-state
           icon="pi-chart-line"
-          title="Aucune projection disponible"
-          description="Lancez un premier calcul pour obtenir votre trésorerie prévisionnelle."
+          title="Aucune projection disponible" i18n-title="@@treasury.cash-forecast.aucune.projection.disponible.3517bf5c"
+          description="Lancez un premier calcul pour obtenir votre trésorerie prévisionnelle." i18n-description="@@treasury.cash-forecast.lancez.un.premier.calcul.pour.obtenir.vo.3d10a879"
           [showAction]="canManage()"
-          actionLabel="Calculer la prévision"
+          actionLabel="Calculer la prévision" i18n-actionLabel="@@treasury.cash-forecast.calculer.la.prevision.0f653c00"
           (actionClick)="recompute()" />
       }
     </div>
@@ -395,7 +394,7 @@ import {
     .toggle { border: 1px solid var(--color-border-subtle, #e2e8f0); background: #fff; border-radius: 6px; padding: .3rem .65rem; font-size: .8rem; cursor: pointer; display: inline-flex; align-items: center; gap: .35rem; }
     .toggle--active { background: var(--superieur-primary, #3862f5); border-color: var(--superieur-primary, #3862f5); color: #fff; }
 
-    .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .num { text-align: end; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .pos { color: #047857; }
     .neg { color: #b91c1c; }
     .totals { font-weight: 600; background: var(--color-surface-muted, #f8fafc); }
@@ -404,14 +403,14 @@ import {
     .scenarios { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; }
     @media (max-width: 900px) { .scenarios { grid-template-columns: 1fr; } }
     .scenario { border: 1px solid var(--color-border-subtle, #e2e8f0); border-radius: 8px; padding: .85rem; }
-    .scenario--optimistic { border-left: 3px solid #10b981; }
-    .scenario--realistic { border-left: 3px solid #3862f5; }
-    .scenario--pessimistic { border-left: 3px solid #ef4444; }
+    .scenario--optimistic { border-inline-start: 3px solid #10b981; }
+    .scenario--realistic { border-inline-start: 3px solid #3862f5; }
+    .scenario--pessimistic { border-inline-start: 3px solid #ef4444; }
     .scenario header { display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
     .scenario h4 { margin: 0 0 .5rem; font-size: .9rem; font-weight: 600; }
     .scenario dl { display: grid; grid-template-columns: 1fr auto; gap: .2rem .5rem; margin: 0; font-size: .8rem; }
     .scenario dt { color: var(--color-text-secondary, #64748b); }
-    .scenario dd { margin: 0; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .scenario dd { margin: 0; text-align: end; font-weight: 600; font-variant-numeric: tabular-nums; }
     .scenario__value { font-size: .95rem; }
     .scenario__rationale { margin: .5rem 0 0; font-size: .75rem; font-style: italic; color: var(--color-text-secondary, #64748b); }
     .ai-badge { font-size: .65rem; font-weight: 600; background: #ede9fe; color: #6d28d9; padding: .1rem .4rem; border-radius: 999px; white-space: nowrap; }
@@ -420,26 +419,26 @@ import {
     .drivers li, .alerts__item { display: flex; justify-content: space-between; align-items: flex-start; gap: .75rem; }
     .drivers__label { display: flex; gap: .5rem; align-items: flex-start; }
     .drivers__label i { color: var(--color-text-tertiary, #94a3b8); margin-top: .15rem; }
-    .alerts__item { border-left: 3px solid transparent; padding-left: .6rem; }
-    .alerts__item--critical { border-left-color: #ef4444; }
-    .alerts__item--warning { border-left-color: #f59e0b; }
-    .alerts__item--info { border-left-color: #3862f5; }
+    .alerts__item { border-inline-start: 3px solid transparent; padding-inline-start: .6rem; }
+    .alerts__item--critical { border-inline-start-color: #ef4444; }
+    .alerts__item--warning { border-inline-start-color: #f59e0b; }
+    .alerts__item--info { border-inline-start-color: #3862f5; }
     .alerts__item p { margin: .15rem 0 0; }
 
     .upcoming { width: 100%; border-collapse: collapse; font-size: .8rem; }
-    .upcoming th { text-align: left; font-weight: 600; color: var(--color-text-secondary, #64748b); padding: .3rem 0; border-bottom: 1px solid var(--color-border-subtle, #e2e8f0); }
+    .upcoming th { text-align: start; font-weight: 600; color: var(--color-text-secondary, #64748b); padding: .3rem 0; border-bottom: 1px solid var(--color-border-subtle, #e2e8f0); }
     .upcoming td { padding: .45rem 0; border-bottom: 1px solid var(--color-border-subtle, #f1f5f9); vertical-align: top; }
     .upcoming__party { display: block; font-weight: 500; }
 
     .quick-actions { display: grid; grid-template-columns: 1fr; gap: .5rem; }
-    .quick { display: flex; align-items: center; gap: .6rem; text-align: left; background: #fff; border: 1px solid var(--color-border-subtle, #e2e8f0); border-radius: 8px; padding: .6rem .75rem; cursor: pointer; }
+    .quick { display: flex; align-items: center; gap: .6rem; text-align: start; background: #fff; border: 1px solid var(--color-border-subtle, #e2e8f0); border-radius: 8px; padding: .6rem .75rem; cursor: pointer; }
     .quick:hover:not(:disabled) { background: var(--color-surface-muted, #f8fafc); }
     .quick:disabled { opacity: .5; cursor: not-allowed; }
     .quick i { color: var(--superieur-primary, #3862f5); }
     .quick strong { display: block; font-size: .82rem; }
     .quick em { font-style: normal; font-size: .72rem; color: var(--color-text-secondary, #64748b); }
 
-    .computed-at { font-size: .72rem; color: var(--color-text-tertiary, #94a3b8); text-align: right; margin: 0; }
+    .computed-at { font-size: .72rem; color: var(--color-text-tertiary, #94a3b8); text-align: end; margin: 0; }
 
     .btn { padding: .5rem .9rem; border-radius: 6px; border: 1px solid transparent; cursor: pointer; font-size: .875rem; display: inline-flex; align-items: center; gap: .4rem; }
     .btn-secondary { background: #fff; border-color: var(--color-border-subtle, #e2e8f0); color: var(--color-text-primary, #0f172a); }
@@ -447,6 +446,13 @@ import {
   `]
 })
 export class CashForecastComponent implements OnInit {
+  readonly loc_ui_tern_recalcul_39088a = $localize`:@@ui.tern.recalcul.39088a:Recalcul…`;
+  readonly loc_ui_tern_rafraichir_les_previsions_6d1d32 = $localize`:@@ui.tern.rafraichir.les.previsions.6d1d32:Rafraîchir les prévisions`;
+  readonly loc_ui_tern_solde_previsionnel_au_73c6a9 = $localize`:@@ui.tern.solde.previsionnel.au.73c6a9:Solde prévisionnel au `;
+  readonly loc_ui_tern_probabilites_ponderees_par_l_ia_autour_des_42688a = $localize`:@@ui.tern.probabilites.ponderees.par.l.ia.autour.des.42688a:Probabilités pondérées par l’IA autour des valeurs du moteur`;
+  readonly loc_ui_tern_probabilites_issues_du_moteur_deterministe_9e9fa3 = $localize`:@@ui.tern.probabilites.issues.du.moteur.deterministe.9e9fa3:Probabilités issues du moteur déterministe`;
+  readonly loc_ui_tern_valeur_du_moteur_16e0b3 = $localize`:@@ui.tern.valeur.du.moteur.16e0b3:Valeur du moteur : `;
+  readonly loc_ui_tern_alerts_item_alerts_item_73da9b = "alerts__item alerts__item--";
   private readonly service = inject(CashForecastService);
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
@@ -475,7 +481,7 @@ export class CashForecastComponent implements OnInit {
       labels: buckets.map(bucketLabel),
       datasets: [
         {
-          label: 'Solde prévisionnel',
+          label: $localize`:@@treasury.cash-forecast.ts.solde.previsionnel.eafdf1d7:Solde prévisionnel`,
           data: buckets.map(b => b.closingBalance),
           borderColor: '#3862f5',
           backgroundColor: 'rgba(56, 98, 245, 0.08)',
@@ -483,7 +489,7 @@ export class CashForecastComponent implements OnInit {
           tension: 0.35
         },
         {
-          label: 'Prévision basse',
+          label: $localize`:@@treasury.cash-forecast.ts.prevision.basse.f82d736b:Prévision basse`,
           data: buckets.map(b => b.lowClosingBalance),
           borderColor: '#ef4444',
           borderDash: [5, 4],
@@ -492,7 +498,7 @@ export class CashForecastComponent implements OnInit {
           tension: 0.35
         },
         {
-          label: 'Prévision haute',
+          label: $localize`:@@treasury.cash-forecast.ts.prevision.haute.3119ac6d:Prévision haute`,
           data: buckets.map(b => b.highClosingBalance),
           borderColor: '#10b981',
           borderDash: [5, 4],
@@ -552,7 +558,7 @@ export class CashForecastComponent implements OnInit {
           this.moduleDisabled.set(true);
         } else {
           this.errorMessage.set(
-            err?.error?.message ?? 'Impossible de charger la trésorerie prévisionnelle.'
+            err?.error?.message ?? $localize`:@@ui.tern.impossible.de.charger.la.tresorerie.previs.acb3d6:Impossible de charger la trésorerie prévisionnelle.`
           );
         }
         this.loading.set(false);
@@ -570,8 +576,8 @@ export class CashForecastComponent implements OnInit {
         this.recomputing.set(false);
         this.toast.add({
           severity: 'success',
-          summary: 'Projection recalculée',
-          detail: `Solde prévisionnel : ${this.amount(data.closingBalance)}`
+          summary: $localize`:@@cash-forecast.component.summary.Projection_recal:Projection recalculée`,
+          detail: $localize`:@@treasury.cash-forecast.ts.solde.previsionnel.amount.159288fd:Solde prévisionnel : ${this.amount(data.closingBalance)}:amount:`
         });
       },
       error: err => {
@@ -580,8 +586,8 @@ export class CashForecastComponent implements OnInit {
         if (err?.status === 429) return;
         this.toast.add({
           severity: 'error',
-          summary: 'Recalcul impossible',
-          detail: err?.error?.message ?? 'Erreur inconnue'
+          summary: $localize`:@@cash-forecast.component.summary.Recalcul imp:Recalcul impossible`,
+          detail: err?.error?.message ?? $localize`:@@ui.tern.erreur.inconnue.c3ec73:Erreur inconnue`
         });
       }
     });
@@ -603,8 +609,8 @@ export class CashForecastComponent implements OnInit {
       error: () =>
         this.toast.add({
           severity: 'error',
-          summary: 'Export impossible',
-          detail: 'Le fichier n’a pas pu être généré.'
+          summary: $localize`:@@cash-forecast.component.summary.Export impos:Export impossible`,
+          detail: $localize`:@@cash-forecast.component.detail.Le_fichier_n_a_p:Le fichier n’a pas pu être généré.`
         })
     });
   }
@@ -640,7 +646,7 @@ export class CashForecastComponent implements OnInit {
   impactLabel(impact: string | null | undefined): string {
     switch (impact) {
       case 'high':
-        return 'Impact élevé';
+        return $localize`:@@treasury.cash-forecast.ts.impact.eleve.d2a56cbd:Impact élevé`;
       case 'medium':
         return 'Impact moyen';
       default:

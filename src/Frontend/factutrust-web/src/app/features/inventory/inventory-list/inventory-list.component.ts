@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -31,6 +33,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { formatLocalDate } from '@core/utils/date.util';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 interface StatusOption {
   label: string;
@@ -41,6 +44,7 @@ interface StatusOption {
   selector: 'app-inventory-list',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -85,10 +89,10 @@ export class InventoryListComponent implements OnInit, OnDestroy {
   summaryMetrics = computed<TotalMetric[]>(() => {
     const s = this.summary();
     return [
-      { label: 'Inventaires', value: s?.count, format: 'number', icon: 'pi-box', tone: 'primary' },
-      { label: 'En cours', value: s?.inProgressCount, format: 'number', icon: 'pi-spinner', tone: 'amber' },
-      { label: 'Validés', value: s?.validatedCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-      { label: 'Produits', value: s?.totalProducts, format: 'number', icon: 'pi-database', tone: 'cyan' }
+      { label: $localize`:@@inventory.list.metric.inventaires:Inventaires`, value: s?.count, format: 'number', icon: 'pi-box', tone: 'primary' },
+      { label: $localize`:@@inventory.list.metric.en-cours:En cours`, value: s?.inProgressCount, format: 'number', icon: 'pi-spinner', tone: 'amber' },
+      { label: $localize`:@@inventory.list.metric.valides:Validés`, value: s?.validatedCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+      { label: $localize`:@@inventory.list.metric.produits:Produits`, value: s?.totalProducts, format: 'number', icon: 'pi-database', tone: 'cyan' }
     ];
   });
 
@@ -106,8 +110,8 @@ export class InventoryListComponent implements OnInit, OnDestroy {
   private readonly SEARCH_DEBOUNCE_MS = 500;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Inventaire' }
+    { label: $localize`:@@inventory.inventory-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@inventory.inventory-list.ts.inventaire.10ad1a54:Inventaire` }
   ];
 
   skeletonColumns: SkeletonColumn[] = [
@@ -120,10 +124,10 @@ export class InventoryListComponent implements OnInit, OnDestroy {
   ];
 
   statusOptions: StatusOption[] = [
-    { label: 'Tous', value: null },
-    { label: 'En cours', value: InventoryStatus.InProgress },
-    { label: 'Valide', value: InventoryStatus.Validated },
-    { label: 'Annulé', value: InventoryStatus.Cancelled }
+    { label: $localize`:@@inventory.list.filter.tous:Tous`, value: null },
+    { label: $localize`:@@inventory.list.filter.en-cours:En cours`, value: InventoryStatus.InProgress },
+    { label: $localize`:@@inventory.list.filter.valide:Valide`, value: InventoryStatus.Validated },
+    { label: $localize`:@@inventory.list.filter.annule:Annulé`, value: InventoryStatus.Cancelled }
   ];
 
   ngOnInit(): void {
@@ -166,7 +170,7 @@ export class InventoryListComponent implements OnInit, OnDestroy {
           this.inventories.set(response.data.items ?? []);
           this.totalRecords.set(response.data.totalCount ?? 0);
         } else {
-          const errorMsg = (response as { error?: string }).error || 'Impossible de charger les inventaires';
+          const errorMsg = (response as { error?: string }).error || $localize`:@@inventory.inventory-list.ts.impossible.de.charger.les.inventaires.52cb63bd:Impossible de charger les inventaires`;
           this.errorMessage.set(errorMsg);
           this.showErrorToast(errorMsg);
         }
@@ -178,7 +182,7 @@ export class InventoryListComponent implements OnInit, OnDestroy {
         this.loading.set(false);
         this.initialLoad.set(false);
         this.isLoadingInProgress = false;
-        const errorMsg = this.errorHandler.extractErrorMessage(error) || 'Impossible de charger les inventaires';
+        const errorMsg = this.errorHandler.extractErrorMessage(error) || $localize`:@@inventory.inventory-list.ts.impossible.de.charger.les.inventaires.52cb63bd:Impossible de charger les inventaires`;
         this.errorMessage.set(errorMsg);
         this.showErrorToast(errorMsg);
       }
@@ -224,7 +228,7 @@ export class InventoryListComponent implements OnInit, OnDestroy {
     this.toastService.add({
       key: 'inventory-list-error',
       severity: 'error',
-      summary: 'Erreur',
+      summary: $localize`:@@inventory-list.component.summary.Erreur:Erreur`,
       detail: message,
       life: 5000
     });
@@ -262,6 +266,6 @@ export class InventoryListComponent implements OnInit, OnDestroy {
   formatDate(dateStr: string | null): string {
     if (!dateStr) return '—';
     const d = new Date(dateStr);
-    return isNaN(d.getTime()) ? '—' : d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+    return isNaN(d.getTime()) ? '—' : d.toLocaleDateString(erpDateLocale('fr-FR'), { day: '2-digit', month: 'short', year: 'numeric' });
   }
 }

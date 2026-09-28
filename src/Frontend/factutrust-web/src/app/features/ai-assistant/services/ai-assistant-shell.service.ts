@@ -24,7 +24,7 @@ export class AiAssistantShellService {
   readonly activePane = signal<WorkspacePane>('work');
 
   /** Label for the work tab (last breadcrumb segment). */
-  readonly workTabTitle = signal('Accueil');
+  readonly workTabTitle = signal($localize`:@@ai-assistant.ai-assistant-shell.ts.accueil.a8ff8fd2:Accueil`);
 
   /**
    * Agent scope for the workspace tab panel. Locked while the tab is open and a conversation

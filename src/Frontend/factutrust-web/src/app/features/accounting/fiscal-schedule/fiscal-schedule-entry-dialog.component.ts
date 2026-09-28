@@ -21,62 +21,62 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
       aria-labelledby="fiscal-entry-dialog-title">
       <form class="fiscal-modal" [formGroup]="form" (ngSubmit)="save.emit()">
         <header>
-          <h2 id="fiscal-entry-dialog-title">{{ editing ? 'Modifier une echeance' : 'Nouvelle echeance fiscale' }}</h2>
-          <button class="square-button" type="button" title="Fermer" (click)="cancel.emit()"><i class="fa-solid fa-xmark"></i></button>
+          <h2 id="fiscal-entry-dialog-title">{{ editing ? loc_ui_tern_modifier_une_echeance_02f156 : loc_ui_tern_nouvelle_echeance_fiscale_6a2c06 }}</h2>
+          <button class="square-button" type="button" title="Fermer" i18n-title="@@accounting.fiscal-schedule.fermer.5ab4ec64" (click)="cancel.emit()"><i class="fa-solid fa-xmark"></i></button>
         </header>
         <div class="fiscal-modal-grid">
           <label>
-            Type d'obligation
+            <ng-container i18n="@@accounting.fiscal-schedule.type.d.obligation.790fbe09"> Type d'obligation </ng-container>
             <select formControlName="obligationType" (change)="obligationTypeChange.emit()">
               <option *ngFor="let option of obligationOptions" [ngValue]="option.value">{{ option.label }}</option>
             </select>
           </label>
           <label>
-            Libelle
+            <ng-container i18n="@@accounting.fiscal-schedule.libelle.bb39bab2"> Libelle </ng-container>
             <input formControlName="obligationLabel">
-            <span class="field-error" *ngIf="form.get('obligationLabel')?.invalid && form.get('obligationLabel')?.touched">Libelle obligatoire (200 caracteres max).</span>
+            <span class="field-error" *ngIf="form.get('obligationLabel')?.invalid && form.get('obligationLabel')?.touched" i18n="@@accounting.fiscal-schedule.libelle.obligatoire.200.caracteres.max.acbc878e">Libelle obligatoire (200 caracteres max).</span>
           </label>
           <label>
-            Exercice
+            <ng-container i18n="@@accounting.fiscal-schedule.exercice.e171e2b0"> Exercice </ng-container>
             <input formControlName="fiscalYear" type="number" min="2000" max="2100">
           </label>
           <label *ngIf="!showQuarterField">
-            Mois
+            <ng-container i18n="@@accounting.fiscal-schedule.mois.0d304bea"> Mois </ng-container>
             <select formControlName="periodMonth">
-              <option [ngValue]="null">Aucun</option>
+              <option [ngValue]="null" i18n="@@accounting.fiscal-schedule.aucun.b2ed82f1">Aucun</option>
               <option *ngFor="let month of months" [ngValue]="month.value">{{ month.label }}</option>
             </select>
           </label>
           <label *ngIf="showQuarterField">
-            Trimestre
+            <ng-container i18n="@@accounting.fiscal-schedule.trimestre.13116972"> Trimestre </ng-container>
             <select formControlName="periodQuarter">
-              <option [ngValue]="null">Selectionner</option>
+              <option [ngValue]="null" i18n="@@accounting.fiscal-schedule.selectionner.3888de7d">Selectionner</option>
               <option *ngFor="let quarter of quarters" [ngValue]="quarter.value">{{ quarter.label }}</option>
             </select>
-            <span class="field-error" *ngIf="form.hasError('periodQuarterRequired') && form.touched">Trimestre obligatoire pour la TVA trimestrielle.</span>
+            <span class="field-error" *ngIf="form.hasError('periodQuarterRequired') && form.touched" i18n="@@accounting.fiscal-schedule.trimestre.obligatoire.pour.la.tva.trimestrielle.8ef8f3dd">Trimestre obligatoire pour la TVA trimestrielle.</span>
           </label>
           <label>
-            Date d'echeance
+            <ng-container i18n="@@accounting.fiscal-schedule.date.d.echeance.e0e8b824"> Date d'echeance </ng-container>
             <input formControlName="dueDate" type="date">
           </label>
           <label>
-            Montant estime
+            <ng-container i18n="@@accounting.fiscal-schedule.montant.estime.b496eba3"> Montant estime </ng-container>
             <input formControlName="estimatedAmount" type="number" min="0" step="0.001">
           </label>
           <label>
-            Responsable
+            <ng-container i18n="@@accounting.fiscal-schedule.responsable.44b58814"> Responsable </ng-container>
             <input formControlName="responsibleName">
           </label>
           <label class="wide">
-            Observations
+            <ng-container i18n="@@accounting.fiscal-schedule.observations.461ebaa1"> Observations </ng-container>
             <textarea formControlName="observations" rows="3"></textarea>
           </label>
-          <p class="field-error wide" *ngIf="form.hasError('periodConflict') && form.touched">Indiquez un mois ou un trimestre, pas les deux.</p>
+          <p class="field-error wide" *ngIf="form.hasError('periodConflict') && form.touched" i18n="@@accounting.fiscal-schedule.indiquez.un.mois.ou.un.trimestre.pas.les.deux.abd83ce3">Indiquez un mois ou un trimestre, pas les deux.</p>
         </div>
         <footer>
-          <button class="icon-button" type="button" (click)="cancel.emit()">Annuler</button>
+          <button class="icon-button" type="button" (click)="cancel.emit()" i18n="@@accounting.fiscal-schedule.annuler.49ba3292">Annuler</button>
           <button class="icon-button primary" type="submit" [disabled]="saving">
-            <i class="fa-solid fa-floppy-disk"></i><span>Enregistrer</span>
+            <i class="fa-solid fa-floppy-disk"></i><span i18n="@@accounting.fiscal-schedule.enregistrer.f7c8bcd8">Enregistrer</span>
           </button>
         </footer>
       </form>
@@ -127,6 +127,8 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
   `]
 })
 export class FiscalScheduleEntryDialogComponent {
+  readonly loc_ui_tern_modifier_une_echeance_02f156 = $localize`:@@ui.tern.modifier.une.echeance.02f156:Modifier une echeance`;
+  readonly loc_ui_tern_nouvelle_echeance_fiscale_6a2c06 = $localize`:@@ui.tern.nouvelle.echeance.fiscale.6a2c06:Nouvelle echeance fiscale`;
   @Input() open = false;
   @Input() editing = false;
   @Input() form!: FormGroup;

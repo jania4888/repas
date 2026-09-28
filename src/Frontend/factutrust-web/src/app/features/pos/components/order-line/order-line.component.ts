@@ -26,13 +26,13 @@ import { PosOrderLine } from '../../services/pos-state.service';
           <span class="order-line__unit-price">{{ formatPrice(line.unitPriceHT) }} / {{ line.unit }}</span>
           }
           @if (!quickMode && line.discountAmount > 0) {
-            <span class="order-line__discount">-{{ formatPrice(line.discountAmount) }} remise</span>
+            <span class="order-line__discount" i18n="@@pos.components.remise.757a6cf3">-{{ formatPrice(line.discountAmount) }} remise</span>
           }
           @if (showDiscountForm) {
             <div class="order-line__discount-form">
               <select [(ngModel)]="discountType">
                 <option value="PERCENT">%</option>
-                <option value="AMOUNT">TND</option>
+                <option value="AMOUNT" i18n="@@pos.components.tnd.51da21a7">TND</option>
               </select>
               <input
                 type="number"
@@ -40,12 +40,12 @@ import { PosOrderLine } from '../../services/pos-state.service';
                 [min]="0"
                 [attr.max]="discountType === 'PERCENT' ? 100 : null"
                 step="0.001"
-                placeholder="0" />
-              <button type="button" class="order-line__discount-apply" (click)="applyDiscount()">OK</button>
+                placeholder="0" i18n-placeholder="@@pos.components.0.b6589fc6" />
+              <button type="button" class="order-line__discount-apply" (click)="applyDiscount()" i18n="@@pos.components.ok.9ce3bd42">OK</button>
               @if (line.discountAmount > 0) {
-                <button type="button" class="order-line__discount-remove" (click)="removeDiscount()">Supprimer</button>
+                <button type="button" class="order-line__discount-remove" (click)="removeDiscount()" i18n="@@pos.components.supprimer.1acfc1c7">Supprimer</button>
               }
-              <button type="button" class="order-line__discount-cancel" (click)="cancelDiscountForm()">Annuler</button>
+              <button type="button" class="order-line__discount-cancel" (click)="cancelDiscountForm()" i18n="@@pos.components.annuler.49ba3292">Annuler</button>
             </div>
           }
         </div>
@@ -57,7 +57,7 @@ import { PosOrderLine } from '../../services/pos-state.service';
             class="order-line__qty-btn"
             (click)="onDecrement.emit()"
             [disabled]="line.quantity <= 0.001"
-            aria-label="Diminuer la quantite">
+            aria-label="Diminuer la quantite" i18n-aria-label="@@pos.components.diminuer.la.quantite.efbcbb8f">
             <i class="pi pi-minus"></i>
           </button>
           <input
@@ -70,11 +70,11 @@ import { PosOrderLine } from '../../services/pos-state.service';
             (keydown.enter)="blurInput($event)"
             min="0.001"
             step="any"
-            aria-label="Quantite" />
+            aria-label="Quantite" i18n-aria-label="@@pos.components.quantite.4b1c4b13" />
           <button
             class="order-line__qty-btn"
             (click)="onIncrement.emit()"
-            aria-label="Augmenter la quantite">
+            aria-label="Augmenter la quantite" i18n-aria-label="@@pos.components.augmenter.la.quantite.5b6aeab2">
             <i class="pi pi-plus"></i>
           </button>
         </div>
@@ -85,8 +85,8 @@ import { PosOrderLine } from '../../services/pos-state.service';
           <button
             class="order-line__discount-btn"
             (click)="openDiscountForm()"
-            aria-label="Ajouter une remise"
-            title="Remise">
+            aria-label="Ajouter une remise" i18n-aria-label="@@pos.components.ajouter.une.remise.178fc2c4"
+            title="Remise" i18n-title="@@pos.components.remise.ce12d942">
             <i class="pi pi-percentage"></i>
           </button>
         }
@@ -94,8 +94,8 @@ import { PosOrderLine } from '../../services/pos-state.service';
         <button
           class="order-line__delete"
           (click)="onRemove.emit()"
-          aria-label="Supprimer cette ligne"
-          title="Supprimer">
+          aria-label="Supprimer cette ligne" i18n-aria-label="@@pos.components.supprimer.cette.ligne.df86a218"
+          title="Supprimer" i18n-title="@@pos.components.supprimer.1acfc1c7">
           <i class="pi pi-trash"></i>
         </button>
       </div>
@@ -301,8 +301,8 @@ import { PosOrderLine } from '../../services/pos-state.service';
       height: 32px;
       padding: 0;
       border: none;
-      border-left: 1px solid var(--color-border-subtle);
-      border-right: 1px solid var(--color-border-subtle);
+      border-inline-start: 1px solid var(--color-border-subtle);
+      border-inline-end: 1px solid var(--color-border-subtle);
       background: var(--color-white);
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-semibold);
@@ -329,7 +329,7 @@ import { PosOrderLine } from '../../services/pos-state.service';
       font-weight: var(--font-weight-bold);
       color: var(--color-text-primary);
       min-width: 90px;
-      text-align: right;
+      text-align: end;
     }
 
     .order-line__delete {

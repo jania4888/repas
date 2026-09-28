@@ -24,20 +24,18 @@ import {
   ],
   template: `
     <app-page-header
-      title="Analyse fournisseurs"
-      subtitle="Classement, part des achats et indicateurs par fournisseur">
+      title="Analyse fournisseurs" i18n-title="@@reports.purchases-analytics.analyse.fournisseurs.496355ab"
+      subtitle="Classement, part des achats et indicateurs par fournisseur" i18n-subtitle="@@reports.purchases-analytics.classement.part.des.achats.et.indicateur.9bf312a8">
       <app-button
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()">
-        Imprimer
-      </app-button>
+        (click)="onPrint()" i18n="@@reports.purchases-analytics.imprimer.5382c09d"> Imprimer </app-button>
     </app-page-header>
 
     <div class="filter-bar">
       <div class="filter-group">
-        <label class="filter-label">Période</label>
+        <label class="filter-label" i18n="@@reports.purchases-analytics.periode.de2110b7">Période</label>
         <div class="period-tabs">
           @for (p of periodOptions; track p.value) {
             <button
@@ -76,19 +74,19 @@ import {
     } @else if (data()) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Fournisseurs actifs"
+          label="Fournisseurs actifs" i18n-label="@@reports.purchases-analytics.fournisseurs.actifs.96b6dc58"
           [value]="data()!.activeSuppliersCount"
           icon="pi-building"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Dépenses totales"
+          label="Dépenses totales" i18n-label="@@reports.purchases-analytics.depenses.totales.7f280e4e"
           [value]="formatAmount(data()!.totalExpenses)"
           icon="pi-dollar"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Concentration top 5"
+          label="Concentration top 5" i18n-label="@@reports.purchases-analytics.concentration.top.5.63dca998"
           [value]="data()!.concentrationTop5Percent.toFixed(1) + ' %'"
           icon="pi-chart-pie"
           variant="warning">
@@ -98,8 +96,8 @@ import {
 
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Classement des fournisseurs</h2>
-        <span class="section-hint">
+        <h2 class="section-title" i18n="@@reports.purchases-analytics.classement.des.fournisseurs.bfaacd1a">Classement des fournisseurs</h2>
+        <span class="section-hint" i18n="@@reports.purchases-analytics.par.montant.total.des.achats.factures.pa.c2877cb7">
           <i class="pi pi-info-circle"></i>
           Par montant total des achats (factures payées) sur la période
         </span>
@@ -107,26 +105,26 @@ import {
       @if (loading()) {
         <div class="loading-spinner">
           <i class="pi pi-spin pi-spinner"></i>
-          <span>Chargement...</span>
+          <span i18n="@@reports.purchases-analytics.chargement.a209b664">Chargement...</span>
         </div>
       } @else if (!data()?.topSuppliers?.length) {
         <div class="empty-state">
           <i class="pi pi-building empty-icon"></i>
-          <p class="empty-title">Aucune donnée disponible</p>
-          <p class="empty-subtitle">Aucune facture fournisseur payée sur cette période. Créez des factures fournisseurs et enregistrez des paiements.</p>
+          <p class="empty-title" i18n="@@reports.purchases-analytics.aucune.donnee.disponible.78c36aa1">Aucune donnée disponible</p>
+          <p class="empty-subtitle" i18n="@@reports.purchases-analytics.aucune.facture.fournisseur.payee.sur.cette.perio.59098a4b">Aucune facture fournisseur payée sur cette période. Créez des factures fournisseurs et enregistrez des paiements.</p>
         </div>
       } @else {
         <p-table
           [value]="data()!.topSuppliers"
           styleClass="p-datatable-sm analytics-table"
-          aria-label="Tableau des fournisseurs par montant">
+          aria-label="Tableau des fournisseurs par montant" i18n-aria-label="@@reports.purchases-analytics.tableau.des.fournisseurs.par.montant.5bd3cc08">
           <ng-template pTemplate="header">
             <tr>
-              <th>Rang</th>
-              <th>Fournisseur</th>
-              <th class="text-right">Factures</th>
-              <th class="text-right">Montant total</th>
-              <th class="text-right">Part</th>
+              <th i18n="@@reports.purchases-analytics.rang.dbb66acd">Rang</th>
+              <th i18n="@@reports.purchases-analytics.fournisseur.97d91d89">Fournisseur</th>
+              <th class="text-right" i18n="@@reports.purchases-analytics.factures.da35e4f2">Factures</th>
+              <th class="text-right" i18n="@@reports.purchases-analytics.montant.total.dd001537">Montant total</th>
+              <th class="text-right" i18n="@@reports.purchases-analytics.part.88be9d62">Part</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-supplier let-i="rowIndex">
@@ -194,7 +192,7 @@ import {
     .empty-subtitle { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
 
     .supplier-name { font-weight: var(--font-weight-medium); color: var(--color-text-primary); }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .amount { font-family: 'JetBrains Mono', monospace; font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
     .rank-badge { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: var(--radius-full); font-size: var(--font-size-xs); font-weight: var(--font-weight-bold); }
     .rank-1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; }
@@ -225,9 +223,9 @@ export class SuppliersAnalyticsComponent implements OnInit {
   selectedPeriod: PurchasesAnalyticsPeriod = 'month';
 
   periodOptions: { label: string; value: PurchasesAnalyticsPeriod }[] = [
-    { label: 'Jour', value: 'day' },
-    { label: 'Mois', value: 'month' },
-    { label: 'Année', value: 'year' }
+    { label: $localize`:@@reports.suppliers-analytics.ts.jour.240ce85d:Jour`, value: 'day' },
+    { label: $localize`:@@reports.suppliers-analytics.ts.mois.0d304bea:Mois`, value: 'month' },
+    { label: $localize`:@@reports.suppliers-analytics.ts.annee.1f910d98:Année`, value: 'year' }
   ];
 
   ngOnInit(): void {
@@ -251,7 +249,7 @@ export class SuppliersAnalyticsComponent implements OnInit {
   }
 
   formatAmount(value: number): string {
-    return new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(value) + ' TND';
+    return new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(value) + $localize`:@@ui.tern.tnd.9aaf5c: TND`;
   }
 
   onPrint(): void {

@@ -133,10 +133,10 @@ export class AiStreamService {
 
   private async resolveHttpErrorMessage(response: Response): Promise<string> {
     if (response.status === 401) {
-      return 'Session expirée. Veuillez vous reconnecter, puis renvoyer votre message.';
+      return $localize`:@@ai-assistant.ai-stream.ts.session.expiree.veuillez.vous.reconnecte.be32677a:Session expirée. Veuillez vous reconnecter, puis renvoyer votre message.`;
     }
     if (response.status === 429) {
-      return 'Trop de requêtes vers l’assistant IA. Patientez un instant avant de réessayer.';
+      return $localize`:@@ai-assistant.ai-stream.ts.trop.de.requetes.vers.l.assistant.ia.pat.ebb869db:Trop de requêtes vers l’assistant IA. Patientez un instant avant de réessayer.`;
     }
 
     try {

@@ -12,8 +12,8 @@ import { WithholdingTaxService, WithholdingDashboardDto } from '@core/services/w
     <div class="page-container">
       <div class="page-header">
         <div>
-          <h1>Tableau de bord — Retenues à la source</h1>
-          <p class="subtitle">Vue d'ensemble de l'activité fiscale TEJ</p>
+          <h1 i18n="@@withholding-tax.withholding-dashboard.tableau.de.bord.retenues.a.la.source.ed610282">Tableau de bord — Retenues à la source</h1>
+          <p class="subtitle" i18n="@@withholding-tax.withholding-dashboard.vue.d.ensemble.de.l.activite.fiscale.tej.349ff0bc">Vue d'ensemble de l'activité fiscale TEJ</p>
         </div>
         <div class="header-controls">
           <select [(ngModel)]="selectedYear" (ngModelChange)="loadDashboard()">
@@ -21,34 +21,34 @@ import { WithholdingTaxService, WithholdingDashboardDto } from '@core/services/w
               <option [ngValue]="y">{{ y }}</option>
             }
           </select>
-          <a routerLink="/withholding-tax/tej-export" class="btn btn-primary">
+          <a routerLink="/withholding-tax/tej-export" class="btn btn-primary" i18n="@@withholding-tax.withholding-dashboard.export.tej.81f73e03">
             <i class="fa-solid fa-file-export"></i> Export TEJ
           </a>
         </div>
       </div>
 
       @if (loading) {
-        <div class="loading-state"><i class="fa-solid fa-spinner fa-spin"></i> Chargement…</div>
+        <div class="loading-state" i18n="@@withholding-tax.withholding-dashboard.chargement.fbee6e98"><i class="fa-solid fa-spinner fa-spin"></i> Chargement…</div>
       }
 
       @if (data) {
         <!-- KPI row -->
         <div class="kpi-row">
-          <div class="kpi-card">
+          <div class="kpi-card" i18n="@@withholding-tax.withholding-dashboard.total.retenues.tnd.3b3de9ab">
             <span class="kpi-label">Total retenues ({{ data.dashboardYear }})</span>
             <span class="kpi-value">{{ data.totalWithheldForYear | number:'1.3-3' }}</span>
             <span class="kpi-unit">TND</span>
           </div>
-          <div class="kpi-card">
+          <div class="kpi-card" i18n="@@withholding-tax.withholding-dashboard.ff.soldees.avec.rs.base.sur.la.date.de.s.ae8af87e">
             <span class="kpi-label">FF soldées avec RS ({{ data.dashboardYear }})</span>
             <span class="kpi-value">{{ data.totalCertificatesForYear }}</span>
             <span class="kpi-hint">Basé sur la date de solde (PaidAt), agrégé pour le tableau</span>
           </div>
           <div class="kpi-card kpi-card-muted">
-            <span class="kpi-label">Retenues subies (ventes)</span>
+            <span class="kpi-label" i18n="@@withholding-tax.withholding-dashboard.retenues.subies.ventes.8d65f638">Retenues subies (ventes)</span>
             <span class="kpi-value">{{ data.totalClientWithholdingSubieForYear | number:'1.3-3' }}</span>
-            <span class="kpi-unit">TND</span>
-            <span class="kpi-hint">Encaissements clients — hors déclaration TEJ déclarant</span>
+            <span class="kpi-unit" i18n="@@withholding-tax.withholding-dashboard.tnd.51da21a7">TND</span>
+            <span class="kpi-hint" i18n="@@withholding-tax.withholding-dashboard.encaissements.clients.hors.declaration.tej.decla.6a0657e2">Encaissements clients — hors déclaration TEJ déclarant</span>
           </div>
         </div>
 
@@ -63,16 +63,16 @@ import { WithholdingTaxService, WithholdingDashboardDto } from '@core/services/w
         <!-- Monthly breakdown -->
         @if (data.monthlyBreakdown.length) {
           <div class="card">
-            <h3>Répartition mensuelle ({{ data.dashboardYear }})</h3>
+            <h3 i18n="@@withholding-tax.withholding-dashboard.repartition.mensuelle.5e9671af">Répartition mensuelle ({{ data.dashboardYear }})</h3>
             <div class="table-wrapper">
               <table>
                 <thead>
                   <tr>
-                    <th>Mois</th>
-                    <th class="right">Opérations</th>
-                    <th class="right">Montant HT</th>
-                    <th class="right">Retenue</th>
-                    <th class="right">Net servi</th>
+                    <th i18n="@@withholding-tax.withholding-dashboard.mois.0d304bea">Mois</th>
+                    <th class="right" i18n="@@withholding-tax.withholding-dashboard.operations.8d02bd5b">Opérations</th>
+                    <th class="right" i18n="@@withholding-tax.withholding-dashboard.montant.ht.3df1d6fe">Montant HT</th>
+                    <th class="right" i18n="@@withholding-tax.withholding-dashboard.retenue.88cf18f4">Retenue</th>
+                    <th class="right" i18n="@@withholding-tax.withholding-dashboard.net.servi.bb6a0c49">Net servi</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -88,7 +88,7 @@ import { WithholdingTaxService, WithholdingDashboardDto } from '@core/services/w
                 </tbody>
                 <tfoot>
                   <tr>
-                    <td><strong>Total</strong></td>
+                    <td><strong i18n="@@withholding-tax.withholding-dashboard.total.b25928c6">Total</strong></td>
                     <td class="right"><strong>{{ getTotalCount() }}</strong></td>
                     <td class="right"><strong>{{ getTotalHT() | number:'1.3-3' }}</strong></td>
                     <td class="right"><strong>{{ data.totalWithheldForYear | number:'1.3-3' }}</strong></td>
@@ -102,14 +102,14 @@ import { WithholdingTaxService, WithholdingDashboardDto } from '@core/services/w
 
         @if (data.clientWithholdingSubieByMonth.length) {
           <div class="card card-muted">
-            <h3>Retenues subies par mois ({{ data.dashboardYear }})</h3>
+            <h3 i18n="@@withholding-tax.withholding-dashboard.retenues.subies.par.mois.e1c7fb56">Retenues subies par mois ({{ data.dashboardYear }})</h3>
             <div class="table-wrapper">
               <table>
                 <thead>
                   <tr>
-                    <th>Mois</th>
-                    <th class="right">Paiements</th>
-                    <th class="right">Total retenu</th>
+                    <th i18n="@@withholding-tax.withholding-dashboard.mois.0d304bea">Mois</th>
+                    <th class="right" i18n="@@withholding-tax.withholding-dashboard.paiements.97ecc646">Paiements</th>
+                    <th class="right" i18n="@@withholding-tax.withholding-dashboard.total.retenu.33b9224b">Total retenu</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -132,11 +132,11 @@ import { WithholdingTaxService, WithholdingDashboardDto } from '@core/services/w
         <div class="quick-links">
           <a routerLink="/withholding-tax/tej-export" class="link-card">
             <i class="fa-solid fa-file-export"></i>
-            <span>Export TEJ XML</span>
+            <span i18n="@@withholding-tax.withholding-dashboard.export.tej.xml.e91753b7">Export TEJ XML</span>
           </a>
           <a routerLink="/withholding-tax/settings" class="link-card">
             <i class="fa-solid fa-cog"></i>
-            <span>Types de retenue</span>
+            <span i18n="@@withholding-tax.withholding-dashboard.types.de.retenue.b0d657ed">Types de retenue</span>
           </a>
         </div>
       }
@@ -169,9 +169,9 @@ import { WithholdingTaxService, WithholdingDashboardDto } from '@core/services/w
     .card h3 { font-size: 1rem; font-weight: 600; margin: 0 0 1rem; }
     .table-wrapper { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-    th, td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); text-align: left; }
+    th, td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); text-align: start; }
     th { font-weight: 500; color: var(--text-secondary); font-size: 0.8125rem; }
-    .right { text-align: right; font-variant-numeric: tabular-nums; }
+    .right { text-align: end; font-variant-numeric: tabular-nums; }
     tfoot td { border-top: 2px solid var(--border); border-bottom: none; }
 
     .quick-links { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
@@ -191,8 +191,8 @@ export class WithholdingDashboardComponent implements OnInit {
   years = Array.from({ length: 7 }, (_, i) => new Date().getFullYear() - i);
 
   private monthNames = [
-    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+    $localize`:@@withholding-tax.withholding-dashboard.ts.janvier.7a32ae0f:Janvier`, $localize`:@@withholding-tax.withholding-dashboard.ts.fevrier.63fc1803:Février`, $localize`:@@withholding-tax.withholding-dashboard.ts.mars.1778011d:Mars`, $localize`:@@withholding-tax.withholding-dashboard.ts.avril.4efeee46:Avril`, $localize`:@@withholding-tax.withholding-dashboard.ts.mai.afe526a6:Mai`, $localize`:@@withholding-tax.withholding-dashboard.ts.juin.8b1e84b6:Juin`,
+    $localize`:@@withholding-tax.withholding-dashboard.ts.juillet.e8e0920c:Juillet`, $localize`:@@withholding-tax.withholding-dashboard.ts.aout.460b6696:Août`, $localize`:@@withholding-tax.withholding-dashboard.ts.septembre.08d23f31:Septembre`, $localize`:@@withholding-tax.withholding-dashboard.ts.octobre.0ed28485:Octobre`, $localize`:@@withholding-tax.withholding-dashboard.ts.novembre.632580af:Novembre`, $localize`:@@withholding-tax.withholding-dashboard.ts.decembre.03bcd9b0:Décembre`
   ];
 
   ngOnInit() {

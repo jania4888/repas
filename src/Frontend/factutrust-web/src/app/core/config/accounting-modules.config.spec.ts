@@ -1,21 +1,22 @@
 import {
-  ACCOUNTING_HOME_HIDDEN_MODULE_TITLES,
+  ACCOUNTING_HOME_HIDDEN_MODULE_IDS,
+  ACCOUNTING_MODULE_ID,
   ACCOUNTING_MODULES,
   getFirmDelegatedAccountingModules,
   isAccountingModuleHiddenFromHome
 } from './accounting-modules.config';
 
 describe('accounting-modules.config', () => {
-  describe('ACCOUNTING_HOME_HIDDEN_MODULE_TITLES', () => {
+  describe('ACCOUNTING_HOME_HIDDEN_MODULE_IDS', () => {
     it('hides Budgétaire and Declarations from the accounting home hub', () => {
-      expect(ACCOUNTING_HOME_HIDDEN_MODULE_TITLES.has('Budgétaire')).toBe(true);
-      expect(ACCOUNTING_HOME_HIDDEN_MODULE_TITLES.has('Declarations')).toBe(true);
+      expect(ACCOUNTING_HOME_HIDDEN_MODULE_IDS.has(ACCOUNTING_MODULE_ID.budget)).toBe(true);
+      expect(ACCOUNTING_HOME_HIDDEN_MODULE_IDS.has(ACCOUNTING_MODULE_ID.declarations)).toBe(true);
     });
 
     it('isAccountingModuleHiddenFromHome reflects the hub hidden set', () => {
-      expect(isAccountingModuleHiddenFromHome('Budgétaire')).toBe(true);
-      expect(isAccountingModuleHiddenFromHome('Declarations')).toBe(true);
-      expect(isAccountingModuleHiddenFromHome('Gestion immobilisations')).toBe(false);
+      expect(isAccountingModuleHiddenFromHome(ACCOUNTING_MODULE_ID.budget)).toBe(true);
+      expect(isAccountingModuleHiddenFromHome(ACCOUNTING_MODULE_ID.declarations)).toBe(true);
+      expect(isAccountingModuleHiddenFromHome(ACCOUNTING_MODULE_ID.fixedAssets)).toBe(false);
     });
   });
 

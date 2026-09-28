@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -35,6 +37,7 @@ interface StatusOption {
     selector: 'app-purchase-order-list',
     standalone: true,
     imports: [
+    BackendLabelPipe,
         CommonModule, RouterModule, FormsModule, CurrencyPipe, DatePipe,
         TableModule, ButtonModule, InputTextModule, SelectModule,
         TagModule, TooltipModule, DatePickerModule, ToastModule,
@@ -45,28 +48,26 @@ interface StatusOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Bons de commande"
-      subtitle="Gérez vos commandes fournisseurs et suivez les réceptions.">
+      title="Bons de commande" i18n-title="@@purchase-orders.purchase-order-list.bons.de.commande.aae719f0"
+      subtitle="Gérez vos commandes fournisseurs et suivez les réceptions." i18n-subtitle="@@purchase-orders.purchase-order-list.gerez.vos.commandes.fournisseurs.et.suiv.4ecce812">
       @if (canCreatePurchaseOrder()) {
         <app-button
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new">
-          Nouvelle commande
-        </app-button>
+          routerLink="new" i18n="@@purchase-orders.purchase-order-list.nouvelle.commande.061f365b"> Nouvelle commande </app-button>
       }
     </app-page-header>
 
     <!-- Filters -->
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@purchase-orders.purchase-order-list.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@purchase-orders.purchase-order-list.reinitialiser.les.filtres.d8915f02" i18n="@@purchase-orders.purchase-order-list.reinitialiser.9637f51e">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -78,7 +79,7 @@ interface StatusOption {
           <input
             pInputText
             type="text"
-            placeholder="Rechercher par numéro, fournisseur ou référence…"
+            placeholder="Rechercher par numéro, fournisseur ou référence…" i18n-placeholder="@@purchase-orders.purchase-order-list.rechercher.par.numero.fournisseur.ou.reference.f62ac59c"
             [(ngModel)]="searchTerm"
             (input)="onSearchInput($event)"
             class="w-full">
@@ -89,7 +90,7 @@ interface StatusOption {
           [(ngModel)]="selectedStatus"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@purchase-orders.purchase-order-list.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -99,7 +100,7 @@ interface StatusOption {
           [(ngModel)]="selectedSupplierId"
           optionLabel="name"
           optionValue="id"
-          placeholder="Tous les fournisseurs"
+          placeholder="Tous les fournisseurs" i18n-placeholder="@@purchase-orders.purchase-order-list.tous.les.fournisseurs.0e8a9fae"
           [showClear]="true"
           [filter]="true"
           filterBy="name"
@@ -107,29 +108,33 @@ interface StatusOption {
           styleClass="supplier-filter">
         </p-select>
 
-        <span class="filter-label">Date début</span>
-        <p-datepicker
-          [(ngModel)]="fromDate"
-          dateFormat="dd/mm/yy"
-          [showIcon]="true"
-          placeholder="Du"
-          [showButtonBar]="true"
-          (onSelect)="onFilterChange()"
-          (onClearClick)="onFilterChange()"
-          styleClass="date-filter">
-        </p-datepicker>
+        <div class="ft-filters__field">
+          <span class="filter-label" i18n="@@purchase-orders.purchase-order-list.date.debut.2413e246">Date début</span>
+          <p-datepicker
+            [(ngModel)]="fromDate"
+            dateFormat="dd/mm/yy"
+            [showIcon]="true"
+            placeholder="Du" i18n-placeholder="@@purchase-orders.purchase-order-list.du.84814985"
+            [showButtonBar]="true"
+            (onSelect)="onFilterChange()"
+            (onClearClick)="onFilterChange()"
+            styleClass="date-filter">
+          </p-datepicker>
+        </div>
 
-        <span class="filter-label">Date fin</span>
-        <p-datepicker
-          [(ngModel)]="toDate"
-          dateFormat="dd/mm/yy"
-          [showIcon]="true"
-          placeholder="Au"
-          [showButtonBar]="true"
-          (onSelect)="onFilterChange()"
-          (onClearClick)="onFilterChange()"
-          styleClass="date-filter">
-        </p-datepicker>
+        <div class="ft-filters__field">
+          <span class="filter-label" i18n="@@purchase-orders.purchase-order-list.date.fin.2d44e855">Date fin</span>
+          <p-datepicker
+            [(ngModel)]="toDate"
+            dateFormat="dd/mm/yy"
+            [showIcon]="true"
+            placeholder="Au" i18n-placeholder="@@purchase-orders.purchase-order-list.au.7a1732d5"
+            [showButtonBar]="true"
+            (onSelect)="onFilterChange()"
+            (onClearClick)="onFilterChange()"
+            styleClass="date-filter">
+          </p-datepicker>
+        </div>
       </div>
     </div>
 
@@ -154,7 +159,7 @@ interface StatusOption {
           [rows]="pageSize"
           [totalRecords]="totalRecords()"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} commandes"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} commandes" i18n-currentPageReportTemplate="@@purchase-orders.purchase-order-list.affichage.de.first.a.last.sur.totalrecords.comma.7762b297"
           (onLazyLoad)="onPageChange($event)"
           [loading]="loading()"
           [first]="(page - 1) * pageSize"
@@ -163,15 +168,15 @@ interface StatusOption {
 
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="number" style="width: 130px">N° <p-sortIcon field="number"></p-sortIcon></th>
-            <th>Fournisseur</th>
-            <th pSortableColumn="orderDate" style="width: 120px">Date <p-sortIcon field="orderDate"></p-sortIcon></th>
-            <th style="width: 120px">Livraison prévue</th>
-            <th>Référence</th>
-            <th style="width: 100px">Lignes</th>
-            <th pSortableColumn="totalTTC" style="width: 130px">Total TTC <p-sortIcon field="totalTTC"></p-sortIcon></th>
-            <th style="width: 140px">Statut</th>
-            <th style="width: 80px">Actions</th>
+            <th pSortableColumn="number" style="width: 130px"><ng-container i18n="@@purchase-orders.purchase-order-list.n.754e6095">N° </ng-container> <p-sortIcon field="number"></p-sortIcon></th>
+            <th i18n="@@purchase-orders.purchase-order-list.fournisseur.97d91d89">Fournisseur</th>
+            <th pSortableColumn="orderDate" style="width: 120px"><ng-container i18n="@@purchase-orders.purchase-order-list.date.eb9a4bc1">Date </ng-container> <p-sortIcon field="orderDate"></p-sortIcon></th>
+            <th style="width: 120px" i18n="@@purchase-orders.purchase-order-list.livraison.prevue.dc15f458">Livraison prévue</th>
+            <th i18n="@@purchase-orders.purchase-order-list.reference.f8130bb0">Référence</th>
+            <th style="width: 100px" i18n="@@purchase-orders.purchase-order-list.lignes.41c7025e">Lignes</th>
+            <th pSortableColumn="totalTTC" style="width: 130px"><ng-container i18n="@@purchase-orders.purchase-order-list.total.ttc.9e80ff7c">Total TTC </ng-container> <p-sortIcon field="totalTTC"></p-sortIcon></th>
+            <th style="width: 140px" i18n="@@purchase-orders.purchase-order-list.statut.659499f3">Statut</th>
+            <th style="width: 80px" i18n="@@purchase-orders.purchase-order-list.actions.c3cd636a">Actions</th>
           </tr>
         </ng-template>
 
@@ -200,7 +205,7 @@ interface StatusOption {
             </td>
             <td>
               <p-tag
-                [value]="order.statusDisplay"
+                [value]="order.statusDisplay | backendLabel"
                 [severity]="getStatusSeverity(order.status)">
               </p-tag>
             </td>
@@ -212,7 +217,7 @@ interface StatusOption {
                   icon="pi-eye"
                   [iconOnly]="true"
                   [routerLink]="order.id"
-                  ariaLabel="Voir la commande">
+                  ariaLabel="Voir la commande" i18n-ariaLabel="@@purchase-orders.purchase-order-list.voir.la.commande.a44478c1">
                 </app-button>
               </div>
             </td>
@@ -223,10 +228,10 @@ interface StatusOption {
           <tr>
             <td colspan="9" class="text-center p-6">
               <app-empty-state
-                title="Aucun bon de commande"
-                description="Créez votre première commande fournisseur pour approvisionner votre stock."
+                title="Aucun bon de commande" i18n-title="@@purchase-orders.purchase-order-list.aucun.bon.de.commande.3805e106"
+                description="Créez votre première commande fournisseur pour approvisionner votre stock." i18n-description="@@purchase-orders.purchase-order-list.creez.votre.premiere.commande.fournisseu.129169b6"
                 [showAction]="canCreatePurchaseOrder()"
-                actionLabel="Nouvelle commande"
+                actionLabel="Nouvelle commande" i18n-actionLabel="@@purchase-orders.purchase-order-list.nouvelle.commande.3b7f4b55"
                 actionRoute="new">
               </app-empty-state>
             </td>
@@ -240,7 +245,7 @@ interface StatusOption {
     .filter-label {
       font-size: var(--font-size-sm);
       color: var(--color-text-tertiary);
-      margin-right: var(--spacing-1);
+      margin-inline-end: var(--spacing-1);
     }
 
     .date-filter {
@@ -324,11 +329,11 @@ export class PurchaseOrderListComponent implements OnInit, OnDestroy {
         const s = this.summary();
         const currency = s?.currency ?? 'TND';
         return [
-            { label: 'Commandes', value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
-            { label: 'Total TTC', value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
-            { label: 'Total HT', value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
-            { label: 'Reçus', value: s?.receivedCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-            { label: 'En attente', value: s?.pendingCount, format: 'number', icon: 'pi-clock', tone: 'amber' }
+            { label: $localize`:@@purchase-orders.purchase-order-list.ts.commandes.17275970:Commandes`, value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
+            { label: $localize`:@@purchase-orders.purchase-order-list.ts.total.ttc.9e80ff7c:Total TTC`, value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
+            { label: $localize`:@@purchase-orders.purchase-order-list.ts.total.ht.2ca17ae6:Total HT`, value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
+            { label: $localize`:@@purchase-orders.purchase-order-list.ts.recus.51ec6e5e:Reçus`, value: s?.receivedCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+            { label: $localize`:@@purchase-orders.purchase-order-list.ts.en.attente.5231158f:En attente`, value: s?.pendingCount, format: 'number', icon: 'pi-clock', tone: 'amber' }
         ];
     });
 
@@ -341,9 +346,9 @@ export class PurchaseOrderListComponent implements OnInit, OnDestroy {
     pageSize = 20;
 
     breadcrumbItems: BreadcrumbItem[] = [
-        { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-        { label: 'Achats' },
-        { label: 'Bons de commande' }
+        { label: $localize`:@@purchase-orders.purchase-order-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+        { label: $localize`:@@purchase-orders.purchase-order-list.ts.achats.ee5b078c:Achats` },
+        { label: $localize`:@@purchase-orders.purchase-order-list.ts.bons.de.commande.aae719f0:Bons de commande` }
     ];
 
     skeletonColumns: SkeletonColumn[] = [
@@ -359,11 +364,11 @@ export class PurchaseOrderListComponent implements OnInit, OnDestroy {
     ];
 
     statusOptions: StatusOption[] = [
-        { label: 'Brouillon', value: PurchaseOrderStatus.Draft },
-        { label: 'Confirmé', value: PurchaseOrderStatus.Confirmed },
-        { label: 'Partiellement reçu', value: PurchaseOrderStatus.PartiallyReceived },
-        { label: 'Reçu', value: PurchaseOrderStatus.Received },
-        { label: 'Annulé', value: PurchaseOrderStatus.Cancelled }
+        { label: $localize`:@@purchase-orders.list.filter.brouillon:Brouillon`, value: PurchaseOrderStatus.Draft },
+        { label: $localize`:@@purchase-orders.list.filter.confirme:Confirmé`, value: PurchaseOrderStatus.Confirmed },
+        { label: $localize`:@@purchase-orders.list.filter.partiel:Partiellement reçu`, value: PurchaseOrderStatus.PartiallyReceived },
+        { label: $localize`:@@purchase-orders.list.filter.recu:Reçu`, value: PurchaseOrderStatus.Received },
+        { label: $localize`:@@purchase-orders.list.filter.annule:Annulé`, value: PurchaseOrderStatus.Cancelled }
     ];
 
     ngOnInit(): void {
@@ -427,8 +432,8 @@ export class PurchaseOrderListComponent implements OnInit, OnDestroy {
         this.initialLoad.set(false);
                 this.toastService.add({
                     severity: 'error',
-                    summary: 'Erreur',
-                    detail: error?.error?.errors?.[0] || 'Impossible de charger les commandes'
+                    summary: $localize`:@@purchase-order-list.component.summary.Erreur:Erreur`,
+                    detail: error?.error?.errors?.[0] || $localize`:@@purchase-orders.purchase-order-list.ts.impossible.de.charger.les.commandes.3f390147:Impossible de charger les commandes`
                 });
             }
         });

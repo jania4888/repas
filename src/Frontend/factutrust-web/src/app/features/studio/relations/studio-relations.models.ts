@@ -41,8 +41,8 @@ export interface CreateManyToManyRelationRequest {
 /** Libellé FR du type de relation (partagé : page Relations + concepteur de table). */
 export function relationKindLabel(kind: EntityRelationDto['kind']): string {
   switch (kind) {
-    case 'many_to_many': return 'Plusieurs-à-plusieurs';
-    case 'many_to_one': return 'Plusieurs-à-un';
-    default: return 'Un-à-plusieurs';
+    case 'many_to_many': return $localize`:@@studio.studio-relations.ts.plusieurs.a.plusieurs.c7a3e8e5:Plusieurs-à-plusieurs`;
+    case 'many_to_one': return $localize`:@@studio.studio-relations.ts.plusieurs.a.un.6a4e3826:Plusieurs-à-un`;
+    default: return $localize`:@@studio.studio-relations.ts.un.a.plusieurs.af68751e:Un-à-plusieurs`;
   }
 }

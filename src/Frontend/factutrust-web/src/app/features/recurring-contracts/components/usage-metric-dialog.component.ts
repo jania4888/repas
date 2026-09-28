@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -32,11 +33,11 @@ interface AggregationOption {
     <p-dialog
       [(visible)]="visible"
       [modal]="true"
-      header="Gérer les métriques"
+      header="Gérer les métriques" i18n-header="@@recurring-contracts.components.gerer.les.metriques.40a2721c"
       [style]="{ width: '46rem' }">
       <table class="metrics-table">
         <thead>
-          <tr><th>Code</th><th>Nom</th><th>Unité</th><th>Agrégation</th><th>Actif</th><th></th></tr>
+          <tr><th i18n="@@recurring-contracts.components.code.adac6937">Code</th><th i18n="@@recurring-contracts.components.nom.7ff20370">Nom</th><th i18n="@@recurring-contracts.components.unite.388fd9c4">Unité</th><th i18n="@@recurring-contracts.components.agregation.1b174f8f">Agrégation</th><th i18n="@@recurring-contracts.components.actif.2eb75f84">Actif</th><th></th></tr>
         </thead>
         <tbody>
           @for (m of metrics; track m.id) {
@@ -45,57 +46,57 @@ interface AggregationOption {
               <td>{{ m.name }}</td>
               <td>{{ m.unit }}</td>
               <td>{{ aggregationLabel(m.aggregationMode) }}</td>
-              <td>{{ m.isActive ? 'Oui' : 'Non' }}</td>
+              <td>{{ m.isActive ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
               <td>
-                <app-button variant="ghost" size="sm" icon="pi-pencil" (clicked)="edit(m)">Modifier</app-button>
+                <app-button variant="ghost" size="sm" icon="pi-pencil" (clicked)="edit(m)" i18n="@@recurring-contracts.components.modifier.f260e757">Modifier</app-button>
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="6" class="empty">Aucune métrique pour l'instant.</td></tr>
+            <tr><td colspan="6" class="empty" i18n="@@recurring-contracts.components.aucune.metrique.pour.l.instant.3adec9d2">Aucune métrique pour l'instant.</td></tr>
           }
         </tbody>
       </table>
 
       <div class="edit-block">
-        <h4>{{ editingId ? 'Modifier la métrique' : 'Nouvelle métrique' }}</h4>
+        <h4>{{ editingId ? loc_ui_tern_modifier_la_metrique_4071da : loc_ui_tern_nouvelle_metrique_e1b093 }}</h4>
         <div class="grid">
-          <label>Code *
-            <input class="ft-input" [(ngModel)]="form.code" name="metricCode" [disabled]="!!editingId" />
+          <label><ng-container i18n="@@recurring-contracts.components.code.35c17344">Code *
+            </ng-container><input class="ft-input" [(ngModel)]="form.code" name="metricCode" [disabled]="!!editingId" />
           </label>
-          <label>Nom *
-            <input class="ft-input" [(ngModel)]="form.name" name="metricName" />
+          <label><ng-container i18n="@@recurring-contracts.components.nom.463a6959">Nom *
+            </ng-container><input class="ft-input" [(ngModel)]="form.name" name="metricName" />
           </label>
-          <label>Unité *
-            <input class="ft-input" [(ngModel)]="form.unit" name="metricUnit" placeholder="ex. appels, Go, utilisateurs" />
+          <label><ng-container i18n="@@recurring-contracts.components.unite.99101743">Unité *
+            </ng-container><input class="ft-input" [(ngModel)]="form.unit" name="metricUnit" placeholder="ex. appels, Go, utilisateurs" i18n-placeholder="@@recurring-contracts.components.ex.appels.go.utilisateurs.f6d48800" />
           </label>
-          <label>Mode d'agrégation
-            <select class="ft-input" [(ngModel)]="form.aggregationMode" name="metricAggregation">
+          <label><ng-container i18n="@@recurring-contracts.components.mode.d.agregation.8270dc3f">Mode d'agrégation
+            </ng-container><select class="ft-input" [(ngModel)]="form.aggregationMode" name="metricAggregation">
               @for (opt of aggregationOptions; track opt.value) {
                 <option [ngValue]="opt.value">{{ opt.label }}</option>
               }
             </select>
           </label>
-          <label>Produit lié
-            <select class="ft-input" [(ngModel)]="form.productId" name="metricProduct">
-              <option [ngValue]="null">— Aucun —</option>
+          <label><ng-container i18n="@@recurring-contracts.components.produit.lie.141ee81e">Produit lié
+            </ng-container><select class="ft-input" [(ngModel)]="form.productId" name="metricProduct">
+              <option [ngValue]="null" i18n="@@recurring-contracts.components.aucun.67323ce2">— Aucun —</option>
               @for (p of products; track p.id) {
                 <option [ngValue]="p.id">{{ p.code }} — {{ p.name }}</option>
               }
             </select>
           </label>
           <label class="checkbox-label">
-            <input type="checkbox" [(ngModel)]="form.isActive" name="metricActive" />
+            <input type="checkbox" [(ngModel)]="form.isActive" name="metricActive" /><ng-container i18n="@@recurring-contracts.components.metrique.active.83bddb37">
             Métrique active
-          </label>
+          </ng-container></label>
         </div>
       </div>
 
       <ng-template pTemplate="footer">
         @if (editingId) {
-          <app-button variant="ghost" (clicked)="resetForm()">Annuler la modification</app-button>
+          <app-button variant="ghost" (clicked)="resetForm()" i18n="@@recurring-contracts.components.annuler.la.modification.a5ded982">Annuler la modification</app-button>
         }
         <app-button variant="primary" icon="pi-check" [disabled]="saving" (clicked)="save()">
-          {{ saving ? 'Enregistrement…' : 'Enregistrer' }}
+          {{ saving ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_f7c8bc }}
         </app-button>
       </ng-template>
     </p-dialog>
@@ -108,7 +109,7 @@ interface AggregationOption {
       margin-bottom: var(--spacing-4);
 
       th {
-        text-align: left;
+        text-align: start;
         color: var(--color-text-secondary);
         font-weight: var(--font-weight-semibold);
         padding: var(--spacing-2);
@@ -175,6 +176,12 @@ interface AggregationOption {
   `]
 })
 export class UsageMetricDialogComponent {
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
+  readonly loc_ui_tern_modifier_la_metrique_4071da = $localize`:@@ui.tern.modifier.la.metrique.4071da:Modifier la métrique`;
+  readonly loc_ui_tern_nouvelle_metrique_e1b093 = $localize`:@@ui.tern.nouvelle.metrique.e1b093:Nouvelle métrique`;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
   @Input() visible = false;
   @Output() visibleChange = new EventEmitter<boolean>();
   @Input() metrics: UsageMetric[] = [];
@@ -192,9 +199,9 @@ export class UsageMetricDialogComponent {
   form: UpsertUsageMetricPayload = this.emptyForm();
 
   readonly aggregationOptions: AggregationOption[] = [
-    { label: 'Somme', value: 'Sum' },
-    { label: 'Maximum', value: 'Max' },
-    { label: 'Dernière valeur', value: 'Last' }
+    { label: $localize`:@@recurring-contracts.usage-metric-dialog.ts.somme.f38fb915:Somme`, value: 'Sum' },
+    { label: $localize`:@@recurring-contracts.usage-metric-dialog.ts.maximum.a8df2fec:Maximum`, value: 'Max' },
+    { label: $localize`:@@recurring-contracts.usage-metric-dialog.ts.derniere.valeur.b7c67051:Dernière valeur`, value: 'Last' }
   ];
 
   aggregationLabel(mode: UsageAggregationMode): string {
@@ -222,8 +229,8 @@ export class UsageMetricDialogComponent {
     if (!this.form.code?.trim() || !this.form.name?.trim() || !this.form.unit?.trim()) {
       this.toast.add({
         severity: 'warn',
-        summary: 'Formulaire incomplet',
-        detail: 'Code, nom et unité sont obligatoires.'
+        summary: $localize`:@@usage-metric-dialog.component.summary.Formulaire_incom:Formulaire incomplet`,
+        detail: $localize`:@@usage-metric-dialog.component.detail.Code_nom_et_uni:Code, nom et unité sont obligatoires.`
       });
       return;
     }
@@ -236,8 +243,8 @@ export class UsageMetricDialogComponent {
         this.saving = false;
         this.toast.add({
           severity: 'success',
-          summary: this.editingId ? 'Métrique modifiée' : 'Métrique créée',
-          detail: `La métrique « ${this.form.name} » a été enregistrée.`
+          summary: this.editingId ? $localize`:@@ui.tern.metrique.modifiee.174890:Métrique modifiée` : $localize`:@@ui.tern.metrique.creee.86b599:Métrique créée`,
+          detail: $localize`:@@recurring-contracts.usage-metric-dialog.ts.la.metrique.name.a.ete.enregistree.a18dafdf:La métrique « ${this.form.name}:name: » a été enregistrée.`
         });
         this.resetForm();
         this.saved.emit();
@@ -245,7 +252,7 @@ export class UsageMetricDialogComponent {
       error: (err: unknown) => {
         this.saving = false;
         this.errorHandler.logError('RecurringContracts: usage metric save', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@usage-metric-dialog.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }

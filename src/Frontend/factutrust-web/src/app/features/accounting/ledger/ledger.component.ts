@@ -63,6 +63,10 @@ type LedgerMode = 'single' | 'range' | 'recap';
   styleUrl: './ledger.component.scss'
 })
 export class LedgerComponent implements OnInit {
+  protected loc_afficher_les_mouvements_du_compte_ac_02e9c2(p0: unknown): string {
+    return $localize`:@@accounting.ledger.tpl.afficher.les.mouvements.du.compte.accoun.02e9c276:Afficher les mouvements du compte ${p0}:account:`;
+  }
+
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly route = inject(ActivatedRoute);
@@ -251,7 +255,7 @@ export class LedgerComponent implements OnInit {
     if (!this.account.trim()) {
       this.loading.set(false);
       this.rows.set([]);
-      this.error.set('Saisissez un numéro de compte pour afficher le grand livre.');
+      this.error.set($localize`:@@accounting.ledger.ts.saisissez.un.numero.de.compte.pour.affic.a85beef0:Saisissez un numéro de compte pour afficher le grand livre.`);
       return;
     }
     const from = parseLocalDateString(this.fromStr);
@@ -259,7 +263,7 @@ export class LedgerComponent implements OnInit {
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
       this.loading.set(false);
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.error.set(null);
@@ -273,10 +277,10 @@ export class LedgerComponent implements OnInit {
             this.rows.set(res.data);
             this.error.set(null);
           } else {
-            this.error.set(res.error ?? 'Erreur');
+            this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
           }
         },
-        error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
+        error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.ledger.ts.erreur.reseau.0683007f:Erreur réseau`))
       });
   }
 
@@ -292,9 +296,9 @@ export class LedgerComponent implements OnInit {
       .subscribe({
         next: res => {
           if (res.success && res.data) this.generalLedger.set(res.data);
-          else this.error.set(res.error ?? 'Erreur');
+          else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         },
-        error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
+        error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.ledger.ts.erreur.reseau.0683007f:Erreur réseau`))
       });
   }
 
@@ -310,9 +314,9 @@ export class LedgerComponent implements OnInit {
       .subscribe({
         next: res => {
           if (res.success && res.data) this.recapRows.set(res.data);
-          else this.error.set(res.error ?? 'Erreur');
+          else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         },
-        error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
+        error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.ledger.ts.erreur.reseau.0683007f:Erreur réseau`))
       });
   }
 
@@ -323,7 +327,7 @@ export class LedgerComponent implements OnInit {
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
       this.loading.set(false);
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return null;
     }
     return { from, to };
@@ -341,14 +345,14 @@ export class LedgerComponent implements OnInit {
 
     const account = this.account.trim();
     if (!account) {
-      this.error.set('Saisissez un numéro de compte avant d\'exporter.');
+      this.error.set($localize`:@@accounting.ledger.ts.saisissez.un.numero.de.compte.avant.d.ex.0325b027:Saisissez un numéro de compte avant d'exporter.`);
       return;
     }
     const from = parseLocalDateString(this.fromStr);
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.exporting.set(true);
@@ -359,7 +363,7 @@ export class LedgerComponent implements OnInit {
       },
       error: err => {
         this.exporting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.ledger.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
       }
     });
   }
@@ -385,7 +389,7 @@ export class LedgerComponent implements OnInit {
         },
         error: err => {
           this.exporting.set(false);
-          this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.ledger.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
         }
       });
   }
@@ -405,7 +409,7 @@ export class LedgerComponent implements OnInit {
       },
       error: err => {
         this.exporting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.ledger.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
       }
     });
   }

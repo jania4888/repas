@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd, ActivatedRoute } from '@angular/router';
@@ -30,6 +31,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
 import { AppModule } from '@core/models/app-module';
 import { filter, take } from 'rxjs/operators';
 import { applyProductListFiltersFromQuery } from '@core/utils/list-filter-from-query';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 interface CategoryOption {
   label: string;
@@ -40,6 +42,7 @@ interface CategoryOption {
   selector: 'app-product-list',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     BarcodeScanFieldComponent,
     PrintLabelsDialogComponent,
     CommonModule,
@@ -64,28 +67,26 @@ interface CategoryOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Produits & Services" 
-      subtitle="Gérez votre catalogue de produits et services">
+      title="Produits & Services" i18n-title="@@products.product-list.produits.services.01d33b70" 
+      subtitle="Gérez votre catalogue de produits et services" i18n-subtitle="@@products.product-list.gerez.votre.catalogue.de.produits.et.ser.33a68e21">
       @if (canCreateProduct()) {
         <app-button 
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new">
-          Nouveau produit
-        </app-button>
+          routerLink="new" i18n="@@products.product-list.nouveau.produit.c31ca342"> Nouveau produit </app-button>
       }
     </app-page-header>
 
     <!-- Filters -->
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@products.product-list.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@products.product-list.reinitialiser.les.filtres.d8915f02" i18n="@@products.product-list.reinitialiser.9637f51e">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -97,7 +98,7 @@ interface CategoryOption {
           <input 
             pInputText 
             type="text" 
-            placeholder="Rechercher par nom ou code..." 
+            placeholder="Rechercher par nom ou code..." i18n-placeholder="@@products.product-list.rechercher.par.nom.ou.code.23e048c2" 
             [(ngModel)]="searchTerm"
             (input)="onSearch()"
             class="w-full">
@@ -105,7 +106,7 @@ interface CategoryOption {
         @if (barcodeScanEnabled) {
           <span class="flex-1">
             <ft-barcode-scan-field
-              placeholder="Scanner un code-barres"
+              placeholder="Scanner un code-barres" i18n-placeholder="@@products.product-list.scanner.un.code.barres.6f3f91b0"
               [autoFocus]="false"
               (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
           </span>
@@ -114,7 +115,7 @@ interface CategoryOption {
         <p-select 
           [options]="categoryOptions" 
           [(ngModel)]="selectedCategory"
-          placeholder="Toutes les types"
+          placeholder="Toutes les types" i18n-placeholder="@@products.product-list.toutes.les.types.946cc73a"
           [showClear]="true"
           (onChange)="onSearch()">
         </p-select>
@@ -122,7 +123,7 @@ interface CategoryOption {
         <p-select 
           [options]="statusOptions" 
           [(ngModel)]="selectedStatus"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@products.product-list.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onSearch()">
         </p-select>
@@ -130,7 +131,7 @@ interface CategoryOption {
         <p-select
           [options]="variantFilterOptions"
           [(ngModel)]="selectedVariantFilter"
-          placeholder="Tous les produits"
+          placeholder="Tous les produits" i18n-placeholder="@@products.product-list.tous.les.produits.02d62f0a"
           [showClear]="true"
           (onChange)="onSearch()">
         </p-select>
@@ -158,16 +159,16 @@ interface CategoryOption {
         
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="code" style="width: 120px">Code <p-sortIcon field="code"></p-sortIcon></th>
-            <th pSortableColumn="name">Désignation <p-sortIcon field="name"></p-sortIcon></th>
-            <th>Type</th>
-            <th>Catégorie</th>
-            <th pSortableColumn="unitPrice" class="text-right" style="width: 140px">Prix HT <p-sortIcon field="unitPrice"></p-sortIcon></th>
-            <th style="width: 80px">Unité</th>
-            <th style="width: 80px">TVA</th>
-            <th style="width: 120px">Stock</th>
-            <th style="width: 80px">Statut</th>
-            <th style="width: 140px" class="text-right">Actions</th>
+            <th pSortableColumn="code" style="width: 120px"><ng-container i18n="@@products.product-list.code.adac6937">Code </ng-container> <p-sortIcon field="code"></p-sortIcon></th>
+            <th pSortableColumn="name"><ng-container i18n="@@products.product-list.designation.63a9062c">Désignation </ng-container> <p-sortIcon field="name"></p-sortIcon></th>
+            <th i18n="@@products.product-list.type.3deb7456">Type</th>
+            <th i18n="@@products.product-list.categorie.6b38300a">Catégorie</th>
+            <th pSortableColumn="unitPrice" class="text-right" style="width: 140px"><ng-container i18n="@@products.product-list.prix.ht.362207ca">Prix HT </ng-container> <p-sortIcon field="unitPrice"></p-sortIcon></th>
+            <th style="width: 80px" i18n="@@products.product-list.unite.388fd9c4">Unité</th>
+            <th style="width: 80px" i18n="@@products.product-list.tva.fb62cb5d">TVA</th>
+            <th style="width: 120px" i18n="@@products.product-list.stock.bcecf456">Stock</th>
+            <th style="width: 80px" i18n="@@products.product-list.statut.659499f3">Statut</th>
+            <th style="width: 140px" class="text-right" i18n="@@products.product-list.actions.c3cd636a">Actions</th>
           </tr>
         </ng-template>
 
@@ -185,7 +186,7 @@ interface CategoryOption {
               </div>
             </td>
             <td>
-              <p-tag [value]="product.typeDisplay" severity="info"></p-tag>
+              <p-tag [value]="product.typeDisplay | backendLabel" severity="info"></p-tag>
             </td>
             <td>
               <span class="product-category">{{ product.category }}</span>
@@ -197,7 +198,7 @@ interface CategoryOption {
             <td>{{ product.vatRate }}%</td>
             <td>
               <p-tag 
-                [value]="product.isStockManaged ? 'Stock activé' : 'Sans stock'" 
+                [value]="product.isStockManaged ? loc_ui_tern_stock_active_e21445 : loc_ui_tern_sans_stock_ef7cf7" 
                 [severity]="product.isStockManaged ? 'success' : 'secondary'">
               </p-tag>
               @if (product.isVariantTemplate) {
@@ -215,7 +216,7 @@ interface CategoryOption {
             </td>
             <td>
               <p-tag 
-                [value]="product.isActive ? 'Actif' : 'Inactif'" 
+                [value]="product.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033" 
                 [severity]="product.isActive ? 'success' : 'secondary'">
               </p-tag>
             </td>
@@ -228,10 +229,10 @@ interface CategoryOption {
                     [icon]="stockToggleLoading().has(product.id) ? 'pi-spin pi-spinner' : 'pi-box'"
                     [iconOnly]="true"
                     [disabled]="stockToggleLoading().has(product.id)"
-                    pTooltip="Activer la gestion de stock"
+                    pTooltip="Activer la gestion de stock" i18n-pTooltip="@@products.product-list.activer.la.gestion.de.stock.38bf89fb"
                     tooltipPosition="top"
                     (click)="enableStockManagement(product)"
-                    ariaLabel="Activer la gestion de stock">
+                    ariaLabel="Activer la gestion de stock" i18n-ariaLabel="@@products.product-list.activer.la.gestion.de.stock.90a2c1f9">
                   </app-button>
                 }
                 @if (canViewProduct()) {
@@ -241,9 +242,9 @@ interface CategoryOption {
                     icon="pi-eye"
                     [iconOnly]="true"
                     [routerLink]="[product.id, 'view']"
-                    pTooltip="Voir les détails du produit"
+                    pTooltip="Voir les détails du produit" i18n-pTooltip="@@products.product-list.voir.les.details.du.produit.155749a5"
                     tooltipPosition="top"
-                    ariaLabel="Voir les détails du produit">
+                    ariaLabel="Voir les détails du produit" i18n-ariaLabel="@@products.product-list.voir.les.details.du.produit.3819c890">
                   </app-button>
                 }
                 @if (canEditProduct()) {
@@ -253,9 +254,9 @@ interface CategoryOption {
                     icon="pi-pencil"
                     [iconOnly]="true"
                     [routerLink]="[product.id, 'edit']"
-                    pTooltip="Modifier le produit"
+                    pTooltip="Modifier le produit" i18n-pTooltip="@@products.product-list.modifier.le.produit.aeaa8f8a"
                     tooltipPosition="top"
-                    ariaLabel="Modifier le produit">
+                    ariaLabel="Modifier le produit" i18n-ariaLabel="@@products.product-list.modifier.le.produit.525c4ebe">
                   </app-button>
                 }
                 @if (labelPrintingEnabled) {
@@ -265,9 +266,9 @@ interface CategoryOption {
                     icon="pi-print"
                     [iconOnly]="true"
                     (clicked)="openLabelDialog(product)"
-                    pTooltip="Imprimer les étiquettes"
+                    pTooltip="Imprimer les étiquettes" i18n-pTooltip="@@products.product-list.imprimer.les.etiquettes.ff40cf1e"
                     tooltipPosition="top"
-                    ariaLabel="Imprimer les étiquettes">
+                    ariaLabel="Imprimer les étiquettes" i18n-ariaLabel="@@products.product-list.imprimer.les.etiquettes.af1e0f60">
                   </app-button>
                 }
                 @if (canDeleteProduct()) {
@@ -277,7 +278,7 @@ interface CategoryOption {
                     icon="pi-trash"
                     [iconOnly]="true"
                     (click)="confirmDelete(product)"
-                    ariaLabel="Supprimer le produit">
+                    ariaLabel="Supprimer le produit" i18n-ariaLabel="@@products.product-list.supprimer.le.produit.b683c9f4">
                   </app-button>
                 }
               </div>
@@ -290,10 +291,10 @@ interface CategoryOption {
             <td colspan="10" class="text-center p-6">
               <app-empty-state
                 illustration="empty-products.svg"
-                title="Aucun produit"
-                description="Ajoutez votre premier produit ou service pour commencer à créer des factures."
+                title="Aucun produit" i18n-title="@@products.product-list.aucun.produit.2cc33b12"
+                description="Ajoutez votre premier produit ou service pour commencer à créer des factures." i18n-description="@@products.product-list.ajoutez.votre.premier.produit.ou.service.fdbc6d41"
                 [showAction]="canCreateProduct()"
-                actionLabel="Ajouter un produit"
+                actionLabel="Ajouter un produit" i18n-actionLabel="@@products.product-list.ajouter.un.produit.580cdfb5"
                 actionRoute="new">
               </app-empty-state>
             </td>
@@ -359,11 +360,15 @@ interface CategoryOption {
     }
 
     .text-right {
-      text-align: right;
+      text-align: end;
     }
   `]
 })
 export class ProductListComponent implements OnInit {
+  readonly loc_ui_tern_stock_active_e21445 = $localize`:@@ui.tern.stock.active.e21445:Stock activé`;
+  readonly loc_ui_tern_sans_stock_ef7cf7 = $localize`:@@ui.tern.sans.stock.ef7cf7:Sans stock`;
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
   private confirmationService = inject(ConfirmationService);
   private toastService = inject(ToastService);
   private productService = inject(ProductService);
@@ -398,10 +403,10 @@ export class ProductListComponent implements OnInit {
   summaryMetrics = computed<TotalMetric[]>(() => {
     const rows = this.products();
     return [
-      { label: 'Produits', value: rows.length, format: 'number', icon: 'pi-box', tone: 'primary' },
-      { label: 'Actifs', value: rows.filter(p => p.isActive).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-      { label: 'Inactifs', value: rows.filter(p => !p.isActive).length, format: 'number', icon: 'pi-ban', tone: 'neutral' },
-      { label: 'Gérés en stock', value: rows.filter(p => p.isStockManaged).length, format: 'number', icon: 'pi-database', tone: 'cyan' }
+      { label: $localize`:@@products.product-list.ts.produits.48000473:Produits`, value: rows.length, format: 'number', icon: 'pi-box', tone: 'primary' },
+      { label: $localize`:@@products.product-list.ts.actifs.4fc3a980:Actifs`, value: rows.filter(p => p.isActive).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+      { label: $localize`:@@products.product-list.ts.inactifs.41c2d03e:Inactifs`, value: rows.filter(p => !p.isActive).length, format: 'number', icon: 'pi-ban', tone: 'neutral' },
+      { label: $localize`:@@products.product-list.ts.geres.en.stock.869a3287:Gérés en stock`, value: rows.filter(p => p.isStockManaged).length, format: 'number', icon: 'pi-database', tone: 'cyan' }
     ];
   });
 
@@ -411,8 +416,8 @@ export class ProductListComponent implements OnInit {
   selectedVariantFilter: string | null = null;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Produits & Services' }
+    { label: $localize`:@@products.product-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@products.product-list.ts.produits.services.01d33b70:Produits & Services` }
   ];
 
   skeletonColumns: SkeletonColumn[] = [
@@ -429,21 +434,21 @@ export class ProductListComponent implements OnInit {
   ];
 
   categoryOptions: CategoryOption[] = [
-    { label: 'Produits', value: 'Produit' },
-    { label: 'Services', value: 'Service' },
-    { label: 'Abonnements', value: 'Abonnement' }
+    { label: $localize`:@@products.product-list.ts.produits.48000473:Produits`, value: 'Produit' },
+    { label: $localize`:@@products.product-list.ts.services.5cbd5840:Services`, value: 'Service' },
+    { label: $localize`:@@products.product-list.ts.abonnements.da06ab9a:Abonnements`, value: 'Abonnement' }
   ];
 
   statusOptions = [
-    { label: 'Actifs', value: true },
-    { label: 'Inactifs', value: false }
+    { label: $localize`:@@products.product-list.ts.actifs.4fc3a980:Actifs`, value: true },
+    { label: $localize`:@@products.product-list.ts.inactifs.41c2d03e:Inactifs`, value: false }
   ];
 
   variantFilterOptions = [
-    { label: 'Masquer les modèles', value: 'hideTemplates' },
-    { label: 'Modèles uniquement', value: 'templates' },
-    { label: 'Variantes (SKU)', value: 'variants' },
-    { label: 'Produits simples', value: 'simple' }
+    { label: $localize`:@@products.product-list.ts.masquer.les.modeles.d0f1732d:Masquer les modèles`, value: 'hideTemplates' },
+    { label: $localize`:@@products.product-list.ts.modeles.uniquement.9c4bbd0f:Modèles uniquement`, value: 'templates' },
+    { label: $localize`:@@products.product-list.ts.variantes.sku.7eac26ca:Variantes (SKU)`, value: 'variants' },
+    { label: $localize`:@@products.product-list.ts.produits.simples.f2dc61d3:Produits simples`, value: 'simple' }
   ];
 
   hasActiveFilters = computed(() => {
@@ -518,8 +523,8 @@ export class ProductListComponent implements OnInit {
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: response.errors?.join(', ') || 'Impossible de charger les produits'
+            summary: $localize`:@@product-list.component.summary.Erreur:Erreur`,
+            detail: response.errors?.join(', ') || $localize`:@@products.product-list.ts.impossible.de.charger.les.produits.a97081a2:Impossible de charger les produits`
           });
           this.products.set([]);
         }
@@ -530,8 +535,8 @@ export class ProductListComponent implements OnInit {
         const errorMessage = this.errorHandler.extractErrorMessage(error);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: errorMessage || 'Impossible de charger les produits'
+          summary: $localize`:@@product-list.component.summary.Erreur:Erreur`,
+          detail: errorMessage || $localize`:@@products.product-list.ts.impossible.de.charger.les.produits.a97081a2:Impossible de charger les produits`
         });
         this.errorHandler.logError('Failed to load products', error);
         this.products.set([]);
@@ -559,11 +564,11 @@ export class ProductListComponent implements OnInit {
 
   enableStockManagement(product: ProductListItem): void {
     this.confirmationService.confirm({
-      message: `Êtes-vous sûr de vouloir activer la gestion de stock pour le produit "${product.name}" ? Il n'est pas possible de désactiver cette fonctionnalité une fois activée.`,
-      header: 'Confirmation d\'activation',
+      message: $localize`:@@products.product-list.ts.etes.vous.sur.de.vouloir.activer.la.gest.3652c0ec:Êtes-vous sûr de vouloir activer la gestion de stock pour le produit "${product.name}:name:" ? Il n'est pas possible de désactiver cette fonctionnalité une fois activée.`,
+      header: $localize`:@@products.product-list.ts.confirmation.d.activation.e200cba4:Confirmation d'activation`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Oui, activer',
-      rejectLabel: 'Non, annuler',
+      acceptLabel: $localize`:@@product-list.component.acceptLabel.Oui, activer:Oui, activer`,
+      rejectLabel: $localize`:@@product-list.component.rejectLabel.Non_annuler:Non, annuler`,
       acceptButtonStyleClass: 'btn-primary',
       accept: () => {
         const currentSet = new Set(this.stockToggleLoading());
@@ -593,15 +598,15 @@ export class ProductListComponent implements OnInit {
             if (response.success) {
               this.toastService.add({
                 severity: 'success',
-                summary: 'Succès',
-                detail: 'La gestion de stock a été activée avec succès'
+                summary: $localize`:@@product-list.component.summary.Succès:Succès`,
+                detail: $localize`:@@product-list.component.detail.La_gestion_de_st:La gestion de stock a été activée avec succès`
               });
               this.loadProducts(); // Rafraîchir la liste
             } else {
               this.toastService.add({
                 severity: 'error',
-                summary: 'Erreur',
-                detail: response.errors?.join(', ') || 'Impossible d\'activer la gestion de stock'
+                summary: $localize`:@@product-list.component.summary.Erreur:Erreur`,
+                detail: response.errors?.join(', ') || $localize`:@@products.product-list.ts.impossible.d.activer.la.gestion.de.stock.49710ff2:Impossible d'activer la gestion de stock`
               });
             }
           },
@@ -613,8 +618,8 @@ export class ProductListComponent implements OnInit {
             const errorMessage = this.errorHandler.extractErrorMessage(error);
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
-              detail: errorMessage || 'Impossible d\'activer la gestion de stock'
+              summary: $localize`:@@product-list.component.summary.Erreur:Erreur`,
+              detail: errorMessage || $localize`:@@products.product-list.ts.impossible.d.activer.la.gestion.de.stock.49710ff2:Impossible d'activer la gestion de stock`
             });
             this.errorHandler.logError('Failed to enable stock management', error);
           }
@@ -625,11 +630,11 @@ export class ProductListComponent implements OnInit {
 
   confirmDelete(product: ProductListItem): void {
     this.confirmationService.confirm({
-      message: `Êtes-vous sûr de vouloir supprimer le produit "${product.name}" ?`,
-      header: 'Confirmation de suppression',
+      message: $localize`:@@products.product-list.ts.etes.vous.sur.de.vouloir.supprimer.le.pr.23339b70:Êtes-vous sûr de vouloir supprimer le produit "${product.name}:name:" ?`,
+      header: $localize`:@@products.product-list.ts.confirmation.de.suppression.6a082d0b:Confirmation de suppression`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Oui, supprimer',
-      rejectLabel: 'Non, annuler',
+      acceptLabel: $localize`:@@product-list.component.acceptLabel.Oui, supprim:Oui, supprimer`,
+      rejectLabel: $localize`:@@product-list.component.rejectLabel.Non_annuler:Non, annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.productService.deleteProduct(product.id).subscribe({
@@ -637,15 +642,15 @@ export class ProductListComponent implements OnInit {
             if (response.success) {
               this.toastService.add({
                 severity: 'success',
-                summary: 'Succès',
-                detail: 'Produit supprimé avec succès'
+                summary: $localize`:@@product-list.component.summary.Succès:Succès`,
+                detail: $localize`:@@product-list.component.detail.Produit supp:Produit supprimé avec succès`
               });
               this.loadProducts(); // Rafraîchir la liste
             } else {
               this.toastService.add({
                 severity: 'error',
-                summary: 'Erreur',
-                detail: response.errors?.join(', ') || 'Impossible de supprimer le produit'
+                summary: $localize`:@@product-list.component.summary.Erreur:Erreur`,
+                detail: response.errors?.join(', ') || $localize`:@@products.product-list.ts.impossible.de.supprimer.le.produit.80de49b9:Impossible de supprimer le produit`
               });
             }
           },
@@ -653,8 +658,8 @@ export class ProductListComponent implements OnInit {
             const errorMessage = this.errorHandler.extractErrorMessage(error);
             this.errorHandler.logError('Failed to delete product', error);
             this.confirmationService.alert({
-              message: errorMessage || 'Impossible de supprimer le produit',
-              header: 'Impossible de supprimer',
+              message: errorMessage || $localize`:@@products.product-list.ts.impossible.de.supprimer.le.produit.80de49b9:Impossible de supprimer le produit`,
+              header: $localize`:@@products.product-list.ts.impossible.de.supprimer.0300380e:Impossible de supprimer`,
               icon: 'pi pi-exclamation-triangle'
             });
           }

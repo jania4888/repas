@@ -187,14 +187,14 @@ function buildAccountDiagnostics(
       out.push({
         severity: 'blocking',
         code: 'AccountMissing',
-        message: `Le compte ${line.accountNumber} est absent du plan comptable.`,
+        message: $localize`:@@accounting.import-proposal.ts.le.compte.accountnumber.est.absent.du.pl.84069a81:Le compte ${line.accountNumber}:accountNumber: est absent du plan comptable.`,
         relatedLineIndex: i
       });
     } else if (status === 'inactive') {
       out.push({
         severity: 'blocking',
         code: 'AccountInactive',
-        message: `Le compte ${line.accountNumber} est désactivé.`,
+        message: $localize`:@@accounting.import-proposal.ts.le.compte.accountnumber.est.desactive.4a2dd509:Le compte ${line.accountNumber}:accountNumber: est désactivé.`,
         relatedLineIndex: i
       });
     }
@@ -215,7 +215,7 @@ function buildPeriodDiagnostics(
     out.push({
       severity: 'blocking',
       code: 'FutureDate',
-      message: "La date d'écriture est postérieure à la date du jour.",
+      message: $localize`:@@accounting.import-proposal.ts.la.date.d.ecriture.est.posterieure.a.la.65800431:La date d'écriture est postérieure à la date du jour.`,
       relatedLineIndex: null
     });
   }
@@ -224,7 +224,7 @@ function buildPeriodDiagnostics(
     out.push({
       severity: 'blocking',
       code: 'PeriodClosed',
-      message: 'La période comptable de cette date est clôturée.',
+      message: $localize`:@@accounting.import-proposal.ts.la.periode.comptable.de.cette.date.est.c.9c7d9809:La période comptable de cette date est clôturée.`,
       relatedLineIndex: null
     });
   }
@@ -254,7 +254,7 @@ function buildThirdPartyDiagnostics(
   return [{
     severity: 'warning',
     code: 'ThirdPartyNotMatched',
-    message: "Tiers non rapproché — l'écriture restera sans auxiliaire si vous ne sélectionnez pas un tiers.",
+    message: $localize`:@@accounting.import-proposal.ts.tiers.non.rapproche.l.ecriture.restera.s.afe0cf92:Tiers non rapproché — l'écriture restera sans auxiliaire si vous ne sélectionnez pas un tiers.`,
     relatedLineIndex: proposedLines.indexOf(collectiveLine)
   }];
 }
@@ -270,7 +270,7 @@ function buildTotalsMismatchDiagnostic(
   return {
     severity: 'warning',
     code: 'TotalsMismatch',
-    message: `Le total TTC du document (${documentTotalTtc.toFixed(3)}) diffère du total de l'écriture (${entryTotal.toFixed(3)}).`,
+    message: $localize`:@@accounting.import-proposal.ts.le.total.ttc.du.document.tofixed.differe.9c9c7662:Le total TTC du document (${documentTotalTtc.toFixed(3)}:toFixed:) diffère du total de l'écriture (${entryTotal.toFixed(3)}:toFixed1:).`,
     relatedLineIndex: null
   };
 }

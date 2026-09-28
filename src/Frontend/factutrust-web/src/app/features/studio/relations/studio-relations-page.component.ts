@@ -25,10 +25,10 @@ import { DiagramModel, toDiagram } from './studio-relation-diagram.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, TableModule, SelectModule, StudioPageShellComponent, StudioRelationDiagramComponent],
   template: `
-    <app-studio-page-shell [title]="labels.relations.title" subtitle="Cartographie des liens entre tables" [breadcrumbs]="breadcrumbs">
+    <app-studio-page-shell [title]="labels.relations.title" subtitle="Cartographie des liens entre tables" i18n-subtitle="@@studio.relations.cartographie.des.liens.entre.tables.13a4fb5c" [breadcrumbs]="breadcrumbs">
       <div studioActions class="studio-head-actions">
         <p-select [options]="entityOptions()" [ngModel]="filterEntityId()" (ngModelChange)="filterEntityId.set($event)"
-          optionLabel="label" optionValue="value" [showClear]="true" placeholder="Filtrer par table" appendTo="body"
+          optionLabel="label" optionValue="value" [showClear]="true" placeholder="Filtrer par table" i18n-placeholder="@@studio.relations.filtrer.par.table.462c26e0" appendTo="body"
           panelStyleClass="studio-theme" data-testid="relations-filter" />
       </div>
 
@@ -38,7 +38,7 @@ import { DiagramModel, toDiagram } from './studio-relation-diagram.model';
         <div class="ft-table-card">
           <p-table [value]="filteredRelations()" [loading]="loading()" styleClass="p-datatable-sm">
             <ng-template pTemplate="header">
-              <tr><th>Source</th><th>Type</th><th>Cible</th><th>Jonction</th></tr>
+              <tr><th i18n="@@studio.relations.source.6da13add">Source</th><th i18n="@@studio.relations.type.3deb7456">Type</th><th i18n="@@studio.relations.cible.bebdb9b8">Cible</th><th i18n="@@studio.relations.jonction.1f6dc40a">Jonction</th></tr>
             </ng-template>
             <ng-template pTemplate="body" let-rel>
               <tr>

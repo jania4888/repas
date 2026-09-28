@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import {
   Component,
   ElementRef,
@@ -43,7 +44,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
   providers: [AccountingDocumentImportService],
   template: `
     <p-dialog
-      header="Importer une facture"
+      header="Importer une facture" i18n-header="@@accounting.manual-entry.importer.une.facture.66ed8807"
       [(visible)]="visible"
       [modal]="true"
       [style]="{ width: phase() === 'review' ? '1100px' : '560px', maxWidth: '98vw' }"
@@ -51,7 +52,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
       [resizable]="false"
       [closable]="true"
       (onHide)="onHide()"
-      ariaLabel="Importer une facture de vente ou d'achat">
+      ariaLabel="Importer une facture de vente ou d'achat" i18n-ariaLabel="@@accounting.manual-entry.importer.une.facture.de.vente.ou.d.achat.14bcf5ca">
 
       <input
         #fileInput
@@ -66,34 +67,30 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
         @case ('extracting') {
           <div class="adi-state" role="status" aria-live="polite">
             <i class="pi pi-spin pi-spinner adi-spinner" aria-hidden="true"></i>
-            <p class="adi-title">Analyse de la pièce… ({{ elapsedSeconds() }} s)</p>
+            <p class="adi-title" i18n="@@accounting.manual-entry.analyse.de.la.piece.s.b321b13b">Analyse de la pièce… ({{ elapsedSeconds() }} s)</p>
             <p class="adi-text">
               @if (selectedFileName()) {
                 <span class="adi-filename">{{ selectedFileName() }}</span>
               }
-              @if (elapsedSeconds() < 20) {
+              @if (elapsedSeconds() < 20) {<ng-container i18n="@@accounting.manual-entry.lecture.du.document.et.detection.des.zon.71726a65">
                 Lecture du document et détection des zones…
-              } @else {
+              </ng-container>} @else {<ng-container i18n="@@accounting.manual-entry.le.document.n.est.pas.au.format.instafac.1a09b4ea">
                 Le document n'est pas au format InstaFact : l'analyse IA peut prendre
                 jusqu'à 3 minutes la première fois.
-              }
+              </ng-container>}
             </p>
             <app-button variant="secondary" icon="pi-times" iconPos="left"
-                        (click)="cancelImport()" ariaLabel="Annuler l'analyse">
-              Annuler
-            </app-button>
+                        (click)="cancelImport()" ariaLabel="Annuler l'analyse" i18n-ariaLabel="@@accounting.manual-entry.annuler.l.analyse.f487f0e5" i18n="@@accounting.manual-entry.annuler.49ba3292"> Annuler </app-button>
           </div>
         }
 
         @case ('error') {
           <div class="adi-state" role="alert">
             <i class="pi pi-exclamation-triangle adi-icon adi-icon-error" aria-hidden="true"></i>
-            <p class="adi-title">L'analyse a échoué</p>
+            <p class="adi-title" i18n="@@accounting.manual-entry.l.analyse.a.echoue.14b05060">L'analyse a échoué</p>
             <p class="adi-text">{{ errorMessage() }}</p>
             <app-button variant="primary" icon="pi-refresh" iconPos="left"
-                        (click)="chooseFile()" ariaLabel="Choisir un autre fichier">
-              Réessayer
-            </app-button>
+                        (click)="chooseFile()" ariaLabel="Choisir un autre fichier" i18n-ariaLabel="@@accounting.manual-entry.choisir.un.autre.fichier.c0cbec19" i18n="@@accounting.manual-entry.reessayer.895d416b"> Réessayer </app-button>
           </div>
         }
 
@@ -103,20 +100,20 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
               <!-- Sens de la pièce -->
               <section class="adi-card">
                 <header class="adi-card__header">
-                  <h3 class="adi-card__title">Sens de la pièce</h3>
+                  <h3 class="adi-card__title" i18n="@@accounting.manual-entry.sens.de.la.piece.cbc2df59">Sens de la pièce</h3>
                   @if (p.directionReason) {
                     <span class="adi-card__hint">{{ p.directionReason }}</span>
                   }
                 </header>
-                <div class="adi-direction" role="radiogroup" aria-label="Sens de la pièce">
+                <div class="adi-direction" role="radiogroup" aria-label="Sens de la pièce" i18n-aria-label="@@accounting.manual-entry.sens.de.la.piece.cbc2df59">
                   <label class="adi-direction__option" [class.is-active]="p.direction === 'SALE'">
                     <input type="radio" name="adi-direction" value="SALE"
                            [checked]="p.direction === 'SALE'"
                            [disabled]="reanalyzing()"
                            (change)="changeDirection('SALE')" />
                     <span>
-                      <strong>Vente</strong>
-                      <small>Journal JV — client au débit</small>
+                      <strong i18n="@@accounting.manual-entry.vente.9e7753e0">Vente</strong>
+                      <small i18n="@@accounting.manual-entry.journal.jv.client.au.debit.c896c4b0">Journal JV — client au débit</small>
                     </span>
                   </label>
                   <label class="adi-direction__option" [class.is-active]="p.direction === 'PURCHASE'">
@@ -125,12 +122,12 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
                            [disabled]="reanalyzing()"
                            (change)="changeDirection('PURCHASE')" />
                     <span>
-                      <strong>Achat</strong>
-                      <small>Journal JA — fournisseur au crédit</small>
+                      <strong i18n="@@accounting.manual-entry.achat.2faf08bf">Achat</strong>
+                      <small i18n="@@accounting.manual-entry.journal.ja.fournisseur.au.credit.481d88ab">Journal JA — fournisseur au crédit</small>
                     </span>
                   </label>
                   @if (reanalyzing()) {
-                    <span class="adi-reanalyzing" role="status">
+                    <span class="adi-reanalyzing" role="status" i18n="@@accounting.manual-entry.recalcul.e2a0a91b">
                       <i class="pi pi-spin pi-spinner" aria-hidden="true"></i> Recalcul…
                     </span>
                   }
@@ -145,21 +142,21 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
                 <!-- Tiers -->
                 <section class="adi-card">
                   <h3 class="adi-card__title">
-                    {{ p.direction === 'SALE' ? 'Client' : 'Fournisseur' }}
+                    {{ p.direction === 'SALE' ? loc_ui_tern_client_1bdd79 : loc_ui_tern_fournisseur_97d91d }}
                   </h3>
                   @if (p.thirdParty; as tp) {
                     <dl class="adi-facts">
-                      <div><dt>Nom</dt><dd>{{ tp.matchedName || tp.name || '—' }}</dd></div>
-                      <div><dt>Matricule fiscal</dt><dd>{{ tp.nif || '—' }}</dd></div>
-                      <div><dt>Compte collectif</dt><dd><code>{{ tp.collectiveAccountNumber }}</code></dd></div>
+                      <div><dt i18n="@@accounting.manual-entry.nom.7ff20370">Nom</dt><dd>{{ tp.matchedName || tp.name || '—' }}</dd></div>
+                      <div><dt i18n="@@accounting.manual-entry.matricule.fiscal.304096c4">Matricule fiscal</dt><dd>{{ tp.nif || '—' }}</dd></div>
+                      <div><dt i18n="@@accounting.manual-entry.compte.collectif.f1c7e97c">Compte collectif</dt><dd><code>{{ tp.collectiveAccountNumber }}</code></dd></div>
                     </dl>
                     @if (tp.matchedId) {
-                      <p class="adi-badge adi-badge--ok">
+                      <p class="adi-badge adi-badge--ok" i18n="@@accounting.manual-entry.tiers.rapproche.9818df8a">
                         <i class="pi pi-check-circle" aria-hidden="true"></i>
-                        Tiers rapproché{{ tp.matchedBy === 'nif' ? ' par matricule fiscal' : ' par nom' }}
+                        Tiers rapproché{{ tp.matchedBy === 'nif' ? loc_ui_tern_par_matricule_fiscal_ef1940 : loc_ui_tern_par_nom_4c4de0 }}
                       </p>
                     } @else {
-                      <p class="adi-badge adi-badge--warn">
+                      <p class="adi-badge adi-badge--warn" i18n="@@accounting.manual-entry.tiers.non.rapproche.l.ecriture.restera.s.30dc87a4">
                         <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
                         Tiers non rapproché — l'écriture restera sans auxiliaire
                       </p>
@@ -172,25 +169,25 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
 
                 <!-- Zones détectées -->
                 <section class="adi-card">
-                  <h3 class="adi-card__title">Zones détectées</h3>
+                  <h3 class="adi-card__title" i18n="@@accounting.manual-entry.zones.detectees.b69dd9e4">Zones détectées</h3>
                   <dl class="adi-facts">
-                    <div><dt>N° de pièce</dt><dd>{{ p.extraction.documentNumber || '—' }}</dd></div>
-                    <div><dt>Date</dt><dd>{{ p.entryDate || '—' }}</dd></div>
-                    <div><dt>Total HT</dt><dd>{{ amount(p.extraction.totalHt) }}</dd></div>
+                    <div><dt i18n="@@accounting.manual-entry.n.de.piece.a63c611f">N° de pièce</dt><dd>{{ p.extraction.documentNumber || '—' }}</dd></div>
+                    <div><dt i18n="@@accounting.manual-entry.date.eb9a4bc1">Date</dt><dd>{{ p.entryDate || '—' }}</dd></div>
+                    <div><dt i18n="@@accounting.manual-entry.total.ht.2ca17ae6">Total HT</dt><dd>{{ amount(p.extraction.totalHt) }}</dd></div>
                     @for (b of p.extraction.vatBreakdown; track b.ratePercent) {
                       <div>
                         <dt>TVA {{ b.ratePercent }}%</dt>
-                        <dd>{{ amount(b.vatAmount) }} <small>(base {{ amount(b.baseAmount) }})</small></dd>
+                        <dd i18n="@@accounting.manual-entry.base.3756d9fc">{{ amount(b.vatAmount) }} <small>(base {{ amount(b.baseAmount) }})</small></dd>
                       </div>
                     }
                     @if (p.extraction.fodecAmount) {
-                      <div><dt>FODEC</dt><dd>{{ amount(p.extraction.fodecAmount) }}</dd></div>
+                      <div><dt i18n="@@accounting.manual-entry.fodec.9a029080">FODEC</dt><dd>{{ amount(p.extraction.fodecAmount) }}</dd></div>
                     }
                     @if (p.extraction.fiscalStampAmount) {
-                      <div><dt>Timbre fiscal</dt><dd>{{ amount(p.extraction.fiscalStampAmount) }}</dd></div>
+                      <div><dt i18n="@@accounting.manual-entry.timbre.fiscal.1f8f7dd1">Timbre fiscal</dt><dd>{{ amount(p.extraction.fiscalStampAmount) }}</dd></div>
                     }
                     <div class="adi-facts__total">
-                      <dt>Total TTC</dt><dd>{{ amount(p.extraction.totalTtc) }}</dd>
+                      <dt i18n="@@accounting.manual-entry.total.ttc.9e80ff7c">Total TTC</dt><dd>{{ amount(p.extraction.totalTtc) }}</dd>
                     </div>
                   </dl>
                 </section>
@@ -207,7 +204,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
               <!-- Diagnostics -->
               @if (displayDiagnostics().length > 0) {
                 <section class="adi-card">
-                  <h3 class="adi-card__title">Contrôles</h3>
+                  <h3 class="adi-card__title" i18n="@@accounting.manual-entry.controles.3d337f2f">Contrôles</h3>
                   <ul class="adi-diagnostics">
                     @for (d of displayDiagnostics(); track $index) {
                       <li class="adi-diagnostic" [class]="'adi-diagnostic--' + d.severity">
@@ -219,9 +216,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
                     }
                   </ul>
                   @if (!canApplyNow() && !reanalyzing()) {
-                    <p class="adi-apply-hint" role="status">
-                      Corrigez les contrôles bloquants ou équilibrez l'écriture avant d'appliquer.
-                    </p>
+                    <p class="adi-apply-hint" role="status" i18n="@@accounting.manual-entry.corrigez.les.controles.bloquants.ou.equilibrez.l.df86b9f6"> Corrigez les contrôles bloquants ou équilibrez l'écriture avant d'appliquer. </p>
                   }
                 </section>
               }
@@ -232,17 +227,13 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
         @default {
           <div class="adi-state">
             <i class="pi pi-file-import adi-icon adi-icon-idle" aria-hidden="true"></i>
-            <p class="adi-title">Importez une facture à comptabiliser</p>
-            <p class="adi-text">
-              Facture de vente ou d'achat (PDF recommandé ; photos et scans acceptés).
+            <p class="adi-title" i18n="@@accounting.manual-entry.importez.une.facture.a.comptabiliser.d03c8692">Importez une facture à comptabiliser</p>
+            <p class="adi-text" i18n="@@accounting.manual-entry.facture.de.vente.ou.d.achat.pdf.recommande.photo.6ef07041"> Facture de vente ou d'achat (PDF recommandé ; photos et scans acceptés).
               Le système détecte les zones de la pièce et propose l'écriture selon le plan
-              comptable tunisien. Vous relisez avant d'appliquer.
-            </p>
+              comptable tunisien. Vous relisez avant d'appliquer. </p>
             <app-button variant="primary" icon="pi-upload" iconPos="left"
-                        (click)="chooseFile()" ariaLabel="Choisir un fichier à importer">
-              Choisir un fichier
-            </app-button>
-            <p class="adi-hint">Taille maximale : 10 Mo</p>
+                        (click)="chooseFile()" ariaLabel="Choisir un fichier à importer" i18n-ariaLabel="@@accounting.manual-entry.choisir.un.fichier.a.importer.6d6c3a02" i18n="@@accounting.manual-entry.choisir.un.fichier.75c27e25"> Choisir un fichier </app-button>
+            <p class="adi-hint" i18n="@@accounting.manual-entry.taille.maximale.10.mo.8166532b">Taille maximale : 10 Mo</p>
             @if (capabilityHint(); as hint) {
               <p class="adi-hint adi-hint-warn" role="status">{{ hint }}</p>
             }
@@ -253,15 +244,11 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
       <ng-template pTemplate="footer">
         @if (phase() === 'review') {
           <div class="adi-footer">
-            <app-button variant="secondary" (click)="chooseFile()" ariaLabel="Analyser une autre pièce">
-              Autre pièce
-            </app-button>
+            <app-button variant="secondary" (click)="chooseFile()" ariaLabel="Analyser une autre pièce" i18n-ariaLabel="@@accounting.manual-entry.analyser.une.autre.piece.09bd4d3a" i18n="@@accounting.manual-entry.autre.piece.de18e3bf"> Autre pièce </app-button>
             <app-button variant="primary" icon="pi-check" iconPos="left"
                         [disabled]="!canApplyNow()"
                         (click)="apply()"
-                        ariaLabel="Appliquer la proposition à la saisie">
-              Appliquer à la saisie
-            </app-button>
+                        ariaLabel="Appliquer la proposition à la saisie" i18n-ariaLabel="@@accounting.manual-entry.appliquer.la.proposition.a.la.saisie.be30f406" i18n="@@accounting.manual-entry.appliquer.a.la.saisie.1da9e067"> Appliquer à la saisie </app-button>
           </div>
         }
       </ng-template>
@@ -297,7 +284,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
     .adi-facts { margin:0; display:flex; flex-direction:column; gap:var(--spacing-1); }
     .adi-facts > div { display:flex; justify-content:space-between; gap:var(--spacing-3); font-size:var(--font-size-sm); }
     .adi-facts dt { color:var(--color-text-secondary); margin:0; }
-    .adi-facts dd { margin:0; font-variant-numeric:tabular-nums; text-align:right; }
+    .adi-facts dd { margin:0; font-variant-numeric:tabular-nums; text-align:end; }
     .adi-facts__total { border-top:1px solid var(--color-border-subtle); margin-top:var(--spacing-1); padding-top:var(--spacing-1); font-weight:600; }
 
     .adi-badge { display:flex; align-items:center; gap:var(--spacing-2); margin:var(--spacing-2) 0 0; font-size:var(--font-size-xs); }
@@ -309,11 +296,11 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
     .adi-apply-hint { margin:var(--spacing-2) 0 0; font-size:var(--font-size-xs); color:var(--color-text-secondary); }
 
     .adi-table { width:100%; border-collapse:collapse; font-size:var(--font-size-sm); }
-    .adi-table th, .adi-table td { padding:var(--spacing-2); border-bottom:1px solid var(--color-border-subtle); text-align:left; vertical-align:top; }
+    .adi-table th, .adi-table td { padding:var(--spacing-2); border-bottom:1px solid var(--color-border-subtle); text-align:start; vertical-align:top; }
     .adi-table tfoot th, .adi-table tfoot td { border-bottom:none; border-top:2px solid var(--color-border-default); font-weight:600; }
-    .adi-num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .adi-num { text-align:end; font-variant-numeric:tabular-nums; white-space:nowrap; }
     .adi-account-label { display:block; color:var(--color-text-tertiary); font-size:var(--font-size-xs); }
-    .adi-chip { display:inline-block; margin-left:var(--spacing-1); padding:0 var(--spacing-1); border-radius:var(--radius-sm); font-size:var(--font-size-xs); }
+    .adi-chip { display:inline-block; margin-inline-start:var(--spacing-1); padding:0 var(--spacing-1); border-radius:var(--radius-sm); font-size:var(--font-size-xs); }
     .adi-chip--danger { background:var(--color-danger); color:#fff; }
     .adi-chip--warn { background:var(--color-warning); color:#000; }
     .adi-balanced { margin:var(--spacing-2) 0 0; font-size:var(--font-size-xs); color:var(--color-success); display:flex; align-items:center; gap:var(--spacing-2); }
@@ -328,6 +315,10 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
   `
 })
 export class AccountingDocumentImportDialogComponent implements OnChanges, OnDestroy {
+  readonly loc_ui_tern_client_1bdd79 = $localize`:@@ui.tern.client.1bdd79:Client`;
+  readonly loc_ui_tern_fournisseur_97d91d = $localize`:@@ui.tern.fournisseur.97d91d:Fournisseur`;
+  readonly loc_ui_tern_par_matricule_fiscal_ef1940 = $localize`:@@ui.tern.par.matricule.fiscal.ef1940: par matricule fiscal`;
+  readonly loc_ui_tern_par_nom_4c4de0 = $localize`:@@ui.tern.par.nom.4c4de0: par nom`;
   private readonly importService = inject(AccountingDocumentImportService);
   private readonly confirmationService = inject(ConfirmationService);
 
@@ -375,14 +366,12 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
       next: (caps) => {
         if (!caps.aiFallbackAvailable) {
           this.capabilityHint.set(
-            "Analyse IA indisponible pour votre compte : seules les factures émises par "
-            + 'InstaFact pourront être lues.');
+            $localize`:@@accounting.accounting-document-import-dialog.ts.analyse.ia.indisponible.pour.votre.compt.4c261844:Analyse IA indisponible pour votre compte : seules les factures émises par InstaFact pourront être lues.`);
           return;
         }
         if (caps.visionModel && caps.visionModelReady === false) {
           this.capabilityHint.set(
-            `Le modèle vision d'import (${caps.visionModel}) n'est pas prêt sur le serveur. `
-            + "Les photos de factures pourraient échouer — contactez l'administrateur InstaFact.");
+            $localize`:@@accounting.accounting-document-import-dialog.ts.le.modele.vision.d.import.visionmodel.n.5ee55a7a:Le modèle vision d'import (${caps.visionModel}:visionModel:) n'est pas prêt sur le serveur. Les photos de factures pourraient échouer — contactez l'administrateur InstaFact.`);
           return;
         }
         this.capabilityHint.set(null);
@@ -499,10 +488,10 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
 
   private confirmDiscardEdits(onConfirm: () => void): void {
     this.confirmationService.confirm({
-      message: 'Vos modifications sur l\'écriture proposée seront perdues. Continuer ?',
-      header: 'Confirmation',
-      acceptLabel: 'Continuer',
-      rejectLabel: 'Annuler',
+      message: $localize`:@@accounting.accounting-document-import-dialog.ts.vos.modifications.sur.l.ecriture.propose.61542b1a:Vos modifications sur l'écriture proposée seront perdues. Continuer ?`,
+      header: $localize`:@@accounting.accounting-document-import-dialog.ts.confirmation.3424edc2:Confirmation`,
+      acceptLabel: $localize`:@@accounting-document-import-dialog.component.acceptLabel.Continuer:Continuer`,
+      rejectLabel: $localize`:@@accounting-document-import-dialog.component.rejectLabel.Annuler:Annuler`,
       accept: onConfirm
     });
   }
@@ -546,7 +535,7 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
       },
       error: (err: Error) => {
         this.stopTimer();
-        this.errorMessage.set(err.message || "L'analyse de la pièce a échoué.");
+        this.errorMessage.set(err.message || $localize`:@@accounting.accounting-document-import-dialog.ts.l.analyse.de.la.piece.a.echoue.b308ea32:L'analyse de la pièce a échoué.`);
         this.phase.set('error');
       }
     });

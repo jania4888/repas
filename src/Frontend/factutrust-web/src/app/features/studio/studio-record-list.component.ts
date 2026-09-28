@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
@@ -40,7 +41,7 @@ import { STUDIO_RUNTIME_LABELS } from './shared/studio-runtime-labels';
     @if (entity(); as e) {
       <app-studio-page-shell
         [title]="e.displayNamePlural"
-        [subtitle]="subtitleTotal() + ' enregistrement(s)'"
+        [subtitle]="subtitleTotal() + loc_ui_tern_enregistrement_s_dea234"
         [breadcrumbs]="breadcrumbs()">
         <div studioActions class="studio-head-actions">
           @if (showViewButton()) {
@@ -49,30 +50,30 @@ import { STUDIO_RUNTIME_LABELS } from './shared/studio-runtime-labels';
             </app-button>
           }
           @if (canDesign()) {
-            <app-button variant="outline" icon="pi-wrench" routerLink="/studio/{{ e.id }}">Concevoir</app-button>
+            <app-button variant="outline" icon="pi-wrench" routerLink="/studio/{{ e.id }}" i18n="@@studio.studio-record-list.concevoir.0fef9efb">Concevoir</app-button>
           }
           @if (showWorkflowsButton()) {
-            <app-button variant="outline" icon="pi-sitemap" [routerLink]="['/studio', 'workflows']" [queryParams]="{ entity: e.id }" data-testid="wf-open">Workflows</app-button>
+            <app-button variant="outline" icon="pi-sitemap" [routerLink]="['/studio', 'workflows']" [queryParams]="{ entity: e.id }" data-testid="wf-open" i18n="@@studio.studio-record-list.workflows.825ce9e9">Workflows</app-button>
           }
           @if (canWrite()) {
-            <app-button variant="primary" icon="pi-plus" [routerLink]="['/studio/d', entityKey, 'new']">Ajouter</app-button>
+            <app-button variant="primary" icon="pi-plus" [routerLink]="['/studio/d', entityKey, 'new']" i18n="@@studio.studio-record-list.ajouter.87c57ed1">Ajouter</app-button>
           }
         </div>
 
         <div class="ft-filters">
           <div class="ft-filters__header">
-            <h3 class="ft-filters__title"><i class="pi pi-search"></i> Recherche</h3>
+            <h3 class="ft-filters__title" i18n="@@studio.studio-record-list.recherche.5d0766ce"><i class="pi pi-search"></i> Recherche</h3>
           </div>
           <div class="studio-toolbar">
-            <input pInputText [(ngModel)]="search" (keyup.enter)="reload()" placeholder="Rechercher…" class="studio-search-input"
+            <input pInputText [(ngModel)]="search" (keyup.enter)="reload()" placeholder="Rechercher…" i18n-placeholder="@@studio.studio-record-list.rechercher.1d12cdfb" class="studio-search-input"
               [disabled]="searchDisabled()" [title]="searchDisabled() ? labels.views.searchDisabled : ''" />
-            <button pButton type="button" icon="fa-solid fa-magnifying-glass" label="Rechercher" class="p-button-sm" (click)="reload()"
+            <button pButton type="button" icon="fa-solid fa-magnifying-glass" label="Rechercher" i18n-label="@@studio.studio-record-list.rechercher.91f7d3e9" class="p-button-sm" (click)="reload()"
               [disabled]="searchDisabled()"></button>
             <span class="studio-toolbar__spacer"></span>
             @if (!activeView()) {
               <!-- Export masqué quand une vue enregistrée est active : il porterait sur les enregistrements
                    bruts (hors filtres de la vue). -->
-              <button pButton type="button" icon="fa-solid fa-download" label="Exporter" class="p-button-sm p-button-outlined"
+              <button pButton type="button" icon="fa-solid fa-download" label="Exporter" i18n-label="@@studio.studio-record-list.exporter.0cd84bdc" class="p-button-sm p-button-outlined"
                 [disabled]="total() === 0" (click)="exportMenu.toggle($event)"></button>
               <p-menu #exportMenu [popup]="true" [model]="exportItems" appendTo="body" styleClass="studio-theme"></p-menu>
             }
@@ -87,7 +88,7 @@ import { STUDIO_RUNTIME_LABELS } from './shared/studio-runtime-labels';
           <app-skeleton-table [columns]="skeletonCols" [rows]="5" />
         } @else {
           @if (activeView(); as v) {
-            <div id="studio-view-panel" role="tabpanel" aria-label="Vue active">
+            <div id="studio-view-panel" role="tabpanel" aria-label="Vue active" i18n-aria-label="@@studio.studio-record-list.vue.active.89414868">
               <app-studio-record-view-runner
                 [entityKey]="entityKey"
                 [view]="v"
@@ -126,6 +127,7 @@ import { STUDIO_RUNTIME_LABELS } from './shared/studio-runtime-labels';
   styleUrl: './shared/studio-layout.scss',
 })
 export class StudioRecordListComponent implements OnInit {
+  readonly loc_ui_tern_enregistrement_s_dea234 = $localize`:@@ui.tern.enregistrement.s.dea234: enregistrement(s)`;
   private readonly studio = inject(StudioService);
   private readonly toast = inject(MessageService);
   private readonly confirmation = inject(ConfirmationService);
@@ -148,10 +150,10 @@ export class StudioRecordListComponent implements OnInit {
   readonly skeletonCols = [{ width: '20%' }, { width: '30%' }, { width: '20%' }, { width: '15%' }];
 
   exportItems: MenuItem[] = [
-    { label: 'CSV — page courante', icon: 'fa-solid fa-file-csv', command: () => this.exportCsv(false) },
-    { label: 'Excel — page courante', icon: 'fa-solid fa-file-excel', command: () => this.exportXlsx(false) },
-    { label: 'CSV — toutes les lignes', icon: 'fa-solid fa-file-csv', command: () => this.exportCsv(true) },
-    { label: 'Excel — toutes les lignes', icon: 'fa-solid fa-file-excel', command: () => this.exportXlsx(true) },
+    { label: $localize`:@@studio.studio-record-list.ts.csv.page.courante.2f0e6273:CSV — page courante`, icon: 'fa-solid fa-file-csv', command: () => this.exportCsv(false) },
+    { label: $localize`:@@studio.studio-record-list.ts.excel.page.courante.84d32d06:Excel — page courante`, icon: 'fa-solid fa-file-excel', command: () => this.exportXlsx(false) },
+    { label: $localize`:@@studio.studio-record-list.ts.csv.toutes.les.lignes.42fbba25:CSV — toutes les lignes`, icon: 'fa-solid fa-file-csv', command: () => this.exportCsv(true) },
+    { label: $localize`:@@studio.studio-record-list.ts.excel.toutes.les.lignes.084ab1f3:Excel — toutes les lignes`, icon: 'fa-solid fa-file-excel', command: () => this.exportXlsx(true) },
   ];
 
   entityKey = '';
@@ -212,7 +214,7 @@ export class StudioRecordListComponent implements OnInit {
       },
       error: () => {
         this.schemaLoading.set(false);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Schéma introuvable.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@studio-record-list.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-record-list.component.detail.Sch_ma_introuvab:Schéma introuvable.` });
       }
     });
   }
@@ -277,7 +279,7 @@ export class StudioRecordListComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Chargement impossible.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@studio-record-list.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-record-list.component.detail.Chargement_impos:Chargement impossible.` });
       }
     });
   }
@@ -325,21 +327,21 @@ export class StudioRecordListComponent implements OnInit {
 
   remove(row: DynamicRow): void {
     this.confirmation.confirm({
-      message: 'Supprimer cet enregistrement ? Cette action est irréversible.',
-      header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      message: $localize`:@@studio.studio-record-list.ts.supprimer.cet.enregistrement.cette.actio.c9b5b5c6:Supprimer cet enregistrement ? Cette action est irréversible.`,
+      header: $localize`:@@studio.studio-record-list.ts.confirmation.3424edc2:Confirmation`,
+      acceptLabel: $localize`:@@studio-record-list.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@studio-record-list.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.studio.deleteRecord(this.entityKey, row.id).subscribe({
           next: res => {
             if (res.success) {
-              this.toast.add({ severity: 'success', summary: 'Supprimé' });
+              this.toast.add({ severity: 'success', summary: $localize`:@@studio-record-list.component.summary.Supprimé:Supprimé` });
               // Suppression via une vue : la liste brute (onglet « Liste ») doit être re-lue au retour.
               this.fetched = false;
               this.reload();
             }
           },
-          error: () => this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Suppression impossible.' })
+          error: () => this.toast.add({ severity: 'error', summary: $localize`:@@studio-record-list.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-record-list.component.detail.Suppression_impo:Suppression impossible.` })
         });
       }
     });

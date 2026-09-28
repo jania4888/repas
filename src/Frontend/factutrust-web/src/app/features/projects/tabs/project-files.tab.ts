@@ -34,7 +34,7 @@ import { formatFileSize } from '../project-enums';
 
         <input type="file" id="proj-file-upload" class="hidden" (change)="onFile($event)" />
 
-        <label for="proj-file-upload" class="cursor-pointer">
+        <label for="proj-file-upload" class="cursor-pointer" i18n="@@projects.tabs.choisir.un.fichier.d68aa201">
 
           <i class="pi pi-upload mr-2"></i>
 
@@ -48,21 +48,21 @@ import { formatFileSize } from '../project-enums';
 
         }
 
-        <p class="text-sm text-color-secondary mt-2 mb-0">Taille maximale : 10 Mo</p>
+        <p class="text-sm text-color-secondary mt-2 mb-0" i18n="@@projects.tabs.taille.maximale.10.mo.8166532b">Taille maximale : 10 Mo</p>
 
-        <app-button class="mt-2" variant="primary" [disabled]="!pending" (click)="upload.emit(pending!)">Téléverser</app-button>
+        <app-button class="mt-2" variant="primary" [disabled]="!pending" (click)="upload.emit(pending!)" i18n="@@projects.tabs.televerser.e9e72d1c">Téléverser</app-button>
 
       </div>
 
     } @else {
 
-      <p class="text-sm text-color-secondary mb-3">Taille maximale : 10 Mo</p>
+      <p class="text-sm text-color-secondary mb-3" i18n="@@projects.tabs.taille.maximale.10.mo.8166532b">Taille maximale : 10 Mo</p>
 
     }
 
     <p-table [value]="files" styleClass="p-datatable-sm">
 
-      <ng-template pTemplate="header"><tr><th>Fichier</th><th>Taille</th><th>Date</th><th></th></tr></ng-template>
+      <ng-template pTemplate="header"><tr><th i18n="@@projects.tabs.fichier.f0fa5745">Fichier</th><th i18n="@@projects.tabs.taille.2b90839d">Taille</th><th i18n="@@projects.tabs.date.eb9a4bc1">Date</th><th></th></tr></ng-template>
 
       <ng-template pTemplate="body" let-f>
 
@@ -76,11 +76,11 @@ import { formatFileSize } from '../project-enums';
 
           <td>
 
-            <app-button size="sm" variant="outline" (click)="download.emit(f)">Télécharger</app-button>
+            <app-button size="sm" variant="outline" (click)="download.emit(f)" i18n="@@projects.tabs.telecharger.b332d06d">Télécharger</app-button>
 
             @if (canUpdate) {
 
-              <app-button size="sm" variant="danger" (click)="remove.emit(f.id)">Supprimer</app-button>
+              <app-button size="sm" variant="danger" (click)="remove.emit(f.id)" i18n="@@projects.tabs.supprimer.1acfc1c7">Supprimer</app-button>
 
             }
 
@@ -94,7 +94,7 @@ import { formatFileSize } from '../project-enums';
 
         <tr><td colspan="4">
 
-          <app-empty-state icon="pi-file" title="Aucun fichier" description="Téléversez un document (max 10 Mo)." [showAction]="false" />
+          <app-empty-state icon="pi-file" title="Aucun fichier" i18n-title="@@projects.tabs.aucun.fichier.49bb628e" description="Téléversez un document (max 10 Mo)." i18n-description="@@projects.tabs.televersez.un.document.max.10.mo.97b92122" [showAction]="false" />
 
         </td></tr>
 
@@ -102,13 +102,13 @@ import { formatFileSize } from '../project-enums';
 
     </p-table>
 
-    <h3>Commentaires</h3>
+    <h3 i18n="@@projects.tabs.commentaires.dbdeccaf">Commentaires</h3>
 
     @if (canUpdate) {
 
       <textarea pTextarea [(ngModel)]="commentBody" rows="2" class="w-full"></textarea>
 
-      <app-button class="mt-2" (click)="sendComment()">Commenter</app-button>
+      <app-button class="mt-2" (click)="sendComment()" i18n="@@projects.tabs.commenter.bf4df9c0">Commenter</app-button>
 
     }
 

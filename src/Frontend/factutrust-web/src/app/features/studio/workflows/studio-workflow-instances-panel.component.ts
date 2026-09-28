@@ -15,8 +15,8 @@ import { StudioWorkflowsService } from './studio-workflows.service';
  * tranche — même motif que `DESIGNER_LABELS` du concepteur, 4.4e1) : erreur et « Charger plus ».
  */
 const PANEL_LABELS = {
-  loadError: 'Chargement des instances impossible.',
-  retry: 'Réessayer',
+  loadError: $localize`:@@studio.studio-workflow-instances-panel.ts.chargement.des.instances.impossible.a21dea32:Chargement des instances impossible.`,
+  retry: $localize`:@@studio.studio-workflow-instances-panel.ts.reessayer.895d416b:Réessayer`,
   /** 4.7a2 / D-47-F01 : accumulation paginée — le total serveur fait foi (lève D-46-01). */
   more: 'Charger plus — encore {remaining}'
 } as const;
@@ -108,13 +108,13 @@ const PANEL_PAGE_SIZE = 20;
     .wf-inst__error { display: flex; flex-direction: column; align-items: flex-start; gap: var(--spacing-2, 0.5rem); }
     .wf-inst { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .25rem; }
     .wf-inst__item { display: flex; flex-direction: column; }
-    .wf-inst__row { display: grid; grid-template-columns: auto 1fr; gap: .5rem; width: 100%; text-align: left; background: none; border: 1px solid transparent; border-radius: var(--radius-md); padding: .4rem .5rem; cursor: pointer; font: inherit; color: inherit; }
+    .wf-inst__row { display: grid; grid-template-columns: auto 1fr; gap: .5rem; width: 100%; text-align: start; background: none; border: 1px solid transparent; border-radius: var(--radius-md); padding: .4rem .5rem; cursor: pointer; font: inherit; color: inherit; }
     .wf-inst__row:hover { border-color: var(--color-border-subtle); }
     .wf-inst__body { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
     .wf-inst__rec { font-weight: 600; font-size: 0.8125rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .wf-inst__dates { display: inline-flex; align-items: center; gap: .25rem; font-size: 0.75rem; color: var(--color-neutral-500, #64748b); }
     .wf-inst__err { color: var(--red-500, #ef4444); }
-    .wf-inst__open { align-self: flex-start; margin: 0 .5rem .25rem 2rem; font-size: 0.75rem; }
+    .wf-inst__open { align-self: flex-start; margin-block: 0 .25rem; margin-inline: 2rem .5rem; font-size: 0.75rem; }
     .wf-inst__more { align-self: flex-start; margin-top: var(--spacing-2, 0.5rem); }
   `]
 })
