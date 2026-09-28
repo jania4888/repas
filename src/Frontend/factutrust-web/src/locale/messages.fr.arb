@@ -113828,8 +113828,8 @@
     ],
     "x-wave": "v4"
   },
-  "supplier-invoices.supplier-invoice-form.tpl.supprimer.la.ligne.i.p.56e12e0e": "Supprimer la ligne {$i}{$p}",
-  "@supplier-invoices.supplier-invoice-form.tpl.supprimer.la.ligne.i.p.56e12e0e": {
+  "supplier-invoices.supplier-invoice-form.tpl.supprimer.la.ligne.i.48c1e3f2": "Supprimer la ligne {$i}",
+  "@supplier-invoices.supplier-invoice-form.tpl.supprimer.la.ligne.i.48c1e3f2": {
     "x-files": [
       "src/app/features/supplier-invoices/supplier-invoice-form/supplier-invoice-form.component.ts"
     ],

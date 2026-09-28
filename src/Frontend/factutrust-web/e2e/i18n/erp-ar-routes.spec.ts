@@ -60,7 +60,12 @@ test.describe('Fuites françaises — ERP en arabe', () => {
         ...snap.alts.map(a => `[alt] ${a}`)
       ];
       const leaks = [
-        ...new Set(lines.filter(l => findFrenchLeaks(l.replace(/^\[[a-z-]+\] /, '').replace(TECHNICAL_ID, ' '), WHITELIST).length))
+        // Les isolats bidi (FSI/PDI) qui entourent les valeurs interpolées ne sont pas des séparateurs de mots.
+        ...new Set(
+          lines.filter(l =>
+            findFrenchLeaks(l.replace(/^\[[a-z-]+\] /, '').replace(/[⁦-⁩]/g, ' ').replace(TECHNICAL_ID, ' '), WHITELIST).length
+          )
+        )
       ];
       fs.mkdirSync(REPORT_DIR, { recursive: true });
       const file = path.join(REPORT_DIR, `${route.replace(/[^a-z0-9]+/gi, '_')}.json`);
