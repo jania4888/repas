@@ -21,6 +21,7 @@ Les drapeaux arabes restent **OFF** en production (`environment.erp.arabicEnable
 | Parité FR TypeScript | `npm run i18n:parity:ts` | 0 écart non justifié (73 approuvés) |
 | Parité FR visuelle | `npx playwright test -c playwright.i18n.config.ts erp-rtl-fr-parity` | 14 écrans **identiques au pixel près** avant/après le passage aux propriétés logiques |
 | Codemods | `npm run i18n:codemod:test` | vert (templates, ternaires, littéraux TS, listes d'approbation, CSS logique, attributs liés) |
+| Fuites françaises (arabe) | `npx playwright test -c playwright.i18n.config.ts erp-ar-routes` | **112 / 112 routes sans fuite** (session simulée, listes vides) |
 | Build de production | `npm run build:prod` | vert ; budgets FR inchangés (2 avertissements préexistants : secondary-nav, projects) |
 | Karma | `npx ng test --watch=false --browsers=ChromeHeadless` | 16 échecs, **identiques à fr-reference** |
 | Backend | `dotnet test --filter MessageLocalizer\|LocalizeApiResponse\|UiLanguage\|ExceptionHandling…` | Infrastructure 23/23 (dont marqueur front gardé en français), API 28/28 |
@@ -72,7 +73,7 @@ Transfert compressé : ~370 Kio.
   - `erp-rtl-screens.spec.ts` : 11 écrans en arabe et en français, dialogue, largeur téléphone, saisie
     d'identifiants — sens, débordement, position de la barre latérale ;
   - `erp-ar-routes.spec.ts` : les 112 routes société (menu + formulaires de création) balayées en arabe,
-    toute ligne française hors liste blanche est une fuite (rapport par route) ;
+    toute ligne française hors liste blanche est une fuite (rapport par route) — **0 fuite sur 112 routes** ;
   - `localize-bound-literals.mjs` : 243 attributs restés en français (`data-label` des tableaux
     responsives, `aria-label` liés, ternaires, concaténations) ; une concaténation devient un seul
     message à placeholders pour que l'arabe puisse réordonner les mots ;
@@ -126,6 +127,7 @@ Transfert compressé : ~370 Kio.
 - **Limites connues, hors chantier** : à largeur téléphone, la barre latérale reste ouverte et comprime le
   contenu — en français comme en arabe (l'ERP n'est pas optimisé mobile). Les panneaux latéraux
   (`position="right"`) s'ouvrent à droite dans les deux langues (positions physiques de PrimeNG).
-- **Relecture native** de chaque vague (`npm run i18n:export-review`) avant activation ; points d'attention :
-  terme « bulletin » (كشف أجر / بطاقة خلاص), accords de genre dans les messages « {champ} إلزامي ».
+- **Relecture native** de chaque vague avant activation : `npm run i18n:export-review` produit 7 CSV
+  (~12 200 lignes, v7 comptabilité/Studio la plus lourde), réimport validé par `npm run i18n:import-review`,
+  avancement dans `scripts/i18n/review-status.json` — procédure dans `TRANSLATOR.md`.
 - **Lot 8 — activation** : uniquement sur feu vert explicite (`Deploy-Hostinger.ps1`) ; retour arrière = drapeaux à `false`.

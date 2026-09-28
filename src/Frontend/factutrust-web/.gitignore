@@ -19,3 +19,6 @@ src/assets/i18n/messages.ar.*.json
 scripts/i18n/reports/
 e2e/baselines/fr-static/*
 !e2e/baselines/fr-static/approved.json
+
+# Exports de relecture native (régénérés par npm run i18n:export-review)
+scripts/i18n/review/
