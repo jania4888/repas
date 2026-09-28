@@ -33,6 +33,7 @@ import {
 import { PROJECT_ROLE_OPTIONS, parseProjectMemberRole, showWorkload } from '../project-enums';
 
 import { ProjectDetail } from '../project-api.service';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 
 
@@ -43,6 +44,7 @@ import { ProjectDetail } from '../project-api.service';
   standalone: true,
 
   imports: [
+    BackendLabelPipe,
 
     CommonModule,
 
@@ -242,7 +244,7 @@ import { ProjectDetail } from '../project-api.service';
 
             <td>{{ m.userName }}</td>
 
-            <td>{{ m.roleDisplay }}</td>
+            <td>{{ m.roleDisplay | backendLabel }}</td>
 
             <td>{{ m.salesRate != null ? (m.salesRate | number:'1.0-3') : '—' }}</td>
 

@@ -30,6 +30,7 @@ import {
   applyQuoteListFiltersFromQuery,
   isActiveQuoteStatus
 } from '@core/utils/list-filter-from-query';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 interface StatusOption {
   label: string;
@@ -40,6 +41,7 @@ interface StatusOption {
   selector: 'app-quote-list',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -172,7 +174,7 @@ interface StatusOption {
               <td>
                 <app-status-badge
                   [status]="getStatusBadgeStatus(quote.status)"
-                  [label]="quote.status">
+                  [label]="quote.status | backendLabel">
                 </app-status-badge>
               </td>
               <td>

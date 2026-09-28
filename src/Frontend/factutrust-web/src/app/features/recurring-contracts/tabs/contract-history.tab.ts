@@ -128,14 +128,14 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
             <li class="timeline__item">
               <div class="timeline__date">{{ a.effectiveDate | date:'dd/MM/yyyy' }}</div>
               <div class="timeline__body">
-                <span class="timeline__type">{{ a.typeDisplay }}</span>
+                <span class="timeline__type">{{ a.typeDisplay | backendLabel }}</span>
                 @if (a.notes) {
                   <p class="timeline__notes">{{ a.notes }}</p>
                 }
                 <span class="timeline__meta"><ng-container i18n="@@recurring-contracts.tabs.enregistre.le.44207d14">
                   Enregistré le {{ a.createdAt | date:'dd/MM/yyyy HH:mm' }}
                   </ng-container>@if (a.createdByUserName) {<ng-container i18n="@@recurring-contracts.tabs.par.f60e18b3"> par {{ a.createdByUserName }} </ng-container>}
-                  · {{ a.prorationPolicyDisplay }}
+                  · {{ a.prorationPolicyDisplay | backendLabel }}
                 </span>
               </div>
             </li>

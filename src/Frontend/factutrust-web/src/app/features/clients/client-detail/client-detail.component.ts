@@ -29,11 +29,13 @@ import { ClientOutstandingPanelComponent } from '../client-outstanding-panel/cli
 import { ClientPortalContactsPanelComponent } from '../client-portal-contacts-panel.component';
 import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 @Component({
   selector: 'app-client-detail',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     ButtonModule,
@@ -169,7 +171,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                     <span class="label" i18n="@@clients.client-detail.type.3deb7456">Type</span>
                     <app-status-badge 
                       [status]="getClientTypeStatus(client()!.type)"
-                      [label]="client()!.typeDisplay">
+                      [label]="client()!.typeDisplay | backendLabel">
                     </app-status-badge>
                   </div>
                   <div class="info-row">

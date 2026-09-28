@@ -64,12 +64,14 @@ import { ModuleRecommendationsService, ModuleRecommendationDto } from '@core/ser
 import { ToastService } from '@core/services/toast.service';
 import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
 import { erpDateLocale } from '@core/i18n/erp-format';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   providers: [DecimalPipe, DatePipe, CurrencyPipe],
   imports: [
+    BackendLabelPipe,
     CommonModule,
     DragDropModule,
     RouterModule,
@@ -661,7 +663,7 @@ import { erpDateLocale } from '@core/i18n/erp-format';
                 <td>
                   <app-status-badge 
                     [status]="getStatusBadgeStatus(invoice.status)"
-                    [label]="invoice.status">
+                    [label]="invoice.status | backendLabel">
                   </app-status-badge>
                 </td>
                 <td>
@@ -751,7 +753,7 @@ import { erpDateLocale } from '@core/i18n/erp-format';
                       <span class="quote-amount">{{ quote.totalAmount | number:'1.3-3' }} {{ quote.currency }}</span>
                       <app-status-badge
                         [status]="getStatusBadgeStatus(quote.status)"
-                        [label]="quote.status">
+                        [label]="quote.status | backendLabel">
                       </app-status-badge>
                     </div>
                   </a>

@@ -28,6 +28,7 @@ import {
   formatTrackingModeLabel
 } from '@shared/utils/product-traceability-rules';
 import { TRACKING_MODE_LOT } from '@shared/utils/stock-traceability.utils';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 const VAT_OPTIONS: { label: string; value: number }[] = [
   { label: $localize`:@@products.product-detail.ts.19.taux.normal.1dc12a7c:19% - Taux normal`, value: 19 },
@@ -40,6 +41,7 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
   selector: 'app-product-detail',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     SkeletonModule,
@@ -96,7 +98,7 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
             <div class="form-group">
               <span class="field-label" i18n="@@products.product-detail.type.3deb7456">Type</span>
               <p class="field-value">
-                <p-tag [value]="p.typeDisplay" severity="info"></p-tag>
+                <p-tag [value]="p.typeDisplay | backendLabel" severity="info"></p-tag>
               </p>
             </div>
             <div class="form-group">

@@ -148,7 +148,7 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
               <td class="text-right">{{ p.netSalary | payrollAmount }}</td>
               <td>
                 @if (p.paymentStatusDisplay) {
-                  <p-tag [value]="p.paymentStatusDisplay" [severity]="paymentTagSeverity(p.paymentStatus)" />
+                  <p-tag [value]="p.paymentStatusDisplay | backendLabel" [severity]="paymentTagSeverity(p.paymentStatus)" />
                 }
               </td>
               <td class="actions">

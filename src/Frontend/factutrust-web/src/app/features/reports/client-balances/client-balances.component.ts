@@ -110,7 +110,7 @@ import {
         <i class="pi pi-clock"></i> Balance âgée
         <small>À partir de la date d'échéance (DueDate).</small>
       </h3>
-      <app-aging-table [rows]="filteredRows()" partyLabel="Client"></app-aging-table>
+      <app-aging-table [rows]="filteredRows()"></app-aging-table>
     </div>
   `,
   styles: [`

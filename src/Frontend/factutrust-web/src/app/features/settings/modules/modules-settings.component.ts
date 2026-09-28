@@ -18,6 +18,7 @@ import { CompanyModuleDto, CompanyModulesService } from '@core/services/company-
 import { ModuleRecommendationsService, ModuleRecommendationDto } from '@core/services/module-recommendations.service';
 import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
 import { TenantUsersService } from '@core/services/tenant-users.service';
+import { backendDisplayLabel } from '@shared/pipes/backend-label.pipe';
 
 /**
  * Paramètres > Modules (plan v1 §2.2). Lets a tenant admin activate/deactivate
@@ -155,9 +156,15 @@ export class ModulesSettingsComponent implements OnInit, OnDestroy {
     return this.usageRecommendations().find(r => r.moduleId === id)?.reasonFr ?? '';
   }
 
-  /** Label français d'un module à partir de son id (pour l'affichage du bandeau de recos). */
+  /** Nom affiché d'un module : `labelFr` de l'API, traduit hors français (FR inchangé). */
+  displayName(module: CompanyModuleDto): string {
+    return backendDisplayLabel(module.labelFr);
+  }
+
+  /** Nom affiché d'un module à partir de son id (pour l'affichage du bandeau de recos). */
   moduleLabel(id: AppModule): string {
-    return this.byId().get(id)?.labelFr ?? String(id);
+    const module = this.byId().get(id);
+    return module ? this.displayName(module) : String(id);
   }
 
   moduleIcon(id: AppModule): string {
@@ -183,8 +190,8 @@ export class ModulesSettingsComponent implements OnInit, OnDestroy {
   }
 
   dependencyLockLabel(id: AppModule): string {
-    const labels = this.dependentsOf(id).map(m => m.labelFr).join(', ');
-    return `Requis par ${labels}`;
+    const labels = this.dependentsOf(id).map(m => this.displayName(m)).join(', ');
+    return $localize`:@@settings.modules-settings.ts.requis.par.labels.1cfd4a45:Requis par ${labels}:labels:`;
   }
 
   wasAutoEnabled(id: AppModule): boolean {

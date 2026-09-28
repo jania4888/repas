@@ -66,5 +66,6 @@
   "core.validation.suggestion.nif": "الصيغة المنتظرة: 1772793W/A/M/000",
   "core.validation.suggestion.phone": "الصيغة المنتظرة: XX XXX XXX (8 أرقام)",
   "core.validation.suggestion.password": "يجب أن تحتوي كلمة المرور على 12 حرفًا على الأقل، منها حرف كبير وحرف صغير ورقم ورمز خاص",
-  "products.product-form.opening-layer-hint": "{$message} استخدموا الزر « إنشاء الطبقة الافتتاحية FIFO/LIFO » إذا كان المخزون منعدمًا."
+  "products.product-form.opening-layer-hint": "{$message} استخدموا الزر « إنشاء الطبقة الافتتاحية FIFO/LIFO » إذا كان المخزون منعدمًا.",
+  "core.confirmation.ts.ok.9ce3bd42": "حسنًا"
 }

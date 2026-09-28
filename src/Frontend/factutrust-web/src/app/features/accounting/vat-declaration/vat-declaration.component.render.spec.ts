@@ -3,7 +3,9 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { apiErrorCode } from '@core/utils/api-error-code';
 import { AuthService, User } from '@core/services/auth.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { ToastService } from '@core/services/toast.service';
@@ -115,7 +117,8 @@ describe('VatDeclarationComponent render', () => {
             extractErrorMessage: (err: { error?: { error?: string }; message?: string } | string) => {
               if (typeof err === 'string') return err;
               return err?.error?.error ?? err?.message ?? 'Erreur';
-            }
+            },
+            getApiErrorCode: (err: unknown) => apiErrorCode(err)
           }
         },
         { provide: AccountingService, useValue: accountingMock }
@@ -165,6 +168,19 @@ describe('VatDeclarationComponent render', () => {
     expect(text).toContain('Aucune déclaration mensuelle soumise par le cabinet');
     expect(text).not.toContain('1. Informations générales');
     expect(text).not.toContain('Enregistrer brouillon');
+  });
+
+  it('company without submitted declaration, message translated by the API: recognised by its code', async () => {
+    accountingMock.getVatDeclaration.and.returnValue(
+      throwError(() => new HttpErrorResponse({
+        status: 400,
+        error: { success: false, message: 'لا يوجد أي تصريح مقدَّم لهذه الفترة.', error: 'لا يوجد أي تصريح مقدَّم لهذه الفترة.', code: 'VatDeclaration.NotSubmitted' }
+      }))
+    );
+    await renderForUser(companyUser);
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('Aucune déclaration mensuelle soumise par le cabinet');
+    expect(text).not.toContain('لا يوجد أي تصريح');
   });
 
   it('firm on draft keeps write actions', async () => {

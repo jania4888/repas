@@ -66,7 +66,7 @@ export interface ProductOption {
     <p-table [value]="costs" styleClass="p-datatable-sm">
       <ng-template pTemplate="header"><tr><th i18n="@@projects.tabs.date.eb9a4bc1">Date</th><th i18n="@@projects.tabs.source.6da13add">Source</th><th i18n="@@projects.tabs.libelle.f5485bba">Libellé</th><th>HT</th></tr></ng-template>
       <ng-template pTemplate="body" let-c>
-        <tr><td>{{ c.occurredOn | date:'shortDate' }}</td><td>{{ c.sourceDisplay }}</td><td>{{ c.description }}</td><td>{{ c.amountHt | number:'1.3-3' }}</td></tr>
+        <tr><td>{{ c.occurredOn | date:'shortDate' }}</td><td>{{ c.sourceDisplay | backendLabel }}</td><td>{{ c.description }}</td><td>{{ c.amountHt | number:'1.3-3' }}</td></tr>
       </ng-template>
     </p-table>
 

@@ -77,11 +77,13 @@ import { ProjectDetailKpiStripComponent } from './components/project-detail-kpi-
 import { ProjectActivityTabComponent } from './tabs/project-activity.tab';
 import { ProjectSettingsTabComponent } from './tabs/project-settings.tab';
 import { ProjectFavoritesService } from './project-favorites.service';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 @Component({
   selector: 'app-project-detail',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     FormsModule,
     TabsModule,
@@ -270,7 +272,7 @@ import { ProjectFavoritesService } from './project-favorites.service';
         <div class="flex flex-column gap-3">
           <label><ng-container i18n="@@projects.project-detail.nom.7ff20370">Nom </ng-container> <input pInputText class="w-full" [(ngModel)]="editDraft.name" /></label>
           <label><ng-container i18n="@@projects.project-detail.type.3deb7456">Type
-            </ng-container><input pInputText class="w-full" [value]="project()?.kindDisplay" readonly />
+            </ng-container><input pInputText class="w-full" [value]="project()?.kindDisplay | backendLabel" readonly />
           </label>
           <label><ng-container i18n="@@projects.project-detail.description.55f8ebc8">Description </ng-container> <textarea pTextarea class="w-full" rows="2" [(ngModel)]="editDraft.description"></textarea></label>
           <label><ng-container i18n="@@projects.project-detail.chef.de.projet.7a1d6008">Chef de projet

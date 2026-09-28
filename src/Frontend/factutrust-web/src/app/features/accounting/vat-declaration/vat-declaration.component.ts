@@ -13,6 +13,7 @@ import {
 } from '@core/config/company-accounting-nav.config';
 import { ToastService } from '@core/services/toast.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
+import { API_ERROR_CODE } from '@core/utils/api-error-code';
 import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen-payload.factory';
 import { AccountingStatusBannerComponent } from '../shared/accounting-status-banner.component';
 import { AccountingCorrectionBannerComponent } from '../shared/accounting-correction-banner.component';
@@ -41,8 +42,9 @@ import {
 } from './vat-declaration.view-model';
 
 /**
- * Message aligné sur VatDeclarationAccess.NotSubmittedMessage (backend), jamais traduit par l'API
- * (MessageLocalizerTests.Localize_RealCatalog_KeepsFrontMarkersInFrench) : ne pas passer en $localize.
+ * Repli pour une API sans champ `code` : texte de VatDeclarationAccess.NotSubmittedMessage (français).
+ * Le cas nominal lit le code `VatDeclaration.NotSubmitted` — en arabe, l'API traduit le message.
+ * Valeur de comparaison : ne pas passer en $localize.
  */
 const COMPANY_NOT_SUBMITTED_MARKER = 'Aucune déclaration soumise';
 
@@ -399,7 +401,7 @@ export class VatDeclarationComponent implements OnInit {
       },
       error: (err) => {
         this.loading.set(false);
-        this.handleLoadFailure(this.errorHandler.extractErrorMessage(err));
+        this.handleLoadFailure(this.errorHandler.extractErrorMessage(err), this.errorHandler.getApiErrorCode(err));
       }
     });
   }
@@ -488,9 +490,12 @@ export class VatDeclarationComponent implements OnInit {
     });
   }
 
-  private handleLoadFailure(message: string): void {
+  private handleLoadFailure(message: string, code?: string): void {
     this.data.set(null);
-    if (this.isCompanyReadOnly && this.isCompanyNotSubmittedMessage(message)) {
+    const notSubmitted = code
+      ? code === API_ERROR_CODE.vatDeclarationNotSubmitted
+      : this.isCompanyNotSubmittedMessage(message);
+    if (this.isCompanyReadOnly && notSubmitted) {
       this.unavailableReason.set(COMPANY_EMPTY_STATE_MESSAGE);
       this.error.set(null);
       return;

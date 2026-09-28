@@ -172,7 +172,7 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
               <td>{{ r.usageMetricName }}</td>
               <td>{{ r.periodFrom | date:'dd/MM/yyyy' }} — {{ r.periodTo | date:'dd/MM/yyyy' }}</td>
               <td>{{ r.quantity | number:'1.0-3' }}</td>
-              <td>{{ r.sourceDisplay }}</td>
+              <td>{{ r.sourceDisplay | backendLabel }}</td>
               <td>{{ r.notes || '—' }}</td>
             </tr>
           </ng-template>

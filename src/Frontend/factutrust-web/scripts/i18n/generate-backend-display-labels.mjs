@@ -48,27 +48,75 @@ function walk(dir, outFiles = []) {
   return outFiles;
 }
 
+/** Aides backend hors ToDisplayString dont le résultat est affiché tel quel (champ *Display d'un DTO). */
+const DISPLAY_HELPERS = [
+  'BillingFrequencyDisplay' // RecurringContractService → ContractDto.BillingFrequencyDisplay
+];
+
 const labels = new Set();
 for (const file of walk(BACKEND)) {
   const src = fs.readFileSync(file, 'utf8');
-  const re = /ToDisplayString\s*\([\s\S]{0,1200}?switch\s*\{([\s\S]*?)\n\s*\}/g;
-  let m;
-  while ((m = re.exec(src)) !== null) {
-    const block = m[1];
-    for (const lit of block.matchAll(/=>\s*"([^"\\]+)"/g)) {
-      const text = lit[1].trim();
-      if (text && /[A-Za-zÀ-ÿ]/.test(text)) labels.add(text);
+  // ToDisplayString() des énumérations, et les aides nommées `static string X(…) => v switch { … }`
+  // qui alimentent un champ *Display d'un DTO du périmètre société (liste explicite).
+  const blocks = [
+    /ToDisplayString\s*\([\s\S]{0,1200}?switch\s*\{([\s\S]*?)\n\s*\}/g,
+    new RegExp(`static string (?:${DISPLAY_HELPERS.join('|')})\\s*\\([^)]*\\)\\s*=>\\s*\\w+\\s+switch\\s*\\{([\\s\\S]*?)\\n\\s*\\}`, 'g')
+  ];
+  for (const re of blocks) {
+    for (const m of src.matchAll(re)) {
+      for (const lit of m[1].matchAll(/=>\s*"([^"\\]+)"/g)) {
+        const text = lit[1].trim();
+        if (text && /[A-Za-zÀ-ÿ]/.test(text)) labels.add(text);
+      }
     }
   }
+}
+
+/**
+ * Libellés d'affichage envoyés tels quels par l'API hors ToDisplayString (constante d'un DTO),
+ * affichés via `| backendLabel` ou `backendDisplayLabel()`. Chacun doit exister dans le fichier source indiqué.
+ */
+const EXCHANGES = 'FactuTrust.Infrastructure/Services/ExchangeService.cs';
+const VERBATIM = [
+  ['InstaFact Comptabilité', 'FactuTrust.Application/Features/FixedAssets/AmortizationReportAssembler.cs'],
+  // ExchangeBootstrapDto.EmptyHint
+  ['Liez un cabinet comptable dans Paramètres → Cabinet comptable pour ouvrir les échanges.', EXCHANGES],
+  ['Votre demande de liaison est en attente d’acceptation par le cabinet.', EXCHANGES],
+  ['Aucun dossier client actif pour démarrer un échange.', EXCHANGES],
+  // ActiveInventoryDto.TypeLabel
+  ['Complet', 'FactuTrust.Application/Features/Inventory/Queries/GetActiveInventoryQuery.cs'],
+  ['Partiel', 'FactuTrust.Application/Features/Inventory/Queries/GetActiveInventoryQuery.cs']
+];
+for (const [text, rel] of VERBATIM) {
+  if (!fs.readFileSync(path.join(BACKEND, rel), 'utf8').includes(`"${text}"`)) {
+    throw new Error(`Libellé verbatim introuvable dans ${rel} : ${text}`);
+  }
+  labels.add(text);
 }
 
 const entries = [...labels].sort((a, b) => a.localeCompare(b, 'fr'));
 const used = new Map();
 const idByText = new Map();
+// ID stables : un libell\u00e9 d\u00e9j\u00e0 g\u00e9n\u00e9r\u00e9 garde son ID (ses traductions en d\u00e9pendent) ; un nouveau
+// libell\u00e9 prend un ID libre, jamais celui d'un autre texte.
+const previousIds = new Map();
+if (fs.existsSync(out)) {
+  for (const m of fs.readFileSync(out, 'utf8').matchAll(/^\s+("(?:[^"\\]|\\.)*"): \$localize`:@@([^:]+):/gm)) {
+    previousIds.set(JSON.parse(m[1]), m[2]);
+  }
+}
 for (const text of entries) {
+  const id = previousIds.get(text);
+  if (id && !used.has(id)) {
+    used.set(id, text);
+    idByText.set(text, id);
+  }
+}
+for (const text of entries) {
+  if (idByText.has(text)) continue;
   const base = `backend.${text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '.').replace(/^\.|\.$/g, '')}`;
-  const prev = used.get(base);
-  const id = prev && prev !== text ? `${base}.b` : base;
+  let id = base;
+  for (let n = 0; used.has(id); n++) id = `${base}.${String.fromCharCode(98 + n)}`;
   used.set(id, text);
   idByText.set(text, id);
 }

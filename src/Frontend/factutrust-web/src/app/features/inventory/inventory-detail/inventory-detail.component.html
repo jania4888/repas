@@ -134,7 +134,7 @@
                 <div class="meta-icon meta-icon--purple"><i class="pi pi-tags"></i></div>
                 <div class="meta-content">
                   <span class="label" i18n="@@inventory.inventory-detail.type.3deb7456">Type</span>
-                  <span class="value">{{ inventory()!.typeLabel }}</span>
+                  <span class="value">{{ inventory()!.typeLabel | backendLabel }}</span>
                 </div>
               </div>
               @if (inventory()!.notes) {

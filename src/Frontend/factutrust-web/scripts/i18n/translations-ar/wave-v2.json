@@ -295,5 +295,9 @@
   "auth.step-company-type.domaines.adaptes.zero": "{$count} مجال ملائم لفئتكم: {$segment}",
   "auth.step-configuration.tpl.activer.label.b372ab94": "تفعيل {$label}",
   "auth.step-informations.tpl.force.du.mot.de.passe.de0bbe05": "قوة كلمة المرور",
-  "login.component.summary.Mot de passe": "تم تحديث كلمة المرور"
+  "login.component.summary.Mot de passe": "تم تحديث كلمة المرور",
+  "auth.register-wizard.ts.type.de.societe.68ad1468": "نوع الشركة",
+  "auth.register-wizard.ts.informations.generales.be6ba6e5": "معلومات عامة",
+  "auth.register-wizard.ts.configuration.75416485": "الإعداد",
+  "auth.register-wizard.ts.finalisation.672d5be7": "الإتمام"
 }

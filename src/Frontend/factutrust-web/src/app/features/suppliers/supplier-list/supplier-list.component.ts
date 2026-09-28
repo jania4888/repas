@@ -23,6 +23,7 @@ import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { applySupplierListFiltersFromQuery } from '@core/utils/list-filter-from-query';
 import { take } from 'rxjs/operators';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 interface TypeOption {
     label: string;
@@ -38,6 +39,7 @@ interface StatusOption {
     selector: 'app-supplier-list',
     standalone: true,
     imports: [
+        BackendLabelPipe,
         CommonModule,
         RouterModule,
         FormsModule,
@@ -181,7 +183,7 @@ interface StatusOption {
             </td>
             <td>
               <p-tag
-                [value]="supplier.typeDisplay"
+                [value]="supplier.typeDisplay | backendLabel"
                 [severity]="getTypeSeverity(supplier.type)">
               </p-tag>
             </td>

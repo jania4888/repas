@@ -877,5 +877,9 @@
   "ui.tern.impossible.de.creer.la.facture.le.numero.p.379737": "تعذّر إنشاء الفاتورة: الرقم المقترح غير متاح بدوره. أعيدوا المحاولة أو أدخلوا رقمًا.",
   "ui.tern.mois.e570fc": "أشهر",
   "ui.tern.ph.deconnectez.vous.et.reconnectez.vous.ou.325880": "{$p0} سجّلوا الخروج ثم أعيدوا الدخول، أو اتصلوا بالمسؤول للتحقق من ارتباطكم بمؤسسة.",
-  "ui.tern.une.fois.validee.cette.facture.ne.pourra.p.acdbf6": "بعد التثبيت، لن يعود بالإمكان تعديل هذه الفاتورة. تأكيد الإصدار؟"
+  "ui.tern.une.fois.validee.cette.facture.ne.pourra.p.acdbf6": "بعد التثبيت، لن يعود بالإمكان تعديل هذه الفاتورة. تأكيد الإصدار؟",
+  "invoices.invoice-detail.ts.creee.a570b396": "مُنشأة",
+  "invoices.invoice-detail.ts.validee.2cc6c327": "مثبّتة",
+  "invoices.invoice-detail.ts.signee.be13d5cd": "ممضاة",
+  "invoices.invoice-detail.ts.payee.65b240e8": "مسددة"
 }

@@ -14,11 +14,13 @@ import {
   parseProjectBillingMode,
   parseProjectKind
 } from '../project-enums';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 @Component({
   selector: 'app-project-settings-tab',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     FormsModule,
     CheckboxModule,
@@ -37,7 +39,7 @@ import {
           @if (project.milestonesEnabled) {
             <span class="proj-chip" i18n="@@projects.tabs.jalons.fafd37b5"><i class="pi pi-flag"></i> Jalons</span>
           }
-          <span class="proj-chip"><i class="pi pi-wallet"></i> {{ project.billingModeDisplay }}</span>
+          <span class="proj-chip"><i class="pi pi-wallet"></i> {{ project.billingModeDisplay | backendLabel }}</span>
         </div>
 
         <app-form-section title="Facturation" i18n-title="@@projects.tabs.facturation.0a55d22e" icon="pi-sliders-h" variant="compact">

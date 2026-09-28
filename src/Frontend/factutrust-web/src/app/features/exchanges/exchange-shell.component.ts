@@ -57,6 +57,7 @@ import {
   threadStatusLabel
 } from './exchange-status';
 import { EXCHANGE_TABS, ExchangeTabKey, parseExchangeTab } from './exchange-tabs';
+import { backendDisplayLabel } from '@shared/pipes/backend-label.pipe';
 
 const MESSAGE_PAGE_SIZE = 50;
 const BADGE_REFRESH_DEBOUNCE_MS = 5000;
@@ -612,7 +613,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
     if (data.emptyHint) {
       this.loading.set(false);
       this.contentLoading.set(false);
-      this.emptyHint.set(data.emptyHint);
+      this.emptyHint.set(backendDisplayLabel(data.emptyHint));
       return;
     }
 
@@ -628,7 +629,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
     if (!active) {
       this.loading.set(false);
       this.contentLoading.set(false);
-      this.emptyHint.set(data.emptyHint || $localize`:@@exchanges.exchange-shell.ts.aucun.echange.disponible.af81cd4b:Aucun échange disponible.`);
+      this.emptyHint.set(backendDisplayLabel(data.emptyHint) || $localize`:@@exchanges.exchange-shell.ts.aucun.echange.disponible.af81cd4b:Aucun échange disponible.`);
       return;
     }
 

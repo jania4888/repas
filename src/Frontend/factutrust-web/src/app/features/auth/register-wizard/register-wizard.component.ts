@@ -178,7 +178,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
 
   readonly stepsMeta: WizardStepMeta[] = [
     {
-      name: 'Type de société',
+      name: $localize`:@@auth.register-wizard.ts.type.de.societe.68ad1468:Type de société`,
       desc: $localize`:@@auth.register-wizard.ts.segment.et.domaine.236abb94:Segment et domaine`,
       icon: 'pi-sitemap',
       why: [
@@ -189,7 +189,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
       ]
     },
     {
-      name: 'Informations générales',
+      name: $localize`:@@auth.register-wizard.ts.informations.generales.be6ba6e5:Informations générales`,
       desc: $localize`:@@auth.register-wizard.ts.compte.et.societe.700362e3:Compte et société`,
       icon: 'pi-id-card',
       why: [
@@ -200,7 +200,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
       ]
     },
     {
-      name: 'Configuration',
+      name: $localize`:@@auth.register-wizard.ts.configuration.75416485:Configuration`,
       desc: $localize`:@@auth.register-wizard.ts.modules.recommandes.53b9fc7a:Modules recommandés`,
       icon: 'pi-cog',
       why: [
@@ -211,7 +211,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
       ]
     },
     {
-      name: 'Finalisation',
+      name: $localize`:@@auth.register-wizard.ts.finalisation.672d5be7:Finalisation`,
       desc: $localize`:@@auth.register-wizard.ts.adresse.et.recapitulatif.d4bb7b00:Adresse et récapitulatif`,
       icon: 'pi-check-circle',
       why: [

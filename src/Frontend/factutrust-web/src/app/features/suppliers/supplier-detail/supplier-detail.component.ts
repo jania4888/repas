@@ -13,11 +13,13 @@ import {
   normalizeSupplierRs7IsBracket,
   rs7BracketLabel
 } from '@core/services/supplier-rs7-enums';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 @Component({
   selector: 'app-supplier-detail',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule, RouterModule, TagModule, ToastModule,
     PageHeaderComponent, BreadcrumbComponent, ButtonComponent
   ],
@@ -32,7 +34,7 @@ import {
     } @else if (supplier()) {
       <app-page-header
         [title]="supplier()!.name"
-        [subtitle]="supplier()!.typeDisplay">
+        [subtitle]="supplier()!.typeDisplay | backendLabel">
         <div class="header-actions">
           <app-button variant="secondary" icon="pi-pencil" iconPos="left"
             [routerLink]="['edit']" i18n="@@suppliers.supplier-detail.modifier.f260e757"> Modifier </app-button>
@@ -51,7 +53,7 @@ import {
           <div class="info-grid">
             <div class="info-item">
               <span class="label" i18n="@@suppliers.supplier-detail.type.3deb7456">Type</span>
-              <p-tag [value]="supplier()!.typeDisplay"
+              <p-tag [value]="supplier()!.typeDisplay | backendLabel"
                 [severity]="supplier()!.type === 1 ? 'success' : 'info'"></p-tag>
             </div>
             <div class="info-item">

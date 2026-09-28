@@ -70,7 +70,7 @@
             <span class="mod-ico" [ngClass]="moduleTone(module.id)"><i [class]="'pi ' + moduleIcon(module.id)" aria-hidden="true"></i></span>
             <span class="mod-locked-badge"><i class="pi pi-lock" aria-hidden="true"></i> Cœur</span>
           </div>
-          <span class="mod-name">{{ module.labelFr }}</span>
+          <span class="mod-name">{{ displayName(module) }}</span>
         </div>
       }
     </div>
@@ -95,12 +95,12 @@
                     (onChange)="toggleModule(module)"
                     [ngModelOptions]="{standalone: true}"
                     [disabled]="isLockedByDependency(module.id)"
-                    [attr.aria-label]="loc_activer_labelfr_ed496d(module.labelFr)">
+                    [attr.aria-label]="loc_activer_labelfr_ed496d(displayName(module))">
                   </p-inputSwitch>
                 </span>
               }
             </div><ng-container i18n="@@settings.modules.recommande.pour.votre.secteur.8eed0fab">
-            <span class="mod-name">{{ module.labelFr }}</span>
+            <span class="mod-name">{{ displayName(module) }}</span>
             <span class="mod-badge"><i class="pi pi-check" aria-hidden="true"></i> Recommandé pour votre secteur</span>
             </ng-container>@if (isLockedByDependency(module.id)) {
               <span class="mod-badge dep"><i class="pi pi-link" aria-hidden="true"></i> {{ dependencyLockLabel(module.id) }}</span>
@@ -133,12 +133,12 @@
                     (onChange)="toggleModule(module)"
                     [ngModelOptions]="{standalone: true}"
                     [disabled]="isLockedByDependency(module.id)"
-                    [attr.aria-label]="loc_activer_labelfr_ed496d(module.labelFr)">
+                    [attr.aria-label]="loc_activer_labelfr_ed496d(displayName(module))">
                   </p-inputSwitch>
                 </span>
               }
             </div>
-            <span class="mod-name">{{ module.labelFr }}</span>
+            <span class="mod-name">{{ displayName(module) }}</span>
             @if (hasUsageRecommendation(module.id)) {
               <span class="mod-badge usage" [pTooltip]="usageRecommendationReason(module.id)" tooltipPosition="top" i18n="@@settings.modules.recommande.pour.vous.9704ce25">
                 <i class="pi pi-sparkles" aria-hidden="true"></i> Recommandé pour vous

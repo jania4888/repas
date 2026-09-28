@@ -599,5 +599,6 @@
   "ui.tern.free.75f527": "مجاني",
   "ui.tern.validation.plateforme.en.brouillon.en.atte.413df7": "(مصادقة المنصة). في حالة المسودة أو الانتظار أو التعليق، لا يعرض هذا العنوان الواجهة للعموم.",
   "warehouses.component.summary.Caisse créée": "تم إنشاء الصندوق",
-  "warehouses.component.summary.Validation": "المصادقة"
+  "warehouses.component.summary.Validation": "المصادقة",
+  "settings.modules-settings.ts.requis.par.labels.1cfd4a45": "مطلوبة لـ {$labels}"
 }

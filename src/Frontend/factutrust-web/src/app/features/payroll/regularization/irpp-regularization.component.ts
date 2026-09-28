@@ -32,11 +32,13 @@ import {
   partialYearNotice,
   resolveOutcome
 } from './irpp-regularization.view-model';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 @Component({
   selector: 'app-irpp-regularization',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     FormsModule,
     TableModule,
@@ -97,7 +99,7 @@ import {
           @if (preview(); as p) {
             <dl class="payroll-detail-grid">
               <dt i18n="@@payroll.regularization.matricule.8f74c132">Matricule</dt><dd>{{ p.employeeNumber || '—' }}</dd>
-              <dt i18n="@@payroll.regularization.motif.2a198f47">Motif</dt><dd>{{ p.reasonLabel }}</dd>
+              <dt i18n="@@payroll.regularization.motif.2a198f47">Motif</dt><dd>{{ p.reasonLabel | backendLabel }}</dd>
               <dt i18n="@@payroll.regularization.bulletins.pris.en.compte.81a26994">Bulletins pris en compte</dt><dd>{{ p.monthsCounted }}</dd>
             </dl>
           }

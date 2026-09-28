@@ -213,7 +213,7 @@ type TaskView = 'list' | 'board' | 'calendar' | 'planning';
             </td>
             <td>
               <span class="proj-pri-dot" [ngClass]="priorityDotClass(t.priority)"></span>
-              {{ t.priorityDisplay }}
+              {{ t.priorityDisplay | backendLabel }}
             </td>
             <td [class.proj-tasks-due--late]="t.isOverdue">
               @if (t.dueDate) {

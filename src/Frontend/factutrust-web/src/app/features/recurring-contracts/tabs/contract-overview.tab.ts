@@ -40,7 +40,7 @@ import { formatContractAmount } from '../recurring-contracts.ui-utils';
           </div>
           <div class="info-row" i18n="@@recurring-contracts.tabs.periodicite.jour.64c56f0b">
             <span class="label">Périodicité</span>
-            <span class="value">{{ contract.billingFrequencyDisplay }} (jour {{ contract.billingDayOfMonth }})</span>
+            <span class="value">{{ contract.billingFrequencyDisplay | backendLabel }} (jour {{ contract.billingDayOfMonth }})</span>
           </div>
           <div class="info-row" i18n="@@recurring-contracts.tabs.debut.fin.ee766f83">
             <span class="label">Début / Fin</span>

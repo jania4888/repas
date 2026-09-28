@@ -26,6 +26,7 @@ import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { applyClientListFiltersFromQuery } from '@core/utils/list-filter-from-query';
 import { take } from 'rxjs/operators';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 interface TypeOption {
   label: string;
@@ -41,6 +42,7 @@ interface StatusOption {
   selector: 'app-client-list',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -188,7 +190,7 @@ interface StatusOption {
             </td>
             <td>
               <p-tag 
-                [value]="client.typeDisplay" 
+                [value]="client.typeDisplay | backendLabel" 
                 [severity]="getTypeSeverity(client.type)">
               </p-tag>
             </td>

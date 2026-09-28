@@ -199,7 +199,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
                 <td class="text-center">
                   {{ line.discountPercent ? (line.discountPercent | number:'1.0-2') + ' %' : '—' }}
                 </td>
-                <td class="text-center">{{ line.vatRateDisplay }}</td>
+                <td class="text-center">{{ line.vatRateDisplay | backendLabel }}</td>
                 <td class="text-right amount">{{ line.subTotal | currency:'TND':'symbol':'1.3-3' }}</td>
               </tr>
             </ng-template>

@@ -294,5 +294,9 @@
   "src/app/shared/validation/validation-rules.ts": {
     "sha": "55b4a6477b1faed5b621557278804ebfa5ef2d6463ac45637befc1edfd2eadcd",
     "reason": "Gouvernorats : libellé affiché via $localize (texte français identique), valeur envoyée à l’API = nom latin officiel inchangé (validation-rules.governorate.spec.ts)."
+  },
+  "src/app/features/reports/shared/party-balances-table.component.ts": {
+    "sha": "d712c3a5d89ca4817b51b75044a9c9d368134458ee1e21a16ecbeea9ab922c52",
+    "reason": "En-tête de la colonne tiers : getter partyColumnLabel en $localize (« Client » / « Fournisseur »), même texte que la valeur partyLabel ; rendu français inchangé."
   }
 }

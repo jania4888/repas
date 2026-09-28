@@ -59,7 +59,7 @@ import {
     } @else {
       @if (voucher(); as v) {
       <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
-      <app-page-header [title]="v.kindDisplay + ' ' + v.number" [subtitle]="v.reasonDisplay">
+      <app-page-header [title]="(v.kindDisplay | backendLabel) + ' ' + v.number" [subtitle]="v.reasonDisplay | backendLabel">
         <div class="header-actions">
           <span class="status-badge" [ngClass]="v.statusCss">{{ v.statusDisplay | backendLabel }}</span>
           <button pButton type="button" label="PDF" i18n-label="@@stock-vouchers.stock-voucher-detail.pdf.d613d88c" icon="pi pi-file-pdf" class="p-button-outlined"

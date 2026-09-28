@@ -1494,5 +1494,7 @@
   "ui.tern.ph.recommandation.s.generee.s.pour.ph.cons.763802": "تم توليد {$p0} توصية لـ {$p1}. اطلعوا على لوحة إعادة التزويد.",
   "ui.tern.ph.valeur.s.de.chaine.anterieure.dupliquee.4aa7b6": "{$p0} قيمة مكررة في السلسلة السابقة — غالبًا بسبب عمليات تسجيل متزامنة قبل التصحيح.",
   "ui.tern.votre.ph.repond.aux.questions.de.son.domai.b85c50": "يجيب {$p0} عن أسئلة مجاله. بعض الأمثلة مصنفة حسب الموضوع:",
-  "withholding-certificates-tab.component.detail.Export ZIP i": "تعذّر التصدير بصيغة ZIP."
+  "withholding-certificates-tab.component.detail.Export ZIP i": "تعذّر التصدير بصيغة ZIP.",
+  "reports.party-balances-table.ts.client.1bdd79b1": "الحريف",
+  "reports.party-balances-table.ts.fournisseur.97d91d89": "المزوّد"
 }

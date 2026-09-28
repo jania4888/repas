@@ -163,7 +163,7 @@ export class ConfirmationService {
     ref.componentInstance.message = config.message;
     ref.componentInstance.header = config.header ?? $localize`:@@core.confirmation.ts.erreur.ab546c23:Erreur`;
     ref.componentInstance.icon = config.icon ?? 'pi pi-exclamation-triangle';
-    ref.componentInstance.acceptLabel = 'OK';
+    ref.componentInstance.acceptLabel = $localize`:@@core.confirmation.ts.ok.9ce3bd42:OK`;
     ref.componentInstance.acceptButtonStyleClass = 'btn-primary';
     ref.componentInstance.showRejectButton = false;
 

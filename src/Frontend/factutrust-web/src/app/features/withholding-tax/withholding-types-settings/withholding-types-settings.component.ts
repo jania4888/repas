@@ -2,11 +2,12 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { WithholdingTaxService, WithholdingTaxTypeDto } from '@core/services/withholding-tax.service';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 @Component({
   selector: 'app-withholding-types-settings',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, BackendLabelPipe],
   template: `
     <div class="page-container">
       <div class="page-header">
@@ -30,7 +31,7 @@ import { WithholdingTaxService, WithholdingTaxTypeDto } from '@core/services/wit
           <div class="filter-group">
             <button class="chip" [class.active]="filter === ''" (click)="filter = ''" i18n="@@withholding-tax.withholding-types-settings.tous.b97ae3b4">Tous</button>
             @for (cat of categories; track cat) {
-              <button class="chip" [class.active]="filter === cat" (click)="filter = cat">{{ cat }}</button>
+              <button class="chip" [class.active]="filter === cat" (click)="filter = cat">{{ cat | backendLabel }}</button>
             }
           </div>
         </div>
@@ -54,7 +55,7 @@ import { WithholdingTaxService, WithholdingTaxTypeDto } from '@core/services/wit
                   <tr>
                     <td><code>{{ type.code }}</code></td>
                     <td>{{ type.label }}</td>
-                    <td><span class="category-badge">{{ type.categoryLabel }}</span></td>
+                    <td><span class="category-badge">{{ type.categoryLabel | backendLabel }}</span></td>
                     <td class="right">{{ type.defaultRate | number:'1.2-2' }}</td>
                     <td class="center">
                       @if (type.applicableToResident) {

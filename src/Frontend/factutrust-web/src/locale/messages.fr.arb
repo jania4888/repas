@@ -2577,6 +2577,13 @@
     ],
     "x-wave": "v1"
   },
+  "backend.aucun.dossier.client.actif.pour.demarrer.un.echange": "Aucun dossier client actif pour démarrer un échange.",
+  "@backend.aucun.dossier.client.actif.pour.demarrer.un.echange": {
+    "x-files": [
+      "src/app/core/i18n/backend-display-labels.generated.ts"
+    ],
+    "x-wave": "v1"
+  },
   "backend.aucun.prorata": "Aucun prorata",
   "@backend.aucun.prorata": {
     "x-files": [
@@ -3739,6 +3746,13 @@
     ],
     "x-wave": "v1"
   },
+  "backend.instafact.comptabilite": "InstaFact Comptabilité",
+  "@backend.instafact.comptabilite": {
+    "x-files": [
+      "src/app/core/i18n/backend-display-labels.generated.ts"
+    ],
+    "x-wave": "v1"
+  },
   "backend.inventaire.physique": "Inventaire physique",
   "@backend.inventaire.physique": {
     "x-files": [
@@ -3790,6 +3804,13 @@
   },
   "backend.licenciement": "Licenciement",
   "@backend.licenciement": {
+    "x-files": [
+      "src/app/core/i18n/backend-display-labels.generated.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "backend.liez.un.cabinet.comptable.dans.parametres.cabinet.comptable.pour.ouvrir.les.echanges": "Liez un cabinet comptable dans Paramètres → Cabinet comptable pour ouvrir les échanges.",
+  "@backend.liez.un.cabinet.comptable.dans.parametres.cabinet.comptable.pour.ouvrir.les.echanges": {
     "x-files": [
       "src/app/core/i18n/backend-display-labels.generated.ts"
     ],
@@ -5048,6 +5069,13 @@
     ],
     "x-wave": "v1"
   },
+  "backend.trimestriel": "Trimestriel",
+  "@backend.trimestriel": {
+    "x-files": [
+      "src/app/core/i18n/backend-display-labels.generated.ts"
+    ],
+    "x-wave": "v1"
+  },
   "backend.trouve.autre": "Trouvé / autre",
   "@backend.trouve.autre": {
     "x-files": [
@@ -5127,6 +5155,13 @@
   },
   "backend.virement.bancaire": "Virement bancaire",
   "@backend.virement.bancaire": {
+    "x-files": [
+      "src/app/core/i18n/backend-display-labels.generated.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "backend.votre.demande.de.liaison.est.en.attente.d.acceptation.par.le.cabinet": "Votre demande de liaison est en attente d’acceptation par le cabinet.",
+  "@backend.votre.demande.de.liaison.est.en.attente.d.acceptation.par.le.cabinet": {
     "x-files": [
       "src/app/core/i18n/backend-display-labels.generated.ts"
     ],
@@ -8037,6 +8072,13 @@
   },
   "core.confirmation.ts.erreur.ab546c23": "Erreur",
   "@core.confirmation.ts.erreur.ab546c23": {
+    "x-files": [
+      "src/app/core/services/confirmation.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.confirmation.ts.ok.9ce3bd42": "OK",
+  "@core.confirmation.ts.ok.9ce3bd42": {
     "x-files": [
       "src/app/core/services/confirmation.service.ts"
     ],
@@ -37200,6 +37242,13 @@
     ],
     "x-wave": "v2"
   },
+  "auth.register-wizard.ts.type.de.societe.68ad1468": "Type de société",
+  "@auth.register-wizard.ts.type.de.societe.68ad1468": {
+    "x-files": [
+      "src/app/features/auth/register-wizard/register-wizard.component.ts"
+    ],
+    "x-wave": "v2"
+  },
   "auth.register-wizard.ts.segment.et.domaine.236abb94": "Segment et domaine",
   "@auth.register-wizard.ts.segment.et.domaine.236abb94": {
     "x-files": [
@@ -37230,6 +37279,13 @@
   },
   "auth.register-wizard.ts.gain.de.temps.des.le.demarrage.885c8c2f": "Gain de temps dès le démarrage",
   "@auth.register-wizard.ts.gain.de.temps.des.le.demarrage.885c8c2f": {
+    "x-files": [
+      "src/app/features/auth/register-wizard/register-wizard.component.ts"
+    ],
+    "x-wave": "v2"
+  },
+  "auth.register-wizard.ts.informations.generales.be6ba6e5": "Informations générales",
+  "@auth.register-wizard.ts.informations.generales.be6ba6e5": {
     "x-files": [
       "src/app/features/auth/register-wizard/register-wizard.component.ts"
     ],
@@ -37270,6 +37326,13 @@
     ],
     "x-wave": "v2"
   },
+  "auth.register-wizard.ts.configuration.75416485": "Configuration",
+  "@auth.register-wizard.ts.configuration.75416485": {
+    "x-files": [
+      "src/app/features/auth/register-wizard/register-wizard.component.ts"
+    ],
+    "x-wave": "v2"
+  },
   "auth.register-wizard.ts.modules.recommandes.53b9fc7a": "Modules recommandés",
   "@auth.register-wizard.ts.modules.recommandes.53b9fc7a": {
     "x-files": [
@@ -37300,6 +37363,13 @@
   },
   "auth.register-wizard.ts.parametres.tunisiens.preconfigures.cb647e73": "Paramètres tunisiens préconfigurés",
   "@auth.register-wizard.ts.parametres.tunisiens.preconfigures.cb647e73": {
+    "x-files": [
+      "src/app/features/auth/register-wizard/register-wizard.component.ts"
+    ],
+    "x-wave": "v2"
+  },
+  "auth.register-wizard.ts.finalisation.672d5be7": "Finalisation",
+  "@auth.register-wizard.ts.finalisation.672d5be7": {
     "x-files": [
       "src/app/features/auth/register-wizard/register-wizard.component.ts"
     ],
@@ -52403,6 +52473,34 @@
   },
   "invoices.invoice-detail.ts.signer.362166e4": "Signer",
   "@invoices.invoice-detail.ts.signer.362166e4": {
+    "x-files": [
+      "src/app/features/invoices/invoice-detail/invoice-detail.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-detail.ts.creee.a570b396": "Créée",
+  "@invoices.invoice-detail.ts.creee.a570b396": {
+    "x-files": [
+      "src/app/features/invoices/invoice-detail/invoice-detail.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-detail.ts.validee.2cc6c327": "Validée",
+  "@invoices.invoice-detail.ts.validee.2cc6c327": {
+    "x-files": [
+      "src/app/features/invoices/invoice-detail/invoice-detail.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-detail.ts.signee.be13d5cd": "Signée",
+  "@invoices.invoice-detail.ts.signee.be13d5cd": {
+    "x-files": [
+      "src/app/features/invoices/invoice-detail/invoice-detail.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-detail.ts.payee.65b240e8": "Payée",
+  "@invoices.invoice-detail.ts.payee.65b240e8": {
     "x-files": [
       "src/app/features/invoices/invoice-detail/invoice-detail.component.ts"
     ],
@@ -91355,6 +91453,20 @@
     ],
     "x-wave": "v6"
   },
+  "reports.party-balances-table.ts.fournisseur.97d91d89": "Fournisseur",
+  "@reports.party-balances-table.ts.fournisseur.97d91d89": {
+    "x-files": [
+      "src/app/features/reports/shared/party-balances-table.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.party-balances-table.ts.client.1bdd79b1": "Client",
+  "@reports.party-balances-table.ts.client.1bdd79b1": {
+    "x-files": [
+      "src/app/features/reports/shared/party-balances-table.component.ts"
+    ],
+    "x-wave": "v6"
+  },
   "reports.party-balances-table.ts.aucun.solde.64a726da": "Aucun solde",
   "@reports.party-balances-table.ts.aucun.solde.64a726da": {
     "x-files": [
@@ -96017,6 +96129,13 @@
   },
   "settings.modules-settings.ts.impossible.de.charger.les.modules.e56b7f1e": "Impossible de charger les modules.",
   "@settings.modules-settings.ts.impossible.de.charger.les.modules.e56b7f1e": {
+    "x-files": [
+      "src/app/features/settings/modules/modules-settings.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.modules-settings.ts.requis.par.labels.1cfd4a45": "Requis par {$labels}",
+  "@settings.modules-settings.ts.requis.par.labels.1cfd4a45": {
     "x-files": [
       "src/app/features/settings/modules/modules-settings.component.ts"
     ],

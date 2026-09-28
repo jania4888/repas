@@ -10,6 +10,7 @@ import { ToastService } from '@core/services/toast.service';
 import { ConfirmationService } from '@core/services/confirmation.service';
 import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 import { outcomeLabel, outcomeSeverity, resolveOutcome } from '../regularization/irpp-regularization.view-model';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 /**
  * Régularisations IRPP du cycle : génération batch et consultation.
@@ -22,6 +23,7 @@ import { outcomeLabel, outcomeSeverity, resolveOutcome } from '../regularization
   selector: 'app-payroll-regularization-grid',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     TableModule,
     TagModule,
@@ -66,7 +68,7 @@ import { outcomeLabel, outcomeSeverity, resolveOutcome } from '../regularization
           <ng-template pTemplate="body" let-line>
             <tr>
               <td>{{ line.employeeName }}</td>
-              <td>{{ line.reasonLabel }}</td>
+              <td>{{ line.reasonLabel | backendLabel }}</td>
               <td class="text-right tabnum">{{ line.cumulNetTaxable | payrollAmount:false }}</td>
               <td class="text-right tabnum">{{ line.irppDue | payrollAmount:false }}</td>
               <td class="text-right tabnum">{{ line.cumulIrppWithheld | payrollAmount:false }}</td>

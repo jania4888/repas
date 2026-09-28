@@ -25,6 +25,7 @@ import {
 import { fiscalYearLabel } from '../services/fiscal-year.util';
 import { AccountingStatusBannerComponent } from '../shared/accounting-status-banner.component';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 @Component({
   selector: 'app-fixed-assets-amortization-table',
@@ -36,7 +37,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     PageHeaderComponent,
     ButtonComponent,
     EmptyStateComponent,
-    AccountingStatusBannerComponent
+    AccountingStatusBannerComponent,
+    BackendLabelPipe
   ],
   template: `
     <app-page-header
@@ -219,7 +221,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             <p i18n="@@accounting.fixed-assets.integral.dotation.unique.l.annee.de.mise.ba977829"><strong>Intégral</strong> : dotation unique l'année de mise en service.</p>
             <p i18n="@@accounting.fixed-assets.devise.09c46e8b">Devise : {{ r.infoBox.currencyCode }}</p>
             <p i18n="@@accounting.fixed-assets.edite.le.date.heure">Édité le {{ r.infoBox.generatedAtUtc | date: 'dd/MM/yyyy' }} à {{ r.infoBox.generatedAtUtc | date: 'HH:mm' }}</p>
-            <p>{{ r.infoBox.productName }}</p>
+            <p>{{ r.infoBox.productName | backendLabel }}</p>
           </div>
         </div>
       </div>

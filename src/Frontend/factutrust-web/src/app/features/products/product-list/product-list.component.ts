@@ -31,6 +31,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
 import { AppModule } from '@core/models/app-module';
 import { filter, take } from 'rxjs/operators';
 import { applyProductListFiltersFromQuery } from '@core/utils/list-filter-from-query';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 interface CategoryOption {
   label: string;
@@ -41,6 +42,7 @@ interface CategoryOption {
   selector: 'app-product-list',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     BarcodeScanFieldComponent,
     PrintLabelsDialogComponent,
     CommonModule,
@@ -184,7 +186,7 @@ interface CategoryOption {
               </div>
             </td>
             <td>
-              <p-tag [value]="product.typeDisplay" severity="info"></p-tag>
+              <p-tag [value]="product.typeDisplay | backendLabel" severity="info"></p-tag>
             </td>
             <td>
               <span class="product-category">{{ product.category }}</span>

@@ -24,6 +24,7 @@ import { ToastService } from '@core/services/toast.service';
 import { AuthService } from '@core/services/auth.service';
 import { formatLocalDate } from '@core/utils/date.util';
 import { Subscription } from 'rxjs';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 export type PaymentViewType = 'client' | 'supplier';
 
@@ -67,6 +68,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
   selector: 'app-payments',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -225,7 +227,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
             <td>
               <app-status-badge 
                 [status]="getStatusBadgeStatus(payment.status)"
-                [label]="payment.status">
+                [label]="payment.status | backendLabel">
               </app-status-badge>
             </td>
             <td>

@@ -38,6 +38,7 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
 import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.component';
 import { FormSectionComponent } from '@shared/components/form-section/form-section.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 type WizardStep = 'start' | 'count' | 'summary' | 'success';
 
@@ -45,6 +46,7 @@ type WizardStep = 'start' | 'count' | 'summary' | 'success';
     selector: 'app-inventory-wizard',
     standalone: true,
     imports: [
+        BackendLabelPipe,
         BarcodeScanFieldComponent,
         CommonModule,
         FormsModule,

@@ -1,7 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Suites i18n/RTL de l'ERP (e2e/i18n/erp-*.spec.ts) sur une session simulée : aucun backend requis.
+ * Suites i18n/RTL de l'ERP (e2e/i18n/erp-*.spec.ts) sur une session simulée : aucun backend requis,
+ * sauf erp-ar-live (API locale isolée, ignorée sans I18N_LIVE_ACCOUNT ; voir l'en-tête du fichier).
  * Port dédié et jamais de réutilisation d'un serveur existant — un `ng serve` lancé depuis une autre
  * copie de travail sur 4200 servirait un autre code.
  *
@@ -11,7 +12,7 @@ const PORT = Number(process.env.I18N_E2E_PORT ?? 4210);
 
 export default defineConfig({
   testDir: './e2e/i18n',
-  testMatch: /erp-(rtl|ar-routes)[^/]*\.spec\.ts$/,
+  testMatch: /erp-(rtl|ar-routes|ar-live)[^/]*\.spec\.ts$/,
   outputDir: './e2e/test-results/i18n',
   snapshotPathTemplate: './e2e/test-results/i18n-snapshots/{arg}{ext}',
   fullyParallel: false,

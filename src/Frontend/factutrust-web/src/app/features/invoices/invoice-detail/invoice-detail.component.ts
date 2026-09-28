@@ -1404,25 +1404,25 @@ export class InvoiceDetailComponent implements OnInit {
   private buildTimeline(invoice: InvoiceDetail): void {
     this.timeline = [
       {
-        status: 'Créée',
+        status: $localize`:@@invoices.invoice-detail.ts.creee.a570b396:Créée`,
         date: invoice.createdAt,
         icon: 'pi pi-file',
         color: 'var(--color-neutral-400)'
       },
       {
-        status: 'Validée',
+        status: $localize`:@@invoices.invoice-detail.ts.validee.2cc6c327:Validée`,
         date: invoice.status !== 'Draft' ? invoice.createdAt : null,
         icon: 'pi pi-check',
         color: invoice.status !== 'Draft' ? 'var(--color-primary-500)' : 'var(--color-neutral-300)'
       },
       {
-        status: 'Signée',
+        status: $localize`:@@invoices.invoice-detail.ts.signee.be13d5cd:Signée`,
         date: invoice.signedAt,
         icon: 'pi pi-pencil',
         color: invoice.signedAt ? 'var(--color-success-500)' : 'var(--color-neutral-300)'
       },
       {
-        status: 'Payée',
+        status: $localize`:@@invoices.invoice-detail.ts.payee.65b240e8:Payée`,
         date: invoice.paidAt,
         icon: 'pi pi-wallet',
         color: invoice.paidAt ? 'var(--color-success-600)' : 'var(--color-neutral-300)'

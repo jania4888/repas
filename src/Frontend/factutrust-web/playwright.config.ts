@@ -12,7 +12,7 @@ export default defineConfig({
   
   /* Exclure les fichiers Selenium et les suites i18n à session simulée (playwright.i18n.config.ts :
      port dédié, captures de référence locales) */
-  testIgnore: [/.*\.selenium\.spec\.ts$/, /[\\/]i18n[\\/]erp-(rtl|ar-routes)[^\\/]*\.spec\.ts$/],
+  testIgnore: [/.*\.selenium\.spec\.ts$/, /[\\/]i18n[\\/]erp-(rtl|ar-routes|ar-live)[^\\/]*\.spec\.ts$/],
   
   /* Timeouts */
   timeout: 30 * 1000,

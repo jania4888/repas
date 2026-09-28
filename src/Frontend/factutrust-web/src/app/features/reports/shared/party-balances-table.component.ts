@@ -44,7 +44,7 @@ export interface PartyBalanceRow {
         <ng-template pTemplate="header">
           <tr>
             <th pSortableColumn="partyName">
-              {{ partyLabel }}
+              {{ partyColumnLabel }}
               <p-sortIcon field="partyName"></p-sortIcon>
             </th>
             <th class="text-right" pSortableColumn="totalInvoiced">
@@ -149,6 +149,13 @@ export class PartyBalancesTableComponent {
   @Input() loading = false;
   @Input() partyLabel: 'Client' | 'Fournisseur' = 'Client';
   @Input() showActions = false;
+
+  /** En-tête affiché de la colonne tiers (`partyLabel` reste une valeur, jamais affichée telle quelle). */
+  get partyColumnLabel(): string {
+    return this.partyLabel === 'Fournisseur'
+      ? $localize`:@@reports.party-balances-table.ts.fournisseur.97d91d89:Fournisseur`
+      : $localize`:@@reports.party-balances-table.ts.client.1bdd79b1:Client`;
+  }
   @Input() emptyMessage = $localize`:@@reports.party-balances-table.ts.aucun.solde.64a726da:Aucun solde`;
   @Input() ariaLabel = $localize`:@@reports.party-balances-table.ts.soldes.e1c7ce3a:Soldes`;
 

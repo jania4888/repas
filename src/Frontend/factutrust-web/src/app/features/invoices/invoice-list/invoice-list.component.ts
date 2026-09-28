@@ -37,6 +37,7 @@ import {
   REFUND_INVOICE_DIALOG_OPTIONS
 } from '@shared/components/refund-invoice-id-dialog/refund-invoice-id-dialog.component';
 import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.service';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 type InvoiceListMode = 'invoices' | 'unpaid' | 'creditNotes';
 
@@ -49,6 +50,7 @@ interface StatusOption {
   selector: 'app-invoice-list',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -254,7 +256,7 @@ interface StatusOption {
             <td>
               <app-status-badge 
                 [status]="getStatusBadgeStatus(invoice.status)"
-                [label]="invoice.status">
+                [label]="invoice.status | backendLabel">
               </app-status-badge>
             </td>
             <td>

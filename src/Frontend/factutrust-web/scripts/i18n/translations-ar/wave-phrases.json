@@ -2830,5 +2830,10 @@
   "withholding-tax.tej-export.l.authentification.se.fait.via.3db24eef": "تتم المصادقة عبر",
   "withholding-tax.routes.title.Tableau_de_bord_retenue_": "لوحة قيادة الخصم من المورد - InstaFact",
   "withholding-tax.routes.title.Export_TEJ_InstaFact": "تصدير TEJ - InstaFact",
-  "withholding-tax.routes.title.Types_de_retenue_Insta": "أنواع الخصم - InstaFact"
+  "withholding-tax.routes.title.Types_de_retenue_Insta": "أنواع الخصم - InstaFact",
+  "backend.instafact.comptabilite": "InstaFact للمحاسبة",
+  "backend.liez.un.cabinet.comptable.dans.parametres.cabinet.comptable.pour.ouvrir.les.echanges": "اربطوا مكتبًا محاسبيًا في الإعدادات ← المكتب المحاسبي لفتح التبادلات.",
+  "backend.votre.demande.de.liaison.est.en.attente.d.acceptation.par.le.cabinet": "طلب الربط الخاص بكم في انتظار قبول المكتب.",
+  "backend.aucun.dossier.client.actif.pour.demarrer.un.echange": "لا يوجد ملف حريف نشط لبدء تبادل.",
+  "backend.trimestriel": "ثلاثي"
 }

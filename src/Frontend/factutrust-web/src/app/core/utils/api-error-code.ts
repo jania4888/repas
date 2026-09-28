@@ -14,7 +14,9 @@ export const API_ERROR_CODE = {
   /** Passage CMUP → FIFO/LIFO refusé : une couche d'ouverture est nécessaire. */
   openingLayerRequired: 'Validation.CostingMethod.OpeningLayerRequired',
   /** Limite du plan d'abonnement atteinte (Studio). */
-  studioPlanLimit: 'Validation.Plan'
+  studioPlanLimit: 'Validation.Plan',
+  /** Société : aucune déclaration mensuelle soumise par le cabinet pour la période (VatDeclarationAccess). */
+  vatDeclarationNotSubmitted: 'VatDeclaration.NotSubmitted'
 } as const;
 
 /** Code de l'erreur API (`error.code`), y compris quand le corps est une chaîne JSON. */

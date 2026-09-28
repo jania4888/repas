@@ -1,7 +1,8 @@
 # Statut du chantier i18n ERP
 
 Dernière mise à jour : 2026-09-28 — lots 0 à 7 livrés sur `i18n/erp-arabe` (worktree `C:\wt\ar`) :
-traduction, mise en page RTL, balayage des fuites sur toutes les routes société, revue de sécurité.
+traduction, mise en page RTL, balayage des fuites sur toutes les routes société, revue de sécurité,
+recette sur API réelle avec données (109 écrans).
 Les drapeaux arabes restent **OFF** en production (`environment.erp.arabicEnabled`,
 `Localization:ArabicMessagesEnabled`).
 
@@ -10,21 +11,22 @@ Les drapeaux arabes restent **OFF** en production (`environment.erp.arabicEnable
 | Porte | Commande | Résultat |
 |-------|----------|----------|
 | Toutes | `npm run i18n:gate` | vert (règles de traduction, ID, concaténations, payloads IA, valeurs, catalogue strict, CSS logique, attributs de templates, parités) |
-| ID uniques | `npm run i18n:ids` | 20 477 messages, tous à `@@id` sauf 18 ICU imbriqués (ID calculé par le compilateur), 0 collision |
+| ID uniques | `npm run i18n:ids` | 20 494 messages, tous à `@@id` sauf 18 ICU imbriqués (ID calculé par le compilateur), 0 collision |
 | CSS RTL | `npm run i18n:rtl:check` | 0 déclaration physique convertible (755 converties en propriétés logiques) ; surcharge Pluto/Bootstrap à jour |
 | Attributs de templates | `node scripts/i18n/codemod/localize-bound-literals.mjs --check` | 0 texte français non balisé dans les attributs et liaisons |
 | Phrases découpées | `node scripts/i18n/gate/check-concat-messages.mjs` | 0 (32 fusionnées en un seul `$localize`) |
 | Payloads IA | `node scripts/i18n/gate/check-ai-payload-messages.mjs` | 0 `$localize` dans le contexte d'écran envoyé au LLM ni dans les fichiers de prompts |
 | Messages-valeurs | `npm run i18n:values` | 0 (enum, clé, URL, classe d'icône… jamais en `$localize`) |
-| Catalogue AR | `node scripts/i18n/build-runtime-translations.mjs --strict` | **16 854 / 17 170** messages, 0 rejet, 1 659 Kio (cible 1,75 Mio, plafond 2 Mio) |
-| Parité FR templates | `npm run i18n:parity:template` | 0 écart non justifié (125 approuvés, motif par template) |
-| Parité FR TypeScript | `npm run i18n:parity:ts` | 0 écart non justifié (73 approuvés) |
+| Catalogue AR | `node scripts/i18n/build-runtime-translations.mjs --strict` | **16 872 / 17 187** messages, 0 rejet, 1 660 Kio (cible 1,75 Mio, plafond 2 Mio) |
+| Parité FR templates | `npm run i18n:parity:template` | 0 écart non justifié (142 approuvés, motif par template) |
+| Parité FR TypeScript | `npm run i18n:parity:ts` | 0 écart non justifié (74 approuvés) |
 | Parité FR visuelle | `npx playwright test -c playwright.i18n.config.ts erp-rtl-fr-parity` | 14 écrans **identiques au pixel près** avant/après le passage aux propriétés logiques |
 | Codemods | `npm run i18n:codemod:test` | vert (templates, ternaires, littéraux TS, listes d'approbation, CSS logique, attributs liés) |
 | Fuites françaises (arabe) | `npx playwright test -c playwright.i18n.config.ts erp-ar-routes` | **112 / 112 routes sans fuite** (session simulée, listes vides) |
+| Recette sur API réelle | `I18N_LIVE_ACCOUNT=<compte> E2E_API_BASE=https://localhost:7011 npx playwright test -c playwright.i18n.config.ts erp-ar-live` | connexion réelle, 103 routes du menu + 5 fiches + dialogue et refus de l'API : **109 écrans en arabe**, un écart connu (analyses de la prévision, ci-dessous) ; 12 routes comptables redirigées « accès refusé » pour une société (voulu) |
 | Build de production | `npm run build:prod` | vert ; budgets FR inchangés (2 avertissements préexistants : secondary-nav, projects) |
-| Karma | `npx ng test --watch=false --browsers=ChromeHeadless` | 16 échecs, **identiques à fr-reference** |
-| Backend | `dotnet test --filter MessageLocalizer\|LocalizeApiResponse\|UiLanguage\|ExceptionHandling…` | Infrastructure 23/23 (dont marqueur front gardé en français), API 28/28 |
+| Karma | `npx ng test --watch=false --browsers=ChromeHeadless` | 16 échecs, **identiques à fr-reference** (lots 0-7) ; après la recette : 498/498 sur les écrans modifiés |
+| Backend | `dotnet test --filter MessageLocalizer\|LocalizeApiResponse\|UiLanguage\|ExceptionHandling\|Accounting…` | Infrastructure MessageLocalizer 14/14 (messages portés par des constantes traduits), API 49/49 |
 
 Les 316 messages non traduits sont volontaires : sigles et exemples identiques (TVA, NIF, IBAN…),
 libellés internes de ng-bootstrap, traces de diagnostic.
@@ -95,6 +97,24 @@ Transfert compressé : ~370 Kio.
 - Compteur d'onboarding, salutation du tableau de bord (virgule arabe), slogan de marque, libellé d'analyse
   générique : restés en dur en français, passés en `$localize`.
 
+**Recette sur données réelles** (la session simulée, à listes vides, ne pouvait pas les voir) :
+- Libellés renvoyés par l'API affichés bruts en français : statuts des factures, devis et paiements (badges
+  « Brouillon », « Validée »), types client/fournisseur/produit, noms de modules, catégories de retenue,
+  statuts et motifs de paie, nature/rôle/priorité des projets, fréquence et historique des contrats, types
+  d'inventaire, bons de stock (~25 liaisons). Tous passent par `| backendLabel` / `backendDisplayLabel()`
+  (dictionnaire généré, ID désormais stables d'une génération à l'autre ; aides `*Display` et constantes
+  de DTO couvertes).
+- Frise de la facture (Créée / Validée / Signée / Payée), étapes de l'inscription, « Requis par … » des
+  modules, en-tête Client/Fournisseur des soldes, bouton « OK » des alertes d'erreur : en dur, passés en `$localize`.
+- Déclaration mensuelle côté société : le front reconnaissait « aucune déclaration soumise » à son texte
+  français, ce qui obligeait l'API à ne pas le traduire (toast en français). L'API renvoie désormais le code
+  `VatDeclaration.NotSubmitted`, le front le teste, le message est traduit.
+- Extracteur backend : les messages passés par une constante (`Error.Forbidden(Access.DeniedMessage)`,
+  `new(code, Message)`) étaient invisibles — 23 récupérés, 18 traduits (les autres : plateforme, landing).
+- Échanges : l'indication renvoyée par l'API (« Liez un cabinet comptable… ») est traduite à l'affichage.
+- Recette : le détecteur « aspect français » ne voit pas « Brouillon » (ni accent ni mot-outil) ; le test
+  compare aussi le texte visible aux clés du dictionnaire des libellés backend.
+
 ## Revue de sécurité (lot 7)
 
 - **Injection HTML** : aucun nouveau `innerHTML` ; le seul existant (`empty-state`, `secondaryAction`) n'est
@@ -119,11 +139,23 @@ Transfert compressé : ~370 Kio.
   (`stock-simple`) dans les deux langues ; le corriger modifierait le français.
 - Gouvernorats, unités, modes de paiement : ce sont des valeurs enregistrées (seuls leurs libellés
   d'option sont traduits là où ils sont distincts de la valeur).
+- Référentiels semés et données enregistrées : plan comptable NCT, journaux, catégories d'amortissement,
+  types de retenue, libellés d'écritures générés à la comptabilisation (« Client — FAC-2026-000001 »).
 
 ## Reste à faire
 
-- **Recette sur données réelles** : le balayage tourne sur des listes vides (session simulée) ; les écrans de
-  détail, les dialogues et les tableaux remplis restent à parcourir avec un compte de démonstration.
+- **Décisions de conception** (textes produits par le backend et enregistrés, non traduisibles en l'état) :
+  - analyses de la prévision de trésorerie (`CashFlowAlertRules`, « Échéances clients », « 71 % des
+    encaissements… ») et raisons de recommandation de module (`ReasonFr`) : à produire sous forme
+    code + paramètres pour être rendues dans la langue de l'interface ;
+  - types de retenue à la source : le champ `LabelAr` existe mais le seed le laisse vide (le remplir demande
+    une mise à jour des dossiers existants et une relecture fiscale) ;
+  - entrepôt par défaut « Entrepôt Principal » créé à l'inscription (donnée renommable ; un nom arabe par
+    défaut apparaîtrait aussi sur les documents, qui restent en français).
+- **Couverture de la recette réelle** : ventes, clients, fournisseurs, produits, écritures générées, prévision.
+  Les modules sans données de test (paie, projets, stock, contrats, inventaire) ont été contrôlés
+  statiquement (liaisons `*Display` / `*Label`) ; une recette avec données sur ces modules reste utile.
+  Les 12 routes comptables réservées au cabinet n'ont été vues qu'en session simulée.
 - **Limites connues, hors chantier** : à largeur téléphone, la barre latérale reste ouverte et comprime le
   contenu — en français comme en arabe (l'ERP n'est pas optimisé mobile). Les panneaux latéraux
   (`position="right"`) s'ouvrent à droite dans les deux langues (positions physiques de PrimeNG).
