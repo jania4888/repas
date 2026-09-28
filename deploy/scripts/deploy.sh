@@ -243,9 +243,11 @@ step "2. ANALYSE DU DELTA $CUR_SHORT..$TGT_SHORT"
 CHANGED=$(git -C src diff --name-only "$CUR" "$TGT")
 say "  $(printf '%s\n' "$CHANGED" | grep -c .) fichier(s) modifie(s)"
 NEED_API=0; NEED_WEB=0; NEED_ADMIN=0
-printf '%s\n' "$CHANGED" | grep -E '^src/Backend/' | grep -qvE '^src/Backend/tests/' && NEED_API=1
-printf '%s\n' "$CHANGED" | grep -qE '^(src/Frontend/factutrust-web/|docs/utilisateur/|docs/screenshots/)' && NEED_WEB=1
-printf '%s\n' "$CHANGED" | grep -qE '^src/Frontend/factutrust-backoffice/' && NEED_ADMIN=1
+# grep -q ferme le tuyau des qu'une ligne correspond : avec pipefail, printf prend SIGPIPE
+# et le delta est tronque (front/back-office ignores sur les gros merges).
+printf '%s\n' "$CHANGED" | grep -E '^src/Backend/' | grep -Ev '^src/Backend/tests/' >/dev/null && NEED_API=1
+printf '%s\n' "$CHANGED" | grep -E '^(src/Frontend/factutrust-web/|docs/utilisateur/|docs/screenshots/)' >/dev/null && NEED_WEB=1
+printf '%s\n' "$CHANGED" | grep -E '^src/Frontend/factutrust-backoffice/' >/dev/null && NEED_ADMIN=1
 if [ "$BUILD_ALL" = 1 ]; then NEED_API=1; NEED_WEB=1; NEED_ADMIN=1; fi
 label() { [ "$1" = 1 ] && printf 'a reconstruire' || printf 'inchange'; }
 say "  API : $(label $NEED_API) | front tenant : $(label $NEED_WEB) | back-office : $(label $NEED_ADMIN)"
@@ -388,8 +390,8 @@ gate() {
   L=$(docker logs --since "$T0" factutrust-api 2>&1)
   n=$(printf '%s\n' "$L" | grep -cE 'FATAL: Error during database migration|FATAL: Database seeding failed')
   if [ "$n" -eq 0 ]; then ok "aucun FATAL de migration ou de semis"; else ko "$n ligne(s) FATAL"; fail=1; fi
-  if printf '%s\n' "$L" | grep -q 'Database migration completed successfully'; then ok "migration master terminee"; else ko "migration master non confirmee"; fail=1; fi
-  if printf '%s\n' "$L" | grep -q 'Database seeding completed successfully'; then ok "semis termine"; else ko "semis non confirme"; fail=1; fi
+  if printf '%s\n' "$L" | grep 'Database migration completed successfully' >/dev/null; then ok "migration master terminee"; else ko "migration master non confirmee"; fail=1; fi
+  if printf '%s\n' "$L" | grep 'Database seeding completed successfully' >/dev/null; then ok "semis termine"; else ko "semis non confirme"; fail=1; fi
   if [ -n "$MASTER_MIGS" ]; then
     list=$(printf "N'%s'," $MASTER_MIGS); list=${list%,}
     want=$(printf '%s\n' $MASTER_MIGS | grep -c .)
@@ -400,7 +402,7 @@ gate() {
   code=$(curl -s -o /dev/null -m 20 -w '%{http_code}' -X POST -H 'Content-Type: application/json' \
     -d '{"refreshToken":"porte-de-deploiement"}' "http://$ip:8080/api/auth/refresh")
   if [ "$code" = 401 ]; then ok "refresh bidon -> 401 (requetes sur Users fonctionnelles)"; else ko "refresh bidon -> $code, 401 attendu"; fail=1; fi
-  if printf '%s\n' "$L" | grep -q 'Effective feature flags:.*Environment=Production'; then ok "drapeaux : Environment=Production"
+  if printf '%s\n' "$L" | grep 'Effective feature flags:.*Environment=Production' >/dev/null; then ok "drapeaux : Environment=Production"
   else ko "ligne 'Effective feature flags' absente ou hors Production"; fail=1; fi
   n=$(printf '%s\n' "$L" | grep -E '\[(ERR|FTL)\]' | grep -vc 'Savepoints are disabled')
   if [ "$n" -eq 0 ]; then ok "0 erreur ERR/FTL depuis le demarrage"
