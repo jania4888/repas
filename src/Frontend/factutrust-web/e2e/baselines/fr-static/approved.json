@@ -48,12 +48,16 @@
     "reason": "Bandeau « Exercice verrouillé définitivement[ le {date}] — le livre d'inventaire est figé. » : trois fragments remplacés par deux phrases complètes (@if lockedAt) ; texte rendu identique (blancs repliés)."
   },
   "src/app/features/accounting/journal/journal.component.ts#JournalComponent": {
-    "sha": "f23f101767a69873a71eb39864303965f12f8445805003ea04a65bff331498e3",
-    "reason": "Pluriel « {{ n > 1 ? 'P' : 'S' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique."
+    "sha": "b726bceb536fa7d227054dfa5b143ee0bd8098ee07accf8cf867da8b42485b5d",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
   },
   "src/app/features/accounting/ledger/ledger.component.html": {
-    "sha": "2d45417c2843e340de62b2ee32c715f37747b1025f69b4f46acfe83b6f21f86f",
-    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres."
+    "sha": "4b9b85630b1bfbd83006b2841f5fdaedbadf0cb683f3dbe06b03707478a2b991",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
+  },
+  "src/app/features/accounting/lettering/lettering.component.html": {
+    "sha": "3f96aff289bb16799b0a41ad921de7f8f70a27d651afd06f296f72587f3a7ca0",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
   },
   "src/app/features/accounting/loans/loans-list.component.ts#LoansListComponent": {
     "sha": "09e469a0c14c0b06fc682a00eab850ecc18e0f42434e4be7aaac1341a7282426",
@@ -75,13 +79,37 @@
     "sha": "a7577c648c48ff62f72fc16d3205cfe25439cc116f2d4d3b28849ae21c1de43b",
     "reason": "« {{ expanded() ? 'Masquer' : 'Voir' }} le texte » remplacé par deux messages complets « Masquer le texte » / « Voir le texte » : texte rendu identique."
   },
+  "src/app/features/ai-assistant/components/chat-panel/chat-panel.component.ts#ChatPanelComponent": {
+    "sha": "57c3e41c31615a883dd63b1ef50082555d1ae98a6c42d5b3c391d7f711fe57f9",
+    "reason": "Questions d'exemple de l'IA marquées lang=\"fr\" dir=\"auto\" (français voulu : routage d'intention) — texte FR inchangé"
+  },
+  "src/app/features/ai-assistant/components/suggestion-catalog/suggestion-catalog.component.ts#SuggestionCatalogComponent": {
+    "sha": "7717f0fbddc7c5bb003b832f3c76947a49f9a4594bd9ffddc71b503305cbb545",
+    "reason": "Questions d'exemple de l'IA marquées lang=\"fr\" dir=\"auto\" (français voulu : routage d'intention) — texte FR inchangé"
+  },
   "src/app/features/auth/auth-shell/auth-shell.component.html": {
     "sha": "aa933dbd3b1f31a0bb0488bbfd9e3fbcd8a8f4e9000fae46a9ee9a31eb5da0ad",
     "reason": "Sélecteur de langue ajouté (masqué si erp.arabicEnabled est faux)."
   },
+  "src/app/features/auth/register-wizard/steps/step-configuration/step-configuration.component.html": {
+    "sha": "8f716b25f701cde0a0b835de88249b66ee0dbde1f09978ebad7fcf83d98855a0",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
+  },
+  "src/app/features/auth/register/register.component.html": {
+    "sha": "0a3f88cb9f320c8918b7a468d3b6613d132da0be0e787a114c0f4062b9aa83e2",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
+  },
   "src/app/features/clients/client-portal-contacts-panel.component.ts#ClientPortalContactsPanelComponent": {
     "sha": "56aeccb15df32c49e4d93fc2bc41e267c3f7a566e66dc887351a275655f9281a",
     "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/crm/activities/activity-list.component.ts#ActivityListComponent": {
+    "sha": "111260971998b0aeed960ff836c7ebbc62fc0ff82e877b5c33137a84eab2d086",
+    "reason": "Style en ligne physique → logique (identique en LTR, retourné en RTL) ; libellés inchangés"
+  },
+  "src/app/features/crm/dashboard/crm-dashboard.component.ts#CrmDashboardComponent": {
+    "sha": "9f48c074708d4a9aba720a399a87e4b01467d19c4df6c02787b7405bcfa46203",
+    "reason": "Style en ligne physique → logique (identique en LTR, retourné en RTL) ; libellés inchangés"
   },
   "src/app/features/dashboard/dashboard.component.ts#DashboardComponent": {
     "sha": "200fcaf1e476006192ff49accf14724f770befb1248ab83ad6ec272089219733",
@@ -104,20 +132,24 @@
     "reason": "Ternaire de libellés « {{ c ? 'A' : 'B' }} » remplacé par un ICU select {!!(c), select, true {A} other {B}} : même branche affichée (vérité JS), texte traduisible."
   },
   "src/app/features/forecasting/pages/replenishment-board/replenishment-board.component.html": {
-    "sha": "18416e2f42f90d6d120f6ca71896f0c9b9b8887ebcaceb22269b0820cc2ed7f5",
-    "reason": "Ternaire de libellés « {{ c ? 'A' : 'B' }} » remplacé par un ICU select {!!(c), select, true {A} other {B}} : même branche affichée (vérité JS), texte traduisible."
+    "sha": "bfa0ae2d964f0336d10fee800acddc7bfface004cda4157075269dbb65697ce6",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
   },
   "src/app/features/inventory/inventory-detail/inventory-detail.component.html": {
-    "sha": "55c33385048d03c238d44a5495d2f20e871397211e0ad6c54fe15ecf3f993dab",
-    "reason": "Ternaire de libellés « {{ c ? 'A' : 'B' }} » remplacé par un ICU select {!!(c), select, true {A} other {B}} : même branche affichée (vérité JS), texte traduisible. Pluriel « {{ n > 1 ? 'P' : 'S' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique. Ajout du pipe backendLabel : identité en français."
+    "sha": "2e2c3cd16fb7e8cf2045cc9d4796ac5186e5c1d476bd35e1df8fbf13e5e2df2d",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
+  },
+  "src/app/features/inventory/inventory-form/inventory-form.component.html": {
+    "sha": "590ba43bb507b56a697db772b57c4d1b6764a26003b7ab15dcaa34452fad3302",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
   },
   "src/app/features/inventory/inventory-list/inventory-list.component.html": {
     "sha": "58ee2f3553b23ca76831773293a931ed5235495c2f48563918f18dfe83fafcc1",
     "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
   },
   "src/app/features/inventory/inventory-wizard/inventory-wizard.component.html": {
-    "sha": "fa49f1dd1790dcd9da941150e32dd58770aa159da5cc90e7caa51ea70c874812",
-    "reason": "Phrase « Saisissez un numéro de lot pour … avant de valider. » rendue par @if/@else en deux phrases complètes (au lieu de trois fragments) : texte affiché identique (blancs HTML repliés), traduction d'un seul tenant."
+    "sha": "c4ff1dfa58661b3f02874fc393d70488a528f49021b3ac4e6fd3c7e336be360d",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
   },
   "src/app/features/invoices/invoice-detail/invoice-detail.component.ts#InvoiceDetailComponent": {
     "sha": "97f2752155172de72256e923face600c20bad0e9e1ffe63aa751a02a387bf07c",
@@ -272,8 +304,8 @@
     "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
   },
   "src/app/features/projects/tabs/project-tasks.tab.ts#ProjectTasksTabComponent": {
-    "sha": "ed5814bc96c76e3d09d2ee1470ae77dbfd979d8f38eaf23f330baacacdf490c7",
-    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+    "sha": "fd08cfda166b07c0ef1a1b49ed03d8eb2ded931612b26aa7cafdf6742f004ab8",
+    "reason": "Style en ligne physique → logique (identique en LTR, retourné en RTL) ; libellés inchangés"
   },
   "src/app/features/projects/tabs/project-time.tab.ts#ProjectTimeTabComponent": {
     "sha": "99fb052ba41729887809c803f1dafce3173885113699397d77e783c740b5086f",
@@ -292,8 +324,8 @@
     "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
   },
   "src/app/features/purchase-receipts/pages/purchase-receipt-detail/purchase-receipt-detail.component.ts#PurchaseReceiptDetailComponent": {
-    "sha": "401c97d348fddbc72865885cd341504a7afe6f3462bb4d3e04c7a85b8783dcfd",
-    "reason": "Ternaire de libellés « {{ c ? 'A' : 'B' }} » remplacé par un ICU select {!!(c), select, true {A} other {B}} : même branche affichée (vérité JS), texte traduisible. Ajout du pipe backendLabel : identité en français."
+    "sha": "6ffc2b73a5f698c63c428dcedd28b1eb1ad2a924a580235f7d9fb87a87913e39",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
   },
   "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts#PurchaseReceiptFormComponent": {
     "sha": "f325d64fda2c3b4156235b114999b37eef46fbd0ba128967b961334934627c67",
@@ -391,6 +423,10 @@
     "sha": "cc50b4a6954094181db52c26e033e9cdae9df27fc65e7c42a3f06a5f03c7840b",
     "reason": "Date et heure séparées pour sortir « à » du format (date:'dd/MM/yyyy' + « à » + date:'HH:mm') : rendu français identique, phrase traduisible."
   },
+  "src/app/features/settings/modules/modules-settings.component.html": {
+    "sha": "f5cc9702f469e099d3ae494422e67310e6ac2b77666b3899d39f3496591de7c7",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
+  },
   "src/app/features/settings/profile/profile.component.ts#ProfileComponent": {
     "sha": "5920a51914300c9df3c4d2f7c6c0a7ce346fd7763abb8341c9fc0ede39bcdb14",
     "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
@@ -423,9 +459,21 @@
     "sha": "28b880ffabbfb43811373242b25d1d274c8130d827f79601cfbdce407885a66f",
     "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
   },
+  "src/app/features/studio/ai/preview/studio-ai-menu-tab.component.ts#StudioAiMenuTabComponent": {
+    "sha": "9bb4b01f39e88bc038a594b411c6e868c278379426d4c140492b973614339fbf",
+    "reason": "Style en ligne physique → logique (identique en LTR, retourné en RTL) ; libellés inchangés"
+  },
+  "src/app/features/studio/ai/preview/studio-ai-relations-tab.component.ts#StudioAiRelationsTabComponent": {
+    "sha": "66f6e7dca703b9577f5a1df7f6bf24fb9f3887112e6ce999b1821b4e4263937f",
+    "reason": "Style en ligne physique → logique (identique en LTR, retourné en RTL) ; libellés inchangés"
+  },
   "src/app/features/supplier-invoices/supplier-invoice-detail/supplier-invoice-detail.component.ts#SupplierInvoiceDetailComponent": {
     "sha": "d73ded8463101fcc075c9da3d93d2361a2ca3b38e5d281ce2356d5d7af79d95c",
     "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/supplier-invoices/supplier-invoice-form/supplier-invoice-form.component.html": {
+    "sha": "416d49434fa76efb5c7acaef6172c833179a7636724175fccd6d5937574e59fe",
+    "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
   },
   "src/app/features/supplier-invoices/supplier-invoice-list/supplier-invoice-list.component.ts#SupplierInvoiceListComponent": {
     "sha": "587eae305720424557245e30ef749618677f6787c3db3397bdb0214549c8cee2",

@@ -9,9 +9,13 @@ export type ErpTextSnapshot = {
   alts: string[];
 };
 
-/** Texte visible normalisé (espaces, sans scripts/styles). */
-export async function collectVisibleText(page: Page): Promise<string> {
-  return page.evaluate(() => {
+/**
+ * Texte visible normalisé (espaces, sans scripts/styles).
+ * @param skipLang texte d'un élément déclaré dans cette langue (`lang="fr"` hors `<html>`) ignoré :
+ *   contenu volontairement laissé en français (questions d'exemple envoyées à l'IA, ticket POS).
+ */
+export async function collectVisibleText(page: Page, skipLang?: string): Promise<string> {
+  return page.evaluate(skip => {
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
       acceptNode(node) {
         const parent = node.parentElement;
@@ -23,6 +27,10 @@ export async function collectVisibleText(page: Page): Promise<string> {
         if (parent.closest('[aria-hidden="true"]')) {
           return NodeFilter.FILTER_REJECT;
         }
+        const declared = parent.closest('[lang]');
+        if (skip && declared && declared !== document.documentElement && declared.getAttribute('lang')?.startsWith(skip)) {
+          return NodeFilter.FILTER_REJECT;
+        }
         const t = (node.textContent ?? '').replace(/\s+/g, ' ').trim();
         return t.length ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
       }
@@ -32,27 +40,31 @@ export async function collectVisibleText(page: Page): Promise<string> {
       parts.push((walker.currentNode.textContent ?? '').replace(/\s+/g, ' ').trim());
     }
     return parts.join('\n').replace(/\n{2,}/g, '\n').trim();
-  });
+  }, skipLang);
 }
 
-function collectAttr(page: Page, attr: string): Promise<string[]> {
+function collectAttr(page: Page, attr: string, skipLang?: string): Promise<string[]> {
   return page.evaluate(
-    (name) =>
+    ({ name, skip }) =>
       Array.from(document.querySelectorAll(`[${name}]`))
+        .filter(el => {
+          const declared = el.closest('[lang]');
+          return !(skip && declared && declared !== document.documentElement && declared.getAttribute('lang')?.startsWith(skip));
+        })
         .map(el => (el.getAttribute(name) ?? '').trim())
         .filter(Boolean)
         .sort(),
-    attr
+    { name: attr, skip: skipLang }
   );
 }
 
-export async function snapshotErpText(page: Page): Promise<ErpTextSnapshot> {
+export async function snapshotErpText(page: Page, skipLang?: string): Promise<ErpTextSnapshot> {
   const title = await page.title();
-  const visibleText = await collectVisibleText(page);
-  const placeholders = await collectAttr(page, 'placeholder');
-  const titles = await collectAttr(page, 'title');
-  const ariaLabels = await collectAttr(page, 'aria-label');
-  const alts = await collectAttr(page, 'alt');
+  const visibleText = await collectVisibleText(page, skipLang);
+  const placeholders = await collectAttr(page, 'placeholder', skipLang);
+  const titles = await collectAttr(page, 'title', skipLang);
+  const ariaLabels = await collectAttr(page, 'aria-label', skipLang);
+  const alts = await collectAttr(page, 'alt', skipLang);
   return { title, visibleText, placeholders, titles, ariaLabels, alts };
 }
 

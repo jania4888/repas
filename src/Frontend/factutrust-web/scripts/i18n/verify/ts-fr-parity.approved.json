@@ -71,6 +71,18 @@
     "sha": "754725e031687b94c9334b5485461d707c4781bc2f3f122d03759ce87aaf2fb9",
     "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
   },
+  "src/app/features/accounting/journal/journal.component.ts": {
+    "sha": "db2b056787ba8d5491120526cb3de7c3a209fb8a62ccc93a578af5502aaea87c",
+    "reason": "Lot 7 : concaténations de liaisons converties en méthodes $localize (un message à placeholders, même texte FR) ; écarts antérieurs du fichier déjà relus (pluriels erpPlural, options partagées)"
+  },
+  "src/app/features/accounting/ledger/ledger.component.ts": {
+    "sha": "e8dd54e8d036b2c805e065feb6811a8a2c6938b4d5e2203de33b4668a2a3c14d",
+    "reason": "Lot 7 : concaténations de liaisons converties en méthodes $localize (un message à placeholders, même texte FR) ; écarts antérieurs du fichier déjà relus (pluriels erpPlural, options partagées)"
+  },
+  "src/app/features/accounting/lettering/lettering.component.ts": {
+    "sha": "3c35838b051019938c2bb75017c9647a2f263fb00c45a9ad10934358869ac5a0",
+    "reason": "Lot 7 : concaténations de liaisons converties en méthodes $localize (un message à placeholders, même texte FR) ; écarts antérieurs du fichier déjà relus (pluriels erpPlural, options partagées)"
+  },
   "src/app/features/accounting/manual-entry/components/draft-banner.component.ts": {
     "sha": "20b57da282da309811c893407c53c23489b7fe157ce5c8cfbe658de5a94fc6f9",
     "reason": "Réécriture erpPlural / fusion de phrase / correctif de regroupement : texte FR rendu identique (vérifié par catégorie CLDR fr : one = singulier, other/many = pluriel)"
@@ -119,6 +131,14 @@
     "sha": "fe9c0fb708aaae985957a61408ef9bd8f70e7aec233018ab12c19a736aeb7660",
     "reason": "Pluriel bricolé « ${n > 1 ? 's' : ''} » (le « s » français serait injecté dans l'arabe) remplacé par erpPlural : une forme $localize par catégorie CLDR ; en français 0 et 1 → forme singulière, sinon pluriel : texte rendu identique."
   },
+  "src/app/features/auth/register-wizard/steps/step-configuration/step-configuration.component.ts": {
+    "sha": "beaf7f67353bdddf3c7ce15116bbff7b99e3888c5e6bd96318aeb4c4baee850a",
+    "reason": "Lot 7 : concaténations de liaisons converties en méthodes $localize (un message à placeholders, même texte FR) ; écarts antérieurs du fichier déjà relus (pluriels erpPlural, options partagées)"
+  },
+  "src/app/features/auth/register/register.component.ts": {
+    "sha": "6bd71dfff8775407de3120a0c5f5a5259657271c501f6176bbe5866670c7fc3d",
+    "reason": "Lot 7 : concaténations de liaisons converties en méthodes $localize (un message à placeholders, même texte FR) ; écarts antérieurs du fichier déjà relus (pluriels erpPlural, options partagées)"
+  },
   "src/app/features/auth/shared/auth-nif-category.helpers.ts": {
     "sha": "42b948ee09e8580504852366411714972f4f3ee883a23e90375b9570c98f12fb",
     "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
@@ -131,9 +151,21 @@
     "sha": "8b6bfc1773573656cc5de6d005417efd3be8cccde6c1bc5fbff699593fc496a5",
     "reason": "Tri via erpCollatorCompare : Intl.Collator('fr') en français, strictement équivalent à localeCompare(…, 'fr')."
   },
+  "src/app/features/forecasting/pages/replenishment-board/replenishment-board.component.ts": {
+    "sha": "0f80d28680db1aef86c935604f893f985d424eccfe3be43c61bfd6a293dc8998",
+    "reason": "Lot 7 : concaténations de liaisons converties en méthodes $localize (un message à placeholders, même texte FR) ; écarts antérieurs du fichier déjà relus (pluriels erpPlural, options partagées)"
+  },
+  "src/app/features/inventory/inventory-detail/inventory-detail.component.ts": {
+    "sha": "e505ee8c808bbc6530206d441c19499872022e088e8967c777470948d5bd2170",
+    "reason": "Lot 7 : concaténations de liaisons converties en méthodes $localize (un message à placeholders, même texte FR) ; écarts antérieurs du fichier déjà relus (pluriels erpPlural, options partagées)"
+  },
   "src/app/features/inventory/inventory-form/inventory-form.component.ts": {
-    "sha": "7c89f1e6c9ace27aada22d62bb57ba41140b58ea699e5cfe91e8934b3dcd74d7",
-    "reason": "Pluriel « ${n > 1 ? 's' : ''} » remplacé par erpPlural (une forme $localize par catégorie CLDR) : en français, 1 → forme « one » et sinon « other »/« many », textes rendus identiques (espace séparateur sorti des messages). L'arabe n'affiche plus le « s » français injecté par les placeholders."
+    "sha": "4ff11b0c34b2882c7b6d224af8ab4c871d5d7b0c287e6cf467e695c7b361a9dd",
+    "reason": "Lot 7 : concaténations de liaisons converties en méthodes $localize (un message à placeholders, même texte FR) ; écarts antérieurs du fichier déjà relus (pluriels erpPlural, options partagées)"
+  },
+  "src/app/features/inventory/inventory-wizard/inventory-wizard.component.ts": {
+    "sha": "f2123773c0ea4b5806aa5eed145ddc2c19777cb2afe9a67fd64202e1c175523d",
+    "reason": "Lot 7 : concaténations de liaisons converties en méthodes $localize (un message à placeholders, même texte FR) ; écarts antérieurs du fichier déjà relus (pluriels erpPlural, options partagées)"
   },
   "src/app/features/invoices/components/invoice-import-dialog/invoice-import-dialog.component.ts": {
     "sha": "cc52042480d8e0f2b94684d47e1b00c83aa89f0719e7b9f35d479c0d3e1c6e54",
@@ -183,6 +215,10 @@
     "sha": "cbb23096671a28258164551d095ee305508611f07eb8e6077bfe32e58ebf4a68",
     "reason": "Options déplacées vers shared/constants/coded-option-labels : mêmes valeurs envoyées à l’API, même ordre, libellés français identiques (seuls les libellés deviennent traduisibles)."
   },
+  "src/app/features/purchase-receipts/pages/purchase-receipt-detail/purchase-receipt-detail.component.ts": {
+    "sha": "2abf4e9e88f28572bd11d907d0d79ebfff73604d797b8de34788d3f239b89abe",
+    "reason": "Lot 7 : concaténations de liaisons converties en méthodes $localize (un message à placeholders, même texte FR) ; écarts antérieurs du fichier déjà relus (pluriels erpPlural, options partagées)"
+  },
   "src/app/features/reports/services/purchases-reports.service.ts": {
     "sha": "983e3128afb8a0b6a6c8e2c090bd5ea8ec56ff20e12e35441e1f3ae054ca9346",
     "reason": "Pluriel bricolé « ${n > 1 ? 's' : ''} » (le « s » français serait injecté dans l'arabe) remplacé par erpPlural : une forme $localize par catégorie CLDR ; en français 0 et 1 → forme singulière, sinon pluriel : texte rendu identique."
@@ -198,6 +234,10 @@
   "src/app/features/sales-orders/sales-order-detail/sales-order-detail.component.ts": {
     "sha": "134b8455e2aed5a3963d7200a97caa07d71c4c9349306f4bc5039e1875962466",
     "reason": "Logique par clé / id au lieu du libellé affiché ; libellés français identiques. Puis phrase de confirmation découpée par concaténation fusionnée en un seul $localize (i18n:concat --fix) : texte identique."
+  },
+  "src/app/features/settings/modules/modules-settings.component.ts": {
+    "sha": "beaf7f67353bdddf3c7ce15116bbff7b99e3888c5e6bd96318aeb4c4baee850a",
+    "reason": "Lot 7 : concaténations de liaisons converties en méthodes $localize (un message à placeholders, même texte FR) ; écarts antérieurs du fichier déjà relus (pluriels erpPlural, options partagées)"
   },
   "src/app/features/settings/payment-terms/payment-terms.component.ts": {
     "sha": "77f136cac08aada7ca8891677f7f0ee14f7860962933e3356dc0876d778d3ab7",
@@ -236,8 +276,8 @@
     "reason": "Limite du plan détectée par le code API Validation.Plan (isStudioPlanLimitError) ; « Limite du plan » était un littéral de comparaison, jamais affiché, conservé en repli dans studio-api-errors.ts."
   },
   "src/app/features/supplier-invoices/supplier-invoice-form/supplier-invoice-form.component.ts": {
-    "sha": "cbb23096671a28258164551d095ee305508611f07eb8e6077bfe32e58ebf4a68",
-    "reason": "Options déplacées vers shared/constants/coded-option-labels : mêmes valeurs envoyées à l’API, même ordre, libellés français identiques (seuls les libellés deviennent traduisibles)."
+    "sha": "2a55ea068ac428f159d11817aa1448912c8a2f19e3907287be69ed855060f5c2",
+    "reason": "Lot 7 : concaténations de liaisons converties en méthodes $localize (un message à placeholders, même texte FR) ; écarts antérieurs du fichier déjà relus (pluriels erpPlural, options partagées)"
   },
   "src/app/features/withholding-tax/tej-export/tej-export.component.ts": {
     "sha": "3f465ea532635ab90ada7b8bcc540e0d3eb3a0d3df835e3accf73567599a6020",
