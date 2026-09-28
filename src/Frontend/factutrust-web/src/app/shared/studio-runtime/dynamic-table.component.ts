@@ -119,8 +119,8 @@ export interface DynamicRow {
   styles: [`
     .dt-picker { display: flex; align-items: center; gap: var(--spacing-3); margin-bottom: var(--spacing-3); }
     .dt-picker label { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-600); }
-    .dt-actions { text-align: right; white-space: nowrap; display: flex; gap: var(--spacing-1); justify-content: flex-end; }
-    .dt-actions-col { width: 8rem; text-align: right; }
+    .dt-actions { text-align: end; white-space: nowrap; display: flex; gap: var(--spacing-1); justify-content: flex-end; }
+    .dt-actions-col { width: 8rem; text-align: end; }
     .dt-file-cell { display: inline-flex; align-items: center; gap: .35rem; color: var(--color-primary-600); cursor: pointer; }
     .dt-file-thumb { max-height: 36px; border-radius: var(--radius-sm); border: 1px solid var(--color-border-subtle); }
     :host ::ng-deep .dt-ms { min-width: 14rem; }

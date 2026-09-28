@@ -560,7 +560,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
         gap: 0.75rem;
       }
       .text-right {
-        text-align: right;
+        text-align: end;
       }
       .meta p {
         margin: 0.25rem 0;

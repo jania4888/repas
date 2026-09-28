@@ -437,7 +437,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
       }
       .p-datatable-tbody > tr.table-row > td { border-bottom: 1px solid var(--color-border-subtle); }
     }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .amount { font-family: var(--font-family-mono, 'JetBrains Mono', monospace); font-weight: var(--font-weight-semibold); }
     .debit-col { color: var(--color-danger-600); }
     .credit-col { color: var(--color-success-600); }

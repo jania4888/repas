@@ -109,7 +109,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   styles: `
     @use '../shared/accounting-layout';
     .hc-toolbar-fields { display:flex; flex-wrap:wrap; align-items:flex-end; gap:var(--spacing-4); }
-    .text-right { text-align:right; }
+    .text-right { text-align:end; }
     .hc-num { font-variant-numeric:tabular-nums; }
     .hc-count-nonzero { font-weight:var(--font-weight-bold); }
     .hc-message { color:var(--color-text-secondary); font-size:var(--font-size-sm); }

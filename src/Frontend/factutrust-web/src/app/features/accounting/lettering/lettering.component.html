@@ -50,7 +50,7 @@
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            [attr.aria-label]="'Charger les écritures du compte ' + account" i18n="@@accounting.lettering.charger.8f860300"> Charger </app-button>
+            [attr.aria-label]="loc_charger_les_ecritures_du_compte_acco_592654(account)" i18n="@@accounting.lettering.charger.8f860300"> Charger </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-lettering"
             density="toolbar"
@@ -130,15 +130,15 @@
             aria-label="Apurer l'écart de change puis lettrer" i18n-aria-label="@@accounting.lettering.apurer.l.ecart.de.change.puis.lettrer.0c7cad24" />
         }
         <p-button
-          [label]="!selectionSummary().balanced && allowPartial ? 'Lettrer partiellement' : 'Lettrer la sélection'"
+          [label]="!selectionSummary().balanced && allowPartial ? 'Lettrer partiellement' : loc_lettrer_la_selection_826ebb"
           icon="pi pi-link"
           [disabled]="!canLetter()"
           [loading]="lettering()"
           (onClick)="letterSelected()"
           [severity]="!selectionSummary().balanced && allowPartial ? 'warn' : 'success'"
           [attr.aria-label]="canLetter()
-            ? 'Lettrer les ' + selectionSummary().count + ' lignes sélectionnées'
-            : 'Sélection non équilibrée – cochez lettrage partiel ou équilibrez la sélection'"
+            ? loc_lettrer_les_count_lignes_selectionne_2f8a67(selectionSummary().count)
+            : loc_selection_non_equilibree_cochez_lett_b9e132"
         />
       </div>
     </div>
@@ -238,13 +238,13 @@
                       [value]="line.letteringCode"
                       [severity]="isPartialCode(line.letteringCode) ? 'warn' : 'info'"
                       [rounded]="true"
-                      [attr.title]="isPartialCode(line.letteringCode) ? 'Lettrage partiel' : 'Lettrage'" />
+                      [attr.title]="isPartialCode(line.letteringCode) ? loc_lettrage_partiel_fc201a : loc_lettrage_cfcdd3" />
                     <button
                       type="button"
                       class="lettering-unletter-btn"
                       [disabled]="unlettering() === line.letteringCode"
                       (click)="unletter(line.letteringCode)"
-                      [attr.aria-label]="'Délettrer le groupe ' + line.letteringCode"
+                      [attr.aria-label]="loc_delettrer_le_groupe_letteringcode_0aecd2(line.letteringCode)"
                       title="Délettrer ce groupe" i18n-title="@@accounting.lettering.delettrer.ce.groupe.210d5232">
                       <i class="pi pi-times" aria-hidden="true"></i>
                     </button>

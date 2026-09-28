@@ -69,7 +69,7 @@ type StatusFilter = 'all' | 'active' | 'inactive';
         [skeletonColumns]="7"
         icon="pi-users"
         title="Aucun salarié" i18n-title="@@payroll.employees.aucun.salarie.a1567c77"
-        [description]="loading() ? undefined : 'Aucun salarié ne correspond à vos critères.'"
+        [description]="loading() ? undefined : loc_aucun_salarie_ne_correspond_a_vos_cr_8e81e0"
         [showAction]="canManage() && !loading()"
         actionLabel="Nouveau salarié" i18n-actionLabel="@@payroll.employees.nouveau.salarie.04ef16d7"
         [actionRoute]="routeBase() + '/employees/new'" />
@@ -120,6 +120,8 @@ type StatusFilter = 'all' | 'active' | 'inactive';
   `
 })
 export class EmployeeListComponent implements OnInit {
+  protected readonly loc_aucun_salarie_ne_correspond_a_vos_cr_8e81e0 = $localize`:@@payroll.employee-list.tpl.aucun.salarie.ne.correspond.a.vos.criter.8e81e068:Aucun salarié ne correspond à vos critères.`;
+
   readonly loc_ui_tern_salaries_du_cabinet_791140 = $localize`:@@ui.tern.salaries.du.cabinet.791140:Salariés du cabinet`;
   readonly loc_ui_tern_salaries_ce6838 = $localize`:@@ui.tern.salaries.ce6838:Salariés`;
   readonly loc_ui_tern_paie_interne_collaborateurs_du_cabinet_74de5b = $localize`:@@ui.tern.paie.interne.collaborateurs.du.cabinet.74de5b:Paie interne — collaborateurs du cabinet.`;

@@ -100,7 +100,7 @@
                   (onChange)="toggleModule(module.id)"
                   [ngModelOptions]="{standalone: true}"
                   [disabled]="isLockedByDependency(module.id)"
-                  [attr.aria-label]="'Activer ' + module.label">
+                  [attr.aria-label]="loc_activer_label_b372ab(module.label)">
                 </p-inputSwitch>
               </span>
             </div><ng-container i18n="@@auth.register-wizard.recommande.pour.votre.secteur.eb291dec">
@@ -130,7 +130,7 @@
                   (onChange)="toggleModule(module.id)"
                   [ngModelOptions]="{standalone: true}"
                   [disabled]="isLockedByDependency(module.id)"
-                  [attr.aria-label]="'Activer ' + module.label">
+                  [attr.aria-label]="loc_activer_label_b372ab(module.label)">
                 </p-inputSwitch>
               </span>
             </div>

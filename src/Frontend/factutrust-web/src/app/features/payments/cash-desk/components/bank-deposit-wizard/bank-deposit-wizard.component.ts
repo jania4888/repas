@@ -51,6 +51,9 @@ const DEPOSIT_TO_METHOD: Record<BankDepositType, number> = {
   styleUrl: './bank-deposit-wizard.component.scss'
 })
 export class BankDepositWizardComponent implements OnChanges, OnInit {
+  protected readonly loc_precedent_a527f1 = $localize`:@@payments.bank-deposit-wizard.tpl.precedent.a527f171:Précédent`;
+  protected readonly loc_fermer_5ab4ec = $localize`:@@payments.bank-deposit-wizard.tpl.fermer.5ab4ec64:Fermer`;
+
   @Input() visible = false;
   @Input() year = new Date().getFullYear();
   @Input() month = new Date().getMonth() + 1;

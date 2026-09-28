@@ -114,12 +114,12 @@ type StatAppearance = 'default' | 'solid' | 'mini-sparkline';
       content: '';
       position: absolute;
       top: 0;
-      right: 0;
+      inset-inline-end: 0;
       width: 8rem;
       height: 8rem;
       background: radial-gradient(circle at top right, currentColor 0%, transparent 70%);
       opacity: 0.08;
-      border-bottom-left-radius: 9999px;
+      border-end-start-radius: 9999px;
       pointer-events: none;
       transition: opacity var(--duration-moderate, 260ms) var(--ease-out-soft);
     }

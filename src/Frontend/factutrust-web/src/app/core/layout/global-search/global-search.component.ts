@@ -167,15 +167,15 @@ export function computeGlobalSearchDropdownPosition(
     .global-search { position: relative; flex: 1; max-width: 560px; }
     .global-search--header { margin: 0 auto; flex: 1; padding: 0 16px; }
     .global-search__input-wrap { position: relative; display: flex; align-items: center; }
-    .global-search__icon { position: absolute; left: 14px; color: var(--color-text-secondary, #64748b); font-size: 14px; pointer-events: none; }
+    .global-search__icon { position: absolute; inset-inline-start: 14px; color: var(--color-text-secondary, #64748b); font-size: 14px; pointer-events: none; }
     .global-search__input {
       width: 100%; border: 1px solid var(--color-border-subtle, #e2e8f0); border-radius: 999px;
-      padding: 10px 72px 10px 40px; background: rgba(255,255,255,0.9); font-size: 14px;
+      padding-block: 10px; padding-inline: 40px 72px; background: rgba(255,255,255,0.9); font-size: 14px;
     }
     .global-search__input--header { min-width: 280px; }
-    .global-search__input--palette { border-radius: 12px; padding-left: 40px; font-size: 16px; }
+    .global-search__input--palette { border-radius: 12px; padding-inline-start: 40px; font-size: 16px; }
     .global-search__hint {
-      position: absolute; right: 12px; font-size: 11px; padding: 2px 6px; border-radius: 6px;
+      position: absolute; inset-inline-end: 12px; font-size: 11px; padding: 2px 6px; border-radius: 6px;
       border: 1px solid var(--color-border-subtle, #e2e8f0); color: var(--color-text-secondary, #64748b); background: #fff;
     }
 
@@ -188,7 +188,7 @@ export function computeGlobalSearchDropdownPosition(
       border: none;
       border-radius: 0;
       color: var(--topbar-fg, #fff);
-      padding: 6px 72px 6px 40px;
+      padding-block: 6px; padding-inline: 40px 72px;
     }
     .global-search--header .global-search__input::placeholder {
       color: var(--topbar-fg-muted, rgba(255, 255, 255, 0.75));
@@ -233,7 +233,7 @@ export function computeGlobalSearchDropdownPosition(
     }
     .global-search__item {
       width: 100%; display: flex; align-items: flex-start; gap: 10px; border: none; background: transparent;
-      text-align: left; padding: 10px; border-radius: 10px; cursor: pointer; color: inherit;
+      text-align: start; padding: 10px; border-radius: 10px; cursor: pointer; color: inherit;
     }
     .global-search__item--active, .global-search__item:hover { background: var(--color-primary-50, #eff6ff); }
     .global-search__item i { width: 18px; margin-top: 2px; color: var(--color-primary-600, #2563eb); }

@@ -47,7 +47,7 @@ import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.co
       padding: var(--spacing-4);
       background: var(--color-primary-50);
       border-radius: var(--radius-xl);
-      border-left: 4px solid var(--color-primary-500);
+      border-inline-start: 4px solid var(--color-primary-500);
     }
 
     .doc-intro p {

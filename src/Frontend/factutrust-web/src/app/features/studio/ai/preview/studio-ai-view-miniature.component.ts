@@ -109,7 +109,7 @@ const PLACEHOLDER_CARDS = [2, 1, 2];
       border-radius: 0.25rem;
       background: var(--surface-card, #fff);
       border: 1px solid var(--color-neutral-200, #e5e7eb);
-      border-left: 3px solid var(--color-primary-400, #818cf8);
+      border-inline-start: 3px solid var(--color-primary-400, #818cf8);
     }
     .th-cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; height: 100%; }
     .th-cal span { background: var(--surface-card, #fff); border: 1px solid var(--color-neutral-200, #e5e7eb); border-radius: 2px; min-height: 0; }

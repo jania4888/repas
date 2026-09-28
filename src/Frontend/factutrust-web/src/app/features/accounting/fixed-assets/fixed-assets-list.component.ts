@@ -145,7 +145,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         max-width: 110px;
       }
       .text-right {
-        text-align: right;
+        text-align: end;
       }
       .status-pill {
         display: inline-block;

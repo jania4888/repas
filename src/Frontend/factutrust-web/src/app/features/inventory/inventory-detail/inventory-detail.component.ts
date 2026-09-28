@@ -18,6 +18,7 @@ import {
   InventoryStatus
 } from '@core/services/inventory.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 @Component({
   selector: 'app-inventory-detail',
@@ -41,6 +42,17 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   styleUrl: './inventory-detail.component.scss'
 })
 export class InventoryDetailComponent implements OnInit {
+  protected readonly loc_chargement_a209b6 = $localize`:@@inventory.inventory-detail.tpl.chargement.a209b664:Chargement...`;
+  protected loc_inventaire_du_startedat_bd168f(p0: unknown): string {
+    return $localize`:@@inventory.inventory-detail.tpl.inventaire.du.startedat.bd168f35:Inventaire du ${p0}:startedAt:`;
+  }
+  protected readonly loc_produit_ff673d = $localize`:@@inventory.inventory-detail.tpl.produit.ff673dc2:Produit`;
+  protected readonly loc_code_adac69 = $localize`:@@inventory.inventory-detail.tpl.code.adac6937:Code`;
+  protected readonly loc_quantite_theorique_e6370b = $localize`:@@inventory.inventory-detail.tpl.quantite.theorique.e6370bd9:Quantité théorique`;
+  protected readonly loc_quantite_comptee_9aee07 = $localize`:@@inventory.inventory-detail.tpl.quantite.comptee.9aee073b:Quantité comptée`;
+  protected readonly loc_ecart_6ae8dc = $localize`:@@inventory.inventory-detail.tpl.ecart.6ae8dce8:Écart`;
+  protected readonly loc_statut_659499 = $localize`:@@inventory.inventory-detail.tpl.statut.659499f3:Statut`;
+
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private inventoryService = inject(InventoryService);
@@ -103,7 +115,7 @@ export class InventoryDetailComponent implements OnInit {
   formatDate(dateStr: string | null): string {
     if (!dateStr) return '—';
     const d = new Date(dateStr);
-    return isNaN(d.getTime()) ? '—' : d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+    return isNaN(d.getTime()) ? '—' : d.toLocaleDateString(erpDateLocale('fr-FR'), { day: '2-digit', month: 'long', year: 'numeric' });
   }
 
   getDiffAriaLabel(difference: number): string {

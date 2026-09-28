@@ -162,7 +162,7 @@
 }
 
 .lines-table th {
-  text-align: left;
+  text-align: start;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
@@ -209,7 +209,7 @@
 
 .lines-table th.ft-num,
 .lines-table td.ft-num {
-  text-align: right;
+  text-align: end;
   font-variant-numeric: tabular-nums;
 }
 
@@ -265,7 +265,7 @@
 :host ::ng-deep .lines-table p-inputnumber .p-inputnumber-input {
   width: 100%;
   min-width: 0;
-  text-align: right;
+  text-align: end;
 }
 
 // `appendTo="body"` sort le panneau de suggestions du composant : sa largeur ne
@@ -288,7 +288,7 @@
 // ─── Totaux ──────────────────────────────────────────────────────────────────
 .ft-totals {
   margin-top: var(--spacing-4);
-  margin-left: auto;
+  margin-inline-start: auto;
   min-width: 280px;
   max-width: 360px;
   width: 100%;

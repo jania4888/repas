@@ -131,7 +131,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     .tpm-list { list-style:none; margin:0; padding:0; }
     .tpm-item { padding:var(--spacing-3) var(--spacing-4); border-bottom:1px solid var(--color-border-subtle); cursor:pointer; display:flex; flex-direction:column; gap:var(--spacing-1); }
     .tpm-item:hover { background:var(--color-background-subtle,#f1f5f9); }
-    .tpm-item-selected { background:var(--color-primary-50,#eff6ff); border-left:3px solid var(--color-primary-500,#3b82f6); }
+    .tpm-item-selected { background:var(--color-primary-50,#eff6ff); border-inline-start:3px solid var(--color-primary-500,#3b82f6); }
     .tpm-item-main { display:flex; justify-content:space-between; align-items:center; gap:var(--spacing-3); }
     .tpm-item-name { font-size:var(--font-size-md); }
     .tpm-item-journal { font-family:monospace; background:var(--color-background-subtle); padding:0.125rem var(--spacing-2); border-radius:var(--radius-sm); font-size:var(--font-size-xs); font-weight:var(--font-weight-semibold); }
@@ -143,7 +143,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     .tpm-preview-table { width:100%; font-size:var(--font-size-xs); border-collapse:collapse; }
     .tpm-preview-table th, .tpm-preview-table td { padding:var(--spacing-1) var(--spacing-2); border-bottom:1px solid var(--color-border-subtle); }
     .tpm-mono { font-family:monospace; font-variant-numeric:tabular-nums; }
-    .text-right { text-align:right; }
+    .text-right { text-align:end; }
     .tpm-footer { display:flex; justify-content:space-between; align-items:center; gap:var(--spacing-3); padding:var(--spacing-4); border-top:1px solid var(--color-border-subtle); }
     .tpm-footer-right { display:flex; gap:var(--spacing-2); }
   `

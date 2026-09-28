@@ -57,7 +57,7 @@
 .numbering-tab__lock {
   font-size: 0.75rem;
   color: var(--color-warning-600);
-  margin-left: var(--spacing-1);
+  margin-inline-start: var(--spacing-1);
 }
 
 .numbering-tab:hover:not(.is-active) {

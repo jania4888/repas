@@ -604,7 +604,7 @@ import {
     }
 
     .invoice-header-right {
-      text-align: right;
+      text-align: end;
     }
 
     .facture-doc-title {
@@ -630,7 +630,7 @@ import {
 
     .invoice-dates-block {
       flex: 0 1 260px;
-      text-align: right;
+      text-align: end;
       font-size: var(--font-size-sm);
     }
 
@@ -802,7 +802,7 @@ import {
         font-weight: var(--font-weight-semibold);
         text-transform: uppercase;
         color: var(--color-neutral-500);
-        text-align: left;
+        text-align: start;
         border-bottom: 2px solid var(--color-neutral-200);
       }
 
@@ -1216,7 +1216,7 @@ import {
     }
 
     .text-right {
-      text-align: right;
+      text-align: end;
     }
 
     .text-center {

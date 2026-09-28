@@ -79,6 +79,20 @@ interface LetteringLine {
   styleUrl: './lettering.component.scss'
 })
 export class LetteringComponent implements OnInit {
+  protected loc_charger_les_ecritures_du_compte_acco_592654(p0: unknown): string {
+    return $localize`:@@accounting.lettering.tpl.charger.les.ecritures.du.compte.account.5926549d:Charger les écritures du compte ${p0}:account:`;
+  }
+  protected readonly loc_lettrer_la_selection_826ebb = $localize`:@@accounting.lettering.tpl.lettrer.la.selection.826ebb34:Lettrer la sélection`;
+  protected readonly loc_selection_non_equilibree_cochez_lett_b9e132 = $localize`:@@accounting.lettering.tpl.selection.non.equilibree.cochez.lettrage.b9e1322b:Sélection non équilibrée – cochez lettrage partiel ou équilibrez la sélection`;
+  protected loc_lettrer_les_count_lignes_selectionne_2f8a67(p0: unknown): string {
+    return $localize`:@@accounting.lettering.tpl.lettrer.les.count.lignes.selectionnees.2f8a674c:Lettrer les ${p0}:count: lignes sélectionnées`;
+  }
+  protected readonly loc_lettrage_cfcdd3 = $localize`:@@accounting.lettering.tpl.lettrage.cfcdd333:Lettrage`;
+  protected readonly loc_lettrage_partiel_fc201a = $localize`:@@accounting.lettering.tpl.lettrage.partiel.fc201a43:Lettrage partiel`;
+  protected loc_delettrer_le_groupe_letteringcode_0aecd2(p0: unknown): string {
+    return $localize`:@@accounting.lettering.tpl.delettrer.le.groupe.letteringcode.0aecd2b5:Délettrer le groupe ${p0}:letteringCode:`;
+  }
+
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly route = inject(ActivatedRoute);

@@ -535,7 +535,7 @@ interface LineRow extends LinePromotionPreview {
         min-width: 280px;
         max-width: 320px;
         margin-top: var(--spacing-4);
-        margin-left: auto;
+        margin-inline-start: auto;
         padding: var(--spacing-4);
         background: var(--color-primary-50);
         border-radius: var(--radius-lg);
@@ -582,7 +582,7 @@ interface LineRow extends LinePromotionPreview {
       .lines-table th,
       .lines-table td {
         padding: var(--spacing-4) var(--spacing-3);
-        text-align: left;
+        text-align: start;
         vertical-align: top;
       }
       .lines-table th {
@@ -598,7 +598,7 @@ interface LineRow extends LinePromotionPreview {
         background-color: #f9fafb;
       }
       .text-right {
-        text-align: right;
+        text-align: end;
       }
       .font-bold {
         font-weight: bold;
@@ -610,8 +610,8 @@ interface LineRow extends LinePromotionPreview {
         color: #6b7280;
       }
       .px-2 {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
+        padding-inline-start: 0.5rem;
+        padding-inline-end: 0.5rem;
       }
       .py-3 {
         padding-top: 0.75rem;

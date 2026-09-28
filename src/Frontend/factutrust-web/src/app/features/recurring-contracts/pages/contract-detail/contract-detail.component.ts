@@ -81,7 +81,7 @@ type ContractAction = 'activate' | 'suspend' | 'resume' | 'cancel' | 'renew' | '
     } @else {
       @if (contract(); as c) {
       <app-page-header
-        [title]="c.number ? loc_ui_tern_contrat_f06722 + c.number : 'Contrat récurrent'"
+        [title]="c.number ? loc_ui_tern_contrat_f06722 + c.number : loc_contrat_recurrent_883a81"
         [subtitle]="c.clientName">
         <app-status-badge
           title-addon
@@ -254,6 +254,8 @@ type ContractAction = 'activate' | 'suspend' | 'resume' | 'cancel' | 'renew' | '
   `]
 })
 export class ContractDetailComponent implements OnInit {
+  protected readonly loc_contrat_recurrent_883a81 = $localize`:@@recurring-contracts.contract-detail.tpl.contrat.recurrent.883a818c:Contrat récurrent`;
+
   readonly loc_ui_tern_contrat_f06722 = $localize`:@@ui.tern.contrat.f06722:Contrat `;
   private readonly service = inject(RecurringContractService);
   private readonly auth = inject(AuthService);

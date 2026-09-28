@@ -169,9 +169,9 @@ import { WithholdingTaxService, WithholdingDashboardDto } from '@core/services/w
     .card h3 { font-size: 1rem; font-weight: 600; margin: 0 0 1rem; }
     .table-wrapper { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-    th, td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); text-align: left; }
+    th, td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); text-align: start; }
     th { font-weight: 500; color: var(--text-secondary); font-size: 0.8125rem; }
-    .right { text-align: right; font-variant-numeric: tabular-nums; }
+    .right { text-align: end; font-variant-numeric: tabular-nums; }
     tfoot td { border-top: 2px solid var(--border); border-bottom: none; }
 
     .quick-links { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }

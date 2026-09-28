@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConversationDto } from '../../models/ai-chat.models';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 @Component({
   selector: 'app-conversation-list',
@@ -132,7 +133,7 @@ import { ConversationDto } from '../../models/ai-chat.models';
 
     .conversation-item.active {
       background: var(--color-primary-50);
-      border-left: 3px solid var(--color-primary-500);
+      border-inline-start: 3px solid var(--color-primary-500);
     }
 
     .conv-title {
@@ -142,7 +143,7 @@ import { ConversationDto } from '../../models/ai-chat.models';
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      padding-right: 28px;
+      padding-inline-end: 28px;
     }
 
     .conv-meta {
@@ -153,7 +154,7 @@ import { ConversationDto } from '../../models/ai-chat.models';
 
     .delete-btn {
       position: absolute;
-      right: var(--spacing-2);
+      inset-inline-end: var(--spacing-2);
       top: 50%;
       transform: translateY(-50%);
       width: 28px;
@@ -206,6 +207,6 @@ export class ConversationListComponent {
     if (minutes < 60) return `il y a ${minutes}min`;
     const hours = Math.floor(minutes / 60);
     if (hours < 24) return `il y a ${hours}h`;
-    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+    return date.toLocaleDateString(erpDateLocale('fr-FR'), { day: 'numeric', month: 'short' });
   }
 }

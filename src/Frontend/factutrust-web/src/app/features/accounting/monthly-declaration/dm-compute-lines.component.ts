@@ -111,9 +111,9 @@ import {
     .dm-family__gap { margin: var(--spacing-2) 0 var(--spacing-3); font-size: var(--font-size-sm); color: var(--color-text-secondary); }
     .dm-family__gap--flag { color: var(--color-warning-700, #a16207); font-weight: var(--font-weight-medium); }
     .dm-mono { font-family: ui-monospace, monospace; }
-    .dm-num { text-align: right; font-family: ui-monospace, monospace; }
+    .dm-num { text-align: end; font-family: ui-monospace, monospace; }
     .dm-num--strong { font-weight: var(--font-weight-semibold); }
-    .dm-chip { display: inline-block; margin-left: var(--spacing-2); padding: 0.1rem 0.45rem; border-radius: var(--radius-pill, 999px); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); }
+    .dm-chip { display: inline-block; margin-inline-start: var(--spacing-2); padding: 0.1rem 0.45rem; border-radius: var(--radius-pill, 999px); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); }
     .dm-chip--warn { background: var(--color-warning-50, #fffbeb); color: var(--color-warning-700, #a16207); border: 1px solid var(--color-warning-200, #fde68a); }
     .dm-chip--error { background: var(--color-error-50, #fef2f2); color: var(--color-error-700, #b91c1c); border: 1px solid var(--color-error-200, #fecaca); }
     .dm-diag { margin: var(--spacing-1) 0 0; font-size: var(--font-size-xs); color: var(--color-warning-700, #a16207); }

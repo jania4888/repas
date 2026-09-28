@@ -79,7 +79,7 @@ import { StudioDuplicateHint } from '../studio-ai.models';
     .sai-dup__icon { color: #b45309; margin-top: 2px; flex: none; }
     .sai-dup__body { display: flex; flex-direction: column; gap: var(--spacing-2, 0.5rem); min-width: 0; }
     .sai-dup__text { margin: 0; }
-    .sai-dup__reason { margin-left: 0.25rem; color: var(--color-neutral-500, #6b7280); }
+    .sai-dup__reason { margin-inline-start: 0.25rem; color: var(--color-neutral-500, #6b7280); }
     .sai-dup__actions { display: flex; flex-wrap: wrap; gap: var(--spacing-2, 0.5rem); }
   `]
 })

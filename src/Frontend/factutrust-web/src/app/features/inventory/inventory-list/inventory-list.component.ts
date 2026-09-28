@@ -33,6 +33,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { formatLocalDate } from '@core/utils/date.util';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 interface StatusOption {
   label: string;
@@ -265,6 +266,6 @@ export class InventoryListComponent implements OnInit, OnDestroy {
   formatDate(dateStr: string | null): string {
     if (!dateStr) return '—';
     const d = new Date(dateStr);
-    return isNaN(d.getTime()) ? '—' : d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+    return isNaN(d.getTime()) ? '—' : d.toLocaleDateString(erpDateLocale('fr-FR'), { day: '2-digit', month: 'short', year: 'numeric' });
   }
 }

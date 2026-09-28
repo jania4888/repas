@@ -277,10 +277,10 @@ import {
 
     .chart-placeholder { min-height: 280px; display: flex; align-items: center; justify-content: center; background: var(--color-neutral-50); border-radius: var(--radius-lg); border: 2px dashed var(--color-border-subtle); }
     .chart-container { display: flex; gap: var(--spacing-2); padding: var(--spacing-4) 0; }
-    .chart-y-axis { display: flex; flex-direction: column; justify-content: space-between; padding-bottom: 28px; min-width: 60px; text-align: right; }
+    .chart-y-axis { display: flex; flex-direction: column; justify-content: space-between; padding-bottom: 28px; min-width: 60px; text-align: end; }
     .y-label { font-size: var(--font-size-xs); color: var(--color-text-secondary); font-family: 'JetBrains Mono', monospace; }
     .chart-area { flex: 1; position: relative; min-height: 250px; }
-    .chart-grid-lines { position: absolute; top: 0; left: 0; right: 0; bottom: 28px; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
+    .chart-grid-lines { position: absolute; top: 0; inset-inline-start: 0; inset-inline-end: 0; bottom: 28px; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
     .grid-line { height: 1px; background: var(--color-border-subtle); }
     .chart-bars { display: flex; align-items: flex-end; height: calc(100% - 28px); gap: 2px; padding: 0; }
     .bar-group { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 0; position: relative; height: 100%; justify-content: flex-end; }

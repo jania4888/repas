@@ -301,8 +301,8 @@ import { PosOrderLine } from '../../services/pos-state.service';
       height: 32px;
       padding: 0;
       border: none;
-      border-left: 1px solid var(--color-border-subtle);
-      border-right: 1px solid var(--color-border-subtle);
+      border-inline-start: 1px solid var(--color-border-subtle);
+      border-inline-end: 1px solid var(--color-border-subtle);
       background: var(--color-white);
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-semibold);
@@ -329,7 +329,7 @@ import { PosOrderLine } from '../../services/pos-state.service';
       font-weight: var(--font-weight-bold);
       color: var(--color-text-primary);
       min-width: 90px;
-      text-align: right;
+      text-align: end;
     }
 
     .order-line__delete {

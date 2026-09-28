@@ -51,8 +51,8 @@
 }
 
 .sai-chip__num { font-weight: var(--font-weight-semibold, 600); color: var(--color-primary-600, #2563eb); }
-.sai-count { margin-left: 0.35rem; font-weight: var(--font-weight-semibold, 600); color: var(--color-primary-600, #2563eb); }
-.sai-soon { margin-left: 0.35rem; }
+.sai-count { margin-inline-start: 0.35rem; font-weight: var(--font-weight-semibold, 600); color: var(--color-primary-600, #2563eb); }
+.sai-soon { margin-inline-start: 0.35rem; }
 /* Réactive le survol sur le libellé d'un onglet désactivé pour laisser passer le tooltip « Bientôt ». */
 .p-tab.p-disabled .sai-tab-label--soon { pointer-events: auto; cursor: not-allowed; }
 
@@ -122,7 +122,7 @@
   background: none;
   font: inherit;
   color: inherit;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
 }
 
@@ -130,10 +130,10 @@
 .sai-list__item--static { cursor: default; }
 .sai-list__item--static:hover { background: none; }
 .sai-list__item--active { background: var(--color-primary-50, #eff6ff); font-weight: var(--font-weight-medium, 500); }
-.sai-list__meta { margin-left: auto; color: var(--color-neutral-500, #6b7280); font-size: var(--font-size-sm, 0.875rem); }
+.sai-list__meta { margin-inline-start: auto; color: var(--color-neutral-500, #6b7280); font-size: var(--font-size-sm, 0.875rem); }
 
 .sai-table { width: 100%; border-collapse: collapse; font-size: var(--font-size-sm, 0.875rem); }
-.sai-table th, .sai-table td { padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface-border, #e5e7eb); text-align: left; vertical-align: top; }
+.sai-table th, .sai-table td { padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface-border, #e5e7eb); text-align: start; vertical-align: top; }
 .sai-table th { color: var(--color-neutral-500, #6b7280); font-weight: var(--font-weight-medium, 500); white-space: nowrap; }
 .sai-table__scroll { overflow-x: auto; }
 .sai-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--font-size-xs, 0.75rem); color: var(--color-neutral-700, #374151); }
@@ -325,7 +325,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.1rem 0.45rem 0.1rem 0.55rem;
+  padding-block: 0.1rem; padding-inline: 0.55rem 0.45rem;
   border-radius: 999px;
   background: var(--color-neutral-100, #f3f4f6);
   color: var(--color-neutral-700, #374151);
@@ -494,7 +494,7 @@
 }
 .sai-wf-card__head { display: flex; gap: 0.75rem; align-items: flex-start; }
 .sai-wf-card__head > i { color: var(--color-primary-600, #4f46e5); margin-top: 0.125rem; }
-.sai-wf-card__head p-tag { margin-left: auto; }
+.sai-wf-card__head p-tag { margin-inline-start: auto; }
 .sai-wf-card__meta {
   display: flex;
   flex-wrap: wrap;

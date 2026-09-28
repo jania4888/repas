@@ -60,7 +60,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
     <app-breadcrumb [items]="breadcrumbItems()"></app-breadcrumb>
     
     <app-page-header 
-      [title]="client()?.name || 'Chargement...'" 
+      [title]="client()?.name || loc_chargement_a209b6" 
       [subtitle]="client()?.code">
       <app-button 
         variant="outline"
@@ -683,6 +683,8 @@ import { PERMISSIONS } from '@core/config/permission-keys';
   `]
 })
 export class ClientDetailComponent implements OnInit {
+  protected readonly loc_chargement_a209b6 = $localize`:@@clients.client-detail.tpl.chargement.a209b664:Chargement...`;
+
   readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
   readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
   readonly loc_ui_tern_desactiver_le_client_a9b066 = $localize`:@@ui.tern.desactiver.le.client.a9b066:Désactiver le client`;

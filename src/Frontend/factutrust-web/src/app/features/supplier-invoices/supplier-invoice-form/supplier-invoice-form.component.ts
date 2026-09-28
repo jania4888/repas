@@ -60,6 +60,11 @@ interface InvoiceLineRow {
   styleUrls: ['./supplier-invoice-form.component.scss']
 })
 export class SupplierInvoiceFormComponent implements OnInit, OnDestroy {
+  protected loc_supprimer_la_ligne_i_48c1e3(p0: unknown): string {
+    return $localize`:@@supplier-invoices.supplier-invoice-form.tpl.supprimer.la.ligne.i.48c1e3f2:Supprimer la ligne ${p0}:i:`;
+  }
+
+
   private router = inject(Router);
   private service = inject(SupplierInvoiceService);
   private supplierService = inject(SupplierService);

@@ -40,7 +40,7 @@ interface VatDetailRow {
   styles: `
     .vat-zone-card { padding: var(--spacing-5); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); margin-bottom: var(--spacing-4); }
     .vat-zone-title { font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin: 0 0 var(--spacing-4); color: var(--color-text-primary); }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .tabnum { font-variant-numeric: tabular-nums; }
     .vat-row-highlight { background: var(--color-primary-50,#eff6ff) !important; }
     .vat-row-bold td { font-weight: var(--font-weight-semibold); }

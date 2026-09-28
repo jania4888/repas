@@ -150,7 +150,7 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
     .invoice-number-static { color: var(--color-neutral-800); }
 
     .credit-note-tag {
-      margin-left: var(--spacing-2);
+      margin-inline-start: var(--spacing-2);
       padding: 0 var(--spacing-2);
       border-radius: var(--radius-full);
       background: var(--color-warning-50, #fffbeb);

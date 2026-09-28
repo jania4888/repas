@@ -7,7 +7,7 @@
 // Skip link — hidden until keyboard focus.
 .skip-link {
   position: absolute;
-  left: -9999px;
+  inset-inline-start: -9999px;
   top: -9999px;
   z-index: 1100;
   padding: .5rem 1rem;
@@ -17,7 +17,7 @@
   border-radius: 0 0 6px 6px;
   text-decoration: none;
   &:focus {
-    left: 1rem;
+    inset-inline-start: 1rem;
     top: 0;
     outline: 2px solid #fff;
     outline-offset: 2px;
@@ -33,11 +33,11 @@
   padding: .5rem 0;
   border-bottom: 1px solid var(--color-neutral-200, #e5e7eb);
 
-  .selection-info { margin-right: .25rem; color: var(--color-neutral-600, #6b7280); font-size: .9rem; }
-  .actions-ai { margin-left: auto; }
+  .selection-info { margin-inline-end: .25rem; color: var(--color-neutral-600, #6b7280); font-size: .9rem; }
+  .actions-ai { margin-inline-start: auto; }
 
   @media (max-width: 768px) {
-    .actions-ai { margin-left: 0; width: 100%; }
+    .actions-ai { margin-inline-start: 0; width: 100%; }
   }
 }
 
@@ -73,7 +73,7 @@
 .table th, .table td {
   padding: .55rem .65rem;
   border-bottom: 1px solid var(--color-neutral-200, #e5e7eb);
-  text-align: left;
+  text-align: start;
   font-size: .88rem;
   vertical-align: middle;
 }
@@ -95,7 +95,7 @@
 }
 .table th .th-sort:hover { color: var(--color-primary-700, #1e40af); }
 
-.table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.table .num { text-align: end; font-variant-numeric: tabular-nums; }
 .table .num.strong { font-weight: 600; color: var(--color-primary-700, #1e40af); }
 .table .check { width: 32px; }
 
@@ -112,7 +112,7 @@
   background: none; border: none; cursor: pointer; padding: 0;
   font-weight: 500;
   color: var(--color-primary-700, #1e40af);
-  text-align: left;
+  text-align: start;
   font-size: inherit;
   text-decoration: underline;
   text-underline-offset: 2px;
@@ -129,7 +129,7 @@
 .stock .rop { font-size: .7rem; color: var(--color-neutral-500, #9ca3af); }
 
 .overridden-icon {
-  margin-left: .25rem;
+  margin-inline-start: .25rem;
   color: #c2410c;
   font-size: .8rem;
 }
@@ -154,7 +154,7 @@
 .badge {
   display: inline-block;
   padding: .15rem .45rem;
-  margin: .05rem .25rem .05rem 0;
+  margin-block: .05rem; margin-inline: 0 .25rem;
   background: var(--color-neutral-100, #f3f4f6);
   border-radius: 4px;
   font-size: .72rem;
@@ -176,7 +176,7 @@
 .status-superseded { background: #fce7f3; color: #831843; }
 
 .po-link {
-  margin-left: .35rem;
+  margin-inline-start: .35rem;
   color: var(--color-primary-700, #1e40af);
   text-decoration: none;
 }

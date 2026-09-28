@@ -394,7 +394,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
       content: '';
       position: absolute;
       bottom: 0;
-      left: 0;
+      inset-inline-start: 0;
       height: 3px;
       background: rgba(255, 255, 255, 0.6);
       animation: paymentPrimaryProgress 3s linear infinite;
@@ -583,7 +583,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
       padding: var(--spacing-3) var(--spacing-4);
       background: var(--color-error-100);
       border: 1px solid var(--color-error-200);
-      border-left: 3px solid var(--color-error-500);
+      border-inline-start: 3px solid var(--color-error-500);
       border-radius: var(--radius-xl);
       animation: paymentErrorShake 400ms ease-out forwards;
     }

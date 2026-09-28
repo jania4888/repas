@@ -132,8 +132,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     .ri-err { color:var(--color-danger-600,#dc2626); }
     .ri-issues { margin-bottom:var(--spacing-4); padding:var(--spacing-3) var(--spacing-4); border-radius:var(--radius-md); background:var(--color-danger-50,#fef2f2); border:1px solid var(--color-danger-200,#fecaca); }
     .ri-issues-title { margin:0 0 var(--spacing-2); font-size:var(--font-size-sm); color:var(--color-danger-700,#b91c1c); }
-    .ri-issues-list { margin:0; padding-left:var(--spacing-5); font-size:var(--font-size-sm); color:var(--color-text-secondary); }
-    .ri-issue-ref { font-weight:var(--font-weight-semibold); color:var(--color-text-primary); margin-right:var(--spacing-1); }
+    .ri-issues-list { margin:0; padding-inline-start:var(--spacing-5); font-size:var(--font-size-sm); color:var(--color-text-secondary); }
+    .ri-issue-ref { font-weight:var(--font-weight-semibold); color:var(--color-text-primary); margin-inline-end:var(--spacing-1); }
     .ri-sample-title { margin:0 0 var(--spacing-3); font-size:var(--font-size-sm); font-weight:var(--font-weight-semibold); }
     .ri-commit-bar { display:flex; align-items:center; justify-content:flex-end; gap:var(--spacing-4); margin-top:var(--spacing-4); padding-top:var(--spacing-4); border-top:1px solid var(--color-border-subtle); }
     .ri-commit-hint { font-size:var(--font-size-sm); color:var(--color-text-secondary); }

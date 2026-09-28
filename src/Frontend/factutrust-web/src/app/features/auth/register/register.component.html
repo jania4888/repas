@@ -12,7 +12,7 @@
         <p i18n="@@auth.register.rejoignez.instafact.et.simplifiez.votre.gestion..470d2407">Rejoignez InstaFact et simplifiez votre gestion en quelques étapes.</p>
       </div>
 
-      <div class="stepper-wrapper" [attr.data-current-step]="currentStep()" role="group" [attr.aria-label]="'Progression : étape ' + stepHumanIndex() + ' sur 3'">
+      <div class="stepper-wrapper" [attr.data-current-step]="currentStep()" role="group" [attr.aria-label]="loc_progression_etape_stephumanindex_sur_39558c(stepHumanIndex())">
         <p-steps 
           [model]="steps" 
           [activeIndex]="currentStep()" 
@@ -156,7 +156,7 @@
                       <span class="password-strength-label" [attr.data-level]="passwordStrengthLevel()">{{ passwordStrengthLabel() }}</span>
                     }
                   </div>
-                  <div class="password-strength-meter" role="progressbar" aria-live="polite" [attr.aria-valuenow]="passwordStrengthMetCount()" aria-valuemin="0" aria-valuemax="5" [attr.aria-label]="passwordStrengthLabel() || 'Force du mot de passe'">
+                  <div class="password-strength-meter" role="progressbar" aria-live="polite" [attr.aria-valuenow]="passwordStrengthMetCount()" aria-valuemin="0" aria-valuemax="5" [attr.aria-label]="passwordStrengthLabel() || loc_force_du_mot_de_passe_de0bbe">
                     @for (seg of strengthSegments; track seg) {
                       <span class="password-strength-segment" [class.filled]="passwordStrengthMetCount() >= seg" [attr.data-level]="passwordStrengthLevel()"></span>
                     }

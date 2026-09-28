@@ -92,7 +92,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
     </p-dialog>
   `,
   styles: [`
-    .ft-actions { text-align: right; white-space: nowrap; }
+    .ft-actions { text-align: end; white-space: nowrap; }
     .ft-empty { text-align: center; color: var(--text-color-secondary); padding: 2rem; }
     .ft-form { display: flex; flex-direction: column; gap: .4rem; }
     .ft-form label { font-weight: 600; font-size: .85rem; margin-top: .5rem; }

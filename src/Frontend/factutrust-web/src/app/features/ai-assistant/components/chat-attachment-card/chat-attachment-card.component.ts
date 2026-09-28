@@ -150,7 +150,7 @@ import type { ChatAttachment } from '../../models/ai-chat.models';
       border-radius: var(--radius-md);
       font-size: var(--font-size-xs);
     }
-    .warnings ul { margin: 0; padding-left: var(--spacing-3); }
+    .warnings ul { margin: 0; padding-inline-start: var(--spacing-3); }
     .extract {
       max-height: 240px;
       overflow: auto;

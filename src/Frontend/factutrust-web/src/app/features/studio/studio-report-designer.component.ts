@@ -35,7 +35,7 @@ import { ToastModule } from 'primeng/toast';
         <button pButton type="button" label="Enregistrer" i18n-label="@@studio.studio-report-designer.enregistrer.f7c8bcd8" icon="fa-solid fa-check" [disabled]="saving()" (click)="save()"></button>
       </div>
 
-      <app-studio-designer-shell previewTitle="Aperçu du rapport">
+      <app-studio-designer-shell previewTitle="Aperçu du rapport" i18n-previewTitle="@@studio.studio-report-designer.apercu.du.rapport.d08f7606">
         <div studioEditor>
           <label class="ft-lbl" i18n="@@studio.studio-report-designer.nom.du.rapport.b452b638">Nom du rapport *</label>
           <input pInputText [(ngModel)]="displayName" class="ft-w-full" placeholder="Ex. Ventes par région" i18n-placeholder="@@studio.studio-report-designer.ex.ventes.par.region.97cf7e33" />

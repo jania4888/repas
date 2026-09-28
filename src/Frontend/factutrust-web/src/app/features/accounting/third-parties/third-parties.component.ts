@@ -145,19 +145,19 @@ interface ThirdPartyProfileForm {
       </ng-template>
       <ng-template pTemplate="body" let-r>
         <tr [class.tp-inactive]="!r.isActive">
-          <td class="tp-mono" data-label="Code aux.">{{ r.auxiliaryCode || '—' }}</td>
-          <td data-label="Nom">{{ r.name }}</td>
-          <td data-label="Type">
+          <td class="tp-mono" data-label="Code aux." i18n-data-label="@@accounting.third-parties.code.aux.2d39a431">{{ r.auxiliaryCode || '—' }}</td>
+          <td data-label="Nom" i18n-data-label="@@accounting.third-parties.nom.7ff20370">{{ r.name }}</td>
+          <td data-label="Type" i18n-data-label="@@accounting.third-parties.type.3deb7456">
             <span class="tp-badge" [class.tp-badge-client]="r.kind === 1" [class.tp-badge-supplier]="r.kind === 2">
               {{ r.kind === 1 ? loc_ui_tern_client_1bdd79 : loc_ui_tern_fournisseur_97d91d }}
             </span>
           </td>
-          <td class="tp-mono" data-label="Collectif">{{ r.collectiveAccountNumber }}</td>
-          <td class="text-right" data-label="Délai">{{ r.paymentTermDays != null ? r.paymentTermDays + ' j' : '—' }}</td>
-          <td class="text-right tp-num" data-label="Solde D">{{ r.balanceDebit | number : '1.3-3' }}</td>
-          <td class="text-right tp-num" data-label="Solde C">{{ r.balanceCredit | number : '1.3-3' }}</td>
-          <td data-label="Actif">{{ r.isActive ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
-          <td data-label="Actions" class="tp-actions">
+          <td class="tp-mono" data-label="Collectif" i18n-data-label="@@accounting.third-parties.collectif.ba912701">{{ r.collectiveAccountNumber }}</td>
+          <td class="text-right" data-label="Délai" i18n-data-label="@@accounting.third-parties.delai.be9a9403">{{ r.paymentTermDays != null ? r.paymentTermDays + ' j' : '—' }}</td>
+          <td class="text-right tp-num" data-label="Solde D" i18n-data-label="@@accounting.third-parties.solde.d.3f441081">{{ r.balanceDebit | number : '1.3-3' }}</td>
+          <td class="text-right tp-num" data-label="Solde C" i18n-data-label="@@accounting.third-parties.solde.c.81de0678">{{ r.balanceCredit | number : '1.3-3' }}</td>
+          <td data-label="Actif" i18n-data-label="@@accounting.third-parties.actif.2eb75f84">{{ r.isActive ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
+          <td data-label="Actions" i18n-data-label="@@accounting.third-parties.actions.c3cd636a" class="tp-actions">
             <app-accounting-table-actions>
             <app-button variant="ghost" size="sm" icon="pi-book" [iconOnly]="true" [iconAlwaysVisible]="true"
               [routerLink]="['/accounting/third-party-ledger']"
@@ -190,7 +190,7 @@ interface ThirdPartyProfileForm {
     .tp-narrow { max-width:7rem; }
     .tp-lbl { font-size:var(--font-size-sm); font-weight:var(--font-weight-semibold); color:var(--color-text-primary); }
     .tp-inp { padding:var(--spacing-2) var(--spacing-3); border:1px solid var(--color-border-default); border-radius:var(--radius-md); background:var(--color-background-elevated); color:var(--color-text-primary); font-size:var(--font-size-sm); width:100%; }
-    .tp-form-actions { display:flex; gap:var(--spacing-2); margin-left:auto; }
+    .tp-form-actions { display:flex; gap:var(--spacing-2); margin-inline-start:auto; }
     .tp-help { margin:var(--spacing-3) 0 0; font-size:var(--font-size-sm); color:var(--color-text-secondary); }
     .tp-mono { font-family:ui-monospace, monospace; }
     .tp-num { font-variant-numeric:tabular-nums; }
@@ -200,7 +200,7 @@ interface ThirdPartyProfileForm {
     .tp-badge-supplier { background:var(--color-warning-50, #fffbeb); color:var(--color-warning-700, #a16207); border:1px solid var(--color-warning-200, #fde68a); }
     .tp-actions { white-space:nowrap; }
     .tp-empty { text-align:center; padding:var(--spacing-6); color:var(--color-text-tertiary); }
-    .text-right { text-align:right; }
+    .text-right { text-align:end; }
     .btn { padding:var(--spacing-2) var(--spacing-4); border-radius:var(--radius-md); font-size:var(--font-size-sm); font-weight:var(--font-weight-semibold); cursor:pointer; border:1px solid transparent; }
     .btn-secondary { background:var(--color-background-subtle); color:var(--color-text-primary); border-color:var(--color-border-default); }
     .btn-primary { background:var(--color-primary-500, #2563eb); color:#fff; }

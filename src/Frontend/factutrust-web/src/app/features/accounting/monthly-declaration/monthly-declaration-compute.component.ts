@@ -157,8 +157,8 @@ import {
     .dm-lbl { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
     .dm-inp { padding: var(--spacing-2) var(--spacing-3); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-background-elevated); color: var(--color-text-primary); font-size: var(--font-size-sm); }
     .dm-narrow { width: 7rem; }
-    .dm-outcome { display: flex; flex-direction: column; gap: var(--spacing-2); border-left: 3px solid var(--color-border-default); }
-    .dm-outcome--clean { border-left-color: var(--color-success-500, #22c55e); }
+    .dm-outcome { display: flex; flex-direction: column; gap: var(--spacing-2); border-inline-start: 3px solid var(--color-border-default); }
+    .dm-outcome--clean { border-inline-start-color: var(--color-success-500, #22c55e); }
     .dm-outcome__head { display: flex; flex-wrap: wrap; gap: var(--spacing-3); align-items: center; justify-content: space-between; }
     .dm-outcome__title { margin: 0; font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); }
     .dm-outcome__text { margin: 0; font-size: var(--font-size-sm); color: var(--color-text-secondary); }
@@ -166,7 +166,7 @@ import {
     .dm-diags { margin-bottom: var(--spacing-4); }
     .dm-diags__title { margin: 0 0 var(--spacing-2); font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); display: flex; flex-wrap: wrap; gap: var(--spacing-2); align-items: baseline; }
     .dm-diags__counts { font-size: var(--font-size-xs); font-weight: var(--font-weight-normal); color: var(--color-text-tertiary); }
-    .dm-diags__list { margin: 0; padding-left: var(--spacing-5); font-size: var(--font-size-sm); color: var(--color-warning-700, #a16207); }
+    .dm-diags__list { margin: 0; padding-inline-start: var(--spacing-5); font-size: var(--font-size-sm); color: var(--color-warning-700, #a16207); }
     .dm-diags__item--error { color: var(--color-error-700, #b91c1c); }
   `
 })

@@ -88,9 +88,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </ng-template>
           <ng-template pTemplate="body" let-r>
             <tr>
-              <td data-label="Compte"><span class="ib-code">{{ r.code }}</span></td>
-              <td data-label="Libellé">{{ r.label }}</td>
-              <td data-label="Montant" class="text-right" [class.ib-neg]="r.amount < 0">{{ r.amount | number : '1.3-3' }}</td>
+              <td data-label="Compte" i18n-data-label="@@accounting.inventory-book.compte.c45740bb"><span class="ib-code">{{ r.code }}</span></td>
+              <td data-label="Libellé" i18n-data-label="@@accounting.inventory-book.libelle.f5485bba">{{ r.label }}</td>
+              <td data-label="Montant" i18n-data-label="@@accounting.inventory-book.montant.4adcd9fc" class="text-right" [class.ib-neg]="r.amount < 0">{{ r.amount | number : '1.3-3' }}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="footer">
@@ -110,7 +110,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   styles: `
     @use '../shared/accounting-layout';
     .ib-fields { display:flex; flex-wrap:wrap; align-items:flex-end; gap:var(--spacing-4); }
-    .text-right { text-align:right; font-variant-numeric:tabular-nums; }
+    .text-right { text-align:end; font-variant-numeric:tabular-nums; }
     .ib-code { font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-weight:500; }
     .ib-section-title { margin:0 0 var(--spacing-3); font-size:var(--font-size-md); font-weight:var(--font-weight-semibold); }
     .ib-card { padding:var(--spacing-5); }

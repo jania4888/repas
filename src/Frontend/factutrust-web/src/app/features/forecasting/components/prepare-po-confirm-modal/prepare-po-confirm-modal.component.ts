@@ -263,13 +263,13 @@ export interface PreparePoLinePrice {
     .po-supplier-select--issue { border-color: #fcd34d; }
     .po-price-block { display: flex; flex-direction: column; align-items: flex-end; gap: .1rem; min-width: 0; }
     .po-price-field { display: block; margin: 0; }
-    .po-price-input { width: 4.75rem; padding: .25rem .4rem; border: 1px solid var(--color-neutral-300, #d1d5db); border-radius: 6px; font: inherit; font-variant-numeric: tabular-nums; text-align: right; }
+    .po-price-input { width: 4.75rem; padding: .25rem .4rem; border: 1px solid var(--color-neutral-300, #d1d5db); border-radius: 6px; font: inherit; font-variant-numeric: tabular-nums; text-align: end; }
     .po-price-input:focus { outline: 2px solid var(--color-primary-400, #60a5fa); outline-offset: 1px; }
     .po-price-input.invalid { border-color: #f87171; background: #fef2f2; }
     .po-price-suffix { font-size: .65rem; color: var(--color-neutral-500, #6b7280); }
     .po-qty-block { display: flex; flex-direction: column; align-items: flex-end; gap: .1rem; min-width: 0; }
     .po-qty-field { display: block; margin: 0; }
-    .po-qty-input { width: 4.5rem; padding: .25rem .4rem; border: 1px solid var(--color-neutral-300, #d1d5db); border-radius: 6px; font: inherit; font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }
+    .po-qty-input { width: 4.5rem; padding: .25rem .4rem; border: 1px solid var(--color-neutral-300, #d1d5db); border-radius: 6px; font: inherit; font-variant-numeric: tabular-nums; font-weight: 600; text-align: end; }
     .po-qty-input:focus { outline: 2px solid var(--color-primary-400, #60a5fa); outline-offset: 1px; }
     .po-qty-input.invalid { border-color: #f87171; background: #fef2f2; }
     .po-rec-hint { font-size: .7rem; color: var(--color-neutral-500, #6b7280); white-space: nowrap; }

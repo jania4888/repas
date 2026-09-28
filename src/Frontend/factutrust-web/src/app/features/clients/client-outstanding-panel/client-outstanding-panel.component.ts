@@ -124,7 +124,7 @@ import { ClientOutstanding } from '@core/services/client.service';
     }
 
     .encours-panel--over {
-      border-left-color: var(--color-warning-500, #f59e0b);
+      border-inline-start-color: var(--color-warning-500, #f59e0b);
     }
 
     .encours-edit-link {
@@ -194,7 +194,7 @@ import { ClientOutstanding } from '@core/services/client.service';
     }
 
     .encours-plafond__pct {
-      margin-left: var(--spacing-2, 0.5rem);
+      margin-inline-start: var(--spacing-2, 0.5rem);
       color: var(--color-text-secondary, #64748b);
       font-weight: var(--font-weight-medium, 500);
     }

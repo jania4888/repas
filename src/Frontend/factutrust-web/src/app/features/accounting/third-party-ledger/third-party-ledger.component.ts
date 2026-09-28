@@ -113,14 +113,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       </ng-template>
       <ng-template pTemplate="body" let-r>
         <tr>
-          <td data-label="Date">{{ r.entryDate | date : 'shortDate' }}</td>
-          <td data-label="Journal">{{ r.journalCode }}</td>
+          <td data-label="Date" i18n-data-label="@@accounting.third-party-ledger.date.eb9a4bc1">{{ r.entryDate | date : 'shortDate' }}</td>
+          <td data-label="Journal" i18n-data-label="@@accounting.third-party-ledger.journal.57d7f743">{{ r.journalCode }}</td>
           <td data-label="N°" class="tpl-num">{{ r.pieceNumber }}</td>
-          <td data-label="Pièce" class="tpl-num">{{ r.pieceRef }}</td>
-          <td data-label="Compte" class="tpl-num">{{ r.accountNumber }}</td>
-          <td data-label="Libellé">{{ r.label }}</td>
+          <td data-label="Pièce" i18n-data-label="@@accounting.third-party-ledger.piece.954bbc8c" class="tpl-num">{{ r.pieceRef }}</td>
+          <td data-label="Compte" i18n-data-label="@@accounting.third-party-ledger.compte.c45740bb" class="tpl-num">{{ r.accountNumber }}</td>
+          <td data-label="Libellé" i18n-data-label="@@accounting.third-party-ledger.libelle.f5485bba">{{ r.label }}</td>
           @if (hasForeignCurrency()) {
-            <td class="tpl-num" data-label="Devise">
+            <td class="tpl-num" data-label="Devise" i18n-data-label="@@accounting.third-party-ledger.devise.eb2e42c4">
               @if (r.currencyCode && r.currencyCode !== functionalCurrency) {
                 {{ r.currencyCode }} {{ r.amountInCurrency | number : '1.2-2' }}
               } @else {
@@ -128,12 +128,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
               }
             </td>
           }
-          <td class="text-right tpl-num" data-label="Débit">{{ r.debit | number : '1.3-3' }}</td>
-          <td class="text-right tpl-num" data-label="Crédit">{{ r.credit | number : '1.3-3' }}</td>
-          <td class="text-right tpl-num" data-label="Solde" [class.tpl-negative]="r.runningBalance < 0">
+          <td class="text-right tpl-num" data-label="Débit" i18n-data-label="@@accounting.third-party-ledger.debit.f528224f">{{ r.debit | number : '1.3-3' }}</td>
+          <td class="text-right tpl-num" data-label="Crédit" i18n-data-label="@@accounting.third-party-ledger.credit.19194bdf">{{ r.credit | number : '1.3-3' }}</td>
+          <td class="text-right tpl-num" data-label="Solde" i18n-data-label="@@accounting.third-party-ledger.solde.e5977cf9" [class.tpl-negative]="r.runningBalance < 0">
             {{ r.runningBalance | number : '1.3-3' }}
           </td>
-          <td data-label="Lettrage">
+          <td data-label="Lettrage" i18n-data-label="@@accounting.third-party-ledger.lettrage.cfcdd333">
             @if (r.letteringCode) {
               <p-tag [value]="r.letteringCode" [severity]="r.letteringCode.startsWith('P') ? 'warn' : 'info'" [rounded]="true" />
             }
@@ -150,7 +150,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   styles: `
     @use '../shared/accounting-layout';
     .tpl-toolbar-fields { display:flex; flex-wrap:wrap; align-items:flex-end; gap:var(--spacing-4); }
-    .text-right { text-align:right; }
+    .text-right { text-align:end; }
     .tpl-num { font-variant-numeric:tabular-nums; }
     .tpl-negative { color:var(--color-danger-600, #dc2626); }
     .tpl-opening {

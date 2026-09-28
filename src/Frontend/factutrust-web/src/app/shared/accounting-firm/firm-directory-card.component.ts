@@ -92,7 +92,7 @@ import {
       background: var(--color-surface, #fff);
       border: 1px solid var(--color-border-subtle, #e2e8f0);
       border-radius: var(--radius-xl, 16px);
-      text-align: left;
+      text-align: start;
       color: inherit;
     }
     .fdc[role="button"] { cursor: pointer; width: 100%; font: inherit; }
@@ -117,7 +117,7 @@ import {
     }
     .fdc__name { margin: 0; font-size: 1rem; font-weight: 650; color: var(--color-text-primary, #0f172a); }
     .fdc__place { margin: 2px 0 0; font-size: 0.85rem; color: var(--color-text-secondary, #64748b); }
-    .fdc__place i { margin-right: 4px; }
+    .fdc__place i { margin-inline-end: 4px; }
     .fdc__match {
       display: inline-flex;
       align-items: center;

@@ -11,8 +11,8 @@
   </div>
 } @else {
   <app-page-header
-    [title]="inventory()?.reference ?? 'Chargement...'"
-    [subtitle]="inventory() ? 'Inventaire du ' + formatDate(inventory()?.startedAt ?? null) : ''">
+    [title]="inventory()?.reference ?? loc_chargement_a209b6"
+    [subtitle]="inventory() ? loc_inventaire_du_startedat_bd168f(formatDate(inventory()?.startedAt ?? null)) : ''">
     <app-button
       variant="outline"
       icon="pi-arrow-left"
@@ -195,18 +195,18 @@
               </ng-template>
               <ng-template pTemplate="body" let-line>
                 <tr [class.row-has-diff]="line.difference !== 0">
-                  <td [attr.data-label]="'Produit'">
+                  <td [attr.data-label]="loc_produit_ff673d">
                     <span class="product-name">{{ line.productName }}</span>
                     @if (line.lotNumber) {
                       <span class="lot-label" i18n="@@inventory.inventory-detail.lot.f7358f58">Lot {{ line.lotNumber }}</span>
                     }
                   </td>
-                  <td [attr.data-label]="'Code'">
+                  <td [attr.data-label]="loc_code_adac69">
                     <code class="product-code">{{ line.productCode ?? '—' }}</code>
                   </td>
-                  <td class="text-right mono-number" [attr.data-label]="'Quantité théorique'">{{ line.theoreticalQuantity | number:'1.2-2' }}</td>
-                  <td class="text-right mono-number" [attr.data-label]="'Quantité comptée'">{{ line.countedQuantity != null ? (line.countedQuantity | number:'1.2-2') : '—' }}</td>
-                  <td class="text-right" [attr.data-label]="'Écart'" [attr.aria-label]="getDiffAriaLabel(line.difference)">
+                  <td class="text-right mono-number" [attr.data-label]="loc_quantite_theorique_e6370b">{{ line.theoreticalQuantity | number:'1.2-2' }}</td>
+                  <td class="text-right mono-number" [attr.data-label]="loc_quantite_comptee_9aee07">{{ line.countedQuantity != null ? (line.countedQuantity | number:'1.2-2') : '—' }}</td>
+                  <td class="text-right" [attr.data-label]="loc_ecart_6ae8dc" [attr.aria-label]="getDiffAriaLabel(line.difference)">
                     <span
                       class="diff-pill"
                       [class.diff-pill--positive]="line.difference > 0"
@@ -221,7 +221,7 @@
                       <span>{{ line.difference !== 0 ? (line.difference > 0 ? '+' : '') + (line.difference | number:'1.2-2') : '0' }}</span>
                     </span>
                   </td>
-                  <td class="text-center" [attr.data-label]="'Statut'">
+                  <td class="text-center" [attr.data-label]="loc_statut_659499">
                     <span
                       class="line-status-badge"
                       [class.line-status-badge--counted]="line.isCounted"

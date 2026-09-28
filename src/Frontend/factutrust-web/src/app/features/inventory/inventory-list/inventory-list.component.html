@@ -100,7 +100,7 @@
       [rows]="pageSize"
       [totalRecords]="totalRecords()"
       [showCurrentPageReport]="true"
-      currentPageReportTemplate="Affichage de {{ (page - 1) * pageSize + 1 }} à {{ (page - 1) * pageSize + inventories().length }} sur {{ totalRecords() }} inventaires"
+      currentPageReportTemplate="Affichage de {{ (page - 1) * pageSize + 1 }} à {{ (page - 1) * pageSize + inventories().length }} sur {{ totalRecords() }} inventaires" i18n-currentPageReportTemplate="@@inventory.inventory-list.affichage.de.inventaires"
       (onLazyLoad)="onPageChange($event)"
       styleClass="p-datatable-sm">
       <ng-template pTemplate="header">

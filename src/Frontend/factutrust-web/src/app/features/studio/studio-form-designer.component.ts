@@ -39,7 +39,7 @@ type DesignerRow =
         <button pButton type="button" label="Enregistrer" i18n-label="@@studio.studio-form-designer.enregistrer.f7c8bcd8" icon="fa-solid fa-check" studioActions
           [disabled]="saving()" (click)="save()"></button>
 
-        <app-studio-designer-shell previewTitle="Aperçu">
+        <app-studio-designer-shell previewTitle="Aperçu" i18n-previewTitle="@@studio.studio-form-designer.apercu.f0f53004">
           <div studioEditor>
             <div class="studio-add-bar">
               <p-select [options]="availableFields()" [(ngModel)]="fieldToAdd" optionLabel="label" optionValue="id"

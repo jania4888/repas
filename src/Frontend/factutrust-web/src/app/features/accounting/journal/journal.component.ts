@@ -230,20 +230,20 @@ type JournalFlatRow = {
         </ng-template>
         <ng-template pTemplate="body" let-r>
           <tr [class.journal-row-draft]="r.isDraft">
-            <td data-label="Date">{{ r.date | date : 'shortDate' }}</td>
-            <td data-label="Journal">{{ r.journal }}</td>
+            <td data-label="Date" i18n-data-label="@@accounting.journal.date.eb9a4bc1">{{ r.date | date : 'shortDate' }}</td>
+            <td data-label="Journal" i18n-data-label="@@accounting.journal.journal.57d7f743">{{ r.journal }}</td>
             <td class="journal-col-narrow journal-cell-num" data-label="N°">{{ r.piece }}</td>
-            <td data-label="Libellé">
+            <td data-label="Libellé" i18n-data-label="@@accounting.journal.libelle.f5485bba">
               {{ r.label }}
               @if (r.firstOfEntry && r.pieceRef) {
                 <span class="journal-piece-ref" [title]="loc_ui_tern_piece_aa1746 + r.pieceRef" i18n="@@accounting.journal.piece.f865dfce">Pièce {{ r.pieceRef }}</span>
               }
             </td>
-            <td class="journal-col-account" data-label="Compte">
+            <td class="journal-col-account" data-label="Compte" i18n-data-label="@@accounting.journal.compte.c45740bb">
               <span class="journal-account-code">{{ r.account }}</span>
             </td>
             @if (hasForeignCurrency()) {
-              <td class="journal-col-narrow" data-label="Devise">
+              <td class="journal-col-narrow" data-label="Devise" i18n-data-label="@@accounting.journal.devise.eb2e42c4">
                 @if (r.currency !== functionalCurrency) {
                   <span class="journal-account-code">{{ r.currency }}</span>
                   <span class="journal-currency-amount">{{ r.amountInCurrency | number : '1.2-2' }}</span>
@@ -252,9 +252,9 @@ type JournalFlatRow = {
                 }
               </td>
             }
-            <td class="journal-col-amount" data-label="Débit">{{ r.debit | number : '1.3-3' }}</td>
-            <td class="journal-col-amount" data-label="Crédit">{{ r.credit | number : '1.3-3' }}</td>
-            <td class="journal-col-narrow" data-label="Statut">
+            <td class="journal-col-amount" data-label="Débit" i18n-data-label="@@accounting.journal.debit.f528224f">{{ r.debit | number : '1.3-3' }}</td>
+            <td class="journal-col-amount" data-label="Crédit" i18n-data-label="@@accounting.journal.credit.19194bdf">{{ r.credit | number : '1.3-3' }}</td>
+            <td class="journal-col-narrow" data-label="Statut" i18n-data-label="@@accounting.journal.statut.659499f3">
               @if (r.firstOfEntry) {
                 <span class="journal-badge" [class.journal-badge-draft]="r.isDraft" [class.journal-badge-valid]="!r.isDraft"
                       [title]="isPayrollSourced(r.sourceEntityType) ? loc_ui_tern_ecriture_generee_par_le_module_paie_corrig_af7d4a : ''">
@@ -268,7 +268,7 @@ type JournalFlatRow = {
                 }
               }
             </td>
-            <td class="journal-col-narrow" data-label="Actions">
+            <td class="journal-col-narrow" data-label="Actions" i18n-data-label="@@accounting.journal.actions.c3cd636a">
               <app-accounting-table-actions>
               @if (r.firstOfEntry && r.isDraft && canEdit()) {
                 <app-button
@@ -279,7 +279,7 @@ type JournalFlatRow = {
                   [iconAlwaysVisible]="true"
                   type="button"
                   (click)="editEntry(r)"
-                  [attr.aria-label]="'Modifier l\\'écriture ' + r.journal + ' n° ' + r.piece"
+                  [attr.aria-label]="loc_modifier_l_ecriture_journal_n_piece_47cdfa(r.journal, r.piece)"
                   title="Modifier" i18n-title="@@accounting.journal.modifier.f260e757" />
               }
               @if (r.firstOfEntry && r.isDraft && canValidate()) {
@@ -291,7 +291,7 @@ type JournalFlatRow = {
                   type="button"
                   (click)="validateEntry(r.entryId)"
                   [disabled]="validatingId() === r.entryId"
-                  [attr.aria-label]="'Valider l\\'écriture ' + r.journal + ' n° ' + r.piece" i18n="@@accounting.journal.valider.be4220f7"> Valider </app-button>
+                  [attr.aria-label]="loc_valider_l_ecriture_journal_n_piece_eb96ff(r.journal, r.piece)" i18n="@@accounting.journal.valider.be4220f7"> Valider </app-button>
               }
               @if (r.firstOfEntry && r.isDraft && canDelete() && !isPayrollSourced(r.sourceEntityType)) {
                 <app-button
@@ -303,7 +303,7 @@ type JournalFlatRow = {
                   type="button"
                   (click)="deleteEntry(r.entryId, r.journal, r.piece)"
                   [disabled]="deletingId() === r.entryId"
-                  [attr.aria-label]="'Supprimer l\\'écriture ' + r.journal + ' n° ' + r.piece"
+                  [attr.aria-label]="loc_supprimer_l_ecriture_journal_n_piece_45c87a(r.journal, r.piece)"
                   title="Supprimer" i18n-title="@@accounting.journal.supprimer.1acfc1c7" />
               }
               @if (r.firstOfEntry && !r.isDraft && !r.isReversed && !isPayrollSourced(r.sourceEntityType)) {
@@ -314,7 +314,7 @@ type JournalFlatRow = {
                   iconPos="left"
                   type="button"
                   (click)="openReverse(r)"
-                  [attr.aria-label]="'Extourner l\\'écriture ' + r.journal + ' n° ' + r.piece" i18n="@@accounting.journal.extourner.8884c9cd"> Extourner </app-button>
+                  [attr.aria-label]="loc_extourner_l_ecriture_journal_n_piece_0c4c79(r.journal, r.piece)" i18n="@@accounting.journal.extourner.8884c9cd"> Extourner </app-button>
               }
               @if (r.firstOfEntry) {
                 <app-button
@@ -325,7 +325,7 @@ type JournalFlatRow = {
                   [iconAlwaysVisible]="true"
                   type="button"
                   (click)="openAttachments(r)"
-                  [attr.aria-label]="'Pièces jointes de l\\'écriture ' + r.journal + ' n° ' + r.piece + (r.attachmentCount > 0 ? ' (' + r.attachmentCount + ')' : '')"
+                  [attr.aria-label]="loc_pieces_jointes_de_l_ecriture_journal_0168c3(r.journal, r.piece, r.attachmentCount > 0 ? ' (' + r.attachmentCount + ')' : '')"
                   title="Pièces justificatives" i18n-title="@@accounting.journal.pieces.justificatives.db547f24" />
                 @if (r.attachmentCount > 0) {
                   <span class="journal-attach-count">{{ r.attachmentCount }}</span>
@@ -516,7 +516,7 @@ type JournalFlatRow = {
     }
     .journal-search-wrap.p-input-icon-left i {
       position: absolute;
-      left: var(--spacing-3);
+      inset-inline-start: var(--spacing-3);
       top: 50%;
       transform: translateY(-50%);
       color: var(--color-text-secondary);
@@ -525,7 +525,7 @@ type JournalFlatRow = {
     :host ::ng-deep .journal-search-wrap .p-inputtext,
     :host ::ng-deep .journal-search-input {
       width: 100%;
-      padding-left: var(--spacing-8);
+      padding-inline-start: var(--spacing-8);
     }
     .journal-count {
       margin: 0;
@@ -545,7 +545,7 @@ type JournalFlatRow = {
       width: 1%;
       white-space: nowrap;
     }
-    .journal-currency-amount { margin-left:var(--spacing-1); font-variant-numeric:tabular-nums; color:var(--color-text-secondary); font-size:var(--font-size-xs); }
+    .journal-currency-amount { margin-inline-start:var(--spacing-1); font-variant-numeric:tabular-nums; color:var(--color-text-secondary); font-size:var(--font-size-xs); }
     .journal-currency-none { color:var(--color-text-tertiary); }
     .journal-account-code {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -553,12 +553,12 @@ type JournalFlatRow = {
       font-weight: var(--font-weight-medium);
     }
     .journal-col-amount {
-      text-align: right;
+      text-align: end;
       font-variant-numeric: tabular-nums;
     }
     .journal-cell-num {
       font-variant-numeric: tabular-nums;
-      text-align: right;
+      text-align: end;
     }
     .journal-draft-banner {
       display: flex;
@@ -634,7 +634,7 @@ type JournalFlatRow = {
       background: var(--color-warning-50, #fffbeb);
     }
     .journal-badge-reversed {
-      margin-left: var(--spacing-1);
+      margin-inline-start: var(--spacing-1);
       background: var(--color-neutral-100, #f1f5f9);
       color: var(--color-text-secondary);
     }
@@ -731,6 +731,22 @@ type JournalFlatRow = {
   `
 })
 export class JournalComponent implements OnInit {
+  protected loc_modifier_l_ecriture_journal_n_piece_47cdfa(p0: unknown, p1: unknown): string {
+    return $localize`:@@accounting.journal.tpl.modifier.l.ecriture.journal.n.piece.47cdfad6:Modifier l'écriture ${p0}:journal: n° ${p1}:piece:`;
+  }
+  protected loc_valider_l_ecriture_journal_n_piece_eb96ff(p0: unknown, p1: unknown): string {
+    return $localize`:@@accounting.journal.tpl.valider.l.ecriture.journal.n.piece.eb96ffd1:Valider l'écriture ${p0}:journal: n° ${p1}:piece:`;
+  }
+  protected loc_supprimer_l_ecriture_journal_n_piece_45c87a(p0: unknown, p1: unknown): string {
+    return $localize`:@@accounting.journal.tpl.supprimer.l.ecriture.journal.n.piece.45c87af2:Supprimer l'écriture ${p0}:journal: n° ${p1}:piece:`;
+  }
+  protected loc_extourner_l_ecriture_journal_n_piece_0c4c79(p0: unknown, p1: unknown): string {
+    return $localize`:@@accounting.journal.tpl.extourner.l.ecriture.journal.n.piece.0c4c795d:Extourner l'écriture ${p0}:journal: n° ${p1}:piece:`;
+  }
+  protected loc_pieces_jointes_de_l_ecriture_journal_0168c3(p0: unknown, p1: unknown, p2: unknown): string {
+    return $localize`:@@accounting.journal.tpl.pieces.jointes.de.l.ecriture.journal.n.p.0168c3b0:Pièces jointes de l'écriture ${p0}:journal: n° ${p1}:piece:${p2}:attachmentCount:`;
+  }
+
   readonly loc_ui_tern_piece_aa1746 = $localize`:@@ui.tern.piece.aa1746:Pièce : `;
   readonly loc_ui_tern_ecriture_generee_par_le_module_paie_corrig_af7d4a = $localize`:@@ui.tern.ecriture.generee.par.le.module.paie.corrig.af7d4a:Écriture générée par le module Paie — corrigez via « Rouvrir le cycle » ou « Annuler le paiement ». Non supprimable ni extournable depuis la comptabilité.`;
   readonly loc_ui_tern_brouillon_57d2d7 = $localize`:@@ui.tern.brouillon.57d2d7:Brouillon`;

@@ -112,7 +112,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
   styles: [`
     .mb-2 { margin-bottom: var(--spacing-2); }
     .mb-3 { margin-bottom: var(--spacing-4); }
-    .ml-2 { margin-left: var(--spacing-2); }
+    .ml-2 { margin-inline-start: var(--spacing-2); }
     .actions { white-space: nowrap; }
     .w-full { width: 100%; }
     .text-center { text-align: center; }

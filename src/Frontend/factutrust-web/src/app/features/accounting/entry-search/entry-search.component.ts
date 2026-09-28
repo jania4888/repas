@@ -106,7 +106,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     .es-inp { padding: var(--spacing-2) var(--spacing-3); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-background-elevated); color: var(--color-text-primary); font-size: var(--font-size-sm); width: 100%; }
     .es-actions { display: flex; gap: var(--spacing-3); margin-top: var(--spacing-4); }
     .es-count { margin: 0 0 var(--spacing-3); font-size: var(--font-size-sm); color: var(--color-text-secondary); }
-    .es-amt { text-align: right; font-variant-numeric: tabular-nums; }
+    .es-amt { text-align: end; font-variant-numeric: tabular-nums; }
     .es-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
     .es-badge { display: inline-block; padding: 0.1rem 0.5rem; border-radius: var(--radius-pill, 999px); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); background: var(--color-success-100, #dcfce7); color: var(--color-success-700, #15803d); }
     .es-badge-draft { background: var(--color-warning-100, #fef3c7); color: var(--color-warning-700, #b45309); }

@@ -91,7 +91,7 @@ import { PosStateService } from '../../services/pos-state.service';
       padding: var(--spacing-3);
       cursor: pointer;
       transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 300ms ease, border-color 300ms ease;
-      text-align: left;
+      text-align: start;
       position: relative;
       overflow: hidden;
       font-family: var(--font-family);
@@ -206,7 +206,7 @@ import { PosStateService } from '../../services/pos-state.service';
     .product-card__add-badge {
       position: absolute;
       top: 8px;
-      right: 8px;
+      inset-inline-end: 8px;
       width: 32px;
       height: 32px;
       border-radius: var(--radius-full);
@@ -269,7 +269,7 @@ import { PosStateService } from '../../services/pos-state.service';
     }
 
     .product-card__stock-unit {
-      margin-left: 0.25rem;
+      margin-inline-start: 0.25rem;
       color: var(--color-text-tertiary);
       font-weight: var(--font-weight-regular);
     }
@@ -313,7 +313,7 @@ import { PosStateService } from '../../services/pos-state.service';
     .product-card__favorite {
       position: absolute;
       top: 8px;
-      left: 8px;
+      inset-inline-start: 8px;
       width: 32px;
       height: 32px;
       border: none;
@@ -346,7 +346,7 @@ import { PosStateService } from '../../services/pos-state.service';
     .product-card__stock-badge {
       position: absolute;
       top: 8px;
-      right: 44px;
+      inset-inline-end: 44px;
       padding: 4px 8px;
       border-radius: var(--radius-full);
       font-size: 0.65rem;

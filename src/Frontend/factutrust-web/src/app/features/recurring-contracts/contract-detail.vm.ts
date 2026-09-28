@@ -4,6 +4,7 @@ import {
   RecurringContractDetail
 } from '@core/services/recurring-contract.service';
 import { fixedLinesMonthlyEstimate } from './recurring-contracts.ui-utils';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 /**
  * Calculs purs de la page détail contrat (pattern cash-forecast.view-model.ts) :
@@ -123,7 +124,7 @@ export function donutChartData(s: ContractFinancialSummary): { labels: string[];
 export function evolutionMonthLabel(month: string): string {
   const d = new Date(`${month}-01T00:00:00`);
   if (Number.isNaN(d.getTime())) return month;
-  return new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(d);
+  return new Intl.DateTimeFormat(erpDateLocale('fr-FR'), { month: 'long', year: 'numeric' }).format(d);
 }
 
 /** Série pour le graphique ligne « Évolution » (ordre chronologique déjà garanti par l'API). */

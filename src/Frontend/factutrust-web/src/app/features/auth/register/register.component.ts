@@ -97,6 +97,11 @@ interface TaxRegime {
   styleUrl: './register.component.scss'
 })
 export class RegisterComponent implements OnInit, OnDestroy {
+  protected loc_progression_etape_stephumanindex_sur_39558c(p0: unknown): string {
+    return $localize`:@@auth.register.tpl.progression.etape.stephumanindex.sur.3.39558c7d:Progression : étape ${p0}:stepHumanIndex: sur 3`;
+  }
+  protected readonly loc_force_du_mot_de_passe_de0bbe = $localize`:@@auth.register.tpl.force.du.mot.de.passe.de0bbe05:Force du mot de passe`;
+
   readonly environment = environment;
   readonly shellConfig = REGISTER_AUTH_SHELL_CONFIG;
 

@@ -108,7 +108,7 @@ import {
     .dm-mono { font-family: ui-monospace, monospace; }
     .dm-rule { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
     .dm-row--inactive { opacity: 0.6; }
-    .dm-flag { display: inline-block; margin-left: var(--spacing-2); padding: 0.1rem 0.45rem; border-radius: var(--radius-pill, 999px); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); }
+    .dm-flag { display: inline-block; margin-inline-start: var(--spacing-2); padding: 0.1rem 0.45rem; border-radius: var(--radius-pill, 999px); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); }
     .dm-flag--warn { background: var(--color-warning-50, #fffbeb); color: var(--color-warning-700, #a16207); border: 1px solid var(--color-warning-200, #fde68a); }
     .dm-empty { text-align: center; padding: var(--spacing-6); color: var(--color-text-tertiary); }
   `

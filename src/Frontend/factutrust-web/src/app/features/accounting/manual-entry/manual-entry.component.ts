@@ -216,7 +216,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     .text-success { color:var(--color-success-600); }
     .me-period-warning { color:var(--color-error-700); font-size:var(--font-size-sm); font-weight:var(--font-weight-medium); margin:var(--spacing-3) 0; }
     .me-vat-fallback-banner, .me-warning-banner { margin:var(--spacing-3) 0; padding:var(--spacing-2) var(--spacing-3); background:var(--color-warning-50); color:var(--color-warning-800); border-radius:var(--radius-md); font-size:var(--font-size-sm); border:1px solid var(--color-warning-200); }
-    .me-warning-banner { border-left:3px solid var(--color-warning-500, #f59e0b); }
+    .me-warning-banner { border-inline-start:3px solid var(--color-warning-500, #f59e0b); }
     .me-source-banner { margin:var(--spacing-3) 0; padding:var(--spacing-2) var(--spacing-3); background:var(--color-info-50, #eff6ff); color:var(--color-info-800, #1e40af); border-radius:var(--radius-md); font-size:var(--font-size-sm); border:1px solid var(--color-info-200, #bfdbfe); }
     .me-shortcuts { margin-top:var(--spacing-4); padding-top:var(--spacing-3); border-top:1px dashed var(--color-border-subtle); font-size:var(--font-size-xs); color:var(--color-text-tertiary); }
     .me-shortcuts summary { cursor:pointer; font-weight:var(--font-weight-semibold); }

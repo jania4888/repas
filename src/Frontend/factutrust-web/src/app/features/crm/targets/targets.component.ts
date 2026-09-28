@@ -14,21 +14,22 @@ import { ToastService } from '@core/services/toast.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { AuthService } from '@core/services/auth.service';
 import { OverlayOptions } from 'primeng/api';
+import { REPORT_EXPORT_MONTHS_FR } from '../../reports/shared/report-export-fr';
 
 const MONTH_NAMES_FR = [
   '',
-  'Janvier',
-  'Février',
-  'Mars',
-  'Avril',
-  'Mai',
-  'Juin',
-  'Juillet',
-  'Août',
-  'Septembre',
-  'Octobre',
-  'Novembre',
-  'Décembre'
+  $localize`:@@crm.targets.ts.janvier.7a32ae0f:Janvier`,
+  $localize`:@@crm.targets.ts.fevrier.63fc1803:Février`,
+  $localize`:@@crm.targets.ts.mars.1778011d:Mars`,
+  $localize`:@@crm.targets.ts.avril.4efeee46:Avril`,
+  $localize`:@@crm.targets.ts.mai.afe526a6:Mai`,
+  $localize`:@@crm.targets.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@crm.targets.ts.juillet.e8e0920c:Juillet`,
+  $localize`:@@crm.targets.ts.aout.460b6696:Août`,
+  $localize`:@@crm.targets.ts.septembre.08d23f31:Septembre`,
+  $localize`:@@crm.targets.ts.octobre.0ed28485:Octobre`,
+  $localize`:@@crm.targets.ts.novembre.632580af:Novembre`,
+  $localize`:@@crm.targets.ts.decembre.03bcd9b0:Décembre`
 ];
 
 @Component({
@@ -57,7 +58,7 @@ const MONTH_NAMES_FR = [
           inputId="tgtYear"
           styleClass="toolbar-dropdown"
           (onChange)="load()"
-          [attr.aria-label]="'Filtrer par année'"></p-select>
+          [attr.aria-label]="loc_filtrer_par_annee_cd10cb"></p-select>
         <p-select
           [options]="monthFilterOptions"
           [(ngModel)]="filterMonth"
@@ -68,7 +69,7 @@ const MONTH_NAMES_FR = [
           inputId="tgtMonth"
           styleClass="toolbar-dropdown"
           (onChange)="load()"
-          [attr.aria-label]="'Filtrer par mois'"></p-select>
+          [attr.aria-label]="loc_filtrer_par_mois_dc1892"></p-select>
         <p-select
           [options]="assignableUsers()"
           [(ngModel)]="filterUserId"
@@ -350,7 +351,7 @@ const MONTH_NAMES_FR = [
       min-width: 180px;
     }
     .text-right {
-      text-align: right;
+      text-align: end;
     }
     .progress-wrap {
       display: flex;
@@ -374,7 +375,7 @@ const MONTH_NAMES_FR = [
     }
     .progress-pct {
       min-width: 48px;
-      text-align: right;
+      text-align: end;
       font-size: var(--font-size-sm);
     }
     .col-actions {
@@ -497,8 +498,8 @@ const MONTH_NAMES_FR = [
       width: 100%;
     }
     .targets-panel .targets-panel-section-title {
-      border-left: 3px solid var(--color-primary-500);
-      padding-left: var(--spacing-3);
+      border-inline-start: 3px solid var(--color-primary-500);
+      padding-inline-start: var(--spacing-3);
     }
     @keyframes targetsPanelFadeIn {
       from { opacity: 0; }
@@ -574,6 +575,9 @@ const MONTH_NAMES_FR = [
   `
 })
 export class TargetsComponent implements OnInit {
+  protected readonly loc_filtrer_par_annee_cd10cb = $localize`:@@crm.targets.tpl.filtrer.par.annee.cd10cbac:Filtrer par année`;
+  protected readonly loc_filtrer_par_mois_dc1892 = $localize`:@@crm.targets.tpl.filtrer.par.mois.dc1892df:Filtrer par mois`;
+
   readonly loc_ui_tern_progression_a6e180 = $localize`:@@ui.tern.progression.a6e180:Progression `;
   readonly loc_ui_tern_pourcent_da28b6 = $localize`:@@ui.tern.pourcent.da28b6: pourcent`;
   readonly loc_ui_tern_modifier_l_objectif_009458 = $localize`:@@ui.tern.modifier.l.objectif.009458:Modifier l’objectif`;
@@ -837,7 +841,7 @@ export class TargetsComponent implements OnInit {
         [
           this.escapeCsv(t.userName),
           t.year,
-          this.monthLabel(t.month),
+          t.month >= 1 && t.month <= 12 ? REPORT_EXPORT_MONTHS_FR[t.month] : String(t.month),
           this.fmtNum(t.targetAmount),
           this.fmtNum(t.achievedAmount),
           this.fmtNum(t.progressPercent)

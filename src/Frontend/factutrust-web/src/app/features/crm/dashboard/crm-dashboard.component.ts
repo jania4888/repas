@@ -34,7 +34,7 @@ import { ToastService } from '@core/services/toast.service';
             <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid var(--border-subtle);">
               <div>
                 <strong>{{ r.subject }}</strong>
-                <span style="color:var(--text-muted); margin-left:0.5rem">{{ r.dueDate | date:'shortDate' }}</span>
+                <span style="color:var(--text-muted); margin-inline-start:0.5rem">{{ r.dueDate | date:'shortDate' }}</span>
               </div>
               <button type="button" style="font-size:0.85rem" (click)="markDone(r.id)" i18n="@@crm.dashboard.termine.3bc59720">Terminé</button>
             </div>
@@ -49,7 +49,7 @@ import { ToastService } from '@core/services/toast.service';
           <div style="display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid var(--border-subtle);">
             <div>
               <a [routerLink]="['/crm/opportunities']" style="font-weight:600">{{ o.title }}</a>
-              <span style="margin-left:0.5rem; font-size:0.85rem; color:var(--text-muted)">{{ o.stageName }}</span>
+              <span style="margin-inline-start:0.5rem; font-size:0.85rem; color:var(--text-muted)">{{ o.stageName }}</span>
             </div>
             <span>{{ o.weightedAmount | number:'1.0-0' }} {{ o.currency }}</span>
           </div>

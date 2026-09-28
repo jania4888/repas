@@ -69,7 +69,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
     .hub { display: flex; flex-direction: column; gap: 1.5rem; }
     .hub-onboard { background: var(--surface-50); border: 1px solid var(--surface-200); border-radius: 10px; padding: 1rem 1.25rem; }
     .hub-onboard h3 { margin: 0 0 .5rem; font-size: 1rem; }
-    .hub-onboard ol { margin: 0; padding-left: 1.25rem; }
+    .hub-onboard ol { margin: 0; padding-inline-start: 1.25rem; }
     .hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
     .hub-card { border: 1px solid var(--surface-200); border-radius: 10px; padding: 1rem; background: var(--surface-0); }
     .hub-card h4 { margin: 0 0 .35rem; display: flex; align-items: center; gap: .5rem; }

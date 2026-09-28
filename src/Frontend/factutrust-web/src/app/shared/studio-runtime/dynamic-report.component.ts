@@ -107,7 +107,7 @@ type ChartType = 'bar' | 'line' | 'pie';
   styles: [`
     .dr-bar { display: flex; align-items: center; gap: var(--spacing-2); margin-bottom: var(--spacing-3); flex-wrap: wrap; }
     .dr-spacer { flex: 1; }
-    .dr-measure { text-align: right; }
+    .dr-measure { text-align: end; }
     .dr-count { color: var(--color-neutral-500); font-size: var(--font-size-sm); margin-top: var(--spacing-2); }
     .dr-chart-wrap { padding: var(--spacing-2) 0; }
     .dr-types { display: flex; gap: var(--spacing-2); margin-bottom: var(--spacing-3); }

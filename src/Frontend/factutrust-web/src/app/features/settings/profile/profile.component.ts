@@ -130,9 +130,9 @@ import { AuthService } from '@core/services/auth.service';
               [toggleMask]="true"
               styleClass="w-full"
               inputStyleClass="w-full"
-              promptLabel="Saisissez un nouveau mot de passe"
+              promptLabel="Saisissez un nouveau mot de passe" i18n-promptLabel="@@settings.profile.saisissez.un.nouveau.mot.de.passe.701e23cd"
               weakLabel="Faible"
-              mediumLabel="Moyen"
+              mediumLabel="Moyen" i18n-mediumLabel="@@settings.profile.moyen.de03c108"
               strongLabel="Fort">
             </p-password>
             <small class="form-hint" i18n="@@settings.profile.minimum.8.caracteres.avec.majuscule.et.chiffre.3751ab62">Minimum 8 caractères avec majuscule et chiffre</small>

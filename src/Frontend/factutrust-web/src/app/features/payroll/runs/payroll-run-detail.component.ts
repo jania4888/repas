@@ -275,7 +275,7 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
     .mb-3 { margin-bottom: var(--spacing-4); }
     .mb-4 { margin-bottom: var(--spacing-6); display: block; }
     .mt-3 { margin-top: var(--spacing-4); }
-    .ml-2 { margin-left: var(--spacing-2); }
+    .ml-2 { margin-inline-start: var(--spacing-2); }
     .text-secondary { color: var(--color-text-secondary); }
     .actions { display: flex; gap: var(--spacing-2); white-space: nowrap; }
     .prorata-summary {

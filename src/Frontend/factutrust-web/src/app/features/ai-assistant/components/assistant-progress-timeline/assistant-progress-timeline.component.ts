@@ -157,7 +157,7 @@ import {
     .progress-card.streaming::after {
       content: '';
       position: absolute;
-      left: 0;
+      inset-inline-start: 0;
       bottom: 0;
       height: 2px;
       width: 40%;
@@ -178,7 +178,7 @@ import {
       display: inline-flex;
       align-items: center;
       gap: 3px;
-      margin-right: 6px;
+      margin-inline-end: 6px;
       vertical-align: middle;
     }
 

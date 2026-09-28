@@ -97,12 +97,14 @@ import { ProjectApiService, ProjectListItem } from '../projects/project-api.serv
     }
     .kpi-banner.reached { background: #ecfdf5; border-color: #a7f3d0; }
     .kpi-banner .pct { font-weight: 600; }
-    .kpi-banner .total { margin-left: auto; opacity: .85; }
+    .kpi-banner .total { margin-inline-start: auto; opacity: .85; }
     .leaderboard {
-      float: right; width: 260px; margin: 0 0 1rem 1rem; padding: .75rem;
+      float: right; /* rtl-ok : retourné en arabe par la règle :host-context ci-dessous */
+      width: 260px; margin-block: 0 1rem; margin-inline: 1rem 0; padding: .75rem;
       border: 1px solid var(--color-border-subtle, #e2e8f0); border-radius: 12px;
     }
-    .leaderboard ol { margin: 0; padding-left: 1.2rem; }
+    :host-context([dir='rtl']) .leaderboard { float: left; } /* rtl-ok */
+    .leaderboard ol { margin: 0; padding-inline-start: 1.2rem; }
     .tip { font-size: .85rem; color: #64748b; margin-top: .5rem; }
     .toolbar { display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; }
     .timer-info { font-size: .9rem; color: #475569; }

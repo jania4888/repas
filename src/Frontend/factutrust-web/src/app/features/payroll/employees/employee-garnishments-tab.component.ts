@@ -174,7 +174,7 @@ const GARNISHMENT_KIND_OPTIONS = [
     .mb-2 { margin-bottom: var(--spacing-2); }
     .mb-3 { margin-bottom: var(--spacing-4); }
     .w-full { width: 100%; }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .actions { white-space: nowrap; }
   `]
 })

@@ -25,6 +25,8 @@ import {
 } from '@core/services/reports-api.service';
 import { PartyBalancesTableComponent, PartyBalanceRow } from '../shared/party-balances-table.component';
 import { mapSupplierBalanceRows } from '../shared/party-balances.util';
+import { erpDateLocale } from '@core/i18n/erp-format';
+import { REPORT_EXPORT_MONTHS_SHORT_FR } from '../shared/report-export-fr';
 
 interface PeriodOption {
   label: string;
@@ -879,7 +881,7 @@ interface PeriodOption {
       height: 24px;
       background: linear-gradient(180deg, #3b82f6, #2563eb);
       border-radius: var(--radius-full);
-      margin-right: var(--spacing-2);
+      margin-inline-end: var(--spacing-2);
       vertical-align: middle;
     }
 
@@ -982,7 +984,7 @@ interface PeriodOption {
 
     .supplier-name { font-weight: var(--font-weight-medium); color: var(--color-text-primary); }
     .invoice-count { font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .amount { font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Consolas', monospace; font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
     .balance-negative { color: var(--color-error-600, #dc2626); }
 
@@ -1107,7 +1109,7 @@ interface PeriodOption {
       }
 
       .print-header__right {
-        text-align: right;
+        text-align: end;
       }
 
       .print-header__app {
@@ -1182,7 +1184,7 @@ interface PeriodOption {
       }
 
       .print-table thead th {
-        text-align: left;
+        text-align: start;
         padding: 9px 12px;
         font-weight: 700;
         color: #1a202c;
@@ -1195,7 +1197,7 @@ interface PeriodOption {
       }
 
       .print-table thead th.text-right {
-        text-align: right;
+        text-align: end;
       }
 
       .print-table tbody td {
@@ -1206,7 +1208,7 @@ interface PeriodOption {
       }
 
       .print-table tbody td.text-right {
-        text-align: right;
+        text-align: end;
       }
 
       .print-table tbody tr {
@@ -1484,7 +1486,7 @@ export class PurchasesReportsComponent implements OnInit {
     if (crossTab && crossTab.years.length > 0) {
       rows.push(['']);
       rows.push(['Tableau croisé dépenses par mois et année', '']);
-      const headerRow = ['Année', ...crossTab.monthLabels, 'Total'];
+      const headerRow = ['Année', ...REPORT_EXPORT_MONTHS_SHORT_FR, 'Total'];
       rows.push(headerRow);
       crossTab.years.forEach(year => {
         const monthAmts = crossTab.matrix.get(year) ?? [];
@@ -1535,7 +1537,7 @@ export class PurchasesReportsComponent implements OnInit {
   }
 
   get printDate(): string {
-    return new Date().toLocaleDateString('fr-FR', {
+    return new Date().toLocaleDateString(erpDateLocale('fr-FR'), {
       day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
     });
   }
@@ -1548,8 +1550,8 @@ export class PurchasesReportsComponent implements OnInit {
     const { fromDate, toDate } = this.getPeriodDates();
     const from = new Date(fromDate + 'T12:00:00');
     const to = new Date(toDate + 'T12:00:00');
-    const fromStr = from.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-    const toStr = to.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const fromStr = from.toLocaleDateString(erpDateLocale('fr-FR'), { day: 'numeric', month: 'long', year: 'numeric' });
+    const toStr = to.toLocaleDateString(erpDateLocale('fr-FR'), { day: 'numeric', month: 'long', year: 'numeric' });
     if (fromDate === toDate) return fromStr;
     return `${fromStr} – ${toStr}`;
   }

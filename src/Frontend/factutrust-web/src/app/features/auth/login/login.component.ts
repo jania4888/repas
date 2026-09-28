@@ -37,6 +37,8 @@ import { environment } from '@environments/environment';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent implements OnInit {
+  protected readonly loc_connexion_a_instafact_643e92 = $localize`:@@auth.login.tpl.connexion.a.instafact.643e92ad:Connexion à InstaFact`;
+
   readonly environment = environment;
   readonly shellConfig = LOGIN_AUTH_SHELL_CONFIG;
   readonly registrationClosedNotice = signal<string | null>(null);

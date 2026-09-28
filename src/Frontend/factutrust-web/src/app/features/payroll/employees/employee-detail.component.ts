@@ -319,9 +319,9 @@ import { PayrollConsultBannerComponent, PayrollAmountPipe, formatPayrollAmount }
     .contract-header { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--spacing-4); }
     .contract-actions { white-space: nowrap; }
     .mb-3 { margin-bottom: var(--spacing-4); display: block; }
-    .ml-2 { margin-left: var(--spacing-2); }
+    .ml-2 { margin-inline-start: var(--spacing-2); }
     .mt-2 { margin-top: var(--spacing-2); }
-    .mr-2 { margin-right: var(--spacing-2); }
+    .mr-2 { margin-inline-end: var(--spacing-2); }
     .leaves-source-banner {
       display: flex; align-items: flex-start; gap: .75rem; flex-wrap: wrap;
       border: 1px solid var(--color-border-subtle, #e2e8f0);
@@ -332,7 +332,7 @@ import { PayrollConsultBannerComponent, PayrollAmountPipe, formatPayrollAmount }
       font-size: .875rem;
     }
     .leaves-source-banner p { margin: .2rem 0 0; color: var(--color-text-muted, #64748b); }
-    .leaves-source-banner .banner-link { margin-left: auto; color: var(--color-primary, #0f766e); white-space: nowrap; }
+    .leaves-source-banner .banner-link { margin-inline-start: auto; color: var(--color-primary, #0f766e); white-space: nowrap; }
   `]
 })
 export class EmployeeDetailComponent implements OnInit {

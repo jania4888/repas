@@ -386,7 +386,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
 
     .search-icon {
       position: absolute;
-      left: 0.75rem;
+      inset-inline-start: 0.75rem;
       top: 50%;
       transform: translateY(-50%);
       color: var(--color-neutral-400);
@@ -397,7 +397,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
 
     .search-input {
       width: 100%;
-      padding-left: 2.25rem !important;
+      padding-inline-start: 2.25rem !important;
     }
 
     .filter-empty {
@@ -548,7 +548,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
     }
     .col-actions {
       white-space: nowrap;
-      text-align: right;
+      text-align: end;
     }
     .registers-list {
       list-style: none;

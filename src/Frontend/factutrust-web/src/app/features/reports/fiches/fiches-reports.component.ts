@@ -233,7 +233,7 @@ import { mapClientBalanceRows } from '../shared/party-balances.util';
       height: 24px;
       background: linear-gradient(180deg, #6366f1, #4f46e5);
       border-radius: var(--radius-full);
-      margin-right: var(--spacing-2);
+      margin-inline-end: var(--spacing-2);
       vertical-align: middle;
     }
 
@@ -257,7 +257,7 @@ import { mapClientBalanceRows } from '../shared/party-balances.util';
 
     .client-name, .product-name { font-weight: var(--font-weight-medium); color: var(--color-text-primary); }
     .client-code, .product-code { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .amount { font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Consolas', monospace; font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
 
     :host ::ng-deep .reports-table {

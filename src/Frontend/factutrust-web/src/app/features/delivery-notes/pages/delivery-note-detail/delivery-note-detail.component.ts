@@ -102,7 +102,7 @@ import {
     <app-breadcrumb [items]="breadcrumbItems()"></app-breadcrumb>
     
     <app-page-header 
-      [title]="deliveryNote()?.number || 'Chargement...'" 
+      [title]="deliveryNote()?.number || loc_chargement_a209b6" 
       [subtitle]="loc_ui_tern_bon_de_livraison_du_b10ffc + (deliveryNote()?.issueDate | date:'dd/MM/yyyy')">
       <app-button 
         variant="outline"
@@ -639,7 +639,7 @@ import {
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: var(--color-text-secondary);
-        text-align: left;
+        text-align: start;
         border-bottom: 2px solid var(--color-border-default);
         background: var(--color-background-subtle);
       }
@@ -670,7 +670,7 @@ import {
       }
 
       .text-right {
-        text-align: right;
+        text-align: end;
       }
 
       .text-center {
@@ -799,7 +799,7 @@ import {
       padding: var(--spacing-2) var(--spacing-3);
       background: var(--color-background-subtle, #f8fafc);
       border: 1px solid var(--color-border-subtle, #e2e8f0);
-      border-left: 4px solid var(--color-primary-500);
+      border-inline-start: 4px solid var(--color-primary-500);
       border-radius: var(--radius-md);
       font-size: var(--font-size-sm);
       color: var(--color-text-primary);
@@ -816,7 +816,7 @@ import {
 
     .delivery-default-badge {
       display: inline-block;
-      margin-left: 0.5rem;
+      margin-inline-start: 0.5rem;
       padding: 0.1rem 0.45rem;
       border-radius: var(--radius-md);
       font-size: var(--font-size-xs);
@@ -910,7 +910,7 @@ import {
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: var(--color-text-secondary);
-        text-align: left;
+        text-align: start;
         border-bottom: 2px solid var(--color-border-default);
         background: var(--color-background-subtle);
         font-weight: var(--font-weight-semibold);
@@ -949,7 +949,7 @@ import {
 
       tr.delivery-alloc-row td {
         background: var(--color-background-subtle);
-        padding: var(--spacing-2) var(--spacing-3) var(--spacing-2) var(--spacing-6);
+        padding-block: var(--spacing-2); padding-inline: var(--spacing-6) var(--spacing-3);
         vertical-align: top;
       }
     }
@@ -995,7 +995,7 @@ import {
 
       .p-inputnumber-input {
         width: 100%;
-        text-align: right;
+        text-align: end;
       }
     }
 
@@ -1062,11 +1062,13 @@ import {
 
     .return-notes-list {
       margin: 0.5rem 0 0;
-      padding-left: 1.25rem;
+      padding-inline-start: 1.25rem;
     }
   `]
 })
 export class DeliveryNoteDetailComponent implements OnInit {
+  protected readonly loc_chargement_a209b6 = $localize`:@@delivery-notes.delivery-note-detail.tpl.chargement.a209b664:Chargement...`;
+
   readonly loc_ui_tern_bon_de_livraison_du_b10ffc = $localize`:@@ui.tern.bon.de.livraison.du.b10ffc:Bon de livraison du `;
   private deliveryNoteService = inject(DeliveryNoteService);
   private route = inject(ActivatedRoute);

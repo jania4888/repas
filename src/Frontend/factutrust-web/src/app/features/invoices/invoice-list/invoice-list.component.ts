@@ -333,7 +333,7 @@ interface StatusOption {
 
     .doc-type-chip {
       display: inline-block;
-      margin-left: var(--spacing-2);
+      margin-inline-start: var(--spacing-2);
       padding: 0 var(--spacing-2);
       border-radius: var(--radius-sm);
       background: var(--color-error-50, #fee2e2);

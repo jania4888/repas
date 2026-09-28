@@ -59,7 +59,7 @@
   "core.validation.max": "القيمة القصوى هي {max}",
   "core.validation.passwordMismatch": "كلمتا المرور غير متطابقتين",
   "core.validation.generic": "هذا الحقل يحتوي على خطأ",
-  "core.validation.suggestion.email": "مثال: votre@email.com",
+  "core.validation.suggestion.email": "مثال: name@example.com",
   "core.titles.accessDenied": "رفض الوصول - InstaFact",
   "core.titles.dashboard": "لوحة التحكم - InstaFact",
   "core.titles.terms": "شروط الاستخدام - InstaFact",

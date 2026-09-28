@@ -174,7 +174,7 @@ import {
               </div>
             }
 
-            <app-accounting-table-shell [loadingOverlay]="loading()" loadingMessage="Chargement de la configuration…">
+            <app-accounting-table-shell [loadingOverlay]="loading()" loadingMessage="Chargement de la configuration…" i18n-loadingMessage="@@accounting.monthly-declaration-config.chargement.de.la.configuration.55f25203">
               <app-dm-rubric-table
                 [rubrics]="visibleRubrics()"
                 [loading]="loading()"
@@ -214,7 +214,7 @@ import {
     .dm-family__toolbar { display: flex; gap: var(--spacing-3); align-items: center; }
     .dm-family__count { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
     .dm-editor { border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); padding: var(--spacing-4); }
-    .dm-dot { margin-left: var(--spacing-1); color: var(--color-warning-600, #d97706); }
+    .dm-dot { margin-inline-start: var(--spacing-1); color: var(--color-warning-600, #d97706); }
   `
 })
 export class MonthlyDeclarationConfigComponent implements OnInit {

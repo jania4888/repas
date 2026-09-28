@@ -114,7 +114,7 @@ import { invoiceBadgeStatus } from '../recurring-contracts.ui-utils';
     .invoice-number:hover { text-decoration: underline; }
 
     .credit-note-tag {
-      margin-left: var(--spacing-2);
+      margin-inline-start: var(--spacing-2);
       padding: 0 var(--spacing-2);
       border-radius: var(--radius-full);
       background: var(--color-warning-50, #fffbeb);

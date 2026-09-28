@@ -499,7 +499,7 @@ interface ModuleDraft extends UserModuleAccessItem {
     .extension-badge {
       display: inline-flex;
       align-items: center;
-      margin-left: var(--spacing-2);
+      margin-inline-start: var(--spacing-2);
       padding: 0 var(--spacing-2);
       font-size: var(--font-size-xs, 0.7rem);
       font-weight: var(--font-weight-medium);

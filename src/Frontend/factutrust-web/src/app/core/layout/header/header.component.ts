@@ -240,8 +240,8 @@ import {
       font-size: 20px;
       cursor: pointer;
       padding: 6px 12px;
-      margin-right: 0;
-      border-right: 1px solid var(--topbar-divider);
+      margin-inline-end: 0;
+      border-inline-end: 1px solid var(--topbar-divider);
       border-radius: 0;
     }
 
@@ -256,9 +256,9 @@ import {
       display: flex;
       align-items: center;
       flex-shrink: 0;
-      padding-left: 12px;
-      margin-right: 12px;
-      border-right: 1px solid var(--topbar-divider);
+      padding-inline-start: 12px;
+      margin-inline-end: 12px;
+      border-inline-end: 1px solid var(--topbar-divider);
     }
 
     .header-mobile-search {
@@ -312,9 +312,9 @@ import {
       display: flex;
       align-items: center;
       gap: 16px;
-      margin-left: auto;
-      padding-left: 16px;
-      border-left: 1px solid var(--topbar-divider);
+      margin-inline-start: auto;
+      padding-inline-start: 16px;
+      border-inline-start: 1px solid var(--topbar-divider);
     }
 
     .main-header__icon-actions {
@@ -344,12 +344,12 @@ import {
         border-radius: 0;
         line-height: normal;
         overflow: visible;
-        text-align: left;
+        text-align: start;
         position: relative;
       }
 
       li + li {
-        border-left: 1px solid var(--topbar-divider);
+        border-inline-start: 1px solid var(--topbar-divider);
       }
 
       li a,
@@ -382,7 +382,7 @@ import {
         .badge {
           position: absolute;
           top: 6px;
-          right: 6px;
+          inset-inline-end: 6px;
           background: var(--topbar-badge);
           color: white;
           font-size: 10px;
@@ -476,7 +476,7 @@ import {
       border: none;
       border-bottom: 1px solid var(--color-neutral-100, #f1f5f9);
       background: transparent;
-      text-align: left;
+      text-align: start;
       cursor: pointer;
       transition: background 0.15s;
 
@@ -537,8 +537,8 @@ import {
       margin: 0;
       padding: 0;
       list-style: none;
-      border-left: 1px solid var(--topbar-divider);
-      margin-left: 0;
+      border-inline-start: 1px solid var(--topbar-divider);
+      margin-inline-start: 0;
       float: none;
       width: auto;
 

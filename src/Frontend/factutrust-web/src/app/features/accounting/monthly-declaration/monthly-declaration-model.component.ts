@@ -188,7 +188,7 @@ import {
     .dm-invalid { margin: 0; font-size: var(--font-size-sm); color: var(--color-danger-700, #b91c1c); }
     .dm-check { display: flex; align-items: center; gap: var(--spacing-2); font-size: var(--font-size-sm); }
     .dm-actions { display: flex; justify-content: flex-end; }
-    .dm-report { display: flex; flex-direction: column; gap: var(--spacing-1); border-left: 3px solid var(--color-success-500, #22c55e); padding-left: var(--spacing-3); }
+    .dm-report { display: flex; flex-direction: column; gap: var(--spacing-1); border-inline-start: 3px solid var(--color-success-500, #22c55e); padding-inline-start: var(--spacing-3); }
     .dm-report__line { margin: 0; font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); }
   `
 })

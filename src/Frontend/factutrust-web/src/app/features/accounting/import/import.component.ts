@@ -208,11 +208,11 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       border: 1px solid var(--color-danger-200, #fecaca);
     }
     .import-issues-title { margin: 0 0 var(--spacing-2); font-size: var(--font-size-sm); color: var(--color-danger-700, #b91c1c); }
-    .import-issues-list { margin: 0; padding-left: var(--spacing-5); font-size: var(--font-size-sm); color: var(--color-text-secondary); }
-    .import-issue-ref { font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-right: var(--spacing-1); }
+    .import-issues-list { margin: 0; padding-inline-start: var(--spacing-5); font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+    .import-issue-ref { font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-inline-end: var(--spacing-1); }
     .import-issues-more { margin: var(--spacing-2) 0 0; font-size: var(--font-size-xs); color: var(--color-text-tertiary); }
     .import-sample-title { margin: 0 0 var(--spacing-3); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); }
-    .import-col-amount { text-align: right; font-variant-numeric: tabular-nums; }
+    .import-col-amount { text-align: end; font-variant-numeric: tabular-nums; }
     .import-badge { display: inline-block; padding: 0.1rem 0.5rem; border-radius: var(--radius-pill, 999px); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); }
     .import-badge-ok { background: var(--color-success-100, #dcfce7); color: var(--color-success-700, #15803d); }
     .import-badge-ko { background: var(--color-danger-100, #fee2e2); color: var(--color-danger-700, #b91c1c); }

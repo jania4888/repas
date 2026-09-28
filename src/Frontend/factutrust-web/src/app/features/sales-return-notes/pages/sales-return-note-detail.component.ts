@@ -89,7 +89,7 @@ import { SalesReturnNoteDetailDto, isSalesReturnNoteDraft } from '../models/sale
     .help { color: var(--text-muted, #475569); }
     .data-table { width: 100%; border-collapse: collapse; }
     .data-table th, .data-table td { padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--surface-border, #e5e7eb); }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .mono { font-variant-numeric: tabular-nums; }
     .muted { color: var(--text-muted, #64748b); }
   `]

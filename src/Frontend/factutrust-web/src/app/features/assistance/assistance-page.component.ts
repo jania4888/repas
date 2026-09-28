@@ -87,8 +87,8 @@ const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
     .assist-error { color: #991b1b; }
     .assist-thread { display: flex; flex-direction: column; gap: 0.75rem; min-height: 16rem; }
     .bubble { border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 0.75rem 1rem; background: #fff; }
-    .bubble.mine { margin-left: 2rem; }
-    .bubble.theirs { margin-right: 2rem; background: #f8fafc; }
+    .bubble.mine { margin-inline-start: 2rem; }
+    .bubble.theirs { margin-inline-end: 2rem; background: #f8fafc; }
     .bubble header { display: flex; gap: 0.5rem; align-items: baseline; flex-wrap: wrap; font-size: 0.85rem; }
     .chip { background: #eef2ff; color: #3730a3; border-radius: 999px; padding: 0.1rem 0.5rem; }
     .body { white-space: pre-wrap; margin: 0.5rem 0 0; }

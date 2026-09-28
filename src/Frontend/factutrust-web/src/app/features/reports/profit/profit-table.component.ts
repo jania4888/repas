@@ -69,7 +69,7 @@ import { CommercialProfitReportRow } from '@core/services/reports-api.service';
   `,
   styles: [`
     .loading-placeholder, .empty-placeholder { padding: var(--spacing-8); text-align: center; color: var(--color-text-secondary); }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .amount { font-family: 'JetBrains Mono', monospace; font-weight: var(--font-weight-semibold); }
     .profit-negative { color: var(--color-error-600, #dc2626); }
     :host ::ng-deep .reports-table .p-datatable-thead > tr > th { background: var(--color-neutral-50); font-size: var(--font-size-sm); text-transform: uppercase; padding: var(--spacing-4) var(--spacing-3); }

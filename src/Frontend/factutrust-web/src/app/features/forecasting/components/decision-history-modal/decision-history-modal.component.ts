@@ -114,7 +114,7 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
     .status-ordered { background: #dbeafe; color: #1e40af; }
     .status-superseded { background: #fce7f3; color: #831843; }
     .who { color: var(--color-neutral-600, #6b7280); }
-    .when { margin-left: .25rem; }
+    .when { margin-inline-start: .25rem; }
     .reason { color: var(--color-neutral-700, #374151); font-style: italic; }
     .payload { background: var(--color-neutral-50, #f9fafb); border: 1px solid var(--color-neutral-200, #e5e7eb); border-radius: 4px; padding: .35rem .55rem; font-size: .7rem; color: var(--color-neutral-700, #374151); white-space: pre-wrap; margin: 0; overflow-x: auto; }
     .modal-footer { display: flex; justify-content: flex-end; gap: .5rem; padding: .75rem 1.25rem 1rem; border-top: 1px solid var(--color-neutral-200, #e5e7eb); }

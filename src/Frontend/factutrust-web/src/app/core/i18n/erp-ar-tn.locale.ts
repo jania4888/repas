@@ -22,10 +22,11 @@ export function registerHybridArTnLocale(
   const fr = cloneLocaleData(localeFrTN as LocaleArray);
   const ar = localeArTN as LocaleArray;
   fr[0] = 'ar-TN';
-  if (ar[3] !== undefined) fr[3] = cloneLocaleData(ar[3] as LocaleArray);
-  if (ar[5] !== undefined) fr[5] = cloneLocaleData(ar[5] as LocaleArray);
-  if (ar[7] !== undefined) fr[7] = cloneLocaleData(ar[7] as LocaleArray);
-  if (ar[9] !== undefined) fr[9] = cloneLocaleData(ar[9] as LocaleArray);
+  // Périodes du jour (1-2), jours et mois en forme de format ET autonome (3-6), ères (7), week-end (9)
+  // et gabarit date + heure (12 : l'arabe n'a pas le « à » de « {1} 'à' {0} »).
+  for (const index of [1, 2, 3, 4, 5, 6, 7, 9, 12]) {
+    if (ar[index] !== undefined) fr[index] = cloneLocaleData(ar[index] as LocaleArray);
+  }
   fr[19] = 'rtl';
   // La fonction de pluriel ne survit pas au clonage JSON (elle deviendrait null et ferait
   // planter les ICU `plural` et I18nPluralPipe) : on reprend celle de l'arabe, par référence.

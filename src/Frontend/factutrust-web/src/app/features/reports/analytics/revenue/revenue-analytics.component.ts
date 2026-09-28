@@ -495,7 +495,7 @@ import {
       justify-content: space-between;
       padding-bottom: 28px;
       min-width: 60px;
-      text-align: right;
+      text-align: end;
     }
 
     .y-label {
@@ -513,8 +513,8 @@ import {
     .chart-grid-lines {
       position: absolute;
       top: 0;
-      left: 0;
-      right: 0;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
       bottom: 28px;
       display: flex;
       flex-direction: column;
@@ -876,7 +876,7 @@ import {
       }
 
       .print-table thead th {
-        text-align: left;
+        text-align: start;
         padding: 12px 16px;
         font-weight: 600;
         color: #333;
@@ -897,8 +897,8 @@ import {
       .print-footer {
         position: fixed;
         bottom: 0;
-        left: 0;
-        right: 0;
+        inset-inline-start: 0;
+        inset-inline-end: 0;
         height: 12px;
         background: #2bbcb3;
       }

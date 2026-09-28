@@ -400,7 +400,7 @@ const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
 
     .required {
       color: var(--color-error-600);
-      margin-left: var(--spacing-1);
+      margin-inline-start: var(--spacing-1);
     }
 
     .form-hint {

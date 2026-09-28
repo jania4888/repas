@@ -154,7 +154,7 @@ const UNSAVED_CHANGES_MESSAGE =
     .fp-row { display:grid; grid-template-columns:1fr 9rem auto; align-items:center; gap:var(--spacing-2); margin-bottom:var(--spacing-2); }
     .fp-row--check { grid-template-columns:1fr auto; }
     .fp-row label { font-size:var(--font-size-sm); color:var(--color-text-secondary); }
-    .fp-row input[type=number] { padding:0.4rem 0.55rem; border:1px solid var(--color-border-default,#cbd5e1); border-radius:var(--radius-md); text-align:right; font-variant-numeric:tabular-nums; }
+    .fp-row input[type=number] { padding:0.4rem 0.55rem; border:1px solid var(--color-border-default,#cbd5e1); border-radius:var(--radius-md); text-align:end; font-variant-numeric:tabular-nums; }
     .fp-hint { font-size:var(--font-size-xs); color:var(--color-text-tertiary); }
     .fp-json { width:100%; font-family:monospace; font-size:var(--font-size-sm); padding:var(--spacing-2); border:1px solid var(--color-border-default,#cbd5e1); border-radius:var(--radius-md); }
     .fp-json--invalid { border-color:var(--color-danger-600,#dc2626); }

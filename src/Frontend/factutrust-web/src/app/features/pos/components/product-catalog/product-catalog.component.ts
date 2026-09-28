@@ -44,7 +44,7 @@ interface CategoryTab {
               (keydown.enter)="onSearchEnter($event)"
               aria-label="Rechercher un produit" i18n-aria-label="@@pos.components.rechercher.un.produit.3ce811dc" />
             @if (searchQuery()) {
-              <button class="catalog__search-clear" (click)="clearSearch()" [attr.aria-label]="'Effacer la recherche'">
+              <button class="catalog__search-clear" (click)="clearSearch()" [attr.aria-label]="loc_effacer_la_recherche_189351">
                 <i class="pi pi-times"></i>
               </button>
             }
@@ -244,7 +244,7 @@ interface CategoryTab {
 
     .catalog__search-icon {
       position: absolute;
-      left: var(--spacing-5);
+      inset-inline-start: var(--spacing-5);
       color: var(--color-text-tertiary);
       font-size: 1.15rem;
       pointer-events: none;
@@ -254,7 +254,7 @@ interface CategoryTab {
     .catalog__search-input {
       width: 100%;
       height: 52px;
-      padding: 0 var(--spacing-10) 0 3.5rem;
+      padding-block: 0; padding-inline: 3.5rem var(--spacing-10);
       border: none;
       border-radius: 20px;
       font-size: var(--font-size-base);
@@ -280,7 +280,7 @@ interface CategoryTab {
 
     .catalog__search-clear {
       position: absolute;
-      right: var(--spacing-3);
+      inset-inline-end: var(--spacing-3);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -368,18 +368,18 @@ interface CategoryTab {
 
     @media (max-width: 1024px) {
       .catalog__search {
-        padding-left: var(--spacing-4);
-        padding-right: var(--spacing-4);
+        padding-inline-start: var(--spacing-4);
+        padding-inline-end: var(--spacing-4);
       }
 
       .catalog__categories {
-        padding-left: var(--spacing-4);
-        padding-right: var(--spacing-4);
+        padding-inline-start: var(--spacing-4);
+        padding-inline-end: var(--spacing-4);
       }
 
       .catalog__grid-container {
-        padding-left: var(--spacing-4);
-        padding-right: var(--spacing-4);
+        padding-inline-start: var(--spacing-4);
+        padding-inline-end: var(--spacing-4);
       }
     }
 
@@ -625,13 +625,13 @@ interface CategoryTab {
       }
 
       .catalog__search {
-        padding-left: var(--spacing-3);
-        padding-right: var(--spacing-3);
+        padding-inline-start: var(--spacing-3);
+        padding-inline-end: var(--spacing-3);
       }
 
       .catalog__categories {
-        padding-left: var(--spacing-3);
-        padding-right: var(--spacing-3);
+        padding-inline-start: var(--spacing-3);
+        padding-inline-end: var(--spacing-3);
       }
 
       .catalog__grid-container {
@@ -650,6 +650,8 @@ interface CategoryTab {
   `]
 })
 export class ProductCatalogComponent implements OnInit, OnDestroy {
+  protected readonly loc_effacer_la_recherche_189351 = $localize`:@@pos.product-catalog.tpl.effacer.la.recherche.189351c0:Effacer la recherche`;
+
   readonly loc_ui_tern_arreter_la_recherche_vocale_00b388 = $localize`:@@ui.tern.arreter.la.recherche.vocale.00b388:Arreter la recherche vocale`;
   readonly loc_ui_tern_recherche_vocale_c929e9 = $localize`:@@ui.tern.recherche.vocale.c929e9:Recherche vocale`;
   @Output() onProductAdd = new EventEmitter<ProductListItem>();

@@ -130,7 +130,7 @@ const MONTH_LABELS = [
   styles: [`
     .mb-3 { margin-bottom: var(--spacing-4); }
     .mb-4 { margin-bottom: var(--spacing-6); display: block; }
-    .ml-2 { margin-left: var(--spacing-2); }
+    .ml-2 { margin-inline-start: var(--spacing-2); }
     .text-warning { color: var(--color-warning-600); }
   `]
 })

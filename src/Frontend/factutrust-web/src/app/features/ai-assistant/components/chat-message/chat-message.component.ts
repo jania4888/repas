@@ -63,7 +63,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
       [class.selectable]="canBeSelected()"
       [class.selected]="isMessageSelected()">
       @if (selection.isSelectionMode() && canBeSelected()) {
-        <label class="message-select" [attr.aria-label]="'Sélectionner cette réponse'">
+        <label class="message-select" [attr.aria-label]="loc_selectionner_cette_reponse_c91703">
           <input
             type="checkbox"
             [checked]="isMessageSelected()"
@@ -494,7 +494,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
     .user-content {
       background: linear-gradient(135deg, var(--color-primary-600, #2563eb) 0%, var(--color-primary-700, #1d4ed8) 100%);
       color: #fff;
-      border-bottom-right-radius: 4px;
+      border-end-end-radius: 4px;
       box-shadow: 0 4px 12px rgba(37, 99, 235, 0.18);
     }
 
@@ -513,7 +513,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
     .assistant .message-content {
       background: var(--color-neutral-50, #f9fafb);
       border: 1px solid var(--color-neutral-200, #e5e7eb);
-      border-bottom-left-radius: 4px;
+      border-end-start-radius: 4px;
     }
 
     :host ::ng-deep .assistant-markdown markdown {
@@ -538,7 +538,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
 
     :host ::ng-deep .assistant-markdown markdown .md-code-copy {
       position: absolute;
-      right: 8px;
+      inset-inline-end: 8px;
       bottom: 6px;
       padding: 4px 10px;
       font-size: 11px;
@@ -585,7 +585,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
     :host ::ng-deep .assistant-markdown markdown td {
       padding: 8px 10px;
       border: 1px solid var(--color-neutral-200, #e5e7eb);
-      text-align: left;
+      text-align: start;
     }
 
     :host ::ng-deep .assistant-markdown markdown th {
@@ -609,10 +609,10 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
     :host ::ng-deep .assistant-markdown markdown blockquote {
       margin: 8px 0;
       padding: 8px 12px;
-      border-left: 3px solid var(--color-neutral-300, #d1d5db);
+      border-inline-start: 3px solid var(--color-neutral-300, #d1d5db);
       color: var(--color-neutral-600, #4b5563);
       background: var(--color-neutral-50, #f9fafb);
-      border-radius: 0 8px 8px 0;
+      border-start-start-radius: 0; border-start-end-radius: 8px; border-end-end-radius: 8px; border-end-start-radius: 0;
     }
 
     :host ::ng-deep .assistant-markdown markdown .severity-critical {
@@ -649,7 +649,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
     :host ::ng-deep .assistant-markdown markdown ul,
     :host ::ng-deep .assistant-markdown markdown ol {
       margin: 4px 0;
-      padding-left: 20px;
+      padding-inline-start: 20px;
     }
 
     :host ::ng-deep .assistant-markdown markdown strong { font-weight: 600; }
@@ -662,7 +662,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
     :host ::ng-deep .assistant-markdown.streaming markdown h3:last-child::after {
       content: '▍';
       display: inline-block;
-      margin-left: 2px;
+      margin-inline-start: 2px;
       color: var(--color-primary-500, #6366f1);
       animation: ft-caret-blink 1s steps(1) infinite;
     }
@@ -714,7 +714,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
 
     .sources-label {
       font-weight: 600;
-      margin-right: 4px;
+      margin-inline-end: 4px;
     }
 
     .src-tag {
@@ -782,7 +782,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
       align-items: flex-start;
       padding: 12px 14px;
       border-radius: 12px;
-      border-bottom-left-radius: 4px;
+      border-end-start-radius: 4px;
       background: var(--color-info-50, #f0f9ff);
       border: 1px solid var(--color-info-200, #bae6fd);
       font-size: 14px;
@@ -1048,7 +1048,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
     }
 
     .confirm-expiry {
-      margin-left: auto;
+      margin-inline-start: auto;
       display: inline-flex;
       align-items: center;
       gap: 5px;
@@ -1115,7 +1115,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
       display: inline-flex;
       align-items: flex-start;
       padding-top: 6px;
-      padding-right: 4px;
+      padding-inline-end: 4px;
       cursor: pointer;
       user-select: none;
     }
@@ -1143,6 +1143,8 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
   `]
 })
 export class ChatMessageComponent implements OnChanges {
+  protected readonly loc_selectionner_cette_reponse_c91703 = $localize`:@@ai-assistant.chat-message.tpl.selectionner.cette.reponse.c917031b:Sélectionner cette réponse`;
+
   @Input({ required: true }) message!: ChatMessage;
   @Input() connectingToModel = false;
   /** Active l'avertissement « réponse non ancrée » (badge ambre / carte repli honnête) — scope FirmMission. */

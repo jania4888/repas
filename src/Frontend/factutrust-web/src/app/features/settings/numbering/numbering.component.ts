@@ -312,7 +312,7 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
     }
 
   .lock-tag {
-      margin-left: auto;
+      margin-inline-start: auto;
     }
 
     .numbering-grid {

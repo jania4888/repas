@@ -257,7 +257,7 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
     .me-amount-credit { background: color-mix(in srgb, var(--color-success-500, #22c55e) 6%, transparent); }
     .me-amount-cell { font-variant-numeric:tabular-nums; }
     .me-amount-local { color:var(--color-text-secondary); background:var(--color-background-subtle); }
-    .text-right { text-align:right; }
+    .text-right { text-align:end; }
     .text-center { text-align:center; }
     .me-row-actions { display:flex; gap:var(--spacing-1); justify-content:center; }
     .me-row-action-btn { min-width:2rem; }

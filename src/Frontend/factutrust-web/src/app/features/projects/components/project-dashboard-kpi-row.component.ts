@@ -32,7 +32,7 @@ import { ProjectDashboardExtended } from '../project-api.service';
           [change]="data.kpiTrends?.activeProjectsChangePercent ?? undefined"
           routerLink="/projects"
           [queryParams]="{ status: 'Active' }"
-          navigationAriaLabel="Voir les projets actifs" />
+          navigationAriaLabel="Voir les projets actifs" i18n-navigationAriaLabel="@@projects.project-dashboard-kpi-row.voir.les.projets.actifs.00f5dabb" />
         <app-stat-card
           label="Tâches en cours" i18n-label="@@projects.components.taches.en.cours.fde40a7b"
           [value]="String(data.openTasks)"
@@ -42,7 +42,7 @@ import { ProjectDashboardExtended } from '../project-api.service';
           appearance="solid"
           [change]="data.kpiTrends?.openTasksChangePercent ?? undefined"
           routerLink="/projects"
-          navigationAriaLabel="Voir les projets" />
+          navigationAriaLabel="Voir les projets" i18n-navigationAriaLabel="@@projects.project-dashboard-kpi-row.voir.les.projets.7473c0ce" />
         <app-stat-card
           label="Tâches terminées" i18n-label="@@projects.components.taches.terminees.f6a3e341"
           [value]="String(data.completedTasks)"
@@ -52,7 +52,7 @@ import { ProjectDashboardExtended } from '../project-api.service';
           appearance="solid"
           [change]="data.kpiTrends?.completedTasksChangePercent ?? undefined"
           routerLink="/projects"
-          navigationAriaLabel="Voir les projets" />
+          navigationAriaLabel="Voir les projets" i18n-navigationAriaLabel="@@projects.project-dashboard-kpi-row.voir.les.projets.7473c0ce" />
         <app-stat-card
           label="En retard" i18n-label="@@projects.components.en.retard.40c1dde3"
           [value]="String(data.overdueTasks)"
@@ -62,7 +62,7 @@ import { ProjectDashboardExtended } from '../project-api.service';
           appearance="solid"
           [change]="data.kpiTrends?.overdueTasksChangePercent ?? undefined"
           routerLink="/projects"
-          navigationAriaLabel="Voir les projets avec tâches en retard" />
+          navigationAriaLabel="Voir les projets avec tâches en retard" i18n-navigationAriaLabel="@@projects.project-dashboard-kpi-row.voir.les.projets.avec.taches.en.retard.3a0d6c28" />
         <app-stat-card
           label="Heures à facturer" i18n-label="@@projects.components.heures.a.facturer.7757d0a3"
           [value]="(data.uninvoicedBillableHours | number:'1.0-1') + ' h'"
@@ -71,7 +71,7 @@ import { ProjectDashboardExtended } from '../project-api.service';
           tone="amber"
           appearance="solid"
           routerLink="/projects/time"
-          navigationAriaLabel="Voir le suivi du temps" />
+          navigationAriaLabel="Voir le suivi du temps" i18n-navigationAriaLabel="@@projects.project-dashboard-kpi-row.voir.le.suivi.du.temps.46e78470" />
       </div>
     }
   `

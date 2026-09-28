@@ -276,7 +276,7 @@ import {
     .status-count { font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
 
     .supplier-name { font-weight: var(--font-weight-medium); color: var(--color-text-primary); }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .amount { font-family: 'JetBrains Mono', monospace; font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
 
     .loading-spinner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-3); padding: var(--spacing-8); color: var(--color-text-secondary); }

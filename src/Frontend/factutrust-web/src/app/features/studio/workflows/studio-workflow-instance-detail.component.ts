@@ -258,7 +258,7 @@ const DETAIL_LABELS = {
     .wf-appr__l1 { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
     .wf-appr__title { font-weight: 600; font-size: .875rem; }
     .wf-appr__meta { font-size: .8125rem; color: var(--text-color-secondary); margin-top: .15rem; }
-    .wf-appr__comment { margin: .4rem 0 0; padding-left: .625rem; border-left: 3px solid var(--surface-300); font-size: .8125rem; font-style: italic; }
+    .wf-appr__comment { margin: .4rem 0 0; padding-inline-start: .625rem; border-inline-start: 3px solid var(--surface-300); font-size: .8125rem; font-style: italic; }
     .wf-inst-actions { display: flex; flex-direction: column; gap: .5rem; margin-top: 1.25rem; padding-top: .75rem; border-top: 1px solid var(--surface-200); }
     .wf-inst-actions__row { display: flex; gap: .5rem; }
     @media (max-width: 639.98px) { ::ng-deep .wf-instance-drawer.p-drawer { width: 100% !important; } }

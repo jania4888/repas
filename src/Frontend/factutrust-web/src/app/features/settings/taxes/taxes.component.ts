@@ -470,7 +470,7 @@ import {
     }
     .col-actions {
       white-space: nowrap;
-      text-align: right;
+      text-align: end;
     }
     .hint-banner {
       padding: var(--spacing-3) var(--spacing-4);

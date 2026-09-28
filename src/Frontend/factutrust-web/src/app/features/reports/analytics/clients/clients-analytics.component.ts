@@ -463,7 +463,7 @@ import {
 
     .search-icon {
       position: absolute;
-      left: 12px;
+      inset-inline-start: 12px;
       top: 50%;
       transform: translateY(-50%);
       color: var(--color-text-secondary);
@@ -472,7 +472,7 @@ import {
 
     .search-input {
       width: 100%;
-      padding: var(--spacing-2) var(--spacing-3) var(--spacing-2) 36px;
+      padding-block: var(--spacing-2); padding-inline: 36px var(--spacing-3);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-lg);
       background: var(--color-background);
@@ -559,13 +559,13 @@ import {
     }
 
     .row-unpaid {
-      border-left: 3px solid var(--color-error-400);
+      border-inline-start: 3px solid var(--color-error-400);
     }
 
     .col-rank { width: 48px; text-align: center; }
     .col-actions { width: 120px; }
     .text-center { text-align: center; }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
 
     .rank-num {
       display: inline-flex;
@@ -646,7 +646,7 @@ import {
       margin-top: var(--spacing-4);
       font-size: var(--font-size-sm);
       color: var(--color-text-secondary);
-      text-align: right;
+      text-align: end;
     }
 
     /* ── Empty & Loading ────────────────────────────────────── */
@@ -690,10 +690,10 @@ import {
       .print-kpi span { font-size: 14pt; font-weight: bold; color: #333; }
       .print-subtitle { font-size: 14pt; margin: 16px 0 8px; color: #2bbcb3; }
       .print-table { width: 100%; border-collapse: collapse; font-size: 11pt; }
-      .print-table thead th { text-align: left; padding: 12px 16px; font-weight: 600; color: #333; border-bottom: 2px solid #2bbcb3; font-size: 10pt; }
+      .print-table thead th { text-align: start; padding: 12px 16px; font-weight: 600; color: #333; border-bottom: 2px solid #2bbcb3; font-size: 10pt; }
       .print-table tbody td { padding: 14px 16px; border-bottom: 1px solid #eee; color: #555; }
       .print-table tbody tr:nth-child(even) { background: #fafafa; }
-      .print-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 12px; background: #2bbcb3; }
+      .print-footer { position: fixed; bottom: 0; inset-inline-start: 0; inset-inline-end: 0; height: 12px; background: #2bbcb3; }
     }
 
     /* ── Responsive ─────────────────────────────────────────── */

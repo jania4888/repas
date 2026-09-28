@@ -272,7 +272,7 @@ interface ReceptionLine {
 
       th {
         padding: var(--spacing-3) var(--spacing-4);
-        text-align: left;
+        text-align: start;
         font-size: var(--font-size-xs);
         font-weight: var(--font-weight-semibold);
         color: var(--color-text-tertiary);

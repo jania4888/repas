@@ -98,7 +98,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
   `,
   styles: [`
     .ft-filters { margin-bottom: 1rem; }
-    .actions-col { width: 200px; text-align: right; }
+    .actions-col { width: 200px; text-align: end; }
     .ft-table-card {
       background: var(--surface-card, #fff);
       border-radius: 8px;

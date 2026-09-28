@@ -144,7 +144,7 @@ interface PayslipPaymentRow {
     .span-2 { grid-column: span 2; }
     .toolbar { display: flex; justify-content: space-between; align-items: center; }
     .w-full { width: 100%; }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
   `]
 })
 export class PayrollRecordPaymentDialogComponent implements OnInit {

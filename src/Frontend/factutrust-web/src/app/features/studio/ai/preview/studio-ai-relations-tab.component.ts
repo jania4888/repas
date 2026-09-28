@@ -38,7 +38,7 @@ interface StudioAiRelationRow {
       <app-studio-relation-diagram [model]="diagram()" size="full" [emptyLabel]="labels.noRelations" />
       <div class="sai-table__scroll">
         <table class="sai-table">
-          <caption class="sai-hint" style="caption-side: top; text-align: left">
+          <caption class="sai-hint" style="caption-side: top; text-align: start">
             {{ rows().length }} {{ labels.relations }}
           </caption>
           <thead>

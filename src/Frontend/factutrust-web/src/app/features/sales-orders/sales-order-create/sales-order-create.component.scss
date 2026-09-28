@@ -87,7 +87,7 @@
 
 // ─── Section lignes vide (mise en évidence) ─────────────────────────────────
 .lines-section-wrap--empty ::ng-deep app-form-section .form-section {
-  border-left-color: var(--color-warning-400, #fbbf24);
+  border-inline-start-color: var(--color-warning-400, #fbbf24);
   background: var(--color-warning-50, #fffbeb);
 }
 
@@ -156,7 +156,7 @@
 .ft-panel {
   background: var(--color-background-elevated, #ffffff);
   border: 1px solid var(--color-border-subtle, #e2e8f0);
-  border-left: 4px solid var(--color-primary-500, #3b82f6);
+  border-inline-start: 4px solid var(--color-primary-500, #3b82f6);
   border-radius: var(--radius-xl, 0.75rem);
   box-shadow: var(--shadow-soft-sm, var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.08)));
   padding: var(--card-padding, var(--spacing-5, 1.25rem));
@@ -329,7 +329,7 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--color-text-secondary, #475569);
-  text-align: left;
+  text-align: start;
   white-space: nowrap;
 }
 
@@ -380,7 +380,7 @@
 .ft-num,
 :host ::ng-deep .ft-table th.ft-num,
 :host ::ng-deep .ft-table td.ft-num {
-  text-align: right;
+  text-align: end;
   font-variant-numeric: tabular-nums;
 }
 
@@ -404,7 +404,7 @@
 
 :host ::ng-deep .ft-table .ft-inline-input .p-inputnumber-input {
   width: 100%;
-  text-align: right;
+  text-align: end;
 }
 
 :host ::ng-deep .ft-table td:nth-child(4) .ft-inline-input {
@@ -418,7 +418,7 @@
 // ─── Totaux ──────────────────────────────────────────────────────────────────
 .ft-totals {
   margin-top: var(--spacing-4, 1rem);
-  margin-left: auto;
+  margin-inline-start: auto;
   min-width: 280px;
   max-width: 360px;
   width: 100%;
@@ -466,5 +466,5 @@
 // ─── Indicateur de résolution de prix en cours ──────────────────────────────
 .ft-resolving {
   color: var(--color-primary-500, #3b82f6);
-  margin-right: var(--spacing-2, 0.5rem);
+  margin-inline-end: var(--spacing-2, 0.5rem);
 }

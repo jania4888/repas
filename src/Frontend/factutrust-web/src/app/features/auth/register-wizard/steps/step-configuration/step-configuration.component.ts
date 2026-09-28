@@ -15,6 +15,10 @@ import { HEADCOUNT_BANDS, HeadcountBand, ModuleCatalogEntry, RegistrationCatalog
   styleUrl: './step-configuration.component.scss'
 })
 export class StepConfigurationComponent {
+  protected loc_activer_label_b372ab(p0: unknown): string {
+    return $localize`:@@auth.step-configuration.tpl.activer.label.b372ab94:Activer ${p0}:label:`;
+  }
+
   @Input({ required: true }) form!: FormGroup;
   @Input() segment: string | null = '';
   @Input() domain: string | null = '';

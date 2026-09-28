@@ -167,7 +167,7 @@ const MAX_FISCAL_YEAR = 2100;
   styles: `
     .cur-toolbar, .cur-form, .cur-list { padding: var(--spacing-4); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); margin-bottom: var(--spacing-4); }
     .cur-toolbar { display: flex; flex-wrap: wrap; gap: var(--spacing-3); align-items: flex-end; }
-    .cur-toolbar-actions { display: flex; gap: var(--spacing-3); margin-left: auto; }
+    .cur-toolbar-actions { display: flex; gap: var(--spacing-3); margin-inline-start: auto; }
     .cur-form-title { margin: 0 0 var(--spacing-3); font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); }
     .cur-fields { display: flex; flex-wrap: wrap; gap: var(--spacing-3); align-items: flex-end; }
     .cur-field { display: flex; flex-direction: column; gap: var(--spacing-1); min-width: 8rem; }
@@ -175,7 +175,7 @@ const MAX_FISCAL_YEAR = 2100;
     .cur-year { max-width: 7rem; }
     .cur-lbl { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
     .cur-inp { padding: var(--spacing-2) var(--spacing-3); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-background-elevated); color: var(--color-text-primary); font-size: var(--font-size-sm); width: 100%; }
-    .cur-form-actions { display: flex; gap: var(--spacing-2); margin-left: auto; }
+    .cur-form-actions { display: flex; gap: var(--spacing-2); margin-inline-start: auto; }
     .cur-mono { font-family: ui-monospace, monospace; }
     .cur-inactive { opacity: 0.6; }
     .cur-muted { color: var(--color-text-tertiary); }
@@ -184,7 +184,7 @@ const MAX_FISCAL_YEAR = 2100;
     .cur-badge--ok { background: var(--color-success-50); color: var(--color-success-700); }
     .cur-badge--warn { background: var(--color-warning-50); color: var(--color-warning-800); }
     .cur-badge--danger { background: var(--color-error-50); color: var(--color-error-700); }
-    .cur-badge--functional { margin-left: var(--spacing-2); background: var(--color-primary-50); color: var(--color-primary-700); }
+    .cur-badge--functional { margin-inline-start: var(--spacing-2); background: var(--color-primary-50); color: var(--color-primary-700); }
     .btn { padding: var(--spacing-2) var(--spacing-4); border-radius: var(--radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; border: 1px solid transparent; }
     .btn-secondary { background: var(--color-background-subtle); color: var(--color-text-primary); border-color: var(--color-border-default); }
     .btn-primary { background: var(--color-primary-500, #2563eb); color: #fff; }

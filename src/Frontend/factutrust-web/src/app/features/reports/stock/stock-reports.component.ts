@@ -414,7 +414,7 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
       height: 24px;
       background: linear-gradient(180deg, #f59e0b, #d97706);
       border-radius: var(--radius-full);
-      margin-right: var(--spacing-2);
+      margin-inline-end: var(--spacing-2);
       vertical-align: middle;
     }
 
@@ -433,8 +433,8 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
     .warehouse-code { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
     .product-link { font-weight: var(--font-weight-semibold); color: var(--color-primary-600); text-decoration: none; }
     .product-link:hover { text-decoration: underline; }
-    .product-code { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-left: var(--spacing-1); }
-    .text-right { text-align: right; }
+    .product-code { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-inline-start: var(--spacing-1); }
+    .text-right { text-align: end; }
     .amount { font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Consolas', monospace; font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
     .amount-error { color: var(--color-error-600); font-weight: var(--font-weight-semibold); }
     .amount-warning { color: var(--color-warning-600); font-weight: var(--font-weight-semibold); }
@@ -462,7 +462,7 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
     .pagination-btns { display: flex; gap: var(--spacing-2); }
     .pagination-btn { padding: var(--spacing-2) var(--spacing-3); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-background); cursor: pointer; font-size: var(--font-size-sm); }
     .pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .filter-hint { font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-left: var(--spacing-2); }
+    .filter-hint { font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-inline-start: var(--spacing-2); }
     .snapshot-error { color: var(--color-error-600); font-size: var(--font-size-sm); margin: var(--spacing-2) 0; }
 
     @media (max-width: 1024px) { .reports-grid { grid-template-columns: 1fr; } }

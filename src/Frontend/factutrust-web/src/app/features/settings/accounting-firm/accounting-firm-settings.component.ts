@@ -408,7 +408,7 @@ const NOTES_MAX = 1000;
       font-size: var(--font-size-xs, 0.75rem);
       color: var(--color-text-secondary, #64748b);
     }
-    .af-suggestion__meta i { margin-right: 4px; }
+    .af-suggestion__meta i { margin-inline-end: 4px; }
 
     .af-actions { display: flex; justify-content: flex-end; }
     .af-filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; align-items: end; }

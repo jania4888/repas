@@ -858,7 +858,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
 
       .required {
         color: var(--color-error-600);
-        margin-left: var(--spacing-1);
+        margin-inline-start: var(--spacing-1);
       }
     }
 

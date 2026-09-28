@@ -265,7 +265,7 @@ import { WarehouseContextService } from '@core/services/warehouse-context.servic
     }
     .history-panel__z ul {
       margin: 0;
-      padding-left: 1.1rem;
+      padding-inline-start: 1.1rem;
     }
     .history-panel__z-empty {
       color: var(--color-text-tertiary);

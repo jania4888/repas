@@ -342,7 +342,7 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
     }
 
     .parent-link {
-      margin-left: 0.5rem;
+      margin-inline-start: 0.5rem;
       font-size: 0.875rem;
     }
 

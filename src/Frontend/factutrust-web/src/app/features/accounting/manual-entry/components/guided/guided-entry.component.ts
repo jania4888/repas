@@ -250,7 +250,7 @@ const PAYMENT_METHODS = [
     .guided-intro, .guided-banner { font-size:var(--font-size-sm); color:var(--color-text-secondary); margin-bottom:var(--spacing-4); }
     .guided-banner { padding:var(--spacing-3); background:var(--color-primary-50); border-radius:var(--radius-md); }
     .scenario-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:var(--spacing-3); margin-bottom:var(--spacing-4); }
-    .scenario-card { display:flex; flex-direction:column; align-items:flex-start; gap:var(--spacing-2); padding:var(--spacing-4); border:2px solid var(--color-border-default); border-radius:var(--radius-lg); background:var(--color-background-elevated); cursor:pointer; text-align:left; transition:border-color 150ms; }
+    .scenario-card { display:flex; flex-direction:column; align-items:flex-start; gap:var(--spacing-2); padding:var(--spacing-4); border:2px solid var(--color-border-default); border-radius:var(--radius-lg); background:var(--color-background-elevated); cursor:pointer; text-align:start; transition:border-color 150ms; }
     .scenario-card:hover, .scenario-card--selected { border-color:var(--color-primary-500); }
     .scenario-card__desc { font-size:var(--font-size-xs); color:var(--color-text-secondary); }
     .scenario-card__icon { font-size:1.75rem; color:var(--color-success-600); line-height:1; flex-shrink:0; }

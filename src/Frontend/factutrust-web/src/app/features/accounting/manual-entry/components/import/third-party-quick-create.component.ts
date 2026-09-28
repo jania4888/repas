@@ -120,7 +120,7 @@ import { ProposedThirdParty } from '../../models/accounting-document-import.mode
     .tpq-forbidden { margin:var(--spacing-2) 0 0; color:var(--color-text-tertiary); font-size:var(--font-size-xs); }
     .tpq-duplicates { border:1px solid var(--color-warning); border-radius:var(--radius-sm); padding:var(--spacing-2); font-size:var(--font-size-xs); }
     .tpq-duplicates__title { margin:0 0 var(--spacing-1); color:var(--color-warning); display:flex; align-items:center; gap:var(--spacing-1); }
-    .tpq-duplicates ul { margin:0; padding-left:var(--spacing-4); }
+    .tpq-duplicates ul { margin:0; padding-inline-start:var(--spacing-4); }
     .tpq-duplicates__hint { margin:var(--spacing-1) 0 0; color:var(--color-text-secondary); }
   `
 })

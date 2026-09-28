@@ -219,7 +219,7 @@ interface StatusOption {
     }
 
     .text-right {
-      text-align: right;
+      text-align: end;
     }
   `]
 })

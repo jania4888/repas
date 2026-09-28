@@ -93,7 +93,7 @@ interface ReportCard {
 
     .search-icon {
       position: absolute;
-      left: var(--spacing-4);
+      inset-inline-start: var(--spacing-4);
       top: 50%;
       transform: translateY(-50%);
       color: var(--color-text-secondary);
@@ -102,7 +102,7 @@ interface ReportCard {
 
     .search-input {
       width: 100%;
-      padding: var(--spacing-3) var(--spacing-4) var(--spacing-3) 2.75rem;
+      padding-block: var(--spacing-3); padding-inline: 2.75rem var(--spacing-4);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-lg);
       background: var(--color-background);

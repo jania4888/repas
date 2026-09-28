@@ -181,15 +181,15 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
     .nct-badge--ok { background:var(--color-success-100,#dcfce7); color:var(--color-success-700,#15803d); }
     .nct-badge--ko { background:var(--color-danger-100,#fee2e2); color:var(--color-danger-700,#b91c1c); }
     .nct-alert-banner { display:flex; align-items:flex-start; gap:var(--spacing-2); margin-bottom:var(--spacing-4); padding:var(--spacing-3) var(--spacing-4); border-radius:var(--radius-md); font-size:var(--font-size-sm); background:var(--color-warning-50,#fffbeb); border:1px solid var(--color-warning-200,#fde68a); color:var(--color-warning-800,#92400e); }
-    .nct-warn-list { margin:0.25rem 0 0; padding-left:1.1rem; }
+    .nct-warn-list { margin:0.25rem 0 0; padding-inline-start:1.1rem; }
     .nct-warn-list li { margin:0.15rem 0; }
     .nct-section { font-size:var(--font-size-sm); font-weight:var(--font-weight-bold); text-transform:uppercase; letter-spacing:0.04em; color:var(--color-text-tertiary); margin:var(--spacing-4) 0 var(--spacing-2); }
     .nct-hint { font-size:var(--font-size-sm); color:var(--color-text-secondary); margin:0 0 var(--spacing-3); }
     .nct-table { width:100%; border-collapse:collapse; margin-bottom:var(--spacing-2); }
     .nct-th-label, .nct-th-amount { font-size:var(--font-size-xs); text-transform:uppercase; letter-spacing:0.04em; color:var(--color-text-tertiary); padding:var(--spacing-2) var(--spacing-3); border-bottom:1px solid var(--color-border-subtle); }
-    .nct-th-amount { text-align:right; }
+    .nct-th-amount { text-align:end; }
     .nct-td-label { padding:var(--spacing-2) var(--spacing-3); color:var(--color-text-secondary); }
-    .nct-td-amount { padding:var(--spacing-2) var(--spacing-3); text-align:right; font-variant-numeric:tabular-nums; font-weight:var(--font-weight-medium); }
+    .nct-td-amount { padding:var(--spacing-2) var(--spacing-3); text-align:end; font-variant-numeric:tabular-nums; font-weight:var(--font-weight-medium); }
     .nct-td-prev { color:var(--color-text-tertiary); }
     .nct-row--subtotal > td { font-weight:var(--font-weight-bold); color:var(--color-text-primary); border-top:1px solid var(--color-border-subtle); background:var(--color-background-subtle); }
     .nct-row--reconciliation > td { font-style:italic; color:var(--color-warning-700,#b45309); background:var(--color-warning-50,#fffbeb); }

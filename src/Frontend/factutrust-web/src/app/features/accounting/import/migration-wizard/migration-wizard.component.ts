@@ -269,8 +269,8 @@ import {
     .mw-muted { color: var(--text-color-secondary, #9ca3af); font-size: .8rem; }
     .mw-issues { margin-top: .75rem; }
     .mw-issues-title { font-size: .9rem; color: var(--red-600, #dc2626); }
-    .mw-issues-list { max-height: 220px; overflow: auto; margin: .5rem 0; padding-left: 1.25rem; font-size: .85rem; }
-    .mw-issue-ref { font-family: monospace; font-weight: 600; margin-right: .4rem; }
+    .mw-issues-list { max-height: 220px; overflow: auto; margin: .5rem 0; padding-inline-start: 1.25rem; font-size: .85rem; }
+    .mw-issue-ref { font-family: monospace; font-weight: 600; margin-inline-end: .4rem; }
     .mw-success { display: flex; align-items: center; gap: .5rem; color: var(--green-600, #059669); font-weight: 600; }
   `]
 })

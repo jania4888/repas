@@ -437,7 +437,7 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
     .pos-header__plus-menu {
       position: absolute;
       top: calc(100% + var(--spacing-2));
-      right: 0;
+      inset-inline-end: 0;
       min-width: 220px;
       background: var(--color-white);
       border-radius: var(--radius-lg);
@@ -458,7 +458,7 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
       background: transparent;
       color: var(--color-text-primary);
       font-size: var(--font-size-sm);
-      text-align: left;
+      text-align: start;
       cursor: pointer;
     }
 
@@ -556,7 +556,7 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
     .pos-header__theme-menu {
       position: absolute;
       top: 100%;
-      right: 0;
+      inset-inline-end: 0;
       margin-top: var(--spacing-2);
       background: var(--color-white);
       border-radius: var(--radius-lg);
@@ -575,7 +575,7 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
       background: transparent;
       color: var(--color-text-primary);
       font-size: var(--font-size-sm);
-      text-align: left;
+      text-align: start;
       cursor: pointer;
     }
 
@@ -690,7 +690,7 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
     .pos-header__shortcuts-close {
       position: absolute;
       top: -4px;
-      right: -4px;
+      inset-inline-end: -4px;
       display: flex;
       align-items: center;
       justify-content: center;

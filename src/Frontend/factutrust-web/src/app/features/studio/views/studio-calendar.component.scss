@@ -99,13 +99,13 @@
 .cal-day {
   min-height: 92px;
   padding: .25rem .3125rem;
-  border-right: 1px solid #f1f5f9;
+  border-inline-end: 1px solid #f1f5f9;
   display: flex;
   flex-direction: column;
   gap: .125rem;
 
   &:last-child {
-    border-right: none;
+    border-inline-end: none;
   }
 
   &--outside {
@@ -139,7 +139,7 @@
     color: #64748b;
     background: transparent;
     border: none;
-    text-align: left;
+    text-align: start;
     padding: 0;
     cursor: pointer;
 
@@ -152,7 +152,7 @@
 .cal-ev {
   display: block;
   width: 100%;
-  text-align: left;
+  text-align: start;
   border: none;
   border-radius: .25rem;
   padding: .0625rem .3125rem;

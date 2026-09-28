@@ -83,7 +83,7 @@ import { FUNCTIONAL_CURRENCY } from '../models/entry-form.model';
     .summary-panel__list { margin:0; }
     .summary-row { display:flex; justify-content:space-between; gap:var(--spacing-2); padding:var(--spacing-2) 0; border-bottom:1px solid var(--color-border-subtle); font-size:var(--font-size-sm); }
     .summary-row dt { color:var(--color-text-secondary); margin:0; }
-    .summary-row dd { margin:0; font-weight:var(--font-weight-medium); text-align:right; }
+    .summary-row dd { margin:0; font-weight:var(--font-weight-medium); text-align:end; }
     .summary-row--highlight { border-bottom:none; padding-top:var(--spacing-3); }
     .mono { font-variant-numeric:tabular-nums; }
     .balanced { color:var(--color-success-600); }

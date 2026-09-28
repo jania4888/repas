@@ -192,7 +192,7 @@ import {
     .empty-subtitle { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
 
     .supplier-name { font-weight: var(--font-weight-medium); color: var(--color-text-primary); }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .amount { font-family: 'JetBrains Mono', monospace; font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
     .rank-badge { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: var(--radius-full); font-size: var(--font-size-xs); font-weight: var(--font-weight-bold); }
     .rank-1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; }

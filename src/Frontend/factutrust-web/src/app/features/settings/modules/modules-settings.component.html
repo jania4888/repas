@@ -95,7 +95,7 @@
                     (onChange)="toggleModule(module)"
                     [ngModelOptions]="{standalone: true}"
                     [disabled]="isLockedByDependency(module.id)"
-                    [attr.aria-label]="'Activer ' + module.labelFr">
+                    [attr.aria-label]="loc_activer_labelfr_ed496d(module.labelFr)">
                   </p-inputSwitch>
                 </span>
               }
@@ -133,7 +133,7 @@
                     (onChange)="toggleModule(module)"
                     [ngModelOptions]="{standalone: true}"
                     [disabled]="isLockedByDependency(module.id)"
-                    [attr.aria-label]="'Activer ' + module.labelFr">
+                    [attr.aria-label]="loc_activer_labelfr_ed496d(module.labelFr)">
                   </p-inputSwitch>
                 </span>
               }

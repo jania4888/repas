@@ -82,13 +82,13 @@ export interface OrdersAnalyticsData {
 }
 
 const MONTH_NAMES_FR = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  $localize`:@@reports.purchases-analytics.ts.janvier.7a32ae0f:Janvier`, $localize`:@@reports.purchases-analytics.ts.fevrier.63fc1803:Février`, $localize`:@@reports.purchases-analytics.ts.mars.1778011d:Mars`, $localize`:@@reports.purchases-analytics.ts.avril.4efeee46:Avril`, $localize`:@@reports.purchases-analytics.ts.mai.afe526a6:Mai`, $localize`:@@reports.purchases-analytics.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@reports.purchases-analytics.ts.juillet.e8e0920c:Juillet`, $localize`:@@reports.purchases-analytics.ts.aout.460b6696:Août`, $localize`:@@reports.purchases-analytics.ts.septembre.08d23f31:Septembre`, $localize`:@@reports.purchases-analytics.ts.octobre.0ed28485:Octobre`, $localize`:@@reports.purchases-analytics.ts.novembre.632580af:Novembre`, $localize`:@@reports.purchases-analytics.ts.decembre.03bcd9b0:Décembre`
 ];
 
 const MONTH_SHORT_FR = [
-  'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin',
-  'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'
+  $localize`:@@reports.purchases-analytics.ts.jan.efed3690:Jan`, $localize`:@@reports.purchases-analytics.ts.fev.7b8852ec:Fév`, $localize`:@@reports.purchases-analytics.ts.mar.c4ba0822:Mar`, $localize`:@@reports.purchases-analytics.ts.avr.d648a3b7:Avr`, $localize`:@@reports.purchases-analytics.ts.mai.afe526a6:Mai`, $localize`:@@reports.purchases-analytics.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@reports.purchases-analytics.ts.juil.190b5d60:Juil`, $localize`:@@reports.purchases-analytics.ts.aout.460b6696:Août`, $localize`:@@reports.purchases-analytics.ts.sep.fdd289e3:Sep`, $localize`:@@reports.purchases-analytics.ts.oct.51327aef:Oct`, $localize`:@@reports.purchases-analytics.ts.nov.bb9bfefd:Nov`, $localize`:@@reports.purchases-analytics.ts.dec.2bc2249a:Déc`
 ];
 
 // ── Service ────────────────────────────────────────────────────────────

@@ -87,7 +87,7 @@ import { AppModule } from '@core/models/app-module';
     }
     .acc-link:hover { background: var(--color-background-subtle); color: var(--color-text-primary); }
     .acc-link > i:first-child { width: 1.1rem; text-align: center; color: var(--color-text-tertiary); }
-    .acc-link-arrow { margin-left: auto; font-size: 0.75rem; color: var(--color-text-tertiary); }
+    .acc-link-arrow { margin-inline-start: auto; font-size: 0.75rem; color: var(--color-text-tertiary); }
   `
 })
 export class AccountingHomeComponent {

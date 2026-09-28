@@ -320,7 +320,7 @@ interface OrderLine {
 
       .required {
         color: var(--color-error-600);
-        margin-left: var(--spacing-1);
+        margin-inline-start: var(--spacing-1);
       }
     }
 
@@ -363,7 +363,7 @@ interface OrderLine {
 
       th {
         padding: var(--spacing-3) var(--spacing-4);
-        text-align: left;
+        text-align: start;
         font-size: var(--font-size-xs);
         font-weight: var(--font-weight-semibold);
         color: var(--color-text-tertiary);
@@ -374,7 +374,7 @@ interface OrderLine {
 
         .required {
           color: var(--color-error-600);
-          margin-left: var(--spacing-1);
+          margin-inline-start: var(--spacing-1);
         }
       }
 
@@ -444,7 +444,7 @@ interface OrderLine {
       background: var(--color-background-subtle);
       border-radius: var(--radius-lg);
       max-width: 350px;
-      margin-left: auto;
+      margin-inline-start: auto;
     }
 
     .total-row {

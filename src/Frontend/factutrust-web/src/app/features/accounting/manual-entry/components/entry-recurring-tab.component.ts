@@ -52,7 +52,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   styles: `
     .recurring-tab { padding:var(--spacing-5); }
     .recurring-table { width:100%; border-collapse:collapse; font-size:var(--font-size-sm); margin-bottom:var(--spacing-4); }
-    .recurring-table th, .recurring-table td { padding:var(--spacing-2) var(--spacing-3); border-bottom:1px solid var(--color-border-subtle); text-align:left; }
+    .recurring-table th, .recurring-table td { padding:var(--spacing-2) var(--spacing-3); border-bottom:1px solid var(--color-border-subtle); text-align:start; }
     .empty { color:var(--color-text-secondary); }
     .link { font-size:var(--font-size-sm); color:var(--color-primary-600); }
   `

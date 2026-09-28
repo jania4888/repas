@@ -358,7 +358,7 @@ interface CategoryOption {
     }
 
     .text-right {
-      text-align: right;
+      text-align: end;
     }
   `]
 })

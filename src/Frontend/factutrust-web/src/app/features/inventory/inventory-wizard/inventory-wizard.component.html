@@ -308,7 +308,7 @@
                                 (ngModelChange)="lotNumber.set($event ?? '')"
                                 placeholder="Ex. LOT-2026-001" i18n-placeholder="@@inventory.inventory-wizard.ex.lot.2026.001.48400037"
                                 [attr.aria-required]="requiresLotNumberForCurrentCount()"
-                                [attr.aria-label]="'Numéro de lot pour ' + (currentProduct()?.productName ?? '')" />
+                                [attr.aria-label]="loc_numero_de_lot_pour_productname_859ef2(currentProduct()?.productName ?? '')" />
                             @if (requiresLotNumberForCurrentCount()) {
                             <p class="lot-hint" i18n="@@inventory.inventory-wizard.obligatoire.pour.un.article.suivi.par.lot.avec.e.5e953602">Obligatoire pour un article suivi par lot avec écart de stock.</p>
                             }
@@ -325,7 +325,7 @@
                                     [maxFractionDigits]="2"
                                     inputId="counted-quantity"
                                     styleClass="count-input"
-                                    [attr.aria-label]="'Quantité comptée pour ' + (currentProduct()?.productName ?? '')">
+                                    [attr.aria-label]="loc_quantite_comptee_pour_productname_4e025d(currentProduct()?.productName ?? '')">
                                 </p-inputNumber>
                             </div>
 

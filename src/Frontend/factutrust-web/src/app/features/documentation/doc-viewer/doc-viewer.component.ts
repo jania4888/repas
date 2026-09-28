@@ -168,11 +168,11 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcru
     .markdown-body :deep(h2) { font-size: 1.35rem; margin-top: 1.5rem; margin-bottom: 0.75rem; border-bottom: 1px solid var(--color-neutral-200); padding-bottom: 0.25rem; }
     .markdown-body :deep(h3) { font-size: 1.15rem; margin-top: 1.25rem; margin-bottom: 0.5rem; }
     .markdown-body :deep(p) { margin-bottom: 1rem; line-height: 1.6; }
-    .markdown-body :deep(ul), .markdown-body :deep(ol) { margin-bottom: 1rem; padding-left: 1.5rem; }
+    .markdown-body :deep(ul), .markdown-body :deep(ol) { margin-bottom: 1rem; padding-inline-start: 1.5rem; }
     .markdown-body :deep(table) { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
-    .markdown-body :deep(th), .markdown-body :deep(td) { border: 1px solid var(--color-neutral-200); padding: 0.5rem 0.75rem; text-align: left; }
+    .markdown-body :deep(th), .markdown-body :deep(td) { border: 1px solid var(--color-neutral-200); padding: 0.5rem 0.75rem; text-align: start; }
     .markdown-body :deep(th) { background: var(--color-neutral-50); font-weight: 600; }
-    .markdown-body :deep(blockquote) { border-left: 4px solid var(--color-primary-300); padding-left: 1rem; margin: 1rem 0; color: var(--color-neutral-600); }
+    .markdown-body :deep(blockquote) { border-inline-start: 4px solid var(--color-primary-300); padding-inline-start: 1rem; margin: 1rem 0; color: var(--color-neutral-600); }
     .markdown-body :deep(img) { max-width: 100%; height: auto; border-radius: var(--radius-md); }
     .markdown-body :deep(a) { color: var(--color-primary-600); text-decoration: none; }
     .markdown-body :deep(a:hover) { text-decoration: underline; }

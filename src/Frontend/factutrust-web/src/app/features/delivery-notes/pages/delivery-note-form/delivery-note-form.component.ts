@@ -506,7 +506,7 @@ interface LineRow extends LinePromotionPreview {
         background-color: #f9fafb;
     }
     .text-right {
-        text-align: right;
+        text-align: end;
     }
     .font-bold {
         font-weight: bold;
@@ -518,8 +518,8 @@ interface LineRow extends LinePromotionPreview {
         color: #6b7280;
     }
     .px-2 {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
+        padding-inline-start: 0.5rem;
+        padding-inline-end: 0.5rem;
     }
     .py-3 {
         padding-top: 0.75rem;
@@ -560,7 +560,7 @@ interface LineRow extends LinePromotionPreview {
     .lines-table th,
     .lines-table td {
       padding: var(--spacing-2) var(--spacing-2);
-      text-align: left;
+      text-align: start;
       vertical-align: middle;
       min-width: 0;
     }

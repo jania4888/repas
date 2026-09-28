@@ -33,7 +33,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     `
       @use '../shared/accounting-layout';
       .text-right {
-        text-align: right;
+        text-align: end;
         font-variant-numeric: tabular-nums;
       }
       .aging-zero {
@@ -126,9 +126,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </ng-template>
           <ng-template pTemplate="body" let-r>
             <tr>
-              <td data-label="Client">{{ r.thirdPartyName }}</td>
-              <td class="text-right" data-label="Total">{{ formatAmount(r.total) }}</td>
-              <td class="text-right" data-label="Non échu">{{ formatAmount(r.notYetDue) }}</td>
+              <td data-label="Client" i18n-data-label="@@accounting.aging.client.1bdd79b1">{{ r.thirdPartyName }}</td>
+              <td class="text-right" data-label="Total" i18n-data-label="@@accounting.aging.total.b25928c6">{{ formatAmount(r.total) }}</td>
+              <td class="text-right" data-label="Non échu" i18n-data-label="@@accounting.aging.non.echu.cb5c1717">{{ formatAmount(r.notYetDue) }}</td>
               <td class="text-right" data-label="0-30j">{{ formatAmount(r.days0To30) }}</td>
               <td class="text-right" data-label="31-60j">{{ formatAmount(r.days31To60) }}</td>
               <td class="text-right aging-overdue-warn" data-label="61-90j">{{ formatAmount(r.days61To90) }}</td>
@@ -182,9 +182,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </ng-template>
           <ng-template pTemplate="body" let-r>
             <tr>
-              <td data-label="Fournisseur">{{ r.thirdPartyName }}</td>
-              <td class="text-right" data-label="Total">{{ formatAmount(r.total) }}</td>
-              <td class="text-right" data-label="Non échu">{{ formatAmount(r.notYetDue) }}</td>
+              <td data-label="Fournisseur" i18n-data-label="@@accounting.aging.fournisseur.97d91d89">{{ r.thirdPartyName }}</td>
+              <td class="text-right" data-label="Total" i18n-data-label="@@accounting.aging.total.b25928c6">{{ formatAmount(r.total) }}</td>
+              <td class="text-right" data-label="Non échu" i18n-data-label="@@accounting.aging.non.echu.cb5c1717">{{ formatAmount(r.notYetDue) }}</td>
               <td class="text-right" data-label="0-30j">{{ formatAmount(r.days0To30) }}</td>
               <td class="text-right" data-label="31-60j">{{ formatAmount(r.days31To60) }}</td>
               <td class="text-right aging-overdue-warn" data-label="61-90j">{{ formatAmount(r.days61To90) }}</td>

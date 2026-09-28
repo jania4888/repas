@@ -148,7 +148,7 @@ import { StockService } from '@core/services/stock.service';
     .filters { display: flex; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; align-items: flex-end; }
     .filters label { display: flex; flex-direction: column; gap: .25rem; font-size: .85rem; color: var(--color-neutral-600, #6b7280); }
     .filters select { padding: .45rem .6rem; border-radius: 6px; border: 1px solid var(--color-neutral-300, #d1d5db); }
-    .filters-actions { margin-left: auto; display: flex; align-items: flex-end; }
+    .filters-actions { margin-inline-start: auto; display: flex; align-items: flex-end; }
     .state { padding: 1rem; color: var(--color-neutral-600, #6b7280); font-style: italic; }
     .state.error { color: var(--color-danger-700, #b91c1c); }
     .state.hint { color: var(--color-neutral-500, #6b7280); font-style: italic; }
@@ -170,17 +170,17 @@ import { StockService } from '@core/services/stock.service';
     .chart-wrap { overflow-x: auto; }
     .chart-bars { display: flex; align-items: flex-end; height: 160px; gap: 4px; min-width: 100%; padding-bottom: 1.5rem; position: relative; }
     .bar-col { flex: 1; min-width: 24px; position: relative; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
-    .ci-band { position: absolute; left: 0; right: 0; background: rgba(37,99,235,.15); border-radius: 3px; pointer-events: none; }
+    .ci-band { position: absolute; inset-inline-start: 0; inset-inline-end: 0; background: rgba(37,99,235,.15); border-radius: 3px; pointer-events: none; }
     .bar-fill { position: relative; width: 100%; border-radius: 4px 4px 0 0; transition: height .3s ease; min-height: 4px; }
     .bar-label { position: absolute; bottom: -1.3rem; left: 50%; transform: translateX(-50%); font-size: .65rem; color: var(--color-neutral-500, #9ca3af); white-space: nowrap; }
 
     .table { width: 100%; border-collapse: collapse; }
-    .table th, .table td { padding: .55rem .75rem; border-bottom: 1px solid var(--color-neutral-200, #e5e7eb); text-align: left; font-size: .9rem; }
+    .table th, .table td { padding: .55rem .75rem; border-bottom: 1px solid var(--color-neutral-200, #e5e7eb); text-align: start; font-size: .9rem; }
     .table th { background: var(--color-neutral-50, #f9fafb); font-weight: 600; }
-    .table .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .table .num { text-align: end; font-variant-numeric: tabular-nums; }
 
     @media (max-width: 768px) {
-      .filters-actions { margin-left: 0; width: 100%; }
+      .filters-actions { margin-inline-start: 0; width: 100%; }
     }
   `]
 })

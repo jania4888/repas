@@ -47,7 +47,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
       </div>
     } @else if (receipt()) {
       <app-page-header
-        [title]="'Réception ' + receipt()!.number"
+        [title]="loc_reception_number_0f769f(receipt()!.number)"
         [subtitle]="receipt()!.supplier.name">
         <div class="header-actions">
           <app-button variant="outline" icon="pi-arrow-left" iconPos="left"
@@ -470,7 +470,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
     }
 
     .linked-invoices .amount {
-      margin-left: auto;
+      margin-inline-start: auto;
       font-family: 'JetBrains Mono', monospace;
     }
 
@@ -486,6 +486,10 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
   `]
 })
 export class PurchaseReceiptDetailComponent implements OnInit {
+  protected loc_reception_number_0f769f(p0: unknown): string {
+    return $localize`:@@purchase-receipts.purchase-receipt-detail.tpl.reception.number.0f769fdc:Réception ${p0}:number:`;
+  }
+
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private receiptService = inject(PurchaseReceiptService);

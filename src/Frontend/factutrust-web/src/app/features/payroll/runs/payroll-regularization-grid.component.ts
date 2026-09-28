@@ -98,7 +98,7 @@ import { outcomeLabel, outcomeSeverity, resolveOutcome } from '../regularization
   `,
   styles: [`
     .mb-3 { margin-bottom: var(--spacing-4); }
-    .ml-2 { margin-left: var(--spacing-2); }
+    .ml-2 { margin-inline-start: var(--spacing-2); }
     .actions { white-space: nowrap; }
     .tabnum { font-variant-numeric: tabular-nums; }
     .block { display: block; }

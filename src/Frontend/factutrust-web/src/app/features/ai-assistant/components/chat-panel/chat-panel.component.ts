@@ -206,7 +206,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                   } @else {
                     <div class="suggestions">
                       @for (s of scopedSuggestions(); track s) {
-                        <button class="suggestion-chip" (click)="session.sendMessage(s)">
+                        <button class="suggestion-chip" lang="fr" dir="auto" (click)="session.sendMessage(s)">
                           {{ s }}
                         </button>
                       }
@@ -290,9 +290,9 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
     .chat-panel {
       position: fixed;
       top: 0;
-      right: 0;
+      inset-inline-end: 0;
       bottom: 0;
-      left: 0;
+      inset-inline-start: 0;
       z-index: 1000;
       pointer-events: none;
       opacity: 0;
@@ -343,7 +343,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
 
     .panel-container {
       position: absolute;
-      right: 0;
+      inset-inline-end: 0;
       top: 0;
       bottom: 0;
       width: min(520px, 100vw);
@@ -454,7 +454,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      margin-left: 6px;
+      margin-inline-start: 6px;
       padding: 1px 8px;
       border-radius: 999px;
       font-size: 11px;
@@ -515,7 +515,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
 
     .sidebar-pane {
       width: 240px;
-      border-right: 1px solid var(--color-neutral-200, #e5e7eb);
+      border-inline-end: 1px solid var(--color-neutral-200, #e5e7eb);
       flex-shrink: 0;
       overflow-y: auto;
     }
@@ -605,7 +605,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
       border: 1px solid var(--color-neutral-200, #e5e7eb);
       border-radius: 10px;
       background: #fff;
-      text-align: left;
+      text-align: start;
       font-size: 13px;
       color: var(--color-neutral-700, #374151);
       cursor: pointer;
@@ -651,7 +651,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
       width: 100%;
       max-width: 400px;
       margin-top: 14px;
-      text-align: left;
+      text-align: start;
     }
 
     .favorites-title {
@@ -672,7 +672,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
 
     .favorite-chip {
       flex: 1;
-      text-align: left;
+      text-align: start;
       padding: 6px 10px;
       border-radius: 8px;
       border: 1px solid var(--color-neutral-200, #e5e7eb);
@@ -708,7 +708,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
       border-radius: 12px;
       border: 1px solid var(--color-neutral-200, #e5e7eb);
       background: var(--color-neutral-50, #f9fafb);
-      text-align: left;
+      text-align: start;
     }
 
     .briefing-title {
@@ -722,7 +722,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
 
     .briefing-list {
       margin: 0;
-      padding-left: 1.1rem;
+      padding-inline-start: 1.1rem;
       font-size: 13px;
       color: var(--color-neutral-700, #374151);
       line-height: 1.5;
@@ -778,7 +778,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
     .selection-limit {
       font-style: italic;
       font-weight: 500;
-      margin-left: 4px;
+      margin-inline-start: 4px;
       color: var(--color-warning-700, #92400e);
     }
 

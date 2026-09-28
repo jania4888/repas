@@ -198,14 +198,14 @@ const KIND_ORDER: StudioAiPlanKind[] = ['CreateSystem', 'CreateApp', 'Amendment'
       background: var(--color-surface, #fff); border: 1px solid var(--color-neutral-200, #e5e7eb); border-radius: var(--radius-lg, 12px);
     }
     .sap-projects__filters { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
-    .sap-projects__count { margin-left: auto; font-size: 0.8125rem; color: var(--color-neutral-500, #6b7280); }
+    .sap-projects__count { margin-inline-start: auto; font-size: 0.8125rem; color: var(--color-neutral-500, #6b7280); }
     .sap-projects__title { font-weight: 500; }
     .sap-projects__system { font-family: ui-monospace, monospace; font-size: 0.8125rem; color: var(--color-neutral-600, #4b5563); }
-    .sap-projects__num { text-align: right; font-variant-numeric: tabular-nums; }
-    .sap-projects__actions { white-space: nowrap; text-align: right; }
-    .sap-projects__actions > * + * { margin-left: 0.5rem; }
+    .sap-projects__num { text-align: end; font-variant-numeric: tabular-nums; }
+    .sap-projects__actions { white-space: nowrap; text-align: end; }
+    .sap-projects__actions > * + * { margin-inline-start: 0.5rem; }
     .sap-projects__actions a { text-decoration: none; }
-    .sap-projects__actions-col { text-align: right; }
+    .sap-projects__actions-col { text-align: end; }
     .sap-projects__empty { text-align: center; padding: 2rem 1rem; color: var(--color-neutral-500, #6b7280); }
     .sap-projects__error {
       display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; border-radius: 8px;

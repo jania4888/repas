@@ -104,7 +104,7 @@ interface BudgetPostForm {
     .bp-narrow { max-width: 6rem; }
     .bp-lbl { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
     .bp-inp { padding: var(--spacing-2) var(--spacing-3); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-background-elevated); color: var(--color-text-primary); font-size: var(--font-size-sm); width: 100%; }
-    .bp-form-actions { display: flex; gap: var(--spacing-2); margin-left: auto; align-items: center; }
+    .bp-form-actions { display: flex; gap: var(--spacing-2); margin-inline-start: auto; align-items: center; }
     .bp-help { margin: var(--spacing-3) 0 0; font-size: var(--font-size-sm); color: var(--color-text-secondary); }
     .bp-mono { font-family: ui-monospace, monospace; }
     .bp-inactive { opacity: 0.6; }

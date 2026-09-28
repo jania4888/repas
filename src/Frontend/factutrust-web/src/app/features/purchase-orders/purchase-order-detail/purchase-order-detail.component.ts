@@ -527,12 +527,12 @@ import {
       margin-bottom: var(--spacing-4);
 
       &.draft-guidance {
-        border-left: 4px solid var(--color-warning-500);
+        border-inline-start: 4px solid var(--color-warning-500);
         background: var(--color-warning-50, #fef3c7);
       }
 
       &.confirmed-guidance {
-        border-left: 4px solid var(--color-info-500);
+        border-inline-start: 4px solid var(--color-info-500);
         background: var(--color-info-50, #eff6ff);
 
         .guidance-icon {
@@ -558,7 +558,7 @@ import {
       }
 
       &.partial-guidance {
-        border-left: 4px solid var(--color-warning-500);
+        border-inline-start: 4px solid var(--color-warning-500);
         background: var(--color-warning-50, #fef3c7);
 
         .guidance-icon {

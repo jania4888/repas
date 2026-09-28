@@ -58,7 +58,7 @@ import { QuantityFormatPipe } from '../../../pipes/quantity-format.pipe';
     .kpi-tile .label { font-size: .7rem; text-transform: uppercase; letter-spacing: .04em; color: var(--color-neutral-500, #9ca3af); }
     .kpi-tile .value { font-size: 1.5rem; font-weight: 700; color: var(--color-neutral-900, #111827); font-variant-numeric: tabular-nums; }
     .kpi-tile .hint { font-size: .7rem; color: var(--color-neutral-500, #9ca3af); }
-    .kpi-tile .ccy { font-size: .9rem; font-weight: 600; color: var(--color-neutral-500, #6b7280); margin-left: .15rem; }
+    .kpi-tile .ccy { font-size: .9rem; font-weight: 600; color: var(--color-neutral-500, #6b7280); margin-inline-start: .15rem; }
     .kpi-tile.urgent .value { color: #c2410c; }
     .kpi-tile.danger .value { color: var(--color-danger-700, #b91c1c); }
     .kpi-loading { grid-column: 1 / -1; padding: 1rem; background: var(--color-neutral-50, #f9fafb); border: 1px dashed var(--color-neutral-200, #e5e7eb); border-radius: 8px; color: var(--color-neutral-500, #9ca3af); font-style: italic; text-align: center; }

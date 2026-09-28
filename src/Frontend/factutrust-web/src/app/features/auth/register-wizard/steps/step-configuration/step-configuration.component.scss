@@ -5,7 +5,7 @@
   justify-content: flex-start;
 
   .based-chip {
-    margin-left: auto;
+    margin-inline-start: auto;
   }
 }
 
@@ -28,7 +28,7 @@
   color: #92400e;
   background: #fffaf0;
   border-color: #fbe3b7;
-  margin-left: 0.4rem;
+  margin-inline-start: 0.4rem;
 }
 
 .mod-group {
@@ -283,7 +283,7 @@
   }
 
   .set-tag {
-    margin-left: auto;
+    margin-inline-start: auto;
     font-size: 0.66rem;
     font-weight: 700;
     color: var(--color-neutral-500);

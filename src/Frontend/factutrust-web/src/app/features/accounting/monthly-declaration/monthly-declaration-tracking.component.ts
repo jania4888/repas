@@ -168,8 +168,8 @@ import {
     .dm-count__label { font-size: var(--font-size-xs); color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.04em; }
     .dm-count--flag .dm-count__value { color: var(--color-warning-700, #a16207); }
     .dm-count--alert .dm-count__value { color: var(--color-error-700, #b91c1c); }
-    .dm-count--total { margin-left: auto; }
-    .dm-num { text-align: right; font-family: ui-monospace, monospace; }
+    .dm-count--total { margin-inline-start: auto; }
+    .dm-num { text-align: end; font-family: ui-monospace, monospace; }
     .dm-num--strong { font-weight: var(--font-weight-semibold); }
     .dm-chip { display: inline-block; padding: 0.1rem 0.45rem; border-radius: var(--radius-pill, 999px); background: var(--color-background-subtle, #f1f5f9); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); }
     .dm-chip--flag { background: var(--color-warning-50, #fffbeb); color: var(--color-warning-700, #a16207); border: 1px solid var(--color-warning-200, #fde68a); }

@@ -130,7 +130,7 @@ import {
 
     .gallery { display: flex; flex-direction: column; gap: var(--spacing-3); }
     .template-card {
-      text-align: left; padding: var(--spacing-4); border-radius: var(--radius-xl);
+      text-align: start; padding: var(--spacing-4); border-radius: var(--radius-xl);
       border: 1px solid var(--color-neutral-200); background: white; cursor: pointer;
       transition: all var(--transition-fast);
     }

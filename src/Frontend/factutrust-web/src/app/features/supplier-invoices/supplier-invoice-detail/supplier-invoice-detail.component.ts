@@ -317,13 +317,13 @@ import { formatLocalDate } from '@core/utils/date.util';
     .total-row { display: flex; justify-content: space-between; width: 300px; font-size: var(--font-size-sm); color: var(--color-text-secondary); }
     .total-row.grand-total { font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-text-primary); padding-top: var(--spacing-2); border-top: 1px solid var(--color-border-subtle); }
     .total-row.muted-row { font-size: var(--font-size-xs); color: var(--color-text-tertiary); }
-    .rs-threshold-banner { align-self: stretch; width: 100%; max-width: 100%; margin-top: var(--spacing-3); padding: var(--spacing-3); border-radius: var(--radius-lg); border: 1px solid var(--color-warning-200); background: var(--color-warning-50, #fffbeb); text-align: left; }
+    .rs-threshold-banner { align-self: stretch; width: 100%; max-width: 100%; margin-top: var(--spacing-3); padding: var(--spacing-3); border-radius: var(--radius-lg); border: 1px solid var(--color-warning-200); background: var(--color-warning-50, #fffbeb); text-align: start; }
     .rs-threshold-title { margin: 0 0 var(--spacing-2); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
     .rs-threshold-text { margin: 0 0 var(--spacing-2); font-size: var(--font-size-xs); line-height: 1.55; color: var(--color-text-secondary); }
     .rs-threshold-link { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-primary-600); text-decoration: none; }
     .rs-threshold-link:hover { text-decoration: underline; }
-    .tej-hint { font-size: var(--font-size-xs); color: var(--color-text-tertiary); line-height: 1.5; margin: var(--spacing-3) 0 0; max-width: 420px; text-align: right; align-self: flex-end; }
-    .link-inline { margin-left: var(--spacing-2); color: var(--color-primary-600); font-weight: var(--font-weight-medium); }
+    .tej-hint { font-size: var(--font-size-xs); color: var(--color-text-tertiary); line-height: 1.5; margin: var(--spacing-3) 0 0; max-width: 420px; text-align: end; align-self: flex-end; }
+    .link-inline { margin-inline-start: var(--spacing-2); color: var(--color-primary-600); font-weight: var(--font-weight-medium); }
     .notes-text { font-size: var(--font-size-sm); color: var(--color-text-secondary); line-height: 1.6; margin: 0; }
     .payment-summary { margin-top: var(--spacing-4); padding-top: var(--spacing-3); border-top: 1px solid var(--color-border-subtle); display: flex; gap: var(--spacing-6); font-size: var(--font-size-sm); }
     .payment-total { font-weight: var(--font-weight-semibold); color: var(--color-success-600); }
@@ -332,7 +332,7 @@ import { formatLocalDate } from '@core/utils/date.util';
     .effet-badge.en-portefeuille { background: var(--color-warning-50); color: var(--color-warning-700); }
     .effet-badge.encaisse { background: var(--color-success-50); color: var(--color-success-700); }
     .effet-badge.impaye { background: var(--color-error-50); color: var(--color-error-700); }
-    .effet-btn { margin-left: var(--spacing-2); border: 1px solid var(--color-success-200); background: var(--color-white); border-radius: var(--radius-md); padding: 2px 10px; font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); color: var(--color-success-700); cursor: pointer; }
+    .effet-btn { margin-inline-start: var(--spacing-2); border: 1px solid var(--color-success-200); background: var(--color-white); border-radius: var(--radius-md); padding: 2px 10px; font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); color: var(--color-success-700); cursor: pointer; }
     .effet-btn:hover:not(:disabled) { background: var(--color-success-50); }
     .effet-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .cancelled-date { font-size: var(--font-size-xs); color: var(--color-danger-600); margin: var(--spacing-2) 0 0; }

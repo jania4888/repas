@@ -51,13 +51,13 @@ import { PayrollAmountPipe, PayrollSectionComponent } from '../shared';
   `,
   styles: [`
     .text-secondary { color: var(--color-text-secondary); font-size: var(--font-size-sm); }
-    .ml-2 { margin-left: var(--spacing-2); }
+    .ml-2 { margin-inline-start: var(--spacing-2); }
     .payments-list { display: flex; flex-direction: column; gap: var(--spacing-3); }
     .payment-card { border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--spacing-3); }
     .payment-card.cancelled { opacity: 0.7; }
     .payment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-2); }
-    .badge-cancelled { margin-left: var(--spacing-2); color: var(--color-danger); font-size: var(--font-size-sm); }
-    .lines { margin: var(--spacing-2) 0; padding-left: var(--spacing-4); font-size: var(--font-size-sm); }
+    .badge-cancelled { margin-inline-start: var(--spacing-2); color: var(--color-danger); font-size: var(--font-size-sm); }
+    .lines { margin: var(--spacing-2) 0; padding-inline-start: var(--spacing-4); font-size: var(--font-size-sm); }
   `]
 })
 export class PayrollPaymentsPanelComponent implements OnInit {

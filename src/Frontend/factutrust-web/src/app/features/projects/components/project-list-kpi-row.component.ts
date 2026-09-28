@@ -41,7 +41,7 @@ import { ProjectListProgressRingComponent } from './project-list-progress-ring.c
           changeSuffix="vs mois dernier"
           [sparkline]="overdueSparkline()"
           [clickable]="true"
-          navigationAriaLabel="Filtrer les projets avec tâches en retard"
+          navigationAriaLabel="Filtrer les projets avec tâches en retard" i18n-navigationAriaLabel="@@projects.project-list-kpi-row.filtrer.les.projets.avec.taches.en.retar.de3b67e9"
           (cardClick)="overdueFilter.emit()" />
         <app-stat-card
           label="Heures à facturer" i18n-label="@@projects.components.heures.a.facturer.7757d0a3"

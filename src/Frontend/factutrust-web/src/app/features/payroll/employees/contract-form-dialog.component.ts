@@ -158,7 +158,7 @@ function parseIsoDate(value?: string): Date | null {
     .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
     .full-width { grid-column: 1 / -1; }
     .allowance-table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
-    .allowance-table th, .allowance-table td { padding: 0.5rem; border-bottom: 1px solid #e2e8f0; text-align: left; }
+    .allowance-table th, .allowance-table td { padding: 0.5rem; border-bottom: 1px solid #e2e8f0; text-align: start; }
     .w-full { width: 100%; }
     .mt-2 { margin-top: 0.5rem; }
     .mt-3 { margin-top: 1rem; }

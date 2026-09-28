@@ -100,7 +100,7 @@
   flex-direction: column;
   background: var(--sidebar-rail-bg-gradient, var(--sidebar-rail-bg));
   height: 100%;
-  border-right: 1px solid var(--sidebar-rail-edge);
+  border-inline-end: 1px solid var(--sidebar-rail-edge);
   z-index: 10;
   transition:
     width var(--transition-slow, 0.3s ease),
@@ -457,7 +457,7 @@
   min-width: var(--sidebar-submenu-width);
   background: var(--sidebar-submenu-bg);
   height: 100%;
-  border-right: 1px solid var(--sidebar-submenu-border);
+  border-inline-end: 1px solid var(--sidebar-submenu-border);
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
@@ -472,7 +472,7 @@
 #sidebar:not(:has(.submenu-group)) .sidebar-submenu-panel {
   width: 0;
   min-width: 0;
-  border-right: none;
+  border-inline-end: none;
 }
 
 .submenu-scroll-area {
@@ -590,11 +590,11 @@
 #sidebar.sidebar--firm-delegated {
   border-radius: var(--sidebar-delegated-radius);
   box-shadow: var(--sidebar-delegated-shadow);
-  margin: 8px 0 8px 8px;
+  margin-block: 8px; margin-inline: 8px 0;
   height: calc(100% - 16px);
 
   .sidebar-icon-rail {
-    border-right-color: var(--sidebar-rail-edge);
+    border-inline-end-color: var(--sidebar-rail-edge);
     border-radius: var(--sidebar-delegated-radius);
     overflow: hidden;
   }
@@ -603,7 +603,7 @@
     background: var(--sidebar-delegated-navy);
     border-bottom: none;
     justify-content: flex-start;
-    padding: 0 44px 0 12px;
+    padding-block: 0; padding-inline: 12px 44px;
 
     a {
       justify-content: flex-start;
@@ -827,7 +827,7 @@
   .delegated-footer-submenu {
     list-style: none;
     margin: 4px 0 6px;
-    padding: 0 0 0 38px;
+    padding-block: 0; padding-inline: 38px 0;
   }
 
   .delegated-footer-sublink {
@@ -854,7 +854,7 @@
   }
 
   .sidebar-submenu-panel {
-    border-right-color: var(--sidebar-submenu-border);
+    border-inline-end-color: var(--sidebar-submenu-border);
     box-shadow: none;
   }
 

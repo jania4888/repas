@@ -166,7 +166,7 @@ import {
     .card h3 { font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase; margin: 0 0 0.75rem 0; }
     .warehouse-name { font-size: 1.125rem; font-weight: 600; margin: 0; }
     .lines-table { width: 100%; border-collapse: collapse; }
-    .lines-table th, .lines-table td { padding: 0.625rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    .lines-table th, .lines-table td { padding: 0.625rem; text-align: start; border-bottom: 1px solid #e2e8f0; }
     .status-badge { padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 500; }
     .status-draft { background: #f1f5f9; color: #475569; }
     .status-validated { background: #dcfce7; color: #166534; }

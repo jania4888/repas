@@ -489,7 +489,7 @@ interface TimelineEvent {
       .lines-table td {
         padding: var(--spacing-3) var(--spacing-2);
         font-size: var(--font-size-sm);
-        text-align: left;
+        text-align: start;
         border-bottom: 1px solid var(--color-neutral-100);
       }
       .lines-table th {
@@ -497,7 +497,7 @@ interface TimelineEvent {
         color: var(--color-neutral-500);
       }
       .lines-table .text-right {
-        text-align: right;
+        text-align: end;
       }
       .lines-table .text-center {
         text-align: center;
@@ -512,7 +512,7 @@ interface TimelineEvent {
         min-width: 280px;
         max-width: 320px;
         margin-top: var(--spacing-4);
-        margin-left: auto;
+        margin-inline-start: auto;
         padding: var(--spacing-4);
         background: var(--color-primary-50);
         border-radius: var(--radius-lg);

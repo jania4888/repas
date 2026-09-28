@@ -63,7 +63,7 @@ export type AccountingAmountSide = 'debit' | 'credit';
       padding: var(--spacing-1) var(--spacing-2);
       font-size: var(--font-size-sm);
       font-variant-numeric: tabular-nums;
-      text-align: right;
+      text-align: end;
       box-sizing: border-box;
     }
     :host ::ng-deep .accounting-amount-input--debit .p-inputnumber-input {

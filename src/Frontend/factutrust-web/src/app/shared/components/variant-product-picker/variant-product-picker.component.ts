@@ -102,7 +102,7 @@ export type VariantPickerSelection = ProductSuggestion;
       grid-template-columns: 1fr 1.5fr auto;
       gap: 0.5rem;
       align-items: center;
-      text-align: left;
+      text-align: start;
       padding: 0.5rem 0.75rem;
       border: 1px solid var(--surface-border);
       border-radius: 8px;

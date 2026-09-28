@@ -81,12 +81,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           <ng-template pTemplate="body" let-l>
             <tr>
               <td data-label="N°" class="ls-narrow">{{ l.installmentNumber }}</td>
-              <td data-label="Échéance">{{ l.dueDate | date : 'shortDate' }}</td>
-              <td data-label="Capital restant dû" class="ls-num">{{ l.openingBalance | number : '1.3-3' }}</td>
-              <td data-label="Intérêt" class="ls-num">{{ l.interestAmount | number : '1.3-3' }}</td>
-              <td data-label="Capital remboursé" class="ls-num">{{ l.principalAmount | number : '1.3-3' }}</td>
-              <td data-label="Annuité" class="ls-num">{{ l.installmentAmount | number : '1.3-3' }}</td>
-              <td data-label="Solde" class="ls-num">{{ l.closingBalance | number : '1.3-3' }}</td>
+              <td data-label="Échéance" i18n-data-label="@@accounting.loan-schedule.echeance.f9a77ff6">{{ l.dueDate | date : 'shortDate' }}</td>
+              <td data-label="Capital restant dû" i18n-data-label="@@accounting.loan-schedule.capital.restant.du.fb1533e2" class="ls-num">{{ l.openingBalance | number : '1.3-3' }}</td>
+              <td data-label="Intérêt" i18n-data-label="@@accounting.loan-schedule.interet.c10e8ea5" class="ls-num">{{ l.interestAmount | number : '1.3-3' }}</td>
+              <td data-label="Capital remboursé" i18n-data-label="@@accounting.loan-schedule.capital.rembourse.829c9aae" class="ls-num">{{ l.principalAmount | number : '1.3-3' }}</td>
+              <td data-label="Annuité" i18n-data-label="@@accounting.loan-schedule.annuite.a3535b86" class="ls-num">{{ l.installmentAmount | number : '1.3-3' }}</td>
+              <td data-label="Solde" i18n-data-label="@@accounting.loan-schedule.solde.e5977cf9" class="ls-num">{{ l.closingBalance | number : '1.3-3' }}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="footer">
@@ -120,7 +120,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     .ls-kpi-label { font-size:var(--font-size-xs); color:var(--color-text-tertiary); text-transform:uppercase; letter-spacing:0.04em; }
     .ls-kpi-value { font-size:var(--font-size-lg); font-weight:var(--font-weight-semibold); font-variant-numeric:tabular-nums; }
     .ls-notice { margin:var(--spacing-4) 0 0; font-size:var(--font-size-sm); color:var(--color-text-secondary); display:flex; align-items:center; gap:var(--spacing-2); }
-    .ls-num { text-align:right; font-variant-numeric:tabular-nums; }
+    .ls-num { text-align:end; font-variant-numeric:tabular-nums; }
     .ls-narrow { width:1%; white-space:nowrap; }
     .acc-totals-row td { font-weight:var(--font-weight-bold); background:var(--color-background-subtle); border-top:2px solid var(--color-border-default); }
   `

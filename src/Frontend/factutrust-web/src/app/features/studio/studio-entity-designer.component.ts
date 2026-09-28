@@ -276,14 +276,14 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
   `,
   styles: [`
     .studio-head-actions { display: flex; flex-wrap: wrap; gap: var(--spacing-2); }
-    .ft-actions { text-align: right; white-space: nowrap; }
+    .ft-actions { text-align: end; white-space: nowrap; }
     .ft-empty { text-align: center; color: var(--color-neutral-500); padding: 2rem; }
     .ft-inactive { opacity: .5; }
     .ft-form { display: flex; flex-direction: column; gap: .35rem; }
     .ft-form label { font-weight: 600; font-size: .85rem; margin-top: .5rem; }
     .ft-row { display: flex; gap: 1rem; align-items: center; margin-top: .5rem; }
     .ft-row > div { display: flex; flex-direction: column; gap: .25rem; }
-    .ft-row span { margin-left: .35rem; }
+    .ft-row span { margin-inline-start: .35rem; }
     .ft-textarea { width: 100%; font-family: monospace; padding: .5rem; border: 1px solid var(--surface-300); border-radius: 6px; }
     :host ::ng-deep .ft-w-full { width: 100%; }
   `],

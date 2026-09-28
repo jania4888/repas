@@ -451,7 +451,7 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
     .mb-3 { margin-bottom: var(--spacing-4); }
     .mt-2 { margin-top: var(--spacing-2); }
     .mt-4 { margin-top: var(--spacing-6); }
-    .mr-2 { margin-right: var(--spacing-2); }
+    .mr-2 { margin-inline-end: var(--spacing-2); }
     .w-full { width: 100%; }
     .w-8rem { width: 8rem; }
     .form-actions { display: flex; gap: var(--spacing-3); }
@@ -477,7 +477,7 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
     }
     .preset-drift-banner__title { display: flex; align-items: center; gap: var(--spacing-2); font-weight: 600; color: var(--color-warning-800, #92400e); margin-bottom: var(--spacing-2); }
     .preset-drift-banner__title i { color: var(--color-warning-600, #d97706); }
-    .preset-drift-banner__list { margin: 0 0 var(--spacing-2); padding-left: var(--spacing-4); font-size: .85rem; color: var(--color-warning-900, #78350f); }
+    .preset-drift-banner__list { margin: 0 0 var(--spacing-2); padding-inline-start: var(--spacing-4); font-size: .85rem; color: var(--color-warning-900, #78350f); }
     .preset-drift-banner__actions { display: flex; justify-content: flex-end; }
   `]
 })

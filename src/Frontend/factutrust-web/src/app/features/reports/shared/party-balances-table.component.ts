@@ -109,7 +109,7 @@ export interface PartyBalanceRow {
       gap: var(--spacing-2);
     }
 
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .amount {
       font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Consolas', monospace;
       font-weight: var(--font-weight-semibold);

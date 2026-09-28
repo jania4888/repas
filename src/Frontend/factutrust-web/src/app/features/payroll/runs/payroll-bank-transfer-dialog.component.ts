@@ -157,7 +157,7 @@ import { downloadBlob } from '../../accounting/shared/accounting-download.util';
     .field label { display: block; margin-bottom: var(--spacing-1); font-weight: 500; }
     .summary { display: flex; gap: var(--spacing-6); }
     .mono { font-family: var(--font-mono, monospace); letter-spacing: 0.02em; }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .payroll-table-scroll { overflow-x: auto; }
     @media (max-width: 640px) {
       .toolbar { grid-template-columns: 1fr; }

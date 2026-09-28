@@ -76,7 +76,7 @@ interface StatusFilterOption {
           icon="pi-file-edit"
           tone="violet"
           routerLink="/recurring-contracts/pending-drafts"
-          navigationAriaLabel="Voir les brouillons à valider">
+          navigationAriaLabel="Voir les brouillons à valider" i18n-navigationAriaLabel="@@recurring-contracts.contract-list.voir.les.brouillons.a.valider.7e168a49">
         </app-stat-card>
       </div>
     }

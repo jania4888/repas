@@ -112,9 +112,9 @@ import { WithholdingTaxService, WithholdingTaxTypeDto } from '@core/services/wit
     .table-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; }
     .table-wrapper { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-    th, td { padding: 0.625rem 0.75rem; border-bottom: 1px solid var(--border); text-align: left; }
+    th, td { padding: 0.625rem 0.75rem; border-bottom: 1px solid var(--border); text-align: start; }
     th { font-weight: 500; color: var(--text-secondary); font-size: 0.8125rem; background: var(--bg-secondary); }
-    .right { text-align: right; font-variant-numeric: tabular-nums; }
+    .right { text-align: end; font-variant-numeric: tabular-nums; }
     .center { text-align: center; }
     code { font-size: 0.8125rem; background: var(--bg-secondary); padding: 0.125rem 0.375rem; border-radius: 3px; }
     .category-badge { display: inline-block; padding: 0.125rem 0.5rem; background: #e0e7ff; color: #3730a3; border-radius: 999px; font-size: 0.75rem; font-weight: 500; }

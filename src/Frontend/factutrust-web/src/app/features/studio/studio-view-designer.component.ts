@@ -53,7 +53,7 @@ interface DesignColumn {
         <button pButton type="button" label="Enregistrer" i18n-label="@@studio.studio-view-designer.enregistrer.f7c8bcd8" icon="fa-solid fa-check" [disabled]="saving()" (click)="save()"></button>
       </div>
 
-      <app-studio-designer-shell previewTitle="Aperçu (lecture seule)">
+      <app-studio-designer-shell previewTitle="Aperçu (lecture seule)" i18n-previewTitle="@@studio.studio-view-designer.apercu.lecture.seule.cc77c764">
         <div studioEditor>
           <label class="studio-lbl" i18n="@@studio.studio-view-designer.nom.de.la.vue.86ef855c">Nom de la vue *</label>
           <input pInputText [(ngModel)]="displayName" class="studio-w-full" placeholder="Ex. Liste clients" i18n-placeholder="@@studio.studio-view-designer.ex.liste.clients.509e94e2" (ngModelChange)="schedulePreview()" />

@@ -810,11 +810,11 @@ interface WizardProductSuggestion {
 
     /* Espacement entre colonne Remise et colonne TVA (taux) */
     ::ng-deep .lines-table .col-discount {
-      padding-right: 2.25rem;
+      padding-inline-end: 2.25rem;
     }
 
     ::ng-deep .lines-table .p-datatable-tbody > tr > td.col-vat {
-      padding-left: 0.75rem;
+      padding-inline-start: 0.75rem;
     }
 
     .line-number {
@@ -925,12 +925,12 @@ interface WizardProductSuggestion {
       background: var(--color-warning-100);
       padding: 0 var(--spacing-1);
       border-radius: var(--radius-sm);
-      margin-left: var(--spacing-1);
+      margin-inline-start: var(--spacing-1);
       vertical-align: middle;
     }
 
     .fodec-badge--suggestion {
-      margin-left: 0;
+      margin-inline-start: 0;
       flex-shrink: 0;
     }
 
@@ -1098,7 +1098,7 @@ interface WizardProductSuggestion {
         text-transform: uppercase;
         color: var(--color-neutral-500);
         padding: var(--spacing-2);
-        text-align: left;
+        text-align: start;
         border-bottom: 1px solid var(--color-neutral-200);
       }
 
@@ -1176,7 +1176,7 @@ interface WizardProductSuggestion {
     }
 
     .text-right {
-      text-align: right;
+      text-align: end;
     }
 
     .text-muted {

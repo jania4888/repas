@@ -97,7 +97,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       </ng-template>
       <ng-template pTemplate="body" let-r>
         <tr>
-          <td data-label="Tiers">
+          <td data-label="Tiers" i18n-data-label="@@accounting.auxiliary-balance.tiers.435080ba">
             <a
               class="auxbal-tiers-link"
               [routerLink]="['/accounting/third-party-ledger']"
@@ -106,12 +106,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
               {{ r.thirdPartyName }}
             </a>
           </td>
-          <td class="text-right auxbal-num" data-label="Ouv. D">{{ r.openingDebit | number : '1.3-3' }}</td>
-          <td class="text-right auxbal-num" data-label="Ouv. C">{{ r.openingCredit | number : '1.3-3' }}</td>
-          <td class="text-right auxbal-num" data-label="Mouv. D">{{ r.movementDebit | number : '1.3-3' }}</td>
-          <td class="text-right auxbal-num" data-label="Mouv. C">{{ r.movementCredit | number : '1.3-3' }}</td>
-          <td class="text-right auxbal-num" data-label="Clôture D">{{ r.closingDebit | number : '1.3-3' }}</td>
-          <td class="text-right auxbal-num" data-label="Clôture C">{{ r.closingCredit | number : '1.3-3' }}</td>
+          <td class="text-right auxbal-num" data-label="Ouv. D" i18n-data-label="@@accounting.auxiliary-balance.ouv.d.1a1c3306">{{ r.openingDebit | number : '1.3-3' }}</td>
+          <td class="text-right auxbal-num" data-label="Ouv. C" i18n-data-label="@@accounting.auxiliary-balance.ouv.c.95e30fd9">{{ r.openingCredit | number : '1.3-3' }}</td>
+          <td class="text-right auxbal-num" data-label="Mouv. D" i18n-data-label="@@accounting.auxiliary-balance.mouv.d.0f50458a">{{ r.movementDebit | number : '1.3-3' }}</td>
+          <td class="text-right auxbal-num" data-label="Mouv. C" i18n-data-label="@@accounting.auxiliary-balance.mouv.c.87e48868">{{ r.movementCredit | number : '1.3-3' }}</td>
+          <td class="text-right auxbal-num" data-label="Clôture D" i18n-data-label="@@accounting.auxiliary-balance.cloture.d.edb6d923">{{ r.closingDebit | number : '1.3-3' }}</td>
+          <td class="text-right auxbal-num" data-label="Clôture C" i18n-data-label="@@accounting.auxiliary-balance.cloture.c.2be08431">{{ r.closingCredit | number : '1.3-3' }}</td>
         </tr>
       </ng-template>
       <ng-template pTemplate="footer">
@@ -133,7 +133,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   styles: `
     @use '../shared/accounting-layout';
     .auxbal-toolbar-fields { display:flex; flex-wrap:wrap; align-items:flex-end; gap:var(--spacing-4); }
-    .text-right { text-align:right; }
+    .text-right { text-align:end; }
     .auxbal-num { font-variant-numeric:tabular-nums; }
     .acc-totals-row td { font-weight:var(--font-weight-bold); background:var(--color-background-subtle); border-top:2px solid var(--color-border-default); }
     .auxbal-tiers-link { font-weight:500; color:var(--color-primary-500); cursor:pointer; text-decoration:none; }

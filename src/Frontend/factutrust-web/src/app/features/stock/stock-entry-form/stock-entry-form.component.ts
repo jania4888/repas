@@ -242,7 +242,7 @@ import { ErrorMessageService } from '@core/services/error-message.service';
 
       .required {
         color: var(--color-error-600);
-        margin-left: var(--spacing-1);
+        margin-inline-start: var(--spacing-1);
       }
     }
 

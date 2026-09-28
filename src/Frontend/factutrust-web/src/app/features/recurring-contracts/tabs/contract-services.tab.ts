@@ -231,7 +231,7 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
     .line-inactive td { color: var(--color-text-tertiary); }
 
     .closed-tag {
-      margin-left: var(--spacing-1);
+      margin-inline-start: var(--spacing-1);
       padding: 0 var(--spacing-2);
       border-radius: var(--radius-full);
       background: var(--color-neutral-100);
@@ -240,7 +240,7 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
     }
 
     .lines-total td {
-      text-align: right;
+      text-align: end;
       font-size: var(--font-size-sm);
       color: var(--color-text-secondary);
 

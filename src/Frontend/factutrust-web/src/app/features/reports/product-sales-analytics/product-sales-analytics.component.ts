@@ -227,7 +227,7 @@ import { RevenueTableComponent } from '../sales-by-line/revenue-table.component'
     .tab-content { padding: var(--spacing-4) 0; }
     .tab-desc { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--spacing-4); }
     .loading-placeholder, .empty-placeholder { padding: var(--spacing-8); text-align: center; color: var(--color-text-secondary); }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .amount { font-family: 'JetBrains Mono', monospace; font-weight: var(--font-weight-semibold); }
     .code { font-size: var(--font-size-xs); color: var(--color-text-secondary); }
     .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-4); margin-bottom: var(--spacing-4); }

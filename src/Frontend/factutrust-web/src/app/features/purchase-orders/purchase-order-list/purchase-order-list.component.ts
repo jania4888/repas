@@ -245,7 +245,7 @@ interface StatusOption {
     .filter-label {
       font-size: var(--font-size-sm);
       color: var(--color-text-tertiary);
-      margin-right: var(--spacing-1);
+      margin-inline-end: var(--spacing-1);
     }
 
     .date-filter {

@@ -148,13 +148,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <ng-template pTemplate="body" let-l>
           <tr>
             <td data-label="N°"><span class="ln-code">{{ l.loanNumber }}</span></td>
-            <td data-label="Libellé">{{ l.label }}</td>
-            <td data-label="Prêteur">{{ l.lenderName }}</td>
-            <td data-label="Capital" class="ln-num">{{ l.principal | number : '1.3-3' }}</td>
-            <td data-label="Taux" class="ln-num">{{ l.annualRatePercent | number : '1.2-4' }} %</td>
-            <td data-label="Échéances" class="ln-num">{{ l.installmentCount }}</td>
-            <td data-label="Coût du crédit" class="ln-num">{{ l.totalInterest | number : '1.3-3' }}</td>
-            <td data-label="Statut">{{ statusLabel(l) }}</td>
+            <td data-label="Libellé" i18n-data-label="@@accounting.loans-list.libelle.f5485bba">{{ l.label }}</td>
+            <td data-label="Prêteur" i18n-data-label="@@accounting.loans-list.preteur.3b469653">{{ l.lenderName }}</td>
+            <td data-label="Capital" i18n-data-label="@@accounting.loans-list.capital.2bd8d265" class="ln-num">{{ l.principal | number : '1.3-3' }}</td>
+            <td data-label="Taux" i18n-data-label="@@accounting.loans-list.taux.18bc95b8" class="ln-num">{{ l.annualRatePercent | number : '1.2-4' }} %</td>
+            <td data-label="Échéances" i18n-data-label="@@accounting.loans-list.echeances.c2079408" class="ln-num">{{ l.installmentCount }}</td>
+            <td data-label="Coût du crédit" i18n-data-label="@@accounting.loans-list.cout.du.credit.2f8c4b43" class="ln-num">{{ l.totalInterest | number : '1.3-3' }}</td>
+            <td data-label="Statut" i18n-data-label="@@accounting.loans-list.statut.659499f3">{{ statusLabel(l) }}</td>
             <td>
               <a class="ln-link" [routerLink]="['/accounting/loans', l.id]"><ng-container i18n="@@accounting.loans.echeancier.7930f4ee">Échéancier </ng-container> <i class="pi pi-angle-right" aria-hidden="true"></i></a>
             </td>
@@ -169,7 +169,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   styles: `
     @use '../shared/accounting-layout';
     .ln-fields { display:flex; flex-wrap:wrap; align-items:flex-end; gap:var(--spacing-4); }
-    .ln-num { text-align:right; font-variant-numeric:tabular-nums; }
+    .ln-num { text-align:end; font-variant-numeric:tabular-nums; }
     .ln-code { font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-weight:500; }
     .ln-table-card, .ln-form-card { padding:var(--spacing-5); }
     .ln-form-title { margin:0 0 var(--spacing-4); font-size:var(--font-size-md); font-weight:var(--font-weight-semibold); }

@@ -347,7 +347,7 @@ const FIELD_IDS = {
       color: var(--color-text-primary);
       margin-bottom: var(--spacing-2);
     }
-    .required { color: var(--color-error-600); margin-left: var(--spacing-1); }
+    .required { color: var(--color-error-600); margin-inline-start: var(--spacing-1); }
     .field-error {
       display: flex; align-items: center; gap: var(--spacing-2);
       margin-top: var(--spacing-1); font-size: var(--font-size-sm); color: var(--color-error-600);

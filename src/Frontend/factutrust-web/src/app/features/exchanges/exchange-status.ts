@@ -1,3 +1,5 @@
+import { erpDateLocale } from '@core/i18n/erp-format';
+
 /**
  * Contrat JSON Exchange : enums sérialisés en PascalCase via
  * JsonStringEnumConverter() (Program.cs). Accepte aussi les entiers 0..N.
@@ -223,7 +225,7 @@ export function messageDayLabel(iso: string, now = new Date()): string {
   const diffDays = Math.round((startToday.getTime() - startMsg.getTime()) / 86_400_000);
   if (diffDays === 0) return $localize`:@@exchanges.exchange-status.ts.aujourd.hui.baca97f6:Aujourd'hui`;
   if (diffDays === 1) return $localize`:@@exchanges.exchange-status.ts.hier.e6faf8c2:Hier`;
-  return d.toLocaleDateString('fr-FR', {
+  return d.toLocaleDateString(erpDateLocale('fr-FR'), {
     weekday: 'long',
     day: 'numeric',
     month: 'long',

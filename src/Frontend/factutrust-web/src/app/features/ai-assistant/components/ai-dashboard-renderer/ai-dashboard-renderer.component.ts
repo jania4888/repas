@@ -167,7 +167,7 @@ import { dashboardFullConfigToCsv, dashboardTableSectionToCsv, downloadCsv } fro
       font: inherit;
       cursor: pointer;
       text-decoration: underline;
-      text-align: left;
+      text-align: start;
     }
 
     .cell-link:hover {

@@ -171,7 +171,7 @@ export class OnboardingChecklistComponent implements OnInit {
   readonly progressLabel = computed(() => {
     const list = this.items();
     const done = list.filter(i => this.doneIds().has(i.id)).length;
-    return `${done} / ${list.length} étapes terminées`;
+    return $localize`:@@shared.onboarding-checklist.etapes.terminees:${done}:done: / ${list.length}:total: étapes terminées`;
   });
 
   ngOnInit(): void {

@@ -13,7 +13,7 @@
   margin: 0;
   overflow: hidden;
   border-radius: 0;
-  border-left: 1px solid var(--color-border-subtle);
+  border-inline-start: 1px solid var(--color-border-subtle);
 
   .p-dialog-header {
     flex-shrink: 0;
@@ -39,6 +39,6 @@
     max-height: min(92dvh, 100%);
     width: min(580px, 96vw) !important;
     border-radius: var(--radius-2xl);
-    border-left: none;
+    border-inline-start: none;
   }
 }

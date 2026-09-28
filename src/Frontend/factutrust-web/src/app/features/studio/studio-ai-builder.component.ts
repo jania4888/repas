@@ -229,7 +229,7 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
     .sab-welcome { font-size: 1.25rem; margin: 0; }
     .sab-examples { display: flex; flex-wrap: wrap; gap: .4rem; }
     .sab-chip { border: 1px solid var(--surface-300); background: var(--surface-50); border-radius: 999px;
-      padding: .35rem .75rem; font-size: .82rem; cursor: pointer; text-align: left; }
+      padding: .35rem .75rem; font-size: .82rem; cursor: pointer; text-align: start; }
     .sab-chip--static { cursor: default; }
     .sab-line { white-space: pre-wrap; padding: .75rem 1rem; border-radius: 10px; background: var(--surface-50);
       border: 1px solid var(--surface-200); line-height: 1.5; max-width: 95%; }
@@ -249,7 +249,7 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
     .sab-report__head h4 { margin: 0; font-size: 1rem; }
     .sab-report__hint { margin: .15rem 0 0; font-size: .82rem; color: var(--text-color-secondary); }
     .sab-plan__label { font-weight: 600; }
-    .sab-plan__detail { color: var(--text-color-secondary); text-align: right; }
+    .sab-plan__detail { color: var(--text-color-secondary); text-align: end; }
     .sab-plan__entities { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .75rem; }
     .sab-plan__warning { margin: .5rem 0 0; font-size: .85rem; color: var(--orange-600); }
     .sab-plan__actions { display: flex; gap: .5rem; margin-top: 1rem; }

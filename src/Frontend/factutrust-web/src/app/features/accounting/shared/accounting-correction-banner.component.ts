@@ -30,7 +30,7 @@ import { ActivatedRoute, Router } from '@angular/router';
       font-size: var(--font-size-sm);
     }
     .acct-correction-banner__btn {
-      margin-left: auto;
+      margin-inline-start: auto;
       padding: 0.35rem 0.75rem;
       border-radius: var(--radius-md);
       border: 1px solid var(--color-info-300, #93c5fd);

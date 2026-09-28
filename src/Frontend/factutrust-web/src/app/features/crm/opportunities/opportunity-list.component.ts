@@ -444,7 +444,7 @@ interface StageOption {
     }
     .required {
       color: var(--color-error-600);
-      margin-left: var(--spacing-1);
+      margin-inline-start: var(--spacing-1);
     }
     .field-error {
       display: block;

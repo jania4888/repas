@@ -118,10 +118,10 @@ interface EditableLine extends SalesReturnNotePrefillLineDto {
     label { display: block; font-weight: 600; margin: 0.75rem 0 0.35rem; }
     .form-control, .qty { width: 100%; padding: 0.45rem 0.6rem; }
     .form-control.invalid { border-color: var(--color-danger-500, #dc2626); }
-    .qty { max-width: 8rem; text-align: right; }
+    .qty { max-width: 8rem; text-align: end; }
     .data-table { width: 100%; border-collapse: collapse; }
     .data-table th, .data-table td { padding: 0.5rem; border-bottom: 1px solid var(--surface-border, #e5e7eb); }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .mono { font-variant-numeric: tabular-nums; }
     .muted { color: var(--text-muted, #64748b); }
     .field-error { margin: 0.35rem 0 0; color: var(--color-danger-600, #dc2626); font-size: 0.875rem; }

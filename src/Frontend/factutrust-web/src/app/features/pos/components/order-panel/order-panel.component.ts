@@ -431,7 +431,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
     }
 
     .order-panel__notes-badge {
-      margin-left: auto;
+      margin-inline-start: auto;
       min-width: 18px;
       height: 18px;
       padding: 0 6px;
@@ -623,7 +623,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
     .order-panel__visual-cart-qty {
       position: absolute;
       bottom: 0;
-      right: 0;
+      inset-inline-end: 0;
       font-size: 0.65rem;
       font-weight: var(--font-weight-semibold);
       background: rgba(0,0,0,0.6);
@@ -666,7 +666,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
     .order-panel__schedule-btns-label {
       font-size: var(--font-size-xs);
       color: var(--color-text-tertiary);
-      margin-right: var(--spacing-2);
+      margin-inline-end: var(--spacing-2);
     }
 
     .order-panel__schedule-btn {
@@ -1074,13 +1074,13 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
     @media (max-width: 768px) {
       .order-panel__header,
       .order-panel__client {
-        padding-left: var(--spacing-4);
-        padding-right: var(--spacing-4);
+        padding-inline-start: var(--spacing-4);
+        padding-inline-end: var(--spacing-4);
       }
 
       .order-panel__divider {
-        margin-left: var(--spacing-4);
-        margin-right: var(--spacing-4);
+        margin-inline-start: var(--spacing-4);
+        margin-inline-end: var(--spacing-4);
       }
 
       .order-panel__totals {

@@ -23,6 +23,8 @@ import { WarehouseContextService } from '@core/services/warehouse-context.servic
   styleUrl: './select-warehouse.component.scss'
 })
 export class SelectWarehouseComponent implements OnInit {
+  protected readonly loc_choisir_un_entrepot_actif_0e7804 = $localize`:@@auth.select-warehouse.tpl.choisir.un.entrepot.actif.0e7804eb:Choisir un entrepôt actif`;
+
   readonly shellConfig = SELECT_WAREHOUSE_AUTH_SHELL_CONFIG;
   private route = inject(ActivatedRoute);
   private router = inject(Router);

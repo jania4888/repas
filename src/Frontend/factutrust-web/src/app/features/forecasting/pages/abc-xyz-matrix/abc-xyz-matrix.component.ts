@@ -103,8 +103,8 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
   styles: [`
     .abc-xyz { display: block; }
     .actions-row { margin-bottom: 1rem; display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
-    .actions-ai { margin-left: auto; }
-    @media (max-width: 768px) { .actions-ai { margin-left: 0; width: 100%; } }
+    .actions-ai { margin-inline-start: auto; }
+    @media (max-width: 768px) { .actions-ai { margin-inline-start: 0; width: 100%; } }
     .info { color: var(--color-neutral-600, #6b7280); font-size: .9rem; margin: 0 0 1rem; }
     .state { padding: 1.25rem; color: var(--color-neutral-600, #6b7280); font-style: italic; }
     .state.empty { background: var(--color-neutral-50, #f9fafb); border: 1px dashed var(--color-neutral-300, #d1d5db); border-radius: 8px; }
@@ -117,9 +117,9 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
     .cell.data .label { font-size: .7rem; color: var(--color-primary-700, #1e40af); margin-top: .25rem; font-style: italic; }
     .cell.data.empty .count { color: var(--color-neutral-300, #d1d5db); }
     .table { width: 100%; border-collapse: collapse; }
-    .table th, .table td { padding: .55rem .75rem; border-bottom: 1px solid var(--color-neutral-200, #e5e7eb); text-align: left; font-size: .9rem; }
+    .table th, .table td { padding: .55rem .75rem; border-bottom: 1px solid var(--color-neutral-200, #e5e7eb); text-align: start; font-size: .9rem; }
     .table th { background: var(--color-neutral-50, #f9fafb); font-weight: 600; }
-    .table .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .table .num { text-align: end; font-variant-numeric: tabular-nums; }
     .product { display: flex; flex-direction: column; }
     .product .code { font-size: .8rem; color: var(--color-neutral-500, #9ca3af); font-family: monospace; }
     .product .name { font-weight: 500; }

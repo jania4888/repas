@@ -63,6 +63,7 @@ import { CompanyModulesService } from '@core/services/company-modules.service';
 import { ModuleRecommendationsService, ModuleRecommendationDto } from '@core/services/module-recommendations.service';
 import { ToastService } from '@core/services/toast.service';
 import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 @Component({
   selector: 'app-dashboard',
@@ -799,7 +800,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
     }
 
     .dashboard-migration-banner__retry {
-      margin-left: auto;
+      margin-inline-start: auto;
       border: none;
       border-radius: var(--radius-md);
       background: var(--color-primary);
@@ -851,7 +852,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       padding: var(--spacing-4) var(--spacing-5);
       margin-bottom: var(--spacing-6);
       border: 1px solid var(--color-warning-200);
-      border-left: 4px solid var(--color-warning-600, #d97706);
+      border-inline-start: 4px solid var(--color-warning-600, #d97706);
       box-shadow: var(--shadow-soft-md, var(--shadow-sm));
       animation: fadeInUp 0.5s ease-out 0.1s both;
     }
@@ -896,7 +897,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
     }
 
     .urgent-item .urgent-arrow {
-      margin-left: auto;
+      margin-inline-start: auto;
       opacity: 0;
       transition: opacity var(--transition-fast);
     }
@@ -909,7 +910,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       background: var(--gradient-banner-danger, var(--color-error-50));
       color: var(--color-error-700);
       border: 1px solid var(--color-error-100);
-      border-left: 3px solid var(--color-error-600);
+      border-inline-start: 3px solid var(--color-error-600);
     }
 
     .urgent-danger:hover {
@@ -921,7 +922,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       background: var(--gradient-banner-warning, var(--color-warning-50));
       color: var(--color-warning-700);
       border: 1px solid var(--color-warning-100);
-      border-left: 3px solid var(--color-warning-600);
+      border-inline-start: 3px solid var(--color-warning-600);
     }
 
     .urgent-warning:hover {
@@ -1041,8 +1042,8 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       content: '';
       position: absolute;
       bottom: 0;
-      left: 0;
-      right: 0;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
       height: 3px;
       background: var(--gradient-primary, linear-gradient(90deg, #3b82f6, #6366f1));
       transform: scaleX(0);
@@ -1614,12 +1615,12 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       .p-datatable-tbody > tr.table-row {
         transition: all var(--transition-fast);
         cursor: pointer;
-        border-left: 3px solid transparent;
+        border-inline-start: 3px solid transparent;
       }
 
       .p-datatable-tbody > tr.table-row:hover {
         background: linear-gradient(90deg, var(--color-primary-50) 0%, transparent 100%);
-        border-left-color: var(--color-primary-500);
+        border-inline-start-color: var(--color-primary-500);
         transform: translateX(4px);
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
       }
@@ -1646,7 +1647,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
     }
 
     .text-right {
-      text-align: right;
+      text-align: end;
     }
 
     .invoice-link {
@@ -1744,7 +1745,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
     }
 
     .top-client-revenue {
-      text-align: right;
+      text-align: end;
       min-width: 120px;
       display: flex;
       flex-direction: column;
@@ -1866,7 +1867,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
     .timeline::before {
       content: '';
       position: absolute;
-      left: 15px;
+      inset-inline-start: 15px;
       top: 8px;
       bottom: 8px;
       width: 2px;
@@ -2316,7 +2317,7 @@ export class DashboardComponent implements OnInit {
     else if (hour < 18) greeting = $localize`:@@dashboard.dashboard.ts.bon.apres.midi.d523da21:Bon après-midi`;
     else greeting = $localize`:@@dashboard.dashboard.ts.bonsoir.29192c62:Bonsoir`;
 
-    return user ? `${greeting}, ${user.firstName}` : greeting;
+    return user ? $localize`:@@dashboard.dashboard.salutation.prenom:${greeting}:greeting:, ${user.firstName}:firstName:` : greeting;
   }
 
   ngOnInit(): void {
@@ -2501,7 +2502,7 @@ export class DashboardComponent implements OnInit {
     if (!isoDate) return '—';
     const d = new Date(isoDate);
     if (Number.isNaN(d.getTime())) return isoDate;
-    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    return d.toLocaleDateString(erpDateLocale('fr-FR'), { day: 'numeric', month: 'long', year: 'numeric' });
   }
 
   loadAccountingKpis(): void {

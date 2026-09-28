@@ -145,12 +145,12 @@ export function sceAccountDigitCount(accountNumber: string): number {
         </ng-template>
         <ng-template pTemplate="body" let-r>
           <tr [class.coa-row-inactive]="!r.isActive">
-            <td class="coa-account-cell" data-label="Compte">
+            <td class="coa-account-cell" data-label="Compte" i18n-data-label="@@accounting.chart-of-accounts.compte.c45740bb">
               <span class="coa-account-code" [style.paddingInlineStart.rem]="indentRem(r.level)">{{ r.accountNumber }}</span>
             </td>
-            <td data-label="Libellé">{{ r.label }}</td>
-            <td class="coa-col-narrow coa-class-cell" data-label="Classe">{{ r.accountClass }}</td>
-            <td class="coa-col-narrow" data-label="Système">
+            <td data-label="Libellé" i18n-data-label="@@accounting.chart-of-accounts.libelle.f5485bba">{{ r.label }}</td>
+            <td class="coa-col-narrow coa-class-cell" data-label="Classe" i18n-data-label="@@accounting.chart-of-accounts.classe.3c38412a">{{ r.accountClass }}</td>
+            <td class="coa-col-narrow" data-label="Système" i18n-data-label="@@accounting.chart-of-accounts.systeme.62d09520">
               <span
                 class="coa-badge"
                 [class.coa-badge--yes]="r.isSystem"
@@ -158,7 +158,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
                 {{ r.isSystem ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}
               </span>
             </td>
-            <td class="coa-col-narrow" data-label="Auxiliaire">
+            <td class="coa-col-narrow" data-label="Auxiliaire" i18n-data-label="@@accounting.chart-of-accounts.auxiliaire.b8c6c266">
               @if (r.isAuxiliary) {
                 <span
                   class="coa-badge coa-badge--aux"
@@ -169,7 +169,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
                 <span class="coa-aux-none" i18n="@@accounting.chart-of-accounts.text.1b93795b">—</span>
               }
             </td>
-            <td class="coa-col-narrow" data-label="Statut">
+            <td class="coa-col-narrow" data-label="Statut" i18n-data-label="@@accounting.chart-of-accounts.statut.659499f3">
               <span class="coa-status-cell">
                 <span
                   class="coa-badge"
@@ -303,7 +303,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
     }
     .coa-search-wrap.p-input-icon-left i {
       position: absolute;
-      left: var(--spacing-3);
+      inset-inline-start: var(--spacing-3);
       top: 50%;
       transform: translateY(-50%);
       color: var(--color-text-secondary);
@@ -312,7 +312,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
     :host ::ng-deep .coa-search-wrap .p-inputtext,
     :host ::ng-deep .coa-search-input {
       width: 100%;
-      padding-left: var(--spacing-8);
+      padding-inline-start: var(--spacing-8);
     }
     .coa-count {
       margin: 0;

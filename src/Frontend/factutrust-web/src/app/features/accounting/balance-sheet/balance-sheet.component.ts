@@ -173,7 +173,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     .bs-icon--assets { background:var(--color-primary-50,#eff6ff); color:var(--color-primary-600,#2563eb); }
     .bs-icon--liabilities { background:var(--color-warning-50,#fffbeb); color:var(--color-warning-600,#d97706); }
     .bs-account-num { font-family:monospace; font-weight:500; }
-    .text-right { text-align:right; }
+    .text-right { text-align:end; }
     .tabnum { font-variant-numeric:tabular-nums; }
     .bs-prev-year { color:var(--color-text-tertiary); }
     .bs-total-row { font-weight:700; }

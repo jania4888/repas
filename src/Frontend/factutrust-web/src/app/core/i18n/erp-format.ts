@@ -1,4 +1,14 @@
 import { inject, Injectable, LOCALE_ID } from '@angular/core';
+import { erpBootEffectiveLocale } from './erp-boot-locale';
+
+/**
+ * Locale Intl des dates écrites en toutes lettres (mois, jour de semaine) : la locale française
+ * d'origine en français (rendu inchangé), `ar-TN` en arabe (mois tunisiens, chiffres latins).
+ * Réservé aux formats textuels : une date purement numérique reste au format français.
+ */
+export function erpDateLocale(frLocale = 'fr-FR'): string {
+  return erpBootEffectiveLocale === 'ar' ? 'ar-TN' : frLocale;
+}
 
 const collatorCache = new Map<string, Intl.Collator>();
 

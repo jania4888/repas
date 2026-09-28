@@ -162,7 +162,7 @@ interface TransferLine {
                 placeholder="Rechercher par nom ou code…" i18n-placeholder="@@transfers.transfer-create.rechercher.par.nom.ou.code.9c838cb7"
                 appendTo="body"
                 [style]="{ width: '100%' }"
-                [attr.aria-label]="'Rechercher un produit à ajouter au transfert'">
+                [attr.aria-label]="loc_rechercher_un_produit_a_ajouter_au_t_f13518">
                 <ng-template let-product pTemplate="item">
                   <div class="product-suggestion">
                     <div class="product-suggestion-main">
@@ -426,7 +426,7 @@ interface TransferLine {
     .lines-table-wrap {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
-      margin-right: 0;
+      margin-inline-end: 0;
       padding-bottom: var(--spacing-1, 0.25rem);
     }
 
@@ -455,7 +455,7 @@ interface TransferLine {
     .lines-table th,
     .lines-table td {
       padding: var(--spacing-3, 0.75rem);
-      text-align: left;
+      text-align: start;
       border-bottom: 1px solid var(--color-border-subtle, #e2e8f0);
       vertical-align: middle;
       min-width: 0;
@@ -628,7 +628,7 @@ interface TransferLine {
     }
 
     :host ::ng-deep .lines-table .p-inputnumber-input {
-      text-align: right;
+      text-align: end;
     }
 
     :host ::ng-deep .p-datepicker {
@@ -690,6 +690,8 @@ interface TransferLine {
   `],
 })
 export class TransferCreateComponent implements OnInit {
+  protected readonly loc_rechercher_un_produit_a_ajouter_au_t_f13518 = $localize`:@@transfers.transfer-create.tpl.rechercher.un.produit.a.ajouter.au.trans.f1351873:Rechercher un produit à ajouter au transfert`;
+
   readonly loc_ui_tern_notes_pour_la_ligne_c1c6dd = $localize`:@@ui.tern.notes.pour.la.ligne.c1c6dd:Notes pour la ligne `;
   readonly loc_ui_tern_retirer_c3dfc6 = $localize`:@@ui.tern.retirer.c3dfc6:Retirer `;
   readonly loc_ui_tern_du_transfert_60be8c = $localize`:@@ui.tern.du.transfert.60be8c: du transfert`;

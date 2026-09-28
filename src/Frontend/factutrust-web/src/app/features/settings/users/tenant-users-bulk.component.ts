@@ -96,7 +96,7 @@ interface BulkRow {
         </ng-template>
         <ng-template pTemplate="body" let-row let-ri="rowIndex">
           <tr>
-            <td data-label="Prénom">
+            <td data-label="Prénom" i18n-data-label="@@settings.tenant-users-bulk.prenom.e4387ade">
               <input
                 pInputText
                 class="w-full"
@@ -105,7 +105,7 @@ interface BulkRow {
                 autocomplete="given-name"
                 placeholder="Prénom" i18n-placeholder="@@settings.users.prenom.e4387ade" />
             </td>
-            <td data-label="Nom">
+            <td data-label="Nom" i18n-data-label="@@settings.tenant-users-bulk.nom.7ff20370">
               <input
                 pInputText
                 class="w-full"
@@ -124,7 +124,7 @@ interface BulkRow {
                 autocomplete="off"
                 placeholder="nom@entreprise.fr" i18n-placeholder="@@settings.users.nom.entreprise.fr.9626f884" />
             </td>
-            <td data-label="Mot de passe">
+            <td data-label="Mot de passe" i18n-data-label="@@settings.tenant-users-bulk.mot.de.passe.94e2f3ee">
               <p-password
                 [(ngModel)]="row.password"
                 [ngModelOptions]="{standalone: true}"
@@ -135,7 +135,7 @@ interface BulkRow {
                 styleClass="w-full"
                 inputStyleClass="w-full bulk-password-input"></p-password>
             </td>
-            <td data-label="Rôle">
+            <td data-label="Rôle" i18n-data-label="@@settings.tenant-users-bulk.role.8b824790">
               <p-select
                 [options]="roleOptions"
                 [ngModel]="row.role"
@@ -146,7 +146,7 @@ interface BulkRow {
                 placeholder="Rôle" i18n-placeholder="@@settings.users.role.8b824790"
                 styleClass="w-full"></p-select>
             </td>
-            <td data-label="Modules">
+            <td data-label="Modules" i18n-data-label="@@settings.tenant-users-bulk.modules.04e9462c">
               <div class="module-cell">
                 <p-button
                   label="Configurer" i18n-label="@@settings.users.configurer.382efbe9"
@@ -155,7 +155,7 @@ interface BulkRow {
                   (onClick)="openModules(ri)"></p-button>
               </div>
             </td>
-            <td data-label="Supprimer">
+            <td data-label="Supprimer" i18n-data-label="@@settings.tenant-users-bulk.supprimer.1acfc1c7">
               <p-button
                 icon="pi pi-trash"
                 [rounded]="true"
@@ -351,7 +351,7 @@ interface BulkRow {
     .extension-badge {
       display: inline-flex;
       align-items: center;
-      margin-left: var(--spacing-2);
+      margin-inline-start: var(--spacing-2);
       padding: 0 var(--spacing-2);
       font-size: var(--font-size-xs, 0.7rem);
       font-weight: var(--font-weight-medium);

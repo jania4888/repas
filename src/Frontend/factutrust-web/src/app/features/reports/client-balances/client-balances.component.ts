@@ -117,7 +117,7 @@ import {
     .filter-input {
       width: 100%;
       min-width: 220px;
-      padding: var(--spacing-2) var(--spacing-3) var(--spacing-2) var(--spacing-8);
+      padding-block: var(--spacing-2); padding-inline: var(--spacing-8) var(--spacing-3);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-lg);
       font-size: var(--font-size-sm);

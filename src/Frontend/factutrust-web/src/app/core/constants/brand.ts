@@ -2,8 +2,8 @@ export const BRAND = {
   name: 'InstaFact',
   shortName: 'IF',
   tagline: 'GESTION COMMERCIALE INTELLIGENTE',
-  taglineShort: 'GESTION COMMERCIALE',
-  taglineLong: 'Plateforme de gestion commerciale intelligente',
+  taglineShort: $localize`:@@core.brand.tagline.short:GESTION COMMERCIALE`,
+  taglineLong: $localize`:@@core.brand.tagline.long:Plateforme de gestion commerciale intelligente`,
   streetName: 'Rue InstaFact',
   // Variantes WebP à taille d'affichage (les PNG d'origine font ~950 Ko pour 56 px de haut).
   logoLockup: 'assets/branding/instafact-lockup.webp',

@@ -27,7 +27,7 @@
 
 .wf-issues {
   margin: var(--spacing-1, 0.25rem) 0 0;
-  padding-left: var(--spacing-4);
+  padding-inline-start: var(--spacing-4);
 }
 
 .wf-issues__link {
@@ -36,7 +36,7 @@
   padding: 0;
   color: inherit;
   font: inherit;
-  text-align: left;
+  text-align: start;
   text-decoration: underline;
   cursor: pointer;
 }

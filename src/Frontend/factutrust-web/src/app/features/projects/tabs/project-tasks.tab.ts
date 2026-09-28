@@ -54,6 +54,7 @@ import {
   taskPriorityDotClass,
   taskStatusPillClass
 } from '../project-tasks.vm';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 type TaskView = 'list' | 'board' | 'calendar' | 'planning';
 
@@ -291,7 +292,7 @@ type TaskView = 'list' | 'board' | 'calendar' | 'planning';
             <div class="proj-planning-label" [routerLink]="['/projects', t.projectId, 'tasks', t.id]">{{ t.title }}</div>
             <div class="proj-planning-track">
               @if (t.dueDate && project?.startDate) {
-                <div class="proj-planning-bar" [style.left.%]="barLeft(t)" [style.width.%]="barWidth(t)">
+                <div class="proj-planning-bar" [style.inset-inline-start.%]="barLeft(t)" [style.width.%]="barWidth(t)">
                   <span>{{ t.progressPercent }}%</span>
                   <i class="proj-planning-fill" [style.width.%]="t.progressPercent"></i>
                 </div>
@@ -388,7 +389,7 @@ type TaskView = 'list' | 'board' | 'calendar' | 'planning';
             class="w-full"
             [(ngModel)]="description"
             rows="3"
-            placeholder="Détails, contexte, critères d'acceptation…"></textarea>
+            placeholder="Détails, contexte, critères d'acceptation…" i18n-placeholder="@@projects.project-tasks.details.contexte.criteres.d.acceptation.1cc3c21f"></textarea>
         </div>
       </div>
       <ng-template pTemplate="footer">
@@ -440,7 +441,7 @@ type TaskView = 'list' | 'board' | 'calendar' | 'planning';
               class="w-full"
               [(ngModel)]="logNotes"
               rows="3"
-              placeholder="Détails, contexte…"></textarea>
+              placeholder="Détails, contexte…" i18n-placeholder="@@projects.project-tasks.details.contexte.18aa02a6"></textarea>
           </div>
         </div>
       }
@@ -603,7 +604,7 @@ export class ProjectTasksTabComponent implements OnInit {
   }
 
   get monthLabel(): string {
-    return this.cursor.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+    return this.cursor.toLocaleDateString(erpDateLocale('fr-FR'), { month: 'long', year: 'numeric' });
   }
 
   get monthDays(): { key: string; day: number; inMonth: boolean; tasks: ProjectTask[] }[] {

@@ -321,7 +321,7 @@ interface PeriodOption {
       height: 24px;
       background: linear-gradient(180deg, #14b8a6, #0d9488);
       border-radius: var(--radius-full);
-      margin-right: var(--spacing-2);
+      margin-inline-end: var(--spacing-2);
       vertical-align: middle;
     }
 
@@ -400,7 +400,7 @@ interface PeriodOption {
       pointer-events: none;
       transition: opacity var(--transition-fast);
       z-index: 10;
-      text-align: left;
+      text-align: start;
       line-height: 1.5;
     }
 
@@ -429,7 +429,7 @@ interface PeriodOption {
     }
 
     .empty-placeholder p { margin: 0; }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .amount { font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Consolas', monospace; font-weight: var(--font-weight-semibold); }
 
     :host ::ng-deep .reports-table .p-datatable-thead > tr > th {

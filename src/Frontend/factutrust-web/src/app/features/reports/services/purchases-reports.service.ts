@@ -4,6 +4,7 @@ import { map, catchError } from 'rxjs/operators';
 import { SupplierInvoiceService, SupplierInvoiceListItem, isSupplierInvoicePaid, isSupplierInvoicePending } from '@core/services/supplier-invoice.service';
 import { formatLocalDate } from '@core/utils/date.util';
 import { erpPlural, erpPluralLocale } from '@core/i18n/erp-plural';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 export type ReportPeriod = 'week' | 'month' | 'quarter' | 'year' | 'all';
 
@@ -65,16 +66,16 @@ export interface PurchasesReportsData {
 }
 
 const MONTH_NAMES_FR = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  $localize`:@@reports.purchases-reports.ts.janvier.7a32ae0f:Janvier`, $localize`:@@reports.purchases-reports.ts.fevrier.63fc1803:Février`, $localize`:@@reports.purchases-reports.ts.mars.1778011d:Mars`, $localize`:@@reports.purchases-reports.ts.avril.4efeee46:Avril`, $localize`:@@reports.purchases-reports.ts.mai.afe526a6:Mai`, $localize`:@@reports.purchases-reports.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@reports.purchases-reports.ts.juillet.e8e0920c:Juillet`, $localize`:@@reports.purchases-reports.ts.aout.460b6696:Août`, $localize`:@@reports.purchases-reports.ts.septembre.08d23f31:Septembre`, $localize`:@@reports.purchases-reports.ts.octobre.0ed28485:Octobre`, $localize`:@@reports.purchases-reports.ts.novembre.632580af:Novembre`, $localize`:@@reports.purchases-reports.ts.decembre.03bcd9b0:Décembre`
 ];
 
 const MONTH_SHORT_FR = [
-  'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin',
-  'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'
+  $localize`:@@reports.purchases-reports.ts.jan.efed3690:Jan`, $localize`:@@reports.purchases-reports.ts.fev.7b8852ec:Fév`, $localize`:@@reports.purchases-reports.ts.mar.c4ba0822:Mar`, $localize`:@@reports.purchases-reports.ts.avr.d648a3b7:Avr`, $localize`:@@reports.purchases-reports.ts.mai.afe526a6:Mai`, $localize`:@@reports.purchases-reports.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@reports.purchases-reports.ts.juil.190b5d60:Juil`, $localize`:@@reports.purchases-reports.ts.aout.460b6696:Août`, $localize`:@@reports.purchases-reports.ts.sep.fdd289e3:Sep`, $localize`:@@reports.purchases-reports.ts.oct.51327aef:Oct`, $localize`:@@reports.purchases-reports.ts.nov.bb9bfefd:Nov`, $localize`:@@reports.purchases-reports.ts.dec.2bc2249a:Déc`
 ];
 
-const DAY_NAMES_FR = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+const DAY_NAMES_FR = ['Lun', $localize`:@@reports.purchases-reports.ts.mar.c4ba0822:Mar`, 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
 const CROSS_TAB_YEARS_WINDOW = 5;
 
@@ -234,7 +235,7 @@ export class PurchasesReportsService {
           return invDate >= dayStart && invDate <= dayEnd;
         }).length;
         result.push({
-          label: dayStart.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'short' }),
+          label: dayStart.toLocaleDateString(erpDateLocale('fr-FR'), { weekday: 'long', day: 'numeric', month: 'short' }),
           labelShort: DAY_NAMES_FR[dayStart.getDay() === 0 ? 6 : dayStart.getDay() - 1],
           amount,
           invoiceCount,

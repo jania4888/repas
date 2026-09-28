@@ -140,16 +140,16 @@ const MONTH_LABELS = [$localize`:@@accounting.budget-entry.ts.jan.efed3690:Jan`,
     .be-badge-draft { background: var(--color-warning-50, #fffbeb); color: var(--color-warning-700, #a16207); border: 1px solid var(--color-warning-200, #fde68a); }
     .be-badge-validated { background: var(--color-success-100, #dcfce7); color: var(--color-success-700, #15803d); }
     .be-validated-info { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
-    .be-actions { display: flex; gap: var(--spacing-2); margin-left: auto; }
+    .be-actions { display: flex; gap: var(--spacing-2); margin-inline-start: auto; }
     .be-distribute { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-3); border: 1px solid var(--color-primary-200, #bfdbfe); }
     .be-inp { padding: var(--spacing-1) var(--spacing-2); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-background-elevated); color: var(--color-text-primary); font-size: var(--font-size-sm); }
     .be-dist-inp { width: 10rem; }
-    .be-cell { width: 6.2rem; text-align: right; font-variant-numeric: tabular-nums; }
+    .be-cell { width: 6.2rem; text-align: end; font-variant-numeric: tabular-nums; }
     .be-post-col { min-width: 16rem; }
-    .be-code { font-family: ui-monospace, monospace; font-weight: var(--font-weight-semibold); margin-right: var(--spacing-1); }
-    .be-kind { display: inline-block; margin-left: var(--spacing-2); padding: 0 0.4rem; border-radius: var(--radius-sm, 4px); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); background: var(--color-warning-50, #fffbeb); color: var(--color-warning-700, #a16207); }
+    .be-code { font-family: ui-monospace, monospace; font-weight: var(--font-weight-semibold); margin-inline-end: var(--spacing-1); }
+    .be-kind { display: inline-block; margin-inline-start: var(--spacing-2); padding: 0 0.4rem; border-radius: var(--radius-sm, 4px); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); background: var(--color-warning-50, #fffbeb); color: var(--color-warning-700, #a16207); }
     .be-kind-rev { background: var(--color-success-100, #dcfce7); color: var(--color-success-700, #15803d); }
-    .be-amt { text-align: right; font-variant-numeric: tabular-nums; }
+    .be-amt { text-align: end; font-variant-numeric: tabular-nums; }
     .be-row-total { font-weight: var(--font-weight-semibold); }
     .be-muted { color: var(--color-text-tertiary); }
     .be-totals-row td { font-weight: var(--font-weight-semibold); border-top: 2px solid var(--color-border-default); }

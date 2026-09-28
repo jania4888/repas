@@ -140,7 +140,7 @@ const MONTH_NAMES = [$localize`:@@accounting.budget-report.ts.janvier.7a32ae0f:J
       color: var(--color-warning-700, #a16207); font-size: var(--font-size-sm);
     }
     .br-table-card { padding: var(--spacing-4); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); margin-top: var(--spacing-4); }
-    .br-amt { text-align: right; font-variant-numeric: tabular-nums; }
+    .br-amt { text-align: end; font-variant-numeric: tabular-nums; }
     .br-mono { font-family: ui-monospace, monospace; }
     .br-badge { display: inline-block; padding: 0.15rem 0.55rem; border-radius: var(--radius-pill, 999px); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); }
     .br-badge-expense { background: var(--color-warning-50, #fffbeb); color: var(--color-warning-700, #a16207); border: 1px solid var(--color-warning-200, #fde68a); }

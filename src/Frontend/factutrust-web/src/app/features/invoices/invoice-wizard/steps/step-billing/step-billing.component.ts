@@ -85,8 +85,8 @@ import { PaymentMethod } from '../../models/invoice-wizard.models';
     }
 
     .payment-toggle.expanded {
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
       border-bottom-color: transparent;
     }
 
@@ -99,7 +99,7 @@ import { PaymentMethod } from '../../models/invoice-wizard.models';
     }
 
     .payment-summary {
-      margin-left: auto;
+      margin-inline-start: auto;
       color: var(--color-neutral-500, #6b7280);
       font-size: var(--font-size-xs, 12px);
     }

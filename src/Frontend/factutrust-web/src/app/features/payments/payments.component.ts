@@ -402,7 +402,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
 
     .p-input-icon-left i {
       position: absolute;
-      left: var(--spacing-3);
+      inset-inline-start: var(--spacing-3);
       top: 50%;
       transform: translateY(-50%);
       color: var(--color-text-secondary);
@@ -410,7 +410,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
 
     .p-input-icon-left input {
       width: 100%;
-      padding-left: var(--spacing-8);
+      padding-inline-start: var(--spacing-8);
     }
 
     /* Table improvements */
@@ -438,12 +438,12 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
       .p-datatable-tbody > tr.table-row {
         transition: all var(--transition-fast);
         cursor: pointer;
-        border-left: 3px solid transparent;
+        border-inline-start: 3px solid transparent;
       }
 
       .p-datatable-tbody > tr.table-row:hover {
         background: linear-gradient(90deg, var(--color-primary-50) 0%, transparent 100%);
-        border-left-color: var(--color-primary-500);
+        border-inline-start-color: var(--color-primary-500);
         transform: translateX(4px);
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
       }
@@ -481,7 +481,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
     }
 
     .text-right {
-      text-align: right;
+      text-align: end;
     }
 
     .invoice-link {

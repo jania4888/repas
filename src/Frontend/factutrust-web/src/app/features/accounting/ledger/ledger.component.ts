@@ -63,6 +63,10 @@ type LedgerMode = 'single' | 'range' | 'recap';
   styleUrl: './ledger.component.scss'
 })
 export class LedgerComponent implements OnInit {
+  protected loc_afficher_les_mouvements_du_compte_ac_02e9c2(p0: unknown): string {
+    return $localize`:@@accounting.ledger.tpl.afficher.les.mouvements.du.compte.accoun.02e9c276:Afficher les mouvements du compte ${p0}:account:`;
+  }
+
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly route = inject(ActivatedRoute);

@@ -79,6 +79,10 @@ import { ReplenishmentExportService } from '../../services/replenishment-export.
   styleUrls: ['./replenishment-board.component.scss']
 })
 export class ReplenishmentBoardComponent implements OnInit {
+  protected loc_selectionner_productname_e7942c(p0: unknown): string {
+    return $localize`:@@forecasting.replenishment-board.tpl.selectionner.productname.e7942c04:Sélectionner ${p0}:productName:`;
+  }
+
   private readonly forecastingService = inject(ForecastingService);
   private readonly exportService = inject(ReplenishmentExportService);
   private readonly toast = inject(ToastService);

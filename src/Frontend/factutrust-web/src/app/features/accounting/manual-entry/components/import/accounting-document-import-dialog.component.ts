@@ -284,7 +284,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
     .adi-facts { margin:0; display:flex; flex-direction:column; gap:var(--spacing-1); }
     .adi-facts > div { display:flex; justify-content:space-between; gap:var(--spacing-3); font-size:var(--font-size-sm); }
     .adi-facts dt { color:var(--color-text-secondary); margin:0; }
-    .adi-facts dd { margin:0; font-variant-numeric:tabular-nums; text-align:right; }
+    .adi-facts dd { margin:0; font-variant-numeric:tabular-nums; text-align:end; }
     .adi-facts__total { border-top:1px solid var(--color-border-subtle); margin-top:var(--spacing-1); padding-top:var(--spacing-1); font-weight:600; }
 
     .adi-badge { display:flex; align-items:center; gap:var(--spacing-2); margin:var(--spacing-2) 0 0; font-size:var(--font-size-xs); }
@@ -296,11 +296,11 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
     .adi-apply-hint { margin:var(--spacing-2) 0 0; font-size:var(--font-size-xs); color:var(--color-text-secondary); }
 
     .adi-table { width:100%; border-collapse:collapse; font-size:var(--font-size-sm); }
-    .adi-table th, .adi-table td { padding:var(--spacing-2); border-bottom:1px solid var(--color-border-subtle); text-align:left; vertical-align:top; }
+    .adi-table th, .adi-table td { padding:var(--spacing-2); border-bottom:1px solid var(--color-border-subtle); text-align:start; vertical-align:top; }
     .adi-table tfoot th, .adi-table tfoot td { border-bottom:none; border-top:2px solid var(--color-border-default); font-weight:600; }
-    .adi-num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .adi-num { text-align:end; font-variant-numeric:tabular-nums; white-space:nowrap; }
     .adi-account-label { display:block; color:var(--color-text-tertiary); font-size:var(--font-size-xs); }
-    .adi-chip { display:inline-block; margin-left:var(--spacing-1); padding:0 var(--spacing-1); border-radius:var(--radius-sm); font-size:var(--font-size-xs); }
+    .adi-chip { display:inline-block; margin-inline-start:var(--spacing-1); padding:0 var(--spacing-1); border-radius:var(--radius-sm); font-size:var(--font-size-xs); }
     .adi-chip--danger { background:var(--color-danger); color:#fff; }
     .adi-chip--warn { background:var(--color-warning); color:#000; }
     .adi-balanced { margin:var(--spacing-2) 0 0; font-size:var(--font-size-xs); color:var(--color-success); display:flex; align-items:center; gap:var(--spacing-2); }

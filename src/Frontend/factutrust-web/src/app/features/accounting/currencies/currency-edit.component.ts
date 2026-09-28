@@ -120,7 +120,7 @@ interface RateRow {
     .ce-year { max-width: 7rem; }
     .ce-lbl { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
     .ce-inp { padding: var(--spacing-2) var(--spacing-3); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-background-elevated); color: var(--color-text-primary); font-size: var(--font-size-sm); width: 100%; }
-    .ce-rate-inp { font-variant-numeric: tabular-nums; text-align: right; }
+    .ce-rate-inp { font-variant-numeric: tabular-nums; text-align: end; }
     .ce-readonly { background: var(--color-background-subtle); color: var(--color-text-tertiary); }
     .ce-hint { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin: var(--spacing-3) 0 0; }
     .ce-direction { font-size: var(--font-size-sm); color: var(--color-text-secondary); background: var(--color-primary-50); padding: var(--spacing-3); border-radius: var(--radius-md); margin: 0 0 var(--spacing-4); }

@@ -450,7 +450,7 @@ import { LayoutRouteService } from '@core/layout/layout-route.service';
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      text-align: left;
+      text-align: start;
     }
 
     .step-label {

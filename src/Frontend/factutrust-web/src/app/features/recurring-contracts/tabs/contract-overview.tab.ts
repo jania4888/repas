@@ -68,7 +68,7 @@ import { formatContractAmount } from '../recurring-contracts.ui-utils';
             <span class="value">
               <app-status-badge
                 [status]="contract.setupFeeBilled ? 'active' : 'inactive'"
-                [label]="contract.setupFeeBilled ? 'Oui' : 'Non'"
+                [label]="contract.setupFeeBilled ? loc_oui_eaa02f : loc_non_a72199"
                 [showIcon]="false">
               </app-status-badge>
             </span>
@@ -242,7 +242,7 @@ import { formatContractAmount } from '../recurring-contracts.ui-utils';
       &:last-child { border-bottom: none; }
 
       .label { color: var(--color-neutral-600); font-size: var(--font-size-sm); }
-      .value { font-weight: var(--font-weight-medium); color: var(--color-neutral-900); text-align: right; }
+      .value { font-weight: var(--font-weight-medium); color: var(--color-neutral-900); text-align: end; }
       .value.link { color: var(--color-primary-600); text-decoration: none; }
       .value.link:hover { text-decoration: underline; }
       .value.notes { white-space: pre-wrap; font-weight: var(--font-weight-normal); }
@@ -310,6 +310,9 @@ import { formatContractAmount } from '../recurring-contracts.ui-utils';
   `]
 })
 export class ContractOverviewTabComponent {
+  protected readonly loc_non_a72199 = $localize`:@@recurring-contracts.contract-overview.tpl.non.a7219939:Non`;
+  protected readonly loc_oui_eaa02f = $localize`:@@recurring-contracts.contract-overview.tpl.oui.eaa02f3f:Oui`;
+
   @Input({ required: true }) contract!: RecurringContractDetail;
   @Input() schedule: ContractScheduleEntry[] | null = null;
   @Input() evolution: ContractEvolutionPoint[] | null = null;

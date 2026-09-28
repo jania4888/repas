@@ -174,7 +174,7 @@
   font-size: 0.75rem;
   color: var(--color-neutral-400);
   margin-top: 0.35rem;
-  padding-left: 1.25rem;
+  padding-inline-start: 1.25rem;
 }
 
 .password-section {
@@ -213,7 +213,7 @@
       // (style.css), ce qui transforme les glyphes `.pi` en « tofu ».
       font-family: 'primeicons' !important;
       position: absolute;
-      left: 1.125rem;
+      inset-inline-start: 1.125rem;
       color: var(--color-neutral-400);
       font-size: 1.05rem;
       z-index: 1;
@@ -223,7 +223,7 @@
 
     input, .p-inputtext, .p-inputmask-input, .p-password-input {
       width: 100%;
-      padding: 0.875rem 1.25rem 0.875rem 2.875rem;
+      padding-block: 0.875rem; padding-inline: 2.875rem 1.25rem;
       border: 1px solid var(--color-neutral-200);
       border-radius: 50px;
       font-size: 0.95rem;
@@ -363,7 +363,7 @@
     .p-password-input,
     .p-inputtext {
       min-height: 3.25rem;
-      padding-left: 2.875rem !important;
+      padding-inline-start: 2.875rem !important;
       border-radius: 50px;
       background: var(--color-neutral-50);
       border: 1px solid var(--color-neutral-200);
@@ -375,7 +375,7 @@
 
     .p-icon-wrapper {
       position: absolute;
-      right: 1.125rem;
+      inset-inline-end: 1.125rem;
       top: 50%;
       transform: translateY(-50%);
       color: var(--color-neutral-500);
@@ -592,7 +592,7 @@
     padding: 1rem 1.25rem;
     width: 100%;
     max-width: 42rem;
-    text-align: left;
+    text-align: start;
     background: var(--color-warning-50, #fffbeb);
     border: 1px solid var(--color-warning-200, #fde68a);
     border-radius: 1rem;
@@ -820,7 +820,7 @@
   margin-bottom: 1rem;
 
   .directory-visibility__hint {
-    margin: 0.5rem 0 0 1.75rem;
+    margin-block: 0.5rem 0; margin-inline: 1.75rem 0;
     font-size: 0.8rem;
     color: var(--color-neutral-600);
     line-height: 1.45;

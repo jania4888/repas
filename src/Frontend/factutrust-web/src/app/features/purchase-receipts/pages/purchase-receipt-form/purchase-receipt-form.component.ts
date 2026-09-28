@@ -114,8 +114,8 @@ interface ReceiptLineRow {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      [title]="isEdit() ? 'Modifier le bon de réception' : 'Nouveau bon de réception'"
-      [subtitle]="isEdit() ? (receiptNumber() || '') : 'Enregistrez une réception de marchandises fournisseur.'">
+      [title]="isEdit() ? loc_modifier_le_bon_de_reception_61e244 : loc_nouveau_bon_de_reception_479ec8"
+      [subtitle]="isEdit() ? (receiptNumber() || '') : loc_enregistrez_une_reception_de_marchan_49a116">
       @if (statusDisplay()) {
         <p-tag [value]="statusDisplay()! | backendLabel" [severity]="statusSeverity()"></p-tag>
       }
@@ -546,7 +546,7 @@ interface ReceiptLineRow {
       align-items: center;
       padding: 0.5rem 0;
     }
-    .lot-alloc-label { font-size: 0.75rem; font-weight: 600; color: #64748b; margin-right: 0.5rem; }
+    .lot-alloc-label { font-size: 0.75rem; font-weight: 600; color: #64748b; margin-inline-end: 0.5rem; }
     .btn-icon { background: none; border: none; cursor: pointer; color: #64748b; }
 
     .loading-container {
@@ -612,7 +612,7 @@ interface ReceiptLineRow {
     .w-full { width: 100%; }
     .bg-muted { background: var(--color-background-subtle, #f9fafb); }
     .text-center { text-align: center; }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .font-bold { font-weight: var(--font-weight-bold); }
 
     .lines-actions {
@@ -624,7 +624,7 @@ interface ReceiptLineRow {
     }
 
     .lines-actions__danger {
-      margin-left: auto;
+      margin-inline-start: auto;
     }
 
     .lines-table-wrap {
@@ -656,7 +656,7 @@ interface ReceiptLineRow {
     .lines-table th,
     .lines-table td {
       padding: var(--spacing-2);
-      text-align: left;
+      text-align: start;
       vertical-align: middle;
       border-bottom: 1px solid var(--color-border-subtle);
     }
@@ -684,7 +684,7 @@ interface ReceiptLineRow {
     }
 
     .lines-table th.col-total,
-    .lines-table td.col-total { text-align: right; }
+    .lines-table td.col-total { text-align: end; }
 
     .lines-table th.col-qty-ord,
     .lines-table th.col-qty-rec,
@@ -876,6 +876,10 @@ interface ReceiptLineRow {
   `]
 })
 export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
+  protected readonly loc_nouveau_bon_de_reception_479ec8 = $localize`:@@purchase-receipts.purchase-receipt-form.tpl.nouveau.bon.de.reception.479ec866:Nouveau bon de réception`;
+  protected readonly loc_modifier_le_bon_de_reception_61e244 = $localize`:@@purchase-receipts.purchase-receipt-form.tpl.modifier.le.bon.de.reception.61e244a1:Modifier le bon de réception`;
+  protected readonly loc_enregistrez_une_reception_de_marchan_49a116 = $localize`:@@purchase-receipts.purchase-receipt-form.tpl.enregistrez.une.reception.de.marchandise.49a116a9:Enregistrez une réception de marchandises fournisseur.`;
+
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private receiptService = inject(PurchaseReceiptService);

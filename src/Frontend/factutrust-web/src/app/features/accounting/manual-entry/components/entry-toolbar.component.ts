@@ -116,14 +116,14 @@ import { PERMISSIONS } from '@core/config/permission-keys';
     .entry-toolbar { display:flex; flex-wrap:wrap; justify-content:space-between; gap:var(--spacing-3); margin-bottom:var(--spacing-4); }
     .entry-toolbar__left, .entry-toolbar__right { display:flex; flex-wrap:wrap; gap:var(--spacing-2); align-items:center; }
     .dropdown { position:relative; }
-    .dropdown-menu { position:absolute; top:100%; left:0; z-index:1050; min-width:14rem; background:var(--color-background-elevated); border:1px solid var(--color-border-default); border-radius:var(--radius-md); box-shadow:var(--shadow-md); padding:var(--spacing-2); }
-    .dropdown-menu-end { right:0; left:auto; }
-    .dropdown-item { display:block; width:100%; text-align:left; padding:var(--spacing-2) var(--spacing-3); border:none; background:transparent; cursor:pointer; font-size:var(--font-size-sm); border-radius:var(--radius-sm); }
+    .dropdown-menu { position:absolute; top:100%; inset-inline-start:0; z-index:1050; min-width:14rem; background:var(--color-background-elevated); border:1px solid var(--color-border-default); border-radius:var(--radius-md); box-shadow:var(--shadow-md); padding:var(--spacing-2); }
+    .dropdown-menu-end { inset-inline-end:0; inset-inline-start:auto; }
+    .dropdown-item { display:block; width:100%; text-align:start; padding:var(--spacing-2) var(--spacing-3); border:none; background:transparent; cursor:pointer; font-size:var(--font-size-sm); border-radius:var(--radius-sm); }
     .dropdown-item:hover { background:var(--color-background-hover); }
     .dropdown-item-check { display:flex; align-items:center; gap:var(--spacing-2); padding:var(--spacing-2) var(--spacing-3); font-size:var(--font-size-sm); cursor:pointer; }
     .dropdown-divider { height:1px; background:var(--color-border-subtle); margin:var(--spacing-1) 0; }
     .btn-group { display:flex; position:relative; }
-    .dropdown-toggle-split { padding-left:var(--spacing-2); padding-right:var(--spacing-2); }
+    .dropdown-toggle-split { padding-inline-start:var(--spacing-2); padding-inline-end:var(--spacing-2); }
   `,
   host: {
     '(document:click)': 'closeMenus()'

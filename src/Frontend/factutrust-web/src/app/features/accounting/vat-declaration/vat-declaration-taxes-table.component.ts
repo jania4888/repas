@@ -59,11 +59,11 @@ import { VatDeclarationExtras, VatExtrasKey, VatTaxTableRow, hasSuggestionMismat
   styles: `
     .vat-zone-card { padding: var(--spacing-5); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); margin-bottom: var(--spacing-4); }
     .vat-zone-title { font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin: 0 0 var(--spacing-4); color: var(--color-text-primary); }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .tabnum { font-variant-numeric: tabular-nums; }
     .vat-row-highlight { background: var(--color-primary-50,#eff6ff) !important; }
     .vat-row-bold td { font-weight: var(--font-weight-semibold); }
-    .vat-edit { text-align: right; font-variant-numeric: tabular-nums; padding: var(--spacing-1) var(--spacing-2); border: 1px solid var(--color-border-default); border-radius: var(--radius-sm); width: 100%; max-width: 8rem; font-size: var(--font-size-sm); }
+    .vat-edit { text-align: end; font-variant-numeric: tabular-nums; padding: var(--spacing-1) var(--spacing-2); border: 1px solid var(--color-border-default); border-radius: var(--radius-sm); width: 100%; max-width: 8rem; font-size: var(--font-size-sm); }
     .vat-suggest { display: flex; align-items: center; justify-content: flex-end; gap: var(--spacing-2); margin-top: var(--spacing-1); font-size: var(--font-size-xs); color: var(--color-text-tertiary); }
     .vat-suggest--mismatch { color: var(--color-warning-700,#b45309); font-weight: var(--font-weight-medium); }
     .vat-suggest-apply { border: 1px solid currentColor; background: transparent; color: inherit; border-radius: var(--radius-sm); padding: 0 var(--spacing-2); font-size: var(--font-size-xs); cursor: pointer; line-height: 1.4; }

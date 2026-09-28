@@ -114,7 +114,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     .inv-kind {
       display: flex; flex-direction: column; gap: 2px; align-items: flex-start;
       padding: var(--spacing-3); border: 1px solid var(--color-border-default); border-radius: var(--radius-md);
-      background: var(--color-background-elevated); cursor: pointer; text-align: left;
+      background: var(--color-background-elevated); cursor: pointer; text-align: start;
     }
     .inv-kind--on { border-color: var(--color-primary-500, #2563eb); background: var(--color-primary-50, #eff6ff); }
     .inv-kind-label { font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }

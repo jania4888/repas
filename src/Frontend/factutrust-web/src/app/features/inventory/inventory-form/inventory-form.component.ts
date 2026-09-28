@@ -69,6 +69,13 @@ export interface InventoryFormLine extends InventoryProductItem {
     styleUrl: './inventory-form.component.scss',
 })
 export class InventoryFormComponent implements OnInit {
+  protected loc_numero_de_lot_pour_productname_859ef2(p0: unknown): string {
+    return $localize`:@@inventory.inventory-form.tpl.numero.de.lot.pour.productname.859ef29d:Numéro de lot pour ${p0}:productName:`;
+  }
+  protected loc_quantite_comptee_pour_productname_4e025d(p0: unknown): string {
+    return $localize`:@@inventory.inventory-form.tpl.quantite.comptee.pour.productname.4e025d28:Quantité comptée pour ${p0}:productName:`;
+  }
+
     private inventoryService = inject(InventoryService);
     private stockService = inject(StockService);
     private toastService = inject(ToastService);

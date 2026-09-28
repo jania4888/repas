@@ -30,7 +30,7 @@ const BASE_SOURCES: ReadonlyArray<{ label: string; value: BridgeParamMapping['so
       <label class="bap__lbl" i18n="@@studio.shared.action.erp.cbd82106">Action ERP *</label>
       <p-select [options]="actions()" [ngModel]="action()" (ngModelChange)="onActionChange($event)" optionLabel="name" optionValue="name"
         [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="bap__w-full" placeholder="Choisir une action" i18n-placeholder="@@studio.shared.choisir.une.action.c17f1360"
-        [disabled]="disabled()" [attr.aria-label]="'Action ERP'" />
+        [disabled]="disabled()" [attr.aria-label]="loc_action_erp_37fe60" />
       @if (selectedAction(); as act) {
         <small class="bap__hint">{{ act.description }}</small>
         <label class="bap__section" i18n="@@studio.shared.correspondance.des.parametres.f8d90751">Correspondance des paramètres</label>
@@ -60,6 +60,8 @@ const BASE_SOURCES: ReadonlyArray<{ label: string; value: BridgeParamMapping['so
     :host ::ng-deep .bap__w-full, :host ::ng-deep .ft-map-src, :host ::ng-deep .ft-map-val { width: 100%; }`]
 })
 export class StudioBridgeActionPickerComponent {
+  protected readonly loc_action_erp_37fe60 = $localize`:@@studio.studio-bridge-action-picker.tpl.action.erp.37fe6093:Action ERP`;
+
   readonly loc_ui_tern_valeur_fixe_84e108 = $localize`:@@ui.tern.valeur.fixe.84e108:Valeur fixe`;
   readonly actions = input.required<AutomationAction[]>();
   readonly fields = input.required<CustomField[]>();

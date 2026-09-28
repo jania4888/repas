@@ -16,6 +16,7 @@ import {
   CalendarMode, colorScaleIndex, eventsForDay, isMultiDay, isSameDay,
   parseIsoDate, rangeDays, rangeForMode, shiftAnchor, toIsoDate
 } from './studio-calendar.util';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 const DOW_LABELS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 const PALETTE_SIZE = 6;
@@ -76,7 +77,7 @@ interface LegendItem {
             (ngModelChange)="setMode($event)"
             optionLabel="label"
             optionValue="value"
-            [attr.aria-label]="'Basculer entre vue mois et semaine'">
+            [attr.aria-label]="loc_basculer_entre_vue_mois_et_semaine_cb2f06">
           </p-selectbutton>
         }
       </div>
@@ -183,6 +184,8 @@ interface LegendItem {
   styleUrl: './studio-calendar.component.scss'
 })
 export class StudioCalendarComponent {
+  protected readonly loc_basculer_entre_vue_mois_et_semaine_cb2f06 = $localize`:@@studio.studio-calendar.tpl.basculer.entre.vue.mois.et.semaine.cb2f0605:Basculer entre vue mois et semaine`;
+
   readonly loc_ui_tern_grille_du_mois_c58c99 = $localize`:@@ui.tern.grille.du.mois.c58c99:Grille du mois, `;
   readonly loc_ui_tern_grille_de_la_semaine_4975b6 = $localize`:@@ui.tern.grille.de.la.semaine.4975b6:Grille de la semaine, `;
   private readonly router = inject(Router);
@@ -220,9 +223,9 @@ export class StudioCalendarComponent {
   protected readonly title = computed(() => {
     const r = this.range();
     if (this.effectiveMode() === 'week') {
-      return `${r.start.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} – ${r.end.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}`;
+      return `${r.start.toLocaleDateString(erpDateLocale('fr-FR'), { day: 'numeric', month: 'short' })} – ${r.end.toLocaleDateString(erpDateLocale('fr-FR'), { day: 'numeric', month: 'short', year: 'numeric' })}`;
     }
-    return this.anchor().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+    return this.anchor().toLocaleDateString(erpDateLocale('fr-FR'), { month: 'long', year: 'numeric' });
   });
 
   protected readonly weeks = computed<DayVm[][]>(() => {

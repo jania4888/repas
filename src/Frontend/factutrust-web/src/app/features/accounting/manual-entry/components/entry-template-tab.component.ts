@@ -51,7 +51,7 @@ import { AccountingService, JournalEntryTemplateDto } from '../../services/accou
     .template-tab__search { margin-bottom:var(--spacing-4); max-width:24rem; }
     .me-input { width:100%; padding:var(--spacing-2) var(--spacing-3); border:1px solid var(--color-border-default); border-radius:var(--radius-md); }
     .template-table { width:100%; border-collapse:collapse; font-size:var(--font-size-sm); }
-    .template-table th, .template-table td { padding:var(--spacing-2) var(--spacing-3); border-bottom:1px solid var(--color-border-subtle); text-align:left; }
+    .template-table th, .template-table td { padding:var(--spacing-2) var(--spacing-3); border-bottom:1px solid var(--color-border-subtle); text-align:start; }
     .template-tab__link { display:inline-block; margin-top:var(--spacing-4); font-size:var(--font-size-sm); color:var(--color-primary-600); }
     .empty { color:var(--color-text-secondary); }
   `

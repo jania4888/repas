@@ -310,7 +310,7 @@ interface TemplateLineRow {
       .lines-table th,
       .lines-table td {
         padding: var(--spacing-3);
-        text-align: left;
+        text-align: start;
         vertical-align: top;
       }
       .lines-table th {

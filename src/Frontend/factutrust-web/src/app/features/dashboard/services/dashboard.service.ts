@@ -8,6 +8,7 @@ import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { isRealizedRevenue } from '@core/utils/invoice-metrics.util';
 import { buildKpiSparklines, type KpiSparklines } from './dashboard-kpi-series.util';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 export type { KpiSparklines };
 
@@ -319,6 +320,6 @@ export class DashboardService {
     if (diffDays < 7) return $localize`:@@dashboard.dashboard.ts.il.y.a.diffdays.jours.44aa16a2:Il y a ${diffDays}:diffDays: jours`;
     if (diffDays < 30) return `Il y a ${Math.floor(diffDays / 7)} sem.`;
 
-    return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+    return date.toLocaleDateString(erpDateLocale('fr-FR'), { day: '2-digit', month: 'short' });
   }
 }

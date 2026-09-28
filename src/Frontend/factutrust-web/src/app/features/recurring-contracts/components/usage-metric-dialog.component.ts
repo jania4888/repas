@@ -109,7 +109,7 @@ interface AggregationOption {
       margin-bottom: var(--spacing-4);
 
       th {
-        text-align: left;
+        text-align: start;
         color: var(--color-text-secondary);
         font-weight: var(--font-weight-semibold);
         padding: var(--spacing-2);

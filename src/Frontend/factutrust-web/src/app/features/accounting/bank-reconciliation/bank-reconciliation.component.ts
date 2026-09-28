@@ -124,12 +124,12 @@ interface WizardStepDef {
           </ng-template>
           <ng-template pTemplate="body" let-s>
             <tr>
-              <td data-label="Banque">{{ s.bankName }}</td>
-              <td data-label="Compte" class="br-mono">{{ s.accountNumber }}</td>
-              <td data-label="Période">{{ s.periodStart | date : 'shortDate' }} → {{ s.periodEnd | date : 'shortDate' }}</td>
-              <td data-label="Solde initial" class="br-amt">{{ s.openingBalance | number : '1.3-3' }}</td>
-              <td data-label="Solde final" class="br-amt">{{ s.closingBalance | number : '1.3-3' }}</td>
-              <td data-label="Avancement" i18n="@@accounting.bank-reconciliation.rapprochee.s.1f9f5e71">
+              <td data-label="Banque" i18n-data-label="@@accounting.bank-reconciliation.banque.2a7302cd">{{ s.bankName }}</td>
+              <td data-label="Compte" i18n-data-label="@@accounting.bank-reconciliation.compte.c45740bb" class="br-mono">{{ s.accountNumber }}</td>
+              <td data-label="Période" i18n-data-label="@@accounting.bank-reconciliation.periode.de2110b7">{{ s.periodStart | date : 'shortDate' }} → {{ s.periodEnd | date : 'shortDate' }}</td>
+              <td data-label="Solde initial" i18n-data-label="@@accounting.bank-reconciliation.solde.initial.78a4e543" class="br-amt">{{ s.openingBalance | number : '1.3-3' }}</td>
+              <td data-label="Solde final" i18n-data-label="@@accounting.bank-reconciliation.solde.final.eafcc35f" class="br-amt">{{ s.closingBalance | number : '1.3-3' }}</td>
+              <td data-label="Avancement" i18n-data-label="@@accounting.bank-reconciliation.avancement.e1963fc4" i18n="@@accounting.bank-reconciliation.rapprochee.s.1f9f5e71">
                 <span class="br-badge" [class.br-badge-done]="reconciledCount(s) === s.lines.length" [class.br-badge-partial]="reconciledCount(s) < s.lines.length">
                   {{ reconciledCount(s) }}/{{ s.lines.length }} rapprochée(s)
                 </span>
@@ -183,11 +183,11 @@ interface WizardStepDef {
               </ng-template>
               <ng-template pTemplate="body" let-i>
                 <tr>
-                  <td data-label="Date">{{ i.date | date : 'shortDate' }}</td>
-                  <td data-label="Référence" class="br-mono">{{ i.reference }}</td>
-                  <td data-label="Libellé">{{ i.label }}</td>
-                  <td data-label="Débit" class="br-amt">{{ i.debit | number : '1.3-3' }}</td>
-                  <td data-label="Crédit" class="br-amt">{{ i.credit | number : '1.3-3' }}</td>
+                  <td data-label="Date" i18n-data-label="@@accounting.bank-reconciliation.date.eb9a4bc1">{{ i.date | date : 'shortDate' }}</td>
+                  <td data-label="Référence" i18n-data-label="@@accounting.bank-reconciliation.reference.f8130bb0" class="br-mono">{{ i.reference }}</td>
+                  <td data-label="Libellé" i18n-data-label="@@accounting.bank-reconciliation.libelle.f5485bba">{{ i.label }}</td>
+                  <td data-label="Débit" i18n-data-label="@@accounting.bank-reconciliation.debit.f528224f" class="br-amt">{{ i.debit | number : '1.3-3' }}</td>
+                  <td data-label="Crédit" i18n-data-label="@@accounting.bank-reconciliation.credit.19194bdf" class="br-amt">{{ i.credit | number : '1.3-3' }}</td>
                 </tr>
               </ng-template>
             </p-table>
@@ -203,11 +203,11 @@ interface WizardStepDef {
               </ng-template>
               <ng-template pTemplate="body" let-i>
                 <tr>
-                  <td data-label="Date">{{ i.date | date : 'shortDate' }}</td>
-                  <td data-label="Référence" class="br-mono">{{ i.reference }}</td>
-                  <td data-label="Libellé">{{ i.label }}</td>
-                  <td data-label="Débit" class="br-amt">{{ i.debit | number : '1.3-3' }}</td>
-                  <td data-label="Crédit" class="br-amt">{{ i.credit | number : '1.3-3' }}</td>
+                  <td data-label="Date" i18n-data-label="@@accounting.bank-reconciliation.date.eb9a4bc1">{{ i.date | date : 'shortDate' }}</td>
+                  <td data-label="Référence" i18n-data-label="@@accounting.bank-reconciliation.reference.f8130bb0" class="br-mono">{{ i.reference }}</td>
+                  <td data-label="Libellé" i18n-data-label="@@accounting.bank-reconciliation.libelle.f5485bba">{{ i.label }}</td>
+                  <td data-label="Débit" i18n-data-label="@@accounting.bank-reconciliation.debit.f528224f" class="br-amt">{{ i.debit | number : '1.3-3' }}</td>
+                  <td data-label="Crédit" i18n-data-label="@@accounting.bank-reconciliation.credit.19194bdf" class="br-amt">{{ i.credit | number : '1.3-3' }}</td>
                 </tr>
               </ng-template>
             </p-table>
@@ -453,7 +453,7 @@ interface WizardStepDef {
                   @else if (a.status === 1) { <span class="br-muted" i18n="@@accounting.bank-reconciliation.candidat.s.0c6feb0a">{{ a.candidateCount }} candidat(s)</span> }
                   @else { <span class="br-muted" i18n="@@accounting.bank-reconciliation.text.1b93795b">—</span> }
                 </td>
-                <td data-label="Actions">
+                <td data-label="Actions" i18n-data-label="@@accounting.bank-reconciliation.actions.c3cd636a">
                   @if (a.status !== 2) {
                     <button type="button" class="br-link-btn" (click)="reconcileFromStep(a)" [disabled]="applying()" i18n="@@accounting.bank-reconciliation.rapprocher.094cf3ee">Rapprocher…</button>
                     <button type="button" class="br-link-btn" (click)="openCreateEntry(a.bankStatementLineId, a.description, a.isDebit, a.amount)" [disabled]="applying()" i18n="@@accounting.bank-reconciliation.creer.ecriture.05b7d14c">Créer écriture</button>
@@ -529,7 +529,7 @@ interface WizardStepDef {
                   {{ l.isReconciled ? loc_ui_tern_rapprochee_bea87b : loc_ui_tern_a_rapprocher_b60223 }}
                 </span>
               </td>
-              <td data-label="Actions">
+              <td data-label="Actions" i18n-data-label="@@accounting.bank-reconciliation.actions.c3cd636a">
                 @if (!l.isReconciled) {
                   <button type="button" class="br-link-btn" (click)="openCandidates(l)" [disabled]="reconciling()" i18n="@@accounting.bank-reconciliation.rechercher.91f7d3e9">Rechercher</button>
                   <button type="button" class="br-link-btn" (click)="openCreateEntry(l.id, l.description, l.isDebit, l.amount)" [disabled]="reconciling()" i18n="@@accounting.bank-reconciliation.creer.ecriture.05b7d14c">Créer écriture</button>
@@ -743,9 +743,9 @@ interface WizardStepDef {
       border: 1px solid var(--color-danger-200, #fecaca);
     }
     .br-issues-title { margin: 0 0 var(--spacing-2); font-size: var(--font-size-sm); color: var(--color-danger-700, #b91c1c); }
-    .br-issues-list { margin: 0; padding-left: var(--spacing-5); font-size: var(--font-size-sm); color: var(--color-text-secondary); }
-    .br-issue-ref { font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-right: var(--spacing-1); }
-    .br-result-list { margin: var(--spacing-2) 0 0; padding-left: var(--spacing-5); font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+    .br-issues-list { margin: 0; padding-inline-start: var(--spacing-5); font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+    .br-issue-ref { font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-inline-end: var(--spacing-1); }
+    .br-result-list { margin: var(--spacing-2) 0 0; padding-inline-start: var(--spacing-5); font-size: var(--font-size-sm); color: var(--color-text-secondary); }
     .br-result-list li { padding: 2px 0; }
 
     .br-commit-bar {
@@ -753,8 +753,8 @@ interface WizardStepDef {
       margin-top: var(--spacing-4); padding-top: var(--spacing-4);
       border-top: 1px solid var(--color-border-subtle);
     }
-    .br-commit-hint { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-right: auto; }
-    .br-amt { text-align: right; font-variant-numeric: tabular-nums; }
+    .br-commit-hint { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-inline-end: auto; }
+    .br-amt { text-align: end; font-variant-numeric: tabular-nums; }
     .br-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
     .br-check-col { width: 2.5rem; text-align: center; }
     .br-proposed { font-size: var(--font-size-sm); }
@@ -766,7 +766,7 @@ interface WizardStepDef {
     .br-badge-partial { background: var(--color-warning-50, #fffbeb); color: var(--color-warning-700, #a16207); border: 1px solid var(--color-warning-200, #fde68a); }
     .br-badge-none { background: var(--color-danger-50, #fef2f2); color: var(--color-danger-700, #b91c1c); border: 1px solid var(--color-danger-200, #fecaca); }
     .br-link-btn {
-      background: none; border: none; padding: 0; margin-right: var(--spacing-3); cursor: pointer;
+      background: none; border: none; padding: 0; margin-inline-end: var(--spacing-3); cursor: pointer;
       color: var(--color-primary-600, #2563eb); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold);
     }
     .br-link-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -787,7 +787,7 @@ interface WizardStepDef {
     .br-recon-adjusted { border-top: 1px solid var(--color-border-default); padding-top: var(--spacing-3); margin-top: var(--spacing-4); }
     .br-recon-sub { margin: var(--spacing-4) 0 var(--spacing-2); font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); }
     .br-recon-diff { font-weight: var(--font-weight-bold); font-variant-numeric: tabular-nums; font-size: var(--font-size-lg); }
-    .br-recon-diff span { font-size: var(--font-size-sm); font-weight: var(--font-weight-regular); margin-left: var(--spacing-2); }
+    .br-recon-diff span { font-size: var(--font-size-sm); font-weight: var(--font-weight-regular); margin-inline-start: var(--spacing-2); }
     .br-recon-ok { color: var(--color-success-600, #16a34a); }
     .br-recon-ko { color: var(--color-danger-600, #dc2626); }
   `

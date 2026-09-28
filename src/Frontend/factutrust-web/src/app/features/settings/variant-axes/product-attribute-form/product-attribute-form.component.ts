@@ -149,9 +149,9 @@ interface NewValueRow {
     .values-table th, .values-table td {
       padding: 0.5rem;
       border-bottom: 1px solid #e2e8f0;
-      text-align: left;
+      text-align: start;
     }
-    .actions { text-align: right; white-space: nowrap; }
+    .actions { text-align: end; white-space: nowrap; }
     .sub-title { margin: 1rem 0 0.5rem; font-size: 0.95rem; }
     .form-actions { margin-top: 1.5rem; }
     .loading-container {

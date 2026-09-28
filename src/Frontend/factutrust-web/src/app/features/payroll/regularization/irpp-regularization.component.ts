@@ -221,8 +221,8 @@ import {
 
     .reg-total-row { font-weight: 700; background: var(--color-background-subtle); }
     .tabnum { font-variant-numeric: tabular-nums; }
-    .text-right { text-align: right; }
-    .ml-2 { margin-left: var(--spacing-2); }
+    .text-right { text-align: end; }
+    .ml-2 { margin-inline-start: var(--spacing-2); }
     .w-full { width: 100%; }
   `]
 })

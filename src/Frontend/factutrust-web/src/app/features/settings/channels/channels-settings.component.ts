@@ -282,7 +282,7 @@ interface ChannelBridgeQrDto {
 
     .steps {
       margin: var(--spacing-2) 0 0;
-      padding-left: var(--spacing-5);
+      padding-inline-start: var(--spacing-5);
       display: flex;
       flex-direction: column;
       gap: var(--spacing-1);

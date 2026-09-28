@@ -41,6 +41,27 @@
     text-align: start;
   }
 
+  // Identifiants saisis en caractères latins (NIF 1772793W/A/M/000, RIB, IBAN, CNSS, codes…) : un champ
+  // texte RTL réordonnerait chiffres et barres obliques. Valeur en LTR ; le placeholder arabe garde son
+  // sens (plaintext). Les références restent hors liste : elles peuvent être saisies en arabe.
+  $ltr-identifiers: nif, rib, iban, swift, bic, cnss, cin, rne, barcode, ean, sku, bankcode, accountnumber, postalcode,
+    email, phone, code;
+  @each $token in $ltr-identifiers {
+    input[formcontrolname*='#{$token}' i]:not([type='checkbox']):not([type='radio']),
+    input[id*='#{$token}' i]:not([type='checkbox']):not([type='radio']),
+    input[name*='#{$token}' i]:not([type='checkbox']):not([type='radio']),
+    // Composants PrimeNG (p-inputMask…) : l'attribut est sur l'hôte, pas sur l'<input> interne.
+    :is(p-inputmask, p-inputnumber, p-autocomplete)[formcontrolname*='#{$token}' i] input,
+    :is(p-inputmask, p-inputnumber, p-autocomplete)[id*='#{$token}' i] input {
+      direction: ltr;
+      text-align: start;
+
+      &::placeholder {
+        unicode-bidi: plaintext;
+      }
+    }
+  }
+
   .stat-value,
   .total-value {
     direction: ltr;
@@ -124,8 +145,16 @@
     padding-inline-end: 0.75rem;
   }
 
-  :lang(ar) {
+  // Police arabe : sur body (héritée) et sur les contrôles qui n'héritent pas de la police. Jamais sur
+  // tous les éléments : `<i class="fa-…">` / `.pi` perdraient leur police d'icônes (cases vides).
+  body.erp-rtl input,
+  body.erp-rtl textarea,
+  body.erp-rtl select,
+  body.erp-rtl button {
     font-family: var(--font-family);
+  }
+
+  :lang(ar) {
     letter-spacing: 0;
     text-transform: none;
 

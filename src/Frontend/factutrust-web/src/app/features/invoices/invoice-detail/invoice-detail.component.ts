@@ -102,7 +102,7 @@ interface TimelineEvent {
     <app-breadcrumb [items]="breadcrumbItems()"></app-breadcrumb>
     
     <app-page-header 
-      [title]="invoice()?.number || 'Chargement...'" 
+      [title]="invoice()?.number || loc_chargement_a209b6" 
       [subtitle]="loc_ui_tern_facture_du_17b440 + (invoice()?.issueDate | date:'dd/MM/yyyy')">
       <app-button 
         variant="outline"
@@ -719,7 +719,7 @@ interface TimelineEvent {
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: var(--color-text-secondary);
-        text-align: left;
+        text-align: start;
         border-bottom: 2px solid var(--color-border-default);
         background: var(--color-background-subtle);
       }
@@ -745,7 +745,7 @@ interface TimelineEvent {
       }
 
       .text-right {
-        text-align: right;
+        text-align: end;
       }
 
       .text-center {
@@ -893,11 +893,11 @@ interface TimelineEvent {
       padding: var(--spacing-3);
       background: var(--color-neutral-50);
       border-radius: var(--radius-md);
-      border-left: 3px solid var(--color-success-500);
+      border-inline-start: 3px solid var(--color-success-500);
 
       &.refunded {
         opacity: 0.7;
-        border-left-color: var(--color-neutral-400);
+        border-inline-start-color: var(--color-neutral-400);
       }
     }
 
@@ -1084,7 +1084,7 @@ interface TimelineEvent {
 
     .validate-default-badge {
       display: inline-block;
-      margin-left: 0.5rem;
+      margin-inline-start: 0.5rem;
       padding: 0.1rem 0.45rem;
       border-radius: var(--radius-md);
       font-size: var(--font-size-xs);
@@ -1152,7 +1152,7 @@ interface TimelineEvent {
         border-bottom: 2px solid var(--color-border-default, var(--color-border-subtle));
       }
 
-      th.text-right, td.text-right { text-align: right; }
+      th.text-right, td.text-right { text-align: end; }
       .mono { font-family: 'JetBrains Mono', monospace; }
 
       td:nth-child(2),
@@ -1267,6 +1267,8 @@ interface TimelineEvent {
   `]
 })
 export class InvoiceDetailComponent implements OnInit {
+  protected readonly loc_chargement_a209b6 = $localize`:@@invoices.invoice-detail.tpl.chargement.a209b664:Chargement...`;
+
   readonly loc_ui_tern_facture_du_17b440 = $localize`:@@ui.tern.facture.du.17b440:Facture du `;
   readonly loc_ui_tern_facture_d_avoir_541e44 = $localize`:@@ui.tern.facture.d.avoir.541e44:Facture d'avoir`;
   readonly loc_ui_tern_facture_3953b9 = $localize`:@@ui.tern.facture.3953b9:Facture`;

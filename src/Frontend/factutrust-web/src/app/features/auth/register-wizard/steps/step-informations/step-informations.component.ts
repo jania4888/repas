@@ -51,6 +51,8 @@ import { TaxRegime } from '../../tax-regime.types';
   styleUrl: './step-informations.component.scss'
 })
 export class StepInformationsComponent implements OnInit {
+  protected readonly loc_force_du_mot_de_passe_de0bbe = $localize`:@@auth.step-informations.tpl.force.du.mot.de.passe.de0bbe05:Force du mot de passe`;
+
   @Input({ required: true }) form!: FormGroup;
   @Input() taxRegimes: TaxRegime[] = [];
   /** Sector-suggested tax regime (plan §3.1) — `null` when the catalog has none for this segment. */

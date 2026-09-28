@@ -129,15 +129,15 @@ type JournalFlatRow = {
         </ng-template>
         <ng-template pTemplate="body" let-r>
           <tr>
-            <td data-label="Date">{{ r.date | date : 'shortDate' }}</td>
-            <td data-label="Journal">{{ r.journal }}</td>
+            <td data-label="Date" i18n-data-label="@@accounting.sub-journals.date.eb9a4bc1">{{ r.date | date : 'shortDate' }}</td>
+            <td data-label="Journal" i18n-data-label="@@accounting.sub-journals.journal.57d7f743">{{ r.journal }}</td>
             <td class="sub-journals-col-narrow sub-journals-cell-num" data-label="N°">{{ r.piece }}</td>
-            <td data-label="Libellé">{{ r.label }}</td>
-            <td class="sub-journals-col-account" data-label="Compte">
+            <td data-label="Libellé" i18n-data-label="@@accounting.sub-journals.libelle.f5485bba">{{ r.label }}</td>
+            <td class="sub-journals-col-account" data-label="Compte" i18n-data-label="@@accounting.sub-journals.compte.c45740bb">
               <span class="sub-journals-account-code">{{ r.account }}</span>
             </td>
-            <td class="sub-journals-col-amount" data-label="Débit">{{ r.debit | number : '1.3-3' }}</td>
-            <td class="sub-journals-col-amount" data-label="Crédit">{{ r.credit | number : '1.3-3' }}</td>
+            <td class="sub-journals-col-amount" data-label="Débit" i18n-data-label="@@accounting.sub-journals.debit.f528224f">{{ r.debit | number : '1.3-3' }}</td>
+            <td class="sub-journals-col-amount" data-label="Crédit" i18n-data-label="@@accounting.sub-journals.credit.19194bdf">{{ r.credit | number : '1.3-3' }}</td>
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
@@ -211,12 +211,12 @@ type JournalFlatRow = {
       font-weight: var(--font-weight-medium);
     }
     .sub-journals-col-amount {
-      text-align: right;
+      text-align: end;
       font-variant-numeric: tabular-nums;
     }
     .sub-journals-cell-num {
       font-variant-numeric: tabular-nums;
-      text-align: right;
+      text-align: end;
     }
     .sub-journals-empty {
       text-align: center;

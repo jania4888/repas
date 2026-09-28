@@ -843,7 +843,7 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
   styles: [`
 
-    .blockers { color: var(--red-500, #dc2626); padding-left: 1.25rem; }
+    .blockers { color: var(--red-500, #dc2626); padding-inline-start: 1.25rem; }
 
     .time-selection-summary {
 

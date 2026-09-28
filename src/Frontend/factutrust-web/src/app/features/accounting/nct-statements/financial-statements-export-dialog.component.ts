@@ -192,7 +192,7 @@ const FAMILY_FLUX: NctAnnexFamily = 'CashFlow';
     .fs-grid { display:grid; grid-template-columns:1fr 1fr; gap:var(--spacing-4); }
     .fs-col { display:flex; flex-direction:column; gap:0.55rem; }
     .fs-check { display:flex; align-items:center; gap:0.5rem; font-size:var(--font-size-sm); cursor:pointer; }
-    .fs-notes { display:flex; flex-direction:column; gap:0.35rem; margin:0 0 0.35rem 1.35rem; }
+    .fs-notes { display:flex; flex-direction:column; gap:0.35rem; margin-block:0 0.35rem; margin-inline:1.35rem 0; }
     .fs-note { display:flex; align-items:flex-start; gap:0.45rem; font-size:var(--font-size-xs); color:var(--color-text-secondary); cursor:pointer; }
     .fs-error { margin:var(--spacing-3) 0 0; color:var(--color-danger-700,#b91c1c); font-size:var(--font-size-sm); }
     .fs-footer { display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-3); width:100%; }

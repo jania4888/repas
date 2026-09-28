@@ -320,13 +320,13 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
     .pos-toast {
       position: fixed;
       top: calc(var(--pos-header-height, 64px) + 16px);
-      right: 24px;
+      inset-inline-end: 24px;
       z-index: 600;
       min-width: 360px;
       border-radius: var(--radius-xl);
       overflow: hidden;
       box-shadow: var(--shadow-2xl);
-      border-left: 3px solid var(--color-success-500);
+      border-inline-start: 3px solid var(--color-success-500);
       animation: slideInToastRight 350ms cubic-bezier(0.34, 1.2, 0.64, 1) forwards,
                  slideOutToastRight 250ms ease-in 2700ms forwards;
     }
@@ -340,7 +340,7 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--color-success-200);
-      border-left: none;
+      border-inline-start: none;
     }
 
     .pos-toast__icon {
@@ -384,7 +384,7 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
       content: '';
       position: absolute;
       top: 0;
-      left: 0;
+      inset-inline-start: 0;
       bottom: 0;
       width: 100%;
       background: var(--color-success-400);
@@ -474,8 +474,8 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
       }
 
       .pos-toast {
-        right: 16px;
-        left: 16px;
+        inset-inline-end: 16px;
+        inset-inline-start: 16px;
       }
 
       .pos-toast__content {
@@ -527,7 +527,7 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
       max-width: 280px;
       padding: var(--spacing-3) var(--spacing-4);
       font-size: 1rem;
-      text-align: left;
+      text-align: start;
       letter-spacing: normal;
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-lg);

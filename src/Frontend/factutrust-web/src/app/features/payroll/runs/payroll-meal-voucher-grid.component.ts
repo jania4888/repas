@@ -217,7 +217,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
     .w-full { width: 100%; }
 
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
 
   `]
 

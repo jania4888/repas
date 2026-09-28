@@ -100,7 +100,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   styles: `
     @use '../shared/accounting-layout';
     .pc-toolbar-fields { display:flex; flex-wrap:wrap; align-items:flex-end; gap:var(--spacing-4); }
-    .text-right { text-align:right; }
+    .text-right { text-align:end; }
     .pc-num { font-variant-numeric:tabular-nums; }
     .pc-count-nonzero { font-weight:var(--font-weight-bold); }
     .pc-message { color:var(--color-text-secondary); font-size:var(--font-size-sm); }

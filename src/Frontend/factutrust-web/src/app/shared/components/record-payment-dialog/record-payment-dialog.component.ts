@@ -270,7 +270,7 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
       padding: var(--spacing-3) var(--spacing-4);
       background: var(--color-background-elevated, #fff);
       border: 1px solid var(--color-border-subtle);
-      border-left: 4px solid var(--color-primary-500);
+      border-inline-start: 4px solid var(--color-primary-500);
       border-radius: var(--radius-xl);
       box-shadow: var(--shadow-sm);
     }

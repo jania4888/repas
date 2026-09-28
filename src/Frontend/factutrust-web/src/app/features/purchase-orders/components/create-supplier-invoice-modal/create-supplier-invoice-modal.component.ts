@@ -335,7 +335,7 @@ interface LineClassificationRow {
     .po-info {
       background: var(--color-background-elevated, #fff);
       border: 1px solid var(--color-border-subtle);
-      border-left: 4px solid var(--color-primary-500);
+      border-inline-start: 4px solid var(--color-primary-500);
       border-radius: var(--radius-xl);
       padding: var(--spacing-4) var(--spacing-5);
       margin-bottom: var(--spacing-5);
@@ -366,7 +366,7 @@ interface LineClassificationRow {
     }
 
     .po-info-item--right {
-      text-align: right;
+      text-align: end;
     }
 
     .po-info-item .amount {
@@ -445,7 +445,7 @@ interface LineClassificationRow {
 
     .required {
       color: var(--color-error-600);
-      margin-left: var(--spacing-1);
+      margin-inline-start: var(--spacing-1);
     }
 
     .input-group {
@@ -503,7 +503,7 @@ interface LineClassificationRow {
     }
 
     .text-right {
-      text-align: right;
+      text-align: end;
     }
 
     .product-cell {
@@ -529,7 +529,7 @@ interface LineClassificationRow {
     }
 
     :host ::ng-deep .invoice-lines-table .p-inputnumber-input {
-      text-align: right;
+      text-align: end;
     }
 
     :host ::ng-deep .asset-lines-table .p-select {

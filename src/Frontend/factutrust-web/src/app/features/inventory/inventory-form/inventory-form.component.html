@@ -132,7 +132,7 @@
                                                     (ngModelChange)="updateLineLotNumber(line, $event)"
                                                     placeholder="N° de lot" i18n-placeholder="@@inventory.inventory-form.n.de.lot.f5d14bdd"
                                                     [attr.aria-required]="requiresLotNumberForLine(line)"
-                                                    [attr.aria-label]="'Numéro de lot pour ' + line.productName" />
+                                                    [attr.aria-label]="loc_numero_de_lot_pour_productname_859ef2(line.productName)" />
                                             } @else if (line.lotNumber) {
                                                 <span class="lot-label">{{ line.lotNumber }}</span>
                                             } @else {
@@ -151,7 +151,7 @@
                                             [maxFractionDigits]="2"
                                             inputId="count-{{ lineKey(line) }}"
                                             styleClass="count-input"
-                                            [attr.aria-label]="'Quantité comptée pour ' + line.productName"
+                                            [attr.aria-label]="loc_quantite_comptee_pour_productname_4e025d(line.productName)"
                                         />
                                     </td>
                                 </tr>

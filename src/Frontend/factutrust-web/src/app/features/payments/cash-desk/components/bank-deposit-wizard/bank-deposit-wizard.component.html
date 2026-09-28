@@ -202,7 +202,7 @@
 
   <ng-template pTemplate="footer">
     <div class="wizard-footer">
-      <app-button variant="outline" (click)="currentStep === 0 ? onHide() : prev()" [attr.aria-label]="currentStep === 0 ? 'Fermer' : 'Précédent'">
+      <app-button variant="outline" (click)="currentStep === 0 ? onHide() : prev()" [attr.aria-label]="currentStep === 0 ? loc_fermer_5ab4ec : loc_precedent_a527f1">
         <ng-container i18n="@@payments.cash-desk.sel.annuler.precedent.8d63cb1d">{!!(currentStep === 0), select, true {Annuler} other {Précédent}}</ng-container>
       </app-button>
       @if (currentStep < 3) {

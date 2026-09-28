@@ -118,9 +118,9 @@ import { slugifyKey } from './shared/studio-text.util';
   `,
   styleUrl: './shared/studio-layout.scss',
   styles: [`
-    .studio-hide-junctions { display: inline-flex; align-items: center; margin-right: auto; font-size: var(--font-size-sm); color: var(--color-neutral-600); gap: var(--spacing-2); margin-bottom: 0; }
+    .studio-hide-junctions { display: inline-flex; align-items: center; margin-inline-end: auto; font-size: var(--font-size-sm); color: var(--color-neutral-600); gap: var(--spacing-2); margin-bottom: 0; }
     .studio-badge-soft {
-      display: inline-block; margin-left: var(--spacing-2); padding: 0 var(--spacing-2);
+      display: inline-block; margin-inline-start: var(--spacing-2); padding: 0 var(--spacing-2);
       border-radius: var(--radius-full, 999px); background: var(--color-neutral-100, #f1f5f9);
       color: var(--color-neutral-600); font-size: var(--font-size-xs); font-weight: 600;
     }

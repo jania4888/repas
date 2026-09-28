@@ -46,7 +46,7 @@ export interface SaveTemplatePayload {
                         [ngModel]="description()" (ngModelChange)="description.set($event)"
                         rows="2"
                         maxlength="1000"
-                        placeholder="À quoi sert ce modèle ?"></textarea>
+                        placeholder="À quoi sert ce modèle ?" i18n-placeholder="@@accounting.save-template-modal.a.quoi.sert.ce.modele.d13b0177"></textarea>
             </div>
 
             <div class="form-field stm-row">
@@ -106,7 +106,7 @@ export interface SaveTemplatePayload {
     .stm-textarea { resize:vertical; min-height:3rem; font-family:inherit; }
     .stm-checkbox { display:flex; align-items:center; gap:var(--spacing-2); font-size:var(--font-size-sm); cursor:pointer; }
     .stm-checkbox input { cursor:pointer; }
-    .stm-hint { font-size:var(--font-size-xs); color:var(--color-text-tertiary); margin:0; padding-left:1.5rem; }
+    .stm-hint { font-size:var(--font-size-xs); color:var(--color-text-tertiary); margin:0; padding-inline-start:1.5rem; }
     .stm-error { color:var(--color-error-700,#b91c1c); font-size:var(--font-size-xs); margin:0; }
     .stm-footer { display:flex; justify-content:flex-end; gap:var(--spacing-2); padding:var(--spacing-4); border-top:1px solid var(--color-border-subtle); }
   `

@@ -211,12 +211,12 @@ const FILE_BASE_BY_TAB: readonly string[] = [
           </ng-template>
           <ng-template pTemplate="body" let-c>
             <tr>
-              <td data-label="Journal"><span class="js-code">{{ c.journalCode }}</span></td>
-              <td data-label="Libellé">{{ c.journalLabel }}</td>
-              <td data-label="Compte"><span class="js-code">{{ c.accountNumber }}</span></td>
-              <td data-label="Intitulé">{{ c.accountLabel }}</td>
-              <td data-label="Débit" class="js-num">{{ c.debit | number : '1.3-3' }}</td>
-              <td data-label="Crédit" class="js-num">{{ c.credit | number : '1.3-3' }}</td>
+              <td data-label="Journal" i18n-data-label="@@accounting.journal-summary.journal.57d7f743"><span class="js-code">{{ c.journalCode }}</span></td>
+              <td data-label="Libellé" i18n-data-label="@@accounting.journal-summary.libelle.f5485bba">{{ c.journalLabel }}</td>
+              <td data-label="Compte" i18n-data-label="@@accounting.journal-summary.compte.c45740bb"><span class="js-code">{{ c.accountNumber }}</span></td>
+              <td data-label="Intitulé" i18n-data-label="@@accounting.journal-summary.intitule.9f19d904">{{ c.accountLabel }}</td>
+              <td data-label="Débit" i18n-data-label="@@accounting.journal-summary.debit.f528224f" class="js-num">{{ c.debit | number : '1.3-3' }}</td>
+              <td data-label="Crédit" i18n-data-label="@@accounting.journal-summary.credit.19194bdf" class="js-num">{{ c.credit | number : '1.3-3' }}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="footer">
@@ -250,11 +250,11 @@ const FILE_BASE_BY_TAB: readonly string[] = [
           </ng-template>
           <ng-template pTemplate="body" let-t>
             <tr>
-              <td data-label="Journal"><span class="js-code">{{ t.journalCode }}</span></td>
-              <td data-label="Libellé">{{ t.journalLabel }}</td>
-              <td data-label="Écritures" class="js-num">{{ t.entryCount }}</td>
-              <td data-label="Total débit" class="js-num">{{ t.debit | number : '1.3-3' }}</td>
-              <td data-label="Total crédit" class="js-num">{{ t.credit | number : '1.3-3' }}</td>
+              <td data-label="Journal" i18n-data-label="@@accounting.journal-summary.journal.57d7f743"><span class="js-code">{{ t.journalCode }}</span></td>
+              <td data-label="Libellé" i18n-data-label="@@accounting.journal-summary.libelle.f5485bba">{{ t.journalLabel }}</td>
+              <td data-label="Écritures" i18n-data-label="@@accounting.journal-summary.ecritures.7bfac2f6" class="js-num">{{ t.entryCount }}</td>
+              <td data-label="Total débit" i18n-data-label="@@accounting.journal-summary.total.debit.ea9c4853" class="js-num">{{ t.debit | number : '1.3-3' }}</td>
+              <td data-label="Total crédit" i18n-data-label="@@accounting.journal-summary.total.credit.98c95962" class="js-num">{{ t.credit | number : '1.3-3' }}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="footer">
@@ -276,12 +276,12 @@ const FILE_BASE_BY_TAB: readonly string[] = [
     @use '../shared/accounting-layout';
 
     .js-fields { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--spacing-4); }
-    .js-num { text-align: right; font-variant-numeric: tabular-nums; }
+    .js-num { text-align: end; font-variant-numeric: tabular-nums; }
     .js-code {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-weight: var(--font-weight-medium);
     }
-    .js-label { margin-left: var(--spacing-2); color: var(--color-text-secondary); }
+    .js-label { margin-inline-start: var(--spacing-2); color: var(--color-text-secondary); }
     .js-empty { text-align: center; padding: var(--spacing-8) var(--spacing-4); }
 
     /* Le centralisateur est large par nature : il défile horizontalement dans son conteneur,
@@ -307,13 +307,13 @@ const FILE_BASE_BY_TAB: readonly string[] = [
       letter-spacing: 0.04em;
       text-align: center;
     }
-    .js-matrix thead th.js-sub { text-align: right; }
+    .js-matrix thead th.js-sub { text-align: end; }
     .js-sticky {
       position: sticky;
-      left: 0;
+      inset-inline-start: 0;
       z-index: 1;
       background: var(--color-background-elevated);
-      text-align: left;
+      text-align: start;
     }
     .js-matrix thead .js-sticky { background: var(--color-background-subtle); }
     .js-total-col { background: var(--color-background-subtle); }

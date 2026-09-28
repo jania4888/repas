@@ -218,7 +218,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
     .card h3 { font-size: 1rem; font-weight: 600; margin: 0 0 1rem; display: flex; align-items: center; gap: 0.5rem; }
     .card-error { border-color: #fca5a5; background: #fef2f2; }
     .card-error h3 { color: #b91c1c; }
-    .card-error ul { margin: 0; padding-left: 1.25rem; }
+    .card-error ul { margin: 0; padding-inline-start: 1.25rem; }
     .card-error li { color: #991b1b; font-size: 0.875rem; margin-bottom: 0.25rem; }
     .card-success { border-color: #86efac; background: #f0fdf4; }
     .card-success h3 { color: #166534; }
@@ -226,7 +226,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
     .card-warning { border-color: #fcd34d; background: #fffbeb; }
     .card-warning h3 { color: #b45309; font-size: 0.9375rem; }
     .hint-p { font-size: 0.875rem; line-height: 1.5; margin: 0 0 0.75rem; color: var(--text-secondary); }
-    .hint-list { margin: 0 0 0.75rem; padding-left: 1.25rem; font-size: 0.875rem; line-height: 1.5; color: var(--text-secondary); }
+    .hint-list { margin: 0 0 0.75rem; padding-inline-start: 1.25rem; font-size: 0.875rem; line-height: 1.5; color: var(--text-secondary); }
     .hint-list li { margin-bottom: 0.35rem; }
     .muted-hint { font-size: 0.8125rem; color: var(--text-secondary); opacity: 0.95; }
     .period-hint { margin: -0.5rem 0 1rem; font-size: 0.8125rem; }
@@ -243,14 +243,14 @@ import { ConfirmationService } from '@core/services/confirmation.service';
     .help-grid { display: grid; gap: 1.5rem; }
     .help-grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
     .help-grid h4 { font-size: 0.875rem; font-weight: 600; margin: 0 0 0.5rem; }
-    .help-grid ul, .help-grid ol { margin: 0; padding-left: 1.25rem; }
+    .help-grid ul, .help-grid ol { margin: 0; padding-inline-start: 1.25rem; }
     .help-grid li { font-size: 0.8125rem; margin-bottom: 0.25rem; }
     .help-p { font-size: 0.8125rem; line-height: 1.5; margin: 0 0 0.75rem; color: var(--text-secondary); }
     .ext-link { color: var(--primary); font-weight: 500; }
     .muted { font-size: 0.875rem; color: var(--text-secondary); margin: 0; }
     .table-wrap { overflow-x: auto; }
     .data-table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
-    .data-table th, .data-table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); text-align: left; }
+    .data-table th, .data-table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); text-align: start; }
     .data-table th { color: var(--text-secondary); font-weight: 600; }
     .mono { font-family: ui-monospace, monospace; }
     .hash { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

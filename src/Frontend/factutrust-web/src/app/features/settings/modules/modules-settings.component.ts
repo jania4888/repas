@@ -41,6 +41,10 @@ import { TenantUsersService } from '@core/services/tenant-users.service';
   styleUrl: './modules-settings.component.scss'
 })
 export class ModulesSettingsComponent implements OnInit, OnDestroy {
+  protected loc_activer_labelfr_ed496d(p0: unknown): string {
+    return $localize`:@@settings.modules-settings.tpl.activer.labelfr.ed496db0:Activer ${p0}:labelFr:`;
+  }
+
   private readonly modulesService = inject(CompanyModulesService);
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);

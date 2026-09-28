@@ -149,18 +149,18 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
           </ng-template>
           <ng-template pTemplate="body" let-l>
             <tr>
-              <td data-label="Matricule">{{ l.employeeNumber }}</td>
-              <td data-label="Salarié">{{ l.employeeName }}</td>
+              <td data-label="Matricule" i18n-data-label="@@payroll.payroll-book.matricule.8f74c132">{{ l.employeeNumber }}</td>
+              <td data-label="Salarié" i18n-data-label="@@payroll.payroll-book.salarie.27f97915">{{ l.employeeName }}</td>
               <td data-label="N° CNSS">{{ l.cnssNumber || '—' }}</td>
-              <td data-label="Mois" class="text-right">{{ l.monthsCount }}</td>
-              <td data-label="Brut" class="text-right">{{ l.grossSalary | payrollAmount }}</td>
-              <td data-label="Brut CNSSable" class="text-right">{{ l.cnssableGross | payrollAmount }}</td>
-              <td data-label="CNSS sal." class="text-right">{{ l.cnssEmployee | payrollAmount }}</td>
-              <td data-label="Net imposable" class="text-right">{{ l.netTaxable | payrollAmount }}</td>
+              <td data-label="Mois" i18n-data-label="@@payroll.payroll-book.mois.0d304bea" class="text-right">{{ l.monthsCount }}</td>
+              <td data-label="Brut" i18n-data-label="@@payroll.payroll-book.brut.8fc72d21" class="text-right">{{ l.grossSalary | payrollAmount }}</td>
+              <td data-label="Brut CNSSable" i18n-data-label="@@payroll.payroll-book.brut.cnssable.fe8d5dba" class="text-right">{{ l.cnssableGross | payrollAmount }}</td>
+              <td data-label="CNSS sal." i18n-data-label="@@payroll.payroll-book.cnss.sal.5d831d27" class="text-right">{{ l.cnssEmployee | payrollAmount }}</td>
+              <td data-label="Net imposable" i18n-data-label="@@payroll.payroll-book.net.imposable.2439110f" class="text-right">{{ l.netTaxable | payrollAmount }}</td>
               <td data-label="IRPP" class="text-right">{{ l.irpp + l.irppRegularization | payrollAmount }}</td>
               <td data-label="CSS" class="text-right">{{ l.css + l.cssRegularization | payrollAmount }}</td>
-              <td data-label="Autres ret." class="text-right">{{ l.otherDeductions | payrollAmount }}</td>
-              <td data-label="Net à payer" class="text-right">{{ l.netSalary | payrollAmount }}</td>
+              <td data-label="Autres ret." i18n-data-label="@@payroll.payroll-book.autres.ret.47401df2" class="text-right">{{ l.otherDeductions | payrollAmount }}</td>
+              <td data-label="Net à payer" i18n-data-label="@@payroll.payroll-book.net.a.payer.7835df38" class="text-right">{{ l.netSalary | payrollAmount }}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="footer">

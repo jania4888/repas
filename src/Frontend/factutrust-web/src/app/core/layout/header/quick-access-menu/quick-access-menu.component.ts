@@ -200,7 +200,7 @@ const SECTION_ORDER: QuickAccessSection[] = ['navigation', 'create'];
       color: var(--color-neutral-700, #334155);
       text-decoration: none;
       width: 100%;
-      text-align: left;
+      text-align: start;
       font: inherit;
       cursor: pointer;
       transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;

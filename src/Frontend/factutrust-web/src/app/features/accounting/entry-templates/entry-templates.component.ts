@@ -222,9 +222,9 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
     .field-label { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
     .tpl-input { padding: var(--spacing-2) var(--spacing-3); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-background-elevated); color: var(--color-text-primary); font-size: var(--font-size-sm); width: 100%; }
     .tpl-lines { width: 100%; border-collapse: collapse; }
-    .tpl-lines th { text-align: left; font-size: var(--font-size-xs); text-transform: uppercase; color: var(--color-text-tertiary); padding: var(--spacing-1) var(--spacing-2); }
+    .tpl-lines th { text-align: start; font-size: var(--font-size-xs); text-transform: uppercase; color: var(--color-text-tertiary); padding: var(--spacing-1) var(--spacing-2); }
     .tpl-lines td { padding: 2px var(--spacing-2); }
-    .tpl-col-amount, .tpl-amount { text-align: right; }
+    .tpl-col-amount, .tpl-amount { text-align: end; }
     .tpl-add-line { margin-top: var(--spacing-2); background: none; border: 1px dashed var(--color-border-default); border-radius: var(--radius-md); padding: var(--spacing-2) var(--spacing-3); color: var(--color-text-secondary); cursor: pointer; font-size: var(--font-size-sm); }
     .tpl-form-actions { display: flex; justify-content: flex-end; gap: var(--spacing-3); margin-top: var(--spacing-4); padding-top: var(--spacing-3); border-top: 1px solid var(--color-border-subtle); }
     .tpl-recurrence-hint { margin: 0 0 var(--spacing-2); font-size: var(--font-size-xs); color: var(--color-text-tertiary); }

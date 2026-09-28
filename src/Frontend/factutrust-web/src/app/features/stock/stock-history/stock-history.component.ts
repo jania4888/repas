@@ -117,7 +117,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       border: 1px solid var(--color-border-subtle, #e5e7eb);
     }
 
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .font-mono { font-family: 'JetBrains Mono', monospace; }
     .font-semibold { font-weight: 600; }
     .text-green-600 { color: #16a34a; }

@@ -9,6 +9,7 @@ import {
   CashPositionZone,
   CashFlowSourceType
 } from '../models/cash-forecast.models';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 /**
  * Fonctions pures de l'écran de trésorerie prévisionnelle.
@@ -142,7 +143,7 @@ export function sourceLabel(source: CashFlowSourceType): string {
 /** Étiquette d'axe d'un mois : « Juin 2026 ». */
 export function bucketLabel(bucket: CashFlowBucket): string {
   const date = new Date(bucket.periodStart);
-  const label = date.toLocaleDateString('fr-TN', { month: 'short', year: 'numeric' });
+  const label = date.toLocaleDateString(erpDateLocale('fr-TN'), { month: 'short', year: 'numeric' });
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 

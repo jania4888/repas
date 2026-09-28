@@ -120,7 +120,7 @@
             <span class="password-strength-label" [attr.data-level]="passwordStrengthLevel()">{{ passwordStrengthLabel() }}</span>
           }
         </div>
-        <div class="password-strength-meter" role="progressbar" aria-live="polite" [attr.aria-valuenow]="passwordStrengthMetCount()" aria-valuemin="0" aria-valuemax="5" [attr.aria-label]="passwordStrengthLabel() || 'Force du mot de passe'">
+        <div class="password-strength-meter" role="progressbar" aria-live="polite" [attr.aria-valuenow]="passwordStrengthMetCount()" aria-valuemin="0" aria-valuemax="5" [attr.aria-label]="passwordStrengthLabel() || loc_force_du_mot_de_passe_de0bbe">
           @for (seg of strengthSegments; track seg) {
             <span class="password-strength-segment" [class.filled]="passwordStrengthMetCount() >= seg" [attr.data-level]="passwordStrengthLevel()"></span>
           }

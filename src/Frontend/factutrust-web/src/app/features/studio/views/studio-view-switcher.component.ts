@@ -107,7 +107,7 @@ interface ViewSwitcherOption {
       font-size: var(--font-size-xs);
     }
 
-    .view-switcher__mode { margin-right: var(--spacing-1, 0.25rem); }
+    .view-switcher__mode { margin-inline-end: var(--spacing-1, 0.25rem); }
 
     .view-switcher-select { min-width: 14rem; }
   `]

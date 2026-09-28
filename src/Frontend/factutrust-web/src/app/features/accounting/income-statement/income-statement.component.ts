@@ -178,7 +178,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     .is-icon--revenue { background:var(--color-success-50,#f0fdf4); color:var(--color-success-600,#16a34a); }
     .is-icon--expenses { background:var(--color-danger-50,#fef2f2); color:var(--color-danger-600,#dc2626); }
     .is-account-num { font-family:monospace; font-weight:500; }
-    .text-right { text-align:right; }
+    .text-right { text-align:end; }
     .tabnum { font-variant-numeric:tabular-nums; }
     .is-prev-year { color:var(--color-text-tertiary); }
     .is-total-row { font-weight:700; }

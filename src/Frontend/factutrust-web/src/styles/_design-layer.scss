@@ -331,7 +331,7 @@ $ft-icon-tones: (
     letter-spacing: 0.04em;
     padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
     border-bottom: 1px solid var(--color-border-default, #cbd5e1);
-    text-align: left;
+    text-align: start;
   }
 
   tbody td {
@@ -546,7 +546,7 @@ $ft-icon-tones: (
 .ft-panel {
   background: var(--color-background-elevated, #ffffff);
   border: 1px solid var(--color-border-subtle, #e2e8f0);
-  border-left: 4px solid var(--color-primary-500, #3b82f6);
+  border-inline-start: 4px solid var(--color-primary-500, #3b82f6);
   border-radius: var(--radius-xl, 0.75rem);
   box-shadow: var(--shadow-soft-sm, var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.08)));
   padding: var(--card-padding, var(--spacing-5, 1.25rem));

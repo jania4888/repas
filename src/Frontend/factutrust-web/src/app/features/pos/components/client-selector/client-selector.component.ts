@@ -240,7 +240,7 @@ import { POS_PASSENGER_CLIENT_EMAIL } from '../../constants/pos-client.constants
       background: var(--color-neutral-50);
       cursor: pointer;
       transition: all 300ms ease;
-      text-align: left;
+      text-align: start;
       font-family: var(--font-family);
     }
 
@@ -396,7 +396,7 @@ import { POS_PASSENGER_CLIENT_EMAIL } from '../../constants/pos-client.constants
       background: transparent;
       cursor: pointer;
       transition: background 200ms ease;
-      text-align: left;
+      text-align: start;
       font-family: var(--font-family);
     }
 

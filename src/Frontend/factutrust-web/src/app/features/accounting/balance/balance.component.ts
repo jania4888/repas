@@ -156,7 +156,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </ng-template>
           <ng-template pTemplate="body" let-r>
             <tr>
-              <td data-label="Compte">
+              <td data-label="Compte" i18n-data-label="@@accounting.balance.compte.c45740bb">
                 <a
                   class="account-link"
                   [routerLink]="['/accounting/ledger']"
@@ -165,9 +165,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   {{ r.accountNumber }}
                 </a>
               </td>
-              <td data-label="Libellé">{{ r.label }}</td>
+              <td data-label="Libellé" i18n-data-label="@@accounting.balance.libelle.f5485bba">{{ r.label }}</td>
               @if (hasForeignCurrency()) {
-                <td data-label="Devises" class="bal-currencies">
+                <td data-label="Devises" i18n-data-label="@@accounting.balance.devises.23dd4301" class="bal-currencies">
                   @if (r.foreignCurrencies?.length) {
                     {{ r.foreignCurrencies.join(' · ') }}
                   } @else {
@@ -175,12 +175,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   }
                 </td>
               }
-              <td class="text-right" data-label="Ouv. D" style="font-variant-numeric:tabular-nums">{{ r.openingDebit | number : '1.3-3' }}</td>
-              <td class="text-right" data-label="Ouv. C" style="font-variant-numeric:tabular-nums">{{ r.openingCredit | number : '1.3-3' }}</td>
-              <td class="text-right" data-label="Mouv. D" style="font-variant-numeric:tabular-nums">{{ r.movementDebit | number : '1.3-3' }}</td>
-              <td class="text-right" data-label="Mouv. C" style="font-variant-numeric:tabular-nums">{{ r.movementCredit | number : '1.3-3' }}</td>
-              <td class="text-right" data-label="Clôture D" style="font-variant-numeric:tabular-nums">{{ r.closingDebit | number : '1.3-3' }}</td>
-              <td class="text-right" data-label="Clôture C" style="font-variant-numeric:tabular-nums">{{ r.closingCredit | number : '1.3-3' }}</td>
+              <td class="text-right" data-label="Ouv. D" i18n-data-label="@@accounting.balance.ouv.d.1a1c3306" style="font-variant-numeric:tabular-nums">{{ r.openingDebit | number : '1.3-3' }}</td>
+              <td class="text-right" data-label="Ouv. C" i18n-data-label="@@accounting.balance.ouv.c.95e30fd9" style="font-variant-numeric:tabular-nums">{{ r.openingCredit | number : '1.3-3' }}</td>
+              <td class="text-right" data-label="Mouv. D" i18n-data-label="@@accounting.balance.mouv.d.0f50458a" style="font-variant-numeric:tabular-nums">{{ r.movementDebit | number : '1.3-3' }}</td>
+              <td class="text-right" data-label="Mouv. C" i18n-data-label="@@accounting.balance.mouv.c.87e48868" style="font-variant-numeric:tabular-nums">{{ r.movementCredit | number : '1.3-3' }}</td>
+              <td class="text-right" data-label="Clôture D" i18n-data-label="@@accounting.balance.cloture.d.edb6d923" style="font-variant-numeric:tabular-nums">{{ r.closingDebit | number : '1.3-3' }}</td>
+              <td class="text-right" data-label="Clôture C" i18n-data-label="@@accounting.balance.cloture.c.2be08431" style="font-variant-numeric:tabular-nums">{{ r.closingCredit | number : '1.3-3' }}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="footer">
@@ -227,13 +227,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                 </ng-template>
                 <ng-template pTemplate="body" let-r>
                   <tr>
-                    <td data-label="Date">{{ r.entryDate | date : 'shortDate' }}</td>
-                    <td data-label="Journal">{{ r.journalCode }}</td>
-                    <td data-label="Pièce">{{ r.pieceNumber }}</td>
-                    <td data-label="Libellé">{{ r.label }}</td>
-                    <td class="text-right" data-label="Débit">{{ r.debit | number : '1.3-3' }}</td>
-                    <td class="text-right" data-label="Crédit">{{ r.credit | number : '1.3-3' }}</td>
-                    <td class="text-right" data-label="Solde">{{ r.runningBalance | number : '1.3-3' }}</td>
+                    <td data-label="Date" i18n-data-label="@@accounting.balance.date.eb9a4bc1">{{ r.entryDate | date : 'shortDate' }}</td>
+                    <td data-label="Journal" i18n-data-label="@@accounting.balance.journal.57d7f743">{{ r.journalCode }}</td>
+                    <td data-label="Pièce" i18n-data-label="@@accounting.balance.piece.954bbc8c">{{ r.pieceNumber }}</td>
+                    <td data-label="Libellé" i18n-data-label="@@accounting.balance.libelle.f5485bba">{{ r.label }}</td>
+                    <td class="text-right" data-label="Débit" i18n-data-label="@@accounting.balance.debit.f528224f">{{ r.debit | number : '1.3-3' }}</td>
+                    <td class="text-right" data-label="Crédit" i18n-data-label="@@accounting.balance.credit.19194bdf">{{ r.credit | number : '1.3-3' }}</td>
+                    <td class="text-right" data-label="Solde" i18n-data-label="@@accounting.balance.solde.e5977cf9">{{ r.runningBalance | number : '1.3-3' }}</td>
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage">
@@ -302,7 +302,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   styles: `
     @use '../shared/accounting-layout';
     .balance-toolbar-fields { display:flex; flex-wrap:wrap; align-items:flex-end; gap:var(--spacing-4); }
-    .text-right { text-align:right; }
+    .text-right { text-align:end; }
     .acc-totals-row td { font-weight:var(--font-weight-bold); background:var(--color-background-subtle); border-top:2px solid var(--color-border-default); }
     .account-link { font-family:monospace; font-weight:500; color:var(--color-primary-500); cursor:pointer; text-decoration:none; }
     .account-link:hover { text-decoration:underline; color:var(--color-primary-700); }
@@ -323,11 +323,11 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       font-variant-numeric:tabular-nums;
     }
     .bal-code { font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-weight:500; }
-    .bal-label { margin-left:var(--spacing-2); color:var(--color-text-secondary); }
+    .bal-label { margin-inline-start:var(--spacing-2); color:var(--color-text-secondary); }
     .bal-empty { text-align:center; padding:var(--spacing-6); color:var(--color-text-secondary); }
     .bal-grand-total {
       margin:var(--spacing-4) 0 0;
-      text-align:right;
+      text-align:end;
       font-weight:var(--font-weight-bold);
       font-variant-numeric:tabular-nums;
     }
@@ -348,7 +348,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       font-size:var(--font-size-xs);
       letter-spacing:0.04em;
     }
-    .bal-sticky { position:sticky; left:0; z-index:1; background:var(--color-background-elevated); text-align:left; }
+    .bal-sticky { position:sticky; inset-inline-start:0; z-index:1; background:var(--color-background-elevated); text-align:start; }
     .bal-matrix thead .bal-sticky { background:var(--color-background-subtle); }
     .bal-total-col { background:var(--color-background-subtle); }
   `

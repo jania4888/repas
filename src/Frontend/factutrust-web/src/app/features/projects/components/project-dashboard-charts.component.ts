@@ -5,6 +5,7 @@ import { ChartModule } from 'primeng/chart';
 import { ChartCardComponent } from '@shared/components/dashboard/chart-card.component';
 import { ProjectDashboardExtended, ProjectStatusBreakdown } from '../project-api.service';
 import { ProjectProgressGaugeComponent } from './project-progress-gauge.component';
+import { erpDateLocale } from '@core/i18n/erp-format';
 
 @Component({
   selector: 'app-project-dashboard-charts',
@@ -98,7 +99,7 @@ export class ProjectDashboardChartsComponent {
     const d = this.data;
     const trend = d?.taskTrend ?? [];
     return {
-      labels: trend.map(p => new Date(p.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })),
+      labels: trend.map(p => new Date(p.date).toLocaleDateString(erpDateLocale('fr-FR'), { weekday: 'short', day: 'numeric' })),
       datasets: [
         { label: $localize`:@@projects.project-dashboard-charts.ts.creees.4b3f024a:Créées`, data: trend.map(p => p.created), borderColor: '#2563eb', tension: 0.3 },
         { label: $localize`:@@projects.project-dashboard-charts.ts.terminees.7d7f40ab:Terminées`, data: trend.map(p => p.completed), borderColor: '#16a34a', tension: 0.3 },

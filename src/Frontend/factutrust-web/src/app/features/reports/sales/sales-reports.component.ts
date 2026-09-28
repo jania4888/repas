@@ -30,6 +30,8 @@ import {
   SalesRevenueReportRow,
   ClientWithholdingReportRow
 } from '@core/services/reports-api.service';
+import { erpDateLocale } from '@core/i18n/erp-format';
+import { REPORT_EXPORT_MONTHS_SHORT_FR } from '../shared/report-export-fr';
 
 interface PeriodOption {
   label: string;
@@ -195,7 +197,7 @@ interface PeriodOption {
           <div 
             class="chart-container" 
             role="img" 
-            [attr.aria-label]="loc_ui_tern_graphique_en_barres_evolution_des_revenus_b58454 + (periodDateRangeLabel() || 'sur la période sélectionnée')">
+            [attr.aria-label]="loc_ui_tern_graphique_en_barres_evolution_des_revenus_b58454 + (periodDateRangeLabel() || loc_sur_la_periode_selectionnee_2fbf29)">
             <div class="chart-y-axis" aria-hidden="true">
               @for (tick of chartYAxisTicks(); track tick.value) {
                 <span class="chart-y-tick">{{ tick.label }}</span>
@@ -1289,7 +1291,7 @@ interface PeriodOption {
     .filter-period-range {
       font-size: var(--font-size-sm);
       color: var(--color-text-secondary);
-      margin-left: var(--spacing-2);
+      margin-inline-start: var(--spacing-2);
     }
 
     .summary-block {
@@ -1484,8 +1486,8 @@ interface PeriodOption {
       flex-direction: column;
       justify-content: space-between;
       height: 220px;
-      padding: 0 var(--spacing-2) 0 0;
-      border-right: 1px solid var(--color-border-subtle);
+      padding-block: 0; padding-inline: 0 var(--spacing-2);
+      border-inline-end: 1px solid var(--color-border-subtle);
       min-width: 72px;
     }
 
@@ -1681,7 +1683,7 @@ interface PeriodOption {
     }
 
     .text-right {
-      text-align: right;
+      text-align: end;
     }
 
     .amount {
@@ -1950,7 +1952,7 @@ interface PeriodOption {
       }
 
       .print-header__right {
-        text-align: right;
+        text-align: end;
       }
 
       .print-header__app {
@@ -2076,7 +2078,7 @@ interface PeriodOption {
       }
 
       .print-table thead th {
-        text-align: left;
+        text-align: start;
         padding: 9px 12px;
         font-weight: 700;
         color: #1a202c;
@@ -2089,7 +2091,7 @@ interface PeriodOption {
       }
 
       .print-table thead th.text-right {
-        text-align: right;
+        text-align: end;
       }
 
       .print-table tbody td {
@@ -2100,7 +2102,7 @@ interface PeriodOption {
       }
 
       .print-table tbody td.text-right {
-        text-align: right;
+        text-align: end;
       }
 
       .print-table tbody tr {
@@ -2202,6 +2204,8 @@ interface PeriodOption {
   `]
 })
 export class SalesReportsComponent implements OnInit {
+  protected readonly loc_sur_la_periode_selectionnee_2fbf29 = $localize`:@@reports.sales-reports.tpl.sur.la.periode.selectionnee.2fbf29c3:sur la période sélectionnée`;
+
   readonly loc_ui_tern_graphique_en_barres_evolution_des_revenus_b58454 = $localize`:@@ui.tern.graphique.en.barres.evolution.des.revenus.b58454:Graphique en barres - évolution des revenus `;
   private readonly route = inject(ActivatedRoute);
   reportsService = inject(SalesReportsService);
@@ -2303,8 +2307,8 @@ export class SalesReportsComponent implements OnInit {
     const { fromDate, toDate } = this.getPeriodDates();
     const from = new Date(fromDate + 'T12:00:00');
     const to = new Date(toDate + 'T12:00:00');
-    const fromStr = from.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-    const toStr = to.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const fromStr = from.toLocaleDateString(erpDateLocale('fr-FR'), { day: 'numeric', month: 'long', year: 'numeric' });
+    const toStr = to.toLocaleDateString(erpDateLocale('fr-FR'), { day: 'numeric', month: 'long', year: 'numeric' });
     if (fromDate === toDate) return fromStr;
     return `${fromStr} – ${toStr}`;
   }
@@ -2567,7 +2571,7 @@ export class SalesReportsComponent implements OnInit {
     if (crossTab && crossTab.years.length > 0) {
       rows.push(['']);
       rows.push(['Tableau croisé CA - Chiffres d\'affaires par mois et année', '']);
-      const headerRow = ['Année', ...crossTab.monthLabels, 'Total'];
+      const headerRow = ['Année', ...REPORT_EXPORT_MONTHS_SHORT_FR, 'Total'];
       rows.push(headerRow);
       crossTab.years.forEach(year => {
         const monthRevs = crossTab.matrix.get(year) ?? [];
@@ -2601,9 +2605,9 @@ export class SalesReportsComponent implements OnInit {
   }
 
   private readonly tabNames = [
-    'Revenus et clients', 'Synthèse mensuelle',
-    'Chiffres d\'affaires par mois / Année',
-    'Taux de conversion devis', 'Répartition par statut',
+    $localize`:@@reports.sales-reports.ts.revenus.et.clients.893c8058:Revenus et clients`, $localize`:@@reports.sales-reports.ts.synthese.mensuelle.bab5b563:Synthèse mensuelle`,
+    $localize`:@@reports.sales-reports.ts.chiffres.d.affaires.par.mois.annee.cc6a49c6:Chiffres d'affaires par mois / Année`,
+    $localize`:@@reports.sales-reports.ts.taux.de.conversion.devis.8bc52158:Taux de conversion devis`, $localize`:@@reports.sales-reports.ts.repartition.par.statut.05b7c49b:Répartition par statut`,
     'Performance produits', 'Évolution ventes par produit',
     'Indicateurs panier', 'Produits jamais vendus',
     'CA par catégorie', 'Transactions clients',
@@ -2616,7 +2620,7 @@ export class SalesReportsComponent implements OnInit {
   }
 
   get printDate(): string {
-    return new Date().toLocaleDateString('fr-FR', {
+    return new Date().toLocaleDateString(erpDateLocale('fr-FR'), {
       day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
     });
   }

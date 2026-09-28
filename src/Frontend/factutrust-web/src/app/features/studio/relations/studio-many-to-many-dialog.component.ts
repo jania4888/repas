@@ -33,7 +33,7 @@ import { slugifyKey } from '../shared/studio-text.util';
 
         <label for="m2m-label" i18n="@@studio.relations.libelle.affiche.39f5ced2">Libellé affiché</label>
         <input pInputText id="m2m-label" class="studio-w-full" [ngModel]="label()" (ngModelChange)="label.set($event)"
-          [placeholder]="selectedTargetLabel() || 'Tels que nommés'" maxlength="120" data-testid="m2m-label" />
+          [placeholder]="selectedTargetLabel() || loc_tels_que_nommes_d8d8b1" maxlength="120" data-testid="m2m-label" />
 
         <label for="m2m-jkey" i18n="@@studio.relations.cle.de.la.table.de.liaison.02619902">Clé de la table de liaison</label>
         <input pInputText id="m2m-jkey" class="studio-w-full" [ngModel]="junctionKey()" (ngModelChange)="junctionKey.set($event)"
@@ -63,6 +63,8 @@ import { slugifyKey } from '../shared/studio-text.util';
   styleUrl: '../shared/studio-layout.scss'
 })
 export class StudioManyToManyDialogComponent {
+  protected readonly loc_tels_que_nommes_d8d8b1 = $localize`:@@studio.studio-many-to-many-dialog.tpl.tels.que.nommes.d8d8b121:Tels que nommés`;
+
   readonly sourceEntity = input.required<CustomEntity>();
   readonly entities = input.required<CustomEntity[]>();
   readonly visible = model(false);

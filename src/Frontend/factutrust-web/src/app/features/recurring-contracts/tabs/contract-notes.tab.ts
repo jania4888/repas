@@ -34,7 +34,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
           rows="6"
           [(ngModel)]="notes"
           name="contractNotes"
-          placeholder="Notes internes sur le contrat…">
+          placeholder="Notes internes sur le contrat…" i18n-placeholder="@@recurring-contracts.contract-notes.notes.internes.sur.le.contrat.d43eb060">
         </textarea>
         <div class="actions">
           <app-button

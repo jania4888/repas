@@ -109,7 +109,7 @@
     display: block;
     width: 100%;
     margin-top: 0.25rem;
-    margin-left: 1.5rem;
+    margin-inline-start: 1.5rem;
     color: var(--color-neutral-600);
     font-size: 0.75rem;
     line-height: 1.4;
@@ -240,7 +240,7 @@
     .p-password .p-password-input,
     .p-password .p-inputtext {
       min-height: 3.25rem;
-      padding: 0.875rem 2.5rem 0.875rem 1.15rem !important;
+      padding-block: 0.875rem !important; padding-inline: 1.15rem 2.5rem !important;
       border: none !important;
       border-radius: 0 !important;
       background: white !important;
@@ -249,7 +249,7 @@
 
     .p-icon-wrapper {
       position: absolute;
-      right: 0.85rem;
+      inset-inline-end: 0.85rem;
       top: 50%;
       transform: translateY(-50%);
       color: var(--color-neutral-500);
@@ -292,7 +292,7 @@
   .p-password .p-inputtext {
     border: none !important;
     background: white !important;
-    padding-left: 1.15rem !important;
+    padding-inline-start: 1.15rem !important;
   }
 
   .login-submit-btn {

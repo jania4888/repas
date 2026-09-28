@@ -120,18 +120,18 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
   styles: [`
     .promotions-board { display: block; }
     .actions-row { margin-bottom: 1rem; display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
-    .actions-ai { margin-left: auto; }
-    @media (max-width: 768px) { .actions-ai { margin-left: 0; width: 100%; } }
+    .actions-ai { margin-inline-start: auto; }
+    @media (max-width: 768px) { .actions-ai { margin-inline-start: 0; width: 100%; } }
     .state { padding: 1.25rem; color: var(--color-neutral-600, #6b7280); font-style: italic; }
     .state.empty { background: var(--color-neutral-50, #f9fafb); border: 1px dashed var(--color-neutral-300, #d1d5db); border-radius: 8px; }
     .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
     .card { background: white; border: 1px solid var(--color-neutral-200, #e5e7eb); border-radius: 8px; padding: 1rem; display: flex; flex-direction: column; }
-    .card.type-destockage { border-left: 4px solid #f59e0b; }
-    .card.type-surstock { border-left: 4px solid #ef4444; }
-    .card.type-saisonnier { border-left: 4px solid #2563eb; }
-    .card.type-crossSell { border-left: 4px solid #8b5cf6; }
-    .card.type-prePic { border-left: 4px solid #10b981; }
-    .card.type-margePush { border-left: 4px solid #14b8a6; }
+    .card.type-destockage { border-inline-start: 4px solid #f59e0b; }
+    .card.type-surstock { border-inline-start: 4px solid #ef4444; }
+    .card.type-saisonnier { border-inline-start: 4px solid #2563eb; }
+    .card.type-crossSell { border-inline-start: 4px solid #8b5cf6; }
+    .card.type-prePic { border-inline-start: 4px solid #10b981; }
+    .card.type-margePush { border-inline-start: 4px solid #14b8a6; }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .5rem; }
     .card-header .type { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; color: var(--color-neutral-600, #6b7280); }
     .card-header .event { font-size: .75rem; color: var(--color-primary-700, #1e40af); }
@@ -160,7 +160,7 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
     .sim-form label { display: flex; flex-direction: column; gap: .25rem; font-size: .85rem; color: var(--color-neutral-600, #6b7280); }
     .sim-form input { padding: .45rem .6rem; border-radius: 6px; border: 1px solid var(--color-neutral-300, #d1d5db); }
     .sim-result { margin-top: 1rem; padding: .85rem 1rem; background: var(--color-neutral-50, #f9fafb); border-radius: 6px; }
-    .sim-result ul { padding-left: 1.5rem; margin: .25rem 0; }
+    .sim-result ul { padding-inline-start: 1.5rem; margin: .25rem 0; }
     .hint { font-size: .8rem; color: var(--color-neutral-500, #9ca3af); }
   `]
 })

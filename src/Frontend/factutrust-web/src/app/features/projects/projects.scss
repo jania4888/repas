@@ -256,7 +256,7 @@
 }
 
 .proj-kanban-col-count {
-  margin-left: 0.35rem;
+  margin-inline-start: 0.35rem;
   font-size: 0.75rem;
   font-weight: 500;
   color: var(--text-color-secondary);
@@ -311,7 +311,7 @@
     padding: 0.75rem;
     border: none;
     background: transparent;
-    text-align: left;
+    text-align: start;
     cursor: inherit;
     border-radius: var(--radius-md, 6px);
 
@@ -368,7 +368,7 @@
 
 .proj-planning-fill {
   position: absolute;
-  left: 0;
+  inset-inline-start: 0;
   top: 0;
   bottom: 0;
   background: var(--primary-500, #3b82f6);
@@ -477,7 +477,7 @@
 
   dd {
     margin: 0;
-    text-align: right;
+    text-align: end;
   }
 }
 
@@ -590,17 +590,17 @@
   align-items: stretch;
 
   .btn-primary:first-child {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
   }
 }
 
 .proj-tasks-create-chevron {
-  border-top-left-radius: 0 !important;
-  border-bottom-left-radius: 0 !important;
-  padding-left: 0.5rem !important;
-  padding-right: 0.5rem !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-start-start-radius: 0 !important;
+  border-end-start-radius: 0 !important;
+  padding-inline-start: 0.5rem !important;
+  padding-inline-end: 0.5rem !important;
+  border-inline-start: 1px solid rgba(255, 255, 255, 0.25) !important;
 }
 
 .proj-tasks-tool-btn {
@@ -831,7 +831,7 @@
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 999px;
-  margin-right: 0.35rem;
+  margin-inline-end: 0.35rem;
   vertical-align: middle;
 
   &--low { background: var(--color-success-500, #22c55e); }
@@ -1035,7 +1035,7 @@
 
 .proj-dash-search__icon {
   position: absolute;
-  left: 0.85rem;
+  inset-inline-start: 0.85rem;
   color: var(--color-text-secondary, #64748b);
   font-size: 0.85rem;
   pointer-events: none;
@@ -1048,7 +1048,7 @@
   background: var(--color-background-elevated, #fff);
   color: var(--color-text-primary, #0f172a);
   font-size: 0.85rem;
-  padding: 0.55rem 4.5rem 0.55rem 2.25rem;
+  padding-block: 0.55rem; padding-inline: 2.25rem 4.5rem;
   outline: none;
 
   &::placeholder {
@@ -1063,7 +1063,7 @@
 
 .proj-dash-search__hint {
   position: absolute;
-  right: 0.65rem;
+  inset-inline-end: 0.65rem;
   font-size: 0.7rem;
   padding: 0.1rem 0.35rem;
   border-radius: 4px;
@@ -1076,8 +1076,8 @@
 .proj-dash-search__dropdown {
   position: absolute;
   top: calc(100% + 6px);
-  left: 0;
-  right: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   z-index: 50;
   background: #fff;
   border: 1px solid var(--color-border-subtle, #e2e8f0);
@@ -1110,7 +1110,7 @@
   width: 100%;
   border: none;
   background: transparent;
-  text-align: left;
+  text-align: start;
   padding: 0.55rem 1rem;
   cursor: pointer;
   color: inherit;
@@ -1524,7 +1524,7 @@
   color: var(--color-text-secondary, #64748b);
 
   .pi {
-    margin-right: 0.2rem;
+    margin-inline-end: 0.2rem;
   }
 }
 
@@ -1718,7 +1718,7 @@
 
   dd {
     margin: 0;
-    text-align: right;
+    text-align: end;
   }
 
   &__person {
@@ -1791,7 +1791,7 @@
     margin-bottom: 0.35rem;
 
     strong {
-      margin-left: auto;
+      margin-inline-start: auto;
     }
   }
 
@@ -1811,7 +1811,7 @@
   color: var(--color-primary-600, #2563eb);
   font-size: 0.85rem;
   cursor: pointer;
-  text-align: left;
+  text-align: start;
 
   &:hover {
     text-decoration: underline;
@@ -1851,7 +1851,7 @@
     small {
       display: block;
       width: 100%;
-      text-align: right;
+      text-align: end;
       color: var(--text-color-secondary, #64748b);
       font-size: 0.75rem;
     }
@@ -1910,7 +1910,7 @@
   }
 
   strong {
-    margin-left: auto;
+    margin-inline-start: auto;
   }
 }
 
@@ -2244,7 +2244,7 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-2, 0.5rem);
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 
 .proj-list-more-filters {

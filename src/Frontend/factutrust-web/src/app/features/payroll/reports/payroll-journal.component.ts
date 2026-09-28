@@ -113,7 +113,7 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
       <app-payroll-empty-state
         icon="pi-file"
         title="Aucun journal disponible" i18n-title="@@payroll.reports.aucun.journal.disponible.690b5900"
-        [description]="error() ?? 'Sélectionnez une période disposant d\\'un cycle de paie.'"
+        [description]="error() ?? loc_selectionnez_une_periode_disposant_d_53f3bd"
         [showAction]="true"
         actionLabel="Voir les cycles de paie" i18n-actionLabel="@@payroll.reports.voir.les.cycles.de.paie.fd141467"
         actionRoute="/payroll/runs" />
@@ -146,17 +146,17 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
               </ng-template>
               <ng-template pTemplate="body" let-l>
                 <tr>
-                  <td data-label="Matricule">{{ l.employeeNumber }}</td>
-                  <td data-label="Salarié">{{ l.employeeName }}</td>
-                  <td data-label="Brut" class="text-right">{{ l.grossSalary | payrollAmount }}</td>
-                  <td data-label="CNSS sal." class="text-right">{{ l.cnssEmployee | payrollAmount }}</td>
-                  <td data-label="Net imposable" class="text-right">{{ l.monthlyNetTaxable | payrollAmount }}</td>
+                  <td data-label="Matricule" i18n-data-label="@@payroll.payroll-journal.matricule.8f74c132">{{ l.employeeNumber }}</td>
+                  <td data-label="Salarié" i18n-data-label="@@payroll.payroll-journal.salarie.27f97915">{{ l.employeeName }}</td>
+                  <td data-label="Brut" i18n-data-label="@@payroll.payroll-journal.brut.8fc72d21" class="text-right">{{ l.grossSalary | payrollAmount }}</td>
+                  <td data-label="CNSS sal." i18n-data-label="@@payroll.payroll-journal.cnss.sal.5d831d27" class="text-right">{{ l.cnssEmployee | payrollAmount }}</td>
+                  <td data-label="Net imposable" i18n-data-label="@@payroll.payroll-journal.net.imposable.2439110f" class="text-right">{{ l.monthlyNetTaxable | payrollAmount }}</td>
                   <td data-label="IRPP" class="text-right">{{ l.irpp + l.irppRegularization | payrollAmount }}</td>
                   <td data-label="CSS" class="text-right">{{ l.css + l.cssRegularization | payrollAmount }}</td>
-                  <td data-label="Autres ret." class="text-right">{{ l.otherDeductions | payrollAmount }}</td>
-                  <td data-label="Net à payer" class="text-right">{{ l.netSalary | payrollAmount }}</td>
-                  <td data-label="Charges pat." class="text-right">{{ l.totalEmployerCharges | payrollAmount }}</td>
-                  <td data-label="Coût employeur" class="text-right">{{ l.totalCost | payrollAmount }}</td>
+                  <td data-label="Autres ret." i18n-data-label="@@payroll.payroll-journal.autres.ret.47401df2" class="text-right">{{ l.otherDeductions | payrollAmount }}</td>
+                  <td data-label="Net à payer" i18n-data-label="@@payroll.payroll-journal.net.a.payer.7835df38" class="text-right">{{ l.netSalary | payrollAmount }}</td>
+                  <td data-label="Charges pat." i18n-data-label="@@payroll.payroll-journal.charges.pat.81ada456" class="text-right">{{ l.totalEmployerCharges | payrollAmount }}</td>
+                  <td data-label="Coût employeur" i18n-data-label="@@payroll.payroll-journal.cout.employeur.99313d1f" class="text-right">{{ l.totalCost | payrollAmount }}</td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="footer">
@@ -201,10 +201,10 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
                 </ng-template>
                 <ng-template pTemplate="body" let-l>
                   <tr>
-                    <td data-label="Compte">{{ l.accountNumber }}</td>
-                    <td data-label="Libellé">{{ l.accountLabel || l.label }}</td>
-                    <td data-label="Débit" class="text-right">{{ l.debit ? (l.debit | payrollAmount) : '—' }}</td>
-                    <td data-label="Crédit" class="text-right">{{ l.credit ? (l.credit | payrollAmount) : '—' }}</td>
+                    <td data-label="Compte" i18n-data-label="@@payroll.payroll-journal.compte.c45740bb">{{ l.accountNumber }}</td>
+                    <td data-label="Libellé" i18n-data-label="@@payroll.payroll-journal.libelle.f5485bba">{{ l.accountLabel || l.label }}</td>
+                    <td data-label="Débit" i18n-data-label="@@payroll.payroll-journal.debit.f528224f" class="text-right">{{ l.debit ? (l.debit | payrollAmount) : '—' }}</td>
+                    <td data-label="Crédit" i18n-data-label="@@payroll.payroll-journal.credit.19194bdf" class="text-right">{{ l.credit ? (l.credit | payrollAmount) : '—' }}</td>
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="footer">
@@ -235,6 +235,8 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
   `]
 })
 export class PayrollJournalComponent implements OnInit {
+  protected readonly loc_selectionnez_une_periode_disposant_d_53f3bd = $localize`:@@payroll.payroll-journal.tpl.selectionnez.une.periode.disposant.d.un.53f3bd68:Sélectionnez une période disposant d'un cycle de paie.`;
+
   private readonly payroll = inject(PayrollService);
   private readonly toast = inject(ToastService);
   private readonly errorHandler = inject(ErrorHandlerService);

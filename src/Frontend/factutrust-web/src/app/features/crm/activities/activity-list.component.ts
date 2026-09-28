@@ -102,7 +102,7 @@ interface StatusFilterOption {
           inputId="actClientFilter"
           styleClass="toolbar-dropdown"
           (onChange)="onFiltersChanged()"
-          [attr.aria-label]="'Filtrer par client'"></p-select>
+          [attr.aria-label]="loc_filtrer_par_client_b003f8"></p-select>
         <p-select
           [options]="filteredOpportunities()"
           [(ngModel)]="selectedOpportunity"
@@ -114,7 +114,7 @@ interface StatusFilterOption {
           inputId="actOppFilter"
           styleClass="toolbar-dropdown"
           (onChange)="onFiltersChanged()"
-          [attr.aria-label]="'Filtrer par opportunité'"></p-select>
+          [attr.aria-label]="loc_filtrer_par_opportunite_c7f710"></p-select>
         <div class="toolbar-dates">
           <label class="sr-only" for="actDueFrom" i18n="@@crm.activities.echeance.du.168e2cce">Échéance du</label>
           <p-datepicker
@@ -189,7 +189,7 @@ interface StatusFilterOption {
       </ng-template>
       <ng-template pTemplate="body" let-a>
         <tr [style.opacity]="a.isCompleted ? 0.6 : 1">
-          <td><i [class]="'pi ' + a.typeIcon" style="margin-right:0.25rem" aria-hidden="true"></i>{{ a.typeName }}</td>
+          <td><i [class]="'pi ' + a.typeIcon" style="margin-inline-end:0.25rem" aria-hidden="true"></i>{{ a.typeName }}</td>
           <td>
             <span style="font-weight:600">{{ a.subject }}</span>
             @if (a.description) {
@@ -583,8 +583,8 @@ interface StatusFilterOption {
       background: var(--color-background-subtle);
     }
     .activity-panel .activity-panel-section-title {
-      border-left: 3px solid var(--color-primary-500);
-      padding-left: var(--spacing-3);
+      border-inline-start: 3px solid var(--color-primary-500);
+      padding-inline-start: var(--spacing-3);
     }
     @keyframes activityPanelFadeIn {
       from { opacity: 0; }
@@ -706,6 +706,9 @@ interface StatusFilterOption {
   `
 })
 export class ActivityListComponent implements OnInit, OnDestroy {
+  protected readonly loc_filtrer_par_client_b003f8 = $localize`:@@crm.activity-list.tpl.filtrer.par.client.b003f826:Filtrer par client`;
+  protected readonly loc_filtrer_par_opportunite_c7f710 = $localize`:@@crm.activity-list.tpl.filtrer.par.opportunite.c7f7103e:Filtrer par opportunité`;
+
   readonly loc_ui_tern_badge_badge_e609fe = "badge badge-";
   readonly loc_ui_tern_terminee_459368 = $localize`:@@ui.tern.terminee.459368:Terminée`;
   readonly loc_ui_tern_en_cours_bc9b53 = $localize`:@@ui.tern.en.cours.bc9b53:En cours`;

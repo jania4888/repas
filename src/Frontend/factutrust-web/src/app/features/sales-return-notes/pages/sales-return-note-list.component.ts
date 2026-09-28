@@ -105,7 +105,7 @@ import {
     .data-table th, .data-table td { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--surface-border, #e5e7eb); }
     .clickable { cursor: pointer; }
     .clickable:hover { background: var(--surface-hover, #f8fafc); }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .mono { font-variant-numeric: tabular-nums; }
     .muted { color: var(--text-muted, #64748b); }
   `]

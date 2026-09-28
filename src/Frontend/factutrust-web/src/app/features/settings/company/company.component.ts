@@ -717,7 +717,7 @@ import {
       margin-top: var(--spacing-2);
 
       i {
-        margin-right: var(--spacing-1);
+        margin-inline-end: var(--spacing-1);
       }
     }
 
@@ -734,13 +734,13 @@ import {
         margin-bottom: var(--spacing-1);
 
         i {
-          margin-right: var(--spacing-1);
+          margin-inline-end: var(--spacing-1);
         }
       }
 
       .preview-list {
         margin: 0 0 var(--spacing-3);
-        padding-left: var(--spacing-5);
+        padding-inline-start: var(--spacing-5);
       }
 
       .preview-warnings {
@@ -794,7 +794,7 @@ import {
       background: var(--color-error-50);
       border: 1px solid var(--color-error-200);
       border-radius: var(--radius-md);
-      border-left: 4px solid var(--color-error-500);
+      border-inline-start: 4px solid var(--color-error-500);
       animation: slideIn 0.3s ease-out;
 
       .error-content {
