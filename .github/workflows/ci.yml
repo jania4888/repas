@@ -98,6 +98,15 @@ jobs:
       - run: npm ci --legacy-peer-deps
       - name: i18n — ID uniques, catalogue arabe validé (placeholders, taille), traductions
         run: npm run i18n:ids && node scripts/i18n/build-runtime-translations.mjs --strict && npm run i18n:check
+      - name: i18n — règles, codemods, phrases découpées, payloads IA, valeurs, CSS RTL, attributs de templates
+        run: |
+          node --test scripts/i18n/translation-rules.test.mjs scripts/i18n/review-csv.test.mjs
+          npm run i18n:codemod:test
+          node scripts/i18n/gate/check-concat-messages.mjs
+          node scripts/i18n/gate/check-ai-payload-messages.mjs
+          npm run i18n:values
+          npm run i18n:rtl:check
+          node scripts/i18n/codemod/localize-bound-literals.mjs --check
       - name: i18n — parité du français (branches i18n/*)
         if: startsWith(github.head_ref || github.ref_name, 'i18n/')
         run: |

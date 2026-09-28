@@ -10,8 +10,9 @@ export default defineConfig({
   
   globalSetup: process.env.CI ? './e2e/ci-global-setup.ts' : undefined,
   
-  /* Exclure les fichiers Selenium */
-  testIgnore: /.*\.selenium\.spec\.ts$/,
+  /* Exclure les fichiers Selenium et les suites i18n à session simulée (playwright.i18n.config.ts :
+     port dédié, captures de référence locales) */
+  testIgnore: [/.*\.selenium\.spec\.ts$/, /[\\/]i18n[\\/]erp-(rtl|ar-routes)[^\\/]*\.spec\.ts$/],
   
   /* Timeouts */
   timeout: 30 * 1000,
