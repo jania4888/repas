@@ -40,6 +40,13 @@ var sources = new Dictionary<string, SortedSet<string>>(StringComparer.Ordinal);
 var sourcesOut = args.SkipWhile(a => a != "--sources").Skip(1).FirstOrDefault();
 var currentFile = "";
 
+// Constantes chaîne (`const string X = "…"`) : un message passé par son nom (Error.Forbidden(
+// Access.DeniedMessage), new Error(code, NotSubmittedMessage)…) est résolu vers sa valeur. Seules
+// les constantes qui atteignent un point d'émission sont retenues — jamais un prompt d'IA.
+var roots = new List<(string File, SyntaxNode Root)>();
+var constsByFile = new Dictionary<string, Dictionary<string, string>>(StringComparer.Ordinal);
+var constsByQualifiedName = new Dictionary<string, string>(StringComparer.Ordinal);
+
 if (Directory.Exists(backendRoot))
 {
     foreach (var file in Directory.EnumerateFiles(backendRoot, "*.cs", SearchOption.AllDirectories))
@@ -53,8 +60,15 @@ if (Directory.Exists(backendRoot))
             continue;
         }
 
-        currentFile = normalized[(normalized.IndexOf("/src/Backend/", StringComparison.Ordinal) + 13)..];
-        var root = CSharpSyntaxTree.ParseText(File.ReadAllText(file)).GetRoot();
+        var relative = normalized[(normalized.IndexOf("/src/Backend/", StringComparison.Ordinal) + 13)..];
+        var parsed = CSharpSyntaxTree.ParseText(File.ReadAllText(file)).GetRoot();
+        roots.Add((relative, parsed));
+        CollectConstants(relative, parsed);
+    }
+
+    foreach (var (relative, root) in roots)
+    {
+        currentFile = relative;
 
         foreach (var invocation in root.DescendantNodes().OfType<InvocationExpressionSyntax>())
         {
@@ -112,6 +126,16 @@ if (Directory.Exists(backendRoot))
                 Add(arguments.Value[0].Expression);
             }
         }
+
+        // `new(code, message)` typé par la cible : `static Error NotSubmitted() => new(Code, Message);`.
+        foreach (var creation in root.DescendantNodes().OfType<ImplicitObjectCreationExpressionSyntax>())
+        {
+            var arguments = creation.ArgumentList.Arguments;
+            if (arguments.Count >= 2 && TargetTypeName(creation) == "Error")
+            {
+                Add(arguments[1].Expression);
+            }
+        }
     }
 }
 
@@ -138,12 +162,84 @@ if (sourcesOut is not null)
     }));
 }
 
+void CollectConstants(string file, SyntaxNode root)
+{
+    foreach (var field in root.DescendantNodes().OfType<FieldDeclarationSyntax>())
+    {
+        if (!field.Modifiers.Any(SyntaxKind.ConstKeyword)
+            || field.Declaration.Type is not PredefinedTypeSyntax { Keyword.ValueText: "string" })
+        {
+            continue;
+        }
+
+        var owner = (field.Parent as TypeDeclarationSyntax)?.Identifier.ValueText;
+        foreach (var variable in field.Declaration.Variables)
+        {
+            var value = variable.Initializer is null ? null : ConstantText(variable.Initializer.Value);
+            if (value is null)
+            {
+                continue;
+            }
+
+            if (!constsByFile.TryGetValue(file, out var local))
+            {
+                constsByFile[file] = local = new Dictionary<string, string>(StringComparer.Ordinal);
+            }
+            local[variable.Identifier.ValueText] = value;
+            if (owner is not null)
+            {
+                constsByQualifiedName[$"{owner}.{variable.Identifier.ValueText}"] = value;
+            }
+        }
+    }
+}
+
+// Type visé par un `new(...)` implicite : retour de méthode/propriété, `return`, déclaration typée.
+static string? TargetTypeName(ImplicitObjectCreationExpressionSyntax creation)
+{
+    static string? Name(TypeSyntax? type) => type switch
+    {
+        IdentifierNameSyntax i => i.Identifier.ValueText,
+        QualifiedNameSyntax q => q.Right.Identifier.ValueText,
+        _ => null
+    };
+
+    return creation.Parent switch
+    {
+        ArrowExpressionClauseSyntax { Parent: MethodDeclarationSyntax m } => Name(m.ReturnType),
+        ArrowExpressionClauseSyntax { Parent: PropertyDeclarationSyntax p } => Name(p.Type),
+        ReturnStatementSyntax r => Name(r.FirstAncestorOrSelf<MethodDeclarationSyntax>()?.ReturnType),
+        EqualsValueClauseSyntax { Parent: VariableDeclaratorSyntax { Parent: VariableDeclarationSyntax d } } => Name(d.Type),
+        _ => null
+    };
+}
+
+// Littéral ou concaténation de littéraux (`"a" + "b"`) ; null sinon.
+static string? ConstantText(ExpressionSyntax expression) => expression switch
+{
+    LiteralExpressionSyntax literal when literal.IsKind(SyntaxKind.StringLiteralExpression) => literal.Token.ValueText,
+    BinaryExpressionSyntax binary when binary.IsKind(SyntaxKind.AddExpression)
+        => ConstantText(binary.Left) is { } left && ConstantText(binary.Right) is { } right ? left + right : null,
+    ParenthesizedExpressionSyntax parenthesized => ConstantText(parenthesized.Expression),
+    _ => null
+};
+
+string? ResolveConstant(ExpressionSyntax expression) => expression switch
+{
+    IdentifierNameSyntax identifier
+        => constsByFile.TryGetValue(currentFile, out var local) && local.TryGetValue(identifier.Identifier.ValueText, out var value) ? value : null,
+    MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax owner } member
+        => constsByQualifiedName.TryGetValue($"{owner.Identifier.ValueText}.{member.Name.Identifier.ValueText}", out var qualified) ? qualified : null,
+    _ => null
+};
+
 void Add(ExpressionSyntax expression)
 {
     var text = expression switch
     {
         LiteralExpressionSyntax literal when literal.IsKind(SyntaxKind.StringLiteralExpression) => literal.Token.ValueText,
         InterpolatedStringExpressionSyntax interpolated => ToTemplate(interpolated),
+        IdentifierNameSyntax or MemberAccessExpressionSyntax => ResolveConstant(expression),
         _ => null
     };
     if (IsUserMessage(text))

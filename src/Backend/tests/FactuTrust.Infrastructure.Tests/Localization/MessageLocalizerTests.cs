@@ -119,20 +119,30 @@ public sealed class MessageLocalizerTests
     }
 
     /// <summary>
-    /// Messages dont le front reconnaît le texte français (vat-declaration.component.ts,
-    /// COMPANY_NOT_SUBMITTED_MARKER) : traduits, l'écran afficherait une erreur au lieu de son état vide.
+    /// Messages portés par une constante (<c>new(code, Message)</c>, <c>Error.Forbidden(Access.Message)</c>) :
+    /// l'extracteur les résout, ils sont traduits. Le front reconnaît « aucune déclaration soumise » à son
+    /// code (<c>VatDeclaration.NotSubmitted</c>, renvoyé par GET vat-declaration), plus à son texte.
     /// </summary>
     [Fact]
-    public void Localize_RealCatalog_KeepsFrontMarkersInFrench()
+    public void Localize_RealCatalog_TranslatesConstantMessages()
     {
         var localizer = CreateLocalizerFromRealCatalog();
         var previous = CultureInfo.CurrentUICulture;
         try
         {
             CultureInfo.CurrentUICulture = new CultureInfo("ar-TN");
-            Assert.Equal(
+            foreach (var message in new[]
+            {
                 FactuTrust.Domain.Authorization.VatDeclarationAccess.NotSubmittedMessage,
-                localizer.Localize(FactuTrust.Domain.Authorization.VatDeclarationAccess.NotSubmittedMessage));
+                FactuTrust.Domain.Authorization.VatDeclarationAccess.WriteDeniedMessage,
+                FactuTrust.Domain.Authorization.AccountingValidationAccess.DeniedMessage,
+                FactuTrust.Domain.Authorization.PayrollOperationsAccess.WriteDeniedMessage
+            })
+            {
+                var localized = localizer.Localize(message);
+                Assert.NotEqual(message, localized);
+                Assert.Matches(@"\p{IsArabic}", localized);
+            }
         }
         finally
         {

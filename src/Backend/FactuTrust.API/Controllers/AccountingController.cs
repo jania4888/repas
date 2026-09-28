@@ -705,7 +705,8 @@ public sealed class AccountingController : ControllerBase
         var enforceCompanySubmittedOnly = !_currentUser.IsAccountingFirmDelegatedContext;
         var r = await _mediator.Send(new GetVatDeclarationQuery(year, month, enforceCompanySubmittedOnly), cancellationToken);
         if (r.IsFailure)
-            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+            // Code stable (VatDeclaration.NotSubmitted…) : le front le teste, le message est traduit.
+            return BadRequest(ApiResponse<object>.FailWithCode(r.Error.Description, r.Error.Code));
         return Ok(ApiResponse<VatDeclarationDto>.Ok(r.Value));
     }
 
