@@ -176,6 +176,20 @@ export class ErrorHandlerService {
       }
     }
 
+    // Enveloppe d'échec (ApiResponse.Fail, ValidationErrorResponse, 500 métier) : le message
+    // serveur doit primer sur le libellé HTTP générique (« Erreur serveur… »).
+    if (errorData && typeof errorData === 'object') {
+      const envelopeMessage = (errorData as any).message ?? (errorData as any).Message;
+      const status = error.status ?? 0;
+      if (
+        typeof envelopeMessage === 'string' &&
+        envelopeMessage.trim() &&
+        ((errorData as any).success === false || status >= 500)
+      ) {
+        return envelopeMessage.trim();
+      }
+    }
+
     // Domain Error format (code/description)
     if (errorData && typeof errorData === 'object') {
       const description = (errorData as any).description ?? (errorData as any).Description;
