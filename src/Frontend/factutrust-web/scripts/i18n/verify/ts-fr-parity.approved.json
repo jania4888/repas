@@ -96,8 +96,8 @@
     "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
   },
   "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts": {
-    "sha": "39669cdff9fb07b4cba4d4b0d87ed696d18c8a3d1696dbe828108c6b63de468b",
-    "reason": "Réécriture erpPlural / fusion de phrase / correctif de regroupement : texte FR rendu identique (vérifié par catégorie CLDR fr : one = singulier, other/many = pluriel)"
+    "sha": "657b3d3bf11de053c5e726d079468ca6f0170b045982f9a1419cd8c51d575a0d",
+    "reason": "Réécriture erpPlural / fusion de phrase / correctif de regroupement : texte FR rendu identique (vérifié par catégorie CLDR fr : one = singulier, other/many = pluriel) — Puis retrait du calcul historique (livraison A) : signalement « double lecture d'une même source »."
   },
   "src/app/features/accounting/nct-statements/nct-statements.component.ts": {
     "sha": "d17ceb7f96c0b8a7bbe74bb1c1595c6029ac6ffe78f03fc9ca30d0ddc6d5d554",
@@ -108,8 +108,8 @@
     "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
   },
   "src/app/features/accounting/vat-declaration/vat-declaration.view-model.ts": {
-    "sha": "bbae243124484e4faa94aea50863367b6608d1b46817165fc115ff700a6f9eb8",
-    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
+    "sha": "56c6ccefeadb4273fd65f410f79f0a397d8632aed9dc1675ac7016ad4bd6dac6",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique. — Puis retrait du calcul historique (livraison A) : droit de consommation, taxe hôtelière et droit de licence dans le total, les écarts et le détail."
   },
   "src/app/features/ai-assistant/components/chat-attachment-card/chat-attachment-card.component.ts": {
     "sha": "7fcf317c1033931242f8f972dd131375f6377f4ff9bca296dcd39ceba5710672",
@@ -298,5 +298,17 @@
   "src/app/features/reports/shared/party-balances-table.component.ts": {
     "sha": "d712c3a5d89ca4817b51b75044a9c9d368134458ee1e21a16ecbeea9ab922c52",
     "reason": "En-tête de la colonne tiers : getter partyColumnLabel en $localize (« Client » / « Fournisseur »), même texte que la valeur partyLabel ; rendu français inchangé."
+  },
+  "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts": {
+    "sha": "2f96263d667f6d0f243097a96abbe58868115676641378c67dca7ca570390651",
+    "reason": "Retrait du calcul historique (livraison A) : origine « Documents » (valeurs documentaires et leurs libellés), TFP par activité, messages de validation miroir du serveur."
+  },
+  "src/app/features/accounting/monthly-declaration/monthly-declaration-model.view-model.ts": {
+    "sha": "eb9b9017523e5f808bad468e04f7b191a1c9cf48137f2188b1fc58acf0ef9c1b",
+    "reason": "Retrait du calcul historique (livraison A) : format courant dm-model-v2 / tn-2026-v2, compte rendu des familles passées en v2 et des inclusions ignorées."
+  },
+  "src/app/features/accounting/services/accounting.service.ts": {
+    "sha": "498b4f2d794228999a4437354b7806b5b602549878b1f1a712e4fa9465987967",
+    "reason": "Retrait du calcul historique (livraison A) : route du rapport de parité et ses paramètres (année, mois de début et de fin)."
   }
 }

@@ -156,3 +156,101 @@ path = "src/Backend/FactuTrust.Infrastructure/Resources/Accounting/monthly-decla
 with io.open(path, "w", encoding="utf-8", newline="\r\n") as f:
     f.write(out)
 print("rubriques:", len(rubrics))
+
+# ── Catalogue v2 : le calcul historique reproduit par la configuration ─────────
+#
+# La v1 ci-dessus reste la REFERENCE : c'est a elle que la montee compare chaque rubrique d'un
+# dossier pour savoir si le comptable l'a retouchee. Elle ne doit donc jamais changer.
+#
+# La v2 reprend la v1 et ne modifie que les rubriques qui, en v1, ne reproduisaient pas le calcul
+# historique. Les taux legaux des rubriques de retenue a la source sont conserves a titre
+# informatif : leur retenue vient desormais du rapport RS, pas d'un taux.
+import copy
+
+def documents(r, gross=None, withheld=None):
+    if gross:
+        r["grossKind"] = "Document"
+        r["grossDocumentSource"] = gross
+        r["grossAccounts"] = []
+    if withheld:
+        r["withheldKind"] = "Document"
+        r["withheldDocumentSource"] = withheld
+        r["withheldAccounts"] = []
+    return r
+
+def payroll_both(r, gross_component, withheld_component):
+    r["grossKind"] = "Payroll"
+    r["payrollComponent"] = gross_component
+    r["withheldKind"] = "Payroll"
+    r["withheldPayrollComponent"] = withheld_component
+    return r
+
+RS = {  # code -> compartiment du rapport RS (partition de WithholdingReportPartition)
+    "F1_4_2": "CommissionsAndRents",
+    "F1_5": "FeesOther",
+    "F1_6": "FeesRealRegime",
+    "F1_10": "CapitalIncome",
+    "F1_12": "Dividends",
+    "F1_16": "RealEstate",
+    "F1_17_1": "PurchasesRate1",
+    "F1_17_2": "PurchasesRate05",
+    "F1_17_3": "PurchasesRate15",
+    "F1_18": "VatOther",
+    "F1_19": "VatFull",
+    "F1_24": "CapitalGains",
+    "F1_25": "NonResidents",
+}
+
+v2 = []
+for r in copy.deepcopy(rubrics):
+    code = r["code"]
+    if code in RS:
+        bucket = RS[code]
+        documents(r, gross="Withholding%sBase" % bucket, withheld="Withholding%sAmount" % bucket)
+    elif code == "F2_1":
+        payroll_both(r, "PayrollTaxBaseManufacturing", "TfpManufacturing")
+    elif code == "F2_2":
+        payroll_both(r, "PayrollTaxBaseOtherActivities", "TfpOtherActivities")
+    elif code == "F3_1":
+        r["withheldKind"] = "Payroll"
+        r["withheldPayrollComponent"] = "Foprolos"
+    elif code == "F6_1":
+        documents(r, gross="FodecFormBase", withheld="FodecAmount")
+    elif code == "F7_1":
+        r["fixedGrossAmount"] = 0
+        documents(r, withheld="FiscalStampAmount")
+    elif code == "F9_3_1":
+        # Le taux est celui de la plateforme au moment de la montee (AccountingSettings), pas 0,2 %
+        # en dur : c'est lui que le calcul historique applique.
+        documents(r, gross="SalesGrossBase")
+    v2.append(r)
+
+    if code == "F1_1":
+        new = R("F1_1_RS", "Withholding",
+                "Traitements et salaires retenus hors cycle de paie (rapport de retenue a la source)", "1")
+        documents(new, gross="WithholdingSalariesBase", withheld="WithholdingSalariesAmount")
+        new["displayOrder"] = r["displayOrder"]
+        v2.append(new)
+    if code == "F1_25":
+        new = R("F1_RS_AUTRES", "Withholding",
+                "Autres retenues a la source du rapport, sans ligne dediee (jeux, autres categories, taux non reconnus)", "*")
+        documents(new, gross="WithholdingRemainderBase", withheld="WithholdingRemainderAmount")
+        new["displayOrder"] = r["displayOrder"]
+        v2.append(new)
+
+doc_v2 = {
+    "catalogVersion": "tn-2026-v2",
+    "_note": (
+        "Catalogue v2 : reproduit le calcul historique par la configuration (origine documents, TFP "
+        "par activite, FOPROLOS de la paie). Applique par MonthlyDeclarationCatalogUpgrade, famille "
+        "par famille, aux seules familles dont toutes les rubriques v1 sont intactes ; jamais aux "
+        "rubriques retouchees par le comptable."
+    ),
+    "rubrics": v2,
+}
+
+out_v2 = json.dumps(doc_v2, ensure_ascii=False, indent=2) + "\n"
+path_v2 = "src/Backend/FactuTrust.Infrastructure/Resources/Accounting/monthly-declaration-rubrics-tn-v2.json"
+with io.open(path_v2, "w", encoding="utf-8", newline="\r\n") as f:
+    f.write(out_v2)
+print("rubriques v2:", len(v2))

@@ -34,10 +34,14 @@ public sealed class TenantDatabaseProvisioner
     private readonly IOptions<TenantProvisioningOptions> _options;
     private readonly ILogger<TenantDatabaseProvisioner> _logger;
 
+    private readonly MonthlyDeclarationCatalogOptions _monthlyDeclarationCatalog;
+
     public TenantDatabaseProvisioner(
         IOptions<TenantProvisioningOptions> options,
-        ILogger<TenantDatabaseProvisioner> logger)
+        ILogger<TenantDatabaseProvisioner> logger,
+        IOptions<AccountingSettings>? accountingSettings = null)
     {
+        _monthlyDeclarationCatalog = MonthlyDeclarationCatalogOptionsFactory.From(accountingSettings);
         _options = options;
         _logger = logger;
     }
@@ -240,7 +244,7 @@ WITH
 
         await using var context = new TenantDbContext(options);
         await TenantRuntimeCatalogBootstrapper.EnsureAsync(
-            context, ChartMigrationMode.AutoSafe, cancellationToken, _logger);
+            context, ChartMigrationMode.AutoSafe, cancellationToken, _logger, _monthlyDeclarationCatalog);
         LogStep("SeedTemplateCatalogs", sw.ElapsedMilliseconds, null);
     }
 

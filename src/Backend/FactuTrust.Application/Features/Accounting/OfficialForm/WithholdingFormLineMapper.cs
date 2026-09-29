@@ -103,47 +103,111 @@ public static class WithholdingFormLineMapper
     /// Détermine la ligne officielle d'une catégorie. Retourne <c>null</c> lorsque la catégorie
     /// n'a pas de ligne dédiée exploitable : son montant reste alors compris dans le total.
     /// </summary>
-    private static string? ResolveLine(WithholdingReportByCategoryDto category)
+    private static string? ResolveLine(WithholdingReportByCategoryDto category) =>
+        WithholdingReportPartition.FormLine(WithholdingReportPartition.Bucket(category));
+}
+
+/// <summary>
+/// Compartiments de la retenue à la source du rapport mensuel : la partition que la ventilation
+/// vers le formulaire officiel applique depuis toujours, ligne de rapport par ligne.
+/// </summary>
+public enum WithholdingReportBucket
+{
+    Salaries,
+    FeesRealRegime,
+    FeesOther,
+    CommissionsAndRents,
+    PurchasesRate1,
+    PurchasesRate05,
+    PurchasesRate15,
+    CapitalIncome,
+    Dividends,
+    RealEstate,
+    VatFull,
+    VatOther,
+    CapitalGains,
+    NonResidents,
+
+    /// <summary>Totalisé par le rapport sans ligne dédiée : jeux, autres, achats à un autre taux.</summary>
+    Remainder
+}
+
+/// <summary>
+/// Répartit une ligne du rapport de retenue à la source entre compartiments, puis traduit un
+/// compartiment en ligne du formulaire officiel.
+/// </summary>
+/// <remarks>
+/// Définition <b>unique</b> : la ventilation du formulaire officiel et les sources « documents » du
+/// moteur paramétré la partagent. Deux définitions auraient fini par placer une même retenue sur
+/// deux articles différents selon le chemin de calcul.
+/// </remarks>
+public static class WithholdingReportPartition
+{
+    public static WithholdingReportBucket Bucket(WithholdingReportByCategoryDto category)
     {
         var rate = EffectiveRatePercent(category);
 
         return category.Category switch
         {
             // Article 1 — salaires et traitements soumis au barème de droit commun.
-            WithholdingCategory.Salaires => "Line1",
+            WithholdingCategory.Salaires => WithholdingReportBucket.Salaries,
 
             // Articles 5 et 6 — honoraires. Le formulaire sépare selon le régime du bénéficiaire,
             // ce que le taux appliqué révèle sans ambiguïté : 3 % pour le régime réel / personnes
             // morales, 10 % pour les personnes physiques hors régime réel.
-            WithholdingCategory.Honoraires => IsAbout(rate, 3m) ? "Line6" : "Line5",
+            WithholdingCategory.Honoraires => IsAbout(rate, 3m)
+                ? WithholdingReportBucket.FeesRealRegime
+                : WithholdingReportBucket.FeesOther,
 
             // Article 4 — commissions, courtages et loyers. Le formulaire distingue personnes
             // physiques et morales (10 % dans les deux cas : le taux ne permet pas de trancher).
             // Défaut retenu : personnes morales, cas dominant pour des factures fournisseurs.
-            WithholdingCategory.Commissions or WithholdingCategory.Loyers => "Line4Entities",
+            WithholdingCategory.Commissions or WithholdingCategory.Loyers => WithholdingReportBucket.CommissionsAndRents,
 
             // Article 17 — acquisitions ≥ 1 000 D. Ici le taux identifie la sous-ligne.
-            WithholdingCategory.Achats => IsAbout(rate, 1m) ? "Line17Rate1"
-                : IsAbout(rate, 0.5m) ? "Line17Rate05"
-                : IsAbout(rate, 1.5m) ? "Line17Rate15"
-                : null,
+            WithholdingCategory.Achats => IsAbout(rate, 1m) ? WithholdingReportBucket.PurchasesRate1
+                : IsAbout(rate, 0.5m) ? WithholdingReportBucket.PurchasesRate05
+                : IsAbout(rate, 1.5m) ? WithholdingReportBucket.PurchasesRate15
+                : WithholdingReportBucket.Remainder,
 
-            WithholdingCategory.RevenusCapitaux => "Line10",
-            WithholdingCategory.Dividendes => "Line12",
-            WithholdingCategory.ImmobilierFoncier => "Line16",
+            WithholdingCategory.RevenusCapitaux => WithholdingReportBucket.CapitalIncome,
+            WithholdingCategory.Dividendes => WithholdingReportBucket.Dividends,
+            WithholdingCategory.ImmobilierFoncier => WithholdingReportBucket.RealEstate,
 
             // Articles 18 et 19 — retenue au titre de la TVA : 25 % sur les marchés publics,
             // 100 % pour les opérations avec des personnes non établies en Tunisie.
-            WithholdingCategory.TVA => IsAbout(rate, 100m) ? "Line19" : "Line18",
+            WithholdingCategory.TVA => IsAbout(rate, 100m)
+                ? WithholdingReportBucket.VatFull
+                : WithholdingReportBucket.VatOther,
 
-            WithholdingCategory.PlusValues => "Line24",
-            WithholdingCategory.NonResidents => "Line25",
+            WithholdingCategory.PlusValues => WithholdingReportBucket.CapitalGains,
+            WithholdingCategory.NonResidents => WithholdingReportBucket.NonResidents,
 
             // Jeux (article 29) et « Autres » : lignes non calibrées à ce jour — le montant reste
             // porté par le total de la page 4.
-            _ => null
+            _ => WithholdingReportBucket.Remainder
         };
     }
+
+    /// <summary>Ligne du formulaire officiel d'un compartiment ; <c>null</c> pour le reliquat.</summary>
+    public static string? FormLine(WithholdingReportBucket bucket) => bucket switch
+    {
+        WithholdingReportBucket.Salaries => "Line1",
+        WithholdingReportBucket.FeesRealRegime => "Line6",
+        WithholdingReportBucket.FeesOther => "Line5",
+        WithholdingReportBucket.CommissionsAndRents => "Line4Entities",
+        WithholdingReportBucket.PurchasesRate1 => "Line17Rate1",
+        WithholdingReportBucket.PurchasesRate05 => "Line17Rate05",
+        WithholdingReportBucket.PurchasesRate15 => "Line17Rate15",
+        WithholdingReportBucket.CapitalIncome => "Line10",
+        WithholdingReportBucket.Dividends => "Line12",
+        WithholdingReportBucket.RealEstate => "Line16",
+        WithholdingReportBucket.VatFull => "Line19",
+        WithholdingReportBucket.VatOther => "Line18",
+        WithholdingReportBucket.CapitalGains => "Line24",
+        WithholdingReportBucket.NonResidents => "Line25",
+        _ => null
+    };
 
     private static decimal EffectiveRatePercent(WithholdingReportByCategoryDto category)
         => category.TotalHT > 0m ? category.TotalWithheld / category.TotalHT * 100m : 0m;

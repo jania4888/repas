@@ -26903,6 +26903,141 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.monthly-declaration.controle.avant.retrait.du.calcul.historique.0aa593e0": "Contrôle avant retrait du calcul historique",
+  "@accounting.monthly-declaration.controle.avant.retrait.du.calcul.historique.0aa593e0": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.compare.mois.par.mois.le.calcul.historique.au.ca.509cf13e": " Compare, mois par mois, le calcul historique au calcul paramétré tel qu’il sera une fois l’historique retiré — montants par famille et cases du formulaire officiel. Rien n’est enregistré, et la rampe de bascule n’est pas modifiée. ",
+  "@accounting.monthly-declaration.compare.mois.par.mois.le.calcul.historique.au.ca.509cf13e": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.exercice.e171e2b0": "Exercice",
+  "@accounting.monthly-declaration.exercice.e171e2b0": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts",
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.component.ts",
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.du.mois.5a23e30b": "Du mois",
+  "@accounting.monthly-declaration.du.mois.5a23e30b": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.au.mois.0f235b41": "Au mois",
+  "@accounting.monthly-declaration.au.mois.0f235b41": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.exporter.la.preuve.json.e995fe42": " Exporter la preuve (JSON) ",
+  "@accounting.monthly-declaration.exporter.la.preuve.json.e995fe42": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.exporter.en.tableur.csv.8c642f15": " Exporter en tableur (CSV) ",
+  "@accounting.monthly-declaration.exporter.en.tableur.csv.8c642f15": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.declaration.enregistree.ed5d4974": "déclaration enregistrée",
+  "@accounting.monthly-declaration.declaration.enregistree.ed5d4974": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.famille.3b0121d3": "Famille",
+  "@accounting.monthly-declaration.famille.3b0121d3": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.historique.34f3a06a": "Historique",
+  "@accounting.monthly-declaration.historique.34f3a06a": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.parametre.4befac1b": "Paramétré",
+  "@accounting.monthly-declaration.parametre.4befac1b": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.ecart.6ae8dce8": "Écart",
+  "@accounting.monthly-declaration.ecart.6ae8dce8": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.verdict.7f6e5a6e": "Verdict",
+  "@accounting.monthly-declaration.verdict.7f6e5a6e": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.non.cochee.ed580872": "non cochée",
+  "@accounting.monthly-declaration.non.cochee.ed580872": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.aucun.montant.sur.ce.mois.d.un.cote.comme.de.l.a.3cd15921": "Aucun montant sur ce mois, d’un côté comme de l’autre.",
+  "@accounting.monthly-declaration.aucun.montant.sur.ce.mois.d.un.cote.comme.de.l.a.3cd15921": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.cases.du.formulaire.officiel.qui.different.85ae6d68": "Cases du formulaire officiel qui diffèrent",
+  "@accounting.monthly-declaration.cases.du.formulaire.officiel.qui.different.85ae6d68": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.case.9254c4bb": "Case",
+  "@accounting.monthly-declaration.case.9254c4bb": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.dm-parity-report.ts.le.controle.a.echoue.efbcecfe": "Le contrôle a échoué.",
+  "@accounting.dm-parity-report.ts.le.controle.a.echoue.efbcecfe": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.dm-parity-report.ts.erreur.reseau.0683007f": "Erreur réseau",
+  "@accounting.dm-parity-report.ts.erreur.reseau.0683007f": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.monthly-declaration.ex.f9.tcl.0451422f": "Ex. F9_TCL",
   "@accounting.monthly-declaration.ex.f9.tcl.0451422f": {
     "x-files": [
@@ -27008,6 +27143,20 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.monthly-declaration.valeur.des.documents.f3338e62": "Valeur des documents",
+  "@accounting.monthly-declaration.valeur.des.documents.f3338e62": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-rubric-form.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.assiettes.lues.sur.les.factures.et.le.rapport.de.bf46ac54": "Assiettes lues sur les factures et le rapport de retenue à la source du mois.",
+  "@accounting.monthly-declaration.assiettes.lues.sur.les.factures.et.le.rapport.de.bf46ac54": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-rubric-form.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.monthly-declaration.valeur.fixe.84e10831": "Valeur fixe",
   "@accounting.monthly-declaration.valeur.fixe.84e10831": {
     "x-files": [
@@ -27031,6 +27180,13 @@
   },
   "accounting.monthly-declaration.ex.436.2ee608c3": "Ex. 436",
   "@accounting.monthly-declaration.ex.436.2ee608c3": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-rubric-form.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.montants.lus.sur.les.factures.et.le.rapport.de.r.cf5bdfae": "Montants lus sur les factures et le rapport de retenue à la source du mois.",
+  "@accounting.monthly-declaration.montants.lus.sur.les.factures.et.le.rapport.de.r.cf5bdfae": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/dm-rubric-form.component.ts"
     ],
@@ -27186,14 +27342,6 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.monthly-declaration.exercice.e171e2b0": "Exercice",
-  "@accounting.monthly-declaration.exercice.e171e2b0": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.component.ts",
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.component.ts"
-    ],
-    "x-wave": "v7"
-  },
   "accounting.monthly-declaration.mois.0d304bea": "Mois",
   "@accounting.monthly-declaration.mois.0d304bea": {
     "x-files": [
@@ -27337,6 +27485,13 @@
   },
   "accounting.monthly-declaration-compute.view-model.ts.une.ligne.a.ete.ecartee.du.formulaire.pa.793e3e04": "Une ligne a été écartée du formulaire par le contrôle de total de famille.",
   "@accounting.monthly-declaration-compute.view-model.ts.une.ligne.a.ete.ecartee.du.formulaire.pa.793e3e04": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.deux.rubriques.reprennent.la.meme.source.0098936d": "Deux rubriques reprennent la même source : le montant serait déclaré deux fois.",
+  "@accounting.monthly-declaration-compute.view-model.ts.deux.rubriques.reprennent.la.meme.source.0098936d": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
     ],
@@ -27861,6 +28016,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.monthly-declaration-config.view-model.ts.documents.de.la.periode.f4b7e6b9": "Documents de la période",
+  "@accounting.monthly-declaration-config.view-model.ts.documents.de.la.periode.f4b7e6b9": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.monthly-declaration-config.view-model.ts.retenue.taux.53769d11": "Retenue ÷ taux",
   "@accounting.monthly-declaration-config.view-model.ts.retenue.taux.53769d11": {
     "x-files": [
@@ -27945,6 +28107,174 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.monthly-declaration-config.view-model.ts.assiette.taxes.sur.salaires.industries.m.a72878ec": "Assiette taxes sur salaires — industries manufacturières (TFP 1 %)",
+  "@accounting.monthly-declaration-config.view-model.ts.assiette.taxes.sur.salaires.industries.m.a72878ec": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.t.f.p.industries.manufacturieres.1.23b056f3": "T.F.P — industries manufacturières (1 %)",
+  "@accounting.monthly-declaration-config.view-model.ts.t.f.p.industries.manufacturieres.1.23b056f3": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.assiette.taxes.sur.salaires.autres.activ.ad9876d9": "Assiette taxes sur salaires — autres activités (TFP 2 %)",
+  "@accounting.monthly-declaration-config.view-model.ts.assiette.taxes.sur.salaires.autres.activ.ad9876d9": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.t.f.p.autres.activites.2.3e083695": "T.F.P — autres activités (2 %)",
+  "@accounting.monthly-declaration-config.view-model.ts.t.f.p.autres.activites.2.3e083695": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.chiffre.d.affaires.ht.facture.b50c678b": "Chiffre d’affaires HT facturé",
+  "@accounting.monthly-declaration-config.view-model.ts.chiffre.d.affaires.ht.facture.b50c678b": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.chiffre.d.affaires.ttc.facture.d29ca31f": "Chiffre d’affaires TTC facturé",
+  "@accounting.monthly-declaration-config.view-model.ts.chiffre.d.affaires.ttc.facture.d29ca31f": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.assiette.fodec.8e76c995": "Assiette FODEC",
+  "@accounting.monthly-declaration-config.view-model.ts.assiette.fodec.8e76c995": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.fodec.facture.2fa816a6": "FODEC facturé",
+  "@accounting.monthly-declaration-config.view-model.ts.fodec.facture.2fa816a6": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.droit.de.timbre.facture.096df710": "Droit de timbre facturé",
+  "@accounting.monthly-declaration-config.view-model.ts.droit.de.timbre.facture.096df710": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.salaires.hors.paie.0a505b88": "salaires hors paie",
+  "@accounting.monthly-declaration-config.view-model.ts.salaires.hors.paie.0a505b88": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.honoraires.3.3be5a3a8": "honoraires 3 %",
+  "@accounting.monthly-declaration-config.view-model.ts.honoraires.3.3be5a3a8": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.honoraires.autres.taux.05770351": "honoraires autres taux",
+  "@accounting.monthly-declaration-config.view-model.ts.honoraires.autres.taux.05770351": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.commissions.et.loyers.5912b973": "commissions et loyers",
+  "@accounting.monthly-declaration-config.view-model.ts.commissions.et.loyers.5912b973": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.acquisitions.1.ccaa091c": "acquisitions 1 %",
+  "@accounting.monthly-declaration-config.view-model.ts.acquisitions.1.ccaa091c": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.acquisitions.0.5.57727617": "acquisitions 0,5 %",
+  "@accounting.monthly-declaration-config.view-model.ts.acquisitions.0.5.57727617": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.acquisitions.1.5.47e8bd5c": "acquisitions 1,5 %",
+  "@accounting.monthly-declaration-config.view-model.ts.acquisitions.1.5.47e8bd5c": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.revenus.de.capitaux.mobiliers.492d44bd": "revenus de capitaux mobiliers",
+  "@accounting.monthly-declaration-config.view-model.ts.revenus.de.capitaux.mobiliers.492d44bd": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.dividendes.30d4a062": "dividendes",
+  "@accounting.monthly-declaration-config.view-model.ts.dividendes.30d4a062": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.revenus.immobiliers.b5438475": "revenus immobiliers",
+  "@accounting.monthly-declaration-config.view-model.ts.revenus.immobiliers.b5438475": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.tva.autres.taux.24814f07": "TVA autres taux",
+  "@accounting.monthly-declaration-config.view-model.ts.tva.autres.taux.24814f07": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.non.residents.245e3131": "non-résidents",
+  "@accounting.monthly-declaration-config.view-model.ts.non.residents.245e3131": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.reliquat.sans.ligne.dediee.d86737a8": "reliquat sans ligne dédiée",
+  "@accounting.monthly-declaration-config.view-model.ts.reliquat.sans.ligne.dediee.d86737a8": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.retenue.a.la.source.label.assiette.ccf6a09d": "Retenue à la source — {$label} (assiette)",
+  "@accounting.monthly-declaration-config.view-model.ts.retenue.a.la.source.label.assiette.ccf6a09d": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.retenue.a.la.source.label.retenue.b66cd8b9": "Retenue à la source — {$label} (retenue)",
+  "@accounting.monthly-declaration-config.view-model.ts.retenue.a.la.source.label.retenue.b66cd8b9": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.monthly-declaration-config.view-model.ts.le.code.de.la.rubrique.est.obligatoire.b3ed4041": "Le code de la rubrique est obligatoire.",
   "@accounting.monthly-declaration-config.view-model.ts.le.code.de.la.rubrique.est.obligatoire.b3ed4041": {
     "x-files": [
@@ -28022,6 +28352,34 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.monthly-declaration-config.view-model.ts.un.brut.issu.des.documents.doit.designer.53bd867c": "Un brut issu des documents doit désigner la valeur à reprendre.",
+  "@accounting.monthly-declaration-config.view-model.ts.un.brut.issu.des.documents.doit.designer.53bd867c": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.cette.valeur.documentaire.n.est.pas.une.923d13d9": "Cette valeur documentaire n’est pas une assiette : elle ne peut pas alimenter le montant brut.",
+  "@accounting.monthly-declaration-config.view-model.ts.cette.valeur.documentaire.n.est.pas.une.923d13d9": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.une.retenue.issue.des.documents.doit.des.2127399a": "Une retenue issue des documents doit désigner la valeur à reprendre.",
+  "@accounting.monthly-declaration-config.view-model.ts.une.retenue.issue.des.documents.doit.des.2127399a": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.cette.valeur.documentaire.est.une.assiet.a40859dd": "Cette valeur documentaire est une assiette : elle ne peut pas alimenter la retenue.",
+  "@accounting.monthly-declaration-config.view-model.ts.cette.valeur.documentaire.est.une.assiet.a40859dd": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.monthly-declaration-config.view-model.ts.un.montant.brut.calcule.sur.comptes.exig.f0d240e9": "Un montant brut calculé sur comptes exige au moins un compte ou une racine.",
   "@accounting.monthly-declaration-config.view-model.ts.un.montant.brut.calcule.sur.comptes.exig.f0d240e9": {
     "x-files": [
@@ -28087,6 +28445,13 @@
   },
   "accounting.monthly-declaration-config.view-model.ts.sidelabel.de.accountssummary.9c9031a1": "{$sideLabel} de {$accountsSummary}",
   "@accounting.monthly-declaration-config.view-model.ts.sidelabel.de.accountssummary.9c9031a1": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.documents.optionlabel.1fe300d3": "Documents — {$optionLabel}",
+  "@accounting.monthly-declaration-config.view-model.ts.documents.optionlabel.1fe300d3": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
     ],
@@ -28260,6 +28625,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.monthly-declaration.fichier.anterieur.a.la.version.2.ses.inclusions..c4bd230e": " Fichier antérieur à la version 2 : ses inclusions de familles seront ignorées — tout export antérieur les porte à « non incluse », les appliquer décocherait le dossier. ",
+  "@accounting.monthly-declaration.fichier.anterieur.a.la.version.2.ses.inclusions..c4bd230e": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-model.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.monthly-declaration.ce.fichier.ne.dit.rien.des.familles.aucune.inclu.0ce77b0a": " Ce fichier ne dit rien des familles : aucune inclusion du dossier ne sera modifiée. ",
   "@accounting.monthly-declaration.ce.fichier.ne.dit.rien.des.familles.aucune.inclu.0ce77b0a": {
     "x-files": [
@@ -28283,6 +28655,13 @@
   },
   "accounting.monthly-declaration.remplacer.les.rubriques.de.meme.code.au.ba00883f": " Remplacer les rubriques de même code au lieu de les ignorer ",
   "@accounting.monthly-declaration.remplacer.les.rubriques.de.meme.code.au.ba00883f": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-model.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration.confirmer.l.exclusion.de.le.dossier.cessera.de.d.35bac01c": "Confirmer l’exclusion de {$INTERPOLATION} : le dossier cessera de déclarer ces familles",
+  "@accounting.monthly-declaration.confirmer.l.exclusion.de.le.dossier.cessera.de.d.35bac01c": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-model.component.ts"
     ],
@@ -28432,6 +28811,83 @@
   "@accounting.monthly-declaration-model.view-model.ts.familieschanged.inclusion.s.de.famille.m.3eb23f52": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-model.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-model.view-model.ts.length.famille.s.passee.s.en.definition.c0179ddd": "{$length} famille(s) passée(s) en définition v2 ({$join})",
+  "@accounting.monthly-declaration-model.view-model.ts.length.famille.s.passee.s.en.definition.c0179ddd": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-model.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-model.view-model.ts.sentence.fichier.anterieur.a.la.version.288096c5": "{$sentence} Fichier antérieur à la version 2 : ses inclusions de familles ont été ignorées.",
+  "@accounting.monthly-declaration-model.view-model.ts.sentence.fichier.anterieur.a.la.version.288096c5": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-model.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-parity.view-model.ts.exercice.invalide.3da242b6": "Exercice invalide.",
+  "@accounting.monthly-declaration-parity.view-model.ts.exercice.invalide.3da242b6": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-parity.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-parity.view-model.ts.les.mois.vont.de.1.a.12.dd68f892": "Les mois vont de 1 à 12.",
+  "@accounting.monthly-declaration-parity.view-model.ts.les.mois.vont.de.1.a.12.dd68f892": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-parity.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-parity.view-model.ts.le.premier.mois.doit.preceder.le.dernier.e2f0c500": "Le premier mois doit précéder le dernier.",
+  "@accounting.monthly-declaration-parity.view-model.ts.le.premier.mois.doit.preceder.le.dernier.e2f0c500": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-parity.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-parity.view-model.ts.identique.11720f37": "Identique",
+  "@accounting.monthly-declaration-parity.view-model.ts.identique.11720f37": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-parity.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-parity.view-model.ts.arrondi.prouve.9ddd4891": "Arrondi prouvé",
+  "@accounting.monthly-declaration-parity.view-model.ts.arrondi.prouve.9ddd4891": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-parity.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-parity.view-model.ts.ecart.6ae8dce8": "Écart",
+  "@accounting.monthly-declaration-parity.view-model.ts.ecart.6ae8dce8": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-parity.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-parity.view-model.ts.aucun.ecart.sur.count.mois.exactmonths.i.3c3e901a": "Aucun écart sur {$count} mois : {$exactMonths} identique(s), {$roundingOnlyMonths} dont les seuls écarts sont des arrondis prouvés. Exportez ce rapport et archivez-le : il ne pourra plus être produit après le retrait du calcul historique.",
+  "@accounting.monthly-declaration-parity.view-model.ts.aucun.ecart.sur.count.mois.exactmonths.i.3c3e901a": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-parity.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-parity.view-model.ts.aucun.ecart.sur.count.mois.le.calcul.par.5cef7434": "Aucun écart sur {$count} mois : le calcul paramétré reproduit le calcul historique au millime. Exportez ce rapport et archivez-le : il ne pourra plus être produit après le retrait du calcul historique.",
+  "@accounting.monthly-declaration-parity.view-model.ts.aucun.ecart.sur.count.mois.le.calcul.par.5cef7434": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-parity.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-parity.view-model.ts.monthswithgap.mois.sur.count.portent.un.0f3abbce": "{$monthsWithGap} mois sur {$count} portent un écart non expliqué. Corrigez la configuration (ou cochez les familles manquantes) puis relancez le contrôle : le calcul historique ne peut pas être retiré en l'état.",
+  "@accounting.monthly-declaration-parity.view-model.ts.monthswithgap.mois.sur.count.portent.un.0f3abbce": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-parity.view-model.ts"
     ],
     "x-wave": "v7"
   },
@@ -30963,6 +31419,27 @@
   },
   "accounting.vat-declaration.view-model.ts.decembre.03bcd9b0": "Décembre",
   "@accounting.vat-declaration.view-model.ts.decembre.03bcd9b0": {
+    "x-files": [
+      "src/app/features/accounting/vat-declaration/vat-declaration.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.vat-declaration.view-model.ts.droit.de.consommation.97da36c0": "Droit de consommation",
+  "@accounting.vat-declaration.view-model.ts.droit.de.consommation.97da36c0": {
+    "x-files": [
+      "src/app/features/accounting/vat-declaration/vat-declaration.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.vat-declaration.view-model.ts.taxe.hoteliere.90f43822": "Taxe hôtelière",
+  "@accounting.vat-declaration.view-model.ts.taxe.hoteliere.90f43822": {
+    "x-files": [
+      "src/app/features/accounting/vat-declaration/vat-declaration.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.vat-declaration.view-model.ts.droit.de.licence.925640a2": "Droit de licence",
+  "@accounting.vat-declaration.view-model.ts.droit.de.licence.925640a2": {
     "x-files": [
       "src/app/features/accounting/vat-declaration/vat-declaration.view-model.ts"
     ],
@@ -80289,6 +80766,13 @@
     ],
     "x-wave": "v4"
   },
+  "purchase-receipts.pages.aucune.ligne.ajoutez.des.articles.ou.selectionne.51f5a9bd": " Aucune ligne. Ajoutez des articles ou sélectionnez un bon de commande. ",
+  "@purchase-receipts.pages.aucune.ligne.ajoutez.des.articles.ou.selectionne.51f5a9bd": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "purchase-receipts.pages.designation.63a9062c": "Désignation",
   "@purchase-receipts.pages.designation.63a9062c": {
     "x-files": [
@@ -80382,13 +80866,6 @@
   },
   "purchase-receipts.pages.supprimer.la.ligne.7e5f9ae0": "Supprimer la ligne",
   "@purchase-receipts.pages.supprimer.la.ligne.7e5f9ae0": {
-    "x-files": [
-      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
-    ],
-    "x-wave": "v4"
-  },
-  "purchase-receipts.pages.aucune.ligne.ajoutez.des.articles.ou.selectionne.51f5a9bd": " Aucune ligne. Ajoutez des articles ou sélectionnez un bon de commande. ",
-  "@purchase-receipts.pages.aucune.ligne.ajoutez.des.articles.ou.selectionne.51f5a9bd": {
     "x-files": [
       "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
     ],

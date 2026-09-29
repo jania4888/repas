@@ -37,7 +37,7 @@ public static class MonthlyDeclarationRubricInitializer
     public static async Task<int> EnsureDefaultsSeededAsync(
         TenantDbContext context, CancellationToken cancellationToken = default)
     {
-        var catalog = LoadCatalog();
+        var catalog = MonthlyDeclarationCatalogs.V1;
         var catalogVersion = catalog.CatalogVersion ?? string.Empty;
 
         var alreadyApplied = await context.MonthlyDeclarationRubricSeedLogs
@@ -129,7 +129,8 @@ public static class MonthlyDeclarationRubricInitializer
             draft.GrossKind, draft.WithheldKind, draft.GrossSide, draft.WithheldSide,
             draft.RatePercent, draft.FixedGrossAmount, draft.FixedWithheldAmount,
             draft.PayrollComponent, draft.WithheldPayrollComponent,
-            draft.EffectiveFrom, draft.EffectiveTo, draft.Accounts, draft.DisplayOrder);
+            draft.EffectiveFrom, draft.EffectiveTo, draft.Accounts, draft.DisplayOrder,
+            draft.GrossDocumentSource, draft.WithheldDocumentSource);
 
         if (created.IsFailure)
             return null;
@@ -137,35 +138,5 @@ public static class MonthlyDeclarationRubricInitializer
         var rubric = created.Value;
         rubric.SetAuditInfo("system");
         return rubric;
-    }
-
-    /// <summary>
-    /// Lit le catalogue embarqué avec <b>l'analyseur du modèle d'intégration</b> — le même que
-    /// l'import de fichier.
-    /// </summary>
-    /// <remarks>
-    /// Un analyseur propre à l'amorçage aurait fini par diverger de celui de l'import, et un
-    /// modèle exporté depuis un dossier n'aurait plus pu servir de catalogue. Les rejets sont
-    /// ignorés ici : c'est la politique de l'amorçage, pas celle de l'import.
-    /// </remarks>
-    private static MonthlyDeclarationModelParse LoadCatalog()
-    {
-        var assembly = typeof(MonthlyDeclarationRubricInitializer).Assembly;
-        var name = assembly.GetManifestResourceNames()
-            .FirstOrDefault(n => n.EndsWith("monthly-declaration-rubrics-tn.json", StringComparison.Ordinal))
-            ?? throw new InvalidOperationException(
-                $"Ressource embarquée introuvable : {CatalogResourceName}.");
-
-        using var stream = assembly.GetManifestResourceStream(name)
-            ?? throw new InvalidOperationException($"Ressource embarquée illisible : {name}.");
-
-        using var reader = new StreamReader(stream);
-        var json = reader.ReadToEnd();
-
-        var parsed = MonthlyDeclarationModel.Parse(json);
-        if (parsed.IsFailure)
-            throw new InvalidOperationException($"Catalogue de rubriques illisible ({name}) : {parsed.Error.Description}");
-
-        return parsed.Value;
     }
 }

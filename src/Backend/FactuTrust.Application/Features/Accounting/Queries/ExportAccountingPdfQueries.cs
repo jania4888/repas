@@ -94,20 +94,12 @@ public sealed class ExportMonthlyDeclarationOfficialFormQueryHandler
 
         var dto = declaration.Value;
 
-        // Détail issu des rubriques paramétrées, projeté sur les cases du millésime en cours.
-        var configuredBoxes = MonthlyDeclarationLineFormBinder.Project(
-            dto.Lines,
-            MonthlyDeclarationLineFormBinder.DeclaredFamilyTotals(dto),
-            MonthlyDeclarationFormBinder.FormVersion);
+        // Détail issu des rubriques paramétrées, projeté sur les cases du millésime en cours. Quand
+        // il ventile déjà la retenue à la source, la ventilation historique est SAUTÉE : les deux
+        // chemins sont exclusifs (voir MonthlyDeclarationOfficialFormInputs).
+        var configuredBoxes = MonthlyDeclarationOfficialFormInputs.ConfiguredBoxes(dto);
 
-        // Quand la configuration produit déjà la ventilation de la retenue à la source, la
-        // correspondance interne (factures + salaires + loyers) est SAUTÉE. Les deux chemins sont
-        // exclusifs par construction : les faire cohabiter compterait deux fois les mêmes montants
-        // sur les mêmes cases.
-        var withholdingIsConfigured = configuredBoxes.Keys
-            .Any(k => k.StartsWith("Withholding.", StringComparison.Ordinal));
-
-        if (withholdingIsConfigured)
+        if (MonthlyDeclarationOfficialFormInputs.IsWithholdingConfigured(configuredBoxes))
         {
             var configuredBytes = await _pdf.GenerateMonthlyDeclarationOfficialFormPdfAsync(
                 dto, WithholdingFormLineMapper.Empty, configuredBoxes, cancellationToken);
@@ -117,14 +109,13 @@ public sealed class ExportMonthlyDeclarationOfficialFormQueryHandler
         // Ventilation de la retenue à la source sur les lignes réglementaires. Best-effort : une
         // indisponibilité du rapport RS ne doit jamais empêcher l'édition de la déclaration, le
         // montant total restant porté par la page 4 et le récapitulatif.
-        IReadOnlyDictionary<string, decimal>? withholdingLines = null;
-        IReadOnlyDictionary<string, decimal> invoiceLines = WithholdingFormLineMapper.Empty;
+        IReadOnlyList<WithholdingReportByCategoryDto>? invoiceWithholding = null;
         try
         {
             var report = await _mediator.Send(
                 new GetWithholdingMonthlyReportQuery(request.Year, request.Month), cancellationToken);
 
-            invoiceLines = WithholdingFormLineMapper.Accumulate(report.ByCategory);
+            invoiceWithholding = report.ByCategory;
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -133,18 +124,7 @@ public sealed class ExportMonthlyDeclarationOfficialFormQueryHandler
                 "la RS salariale sera tout de même reportée.", request.Year, request.Month);
         }
 
-        withholdingLines = PayrollWithholdingFormLines.Merge(
-            invoiceLines,
-            declaration.Value.WithholdingTax,
-            declaration.Value.PayrollSalariesNetTaxableBase,
-            declaration.Value.PayrollWithholdingIrpp,
-            declaration.Value.PayrollWithholdingCss);
-
-        withholdingLines = RentWithholdingFormLines.Merge(
-            withholdingLines,
-            declaration.Value.WithholdingTax,
-            declaration.Value.RentWithholdingBase,
-            declaration.Value.RentWithholdingAmount);
+        var withholdingLines = MonthlyDeclarationOfficialFormInputs.HistoricWithholdingLines(dto, invoiceWithholding);
 
         var bytes = await _pdf.GenerateMonthlyDeclarationOfficialFormPdfAsync(
             dto, withholdingLines, configuredBoxes, cancellationToken);

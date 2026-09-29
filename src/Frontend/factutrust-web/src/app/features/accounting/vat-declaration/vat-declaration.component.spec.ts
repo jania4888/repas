@@ -109,6 +109,46 @@ describe('vat-declaration.view-model', () => {
     expect(computeTotalToPay({ ...baseDto, vatDue: 0 }, { ...extras, acomptes: 999 })).toBe(0);
   });
 
+  describe('familles produites par le seul calcul paramétré', () => {
+    // Droit de consommation, taxe hôtelière, droit de licence : pas de champ de saisie, mais
+    // comprises dans le total déposé par le serveur.
+    const withConfiguredFamilies = {
+      ...suggestedDto,
+      consumptionDuty: 10,
+      hotelTax: 20,
+      licenceFee: 0,
+      suggested: { ...suggestedDto.suggested, consumptionDuty: 10, hotelTax: 25, licenceFee: 5 }
+    };
+
+    it('computeTotalToPay les additionne, comme le serveur', () => {
+      expect(computeTotalToPay(withConfiguredFamilies, extras)).toBeCloseTo(1486.799 + 30, 3);
+    });
+
+    it('buildTaxRows les affiche en lecture seule dès qu’un montant existe', () => {
+      const rows = buildTaxRows(withConfiguredFamilies, extras, 1516.799);
+
+      const hotel = rows.find(r => r.taxLabel === 'Taxe hôtelière');
+      expect(hotel?.netAmount).toBe(20);
+      expect(hotel?.editableKey).toBeUndefined();
+      // Déclaré 0 mais recalculé 5 : la ligne reste visible pour que l'écart se voie.
+      expect(rows.some(r => r.taxLabel === 'Droit de licence')).toBe(true);
+    });
+
+    it('buildTaxRows les tait quand elles valent zéro de part et d’autre', () => {
+      const rows = buildTaxRows(baseDto, extras, 1486.799);
+      expect(rows.some(r => r.taxLabel === 'Droit de consommation')).toBe(false);
+      expect(rows.some(r => r.taxLabel === 'Taxe hôtelière')).toBe(false);
+    });
+
+    it('buildDivergenceRows signale leur écart avec le recalcul', () => {
+      const labels = buildDivergenceRows(withConfiguredFamilies).map(r => r.label);
+
+      expect(labels).toContain('Taxe hôtelière');
+      expect(labels).toContain('Droit de licence');
+      expect(labels).not.toContain('Droit de consommation');
+    });
+  });
+
   it('clampExtrasValue rejects negatives', () => {
     expect(clampExtrasValue(-5)).toBe(0);
     expect(clampExtrasValue(12.5)).toBe(12.5);

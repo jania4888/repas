@@ -6,6 +6,7 @@ using FactuTrust.Application.Configuration;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
+using FactuTrust.Domain.Enums;
 using AuditActions = FactuTrust.Domain.Entities.AuditActions;
 using MediatR;
 using Microsoft.Extensions.Options;
@@ -138,8 +139,32 @@ public sealed class ImportMonthlyDeclarationModelCommandHandler
         if (guard.IsFailure)
             return Result.Failure<MonthlyDeclarationModelImportResultDto>(guard.Error);
 
+        // Un fichier antérieur à la version 2 — export v1 ou catalogue v1 — porte toutes ses
+        // familles à « non incluse » : les appliquer décocherait le dossier entier. Elles sont
+        // ignorées ; ses rubriques identiques au catalogue v1 passent en v2 si la montée est permise.
+        var isLegacyFile = !MonthlyDeclarationModel.IsCurrentFormat(model);
+        var families = isLegacyFile ? Array.Empty<MonthlyDeclarationFamilyDraft>() : model.Families;
+
+        if (!isLegacyFile && !request.Request.ConfirmFamilyExclusions)
+        {
+            var exclusions = await ExcludedFamiliesAsync(families, cancellationToken);
+            if (exclusions.Count > 0)
+            {
+                return Result.Failure<MonthlyDeclarationModelImportResultDto>(Error.Validation(
+                    "Families",
+                    $"Le fichier décocherait {(exclusions.Count == 1 ? "la famille" : "les familles")} "
+                    + $"« {string.Join(" », « ", exclusions)} », aujourd'hui "
+                    + $"{(exclusions.Count == 1 ? "incluse" : "incluses")} : le dossier cesserait de "
+                    + $"{(exclusions.Count == 1 ? "la" : "les")} déclarer. Confirmez l'exclusion pour importer."));
+            }
+        }
+
+        var upgradeToV2 = isLegacyFile && _settings.MonthlyDeclarationCatalogV2UpgradeEnabled
+            ? new MonthlyDeclarationImportUpgrade(_settings.TclRatePercent)
+            : null;
+
         var outcome = await _importer.ImportAsync(
-            model.Rubrics, model.Families, request.Request.Overwrite, cancellationToken);
+            model.Rubrics, families, request.Request.Overwrite, cancellationToken, upgradeToV2);
         if (outcome.IsFailure)
             return Result.Failure<MonthlyDeclarationModelImportResultDto>(outcome.Error);
 
@@ -156,6 +181,8 @@ public sealed class ImportMonthlyDeclarationModelCommandHandler
                 applied.Inserted,
                 applied.Replaced,
                 applied.FamiliesChanged,
+                FamilyInclusionsIgnored = isLegacyFile && model.Families.Count > 0,
+                UpgradedFamilies = (applied.UpgradedFamilies ?? []).Select(f => f.ToString()),
                 SkippedCodes = applied.SkippedCodes,
                 UnknownAccounts = applied.UnknownAccounts
             },
@@ -167,7 +194,9 @@ public sealed class ImportMonthlyDeclarationModelCommandHandler
             Replaced = applied.Replaced,
             SkippedCodes = applied.SkippedCodes,
             UnknownAccounts = applied.UnknownAccounts,
-            FamiliesChanged = applied.FamiliesChanged
+            FamiliesChanged = applied.FamiliesChanged,
+            UpgradedFamilies = (applied.UpgradedFamilies ?? []).Select(f => (int)f).ToList(),
+            FamilyInclusionsIgnored = isLegacyFile && model.Families.Count > 0
         });
     }
 
@@ -176,6 +205,25 @@ public sealed class ImportMonthlyDeclarationModelCommandHandler
     /// fichier : réimporter un modèle déjà appliqué n'ajoute rien et ne doit pas être refusé parce
     /// que le dossier frôle la limite.
     /// </summary>
+    /// <summary>Familles aujourd'hui incluses que le fichier décocherait, par leur libellé d'onglet.</summary>
+    private async Task<IReadOnlyList<string>> ExcludedFamiliesAsync(
+        IReadOnlyList<MonthlyDeclarationFamilyDraft> families, CancellationToken cancellationToken)
+    {
+        if (!families.Any(f => !f.IsIncluded))
+            return Array.Empty<string>();
+
+        var included = (await _config.GetFamilySettingsAsync(cancellationToken))
+            .Where(f => f.IsIncluded)
+            .Select(f => f.Family)
+            .ToHashSet();
+
+        return families
+            .Where(f => !f.IsIncluded && included.Contains(f.Family))
+            .Select(f => f.Family.ToDisplayString())
+            .Distinct()
+            .ToList();
+    }
+
     private async Task<Result> GuardCardinalityAsync(
         MonthlyDeclarationModelParse model, CancellationToken cancellationToken)
     {

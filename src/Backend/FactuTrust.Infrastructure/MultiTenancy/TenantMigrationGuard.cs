@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using FactuTrust.Application.Common.Interfaces;
+using FactuTrust.Application.Configuration;
 using FactuTrust.Domain.Common;
 using FactuTrust.Infrastructure.Accounting;
 using FactuTrust.Infrastructure.Persistence;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace FactuTrust.Infrastructure.MultiTenancy;
 
@@ -29,17 +31,20 @@ public sealed class TenantMigrationGuard : ITenantMigrationGuard
     private readonly ITenantService _tenantService;
     private readonly ILogger<TenantMigrationGuard> _logger;
     private readonly IHostEnvironment _environment;
+    private readonly MonthlyDeclarationCatalogOptions _monthlyDeclarationCatalog;
 
     public TenantMigrationGuard(
         IMemoryCache cache,
         ITenantService tenantService,
         ILogger<TenantMigrationGuard> logger,
-        IHostEnvironment environment)
+        IHostEnvironment environment,
+        IOptions<AccountingSettings>? accountingSettings = null)
     {
         _cache = cache;
         _tenantService = tenantService;
         _logger = logger;
         _environment = environment;
+        _monthlyDeclarationCatalog = MonthlyDeclarationCatalogOptionsFactory.From(accountingSettings);
     }
 
     public async Task<Result> EnsureMigrationsAppliedAsync(Guid tenantId, CancellationToken cancellationToken = default)
@@ -102,7 +107,7 @@ public sealed class TenantMigrationGuard : ITenantMigrationGuard
                 return schemaCheck;
             }
 
-            await EnsureRuntimeCatalogsAsync(connectionString, _logger, cancellationToken);
+            await EnsureRuntimeCatalogsAsync(connectionString, _logger, _monthlyDeclarationCatalog, cancellationToken);
 
             var cacheDuration = _environment.IsDevelopment() ? CacheDurationDevelopment : CacheDuration;
             _cache.Set(cacheKey, true, cacheDuration);
@@ -186,7 +191,10 @@ public sealed class TenantMigrationGuard : ITenantMigrationGuard
     }
 
     private static async Task EnsureRuntimeCatalogsAsync(
-        string connectionString, ILogger logger, CancellationToken cancellationToken)
+        string connectionString,
+        ILogger logger,
+        MonthlyDeclarationCatalogOptions monthlyDeclarationCatalog,
+        CancellationToken cancellationToken)
     {
         var options = new DbContextOptionsBuilder<TenantDbContext>()
             .UseSqlServer(connectionString, b => b.MigrationsAssembly(typeof(TenantDbContext).Assembly.FullName))
@@ -194,6 +202,6 @@ public sealed class TenantMigrationGuard : ITenantMigrationGuard
 
         await using var context = new TenantDbContext(options);
         await TenantRuntimeCatalogBootstrapper.EnsureAsync(
-            context, ChartMigrationMode.AutoSafe, cancellationToken, logger);
+            context, ChartMigrationMode.AutoSafe, cancellationToken, logger, monthlyDeclarationCatalog);
     }
 }

@@ -115,7 +115,12 @@ import {
             }
           </dl>
 
-          @if (s.silentOnFamilies) {
+          @if (!s.silentOnFamilies && !s.isCurrentFormat) {
+            <p class="dm-hint" i18n="@@accounting.monthly-declaration.fichier.anterieur.a.la.version.2.ses.inclusions..c4bd230e">
+              Fichier antérieur à la version 2 : ses inclusions de familles seront ignorées — tout
+              export antérieur les porte à « non incluse », les appliquer décocherait le dossier.
+            </p>
+          } @else if (s.silentOnFamilies) {
             <p class="dm-hint" i18n="@@accounting.monthly-declaration.ce.fichier.ne.dit.rien.des.familles.aucune.inclu.0ce77b0a"> Ce fichier ne dit rien des familles : aucune inclusion du dossier ne sera modifiée. </p>
           } @else {
             @if (s.includedFamilies.length) {
@@ -141,6 +146,18 @@ import {
           [disabled]="!canImport() || importing()" /><ng-container i18n="@@accounting.monthly-declaration.remplacer.les.rubriques.de.meme.code.au.ba00883f">
         Remplacer les rubriques de même code au lieu de les ignorer
       </ng-container></label>
+
+      @if (summary(); as s) {
+        @if (s.isCurrentFormat && s.excludedFamilies.length) {
+          <label class="dm-check">
+            <input
+              type="checkbox"
+              [(ngModel)]="confirmExclusions"
+              [disabled]="!canImport() || importing()" />
+            <span i18n="@@accounting.monthly-declaration.confirmer.l.exclusion.de.le.dossier.cessera.de.d.35bac01c">Confirmer l’exclusion de {{ s.excludedFamilies.join(', ') }} : le dossier cessera de déclarer ces familles</span>
+          </label>
+        }
+      }
 
       <div class="dm-actions">
         <app-button
@@ -211,6 +228,8 @@ export class MonthlyDeclarationModelComponent implements OnInit {
   readonly error = signal<string | null>(null);
 
   overwrite = false;
+  /** Décocher une famille par import exige une confirmation explicite (refus serveur sinon). */
+  confirmExclusions = false;
 
   /** Miroir du verrou serveur `IsAccountingFirmDelegatedContext`, qui ne garde que l'import. */
   readonly canWrite = computed(() => this.auth.isAccountingFirm() && this.auth.isDelegatedMode());
@@ -288,6 +307,8 @@ export class MonthlyDeclarationModelComponent implements OnInit {
 
     this.result.set(null);
     this.error.set(null);
+    // Une confirmation vaut pour le fichier qu'on a lu, pas pour le suivant.
+    this.confirmExclusions = false;
 
     if (!file) {
       this.content.set(null);
@@ -324,7 +345,11 @@ export class MonthlyDeclarationModelComponent implements OnInit {
     this.importing.set(true);
     this.error.set(null);
     this.api
-      .importMonthlyDeclarationModel({ content, overwrite: this.overwrite })
+      .importMonthlyDeclarationModel({
+        content,
+        overwrite: this.overwrite,
+        confirmFamilyExclusions: this.confirmExclusions
+      })
       .subscribe({
         next: res => {
           this.importing.set(false);

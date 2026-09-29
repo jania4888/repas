@@ -312,4 +312,90 @@ public sealed class MonthlyDeclarationRollUpTests
         journals.VerifyNoOtherCalls();
         chart.VerifyNoOtherCalls();
     }
+
+    // ── Aucune famille cochée ─────────────────────────────────────────────────
+
+    private static MonthlyDeclarationSettings SettingsIn(MonthlyDeclarationMode mode)
+    {
+        var settings = MonthlyDeclarationSettings.CreateDefault();
+        settings.SwitchToParity();
+        if (mode == MonthlyDeclarationMode.Configured)
+            settings.SwitchToConfigured(new DateTime(2026, 7, 1), "comptable@cabinet.tn", "test");
+        return settings;
+    }
+
+    private static (MonthlyDeclarationLineComposer Composer, Mock<IMonthlyDeclarationConfigRepository> Config,
+        Mock<IJournalEntryRepository> Journals, Mock<IChartOfAccountRepository> Chart) ComposerWithoutFamily(
+        MonthlyDeclarationMode mode)
+    {
+        var config = new Mock<IMonthlyDeclarationConfigRepository>(MockBehavior.Strict);
+        config.Setup(c => c.GetSettingsAsync(It.IsAny<CancellationToken>())).ReturnsAsync(SettingsIn(mode));
+        config.Setup(c => c.GetFamilySettingsAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new[]
+            {
+                MonthlyDeclarationFamilySetting.Create(MonthlyDeclarationFamily.Tfp, isIncluded: false).Value
+            });
+
+        var journals = new Mock<IJournalEntryRepository>(MockBehavior.Strict);
+        var chart = new Mock<IChartOfAccountRepository>(MockBehavior.Strict);
+        var settings = Options.Create(new AccountingSettings
+        {
+            MonthlyDeclarationV2Enabled = true,
+            MonthlyDeclarationConfigurableLinesEnabled = true
+        });
+
+        return (new MonthlyDeclarationLineComposer(config.Object, journals.Object, chart.Object, settings),
+            config, journals, chart);
+    }
+
+    /// <summary>
+    /// Un dossier basculé en calcul paramétré qui n'a encore coché aucune famille reste paramétré.
+    /// Le rendre « historique » faisait afficher « Calcul historique » sur l'écran Calcul DM d'un
+    /// dossier configuré depuis des mois.
+    /// </summary>
+    [Fact]
+    public async Task Dossier_configure_sans_famille_cochee_reste_configure_sans_rien_composer()
+    {
+        var (composer, config, journals, chart) = ComposerWithoutFamily(MonthlyDeclarationMode.Configured);
+
+        var composed = await composer.ComposeAsync(2026, 9, PayrollMonthlyContribution.None);
+
+        Assert.Equal(MonthlyDeclarationMode.Configured, composed.Mode);
+        Assert.Empty(composed.Lines);
+        Assert.Empty(composed.ActiveFamilies);
+        config.Verify(c => c.GetRubricsAsync(It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
+        journals.VerifyNoOtherCalls();
+        chart.VerifyNoOtherCalls();
+    }
+
+    /// <summary>
+    /// En contrôle de parité, un calcul qui ne mesure aucune famille ne doit pas passer pour un
+    /// contrôle : il reste inactif, sans quoi il allongerait la série sans écart qui ouvre la bascule.
+    /// </summary>
+    [Fact]
+    public async Task Controle_de_parite_sans_famille_cochee_reste_inactif()
+    {
+        var (composer, _, journals, chart) = ComposerWithoutFamily(MonthlyDeclarationMode.Parity);
+
+        var composed = await composer.ComposeAsync(2026, 9, PayrollMonthlyContribution.None);
+
+        Assert.Same(ComposedDeclarationLines.Inactive, composed);
+        journals.VerifyNoOtherCalls();
+        chart.VerifyNoOtherCalls();
+    }
+
+    /// <summary>
+    /// Sans famille composée, le mode configuré ne change aucun montant : le repli famille par
+    /// famille rend le calcul historique tel quel.
+    /// </summary>
+    [Fact]
+    public void Dossier_configure_sans_famille_cochee_garde_les_montants_historiques()
+    {
+        var legacy = Legacy();
+
+        var rolled = GetVatDeclarationQueryHandler.ApplyRollUp(
+            legacy, new ComposedDeclarationLines { Mode = MonthlyDeclarationMode.Configured });
+
+        Assert.Equal(legacy, rolled);
+    }
 }

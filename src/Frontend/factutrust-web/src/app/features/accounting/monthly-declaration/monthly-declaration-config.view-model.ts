@@ -2,6 +2,7 @@ import {
   AccountBalanceSide,
   ChartOfAccountDto,
   CreateMonthlyDeclarationRubricRequest,
+  DeclarationDocumentSource,
   MonthlyDeclarationFamily,
   MonthlyDeclarationFamilySettingDto,
   MonthlyDeclarationMode,
@@ -136,6 +137,7 @@ export const DM_GROSS_KIND_OPTIONS: readonly DmOption<RubricGrossKind>[] = [
   { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.valeur.fixe.saisie.5355f54c:Valeur fixe / saisie`, value: RubricGrossKind.Fixed },
   { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.valeur.de.paie.00856faf:Valeur de paie`, value: RubricGrossKind.Payroll },
   { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.solde.de.comptes.095ae5f3:Solde de comptes`, value: RubricGrossKind.Account },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.documents.de.la.periode.f4b7e6b9:Documents de la période`, value: RubricGrossKind.Document },
   { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.retenue.taux.53769d11:Retenue ÷ taux`, value: RubricGrossKind.WithheldOverRate }
 ];
 
@@ -144,6 +146,7 @@ export const DM_WITHHELD_KIND_OPTIONS: readonly DmOption<RubricWithheldKind>[] =
   { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.solde.de.comptes.095ae5f3:Solde de comptes`, value: RubricWithheldKind.Account },
   { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.brut.taux.adedfda6:Brut × taux`, value: RubricWithheldKind.GrossTimesRate },
   { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.valeur.de.paie.00856faf:Valeur de paie`, value: RubricWithheldKind.Payroll },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.documents.de.la.periode.f4b7e6b9:Documents de la période`, value: RubricWithheldKind.Document },
   { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.retenue.taux.non.pris.en.charge.180ce782:Retenue ÷ taux (non pris en charge)`, value: RubricWithheldKind.WithheldOverRate }
 ];
 
@@ -160,8 +163,75 @@ export const DM_PAYROLL_COMPONENT_OPTIONS: readonly DmOption<PayrollContribution
   { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.css.retenue.034ee1f0:CSS retenue`, value: PayrollContributionComponent.WithholdingCss },
   { label: 'IRPP + CSS', value: PayrollContributionComponent.WithholdingTotal },
   { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.t.f.p.du.cycle.d85aaf4d:T.F.P du cycle`, value: PayrollContributionComponent.Tfp },
-  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.foprolos.du.cycle.3fa66678:FOPROLOS du cycle`, value: PayrollContributionComponent.Foprolos }
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.foprolos.du.cycle.3fa66678:FOPROLOS du cycle`, value: PayrollContributionComponent.Foprolos },
+  {
+    label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.assiette.taxes.sur.salaires.industries.m.a72878ec:Assiette taxes sur salaires — industries manufacturières (TFP 1 %)`,
+    value: PayrollContributionComponent.PayrollTaxBaseManufacturing
+  },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.t.f.p.industries.manufacturieres.1.23b056f3:T.F.P — industries manufacturières (1 %)`, value: PayrollContributionComponent.TfpManufacturing },
+  {
+    label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.assiette.taxes.sur.salaires.autres.activ.ad9876d9:Assiette taxes sur salaires — autres activités (TFP 2 %)`,
+    value: PayrollContributionComponent.PayrollTaxBaseOtherActivities
+  },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.t.f.p.autres.activites.2.3e083695:T.F.P — autres activités (2 %)`, value: PayrollContributionComponent.TfpOtherActivities }
 ];
+
+/** Libellés des valeurs documentaires. Miroir de `DeclarationDocumentSources.Label` côté serveur. */
+export const DM_DOCUMENT_SOURCE_OPTIONS: readonly DmOption<DeclarationDocumentSource>[] = [
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.chiffre.d.affaires.ht.facture.b50c678b:Chiffre d’affaires HT facturé`, value: DeclarationDocumentSource.SalesTaxableBase },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.chiffre.d.affaires.ttc.facture.d29ca31f:Chiffre d’affaires TTC facturé`, value: DeclarationDocumentSource.SalesGrossBase },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.assiette.fodec.8e76c995:Assiette FODEC`, value: DeclarationDocumentSource.FodecFormBase },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.fodec.facture.2fa816a6:FODEC facturé`, value: DeclarationDocumentSource.FodecAmount },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.droit.de.timbre.facture.096df710:Droit de timbre facturé`, value: DeclarationDocumentSource.FiscalStampAmount },
+  ...withholdingPair($localize`:@@accounting.monthly-declaration-config.view-model.ts.salaires.hors.paie.0a505b88:salaires hors paie`, DeclarationDocumentSource.WithholdingSalariesBase),
+  ...withholdingPair($localize`:@@accounting.monthly-declaration-config.view-model.ts.honoraires.3.3be5a3a8:honoraires 3 %`, DeclarationDocumentSource.WithholdingFeesRealRegimeBase),
+  ...withholdingPair($localize`:@@accounting.monthly-declaration-config.view-model.ts.honoraires.autres.taux.05770351:honoraires autres taux`, DeclarationDocumentSource.WithholdingFeesOtherBase),
+  ...withholdingPair($localize`:@@accounting.monthly-declaration-config.view-model.ts.commissions.et.loyers.5912b973:commissions et loyers`, DeclarationDocumentSource.WithholdingCommissionsAndRentsBase),
+  ...withholdingPair($localize`:@@accounting.monthly-declaration-config.view-model.ts.acquisitions.1.ccaa091c:acquisitions 1 %`, DeclarationDocumentSource.WithholdingPurchasesRate1Base),
+  ...withholdingPair($localize`:@@accounting.monthly-declaration-config.view-model.ts.acquisitions.0.5.57727617:acquisitions 0,5 %`, DeclarationDocumentSource.WithholdingPurchasesRate05Base),
+  ...withholdingPair($localize`:@@accounting.monthly-declaration-config.view-model.ts.acquisitions.1.5.47e8bd5c:acquisitions 1,5 %`, DeclarationDocumentSource.WithholdingPurchasesRate15Base),
+  ...withholdingPair($localize`:@@accounting.monthly-declaration-config.view-model.ts.revenus.de.capitaux.mobiliers.492d44bd:revenus de capitaux mobiliers`, DeclarationDocumentSource.WithholdingCapitalIncomeBase),
+  ...withholdingPair($localize`:@@accounting.monthly-declaration-config.view-model.ts.dividendes.30d4a062:dividendes`, DeclarationDocumentSource.WithholdingDividendsBase),
+  ...withholdingPair($localize`:@@accounting.monthly-declaration-config.view-model.ts.revenus.immobiliers.b5438475:revenus immobiliers`, DeclarationDocumentSource.WithholdingRealEstateBase),
+  ...withholdingPair('TVA 100 %', DeclarationDocumentSource.WithholdingVatFullBase),
+  ...withholdingPair($localize`:@@accounting.monthly-declaration-config.view-model.ts.tva.autres.taux.24814f07:TVA autres taux`, DeclarationDocumentSource.WithholdingVatOtherBase),
+  ...withholdingPair('plus-values', DeclarationDocumentSource.WithholdingCapitalGainsBase),
+  ...withholdingPair($localize`:@@accounting.monthly-declaration-config.view-model.ts.non.residents.245e3131:non-résidents`, DeclarationDocumentSource.WithholdingNonResidentsBase),
+  ...withholdingPair($localize`:@@accounting.monthly-declaration-config.view-model.ts.reliquat.sans.ligne.dediee.d86737a8:reliquat sans ligne dédiée`, DeclarationDocumentSource.WithholdingRemainderBase)
+];
+
+/** Assiette (numéro pair) et retenue (le suivant) d'un compartiment du rapport RS. */
+function withholdingPair(label: string, base: DeclarationDocumentSource): DmOption<DeclarationDocumentSource>[] {
+  return [
+    { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.retenue.a.la.source.label.assiette.ccf6a09d:Retenue à la source — ${label}:label: (assiette)`, value: base },
+    { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.retenue.a.la.source.label.retenue.b66cd8b9:Retenue à la source — ${label}:label: (retenue)`, value: (base + 1) as DeclarationDocumentSource }
+  ];
+}
+
+/**
+ * Une assiette n'alimente que le brut, un montant que la retenue : lire le chiffre d'affaires comme
+ * une retenue produirait un impôt égal au chiffre d'affaires. Miroir de
+ * `DeclarationDocumentSources.IsBase` côté serveur.
+ */
+export function isDocumentBase(source: DeclarationDocumentSource): boolean {
+  switch (source) {
+    case DeclarationDocumentSource.SalesTaxableBase:
+    case DeclarationDocumentSource.SalesGrossBase:
+    case DeclarationDocumentSource.FodecFormBase:
+      return true;
+    case DeclarationDocumentSource.FodecAmount:
+    case DeclarationDocumentSource.FiscalStampAmount:
+      return false;
+    default:
+      return source % 2 === 0;
+  }
+}
+
+export const DM_GROSS_DOCUMENT_OPTIONS: readonly DmOption<DeclarationDocumentSource>[] =
+  DM_DOCUMENT_SOURCE_OPTIONS.filter(o => isDocumentBase(o.value));
+
+export const DM_WITHHELD_DOCUMENT_OPTIONS: readonly DmOption<DeclarationDocumentSource>[] =
+  DM_DOCUMENT_SOURCE_OPTIONS.filter(o => !isDocumentBase(o.value));
 
 function optionLabel<T>(options: readonly DmOption<T>[], value: T | null | undefined): string {
   if (value === null || value === undefined) {
@@ -200,6 +270,8 @@ export interface DmRubricForm {
   fixedWithheldAmount: number | null;
   payrollComponent: PayrollContributionComponent | null;
   withheldPayrollComponent: PayrollContributionComponent | null;
+  grossDocumentSource: DeclarationDocumentSource | null;
+  withheldDocumentSource: DeclarationDocumentSource | null;
   /** Format `yyyy-MM-dd` (input type="date"). */
   effectiveFrom: string | null;
   effectiveTo: string | null;
@@ -301,6 +373,8 @@ export function newRubricForm(family: MonthlyDeclarationFamily, displayOrder: nu
     fixedWithheldAmount: null,
     payrollComponent: null,
     withheldPayrollComponent: null,
+    grossDocumentSource: null,
+    withheldDocumentSource: null,
     effectiveFrom: null,
     effectiveTo: null,
     displayOrder,
@@ -325,6 +399,8 @@ export function toRubricForm(rubric: MonthlyDeclarationRubricDto): DmRubricForm 
     fixedWithheldAmount: rubric.fixedWithheldAmount,
     payrollComponent: rubric.payrollComponent,
     withheldPayrollComponent: rubric.withheldPayrollComponent,
+    grossDocumentSource: rubric.grossDocumentSource ?? null,
+    withheldDocumentSource: rubric.withheldDocumentSource ?? null,
     effectiveFrom: toDateInputValue(rubric.effectiveFrom),
     effectiveTo: toDateInputValue(rubric.effectiveTo),
     displayOrder: rubric.displayOrder,
@@ -348,6 +424,8 @@ function commonPayload(form: DmRubricForm): UpdateMonthlyDeclarationRubricReques
     // sélection abandonnée ferait mentir la fiche enregistrée.
     payrollComponent: needsPayrollComponent(form) ? form.payrollComponent : null,
     withheldPayrollComponent: needsWithheldPayrollComponent(form) ? form.withheldPayrollComponent : null,
+    grossDocumentSource: needsGrossDocumentSource(form) ? form.grossDocumentSource : null,
+    withheldDocumentSource: needsWithheldDocumentSource(form) ? form.withheldDocumentSource : null,
     effectiveFrom: form.effectiveFrom || null,
     effectiveTo: form.effectiveTo || null,
     displayOrder: Number(form.displayOrder) || 0,
@@ -383,6 +461,14 @@ export function needsPayrollComponent(form: DmRubricForm): boolean {
 
 export function needsWithheldPayrollComponent(form: DmRubricForm): boolean {
   return form.withheldKind === RubricWithheldKind.Payroll;
+}
+
+export function needsGrossDocumentSource(form: DmRubricForm): boolean {
+  return form.grossKind === RubricGrossKind.Document;
+}
+
+export function needsWithheldDocumentSource(form: DmRubricForm): boolean {
+  return form.withheldKind === RubricWithheldKind.Document;
 }
 
 export function needsRate(form: DmRubricForm): boolean {
@@ -446,6 +532,22 @@ export function validateRubricForm(form: DmRubricForm): string | null {
   if (needsWithheldPayrollComponent(form) && form.withheldPayrollComponent === null) {
     return $localize`:@@accounting.monthly-declaration-config.view-model.ts.une.retenue.issue.de.la.paie.doit.design.330f35c5:Une retenue issue de la paie doit désigner la valeur du cycle à reprendre.`;
   }
+  if (needsGrossDocumentSource(form)) {
+    if (form.grossDocumentSource === null) {
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.un.brut.issu.des.documents.doit.designer.53bd867c:Un brut issu des documents doit désigner la valeur à reprendre.`;
+    }
+    if (!isDocumentBase(form.grossDocumentSource)) {
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.cette.valeur.documentaire.n.est.pas.une.923d13d9:Cette valeur documentaire n’est pas une assiette : elle ne peut pas alimenter le montant brut.`;
+    }
+  }
+  if (needsWithheldDocumentSource(form)) {
+    if (form.withheldDocumentSource === null) {
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.une.retenue.issue.des.documents.doit.des.2127399a:Une retenue issue des documents doit désigner la valeur à reprendre.`;
+    }
+    if (isDocumentBase(form.withheldDocumentSource)) {
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.cette.valeur.documentaire.est.une.assiet.a40859dd:Cette valeur documentaire est une assiette : elle ne peut pas alimenter la retenue.`;
+    }
+  }
 
   if (needsGrossAccounts(form) && countSelectedAccounts(form.grossAccounts) === 0) {
     return $localize`:@@accounting.monthly-declaration-config.view-model.ts.un.montant.brut.calcule.sur.comptes.exig.f0d240e9:Un montant brut calculé sur comptes exige au moins un compte ou une racine.`;
@@ -497,6 +599,8 @@ export function describeGross(rubric: MonthlyDeclarationRubricDto): string {
       return `Paie — ${optionLabel(DM_PAYROLL_COMPONENT_OPTIONS, rubric.payrollComponent)}`;
     case RubricGrossKind.Account:
       return $localize`:@@accounting.monthly-declaration-config.view-model.ts.sidelabel.de.accountssummary.9c9031a1:${sideLabel(rubric.grossSide)}:sideLabel: de ${accountsSummary(rubric.accounts, RubricAccountRole.Gross)}:accountsSummary:`;
+    case RubricGrossKind.Document:
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.documents.optionlabel.1fe300d3:Documents — ${optionLabel(DM_DOCUMENT_SOURCE_OPTIONS, rubric.grossDocumentSource)}:optionLabel:`;
     case RubricGrossKind.WithheldOverRate:
       return `Retenue ÷ ${rubric.ratePercent} %`;
     default:
@@ -517,6 +621,8 @@ export function describeWithheld(rubric: MonthlyDeclarationRubricDto): string {
       return `Brut × ${rubric.ratePercent} %`;
     case RubricWithheldKind.Payroll:
       return `Paie — ${optionLabel(DM_PAYROLL_COMPONENT_OPTIONS, rubric.withheldPayrollComponent)}`;
+    case RubricWithheldKind.Document:
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.documents.optionlabel.1fe300d3:Documents — ${optionLabel(DM_DOCUMENT_SOURCE_OPTIONS, rubric.withheldDocumentSource)}:optionLabel:`;
     case RubricWithheldKind.WithheldOverRate:
       return $localize`:@@accounting.monthly-declaration-config.view-model.ts.non.pris.en.charge.2c0f420c:Non pris en charge`;
     default:

@@ -521,3 +521,12 @@ describe('monthly-declaration-compute.view-model', () => {
     });
   });
 });
+
+describe('monthly-declaration-compute.view-model — double lecture', () => {
+  it('traite la double lecture d’une source comme une erreur, avec la phrase du serveur', () => {
+    const detail = 'La rubrique F1_1 reprendrait « IRPP retenu par la paie », déjà reprise par la rubrique F1_1B.';
+
+    expect(diagnosticSeverity(RubricDiagnosticKind.DuplicateSourceRead)).toBe('error');
+    expect(describeDiagnostic({ kind: RubricDiagnosticKind.DuplicateSourceRead, detail })).toBe(detail);
+  });
+});

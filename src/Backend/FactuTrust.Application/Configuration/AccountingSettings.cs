@@ -83,11 +83,30 @@ public sealed class AccountingSettings
     /// <remarks>
     /// La conjonction avec <see cref="MonthlyDeclarationV2Enabled"/> n'est pas une précaution de
     /// style : tous les scalaires alimentés par le moteur (FODEC, timbre, TCL, TFP, FOPROLOS,
-    /// retenue à la source, acomptes) ne sont calculés — <c>ComputeLiveAsync</c> retourne plus tôt —
+    /// retenue à la source, acomptes) ne sont calculés — <c>ComputeLive</c> retourne plus tôt —
     /// et ne sont persistés — <c>SetAdditionalTaxes</c> n'est appelé — que sous V2. Sans V2, une
     /// configuration paramétrée n'aurait nulle part où se déverser.
     /// </remarks>
     public bool ConfigurableLinesActive => MonthlyDeclarationV2Enabled && MonthlyDeclarationConfigurableLinesEnabled;
+
+    /// <summary>
+    /// Autorise la montée des dossiers vers le catalogue de rubriques <c>tn-2026-v2</c> (origine
+    /// « documents », TFP par activité…), à l'amorçage de chaque dossier.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b>Éteint par défaut, et absent des fichiers de configuration</b> : c'est l'unique
+    /// modification de données du retrait du calcul historique, et elle se déploie après le code,
+    /// jamais avec lui. On ne l'allume qu'après une période stable de la version qui sait lire le
+    /// catalogue v2 (variable d'environnement
+    /// <c>Accounting__MonthlyDeclarationCatalogV2UpgradeEnabled=true</c>).
+    /// </para>
+    /// <para>
+    /// L'éteindre n'annule rien : les dossiers déjà montés le restent. Il empêche seulement les
+    /// suivants de l'être.
+    /// </para>
+    /// </remarks>
+    public bool MonthlyDeclarationCatalogV2UpgradeEnabled { get; set; }
 
     /// <summary>
     /// Active les états financiers au format NCT (bilan/résultat structurés + flux + variation des

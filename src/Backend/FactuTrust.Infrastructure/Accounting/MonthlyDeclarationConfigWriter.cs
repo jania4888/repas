@@ -1,4 +1,5 @@
 using FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
+using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
 using FactuTrust.Infrastructure.Persistence;
@@ -26,14 +27,15 @@ namespace FactuTrust.Infrastructure.Accounting;
 internal static class MonthlyDeclarationConfigWriter
 {
     /// <summary>
-    /// Applique les rubriques, puis les inclusions de familles, et enregistre le tout en une fois.
+    /// Applique les rubriques, puis les inclusions de familles, et enregistre le tout en une fois —
+    /// ou rien du tout, si la configuration obtenue lirait deux fois une même source.
     /// </summary>
     /// <param name="families">
     /// Vide lorsque l'appelant ne transporte pas les inclusions. Une famille absente de la liste
     /// n'est pas touchée : l'inclusion est une décision du dossier, et un jeu entrant muet à son
     /// sujet ne doit pas la révoquer.
     /// </param>
-    public static async Task<MonthlyDeclarationConfigApplyResult> ApplyAsync(
+    public static async Task<Result<MonthlyDeclarationConfigApplyResult>> ApplyAsync(
         TenantDbContext destination,
         IReadOnlyList<MonthlyDeclarationRubricDraft> drafts,
         IReadOnlyList<MonthlyDeclarationFamilyDraft> families,
@@ -82,7 +84,8 @@ internal static class MonthlyDeclarationConfigWriter
                     draft.GrossSide, draft.WithheldSide, draft.RatePercent,
                     draft.FixedGrossAmount, draft.FixedWithheldAmount,
                     draft.PayrollComponent, draft.WithheldPayrollComponent,
-                    draft.EffectiveFrom, draft.EffectiveTo, draft.Accounts, draft.DisplayOrder);
+                    draft.EffectiveFrom, draft.EffectiveTo, draft.Accounts, draft.DisplayOrder,
+                    draft.GrossDocumentSource, draft.WithheldDocumentSource);
 
                 if (updated.IsFailure)
                 {
@@ -115,7 +118,8 @@ internal static class MonthlyDeclarationConfigWriter
                 draft.GrossKind, draft.WithheldKind, draft.GrossSide, draft.WithheldSide,
                 draft.RatePercent, draft.FixedGrossAmount, draft.FixedWithheldAmount,
                 draft.PayrollComponent, draft.WithheldPayrollComponent,
-                draft.EffectiveFrom, draft.EffectiveTo, draft.Accounts, draft.DisplayOrder);
+                draft.EffectiveFrom, draft.EffectiveTo, draft.Accounts, draft.DisplayOrder,
+                draft.GrossDocumentSource, draft.WithheldDocumentSource);
 
             if (created.IsFailure)
             {
@@ -130,15 +134,23 @@ internal static class MonthlyDeclarationConfigWriter
 
             created.Value.SetAuditInfo(user);
             destination.MonthlyDeclarationRubrics.Add(created.Value);
+            existing[created.Value.Code] = created.Value;
             inserted++;
         }
+
+        // Contrôle sur l'état final, rubriques existantes comprises : c'est la configuration qui
+        // serait enregistrée qui ne doit lire aucune source deux fois. Rien n'est écrit sinon — le
+        // contexte est jeté par l'appelant avec ses modifications.
+        var conflict = MonthlyDeclarationSourceOverlap.AllConflicts(existing.Values.ToList()).FirstOrDefault();
+        if (conflict is not null)
+            return Result.Failure<MonthlyDeclarationConfigApplyResult>(MonthlyDeclarationSourceOverlap.Refusal(conflict));
 
         var familiesChanged = await ApplyFamiliesAsync(destination, families, user, cancellationToken);
 
         await destination.SaveChangesAsync(cancellationToken);
 
-        return new MonthlyDeclarationConfigApplyResult(
-            inserted, replaced, skipped, unknownAccounts.ToList(), familiesChanged);
+        return Result.Success(new MonthlyDeclarationConfigApplyResult(
+            inserted, replaced, skipped, unknownAccounts.ToList(), familiesChanged));
     }
 
     /// <summary>

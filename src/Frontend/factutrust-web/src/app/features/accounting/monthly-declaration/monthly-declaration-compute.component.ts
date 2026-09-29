@@ -17,6 +17,7 @@ import {
 } from '../services/accounting.service';
 import { DmComputeLinesComponent } from './dm-compute-lines.component';
 import { DmModePanelComponent } from './dm-mode-panel.component';
+import { DmParityReportComponent } from './dm-parity-report.component';
 import { isConfigurableLinesActive, modeLabel } from './monthly-declaration-config.view-model';
 import { formatPeriodLabel } from '../vat-declaration/vat-declaration.view-model';
 import {
@@ -54,7 +55,8 @@ import {
     ButtonComponent,
     AccountingStatusBannerComponent,
     DmComputeLinesComponent,
-    DmModePanelComponent
+    DmModePanelComponent,
+    DmParityReportComponent
   ],
   template: `
     <app-page-header
@@ -150,6 +152,9 @@ import {
       [disabled]="!canCompute()"
       [saving]="savingMode()"
       (apply)="applyMode()" />
+
+    <!-- Lecture pure, mais réservée au cabinet délégué : le rapport expose des montants de brouillon. -->
+    <app-dm-parity-report [disabled]="!canCompute()" />
   `,
   styles: `
     .dm-period { display: flex; flex-wrap: wrap; gap: var(--spacing-3); align-items: flex-end; }

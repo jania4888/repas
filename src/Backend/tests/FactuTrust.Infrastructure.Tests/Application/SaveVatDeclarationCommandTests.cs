@@ -5,6 +5,7 @@ using FactuTrust.Application.Configuration;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.Accounting.Commands;
 using FactuTrust.Application.Features.Accounting.FiscalSchedule;
+using FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
 using FactuTrust.Application.Features.Accounting.Queries;
 using FactuTrust.Domain.Authorization;
 using FactuTrust.Domain.Common;
@@ -269,5 +270,150 @@ public sealed class SaveVatDeclarationCommandTests
         _repo.Verify(r => r.AddAsync(It.IsAny<VatDeclaration>(), It.IsAny<CancellationToken>()), Times.Never);
         _repo.Verify(r => r.UpdateAsync(It.IsAny<VatDeclaration>(), It.IsAny<CancellationToken>()), Times.Never);
         _mediator.Verify(m => m.Send(It.IsAny<GetVatDeclarationQuery>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    // ── Famille incluse sans rubrique applicable ──────────────────────────
+
+    private static VatDeclarationDto WithMissingRubric(MonthlyDeclarationMode mode, params MonthlyDeclarationFamily[] families) =>
+        Dto() with
+        {
+            MonthlyDeclarationMode = (int)mode,
+            MonthlyDeclarationDiagnostics = families
+                .Select(f => new MonthlyDeclarationDiagnosticDto
+                {
+                    Kind = (int)RubricDiagnosticKind.MissingRubricForFamily,
+                    Detail = f.ToString()
+                })
+                .ToList()
+        };
+
+    /// <summary>
+    /// Une famille incluse sans rubrique produirait un zéro que rien ne signalerait une fois déposé.
+    /// Le refus était annoncé par l'écran et par la documentation, jamais appliqué côté serveur.
+    /// </summary>
+    [Fact]
+    public async Task Periode_configuree_avec_famille_sans_rubrique_refuse_l_enregistrement_et_n_ecrit_rien()
+    {
+        _repo.Setup(r => r.GetByYearMonthAsync(2026, 7, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((VatDeclaration?)null);
+
+        var result = await BuildHandler(dto: WithMissingRubric(
+                MonthlyDeclarationMode.Configured, MonthlyDeclarationFamily.Tfp, MonthlyDeclarationFamily.StampDuty))
+            .Handle(Command(submit: true), CancellationToken.None);
+
+        Assert.True(result.IsFailure);
+        Assert.Contains("« T.F.P »", result.Error.Description);
+        Assert.Contains("« Droit de timbre »", result.Error.Description);
+        _repo.Verify(r => r.AddAsync(It.IsAny<VatDeclaration>(), It.IsAny<CancellationToken>()), Times.Never);
+        _repo.Verify(r => r.UpdateAsync(It.IsAny<VatDeclaration>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    /// <summary>
+    /// Deux rubriques qui reprennent la même source déclareraient le montant deux fois : la
+    /// période configurée n'est pas enregistrable tant que la configuration n'est pas corrigée.
+    /// </summary>
+    [Fact]
+    public async Task Periode_configuree_avec_double_lecture_refuse_l_enregistrement()
+    {
+        _repo.Setup(r => r.GetByYearMonthAsync(2026, 7, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((VatDeclaration?)null);
+
+        var dto = Dto() with
+        {
+            MonthlyDeclarationMode = (int)MonthlyDeclarationMode.Configured,
+            MonthlyDeclarationDiagnostics = new[]
+            {
+                new MonthlyDeclarationDiagnosticDto
+                {
+                    Kind = (int)RubricDiagnosticKind.DuplicateSourceRead,
+                    Detail = "La rubrique F1_1 reprendrait « IRPP retenu par la paie », déjà reprise par la rubrique F1_1B."
+                }
+            }
+        };
+
+        var result = await BuildHandler(dto: dto).Handle(Command(), CancellationToken.None);
+
+        Assert.True(result.IsFailure);
+        Assert.Contains("F1_1B", result.Error.Description);
+        _repo.Verify(r => r.AddAsync(It.IsAny<VatDeclaration>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    /// <summary>
+    /// L'origine du calcul est consignée au dépôt : c'est elle, et non le régime actuel du
+    /// dossier, qui dira plus tard d'où viennent les montants. Le contrôle de parité reste
+    /// historique : ses montants le sont.
+    /// </summary>
+    [Theory]
+    [InlineData(MonthlyDeclarationMode.Configured, DeclarationCalculationOrigin.Configured)]
+    [InlineData(MonthlyDeclarationMode.Parity, DeclarationCalculationOrigin.Historic)]
+    [InlineData(MonthlyDeclarationMode.Legacy, DeclarationCalculationOrigin.Historic)]
+    public async Task L_enregistrement_consigne_l_origine_du_calcul(
+        MonthlyDeclarationMode mode, DeclarationCalculationOrigin expected)
+    {
+        _repo.Setup(r => r.GetByYearMonthAsync(2026, 7, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((VatDeclaration?)null);
+        VatDeclaration? added = null;
+        _repo.Setup(r => r.AddAsync(It.IsAny<VatDeclaration>(), It.IsAny<CancellationToken>()))
+            .Callback<VatDeclaration, CancellationToken>((d, _) => added = d)
+            .ReturnsAsync((VatDeclaration d, CancellationToken _) => d);
+
+        var result = await BuildHandler(dto: Dto() with { MonthlyDeclarationMode = (int)mode })
+            .Handle(Command(), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(expected, added!.CalculationOrigin);
+    }
+
+    /// <summary>
+    /// Hors mode configuré, la famille sans rubrique retombe sur le calcul historique : aucun zéro,
+    /// donc aucune raison de refuser.
+    /// </summary>
+    [Theory]
+    [InlineData(MonthlyDeclarationMode.Legacy)]
+    [InlineData(MonthlyDeclarationMode.Parity)]
+    public async Task Hors_mode_configure_la_famille_sans_rubrique_ne_bloque_pas(MonthlyDeclarationMode mode)
+    {
+        _repo.Setup(r => r.GetByYearMonthAsync(2026, 7, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((VatDeclaration?)null);
+
+        var result = await BuildHandler(dto: WithMissingRubric(mode, MonthlyDeclarationFamily.Tfp))
+            .Handle(Command(), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+    }
+
+    /// <summary>
+    /// Déclaration mensuelle unique éteinte : seule la TVA est déposée. Les familles et le détail du
+    /// moteur ne doivent pas être écrits — l'indentation le laissait croire, l'absence d'accolades
+    /// les écrivait quand même.
+    /// </summary>
+    [Fact]
+    public async Task V2_eteinte_n_ecrit_ni_les_familles_du_moteur_ni_le_detail()
+    {
+        _repo.Setup(r => r.GetByYearMonthAsync(2026, 7, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((VatDeclaration?)null);
+        VatDeclaration? added = null;
+        _repo.Setup(r => r.AddAsync(It.IsAny<VatDeclaration>(), It.IsAny<CancellationToken>()))
+            .Callback<VatDeclaration, CancellationToken>((d, _) => added = d)
+            .ReturnsAsync((VatDeclaration d, CancellationToken _) => d);
+
+        var dto = Dto() with
+        {
+            HotelTax = 45m,
+            Lines = new[]
+            {
+                new MonthlyDeclarationLineDto
+                {
+                    Code = "F8_1", Label = "Taxe hôtelière", Family = (int)MonthlyDeclarationFamily.HotelTax,
+                    ReportCode = "1", Gross = 2_250m, Withheld = 45m
+                }
+            }
+        };
+
+        var result = await BuildHandler(v2: false, dto: dto).Handle(Command(), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(0m, added!.HotelTax);
+        Assert.Empty(added.Lines);
     }
 }

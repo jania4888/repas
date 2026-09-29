@@ -73,6 +73,7 @@ public static class MonthlyDeclarationRubricEvaluator
             // dériver « brut × taux » d'un millime sur les grandes assiettes.
             Gross = MillimeRounding.Round(gross),
             Withheld = MillimeRounding.Round(withheld),
+            WithheldUnrounded = withheld,
             RatePercentApplied = rubric.RatePercent,
             RequiresManualInput = RequiresManualInput(rubric),
             Diagnostics = diagnostics
@@ -88,9 +89,14 @@ public static class MonthlyDeclarationRubricEvaluator
             RubricGrossKind.Fixed => rubric.FixedGrossAmount ?? 0m,
             RubricGrossKind.Payroll => PayrollValue(rubric.PayrollComponent, data, diagnostics),
             RubricGrossKind.Account => data.SumFor(Accounts(rubric, RubricAccountRole.Gross), rubric.GrossSide),
+            RubricGrossKind.Document => DocumentValue(rubric.GrossDocumentSource, data),
             // Traité en amont dans EvaluateOne : la retenue doit être calculée d'abord.
             _ => 0m
         };
+
+    /// <summary>Valeur des documents de la période désignée par la rubrique.</summary>
+    private static decimal DocumentValue(DeclarationDocumentSource? source, RubricPeriodData data) =>
+        source is { } s ? data.Documents.ValueOf(s) : 0m;
 
     /// <summary>
     /// Projette l'apport du cycle de paie du mois sur la valeur désignée par la rubrique.
@@ -121,9 +127,17 @@ public static class MonthlyDeclarationRubricEvaluator
             PayrollContributionComponent.WithholdingTotal => data.Payroll.WithholdingTotal,
             PayrollContributionComponent.Tfp => data.Payroll.Tfp,
             PayrollContributionComponent.Foprolos => data.Payroll.Foprolos,
+            // Une paire par ligne du formulaire : la TFP n'est portée que par celle de son activité.
+            PayrollContributionComponent.PayrollTaxBaseManufacturing => IsManufacturing(data) ? data.Payroll.TaxBase : 0m,
+            PayrollContributionComponent.TfpManufacturing => IsManufacturing(data) ? data.Payroll.Tfp : 0m,
+            PayrollContributionComponent.PayrollTaxBaseOtherActivities => IsManufacturing(data) ? 0m : data.Payroll.TaxBase,
+            PayrollContributionComponent.TfpOtherActivities => IsManufacturing(data) ? 0m : data.Payroll.Tfp,
             _ => 0m
         };
     }
+
+    private static bool IsManufacturing(RubricPeriodData data) =>
+        TfpActivity.IsManufacturing(data.Payroll.TfpRatePercent, data.Payroll.Tfp, data.Payroll.TaxBase);
 
     // ── Colonne « Retenue » ───────────────────────────────────────────────────
 
@@ -139,6 +153,7 @@ public static class MonthlyDeclarationRubricEvaluator
                 PayrollValue(rubric.WithheldPayrollComponent, data, diagnostics),
             RubricWithheldKind.Account =>
                 data.SumFor(Accounts(rubric, RubricAccountRole.Withheld), rubric.WithheldSide),
+            RubricWithheldKind.Document => DocumentValue(rubric.WithheldDocumentSource, data),
             RubricWithheldKind.GrossTimesRate => rubric.RatePercent > 0m
                 ? gross * rubric.RatePercent / 100m
                 : Report(diagnostics, RubricDiagnosticKind.RateRequired, rubric.Code, 0m),

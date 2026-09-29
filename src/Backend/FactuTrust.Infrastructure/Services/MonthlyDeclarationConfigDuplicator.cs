@@ -43,17 +43,23 @@ public sealed class MonthlyDeclarationConfigDuplicator : IMonthlyDeclarationConf
     private readonly ITenantService _tenantService;
     private readonly ITenantDbContextFactory _contextFactory;
     private readonly ICurrentUser _currentUser;
+    private readonly ITenantMigrationGuard? _migrationGuard;
 
+    /// <param name="migrationGuard">
+    /// Facultatif : absent hors exécution (outillage EF), où la duplication ne s'exécute pas.
+    /// </param>
     public MonthlyDeclarationConfigDuplicator(
         MasterDbContext master,
         ITenantService tenantService,
         ITenantDbContextFactory contextFactory,
-        ICurrentUser currentUser)
+        ICurrentUser currentUser,
+        ITenantMigrationGuard? migrationGuard = null)
     {
         _master = master;
         _tenantService = tenantService;
         _contextFactory = contextFactory;
         _currentUser = currentUser;
+        _migrationGuard = migrationGuard;
     }
 
     public async Task<Result<MonthlyDeclarationDuplicationResultDto>> DuplicateAsync(
@@ -88,6 +94,17 @@ public sealed class MonthlyDeclarationConfigDuplicator : IMonthlyDeclarationConf
         {
             return Result.Failure<MonthlyDeclarationDuplicationResultDto>(
                 Error.NotFound("Base du dossier source introuvable."));
+        }
+
+        // Les migrations d'un dossier s'appliquent à sa première requête. Un dossier source que
+        // personne n'a ouvert depuis le dernier déploiement n'a pas encore les colonnes que le
+        // modèle lit : on les lui applique d'abord, sans quoi la lecture échouerait sur une colonne
+        // inconnue.
+        if (_migrationGuard is not null)
+        {
+            var migrated = await _migrationGuard.EnsureMigrationsAppliedAsync(sourceCompanyTenantId, cancellationToken);
+            if (migrated.IsFailure)
+                return Result.Failure<MonthlyDeclarationDuplicationResultDto>(migrated.Error);
         }
 
         var source = await ReadSourceAsync(connectionString, cancellationToken);
@@ -151,7 +168,9 @@ public sealed class MonthlyDeclarationConfigDuplicator : IMonthlyDeclarationConf
                 // La duplication ne dit rien de l'état actif : une rubrique nouvelle arrive active,
                 // et une rubrique déjà présente garde l'état que le dossier lui a donné.
                 IsActive: null,
-                r.Accounts.Select(a => new RubricAccountInput(a.Role, a.AccountNumber, a.MatchMode)).ToList()))
+                r.Accounts.Select(a => new RubricAccountInput(a.Role, a.AccountNumber, a.MatchMode)).ToList(),
+                r.GrossDocumentSource,
+                r.WithheldDocumentSource))
             .ToList();
     }
 
@@ -167,13 +186,15 @@ public sealed class MonthlyDeclarationConfigDuplicator : IMonthlyDeclarationConf
 
         var applied = await MonthlyDeclarationConfigWriter.ApplyAsync(
             destination, source, [], overwrite, _currentUser.Email ?? "system", cancellationToken);
+        if (applied.IsFailure)
+            return Result.Failure<MonthlyDeclarationDuplicationResultDto>(applied.Error);
 
         return Result.Success(new MonthlyDeclarationDuplicationResultDto
         {
-            Inserted = applied.Inserted,
-            Replaced = applied.Replaced,
-            SkippedCodes = applied.SkippedCodes,
-            UnknownAccounts = applied.UnknownAccounts
+            Inserted = applied.Value.Inserted,
+            Replaced = applied.Value.Replaced,
+            SkippedCodes = applied.Value.SkippedCodes,
+            UnknownAccounts = applied.Value.UnknownAccounts
         });
     }
 }

@@ -1,5 +1,6 @@
 using FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
 using FactuTrust.Domain.Common;
+using FactuTrust.Domain.Enums;
 
 namespace FactuTrust.Application.Common.Interfaces.Services;
 
@@ -24,12 +25,21 @@ public interface IMonthlyDeclarationModelImporter
     /// Faux : seules les rubriques dont le code est absent sont créées. Vrai : les codes en commun
     /// sont remplacés. Dans les deux cas, rien n'est supprimé en masse.
     /// </param>
+    /// <param name="upgradeToV2">
+    /// Non nul pour un fichier v1 importé une fois la montée v2 autorisée : ses familles identiques
+    /// au catalogue v1 sont importées dans leur définition v2, par la même règle que la montée.
+    /// </param>
     Task<Result<MonthlyDeclarationModelImportOutcome>> ImportAsync(
         IReadOnlyList<MonthlyDeclarationRubricDraft> rubrics,
         IReadOnlyList<MonthlyDeclarationFamilyDraft> families,
         bool overwrite,
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken = default,
+        MonthlyDeclarationImportUpgrade? upgradeToV2 = null);
 }
+
+/// <summary>Passage v1 → v2 d'un fichier importé.</summary>
+/// <param name="TclRatePercent">Taux de TCL de la plateforme, repris par la rubrique TCL.</param>
+public sealed record MonthlyDeclarationImportUpgrade(decimal TclRatePercent);
 
 /// <summary>Ce que l'écriture a réellement fait.</summary>
 public sealed record MonthlyDeclarationModelImportOutcome(
@@ -37,4 +47,5 @@ public sealed record MonthlyDeclarationModelImportOutcome(
     int Replaced,
     IReadOnlyList<string> SkippedCodes,
     IReadOnlyList<string> UnknownAccounts,
-    int FamiliesChanged);
+    int FamiliesChanged,
+    IReadOnlyList<MonthlyDeclarationFamily>? UpgradedFamilies = null);
