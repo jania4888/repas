@@ -30,6 +30,7 @@ import { ClientService, ClientListItem } from '@core/services/client.service';
 import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
+import { isEmptyDeliveryNoteReportError } from '@core/utils/report-pdf-empty.util';
 
 interface StatusOption {
   label: string;
@@ -69,7 +70,7 @@ interface StatusOption {
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        [disabled]="printingReport()"
+        [disabled]="printingReport() || !canPrintDeliveryNoteReport()"
         (click)="printDeliveryNoteReport()"
         ariaLabel="Imprimer l'état des bons de livraison (période et client optionnels)" i18n-ariaLabel="@@delivery-notes.pages.imprimer.l.etat.des.bons.de.livraison.pe.5e9a3cfc" i18n="@@delivery-notes.pages.imprimer.l.etat.389e5da9"> Imprimer l'état </app-button>
       @if (canCreateDeliveryNote()) {
@@ -324,6 +325,13 @@ export class DeliveryNoteListComponent implements OnInit, OnDestroy {
   summary = signal<DeliveryNoteListSummary | null>(null);
   summaryLoading = signal(false);
 
+  canPrintDeliveryNoteReport = computed(() => {
+    if (this.loading() || this.summaryLoading() || this.initialLoad()) {
+      return false;
+    }
+    return (this.summary()?.count ?? 0) > 0;
+  });
+
   summaryMetrics = computed<TotalMetric[]>(() => {
     const s = this.summary();
     const currency = s?.currency ?? 'TND';
@@ -511,6 +519,17 @@ export class DeliveryNoteListComponent implements OnInit, OnDestroy {
   }
 
   printDeliveryNoteReport(): void {
+    if (!this.canPrintDeliveryNoteReport()) {
+      this.toastService.add({
+        key: 'delivery-note-list-print',
+        severity: 'warn',
+        summary: $localize`:@@delivery-notes.delivery-note-list.report.toast.summary.information:Information`,
+        detail: $localize`:@@delivery-notes.delivery-note-list.report.empty.deliveryNotes:Aucun bon de livraison sur cette période pour l'état.`,
+        life: 5000
+      });
+      return;
+    }
+
     const fromDate = this.dateRange?.[0] ? formatLocalDate(this.dateRange[0]) : undefined;
     const toDate = this.dateRange?.[1] ? formatLocalDate(this.dateRange[1]) : undefined;
     const clientId = this.selectedClient?.id;
@@ -524,10 +543,13 @@ export class DeliveryNoteListComponent implements OnInit, OnDestroy {
       },
       error: (error: Error) => {
         this.printingReport.set(false);
+        const emptyPeriod = isEmptyDeliveryNoteReportError(error.message);
         this.toastService.add({
           key: 'delivery-note-list-print',
-          severity: 'error',
-          summary: $localize`:@@delivery-note-list.component.summary.Erreur:Erreur`,
+          severity: emptyPeriod ? 'warn' : 'error',
+          summary: emptyPeriod
+            ? $localize`:@@delivery-notes.delivery-note-list.report.toast.summary.information:Information`
+            : $localize`:@@delivery-note-list.component.summary.Erreur:Erreur`,
           detail: error.message || $localize`:@@delivery-notes.delivery-note-list.ts.impossible.de.generer.le.rapport.pdf.e2243d7a:Impossible de générer le rapport PDF`,
           life: 5000
         });

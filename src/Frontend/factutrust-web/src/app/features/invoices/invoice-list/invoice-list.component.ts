@@ -38,6 +38,10 @@ import {
 } from '@shared/components/refund-invoice-id-dialog/refund-invoice-id-dialog.component';
 import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.service';
 import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
+import {
+  INVOICE_LIST_STATUS_CANCELLED,
+  isEmptyInvoiceReportError
+} from '@core/utils/report-pdf-empty.util';
 
 type InvoiceListMode = 'invoices' | 'unpaid' | 'creditNotes';
 
@@ -81,7 +85,7 @@ interface StatusOption {
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        [disabled]="printingReport()"
+        [disabled]="printingReport() || !canPrintInvoiceReport()"
         (click)="printInvoiceReport()"
         [ariaLabel]="printAriaLabel()" i18n="@@invoices.invoice-list.imprimer.l.etat.389e5da9"> Imprimer l'état </app-button>
       <app-analyze-with-ai-button
@@ -454,6 +458,17 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
       ? $localize`:@@ui.tern.imprimer.l.etat.des.avoirs.periode.et.clie.1f08fb:Imprimer l'état des avoirs (période et client optionnels)`
       : $localize`:@@ui.tern.imprimer.l.etat.des.factures.periode.et.cl.728ed9:Imprimer l'état des factures (période et client optionnels)`
   );
+
+  /** False while loading or when no document is eligible for the period PDF (état excludes cancelled). */
+  canPrintInvoiceReport = computed(() => {
+    if (this.loading() || this.summaryLoading() || this.initialLoad()) {
+      return false;
+    }
+    if (this.selectedStatus === INVOICE_LIST_STATUS_CANCELLED) {
+      return false;
+    }
+    return (this.summary()?.count ?? 0) > 0;
+  });
   viewAriaLabel = computed(() => this.creditNotesOnlyMode() ? $localize`:@@ui.tern.voir.l.avoir.1dce8e:Voir l'avoir` : $localize`:@@ui.tern.voir.la.facture.e4bdde:Voir la facture`);
 
   canCreateInvoice = computed(
@@ -844,6 +859,11 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
   }
 
   printInvoiceReport(): void {
+    if (!this.canPrintInvoiceReport()) {
+      this.showEmptyInvoiceReportInfoToast();
+      return;
+    }
+
     const fromDate = this.dateRange?.[0] ? formatLocalDate(this.dateRange[0]) : undefined;
     const toDate = this.dateRange?.[1] ? formatLocalDate(this.dateRange[1]) : undefined;
     const clientId = this.selectedClient?.id;
@@ -858,14 +878,35 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
       },
       error: (error: Error) => {
         this.printingReport.set(false);
+        const emptyPeriod = isEmptyInvoiceReportError(error.message);
         this.toastService.add({
           key: 'invoice-list-print',
-          severity: 'error',
-          summary: $localize`:@@invoice-list.component.summary.Erreur:Erreur`,
+          severity: emptyPeriod ? 'warn' : 'error',
+          summary: emptyPeriod
+            ? $localize`:@@invoices.invoice-list.report.toast.summary.information:Information`
+            : $localize`:@@invoice-list.component.summary.Erreur:Erreur`,
           detail: error.message || $localize`:@@invoices.invoice-list.ts.impossible.de.generer.le.rapport.pdf.e2243d7a:Impossible de générer le rapport PDF`,
           life: 5000
         });
       }
+    });
+  }
+
+  private showEmptyInvoiceReportInfoToast(): void {
+    let detail: string;
+    if (this.selectedStatus === INVOICE_LIST_STATUS_CANCELLED) {
+      detail = $localize`:@@invoices.invoice-list.report.empty.cancelledFilter:L'état n'inclut pas les factures annulées.`;
+    } else if (this.creditNotesOnlyMode()) {
+      detail = $localize`:@@invoices.invoice-list.report.empty.creditNotes:Aucun avoir sur cette période pour l'état.`;
+    } else {
+      detail = $localize`:@@invoices.invoice-list.report.empty.invoices:Aucune facture sur cette période pour l'état.`;
+    }
+    this.toastService.add({
+      key: 'invoice-list-print',
+      severity: 'warn',
+      summary: $localize`:@@invoices.invoice-list.report.toast.summary.information:Information`,
+      detail,
+      life: 5000
     });
   }
 

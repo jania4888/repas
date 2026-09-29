@@ -198,7 +198,8 @@ export class DeliveryNoteService {
         return this.http.get(`${this.API_URL}/report/pdf`, {
             params: httpParams,
             responseType: 'blob',
-            observe: 'response'
+            observe: 'response',
+            context: createHttpContextSkipGlobalErrorUi()
         }).pipe(
             switchMap(response => {
                 const contentType = response.headers.get('content-type') || '';

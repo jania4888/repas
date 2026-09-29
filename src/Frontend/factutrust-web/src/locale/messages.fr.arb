@@ -46348,6 +46348,20 @@
     ],
     "x-wave": "v4"
   },
+  "delivery-notes.delivery-note-list.report.toast.summary.information": "Information",
+  "@delivery-notes.delivery-note-list.report.toast.summary.information": {
+    "x-files": [
+      "src/app/features/delivery-notes/pages/delivery-note-list/delivery-note-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "delivery-notes.delivery-note-list.report.empty.deliveryNotes": "Aucun bon de livraison sur cette période pour l'état.",
+  "@delivery-notes.delivery-note-list.report.empty.deliveryNotes": {
+    "x-files": [
+      "src/app/features/delivery-notes/pages/delivery-note-list/delivery-note-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "delivery-notes.delivery-note.ts.impossible.de.generer.le.rapport.pdf.e2243d7a": "Impossible de générer le rapport PDF",
   "@delivery-notes.delivery-note.ts.impossible.de.generer.le.rapport.pdf.e2243d7a": {
     "x-files": [
@@ -53735,6 +53749,34 @@
   },
   "invoices.invoice-list.ts.impossible.de.generer.le.rapport.pdf.e2243d7a": "Impossible de générer le rapport PDF",
   "@invoices.invoice-list.ts.impossible.de.generer.le.rapport.pdf.e2243d7a": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-list.report.toast.summary.information": "Information",
+  "@invoices.invoice-list.report.toast.summary.information": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-list.report.empty.invoices": "Aucune facture sur cette période pour l'état.",
+  "@invoices.invoice-list.report.empty.invoices": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-list.report.empty.creditNotes": "Aucun avoir sur cette période pour l'état.",
+  "@invoices.invoice-list.report.empty.creditNotes": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-list.report.empty.cancelledFilter": "L'état n'inclut pas les factures annulées.",
+  "@invoices.invoice-list.report.empty.cancelledFilter": {
     "x-files": [
       "src/app/features/invoices/invoice-list/invoice-list.component.ts"
     ],

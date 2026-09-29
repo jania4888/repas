@@ -5198,5 +5198,11 @@
   "settings.taxes.affichage.bc8f3ed6": "العرض",
   "settings.users.extension.659087d3": "الامتداد",
   "settings.warehouses.nom.8d406e3d": "الاسم",
-  "studio.studio-record-list.workflows.825ce9e9": "مسارات العمل"
+  "studio.studio-record-list.workflows.825ce9e9": "مسارات العمل",
+  "invoices.invoice-list.report.toast.summary.information": "معلومة",
+  "invoices.invoice-list.report.empty.invoices": "لا توجد فواتير في هذه الفترة لكشف الحالة.",
+  "invoices.invoice-list.report.empty.creditNotes": "لا توجد إشعارات دائنة في هذه الفترة لكشف الحالة.",
+  "invoices.invoice-list.report.empty.cancelledFilter": "كشف الحالة لا يتضمن الفواتير الملغاة.",
+  "delivery-notes.delivery-note-list.report.toast.summary.information": "معلومة",
+  "delivery-notes.delivery-note-list.report.empty.deliveryNotes": "لا توجد أوامر تسليم في هذه الفترة لكشف الحالة."
 }
