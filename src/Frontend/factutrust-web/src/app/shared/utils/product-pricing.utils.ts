@@ -135,6 +135,24 @@ export function recalculatePricing(
   };
 }
 
+/** TTC achat catalogue : HT + TVA uniquement (pas de FODEC). */
+export function calculatePurchaseTtc(
+  purchasePriceHt: number,
+  vatRatePercent: number
+): number {
+  return calculateSaleTtc(purchasePriceHt, vatRatePercent, false);
+}
+
+export function resolvePurchaseTtc(
+  purchasePriceHt: number | null | undefined,
+  vatRatePercent: number
+): number | null {
+  if (purchasePriceHt == null) {
+    return null;
+  }
+  return calculatePurchaseTtc(purchasePriceHt, vatRatePercent);
+}
+
 export function getEffectiveMaxDiscountPercent(
   isDiscountEnabled: boolean | undefined,
   productMaxDiscountPercent: number | null | undefined,

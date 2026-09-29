@@ -1,9 +1,11 @@
 import {
   calculateMarginPercent,
+  calculatePurchaseTtc,
   calculateSaleTtc,
   calculateUnitPriceFromMargin,
   deriveUnitPriceFromTtc,
-  recalculatePricing
+  recalculatePricing,
+  resolvePurchaseTtc
 } from './product-pricing.utils';
 
 describe('product-pricing.utils', () => {
@@ -13,6 +15,25 @@ describe('product-pricing.utils', () => {
 
   it('calculates sale TTC with 13% VAT', () => {
     expect(calculateSaleTtc(50400, 13, false)).toBe(56952);
+  });
+
+  describe('purchase TTC (HT + VAT, no FODEC)', () => {
+    it('calculates catalog purchase TTC for 10.432 HT at 19% VAT', () => {
+      expect(calculatePurchaseTtc(10.432, 19)).toBe(12.414);
+    });
+
+    it('resolvePurchaseTtc returns null when HT is null', () => {
+      expect(resolvePurchaseTtc(null, 19)).toBeNull();
+      expect(resolvePurchaseTtc(undefined, 19)).toBeNull();
+    });
+
+    it('returns HT when VAT is 0%', () => {
+      expect(calculatePurchaseTtc(100, 0)).toBe(100);
+    });
+
+    it('matches purchase-order style VAT on integer HT', () => {
+      expect(calculatePurchaseTtc(50400, 13)).toBe(56952);
+    });
   });
 
   it('round-trips HT from TTC', () => {

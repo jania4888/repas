@@ -37,7 +37,8 @@ import {
   calculateSaleTtc,
   calculateVatAmount,
   PricingEditSource,
-  recalculatePricing
+  recalculatePricing,
+  resolvePurchaseTtc
 } from '@shared/utils/product-pricing.utils';
 import { ProductClientPricesComponent } from '../product-client-prices/product-client-prices.component';
 import { ProductVariantMatrixComponent } from '@shared/components/product-variant-matrix/product-variant-matrix.component';
@@ -476,21 +477,39 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
         <app-form-section class="section-pricing" title="Tarification" i18n-title="@@products.product-form.tarification.5dc310ae" icon="pi-dollar" [number]="pricingSectionNumber()">
           <div class="pricing-block">
             <h4 class="pricing-block-title" i18n="@@products.product-form.couts.d.achat.1efe6462">Coûts d'achat</h4>
-            <div class="form-group">
-              <label for="purchasePrice" i18n="@@products.product-form.prix.d.achat.ht.9e99d105">Prix d'achat HT</label>
-              <p-inputNumber
-                id="purchasePrice"
-                formControlName="purchasePrice"
-                mode="decimal"
-                [minFractionDigits]="3"
-                [maxFractionDigits]="3"
-                suffix=" TND"
-                placeholder="Optionnel" i18n-placeholder="@@products.product-form.optionnel.879d6b16"
-                styleClass="w-full"
-                (onInput)="onPricingChange('purchasePrice')">
-              </p-inputNumber>
-              <small class="form-hint" i18n="@@products.product-form.prix.par.defaut.pour.les.bons.de.commande.et.fac.3864e612"> Prix par défaut pour les bons de commande et factures fournisseurs. </small>
+            <div class="form-row form-row-purchase-ht-ttc">
+              <div class="form-group">
+                <label for="purchasePrice" i18n="@@products.product-form.prix.d.achat.ht.9e99d105">Prix d'achat HT</label>
+                <p-inputNumber
+                  id="purchasePrice"
+                  formControlName="purchasePrice"
+                  mode="decimal"
+                  [minFractionDigits]="3"
+                  [maxFractionDigits]="3"
+                  suffix=" TND"
+                  placeholder="Optionnel" i18n-placeholder="@@products.product-form.optionnel.879d6b16"
+                  styleClass="w-full"
+                  (onInput)="onPricingChange('purchasePrice')">
+                </p-inputNumber>
+              </div>
+              <div class="form-group">
+                <label for="purchasePriceTtc" i18n="@@products.product-form.prix.d.achat.ttc.a8f3c2e1">Prix d'achat TTC</label>
+                <p-inputNumber
+                  id="purchasePriceTtc"
+                  [ngModel]="previewPurchaseTtc()"
+                  [ngModelOptions]="{ standalone: true }"
+                  mode="decimal"
+                  [minFractionDigits]="3"
+                  [maxFractionDigits]="3"
+                  suffix=" TND"
+                  placeholder="—" i18n-placeholder="@@products.product-form.text.1b93795b"
+                  [disabled]="true"
+                  styleClass="w-full readonly-field">
+                </p-inputNumber>
+                <small class="form-hint" i18n="@@products.product-form.calcule.a.partir.du.prix.ht.et.du.taux.de.tva.b4e91d02">Calculé à partir du prix HT et du taux de TVA.</small>
+              </div>
             </div>
+            <small class="form-hint purchase-ht-hint" i18n="@@products.product-form.prix.par.defaut.pour.les.bons.de.commande.et.fac.3864e612"> Prix par défaut pour les bons de commande et factures fournisseurs. </small>
 
             <div class="pricing-readonly-group">
               <p class="pricing-readonly-badge" i18n="@@products.product-form.calcule.automatiquement.395afd28">
@@ -1013,6 +1032,19 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
       letter-spacing: 0.04em;
     }
 
+    .form-row-purchase-ht-ttc {
+      margin-bottom: var(--spacing-2);
+
+      .form-group {
+        margin-bottom: var(--spacing-3);
+      }
+    }
+
+    .purchase-ht-hint {
+      display: block;
+      margin-bottom: var(--spacing-5);
+    }
+
     .discount-hint {
       color: var(--color-error-600);
     }
@@ -1448,6 +1480,13 @@ export class ProductFormComponent implements OnInit {
     const unitPrice = this.form.get('unitPrice')?.value ?? 0;
     const fodec = this.previewFodec();
     return calculateVatAmount(unitPrice, fodec, this.form.get('vatRate')?.value ?? 0);
+  }
+
+  previewPurchaseTtc(): number | null {
+    return resolvePurchaseTtc(
+      this.form.get('purchasePrice')?.value ?? null,
+      this.form.get('vatRate')?.value ?? 0
+    );
   }
 
   private syncMarginControl(): void {

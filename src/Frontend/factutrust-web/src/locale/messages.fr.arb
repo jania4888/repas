@@ -71267,6 +71267,13 @@
     ],
     "x-wave": "v3"
   },
+  "products.product-detail.prix.d.achat.ttc.a8f3c2e1": "Prix d'achat TTC",
+  "@products.product-detail.prix.d.achat.ttc.a8f3c2e1": {
+    "x-files": [
+      "src/app/features/products/product-detail/product-detail.component.ts"
+    ],
+    "x-wave": "v3"
+  },
   "products.product-detail.calcule.automatiquement.395afd28": "{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT} Calculé automatiquement ",
   "@products.product-detail.calcule.automatiquement.395afd28": {
     "x-files": [
@@ -71930,6 +71937,20 @@
   },
   "products.product-form.prix.d.achat.ht.9e99d105": "Prix d'achat HT",
   "@products.product-form.prix.d.achat.ht.9e99d105": {
+    "x-files": [
+      "src/app/features/products/product-form/product-form.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "products.product-form.prix.d.achat.ttc.a8f3c2e1": "Prix d'achat TTC",
+  "@products.product-form.prix.d.achat.ttc.a8f3c2e1": {
+    "x-files": [
+      "src/app/features/products/product-form/product-form.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "products.product-form.calcule.a.partir.du.prix.ht.et.du.taux.de.tva.b4e91d02": "Calculé à partir du prix HT et du taux de TVA.",
+  "@products.product-form.calcule.a.partir.du.prix.ht.et.du.taux.de.tva.b4e91d02": {
     "x-files": [
       "src/app/features/products/product-form/product-form.component.ts"
     ],

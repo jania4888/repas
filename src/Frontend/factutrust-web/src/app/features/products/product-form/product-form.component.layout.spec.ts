@@ -200,6 +200,11 @@ describe('ProductFormComponent — layout', () => {
     expect(vatEl.compareDocumentPosition(ttcEl) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 
     expect(fixture.nativeElement.querySelector('.price-preview .preview-row.total')).toBeTruthy();
+
+    const purchaseRow = fixture.nativeElement.querySelector('.form-row-purchase-ht-ttc') as HTMLElement;
+    expect(purchaseRow).toBeTruthy();
+    expect(purchaseRow.querySelector('#purchasePrice')).toBeTruthy();
+    expect(purchaseRow.querySelector('#purchasePriceTtc')).toBeTruthy();
   });
 
   it('hasSideSections follows the same gates as variants/trace methods', () => {

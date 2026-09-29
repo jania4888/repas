@@ -240,4 +240,22 @@ describe('ProductFormComponent — margin enablement', () => {
     // 1500 + FODEC 1% (15) + TVA 19% on 1515 = 1500 + 15 + 287.85 = 1802.85
     expect(component.form.get('salePriceTtc')?.value).toBe(1802.85);
   });
+
+  it('previewPurchaseTtc returns null when purchase price is missing', () => {
+    component.form.patchValue({ purchasePrice: null, vatRate: 19 }, { emitEvent: false });
+    expect(component.previewPurchaseTtc()).toBeNull();
+  });
+
+  it('previewPurchaseTtc calculates from HT and VAT rate', () => {
+    component.form.patchValue({ purchasePrice: 10.432, vatRate: 19 }, { emitEvent: false });
+    expect(component.previewPurchaseTtc()).toBe(12.414);
+  });
+
+  it('previewPurchaseTtc updates when VAT changes', () => {
+    component.form.patchValue({ purchasePrice: 100, vatRate: 19 }, { emitEvent: false });
+    expect(component.previewPurchaseTtc()).toBe(119);
+
+    component.form.patchValue({ vatRate: 0 }, { emitEvent: false });
+    expect(component.previewPurchaseTtc()).toBe(100);
+  });
 });

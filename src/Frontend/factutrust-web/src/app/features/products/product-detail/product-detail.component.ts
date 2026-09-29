@@ -18,7 +18,8 @@ import { PERMISSIONS } from '@core/config/permission-keys';
 import {
   calculateFodecAmount,
   calculateSaleTtc,
-  calculateVatAmount
+  calculateVatAmount,
+  resolvePurchaseTtc
 } from '@shared/utils/product-pricing.utils';
 import { ProductClientPricesComponent } from '../product-client-prices/product-client-prices.component';
 import { ProductVariantMatrixComponent } from '@shared/components/product-variant-matrix/product-variant-matrix.component';
@@ -202,9 +203,15 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
         <app-form-section title="Tarification" i18n-title="@@products.product-detail.tarification.5dc310ae" icon="pi-dollar" [number]="2">
           <div class="pricing-block">
             <h4 class="pricing-block-title" i18n="@@products.product-detail.couts.d.achat.1efe6462">Coûts d'achat</h4>
-            <div class="form-group">
-              <span class="field-label" i18n="@@products.product-detail.prix.d.achat.ht.9e99d105">Prix d'achat HT</span>
-              <p class="field-value mono">{{ formatMoney(p.purchasePrice) }}</p>
+            <div class="form-row form-row-purchase-ht-ttc">
+              <div class="form-group">
+                <span class="field-label" i18n="@@products.product-detail.prix.d.achat.ht.9e99d105">Prix d'achat HT</span>
+                <p class="field-value mono">{{ formatMoney(p.purchasePrice) }}</p>
+              </div>
+              <div class="form-group">
+                <span class="field-label" i18n="@@products.product-detail.prix.d.achat.ttc.a8f3c2e1">Prix d'achat TTC</span>
+                <p class="field-value mono">{{ formatPurchaseTtc(p) }}</p>
+              </div>
             </div>
 
             <div class="pricing-readonly-group">
@@ -443,6 +450,16 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
       border-radius: var(--radius-lg);
     }
 
+    .form-row-purchase-ht-ttc {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-4);
+
+      @media (max-width: 640px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .pricing-block {
       margin-bottom: var(--spacing-5);
       padding-bottom: var(--spacing-4);
@@ -616,6 +633,12 @@ export class ProductDetailComponent implements OnInit {
   formatMoney(value: number | null | undefined): string {
     if (value == null) return '—';
     return `${value.toLocaleString('fr-FR', { minimumFractionDigits: 3, maximumFractionDigits: 3 })} TND`;
+  }
+
+  formatPurchaseTtc(p: Product): string {
+    const ttc = resolvePurchaseTtc(p.purchasePrice, p.vatRate ?? 0);
+    if (ttc == null) return '—';
+    return `${ttc.toLocaleString('fr-FR', { minimumFractionDigits: 3, maximumFractionDigits: 3 })} TND`;
   }
 
   calculateFodec(p: Product): number {
