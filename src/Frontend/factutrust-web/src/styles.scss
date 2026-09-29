@@ -1923,6 +1923,11 @@ body .si-line-product-panel.p-autocomplete-overlay {
   min-width: min(420px, calc(100vw - 2rem));
 }
 
+// Panneau de suggestions d'articles — lignes de bon de réception (appendTo="body").
+body .receipt-product-panel.p-autocomplete-overlay {
+  min-width: min(420px, calc(100vw - 2rem));
+}
+
 // --------------------------------------------
 // InstaFact app shell — overrides thème Pluto (#content / .topbar)
 // style.css Pluto suppose une sidebar en position fixed et compense avec un

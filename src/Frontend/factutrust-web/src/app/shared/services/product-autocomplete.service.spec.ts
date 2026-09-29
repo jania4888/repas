@@ -18,6 +18,7 @@ describe('ProductAutocompleteService', () => {
       code: 'TAB001',
       name: 'Table001 FODEC',
       unitPrice: 82,
+      purchasePrice: 50,
       vatRate: 19,
       unit: 'Unité',
       isFodecApplicable: true,
@@ -74,6 +75,14 @@ describe('ProductAutocompleteService', () => {
     service = TestBed.inject(ProductAutocompleteService);
     service.invalidateCache();
     (environment.featureFlags as { invoiceProductSearchV2: boolean }).invoiceProductSearchV2 = true;
+  });
+
+  it('prefetch maps purchasePrice from select API', (done) => {
+    service.prefetch().subscribe(items => {
+      expect(items[0].purchasePrice).toBe(50);
+      expect(items[0].unitPrice).toBe(82);
+      done();
+    });
   });
 
   it('prefetch loads once and warms cache', (done) => {
@@ -166,6 +175,44 @@ describe('ProductAutocompleteService', () => {
     });
   });
 
+  it('legacy search maps purchasePrice from getProducts', (done) => {
+    (environment.featureFlags as { invoiceProductSearchV2: boolean }).invoiceProductSearchV2 = false;
+    getProductsSpy.and.returnValue(
+      of({
+        success: true,
+        data: {
+          items: [
+            {
+              id: '9',
+              code: 'LEG',
+              name: 'Legacy item',
+              unitPrice: 75,
+              purchasePrice: 50,
+              vatRate: 19,
+              unit: 'Unité',
+              isFodecApplicable: false,
+              isDiscountEnabled: false,
+              maxDiscountPercent: null
+            }
+          ],
+          page: 1,
+          pageSize: 50,
+          totalCount: 1,
+          totalPages: 1,
+          hasNextPage: false,
+          hasPreviousPage: false
+        }
+      })
+    );
+    service.search('leg').subscribe(items => {
+      expect(items.length).toBe(1);
+      expect(items[0].purchasePrice).toBe(50);
+      expect(items[0].unitPrice).toBe(75);
+      (environment.featureFlags as { invoiceProductSearchV2: boolean }).invoiceProductSearchV2 = true;
+      done();
+    });
+  });
+
   it('suggestionToListItem maps required fields', () => {
     const list = suggestionToListItem({
       id: '1',
@@ -251,6 +298,23 @@ describe('ProductAutocompleteService', () => {
       expect(local[0].id).toBe('3');
       done();
     });
+  });
+
+  it('suggestionToListItem propage purchasePrice', () => {
+    const list = suggestionToListItem({
+      id: '1',
+      code: 'A',
+      name: 'Alpha',
+      unitPrice: 75,
+      purchasePrice: 50,
+      vatRate: 19,
+      unit: 'u',
+      isFodecApplicable: false,
+      isDiscountEnabled: false,
+      maxDiscountPercent: null
+    });
+    expect(list.purchasePrice).toBe(50);
+    expect(list.unitPrice).toBe(75);
   });
 
   it('suggestionToListItem propage le code-barres', () => {

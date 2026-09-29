@@ -1,0 +1,470 @@
+.lot-alloc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.lot-alloc-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-inline-end: 0.5rem;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-12);
+  color: var(--color-text-secondary);
+  gap: var(--spacing-3);
+}
+
+.form-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: var(--spacing-4);
+  align-items: start;
+  width: 100%;
+  max-width: 100%;
+}
+
+.form-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  min-width: 0;
+}
+
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-4);
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-4);
+}
+
+@media (max-width: 900px) {
+  .form-grid-3,
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.span-full {
+  grid-column: 1 / -1;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  min-width: 0;
+}
+
+.form-group label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.required {
+  color: var(--color-error-600);
+}
+
+.w-full {
+  width: 100%;
+}
+
+.bg-muted {
+  background: var(--color-background-subtle, #f9fafb);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: end;
+}
+
+.font-bold {
+  font-weight: var(--font-weight-bold);
+}
+
+.lines-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-4);
+}
+
+.lines-actions__danger {
+  margin-inline-start: auto;
+}
+
+.barcode-scan-row {
+  margin-bottom: var(--spacing-3);
+}
+
+// ─── Tableau Articles ───────────────────────────────────────────────────────
+.lines-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  min-width: 0;
+  max-width: 100%;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding-bottom: var(--spacing-1, 0.25rem);
+}
+
+.lines-table-wrap::-webkit-scrollbar {
+  height: 6px;
+}
+
+.lines-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  min-width: 1060px;
+}
+
+// Colonnes à largeur fixe (px). Article + Désignation partagent l'espace restant.
+.lines-table col.col-idx {
+  width: 40px;
+}
+
+.lines-table col.col-unit {
+  width: 72px;
+}
+
+.lines-table col.col-qty-ord,
+.lines-table col.col-qty-rec,
+.lines-table col.col-qty-pend {
+  width: 88px;
+}
+
+.lines-table col.col-price {
+  width: 124px;
+}
+
+.lines-table col.col-disc {
+  width: 80px;
+}
+
+.lines-table col.col-total {
+  width: 112px;
+}
+
+.lines-table col.col-actions {
+  width: 48px;
+}
+
+// `box-sizing: border-box` est INDISPENSABLE en `table-layout: fixed` : sinon le
+// padding s'ajoute aux largeurs déclarées et la colonne Article s'effondre.
+.lines-table th,
+.lines-table td {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: var(--spacing-2) var(--spacing-3);
+  text-align: start;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.lines-table th {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary);
+  background: var(--color-background-subtle);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+
+.lines-table td.col-designation input {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lines-table th.col-total,
+.lines-table td.col-total {
+  text-align: end;
+}
+
+.lines-table th.col-price,
+.lines-table td.col-price {
+  text-align: end;
+}
+
+.lines-table th.col-qty-ord,
+.lines-table th.col-qty-rec,
+.lines-table th.col-qty-pend,
+.lines-table td.col-qty-ord,
+.lines-table td.col-qty-rec,
+.lines-table td.col-qty-pend {
+  text-align: center;
+}
+
+.lines-table th.col-actions,
+.lines-table td.col-actions {
+  text-align: center;
+  padding-inline: var(--spacing-1, 0.25rem);
+}
+
+.lines-table .line-amount {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.lines-table td.col-qty-ord,
+.lines-table td.col-qty-pend {
+  font-variant-numeric: tabular-nums;
+}
+
+.line-traceability-row td {
+  background: var(--color-background-subtle, #f8fafc);
+  padding: var(--spacing-3);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.pending-qty {
+  color: #ea580c;
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.empty-lines {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-8);
+  color: var(--color-text-tertiary, var(--color-text-secondary));
+  gap: var(--spacing-2);
+  text-align: center;
+}
+
+.empty-lines i {
+  font-size: 2rem;
+  opacity: 0.85;
+}
+
+.empty-lines p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  max-width: 28rem;
+  line-height: 1.5;
+}
+
+// Panneau autocomplete : voir aussi body .receipt-product-panel dans styles.scss
+.product-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-width: 0;
+}
+
+.product-item__code {
+  font-weight: var(--font-weight-bold);
+  flex-shrink: 0;
+  font-family: var(--font-family-mono, monospace);
+}
+
+.product-item__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-item__price {
+  flex-shrink: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.product-empty {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.attachments-hint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.attachments-list {
+  list-style: none;
+  padding: 0;
+  margin: var(--spacing-4) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.attachments-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-background-subtle);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+.attachments-list li span {
+  flex: 1;
+}
+
+.totals-panel {
+  background: var(--color-background-elevated);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: var(--spacing-4);
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+}
+
+.totals-panel h3 {
+  margin: 0 0 var(--spacing-4);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-2);
+}
+
+.total-row.grand {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-top: var(--spacing-2);
+}
+
+.total-row.pending-total span:last-child {
+  color: #ea580c;
+  font-weight: var(--font-weight-semibold);
+}
+
+.divider {
+  height: 1px;
+  background: var(--color-border-subtle);
+  margin: var(--spacing-3) 0;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-6);
+  padding-top: var(--spacing-6);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.dialog-hint {
+  margin: 0 0 var(--spacing-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 1100px) {
+  .form-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .totals-panel {
+    position: static;
+  }
+}
+
+:host ::ng-deep {
+  app-form-section .form-section {
+    margin-bottom: 0;
+  }
+
+  .p-select,
+  .p-datepicker,
+  .p-autocomplete {
+    width: 100%;
+  }
+
+  .p-datepicker {
+    display: flex;
+  }
+
+  .form-grid-3 .p-select,
+  .form-grid-3 .p-datepicker {
+    width: 100%;
+  }
+
+  // PrimeNG autocomplete [dropdown]="true" : éviter l'effondrement de la colonne Article.
+  .lines-table p-autocomplete {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .lines-table p-autocomplete .p-autocomplete {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .lines-table p-autocomplete .p-autocomplete-input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .lines-table p-inputnumber {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .lines-table p-inputnumber .p-inputnumber-input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .lines-table td input.p-inputtext {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+  }
+}

@@ -64,6 +64,7 @@ import {
   ProductSuggestion,
   suggestionToListItem
 } from '@shared/services/product-autocomplete.service';
+import { resolvePurchaseUnitPriceHt } from '@shared/utils/product-purchase-price.utils';
 import {
   Subject,
   switchMap,
@@ -110,6 +111,7 @@ interface ReceiptLineRow {
     WarehouseSelectorComponent, ButtonComponent,
     StockAllocationEditorComponent, BarcodeScanFieldComponent
   ],
+  styleUrl: './purchase-receipt-form.component.scss',
   template: `
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
@@ -236,6 +238,14 @@ interface ReceiptLineRow {
               </div>
             }
 
+            @if (lines.length === 0) {
+              <div class="empty-lines" role="status">
+                <i class="pi pi-inbox" aria-hidden="true"></i>
+                <p i18n="@@purchase-receipts.pages.aucune.ligne.ajoutez.des.articles.ou.selectionne.51f5a9bd">
+                  Aucune ligne. Ajoutez des articles ou sélectionnez un bon de commande.
+                </p>
+              </div>
+            } @else {
             <div class="lines-table-wrap">
               <table class="lines-table">
                 <colgroup>
@@ -293,7 +303,7 @@ interface ReceiptLineRow {
                               <span class="product-item__code">{{ product.code }}</span>
                               <span class="product-item__name">{{ product.name }}</span>
                               <span class="product-item__price">
-                                {{ (product.purchasePrice ?? product.unitPrice ?? 0) | number:'1.3-3' }} DT
+                                {{ purchaseUnitPriceHt(product) | number:'1.3-3' }} DT
                               </span>
                             </div>
                           </ng-template>
@@ -310,7 +320,7 @@ interface ReceiptLineRow {
                         </p-autoComplete>
                       </td>
                       <td class="col-designation">
-                        <input pInputText [value]="line.designation" disabled class="w-full bg-muted" />
+                        <input pInputText [value]="line.designation" [title]="line.designation" disabled class="w-full bg-muted" />
                       </td>
                       <td class="col-unit">
                         <input pInputText [value]="line.unit" disabled class="w-full bg-muted text-center" />
@@ -362,7 +372,7 @@ interface ReceiptLineRow {
                           inputStyleClass="text-center">
                         </p-inputNumber>
                       </td>
-                      <td class="col-total font-bold">
+                      <td class="col-total font-bold line-amount">
                         {{ lineTotalHT(line) | number:'1.3-3' }}
                       </td>
                       <td class="col-actions">
@@ -377,7 +387,7 @@ interface ReceiptLineRow {
                       </td>
                     </tr>
                     @if (showLineTraceability(line)) {
-                    <tr>
+                    <tr class="line-traceability-row">
                       <td [attr.colspan]="11">
                         <app-stock-allocation-editor
                           mode="entry"
@@ -392,14 +402,11 @@ interface ReceiptLineRow {
                       </td>
                     </tr>
                     }
-                  } @empty {
-                    <tr>
-                      <td colspan="11" class="empty-lines" i18n="@@purchase-receipts.pages.aucune.ligne.ajoutez.des.articles.ou.selectionne.51f5a9bd"> Aucune ligne. Ajoutez des articles ou sélectionnez un bon de commande. </td>
-                    </tr>
                   }
                 </tbody>
               </table>
             </div>
+            }
           </app-form-section>
 
           <app-form-section title="Informations complémentaires" i18n-title="@@purchase-receipts.pages.informations.complementaires.805470ce" icon="pi-file-edit" [number]="3">
@@ -537,345 +544,10 @@ interface ReceiptLineRow {
           (clicked)="applyImportBl()" i18n="@@purchase-receipts.pages.appliquer.a4d66139"> Appliquer </app-button>
       </ng-template>
     </p-dialog>
-  `,
-  styles: [`
-    .lot-alloc {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      align-items: center;
-      padding: 0.5rem 0;
-    }
-    .lot-alloc-label { font-size: 0.75rem; font-weight: 600; color: #64748b; margin-inline-end: 0.5rem; }
-    .btn-icon { background: none; border: none; cursor: pointer; color: #64748b; }
-
-    .loading-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: var(--spacing-12);
-      color: var(--color-text-secondary);
-      gap: var(--spacing-3);
-    }
-
-    .form-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 280px;
-      gap: var(--spacing-4);
-      align-items: start;
-      width: 100%;
-      max-width: 100%;
-    }
-
-    .form-main {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-4);
-      min-width: 0;
-    }
-
-    .form-grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: var(--spacing-4);
-    }
-
-    .form-grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--spacing-4);
-    }
-
-    @media (max-width: 900px) {
-      .form-grid-3,
-      .form-grid-2 { grid-template-columns: 1fr; }
-    }
-
-    .span-full { grid-column: 1 / -1; }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-2);
-      min-width: 0;
-    }
-
-    .form-group label {
-      font-size: var(--font-size-sm);
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-text-primary);
-    }
-
-    .required { color: var(--color-error-600); }
-
-    .w-full { width: 100%; }
-    .bg-muted { background: var(--color-background-subtle, #f9fafb); }
-    .text-center { text-align: center; }
-    .text-right { text-align: end; }
-    .font-bold { font-weight: var(--font-weight-bold); }
-
-    .lines-actions {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: var(--spacing-2);
-      margin-bottom: var(--spacing-4);
-    }
-
-    .lines-actions__danger {
-      margin-inline-start: auto;
-    }
-
-    .lines-table-wrap {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      min-width: 0;
-      max-width: 100%;
-    }
-
-    .lines-table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-      min-width: 920px;
-    }
-
-    .lines-table col.col-idx { width: 40px; }
-    .lines-table col.col-article { width: 19%; }
-    .lines-table col.col-designation { width: 13%; }
-    .lines-table col.col-unit { width: 8%; }
-    .lines-table col.col-qty-ord { width: 8%; }
-    .lines-table col.col-qty-rec { width: 9%; }
-    .lines-table col.col-qty-pend { width: 8%; }
-    .lines-table col.col-price { width: 10%; }
-    .lines-table col.col-disc { width: 7%; }
-    .lines-table col.col-total { width: 10%; }
-    .lines-table col.col-actions { width: 44px; }
-
-    .lines-table th,
-    .lines-table td {
-      padding: var(--spacing-2);
-      text-align: start;
-      vertical-align: middle;
-      border-bottom: 1px solid var(--color-border-subtle);
-    }
-
-    .lines-table th.col-designation,
-    .lines-table td.col-designation,
-    .lines-table th.col-total,
-    .lines-table td.col-total {
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .lines-table td.col-article {
-      overflow: visible;
-    }
-
-    .lines-table th {
-      font-size: var(--font-size-xs);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--color-text-secondary);
-      background: var(--color-background-subtle);
-      font-weight: var(--font-weight-semibold);
-      white-space: nowrap;
-    }
-
-    .lines-table th.col-total,
-    .lines-table td.col-total { text-align: end; }
-
-    .lines-table th.col-qty-ord,
-    .lines-table th.col-qty-rec,
-    .lines-table th.col-qty-pend,
-    .lines-table td.col-qty-ord,
-    .lines-table td.col-qty-rec,
-    .lines-table td.col-qty-pend { text-align: center; }
-
-    .lines-table th.col-actions,
-    .lines-table td.col-actions {
-      text-align: center;
-      padding-inline: var(--spacing-1, 0.25rem);
-    }
-
-    .pending-qty {
-      color: #ea580c;
-      font-weight: var(--font-weight-semibold);
-    }
-
-    .empty-lines {
-      text-align: center;
-      padding: var(--spacing-6) !important;
-      color: var(--color-text-secondary);
-    }
-
-    .product-item {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-2);
-      min-width: 0;
-    }
-
-    .product-item__code {
-      font-weight: var(--font-weight-bold);
-      flex-shrink: 0;
-    }
-
-    .product-item__name {
-      flex: 1;
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .product-item__price {
-      flex-shrink: 0;
-      font-size: var(--font-size-xs);
-      color: var(--color-text-secondary);
-    }
-
-    .product-empty {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-2);
-      padding: var(--spacing-2) var(--spacing-3);
-      color: var(--color-text-secondary);
-      font-size: var(--font-size-sm);
-    }
-
-    .attachments-hint {
-      font-size: var(--font-size-sm);
-      color: var(--color-text-secondary);
-      margin: 0;
-    }
-
-    .attachments-list {
-      list-style: none;
-      padding: 0;
-      margin: var(--spacing-4) 0 0;
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-2);
-    }
-
-    .attachments-list li {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-2);
-      padding: var(--spacing-2) var(--spacing-3);
-      background: var(--color-background-subtle);
-      border-radius: var(--radius-md);
-      font-size: var(--font-size-sm);
-    }
-
-    .attachments-list li span { flex: 1; }
-
-    .totals-panel {
-      background: var(--color-background-elevated);
-      border: 1px solid var(--color-border-subtle);
-      border-radius: var(--radius-xl);
-      padding: var(--spacing-5);
-      box-shadow: var(--shadow-md);
-      position: sticky;
-      top: var(--spacing-4);
-      min-width: 0;
-      width: 100%;
-      box-sizing: border-box;
-      overflow-wrap: anywhere;
-    }
-
-    .totals-panel h3 {
-      margin: 0 0 var(--spacing-4);
-      font-size: var(--font-size-base);
-      font-weight: var(--font-weight-semibold);
-    }
-
-    .total-row {
-      display: flex;
-      justify-content: space-between;
-      gap: var(--spacing-3);
-      font-size: var(--font-size-sm);
-      color: var(--color-text-secondary);
-      margin-bottom: var(--spacing-2);
-    }
-
-    .total-row.grand {
-      font-size: var(--font-size-lg);
-      font-weight: var(--font-weight-bold);
-      color: var(--color-text-primary);
-      margin-top: var(--spacing-2);
-    }
-
-    .total-row.pending-total span:last-child {
-      color: #ea580c;
-      font-weight: var(--font-weight-semibold);
-    }
-
-    .divider {
-      height: 1px;
-      background: var(--color-border-subtle);
-      margin: var(--spacing-3) 0;
-    }
-
-    .form-actions {
-      display: flex;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-      gap: var(--spacing-3);
-      margin-top: var(--spacing-6);
-      padding-top: var(--spacing-6);
-      border-top: 1px solid var(--color-border-subtle);
-    }
-
-    .dialog-hint {
-      margin: 0 0 var(--spacing-3);
-      font-size: var(--font-size-sm);
-      color: var(--color-text-secondary);
-    }
-
-    @media (max-width: 1100px) {
-      .form-layout { grid-template-columns: 1fr; }
-      .totals-panel { position: static; }
-    }
-
-    :host ::ng-deep {
-      app-form-section .form-section {
-        margin-bottom: 0;
-      }
-
-      .p-select, .p-datepicker, .p-autocomplete { width: 100%; }
-      .p-datepicker { display: flex; }
-
-      .form-grid-3 .p-select,
-      .form-grid-3 .p-datepicker {
-        width: 100%;
-      }
-
-      .lines-table p-autocomplete,
-      .lines-table p-autocomplete .p-autocomplete,
-      .lines-table p-autocomplete .p-autocomplete-input {
-        width: 100%;
-        max-width: 100%;
-      }
-
-      .lines-table p-inputnumber,
-      .lines-table p-inputnumber .p-inputnumber,
-      .lines-table p-inputnumber .p-inputtext {
-        width: 100%;
-        max-width: 100%;
-      }
-
-      .lines-table td input.p-inputtext {
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-      }
-    }
-  `]
+  `
 })
 export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
+  protected readonly purchaseUnitPriceHt = resolvePurchaseUnitPriceHt;
   protected readonly loc_nouveau_bon_de_reception_479ec8 = $localize`:@@purchase-receipts.purchase-receipt-form.tpl.nouveau.bon.de.reception.479ec866:Nouveau bon de réception`;
   protected readonly loc_modifier_le_bon_de_reception_61e244 = $localize`:@@purchase-receipts.purchase-receipt-form.tpl.modifier.le.bon.de.reception.61e244a1:Modifier le bon de réception`;
   protected readonly loc_enregistrez_une_reception_de_marchan_49a116 = $localize`:@@purchase-receipts.purchase-receipt-form.tpl.enregistrez.une.reception.de.marchandise.49a116a9:Enregistrez une réception de marchandises fournisseur.`;
@@ -1375,7 +1047,7 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
     line.productName = product.name;
     line.designation = product.name;
     line.unit = product.unit ?? '';
-    line.unitPriceHT = product.purchasePrice ?? product.unitPrice ?? 0;
+    line.unitPriceHT = resolvePurchaseUnitPriceHt(product);
     line.vatRate = product.vatRate ?? 19;
     line.trackingMode = coerceTrackingMode(product.trackingMode);
     line.pickingPolicy = this.traceabilityByProduct().get(product.id)?.pickingPolicy ?? 0;
@@ -1639,7 +1311,7 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
         line.productName = product.name;
         line.designation = product.name;
         line.unit = product.unit ?? '';
-        line.unitPriceHT = product.purchasePrice ?? product.unitPrice ?? 0;
+        line.unitPriceHT = resolvePurchaseUnitPriceHt(product);
         line.vatRate = product.vatRate ?? 19;
         line.receivedQuantity = 1;
         this.lines.push(line);

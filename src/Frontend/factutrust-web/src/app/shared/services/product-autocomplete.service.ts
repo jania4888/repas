@@ -14,6 +14,8 @@ export interface ProductSuggestion {
   code: string;
   name: string;
   unitPrice: number;
+  /** Prix d'achat HT catalogue (documents achat). */
+  purchasePrice?: number | null;
   /** VAT rate percent (0, 7, 13, 19). */
   vatRate: number;
   unit: string;
@@ -252,6 +254,7 @@ export class ProductAutocompleteService {
             code: p.code,
             name: p.name,
             unitPrice: p.unitPrice,
+            purchasePrice: p.purchasePrice ?? null,
             vatRate: p.vatRate,
             unit: p.unit || 'Unité',
             isFodecApplicable: p.isFodecApplicable ?? false,
@@ -281,6 +284,7 @@ export class ProductAutocompleteService {
       code: item.code,
       name: item.name,
       unitPrice: item.unitPrice,
+      purchasePrice: item.purchasePrice ?? null,
       vatRate: item.vatRate,
       unit: item.unit || 'Unité',
       isFodecApplicable: item.isFodecApplicable ?? false,
@@ -303,6 +307,7 @@ export function suggestionToListItem(s: ProductSuggestion): import('@core/servic
     categoryId: '',
     category: '',
     unitPrice: s.unitPrice,
+    purchasePrice: s.purchasePrice ?? null,
     unit: s.unit || 'Unité',
     vatRate: s.vatRate,
     isFodecApplicable: s.isFodecApplicable,

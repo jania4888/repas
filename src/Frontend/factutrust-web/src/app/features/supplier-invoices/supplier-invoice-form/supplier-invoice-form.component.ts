@@ -28,6 +28,7 @@ import { ToastService } from '@core/services/toast.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { SupplierService, SupplierListItem } from '@core/services/supplier.service';
 import { ProductService, ProductListItem } from '@core/services/product.service';
+import { resolvePurchaseUnitPriceHt } from '@shared/utils/product-purchase-price.utils';
 import {
   CreateStandaloneSupplierInvoiceRequest,
   SupplierInvoiceService
@@ -218,7 +219,7 @@ export class SupplierInvoiceFormComponent implements OnInit, OnDestroy {
     }
     line.product = product;
     line.productId = product.id;
-    line.unitPriceHT = product.purchasePrice ?? product.unitPrice ?? 0;
+    line.unitPriceHT = resolvePurchaseUnitPriceHt(product);
     line.vatRate = product.vatRate ?? 19;
     this.recalculateTotals();
   }
@@ -235,7 +236,7 @@ export class SupplierInvoiceFormComponent implements OnInit, OnDestroy {
     const empty = this.lines.find(l => !l.productId) ?? this.addEmptyAndReturn();
     empty.product = product;
     empty.productId = product.id;
-    empty.unitPriceHT = product.purchasePrice ?? product.unitPrice ?? 0;
+    empty.unitPriceHT = resolvePurchaseUnitPriceHt(product);
     empty.vatRate = product.vatRate ?? 19;
     this.recalculateTotals();
   }
@@ -374,7 +375,7 @@ export class SupplierInvoiceFormComponent implements OnInit, OnDestroy {
         const empty = this.lines.find(l => !l.productId) ?? this.addEmptyAndReturn();
         empty.product = product;
         empty.productId = product.id;
-        empty.unitPriceHT = product.purchasePrice ?? product.unitPrice ?? 0;
+        empty.unitPriceHT = resolvePurchaseUnitPriceHt(product);
         empty.vatRate = product.vatRate ?? 19;
       }
 
