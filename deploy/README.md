@@ -719,6 +719,19 @@ Ajouter `-CleanInstall` pour un `npm ci --legacy-peer-deps` avant les étapes An
 repart d'un `node_modules` vide, et c'est précisément cet écart qui a déjà fait échouer l'étape
 `npm ci` en CI alors que tout passait en local.
 
+**`package-lock.json` du front tenant** (`src/Frontend/factutrust-web`) : le déploiement Docker
+exécute `npm ci --legacy-peer-deps` dans `node:20-alpine` (npm 10.x). Toute modification du lock
+doit être régénérée avec Node 20, sans changer les versions directes de `package.json` :
+
+```bash
+cd src/Frontend/factutrust-web
+npm install --package-lock-only --legacy-peer-deps
+```
+
+En cas de conflit Git sur le lock, ne pas fusionner à la main : repartir du lock de `main`, puis
+relancer la commande ci-dessus. La CI exécute aussi `npm ci` dans `node:20-alpine` (voir
+`.github/workflows/ci.yml`) pour reproduire exactement [`Dockerfile.web`](Dockerfile.web).
+
 **Capturer la liste des noms de tests en échec AVANT toute modification** et la comparer
 après : un compteur ne distingue pas un échec préexistant d'une régression.
 

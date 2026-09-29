@@ -90,6 +90,10 @@ jobs:
         with:
           # Historique complet : la parité du français se mesure au point de divergence avec main.
           fetch-depth: 0
+      - name: Lockfile aligné sur le build Docker (node:20-alpine)
+        run: |
+          docker run --rm -v "$PWD:/work" -w /work node:20-alpine \
+            sh -c "npm ci --legacy-peer-deps"
       - uses: actions/setup-node@v7
         with:
           node-version: 20
