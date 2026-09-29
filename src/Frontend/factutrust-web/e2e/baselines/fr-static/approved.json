@@ -566,5 +566,21 @@
   "src/app/features/suppliers/supplier-list/supplier-list.component.ts#SupplierListComponent": {
     "sha": "4bb8980f62ffed624d4af8baa35c7faf23e1644ee047216fb199be582cd286b2",
     "reason": "Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
+  },
+  "src/app/features/accounting/monthly-declaration/dm-rubric-form.component.ts#DmRubricFormComponent": {
+    "sha": "31e86b2478f304ef18fc260003031b6309ef5149b83b48edeee7387f58f7eb1b",
+    "reason": "Retrait du calcul historique (livraison A) : champs « Valeur des documents » du brut et de la retenue, affichés seulement pour l'origine « Documents »."
+  },
+  "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.component.ts#MonthlyDeclarationComputeComponent": {
+    "sha": "d41726711bbb55c2de7ba013e64fed350f8d8edd40b1bb3dd8ab7887ab62124b",
+    "reason": "Retrait du calcul historique (livraison A) : section « Contrôle avant retrait du calcul historique » (rapport de parité) ajoutée sous le changement de régime."
+  },
+  "src/app/features/accounting/monthly-declaration/monthly-declaration-config.component.ts#MonthlyDeclarationConfigComponent": {
+    "sha": "f188e0b0d5aa2a8a517c3809d74d44f8b7d71a9da59911b88091f617d72b93d8",
+    "reason": "Retrait du calcul historique (livraison A) : bandeaux d'avertissement de cohérence de la configuration (double lecture d'une source, même assiette taxée deux fois)."
+  },
+  "src/app/features/accounting/monthly-declaration/monthly-declaration-model.component.ts#MonthlyDeclarationModelComponent": {
+    "sha": "1e0f63b261d9cd52a39d8d363a7b315aed1b4f6487d70cf5d13a534b7474530d",
+    "reason": "Retrait du calcul historique (livraison A) : avis « fichier antérieur à la version 2 » (inclusions ignorées) et case de confirmation de l'exclusion de familles."
   }
 }

@@ -372,14 +372,61 @@ public sealed class SaveVatDeclarationCommandHandler : IRequestHandler<SaveVatDe
     }
 
     /// <summary>
-    /// Total à payer reflétant les valeurs EFFECTIVEMENT sauvegardées (les taxes de la requête,
-    /// pas celles du DTO recalculé qui lit l'état antérieur) — même formule que la query V2.
+    /// Total à payer de la déclaration telle qu'elle vient d'être enregistrée — montants écrêtés
+    /// compris — par l'expression PARTAGÉE avec l'écran et le suivi : une seconde formule finirait
+    /// par donner deux chiffres pour la même période.
     /// </summary>
-    private decimal ComputeSavedTotalToPay(VatDeclarationDto dto, SaveVatDeclarationRequest r) =>
-        _settings.MonthlyDeclarationV2Enabled
-            ? Math.Max(0m, dto.VatDue + r.Fodec + r.DroitTimbre + r.Tcl + r.Tfp + r.Foprolos + r.WithholdingTax
-                           + dto.ConsumptionDuty + dto.HotelTax + dto.LicenceFee - r.Acomptes)
-            : dto.VatDue;
+    private decimal SavedTotalToPay(VatDeclaration saved) =>
+        GetVatDeclarationQueryHandler.TotalToPay(
+            GetVatDeclarationQueryHandler.TaxAmounts.FromEntity(saved),
+            _settings.MonthlyDeclarationV2Enabled);
+
+    /// <summary>
+    /// Calcul qui vient de produire les montants enregistrés : paramétré si la période est en mode
+    /// configuré, historique sinon — y compris en contrôle de parité, où les montants restent ceux
+    /// du calcul historique.
+    /// </summary>
+    private static DeclarationCalculationOrigin CalculationOriginOf(VatDeclarationDto dto) =>
+        (MonthlyDeclarationMode)dto.MonthlyDeclarationMode == MonthlyDeclarationMode.Configured
+            ? DeclarationCalculationOrigin.Configured
+            : DeclarationCalculationOrigin.Historic;
+
+    /// <summary>
+    /// Refus d'une période configurée dont la configuration produirait un montant faux sans que
+    /// rien ne le signale une fois la déclaration déposée : famille incluse sans rubrique applicable
+    /// (un zéro), ou même source reprise par deux rubriques (un double).
+    /// </summary>
+    private static Error? ConfiguredPeriodRefusal(VatDeclarationDto dto)
+    {
+        if ((MonthlyDeclarationMode)dto.MonthlyDeclarationMode != MonthlyDeclarationMode.Configured)
+            return null;
+
+        var duplicate = dto.MonthlyDeclarationDiagnostics
+            .FirstOrDefault(d => d.Kind == (int)RubricDiagnosticKind.DuplicateSourceRead);
+        if (duplicate is not null)
+            return Error.Validation("MonthlyDeclaration", $"Enregistrement refusé : {duplicate.Detail}");
+
+        var families = dto.MonthlyDeclarationDiagnostics
+            .Where(d => d.Kind == (int)RubricDiagnosticKind.MissingRubricForFamily)
+            .Select(d => Enum.TryParse<MonthlyDeclarationFamily>(d.Detail, ignoreCase: false, out var family)
+                         && Enum.IsDefined(family)
+                ? family.ToDisplayString()
+                : d.Detail ?? string.Empty)
+            .Where(name => name.Length > 0)
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
+
+        if (families.Count == 0)
+            return null;
+
+        return Error.Validation(
+            "MonthlyDeclaration",
+            $"Enregistrement refusé : {(families.Count == 1 ? "la famille" : "les familles")} "
+            + $"« {string.Join(" », « ", families)} » "
+            + $"{(families.Count == 1 ? "est incluse" : "sont incluses")} dans la déclaration sans "
+            + "aucune rubrique applicable à cette période. Ajoutez une rubrique dans Configuration DM, "
+            + "ou décochez la famille si le dossier ne la déclare pas.");
+    }
 
     /// <summary>Synchro échéancier best-effort : ne fait JAMAIS échouer la sauvegarde.</summary>
     private async Task TrySyncScheduleAsync(VatDeclaration declaration, decimal totalToPay, CancellationToken ct)
@@ -415,6 +462,9 @@ public sealed class SaveVatDeclarationCommandHandler : IRequestHandler<SaveVatDe
         var v2 = _settings.MonthlyDeclarationV2Enabled;
         var user = _currentUser.Email ?? "system";
 
+        if (v2 && ConfiguredPeriodRefusal(dto) is { } refusal)
+            return Result.Failure<Guid>(refusal);
+
         var existing = await _vatDecl.GetByYearMonthAsync(r.Year, r.Month, cancellationToken);
         if (existing is not null)
         {
@@ -436,12 +486,17 @@ public sealed class SaveVatDeclarationCommandHandler : IRequestHandler<SaveVatDe
                     return Result.Failure<Guid>(upd.Error);
 
                 if (v2)
+                {
                     existing.SetAdditionalTaxes(r.Fodec, r.DroitTimbre, r.Tcl, r.Tfp, r.Foprolos, r.WithholdingTax, r.Acomptes);
                     // Droit de consommation, taxe hôtelière et droit de licence n'ont pas de champ
                     // de saisie : leur seule source est le moteur paramétré, donc le recalcul en
                     // direct — comme la TVA. Valent 0 pour un dossier en calcul historique.
                     existing.SetConfiguredFamilyTaxes(dto.ConsumptionDuty, dto.HotelTax, dto.LicenceFee);
                     existing.ReplaceLines(MonthlyDeclarationLineSnapshot.Freeze(dto.Lines));
+            existing.SetCalculationOrigin(CalculationOriginOf(dto));
+                    existing.SetCalculationOrigin(CalculationOriginOf(dto));
+                }
+
                 if (r.Submit)
                     existing.Submit();
                 existing.SetAuditInfo(user, isUpdate: true);
@@ -454,7 +509,7 @@ public sealed class SaveVatDeclarationCommandHandler : IRequestHandler<SaveVatDe
                     newValues: new { r.Year, r.Month, dto.VatDue, r.Submit },
                     cancellationToken: cancellationToken);
 
-                await TrySyncScheduleAsync(existing, ComputeSavedTotalToPay(dto, r), cancellationToken);
+                await TrySyncScheduleAsync(existing, SavedTotalToPay(existing), cancellationToken);
 
                 return Result.Success(existing.Id);
             }
@@ -489,7 +544,7 @@ public sealed class SaveVatDeclarationCommandHandler : IRequestHandler<SaveVatDe
                 newValues: new { r.Year, r.Month, existing.RevisionNumber, dto.VatDue, r.Submit },
                 cancellationToken: cancellationToken);
 
-            await TrySyncScheduleAsync(existing, ComputeSavedTotalToPay(dto, r), cancellationToken);
+            await TrySyncScheduleAsync(existing, SavedTotalToPay(existing), cancellationToken);
 
             return Result.Success(existing.Id);
         }
@@ -507,9 +562,12 @@ public sealed class SaveVatDeclarationCommandHandler : IRequestHandler<SaveVatDe
             currency);
 
         if (v2)
+        {
             draft.SetAdditionalTaxes(r.Fodec, r.DroitTimbre, r.Tcl, r.Tfp, r.Foprolos, r.WithholdingTax, r.Acomptes);
             draft.SetConfiguredFamilyTaxes(dto.ConsumptionDuty, dto.HotelTax, dto.LicenceFee);
             draft.ReplaceLines(MonthlyDeclarationLineSnapshot.Freeze(dto.Lines));
+            draft.SetCalculationOrigin(CalculationOriginOf(dto));
+        }
 
         draft.SetAuditInfo(user, false);
         if (r.Submit)
@@ -524,7 +582,7 @@ public sealed class SaveVatDeclarationCommandHandler : IRequestHandler<SaveVatDe
             newValues: new { r.Year, r.Month, dto.VatDue, r.Submit },
             cancellationToken: cancellationToken);
 
-        await TrySyncScheduleAsync(draft, ComputeSavedTotalToPay(dto, r), cancellationToken);
+        await TrySyncScheduleAsync(draft, SavedTotalToPay(draft), cancellationToken);
 
         return Result.Success(draft.Id);
     }

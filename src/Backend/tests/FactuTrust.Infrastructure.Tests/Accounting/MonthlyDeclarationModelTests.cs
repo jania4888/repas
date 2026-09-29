@@ -237,7 +237,7 @@ public sealed class MonthlyDeclarationModelTests
         {
             var first = await MonthlyDeclarationConfigWriter.ApplyAsync(
                 context, drafts, [], overwrite: false, "tester", CancellationToken.None);
-            Assert.Equal(1, first.Inserted);
+            Assert.Equal(1, first.Value.Inserted);
         }
 
         await using (var context = NewContext(name))
@@ -245,9 +245,9 @@ public sealed class MonthlyDeclarationModelTests
             var second = await MonthlyDeclarationConfigWriter.ApplyAsync(
                 context, drafts, [], overwrite: false, "tester", CancellationToken.None);
 
-            Assert.Equal(0, second.Inserted);
-            Assert.Equal(0, second.Replaced);
-            Assert.Equal("F9_TCL", Assert.Single(second.SkippedCodes));
+            Assert.Equal(0, second.Value.Inserted);
+            Assert.Equal(0, second.Value.Replaced);
+            Assert.Equal("F9_TCL", Assert.Single(second.Value.SkippedCodes));
         }
     }
 
@@ -335,13 +335,13 @@ public sealed class MonthlyDeclarationModelTests
 
         var unchanged = await MonthlyDeclarationConfigWriter.ApplyAsync(
             context, drafts, families, overwrite: true, "tester", CancellationToken.None);
-        Assert.Equal(0, unchanged.FamiliesChanged);
+        Assert.Equal(0, unchanged.Value.FamiliesChanged);
 
         var flipped = await MonthlyDeclarationConfigWriter.ApplyAsync(
             context, drafts,
             [new MonthlyDeclarationFamilyDraft(MonthlyDeclarationFamily.Tcl, false)],
             overwrite: true, "tester", CancellationToken.None);
-        Assert.Equal(1, flipped.FamiliesChanged);
+        Assert.Equal(1, flipped.Value.FamiliesChanged);
     }
 
     [Fact]
@@ -363,6 +363,120 @@ public sealed class MonthlyDeclarationModelTests
         var tfp = await context.MonthlyDeclarationFamilySettings
             .SingleAsync(f => f.Family == MonthlyDeclarationFamily.Tfp);
         Assert.True(tfp.IsIncluded);
+    }
+
+    // ── Valeurs documentaires et jetons (dm-model-v2) ────────────────────────
+
+    private const string DocumentRubric = """
+    {
+      "rubrics": [
+        {
+          "code": "F6_1",
+          "family": "OtherTurnoverTaxes",
+          "label": "FODEC",
+          "reportCode": "1",
+          "grossKind": "Document",
+          "withheldKind": "Document",
+          "grossSide": "Credit",
+          "withheldSide": "Credit",
+          "grossDocumentSource": "FodecFormBase",
+          "withheldDocumentSource": "FodecAmount",
+          "ratePercent": 0,
+          "displayOrder": 10
+        }
+      ]
+    }
+    """;
+
+    [Fact]
+    public void Les_valeurs_documentaires_sont_lues_par_leur_nom()
+    {
+        var draft = Assert.Single(MonthlyDeclarationModel.Parse(DocumentRubric).Value.Rubrics);
+
+        Assert.Equal(DeclarationDocumentSource.FodecFormBase, draft.GrossDocumentSource);
+        Assert.Equal(DeclarationDocumentSource.FodecAmount, draft.WithheldDocumentSource);
+    }
+
+    [Fact]
+    public void Les_valeurs_documentaires_font_l_aller_retour_export_import()
+    {
+        var rubric = MonthlyDeclarationRubric.Create(
+            MonthlyDeclarationFamily.StampDuty, "F7_1", "Timbre", "*",
+            RubricGrossKind.Fixed, RubricWithheldKind.Document,
+            AccountBalanceSide.Credit, AccountBalanceSide.Credit,
+            0m, 0m, null, null, null, null, null, [], 0,
+            withheldDocumentSource: DeclarationDocumentSource.FiscalStampAmount).Value;
+
+        var json = MonthlyDeclarationModel.Serialize([rubric], [], DateTime.UtcNow);
+        var reread = Assert.Single(MonthlyDeclarationModel.Parse(json).Value.Rubrics);
+
+        Assert.Contains("\"dm-model-v2\"", json);
+        Assert.Contains("\"FiscalStampAmount\"", json);
+        Assert.Equal(DeclarationDocumentSource.FiscalStampAmount, reread.WithheldDocumentSource);
+        Assert.Null(reread.GrossDocumentSource);
+    }
+
+    /// <summary>
+    /// <c>Enum.TryParse</c> accepte « 42 » et combine « Debit, Credit » : un fichier piégé
+    /// produirait une valeur hors liste. Seul le nom exact est admis.
+    /// </summary>
+    [Theory]
+    [InlineData("\"grossKind\": \"Account\"", "\"grossKind\": \"2\"")]
+    [InlineData("\"grossKind\": \"Account\"", "\"grossKind\": \"42\"")]
+    [InlineData("\"grossSide\": \"Credit\"", "\"grossSide\": \"Debit, Credit\"")]
+    [InlineData("\"family\": \"Tcl\"", "\"family\": \"8\"")]
+    [InlineData("\"mode\": \"Prefix\"", "\"mode\": \"1\"")]
+    public void Un_jeton_numerique_ou_combine_est_refuse(string original, string trapped)
+    {
+        var parsed = MonthlyDeclarationModel.Parse(MinimalRubric.Replace(original, trapped));
+
+        Assert.True(parsed.IsSuccess);
+        Assert.Empty(parsed.Value.Rubrics);
+        Assert.Single(parsed.Value.Rejected);
+    }
+
+    [Fact]
+    public void Une_valeur_documentaire_inconnue_est_refusee()
+    {
+        var parsed = MonthlyDeclarationModel.Parse(DocumentRubric.Replace("\"FodecAmount\"", "\"103\""));
+
+        Assert.Empty(parsed.Value.Rubrics);
+        Assert.Contains("documentaire", Assert.Single(parsed.Value.Rejected).Reason);
+    }
+
+    /// <summary>
+    /// Un import qui ferait lire deux fois la même source n'écrit rien : la configuration
+    /// enregistrée ne doit jamais déclarer un montant deux fois.
+    /// </summary>
+    [Fact]
+    public async Task Un_import_qui_ferait_lire_deux_fois_une_source_n_ecrit_rien()
+    {
+        var name = $"DmModelDb_{Guid.NewGuid()}";
+        await using (var context = NewContext(name))
+        {
+            context.MonthlyDeclarationRubrics.Add(MonthlyDeclarationRubric.Create(
+                MonthlyDeclarationFamily.OtherTurnoverTaxes, "FODEC_DOSSIER", "FODEC", "*",
+                RubricGrossKind.Fixed, RubricWithheldKind.Document,
+                AccountBalanceSide.Credit, AccountBalanceSide.Credit,
+                0m, 0m, null, null, null, null, null, [], 0,
+                withheldDocumentSource: DeclarationDocumentSource.FodecAmount).Value);
+            await context.SaveChangesAsync();
+        }
+
+        await using (var context = NewContext(name))
+        {
+            var drafts = MonthlyDeclarationModel.Parse(DocumentRubric).Value.Rubrics;
+            var applied = await MonthlyDeclarationConfigWriter.ApplyAsync(
+                context, drafts, [], overwrite: false, "tester", CancellationToken.None);
+
+            Assert.True(applied.IsFailure);
+            Assert.Contains("FODEC_DOSSIER", applied.Error.Description);
+        }
+
+        await using (var context = NewContext(name))
+        {
+            Assert.Equal("FODEC_DOSSIER", (await context.MonthlyDeclarationRubrics.SingleAsync()).Code);
+        }
     }
 
     private static TenantDbContext NewContext(string databaseName) =>

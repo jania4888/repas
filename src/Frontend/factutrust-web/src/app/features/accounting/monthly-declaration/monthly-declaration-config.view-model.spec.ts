@@ -1,6 +1,7 @@
 import {
   AccountBalanceSide,
   ChartOfAccountDto,
+  DeclarationDocumentSource,
   MonthlyDeclarationFamily,
   MonthlyDeclarationMode,
   MonthlyDeclarationRubricDto,
@@ -12,7 +13,10 @@ import {
   RubricWithheldKind
 } from '../services/accounting.service';
 import {
+  DM_DOCUMENT_SOURCE_OPTIONS,
   DM_FAMILY_TABS,
+  DM_GROSS_DOCUMENT_OPTIONS,
+  DM_WITHHELD_DOCUMENT_OPTIONS,
   DmRubricForm,
   accountPickerOptions,
   buildRubricAccounts,
@@ -25,6 +29,7 @@ import {
   familyNeedsAttention,
   isConfigurableLinesActive,
   isFamilyIncluded,
+  isDocumentBase,
   isFamilyOutOfEngineScope,
   isRubricUnsupported,
   modeLabel,
@@ -510,5 +515,80 @@ describe('monthly-declaration-config.view-model — plan comptable', () => {
     });
 
     expect(unknownAccountsOf(target, known)).toEqual(['7072']);
+  });
+});
+
+describe('monthly-declaration-config.view-model — origine « Documents »', () => {
+  it('libelle chaque valeur documentaire du serveur, une seule fois', () => {
+    const values = DM_DOCUMENT_SOURCE_OPTIONS.map(o => o.value);
+    const serverValues = Object.values(DeclarationDocumentSource).filter(v => typeof v === 'number');
+
+    expect(new Set(values).size).toBe(values.length);
+    expect([...values].sort()).toEqual([...(serverValues as number[])].sort());
+  });
+
+  it('réserve les assiettes au brut et les montants à la retenue', () => {
+    expect(DM_GROSS_DOCUMENT_OPTIONS.every(o => isDocumentBase(o.value))).toBe(true);
+    expect(DM_WITHHELD_DOCUMENT_OPTIONS.some(o => isDocumentBase(o.value))).toBe(false);
+    expect(isDocumentBase(DeclarationDocumentSource.SalesGrossBase)).toBe(true);
+    expect(isDocumentBase(DeclarationDocumentSource.FodecAmount)).toBe(false);
+    expect(isDocumentBase(DeclarationDocumentSource.WithholdingDividendsBase)).toBe(true);
+    expect(isDocumentBase(DeclarationDocumentSource.WithholdingDividendsAmount)).toBe(false);
+  });
+
+  it('exige la valeur documentaire et refuse une assiette en retenue', () => {
+    expect(validateRubricForm(form({ withheldKind: RubricWithheldKind.Document }))).toContain(
+      'désigner la valeur'
+    );
+    expect(
+      validateRubricForm(
+        form({
+          withheldKind: RubricWithheldKind.Document,
+          withheldDocumentSource: DeclarationDocumentSource.SalesTaxableBase
+        })
+      )
+    ).toContain('assiette');
+    expect(
+      validateRubricForm(
+        form({
+          grossKind: RubricGrossKind.Document,
+          grossDocumentSource: DeclarationDocumentSource.FodecAmount,
+          grossAccounts: { exact: [], prefixes: '' }
+        })
+      )
+    ).toContain('pas une assiette');
+  });
+
+  it('n’envoie la valeur documentaire que si la colonne l’utilise', () => {
+    const payload = toUpdateRequest(
+      form({
+        grossKind: RubricGrossKind.Document,
+        grossDocumentSource: DeclarationDocumentSource.SalesGrossBase,
+        withheldDocumentSource: DeclarationDocumentSource.FodecAmount
+      })
+    );
+
+    expect(payload.grossDocumentSource).toBe(DeclarationDocumentSource.SalesGrossBase);
+    expect(payload.withheldDocumentSource).toBeNull();
+  });
+
+  it('décrit en clair une rubrique « Documents »', () => {
+    const r = rubric({
+      grossKind: RubricGrossKind.Document,
+      withheldKind: RubricWithheldKind.Document,
+      grossDocumentSource: DeclarationDocumentSource.FodecFormBase,
+      withheldDocumentSource: DeclarationDocumentSource.FodecAmount
+    });
+
+    expect(describeGross(r)).toBe('Documents — Assiette FODEC');
+    expect(describeWithheld(r)).toBe('Documents — FODEC facturé');
+    expect(toRubricForm(r).withheldDocumentSource).toBe(DeclarationDocumentSource.FodecAmount);
+  });
+
+  it('lit une rubrique d’un serveur antérieur, sans valeur documentaire', () => {
+    const legacy = rubric();
+    delete (legacy as Partial<MonthlyDeclarationRubricDto>).grossDocumentSource;
+
+    expect(toRubricForm(legacy).grossDocumentSource).toBeNull();
   });
 });

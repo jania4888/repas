@@ -387,6 +387,14 @@ export interface VatDeclarationComputed {
   withholdingFromInvoices: number;
   /** Part de la RS provenant des traitements et salaires (IRPP + CSS). */
   withholdingFromSalaries: number;
+  /** Part de la RS provenant des loyers du journal (compte 613). */
+  withholdingFromRentJournal?: number;
+  /** Part de la RS produite par les rubriques paramétrées (0 hors calcul paramétré). */
+  withholdingFromRubrics?: number;
+  /** Familles produites uniquement par le calcul paramétré : comprises dans le total à payer. */
+  consumptionDuty?: number;
+  hotelTax?: number;
+  licenceFee?: number;
   totalToPay: number;
   /** Un cycle de paie existe pour la période, quel que soit son statut. */
   payrollRunExists: boolean;
@@ -604,7 +612,9 @@ export enum RubricGrossKind {
   Fixed = 0,
   Payroll = 1,
   Account = 2,
-  WithheldOverRate = 3
+  WithheldOverRate = 3,
+  /** Valeur lue sur les documents de la période, désignée par `grossDocumentSource`. */
+  Document = 4
 }
 
 /** Origine de la retenue d'une rubrique. `WithheldOverRate` n'est pas implémenté côté serveur. */
@@ -613,7 +623,9 @@ export enum RubricWithheldKind {
   Account = 1,
   GrossTimesRate = 2,
   WithheldOverRate = 3,
-  Payroll = 4
+  Payroll = 4,
+  /** Valeur lue sur les documents de la période, désignée par `withheldDocumentSource`. */
+  Document = 5
 }
 
 /** Sens retenu pour lire le mouvement d'un compte sur la période. */
@@ -645,7 +657,58 @@ export enum PayrollContributionComponent {
   WithholdingCss = 4,
   WithholdingTotal = 5,
   Tfp = 6,
-  Foprolos = 7
+  Foprolos = 7,
+  /** Assiette des taxes sur salaires si la TFP est au taux « industries manufacturières », sinon 0. */
+  PayrollTaxBaseManufacturing = 8,
+  /** TFP du cycle si elle est au taux « industries manufacturières », sinon 0. */
+  TfpManufacturing = 9,
+  /** Assiette des taxes sur salaires si la TFP est au taux « autres activités », sinon 0. */
+  PayrollTaxBaseOtherActivities = 10,
+  /** TFP du cycle si elle est au taux « autres activités », sinon 0. */
+  TfpOtherActivities = 11
+}
+
+/**
+ * Valeur des documents de la période reprise par une rubrique « Documents ». Miroir de
+ * `DeclarationDocumentSource` : valeurs explicites, groupées par centaine. Les `…Base` sont des
+ * assiettes (colonne brut), les `…Amount` des montants (colonne retenue).
+ */
+export enum DeclarationDocumentSource {
+  SalesTaxableBase = 100,
+  SalesGrossBase = 101,
+  FodecFormBase = 102,
+  FodecAmount = 103,
+  FiscalStampAmount = 104,
+  WithholdingSalariesBase = 200,
+  WithholdingSalariesAmount = 201,
+  WithholdingFeesRealRegimeBase = 202,
+  WithholdingFeesRealRegimeAmount = 203,
+  WithholdingFeesOtherBase = 204,
+  WithholdingFeesOtherAmount = 205,
+  WithholdingCommissionsAndRentsBase = 206,
+  WithholdingCommissionsAndRentsAmount = 207,
+  WithholdingPurchasesRate1Base = 208,
+  WithholdingPurchasesRate1Amount = 209,
+  WithholdingPurchasesRate05Base = 210,
+  WithholdingPurchasesRate05Amount = 211,
+  WithholdingPurchasesRate15Base = 212,
+  WithholdingPurchasesRate15Amount = 213,
+  WithholdingCapitalIncomeBase = 214,
+  WithholdingCapitalIncomeAmount = 215,
+  WithholdingDividendsBase = 216,
+  WithholdingDividendsAmount = 217,
+  WithholdingRealEstateBase = 218,
+  WithholdingRealEstateAmount = 219,
+  WithholdingVatFullBase = 220,
+  WithholdingVatFullAmount = 221,
+  WithholdingVatOtherBase = 222,
+  WithholdingVatOtherAmount = 223,
+  WithholdingCapitalGainsBase = 224,
+  WithholdingCapitalGainsAmount = 225,
+  WithholdingNonResidentsBase = 226,
+  WithholdingNonResidentsAmount = 227,
+  WithholdingRemainderBase = 228,
+  WithholdingRemainderAmount = 229
 }
 
 export interface MonthlyDeclarationRubricAccountDto {
@@ -670,6 +733,9 @@ export interface MonthlyDeclarationRubricDto {
   fixedWithheldAmount: number | null;
   payrollComponent: PayrollContributionComponent | null;
   withheldPayrollComponent: PayrollContributionComponent | null;
+  /** Absent d'un serveur antérieur aux valeurs documentaires. */
+  grossDocumentSource?: DeclarationDocumentSource | null;
+  withheldDocumentSource?: DeclarationDocumentSource | null;
   effectiveFrom: string | null;
   /** « Maximum date d'application » : la rubrique s'applique à tout le mois de cette date. */
   effectiveTo: string | null;
@@ -701,6 +767,8 @@ export interface MonthlyDeclarationConfigurationDto {
   settings: MonthlyDeclarationSettingsDto;
   families: MonthlyDeclarationFamilySettingDto[];
   rubrics: MonthlyDeclarationRubricDto[];
+  /** Avertissements de cohérence (même assiette taxée deux fois, double lecture d'une source). */
+  warnings?: string[];
 }
 
 export interface CreateMonthlyDeclarationRubricRequest {
@@ -717,6 +785,8 @@ export interface CreateMonthlyDeclarationRubricRequest {
   fixedWithheldAmount: number | null;
   payrollComponent: PayrollContributionComponent | null;
   withheldPayrollComponent: PayrollContributionComponent | null;
+  grossDocumentSource: DeclarationDocumentSource | null;
+  withheldDocumentSource: DeclarationDocumentSource | null;
   effectiveFrom: string | null;
   effectiveTo: string | null;
   displayOrder: number;
@@ -768,7 +838,9 @@ export enum RubricDiagnosticKind {
   /** Ligne écartée du formulaire par le garde-fou de total de famille. */
   SuppressedFromForm = 5,
   /** Famille incluse dans la déclaration sans aucune rubrique applicable à la période. */
-  MissingRubricForFamily = 6
+  MissingRubricForFamily = 6,
+  /** Deux rubriques reprennent la même source : le montant serait déclaré deux fois. */
+  DuplicateSourceRead = 7
 }
 
 export interface MonthlyDeclarationDiagnosticDto {
@@ -819,6 +891,11 @@ export interface ImportMonthlyDeclarationModelRequest {
   content: string;
   /** Remplacer les rubriques de même code au lieu de les ignorer. */
   overwrite: boolean;
+  /**
+   * Autorise le fichier à décocher des familles aujourd'hui incluses. Sans elle, le serveur refuse
+   * l'import et nomme les familles concernées.
+   */
+  confirmFamilyExclusions?: boolean;
 }
 
 export interface MonthlyDeclarationModelRejectionDto {
@@ -836,6 +913,10 @@ export interface MonthlyDeclarationModelImportResultDto {
   unknownAccounts: string[];
   /** Nombre d'inclusions de familles réellement modifiées. */
   familiesChanged: number;
+  /** Familles d'un fichier ancien importées dans leur définition v2 (absent d'un serveur antérieur). */
+  upgradedFamilies?: MonthlyDeclarationFamily[];
+  /** Le fichier, antérieur à la v2, portait des inclusions : elles ont été ignorées. */
+  familyInclusionsIgnored?: boolean;
   /** Toujours vide sur un import réussi : un fichier fautif est refusé en entier. */
   rejected: MonthlyDeclarationModelRejectionDto[];
 }
@@ -866,6 +947,67 @@ export interface MonthlyDeclarationTrackingRowDto {
    * la date d'effet reste calculée à l'ancienne.
    */
   mode: MonthlyDeclarationMode;
+}
+
+/** Verdict du rapport de parité. Miroir de `ParityVerdict`. */
+export enum ParityVerdict {
+  /** Identique au millime. */
+  Exact = 0,
+  /** Écart prouvé dû à la seule règle d'arrondi du demi-millime. */
+  Rounding = 1,
+  /** Écart non expliqué : à corriger avant le retrait du calcul historique. */
+  Gap = 2
+}
+
+export interface MonthlyDeclarationParityFamilyDto {
+  family: MonthlyDeclarationFamily;
+  /** Famille cochée dans la configuration ; non cochée, elle vaudra 0 après le retrait. */
+  isIncluded: boolean;
+  legacy: number;
+  configured: number;
+  /** Paramétré − historique. */
+  gap: number;
+  verdict: ParityVerdict;
+}
+
+export interface MonthlyDeclarationParityBoxDto {
+  /** Clé de la case du formulaire officiel (« Withholding.Line5.Amount »). */
+  key: string;
+  /** Valeur telle que tamponnée ; `null` = case vide. */
+  legacy: string | null;
+  configured: string | null;
+  verdict: ParityVerdict;
+}
+
+export interface MonthlyDeclarationParityMonthDto {
+  month: number;
+  /** Statut de la déclaration enregistrée, `null` si aucune. */
+  savedStatus: number | null;
+  verdict: ParityVerdict;
+  /** Motif, quand le mois n'a pas pu être calculé. */
+  error?: string | null;
+  families: MonthlyDeclarationParityFamilyDto[];
+  boxDifferences: MonthlyDeclarationParityBoxDto[];
+  diagnostics: MonthlyDeclarationDiagnosticDto[];
+}
+
+/**
+ * Rapport de parité : la preuve, mois par mois, que le calcul paramétré reproduit le calcul
+ * historique avant son retrait. À exporter et archiver : il ne sera plus régénérable ensuite.
+ */
+export interface MonthlyDeclarationParityReportDto {
+  year: number;
+  fromMonth: number;
+  toMonth: number;
+  generatedAtUtc: string;
+  generatedBy: string;
+  companyName: string;
+  nif: string;
+  months: MonthlyDeclarationParityMonthDto[];
+  exactMonths: number;
+  roundingOnlyMonths: number;
+  monthsWithGap: number;
+  readyForRetirement: boolean;
 }
 
 /** Les douze mois d'un exercice, et l'état de la rampe du dossier. */
@@ -2676,6 +2818,22 @@ export class AccountingService {
    * « Suivi DM » : les douze mois d'un exercice. Lecture seule, ouverte à la société comme au
    * cabinet, et disponible drapeau éteint — voir les trous de dépôt ne dépend d'aucun drapeau.
    */
+  /**
+   * Rapport de parité : calcul historique face au calcul paramétré, mois par mois. Lecture pure,
+   * réservée au cabinet délégué. Peut prendre plusieurs secondes par mois.
+   */
+  getMonthlyDeclarationParityReport(
+    year: number,
+    fromMonth: number,
+    toMonth: number
+  ): Observable<ApiResponse<MonthlyDeclarationParityReportDto>> {
+    const p = new HttpParams().set('year', year).set('fromMonth', fromMonth).set('toMonth', toMonth);
+    return this.http.get<ApiResponse<MonthlyDeclarationParityReportDto>>(
+      `${this.base}/monthly-declaration/parity-report`,
+      { params: p }
+    );
+  }
+
   getMonthlyDeclarationTracking(
     year: number
   ): Observable<ApiResponse<MonthlyDeclarationTrackingDto>> {

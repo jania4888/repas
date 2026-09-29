@@ -26,7 +26,16 @@ export interface DmModelSummary {
   excludedFamilies: string[];
   /** Le fichier ne dit rien des inclusions : aucune ne sera touchée. */
   silentOnFamilies: boolean;
+  /**
+   * Fichier au format courant (modèle v2 ou catalogue v2). Un fichier plus ancien voit ses
+   * inclusions ignorées par le serveur : tout export antérieur les porte à « non incluse ».
+   */
+  isCurrentFormat: boolean;
 }
+
+/** Miroir de `MonthlyDeclarationModel.CurrentModelVersion` / `CurrentCatalogVersion`. */
+export const DM_CURRENT_MODEL_VERSION = 'dm-model-v2';
+export const DM_CURRENT_CATALOG_VERSION = 'tn-2026-v2';
 
 function emptySummary(error: string | null): DmModelSummary {
   return {
@@ -37,7 +46,8 @@ function emptySummary(error: string | null): DmModelSummary {
     rubricCount: 0,
     includedFamilies: [],
     excludedFamilies: [],
-    silentOnFamilies: true
+    silentOnFamilies: true,
+    isCurrentFormat: false
   };
 }
 
@@ -80,15 +90,20 @@ export function summariseModel(content: string | null | undefined): DmModelSumma
     (entry['isIncluded'] === true ? included : excluded).push(label);
   }
 
+  const modelVersion = asText(doc['modelVersion']);
+  const catalogVersion = asText(doc['catalogVersion']);
+
   return {
     error: null,
-    modelVersion: asText(doc['modelVersion']),
-    catalogVersion: asText(doc['catalogVersion']),
+    modelVersion,
+    catalogVersion,
     exportedAt: asText(doc['exportedAt']),
     rubricCount: rubrics.length,
     includedFamilies: included,
     excludedFamilies: excluded,
-    silentOnFamilies: families === null || families.length === 0
+    silentOnFamilies: families === null || families.length === 0,
+    isCurrentFormat:
+      modelVersion === DM_CURRENT_MODEL_VERSION || catalogVersion === DM_CURRENT_CATALOG_VERSION
   };
 }
 
@@ -123,7 +138,14 @@ export function describeImportOutcome(result: MonthlyDeclarationModelImportResul
   parts.push($localize`:@@accounting.monthly-declaration-model.view-model.ts.replaced.remplacee.s.e1e7cdb1:${result.replaced}:replaced: remplacée(s)`);
   if (result.skippedCodes.length) parts.push($localize`:@@accounting.monthly-declaration-model.view-model.ts.length.ignoree.s.14c19e1e:${result.skippedCodes.length}:length: ignorée(s)`);
   if (result.familiesChanged) parts.push($localize`:@@accounting.monthly-declaration-model.view-model.ts.familieschanged.inclusion.s.de.famille.m.3eb23f52:${result.familiesChanged}:familiesChanged: inclusion(s) de famille modifiée(s)`);
-  return `${parts.join(', ')}.`;
+  const upgraded = result.upgradedFamilies ?? [];
+  if (upgraded.length) {
+    parts.push($localize`:@@accounting.monthly-declaration-model.view-model.ts.length.famille.s.passee.s.en.definition.c0179ddd:${upgraded.length}:length: famille(s) passée(s) en définition v2 (${upgraded.map(familyLabel).join(', ')}:join:)`);
+  }
+  const sentence = `${parts.join(', ')}.`;
+  return result.familyInclusionsIgnored
+    ? $localize`:@@accounting.monthly-declaration-model.view-model.ts.sentence.fichier.anterieur.a.la.version.288096c5:${sentence}:sentence: Fichier antérieur à la version 2 : ses inclusions de familles ont été ignorées.`
+    : sentence;
 }
 
 /**

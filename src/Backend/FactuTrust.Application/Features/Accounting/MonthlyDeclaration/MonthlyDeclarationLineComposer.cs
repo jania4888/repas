@@ -81,6 +81,7 @@ public sealed class MonthlyDeclarationLineComposer
         int year,
         int month,
         PayrollMonthlyContribution payroll,
+        DeclarationDocumentContribution? documents = null,
         CancellationToken cancellationToken = default)
     {
         // Drapeau éteint : un test booléen, aucune requête. C'est ce qui garantit qu'un dossier non
@@ -93,14 +94,53 @@ public sealed class MonthlyDeclarationLineComposer
         if (mode == MonthlyDeclarationMode.Legacy)
             return ComposedDeclarationLines.Inactive;
 
+        return await ComposeInModeAsync(year, month, mode, payroll, documents, cancellationToken);
+    }
+
+    /// <summary>
+    /// Compose la période comme si le dossier était en calcul paramétré, <b>sans lire ni écrire</b>
+    /// son régime. Réservé au rapport de parité, qui doit montrer ce que produira le calcul
+    /// paramétré une fois l'historique retiré, sans déplacer la rampe ni toucher aux réglages.
+    /// </summary>
+    /// <remarks>
+    /// Seul l'interrupteur de plateforme est respecté : éteint, il n'y a pas de calcul paramétré à
+    /// montrer.
+    /// </remarks>
+    public Task<ComposedDeclarationLines> ComposeAsConfiguredAsync(
+        int year,
+        int month,
+        PayrollMonthlyContribution payroll,
+        DeclarationDocumentContribution documents,
+        CancellationToken cancellationToken = default) =>
+        _settings.ConfigurableLinesActive
+            ? ComposeInModeAsync(year, month, MonthlyDeclarationMode.Configured, payroll, documents, cancellationToken)
+            : Task.FromResult(ComposedDeclarationLines.Inactive);
+
+    private async Task<ComposedDeclarationLines> ComposeInModeAsync(
+        int year,
+        int month,
+        MonthlyDeclarationMode mode,
+        PayrollMonthlyContribution payroll,
+        DeclarationDocumentContribution? documents,
+        CancellationToken cancellationToken)
+    {
+
         var familySettings = await _config.GetFamilySettingsAsync(cancellationToken);
         var includedFamilies = familySettings
             .Where(f => f.IsIncluded)
             .Select(f => f.Family)
             .ToHashSet();
 
+        // Aucune famille cochée : rien à composer. Un dossier CONFIGURÉ reste pourtant configuré —
+        // le rendre « historique » faisait afficher « Calcul historique » à un dossier basculé.
+        // En contrôle de parité, en revanche, on reste inactif : un contrôle qui ne mesure aucune
+        // famille ne doit pas allonger la série sans écart qui ouvre la bascule.
         if (includedFamilies.Count == 0)
-            return ComposedDeclarationLines.Inactive;
+        {
+            return mode == MonthlyDeclarationMode.Configured
+                ? new ComposedDeclarationLines { Mode = MonthlyDeclarationMode.Configured }
+                : ComposedDeclarationLines.Inactive;
+        }
 
         var rubrics = (await _config.GetRubricsAsync(includeInactive: false, cancellationToken))
             .Where(r => includedFamilies.Contains(r.Family) && r.IsApplicableTo(year, month))
@@ -109,13 +149,18 @@ public sealed class MonthlyDeclarationLineComposer
         var withRubric = rubrics.Select(r => r.Family).ToHashSet();
         var withoutRubric = includedFamilies.Where(f => !withRubric.Contains(f)).ToHashSet();
 
-        var data = await ResolvePeriodDataAsync(year, month, rubrics, payroll, cancellationToken);
+        var data = await ResolvePeriodDataAsync(
+            year, month, rubrics, payroll, documents ?? DeclarationDocumentContribution.None, cancellationToken);
         var lines = MonthlyDeclarationRubricEvaluator.Evaluate(rubrics, data);
 
         var diagnostics = lines
             .SelectMany(l => l.Diagnostics)
             .Concat(withoutRubric.Select(f =>
                 new RubricDiagnostic(RubricDiagnosticKind.MissingRubricForFamily, f.ToString())))
+            .Concat(MonthlyDeclarationSourceOverlap.AllConflicts(rubrics).Select(c =>
+                new RubricDiagnostic(
+                    RubricDiagnosticKind.DuplicateSourceRead,
+                    MonthlyDeclarationSourceOverlap.Refusal(c).Description)))
             .ToList();
 
         return new ComposedDeclarationLines
@@ -137,6 +182,7 @@ public sealed class MonthlyDeclarationLineComposer
         int month,
         IReadOnlyList<MonthlyDeclarationRubric> rubrics,
         PayrollMonthlyContribution payroll,
+        DeclarationDocumentContribution documents,
         CancellationToken cancellationToken)
     {
         var start = new DateTime(year, month, 1);
@@ -168,6 +214,7 @@ public sealed class MonthlyDeclarationLineComposer
             Month = month,
             MovementsByAccount = movements,
             Payroll = payroll,
+            Documents = documents,
             KnownAccounts = knownAccounts
         };
     }

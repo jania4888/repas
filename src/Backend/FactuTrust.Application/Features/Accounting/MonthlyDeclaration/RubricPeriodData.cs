@@ -33,7 +33,13 @@ public enum RubricDiagnosticKind
     SuppressedFromForm = 5,
 
     /// <summary>Famille incluse dans la déclaration sans aucune rubrique applicable à la période.</summary>
-    MissingRubricForFamily = 6
+    MissingRubricForFamily = 6,
+
+    /// <summary>
+    /// Deux rubriques applicables reprennent la même source (IRPP de la paie, retenue « honoraires »
+    /// du rapport RS…) : le montant serait déclaré deux fois. Le détail est la phrase à afficher.
+    /// </summary>
+    DuplicateSourceRead = 7
 }
 
 /// <summary>Signalement attaché à une rubrique évaluée.</summary>
@@ -63,6 +69,9 @@ public sealed record RubricPeriodData
 
     /// <summary>Apport du cycle de paie du mois, tel que le fournit le module paie.</summary>
     public required PayrollMonthlyContribution Payroll { get; init; }
+
+    /// <summary>Valeurs des documents de la période (factures clients, rapport de retenue à la source).</summary>
+    public DeclarationDocumentContribution Documents { get; init; } = DeclarationDocumentContribution.None;
 
     /// <summary>
     /// Numéros du plan comptable du dossier. Sert uniquement à distinguer « compte sans mouvement »
@@ -124,6 +133,13 @@ public sealed record RubricEvaluation
 
     /// <summary>Taux effectivement appliqué, reporté tel quel sur l'état détaillé.</summary>
     public required decimal RatePercentApplied { get; init; }
+
+    /// <summary>
+    /// Retenue avant l'arrondi au millime. Ni affichée ni déposée : elle sert à prouver qu'un
+    /// écart d'un millime avec le calcul historique ne vient que de la règle d'arrondi
+    /// (demi-millime écarté de zéro ici, arrondi bancaire là-bas), et de rien d'autre.
+    /// </summary>
+    public decimal WithheldUnrounded { get; init; }
 
     /// <summary>
     /// Vrai quand la rubrique attend une saisie : type « Fixe » sans constante enregistrée. La

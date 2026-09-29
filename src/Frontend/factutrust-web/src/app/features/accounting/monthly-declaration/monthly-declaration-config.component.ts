@@ -107,6 +107,11 @@ import {
           message="Configuration en lecture seule : sa modification est réservée au cabinet comptable ouvrant le dossier." i18n-message="@@accounting.monthly-declaration.configuration.en.lecture.seule.sa.modifi.698a149c" />
       }
 
+      <!-- Cohérence de la configuration : double lecture d'une source, même assiette taxée deux fois. -->
+      @for (warning of config.warnings ?? []; track warning) {
+        <app-accounting-status-banner variant="warning" [message]="warning" />
+      }
+
       <div class="card dm-panel">
         <!-- Onze onglets : la barre défile plutôt que de se replier sur deux lignes. -->
         <p-tabs [value]="activeFamily()" [scrollable]="true" (valueChange)="selectFamily($event)">

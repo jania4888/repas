@@ -64,6 +64,8 @@ internal static class MonthlyDeclarationConfigMapper
         FixedWithheldAmount = r.FixedWithheldAmount,
         PayrollComponent = r.PayrollComponent is { } c ? (int)c : null,
         WithheldPayrollComponent = r.WithheldPayrollComponent is { } wc ? (int)wc : null,
+        GrossDocumentSource = r.GrossDocumentSource is { } gd ? (int)gd : null,
+        WithheldDocumentSource = r.WithheldDocumentSource is { } wd ? (int)wd : null,
         EffectiveFrom = r.EffectiveFrom,
         EffectiveTo = r.EffectiveTo,
         IsActive = r.IsActive,
@@ -131,7 +133,8 @@ internal static class MonthlyDeclarationConfigMapper
     /// <summary>Valide les énumérations de la rubrique avant de les confier au domaine.</summary>
     public static Result ValidateEnums(
         int family, int grossKind, int withheldKind, int grossSide, int withheldSide,
-        int? payrollComponent, int? withheldPayrollComponent)
+        int? payrollComponent, int? withheldPayrollComponent,
+        int? grossDocumentSource = null, int? withheldDocumentSource = null)
     {
         if (!Enum.IsDefined((MonthlyDeclarationFamily)family))
             return Result.Failure(Error.Validation("Family", $"Famille inconnue : {family}."));
@@ -147,8 +150,26 @@ internal static class MonthlyDeclarationConfigMapper
             return Result.Failure(Error.Validation("PayrollComponent", $"Valeur de paie inconnue : {p}."));
         if (withheldPayrollComponent is { } wp && !Enum.IsDefined((PayrollContributionComponent)wp))
             return Result.Failure(Error.Validation("WithheldPayrollComponent", $"Valeur de paie inconnue : {wp}."));
+        if (grossDocumentSource is { } gd && !Enum.IsDefined((DeclarationDocumentSource)gd))
+            return Result.Failure(Error.Validation("GrossDocumentSource", $"Valeur documentaire inconnue : {gd}."));
+        if (withheldDocumentSource is { } wd && !Enum.IsDefined((DeclarationDocumentSource)wd))
+            return Result.Failure(Error.Validation("WithheldDocumentSource", $"Valeur documentaire inconnue : {wd}."));
 
         return Result.Success();
+    }
+
+    /// <summary>Avertissements de cohérence, en phrases prêtes à afficher.</summary>
+    public static IReadOnlyList<string> Warnings(IReadOnlyList<MonthlyDeclarationRubric> rubrics)
+    {
+        var active = rubrics.Where(r => r.IsActive).ToList();
+
+        return MonthlyDeclarationSourceOverlap.AllConflicts(active)
+            .Select(c => MonthlyDeclarationSourceOverlap.Refusal(c).Description)
+            .Concat(MonthlyDeclarationSourceOverlap.SharedBaseWarnings(active).Select(w =>
+                $"Onglet « {w.Family.ToDisplayString()} » : les rubriques {w.Code} et {w.OtherCode} "
+                + "appliquent chacune un taux à la même assiette. Si elles relèvent de lignes "
+                + "exclusives (TFP 1 % ou 2 %), une seule doit s'appliquer au dossier."))
+            .ToList();
     }
 }
 
@@ -193,7 +214,8 @@ public sealed class GetMonthlyDeclarationConfigurationQueryHandler
         {
             Settings = MonthlyDeclarationConfigMapper.Map(settings, _settings.ConfigurableLinesActive),
             Families = allFamilies,
-            Rubrics = rubrics.Select(MonthlyDeclarationConfigMapper.Map).ToList()
+            Rubrics = rubrics.Select(MonthlyDeclarationConfigMapper.Map).ToList(),
+            Warnings = MonthlyDeclarationConfigMapper.Warnings(rubrics)
         });
     }
 }
@@ -235,7 +257,7 @@ public sealed class CreateMonthlyDeclarationRubricCommandHandler
 
         var enums = MonthlyDeclarationConfigMapper.ValidateEnums(
             r.Family, r.GrossKind, r.WithheldKind, r.GrossSide, r.WithheldSide,
-            r.PayrollComponent, r.WithheldPayrollComponent);
+            r.PayrollComponent, r.WithheldPayrollComponent, r.GrossDocumentSource, r.WithheldDocumentSource);
         if (enums.IsFailure)
             return Result.Failure<Guid>(enums.Error);
 
@@ -262,11 +284,17 @@ public sealed class CreateMonthlyDeclarationRubricCommandHandler
             r.RatePercent, r.FixedGrossAmount, r.FixedWithheldAmount,
             r.PayrollComponent is { } p ? (PayrollContributionComponent)p : null,
             r.WithheldPayrollComponent is { } wp ? (PayrollContributionComponent)wp : null,
-            r.EffectiveFrom, r.EffectiveTo, accounts.Value, r.DisplayOrder);
+            r.EffectiveFrom, r.EffectiveTo, accounts.Value, r.DisplayOrder,
+            r.GrossDocumentSource is { } gd ? (DeclarationDocumentSource)gd : null,
+            r.WithheldDocumentSource is { } wd ? (DeclarationDocumentSource)wd : null);
         if (create.IsFailure)
             return Result.Failure<Guid>(create.Error);
 
         var rubric = create.Value;
+
+        var others = await _config.GetRubricsAsync(includeInactive: false, cancellationToken);
+        if (MonthlyDeclarationSourceOverlap.RefusalFor(rubric, others) is { } overlap)
+            return Result.Failure<Guid>(overlap);
         rubric.SetAuditInfo(_currentUser.Email ?? "system");
         await _config.AddRubricAsync(rubric, cancellationToken);
 
@@ -319,7 +347,7 @@ public sealed class UpdateMonthlyDeclarationRubricCommandHandler
 
         var enums = MonthlyDeclarationConfigMapper.ValidateEnums(
             (int)rubric.Family, r.GrossKind, r.WithheldKind, r.GrossSide, r.WithheldSide,
-            r.PayrollComponent, r.WithheldPayrollComponent);
+            r.PayrollComponent, r.WithheldPayrollComponent, r.GrossDocumentSource, r.WithheldDocumentSource);
         if (enums.IsFailure)
             return enums;
 
@@ -336,9 +364,17 @@ public sealed class UpdateMonthlyDeclarationRubricCommandHandler
             r.RatePercent, r.FixedGrossAmount, r.FixedWithheldAmount,
             r.PayrollComponent is { } p ? (PayrollContributionComponent)p : null,
             r.WithheldPayrollComponent is { } wp ? (PayrollContributionComponent)wp : null,
-            r.EffectiveFrom, r.EffectiveTo, accounts.Value, r.DisplayOrder);
+            r.EffectiveFrom, r.EffectiveTo, accounts.Value, r.DisplayOrder,
+            r.GrossDocumentSource is { } gd ? (DeclarationDocumentSource)gd : null,
+            r.WithheldDocumentSource is { } wd ? (DeclarationDocumentSource)wd : null);
         if (update.IsFailure)
             return update;
+
+        // Contrôle sur l'état modifié : les dépôts travaillent sur des contextes éphémères, la
+        // rubrique refusée ici n'est donc jamais enregistrée.
+        var others = await _config.GetRubricsAsync(includeInactive: false, cancellationToken);
+        if (MonthlyDeclarationSourceOverlap.RefusalFor(rubric, others) is { } overlap)
+            return Result.Failure(overlap);
 
         rubric.SetAuditInfo(_currentUser.Email ?? "system", isUpdate: true);
         await _config.UpdateRubricAsync(rubric, cancellationToken);
@@ -389,6 +425,15 @@ public sealed class ToggleMonthlyDeclarationRubricCommandHandler
             return Result.Failure(Error.NotFound(nameof(MonthlyDeclarationRubric), request.Id));
 
         rubric.ToggleActive();
+
+        // Réactiver une rubrique peut lui faire relire une source qu'une autre a reprise entre-temps.
+        if (rubric.IsActive)
+        {
+            var others = await _config.GetRubricsAsync(includeInactive: false, cancellationToken);
+            if (MonthlyDeclarationSourceOverlap.RefusalFor(rubric, others) is { } overlap)
+                return Result.Failure(overlap);
+        }
+
         rubric.SetAuditInfo(_currentUser.Email ?? "system", isUpdate: true);
         await _config.UpdateRubricAsync(rubric, cancellationToken);
 

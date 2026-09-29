@@ -111,10 +111,11 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
         // scalaires et le détail par ligne exposé à l'écran. Inerte — et sans requête — quand le
         // drapeau est éteint ou le dossier en calcul historique.
         var composed = v2
-            ? await _composer.ComposeAsync(request.Year, request.Month, context.Payroll, cancellationToken)
+            ? await _composer.ComposeAsync(
+                request.Year, request.Month, context.Payroll, context.Documents, cancellationToken)
             : ComposedDeclarationLines.Inactive;
 
-        var live = await ComputeLiveAsync(request, context, v2, composed, cancellationToken);
+        var live = ComputeLive(request, context, v2, composed);
 
         // Ce que la déclaration porte réellement. Une déclaration enregistrée fait foi, y compris
         // pour la TVA : un document déposé ne se réécrit pas tout seul entre deux affichages.
@@ -122,13 +123,64 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
             ? TaxAmounts.FromEntity(saved)
             : live;
 
-        var declaredLines = saved is { Lines.Count: > 0 } && request.Valuation == VatDeclarationValuation.Declared
+        // Le dépôt fait foi jusque dans le détail, y compris quand il n'en a AUCUN : une déclaration
+        // enregistrée sous le calcul historique n'a pas de lignes, et lui prêter les lignes
+        // recomposées aujourd'hui ferait afficher — et réimprimer sur le formulaire officiel — un
+        // détail qui n'a jamais été déposé.
+        var declaredLines = saved is not null && request.Valuation == VatDeclarationValuation.Declared
             ? MonthlyDeclarationLineSnapshot.Read(saved.Lines)
             : null;
 
         var tenantSummary = await _tenantCompanySummary.GetCurrentTenantSummaryAsync(cancellationToken);
 
-        var dto = new VatDeclarationDto
+        // Une déclaration enregistrée affiche ses lignes déposées, même si la configuration a
+        // changé depuis ; le recalcul reste visible dans la section « suggéré ».
+        var dto = CreateDto(
+            request, context, saved, declared, live, declaredLines ?? MapLines(composed), composed, v2, tenantSummary);
+
+        // La société ne voit que ses dépôts : les signalements du moteur et l'écart de parité sont
+        // des éléments de travail du cabinet, pas le contenu de la déclaration déposée.
+        if (request.EnforceCompanySubmittedOnly)
+        {
+            return Result.Success(dto with
+            {
+                MonthlyDeclarationDiagnostics = Array.Empty<MonthlyDeclarationDiagnosticDto>(),
+                ParityMaxGapMillimes = 0
+            });
+        }
+
+        // Le sort de chaque ligne sur le formulaire officiel se dit à l'écran, avec la même décision
+        // que celle du tamponnage. Sans formulaire officiel activé, il n'y a rien à expliquer.
+        if (_settings.MonthlyDeclarationOfficialFormEnabled && dto.Lines.Count > 0)
+        {
+            dto = dto with
+            {
+                Lines = MonthlyDeclarationLineFormBinder.Annotate(
+                    dto.Lines,
+                    MonthlyDeclarationLineFormBinder.DeclaredFamilyTotals(dto),
+                    MonthlyDeclarationFormBinder.FormVersion)
+            };
+        }
+
+        return Result.Success(dto);
+    }
+
+    /// <summary>
+    /// Assemble le DTO d'une période à partir de ses montants et de son détail. Partagé par
+    /// l'affichage de la déclaration et par le rapport de parité : les deux calculs comparés sont
+    /// ainsi présentés exactement comme l'écran et le formulaire officiel les verraient.
+    /// </summary>
+    private VatDeclarationDto CreateDto(
+        GetVatDeclarationQuery request,
+        PeriodContext context,
+        VatDeclaration? saved,
+        TaxAmounts declared,
+        TaxAmounts live,
+        IReadOnlyList<MonthlyDeclarationLineDto> lines,
+        ComposedDeclarationLines composed,
+        bool v2,
+        TenantCompanySummaryDto? tenantSummary) =>
+        new()
         {
             Year = request.Year,
             Month = request.Month,
@@ -153,10 +205,7 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
             HotelTax = declared.HotelTax,
             LicenceFee = declared.LicenceFee,
             MonthlyDeclarationMode = (int)composed.Mode,
-            // Le dépôt fait foi jusque dans le détail : tant qu'une déclaration enregistrée porte
-            // des lignes, ce sont elles qui s'affichent, même si la configuration a changé depuis.
-            // Le recalcul reste visible dans la section « suggéré ».
-            Lines = declaredLines ?? MapLines(composed),
+            Lines = lines,
             MonthlyDeclarationDiagnostics = MapDiagnostics(composed.Diagnostics),
             ParityMaxGapMillimes = MaxGapMillimes(live, composed),
             TotalToPay = TotalToPay(declared, v2),
@@ -199,7 +248,80 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
             Suggested = v2 ? MapComputed(live, context, v2) : null
         };
 
-        return Result.Success(dto);
+    // ── Rapport de parité : les deux calculs d'une période, sans rien écrire ─────
+
+    /// <summary>
+    /// Les deux calculs d'une même période, sur le même contexte : l'historique, et le paramétré
+    /// tel qu'il sera une fois l'historique retiré.
+    /// </summary>
+    /// <param name="SavedStatus">Statut de la déclaration enregistrée, <c>null</c> si aucune.</param>
+    internal sealed record ParityProbe(
+        VatDeclarationDto Legacy,
+        VatDeclarationDto Configured,
+        ComposedDeclarationLines Composed,
+        IReadOnlyList<WithholdingReportByCategoryDto> WithholdingReportRows,
+        VatDeclarationStatus? SavedStatus);
+
+    /// <summary>
+    /// Calcule une période des deux façons, en valorisation « en direct ».
+    /// </summary>
+    /// <remarks>
+    /// <b>Lecture pure</b> : le composeur est forcé en calcul paramétré sans lire ni écrire le
+    /// régime du dossier, et rien n'est enregistré. Le contexte de période est construit une seule
+    /// fois pour les deux calculs : un écart ne peut donc venir que du calcul lui-même.
+    /// </remarks>
+    internal async Task<Result<ParityProbe>> ProbeParityAsync(int year, int month, CancellationToken cancellationToken)
+    {
+        var request = new GetVatDeclarationQuery(year, month, Valuation: VatDeclarationValuation.Live);
+
+        var context = await BuildPeriodContextAsync(request, cancellationToken);
+        if (context.Error is not null)
+            return Result.Failure<ParityProbe>(context.Error);
+
+        var legacy = ComputeLive(request, context, v2: true, ComposedDeclarationLines.Inactive);
+        var composed = await _composer.ComposeAsConfiguredAsync(
+            year, month, context.Payroll, context.Documents, cancellationToken);
+        var configured = RollUpConfigured(legacy, composed);
+
+        var saved = await _vatDeclarationRepository.GetByYearMonthAsync(year, month, cancellationToken);
+        var tenantSummary = await _tenantCompanySummary.GetCurrentTenantSummaryAsync(cancellationToken);
+
+        var legacyDto = CreateDto(
+            request, context, saved: null, legacy, legacy, Array.Empty<MonthlyDeclarationLineDto>(),
+            ComposedDeclarationLines.Inactive, v2: true, tenantSummary);
+        var configuredDto = CreateDto(
+            request, context, saved: null, configured, configured, MapLines(composed),
+            composed, v2: true, tenantSummary);
+
+        return Result.Success(new ParityProbe(
+            legacyDto, configuredDto, composed, context.WithholdingReportRows, saved?.Status));
+    }
+
+    /// <summary>
+    /// Remontée du calcul paramétré tel qu'il sera après le retrait de l'historique : chaque famille
+    /// vaut la somme de ses lignes, et <b>0 si elle n'est pas incluse</b> — plus aucun repli sur le
+    /// calcul historique. La T.V.A reste celle du module TVA.
+    /// </summary>
+    internal static TaxAmounts RollUpConfigured(TaxAmounts vat, ComposedDeclarationLines composed)
+    {
+        var withholding = composed.WithheldFor(MonthlyDeclarationFamily.Withholding);
+
+        return vat with
+        {
+            Fodec = composed.WithheldFor(MonthlyDeclarationFamily.OtherTurnoverTaxes),
+            DroitTimbre = composed.WithheldFor(MonthlyDeclarationFamily.StampDuty),
+            Tcl = composed.WithheldFor(MonthlyDeclarationFamily.Tcl),
+            Tfp = composed.WithheldFor(MonthlyDeclarationFamily.Tfp),
+            Foprolos = composed.WithheldFor(MonthlyDeclarationFamily.Foprolos),
+            ConsumptionDuty = composed.WithheldFor(MonthlyDeclarationFamily.ConsumptionDuty),
+            HotelTax = composed.WithheldFor(MonthlyDeclarationFamily.HotelTax),
+            LicenceFee = composed.WithheldFor(MonthlyDeclarationFamily.LicenceFee),
+            WithholdingTax = withholding,
+            WithholdingFromInvoices = 0m,
+            WithholdingFromSalaries = 0m,
+            WithholdingFromRentJournal = 0m,
+            WithholdingFromRubrics = withholding
+        };
     }
 
     // ── Contexte de période : sources communes aux deux valorisations ──────────
@@ -223,6 +345,23 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
         public decimal DeductiblePurchasesTaxableBase { get; init; }
         public decimal FodecTaxableBase { get; init; }
         public PayrollMonthlyContribution Payroll { get; init; } = PayrollMonthlyContribution.None;
+
+        /// <summary>
+        /// Valeurs des documents de la période : lues une fois, elles alimentent à la fois le calcul
+        /// historique et les rubriques « documents », qui ne peuvent donc pas diverger.
+        /// </summary>
+        public DeclarationDocumentContribution Documents { get; init; } = DeclarationDocumentContribution.None;
+
+        /// <summary>Retenue à la source totale du rapport RS sur factures fournisseurs.</summary>
+        public decimal InvoiceWithholdingTotal { get; init; }
+
+        /// <summary>
+        /// Lignes du rapport RS, telles quelles : la ventilation historique du formulaire officiel
+        /// en a besoin pour que le rapport de parité compare exactement ce qui serait tamponné.
+        /// </summary>
+        public IReadOnlyList<WithholdingReportByCategoryDto> WithholdingReportRows { get; init; } =
+            Array.Empty<WithholdingReportByCategoryDto>();
+
         public decimal RentWithholdingBase { get; init; }
         public decimal RentWithholdingAmount { get; init; }
         public IReadOnlyList<VatRateBreakdownDto> CollectedVatBreakdown { get; init; } = Array.Empty<VatRateBreakdownDto>();
@@ -303,6 +442,31 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
                 CashDeskPostingAccounts.Rent, start, end, cancellationToken)
             : 0m;
 
+        var salesTaxableBase = sales.Value.Sum(r => r.TotalTaxableAmount);
+        var salesGrossBase = sales.Value.Sum(r => r.TotalTaxableAmount + r.TotalVatAmount);
+        var fodecTaxableBase = v2 ? await _invoices.SumFodecTaxableBaseAsync(start, end, cancellationToken) : 0m;
+
+        // Valeurs des documents, lues UNE fois — les mêmes appels que faisait jusqu'ici le calcul
+        // historique : aucune requête de plus, et le calcul historique comme les rubriques
+        // « documents » lisent les mêmes chiffres.
+        var documents = DeclarationDocumentContribution.None;
+        var invoiceWithholdingTotal = 0m;
+        IReadOnlyList<WithholdingReportByCategoryDto> withholdingReportRows = Array.Empty<WithholdingReportByCategoryDto>();
+        if (v2)
+        {
+            var rs = await _mediator.Send(
+                new GetWithholdingMonthlyReportQuery(request.Year, request.Month), cancellationToken);
+            invoiceWithholdingTotal = rs.GrandTotalWithheld;
+            withholdingReportRows = rs.ByCategory ?? [];
+            documents = DeclarationDocumentContribution.From(
+                salesTaxableBase,
+                salesGrossBase,
+                fodecTaxableBase,
+                await _invoices.SumFodecAsync(start, end, cancellationToken),
+                await _invoices.SumFiscalStampAsync(start, end, cancellationToken),
+                rs);
+        }
+
         return new PeriodContext
         {
             Currency = sales.Value.FirstOrDefault()?.Currency ?? Money.DefaultCurrency,
@@ -315,13 +479,16 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
             // SalesTaxableBase/SalesGrossBase restent STRICTEMENT facturières (plan §6.7) : la
             // caisse n'alimente que la TVA collectée et sa ventilation (CollectedVatBreakdown
             // ci-dessous), jamais les bases CA. Conséquence assumée : Σ breakdown.TaxableBase peut
-            // dépasser SalesTaxableBase. La TCL (calculée sur SalesGrossBase, cf. ComputeLiveAsync)
+            // dépasser SalesTaxableBase. La TCL (calculée sur SalesGrossBase, cf. ComputeLive)
             // et le repli FODEC du binder (MonthlyDeclarationFormBinder) restent donc inchangés.
-            SalesTaxableBase = sales.Value.Sum(r => r.TotalTaxableAmount),
-            SalesGrossBase = sales.Value.Sum(r => r.TotalTaxableAmount + r.TotalVatAmount),
+            SalesTaxableBase = salesTaxableBase,
+            SalesGrossBase = salesGrossBase,
             DeductiblePurchasesTaxableBase = purchases.Value.Sum(p => p.TotalTaxableAmount),
-            FodecTaxableBase = v2 ? await _invoices.SumFodecTaxableBaseAsync(start, end, cancellationToken) : 0m,
+            FodecTaxableBase = fodecTaxableBase,
             Payroll = v2 ? await _payroll.GetAsync(request.Year, request.Month, cancellationToken) : PayrollMonthlyContribution.None,
+            Documents = documents,
+            InvoiceWithholdingTotal = invoiceWithholdingTotal,
+            WithholdingReportRows = withholdingReportRows,
             RentWithholdingBase = rentBase,
             RentWithholdingAmount = RentWithholdingFormLines.ComputeAmount(rentBase),
             // Base + TVA par taux, caisse incluse : requis par MonthlyDeclarationFormBinder
@@ -344,16 +511,12 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
 
     // ── Recalcul temps réel ────────────────────────────────────────────────────
 
-    private async Task<TaxAmounts> ComputeLiveAsync(
+    private TaxAmounts ComputeLive(
         GetVatDeclarationQuery request,
         PeriodContext context,
         bool v2,
-        ComposedDeclarationLines composed,
-        CancellationToken cancellationToken)
+        ComposedDeclarationLines composed)
     {
-        var start = new DateTime(request.Year, request.Month, 1);
-        var end = start.AddMonths(1).AddDays(-1);
-
         var draft = VatDeclaration.CreateDraft(
             request.Year,
             request.Month,
@@ -385,16 +548,16 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
             return vat;
 
         // Retenue à la source : factures fournisseurs, traitements et salaires (IRPP + CSS),
-        // et loyers journal 613 (article 4 personnes physiques 10 %).
-        var rs = await _mediator.Send(new GetWithholdingMonthlyReportQuery(request.Year, request.Month), cancellationToken);
-        var withholdingFromInvoices = rs.GrandTotalWithheld;
+        // et loyers journal 613 (article 4 personnes physiques 10 %). Les valeurs des documents
+        // sont celles du contexte : les mêmes que lisent les rubriques « documents ».
+        var withholdingFromInvoices = context.InvoiceWithholdingTotal;
         var withholdingFromSalaries = context.Payroll.WithholdingTotal;
         var withholdingFromRentJournal = context.RentWithholdingAmount;
 
         var legacy = vat with
         {
-            Fodec = await _invoices.SumFodecAsync(start, end, cancellationToken),
-            DroitTimbre = await _invoices.SumFiscalStampAsync(start, end, cancellationToken),
+            Fodec = context.Documents.FodecAmount,
+            DroitTimbre = context.Documents.FiscalStampAmount,
             Tcl = Math.Round(_settings.TclRatePercent / 100m * context.SalesGrossBase, 3),
             Tfp = context.Payroll.Tfp,
             Foprolos = context.Payroll.Foprolos,

@@ -396,6 +396,12 @@ public static class AuditActions
         public const string MonthlyDeclarationConfigDuplicated = "Accounting.MonthlyDeclarationConfigDuplicated";
         public const string MonthlyDeclarationConfigImported = "Accounting.MonthlyDeclarationConfigImported";
         /// <summary>
+        /// Montée du dossier vers le catalogue de rubriques v2, à l'amorçage. La charge utile dit
+        /// quelles familles ont été montées, lesquelles ont été laissées et pourquoi, et quelles
+        /// inclusions ont été cochées avec leur état antérieur.
+        /// </summary>
+        public const string MonthlyDeclarationCatalogUpgraded = "Accounting.MonthlyDeclarationCatalogUpgraded";
+        /// <summary>
         /// Exécution du calcul paramétré sur une période. La charge utile porte les totaux par
         /// famille <b>et</b> les codes de diagnostic : c'est la trace qui expliquera, des mois plus
         /// tard, pourquoi un montant déposé diffère d'un recalcul.

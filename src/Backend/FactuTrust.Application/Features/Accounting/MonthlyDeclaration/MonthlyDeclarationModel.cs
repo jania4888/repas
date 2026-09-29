@@ -32,8 +32,23 @@ namespace FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
 /// </remarks>
 public static class MonthlyDeclarationModel
 {
-    /// <summary>Version du format, écrite à l'export et ignorée à l'import (aucun format antérieur).</summary>
-    public const string CurrentModelVersion = "dm-model-v1";
+    /// <summary>
+    /// Version du format, écrite à l'export. v2 ajoute les valeurs documentaires
+    /// (<c>GrossDocumentSource</c>, <c>WithheldDocumentSource</c>) ; un fichier v1, qui ne les porte
+    /// pas, reste lisible tel quel.
+    /// </summary>
+    public const string CurrentModelVersion = "dm-model-v2";
+
+    /// <summary>Version de catalogue embarqué contemporaine du format courant.</summary>
+    public const string CurrentCatalogVersion = "tn-2026-v2";
+
+    /// <summary>
+    /// Le fichier est-il au format courant ? Un modèle exporté en v2 ou le catalogue v2 l'est ; un
+    /// export v1, un catalogue v1 ou un fichier sans version ne l'est pas.
+    /// </summary>
+    public static bool IsCurrentFormat(MonthlyDeclarationModelParse model) =>
+        string.Equals(model.ModelVersion, CurrentModelVersion, StringComparison.Ordinal)
+        || string.Equals(model.CatalogVersion, CurrentCatalogVersion, StringComparison.Ordinal);
 
     /// <summary>
     /// Plafond de taille du fichier accepté, en octets. Le plafond de rubriques par dossier
@@ -124,7 +139,7 @@ public static class MonthlyDeclarationModel
         var families = new List<MonthlyDeclarationFamilyDraft>();
         foreach (var entry in document.Families ?? [])
         {
-            if (!Enum.TryParse<MonthlyDeclarationFamily>(entry.Family, ignoreCase: false, out var family))
+            if (!TryParseName<MonthlyDeclarationFamily>(entry.Family, out var family))
             {
                 rejected.Add(new MonthlyDeclarationModelRejection(
                     entry.Family ?? "(sans nom)", "Famille inconnue."));
@@ -148,24 +163,32 @@ public static class MonthlyDeclarationModel
     private static Result<MonthlyDeclarationRubricDraft> ToDraft(
         MonthlyDeclarationModelRubricEntry entry, string code)
     {
-        if (!Enum.TryParse<MonthlyDeclarationFamily>(entry.Family, out var family))
+        if (!TryParseName<MonthlyDeclarationFamily>(entry.Family, out var family))
             return Fail(code, $"Famille inconnue : « {entry.Family} ».");
-        if (!Enum.TryParse<RubricGrossKind>(entry.GrossKind, out var grossKind))
+        if (!TryParseName<RubricGrossKind>(entry.GrossKind, out var grossKind))
             return Fail(code, $"Type de montant brut inconnu : « {entry.GrossKind} ».");
-        if (!Enum.TryParse<RubricWithheldKind>(entry.WithheldKind, out var withheldKind))
+        if (!TryParseName<RubricWithheldKind>(entry.WithheldKind, out var withheldKind))
             return Fail(code, $"Type de retenue inconnu : « {entry.WithheldKind} ».");
-        if (!Enum.TryParse<AccountBalanceSide>(entry.GrossSide, out var grossSide))
+        if (!TryParseName<AccountBalanceSide>(entry.GrossSide, out var grossSide))
             return Fail(code, $"Sens du montant brut inconnu : « {entry.GrossSide} ».");
-        if (!Enum.TryParse<AccountBalanceSide>(entry.WithheldSide, out var withheldSide))
+        if (!TryParseName<AccountBalanceSide>(entry.WithheldSide, out var withheldSide))
             return Fail(code, $"Sens de la retenue inconnu : « {entry.WithheldSide} ».");
 
-        var payroll = ParseOptionalComponent(entry.PayrollComponent);
+        var payroll = ParseOptional<PayrollContributionComponent>(entry.PayrollComponent, "Valeur de paie");
         if (payroll.IsFailure)
             return Fail(code, payroll.Error.Description);
 
-        var withheldPayroll = ParseOptionalComponent(entry.WithheldPayrollComponent);
+        var withheldPayroll = ParseOptional<PayrollContributionComponent>(entry.WithheldPayrollComponent, "Valeur de paie");
         if (withheldPayroll.IsFailure)
             return Fail(code, withheldPayroll.Error.Description);
+
+        var grossDocument = ParseOptional<DeclarationDocumentSource>(entry.GrossDocumentSource, "Valeur documentaire");
+        if (grossDocument.IsFailure)
+            return Fail(code, grossDocument.Error.Description);
+
+        var withheldDocument = ParseOptional<DeclarationDocumentSource>(entry.WithheldDocumentSource, "Valeur documentaire");
+        if (withheldDocument.IsFailure)
+            return Fail(code, withheldDocument.Error.Description);
 
         var accounts = new List<RubricAccountInput>();
         foreach (var (list, role) in new[]
@@ -176,7 +199,7 @@ public static class MonthlyDeclarationModel
         {
             foreach (var account in list ?? [])
             {
-                if (!Enum.TryParse<RubricAccountMatchMode>(account.Mode, out var mode))
+                if (!TryParseName<RubricAccountMatchMode>(account.Mode, out var mode))
                     return Fail(code, $"Mode de sélection de compte inconnu : « {account.Mode} ».");
                 accounts.Add(new RubricAccountInput(role, account.Number ?? string.Empty, mode));
             }
@@ -189,7 +212,8 @@ public static class MonthlyDeclarationModel
             grossSide, withheldSide, entry.RatePercent,
             entry.FixedGrossAmount, entry.FixedWithheldAmount,
             payroll.Value, withheldPayroll.Value,
-            entry.EffectiveFrom, entry.EffectiveTo, accounts, entry.DisplayOrder);
+            entry.EffectiveFrom, entry.EffectiveTo, accounts, entry.DisplayOrder,
+            grossDocument.Value, withheldDocument.Value);
 
         if (probe.IsFailure)
             return Fail(code, probe.Error.Description);
@@ -200,19 +224,32 @@ public static class MonthlyDeclarationModel
             entry.FixedGrossAmount, entry.FixedWithheldAmount,
             payroll.Value, withheldPayroll.Value,
             entry.EffectiveFrom, entry.EffectiveTo, entry.DisplayOrder,
-            entry.IsActive, accounts));
+            entry.IsActive, accounts, grossDocument.Value, withheldDocument.Value));
     }
 
-    private static Result<PayrollContributionComponent?> ParseOptionalComponent(string? value)
+    /// <summary>
+    /// Lit un jeton d'énumération <b>par son nom exact</b>. <c>Enum.TryParse</c> accepte aussi
+    /// « 42 » — une valeur hors liste que rien ne détecterait ensuite — et « Debit, Credit », qu'il
+    /// combine : un fichier ne doit désigner une valeur que par son nom.
+    /// </summary>
+    private static bool TryParseName<TEnum>(string? token, out TEnum value) where TEnum : struct, Enum
     {
-        if (string.IsNullOrWhiteSpace(value))
-            return Result.Success<PayrollContributionComponent?>(null);
-        if (!Enum.TryParse<PayrollContributionComponent>(value, out var parsed))
-        {
-            return Result.Failure<PayrollContributionComponent?>(
-                Error.Validation("PayrollComponent", $"Valeur de paie inconnue : « {value} »."));
-        }
-        return Result.Success<PayrollContributionComponent?>(parsed);
+        value = default;
+        var name = token?.Trim();
+        if (string.IsNullOrEmpty(name) || !Enum.GetNames<TEnum>().Contains(name, StringComparer.Ordinal))
+            return false;
+
+        value = Enum.Parse<TEnum>(name);
+        return true;
+    }
+
+    private static Result<TEnum?> ParseOptional<TEnum>(string? token, string what) where TEnum : struct, Enum
+    {
+        if (string.IsNullOrWhiteSpace(token))
+            return Result.Success<TEnum?>(null);
+        if (!TryParseName<TEnum>(token, out var parsed))
+            return Result.Failure<TEnum?>(Error.Validation(typeof(TEnum).Name, $"{what} inconnue : « {token} »."));
+        return Result.Success<TEnum?>(parsed);
     }
 
     private static Result<MonthlyDeclarationRubricDraft> Fail(string code, string reason) =>
@@ -264,6 +301,8 @@ public static class MonthlyDeclarationModel
         FixedWithheldAmount = r.FixedWithheldAmount,
         PayrollComponent = r.PayrollComponent?.ToString(),
         WithheldPayrollComponent = r.WithheldPayrollComponent?.ToString(),
+        GrossDocumentSource = r.GrossDocumentSource?.ToString(),
+        WithheldDocumentSource = r.WithheldDocumentSource?.ToString(),
         EffectiveFrom = r.EffectiveFrom,
         EffectiveTo = r.EffectiveTo,
         IsActive = r.IsActive,
@@ -334,7 +373,9 @@ public sealed record MonthlyDeclarationRubricDraft(
     /// en silence une rubrique qu'un comptable a désactivée la ferait revenir dans le calcul.
     /// </summary>
     bool? IsActive,
-    IReadOnlyList<RubricAccountInput> Accounts);
+    IReadOnlyList<RubricAccountInput> Accounts,
+    DeclarationDocumentSource? GrossDocumentSource = null,
+    DeclarationDocumentSource? WithheldDocumentSource = null);
 
 public sealed record MonthlyDeclarationModelParse(
     string? ModelVersion,
@@ -378,6 +419,13 @@ internal sealed class MonthlyDeclarationModelRubricEntry
     public decimal? FixedWithheldAmount { get; set; }
     public string? PayrollComponent { get; set; }
     public string? WithheldPayrollComponent { get; set; }
+
+    /// <summary>Facultatif (apparu en dm-model-v2) : nom de la valeur documentaire de la colonne brut.</summary>
+    public string? GrossDocumentSource { get; set; }
+
+    /// <summary>Facultatif (apparu en dm-model-v2) : nom de la valeur documentaire de la colonne retenue.</summary>
+    public string? WithheldDocumentSource { get; set; }
+
     public DateTime? EffectiveFrom { get; set; }
     public DateTime? EffectiveTo { get; set; }
 

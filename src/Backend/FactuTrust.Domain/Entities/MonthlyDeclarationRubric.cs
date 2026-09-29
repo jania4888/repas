@@ -90,6 +90,12 @@ public sealed class MonthlyDeclarationRubric : AggregateRoot
     /// </summary>
     public PayrollContributionComponent? WithheldPayrollComponent { get; private set; }
 
+    /// <summary>Valeur documentaire de la colonne brut ; obligatoire si et seulement si le brut est de type documents.</summary>
+    public DeclarationDocumentSource? GrossDocumentSource { get; private set; }
+
+    /// <summary>Valeur documentaire de la colonne retenue ; obligatoire si et seulement si la retenue est de type documents.</summary>
+    public DeclarationDocumentSource? WithheldDocumentSource { get; private set; }
+
     /// <summary>
     /// Premier jour d'application. Absent de la maquette d'origine, ajouté délibérément : sans date
     /// de début, corriger un taux écraserait la règle qui a produit les déclarations passées.
@@ -124,13 +130,15 @@ public sealed class MonthlyDeclarationRubric : AggregateRoot
         DateTime? effectiveFrom,
         DateTime? effectiveTo,
         IReadOnlyList<RubricAccountInput>? accounts,
-        int displayOrder = 0)
+        int displayOrder = 0,
+        DeclarationDocumentSource? grossDocumentSource = null,
+        DeclarationDocumentSource? withheldDocumentSource = null)
     {
         var rubric = new MonthlyDeclarationRubric { IsActive = true };
         var applied = rubric.Apply(
             family, code, label, reportCode, grossKind, withheldKind, grossSide, withheldSide,
             ratePercent, fixedGrossAmount, fixedWithheldAmount, payrollComponent, withheldPayrollComponent,
-            effectiveFrom, effectiveTo, accounts, displayOrder);
+            effectiveFrom, effectiveTo, accounts, displayOrder, grossDocumentSource, withheldDocumentSource);
 
         return applied.IsFailure
             ? Result.Failure<MonthlyDeclarationRubric>(applied.Error)
@@ -157,11 +165,13 @@ public sealed class MonthlyDeclarationRubric : AggregateRoot
         DateTime? effectiveFrom,
         DateTime? effectiveTo,
         IReadOnlyList<RubricAccountInput>? accounts,
-        int displayOrder)
+        int displayOrder,
+        DeclarationDocumentSource? grossDocumentSource = null,
+        DeclarationDocumentSource? withheldDocumentSource = null)
         => Apply(
             Family, Code, label, reportCode, grossKind, withheldKind, grossSide, withheldSide,
             ratePercent, fixedGrossAmount, fixedWithheldAmount, payrollComponent, withheldPayrollComponent,
-            effectiveFrom, effectiveTo, accounts, displayOrder);
+            effectiveFrom, effectiveTo, accounts, displayOrder, grossDocumentSource, withheldDocumentSource);
 
     public void ToggleActive() => IsActive = !IsActive;
 
@@ -206,7 +216,9 @@ public sealed class MonthlyDeclarationRubric : AggregateRoot
         DateTime? effectiveFrom,
         DateTime? effectiveTo,
         IReadOnlyList<RubricAccountInput>? accounts,
-        int displayOrder)
+        int displayOrder,
+        DeclarationDocumentSource? grossDocumentSource,
+        DeclarationDocumentSource? withheldDocumentSource)
     {
         var normalizedCode = (code ?? string.Empty).Trim().ToUpperInvariant();
         var normalizedLabel = (label ?? string.Empty).Trim();
@@ -215,7 +227,8 @@ public sealed class MonthlyDeclarationRubric : AggregateRoot
 
         var validation = Validate(
             family, normalizedCode, normalizedLabel, normalizedReportCode, grossKind, withheldKind,
-            ratePercent, payrollComponent, withheldPayrollComponent, effectiveFrom, effectiveTo, inputs);
+            grossSide, withheldSide, ratePercent, payrollComponent, withheldPayrollComponent,
+            grossDocumentSource, withheldDocumentSource, effectiveFrom, effectiveTo, inputs);
         if (validation.IsFailure)
             return validation;
 
@@ -236,6 +249,8 @@ public sealed class MonthlyDeclarationRubric : AggregateRoot
         FixedWithheldAmount = fixedWithheldAmount;
         PayrollComponent = grossKind == RubricGrossKind.Payroll ? payrollComponent : null;
         WithheldPayrollComponent = withheldKind == RubricWithheldKind.Payroll ? withheldPayrollComponent : null;
+        GrossDocumentSource = grossKind == RubricGrossKind.Document ? grossDocumentSource : null;
+        WithheldDocumentSource = withheldKind == RubricWithheldKind.Document ? withheldDocumentSource : null;
         EffectiveFrom = effectiveFrom?.Date;
         EffectiveTo = effectiveTo?.Date;
         DisplayOrder = displayOrder;
@@ -251,15 +266,36 @@ public sealed class MonthlyDeclarationRubric : AggregateRoot
         string reportCode,
         RubricGrossKind grossKind,
         RubricWithheldKind withheldKind,
+        AccountBalanceSide grossSide,
+        AccountBalanceSide withheldSide,
         decimal ratePercent,
         PayrollContributionComponent? payrollComponent,
         PayrollContributionComponent? withheldPayrollComponent,
+        DeclarationDocumentSource? grossDocumentSource,
+        DeclarationDocumentSource? withheldDocumentSource,
         DateTime? effectiveFrom,
         DateTime? effectiveTo,
         IReadOnlyList<RubricAccountInput> accounts)
     {
         if (!Enum.IsDefined(family))
             return Result.Failure(Error.Validation("Family", "Famille de déclaration inconnue."));
+
+        // Toute énumération reçue est vérifiée : une valeur hors liste (« 42 » transmis par l'API
+        // ou par un fichier) serait sinon changée en zéro par l'évaluateur, sans rien signaler.
+        if (!Enum.IsDefined(grossKind))
+            return Result.Failure(Error.Validation("GrossKind", "Type de montant brut inconnu."));
+        if (!Enum.IsDefined(withheldKind))
+            return Result.Failure(Error.Validation("WithheldKind", "Type de retenue inconnu."));
+        if (!Enum.IsDefined(grossSide))
+            return Result.Failure(Error.Validation("GrossSide", "Sens du montant brut inconnu."));
+        if (!Enum.IsDefined(withheldSide))
+            return Result.Failure(Error.Validation("WithheldSide", "Sens de la retenue inconnu."));
+        if (accounts.Any(a => !Enum.IsDefined(a.Role) || !Enum.IsDefined(a.MatchMode)))
+            return Result.Failure(Error.Validation("Accounts", "Rôle ou mode de sélection de compte inconnu."));
+
+        var documents = ValidateDocumentSources(grossKind, withheldKind, grossDocumentSource, withheldDocumentSource);
+        if (documents.IsFailure)
+            return documents;
 
         if (string.IsNullOrEmpty(code))
             return Result.Failure(Error.Validation("Code", "Le code de la rubrique est obligatoire."));
@@ -343,6 +379,54 @@ public sealed class MonthlyDeclarationRubric : AggregateRoot
         }
 
         return ValidateAccountRequirements(grossKind, withheldKind, accounts);
+    }
+
+    /// <summary>
+    /// Une colonne « documents » désigne sa valeur, et une valeur adaptée à la colonne : une
+    /// assiette en brut, un montant en retenue. Lire le chiffre d'affaires comme une retenue
+    /// produirait un impôt égal au chiffre d'affaires.
+    /// </summary>
+    private static Result ValidateDocumentSources(
+        RubricGrossKind grossKind,
+        RubricWithheldKind withheldKind,
+        DeclarationDocumentSource? grossDocumentSource,
+        DeclarationDocumentSource? withheldDocumentSource)
+    {
+        if (grossKind == RubricGrossKind.Document)
+        {
+            if (grossDocumentSource is not { } gross)
+            {
+                return Result.Failure(Error.Validation(
+                    "GrossDocumentSource",
+                    "Un brut issu des documents doit désigner la valeur à reprendre."));
+            }
+
+            if (!DeclarationDocumentSources.IsAllowedFor(gross, RubricAccountRole.Gross))
+            {
+                return Result.Failure(Error.Validation(
+                    "GrossDocumentSource",
+                    "Cette valeur documentaire n'est pas une assiette : elle ne peut pas alimenter le montant brut."));
+            }
+        }
+
+        if (withheldKind == RubricWithheldKind.Document)
+        {
+            if (withheldDocumentSource is not { } withheld)
+            {
+                return Result.Failure(Error.Validation(
+                    "WithheldDocumentSource",
+                    "Une retenue issue des documents doit désigner la valeur à reprendre."));
+            }
+
+            if (!DeclarationDocumentSources.IsAllowedFor(withheld, RubricAccountRole.Withheld))
+            {
+                return Result.Failure(Error.Validation(
+                    "WithheldDocumentSource",
+                    "Cette valeur documentaire est une assiette : elle ne peut pas alimenter la retenue."));
+            }
+        }
+
+        return Result.Success();
     }
 
     private static Result ValidateAccountRequirements(

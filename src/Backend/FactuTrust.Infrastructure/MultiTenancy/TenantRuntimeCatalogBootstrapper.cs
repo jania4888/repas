@@ -24,8 +24,10 @@ public static class TenantRuntimeCatalogBootstrapper
         TenantDbContext context,
         ChartMigrationMode chartMode = ChartMigrationMode.AutoSafe,
         CancellationToken cancellationToken = default,
-        ILogger? logger = null)
+        ILogger? logger = null,
+        MonthlyDeclarationCatalogOptions? monthlyDeclarationCatalog = null)
     {
+        var dmCatalog = monthlyDeclarationCatalog ?? MonthlyDeclarationCatalogOptions.Disabled;
         var report = await Nct01ChartMigrationService.EnsureMigratedAsync(context, chartMode, cancellationToken);
 
         if (report.ChartOutcome == ChartCatalogOutcome.DeferredHasAccountingData)
@@ -49,6 +51,9 @@ public static class TenantRuntimeCatalogBootstrapper
             await WithholdingFiscalYearParameterInitializer.EnsureDefaultsSeededAsync(context, cancellationToken);
             await IncomeTaxYearParameterInitializer.EnsureDefaultsSeededAsync(context, cancellationToken);
             await MonthlyDeclarationRubricInitializer.EnsureDefaultsSeededAsync(context, cancellationToken);
+            // Ne dépend pas du plan comptable : les rubriques montées lisent les documents et la
+            // paie, et un compte v1 est reconnu sous son numéro hérité comme sous son image NCT.
+            await MonthlyDeclarationCatalogUpgrade.EnsureAppliedAsync(context, dmCatalog, logger, cancellationToken);
 
             return report;
         }
@@ -70,6 +75,10 @@ public static class TenantRuntimeCatalogBootstrapper
         // couvre à la fois la création d'un dossier et le rattrapage des dossiers existants à leur
         // première requête après déploiement. Données inertes tant qu'aucune famille n'est cochée.
         await MonthlyDeclarationRubricInitializer.EnsureDefaultsSeededAsync(context, cancellationToken);
+
+        // Montée vers le catalogue v2, derrière son propre interrupteur. Juste après la v1, pour
+        // qu'un dossier neuf reçoive la v2 à sa première requête ; sans effet s'il est déjà monté.
+        await MonthlyDeclarationCatalogUpgrade.EnsureAppliedAsync(context, dmCatalog, logger, cancellationToken);
 
         if (report.ChartOutcome is ChartCatalogOutcome.Applied or ChartCatalogOutcome.CatalogResynced)
         {

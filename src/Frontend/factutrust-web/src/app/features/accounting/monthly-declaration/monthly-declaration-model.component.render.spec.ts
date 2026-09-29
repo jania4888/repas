@@ -14,9 +14,24 @@ import {
 import { MonthlyDeclarationModelComponent } from './monthly-declaration-model.component';
 import { summariseModel } from './monthly-declaration-model.view-model';
 
+/** Fichier au format courant, tel que l'export le produit aujourd'hui. */
 const MODEL_JSON = JSON.stringify({
-  modelVersion: 'dm-model-v1',
+  modelVersion: 'dm-model-v2',
   families: [{ family: 'Tfp', isIncluded: true }],
+  rubrics: [{ code: 'F2_TFP', family: 'Tfp' }]
+});
+
+/** Export antérieur à la version 2 : ses inclusions sont ignorées par le serveur. */
+const LEGACY_MODEL_JSON = JSON.stringify({
+  modelVersion: 'dm-model-v1',
+  families: [{ family: 'Tfp', isIncluded: false }],
+  rubrics: [{ code: 'F2_TFP', family: 'Tfp' }]
+});
+
+/** Fichier courant qui décoche une famille : l'import exige une confirmation. */
+const EXCLUDING_MODEL_JSON = JSON.stringify({
+  modelVersion: 'dm-model-v2',
+  families: [{ family: 'Tfp', isIncluded: false }],
   rubrics: [{ code: 'F2_TFP', family: 'Tfp' }]
 });
 
@@ -250,8 +265,32 @@ describe('MonthlyDeclarationModelComponent render', () => {
     fixture.detectChanges();
     loadContent(MODEL_JSON);
 
-    expect(text()).toContain('dm-model-v1');
+    expect(text()).toContain('dm-model-v2');
     expect(text()).toContain('T.F.P');
+  });
+
+  it('prévient qu’un fichier antérieur à la version 2 ne touchera pas aux familles', () => {
+    fixture.detectChanges();
+    loadContent(LEGACY_MODEL_JSON);
+
+    expect(text()).toContain('inclusions de familles seront ignorées');
+    expect(text()).not.toContain('Confirmer l’exclusion');
+  });
+
+  it('demande de confirmer l’exclusion d’une famille et la transmet', () => {
+    fixture.detectChanges();
+    loadContent(EXCLUDING_MODEL_JSON);
+
+    expect(text()).toContain('Confirmer l’exclusion de T.F.P');
+
+    fixture.componentInstance.confirmExclusions = true;
+    fixture.componentInstance.importModel();
+
+    expect(api.importMonthlyDeclarationModel).toHaveBeenCalledWith({
+      content: EXCLUDING_MODEL_JSON,
+      overwrite: false,
+      confirmFamilyExclusions: true
+    });
   });
 
   it('avertit qu’inclure une famille déplace des montants', () => {
@@ -286,7 +325,8 @@ describe('MonthlyDeclarationModelComponent render', () => {
 
     expect(api.importMonthlyDeclarationModel).toHaveBeenCalledWith({
       content: MODEL_JSON,
-      overwrite: true
+      overwrite: true,
+      confirmFamilyExclusions: false
     });
   });
 

@@ -4021,6 +4021,8 @@ public partial class TenantDbContext : DbContext
             entity.Property(e => e.WithheldSide).HasConversion<int>();
             entity.Property(e => e.PayrollComponent).HasConversion<int>();
             entity.Property(e => e.WithheldPayrollComponent).HasConversion<int>();
+            entity.Property(e => e.GrossDocumentSource).HasConversion<int>();
+            entity.Property(e => e.WithheldDocumentSource).HasConversion<int>();
             entity.Property(e => e.RatePercent).HasPrecision(9, 4);
             entity.Property(e => e.FixedGrossAmount).HasPrecision(18, 3);
             entity.Property(e => e.FixedWithheldAmount).HasPrecision(18, 3);
@@ -4316,6 +4318,11 @@ public partial class TenantDbContext : DbContext
             entity.Property(e => e.ConsumptionDuty).HasPrecision(18, 3).HasDefaultValue(0m);
             entity.Property(e => e.HotelTax).HasPrecision(18, 3).HasDefaultValue(0m);
             entity.Property(e => e.LicenceFee).HasPrecision(18, 3).HasDefaultValue(0m);
+            // Défaut SQL « historique » : toute déclaration antérieure à la colonne l'est, et une
+            // image plus ancienne qui n'écrit pas la colonne continue d'insérer sans erreur.
+            entity.Property(e => e.CalculationOrigin)
+                .HasConversion<int>()
+                .HasDefaultValue(DeclarationCalculationOrigin.Historic);
 
             entity.HasMany(e => e.Lines)
                 .WithOne()

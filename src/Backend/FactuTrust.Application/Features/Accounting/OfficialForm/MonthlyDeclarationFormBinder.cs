@@ -1,5 +1,6 @@
 using System.Globalization;
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
 using FactuTrust.Domain.ValueObjects;
 
 namespace FactuTrust.Application.Features.Accounting.OfficialForm;
@@ -230,20 +231,13 @@ public static class MonthlyDeclarationFormBinder
 
     /// <summary>
     /// Le formulaire distingue deux lignes exclusives : 1 % (industries manufacturières) et 2 %
-    /// (autres activités). On retient le taux réellement appliqué par le cycle de paie ; à défaut,
-    /// on le reconstitue depuis l'assiette ; en dernier recours « autres activités », cas le plus
-    /// fréquent et le plus prudent (taux le plus élevé).
+    /// (autres activités). La règle est celle de <see cref="TfpActivity"/>, partagée avec le moteur
+    /// paramétré.
     /// </summary>
-    private static string TfpPrefix(VatDeclarationDto d, decimal basis)
-    {
-        var ratePercent = d.TfpRatePercent > 0m
-            ? d.TfpRatePercent
-            : basis > 0m ? d.Tfp / basis * 100m : 0m;
-
-        return ratePercent > 0m && Math.Abs(ratePercent - 1m) < 0.05m
+    private static string TfpPrefix(VatDeclarationDto d, decimal basis) =>
+        TfpActivity.IsManufacturing(d.TfpRatePercent, d.Tfp, basis)
             ? "Tfp.Manufacturing"
             : "Tfp.Other";
-    }
 
     // ── TVA (page 5) ──────────────────────────────────────────────────────────
 

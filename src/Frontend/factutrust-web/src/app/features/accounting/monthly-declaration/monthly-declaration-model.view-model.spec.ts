@@ -1,4 +1,7 @@
-import { MonthlyDeclarationModelImportResultDto } from '../services/accounting.service';
+import {
+  MonthlyDeclarationFamily,
+  MonthlyDeclarationModelImportResultDto
+} from '../services/accounting.service';
 import {
   DM_MODEL_MAX_BYTES,
   describeImportOutcome,
@@ -134,6 +137,29 @@ describe('monthly-declaration-model.view-model', () => {
       expect(importChangedNothing(result({ skippedCodes: ['A'] }))).toBe(true);
       expect(importChangedNothing(result({ inserted: 1 }))).toBe(false);
       expect(importChangedNothing(result({ familiesChanged: 1 }))).toBe(false);
+    });
+  });
+
+  describe('fichiers antérieurs à la version 2', () => {
+    it('distingue le format courant des fichiers plus anciens', () => {
+      const v1 = summariseModel(JSON.stringify({ modelVersion: 'dm-model-v1', rubrics: [{ code: 'A' }] }));
+      const v2 = summariseModel(JSON.stringify({ modelVersion: 'dm-model-v2', rubrics: [{ code: 'A' }] }));
+      const catalogV2 = summariseModel(JSON.stringify({ catalogVersion: 'tn-2026-v2', rubrics: [{ code: 'A' }] }));
+      const unversioned = summariseModel(JSON.stringify({ rubrics: [{ code: 'A' }] }));
+
+      expect(v1.isCurrentFormat).toBeFalse();
+      expect(unversioned.isCurrentFormat).toBeFalse();
+      expect(v2.isCurrentFormat).toBeTrue();
+      expect(catalogV2.isCurrentFormat).toBeTrue();
+    });
+
+    it('dit quand un fichier ancien a vu ses inclusions ignorées et ses familles passées en v2', () => {
+      const text = describeImportOutcome(
+        result({ inserted: 2, upgradedFamilies: [MonthlyDeclarationFamily.Tfp], familyInclusionsIgnored: true })
+      );
+
+      expect(text).toContain('1 famille(s) passée(s) en définition v2 (T.F.P)');
+      expect(text).toContain('inclusions de familles ont été ignorées');
     });
   });
 });

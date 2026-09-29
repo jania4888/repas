@@ -61,6 +61,22 @@ public sealed class VatDeclaration : AggregateRoot
     /// <summary>Vrai si la déclaration est une rectificative (au moins une révision appliquée).</summary>
     public bool IsRectificative { get; private set; }
 
+    /// <summary>
+    /// Calcul qui a produit la déclaration lors de son dernier enregistrement. C'est lui, et non le
+    /// régime actuel du dossier, qui dit d'où viennent les montants d'un dépôt : une déclaration
+    /// déposée sous le calcul historique le reste, quelle que soit la configuration d'aujourd'hui.
+    /// </summary>
+    public DeclarationCalculationOrigin CalculationOrigin { get; private set; } = DeclarationCalculationOrigin.Historic;
+
+    /// <summary>Consigne le calcul qui vient de produire les montants enregistrés.</summary>
+    public void SetCalculationOrigin(DeclarationCalculationOrigin origin)
+    {
+        if (!Enum.IsDefined(origin))
+            throw new ArgumentOutOfRangeException(nameof(origin), origin, "Origine de calcul inconnue.");
+
+        CalculationOrigin = origin;
+    }
+
     private readonly List<VatDeclarationLine> _lines = new();
 
     /// <summary>

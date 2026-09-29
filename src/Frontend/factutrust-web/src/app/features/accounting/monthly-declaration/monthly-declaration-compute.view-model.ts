@@ -59,6 +59,7 @@ export function diagnosticSeverity(kind: RubricDiagnosticKind): DmDiagnosticSeve
     case RubricDiagnosticKind.RateRequired:
     case RubricDiagnosticKind.UnsupportedCombination:
     case RubricDiagnosticKind.MissingRubricForFamily:
+    case RubricDiagnosticKind.DuplicateSourceRead:
       return 'error';
     default:
       return 'warning';
@@ -99,6 +100,8 @@ export function describeDiagnostic(d: MonthlyDeclarationDiagnosticDto): string {
       return detail
         ? $localize`:@@accounting.monthly-declaration-compute.view-model.ts.ligne.ecartee.du.formulaire.par.le.contr.4c600990:Ligne écartée du formulaire par le contrôle de total de famille (${detail}:detail:).`
         : $localize`:@@accounting.monthly-declaration-compute.view-model.ts.une.ligne.a.ete.ecartee.du.formulaire.pa.793e3e04:Une ligne a été écartée du formulaire par le contrôle de total de famille.`;
+    case RubricDiagnosticKind.DuplicateSourceRead:
+      return detail || $localize`:@@accounting.monthly-declaration-compute.view-model.ts.deux.rubriques.reprennent.la.meme.source.0098936d:Deux rubriques reprennent la même source : le montant serait déclaré deux fois.`;
     case RubricDiagnosticKind.MissingRubricForFamily: {
       const family = detail ? familyFromServerName(detail) : null;
       const name = family === null ? detail : familyLabel(family);

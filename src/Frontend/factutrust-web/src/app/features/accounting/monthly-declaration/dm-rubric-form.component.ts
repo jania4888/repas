@@ -4,18 +4,22 @@ import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import {
+  DM_GROSS_DOCUMENT_OPTIONS,
   DM_GROSS_KIND_OPTIONS,
   DM_PAYROLL_COMPONENT_OPTIONS,
   DM_SIDE_OPTIONS,
+  DM_WITHHELD_DOCUMENT_OPTIONS,
   DM_WITHHELD_KIND_OPTIONS,
   DmOption,
   DmRubricForm,
   needsFixedGross,
   needsFixedWithheld,
   needsGrossAccounts,
+  needsGrossDocumentSource,
   needsPayrollComponent,
   needsRate,
   needsWithheldAccounts,
+  needsWithheldDocumentSource,
   needsWithheldPayrollComponent,
   validateRubricForm
 } from './monthly-declaration-config.view-model';
@@ -150,6 +154,23 @@ import {
               </div>
             }
 
+            @if (showGrossDocumentSource) {
+              <div class="dm-field">
+                <label class="dm-lbl" for="dm-gross-document" i18n="@@accounting.monthly-declaration.valeur.des.documents.f3338e62">Valeur des documents</label>
+                <select
+                  id="dm-gross-document"
+                  class="dm-inp"
+                  [(ngModel)]="f.grossDocumentSource"
+                  [disabled]="disabled">
+                  <option [ngValue]="null" i18n="@@accounting.monthly-declaration.choisir.413c3acc">— Choisir —</option>
+                  @for (o of grossDocumentSources; track o.value) {
+                    <option [ngValue]="o.value">{{ o.label }}</option>
+                  }
+                </select>
+                <small class="dm-hint" i18n="@@accounting.monthly-declaration.assiettes.lues.sur.les.factures.et.le.rapport.de.bf46ac54">Assiettes lues sur les factures et le rapport de retenue à la source du mois.</small>
+              </div>
+            }
+
             @if (showFixedGross) {
               <div class="dm-field">
                 <label class="dm-lbl" for="dm-fixed-gross" i18n="@@accounting.monthly-declaration.valeur.fixe.84e10831">Valeur fixe</label>
@@ -228,6 +249,23 @@ import {
                     <option [ngValue]="o.value">{{ o.label }}</option>
                   }
                 </select>
+              </div>
+            }
+
+            @if (showWithheldDocumentSource) {
+              <div class="dm-field">
+                <label class="dm-lbl" for="dm-withheld-document" i18n="@@accounting.monthly-declaration.valeur.des.documents.f3338e62">Valeur des documents</label>
+                <select
+                  id="dm-withheld-document"
+                  class="dm-inp"
+                  [(ngModel)]="f.withheldDocumentSource"
+                  [disabled]="disabled">
+                  <option [ngValue]="null" i18n="@@accounting.monthly-declaration.choisir.413c3acc">— Choisir —</option>
+                  @for (o of withheldDocumentSources; track o.value) {
+                    <option [ngValue]="o.value">{{ o.label }}</option>
+                  }
+                </select>
+                <small class="dm-hint" i18n="@@accounting.monthly-declaration.montants.lus.sur.les.factures.et.le.rapport.de.r.cf5bdfae">Montants lus sur les factures et le rapport de retenue à la source du mois.</small>
               </div>
             }
 
@@ -332,6 +370,8 @@ export class DmRubricFormComponent {
   readonly withheldKinds = DM_WITHHELD_KIND_OPTIONS;
   readonly sides = DM_SIDE_OPTIONS;
   readonly payrollComponents = DM_PAYROLL_COMPONENT_OPTIONS;
+  readonly grossDocumentSources = DM_GROSS_DOCUMENT_OPTIONS;
+  readonly withheldDocumentSources = DM_WITHHELD_DOCUMENT_OPTIONS;
 
   get showGrossAccounts(): boolean {
     return needsGrossAccounts(this.form);
@@ -347,6 +387,14 @@ export class DmRubricFormComponent {
 
   get showWithheldPayrollComponent(): boolean {
     return needsWithheldPayrollComponent(this.form);
+  }
+
+  get showGrossDocumentSource(): boolean {
+    return needsGrossDocumentSource(this.form);
+  }
+
+  get showWithheldDocumentSource(): boolean {
+    return needsWithheldDocumentSource(this.form);
   }
 
   get showRate(): boolean {

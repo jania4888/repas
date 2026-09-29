@@ -95,10 +95,29 @@ export function periodDateRange(year: number, month: number): { from: string; to
   return { from: fmt(start), to: fmt(end) };
 }
 
+/**
+ * Même expression que le serveur (`GetVatDeclarationQueryHandler.TotalToPay`) : les trois familles
+ * que seul le calcul paramétré produit — sans champ de saisie — entrent dans le total comme la TVA,
+ * depuis le DTO. Les omettre faisait afficher un total inférieur à celui déposé.
+ */
 export function computeTotalToPay(d: VatDeclarationDto, extras: VatDeclarationExtras): number {
   const total = d.vatDue + extras.fodec + extras.droitTimbre + extras.tcl + extras.tfp
-    + extras.foprolos + extras.withholdingTax - extras.acomptes;
+    + extras.foprolos + extras.withholdingTax + configuredFamiliesTotal(d) - extras.acomptes;
   return Math.max(0, total);
+}
+
+/** Familles produites uniquement par le calcul paramétré, sans champ de saisie à l'écran. */
+export const CONFIGURED_ONLY_FAMILIES: readonly {
+  label: string;
+  key: 'consumptionDuty' | 'hotelTax' | 'licenceFee';
+}[] = [
+  { label: $localize`:@@accounting.vat-declaration.view-model.ts.droit.de.consommation.97da36c0:Droit de consommation`, key: 'consumptionDuty' },
+  { label: $localize`:@@accounting.vat-declaration.view-model.ts.taxe.hoteliere.90f43822:Taxe hôtelière`, key: 'hotelTax' },
+  { label: $localize`:@@accounting.vat-declaration.view-model.ts.droit.de.licence.925640a2:Droit de licence`, key: 'licenceFee' }
+];
+
+function configuredFamiliesTotal(d: VatDeclarationDto): number {
+  return CONFIGURED_ONLY_FAMILIES.reduce((sum, f) => sum + (d[f.key] ?? 0), 0);
 }
 
 export function computeTotalCollected(d: VatDeclarationDto): number {
@@ -182,7 +201,12 @@ export function buildDivergenceRows(d: VatDeclarationDto): VatDivergenceRow[] {
     { label: 'TCL', declared: d.tcl, computed: s.tcl },
     { label: 'TFP', declared: d.tfp, computed: s.tfp },
     { label: 'FOPROLOS', declared: d.foprolos, computed: s.foprolos },
-    { label: $localize`:@@accounting.vat-declaration.view-model.ts.retenues.a.la.source.rs.04dda5ef:Retenues à la source (RS)`, declared: d.withholdingTax, computed: s.withholdingTax }
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.retenues.a.la.source.rs.04dda5ef:Retenues à la source (RS)`, declared: d.withholdingTax, computed: s.withholdingTax },
+    ...CONFIGURED_ONLY_FAMILIES.map(f => ({
+      label: f.label,
+      declared: d[f.key] ?? 0,
+      computed: s[f.key] ?? 0
+    }))
   ];
 
   return candidates.filter(r => hasSuggestionMismatch(r.declared, r.computed));
@@ -358,6 +382,20 @@ export function buildTaxRows(
       editableKey: 'withholdingTax',
       suggestedAmount: s?.withholdingTax ?? null
     });
+    // Sans champ de saisie : leur seule source est le calcul paramétré. Affichées dès qu'elles
+    // portent un montant, déclaré ou recalculé, pour que le total reste vérifiable ligne à ligne.
+    for (const f of CONFIGURED_ONLY_FAMILIES) {
+      const amount = d[f.key] ?? 0;
+      if (amount === 0 && (s?.[f.key] ?? 0) === 0) continue;
+      rows.push({
+        taxLabel: f.label,
+        taxableBase: null,
+        ratePercent: null,
+        amountToPay: amount,
+        deductibleAmount: null,
+        netAmount: amount
+      });
+    }
     rows.push({
       taxLabel: $localize`:@@accounting.vat-declaration.view-model.ts.acomptes.provisionnels.deduits.e190ddc4:Acomptes provisionnels (déduits)`,
       taxableBase: null,
@@ -398,7 +436,8 @@ export function buildChartSegments(
     { label: 'TCL', value: extras.tcl },
     { label: 'TFP', value: extras.tfp },
     { label: 'FOPROLOS', value: extras.foprolos },
-    { label: 'RS', value: extras.withholdingTax }
+    { label: 'RS', value: extras.withholdingTax },
+    ...CONFIGURED_ONLY_FAMILIES.map(f => ({ label: f.label, value: d[f.key] ?? 0 }))
   ];
   return segments.filter(s => s.value > 0).length > 0
     ? segments.filter(s => s.value > 0)

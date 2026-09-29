@@ -62,6 +62,15 @@ public partial class PdfService
                         AmountRow(col, "TFP", dto.Tfp);
                         AmountRow(col, "FOPROLOS", dto.Foprolos);
                         AmountRow(col, "Retenues à la source (RS)", dto.WithholdingTax);
+                        // Comprises dans le net à payer : les taire rendrait le total invérifiable.
+                        // Imprimées seulement non nulles, pour que le récapitulatif d'un dépôt où elles
+                        // valent 0 — tous ceux d'avant la déclaration paramétrable — reste identique.
+                        if (dto.ConsumptionDuty != 0m)
+                            AmountRow(col, "Droit de consommation", dto.ConsumptionDuty);
+                        if (dto.HotelTax != 0m)
+                            AmountRow(col, "Taxe hôtelière", dto.HotelTax);
+                        if (dto.LicenceFee != 0m)
+                            AmountRow(col, "Droit de licence", dto.LicenceFee);
                         AmountRow(col, "Acomptes provisionnels (déduits)", -dto.Acomptes);
 
                         Section(col, "TOTAL À PAYER");

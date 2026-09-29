@@ -54,6 +54,25 @@ public sealed class MonthlyDeclarationFlagsConfigurationTests
         }
     }
 
+    /// <summary>
+    /// La montée vers le catalogue v2 est la seule modification de données du retrait du calcul
+    /// historique : elle se déploie après le code, par variable d'environnement, jamais par le dépôt.
+    /// Aucun fichier ne doit donc l'allumer.
+    /// </summary>
+    [Theory]
+    [InlineData("appsettings.json")]
+    [InlineData("appsettings.Production.json")]
+    [InlineData("appsettings.Development.json")]
+    public void No_settings_file_turns_the_catalog_v2_upgrade_on(string fileName)
+    {
+        var accounting = ReadAccountingSection(fileName);
+        if (accounting is null)
+            return;
+
+        if (accounting.Value.TryGetProperty("MonthlyDeclarationCatalogV2UpgradeEnabled", out var value))
+            Assert.Equal(JsonValueKind.False, value.ValueKind);
+    }
+
     [Theory]
     [InlineData("appsettings.Production.json")]
     [InlineData("appsettings.Development.json")]

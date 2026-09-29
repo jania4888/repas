@@ -51,6 +51,12 @@ public sealed record MonthlyDeclarationRubricDto
     /// </summary>
     public int? WithheldPayrollComponent { get; init; }
 
+    /// <summary>Valeur documentaire de la colonne brut (obligatoire si le brut est de type documents).</summary>
+    public int? GrossDocumentSource { get; init; }
+
+    /// <summary>Valeur documentaire de la colonne retenue (obligatoire si la retenue est de type documents).</summary>
+    public int? WithheldDocumentSource { get; init; }
+
     public DateTime? EffectiveFrom { get; init; }
 
     /// <summary>« Maximum date d'application » : la rubrique s'applique à tout le mois de cette date.</summary>
@@ -97,6 +103,12 @@ public sealed record MonthlyDeclarationConfigurationDto
         Array.Empty<MonthlyDeclarationFamilySettingDto>();
     public IReadOnlyList<MonthlyDeclarationRubricDto> Rubrics { get; init; } =
         Array.Empty<MonthlyDeclarationRubricDto>();
+
+    /// <summary>
+    /// Avertissements de cohérence de la configuration (même assiette multipliée deux fois dans une
+    /// famille, double lecture d'une même source). Ils n'empêchent pas l'affichage.
+    /// </summary>
+    public IReadOnlyList<string> Warnings { get; init; } = Array.Empty<string>();
 }
 
 /// <summary>Création d'une rubrique.</summary>
@@ -115,6 +127,8 @@ public sealed record CreateMonthlyDeclarationRubricRequest
     public decimal? FixedWithheldAmount { get; init; }
     public int? PayrollComponent { get; init; }
     public int? WithheldPayrollComponent { get; init; }
+    public int? GrossDocumentSource { get; init; }
+    public int? WithheldDocumentSource { get; init; }
     public DateTime? EffectiveFrom { get; init; }
     public DateTime? EffectiveTo { get; init; }
     public int DisplayOrder { get; init; }
@@ -140,6 +154,8 @@ public sealed record UpdateMonthlyDeclarationRubricRequest
     public decimal? FixedWithheldAmount { get; init; }
     public int? PayrollComponent { get; init; }
     public int? WithheldPayrollComponent { get; init; }
+    public int? GrossDocumentSource { get; init; }
+    public int? WithheldDocumentSource { get; init; }
     public DateTime? EffectiveFrom { get; init; }
     public DateTime? EffectiveTo { get; init; }
     public int DisplayOrder { get; init; }
@@ -153,7 +169,8 @@ public sealed record MonthlyDeclarationDiagnosticDto
     /// <summary>
     /// 0 = compte inconnu, 1 = taux requis, 2 = cycle de paie non arrêté,
     /// 3 = combinaison non prise en charge, 4 = code rapport non cartographié,
-    /// 5 = ligne écartée du formulaire, 6 = famille incluse sans rubrique applicable.
+    /// 5 = ligne écartée du formulaire, 6 = famille incluse sans rubrique applicable,
+    /// 7 = même source reprise par deux rubriques.
     /// </summary>
     public int Kind { get; init; }
 
@@ -255,6 +272,13 @@ public sealed record ImportMonthlyDeclarationModelRequest
 
     /// <summary>Remplacer les rubriques de même code au lieu de les ignorer.</summary>
     public bool Overwrite { get; init; }
+
+    /// <summary>
+    /// Autorise un fichier à décocher des familles aujourd'hui incluses. Sans cette confirmation,
+    /// l'import est refusé et le refus nomme les familles : décocher une famille, c'est cesser de la
+    /// déclarer.
+    /// </summary>
+    public bool ConfirmFamilyExclusions { get; init; }
 }
 
 /// <summary>Entrée du fichier refusée par l'analyseur, avec son motif.</summary>
@@ -281,6 +305,18 @@ public sealed record MonthlyDeclarationModelImportResultDto
 
     /// <summary>Nombre d'inclusions de familles réellement modifiées par l'import.</summary>
     public int FamiliesChanged { get; init; }
+
+    /// <summary>
+    /// Familles d'un fichier v1 importées dans leur définition v2, parce qu'elles étaient celles du
+    /// catalogue v1 à l'identique.
+    /// </summary>
+    public IReadOnlyList<int> UpgradedFamilies { get; init; } = Array.Empty<int>();
+
+    /// <summary>
+    /// Vrai quand le fichier, antérieur à la version 2, portait des inclusions de familles : elles
+    /// ont été ignorées, tout export antérieur les ayant toutes à « non incluse ».
+    /// </summary>
+    public bool FamilyInclusionsIgnored { get; init; }
 
     /// <summary>
     /// Entrées refusées. Toujours vide sur un import réussi : une seule entrée fautive fait

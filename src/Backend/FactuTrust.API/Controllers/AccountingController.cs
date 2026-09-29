@@ -1559,6 +1559,28 @@ public sealed class AccountingController : ControllerBase
     }
 
     /// <summary>
+    /// Rapport de parité : pour chaque mois de la plage, le calcul historique face au calcul
+    /// paramétré tel qu'il sera après le retrait de l'historique — montants par famille et cases du
+    /// formulaire officiel. Lecture pure : ni le régime ni la rampe ne sont touchés.
+    /// </summary>
+    /// <remarks>
+    /// Sous <c>accounting:declare</c> et réservé au cabinet délégué (vérifié par le handler) : le
+    /// rapport expose des montants de brouillon, que la société ne voit pas. Route temporaire,
+    /// retirée avec le calcul historique.
+    /// </remarks>
+    [HttpGet("monthly-declaration/parity-report")]
+    [Authorize(Policy = PermissionPolicies.AccountingDeclare)]
+    public async Task<IActionResult> GetMonthlyDeclarationParityReport(
+        [FromQuery] int year, [FromQuery] int fromMonth, [FromQuery] int toMonth, CancellationToken cancellationToken)
+    {
+        var r = await _mediator.Send(
+            new GetMonthlyDeclarationParityReportQuery(year, fromMonth, toMonth), cancellationToken);
+        if (r.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+        return Ok(ApiResponse<MonthlyDeclarationParityReportDto>.Ok(r.Value));
+    }
+
+    /// <summary>
     /// Reprend la configuration DM d'un autre dossier du cabinet. Le dossier source est vérifié
     /// côté serveur contre le portefeuille du cabinet appelant.
     /// </summary>

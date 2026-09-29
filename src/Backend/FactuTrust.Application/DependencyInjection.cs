@@ -44,6 +44,9 @@ public static class DependencyInjection
         // (ValidateOnBuild), un enregistrement conditionnel ferait échouer la construction du
         // conteneur dès que le drapeau est éteint.
         services.AddScoped<Features.Accounting.MonthlyDeclaration.MonthlyDeclarationLineComposer>();
+        // Le rapport de parité réutilise le calcul de la déclaration tel quel, sans en recopier une
+        // ligne : le handler est donc aussi résolvable par son type concret.
+        services.AddScoped<Features.Accounting.Queries.GetVatDeclarationQueryHandler>();
 
         services.AddScoped<ISupplierInvoiceNumberService, SupplierInvoiceNumberService>();
         services.AddScoped<ITrackedDocumentStockService, TrackedDocumentStockService>();

@@ -1,10 +1,12 @@
 using FactuTrust.Application.Common;
 using FactuTrust.Application.Common.Interfaces;
+using FactuTrust.Application.Configuration;
 using FactuTrust.Infrastructure.Accounting;
 using FactuTrust.Infrastructure.Persistence;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace FactuTrust.Infrastructure.MultiTenancy;
 
@@ -21,9 +23,14 @@ public sealed class TenantRuntimeCatalogSeeder : ITenantRuntimeCatalogSeeder
 {
     private readonly ILogger<TenantRuntimeCatalogSeeder> _logger;
 
-    public TenantRuntimeCatalogSeeder(ILogger<TenantRuntimeCatalogSeeder> logger)
+    private readonly MonthlyDeclarationCatalogOptions _monthlyDeclarationCatalog;
+
+    public TenantRuntimeCatalogSeeder(
+        ILogger<TenantRuntimeCatalogSeeder> logger,
+        IOptions<AccountingSettings>? accountingSettings = null)
     {
         _logger = logger;
+        _monthlyDeclarationCatalog = MonthlyDeclarationCatalogOptionsFactory.From(accountingSettings);
     }
 
     public async Task<TenantRuntimeCatalogReport> EnsureAsync(
@@ -36,7 +43,8 @@ public sealed class TenantRuntimeCatalogSeeder : ITenantRuntimeCatalogSeeder
             context,
             authorizeChartRemap ? ChartMigrationMode.Authorized : ChartMigrationMode.AutoSafe,
             cancellationToken,
-            _logger);
+            _logger,
+            _monthlyDeclarationCatalog);
     }
 
     public async Task<TenantRuntimeCatalogReport> InspectAsync(

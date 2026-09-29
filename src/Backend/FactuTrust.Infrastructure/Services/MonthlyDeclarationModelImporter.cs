@@ -2,6 +2,7 @@ using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
 using FactuTrust.Domain.Common;
+using FactuTrust.Domain.Enums;
 using FactuTrust.Infrastructure.Accounting;
 using FactuTrust.Infrastructure.MultiTenancy;
 
@@ -32,16 +33,23 @@ public sealed class MonthlyDeclarationModelImporter : IMonthlyDeclarationModelIm
         IReadOnlyList<MonthlyDeclarationRubricDraft> rubrics,
         IReadOnlyList<MonthlyDeclarationFamilyDraft> families,
         bool overwrite,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        MonthlyDeclarationImportUpgrade? upgradeToV2 = null)
     {
+        IReadOnlyList<MonthlyDeclarationFamily> upgraded = Array.Empty<MonthlyDeclarationFamily>();
+        if (upgradeToV2 is not null)
+            (rubrics, upgraded) = MonthlyDeclarationCatalogV2.UpgradeDrafts(rubrics, upgradeToV2.TclRatePercent);
+
         await using var destination = _contextFactory.CreateContext();
 
         var applied = await MonthlyDeclarationConfigWriter.ApplyAsync(
             destination, rubrics, families, overwrite,
             _currentUser.Email ?? "system", cancellationToken);
+        if (applied.IsFailure)
+            return Result.Failure<MonthlyDeclarationModelImportOutcome>(applied.Error);
 
         return Result.Success(new MonthlyDeclarationModelImportOutcome(
-            applied.Inserted, applied.Replaced, applied.SkippedCodes,
-            applied.UnknownAccounts, applied.FamiliesChanged));
+            applied.Value.Inserted, applied.Value.Replaced, applied.Value.SkippedCodes,
+            applied.Value.UnknownAccounts, applied.Value.FamiliesChanged, upgraded));
     }
 }
