@@ -307,6 +307,14 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['supplier_invoices:read']
       },
       {
+        id: 'purchases--purchases-journal',
+        label: $localize`:@@core.app-navigation.registry.ts.journal.dachats.pj1a2b3c:Journal d'achats`,
+        route: '/reports/purchases-journal',
+        icon: 'fa-solid fa-book',
+        modules: [M.Reports, M.Purchases],
+        permissionsAll: ['reports:view', 'supplier_invoices:read']
+      },
+      {
         id: 'purchases--reports-supplier-balances',
         label: $localize`:@@core.app-navigation.registry.ts.solde.par.fournisseur.7b26b81c:Solde par fournisseur`,
         route: '/reports/supplier-balances',
@@ -1004,6 +1012,7 @@ const ROUTE_KEYWORDS: Record<string, string[]> = {
   '/payments': ['paiement', 'règlement', 'trésorerie'],
   '/reports': ['rapport', 'statistique', 'analytics'],
   '/reports/sales-journal': ['journal de ventes', 'journal ventes', 'lignes facture', 'articles vendus'],
+  '/reports/purchases-journal': ['journal achats', 'journal d achats', 'articles achetés', 'lignes facture fournisseur', 'bons de réception'],
   '/pos': ['caisse', 'point de vente', 'POS'],
   '/ai-assistant': ['assistant', 'IA', 'chat', 'intelligence'],
   '/withholding-tax/tej-export': ['TEJ', 'export fiscal', 'retenue'],
@@ -1022,6 +1031,7 @@ const ROUTE_SEARCH_GROUP: Record<string, NavSearchGroup> = {
   '/reports': 'report',
   '/reports/sales': 'report',
   '/reports/sales-journal': 'report',
+  '/reports/purchases-journal': 'report',
   '/reports/purchases': 'report',
   '/reports/fiches': 'report',
   '/reports/stock': 'report',

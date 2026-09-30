@@ -151,6 +151,80 @@ public sealed record SalesJournalPdfContext(
     IReadOnlyList<SalesJournalAggregatedRowDto> AggregatedRows,
     SalesJournalTotalsDto Totals);
 
+/// <summary>One line in the commercial purchases journal (detail mode).</summary>
+public sealed record PurchasesJournalDetailRowDto
+{
+    public DateTime EntryDate { get; init; }
+    public Guid DocumentId { get; init; }
+    public string DocumentNumber { get; init; } = null!;
+    public string DocumentKind { get; init; } = null!;
+    public Guid SupplierId { get; init; }
+    public string SupplierName { get; init; } = null!;
+    public Guid ProductId { get; init; }
+    public string ProductCode { get; init; } = null!;
+    public string ProductName { get; init; } = null!;
+    public decimal Quantity { get; init; }
+    public decimal UnitPrice { get; init; }
+    public decimal LineSubTotal { get; init; }
+    public decimal LineTotal { get; init; }
+    public decimal VatAmount { get; init; }
+    public string Currency { get; init; } = null!;
+}
+
+/// <summary>Aggregated purchases journal row (day / month / year).</summary>
+public sealed record PurchasesJournalAggregatedRowDto
+{
+    public string PeriodKey { get; init; } = null!;
+    public Guid SupplierId { get; init; }
+    public string SupplierName { get; init; } = null!;
+    public Guid ProductId { get; init; }
+    public string ProductCode { get; init; } = null!;
+    public string ProductName { get; init; } = null!;
+    public decimal Quantity { get; init; }
+    public decimal LineSubTotal { get; init; }
+    public decimal LineTotal { get; init; }
+    public decimal VatAmount { get; init; }
+    public string Currency { get; init; } = null!;
+}
+
+public sealed record PurchasesJournalTotalsDto
+{
+    public decimal Quantity { get; init; }
+    public decimal LineSubTotal { get; init; }
+    public decimal LineTotal { get; init; }
+    public decimal VatAmount { get; init; }
+    public string Currency { get; init; } = null!;
+}
+
+public sealed record PurchasesJournalReportResultDto
+{
+    public required string Source { get; init; }
+    public required string ViewMode { get; init; }
+    public DateTime From { get; init; }
+    public DateTime To { get; init; }
+    public Guid? SupplierId { get; init; }
+    public int TotalRows { get; init; }
+    public int Page { get; init; }
+    public int PageSize { get; init; }
+    public PurchasesJournalTotalsDto Totals { get; init; } = null!;
+    public IReadOnlyList<PurchasesJournalDetailRowDto> DetailRows { get; init; } = Array.Empty<PurchasesJournalDetailRowDto>();
+    public IReadOnlyList<PurchasesJournalAggregatedRowDto> AggregatedRows { get; init; } = Array.Empty<PurchasesJournalAggregatedRowDto>();
+}
+
+public sealed record PurchasesJournalPdfContext(
+    string Title,
+    string ViewModeLabel,
+    string SourceLabel,
+    DateTime From,
+    DateTime To,
+    string? SupplierName,
+    string? CompanyName,
+    string? MatriculeFiscal,
+    SalesJournalViewMode ViewMode,
+    IReadOnlyList<PurchasesJournalDetailRowDto> DetailRows,
+    IReadOnlyList<PurchasesJournalAggregatedRowDto> AggregatedRows,
+    PurchasesJournalTotalsDto Totals);
+
 /// <summary>
 /// One row in the sales-by-line report (details ventes par ligne produit).
 /// </summary>

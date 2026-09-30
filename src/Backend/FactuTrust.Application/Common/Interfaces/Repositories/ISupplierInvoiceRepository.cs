@@ -1,4 +1,5 @@
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Features.Reports;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
@@ -138,5 +139,39 @@ public interface ISupplierInvoiceRepository : IRepository<SupplierInvoice>
     Task<IReadOnlyList<SupplierWithholdingReportRowDto>> GetSupplierWithholdingReportRowsAsync(
         DateTime fromDate,
         DateTime toDate,
+        CancellationToken cancellationToken = default);
+
+    Task<(IReadOnlyList<PurchasesJournalDetailRowDto> Rows, int TotalCount)> GetPurchasesJournalDetailPagedAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? supplierId,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<PurchasesJournalDetailRowDto>> GetPurchasesJournalDetailAllAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? supplierId,
+        int maxRows,
+        CancellationToken cancellationToken = default);
+
+    Task<PurchasesJournalTotalsDto> GetPurchasesJournalDetailTotalsAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? supplierId,
+        CancellationToken cancellationToken = default);
+
+    Task<int> CountPurchasesJournalDetailAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? supplierId,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<PurchasesJournalAggregatedRowDto>> GetPurchasesJournalAggregatedAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? supplierId,
+        SalesJournalViewMode groupBy,
         CancellationToken cancellationToken = default);
 }

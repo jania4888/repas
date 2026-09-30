@@ -199,7 +199,7 @@ describe('firm-navigation.registry — delegated firm sales/purchases', () => {
 
   it('allowlists contain exactly four ventes and achats routes', () => {
     expect(DELEGATED_FIRM_VENTES_ALLOWED_ROUTES.size).toBe(4);
-    expect(DELEGATED_FIRM_ACHATS_ALLOWED_ROUTES.size).toBe(5);
+    expect(DELEGATED_FIRM_ACHATS_ALLOWED_ROUTES.size).toBe(6);
   });
 
   it('filterDelegatedFirmSectionChildren keeps only allowed ventes items', () => {

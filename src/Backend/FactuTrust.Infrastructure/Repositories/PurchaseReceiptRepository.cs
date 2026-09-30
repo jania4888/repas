@@ -1,6 +1,7 @@
 using System.Reflection;
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Features.Reports;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
 using FactuTrust.Infrastructure.MultiTenancy;
@@ -398,5 +399,64 @@ public sealed class PurchaseReceiptRepository : IPurchaseReceiptRepository
             typeof(Product).GetProperty(nameof(Product.Category), BindingFlags.Public | BindingFlags.Instance)
                 ?.SetValue(product, trackedCategory);
         }
+    }
+
+    public async Task<(IReadOnlyList<PurchasesJournalDetailRowDto> Rows, int TotalCount)> GetPurchasesJournalDetailPagedAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? supplierId,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        await using var context = _contextFactory.CreateContext();
+        return await PurchasesJournalPurchaseReceiptQueries.GetDetailPagedAsync(
+            context, fromDate, toDate, supplierId, page, pageSize, cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<PurchasesJournalDetailRowDto>> GetPurchasesJournalDetailAllAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? supplierId,
+        int maxRows,
+        CancellationToken cancellationToken = default)
+    {
+        await using var context = _contextFactory.CreateContext();
+        return await PurchasesJournalPurchaseReceiptQueries.GetDetailAllAsync(
+            context, fromDate, toDate, supplierId, maxRows, cancellationToken);
+    }
+
+    public async Task<PurchasesJournalTotalsDto> GetPurchasesJournalDetailTotalsAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? supplierId,
+        CancellationToken cancellationToken = default)
+    {
+        await using var context = _contextFactory.CreateContext();
+        return await PurchasesJournalPurchaseReceiptQueries.GetDetailTotalsAsync(
+            context, fromDate, toDate, supplierId, cancellationToken);
+    }
+
+    public async Task<int> CountPurchasesJournalDetailAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? supplierId,
+        CancellationToken cancellationToken = default)
+    {
+        await using var context = _contextFactory.CreateContext();
+        return await PurchasesJournalPurchaseReceiptQueries.CountDetailAsync(
+            context, fromDate, toDate, supplierId, cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<PurchasesJournalAggregatedRowDto>> GetPurchasesJournalAggregatedAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? supplierId,
+        SalesJournalViewMode groupBy,
+        CancellationToken cancellationToken = default)
+    {
+        await using var context = _contextFactory.CreateContext();
+        return await PurchasesJournalPurchaseReceiptQueries.GetAggregatedAsync(
+            context, fromDate, toDate, supplierId, groupBy, cancellationToken);
     }
 }

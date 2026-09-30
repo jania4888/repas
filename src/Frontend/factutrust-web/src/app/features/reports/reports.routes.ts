@@ -97,6 +97,11 @@ export const REPORTS_ROUTES: Routes = [
     title: $localize`:@@reports.routes.title.Journal_de_ventes_Insta:Journal de ventes - InstaFact`
   },
   {
+    path: 'purchases-journal',
+    loadComponent: () => import('./purchases-journal/purchases-journal-reports.component').then(m => m.PurchasesJournalReportsComponent),
+    title: $localize`:@@reports.routes.title.Journal_d_achats_Insta:Journal d'achats - InstaFact`
+  },
+  {
     path: 'profit',
     loadComponent: () => import('./profit/profit-reports.component').then(m => m.ProfitReportsComponent),
     title: $localize`:@@reports.routes.title.Rapport_B_n_fices_Inst:Rapport Bénéfices - InstaFact`

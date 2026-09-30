@@ -144,6 +144,21 @@ Les factures liées apparaissent sur les fiches BC et BR. L'annulation d'une fac
 
 ---
 
+## Journal d'achats
+
+Le **journal d'achats** liste les articles achetés ligne par ligne, avec filtres par période et par fournisseur.
+
+1. Dans le menu, cliquez sur **Achats** puis **Journal d'achats**.
+2. Choisissez la **source** :
+   - **Factures fournisseur** (vision comptable, date de facture) ;
+   - **Bons de réception** (vision logistique, date de réception).
+3. Utilisez les onglets **Détail**, **Par jour**, **Par mois** ou **Par année**.
+4. **Imprimer (PDF)** ou **Exporter** (CSV) selon vos besoins.
+
+> Les deux sources ne se cumulent pas : une même opération peut apparaître à la réception puis à la facturation.
+
+---
+
 ## Factures fournisseurs
 
 Les **factures fournisseurs** sont les factures que vos fournisseurs vous envoient pour les achats que vous avez effectués.
