@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, from, of, throwError } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { environment } from '@environments/environment';
 import { ApiResponse } from './auth.service';
 
@@ -166,6 +167,64 @@ export class ReportsApiService {
   getProductsNeverSold(fromDate: string, toDate: string): Observable<ApiResponse<ProductNeverSoldReportRow[]>> {
     const params = new HttpParams().set('from', fromDate).set('to', toDate);
     return this.http.get<ApiResponse<ProductNeverSoldReportRow[]>>(`${this.API_URL}/products-never-sold`, { params });
+  }
+
+  getSalesJournal(params: {
+    from: string;
+    to: string;
+    viewMode: SalesJournalViewMode;
+    clientId?: string | null;
+    page?: number;
+    pageSize?: number;
+  }): Observable<ApiResponse<SalesJournalReportResult>> {
+    let httpParams = new HttpParams()
+      .set('from', params.from)
+      .set('to', params.to)
+      .set('viewMode', params.viewMode);
+    if (params.clientId) httpParams = httpParams.set('clientId', params.clientId);
+    if (params.page != null) httpParams = httpParams.set('page', params.page.toString());
+    if (params.pageSize != null) httpParams = httpParams.set('pageSize', params.pageSize.toString());
+    return this.http.get<ApiResponse<SalesJournalReportResult>>(`${this.API_URL}/sales-journal`, { params: httpParams });
+  }
+
+  downloadSalesJournalPdf(params: {
+    from: string;
+    to: string;
+    viewMode: SalesJournalViewMode;
+    clientId?: string | null;
+  }): Observable<Blob> {
+    let httpParams = new HttpParams()
+      .set('from', params.from)
+      .set('to', params.to)
+      .set('viewMode', params.viewMode);
+    if (params.clientId) httpParams = httpParams.set('clientId', params.clientId);
+    return this.http.get(`${this.API_URL}/sales-journal/pdf`, {
+      params: httpParams,
+      responseType: 'blob',
+      observe: 'response'
+    }).pipe(
+      switchMap(response => {
+        const contentType = response.headers.get('content-type') || '';
+        const body = response.body;
+        if (contentType.includes('application/json') && body) {
+          return from(body.text()).pipe(
+            switchMap(text => {
+              try {
+                const parsed = JSON.parse(text) as { message?: string; errors?: string[] };
+                const msg = parsed.errors?.[0] ?? parsed.message ?? 'Impossible de générer le PDF';
+                return throwError(() => new Error(msg));
+              } catch {
+                return throwError(() => new Error('Impossible de générer le PDF'));
+              }
+            })
+          );
+        }
+        if (!body || body.size === 0) {
+          return throwError(() => new Error('Impossible de générer le PDF'));
+        }
+        return of(body);
+      })
+    );
   }
 }
 
@@ -348,4 +407,60 @@ export interface BasketMetricsReportDto {
   averageBasket: number;
   averageLinesPerInvoice: number;
   currency: string;
+}
+
+export type SalesJournalViewMode = 'Detail' | 'Day' | 'Month' | 'Year';
+
+export interface SalesJournalDetailRow {
+  issueDate: string;
+  invoiceId: string;
+  invoiceNumber: string;
+  documentType: string;
+  clientId: string;
+  clientName: string;
+  productId?: string | null;
+  productCode: string;
+  productName: string;
+  categoryName?: string | null;
+  quantity: number;
+  unitPrice: number;
+  lineSubTotal: number;
+  lineTotal: number;
+  vatAmount: number;
+  currency: string;
+}
+
+export interface SalesJournalAggregatedRow {
+  periodKey: string;
+  clientId: string;
+  clientName: string;
+  productId?: string | null;
+  productCode: string;
+  productName: string;
+  quantity: number;
+  lineSubTotal: number;
+  lineTotal: number;
+  vatAmount: number;
+  currency: string;
+}
+
+export interface SalesJournalTotals {
+  quantity: number;
+  lineSubTotal: number;
+  lineTotal: number;
+  vatAmount: number;
+  currency: string;
+}
+
+export interface SalesJournalReportResult {
+  viewMode: string;
+  from: string;
+  to: string;
+  clientId?: string | null;
+  totalRows: number;
+  page: number;
+  pageSize: number;
+  totals: SalesJournalTotals;
+  detailRows: SalesJournalDetailRow[];
+  aggregatedRows: SalesJournalAggregatedRow[];
 }

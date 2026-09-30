@@ -1,3 +1,5 @@
+using FactuTrust.Application.Features.Reports;
+
 namespace FactuTrust.Application.DTOs;
 
 /// <summary>
@@ -75,6 +77,79 @@ public sealed record SupplierTransactionReportRowDto
     public Guid? SupplierInvoiceId { get; init; }
     public Guid? PaymentId { get; init; }
 }
+
+/// <summary>One line in the commercial sales journal (detail mode).</summary>
+public sealed record SalesJournalDetailRowDto
+{
+    public DateTime IssueDate { get; init; }
+    public Guid InvoiceId { get; init; }
+    public string InvoiceNumber { get; init; } = null!;
+    public string DocumentType { get; init; } = null!;
+    public Guid ClientId { get; init; }
+    public string ClientName { get; init; } = null!;
+    public Guid? ProductId { get; init; }
+    public string ProductCode { get; init; } = null!;
+    public string ProductName { get; init; } = null!;
+    public string? CategoryName { get; init; }
+    public decimal Quantity { get; init; }
+    public decimal UnitPrice { get; init; }
+    public decimal LineSubTotal { get; init; }
+    public decimal LineTotal { get; init; }
+    public decimal VatAmount { get; init; }
+    public string Currency { get; init; } = null!;
+}
+
+/// <summary>Aggregated sales journal row (day / month / year).</summary>
+public sealed record SalesJournalAggregatedRowDto
+{
+    public string PeriodKey { get; init; } = null!;
+    public Guid ClientId { get; init; }
+    public string ClientName { get; init; } = null!;
+    public Guid? ProductId { get; init; }
+    public string ProductCode { get; init; } = null!;
+    public string ProductName { get; init; } = null!;
+    public decimal Quantity { get; init; }
+    public decimal LineSubTotal { get; init; }
+    public decimal LineTotal { get; init; }
+    public decimal VatAmount { get; init; }
+    public string Currency { get; init; } = null!;
+}
+
+public sealed record SalesJournalTotalsDto
+{
+    public decimal Quantity { get; init; }
+    public decimal LineSubTotal { get; init; }
+    public decimal LineTotal { get; init; }
+    public decimal VatAmount { get; init; }
+    public string Currency { get; init; } = null!;
+}
+
+public sealed record SalesJournalReportResultDto
+{
+    public required string ViewMode { get; init; }
+    public DateTime From { get; init; }
+    public DateTime To { get; init; }
+    public Guid? ClientId { get; init; }
+    public int TotalRows { get; init; }
+    public int Page { get; init; }
+    public int PageSize { get; init; }
+    public SalesJournalTotalsDto Totals { get; init; } = null!;
+    public IReadOnlyList<SalesJournalDetailRowDto> DetailRows { get; init; } = Array.Empty<SalesJournalDetailRowDto>();
+    public IReadOnlyList<SalesJournalAggregatedRowDto> AggregatedRows { get; init; } = Array.Empty<SalesJournalAggregatedRowDto>();
+}
+
+public sealed record SalesJournalPdfContext(
+    string Title,
+    string ViewModeLabel,
+    DateTime From,
+    DateTime To,
+    string? ClientName,
+    string? CompanyName,
+    string? MatriculeFiscal,
+    SalesJournalViewMode ViewMode,
+    IReadOnlyList<SalesJournalDetailRowDto> DetailRows,
+    IReadOnlyList<SalesJournalAggregatedRowDto> AggregatedRows,
+    SalesJournalTotalsDto Totals);
 
 /// <summary>
 /// One row in the sales-by-line report (details ventes par ligne produit).

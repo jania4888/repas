@@ -148,6 +148,10 @@ public interface IPdfService
         string? clientName = null,
         CancellationToken cancellationToken = default);
 
+    Task<byte[]> GenerateSalesJournalReportPdfAsync(
+        SalesJournalPdfContext context,
+        CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Generates a PDF for a quote (devis).
     /// </summary>

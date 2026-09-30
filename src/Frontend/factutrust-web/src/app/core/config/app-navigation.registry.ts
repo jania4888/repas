@@ -203,6 +203,14 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['invoices:read']
       },
       {
+        id: 'sales--sales-journal',
+        label: $localize`:@@core.app-navigation.registry.ts.journal.de.ventes.a1b2c3d4:Journal de ventes`,
+        route: '/reports/sales-journal',
+        icon: 'fa-solid fa-book',
+        modules: [M.Reports, M.Sales],
+        permissionsAll: ['reports:view', 'invoices:read']
+      },
+      {
         id: 'sales--recurring-contracts',
         label: $localize`:@@core.app-navigation.registry.ts.contrats.recurrents.e773e54a:Contrats récurrents`,
         route: '/recurring-contracts',
@@ -995,6 +1003,7 @@ const ROUTE_KEYWORDS: Record<string, string[]> = {
   '/suppliers': ['fournisseur', 'vendor'],
   '/payments': ['paiement', 'règlement', 'trésorerie'],
   '/reports': ['rapport', 'statistique', 'analytics'],
+  '/reports/sales-journal': ['journal de ventes', 'journal ventes', 'lignes facture', 'articles vendus'],
   '/pos': ['caisse', 'point de vente', 'POS'],
   '/ai-assistant': ['assistant', 'IA', 'chat', 'intelligence'],
   '/withholding-tax/tej-export': ['TEJ', 'export fiscal', 'retenue'],
@@ -1012,6 +1021,7 @@ const ROUTE_KEYWORDS: Record<string, string[]> = {
 const ROUTE_SEARCH_GROUP: Record<string, NavSearchGroup> = {
   '/reports': 'report',
   '/reports/sales': 'report',
+  '/reports/sales-journal': 'report',
   '/reports/purchases': 'report',
   '/reports/fiches': 'report',
   '/reports/stock': 'report',

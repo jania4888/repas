@@ -1,5 +1,6 @@
 using FactuTrust.API.Authorization;
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Features.Reports;
 using FactuTrust.Application.Features.Reports.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -416,6 +417,59 @@ public class ReportsController : ControllerBase
         if (result.IsFailure)
             return BadRequest(ApiResponse<object>.Fail(result.Error.Description));
         return Ok(ApiResponse<IReadOnlyList<ProductNeverSoldReportRowDto>>.Ok(result.Value));
+    }
+
+    [HttpGet("sales-journal")]
+    [Authorize(Policy = PermissionPolicies.ReportsView)]
+    [ProducesResponseType(typeof(ApiResponse<SalesJournalReportResultDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetSalesJournal(
+        [FromQuery] DateTime? from,
+        [FromQuery] DateTime? to,
+        [FromQuery] string? viewMode,
+        [FromQuery] Guid? clientId,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = SalesJournalReportConstants.DefaultPageSize,
+        CancellationToken cancellationToken = default)
+    {
+        if (!from.HasValue || !to.HasValue)
+            return BadRequest(ApiResponse<object>.Fail("Les paramètres from et to sont requis (format: yyyy-MM-dd)."));
+        if (from.Value > to.Value)
+            return BadRequest(ApiResponse<object>.Fail("La date de début ne peut pas être après la date de fin."));
+
+        var mode = SalesJournalReportAssembler.ParseViewMode(viewMode);
+        var result = await _mediator.Send(
+            new GetSalesJournalReportQuery(from.Value, to.Value, mode, clientId, page, pageSize),
+            cancellationToken);
+        if (result.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(result.Error.Description));
+        return Ok(ApiResponse<SalesJournalReportResultDto>.Ok(result.Value));
+    }
+
+    [HttpGet("sales-journal/pdf")]
+    [Authorize(Policy = PermissionPolicies.ReportsView)]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ExportSalesJournalPdf(
+        [FromQuery] DateTime? from,
+        [FromQuery] DateTime? to,
+        [FromQuery] string? viewMode,
+        [FromQuery] Guid? clientId,
+        CancellationToken cancellationToken = default)
+    {
+        if (!from.HasValue || !to.HasValue)
+            return BadRequest(ApiResponse<object>.Fail("Les paramètres from et to sont requis (format: yyyy-MM-dd)."));
+        if (from.Value > to.Value)
+            return BadRequest(ApiResponse<object>.Fail("La date de début ne peut pas être après la date de fin."));
+
+        var mode = SalesJournalReportAssembler.ParseViewMode(viewMode);
+        var result = await _mediator.Send(
+            new ExportSalesJournalPdfQuery(from.Value, to.Value, mode, clientId),
+            cancellationToken);
+        if (result.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(result.Error.Description, result.Error.Code));
+
+        return File(result.Value.Content, result.Value.ContentType, result.Value.FileName);
     }
 }
 

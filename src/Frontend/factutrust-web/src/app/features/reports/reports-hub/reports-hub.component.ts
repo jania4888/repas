@@ -233,6 +233,7 @@ export class ReportsHubComponent {
       icon: 'pi-chart-line',
       modules: [AppModule.Reports, AppModule.Sales],
       links: [
+        { label: $localize`:@@reports.reports-hub.ts.journal.de.ventes.a1b2c3d4:Journal de ventes`, route: '/reports/sales-journal' },
         { label: $localize`:@@reports.reports-hub.ts.vente.par.client.b9eed164:Vente par client`, route: '/reports/sales' },
         { label: $localize`:@@reports.reports-hub.ts.details.ventes.par.ligne.produit.2fe7a584:Détails ventes par ligne produit`, route: '/reports/sales' },
         { label: $localize`:@@reports.reports-hub.ts.transactions.clients.32259f49:Transactions clients`, route: '/reports/sales' },

@@ -17,6 +17,7 @@ export const NAV_LABELS: Readonly<Record<string, string>> = {
   'sales--invoices': $localize`:@@core.nav.sales.invoices:Factures`,
   'sales--invoices-credit-notes': $localize`:@@core.nav.sales.invoices-credit-notes:Avoir de vente`,
   'sales--invoices-unpaid': $localize`:@@core.nav.sales.invoices-unpaid:Factures impayées`,
+  'sales--sales-journal': $localize`:@@core.nav.sales.sales-journal:Journal de ventes`,
   'sales--recurring-contracts': $localize`:@@core.nav.sales.recurring-contracts:Contrats récurrents`,
   'sales--reports-client-balances': $localize`:@@core.nav.sales.reports-client-balances:Solde par client`,
   'sales--reports-analytics': $localize`:@@core.nav.sales.reports-analytics:États analytiques`,
