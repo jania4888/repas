@@ -1,5 +1,6 @@
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Features.Reports;
 using FactuTrust.Application.Features.Reports.Queries;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
@@ -464,6 +465,321 @@ public sealed class InvoiceRepository : IInvoiceRepository
             })
             .OrderByDescending(r => r.Revenue)
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<(IReadOnlyList<SalesJournalDetailRowDto> Rows, int TotalCount)> GetSalesJournalDetailPagedAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? clientId,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        await using var context = _contextFactory.CreateContext();
+        var (from, toExclusive) = SalesJournalDateRange(fromDate, toDate);
+        var baseQuery = SalesJournalRealizedLines(context.InvoiceLines.AsNoTracking(), from, toExclusive, clientId);
+
+        var total = await baseQuery.CountAsync(cancellationToken);
+        var skip = Math.Max(0, (page - 1) * pageSize);
+
+        var rows = await baseQuery
+            .OrderBy(l => l.Invoice.IssueDate)
+            .ThenBy(l => l.LineNumber)
+            .Skip(skip)
+            .Take(pageSize)
+            .Select(l => new SalesJournalDetailRowDto
+            {
+                IssueDate = l.Invoice.IssueDate,
+                InvoiceId = l.InvoiceId,
+                InvoiceNumber = EF.Property<string>(l.Invoice.Number, "Value"),
+                DocumentType = l.Invoice.Type == InvoiceType.CreditNote ? "AVO" : "FAC",
+                ClientId = l.Invoice.ClientId,
+                ClientName = l.Invoice.Client != null ? l.Invoice.Client.Name : string.Empty,
+                ProductId = l.ProductId,
+                ProductCode = l.ProductCode,
+                ProductName = l.ProductName,
+                CategoryName = l.Product != null && l.Product.Category != null ? l.Product.Category.Name : null,
+                Quantity = l.Invoice.Type == InvoiceType.CreditNote ? -l.Quantity : l.Quantity,
+                UnitPrice = l.UnitPrice.Amount,
+                LineSubTotal = l.Invoice.Type == InvoiceType.CreditNote ? -l.SubTotal.Amount : l.SubTotal.Amount,
+                LineTotal = l.Invoice.Type == InvoiceType.CreditNote ? -l.Total.Amount : l.Total.Amount,
+                VatAmount = l.Invoice.Type == InvoiceType.CreditNote ? -l.VatAmount.Amount : l.VatAmount.Amount,
+                Currency = l.Total.Currency
+            })
+            .ToListAsync(cancellationToken);
+
+        return (rows, total);
+    }
+
+    public async Task<IReadOnlyList<SalesJournalDetailRowDto>> GetSalesJournalDetailAllAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? clientId,
+        int maxRows,
+        CancellationToken cancellationToken = default)
+    {
+        await using var context = _contextFactory.CreateContext();
+        var (from, toExclusive) = SalesJournalDateRange(fromDate, toDate);
+        var baseQuery = SalesJournalRealizedLines(context.InvoiceLines.AsNoTracking(), from, toExclusive, clientId);
+
+        return await baseQuery
+            .OrderBy(l => l.Invoice.IssueDate)
+            .ThenBy(l => l.LineNumber)
+            .Take(maxRows + 1)
+            .Select(l => new SalesJournalDetailRowDto
+            {
+                IssueDate = l.Invoice.IssueDate,
+                InvoiceId = l.InvoiceId,
+                InvoiceNumber = EF.Property<string>(l.Invoice.Number, "Value"),
+                DocumentType = l.Invoice.Type == InvoiceType.CreditNote ? "AVO" : "FAC",
+                ClientId = l.Invoice.ClientId,
+                ClientName = l.Invoice.Client != null ? l.Invoice.Client.Name : string.Empty,
+                ProductId = l.ProductId,
+                ProductCode = l.ProductCode,
+                ProductName = l.ProductName,
+                CategoryName = l.Product != null && l.Product.Category != null ? l.Product.Category.Name : null,
+                Quantity = l.Invoice.Type == InvoiceType.CreditNote ? -l.Quantity : l.Quantity,
+                UnitPrice = l.UnitPrice.Amount,
+                LineSubTotal = l.Invoice.Type == InvoiceType.CreditNote ? -l.SubTotal.Amount : l.SubTotal.Amount,
+                LineTotal = l.Invoice.Type == InvoiceType.CreditNote ? -l.Total.Amount : l.Total.Amount,
+                VatAmount = l.Invoice.Type == InvoiceType.CreditNote ? -l.VatAmount.Amount : l.VatAmount.Amount,
+                Currency = l.Total.Currency
+            })
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<int> CountSalesJournalDetailAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? clientId,
+        CancellationToken cancellationToken = default)
+    {
+        await using var context = _contextFactory.CreateContext();
+        var (from, toExclusive) = SalesJournalDateRange(fromDate, toDate);
+        return await SalesJournalRealizedLines(context.InvoiceLines.AsNoTracking(), from, toExclusive, clientId)
+            .CountAsync(cancellationToken);
+    }
+
+    public async Task<SalesJournalTotalsDto> GetSalesJournalDetailTotalsAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? clientId,
+        CancellationToken cancellationToken = default)
+    {
+        await using var context = _contextFactory.CreateContext();
+        var (from, toExclusive) = SalesJournalDateRange(fromDate, toDate);
+        var baseQuery = SalesJournalRealizedLines(context.InvoiceLines.AsNoTracking(), from, toExclusive, clientId);
+
+        var agg = await baseQuery
+            .GroupBy(_ => 1)
+            .Select(g => new
+            {
+                Quantity = g.Sum(x => x.Invoice.Type == InvoiceType.CreditNote ? -x.Quantity : x.Quantity),
+                LineSubTotal = g.Sum(x => x.Invoice.Type == InvoiceType.CreditNote ? -x.SubTotal.Amount : x.SubTotal.Amount),
+                LineTotal = g.Sum(x => x.Invoice.Type == InvoiceType.CreditNote ? -x.Total.Amount : x.Total.Amount),
+                VatAmount = g.Sum(x => x.Invoice.Type == InvoiceType.CreditNote ? -x.VatAmount.Amount : x.VatAmount.Amount),
+                Currency = g.Select(x => x.Total.Currency).First()
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (agg is null)
+            return new SalesJournalTotalsDto { Currency = "TND" };
+
+        return new SalesJournalTotalsDto
+        {
+            Quantity = agg.Quantity,
+            LineSubTotal = agg.LineSubTotal,
+            LineTotal = agg.LineTotal,
+            VatAmount = agg.VatAmount,
+            Currency = agg.Currency
+        };
+    }
+
+    public async Task<IReadOnlyList<SalesJournalAggregatedRowDto>> GetSalesJournalAggregatedAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? clientId,
+        SalesJournalViewMode groupBy,
+        CancellationToken cancellationToken = default)
+    {
+        await using var context = _contextFactory.CreateContext();
+        var (from, toExclusive) = SalesJournalDateRange(fromDate, toDate);
+        var baseQuery = SalesJournalRealizedLines(context.InvoiceLines.AsNoTracking(), from, toExclusive, clientId);
+
+        return groupBy switch
+        {
+            SalesJournalViewMode.Day => await AggregateSalesJournalByDayAsync(baseQuery, cancellationToken),
+            SalesJournalViewMode.Month => await AggregateSalesJournalByMonthAsync(baseQuery, cancellationToken),
+            SalesJournalViewMode.Year => await AggregateSalesJournalByYearAsync(baseQuery, cancellationToken),
+            _ => await AggregateSalesJournalByDayAsync(baseQuery, cancellationToken)
+        };
+    }
+
+    private static (DateTime From, DateTime ToExclusive) SalesJournalDateRange(DateTime fromDate, DateTime toDate)
+    {
+        var from = fromDate.Date;
+        var toExclusive = toDate.Date.AddDays(1);
+        return (from, toExclusive);
+    }
+
+    private static IQueryable<InvoiceLine> SalesJournalRealizedLines(
+        IQueryable<InvoiceLine> lines,
+        DateTime from,
+        DateTime toExclusive,
+        Guid? clientId)
+    {
+        lines = lines.Where(l =>
+            l.Invoice.IssueDate >= from
+            && l.Invoice.IssueDate < toExclusive
+            && (l.Invoice.Status == InvoiceStatus.Validated || l.Invoice.Status == InvoiceStatus.Paid));
+
+        if (clientId.HasValue)
+            lines = lines.Where(l => l.Invoice.ClientId == clientId.Value);
+
+        return lines;
+    }
+
+    private static async Task<IReadOnlyList<SalesJournalAggregatedRowDto>> AggregateSalesJournalByDayAsync(
+        IQueryable<InvoiceLine> baseQuery,
+        CancellationToken cancellationToken)
+    {
+        var raw = await baseQuery
+            .GroupBy(l => new
+            {
+                Day = l.Invoice.IssueDate.Date,
+                l.Invoice.ClientId,
+                ClientName = l.Invoice.Client != null ? l.Invoice.Client.Name : string.Empty,
+                l.ProductId,
+                l.ProductCode,
+                l.ProductName
+            })
+            .Select(g => new
+            {
+                g.Key.Day,
+                g.Key.ClientId,
+                g.Key.ClientName,
+                g.Key.ProductId,
+                g.Key.ProductCode,
+                g.Key.ProductName,
+                Quantity = g.Sum(x => x.Invoice.Type == InvoiceType.CreditNote ? -x.Quantity : x.Quantity),
+                LineSubTotal = g.Sum(x => x.Invoice.Type == InvoiceType.CreditNote ? -x.SubTotal.Amount : x.SubTotal.Amount),
+                LineTotal = g.Sum(x => x.Invoice.Type == InvoiceType.CreditNote ? -x.Total.Amount : x.Total.Amount),
+                VatAmount = g.Sum(x => x.Invoice.Type == InvoiceType.CreditNote ? -x.VatAmount.Amount : x.VatAmount.Amount),
+                Currency = g.Select(x => x.Total.Currency).First()
+            })
+            .OrderBy(x => x.Day).ThenBy(x => x.ClientName).ThenBy(x => x.ProductName)
+            .ToListAsync(cancellationToken);
+
+        return raw.Select(r => new SalesJournalAggregatedRowDto
+        {
+            PeriodKey = r.Day.ToString("yyyy-MM-dd"),
+            ClientId = r.ClientId,
+            ClientName = r.ClientName,
+            ProductId = r.ProductId,
+            ProductCode = r.ProductCode,
+            ProductName = r.ProductName,
+            Quantity = r.Quantity,
+            LineSubTotal = r.LineSubTotal,
+            LineTotal = r.LineTotal,
+            VatAmount = r.VatAmount,
+            Currency = r.Currency
+        }).ToList();
+    }
+
+    private static async Task<IReadOnlyList<SalesJournalAggregatedRowDto>> AggregateSalesJournalByMonthAsync(
+        IQueryable<InvoiceLine> baseQuery,
+        CancellationToken cancellationToken)
+    {
+        var raw = await baseQuery
+            .GroupBy(l => new
+            {
+                l.Invoice.IssueDate.Year,
+                l.Invoice.IssueDate.Month,
+                l.Invoice.ClientId,
+                ClientName = l.Invoice.Client != null ? l.Invoice.Client.Name : string.Empty,
+                l.ProductId,
+                l.ProductCode,
+                l.ProductName
+            })
+            .Select(g => new
+            {
+                g.Key.Year,
+                g.Key.Month,
+                g.Key.ClientId,
+                g.Key.ClientName,
+                g.Key.ProductId,
+                g.Key.ProductCode,
+                g.Key.ProductName,
+                Quantity = g.Sum(x => x.Invoice.Type == InvoiceType.CreditNote ? -x.Quantity : x.Quantity),
+                LineSubTotal = g.Sum(x => x.Invoice.Type == InvoiceType.CreditNote ? -x.SubTotal.Amount : x.SubTotal.Amount),
+                LineTotal = g.Sum(x => x.Invoice.Type == InvoiceType.CreditNote ? -x.Total.Amount : x.Total.Amount),
+                VatAmount = g.Sum(x => x.Invoice.Type == InvoiceType.CreditNote ? -x.VatAmount.Amount : x.VatAmount.Amount),
+                Currency = g.Select(x => x.Total.Currency).First()
+            })
+            .OrderBy(x => x.Year).ThenBy(x => x.Month).ThenBy(x => x.ClientName).ThenBy(x => x.ProductName)
+            .ToListAsync(cancellationToken);
+
+        return raw.Select(r => new SalesJournalAggregatedRowDto
+        {
+            PeriodKey = $"{r.Year:D4}-{r.Month:D2}",
+            ClientId = r.ClientId,
+            ClientName = r.ClientName,
+            ProductId = r.ProductId,
+            ProductCode = r.ProductCode,
+            ProductName = r.ProductName,
+            Quantity = r.Quantity,
+            LineSubTotal = r.LineSubTotal,
+            LineTotal = r.LineTotal,
+            VatAmount = r.VatAmount,
+            Currency = r.Currency
+        }).ToList();
+    }
+
+    private static async Task<IReadOnlyList<SalesJournalAggregatedRowDto>> AggregateSalesJournalByYearAsync(
+        IQueryable<InvoiceLine> baseQuery,
+        CancellationToken cancellationToken)
+    {
+        var raw = await baseQuery
+            .GroupBy(l => new
+            {
+                l.Invoice.IssueDate.Year,
+                l.Invoice.ClientId,
+                ClientName = l.Invoice.Client != null ? l.Invoice.Client.Name : string.Empty,
+                l.ProductId,
+                l.ProductCode,
+                l.ProductName
+            })
+            .Select(g => new
+            {
+                g.Key.Year,
+                g.Key.ClientId,
+                g.Key.ClientName,
+                g.Key.ProductId,
+                g.Key.ProductCode,
+                g.Key.ProductName,
+                Quantity = g.Sum(x => x.Invoice.Type == InvoiceType.CreditNote ? -x.Quantity : x.Quantity),
+                LineSubTotal = g.Sum(x => x.Invoice.Type == InvoiceType.CreditNote ? -x.SubTotal.Amount : x.SubTotal.Amount),
+                LineTotal = g.Sum(x => x.Invoice.Type == InvoiceType.CreditNote ? -x.Total.Amount : x.Total.Amount),
+                VatAmount = g.Sum(x => x.Invoice.Type == InvoiceType.CreditNote ? -x.VatAmount.Amount : x.VatAmount.Amount),
+                Currency = g.Select(x => x.Total.Currency).First()
+            })
+            .OrderBy(x => x.Year).ThenBy(x => x.ClientName).ThenBy(x => x.ProductName)
+            .ToListAsync(cancellationToken);
+
+        return raw.Select(r => new SalesJournalAggregatedRowDto
+        {
+            PeriodKey = r.Year.ToString("D4"),
+            ClientId = r.ClientId,
+            ClientName = r.ClientName,
+            ProductId = r.ProductId,
+            ProductCode = r.ProductCode,
+            ProductName = r.ProductName,
+            Quantity = r.Quantity,
+            LineSubTotal = r.LineSubTotal,
+            LineTotal = r.LineTotal,
+            VatAmount = r.VatAmount,
+            Currency = r.Currency
+        }).ToList();
     }
 
     public async Task<IReadOnlyList<Invoice>> GetForReportAsync(

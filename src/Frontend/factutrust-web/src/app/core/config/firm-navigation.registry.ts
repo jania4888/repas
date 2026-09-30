@@ -393,6 +393,8 @@ const DELEGATED_FIRM_BLOCKED_SALES_PURCHASES_PREFIXES = [
 
   '/reports/sales-by-line',
 
+  '/reports/sales-journal',
+
   '/reports/product-sales-analytics',
 
   '/ai-assistant/ventes',

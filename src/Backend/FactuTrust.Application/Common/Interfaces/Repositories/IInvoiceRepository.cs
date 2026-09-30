@@ -1,4 +1,5 @@
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Features.Reports;
 using FactuTrust.Application.Features.Reports.Queries;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
@@ -107,6 +108,40 @@ public interface IInvoiceRepository : IRepository<Invoice>
     Task<IReadOnlyList<SalesByLineReportRowDto>> GetSalesByLineAggregatedAsync(
         DateTime fromDate,
         DateTime toDate,
+        CancellationToken cancellationToken = default);
+
+    Task<(IReadOnlyList<SalesJournalDetailRowDto> Rows, int TotalCount)> GetSalesJournalDetailPagedAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? clientId,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<SalesJournalDetailRowDto>> GetSalesJournalDetailAllAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? clientId,
+        int maxRows,
+        CancellationToken cancellationToken = default);
+
+    Task<int> CountSalesJournalDetailAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? clientId,
+        CancellationToken cancellationToken = default);
+
+    Task<SalesJournalTotalsDto> GetSalesJournalDetailTotalsAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? clientId,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<SalesJournalAggregatedRowDto>> GetSalesJournalAggregatedAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        Guid? clientId,
+        SalesJournalViewMode groupBy,
         CancellationToken cancellationToken = default);
 
     /// <summary>

@@ -84,6 +84,15 @@ describe('delegatedFirmNavGuard', () => {
     expect(result).not.toBe(true);
   });
 
+  it('blocks delegated firm user on /reports/sales-journal', async () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, delegatedUser);
+    const result = await TestBed.runInInjectionContext(() =>
+      delegatedFirmNavGuard({} as never, { url: '/reports/sales-journal' } as never)
+    );
+    expect(result).not.toBe(true);
+  });
+
   it('blocks firm-managed delegated user on /invoices', async () => {
     const auth = TestBed.inject(AuthService);
     setUser(auth, { ...delegatedUser, isFirmManaged: true });
