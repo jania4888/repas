@@ -1,19 +1,22 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { TableModule } from 'primeng/table';
+import { TableModule, TableLazyLoadEvent } from 'primeng/table';
 import { SelectModule } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { EMPTY, Subject, Subscription, finalize, switchMap } from 'rxjs';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { TableTotalsBarComponent } from '@shared/components/table-totals-bar/table-totals-bar.component';
+import { SkeletonTableComponent, SkeletonColumn } from '@shared/components/skeleton/skeleton-table.component';
 import { formatLocalDate } from '@core/utils/date.util';
-import { parseLocalDateString } from '@features/accounting/shared/accounting-date-utils';
+import { parseLocalDateString, validateDateRange } from '@features/accounting/shared/accounting-date-utils';
 import { PrintPreviewService } from '@core/services/print-preview.service';
 import { ClientService, ClientListItem } from '@core/services/client.service';
+import { ErrorHandlerService } from '@core/services/error-handler.service';
 import {
   ReportsApiService,
   SalesJournalAggregatedRow,
@@ -35,7 +38,8 @@ import {
     ToastModule,
     PageHeaderComponent,
     ButtonComponent,
-    TableTotalsBarComponent
+    TableTotalsBarComponent,
+    SkeletonTableComponent
   ],
   providers: [MessageService],
   template: `
@@ -44,11 +48,11 @@ import {
       title="Journal de ventes" i18n-title="@@reports.sales-journal.journal.de.ventes.a1b2c3d4"
       subtitle="Journal commercial des lignes de factures (FAC et AVO) — distinct du journal comptable JV." i18n-subtitle="@@reports.sales-journal.subtitle.commercial.jv.e5f6g7h8">
       <app-button variant="secondary" icon="pi-file-pdf" iconPos="left"
-        [disabled]="loading() || printingPdf()" (click)="printPdf()" i18n="@@reports.sales-journal.imprimer.pdf.i9j0k1l2">
+        [disabled]="loading() || initialLoad() || printingPdf()" (click)="printPdf()" i18n="@@reports.sales-journal.imprimer.pdf.i9j0k1l2">
         Imprimer (PDF)
       </app-button>
       <app-button variant="secondary" icon="pi-download" iconPos="left"
-        [disabled]="loading() || !hasData()" (click)="exportCsv()" i18n="@@reports.sales-journal.exporter.csv.m3n4o5p6">
+        [disabled]="loading() || initialLoad() || !hasData()" (click)="exportCsv()" i18n="@@reports.sales-journal.exporter.csv.m3n4o5p6">
         Exporter
       </app-button>
     </app-page-header>
@@ -75,14 +79,21 @@ import {
       </p-tablist>
       <p-tabpanels>
         <p-tabpanel [value]="viewModeTab()">
-          <app-table-totals-bar [metrics]="summaryMetrics()" [loading]="loading()"></app-table-totals-bar>
-          @if (loading()) {
-            <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i></div>
+          <app-table-totals-bar [metrics]="summaryMetrics()" [loading]="loading() || initialLoad()"></app-table-totals-bar>
+          @if (initialLoad()) {
+            <app-skeleton-table [rows]="5" [columns]="skeletonColumns"></app-skeleton-table>
+          } @else if (loadError()) {
+            <div class="error-placeholder" role="alert">
+              <p>{{ loadError() }}</p>
+              <app-button variant="secondary" icon="pi-refresh" iconPos="left" (click)="reload()"
+                i18n="@@reports.sales-journal.reessayer.a1b2c3d4">Réessayer</app-button>
+            </div>
           } @else if (!hasData()) {
             <div class="empty-placeholder" i18n="@@reports.sales-journal.aucune.ligne.0d1e2f3a">Aucune ligne de vente sur cette période.</div>
           } @else if (isDetailMode()) {
             <p-table [value]="detailRows()" [paginator]="true" [rows]="pageSize" [totalRecords]="totalRows()"
-              [lazy]="true" (onLazyLoad)="onPage($event)" styleClass="p-datatable-sm">
+              [lazy]="true" [lazyLoadOnInit]="false" [loading]="loading()"
+              (onLazyLoad)="onPage($event)" styleClass="p-datatable-sm">
               <ng-template pTemplate="header">
                 <tr>
                   <th i18n="@@reports.sales-journal.date.4e5f6071">Date</th>
@@ -116,7 +127,8 @@ import {
             </p-table>
           } @else {
             <p-table [value]="aggregatedRows()" [paginator]="true" [rows]="pageSize" [totalRecords]="totalRows()"
-              [lazy]="true" (onLazyLoad)="onPage($event)" styleClass="p-datatable-sm">
+              [lazy]="true" [lazyLoadOnInit]="false" [loading]="loading()"
+              (onLazyLoad)="onPage($event)" styleClass="p-datatable-sm">
               <ng-template pTemplate="header">
                 <tr>
                   <th i18n="@@reports.sales-journal.periode.0e1f2a3b">Période</th>
@@ -157,18 +169,28 @@ import {
     .filter-input { padding: var(--spacing-2); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); }
     .client-select { min-width: 220px; }
     .text-right { text-align: right; }
-    .loading-placeholder, .empty-placeholder { padding: var(--spacing-8); text-align: center; color: var(--color-text-secondary); }
+    .empty-placeholder, .error-placeholder { padding: var(--spacing-8); text-align: center; color: var(--color-text-secondary); }
+    .error-placeholder p { margin-bottom: var(--spacing-4); color: var(--color-text-primary); }
     .back-link-wrap { margin-top: var(--spacing-6); }
     .back-link { color: var(--color-primary-600); }
   `]
 })
-export class SalesJournalReportsComponent implements OnInit {
+export class SalesJournalReportsComponent implements OnInit, OnDestroy {
   private readonly reportsApi = inject(ReportsApiService);
   private readonly clientService = inject(ClientService);
   private readonly printPreview = inject(PrintPreviewService);
   private readonly toast = inject(MessageService);
+  private readonly errorHandler = inject(ErrorHandlerService);
+
+  private readonly reloadTrigger$ = new Subject<{ resetPage: boolean }>();
+  private subscriptions = new Subscription();
+  /** Évite le double chargement (ngOnInit + premier onLazyLoad PrimeNG). */
+  private initialLoadDone = false;
+  private isFirstLazyLoad = true;
 
   loading = signal(false);
+  initialLoad = signal(true);
+  loadError = signal<string | null>(null);
   printingPdf = signal(false);
   result = signal<SalesJournalReportResult | null>(null);
   clientOptions = signal<ClientListItem[]>([]);
@@ -179,6 +201,20 @@ export class SalesJournalReportsComponent implements OnInit {
   viewModeTab = signal(0);
   page = 1;
   pageSize = 50;
+
+  skeletonColumns: SkeletonColumn[] = [
+    { width: '90px' },
+    { width: '100px' },
+    { width: '60px' },
+    { width: '140px' },
+    { width: '80px' },
+    { width: '160px' },
+    { width: '70px' },
+    { width: '70px' },
+    { width: '80px' },
+    { width: '80px' },
+    { width: '100px' }
+  ];
 
   detailRows = () => this.result()?.detailRows ?? [];
   aggregatedRows = () => this.result()?.aggregatedRows ?? [];
@@ -199,21 +235,108 @@ export class SalesJournalReportsComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.clientService.getClients({ page: 1, pageSize: 500 }).subscribe({
-      next: res => this.clientOptions.set(res.success && res.data ? res.data.items : [])
-    });
+    this.subscriptions.add(
+      this.clientService.getClients({ page: 1, pageSize: 500 }).subscribe({
+        next: res => this.clientOptions.set(res.success && res.data ? res.data.items : [])
+      })
+    );
+
+    this.subscriptions.add(
+      this.reloadTrigger$.pipe(
+        switchMap(({ resetPage }) => {
+          if (resetPage) this.page = 1;
+          const from = parseLocalDateString(this.fromStr);
+          const to = parseLocalDateString(this.toStr);
+          const range = validateDateRange(from, to);
+          if (!range.valid) {
+            this.loadError.set(range.message ?? $localize`:@@reports.sales-journal.dates.invalides.b2c3d4e5:Dates invalides.`);
+            this.result.set(null);
+            this.loading.set(false);
+            this.initialLoad.set(false);
+            this.initialLoadDone = true;
+            return EMPTY;
+          }
+
+          this.loadError.set(null);
+          this.loading.set(true);
+          return this.reportsApi.getSalesJournal({
+            from: this.fromStr,
+            to: this.toStr,
+            viewMode: this.viewMode(),
+            clientId: this.selectedClientId,
+            page: this.page,
+            pageSize: this.pageSize
+          }).pipe(
+            finalize(() => {
+              this.loading.set(false);
+              this.initialLoad.set(false);
+              this.initialLoadDone = true;
+            })
+          );
+        })
+      ).subscribe({
+        next: res => {
+          if (res.success && res.data) {
+            this.loadError.set(null);
+            this.result.set(res.data);
+          } else {
+            const msg =
+              res.errors?.join(', ') ??
+              $localize`:@@reports.sales-journal.chargement.echoue.c6d7e8f9:Impossible de charger le journal de ventes.`;
+            this.loadError.set(msg);
+            this.result.set(null);
+            this.toast.add({
+              severity: 'error',
+              summary: $localize`:@@reports.sales-journal.erreur.chargement.d0e1f2a3:Erreur`,
+              detail: msg
+            });
+          }
+        },
+        error: err => {
+          const msg =
+            this.errorHandler.extractErrorMessage(err) ??
+            $localize`:@@reports.sales-journal.chargement.echoue.c6d7e8f9:Impossible de charger le journal de ventes.`;
+          this.loadError.set(msg);
+          this.result.set(null);
+        }
+      })
+    );
+
     this.reload();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+    this.reloadTrigger$.complete();
   }
 
   onViewModeChange(tab: string | number): void {
-    this.viewModeTab.set(typeof tab === 'number' ? tab : Number(tab));
+    const n = typeof tab === 'number' ? tab : Number(tab);
+    if (Number.isNaN(n)) return;
+    this.viewModeTab.set(n);
     this.page = 1;
+    this.isFirstLazyLoad = true;
     this.reload();
   }
 
-  onPage(event: { first?: number }): void {
-    this.page = Math.floor((event.first ?? 0) / this.pageSize) + 1;
+  onPage(event: TableLazyLoadEvent): void {
+    const rows = event.rows ?? this.pageSize;
+    const first = event.first ?? 0;
+    const nextPage = rows ? Math.floor(first / rows) + 1 : 1;
+
+    if (nextPage === this.page && rows === this.pageSize) {
+      return;
+    }
+
+    if (this.isFirstLazyLoad && first === 0 && this.initialLoadDone) {
+      this.isFirstLazyLoad = false;
+      return;
+    }
+
+    this.page = nextPage;
+    this.pageSize = rows;
     this.reload(false);
+    this.isFirstLazyLoad = false;
   }
 
   private viewMode(): SalesJournalViewMode {
@@ -222,29 +345,7 @@ export class SalesJournalReportsComponent implements OnInit {
   }
 
   reload(resetPage = true): void {
-    if (resetPage) this.page = 1;
-    const from = parseLocalDateString(this.fromStr);
-    const to = parseLocalDateString(this.toStr);
-    if (!from || !to || from > to) return;
-
-    this.loading.set(true);
-    this.reportsApi.getSalesJournal({
-      from: this.fromStr,
-      to: this.toStr,
-      viewMode: this.viewMode(),
-      clientId: this.selectedClientId,
-      page: this.page,
-      pageSize: this.pageSize
-    }).subscribe({
-      next: res => {
-        this.loading.set(false);
-        this.result.set(res.success && res.data ? res.data : null);
-      },
-      error: () => {
-        this.loading.set(false);
-        this.result.set(null);
-      }
-    });
+    this.reloadTrigger$.next({ resetPage });
   }
 
   printPdf(): void {
@@ -274,6 +375,14 @@ export class SalesJournalReportsComponent implements OnInit {
   exportCsv(): void {
     if (!this.hasData()) return;
     this.fetchAllRowsForExport().then(rows => {
+      if (rows === null) {
+        this.toast.add({
+          severity: 'error',
+          summary: $localize`:@@reports.sales-journal.erreur.export.e4f5a6b7:Erreur`,
+          detail: $localize`:@@reports.sales-journal.export.interrompu.c8d9e0f1:L'export CSV n'a pas pu être complété. Réessayez ou réduisez la période.`
+        });
+        return;
+      }
       const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
       let lines: string[] = [];
       if (this.isDetailMode()) {
@@ -304,7 +413,7 @@ export class SalesJournalReportsComponent implements OnInit {
     });
   }
 
-  private async fetchAllRowsForExport(): Promise<SalesJournalDetailRow[] | SalesJournalAggregatedRow[]> {
+  private async fetchAllRowsForExport(): Promise<SalesJournalDetailRow[] | SalesJournalAggregatedRow[] | null> {
     const pageSize = 200;
     const total = this.totalRows();
     const pages = Math.max(1, Math.ceil(total / pageSize));
@@ -323,7 +432,7 @@ export class SalesJournalReportsComponent implements OnInit {
           error: () => resolve(null)
         });
       });
-      if (!res) break;
+      if (!res) return null;
       if (this.isDetailMode()) all.push(...(res.detailRows ?? []));
       else all.push(...(res.aggregatedRows ?? []));
     }
