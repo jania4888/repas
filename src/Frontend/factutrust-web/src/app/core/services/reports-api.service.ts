@@ -226,6 +226,68 @@ export class ReportsApiService {
       })
     );
   }
+
+  getPurchasesJournal(params: {
+    from: string;
+    to: string;
+    viewMode: SalesJournalViewMode;
+    source: PurchasesJournalSource;
+    supplierId?: string | null;
+    page?: number;
+    pageSize?: number;
+  }): Observable<ApiResponse<PurchasesJournalReportResult>> {
+    let httpParams = new HttpParams()
+      .set('from', params.from)
+      .set('to', params.to)
+      .set('viewMode', params.viewMode)
+      .set('source', params.source);
+    if (params.supplierId) httpParams = httpParams.set('supplierId', params.supplierId);
+    if (params.page != null) httpParams = httpParams.set('page', params.page.toString());
+    if (params.pageSize != null) httpParams = httpParams.set('pageSize', params.pageSize.toString());
+    return this.http.get<ApiResponse<PurchasesJournalReportResult>>(`${this.API_URL}/purchases-journal`, { params: httpParams });
+  }
+
+  downloadPurchasesJournalPdf(params: {
+    from: string;
+    to: string;
+    viewMode: SalesJournalViewMode;
+    source: PurchasesJournalSource;
+    supplierId?: string | null;
+  }): Observable<Blob> {
+    let httpParams = new HttpParams()
+      .set('from', params.from)
+      .set('to', params.to)
+      .set('viewMode', params.viewMode)
+      .set('source', params.source);
+    if (params.supplierId) httpParams = httpParams.set('supplierId', params.supplierId);
+    return this.http.get(`${this.API_URL}/purchases-journal/pdf`, {
+      params: httpParams,
+      responseType: 'blob',
+      observe: 'response'
+    }).pipe(
+      switchMap(response => {
+        const contentType = response.headers.get('content-type') || '';
+        const body = response.body;
+        if (contentType.includes('application/json') && body) {
+          return from(body.text()).pipe(
+            switchMap(text => {
+              try {
+                const parsed = JSON.parse(text) as { message?: string; errors?: string[] };
+                const msg = parsed.errors?.[0] ?? parsed.message ?? 'Impossible de générer le PDF';
+                return throwError(() => new Error(msg));
+              } catch {
+                return throwError(() => new Error('Impossible de générer le PDF'));
+              }
+            })
+          );
+        }
+        if (!body || body.size === 0) {
+          return throwError(() => new Error('Impossible de générer le PDF'));
+        }
+        return of(body);
+      })
+    );
+  }
 }
 
 export interface StockMovementReportRow {
@@ -463,4 +525,60 @@ export interface SalesJournalReportResult {
   totals: SalesJournalTotals;
   detailRows: SalesJournalDetailRow[];
   aggregatedRows: SalesJournalAggregatedRow[];
+}
+
+export type PurchasesJournalSource = 'Invoice' | 'Receipt';
+
+export interface PurchasesJournalDetailRow {
+  entryDate: string;
+  documentId: string;
+  documentNumber: string;
+  documentKind: string;
+  supplierId: string;
+  supplierName: string;
+  productId: string;
+  productCode: string;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  lineSubTotal: number;
+  lineTotal: number;
+  vatAmount: number;
+  currency: string;
+}
+
+export interface PurchasesJournalAggregatedRow {
+  periodKey: string;
+  supplierId: string;
+  supplierName: string;
+  productId: string;
+  productCode: string;
+  productName: string;
+  quantity: number;
+  lineSubTotal: number;
+  lineTotal: number;
+  vatAmount: number;
+  currency: string;
+}
+
+export interface PurchasesJournalTotals {
+  quantity: number;
+  lineSubTotal: number;
+  lineTotal: number;
+  vatAmount: number;
+  currency: string;
+}
+
+export interface PurchasesJournalReportResult {
+  source: string;
+  viewMode: string;
+  from: string;
+  to: string;
+  supplierId?: string | null;
+  totalRows: number;
+  page: number;
+  pageSize: number;
+  totals: PurchasesJournalTotals;
+  detailRows: PurchasesJournalDetailRow[];
+  aggregatedRows: PurchasesJournalAggregatedRow[];
 }

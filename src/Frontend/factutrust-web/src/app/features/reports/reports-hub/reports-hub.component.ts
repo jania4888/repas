@@ -246,6 +246,7 @@ export class ReportsHubComponent {
       icon: 'pi-shopping-cart',
       modules: [AppModule.Reports, AppModule.Purchases],
       links: [
+        { label: $localize`:@@reports.reports-hub.ts.journal.dachats.pj1a2b3c:Journal d'achats`, route: '/reports/purchases-journal' },
         { label: $localize`:@@reports.reports-hub.ts.achat.par.fournisseur.aad87ab5:Achat par fournisseur`, route: '/reports/purchases' },
         { label: $localize`:@@reports.reports-hub.ts.details.d.achat.par.ligne.produit.6d58e43d:Détails d'achat par ligne produit`, route: '/reports/purchases' },
         { label: $localize`:@@reports.reports-hub.ts.transactions.fournisseurs.83a34e96:Transactions fournisseurs`, route: '/reports/purchases' },

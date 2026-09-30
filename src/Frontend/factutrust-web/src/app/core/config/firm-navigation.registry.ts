@@ -368,6 +368,8 @@ export const DELEGATED_FIRM_ACHATS_ALLOWED_ROUTES = new Set([
 
   '/reports/purchases',
 
+  '/reports/purchases-journal',
+
   '/purchase-receipts'
 
 ]);

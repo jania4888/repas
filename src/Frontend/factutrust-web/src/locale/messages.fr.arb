@@ -785,6 +785,13 @@
     ],
     "x-wave": "v1"
   },
+  "core.app-navigation.registry.ts.journal.dachats.pj1a2b3c": "Journal d'achats",
+  "@core.app-navigation.registry.ts.journal.dachats.pj1a2b3c": {
+    "x-files": [
+      "src/app/core/config/app-navigation.registry.ts"
+    ],
+    "x-wave": "v1"
+  },
   "core.app-navigation.registry.ts.contrats.recurrents.e773e54a": "Contrats récurrents",
   "@core.app-navigation.registry.ts.contrats.recurrents.e773e54a": {
     "x-files": [
@@ -5592,6 +5599,13 @@
   },
   "core.nav.purchases.invoices-unpaid": "Factures impayées",
   "@core.nav.purchases.invoices-unpaid": {
+    "x-files": [
+      "src/app/core/i18n/nav-labels.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.nav.purchases.purchases-journal": "Journal d'achats",
+  "@core.nav.purchases.purchases-journal": {
     "x-files": [
       "src/app/core/i18n/nav-labels.ts"
     ],

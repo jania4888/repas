@@ -30,6 +30,7 @@ export const NAV_LABELS: Readonly<Record<string, string>> = {
   'purchases--purchase-receipts': $localize`:@@core.nav.purchases.purchase-receipts:Bons de réception`,
   'purchases--supplier-invoices': $localize`:@@core.nav.purchases.supplier-invoices:Factures fournisseurs`,
   'purchases--invoices-unpaid': $localize`:@@core.nav.purchases.invoices-unpaid:Factures impayées`,
+  'purchases--purchases-journal': $localize`:@@core.nav.purchases.purchases-journal:Journal d'achats`,
   'purchases--reports-supplier-balances': $localize`:@@core.nav.purchases.reports-supplier-balances:Solde par fournisseur`,
   'purchases--reports-analytics': $localize`:@@core.nav.purchases.reports-analytics:États analytiques`,
   'purchases--reports-sales': $localize`:@@core.nav.purchases.reports-sales:Rapports`,

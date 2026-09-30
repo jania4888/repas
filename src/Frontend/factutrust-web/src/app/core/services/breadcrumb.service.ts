@@ -52,6 +52,8 @@ const REPORTS_CHILD_LABELS: Record<string, string> = {
   analytics: $localize`:@@core.breadcrumb.ts.etats.analytiques.23bcc707:États analytiques`,
   sales: $localize`:@@core.breadcrumb.ts.rapports.ventes.5a196bd1:Rapports Ventes`,
   'sales-by-line': $localize`:@@core.breadcrumb.ts.details.ventes.par.ligne.2ed7995e:Détails ventes par ligne`,
+  'sales-journal': $localize`:@@core.breadcrumb.ts.journal.de.ventes.a1b2c3d4:Journal de ventes`,
+  'purchases-journal': $localize`:@@core.breadcrumb.ts.journal.dachats.pj1a2b3c:Journal d'achats`,
   purchases: $localize`:@@core.breadcrumb.ts.rapports.achats.ac9a7abf:Rapports Achats`,
   'purchases-analytics': $localize`:@@core.breadcrumb.ts.etats.analytiques.achats.0f98ad05:États analytiques Achats`,
   stock: $localize`:@@core.breadcrumb.ts.rapports.stock.00f72cdf:Rapports Stock`,

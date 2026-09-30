@@ -471,6 +471,63 @@ public class ReportsController : ControllerBase
 
         return File(result.Value.Content, result.Value.ContentType, result.Value.FileName);
     }
+
+    [HttpGet("purchases-journal")]
+    [Authorize(Policy = PermissionPolicies.ReportsView)]
+    [ProducesResponseType(typeof(ApiResponse<PurchasesJournalReportResultDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetPurchasesJournal(
+        [FromQuery] DateTime? from,
+        [FromQuery] DateTime? to,
+        [FromQuery] string? viewMode,
+        [FromQuery] string? source,
+        [FromQuery] Guid? supplierId,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = PurchasesJournalReportConstants.DefaultPageSize,
+        CancellationToken cancellationToken = default)
+    {
+        if (!from.HasValue || !to.HasValue)
+            return BadRequest(ApiResponse<object>.Fail("Les paramètres from et to sont requis (format: yyyy-MM-dd)."));
+        if (from.Value > to.Value)
+            return BadRequest(ApiResponse<object>.Fail("La date de début ne peut pas être après la date de fin."));
+
+        var mode = PurchasesJournalReportAssembler.ParseViewMode(viewMode);
+        var src = PurchasesJournalReportAssembler.ParseSource(source);
+        var result = await _mediator.Send(
+            new GetPurchasesJournalReportQuery(from.Value, to.Value, mode, src, supplierId, page, pageSize),
+            cancellationToken);
+        if (result.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(result.Error.Description));
+        return Ok(ApiResponse<PurchasesJournalReportResultDto>.Ok(result.Value));
+    }
+
+    [HttpGet("purchases-journal/pdf")]
+    [Authorize(Policy = PermissionPolicies.ReportsView)]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ExportPurchasesJournalPdf(
+        [FromQuery] DateTime? from,
+        [FromQuery] DateTime? to,
+        [FromQuery] string? viewMode,
+        [FromQuery] string? source,
+        [FromQuery] Guid? supplierId,
+        CancellationToken cancellationToken = default)
+    {
+        if (!from.HasValue || !to.HasValue)
+            return BadRequest(ApiResponse<object>.Fail("Les paramètres from et to sont requis (format: yyyy-MM-dd)."));
+        if (from.Value > to.Value)
+            return BadRequest(ApiResponse<object>.Fail("La date de début ne peut pas être après la date de fin."));
+
+        var mode = PurchasesJournalReportAssembler.ParseViewMode(viewMode);
+        var src = PurchasesJournalReportAssembler.ParseSource(source);
+        var result = await _mediator.Send(
+            new ExportPurchasesJournalPdfQuery(from.Value, to.Value, mode, src, supplierId),
+            cancellationToken);
+        if (result.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(result.Error.Description, result.Error.Code));
+
+        return File(result.Value.Content, result.Value.ContentType, result.Value.FileName);
+    }
 }
 
 /// <summary>
