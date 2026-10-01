@@ -730,6 +730,20 @@ app.MapControllers();
         featureLogger.LogWarning(
             "Features:PublicContact:RequireCaptcha=true sans TurnstileSecretKey/TurnstileAllowedHostnames : toutes les soumissions seront refusées (fail-closed).");
     }
+
+    // Import IA de relevés bancaires : drapeaux OFF par défaut. La génération exige le brouillard
+    // (fail-closed) : drapeau ON sans brouillard = analyse possible, génération toujours refusée.
+    var accountingSettings = app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<FactuTrust.Application.Configuration.AccountingSettings>>().Value;
+    featureLogger.LogInformation(
+        "Effective feature flags: Accounting.BankStatementAiPosting={BankStatementAiPostingEnabled} Accounting.BankReconciliationMatchingV2={BankReconciliationMatchingV2Enabled} Accounting.Brouillard={BrouillardEnabled}",
+        accountingSettings.BankStatementAiPostingEnabled,
+        accountingSettings.BankReconciliationMatchingV2Enabled,
+        accountingSettings.BrouillardEnabled);
+    if (accountingSettings.BankStatementAiPostingEnabled && !accountingSettings.BrouillardEnabled)
+    {
+        featureLogger.LogWarning(
+            "Accounting:BankStatementAiPostingEnabled=true sans BrouillardEnabled : les relevés peuvent être analysés mais aucune écriture ne sera générée (brouillard obligatoire).");
+    }
 }
 
 // Note : l'enregistrement des jobs récurrents Hangfire (anciennement ici, en inline) est

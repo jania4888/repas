@@ -48,6 +48,12 @@ public sealed record AiStructuredExtractionRequest
     /// serveur Ollama le rejette. Voir <see cref="Json.LlmOutputSchemas"/>.
     /// </summary>
     public JsonElement? OutputSchema { get; init; }
+
+    /// <summary>
+    /// Consigne remplaçant « extrais les données commerciales au format JSON demandé. » dans le
+    /// message utilisateur. Null (défaut) : message strictement identique à l'historique.
+    /// </summary>
+    public string? UserInstruction { get; init; }
 }
 
 /// <summary>Résultat brut d'un appel d'extraction structurée, avant désérialisation.</summary>
@@ -236,7 +242,7 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
         {
             (raw, chunkCount, firstTokenMs) = await CallLlmAsync(
                 activeModelRef, request.SystemPrompt, extractedText, llmImages, code,
-                useSchema ? request.OutputSchema : null, cancellationToken);
+                useSchema ? request.OutputSchema : null, cancellationToken, request.UserInstruction);
         }
         catch (OllamaRequestException ex) when (useSchema && IsSchemaRejection(ex))
         {
@@ -249,7 +255,7 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
 
             (raw, chunkCount, firstTokenMs) = await CallLlmAsync(
                 activeModelRef, request.SystemPrompt, extractedText, llmImages, code,
-                outputSchema: null, cancellationToken);
+                outputSchema: null, cancellationToken, request.UserInstruction);
         }
         catch (InvalidOperationException ex)
         {
@@ -498,10 +504,11 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
         List<string> images,
         string scope,
         JsonElement? outputSchema,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        string? userInstruction = null)
     {
         var sb = new StringBuilder();
-        var userPrompt = BuildUserPrompt(text, images.Count > 0);
+        var userPrompt = BuildUserPrompt(text, images.Count > 0, userInstruction);
         var outputCap = Math.Min(Math.Max(1, _ollamaSettings.MaxTokens), ResolveImportMaxOutputTokens());
         var streamTimeout = ResolveImportLlmTimeout();
         var chunkCount = 0;
@@ -595,7 +602,7 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
             var messages = new List<OpenAiChatMessagePayload>
             {
                 new() { Role = "system", Content = systemPrompt },
-                BuildOpenAiUserMessage(text, images)
+                BuildOpenAiUserMessage(text, images, userInstruction)
             };
 
             _logger.LogInformation(
@@ -684,7 +691,7 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
         return (sb.ToString(), chunkCount, firstTokenMs);
     }
 
-    private static string BuildUserPrompt(string text, bool hasImages)
+    internal static string BuildUserPrompt(string text, bool hasImages, string? userInstruction = null)
     {
         var intro = hasImages
             ? "Analyse le document (image jointe"
@@ -693,7 +700,9 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
             intro += " et texte OCR ci-dessous";
         else if (hasImages)
             intro += " uniquement";
-        intro += ") et extrais les données commerciales au format JSON demandé.\n\n";
+        intro += string.IsNullOrWhiteSpace(userInstruction)
+            ? ") et extrais les données commerciales au format JSON demandé.\n\n"
+            : ") et " + userInstruction.Trim() + "\n\n";
 
         if (string.IsNullOrWhiteSpace(text))
             return intro;
@@ -704,9 +713,9 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
             + "\n--- FIN DU CONTENU OCR ---";
     }
 
-    private static OpenAiChatMessagePayload BuildOpenAiUserMessage(string text, List<string> images)
+    private static OpenAiChatMessagePayload BuildOpenAiUserMessage(string text, List<string> images, string? userInstruction = null)
     {
-        var prompt = BuildUserPrompt(text, images.Count > 0);
+        var prompt = BuildUserPrompt(text, images.Count > 0, userInstruction);
         if (images.Count == 0)
             return new OpenAiChatMessagePayload { Role = "user", Content = prompt };
 

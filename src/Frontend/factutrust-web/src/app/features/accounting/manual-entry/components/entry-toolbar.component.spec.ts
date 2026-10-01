@@ -182,6 +182,52 @@ describe('EntryToolbarComponent', () => {
     expect(openMenus().length).toBe(0);
   });
 
+  // ---------------------------------------------------------------------------
+  // Import de relevé bancaire : visible seulement si le serveur l'a activé
+  // ---------------------------------------------------------------------------
+
+  function bankStatementItem(): HTMLButtonElement | null {
+    return (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('[data-testid="import-bank-statement"]');
+  }
+
+  it("n'affiche pas l'import de relevé bancaire tant que la fonctionnalité est désactivée", () => {
+    click(toggleButton('Import'));
+
+    expect(bankStatementItem()).toBeNull();
+    expect(menuText()).toContain('Importer une facture');
+  });
+
+  it("affiche l'import de relevé bancaire quand le serveur l'active et émet une seule fois", () => {
+    fixture.componentRef.setInput('bankStatementImportEnabled', true);
+    fixture.detectChanges();
+    const emitted: void[] = [];
+    fixture.componentInstance.importBankStatement.subscribe(() => emitted.push(undefined));
+
+    click(toggleButton('Import'));
+    const item = bankStatementItem();
+    expect(item).withContext('entrée « relevé bancaire » introuvable').toBeTruthy();
+
+    click(item!);
+
+    expect(emitted.length).toBe(1);
+    expect(openMenus().length).toBe(0);
+  });
+
+  it("masque l'import de relevé bancaire sans le droit de création comptable", () => {
+    const original = authMock.hasPermission;
+    authMock.hasPermission = () => false;
+    try {
+      fixture.componentRef.setInput('bankStatementImportEnabled', true);
+      fixture.detectChanges();
+
+      click(toggleButton('Import'));
+
+      expect(bankStatementItem()).toBeNull();
+    } finally {
+      authMock.hasPermission = original;
+    }
+  });
+
   it("conserve les accès historiques à l'import de fichier et au brouillard", () => {
     click(toggleButton('Import'));
 

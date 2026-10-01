@@ -1,0 +1,299 @@
+{
+  "version": 1,
+  "comment": "Catalogue des opérations bancaires tunisiennes → compte de contrepartie (NCT 01). Libellés NORMALISÉS (majuscules, sans accents). L'ordre compte : la première règle qui correspond (sens compris) l'emporte. Aucune règle ne crée de compte : un compte absent du plan du dossier devient un diagnostic. Les règles du dossier (« Mémoriser ») passent avant ce catalogue.",
+  "rules": [
+    {
+      "id": "vat-on-fees",
+      "side": "debit",
+      "startsWith": [
+        "TVA SUR ",
+        "TVA ",
+        "T.V.A"
+      ],
+      "equals": [
+        "TVA",
+        "T.V.A"
+      ],
+      "account": "43666",
+      "party": "none",
+      "confidence": "probable",
+      "explanation": "TVA facturée par la banque sur ses commissions : TVA déductible (43666)."
+    },
+    {
+      "id": "overdraft-interest",
+      "side": "debit",
+      "contains": [
+        "ARRETE DE COMPTE",
+        "AGIOS",
+        "INTERETS DEBITEURS"
+      ],
+      "account": "6516",
+      "party": "none",
+      "confidence": "probable",
+      "explanation": "Agios / intérêts débiteurs : intérêts bancaires (6516)."
+    },
+    {
+      "id": "islamic-financing-profit",
+      "side": "debit",
+      "startsWith": [
+        "PAIEMENT PROFIT"
+      ],
+      "account": "6511",
+      "party": "none",
+      "confidence": "toCheck",
+      "explanation": "Profit d'un financement islamique (Mourabaha) : charge financière (6511) — à vérifier."
+    },
+    {
+      "id": "loan-principal",
+      "side": "debit",
+      "startsWith": [
+        "PAIEMENT PRINCIPAL",
+        "PAIEMENTPRINCIPAL"
+      ],
+      "contains": [
+        "REMBOURSEMENT ECHEANCE",
+        "REGL.ECH"
+      ],
+      "account": null,
+      "party": "none",
+      "confidence": "toCheck",
+      "explanation": "Remboursement du capital d'un emprunt : choisir le compte d'emprunt (16…)."
+    },
+    {
+      "id": "loan-insurance",
+      "side": "debit",
+      "contains": [
+        "ASSUREMPRUNT",
+        "ASSURANCE EMPRUNT"
+      ],
+      "account": "616",
+      "party": "none",
+      "confidence": "probable",
+      "explanation": "Assurance liée à un emprunt : primes d'assurances (616)."
+    },
+    {
+      "id": "stamp-duty",
+      "side": "debit",
+      "contains": [
+        "TIMBRE"
+      ],
+      "account": "6654",
+      "party": "none",
+      "confidence": "probable",
+      "explanation": "Timbre : droits d'enregistrement et de timbre (6654)."
+    },
+    {
+      "id": "fees-with-vat",
+      "side": "debit",
+      "contains": [
+        "COM ET TVA",
+        "COM TVA"
+      ],
+      "account": "6278",
+      "vatAccount": "43666",
+      "impliedVatRate": 0.19,
+      "party": "none",
+      "confidence": "probable",
+      "explanation": "Commission TVA comprise : 6278 pour le hors taxe, 43666 pour la TVA à 19 % (ventilée seulement si le calcul tombe juste au millime)."
+    },
+    {
+      "id": "bank-fees",
+      "side": "debit",
+      "startsWith": [
+        "COM ",
+        "COMM ",
+        "COMM.",
+        "COM.",
+        "FRAIS",
+        "SWIFT",
+        "AFFRANCHISSEMENT",
+        "COTISATION"
+      ],
+      "contains": [
+        "COMMISSION",
+        "COM ET TVA",
+        "COMM REM TPE",
+        "FRAIS TELECOMPENSATION"
+      ],
+      "account": "6278",
+      "vatAccount": "43666",
+      "party": "none",
+      "confidence": "probable",
+      "explanation": "Commission / frais bancaires : autres frais et commissions (6278)."
+    },
+    {
+      "id": "cash-deposit",
+      "side": "credit",
+      "startsWith": [
+        "VERSEMENT ESPECE",
+        "VRST"
+      ],
+      "account": "58",
+      "party": "none",
+      "confidence": "probable",
+      "explanation": "Versement d'espèces : virement de fonds caisse → banque (58)."
+    },
+    {
+      "id": "bill-collected",
+      "side": "credit",
+      "startsWith": [
+        "ENCAISSEMENT EFFET"
+      ],
+      "contains": [
+        "REMISE EFFET"
+      ],
+      "account": "413",
+      "party": "client",
+      "confidence": "probable",
+      "explanation": "Encaissement d'un effet remis à l'encaissement : clients - effets à recevoir (413)."
+    },
+    {
+      "id": "cheque-collected",
+      "side": "credit",
+      "startsWith": [
+        "ENCAISSEMENT CHEQUE",
+        "REMISE CHEQUE",
+        "REMISE CHQ"
+      ],
+      "account": "4111",
+      "party": "client",
+      "confidence": "toCheck",
+      "explanation": "Encaissement de chèque : règlement client (4111)."
+    },
+    {
+      "id": "card-receipts",
+      "side": "credit",
+      "startsWith": [
+        "REM TPE"
+      ],
+      "account": "4111",
+      "party": "client",
+      "confidence": "toCheck",
+      "explanation": "Remise de paiements par carte (TPE) : règlement client (4111)."
+    },
+    {
+      "id": "transfer-received",
+      "side": "credit",
+      "startsWith": [
+        "VIREMENT RECU",
+        "VIR RECU",
+        "VIREMENT TN",
+        "VIREMENT ETRANGER REC"
+      ],
+      "contains": [
+        "VIR RECU"
+      ],
+      "account": "4111",
+      "party": "client",
+      "confidence": "probable",
+      "explanation": "Virement reçu : règlement client (4111)."
+    },
+    {
+      "id": "bill-paid",
+      "side": "debit",
+      "contains": [
+        "REGLEMENT EFFET",
+        "PAIEMENT EFFET",
+        "DELIVRANCE BON A PAYER EFFET",
+        "EFFET COMPENSE"
+      ],
+      "account": "403",
+      "party": "supplier",
+      "confidence": "probable",
+      "explanation": "Paiement d'un effet à l'échéance : fournisseurs - effets à payer (403)."
+    },
+    {
+      "id": "cheque-paid",
+      "side": "debit",
+      "contains": [
+        "REG CHEQUE",
+        "REGLEMENT CHEQUE",
+        "PAIEMENT CHQ",
+        "RES PECC CHEQUE",
+        "REGLEMENT CHQ"
+      ],
+      "account": "4011",
+      "party": "supplier",
+      "confidence": "probable",
+      "explanation": "Chèque émis encaissé par son bénéficiaire : règlement fournisseur (4011)."
+    },
+    {
+      "id": "salary-transfer",
+      "side": "debit",
+      "contains": [
+        "SALAIRE",
+        "PAIE "
+      ],
+      "account": "425",
+      "party": "employee",
+      "confidence": "toCheck",
+      "explanation": "Virement de salaire : personnel - rémunérations dues (425)."
+    },
+    {
+      "id": "social-security",
+      "side": "debit",
+      "contains": [
+        "CNSS"
+      ],
+      "account": "453",
+      "party": "none",
+      "confidence": "probable",
+      "explanation": "Prélèvement CNSS : sécurité sociale (453)."
+    },
+    {
+      "id": "tax-office",
+      "side": "debit",
+      "contains": [
+        "MINISTERE DES FINANCES",
+        "RECETTE DES FINANCES",
+        "REGLE DE LA DECLARATION"
+      ],
+      "account": null,
+      "party": "none",
+      "confidence": "toCheck",
+      "explanation": "Prélèvement du Trésor : choisir le compte d'impôt réglé (TVA, retenues, acomptes…)."
+    },
+    {
+      "id": "certified-cheque",
+      "side": "debit",
+      "contains": [
+        "CERTIF CHEQUE"
+      ],
+      "account": null,
+      "party": "none",
+      "confidence": "toCheck",
+      "explanation": "Chèque certifié (souvent destiné à la douane) : compte à préciser."
+    },
+    {
+      "id": "transfer-sent",
+      "side": "debit",
+      "startsWith": [
+        "VIREMENT EMIS",
+        "VIREMENTS EMIS",
+        "VIR EMIS",
+        "VIR TN",
+        "VIR.TN",
+        "VIREMENT TN"
+      ],
+      "contains": [
+        "VIR EMIS"
+      ],
+      "account": "4011",
+      "party": "supplier",
+      "confidence": "toCheck",
+      "explanation": "Virement émis : règlement fournisseur (4011)."
+    },
+    {
+      "id": "direct-debit",
+      "side": "debit",
+      "startsWith": [
+        "PRELEVEMENT",
+        "PRLV"
+      ],
+      "account": "4011",
+      "party": "supplier",
+      "confidence": "toCheck",
+      "explanation": "Prélèvement d'un créancier : règlement fournisseur (4011)."
+    }
+  ]
+}

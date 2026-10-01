@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "comment": "Profils de mise en page des relevés bancaires tunisiens (import IA vers le journal de banque). Ne décrire ici QUE ce qui diffère du profil générique ; la géométrie est déduite du document (en-têtes, filets, colonnes de montants). Chaque profil est couvert par un test sur fixture synthétique et par une recette sur relevé réel (hors dépôt).",
+  "profiles": [
+    {
+      "id": "generic",
+      "bankName": null,
+      "ribBankCodes": [],
+      "textMarkers": [],
+      "operationDateFormats": [ "dd/MM/yyyy", "dd-MM-yyyy", "dd.MM.yyyy", "dd/MM/yy", "dd-MM-yy" ],
+      "valueDateFormats": [ "dd/MM/yyyy", "dd-MM-yyyy", "dd.MM.yyyy", "yyyy-MM-dd", "dd/MM/yy", "dd-MM-yy" ],
+      "statementDateFormats": [ "dd/MM/yyyy", "dd-MM-yyyy", "dd.MM.yyyy", "dd/MM/yy", "dd-MM-yy" ],
+      "excludedSummaryLabels": [ "SOLDE DU COMPTE AU", "SOLDE DISPONIBLE", "MONTANT DE BLOCAGE", "MONTANT DE L'AUTORISATION", "TOTAL DES REMISES", "TOTAL DES IMPAYES" ],
+      "debitCreditBoundaryRatio": null
+    },
+    {
+      "id": "stb-historique",
+      "bankName": "STB",
+      "ribBankCodes": [ "10" ],
+      "textMarkers": [ "SOCIETE TUNISIENNE DE BANQUE" ],
+      "operationDateFormats": [ "dd/MM/yyyy" ],
+      "valueDateFormats": [ "dd/MM/yyyy" ],
+      "statementDateFormats": [ "dd/MM/yyyy" ],
+      "excludedSummaryLabels": [ "SOLDE DU COMPTE AU", "MONTANT DE BLOCAGE", "MONTANT DE L'AUTORISATION", "TOTAL DES REMISES", "TOTAL DES IMPAYES", "PROCHAINE ECHEANCE" ],
+      "debitCreditBoundaryRatio": null
+    },
+    {
+      "id": "bh-releve",
+      "bankName": "BH",
+      "ribBankCodes": [ "14" ],
+      "textMarkers": [ "MEDIATEUR DE LA BH BANK", "BHBANK" ],
+      "operationDateFormats": [ "dd-MM" ],
+      "valueDateFormats": [ "yyyy-MM-dd" ],
+      "statementDateFormats": [ "dd-MM-yy" ],
+      "excludedSummaryLabels": [],
+      "comment": "Les en-têtes de colonnes BH sont dessinés (pas de couche texte) : à défaut de deux groupes de montants nets, la frontière débit/crédit est prise à 84 % de la largeur de page (mesuré : débits ≤ 468 pt, crédits ≥ 503 pt sur 595 pt).",
+      "debitCreditBoundaryRatio": 0.84
+    },
+    {
+      "id": "zitouna-releve",
+      "bankName": "ZITOUNA",
+      "ribBankCodes": [ "25" ],
+      "textMarkers": [ "BANQUE ZITOUNA", "BANQUEZITOUNA" ],
+      "operationDateFormats": [ "dd/MM/yyyy" ],
+      "valueDateFormats": [ "dd/MM/yyyy" ],
+      "statementDateFormats": [ "dd/MM/yyyy" ],
+      "excludedSummaryLabels": [],
+      "debitCreditBoundaryRatio": null
+    },
+    {
+      "id": "biat-releve",
+      "bankName": "BIAT",
+      "ribBankCodes": [ "08" ],
+      "textMarkers": [ "DINAR TUNISIEN" ],
+      "comment": "Dates d'opération imprimées en deux mots (« 02 » « 01 »), dates valeur compactes (« 02012026 »), aucun en-tête texte, totaux sans libellé dont le total crédit INCLUT le solde d'ouverture, solde final sous « DINAR TUNISIEN » (colonne débit si débiteur).",
+      "mergeSplitDates": true,
+      "operationDateFormats": [ "dd/MM" ],
+      "valueDateFormats": [ "ddMMyyyy" ],
+      "statementDateFormats": [ "dd/MM/yyyy" ],
+      "closingLabels": [ "DINAR TUNISIEN" ],
+      "creditTotalIncludesOpening": true,
+      "excludedSummaryLabels": [],
+      "debitCreditBoundaryRatio": null
+    },
+    {
+      "id": "attijari-extrait",
+      "bankName": "ATTIJARI",
+      "ribBankCodes": [ "04" ],
+      "textMarkers": [ "ATTIJARIBANK", "EXTRAIT DE COMPTE" ],
+      "operationDateFormats": [ "dd-MM-yyyy" ],
+      "valueDateFormats": [ "dd-MM-yyyy" ],
+      "statementDateFormats": [ "dd-MM-yyyy" ],
+      "excludedSummaryLabels": [],
+      "debitCreditBoundaryRatio": null
+    }
+  ]
+}

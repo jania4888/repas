@@ -33,6 +33,8 @@ import { GuidedEntryComponent } from './components/guided/guided-entry.component
 import { EntryTemplateTabComponent } from './components/entry-template-tab.component';
 import { EntryRecurringTabComponent } from './components/entry-recurring-tab.component';
 import { AccountingDocumentImportDialogComponent } from './components/import/accounting-document-import-dialog.component';
+import { BankStatementUploadDialogComponent } from '../bank-statement-import/bank-statement-upload-dialog.component';
+import { BankStatementImportService } from '../bank-statement-import/bank-statement-import.service';
 import { JournalEntryProposal } from './models/accounting-document-import.models';
 import { EntryTabId } from './models/entry-form.model';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
@@ -58,7 +60,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     GuidedEntryComponent,
     EntryTemplateTabComponent,
     EntryRecurringTabComponent,
-    AccountingDocumentImportDialogComponent
+    AccountingDocumentImportDialogComponent,
+    BankStatementUploadDialogComponent
   ],
   providers: [EntryFormStore, EntryReferenceStore, EntrySubmitService, VatAssistService],
   template: `
@@ -103,11 +106,17 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       (saveTemplate)="openSaveTemplate()"
       (reset)="resetWithConfirm()"
       (importDocument)="openDocumentImport()"
+      [bankStatementImportEnabled]="bankStatementImportEnabled()"
+      (importBankStatement)="openBankStatementImport()"
       (cancelEdit)="cancelEdit()" />
 
     <app-accounting-document-import-dialog
       [(visible)]="documentImportVisible"
       (applied)="onDocumentProposalApplied($event)" />
+
+    @if (bankStatementImportEnabled()) {
+      <app-bank-statement-upload-dialog [(visible)]="bankStatementImportVisible" />
+    }
 
     <p-tabs class="ft-tabs entry-main-tabs"
             [value]="tabIndex()"
@@ -236,6 +245,7 @@ export class ManualEntryComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly draftStore = inject(ManualEntryDraftService);
   private readonly confirmationService = inject(ConfirmationService);
+  private readonly bankStatementImport = inject(BankStatementImportService);
 
   readonly pendingDraft = signal<ManualEntryDraft | null>(null);
   readonly showTemplatePicker = signal(false);
@@ -244,6 +254,9 @@ export class ManualEntryComponent implements OnInit {
   readonly pendingFiles = signal<File[]>([]);
   readonly tabIndex = signal(0);
   readonly documentImportVisible = signal(false);
+  /** Import IA de relevés : l'entrée de menu n'apparaît que si le serveur a activé la fonctionnalité. */
+  readonly bankStatementImportEnabled = signal(false);
+  readonly bankStatementImportVisible = signal(false);
 
   private draftInitialized = signal(false);
   private readonly returnFrom = signal<string | null>(null);
@@ -320,6 +333,10 @@ export class ManualEntryComponent implements OnInit {
 
   ngOnInit(): void {
     this.refs.loadAll();
+    this.bankStatementImport
+      .capabilities()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(caps => this.bankStatementImportEnabled.set(!!caps?.enabled));
 
     const qp = this.route.snapshot.queryParamMap;
     this.returnFrom.set(qp.get('returnFrom'));
@@ -402,6 +419,11 @@ export class ManualEntryComponent implements OnInit {
   openDocumentImport(): void {
     if (this.store.editingLocked()) return;
     this.documentImportVisible.set(true);
+  }
+
+  openBankStatementImport(): void {
+    if (this.store.editingLocked() || !this.bankStatementImportEnabled()) return;
+    this.bankStatementImportVisible.set(true);
   }
 
   /**

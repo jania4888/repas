@@ -72,6 +72,12 @@ import { PERMISSIONS } from '@core/config/permission-keys';
             <div class="dropdown-menu show">
               <button type="button" class="dropdown-item"
                       (click)="importDocument.emit(); importOpen = false" i18n="@@accounting.manual-entry.importer.une.facture.pdf.image.dc57ae71"> Importer une facture (PDF / image) </button>
+              @if (canImportBankStatement()) {
+                <button type="button" class="dropdown-item" data-testid="import-bank-statement"
+                        title="Importer un relevé bancaire et proposer les écritures du journal de banque"
+                        i18n-title="@@accounting.manual-entry.importer.un.releve.bancaire.et.proposer.les.ecri.864c2618"
+                        (click)="importBankStatement.emit(); importOpen = false" i18n="@@accounting.manual-entry.importer.un.releve.bancaire.pdf.image.72caac7e"> Importer un relevé bancaire (PDF / image) </button>
+              }
               <div class="dropdown-divider"></div>
               <a routerLink="/accounting/import" class="dropdown-item" i18n="@@accounting.manual-entry.import.de.fichier.csv.excel.77102ff0"> Import de fichier (CSV / Excel) </a>
               <a routerLink="/accounting/draft-batch" class="dropdown-item" i18n="@@accounting.manual-entry.ecritures.en.brouillard.4d98b8f8"> Écritures en brouillard </a>
@@ -144,6 +150,10 @@ export class EntryToolbarComponent {
   @Output() reset = new EventEmitter<void>();
   /** Ouvre la modale d'import d'une facture à comptabiliser. */
   @Output() importDocument = new EventEmitter<void>();
+  /** Ouvre la modale d'import d'un relevé bancaire (écritures du journal de banque). */
+  @Output() importBankStatement = new EventEmitter<void>();
+  /** Fonctionnalité activée côté serveur (capacités de l'import de relevés). */
+  @Input() bankStatementImportEnabled = false;
   /** Quitte le mode édition sans enregistrer (retour journal). */
   @Output() cancelEdit = new EventEmitter<void>();
 
@@ -155,6 +165,10 @@ export class EntryToolbarComponent {
   readonly canSave = computed(() =>
     this.store.canSubmit() && this.auth.hasPermission(PERMISSIONS.accounting.create)
   );
+
+  canImportBankStatement(): boolean {
+    return this.bankStatementImportEnabled && this.auth.hasPermission(PERMISSIONS.accounting.create);
+  }
 
   // Chaque bouton d'ouverture DOIT arrêter la propagation : sans cela le clic remonte jusqu'à
   // `document`, où `closeMenus()` referme le menu dans la même propagation — avant même le

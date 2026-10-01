@@ -161,6 +161,23 @@ public sealed class AccountingSettings
     public int BankMatchWindowDays { get; set; } = 10;
 
     /// <summary>
+    /// Active l'import IA de relevés bancaires vers des brouillons du journal de banque
+    /// (« Importer un relevé bancaire » depuis la saisie manuelle). OFF par défaut : sans lui, les
+    /// endpoints répondent 404 et le menu ne propose pas l'action.
+    /// </summary>
+    public bool BankStatementAiPostingEnabled { get; set; }
+
+    /// <summary>
+    /// Rapprochement automatique « v2 » : priorité au lien source (écriture générée depuis la ligne
+    /// de relevé) et comparaison de compte dans les deux sens (5321 ↔ sous-compte). OFF par défaut :
+    /// l'association automatique historique reste strictement identique.
+    /// </summary>
+    public bool BankReconciliationMatchingV2Enabled { get; set; }
+
+    /// <summary>Limites de l'import IA de relevés bancaires.</summary>
+    public BankStatementImportLimits BankStatementImport { get; set; } = new();
+
+    /// <summary>
     /// Active la checklist des contrôles de pré-clôture (brouillons, comptes d'attente non soldés,
     /// lettrage en suspens, dotations non passées, TVA compta vs déclarée…) et le blocage de la
     /// clôture annuelle / du verrouillage définitif sur les contrôles bloquants.

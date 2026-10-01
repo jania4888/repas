@@ -321,6 +321,24 @@ export const ACCOUNTING_ROUTES: Routes = [
     title: $localize`:@@accounting.routes.title.Rapprochement_bancaire_:Rapprochement bancaire - InstaFact`
   },
   {
+    // Import IA de relevé bancaire : relecture de l'analyse (session) puis comptabilisation (relevé).
+    // Le drapeau serveur fait foi : désactivé, l'API répond 404 et l'écran l'affiche.
+    path: 'bank-statement-import/session/:sessionId',
+    loadComponent: () =>
+      import('./bank-statement-import/bank-statement-review.component').then(m => m.BankStatementReviewComponent),
+    canActivate: [permissionGuard],
+    data: { permissions: [PERMISSIONS.accounting.create] },
+    title: $localize`:@@accounting.routes.title.Releve_bancaire_comptab:Relevé bancaire - InstaFact`
+  },
+  {
+    path: 'bank-statement-import/statement/:statementId',
+    loadComponent: () =>
+      import('./bank-statement-import/bank-statement-review.component').then(m => m.BankStatementReviewComponent),
+    canActivate: [permissionGuard],
+    data: { permissions: [PERMISSIONS.accounting.create] },
+    title: $localize`:@@accounting.routes.title.Releve_bancaire_comptab:Relevé bancaire - InstaFact`
+  },
+  {
     path: 'fixed-assets',
     loadComponent: () =>
       import('./fixed-assets/fixed-assets-list.component').then(m => m.FixedAssetsListComponent),
