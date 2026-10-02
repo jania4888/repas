@@ -10,13 +10,15 @@ using FactuTrust.Application.Features.Accounting.BankStatementImport;
 using FactuTrust.Application.Features.AI;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Enums;
+using FactuTrust.Infrastructure.Services.BankStatementImport;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace FactuTrust.Infrastructure.Services;
 
 /// <summary>
-/// Import PDF/image de relevé bancaire : extraction texte → parser BIAT → fallback LLM.
+/// Import PDF/image de relevé bancaire : extraction texte → parser BIAT → (drapeau) lecture par
+/// profils bancaires → fallback OCR/LLM, ce dernier borné dans le temps (budget inférieur au proxy).
 /// </summary>
 public sealed class BankStatementPdfImportService : IBankStatementPdfImportService
 {
@@ -25,6 +27,7 @@ public sealed class BankStatementPdfImportService : IBankStatementPdfImportServi
     private readonly BankAccountMatcher _bankMatcher;
     private readonly AccountingSettings _settings;
     private readonly ILogger<BankStatementPdfImportService> _logger;
+    private readonly BankStatementLayoutExtractor _layoutExtractor;
     private readonly TunisianBankStatementTextParser _textParser = new();
 
     public BankStatementPdfImportService(
@@ -32,13 +35,15 @@ public sealed class BankStatementPdfImportService : IBankStatementPdfImportServi
         ImportBankStatementFromFileHandler llmHandler,
         BankAccountMatcher bankMatcher,
         IOptions<AccountingSettings> settings,
-        ILogger<BankStatementPdfImportService> logger)
+        ILogger<BankStatementPdfImportService> logger,
+        BankStatementLayoutExtractor? layoutExtractor = null)
     {
         _documentExtractor = documentExtractor;
         _llmHandler = llmHandler;
         _bankMatcher = bankMatcher;
         _settings = settings.Value;
         _logger = logger;
+        _layoutExtractor = layoutExtractor ?? new BankStatementLayoutExtractor();
     }
 
     public async Task<Result<BankStatementFilePreviewDto>> PreviewAsync(
@@ -72,39 +77,194 @@ public sealed class BankStatementPdfImportService : IBankStatementPdfImportServi
             _logger.LogInformation(
                 "Relevé PDF : extraction brute insuffisante ou 0 opération ({LineCount} lignes), bascule extracteur layout/OCR.",
                 rawResult.Success ? CountParsedLines(rawResult.Text) : 0);
-        }
 
-        await using var stream = new MemoryStream(content);
-        var extract = await _documentExtractor.ExtractAsync(stream, fileName, contentType, cancellationToken);
-        if (!extract.Success || string.IsNullOrWhiteSpace(extract.Text))
-        {
-            var llmOnly = await _llmHandler.ExtractAsync(content, fileName, contentType, extract, cancellationToken);
-            if (llmOnly.IsFailure)
-                return Result.Failure<BankStatementFilePreviewDto>(llmOnly.Error);
-            return await FinalizePreviewAsync(llmOnly.Value, content, fileName, BankStatementExtractionMethod.OcrLlm, extract.PageCount, cancellationToken);
-        }
-
-        if (BankStatementTextQuality.IsSufficient(extract.Text) || BankStatementImportOcrQuality.IsSufficient(extract.Text))
-        {
-            if (TryParseDeterministic(extract.Text, extract.PageCount, extract.OcrApplied, out var parsed))
+            if (_settings.BankStatementLayoutParserEnabled)
             {
-                var method = extract.OcrApplied
-                    ? BankStatementExtractionMethod.OcrTextParser
-                    : BankStatementExtractionMethod.TextParser;
-                var preview = await BuildPreviewDtoAsync(
-                    parsed.Lines, parsed.Issues, parsed.Rib, parsed.BankCode, parsed.BankName,
-                    parsed.PeriodStart, parsed.PeriodEnd, parsed.Opening, parsed.Closing,
-                    parsed.FooterTotalDebits, parsed.FooterTotalCredits,
-                    method, parsed.PageCount, content, fileName, cancellationToken);
-                return Result.Success(preview);
+                var layout = await TryLayoutPreviewAsync(content, cancellationToken);
+                if (layout is not null)
+                    return Result.Success(layout);
             }
         }
 
-        _logger.LogInformation("Relevé bancaire : texte insuffisant pour parser déterministe, bascule LLM.");
-        var llm = await _llmHandler.ExtractAsync(content, fileName, contentType, extract, cancellationToken);
-        if (llm.IsFailure)
-            return Result.Failure<BankStatementFilePreviewDto>(llm.Error);
-        return await FinalizePreviewAsync(llm.Value, content, fileName, BankStatementExtractionMethod.OcrLlm, extract.PageCount, cancellationToken);
+        // OCR et IA s'exécutent dans la requête HTTP : budget total inférieur au délai du proxy (nginx
+        // 300 s), attente de la file IA comprise. L'annulation du client (RequestAborted) reste propagée.
+        var budget = TimeSpan.FromSeconds(Math.Clamp(_settings.BankStatementPreviewTimeoutSeconds, 1, 280));
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        deadline.CancelAfter(budget);
+        var started = DateTime.UtcNow;
+        var stage = "ocr";
+        try
+        {
+            await using var stream = new MemoryStream(content);
+            var extract = await _documentExtractor.ExtractAsync(stream, fileName, contentType, deadline.Token);
+            if (!extract.Success || string.IsNullOrWhiteSpace(extract.Text))
+            {
+                stage = "llm";
+                var llmOnly = await _llmHandler.ExtractAsync(content, fileName, contentType, extract, deadline.Token);
+                if (llmOnly.IsFailure)
+                    return Result.Failure<BankStatementFilePreviewDto>(llmOnly.Error);
+                return await FinalizePreviewAsync(llmOnly.Value, content, fileName, BankStatementExtractionMethod.OcrLlm, extract.PageCount, cancellationToken);
+            }
+
+            if (BankStatementTextQuality.IsSufficient(extract.Text) || BankStatementImportOcrQuality.IsSufficient(extract.Text))
+            {
+                if (TryParseDeterministic(extract.Text, extract.PageCount, extract.OcrApplied, out var parsed))
+                {
+                    var method = extract.OcrApplied
+                        ? BankStatementExtractionMethod.OcrTextParser
+                        : BankStatementExtractionMethod.TextParser;
+                    var preview = await BuildPreviewDtoAsync(
+                        parsed.Lines, parsed.Issues, parsed.Rib, parsed.BankCode, parsed.BankName,
+                        parsed.PeriodStart, parsed.PeriodEnd, parsed.Opening, parsed.Closing,
+                        parsed.FooterTotalDebits, parsed.FooterTotalCredits,
+                        method, parsed.PageCount, content, fileName, cancellationToken);
+                    return Result.Success(preview);
+                }
+            }
+
+            _logger.LogInformation("Relevé bancaire : texte insuffisant pour parser déterministe, bascule LLM.");
+            stage = "llm";
+            var llm = await _llmHandler.ExtractAsync(content, fileName, contentType, extract, deadline.Token);
+            if (llm.IsFailure)
+                return Result.Failure<BankStatementFilePreviewDto>(llm.Error);
+            return await FinalizePreviewAsync(llm.Value, content, fileName, BankStatementExtractionMethod.OcrLlm, extract.PageCount, cancellationToken);
+        }
+        catch (OperationCanceledException) when (deadline.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
+        {
+            _logger.LogWarning(
+                "Relevé bancaire : lecture {Stage} interrompue après {Elapsed:F0} s (budget {Budget:F0} s).",
+                stage, (DateTime.UtcNow - started).TotalSeconds, budget.TotalSeconds);
+            return Result.Failure<BankStatementFilePreviewDto>(new Error(BankStatementPreviewErrorCodes.PreviewTimeout,
+                "La lecture de ce relevé par l'IA dépasse le délai autorisé. Utilisez de préférence un relevé PDF " +
+                "téléchargé depuis votre banque en ligne (texte lisible), ou un export CSV/OFX."));
+        }
+        catch (Exception ex) when (!cancellationToken.IsCancellationRequested
+                                   && ex is OllamaRequestException or HttpRequestException or TimeoutException
+                                       or TaskCanceledException { InnerException: TimeoutException })
+        {
+            _logger.LogWarning(
+                "Relevé bancaire : moteur IA en erreur ({ErrorType}) à l'étape {Stage} après {Elapsed:F0} s.",
+                ex.GetType().Name, stage, (DateTime.UtcNow - started).TotalSeconds);
+            return Result.Failure<BankStatementFilePreviewDto>(new Error(BankStatementPreviewErrorCodes.AiUnavailable,
+                "Le moteur IA n'a pas pu lire ce relevé pour le moment. Réessayez plus tard, ou utilisez un relevé " +
+                "PDF téléchargé depuis votre banque en ligne, ou un export CSV/OFX."));
+        }
+    }
+
+    /// <summary>
+    /// Lecture déterministe par profils bancaires (gabarits que le parseur historique ne lit pas, fichiers
+    /// à plusieurs relevés). Retenue SEULEMENT si chaque relevé a des lignes et aucune anomalie bloquante
+    /// (soldes vérifiés au millime) ; sinon null et le chemin historique (OCR, IA) s'applique tel quel.
+    /// </summary>
+    private async Task<BankStatementFilePreviewDto?> TryLayoutPreviewAsync(byte[] content, CancellationToken cancellationToken)
+    {
+        IReadOnlyList<ExtractedBankStatement> statements;
+        try
+        {
+            statements = _layoutExtractor.ExtractAll(content);
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            _logger.LogWarning(ex, "Relevé PDF : lecture par profils impossible, chemin historique conservé.");
+            return null;
+        }
+
+        if (statements.Count == 0 || statements.Any(s => s.Lines.Count == 0 || s.HasBlockingIssue))
+        {
+            _logger.LogInformation(
+                "Relevé PDF : lecture par profils non retenue ({Count} relevé(s), profil {Profile}), chemin historique conservé.",
+                statements.Count, statements.FirstOrDefault()?.ProfileId);
+            return null;
+        }
+
+        var previews = new List<BankStatementFilePreviewDto>();
+        foreach (var statement in statements)
+            previews.Add(await BuildLayoutPreviewAsync(statement, cancellationToken));
+
+        _logger.LogInformation(
+            "Relevé PDF : lu par profil {Profile} sans IA, {Count} relevé(s), {Lines} ligne(s).",
+            statements[0].ProfileId, statements.Count, statements.Sum(s => s.Lines.Count));
+
+        if (previews.Count == 1)
+            return previews[0];
+
+        var periods = string.Join(", ", previews.Select(p => $"{p.PeriodStart:dd/MM/yyyy}–{p.PeriodEnd:dd/MM/yyyy}"));
+        return previews[0] with
+        {
+            CanImport = false,
+            Issues = previews[0].Issues.Append(new ImportIssueDto
+            {
+                Ref = "fichier",
+                Message = $"Le fichier contient {previews.Count} relevés ({periods}) : ils sont importés l'un après l'autre.",
+                IsBlocking = false
+            }).ToList(),
+            Statements = previews
+        };
+    }
+
+    private async Task<BankStatementFilePreviewDto> BuildLayoutPreviewAsync(ExtractedBankStatement statement, CancellationToken cancellationToken)
+    {
+        var header = statement.Header;
+        var lines = statement.Lines.Select(l => new ImportBankStatementLineRequest
+        {
+            TransactionDate = l.TransactionDate.ToDateTime(TimeOnly.MinValue),
+            ValueDate = l.ValueDate?.ToDateTime(TimeOnly.MinValue),
+            Reference = BankLabelReferences.Extract(l.Label)?.Number ?? string.Empty,
+            Description = l.Label,
+            Amount = l.Amount,
+            IsDebit = l.IsDebit
+        }).ToList();
+
+        var issues = statement.Issues
+            .Where(i => i.Severity != StatementIssueSeverity.Info)
+            .Select(i => new ImportIssueDto
+            {
+                Ref = i.PageNumber is { } page ? $"page {page}" : "fichier",
+                Message = i.Message,
+                IsBlocking = i.Severity == StatementIssueSeverity.Blocking
+            })
+            .ToList();
+
+        var (match, matchIssues) = await _bankMatcher.MatchByRibAsync(header.Rib, cancellationToken);
+        issues.AddRange(matchIssues);
+
+        // L'enregistrement de l'assistant (POST statements) ne sait pas stocker un solde débiteur.
+        if (header.OpeningBalance?.Value < 0 || header.ClosingBalance?.Value < 0)
+        {
+            issues.Add(new ImportIssueDto
+            {
+                Ref = "fichier",
+                Message = "Ce relevé présente un solde débiteur, que l'assistant de rapprochement ne sait pas enregistrer : " +
+                          "importez-le depuis la saisie manuelle (Import › Importer un relevé bancaire).",
+                IsBlocking = true
+            });
+        }
+
+        var check = BankStatementBalanceCheck.Evaluate(header, statement.Lines);
+        var bankName = BankStatementProfileRegistry.Default.Profiles.FirstOrDefault(p => p.Id == statement.ProfileId)?.BankName;
+        return new BankStatementFilePreviewDto
+        {
+            TotalLines = lines.Count,
+            ValidLines = lines.Count,
+            TotalDebit = lines.Where(l => l.IsDebit).Sum(l => l.Amount),
+            TotalCredit = lines.Where(l => !l.IsDebit).Sum(l => l.Amount),
+            PeriodStart = header.PeriodStart?.ToDateTime(TimeOnly.MinValue),
+            PeriodEnd = header.PeriodEnd?.ToDateTime(TimeOnly.MinValue),
+            CanImport = !issues.Any(i => i.IsBlocking) && lines.Count > 0,
+            Issues = issues,
+            Lines = lines,
+            DetectedBankCode = header.BankCode,
+            DetectedRib = header.Rib,
+            MatchedBankAccountId = match.BankAccountId,
+            MatchedChartOfAccountNumber = match.ChartOfAccountNumber,
+            SuggestedBankName = match.BankName ?? bankName,
+            SuggestedOpeningBalance = header.OpeningBalance?.Value,
+            SuggestedClosingBalance = header.ClosingBalance?.Value,
+            ExtractionMethod = BankStatementExtractionMethod.TextParser,
+            ConfidenceScore = 95,
+            SourcePageCount = statement.PageCount,
+            BalanceDiscrepancy = check.Difference is { } difference ? Math.Abs(difference) : null
+        };
     }
 
     private sealed record DeterministicParseResult(
@@ -226,6 +386,16 @@ public sealed class BankStatementPdfImportService : IBankStatementPdfImportServi
                     IsBlocking = false
                 });
             }
+        }
+
+        if (periodStart is { } start && periodEnd is { } end && end < start)
+        {
+            allIssues.Add(new ImportIssueDto
+            {
+                Ref = "periode",
+                Message = $"Période déduite incohérente : fin {end:dd/MM/yyyy} avant début {start:dd/MM/yyyy}. Corrigez la période avant d'importer.",
+                IsBlocking = false
+            });
         }
 
         var hasBlocking = allIssues.Any(i => i.IsBlocking);

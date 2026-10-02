@@ -51,29 +51,32 @@ public sealed class BankStatementImportController : ControllerBase
         _settings = settings.Value;
     }
 
-    /// <summary>Capacités : activation, IA disponible (et de quel type), limites, banques reconnues.</summary>
+    /// <summary>
+    /// Capacités : activation, IA disponible (et de quel type), limites, banques reconnues.
+    /// Fonctionnalité éteinte : 200 avec <c>enabled=false</c> (les autres actions restent en 404).
+    /// <paramref name="includeAi"/> = false : pas de sonde du moteur IA (écrans qui ne lisent que <c>enabled</c>).
+    /// </summary>
     [HttpGet("capabilities")]
     [Authorize(Policy = PermissionPolicies.AccountingRead)]
-    public async Task<IActionResult> GetCapabilities(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetCapabilities([FromQuery] bool includeAi = true, CancellationToken cancellationToken = default)
     {
         if (!_settings.BankStatementAiPostingEnabled)
-            return NotFound();
+            return Ok(ApiResponse<BankStatementImportCapabilitiesDto>.Ok(BankStatementImportCapabilitiesDto.Disabled));
 
-        var canUseAi = _currentUser.HasPermission(Permissions.AI.Chat);
+        var canUseAi = includeAi && _currentUser.HasPermission(Permissions.AI.Chat);
         var ai = canUseAi ? await _ai.CheckAvailabilityAsync(cancellationToken) : null;
-        return Ok(ApiResponse<object>.Ok(new
-        {
-            enabled = true,
-            aiAvailable = ai?.Available == true,
-            aiProviderKind = ai?.Available == true ? ai.ProviderKind : null,
-            maxFileBytes = _settings.BankStatementImport.MaxFileBytes,
-            maxPages = _settings.BankStatementImport.MaxPages,
-            acceptedExtensions = new[] { ".pdf", ".png", ".jpg", ".jpeg", ".webp" },
-            recognizedBanks = _profiles.Profiles
+        return Ok(ApiResponse<BankStatementImportCapabilitiesDto>.Ok(new BankStatementImportCapabilitiesDto(
+            Enabled: true,
+            AiAvailable: ai?.Available == true,
+            AiProviderKind: ai?.Available == true ? ai.ProviderKind : null,
+            MaxFileBytes: _settings.BankStatementImport.MaxFileBytes,
+            MaxPages: _settings.BankStatementImport.MaxPages,
+            AcceptedExtensions: new[] { ".pdf", ".png", ".jpg", ".jpeg", ".webp" },
+            RecognizedBanks: _profiles.Profiles
                 .Where(p => p.Id != BankStatementProfileRegistry.GenericProfileId && p.BankName is not null)
-                .Select(p => p.BankName)
-                .ToArray()
-        }));
+                .Select(p => p.BankName!)
+                .Distinct(StringComparer.Ordinal)
+                .ToArray())));
     }
 
     /// <summary>

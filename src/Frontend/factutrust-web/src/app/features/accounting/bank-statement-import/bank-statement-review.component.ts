@@ -20,6 +20,7 @@ import {
   BankLineProposal,
   BankStatementImportCapabilities,
   BankStatementImportSession,
+  BankStatementImportSibling,
   BankStatementProposals,
   GenerateItem,
   GenerateOutcome,
@@ -102,6 +103,22 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
         </div>
       }
 
+      <!-- ══ Fichier assemblant plusieurs relevés : une session par relevé ══ -->
+      @if (s.segmentCount && s.segmentCount > 1) {
+        <div class="card bsr-card" role="status">
+          <p class="bsr-strong" i18n="@@accounting.bank-statement-import.ce.fichier.contient.releves.chacun.est.c.aaf84d84">Ce fichier contient {{ s.segmentCount }} relevés : chacun est contrôlé et enregistré séparément.</p>
+          <ul class="bsr-siblings">
+            <li i18n="@@accounting.bank-statement-import.releve.affiche.ci.dessous.a7b05a90">Relevé {{ s.segmentIndex }} — affiché ci-dessous</li>
+            @for (sib of s.siblings ?? []; track sib.id) {
+              <li i18n="@@accounting.bank-statement-import.releve.1919c83f">
+                <a class="bsr-link" [routerLink]="siblingLink(sib)">Relevé {{ sib.segmentIndex }} — {{ sib.periodStart | date: 'MM/yyyy' }}</a>
+                <span class="bsr-muted"> · {{ siblingState(sib) }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
       <!-- ══ Étape 1 : contrôle de l'extraction ══ -->
       @if (s.status === 'AwaitingReview' && s.extraction; as x) {
         <div class="card bsr-card">
@@ -176,6 +193,18 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
           </div>
         </div>
       }
+    }
+
+    <!-- ══ Relevés du même fichier restant à contrôler ══ -->
+    @if (proposals() && pendingSiblings().length > 0) {
+      <div class="card bsr-card" role="status">
+        <p class="bsr-strong" i18n="@@accounting.bank-statement-import.il.reste.releve.s.de.ce.fichier.a.contro.a982f4ce">Il reste {{ pendingSiblings().length }} relevé(s) de ce fichier à contrôler :</p>
+        <ul class="bsr-siblings">
+          @for (sib of pendingSiblings(); track sib.id) {
+            <li i18n="@@accounting.bank-statement-import.releve.0edb21de"><a class="bsr-link" [routerLink]="siblingLink(sib)">Relevé {{ sib.segmentIndex }} — {{ sib.periodStart | date: 'MM/yyyy' }}</a></li>
+          }
+        </ul>
+      </div>
     }
 
     <!-- ══ Étape 2 : propositions et génération ══ -->
@@ -370,6 +399,7 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
     .bsr-result { border-top:1px solid var(--color-border-subtle); padding-block-start:var(--spacing-3); display:flex; flex-direction:column; gap:var(--spacing-2); }
     .bsr-links { display:flex; gap:var(--spacing-3); flex-wrap:wrap; }
     .bsr-link { color:var(--color-primary); }
+    .bsr-siblings { margin:0; padding-inline-start:var(--spacing-4); display:flex; flex-direction:column; gap:var(--spacing-1); }
   `
 })
 export class BankStatementReviewComponent implements OnInit {
@@ -394,6 +424,8 @@ export class BankStatementReviewComponent implements OnInit {
   readonly error = signal<string | null>(null);
   readonly filter = signal<RowFilter>('all');
   readonly activeRow = signal<ReviewRow | null>(null);
+  /** Relevés frères (même fichier) encore à contrôler, transmis lors de la navigation après confirmation. */
+  readonly pendingSiblings = signal<BankStatementImportSibling[]>([]);
   readonly lastGeneration = signal<{ created: number; skipped: number; failed: number; failures: GenerateOutcome[] } | null>(null);
 
   journalCode = 'JB';
@@ -496,7 +528,11 @@ export class BankStatementReviewComponent implements OnInit {
     this.api.confirm(s.id).subscribe({
       next: result => {
         this.busy.set(false);
-        void this.router.navigate(['/accounting/bank-statement-import/statement', result.statementId], { replaceUrl: true });
+        const pendingSiblings = (s.siblings ?? []).filter(x => !x.statementId);
+        void this.router.navigate(['/accounting/bank-statement-import/statement', result.statementId], {
+          replaceUrl: true,
+          state: { pendingSiblings }
+        });
       },
       error: (err: unknown) => this.fail(err)
     });
@@ -506,6 +542,8 @@ export class BankStatementReviewComponent implements OnInit {
 
   private loadProposals(statementId: string): void {
     this.session.set(null);
+    const state = (typeof history !== 'undefined' ? history.state : null) as { pendingSiblings?: BankStatementImportSibling[] } | null;
+    if (Array.isArray(state?.pendingSiblings)) this.pendingSiblings.set(state.pendingSiblings);
     this.api.proposals(statementId).subscribe({
       next: p => {
         this.proposals.set(p);
@@ -728,6 +766,25 @@ export class BankStatementReviewComponent implements OnInit {
   readonly issueTitle = issueTitle;
   readonly sourceLabel = proposalSourceLabel;
   readonly diagnosticText = proposalDiagnosticMessage;
+
+  siblingLink(sib: BankStatementImportSibling): string[] {
+    return sib.statementId
+      ? ['/accounting/bank-statement-import/statement', sib.statementId]
+      : ['/accounting/bank-statement-import/session', sib.id];
+  }
+
+  siblingState(sib: BankStatementImportSibling): string {
+    if (sib.statementId) return $localize`:@@accounting.bank-statement-import.ts.enregistre.c68fb2eb:enregistré`;
+    switch (sib.status) {
+      case 'AwaitingReview':
+        return $localize`:@@accounting.bank-statement-import.ts.a.controler.c2ced249:à contrôler`;
+      case 'Extracting':
+      case 'Pending':
+        return $localize`:@@accounting.bank-statement-import.ts.lecture.en.cours.01347730:lecture en cours`;
+      default:
+        return $localize`:@@accounting.bank-statement-import.ts.indisponible.1ad054af:indisponible`;
+    }
+  }
 
   maskRib(rib: string | null): string {
     return rib ? `${rib.slice(0, 2)} … ${rib.slice(-4)}` : '—';

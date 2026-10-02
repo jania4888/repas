@@ -334,7 +334,7 @@ export class ManualEntryComponent implements OnInit {
   ngOnInit(): void {
     this.refs.loadAll();
     this.bankStatementImport
-      .capabilities()
+      .capabilities({ includeAi: false })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(caps => this.bankStatementImportEnabled.set(!!caps?.enabled));
 

@@ -31,10 +31,25 @@ Profils dans `FactuTrust.Infrastructure/Resources/Accounting/bank-statement-prof
 | `bh-releve` | 14 | Dates `DD-MM` sans année (année tirée de l'arrêté) ; sens par colonne uniquement |
 | `zitouna-releve` | 25 | Débits imprimés négatifs |
 | `attijari-extrait` | 04 | Libellés sur plusieurs lignes ; « DONT TVA » ; récapitulatif à 2 décimales |
-| `biat-releve` | 08 | Dates éclatées ; total crédit incluant le solde d'ouverture |
+| `biat-releve` | 08 | Gabarit « DINAR TUNISIEN » : dates éclatées ; total crédit incluant le solde d'ouverture |
+| `biat-releve-mensuel` | 08 | Gabarit bilingue « RELEVÉ DE COMPTE MENSUEL » : période « Du : / Au : » sur deux lignes, soldes imprimés au-dessus de leur libellé, total crédit incluant l'ouverture ; boîtes de mots par avance des lettres (PDF régénérés par pdf-lib aux métriques de police fausses) |
 | `generic` | — | Ancres d'en-tête seules |
 
-Le parcours historique de l'assistant de rapprochement (`import-file`, parseur BIAT) est **inchangé**.
+Un code banque peut avoir plusieurs gabarits : parmi les profils du code, celui dont un marqueur figure dans le
+document l'emporte ; sans marqueur, le premier déclaré (gabarit historique).
+
+**Fichier assemblant plusieurs relevés** (ex. juillet et août dans un même PDF, même dans le désordre) : il est
+découpé par période imprimée en en-tête de page et par RIB, chaque relevé est lu et contrôlé séparément (soldes au
+millime), remis dans l'ordre chronologique, avec contrôle de continuité (clôture n = ouverture n+1 : avertissement)
+et de chevauchement (bloquant). 12 relevés au plus par fichier. Dans l'import IA, chaque relevé a sa session (même
+fichier, empreinte dérivée `<58 car. du SHA-256>-IP/NN`), confirmée séparément ; la relecture liste les relevés frères.
+
+**Assistant de rapprochement** (`import-file`) : le parseur historique reste le premier essayé. S'il ne lit aucune
+ligne et que `Accounting:BankStatementLayoutParserEnabled` est actif, la lecture par profils ci-dessus est tentée
+avant l'OCR et l'IA ; elle n'est retenue que si chaque relevé est lu sans anomalie bloquante. Un fichier à plusieurs
+relevés est alors proposé relevé par relevé et importé dans l'ordre chronologique. Le repli OCR + IA est borné par
+`Accounting:BankStatementPreviewTimeoutSeconds` (défaut 240 s, sous le délai nginx de 300 s) : au-delà, message
+`bank_statement.preview_timeout` ; moteur IA en erreur : `bank_statement.ai_unavailable` (plus de 504 ni de 500).
 
 ## Ordre de proposition (premier qui répond)
 

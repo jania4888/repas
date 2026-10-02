@@ -20,7 +20,8 @@ namespace FactuTrust.Infrastructure.Tests.Services.BankStatementImport;
 ///                     "lineCount"?, "creditCount"?, "periodStart", "periodEnd", "totalsLabelled"? } ],
 ///   "probes": [ { "name", "file", "index"? | "lastOfPage"? | "firstOfPage"? | "amount"? | "labelContains",
 ///                 "labelStartsWith"?, "labelEndsWith"?, "isDebit"?, "transactionDate"?, "valueDate"?,
-///                 "labelLineCount"?, "embeddedVat"? { "net", "vat" }, "singleDontTva"? } ] }
+///                 "labelLineCount"?, "embeddedVat"? { "net", "vat" }, "singleDontTva"? } ],
+///   "multi"?: [ { "file", "statements": [ { "periodStart", "periodEnd", "opening", "closing", "lineCount" } ] } ] }
 /// </code>
 /// Une sonde désigne une opération (par position, par page, par montant ou par libellé) et vérifie
 /// ce que l'extraction doit en lire : sens tiré de la colonne (BH), débit négatif (Zitouna),
@@ -40,6 +41,8 @@ public sealed class BankStatementLayoutExtractorPrivateFixtureTests
     public static IEnumerable<object[]> Statements => Indexes(e => e.Statements.Count);
 
     public static IEnumerable<object[]> Probes => Indexes(e => e.Probes.Count);
+
+    public static IEnumerable<object[]> MultiFiles => Indexes(e => e.Multi?.Count ?? 0);
 
     [SkippableTheory]
     [MemberData(nameof(Statements))]
@@ -108,6 +111,36 @@ public sealed class BankStatementLayoutExtractorPrivateFixtureTests
         }
     }
 
+    [SkippableTheory]
+    [MemberData(nameof(MultiFiles))]
+    public void File_with_several_statements_is_split_in_chronological_order(int index)
+    {
+        var multi = Expected().Multi ?? new List<ExpectedMulti>();
+        Skip.If(index >= multi.Count, "aucun fichier à plusieurs relevés dans expected.json");
+        var expected = multi[index];
+        var path = Path.Combine(Directory(), expected.File);
+        Skip.IfNot(File.Exists(path), $"{path} absent : recette privée ignorée.");
+
+        var results = new BankStatementLayoutExtractor().ExtractAll(File.ReadAllBytes(path));
+
+        Assert.Equal(expected.Statements.Count, results.Count);
+        for (var i = 0; i < results.Count; i++)
+        {
+            var (result, statement) = (results[i], expected.Statements[i]);
+            Assert.Empty(result.Issues.Where(x => x.Severity == StatementIssueSeverity.Blocking).Select(x => x.Message));
+            Assert.Equal(DateOnly.Parse(statement.PeriodStart, CultureInfo.InvariantCulture), result.Header.PeriodStart);
+            Assert.Equal(DateOnly.Parse(statement.PeriodEnd, CultureInfo.InvariantCulture), result.Header.PeriodEnd);
+            Assert.Equal(statement.Opening, result.Header.OpeningBalance!.Value);
+            Assert.Equal(statement.Closing, result.Header.ClosingBalance!.Value);
+            Assert.Equal(statement.LineCount, result.Lines.Count);
+            Assert.True(BankStatementBalanceCheck.Evaluate(result.Header, result.Lines).IsBalanced);
+        }
+
+        // Le fichier entier lu comme UN relevé est refusé : jamais de mélange de deux périodes.
+        var single = new BankStatementLayoutExtractor().Extract(File.ReadAllBytes(path));
+        Assert.Contains(single.Issues, x => x.Code == StatementIssueCodes.MultipleStatements && x.Severity == StatementIssueSeverity.Blocking);
+    }
+
     private static ExtractedStatementLine Select(ExtractedBankStatement result, Probe probe)
     {
         if (probe.Index is { } index)
@@ -162,7 +195,11 @@ public sealed class BankStatementLayoutExtractorPrivateFixtureTests
         return new BankStatementLayoutExtractor().Extract(File.ReadAllBytes(path));
     }
 
-    private sealed record ExpectedFile(List<ExpectedStatement> Statements, List<Probe> Probes);
+    private sealed record ExpectedFile(List<ExpectedStatement> Statements, List<Probe> Probes, List<ExpectedMulti>? Multi);
+
+    private sealed record ExpectedMulti(string File, List<ExpectedSegment> Statements);
+
+    private sealed record ExpectedSegment(string PeriodStart, string PeriodEnd, decimal Opening, decimal Closing, int LineCount);
 
     private sealed record ExpectedStatement(
         string File, string Profile, string Rib, decimal Opening, decimal Closing, decimal TotalDebits, decimal TotalCredits,

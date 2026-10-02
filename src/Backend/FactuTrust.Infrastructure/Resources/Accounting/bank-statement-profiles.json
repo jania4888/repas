@@ -63,6 +63,25 @@
       "debitCreditBoundaryRatio": null
     },
     {
+      "id": "biat-releve-mensuel",
+      "bankName": "BIAT",
+      "ribBankCodes": [ "08" ],
+      "textMarkers": [ "RELEVE DE COMPTE MENSUEL" ],
+      "comment": "Relevé mensuel bilingue (français/arabe) : en-têtes texte Date / Libellé de l'opération / Référence / Date de valeur / Débit / Crédit, dates jj/mm/aaaa, ouverture « Solde au », pied « Totaux » (le total crédit inclut l'ouverture) puis « Solde » ; montants de solde imprimés ~4 pt au-dessus de leur libellé ; période « Du : » / « Au : » sur deux lignes ; PDF souvent régénérés (pdf-lib) avec des métriques de police fausses, d'où les boîtes par avance des lettres. Doit rester APRÈS « biat-releve » : sans marqueur, le premier profil du code reste le gabarit historique.",
+      "operationDateFormats": [ "dd/MM/yyyy" ],
+      "valueDateFormats": [ "dd/MM/yyyy" ],
+      "statementDateFormats": [ "dd/MM/yyyy" ],
+      "openingLabels": [ "SOLDE AU" ],
+      "closingLabels": [ "SOLDE" ],
+      "creditTotalIncludesOpening": true,
+      "useAdvanceBoxes": true,
+      "summaryAmountAboveTolerance": 7,
+      "periodBoundsOnSeparateLines": true,
+      "anchorsBelowHeaderOnly": true,
+      "excludedSummaryLabels": [],
+      "debitCreditBoundaryRatio": null
+    },
+    {
       "id": "attijari-extrait",
       "bankName": "ATTIJARI",
       "ribBankCodes": [ "04" ],

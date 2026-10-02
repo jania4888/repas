@@ -148,6 +148,14 @@ public static class StatementIssueCodes
     public const string AiPageFailed = "statement.ai_page_failed";
     public const string AiAmountNotGrounded = "statement.ai_amount_not_grounded";
 
+    /// <summary>Le fichier contient plusieurs relevés (périodes distinctes) : à lire relevé par relevé.</summary>
+    public const string MultipleStatements = "statement.multiple_statements";
+    public const string TooManyStatements = "statement.too_many_statements";
+    /// <summary>Deux relevés d'un même fichier se chevauchent.</summary>
+    public const string PeriodsOverlap = "statement.periods_overlap";
+    /// <summary>Le solde d'ouverture ne reprend pas la clôture du relevé précédent du fichier.</summary>
+    public const string Discontinuity = "statement.discontinuity";
+
     /// <summary>Codes produits par le contrôle arithmétique (recalculés après chaque correction).</summary>
     public static readonly IReadOnlySet<string> BalanceCodes = new HashSet<string>(StringComparer.Ordinal)
     {

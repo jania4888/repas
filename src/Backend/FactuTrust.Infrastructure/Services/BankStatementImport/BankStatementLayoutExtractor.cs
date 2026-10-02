@@ -61,7 +61,100 @@ public sealed partial class BankStatementLayoutExtractor
         _profiles = profiles ?? BankStatementProfileRegistry.Default;
     }
 
+    /// <summary>Au-delà, un fichier contenant plusieurs relevés est refusé (garde-fou de charge).</summary>
+    public const int MaxStatementsPerFile = 12;
+
+    /// <summary>
+    /// Lit UN relevé. Un fichier qui en contient plusieurs (périodes distinctes, ex. deux mois
+    /// assemblés) reçoit en plus un signalement bloquant <see cref="StatementIssueCodes.MultipleStatements"/> :
+    /// l'appelant qui sait traiter plusieurs relevés utilise <see cref="ExtractAll"/>.
+    /// </summary>
     public ExtractedBankStatement Extract(byte[] pdf)
+    {
+        var document = Prepare(pdf);
+        if (document.Early is { } early)
+            return early;
+
+        var result = ExtractCore(document, document.TextPages, document.Unresolved, firstPage: 1, document.Issues, document.Rib);
+        var segments = Segment(document);
+        if (segments.Count <= 1)
+            return result;
+
+        var issues = result.Issues.ToList();
+        issues.Add(MultipleStatementsIssue(segments));
+        return result with { Issues = issues };
+    }
+
+    /// <summary>
+    /// Lit tous les relevés du fichier, dans l'ordre chronologique. Un seul relevé : résultat
+    /// identique à <see cref="Extract"/>. Plusieurs : un résultat par période, chacun avec son propre
+    /// contrôle de solde, plus le contrôle de continuité (clôture n = ouverture n+1) et de chevauchement.
+    /// </summary>
+    public IReadOnlyList<ExtractedBankStatement> ExtractAll(byte[] pdf)
+    {
+        var document = Prepare(pdf);
+        if (document.Early is { } early)
+            return new[] { early };
+
+        var segments = Segment(document);
+        if (segments.Count <= 1)
+            return new[] { ExtractCore(document, document.TextPages, document.Unresolved, firstPage: 1, document.Issues, document.Rib) };
+
+        if (segments.Count > MaxStatementsPerFile)
+        {
+            var refused = new List<StatementExtractionIssue>(document.Issues)
+            {
+                new(StatementIssueCodes.TooManyStatements, StatementIssueSeverity.Blocking,
+                    $"Le fichier contient {segments.Count} relevés (maximum {MaxStatementsPerFile}) : importez-les en plusieurs fois.")
+            };
+            return new[] { Empty(refused, document.PageCount) };
+        }
+
+        var results = segments
+            .Select(segment =>
+            {
+                var pageNumbers = segment.Pages.ToHashSet();
+                var issues = new List<StatementExtractionIssue>();
+                var unresolved = document.Unresolved.Where(pageNumbers.Contains).ToList();
+                foreach (var page in unresolved)
+                {
+                    issues.Add(new StatementExtractionIssue(StatementIssueCodes.NoTextLayer, StatementIssueSeverity.Blocking,
+                        $"La page {page} n'a pas de texte lisible (document scanné) : lecture par OCR / IA nécessaire.", page));
+                }
+
+                var rib = FindRib(document.OriginalBands.Where(b => pageNumbers.Contains(b.Page)).ToList(), issues);
+                var textPages = document.TextPages.Where(p => pageNumbers.Contains(p.Number)).ToList();
+                var extracted = ExtractCore(document, textPages, unresolved, segment.Pages[0], issues, rib);
+                return extracted with { PageCount = segment.Pages.Count };
+            })
+            .OrderBy(r => r.Header.PeriodStart ?? DateOnly.MaxValue)
+            .ToList();
+
+        for (var i = 1; i < results.Count; i++)
+        {
+            var previous = results[i - 1];
+            var current = results[i];
+            var issues = current.Issues.ToList();
+            if (previous.Header.PeriodEnd is { } end && current.Header.PeriodStart is { } start && start <= end)
+            {
+                issues.Add(new StatementExtractionIssue(StatementIssueCodes.PeriodsOverlap, StatementIssueSeverity.Blocking,
+                    $"Ce relevé ({start:dd/MM/yyyy}) chevauche le précédent du fichier (jusqu'au {end:dd/MM/yyyy})."));
+            }
+            else if (previous.Header.ClosingBalance is { } closing && current.Header.OpeningBalance is { } opening
+                     && closing.Value != opening.Value)
+            {
+                issues.Add(new StatementExtractionIssue(StatementIssueCodes.Discontinuity, StatementIssueSeverity.Warning,
+                    $"Le solde d'ouverture ({opening.Value:N3}) ne reprend pas la clôture du relevé précédent ({closing.Value:N3}) : un relevé intermédiaire manque peut-être."));
+            }
+
+            results[i] = current with { Issues = issues };
+        }
+
+        return results;
+    }
+
+    /// <summary>Chargement, couche texte, RIB et profil : commun à tous les relevés d'un fichier.</summary>
+    private PreparedDocument Prepare(byte[] pdf)
     {
         ArgumentNullException.ThrowIfNull(pdf);
         var issues = new List<StatementExtractionIssue>();
@@ -76,7 +169,7 @@ public sealed partial class BankStatementLayoutExtractor
             {
                 issues.Add(new StatementExtractionIssue(StatementIssueCodes.TooManyPages, StatementIssueSeverity.Blocking,
                     $"Le relevé compte {pageCount} pages (maximum {MaxPages})."));
-                return Empty(issues, pageCount);
+                return PreparedDocument.Failed(Empty(issues, pageCount));
             }
 
             pages = document.GetPages().Select(LoadPage).ToList();
@@ -88,7 +181,7 @@ public sealed partial class BankStatementLayoutExtractor
                 ? "Le PDF est protégé par mot de passe : exportez une version non protégée depuis votre banque."
                 : "Le fichier n'a pas pu être lu comme un PDF.";
             issues.Add(new StatementExtractionIssue(StatementIssueCodes.Unreadable, StatementIssueSeverity.Blocking, message));
-            return Empty(issues, 0);
+            return PreparedDocument.Failed(Empty(issues, 0));
         }
 
         var textPages = pages.Where(p => p.HasTextLayer).ToList();
@@ -99,16 +192,31 @@ public sealed partial class BankStatementLayoutExtractor
                 $"La page {page} n'a pas de texte lisible (document scanné) : lecture par OCR / IA nécessaire.", page));
         }
 
-        var bands = textPages.SelectMany(BuildBands).ToList();
-        var rib = FindRib(bands, issues);
-        var documentText = BankLabelNormalizer.Normalize(string.Join(' ', bands.Select(b => b.Text)));
+        var originalBands = textPages.SelectMany(BuildBands).ToList();
+        var rib = FindRib(originalBands, issues);
+        var documentText = BankLabelNormalizer.Normalize(string.Join(' ', originalBands.Select(b => b.Text)));
         var profile = _profiles.Resolve(TunisianIban.BankCodeOf(rib), documentText);
 
+        if (profile.UseAdvanceBoxes)
+            textPages = textPages.Select(p => p.AdvanceWords.Count > 0 ? p with { Words = p.AdvanceWords } : p).ToList();
+
         if (profile.MergeSplitDates)
-        {
             textPages = textPages.Select(MergeSplitDates).ToList();
-            bands = textPages.SelectMany(BuildBands).ToList();
-        }
+
+        return new PreparedDocument(null, pages, pageCount, textPages, unresolved, originalBands, rib, profile, issues);
+    }
+
+    /// <summary>Lecture d'un relevé sur un sous-ensemble de pages (tout le fichier, ou un segment).</summary>
+    private static ExtractedBankStatement ExtractCore(
+        PreparedDocument document,
+        IReadOnlyList<PageData> textPages,
+        IReadOnlyList<int> unresolved,
+        int firstPage,
+        List<StatementExtractionIssue> issues,
+        string? rib)
+    {
+        var profile = document.Profile;
+        var bands = textPages.SelectMany(BuildBands).ToList();
 
         var anchors = FindAnchors(textPages, profile);
         var valueColumn = FindValueDateColumn(textPages, anchors, profile);
@@ -120,7 +228,7 @@ public sealed partial class BankStatementLayoutExtractor
 
         var headers = textPages.ToDictionary(p => p.Number, p => FindHeader(p, bands));
         var columns = ResolveColumns(textPages, headers, anchors, profile, issues);
-        var period = FindPeriod(bands, profile);
+        var period = FindPeriod(bands, profile, firstPage);
 
         var rows = BuildRows(textPages, headers, anchors, columns, issues);
         var summary = ReadSummary(bands, anchors, columns, profile);
@@ -165,18 +273,103 @@ public sealed partial class BankStatementLayoutExtractor
             Lines = lines,
             Issues = issues,
             ProfileId = profile.Id,
-            PageCount = pageCount,
+            PageCount = document.PageCount,
             UnresolvedPages = unresolved
         };
+    }
+
+    // ── Découpage d'un fichier en relevés ───────────────────────────────────────────────────
+
+    /// <summary>
+    /// Segments = pages consécutives de même période imprimée et de même RIB. La période n'est
+    /// cherchée que dans l'EN-TÊTE de la page (au-dessus de la première opération) : un libellé
+    /// d'opération « AGIOS DU 24/02/2026 AU 25/02/2026 » ne doit pas couper un relevé. Une page sans
+    /// opération, sans période lisible ou scannée rejoint le segment précédent : un relevé de
+    /// plusieurs pages qui n'imprime sa période qu'en première page reste donc d'un seul tenant.
+    /// </summary>
+    private static List<StatementSegment> Segment(PreparedDocument document)
+    {
+        var segments = new List<StatementSegment>();
+        var bandsByPage = document.TextPages.ToDictionary(p => p.Number, p => BuildBands(p).ToList());
+        var originalByPage = document.OriginalBands.GroupBy(b => b.Page).ToDictionary(g => g.Key, g => g.ToList());
+        var anchors = FindAnchors(document.TextPages, document.Profile);
+
+        foreach (var page in document.AllPages.OrderBy(p => p.Number))
+        {
+            (DateOnly? Start, DateOnly? End) period = (null, null);
+            string? rib = null;
+            var pageAnchors = anchors.Where(a => a.Page == page.Number).ToList();
+            if (bandsByPage.TryGetValue(page.Number, out var bands) && pageAnchors.Count > 0)
+            {
+                var firstOperation = pageAnchors.Max(a => a.Box.CenterY);
+                var headerBands = bands.Where(b => b.CenterY > firstOperation + BandTolerance).ToList();
+                period = FindPeriod(headerBands, document.Profile, page.Number);
+                rib = FindRib(originalByPage.GetValueOrDefault(page.Number) ?? new List<Band>(), new List<StatementExtractionIssue>());
+            }
+
+            var current = segments.Count > 0 ? segments[^1] : null;
+            var startsNew = current is null
+                            || (period.Start is not null && current.Start is not null && (period.Start != current.Start || period.End != current.End))
+                            || (rib is not null && current.Rib is not null && rib != current.Rib);
+            if (startsNew)
+            {
+                segments.Add(new StatementSegment(new List<int> { page.Number }, period.Start, period.End, rib));
+            }
+            else
+            {
+                current!.Pages.Add(page.Number);
+                current.Start ??= period.Start;
+                current.End ??= period.End;
+                current.Rib ??= rib;
+            }
+        }
+
+        return segments;
+    }
+
+    private static StatementExtractionIssue MultipleStatementsIssue(IReadOnlyList<StatementSegment> segments)
+    {
+        var periods = string.Join(", ", segments
+            .OrderBy(s => s.Start ?? DateOnly.MaxValue)
+            .Select(s => s.Start is { } start && s.End is { } end ? $"{start:dd/MM/yyyy}–{end:dd/MM/yyyy}" : $"pages {s.Pages[0]}–{s.Pages[^1]}"));
+        return new StatementExtractionIssue(StatementIssueCodes.MultipleStatements, StatementIssueSeverity.Blocking,
+            $"Le fichier contient {segments.Count} relevés ({periods}) : ils doivent être lus séparément.");
+    }
+
+    private sealed class StatementSegment(List<int> pages, DateOnly? start, DateOnly? end, string? rib)
+    {
+        public List<int> Pages { get; } = pages;
+        public DateOnly? Start { get; set; } = start;
+        public DateOnly? End { get; set; } = end;
+        public string? Rib { get; set; } = rib;
+    }
+
+    private sealed record PreparedDocument(
+        ExtractedBankStatement? Early,
+        IReadOnlyList<PageData> AllPages,
+        int PageCount,
+        IReadOnlyList<PageData> TextPages,
+        IReadOnlyList<int> Unresolved,
+        IReadOnlyList<Band> OriginalBands,
+        string? Rib,
+        BankStatementProfile Profile,
+        List<StatementExtractionIssue> Issues)
+    {
+        public static PreparedDocument Failed(ExtractedBankStatement result) => new(
+            result, Array.Empty<PageData>(), result.PageCount, Array.Empty<PageData>(), Array.Empty<int>(),
+            Array.Empty<Band>(), null, BankStatementProfileRegistry.Default.Generic, new List<StatementExtractionIssue>());
     }
 
     // ── Chargement ──────────────────────────────────────────────────────────────────────────
 
     private static PageData LoadPage(Page page)
     {
-        var words = page.GetWords()
-            .Where(w => !string.IsNullOrWhiteSpace(w.Text))
+        var pdfWords = page.GetWords().Where(w => !string.IsNullOrWhiteSpace(w.Text)).ToList();
+        var words = pdfWords
             .Select(w => new TextWord(w.Text.Trim(), new Box(w.BoundingBox.Left, w.BoundingBox.Right, w.BoundingBox.Bottom, w.BoundingBox.Top), page.Number))
+            .ToList();
+        var advanceWords = pdfWords
+            .Select(w => new TextWord(w.Text.Trim(), AdvanceBox(w) ?? new Box(w.BoundingBox.Left, w.BoundingBox.Right, w.BoundingBox.Bottom, w.BoundingBox.Top), page.Number))
             .ToList();
 
         var rules = new List<HRule>();
@@ -197,7 +390,28 @@ public sealed partial class BankStatementLayoutExtractor
             // Les filets ne sont qu'une aide : sans eux, l'appariement par ligne d'ancre prend le relais.
         }
 
-        return new PageData(page.Number, page.Width, page.Height, words, rules, page.Letters.Count >= MinLettersForTextLayer);
+        return new PageData(page.Number, page.Width, page.Height, words, rules, page.Letters.Count >= MinLettersForTextLayer)
+        {
+            AdvanceWords = advanceWords
+        };
+    }
+
+    /// <summary>
+    /// Boîte d'un mot d'après la position et l'avance de ses lettres (ligne de base), indépendante du
+    /// rectangle de glyphe déclaré par la police. Hauteur conventionnelle : 0,7 × corps.
+    /// </summary>
+    private static Box? AdvanceBox(Word word)
+    {
+        var letters = word.Letters;
+        if (letters.Count == 0)
+            return null;
+        var left = letters.Min(l => Math.Min(l.StartBaseLine.X, l.EndBaseLine.X));
+        var right = letters.Max(l => Math.Max(l.StartBaseLine.X, l.EndBaseLine.X));
+        var baseline = letters.Min(l => l.StartBaseLine.Y);
+        var size = letters.Max(l => l.PointSize > 0 ? l.PointSize : l.FontSize);
+        if (right <= left || size <= 0)
+            return null;
+        return new Box(left, right, baseline, baseline + size * 0.7);
     }
 
     private static IEnumerable<Band> BuildBands(PageData page) =>
@@ -284,9 +498,9 @@ public sealed partial class BankStatementLayoutExtractor
         return bands.Any(b => BankLabelNormalizer.Normalize(b.Text).Contains("DINAR TUNISIEN", StringComparison.Ordinal)) ? "TND" : null;
     }
 
-    private static (DateOnly? Start, DateOnly? End) FindPeriod(IReadOnlyList<Band> bands, BankStatementProfile profile)
+    private static (DateOnly? Start, DateOnly? End) FindPeriod(IReadOnlyList<Band> bands, BankStatementProfile profile, int firstPage = 1)
     {
-        foreach (var band in bands.Where(b => b.Page == 1))
+        foreach (var band in bands.Where(b => b.Page == firstPage))
         {
             var dates = band.Words
                 .Select(w => ParseDate(w.Text, profile.StatementDateFormats))
@@ -301,14 +515,64 @@ public sealed partial class BankStatementLayoutExtractor
                 return (dates[0], dates[1]);
         }
 
-        return (null, null);
+        return profile.PeriodBoundsOnSeparateLines ? FindPeriodOnSeparateLines(bands, profile, firstPage) : (null, null);
+    }
+
+    /// <summary>
+    /// « Du : 01/08/2026 » et « Au : 31/08/2026 » sur deux lignes : chaque borne est le mot DU / AU
+    /// immédiatement suivi d'une date, cherché seulement au-dessus de l'en-tête du tableau (le
+    /// « Solde au … » d'ouverture et les mentions légales du pied ne peuvent donc pas s'y substituer).
+    /// </summary>
+    private static (DateOnly? Start, DateOnly? End) FindPeriodOnSeparateLines(IReadOnlyList<Band> bands, BankStatementProfile profile, int firstPage)
+    {
+        var page = bands.Where(b => b.Page == firstPage).OrderByDescending(b => b.CenterY).ToList();
+        var header = page.FirstOrDefault(b =>
+            b.Words.Any(w => BankLabelNormalizer.Normalize(w.Text) == "DEBIT") &&
+            b.Words.Any(w => BankLabelNormalizer.Normalize(w.Text) == "CREDIT"));
+        if (header is null)
+            return (null, null);
+
+        DateOnly? start = null;
+        DateOnly? end = null;
+        foreach (var band in page.Where(b => b.CenterY > header.CenterY))
+        {
+            var words = band.Words.OrderBy(w => w.Box.Left).ToList();
+            for (var k = 0; k + 1 < words.Count; k++)
+            {
+                var label = BankLabelNormalizer.Normalize(words[k].Text);
+                if (label is not ("DU" or "AU"))
+                    continue;
+                if (ParseDate(words[k + 1].Text, profile.StatementDateFormats) is not { Year: not null } d)
+                    continue;
+                var date = new DateOnly(d.Year!.Value, d.Month, d.Day);
+                if (label == "DU" && start is null)
+                    start = date;
+                else if (label == "AU" && start is not null && end is null)
+                    end = date;
+            }
+        }
+
+        return start is { } s && end is { } e && s <= e ? (s, e) : (null, null);
     }
 
     // ── Ancres (dates d'opération) ──────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Mots pouvant porter une date d'opération. Profil <c>AnchorsBelowHeaderOnly</c> : seulement sous
+    /// l'en-tête du tableau, sinon les dates de période imprimées au-dessus (« Du : » / « Au : ») font
+    /// une colonne plus dense que celle des opérations d'un mois qui n'en compte qu'une.
+    /// </summary>
+    private static IEnumerable<TextWord> AnchorCandidates(PageData page, BankStatementProfile profile)
+    {
+        if (!profile.AnchorsBelowHeaderOnly)
+            return page.Words;
+        var header = FindHeader(page, BuildBands(page).ToList());
+        return header is null ? page.Words : page.Words.Where(w => w.Box.CenterY < header.Bottom);
+    }
+
     private static List<TextWord> FindAnchors(IReadOnlyList<PageData> pages, BankStatementProfile profile)
     {
-        var dated = pages.SelectMany(p => p.Words)
+        var dated = pages.SelectMany(p => AnchorCandidates(p, profile))
             .Where(w => ParseDate(w.Text, profile.OperationDateFormats) is not null)
             .ToList();
         if (dated.Count == 0)
@@ -723,7 +987,7 @@ public sealed partial class BankStatementLayoutExtractor
             if (profile.ExcludedSummaryLabels.Any(e => normalizedBand.Contains(e, StringComparison.Ordinal)))
                 continue;
 
-            var matches = FindLabels(band, profile.ClosingLabels);
+            var matches = FindLabels(band, profile);
             for (var m = 0; m < matches.Count; m++)
             {
                 var match = matches[m];
@@ -731,6 +995,16 @@ public sealed partial class BankStatementLayoutExtractor
                 var groups = AmountGroups(band.Words)
                     .Where(g => g.Box.Left > match.Right && g.Box.Left < nextLeft && !g.Words.Any(consumed.Contains))
                     .ToList();
+                var amountBand = band;
+                if (groups.Count == 0 && profile.SummaryAmountAboveTolerance > 0 &&
+                    FindBandAbove(ordered, i, anchorSet, profile.SummaryAmountAboveTolerance) is { } above)
+                {
+                    groups = AmountGroups(above.Words)
+                        .Where(g => g.Box.Left > match.Right && g.Box.Left < nextLeft && !g.Words.Any(consumed.Contains))
+                        .ToList();
+                    if (groups.Count > 0)
+                        amountBand = above;
+                }
 
                 if (match.Kind is LabelKind.Opening or LabelKind.Closing or LabelKind.Positional)
                 {
@@ -738,14 +1012,15 @@ public sealed partial class BankStatementLayoutExtractor
                     if (kind == LabelKind.Positional)
                         kind = IsBefore(band, first) ? LabelKind.Opening : LabelKind.Closing;
 
-                    var group = groups.FirstOrDefault() ?? FindAmountBelow(ordered, i, consumed, profile.ClosingLabels);
+                    var group = groups.FirstOrDefault() ?? FindAmountBelow(ordered, i, consumed, profile);
                     if (group is null)
                         continue;
                     foreach (var w in group.Words)
                         consumed.Add(w);
 
                     var signed = SignBalance(group, normalizedBand, columns);
-                    var date = band.Words.Select(w => ParseDate(w.Text, profile.StatementDateFormats))
+                    var date = band.Words.Concat(amountBand == band ? Array.Empty<TextWord>() : amountBand.Words)
+                        .Select(w => ParseDate(w.Text, profile.StatementDateFormats))
                         .FirstOrDefault(d => d is { Year: not null });
                     var dateOnly = date is { } d ? new DateOnly(d.Year!.Value, d.Month, d.Day) : (DateOnly?)null;
 
@@ -783,7 +1058,7 @@ public sealed partial class BankStatementLayoutExtractor
         {
             var totalsBand = ordered.FirstOrDefault(b =>
                 !IsBefore(b, last) && b != ordered.FirstOrDefault(x => x.Words.Contains(last)) &&
-                FindLabels(b, profile.ClosingLabels).Count == 0 &&
+                FindLabels(b, profile).Count == 0 &&
                 b.Words.All(w => ParseDate(w.Text, profile.StatementDateFormats) is null) &&
                 AmountGroups(b.Words).Count(g => g.Box.Left >= columns.AmountZoneLeft && !g.Words.Any(consumed.Contains)) is 1 or 2);
             if (totalsBand is not null)
@@ -827,7 +1102,7 @@ public sealed partial class BankStatementLayoutExtractor
         return new StatementAmount(group.Value, group.Decimals, StatementSignSource.Assumed);
     }
 
-    private static AmountGroup? FindAmountBelow(IReadOnlyList<Band> ordered, int index, ISet<TextWord> consumed, IReadOnlyList<string> extraClosingLabels)
+    private static AmountGroup? FindAmountBelow(IReadOnlyList<Band> ordered, int index, ISet<TextWord> consumed, BankStatementProfile profile)
     {
         var origin = ordered[index];
         for (var j = index + 1; j < ordered.Count; j++)
@@ -835,11 +1110,27 @@ public sealed partial class BankStatementLayoutExtractor
             var band = ordered[j];
             if (band.Page != origin.Page || origin.CenterY - band.CenterY > 30)
                 break;
-            if (FindLabels(band, extraClosingLabels).Count > 0)
+            if (FindLabels(band, profile).Count > 0)
                 break;
             var group = AmountGroups(band.Words).FirstOrDefault(g => !g.Words.Any(consumed.Contains));
             if (group is not null)
                 return group;
+        }
+
+        return null;
+    }
+
+    /// <summary>Ligne immédiatement au-dessus du libellé, à moins de <paramref name="tolerance"/> points, hors opérations.</summary>
+    private static Band? FindBandAbove(IReadOnlyList<Band> ordered, int index, ISet<TextWord> anchors, double tolerance)
+    {
+        var origin = ordered[index];
+        for (var j = index - 1; j >= 0; j--)
+        {
+            var band = ordered[j];
+            if (band.Page != origin.Page || band.CenterY - origin.CenterY > tolerance)
+                return null;
+            if (!band.Words.Any(anchors.Contains))
+                return band;
         }
 
         return null;
@@ -861,7 +1152,7 @@ public sealed partial class BankStatementLayoutExtractor
         return null;
     }
 
-    private static List<LabelMatch> FindLabels(Band band, IReadOnlyList<string> extraClosingLabels)
+    private static List<LabelMatch> FindLabels(Band band, BankStatementProfile profile)
     {
         var tokens = band.Words.Select(w => BankLabelNormalizer.Normalize(w.Text)).ToList();
         var matches = new List<LabelMatch>();
@@ -870,8 +1161,8 @@ public sealed partial class BankStatementLayoutExtractor
         {
             var match = TryMatch(tokens, i, DebitTotalLabels, LabelKind.DebitTotal)
                         ?? TryMatch(tokens, i, CreditTotalLabels, LabelKind.CreditTotal)
-                        ?? TryMatch(tokens, i, OpeningLabels, LabelKind.Opening)
-                        ?? TryMatch(tokens, i, ClosingLabels.Concat(extraClosingLabels), LabelKind.Closing)
+                        ?? TryMatch(tokens, i, OpeningLabels.Concat(profile.OpeningLabels), LabelKind.Opening)
+                        ?? TryMatch(tokens, i, ClosingLabels.Concat(profile.ClosingLabels), LabelKind.Closing)
                         ?? TryMatch(tokens, i, PositionalBalanceLabels, LabelKind.Positional)
                         ?? TryMatchTotal(tokens, i);
             if (match is { } found)
@@ -1121,7 +1412,11 @@ public sealed partial class BankStatementLayoutExtractor
 
     private sealed record HRule(double Y, double Left, double Right);
 
-    private sealed record PageData(int Number, double Width, double Height, IReadOnlyList<TextWord> Words, IReadOnlyList<HRule> Rules, bool HasTextLayer);
+    private sealed record PageData(int Number, double Width, double Height, IReadOnlyList<TextWord> Words, IReadOnlyList<HRule> Rules, bool HasTextLayer)
+    {
+        /// <summary>Mêmes mots, boîtes tirées de l'avance des lettres (profil <c>UseAdvanceBoxes</c>).</summary>
+        public IReadOnlyList<TextWord> AdvanceWords { get; init; } = Array.Empty<TextWord>();
+    }
 
     private sealed record Band(int Page, double CenterY, IReadOnlyList<TextWord> Words)
     {

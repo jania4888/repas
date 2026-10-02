@@ -137,10 +137,18 @@ public sealed class BankStatementImportService : IBankStatementImportService
         await PurgeExpiredAsync(ctx, now, cancellationToken);
 
         // 4. Lecture déterministe (rapide, même pour 20 pages) ; les pages scannées iront à l'IA.
-        var extraction = extension == ".pdf"
-            ? _extractor.Extract(content)
-            : ImageOnlyExtraction();
-        extraction = AddAccountChecks(extraction, account!);
+        //    Un fichier qui assemble plusieurs relevés (ex. deux mois) donne une session par relevé.
+        var extractions = extension == ".pdf"
+            ? _extractor.ExtractAll(content)
+            : new[] { ImageOnlyExtraction() };
+        if (extractions.Count > 1)
+        {
+            return await StartSeveralAsync(ctx, account!, journalCode, hash, content, extension,
+                validation.SafeFileName ?? "releve" + extension, request.ContentType ?? string.Empty,
+                extractions, tenantId.Value, now, cancellationToken);
+        }
+
+        var extraction = AddAccountChecks(extractions[0], account!);
 
         if (extraction.PageCount > Limits.MaxPages && !extraction.Issues.Any(i => i.Code == StatementIssueCodes.TooManyPages))
         {
@@ -238,7 +246,138 @@ public sealed class BankStatementImportService : IBankStatementImportService
         var session = await ctx.BankStatementImportSessions.AsNoTracking().FirstOrDefaultAsync(s => s.Id == sessionId, cancellationToken);
         return session is null
             ? Fail<BankStatementImportSessionDto>(BankStatementImportErrorCodes.SessionNotFound, "Analyse de relevé introuvable.")
-            : Result.Success(ToDto(session));
+            : Result.Success(await WithSiblingsAsync(ctx, session, cancellationToken));
+    }
+
+    /// <summary>
+    /// Fichier à plusieurs relevés : une session par relevé (empreinte dérivée, cf.
+    /// <see cref="StatementSegmentFingerprint"/>), chacune contrôlée et confirmée séparément. Les relevés
+    /// déjà importés ou déjà en cours d'analyse sont repris tels quels. Pas de lecture IA dans ce cas :
+    /// un relevé scanné d'un tel fichier est signalé, à importer seul.
+    /// </summary>
+    private async Task<Result<BankStatementImportSessionDto>> StartSeveralAsync(
+        TenantDbContext ctx,
+        BankAccount account,
+        string journalCode,
+        string fileHash,
+        byte[] content,
+        string extension,
+        string safeFileName,
+        string contentType,
+        IReadOnlyList<ExtractedBankStatement> extractions,
+        Guid tenantId,
+        DateTime now,
+        CancellationToken cancellationToken)
+    {
+        var count = extractions.Count;
+        var prefix = StatementSegmentFingerprint.GroupPrefix(fileHash);
+        var imported = await ctx.BankStatements.AsNoTracking()
+            .Where(s => s.BankAccountId == account.Id && s.SourceFileHash != null && s.SourceFileHash.StartsWith(prefix))
+            .Select(s => s.SourceFileHash!)
+            .ToListAsync(cancellationToken);
+        var open = await ctx.BankStatementImportSessions.AsNoTracking()
+            .Where(s => s.BankAccountId == account.Id && s.FileHash.StartsWith(prefix) && s.ExpiresAt > now
+                        && (s.Status == BankStatementImportSessionStatus.AwaitingReview || s.Status == BankStatementImportSessionStatus.Extracting))
+            .ToListAsync(cancellationToken);
+
+        var created = new List<BankStatementImportSession>();
+        for (var i = 0; i < count; i++)
+        {
+            var fingerprint = StatementSegmentFingerprint.Create(fileHash, i + 1, count);
+            if (imported.Contains(fingerprint) || open.Any(s => s.FileHash == fingerprint))
+                continue;
+
+            var extraction = AddAccountChecks(extractions[i], account);
+            if (extraction.UnresolvedPages.Count > 0)
+            {
+                extraction = extraction with
+                {
+                    Issues = extraction.Issues.Append(new StatementExtractionIssue(StatementIssueCodes.AiUnavailable, StatementIssueSeverity.Blocking,
+                        "Pages scannées non lues : dans un fichier à plusieurs relevés, importez ce relevé seul pour qu'il soit lu par l'IA.")).ToList()
+                };
+            }
+
+            var session = BankStatementImportSession.Create(account.Id, journalCode, safeFileName, fingerprint,
+                content.Length, contentType, now.AddHours(Math.Max(1, Limits.SessionRetentionHours)));
+            session.SetAuditInfo(UserLabel, false);
+            try
+            {
+                session.AttachFile(await _files.SaveSessionFileAsync(tenantId, session.Id, extension, content, cancellationToken));
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
+            {
+                _logger.LogError(ex, "Import relevé : stockage du fichier impossible (session {SessionId}).", session.Id);
+                foreach (var done in created)
+                    _files.TryDelete(done.StoragePath);
+                return Fail<BankStatementImportSessionDto>(BankStatementImportErrorCodes.Storage, "Le fichier n'a pas pu être enregistré sur le serveur.");
+            }
+
+            session.CompleteExtraction(JsonSerializer.Serialize(extraction, JsonOptions), "layout", extraction.ProfileId, extraction.PageCount);
+            ctx.BankStatementImportSessions.Add(session);
+            created.Add(session);
+        }
+
+        if (created.Count == 0 && open.Count == 0)
+            return Fail<BankStatementImportSessionDto>(BankStatementImportErrorCodes.AlreadyImported,
+                "Les relevés de ce fichier ont déjà été importés pour ce compte bancaire.");
+
+        if (created.Count > 0)
+            await ctx.SaveChangesAsync(cancellationToken);
+
+        foreach (var session in created)
+        {
+            var extraction = Deserialize(session.ResultJson!);
+            await _audit.LogAsync(AuditActions.Accounting.BankStatementAnalyzed, nameof(BankStatementImportSession), session.Id,
+                newValues: new
+                {
+                    session.BankAccountId,
+                    session.JournalCode,
+                    extraction?.ProfileId,
+                    extraction?.PageCount,
+                    LineCount = extraction?.Lines.Count ?? 0,
+                    Segment = session.FileHash[^5..],
+                    Blocking = extraction?.Issues.Count(i => i.Severity == StatementIssueSeverity.Blocking) ?? 0,
+                    AiProvider = (string?)null
+                },
+                cancellationToken: cancellationToken);
+        }
+
+        _logger.LogInformation(
+            "Import relevé : fichier de {Count} relevés, {Created} session(s) ouverte(s), {Reused} reprise(s), {Imported} déjà importé(s).",
+            count, created.Count, open.Count, imported.Count);
+
+        var first = created.Concat(open)
+            .OrderBy(s => StatementSegmentFingerprint.TryParse(s.FileHash, out _, out var index, out _) ? index : int.MaxValue)
+            .First();
+        return Result.Success(await WithSiblingsAsync(ctx, first, cancellationToken));
+    }
+
+    /// <summary>Projection d'une session et, si elle provient d'un fichier à plusieurs relevés, de ses sœurs.</summary>
+    private static async Task<BankStatementImportSessionDto> WithSiblingsAsync(TenantDbContext ctx, BankStatementImportSession session, CancellationToken cancellationToken)
+    {
+        var dto = ToDto(session);
+        if (!StatementSegmentFingerprint.TryParse(session.FileHash, out var prefix, out _, out _))
+            return dto;
+
+        var siblings = await ctx.BankStatementImportSessions.AsNoTracking()
+            .Where(s => s.BankAccountId == session.BankAccountId && s.FileHash.StartsWith(prefix) && s.Id != session.Id
+                        && s.Status != BankStatementImportSessionStatus.Cancelled)
+            .ToListAsync(cancellationToken);
+
+        return dto with
+        {
+            Siblings = siblings
+                .Select(s =>
+                {
+                    StatementSegmentFingerprint.TryParse(s.FileHash, out _, out var index, out _);
+                    var header = s.ResultJson is null ? null : Deserialize(s.ResultJson)?.Header;
+                    return new BankStatementImportSiblingDto(s.Id, index, header?.PeriodStart, header?.PeriodEnd, s.Status.ToString(), s.StatementId);
+                })
+                .GroupBy(s => s.SegmentIndex)
+                .Select(g => g.First())
+                .OrderBy(s => s.SegmentIndex)
+                .ToList()
+        };
     }
 
     public async Task<Result> CancelAsync(Guid sessionId, CancellationToken cancellationToken = default)
@@ -638,6 +777,8 @@ public sealed class BankStatementImportService : IBankStatementImportService
             ExpiresAt = session.ExpiresAt,
             Extraction = extraction,
             BalanceCheck = check,
+            SegmentIndex = StatementSegmentFingerprint.TryParse(session.FileHash, out _, out var segmentIndex, out _) ? segmentIndex : null,
+            SegmentCount = StatementSegmentFingerprint.TryParse(session.FileHash, out _, out _, out var segmentCount) ? segmentCount : null,
             CanConfirm = session.Status == BankStatementImportSessionStatus.AwaitingReview
                          && extraction is not null
                          && extraction.Lines.Count > 0

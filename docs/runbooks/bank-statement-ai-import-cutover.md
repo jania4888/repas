@@ -10,8 +10,12 @@ Fonctionnement : `docs/accounting/bank-statement-ai-import.md`.
 | `Accounting:BankStatementAiPostingEnabled` | `FactuTrust.API/appsettings*.json` | `false` | Endpoints `api/accounting/bank-statement-import/*` (404 si éteint), entrées de menu côté front |
 | `Accounting:BankReconciliationMatchingV2Enabled` | idem | `false` | `AutoAssociateAsync` : priorité au lien source, comptes 532 ↔ 532x dans les deux sens |
 | `Accounting:BrouillardEnabled` | idem | (existant) | **Requis** pour générer : la génération est refusée sans brouillard |
+| `Accounting:BankStatementLayoutParserEnabled` | idem | `false` | Assistant de rapprochement : lecture par profils (BIAT mensuel, fichiers à plusieurs relevés…) quand le parseur historique ne lit rien, avant OCR/IA |
+| `Accounting:BankStatementPreviewTimeoutSeconds` | idem | `240` | Budget OCR + IA de l'aperçu de l'assistant (toujours < 300 s, délai nginx) |
 
-Le front n'a **aucun drapeau propre** : il lit `GET …/capabilities` (404 → fonctionnalité masquée).
+Le front n'a **aucun drapeau propre** : il lit `GET …/capabilities`, qui répond **200 `{ enabled: false }`** quand la
+fonctionnalité est éteinte (et non 404, que le navigateur journalisait en rouge à chaque visite de la saisie manuelle
+et du rapprochement). Les autres endpoints restent en 404 drapeau éteint.
 Les valeurs effectives sont journalisées au démarrage (`Startup.Features`, « Effective feature flags:
 Accounting.BankStatementAiPosting=… »), avec un avertissement si l'import est actif sans brouillard.
 
@@ -25,6 +29,7 @@ Accounting.BankStatementAiPosting=… »), avec un avertissement si l'import est
 | 4 | **Recette locale** | `BankStatementAiPostingEnabled=true` sur une base de recette. Dérouler un relevé par banque (STB, BH, Zitouna, Attijari, BIAT) : contrôle de solde vert, enregistrement, propositions, génération, relance sans doublon, suppression d'un brouillon puis regénération. | Oui |
 | 5 | **Production — import** | `BankStatementAiPostingEnabled=true`, sur feu vert explicite. Vérifier la ligne `Startup.Features` au démarrage. | Oui — bascule du drapeau |
 | 6 | **Production — rapprochement V2** | `BankReconciliationMatchingV2Enabled=true` après quelques relevés générés et validés. Contrôler qu'un relevé déjà associé l'est toujours (sur-ensemble des associations). | Oui — bascule du drapeau |
+| 7 | **Assistant — lecture par profils** | Indépendant des étapes 4 à 6. `BankStatementLayoutParserEnabled=true` sur feu vert, après recette d'un relevé BIAT mensuel (et d'un fichier de deux mois) dans l'assistant de rapprochement. Les fichiers déjà lus par le parseur historique ne changent pas de chemin. | Oui — bascule du drapeau |
 
 ## Données personnelles et IA externe
 

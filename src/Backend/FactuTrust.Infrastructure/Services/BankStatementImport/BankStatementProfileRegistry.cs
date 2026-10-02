@@ -30,6 +30,31 @@ public sealed record BankStatementProfile
 
     /// <summary>Le total crédit imprimé inclut le solde d'ouverture (BIAT).</summary>
     public bool CreditTotalIncludesOpening { get; init; }
+
+    /// <summary>
+    /// Libellés de solde d'ouverture propres à la banque, essayés AVANT les libellés de clôture
+    /// (BIAT mensuel : « SOLDE AU » ouvre, « SOLDE » seul clôt).
+    /// </summary>
+    public IReadOnlyList<string> OpeningLabels { get; init; } = Array.Empty<string>();
+
+    /// <summary>
+    /// Boîtes de mots reconstruites depuis l'avance des lettres (ligne de base) au lieu des
+    /// rectangles de glyphes : PDF régénérés (pdf-lib…) dont la police déclare des métriques fausses,
+    /// qui élargissent les mots (« 2,380 » de 17 pt mesuré sur 44 pt) et faussent colonnes et lignes.
+    /// </summary>
+    public bool UseAdvanceBoxes { get; init; }
+
+    /// <summary>
+    /// Montant d'un solde ou d'un total imprimé légèrement AU-DESSUS de son libellé (écart vertical
+    /// maximal en points). 0 = sur la même ligne ou en dessous seulement (comportement historique).
+    /// </summary>
+    public double SummaryAmountAboveTolerance { get; init; }
+
+    /// <summary>Période imprimée sur deux lignes (« Du : 01/08/2026 » puis « Au : 31/08/2026 »).</summary>
+    public bool PeriodBoundsOnSeparateLines { get; init; }
+
+    /// <summary>Dates d'opération cherchées seulement sous l'en-tête texte du tableau (s'il existe).</summary>
+    public bool AnchorsBelowHeaderOnly { get; init; }
 }
 
 /// <summary>Charge les profils embarqués ; sélection par code banque du RIB puis par marqueurs textuels.</summary>
@@ -55,24 +80,32 @@ public sealed class BankStatementProfileRegistry
 
     public IReadOnlyList<BankStatementProfile> Profiles => _profiles;
 
-    /// <summary>Profil du code banque (RIB) en priorité, sinon d'après les marqueurs du texte, sinon générique.</summary>
+    /// <summary>
+    /// Profil du code banque (RIB) en priorité, sinon d'après les marqueurs du texte, sinon générique.
+    /// Une banque peut avoir plusieurs gabarits (BIAT : relevé « DINAR TUNISIEN » et relevé mensuel
+    /// bilingue) : parmi les profils du code, celui dont un marqueur figure dans le document l'emporte ;
+    /// à défaut, le premier déclaré pour ce code (comportement historique).
+    /// </summary>
     public BankStatementProfile Resolve(string? ribBankCode, string normalizedDocumentText)
     {
         if (!string.IsNullOrEmpty(ribBankCode))
         {
-            var byCode = _profiles.FirstOrDefault(p => p.RibBankCodes.Contains(ribBankCode, StringComparer.Ordinal));
-            if (byCode is not null)
-                return byCode;
+            var byCode = _profiles.Where(p => p.RibBankCodes.Contains(ribBankCode, StringComparer.Ordinal)).ToList();
+            if (byCode.Count > 0)
+                return byCode.FirstOrDefault(p => HasMarker(p, normalizedDocumentText)) ?? byCode[0];
         }
 
         foreach (var profile in _profiles)
         {
-            if (profile.TextMarkers.Any(m => normalizedDocumentText.Contains(BankLabelNormalizer.Normalize(m), StringComparison.Ordinal)))
+            if (HasMarker(profile, normalizedDocumentText))
                 return profile;
         }
 
         return Generic;
     }
+
+    private static bool HasMarker(BankStatementProfile profile, string normalizedDocumentText) =>
+        profile.TextMarkers.Any(m => normalizedDocumentText.Contains(BankLabelNormalizer.Normalize(m), StringComparison.Ordinal));
 
     private static BankStatementProfileRegistry LoadEmbedded()
     {
@@ -115,6 +148,11 @@ public sealed class BankStatementProfileRegistry
         public bool MergeSplitDates { get; set; }
         public List<string>? ClosingLabels { get; set; }
         public bool CreditTotalIncludesOpening { get; set; }
+        public List<string>? OpeningLabels { get; set; }
+        public bool UseAdvanceBoxes { get; set; }
+        public double SummaryAmountAboveTolerance { get; set; }
+        public bool PeriodBoundsOnSeparateLines { get; set; }
+        public bool AnchorsBelowHeaderOnly { get; set; }
 
         public BankStatementProfile ToProfile(ProfileDto? fallback) => new()
         {
@@ -133,7 +171,12 @@ public sealed class BankStatementProfileRegistry
             DebitCreditBoundaryRatio = DebitCreditBoundaryRatio,
             MergeSplitDates = MergeSplitDates,
             ClosingLabels = (ClosingLabels ?? new List<string>()).Select(BankLabelNormalizer.Normalize).ToList(),
-            CreditTotalIncludesOpening = CreditTotalIncludesOpening
+            CreditTotalIncludesOpening = CreditTotalIncludesOpening,
+            OpeningLabels = (OpeningLabels ?? new List<string>()).Select(BankLabelNormalizer.Normalize).ToList(),
+            UseAdvanceBoxes = UseAdvanceBoxes,
+            SummaryAmountAboveTolerance = Math.Clamp(SummaryAmountAboveTolerance, 0, 12),
+            PeriodBoundsOnSeparateLines = PeriodBoundsOnSeparateLines,
+            AnchorsBelowHeaderOnly = AnchorsBelowHeaderOnly
         };
 
         private static IReadOnlyList<string> Pick(List<string>? own, List<string>? fallback) =>
