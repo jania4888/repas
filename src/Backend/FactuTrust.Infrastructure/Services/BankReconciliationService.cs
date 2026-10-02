@@ -301,6 +301,7 @@ public sealed class BankReconciliationService : IBankReconciliationService
         // Écritures candidates : compte banque, hors brouillon, sur la fenêtre du relevé, non déjà
         // rapprochées par une autre ligne — chargées en UNE requête.
         var candidateLines = new List<CandidateLine>();
+        var sourceLinked = new Dictionary<Guid, Guid>();
         if (!string.IsNullOrWhiteSpace(chartAccount) && lines.Count > 0)
         {
             var minDate = lines.Min(l => l.TransactionDate).AddDays(-window);
@@ -311,20 +312,58 @@ public sealed class BankReconciliationService : IBankReconciliationService
                 .ToListAsync(cancellationToken);
             var usedSet = new HashSet<Guid>(usedIds);
 
-            candidateLines = await ctx.JournalEntryLines.AsNoTracking()
-                .Include(l => l.JournalEntry)
-                .Where(l => l.AccountNumber.StartsWith(chartAccount)
-                            && l.JournalEntry.Status != JournalEntryStatus.Brouillon
-                            && l.JournalEntry.EntryDate >= minDate && l.JournalEntry.EntryDate <= maxDate)
-                .Select(l => new CandidateLine(
-                    l.Id, l.JournalEntry.EntryDate, l.JournalEntry.JournalCode, l.JournalEntry.EntryNumber,
-                    l.AccountNumber, l.DebitAmount.Amount, l.CreditAmount.Amount))
-                .ToListAsync(cancellationToken);
+            if (!_settings.BankReconciliationMatchingV2Enabled)
+            {
+                candidateLines = await ctx.JournalEntryLines.AsNoTracking()
+                    .Include(l => l.JournalEntry)
+                    .Where(l => l.AccountNumber.StartsWith(chartAccount)
+                                && l.JournalEntry.Status != JournalEntryStatus.Brouillon
+                                && l.JournalEntry.EntryDate >= minDate && l.JournalEntry.EntryDate <= maxDate)
+                    .Select(l => new CandidateLine(
+                        l.Id, l.JournalEntry.EntryDate, l.JournalEntry.JournalCode, l.JournalEntry.EntryNumber,
+                        l.AccountNumber, l.DebitAmount.Amount, l.CreditAmount.Amount))
+                    .ToListAsync(cancellationToken);
+            }
+            else
+            {
+                // v2 : le compte banque peut être relié à un sous-compte (53210001) alors que les
+                // paiements sont comptabilisés sur 5321 — on cherche aussi sur ses parents 532…
+                var parents = BankAccountParents(chartAccount);
+                candidateLines = await ctx.JournalEntryLines.AsNoTracking()
+                    .Include(l => l.JournalEntry)
+                    .Where(l => (l.AccountNumber.StartsWith(chartAccount) || parents.Contains(l.AccountNumber))
+                                && l.JournalEntry.Status != JournalEntryStatus.Brouillon
+                                && !l.JournalEntry.IsReversed
+                                && l.JournalEntry.EntryDate >= minDate && l.JournalEntry.EntryDate <= maxDate)
+                    .Select(l => new CandidateLine(
+                        l.Id, l.JournalEntry.EntryDate, l.JournalEntry.JournalCode, l.JournalEntry.EntryNumber,
+                        l.AccountNumber, l.DebitAmount.Amount, l.CreditAmount.Amount))
+                    .ToListAsync(cancellationToken);
+
+                // Lien source prioritaire : l'écriture générée DEPUIS la ligne de relevé lui revient,
+                // même si d'autres lignes portent le même montant (trois commissions identiques…).
+                var lineIds = lines.Select(l => l.Id).ToList();
+                var linked = await ctx.JournalEntryLines.AsNoTracking()
+                    .Where(l => (l.AccountNumber.StartsWith(chartAccount) || parents.Contains(l.AccountNumber))
+                                && l.JournalEntry.Status != JournalEntryStatus.Brouillon
+                                && !l.JournalEntry.IsReversed
+                                && l.JournalEntry.SourceEntityId != null
+                                && lineIds.Contains(l.JournalEntry.SourceEntityId.Value)
+                                && (l.JournalEntry.SourceEntityType == "BankReconciliation"
+                                    || l.JournalEntry.SourceEntityType == TenantDbContext.BankStatementLineSourceType))
+                    .Select(l => new { StatementLineId = l.JournalEntry.SourceEntityId!.Value, l.Id })
+                    .ToListAsync(cancellationToken);
+                foreach (var link in linked.Where(k => !usedSet.Contains(k.Id)))
+                    sourceLinked.TryAdd(link.StatementLineId, link.Id);
+            }
+
             candidateLines = candidateLines.Where(c => !usedSet.Contains(c.Id)).ToList();
         }
 
         var associations = new List<BankLineAssociationDto>();
         var claimed = new HashSet<Guid>();
+        // v2 : une écriture générée depuis une ligne lui est réservée (vide si le drapeau est éteint).
+        var reservedLinks = sourceLinked.Values.ToHashSet();
         var associatedCount = 0;
         var toReconcileCount = 0;
         var notAssociatedCount = 0;
@@ -333,11 +372,20 @@ public sealed class BankReconciliationService : IBankReconciliationService
         {
             // Convention 512 : ligne débit relevé (décaissement) ⇒ crédit banque ; crédit relevé
             // (encaissement) ⇒ débit banque.
+            var ownLink = sourceLinked.TryGetValue(line.Id, out var own) ? own : (Guid?)null;
             var matches = candidateLines
                 .Where(c => !claimed.Contains(c.Id)
+                            && (!reservedLinks.Contains(c.Id) || c.Id == ownLink)
                             && Math.Abs((c.EntryDate - line.TransactionDate).TotalDays) <= window
                             && (line.IsDebit ? c.Credit == line.Amount.Amount : c.Debit == line.Amount.Amount))
                 .ToList();
+
+            // v2 : lien source d'abord (vide si le drapeau est éteint).
+            if (sourceLinked.TryGetValue(line.Id, out var linkedLineId)
+                && candidateLines.FirstOrDefault(c => c.Id == linkedLineId && !claimed.Contains(c.Id)) is { } linkedCandidate)
+            {
+                matches = new List<CandidateLine> { linkedCandidate };
+            }
 
             int status;
             Guid? proposedId = null;
@@ -391,6 +439,13 @@ public sealed class BankReconciliationService : IBankReconciliationService
 
         return Result.Success(new AutoAssociationResultDto { Associations = associations, Summary = summary });
     }
+
+    /// <summary>Parents 532… d'un compte banque (53210001 ⇒ 5321, 53210, 532100, 5321000).</summary>
+    private static List<string> BankAccountParents(string chartAccount) =>
+        Enumerable.Range(4, Math.Max(0, chartAccount.Length - 4))
+            .Select(n => chartAccount[..n])
+            .Where(p => p.StartsWith("532", StringComparison.Ordinal))
+            .ToList();
 
     private readonly record struct CandidateLine(
         Guid Id, DateTime EntryDate, string JournalCode, int EntryNumber, string AccountNumber, decimal Debit, decimal Credit);
@@ -468,6 +523,16 @@ public sealed class BankReconciliationService : IBankReconciliationService
             return Result.Failure(Error.NotFound("BankStatementLine", bankStatementLineId));
         if (line.IsReconciled)
             return Result.Failure(Error.Validation("Reconciliation", "Cette ligne est déjà rapprochée."));
+
+        // Garde-fou anti-doublon : en brouillard, la ligne n'est pas rapprochée tout de suite, si bien
+        // qu'un second clic (ou la comptabilisation assistée d'un relevé importé) créait une deuxième
+        // écriture pour la même ligne.
+        var alreadyPosted = await ctx.JournalEntries.AsNoTracking().AnyAsync(e =>
+            !e.IsReversed && e.SourceEntityId == line.Id
+            && (e.SourceEntityType == "BankReconciliation" || e.SourceEntityType == TenantDbContext.BankStatementLineSourceType),
+            cancellationToken);
+        if (alreadyPosted)
+            return Result.Failure(Error.Validation("Reconciliation", "Une écriture a déjà été créée pour cette ligne de relevé."));
 
         var bankAccount = line.BankStatement.ChartOfAccountNumber;
         if (string.IsNullOrWhiteSpace(bankAccount))

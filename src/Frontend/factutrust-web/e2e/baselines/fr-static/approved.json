@@ -16,8 +16,8 @@
     "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres."
   },
   "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts#BankReconciliationComponent": {
-    "sha": "bfaa4e6f8b968c2c47810f7e6c1f7f6aa40b8b2f672d4b033ba7c8f73da5ef16",
-    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
+    "sha": "1028610bc88f410ff3b84576ba34500b6f35833c80240ea99b35b759c50f313e",
+    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique. Import IA de relevés : bouton « Comptabiliser avec l'IA » ajouté à l'étape 2, visible seulement si le serveur active la fonctionnalité."
   },
   "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts#ChartOfAccountsComponent": {
     "sha": "cf1667aeda670fbcd57064ba16cec3d9e432a1a7c60a8c39694cd4b72ce5c115",
@@ -582,5 +582,13 @@
   "src/app/features/accounting/monthly-declaration/monthly-declaration-model.component.ts#MonthlyDeclarationModelComponent": {
     "sha": "1e0f63b261d9cd52a39d8d363a7b315aed1b4f6487d70cf5d13a534b7474530d",
     "reason": "Retrait du calcul historique (livraison A) : avis « fichier antérieur à la version 2 » (inclusions ignorées) et case de confirmation de l'exclusion de familles."
+  },
+  "src/app/features/accounting/manual-entry/components/entry-toolbar.component.ts#EntryToolbarComponent": {
+    "sha": "5a18a81666c1bfcdd6cda38cae39bae43a111121b913e6905270efa20a91b4bd",
+    "reason": "Import IA de relevés : entrée « Importer un relevé bancaire (PDF / image) » ajoutée au menu Import, visible seulement si le serveur active la fonctionnalité."
+  },
+  "src/app/features/accounting/manual-entry/manual-entry.component.ts#ManualEntryComponent": {
+    "sha": "5c2d7931992c709542ba7fdea4fb182881cb9acc5b116691f5af559523ad01ff",
+    "reason": "Import IA de relevés : modale d'upload et liaison de la nouvelle entrée du menu Import (ajouts purs)."
   }
 }

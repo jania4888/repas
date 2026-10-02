@@ -92,6 +92,33 @@ public static class LlmOutputSchemas
     public static JsonElement AccountingDocument { get; } =
         JsonDocument.Parse(AccountingDocumentSchemaJson).RootElement.Clone();
 
+    private const string BankStatementPageSchemaJson = """
+        {
+          "type": "object",
+          "properties": {
+            "openingBalance": { "type": ["number","null"] },
+            "closingBalance": { "type": ["number","null"] },
+            "lines": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "date": { "type": ["string","null"] },
+                  "valueDate": { "type": ["string","null"] },
+                  "label": { "type": ["string","null"] },
+                  "debit": { "type": ["number","null"] },
+                  "credit": { "type": ["number","null"] }
+                }
+              }
+            }
+          }
+        }
+        """;
+
+    /// <summary>Schéma d'une PAGE de relevé bancaire lue par l'IA (import vers le journal de banque).</summary>
+    public static JsonElement BankStatementPage { get; } =
+        JsonDocument.Parse(BankStatementPageSchemaJson).RootElement.Clone();
+
     /// <summary>Valeur historique : JSON syntaxiquement valide, sans contrainte de type.</summary>
     public const string PlainJson = "json";
 }

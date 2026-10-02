@@ -363,6 +363,20 @@ public static class DependencyInjection
         services.AddScoped<ImportBankStatementFromFileHandler>();
         services.AddScoped<IBankStatementPdfImportService, BankStatementPdfImportService>();
 
+        // Import IA de relevés bancaires → brouillons du journal de banque. Enregistrement
+        // inconditionnel (ValidateOnBuild) ; le drapeau Accounting:BankStatementAiPostingEnabled
+        // est vérifié à l'exécution.
+        services.AddSingleton(Services.BankStatementImport.BankStatementProfileRegistry.Default);
+        services.AddSingleton<Services.BankStatementImport.BankStatementLayoutExtractor>();
+        services.AddSingleton<Services.BankStatementImport.BankStatementFileStore>();
+        services.AddScoped<Application.Features.Accounting.BankStatementImport.IBankStatementAiExtraction,
+            Services.BankStatementImport.BankStatementAiExtraction>();
+        services.AddScoped<Services.BankStatementImport.BankStatementAiExtractionJob>();
+        services.AddScoped<Application.Features.Accounting.BankStatementImport.IBankStatementImportService,
+            Services.BankStatementImport.BankStatementImportService>();
+        services.AddScoped<Application.Features.Accounting.BankStatementImport.IBankStatementPostingService,
+            Services.BankStatementImport.BankStatementPostingService>();
+
         // Services
         services.AddScoped<IEnsureDefaultCompanyService, EnsureDefaultCompanyService>();
         services.AddHttpClient("InvoicePdfLogo", client =>

@@ -521,6 +521,9 @@ public partial class TenantDbContext : DbContext
         // Trésorerie prévisionnelle par IA — defined in TenantDbContext.Treasury.cs (partial class).
         ConfigureTreasuryForecast(builder);
 
+        // Import IA de relevés bancaires — defined in TenantDbContext.BankStatementImport.cs (partial class).
+        ConfigureBankStatementImport(builder);
+
         // Honoraires Module — defined in TenantDbContext.Honoraires.cs (partial class).
         ConfigureHonoraires(builder);
 

@@ -31,6 +31,7 @@ import {
 import { BankAccountDto, BankAccountService } from '@core/services/bank-account.service';
 import { formatLocalDate, parseLocalDateString } from '../shared/accounting-date-utils';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
+import { BankStatementImportService } from '../bank-statement-import/bank-statement-import.service';
 
 interface WizardStepDef {
   index: 1 | 2 | 3 | 4;
@@ -406,6 +407,12 @@ interface WizardStepDef {
           <div class="br-detail-head">
             <h2 class="br-section-title" i18n="@@accounting.bank-reconciliation.2.association.automatique.c80a6cb1">2 · Association automatique — {{ s.bankName }} · {{ s.accountNumber }}</h2>
             <div class="br-head-actions">
+              @if (aiPostingEnabled()) {
+                <app-button variant="secondary" icon="pi pi-sparkles" [routerLink]="['/accounting/bank-statement-import/statement', s.id]"
+                  ariaLabel="Proposer et générer les écritures du journal de banque pour les lignes de ce relevé"
+                  i18n-ariaLabel="@@accounting.bank-reconciliation.proposer.et.generer.les.ecritures.du.journal.de.b7479a3c"
+                  i18n="@@accounting.bank-reconciliation.comptabiliser.avec.l.ia.4192ed9a">Comptabiliser avec l'IA</app-button>
+              }
               <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="runAutoAssociate()" [disabled]="autoAssociating() || applying()" i18n="@@accounting.bank-reconciliation.relancer.l.association.3c42e685"> Relancer l'association </app-button>
               <app-button variant="primary" icon="pi pi-check-circle" type="button" (click)="applySelectedAssociations()"
                 [disabled]="applying() || autoAssociating() || selectedAssociatedCount() === 0">
@@ -815,6 +822,10 @@ export class BankReconciliationComponent implements OnInit {
   private readonly bankAccountsApi = inject(BankAccountService);
   private readonly toast = inject(ToastService);
   private readonly route = inject(ActivatedRoute);
+  private readonly bankStatementImport = inject(BankStatementImportService);
+
+  /** Import IA de relevés activé côté serveur : accès à la comptabilisation assistée d'un relevé. */
+  readonly aiPostingEnabled = signal(false);
 
   unmatchedOnly = false;
 
@@ -908,6 +919,7 @@ export class BankReconciliationComponent implements OnInit {
     this.unmatchedOnly = qp.get('unmatchedOnly') === '1';
     this.loadStatements();
     this.loadBankAccounts();
+    this.bankStatementImport.capabilities().subscribe(caps => this.aiPostingEnabled.set(!!caps?.enabled));
   }
 
   loadBankAccounts(): void {

@@ -310,5 +310,9 @@
   "src/app/features/accounting/services/accounting.service.ts": {
     "sha": "498b4f2d794228999a4437354b7806b5b602549878b1f1a712e4fa9465987967",
     "reason": "Retrait du calcul historique (livraison A) : route du rapport de parité et ses paramètres (année, mois de début et de fin)."
+  },
+  "src/app/features/accounting/accounting.routes.ts": {
+    "sha": "dde0f683180aa4b8ee682b8d4f3d84ee8e43254d8637661ed8995510005faf13",
+    "reason": "Import IA de relevés : routes de relecture (session) et de comptabilisation (relevé) ajoutées, gardées par accounting:create."
   }
 }

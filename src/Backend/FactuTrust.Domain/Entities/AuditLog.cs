@@ -432,5 +432,12 @@ public static class AuditActions
         public const string BankLineReconciled = "Accounting.BankLineReconciled";
         public const string BankLineUnreconciled = "Accounting.BankLineUnreconciled";
         public const string BankEntryCreatedFromLine = "Accounting.BankEntryCreatedFromLine";
+
+        // Import IA de relevés bancaires → brouillons du journal de banque.
+        public const string BankStatementAnalyzed = "Accounting.BankStatementAnalyzed";
+        public const string BankStatementExtractionCorrected = "Accounting.BankStatementExtractionCorrected";
+        public const string BankStatementEntriesGenerated = "Accounting.BankStatementEntriesGenerated";
+        public const string BankPostingRuleSaved = "Accounting.BankPostingRuleSaved";
+        public const string BankPostingRuleDeleted = "Accounting.BankPostingRuleDeleted";
     }
 }
