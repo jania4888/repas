@@ -42,7 +42,8 @@ Les rapports achats affichent :
 
 Les rapports stock affichent :
 
-- **Alertes de stock** : produits en rupture ou en stock bas
+- **État de stock (actuel)** : menu **Stock → État de stock** (`/reports/stock-status`) — quantités et valeurs par entrepôt et catégorie, PDF imprimable
+- **Alertes de stock** : produits en rupture ou en stock bas (hub Rapports Stock)
 - **Mouvements** de stock
 - **Valeur** du stock
 
@@ -76,6 +77,7 @@ Depuis le hub central **Rapports**, vous accédez notamment à :
 |---|---|
 | Soldes client | Rapports Fiches → section Soldes client |
 | Soldes fournisseur | Rapports Achats → onglet Soldes fournisseur |
+| État de stock (actuel) | Stock → État de stock |
 | État de stock à une date antérieure | Rapports Stock → section snapshot (date + entrepôt) |
 | Total des retenues pour les clients | Rapports Ventes → onglet Retenues clients (période = date d'encaissement) |
 | Total des retenues pour les fournisseurs | Rapports Achats → onglet Retenues fournisseurs (période = date de solde PaidAt, aligné TEJ) |

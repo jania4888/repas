@@ -143,6 +143,68 @@ export class ReportsApiService {
     return this.http.get<ApiResponse<StockSnapshotRow[]>>(`${this.API_URL}/stock-snapshot`, { params: httpParams });
   }
 
+  getStockStatus(params: {
+    warehouseId?: string | null;
+    categoryId?: string | null;
+    search?: string | null;
+    includeZeroStock?: boolean;
+    groupingMode?: StockStatusGroupingMode;
+    page?: number;
+    pageSize?: number;
+  }): Observable<ApiResponse<StockStatusReportResult>> {
+    let httpParams = new HttpParams();
+    if (params.warehouseId) httpParams = httpParams.set('warehouseId', params.warehouseId);
+    if (params.categoryId) httpParams = httpParams.set('categoryId', params.categoryId);
+    if (params.search?.trim()) httpParams = httpParams.set('search', params.search.trim());
+    if (params.includeZeroStock) httpParams = httpParams.set('includeZeroStock', 'true');
+    if (params.groupingMode) httpParams = httpParams.set('groupingMode', params.groupingMode);
+    if (params.page != null) httpParams = httpParams.set('page', params.page.toString());
+    if (params.pageSize != null) httpParams = httpParams.set('pageSize', params.pageSize.toString());
+    return this.http.get<ApiResponse<StockStatusReportResult>>(`${this.API_URL}/stock-status`, { params: httpParams });
+  }
+
+  downloadStockStatusPdf(params: {
+    warehouseId?: string | null;
+    categoryId?: string | null;
+    search?: string | null;
+    includeZeroStock?: boolean;
+    groupingMode?: StockStatusGroupingMode;
+  }): Observable<Blob> {
+    let httpParams = new HttpParams();
+    if (params.warehouseId) httpParams = httpParams.set('warehouseId', params.warehouseId);
+    if (params.categoryId) httpParams = httpParams.set('categoryId', params.categoryId);
+    if (params.search?.trim()) httpParams = httpParams.set('search', params.search.trim());
+    if (params.includeZeroStock) httpParams = httpParams.set('includeZeroStock', 'true');
+    if (params.groupingMode) httpParams = httpParams.set('groupingMode', params.groupingMode);
+    return this.http.get(`${this.API_URL}/stock-status/pdf`, {
+      params: httpParams,
+      responseType: 'blob',
+      observe: 'response'
+    }).pipe(
+      switchMap(response => {
+        const contentType = response.headers.get('content-type') || '';
+        const body = response.body;
+        if (contentType.includes('application/json') && body) {
+          return from(body.text()).pipe(
+            switchMap(text => {
+              try {
+                const parsed = JSON.parse(text) as { message?: string; errors?: string[] };
+                const msg = parsed.errors?.[0] ?? parsed.message ?? 'Impossible de générer le PDF';
+                return throwError(() => new Error(msg));
+              } catch {
+                return throwError(() => new Error('Impossible de générer le PDF'));
+              }
+            })
+          );
+        }
+        if (!body || body.size === 0) {
+          return throwError(() => new Error('Impossible de générer le PDF'));
+        }
+        return of(body);
+      })
+    );
+  }
+
   getCommercialProfit(fromDate: string, toDate: string, groupBy: 'Line' | 'Product' | 'Month' | 'Piece'): Observable<ApiResponse<CommercialProfitReportRow[]>> {
     let params = new HttpParams().set('from', fromDate).set('to', toDate);
     if (groupBy) params = params.set('groupBy', groupBy);
@@ -317,6 +379,35 @@ export interface StockSnapshotRow {
   quantity: number;
   unitCost: number;
   totalValue: number;
+}
+
+export type StockStatusGroupingMode = 'warehouse_then_category' | 'category_then_warehouse';
+
+export interface StockStatusReportRow {
+  productId: string;
+  productCode: string;
+  productName: string;
+  categoryId?: string | null;
+  categoryName: string;
+  warehouseId: string;
+  warehouseCode: string;
+  warehouseName: string;
+  quantityOnHand: number;
+  unitCost: number;
+  stockValue: number;
+}
+
+export interface StockStatusReportResult {
+  groupingMode: string;
+  totalRows: number;
+  page: number;
+  pageSize: number;
+  grandTotalQuantity: number;
+  grandTotalValue: number;
+  currency: string;
+  generatedAtUtc: string;
+  filtersSummary?: string | null;
+  rows: StockStatusReportRow[];
 }
 
 export interface CommercialProfitReportRow {

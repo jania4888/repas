@@ -287,6 +287,7 @@ export class ReportsHubComponent {
       icon: 'pi-box',
       modules: [AppModule.Reports, AppModule.Stock],
       links: [
+        { label: $localize`:@@reports.reports-hub.ts.etat.de.stock.actuel.a7b8c9d0:État de stock (actuel)`, route: '/reports/stock-status' },
         { label: $localize`:@@reports.reports-hub.ts.mouvement.detaille.de.stock.89c0156d:Mouvement détaillé de stock`, route: '/reports/stock' },
         { label: $localize`:@@reports.reports-hub.ts.etat.de.stock.a.une.date.anterieure.c5bc857a:Etat de stock à une date antérieure`, route: '/reports/stock', queryParams: { section: 'snapshot' } }
       ]

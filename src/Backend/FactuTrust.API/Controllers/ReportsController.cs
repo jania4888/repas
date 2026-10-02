@@ -332,6 +332,72 @@ public class ReportsController : ControllerBase
     }
 
     /// <summary>
+    /// Current stock status report (état de stock), grouped by warehouse and category.
+    /// </summary>
+    [HttpGet("stock-status")]
+    [Authorize(Policy = PermissionPolicies.ReportsView)]
+    [ProducesResponseType(typeof(ApiResponse<StockStatusReportResultDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetStockStatus(
+        [FromQuery] Guid? warehouseId,
+        [FromQuery] Guid? categoryId,
+        [FromQuery] string? search,
+        [FromQuery] bool includeZeroStock = false,
+        [FromQuery] string? groupingMode = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = StockStatusReportConstants.DefaultPageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var mode = StockStatusReportAssembler.ParseGroupingMode(groupingMode);
+        var result = await _mediator.Send(
+            new GetStockStatusReportQuery(
+                warehouseId,
+                categoryId,
+                search,
+                includeZeroStock,
+                mode,
+                page,
+                pageSize),
+            cancellationToken);
+        if (result.IsFailure)
+        {
+            if (result.Error.Code.EndsWith(".NotFound", StringComparison.Ordinal)
+                || result.Error.Code == "NotFound")
+                return NotFound(ApiResponse<object>.Fail(result.Error.Description));
+            return BadRequest(ApiResponse<object>.Fail(result.Error.Description));
+        }
+
+        return Ok(ApiResponse<StockStatusReportResultDto>.Ok(result.Value));
+    }
+
+    [HttpGet("stock-status/pdf")]
+    [Authorize(Policy = PermissionPolicies.ReportsView)]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ExportStockStatusPdf(
+        [FromQuery] Guid? warehouseId,
+        [FromQuery] Guid? categoryId,
+        [FromQuery] string? search,
+        [FromQuery] bool includeZeroStock = false,
+        [FromQuery] string? groupingMode = null,
+        CancellationToken cancellationToken = default)
+    {
+        var mode = StockStatusReportAssembler.ParseGroupingMode(groupingMode);
+        var result = await _mediator.Send(
+            new ExportStockStatusPdfQuery(
+                warehouseId,
+                categoryId,
+                search,
+                includeZeroStock,
+                mode),
+            cancellationToken);
+        if (result.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(result.Error.Description, result.Error.Code));
+
+        return File(result.Value.Content, result.Value.ContentType, result.Value.FileName);
+    }
+
+    /// <summary>
     /// Get product performance report (classement avec marge et part du CA).
     /// </summary>
     [HttpGet("product-performance")]

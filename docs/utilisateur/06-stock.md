@@ -13,6 +13,13 @@ La gestion du stock permet de suivre les quantités de produits disponibles dans
 1. Dans le menu, cliquez sur **Stock** puis **Gestion de stock**.
 2. La liste des produits avec suivi de stock s'affiche.
 
+### État de stock (rapport actuel)
+
+1. Dans le menu, cliquez sur **Stock** puis **État de stock**.
+2. Consultez les quantités et valeurs par **entrepôt** et **catégorie**, avec filtres et regroupement.
+3. Utilisez **Imprimer (PDF)** ou **Exporter** pour obtenir un document imprimable.
+4. Pour un stock **à une date passée**, utilisez **Stock → Rapports** (section « état à une date antérieure »).
+
 ![Gestion du stock](../screenshots/06-stock/stock-gestion.png)
 
 ### Vue simple et vue avancée

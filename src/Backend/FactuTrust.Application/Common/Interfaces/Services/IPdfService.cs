@@ -156,6 +156,10 @@ public interface IPdfService
         PurchasesJournalPdfContext context,
         CancellationToken cancellationToken = default);
 
+    Task<byte[]> GenerateStockStatusReportPdfAsync(
+        StockStatusPdfContext context,
+        CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Generates a PDF for a quote (devis).
     /// </summary>

@@ -396,6 +396,56 @@ public sealed record StockSnapshotRowDto
     public decimal TotalValue { get; init; }
 }
 
+/// <summary>Grouping mode for the current stock status report.</summary>
+public enum StockStatusGroupingMode
+{
+    WarehouseThenCategory = 0,
+    CategoryThenWarehouse = 1
+}
+
+/// <summary>One flat row in the current stock status report (état de stock).</summary>
+public sealed record StockStatusReportRowDto
+{
+    public Guid ProductId { get; init; }
+    public string ProductCode { get; init; } = null!;
+    public string ProductName { get; init; } = null!;
+    public Guid? CategoryId { get; init; }
+    public string CategoryName { get; init; } = null!;
+    public Guid WarehouseId { get; init; }
+    public string WarehouseCode { get; init; } = null!;
+    public string WarehouseName { get; init; } = null!;
+    public decimal QuantityOnHand { get; init; }
+    public decimal UnitCost { get; init; }
+    public decimal StockValue { get; init; }
+}
+
+public sealed record StockStatusReportResultDto
+{
+    public required string GroupingMode { get; init; }
+    public int TotalRows { get; init; }
+    public int Page { get; init; }
+    public int PageSize { get; init; }
+    public decimal GrandTotalQuantity { get; init; }
+    public decimal GrandTotalValue { get; init; }
+    public string Currency { get; init; } = "TND";
+    public DateTime GeneratedAtUtc { get; init; }
+    public string? FiltersSummary { get; init; }
+    public IReadOnlyList<StockStatusReportRowDto> Rows { get; init; } = Array.Empty<StockStatusReportRowDto>();
+}
+
+public sealed record StockStatusPdfContext(
+    string Title,
+    string GroupingModeLabel,
+    string? CompanyName,
+    string? MatriculeFiscal,
+    DateTime GeneratedAtLocal,
+    string? FiltersSummary,
+    StockStatusGroupingMode GroupingMode,
+    IReadOnlyList<StockStatusReportRowDto> Rows,
+    decimal GrandTotalQuantity,
+    decimal GrandTotalValue,
+    string Currency);
+
 /// <summary>
 /// One row in the commercial profit report (bénéfice par ligne, produit ou mois).
 /// </summary>

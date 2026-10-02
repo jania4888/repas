@@ -184,16 +184,6 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
   },
 
   {
-
-    label: $localize`:@@core.firm-navigation.registry.ts.notes.de.frais.dirigeants.816474a3:Notes de frais dirigeants`,
-
-    route: '/firm/governance/expense-notes',
-
-    icon: 'fa-solid fa-receipt'
-
-  },
-
-  {
     label: $localize`:@@core.firm-navigation.registry.ts.facturation.04716c6b:Facturation`,
     icon: 'fa-solid fa-file-invoice-dollar',
     managerOnly: true,

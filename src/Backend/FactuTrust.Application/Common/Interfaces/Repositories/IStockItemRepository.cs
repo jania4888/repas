@@ -1,3 +1,4 @@
+using FactuTrust.Application.DTOs;
 using FactuTrust.Domain.Entities;
 
 namespace FactuTrust.Application.Common.Interfaces.Repositories;
@@ -83,5 +84,26 @@ public interface IStockItemRepository : IRepository<StockItem>
     Task<IReadOnlyDictionary<Guid, decimal>> GetAvailableQuantityByProductIdsAsync(
         Guid warehouseId,
         IReadOnlyList<Guid> productIds,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Flat rows for the current stock status report (products × warehouses), with optional filters.
+    /// </summary>
+    Task<(IReadOnlyList<StockStatusReportRowDto> Items, int TotalCount)> GetStockStatusReportRowsAsync(
+        Guid? warehouseId,
+        Guid? categoryId,
+        string? search,
+        bool includeZeroStock,
+        StockStatusGroupingMode groupingMode,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>Count of rows matching stock status filters (for PDF cap).</summary>
+    Task<int> CountStockStatusReportRowsAsync(
+        Guid? warehouseId,
+        Guid? categoryId,
+        string? search,
+        bool includeZeroStock,
         CancellationToken cancellationToken = default);
 }
