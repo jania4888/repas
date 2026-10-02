@@ -1541,13 +1541,6 @@
     ],
     "x-wave": "v1"
   },
-  "core.firm-navigation.registry.ts.notes.de.frais.dirigeants.816474a3": "Notes de frais dirigeants",
-  "@core.firm-navigation.registry.ts.notes.de.frais.dirigeants.816474a3": {
-    "x-files": [
-      "src/app/core/config/firm-navigation.registry.ts"
-    ],
-    "x-wave": "v1"
-  },
   "core.firm-navigation.registry.ts.facturation.04716c6b": "Facturation",
   "@core.firm-navigation.registry.ts.facturation.04716c6b": {
     "x-files": [

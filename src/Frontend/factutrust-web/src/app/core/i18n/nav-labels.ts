@@ -46,6 +46,7 @@ export const NAV_LABELS: Readonly<Record<string, string>> = {
   'stock--transfers': $localize`:@@core.nav.stock.transfers:Transferts`,
   'stock--inventory': $localize`:@@core.nav.stock.inventory:Inventaire`,
   'stock--inventory-wizard': $localize`:@@core.nav.stock.inventory-wizard:Mode assistant`,
+  'stock--stock-status': $localize`:@@core.nav.stock.stock-status:État de stock`,
   'stock--reports-sales': $localize`:@@core.nav.stock.reports-sales:Rapports`,
   'treasury': $localize`:@@core.nav.treasury:Trésorerie`,
   'treasury--treasury-cash-forecast': $localize`:@@core.nav.treasury.treasury-cash-forecast:Trésorerie prévisionnelle`,

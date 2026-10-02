@@ -57,6 +57,7 @@ const REPORTS_CHILD_LABELS: Record<string, string> = {
   purchases: $localize`:@@core.breadcrumb.ts.rapports.achats.ac9a7abf:Rapports Achats`,
   'purchases-analytics': $localize`:@@core.breadcrumb.ts.etats.analytiques.achats.0f98ad05:États analytiques Achats`,
   stock: $localize`:@@core.breadcrumb.ts.rapports.stock.00f72cdf:Rapports Stock`,
+  'stock-status': $localize`:@@core.breadcrumb.ts.etat.de.stock.7c4e2a91:État de stock`,
   fiches: $localize`:@@core.breadcrumb.ts.rapports.fiches.e0b32117:Rapports Fiches`,
   payments: $localize`:@@core.breadcrumb.ts.rapports.paiements.187514db:Rapports Paiements`,
   profit: $localize`:@@core.breadcrumb.ts.rapport.benefices.245eba08:Rapport Bénéfices`,

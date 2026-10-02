@@ -318,6 +318,15 @@ describe('app-navigation.registry', () => {
     });
   });
 
+  describe('Stock · État de stock', () => {
+    it('exposes /reports/stock-status under Stock with reports and stock permissions', () => {
+      const stock = ALL_NAV_ITEMS.find(i => i.id === 'stock');
+      const entry = stock?.children?.find(c => c.id === 'stock--stock-status');
+      expect(entry?.route).toBe('/reports/stock-status');
+      expect(entry?.permissionsAll).toEqual(['reports:view', 'stock:read']);
+    });
+  });
+
   describe('Declarations · Paiements navigation entry (fuite menu ⇔ route)', () => {
     it('requires treasury_forecast:view, matching the /treasury/cash-forecast route guard', () => {
       const comptabilite = ALL_NAV_ITEMS.find(i => i.label === 'Comptabilité');

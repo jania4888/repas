@@ -23,8 +23,7 @@ describe('firm-navigation.registry — FIRM_NATIVE_NAV', () => {
     '/firm/payroll',
     '/firm/governance/dossier-time-profitability',
     '/firm/governance/collaborator-rentability',
-    '/firm/governance/collaborator-costs',
-    '/firm/governance/expense-notes'
+    '/firm/governance/collaborator-costs'
   ];
 
   function collectRoutes(items: NavItem[]): string[] {
@@ -93,6 +92,11 @@ describe('firm-navigation.registry — FIRM_NATIVE_NAV', () => {
     expect(collectRoutes(FIRM_NATIVE_NAV)).not.toContain('/firm/governance/social');
   });
 
+  it('FIRM_NATIVE_NAV no longer exposes Notes de frais dirigeants', () => {
+    expect(collectRoutes(FIRM_NATIVE_NAV)).not.toContain('/firm/governance/expense-notes');
+    expect(FIRM_NATIVE_NAV.some(i => i.label === 'Notes de frais dirigeants')).toBe(false);
+  });
+
   it('filterFirmGovernanceNav removes governance when flag off', () => {
     const filtered = filterFirmGovernanceNav(FIRM_NATIVE_NAV, false);
     expect(filtered.some(i => i.label === 'Gouvernance')).toBe(false);
@@ -117,7 +121,7 @@ describe('firm-navigation.registry — FIRM_NATIVE_NAV', () => {
     const managerFlagOn = collectRoutes(filterFirmGovernanceNav(FIRM_NATIVE_NAV, true)).filter(route =>
       governanceRoutes.includes(route)
     );
-    expect(managerFlagOn).toHaveSize(9);
+    expect(managerFlagOn).toHaveSize(8);
 
     const managerFlagOff = collectRoutes(filterFirmGovernanceNav(FIRM_NATIVE_NAV, false)).filter(route =>
       governanceRoutes.includes(route)
@@ -130,8 +134,7 @@ describe('firm-navigation.registry — FIRM_NATIVE_NAV', () => {
     expect(nonManagerFlagOn).toEqual([
       '/firm/governance/permanent-files',
       '/firm/governance/time-sheets',
-      '/firm/governance/leaves',
-      '/firm/governance/expense-notes'
+      '/firm/governance/leaves'
     ]);
 
     const nonManagerFlagOff = collectRoutes(
@@ -240,6 +243,7 @@ describe('firm-navigation.registry — delegated firm sales/purchases', () => {
     expect(isDelegatedFirmBlockedSalesPurchasesRoute('/reports')).toBe(true);
     expect(isDelegatedFirmBlockedSalesPurchasesRoute('/reports/fiches')).toBe(true);
     expect(isDelegatedFirmBlockedSalesPurchasesRoute('/reports/stock')).toBe(true);
+    expect(isDelegatedFirmBlockedSalesPurchasesRoute('/reports/stock-status')).toBe(true);
   });
 
   it('isDelegatedReadOnlyRoute no longer includes quotes or suppliers', () => {

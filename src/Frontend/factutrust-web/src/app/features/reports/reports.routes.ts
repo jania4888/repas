@@ -77,6 +77,11 @@ export const REPORTS_ROUTES: Routes = [
     title: $localize`:@@reports.routes.title.Rapports_Stock_InstaFa:Rapports Stock - InstaFact`
   },
   {
+    path: 'stock-status',
+    loadComponent: () => import('./stock-status/stock-status-report.component').then(m => m.StockStatusReportComponent),
+    title: $localize`:@@reports.routes.title.Etat_de_stock_InstaFa:État de stock - InstaFact`
+  },
+  {
     path: 'fiches',
     loadComponent: () => import('./fiches/fiches-reports.component').then(m => m.FichesReportsComponent),
     title: $localize`:@@reports.routes.title.Rapports_Fiches_InstaF:Rapports Fiches - InstaFact`

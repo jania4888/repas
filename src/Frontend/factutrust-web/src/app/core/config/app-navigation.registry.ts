@@ -443,6 +443,14 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['inventory:read']
       },
       {
+        id: 'stock--stock-status',
+        label: $localize`:@@core.app-navigation.registry.ts.etat.de.stock.7c4e2a91:État de stock`,
+        route: '/reports/stock-status',
+        icon: 'fa-solid fa-table-list',
+        modules: [M.Reports, M.Stock],
+        permissionsAll: ['reports:view', 'stock:read']
+      },
+      {
         id: 'stock--reports-sales',
         label: $localize`:@@core.app-navigation.registry.ts.rapports.db7d9fbb:Rapports`,
         route: '/reports/stock',
@@ -1035,6 +1043,7 @@ const ROUTE_SEARCH_GROUP: Record<string, NavSearchGroup> = {
   '/reports/purchases': 'report',
   '/reports/fiches': 'report',
   '/reports/stock': 'report',
+  '/reports/stock-status': 'report',
   '/reports/payments': 'report',
   '/reports/analytics': 'report',
   '/reports/purchases-analytics': 'report',
