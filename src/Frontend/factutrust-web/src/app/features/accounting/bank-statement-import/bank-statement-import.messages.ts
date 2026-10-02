@@ -140,6 +140,14 @@ export function issueTitle(code: string): string {
       return $localize`:@@accounting.bank-statement-import.ts.releve.trop.long.ccf4961d:Relevé trop long`;
     case 'statement.unreadable':
       return $localize`:@@accounting.bank-statement-import.ts.fichier.illisible.aded9791:Fichier illisible`;
+    case 'statement.multiple_statements':
+      return $localize`:@@accounting.bank-statement-import.ts.plusieurs.releves.dans.le.fichier.4a8dd23d:Plusieurs relevés dans le fichier`;
+    case 'statement.too_many_statements':
+      return $localize`:@@accounting.bank-statement-import.ts.trop.de.releves.dans.le.fichier.eb3973c2:Trop de relevés dans le fichier`;
+    case 'statement.periods_overlap':
+      return $localize`:@@accounting.bank-statement-import.ts.periodes.qui.se.chevauchent.8175af92:Périodes qui se chevauchent`;
+    case 'statement.discontinuity':
+      return $localize`:@@accounting.bank-statement-import.ts.solde.d.ouverture.discontinu.26349909:Solde d'ouverture discontinu`;
     case 'statement.no_transactions':
       return $localize`:@@accounting.bank-statement-import.ts.aucune.operation.trouvee.b492f86f:Aucune opération trouvée`;
     default:

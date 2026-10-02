@@ -148,6 +148,22 @@ public sealed class AccountingSettings
     public bool BankStatementPdfImportEnabled { get; set; } = true;
 
     /// <summary>
+    /// Assistant de rapprochement : quand le parseur historique ne lit AUCUNE ligne d'un PDF, essayer
+    /// la lecture déterministe par profils bancaires (gabarits STB, BH, Zitouna, Attijari, BIAT
+    /// mensuel…, fichiers à plusieurs relevés découpés par période) AVANT l'OCR et l'IA. Retenue
+    /// seulement si chaque relevé est lu sans anomalie bloquante (soldes vérifiés au millime).
+    /// OFF par défaut : sans lui, l'aperçu suit exactement le chemin historique.
+    /// </summary>
+    public bool BankStatementLayoutParserEnabled { get; set; }
+
+    /// <summary>
+    /// Budget total (secondes) de la lecture OCR + IA d'un relevé dans l'aperçu de l'assistant, attente
+    /// de la file IA comprise. Toujours inférieur au délai du proxy (nginx : 300 s) pour rendre un
+    /// message clair au lieu d'une 504. Borné à [1 ; 280] (défaut 240).
+    /// </summary>
+    public int BankStatementPreviewTimeoutSeconds { get; set; } = 240;
+
+    /// <summary>
     /// Active l'import d'une facture (vente ou achat) depuis la saisie manuelle d'écritures :
     /// détection des zones de la pièce puis proposition de l'écriture selon le plan comptable
     /// tunisien. L'endpoint est en lecture seule — il ne fait que proposer.

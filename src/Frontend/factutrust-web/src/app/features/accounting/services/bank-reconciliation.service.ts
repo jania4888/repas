@@ -142,6 +142,11 @@ export interface BankStatementFilePreviewDto {
   confidenceScore?: number;
   sourcePageCount?: number;
   balanceDiscrepancy?: number | null;
+  /**
+   * Fichier contenant plusieurs relevés (ex. deux mois assemblés) : un aperçu par relevé, dans l'ordre
+   * chronologique, chacun importable séparément. Absent ou null = un seul relevé.
+   */
+  statements?: BankStatementFilePreviewDto[] | null;
 }
 
 export interface ReconcileLineRequest {

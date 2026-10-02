@@ -20,13 +20,33 @@ describe('BankStatementImportService', () => {
 
   afterEach(() => http.verify());
 
-  it('renvoie null quand la fonctionnalité est désactivée (404), sans propager d’erreur', () => {
+  it('renvoie null quand le serveur répond 200 « enabled:false » (fonctionnalité éteinte)', () => {
+    let result: unknown = 'non émis';
+    service.capabilities().subscribe(caps => (result = caps));
+
+    http.expectOne(`${base}/capabilities`).flush({
+      success: true,
+      data: { enabled: false, aiAvailable: false, aiProviderKind: null, maxFileBytes: 0, maxPages: 0, acceptedExtensions: [], recognizedBanks: [] }
+    });
+
+    expect(result).toBeNull();
+  });
+
+  it('renvoie null sur un 404 d’un serveur pas encore à jour, sans propager d’erreur', () => {
     let result: unknown = 'non émis';
     service.capabilities().subscribe(caps => (result = caps));
 
     http.expectOne(`${base}/capabilities`).flush({ success: false }, { status: 404, statusText: 'Not Found' });
 
     expect(result).toBeNull();
+  });
+
+  it('épargne la sonde IA aux écrans qui ne lisent que l’interrupteur', () => {
+    service.capabilities({ includeAi: false }).subscribe();
+
+    const req = http.expectOne(r => r.url === `${base}/capabilities`);
+    expect(req.request.params.get('includeAi')).toBe('false');
+    req.flush({ success: true, data: { enabled: false } });
   });
 
   it('renvoie les capacités quand la fonctionnalité est active', () => {

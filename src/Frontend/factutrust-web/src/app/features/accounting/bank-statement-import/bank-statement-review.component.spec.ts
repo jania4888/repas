@@ -197,7 +197,7 @@ describe('BankStatementReviewComponent', () => {
     component.confirmStatement();
 
     expect(api.confirm).toHaveBeenCalledOnceWith('s-1');
-    expect(router.navigate).toHaveBeenCalledWith(['/accounting/bank-statement-import/statement', 'st-9'], { replaceUrl: true });
+    expect(router.navigate).toHaveBeenCalledWith(['/accounting/bank-statement-import/statement', 'st-9'], jasmine.objectContaining({ replaceUrl: true }));
   });
 
   it('refuse l’enregistrement quand le serveur ne l’autorise pas', async () => {
@@ -229,6 +229,33 @@ describe('BankStatementReviewComponent', () => {
     await create({ sessionId: 's-1' });
 
     expect(router.navigate).toHaveBeenCalledWith(['/accounting/bank-statement-import/statement', 'st-3'], { replaceUrl: true });
+  });
+
+  it('signale les autres relevés du même fichier et transmet ceux qui restent à contrôler', async () => {
+    api.session.and.returnValue(
+      of(
+        session({
+          segmentIndex: 1,
+          segmentCount: 3,
+          siblings: [
+            { id: 's-2', segmentIndex: 2, periodStart: '2026-08-01', periodEnd: '2026-08-31', status: 'AwaitingReview', statementId: null },
+            { id: 's-3', segmentIndex: 3, periodStart: '2026-09-01', periodEnd: '2026-09-30', status: 'Confirmed', statementId: 'st-3' }
+          ]
+        })
+      )
+    );
+    api.confirm.and.returnValue(of({ statementId: 'st-1', lineCount: 1, alreadyImportedCount: 0 }));
+    await create({ sessionId: 's-1' });
+
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(text).toContain('Ce fichier contient 3 relevés');
+    expect(component.siblingLink(component.session()!.siblings![0])).toEqual(['/accounting/bank-statement-import/session', 's-2']);
+    expect(component.siblingLink(component.session()!.siblings![1])).toEqual(['/accounting/bank-statement-import/statement', 'st-3']);
+
+    component.confirmStatement();
+
+    const extras = (router.navigate as jasmine.Spy).calls.mostRecent().args[1];
+    expect(extras.state.pendingSiblings.map((x: { id: string }) => x.id)).toEqual(['s-2']);
   });
 
   it('affiche un message de reconnexion sur un 403', async () => {

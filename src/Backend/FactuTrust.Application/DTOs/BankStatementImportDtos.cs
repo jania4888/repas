@@ -55,4 +55,23 @@ public sealed record BankStatementFilePreviewDto
     public int SourcePageCount { get; init; }
     /// <summary>Écart entre solde calculé et solde final déclaré (null si non calculable).</summary>
     public decimal? BalanceDiscrepancy { get; init; }
+
+    /// <summary>
+    /// Fichier contenant PLUSIEURS relevés (ex. deux mois assemblés) : un aperçu par relevé, dans
+    /// l'ordre chronologique, chacun avec son propre <see cref="CanImport"/>. Null = un seul relevé
+    /// (cas historique). Quand il est renseigné, les champs racine reprennent le premier relevé et
+    /// <see cref="CanImport"/> racine vaut false : un client qui ignore ce champ ne peut pas importer
+    /// une partie du fichier en la prenant pour le tout.
+    /// </summary>
+    public IReadOnlyList<BankStatementFilePreviewDto>? Statements { get; init; }
+}
+
+/// <summary>Codes stables des échecs de l'aperçu d'un relevé (testés par le front, jamais le texte).</summary>
+public static class BankStatementPreviewErrorCodes
+{
+    /// <summary>La lecture OCR + IA a dépassé le budget de l'aperçu (attente de la file IA comprise).</summary>
+    public const string PreviewTimeout = "bank_statement.preview_timeout";
+
+    /// <summary>Le moteur IA a répondu en erreur ou n'a pas répondu (délai, modèle absent, 5xx).</summary>
+    public const string AiUnavailable = "bank_statement.ai_unavailable";
 }

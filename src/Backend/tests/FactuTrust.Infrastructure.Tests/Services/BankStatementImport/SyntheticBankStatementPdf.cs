@@ -147,6 +147,91 @@ internal static class SyntheticBankStatementPdf
         });
     }).GeneratePdf();
 
+    /// <summary>Un relevé mensuel BIAT : période, données et (optionnellement) solde d'ouverture imposé.</summary>
+    public sealed record Monthly(DateOnly From, DateOnly To, Spec Spec);
+
+    /// <summary>
+    /// Façon BIAT « relevé de compte mensuel » : UNE page par relevé, dans l'ordre donné (un fichier
+    /// peut assembler plusieurs mois, même dans le désordre). En-têtes texte, dates jj/mm/aaaa,
+    /// période « Du : » / « Au : » sur deux lignes, montants des soldes et totaux imprimés ~4 pt
+    /// AU-DESSUS de leur libellé, total crédit incluant le solde d'ouverture, solde final « Solde ».
+    /// </summary>
+    public static byte[] BiatMonthlyLike(params Monthly[] statements) => Document.Create(container =>
+    {
+        foreach (var statement in statements)
+        {
+            var spec = statement.Spec;
+            container.Page(page =>
+            {
+                page.Size(PageSizes.A4);
+                page.Margin(20);
+                page.DefaultTextStyle(t => t.FontSize(7));
+                page.Content().Column(col =>
+                {
+                    col.Item().AlignCenter().Text("RELEVÉ  DE  COMPTE  MENSUEL").FontSize(10).Bold();
+                    col.Item().PaddingTop(6).Row(row =>
+                    {
+                        row.ConstantItem(230).Text("Agence :   AGENCE FICTIVE (99)");
+                        row.ConstantItem(100).Text($"Du: {statement.From:dd/MM/yyyy}");
+                        row.RelativeItem().Text("STE EXEMPLE SARL");
+                    });
+                    col.Item().Row(row =>
+                    {
+                        row.ConstantItem(230).Text("COMPTE COURANT EN TND");
+                        row.ConstantItem(100).Text($"Au: {statement.To:dd/MM/yyyy}");
+                        row.RelativeItem().Text("1000 TUNIS");
+                    });
+                    col.Item().Text("Devise :   TND");
+                    col.Item().Text($"RIB :   {spec.Rib}");
+                    col.Item().PaddingTop(10).Element(e => MonthlyRow(e, "Date", "Libellé de l'opération", "Référence", "Date de valeur", "Débit", "Crédit"));
+
+                    // Solde d'ouverture : montant (et date) légèrement AU-DESSUS du libellé, colonne crédit si créditeur.
+                    col.Item().PaddingTop(4).Element(e => MonthlySummary(e, "Solde au", statement.From.AddDays(-1).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture),
+                        spec.Opening < 0 ? Comma(-spec.Opening, groups: true) : string.Empty,
+                        spec.Opening >= 0 ? Comma(spec.Opening, groups: true) : string.Empty));
+
+                    foreach (var op in spec.Ops)
+                    {
+                        col.Item().Element(e => MonthlyRow(e, op.Date, string.Join(' ', op.Label), "FT2600000000" + op.Date.Replace("/", string.Empty)[..4], op.ValueDate,
+                            op.Debit is { } d ? Comma(d, groups: true) : string.Empty,
+                            op.Credit is { } c ? Comma(c, groups: true) : string.Empty));
+                    }
+
+                    // Totaux : le total crédit inclut le solde d'ouverture (comme le vrai relevé).
+                    col.Item().PaddingTop(18).Element(e => MonthlySummary(e, "Totaux", string.Empty,
+                        Comma(spec.TotalDebits, groups: true),
+                        Comma(spec.TotalCredits + (spec.Opening >= 0 ? spec.Opening : 0), groups: true)));
+                    col.Item().PaddingTop(10).Element(e => MonthlySummary(e, "Solde", string.Empty,
+                        spec.Closing < 0 ? Comma(-spec.Closing, groups: true) : string.Empty,
+                        spec.Closing >= 0 ? Comma(spec.Closing, groups: true) : string.Empty));
+                    col.Item().PaddingTop(10).Text("Les dépôts sont garantis par le fonds de Garantie des Dépôts bancaires (loi 2016-48 du 11-07-2016).");
+                });
+            });
+        }
+    }).GeneratePdf();
+
+    private static void MonthlyRow(IContainer container, string date, string label, string reference, string valueDate, string debit, string credit) =>
+        container.Row(row =>
+        {
+            row.ConstantItem(55).Text(date);
+            row.ConstantItem(200).Text(label);
+            row.ConstantItem(110).Text(reference);
+            row.ConstantItem(70).Text(valueDate);
+            row.ConstantItem(55).AlignRight().Text(debit);
+            row.ConstantItem(65).AlignRight().Text(credit);
+        });
+
+    /// <summary>Libellé de solde/total ; date et montants remontés de 4 pt (décalage observé sur le vrai relevé).</summary>
+    private static void MonthlySummary(IContainer container, string label, string date, string debit, string credit) =>
+        container.Row(row =>
+        {
+            row.ConstantItem(255).AlignRight().PaddingRight(20).Text(label).Bold();
+            row.ConstantItem(110).TranslateY(-4).Text(date);
+            row.ConstantItem(70).Text(string.Empty);
+            row.ConstantItem(55).TranslateY(-4).AlignRight().Text(debit);
+            row.ConstantItem(65).TranslateY(-4).AlignRight().Text(credit);
+        });
+
     /// <summary>PDF sans couche texte (page « scannée ») : un simple aplat.</summary>
     public static byte[] ImageOnly() => Document.Create(container =>
     {

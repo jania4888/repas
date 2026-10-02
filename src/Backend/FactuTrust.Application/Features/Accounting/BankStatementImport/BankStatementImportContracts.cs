@@ -86,6 +86,52 @@ public sealed record BankStatementImportSessionDto
 
     /// <summary>Vrai si la confirmation est possible (aucun signalement bloquant).</summary>
     public bool CanConfirm { get; init; }
+
+    /// <summary>Rang (1…N) du relevé dans un fichier qui en contient plusieurs ; null = fichier d'un seul relevé.</summary>
+    public int? SegmentIndex { get; init; }
+
+    public int? SegmentCount { get; init; }
+
+    /// <summary>Les autres relevés du même fichier (une session chacun), dans l'ordre chronologique.</summary>
+    public IReadOnlyList<BankStatementImportSiblingDto> Siblings { get; init; } = Array.Empty<BankStatementImportSiblingDto>();
+}
+
+public sealed record BankStatementImportSiblingDto(
+    Guid Id,
+    int SegmentIndex,
+    DateOnly? PeriodStart,
+    DateOnly? PeriodEnd,
+    string Status,
+    Guid? StatementId);
+
+/// <summary>
+/// Empreinte d'un relevé extrait d'un fichier qui en contient plusieurs : les 58 premiers caractères
+/// du SHA-256 du fichier puis « -IP/NN » (rang/nombre), soit 64 caractères comme une empreinte
+/// ordinaire (hexadécimale, sans « - » ni « / », donc jamais confondue). Chaque relevé garde ainsi sa
+/// propre déduplication (session ouverte, relevé déjà importé, confirmation) sans changer le schéma ;
+/// ses relevés frères partagent le préfixe.
+/// </summary>
+public static class StatementSegmentFingerprint
+{
+    private const int PrefixLength = 58;
+
+    public static string Create(string fileHash, int index, int count) =>
+        $"{fileHash[..PrefixLength]}-{index:D2}/{count:D2}";
+
+    /// <summary>Préfixe commun aux relevés frères (« … - »), pour une recherche par début de chaîne.</summary>
+    public static string GroupPrefix(string fileHash) => fileHash[..PrefixLength] + "-";
+
+    public static bool TryParse(string? fingerprint, out string groupPrefix, out int index, out int count)
+    {
+        groupPrefix = string.Empty;
+        index = count = 0;
+        if (fingerprint is not { Length: PrefixLength + 6 } || fingerprint[PrefixLength] != '-' || fingerprint[PrefixLength + 3] != '/')
+            return false;
+        if (!int.TryParse(fingerprint.AsSpan(PrefixLength + 1, 2), out index) || !int.TryParse(fingerprint.AsSpan(PrefixLength + 4, 2), out count))
+            return false;
+        groupPrefix = fingerprint[..(PrefixLength + 1)];
+        return index >= 1 && index <= count;
+    }
 }
 
 public sealed record BankStatementBalanceCheckDto(
@@ -94,6 +140,24 @@ public sealed record BankStatementBalanceCheckDto(
     decimal? ComputedClosing,
     decimal? Difference,
     bool IsBalanced);
+
+/// <summary>
+/// Capacités de l'import, lues par le front à l'ouverture de la saisie manuelle et du rapprochement.
+/// Fonctionnalité éteinte : réponse 200 <see cref="Disabled"/> (et non 404, que le navigateur journalise
+/// comme une erreur à chaque visite) ; elle ne révèle ni limites, ni banques, ni fournisseur IA.
+/// </summary>
+public sealed record BankStatementImportCapabilitiesDto(
+    bool Enabled,
+    bool AiAvailable,
+    string? AiProviderKind,
+    long MaxFileBytes,
+    int MaxPages,
+    IReadOnlyList<string> AcceptedExtensions,
+    IReadOnlyList<string> RecognizedBanks)
+{
+    public static BankStatementImportCapabilitiesDto Disabled { get; } =
+        new(false, false, null, 0, 0, Array.Empty<string>(), Array.Empty<string>());
+}
 
 /// <summary>Codes d'erreur stables de l'import (testés par le front, traduits côté API).</summary>
 public static class BankStatementImportErrorCodes

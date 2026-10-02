@@ -359,6 +359,106 @@ public sealed class BankStatementImportServiceTests : IDisposable
         Assert.Equal(expected, BankStatementImportService.DownloadName(original, extension));
     }
 
+    // ── Fichier assemblant plusieurs relevés (ex. deux mois BIAT) ───────────────────────────
+
+    private static (byte[] Pdf, Monthly July, Monthly August) TwoMonths()
+    {
+        var july = new Monthly(new DateOnly(2026, 7, 1), new DateOnly(2026, 7, 31), new Spec("08", 6_000.000m, new[]
+        {
+            new Op("02/07/2026", "01/07/2026", new[] { "COM TVA VIREMENT REF : 00070000000001" }, 2.380m, null),
+            new Op("02/07/2026", "03/07/2026", new[] { "VIREMENT TUNISIE AUTRE BANQUE 00070000000001" }, null, 345.678m),
+            new Op("14/07/2026", "13/07/2026", new[] { "REGLEMENT CHEQUE NO 0000101 F/ STE EXEMPLE" }, 199.000m, null)
+        }));
+        var august = new Monthly(new DateOnly(2026, 8, 1), new DateOnly(2026, 8, 31), new Spec("08", july.Spec.Closing, new[]
+        {
+            new Op("03/08/2026", "31/07/2026", new[] { "REGLEMENT CHEQUE NO 0000102 F/ STE EXEMPLE" }, 120.250m, null),
+            new Op("04/08/2026", "05/08/2026", new[] { "VIREMENT TUNISIE AUTRE BANQUE 00080000000001" }, null, 1_400.900m)
+        }));
+        return (BiatMonthlyLike(august, july), july, august);
+    }
+
+    [Fact]
+    public async Task File_with_two_months_opens_one_session_per_statement_in_chronological_order()
+    {
+        var (pdf, _, _) = TwoMonths();
+        var accountId = SeedBankAccount(RibFor("08"));
+
+        var result = await Service().StartAsync(Request(pdf, accountId));
+
+        Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
+        var first = result.Value;
+        Assert.Equal(1, first.SegmentIndex);
+        Assert.Equal(2, first.SegmentCount);
+        Assert.True(first.CanConfirm, string.Join(" | ", first.Extraction!.Issues.Select(i => i.Message)));
+        Assert.Equal(new DateOnly(2026, 7, 1), first.Extraction!.Header.PeriodStart);
+        var sibling = Assert.Single(first.Siblings);
+        Assert.Equal(2, sibling.SegmentIndex);
+        Assert.Equal(new DateOnly(2026, 8, 1), sibling.PeriodStart);
+        _ai.Verify(a => a.Schedule(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
+
+        await using var ctx = _factory.CreateContext();
+        Assert.Equal(2, await ctx.BankStatementImportSessions.CountAsync());
+    }
+
+    [Fact]
+    public async Task Statements_of_the_same_file_are_confirmed_independently_and_never_twice()
+    {
+        var (pdf, july, august) = TwoMonths();
+        var accountId = SeedBankAccount(RibFor("08"));
+        var first = (await Service().StartAsync(Request(pdf, accountId))).Value;
+        var secondId = first.Siblings[0].Id;
+
+        var confirmJuly = await Service().ConfirmAsync(first.Id, new ConfirmBankStatementImportRequest());
+        var confirmAugust = await Service().ConfirmAsync(secondId, new ConfirmBankStatementImportRequest());
+
+        Assert.True(confirmJuly.IsSuccess, confirmJuly.IsFailure ? confirmJuly.Error.Description : null);
+        Assert.True(confirmAugust.IsSuccess, confirmAugust.IsFailure ? confirmAugust.Error.Description : null);
+        await using (var ctx = _factory.CreateContext())
+        {
+            var statements = await ctx.BankStatements.OrderBy(s => s.PeriodStart).ToListAsync();
+            Assert.Equal(2, statements.Count);
+            Assert.Equal(july.Spec.Closing, statements[0].ClosingBalance.Amount);
+            Assert.Equal(august.Spec.Closing, statements[1].ClosingBalance.Amount);
+            Assert.NotEqual(statements[0].SourceFileHash, statements[1].SourceFileHash);
+        }
+
+        var again = await Service().StartAsync(Request(pdf, accountId));
+        Assert.Equal(BankStatementImportErrorCodes.AlreadyImported, again.Error.Code);
+    }
+
+    [Fact]
+    public async Task Uploading_the_same_file_again_reopens_the_pending_statements()
+    {
+        var (pdf, _, _) = TwoMonths();
+        var accountId = SeedBankAccount(RibFor("08"));
+        var first = (await Service().StartAsync(Request(pdf, accountId))).Value;
+        Assert.True((await Service().ConfirmAsync(first.Id, new ConfirmBankStatementImportRequest())).IsSuccess);
+
+        var again = await Service().StartAsync(Request(pdf, accountId));
+
+        Assert.True(again.IsSuccess);
+        Assert.Equal(first.Siblings[0].Id, again.Value.Id);
+        Assert.Equal(2, again.Value.SegmentIndex);
+        await using var ctx = _factory.CreateContext();
+        Assert.Equal(2, await ctx.BankStatementImportSessions.CountAsync());
+    }
+
+    [Theory]
+    [InlineData(1, 2)]
+    [InlineData(12, 12)]
+    public void Segment_fingerprint_round_trips_and_keeps_the_hash_length(int index, int count)
+    {
+        var hash = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(new byte[] { 1, 2, 3 }));
+
+        var fingerprint = StatementSegmentFingerprint.Create(hash, index, count);
+
+        Assert.Equal(64, fingerprint.Length);
+        Assert.True(StatementSegmentFingerprint.TryParse(fingerprint, out var prefix, out var parsedIndex, out var parsedCount));
+        Assert.Equal((index, count), (parsedIndex, parsedCount));
+        Assert.Equal(StatementSegmentFingerprint.GroupPrefix(hash), prefix);
+        Assert.False(StatementSegmentFingerprint.TryParse(hash, out _, out _, out _));
+    }
+
     /// <summary>PNG minimal valide (signature + IHDR) : suffit au contrôle de signature.</summary>
     private static byte[] PngBytes() => Convert.FromBase64String(
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==");

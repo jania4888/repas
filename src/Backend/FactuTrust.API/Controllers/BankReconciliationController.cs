@@ -72,7 +72,7 @@ public sealed class BankReconciliationController : ControllerBase
             file.ContentType ?? "application/octet-stream",
             cancellationToken);
         if (result.IsFailure)
-            return BadRequest(ApiResponse<object>.Fail(result.Error.Description));
+            return BadRequest(ApiResponse<object>.FailWithCode(result.Error.Description, result.Error.Code));
         return Ok(ApiResponse<BankStatementFilePreviewDto>.Ok(result.Value));
     }
 

@@ -85,6 +85,20 @@ export interface BankStatementImportSession {
   extraction: ExtractedBankStatement | null;
   balanceCheck: BalanceCheck | null;
   canConfirm: boolean;
+  /** Rang (1…N) du relevé dans un fichier qui en contient plusieurs ; null = fichier d'un seul relevé. */
+  segmentIndex?: number | null;
+  segmentCount?: number | null;
+  /** Les autres relevés du même fichier, une session chacun (ordre chronologique). */
+  siblings?: BankStatementImportSibling[];
+}
+
+export interface BankStatementImportSibling {
+  id: string;
+  segmentIndex: number;
+  periodStart: string | null;
+  periodEnd: string | null;
+  status: SessionStatus;
+  statementId: string | null;
 }
 
 export interface ConfirmResult {

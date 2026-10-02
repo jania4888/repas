@@ -1,5 +1,8 @@
 /// <reference types="@angular/localize" />
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
+import { concatMap, from, map } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -15,6 +18,7 @@ import { AccountingExportFormat, downloadBlob, exportExtension } from '../shared
 import { AccountingService, JournalSearchRowDto } from '../services/accounting.service';
 import {
   AutoAssociationResultDto,
+  BankImportIssueDto,
   BankLineAssociationDto,
   BankLineAssociationStatus,
   BankReconciliationService,
@@ -272,6 +276,9 @@ interface WizardStepDef {
             </app-button>
           </div>
         </div>
+        @if (previewing()) {
+          <p class="br-help" role="status" i18n="@@accounting.bank-reconciliation.lecture.du.releve.en.cours.un.releve.sca.f6c24d36">Lecture du relevé en cours. Un relevé scanné lu par l'IA peut demander quelques minutes.</p>
+        }
 
         <!-- Options d'import (façon Sage) -->
         <h3 class="br-section-sub" i18n="@@accounting.bank-reconciliation.options.d.import.ad83e6f8">Options d'import</h3>
@@ -317,6 +324,69 @@ interface WizardStepDef {
               @if (p.matchedChartOfAccountNumber) {<ng-container i18n="@@accounting.bank-reconciliation.compte.comptable.42b761b0"> — compte comptable {{ p.matchedChartOfAccountNumber }} </ng-container>}
             </p>
           }
+          @if (p.statements && p.statements.length > 1) {
+            <h3 class="br-section-sub" i18n="@@accounting.bank-reconciliation.releves.detectes.dans.ce.fichier.c9a38276">{{ p.statements.length }} relevés détectés dans ce fichier</h3>
+            <p class="br-help" i18n="@@accounting.bank-reconciliation.ils.seront.importes.l.un.apres.l.autre.d.a2fd50e2">Ils seront importés l'un après l'autre, dans l'ordre chronologique, chacun avec ses propres soldes.</p>
+            <p-table [value]="p.statements" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th scope="col" i18n="@@accounting.bank-reconciliation.periode.de2110b7">Période</th>
+                  <th scope="col" class="br-amt" i18n="@@accounting.bank-reconciliation.lignes.41c7025e">Lignes</th>
+                  <th scope="col" class="br-amt" i18n="@@accounting.bank-reconciliation.solde.initial.78a4e543">Solde initial</th>
+                  <th scope="col" class="br-amt" i18n="@@accounting.bank-reconciliation.total.debits.9acf4842">Total débits</th>
+                  <th scope="col" class="br-amt" i18n="@@accounting.bank-reconciliation.total.credits.ec8c5525">Total crédits</th>
+                  <th scope="col" class="br-amt" i18n="@@accounting.bank-reconciliation.solde.final.eafcc35f">Solde final</th>
+                  <th scope="col" i18n="@@accounting.bank-reconciliation.etat.d3b28a2a">État</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-st>
+                <tr>
+                  <td>{{ st.periodStart | date : 'shortDate' }} → {{ st.periodEnd | date : 'shortDate' }}</td>
+                  <td class="br-amt">{{ st.validLines }}</td>
+                  <td class="br-amt">{{ st.suggestedOpeningBalance | number : '1.3-3' }}</td>
+                  <td class="br-amt">{{ st.totalDebit | number : '1.3-3' }}</td>
+                  <td class="br-amt">{{ st.totalCredit | number : '1.3-3' }}</td>
+                  <td class="br-amt">{{ st.suggestedClosingBalance | number : '1.3-3' }}</td>
+                  <td>
+                    @if (st.canImport) {
+                      <span class="br-ok" i18n="@@accounting.bank-reconciliation.pret.49ed3e18">Prêt</span>
+                    } @else {
+                      <span class="br-err" i18n="@@accounting.bank-reconciliation.a.corriger.28269b0c">À corriger</span>
+                    }
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+            @for (st of p.statements; track $index) {
+              @if (blockingIssues(st).length > 0) {
+                <div class="br-issues">
+                  <h3 class="br-issues-title">{{ st.periodStart | date : 'shortDate' }} → {{ st.periodEnd | date : 'shortDate' }}</h3>
+                  <ul class="br-issues-list">
+                    @for (issue of blockingIssues(st); track $index) {
+                      <li><span class="br-issue-ref">{{ issue.ref }}</span> {{ issue.message }}</li>
+                    }
+                  </ul>
+                </div>
+              }
+            }
+            <div class="br-import-fields">
+              <div class="form-field">
+                <label class="field-label" for="br-bank-multi" i18n="@@accounting.bank-reconciliation.banque.2a7302cd">Banque</label>
+                <input id="br-bank-multi" class="br-input" [(ngModel)]="meta.bankName" [disabled]="busy()" />
+              </div>
+              <div class="form-field">
+                <label class="field-label" for="br-acc-multi" i18n="@@accounting.bank-reconciliation.n.de.compte.0b69581b">N° de compte</label>
+                <input id="br-acc-multi" class="br-input" [(ngModel)]="meta.accountNumber" [disabled]="busy()" />
+              </div>
+            </div>
+            <div class="br-commit-bar">
+              <span class="br-commit-hint" i18n="@@accounting.bank-reconciliation.releve.s.a.importer.du.plus.ancien.au.pl.813a34f3">{{ p.statements.length }} relevé(s) à importer, du plus ancien au plus récent.</span>
+              <app-button variant="primary" icon="pi pi-arrow-right" type="button"
+                (click)="runImportAll()" [disabled]="!canImportAll() || busy()">
+                {{ importing() ? loc_ui_tern_import_4834ca : loc_import_all_statements }}
+              </app-button>
+            </div>
+          } @else {
           <div class="br-summary">
             <div class="br-kpi"><span class="br-kpi-label" i18n="@@accounting.bank-reconciliation.lignes.valides.b21843dc">Lignes valides</span><span class="br-kpi-value br-ok">{{ p.validLines }}</span></div>
             <div class="br-kpi"><span class="br-kpi-label" i18n="@@accounting.bank-reconciliation.anomalies.4b2e6f56">Anomalies</span><span class="br-kpi-value" [class.br-err]="p.issues.length > 0">{{ p.issues.length }}</span></div>
@@ -395,6 +465,7 @@ interface WizardStepDef {
             </div>
           } @else {
             <p class="br-commit-hint br-err" i18n="@@accounting.bank-reconciliation.corrigez.les.anomalies.bloquantes.avant.d.import.127ebca3">Corrigez les anomalies bloquantes avant d'importer.</p>
+          }
           }
         }
       </div>
@@ -806,6 +877,7 @@ export class BankReconciliationComponent implements OnInit {
   readonly loc_ui_tern_tester_l_importation_92d856 = $localize`:@@ui.tern.tester.l.importation.92d856:Tester l'importation`;
   readonly loc_ui_tern_import_4834ca = $localize`:@@ui.tern.import.4834ca:Import…`;
   readonly loc_ui_tern_importer_et_continuer_135d02 = $localize`:@@ui.tern.importer.et.continuer.135d02:Importer et continuer`;
+  readonly loc_import_all_statements = $localize`:@@accounting.bank-reconciliation.ts.importer.les.releves.et.continuer.d68ffced:Importer les relevés et continuer`;
   readonly loc_ui_tern_rapprochement_e7a2b4 = $localize`:@@ui.tern.rapprochement.e7a2b4:Rapprochement…`;
   readonly loc_ui_tern_rapprocher_tout_ce_qui_est_associe_061001 = $localize`:@@ui.tern.rapprocher.tout.ce.qui.est.associe.061001:Rapprocher tout ce qui est associé (`;
   readonly loc_ui_tern_rapprochee_bea87b = $localize`:@@ui.tern.rapprochee.bea87b:Rapprochée`;
@@ -823,6 +895,7 @@ export class BankReconciliationComponent implements OnInit {
   private readonly toast = inject(ToastService);
   private readonly route = inject(ActivatedRoute);
   private readonly bankStatementImport = inject(BankStatementImportService);
+  private readonly destroyRef = inject(DestroyRef);
 
   /** Import IA de relevés activé côté serveur : accès à la comptabilisation assistée d'un relevé. */
   readonly aiPostingEnabled = signal(false);
@@ -919,7 +992,7 @@ export class BankReconciliationComponent implements OnInit {
     this.unmatchedOnly = qp.get('unmatchedOnly') === '1';
     this.loadStatements();
     this.loadBankAccounts();
-    this.bankStatementImport.capabilities().subscribe(caps => this.aiPostingEnabled.set(!!caps?.enabled));
+    this.bankStatementImport.capabilities({ includeAi: false }).subscribe(caps => this.aiPostingEnabled.set(!!caps?.enabled));
   }
 
   loadBankAccounts(): void {
@@ -1133,7 +1206,7 @@ export class BankReconciliationComponent implements OnInit {
     if (!file || this.busy()) return;
     this.error.set(null);
     this.previewing.set(true);
-    this.api.previewStatementFile(file, this.fileFormat).subscribe({
+    this.api.previewStatementFile(file, this.fileFormat).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: res => {
         this.previewing.set(false);
         if (!res.success || !res.data) {
@@ -1159,7 +1232,8 @@ export class BankReconciliationComponent implements OnInit {
       },
       error: err => {
         this.previewing.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.bank-reconciliation.ts.erreur.reseau.lors.de.l.apercu.du.releve.170cebcd:Erreur réseau lors de l'aperçu du relevé.`));
+        this.error.set(this.previewErrorMessage(err)
+          ?? this.errors.extractErrorMessage(err, $localize`:@@accounting.bank-reconciliation.ts.erreur.reseau.lors.de.l.apercu.du.releve.170cebcd:Erreur réseau lors de l'aperçu du relevé.`));
       }
     });
   }
@@ -1209,6 +1283,101 @@ export class BankReconciliationComponent implements OnInit {
         this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.bank-reconciliation.ts.erreur.reseau.lors.de.l.import.du.releve.60473acb:Erreur réseau lors de l'import du relevé.`));
       }
     });
+  }
+
+  /** Anomalies bloquantes d'un relevé d'un fichier qui en contient plusieurs. */
+  blockingIssues(statement: BankStatementFilePreviewDto): BankImportIssueDto[] {
+    return statement.issues.filter(i => i.isBlocking);
+  }
+
+  canImportAll(): boolean {
+    const statements = this.preview()?.statements ?? [];
+    return statements.length > 1
+      && statements.every(s => s.canImport)
+      && this.meta.bankName.trim().length > 0
+      && this.meta.accountNumber.trim().length > 0;
+  }
+
+  /**
+   * Plusieurs relevés dans un fichier : import successif (du plus ancien au plus récent) par l'endpoint
+   * historique, arrêt au premier échec avec bilan, puis association automatique du premier relevé.
+   */
+  runImportAll(): void {
+    const p = this.preview();
+    const statements = p?.statements ?? [];
+    if (!p || !this.canImportAll() || this.busy()) return;
+    this.error.set(null);
+    this.importing.set(true);
+    const imported: BankStatementDto[] = [];
+    from(statements)
+      .pipe(
+        concatMap(st => this.importOne(st, p).pipe(map(res => {
+          if (!res.success || !res.data) throw new Error(res.error ?? '');
+          return res.data;
+        }))),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: statement => imported.push(statement),
+        error: err => {
+          this.importing.set(false);
+          const reason = err instanceof HttpErrorResponse
+            ? this.errors.extractErrorMessage(err, $localize`:@@accounting.bank-reconciliation.ts.erreur.reseau.lors.de.l.import.du.releve.60473acb:Erreur réseau lors de l'import du relevé.`)
+            : (err as Error)?.message || $localize`:@@ui.tern.l.import.du.releve.a.echoue.ae1cdf:L'import du relevé a échoué.`;
+          // La liste est rafraîchie d'abord : son chargement efface l'erreur affichée.
+          if (imported.length > 0) this.loadStatements();
+          this.error.set($localize`:@@accounting.bank-reconciliation.ts.releve.s.importe.s.sur.echec.du.suivant.24963d2a:${imported.length}:imported: relevé(s) importé(s) sur ${statements.length}:total: ; échec du suivant : ${reason}:reason:`);
+        },
+        complete: () => {
+          this.importing.set(false);
+          if (imported.length === 0) return;
+          this.toast.add({
+            severity: 'success',
+            summary: $localize`:@@accounting.bank-reconciliation.ts.releves.importes.958c16b7:Relevés importés`,
+            detail: $localize`:@@accounting.bank-reconciliation.ts.releve.s.importe.s.ligne.s.62b87b72:${imported.length}:count: relevé(s) importé(s), ${imported.reduce((n, s) => n + s.lines.length, 0)}:lines: ligne(s).`,
+            life: 4000
+          });
+          this.selected.set(imported[0]);
+          this.resetImport();
+          this.step.set(2);
+          this.runAutoAssociate();
+        }
+      });
+  }
+
+  private importOne(st: BankStatementFilePreviewDto, root: BankStatementFilePreviewDto): ReturnType<BankReconciliationService['importStatement']> {
+    return this.api.importStatement({
+      bankName: this.meta.bankName.trim(),
+      accountNumber: this.meta.accountNumber.trim(),
+      statementDate: (st.periodEnd ?? '').substring(0, 10),
+      periodStart: (st.periodStart ?? '').substring(0, 10),
+      periodEnd: (st.periodEnd ?? '').substring(0, 10),
+      openingBalance: this.optImportBalances ? Number(st.suggestedOpeningBalance ?? 0) : 0,
+      closingBalance: this.optImportBalances ? Number(st.suggestedClosingBalance ?? 0) : 0,
+      bankAccountId: this.selectedBankAccountId || st.matchedBankAccountId || root.matchedBankAccountId || null,
+      chartOfAccountNumber: this.resolveChartAccountNumber(st),
+      sourceFileName: this.lastSourceFileName,
+      importMethod: this.lastImportMethod,
+      skipAlreadyImported: this.optSkipAlreadyImported,
+      lines: st.lines
+    });
+  }
+
+  /** Échecs de l'aperçu restitués par leur code stable (jamais le texte serveur). */
+  private previewErrorMessage(err: unknown): string | null {
+    if (!(err instanceof HttpErrorResponse)) return null;
+    if (err.status === 504) {
+      return $localize`:@@accounting.bank-reconciliation.ts.le.serveur.a.mis.trop.de.temps.a.lire.ce.releve.81baa616:Le serveur a mis trop de temps à lire ce relevé. Préférez un relevé PDF téléchargé depuis votre banque en ligne, ou un export CSV/OFX.`;
+    }
+    const code = (err.error as { code?: string } | null)?.code;
+    switch (code) {
+      case 'bank_statement.preview_timeout':
+        return $localize`:@@accounting.bank-reconciliation.ts.la.lecture.de.ce.releve.par.l.ia.depasse.le.dela.238cef35:La lecture de ce relevé par l'IA dépasse le délai autorisé. Préférez un relevé PDF téléchargé depuis votre banque en ligne (texte lisible), ou un export CSV/OFX.`;
+      case 'bank_statement.ai_unavailable':
+        return $localize`:@@accounting.bank-reconciliation.ts.le.moteur.ia.n.a.pas.pu.lire.ce.releve.pour.le.m.c6ea7b62:Le moteur IA n'a pas pu lire ce relevé pour le moment. Réessayez plus tard, ou utilisez un relevé PDF téléchargé depuis votre banque en ligne, ou un export CSV/OFX.`;
+      default:
+        return null;
+    }
   }
 
   private resetImport(): void {

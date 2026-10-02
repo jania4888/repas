@@ -735,10 +735,12 @@ app.MapControllers();
     // (fail-closed) : drapeau ON sans brouillard = analyse possible, génération toujours refusée.
     var accountingSettings = app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<FactuTrust.Application.Configuration.AccountingSettings>>().Value;
     featureLogger.LogInformation(
-        "Effective feature flags: Accounting.BankStatementAiPosting={BankStatementAiPostingEnabled} Accounting.BankReconciliationMatchingV2={BankReconciliationMatchingV2Enabled} Accounting.Brouillard={BrouillardEnabled}",
+        "Effective feature flags: Accounting.BankStatementAiPosting={BankStatementAiPostingEnabled} Accounting.BankReconciliationMatchingV2={BankReconciliationMatchingV2Enabled} Accounting.Brouillard={BrouillardEnabled} Accounting.BankStatementLayoutParser={BankStatementLayoutParserEnabled} Accounting.BankStatementPreviewTimeoutSeconds={BankStatementPreviewTimeoutSeconds}",
         accountingSettings.BankStatementAiPostingEnabled,
         accountingSettings.BankReconciliationMatchingV2Enabled,
-        accountingSettings.BrouillardEnabled);
+        accountingSettings.BrouillardEnabled,
+        accountingSettings.BankStatementLayoutParserEnabled,
+        accountingSettings.BankStatementPreviewTimeoutSeconds);
     if (accountingSettings.BankStatementAiPostingEnabled && !accountingSettings.BrouillardEnabled)
     {
         featureLogger.LogWarning(

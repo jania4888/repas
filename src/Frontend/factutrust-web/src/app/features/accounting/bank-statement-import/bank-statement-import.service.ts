@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable, catchError, map, of, throwError } from 'rxjs';
 import { environment } from '@environments/environment';
 import { createHttpContextSkipGlobalErrorUi } from '@core/http-context';
@@ -35,12 +35,19 @@ export class BankStatementImportService {
   private readonly base = `${environment.apiUrl}/accounting/bank-statement-import`;
   private readonly context = createHttpContextSkipGlobalErrorUi();
 
-  /** Capacités ; `null` si la fonctionnalité est désactivée (404) ou inaccessible. */
-  capabilities(): Observable<BankStatementImportCapabilities | null> {
-    return this.http.get<ApiEnvelope<BankStatementImportCapabilities>>(`${this.base}/capabilities`, { context: this.context }).pipe(
-      map(res => (res?.success && res.data ? res.data : null)),
-      catchError(() => of(null))
-    );
+  /**
+   * Capacités ; `null` = fonctionnalité indisponible pour cet écran, quelle qu'en soit la raison :
+   * désactivée (`enabled:false`), serveur plus ancien (404) ou erreur. Seul signal « désactivé » des appelants.
+   * `includeAi:false` épargne la sonde du moteur IA aux écrans qui n'ont besoin que de l'interrupteur.
+   */
+  capabilities(options: { includeAi?: boolean } = {}): Observable<BankStatementImportCapabilities | null> {
+    const params = options.includeAi === false ? new HttpParams().set('includeAi', 'false') : undefined;
+    return this.http
+      .get<ApiEnvelope<BankStatementImportCapabilities>>(`${this.base}/capabilities`, { context: this.context, params })
+      .pipe(
+        map(res => (res?.success && res.data?.enabled ? res.data : null)),
+        catchError(() => of(null))
+      );
   }
 
   start(file: File, bankAccountId: string, journalCode: string): Observable<BankStatementImportSession> {
