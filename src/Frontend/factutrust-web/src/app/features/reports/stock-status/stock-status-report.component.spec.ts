@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { StockStatusReportComponent } from './stock-status-report.component';
 import { ReportsApiService } from '@core/services/reports-api.service';
@@ -39,7 +40,8 @@ describe('StockStatusReportComponent', () => {
           stockValue: 20
         }]
       },
-      message: null
+      message: null,
+      errors: []
     }));
 
     await TestBed.configureTestingModule({
@@ -47,6 +49,7 @@ describe('StockStatusReportComponent', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideRouter([]),
         MessageService,
         { provide: ReportsApiService, useValue: reportsApi },
         {
