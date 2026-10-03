@@ -91,7 +91,6 @@ public static partial class BankStatementAiPageReader
     /// </param>
     public static PageReading Read(string rawLlmOutput, int pageNumber, string? ocrText, bool acceptDayFirstDates)
     {
-        var issues = new List<StatementExtractionIssue>();
         var json = InvoiceImportParsing.ExtractFirstJsonObject(rawLlmOutput);
         LlmBankStatementPage? page = null;
         if (!string.IsNullOrWhiteSpace(json))
@@ -106,6 +105,13 @@ public static partial class BankStatementAiPageReader
             }
         }
 
+        return Read(page, pageNumber, ocrText, acceptDayFirstDates);
+    }
+
+    /// <summary>Lit une page déjà désérialisée (vision verbatim normalisée ou texte).</summary>
+    public static PageReading Read(LlmBankStatementPage? page, int pageNumber, string? ocrText, bool acceptDayFirstDates)
+    {
+        var issues = new List<StatementExtractionIssue>();
         if (page is null)
         {
             issues.Add(new StatementExtractionIssue(StatementIssueCodes.AiPageFailed, StatementIssueSeverity.Blocking,
@@ -272,6 +278,27 @@ public static partial class BankStatementAiPageReader
             ordered.SelectMany(c => c.Chunk.ContextAmounts).Distinct().ToList(),
             failed,
             ordered.SelectMany(c => c.Chunk.OperationSides ?? c.Chunk.OperationAmounts.Select(_ => (bool?)null).ToList()).ToList());
+    }
+
+    /// <summary>
+    /// Lecture vision d'une page texte entière : ancrage via les montants imprimés des extraits (sans envoyer le texte au modèle).
+    /// </summary>
+    public static TextPageReading ForWholePage(
+        PageReading reading,
+        IReadOnlyList<BankStatementAiTextChunk> chunks)
+    {
+        var failed = reading.Issues.Any(i => i.Code == StatementIssueCodes.AiPageFailed);
+        if (chunks.Count == 0)
+        {
+            return new TextPageReading(reading, Array.Empty<decimal>(), Array.Empty<decimal>(), failed);
+        }
+
+        return new TextPageReading(
+            reading,
+            chunks.SelectMany(c => c.OperationAmounts).ToList(),
+            chunks.SelectMany(c => c.ContextAmounts).Distinct().ToList(),
+            failed,
+            chunks.SelectMany(c => c.OperationSides ?? c.OperationAmounts.Select(_ => (bool?)null).ToList()).ToList());
     }
 
     /// <summary>

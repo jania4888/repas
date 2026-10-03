@@ -152,6 +152,14 @@ public interface IPdfService
         SalesJournalPdfContext context,
         CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// PDF du journal de trésorerie. Le document porte déjà les libellés FR ou AR ;
+    /// ce rendu n'altère pas les factures ni les autres états.
+    /// </summary>
+    Task<byte[]> GenerateTreasuryJournalPdfAsync(
+        TreasuryJournalPdfDocument document,
+        CancellationToken cancellationToken = default);
+
     Task<byte[]> GeneratePurchasesJournalReportPdfAsync(
         PurchasesJournalPdfContext context,
         CancellationToken cancellationToken = default);

@@ -42,6 +42,21 @@ public sealed record AiStructuredExtractionRequest
     /// <summary>Force le chemin vision (repli après échec de parsing JSON sur une image).</summary>
     public bool ForceVision { get; init; }
 
+    /// <summary>Modèle vision explicite (sinon <see cref="IAiStructuredExtractionPipeline.ResolveVisionModelId"/>).</summary>
+    public string? VisionModelOverride { get; init; }
+
+    /// <summary>Échec si la vision n'a pas pu être utilisée (pas de repli silencieux vers le modèle texte).</summary>
+    public bool RequireVision { get; init; }
+
+    /// <summary>Inclure le texte extrait dans le message utilisateur lorsqu'une image est jointe.</summary>
+    public bool IncludeExtractedTextWithImages { get; init; } = true;
+
+    public int? MaxOutputTokens { get; init; }
+
+    public int? LlmTimeoutSeconds { get; init; }
+
+    public int? RenderDpi { get; init; }
+
     /// <summary>
     /// Schéma JSON contraignant le décodage côté Ollama (clé <c>format</c>). Null = mode
     /// <c>"json"</c> historique. Sans effet sur OpenRouter, et automatiquement abandonné si le
@@ -145,11 +160,16 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
 
         // 1. Résolution du modèle texte (JSON structuré).
         var modelRef = await ResolveModelRefAsync(request.ModelOverride, cancellationToken);
-        var visionModelId = ResolveVisionModelId();
+        var visionModelId = !string.IsNullOrWhiteSpace(request.VisionModelOverride)
+            ? request.VisionModelOverride.Trim()
+            : ResolveVisionModelId();
         var wantPrimaryVision = AiModelCapabilityDetector.DetectVisionSupport(modelRef);
 
         // 2. Extraction du texte (+ image base64 pour fallback vision sur photos et scans).
         var hasVisionModel = !string.IsNullOrWhiteSpace(visionModelId);
+        var renderDpi = request.RenderDpi is > 0
+            ? Math.Clamp(request.RenderDpi.Value, 72, 300)
+            : 200;
         var extractionSw = Stopwatch.StartNew();
         var extraction = await _documentTextExtractor.ExtractAsync(
             request.FileStream,
@@ -160,6 +180,7 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
                 // Rendu complet des pages : modèle principal multimodal, ou 2ᵉ passe explicitement
                 // forcée après une réponse inexploitable.
                 RenderPagesAsImages = wantPrimaryVision || (request.ForceVision && hasVisionModel),
+                RenderDpi = renderDpi,
 
                 // Récupération gratuite des pages scannées que l'OCR a déjà dû rasteriser : sans
                 // cela un PDF scanné n'expose aucune image et ne peut jamais basculer en vision.
@@ -194,9 +215,21 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
 
         if (extractedText.Length == 0 && !useVisionFallback)
         {
+            if (request.RequireVision)
+            {
+                return Result.Failure<AiStructuredExtractionOutcome>(Error.Validation(code,
+                    "La lecture vision est requise mais aucune image exploitable n'a été produite."));
+            }
+
             return Result.Failure<AiStructuredExtractionOutcome>(Error.Validation(code,
                 "Photo illisible : OCR vide et aucun modèle vision d'import configuré (clé InvoiceImportVisionModel, ex. gemma3:4b). "
                 + "Exécutez scripts/install-tessdata.ps1 ou contactez l'administrateur plateforme."));
+        }
+
+        if (request.RequireVision && !useVisionFallback)
+        {
+            return Result.Failure<AiStructuredExtractionOutcome>(Error.Validation(code,
+                "La lecture vision est requise mais le modèle vision n'a pas pu être utilisé."));
         }
 
         var textTruncated = extraction.Truncated;
@@ -240,9 +273,11 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
 
         try
         {
+            var promptText = useVisionFallback && !request.IncludeExtractedTextWithImages ? string.Empty : extractedText;
             (raw, chunkCount, firstTokenMs) = await CallLlmAsync(
-                activeModelRef, request.SystemPrompt, extractedText, llmImages, code,
-                useSchema ? request.OutputSchema : null, cancellationToken, request.UserInstruction);
+                activeModelRef, request.SystemPrompt, promptText, llmImages, code,
+                useSchema ? request.OutputSchema : null, cancellationToken, request.UserInstruction,
+                request.MaxOutputTokens, request.LlmTimeoutSeconds);
         }
         catch (OllamaRequestException ex) when (useSchema && IsSchemaRejection(ex))
         {
@@ -253,9 +288,11 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
                 + "repli sur format=\"json\". Désactivez « UseStructuredOutputSchema » pour éviter cet aller-retour.",
                 code, ex.HttpStatusCode);
 
+            var promptText = useVisionFallback && !request.IncludeExtractedTextWithImages ? string.Empty : extractedText;
             (raw, chunkCount, firstTokenMs) = await CallLlmAsync(
-                activeModelRef, request.SystemPrompt, extractedText, llmImages, code,
-                outputSchema: null, cancellationToken, request.UserInstruction);
+                activeModelRef, request.SystemPrompt, promptText, llmImages, code,
+                outputSchema: null, cancellationToken, request.UserInstruction,
+                request.MaxOutputTokens, request.LlmTimeoutSeconds);
         }
         catch (InvalidOperationException ex)
         {
@@ -417,16 +454,27 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
         return modelRef;
     }
 
-    private int ResolveImportMaxOutputTokens() =>
-        Math.Clamp(
+    private int ResolveImportMaxOutputTokens(int? overrideTokens)
+    {
+        if (overrideTokens is > 0)
+        {
+            var maxCtxHalf = _ollamaSettings.NumCtx > 0 ? _ollamaSettings.NumCtx / 2 : 8192;
+            return Math.Clamp(overrideTokens.Value, 256, Math.Min(8192, maxCtxHalf));
+        }
+
+        return Math.Clamp(
             _ollamaSettings.ImportMaxOutputTokens > 0
                 ? _ollamaSettings.ImportMaxOutputTokens
                 : DefaultImportMaxOutputTokens,
             256,
             3072);
+    }
 
-    private TimeSpan ResolveImportLlmTimeout() =>
-        TimeSpan.FromSeconds(Math.Clamp(_ollamaSettings.ImportLlmTimeoutSeconds, 30, 600));
+    private TimeSpan ResolveImportLlmTimeout(int? overrideSeconds) =>
+        TimeSpan.FromSeconds(Math.Clamp(
+            overrideSeconds ?? _ollamaSettings.ImportLlmTimeoutSeconds,
+            30,
+            600));
 
     // ========================================================================
     // Appel LLM
@@ -505,12 +553,14 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
         string scope,
         JsonElement? outputSchema,
         CancellationToken cancellationToken,
-        string? userInstruction = null)
+        string? userInstruction = null,
+        int? maxOutputTokens = null,
+        int? llmTimeoutSeconds = null)
     {
         var sb = new StringBuilder();
         var userPrompt = BuildUserPrompt(text, images.Count > 0, userInstruction);
-        var outputCap = Math.Min(Math.Max(1, _ollamaSettings.MaxTokens), ResolveImportMaxOutputTokens());
-        var streamTimeout = ResolveImportLlmTimeout();
+        var outputCap = Math.Min(Math.Max(1, _ollamaSettings.MaxTokens), ResolveImportMaxOutputTokens(maxOutputTokens));
+        var streamTimeout = ResolveImportLlmTimeout(llmTimeoutSeconds);
         var chunkCount = 0;
         long? firstTokenMs = null;
         var llmSw = Stopwatch.StartNew();

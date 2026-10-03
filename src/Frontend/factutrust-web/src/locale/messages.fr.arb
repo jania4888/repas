@@ -13308,6 +13308,62 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.lecture.des.pages.par.l.ia.locale.vision": "Lecture des pages par l'IA locale… {$INTERPOLATION} %",
+  "@accounting.bank-statement-import.lecture.des.pages.par.l.ia.locale.vision": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.une.page.prend.une.a.trois.minutes.avec.l.ia.locale": "Une page prend une à trois minutes avec l'IA locale. Vous pouvez quitter cet écran et y revenir.",
+  "@accounting.bank-statement-import.une.page.prend.une.a.trois.minutes.avec.l.ia.locale": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lecture.ia.non.lancee": "Lecture IA non lancée",
+  "@accounting.bank-statement-import.ts.lecture.ia.non.lancee": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.rib.a.verifier": "RIB à vérifier",
+  "@accounting.bank-statement-import.ts.rib.a.verifier": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.releve.non.prouve.lecture.page.par.page.ia.locale": "Relevé non prouvé au millime : lecture page par page par l'IA locale (comptez une à trois minutes par page).",
+  "@accounting.bank-statement-import.releve.non.prouve.lecture.page.par.page.ia.locale": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ce.releve.appartient.au.compte.suggere": "Ce relevé appartient au compte {$INTERPOLATION} (…{$INTERPOLATION_1}).",
+  "@accounting.bank-statement-import.ce.releve.appartient.au.compte.suggere": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.analyser.avec.ce.compte": "Analyser avec ce compte",
+  "@accounting.bank-statement-import.analyser.avec.ce.compte": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.analyser.avec.ce.compte.aria": "Analyser avec ce compte bancaire",
+  "@accounting.bank-statement-import.analyser.avec.ce.compte.aria": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.pages.scannees.lecture.par.une.ia.extern.8eb6571b": " Pages scannées : lecture par une IA externe (fournisseur configuré par la plateforme). ",
   "@accounting.bank-statement-import.pages.scannees.lecture.par.une.ia.extern.8eb6571b": {
     "x-files": [
@@ -123191,5 +123247,31 @@
       "src/app/shared/validation/validation-rules.ts"
     ],
     "x-wave": "v1"
-  }
+  },
+  "core.nav.treasury.payments-cash-journal": "Journal de trésorerie",
+  "payments.routes.title.Journal_de_tresorerie": "Journal de trésorerie - InstaFact",
+  "payments.cash-journal.title": "Journal de trésorerie",
+  "payments.cash-journal.subtitle": "Mouvements de caisse regroupés par catégorie d'encaissement et de décaissement.",
+  "payments.cash-journal.print": "Imprimer (PDF)",
+  "payments.cash-journal.from": "Du",
+  "payments.cash-journal.to": "Au",
+  "payments.cash-journal.method": "Moyen",
+  "payments.cash-journal.show": "Afficher",
+  "payments.cash-journal.subtotal": "Sous-total",
+  "payments.cash-journal.partial": "Le détail de cette catégorie continue sur une autre page.",
+  "payments.cash-journal.previous": "Page précédente",
+  "payments.cash-journal.next": "Page suivante",
+  "payments.cash-journal.pager": "Pages du journal",
+  "payments.cash-journal.all-methods": "Tous les moyens",
+  "payments.cash-journal.encaissements": "Encaissements",
+  "payments.cash-journal.decaissements": "Décaissements",
+  "payments.cash-journal.unclassified": "Non classé",
+  "payments.cash-journal.load-error": "Impossible de charger le journal de trésorerie.",
+  "payments.cash-journal.pdf-error": "Impossible de générer le PDF.",
+  "payments.cash-journal.period-order": "La date de début ne peut pas être après la date de fin.",
+  "payments.cash-journal.period-length": "La période du journal de trésorerie ne peut pas dépasser 366 jours.",
+  "payments.cash-journal.debit": "Débit",
+  "payments.cash-journal.credit": "Crédit",
+  "payments.cash-journal.balance": "Solde",
+  "payments.cash-journal.count": "Nombre d'opérations"
 }

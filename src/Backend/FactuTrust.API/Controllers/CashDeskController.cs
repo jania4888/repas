@@ -1,8 +1,10 @@
 using FactuTrust.API.Authorization;
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Features.CashDesk;
 using FactuTrust.Application.Features.CashDesk.Commands;
 using FactuTrust.Application.Features.CashDesk.Queries;
 using FactuTrust.Domain.Common;
+using FactuTrust.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -107,6 +109,87 @@ public class CashDeskController : ControllerBase
         var query = new GetCashDeskBalancesQuery(year, month);
         var result = await _mediator.Send(query, cancellationToken);
         return Ok(ApiResponse<CashDeskBalancesDto>.Ok(result));
+    }
+
+    [HttpGet("journal")]
+    [Authorize(Policy = PermissionPolicies.PaymentsRead)]
+    [ProducesResponseType(typeof(ApiResponse<TreasuryJournalResultDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetJournal(
+        [FromQuery] DateTime? from,
+        [FromQuery] DateTime? to,
+        [FromQuery] int? method,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = TreasuryJournalConstants.DefaultPageSize,
+        CancellationToken cancellationToken = default)
+    {
+        if (!TryReadJournalFilters(from, to, method, out var parsedMethod, out var error))
+            return error!;
+
+        var result = await _mediator.Send(
+            new GetTreasuryJournalQuery(from!.Value, to!.Value, parsedMethod, page, pageSize),
+            cancellationToken);
+        if (result.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(result.Error.Description, result.Error.Code));
+
+        return Ok(ApiResponse<TreasuryJournalResultDto>.Ok(result.Value));
+    }
+
+    [HttpGet("journal/pdf")]
+    [Authorize(Policy = PermissionPolicies.PaymentsRead)]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ExportJournalPdf(
+        [FromQuery] DateTime? from,
+        [FromQuery] DateTime? to,
+        [FromQuery] int? method,
+        CancellationToken cancellationToken = default)
+    {
+        if (!TryReadJournalFilters(from, to, method, out var parsedMethod, out var error))
+            return error!;
+
+        var result = await _mediator.Send(
+            new ExportTreasuryJournalPdfQuery(from!.Value, to!.Value, parsedMethod),
+            cancellationToken);
+        if (result.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(result.Error.Description, result.Error.Code));
+
+        return File(result.Value.Content, result.Value.ContentType, result.Value.FileName);
+    }
+
+    private bool TryReadJournalFilters(
+        DateTime? from,
+        DateTime? to,
+        int? method,
+        out PaymentMethod? parsedMethod,
+        out IActionResult? error)
+    {
+        parsedMethod = null;
+        error = null;
+
+        if (!from.HasValue || !to.HasValue)
+        {
+            error = BadRequest(ApiResponse<object>.Fail("Les paramètres from et to sont requis (format: yyyy-MM-dd)."));
+            return false;
+        }
+
+        if (from.Value.Date > to.Value.Date)
+        {
+            error = BadRequest(ApiResponse<object>.Fail("La date de début ne peut pas être après la date de fin."));
+            return false;
+        }
+
+        if (!method.HasValue)
+            return true;
+
+        if (!Enum.IsDefined(typeof(PaymentMethod), method.Value))
+        {
+            error = BadRequest(ApiResponse<object>.Fail(TreasuryJournalConstants.InvalidMethodMessage));
+            return false;
+        }
+
+        parsedMethod = (PaymentMethod)method.Value;
+        return true;
     }
 
     [HttpPost("operations/{id:guid}/cancel")]

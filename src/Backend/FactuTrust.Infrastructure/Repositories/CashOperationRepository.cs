@@ -1,7 +1,9 @@
 using FactuTrust.Application.Common.Interfaces.Repositories;
+using FactuTrust.Application.Features.CashDesk;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
 using FactuTrust.Infrastructure.MultiTenancy;
+using FactuTrust.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace FactuTrust.Infrastructure.Repositories;
@@ -179,6 +181,88 @@ public sealed class CashOperationRepository : ICashOperationRepository
     {
         await using var context = _contextFactory.CreateContext();
         return await context.CashOperations.AnyAsync(e => e.Id == id, cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<CashJournalCategoryTotal>> GetNonCancelledJournalCategoryTotalsAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        PaymentMethod? method,
+        CancellationToken cancellationToken = default)
+    {
+        await using var context = _contextFactory.CreateContext();
+
+        var rows = await JournalFilter(context, fromDate, toDate, method)
+            .GroupBy(e => new { e.OperationType, e.Category, e.RevenueCategory })
+            .Select(g => new
+            {
+                g.Key.OperationType,
+                g.Key.Category,
+                g.Key.RevenueCategory,
+                Count = g.Count(),
+                Total = g.Sum(x => x.Amount.Amount)
+            })
+            .ToListAsync(cancellationToken);
+
+        return rows
+            .Select(r => new CashJournalCategoryTotal(
+                r.OperationType,
+                r.OperationType == CashOperationType.Credit ? (int?)r.RevenueCategory : (int?)r.Category,
+                r.Count,
+                r.Total))
+            .GroupBy(r => (r.OperationType, r.CategoryCode))
+            .Select(g => new CashJournalCategoryTotal(
+                g.Key.OperationType,
+                g.Key.CategoryCode,
+                g.Sum(x => x.Count),
+                g.Sum(x => x.Total)))
+            .ToList();
+    }
+
+    public async Task<(IReadOnlyList<CashOperation> Items, int TotalCount)> GetNonCancelledJournalLinesAsync(
+        DateTime fromDate,
+        DateTime toDate,
+        PaymentMethod? method,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        await using var context = _contextFactory.CreateContext();
+
+        // Tri en mémoire : le fournisseur InMemory d'EF Core ne traduit pas ThenBy sur le numéro
+        // possédé, et la fenêtre est déjà bornée à 366 jours par le handler. On ne charge pas la table.
+        var period = await JournalFilter(context, fromDate, toDate, method).ToListAsync(cancellationToken);
+        var ordered = period
+            .OrderBy(e => e.OperationDate)
+            .ThenBy(e => e.Number.Value, StringComparer.Ordinal)
+            .ThenBy(e => e.Id)
+            .ToList();
+
+        var take = Math.Clamp(pageSize, 1, TreasuryJournalConstants.MaxLinesForPdf);
+        var skip = PagingBounds.SafeSkip(page, take);
+        if (skip >= ordered.Count)
+            return (Array.Empty<CashOperation>(), ordered.Count);
+
+        var items = ordered.Skip(skip).Take(take).ToList();
+        return (items, ordered.Count);
+    }
+
+    private static IQueryable<CashOperation> JournalFilter(
+        TenantDbContext context,
+        DateTime fromDate,
+        DateTime toDate,
+        PaymentMethod? method)
+    {
+        var from = fromDate.Date;
+        var to = toDate.Date;
+        var query = context.CashOperations.Where(e =>
+            e.Status != CashOperationStatus.Annulee &&
+            e.OperationDate >= from &&
+            e.OperationDate <= to);
+
+        if (method.HasValue)
+            query = query.Where(e => e.Method == method.Value);
+
+        return query;
     }
 
     public async Task<IReadOnlyList<CashOperation>> GetByCashRegisterSessionIdAsync(

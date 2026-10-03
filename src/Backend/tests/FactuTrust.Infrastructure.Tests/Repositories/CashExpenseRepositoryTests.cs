@@ -336,6 +336,109 @@ public sealed class CashOperationRepositoryTests : IDisposable
         Assert.Equal(operation.Id, fetched!.Id);
     }
 
+    [Fact]
+    public async Task GetNonCancelledJournal_ExcludesCancelled_GroupsCategories_AndOrdersChronologically()
+    {
+        var from = new DateTime(2026, 9, 1);
+        var to = new DateTime(2026, 9, 30);
+
+        var rent = CashOperation.Create(
+            CashOperationNumber.Create("DEP", 2026, 1).Value,
+            CashOperationType.Debit,
+            new DateTime(2026, 9, 1),
+            PaymentMethod.Cash,
+            Money.Create(100m, "TND"),
+            "Loyer",
+            category: CashExpenseCategory.RentPayment).Value;
+
+        var sales = CashOperation.Create(
+            CashOperationNumber.Create("ENC", 2026, 1).Value,
+            CashOperationType.Credit,
+            new DateTime(2026, 9, 2),
+            PaymentMethod.Cash,
+            Money.Create(250m, "TND"),
+            "Ventes",
+            revenueCategory: CashRevenueCategory.CashSalesReceipt).Value;
+
+        var deposit = CashOperation.Create(
+            CashOperationNumber.Create("DEP", 2026, 2).Value,
+            CashOperationType.Debit,
+            new DateTime(2026, 9, 3),
+            PaymentMethod.BankTransfer,
+            Money.Create(40m, "TND"),
+            "Remise",
+            category: CashExpenseCategory.BankDeposit).Value;
+
+        var cancelled = CashOperation.Create(
+            CashOperationNumber.Create("ENC", 2026, 2).Value,
+            CashOperationType.Credit,
+            new DateTime(2026, 9, 3),
+            PaymentMethod.Cash,
+            Money.Create(15m, "TND"),
+            "Annulé",
+            revenueCategory: CashRevenueCategory.Other).Value;
+        Assert.True(cancelled.Cancel("Annulation test").IsSuccess);
+
+        var unclassified = CashOperation.Create(
+            CashOperationNumber.Create("DEP", 2026, 3).Value,
+            CashOperationType.Debit,
+            new DateTime(2026, 9, 4),
+            PaymentMethod.Cash,
+            Money.Create(5m, "TND"),
+            "Sans catégorie",
+            category: CashExpenseCategory.Other).Value;
+        typeof(CashOperation).GetProperty(nameof(CashOperation.Category))!.SetValue(unclassified, null);
+
+        var outside = CashOperation.Create(
+            CashOperationNumber.Create("DEP", 2026, 99).Value,
+            CashOperationType.Debit,
+            new DateTime(2026, 8, 31),
+            PaymentMethod.Cash,
+            Money.Create(999m, "TND"),
+            "Hors période",
+            category: CashExpenseCategory.Other).Value;
+
+        await using (var context = _contextFactory.CreateContext())
+        {
+            context.CashOperations.AddRange(rent, sales, deposit, cancelled, unclassified, outside);
+            await context.SaveChangesAsync();
+        }
+
+        var totals = await _repository.GetNonCancelledJournalCategoryTotalsAsync(from, to, method: null);
+        var credits = totals.Where(t => t.OperationType == CashOperationType.Credit).Sum(t => t.Total);
+        var debits = totals.Where(t => t.OperationType == CashOperationType.Debit).Sum(t => t.Total);
+        Assert.Equal(250m, credits);
+        Assert.Equal(145m, debits);
+
+        var byMethod = await _repository.GetNonCancelledTotalsByMethodAndTypeAsync(from, to);
+        var balanceCredits = byMethod.Where(kv => kv.Key.Type == CashOperationType.Credit).Sum(kv => kv.Value);
+        var balanceDebits = byMethod.Where(kv => kv.Key.Type == CashOperationType.Debit).Sum(kv => kv.Value);
+        Assert.Equal(credits, balanceCredits);
+        Assert.Equal(debits, balanceDebits);
+        Assert.Equal(credits - debits, balanceCredits - balanceDebits);
+        Assert.Contains(totals, t =>
+            t.OperationType == CashOperationType.Debit &&
+            t.CategoryCode == (int)CashExpenseCategory.BankDeposit &&
+            t.Total == 40m &&
+            t.Count == 1);
+        Assert.Contains(totals, t =>
+            t.OperationType == CashOperationType.Debit &&
+            t.CategoryCode is null &&
+            t.Total == 5m);
+        Assert.DoesNotContain(totals, t => t.Total == 15m || t.Total == 999m);
+
+        var (page, totalCount) = await _repository.GetNonCancelledJournalLinesAsync(from, to, null, page: 1, pageSize: 1);
+        Assert.Equal(4, totalCount);
+        Assert.Single(page);
+        Assert.Equal(rent.Id, page[0].Id);
+
+        var (cashOnly, cashCount) = await _repository.GetNonCancelledJournalLinesAsync(
+            from, to, PaymentMethod.Cash, page: 1, pageSize: 20);
+        Assert.Equal(3, cashCount);
+        Assert.DoesNotContain(cashOnly, op => op.Id == deposit.Id);
+        Assert.Equal(new[] { rent.Id, sales.Id, unclassified.Id }, cashOnly.Select(op => op.Id).ToArray());
+    }
+
     public void Dispose()
     {
         using var context = _contextFactory.CreateContext();

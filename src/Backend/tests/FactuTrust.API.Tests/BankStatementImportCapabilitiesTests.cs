@@ -3,6 +3,7 @@ using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.Features.Accounting.BankStatementImport;
 using FactuTrust.Domain.Enums;
+using FactuTrust.Infrastructure.MultiTenancy;
 using FactuTrust.Infrastructure.Services.BankStatementImport;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -26,12 +27,15 @@ public sealed class BankStatementImportCapabilitiesTests
         _user.Setup(u => u.HasPermission(It.IsAny<string>())).Returns(true);
         _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new BankStatementAiAvailability(true, "local", "ollama:test", null));
+        var tenant = new Mock<ITenantContext>();
+        tenant.Setup(t => t.TenantId).Returns(Guid.NewGuid());
         return new BankStatementImportController(
             Mock.Of<IBankStatementImportService>(),
             Mock.Of<IBankStatementPostingService>(),
             _ai.Object,
             BankStatementProfileRegistry.Default,
             _user.Object,
+            tenant.Object,
             Options.Create(new AccountingSettings { BankStatementAiPostingEnabled = enabled, BankStatementAiForAllDocumentsEnabled = allDocuments }));
     }
 

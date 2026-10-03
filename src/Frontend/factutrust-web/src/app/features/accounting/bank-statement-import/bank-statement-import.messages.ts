@@ -122,6 +122,10 @@ export function issueTitle(code: string): string {
       return $localize`:@@accounting.bank-statement-import.ts.solde.final.introuvable.13b030ed:Solde final introuvable`;
     case 'statement.rib_mismatch':
       return $localize`:@@accounting.bank-statement-import.ts.releve.d.un.autre.compte.bancaire.0040e15e:Relevé d'un autre compte bancaire`;
+    case 'statement.ai_not_started':
+      return $localize`:@@accounting.bank-statement-import.ts.lecture.ia.non.lancee:Lecture IA non lancée`;
+    case 'statement.ai_rib_mismatch':
+      return $localize`:@@accounting.bank-statement-import.ts.rib.a.verifier:RIB à vérifier`;
     case 'statement.rib_not_found':
       return $localize`:@@accounting.bank-statement-import.ts.rib.introuvable.sur.le.releve.bb213e2b:RIB introuvable sur le relevé`;
     case 'statement.rib_invalid_key':

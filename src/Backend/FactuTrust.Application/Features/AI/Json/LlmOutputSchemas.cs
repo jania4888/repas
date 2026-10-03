@@ -119,6 +119,35 @@ public static class LlmOutputSchemas
     public static JsonElement BankStatementPage { get; } =
         JsonDocument.Parse(BankStatementPageSchemaJson).RootElement.Clone();
 
+    private const string BankStatementPageVerbatimSchemaJson = """
+        {
+          "type": "object",
+          "properties": {
+            "rib": { "type": ["string","null"], "maxLength": 24 },
+            "openingBalance": { "type": ["string","null"], "maxLength": 32 },
+            "closingBalance": { "type": ["string","null"], "maxLength": 32 },
+            "lines": {
+              "type": "array",
+              "maxItems": 80,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "date": { "type": ["string","null"], "maxLength": 16 },
+                  "valueDate": { "type": ["string","null"], "maxLength": 16 },
+                  "label": { "type": ["string","null"], "maxLength": 300 },
+                  "debit": { "type": ["string","null"], "maxLength": 32 },
+                  "credit": { "type": ["string","null"], "maxLength": 32 }
+                }
+              }
+            }
+          }
+        }
+        """;
+
+    /// <summary>Schéma vision : montants et dates recopiés tels qu'imprimés (chaînes).</summary>
+    public static JsonElement BankStatementPageVerbatim { get; } =
+        JsonDocument.Parse(BankStatementPageVerbatimSchemaJson).RootElement.Clone();
+
     /// <summary>Valeur historique : JSON syntaxiquement valide, sans contrainte de type.</summary>
     public const string PlainJson = "json";
 }

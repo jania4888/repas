@@ -52,6 +52,7 @@ export const NAV_LABELS: Readonly<Record<string, string>> = {
   'treasury--treasury-cash-forecast': $localize`:@@core.nav.treasury.treasury-cash-forecast:Trésorerie prévisionnelle`,
   'treasury--ai-assistant-tresorerie': $localize`:@@core.nav.treasury.ai-assistant-tresorerie:Assistant Trésorerie`,
   'treasury--payments-cash-desk': $localize`:@@core.nav.treasury.payments-cash-desk:Caisse`,
+  'treasury--payments-cash-journal': $localize`:@@core.nav.treasury.payments-cash-journal:Journal de trésorerie`,
   'treasury--payments-bank-accounts': $localize`:@@core.nav.treasury.payments-bank-accounts:Comptes bancaires`,
   'treasury--payments-clients': $localize`:@@core.nav.treasury.payments-clients:Paiements clients`,
   'treasury--payments-suppliers': $localize`:@@core.nav.treasury.payments-suppliers:Paiements fournisseurs`,

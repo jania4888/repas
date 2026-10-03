@@ -642,7 +642,7 @@ public sealed class BankReconciliationService : IBankReconciliationService
         // Tout document par l'IA : un PDF ou une image passe par l'import IA (tâche de fond, droit IA,
         // limite de débit) et plus par cet aperçu synchrone. Le format est choisi par le client : la
         // signature du contenu est aussi vérifiée.
-        if (_settings.AiForAllDocumentsEffective
+        if (_settings.IsAiForAllDocumentsEnabledFor(_currentUser.TenantId)
             && (format is BankStatementFileFormat.Pdf or BankStatementFileFormat.Image || LooksLikePdfOrImage(content)))
         {
             return Result.Failure<BankStatementFilePreviewDto>(new Error(BankStatementPreviewErrorCodes.AiImportRequired,

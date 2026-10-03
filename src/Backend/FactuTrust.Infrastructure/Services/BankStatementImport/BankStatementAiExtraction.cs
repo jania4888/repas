@@ -23,37 +23,72 @@ public sealed class BankStatementAiExtraction : IBankStatementAiExtraction
 {
     private readonly IAiStructuredExtractionPipeline _pipeline;
     private readonly IOllamaClient _ollama;
+    private readonly IOllamaModelReadinessChecker _readiness;
     private readonly IBackgroundJobClient _jobs;
     private readonly ILogger<BankStatementAiExtraction> _logger;
+    private readonly OllamaSettings _ollamaSettings;
+    private readonly BankStatementImportLimits _limits;
 
     public BankStatementAiExtraction(
         IAiStructuredExtractionPipeline pipeline,
         IOllamaClient ollama,
+        IOllamaModelReadinessChecker readiness,
         IBackgroundJobClient jobs,
-        ILogger<BankStatementAiExtraction> logger)
+        ILogger<BankStatementAiExtraction> logger,
+        IOptions<OllamaSettings> ollamaSettings,
+        IOptions<AccountingSettings> accountingSettings)
     {
         _pipeline = pipeline;
         _ollama = ollama;
+        _readiness = readiness;
         _jobs = jobs;
         _logger = logger;
+        _ollamaSettings = ollamaSettings.Value;
+        _limits = accountingSettings.Value.BankStatementImport;
     }
 
     public async Task<BankStatementAiAvailability> CheckAvailabilityAsync(CancellationToken cancellationToken = default)
     {
         try
         {
-            var model = await _pipeline.ResolveModelRefAsync(null, cancellationToken);
-            if (string.IsNullOrWhiteSpace(model.ProviderModelId))
+            var textModel = await _pipeline.ResolveModelRefAsync(null, cancellationToken);
+            if (string.IsNullOrWhiteSpace(textModel.ProviderModelId))
                 return BankStatementAiAvailability.Unavailable("aucun modèle d'import IA n'est configuré.");
 
-            if (model.Kind == LlmProviderKind.Ollama)
+            var visionId = ImportAiModelResolver.ResolveBankStatementVisionModelId(_ollamaSettings);
+            if (_limits.VisionReadingEnabled && !string.IsNullOrWhiteSpace(visionId))
+            {
+                var visionRef = ModelRef.Parse(visionId);
+                if (visionRef.Kind == LlmProviderKind.Ollama)
+                {
+                    if (!await _ollama.IsAvailableAsync(cancellationToken))
+                        return BankStatementAiAvailability.Unavailable("le moteur IA local est indisponible.");
+                    var readiness = await _readiness.CheckAsync(visionRef.ProviderModelId!, cancellationToken);
+                    if (readiness.IsReady)
+                    {
+                        return new BankStatementAiAvailability(
+                            true, "local", textModel.CanonicalModelRef, null, "vision", visionRef.CanonicalModelRef);
+                    }
+                }
+                else if (!_limits.AiComplementAllowExternal)
+                {
+                    // Vision externe non autorisée pour relevés réels : repli texte local si possible.
+                }
+                else
+                {
+                    return new BankStatementAiAvailability(
+                        true, "external", textModel.CanonicalModelRef, null, "vision", visionRef.CanonicalModelRef);
+                }
+            }
+
+            if (textModel.Kind == LlmProviderKind.Ollama)
             {
                 if (!await _ollama.IsAvailableAsync(cancellationToken))
                     return BankStatementAiAvailability.Unavailable("le moteur IA local est indisponible.");
-                return new BankStatementAiAvailability(true, "local", model.CanonicalModelRef, null);
+                return new BankStatementAiAvailability(true, "local", textModel.CanonicalModelRef, null, "text");
             }
 
-            return new BankStatementAiAvailability(true, "external", model.CanonicalModelRef, null);
+            return new BankStatementAiAvailability(true, "external", textModel.CanonicalModelRef, null, "text");
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -64,6 +99,19 @@ public sealed class BankStatementAiExtraction : IBankStatementAiExtraction
 
     public void Schedule(Guid tenantId, Guid sessionId) =>
         _jobs.Enqueue<BankStatementAiExtractionJob>(job => job.ExecuteAsync(tenantId, sessionId, CancellationToken.None));
+
+    public void ScheduleMany(Guid tenantId, IReadOnlyList<Guid> sessionIds)
+    {
+        if (sessionIds.Count == 0)
+            return;
+        if (sessionIds.Count == 1)
+        {
+            Schedule(tenantId, sessionIds[0]);
+            return;
+        }
+
+        _jobs.Enqueue<BankStatementAiExtractionJob>(job => job.ExecuteManyAsync(tenantId, sessionIds, CancellationToken.None));
+    }
 }
 
 /// <summary>
@@ -71,7 +119,7 @@ public sealed class BankStatementAiExtraction : IBankStatementAiExtraction
 /// génération Ollama est relâchée entre deux pages, le chat et les autres imports s'intercalent),
 /// budget de temps global, annulation coopérative entre les pages. Aucun libellé n'est journalisé.
 /// </summary>
-public sealed class BankStatementAiExtractionJob
+public sealed partial class BankStatementAiExtractionJob
 {
     private static readonly TimeSpan Budget = TimeSpan.FromMinutes(20);
 
@@ -89,6 +137,7 @@ public sealed class BankStatementAiExtractionJob
         _logger = logger;
     }
 
+    [Queue("bank_statement_ai")]
     [AutomaticRetry(Attempts = 0)]
     public async Task ExecuteAsync(Guid tenantId, Guid sessionId, CancellationToken cancellationToken)
     {
@@ -127,6 +176,18 @@ public sealed class BankStatementAiExtractionJob
                           ?? throw new InvalidOperationException("Fichier du relevé introuvable.");
             var isPdf = session.ContentType.Contains("pdf", StringComparison.OrdinalIgnoreCase)
                         || session.FileName.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase);
+
+            if (string.Equals(layout.AiPlan?.Engine, "vision", StringComparison.Ordinal))
+            {
+                var visionPlan = layout.AiPlan!;
+                budget.CancelAfter(ComputeBudget(
+                    Math.Max(1, visionPlan.ScannedPages.Count + visionPlan.TextPages.Count),
+                    limits.EffectiveVisionCallTimeoutSeconds,
+                    limits.EffectiveAiJobBudgetMinutes));
+
+                await RunVisionAsync(services, ctx, session, layout, content, isPdf, limits, budget.Token);
+                return;
+            }
 
             // Plan absent (analyse lancée sans le drapeau « tout document par l'IA », ou avant lui) :
             // pages scannées seulement, exactement comme avant. Plan présent : pages scannées du plan

@@ -76,6 +76,8 @@ export interface BankStatementAiPlan {
   reason: AiReadingReason | null;
   estimatedCalls: number;
   estimatedSeconds: number;
+  engine?: 'vision' | 'text' | null;
+  fallbackPages?: number[];
 }
 
 export interface BalanceCheck {
@@ -135,6 +137,7 @@ export interface BankStatementImportCapabilities {
   recognizedBanks: string[];
   /** Tout relevé PDF ou image passe par l'import IA (le rapprochement y bascule ces fichiers). */
   allDocumentsViaAi?: boolean;
+  aiEngine?: 'vision' | 'text' | null;
 }
 
 export type LineStatus =

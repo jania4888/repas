@@ -491,6 +491,14 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['payments:read']
       },
       {
+        id: 'treasury--payments-cash-journal',
+        label: $localize`:@@core.nav.treasury.payments-cash-journal:Journal de trésorerie`,
+        route: '/payments/cash-journal',
+        icon: 'fa-solid fa-book',
+        modules: [M.Treasury],
+        permissionsAll: ['payments:read']
+      },
+      {
         id: 'treasury--payments-bank-accounts',
         label: $localize`:@@core.app-navigation.registry.ts.comptes.bancaires.3af6caeb:Comptes bancaires`,
         route: '/payments/bank-accounts',

@@ -109,7 +109,9 @@ export type BankStatementImportOrigin = 'manual-entry' | 'reconciliation';
             @if (caps.allDocumentsViaAi) {
               @if (caps.aiAvailable) {
                 <p class="bsu-hint">
-                  @if (caps.aiProviderKind === 'external') {<ng-container i18n="@@accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.67692986">
+                  @if (caps.aiEngine === 'vision') {
+                    <ng-container i18n="@@accounting.bank-statement-import.releve.non.prouve.lecture.page.par.page.ia.locale">Relevé non prouvé au millime : lecture page par page par l'IA locale (comptez une à trois minutes par page).</ng-container>
+                  } @else if (caps.aiProviderKind === 'external') {<ng-container i18n="@@accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.67692986">
                     Pages scannées ou non lues avec certitude : relecture par une IA externe (fournisseur configuré par la plateforme).
                   </ng-container>} @else {<ng-container i18n="@@accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.ad04271e">
                     Pages scannées ou non lues avec certitude : relecture par l'IA locale du serveur.

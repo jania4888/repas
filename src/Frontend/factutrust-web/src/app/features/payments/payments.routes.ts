@@ -30,6 +30,13 @@ export const PAYMENTS_ROUTES: Routes = [
     title: $localize`:@@payments.routes.title.Caisse_de_tr_sorerie_I:Caisse de trésorerie - InstaFact`
   },
   {
+    path: 'cash-journal',
+    loadComponent: () => import('./cash-journal/cash-journal.component').then(m => m.CashJournalComponent),
+    canActivate: [permissionGuard],
+    data: { modules: [AppModule.Treasury], permissions: [PERMISSIONS.payments.read] },
+    title: $localize`:@@payments.routes.title.Journal_de_tresorerie:Journal de trésorerie - InstaFact`
+  },
+  {
     path: 'bank-accounts',
     loadComponent: () => import('./bank-accounts/bank-accounts.component').then(m => m.BankAccountsComponent),
     title: $localize`:@@payments.routes.title.Comptes_bancaires_Inst:Comptes bancaires - InstaFact`

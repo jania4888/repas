@@ -48,6 +48,54 @@ public sealed class BankStatementImportLimits
     /// </summary>
     public bool AiComplementAllowExternal { get; set; }
 
+    // ── Lecture vision GLM-OCR (relevés non prouvés) ──
+
+    /// <summary>Active la lecture page par page via le modèle vision (GLM-OCR).</summary>
+    public bool VisionReadingEnabled { get; set; }
+
+    /// <summary>Dossiers pilotes (GUID). Vide = tous les dossiers.</summary>
+    public List<Guid> AiPilotTenantIds { get; set; } = new();
+
+    /// <summary>Repli qwen / chemin historique si GLM-OCR échoue sur une page.</summary>
+    public bool VisionTextFallbackEnabled { get; set; } = true;
+
+    /// <summary>Inclure le texte OCR/couche texte dans le message utilisateur avec l'image.</summary>
+    public bool VisionSendTextLayer { get; set; }
+
+    public int VisionRenderDpi { get; set; } = 200;
+
+    public int VisionMaxLongSidePx { get; set; } = 3000;
+
+    public int VisionMaxOutputTokens { get; set; } = 4096;
+
+    public int VisionCallTimeoutSeconds { get; set; } = 300;
+
+    /// <summary>Durée estimée par page vision (affichage UI).</summary>
+    public int VisionEstimatedSecondsPerPage { get; set; } = 180;
+
+    /// <summary>Refus des images dont largeur×hauteur dépasse ce seuil (MP).</summary>
+    public int MaxImageMegapixels { get; set; } = 60;
+
+    /// <summary>Workers Hangfire dédiés à la file <c>bank_statement_ai</c>.</summary>
+    public int AiWorkerCount { get; set; } = 2;
+
+    public int EffectiveVisionRenderDpi => Math.Clamp(VisionRenderDpi, 120, 300);
+
+    public int EffectiveVisionMaxLongSidePx => Math.Clamp(VisionMaxLongSidePx, 1200, 4000);
+
+    public int EffectiveVisionMaxOutputTokens => Math.Clamp(VisionMaxOutputTokens, 1024, 8192);
+
+    public int EffectiveVisionCallTimeoutSeconds => Math.Clamp(VisionCallTimeoutSeconds, 60, 600);
+
+    public int EffectiveVisionEstimatedSecondsPerPage => Math.Clamp(VisionEstimatedSecondsPerPage, 30, 900);
+
+    public int EffectiveMaxImageMegapixels => Math.Clamp(MaxImageMegapixels, 10, 120);
+
+    public int EffectiveAiWorkerCount => Math.Clamp(AiWorkerCount, 1, 4);
+
+    public bool IsPilotTenant(Guid? tenantId) =>
+        AiPilotTenantIds.Count == 0 || (tenantId is { } id && AiPilotTenantIds.Contains(id));
+
     public int EffectiveAiTextOperationsPerCall => Math.Clamp(AiTextOperationsPerCall, 3, 15);
 
     public int EffectiveMaxAiCalls => Math.Max(1, MaxAiCalls);

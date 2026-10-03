@@ -200,5 +200,13 @@
   "accounting.bank-statement-import.aucun.compte.bancaire.n.est.pret.pour.l.import.d.d519959a": " لا يوجد حساب بنكي جاهز لاستيراد الكشف (حساب بالدينار مرتبط بحساب محاسبي 532): اضبطه في المدفوعات › الحسابات البنكية، أو استورد ملف تصدير CSV / OFX من بنكك. ",
   "accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.67692986": " الصفحات الممسوحة ضوئيًا أو غير المقروءة بيقين: إعادة قراءة بذكاء اصطناعي خارجي (مزوّد تضبطه المنصة). ",
   "accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.ad04271e": " الصفحات الممسوحة ضوئيًا أو غير المقروءة بيقين: إعادة قراءة بالذكاء الاصطناعي المحلي للخادم. ",
-  "accounting.bank-statement-import.ia.indisponible.seuls.les.releves.pdf.lus.avec.c.40012216": "الذكاء الاصطناعي غير متاح: لن تُحفظ إلا الكشوف بصيغة PDF المقروءة بيقين (رصيد متحقَّق منه بالمليم)."
+  "accounting.bank-statement-import.ia.indisponible.seuls.les.releves.pdf.lus.avec.c.40012216": "الذكاء الاصطناعي غير متاح: لن تُحفظ إلا الكشوف بصيغة PDF المقروءة بيقين (رصيد متحقَّق منه بالمليم).",
+  "accounting.bank-statement-import.lecture.des.pages.par.l.ia.locale.vision": "قراءة الصفحات بالذكاء الاصطناعي المحلي…",
+  "accounting.bank-statement-import.une.page.prend.une.a.trois.minutes.avec.l.ia.locale": "قد تستغرق الصفحة من دقيقة إلى ثلاث دقائق مع الذكاء الاصطناعي المحلي. يمكنك مغادرة هذه الشاشة والعودة لاحقًا.",
+  "accounting.bank-statement-import.ts.lecture.ia.non.lancee": "لم تُبدأ قراءة الذكاء الاصطناعي",
+  "accounting.bank-statement-import.ts.rib.a.verifier": "تحقق من RIB",
+  "accounting.bank-statement-import.releve.non.prouve.lecture.page.par.page.ia.locale": "كشف غير مثبت بالمليم: قراءة صفحة بصفحة بالذكاء الاصطناعي المحلي (من دقيقة إلى ثلاث دقائق لكل صفحة).",
+  "accounting.bank-statement-import.ce.releve.appartient.au.compte.suggere": "هذا الكشف يخص الحساب {$INTERPOLATION} (…{$INTERPOLATION_1}).",
+  "accounting.bank-statement-import.analyser.avec.ce.compte": "تحليل بهذا الحساب",
+  "accounting.bank-statement-import.analyser.avec.ce.compte.aria": "تحليل بهذا الحساب البنكي"
 }

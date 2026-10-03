@@ -83,7 +83,7 @@ import { PayrollConsultBannerComponent, PayrollAmountPipe, formatPayrollAmount }
         </div>
       }
 
-      <p-tabs class="ft-tabs" [lazy]="true">
+      <p-tabs class="ft-tabs" [lazy]="true" [(value)]="activeTab">
         <p-tablist>
           <p-tab [value]="0"><i class="pi pi-id-card mr-2"></i><span i18n="@@payroll.employees.informations.54937b3a">Informations</span></p-tab>
           <p-tab [value]="1"><i class="pi pi-file mr-2"></i><span i18n="@@payroll.employees.contrats.d35fbb32">Contrats</span></p-tab>
@@ -354,6 +354,8 @@ export class EmployeeDetailComponent implements OnInit {
   readonly auth = inject(AuthService);
 
   loading = signal(true);
+  /** Onglet affiché. 0 = Informations, sélectionné dès le montage de la fiche. */
+  activeTab = 0;
   employee = signal<EmployeeDetail | null>(null);
   monthlySmig = signal<number | null>(null);
   contractDialogVisible = false;

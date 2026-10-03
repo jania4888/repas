@@ -4,6 +4,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { BankStatementReviewComponent } from './bank-statement-review.component';
+import { BankAccountService } from '@core/services/bank-account.service';
 import { BankStatementImportError, BankStatementImportService } from './bank-statement-import.service';
 import { EntryReferenceStore } from '../manual-entry/services/entry-reference.store';
 import { ConfirmationService } from '@core/services/confirmation.service';
@@ -156,7 +157,8 @@ describe('BankStatementReviewComponent', () => {
         { provide: BankStatementImportService, useValue: api },
         { provide: ConfirmationService, useValue: { confirm: (c: { accept?: () => void }) => c.accept?.() } },
         { provide: AuthService, useValue: { hasPermission: (p: string) => permissions.includes(p) } },
-        { provide: EmployeeService, useValue: employees }
+        { provide: EmployeeService, useValue: employees },
+        { provide: BankAccountService, useValue: { list: () => of({ success: true, data: [] }) } }
       ]
     })
       .overrideComponent(BankStatementReviewComponent, { set: { providers: [{ provide: EntryReferenceStore, useValue: refs }] } })

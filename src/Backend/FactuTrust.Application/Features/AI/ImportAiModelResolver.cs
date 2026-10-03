@@ -44,6 +44,15 @@ public static class ImportAiModelResolver
         return NormalizeModelRef(model);
     }
 
+    /// <summary>Modèle vision relevé : BankStatementImportVisionModel → InvoiceImportVisionModel, ou null.</summary>
+    public static string? ResolveBankStatementVisionModelId(OllamaSettings settings)
+    {
+        var model = !string.IsNullOrWhiteSpace(settings.BankStatementImportVisionModel)
+            ? settings.BankStatementImportVisionModel.Trim()
+            : settings.InvoiceImportVisionModel?.Trim();
+        return string.IsNullOrWhiteSpace(model) ? null : model;
+    }
+
     /// <summary>Chaîne relevé bancaire : BankStatementImportModel → InvoiceImportModel → DefaultModel.</summary>
     public static string ResolveServerBankStatementImportModelName(OllamaSettings settings) =>
         !string.IsNullOrWhiteSpace(settings.BankStatementImportModel)

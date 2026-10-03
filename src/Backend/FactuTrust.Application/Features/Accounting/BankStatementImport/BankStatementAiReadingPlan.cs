@@ -30,6 +30,12 @@ public sealed record BankStatementAiPlan
 
     public int EstimatedSeconds { get; init; }
 
+    /// <summary><c>vision</c> (GLM-OCR page par page) ou <c>text</c> (historique). Null = plan ancien.</summary>
+    public string? Engine { get; init; }
+
+    /// <summary>Pages relues en repli texte / historique après échec vision.</summary>
+    public IReadOnlyList<int> FallbackPages { get; init; } = Array.Empty<int>();
+
     public bool IsEmpty => ScannedPages.Count == 0 && TextPages.Count == 0;
 
     public static BankStatementAiPlan Empty { get; } = new();
@@ -79,7 +85,7 @@ public static class BankStatementAiReadingPlanner
         var wholeDocument =
             blocking.Any(i => StatementIssueCodes.BalanceCodes.Contains(i.Code))
             || blocking.Any(i => i.Code == StatementIssueCodes.LineAmbiguousSide && i.PageNumber is null)
-            || (scanned.Count == 0 && blocking.Any(i => i.Code == StatementIssueCodes.NoTransactions));
+            || blocking.Any(i => i.Code == StatementIssueCodes.NoTransactions);
 
         List<int> textToRead;
         string? textReason;
@@ -116,5 +122,21 @@ public static class BankStatementAiReadingPlanner
     {
         var calls = plan.ScannedPages.Count + Math.Max(0, textCalls);
         return plan with { EstimatedCalls = calls, EstimatedSeconds = calls * Math.Max(0, secondsPerCall) };
+    }
+
+    public static BankStatementAiPlan WithVisionEstimate(BankStatementAiPlan plan, int secondsPerPage)
+    {
+        var pages = plan.ScannedPages.Count + plan.TextPages.Count;
+        return plan with { EstimatedCalls = pages, EstimatedSeconds = pages * Math.Max(0, secondsPerPage) };
+    }
+
+    /// <summary>Code du premier blocage qu'une relecture ne peut pas lever, ou null.</summary>
+    public static string? NotFixableBlocker(ExtractedBankStatement statement)
+    {
+        ArgumentNullException.ThrowIfNull(statement);
+        return statement.Issues
+            .Where(i => i.Severity == StatementIssueSeverity.Blocking && NotFixableByReading.Contains(i.Code))
+            .Select(i => i.Code)
+            .FirstOrDefault();
     }
 }

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 import { EmployeeFormComponent } from './employee-form.component';
 import { EmployeeService } from '@core/services/employee.service';
 import { ToastService } from '@core/services/toast.service';
@@ -57,5 +58,57 @@ describe('EmployeeFormComponent', () => {
     component.form.get('hireDate')?.disable();
     expect(component.form.get('employeeNumber')?.disabled).toBe(true);
     expect(component.form.get('hireDate')?.disabled).toBe(true);
+  });
+
+  function fillIdentity(): void {
+    component.form.patchValue({
+      employeeNumber: '8744456',
+      firstName: 'SANA',
+      lastName: 'CHAHLAOUI',
+      hireDate: new Date(2020, 0, 6)
+    });
+  }
+
+  it('navigates to the new employee file after a successful create', () => {
+    const router = TestBed.inject(Router);
+    const employees = TestBed.inject(EmployeeService) as jasmine.SpyObj<EmployeeService>;
+    const id = 'b980ae75-daef-4749-859b-88e7aebaf265';
+    spyOn(router, 'navigate');
+    employees.create.and.returnValue(of({ success: true, data: id }));
+    fillIdentity();
+
+    expect(component.form.valid).toBeTrue();
+    component.onSubmit();
+
+    expect(router.navigate).toHaveBeenCalledOnceWith(['/payroll/employees', id]);
+  });
+
+  it('does not navigate when create succeeds without an id', () => {
+    const router = TestBed.inject(Router);
+    const employees = TestBed.inject(EmployeeService) as jasmine.SpyObj<EmployeeService>;
+    spyOn(router, 'navigate');
+    employees.create.and.returnValue(of({ success: true, data: undefined as unknown as string }));
+    fillIdentity();
+
+    component.onSubmit();
+
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('returns to the same employee file after an update', () => {
+    const id = 'employee-edit-id';
+    const router = TestBed.inject(Router);
+    const employees = TestBed.inject(EmployeeService) as jasmine.SpyObj<EmployeeService>;
+    spyOn(router, 'navigate');
+    employees.update.and.returnValue(of({ success: true, data: null }));
+    component.employeeId.set(id);
+    fillIdentity();
+    component.form.get('employeeNumber')?.disable();
+    component.form.get('hireDate')?.disable();
+
+    component.onSubmit();
+
+    expect(employees.create).not.toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledOnceWith(['/payroll/employees', id]);
   });
 });

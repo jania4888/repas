@@ -10,6 +10,7 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { ConfirmationService } from '@core/services/confirmation.service';
 import { AuthService } from '@core/services/auth.service';
+import { BankAccountDto, BankAccountService } from '@core/services/bank-account.service';
 import { EmployeeService } from '@core/services/employee.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { EntryReferenceStore } from '../manual-entry/services/entry-reference.store';
@@ -89,22 +90,26 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
         <div class="card bsr-card bsr-progress" role="status" aria-live="polite">
           <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
           <div class="bsr-progress__body">
-            @switch (s.extraction?.aiPlan?.reason) {
-              @case ('line_issues') {
-                <p class="bsr-strong" i18n="@@accounting.bank-statement-import.relecture.par.l.ia.des.lignes.non.lues.avec.cert.a39a7373">Relecture par l'IA des lignes non lues avec certitude… {{ s.progressPercent }} %</p>
-              }
-              @case ('unverified') {
-                <p class="bsr-strong" i18n="@@accounting.bank-statement-import.relecture.du.releve.par.l.ia.solde.non.verifie.s.725c03c7">Relecture du relevé par l'IA (solde non vérifié)… {{ s.progressPercent }} %</p>
-              }
-              @default {
-                <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.des.pages.scannees.ebb6ce2d">Lecture des pages scannées… {{ s.progressPercent }} %</p>
+            @if (s.extraction?.aiPlan?.engine === 'vision') {
+              <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.des.pages.par.l.ia.locale.vision">Lecture des pages par l'IA locale… {{ s.progressPercent }} %</p>
+            } @else {
+              @switch (s.extraction?.aiPlan?.reason) {
+                @case ('line_issues') {
+                  <p class="bsr-strong" i18n="@@accounting.bank-statement-import.relecture.par.l.ia.des.lignes.non.lues.avec.cert.a39a7373">Relecture par l'IA des lignes non lues avec certitude… {{ s.progressPercent }} %</p>
+                }
+                @case ('unverified') {
+                  <p class="bsr-strong" i18n="@@accounting.bank-statement-import.relecture.du.releve.par.l.ia.solde.non.verifie.s.725c03c7">Relecture du relevé par l'IA (solde non vérifié)… {{ s.progressPercent }} %</p>
+                }
+                @default {
+                  <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.des.pages.scannees.ebb6ce2d">Lecture des pages scannées… {{ s.progressPercent }} %</p>
+                }
               }
             }
             <div class="bsr-bar"><div class="bsr-bar__fill" [style.width.%]="s.progressPercent"></div></div>
             @if (estimatedMinutes(s); as minutes) {
               <p class="bsr-muted bsr-estimate" i18n="@@accounting.bank-statement-import.duree.estimee.environ.minutes.min.vous.pouvez.qu.8c3f8b0a">Durée estimée : environ {{ minutes }} min. Vous pouvez quitter cet écran et y revenir.</p>
             } @else {
-              <p class="bsr-muted" i18n="@@accounting.bank-statement-import.une.page.prend.jusqu.a.une.minute.avec.l.fc78a702">Une page prend jusqu'à une minute avec l'IA locale. Vous pouvez quitter cet écran et y revenir.</p>
+              <p class="bsr-muted" i18n="@@accounting.bank-statement-import.une.page.prend.une.a.trois.minutes.avec.l.ia.locale">Une page prend une à trois minutes avec l'IA locale. Vous pouvez quitter cet écran et y revenir.</p>
             }
           </div>
           <app-button variant="secondary" icon="pi-times" iconPos="left" (clicked)="cancelSession()" [disabled]="busy()" ariaLabel="Annuler l'import" i18n-ariaLabel="@@accounting.bank-statement-import.annuler.l.import.8c2b45d2" i18n="@@accounting.bank-statement-import.annuler.49ba3292">Annuler</app-button>
@@ -175,6 +180,15 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
                 </li>
               }
             </ul>
+          }
+
+          @if (suggestedRetargetAccount(); as match) {
+            <div class="bsr-retarget" role="status">
+              <p class="bsr-muted" i18n="@@accounting.bank-statement-import.ce.releve.appartient.au.compte.suggere">Ce relevé appartient au compte {{ match.bankName }} (…{{ ribTail(match.rib) }}).</p>
+              <app-button variant="secondary" icon="pi-refresh" iconPos="left" (clicked)="retargetToAccount(match.id)" [disabled]="busy()"
+                        ariaLabel="Analyser avec ce compte bancaire" i18n-ariaLabel="@@accounting.bank-statement-import.analyser.avec.ce.compte.aria"
+                        i18n="@@accounting.bank-statement-import.analyser.avec.ce.compte">Analyser avec ce compte</app-button>
+            </div>
           }
 
           <p-table [value]="x.lines" [paginator]="x.lines.length > 50" [rows]="50" styleClass="p-datatable-sm" [tableStyle]="{ 'min-width': '720px' }">
@@ -419,12 +433,14 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
     .bsr-links { display:flex; gap:var(--spacing-3); flex-wrap:wrap; }
     .bsr-link { color:var(--color-primary); }
     .bsr-siblings { margin:0; padding-inline-start:var(--spacing-4); display:flex; flex-direction:column; gap:var(--spacing-1); }
+    .bsr-retarget { display:flex; flex-direction:column; align-items:flex-start; gap:var(--spacing-2); margin-block-start:var(--spacing-2); }
   `
 })
 export class BankStatementReviewComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly api = inject(BankStatementImportService);
+  private readonly bankAccountsApi = inject(BankAccountService);
   private readonly refs = inject(EntryReferenceStore);
   private readonly confirmation = inject(ConfirmationService);
   private readonly auth = inject(AuthService);
@@ -448,6 +464,7 @@ export class BankStatementReviewComponent implements OnInit {
   /** Écran d'origine reconnu (liste blanche) : le rapprochement y revient après l'enregistrement. */
   readonly origin = signal<'reconciliation' | null>(null);
   readonly lastGeneration = signal<{ created: number; skipped: number; failed: number; failures: GenerateOutcome[] } | null>(null);
+  readonly bankAccounts = signal<BankAccountDto[]>([]);
 
   journalCode = 'JB';
   private polling?: Subscription;
@@ -491,9 +508,21 @@ export class BankStatementReviewComponent implements OnInit {
 
   readonly selectedCount = computed(() => this.rows().filter(r => r.selected && !this.isSettled(r)).length);
 
+  readonly suggestedRetargetAccount = computed(() => {
+    const s = this.session();
+    const readRib = this.normalizeRibDigits(s?.extraction?.header?.rib);
+    if (!s || readRib.length !== 20) return null;
+    if (!s.extraction?.issues.some(i => i.code === 'statement.rib_mismatch' && i.severity === 'Blocking')) return null;
+    return this.bankAccounts().find(a => a.isActive && this.normalizeRibDigits(a.rib) === readRib && a.id !== s.bankAccountId) ?? null;
+  });
+
   ngOnInit(): void {
     this.origin.set(this.route.snapshot?.queryParamMap?.get('from') === 'reconciliation' ? 'reconciliation' : null);
     this.refs.loadAll();
+    this.bankAccountsApi.list().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: res => this.bankAccounts.set((res?.data ?? []).filter(a => a.isActive)),
+      error: () => this.bankAccounts.set([])
+    });
     this.api.capabilities().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(caps => this.capabilities.set(caps));
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
       const sessionId = params.get('sessionId');
@@ -853,6 +882,35 @@ export class BankStatementReviewComponent implements OnInit {
 
   maskRib(rib: string | null): string {
     return rib ? `${rib.slice(0, 2)} … ${rib.slice(-4)}` : '—';
+  }
+
+  ribTail(rib: string): string {
+    const digits = this.normalizeRibDigits(rib);
+    return digits.length >= 4 ? digits.slice(-4) : '????';
+  }
+
+  private normalizeRibDigits(rib: string | null | undefined): string {
+    return (rib ?? '').replace(/\D/g, '');
+  }
+
+  retargetToAccount(bankAccountId: string): void {
+    const s = this.session();
+    if (!s || this.busy()) return;
+    this.busy.set(true);
+    this.error.set(null);
+    this.api.retarget(s.id, bankAccountId).subscribe({
+      next: next => {
+        this.busy.set(false);
+        void this.router.navigate(['/accounting/bank-statement-import/session', next.id], {
+          queryParams: this.originQuery() ?? {},
+          replaceUrl: true
+        });
+      },
+      error: err => {
+        this.busy.set(false);
+        this.error.set(importErrorMessage(err));
+      }
+    });
   }
 
   methodLabel(s: BankStatementImportSession): string {
