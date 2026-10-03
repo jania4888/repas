@@ -74,4 +74,10 @@ public static class BankStatementPreviewErrorCodes
 
     /// <summary>Le moteur IA a répondu en erreur ou n'a pas répondu (délai, modèle absent, 5xx).</summary>
     public const string AiUnavailable = "bank_statement.ai_unavailable";
+
+    /// <summary>
+    /// Relevé PDF ou image refusé par l'aperçu historique : avec le drapeau « tout document par l'IA »,
+    /// ces fichiers passent par l'import IA (analyse en arrière-plan, relecture, enregistrement).
+    /// </summary>
+    public const string AiImportRequired = "bank_statement.ai_import_required";
 }

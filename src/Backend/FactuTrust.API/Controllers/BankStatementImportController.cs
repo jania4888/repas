@@ -76,7 +76,10 @@ public sealed class BankStatementImportController : ControllerBase
                 .Where(p => p.Id != BankStatementProfileRegistry.GenericProfileId && p.BankName is not null)
                 .Select(p => p.BankName!)
                 .Distinct(StringComparer.Ordinal)
-                .ToArray())));
+                .ToArray())
+        {
+            AllDocumentsViaAi = _settings.AiForAllDocumentsEffective
+        }));
     }
 
     /// <summary>

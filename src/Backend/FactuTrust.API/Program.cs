@@ -735,12 +735,18 @@ app.MapControllers();
     // (fail-closed) : drapeau ON sans brouillard = analyse possible, génération toujours refusée.
     var accountingSettings = app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<FactuTrust.Application.Configuration.AccountingSettings>>().Value;
     featureLogger.LogInformation(
-        "Effective feature flags: Accounting.BankStatementAiPosting={BankStatementAiPostingEnabled} Accounting.BankReconciliationMatchingV2={BankReconciliationMatchingV2Enabled} Accounting.Brouillard={BrouillardEnabled} Accounting.BankStatementLayoutParser={BankStatementLayoutParserEnabled} Accounting.BankStatementPreviewTimeoutSeconds={BankStatementPreviewTimeoutSeconds}",
+        "Effective feature flags: Accounting.BankStatementAiPosting={BankStatementAiPostingEnabled} Accounting.BankStatementAiForAllDocuments={BankStatementAiForAllDocumentsEnabled} Accounting.BankReconciliationMatchingV2={BankReconciliationMatchingV2Enabled} Accounting.Brouillard={BrouillardEnabled} Accounting.BankStatementLayoutParser={BankStatementLayoutParserEnabled} Accounting.BankStatementPreviewTimeoutSeconds={BankStatementPreviewTimeoutSeconds}",
         accountingSettings.BankStatementAiPostingEnabled,
+        accountingSettings.BankStatementAiForAllDocumentsEnabled,
         accountingSettings.BankReconciliationMatchingV2Enabled,
         accountingSettings.BrouillardEnabled,
         accountingSettings.BankStatementLayoutParserEnabled,
         accountingSettings.BankStatementPreviewTimeoutSeconds);
+    if (accountingSettings.BankStatementAiForAllDocumentsEnabled && !accountingSettings.BankStatementAiPostingEnabled)
+    {
+        featureLogger.LogWarning(
+            "Accounting:BankStatementAiForAllDocumentsEnabled=true sans BankStatementAiPostingEnabled : sans effet, l'assistant de rapprochement garde son aperçu PDF historique.");
+    }
     if (accountingSettings.BankStatementAiPostingEnabled && !accountingSettings.BrouillardEnabled)
     {
         featureLogger.LogWarning(

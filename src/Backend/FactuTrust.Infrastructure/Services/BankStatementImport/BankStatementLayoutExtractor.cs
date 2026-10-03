@@ -153,6 +153,294 @@ public sealed partial class BankStatementLayoutExtractor
         return results;
     }
 
+    // ── Extraits texte pour la relecture IA ─────────────────────────────────────────────────
+
+    /// <summary>Lignes de contexte reprises en tête de chaque extrait quand l'en-tête du tableau n'est pas repéré.</summary>
+    private const int AiContextRows = 6;
+
+    /// <summary>Lignes examinées après la dernière opération d'une page (fin de libellé, totaux, solde final).</summary>
+    private const int AiTrailingRows = 20;
+
+    /// <summary>Lignes du pied de page retenues (celles qui portent un montant ou un libellé de solde/total).</summary>
+    private const int AiFooterRows = 8;
+
+    /// <summary>Largeur de rendu d'une ligne (caractères) : les colonnes restent alignées d'une ligne à l'autre.</summary>
+    private const int AiRenderColumns = 160;
+
+    /// <summary>Marge (points) à gauche des en-têtes Débit / Crédit en deçà de laquelle un montant reste dans le libellé.</summary>
+    private const double AiAmountZoneMargin = 30;
+
+    /// <summary>Titres des sections d'un extrait (repris tels quels par la consigne de l'IA).</summary>
+    public const string AiOperationsTitle = BankStatementAiPrompt.OperationsTitle;
+    public const string AiFooterTitle = BankStatementAiPrompt.FooterTitle;
+
+    /// <summary>
+    /// Découpe les pages TEXTE demandées en extraits de quelques opérations pour une relecture par
+    /// l'IA. Le texte est semi-structuré, d'après ce que la lecture directe sait déjà :
+    /// <list type="bullet">
+    /// <item>en tête, les lignes d'en-tête du tableau (et le solde d'ouverture) ;</item>
+    /// <item>sous « Opérations : », UNE opération par ligne (sa date d'abord, ses lignes de suite jointes
+    /// par « / »), au plus <paramref name="operationsPerChunk"/> opérations entières ;</item>
+    /// <item>les montants normalisés (point décimal) et, sous les en-têtes Débit / Crédit, marqués
+    /// « [DÉBIT x] » / « [CRÉDIT x] » : la colonne imprimée tranche le sens, pas le modèle ;</item>
+    /// <item>sous « Pied de page : » (dernier extrait de la page), les totaux et le solde final.</item>
+    /// </list>
+    /// Une page sans opération datée est découpée en fenêtres de lignes. Les RIB/IBAN sont masqués et
+    /// les délimiteurs du prompt neutralisés. Lecture seule : <see cref="Extract"/> et <see cref="ExtractAll"/>
+    /// ne sont pas affectés. Pages scannées ou absentes : ignorées.
+    /// </summary>
+    public IReadOnlyList<BankStatementAiTextChunk> BuildAiTextChunks(byte[] pdf, IReadOnlyCollection<int> pages, int operationsPerChunk)
+    {
+        ArgumentNullException.ThrowIfNull(pages);
+        var document = Prepare(pdf);
+        if (document.Early is not null || pages.Count == 0)
+            return Array.Empty<BankStatementAiTextChunk>();
+
+        var perChunk = Math.Max(1, operationsPerChunk);
+        var anchors = FindAnchors(document.TextPages, document.Profile).ToHashSet();
+        var chunks = new List<BankStatementAiTextChunk>();
+        foreach (var page in document.TextPages.Where(p => pages.Contains(p.Number)).OrderBy(p => p.Number))
+        {
+            var bands = BuildBands(page).ToList();
+            if (bands.Count == 0)
+                continue;
+
+            var header = FindHeader(page, bands);
+            var anchorRows = bands
+                .Select((band, index) => (band, index))
+                .Where(x => x.band.Words.Any(anchors.Contains))
+                .Select(x => x.index)
+                .ToList();
+
+            if (anchorRows.Count == 0)
+            {
+                AddWindowChunks(chunks, page, bands, header, perChunk);
+                continue;
+            }
+
+            // Contexte : la ligne d'en-têtes du tableau et ce qui la suit (solde d'ouverture), jamais
+            // l'en-tête de courrier (adresse, RIB, formules) ; à défaut, les dernières lignes au-dessus.
+            var headerIndex = header is null ? -1 : bands.FindIndex(b => b.Words.Min(w => w.Box.Bottom) == header.Bottom);
+            var context = headerIndex >= 0 && headerIndex < anchorRows[0]
+                ? bands.Skip(headerIndex).Take(anchorRows[0] - headerIndex).ToList()
+                : bands.Take(anchorRows[0]).TakeLast(AiContextRows).ToList();
+            var blocks = new List<List<Band>>();
+            var footer = new List<Band>();
+            for (var i = 0; i < anchorRows.Count; i++)
+            {
+                var start = anchorRows[i];
+                if (i + 1 < anchorRows.Count)
+                {
+                    blocks.Add(bands.Skip(start).Take(anchorRows[i + 1] - start).ToList());
+                    continue;
+                }
+
+                // Dernière opération : ses lignes de suite s'arrêtent au premier libellé de solde ou de total.
+                var after = bands.Skip(start + 1).Take(AiTrailingRows).ToList();
+                var cut = after.FindIndex(b => FindLabels(b, document.Profile).Count > 0);
+                if (cut < 0)
+                    cut = after.Count;
+
+                // Montants de totaux / soldes imprimés juste AU-DESSUS de leur libellé (BIAT mensuel) : ils
+                // appartiennent au pied de page, pas à la dernière opération.
+                var above = document.Profile.SummaryAmountAboveTolerance;
+                while (above > 0 && cut > 0 && cut < after.Count
+                       && after[cut - 1].CenterY - after[cut].CenterY <= above + BandTolerance
+                       && AmountGroupsInBand(after[cut - 1].Words).Count > 0)
+                {
+                    cut--;
+                }
+                blocks.Add(new[] { bands[start] }.Concat(after.Take(cut)).ToList());
+                footer.AddRange(after.Skip(cut)
+                    .Where(b => AmountGroupsInBand(b.Words).Count > 0 || FindLabels(b, document.Profile).Count > 0)
+                    .Take(AiFooterRows));
+            }
+
+            var index = 0;
+            for (var i = 0; i < blocks.Count; i += perChunk)
+            {
+                var operations = blocks.Skip(i).Take(perChunk).ToList();
+                var last = i + perChunk >= blocks.Count;
+                chunks.Add(BuildChunk(page, index++, header, context, operations, last ? footer : new List<Band>()));
+            }
+        }
+
+        return chunks;
+    }
+
+    /// <summary>Page sans opération datée reconnue : fenêtres de lignes, en-tête du tableau repris s'il est trouvé.</summary>
+    private static void AddWindowChunks(List<BankStatementAiTextChunk> chunks, PageData page, List<Band> bands, PageHeader? header, int perChunk)
+    {
+        var headerIndex = header is null ? -1 : bands.FindIndex(b => b.Words.Min(w => w.Box.Bottom) == header.Bottom);
+        var window = Math.Max(4, perChunk * 2);
+        var index = 0;
+        for (var i = 0; i < bands.Count; i += window)
+        {
+            var rows = bands.Skip(i).Take(window).Select(b => new List<Band> { b }).ToList();
+            var context = headerIndex >= 0 && headerIndex < i ? new List<Band> { bands[headerIndex] } : new List<Band>();
+            chunks.Add(BuildChunk(page, index++, header, context, rows, new List<Band>()));
+        }
+    }
+
+    private static BankStatementAiTextChunk BuildChunk(
+        PageData page, int index, PageHeader? header, IReadOnlyList<Band> context, IReadOnlyList<List<Band>> operations, IReadOnlyList<Band> footer)
+    {
+        var text = new System.Text.StringBuilder();
+        foreach (var band in context)
+            text.AppendLine(RenderForAi(band, page.Width, header: null));
+        text.AppendLine().AppendLine(AiOperationsTitle);
+        foreach (var operation in operations)
+        {
+            var line = RenderForAi(operation[0], page.Width, header);
+            foreach (var continuation in operation.Skip(1))
+                line += " / " + RenderForAi(continuation, page.Width, header).Trim();
+            text.AppendLine(line);
+        }
+
+        if (footer.Count > 0)
+        {
+            text.AppendLine().AppendLine(AiFooterTitle);
+            foreach (var band in footer)
+                text.AppendLine(RenderForAi(band, page.Width, header: null));
+        }
+
+        var operationAmounts = operations.SelectMany(o => o).SelectMany(b => AmountGroupsInBand(b.Words)).ToList();
+        return new BankStatementAiTextChunk(
+            page.Number,
+            index,
+            text.ToString().TrimEnd(),
+            operationAmounts.Select(g => Math.Abs(g.Value)).ToList(),
+            context.Concat(footer).SelectMany(b => AmountGroupsInBand(b.Words)).Select(g => Math.Abs(g.Value)).ToList(),
+            operationAmounts.Select(g => AmountSide(g, header)).ToList());
+    }
+
+    /// <summary>
+    /// Une ligne visuelle en texte : mots d'une même cellule séparés d'une espace, colonnes à une position
+    /// proportionnelle. Montants normalisés (point décimal) et, sous les en-têtes Débit / Crédit, marqués
+    /// du sens de leur colonne. RIB/IBAN masqués, « --- » neutralisé.
+    /// </summary>
+    private static string RenderForAi(Band band, double pageWidth, PageHeader? header)
+    {
+        var accountWords = AccountNumberWords(band.Words);
+        var amounts = new Dictionary<TextWord, AmountGroup>(ReferenceEqualityComparer.Instance);
+        foreach (var group in AmountGroupsInBand(band.Words))
+        {
+            foreach (var word in group.Words)
+                amounts[word] = group;
+        }
+
+        var line = new System.Text.StringBuilder();
+        var width = pageWidth > 0 ? pageWidth : 595;
+        var columnWidth = width / AiRenderColumns;
+        TextWord? previous = null;
+        foreach (var word in band.Words)
+        {
+            string text;
+            if (accountWords.TryGetValue(word, out var first))
+            {
+                if (!first)
+                    continue;
+                text = "[RIB]";
+            }
+            else if (amounts.TryGetValue(word, out var group))
+            {
+                if (!ReferenceEquals(group.Words[0], word))
+                    continue;
+                text = RenderAmount(group, header);
+            }
+            else
+            {
+                text = word.Text;
+            }
+
+            // Mots d'une même cellule (écart d'une espace) : une espace ; au-delà, colonne proportionnelle
+            // (au moins deux espaces), pour que chaque montant reste sous son en-tête.
+            if (previous is not null && word.Box.Left - previous.Box.Right <= 2 * columnWidth)
+            {
+                line.Append(' ').Append(text);
+            }
+            else
+            {
+                var column = (int)Math.Round(Math.Clamp(word.Box.Left / width, 0, 1) * AiRenderColumns);
+                var at = Math.Max(column, line.Length == 0 ? 0 : line.Length + 2);
+                line.Append(' ', at - line.Length);
+                line.Append(text);
+            }
+
+            previous = amounts.TryGetValue(word, out var whole) ? whole.Words[^1] : word;
+        }
+
+        return DashRunRegex().Replace(line.ToString(), "–");
+    }
+
+    /// <summary>« 2,380 » ⇒ « 2.380 » ; sous l'en-tête Débit ou Crédit ⇒ « [DÉBIT 2.380] » / « [CRÉDIT 2.380] ».</summary>
+    private static string RenderAmount(AmountGroup group, PageHeader? header)
+    {
+        var value = group.Value.ToString(group.Decimals == 2 ? "0.00" : "0.000", CultureInfo.InvariantCulture);
+        return AmountSide(group, header) switch
+        {
+            true => $"[DÉBIT {value}]",
+            false => $"[CRÉDIT {value}]",
+            null => value
+        };
+    }
+
+    /// <summary>Colonne d'un montant : true = Débit, false = Crédit, null = inconnue (pas d'en-têtes, montant dans le libellé).</summary>
+    private static bool? AmountSide(AmountGroup group, PageHeader? header)
+    {
+        if (header is null)
+            return null;
+        var zoneLeft = Math.Min(header.Debit.Left, header.Credit.Left) - AiAmountZoneMargin;
+        if (group.Box.CenterX < zoneLeft)
+            return null;
+        return Math.Abs(group.Box.CenterX - header.Debit.CenterX) <= Math.Abs(group.Box.CenterX - header.Credit.CenterX);
+    }
+
+    /// <summary>
+    /// Mots formant un numéro de compte (RIB à 20 chiffres, IBAN « TNkk » suivi du RIB), éventuellement
+    /// imprimé en groupes contigus : valeur = true pour le premier mot de la suite (rendu « [RIB] »).
+    /// </summary>
+    private static Dictionary<TextWord, bool> AccountNumberWords(IReadOnlyList<TextWord> words)
+    {
+        var result = new Dictionary<TextWord, bool>(ReferenceEqualityComparer.Instance);
+        var run = new List<TextWord>();
+
+        void Flush()
+        {
+            if (run.Sum(w => w.Text.Count(char.IsDigit)) >= 20)
+            {
+                for (var i = 0; i < run.Count; i++)
+                    result[run[i]] = i == 0;
+            }
+
+            run.Clear();
+        }
+
+        foreach (var word in words)
+        {
+            var isAccountPart = word.Text.All(char.IsDigit) || IbanPrefixRegex().IsMatch(word.Text);
+            var contiguous = run.Count == 0 || word.Box.Left - run[^1].Box.Right <= 8;
+            if (isAccountPart && contiguous)
+            {
+                run.Add(word);
+                continue;
+            }
+
+            Flush();
+            if (isAccountPart)
+                run.Add(word);
+        }
+
+        Flush();
+        return result;
+    }
+
+    [GeneratedRegex(@"-{3,}")]
+    private static partial Regex DashRunRegex();
+
+    [GeneratedRegex(@"^TN\d{2}\d*$", RegexOptions.IgnoreCase)]
+    private static partial Regex IbanPrefixRegex();
+
     /// <summary>Chargement, couche texte, RIB et profil : commun à tous les relevés d'un fichier.</summary>
     private PreparedDocument Prepare(byte[] pdf)
     {
@@ -237,6 +525,7 @@ public sealed partial class BankStatementLayoutExtractor
         var periodStart = period.Start ?? summary.OpeningDate?.AddDays(1);
         var periodEnd = period.End ?? summary.ClosingDate;
         var lines = BuildLines(rows, profile, columns, valueColumn, referenceYear, periodStart, periodEnd, issues);
+        var periodPrinted = periodStart is not null && periodEnd is not null;
 
         if (periodStart is null && lines.Count > 0)
             periodStart = lines.Min(l => l.TransactionDate);
@@ -250,6 +539,7 @@ public sealed partial class BankStatementLayoutExtractor
             Currency = FindCurrency(bands),
             PeriodStart = periodStart,
             PeriodEnd = periodEnd,
+            PeriodPrinted = periodPrinted,
             OpeningBalance = summary.Opening,
             ClosingBalance = summary.Closing,
             TotalDebits = summary.TotalDebits,
