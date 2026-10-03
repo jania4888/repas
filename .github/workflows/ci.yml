@@ -58,6 +58,10 @@ jobs:
           dotnet-version: 8.0.x
       - name: Démarrer LocalDB
         run: sqllocaldb start MSSQLLocalDB
+      - name: Valider appsettings.Production.json (JSON strict, comme au boot Docker)
+        shell: pwsh
+        run: |
+          Get-Content src/Backend/FactuTrust.API/appsettings.Production.json -Raw | ConvertFrom-Json | Out-Null
       - name: Build
         run: dotnet build src/Backend/FactuTrust.sln --configuration Release
       # Do not define JWT/signature keys at process scope: WebApplicationFactory

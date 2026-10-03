@@ -73,15 +73,27 @@ sql() { # requete sur la base master ; le mot de passe ne passe pas en ligne de 
     -Q "SET NOCOUNT ON; $1" </dev/null
 }
 
+log_container_tail() { # conteneur : dernieres lignes de journal en cas d'echec healthcheck
+  local c="$1" n="${2:-80}"
+  say "  --- docker logs --tail $n $c ---"
+  docker logs --tail "$n" "$c" 2>&1 | sed 's/^/    /' || true
+  say "  --- fin journal $c ---"
+}
+
 wait_healthy() { # conteneur, delai maximal en secondes
   local c="$1" max="$2" s i
   for ((i = 0; i <= max; i += 5)); do
     s=$(docker inspect -f '{{.State.Health.Status}}' "$c" 2>/dev/null)
     [ "$s" = healthy ] && { ok "$c : healthy apres ${i} s"; return 0; }
-    [ "$s" = unhealthy ] && { ko "$c : unhealthy"; return 1; }
+    if [ "$s" = unhealthy ]; then
+      ko "$c : unhealthy"
+      log_container_tail "$c" 80
+      return 1
+    fi
     sleep 5
   done
   ko "$c : toujours pas healthy apres ${max} s"
+  log_container_tail "$c" 80
   return 1
 }
 
