@@ -29,6 +29,8 @@ export interface ExtractedStatementHeader {
   totalDebits: StatementAmount | null;
   totalCredits: StatementAmount | null;
   totalsLabelled: boolean;
+  /** Période imprimée sur le relevé (et non déduite des opérations). */
+  periodPrinted?: boolean;
 }
 
 export interface ExtractedStatementLine {
@@ -58,6 +60,22 @@ export interface ExtractedBankStatement {
   profileId: string;
   pageCount: number;
   unresolvedPages: number[];
+  /**
+   * Pages confiées à l'IA et pourquoi (« tout document par l'IA ») ; absent ou null = ancien
+   * fonctionnement (pages scannées seulement). Plan vide = lecture directe prouvée, aucune IA.
+   */
+  aiPlan?: BankStatementAiPlan | null;
+}
+
+/** Codes stables du motif de relecture IA. */
+export type AiReadingReason = 'scanned' | 'line_issues' | 'unverified';
+
+export interface BankStatementAiPlan {
+  scannedPages: number[];
+  textPages: number[];
+  reason: AiReadingReason | null;
+  estimatedCalls: number;
+  estimatedSeconds: number;
 }
 
 export interface BalanceCheck {
@@ -115,6 +133,8 @@ export interface BankStatementImportCapabilities {
   maxPages: number;
   acceptedExtensions: string[];
   recognizedBanks: string[];
+  /** Tout relevé PDF ou image passe par l'import IA (le rapprochement y bascule ces fichiers). */
+  allDocumentsViaAi?: boolean;
 }
 
 export type LineStatus =

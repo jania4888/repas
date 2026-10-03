@@ -142,14 +142,17 @@ describe('BankStatementReviewComponent', () => {
     thirdPartySuggestions
   };
 
-  async function create(route: { sessionId?: string; statementId?: string }): Promise<void> {
+  async function create(route: { sessionId?: string; statementId?: string }, query?: Record<string, string>): Promise<void> {
     params = new BehaviorSubject(convertToParamMap(route));
+    const activatedRoute = query
+      ? { paramMap: params.asObservable(), snapshot: { queryParamMap: convertToParamMap(query) } }
+      : { paramMap: params.asObservable() };
     await TestBed.configureTestingModule({
       imports: [BankStatementReviewComponent],
       providers: [
         provideNoopAnimations(),
         provideRouter([]),
-        { provide: ActivatedRoute, useValue: { paramMap: params.asObservable() } },
+        { provide: ActivatedRoute, useValue: activatedRoute },
         { provide: BankStatementImportService, useValue: api },
         { provide: ConfirmationService, useValue: { confirm: (c: { accept?: () => void }) => c.accept?.() } },
         { provide: AuthService, useValue: { hasPermission: (p: string) => permissions.includes(p) } },
@@ -198,6 +201,118 @@ describe('BankStatementReviewComponent', () => {
 
     expect(api.confirm).toHaveBeenCalledOnceWith('s-1');
     expect(router.navigate).toHaveBeenCalledWith(['/accounting/bank-statement-import/statement', 'st-9'], jasmine.objectContaining({ replaceUrl: true }));
+  });
+
+  // ── Ouvert depuis le rapprochement (tout document par l'IA) ─────────────────────────
+
+  describe('ouvert depuis le rapprochement', () => {
+    const fromReconciliation = { from: 'reconciliation' };
+
+    it('revient au rapprochement sur le relevé enregistré', async () => {
+      api.session.and.returnValue(of(session()));
+      api.confirm.and.returnValue(of({ statementId: 'st-9', lineCount: 4, alreadyImportedCount: 1 }));
+      await create({ sessionId: 's-1' }, fromReconciliation);
+
+      component.confirmStatement();
+
+      expect(router.navigate).toHaveBeenCalledOnceWith(['/accounting/bank-reconciliation'], {
+        replaceUrl: true,
+        queryParams: { statementId: 'st-9' },
+        state: { importedStatement: { lineCount: 4, alreadyImportedCount: 1 } }
+      });
+    });
+
+    it('enchaîne sur le relevé suivant du même fichier avant de revenir', async () => {
+      api.session.and.returnValue(
+        of(session({ segmentIndex: 1, segmentCount: 2, siblings: [{ id: 's-2', segmentIndex: 2, periodStart: '2026-08-01', periodEnd: '2026-08-31', status: 'AwaitingReview', statementId: null }] }))
+      );
+      api.confirm.and.returnValue(of({ statementId: 'st-1', lineCount: 1, alreadyImportedCount: 0 }));
+      await create({ sessionId: 's-1' }, fromReconciliation);
+
+      component.confirmStatement();
+
+      expect(router.navigate).toHaveBeenCalledOnceWith(['/accounting/bank-statement-import/session', 's-2'], {
+        replaceUrl: true,
+        queryParams: { from: 'reconciliation' }
+      });
+    });
+
+    it('ouvre le rapprochement sur le premier relevé du fichier une fois tous enregistrés', async () => {
+      api.session.and.returnValue(
+        of(session({ segmentIndex: 2, segmentCount: 2, siblings: [{ id: 's-1', segmentIndex: 1, periodStart: '2026-07-01', periodEnd: '2026-07-31', status: 'Confirmed', statementId: 'st-7' }] }))
+      );
+      api.confirm.and.returnValue(of({ statementId: 'st-8', lineCount: 1, alreadyImportedCount: 0 }));
+      await create({ sessionId: 's-2' }, fromReconciliation);
+
+      component.confirmStatement();
+
+      expect(router.navigate).toHaveBeenCalledWith(['/accounting/bank-reconciliation'], jasmine.objectContaining({ queryParams: { statementId: 'st-7' } }));
+    });
+
+    it('renvoie au rapprochement une session déjà enregistrée', async () => {
+      api.session.and.returnValue(of(session({ status: 'Confirmed', statementId: 'st-3' })));
+      await create({ sessionId: 's-1' }, fromReconciliation);
+
+      expect(router.navigate).toHaveBeenCalledWith(['/accounting/bank-reconciliation'], jasmine.objectContaining({ queryParams: { statementId: 'st-3' } }));
+    });
+
+    it('annule et revient au rapprochement', async () => {
+      api.session.and.returnValue(of(session({ status: 'Extracting', canConfirm: false })));
+      api.cancel.and.returnValue(of(undefined));
+      await create({ sessionId: 's-1' }, fromReconciliation);
+
+      component.cancelSession();
+
+      expect(router.navigate).toHaveBeenCalledWith(['/accounting/bank-reconciliation']);
+      fixture.destroy();
+    });
+
+    it('ignore une origine inconnue (liste blanche)', async () => {
+      api.session.and.returnValue(of(session()));
+      api.confirm.and.returnValue(of({ statementId: 'st-9', lineCount: 1, alreadyImportedCount: 0 }));
+      await create({ sessionId: 's-1' }, { from: 'https://exemple.test' });
+
+      component.confirmStatement();
+
+      expect(component.origin()).toBeNull();
+      expect(router.navigate).toHaveBeenCalledWith(['/accounting/bank-statement-import/statement', 'st-9'], jasmine.objectContaining({ replaceUrl: true }));
+    });
+  });
+
+  it('annonce la relecture IA du relevé avec une durée estimée', async () => {
+    const base = session();
+    api.session.and.returnValue(
+      of(
+        session({
+          status: 'Extracting',
+          progressPercent: 50,
+          canConfirm: false,
+          extraction: {
+            ...base.extraction!,
+            aiPlan: { scannedPages: [], textPages: [1], reason: 'unverified', estimatedCalls: 5, estimatedSeconds: 600 }
+          }
+        })
+      )
+    );
+    await create({ sessionId: 's-1' });
+
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(text).toContain('Relecture du relevé par l');
+    expect(text).toContain('environ 5 min');
+    fixture.destroy();
+  });
+
+  it('indique une lecture directe complétée par l’IA', async () => {
+    const base = session();
+    await create({ sessionId: 's-1' });
+    const s = session({
+      extractionMethod: 'layout+ai',
+      aiProviderKind: 'local',
+      extraction: { ...base.extraction!, aiPlan: { scannedPages: [], textPages: [1], reason: 'line_issues', estimatedCalls: 1, estimatedSeconds: 120 } }
+    });
+
+    expect(component.methodLabel(s)).toBe('Lecture directe complétée par l\'IA locale');
+    expect(component.methodLabel({ ...s, extraction: base.extraction })).toContain('pages scannées');
   });
 
   it('refuse l’enregistrement quand le serveur ne l’autorise pas', async () => {

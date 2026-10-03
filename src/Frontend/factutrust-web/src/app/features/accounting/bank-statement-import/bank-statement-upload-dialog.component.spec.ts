@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
-import { BankStatementUploadDialogComponent } from './bank-statement-upload-dialog.component';
+import { BankStatementImportOrigin, BankStatementUploadDialogComponent } from './bank-statement-upload-dialog.component';
 import { BankStatementImportError, BankStatementImportService } from './bank-statement-import.service';
 import { BankAccountDto, BankAccountService } from '@core/services/bank-account.service';
 import { AccountingJournalCatalogService } from '../shared/accounting-journal-catalog.service';
@@ -42,7 +42,11 @@ describe('BankStatementUploadDialogComponent', () => {
   let api: jasmine.SpyObj<BankStatementImportService>;
   let router: Router;
 
-  async function open(accounts: BankAccountDto[], caps: BankStatementImportCapabilities | null = capabilities): Promise<void> {
+  async function open(
+    accounts: BankAccountDto[],
+    caps: BankStatementImportCapabilities | null = capabilities,
+    inputs: { initialFile?: File; initialBankAccountId?: string; origin?: BankStatementImportOrigin } = {}
+  ): Promise<void> {
     api.capabilities.and.returnValue(of(caps));
     await TestBed.configureTestingModule({
       imports: [BankStatementUploadDialogComponent],
@@ -67,8 +71,15 @@ describe('BankStatementUploadDialogComponent', () => {
     spyOn(router, 'navigate').and.resolveTo(true);
     fixture = TestBed.createComponent(BankStatementUploadDialogComponent);
     component = fixture.componentInstance;
+    if (inputs.initialFile) fixture.componentRef.setInput('initialFile', inputs.initialFile);
+    if (inputs.initialBankAccountId) fixture.componentRef.setInput('initialBankAccountId', inputs.initialBankAccountId);
+    if (inputs.origin) fixture.componentRef.setInput('origin', inputs.origin);
     fixture.componentRef.setInput('visible', true);
     fixture.detectChanges();
+  }
+
+  function text(): string {
+    return (document.body.textContent ?? '').replace(/\s+/g, ' ');
   }
 
   function select(file: File): void {
@@ -129,6 +140,75 @@ describe('BankStatementUploadDialogComponent', () => {
     expect(component.error()).toContain('déjà été importé');
     expect(component.error()).not.toContain('texte serveur');
     expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  describe('ouverte depuis le rapprochement (tout document par l’IA)', () => {
+    const pdf = new File(['%PDF'], 'releve.pdf', { type: 'application/pdf' });
+
+    it('présélectionne le fichier et le compte déjà choisis', async () => {
+      await open([account({ id: 'ok', isDefault: true }), account({ id: 'autre' })], capabilities, {
+        initialFile: pdf,
+        initialBankAccountId: 'autre',
+        origin: 'reconciliation'
+      });
+
+      expect(component.file()).toBe(pdf);
+      expect(component.bankAccountId).toBe('autre');
+      expect(component.canAnalyze()).toBeTrue();
+    });
+
+    it('écarte un fichier présélectionné trop lourd', async () => {
+      await open([account({ id: 'ok' })], capabilities, {
+        initialFile: new File([new Uint8Array(2048)], 'gros.pdf', { type: 'application/pdf' }),
+        origin: 'reconciliation'
+      });
+
+      expect(component.file()).toBeNull();
+      expect(component.error()).toContain('trop volumineux');
+    });
+
+    it('revient au rapprochement après l’analyse', async () => {
+      api.start.and.returnValue(of({ id: 's-7' } as BankStatementImportSession));
+      await open([account({ id: 'ok' })], capabilities, { initialFile: pdf, origin: 'reconciliation' });
+
+      component.analyze();
+
+      expect(router.navigate).toHaveBeenCalledWith(['/accounting/bank-statement-import/session', 's-7'], {
+        queryParams: { from: 'reconciliation' }
+      });
+    });
+
+    it('explique quoi faire quand aucun compte n’est éligible', async () => {
+      await open(
+        [account({ id: 'sans-532', chartOfAccountNumber: null }), account({ id: 'euros', currency: 'EUR' })],
+        capabilities,
+        { initialFile: pdf, origin: 'reconciliation' }
+      );
+
+      expect(component.hasEligibleAccount()).toBeFalse();
+      expect(document.body.querySelector('.bsu-no-eligible')).not.toBeNull();
+      expect(text()).toContain('CSV / OFX');
+    });
+
+    it('n’affiche pas cette aide depuis la saisie manuelle', async () => {
+      await open([account({ id: 'sans-532', chartOfAccountNumber: null })]);
+
+      expect(document.body.querySelector('.bsu-no-eligible')).toBeNull();
+    });
+
+    it('annonce la relecture par l’IA de ce qui n’est pas lu avec certitude', async () => {
+      await open([account({ id: 'ok' })], { ...capabilities, aiProviderKind: 'local', allDocumentsViaAi: true }, { origin: 'reconciliation' });
+
+      expect(text()).toContain('non lues avec certitude');
+      expect(text()).toContain('rapprochement bancaire');
+    });
+
+    it('prévient qu’un compte hors dinars n’est pas pris en charge', async () => {
+      await open([account({ id: 'euros', currency: 'EUR', isDefault: true })]);
+
+      expect(component.bankAccountId).toBe('euros');
+      expect(text()).toContain('pas en dinars');
+    });
   });
 
   it('ne permet pas l’analyse quand la fonctionnalité est désactivée', async () => {

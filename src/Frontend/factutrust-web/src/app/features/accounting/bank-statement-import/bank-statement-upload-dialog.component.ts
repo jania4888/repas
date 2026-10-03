@@ -15,6 +15,9 @@ import { importErrorMessage } from './bank-statement-import.messages';
 /** Journaux standards qui ne sont jamais des journaux de banque. */
 const NON_BANK_JOURNALS = new Set(['JV', 'JA', 'JC', 'JOD', 'JIM', 'JAN']);
 
+/** Écran d'où la modale est ouverte : l'analyse y ramène après relecture. */
+export type BankStatementImportOrigin = 'manual-entry' | 'reconciliation';
+
 /**
  * Import d'un relevé bancaire depuis la saisie manuelle : compte bancaire, journal, fichier.
  * L'analyse est lancée côté serveur ; la relecture se fait ensuite sur un écran dédié.
@@ -45,11 +48,19 @@ const NON_BANK_JOURNALS = new Set(['JV', 'JA', 'JC', 'JOD', 'JIM', 'JAN']);
         </div>
       } @else {
         <div class="bsu-form">
-          <p class="bsu-intro" i18n="@@accounting.bank-statement-import.releve.pdf.ou.photo.de.votre.banque.les.7e61a9fe">
-            Relevé PDF (ou photo) de votre banque : les opérations sont lues, contrôlées par les soldes,
-            puis le système propose une écriture par opération dans le journal de banque. Vous relisez
-            avant de générer les écritures en brouillard.
-          </p>
+          @if (origin === 'reconciliation') {
+            <p class="bsu-intro" i18n="@@accounting.bank-statement-import.releve.pdf.ou.photo.de.votre.banque.les.operatio.481bec91">
+              Relevé PDF (ou photo) de votre banque : les opérations sont lues et contrôlées par les soldes,
+              l'IA relit tout ce qui n'est pas lu avec certitude. Vous relisez le relevé, puis il revient
+              dans le rapprochement bancaire.
+            </p>
+          } @else {
+            <p class="bsu-intro" i18n="@@accounting.bank-statement-import.releve.pdf.ou.photo.de.votre.banque.les.7e61a9fe">
+              Relevé PDF (ou photo) de votre banque : les opérations sont lues, contrôlées par les soldes,
+              puis le système propose une écriture par opération dans le journal de banque. Vous relisez
+              avant de générer les écritures en brouillard.
+            </p>
+          }
 
           <label class="bsu-label" for="bsu-account" i18n="@@accounting.bank-statement-import.compte.bancaire.485b42ca">Compte bancaire</label>
           <select id="bsu-account" class="bsu-input" [(ngModel)]="bankAccountId" [disabled]="busy()">
@@ -65,10 +76,19 @@ const NON_BANK_JOURNALS = new Set(['JV', 'JA', 'JC', 'JOD', 'JIM', 'JAN']);
               <p class="bsu-hint bsu-hint--warn" role="status" i18n="@@accounting.bank-statement-import.ce.compte.bancaire.n.est.relie.a.aucun.c.f79aaeba">
                 Ce compte bancaire n'est relié à aucun compte comptable 532 : reliez-le dans les comptes bancaires avant d'importer.
               </p>
+            } @else if (!isDinarAccount(account)) {
+              <p class="bsu-hint bsu-hint--warn" role="status" i18n="@@accounting.bank-statement-import.ce.compte.bancaire.n.est.pas.en.dinars.tnd.l.imp.779d721c">
+                Ce compte bancaire n'est pas en dinars (TND) : l'import de relevés ne prend en charge que les comptes en dinars.
+              </p>
             }
           }
           @if (bankAccounts().length === 0 && !loading()) {
             <p class="bsu-hint bsu-hint--warn" role="status" i18n="@@accounting.bank-statement-import.aucun.compte.bancaire.actif.creez.en.un.0eedb1be">Aucun compte bancaire actif : créez-en un dans Paiements › Comptes bancaires.</p>
+          } @else if (origin === 'reconciliation' && accountsLoaded() && !hasEligibleAccount()) {
+            <p class="bsu-hint bsu-hint--warn bsu-no-eligible" role="status" i18n="@@accounting.bank-statement-import.aucun.compte.bancaire.n.est.pret.pour.l.import.d.d519959a">
+              Aucun compte bancaire n'est prêt pour l'import du relevé (compte en dinars relié à un compte comptable 532) :
+              paramétrez-le dans Paiements › Comptes bancaires, ou importez un export CSV / OFX de votre banque.
+            </p>
           }
 
           <label class="bsu-label" for="bsu-journal" i18n="@@accounting.bank-statement-import.journal.57d7f743">Journal</label>
@@ -86,7 +106,19 @@ const NON_BANK_JOURNALS = new Set(['JV', 'JA', 'JC', 'JOD', 'JIM', 'JAN']);
           <p class="bsu-hint" i18n="@@accounting.bank-statement-import.pdf.png.jpeg.ou.webp.taille.maximale.mo.ddc9390d">PDF, PNG, JPEG ou WEBP — taille maximale : {{ maxMegabytes() }} Mo.</p>
 
           @if (capabilities(); as caps) {
-            @if (caps.aiAvailable) {
+            @if (caps.allDocumentsViaAi) {
+              @if (caps.aiAvailable) {
+                <p class="bsu-hint">
+                  @if (caps.aiProviderKind === 'external') {<ng-container i18n="@@accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.67692986">
+                    Pages scannées ou non lues avec certitude : relecture par une IA externe (fournisseur configuré par la plateforme).
+                  </ng-container>} @else {<ng-container i18n="@@accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.ad04271e">
+                    Pages scannées ou non lues avec certitude : relecture par l'IA locale du serveur.
+                  </ng-container>}
+                </p>
+              } @else {
+                <p class="bsu-hint" i18n="@@accounting.bank-statement-import.ia.indisponible.seuls.les.releves.pdf.lus.avec.c.40012216">IA indisponible : seuls les relevés PDF lus avec certitude (solde vérifié au millime) pourront être enregistrés.</p>
+              }
+            } @else if (caps.aiAvailable) {
               <p class="bsu-hint">
                 @if (caps.aiProviderKind === 'external') {<ng-container i18n="@@accounting.bank-statement-import.pages.scannees.lecture.par.une.ia.extern.8eb6571b">
                   Pages scannées : lecture par une IA externe (fournisseur configuré par la plateforme).
@@ -136,6 +168,12 @@ const NON_BANK_JOURNALS = new Set(['JV', 'JA', 'JC', 'JOD', 'JIM', 'JAN']);
 export class BankStatementUploadDialogComponent implements OnChanges {
   @Input() visible = false;
   @Output() visibleChange = new EventEmitter<boolean>();
+  /** Fichier déjà choisi ailleurs (rapprochement) : présélectionné à l'ouverture. */
+  @Input() initialFile: File | null = null;
+  /** Compte bancaire présélectionné (ex. compte déjà choisi dans le rapprochement). */
+  @Input() initialBankAccountId: string | null = null;
+  /** Écran d'origine : le rapprochement y revient après la relecture du relevé. */
+  @Input() origin: BankStatementImportOrigin = 'manual-entry';
   @ViewChild('fileInput') private fileInput?: ElementRef<HTMLInputElement>;
 
   private readonly api = inject(BankStatementImportService);
@@ -154,6 +192,7 @@ export class BankStatementUploadDialogComponent implements OnChanges {
   readonly busy = signal(false);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
+  readonly accountsLoaded = signal(false);
 
   bankAccountId: string | null = null;
   journalCode = 'JB';
@@ -164,6 +203,15 @@ export class BankStatementUploadDialogComponent implements OnChanges {
     return this.bankAccounts().find(a => a.id === this.bankAccountId);
   }
 
+  /** Devise absente du DTO (ancien serveur) : considérée en dinars, le serveur contrôle de toute façon. */
+  isDinarAccount(account: BankAccountDto): boolean {
+    return !account.currency || account.currency.toUpperCase() === 'TND';
+  }
+
+  hasEligibleAccount(): boolean {
+    return this.bankAccounts().some(a => !!a.chartOfAccountNumber && this.isDinarAccount(a));
+  }
+
   canAnalyze(): boolean {
     const account = this.selectedAccount();
     return !this.busy() && !!this.capabilities() && !!this.file() && !!account?.chartOfAccountNumber && !!this.journalCode;
@@ -172,6 +220,8 @@ export class BankStatementUploadDialogComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['visible']?.currentValue === true) {
       this.reset();
+      if (this.initialBankAccountId) this.bankAccountId = this.initialBankAccountId;
+      this.useFile(this.initialFile);
       this.load();
     }
   }
@@ -192,8 +242,15 @@ export class BankStatementUploadDialogComponent implements OnChanges {
     input.value = '';
     this.error.set(null);
     if (!selected) return;
+    this.useFile(selected);
+  }
+
+  /** Retient le fichier s'il respecte la taille maximale (contrôlée aussi par le serveur). */
+  private useFile(selected: File | null): void {
+    if (!selected) return;
     const max = this.capabilities()?.maxFileBytes ?? 10 * 1024 * 1024;
     if (selected.size > max) {
+      this.file.set(null);
       this.error.set(importErrorMessage('bank_statement_import.file_too_large'));
       return;
     }
@@ -209,7 +266,11 @@ export class BankStatementUploadDialogComponent implements OnChanges {
       next: session => {
         this.busy.set(false);
         this.close();
-        void this.router.navigate(['/accounting/bank-statement-import/session', session.id]);
+        if (this.origin === 'reconciliation') {
+          void this.router.navigate(['/accounting/bank-statement-import/session', session.id], { queryParams: { from: 'reconciliation' } });
+        } else {
+          void this.router.navigate(['/accounting/bank-statement-import/session', session.id]);
+        }
       },
       error: (err: unknown) => {
         this.busy.set(false);
@@ -228,6 +289,7 @@ export class BankStatementUploadDialogComponent implements OnChanges {
     this.file.set(null);
     this.error.set(null);
     this.busy.set(false);
+    this.accountsLoaded.set(false);
   }
 
   private load(): void {
@@ -235,17 +297,24 @@ export class BankStatementUploadDialogComponent implements OnChanges {
     this.api.capabilities().subscribe(caps => {
       this.capabilities.set(caps);
       this.loading.set(false);
+      // Taille réelle autorisée connue : un fichier présélectionné trop lourd est écarté.
+      const file = this.file();
+      if (file && caps && file.size > caps.maxFileBytes) this.useFile(file);
     });
     this.bankAccountsApi.list().subscribe({
       next: res => {
         const accounts = (res?.data ?? []).filter(a => a.isActive);
         this.bankAccounts.set(accounts);
+        this.accountsLoaded.set(true);
         if (!this.bankAccountId) {
           const preferred = accounts.find(a => a.isDefault && a.chartOfAccountNumber) ?? accounts.find(a => a.chartOfAccountNumber);
           this.bankAccountId = preferred?.id ?? null;
         }
       },
-      error: () => this.bankAccounts.set([])
+      error: () => {
+        this.bankAccounts.set([]);
+        this.accountsLoaded.set(true);
+      }
     });
     this.journalCatalog.list().subscribe(journals => {
       const bankJournals = journals.filter(j => j.code === 'JB' || !NON_BANK_JOURNALS.has(j.code));
