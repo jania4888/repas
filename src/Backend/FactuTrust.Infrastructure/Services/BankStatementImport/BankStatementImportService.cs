@@ -107,6 +107,13 @@ public sealed class BankStatementImportService : IBankStatementImportService
         if (!validation.IsValid)
             return Fail<BankStatementImportSessionDto>(BankStatementImportErrorCodes.FileRejected, validation.ErrorMessage ?? "Fichier refusé.");
 
+        if (extension is not ".pdf" &&
+            BankStatementImageMegapixelGuard.ExceedsMegapixelLimit(content, Limits.EffectiveMaxImageMegapixels))
+        {
+            return Fail<BankStatementImportSessionDto>(BankStatementImportErrorCodes.FileRejected,
+                "Image trop grande pour l'analyse (résolution maximale dépassée).");
+        }
+
         await using var ctx = _contextFactory.CreateContext();
 
         // 2. Compte bancaire et journal.
@@ -145,65 +152,18 @@ public sealed class BankStatementImportService : IBankStatementImportService
         {
             return await StartSeveralAsync(ctx, account!, journalCode, hash, content, extension,
                 validation.SafeFileName ?? "releve" + extension, request.ContentType ?? string.Empty,
-                extractions, tenantId.Value, now, cancellationToken);
+                extractions, tenantId.Value, now, request.AllowAi, cancellationToken);
         }
 
-        var extraction = AddAccountChecks(extractions[0], account!);
+        var (extraction, needsAi, ai) = await ApplyAiReadingPlanAsync(
+            extractions[0], account!, tenantId.Value, request.AllowAi, content, extension, cancellationToken);
+        var plan = extraction.AiPlan;
 
-        if (extraction.PageCount > Limits.MaxPages && !extraction.Issues.Any(i => i.Code == StatementIssueCodes.TooManyPages))
+        if (needsAi && ai is { Available: true } && await IsAiReadingInProgressAsync(ctx, now, plan is not null, cancellationToken))
         {
-            extraction = extraction with
-            {
-                Issues = extraction.Issues.Append(new StatementExtractionIssue(StatementIssueCodes.TooManyPages, StatementIssueSeverity.Blocking,
-                    $"Le relevé compte {extraction.PageCount} pages (maximum {Limits.MaxPages}).")).ToList()
-            };
+            return Fail<BankStatementImportSessionDto>(BankStatementImportErrorCodes.AnalysisInProgress,
+                "Une autre lecture IA de relevé est en cours pour ce dossier : réessayez dans quelques minutes.");
         }
-
-        // Tout document par l'IA : l'IA relit chaque page non lue avec certitude (plan vide = lecture
-        // prouvée, l'IA n'est pas appelée). Sans le drapeau : pages scannées seulement, comme avant.
-        var plan = _settings.AiForAllDocumentsEffective ? BankStatementAiReadingPlanner.Select(extraction) : null;
-        var needsAi = plan is not null
-            ? !plan.IsEmpty
-            : extraction.UnresolvedPages.Count > 0 && !extraction.Issues.Any(i => i.Code == StatementIssueCodes.TooManyPages);
-        BankStatementAiAvailability? ai = null;
-        if (needsAi)
-        {
-            ai = request.AllowAi
-                ? await _ai.CheckAvailabilityAsync(cancellationToken)
-                : BankStatementAiAvailability.Unavailable("Lecture IA non autorisée pour cet utilisateur.");
-
-            if (plan is null)
-            {
-                if (ai.Available && extraction.UnresolvedPages.Count > Limits.MaxAiPages)
-                    ai = BankStatementAiAvailability.Unavailable($"Trop de pages scannées ({extraction.UnresolvedPages.Count}, maximum {Limits.MaxAiPages}).");
-            }
-            else if (ai.Available)
-            {
-                (plan, ai, var planIssue) = FitPlan(plan, ai, content, extension);
-                if (planIssue is not null)
-                    extraction = extraction with { Issues = extraction.Issues.Append(planIssue).ToList() };
-                needsAi = !plan.IsEmpty;
-            }
-
-            if (needsAi && ai.Available && await IsAiReadingInProgressAsync(ctx, now, plan is not null, cancellationToken))
-            {
-                return Fail<BankStatementImportSessionDto>(BankStatementImportErrorCodes.AnalysisInProgress,
-                    "Une autre lecture IA de relevé est en cours pour ce dossier : réessayez dans quelques minutes.");
-            }
-
-            if (!ai.Available)
-            {
-                var what = plan is { TextPages.Count: > 0 } ? "Relevé non lu avec certitude" : "Pages scannées non lues";
-                extraction = extraction with
-                {
-                    Issues = extraction.Issues.Append(new StatementExtractionIssue(StatementIssueCodes.AiUnavailable, StatementIssueSeverity.Blocking,
-                        $"{what} : {ai.Reason}")).ToList()
-                };
-            }
-        }
-
-        if (plan is not null)
-            extraction = extraction with { AiPlan = plan };
 
         // 5. Session + fichier.
         var session = BankStatementImportSession.Create(account!.Id, journalCode, validation.SafeFileName ?? "releve" + extension, hash,
@@ -255,6 +215,8 @@ public sealed class BankStatementImportService : IBankStatementImportService
                 UnresolvedPages = extraction.UnresolvedPages.Count,
                 Blocking = extraction.Issues.Count(i => i.Severity == StatementIssueSeverity.Blocking),
                 AiProvider = aiScheduled ? ai!.ProviderKind : null,
+                AiEngine = aiScheduled ? plan.Engine ?? ai!.Engine : null,
+                AiModel = aiScheduled ? (plan.Engine == "vision" ? ai!.VisionModelRef ?? ai.ModelRef : ai!.ModelRef) : null,
                 AiTextPages = plan.TextPages.Count,
                 AiCalls = plan.EstimatedCalls,
                 AiReason = plan.Reason
@@ -301,6 +263,7 @@ public sealed class BankStatementImportService : IBankStatementImportService
         IReadOnlyList<ExtractedBankStatement> extractions,
         Guid tenantId,
         DateTime now,
+        bool allowAi,
         CancellationToken cancellationToken)
     {
         var count = extractions.Count;
@@ -314,23 +277,29 @@ public sealed class BankStatementImportService : IBankStatementImportService
                         && (s.Status == BankStatementImportSessionStatus.AwaitingReview || s.Status == BankStatementImportSessionStatus.Extracting))
             .ToListAsync(cancellationToken);
 
-        var created = new List<BankStatementImportSession>();
+        var segments = new List<(int Index, ExtractedBankStatement Extraction, bool NeedsAi, BankStatementAiAvailability? Ai)>();
         for (var i = 0; i < count; i++)
         {
             var fingerprint = StatementSegmentFingerprint.Create(fileHash, i + 1, count);
             if (imported.Contains(fingerprint) || open.Any(s => s.FileHash == fingerprint))
                 continue;
 
-            var extraction = AddAccountChecks(extractions[i], account);
-            if (extraction.UnresolvedPages.Count > 0)
-            {
-                extraction = extraction with
-                {
-                    Issues = extraction.Issues.Append(new StatementExtractionIssue(StatementIssueCodes.AiUnavailable, StatementIssueSeverity.Blocking,
-                        "Pages scannées non lues : dans un fichier à plusieurs relevés, importez ce relevé seul pour qu'il soit lu par l'IA.")).ToList()
-                };
-            }
+            var prepared = await ApplyAiReadingPlanAsync(extractions[i], account, tenantId, allowAi, content, extension, cancellationToken);
+            segments.Add((i, prepared.Extraction, prepared.NeedsAi, prepared.Ai));
+        }
 
+        if (segments.Any(s => s.NeedsAi && s.Ai is { Available: true })
+            && await IsAiReadingInProgressAsync(ctx, now, segments.Any(s => s.Extraction.AiPlan is not null), cancellationToken))
+        {
+            return Fail<BankStatementImportSessionDto>(BankStatementImportErrorCodes.AnalysisInProgress,
+                "Une autre lecture IA de relevé est en cours pour ce dossier : réessayez dans quelques minutes.");
+        }
+
+        var created = new List<BankStatementImportSession>();
+        var aiSessionIds = new List<Guid>();
+        foreach (var (index, extraction, needsAi, ai) in segments)
+        {
+            var fingerprint = StatementSegmentFingerprint.Create(fileHash, index + 1, count);
             var session = BankStatementImportSession.Create(account.Id, journalCode, safeFileName, fingerprint,
                 content.Length, contentType, now.AddHours(Math.Max(1, Limits.SessionRetentionHours)));
             session.SetAuditInfo(UserLabel, false);
@@ -346,9 +315,17 @@ public sealed class BankStatementImportService : IBankStatementImportService
                 return Fail<BankStatementImportSessionDto>(BankStatementImportErrorCodes.Storage, "Le fichier n'a pas pu être enregistré sur le serveur.");
             }
 
-            session.CompleteExtraction(JsonSerializer.Serialize(extraction, JsonOptions), "layout", extraction.ProfileId, extraction.PageCount);
+            var json = JsonSerializer.Serialize(extraction, JsonOptions);
+            var aiScheduled = needsAi && ai is { Available: true };
+            if (aiScheduled)
+                session.StartAiExtraction(ai!.ProviderKind ?? "local", json, extraction.ProfileId, extraction.PageCount);
+            else
+                session.CompleteExtraction(json, extension == ".pdf" ? "layout" : "ai", extraction.ProfileId, extraction.PageCount);
+
             ctx.BankStatementImportSessions.Add(session);
             created.Add(session);
+            if (aiScheduled)
+                aiSessionIds.Add(session.Id);
         }
 
         if (created.Count == 0 && open.Count == 0)
@@ -358,21 +335,44 @@ public sealed class BankStatementImportService : IBankStatementImportService
         if (created.Count > 0)
             await ctx.SaveChangesAsync(cancellationToken);
 
+        if (aiSessionIds.Count == 1)
+            _ai.Schedule(tenantId, aiSessionIds[0]);
+        else if (aiSessionIds.Count > 1)
+            _ai.ScheduleMany(tenantId, aiSessionIds);
+
         foreach (var session in created)
         {
             var extraction = Deserialize(session.ResultJson!);
+            var plan = extraction?.AiPlan;
+            var aiScheduled = session.Status == BankStatementImportSessionStatus.Extracting;
             await _audit.LogAsync(AuditActions.Accounting.BankStatementAnalyzed, nameof(BankStatementImportSession), session.Id,
-                newValues: new
-                {
-                    session.BankAccountId,
-                    session.JournalCode,
-                    extraction?.ProfileId,
-                    extraction?.PageCount,
-                    LineCount = extraction?.Lines.Count ?? 0,
-                    Segment = session.FileHash[^5..],
-                    Blocking = extraction?.Issues.Count(i => i.Severity == StatementIssueSeverity.Blocking) ?? 0,
-                    AiProvider = (string?)null
-                },
+                newValues: plan is null
+                    ? new
+                    {
+                        session.BankAccountId,
+                        session.JournalCode,
+                        extraction?.ProfileId,
+                        extraction?.PageCount,
+                        LineCount = extraction?.Lines.Count ?? 0,
+                        Segment = session.FileHash[^5..],
+                        Blocking = extraction?.Issues.Count(i => i.Severity == StatementIssueSeverity.Blocking) ?? 0,
+                        AiProvider = aiScheduled ? session.AiProviderKind : null
+                    }
+                    : new
+                    {
+                        session.BankAccountId,
+                        session.JournalCode,
+                        extraction?.ProfileId,
+                        extraction?.PageCount,
+                        LineCount = extraction?.Lines.Count ?? 0,
+                        Segment = session.FileHash[^5..],
+                        Blocking = extraction?.Issues.Count(i => i.Severity == StatementIssueSeverity.Blocking) ?? 0,
+                        AiProvider = aiScheduled ? session.AiProviderKind : null,
+                        AiEngine = aiScheduled ? plan.Engine : null,
+                        AiTextPages = plan.TextPages.Count,
+                        AiCalls = plan.EstimatedCalls,
+                        AiReason = plan.Reason
+                    },
                 cancellationToken: cancellationToken);
         }
 
@@ -432,6 +432,37 @@ public sealed class BankStatementImportService : IBankStatementImportService
         session.SetAuditInfo(UserLabel, true);
         await ctx.SaveChangesAsync(cancellationToken);
         return Result.Success();
+    }
+
+    public async Task<Result<BankStatementImportSessionDto>> RetargetAsync(
+        Guid sessionId, Guid bankAccountId, CancellationToken cancellationToken = default)
+    {
+        if (!_settings.BankStatementAiPostingEnabled)
+            return Fail<BankStatementImportSessionDto>(BankStatementImportErrorCodes.Disabled, "L'import de relevés bancaires n'est pas activé.");
+
+        await using var ctx = _contextFactory.CreateContext();
+        var session = await ctx.BankStatementImportSessions.AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Id == sessionId, cancellationToken);
+        if (session is null || string.IsNullOrEmpty(session.StoragePath))
+            return Fail<BankStatementImportSessionDto>(BankStatementImportErrorCodes.SessionNotFound, "Analyse de relevé introuvable.");
+
+        var content = await _files.ReadAsync(session.StoragePath, cancellationToken);
+        if (content is null)
+            return Fail<BankStatementImportSessionDto>(BankStatementImportErrorCodes.Storage, "Le fichier du relevé est introuvable.");
+
+        await CancelAsync(sessionId, cancellationToken);
+
+        await using var stream = new MemoryStream(content);
+        return await StartAsync(new StartBankStatementImportRequest
+        {
+            Content = stream,
+            FileName = session.FileName,
+            ContentType = session.ContentType,
+            Length = content.Length,
+            BankAccountId = bankAccountId,
+            JournalCode = session.JournalCode,
+            AllowAi = _currentUser.HasPermission(Permissions.AI.Chat)
+        }, cancellationToken);
     }
 
     // ── Confirmation ────────────────────────────────────────────────────────────────────────
@@ -497,7 +528,7 @@ public sealed class BankStatementImportService : IBankStatementImportService
         // Tout document par l'IA : l'ancien assistant refusait un relevé dont TOUTES les opérations
         // étaient déjà importées ; ce garde-fou est repris ici (un relevé déjà saisi par l'ancien
         // chemin n'a pas d'empreinte de fichier à comparer).
-        if (_settings.AiForAllDocumentsEffective && extraction.Lines.Count > 0 && alreadyImported >= extraction.Lines.Count)
+        if (_settings.IsAiForAllDocumentsEnabledFor(_tenantContext.TenantId) && extraction.Lines.Count > 0 && alreadyImported >= extraction.Lines.Count)
         {
             return Fail<ConfirmBankStatementImportResult>(BankStatementImportErrorCodes.AlreadyImported,
                 "Toutes les opérations de ce relevé figurent déjà dans un relevé importé pour ce compte bancaire.");
@@ -607,6 +638,79 @@ public sealed class BankStatementImportService : IBankStatementImportService
     /// <see cref="BankStatementImportLimits.MaxAiPages"/> pages scannées ou de
     /// <see cref="BankStatementImportLimits.MaxAiCalls"/> appels, l'IA est déclarée indisponible.
     /// </summary>
+    private async Task<(ExtractedBankStatement Extraction, bool NeedsAi, BankStatementAiAvailability? Ai)> ApplyAiReadingPlanAsync(
+        ExtractedBankStatement rawExtraction,
+        BankAccount account,
+        Guid tenantId,
+        bool allowAi,
+        byte[] content,
+        string extension,
+        CancellationToken cancellationToken)
+    {
+        var extraction = AddAccountChecks(rawExtraction, account);
+
+        if (extraction.PageCount > Limits.MaxPages && !extraction.Issues.Any(i => i.Code == StatementIssueCodes.TooManyPages))
+        {
+            extraction = extraction with
+            {
+                Issues = extraction.Issues.Append(new StatementExtractionIssue(StatementIssueCodes.TooManyPages, StatementIssueSeverity.Blocking,
+                    $"Le relevé compte {extraction.PageCount} pages (maximum {Limits.MaxPages}).")).ToList()
+            };
+        }
+
+        var aiForAll = _settings.IsAiForAllDocumentsEnabledFor(tenantId);
+        var plan = aiForAll ? BankStatementAiReadingPlanner.Select(extraction) : null;
+        if (aiForAll && plan is { IsEmpty: true } && BankStatementAiReadingPlanner.NotFixableBlocker(extraction) is not null)
+        {
+            extraction = extraction with
+            {
+                Issues = extraction.Issues.Append(new StatementExtractionIssue(
+                    StatementIssueCodes.AiNotStarted,
+                    StatementIssueSeverity.Info,
+                    BuildAiNotStartedMessage(extraction, account))).ToList()
+            };
+        }
+
+        var needsAi = plan is not null
+            ? !plan.IsEmpty
+            : extraction.UnresolvedPages.Count > 0 && !extraction.Issues.Any(i => i.Code == StatementIssueCodes.TooManyPages);
+        BankStatementAiAvailability? ai = null;
+        if (needsAi)
+        {
+            ai = allowAi
+                ? await _ai.CheckAvailabilityAsync(cancellationToken)
+                : BankStatementAiAvailability.Unavailable("Lecture IA non autorisée pour cet utilisateur.");
+
+            if (plan is null)
+            {
+                if (ai.Available && extraction.UnresolvedPages.Count > Limits.MaxAiPages)
+                    ai = BankStatementAiAvailability.Unavailable($"Trop de pages scannées ({extraction.UnresolvedPages.Count}, maximum {Limits.MaxAiPages}).");
+            }
+            else if (ai.Available)
+            {
+                (plan, ai, var planIssue) = FitPlan(plan, ai, content, extension);
+                if (planIssue is not null)
+                    extraction = extraction with { Issues = extraction.Issues.Append(planIssue).ToList() };
+                needsAi = !plan.IsEmpty;
+            }
+
+            if (!ai.Available)
+            {
+                var what = plan is { TextPages.Count: > 0 } ? "Relevé non lu avec certitude" : "Pages scannées non lues";
+                extraction = extraction with
+                {
+                    Issues = extraction.Issues.Append(new StatementExtractionIssue(StatementIssueCodes.AiUnavailable, StatementIssueSeverity.Blocking,
+                        $"{what} : {ai.Reason}")).ToList()
+                };
+            }
+        }
+
+        if (plan is not null)
+            extraction = extraction with { AiPlan = plan };
+
+        return (extraction, needsAi, ai);
+    }
+
     private (BankStatementAiPlan Plan, BankStatementAiAvailability Ai, StatementExtractionIssue? Issue) FitPlan(
         BankStatementAiPlan plan, BankStatementAiAvailability ai, byte[] content, string extension)
     {
@@ -622,10 +726,28 @@ public sealed class BankStatementImportService : IBankStatementImportService
             };
         }
 
+        if (string.Equals(ai.Engine, "vision", StringComparison.Ordinal) && Limits.VisionReadingEnabled)
+        {
+            plan = plan with { Engine = "vision" };
+            plan = BankStatementAiReadingPlanner.WithVisionEstimate(plan, Limits.EffectiveVisionEstimatedSecondsPerPage);
+            var pageCount = plan.ScannedPages.Count + plan.TextPages.Count;
+            if (pageCount > Limits.MaxAiPages)
+            {
+                ai = BankStatementAiAvailability.Unavailable($"Trop de pages à lire ({pageCount}, maximum {Limits.MaxAiPages}).");
+            }
+            else if (plan.EstimatedCalls > Limits.EffectiveMaxAiCalls)
+            {
+                ai = BankStatementAiAvailability.Unavailable(
+                    $"relevé trop long pour la lecture IA ({plan.EstimatedCalls} pages nécessaires, maximum {Limits.EffectiveMaxAiCalls}).");
+            }
+
+            return (plan, ai, issue);
+        }
+
         var textCalls = plan.TextPages.Count > 0 && extension == ".pdf"
             ? _extractor.BuildAiTextChunks(content, plan.TextPages, Limits.EffectiveAiTextOperationsPerCall).Count
             : 0;
-        plan = BankStatementAiReadingPlanner.WithEstimate(plan, textCalls, Limits.EffectiveAiEstimatedSecondsPerCall);
+        plan = BankStatementAiReadingPlanner.WithEstimate(plan, textCalls, Limits.EffectiveAiEstimatedSecondsPerCall) with { Engine = "text" };
 
         if (plan.ScannedPages.Count > Limits.MaxAiPages)
         {
@@ -638,6 +760,19 @@ public sealed class BankStatementImportService : IBankStatementImportService
         }
 
         return (plan, ai, issue);
+    }
+
+    private static string BuildAiNotStartedMessage(ExtractedBankStatement extraction, BankAccount account)
+    {
+        if (extraction.Issues.Any(i => i.Code == StatementIssueCodes.RibMismatch))
+        {
+            var readRib = extraction.Header.Rib is { } r ? MaskRib(r) : "…";
+            var accountRib = MaskRib(TunisianIban.NormalizeRibDigits(account.Rib));
+            return $"Lecture IA non lancée : ce relevé appartient à un autre compte bancaire (…{readRib}). "
+                   + $"Choisissez le compte …{readRib} ou corrigez le RIB du compte …{accountRib}, puis relancez l'analyse.";
+        }
+
+        return "Lecture IA non lancée : un contrôle bloquant empêche la relecture automatique. Corrigez le signalement puis relancez l'analyse.";
     }
 
     /// <summary>

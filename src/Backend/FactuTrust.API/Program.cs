@@ -542,6 +542,14 @@ builder.Services.AddHangfireServer(options =>
     options.ServerName = $"factutrust-{Environment.MachineName}";
 });
 
+builder.Services.AddHangfireServer(options =>
+{
+    var aiWorkers = builder.Configuration.GetValue("Accounting:BankStatementImport:AiWorkerCount", 2);
+    options.WorkerCount = Math.Clamp(aiWorkers, 1, 4);
+    options.Queues = new[] { "bank_statement_ai" };
+    options.ServerName = $"factutrust-bank-ai-{Environment.MachineName}";
+});
+
 // Enregistrement résilient des jobs récurrents : déplacé hors du pipeline de démarrage
 // synchrone pour qu'une indisponibilité momentanée de Hangfire / SQL Server / LocalDB
 // ne crashe plus l'API au boot. Voir HangfireRecurringJobsRegistrationService.
@@ -751,6 +759,21 @@ app.MapControllers();
     {
         featureLogger.LogWarning(
             "Accounting:BankStatementAiPostingEnabled=true sans BrouillardEnabled : les relevés peuvent être analysés mais aucune écriture ne sera générée (brouillard obligatoire).");
+    }
+
+    var bsImport = accountingSettings.BankStatementImport;
+    featureLogger.LogInformation(
+        "Bank statement import IA: VisionReading={VisionReadingEnabled} AiForAllDocuments={AiForAll} VisionSendTextLayer={VisionSendTextLayer} AiWorkers={AiWorkers}",
+        bsImport.VisionReadingEnabled,
+        accountingSettings.BankStatementAiForAllDocumentsEnabled,
+        bsImport.VisionSendTextLayer,
+        bsImport.EffectiveAiWorkerCount);
+    if (bsImport.VisionReadingEnabled && string.IsNullOrWhiteSpace(
+            FactuTrust.Application.Features.AI.ImportAiModelResolver.ResolveBankStatementVisionModelId(
+                app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<FactuTrust.Application.Configuration.OllamaSettings>>().Value)))
+    {
+        featureLogger.LogWarning(
+            "Accounting:BankStatementImport:VisionReadingEnabled=true sans modèle vision (Ollama:BankStatementImportVisionModel ou InvoiceImportVisionModel).");
     }
 }
 

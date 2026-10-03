@@ -197,6 +197,14 @@ public sealed class AccountingSettings
     public bool AiForAllDocumentsEffective => BankStatementAiPostingEnabled && BankStatementAiForAllDocumentsEnabled;
 
     /// <summary>
+    /// Mode « tout document par l'IA » pour un dossier : posting actif, drapeau global, et dossier pilote si liste non vide.
+    /// </summary>
+    public bool IsAiForAllDocumentsEnabledFor(Guid? tenantId) =>
+        BankStatementAiPostingEnabled
+        && BankStatementAiForAllDocumentsEnabled
+        && BankStatementImport.IsPilotTenant(tenantId);
+
+    /// <summary>
     /// Rapprochement automatique « v2 » : priorité au lien source (écriture générée depuis la ligne
     /// de relevé) et comparaison de compte dans les deux sens (5321 ↔ sous-compte). OFF par défaut :
     /// l'association automatique historique reste strictement identique.

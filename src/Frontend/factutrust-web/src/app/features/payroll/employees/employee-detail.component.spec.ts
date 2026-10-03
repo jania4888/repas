@@ -4,7 +4,7 @@ import { ActivatedRoute, provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { EmployeeDetailComponent } from './employee-detail.component';
 import { EmployeeService } from '@core/services/employee.service';
 import { AuthService } from '@core/services/auth.service';
@@ -58,7 +58,6 @@ describe('EmployeeDetailComponent', () => {
       success: true,
       data: { employeeId: 'e1', year: 2026, openingBalance: 0, accruedInYear: 0, totalAcquired: 0, consumed: 0, remaining: 0, pending: 0, available: 0 }
     }));
-
     await TestBed.configureTestingModule({
       imports: [EmployeeDetailComponent],
       providers: [
@@ -163,5 +162,47 @@ describe('EmployeeDetailComponent', () => {
 
     expect(fixture.componentInstance.firmInternal()).toBeFalse();
     expect(fixture.componentInstance.routeBase()).toBe('/payroll');
+  });
+
+  it('ouvre Informations dès le montage et conserve l’onglet choisi ensuite', async () => {
+    const fixture = await setup(true);
+    const el = fixture.nativeElement as HTMLElement;
+    const tabs = fixture.debugElement.query(By.directive(Tabs)).componentInstance as Tabs;
+    const infoTab = el.querySelector('.p-tab.p-tab-active');
+
+    expect(fixture.componentInstance.activeTab).toBe(0);
+    expect(tabs.value()).toBe(0);
+    expect(el.textContent).toContain('CIN');
+    expect(infoTab?.textContent).toContain('Informations');
+    expect(infoTab?.getAttribute('aria-selected')).toBe('true');
+    expect(el.textContent).not.toContain('Ajouter un contrat');
+
+    tabs.updateValue(1);
+    expect(fixture.componentInstance.activeTab).toBe(1);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.activeTab).toBe(1);
+    expect(tabs.value()).toBe(1);
+    expect(el.textContent).toContain('Ajouter un contrat');
+  });
+
+  it('conserve l’onglet Contrats après rechargement de la fiche', async () => {
+    const fixture = await setup(true);
+    const el = fixture.nativeElement as HTMLElement;
+    const tabs = fixture.debugElement.query(By.directive(Tabs)).componentInstance as Tabs;
+    const pending = new Subject<{ success: boolean; data: typeof employeeData }>();
+
+    tabs.updateValue(1);
+    fixture.detectChanges();
+    employeeServiceSpy.getById.and.returnValue(pending.asObservable());
+    fixture.componentInstance.reload();
+    fixture.detectChanges();
+
+    expect(el.textContent).toContain('Chargement');
+
+    pending.next({ success: true, data: employeeData });
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.activeTab).toBe(1);
+    expect(el.textContent).toContain('Ajouter un contrat');
   });
 });

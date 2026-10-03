@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, shareReplay, catchError, throwError, map } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { Observable, shareReplay, catchError, throwError, map, from, of, switchMap } from 'rxjs';
 import { environment } from '@environments/environment';
 import { createHttpContextSkipGlobalErrorUi } from '@core/http-context';
 import { ApiResponse, PagedResult } from './client.service';
@@ -180,6 +180,28 @@ export function getCashRevenueCategoryLabel(value: number | null | undefined): s
   return undefined;
 }
 
+/** Libellés déjà traduits (mêmes identifiants que la saisie caisse). */
+export function getCashPaymentMethodLabel(value: number | null | undefined): string {
+  switch (value) {
+    case 0:
+      return $localize`:@@pay.cash:Espèces`;
+    case 1:
+      return $localize`:@@pay.transfer:Virement bancaire`;
+    case 2:
+      return $localize`:@@pay.check:Chèque`;
+    case 3:
+      return $localize`:@@pay.card:Carte bancaire`;
+    case 4:
+      return $localize`:@@pay.mobile:Paiement mobile`;
+    case 5:
+      return $localize`:@@shared.record-payment-dialog.ts.traite.effet.de.commerce.b1384467:Traite (effet de commerce)`;
+    case 99:
+      return $localize`:@@pay.other:Autre`;
+    default:
+      return '';
+  }
+}
+
 /** Matches backend PaymentMethod (JsonStringEnumConverter camelCase). */
 const PAYMENT_METHOD_FROM_API: Record<string, number> = {
   cash: 0,
@@ -280,6 +302,41 @@ export interface CashOperationListItem {
   vatRatePercent?: number | null;
   htAmount?: number | null;
   vatAmount?: number | null;
+}
+
+export interface TreasuryJournalGroup {
+  operationType: number;
+  category: number | null;
+  count: number;
+  total: number;
+}
+
+export interface TreasuryJournalResult {
+  from: string;
+  to: string;
+  currency: string;
+  totalCredits: number;
+  totalDebits: number;
+  balance: number;
+  operationCount: number;
+  groups: TreasuryJournalGroup[];
+  lines: PagedResult<CashOperationListItem>;
+}
+
+function normalizeNamedEnum(value: number | string | null | undefined, enumObj: object): number | null {
+  if (value === null || value === undefined || value === '') return null;
+  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+  const named = Object.entries(enumObj).find(([key, entry]) => key === value && typeof entry === 'number');
+  return named ? (named[1] as number) : null;
+}
+
+function normalizeJournalCategory(
+  operationType: number | string,
+  category: number | string | null | undefined
+): number | null {
+  const type = normalizeCashOperationType(operationType);
+  const vocabulary = type === CashOperationType.Credit ? CashRevenueCategory : CashExpenseCategory;
+  return normalizeNamedEnum(category, vocabulary);
 }
 
 /** Taux de TVA proposés pour les encaissements « ventes au comptant » (cf. VatRate backend : Exempt=0, Reduced=7, Intermediate=13, Standard=19). */
@@ -464,6 +521,84 @@ export class CashDeskService {
     for (const key of Array.from(this.operationsCache.keys())) {
       if (key.startsWith(prefix)) this.operationsCache.delete(key);
     }
+  }
+
+  getTreasuryJournal(params: {
+    from: string;
+    to: string;
+    method: number | null;
+    page: number;
+    pageSize: number;
+  }): Observable<ApiResponse<TreasuryJournalResult>> {
+    let httpParams = new HttpParams()
+      .set('from', params.from)
+      .set('to', params.to)
+      .set('page', String(params.page))
+      .set('pageSize', String(params.pageSize));
+    if (params.method !== null && params.method !== undefined) {
+      httpParams = httpParams.set('method', String(params.method));
+    }
+
+    return this.http.get<ApiResponse<TreasuryJournalResult>>(`${this.API_URL}/journal`, { params: httpParams }).pipe(
+      map(res => {
+        if (!res.success || !res.data) return res;
+        const lines = res.data.lines;
+        return {
+          ...res,
+          data: {
+            ...res.data,
+            groups: (res.data.groups ?? []).map(group => ({
+              ...group,
+              operationType: normalizeCashOperationType(group.operationType as number | string),
+              category: normalizeJournalCategory(group.operationType, group.category)
+            })),
+            lines: {
+              ...lines,
+              items: (lines?.items ?? []).map(item => {
+                const normalized = normalizeCashOperationListItem(item);
+                return {
+                  ...normalized,
+                  category: normalizeNamedEnum(normalized.category as number | string | null, CashExpenseCategory),
+                  revenueCategory: normalizeNamedEnum(
+                    normalized.revenueCategory as number | string | null,
+                    CashRevenueCategory
+                  )
+                };
+              })
+            }
+          }
+        };
+      })
+    );
+  }
+
+  downloadTreasuryJournalPdf(params: { from: string; to: string; method: number | null }): Observable<Blob> {
+    let httpParams = new HttpParams().set('from', params.from).set('to', params.to);
+    if (params.method !== null && params.method !== undefined) {
+      httpParams = httpParams.set('method', String(params.method));
+    }
+    const fallback = $localize`:@@payments.cash-journal.pdf-error:Impossible de générer le PDF.`;
+    return this.http
+      .get(`${this.API_URL}/journal/pdf`, { params: httpParams, responseType: 'blob', observe: 'response' })
+      .pipe(
+        switchMap(response => of(response.body ?? new Blob())),
+        catchError((err: HttpErrorResponse) => {
+          const blob = err.error;
+          if (!(blob instanceof Blob)) return throwError(() => new Error(fallback));
+          return from(blob.text()).pipe(
+            switchMap(text => {
+              let message = fallback;
+              try {
+                const parsed = JSON.parse(text) as { message?: string; errors?: string[] };
+                message = parsed.errors?.[0] ?? parsed.message ?? fallback;
+              } catch {
+                /* réponse non JSON */
+              }
+              return throwError(() => new Error(message));
+            })
+          );
+        })
+      );
   }
 
   /**

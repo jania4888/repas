@@ -12,6 +12,8 @@ Fonctionnement : `docs/accounting/bank-statement-ai-import.md`.
 | `Accounting:BrouillardEnabled` | idem | (existant) | **Requis** pour générer : la génération est refusée sans brouillard |
 | `Accounting:BankStatementLayoutParserEnabled` | idem | `false` | Assistant de rapprochement : lecture par profils (BIAT mensuel, fichiers à plusieurs relevés…) quand le parseur historique ne lit rien, avant OCR/IA |
 | `Accounting:BankStatementPreviewTimeoutSeconds` | idem | `240` | Budget OCR + IA de l'aperçu de l'assistant (toujours < 300 s, délai nginx) |
+| `Accounting:BankStatementImport:VisionReadingEnabled` | idem | `false` | GLM-OCR page par page (repli texte qwen) |
+| `Ollama:BankStatementImportVisionModel` | idem | (vide → `InvoiceImportVisionModel`) | Modèle vision relevés |
 | `Accounting:BankStatementAiForAllDocumentsEnabled` | idem | `false` | Tout relevé PDF/image passe par l'import IA ; l'IA relit chaque page non lue avec certitude ; l'aperçu PDF/image de l'assistant est fermé (`bank_statement.ai_import_required`). Sans effet si `BankStatementAiPostingEnabled` est éteint |
 | `Accounting:BankStatementImport:AiComplementAllowExternal` | idem | `false` | Autorise l'envoi du texte des pages lisibles à une IA externe |
 

@@ -22,6 +22,9 @@ public interface IBankStatementImportService
 
     /// <summary>Pièce justificative d'un relevé enregistré par ce parcours (fichier d'origine).</summary>
     Task<Result<BankStatementSourceFile>> GetSourceFileAsync(Guid statementId, CancellationToken cancellationToken = default);
+
+    /// <summary>Relance l'analyse du fichier d'une session sur un autre compte bancaire (ex. RIB corrigé).</summary>
+    Task<Result<BankStatementImportSessionDto>> RetargetAsync(Guid sessionId, Guid bankAccountId, CancellationToken cancellationToken = default);
 }
 
 /// <param name="FileName">Nom d'origine assaini (affichage et téléchargement seulement, jamais un chemin).</param>
@@ -39,6 +42,8 @@ public sealed record StartBankStatementImportRequest
     /// <summary>L'utilisateur a le droit d'utiliser l'IA (<c>ai:chat</c>) pour les pages scannées.</summary>
     public bool AllowAi { get; init; }
 }
+
+public sealed record RetargetBankStatementImportRequest(Guid BankAccountId);
 
 public sealed record ConfirmBankStatementImportRequest
 {
@@ -163,6 +168,9 @@ public sealed record BankStatementImportCapabilitiesDto(
     /// ces fichiers au lieu de son aperçu historique. Toujours faux quand l'import est désactivé.
     /// </summary>
     public bool AllDocumentsViaAi { get; init; }
+
+    /// <summary><c>vision</c> (GLM-OCR) ou <c>text</c> lorsque l'IA est disponible.</summary>
+    public string? AiEngine { get; init; }
 }
 
 /// <summary>Codes d'erreur stables de l'import (testés par le front, traduits côté API).</summary>

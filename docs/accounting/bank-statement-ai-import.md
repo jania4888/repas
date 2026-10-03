@@ -21,6 +21,13 @@ Fonctionnalité **désactivée par défaut** (`Accounting:BankStatementAiPosting
 6. Après validation, le rapprochement automatique associe les lignes à leur écriture par lien source
    (drapeau `BankReconciliationMatchingV2Enabled`).
 
+## Lecture vision GLM-OCR (`BankStatementImport:VisionReadingEnabled`)
+
+Quand le drapeau est actif et le modèle vision est prêt (`Ollama:BankStatementImportVisionModel`, sinon
+`InvoiceImportVisionModel`), le plan porte `engine: "vision"` : une page = un appel GLM-OCR (image, schéma verbatim,
+repli texte qwen si échec). Recette privée : `BankStatementVisionRecetteTests` + variables
+`FACTUTRUST_RECETTE_VISION_MODEL`.
+
 ## Tout document par l'IA (drapeau `BankStatementAiForAllDocumentsEnabled`)
 
 Drapeau **éteint par défaut**, sans effet si `BankStatementAiPostingEnabled` est éteint. Allumé :

@@ -125,7 +125,7 @@ public sealed partial class BankStatementLayoutExtractor
                 var rib = FindRib(document.OriginalBands.Where(b => pageNumbers.Contains(b.Page)).ToList(), issues);
                 var textPages = document.TextPages.Where(p => pageNumbers.Contains(p.Number)).ToList();
                 var extracted = ExtractCore(document, textPages, unresolved, segment.Pages[0], issues, rib);
-                return extracted with { PageCount = segment.Pages.Count };
+                return extracted with { PageCount = segment.Pages.Count, SourcePages = segment.Pages };
             })
             .OrderBy(r => r.Header.PeriodStart ?? DateOnly.MaxValue)
             .ToList();

@@ -27,6 +27,9 @@ public sealed record ExtractedBankStatement
     /// </summary>
     public BankStatementAiPlan? AiPlan { get; init; }
 
+    /// <summary>Numéros de pages absolus dans le PDF source (segment multi-relevés). Null = pages 1..PageCount.</summary>
+    public IReadOnlyList<int>? SourcePages { get; init; }
+
     public bool HasBlockingIssue => Issues.Any(i => i.Severity == StatementIssueSeverity.Blocking);
 }
 
@@ -160,6 +163,8 @@ public static class StatementIssueCodes
     public const string AiUnavailable = "statement.ai_unavailable";
     public const string AiPageFailed = "statement.ai_page_failed";
     public const string AiAmountNotGrounded = "statement.ai_amount_not_grounded";
+    public const string AiNotStarted = "statement.ai_not_started";
+    public const string AiRibMismatch = "statement.ai_rib_mismatch";
 
     /// <summary>Le fichier contient plusieurs relevés (périodes distinctes) : à lire relevé par relevé.</summary>
     public const string MultipleStatements = "statement.multiple_statements";

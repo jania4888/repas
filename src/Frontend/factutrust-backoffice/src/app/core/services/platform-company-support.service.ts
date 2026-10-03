@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@environments/environment';
 import type { ApiResponse } from '@core/models/api-response.model';
@@ -38,15 +38,31 @@ export interface PlatformSupportInbox {
   totalCount: number;
 }
 
+/** Filtres déjà acceptés par `GET /platform/company-support/conversations`. */
+export interface PlatformSupportInboxQuery {
+  companyName?: string | null;
+  unreadOnly?: boolean;
+  category?: string | null;
+  page?: number;
+  pageSize?: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PlatformCompanySupportService {
   private readonly http = inject(HttpClient);
   private readonly base = `${environment.apiUrl}/platform/company-support`;
 
-  inbox(): Observable<ApiResponse<PlatformSupportInbox>> {
-    return this.http.get<ApiResponse<PlatformSupportInbox>>(`${this.base}/conversations`, {
-      params: { page: 1, pageSize: 50 }
-    });
+  inbox(query: PlatformSupportInboxQuery = {}): Observable<ApiResponse<PlatformSupportInbox>> {
+    const page = query.page && query.page > 0 ? Math.floor(query.page) : 1;
+    const requestedSize = query.pageSize && query.pageSize > 0 ? Math.floor(query.pageSize) : 50;
+    const pageSize = Math.min(requestedSize, 50);
+    let params = new HttpParams().set('page', String(page)).set('pageSize', String(pageSize));
+    const name = query.companyName?.trim().slice(0, 100);
+    if (name) params = params.set('companyName', name);
+    if (query.unreadOnly) params = params.set('unreadOnly', 'true');
+    const category = query.category?.trim();
+    if (category) params = params.set('category', category);
+    return this.http.get<ApiResponse<PlatformSupportInbox>>(`${this.base}/conversations`, { params });
   }
 
   unreadCount(): Observable<ApiResponse<number>> {

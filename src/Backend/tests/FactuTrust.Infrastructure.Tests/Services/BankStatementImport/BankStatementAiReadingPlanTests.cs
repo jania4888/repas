@@ -113,14 +113,14 @@ public sealed class BankStatementAiReadingPlanTests
     }
 
     [Fact]
-    public void No_operation_with_scanned_pages_reads_only_the_scanned_pages()
+    public void No_operation_with_scanned_pages_also_reads_text_pages()
     {
         var plan = BankStatementAiReadingPlanner.Select(Statement(3, new[] { 2, 3 },
             Blocking(StatementIssueCodes.NoTransactions), Blocking(StatementIssueCodes.NoTextLayer, 2), Blocking(StatementIssueCodes.NoTextLayer, 3)));
 
         Assert.Equal(new[] { 2, 3 }, plan.ScannedPages);
-        Assert.Empty(plan.TextPages);
-        Assert.Equal(BankStatementAiReadingReasons.Scanned, plan.Reason);
+        Assert.Equal(new[] { 1 }, plan.TextPages);
+        Assert.Equal(BankStatementAiReadingReasons.Unverified, plan.Reason);
     }
 
     [Theory]

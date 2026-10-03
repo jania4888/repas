@@ -66,6 +66,16 @@ export class BankStatementImportService {
     return this.unwrap(this.http.delete<ApiEnvelope<unknown>>(`${this.base}/sessions/${id}`, { context: this.context }));
   }
 
+  retarget(sessionId: string, bankAccountId: string): Observable<BankStatementImportSession> {
+    return this.unwrap(
+      this.http.post<ApiEnvelope<BankStatementImportSession>>(
+        `${this.base}/sessions/${sessionId}/retarget`,
+        { bankAccountId },
+        { context: this.context }
+      )
+    );
+  }
+
   confirm(id: string): Observable<ConfirmResult> {
     return this.unwrap(this.http.post<ApiEnvelope<ConfirmResult>>(`${this.base}/sessions/${id}/confirm`, { corrections: [] }, { context: this.context }));
   }

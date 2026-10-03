@@ -568,6 +568,11 @@ public sealed class OllamaSettings
     public string InvoiceImportVisionModel { get; set; } = "";
 
     /// <summary>
+    /// Modèle vision Ollama pour l'import de relevés bancaires (GLM-OCR). Vide = <see cref="InvoiceImportVisionModel"/>.
+    /// </summary>
+    public string BankStatementImportVisionModel { get; set; } = "";
+
+    /// <summary>
     /// Autorise une 2ᵉ passe en vision quand la 1re passe (texte/OCR) rend une réponse
     /// inexploitable. Coupe-circuit d'exploitation : à <c>false</c>, un seul appel LLM par import.
     /// </summary>

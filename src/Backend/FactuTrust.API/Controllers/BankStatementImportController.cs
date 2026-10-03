@@ -4,6 +4,7 @@ using FactuTrust.Application.Configuration;
 using FactuTrust.Application.Features.Accounting.BankStatementImport;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Enums;
+using FactuTrust.Infrastructure.MultiTenancy;
 using FactuTrust.Infrastructure.Services.BankStatementImport;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,7 @@ public sealed class BankStatementImportController : ControllerBase
     private readonly IBankStatementAiExtraction _ai;
     private readonly BankStatementProfileRegistry _profiles;
     private readonly ICurrentUser _currentUser;
+    private readonly ITenantContext _tenantContext;
     private readonly AccountingSettings _settings;
 
     public BankStatementImportController(
@@ -41,6 +43,7 @@ public sealed class BankStatementImportController : ControllerBase
         IBankStatementAiExtraction ai,
         BankStatementProfileRegistry profiles,
         ICurrentUser currentUser,
+        ITenantContext tenantContext,
         IOptions<AccountingSettings> settings)
     {
         _service = service;
@@ -48,6 +51,7 @@ public sealed class BankStatementImportController : ControllerBase
         _ai = ai;
         _profiles = profiles;
         _currentUser = currentUser;
+        _tenantContext = tenantContext;
         _settings = settings.Value;
     }
 
@@ -78,8 +82,22 @@ public sealed class BankStatementImportController : ControllerBase
                 .Distinct(StringComparer.Ordinal)
                 .ToArray())
         {
-            AllDocumentsViaAi = _settings.AiForAllDocumentsEffective
+            AllDocumentsViaAi = _settings.IsAiForAllDocumentsEnabledFor(_tenantContext.TenantId),
+            AiEngine = ai?.Available == true ? ai.Engine : null
         }));
+    }
+
+    [HttpPost("sessions/{id:guid}/retarget")]
+    [Authorize(Policy = PermissionPolicies.AccountingCreate)]
+    [EnableRateLimiting("ai")]
+    public async Task<IActionResult> Retarget(Guid id, [FromBody] RetargetBankStatementImportRequest request, CancellationToken cancellationToken)
+    {
+        if (!_settings.BankStatementAiPostingEnabled)
+            return NotFound();
+        var result = await _service.RetargetAsync(id, request.BankAccountId, cancellationToken);
+        return result.IsSuccess
+            ? Ok(ApiResponse<BankStatementImportSessionDto>.Ok(result.Value))
+            : Failure(result.Error);
     }
 
     /// <summary>

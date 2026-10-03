@@ -104,6 +104,7 @@
     <EmbeddedResource Include="Resources\OfficialForms\*.pdf" />
     <EmbeddedResource Include="Resources\OfficialForms\*.json" />
     <EmbeddedResource Include="Resources\OfficialForms\Fonts\Lato-Regular.ttf" />
+    <EmbeddedResource Include="Fonts\NotoNaskhArabic-Regular.ttf" />
     <EmbeddedResource Include="Resources\Accounting\*.json" />
   </ItemGroup>
 
