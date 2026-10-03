@@ -183,5 +183,22 @@
   "accounting.bank-statement-import.ts.enregistre.c68fb2eb": "محفوظ",
   "accounting.bank-statement-import.ts.a.controler.c2ced249": "للمراجعة",
   "accounting.bank-statement-import.ts.lecture.en.cours.01347730": "القراءة جارية",
-  "accounting.bank-statement-import.ts.indisponible.1ad054af": "غير متاح"
+  "accounting.bank-statement-import.ts.indisponible.1ad054af": "غير متاح",
+  "accounting.bank-reconciliation.releve.pdf.ou.image.analyse.par.l.import.ia.lect.4f7ad0bc": "كشف بصيغة PDF أو صورة: يُحلَّل عبر الاستيراد بالذكاء الاصطناعي (قراءة مباشرة يكمّلها الذكاء الاصطناعي عند الحاجة)، ثم العودة إلى هنا.",
+  "accounting.bank-reconciliation.ts.releve.enregistre.48f3bacc": "تم حفظ الكشف",
+  "accounting.bank-reconciliation.ts.operation.s.dont.deja.presente.s.dans.un.autre.r.84d6cf0e": "{$COUNT} عملية، منها {$ALREADY} موجودة مسبقًا في كشف آخر لهذا الحساب.",
+  "accounting.bank-reconciliation.ts.operation.s.prete.s.pour.le.rapprochement.9a5f4b90": "{$COUNT} عملية جاهزة للمطابقة.",
+  "accounting.bank-reconciliation.ts.les.releves.pdf.ou.image.s.importent.par.l.analy.f7d9f7d0": "تُستورد الكشوف بصيغة PDF أو الصور عبر تحليل الكشف بالذكاء الاصطناعي: أعد تحميل الصفحة ثم اختر الملف من جديد.",
+  "accounting.bank-statement-import.relecture.par.l.ia.des.lignes.non.lues.avec.cert.a39a7373": "إعادة قراءة الأسطر غير المقروءة بيقين بالذكاء الاصطناعي… {$INTERPOLATION} %",
+  "accounting.bank-statement-import.relecture.du.releve.par.l.ia.solde.non.verifie.s.725c03c7": "إعادة قراءة الكشف بالذكاء الاصطناعي (الرصيد غير متحقَّق منه)… {$INTERPOLATION} %",
+  "accounting.bank-statement-import.duree.estimee.environ.minutes.min.vous.pouvez.qu.8c3f8b0a": "المدة المقدّرة: حوالي {$INTERPOLATION} دقيقة. يمكنك مغادرة هذه الشاشة والعودة إليها.",
+  "accounting.bank-statement-import.retour.au.rapprochement.bancaire.6e5dcc9c": "العودة إلى المطابقة البنكية",
+  "accounting.bank-statement-import.ts.lecture.directe.completee.par.une.ia.externe.b4615235": "قراءة مباشرة يكمّلها ذكاء اصطناعي خارجي",
+  "accounting.bank-statement-import.ts.lecture.directe.completee.par.l.ia.locale.bdf8d38c": "قراءة مباشرة يكمّلها الذكاء الاصطناعي المحلي",
+  "accounting.bank-statement-import.releve.pdf.ou.photo.de.votre.banque.les.operatio.481bec91": " كشف بصيغة PDF (أو صورة) من بنكك: تُقرأ العمليات ويُتحقَّق منها بالأرصدة، ويعيد الذكاء الاصطناعي قراءة كل ما لم يُقرأ بيقين. تراجع الكشف، ثم يعود إلى المطابقة البنكية. ",
+  "accounting.bank-statement-import.ce.compte.bancaire.n.est.pas.en.dinars.tnd.l.imp.779d721c": " هذا الحساب البنكي ليس بالدينار (TND): لا يدعم استيراد الكشوف إلا الحسابات بالدينار. ",
+  "accounting.bank-statement-import.aucun.compte.bancaire.n.est.pret.pour.l.import.d.d519959a": " لا يوجد حساب بنكي جاهز لاستيراد الكشف (حساب بالدينار مرتبط بحساب محاسبي 532): اضبطه في المدفوعات › الحسابات البنكية، أو استورد ملف تصدير CSV / OFX من بنكك. ",
+  "accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.67692986": " الصفحات الممسوحة ضوئيًا أو غير المقروءة بيقين: إعادة قراءة بذكاء اصطناعي خارجي (مزوّد تضبطه المنصة). ",
+  "accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.ad04271e": " الصفحات الممسوحة ضوئيًا أو غير المقروءة بيقين: إعادة قراءة بالذكاء الاصطناعي المحلي للخادم. ",
+  "accounting.bank-statement-import.ia.indisponible.seuls.les.releves.pdf.lus.avec.c.40012216": "الذكاء الاصطناعي غير متاح: لن تُحفظ إلا الكشوف بصيغة PDF المقروءة بيقين (رصيد متحقَّق منه بالمليم)."
 }

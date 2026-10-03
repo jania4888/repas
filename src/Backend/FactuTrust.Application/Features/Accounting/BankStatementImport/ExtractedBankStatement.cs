@@ -21,6 +21,12 @@ public sealed record ExtractedBankStatement
     /// <summary>Pages sans couche texte exploitable (scannées) : à traiter par OCR / IA.</summary>
     public IReadOnlyList<int> UnresolvedPages { get; init; } = Array.Empty<int>();
 
+    /// <summary>
+    /// Pages confiées à l'IA et pourquoi (drapeau « tout document par l'IA »). Null = ancien
+    /// fonctionnement : seules les <see cref="UnresolvedPages"/> sont lues par l'IA.
+    /// </summary>
+    public BankStatementAiPlan? AiPlan { get; init; }
+
     public bool HasBlockingIssue => Issues.Any(i => i.Severity == StatementIssueSeverity.Blocking);
 }
 
@@ -35,6 +41,13 @@ public sealed record ExtractedStatementHeader
     public string? Currency { get; init; }
     public DateOnly? PeriodStart { get; init; }
     public DateOnly? PeriodEnd { get; init; }
+
+    /// <summary>
+    /// True si la période vient du document (période ou dates de solde imprimées), false si elle a été
+    /// déduite des dates des opérations lues. Sert à borner les dates proposées par l'IA.
+    /// </summary>
+    public bool PeriodPrinted { get; init; }
+
     public StatementAmount? OpeningBalance { get; init; }
     public StatementAmount? ClosingBalance { get; init; }
 

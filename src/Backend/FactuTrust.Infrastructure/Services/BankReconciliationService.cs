@@ -639,6 +639,16 @@ public sealed class BankReconciliationService : IBankReconciliationService
         string contentType,
         CancellationToken cancellationToken = default)
     {
+        // Tout document par l'IA : un PDF ou une image passe par l'import IA (tâche de fond, droit IA,
+        // limite de débit) et plus par cet aperçu synchrone. Le format est choisi par le client : la
+        // signature du contenu est aussi vérifiée.
+        if (_settings.AiForAllDocumentsEffective
+            && (format is BankStatementFileFormat.Pdf or BankStatementFileFormat.Image || LooksLikePdfOrImage(content)))
+        {
+            return Result.Failure<BankStatementFilePreviewDto>(new Error(BankStatementPreviewErrorCodes.AiImportRequired,
+                "Les relevés PDF ou image s'importent par l'analyse IA du relevé (compte bancaire et journal à choisir)."));
+        }
+
         if (format is BankStatementFileFormat.Pdf or BankStatementFileFormat.Image)
             return await _pdfImportService.PreviewAsync(content, fileName, contentType, format, cancellationToken);
 
@@ -657,6 +667,19 @@ public sealed class BankReconciliationService : IBankReconciliationService
 
         var (lines, issues) = _parser.Parse(content, format);
         return Result.Success(BuildFilePreview(lines, issues));
+    }
+
+    /// <summary>Signature d'un PDF (« %PDF » dans le premier Ko) ou d'une image PNG, JPEG ou WEBP.</summary>
+    internal static bool LooksLikePdfOrImage(byte[] content)
+    {
+        if (content is null || content.Length < 3)
+            return false;
+        var head = content.AsSpan(0, Math.Min(content.Length, 1024));
+        if (head.IndexOf("%PDF"u8) >= 0)
+            return true;
+        if (head.StartsWith(new byte[] { 0x89, 0x50, 0x4E, 0x47 }) || head.StartsWith(new byte[] { 0xFF, 0xD8, 0xFF }))
+            return true;
+        return head.Length >= 12 && head[..4].SequenceEqual("RIFF"u8) && head.Slice(8, 4).SequenceEqual("WEBP"u8);
     }
 
     /// <summary>Construit le DTO d'aperçu commun aux formats tabulaires (CSV/Excel) et structurés (OFX/MT940).</summary>

@@ -11035,6 +11035,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-reconciliation.releve.pdf.ou.image.analyse.par.l.import.ia.lect.4f7ad0bc": "Relevé PDF ou image : analyse par l'import IA (lecture directe, complétée par l'IA si nécessaire), puis retour ici.",
+  "@accounting.bank-reconciliation.releve.pdf.ou.image.analyse.par.l.import.ia.lect.4f7ad0bc": {
+    "x-files": [
+      "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-reconciliation.lecture.du.releve.en.cours.un.releve.sca.f6c24d36": "Lecture du relevé en cours. Un relevé scanné lu par l'IA peut demander quelques minutes.",
   "@accounting.bank-reconciliation.lecture.du.releve.en.cours.un.releve.sca.f6c24d36": {
     "x-files": [
@@ -11794,6 +11801,27 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-reconciliation.ts.releve.enregistre.48f3bacc": "Relevé enregistré",
+  "@accounting.bank-reconciliation.ts.releve.enregistre.48f3bacc": {
+    "x-files": [
+      "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-reconciliation.ts.operation.s.dont.deja.presente.s.dans.un.autre.r.84d6cf0e": "{$COUNT} opération(s), dont {$ALREADY} déjà présente(s) dans un autre relevé de ce compte.",
+  "@accounting.bank-reconciliation.ts.operation.s.dont.deja.presente.s.dans.un.autre.r.84d6cf0e": {
+    "x-files": [
+      "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-reconciliation.ts.operation.s.prete.s.pour.le.rapprochement.9a5f4b90": "{$COUNT} opération(s) prête(s) pour le rapprochement.",
+  "@accounting.bank-reconciliation.ts.operation.s.prete.s.pour.le.rapprochement.9a5f4b90": {
+    "x-files": [
+      "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-reconciliation.ts.associe.7ab382a5": "Associé",
   "@accounting.bank-reconciliation.ts.associe.7ab382a5": {
     "x-files": [
@@ -11957,6 +11985,13 @@
   },
   "accounting.bank-reconciliation.ts.le.moteur.ia.n.a.pas.pu.lire.ce.releve.pour.le.m.c6ea7b62": "Le moteur IA n'a pas pu lire ce relevé pour le moment. Réessayez plus tard, ou utilisez un relevé PDF téléchargé depuis votre banque en ligne, ou un export CSV/OFX.",
   "@accounting.bank-reconciliation.ts.le.moteur.ia.n.a.pas.pu.lire.ce.releve.pour.le.m.c6ea7b62": {
+    "x-files": [
+      "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-reconciliation.ts.les.releves.pdf.ou.image.s.importent.par.l.analy.f7d9f7d0": "Les relevés PDF ou image s'importent par l'analyse IA du relevé : rechargez la page puis choisissez à nouveau le fichier.",
+  "@accounting.bank-reconciliation.ts.les.releves.pdf.ou.image.s.importent.par.l.analy.f7d9f7d0": {
     "x-files": [
       "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
     ],
@@ -12578,8 +12613,29 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.relecture.par.l.ia.des.lignes.non.lues.avec.cert.a39a7373": "Relecture par l'IA des lignes non lues avec certitude… {$INTERPOLATION} %",
+  "@accounting.bank-statement-import.relecture.par.l.ia.des.lignes.non.lues.avec.cert.a39a7373": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.relecture.du.releve.par.l.ia.solde.non.verifie.s.725c03c7": "Relecture du relevé par l'IA (solde non vérifié)… {$INTERPOLATION} %",
+  "@accounting.bank-statement-import.relecture.du.releve.par.l.ia.solde.non.verifie.s.725c03c7": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.lecture.des.pages.scannees.ebb6ce2d": "Lecture des pages scannées… {$INTERPOLATION} %",
   "@accounting.bank-statement-import.lecture.des.pages.scannees.ebb6ce2d": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.duree.estimee.environ.minutes.min.vous.pouvez.qu.8c3f8b0a": "Durée estimée : environ {$INTERPOLATION} min. Vous pouvez quitter cet écran et y revenir.",
+  "@accounting.bank-statement-import.duree.estimee.environ.minutes.min.vous.pouvez.qu.8c3f8b0a": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
     ],
@@ -12609,6 +12665,13 @@
   },
   "accounting.bank-statement-import.l.analyse.de.ce.releve.n.a.pas.abouti.bcff5d65": "L'analyse de ce relevé n'a pas abouti.",
   "@accounting.bank-statement-import.l.analyse.de.ce.releve.n.a.pas.abouti.bcff5d65": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.retour.au.rapprochement.bancaire.6e5dcc9c": "Retour au rapprochement bancaire",
+  "@accounting.bank-statement-import.retour.au.rapprochement.bancaire.6e5dcc9c": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
     ],
@@ -13077,6 +13140,20 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.ts.lecture.directe.completee.par.une.ia.externe.b4615235": "Lecture directe complétée par une IA externe",
+  "@accounting.bank-statement-import.ts.lecture.directe.completee.par.une.ia.externe.b4615235": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lecture.directe.completee.par.l.ia.locale.bdf8d38c": "Lecture directe complétée par l'IA locale",
+  "@accounting.bank-statement-import.ts.lecture.directe.completee.par.l.ia.locale.bdf8d38c": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.ts.lecture.directe.pages.scannees.lues.par.une.ia.e.1e33d5e5": "Lecture directe + pages scannées lues par une IA externe",
   "@accounting.bank-statement-import.ts.lecture.directe.pages.scannees.lues.par.une.ia.e.1e33d5e5": {
     "x-files": [
@@ -13133,6 +13210,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.releve.pdf.ou.photo.de.votre.banque.les.operatio.481bec91": " Relevé PDF (ou photo) de votre banque : les opérations sont lues et contrôlées par les soldes, l'IA relit tout ce qui n'est pas lu avec certitude. Vous relisez le relevé, puis il revient dans le rapprochement bancaire. ",
+  "@accounting.bank-statement-import.releve.pdf.ou.photo.de.votre.banque.les.operatio.481bec91": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.releve.pdf.ou.photo.de.votre.banque.les.7e61a9fe": " Relevé PDF (ou photo) de votre banque : les opérations sont lues, contrôlées par les soldes, puis le système propose une écriture par opération dans le journal de banque. Vous relisez avant de générer les écritures en brouillard. ",
   "@accounting.bank-statement-import.releve.pdf.ou.photo.de.votre.banque.les.7e61a9fe": {
     "x-files": [
@@ -13161,8 +13245,22 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.ce.compte.bancaire.n.est.pas.en.dinars.tnd.l.imp.779d721c": " Ce compte bancaire n'est pas en dinars (TND) : l'import de relevés ne prend en charge que les comptes en dinars. ",
+  "@accounting.bank-statement-import.ce.compte.bancaire.n.est.pas.en.dinars.tnd.l.imp.779d721c": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.aucun.compte.bancaire.actif.creez.en.un.0eedb1be": "Aucun compte bancaire actif : créez-en un dans Paiements › Comptes bancaires.",
   "@accounting.bank-statement-import.aucun.compte.bancaire.actif.creez.en.un.0eedb1be": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.aucun.compte.bancaire.n.est.pret.pour.l.import.d.d519959a": " Aucun compte bancaire n'est prêt pour l'import du relevé (compte en dinars relié à un compte comptable 532) : paramétrez-le dans Paiements › Comptes bancaires, ou importez un export CSV / OFX de votre banque. ",
+  "@accounting.bank-statement-import.aucun.compte.bancaire.n.est.pret.pour.l.import.d.d519959a": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
     ],
@@ -13184,6 +13282,27 @@
   },
   "accounting.bank-statement-import.pdf.png.jpeg.ou.webp.taille.maximale.mo.ddc9390d": "PDF, PNG, JPEG ou WEBP — taille maximale : {$INTERPOLATION} Mo.",
   "@accounting.bank-statement-import.pdf.png.jpeg.ou.webp.taille.maximale.mo.ddc9390d": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.67692986": " Pages scannées ou non lues avec certitude : relecture par une IA externe (fournisseur configuré par la plateforme). ",
+  "@accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.67692986": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.ad04271e": " Pages scannées ou non lues avec certitude : relecture par l'IA locale du serveur. ",
+  "@accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.ad04271e": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ia.indisponible.seuls.les.releves.pdf.lus.avec.c.40012216": "IA indisponible : seuls les relevés PDF lus avec certitude (solde vérifié au millime) pourront être enregistrés.",
+  "@accounting.bank-statement-import.ia.indisponible.seuls.les.releves.pdf.lus.avec.c.40012216": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
     ],

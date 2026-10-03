@@ -141,6 +141,50 @@ public sealed class BankStatementLayoutExtractorPrivateFixtureTests
         Assert.Contains(single.Issues, x => x.Code == StatementIssueCodes.MultipleStatements && x.Severity == StatementIssueSeverity.Blocking);
     }
 
+    /// <summary>
+    /// Porte d'activation de « tout document par l'IA » : un vrai relevé bien lu ne doit JAMAIS être
+    /// envoyé à l'IA (plan vide), et si une page devait être relue, chaque montant réellement imprimé
+    /// doit se retrouver dans les montants de ses extraits (sinon une ligne juste de l'IA serait refusée).
+    /// </summary>
+    [SkippableTheory]
+    [MemberData(nameof(Statements))]
+    public void Real_statement_is_never_sent_to_the_ai_and_its_amounts_are_anchored_in_the_extracts(int index)
+    {
+        var expected = Expected().Statements[index];
+        var path = Path.Combine(Directory(), expected.File);
+        Skip.IfNot(File.Exists(path), $"{path} absent : recette privée ignorée.");
+        var pdf = File.ReadAllBytes(path);
+        var extractor = new BankStatementLayoutExtractor();
+        var result = extractor.Extract(pdf);
+
+        Assert.True(BankStatementAiReadingPlanner.Select(result).IsEmpty);
+
+        var pages = result.Lines.Select(l => l.PageNumber).Distinct().ToList();
+        var chunks = extractor.BuildAiTextChunks(pdf, pages, operationsPerChunk: 6);
+        foreach (var page in pages)
+        {
+            var printed = chunks.Where(c => c.Page == page).SelectMany(c => c.OperationAmounts).ToList();
+            foreach (var line in result.Lines.Where(l => l.PageNumber == page))
+            {
+                Assert.True(printed.Remove(line.Amount), $"page {page} : montant d'une opération absent des extraits");
+            }
+        }
+    }
+
+    [SkippableTheory]
+    [MemberData(nameof(MultiFiles))]
+    public void Real_multi_statement_file_needs_no_ai(int index)
+    {
+        var multi = Expected().Multi;
+        Skip.If(multi is null || multi.Count == 0, "Aucun fichier à plusieurs relevés dans la recette privée.");
+        var path = Path.Combine(Directory(), multi![index].File);
+        Skip.IfNot(File.Exists(path), $"{path} absent : recette privée ignorée.");
+
+        var results = new BankStatementLayoutExtractor().ExtractAll(File.ReadAllBytes(path));
+
+        Assert.All(results, r => Assert.True(BankStatementAiReadingPlanner.Select(r).IsEmpty));
+    }
+
     private static ExtractedStatementLine Select(ExtractedBankStatement result, Probe probe)
     {
         if (probe.Index is { } index)

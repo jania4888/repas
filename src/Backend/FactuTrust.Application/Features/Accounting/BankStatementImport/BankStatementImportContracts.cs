@@ -157,6 +157,12 @@ public sealed record BankStatementImportCapabilitiesDto(
 {
     public static BankStatementImportCapabilitiesDto Disabled { get; } =
         new(false, false, null, 0, 0, Array.Empty<string>(), Array.Empty<string>());
+
+    /// <summary>
+    /// Tout relevé PDF ou image doit passer par l'import IA : l'assistant de rapprochement y bascule
+    /// ces fichiers au lieu de son aperçu historique. Toujours faux quand l'import est désactivé.
+    /// </summary>
+    public bool AllDocumentsViaAi { get; init; }
 }
 
 /// <summary>Codes d'erreur stables de l'import (testés par le front, traduits côté API).</summary>

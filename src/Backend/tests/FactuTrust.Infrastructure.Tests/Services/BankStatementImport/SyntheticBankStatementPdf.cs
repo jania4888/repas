@@ -30,6 +30,18 @@ internal static class SyntheticBankStatementPdf
         QuestPDF.Settings.License = LicenseType.Community;
     }
 
+    private static readonly object GenerationGate = new();
+
+    /// <summary>
+    /// Génération sérialisée : des générations QuestPDF simultanées (tests exécutés en parallèle)
+    /// produisent de temps à autre un PDF sans texte lisible, ce qui rendait des tests instables.
+    /// </summary>
+    private static byte[] GenerateSerialized(this IDocument document)
+    {
+        lock (GenerationGate)
+            return document.GeneratePdf();
+    }
+
     /// <summary>RIB fictif à clé valide pour un code banque donné.</summary>
     public static string RibFor(string bankCode)
     {
@@ -93,7 +105,7 @@ internal static class SyntheticBankStatementPdf
                 col.Item().Text($"Solde du compte au: 31/01/2026 {Dot(spec.Closing - 28.636m)}");
             });
         });
-    }).GeneratePdf();
+    }).GenerateSerialized();
 
     /// <summary>Façon BH : AUCUN en-tête texte, dates sans année, dates valeur ISO, totaux sans libellé.</summary>
     public static byte[] BhLike(Spec spec) => Document.Create(container =>
@@ -114,7 +126,7 @@ internal static class SyntheticBankStatementPdf
                 col.Item().PaddingTop(6).Element(e => Row(e, "31-01-26 CREDITEUR", string.Empty, null, spec.Closing));
             });
         });
-    }).GeneratePdf();
+    }).GenerateSerialized();
 
     /// <summary>Façon Zitouna : en-têtes texte, débits imprimés NÉGATIFS, « Solde au » sur la ligne au-dessus du montant.</summary>
     public static byte[] ZitounaLike(Spec spec) => Document.Create(container =>
@@ -145,7 +157,7 @@ internal static class SyntheticBankStatementPdf
                 col.Item().PaddingTop(6).Element(e => SignedRow(e, string.Empty, string.Empty, string.Empty, "31/01/2026 :", Comma(spec.Closing, groups: false)));
             });
         });
-    }).GeneratePdf();
+    }).GenerateSerialized();
 
     /// <summary>Un relevé mensuel BIAT : période, données et (optionnellement) solde d'ouverture imposé.</summary>
     public sealed record Monthly(DateOnly From, DateOnly To, Spec Spec);
@@ -208,7 +220,7 @@ internal static class SyntheticBankStatementPdf
                 });
             });
         }
-    }).GeneratePdf();
+    }).GenerateSerialized();
 
     private static void MonthlyRow(IContainer container, string date, string label, string reference, string valueDate, string debit, string credit) =>
         container.Row(row =>
@@ -240,13 +252,30 @@ internal static class SyntheticBankStatementPdf
             page.Size(PageSizes.A4);
             page.Content().Height(200).Background(Colors.Grey.Lighten2);
         });
-    }).GeneratePdf();
+    }).GenerateSerialized();
+
+    /// <summary>Page texte SANS date d'opération reconnaissable (banque inconnue) : lignes libres.</summary>
+    public static byte[] UnknownLayout(int rows) => Document.Create(container =>
+    {
+        container.Page(page =>
+        {
+            page.Size(PageSizes.A4);
+            page.Margin(20);
+            page.DefaultTextStyle(t => t.FontSize(8));
+            page.Content().Column(col =>
+            {
+                col.Item().Text("ETABLISSEMENT FICTIF - EXTRAIT DE COMPTE");
+                for (var i = 1; i <= rows; i++)
+                    col.Item().Text($"MOUVEMENT NUMERO {i:D2} REFERENCE INTERNE        {i},500");
+            });
+        });
+    }).GenerateSerialized();
 
     public static byte[] ManyPages(int count) => Document.Create(container =>
     {
         for (var i = 0; i < count; i++)
             container.Page(page => page.Content().Text($"Page {i + 1}"));
-    }).GeneratePdf();
+    }).GenerateSerialized();
 
     private static IContainer Cell(TableDescriptor table, uint span = 1) =>
         table.Cell().ColumnSpan(span).Border(0.5f).Padding(3).AlignMiddle();

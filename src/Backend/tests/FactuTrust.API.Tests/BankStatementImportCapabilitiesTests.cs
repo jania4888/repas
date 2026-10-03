@@ -21,7 +21,7 @@ public sealed class BankStatementImportCapabilitiesTests
     private readonly Mock<IBankStatementAiExtraction> _ai = new();
     private readonly Mock<ICurrentUser> _user = new();
 
-    private BankStatementImportController Controller(bool enabled)
+    private BankStatementImportController Controller(bool enabled, bool allDocuments = false)
     {
         _user.Setup(u => u.HasPermission(It.IsAny<string>())).Returns(true);
         _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>()))
@@ -32,7 +32,7 @@ public sealed class BankStatementImportCapabilitiesTests
             _ai.Object,
             BankStatementProfileRegistry.Default,
             _user.Object,
-            Options.Create(new AccountingSettings { BankStatementAiPostingEnabled = enabled }));
+            Options.Create(new AccountingSettings { BankStatementAiPostingEnabled = enabled, BankStatementAiForAllDocumentsEnabled = allDocuments }));
     }
 
     private static BankStatementImportCapabilitiesDto Capabilities(IActionResult result)
@@ -78,6 +78,19 @@ public sealed class BankStatementImportCapabilitiesTests
 
         Assert.True(caps.Enabled);
         Assert.False(caps.AiAvailable);
+        _ai.Verify(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Theory]
+    [InlineData(false, false, false)]
+    [InlineData(false, true, false)]
+    [InlineData(true, false, false)]
+    [InlineData(true, true, true)]
+    public async Task All_documents_via_ai_needs_both_switches_even_without_ai_probe(bool enabled, bool allDocuments, bool expected)
+    {
+        var caps = Capabilities(await Controller(enabled, allDocuments).GetCapabilities(includeAi: false));
+
+        Assert.Equal(expected, caps.AllDocumentsViaAi);
         _ai.Verify(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 

@@ -184,6 +184,19 @@ public sealed class AccountingSettings
     public bool BankStatementAiPostingEnabled { get; set; }
 
     /// <summary>
+    /// Tout relevé PDF ou image passe par l'import IA : la lecture directe reste la première passe et
+    /// l'IA relit automatiquement chaque page non lue avec certitude (page scannée, banque inconnue,
+    /// ligne douteuse, solde qui ne boucle pas). L'assistant de rapprochement bascule alors ces
+    /// fichiers vers l'import IA, et son ancien aperçu PDF/image (IA synchrone) est fermé.
+    /// OFF par défaut : sans lui, tous les chemins restent strictement identiques. N'a d'effet que si
+    /// <see cref="BankStatementAiPostingEnabled"/> est aussi actif (voir <see cref="AiForAllDocumentsEffective"/>).
+    /// </summary>
+    public bool BankStatementAiForAllDocumentsEnabled { get; set; }
+
+    /// <summary>Effet réel de <see cref="BankStatementAiForAllDocumentsEnabled"/> : l'import IA doit être actif.</summary>
+    public bool AiForAllDocumentsEffective => BankStatementAiPostingEnabled && BankStatementAiForAllDocumentsEnabled;
+
+    /// <summary>
     /// Rapprochement automatique « v2 » : priorité au lien source (écriture générée depuis la ligne
     /// de relevé) et comparaison de compte dans les deux sens (5321 ↔ sous-compte). OFF par défaut :
     /// l'association automatique historique reste strictement identique.

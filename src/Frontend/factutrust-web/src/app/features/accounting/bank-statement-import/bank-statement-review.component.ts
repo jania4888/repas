@@ -22,6 +22,7 @@ import {
   BankStatementImportSession,
   BankStatementImportSibling,
   BankStatementProposals,
+  ConfirmResult,
   GenerateItem,
   GenerateOutcome,
   SETTLED_STATUSES,
@@ -88,9 +89,23 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
         <div class="card bsr-card bsr-progress" role="status" aria-live="polite">
           <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
           <div class="bsr-progress__body">
-            <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.des.pages.scannees.ebb6ce2d">Lecture des pages scannées… {{ s.progressPercent }} %</p>
+            @switch (s.extraction?.aiPlan?.reason) {
+              @case ('line_issues') {
+                <p class="bsr-strong" i18n="@@accounting.bank-statement-import.relecture.par.l.ia.des.lignes.non.lues.avec.cert.a39a7373">Relecture par l'IA des lignes non lues avec certitude… {{ s.progressPercent }} %</p>
+              }
+              @case ('unverified') {
+                <p class="bsr-strong" i18n="@@accounting.bank-statement-import.relecture.du.releve.par.l.ia.solde.non.verifie.s.725c03c7">Relecture du relevé par l'IA (solde non vérifié)… {{ s.progressPercent }} %</p>
+              }
+              @default {
+                <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.des.pages.scannees.ebb6ce2d">Lecture des pages scannées… {{ s.progressPercent }} %</p>
+              }
+            }
             <div class="bsr-bar"><div class="bsr-bar__fill" [style.width.%]="s.progressPercent"></div></div>
-            <p class="bsr-muted" i18n="@@accounting.bank-statement-import.une.page.prend.jusqu.a.une.minute.avec.l.fc78a702">Une page prend jusqu'à une minute avec l'IA locale. Vous pouvez quitter cet écran et y revenir.</p>
+            @if (estimatedMinutes(s); as minutes) {
+              <p class="bsr-muted bsr-estimate" i18n="@@accounting.bank-statement-import.duree.estimee.environ.minutes.min.vous.pouvez.qu.8c3f8b0a">Durée estimée : environ {{ minutes }} min. Vous pouvez quitter cet écran et y revenir.</p>
+            } @else {
+              <p class="bsr-muted" i18n="@@accounting.bank-statement-import.une.page.prend.jusqu.a.une.minute.avec.l.fc78a702">Une page prend jusqu'à une minute avec l'IA locale. Vous pouvez quitter cet écran et y revenir.</p>
+            }
           </div>
           <app-button variant="secondary" icon="pi-times" iconPos="left" (clicked)="cancelSession()" [disabled]="busy()" ariaLabel="Annuler l'import" i18n-ariaLabel="@@accounting.bank-statement-import.annuler.l.import.8c2b45d2" i18n="@@accounting.bank-statement-import.annuler.49ba3292">Annuler</app-button>
         </div>
@@ -99,7 +114,11 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
       @if (s.status === 'Failed' || s.status === 'Cancelled') {
         <div class="card bsr-card">
           <p class="bsr-strong" i18n="@@accounting.bank-statement-import.l.analyse.de.ce.releve.n.a.pas.abouti.bcff5d65">L'analyse de ce relevé n'a pas abouti.</p>
-          <a routerLink="/accounting/manual-entry" class="bsr-link" i18n="@@accounting.bank-statement-import.retour.a.la.saisie.ca4355e9">Retour à la saisie</a>
+          @if (origin() === 'reconciliation') {
+            <a routerLink="/accounting/bank-reconciliation" class="bsr-link" i18n="@@accounting.bank-statement-import.retour.au.rapprochement.bancaire.6e5dcc9c">Retour au rapprochement bancaire</a>
+          } @else {
+            <a routerLink="/accounting/manual-entry" class="bsr-link" i18n="@@accounting.bank-statement-import.retour.a.la.saisie.ca4355e9">Retour à la saisie</a>
+          }
         </div>
       }
 
@@ -111,7 +130,7 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
             <li i18n="@@accounting.bank-statement-import.releve.affiche.ci.dessous.a7b05a90">Relevé {{ s.segmentIndex }} — affiché ci-dessous</li>
             @for (sib of s.siblings ?? []; track sib.id) {
               <li i18n="@@accounting.bank-statement-import.releve.1919c83f">
-                <a class="bsr-link" [routerLink]="siblingLink(sib)">Relevé {{ sib.segmentIndex }} — {{ sib.periodStart | date: 'MM/yyyy' }}</a>
+                <a class="bsr-link" [routerLink]="siblingLink(sib)" [queryParams]="originQuery()">Relevé {{ sib.segmentIndex }} — {{ sib.periodStart | date: 'MM/yyyy' }}</a>
                 <span class="bsr-muted"> · {{ siblingState(sib) }}</span>
               </li>
             }
@@ -201,7 +220,7 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
         <p class="bsr-strong" i18n="@@accounting.bank-statement-import.il.reste.releve.s.de.ce.fichier.a.contro.a982f4ce">Il reste {{ pendingSiblings().length }} relevé(s) de ce fichier à contrôler :</p>
         <ul class="bsr-siblings">
           @for (sib of pendingSiblings(); track sib.id) {
-            <li i18n="@@accounting.bank-statement-import.releve.0edb21de"><a class="bsr-link" [routerLink]="siblingLink(sib)">Relevé {{ sib.segmentIndex }} — {{ sib.periodStart | date: 'MM/yyyy' }}</a></li>
+            <li i18n="@@accounting.bank-statement-import.releve.0edb21de"><a class="bsr-link" [routerLink]="siblingLink(sib)" [queryParams]="originQuery()">Relevé {{ sib.segmentIndex }} — {{ sib.periodStart | date: 'MM/yyyy' }}</a></li>
           }
         </ul>
       </div>
@@ -426,6 +445,8 @@ export class BankStatementReviewComponent implements OnInit {
   readonly activeRow = signal<ReviewRow | null>(null);
   /** Relevés frères (même fichier) encore à contrôler, transmis lors de la navigation après confirmation. */
   readonly pendingSiblings = signal<BankStatementImportSibling[]>([]);
+  /** Écran d'origine reconnu (liste blanche) : le rapprochement y revient après l'enregistrement. */
+  readonly origin = signal<'reconciliation' | null>(null);
   readonly lastGeneration = signal<{ created: number; skipped: number; failed: number; failures: GenerateOutcome[] } | null>(null);
 
   journalCode = 'JB';
@@ -471,6 +492,7 @@ export class BankStatementReviewComponent implements OnInit {
   readonly selectedCount = computed(() => this.rows().filter(r => r.selected && !this.isSettled(r)).length);
 
   ngOnInit(): void {
+    this.origin.set(this.route.snapshot?.queryParamMap?.get('from') === 'reconciliation' ? 'reconciliation' : null);
     this.refs.loadAll();
     this.api.capabilities().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(caps => this.capabilities.set(caps));
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
@@ -489,7 +511,8 @@ export class BankStatementReviewComponent implements OnInit {
       next: s => {
         this.session.set(s);
         if (s.status === 'Confirmed' && s.statementId) {
-          void this.router.navigate(['/accounting/bank-statement-import/statement', s.statementId], { replaceUrl: true });
+          if (this.origin() === 'reconciliation') this.returnToReconciliation(s, s.statementId);
+          else void this.router.navigate(['/accounting/bank-statement-import/statement', s.statementId], { replaceUrl: true });
           return;
         }
         if (s.status === 'Extracting' || s.status === 'Pending') this.schedulePoll(id);
@@ -514,7 +537,7 @@ export class BankStatementReviewComponent implements OnInit {
     this.api.cancel(s.id).subscribe({
       next: () => {
         this.busy.set(false);
-        void this.router.navigate(['/accounting/manual-entry']);
+        void this.router.navigate([this.origin() === 'reconciliation' ? '/accounting/bank-reconciliation' : '/accounting/manual-entry']);
       },
       error: (err: unknown) => this.fail(err)
     });
@@ -528,6 +551,10 @@ export class BankStatementReviewComponent implements OnInit {
     this.api.confirm(s.id).subscribe({
       next: result => {
         this.busy.set(false);
+        if (this.origin() === 'reconciliation') {
+          this.returnToReconciliation(s, result.statementId, result);
+          return;
+        }
         const pendingSiblings = (s.siblings ?? []).filter(x => !x.statementId);
         void this.router.navigate(['/accounting/bank-statement-import/statement', result.statementId], {
           replaceUrl: true,
@@ -536,6 +563,39 @@ export class BankStatementReviewComponent implements OnInit {
       },
       error: (err: unknown) => this.fail(err)
     });
+  }
+
+  /**
+   * Retour au rapprochement : s'il reste un relevé du même fichier à contrôler, on l'ouvre (même
+   * origine) ; sinon le rapprochement s'ouvre sur le premier relevé enregistré du fichier (ordre
+   * chronologique). Cibles constantes : seul l'identifiant du relevé est transmis.
+   */
+  private returnToReconciliation(s: BankStatementImportSession, statementId: string, result?: ConfirmResult): void {
+    const next = (s.siblings ?? []).find(x => !x.statementId && (x.status === 'AwaitingReview' || x.status === 'Extracting' || x.status === 'Pending'));
+    if (next) {
+      void this.router.navigate(['/accounting/bank-statement-import/session', next.id], {
+        replaceUrl: true,
+        queryParams: { from: 'reconciliation' }
+      });
+      return;
+    }
+    const saved = [{ segmentIndex: s.segmentIndex ?? 1, statementId }, ...(s.siblings ?? [])
+      .filter(x => !!x.statementId)
+      .map(x => ({ segmentIndex: x.segmentIndex, statementId: x.statementId as string }))];
+    const first = saved.reduce((a, b) => (b.segmentIndex < a.segmentIndex ? b : a));
+    void this.router.navigate(['/accounting/bank-reconciliation'], {
+      replaceUrl: true,
+      queryParams: { statementId: first.statementId },
+      state: result ? { importedStatement: { lineCount: result.lineCount, alreadyImportedCount: result.alreadyImportedCount } } : undefined
+    });
+  }
+
+  /** Durée estimée de la lecture IA restante (minutes, arrondie au supérieur) ; null sans estimation. */
+  estimatedMinutes(s: BankStatementImportSession): number | null {
+    const seconds = s.extraction?.aiPlan?.estimatedSeconds ?? 0;
+    if (seconds <= 0) return null;
+    const remaining = seconds * (1 - Math.min(100, Math.max(0, s.progressPercent)) / 100);
+    return Math.max(1, Math.ceil(remaining / 60));
   }
 
   // ── Propositions ────────────────────────────────────────────────────────────────────────
@@ -767,6 +827,11 @@ export class BankStatementReviewComponent implements OnInit {
   readonly sourceLabel = proposalSourceLabel;
   readonly diagnosticText = proposalDiagnosticMessage;
 
+  /** Paramètres conservés dans les liens vers les autres relevés du fichier (origine connue seulement). */
+  originQuery(): { from: 'reconciliation' } | null {
+    return this.origin() === 'reconciliation' ? { from: 'reconciliation' } : null;
+  }
+
   siblingLink(sib: BankStatementImportSibling): string[] {
     return sib.statementId
       ? ['/accounting/bank-statement-import/statement', sib.statementId]
@@ -795,6 +860,11 @@ export class BankStatementReviewComponent implements OnInit {
       case 'layout':
         return $localize`:@@accounting.bank-statement-import.ts.lecture.directe.du.pdf.aucune.ia.ba300454:Lecture directe du PDF (aucune IA)`;
       case 'layout+ai':
+        if (s.extraction?.aiPlan?.textPages?.length) {
+          return s.aiProviderKind === 'external'
+            ? $localize`:@@accounting.bank-statement-import.ts.lecture.directe.completee.par.une.ia.externe.b4615235:Lecture directe complétée par une IA externe`
+            : $localize`:@@accounting.bank-statement-import.ts.lecture.directe.completee.par.l.ia.locale.bdf8d38c:Lecture directe complétée par l'IA locale`;
+        }
         return s.aiProviderKind === 'external'
           ? $localize`:@@accounting.bank-statement-import.ts.lecture.directe.pages.scannees.lues.par.une.ia.e.1e33d5e5:Lecture directe + pages scannées lues par une IA externe`
           : $localize`:@@accounting.bank-statement-import.ts.lecture.directe.pages.scannees.lues.par.l.ia.loc.9d423ab4:Lecture directe + pages scannées lues par l'IA locale`;

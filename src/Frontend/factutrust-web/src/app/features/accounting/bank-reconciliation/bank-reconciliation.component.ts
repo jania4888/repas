@@ -5,7 +5,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { concatMap, from, map } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TableModule } from 'primeng/table';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
@@ -36,11 +36,21 @@ import { BankAccountDto, BankAccountService } from '@core/services/bank-account.
 import { formatLocalDate, parseLocalDateString } from '../shared/accounting-date-utils';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { BankStatementImportService } from '../bank-statement-import/bank-statement-import.service';
+import { BankStatementUploadDialogComponent } from '../bank-statement-import/bank-statement-upload-dialog.component';
 
 interface WizardStepDef {
   index: 1 | 2 | 3 | 4;
   label: string;
   hint: string;
+}
+
+/** Identifiant de relevé accepté dans l'adresse (retour de l'import IA). */
+const GUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Code stable d'un échec de l'aperçu (corps `ApiResponse`), jamais le texte serveur. */
+function previewErrorCode(err: unknown): string | null {
+  if (!(err instanceof HttpErrorResponse)) return null;
+  return (err.error as { code?: string } | null)?.code ?? null;
 }
 
 @Component({
@@ -55,7 +65,8 @@ interface WizardStepDef {
     AccountingStatusBannerComponent,
     AccountingFilterBarComponent,
     AccountingExportMenuComponent,
-    AccountingCorrectionBannerComponent
+    AccountingCorrectionBannerComponent,
+    BankStatementUploadDialogComponent
   ],
   template: `
     <app-page-header
@@ -267,7 +278,10 @@ interface WizardStepDef {
           <div class="form-field br-field-file">
             <label class="field-label" for="br-file" i18n="@@accounting.bank-reconciliation.fichier.f0fa5745">Fichier</label>
             <input id="br-file" type="file" class="br-input" (change)="onFileSelected($event)" [disabled]="busy()"
-              accept=".csv,.txt,.tsv,.xlsx,.ofx,.qfx,.sta,.mt940,.txt,.pdf,.jpg,.jpeg,.png" />
+              accept=".csv,.txt,.tsv,.xlsx,.ofx,.qfx,.sta,.mt940,.txt,.pdf,.jpg,.jpeg,.png,.webp" />
+            @if (allDocumentsViaAi()) {
+              <small class="br-help br-ai-hint" i18n="@@accounting.bank-reconciliation.releve.pdf.ou.image.analyse.par.l.import.ia.lect.4f7ad0bc">Relevé PDF ou image : analyse par l'import IA (lecture directe, complétée par l'IA si nécessaire), puis retour ici.</small>
+            }
           </div>
           <div class="br-import-actions">
             <app-button variant="secondary" icon="pi pi-search" type="button"
@@ -732,6 +746,14 @@ interface WizardStepDef {
         </div>
       </div>
     }
+
+    @if (aiPostingEnabled()) {
+      <app-bank-statement-upload-dialog
+        [(visible)]="aiImportVisible"
+        [initialFile]="aiImportFile()"
+        [initialBankAccountId]="selectedBankAccountId || null"
+        origin="reconciliation" />
+    }
   `,
   styles: `
     .br-card {
@@ -894,11 +916,16 @@ export class BankReconciliationComponent implements OnInit {
   private readonly bankAccountsApi = inject(BankAccountService);
   private readonly toast = inject(ToastService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly bankStatementImport = inject(BankStatementImportService);
   private readonly destroyRef = inject(DestroyRef);
 
   /** Import IA de relevés activé côté serveur : accès à la comptabilisation assistée d'un relevé. */
   readonly aiPostingEnabled = signal(false);
+  /** Tout relevé PDF ou image passe par l'import IA (analyse en arrière-plan, relecture, retour ici). */
+  readonly allDocumentsViaAi = signal(false);
+  readonly aiImportVisible = signal(false);
+  readonly aiImportFile = signal<File | null>(null);
 
   unmatchedOnly = false;
 
@@ -992,7 +1019,53 @@ export class BankReconciliationComponent implements OnInit {
     this.unmatchedOnly = qp.get('unmatchedOnly') === '1';
     this.loadStatements();
     this.loadBankAccounts();
-    this.bankStatementImport.capabilities({ includeAi: false }).subscribe(caps => this.aiPostingEnabled.set(!!caps?.enabled));
+    this.bankStatementImport.capabilities({ includeAi: false }).subscribe(caps => {
+      this.aiPostingEnabled.set(!!caps?.enabled);
+      this.allDocumentsViaAi.set(!!caps?.enabled && !!caps?.allDocumentsViaAi);
+    });
+    this.openImportedStatement(qp.get('statementId'));
+  }
+
+  /**
+   * Retour de l'import IA : le relevé enregistré s'ouvre directement à l'étape 2 (association).
+   * Seul un identifiant au format GUID est accepté, lu par l'API du dossier ; le paramètre est
+   * ensuite retiré de l'adresse (un rafraîchissement ne rouvre pas l'assistant).
+   */
+  private openImportedStatement(statementId: string | null): void {
+    if (!statementId || !GUID_PATTERN.test(statementId)) return;
+    const state = (typeof history !== 'undefined' ? history.state : null) as
+      { importedStatement?: { lineCount?: number; alreadyImportedCount?: number } } | null;
+    const imported = state?.importedStatement;
+    if (imported && typeof imported.lineCount === 'number') {
+      const already = imported.alreadyImportedCount ?? 0;
+      this.toast.add({
+        severity: already > 0 ? 'warn' : 'success',
+        summary: $localize`:@@accounting.bank-reconciliation.ts.releve.enregistre.48f3bacc:Relevé enregistré`,
+        detail: already > 0
+          ? $localize`:@@accounting.bank-reconciliation.ts.operation.s.dont.deja.presente.s.dans.un.autre.r.84d6cf0e:${imported.lineCount}:COUNT: opération(s), dont ${already}:ALREADY: déjà présente(s) dans un autre relevé de ce compte.`
+          : $localize`:@@accounting.bank-reconciliation.ts.operation.s.prete.s.pour.le.rapprochement.9a5f4b90:${imported.lineCount}:COUNT: opération(s) prête(s) pour le rapprochement.`,
+        life: 5000
+      });
+    }
+    this.openStatement(statementId);
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { statementId: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
+  }
+
+  /** Relevé PDF ou image : l'import IA le prend en charge (le fichier est présélectionné). */
+  openAiImport(file: File | null): void {
+    if (!file) return;
+    this.aiImportFile.set(file);
+    this.aiImportVisible.set(true);
+  }
+
+  private isAiDocument(file: File | null): boolean {
+    const ext = file?.name.split('.').pop()?.toLowerCase() ?? '';
+    return ['pdf', 'png', 'jpg', 'jpeg', 'webp'].includes(ext);
   }
 
   loadBankAccounts(): void {
@@ -1198,12 +1271,18 @@ export class BankReconciliationComponent implements OnInit {
       else if (['ofx', 'qfx'].includes(ext)) this.fileFormat = BankStatementFileFormat.Ofx;
       else if (['sta', 'mt940'].includes(ext)) this.fileFormat = BankStatementFileFormat.Mt940;
       else this.fileFormat = BankStatementFileFormat.Csv;
+      if (this.allDocumentsViaAi() && this.isAiDocument(file)) this.openAiImport(file);
     }
   }
 
   runPreview(): void {
     const file = this.selectedFile();
     if (!file || this.busy()) return;
+    if (this.allDocumentsViaAi()
+      && (this.isAiDocument(file) || this.fileFormat === BankStatementFileFormat.Pdf || this.fileFormat === BankStatementFileFormat.Image)) {
+      this.openAiImport(file);
+      return;
+    }
     this.error.set(null);
     this.previewing.set(true);
     this.api.previewStatementFile(file, this.fileFormat).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -1232,6 +1311,10 @@ export class BankReconciliationComponent implements OnInit {
       },
       error: err => {
         this.previewing.set(false);
+        if (previewErrorCode(err) === 'bank_statement.ai_import_required' && this.aiPostingEnabled()) {
+          this.openAiImport(file);
+          return;
+        }
         this.error.set(this.previewErrorMessage(err)
           ?? this.errors.extractErrorMessage(err, $localize`:@@accounting.bank-reconciliation.ts.erreur.reseau.lors.de.l.apercu.du.releve.170cebcd:Erreur réseau lors de l'aperçu du relevé.`));
       }
@@ -1375,6 +1458,8 @@ export class BankReconciliationComponent implements OnInit {
         return $localize`:@@accounting.bank-reconciliation.ts.la.lecture.de.ce.releve.par.l.ia.depasse.le.dela.238cef35:La lecture de ce relevé par l'IA dépasse le délai autorisé. Préférez un relevé PDF téléchargé depuis votre banque en ligne (texte lisible), ou un export CSV/OFX.`;
       case 'bank_statement.ai_unavailable':
         return $localize`:@@accounting.bank-reconciliation.ts.le.moteur.ia.n.a.pas.pu.lire.ce.releve.pour.le.m.c6ea7b62:Le moteur IA n'a pas pu lire ce relevé pour le moment. Réessayez plus tard, ou utilisez un relevé PDF téléchargé depuis votre banque en ligne, ou un export CSV/OFX.`;
+      case 'bank_statement.ai_import_required':
+        return $localize`:@@accounting.bank-reconciliation.ts.les.releves.pdf.ou.image.s.importent.par.l.analy.f7d9f7d0:Les relevés PDF ou image s'importent par l'analyse IA du relevé : rechargez la page puis choisissez à nouveau le fichier.`;
       default:
         return null;
     }

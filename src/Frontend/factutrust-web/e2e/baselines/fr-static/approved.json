@@ -16,8 +16,8 @@
     "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres."
   },
   "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts#BankReconciliationComponent": {
-    "sha": "43febc1a19c61652db7fee145168d0d8a949d6a6900728965e51d09b1f08179f",
-    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique. Import IA de relevés : bouton « Comptabiliser avec l'IA » ajouté à l'étape 2, visible seulement si le serveur active la fonctionnalité. Aperçu PDF : indication de lecture en cours ; fichier à plusieurs relevés listé relevé par relevé (période, soldes, état) et importé dans l'ordre chronologique (ajouts purs, l'écran d'un seul relevé est inchangé)."
+    "sha": "9cb6fc65e552ee8ef69dfac85ce8942731ca84b737a9fccbe6b66f94c611ab04",
+    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique. Import IA de relevés : bouton « Comptabiliser avec l'IA » ajouté à l'étape 2, visible seulement si le serveur active la fonctionnalité. Aperçu PDF : indication de lecture en cours ; fichier à plusieurs relevés listé relevé par relevé (période, soldes, état) et importé dans l'ordre chronologique (ajouts purs, l'écran d'un seul relevé est inchangé). Tout document par l'IA : un relevé PDF ou image ouvre l'import IA (indication sous le champ fichier, .webp accepté, modale d'import en fin d'écran), visible seulement si le serveur active la fonctionnalité (ajouts purs)."
   },
   "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts#ChartOfAccountsComponent": {
     "sha": "cf1667aeda670fbcd57064ba16cec3d9e432a1a7c60a8c39694cd4b72ce5c115",

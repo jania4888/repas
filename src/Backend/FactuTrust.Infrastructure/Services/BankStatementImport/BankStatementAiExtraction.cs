@@ -128,9 +128,25 @@ public sealed class BankStatementAiExtractionJob
             var isPdf = session.ContentType.Contains("pdf", StringComparison.OrdinalIgnoreCase)
                         || session.FileName.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase);
 
-            var pages = layout.UnresolvedPages.Take(Math.Max(1, limits.MaxAiPages)).ToList();
+            // Plan absent (analyse lancée sans le drapeau « tout document par l'IA », ou avant lui) :
+            // pages scannées seulement, exactement comme avant. Plan présent : pages scannées du plan
+            // puis pages texte relues par extraits de quelques opérations.
+            var plan = layout.AiPlan;
+            var pages = (plan?.ScannedPages ?? layout.UnresolvedPages).Take(Math.Max(1, limits.MaxAiPages)).ToList();
+            var chunks = plan is { TextPages.Count: > 0 } && isPdf
+                ? (services.GetService<BankStatementLayoutExtractor>() ?? new BankStatementLayoutExtractor())
+                    .BuildAiTextChunks(content, plan.TextPages, limits.EffectiveAiTextOperationsPerCall)
+                : Array.Empty<BankStatementAiTextChunk>();
+            var totalCalls = Math.Max(1, pages.Count + chunks.Count);
+            if (plan is not null)
+            {
+                var llmSeconds = services.GetService<IOptions<OllamaSettings>>()?.Value.ImportLlmTimeoutSeconds ?? 180;
+                budget.CancelAfter(ComputeBudget(totalCalls, llmSeconds, limits.EffectiveAiJobBudgetMinutes));
+            }
+
             var readings = new Dictionary<int, BankStatementAiPageReader.PageReading>();
             var failed = new List<int>();
+            var calls = 0;
 
             for (var i = 0; i < pages.Count; i++)
             {
@@ -155,13 +171,7 @@ public sealed class BankStatementAiExtractionJob
                 BankStatementAiPageReader.PageReading reading;
                 if (outcome.IsFailure)
                 {
-                    reading = new BankStatementAiPageReader.PageReading(
-                        Array.Empty<ExtractedStatementLine>(), null, null,
-                        new[]
-                        {
-                            new StatementExtractionIssue(StatementIssueCodes.AiPageFailed, StatementIssueSeverity.Blocking,
-                                $"Page {pageNumber} non lue par l'IA : {outcome.Error.Description}", pageNumber)
-                        });
+                    reading = FailedReading(pageNumber, outcome.Error.Description);
                 }
                 else
                 {
@@ -172,11 +182,54 @@ public sealed class BankStatementAiExtractionJob
                 if (reading.Issues.Any(x => x.Code == StatementIssueCodes.AiPageFailed))
                     failed.Add(pageNumber);
 
-                session.ReportProgress((i + 1) * 100 / pages.Count);
+                session.ReportProgress(++calls * 100 / totalCalls);
                 await ctx.SaveChangesAsync(budget.Token);
             }
 
-            var merged = BankStatementAiPageReader.Merge(layout, readings, failed);
+            var chunkReadings = new List<(BankStatementAiPageReader.PageReading Reading, BankStatementAiTextChunk Chunk)>();
+            foreach (var chunk in chunks)
+            {
+                if (await IsCancelledAsync(ctx, sessionId, budget.Token))
+                    return;
+
+                await using var stream = new MemoryStream(Encoding.UTF8.GetBytes(chunk.Text));
+                var outcome = await pipeline.RunAsync(new AiStructuredExtractionRequest
+                {
+                    FileStream = stream,
+                    FileName = $"releve-p{chunk.Page}-{chunk.Index + 1}.txt",
+                    ContentType = "text/plain",
+                    SystemPrompt = BankStatementAiPrompt.System,
+                    UserInstruction = BankStatementAiPrompt.TextExtractInstruction,
+                    OutputSchema = LlmOutputSchemas.BankStatementPage,
+                    ErrorCode = "BankStatementImport",
+                    MaxImages = 1
+                }, budget.Token);
+
+                // Pas d'ancrage OCR ici : la fusion vérifie chaque montant contre les montants imprimés de l'extrait.
+                var reading = outcome.IsFailure
+                    ? FailedReading(chunk.Page, outcome.Error.Description)
+                    : BankStatementAiPageReader.Read(outcome.Value.RawContent, chunk.Page, ocrText: null, acceptDayFirstDates: true);
+                chunkReadings.Add((reading, chunk));
+
+                session.ReportProgress(++calls * 100 / totalCalls);
+                await ctx.SaveChangesAsync(budget.Token);
+            }
+
+            Dictionary<int, BankStatementAiPageReader.TextPageReading>? textReadings = null;
+            if (plan is { TextPages.Count: > 0 })
+            {
+                textReadings = new Dictionary<int, BankStatementAiPageReader.TextPageReading>();
+                foreach (var page in plan.TextPages)
+                {
+                    var forPage = chunkReadings.Where(c => c.Chunk.Page == page).ToList();
+                    textReadings[page] = forPage.Count > 0
+                        ? BankStatementAiPageReader.CombineChunks(forPage)
+                        : new BankStatementAiPageReader.TextPageReading(
+                            FailedReading(page, "aucun texte exploitable sur la page."), Array.Empty<decimal>(), Array.Empty<decimal>(), Failed: true);
+                }
+            }
+
+            var merged = BankStatementAiPageReader.Merge(layout, readings, failed, textReadings);
             var method = layout.Lines.Count > 0 ? "layout+ai" : "ai";
             session.CompleteExtraction(JsonSerializer.Serialize(merged, BankStatementImportService.JsonOptions), method, layout.ProfileId, layout.PageCount);
             await ctx.SaveChangesAsync(budget.Token);
@@ -184,6 +237,12 @@ public sealed class BankStatementAiExtractionJob
             _logger.LogInformation(
                 "Lecture IA de relevé : session {SessionId}, {Pages} page(s) lue(s), {Failed} en échec, {Lines} ligne(s) au total.",
                 sessionId, readings.Count, failed.Count, merged.Lines.Count);
+            if (textReadings is not null)
+            {
+                _logger.LogInformation(
+                    "Lecture IA de relevé : session {SessionId}, {TextPages} page(s) texte relue(s) en {Chunks} extrait(s), {TextFailed} en échec.",
+                    sessionId, textReadings.Count, chunks.Count, textReadings.Count(t => t.Value.Failed));
+            }
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -198,6 +257,26 @@ public sealed class BankStatementAiExtractionJob
             _logger.LogError(ex, "Lecture IA de relevé : échec de la session {SessionId}.", sessionId);
             await FailAsync(ctx, session, "ai_failed");
         }
+    }
+
+    private static BankStatementAiPageReader.PageReading FailedReading(int pageNumber, string reason) =>
+        new(Array.Empty<ExtractedStatementLine>(), null, null,
+            new[]
+            {
+                new StatementExtractionIssue(StatementIssueCodes.AiPageFailed, StatementIssueSeverity.Blocking,
+                    $"Page {pageNumber} non lue par l'IA : {reason}", pageNumber)
+            });
+
+    /// <summary>
+    /// Budget d'une lecture planifiée : chaque appel dispose du délai d'un appel d'import plus une
+    /// marge (attente de la file IA partagée), borné entre l'ancien budget (20 min) et le plafond réglé.
+    /// </summary>
+    internal static TimeSpan ComputeBudget(int calls, int llmTimeoutSeconds, int maxMinutes)
+    {
+        var perCall = TimeSpan.FromSeconds(Math.Clamp(llmTimeoutSeconds, 30, 600) + 60);
+        var wanted = TimeSpan.FromTicks(perCall.Ticks * Math.Max(1, calls));
+        var max = TimeSpan.FromMinutes(Math.Max(Budget.TotalMinutes, maxMinutes));
+        return wanted < Budget ? Budget : wanted > max ? max : wanted;
     }
 
     private static async Task<bool> IsCancelledAsync(Persistence.TenantDbContext ctx, Guid sessionId, CancellationToken cancellationToken) =>
