@@ -12641,13 +12641,6 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.bank-statement-import.une.page.prend.jusqu.a.une.minute.avec.l.fc78a702": "Une page prend jusqu'à une minute avec l'IA locale. Vous pouvez quitter cet écran et y revenir.",
-  "@accounting.bank-statement-import.une.page.prend.jusqu.a.une.minute.avec.l.fc78a702": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
   "accounting.bank-statement-import.annuler.l.import.8c2b45d2": "Annuler l'import",
   "@accounting.bank-statement-import.annuler.l.import.8c2b45d2": {
     "x-files": [
@@ -12714,13 +12707,6 @@
   },
   "accounting.bank-statement-import.fichier.71149cb0": "{$START_TAG_SPAN}Fichier{$CLOSE_TAG_SPAN}{$START_TAG_SPAN_1}{$INTERPOLATION}{$CLOSE_TAG_SPAN}",
   "@accounting.bank-statement-import.fichier.71149cb0": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.rib.lu.18ae8682": "{$START_TAG_SPAN}RIB lu{$CLOSE_TAG_SPAN}{$START_TAG_SPAN_1}{$INTERPOLATION}{$CLOSE_TAG_SPAN}",
-  "@accounting.bank-statement-import.rib.lu.18ae8682": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
     ],
@@ -13301,20 +13287,6 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.bank-statement-import.ia.indisponible.seuls.les.releves.pdf.lus.avec.c.40012216": "IA indisponible : seuls les relevés PDF lus avec certitude (solde vérifié au millime) pourront être enregistrés.",
-  "@accounting.bank-statement-import.ia.indisponible.seuls.les.releves.pdf.lus.avec.c.40012216": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.lecture.des.pages.par.l.ia.locale.vision": "Lecture des pages par l'IA locale… {$INTERPOLATION} %",
-  "@accounting.bank-statement-import.lecture.des.pages.par.l.ia.locale.vision": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
   "accounting.bank-statement-import.une.page.prend.une.a.trois.minutes.avec.l.ia.locale": "Une page prend une à trois minutes avec l'IA locale. Vous pouvez quitter cet écran et y revenir.",
   "@accounting.bank-statement-import.une.page.prend.une.a.trois.minutes.avec.l.ia.locale": {
     "x-files": [
@@ -13333,13 +13305,6 @@
   "@accounting.bank-statement-import.ts.rib.a.verifier": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.releve.non.prouve.lecture.page.par.page.ia.locale": "Relevé non prouvé au millime : lecture page par page par l'IA locale (comptez une à trois minutes par page).",
-  "@accounting.bank-statement-import.releve.non.prouve.lecture.page.par.page.ia.locale": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
     ],
     "x-wave": "v7"
   },
@@ -13415,6 +13380,566 @@
   },
   "accounting.bank-statement-import.ts.aucun.fichier.choisi.7b63b7ff": "Aucun fichier choisi",
   "@accounting.bank-statement-import.ts.aucun.fichier.choisi.7b63b7ff": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.confirmez.l.ecart.de.solde": "L'enregistrement nécessite de confirmer l'écart de solde.",
+  "@accounting.bank-statement-import.ts.confirmez.l.ecart.de.solde": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.ligne.non.corrigeable": "Cette ligne ne peut pas être corrigée : elle a été lue directement dans le PDF.",
+  "@accounting.bank-statement-import.ts.ligne.non.corrigeable": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.compte.identique.relance": "Ce relevé est déjà analysé sur ce compte bancaire : utilisez « Relancer l'analyse » pour le relire.",
+  "@accounting.bank-statement-import.ts.compte.identique.relance": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.page.sans.operation": "Page sans opération",
+  "@accounting.bank-statement-import.ts.page.sans.operation": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.page.peut.etre.incomplete": "Page peut-être incomplète",
+  "@accounting.bank-statement-import.ts.page.peut.etre.incomplete": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.ligne.de.solde.non.importee": "Ligne de solde non importée",
+  "@accounting.bank-statement-import.ts.ligne.de.solde.non.importee": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.doublon.possible.entre.deux.pages": "Doublon possible entre deux pages",
+  "@accounting.bank-statement-import.ts.doublon.possible.entre.deux.pages": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.page.relue.par.le.modele.texte": "Page relue par le modèle texte",
+  "@accounting.bank-statement-import.ts.page.relue.par.le.modele.texte": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.ligne.a.corriger": "Ligne à corriger",
+  "@accounting.bank-statement-import.ts.ligne.a.corriger": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.sens.d.une.operation.incertain": "Sens d'une opération incertain",
+  "@accounting.bank-statement-import.ts.sens.d.une.operation.incertain": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.devise.non.trouvee.sur.le.releve": "Devise non trouvée sur le relevé",
+  "@accounting.bank-statement-import.ts.devise.non.trouvee.sur.le.releve": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.date.d.operation.illisible": "Date d'opération illisible",
+  "@accounting.bank-statement-import.ts.date.d.operation.illisible": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.montant.sans.operation.associee": "Montant sans opération associée",
+  "@accounting.bank-statement-import.ts.montant.sans.operation.associee": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.operation.sans.montant": "Opération sans montant",
+  "@accounting.bank-statement-import.ts.operation.sans.montant": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.plusieurs.montants.sur.une.operation": "Plusieurs montants sur une opération",
+  "@accounting.bank-statement-import.ts.plusieurs.montants.sur.une.operation": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.signe.d.un.solde.suppose": "Signe d'un solde supposé",
+  "@accounting.bank-statement-import.ts.signe.d.un.solde.suppose": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.echec.ia.indisponible": "L'IA de lecture (GLM-OCR) est indisponible sur le serveur : aucune page n'a été lue. Réessayez plus tard ou contactez l'administrateur.",
+  "@accounting.bank-statement-import.ts.echec.ia.indisponible": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.echec.ia.delai.depasse": "La lecture a dépassé le temps alloué. Réessayez avec un relevé plus court ou plus tard.",
+  "@accounting.bank-statement-import.ts.echec.ia.delai.depasse": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.echec.ia.lecture": "La lecture par l'IA a échoué. Réessayez ; si le problème persiste, contactez l'administrateur.",
+  "@accounting.bank-statement-import.ts.echec.ia.lecture": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.lecture.des.pages.par.glm.ocr.page.sur.pourcent": "Lecture des pages par GLM-OCR… page {$INTERPOLATION} sur {$INTERPOLATION_1} — {$INTERPOLATION_2} %",
+  "@accounting.bank-statement-import.lecture.des.pages.par.glm.ocr.page.sur.pourcent": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.secondes.ecoulees": "{$INTERPOLATION} s écoulées",
+  "@accounting.bank-statement-import.secondes.ecoulees": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.temps.restant.estime.environ.min.une.a.trois.minutes.par.page": "Temps restant estimé : environ {$INTERPOLATION} min (une à trois minutes par page sur le serveur). Vous pouvez quitter cet écran et y revenir.",
+  "@accounting.bank-statement-import.temps.restant.estime.environ.min.une.a.trois.minutes.par.page": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.page.etat.lue": "Page {$INTERPOLATION} · lue",
+  "@accounting.bank-statement-import.page.etat.lue": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.page.etat.relue": "Page {$INTERPOLATION} · relue par le modèle texte",
+  "@accounting.bank-statement-import.page.etat.relue": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.page.etat.echouee": "Page {$INTERPOLATION} · échouée",
+  "@accounting.bank-statement-import.page.etat.echouee": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.page.etat.en.cours": "Page {$INTERPOLATION} · en cours",
+  "@accounting.bank-statement-import.page.etat.en.cours": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.page.etat.a.lire": "Page {$INTERPOLATION} · à lire",
+  "@accounting.bank-statement-import.page.etat.a.lire": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.pages.relues.par.le.modele.texte.en.cours": "Pages {$INTERPOLATION} : GLM-OCR n'a pas pu lire la page, relecture par le modèle texte.",
+  "@accounting.bank-statement-import.pages.relues.par.le.modele.texte.en.cours": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.relancer.l.analyse.du.releve.aria": "Relancer l'analyse du relevé",
+  "@accounting.bank-statement-import.relancer.l.analyse.du.releve.aria": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.relancer.l.analyse": "Relancer l'analyse",
+  "@accounting.bank-statement-import.ts.relancer.l.analyse": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.rib.lu": "RIB lu",
+  "@accounting.bank-statement-import.rib.lu": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.rib.non.lu": "non lu",
+  "@accounting.bank-statement-import.rib.non.lu": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.badge.rib.a.verifier": "à vérifier",
+  "@accounting.bank-statement-import.badge.rib.a.verifier": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ecart.de.solde.lu.par.l.ia.non.prouve": "Écart de solde de {$INTERPOLATION} TND : les montants ont été lus par l'IA et n'ont pas pu être prouvés au millime.",
+  "@accounting.bank-statement-import.ecart.de.solde.lu.par.l.ia.non.prouve": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.total.debits.imprime.calcule": "Total débits imprimé {$INTERPOLATION} / calculé {$INTERPOLATION_1}",
+  "@accounting.bank-statement-import.total.debits.imprime.calcule": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.total.credits.imprime.calcule": "Total crédits imprimé {$INTERPOLATION} / calculé {$INTERPOLATION_1}",
+  "@accounting.bank-statement-import.total.credits.imprime.calcule": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.j.ai.verifie.enregistrer.malgre.l.ecart": "J'ai vérifié les opérations ci-dessous et je souhaite enregistrer ce relevé malgré l'écart de solde.",
+  "@accounting.bank-statement-import.j.ai.verifie.enregistrer.malgre.l.ecart": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.l.ecart.sera.consigne.dans.l.audit": "L'écart sera consigné dans le journal d'audit du dossier.",
+  "@accounting.bank-statement-import.l.ecart.sera.consigne.dans.l.audit": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.page.prefixe.signalement": "Page {$INTERPOLATION} · ",
+  "@accounting.bank-statement-import.page.prefixe.signalement": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ligne.prefixe.signalement": "Ligne {$INTERPOLATION} · ",
+  "@accounting.bank-statement-import.ligne.prefixe.signalement": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.corriger.cette.ligne": "Corriger cette ligne",
+  "@accounting.bank-statement-import.corriger.cette.ligne": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.aucune.operation.lue.la.relance.reprend.le.fichier.complet.environ.min": "Aucune opération n'a été lue : la relance reprend le fichier complet ({$INTERPOLATION} pages, environ {$INTERPOLATION_1} min) dès que le modèle est prêt.",
+  "@accounting.bank-statement-import.aucune.operation.lue.la.relance.reprend.le.fichier.complet.environ.min": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.aucune.operation.lue.la.relance.reprend.le.fichier.complet": "Aucune opération n'a été lue : la relance reprend le fichier complet ({$INTERPOLATION} pages) dès que le modèle est prêt.",
+  "@accounting.bank-statement-import.aucune.operation.lue.la.relance.reprend.le.fichier.complet": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.relance.lecture.complete.pages.environ.min": "Analyser avec ce compte relance la lecture complète du fichier par GLM-OCR ({$INTERPOLATION} pages, environ {$INTERPOLATION_1} min). Les opérations déjà lues ci-dessous sont présentées à titre indicatif.",
+  "@accounting.bank-statement-import.relance.lecture.complete.pages.environ.min": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.relance.lecture.complete.pages": "Analyser avec ce compte relance la lecture complète du fichier par GLM-OCR ({$INTERPOLATION} pages). Les opérations déjà lues ci-dessous sont présentées à titre indicatif.",
+  "@accounting.bank-statement-import.relance.lecture.complete.pages": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.releve.d.un.compte.absent.du.dossier": "Ce relevé appartient à un autre compte (RIB …{$INTERPOLATION}) qui n'existe pas dans ce dossier. Créez-le dans Paiements › Comptes bancaires (compte en dinars relié à un compte 532), puis relancez l'import.",
+  "@accounting.bank-statement-import.releve.d.un.compte.absent.du.dossier": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.pages.relues.par.le.modele.texte.verifiez": "GLM-OCR n'a pas pu lire les pages {$INTERPOLATION} : elles ont été relues par le modèle texte local, moins précis. Vérifiez attentivement ces opérations.",
+  "@accounting.bank-statement-import.pages.relues.par.le.modele.texte.verifiez": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.page.relue.par.le.modele.texte.verifiez": "GLM-OCR n'a pas pu lire la page {$INTERPOLATION} : elle a été relue par le modèle texte local, moins précis. Vérifiez attentivement ces opérations.",
+  "@accounting.bank-statement-import.page.relue.par.le.modele.texte.verifiez": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.aucune.operation.lue.verifiez.le.fichier": "Aucune opération n'a été lue sur ce relevé. Vérifiez que le fichier est bien un relevé bancaire lisible, ou abandonnez cet import.",
+  "@accounting.bank-statement-import.aucune.operation.lue.verifiez.le.fichier": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.actions.sur.la.ligne": "Actions sur la ligne",
+  "@accounting.bank-statement-import.actions.sur.la.ligne": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.date.de.l.operation.aria": "Date de l'opération",
+  "@accounting.bank-statement-import.date.de.l.operation.aria": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.libelle.de.l.operation.aria": "Libellé de l'opération",
+  "@accounting.bank-statement-import.libelle.de.l.operation.aria": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.montant.de.l.operation.aria": "Montant de l'opération",
+  "@accounting.bank-statement-import.montant.de.l.operation.aria": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.sens.de.l.operation.aria": "Sens de l'opération",
+  "@accounting.bank-statement-import.sens.de.l.operation.aria": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.sens.debit": "Débit",
+  "@accounting.bank-statement-import.sens.debit": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.sens.credit": "Crédit",
+  "@accounting.bank-statement-import.sens.credit": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.valider.la.ligne.aria": "Valider la ligne",
+  "@accounting.bank-statement-import.valider.la.ligne.aria": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.annuler.la.modification.aria": "Annuler la modification",
+  "@accounting.bank-statement-import.annuler.la.modification.aria": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.badge.modele.texte": "modèle texte",
+  "@accounting.bank-statement-import.badge.modele.texte": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.badge.corrigee": "Corrigée",
+  "@accounting.bank-statement-import.badge.corrigee": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.badge.exclue": "Exclue",
+  "@accounting.bank-statement-import.badge.exclue": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.retablir.la.ligne": "Rétablir",
+  "@accounting.bank-statement-import.retablir.la.ligne": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.modifier.la.ligne.aria": "Modifier la ligne",
+  "@accounting.bank-statement-import.modifier.la.ligne.aria": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.exclure.la.ligne.aria": "Exclure la ligne",
+  "@accounting.bank-statement-import.exclure.la.ligne.aria": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.lignes.corrigees.exclues.recalcul.serveur": "{$INTERPOLATION} ligne(s) corrigée(s), {$INTERPOLATION_1} exclue(s) — le contrôle de solde sera recalculé par le serveur à l'enregistrement.",
+  "@accounting.bank-statement-import.lignes.corrigees.exclues.recalcul.serveur": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.page.relue.par.le.modele.texte.aria": "Page relue par le modèle texte",
+  "@accounting.bank-statement-import.page.relue.par.le.modele.texte.aria": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.enregistrer.le.releve.malgre.l.ecart.aria": "Enregistrer le relevé malgré l'écart de solde",
+  "@accounting.bank-statement-import.ts.enregistrer.le.releve.malgre.l.ecart.aria": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.enregistrer.malgre.l.ecart.de.solde.titre": "Enregistrer malgré l'écart de solde ?",
+  "@accounting.bank-statement-import.ts.enregistrer.malgre.l.ecart.de.solde.titre": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.ecart.de.tnd.le.releve.sera.enregistre.en.l.etat": "Écart de {$difference} TND. Le relevé sera enregistré en l'état et l'écart consigné dans l'audit.",
+  "@accounting.bank-statement-import.ts.ecart.de.tnd.le.releve.sera.enregistre.en.l.etat": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.enregistrer.malgre.l.ecart": "Enregistrer malgré l'écart",
+  "@accounting.bank-statement-import.ts.enregistrer.malgre.l.ecart": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.revenir.au.controle": "Revenir au contrôle",
+  "@accounting.bank-statement-import.ts.revenir.au.controle": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lecture.ia.non.effectuee": "Lecture IA non effectuée",
+  "@accounting.bank-statement-import.ts.lecture.ia.non.effectuee": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.glm.ocr.pages.relues.par.le.modele.texte": "Lu par GLM-OCR — pages {$pages} relues par le modèle texte",
+  "@accounting.bank-statement-import.ts.lu.par.glm.ocr.pages.relues.par.le.modele.texte": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.glm.ocr.page.relue.par.le.modele.texte": "Lu par GLM-OCR — page {$page} relue par le modèle texte",
+  "@accounting.bank-statement-import.ts.lu.par.glm.ocr.page.relue.par.le.modele.texte": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.glm.ocr.une.page": "Lu par GLM-OCR (1 page)",
+  "@accounting.bank-statement-import.ts.lu.par.glm.ocr.une.page": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.glm.ocr.pages": "Lu par GLM-OCR ({$count} pages)",
+  "@accounting.bank-statement-import.ts.lu.par.glm.ocr.pages": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.le.modele.texte.local.glm.ocr.indisponible": "Lu par le modèle texte local (GLM-OCR indisponible)",
+  "@accounting.bank-statement-import.ts.lu.par.le.modele.texte.local.glm.ocr.indisponible": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.lecture.page.par.page.glm.ocr.une.a.trois.minutes.par.page": "Chaque relevé — PDF texte, PDF scanné ou image — est lu page par page par l'IA locale GLM-OCR : comptez une à trois minutes par page sur le serveur. Les opérations lues sont ensuite à contrôler avant l'enregistrement.",
+  "@accounting.bank-statement-import.lecture.page.par.page.glm.ocr.une.a.trois.minutes.par.page": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.glm.ocr.indisponible.lecture.par.le.modele.texte": "GLM-OCR est indisponible : les relevés seront lus par le modèle texte local, moins précis sur les pages scannées.",
+  "@accounting.bank-statement-import.glm.ocr.indisponible.lecture.par.le.modele.texte": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ia.de.lecture.indisponible.import.suspendu": "IA de lecture indisponible (modèle GLM-OCR non chargé ou service Ollama arrêté) : l'import de relevés est suspendu. Réessayez dans quelques minutes ou contactez l'administrateur de la plateforme.",
+  "@accounting.bank-statement-import.ia.de.lecture.indisponible.import.suspendu": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
     ],

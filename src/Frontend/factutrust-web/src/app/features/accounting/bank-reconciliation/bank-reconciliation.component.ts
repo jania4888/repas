@@ -280,7 +280,7 @@ function previewErrorCode(err: unknown): string | null {
             <input id="br-file" type="file" class="br-input" (change)="onFileSelected($event)" [disabled]="busy()"
               accept=".csv,.txt,.tsv,.xlsx,.ofx,.qfx,.sta,.mt940,.txt,.pdf,.jpg,.jpeg,.png,.webp" />
             @if (allDocumentsViaAi()) {
-              <small class="br-help br-ai-hint" i18n="@@accounting.bank-reconciliation.releve.pdf.ou.image.analyse.par.l.import.ia.lect.4f7ad0bc">Relevé PDF ou image : analyse par l'import IA (lecture directe, complétée par l'IA si nécessaire), puis retour ici.</small>
+              <small class="br-help br-ai-hint" i18n="@@accounting.bank-reconciliation.releve.pdf.ou.image.lecture.page.par.page.ia.locale">Relevé PDF ou image : lecture page par page par l'IA locale (import IA), puis retour ici.</small>
             }
           </div>
           <div class="br-import-actions">

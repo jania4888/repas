@@ -70,6 +70,23 @@ export interface ExtractedBankStatement {
 /** Codes stables du motif de relecture IA. */
 export type AiReadingReason = 'scanned' | 'line_issues' | 'unverified';
 
+/**
+ * Moteur qui a fourni une page (lecture « IA seule ») : GLM-OCR (gabarit JSON), GLM-OCR en
+ * reconnaissance de tableau, modèle texte local (repli D2) ou échec des trois étages.
+ */
+export type BankStatementPageReadingEngine = 'glm-ocr' | 'glm-ocr-table' | 'text-model' | 'failed' | (string & {});
+
+/** Trace de lecture d'une page, alimentée au fil de la lecture ; aucune donnée de relevé. */
+export interface BankStatementPageReading {
+  page: number;
+  engine: BankStatementPageReadingEngine;
+  model: string | null;
+  attempts: number;
+  durationMs: number;
+  lineCount: number;
+  failureReason: string | null;
+}
+
 export interface BankStatementAiPlan {
   scannedPages: number[];
   textPages: number[];
@@ -77,8 +94,22 @@ export interface BankStatementAiPlan {
   estimatedCalls: number;
   estimatedSeconds: number;
   engine?: 'vision' | 'text' | null;
+  /** Pages relues par le modèle texte (dérivé de `pageReadings` en lecture IA seule). */
   fallbackPages?: number[];
+  /** `complement` : IA en complément de la lecture directe ; `ai_only` : toutes les pages par l'IA. */
+  mode?: 'complement' | 'ai_only';
+  /** Lecture page par page (remplie progressivement pendant `Extracting`). */
+  pageReadings?: BankStatementPageReading[];
 }
+
+/**
+ * Méthode de lecture : « layout », « layout+ai », « ai » (historique) ; « ai-vision », « ai-text »,
+ * « none » en lecture IA seule. Toute autre valeur s'affiche « — ».
+ */
+export type ExtractionMethod = 'layout' | 'layout+ai' | 'ai' | 'ai-vision' | 'ai-text' | 'none' | (string & {});
+
+/** Codes d'échec connus d'une session `Failed` (lecture IA). */
+export type SessionErrorCode = 'ai_timeout' | 'ai_failed' | 'ai_unavailable' | (string & {});
 
 export interface BalanceCheck {
   sumDebits: number;
@@ -96,15 +127,20 @@ export interface BankStatementImportSession {
   journalCode: string;
   fileName: string;
   pageCount: number;
-  extractionMethod: string | null;
+  extractionMethod: ExtractionMethod | null;
   profileId: string | null;
   aiProviderKind: 'local' | 'external' | null;
-  errorCode: string | null;
+  errorCode: SessionErrorCode | null;
   statementId: string | null;
   expiresAt: string;
   extraction: ExtractedBankStatement | null;
   balanceCheck: BalanceCheck | null;
   canConfirm: boolean;
+  /**
+   * L'enregistrement exige l'accusé explicite de l'écart de solde (relevé lu entièrement par l'IA,
+   * contrôle en avertissement). Calculé par le serveur ; absent = faux, jamais dérivé côté client.
+   */
+  requiresBalanceAcknowledgement?: boolean;
   /** Rang (1…N) du relevé dans un fichier qui en contient plusieurs ; null = fichier d'un seul relevé. */
   segmentIndex?: number | null;
   segmentCount?: number | null;
@@ -119,6 +155,25 @@ export interface BankStatementImportSibling {
   periodEnd: string | null;
   status: SessionStatus;
   statementId: string | null;
+}
+
+/**
+ * Correction d'une ligne lue par l'IA, indexée par `lineIndex` ; seuls les champs modifiés sont
+ * renseignés. `exclude` retire la ligne (les autres champs sont alors ignorés par le serveur).
+ */
+export interface StatementLineCorrection {
+  lineIndex: number;
+  transactionDate?: string;
+  amount?: number;
+  isDebit?: boolean;
+  label?: string;
+  exclude?: boolean;
+}
+
+/** Corps de `POST sessions/{id}/confirm` ; `acknowledgeBalanceWarning` n'est émis que s'il vaut vrai. */
+export interface ConfirmBankStatementImportRequest {
+  corrections: StatementLineCorrection[];
+  acknowledgeBalanceWarning?: boolean;
 }
 
 export interface ConfirmResult {
@@ -138,6 +193,10 @@ export interface BankStatementImportCapabilities {
   /** Tout relevé PDF ou image passe par l'import IA (le rapprochement y bascule ces fichiers). */
   allDocumentsViaAi?: boolean;
   aiEngine?: 'vision' | 'text' | null;
+  /** Pourquoi aucune lecture IA n'est possible (code court) ; null quand l'IA est disponible. */
+  aiUnavailableReason?: string | null;
+  /** Pourquoi GLM-OCR n'est pas prêt alors que le modèle texte reste disponible ; null sinon. */
+  visionUnavailableReason?: string | null;
 }
 
 export type LineStatus =

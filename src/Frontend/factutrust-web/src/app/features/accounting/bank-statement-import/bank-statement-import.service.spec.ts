@@ -119,6 +119,42 @@ describe('BankStatementImportService', () => {
     req.flush({ success: true, data: { statementId: 'st-1', lineCount: 3, alreadyImportedCount: 0 } });
   });
 
+  it('confirme avec l’accusé de l’écart de solde', () => {
+    service.confirm('s-1', { corrections: [], acknowledgeBalanceWarning: true }).subscribe();
+
+    const req = http.expectOne(`${base}/sessions/s-1/confirm`);
+    expect(req.request.body).toEqual({ corrections: [], acknowledgeBalanceWarning: true });
+    req.flush({ success: true, data: { statementId: 'st-1', lineCount: 3, alreadyImportedCount: 0 } });
+  });
+
+  it('n’émet pas l’accusé quand il est faux et transmet les corrections telles quelles', () => {
+    service.confirm('s-1', { corrections: [{ lineIndex: 2, amount: 12.5 }, { lineIndex: 4, exclude: true }], acknowledgeBalanceWarning: false }).subscribe();
+
+    const req = http.expectOne(`${base}/sessions/s-1/confirm`);
+    expect(req.request.body).toEqual({ corrections: [{ lineIndex: 2, amount: 12.5 }, { lineIndex: 4, exclude: true }] });
+    expect('acknowledgeBalanceWarning' in req.request.body).toBeFalse();
+    req.flush({ success: true, data: { statementId: 'st-1', lineCount: 3, alreadyImportedCount: 0 } });
+  });
+
+  it('relance la lecture complète d’une session sur le même compte', () => {
+    let next: { id: string } | undefined;
+    service.retry('s-1').subscribe(s => (next = s));
+
+    const req = http.expectOne(`${base}/sessions/s-1/retry`);
+    expect(req.request.method).toBe('POST');
+    req.flush({ success: true, data: { id: 's-2', status: 'Pending' } });
+    expect(next?.id).toBe('s-2');
+  });
+
+  it('re-cible une session sur un autre compte bancaire', () => {
+    service.retarget('s-1', 'bank-2').subscribe();
+
+    const req = http.expectOne(`${base}/sessions/s-1/retarget`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ bankAccountId: 'bank-2' });
+    req.flush({ success: true, data: { id: 's-2', status: 'Pending' } });
+  });
+
   it('génère avec le journal et les choix de ligne uniquement', () => {
     const items: GenerateItem[] = [
       { lineId: 'l-1', accountNumber: '6278', thirdPartyId: null, thirdPartyKind: 'None', vatAmount: null, vatAccountNumber: null, label: null, rememberRule: false }

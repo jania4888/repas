@@ -108,9 +108,11 @@ export type BankStatementImportOrigin = 'manual-entry' | 'reconciliation';
           @if (capabilities(); as caps) {
             @if (caps.allDocumentsViaAi) {
               @if (caps.aiAvailable) {
-                <p class="bsu-hint">
+                <p class="bsu-hint" [class.bsu-hint--warn]="caps.aiEngine === 'text' && !!caps.visionUnavailableReason">
                   @if (caps.aiEngine === 'vision') {
-                    <ng-container i18n="@@accounting.bank-statement-import.releve.non.prouve.lecture.page.par.page.ia.locale">Relevé non prouvé au millime : lecture page par page par l'IA locale (comptez une à trois minutes par page).</ng-container>
+                    <ng-container i18n="@@accounting.bank-statement-import.lecture.page.par.page.glm.ocr.une.a.trois.minutes.par.page">Chaque relevé — PDF texte, PDF scanné ou image — est lu page par page par l'IA locale GLM-OCR : comptez une à trois minutes par page sur le serveur. Les opérations lues sont ensuite à contrôler avant l'enregistrement.</ng-container>
+                  } @else if (caps.aiEngine === 'text' && caps.visionUnavailableReason) {
+                    <ng-container i18n="@@accounting.bank-statement-import.glm.ocr.indisponible.lecture.par.le.modele.texte">GLM-OCR est indisponible : les relevés seront lus par le modèle texte local, moins précis sur les pages scannées.</ng-container>
                   } @else if (caps.aiProviderKind === 'external') {<ng-container i18n="@@accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.67692986">
                     Pages scannées ou non lues avec certitude : relecture par une IA externe (fournisseur configuré par la plateforme).
                   </ng-container>} @else {<ng-container i18n="@@accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.ad04271e">
@@ -118,7 +120,7 @@ export type BankStatementImportOrigin = 'manual-entry' | 'reconciliation';
                   </ng-container>}
                 </p>
               } @else {
-                <p class="bsu-hint" i18n="@@accounting.bank-statement-import.ia.indisponible.seuls.les.releves.pdf.lus.avec.c.40012216">IA indisponible : seuls les relevés PDF lus avec certitude (solde vérifié au millime) pourront être enregistrés.</p>
+                <p class="bsu-hint bsu-hint--blocked" role="alert" i18n="@@accounting.bank-statement-import.ia.de.lecture.indisponible.import.suspendu">IA de lecture indisponible (modèle GLM-OCR non chargé ou service Ollama arrêté) : l'import de relevés est suspendu. Réessayez dans quelques minutes ou contactez l'administrateur de la plateforme.</p>
               }
             } @else if (caps.aiAvailable) {
               <p class="bsu-hint">
@@ -160,6 +162,7 @@ export type BankStatementImportOrigin = 'manual-entry' | 'reconciliation';
     .bsu-filename { font-size:var(--font-size-sm); color:var(--color-text-secondary); overflow-wrap:anywhere; }
     .bsu-hint { margin:0; font-size:var(--font-size-xs); color:var(--color-text-tertiary); }
     .bsu-hint--warn { color:var(--color-warning); }
+    .bsu-hint--blocked { color:var(--color-danger); font-size:var(--font-size-sm); font-weight:600; padding:var(--spacing-2) var(--spacing-3); border:1px solid var(--color-danger); border-radius:var(--radius-sm); background:var(--color-danger-subtle, transparent); }
     .bsu-error { margin:var(--spacing-2) 0 0; color:var(--color-danger); font-size:var(--font-size-sm); }
     .bsu-state { display:flex; flex-direction:column; align-items:center; gap:var(--spacing-2); padding:var(--spacing-4); text-align:center; }
     .bsu-icon { font-size:2rem; color:var(--color-text-tertiary); }
@@ -201,6 +204,15 @@ export class BankStatementUploadDialogComponent implements OnChanges {
 
   readonly maxMegabytes = computed(() => Math.round((this.capabilities()?.maxFileBytes ?? 10 * 1024 * 1024) / (1024 * 1024)));
 
+  /**
+   * Tout relevé passe par l'IA et celle-ci est indisponible : lancer l'analyse produirait une
+   * session sans aucune opération. L'import est suspendu jusqu'au retour du moteur.
+   */
+  readonly aiBlocked = computed(() => {
+    const c = this.capabilities();
+    return !!c && !!c.allDocumentsViaAi && !c.aiAvailable;
+  });
+
   selectedAccount(): BankAccountDto | undefined {
     return this.bankAccounts().find(a => a.id === this.bankAccountId);
   }
@@ -216,7 +228,7 @@ export class BankStatementUploadDialogComponent implements OnChanges {
 
   canAnalyze(): boolean {
     const account = this.selectedAccount();
-    return !this.busy() && !!this.capabilities() && !!this.file() && !!account?.chartOfAccountNumber && !!this.journalCode;
+    return !this.busy() && !!this.capabilities() && !this.aiBlocked() && !!this.file() && !!account?.chartOfAccountNumber && !!this.journalCode;
   }
 
   ngOnChanges(changes: SimpleChanges): void {

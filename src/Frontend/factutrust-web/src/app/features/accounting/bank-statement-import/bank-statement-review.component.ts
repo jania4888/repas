@@ -1,10 +1,10 @@
 /// <reference types="@angular/localize" />
-import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, LOCALE_ID, OnDestroy, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatNumber } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { Subscription, catchError, of, timer } from 'rxjs';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
@@ -23,10 +23,15 @@ import {
   BankStatementImportSession,
   BankStatementImportSibling,
   BankStatementProposals,
+  ConfirmBankStatementImportRequest,
   ConfirmResult,
+  ExtractedStatementLine,
   GenerateItem,
   GenerateOutcome,
+  IssueSeverity,
   SETTLED_STATUSES,
+  StatementAmount,
+  StatementLineCorrection,
   expectedThirdPartyKind,
   requiresThirdParty,
   thirdPartyKindCode,
@@ -39,7 +44,8 @@ import {
   issueTitle,
   lineStatusLabel,
   proposalDiagnosticMessage,
-  proposalSourceLabel
+  proposalSourceLabel,
+  sessionFailureMessage
 } from './bank-statement-import.messages';
 
 /** État éditable d'une ligne de proposition (jamais le montant ni la date : ils restent ceux du relevé). */
@@ -55,6 +61,30 @@ interface ReviewRow {
 }
 
 type RowFilter = 'all' | 'todo' | 'proposed' | 'settled';
+
+/** Ligne du relevé telle qu'affichée : valeurs lues, recouvertes par la correction locale éventuelle. */
+interface DisplayLine extends ExtractedStatementLine {
+  /** Au moins un champ corrigé localement (pas encore envoyé au serveur). */
+  corrected: boolean;
+  /** Exclue localement de l'enregistrement. */
+  excluded: boolean;
+  /** Page relue par le modèle texte (repli D2) : à vérifier avec plus d'attention. */
+  fallbackPage: boolean;
+}
+
+/** Brouillon d'édition d'une ligne (chaînes telles que saisies ; validé avant d'être transformé en correction). */
+interface LineDraft {
+  lineIndex: number;
+  transactionDate: string;
+  label: string;
+  amount: number | null;
+  isDebit: boolean;
+}
+
+type PageState = 'done' | 'fallback' | 'failed' | 'current' | 'todo';
+
+/** Codes d'échec d'une session `Failed` pour lesquels une relance complète a un sens. */
+const RETRYABLE_FAILURES = ['ai_unavailable', 'ai_timeout', 'ai_failed'];
 
 const GENERATION_BATCH = 200;
 
@@ -84,14 +114,18 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
       </div>
     }
 
-    <!-- ══ Lecture en cours (pages scannées lues par l'IA) ══ -->
+    <!-- ══ Lecture en cours (pages lues par l'IA) ══ -->
     @if (session(); as s) {
       @if (s.status === 'Extracting' || s.status === 'Pending') {
         <div class="card bsr-card bsr-progress" role="status" aria-live="polite">
           <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
           <div class="bsr-progress__body">
             @if (s.extraction?.aiPlan?.engine === 'vision') {
-              <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.des.pages.par.l.ia.locale.vision">Lecture des pages par l'IA locale… {{ s.progressPercent }} %</p>
+              <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.des.pages.par.glm.ocr.page.sur.pourcent">Lecture des pages par GLM-OCR… page {{ currentPage(s) }} sur {{ totalPages(s) }} — {{ s.progressPercent }} %</p>
+              <p class="bsr-muted bsr-progress__meta">
+                <span>{{ s.fileName }}</span>
+                <span aria-hidden="true" i18n="@@accounting.bank-statement-import.secondes.ecoulees">{{ elapsedSeconds() }} s écoulées</span>
+              </p>
             } @else {
               @switch (s.extraction?.aiPlan?.reason) {
                 @case ('line_issues') {
@@ -105,11 +139,41 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
                 }
               }
             }
-            <div class="bsr-bar"><div class="bsr-bar__fill" [style.width.%]="s.progressPercent"></div></div>
-            @if (estimatedMinutes(s); as minutes) {
-              <p class="bsr-muted bsr-estimate" i18n="@@accounting.bank-statement-import.duree.estimee.environ.minutes.min.vous.pouvez.qu.8c3f8b0a">Durée estimée : environ {{ minutes }} min. Vous pouvez quitter cet écran et y revenir.</p>
+            <div class="bsr-bar" role="progressbar" [attr.aria-valuenow]="s.progressPercent" aria-valuemin="0" aria-valuemax="100"><div class="bsr-bar__fill" [style.width.%]="s.progressPercent"></div></div>
+            @if (s.extraction?.aiPlan?.engine === 'vision') {
+              @if (estimatedMinutes(s); as minutes) {
+                <p class="bsr-muted bsr-estimate" i18n="@@accounting.bank-statement-import.temps.restant.estime.environ.min.une.a.trois.minutes.par.page">Temps restant estimé : environ {{ minutes }} min (une à trois minutes par page sur le serveur). Vous pouvez quitter cet écran et y revenir.</p>
+              } @else {
+                <p class="bsr-muted" i18n="@@accounting.bank-statement-import.une.page.prend.une.a.trois.minutes.avec.l.ia.locale">Une page prend une à trois minutes avec l'IA locale. Vous pouvez quitter cet écran et y revenir.</p>
+              }
+              @if (pageStates(s); as pages) {
+                @if (pages.length > 0) {
+                  <ul class="bsr-pages">
+                    @for (p of pages; track p.page) {
+                      <li class="bsr-page" [class.is-done]="p.state === 'done'" [class.is-fallback]="p.state === 'fallback'" [class.is-failed]="p.state === 'failed'" [class.is-current]="p.state === 'current'">
+                        @switch (p.state) {
+                          @case ('done') {<ng-container i18n="@@accounting.bank-statement-import.page.etat.lue">Page {{ p.page }} · lue</ng-container>}
+                          @case ('fallback') {<ng-container i18n="@@accounting.bank-statement-import.page.etat.relue">Page {{ p.page }} · relue par le modèle texte</ng-container>}
+                          @case ('failed') {<ng-container i18n="@@accounting.bank-statement-import.page.etat.echouee">Page {{ p.page }} · échouée</ng-container>}
+                          @case ('current') {<ng-container i18n="@@accounting.bank-statement-import.page.etat.en.cours">Page {{ p.page }} · en cours</ng-container>}
+                          @default {<ng-container i18n="@@accounting.bank-statement-import.page.etat.a.lire">Page {{ p.page }} · à lire</ng-container>}
+                        }
+                      </li>
+                    }
+                  </ul>
+                }
+              }
+              @if (fallbackPagesOf(s); as fallback) {
+                @if (fallback.length > 0) {
+                  <p class="bsr-muted bsr-fallback-note" role="note" i18n="@@accounting.bank-statement-import.pages.relues.par.le.modele.texte.en.cours">Pages {{ pageList(fallback) }} : GLM-OCR n'a pas pu lire la page, relecture par le modèle texte.</p>
+                }
+              }
             } @else {
-              <p class="bsr-muted" i18n="@@accounting.bank-statement-import.une.page.prend.une.a.trois.minutes.avec.l.ia.locale">Une page prend une à trois minutes avec l'IA locale. Vous pouvez quitter cet écran et y revenir.</p>
+              @if (estimatedMinutes(s); as minutes) {
+                <p class="bsr-muted bsr-estimate" i18n="@@accounting.bank-statement-import.duree.estimee.environ.minutes.min.vous.pouvez.qu.8c3f8b0a">Durée estimée : environ {{ minutes }} min. Vous pouvez quitter cet écran et y revenir.</p>
+              } @else {
+                <p class="bsr-muted" i18n="@@accounting.bank-statement-import.une.page.prend.une.a.trois.minutes.avec.l.ia.locale">Une page prend une à trois minutes avec l'IA locale. Vous pouvez quitter cet écran et y revenir.</p>
+              }
             }
           </div>
           <app-button variant="secondary" icon="pi-times" iconPos="left" (clicked)="cancelSession()" [disabled]="busy()" ariaLabel="Annuler l'import" i18n-ariaLabel="@@accounting.bank-statement-import.annuler.l.import.8c2b45d2" i18n="@@accounting.bank-statement-import.annuler.49ba3292">Annuler</app-button>
@@ -119,11 +183,21 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
       @if (s.status === 'Failed' || s.status === 'Cancelled') {
         <div class="card bsr-card">
           <p class="bsr-strong" i18n="@@accounting.bank-statement-import.l.analyse.de.ce.releve.n.a.pas.abouti.bcff5d65">L'analyse de ce relevé n'a pas abouti.</p>
-          @if (origin() === 'reconciliation') {
-            <a routerLink="/accounting/bank-reconciliation" class="bsr-link" i18n="@@accounting.bank-statement-import.retour.au.rapprochement.bancaire.6e5dcc9c">Retour au rapprochement bancaire</a>
-          } @else {
-            <a routerLink="/accounting/manual-entry" class="bsr-link" i18n="@@accounting.bank-statement-import.retour.a.la.saisie.ca4355e9">Retour à la saisie</a>
+          @if (s.status === 'Failed' && sessionFailureMessage(s.errorCode); as failure) {
+            <p class="bsr-muted">{{ failure }}</p>
           }
+          <div class="bsr-actions bsr-actions--start">
+            @if (canRetry()) {
+              <app-button variant="secondary" icon="pi-refresh" iconPos="left" (clicked)="retry()" [disabled]="busy()"
+                          ariaLabel="Relancer l'analyse du relevé" i18n-ariaLabel="@@accounting.bank-statement-import.relancer.l.analyse.du.releve.aria"
+                          i18n="@@accounting.bank-statement-import.ts.relancer.l.analyse">Relancer l'analyse</app-button>
+            }
+            @if (origin() === 'reconciliation') {
+              <a routerLink="/accounting/bank-reconciliation" class="bsr-link" i18n="@@accounting.bank-statement-import.retour.au.rapprochement.bancaire.6e5dcc9c">Retour au rapprochement bancaire</a>
+            } @else {
+              <a routerLink="/accounting/manual-entry" class="bsr-link" i18n="@@accounting.bank-statement-import.retour.a.la.saisie.ca4355e9">Retour à la saisie</a>
+            }
+          </div>
         </div>
       }
 
@@ -149,24 +223,49 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
           <h2 class="bsr-title" i18n="@@accounting.bank-statement-import.1.controle.du.releve.2c418cb5">1 · Contrôle du relevé</h2>
           <div class="bsr-facts">
             <div i18n="@@accounting.bank-statement-import.fichier.71149cb0"><span class="bsr-muted">Fichier</span><span>{{ s.fileName }}</span></div>
-            <div i18n="@@accounting.bank-statement-import.rib.lu.18ae8682"><span class="bsr-muted">RIB lu</span><span>{{ maskRib(x.header.rib) }}</span></div>
+            <div>
+              <span class="bsr-muted" i18n="@@accounting.bank-statement-import.rib.lu">RIB lu</span>
+              <span class="bsr-inline">
+                <span>{{ maskRib(x.header.rib) }}</span>
+                @if (!x.header.rib) {
+                  <span class="bsr-badge bsr-badge--muted" i18n="@@accounting.bank-statement-import.rib.non.lu">non lu</span>
+                } @else if (hasIssue(s, 'statement.ai_rib_mismatch', 'Warning')) {
+                  <span class="bsr-badge bsr-badge--fallback" [title]="ribToCheckTitle" i18n="@@accounting.bank-statement-import.badge.rib.a.verifier">à vérifier</span>
+                }
+              </span>
+            </div>
             <div i18n="@@accounting.bank-statement-import.periode.bad3ec87"><span class="bsr-muted">Période</span><span>{{ x.header.periodStart | date: 'dd/MM/yyyy' }} → {{ x.header.periodEnd | date: 'dd/MM/yyyy' }}</span></div>
             <div i18n="@@accounting.bank-statement-import.operations.lues.p.e06736ac"><span class="bsr-muted">Opérations lues</span><span>{{ x.lines.length }} ({{ s.pageCount }} p.)</span></div>
             <div i18n="@@accounting.bank-statement-import.methode.1488365d"><span class="bsr-muted">Méthode</span><span>{{ methodLabel(s) }}</span></div>
           </div>
 
           @if (s.balanceCheck; as b) {
-            <div class="bsr-balance" [class.is-ok]="b.isBalanced" [class.is-ko]="!b.isBalanced">
-              <i class="pi" [class.pi-check-circle]="b.isBalanced" [class.pi-times-circle]="!b.isBalanced" aria-hidden="true"></i>
-              <div>
+            <div class="bsr-balance" [class.is-ok]="balanceMode() === 'ok'" [class.is-ko]="balanceMode() === 'blocking'" [class.is-warning]="balanceMode() === 'warning'" [attr.role]="balanceMode() === 'warning' ? 'alert' : null">
+              <i class="pi" [class.pi-check-circle]="balanceMode() === 'ok'" [class.pi-times-circle]="balanceMode() === 'blocking'" [class.pi-exclamation-triangle]="balanceMode() === 'warning'" aria-hidden="true"></i>
+              <div class="bsr-balance__body">
                 <p class="bsr-strong">
-                  @if (b.isBalanced) {<ng-container i18n="@@accounting.bank-statement-import.soldes.controles.le.releve.est.complet.e148f4ae"> Soldes contrôlés : le relevé est complet. </ng-container>} @else {<ng-container i18n="@@accounting.bank-statement-import.controle.de.solde.en.echec.le.releve.ne.4c049756"> Contrôle de solde en échec : le relevé ne peut pas être enregistré. </ng-container>}
+                  @switch (balanceMode()) {
+                    @case ('ok') {<ng-container i18n="@@accounting.bank-statement-import.soldes.controles.le.releve.est.complet.e148f4ae"> Soldes contrôlés : le relevé est complet. </ng-container>}
+                    @case ('warning') {<ng-container i18n="@@accounting.bank-statement-import.ecart.de.solde.lu.par.l.ia.non.prouve">Écart de solde de {{ b.difference | number: '1.3-3' }} TND : les montants ont été lus par l'IA et n'ont pas pu être prouvés au millime.</ng-container>}
+                    @default {<ng-container i18n="@@accounting.bank-statement-import.controle.de.solde.en.echec.le.releve.ne.4c049756"> Contrôle de solde en échec : le relevé ne peut pas être enregistré. </ng-container>}
+                  }
                 </p>
                 <p class="bsr-muted bsr-num">
                   {{ x.header.openingBalance?.value | number: '1.3-3' }} + {{ b.sumCredits | number: '1.3-3' }}
                   − {{ b.sumDebits | number: '1.3-3' }} = {{ b.computedClosing | number: '1.3-3' }}
                   / {{ x.header.closingBalance?.value | number: '1.3-3' }}
                 </p>
+                @if (balanceMode() === 'warning') {
+                  <p class="bsr-muted bsr-num bsr-small" i18n="@@accounting.bank-statement-import.total.debits.imprime.calcule">Total débits imprimé {{ printedAmount(x.header.totalDebits) }} / calculé {{ b.sumDebits | number: '1.3-3' }}</p>
+                  <p class="bsr-muted bsr-num bsr-small" i18n="@@accounting.bank-statement-import.total.credits.imprime.calcule">Total crédits imprimé {{ printedAmount(x.header.totalCredits) }} / calculé {{ b.sumCredits | number: '1.3-3' }}</p>
+                  <div class="bsr-ack">
+                    <input type="checkbox" id="bsr-ack" [(ngModel)]="balanceAcknowledged" [disabled]="busy()" aria-describedby="bsr-ack-help" />
+                    <div>
+                      <label for="bsr-ack" i18n="@@accounting.bank-statement-import.j.ai.verifie.enregistrer.malgre.l.ecart">J'ai vérifié les opérations ci-dessous et je souhaite enregistrer ce relevé malgré l'écart de solde.</label>
+                      <p id="bsr-ack-help" class="bsr-muted bsr-small" i18n="@@accounting.bank-statement-import.l.ecart.sera.consigne.dans.l.audit">L'écart sera consigné dans le journal d'audit du dossier.</p>
+                    </div>
+                  </div>
+                }
               </div>
             </div>
           }
@@ -175,23 +274,68 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
             <ul class="bsr-issues">
               @for (issue of x.issues; track $index) {
                 <li [class]="'bsr-issue bsr-issue--' + issue.severity.toLowerCase()">
-                  <span class="bsr-strong">{{ issueTitle(issue.code) }}</span>
+                  <span class="bsr-strong">
+                    @if (issue.pageNumber) {<span class="bsr-muted" i18n="@@accounting.bank-statement-import.page.prefixe.signalement">Page {{ issue.pageNumber }} · </span>}
+                    @if (issue.lineIndex !== null && issue.lineIndex !== undefined) {<span class="bsr-muted" i18n="@@accounting.bank-statement-import.ligne.prefixe.signalement">Ligne {{ issue.lineIndex + 1 }} · </span>}
+                    <span>{{ issueTitle(issue.code) }}</span>
+                  </span>
                   <span class="bsr-muted">{{ issue.message }}</span>
+                  @if (issue.code === 'statement.ai_line_needs_review' && issue.lineIndex !== null && issue.lineIndex !== undefined && hasEditableLines()) {
+                    <button type="button" class="bsr-link bsr-link--button" (click)="editLineFromIssue(issue.lineIndex)" [disabled]="busy()" i18n="@@accounting.bank-statement-import.corriger.cette.ligne">Corriger cette ligne</button>
+                  }
                 </li>
               }
             </ul>
           }
 
+          @if (aiUnavailableBlocking()) {
+            <div class="bsr-retarget" role="status">
+              @if (plannedMinutes(s); as minutes) {
+                <p class="bsr-muted" i18n="@@accounting.bank-statement-import.aucune.operation.lue.la.relance.reprend.le.fichier.complet.environ.min">Aucune opération n'a été lue : la relance reprend le fichier complet ({{ s.pageCount }} pages, environ {{ minutes }} min) dès que le modèle est prêt.</p>
+              } @else {
+                <p class="bsr-muted" i18n="@@accounting.bank-statement-import.aucune.operation.lue.la.relance.reprend.le.fichier.complet">Aucune opération n'a été lue : la relance reprend le fichier complet ({{ s.pageCount }} pages) dès que le modèle est prêt.</p>
+              }
+              <app-button variant="secondary" icon="pi-refresh" iconPos="left" (clicked)="retry()" [disabled]="busy()"
+                          ariaLabel="Relancer l'analyse du relevé" i18n-ariaLabel="@@accounting.bank-statement-import.relancer.l.analyse.du.releve.aria"
+                          i18n="@@accounting.bank-statement-import.ts.relancer.l.analyse">Relancer l'analyse</app-button>
+            </div>
+          }
+
           @if (suggestedRetargetAccount(); as match) {
             <div class="bsr-retarget" role="status">
               <p class="bsr-muted" i18n="@@accounting.bank-statement-import.ce.releve.appartient.au.compte.suggere">Ce relevé appartient au compte {{ match.bankName }} (…{{ ribTail(match.rib) }}).</p>
+              @if (s.extraction?.aiPlan?.engine === 'vision') {
+                @if (plannedMinutes(s); as minutes) {
+                  <p class="bsr-muted bsr-small" i18n="@@accounting.bank-statement-import.relance.lecture.complete.pages.environ.min">Analyser avec ce compte relance la lecture complète du fichier par GLM-OCR ({{ s.pageCount }} pages, environ {{ minutes }} min). Les opérations déjà lues ci-dessous sont présentées à titre indicatif.</p>
+                } @else {
+                  <p class="bsr-muted bsr-small" i18n="@@accounting.bank-statement-import.relance.lecture.complete.pages">Analyser avec ce compte relance la lecture complète du fichier par GLM-OCR ({{ s.pageCount }} pages). Les opérations déjà lues ci-dessous sont présentées à titre indicatif.</p>
+                }
+              }
               <app-button variant="secondary" icon="pi-refresh" iconPos="left" (clicked)="retargetToAccount(match.id)" [disabled]="busy()"
                         ariaLabel="Analyser avec ce compte bancaire" i18n-ariaLabel="@@accounting.bank-statement-import.analyser.avec.ce.compte.aria"
                         i18n="@@accounting.bank-statement-import.analyser.avec.ce.compte">Analyser avec ce compte</app-button>
             </div>
+          } @else {
+            @if (missingAccountRibTail(); as tail) {
+              <div class="bsr-retarget" role="status">
+                <p class="bsr-muted" i18n="@@accounting.bank-statement-import.releve.d.un.compte.absent.du.dossier">Ce relevé appartient à un autre compte (RIB …{{ tail }}) qui n'existe pas dans ce dossier. Créez-le dans Paiements › Comptes bancaires (compte en dinars relié à un compte 532), puis relancez l'import.</p>
+              </div>
+            }
           }
 
-          <p-table [value]="x.lines" [paginator]="x.lines.length > 50" [rows]="50" styleClass="p-datatable-sm" [tableStyle]="{ 'min-width': '720px' }">
+          @if (fallbackPagesOf(s); as fallback) {
+            @if (fallback.length > 1) {
+              <p class="bsr-fallback-note" role="note" i18n="@@accounting.bank-statement-import.pages.relues.par.le.modele.texte.verifiez">GLM-OCR n'a pas pu lire les pages {{ pageList(fallback) }} : elles ont été relues par le modèle texte local, moins précis. Vérifiez attentivement ces opérations.</p>
+            } @else if (fallback.length === 1) {
+              <p class="bsr-fallback-note" role="note" i18n="@@accounting.bank-statement-import.page.relue.par.le.modele.texte.verifiez">GLM-OCR n'a pas pu lire la page {{ fallback[0] }} : elle a été relue par le modèle texte local, moins précis. Vérifiez attentivement ces opérations.</p>
+            }
+          }
+
+          @if (x.lines.length === 0) {
+            <p class="bsr-empty" role="status" i18n="@@accounting.bank-statement-import.aucune.operation.lue.verifiez.le.fichier">Aucune opération n'a été lue sur ce relevé. Vérifiez que le fichier est bien un relevé bancaire lisible, ou abandonnez cet import.</p>
+          }
+
+          <p-table #linesTable [value]="displayLines()" dataKey="index" [paginator]="displayLines().length > 50" [rows]="50" styleClass="p-datatable-sm" [tableStyle]="{ 'min-width': '720px' }">
             <ng-template pTemplate="header">
               <tr>
                 <th i18n="@@accounting.bank-statement-import.date.eb9a4bc1">Date</th>
@@ -200,29 +344,86 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
                 <th class="bsr-right" i18n="@@accounting.bank-statement-import.debit.f528224f">Débit</th>
                 <th class="bsr-right" i18n="@@accounting.bank-statement-import.credit.19194bdf">Crédit</th>
                 <th i18n="@@accounting.bank-statement-import.page.fb06270f">Page</th>
+                @if (hasEditableLines()) {
+                  <th class="bsr-col-actions"><span class="sr-only" i18n="@@accounting.bank-statement-import.actions.sur.la.ligne">Actions sur la ligne</span></th>
+                }
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-line>
-              <tr>
-                <td>{{ line.transactionDate | date: 'dd/MM/yyyy' }}</td>
-                <td>{{ line.valueDate | date: 'dd/MM/yyyy' }}</td>
-                <td>
-                  @for (part of line.labelLines.length ? line.labelLines : [line.label]; track $index) {
-                    <div>{{ part }}</div>
+              <tr [id]="'line-' + line.index" [class.bsr-row--excluded]="line.excluded" [class.bsr-row--editing]="editingIndex() === line.index">
+                @if (editingIndex() === line.index) {
+                  <td>
+                    <input type="date" class="bsr-input bsr-input--date" [(ngModel)]="draft.transactionDate" required [disabled]="busy()"
+                           aria-label="Date de l'opération" i18n-aria-label="@@accounting.bank-statement-import.date.de.l.operation.aria" />
+                  </td>
+                  <td>{{ line.valueDate | date: 'dd/MM/yyyy' }}</td>
+                  <td>
+                    <input type="text" class="bsr-input bsr-input--label" [(ngModel)]="draft.label" maxlength="200" required [disabled]="busy()"
+                           aria-label="Libellé de l'opération" i18n-aria-label="@@accounting.bank-statement-import.libelle.de.l.operation.aria" />
+                  </td>
+                  <td class="bsr-right">
+                    <input type="number" class="bsr-input bsr-input--amount" [(ngModel)]="draft.amount" step="0.001" min="0.001" required [disabled]="busy()"
+                           aria-label="Montant de l'opération" i18n-aria-label="@@accounting.bank-statement-import.montant.de.l.operation.aria" />
+                  </td>
+                  <td>
+                    <select class="bsr-input" [(ngModel)]="draft.isDebit" [disabled]="busy()" aria-label="Sens de l'opération" i18n-aria-label="@@accounting.bank-statement-import.sens.de.l.operation.aria">
+                      <option [ngValue]="true" i18n="@@accounting.bank-statement-import.sens.debit">Débit</option>
+                      <option [ngValue]="false" i18n="@@accounting.bank-statement-import.sens.credit">Crédit</option>
+                    </select>
+                  </td>
+                  <td>{{ line.pageNumber }}</td>
+                  <td class="bsr-col-actions">
+                    <button type="button" class="bsr-icon-btn" (click)="saveLineEdit(line)" [disabled]="busy() || !draftValid()"
+                            aria-label="Valider la ligne" i18n-aria-label="@@accounting.bank-statement-import.valider.la.ligne.aria"><i class="pi pi-check" aria-hidden="true"></i></button>
+                    <button type="button" class="bsr-icon-btn" (click)="cancelLineEdit()" [disabled]="busy()"
+                            aria-label="Annuler la modification" i18n-aria-label="@@accounting.bank-statement-import.annuler.la.modification.aria"><i class="pi pi-times" aria-hidden="true"></i></button>
+                  </td>
+                } @else {
+                  <td>{{ line.transactionDate | date: 'dd/MM/yyyy' }}</td>
+                  <td>{{ line.valueDate | date: 'dd/MM/yyyy' }}</td>
+                  <td>
+                    @if (line.corrected) {
+                      <div>{{ line.label }}</div>
+                    } @else {
+                      @for (part of line.labelLines.length ? line.labelLines : [line.label]; track $index) {
+                        <div>{{ part }}</div>
+                      }
+                    }
+                    @if (line.source === 'Ai') { <span class="bsr-badge bsr-badge--ai" i18n="@@accounting.bank-statement-import.lu.par.l.ia.e4b06016">Lu par l'IA</span> }
+                    @if (line.fallbackPage) { <span class="bsr-badge bsr-badge--fallback" [title]="fallbackBadgeTitle" [attr.aria-label]="fallbackBadgeTitle" i18n="@@accounting.bank-statement-import.badge.modele.texte">modèle texte</span> }
+                    @if (line.source === 'Manual' || line.corrected) { <span class="bsr-badge bsr-badge--manual" i18n="@@accounting.bank-statement-import.badge.corrigee">Corrigée</span> }
+                    @if (line.excluded) { <span class="bsr-badge bsr-badge--excluded" i18n="@@accounting.bank-statement-import.badge.exclue">Exclue</span> }
+                  </td>
+                  <td class="bsr-right bsr-num">{{ line.isDebit ? (line.amount | number: '1.3-3') : '' }}</td>
+                  <td class="bsr-right bsr-num">{{ line.isDebit ? '' : (line.amount | number: '1.3-3') }}</td>
+                  <td>{{ line.pageNumber }}</td>
+                  @if (hasEditableLines()) {
+                    <td class="bsr-col-actions">
+                      @if (isEditable(line)) {
+                        @if (line.excluded) {
+                          <button type="button" class="bsr-link bsr-link--button" (click)="toggleExclude(line)" [disabled]="busy()" i18n="@@accounting.bank-statement-import.retablir.la.ligne">Rétablir</button>
+                        } @else {
+                          <button type="button" class="bsr-icon-btn" (click)="startLineEdit(line)" [disabled]="busy() || editingIndex() !== null"
+                                  aria-label="Modifier la ligne" i18n-aria-label="@@accounting.bank-statement-import.modifier.la.ligne.aria"><i class="pi pi-pencil" aria-hidden="true"></i></button>
+                          <button type="button" class="bsr-icon-btn" (click)="toggleExclude(line)" [disabled]="busy() || editingIndex() !== null"
+                                  aria-label="Exclure la ligne" i18n-aria-label="@@accounting.bank-statement-import.exclure.la.ligne.aria"><i class="pi pi-ban" aria-hidden="true"></i></button>
+                        }
+                      }
+                    </td>
                   }
-                  @if (line.source === 'Ai') { <span class="bsr-badge bsr-badge--ai" i18n="@@accounting.bank-statement-import.lu.par.l.ia.e4b06016">Lu par l'IA</span> }
-                </td>
-                <td class="bsr-right bsr-num">{{ line.isDebit ? (line.amount | number: '1.3-3') : '' }}</td>
-                <td class="bsr-right bsr-num">{{ line.isDebit ? '' : (line.amount | number: '1.3-3') }}</td>
-                <td>{{ line.pageNumber }}</td>
+                }
               </tr>
             </ng-template>
           </p-table>
 
+          @if (correctedCount() > 0 || excludedCount() > 0) {
+            <p class="bsr-muted bsr-small" role="status" i18n="@@accounting.bank-statement-import.lignes.corrigees.exclues.recalcul.serveur">{{ correctedCount() }} ligne(s) corrigée(s), {{ excludedCount() }} exclue(s) — le contrôle de solde sera recalculé par le serveur à l'enregistrement.</p>
+          }
+
           <div class="bsr-actions">
             <app-button variant="secondary" (clicked)="cancelSession()" [disabled]="busy()" ariaLabel="Abandonner cet import" i18n-ariaLabel="@@accounting.bank-statement-import.abandonner.cet.import.b2a65847" i18n="@@accounting.bank-statement-import.abandonner.7a0662a3">Abandonner</app-button>
-            <app-button variant="primary" icon="pi-check" iconPos="left" (clicked)="confirmStatement()" [disabled]="!s.canConfirm || busy()"
-                        ariaLabel="Enregistrer le relevé et passer aux propositions" i18n-ariaLabel="@@accounting.bank-statement-import.enregistrer.le.releve.et.passer.aux.prop.932225f1" i18n="@@accounting.bank-statement-import.enregistrer.le.releve.8d42b4ab">Enregistrer le relevé</app-button>
+            <app-button variant="primary" icon="pi-check" iconPos="left" (clicked)="confirmStatement()" [disabled]="!s.canConfirm || busy() || (balanceMode() === 'warning' && !balanceAcknowledged())"
+                        [ariaLabel]="confirmAriaLabel()" i18n="@@accounting.bank-statement-import.enregistrer.le.releve.8d42b4ab">Enregistrer le relevé</app-button>
           </div>
         </div>
       }
@@ -390,8 +591,15 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
     .bsr-alert--error { background:var(--color-danger-subtle, transparent); color:var(--color-danger); border:1px solid var(--color-danger); }
     .bsr-progress { flex-direction:row; align-items:center; }
     .bsr-progress__body { flex:1; display:flex; flex-direction:column; gap:var(--spacing-2); }
+    .bsr-progress__meta { display:flex; gap:var(--spacing-3); flex-wrap:wrap; font-size:var(--font-size-sm); }
     .bsr-bar { height:6px; background:var(--color-border-subtle); border-radius:3px; overflow:hidden; }
     .bsr-bar__fill { height:100%; background:var(--color-primary); transition:width .3s; }
+    .bsr-pages { list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:var(--spacing-1); }
+    .bsr-page { font-size:var(--font-size-xs); padding:1px var(--spacing-2); border-radius:999px; border:1px solid var(--color-border-default); color:var(--color-text-secondary); }
+    .bsr-page.is-done { border-color:var(--color-success); color:var(--color-success); }
+    .bsr-page.is-fallback { border-color:var(--color-warning); color:var(--color-warning); }
+    .bsr-page.is-failed { border-color:var(--color-danger); color:var(--color-danger); }
+    .bsr-page.is-current { border-color:var(--color-primary); color:var(--color-primary); font-weight:600; }
     .bsr-facts { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:var(--spacing-2); }
     .bsr-facts > div { display:flex; flex-direction:column; gap:2px; }
     .bsr-balance { display:flex; gap:var(--spacing-3); align-items:flex-start; padding:var(--spacing-3); border-radius:var(--radius-md); border:1px solid var(--color-border-default); }
@@ -400,7 +608,15 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
     .bsr-balance.is-ok .pi { color:var(--color-success); }
     .bsr-balance.is-ko { border-color:var(--color-danger); }
     .bsr-balance.is-ko .pi { color:var(--color-danger); }
+    .bsr-balance.is-warning { border-color:var(--color-warning); }
+    .bsr-balance.is-warning .pi { color:var(--color-warning); }
+    .bsr-balance__body { flex:1; display:flex; flex-direction:column; gap:var(--spacing-1); }
     .bsr-balance p { margin:0; }
+    .bsr-ack { display:flex; gap:var(--spacing-2); align-items:flex-start; margin-block-start:var(--spacing-2); }
+    .bsr-ack input { margin-block-start:3px; }
+    .bsr-ack label { font-weight:600; cursor:pointer; }
+    .bsr-fallback-note { margin:0; padding:var(--spacing-2) var(--spacing-3); border-inline-start:3px solid var(--color-warning); background:var(--color-warning-subtle, transparent); }
+    .bsr-empty { margin:0; padding:var(--spacing-3); border:1px dashed var(--color-border-default); border-radius:var(--radius-md); color:var(--color-text-secondary); }
     .bsr-issues { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:var(--spacing-1); }
     .bsr-issue { display:flex; flex-direction:column; padding:var(--spacing-2); border-inline-start:3px solid var(--color-border-default); }
     .bsr-issue--blocking { border-inline-start-color:var(--color-danger); }
@@ -429,6 +645,23 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
     .bsr-badge--blocked { border-color:var(--color-danger); color:var(--color-danger); }
     .bsr-badge--generated, .bsr-badge--reconciled, .bsr-badge--alreadyposted, .bsr-badge--alreadyimported { border-color:var(--color-success); color:var(--color-success); }
     .bsr-badge--ai { margin-block-start:var(--spacing-1); border-color:var(--color-warning); color:var(--color-warning); }
+    .bsr-badge--fallback { margin-block-start:var(--spacing-1); margin-inline-start:var(--spacing-1); border-color:var(--color-warning); color:var(--color-warning); }
+    .bsr-badge--manual { margin-block-start:var(--spacing-1); margin-inline-start:var(--spacing-1); border-color:var(--color-primary); color:var(--color-primary); }
+    .bsr-badge--excluded { margin-block-start:var(--spacing-1); margin-inline-start:var(--spacing-1); border-color:var(--color-text-secondary); color:var(--color-text-secondary); }
+    .bsr-badge--muted { color:var(--color-text-secondary); }
+    .bsr-row--excluded td { opacity:.55; text-decoration:line-through; }
+    .bsr-row--excluded td.bsr-col-actions { text-decoration:none; }
+    .bsr-col-actions { width:5.5rem; white-space:nowrap; text-align:end; }
+    .bsr-icon-btn { border:1px solid var(--color-border-default); background:transparent; border-radius:var(--radius-sm); width:2rem; height:2rem; cursor:pointer; color:var(--color-text-secondary); }
+    .bsr-icon-btn:hover:not(:disabled) { color:var(--color-primary); border-color:var(--color-primary); }
+    .bsr-icon-btn:disabled { opacity:.5; cursor:default; }
+    .bsr-icon-btn + .bsr-icon-btn { margin-inline-start:var(--spacing-1); }
+    .bsr-link--button { border:none; background:transparent; padding:0; cursor:pointer; font:inherit; text-align:start; }
+    .bsr-link--button:disabled { opacity:.5; cursor:default; }
+    .bsr-input--date { width:9.5rem; }
+    .bsr-input--label { width:100%; min-width:12rem; }
+    .bsr-input--amount { width:7.5rem; text-align:end; }
+    .bsr-actions--start { justify-content:flex-start; }
     .bsr-result { border-top:1px solid var(--color-border-subtle); padding-block-start:var(--spacing-3); display:flex; flex-direction:column; gap:var(--spacing-2); }
     .bsr-links { display:flex; gap:var(--spacing-3); flex-wrap:wrap; }
     .bsr-link { color:var(--color-primary); }
@@ -436,7 +669,7 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
     .bsr-retarget { display:flex; flex-direction:column; align-items:flex-start; gap:var(--spacing-2); margin-block-start:var(--spacing-2); }
   `
 })
-export class BankStatementReviewComponent implements OnInit {
+export class BankStatementReviewComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly api = inject(BankStatementImportService);
@@ -446,6 +679,9 @@ export class BankStatementReviewComponent implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly employees = inject(EmployeeService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly locale = inject(LOCALE_ID);
+
+  @ViewChild('linesTable') private linesTable?: Table;
 
   /** Salariés (compte 425) : recherchés seulement avec `payroll:read`, sinon l'API répondrait 403. */
   private readonly employeeSuggestions = signal<ThirdPartyRef[]>([]);
@@ -465,10 +701,26 @@ export class BankStatementReviewComponent implements OnInit {
   readonly origin = signal<'reconciliation' | null>(null);
   readonly lastGeneration = signal<{ created: number; skipped: number; failed: number; failures: GenerateOutcome[] } | null>(null);
   readonly bankAccounts = signal<BankAccountDto[]>([]);
+  /** Comptes bancaires du dossier chargés (sinon on ne peut pas affirmer qu'un compte est absent). */
+  private readonly bankAccountsLoaded = signal(false);
+
+  /** Secondes écoulées depuis l'ouverture d'une lecture en cours (compteur local, 1 s). */
+  readonly elapsedSeconds = signal(0);
+  /** Accusé explicite de l'écart de solde (D4) ; remis à zéro à chaque rechargement de la session. */
+  readonly balanceAcknowledged = signal(false);
+  /** Corrections locales par index de ligne (seuls les champs modifiés y figurent). */
+  readonly corrections = signal<Map<number, StatementLineCorrection>>(new Map());
+  /** Ligne en cours d'édition (une seule à la fois). */
+  readonly editingIndex = signal<number | null>(null);
+  draft: LineDraft = { lineIndex: -1, transactionDate: '', label: '', amount: null, isDebit: true };
+
+  readonly ribToCheckTitle = issueTitle('statement.ai_rib_mismatch');
+  readonly fallbackBadgeTitle = $localize`:@@accounting.bank-statement-import.page.relue.par.le.modele.texte.aria:Page relue par le modèle texte`;
 
   journalCode = 'JB';
   private polling?: Subscription;
   private pollAttempt = 0;
+  private elapsedTimer?: ReturnType<typeof setInterval>;
 
   readonly subtitle = computed(() => {
     const p = this.proposals();
@@ -516,11 +768,88 @@ export class BankStatementReviewComponent implements OnInit {
     return this.bankAccounts().find(a => a.isActive && this.normalizeRibDigits(a.rib) === readRib && a.id !== s.bankAccountId) ?? null;
   });
 
+  /**
+   * RIB lu d'un autre compte qu'aucun compte bancaire actif du dossier ne porte : les quatre derniers
+   * chiffres à afficher, ou null (RIB illisible, pas de signalement, compte suggéré ou liste non chargée).
+   */
+  readonly missingAccountRibTail = computed(() => {
+    const s = this.session();
+    if (!s?.extraction || !this.bankAccountsLoaded() || this.suggestedRetargetAccount()) return null;
+    if (!s.extraction.issues.some(i => i.code === 'statement.rib_mismatch')) return null;
+    const readRib = this.normalizeRibDigits(s.extraction.header.rib);
+    return readRib.length === 20 ? readRib.slice(-4) : null;
+  });
+
+  /** Lecture IA bloquée avant toute page (session en relecture sans aucune opération). */
+  readonly aiUnavailableBlocking = computed(() => {
+    const s = this.session();
+    return !!s && s.status === 'AwaitingReview' && this.hasIssue(s, 'statement.ai_unavailable', 'Blocking');
+  });
+
+  /** Relance complète possible : IA indisponible avant lecture, ou session échouée pour un motif IA. */
+  readonly canRetry = computed(() => {
+    const s = this.session();
+    if (!s) return false;
+    if (s.status === 'Failed') return RETRYABLE_FAILURES.includes(s.errorCode ?? '');
+    return this.aiUnavailableBlocking();
+  });
+
+  /**
+   * Mode du contrôle de solde : `ok` (prouvé), `warning` (écart lu par l'IA, enregistrable avec accusé —
+   * décidé par le serveur seul via `requiresBalanceAcknowledgement`), `blocking` sinon ; null sans contrôle.
+   */
+  readonly balanceMode = computed<'ok' | 'warning' | 'blocking' | null>(() => {
+    const s = this.session();
+    const b = s?.balanceCheck;
+    if (!s || !b) return null;
+    if (b.isBalanced) return 'ok';
+    return s.requiresBalanceAcknowledgement === true ? 'warning' : 'blocking';
+  });
+
+  /** Pages relues par le modèle texte (repli D2), d'après les lectures page par page ou le plan. */
+  readonly fallbackPageSet = computed(() => {
+    const s = this.session();
+    return new Set(s ? this.fallbackPagesOf(s) : []);
+  });
+
+  readonly hasEditableLines = computed(() => (this.session()?.extraction?.lines ?? []).some(l => l.source !== 'Layout'));
+
+  readonly displayLines = computed<DisplayLine[]>(() => {
+    const lines = this.session()?.extraction?.lines ?? [];
+    const corrections = this.corrections();
+    const fallback = this.fallbackPageSet();
+    return lines.map(line => {
+      const c = corrections.get(line.index);
+      return {
+        ...line,
+        transactionDate: c?.transactionDate ?? line.transactionDate,
+        label: c?.label ?? line.label,
+        amount: c?.amount ?? line.amount,
+        isDebit: c?.isDebit ?? line.isDebit,
+        corrected: !!c && this.hasFieldChange(c),
+        excluded: c?.exclude === true,
+        fallbackPage: fallback.has(line.pageNumber)
+      };
+    });
+  });
+
+  readonly correctedCount = computed(() => [...this.corrections().values()].filter(c => this.hasFieldChange(c) && !c.exclude).length);
+  readonly excludedCount = computed(() => [...this.corrections().values()].filter(c => c.exclude === true).length);
+
+  readonly confirmAriaLabel = computed(() =>
+    this.balanceMode() === 'warning'
+      ? $localize`:@@accounting.bank-statement-import.ts.enregistrer.le.releve.malgre.l.ecart.aria:Enregistrer le relevé malgré l'écart de solde`
+      : $localize`:@@accounting.bank-statement-import.enregistrer.le.releve.et.passer.aux.prop.932225f1:Enregistrer le relevé et passer aux propositions`
+  );
+
   ngOnInit(): void {
     this.origin.set(this.route.snapshot?.queryParamMap?.get('from') === 'reconciliation' ? 'reconciliation' : null);
     this.refs.loadAll();
     this.bankAccountsApi.list().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: res => this.bankAccounts.set((res?.data ?? []).filter(a => a.isActive)),
+      next: res => {
+        this.bankAccounts.set((res?.data ?? []).filter(a => a.isActive));
+        this.bankAccountsLoaded.set(true);
+      },
       error: () => this.bankAccounts.set([])
     });
     this.api.capabilities().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(caps => this.capabilities.set(caps));
@@ -533,23 +862,48 @@ export class BankStatementReviewComponent implements OnInit {
     this.destroyRef.onDestroy(() => this.polling?.unsubscribe());
   }
 
+  ngOnDestroy(): void {
+    this.stopElapsedTimer();
+  }
+
   // ── Session ─────────────────────────────────────────────────────────────────────────────
 
   private loadSession(id: string): void {
     this.api.session(id).subscribe({
       next: s => {
         this.session.set(s);
+        this.balanceAcknowledged.set(false);
+        this.corrections.set(new Map());
+        this.editingIndex.set(null);
         if (s.status === 'Confirmed' && s.statementId) {
+          this.stopElapsedTimer();
           if (this.origin() === 'reconciliation') this.returnToReconciliation(s, s.statementId);
           else void this.router.navigate(['/accounting/bank-statement-import/statement', s.statementId], { replaceUrl: true });
           return;
         }
-        if (s.status === 'Extracting' || s.status === 'Pending') this.schedulePoll(id);
-        else this.pollAttempt = 0;
+        if (s.status === 'Extracting' || s.status === 'Pending') {
+          this.startElapsedTimer();
+          this.schedulePoll(id);
+        } else {
+          this.stopElapsedTimer();
+          this.pollAttempt = 0;
+        }
         this.journalCode = s.journalCode || 'JB';
       },
       error: (err: unknown) => this.fail(err)
     });
+  }
+
+  private startElapsedTimer(): void {
+    if (this.elapsedTimer) return;
+    this.elapsedSeconds.set(0);
+    this.elapsedTimer = setInterval(() => this.elapsedSeconds.update(v => v + 1), 1_000);
+  }
+
+  private stopElapsedTimer(): void {
+    if (!this.elapsedTimer) return;
+    clearInterval(this.elapsedTimer);
+    this.elapsedTimer = undefined;
   }
 
   /** Interrogation avec temporisation croissante (2 s → 10 s). */
@@ -574,10 +928,27 @@ export class BankStatementReviewComponent implements OnInit {
 
   confirmStatement(): void {
     const s = this.session();
-    if (!s?.canConfirm) return;
+    if (!s?.canConfirm || this.busy()) return;
+    const corrections = [...this.corrections().values()];
+    if (this.balanceMode() === 'warning') {
+      if (!this.balanceAcknowledged()) return;
+      const difference = formatNumber(Math.abs(s.balanceCheck?.difference ?? 0), this.locale, '1.3-3');
+      this.confirmation.confirm({
+        header: $localize`:@@accounting.bank-statement-import.ts.enregistrer.malgre.l.ecart.de.solde.titre:Enregistrer malgré l'écart de solde ?`,
+        message: $localize`:@@accounting.bank-statement-import.ts.ecart.de.tnd.le.releve.sera.enregistre.en.l.etat:Écart de ${difference}:difference: TND. Le relevé sera enregistré en l'état et l'écart consigné dans l'audit.`,
+        acceptLabel: $localize`:@@accounting.bank-statement-import.ts.enregistrer.malgre.l.ecart:Enregistrer malgré l'écart`,
+        rejectLabel: $localize`:@@accounting.bank-statement-import.ts.revenir.au.controle:Revenir au contrôle`,
+        accept: () => this.doConfirm(s, { corrections, acknowledgeBalanceWarning: true })
+      });
+      return;
+    }
+    this.doConfirm(s, { corrections });
+  }
+
+  private doConfirm(s: BankStatementImportSession, request: ConfirmBankStatementImportRequest): void {
     this.busy.set(true);
     this.error.set(null);
-    this.api.confirm(s.id).subscribe({
+    this.api.confirm(s.id, request).subscribe({
       next: result => {
         this.busy.set(false);
         if (this.origin() === 'reconciliation') {
@@ -590,8 +961,197 @@ export class BankStatementReviewComponent implements OnInit {
           state: { pendingSiblings }
         });
       },
+      error: (err: unknown) => {
+        this.fail(err);
+        // Le serveur a tranché (contrôles bloquants, accusé manquant) : on recharge son état de référence.
+        if (err instanceof BankStatementImportError && (err.code === 'bank_statement_import.blocking_issues' || err.code === 'bank_statement_import.balance_warning_not_acknowledged')) {
+          this.loadSession(s.id);
+        }
+      }
+    });
+  }
+
+  /** Relance la lecture complète du fichier (nouvelle session, même compte) et s'y rend. */
+  retry(): void {
+    const s = this.session();
+    if (!s || this.busy() || !this.canRetry()) return;
+    this.busy.set(true);
+    this.error.set(null);
+    this.api.retry(s.id).subscribe({
+      next: next => {
+        this.busy.set(false);
+        this.stopElapsedTimer();
+        void this.router.navigate(['/accounting/bank-statement-import/session', next.id], {
+          queryParams: this.originQuery() ?? {},
+          replaceUrl: true
+        });
+      },
       error: (err: unknown) => this.fail(err)
     });
+  }
+
+  // ── Lecture page par page ──────────────────────────────────────────────────────────────
+
+  hasIssue(s: BankStatementImportSession, code: string, severity?: IssueSeverity): boolean {
+    return (s.extraction?.issues ?? []).some(i => i.code === code && (!severity || i.severity === severity));
+  }
+
+  /** Nombre de pages à lire : celles du plan IA, sinon le nombre de pages du fichier. */
+  totalPages(s: BankStatementImportSession): number {
+    const plan = s.extraction?.aiPlan;
+    const planned = plan ? (plan.scannedPages?.length ?? 0) + (plan.textPages?.length ?? 0) : 0;
+    return planned > 0 ? planned : Math.max(0, s.pageCount ?? 0);
+  }
+
+  /** Page en cours : la suivante des pages déjà lues, sinon déduite de l'avancement ; bornée au total. */
+  currentPage(s: BankStatementImportSession): number {
+    const total = this.totalPages(s);
+    if (total === 0) return 0;
+    const readings = s.extraction?.aiPlan?.pageReadings;
+    if (readings && readings.length > 0) return Math.min(total, readings.length + 1);
+    const percent = Math.min(100, Math.max(0, s.progressPercent ?? 0));
+    return Math.min(total, Math.floor((percent * total) / 100) + 1);
+  }
+
+  /** État de chaque page du plan, pour les pastilles de progression. */
+  pageStates(s: BankStatementImportSession): { page: number; state: PageState }[] {
+    const total = this.totalPages(s);
+    if (total === 0) return [];
+    const plan = s.extraction?.aiPlan;
+    const planned = [...(plan?.scannedPages ?? []), ...(plan?.textPages ?? [])].sort((a, b) => a - b);
+    const pages = planned.length === total ? planned : Array.from({ length: total }, (_, i) => i + 1);
+    const readings = new Map((plan?.pageReadings ?? []).map(r => [r.page, r]));
+    const current = this.currentPage(s);
+    let currentAssigned = false;
+    return pages.map((page, position) => {
+      const reading = readings.get(page);
+      if (reading) {
+        const state: PageState = reading.engine === 'text-model' ? 'fallback' : reading.engine === 'failed' ? 'failed' : 'done';
+        return { page, state };
+      }
+      if (readings.size === 0) {
+        if (position + 1 < current) return { page, state: 'done' as const };
+        if (position + 1 === current) return { page, state: 'current' as const };
+        return { page, state: 'todo' as const };
+      }
+      if (!currentAssigned) {
+        currentAssigned = true;
+        return { page, state: 'current' as const };
+      }
+      return { page, state: 'todo' as const };
+    });
+  }
+
+  /** Pages relues par le modèle texte : lectures page par page si présentes, sinon `fallbackPages` du plan. */
+  fallbackPagesOf(s: BankStatementImportSession): number[] {
+    const plan = s.extraction?.aiPlan;
+    if (!plan) return [];
+    const readings = plan.pageReadings ?? [];
+    const pages = readings.length > 0 ? readings.filter(r => r.engine === 'text-model').map(r => r.page) : (plan.fallbackPages ?? []);
+    return [...new Set(pages)].sort((a, b) => a - b);
+  }
+
+  /** Liste de numéros de pages triée, séparée par « , » (un seul placeholder dans le message traduit). */
+  pageList(pages: number[]): string {
+    return [...pages].sort((a, b) => a - b).join(', ');
+  }
+
+  /** Durée totale prévue de la lecture complète (minutes, ≥ 1) ; null sans estimation. */
+  plannedMinutes(s: BankStatementImportSession): number | null {
+    const seconds = s.extraction?.aiPlan?.estimatedSeconds ?? 0;
+    return seconds > 0 ? Math.max(1, Math.ceil(seconds / 60)) : null;
+  }
+
+  /** Montant imprimé sur le relevé, formaté ; « — » s'il n'a pas été lu. */
+  printedAmount(amount: StatementAmount | null | undefined): string {
+    return amount ? formatNumber(amount.value, this.locale, '1.3-3') : '—';
+  }
+
+  // ── Correction des lignes lues par l'IA ────────────────────────────────────────────────
+
+  isEditable(line: ExtractedStatementLine): boolean {
+    return line.source !== 'Layout';
+  }
+
+  startLineEdit(line: DisplayLine): void {
+    if (!this.isEditable(line) || line.excluded || this.busy()) return;
+    this.draft = {
+      lineIndex: line.index,
+      transactionDate: (line.transactionDate ?? '').slice(0, 10),
+      label: line.label ?? '',
+      amount: line.amount,
+      isDebit: line.isDebit
+    };
+    this.editingIndex.set(line.index);
+  }
+
+  cancelLineEdit(): void {
+    this.editingIndex.set(null);
+  }
+
+  draftValid(): boolean {
+    const d = this.draft;
+    const amount = Number(d.amount);
+    return /^\d{4}-\d{2}-\d{2}$/.test(d.transactionDate) && d.label.trim().length > 0 && d.label.trim().length <= 200 && Number.isFinite(amount) && amount > 0;
+  }
+
+  /** Transforme le brouillon en correction ne contenant que les champs qui diffèrent de la lecture. */
+  saveLineEdit(line: DisplayLine): void {
+    if (this.editingIndex() !== line.index || !this.draftValid()) return;
+    const original = this.session()?.extraction?.lines.find(l => l.index === line.index);
+    if (!original) return;
+    const d = this.draft;
+    const previous = this.corrections().get(line.index);
+    const next: StatementLineCorrection = { lineIndex: line.index };
+    if (d.transactionDate !== (original.transactionDate ?? '').slice(0, 10)) next.transactionDate = d.transactionDate;
+    const amount = Math.round(Number(d.amount) * 1000) / 1000;
+    if (amount !== original.amount) next.amount = amount;
+    if (d.isDebit !== original.isDebit) next.isDebit = d.isDebit;
+    const label = d.label.trim();
+    if (label !== original.label) next.label = label;
+    if (previous?.exclude) next.exclude = true;
+    this.corrections.update(map => {
+      const copy = new Map(map);
+      if (this.hasFieldChange(next) || next.exclude) copy.set(line.index, next);
+      else copy.delete(line.index);
+      return copy;
+    });
+    this.editingIndex.set(null);
+  }
+
+  toggleExclude(line: DisplayLine): void {
+    if (!this.isEditable(line) || this.busy()) return;
+    this.corrections.update(map => {
+      const copy = new Map(map);
+      const previous = copy.get(line.index);
+      if (previous?.exclude) {
+        const rest: StatementLineCorrection = { ...previous };
+        delete rest.exclude;
+        if (this.hasFieldChange(rest)) copy.set(line.index, rest);
+        else copy.delete(line.index);
+      } else {
+        copy.set(line.index, { ...(previous ?? {}), lineIndex: line.index, exclude: true });
+      }
+      return copy;
+    });
+    if (this.editingIndex() === line.index) this.editingIndex.set(null);
+  }
+
+  /** Depuis un signalement « ligne à corriger » : ouvre la ligne en édition et la rend visible. */
+  editLineFromIssue(lineIndex: number): void {
+    const line = this.displayLines().find(l => l.index === lineIndex);
+    if (!line || !this.isEditable(line) || line.excluded) return;
+    const position = this.displayLines().indexOf(line);
+    const table = this.linesTable;
+    if (table && table.rows && position >= table.rows) table.first = Math.floor(position / table.rows) * table.rows;
+    this.startLineEdit(line);
+    if (typeof document !== 'undefined') {
+      setTimeout(() => document.getElementById(`line-${lineIndex}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' }));
+    }
+  }
+
+  private hasFieldChange(c: Partial<StatementLineCorrection>): boolean {
+    return c.transactionDate !== undefined || c.amount !== undefined || c.isDebit !== undefined || c.label !== undefined;
   }
 
   /**
@@ -853,6 +1413,7 @@ export class BankStatementReviewComponent implements OnInit {
   readonly statusLabel = lineStatusLabel;
   readonly confidenceText = confidenceLabel;
   readonly issueTitle = issueTitle;
+  readonly sessionFailureMessage = sessionFailureMessage;
   readonly sourceLabel = proposalSourceLabel;
   readonly diagnosticText = proposalDiagnosticMessage;
 
@@ -906,15 +1467,31 @@ export class BankStatementReviewComponent implements OnInit {
           replaceUrl: true
         });
       },
-      error: err => {
-        this.busy.set(false);
-        this.error.set(importErrorMessage(err));
-      }
+      error: (err: unknown) => this.fail(err)
     });
   }
 
   methodLabel(s: BankStatementImportSession): string {
+    if (this.hasIssue(s, 'statement.ai_unavailable', 'Blocking') || s.extractionMethod === 'none') {
+      return $localize`:@@accounting.bank-statement-import.ts.lecture.ia.non.effectuee:Lecture IA non effectuée`;
+    }
     switch (s.extractionMethod) {
+      case 'ai-vision': {
+        const fallback = this.fallbackPagesOf(s);
+        if (fallback.length > 1) {
+          const pages = this.pageList(fallback);
+          return $localize`:@@accounting.bank-statement-import.ts.lu.par.glm.ocr.pages.relues.par.le.modele.texte:Lu par GLM-OCR — pages ${pages}:pages: relues par le modèle texte`;
+        }
+        if (fallback.length === 1) {
+          const page = String(fallback[0]);
+          return $localize`:@@accounting.bank-statement-import.ts.lu.par.glm.ocr.page.relue.par.le.modele.texte:Lu par GLM-OCR — page ${page}:page: relue par le modèle texte`;
+        }
+        const count = s.pageCount ?? 0;
+        if (count === 1) return $localize`:@@accounting.bank-statement-import.ts.lu.par.glm.ocr.une.page:Lu par GLM-OCR (1 page)`;
+        return $localize`:@@accounting.bank-statement-import.ts.lu.par.glm.ocr.pages:Lu par GLM-OCR (${String(count)}:count: pages)`;
+      }
+      case 'ai-text':
+        return $localize`:@@accounting.bank-statement-import.ts.lu.par.le.modele.texte.local.glm.ocr.indisponible:Lu par le modèle texte local (GLM-OCR indisponible)`;
       case 'layout':
         return $localize`:@@accounting.bank-statement-import.ts.lecture.directe.du.pdf.aucune.ia.ba300454:Lecture directe du PDF (aucune IA)`;
       case 'layout+ai':
