@@ -69,6 +69,26 @@ public sealed record AiStructuredExtractionRequest
     /// message utilisateur. Null (défaut) : message strictement identique à l'historique.
     /// </summary>
     public string? UserInstruction { get; init; }
+
+    /// <summary>
+    /// Vrai : le message utilisateur est EXACTEMENT <see cref="UserInstruction"/> (aucun habillage
+    /// « Document : … », aucun texte extrait), et aucun message système n'est envoyé quand
+    /// <see cref="SystemPrompt"/> est vide. Sans schéma de sortie, aucune contrainte
+    /// <c>format</c> n'est posée (le modèle répond en texte libre). Requis par les modèles OCR
+    /// spécialisés (GLM-OCR) qui ne connaissent que leurs consignes natives.
+    /// Faux (défaut) : comportement historique, inchangé pour les appelants existants.
+    /// </summary>
+    public bool RawUserPrompt { get; init; }
+
+    /// <summary>
+    /// Vrai : les pages sans couche texte sont rendues en image sans passage OCR Tesseract
+    /// (voir <see cref="AiDocumentExtractOptions.SkipOcrWhenRendering"/>). Faux (défaut) :
+    /// comportement historique.
+    /// </summary>
+    public bool SkipOcrWhenRendering { get; init; }
+
+    /// <summary>Limite de pages PDF lues par l'extracteur de texte (null = défaut de l'extracteur).</summary>
+    public int? MaxPages { get; init; }
 }
 
 /// <summary>Résultat brut d'un appel d'extraction structurée, avant désérialisation.</summary>
@@ -102,8 +122,22 @@ public interface IAiStructuredExtractionPipeline
     /// <summary>Identifiant du modèle vision d'import, ou null si aucun n'est configuré.</summary>
     string? ResolveVisionModelId();
 
+    /// <summary>
+    /// Identifiant du modèle vision à utiliser pour un flux donné : <paramref name="explicitModel"/>
+    /// s'il est renseigné (ex. modèle vision des relevés bancaires), sinon le modèle vision d'import.
+    /// </summary>
+    string? ResolveVisionModelId(string? explicitModel) =>
+        string.IsNullOrWhiteSpace(explicitModel) ? ResolveVisionModelId() : explicitModel.Trim();
+
     /// <summary>Préchauffage best-effort du modèle d'extraction (et du modèle vision si présent).</summary>
     Task<InvoiceImportWarmUpResult> WarmUpAsync(CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Préchauffage best-effort du modèle d'extraction et du modèle vision
+    /// <paramref name="visionModelId"/> (null = modèle vision d'import).
+    /// </summary>
+    Task<InvoiceImportWarmUpResult> WarmUpAsync(string? visionModelId, CancellationToken cancellationToken) =>
+        WarmUpAsync(cancellationToken);
 }
 
 /// <inheritdoc cref="IAiStructuredExtractionPipeline"/>
@@ -184,7 +218,9 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
 
                 // Récupération gratuite des pages scannées que l'OCR a déjà dû rasteriser : sans
                 // cela un PDF scanné n'expose aucune image et ne peut jamais basculer en vision.
-                KeepOcrRenderedImages = hasVisionModel
+                KeepOcrRenderedImages = hasVisionModel,
+                SkipOcrWhenRendering = request.SkipOcrWhenRendering,
+                MaxPages = request.MaxPages
             },
             cancellationToken);
 
@@ -277,7 +313,7 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
             (raw, chunkCount, firstTokenMs) = await CallLlmAsync(
                 activeModelRef, request.SystemPrompt, promptText, llmImages, code,
                 useSchema ? request.OutputSchema : null, cancellationToken, request.UserInstruction,
-                request.MaxOutputTokens, request.LlmTimeoutSeconds);
+                request.MaxOutputTokens, request.LlmTimeoutSeconds, request.RawUserPrompt);
         }
         catch (OllamaRequestException ex) when (useSchema && IsSchemaRejection(ex))
         {
@@ -292,7 +328,7 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
             (raw, chunkCount, firstTokenMs) = await CallLlmAsync(
                 activeModelRef, request.SystemPrompt, promptText, llmImages, code,
                 outputSchema: null, cancellationToken, request.UserInstruction,
-                request.MaxOutputTokens, request.LlmTimeoutSeconds);
+                request.MaxOutputTokens, request.LlmTimeoutSeconds, request.RawUserPrompt);
         }
         catch (InvalidOperationException ex)
         {
@@ -331,7 +367,10 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
     // Préchauffage & résolution du modèle
     // ========================================================================
 
-    public async Task<InvoiceImportWarmUpResult> WarmUpAsync(CancellationToken cancellationToken)
+    public Task<InvoiceImportWarmUpResult> WarmUpAsync(CancellationToken cancellationToken) =>
+        WarmUpAsync(null, cancellationToken);
+
+    public async Task<InvoiceImportWarmUpResult> WarmUpAsync(string? visionModelId, CancellationToken cancellationToken)
     {
         var modelRef = await ResolveModelRefAsync(null, cancellationToken);
         if (modelRef.Kind != LlmProviderKind.Ollama || string.IsNullOrWhiteSpace(modelRef.ProviderModelId))
@@ -372,7 +411,8 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
                     readiness.AvailableGiB);
             }
 
-            await WarmUpVisionModelBestEffortAsync(keepAlive, inferenceProfile, cancellationToken);
+            await WarmUpVisionModelBestEffortAsync(
+                ResolveVisionModelId(visionModelId), keepAlive, inferenceProfile, cancellationToken);
             return new InvoiceImportWarmUpResult(true, true, modelName, null, readiness.RequiredGiB, readiness.AvailableGiB);
         }
         catch (Exception ex)
@@ -389,13 +429,19 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
     }
 
     private async Task WarmUpVisionModelBestEffortAsync(
+        string? visionId,
         string keepAlive,
         OllamaInferenceProfile inferenceProfile,
         CancellationToken cancellationToken)
     {
-        var visionId = ResolveVisionModelId();
         if (string.IsNullOrWhiteSpace(visionId))
             return;
+
+        // Seuls les modèles Ollama locaux se préchauffent.
+        var parsedVision = ModelRef.Parse(visionId);
+        if (parsedVision.Kind != LlmProviderKind.Ollama || string.IsNullOrWhiteSpace(parsedVision.ProviderModelId))
+            return;
+        visionId = parsedVision.ProviderModelId;
 
         try
         {
@@ -440,6 +486,9 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
         return ImportAiModelResolver.ResolveServerImportModel(_ollamaSettings);
     }
 
+    public string? ResolveVisionModelId(string? explicitModel) =>
+        string.IsNullOrWhiteSpace(explicitModel) ? ResolveVisionModelId() : explicitModel.Trim();
+
     public string? ResolveVisionModelId()
     {
         var model = _ollamaSettings.InvoiceImportVisionModel?.Trim();
@@ -453,6 +502,17 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
             modelRef = ModelRef.Parse($"{ModelRef.OllamaPrefix}{model}");
         return modelRef;
     }
+
+    /// <summary>
+    /// Plafond de génération effectif. Avec une demande explicite (<paramref name="overrideTokens"/>),
+    /// seul le plafond du flux s'applique (borné par <c>NumCtx/2</c> et 8192) : <c>Ollama:MaxTokens</c>
+    /// est le plafond des flux conversationnels et écrasait les pages denses des relevés. Sans
+    /// demande explicite, comportement historique inchangé (<c>min(MaxTokens, plafond import)</c>).
+    /// </summary>
+    internal int ResolveOutputCap(int? overrideTokens) =>
+        overrideTokens is > 0
+            ? ResolveImportMaxOutputTokens(overrideTokens)
+            : Math.Min(Math.Max(1, _ollamaSettings.MaxTokens), ResolveImportMaxOutputTokens(null));
 
     private int ResolveImportMaxOutputTokens(int? overrideTokens)
     {
@@ -555,11 +615,14 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
         CancellationToken cancellationToken,
         string? userInstruction = null,
         int? maxOutputTokens = null,
-        int? llmTimeoutSeconds = null)
+        int? llmTimeoutSeconds = null,
+        bool rawUserPrompt = false)
     {
         var sb = new StringBuilder();
-        var userPrompt = BuildUserPrompt(text, images.Count > 0, userInstruction);
-        var outputCap = Math.Min(Math.Max(1, _ollamaSettings.MaxTokens), ResolveImportMaxOutputTokens(maxOutputTokens));
+        var userPrompt = rawUserPrompt
+            ? userInstruction ?? string.Empty
+            : BuildUserPrompt(text, images.Count > 0, userInstruction);
+        var outputCap = ResolveOutputCap(maxOutputTokens);
         var streamTimeout = ResolveImportLlmTimeout(llmTimeoutSeconds);
         var chunkCount = 0;
         long? firstTokenMs = null;
@@ -569,16 +632,15 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
         {
         case LlmProviderKind.Ollama:
         {
-            var messages = new List<OllamaChatMessage>
+            var messages = new List<OllamaChatMessage>();
+            if (!(rawUserPrompt && string.IsNullOrEmpty(systemPrompt)))
+                messages.Add(new() { Role = "system", Content = systemPrompt });
+            messages.Add(new()
             {
-                new() { Role = "system", Content = systemPrompt },
-                new()
-                {
-                    Role = "user",
-                    Content = userPrompt,
-                    Images = images.Count > 0 ? images : null
-                }
-            };
+                Role = "user",
+                Content = userPrompt,
+                Images = images.Count > 0 ? images : null
+            });
 
             var numCtx = InvoiceImportParsing.ResolveImportNumCtx(
                 _ollamaSettings.NumCtx,
@@ -599,8 +661,11 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
                 Messages = messages,
                 Stream = true,
                 // Schéma quand l'appelant en fournit un (contraint les TYPES), sinon le mode "json"
-                // historique (ne contraint que la syntaxe).
-                Format = outputSchema.HasValue ? outputSchema.Value : LlmOutputSchemas.PlainJson,
+                // historique (ne contraint que la syntaxe). Consigne brute sans schéma : aucune
+                // contrainte, le modèle OCR répond en texte libre (tableau HTML/Markdown).
+                Format = outputSchema.HasValue
+                    ? outputSchema.Value
+                    : rawUserPrompt ? null : LlmOutputSchemas.PlainJson,
                 KeepAlive = $"{Math.Clamp(_ollamaSettings.KeepAliveMinutes, 1, 1440)}m",
                 Options = options
             };
@@ -649,11 +714,12 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
                 apiKey = openRouter.ApiKey!;
             }
 
-            var messages = new List<OpenAiChatMessagePayload>
-            {
-                new() { Role = "system", Content = systemPrompt },
-                BuildOpenAiUserMessage(text, images, userInstruction)
-            };
+            var messages = new List<OpenAiChatMessagePayload>();
+            if (!(rawUserPrompt && string.IsNullOrEmpty(systemPrompt)))
+                messages.Add(new() { Role = "system", Content = systemPrompt });
+            messages.Add(rawUserPrompt
+                ? BuildOpenAiRawUserMessage(userPrompt, images)
+                : BuildOpenAiUserMessage(text, images, userInstruction));
 
             _logger.LogInformation(
                 "[{Scope}] Appel LLM {Provider} : modèle={Model} maxTokens={MaxTokens} images={ImageCount}",
@@ -761,6 +827,23 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
             + "--- DÉBUT DU CONTENU OCR ---\n"
             + text
             + "\n--- FIN DU CONTENU OCR ---";
+    }
+
+    private static OpenAiChatMessagePayload BuildOpenAiRawUserMessage(string prompt, List<string> images)
+    {
+        if (images.Count == 0)
+            return new OpenAiChatMessagePayload { Role = "user", Content = prompt };
+
+        var parts = new List<OpenAiContentPart> { new() { Type = "text", Text = prompt } };
+        foreach (var b64 in images)
+        {
+            parts.Add(new OpenAiContentPart
+            {
+                Type = "image_url",
+                ImageUrl = new OpenAiImageUrl { Url = "data:image/png;base64," + b64 }
+            });
+        }
+        return new OpenAiChatMessagePayload { Role = "user", Content = parts };
     }
 
     private static OpenAiChatMessagePayload BuildOpenAiUserMessage(string text, List<string> images, string? userInstruction = null)

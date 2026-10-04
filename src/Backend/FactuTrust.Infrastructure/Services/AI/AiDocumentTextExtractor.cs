@@ -23,7 +23,8 @@ namespace FactuTrust.Infrastructure.Services.AI;
 public sealed class AiDocumentTextExtractor : IAiDocumentTextExtractor
 {
     private const int MaxChars = 200_000;
-    private const int MaxPages = 50;
+    /// <summary>Limite de pages par défaut ; surchargeable par <see cref="AiDocumentExtractOptions.MaxPages"/>.</summary>
+    internal const int DefaultMaxPages = 50;
     private const string OcrLanguages = "fra+eng+ara";
 
     private readonly ILogger<AiDocumentTextExtractor> _logger;
@@ -82,9 +83,10 @@ public sealed class AiDocumentTextExtractor : IAiDocumentTextExtractor
                 using var ms = new MemoryStream();
                 await stream.CopyToAsync(ms, cancellationToken);
                 var bytes = ms.ToArray();
+                var maxPages = opts.MaxPages is > 0 ? opts.MaxPages.Value : DefaultMaxPages;
                 return await ExtractPdfAsync(
                     bytes, safeFileName, opts.RenderPagesAsImages, opts.KeepOcrRenderedImages,
-                    dpi, ocrDpi, cancellationToken);
+                    dpi, ocrDpi, maxPages, opts.SkipOcrWhenRendering, cancellationToken);
             }
 
             if (IsDocx(ct, ext))
@@ -232,8 +234,11 @@ public sealed class AiDocumentTextExtractor : IAiDocumentTextExtractor
 
     private async Task<AiDocumentExtractionResult> ExtractPdfAsync(
         byte[] bytes, string fileName, bool renderImages, bool keepOcrImages,
-        int dpi, int ocrDpi, CancellationToken cancellationToken)
+        int dpi, int ocrDpi, int maxPages, bool skipOcrWhenRendering, CancellationToken cancellationToken)
     {
+        // L'OCR Tesseract ne sert à rien quand l'appelant rend les pages pour un modèle vision et
+        // ne consomme pas le texte OCR : on l'évite (une rastérisation par page au lieu de deux).
+        var ocrEnabled = !(skipOcrWhenRendering && renderImages);
         PdfDocument document;
         try
         {
@@ -250,8 +255,8 @@ public sealed class AiDocumentTextExtractor : IAiDocumentTextExtractor
         {
             var sb = new StringBuilder();
             var pageCount = document.NumberOfPages;
-            var pagesToProcess = Math.Min(pageCount, MaxPages);
-            var truncatedByPageLimit = pageCount > MaxPages;
+            var pagesToProcess = Math.Min(pageCount, maxPages);
+            var truncatedByPageLimit = pageCount > maxPages;
             var ocrAppliedAtLeastOnce = false;
             var warnings = new List<string>();
             var pages = new List<AiDocumentExtractedPage>(pagesToProcess);
@@ -269,7 +274,7 @@ public sealed class AiDocumentTextExtractor : IAiDocumentTextExtractor
                     var page = document.GetPage(i);
                     pageText = ExtractPageTextLayoutAware(page);
 
-                    if (string.IsNullOrWhiteSpace(pageText) && _pdfRenderer.IsAvailable && _ocr.IsAvailable)
+                    if (ocrEnabled && string.IsNullOrWhiteSpace(pageText) && _pdfRenderer.IsAvailable && _ocr.IsAvailable)
                     {
                         rendered = await _pdfRenderer.RenderPageAsync(bytes, i - 1, ocrDpi, cancellationToken);
                         if (rendered is not null)
@@ -323,7 +328,7 @@ public sealed class AiDocumentTextExtractor : IAiDocumentTextExtractor
 
             if (truncatedByPageLimit)
             {
-                var msg = $"Document tronqué : {pageCount} pages au total, seules les {MaxPages} premières ont été lues.";
+                var msg = $"Document tronqué : {pageCount} pages au total, seules les {maxPages} premières ont été lues.";
                 warnings.Add(msg);
                 sb.AppendLine();
                 sb.Append('[').Append(msg).AppendLine("]");

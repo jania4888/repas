@@ -50,6 +50,20 @@ public sealed record AiDocumentExtractOptions
     /// <summary>DPI de rendu (par défaut 200, max 300).</summary>
     public int RenderDpi { get; init; } = 200;
 
+    /// <summary>
+    /// Quand les pages sont rendues en images (<see cref="RenderPagesAsImages"/>), ne lance pas
+    /// l'OCR Tesseract sur les pages sans couche texte : la page est rendue une seule fois, au
+    /// DPI demandé, et c'est le modèle vision qui la lit. Évite un passage OCR inutile (et lent)
+    /// par page scannée lorsque l'appelant n'exploite pas le texte OCR.
+    /// </summary>
+    public bool SkipOcrWhenRendering { get; init; }
+
+    /// <summary>
+    /// Nombre maximal de pages PDF lues (null = limite par défaut de l'extracteur). Les pages
+    /// au-delà sont ignorées et signalées dans <see cref="AiDocumentExtractionResult.Warnings"/>.
+    /// </summary>
+    public int? MaxPages { get; init; }
+
     public static AiDocumentExtractOptions Default { get; } = new();
 }
 

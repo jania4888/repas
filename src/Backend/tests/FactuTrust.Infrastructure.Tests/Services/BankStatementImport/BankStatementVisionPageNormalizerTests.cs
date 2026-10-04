@@ -19,6 +19,13 @@ public sealed class BankStatementVisionPageNormalizerTests
     [Fact]
     public void TryNormalizeRib_accepts_20_digits()
     {
-        Assert.Equal("12345678901234567890", BankStatementVisionPageNormalizer.TryNormalizeRib("12 345678901234567890"));
+        Assert.Equal("12345678901234567887", BankStatementVisionPageNormalizer.TryNormalizeRib("12 345678901234567887"));
+    }
+
+    [Fact]
+    public void TryNormalizeRib_rejects_an_incoherent_rib_key()
+    {
+        // Mieux vaut « RIB non lu » qu'un faux RIB (chiffre mal lu) qui bloquerait l'import.
+        Assert.Null(BankStatementVisionPageNormalizer.TryNormalizeRib("12 345678901234567890"));
     }
 }

@@ -47,14 +47,27 @@ public sealed class BankStatementAiExtraction : IBankStatementAiExtraction
         _limits = accountingSettings.Value.BankStatementImport;
     }
 
+    /// <summary>
+    /// Disponibilité AVANT lancement (décision D2) : le moteur vision retenu est le modèle GLM-OCR
+    /// Ollama local ; un modèle vision externe n'est jamais utilisé pour des relevés réels
+    /// (<see cref="BankStatementAiAvailabilityReasons.ExternalNotAllowed"/>). Si le modèle vision
+    /// n'est pas prêt, le modèle texte est proposé avec la raison exposée
+    /// (<see cref="BankStatementAiAvailability.VisionUnavailableReason"/>) ; si le moteur local est
+    /// arrêté ou qu'aucun modèle texte n'est utilisable, l'import est indisponible avec un code de raison.
+    /// </summary>
     public async Task<BankStatementAiAvailability> CheckAvailabilityAsync(CancellationToken cancellationToken = default)
     {
         try
         {
             var textModel = await _pipeline.ResolveModelRefAsync(null, cancellationToken);
             if (string.IsNullOrWhiteSpace(textModel.ProviderModelId))
-                return BankStatementAiAvailability.Unavailable("aucun modèle d'import IA n'est configuré.");
+            {
+                return BankStatementAiAvailability.Unavailable(
+                    "aucun modèle d'import IA n'est configuré.", BankStatementAiAvailabilityReasons.TextModelUnavailable);
+            }
 
+            string? visionUnavailableReason = null;
+            string? visionReasonCode = null;
             var visionId = ImportAiModelResolver.ResolveBankStatementVisionModelId(_ollamaSettings);
             if (_limits.VisionReadingEnabled && !string.IsNullOrWhiteSpace(visionId))
             {
@@ -62,38 +75,75 @@ public sealed class BankStatementAiExtraction : IBankStatementAiExtraction
                 if (visionRef.Kind == LlmProviderKind.Ollama)
                 {
                     if (!await _ollama.IsAvailableAsync(cancellationToken))
-                        return BankStatementAiAvailability.Unavailable("le moteur IA local est indisponible.");
+                    {
+                        return BankStatementAiAvailability.Unavailable(
+                            "le moteur IA local est indisponible.", BankStatementAiAvailabilityReasons.EngineUnavailable);
+                    }
+
                     var readiness = await _readiness.CheckAsync(visionRef.ProviderModelId!, cancellationToken);
                     if (readiness.IsReady)
                     {
                         return new BankStatementAiAvailability(
-                            true, "local", textModel.CanonicalModelRef, null, "vision", visionRef.CanonicalModelRef);
+                            true, "local", textModel.CanonicalModelRef, null, BankStatementAiEngines.Vision, visionRef.CanonicalModelRef);
                     }
+
+                    visionUnavailableReason = readiness.UserMessage ?? "le modèle vision des relevés n'est pas prêt.";
+                    visionReasonCode = BankStatementAiAvailabilityReasons.VisionModelUnavailable;
                 }
                 else if (!_limits.AiComplementAllowExternal)
                 {
-                    // Vision externe non autorisée pour relevés réels : repli texte local si possible.
+                    return BankStatementAiAvailability.Unavailable(
+                        "IA externe non autorisée pour les relevés bancaires.", BankStatementAiAvailabilityReasons.ExternalNotAllowed);
                 }
                 else
                 {
                     return new BankStatementAiAvailability(
-                        true, "external", textModel.CanonicalModelRef, null, "vision", visionRef.CanonicalModelRef);
+                        true, "external", textModel.CanonicalModelRef, null, BankStatementAiEngines.Vision, visionRef.CanonicalModelRef);
                 }
+            }
+            else
+            {
+                visionUnavailableReason = _limits.VisionReadingEnabled
+                    ? "aucun modèle vision n'est configuré pour les relevés."
+                    : "la lecture vision des relevés est désactivée.";
+                visionReasonCode = BankStatementAiAvailabilityReasons.VisionModelUnavailable;
             }
 
             if (textModel.Kind == LlmProviderKind.Ollama)
             {
                 if (!await _ollama.IsAvailableAsync(cancellationToken))
-                    return BankStatementAiAvailability.Unavailable("le moteur IA local est indisponible.");
-                return new BankStatementAiAvailability(true, "local", textModel.CanonicalModelRef, null, "text");
+                {
+                    return BankStatementAiAvailability.Unavailable(
+                        "le moteur IA local est indisponible.", BankStatementAiAvailabilityReasons.EngineUnavailable);
+                }
+
+                var textReadiness = await _readiness.CheckAsync(textModel.ProviderModelId!, cancellationToken);
+                if (!textReadiness.IsReady)
+                {
+                    return BankStatementAiAvailability.Unavailable(
+                        textReadiness.UserMessage ?? "le modèle texte d'import IA n'est pas prêt.",
+                        BankStatementAiAvailabilityReasons.TextModelUnavailable);
+                }
+
+                return new BankStatementAiAvailability(
+                    true, "local", textModel.CanonicalModelRef, null, BankStatementAiEngines.Text,
+                    null, visionUnavailableReason, visionReasonCode);
             }
 
-            return new BankStatementAiAvailability(true, "external", textModel.CanonicalModelRef, null, "text");
+            if (!_limits.AiComplementAllowExternal)
+            {
+                return BankStatementAiAvailability.Unavailable(
+                    "IA externe non autorisée pour les relevés bancaires.", BankStatementAiAvailabilityReasons.ExternalNotAllowed);
+            }
+
+            return new BankStatementAiAvailability(
+                true, "external", textModel.CanonicalModelRef, null, BankStatementAiEngines.Text,
+                null, visionUnavailableReason, visionReasonCode);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.LogWarning(ex, "Import relevé : disponibilité de l'IA indéterminée.");
-            return BankStatementAiAvailability.Unavailable("le moteur IA ne répond pas.");
+            return BankStatementAiAvailability.Unavailable("le moteur IA ne répond pas.", BankStatementAiAvailabilityReasons.EngineUnavailable);
         }
     }
 
@@ -177,11 +227,13 @@ public sealed partial class BankStatementAiExtractionJob
             var isPdf = session.ContentType.Contains("pdf", StringComparison.OrdinalIgnoreCase)
                         || session.FileName.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase);
 
-            if (string.Equals(layout.AiPlan?.Engine, "vision", StringComparison.Ordinal))
+            // Plan vision (GLM-OCR page par page) ou plan « 100 % IA » (même boucle par page, étages
+            // vision éventuellement sautés si le moteur vision n'est pas retenu) : lecture par page tracée.
+            if (layout.AiPlan is { } pagePlan
+                && (string.Equals(pagePlan.Engine, BankStatementAiEngines.Vision, StringComparison.Ordinal) || pagePlan.IsAiOnly))
             {
-                var visionPlan = layout.AiPlan!;
                 budget.CancelAfter(ComputeBudget(
-                    Math.Max(1, visionPlan.ScannedPages.Count + visionPlan.TextPages.Count),
+                    Math.Max(1, pagePlan.PlannedPages.Count),
                     limits.EffectiveVisionCallTimeoutSeconds,
                     limits.EffectiveAiJobBudgetMinutes));
 
@@ -329,13 +381,15 @@ public sealed partial class BankStatementAiExtractionJob
             });
 
     /// <summary>
-    /// Budget d'une lecture planifiée : chaque appel dispose du délai d'un appel d'import plus une
-    /// marge (attente de la file IA partagée), borné entre l'ancien budget (20 min) et le plafond réglé.
+    /// Budget d'une lecture planifiée : chaque page dispose du délai d'un appel plus une marge
+    /// (attente de la file IA partagée), le tout majoré de 50 % pour les étages de repli
+    /// (tableau, modèle texte), borné entre l'ancien budget (20 min) et le plafond réglé
+    /// (<c>AiJobBudgetMinutes</c>).
     /// </summary>
     internal static TimeSpan ComputeBudget(int calls, int llmTimeoutSeconds, int maxMinutes)
     {
         var perCall = TimeSpan.FromSeconds(Math.Clamp(llmTimeoutSeconds, 30, 600) + 60);
-        var wanted = TimeSpan.FromTicks(perCall.Ticks * Math.Max(1, calls));
+        var wanted = TimeSpan.FromTicks((long)(perCall.Ticks * Math.Max(1, calls) * 1.5));
         var max = TimeSpan.FromMinutes(Math.Max(Budget.TotalMinutes, maxMinutes));
         return wanted < Budget ? Budget : wanted > max ? max : wanted;
     }
