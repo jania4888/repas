@@ -333,7 +333,7 @@ export class StudioAiPreviewComponent {
     }
   }
 
-  onTabChange(value: string | number): void {
+  onTabChange(value: string | number | undefined): void {
     const next = value as StudioAiPreviewTab;
     if (!this.tabs.find(t => t.id === next)?.available) return;
     this.activeTab.set(next);

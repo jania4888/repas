@@ -275,7 +275,7 @@ export class ProductSalesAnalyticsComponent implements OnInit {
     this.loadAll();
   }
 
-  onTabChange(index: string | number): void {
+  onTabChange(index: string | number | undefined): void {
     this.activeTabIndex = typeof index === 'number' ? index : Number(index);
   }
 

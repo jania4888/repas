@@ -10,7 +10,7 @@ import { SelectModule } from 'primeng/select';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { Textarea } from 'primeng/textarea';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TabsModule } from 'primeng/tabs';
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
@@ -73,7 +73,7 @@ interface LineRow {
     InputNumberModule,
     InputTextModule,
     Textarea,
-    InputSwitchModule,
+    ToggleSwitchModule,
     TabsModule,
     DialogModule,
     TableModule,

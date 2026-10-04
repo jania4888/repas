@@ -357,7 +357,7 @@ export class ManualEntryComponent implements OnInit {
     }
   }
 
-  onTabChange(index: string | number): void {
+  onTabChange(index: string | number | undefined): void {
     const tabIndex = typeof index === 'number' ? index : Number(index);
     this.tabIndex.set(tabIndex);
     this.store.activeTab.set(this.tabIds[tabIndex] ?? 'standard');

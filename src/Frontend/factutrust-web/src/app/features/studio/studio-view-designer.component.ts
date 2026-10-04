@@ -6,7 +6,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { SelectModule } from 'primeng/select';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
@@ -39,7 +39,7 @@ interface DesignColumn {
   standalone: true,
   imports: [
     CommonModule, FormsModule, RouterModule, DragDropModule,
-    ButtonModule, InputTextModule, InputSwitchModule, SelectModule, ToastModule,
+    ButtonModule, InputTextModule, ToggleSwitchModule, SelectModule, ToastModule,
     DynamicReportComponent, StudioPageShellComponent, StudioDesignerShellComponent
   ],
   template: `
@@ -66,7 +66,7 @@ interface DesignColumn {
 
           <div class="studio-block-head" style="margin-top: 1rem">
             <label class="studio-lbl" style="margin:0" i18n="@@studio.studio-view-designer.recherche.activee.4d16ddb9">Recherche activée</label>
-            <p-inputSwitch [(ngModel)]="searchEnabled"></p-inputSwitch>
+            <p-toggleswitch [(ngModel)]="searchEnabled"></p-toggleswitch>
           </div>
 
           @if (columns().length > 0) {
@@ -75,7 +75,7 @@ interface DesignColumn {
               @for (c of columns(); track c.name) {
                 <div class="studio-col-row" cdkDrag [class.studio-col-row--off]="!c.included">
                   <i class="fa-solid fa-grip-vertical studio-drag-handle" cdkDragHandle></i>
-                  <p-inputSwitch [(ngModel)]="c.included" (ngModelChange)="schedulePreview()"></p-inputSwitch>
+                  <p-toggleswitch [(ngModel)]="c.included" (ngModelChange)="schedulePreview()"></p-toggleswitch>
                   <code class="studio-cname">{{ c.name }}</code>
                   <input pInputText [(ngModel)]="c.label" [placeholder]="c.name" class="studio-grow"
                     [disabled]="!c.included" (ngModelChange)="schedulePreview()" />

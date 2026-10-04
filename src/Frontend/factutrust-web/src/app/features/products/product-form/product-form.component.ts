@@ -12,7 +12,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ToastModule } from 'primeng/toast';
@@ -91,7 +91,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
     SelectModule,
     ButtonModule,
     CardModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     CheckboxModule,
     FileUploadModule,
     ToastModule,
@@ -243,11 +243,11 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
               <div class="form-group">
                 <label for="isStockManaged" i18n="@@products.product-form.gestion.de.stock.3f196b66">Gestion de stock</label>
                 <div class="status-switch">
-                  <p-inputSwitch 
+                  <p-toggleswitch 
                     id="isStockManaged"
                     formControlName="isStockManaged"
                     [disabled]="!isProductCategory()">
-                  </p-inputSwitch>
+                  </p-toggleswitch>
                   <span [class.active]="form.get('isStockManaged')?.value">
                     {{ form.get('isStockManaged')?.value ? loc_ui_tern_activee_9b4e7c : loc_ui_tern_desactivee_74cc3b }}
                   </span>
@@ -338,10 +338,10 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
             <div class="form-group">
               <label for="isActive" i18n="@@products.product-form.statut.659499f3">Statut</label>
               <div class="status-switch">
-                <p-inputSwitch 
+                <p-toggleswitch 
                   id="isActive"
                   formControlName="isActive">
-                </p-inputSwitch>
+                </p-toggleswitch>
                 <span [class.active]="form.get('isActive')?.value">
                   {{ form.get('isActive')?.value ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033 }}
                 </span>
@@ -357,7 +357,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
             <div class="form-group">
               <label for="isVariantTemplate" i18n="@@products.product-form.modele.de.variantes.25d7b4a0">Modèle de variantes</label>
               <div class="status-switch">
-                <p-inputSwitch id="isVariantTemplate" formControlName="isVariantTemplate"></p-inputSwitch>
+                <p-toggleswitch id="isVariantTemplate" formControlName="isVariantTemplate"></p-toggleswitch>
                 <span [class.active]="form.get('isVariantTemplate')?.value">
                   @if (form.get('isVariantTemplate')?.value) {<ng-container i18n="@@products.product-form.oui.le.parent.n.est.pas.vendable.1a2b10db">
                     Oui — le parent n'est pas vendable
@@ -441,7 +441,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
                 <div class="form-group">
                   <label for="hasExpiryTracking" i18n="@@products.product-form.suivi.de.peremption.dluo.1e67289e">Suivi de péremption (DLUO)</label>
                   <div class="status-switch">
-                    <p-inputSwitch id="hasExpiryTracking" formControlName="hasExpiryTracking"></p-inputSwitch>
+                    <p-toggleswitch id="hasExpiryTracking" formControlName="hasExpiryTracking"></p-toggleswitch>
                     <span [class.active]="form.get('hasExpiryTracking')?.value">
                       {{ form.get('hasExpiryTracking')?.value ? loc_ui_tern_active_42ce0b : loc_ui_tern_desactive_2d32fa }}
                     </span>

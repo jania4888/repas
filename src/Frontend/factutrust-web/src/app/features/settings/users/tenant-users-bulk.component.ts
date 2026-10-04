@@ -9,7 +9,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { SelectModule } from 'primeng/select';
 import { DialogModule } from 'primeng/dialog';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { CheckboxModule } from 'primeng/checkbox';
 import { CardModule } from 'primeng/card';
 import { forkJoin } from 'rxjs';
@@ -55,7 +55,7 @@ interface BulkRow {
     PasswordModule,
     SelectModule,
     DialogModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     CheckboxModule,
     CardModule,
     PageHeaderComponent,
@@ -203,9 +203,9 @@ interface BulkRow {
                     <span class="default-badge" i18n="@@settings.users.inclus.par.defaut.0d38cc2c">Inclus par défaut</span>
                   }
                 </span>
-                <p-inputSwitch
+                <p-toggleswitch
                   [(ngModel)]="m.enabled"
-                  (ngModelChange)="afterModuleEnabledChange(m)"></p-inputSwitch>
+                  (ngModelChange)="afterModuleEnabledChange(m)"></p-toggleswitch>
               </div>
               @if (m.enabled && catalogVisibleFeatures(bulkCatalogModule(m.module)).length) {
                 <div

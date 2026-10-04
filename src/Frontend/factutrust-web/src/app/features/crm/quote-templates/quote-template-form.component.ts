@@ -8,7 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { Textarea } from 'primeng/textarea';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { AutoCompleteModule, AutoCompleteCompleteEvent, AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { MessageModule } from 'primeng/message';
 import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.component';
@@ -42,7 +42,7 @@ interface TemplateLineRow {
     InputTextModule,
     InputNumberModule,
     Textarea,
-    InputSwitchModule,
+    ToggleSwitchModule,
     AutoCompleteModule,
     MessageModule,
     BreadcrumbComponent,
@@ -82,7 +82,7 @@ interface TemplateLineRow {
             @if (isEdit()) {
               <div class="field switch-field">
                 <label for="isActive" i18n="@@crm.quote-templates.modele.actif.61a8a78c">Modèle actif</label>
-                <p-inputSwitch inputId="isActive" [(ngModel)]="isActive" name="isActive"></p-inputSwitch>
+                <p-toggleswitch inputId="isActive" [(ngModel)]="isActive" name="isActive"></p-toggleswitch>
               </div>
             }
           </div>
@@ -113,7 +113,7 @@ interface TemplateLineRow {
                         [suggestions]="productSuggestions()"
                         (completeMethod)="searchProducts($event)"
                         (onSelect)="onProductSelect(line, $event)"
-                        field="name"
+                        optionLabel="name"
                         [dropdown]="true"
                         [forceSelection]="true"
                         placeholder="Rechercher un produit..." i18n-placeholder="@@crm.quote-templates.rechercher.un.produit.0da008f6"

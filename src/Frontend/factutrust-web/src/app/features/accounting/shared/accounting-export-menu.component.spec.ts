@@ -1,6 +1,7 @@
+import { DOCUMENT } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { DOCUMENT } from '@angular/common';
+
 import { AccountingExportMenuComponent } from './accounting-export-menu.component';
 
 describe('AccountingExportMenuComponent', () => {

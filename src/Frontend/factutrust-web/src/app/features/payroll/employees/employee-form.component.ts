@@ -7,7 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TagModule } from 'primeng/tag';
 import { ToastService } from '@core/services/toast.service';
 import { ErrorMessageService } from '@core/services/error-message.service';
@@ -50,7 +50,7 @@ function parseIsoDate(value?: string): Date | null {
     InputNumberModule,
     SelectModule,
     DatePickerModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     TagModule,
     PageHeaderComponent,
     BreadcrumbComponent,
@@ -149,7 +149,7 @@ function parseIsoDate(value?: string): Date | null {
             </div>
             <div class="payroll-form-group switch-group">
               <label for="isHeadOfFamily" i18n="@@payroll.employees.chef.de.famille.0ba5a38a">Chef de famille</label>
-              <p-inputSwitch id="isHeadOfFamily" formControlName="isHeadOfFamily" />
+              <p-toggleswitch id="isHeadOfFamily" formControlName="isHeadOfFamily" />
             </div>
           </div>
           <div class="payroll-form-row">

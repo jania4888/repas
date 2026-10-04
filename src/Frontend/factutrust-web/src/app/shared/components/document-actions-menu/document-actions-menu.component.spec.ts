@@ -50,7 +50,7 @@ describe('DocumentActionsMenuComponent', () => {
     const menuDebug = fixture.debugElement.query(By.directive(Menu));
     expect(menuDebug).toBeTruthy();
     const menu = menuDebug.componentInstance as Menu;
-    expect(menu.appendTo).toBe('body');
+    expect(menu.appendTo()).toBe('body'); // v20 : appendTo est un signal input
     expect(menu.popup).toBeTrue();
     expect(menu.styleClass).toContain('ft-document-actions-menu');
   });

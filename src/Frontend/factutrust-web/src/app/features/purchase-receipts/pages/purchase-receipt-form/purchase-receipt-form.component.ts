@@ -286,7 +286,7 @@ interface ReceiptLineRow {
                           [suggestions]="productSuggestions()"
                           (completeMethod)="searchProducts($event)"
                           (onSelect)="onProductSelect(line, $event)"
-                          field="name"
+                          optionLabel="name"
                           [dropdown]="true"
                           [forceSelection]="true"
                           [minLength]="0"

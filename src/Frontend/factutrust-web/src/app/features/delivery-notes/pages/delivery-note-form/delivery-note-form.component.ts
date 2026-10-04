@@ -219,7 +219,7 @@ interface LineRow extends LinePromotionPreview {
                             [suggestions]="productSuggestions()"
                             (completeMethod)="searchProducts($event)"
                             (onSelect)="onProductSelect(line, $event)"
-                            field="name"
+                            optionLabel="name"
                             [dropdown]="true"
                             [forceSelection]="true"
                             appendTo="body"

@@ -56,7 +56,7 @@ export const REFUND_INVOICE_DIALOG_OPTIONS: NgbModalOptions = {
           [suggestions]="suggestions"
           (completeMethod)="onSearch($event)"
           (onSelect)="onInvoiceSelect($event)"
-          field="number"
+          optionLabel="number"
           [dropdown]="false"
           [minLength]="1"
           placeholder="Ex. FAC-2026-000042 ou POS-…" i18n-placeholder="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.ex.fac.2026.000042.ou.pos.3c339c9e"

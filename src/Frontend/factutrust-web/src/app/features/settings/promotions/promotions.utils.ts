@@ -134,7 +134,7 @@ export function lifecycleLabel(lifecycle: PromotionLifecycle): string {
   }
 }
 
-export function lifecycleSeverity(lifecycle: PromotionLifecycle): 'success' | 'warning' | 'secondary' | 'danger' | 'info' {
+export function lifecycleSeverity(lifecycle: PromotionLifecycle): 'success' | 'warn' | 'secondary' | 'danger' | 'info' {
   switch (lifecycle) {
     case 'running':
       return 'success';
@@ -142,7 +142,7 @@ export function lifecycleSeverity(lifecycle: PromotionLifecycle): 'success' | 'w
       return 'info';
     case 'expired':
     case 'outOfWindow':
-      return 'warning';
+      return 'warn';
     case 'disabled':
       return 'secondary';
   }

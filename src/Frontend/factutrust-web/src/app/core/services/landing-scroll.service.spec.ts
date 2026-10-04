@@ -1,4 +1,4 @@
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT } from '@angular/core';
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { LANDING_HEADER_OFFSET_PX, LANDING_SCROLL_RETRY_MS, LandingScrollService } from './landing-scroll.service';
 

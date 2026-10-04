@@ -185,9 +185,9 @@ export class FirmExpenseNotesComponent implements OnInit {
     this.load();
   }
 
-  statusSeverity(status: number): 'success' | 'info' | 'warning' | 'danger' | 'secondary' | 'contrast' | undefined {
+  statusSeverity(status: number): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined {
     switch (status) {
-      case 1: return 'warning';
+      case 1: return 'warn';
       case 2: return 'success';
       case 3: return 'danger';
       case 4: return 'info';

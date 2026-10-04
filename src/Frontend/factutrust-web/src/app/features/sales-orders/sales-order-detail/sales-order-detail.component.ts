@@ -929,7 +929,7 @@ export class SalesOrderDetailComponent implements OnInit {
     return Math.round((done / ordered) * 100);
   }
 
-  statusSeverity(status: SalesOrderStatus): 'success' | 'info' | 'warning' | 'danger' | 'secondary' {
+  statusSeverity(status: SalesOrderStatus): 'success' | 'info' | 'warn' | 'danger' | 'secondary' {
     switch (status) {
       case 'Draft':
         return 'secondary';
@@ -937,13 +937,13 @@ export class SalesOrderDetailComponent implements OnInit {
       case 'Delivered':
         return 'info';
       case 'PartiallyDelivered':
-        return 'warning';
+        return 'warn';
       case 'Completed':
         return 'success';
       case 'Cancelled':
         return 'danger';
       case 'Closed':
-        return 'warning';
+        return 'warn';
       default:
         return 'secondary';
     }

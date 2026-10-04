@@ -366,76 +366,86 @@ import {
 
               <!-- Validation Details -->
               <div class="validation-details">
-                <p-accordion [multiple]="true">
+                <p-accordion [multiple]="true" [value]="openAccordionPanels()">
                   <!-- Legal Checks -->
-                  <p-accordionTab header="Mentions légales" i18n-header="@@invoices.invoice-wizard.mentions.legales.414291e0" [selected]="hasErrorsInCategory('LEGAL')">
-                    <ng-template pTemplate="header">
+                  <p-accordion-panel value="legal">
+                    <p-accordion-header>
                       <div class="accordion-header">
                         <span i18n="@@invoices.invoice-wizard.mentions.legales.414291e0">Mentions légales</span>
                         {{ getCategoryStatus('LEGAL') }}
                       </div>
-                    </ng-template>
-                    @for (check of getChecksByCategory('LEGAL'); track check.id) {
-                      <div class="check-item" [class]="check.status.toLowerCase()">
-                        <i [class]="getCheckIcon(check)"></i>
-                        <div class="check-content">
-                          <span class="check-label">{{ check.label }}</span>
-                          <span class="check-desc">{{ check.description }}</span>
+                    </p-accordion-header>
+                    <p-accordion-content>
+                      @for (check of getChecksByCategory('LEGAL'); track check.id) {
+                        <div class="check-item" [class]="check.status.toLowerCase()">
+                          <i [class]="getCheckIcon(check)"></i>
+                          <div class="check-content">
+                            <span class="check-label">{{ check.label }}</span>
+                            <span class="check-desc">{{ check.description }}</span>
+                          </div>
                         </div>
-                      </div>
-                    }
-                  </p-accordionTab>
-
+                      }
+                    </p-accordion-content>
+                  </p-accordion-panel>
                   <!-- Fiscal Checks -->
-                  <p-accordionTab header="Conformité fiscale" i18n-header="@@invoices.invoice-wizard.conformite.fiscale.f4dc5b52" [selected]="hasErrorsInCategory('FISCAL')">
-                    <ng-template pTemplate="header">
+                  <p-accordion-panel value="fiscal">
+                    <p-accordion-header>
                       <div class="accordion-header">
                         <span i18n="@@invoices.invoice-wizard.conformite.fiscale.f4dc5b52">Conformité fiscale</span>
                         {{ getCategoryStatus('FISCAL') }}
                       </div>
-                    </ng-template>
-                    @for (check of getChecksByCategory('FISCAL'); track check.id) {
-                      <div class="check-item" [class]="check.status.toLowerCase()">
-                        <i [class]="getCheckIcon(check)"></i>
-                        <div class="check-content">
-                          <span class="check-label">{{ check.label }}</span>
-                          <span class="check-desc">{{ check.description }}</span>
+                    </p-accordion-header>
+                    <p-accordion-content>
+                      @for (check of getChecksByCategory('FISCAL'); track check.id) {
+                        <div class="check-item" [class]="check.status.toLowerCase()">
+                          <i [class]="getCheckIcon(check)"></i>
+                          <div class="check-content">
+                            <span class="check-label">{{ check.label }}</span>
+                            <span class="check-desc">{{ check.description }}</span>
+                          </div>
                         </div>
-                      </div>
-                    }
-                  </p-accordionTab>
-
+                      }
+                    </p-accordion-content>
+                  </p-accordion-panel>
                   <!-- Calculation Checks -->
-                  <p-accordionTab header="Calculs" i18n-header="@@invoices.invoice-wizard.calculs.009b0e4f" [selected]="hasErrorsInCategory('CALCULATION')">
-                    <ng-template pTemplate="header">
+                  <p-accordion-panel value="calculation">
+                    <p-accordion-header>
                       <div class="accordion-header">
                         <span i18n="@@invoices.invoice-wizard.calculs.009b0e4f">Calculs</span>
                         {{ getCategoryStatus('CALCULATION') }}
                       </div>
-                    </ng-template>
-                    @for (check of getChecksByCategory('CALCULATION'); track check.id) {
-                      <div class="check-item" [class]="check.status.toLowerCase()">
-                        <i [class]="getCheckIcon(check)"></i>
-                        <div class="check-content">
-                          <span class="check-label">{{ check.label }}</span>
-                          <span class="check-desc">{{ check.description }}</span>
+                    </p-accordion-header>
+                    <p-accordion-content>
+                      @for (check of getChecksByCategory('CALCULATION'); track check.id) {
+                        <div class="check-item" [class]="check.status.toLowerCase()">
+                          <i [class]="getCheckIcon(check)"></i>
+                          <div class="check-content">
+                            <span class="check-label">{{ check.label }}</span>
+                            <span class="check-desc">{{ check.description }}</span>
+                          </div>
                         </div>
-                      </div>
-                    }
-                  </p-accordionTab>
-
+                      }
+                    </p-accordion-content>
+                  </p-accordion-panel>
                   <!-- Format Checks -->
-                  <p-accordionTab header="Format" i18n-header="@@invoices.invoice-wizard.format.041a5dec">
-                    @for (check of getChecksByCategory('FORMAT'); track check.id) {
-                      <div class="check-item" [class]="check.status.toLowerCase()">
-                        <i [class]="getCheckIcon(check)"></i>
-                        <div class="check-content">
-                          <span class="check-label">{{ check.label }}</span>
-                          <span class="check-desc">{{ check.description }}</span>
-                        </div>
+                  <p-accordion-panel value="format">
+                    <p-accordion-header>
+                      <div class="accordion-header">
+                        <span i18n="@@invoices.invoice-wizard.format.041a5dec">Format</span>
                       </div>
-                    }
-                  </p-accordionTab>
+                    </p-accordion-header>
+                    <p-accordion-content>
+                      @for (check of getChecksByCategory('FORMAT'); track check.id) {
+                        <div class="check-item" [class]="check.status.toLowerCase()">
+                          <i [class]="getCheckIcon(check)"></i>
+                          <div class="check-content">
+                            <span class="check-label">{{ check.label }}</span>
+                            <span class="check-desc">{{ check.description }}</span>
+                          </div>
+                        </div>
+                      }
+                    </p-accordion-content>
+                  </p-accordion-panel>
                 </p-accordion>
               </div>
             }
@@ -1501,6 +1511,15 @@ export class StepPreviewComponent implements OnInit {
 
   getChecksByCategory(category: string): ComplianceCheck[] {
     return this.validation?.checks.filter(c => c.category === category) || [];
+  }
+
+  /** Panneaux d'accordion ouverts : chaque catégorie en erreur. */
+  openAccordionPanels(): string[] {
+    const open: string[] = [];
+    if (this.hasErrorsInCategory('LEGAL')) open.push('legal');
+    if (this.hasErrorsInCategory('FISCAL')) open.push('fiscal');
+    if (this.hasErrorsInCategory('CALCULATION')) open.push('calculation');
+    return open;
   }
 
   hasErrorsInCategory(category: string): boolean {

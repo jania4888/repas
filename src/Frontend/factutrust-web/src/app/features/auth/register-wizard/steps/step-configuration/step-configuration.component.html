@@ -95,13 +95,13 @@
               <span class="mod-ico tone-green"><i class="pi pi-sparkles" aria-hidden="true"></i></span>
               <!-- Wrapper span carries the tooltip: PrimeNG disables pointer events on [disabled] switches. -->
               <span [pTooltip]="isLockedByDependency(module.id) ? dependencyLockLabel(module.id) : undefined" tooltipPosition="top">
-                <p-inputSwitch
+                <p-toggleswitch
                   [ngModel]="isModuleEnabled(module.id)"
                   (onChange)="toggleModule(module.id)"
                   [ngModelOptions]="{standalone: true}"
                   [disabled]="isLockedByDependency(module.id)"
                   [attr.aria-label]="loc_activer_label_b372ab(module.label)">
-                </p-inputSwitch>
+                </p-toggleswitch>
               </span>
             </div><ng-container i18n="@@auth.register-wizard.recommande.pour.votre.secteur.eb291dec">
             <span class="mod-name">{{ module.label }}</span>
@@ -125,13 +125,13 @@
             <div class="mod-top">
               <span class="mod-ico tone-gray"><i class="pi pi-box" aria-hidden="true"></i></span>
               <span [pTooltip]="isLockedByDependency(module.id) ? dependencyLockLabel(module.id) : undefined" tooltipPosition="top">
-                <p-inputSwitch
+                <p-toggleswitch
                   [ngModel]="isModuleEnabled(module.id)"
                   (onChange)="toggleModule(module.id)"
                   [ngModelOptions]="{standalone: true}"
                   [disabled]="isLockedByDependency(module.id)"
                   [attr.aria-label]="loc_activer_label_b372ab(module.label)">
-                </p-inputSwitch>
+                </p-toggleswitch>
               </span>
             </div>
             <span class="mod-name">{{ module.label }}</span>

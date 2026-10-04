@@ -260,12 +260,12 @@
                       <i class="pi pi-id-card text-primary-600" aria-hidden="true"></i>
                       <span id="profile-label" i18n="@@auth.register-firm.profil.cabinet.optionnel.3b62b186">Profil cabinet (optionnel)</span>
                     </div>
-                    <p-inputSwitch inputId="profile-toggle" [ngModel]="showOptionalProfile()"
+                    <p-toggleswitch inputId="profile-toggle" [ngModel]="showOptionalProfile()"
                                    (ngModelChange)="showOptionalProfile.set($event)"
                                    [ngModelOptions]="{standalone: true}"
                                    [attr.aria-labelledby]="'profile-label'"
                                    (click)="$event.stopPropagation()">
-                    </p-inputSwitch>
+                    </p-toggleswitch>
                   </div>
                   <p class="optional-hint" i18n="@@auth.register-firm.ces.informations.enrichissent.votre.fiche.dans.l.82c66819">Ces informations enrichissent votre fiche dans l'annuaire des cabinets.</p>
 

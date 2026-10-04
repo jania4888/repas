@@ -7,7 +7,7 @@ import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { EmployeeService, CreateContractRequest, EmploymentContract } from '@core/services/employee.service';
@@ -46,7 +46,7 @@ function parseIsoDate(value?: string): Date | null {
     DatePickerModule,
     InputNumberModule,
     InputTextModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     CheckboxModule,
     ButtonComponent
   ],
@@ -94,7 +94,7 @@ function parseIsoDate(value?: string): Date | null {
         @if (editContract) {
           <div class="form-group">
             <label i18n="@@payroll.employees.contrat.actif.db7e3b10">Contrat actif</label>
-            <p-inputSwitch [(ngModel)]="isActive" />
+            <p-toggleswitch [(ngModel)]="isActive" />
           </div>
         }
       </div>

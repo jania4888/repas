@@ -10,7 +10,7 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { SelectModule } from 'primeng/select';
 import { MessageModule } from 'primeng/message';
 import { MessageService } from 'primeng/api';
@@ -35,7 +35,7 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
   standalone: true,
   imports: [
     CommonModule, FormsModule, RouterModule,
-    TableModule, ButtonModule, DialogModule, InputTextModule, InputNumberModule, InputSwitchModule, SelectModule,
+    TableModule, ButtonModule, DialogModule, InputTextModule, InputNumberModule, ToggleSwitchModule, SelectModule,
     MessageModule, TooltipModule, ToastModule, StudioPageShellComponent, StudioManyToManyDialogComponent
   ],
   template: `
@@ -150,8 +150,8 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
         }
 
         <div class="ft-row">
-          <div><p-inputSwitch [(ngModel)]="fRequired"></p-inputSwitch> <span i18n="@@studio.studio-entity-designer.obligatoire.389b678a">Obligatoire</span></div>
-          <div><p-inputSwitch [(ngModel)]="fUnique"></p-inputSwitch> <span i18n="@@studio.studio-entity-designer.unique.87c6f410">Unique</span></div>
+          <div><p-toggleswitch [(ngModel)]="fRequired"></p-toggleswitch> <span i18n="@@studio.studio-entity-designer.obligatoire.389b678a">Obligatoire</span></div>
+          <div><p-toggleswitch [(ngModel)]="fUnique"></p-toggleswitch> <span i18n="@@studio.studio-entity-designer.unique.87c6f410">Unique</span></div>
         </div>
 
         <ng-container *ngIf="isSelect()">

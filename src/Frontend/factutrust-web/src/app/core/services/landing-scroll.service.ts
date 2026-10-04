@@ -1,5 +1,5 @@
-import { DOCUMENT } from '@angular/common';
-import { Injectable, inject } from '@angular/core';
+
+import { Injectable, inject, DOCUMENT } from '@angular/core';
 
 /** Hauteur du header fixe de la landing à compenser lors du défilement vers une ancre. */
 export const LANDING_HEADER_OFFSET_PX = 80;

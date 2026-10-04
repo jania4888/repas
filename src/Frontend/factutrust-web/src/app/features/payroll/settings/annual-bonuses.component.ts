@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { SelectModule } from 'primeng/select';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
@@ -18,7 +18,7 @@ import { ToastService } from '@core/services/toast.service';
   standalone: true,
   imports: [BackendLabelPipe, 
     CommonModule, FormsModule, TableModule, InputNumberModule, InputTextModule,
-    InputSwitchModule, SelectModule, PageHeaderComponent, ButtonComponent
+    ToggleSwitchModule, SelectModule, PageHeaderComponent, ButtonComponent
   ],
   template: `
     <app-page-header title="Primes annuelles" i18n-title="@@payroll.settings.primes.annuelles.c20c4756" subtitle="Règles de 13e mois, ancienneté et vacances." i18n-subtitle="@@payroll.settings.regles.de.13e.mois.anciennete.et.vacance.a109acd4" />
@@ -35,7 +35,7 @@ import { ToastService } from '@core/services/toast.service';
         <div class="payroll-form-group"><label i18n="@@payroll.settings.libelle.f5485bba">Libellé</label><input pInputText [(ngModel)]="form.label" class="w-full" /></div>
         <div class="payroll-form-group"><label i18n="@@payroll.settings.mois.de.versement.d19605e1">Mois de versement</label><p-inputNumber [(ngModel)]="form.paymentMonth" [min]="1" [max]="12" /></div>
         <div class="payroll-form-group"><label i18n="@@payroll.settings.mois.de.base.5e342b5d">Mois de base</label><p-inputNumber [(ngModel)]="form.monthsOfBase" [minFractionDigits]="2" /></div>
-        <div class="payroll-form-group"><label i18n="@@payroll.settings.actif.2eb75f84">Actif</label><p-inputSwitch [(ngModel)]="form.isActive" /></div>
+        <div class="payroll-form-group"><label i18n="@@payroll.settings.actif.2eb75f84">Actif</label><p-toggleswitch [(ngModel)]="form.isActive" /></div>
         <div class="payroll-form-group flex-end">
           <app-button variant="primary" (click)="saveRule()" i18n="@@payroll.settings.enregistrer.f7c8bcd8">Enregistrer</app-button>
         </div>

@@ -1,4 +1,4 @@
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { LANDING_LOCALE_STORAGE_KEY, LandingLocaleService } from './landing-locale.service';
 

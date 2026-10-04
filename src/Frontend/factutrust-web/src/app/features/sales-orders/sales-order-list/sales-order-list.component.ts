@@ -370,14 +370,14 @@ export class SalesOrderListComponent implements OnInit {
     return new Date(order.expectedDeliveryDate) < new Date(new Date().toDateString());
   }
 
-  statusSeverity(status: SalesOrderStatus): 'success' | 'info' | 'warning' | 'danger' | 'secondary' {
+  statusSeverity(status: SalesOrderStatus): 'success' | 'info' | 'warn' | 'danger' | 'secondary' {
     switch (status) {
       case 'Draft':
         return 'secondary';
       case 'Confirmed':
         return 'info';
       case 'PartiallyDelivered':
-        return 'warning';
+        return 'warn';
       case 'Delivered':
         return 'info';
       case 'Completed':

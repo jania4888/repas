@@ -12,7 +12,7 @@ import { DialogModule } from 'primeng/dialog';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -44,7 +44,7 @@ import {
     SelectModule,
     InputTextModule,
     InputNumberModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     ToastModule,
     TooltipModule,
     PageHeaderComponent,
@@ -108,12 +108,12 @@ import {
                 <td>{{ formatValue(row) }}</td>
                 <td>{{ row.isAppliedToProducts ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
                 <td>
-                  <p-inputSwitch
+                  <p-toggleswitch
                     [ngModel]="row.isActive"
                     (ngModelChange)="onToggleActive(row, $event)"
                     [inputId]="'active-' + row.id"
                     [attr.aria-label]="loc_ui_tern_activer_ou_desactiver_04c31b + row.name">
-                  </p-inputSwitch>
+                  </p-toggleswitch>
                 </td>
                 <td class="col-actions">
                   <p-button
@@ -168,12 +168,12 @@ import {
                 <td>{{ formatValue(row) }}</td>
                 <td>{{ row.isAppliedToProducts ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
                 <td>
-                  <p-inputSwitch
+                  <p-toggleswitch
                     [ngModel]="row.isActive"
                     (ngModelChange)="onToggleActive(row, $event)"
                     [inputId]="'vat-active-' + row.id"
                     [attr.aria-label]="loc_ui_tern_activer_ou_desactiver_04c31b + row.name">
-                  </p-inputSwitch>
+                  </p-toggleswitch>
                 </td>
                 <td class="col-actions">
                   <p-button
@@ -361,7 +361,7 @@ import {
               <label class="switch-field__label" for="tax-on-products">
                 <span class="label-text" i18n="@@settings.taxes.appliquee.sur.les.produits.0ff18fd8">Appliquée sur les produits</span>
               </label>
-              <p-inputSwitch formControlName="isAppliedToProducts" inputId="tax-on-products"></p-inputSwitch>
+              <p-toggleswitch formControlName="isAppliedToProducts" inputId="tax-on-products"></p-toggleswitch>
             </div>
           </div>
 

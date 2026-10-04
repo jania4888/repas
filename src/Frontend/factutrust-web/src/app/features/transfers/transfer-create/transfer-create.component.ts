@@ -155,7 +155,7 @@ interface TransferLine {
                 [(ngModel)]="selectedProduct"
                 [suggestions]="productSuggestions()"
                 (completeMethod)="onProductSearch($event)"
-                field="name"
+                optionLabel="name"
                 [dropdown]="true"
                 [forceSelection]="true"
                 [minLength]="0"

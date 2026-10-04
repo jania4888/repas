@@ -1,5 +1,5 @@
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Injectable, PLATFORM_ID, computed, inject, signal, DOCUMENT } from '@angular/core';
 import { ErpDocumentLocaleBridge } from '@core/i18n/erp-document-locale.bridge';
 import {
   LANDING_DIR,

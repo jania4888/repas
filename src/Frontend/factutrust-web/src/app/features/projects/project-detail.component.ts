@@ -409,7 +409,7 @@ export class ProjectDetailComponent implements OnInit {
     this.loadTab(this.tab());
   }
 
-  onTab(value: string | number): void {
+  onTab(value: string | number | undefined): void {
     this.goTab(String(value) as TabKey);
   }
 

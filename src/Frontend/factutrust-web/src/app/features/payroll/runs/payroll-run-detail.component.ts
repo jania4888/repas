@@ -421,9 +421,9 @@ export class PayrollRunDetailComponent implements OnInit {
     return 'treasury-banner__value--unpaid';
   });
 
-  paymentTagSeverity(status?: string): 'success' | 'warning' | 'secondary' {
+  paymentTagSeverity(status?: string): 'success' | 'warn' | 'secondary' {
     if (status === 'Paid') return 'success';
-    if (status === 'PartiallyPaid') return 'warning';
+    if (status === 'PartiallyPaid') return 'warn';
     return 'secondary';
   }
 

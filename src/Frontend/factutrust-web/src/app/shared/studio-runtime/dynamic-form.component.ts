@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { Textarea } from 'primeng/textarea';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { DatePickerModule } from 'primeng/datepicker';
 import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -35,7 +35,7 @@ interface RenderSection {
   imports: [
     CommonModule, ReactiveFormsModule,
     ButtonModule, InputTextModule, Textarea, InputNumberModule,
-    InputSwitchModule, DatePickerModule, SelectModule, MultiSelectModule, RatingModule,
+    ToggleSwitchModule, DatePickerModule, SelectModule, MultiSelectModule, RatingModule,
     StudioCodeImageComponent, StudioFileFieldComponent
   ],
   template: `
@@ -70,7 +70,7 @@ interface RenderSection {
                 [value]="form.get(cell.field.key)?.value" (valueChange)="setFileValue(cell.field.key, $event)"></app-studio-file-field>
               <app-studio-file-field *ngSwitchCase="FT.Signature" mode="signature" [entityKey]="entityKey"
                 [value]="form.get(cell.field.key)?.value" (valueChange)="setFileValue(cell.field.key, $event)"></app-studio-file-field>
-              <p-inputSwitch *ngSwitchCase="FT.Boolean" [formControlName]="cell.field.key"></p-inputSwitch>
+              <p-toggleswitch *ngSwitchCase="FT.Boolean" [formControlName]="cell.field.key"></p-toggleswitch>
               <p-datepicker *ngSwitchCase="FT.Date" [formControlName]="cell.field.key" dateFormat="yy-mm-dd" appendTo="body"></p-datepicker>
               <p-datepicker *ngSwitchCase="FT.DateTime" [formControlName]="cell.field.key" [showTime]="true" dateFormat="yy-mm-dd" appendTo="body"></p-datepicker>
               <p-select *ngSwitchCase="FT.Select" [formControlName]="cell.field.key" [options]="cell.field.options || []"

@@ -8,7 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { MessageService } from 'primeng/api';
 import { StudioService } from './studio.service';
 import {
@@ -30,7 +30,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
   standalone: true,
   imports: [
     CommonModule, FormsModule, RouterModule, TableModule, ButtonModule, DialogModule,
-    SelectModule, InputTextModule, InputSwitchModule, StudioPageShellComponent,
+    SelectModule, InputTextModule, ToggleSwitchModule, StudioPageShellComponent,
     StudioBridgeActionPickerComponent
   ],
   template: `
@@ -81,8 +81,8 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
         <app-studio-bridge-action-picker [actions]="actions()" [fields]="fields()" [(action)]="fAction" [(mapping)]="fMapping" />
 
         <div class="ft-row ft-switches">
-          <div><p-inputSwitch [(ngModel)]="fRunOnce"></p-inputSwitch> <span i18n="@@studio.studio-automations.executer.une.seule.fois.par.enregistrement.b68e342f">Exécuter une seule fois par enregistrement</span></div>
-          <div><p-inputSwitch [(ngModel)]="fActive"></p-inputSwitch> <span i18n="@@studio.studio-automations.active.a733b809">Active</span></div>
+          <div><p-toggleswitch [(ngModel)]="fRunOnce"></p-toggleswitch> <span i18n="@@studio.studio-automations.executer.une.seule.fois.par.enregistrement.b68e342f">Exécuter une seule fois par enregistrement</span></div>
+          <div><p-toggleswitch [(ngModel)]="fActive"></p-toggleswitch> <span i18n="@@studio.studio-automations.active.a733b809">Active</span></div>
         </div>
       </div>
       <ng-template pTemplate="footer">

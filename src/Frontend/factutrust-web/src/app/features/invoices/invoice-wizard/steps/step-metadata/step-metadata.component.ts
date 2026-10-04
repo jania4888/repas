@@ -142,7 +142,7 @@ import {
                   [suggestions]="invoiceSuggestions"
                   (completeMethod)="searchInvoices($event)"
                   (onSelect)="onLinkedInvoiceSelect($event)"
-                  field="number"
+                  optionLabel="number"
                   [dropdown]="false"
                   [minLength]="1"
                   placeholder="Rechercher par numéro ou client..." i18n-placeholder="@@invoices.invoice-wizard.rechercher.par.numero.ou.client.32e33f20"

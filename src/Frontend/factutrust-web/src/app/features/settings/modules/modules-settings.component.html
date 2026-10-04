@@ -90,13 +90,13 @@
                 <span class="mod-locked-badge"><i class="pi pi-lock" aria-hidden="true"></i> {{ planLockLabel(module) }}</span>
               } @else {
                 <span [pTooltip]="isLockedByDependency(module.id) ? dependencyLockLabel(module.id) : undefined" tooltipPosition="top">
-                  <p-inputSwitch
+                  <p-toggleswitch
                     [ngModel]="isSelected(module.id)"
                     (onChange)="toggleModule(module)"
                     [ngModelOptions]="{standalone: true}"
                     [disabled]="isLockedByDependency(module.id)"
                     [attr.aria-label]="loc_activer_labelfr_ed496d(displayName(module))">
-                  </p-inputSwitch>
+                  </p-toggleswitch>
                 </span>
               }
             </div><ng-container i18n="@@settings.modules.recommande.pour.votre.secteur.8eed0fab">
@@ -128,13 +128,13 @@
                 <span class="mod-locked-badge"><i class="pi pi-lock" aria-hidden="true"></i> {{ planLockLabel(module) }}</span>
               } @else {
                 <span [pTooltip]="isLockedByDependency(module.id) ? dependencyLockLabel(module.id) : undefined" tooltipPosition="top">
-                  <p-inputSwitch
+                  <p-toggleswitch
                     [ngModel]="isSelected(module.id)"
                     (onChange)="toggleModule(module)"
                     [ngModelOptions]="{standalone: true}"
                     [disabled]="isLockedByDependency(module.id)"
                     [attr.aria-label]="loc_activer_labelfr_ed496d(displayName(module))">
-                  </p-inputSwitch>
+                  </p-toggleswitch>
                 </span>
               }
             </div>

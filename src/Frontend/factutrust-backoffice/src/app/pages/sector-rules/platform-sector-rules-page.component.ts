@@ -243,7 +243,7 @@ export class PlatformSectorRulesPageComponent implements OnInit {
     });
   }
 
-  onTabChange(value: string | number): void {
+  onTabChange(value: string | number | undefined): void {
     const idx = typeof value === 'number' ? value : Number(value);
     if (!Number.isNaN(idx)) this.activeTab.set(idx);
   }

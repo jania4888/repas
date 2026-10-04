@@ -109,10 +109,10 @@ describe('QuickCreateProductDialogComponent', () => {
     component.onCategoryChange('Service');
     fixture.detectChanges();
 
-    const stockSwitch = fixture.debugElement.query(By.css('p-inputSwitch'));
+    const stockSwitch = fixture.debugElement.query(By.css('p-toggleswitch'));
     expect(component.isStockManaged()).toBeFalse();
     expect(stockSwitch).not.toBeNull();
-    expect(stockSwitch.componentInstance.disabled).toBeTrue();
+    expect(stockSwitch.componentInstance.disabled()).toBeTrue(); // v20 : input signal
     expect(fixture.nativeElement.textContent).toContain('Disponible uniquement pour les produits physiques.');
     expect(fixture.nativeElement.textContent).toContain('Désactivée');
 

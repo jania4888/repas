@@ -281,10 +281,10 @@ export class FirmPermanentFilesComponent implements OnInit {
     return params;
   }
 
-  statusSeverity(status: number): 'success' | 'info' | 'warning' | 'danger' | 'secondary' {
+  statusSeverity(status: number): 'success' | 'info' | 'warn' | 'danger' | 'secondary' {
     switch (status) {
       case 2: return 'success';
-      case 1: return 'warning';
+      case 1: return 'warn';
       case 9: return 'secondary';
       default: return 'info';
     }

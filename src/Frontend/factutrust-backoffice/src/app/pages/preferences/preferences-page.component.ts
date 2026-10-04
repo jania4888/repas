@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { MessageService } from 'primeng/api';
 import {
   PlatformPreferencesService,
@@ -20,7 +20,7 @@ import { FtPageHeaderComponent } from '@core/ui/page-header/ft-page-header.compo
     RouterLink,
     ButtonModule,
     SelectModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     FtPageHeaderComponent
   ],
   template: `
@@ -51,7 +51,7 @@ import { FtPageHeaderComponent } from '@core/ui/page-header/ft-page-header.compo
           <h2>Confirmation avant déconnexion</h2>
           <p class="muted">Demande une confirmation lorsque vous cliquez sur « Déconnexion ».</p>
         </div>
-        <p-inputSwitch [(ngModel)]="confirmLogout" (ngModelChange)="onConfirmLogoutChange($event)" />
+        <p-toggleswitch [(ngModel)]="confirmLogout" (ngModelChange)="onConfirmLogoutChange($event)" />
       </section>
 
       <div class="prefs-actions">

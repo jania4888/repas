@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, Output, inject } from '@angular/core';
-import { SidebarModule } from 'primeng/sidebar';
+import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
 import { FtOverlayCleanupService } from '@core/services/ft-overlay-cleanup.service';
 
 /**
- * Drawer latéral droit, wrappant `p-sidebar` avec un look unifié.
+ * Drawer latéral droit, wrappant `p-drawer` avec un look unifié.
  *
  * Usage :
  *  ```html
@@ -23,9 +23,9 @@ import { FtOverlayCleanupService } from '@core/services/ft-overlay-cleanup.servi
   selector: 'ft-drawer',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SidebarModule, ButtonModule],
+  imports: [DrawerModule, ButtonModule],
   template: `
-    <p-sidebar
+    <p-drawer
       [visible]="visible"
       (visibleChange)="onVisibleChange($event)"
       position="right"
@@ -57,7 +57,7 @@ import { FtOverlayCleanupService } from '@core/services/ft-overlay-cleanup.servi
       <footer class="drawer__foot">
         <ng-content select="[ftFooter]" />
       </footer>
-    </p-sidebar>
+    </p-drawer>
   `,
   styles: [
     `
@@ -67,7 +67,7 @@ import { FtOverlayCleanupService } from '@core/services/ft-overlay-cleanup.servi
         color: var(--ft-text) !important;
       }
 
-      :host ::ng-deep .ft-drawer-host .p-sidebar-content {
+      :host ::ng-deep .ft-drawer-host .p-drawer-content {
         padding: 0;
         display: flex;
         flex-direction: column;

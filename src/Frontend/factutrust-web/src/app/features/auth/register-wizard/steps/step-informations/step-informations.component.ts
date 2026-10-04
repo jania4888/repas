@@ -8,7 +8,7 @@ import { PasswordModule } from 'primeng/password';
 import { SelectModule } from 'primeng/select';
 import { InputMaskModule } from 'primeng/inputmask';
 import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directive';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ErrorMessageService } from '@core/services/error-message.service';
 import {
   passwordCriteria as computePasswordCriteria,
@@ -34,7 +34,7 @@ import { TaxRegime } from '../../tax-regime.types';
     SelectModule,
     InputMaskModule,
     NifMaskPasteDirective,
-    InputSwitchModule
+    ToggleSwitchModule
   ],
   animations: [
     trigger('fadeInOut', [

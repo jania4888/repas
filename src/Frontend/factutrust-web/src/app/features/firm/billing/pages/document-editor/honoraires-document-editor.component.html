@@ -248,7 +248,7 @@
                   </div>
                   <div class="recurring" *ngIf="mode === 'invoice' && !isCreditNote">
                     <label>Facture récurrente</label>
-                    <p-inputSwitch [(ngModel)]="isRecurring" [disabled]="!canEdit"></p-inputSwitch>
+                    <p-toggleswitch [(ngModel)]="isRecurring" [disabled]="!canEdit"></p-toggleswitch>
                     <p-select *ngIf="isRecurring" [options]="recurrenceOptions" [(ngModel)]="recurrenceFrequency" optionLabel="label" optionValue="value" [disabled]="!canEdit"></p-select>
                   </div>
                 </p-tabpanel>

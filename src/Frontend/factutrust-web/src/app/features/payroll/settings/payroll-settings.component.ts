@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
@@ -26,7 +26,7 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
     TabsModule,
     SelectModule,
     InputNumberModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     TableModule,
     ButtonModule,
     PageHeaderComponent,
@@ -98,11 +98,11 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
           </div>
           <div>
             <label class="sce-config-card__label" for="sceDisbursement" i18n="@@payroll.settings.ecritures.de.decaissement.avances.prets.fc6fcade">Écritures de décaissement (avances/prêts)</label>
-            <p-inputSwitch inputId="sceDisbursement" [(ngModel)]="acc.disbursementEntriesEnabled" [ngModelOptions]="{ standalone: true }" />
+            <p-toggleswitch inputId="sceDisbursement" [(ngModel)]="acc.disbursementEntriesEnabled" [ngModelOptions]="{ standalone: true }" />
           </div>
           <div>
             <label class="sce-config-card__label" for="sceSalarySplit" i18n="@@payroll.settings.ventilation.detaillee.des.salaires.640.2cd2becc">Ventilation détaillée des salaires (640)</label>
-            <p-inputSwitch inputId="sceSalarySplit" [(ngModel)]="acc.detailedSalarySplitEnabled" [ngModelOptions]="{ standalone: true }" />
+            <p-toggleswitch inputId="sceSalarySplit" [(ngModel)]="acc.detailedSalarySplitEnabled" [ngModelOptions]="{ standalone: true }" />
           </div>
         </div>
 
@@ -328,27 +328,27 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
               <div class="payroll-form-row payroll-form-row--cols-2">
                 <div class="payroll-form-group switch-row">
                   <label for="enforceSmig" i18n="@@payroll.settings.controle.smig.sur.les.contrats.120f8cc7">Contrôle SMIG sur les contrats</label>
-                  <p-inputSwitch inputId="enforceSmig" [(ngModel)]="params()!.enforceSmigOnContracts" name="enforceSmig" />
+                  <p-toggleswitch inputId="enforceSmig" [(ngModel)]="params()!.enforceSmigOnContracts" name="enforceSmig" />
                 </div>
                 <div class="payroll-form-group switch-row">
                   <label for="extendedOvertime" i18n="@@payroll.settings.taux.hs.etendus.175.200.001e8643">Taux HS étendus (175 %, 200 %)</label>
-                  <p-inputSwitch inputId="extendedOvertime" [(ngModel)]="params()!.enableExtendedOvertimeRates" name="extendedOvertime" />
+                  <p-toggleswitch inputId="extendedOvertime" [(ngModel)]="params()!.enableExtendedOvertimeRates" name="extendedOvertime" />
                 </div>
                 <div class="payroll-form-group switch-row">
                   <label for="allowanceMatrix" i18n="@@payroll.settings.matrice.primes.imposable.cnss.b517a503">Matrice primes (imposable × CNSS)</label>
-                  <p-inputSwitch inputId="allowanceMatrix" [(ngModel)]="params()!.enableAllowanceQuadrantMatrix" name="allowanceMatrix" />
+                  <p-toggleswitch inputId="allowanceMatrix" [(ngModel)]="params()!.enableAllowanceQuadrantMatrix" name="allowanceMatrix" />
                 </div>
                 <div class="payroll-form-group switch-row">
                   <label for="industrialSector" i18n="@@payroll.settings.secteur.industriel.tfp.1.au.lieu.de.2.080374b6">Secteur industriel (TFP 1 % au lieu de 2 %)</label>
-                  <p-inputSwitch inputId="industrialSector" [(ngModel)]="params()!.isIndustrialSector" name="industrialSector" />
+                  <p-toggleswitch inputId="industrialSector" [(ngModel)]="params()!.isIndustrialSector" name="industrialSector" />
                 </div>
                 <div class="payroll-form-group switch-row">
                   <label for="irppRegularization" i18n="@@payroll.settings.regularisation.irpp.annuelle.solde.de.tout.compt.6ba9bbeb">Régularisation IRPP annuelle (solde de tout compte)</label>
-                  <p-inputSwitch inputId="irppRegularization" [(ngModel)]="params()!.enableIrppRegularization" name="irppRegularization" />
+                  <p-toggleswitch inputId="irppRegularization" [(ngModel)]="params()!.enableIrppRegularization" name="irppRegularization" />
                 </div>
                 <div class="payroll-form-group switch-row">
                   <label for="automaticProrata" i18n="@@payroll.settings.prorata.automatique.absences.suspensions.departs.1a4ac29b">Prorata automatique (absences, suspensions, départs)</label>
-                  <p-inputSwitch inputId="automaticProrata" [(ngModel)]="params()!.enableAutomaticProrata" name="automaticProrata" />
+                  <p-toggleswitch inputId="automaticProrata" [(ngModel)]="params()!.enableAutomaticProrata" name="automaticProrata" />
                 </div>
               </div>
             </app-form-section>

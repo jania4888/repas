@@ -10,7 +10,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { MessageService } from 'primeng/api';
 
 import {
@@ -40,7 +40,7 @@ import { PlanFormDialogComponent } from './plan-form-dialog.component';
     FormsModule,
     ButtonModule,
     TooltipModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     FtPageHeaderComponent,
     FtBadgeComponent,
     FtSkeletonComponent,
@@ -54,7 +54,7 @@ import { PlanFormDialogComponent } from './plan-form-dialog.component';
     <ft-page-header [title]="t('list.title')" [subtitle]="t('list.subtitle')">
       <ng-container ftActions>
         <span class="archived-toggle">
-          <p-inputSwitch
+          <p-toggleswitch
             [(ngModel)]="includeArchived"
             (ngModelChange)="onIncludeArchivedChange($event)" />
           <label class="muted">{{ t('list.actions.includeArchived') }}</label>
