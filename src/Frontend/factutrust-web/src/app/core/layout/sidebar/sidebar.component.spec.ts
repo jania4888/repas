@@ -275,6 +275,7 @@ describe('SidebarComponent — firm navigation', () => {
     expect(achats?.children?.map(c => c.label)).toEqual([
       'Factures fournisseurs',
       'Factures impayées',
+      'Journal d\'achats',
       'Solde par fournisseur',
       'Rapports'
     ]);

@@ -1,3 +1,5 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
@@ -53,6 +55,10 @@ describe('SupplierInvoiceFormComponent', () => {
       providers: [
         provideRouter([]),
         provideNoopAnimations(),
+        // Le sous-arbre du composant (directive de permission, services partagés) injecte
+        // AuthService → HttpClient : les fournir, les requêtes restent interceptées par le test.
+        provideHttpClient(),
+        provideHttpClientTesting(),
         {
           provide: SupplierInvoiceService,
           useValue: { create: createSpy, previewNumber: previewNumberSpy }

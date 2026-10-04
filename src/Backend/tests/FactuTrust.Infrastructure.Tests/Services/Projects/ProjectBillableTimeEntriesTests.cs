@@ -80,6 +80,7 @@ public sealed class ProjectBillableTimeEntriesTests
 
         var phase = ProjectPhase.Create(project.Id, "À faire", 0).Value;
         var taskHourly = ProjectTask.Create(project.Id, phase.Id, "Tâche horaire", null, ProjectTaskPriority.Normal, null, null, null, 8m).Value;
+        var taskHourly2 = ProjectTask.Create(project.Id, phase.Id, "Tâche horaire 2", null, ProjectTaskPriority.Normal, null, null, null, 8m).Value;
 
         var aliceId = Guid.NewGuid();
         var bobId = Guid.NewGuid();
@@ -90,7 +91,7 @@ public sealed class ProjectBillableTimeEntriesTests
         Assert.True(entry1.Submit().IsSuccess);
         Assert.True(entry1.Validate().IsSuccess);
 
-        var entry2 = ProjectTimeEntry.Create(project.Id, bobId, new DateTime(2026, 8, 2), 3m, true, null, null).Value;
+        var entry2 = ProjectTimeEntry.Create(project.Id, bobId, new DateTime(2026, 8, 2), 3m, true, null, taskHourly2.Id).Value;
         Assert.True(entry2.Submit().IsSuccess);
         Assert.True(entry2.Validate().IsSuccess);
 
@@ -99,7 +100,7 @@ public sealed class ProjectBillableTimeEntriesTests
             ctx.Clients.Add(client);
             ctx.Projects.Add(project);
             ctx.ProjectPhases.Add(phase);
-            ctx.ProjectTasks.Add(taskHourly);
+            ctx.ProjectTasks.AddRange(taskHourly, taskHourly2);
             ctx.ProjectMembers.AddRange(alice, bob);
             ctx.ProjectTimeEntries.AddRange(entry1, entry2);
             await ctx.SaveChangesAsync();
@@ -190,7 +191,7 @@ public sealed class ProjectBillableTimeEntriesTests
 
         var memberId = Guid.NewGuid();
         var member = ProjectMember.Create(project.Id, memberId, ProjectMemberRole.Member, 320m, 100m, 40m).Value;
-        var entry = ProjectTimeEntry.Create(project.Id, memberId, new DateTime(2026, 8, 3), 2m, true, null, null).Value;
+        var entry = ProjectTimeEntry.Create(project.Id, memberId, new DateTime(2026, 8, 3), 2m, true, null, Guid.NewGuid()).Value;
         Assert.True(entry.Submit().IsSuccess);
         Assert.True(entry.Validate().IsSuccess);
 
@@ -244,8 +245,8 @@ public sealed class ProjectBillableTimeEntriesTests
 
         var memberId = Guid.NewGuid();
         var member = ProjectMember.Create(project.Id, memberId, ProjectMemberRole.Member, 640m, 80m, 40m).Value;
-        var billable = ProjectTimeEntry.Create(project.Id, memberId, new DateTime(2026, 8, 1), 4m, true, null, null).Value;
-        var nonBillable = ProjectTimeEntry.Create(project.Id, memberId, new DateTime(2026, 8, 2), 2m, false, null, null).Value;
+        var billable = ProjectTimeEntry.Create(project.Id, memberId, new DateTime(2026, 8, 1), 4m, true, null, Guid.NewGuid()).Value;
+        var nonBillable = ProjectTimeEntry.Create(project.Id, memberId, new DateTime(2026, 8, 2), 2m, false, null, Guid.NewGuid()).Value;
         Assert.True(billable.Submit().IsSuccess);
         Assert.True(billable.Validate().IsSuccess);
         Assert.True(nonBillable.Submit().IsSuccess);

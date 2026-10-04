@@ -746,7 +746,8 @@ export class ProjectApiService {
   ): Observable<ApiResponse<{ invoiceId: string; billingId: string }>> {
     return this.http.post<ApiResponse<{ invoiceId: string; billingId: string }>>(
       `${this.base}/${projectId}/billing/time`,
-      { groupBy: 'member', notes, timeEntryIds, targetInvoiceId }
+      // targetInvoiceId seulement s'il est renseigné : la forme du payload reste stable.
+      { groupBy: 'member', notes, timeEntryIds, ...(targetInvoiceId ? { targetInvoiceId } : {}) }
     );
   }
 
@@ -759,7 +760,7 @@ export class ProjectApiService {
   ): Observable<ApiResponse<{ invoiceId: string; billingId: string }>> {
     return this.http.post<ApiResponse<{ invoiceId: string; billingId: string }>>(
       `${this.base}/${projectId}/billing/tasks`,
-      { method, notes, tasks, targetInvoiceId }
+      { method, notes, tasks, ...(targetInvoiceId ? { targetInvoiceId } : {}) }
     );
   }
 
