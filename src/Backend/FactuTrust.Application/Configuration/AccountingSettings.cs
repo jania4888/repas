@@ -205,6 +205,20 @@ public sealed class AccountingSettings
         && BankStatementImport.IsPilotTenant(tenantId);
 
     /// <summary>
+    /// Mode « IA seule » pour un dossier (D1 + D3) : « tout document par l'IA » actif pour ce dossier
+    /// et <see cref="BankStatementImportLimits.AiOnlyReadingEnabled"/>.
+    /// </summary>
+    public bool IsAiOnlyReadingEnabledFor(Guid? tenantId) =>
+        IsAiForAllDocumentsEnabledFor(tenantId) && BankStatementImport.AiOnlyReadingEnabled;
+
+    /// <summary>
+    /// D4 pour un dossier : écart de solde en avertissement à reconnaître quand tout a été lu par l'IA.
+    /// N'a d'effet qu'en mode « IA seule ».
+    /// </summary>
+    public bool IsAiBalanceMismatchAsWarningFor(Guid? tenantId) =>
+        IsAiOnlyReadingEnabledFor(tenantId) && BankStatementImport.AiBalanceMismatchAsWarning;
+
+    /// <summary>
     /// Rapprochement automatique « v2 » : priorité au lien source (écriture générée depuis la ligne
     /// de relevé) et comparaison de compte dans les deux sens (5321 ↔ sous-compte). OFF par défaut :
     /// l'association automatique historique reste strictement identique.

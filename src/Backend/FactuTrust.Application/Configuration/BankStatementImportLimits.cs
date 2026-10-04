@@ -6,11 +6,17 @@ public sealed class BankStatementImportLimits
     /// <summary>Taille maximale du fichier (10 Mo, comme l'import de facture).</summary>
     public long MaxFileBytes { get; set; } = 10 * 1024 * 1024;
 
-    /// <summary>Nombre maximal de pages du PDF (refus avant lecture).</summary>
-    public int MaxPages { get; set; } = 60;
+    /// <summary>
+    /// Nombre maximal de pages du PDF (refus avant lecture). Valeur unique, propagée à l'extracteur
+    /// de texte (<c>AiDocumentTextExtractor</c>) pour qu'aucune page ne soit tronquée en silence.
+    /// </summary>
+    public int MaxPages { get; set; } = 50;
 
-    /// <summary>Nombre maximal de pages lues par l'IA (pages scannées) dans une même analyse.</summary>
-    public int MaxAiPages { get; set; } = 30;
+    /// <summary>
+    /// Nombre maximal de pages lues par l'IA dans une même analyse (borné à [1 ; 60]). En mode
+    /// « IA seule », un relevé qui dépasse ce plafond est refusé en amont (lecture partielle inutile).
+    /// </summary>
+    public int MaxAiPages { get; set; } = 20;
 
     /// <summary>Durée de vie d'une analyse non confirmée (fichier et résultat purgés ensuite).</summary>
     public int SessionRetentionHours { get; set; } = 24;
@@ -53,6 +59,22 @@ public sealed class BankStatementImportLimits
     /// <summary>Active la lecture page par page via le modèle vision (GLM-OCR).</summary>
     public bool VisionReadingEnabled { get; set; }
 
+    /// <summary>
+    /// Mode « IA seule » (D1 + D3) : toutes les pages de tout relevé sont lues par l'IA
+    /// (<see cref="Features.Accounting.BankStatementImport.BankStatementAiReadingModes.AiOnly"/>) ;
+    /// la lecture directe du PDF ne fournit plus que des métadonnées et un RIB différent du compte
+    /// n'empêche plus la lecture. OFF (défaut code) = chemin historique « complément ».
+    /// Évalué à travers <c>AccountingSettings.IsAiForAllDocumentsEnabledFor</c> (dossiers pilotes).
+    /// </summary>
+    public bool AiOnlyReadingEnabled { get; set; }
+
+    /// <summary>
+    /// D4 : quand toutes les lignes viennent de l'IA (aucune ligne lue directement, aucune page en
+    /// échec), un contrôle de solde qui ne boucle pas devient un avertissement à reconnaître
+    /// explicitement à la confirmation, au lieu d'un blocage. OFF (défaut code) = blocage.
+    /// </summary>
+    public bool AiBalanceMismatchAsWarning { get; set; }
+
     /// <summary>Dossiers pilotes (GUID). Vide = tous les dossiers.</summary>
     public List<Guid> AiPilotTenantIds { get; set; } = new();
 
@@ -76,8 +98,11 @@ public sealed class BankStatementImportLimits
     /// <summary>Refus des images dont largeur×hauteur dépasse ce seuil (MP).</summary>
     public int MaxImageMegapixels { get; set; } = 60;
 
-    /// <summary>Workers Hangfire dédiés à la file <c>bank_statement_ai</c>.</summary>
-    public int AiWorkerCount { get; set; } = 2;
+    /// <summary>
+    /// Workers Hangfire dédiés à la file <c>bank_statement_ai</c>. Règle : ≤ <c>Ollama:MaxConcurrentGenerations</c>
+    /// (un second ouvrier attendrait derrière le créneau unique du moteur pendant que son budget s'écoule).
+    /// </summary>
+    public int AiWorkerCount { get; set; } = 1;
 
     public int EffectiveVisionRenderDpi => Math.Clamp(VisionRenderDpi, 120, 300);
 
@@ -92,6 +117,10 @@ public sealed class BankStatementImportLimits
     public int EffectiveMaxImageMegapixels => Math.Clamp(MaxImageMegapixels, 10, 120);
 
     public int EffectiveAiWorkerCount => Math.Clamp(AiWorkerCount, 1, 4);
+
+    public int EffectiveMaxPages => Math.Clamp(MaxPages, 1, 200);
+
+    public int EffectiveMaxAiPages => Math.Clamp(MaxAiPages, 1, 60);
 
     public bool IsPilotTenant(Guid? tenantId) =>
         AiPilotTenantIds.Count == 0 || (tenantId is { } id && AiPilotTenantIds.Contains(id));

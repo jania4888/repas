@@ -436,6 +436,8 @@ public static class AuditActions
         // Import IA de relevés bancaires → brouillons du journal de banque.
         public const string BankStatementAnalyzed = "Accounting.BankStatementAnalyzed";
         public const string BankStatementExtractionCorrected = "Accounting.BankStatementExtractionCorrected";
+        /// <summary>Fin d'une lecture IA page par page : compteurs par moteur, durée, modèles (aucune donnée de relevé).</summary>
+        public const string BankStatementAiReadingCompleted = "Accounting.BankStatementAiReadingCompleted";
         public const string BankStatementEntriesGenerated = "Accounting.BankStatementEntriesGenerated";
         public const string BankPostingRuleSaved = "Accounting.BankPostingRuleSaved";
         public const string BankPostingRuleDeleted = "Accounting.BankPostingRuleDeleted";
