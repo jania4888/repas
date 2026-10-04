@@ -105,7 +105,7 @@ public sealed class ExportPurchasesJournalPdfQueryHandler
 
         var company = await _companyRepository.GetDefaultAsync(cancellationToken);
         var context = new PurchasesJournalPdfContext(
-            Title: "Journal d'achats",
+            Title: PurchasesJournalLabels.Title(),
             ViewModeLabel: PurchasesJournalReportAssembler.ViewModeDisplayLabel(request.ViewMode),
             SourceLabel: PurchasesJournalReportAssembler.SourceDisplayLabel(request.Source),
             From: from,
@@ -116,7 +116,8 @@ public sealed class ExportPurchasesJournalPdfQueryHandler
             ViewMode: request.ViewMode,
             DetailRows: detailRows,
             AggregatedRows: aggregatedRows,
-            Totals: totals);
+            Totals: totals,
+            RightToLeft: PurchasesJournalLabels.IsArabic);
 
         var pdfBytes = await _pdfService.GeneratePurchasesJournalReportPdfAsync(context, cancellationToken);
 

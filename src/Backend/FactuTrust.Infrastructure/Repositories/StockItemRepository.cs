@@ -1,9 +1,9 @@
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Features.Reports;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Infrastructure.MultiTenancy;
 using Microsoft.EntityFrameworkCore;
-using StockStatusReportConstants = FactuTrust.Application.Features.Reports.StockStatusReportConstants;
 
 namespace FactuTrust.Infrastructure.Repositories;
 
@@ -334,12 +334,18 @@ public sealed class StockItemRepository : IStockItemRepository
             .ToListAsync(cancellationToken);
 
         if (!includeZeroStock || !warehouseId.HasValue)
+        {
+            LocalizeUncategorized(fromStockItems);
             return fromStockItems;
+        }
 
         var warehouse = await context.Warehouses.AsNoTracking()
             .FirstOrDefaultAsync(w => w.Id == warehouseId.Value && w.IsActive, cancellationToken);
         if (warehouse is null)
+        {
+            LocalizeUncategorized(fromStockItems);
             return fromStockItems;
+        }
 
         var existingProductIds = fromStockItems.Select(r => r.ProductId).ToHashSet();
 
@@ -381,7 +387,41 @@ public sealed class StockItemRepository : IStockItemRepository
             })
             .ToListAsync(cancellationToken);
         fromStockItems.AddRange(missingRows);
+        LocalizeUncategorized(fromStockItems);
         return fromStockItems;
+    }
+
+    /// <summary>
+    /// Le SQL conserve le libellé français historique. La traduction n'est appliquée qu'en mémoire,
+    /// après lecture, et seulement quand l'interface est en arabe.
+    /// </summary>
+    private static void LocalizeUncategorized(List<StockStatusReportRowDto> rows)
+    {
+        if (!StockStatusLabels.IsArabic)
+            return;
+
+        var label = StockStatusLabels.Uncategorized();
+        for (var i = 0; i < rows.Count; i++)
+        {
+            if (rows[i].CategoryName != StockStatusReportConstants.UncategorizedLabel)
+                continue;
+
+            var row = rows[i];
+            rows[i] = new StockStatusReportRowDto
+            {
+                ProductId = row.ProductId,
+                ProductCode = row.ProductCode,
+                ProductName = row.ProductName,
+                CategoryId = row.CategoryId,
+                CategoryName = label,
+                WarehouseId = row.WarehouseId,
+                WarehouseCode = row.WarehouseCode,
+                WarehouseName = row.WarehouseName,
+                QuantityOnHand = row.QuantityOnHand,
+                UnitCost = row.UnitCost,
+                StockValue = row.StockValue
+            };
+        }
     }
 
     private static List<StockStatusReportRowDto> SortStockStatusRows(

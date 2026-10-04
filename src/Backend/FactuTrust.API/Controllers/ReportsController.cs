@@ -499,9 +499,9 @@ public class ReportsController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         if (!from.HasValue || !to.HasValue)
-            return BadRequest(ApiResponse<object>.Fail("Les paramètres from et to sont requis (format: yyyy-MM-dd)."));
+            return BadRequest(ApiResponse<object>.Fail(SalesJournalLabels.MissingDates()));
         if (from.Value > to.Value)
-            return BadRequest(ApiResponse<object>.Fail("La date de début ne peut pas être après la date de fin."));
+            return BadRequest(ApiResponse<object>.Fail(SalesJournalLabels.DateOrder()));
 
         var mode = SalesJournalReportAssembler.ParseViewMode(viewMode);
         var result = await _mediator.Send(
@@ -524,16 +524,16 @@ public class ReportsController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         if (!from.HasValue || !to.HasValue)
-            return BadRequest(ApiResponse<object>.Fail("Les paramètres from et to sont requis (format: yyyy-MM-dd)."));
+            return BadRequest(ApiResponse<object>.Fail(SalesJournalLabels.MissingDates()));
         if (from.Value > to.Value)
-            return BadRequest(ApiResponse<object>.Fail("La date de début ne peut pas être après la date de fin."));
+            return BadRequest(ApiResponse<object>.Fail(SalesJournalLabels.DateOrder()));
 
         var mode = SalesJournalReportAssembler.ParseViewMode(viewMode);
         var result = await _mediator.Send(
             new ExportSalesJournalPdfQuery(from.Value, to.Value, mode, clientId),
             cancellationToken);
         if (result.IsFailure)
-            return BadRequest(ApiResponse<object>.Fail(result.Error.Description, result.Error.Code));
+            return BadRequest(ApiResponse<object>.FailWithCode(result.Error.Description, result.Error.Code));
 
         return File(result.Value.Content, result.Value.ContentType, result.Value.FileName);
     }

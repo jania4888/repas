@@ -68,7 +68,8 @@ import { ProductOnboardingApiService } from '../../onboarding/product-onboarding
             class="midde_cont"
             [class.layout-full-width]="layoutFlags().fullWidth"
             [class.layout-distraction-free]="layoutFlags().hideLayout"
-            [class.midde_cont--workspace]="showWorkspaceTabBar()">
+            [class.midde_cont--workspace]="showWorkspaceTabBar()"
+            [class.midde_cont--fill-pane]="layoutFlags().fillPane">
             @if (isAiAssistantRoute()) {
               <main
                 id="main-content"
@@ -209,6 +210,28 @@ import { ProductOnboardingApiService } from '../../onboarding/product-onboarding
       display: none !important;
     }
 
+    .midde_cont.midde_cont--fill-pane {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 0;
+      padding: 0;
+      border-start-start-radius: 0;
+    }
+
+    .midde_cont.midde_cont--fill-pane .workspace-pane--work {
+      overflow: hidden;
+      padding-bottom: 0;
+    }
+
+    .midde_cont.midde_cont--fill-pane main#main-content {
+      flex: 1;
+      min-height: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
     main#main-content {
       max-width: var(--shell-main-max-width);
       margin-inline: 0;
@@ -331,6 +354,12 @@ export class MainLayoutComponent implements OnInit {
 
   readonly isAiAssistantRoute = computed(() => this.aiAssistantShell.isAiAssistantRoute(this.routerUrl()));
 
+  /** Dedicated chef-de-mission page already is the assistant; the FAB would cover the composer. */
+  readonly isFirmAssistantPage = computed(() => {
+    const path = this.routerUrl().split('?')[0].split('#')[0];
+    return path === '/firm/assistant';
+  });
+
   readonly routeAgentScope = computed(() =>
     resolveScopeFromUrl(this.routerUrl(), {
       firmDelegated: this.auth.isAccountingFirm() && this.auth.isDelegatedMode()
@@ -349,6 +378,7 @@ export class MainLayoutComponent implements OnInit {
     () =>
       this.hasAiAccess() &&
       !this.isAiAssistantRoute() &&
+      !this.isFirmAssistantPage() &&
       !this.layoutFlags().hideLayout &&
       !this.drawerOverlay.isOpen() &&
       (!this.aiAssistantShell.aiTabOpen() || this.aiAssistantShell.activePane() !== 'ai')

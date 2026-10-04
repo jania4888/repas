@@ -16,6 +16,7 @@ import { ProductCategoryService, ProductCategorySelect } from '@core/services/pr
 import {
   ReportsApiService,
   StockStatusGroupingMode,
+  StockStatusPdfError,
   StockStatusReportResult,
   StockStatusReportRow
 } from '@core/services/reports-api.service';
@@ -272,6 +273,11 @@ export class StockStatusReportComponent implements OnInit {
     return (this.report()?.totalRows ?? 0) > 0;
   }
 
+  /**
+   * Chiffres latins et 3 décimales. `fr-FR` est conservé : la locale hybride `ar-TN`
+   * utilise les mêmes séparateurs, et `LOCALE_ID` vaut `fr-TN` en français, ce qui
+   * changerait le regroupement déjà affiché sur cette carte.
+   */
   formatAmount(value: number): string {
     return value.toLocaleString('fr-FR', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
   }
@@ -296,7 +302,7 @@ export class StockStatusReportComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (!res.success || !res.data) {
-          this.loadError.set(res.message ?? 'Erreur de chargement');
+          this.loadError.set(res.message ?? $localize`:@@reports.stock-status.erreur.chargement:Impossible de charger l'état de stock.`);
           return;
         }
         const data = res.data;
@@ -367,9 +373,12 @@ export class StockStatusReportComponent implements OnInit {
       },
       error: err => {
         this.printingPdf.set(false);
-        const msg = err?.message ?? $localize`:@@reports.stock-status.pdf.error:Impossible de générer le PDF`;
+        const pdfError = err instanceof StockStatusPdfError ? err : null;
+        const msg = pdfError?.message
+          ?? err?.message
+          ?? $localize`:@@reports.stock-status.pdf.error:Impossible de générer le PDF`;
         this.toast.add({
-          severity: msg.includes('Aucun') ? 'info' : 'error',
+          severity: pdfError?.code === 'NoData' ? 'info' : 'error',
           summary: $localize`:@@reports.stock-status.information:Information`,
           detail: msg
         });
@@ -387,7 +396,16 @@ export class StockStatusReportComponent implements OnInit {
 
     loadRows.then(rows => {
       const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
-      const header = ['Entrepôt', 'Catégorie', 'Code', 'Désignation', 'Qté', 'P.U.', 'Valeur', 'Devise'];
+      const header = [
+        $localize`:@@reports.stock-status.col.entrepot:Entrepôt`,
+        $localize`:@@reports.stock-status.col.categorie:Catégorie`,
+        $localize`:@@reports.stock-status.col.code:Code`,
+        $localize`:@@reports.stock-status.col.designation:Désignation`,
+        $localize`:@@reports.stock-status.col.qte:Qté`,
+        $localize`:@@reports.stock-status.col.pu:P.U.`,
+        $localize`:@@reports.stock-status.col.valeur:Valeur`,
+        $localize`:@@reports.stock-status.col.devise:Devise`
+      ];
       const lines = [
         header.join(';'),
         ...rows.map(row =>

@@ -5,7 +5,7 @@ import { provideRouter } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { of } from 'rxjs';
 import { PurchasesJournalReportsComponent } from './purchases-journal-reports.component';
-import { ReportsApiService } from '@core/services/reports-api.service';
+import { PurchasesJournalDetailRow, ReportsApiService } from '@core/services/reports-api.service';
 import { SupplierService } from '@core/services/supplier.service';
 
 describe('PurchasesJournalReportsComponent', () => {
@@ -56,5 +56,16 @@ describe('PurchasesJournalReportsComponent', () => {
   it('should create and load empty journal', () => {
     expect(fixture.componentInstance).toBeTruthy();
     expect(fixture.componentInstance.hasData()).toBe(false);
+  });
+
+  it('shows a document label and keeps routing on the BR code', () => {
+    const component = fixture.componentInstance;
+    const receipt = { documentKind: 'BR', documentId: 'receipt-1' } as PurchasesJournalDetailRow;
+    const invoice = { documentKind: 'FAC', documentId: 'invoice-1' } as PurchasesJournalDetailRow;
+
+    expect(component.documentKindLabel('BR')).not.toBe('BR');
+    expect(component.documentKindLabel('FAC')).not.toBe('FAC');
+    expect(component.documentLink(receipt)).toEqual(['/purchase-receipts', 'receipt-1']);
+    expect(component.documentLink(invoice)).toEqual(['/supplier-invoices', 'invoice-1']);
   });
 });

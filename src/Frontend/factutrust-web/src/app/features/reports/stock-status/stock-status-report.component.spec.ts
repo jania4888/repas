@@ -2,9 +2,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { StockStatusReportComponent } from './stock-status-report.component';
-import { ReportsApiService } from '@core/services/reports-api.service';
+import { ReportsApiService, StockStatusPdfError } from '@core/services/reports-api.service';
 import { StockService } from '@core/services/stock.service';
 import { ProductCategoryService } from '@core/services/product-category.service';
 import { PrintPreviewService } from '@core/services/print-preview.service';
@@ -76,5 +76,62 @@ describe('StockStatusReportComponent', () => {
   it('builds primary groups from rows', () => {
     const groups = fixture.componentInstance.primaryGroups();
     expect(groups.length).toBeGreaterThan(0);
+  });
+
+  it('exports csv with localized headers and quoted cells', async () => {
+    let captured: Blob | undefined;
+    spyOn(URL, 'createObjectURL').and.callFake((blob: Blob) => {
+      captured = blob;
+      return 'blob:stock';
+    });
+    spyOn(URL, 'revokeObjectURL');
+    spyOn(HTMLAnchorElement.prototype, 'click');
+
+    fixture.componentInstance.exportCsv();
+    await fixture.whenStable();
+    const bytes = new Uint8Array(await captured!.arrayBuffer());
+    expect(Array.from(bytes.slice(0, 3))).toEqual([0xEF, 0xBB, 0xBF]);
+    const csv = new TextDecoder().decode(bytes);
+    const header = [
+      $localize`:@@reports.stock-status.col.entrepot:Entrepôt`,
+      $localize`:@@reports.stock-status.col.categorie:Catégorie`,
+      $localize`:@@reports.stock-status.col.code:Code`,
+      $localize`:@@reports.stock-status.col.designation:Désignation`,
+      $localize`:@@reports.stock-status.col.qte:Qté`,
+      $localize`:@@reports.stock-status.col.pu:P.U.`,
+      $localize`:@@reports.stock-status.col.valeur:Valeur`,
+      $localize`:@@reports.stock-status.col.devise:Devise`
+    ].join(';');
+
+    expect(csv.split(/\r?\n/)[0]).toBe(header);
+    expect(csv).toContain('"Magasin"');
+    expect(csv).toContain('"Article"');
+  });
+
+  it('shows an info toast for NoData without reading the french sentence', () => {
+    reportsApi.downloadStockStatusPdf.and.returnValue(
+      throwError(() => new StockStatusPdfError('لا توجد أصناف في المخزون لهذه المعايير.', 'NoData'))
+    );
+    const toast = fixture.debugElement.injector.get(MessageService);
+    spyOn(toast, 'add');
+
+    fixture.componentInstance.printPdf();
+
+    expect(toast.add).toHaveBeenCalledWith(jasmine.objectContaining({
+      severity: 'info',
+      detail: 'لا توجد أصناف في المخزون لهذه المعايير.'
+    }));
+  });
+
+  it('shows an error toast when an empty-looking french message is not NoData', () => {
+    reportsApi.downloadStockStatusPdf.and.returnValue(
+      throwError(() => new StockStatusPdfError('Aucun article en stock pour ces critères.', 'TooManyLines'))
+    );
+    const toast = fixture.debugElement.injector.get(MessageService);
+    spyOn(toast, 'add');
+
+    fixture.componentInstance.printPdf();
+
+    expect(toast.add).toHaveBeenCalledWith(jasmine.objectContaining({ severity: 'error' }));
   });
 });

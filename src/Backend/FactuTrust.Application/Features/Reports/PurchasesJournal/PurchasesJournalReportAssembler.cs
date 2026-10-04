@@ -1,3 +1,4 @@
+using System.Globalization;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Domain.Common;
 
@@ -13,11 +14,17 @@ public static class PurchasesJournalReportAssembler
         var days = (to.Date - from.Date).Days + 1;
         if (viewMode == SalesJournalViewMode.Detail && days > PurchasesJournalReportConstants.MaxDetailPeriodDays)
             return Result.Failure(Error.Validation("Period",
-                $"La période ne peut pas dépasser {PurchasesJournalReportConstants.MaxDetailPeriodDays} jours en mode détail."));
+                string.Format(
+                    CultureInfo.InvariantCulture,
+                    PurchasesJournalReportConstants.DetailPeriodExceededTemplate,
+                    PurchasesJournalReportConstants.MaxDetailPeriodDays)));
 
         if (viewMode != SalesJournalViewMode.Detail && days > PurchasesJournalReportConstants.MaxAggregatedPeriodDays)
             return Result.Failure(Error.Validation("Period",
-                $"La période ne peut pas dépasser {PurchasesJournalReportConstants.MaxAggregatedPeriodDays / 366} ans en mode agrégé."));
+                string.Format(
+                    CultureInfo.InvariantCulture,
+                    PurchasesJournalReportConstants.AggregatedPeriodExceededTemplate,
+                    PurchasesJournalReportConstants.MaxAggregatedPeriodDays / 366)));
 
         return Result.Success();
     }
@@ -58,7 +65,7 @@ public static class PurchasesJournalReportAssembler
 
     public static SalesJournalViewMode ParseViewMode(string? value) => SalesJournalReportAssembler.ParseViewMode(value);
 
-    public static string ViewModeDisplayLabel(SalesJournalViewMode mode) => SalesJournalReportAssembler.ViewModeDisplayLabel(mode);
+    public static string ViewModeDisplayLabel(SalesJournalViewMode mode) => PurchasesJournalLabels.ViewMode(mode);
 
     public static PurchasesJournalSource ParseSource(string? value) =>
         value?.Trim().ToLowerInvariant() switch
@@ -73,9 +80,5 @@ public static class PurchasesJournalReportAssembler
         _ => "Invoice"
     };
 
-    public static string SourceDisplayLabel(PurchasesJournalSource source) => source switch
-    {
-        PurchasesJournalSource.PurchaseReceipt => "Bons de réception",
-        _ => "Factures fournisseur"
-    };
+    public static string SourceDisplayLabel(PurchasesJournalSource source) => PurchasesJournalLabels.Source(source);
 }

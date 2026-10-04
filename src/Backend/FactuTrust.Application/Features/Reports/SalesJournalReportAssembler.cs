@@ -8,16 +8,14 @@ public static class SalesJournalReportAssembler
     public static Result ValidatePeriod(DateTime from, DateTime to, SalesJournalViewMode viewMode)
     {
         if (from > to)
-            return Result.Failure(Error.Validation("Period", "La date de début doit être antérieure à la date de fin."));
+            return Result.Failure(Error.Validation("Period", SalesJournalLabels.PeriodOrder()));
 
         var days = (to.Date - from.Date).Days + 1;
         if (viewMode == SalesJournalViewMode.Detail && days > SalesJournalReportConstants.MaxDetailPeriodDays)
-            return Result.Failure(Error.Validation("Period",
-                $"La période ne peut pas dépasser {SalesJournalReportConstants.MaxDetailPeriodDays} jours en mode détail."));
+            return Result.Failure(Error.Validation("Period", SalesJournalLabels.DetailPeriodTooLong()));
 
         if (viewMode != SalesJournalViewMode.Detail && days > SalesJournalReportConstants.MaxAggregatedPeriodDays)
-            return Result.Failure(Error.Validation("Period",
-                $"La période ne peut pas dépasser {SalesJournalReportConstants.MaxAggregatedPeriodDays / 366} ans en mode agrégé."));
+            return Result.Failure(Error.Validation("Period", SalesJournalLabels.AggregatedPeriodTooLong()));
 
         return Result.Success();
     }
@@ -72,12 +70,5 @@ public static class SalesJournalReportAssembler
             _ => SalesJournalViewMode.Detail
         };
 
-    public static string ViewModeDisplayLabel(SalesJournalViewMode mode) => mode switch
-    {
-        SalesJournalViewMode.Detail => "Détail",
-        SalesJournalViewMode.Day => "Par jour",
-        SalesJournalViewMode.Month => "Par mois",
-        SalesJournalViewMode.Year => "Par année",
-        _ => "Détail"
-    };
+    public static string ViewModeDisplayLabel(SalesJournalViewMode mode) => SalesJournalLabels.ViewMode(mode);
 }

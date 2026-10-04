@@ -50,7 +50,8 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
       class="chat-panel"
       [class.open]="isOpen || embedded"
       [class.embedded]="embedded"
-      [class.embedded-workspace]="embedded && workspaceTab">
+      [class.embedded-workspace]="embedded && workspaceTab"
+      [class.embedded-page]="embedded && pageFill">
       <div class="panel-backdrop" (click)="onBackdropClose()"></div>
       <div class="panel-container">
         <!-- Header -->
@@ -112,9 +113,11 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
               (click)="toggleSelectionMode()"
               [attr.aria-pressed]="selection.isSelectionMode()"
               title="Sélection multi-réponses (export PowerPoint)" i18n-title="@@ai-assistant.components.selection.multi.reponses.export.powerpoint.8e60cffd" i18n="@@ai-assistant.components.selection.ac0002b0"> Sélection </button>
-            <button class="icon-btn" (click)="onCloseClick()" title="Fermer" i18n-title="@@ai-assistant.components.fermer.5ab4ec64">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
+            @if (!pageFill) {
+              <button class="icon-btn" (click)="onCloseClick()" title="Fermer" i18n-title="@@ai-assistant.components.fermer.5ab4ec64">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            }
           </div>
         </div>
 
@@ -321,6 +324,12 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
       flex: 1;
     }
 
+    .chat-panel.embedded.embedded-page {
+      height: 100%;
+      min-height: 0;
+      flex: 1;
+    }
+
     .chat-panel.embedded .panel-container {
       flex: 1;
       min-height: 0;
@@ -367,6 +376,14 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
       border-radius: 12px;
       border: 1px solid var(--color-neutral-200, #e5e7eb);
       overflow: hidden;
+    }
+
+    .chat-panel.embedded.embedded-page .panel-container {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
     }
 
     .panel-header {
@@ -585,6 +602,26 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
       font-size: 16px;
       font-weight: 600;
       color: var(--color-neutral-800, #1f2937);
+    }
+
+    .chat-panel.embedded.embedded-page .welcome-state--catalog {
+      align-items: center;
+      padding: 40px 32px 24px;
+    }
+
+    .chat-panel.embedded.embedded-page .welcome-state h4 {
+      font-size: 22px;
+    }
+
+    .chat-panel.embedded.embedded-page .welcome-state p {
+      max-width: 1120px;
+    }
+
+    .chat-panel.embedded.embedded-page .welcome-state--catalog app-suggestion-catalog,
+    .chat-panel.embedded.embedded-page .favorite-add,
+    .chat-panel.embedded.embedded-page .favorites-block {
+      width: 100%;
+      max-width: 1120px;
     }
 
     .welcome-state p {
@@ -843,6 +880,8 @@ export class ChatPanelComponent implements AfterViewInit, OnInit, OnChanges, OnD
   @Input() embedded = false;
   /** When true with embedded, panel fills the workspace tab pane (not a dedicated /ai-assistant route). */
   @Input() workspaceTab = false;
+  /** When true with embedded, panel is the page surface (firm chef de mission), not a floating card. */
+  @Input() pageFill = false;
   /**
    * Expert de module de cette surface (None = assistant global, comportement historique).
    * Appliqué à la session à l'init, à chaque changement d'input et à chaque (ré)ouverture.

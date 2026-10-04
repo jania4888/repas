@@ -785,8 +785,8 @@
     ],
     "x-wave": "v1"
   },
-  "core.app-navigation.registry.ts.journal.dachats.pj1a2b3c": "Journal d'achats",
-  "@core.app-navigation.registry.ts.journal.dachats.pj1a2b3c": {
+  "core.app-navigation.registry.ts.journal.de.ventes.a1b2c3d4": "Journal de ventes",
+  "@core.app-navigation.registry.ts.journal.de.ventes.a1b2c3d4": {
     "x-files": [
       "src/app/core/config/app-navigation.registry.ts"
     ],
@@ -864,6 +864,13 @@
   },
   "core.app-navigation.registry.ts.factures.fournisseurs.1dcbc2ed": "Factures fournisseurs",
   "@core.app-navigation.registry.ts.factures.fournisseurs.1dcbc2ed": {
+    "x-files": [
+      "src/app/core/config/app-navigation.registry.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.app-navigation.registry.ts.journal.dachats.pj1a2b3c": "Journal d'achats",
+  "@core.app-navigation.registry.ts.journal.dachats.pj1a2b3c": {
     "x-files": [
       "src/app/core/config/app-navigation.registry.ts"
     ],
@@ -960,6 +967,13 @@
     ],
     "x-wave": "v1"
   },
+  "core.app-navigation.registry.ts.etat.de.stock.7c4e2a91": "État de stock",
+  "@core.app-navigation.registry.ts.etat.de.stock.7c4e2a91": {
+    "x-files": [
+      "src/app/core/config/app-navigation.registry.ts"
+    ],
+    "x-wave": "v1"
+  },
   "core.app-navigation.registry.ts.tresorerie.e0e75da7": "Trésorerie",
   "@core.app-navigation.registry.ts.tresorerie.e0e75da7": {
     "x-files": [
@@ -985,6 +999,14 @@
   "@core.app-navigation.registry.ts.caisse.ce5a5c98": {
     "x-files": [
       "src/app/core/config/app-navigation.registry.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.nav.treasury.payments-cash-journal": "Journal de trésorerie",
+  "@core.nav.treasury.payments-cash-journal": {
+    "x-files": [
+      "src/app/core/config/app-navigation.registry.ts",
+      "src/app/core/i18n/nav-labels.ts"
     ],
     "x-wave": "v1"
   },
@@ -5520,6 +5542,13 @@
     ],
     "x-wave": "v1"
   },
+  "core.nav.sales.sales-journal": "Journal de ventes",
+  "@core.nav.sales.sales-journal": {
+    "x-files": [
+      "src/app/core/i18n/nav-labels.ts"
+    ],
+    "x-wave": "v1"
+  },
   "core.nav.sales.recurring-contracts": "Contrats récurrents",
   "@core.nav.sales.recurring-contracts": {
     "x-files": [
@@ -5690,6 +5719,13 @@
   },
   "core.nav.stock.inventory-wizard": "Mode assistant",
   "@core.nav.stock.inventory-wizard": {
+    "x-files": [
+      "src/app/core/i18n/nav-labels.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.nav.stock.stock-status": "État de stock",
+  "@core.nav.stock.stock-status": {
     "x-files": [
       "src/app/core/i18n/nav-labels.ts"
     ],
@@ -7769,8 +7805,29 @@
     ],
     "x-wave": "v1"
   },
+  "core.breadcrumb.ts.journal.de.ventes.a1b2c3d4": "Journal de ventes",
+  "@core.breadcrumb.ts.journal.de.ventes.a1b2c3d4": {
+    "x-files": [
+      "src/app/core/services/breadcrumb.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.breadcrumb.ts.journal.dachats.pj1a2b3c": "Journal d'achats",
+  "@core.breadcrumb.ts.journal.dachats.pj1a2b3c": {
+    "x-files": [
+      "src/app/core/services/breadcrumb.service.ts"
+    ],
+    "x-wave": "v1"
+  },
   "core.breadcrumb.ts.etats.analytiques.achats.0f98ad05": "États analytiques Achats",
   "@core.breadcrumb.ts.etats.analytiques.achats.0f98ad05": {
+    "x-files": [
+      "src/app/core/services/breadcrumb.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.breadcrumb.ts.etat.de.stock.7c4e2a91": "État de stock",
+  "@core.breadcrumb.ts.etat.de.stock.7c4e2a91": {
     "x-files": [
       "src/app/core/services/breadcrumb.service.ts"
     ],
@@ -8035,6 +8092,62 @@
     ],
     "x-wave": "v1"
   },
+  "pay.cash": "Espèces",
+  "@pay.cash": {
+    "x-files": [
+      "src/app/core/services/cash-desk.service.ts",
+      "src/app/features/payments/cash-desk/components/add-cash-operation-dialog/add-cash-operation-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "pay.transfer": "Virement bancaire",
+  "@pay.transfer": {
+    "x-files": [
+      "src/app/core/services/cash-desk.service.ts",
+      "src/app/features/payments/cash-desk/components/add-cash-operation-dialog/add-cash-operation-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "pay.check": "Chèque",
+  "@pay.check": {
+    "x-files": [
+      "src/app/core/services/cash-desk.service.ts",
+      "src/app/features/payments/cash-desk/components/add-cash-operation-dialog/add-cash-operation-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "pay.card": "Carte bancaire",
+  "@pay.card": {
+    "x-files": [
+      "src/app/core/services/cash-desk.service.ts",
+      "src/app/features/payments/cash-desk/components/add-cash-operation-dialog/add-cash-operation-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "pay.mobile": "Paiement mobile",
+  "@pay.mobile": {
+    "x-files": [
+      "src/app/core/services/cash-desk.service.ts",
+      "src/app/features/payments/cash-desk/components/add-cash-operation-dialog/add-cash-operation-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.record-payment-dialog.ts.traite.effet.de.commerce.b1384467": "Traite (effet de commerce)",
+  "@shared.record-payment-dialog.ts.traite.effet.de.commerce.b1384467": {
+    "x-files": [
+      "src/app/core/services/cash-desk.service.ts",
+      "src/app/shared/components/record-payment-dialog/record-payment-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "pay.other": "Autre",
+  "@pay.other": {
+    "x-files": [
+      "src/app/core/services/cash-desk.service.ts",
+      "src/app/features/payments/cash-desk/components/add-cash-operation-dialog/add-cash-operation-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
   "core.cash-desk.ts.non.renseignee.d6a3c5fe": "Non renseignée",
   "@core.cash-desk.ts.non.renseignee.d6a3c5fe": {
     "x-files": [
@@ -8044,6 +8157,13 @@
   },
   "core.cash-desk.ts.0.exonere.077b7639": "0 % Exonéré",
   "@core.cash-desk.ts.0.exonere.077b7639": {
+    "x-files": [
+      "src/app/core/services/cash-desk.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "payments.cash-journal.pdf-error": "Impossible de générer le PDF.",
+  "@payments.cash-journal.pdf-error": {
     "x-files": [
       "src/app/core/services/cash-desk.service.ts"
     ],
@@ -8396,6 +8516,14 @@
   "@core.invoice.ts.erreur.p.impossible.de.telecharger.le.pd.4effb8bc": {
     "x-files": [
       "src/app/core/services/invoice.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "reports.purchases-journal.pdf.error.1f2e3d4c": "Impossible de générer le PDF",
+  "@reports.purchases-journal.pdf.error.1f2e3d4c": {
+    "x-files": [
+      "src/app/core/services/reports-api.service.ts",
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
     ],
     "x-wave": "v1"
   },
@@ -11168,15 +11296,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.bank-reconciliation.lignes.valides.b21843dc": "Lignes valides",
-  "@accounting.bank-reconciliation.lignes.valides.b21843dc": {
-    "x-files": [
-      "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-reconciliation.anomalies.4b2e6f56": "Anomalies",
-  "@accounting.bank-reconciliation.anomalies.4b2e6f56": {
+  "accounting.bank-reconciliation.lignes.41c7025e": "Lignes",
+  "@accounting.bank-reconciliation.lignes.41c7025e": {
     "x-files": [
       "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
     ],
@@ -11217,6 +11338,34 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-reconciliation.n.de.compte.0b69581b": "N° de compte",
+  "@accounting.bank-reconciliation.n.de.compte.0b69581b": {
+    "x-files": [
+      "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-reconciliation.releve.s.a.importer.du.plus.ancien.au.pl.813a34f3": "{$INTERPOLATION} relevé(s) à importer, du plus ancien au plus récent.",
+  "@accounting.bank-reconciliation.releve.s.a.importer.du.plus.ancien.au.pl.813a34f3": {
+    "x-files": [
+      "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-reconciliation.lignes.valides.b21843dc": "Lignes valides",
+  "@accounting.bank-reconciliation.lignes.valides.b21843dc": {
+    "x-files": [
+      "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-reconciliation.anomalies.4b2e6f56": "Anomalies",
+  "@accounting.bank-reconciliation.anomalies.4b2e6f56": {
+    "x-files": [
+      "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-reconciliation.anomalie.s.e802e12e": "{$INTERPOLATION} anomalie(s)",
   "@accounting.bank-reconciliation.anomalie.s.e802e12e": {
     "x-files": [
@@ -11247,20 +11396,6 @@
   },
   "accounting.bank-reconciliation.ex.biat.3372625e": "Ex. BIAT",
   "@accounting.bank-reconciliation.ex.biat.3372625e": {
-    "x-files": [
-      "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-reconciliation.n.de.compte.0b69581b": "N° de compte",
-  "@accounting.bank-reconciliation.n.de.compte.0b69581b": {
-    "x-files": [
-      "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-reconciliation.releve.s.a.importer.du.plus.ancien.au.pl.813a34f3": "{$INTERPOLATION} relevé(s) à importer, du plus ancien au plus récent.",
-  "@accounting.bank-reconciliation.releve.s.a.importer.du.plus.ancien.au.pl.813a34f3": {
     "x-files": [
       "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
     ],
@@ -11548,13 +11683,6 @@
   },
   "accounting.bank-reconciliation.4.resultat.d9bfda09": "4 · Résultat — {$INTERPOLATION} · {$INTERPOLATION_1}",
   "@accounting.bank-reconciliation.4.resultat.d9bfda09": {
-    "x-files": [
-      "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-reconciliation.lignes.41c7025e": "Lignes",
-  "@accounting.bank-reconciliation.lignes.41c7025e": {
     "x-files": [
       "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
     ],
@@ -12431,6 +12559,20 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.ts.lecture.ia.non.lancee": "Lecture IA non lancée",
+  "@accounting.bank-statement-import.ts.lecture.ia.non.lancee": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.rib.a.verifier": "RIB à vérifier",
+  "@accounting.bank-statement-import.ts.rib.a.verifier": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.ts.rib.introuvable.sur.le.releve.bb213e2b": "RIB introuvable sur le relevé",
   "@accounting.bank-statement-import.ts.rib.introuvable.sur.le.releve.bb213e2b": {
     "x-files": [
@@ -12613,6 +12755,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.lecture.des.pages.par.l.ia.locale.vision": "Lecture des pages par l'IA locale… {$INTERPOLATION} %",
+  "@accounting.bank-statement-import.lecture.des.pages.par.l.ia.locale.vision": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.relecture.par.l.ia.des.lignes.non.lues.avec.cert.a39a7373": "Relecture par l'IA des lignes non lues avec certitude… {$INTERPOLATION} %",
   "@accounting.bank-statement-import.relecture.par.l.ia.des.lignes.non.lues.avec.cert.a39a7373": {
     "x-files": [
@@ -12641,8 +12790,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.bank-statement-import.une.page.prend.jusqu.a.une.minute.avec.l.fc78a702": "Une page prend jusqu'à une minute avec l'IA locale. Vous pouvez quitter cet écran et y revenir.",
-  "@accounting.bank-statement-import.une.page.prend.jusqu.a.une.minute.avec.l.fc78a702": {
+  "accounting.bank-statement-import.une.page.prend.une.a.trois.minutes.avec.l.ia.locale": "Une page prend une à trois minutes avec l'IA locale. Vous pouvez quitter cet écran et y revenir.",
+  "@accounting.bank-statement-import.une.page.prend.une.a.trois.minutes.avec.l.ia.locale": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
     ],
@@ -12756,6 +12905,27 @@
   },
   "accounting.bank-statement-import.controle.de.solde.en.echec.le.releve.ne.4c049756": " Contrôle de solde en échec : le relevé ne peut pas être enregistré. ",
   "@accounting.bank-statement-import.controle.de.solde.en.echec.le.releve.ne.4c049756": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ce.releve.appartient.au.compte.suggere": "Ce relevé appartient au compte {$INTERPOLATION} (…{$INTERPOLATION_1}).",
+  "@accounting.bank-statement-import.ce.releve.appartient.au.compte.suggere": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.analyser.avec.ce.compte.aria": "Analyser avec ce compte bancaire",
+  "@accounting.bank-statement-import.analyser.avec.ce.compte.aria": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.analyser.avec.ce.compte": "Analyser avec ce compte",
+  "@accounting.bank-statement-import.analyser.avec.ce.compte": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
     ],
@@ -13287,6 +13457,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.releve.non.prouve.lecture.page.par.page.ia.locale": "Relevé non prouvé au millime : lecture page par page par l'IA locale (comptez une à trois minutes par page).",
+  "@accounting.bank-statement-import.releve.non.prouve.lecture.page.par.page.ia.locale": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.67692986": " Pages scannées ou non lues avec certitude : relecture par une IA externe (fournisseur configuré par la plateforme). ",
   "@accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.67692986": {
     "x-files": [
@@ -13305,62 +13482,6 @@
   "@accounting.bank-statement-import.ia.indisponible.seuls.les.releves.pdf.lus.avec.c.40012216": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.lecture.des.pages.par.l.ia.locale.vision": "Lecture des pages par l'IA locale… {$INTERPOLATION} %",
-  "@accounting.bank-statement-import.lecture.des.pages.par.l.ia.locale.vision": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.une.page.prend.une.a.trois.minutes.avec.l.ia.locale": "Une page prend une à trois minutes avec l'IA locale. Vous pouvez quitter cet écran et y revenir.",
-  "@accounting.bank-statement-import.une.page.prend.une.a.trois.minutes.avec.l.ia.locale": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ts.lecture.ia.non.lancee": "Lecture IA non lancée",
-  "@accounting.bank-statement-import.ts.lecture.ia.non.lancee": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ts.rib.a.verifier": "RIB à vérifier",
-  "@accounting.bank-statement-import.ts.rib.a.verifier": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.releve.non.prouve.lecture.page.par.page.ia.locale": "Relevé non prouvé au millime : lecture page par page par l'IA locale (comptez une à trois minutes par page).",
-  "@accounting.bank-statement-import.releve.non.prouve.lecture.page.par.page.ia.locale": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ce.releve.appartient.au.compte.suggere": "Ce relevé appartient au compte {$INTERPOLATION} (…{$INTERPOLATION_1}).",
-  "@accounting.bank-statement-import.ce.releve.appartient.au.compte.suggere": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.analyser.avec.ce.compte": "Analyser avec ce compte",
-  "@accounting.bank-statement-import.analyser.avec.ce.compte": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.analyser.avec.ce.compte.aria": "Analyser avec ce compte bancaire",
-  "@accounting.bank-statement-import.analyser.avec.ce.compte.aria": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
     ],
     "x-wave": "v7"
   },
@@ -36228,6 +36349,13 @@
     ],
     "x-wave": "v5"
   },
+  "assistance.assistance-page.chargement": "Chargement…",
+  "@assistance.assistance-page.chargement": {
+    "x-files": [
+      "src/app/features/assistance/assistance-page.component.ts"
+    ],
+    "x-wave": "v5"
+  },
   "assistance.assistance-page.aucun.message.posez.une.question.envoyez.une.pro.0dad613d": "Aucun message. Posez une question, envoyez une proposition ou une réclamation.",
   "@assistance.assistance-page.aucun.message.posez.une.question.envoyez.une.pro.0dad613d": {
     "x-files": [
@@ -36235,7 +36363,7 @@
     ],
     "x-wave": "v5"
   },
-  "assistance.assistance-page.type.3deb7456": " Type ",
+  "assistance.assistance-page.type.3deb7456": "Type",
   "@assistance.assistance-page.type.3deb7456": {
     "x-files": [
       "src/app/features/assistance/assistance-page.component.ts"
@@ -36263,7 +36391,7 @@
     ],
     "x-wave": "v5"
   },
-  "assistance.assistance-page.message.68f4145f": " Message ",
+  "assistance.assistance-page.message.68f4145f": "Message",
   "@assistance.assistance-page.message.68f4145f": {
     "x-files": [
       "src/app/features/assistance/assistance-page.component.ts"
@@ -36277,8 +36405,22 @@
     ],
     "x-wave": "v5"
   },
-  "assistance.assistance-page.fichiers.23a9d9fc": " Fichiers ",
+  "assistance.assistance-page.fichiers.23a9d9fc": "Fichiers",
   "@assistance.assistance-page.fichiers.23a9d9fc": {
+    "x-files": [
+      "src/app/features/assistance/assistance-page.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "assistance.assistance-page.joindre.des.fichiers": "Joindre des fichiers",
+  "@assistance.assistance-page.joindre.des.fichiers": {
+    "x-files": [
+      "src/app/features/assistance/assistance-page.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "assistance.assistance-page.plafond.fichiers.rappel": "Jusqu'à 5 fichiers. Le type et la taille sont vérifiés à l'envoi.",
+  "@assistance.assistance-page.plafond.fichiers.rappel": {
     "x-files": [
       "src/app/features/assistance/assistance-page.component.ts"
     ],
@@ -36286,6 +36428,27 @@
   },
   "assistance.assistance-page.fichier.s.selectionne.s.d143cce6": "{$INTERPOLATION} fichier(s) sélectionné(s)",
   "@assistance.assistance-page.fichier.s.selectionne.s.d143cce6": {
+    "x-files": [
+      "src/app/features/assistance/assistance-page.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "assistance.assistance-page.retirer": "Retirer",
+  "@assistance.assistance-page.retirer": {
+    "x-files": [
+      "src/app/features/assistance/assistance-page.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "assistance.assistance-page.limite.cinq.fichiers": "Seuls les 5 premiers fichiers seront envoyés.",
+  "@assistance.assistance-page.limite.cinq.fichiers": {
+    "x-files": [
+      "src/app/features/assistance/assistance-page.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "assistance.assistance-page.envoi.en.cours": "Envoi…",
+  "@assistance.assistance-page.envoi.en.cours": {
     "x-files": [
       "src/app/features/assistance/assistance-page.component.ts"
     ],
@@ -47820,13 +47983,6 @@
     ],
     "x-wave": "v4"
   },
-  "delivery-notes.delivery-note-list.ts.impossible.de.generer.le.rapport.pdf.e2243d7a": "Impossible de générer le rapport PDF",
-  "@delivery-notes.delivery-note-list.ts.impossible.de.generer.le.rapport.pdf.e2243d7a": {
-    "x-files": [
-      "src/app/features/delivery-notes/pages/delivery-note-list/delivery-note-list.component.ts"
-    ],
-    "x-wave": "v4"
-  },
   "delivery-notes.delivery-note-list.report.toast.summary.information": "Information",
   "@delivery-notes.delivery-note-list.report.toast.summary.information": {
     "x-files": [
@@ -47836,6 +47992,13 @@
   },
   "delivery-notes.delivery-note-list.report.empty.deliveryNotes": "Aucun bon de livraison sur cette période pour l'état.",
   "@delivery-notes.delivery-note-list.report.empty.deliveryNotes": {
+    "x-files": [
+      "src/app/features/delivery-notes/pages/delivery-note-list/delivery-note-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "delivery-notes.delivery-note-list.ts.impossible.de.generer.le.rapport.pdf.e2243d7a": "Impossible de générer le rapport PDF",
+  "@delivery-notes.delivery-note-list.ts.impossible.de.generer.le.rapport.pdf.e2243d7a": {
     "x-files": [
       "src/app/features/delivery-notes/pages/delivery-note-list/delivery-note-list.component.ts"
     ],
@@ -55226,13 +55389,6 @@
     ],
     "x-wave": "v4"
   },
-  "invoices.invoice-list.ts.impossible.de.generer.le.rapport.pdf.e2243d7a": "Impossible de générer le rapport PDF",
-  "@invoices.invoice-list.ts.impossible.de.generer.le.rapport.pdf.e2243d7a": {
-    "x-files": [
-      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
-    ],
-    "x-wave": "v4"
-  },
   "invoices.invoice-list.report.toast.summary.information": "Information",
   "@invoices.invoice-list.report.toast.summary.information": {
     "x-files": [
@@ -55240,8 +55396,15 @@
     ],
     "x-wave": "v4"
   },
-  "invoices.invoice-list.report.empty.invoices": "Aucune facture sur cette période pour l'état.",
-  "@invoices.invoice-list.report.empty.invoices": {
+  "invoices.invoice-list.ts.impossible.de.generer.le.rapport.pdf.e2243d7a": "Impossible de générer le rapport PDF",
+  "@invoices.invoice-list.ts.impossible.de.generer.le.rapport.pdf.e2243d7a": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-list.report.empty.cancelledFilter": "L'état n'inclut pas les factures annulées.",
+  "@invoices.invoice-list.report.empty.cancelledFilter": {
     "x-files": [
       "src/app/features/invoices/invoice-list/invoice-list.component.ts"
     ],
@@ -55254,8 +55417,8 @@
     ],
     "x-wave": "v4"
   },
-  "invoices.invoice-list.report.empty.cancelledFilter": "L'état n'inclut pas les factures annulées.",
-  "@invoices.invoice-list.report.empty.cancelledFilter": {
+  "invoices.invoice-list.report.empty.invoices": "Aucune facture sur cette période pour l'état.",
+  "@invoices.invoice-list.report.empty.invoices": {
     "x-files": [
       "src/app/features/invoices/invoice-list/invoice-list.component.ts"
     ],
@@ -59790,14 +59953,16 @@
   "payments.cash-desk.aucune.operation.5e70746f": "Aucune opération",
   "@payments.cash-desk.aucune.operation.5e70746f": {
     "x-files": [
-      "src/app/features/payments/cash-desk/cash-desk.component.ts"
+      "src/app/features/payments/cash-desk/cash-desk.component.ts",
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
     ],
     "x-wave": "v5"
   },
   "payments.cash-desk.aucune.operation.trouvee.pour.la.periode.cd290cb0": "Aucune opération trouvée pour la période sélectionnée.",
   "@payments.cash-desk.aucune.operation.trouvee.pour.la.periode.cd290cb0": {
     "x-files": [
-      "src/app/features/payments/cash-desk/cash-desk.component.ts"
+      "src/app/features/payments/cash-desk/cash-desk.component.ts",
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
     ],
     "x-wave": "v5"
   },
@@ -59811,7 +59976,8 @@
   "payments.cash-desk.date.eb9a4bc1": "Date",
   "@payments.cash-desk.date.eb9a4bc1": {
     "x-files": [
-      "src/app/features/payments/cash-desk/cash-desk.component.ts"
+      "src/app/features/payments/cash-desk/cash-desk.component.ts",
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
     ],
     "x-wave": "v5"
   },
@@ -59819,21 +59985,24 @@
   "@payments.cash-desk.type.3deb7456": {
     "x-files": [
       "src/app/features/payments/cash-desk/cash-desk.component.ts",
-      "src/app/features/payments/cash-desk/components/bank-deposit-wizard/bank-deposit-wizard.component.html"
+      "src/app/features/payments/cash-desk/components/bank-deposit-wizard/bank-deposit-wizard.component.html",
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
     ],
     "x-wave": "v5"
   },
   "payments.cash-desk.moyen.de03c108": "Moyen",
   "@payments.cash-desk.moyen.de03c108": {
     "x-files": [
-      "src/app/features/payments/cash-desk/cash-desk.component.ts"
+      "src/app/features/payments/cash-desk/cash-desk.component.ts",
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
     ],
     "x-wave": "v5"
   },
   "payments.cash-desk.categorie.6b38300a": "Catégorie",
   "@payments.cash-desk.categorie.6b38300a": {
     "x-files": [
-      "src/app/features/payments/cash-desk/cash-desk.component.ts"
+      "src/app/features/payments/cash-desk/cash-desk.component.ts",
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
     ],
     "x-wave": "v5"
   },
@@ -59841,28 +60010,32 @@
   "@payments.cash-desk.libelle.f5485bba": {
     "x-files": [
       "src/app/features/payments/cash-desk/cash-desk.component.ts",
-      "src/app/features/payments/cash-desk/components/add-cash-operation-dialog/add-cash-operation-dialog.component.ts"
+      "src/app/features/payments/cash-desk/components/add-cash-operation-dialog/add-cash-operation-dialog.component.ts",
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
     ],
     "x-wave": "v5"
   },
   "payments.cash-desk.document.e214b8a2": "Document",
   "@payments.cash-desk.document.e214b8a2": {
     "x-files": [
-      "src/app/features/payments/cash-desk/cash-desk.component.ts"
+      "src/app/features/payments/cash-desk/cash-desk.component.ts",
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
     ],
     "x-wave": "v5"
   },
   "payments.cash-desk.debit.f528224f": "Débit",
   "@payments.cash-desk.debit.f528224f": {
     "x-files": [
-      "src/app/features/payments/cash-desk/cash-desk.component.ts"
+      "src/app/features/payments/cash-desk/cash-desk.component.ts",
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
     ],
     "x-wave": "v5"
   },
   "payments.cash-desk.credit.19194bdf": "Crédit",
   "@payments.cash-desk.credit.19194bdf": {
     "x-files": [
-      "src/app/features/payments/cash-desk/cash-desk.component.ts"
+      "src/app/features/payments/cash-desk/cash-desk.component.ts",
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
     ],
     "x-wave": "v5"
   },
@@ -60046,48 +60219,6 @@
   "@payments.cash-desk.ts.erreur.lors.de.l.annulation.0ba57921": {
     "x-files": [
       "src/app/features/payments/cash-desk/cash-desk.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pay.cash": "Espèces",
-  "@pay.cash": {
-    "x-files": [
-      "src/app/features/payments/cash-desk/components/add-cash-operation-dialog/add-cash-operation-dialog.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pay.transfer": "Virement bancaire",
-  "@pay.transfer": {
-    "x-files": [
-      "src/app/features/payments/cash-desk/components/add-cash-operation-dialog/add-cash-operation-dialog.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pay.check": "Chèque",
-  "@pay.check": {
-    "x-files": [
-      "src/app/features/payments/cash-desk/components/add-cash-operation-dialog/add-cash-operation-dialog.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pay.card": "Carte bancaire",
-  "@pay.card": {
-    "x-files": [
-      "src/app/features/payments/cash-desk/components/add-cash-operation-dialog/add-cash-operation-dialog.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pay.mobile": "Paiement mobile",
-  "@pay.mobile": {
-    "x-files": [
-      "src/app/features/payments/cash-desk/components/add-cash-operation-dialog/add-cash-operation-dialog.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pay.other": "Autre",
-  "@pay.other": {
-    "x-files": [
-      "src/app/features/payments/cash-desk/components/add-cash-operation-dialog/add-cash-operation-dialog.component.ts"
     ],
     "x-wave": "v5"
   },
@@ -60733,6 +60864,167 @@
     ],
     "x-wave": "v5"
   },
+  "payments.cash-journal.title": "Journal de trésorerie",
+  "@payments.cash-journal.title": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.subtitle": "Mouvements de caisse regroupés par catégorie d'encaissement et de décaissement.",
+  "@payments.cash-journal.subtitle": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.print": "Imprimer (PDF)",
+  "@payments.cash-journal.print": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.from": "Du",
+  "@payments.cash-journal.from": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.to": "Au",
+  "@payments.cash-journal.to": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.method": "Moyen",
+  "@payments.cash-journal.method": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.show": "Afficher",
+  "@payments.cash-journal.show": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.subtotal": "Sous-total",
+  "@payments.cash-journal.subtotal": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.partial": "Le détail de cette catégorie continue sur une autre page.",
+  "@payments.cash-journal.partial": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.previous": "Page précédente",
+  "@payments.cash-journal.previous": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.next": "Page suivante",
+  "@payments.cash-journal.next": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.pager": "Pages du journal",
+  "@payments.cash-journal.pager": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.all-methods": "Tous les moyens",
+  "@payments.cash-journal.all-methods": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.encaissements": "Encaissements",
+  "@payments.cash-journal.encaissements": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.decaissements": "Décaissements",
+  "@payments.cash-journal.decaissements": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.unclassified": "Non classé",
+  "@payments.cash-journal.unclassified": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.load-error": "Impossible de charger le journal de trésorerie.",
+  "@payments.cash-journal.load-error": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.period-order": "La date de début ne peut pas être après la date de fin.",
+  "@payments.cash-journal.period-order": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.period-length": "La période du journal de trésorerie ne peut pas dépasser 366 jours.",
+  "@payments.cash-journal.period-length": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.debit": "Débit",
+  "@payments.cash-journal.debit": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.credit": "Crédit",
+  "@payments.cash-journal.credit": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.balance": "Solde",
+  "@payments.cash-journal.balance": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-journal.count": "Nombre d'opérations",
+  "@payments.cash-journal.count": {
+    "x-files": [
+      "src/app/features/payments/cash-journal/cash-journal.component.ts"
+    ],
+    "x-wave": "v5"
+  },
   "payments.client.filter.tous": "Tous les statuts",
   "@payments.client.filter.tous": {
     "x-files": [
@@ -61064,6 +61356,13 @@
   },
   "payments.routes.title.Caisse_de_tr_sorerie_I": "Caisse de trésorerie - InstaFact",
   "@payments.routes.title.Caisse_de_tr_sorerie_I": {
+    "x-files": [
+      "src/app/features/payments/payments.routes.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.routes.title.Journal_de_tresorerie": "Journal de trésorerie - InstaFact",
+  "@payments.routes.title.Journal_de_tresorerie": {
     "x-files": [
       "src/app/features/payments/payments.routes.ts"
     ],
@@ -73463,6 +73762,13 @@
     ],
     "x-wave": "v3"
   },
+  "products.product-form.optionnel.879d6b16": "Optionnel",
+  "@products.product-form.optionnel.879d6b16": {
+    "x-files": [
+      "src/app/features/products/product-form/product-form.component.ts"
+    ],
+    "x-wave": "v3"
+  },
   "products.product-form.prix.d.achat.ttc.a8f3c2e1": "Prix d'achat TTC",
   "@products.product-form.prix.d.achat.ttc.a8f3c2e1": {
     "x-files": [
@@ -73470,15 +73776,15 @@
     ],
     "x-wave": "v3"
   },
-  "products.product-form.calcule.a.partir.du.prix.ht.et.du.taux.de.tva.b4e91d02": "Calculé à partir du prix HT et du taux de TVA.",
-  "@products.product-form.calcule.a.partir.du.prix.ht.et.du.taux.de.tva.b4e91d02": {
+  "products.product-form.text.1b93795b": "—",
+  "@products.product-form.text.1b93795b": {
     "x-files": [
       "src/app/features/products/product-form/product-form.component.ts"
     ],
     "x-wave": "v3"
   },
-  "products.product-form.optionnel.879d6b16": "Optionnel",
-  "@products.product-form.optionnel.879d6b16": {
+  "products.product-form.calcule.a.partir.du.prix.ht.et.du.taux.de.tva.b4e91d02": "Calculé à partir du prix HT et du taux de TVA.",
+  "@products.product-form.calcule.a.partir.du.prix.ht.et.du.taux.de.tva.b4e91d02": {
     "x-files": [
       "src/app/features/products/product-form/product-form.component.ts"
     ],
@@ -73570,13 +73876,6 @@
   },
   "products.product-form.marge.beneficiaire.b7324f90": "Marge bénéficiaire",
   "@products.product-form.marge.beneficiaire.b7324f90": {
-    "x-files": [
-      "src/app/features/products/product-form/product-form.component.ts"
-    ],
-    "x-wave": "v3"
-  },
-  "products.product-form.text.1b93795b": "—",
-  "@products.product-form.text.1b93795b": {
     "x-files": [
       "src/app/features/products/product-form/product-form.component.ts"
     ],
@@ -89914,6 +90213,384 @@
     ],
     "x-wave": "v6"
   },
+  "reports.purchases-journal.title.a1b2c3d4": "Journal d'achats",
+  "@reports.purchases-journal.title.a1b2c3d4": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.subtitle.ja.e5f6g7h8": "Journal commercial des lignes (factures fournisseur ou bons de réception) — distinct du journal comptable JA. Les deux sources ne se cumulent pas.",
+  "@reports.purchases-journal.subtitle.ja.e5f6g7h8": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.imprimer.pdf.i9j0k1l2": " Imprimer (PDF) ",
+  "@reports.purchases-journal.imprimer.pdf.i9j0k1l2": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.exporter.csv.m3n4o5p6": " Exporter ",
+  "@reports.purchases-journal.exporter.csv.m3n4o5p6": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.du.7a8b9c0d": "Du",
+  "@reports.purchases-journal.du.7a8b9c0d": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.au.1e2f3a4b": "Au",
+  "@reports.purchases-journal.au.1e2f3a4b": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.source.2a3b4c5d": "Source",
+  "@reports.purchases-journal.source.2a3b4c5d": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.fournisseur.5c6d7e8f": "Fournisseur",
+  "@reports.purchases-journal.fournisseur.5c6d7e8f": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.tous.fournisseurs.9a0b1c2d": "Tous les fournisseurs",
+  "@reports.purchases-journal.tous.fournisseurs.9a0b1c2d": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.detail.3d4e5f60": "Détail",
+  "@reports.purchases-journal.detail.3d4e5f60": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.par.jour.7e8f9a01": "Par jour",
+  "@reports.purchases-journal.par.jour.7e8f9a01": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.par.mois.2b3c4d5e": "Par mois",
+  "@reports.purchases-journal.par.mois.2b3c4d5e": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.par.annee.6f7a8b9c": "Par année",
+  "@reports.purchases-journal.par.annee.6f7a8b9c": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.reessayer.a1b2c3d4": "Réessayer",
+  "@reports.purchases-journal.reessayer.a1b2c3d4": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.aucune.ligne.0d1e2f3a": "Aucune ligne d'achat sur cette période.",
+  "@reports.purchases-journal.aucune.ligne.0d1e2f3a": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.date.4e5f6071": "Date",
+  "@reports.purchases-journal.date.4e5f6071": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.type.2e3f4a5b": "Type",
+  "@reports.purchases-journal.type.2e3f4a5b": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.fournisseur.col.6c7d8e9f": "Fournisseur",
+  "@reports.purchases-journal.fournisseur.col.6c7d8e9f": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.code.1a2b3c4d": "Code",
+  "@reports.purchases-journal.code.1a2b3c4d": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.produit.5e6f7a8b": "Produit",
+  "@reports.purchases-journal.produit.5e6f7a8b": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.qte.9c0d1e2f": "Qté",
+  "@reports.purchases-journal.qte.9c0d1e2f": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.pu.3a4b5c6d": "P.U.",
+  "@reports.purchases-journal.pu.3a4b5c6d": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.ht.7e8f9a0b": "HT",
+  "@reports.purchases-journal.ht.7e8f9a0b": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.tva.1c2d3e4f": "TVA",
+  "@reports.purchases-journal.tva.1c2d3e4f": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.ttc.5a6b7c8d": "TTC",
+  "@reports.purchases-journal.ttc.5a6b7c8d": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.periode.0e1f2a3b": "Période",
+  "@reports.purchases-journal.periode.0e1f2a3b": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.retour.4b5c6d7e": "Retour aux rapports",
+  "@reports.purchases-journal.retour.4b5c6d7e": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.source.invoice": "Factures fournisseur",
+  "@reports.purchases-journal.source.invoice": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.source.receipt": "Bons de réception",
+  "@reports.purchases-journal.source.receipt": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.bon.reception.8a9b0c1d": "Bon de réception",
+  "@reports.purchases-journal.bon.reception.8a9b0c1d": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.facture.8a9b0c1e": "Facture",
+  "@reports.purchases-journal.facture.8a9b0c1e": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.total.qte.8d9e0f1a": "Total quantité",
+  "@reports.purchases-journal.total.qte.8d9e0f1a": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.total.ht.2a3b4c5d": "Total HT",
+  "@reports.purchases-journal.total.ht.2a3b4c5d": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.total.tva.6e7f8a9b": "Total TVA",
+  "@reports.purchases-journal.total.tva.6e7f8a9b": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.total.ttc.0c1d2e3f": "Total TTC",
+  "@reports.purchases-journal.total.ttc.0c1d2e3f": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.dates.invalides.b2c3d4e5": "Dates invalides.",
+  "@reports.purchases-journal.dates.invalides.b2c3d4e5": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.chargement.echoue.c6d7e8f9": "Impossible de charger le journal d'achats.",
+  "@reports.purchases-journal.chargement.echoue.c6d7e8f9": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.erreur.chargement.d0e1f2a3": "Erreur",
+  "@reports.purchases-journal.erreur.chargement.d0e1f2a3": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.information.5a6b7c8d": "Information",
+  "@reports.purchases-journal.information.5a6b7c8d": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.erreur.export.e4f5a6b7": "Erreur",
+  "@reports.purchases-journal.erreur.export.e4f5a6b7": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.export.interrompu.c8d9e0f1": "L'export CSV n'a pas pu être complété. Réessayez ou réduisez la période.",
+  "@reports.purchases-journal.export.interrompu.c8d9e0f1": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.csv.date": "Date",
+  "@reports.purchases-journal.csv.date": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.csv.piece": "Pièce",
+  "@reports.purchases-journal.csv.piece": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.csv.type": "Type",
+  "@reports.purchases-journal.csv.type": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.csv.supplier": "Fournisseur",
+  "@reports.purchases-journal.csv.supplier": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.csv.code": "Code",
+  "@reports.purchases-journal.csv.code": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.csv.product": "Produit",
+  "@reports.purchases-journal.csv.product": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.csv.qty": "Qté",
+  "@reports.purchases-journal.csv.qty": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.csv.pu": "PU",
+  "@reports.purchases-journal.csv.pu": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.csv.ht": "HT",
+  "@reports.purchases-journal.csv.ht": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.csv.tva": "TVA",
+  "@reports.purchases-journal.csv.tva": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.csv.ttc": "TTC",
+  "@reports.purchases-journal.csv.ttc": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.csv.currency": "Devise",
+  "@reports.purchases-journal.csv.currency": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-journal.csv.period": "Période",
+  "@reports.purchases-journal.csv.period": {
+    "x-files": [
+      "src/app/features/reports/purchases-journal/purchases-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
   "reports.purchases.rapports.achats.ac9a7abf": "Rapports Achats",
   "@reports.purchases.rapports.achats.ac9a7abf": {
     "x-files": [
@@ -90734,6 +91411,13 @@
     ],
     "x-wave": "v6"
   },
+  "reports.reports-hub.ts.journal.de.ventes.a1b2c3d4": "Journal de ventes",
+  "@reports.reports-hub.ts.journal.de.ventes.a1b2c3d4": {
+    "x-files": [
+      "src/app/features/reports/reports-hub/reports-hub.component.ts"
+    ],
+    "x-wave": "v6"
+  },
   "reports.reports-hub.ts.vente.par.client.b9eed164": "Vente par client",
   "@reports.reports-hub.ts.vente.par.client.b9eed164": {
     "x-files": [
@@ -90771,6 +91455,13 @@
   },
   "reports.reports-hub.ts.rapport.d.achat.18888a98": "Rapport d'achat",
   "@reports.reports-hub.ts.rapport.d.achat.18888a98": {
+    "x-files": [
+      "src/app/features/reports/reports-hub/reports-hub.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.reports-hub.ts.journal.dachats.pj1a2b3c": "Journal d'achats",
+  "@reports.reports-hub.ts.journal.dachats.pj1a2b3c": {
     "x-files": [
       "src/app/features/reports/reports-hub/reports-hub.component.ts"
     ],
@@ -90876,6 +91567,13 @@
   },
   "reports.reports-hub.ts.rapport.stock.9fb51cd8": "Rapport Stock",
   "@reports.reports-hub.ts.rapport.stock.9fb51cd8": {
+    "x-files": [
+      "src/app/features/reports/reports-hub/reports-hub.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.reports-hub.ts.etat.de.stock.actuel.a7b8c9d0": "État de stock (actuel)",
+  "@reports.reports-hub.ts.etat.de.stock.actuel.a7b8c9d0": {
     "x-files": [
       "src/app/features/reports/reports-hub/reports-hub.component.ts"
     ],
@@ -91056,6 +91754,13 @@
     ],
     "x-wave": "v6"
   },
+  "reports.routes.title.Etat_de_stock_InstaFa": "État de stock - InstaFact",
+  "@reports.routes.title.Etat_de_stock_InstaFa": {
+    "x-files": [
+      "src/app/features/reports/reports.routes.ts"
+    ],
+    "x-wave": "v6"
+  },
   "reports.routes.title.Rapports_Fiches_InstaF": "Rapports Fiches - InstaFact",
   "@reports.routes.title.Rapports_Fiches_InstaF": {
     "x-files": [
@@ -91072,6 +91777,20 @@
   },
   "reports.routes.title.D_tails_ventes_par_ligne": "Détails ventes par ligne - InstaFact",
   "@reports.routes.title.D_tails_ventes_par_ligne": {
+    "x-files": [
+      "src/app/features/reports/reports.routes.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.routes.title.Journal_de_ventes_Insta": "Journal de ventes - InstaFact",
+  "@reports.routes.title.Journal_de_ventes_Insta": {
+    "x-files": [
+      "src/app/features/reports/reports.routes.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.routes.title.Journal_d_achats_Insta": "Journal d'achats - InstaFact",
+  "@reports.routes.title.Journal_d_achats_Insta": {
     "x-files": [
       "src/app/features/reports/reports.routes.ts"
     ],
@@ -91249,6 +91968,272 @@
   "@reports.sales-by-line-reports.ts.tout.6b0b09b8": {
     "x-files": [
       "src/app/features/reports/sales-by-line/sales-by-line-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.journal.de.ventes.a1b2c3d4": "Journal de ventes",
+  "@reports.sales-journal.journal.de.ventes.a1b2c3d4": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.subtitle.commercial.jv.e5f6g7h8": "Journal commercial des lignes de factures (FAC et AVO) — distinct du journal comptable JV.",
+  "@reports.sales-journal.subtitle.commercial.jv.e5f6g7h8": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.imprimer.pdf.i9j0k1l2": " Imprimer (PDF) ",
+  "@reports.sales-journal.imprimer.pdf.i9j0k1l2": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.exporter.csv.m3n4o5p6": " Exporter ",
+  "@reports.sales-journal.exporter.csv.m3n4o5p6": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.du.7a8b9c0d": "Du",
+  "@reports.sales-journal.du.7a8b9c0d": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.au.1e2f3a4b": "Au",
+  "@reports.sales-journal.au.1e2f3a4b": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.client.5c6d7e8f": "Client",
+  "@reports.sales-journal.client.5c6d7e8f": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.tous.les.clients.9a0b1c2d": "Tous les clients",
+  "@reports.sales-journal.tous.les.clients.9a0b1c2d": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.detail.3d4e5f60": "Détail",
+  "@reports.sales-journal.detail.3d4e5f60": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.par.jour.7e8f9a01": "Par jour",
+  "@reports.sales-journal.par.jour.7e8f9a01": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.par.mois.2b3c4d5e": "Par mois",
+  "@reports.sales-journal.par.mois.2b3c4d5e": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.par.annee.6f7a8b9c": "Par année",
+  "@reports.sales-journal.par.annee.6f7a8b9c": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.reessayer.a1b2c3d4": "Réessayer",
+  "@reports.sales-journal.reessayer.a1b2c3d4": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.aucune.ligne.0d1e2f3a": "Aucune ligne de vente sur cette période.",
+  "@reports.sales-journal.aucune.ligne.0d1e2f3a": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.date.4e5f6071": "Date",
+  "@reports.sales-journal.date.4e5f6071": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.facture.8a9b0c1d": "Facture",
+  "@reports.sales-journal.facture.8a9b0c1d": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.type.2e3f4a5b": "Type",
+  "@reports.sales-journal.type.2e3f4a5b": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.client.col.6c7d8e9f": "Client",
+  "@reports.sales-journal.client.col.6c7d8e9f": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.code.1a2b3c4d": "Code",
+  "@reports.sales-journal.code.1a2b3c4d": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.produit.5e6f7a8b": "Produit",
+  "@reports.sales-journal.produit.5e6f7a8b": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.qte.9c0d1e2f": "Qté",
+  "@reports.sales-journal.qte.9c0d1e2f": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.pu.3a4b5c6d": "P.U.",
+  "@reports.sales-journal.pu.3a4b5c6d": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.ht.7e8f9a0b": "HT",
+  "@reports.sales-journal.ht.7e8f9a0b": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.tva.1c2d3e4f": "TVA",
+  "@reports.sales-journal.tva.1c2d3e4f": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.ttc.5a6b7c8d": "TTC",
+  "@reports.sales-journal.ttc.5a6b7c8d": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.periode.0e1f2a3b": "Période",
+  "@reports.sales-journal.periode.0e1f2a3b": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.retour.4b5c6d7e": "Retour aux rapports",
+  "@reports.sales-journal.retour.4b5c6d7e": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.total.qte.8d9e0f1a": "Total quantité",
+  "@reports.sales-journal.total.qte.8d9e0f1a": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.total.ht.2a3b4c5d": "Total HT",
+  "@reports.sales-journal.total.ht.2a3b4c5d": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.total.tva.6e7f8a9b": "Total TVA",
+  "@reports.sales-journal.total.tva.6e7f8a9b": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.total.ttc.0c1d2e3f": "Total TTC",
+  "@reports.sales-journal.total.ttc.0c1d2e3f": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.dates.invalides.b2c3d4e5": "Dates invalides.",
+  "@reports.sales-journal.dates.invalides.b2c3d4e5": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.chargement.echoue.c6d7e8f9": "Impossible de charger le journal de ventes.",
+  "@reports.sales-journal.chargement.echoue.c6d7e8f9": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.erreur.chargement.d0e1f2a3": "Erreur",
+  "@reports.sales-journal.erreur.chargement.d0e1f2a3": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.pdf.error.1f2e3d4c": "Impossible de générer le PDF",
+  "@reports.sales-journal.pdf.error.1f2e3d4c": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.information.5a6b7c8d": "Information",
+  "@reports.sales-journal.information.5a6b7c8d": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.erreur.export.e4f5a6b7": "Erreur",
+  "@reports.sales-journal.erreur.export.e4f5a6b7": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-journal.export.interrompu.c8d9e0f1": "L'export CSV n'a pas pu être complété. Réessayez ou réduisez la période.",
+  "@reports.sales-journal.export.interrompu.c8d9e0f1": {
+    "x-files": [
+      "src/app/features/reports/sales-journal/sales-journal-reports.component.ts"
     ],
     "x-wave": "v6"
   },
@@ -93546,6 +94531,237 @@
   "@reports.party-balances.ts.a.relancer.en.priorite.44d22202": {
     "x-files": [
       "src/app/features/reports/shared/party-balances.util.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.etat.de.stock.title": "État de stock",
+  "@reports.stock-status.etat.de.stock.title": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.subtitle": "Quantités et valeurs en stock actuelles, par entrepôt et par catégorie",
+  "@reports.stock-status.subtitle": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.imprimer.pdf": "Imprimer (PDF)",
+  "@reports.stock-status.imprimer.pdf": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.exporter": "Exporter",
+  "@reports.stock-status.exporter": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.lien.snapshot": " Besoin d'un état à une date antérieure ? ",
+  "@reports.stock-status.lien.snapshot": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.entrepot": "Entrepôt",
+  "@reports.stock-status.entrepot": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.tous.entrepots": "Tous les entrepôts",
+  "@reports.stock-status.tous.entrepots": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.categorie": "Catégorie",
+  "@reports.stock-status.categorie": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.toutes.categories": "Toutes les catégories",
+  "@reports.stock-status.toutes.categories": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.recherche": "Recherche",
+  "@reports.stock-status.recherche": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.regroupement": "Regroupement",
+  "@reports.stock-status.regroupement": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.inclure.zero": "Inclure stock à zéro",
+  "@reports.stock-status.inclure.zero": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.reessayer": "Réessayer",
+  "@reports.stock-status.reessayer": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.valeur.totale": "Valeur totale",
+  "@reports.stock-status.valeur.totale": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.quantite.totale": "Quantité totale",
+  "@reports.stock-status.quantite.totale": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.lignes": "Lignes",
+  "@reports.stock-status.lignes": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.aucune.ligne": "Aucun article en stock pour ces critères.",
+  "@reports.stock-status.aucune.ligne": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.table.plate": "Affichage paginé (nombreuses lignes).",
+  "@reports.stock-status.table.plate": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.col.entrepot": "Entrepôt",
+  "@reports.stock-status.col.entrepot": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.col.categorie": "Catégorie",
+  "@reports.stock-status.col.categorie": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.col.code": "Code",
+  "@reports.stock-status.col.code": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.col.designation": "Désignation",
+  "@reports.stock-status.col.designation": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.col.qte": "Qté",
+  "@reports.stock-status.col.qte": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.col.pu": "P.U.",
+  "@reports.stock-status.col.pu": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.col.valeur": "Valeur",
+  "@reports.stock-status.col.valeur": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.col.devise": "Devise",
+  "@reports.stock-status.col.devise": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.sous.total": "Sous-total",
+  "@reports.stock-status.sous.total": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.total.groupe": "Total",
+  "@reports.stock-status.total.groupe": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.mode.wh.cat": "Par entrepôt puis catégorie",
+  "@reports.stock-status.mode.wh.cat": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.mode.cat.wh": "Par catégorie puis entrepôt",
+  "@reports.stock-status.mode.cat.wh": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.erreur.chargement": "Impossible de charger l'état de stock.",
+  "@reports.stock-status.erreur.chargement": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.pdf.error": "Impossible de générer le PDF",
+  "@reports.stock-status.pdf.error": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.information": "Information",
+  "@reports.stock-status.information": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
     ],
     "x-wave": "v6"
   },
@@ -121337,13 +122553,6 @@
     ],
     "x-wave": "v1"
   },
-  "shared.record-payment-dialog.ts.traite.effet.de.commerce.b1384467": "Traite (effet de commerce)",
-  "@shared.record-payment-dialog.ts.traite.effet.de.commerce.b1384467": {
-    "x-files": [
-      "src/app/shared/components/record-payment-dialog/record-payment-dialog.component.ts"
-    ],
-    "x-wave": "v1"
-  },
   "shared.record-payment-dialog.ts.autre.43dacf9e": "Autre",
   "@shared.record-payment-dialog.ts.autre.43dacf9e": {
     "x-files": [
@@ -123248,30 +124457,6 @@
     ],
     "x-wave": "v1"
   },
-  "core.nav.treasury.payments-cash-journal": "Journal de trésorerie",
-  "payments.routes.title.Journal_de_tresorerie": "Journal de trésorerie - InstaFact",
-  "payments.cash-journal.title": "Journal de trésorerie",
-  "payments.cash-journal.subtitle": "Mouvements de caisse regroupés par catégorie d'encaissement et de décaissement.",
-  "payments.cash-journal.print": "Imprimer (PDF)",
-  "payments.cash-journal.from": "Du",
-  "payments.cash-journal.to": "Au",
-  "payments.cash-journal.method": "Moyen",
-  "payments.cash-journal.show": "Afficher",
-  "payments.cash-journal.subtotal": "Sous-total",
-  "payments.cash-journal.partial": "Le détail de cette catégorie continue sur une autre page.",
-  "payments.cash-journal.previous": "Page précédente",
-  "payments.cash-journal.next": "Page suivante",
-  "payments.cash-journal.pager": "Pages du journal",
-  "payments.cash-journal.all-methods": "Tous les moyens",
-  "payments.cash-journal.encaissements": "Encaissements",
-  "payments.cash-journal.decaissements": "Décaissements",
-  "payments.cash-journal.unclassified": "Non classé",
-  "payments.cash-journal.load-error": "Impossible de charger le journal de trésorerie.",
-  "payments.cash-journal.pdf-error": "Impossible de générer le PDF.",
-  "payments.cash-journal.period-order": "La date de début ne peut pas être après la date de fin.",
-  "payments.cash-journal.period-length": "La période du journal de trésorerie ne peut pas dépasser 366 jours.",
-  "payments.cash-journal.debit": "Débit",
-  "payments.cash-journal.credit": "Crédit",
-  "payments.cash-journal.balance": "Solde",
-  "payments.cash-journal.count": "Nombre d'opérations"
+  "reports.sales-journal.csv.pu": "PU",
+  "reports.sales-journal.csv.devise": "Devise"
 }

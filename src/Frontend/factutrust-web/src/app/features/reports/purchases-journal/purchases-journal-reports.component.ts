@@ -18,6 +18,7 @@ import { PrintPreviewService } from '@core/services/print-preview.service';
 import { SupplierService, SupplierListItem } from '@core/services/supplier.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import {
+  PurchasesJournalPdfError,
   ReportsApiService,
   PurchasesJournalAggregatedRow,
   PurchasesJournalDetailRow,
@@ -65,17 +66,25 @@ interface SourceOption {
 
     <div class="ft-filters">
       <div class="ft-filters__row filters-row">
-        <label class="filter-label" for="fromDate" i18n="@@reports.purchases-journal.du.7a8b9c0d">Du</label>
-        <input id="fromDate" type="date" class="filter-input" [(ngModel)]="fromStr" (change)="reload()" />
-        <label class="filter-label" for="toDate" i18n="@@reports.purchases-journal.au.1e2f3a4b">Au</label>
-        <input id="toDate" type="date" class="filter-input" [(ngModel)]="toStr" (change)="reload()" />
-        <label class="filter-label" for="source" i18n="@@reports.purchases-journal.source.2a3b4c5d">Source</label>
-        <p-select inputId="source" [options]="sourceOptions" optionLabel="label" optionValue="value"
-          [(ngModel)]="selectedSource" (ngModelChange)="reload()" styleClass="source-select" />
-        <label class="filter-label" for="supplier" i18n="@@reports.purchases-journal.fournisseur.5c6d7e8f">Fournisseur</label>
-        <p-select inputId="supplier" [options]="supplierOptions()" optionLabel="name" optionValue="id"
-          [(ngModel)]="selectedSupplierId" [showClear]="true" placeholder="Tous les fournisseurs" i18n-placeholder="@@reports.purchases-journal.tous.fournisseurs.9a0b1c2d"
-          (ngModelChange)="reload()" styleClass="supplier-select" />
+        <span class="filter-field">
+          <label class="filter-label" for="fromDate" i18n="@@reports.purchases-journal.du.7a8b9c0d">Du</label>
+          <input id="fromDate" type="date" class="filter-input" [(ngModel)]="fromStr" (change)="reload()" />
+        </span>
+        <span class="filter-field">
+          <label class="filter-label" for="toDate" i18n="@@reports.purchases-journal.au.1e2f3a4b">Au</label>
+          <input id="toDate" type="date" class="filter-input" [(ngModel)]="toStr" (change)="reload()" />
+        </span>
+        <span class="filter-field">
+          <label class="filter-label" for="source" i18n="@@reports.purchases-journal.source.2a3b4c5d">Source</label>
+          <p-select inputId="source" [options]="sourceOptions" optionLabel="label" optionValue="value"
+            [(ngModel)]="selectedSource" (ngModelChange)="reload()" styleClass="source-select" />
+        </span>
+        <span class="filter-field">
+          <label class="filter-label" for="supplier" i18n="@@reports.purchases-journal.fournisseur.5c6d7e8f">Fournisseur</label>
+          <p-select inputId="supplier" [options]="supplierOptions()" optionLabel="name" optionValue="id"
+            [(ngModel)]="selectedSupplierId" [showClear]="true" placeholder="Tous les fournisseurs" i18n-placeholder="@@reports.purchases-journal.tous.fournisseurs.9a0b1c2d"
+            (ngModelChange)="reload()" styleClass="supplier-select" />
+        </span>
       </div>
     </div>
 
@@ -111,26 +120,26 @@ interface SourceOption {
                   <th i18n="@@reports.purchases-journal.fournisseur.col.6c7d8e9f">Fournisseur</th>
                   <th i18n="@@reports.purchases-journal.code.1a2b3c4d">Code</th>
                   <th i18n="@@reports.purchases-journal.produit.5e6f7a8b">Produit</th>
-                  <th class="text-right" i18n="@@reports.purchases-journal.qte.9c0d1e2f">Qté</th>
-                  <th class="text-right" i18n="@@reports.purchases-journal.pu.3a4b5c6d">P.U.</th>
-                  <th class="text-right" i18n="@@reports.purchases-journal.ht.7e8f9a0b">HT</th>
-                  <th class="text-right" i18n="@@reports.purchases-journal.tva.1c2d3e4f">TVA</th>
-                  <th class="text-right" i18n="@@reports.purchases-journal.ttc.5a6b7c8d">TTC</th>
+                  <th class="text-end" i18n="@@reports.purchases-journal.qte.9c0d1e2f">Qté</th>
+                  <th class="text-end" i18n="@@reports.purchases-journal.pu.3a4b5c6d">P.U.</th>
+                  <th class="text-end" i18n="@@reports.purchases-journal.ht.7e8f9a0b">HT</th>
+                  <th class="text-end" i18n="@@reports.purchases-journal.tva.1c2d3e4f">TVA</th>
+                  <th class="text-end" i18n="@@reports.purchases-journal.ttc.5a6b7c8d">TTC</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-row>
                 <tr>
                   <td>{{ row.entryDate | date:'dd/MM/yyyy' }}</td>
                   <td><a [routerLink]="documentLink(row)">{{ row.documentNumber }}</a></td>
-                  <td>{{ row.documentKind }}</td>
+                  <td>{{ documentKindLabel(row.documentKind) }}</td>
                   <td>{{ row.supplierName }}</td>
                   <td>{{ row.productCode }}</td>
                   <td>{{ row.productName }}</td>
-                  <td class="text-right">{{ row.quantity | number:'1.3-3' }}</td>
-                  <td class="text-right">{{ row.unitPrice | number:'1.3-3' }}</td>
-                  <td class="text-right">{{ row.lineSubTotal | number:'1.3-3' }}</td>
-                  <td class="text-right">{{ row.vatAmount | number:'1.3-3' }}</td>
-                  <td class="text-right">{{ row.lineTotal | number:'1.3-3' }} {{ row.currency }}</td>
+                  <td class="text-end erp-amount">{{ row.quantity | number:'1.3-3' }}</td>
+                  <td class="text-end erp-amount">{{ row.unitPrice | number:'1.3-3' }}</td>
+                  <td class="text-end erp-amount">{{ row.lineSubTotal | number:'1.3-3' }}</td>
+                  <td class="text-end erp-amount">{{ row.vatAmount | number:'1.3-3' }}</td>
+                  <td class="text-end erp-amount">{{ row.lineTotal | number:'1.3-3' }} {{ row.currency }}</td>
                 </tr>
               </ng-template>
             </p-table>
@@ -144,10 +153,10 @@ interface SourceOption {
                   <th i18n="@@reports.purchases-journal.fournisseur.col.6c7d8e9f">Fournisseur</th>
                   <th i18n="@@reports.purchases-journal.code.1a2b3c4d">Code</th>
                   <th i18n="@@reports.purchases-journal.produit.5e6f7a8b">Produit</th>
-                  <th class="text-right" i18n="@@reports.purchases-journal.qte.9c0d1e2f">Qté</th>
-                  <th class="text-right" i18n="@@reports.purchases-journal.ht.7e8f9a0b">HT</th>
-                  <th class="text-right" i18n="@@reports.purchases-journal.tva.1c2d3e4f">TVA</th>
-                  <th class="text-right" i18n="@@reports.purchases-journal.ttc.5a6b7c8d">TTC</th>
+                  <th class="text-end" i18n="@@reports.purchases-journal.qte.9c0d1e2f">Qté</th>
+                  <th class="text-end" i18n="@@reports.purchases-journal.ht.7e8f9a0b">HT</th>
+                  <th class="text-end" i18n="@@reports.purchases-journal.tva.1c2d3e4f">TVA</th>
+                  <th class="text-end" i18n="@@reports.purchases-journal.ttc.5a6b7c8d">TTC</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-row>
@@ -156,10 +165,10 @@ interface SourceOption {
                   <td>{{ row.supplierName }}</td>
                   <td>{{ row.productCode }}</td>
                   <td>{{ row.productName }}</td>
-                  <td class="text-right">{{ row.quantity | number:'1.3-3' }}</td>
-                  <td class="text-right">{{ row.lineSubTotal | number:'1.3-3' }}</td>
-                  <td class="text-right">{{ row.vatAmount | number:'1.3-3' }}</td>
-                  <td class="text-right">{{ row.lineTotal | number:'1.3-3' }} {{ row.currency }}</td>
+                  <td class="text-end erp-amount">{{ row.quantity | number:'1.3-3' }}</td>
+                  <td class="text-end erp-amount">{{ row.lineSubTotal | number:'1.3-3' }}</td>
+                  <td class="text-end erp-amount">{{ row.vatAmount | number:'1.3-3' }}</td>
+                  <td class="text-end erp-amount">{{ row.lineTotal | number:'1.3-3' }} {{ row.currency }}</td>
                 </tr>
               </ng-template>
             </p-table>
@@ -174,10 +183,11 @@ interface SourceOption {
   `,
   styles: [`
     .filters-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-3); }
+    .filter-field { display: inline-flex; align-items: center; gap: var(--spacing-2); }
     .filter-label { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
     .filter-input { padding: var(--spacing-2); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); }
     .supplier-select, .source-select { min-width: 220px; }
-    .text-right { text-align: right; }
+    .text-end { text-align: end; }
     .empty-placeholder, .error-placeholder { padding: var(--spacing-8); text-align: center; color: var(--color-text-secondary); }
     .error-placeholder p { margin-bottom: var(--spacing-4); color: var(--color-text-primary); }
     .back-link-wrap { margin-top: var(--spacing-6); }
@@ -240,6 +250,12 @@ export class PurchasesJournalReportsComponent implements OnInit, OnDestroy {
     this.selectedSource === 'Receipt'
       ? $localize`:@@reports.purchases-journal.bon.reception.8a9b0c1d:Bon de réception`
       : $localize`:@@reports.purchases-journal.facture.8a9b0c1e:Facture`;
+
+  documentKindLabel(kind: string): string {
+    return kind === 'BR'
+      ? $localize`:@@reports.purchases-journal.bon.reception.8a9b0c1d:Bon de réception`
+      : $localize`:@@reports.purchases-journal.facture.8a9b0c1e:Facture`;
+  }
 
   documentLink(row: PurchasesJournalDetailRow): string[] {
     return row.documentKind === 'BR'
@@ -389,9 +405,12 @@ export class PurchasesJournalReportsComponent implements OnInit, OnDestroy {
       },
       error: err => {
         this.printingPdf.set(false);
-        const msg = err?.message ?? $localize`:@@reports.purchases-journal.pdf.error.1f2e3d4c:Impossible de générer le PDF`;
+        const pdfError = err instanceof PurchasesJournalPdfError ? err : null;
+        const msg = pdfError?.message
+          ?? err?.message
+          ?? $localize`:@@reports.purchases-journal.pdf.error.1f2e3d4c:Impossible de générer le PDF`;
         this.toast.add({
-          severity: msg.includes('Aucune') ? 'info' : 'error',
+          severity: pdfError?.code === 'NoData' ? 'info' : 'error',
           summary: $localize`:@@reports.purchases-journal.information.5a6b7c8d:Information`,
           detail: msg
         });
@@ -415,16 +434,39 @@ export class PurchasesJournalReportsComponent implements OnInit, OnDestroy {
       if (this.isDetailMode()) {
         const detail = rows as PurchasesJournalDetailRow[];
         lines = [
-          ['Date', 'Pièce', 'Type', 'Fournisseur', 'Code', 'Produit', 'Qté', 'PU', 'HT', 'TVA', 'TTC', 'Devise'].join(';'),
+          [
+            $localize`:@@reports.purchases-journal.csv.date:Date`,
+            $localize`:@@reports.purchases-journal.csv.piece:Pièce`,
+            $localize`:@@reports.purchases-journal.csv.type:Type`,
+            $localize`:@@reports.purchases-journal.csv.supplier:Fournisseur`,
+            $localize`:@@reports.purchases-journal.csv.code:Code`,
+            $localize`:@@reports.purchases-journal.csv.product:Produit`,
+            $localize`:@@reports.purchases-journal.csv.qty:Qté`,
+            $localize`:@@reports.purchases-journal.csv.pu:PU`,
+            $localize`:@@reports.purchases-journal.csv.ht:HT`,
+            $localize`:@@reports.purchases-journal.csv.tva:TVA`,
+            $localize`:@@reports.purchases-journal.csv.ttc:TTC`,
+            $localize`:@@reports.purchases-journal.csv.currency:Devise`
+          ].join(';'),
           ...detail.map(row =>
-            [row.entryDate, row.documentNumber, row.documentKind, row.supplierName, row.productCode, row.productName,
+            [row.entryDate, row.documentNumber, this.documentKindLabel(row.documentKind), row.supplierName, row.productCode, row.productName,
               row.quantity, row.unitPrice, row.lineSubTotal, row.vatAmount, row.lineTotal, row.currency]
               .map(c => escape(String(c))).join(';'))
         ];
       } else {
         const agg = rows as PurchasesJournalAggregatedRow[];
         lines = [
-          ['Période', 'Fournisseur', 'Code', 'Produit', 'Qté', 'HT', 'TVA', 'TTC', 'Devise'].join(';'),
+          [
+            $localize`:@@reports.purchases-journal.csv.period:Période`,
+            $localize`:@@reports.purchases-journal.csv.supplier:Fournisseur`,
+            $localize`:@@reports.purchases-journal.csv.code:Code`,
+            $localize`:@@reports.purchases-journal.csv.product:Produit`,
+            $localize`:@@reports.purchases-journal.csv.qty:Qté`,
+            $localize`:@@reports.purchases-journal.csv.ht:HT`,
+            $localize`:@@reports.purchases-journal.csv.tva:TVA`,
+            $localize`:@@reports.purchases-journal.csv.ttc:TTC`,
+            $localize`:@@reports.purchases-journal.csv.currency:Devise`
+          ].join(';'),
           ...agg.map(row =>
             [row.periodKey, row.supplierName, row.productCode, row.productName,
               row.quantity, row.lineSubTotal, row.vatAmount, row.lineTotal, row.currency]

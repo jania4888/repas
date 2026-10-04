@@ -22,14 +22,18 @@ import { AssistantAgentScope } from '@features/ai-assistant/models/ai-chat.model
     <app-chat-panel
       [isOpen]="true"
       [embedded]="true"
+      [pageFill]="true"
       [agentScope]="firmMissionScope" />
   `,
   styles: [
     `
       :host {
-        display: block;
-        height: 100%;
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        align-self: stretch;
         min-height: 0;
+        height: 100%;
       }
     `
   ]

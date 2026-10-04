@@ -149,7 +149,8 @@ public sealed record SalesJournalPdfContext(
     SalesJournalViewMode ViewMode,
     IReadOnlyList<SalesJournalDetailRowDto> DetailRows,
     IReadOnlyList<SalesJournalAggregatedRowDto> AggregatedRows,
-    SalesJournalTotalsDto Totals);
+    SalesJournalTotalsDto Totals,
+    bool RightToLeft = false);
 
 /// <summary>One line in the commercial purchases journal (detail mode).</summary>
 public sealed record PurchasesJournalDetailRowDto
@@ -223,7 +224,8 @@ public sealed record PurchasesJournalPdfContext(
     SalesJournalViewMode ViewMode,
     IReadOnlyList<PurchasesJournalDetailRowDto> DetailRows,
     IReadOnlyList<PurchasesJournalAggregatedRowDto> AggregatedRows,
-    PurchasesJournalTotalsDto Totals);
+    PurchasesJournalTotalsDto Totals,
+    bool RightToLeft = false);
 
 /// <summary>
 /// One row in the sales-by-line report (details ventes par ligne produit).
@@ -444,7 +446,8 @@ public sealed record StockStatusPdfContext(
     IReadOnlyList<StockStatusReportRowDto> Rows,
     decimal GrandTotalQuantity,
     decimal GrandTotalValue,
-    string Currency);
+    string Currency,
+    bool RightToLeft = false);
 
 /// <summary>
 /// One row in the commercial profit report (bénéfice par ligne, produit ou mois).

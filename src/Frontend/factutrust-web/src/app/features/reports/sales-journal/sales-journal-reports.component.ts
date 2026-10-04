@@ -21,6 +21,7 @@ import {
   ReportsApiService,
   SalesJournalAggregatedRow,
   SalesJournalDetailRow,
+  SalesJournalPdfError,
   SalesJournalReportResult,
   SalesJournalViewMode
 } from '@core/services/reports-api.service';
@@ -59,14 +60,20 @@ import {
 
     <div class="ft-filters">
       <div class="ft-filters__row filters-row">
-        <label class="filter-label" for="fromDate" i18n="@@reports.sales-journal.du.7a8b9c0d">Du</label>
-        <input id="fromDate" type="date" class="filter-input" [(ngModel)]="fromStr" (change)="reload()" />
-        <label class="filter-label" for="toDate" i18n="@@reports.sales-journal.au.1e2f3a4b">Au</label>
-        <input id="toDate" type="date" class="filter-input" [(ngModel)]="toStr" (change)="reload()" />
-        <label class="filter-label" for="client" i18n="@@reports.sales-journal.client.5c6d7e8f">Client</label>
-        <p-select inputId="client" [options]="clientOptions()" optionLabel="name" optionValue="id"
-          [(ngModel)]="selectedClientId" [showClear]="true" placeholder="Tous les clients" i18n-placeholder="@@reports.sales-journal.tous.les.clients.9a0b1c2d"
-          (ngModelChange)="reload()" styleClass="client-select" />
+        <span class="filter-field">
+          <label class="filter-label" for="fromDate" i18n="@@reports.sales-journal.du.7a8b9c0d">Du</label>
+          <input id="fromDate" type="date" class="filter-input" [(ngModel)]="fromStr" (change)="reload()" />
+        </span>
+        <span class="filter-field">
+          <label class="filter-label" for="toDate" i18n="@@reports.sales-journal.au.1e2f3a4b">Au</label>
+          <input id="toDate" type="date" class="filter-input" [(ngModel)]="toStr" (change)="reload()" />
+        </span>
+        <span class="filter-field">
+          <label class="filter-label" for="client" i18n="@@reports.sales-journal.client.5c6d7e8f">Client</label>
+          <p-select inputId="client" [options]="clientOptions()" optionLabel="name" optionValue="id"
+            [(ngModel)]="selectedClientId" [showClear]="true" placeholder="Tous les clients" i18n-placeholder="@@reports.sales-journal.tous.les.clients.9a0b1c2d"
+            (ngModelChange)="reload()" styleClass="client-select" />
+        </span>
       </div>
     </div>
 
@@ -91,69 +98,73 @@ import {
           } @else if (!hasData()) {
             <div class="empty-placeholder" i18n="@@reports.sales-journal.aucune.ligne.0d1e2f3a">Aucune ligne de vente sur cette période.</div>
           } @else if (isDetailMode()) {
-            <p-table [value]="detailRows()" [paginator]="true" [rows]="pageSize" [totalRecords]="totalRows()"
-              [lazy]="true" [lazyLoadOnInit]="false" [loading]="loading()"
-              (onLazyLoad)="onPage($event)" styleClass="p-datatable-sm">
-              <ng-template pTemplate="header">
-                <tr>
-                  <th i18n="@@reports.sales-journal.date.4e5f6071">Date</th>
-                  <th i18n="@@reports.sales-journal.facture.8a9b0c1d">Facture</th>
-                  <th i18n="@@reports.sales-journal.type.2e3f4a5b">Type</th>
-                  <th i18n="@@reports.sales-journal.client.col.6c7d8e9f">Client</th>
-                  <th i18n="@@reports.sales-journal.code.1a2b3c4d">Code</th>
-                  <th i18n="@@reports.sales-journal.produit.5e6f7a8b">Produit</th>
-                  <th class="text-right" i18n="@@reports.sales-journal.qte.9c0d1e2f">Qté</th>
-                  <th class="text-right" i18n="@@reports.sales-journal.pu.3a4b5c6d">P.U.</th>
-                  <th class="text-right" i18n="@@reports.sales-journal.ht.7e8f9a0b">HT</th>
-                  <th class="text-right" i18n="@@reports.sales-journal.tva.1c2d3e4f">TVA</th>
-                  <th class="text-right" i18n="@@reports.sales-journal.ttc.5a6b7c8d">TTC</th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-row>
-                <tr>
-                  <td>{{ row.issueDate | date:'dd/MM/yyyy' }}</td>
-                  <td><a [routerLink]="['/invoices', row.invoiceId]">{{ row.invoiceNumber }}</a></td>
-                  <td>{{ row.documentType }}</td>
-                  <td>{{ row.clientName }}</td>
-                  <td>{{ row.productCode }}</td>
-                  <td>{{ row.productName }}</td>
-                  <td class="text-right">{{ row.quantity | number:'1.3-3' }}</td>
-                  <td class="text-right">{{ row.unitPrice | number:'1.3-3' }}</td>
-                  <td class="text-right">{{ row.lineSubTotal | number:'1.3-3' }}</td>
-                  <td class="text-right">{{ row.vatAmount | number:'1.3-3' }}</td>
-                  <td class="text-right">{{ row.lineTotal | number:'1.3-3' }} {{ row.currency }}</td>
-                </tr>
-              </ng-template>
-            </p-table>
+            <div class="table-wrap">
+              <p-table [value]="detailRows()" [paginator]="true" [rows]="pageSize" [totalRecords]="totalRows()"
+                [lazy]="true" [lazyLoadOnInit]="false" [loading]="loading()"
+                (onLazyLoad)="onPage($event)" styleClass="p-datatable-sm">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th i18n="@@reports.sales-journal.date.4e5f6071">Date</th>
+                    <th i18n="@@reports.sales-journal.facture.8a9b0c1d">Facture</th>
+                    <th i18n="@@reports.sales-journal.type.2e3f4a5b">Type</th>
+                    <th i18n="@@reports.sales-journal.client.col.6c7d8e9f">Client</th>
+                    <th i18n="@@reports.sales-journal.code.1a2b3c4d">Code</th>
+                    <th i18n="@@reports.sales-journal.produit.5e6f7a8b">Produit</th>
+                    <th class="text-right amount" i18n="@@reports.sales-journal.qte.9c0d1e2f">Qté</th>
+                    <th class="text-right amount" i18n="@@reports.sales-journal.pu.3a4b5c6d">P.U.</th>
+                    <th class="text-right amount" i18n="@@reports.sales-journal.ht.7e8f9a0b">HT</th>
+                    <th class="text-right amount" i18n="@@reports.sales-journal.tva.1c2d3e4f">TVA</th>
+                    <th class="text-right amount" i18n="@@reports.sales-journal.ttc.5a6b7c8d">TTC</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                  <tr>
+                    <td>{{ row.issueDate | date:'dd/MM/yyyy' }}</td>
+                    <td dir="ltr"><a [routerLink]="['/invoices', row.invoiceId]">{{ row.invoiceNumber }}</a></td>
+                    <td dir="ltr">{{ row.documentType }}</td>
+                    <td>{{ row.clientName }}</td>
+                    <td dir="ltr">{{ row.productCode }}</td>
+                    <td>{{ row.productName }}</td>
+                    <td class="text-right amount">{{ row.quantity | number:'1.3-3' }}</td>
+                    <td class="text-right amount">{{ row.unitPrice | number:'1.3-3' }}</td>
+                    <td class="text-right amount">{{ row.lineSubTotal | number:'1.3-3' }}</td>
+                    <td class="text-right amount">{{ row.vatAmount | number:'1.3-3' }}</td>
+                    <td class="text-right amount">{{ row.lineTotal | number:'1.3-3' }} {{ row.currency }}</td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
           } @else {
-            <p-table [value]="aggregatedRows()" [paginator]="true" [rows]="pageSize" [totalRecords]="totalRows()"
-              [lazy]="true" [lazyLoadOnInit]="false" [loading]="loading()"
-              (onLazyLoad)="onPage($event)" styleClass="p-datatable-sm">
-              <ng-template pTemplate="header">
-                <tr>
-                  <th i18n="@@reports.sales-journal.periode.0e1f2a3b">Période</th>
-                  <th i18n="@@reports.sales-journal.client.col.6c7d8e9f">Client</th>
-                  <th i18n="@@reports.sales-journal.code.1a2b3c4d">Code</th>
-                  <th i18n="@@reports.sales-journal.produit.5e6f7a8b">Produit</th>
-                  <th class="text-right" i18n="@@reports.sales-journal.qte.9c0d1e2f">Qté</th>
-                  <th class="text-right" i18n="@@reports.sales-journal.ht.7e8f9a0b">HT</th>
-                  <th class="text-right" i18n="@@reports.sales-journal.tva.1c2d3e4f">TVA</th>
-                  <th class="text-right" i18n="@@reports.sales-journal.ttc.5a6b7c8d">TTC</th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-row>
-                <tr>
-                  <td>{{ row.periodKey }}</td>
-                  <td>{{ row.clientName }}</td>
-                  <td>{{ row.productCode }}</td>
-                  <td>{{ row.productName }}</td>
-                  <td class="text-right">{{ row.quantity | number:'1.3-3' }}</td>
-                  <td class="text-right">{{ row.lineSubTotal | number:'1.3-3' }}</td>
-                  <td class="text-right">{{ row.vatAmount | number:'1.3-3' }}</td>
-                  <td class="text-right">{{ row.lineTotal | number:'1.3-3' }} {{ row.currency }}</td>
-                </tr>
-              </ng-template>
-            </p-table>
+            <div class="table-wrap">
+              <p-table [value]="aggregatedRows()" [paginator]="true" [rows]="pageSize" [totalRecords]="totalRows()"
+                [lazy]="true" [lazyLoadOnInit]="false" [loading]="loading()"
+                (onLazyLoad)="onPage($event)" styleClass="p-datatable-sm">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th i18n="@@reports.sales-journal.periode.0e1f2a3b">Période</th>
+                    <th i18n="@@reports.sales-journal.client.col.6c7d8e9f">Client</th>
+                    <th i18n="@@reports.sales-journal.code.1a2b3c4d">Code</th>
+                    <th i18n="@@reports.sales-journal.produit.5e6f7a8b">Produit</th>
+                    <th class="text-right amount" i18n="@@reports.sales-journal.qte.9c0d1e2f">Qté</th>
+                    <th class="text-right amount" i18n="@@reports.sales-journal.ht.7e8f9a0b">HT</th>
+                    <th class="text-right amount" i18n="@@reports.sales-journal.tva.1c2d3e4f">TVA</th>
+                    <th class="text-right amount" i18n="@@reports.sales-journal.ttc.5a6b7c8d">TTC</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                  <tr>
+                    <td dir="ltr">{{ row.periodKey }}</td>
+                    <td>{{ row.clientName }}</td>
+                    <td dir="ltr">{{ row.productCode }}</td>
+                    <td>{{ row.productName }}</td>
+                    <td class="text-right amount">{{ row.quantity | number:'1.3-3' }}</td>
+                    <td class="text-right amount">{{ row.lineSubTotal | number:'1.3-3' }}</td>
+                    <td class="text-right amount">{{ row.vatAmount | number:'1.3-3' }}</td>
+                    <td class="text-right amount">{{ row.lineTotal | number:'1.3-3' }} {{ row.currency }}</td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
           }
         </p-tabpanel>
       </p-tabpanels>
@@ -165,9 +176,12 @@ import {
   `,
   styles: [`
     .filters-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-3); }
+    .filter-field { display: inline-flex; align-items: center; gap: var(--spacing-2); }
     .filter-label { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
     .filter-input { padding: var(--spacing-2); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); }
     .client-select { min-width: 220px; }
+    .table-wrap { overflow-x: auto; }
+    :host ::ng-deep .table-wrap .p-datatable-table { min-width: 68rem; }
     .text-right { text-align: right; }
     .empty-placeholder, .error-placeholder { padding: var(--spacing-8); text-align: center; color: var(--color-text-secondary); }
     .error-placeholder p { margin-bottom: var(--spacing-4); color: var(--color-text-primary); }
@@ -362,9 +376,12 @@ export class SalesJournalReportsComponent implements OnInit, OnDestroy {
       },
       error: err => {
         this.printingPdf.set(false);
-        const msg = err?.message ?? $localize`:@@reports.sales-journal.pdf.error.1f2e3d4c:Impossible de générer le PDF`;
+        const pdfError = err instanceof SalesJournalPdfError ? err : null;
+        const msg = pdfError?.message
+          ?? err?.message
+          ?? $localize`:@@reports.sales-journal.pdf.error.1f2e3d4c:Impossible de générer le PDF`;
         this.toast.add({
-          severity: msg.includes('Aucune') ? 'info' : 'error',
+          severity: pdfError?.code === 'NoData' ? 'info' : 'error',
           summary: $localize`:@@reports.sales-journal.information.5a6b7c8d:Information`,
           detail: msg
         });
@@ -372,9 +389,9 @@ export class SalesJournalReportsComponent implements OnInit, OnDestroy {
     });
   }
 
-  exportCsv(): void {
-    if (!this.hasData()) return;
-    this.fetchAllRowsForExport().then(rows => {
+  exportCsv(): Promise<void> {
+    if (!this.hasData()) return Promise.resolve();
+    return this.fetchAllRowsForExport().then(rows => {
       if (rows === null) {
         this.toast.add({
           severity: 'error',
@@ -388,7 +405,20 @@ export class SalesJournalReportsComponent implements OnInit, OnDestroy {
       if (this.isDetailMode()) {
         const detail = rows as SalesJournalDetailRow[];
         lines = [
-          ['Date', 'Facture', 'Type', 'Client', 'Code', 'Produit', 'Qté', 'PU', 'HT', 'TVA', 'TTC', 'Devise'].join(';'),
+          [
+            $localize`:@@reports.sales-journal.date.4e5f6071:Date`,
+            $localize`:@@reports.sales-journal.facture.8a9b0c1d:Facture`,
+            $localize`:@@reports.sales-journal.type.2e3f4a5b:Type`,
+            $localize`:@@reports.sales-journal.client.col.6c7d8e9f:Client`,
+            $localize`:@@reports.sales-journal.code.1a2b3c4d:Code`,
+            $localize`:@@reports.sales-journal.produit.5e6f7a8b:Produit`,
+            $localize`:@@reports.sales-journal.qte.9c0d1e2f:Qté`,
+            $localize`:@@reports.sales-journal.csv.pu:PU`,
+            $localize`:@@reports.sales-journal.ht.7e8f9a0b:HT`,
+            $localize`:@@reports.sales-journal.tva.1c2d3e4f:TVA`,
+            $localize`:@@reports.sales-journal.ttc.5a6b7c8d:TTC`,
+            $localize`:@@reports.sales-journal.csv.devise:Devise`
+          ].join(';'),
           ...detail.map(row =>
             [row.issueDate, row.invoiceNumber, row.documentType, row.clientName, row.productCode, row.productName,
               row.quantity, row.unitPrice, row.lineSubTotal, row.vatAmount, row.lineTotal, row.currency]
@@ -397,7 +427,17 @@ export class SalesJournalReportsComponent implements OnInit, OnDestroy {
       } else {
         const agg = rows as SalesJournalAggregatedRow[];
         lines = [
-          ['Période', 'Client', 'Code', 'Produit', 'Qté', 'HT', 'TVA', 'TTC', 'Devise'].join(';'),
+          [
+            $localize`:@@reports.sales-journal.periode.0e1f2a3b:Période`,
+            $localize`:@@reports.sales-journal.client.col.6c7d8e9f:Client`,
+            $localize`:@@reports.sales-journal.code.1a2b3c4d:Code`,
+            $localize`:@@reports.sales-journal.produit.5e6f7a8b:Produit`,
+            $localize`:@@reports.sales-journal.qte.9c0d1e2f:Qté`,
+            $localize`:@@reports.sales-journal.ht.7e8f9a0b:HT`,
+            $localize`:@@reports.sales-journal.tva.1c2d3e4f:TVA`,
+            $localize`:@@reports.sales-journal.ttc.5a6b7c8d:TTC`,
+            $localize`:@@reports.sales-journal.csv.devise:Devise`
+          ].join(';'),
           ...agg.map(row =>
             [row.periodKey, row.clientName, row.productCode, row.productName,
               row.quantity, row.lineSubTotal, row.vatAmount, row.lineTotal, row.currency]

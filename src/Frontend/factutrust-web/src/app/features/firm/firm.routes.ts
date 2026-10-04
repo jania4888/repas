@@ -36,6 +36,7 @@ export const FIRM_ROUTES: Routes = [
       {
         path: 'assistant',
         loadComponent: () => import('./assistant/firm-assistant.component').then(m => m.FirmAssistantComponent),
+        data: { fullWidth: true, fillPane: true },
         title: 'Cabinet — Chef de mission'
       },
       {

@@ -54,7 +54,7 @@ public sealed class ExportSalesJournalPdfQueryHandler
         {
             var client = await _clientRepository.GetByIdAsync(request.ClientId.Value, cancellationToken);
             if (client is null)
-                return Result.Failure<InvoicePdfResult>(Error.Validation("Client", "Client introuvable."));
+                return Result.Failure<InvoicePdfResult>(Error.Validation("Client", SalesJournalLabels.ClientNotFound()));
             clientName = client.Name;
         }
 
@@ -66,9 +66,9 @@ public sealed class ExportSalesJournalPdfQueryHandler
         {
             var count = await _invoiceRepository.CountSalesJournalDetailAsync(from, to, request.ClientId, cancellationToken);
             if (count == 0)
-                return Result.Failure<InvoicePdfResult>(new Error("NoData", SalesJournalReportConstants.EmptyPeriodMessage));
+                return Result.Failure<InvoicePdfResult>(new Error("NoData", SalesJournalLabels.EmptyPeriod()));
             if (count > SalesJournalReportConstants.MaxLinesForPdf)
-                return Result.Failure<InvoicePdfResult>(new Error("TooManyLines", SalesJournalReportConstants.TooManyLinesForPdfMessage));
+                return Result.Failure<InvoicePdfResult>(new Error("TooManyLines", SalesJournalLabels.TooManyLines()));
 
             detailRows = await _invoiceRepository.GetSalesJournalDetailAllAsync(
                 from, to, request.ClientId, SalesJournalReportConstants.MaxLinesForPdf, cancellationToken);
@@ -79,16 +79,16 @@ public sealed class ExportSalesJournalPdfQueryHandler
             aggregatedRows = await _invoiceRepository.GetSalesJournalAggregatedAsync(
                 from, to, request.ClientId, request.ViewMode, cancellationToken);
             if (aggregatedRows.Count == 0)
-                return Result.Failure<InvoicePdfResult>(new Error("NoData", SalesJournalReportConstants.EmptyPeriodMessage));
+                return Result.Failure<InvoicePdfResult>(new Error("NoData", SalesJournalLabels.EmptyPeriod()));
             if (aggregatedRows.Count > SalesJournalReportConstants.MaxLinesForPdf)
-                return Result.Failure<InvoicePdfResult>(new Error("TooManyLines", SalesJournalReportConstants.TooManyLinesForPdfMessage));
+                return Result.Failure<InvoicePdfResult>(new Error("TooManyLines", SalesJournalLabels.TooManyLines()));
 
             totals = SalesJournalReportAssembler.ComputeAggregatedTotals(aggregatedRows);
         }
 
         var company = await _companyRepository.GetDefaultAsync(cancellationToken);
         var context = new SalesJournalPdfContext(
-            Title: "Journal de ventes",
+            Title: SalesJournalLabels.Title(),
             ViewModeLabel: SalesJournalReportAssembler.ViewModeDisplayLabel(request.ViewMode),
             From: from,
             To: to,
@@ -98,7 +98,8 @@ public sealed class ExportSalesJournalPdfQueryHandler
             ViewMode: request.ViewMode,
             DetailRows: detailRows,
             AggregatedRows: aggregatedRows,
-            Totals: totals);
+            Totals: totals,
+            RightToLeft: SalesJournalLabels.IsArabic);
 
         var pdfBytes = await _pdfService.GenerateSalesJournalReportPdfAsync(context, cancellationToken);
 

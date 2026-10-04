@@ -21,7 +21,8 @@ function resolveLayoutFlags(snapshot: ActivatedRouteSnapshot): LayoutRouteFlags 
   const data = leaf.data as LayoutRouteData;
   return {
     hideLayout: data.hideLayout === true,
-    fullWidth: data.fullWidth === true
+    fullWidth: data.fullWidth === true,
+    fillPane: data.fillPane === true
   };
 }
 

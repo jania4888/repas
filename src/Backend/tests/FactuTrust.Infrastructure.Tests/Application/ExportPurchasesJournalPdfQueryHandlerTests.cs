@@ -1,3 +1,4 @@
+using System.Globalization;
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.DTOs;
@@ -63,6 +64,64 @@ public sealed class ExportPurchasesJournalPdfQueryHandlerTests
 
         Assert.True(result.IsFailure);
         Assert.Equal(PurchasesJournalReportConstants.TooManyLinesForPdfMessage, result.Error.Description);
+    }
+
+    [Theory]
+    [InlineData("fr-FR", "Journal d'achats", false)]
+    [InlineData("ar-TN", "يومية المشتريات", true)]
+    public async Task Export_PassesLocalizedTitle(string culture, string title, bool rightToLeft)
+    {
+        var previous = CultureInfo.CurrentUICulture;
+        CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(culture);
+        try
+        {
+            var invoiceRepo = new Mock<ISupplierInvoiceRepository>();
+            invoiceRepo
+                .Setup(r => r.CountPurchasesJournalDetailAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), null, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(1);
+            invoiceRepo
+                .Setup(r => r.GetPurchasesJournalDetailAllAsync(
+                    It.IsAny<DateTime>(), It.IsAny<DateTime>(), null, It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Array.Empty<PurchasesJournalDetailRowDto>());
+            invoiceRepo
+                .Setup(r => r.GetPurchasesJournalDetailTotalsAsync(
+                    It.IsAny<DateTime>(), It.IsAny<DateTime>(), null, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new PurchasesJournalTotalsDto { Currency = "TND" });
+
+            PurchasesJournalPdfContext? captured = null;
+            var pdf = new Mock<IPdfService>();
+            pdf.Setup(p => p.GeneratePurchasesJournalReportPdfAsync(It.IsAny<PurchasesJournalPdfContext>(), It.IsAny<CancellationToken>()))
+                .Callback<PurchasesJournalPdfContext, CancellationToken>((document, _) => captured = document)
+                .ReturnsAsync(new byte[] { 0x25, 0x50, 0x44, 0x46 });
+
+            var companyRepo = new Mock<ICompanyRepository>();
+            companyRepo.Setup(r => r.GetDefaultAsync(It.IsAny<CancellationToken>())).ReturnsAsync((Company?)null);
+
+            var handler = new ExportPurchasesJournalPdfQueryHandler(
+                invoiceRepo.Object,
+                new Mock<IPurchaseReceiptRepository>().Object,
+                new Mock<ISupplierRepository>().Object,
+                companyRepo.Object,
+                pdf.Object,
+                new Mock<IAuditService>().Object);
+
+            var day = new DateTime(2026, 4, 10);
+            var result = await handler.Handle(
+                new ExportPurchasesJournalPdfQuery(day, day, SalesJournalViewMode.Detail, PurchasesJournalSource.SupplierInvoice),
+                CancellationToken.None);
+
+            Assert.True(result.IsSuccess);
+            Assert.StartsWith("Journal_achats_", result.Value.FileName);
+            Assert.EndsWith(".pdf", result.Value.FileName);
+            Assert.DoesNotContain("يومية", result.Value.FileName);
+            Assert.NotNull(captured);
+            Assert.Equal(title, captured!.Title);
+            Assert.Equal(rightToLeft, captured.RightToLeft);
+        }
+        finally
+        {
+            CultureInfo.CurrentUICulture = previous;
+        }
     }
 
     private static ExportPurchasesJournalPdfQueryHandler CreateHandler(Mock<ISupplierInvoiceRepository>? invoiceRepo = null)
