@@ -19,12 +19,11 @@ public static partial class BankStatementVisionPageNormalizer
     {
         var verbatim = JsonSerializer.Deserialize<LlmBankStatementPageVerbatim>(json, LlmJsonOptions.Tolerant)
                        ?? new LlmBankStatementPageVerbatim();
-        return Normalize(verbatim, pageNumber);
+        return Normalize(verbatim);
     }
 
-    private static LlmBankStatementPage Normalize(LlmBankStatementPageVerbatim verbatim, int pageNumber)
+    private static LlmBankStatementPage Normalize(LlmBankStatementPageVerbatim verbatim)
     {
-        _ = pageNumber;
         var decimals = new List<int>();
         var lines = (verbatim.Lines ?? new List<LlmBankStatementPageVerbatimLine>())
             .Select(l => new LlmBankStatementPageLine

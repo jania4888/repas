@@ -136,7 +136,7 @@ public static class BankStatementAiOnlyMerge
         {
             var reason = readingByPage.TryGetValue(page, out var trace) ? trace.FailureReason : null;
             issues.Add(new StatementExtractionIssue(StatementIssueCodes.AiPageFailed, StatementIssueSeverity.Blocking,
-                $"Page {page} non lue par l'IA{(string.IsNullOrWhiteSpace(reason) ? string.Empty : " : " + reason)}.", page));
+                PageNotReadMessage(page, reason), page));
         }
 
         // ---- Soldes : première/dernière page lue, sinon ceux de la couche texte.
@@ -232,7 +232,7 @@ public static class BankStatementAiOnlyMerge
             if (!issues.Any(i => i.Code == StatementIssueCodes.AiPageFailed && i.PageNumber == page))
             {
                 issues.Add(new StatementExtractionIssue(StatementIssueCodes.AiPageFailed, StatementIssueSeverity.Blocking,
-                    $"Page {page} non lue par l'IA{(string.IsNullOrWhiteSpace(trace.FailureReason) ? string.Empty : " : " + trace.FailureReason)}.", page));
+                    PageNotReadMessage(page, trace.FailureReason), page));
             }
             return;
         }
@@ -294,9 +294,12 @@ public static class BankStatementAiOnlyMerge
         && a.IsDebit == b.IsDebit
         && string.Equals(NormalizeLabel(a.Label), NormalizeLabel(b.Label), StringComparison.Ordinal);
 
+    private static string PageNotReadMessage(int page, string? reason) =>
+        $"Page {page} non lue par l'IA{(string.IsNullOrWhiteSpace(reason) ? string.Empty : " : " + reason)}.";
+
     private static int ModalPrintedDecimals(IEnumerable<int?> values)
     {
-        var known = values.Where(v => v is not null).Select(v => v!.Value).ToList();
+        var known = values.OfType<int>().ToList();
         if (known.Count == 0)
             return BankStatementBalanceCheck.CurrencyDecimals;
         return known.GroupBy(v => v).OrderByDescending(g => g.Count()).ThenByDescending(g => g.Key).First().Key;

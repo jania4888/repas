@@ -145,7 +145,7 @@ public sealed partial class BankStatementAiExtractionJob
 
             if (extractionFailure is not null)
             {
-                RecordPage(pageNumber, FailedReading(pageNumber, extractionFailure), BankStatementPageReadingEngines.Failed, null, 0, pageSw.ElapsedMilliseconds, 0, extractionFailure, "failed");
+                RecordPage(pageNumber, FailedReading(pageNumber, extractionFailure), BankStatementPageReadingEngines.Failed, null, 0, pageSw.ElapsedMilliseconds, 0, extractionFailure);
                 await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
                 continue;
             }
@@ -154,7 +154,7 @@ public sealed partial class BankStatementAiExtractionJob
             {
                 var reason = PageFailureReasons.RenderGuard;
                 var fallback = await RunStage3Async(pipeline, extractor, content, isPdf, session, pageNumber, plan, limits, readOptions, null, cancellationToken);
-                RecordStage3(pageNumber, fallback, reason, isScanned, pageSw);
+                RecordStage3(pageNumber, fallback, reason, pageSw);
                 if (fallback.ProviderUnavailable) textModelMissing = true;
                 await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
                 continue;
@@ -184,7 +184,7 @@ public sealed partial class BankStatementAiExtractionJob
                 if (stage1.Succeeded)
                 {
                     consecutiveVisionFailures = 0;
-                    RecordPage(pageNumber, stage1.Reading!, BankStatementPageReadingEngines.GlmOcr, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, stage1.Reading!.Lines.Count, null, stage1.Outcome, truncated);
+                    RecordPage(pageNumber, stage1.Reading!, BankStatementPageReadingEngines.GlmOcr, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, stage1.Reading!.Lines.Count, null, truncated);
                     await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
                     continue;
                 }
@@ -209,7 +209,7 @@ public sealed partial class BankStatementAiExtractionJob
                     if (stage2.Succeeded)
                     {
                         consecutiveVisionFailures = 0;
-                        RecordPage(pageNumber, stage2.Reading!, BankStatementPageReadingEngines.GlmOcrTable, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, stage2.Reading!.Lines.Count, null, stage2.Outcome, truncated);
+                        RecordPage(pageNumber, stage2.Reading!, BankStatementPageReadingEngines.GlmOcrTable, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, stage2.Reading!.Lines.Count, null, truncated);
                         await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
                         continue;
                     }
@@ -239,7 +239,7 @@ public sealed partial class BankStatementAiExtractionJob
             if (!limits.VisionTextFallbackEnabled && visionModel is not null)
             {
                 var reason = lastFailure ?? PageFailureReasons.VisionNotUsed;
-                RecordPage(pageNumber, FailedReading(pageNumber, reason), BankStatementPageReadingEngines.Failed, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, 0, reason, "failed", truncated);
+                RecordPage(pageNumber, FailedReading(pageNumber, reason), BankStatementPageReadingEngines.Failed, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, 0, reason, truncated);
                 await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
                 continue;
             }
@@ -249,7 +249,7 @@ public sealed partial class BankStatementAiExtractionJob
             LogPage(session.Id, pageNumber, BankStatementPageReadingEngines.TextModel, textModelLabel, attempts, stage3);
             if (stage3.ProviderUnavailable)
                 textModelMissing = true;
-            RecordStage3(pageNumber, stage3, lastFailure ?? PageFailureReasons.VisionNotUsed, isScanned, pageSw, attempts);
+            RecordStage3(pageNumber, stage3, lastFailure ?? PageFailureReasons.VisionNotUsed, pageSw, attempts);
             await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
 
             if (textModelMissing && circuitOpen)
@@ -323,7 +323,7 @@ public sealed partial class BankStatementAiExtractionJob
         }, cancellationToken);
 
         // ------------------------------------------------------------------ fonctions locales
-        void RecordPage(int page, BankStatementAiPageReader.PageReading reading, string engine, string? model, int attemptCount, long durationMs, int lineCount, string? failureReason, string outcome, bool wasTruncated = false)
+        void RecordPage(int page, BankStatementAiPageReader.PageReading reading, string engine, string? model, int attemptCount, long durationMs, int lineCount, string? failureReason, bool wasTruncated = false)
         {
             if (wasTruncated && engine != BankStatementPageReadingEngines.Failed)
             {
@@ -345,20 +345,18 @@ public sealed partial class BankStatementAiExtractionJob
 
             pageReadings.RemoveAll(r => r.Page == page);
             pageReadings.Add(new BankStatementPageReading(page, engine, model, attemptCount, durationMs, lineCount, failureReason));
-            _ = outcome;
         }
 
-        void RecordStage3(int page, StageResult stage, string reason, bool scanned, Stopwatch sw, int attemptCount = 1)
+        void RecordStage3(int page, StageResult stage, string reason, Stopwatch sw, int attemptCount = 1)
         {
-            _ = scanned;
             if (stage.Succeeded)
             {
-                RecordPage(page, stage.Reading!, BankStatementPageReadingEngines.TextModel, textModelLabel, attemptCount, sw.ElapsedMilliseconds, stage.Reading!.Lines.Count, reason, stage.Outcome);
+                RecordPage(page, stage.Reading!, BankStatementPageReadingEngines.TextModel, textModelLabel, attemptCount, sw.ElapsedMilliseconds, stage.Reading!.Lines.Count, reason);
                 return;
             }
 
             var failure = stage.FailureReason ?? reason;
-            RecordPage(page, stage.Reading ?? FailedReading(page, failure), BankStatementPageReadingEngines.Failed, textModelLabel, attemptCount, sw.ElapsedMilliseconds, 0, failure, "failed");
+            RecordPage(page, stage.Reading ?? FailedReading(page, failure), BankStatementPageReadingEngines.Failed, textModelLabel, attemptCount, sw.ElapsedMilliseconds, 0, failure);
         }
     }
 
@@ -386,11 +384,7 @@ public sealed partial class BankStatementAiExtractionJob
         {
             return Result.Failure<AiStructuredExtractionOutcome>(Error.Validation("BankStatementImport", "timeout"));
         }
-        catch (OllamaRequestException)
-        {
-            return Result.Failure<AiStructuredExtractionOutcome>(Error.Validation("BankStatementImport", "Le moteur IA local est indisponible."));
-        }
-        catch (HttpRequestException)
+        catch (Exception ex) when (ex is OllamaRequestException or HttpRequestException)
         {
             return Result.Failure<AiStructuredExtractionOutcome>(Error.Validation("BankStatementImport", "Le moteur IA local est indisponible."));
         }
@@ -399,6 +393,38 @@ public sealed partial class BankStatementAiExtractionJob
             return Result.Failure<AiStructuredExtractionOutcome>(Error.Validation("BankStatementImport", "erreur du moteur IA"));
         }
     }
+
+    /// <summary>Requête GLM-OCR bornée à une page, commune aux étages 1 et 2 (consignes natives, une image).</summary>
+    private static AiStructuredExtractionRequest VisionPageRequest(
+        Stream stream,
+        string fileName,
+        string contentType,
+        string instruction,
+        JsonElement? schema,
+        bool includeTextLayer,
+        string visionModel,
+        BankStatementImportLimits limits) =>
+        new()
+        {
+            FileStream = stream,
+            FileName = fileName,
+            ContentType = contentType,
+            SystemPrompt = BankStatementVisionPrompt.System,
+            UserInstruction = instruction,
+            RawUserPrompt = true,
+            OutputSchema = schema,
+            ErrorCode = "BankStatementImport",
+            MaxImages = 1,
+            ForceVision = true,
+            RequireVision = true,
+            VisionModelOverride = visionModel,
+            IncludeExtractedTextWithImages = includeTextLayer,
+            SkipOcrWhenRendering = true,
+            MaxOutputTokens = limits.EffectiveVisionMaxOutputTokens,
+            LlmTimeoutSeconds = limits.EffectiveVisionCallTimeoutSeconds,
+            RenderDpi = limits.EffectiveVisionRenderDpi,
+            MaxPages = 1
+        };
 
     private static async Task<StageResult> RunVisionJsonStageAsync(
         IAiStructuredExtractionPipeline pipeline,
@@ -413,27 +439,9 @@ public sealed partial class BankStatementAiExtractionJob
     {
         var sw = Stopwatch.StartNew();
         await using var stream = new MemoryStream(pageBytes);
-        var outcome = await RunPipelineForPageAsync(pipeline, new AiStructuredExtractionRequest
-        {
-            FileStream = stream,
-            FileName = fileName,
-            ContentType = contentType,
-            SystemPrompt = BankStatementVisionPrompt.System,
-            UserInstruction = BankStatementVisionPrompt.NativeExtractionInstruction,
-            RawUserPrompt = true,
-            OutputSchema = LlmOutputSchemas.BankStatementPageVerbatim,
-            ErrorCode = "BankStatementImport",
-            MaxImages = 1,
-            ForceVision = true,
-            RequireVision = true,
-            VisionModelOverride = visionModel,
-            IncludeExtractedTextWithImages = limits.VisionSendTextLayer,
-            SkipOcrWhenRendering = true,
-            MaxOutputTokens = limits.EffectiveVisionMaxOutputTokens,
-            LlmTimeoutSeconds = limits.EffectiveVisionCallTimeoutSeconds,
-            RenderDpi = limits.EffectiveVisionRenderDpi,
-            MaxPages = 1
-        }, cancellationToken);
+        var outcome = await RunPipelineForPageAsync(pipeline, VisionPageRequest(
+            stream, fileName, contentType, BankStatementVisionPrompt.NativeExtractionInstruction,
+            LlmOutputSchemas.BankStatementPageVerbatim, limits.VisionSendTextLayer, visionModel, limits), cancellationToken);
 
         if (outcome.IsFailure)
             return FailedStage(outcome.Error.Description, sw.ElapsedMilliseconds);
@@ -478,27 +486,9 @@ public sealed partial class BankStatementAiExtractionJob
     {
         var sw = Stopwatch.StartNew();
         await using var stream = new MemoryStream(pageBytes);
-        var outcome = await RunPipelineForPageAsync(pipeline, new AiStructuredExtractionRequest
-        {
-            FileStream = stream,
-            FileName = fileName,
-            ContentType = contentType,
-            SystemPrompt = BankStatementVisionPrompt.System,
-            UserInstruction = BankStatementVisionPrompt.TableRecognitionInstruction,
-            RawUserPrompt = true,
-            OutputSchema = null,
-            ErrorCode = "BankStatementImport",
-            MaxImages = 1,
-            ForceVision = true,
-            RequireVision = true,
-            VisionModelOverride = visionModel,
-            IncludeExtractedTextWithImages = false,
-            SkipOcrWhenRendering = true,
-            MaxOutputTokens = limits.EffectiveVisionMaxOutputTokens,
-            LlmTimeoutSeconds = limits.EffectiveVisionCallTimeoutSeconds,
-            RenderDpi = limits.EffectiveVisionRenderDpi,
-            MaxPages = 1
-        }, cancellationToken);
+        var outcome = await RunPipelineForPageAsync(pipeline, VisionPageRequest(
+            stream, fileName, contentType, BankStatementVisionPrompt.TableRecognitionInstruction,
+            schema: null, includeTextLayer: false, visionModel, limits), cancellationToken);
 
         if (outcome.IsFailure)
             return FailedStage(outcome.Error.Description, sw.ElapsedMilliseconds);
@@ -854,15 +844,8 @@ public sealed partial class BankStatementAiExtractionJob
             : string.Join(',', stage.Reading.Issues.Select(i => i.Code).Distinct());
         var lines = stage.Reading?.Lines.Count ?? 0;
 
-        if (stage.Outcome is "empty" or "invalid_json")
-        {
-            _logger.LogWarning(
-                "Lecture IA relevé : session {SessionId}, page {Page}, moteur {Engine}, modèle {Model}, essai {Attempts}, durée {DurationMs} ms, premier jeton {FirstTokenMs} ms, fragments {StreamChunkCount}, caractères {RawChars}, lignes {Lines}, codes {IssueCodes}, issue {Outcome}, raison {Reason}",
-                sessionId, page, engine, model, attempts, stage.DurationMs, stage.FirstTokenMs, stage.StreamChunkCount, stage.RawChars, lines, issueCodes, stage.Outcome, stage.FailureReason);
-            return;
-        }
-
-        _logger.LogInformation(
+        var level = stage.Outcome is "empty" or "invalid_json" ? LogLevel.Warning : LogLevel.Information;
+        _logger.Log(level,
             "Lecture IA relevé : session {SessionId}, page {Page}, moteur {Engine}, modèle {Model}, essai {Attempts}, durée {DurationMs} ms, premier jeton {FirstTokenMs} ms, fragments {StreamChunkCount}, caractères {RawChars}, lignes {Lines}, codes {IssueCodes}, issue {Outcome}, raison {Reason}",
             sessionId, page, engine, model, attempts, stage.DurationMs, stage.FirstTokenMs, stage.StreamChunkCount, stage.RawChars, lines, issueCodes, stage.Outcome, stage.FailureReason);
     }
