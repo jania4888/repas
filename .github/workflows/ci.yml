@@ -135,6 +135,10 @@ jobs:
       - name: Gardes landing (copy + CSS physique)
         run: npm run test:landing
       - name: Specs Jasmine (headless)
+        # Heap Node élargi : le bundling de test dépasse la limite par défaut (~2 Gio)
+        # et plantait en OOM (exit 134) pendant « Generating browser application bundles ».
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
         run: npx ng test --watch=false --browsers=ChromeHeadless
       - name: Build production
         run: npm run build:prod
