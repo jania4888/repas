@@ -144,7 +144,11 @@ public static partial class BankStatementAiPageReader
     /// Extraits de pages texte : une date recopiée telle qu'imprimée (« 14/07/2026 », jour d'abord comme
     /// sur tous les relevés tunisiens) est admise en plus du format ISO. Pages scannées : ISO seulement.
     /// </param>
-    public static PageReading Read(string rawLlmOutput, int pageNumber, string? ocrText, bool acceptDayFirstDates)
+    public static PageReading Read(string rawLlmOutput, int pageNumber, string? ocrText, bool acceptDayFirstDates) =>
+        Read(rawLlmOutput, pageNumber, ocrText, new BankStatementAiReadOptions(acceptDayFirstDates, KeepUnreadableLines: false));
+
+    /// <summary>Lit la sortie brute du modèle (JSON éventuellement enrobé) avec des options explicites.</summary>
+    public static PageReading Read(string rawLlmOutput, int pageNumber, string? ocrText, BankStatementAiReadOptions options)
     {
         var json = InvoiceImportParsing.ExtractFirstJsonObject(rawLlmOutput);
         LlmBankStatementPage? page = null;
@@ -160,7 +164,7 @@ public static partial class BankStatementAiPageReader
             }
         }
 
-        return Read(page, pageNumber, ocrText, acceptDayFirstDates);
+        return Read(page, pageNumber, ocrText, options);
     }
 
     /// <summary>Lit une page déjà désérialisée (vision verbatim normalisée ou texte).</summary>

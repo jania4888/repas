@@ -510,25 +510,24 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
     /// demande explicite, comportement historique inchangé (<c>min(MaxTokens, plafond import)</c>).
     /// </summary>
     internal int ResolveOutputCap(int? overrideTokens) =>
+        ResolveOutputCap(overrideTokens, _ollamaSettings.MaxTokens, _ollamaSettings.ImportMaxOutputTokens, _ollamaSettings.NumCtx);
+
+    /// <summary>Fonction pure de <see cref="ResolveOutputCap(int?)"/> pour les tests.</summary>
+    internal static int ResolveOutputCap(int? overrideTokens, int ollamaMaxTokens, int importMaxOutputTokens, int numCtx) =>
         overrideTokens is > 0
-            ? ResolveImportMaxOutputTokens(overrideTokens)
-            : Math.Min(Math.Max(1, _ollamaSettings.MaxTokens), ResolveImportMaxOutputTokens(null));
+            ? ResolveExplicitOutputCap(overrideTokens.Value, numCtx)
+            : Math.Min(Math.Max(1, ollamaMaxTokens), ResolveDefaultOutputCap(importMaxOutputTokens));
 
-    private int ResolveImportMaxOutputTokens(int? overrideTokens)
+    /// <summary>Demande explicite : bornée par <c>NumCtx/2</c> et 8192 ; <c>Ollama:MaxTokens</c> ignoré.</summary>
+    internal static int ResolveExplicitOutputCap(int overrideTokens, int numCtx)
     {
-        if (overrideTokens is > 0)
-        {
-            var maxCtxHalf = _ollamaSettings.NumCtx > 0 ? _ollamaSettings.NumCtx / 2 : 8192;
-            return Math.Clamp(overrideTokens.Value, 256, Math.Min(8192, maxCtxHalf));
-        }
-
-        return Math.Clamp(
-            _ollamaSettings.ImportMaxOutputTokens > 0
-                ? _ollamaSettings.ImportMaxOutputTokens
-                : DefaultImportMaxOutputTokens,
-            256,
-            3072);
+        var maxCtxHalf = numCtx > 0 ? numCtx / 2 : 8192;
+        return Math.Clamp(overrideTokens, 256, Math.Min(8192, maxCtxHalf));
     }
+
+    /// <summary>Sans demande explicite : plafond import historique (<c>ImportMaxOutputTokens</c> ou 1536), borné à 3072.</summary>
+    internal static int ResolveDefaultOutputCap(int importMaxOutputTokens) =>
+        Math.Clamp(importMaxOutputTokens > 0 ? importMaxOutputTokens : DefaultImportMaxOutputTokens, 256, 3072);
 
     private TimeSpan ResolveImportLlmTimeout(int? overrideSeconds) =>
         TimeSpan.FromSeconds(Math.Clamp(

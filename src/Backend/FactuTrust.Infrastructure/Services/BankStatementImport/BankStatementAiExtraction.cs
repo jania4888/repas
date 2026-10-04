@@ -120,9 +120,12 @@ public sealed class BankStatementAiExtraction : IBankStatementAiExtraction
                 var textReadiness = await _readiness.CheckAsync(textModel.ProviderModelId!, cancellationToken);
                 if (!textReadiness.IsReady)
                 {
-                    return BankStatementAiAvailability.Unavailable(
+                    // Ni vision ni texte : les deux raisons remontent (l'opérateur voit pourquoi GLM-OCR
+                    // n'est pas proposé ET pourquoi le repli texte est impossible).
+                    return new BankStatementAiAvailability(
+                        false, null, null,
                         textReadiness.UserMessage ?? "le modèle texte d'import IA n'est pas prêt.",
-                        BankStatementAiAvailabilityReasons.TextModelUnavailable);
+                        null, null, visionUnavailableReason, BankStatementAiAvailabilityReasons.TextModelUnavailable);
                 }
 
                 return new BankStatementAiAvailability(
