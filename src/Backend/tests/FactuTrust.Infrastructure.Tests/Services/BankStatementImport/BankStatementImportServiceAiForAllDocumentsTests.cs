@@ -48,7 +48,7 @@ public sealed class BankStatementImportServiceAiForAllDocumentsTests : IDisposab
         public TenantDbContext CreateContext() => new(new DbContextOptionsBuilder<TenantDbContext>().UseInMemoryDatabase(name).Options);
     }
 
-    private BankStatementImportService Service(bool allDocuments = true, Action<BankStatementImportLimits>? limits = null)
+    private BankStatementImportService Service(bool allDocuments = true, Action<BankStatementImportLimits>? limits = null, bool aiOnly = false, bool userHasAiRight = true)
     {
         var settings = new AccountingSettings
         {
@@ -56,6 +56,7 @@ public sealed class BankStatementImportServiceAiForAllDocumentsTests : IDisposab
             BankStatementAiForAllDocumentsEnabled = allDocuments
         };
         settings.BankStatementImport.StorageBasePath = _storage;
+        settings.BankStatementImport.AiOnlyReadingEnabled = aiOnly;
         limits?.Invoke(settings.BankStatementImport);
         var options = Options.Create(settings);
         var tenant = new Mock<ITenantContext>();
@@ -63,9 +64,31 @@ public sealed class BankStatementImportServiceAiForAllDocumentsTests : IDisposab
         var user = new Mock<ICurrentUser>();
         user.SetupGet(u => u.Email).Returns("comptable@test.tn");
         user.SetupGet(u => u.TenantId).Returns(_tenantId);
+        user.Setup(u => u.HasPermission(It.IsAny<string>())).Returns(userHasAiRight);
         return new BankStatementImportService(_factory, tenant.Object, user.Object, _audit.Object, _ai.Object,
             new BankStatementFileStore(options), new BankStatementLayoutExtractor(), options,
             NullLogger<BankStatementImportService>.Instance);
+    }
+
+    /// <summary>Mode « IA seule » (D1) avec lecture vision autorisée par la configuration.</summary>
+    private BankStatementImportService AiOnlyService(Action<BankStatementImportLimits>? limits = null, bool userHasAiRight = true) =>
+        Service(aiOnly: true, userHasAiRight: userHasAiRight, limits: l =>
+        {
+            l.VisionReadingEnabled = true;
+            limits?.Invoke(l);
+        });
+
+    private static BankStatementAiAvailability GlmOcrReady() =>
+        new(true, "local", "ollama:qwen2.5:7b-instruct", null, Engine: BankStatementAiEngines.Vision, VisionModelRef: "hf.co/ggml-org/GLM-OCR-GGUF:Q8_0");
+
+    private static BankStatementAiAvailability GlmOcrMissing() =>
+        new(true, "local", "ollama:qwen2.5:7b-instruct", null, Engine: BankStatementAiEngines.Text,
+            VisionUnavailableReason: "modèle GLM-OCR non installé sur le serveur");
+
+    private async Task<BankStatementImportSession> LoadSession(Guid id)
+    {
+        await using var ctx = _factory.CreateContext();
+        return await ctx.BankStatementImportSessions.AsNoTracking().SingleAsync(s => s.Id == id);
     }
 
     private Guid SeedBankAccount(string rib)
@@ -278,5 +301,297 @@ public sealed class BankStatementImportServiceAiForAllDocumentsTests : IDisposab
 
         Assert.True(confirm.IsSuccess);
         Assert.Equal(3, confirm.Value.AlreadyImportedCount);
+    }
+
+    // ── Mode « IA seule » (D1/D2) : pré-vol ─────────────────────────────────────────────────
+
+    [Fact]
+    public async Task Ai_only_mode_sends_every_page_to_glm_ocr_even_when_the_direct_reading_is_proven()
+    {
+        _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>())).ReturnsAsync(GlmOcrReady());
+        var spec = StbSpec();
+        var accountId = SeedBankAccount(spec.Rib);
+
+        var result = await AiOnlyService().StartAsync(Request(StbLike(spec), accountId));
+
+        Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
+        Assert.Equal(nameof(BankStatementImportSessionStatus.Extracting), result.Value.Status);
+        var plan = result.Value.Extraction!.AiPlan!;
+        Assert.True(plan.IsAiOnly);
+        Assert.Equal(BankStatementAiReadingModes.AiOnly, plan.Mode);
+        Assert.Equal(BankStatementAiReadingReasons.AllDocuments, plan.Reason);
+        Assert.Equal(BankStatementAiEngines.Vision, plan.Engine);
+        Assert.Equal(new[] { 1 }, plan.PlannedPages);
+        Assert.Equal(1, plan.EstimatedCalls);
+        Assert.Equal(180, plan.EstimatedSeconds);
+        Assert.DoesNotContain(result.Value.Extraction.Issues, i => i.Code == StatementIssueCodes.AiUnavailable || i.Code == StatementIssueCodes.AiTextFallback);
+        _ai.Verify(a => a.Schedule(_tenantId, result.Value.Id), Times.Once);
+    }
+
+    [Fact]
+    public async Task Ai_only_mode_falls_back_to_the_text_model_and_says_so_when_glm_ocr_is_not_ready()
+    {
+        _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>())).ReturnsAsync(GlmOcrMissing());
+        var spec = StbSpec();
+        var accountId = SeedBankAccount(spec.Rib);
+
+        var result = await AiOnlyService().StartAsync(Request(StbLike(spec), accountId));
+
+        Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
+        Assert.Equal(nameof(BankStatementImportSessionStatus.Extracting), result.Value.Status);
+        var plan = result.Value.Extraction!.AiPlan!;
+        Assert.Equal(BankStatementAiEngines.Text, plan.Engine);
+        Assert.True(plan.IsAiOnly);
+        var global = Assert.Single(result.Value.Extraction.Issues, i => i.Code == StatementIssueCodes.AiUnavailable);
+        Assert.Equal(StatementIssueSeverity.Warning, global.Severity);
+        Assert.Contains("GLM-OCR indisponible", global.Message, StringComparison.Ordinal);
+        Assert.Contains("non installé", global.Message, StringComparison.Ordinal);
+        var page = Assert.Single(result.Value.Extraction.Issues, i => i.Code == StatementIssueCodes.AiTextFallback);
+        Assert.Equal(StatementIssueSeverity.Warning, page.Severity);
+        Assert.Equal(1, page.PageNumber);
+        _ai.Verify(a => a.Schedule(_tenantId, result.Value.Id), Times.Once);
+    }
+
+    [Fact]
+    public async Task Ai_only_mode_blocks_explicitly_when_glm_ocr_is_not_ready_and_the_text_fallback_is_disabled()
+    {
+        _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>())).ReturnsAsync(GlmOcrMissing());
+        var spec = StbSpec();
+        var accountId = SeedBankAccount(spec.Rib);
+
+        var result = await AiOnlyService(l => l.VisionTextFallbackEnabled = false).StartAsync(Request(StbLike(spec), accountId));
+
+        Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
+        Assert.Equal(nameof(BankStatementImportSessionStatus.AwaitingReview), result.Value.Status);
+        Assert.Equal(BankStatementImportExtractionMethods.None, result.Value.ExtractionMethod);
+        Assert.False(result.Value.CanConfirm);
+        var issue = Assert.Single(result.Value.Extraction!.Issues, i => i.Code == StatementIssueCodes.AiUnavailable);
+        Assert.Equal(StatementIssueSeverity.Blocking, issue.Severity);
+        Assert.StartsWith("Lecture IA impossible", issue.Message, StringComparison.Ordinal);
+        Assert.Contains("non installé", issue.Message, StringComparison.Ordinal);
+        Assert.True(result.Value.Extraction.AiPlan!.IsAiOnly);
+        _ai.Verify(a => a.Schedule(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Ai_only_mode_blocks_explicitly_when_no_engine_answers()
+    {
+        _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(BankStatementAiAvailability.Unavailable("le moteur IA ne répond pas", BankStatementAiAvailabilityReasons.EngineUnavailable));
+        var spec = StbSpec();
+        var accountId = SeedBankAccount(spec.Rib);
+
+        var result = await AiOnlyService().StartAsync(Request(StbLike(spec), accountId));
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(nameof(BankStatementImportSessionStatus.AwaitingReview), result.Value.Status);
+        Assert.Equal(BankStatementImportExtractionMethods.None, result.Value.ExtractionMethod);
+        Assert.False(result.Value.CanConfirm);
+        var issue = Assert.Single(result.Value.Extraction!.Issues, i => i.Code == StatementIssueCodes.AiUnavailable);
+        Assert.Equal(StatementIssueSeverity.Blocking, issue.Severity);
+        Assert.Equal("Lecture IA impossible : le moteur IA ne répond pas. Réessayez plus tard ou contactez l'administrateur.", issue.Message);
+        _ai.Verify(a => a.Schedule(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Ai_only_mode_never_sends_a_statement_to_an_external_provider_unless_allowed()
+    {
+        _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new BankStatementAiAvailability(true, "external", "openrouter:test", null, Engine: BankStatementAiEngines.Vision));
+        var spec = StbSpec();
+        var accountId = SeedBankAccount(spec.Rib);
+
+        var result = await AiOnlyService().StartAsync(Request(StbLike(spec), accountId));
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(nameof(BankStatementImportSessionStatus.AwaitingReview), result.Value.Status);
+        var issue = Assert.Single(result.Value.Extraction!.Issues, i => i.Code == StatementIssueCodes.AiUnavailable);
+        Assert.Equal(StatementIssueSeverity.Blocking, issue.Severity);
+        Assert.Contains("IA externe", issue.Message, StringComparison.Ordinal);
+        _ai.Verify(a => a.Schedule(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Ai_only_mode_refuses_a_statement_above_the_ai_page_cap_before_sending_anything()
+    {
+        _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>())).ReturnsAsync(GlmOcrReady());
+        var accountId = SeedBankAccount(StbSpec().Rib);
+
+        var result = await AiOnlyService(l => l.MaxAiPages = 2).StartAsync(Request(ManyPages(3), accountId));
+
+        Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
+        Assert.Equal(nameof(BankStatementImportSessionStatus.AwaitingReview), result.Value.Status);
+        Assert.Equal(BankStatementImportExtractionMethods.None, result.Value.ExtractionMethod);
+        var issue = Assert.Single(result.Value.Extraction!.Issues, i => i.Code == StatementIssueCodes.AiUnavailable);
+        Assert.Equal(StatementIssueSeverity.Blocking, issue.Severity);
+        Assert.Equal("Trop de pages à lire (3, maximum 2). Scindez le PDF par relevé ou par mois.", issue.Message);
+        Assert.Equal(new[] { 1, 2, 3 }, result.Value.Extraction.AiPlan!.PlannedPages);
+        _ai.Verify(a => a.Schedule(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Ai_only_mode_user_without_ai_right_is_blocked_explicitly()
+    {
+        var spec = StbSpec();
+        var accountId = SeedBankAccount(spec.Rib);
+
+        var result = await AiOnlyService().StartAsync(Request(StbLike(spec), accountId, allowAi: false));
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(nameof(BankStatementImportSessionStatus.AwaitingReview), result.Value.Status);
+        Assert.Equal(BankStatementImportExtractionMethods.None, result.Value.ExtractionMethod);
+        var issue = Assert.Single(result.Value.Extraction!.Issues, i => i.Code == StatementIssueCodes.AiUnavailable);
+        Assert.Equal(StatementIssueSeverity.Blocking, issue.Severity);
+        Assert.StartsWith("Lecture IA impossible", issue.Message, StringComparison.Ordinal);
+        _ai.Verify(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>()), Times.Never);
+        _ai.Verify(a => a.Schedule(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
+    }
+
+    // ── D3 : RIB différent, relance ─────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task Ai_only_mode_reads_a_statement_whose_rib_differs_from_the_chosen_account()
+    {
+        _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>())).ReturnsAsync(GlmOcrReady());
+        var spec = StbSpec();
+        var accountId = SeedBankAccount(RibFor("14"));
+
+        var result = await AiOnlyService().StartAsync(Request(StbLike(spec), accountId));
+
+        Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
+        Assert.Equal(nameof(BankStatementImportSessionStatus.Extracting), result.Value.Status);
+        Assert.Contains(result.Value.Extraction!.Issues, i => i.Code == StatementIssueCodes.RibMismatch && i.Severity == StatementIssueSeverity.Blocking);
+        Assert.DoesNotContain(result.Value.Extraction.Issues, i => i.Code == StatementIssueCodes.AiNotStarted);
+        Assert.False(result.Value.Extraction.AiPlan!.IsEmpty);
+        _ai.Verify(a => a.Schedule(_tenantId, result.Value.Id), Times.Once);
+    }
+
+    [Fact]
+    public async Task Without_the_ai_only_flag_a_rib_mismatch_still_stops_the_reading_as_before()
+    {
+        var spec = StbSpec();
+        var accountId = SeedBankAccount(RibFor("14"));
+
+        var result = await Service().StartAsync(Request(StbLike(spec), accountId));
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(nameof(BankStatementImportSessionStatus.AwaitingReview), result.Value.Status);
+        Assert.Contains(result.Value.Extraction!.Issues, i => i.Code == StatementIssueCodes.AiNotStarted && i.Message.Contains("autre compte bancaire", StringComparison.Ordinal));
+        _ai.Verify(a => a.Schedule(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Retarget_to_the_same_account_is_refused_and_the_session_is_kept()
+    {
+        var spec = StbSpec();
+        var accountId = SeedBankAccount(spec.Rib);
+        var started = await Service().StartAsync(Request(StbLike(spec), accountId));
+
+        var result = await Service().RetargetAsync(started.Value.Id, accountId);
+
+        Assert.Equal(BankStatementImportErrorCodes.SameBankAccount, result.Error.Code);
+        Assert.Equal(BankStatementImportSessionStatus.AwaitingReview, (await LoadSession(started.Value.Id)).Status);
+    }
+
+    [Fact]
+    public async Task Retarget_of_a_running_analysis_is_refused_and_leaves_it_intact()
+    {
+        var spec = Unverified();
+        var accountId = SeedBankAccount(spec.Rib);
+        var otherAccountId = SeedBankAccount(RibFor("14"));
+        var started = await Service().StartAsync(Request(StbLike(spec), accountId));
+        Assert.Equal(nameof(BankStatementImportSessionStatus.Extracting), started.Value.Status);
+
+        var result = await Service().RetargetAsync(started.Value.Id, otherAccountId);
+
+        Assert.Equal(BankStatementImportErrorCodes.SessionNotReviewable, result.Error.Code);
+        var session = await LoadSession(started.Value.Id);
+        Assert.Equal(BankStatementImportSessionStatus.Extracting, session.Status);
+        Assert.NotNull(session.StoragePath);
+    }
+
+    [Fact]
+    public async Task Relaunch_is_refused_before_cancelling_when_another_reading_is_in_progress()
+    {
+        _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(BankStatementAiAvailability.Unavailable("le moteur IA ne répond pas", BankStatementAiAvailabilityReasons.EngineUnavailable));
+        var spec = StbSpec();
+        var accountId = SeedBankAccount(spec.Rib);
+        var blocked = await AiOnlyService().StartAsync(Request(StbLike(spec), accountId));
+        Assert.Equal(nameof(BankStatementImportSessionStatus.AwaitingReview), blocked.Value.Status);
+
+        await using (var ctx = _factory.CreateContext())
+        {
+            var running = BankStatementImportSession.Create(accountId, "JB", "autre.pdf", new string('B', 64), 10, "application/pdf", DateTime.UtcNow.AddHours(24));
+            running.StartAiExtraction("local", "{}", "generic", 1);
+            ctx.BankStatementImportSessions.Add(running);
+            await ctx.SaveChangesAsync();
+        }
+
+        _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>())).ReturnsAsync(GlmOcrReady());
+        var result = await AiOnlyService().RetryAsync(blocked.Value.Id);
+
+        Assert.Equal(BankStatementImportErrorCodes.AnalysisInProgress, result.Error.Code);
+        var origin = await LoadSession(blocked.Value.Id);
+        Assert.Equal(BankStatementImportSessionStatus.AwaitingReview, origin.Status);
+        Assert.NotNull(origin.StoragePath);
+        Assert.True(File.Exists(Path.Combine(_storage, origin.StoragePath!)), "le fichier d'origine doit être conservé : rien n'a été annulé");
+        _ai.Verify(a => a.Schedule(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Retry_relaunches_a_session_blocked_by_an_unavailable_ai_once_it_answers()
+    {
+        _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(BankStatementAiAvailability.Unavailable("le moteur IA ne répond pas", BankStatementAiAvailabilityReasons.EngineUnavailable));
+        var spec = StbSpec();
+        var accountId = SeedBankAccount(spec.Rib);
+        var blocked = await AiOnlyService().StartAsync(Request(StbLike(spec), accountId));
+
+        _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>())).ReturnsAsync(GlmOcrReady());
+        var result = await AiOnlyService().RetryAsync(blocked.Value.Id);
+
+        Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
+        Assert.NotEqual(blocked.Value.Id, result.Value.Id);
+        Assert.Equal(nameof(BankStatementImportSessionStatus.Extracting), result.Value.Status);
+        Assert.Equal(accountId, result.Value.BankAccountId);
+        Assert.Equal(BankStatementAiEngines.Vision, result.Value.Extraction!.AiPlan!.Engine);
+        Assert.Equal(BankStatementImportSessionStatus.Cancelled, (await LoadSession(blocked.Value.Id)).Status);
+        _ai.Verify(a => a.Schedule(_tenantId, result.Value.Id), Times.Once);
+    }
+
+    [Fact]
+    public async Task Retry_is_refused_when_the_reading_did_happen()
+    {
+        var spec = StbSpec();
+        var accountId = SeedBankAccount(spec.Rib);
+        var proven = await Service().StartAsync(Request(StbLike(spec), accountId));
+        Assert.True(proven.Value.CanConfirm);
+
+        var result = await Service().RetryAsync(proven.Value.Id);
+
+        Assert.Equal(BankStatementImportErrorCodes.SessionNotReviewable, result.Error.Code);
+        Assert.Equal(BankStatementImportSessionStatus.AwaitingReview, (await LoadSession(proven.Value.Id)).Status);
+    }
+
+    [Fact]
+    public async Task Retry_relaunches_a_failed_reading()
+    {
+        _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>())).ReturnsAsync(GlmOcrReady());
+        var spec = StbSpec();
+        var accountId = SeedBankAccount(spec.Rib);
+        var started = await AiOnlyService().StartAsync(Request(StbLike(spec), accountId));
+        await using (var ctx = _factory.CreateContext())
+        {
+            var session = await ctx.BankStatementImportSessions.SingleAsync(s => s.Id == started.Value.Id);
+            session.Fail(BankStatementImportSessionErrorCodes.AiUnavailable);
+            await ctx.SaveChangesAsync();
+        }
+
+        var result = await AiOnlyService().RetryAsync(started.Value.Id);
+
+        Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
+        Assert.Equal(nameof(BankStatementImportSessionStatus.Extracting), result.Value.Status);
+        Assert.Equal(BankStatementImportSessionStatus.Cancelled, (await LoadSession(started.Value.Id)).Status);
     }
 }

@@ -22,11 +22,11 @@ public sealed class BankStatementImportCapabilitiesTests
     private readonly Mock<IBankStatementAiExtraction> _ai = new();
     private readonly Mock<ICurrentUser> _user = new();
 
-    private BankStatementImportController Controller(bool enabled, bool allDocuments = false)
+    private BankStatementImportController Controller(bool enabled, bool allDocuments = false, BankStatementAiAvailability? ai = null)
     {
         _user.Setup(u => u.HasPermission(It.IsAny<string>())).Returns(true);
         _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new BankStatementAiAvailability(true, "local", "ollama:test", null));
+            .ReturnsAsync(ai ?? new BankStatementAiAvailability(true, "local", "ollama:test", null));
         var tenant = new Mock<ITenantContext>();
         tenant.Setup(t => t.TenantId).Returns(Guid.NewGuid());
         return new BankStatementImportController(
@@ -99,11 +99,68 @@ public sealed class BankStatementImportCapabilitiesTests
     }
 
     [Fact]
+    public async Task Ready_vision_engine_publishes_no_unavailability_reason()
+    {
+        var caps = Capabilities(await Controller(enabled: true, allDocuments: true,
+            ai: new BankStatementAiAvailability(true, "local", "ollama:qwen2.5:7b-instruct", null,
+                Engine: BankStatementAiEngines.Vision, VisionModelRef: "hf.co/ggml-org/GLM-OCR-GGUF:Q8_0")).GetCapabilities());
+
+        Assert.True(caps.AiAvailable);
+        Assert.Equal(BankStatementAiEngines.Vision, caps.AiEngine);
+        Assert.Null(caps.AiUnavailableReason);
+        Assert.Null(caps.VisionUnavailableReason);
+        Assert.Equal(50, caps.MaxPages);
+    }
+
+    [Fact]
+    public async Task Missing_glm_ocr_is_reported_as_a_vision_reason_while_the_text_engine_stays_available()
+    {
+        var caps = Capabilities(await Controller(enabled: true, allDocuments: true,
+            ai: new BankStatementAiAvailability(true, "local", "ollama:qwen2.5:7b-instruct", null,
+                Engine: BankStatementAiEngines.Text, VisionUnavailableReason: "modèle GLM-OCR non installé sur le serveur")).GetCapabilities());
+
+        Assert.True(caps.AiAvailable);
+        Assert.Equal(BankStatementAiEngines.Text, caps.AiEngine);
+        Assert.Null(caps.AiUnavailableReason);
+        Assert.Equal("modèle GLM-OCR non installé sur le serveur", caps.VisionUnavailableReason);
+    }
+
+    [Fact]
+    public async Task Unreachable_engine_is_reported_with_a_stable_reason_code_and_never_a_raw_error()
+    {
+        var caps = Capabilities(await Controller(enabled: true, allDocuments: true,
+            ai: BankStatementAiAvailability.Unavailable("Connection refused (127.0.0.1:11434)", BankStatementAiAvailabilityReasons.EngineUnavailable)).GetCapabilities());
+
+        Assert.False(caps.AiAvailable);
+        Assert.Equal(BankStatementAiAvailabilityReasons.EngineUnavailable, caps.AiUnavailableReason);
+        Assert.Null(caps.VisionUnavailableReason);
+        Assert.DoesNotContain("11434", caps.AiUnavailableReason, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Unavailable_engine_without_a_reason_code_falls_back_to_engine_unavailable()
+    {
+        var caps = Capabilities(await Controller(enabled: true,
+            ai: new BankStatementAiAvailability(false, "local", null, "le moteur IA ne répond pas")).GetCapabilities());
+
+        Assert.False(caps.AiAvailable);
+        Assert.Equal(BankStatementAiAvailabilityReasons.EngineUnavailable, caps.AiUnavailableReason);
+    }
+
+    [Fact]
+    public async Task Disabled_feature_or_screens_without_ai_probe_publish_no_reason()
+    {
+        Assert.Null(Capabilities(await Controller(enabled: false).GetCapabilities()).AiUnavailableReason);
+        Assert.Null(Capabilities(await Controller(enabled: true).GetCapabilities(includeAi: false)).AiUnavailableReason);
+    }
+
+    [Fact]
     public async Task Other_actions_stay_hidden_when_the_feature_is_off()
     {
         var controller = Controller(enabled: false);
 
         Assert.IsType<NotFoundResult>(await controller.Get(Guid.NewGuid(), CancellationToken.None));
         Assert.IsType<NotFoundResult>(await controller.GetProposals(Guid.NewGuid(), CancellationToken.None));
+        Assert.IsType<NotFoundResult>(await controller.Retry(Guid.NewGuid(), CancellationToken.None));
     }
 }

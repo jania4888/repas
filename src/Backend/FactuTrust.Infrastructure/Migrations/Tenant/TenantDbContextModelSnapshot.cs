@@ -623,6 +623,15 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
+                    b.Property<bool>("BalanceAcknowledged")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<decimal?>("BalanceDifference")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
                     b.Property<Guid?>("BankAccountId")
                         .HasColumnType("uniqueidentifier");
 
