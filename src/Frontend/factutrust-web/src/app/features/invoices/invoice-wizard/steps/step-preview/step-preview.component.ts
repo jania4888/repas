@@ -366,7 +366,7 @@ import {
 
               <!-- Validation Details -->
               <div class="validation-details">
-                <p-accordion [multiple]="true" [value]="openAccordionPanels()">
+                <p-accordion [multiple]="true" [(value)]="openAccordionPanels">
                   <!-- Legal Checks -->
                   <p-accordion-panel value="legal">
                     <p-accordion-header>
@@ -1500,10 +1500,12 @@ export class StepPreviewComponent implements OnInit {
     this.wizardService.ensureSubscriptionLoaded({ forceRefresh: true }).subscribe({
       next: () => {
         this.validation = this.wizardService.validateInvoice();
+        this.openAccordionPanels = this.computeOpenAccordionPanels();
         this.validating.set(false);
       },
       error: () => {
         this.validation = this.wizardService.validateInvoice();
+        this.openAccordionPanels = this.computeOpenAccordionPanels();
         this.validating.set(false);
       }
     });
@@ -1513,8 +1515,14 @@ export class StepPreviewComponent implements OnInit {
     return this.validation?.checks.filter(c => c.category === category) || [];
   }
 
-  /** Panneaux d'accordion ouverts : chaque catégorie en erreur. */
-  openAccordionPanels(): string[] {
+  /**
+   * Panneaux d'accordion ouverts. Recalculé à chaque nouvelle validation
+   * (catégories en erreur ouvertes) ; lié en deux sens pour que les
+   * ouvertures/fermetures manuelles persistent entre les cycles de détection.
+   */
+  openAccordionPanels: string[] = [];
+
+  private computeOpenAccordionPanels(): string[] {
     const open: string[] = [];
     if (this.hasErrorsInCategory('LEGAL')) open.push('legal');
     if (this.hasErrorsInCategory('FISCAL')) open.push('fiscal');

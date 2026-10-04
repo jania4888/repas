@@ -11,12 +11,12 @@ export class FtOverlayCleanupService {
   clearOrphanOverlays(): void {
     if (typeof document === 'undefined') return;
 
-    document.querySelectorAll('[name="p-anchored-overlay"]').forEach(node => node.remove());
-
-    document.querySelectorAll('.p-component-overlay').forEach(node => {
+    // PrimeNG 20 : les overlays sont des éléments <p-overlay> (plus de marqueur
+    // p-anchored-overlay) ; on cible les panneaux orphelins hors dialog/drawer.
+    document.querySelectorAll('.p-component-overlay, .p-overlay').forEach(node => {
       const el = node as HTMLElement;
       if (el.closest('.p-dialog') || el.closest('.p-drawer')) return;
-      if (el.classList.contains('p-sidebar-mask')) return;
+      if (el.classList.contains('p-overlay-mask') || el.classList.contains('p-drawer-mask')) return;
       node.remove();
     });
   }
