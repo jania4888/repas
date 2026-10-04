@@ -22,7 +22,7 @@ export interface CreateFirmManagedClient {
   governorate: string;
   postalCode?: string | null;
   email?: string | null;
-  phone: string;
+  phone?: string | null;
   website?: string | null;
   // Étape 2 — Options comptables
   fiscalYearStartMonth: number;
@@ -32,8 +32,6 @@ export interface CreateFirmManagedClient {
   taxRegime: number;
   taxOffice?: string | null;
   isStandardRate?: number | null;
-  cnssEmployeeRate?: number | null;
-  cnssEmployerRate?: number | null;
   // Étape 4 — Paramètres du dossier cabinet
   annualFeeAmount?: number | null;
   billingFrequency?: number | null;

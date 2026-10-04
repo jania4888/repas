@@ -472,10 +472,9 @@ public sealed class JournalEntryRepository : IJournalEntryRepository
     ///
     /// Aucun filtre de statut : le Brouillon est INCLUS volontairement (cf. plan §6.7) — la TVA
     /// collectée facturière ne filtre jamais sur le statut de l'écriture (seulement sur celui de la
-    /// facture) ; exclure la caisse en brouillon créerait une asymétrie entre les deux sources du
-    /// même total collecté, et avec BrouillardEnabled actif TOUTES les écritures JC naissent en
-    /// brouillon jusqu'à validation par l'expert — les filtrer ferait disparaître silencieusement
-    /// la TVA caisse de la déclaration.
+    /// facture). Les écritures JC nouvelles issues d'une opération de caisse naissent Validée, mais
+    /// les brouillons JC historiques (et les extournes manuelles encore en brouillon) doivent rester
+    /// dans le cumul : ajouter un filtre de statut ferait disparaître silencieusement leur TVA.
     ///
     /// Mouvements SIGNÉS (v2.1) : une écriture caisse extournée reste comptée dans SA période
     /// (positif, malgré IsReversed=true) et son extourne manuelle (SourceEntityType="ManualReversal")

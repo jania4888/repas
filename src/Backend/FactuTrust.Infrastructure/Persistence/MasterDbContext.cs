@@ -310,10 +310,11 @@ public class MasterDbContext : IdentityDbContext<ApplicationUser, ApplicationRol
                 phone.Property(p => p.Value)
                     .HasColumnName("Phone")
                     .HasMaxLength(20)
-                    .IsRequired();
+                    .IsRequired(false);
                 phone.Ignore(p => p.CountryCode);
                 phone.Ignore(p => p.LocalNumber);
             });
+            entity.Navigation(t => t.Phone).IsRequired(false);
         });
 
         // Subscription configuration

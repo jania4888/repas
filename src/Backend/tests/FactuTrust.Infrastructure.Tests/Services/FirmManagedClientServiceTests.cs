@@ -143,6 +143,95 @@ public sealed class FirmManagedClientServiceTests
         Assert.Null(tenant.Email);
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task Create_without_phone_provisions_dossier(string? phone)
+    {
+        await using var db = BuildMaster();
+        await SeedFirmAsync(db);
+        var tenantService = new Mock<ITenantService>();
+        tenantService
+            .Setup(s => s.CreateTenantDatabaseAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync("Server=test;Database=tenant;");
+        var service = BuildService(db, tenantService);
+
+        var phoneNav = db.Model.FindEntityType(typeof(Tenant))!.FindNavigation(nameof(Tenant.Phone));
+        Assert.NotNull(phoneNav);
+        Assert.True(phoneNav!.TargetEntityType.FindProperty("Value")!.IsNullable);
+
+        var result = await service.CreateManagedClientAsync(
+            FirmId, FirmUserId, ValidDto() with { Phone = phone, CompanyName = "Sans Tel " + (phone ?? "null") });
+
+        Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
+        var tenant = await db.Tenants.SingleAsync(t => t.Id == result.Value.CompanyTenantId);
+        Assert.Null(tenant.Phone);
+        Assert.NotNull(await db.PermanentFiles.SingleOrDefaultAsync(p => p.CompanyName == tenant.CompanyName));
+        tenantService.Verify(
+            s => s.CreateTenantDatabaseAsync(tenant.Id, tenant.DatabaseName, null, It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Theory]
+    [InlineData("abc")]
+    [InlineData("123")]
+    public async Task Create_invalid_phone_is_rejected_without_tenant(string phone)
+    {
+        await using var db = BuildMaster();
+        await SeedFirmAsync(db);
+        var tenantService = new Mock<ITenantService>();
+        var service = BuildService(db, tenantService);
+
+        var result = await service.CreateManagedClientAsync(
+            FirmId, FirmUserId, ValidDto() with { Phone = phone });
+
+        Assert.True(result.IsFailure);
+        Assert.Contains("invalide", result.Error.Description, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(1, await db.Tenants.CountAsync());
+        tenantService.Verify(
+            s => s.CreateTenantDatabaseAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
+    [Theory]
+    [InlineData("73123456", "+21673123456")]
+    [InlineData("+216 71 123 456", "+21671123456")]
+    public async Task Create_valid_phone_is_stored_canonical(string phone, string expected)
+    {
+        await using var db = BuildMaster();
+        await SeedFirmAsync(db);
+        var service = BuildService(db);
+
+        var result = await service.CreateManagedClientAsync(
+            FirmId, FirmUserId, ValidDto() with { Phone = phone, Nif = phone.Contains('+') ? "1234567/A/B/C/001" : "1234567/A/B/C/002" });
+
+        Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
+        var tenant = await db.Tenants.SingleAsync(t => t.Id == result.Value.CompanyTenantId);
+        Assert.Equal(expected, tenant.Phone!.Value);
+    }
+
+    [Theory]
+    [InlineData("1772793WAM000")]
+    [InlineData("____/__/__/___")]
+    [InlineData("' OR 1=1")]
+    public async Task Create_invalid_nif_is_rejected_without_tenant(string nif)
+    {
+        await using var db = BuildMaster();
+        await SeedFirmAsync(db);
+        var tenantService = new Mock<ITenantService>();
+        var service = BuildService(db, tenantService);
+
+        var result = await service.CreateManagedClientAsync(
+            FirmId, FirmUserId, ValidDto() with { Nif = nif });
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(1, await db.Tenants.CountAsync());
+        tenantService.Verify(
+            s => s.CreateTenantDatabaseAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
     [Fact]
     public async Task Create_invalid_email_is_rejected_without_tenant()
     {

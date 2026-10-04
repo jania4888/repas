@@ -5885,7 +5885,6 @@ namespace FactuTrust.Infrastructure.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("Value")
-                                .IsRequired()
                                 .HasMaxLength(20)
                                 .HasColumnType("nvarchar(20)")
                                 .HasColumnName("Phone");
@@ -5906,8 +5905,7 @@ namespace FactuTrust.Infrastructure.Migrations
                     b.Navigation("NIF")
                         .IsRequired();
 
-                    b.Navigation("Phone")
-                        .IsRequired();
+                    b.Navigation("Phone");
                 });
 
             modelBuilder.Entity("FactuTrust.Domain.Entities.UserModuleGrant", b =>

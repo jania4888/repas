@@ -8,8 +8,9 @@ import { FirmManagedClientsService, CreateFirmManagedClient, FirmManagedClientCr
 import { FirmGovernanceService, FirmAssignableAccountant } from '@core/services/firm-governance.service';
 import { FirmContextService } from '@core/services/firm-context.service';
 import { ToastService } from '@core/services/toast.service';
-import { canonicalizeNif, TUNISIAN_GOVERNORATE_OPTIONS } from '@shared/validation/validation-rules';
+import { canonicalizeNif, NIF_PATTERN, TUNISIAN_GOVERNORATE_OPTIONS } from '@shared/validation/validation-rules';
 import { TunisianValidators } from '@shared/validation/tunisian-validators';
+import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directive';
 import {
   ProvisioningStep,
   applyRunningSchedule,
@@ -19,6 +20,7 @@ import {
   scheduleProvisioningProgress
 } from './managed-client-provisioning-progress';
 import { ButtonModule } from 'primeng/button';
+import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -47,7 +49,8 @@ const MONTH_OPTIONS: Option<number>[] = [
   standalone: true,
   imports: [
     CommonModule, RouterModule, ReactiveFormsModule, PageHeaderComponent,
-    ButtonModule, InputTextModule, SelectModule, InputNumberModule,
+    ButtonModule, InputMaskModule, InputTextModule, SelectModule, InputNumberModule,
+    NifMaskPasteDirective,
     DatePickerModule, Textarea, TagModule, ProgressBarModule
   ],
   template: `
@@ -152,8 +155,22 @@ const MONTH_OPTIONS: Option<number>[] = [
                 <input pInputText formControlName="companyName" maxlength="200" placeholder="Société Exemple SARL" />
               </div>
               <div class="mc-field">
-                <label>Matricule fiscal (NIF) <span class="req">*</span></label>
-                <input pInputText formControlName="nif" placeholder="1772793W/A/M/000" (blur)="canonicalizeNifField()" />
+                <label for="nif">Matricule fiscal (NIF) <span class="req">*</span></label>
+                <p-inputMask
+                  id="nif"
+                  formControlName="nif"
+                  appNifMaskPaste
+                  mask="9999999a/a/a/999"
+                  placeholder="1772793W/A/M/000"
+                  styleClass="w-full"
+                  [style]="{'text-transform': 'uppercase'}"
+                  [class.ng-invalid]="nifInvalid()"
+                  (onBlur)="canonicalizeNifField()">
+                </p-inputMask>
+                <small class="mc-hint">Format : 1772793W/A/M/000</small>
+                @if (nifInvalid()) {
+                  <small class="mc-error">{{ nifErrorMessage() }}</small>
+                }
               </div>
               <div class="mc-field">
                 <label>Forme juridique</label>
@@ -194,8 +211,11 @@ const MONTH_OPTIONS: Option<number>[] = [
                   placeholder="Sélectionner" [filter]="true" styleClass="w-full" appendTo="body" />
               </div>
               <div class="mc-field">
-                <label>Téléphone <span class="req">*</span></label>
-                <input pInputText formControlName="phone" placeholder="+216 71 123 456" />
+                <label for="phone">Téléphone</label>
+                <input id="phone" pInputText formControlName="phone" placeholder="+216 71 123 456" />
+                @if (phoneInvalid()) {
+                  <small class="mc-error">{{ phoneErrorMessage() }}</small>
+                }
               </div>
               <div class="mc-field">
                 <label>Email</label>
@@ -261,16 +281,6 @@ const MONTH_OPTIONS: Option<number>[] = [
               </div>
               <div class="mc-field"></div>
               <div class="mc-field">
-                <label>Taux CNSS salarial (%)</label>
-                <p-inputNumber formControlName="cnssEmployeeRate" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="2"
-                  [min]="0" [max]="100" placeholder="Ex. 9,18" styleClass="w-full" />
-              </div>
-              <div class="mc-field">
-                <label>Taux CNSS patronal (%)</label>
-                <p-inputNumber formControlName="cnssEmployerRate" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="2"
-                  [min]="0" [max]="100" placeholder="Ex. 16,57" styleClass="w-full" />
-              </div>
-              <div class="mc-field">
                 <label>Honoraires annuels (TND)</label>
                 <p-inputNumber formControlName="annualFeeAmount" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="3"
                   [min]="0" styleClass="w-full" />
@@ -288,8 +298,10 @@ const MONTH_OPTIONS: Option<number>[] = [
             <div class="mc-info mc-info--muted">
               <i class="pi pi-info-circle"></i>
               <div>
-                Les taux laissés vides utilisent les défauts légaux de l'exercice ; ils restent
-                modifiables depuis l'écran « Paramètres fiscaux » du dossier.
+                Le taux d'IS laissé vide utilise le défaut légal de l'exercice ; il reste
+                modifiable depuis l'écran « Paramètres fiscaux » du dossier.
+                Les taux CNSS ne se saisissent pas ici : ils suivent la loi de finances de l'exercice
+                et se règlent dans « Paramètres de paie » du dossier.
               </div>
             </div>
           }
@@ -315,16 +327,11 @@ const MONTH_OPTIONS: Option<number>[] = [
               <dt>NIF</dt><dd>{{ generalForm.value.nif || '—' }}</dd>
               <dt>Forme juridique</dt><dd>{{ legalFormLabel(generalForm.value.legalForm) }}</dd>
               <dt>Adresse</dt><dd>{{ recapAddress() }}</dd>
-              <dt>Contact</dt><dd>{{ generalForm.value.phone }} · {{ generalForm.value.email }}</dd>
+              <dt>Contact</dt><dd>{{ recapContact() }}</dd>
               <dt>Exercice</dt><dd>{{ recapExercice() }}</dd>
               <dt>Régime fiscal</dt><dd>{{ taxRegimeLabel(fiscalForm.value.taxRegime) }}</dd>
               <dt>Taux IS</dt><dd>{{ fiscalForm.value.isStandardRate != null ? fiscalForm.value.isStandardRate + ' %' : 'Défaut légal' }}</dd>
-              <dt>CNSS</dt>
-              <dd>
-                {{ fiscalForm.value.cnssEmployeeRate != null || fiscalForm.value.cnssEmployerRate != null
-                  ? (fiscalForm.value.cnssEmployeeRate ?? '—') + ' % / ' + (fiscalForm.value.cnssEmployerRate ?? '—') + ' %'
-                  : 'Défauts légaux' }}
-              </dd>
+              <dt>CNSS</dt><dd>Taux légaux de l'exercice</dd>
               <dt>Honoraires</dt><dd>{{ recapBilling() }}</dd>
               <dt>Gestionnaire</dt><dd>{{ accountantLabel(settingsForm.value.assignedAccountantUserId) }}</dd>
             </dl>
@@ -416,6 +423,10 @@ const MONTH_OPTIONS: Option<number>[] = [
     .mc-field label { font-size: 0.83rem; font-weight: 500; color: var(--color-text-muted, #475569); }
     .mc-field .req { color: var(--color-danger-600, #dc2626); }
     .mc-field input, .mc-field textarea { width: 100%; }
+    :host ::ng-deep .mc-field .p-inputmask { width: 100%; display: block; }
+    :host ::ng-deep .mc-field .p-inputmask input { width: 100%; }
+    .mc-hint { font-size: 0.78rem; color: var(--color-text-muted, #64748b); }
+    .mc-error { font-size: 0.78rem; color: var(--color-danger-600, #dc2626); }
     .mc-info {
       display: flex; gap: 0.6rem; align-items: flex-start;
       background: var(--color-primary-50, #eff6ff);
@@ -540,7 +551,7 @@ export class FirmManagedClientWizardComponent implements OnInit, OnDestroy {
     postalCode: ['', TunisianValidators.postalCode()],
     city: ['', Validators.required],
     governorate: ['', Validators.required],
-    phone: ['', [Validators.required, TunisianValidators.tunisianPhone()]],
+    phone: ['', [TunisianValidators.tunisianPhone()]],
     email: ['', [TunisianValidators.email()]],
     website: ['']
   });
@@ -555,8 +566,6 @@ export class FirmManagedClientWizardComponent implements OnInit, OnDestroy {
     taxRegime: [0, Validators.required],
     taxOffice: [''],
     isStandardRate: this.fb.control<number | null>(null),
-    cnssEmployeeRate: this.fb.control<number | null>(null),
-    cnssEmployerRate: this.fb.control<number | null>(null),
     annualFeeAmount: this.fb.control<number | null>(null),
     billingFrequency: this.fb.control<number | null>(null),
     billingNotes: ['']
@@ -609,6 +618,10 @@ export class FirmManagedClientWizardComponent implements OnInit, OnDestroy {
 
   next(): void {
     if (this.saving()) return;
+    if (this.step() === 1) {
+      this.canonicalizeNifField();
+      this.normalizePhoneField();
+    }
     const form = this.step() === 1 ? this.generalForm : this.step() === 2 ? this.accountingForm : this.fiscalForm;
     if (form.invalid) {
       form.markAllAsTouched();
@@ -621,12 +634,19 @@ export class FirmManagedClientWizardComponent implements OnInit, OnDestroy {
   create(): void {
     if (this.saving()) return;
 
+    this.canonicalizeNifField();
+    this.normalizePhoneField();
     if (this.generalForm.invalid || this.accountingForm.invalid || this.fiscalForm.invalid) {
       this.toast.add({ severity: 'warn', summary: 'Champs incomplets', detail: 'Revenez aux étapes précédentes pour compléter les champs obligatoires.' });
       return;
     }
 
     const body = this.buildPayload();
+    if (!body.nif || body.nif.includes('_') || !NIF_PATTERN.test(body.nif)) {
+      this.generalForm.controls.nif.markAsTouched();
+      this.toast.add({ severity: 'warn', summary: 'Champs incomplets', detail: 'Complétez les champs obligatoires avant de continuer.' });
+      return;
+    }
     this.saving.set(true);
     this.startProvisioningProgress(body.companyName);
 
@@ -701,10 +721,63 @@ export class FirmManagedClientWizardComponent implements OnInit, OnDestroy {
 
   canonicalizeNifField(): void {
     const control = this.generalForm.controls.nif;
-    const canonical = canonicalizeNif(control.value);
-    if (canonical && canonical !== control.value) {
-      control.setValue(canonical);
+    const value = control.value;
+    if (!value || typeof value !== 'string') return;
+
+    const normalized = canonicalizeNif(value);
+    // Ne mettre à jour le contrôle que si vide ou NIF complet valide (évite conflit avec p-inputMask)
+    const isEmpty = normalized === '';
+    const isValidComplete = normalized.length > 0 && NIF_PATTERN.test(normalized);
+    if ((isEmpty || isValidComplete) && normalized !== value) {
+      control.setValue(normalized, { emitEvent: false });
+      control.updateValueAndValidity({ emitEvent: false });
     }
+  }
+
+  private normalizePhoneField(): void {
+    const control = this.generalForm.controls.phone;
+    const trimmed = control.value.trim();
+    if (trimmed !== control.value) {
+      control.setValue(trimmed);
+    }
+  }
+
+  nifInvalid(): boolean {
+    const control = this.generalForm.controls.nif;
+    return control.invalid && (control.touched || control.dirty);
+  }
+
+  nifErrorMessage(): string {
+    const errors = this.generalForm.controls.nif.errors;
+    if (!errors) return '';
+    if (errors['required']) return 'Le matricule fiscal est obligatoire';
+    const invalid = errors['INVALID_NIF'];
+    if (invalid && typeof invalid === 'object' && 'message' in invalid) {
+      return String((invalid as { message: string }).message);
+    }
+    return 'Matricule fiscal invalide. Format attendu: 1772793W/A/M/000';
+  }
+
+  phoneInvalid(): boolean {
+    const control = this.generalForm.controls.phone;
+    return control.invalid && (control.touched || control.dirty);
+  }
+
+  phoneErrorMessage(): string {
+    const invalid = this.generalForm.controls.phone.errors?.['INVALID_PHONE'];
+    if (invalid && typeof invalid === 'object' && 'message' in invalid) {
+      return String((invalid as { message: string }).message);
+    }
+    return 'Numéro de téléphone invalide. Format attendu: +216 XX XXX XXX';
+  }
+
+  recapContact(): string {
+    const phone = this.generalForm.value.phone?.trim();
+    const email = this.generalForm.value.email?.trim();
+    if (!phone && !email) return '—';
+    if (!phone) return email ?? '—';
+    if (!email) return phone;
+    return `${phone} · ${email}`;
   }
 
   recapExercice(): string {
@@ -728,9 +801,10 @@ export class FirmManagedClientWizardComponent implements OnInit, OnDestroy {
     const f = this.fiscalForm.getRawValue();
     const s = this.settingsForm.getRawValue();
 
+    const nif = canonicalizeNif(g.nif.trim());
     return {
       companyName: g.companyName.trim(),
-      nif: canonicalizeNif(g.nif.trim()) || g.nif.trim(),
+      nif,
       legalForm: g.legalForm,
       rneIdentifier: g.rneIdentifier?.trim() || null,
       incorporationDate: g.incorporationDate ? g.incorporationDate.toISOString() : null,
@@ -741,7 +815,7 @@ export class FirmManagedClientWizardComponent implements OnInit, OnDestroy {
       governorate: g.governorate,
       postalCode: g.postalCode?.trim() || null,
       email: g.email?.trim() || null,
-      phone: g.phone.trim(),
+      phone: g.phone.trim() || null,
       website: g.website?.trim() || null,
       fiscalYearStartMonth: a.fiscalYearStartMonth,
       fiscalYearEndMonth: a.fiscalYearEndMonth,
@@ -749,8 +823,6 @@ export class FirmManagedClientWizardComponent implements OnInit, OnDestroy {
       taxRegime: f.taxRegime,
       taxOffice: f.taxOffice?.trim() || null,
       isStandardRate: f.isStandardRate,
-      cnssEmployeeRate: f.cnssEmployeeRate,
-      cnssEmployerRate: f.cnssEmployerRate,
       annualFeeAmount: f.annualFeeAmount,
       billingFrequency: f.billingFrequency,
       billingNotes: f.billingNotes?.trim() || null,

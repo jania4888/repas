@@ -5,7 +5,6 @@ using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Entities.FirmGovernance;
 using FactuTrust.Domain.Enums;
-using FactuTrust.Domain.Services.Payroll;
 using FactuTrust.Domain.ValueObjects;
 using FactuTrust.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -64,7 +63,7 @@ public sealed class FirmManagedClientService : IFirmManagedClientService
         if (emailResult.IsFailure)
             return Result.Failure<FirmManagedClientCreatedDto>(emailResult.Error);
 
-        var phoneResult = PhoneNumber.Create(dto.Phone);
+        var phoneResult = PhoneNumber.CreateOptional(dto.Phone);
         if (phoneResult.IsFailure)
             return Result.Failure<FirmManagedClientCreatedDto>(phoneResult.Error);
 
@@ -230,9 +229,11 @@ public sealed class FirmManagedClientService : IFirmManagedClientService
     }
 
     /// <summary>
-    /// Applique les taux du wizard (IS, CNSS) dans la base tenant nouvellement créée.
-    /// Best-effort : en cas d'échec le dossier reste utilisable, les paramètres restent
-    /// sur les défauts légaux et sont modifiables depuis l'écran « Paramètres fiscaux ».
+    /// Applique le taux d'IS du wizard dans la base tenant nouvellement créée.
+    /// Les taux CNSS ne sont pas saisis ici : ils viennent des défauts légaux
+    /// au premier accès à la paie, puis se règlent dans « Paramètres de paie ».
+    /// Best-effort : en cas d'échec le dossier reste utilisable, le taux d'IS reste
+    /// sur le défaut légal et est modifiable depuis l'écran « Paramètres fiscaux ».
     /// </summary>
     private async Task TryApplyFiscalParametersAsync(
         Guid tenantId,
@@ -240,7 +241,7 @@ public sealed class FirmManagedClientService : IFirmManagedClientService
         CreateFirmManagedClientDto dto,
         CancellationToken cancellationToken)
     {
-        if (dto.IsStandardRate is null && dto.CnssEmployeeRate is null && dto.CnssEmployerRate is null)
+        if (dto.IsStandardRate is null)
             return;
 
         try
@@ -252,66 +253,16 @@ public sealed class FirmManagedClientService : IFirmManagedClientService
             await using var context = new TenantDbContext(options);
             var fiscalYear = dto.FirstFiscalYear ?? DateTime.UtcNow.Year;
 
-            if (dto.IsStandardRate.HasValue)
-            {
-                var incomeTax = await context.IncomeTaxYearParameters
-                    .FirstOrDefaultAsync(p => p.FiscalYear == fiscalYear, cancellationToken);
-                incomeTax?.Update(
-                    dto.IsStandardRate.Value, incomeTax.IsReducedRate, incomeTax.IsSectorRate,
-                    incomeTax.MinTaxRate, incomeTax.MinTaxReducedRate, incomeTax.MinTaxFloorTnd,
-                    incomeTax.CssApplies, incomeTax.CssRate, incomeTax.CssFloorTnd,
-                    incomeTax.AcompteRate, incomeTax.AcompteCount, incomeTax.DeficitCarryForwardYears,
-                    incomeTax.IrppBracketsJson,
-                    incomeTax.MinTaxFloorReducedTnd, incomeTax.RoundTaxableToDinar,
-                    markUserModified: true);
-            }
-
-            if (dto.CnssEmployeeRate.HasValue || dto.CnssEmployerRate.HasValue)
-            {
-                var payroll = await context.PayrollYearParameters
-                    .Include(p => p.IrppBrackets)
-                    .FirstOrDefaultAsync(p => p.FiscalYear == fiscalYear, cancellationToken);
-
-                if (payroll is null)
-                {
-                    var defaultsResult = PayrollParameterDefaults.CreateDefaults(fiscalYear);
-                    if (defaultsResult.IsFailure)
-                    {
-                        _logger.LogWarning(
-                            "Paramètres de paie par défaut indisponibles pour l'exercice {Year} : {Error}",
-                            fiscalYear, defaultsResult.Error.Description);
-                        await context.SaveChangesAsync(cancellationToken);
-                        return;
-                    }
-                    payroll = defaultsResult.Value;
-                    context.PayrollYearParameters.Add(payroll);
-                }
-
-                payroll.UpdateRates(
-                    dto.CnssEmployeeRate ?? payroll.CnssEmployeeRate,
-                    dto.CnssEmployerRate ?? payroll.CnssEmployerRate,
-                    payroll.CssRate,
-                    payroll.CssAnnualExemptionThreshold,
-                    payroll.ProfessionalExpensesRate,
-                    payroll.ProfessionalExpensesAnnualCap,
-                    payroll.HeadOfFamilyAnnualDeduction,
-                    payroll.ChildAnnualDeduction,
-                    payroll.MaxDeductibleChildren,
-                    payroll.TfpRateIndustry,
-                    payroll.TfpRateOther,
-                    payroll.FoprolosRate,
-                    payroll.MonthlySmig,
-                    dto.CnssEmployeeRate ?? payroll.CnssEmployeeRateRsa,
-                    dto.CnssEmployerRate ?? payroll.CnssEmployerRateRsa,
-                    payroll.EnforceSmigOnContracts,
-                    payroll.EnableExtendedOvertimeRates,
-                    payroll.EnableAllowanceQuadrantMatrix,
-                    payroll.StudentChildAnnualDeduction,
-                    payroll.DisabledChildAnnualDeduction,
-                    payroll.ParentDeductionRatePercent,
-                    payroll.ParentAnnualDeductionCap,
-                    payroll.IsIndustrialSector);
-            }
+            var incomeTax = await context.IncomeTaxYearParameters
+                .FirstOrDefaultAsync(p => p.FiscalYear == fiscalYear, cancellationToken);
+            incomeTax?.Update(
+                dto.IsStandardRate.Value, incomeTax.IsReducedRate, incomeTax.IsSectorRate,
+                incomeTax.MinTaxRate, incomeTax.MinTaxReducedRate, incomeTax.MinTaxFloorTnd,
+                incomeTax.CssApplies, incomeTax.CssRate, incomeTax.CssFloorTnd,
+                incomeTax.AcompteRate, incomeTax.AcompteCount, incomeTax.DeficitCarryForwardYears,
+                incomeTax.IrppBracketsJson,
+                incomeTax.MinTaxFloorReducedTnd, incomeTax.RoundTaxableToDinar,
+                markUserModified: true);
 
             await context.SaveChangesAsync(cancellationToken);
         }

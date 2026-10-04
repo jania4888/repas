@@ -69,7 +69,9 @@ public sealed class RecurringEntryGenerator
     /// <summary>
     /// Génère UNE occurrence du modèle à la date donnée puis avance l'échéance — le tout dans un
     /// seul SaveChanges. Si la période de l'occurrence est clôturée, l'écriture est datée du jour
-    /// (même repli que l'extourne).
+    /// (même repli que l'extourne). L'écriture naît <see cref="JournalEntryStatus.Validee"/> :
+    /// <paramref name="settings"/> est conservé pour les appelants, le brouillard ne s'applique pas
+    /// à un modèle récurrent.
     /// </summary>
     public async Task<Result<Guid>> GenerateOccurrenceAsync(
         TenantDbContext ctx,
@@ -78,6 +80,10 @@ public sealed class RecurringEntryGenerator
         DateTime occurrenceDate,
         CancellationToken cancellationToken = default)
     {
+        // Signature stable pour le job et l'action « Générer maintenant ».
+        // Le brouillard ne décide plus du statut d'un modèle récurrent.
+        _ = settings;
+
         if (!template.IsRecurring)
             return Result.Failure<Guid>(Error.Validation("Recurrence", "Ce modèle n'est pas planifié."));
 
@@ -146,7 +152,7 @@ public sealed class RecurringEntryGenerator
             lines,
             Money.DefaultCurrency,
             reversesEntryId: null,
-            initialStatus: settings.BrouillardEnabled ? JournalEntryStatus.Brouillon : JournalEntryStatus.Validee);
+            initialStatus: JournalEntryStatus.Validee);
 
         if (create.IsFailure)
             return Result.Failure<Guid>(create.Error);
