@@ -440,6 +440,19 @@ else
   step "8. PORTE GO / NO-GO : API inchangee, non redemarree"
 fi
 
+# Modeles Ollama attendus par la version deployee : verification seule (aucun pull), NON
+# bloquante. /health/ready ne depend pas d'Ollama ; un modele de vision absent ou sans
+# projecteur laisse l'import de facture par photo et l'import de releves bancaires annoncer
+# l'IA indisponible. Le controle "ollama-bank-statement-vision" de /api/platform/ops/health
+# dit la meme chose en continu.
+step "8 bis. MODELES OLLAMA (verification, non bloquante)"
+if (cd "$ROOT/src" && VERIFY_ONLY_MODE=1 COMPOSE_FILE=deploy/docker-compose.yml \
+      COMPOSE_EXTRA_FILE=deploy/docker-compose.vps.yml bash deploy/scripts/pull-ollama-models.sh </dev/null) 2>&1 | sed 's/^/    /'; then
+  ok "modeles Ollama presents (vision annoncee)"
+else
+  ko "modele Ollama absent ou sans vision : l'import IA (facture photo, releves) annoncera l'IA indisponible. Installation manuelle : deploy/README.md section 4. Le deploiement continue."
+fi
+
 # ---------------------------------------------------------------------------------------------
 if [ "$NEED_WEB" = 1 ] || [ "$NEED_ADMIN" = 1 ]; then
   step "9. PUBLICATION DES FRONTS (apres l'API)"

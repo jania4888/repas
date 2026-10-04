@@ -62,6 +62,18 @@ for i in $(seq 1 60); do
   fi
 done
 
+# Modeles Ollama : verification seule (aucun pull), non bloquante mais visible. Un modele de
+# vision absent ou sans projecteur = import de facture par photo et import de releves bancaires
+# en panne, que /health/ready ne voit pas (le controle "ollama-bank-statement-vision" n'est
+# visible que dans /api/platform/ops/health).
+echo "=== Verification des modeles Ollama (VERIFY_ONLY_MODE=1) ==="
+if VERIFY_ONLY_MODE=1 COMPOSE_FILE="${COMPOSE_FILE}" COMPOSE_EXTRA_FILE="${COMPOSE_EXTRA_FILE}" \
+   bash deploy/scripts/pull-ollama-models.sh; then
+  OLLAMA_MODELS_STATUS="ok"
+else
+  OLLAMA_MODELS_STATUS="ECHEC (voir ci-dessus ; installation manuelle : deploy/README.md section 4)"
+fi
+
 echo "=== Restart nginx ==="
 compose up -d nginx
 
@@ -99,6 +111,7 @@ echo "     GET  /api/platform/migrations/tenants/migrations-status   # CHAQUE do
 echo "   Voir docs/backend-tenant-migrations.md (certaines migrations ont un ordre impose)."
 echo ""
 echo "3. Test de fumee : ${SMOKE_STATUS}"
+echo "4. Modeles Ollama : ${OLLAMA_MODELS_STATUS}"
 
 [[ "${SMOKE_STATUS}" == "ECHEC" ]] && exit 1
 exit 0
