@@ -77,7 +77,9 @@ export async function loginAsDemoUser(page: Page): Promise<void> {
   await page.locator('p-password[formcontrolname="password"] input').fill(creds.password);
   await page.click('button[type="submit"]');
 
-  await page.waitForURL(/\/(dashboard|auth\/select-warehouse)/, { timeout: 20000 });
+  // 60 s : à froid, le serveur de dev compile les routes paresseuses authentifiées
+  // au premier accès (surtout depuis Angular 20) — 20 s ne suffisent pas en CI.
+  await page.waitForURL(/\/(dashboard|auth\/select-warehouse)/, { timeout: 60000 });
 
   if (page.url().includes('/auth/select-warehouse')) {
     const warehouseName = process.env.DOC_WAREHOUSE;
