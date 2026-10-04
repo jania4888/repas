@@ -477,6 +477,11 @@ public sealed class BankStatementImportService : IBankStatementImportService
         if (!_settings.BankStatementAiPostingEnabled)
             return Fail<BankStatementImportSessionDto>(BankStatementImportErrorCodes.Disabled, "L'import de relevés bancaires n'est pas activé.");
 
+        // La relance est une lecture IA : la permission « ai:chat » est exigée AVANT toute mutation —
+        // sinon l'utilisateur perdrait sa session d'origine pour une nouvelle session vouée à l'échec.
+        if (!_currentUser.HasPermission(Permissions.AI.Chat))
+            return Result.Failure<BankStatementImportSessionDto>(Error.Forbidden("La relance de la lecture IA requiert la permission d'assistance IA."));
+
         var retry = targetBankAccountId is null;
         await using var ctx = _contextFactory.CreateContext();
         var session = await ctx.BankStatementImportSessions.AsNoTracking()
@@ -596,18 +601,16 @@ public sealed class BankStatementImportService : IBankStatementImportService
         // exclue est retirée du relevé (ses signalements avec elle), les autres sont renumérotées.
         var correctedLines = 0;
         var excludedLines = 0;
+        List<(object Before, object After)>? correctionTrail = null;
         if (request.Corrections.Count > 0)
         {
             var corrected = ApplyCorrections(extraction, request.Corrections, out var correctionError, out var trail);
             if (correctionError is not null)
                 return Result.Failure<ConfirmBankStatementImportResult>(correctionError);
-            foreach (var (before, after) in trail)
-            {
-                await _audit.LogAsync(AuditActions.Accounting.BankStatementExtractionCorrected, nameof(BankStatementImportSession), session.Id,
-                    oldValues: before,
-                    newValues: after,
-                    cancellationToken: cancellationToken);
-            }
+            // L'audit des corrections n'est écrit qu'une fois l'enregistrement réussi (plus bas) :
+            // un refus (signalement bloquant, accusé manquant) ne doit pas laisser de trace d'une
+            // correction jamais appliquée.
+            correctionTrail = trail;
 
             excludedLines = request.Corrections.Count(c => c.Exclude);
             correctedLines = request.Corrections.Count - excludedLines;
@@ -672,6 +675,17 @@ public sealed class BankStatementImportService : IBankStatementImportService
         session.Confirm(statement.Id);
         session.SetAuditInfo(UserLabel, true);
         await ctx.SaveChangesAsync(cancellationToken);
+
+        if (correctionTrail is not null)
+        {
+            foreach (var (before, after) in correctionTrail)
+            {
+                await _audit.LogAsync(AuditActions.Accounting.BankStatementExtractionCorrected, nameof(BankStatementImportSession), session.Id,
+                    oldValues: before,
+                    newValues: after,
+                    cancellationToken: cancellationToken);
+            }
+        }
 
         // Le fichier devient la pièce justificative du relevé (best-effort : l'enregistrement est fait).
         try
@@ -897,8 +911,10 @@ public sealed class BankStatementImportService : IBankStatementImportService
         var pages = plan.PlannedPages.Count;
         if (pages > Limits.EffectiveMaxAiPages)
         {
+            // Refus déterministe (ni relançable ni transitoire) : code dédié, distinct de ai_unavailable,
+            // pour que « Relancer l'analyse » ne propose pas une action vouée au même échec.
             var reason = $"Trop de pages à lire ({pages}, maximum {Limits.EffectiveMaxAiPages}). Scindez le PDF par relevé ou par mois.";
-            issues.Add(Blocking(StatementIssueCodes.AiUnavailable, reason));
+            issues.Add(Blocking(StatementIssueCodes.TooManyPages, reason));
             return (plan, BankStatementAiAvailability.Unavailable(reason), issues);
         }
 
@@ -1351,7 +1367,10 @@ public sealed class BankStatementImportService : IBankStatementImportService
         var canConfirm = session.Status == BankStatementImportSessionStatus.AwaitingReview
                          && extraction is not null
                          && extraction.Lines.Count > 0
-                         && !extraction.HasBlockingIssue;
+                         && !extraction.HasBlockingIssue
+                         // Garde-fou de ConfirmAsync : sans aucun solde lu, la confirmation est
+                         // toujours refusée — ne pas projeter un état « confirmable » trompeur.
+                         && (extraction.Header.OpeningBalance is not null || extraction.Header.ClosingBalance is not null);
 
         return new BankStatementImportSessionDto
         {

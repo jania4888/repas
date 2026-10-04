@@ -53,7 +53,8 @@ public static partial class BankStatementVisionPageNormalizer
 
     /// <summary>
     /// RIB tunisien à 20 chiffres lu sur la page : accepte le RIB nu (espaces/points tolérés),
-    /// l'IBAN « TN59 » + 20 chiffres et la forme 22 chiffres « 59 » + RIB (IBAN sans lettres).
+    /// l'IBAN « TN59 » + 20 chiffres, la forme 22 chiffres « 59 » + RIB (IBAN sans lettres) et la
+    /// forme 26 chiffres « 2923 » + clé IBAN + RIB (« TN » converti en chiffres, T=29, N=23).
     /// Retourne null si la clé RIB est incohérente (chiffre mal lu) : mieux vaut « RIB non lu »
     /// qu'un faux RIB qui bloquerait l'import pour un compte différent.
     /// </summary>
@@ -72,8 +73,8 @@ public static partial class BankStatementVisionPageNormalizer
             candidate = digits[2..]; // « TN59 » + RIB : la clé IBAN (2 chiffres) précède le RIB.
         else if (digits.Length == 22 && digits.StartsWith("59", StringComparison.Ordinal))
             candidate = digits[2..]; // IBAN recopié sans les lettres.
-        else if (digits.Length == 24 && digits.StartsWith("2923", StringComparison.Ordinal))
-            candidate = digits[6..]; // « TN » converti en chiffres (T=29, N=23) + clé + RIB.
+        else if (digits.Length == 26 && digits.StartsWith("2923", StringComparison.Ordinal))
+            candidate = digits[6..]; // « TN » converti en chiffres (T=29, N=23) + clé IBAN + RIB.
 
         if (candidate is null)
             return null;
@@ -130,7 +131,7 @@ public static partial class BankStatementVisionPageNormalizer
         if (string.IsNullOrWhiteSpace(printed))
             return (null, false);
 
-        var t = ControlChars().Replace(printed.Trim(), " ").Trim();
+        var t = StripCurrencyMarkers(ControlChars().Replace(printed.Trim(), " ").Trim());
         var sign = 1;
         var signed = false;
 
@@ -167,9 +168,7 @@ public static partial class BankStatementVisionPageNormalizer
             t = t[1..].Trim();
         }
 
-        t = t.Replace("TND", string.Empty, StringComparison.OrdinalIgnoreCase)
-            .Replace("DT", string.Empty, StringComparison.OrdinalIgnoreCase)
-            .Trim();
+        t = StripCurrencyMarkers(t);
 
         if (!TryParseAmountLenient(t, out var value, out var printedDecimals))
             return (null, false);
@@ -185,7 +184,7 @@ public static partial class BankStatementVisionPageNormalizer
     {
         if (string.IsNullOrWhiteSpace(printed))
             return null;
-        var t = ControlChars().Replace(printed.Trim(), " ").Trim();
+        var t = StripCurrencyMarkers(ControlChars().Replace(printed.Trim(), " ").Trim());
         var negative = false;
         if (t.StartsWith("-", StringComparison.Ordinal))
         {
@@ -210,9 +209,7 @@ public static partial class BankStatementVisionPageNormalizer
             t = t[..suffix.Index].Trim();
         }
 
-        t = t.Replace("TND", string.Empty, StringComparison.OrdinalIgnoreCase)
-            .Replace("DT", string.Empty, StringComparison.OrdinalIgnoreCase)
-            .Trim();
+        t = StripCurrencyMarkers(t);
 
         if (!TryParseAmountLenient(t, out var value, out var printedDecimals))
             return null;
@@ -289,6 +286,15 @@ public static partial class BankStatementVisionPageNormalizer
 
     [GeneratedRegex(@"[\u0000-\u001F\u007F]", RegexOptions.CultureInvariant)]
     private static partial Regex ControlChars();
+
+    /// <summary>
+    /// Retire les mentions de devise (« TND », « DT ») avant l'analyse des suffixes D/C : sinon le
+    /// « D » final de « TND » serait lu comme un suffixe DÉBITEUR et laisserait un reliquat « TN ».
+    /// </summary>
+    private static string StripCurrencyMarkers(string value) =>
+        value.Replace("TND", string.Empty, StringComparison.OrdinalIgnoreCase)
+            .Replace("DT", string.Empty, StringComparison.OrdinalIgnoreCase)
+            .Trim();
 
     [GeneratedRegex(@"\s*(?<w>DEBITEUR|DÉBITEUR|CREDITEUR|CRÉDITEUR|DB|CR|D|C)\.?\s*$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
     private static partial Regex BalanceSuffixRegex();

@@ -157,7 +157,10 @@ WHERE Id = @id;
 - Moteur : `docker exec factutrust-ollama ollama ps` (modèle chargé), `ollama show hf.co/ggml-org/GLM-OCR-GGUF:Q8_0`
   (capacité vision), `docker stats factutrust-ollama` (mémoire), `GET /api/platform/ops/health` (contrôle
   `ollama-bank-statement-vision` : Healthy / Degraded = modèle vision absent ou sans mémoire, repli texte prêt /
-  Unhealthy = moteur injoignable ou aucun modèle prêt).
+  Unhealthy = moteur injoignable ou aucun modèle prêt). **Limite connue** : le contrôle vérifie la présence
+  du modèle et la mémoire, pas la capacité vision (projecteur mmproj) — un modèle installé sans son
+  projecteur est Healthy ici mais échouera à la lecture. La vérification définitive reste
+  `deploy/scripts/pull-ollama-models.sh` (`VERIFY_ONLY_MODE=1`, qui contrôle `ollama show … vision`).
 - Audit du dossier : `Accounting.BankStatementAnalyzed` (`AiUnavailableReason`, `Retarget`, `Retry`,
   `PreviousSessionId`), `Accounting.BankStatementAiReadingCompleted` (pages, pages vision, pages repliées, pages
   non lues, durée, modèles), `Accounting.BankStatementExtractionCorrected` (corrections, exclusions, écart reconnu).

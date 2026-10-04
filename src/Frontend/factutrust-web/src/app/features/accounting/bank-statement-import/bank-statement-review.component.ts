@@ -134,12 +134,16 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
                 @case ('unverified') {
                   <p class="bsr-strong" i18n="@@accounting.bank-statement-import.relecture.du.releve.par.l.ia.solde.non.verifie.s.725c03c7">Relecture du relevé par l'IA (solde non vérifié)… {{ s.progressPercent }} %</p>
                 }
+                @case ('all_documents') {
+                  <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.du.releve.par.le.modele.texte.glm.ocr.indisponible">Lecture du relevé par le modèle texte local (GLM-OCR indisponible)… {{ s.progressPercent }} %</p>
+                }
                 @default {
                   <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.des.pages.scannees.ebb6ce2d">Lecture des pages scannées… {{ s.progressPercent }} %</p>
                 }
               }
             }
-            <div class="bsr-bar" role="progressbar" [attr.aria-valuenow]="s.progressPercent" aria-valuemin="0" aria-valuemax="100"><div class="bsr-bar__fill" [style.width.%]="s.progressPercent"></div></div>
+            <div class="bsr-bar" role="progressbar" [attr.aria-valuenow]="s.progressPercent" aria-valuemin="0" aria-valuemax="100"
+                 i18n-aria-label="@@accounting.bank-statement-import.progression.lecture.aria" aria-label="Progression de la lecture"><div class="bsr-bar__fill" [style.width.%]="s.progressPercent"></div></div>
             @if (s.extraction?.aiPlan?.engine === 'vision') {
               @if (estimatedMinutes(s); as minutes) {
                 <p class="bsr-muted bsr-estimate" i18n="@@accounting.bank-statement-import.temps.restant.estime.environ.min.une.a.trois.minutes.par.page">Temps restant estimé : environ {{ minutes }} min (une à trois minutes par page sur le serveur). Vous pouvez quitter cet écran et y revenir.</p>
@@ -882,7 +886,7 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
           return;
         }
         if (s.status === 'Extracting' || s.status === 'Pending') {
-          this.startElapsedTimer();
+          this.startElapsedTimer(id);
           this.schedulePoll(id);
         } else {
           this.stopElapsedTimer();
@@ -894,8 +898,12 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
     });
   }
 
-  private startElapsedTimer(): void {
-    if (this.elapsedTimer) return;
+  private elapsedSessionId: string | null = null;
+
+  private startElapsedTimer(sessionId: string): void {
+    if (this.elapsedTimer && this.elapsedSessionId === sessionId) return;
+    this.stopElapsedTimer();
+    this.elapsedSessionId = sessionId;
     this.elapsedSeconds.set(0);
     this.elapsedTimer = setInterval(() => this.elapsedSeconds.update(v => v + 1), 1_000);
   }
@@ -934,6 +942,7 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
       if (!this.balanceAcknowledged()) return;
       const difference = formatNumber(Math.abs(s.balanceCheck?.difference ?? 0), this.locale, '1.3-3');
       this.confirmation.confirm({
+        size: 'md',
         header: $localize`:@@accounting.bank-statement-import.ts.enregistrer.malgre.l.ecart.de.solde.titre:Enregistrer malgré l'écart de solde ?`,
         message: $localize`:@@accounting.bank-statement-import.ts.ecart.de.tnd.le.releve.sera.enregistre.en.l.etat:Écart de ${difference}:difference: TND. Le relevé sera enregistré en l'état et l'écart consigné dans l'audit.`,
         acceptLabel: $localize`:@@accounting.bank-statement-import.ts.enregistrer.malgre.l.ecart:Enregistrer malgré l'écart`,
@@ -1514,6 +1523,8 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
 
   private fail(err: unknown): void {
     this.busy.set(false);
+    this.stopElapsedTimer();
+    this.polling?.unsubscribe();
     if (err instanceof BankStatementImportError && err.status === 403) {
       this.error.set($localize`:@@accounting.bank-statement-import.ts.acces.refuse.vos.droits.ont.peut.etre.change.rec.68412fb2:Accès refusé : vos droits ont peut-être changé, reconnectez-vous.`);
       return;

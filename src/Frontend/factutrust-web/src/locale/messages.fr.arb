@@ -11035,8 +11035,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.bank-reconciliation.releve.pdf.ou.image.analyse.par.l.import.ia.lect.4f7ad0bc": "Relevé PDF ou image : analyse par l'import IA (lecture directe, complétée par l'IA si nécessaire), puis retour ici.",
-  "@accounting.bank-reconciliation.releve.pdf.ou.image.analyse.par.l.import.ia.lect.4f7ad0bc": {
+  "accounting.bank-reconciliation.releve.pdf.ou.image.lecture.page.par.page.ia.locale": "Relevé PDF ou image : lecture page par page par l'IA locale (import IA), puis retour ici.",
+  "@accounting.bank-reconciliation.releve.pdf.ou.image.lecture.page.par.page.ia.locale": {
     "x-files": [
       "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
     ],
@@ -12622,6 +12622,20 @@
   },
   "accounting.bank-statement-import.relecture.du.releve.par.l.ia.solde.non.verifie.s.725c03c7": "Relecture du relevé par l'IA (solde non vérifié)… {$INTERPOLATION} %",
   "@accounting.bank-statement-import.relecture.du.releve.par.l.ia.solde.non.verifie.s.725c03c7": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.lecture.du.releve.par.le.modele.texte.glm.ocr.indisponible": "Lecture du relevé par le modèle texte local (GLM-OCR indisponible)… {$INTERPOLATION} %",
+  "@accounting.bank-statement-import.lecture.du.releve.par.le.modele.texte.glm.ocr.indisponible": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.progression.lecture.aria": "Progression de la lecture",
+  "@accounting.bank-statement-import.progression.lecture.aria": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
     ],

@@ -422,8 +422,10 @@ public sealed class BankStatementImportServiceAiForAllDocumentsTests : IDisposab
         Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
         Assert.Equal(nameof(BankStatementImportSessionStatus.AwaitingReview), result.Value.Status);
         Assert.Equal(BankStatementImportExtractionMethods.None, result.Value.ExtractionMethod);
-        var issue = Assert.Single(result.Value.Extraction!.Issues, i => i.Code == StatementIssueCodes.AiUnavailable);
+        // Refus déterministe : code dédié (non relançable), distinct de ai_unavailable.
+        var issue = Assert.Single(result.Value.Extraction!.Issues, i => i.Code == StatementIssueCodes.TooManyPages);
         Assert.Equal(StatementIssueSeverity.Blocking, issue.Severity);
+        Assert.DoesNotContain(result.Value.Extraction!.Issues, i => i.Code == StatementIssueCodes.AiUnavailable);
         Assert.Equal("Trop de pages à lire (3, maximum 2). Scindez le PDF par relevé ou par mois.", issue.Message);
         Assert.Equal(new[] { 1, 2, 3 }, result.Value.Extraction.AiPlan!.PlannedPages);
         _ai.Verify(a => a.Schedule(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
@@ -572,6 +574,42 @@ public sealed class BankStatementImportServiceAiForAllDocumentsTests : IDisposab
 
         Assert.Equal(BankStatementImportErrorCodes.SessionNotReviewable, result.Error.Code);
         Assert.Equal(BankStatementImportSessionStatus.AwaitingReview, (await LoadSession(proven.Value.Id)).Status);
+    }
+
+    [Fact]
+    public async Task Retry_without_the_ai_permission_is_refused_before_any_cancellation()
+    {
+        _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(BankStatementAiAvailability.Unavailable("le moteur IA ne répond pas", BankStatementAiAvailabilityReasons.EngineUnavailable));
+        var spec = StbSpec();
+        var accountId = SeedBankAccount(spec.Rib);
+        var blocked = await AiOnlyService().StartAsync(Request(StbLike(spec), accountId));
+        Assert.Equal(nameof(BankStatementImportSessionStatus.AwaitingReview), blocked.Value.Status);
+
+        var result = await AiOnlyService(userHasAiRight: false).RetryAsync(blocked.Value.Id);
+
+        Assert.Equal("Forbidden", result.Error.Code);
+        var origin = await LoadSession(blocked.Value.Id);
+        Assert.Equal(BankStatementImportSessionStatus.AwaitingReview, origin.Status);
+        Assert.NotNull(origin.StoragePath);
+        Assert.True(File.Exists(Path.Combine(_storage, origin.StoragePath!)), "la session d'origine ne doit pas être annulée sans le droit IA");
+        _ai.Verify(a => a.Schedule(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task The_too_many_pages_refusal_is_deterministic_and_not_retryable()
+    {
+        _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>())).ReturnsAsync(GlmOcrReady());
+        var accountId = SeedBankAccount(StbSpec().Rib);
+        var refused = await AiOnlyService(l => l.MaxAiPages = 1).StartAsync(Request(ManyPages(2), accountId));
+
+        Assert.Equal(nameof(BankStatementImportSessionStatus.AwaitingReview), refused.Value.Status);
+        Assert.Contains(refused.Value.Extraction!.Issues, i => i.Code == StatementIssueCodes.TooManyPages && i.Severity == StatementIssueSeverity.Blocking);
+        Assert.DoesNotContain(refused.Value.Extraction!.Issues, i => i.Code == StatementIssueCodes.AiUnavailable && i.Severity == StatementIssueSeverity.Blocking);
+
+        var retry = await AiOnlyService(l => l.MaxAiPages = 1).RetryAsync(refused.Value.Id);
+        Assert.Equal(BankStatementImportErrorCodes.SessionNotReviewable, retry.Error.Code);
+        Assert.Equal(BankStatementImportSessionStatus.AwaitingReview, (await LoadSession(refused.Value.Id)).Status);
     }
 
     [Fact]

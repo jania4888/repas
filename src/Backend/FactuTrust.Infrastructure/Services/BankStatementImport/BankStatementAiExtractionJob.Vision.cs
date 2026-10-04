@@ -125,7 +125,7 @@ public sealed partial class BankStatementAiExtractionJob
             var isScanned = plan.ScannedPages.Contains(pageNumber);
             var acceptDayFirst = aiOnly || !isScanned;
             var readOptions = aiOnly
-                ? isScanned ? BankStatementAiReadOptions.AiOnlyScanned(layout.Header.PeriodStart) : BankStatementAiReadOptions.AiOnlyText(layout.Header.PeriodStart)
+                ? isScanned ? BankStatementAiReadOptions.AiOnlyScanned(layout.Header.PeriodStart, layout.Header.PeriodEnd) : BankStatementAiReadOptions.AiOnlyText(layout.Header.PeriodStart, layout.Header.PeriodEnd)
                 : BankStatementAiReadOptions.Legacy(acceptDayFirst);
 
             // ---- Page isolée (PDF) : PdfSharp, sinon rendu PNG, sinon échec de page.
@@ -200,6 +200,7 @@ public sealed partial class BankStatementAiExtractionJob
                     stage2 = await RunVisionTableStageAsync(pipeline, pageBytes, pageFileName, pageContentType, visionModel!, pageNumber, limits, readOptions, cancellationToken);
                     LogPage(session.Id, pageNumber, BankStatementPageReadingEngines.GlmOcrTable, visionModelLabel, attempts, stage2);
                     groundingText = stage2.GroundingText ?? groundingText;
+                    truncated |= stage2.Truncated;
                     if (stage2.ProviderUnavailable)
                     {
                         circuitOpen = true;
@@ -449,7 +450,10 @@ public sealed partial class BankStatementAiExtractionJob
             return new StageResult(null, PageFailureReasons.VisionNotUsed, "failed", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.RawContent?.Length ?? 0, null, false, false);
 
         var raw = outcome.Value.RawContent ?? string.Empty;
-        var grounding = limits.VisionSendTextLayer ? outcome.Value.Extraction.Text : null;
+        // La couche texte PdfPig est extraite quoiqu'il arrive (VisionSendTextLayer ne pilote que
+        // son envoi au modèle) : elle alimente toujours le recoupement des montants.
+        var groundingLayer = outcome.Value.Extraction.Text;
+        var grounding = string.IsNullOrWhiteSpace(groundingLayer) ? null : groundingLayer;
         var json = InvoiceImportParsing.ExtractFirstJsonObject(raw);
         var looksTruncated = !raw.TrimEnd().EndsWith('}');
         if (string.IsNullOrWhiteSpace(json))
@@ -580,7 +584,10 @@ public sealed partial class BankStatementAiExtractionJob
                 FileName = $"releve-p{pageNumber}-tableau.txt",
                 ContentType = "text/plain",
                 SystemPrompt = BankStatementAiPrompt.System,
-                UserInstruction = BankStatementAiPrompt.TextExtractInstruction,
+                // Texte brut du tableau GLM-OCR (colonnes séparées par « | »), pas un extrait mis en
+                // forme par BuildAiTextChunks : la consigne générique s'applique, pas celle des
+                // sections « Opérations : » et marqueurs [DÉBIT x].
+                UserInstruction = BankStatementAiPrompt.UserInstruction,
                 OutputSchema = LlmOutputSchemas.BankStatementPage,
                 ErrorCode = "BankStatementImport",
                 MaxImages = 1

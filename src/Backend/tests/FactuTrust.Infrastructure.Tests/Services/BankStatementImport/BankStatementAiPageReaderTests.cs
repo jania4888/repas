@@ -195,6 +195,31 @@ public sealed class BankStatementAiPageReaderTests
     }
 
     [Fact]
+    public void AiOnly_flags_a_date_outside_the_printed_period_but_keeps_the_line()
+    {
+        const string raw = """{"lines":[{"date":"2025-10-15","label":"ANCIENNE OPERATION","debit":42},{"date":"2026-01-09","label":"OK","debit":10}]}""";
+        var options = BankStatementAiReadOptions.AiOnlyText(new DateOnly(2026, 1, 1), new DateOnly(2026, 1, 31));
+
+        var page = BankStatementAiPageReader.Read(raw, 1, ocrText: null, options);
+
+        Assert.Equal(2, page.Lines.Count);
+        Assert.Contains(page.Issues, i => i.Code == StatementIssueCodes.AiLineNeedsReview
+            && i.LineIndex == 1 && i.Message.Contains("hors période", StringComparison.Ordinal));
+        Assert.DoesNotContain(page.Issues, i => i.Code == StatementIssueCodes.AiLineNeedsReview && i.LineIndex == 2);
+    }
+
+    [Fact]
+    public void Legacy_reading_never_flags_an_out_of_period_date()
+    {
+        const string raw = """{"lines":[{"date":"2025-10-15","label":"ANCIENNE OPERATION","debit":42}]}""";
+
+        var page = BankStatementAiPageReader.Read(raw, 1, ocrText: null, BankStatementAiReadOptions.Legacy(false));
+
+        Assert.Single(page.Lines);
+        Assert.DoesNotContain(page.Issues, i => i.Code == StatementIssueCodes.AiLineNeedsReview);
+    }
+
+    [Fact]
     public void KeepUnreadableLines_falls_back_to_the_previous_date_then_the_period_start()
     {
         const string raw = """{"lines":[{"date":"2026-01-09","label":"OK","debit":10},{"date":"illisible","label":"SUITE","debit":5}]}""";

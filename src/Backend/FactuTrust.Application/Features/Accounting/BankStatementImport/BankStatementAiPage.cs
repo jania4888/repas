@@ -98,22 +98,28 @@ public sealed class LlmBankStatementPageLine
 /// (le texte de recoupement est lui-même issu de l'OCR), Warning sur une page avec couche texte.
 /// </param>
 /// <param name="PeriodStart">Date de repli d'une ligne sans date lisible quand aucune ligne précédente n'existe.</param>
+/// <param name="PeriodEnd">
+/// Fin de la période imprimée : avec <paramref name="PeriodStart"/>, borne le contrôle de
+/// plausibilité des dates (ai_only uniquement — une date hors [début − 31 j ; fin + 31 j] est
+/// signalée <see cref="StatementIssueCodes.AiLineNeedsReview"/>, jamais écartée).
+/// </param>
 public sealed record BankStatementAiReadOptions(
     bool AcceptDayFirstDates,
     bool KeepUnreadableLines,
     StatementIssueSeverity GroundingSeverity = StatementIssueSeverity.Warning,
-    DateOnly? PeriodStart = null)
+    DateOnly? PeriodStart = null,
+    DateOnly? PeriodEnd = null)
 {
     /// <summary>Lecture historique (complément des pages non lues par la mise en page).</summary>
     public static BankStatementAiReadOptions Legacy(bool acceptDayFirstDates) => new(acceptDayFirstDates, false);
 
     /// <summary>Lecture 100 % IA d'une page scannée (recoupement sur texte OCR : informatif).</summary>
-    public static BankStatementAiReadOptions AiOnlyScanned(DateOnly? periodStart = null) =>
-        new(true, true, StatementIssueSeverity.Info, periodStart);
+    public static BankStatementAiReadOptions AiOnlyScanned(DateOnly? periodStart = null, DateOnly? periodEnd = null) =>
+        new(true, true, StatementIssueSeverity.Info, periodStart, periodEnd);
 
     /// <summary>Lecture 100 % IA d'une page à couche texte (recoupement fiable : avertissement).</summary>
-    public static BankStatementAiReadOptions AiOnlyText(DateOnly? periodStart = null) =>
-        new(true, true, StatementIssueSeverity.Warning, periodStart);
+    public static BankStatementAiReadOptions AiOnlyText(DateOnly? periodStart = null, DateOnly? periodEnd = null) =>
+        new(true, true, StatementIssueSeverity.Warning, periodStart, periodEnd);
 }
 
 /// <summary>
@@ -221,6 +227,10 @@ public static partial class BankStatementAiPageReader
 
                 date = fallback.Value;
                 needsReview.Add($"date illisible : {Truncate(raw.Date, 16)}");
+            }
+            else if (options.KeepUnreadableLines && IsOutOfPeriod(date, options))
+            {
+                needsReview.Add($"date hors période du relevé : {raw.Date}");
             }
 
             var debit = raw.Debit is { } d && d != 0 ? d : (decimal?)null;
@@ -795,6 +805,11 @@ public static partial class BankStatementAiPageReader
     }
 
     /// <summary>Montant retrouvé dans le texte OCR, séparateurs ignorés (« 1 234,567 » ⇔ 1234567).</summary>
+    /// <summary>Date lue hors de la période imprimée élargie (± 31 jours) ; sans période connue, rien n'est signalé.</summary>
+    private static bool IsOutOfPeriod(DateOnly date, BankStatementAiReadOptions options) =>
+        (options.PeriodStart is { } start && date < start.AddDays(-31))
+        || (options.PeriodEnd is { } end && date > end.AddDays(31));
+
     private static bool IsGrounded(decimal amount, string digitRuns)
     {
         var millimes = ((long)Math.Round(amount * 1000m)).ToString(CultureInfo.InvariantCulture);

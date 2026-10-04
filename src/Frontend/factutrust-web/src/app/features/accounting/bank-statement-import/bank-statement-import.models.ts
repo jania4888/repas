@@ -68,7 +68,7 @@ export interface ExtractedBankStatement {
 }
 
 /** Codes stables du motif de relecture IA. */
-export type AiReadingReason = 'scanned' | 'line_issues' | 'unverified';
+export type AiReadingReason = 'scanned' | 'line_issues' | 'unverified' | 'all_documents';
 
 /**
  * Moteur qui a fourni une page (lecture « IA seule ») : GLM-OCR (gabarit JSON), GLM-OCR en

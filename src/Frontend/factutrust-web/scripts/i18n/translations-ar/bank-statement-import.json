@@ -283,5 +283,7 @@
   "accounting.bank-statement-import.ts.relancer.l.analyse": "إعادة تشغيل التحليل",
   "accounting.bank-statement-import.ts.revenir.au.controle": "العودة إلى المراجعة",
   "accounting.bank-statement-import.ts.sens.d.une.operation.incertain": "اتجاه عملية غير مؤكد",
-  "accounting.bank-statement-import.ts.signe.d.un.solde.suppose": "إشارة رصيد مفترضة"
+  "accounting.bank-statement-import.ts.signe.d.un.solde.suppose": "إشارة رصيد مفترضة",
+  "accounting.bank-statement-import.lecture.du.releve.par.le.modele.texte.glm.ocr.indisponible": "جارٍ قراءة الكشف بالنموذج النصي المحلي (GLM-OCR غير متوفر)… {$INTERPOLATION} %",
+  "accounting.bank-statement-import.progression.lecture.aria": "تقدُّم القراءة"
 }

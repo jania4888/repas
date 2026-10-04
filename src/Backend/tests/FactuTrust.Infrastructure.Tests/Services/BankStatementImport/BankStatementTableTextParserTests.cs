@@ -79,6 +79,53 @@ public sealed class BankStatementTableTextParserTests
     }
 
     [Fact]
+    public void A_dated_solde_labelled_row_stays_an_operation_for_the_merge_to_adjudicate()
+    {
+        // « VIREMENT SOLDE DE TOUT COMPTE » daté par la colonne de date : vraie opération — le
+        // parseur ne doit ni l'écarter silencieusement ni la prendre pour un solde (la fusion
+        // ai_only applique la règle libellé + montant, avec signalement).
+        const string raw = """
+            <table>
+              <tr><th>Date</th><th>Libellé</th><th>Débit</th><th>Crédit</th></tr>
+              <tr><td></td><td>SOLDE AU 01/05/2026</td><td></td><td>965,323</td></tr>
+              <tr><td>10/05/2026</td><td>VIREMENT SOLDE DE TOUT COMPTE</td><td>100,000</td><td></td></tr>
+              <tr><td></td><td>NOUVEAU SOLDE</td><td></td><td>865,323</td></tr>
+            </table>
+            """;
+
+        var result = BankStatementTableTextParser.Parse(raw, pageNumber: 1);
+
+        Assert.NotNull(result.Page);
+        Assert.Single(result.Page!.Lines);
+        Assert.Equal("VIREMENT SOLDE DE TOUT COMPTE", result.Page.Lines[0].Label);
+        Assert.Equal("2026-05-10", result.Page.Lines[0].Date);
+        Assert.Equal(965.323m, result.Page.OpeningBalance);
+        Assert.Equal(865.323m, result.Page.ClosingBalance);
+    }
+
+    [Fact]
+    public void A_totals_row_is_neither_an_operation_nor_a_balance()
+    {
+        // « TOTAL DES MOUVEMENTS » additionne débits et crédits : ce n'est jamais le solde de
+        // clôture — l'assigner ferait échouer le contrôle de solde à coup sûr.
+        const string raw = """
+            | Date | Libellé | Débit | Crédit |
+            |------|---------|-------|--------|
+            | 10/05/2026 | PRELEVEMENT | 100,000 | |
+            | | TOTAL DES MOUVEMENTS | 100,000 | |
+            | | NOUVEAU SOLDE | | 865,323 |
+            """;
+
+        var result = BankStatementTableTextParser.Parse(raw, pageNumber: 1);
+
+        Assert.NotNull(result.Page);
+        Assert.Single(result.Page!.Lines);
+        Assert.Equal("PRELEVEMENT", result.Page.Lines[0].Label);
+        Assert.Null(result.Page.OpeningBalance);
+        Assert.Equal(865.323m, result.Page.ClosingBalance);
+    }
+
+    [Fact]
     public void Parse_appends_a_label_only_row_to_the_previous_line()
     {
         const string raw = """

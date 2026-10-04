@@ -230,6 +230,45 @@ public sealed class BankStatementImportServiceConfirmBalanceGapTests
     }
 
     [Fact]
+    public async Task A_statement_without_any_balance_is_not_confirmable_and_never_surfaces_a_dead_end()
+    {
+        var rib = RibFor("10");
+        var sessionId = await SeedAwaitingReview(SeedBankAccount(rib), AiOnlyStatement(rib, closing: null, opening: null));
+
+        var dto = (await Service().GetAsync(sessionId)).Value;
+        var confirm = await Service().ConfirmAsync(sessionId, new ConfirmBankStatementImportRequest { AcknowledgeBalanceWarning = true });
+
+        Assert.False(dto.CanConfirm);
+        Assert.False(dto.RequiresBalanceAcknowledgement);
+        Assert.Equal(BankStatementImportErrorCodes.BlockingIssues, confirm.Error.Code);
+        Assert.Contains("solde", confirm.Error.Description, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task A_refused_confirm_writes_no_correction_audit_and_a_successful_one_writes_it_once()
+    {
+        var rib = RibFor("10");
+        var sessionId = await SeedAwaitingReview(SeedBankAccount(rib), AiOnlyStatement(rib));
+        var corrections = new[]
+        {
+            new StatementLineCorrection { LineIndex = 0, Label = "VIREMENT REÇU SOCIETE ALPHA (corrigé)" }
+        };
+
+        // Sans l'accusé : refus, et aucune trace de correction ne doit être consignée.
+        var refused = await Service().ConfirmAsync(sessionId, new ConfirmBankStatementImportRequest { Corrections = corrections });
+        Assert.Equal(BankStatementImportErrorCodes.BalanceWarningNotAcknowledged, refused.Error.Code);
+        _audit.Verify(a => a.LogAsync(AuditActions.Accounting.BankStatementExtractionCorrected, It.IsAny<string>(), It.IsAny<Guid>(),
+            It.IsAny<object?>(), It.IsAny<object?>(), It.IsAny<CancellationToken>()), Times.Never);
+
+        // Avec l'accusé : succès, et la correction est auditée une seule fois.
+        var confirmed = await Service().ConfirmAsync(sessionId,
+            new ConfirmBankStatementImportRequest { Corrections = corrections, AcknowledgeBalanceWarning = true });
+        Assert.True(confirmed.IsSuccess, confirmed.IsFailure ? confirmed.Error.Description : null);
+        _audit.Verify(a => a.LogAsync(AuditActions.Accounting.BankStatementExtractionCorrected, nameof(BankStatementImportSession), sessionId,
+            It.IsAny<object?>(), It.IsAny<object?>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
     public async Task A_balanced_ai_only_statement_needs_no_acknowledgement_and_records_a_zero_gap()
     {
         var rib = RibFor("10");

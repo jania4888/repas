@@ -87,8 +87,18 @@ public static partial class BankStatementTableTextParser
             sawAmount |= rowHasAmount;
 
             var normalizedLabel = NormalizeLabel(label);
-            if (IsBalanceRow(normalizedLabel))
+            // La date vient-elle d'une vraie colonne de date, ou du libellé (« SOLDE AU 31/03/2026 ») ?
+            // Une ligne « solde » datée par son libellé reste une ligne de solde ; une ligne « solde »
+            // datée par la colonne de date (« VIREMENT SOLDE DE TOUT COMPTE ») reste une opération
+            // candidate — la fusion ai_only décidera (règle libellé + montant, avec signalement).
+            var datedByColumn = IsDateLike(date) && !ContainsDateToken(label);
+            if (IsBalanceRow(normalizedLabel) && !datedByColumn)
             {
+                // Ligne de totaux des mouvements (« TOTAL DES DEBITS »…) : jamais un solde, jamais
+                // une opération — la source d'un solde de clôture serait systématiquement fausse.
+                if (IsTotalsKeyword(normalizedLabel))
+                    continue;
+
                 var printed = FirstAmountLike(balance, credit, debit) ?? cells.LastOrDefault(IsAmountLike);
                 var (value, signed) = BankStatementVisionPageNormalizer.ParseBalance(printed);
                 if (value is not null)
@@ -336,6 +346,13 @@ public static partial class BankStatementTableTextParser
         return t.Length > 0 && t.Any(char.IsDigit) && !IsDateLike(t)
                && BankStatementVisionPageNormalizer.TryParseAmountLenient(t, out _, out _);
     }
+
+    private static bool ContainsDateToken(string? value) =>
+        !string.IsNullOrWhiteSpace(value)
+        && value.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Any(IsDateLike);
+
+    private static bool IsTotalsKeyword(string normalizedLabel) =>
+        normalizedLabel.StartsWith("TOTAL") || normalizedLabel.StartsWith("TOTAUX");
 
     private static bool IsBalanceRow(string normalizedLabel) =>
         normalizedLabel.StartsWith("SOLDE") || normalizedLabel.StartsWith("REPORT") || normalizedLabel.StartsWith("A NOUVEAU")

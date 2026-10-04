@@ -416,3 +416,43 @@ test('session en échec : motif IA expliqué et relance proposée seulement pour
   await expect(page.getByText('La lecture a dépassé le temps alloué', { exact: false })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Relancer l\'analyse du relevé' })).toHaveCount(0);
 });
+
+
+test('session héritée (avant GLM-OCR) : aucun champ nouveau, rendu et confirmation sans erreur', async ({ page }) => {
+  // Non-régression : une session créée par l'ancien assistant (extractionMethod 'ai', sans
+  // pageReadings/mode/requiresBalanceAcknowledgement) doit s'afficher et se confirmer normalement.
+  const legacyRaw = session({ id: 's-legacy', extractionMethod: 'ai' }) as Record<string, unknown>;
+  delete legacyRaw.requiresBalanceAcknowledgement;
+  const legacyExtraction = legacyRaw.extraction as Record<string, unknown>;
+  const legacyPlan = { ...(legacyExtraction.aiPlan as Record<string, unknown>) };
+  delete legacyPlan.mode;
+  delete legacyPlan.pageReadings;
+  delete legacyPlan.fallbackPages;
+  legacyExtraction.aiPlan = legacyPlan;
+
+  const consoleErrors: string[] = [];
+  page.on('pageerror', e => consoleErrors.push(String(e)));
+  await installImportMocks(page, { 's-legacy': () => legacyRaw });
+  let confirms = 0;
+  await page.route(`${IMPORT_API}/sessions/s-legacy/confirm`, route => {
+    confirms++;
+    return json(route, ok({ statementId: 'st-9', lineCount: 1, alreadyImportedCount: 0 }));
+  });
+  await page.route(`${IMPORT_API}/statements/st-9/proposals`, route =>
+    json(route, ok({
+      statementId: 'st-9', bankAccountId: 'bank-1', bankName: 'STB', bankGlAccount: '53210001',
+      periodStart: '2026-03-01', periodEnd: '2026-03-31', openingBalance: 100, closingBalance: 90,
+      lines: [], unclassifiedDistinctLabels: 0
+    })));
+
+  await openReview(page, 's-legacy');
+
+  await expect(page.getByText('Lu par l\'IA locale', { exact: false }).first()).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByText('Page relue par le modèle texte', { exact: false })).toHaveCount(0);
+  await expect(page.getByText('écart de solde', { exact: false })).toHaveCount(0);
+
+  await page.getByRole('button', { name: 'Enregistrer le relevé et passer aux propositions' }).click();
+  await expect(page).toHaveURL(/\/accounting\/bank-statement-import\/statement\/st-9/, { timeout: 15_000 });
+  expect(confirms).toBe(1);
+  expect(consoleErrors).toEqual([]);
+});
