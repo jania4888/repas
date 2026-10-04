@@ -84,8 +84,13 @@ if [[ -z "${INSTALLED}" ]]; then
   exit 1
 fi
 MISSING=0
+# Correspondance EXACTE sur la colonne nom (1er champ) : un tag voisin du genre
+# "qwen2.5:7b-instruct-custom" ne doit pas valider la presence de "qwen2.5:7b-instruct".
+model_present() {
+  awk '{print $1}' <<< "${INSTALLED}" | grep -qxF "$1"
+}
 for model in "${MODELS[@]}"; do
-  if grep -qF "${model}" <<< "${INSTALLED}"; then
+  if model_present "${model}"; then
     echo "[OK]       ${model}"
   else
     echo "[MANQUANT] ${model}"
@@ -95,7 +100,7 @@ done
 # Un modele de vision doit etre installe ET annoncer la capacite " vision " : un modele cree
 # sans son projecteur mmproj figure dans `ollama list` mais ignore les images (JSON invente).
 for model in "${VISION_MODELS[@]}"; do
-  if ! grep -qF "${model}" <<< "${INSTALLED}"; then
+  if ! model_present "${model}"; then
     echo "[MANQUANT] ${model} (modele de vision : installation manuelle, deploy/README.md section 4)"
     MISSING=1
     continue
