@@ -10,7 +10,7 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { Textarea } from 'primeng/textarea';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -38,7 +38,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
     DialogModule,
     InputTextModule,
     Textarea,
-    InputSwitchModule,
+    ToggleSwitchModule,
     CardModule,
     TagModule,
     PageHeaderComponent,
@@ -256,11 +256,11 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
         <div class="form-field switch-block">
           <div class="switch-field">
             <span class="label-text" id="wh-default-label" i18n="@@settings.warehouses.entrepot.par.defaut.5dc0b8c6">Entrepôt par défaut</span>
-            <p-inputSwitch
+            <p-toggleswitch
               formControlName="isDefault"
               inputId="wh-default"
               [attr.aria-labelledby]="'wh-default-label'">
-            </p-inputSwitch>
+            </p-toggleswitch>
           </div>
           <small class="hint switch-hint" i18n="@@settings.warehouses.utilise.par.defaut.pour.le.stock.et.les.document.b0aef0d3"> Utilisé par défaut pour le stock et les documents lorsqu’aucun autre entrepôt n’est précisé. </small>
         </div>
@@ -321,7 +321,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
         </label>
         <div class="switch-field">
           <span i18n="@@settings.warehouses.caisse.par.defaut.f4c511df">Caisse par défaut</span>
-          <p-inputSwitch formControlName="isDefault"></p-inputSwitch>
+          <p-toggleswitch formControlName="isDefault"></p-toggleswitch>
         </div>
         <div class="dialog-actions">
           <p-button type="button" label="Fermer" i18n-label="@@settings.warehouses.fermer.5ab4ec64" [outlined]="true" (onClick)="registersDialogVisible = false"></p-button>

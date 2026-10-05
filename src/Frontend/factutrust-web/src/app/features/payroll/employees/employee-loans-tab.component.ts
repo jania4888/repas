@@ -194,11 +194,11 @@ export class EmployeeLoansTabComponent implements OnInit {
     });
   }
 
-  loanStatusSeverity(status: string): 'success' | 'info' | 'secondary' | 'warning' {
+  loanStatusSeverity(status: string): 'success' | 'info' | 'secondary' | 'warn' {
     if (status === 'FullyRepaid') return 'success';
     if (status === 'Active') return 'info';
     if (status === 'Cancelled') return 'secondary';
-    return 'warning';
+    return 'warn';
   }
 
   openCreateDialog(): void {

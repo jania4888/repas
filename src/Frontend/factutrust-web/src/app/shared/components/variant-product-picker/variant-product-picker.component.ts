@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { AutoCompleteModule } from 'primeng/autocomplete';
-import { TabViewModule } from 'primeng/tabview';
+import { TabsModule } from 'primeng/tabs';
 import { TagModule } from 'primeng/tag';
 import {
   ProductSelectItem,
@@ -25,7 +25,7 @@ export type VariantPickerSelection = ProductSuggestion;
     FormsModule,
     DialogModule,
     AutoCompleteModule,
-    TabViewModule,
+    TabsModule,
     TagModule
   ],
   template: `
@@ -35,14 +35,19 @@ export type VariantPickerSelection = ProductSuggestion;
       [style]="{ width: 'min(720px, 96vw)' }"
       header="Choisir une variante" i18n-header="@@shared.components.variant-product-picker.variant-product-picker.choisir.une.variante.c8ab137c"
       (onHide)="onDialogHide()">
-      <p-tabView>
-        <p-tabPanel header="Recherche SKU" i18n-header="@@shared.components.variant-product-picker.variant-product-picker.recherche.sku.ecc8587e">
+      <p-tabs value="0">
+        <p-tablist>
+          <p-tab value="0" i18n="@@shared.components.variant-product-picker.variant-product-picker.recherche.sku.ecc8587e">Recherche SKU</p-tab>
+          <p-tab value="1" i18n="@@shared.components.variant-product-picker.variant-product-picker.par.modele.ad61be8b">Par modèle</p-tab>
+        </p-tablist>
+        <p-tabpanels>
+        <p-tabpanel value="0">
           <p-autoComplete
             [(ngModel)]="directQuery"
             [suggestions]="directSuggestions()"
             (completeMethod)="searchDirect($event)"
             (onSelect)="selectDirect($event.value)"
-            field="label"
+            optionLabel="label"
             placeholder="Code ou nom du SKU…" i18n-placeholder="@@shared.components.variant-product-picker.variant-product-picker.code.ou.nom.du.sku.f9636dc9"
             styleClass="w-full"
             [minLength]="1">
@@ -56,8 +61,8 @@ export type VariantPickerSelection = ProductSuggestion;
               </div>
             </ng-template>
           </p-autoComplete>
-        </p-tabPanel>
-        <p-tabPanel header="Par modèle" i18n-header="@@shared.components.variant-product-picker.variant-product-picker.par.modele.ad61be8b">
+        </p-tabpanel>
+        <p-tabpanel value="1">
           <div class="grouped-step">
             <label i18n="@@shared.components.variant-product-picker.variant-product-picker.modele.9853170f">Modèle</label>
             <p-autoComplete
@@ -65,7 +70,7 @@ export type VariantPickerSelection = ProductSuggestion;
               [suggestions]="templateSuggestions()"
               (completeMethod)="searchTemplates($event)"
               (onSelect)="onTemplateSelected($event.value)"
-              field="name"
+              optionLabel="name"
               placeholder="Rechercher un modèle…" i18n-placeholder="@@shared.components.variant-product-picker.variant-product-picker.rechercher.un.modele.57af3d5f"
               styleClass="w-full"
               [minLength]="1" />
@@ -88,8 +93,9 @@ export type VariantPickerSelection = ProductSuggestion;
               }
             </div>
           }
-        </p-tabPanel>
-      </p-tabView>
+        </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
     </p-dialog>
   `,
   styles: [`

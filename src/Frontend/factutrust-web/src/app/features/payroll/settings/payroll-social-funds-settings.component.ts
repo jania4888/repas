@@ -9,7 +9,7 @@ import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TagModule } from 'primeng/tag';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import {
@@ -47,7 +47,7 @@ const BASE_OPTIONS = [
     DatePickerModule,
     InputNumberModule,
     InputTextModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     TagModule,
     ButtonComponent
   ],
@@ -107,7 +107,7 @@ const BASE_OPTIONS = [
         </div>
         <div class="payroll-form-group switch-row">
           <label for="schemeActive" i18n="@@payroll.settings.active.a733b809">Active</label>
-          <p-inputSwitch inputId="schemeActive" [(ngModel)]="formIsActive" />
+          <p-toggleswitch inputId="schemeActive" [(ngModel)]="formIsActive" />
         </div>
       </div>
       <div class="payroll-form-row">

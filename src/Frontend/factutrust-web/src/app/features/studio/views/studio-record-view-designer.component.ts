@@ -11,7 +11,7 @@ import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { AuthService } from '@core/services/auth.service';
@@ -53,7 +53,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: $localiz
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule, ButtonModule, InputTextModule, InputNumberModule, InputSwitchModule, SelectModule,
+    FormsModule, ButtonModule, InputTextModule, InputNumberModule, ToggleSwitchModule, SelectModule,
     MultiSelectModule, StudioPageShellComponent, StudioFilterBuilderComponent, StudioRecordViewRunnerComponent
   ],
   template: `
@@ -118,7 +118,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: $localiz
                   optionLabel="label" optionValue="key" [maxSelectedLabels]="3" selectedItemsLabel="{0} champs" i18n-selectedItemsLabel="@@studio.views.0.champs.5a68afcf"
                   [disabled]="!canDesign()" appendTo="body" panelStyleClass="studio-theme" data-testid="designer-kanban-cards" />
                 <div class="studio-line">
-                  <p-inputSwitch inputId="rvd-kanban-empty" [ngModel]="kanban().showEmptyGroup"
+                  <p-toggleswitch inputId="rvd-kanban-empty" [ngModel]="kanban().showEmptyGroup"
                     (ngModelChange)="patchKanban({ showEmptyGroup: $event })" [disabled]="!canDesign()" />
                   <label for="rvd-kanban-empty" i18n="@@studio.views.afficher.la.colonne.0f3cc32c">Afficher la colonne « {{ labels.kanban.emptyGroup }} »</label>
                 </div>
@@ -200,11 +200,11 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: $localiz
                 [min]="1" [max]="limits.maxPageSize" [showButtons]="true" [disabled]="!canDesign()" data-testid="designer-page-size" />
             </div>
             <div class="studio-line">
-              <p-inputSwitch inputId="rvd-search" [ngModel]="searchEnabled()" (ngModelChange)="searchEnabled.set($event)" [disabled]="!canDesign()" />
+              <p-toggleswitch inputId="rvd-search" [ngModel]="searchEnabled()" (ngModelChange)="searchEnabled.set($event)" [disabled]="!canDesign()" />
               <label for="rvd-search" i18n="@@studio.views.recherche.plein.texte.0c174b56">Recherche plein texte</label>
             </div>
             <div class="studio-line">
-              <p-inputSwitch inputId="rvd-default" [ngModel]="isDefault()" (ngModelChange)="isDefault.set($event)" [disabled]="!canDesign()" />
+              <p-toggleswitch inputId="rvd-default" [ngModel]="isDefault()" (ngModelChange)="isDefault.set($event)" [disabled]="!canDesign()" />
               <label for="rvd-default">{{ labels.designer.setDefault }}</label>
             </div>
 

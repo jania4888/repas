@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { DOCUMENT } from '@angular/common';
+
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
-import { signal } from '@angular/core';
+import { signal, DOCUMENT } from '@angular/core';
 import { of } from 'rxjs';
 import { JournalComponent } from './journal.component';
 import { AccountingService } from '../services/accounting.service';

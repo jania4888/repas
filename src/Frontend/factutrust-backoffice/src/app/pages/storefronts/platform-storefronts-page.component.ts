@@ -265,8 +265,9 @@ export class PlatformStorefrontsPageComponent implements OnInit {
   }
 
   // ----- Tabs -----
-  onTabChange(index: string | number): void {
+  onTabChange(index: string | number | undefined): void {
     const tabIndex = typeof index === 'number' ? index : Number(index);
+    if (Number.isNaN(tabIndex)) return;
     this.activeIndex.set(tabIndex);
     this.loadTab(tabIndex);
   }

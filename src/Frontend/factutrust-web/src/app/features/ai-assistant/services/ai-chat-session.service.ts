@@ -1,5 +1,5 @@
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { Injectable, inject, PLATFORM_ID, signal, effect } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Injectable, inject, PLATFORM_ID, signal, effect, DOCUMENT } from '@angular/core';
 import { Subscription, fromEvent, firstValueFrom } from 'rxjs';
 import { debounceTime, filter } from 'rxjs/operators';
 import { AuthService, User } from '@core/services/auth.service';

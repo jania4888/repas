@@ -84,7 +84,6 @@ describe('StudioAiSessionStore', () => {
     }) as never);
     chat.deleteConversation.and.returnValue(of(undefined));
     localStorage.removeItem(STUDIO_AI_ADVANCED_MODEL_STORAGE_KEY);
-
     TestBed.configureTestingModule({
       providers: [
         StudioAiSessionStore,
@@ -96,6 +95,12 @@ describe('StudioAiSessionStore', () => {
       ]
     });
     store = TestBed.inject(StudioAiSessionStore);
+  });
+
+  afterEach(() => {
+    // setAdvancedModel(true) persiste dans localStorage : ne pas fuiter
+    // vers les autres specs (ordre d'exécution Jasmine aléatoire).
+    localStorage.removeItem(STUDIO_AI_ADVANCED_MODEL_STORAGE_KEY);
   });
 
   describe('send', () => {

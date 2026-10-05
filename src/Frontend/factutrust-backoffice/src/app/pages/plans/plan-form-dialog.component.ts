@@ -15,7 +15,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { Textarea } from 'primeng/textarea';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -109,7 +109,7 @@ const DEFAULT_LIMIT_KEYS = [
     InputTextModule,
     Textarea,
     InputNumberModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     SelectModule,
     TableModule,
     CheckboxModule,
@@ -229,7 +229,7 @@ const DEFAULT_LIMIT_KEYS = [
             </div>
             <div class="field field--full">
               <label class="checkbox">
-                <p-inputSwitch [(ngModel)]="isPublic" [disabled]="busy" />
+                <p-toggleswitch [(ngModel)]="isPublic" [disabled]="busy" />
                 <span>{{ t('form.field.isPublic') }}</span>
               </label>
             </div>
@@ -326,7 +326,7 @@ const DEFAULT_LIMIT_KEYS = [
                     class="w-full mono" />
                 </td>
                 <td>
-                  <p-inputSwitch [(ngModel)]="row.enabled" [disabled]="busy" />
+                  <p-toggleswitch [(ngModel)]="row.enabled" [disabled]="busy" />
                 </td>
                 <td class="cell-action">
                   <p-button

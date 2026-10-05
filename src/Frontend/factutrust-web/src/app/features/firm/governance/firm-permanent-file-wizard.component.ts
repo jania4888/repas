@@ -310,7 +310,7 @@ interface FirmUserOption {
                   <td>
                     {{ s.name }} {{ s.isLegalEntity ? '(PM)' : '' }}
                     @if (s.warnings?.length) {
-                      <p-tag value="Parts ≠ 100%" severity="warning" styleClass="ml-1" />
+                      <p-tag value="Parts ≠ 100%" severity="warn" styleClass="ml-1" />
                     }
                   </td>
                   <td>{{ s.shareCount }}</td>
@@ -827,10 +827,10 @@ export class FirmPermanentFileWizardComponent implements OnInit, OnDestroy {
     return this.billingFrequencies.find(l => l.value === v)?.label ?? '—';
   }
 
-  statusSeverity(status: number): 'success' | 'info' | 'warning' | 'secondary' {
+  statusSeverity(status: number): 'success' | 'info' | 'warn' | 'secondary' {
     switch (status) {
       case 2: return 'success';
-      case 1: return 'warning';
+      case 1: return 'warn';
       case 9: return 'secondary';
       default: return 'info';
     }

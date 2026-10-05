@@ -16,7 +16,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { Textarea } from 'primeng/textarea';
 import { CheckboxModule } from 'primeng/checkbox';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { OverlayOptions } from 'primeng/api';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { ProductService, CreateProductRequest, Product, ProductListItem } from '@core/services/product.service';
@@ -71,7 +71,7 @@ const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
     SelectModule,
     Textarea,
     CheckboxModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     ButtonComponent,
   ],
   template: `
@@ -159,13 +159,13 @@ const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
               <div class="form-group">
                 <label for="quick-stock" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.gestion.de.stock.3f196b66">Gestion de stock</label>
                 <div class="status-switch">
-                  <p-inputSwitch
+                  <p-toggleswitch
                     id="quick-stock"
                     [ngModel]="isStockManaged()"
                     (ngModelChange)="isStockManaged.set(!!$event)"
                     [disabled]="!isProductCategory()"
                     [attr.aria-describedby]="stockDescribedBy()">
-                  </p-inputSwitch>
+                  </p-toggleswitch>
                   <span [class.active]="resolveIsStockManaged()">
                     {{ resolveIsStockManaged() ? loc_ui_tern_activee_9b4e7c : loc_ui_tern_desactivee_74cc3b }}
                   </span>

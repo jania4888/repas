@@ -105,7 +105,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
               (onSelect)="onClientSelect($event)"
               [dropdown]="true"
               [forceSelection]="true"
-              field="name"
+              optionLabel="name"
               placeholder="Nom, matricule fiscal ou email..." i18n-placeholder="@@invoices.invoice-wizard.nom.matricule.fiscal.ou.email.270e5b5e"
               [minLength]="2"
               emptyMessage="Aucun client trouvé" i18n-emptyMessage="@@invoices.invoice-wizard.aucun.client.trouve.ef55e6be"

@@ -11,7 +11,12 @@ const WEB = path.resolve(fileURLToPath(new URL('../../..', import.meta.url)));
 const ng = await import(pathToFileURL(path.join(WEB, 'node_modules/@angular/compiler/fesm2022/compiler.mjs')).href);
 setIdenticalWords([]);
 const isText = createClassifier(new Set(['Nouveau bon de réception']));
-const parse = src => new ng.Parser(new ng.Lexer()).parseBinding(src, '', 0);
+// Angular 20 : parseBinding exige un ParseSourceSpan (plus une simple chaîne).
+const parse = src => {
+  const file = new ng.ParseSourceFile(src, 'codemod-test.html');
+  const loc = new ng.ParseLocation(file, 0, 0, 0);
+  return new ng.Parser(new ng.Lexer()).parseBinding(src, new ng.ParseSourceSpan(loc, loc), 0);
+};
 const rewrite = src => rewriteExpression(src, parse(src), isText, 'stock.stock-list');
 
 test('ternaire : chaque branche devient un champ $localize, la condition ne bouge pas', () => {

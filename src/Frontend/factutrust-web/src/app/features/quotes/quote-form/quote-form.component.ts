@@ -218,7 +218,7 @@ interface LineRow extends LinePromotionPreview {
                             [suggestions]="productSuggestions()"
                             (completeMethod)="searchProducts($event)"
                             (onSelect)="onProductSelect(line, $event)"
-                            field="name"
+                            optionLabel="name"
                             [dropdown]="true"
                             [forceSelection]="true"
                             [ngModelOptions]="{ standalone: true }"
@@ -294,7 +294,7 @@ interface LineRow extends LinePromotionPreview {
                       @if (linePricing.resolving()) {
                         <i class="pi pi-spin pi-spinner" pTooltip="Résolution du prix…" i18n-pTooltip="@@quotes.quote-form.resolution.du.prix.38097b39"></i>
                       } @else if (line.priceOverridden) {
-                        <p-tag severity="warning" value="Saisi"></p-tag>
+                        <p-tag severity="warn" value="Saisi"></p-tag>
                       } @else if (line.priceSource === 'ClientPrice') {
                         <p-tag severity="success" value="Prix négocié"></p-tag>
                       } @else if (line.priceSource === 'PriceList') {

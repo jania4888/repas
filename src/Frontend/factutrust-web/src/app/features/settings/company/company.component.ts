@@ -12,7 +12,7 @@ import { CardModule } from 'primeng/card';
 import { DividerModule } from 'primeng/divider';
 import { FileUploadModule } from 'primeng/fileupload';
 import { TagModule } from 'primeng/tag';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { DialogModule } from 'primeng/dialog';
 import { ToastService } from '@core/services/toast.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -52,7 +52,7 @@ import {
     DividerModule,
     FileUploadModule,
     TagModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     DialogModule,
     PageHeaderComponent,
     BreadcrumbComponent
@@ -372,7 +372,7 @@ import {
         <p-card header="Espace client" i18n-header="@@settings.company.espace.client.997229dc" styleClass="form-card">
           <div class="form-group">
             <label for="clientPortalEnabled" i18n="@@settings.company.activer.l.espace.client.d7a22239">Activer l’espace client</label>
-            <p-inputSwitch inputId="clientPortalEnabled" formControlName="clientPortalEnabled"></p-inputSwitch>
+            <p-toggleswitch inputId="clientPortalEnabled" formControlName="clientPortalEnabled"></p-toggleswitch>
             <small class="form-hint" i18n="@@settings.company.permet.d.inviter.des.contacts.depuis.la.fiche.cl.a5481538">Permet d’inviter des contacts depuis la fiche client pour consulter leurs factures.</small>
           </div>
         </p-card>

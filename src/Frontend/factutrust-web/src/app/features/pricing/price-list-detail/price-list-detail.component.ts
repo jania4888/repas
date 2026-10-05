@@ -7,7 +7,7 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
@@ -41,7 +41,7 @@ interface ProductOption {
     ButtonModule,
     InputTextModule,
     InputNumberModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     TagModule,
     TooltipModule,
     DialogModule,
@@ -194,7 +194,7 @@ interface ProductOption {
         </div>
 
         <div class="ft-field ft-field--inline">
-          <p-inputSwitch [(ngModel)]="settingsForm.isActive" inputId="pl-active"></p-inputSwitch>
+          <p-toggleswitch [(ngModel)]="settingsForm.isActive" inputId="pl-active"></p-toggleswitch>
           <label for="pl-active" i18n="@@pricing.price-list-detail.grille.active.5fe0537d">Grille active</label>
           <small class="ft-hint" i18n="@@pricing.price-list-detail.desactiver.est.reversible.et.n.affecte.aucun.doc.f76ea8fd"> Désactiver est réversible et n'affecte aucun document déjà émis. </small>
         </div>
@@ -230,7 +230,7 @@ interface ProductOption {
               [(ngModel)]="selectedProduct"
               [suggestions]="productSuggestions()"
               (completeMethod)="searchProducts($event)"
-              field="label"
+              optionLabel="label"
               [forceSelection]="true"
               [dropdown]="true"
               placeholder="Rechercher par code ou nom" i18n-placeholder="@@pricing.price-list-detail.rechercher.par.code.ou.nom.46838c72"

@@ -7,7 +7,7 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { Textarea } from 'primeng/textarea';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { SelectModule } from 'primeng/select';
 import { MessageModule } from 'primeng/message';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -226,7 +226,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
     ButtonModule,
     InputTextModule,
     Textarea,
-    InputSwitchModule,
+    ToggleSwitchModule,
     SelectModule,
     MessageModule,
     PageHeaderComponent,
@@ -393,7 +393,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
             </div>
             <div class="field switch-field">
               <label for="sf-orders" i18n="@@settings.storefront.autoriser.les.commandes.depuis.la.vitrine.publiq.054fb621">Autoriser les commandes depuis la vitrine publique</label>
-              <p-inputSwitch inputId="sf-orders" [(ngModel)]="editForm.orderSubmissionEnabled" />
+              <p-toggleswitch inputId="sf-orders" [(ngModel)]="editForm.orderSubmissionEnabled" />
             </div>
             <p-button label="Enregistrer" i18n-label="@@settings.storefront.enregistrer.f7c8bcd8" icon="pi pi-save" (onClick)="saveProfile()" [loading]="saveBusy()" />
           </p-card>

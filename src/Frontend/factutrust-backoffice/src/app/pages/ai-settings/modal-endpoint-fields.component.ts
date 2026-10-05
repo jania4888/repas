@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component, input, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-modal-endpoint-fields',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, InputSwitchModule, InputTextModule],
+  imports: [FormsModule, ToggleSwitchModule, InputTextModule],
   template: `
     <div class="field field-row">
       <label [attr.for]="idPrefix() + '-enabled'">Activer Modal</label>
-      <p-inputSwitch
+      <p-toggleswitch
         [inputId]="idPrefix() + '-enabled'"
         [ngModel]="enabled()"
         (ngModelChange)="enabled.set($event)"

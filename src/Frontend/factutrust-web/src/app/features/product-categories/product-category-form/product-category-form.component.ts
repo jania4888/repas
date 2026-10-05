@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ToastModule } from 'primeng/toast';
 import { ToastService } from '@core/services/toast.service';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -25,7 +25,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     RouterModule,
     InputTextModule,
     InputNumberModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     ToastModule,
     PageHeaderComponent,
     BreadcrumbComponent,
@@ -130,10 +130,10 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
               <div class="form-group">
                 <label for="isActive" i18n="@@product-categories.product-category-form.statut.659499f3">Statut</label>
                 <div class="status-switch">
-                  <p-inputSwitch
+                  <p-toggleswitch
                     id="isActive"
                     formControlName="isActive">
-                  </p-inputSwitch>
+                  </p-toggleswitch>
                   <span [class.active]="form.get('isActive')?.value">
                     {{ form.get('isActive')?.value ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033 }}
                   </span>

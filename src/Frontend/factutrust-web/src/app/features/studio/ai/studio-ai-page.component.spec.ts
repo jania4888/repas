@@ -47,6 +47,8 @@ describe('StudioAiPageComponent', () => {
 
   /** `beforeCreate` : espions à poser après la configuration du module mais avant la création (ex. `Router.navigate`). */
   async function setup(beforeCreate?: () => void): Promise<void> {
+    // Isolation : la préférence « Modèle avancé » persiste dans localStorage.
+    localStorage.removeItem('studio.ai.advancedModel');
     stream = jasmine.createSpyObj<AiStreamService>('AiStreamService', ['streamChat']);
     stream.streamChat.and.returnValue(of());
     builds = jasmine.createSpyObj<StudioAiBuildService>('StudioAiBuildService', [

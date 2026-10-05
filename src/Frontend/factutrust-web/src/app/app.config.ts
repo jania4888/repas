@@ -1,9 +1,8 @@
-import { APP_INITIALIZER, ApplicationConfig, LOCALE_ID, importProvidersFrom } from '@angular/core';
+import { APP_INITIALIZER, ApplicationConfig, LOCALE_ID, importProvidersFrom, DOCUMENT } from '@angular/core';
 import { provideRouter, withViewTransitions } from '@angular/router';
 import { PrimeNG } from 'primeng/config';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { DOCUMENT } from '@angular/common';
 import { MarkdownModule } from 'ngx-markdown';
 import { MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';

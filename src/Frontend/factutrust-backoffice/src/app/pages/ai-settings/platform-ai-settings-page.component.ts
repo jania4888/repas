@@ -11,7 +11,7 @@ import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { SelectButtonModule } from 'primeng/selectbutton';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageService } from 'primeng/api';
 
@@ -54,7 +54,7 @@ interface InferenceDeviceOption {
     FormsModule,
     ButtonModule,
     SelectModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     InputTextModule,
     SelectButtonModule,
     FtPageHeaderComponent,
@@ -282,7 +282,7 @@ interface InferenceDeviceOption {
         </p>
         <div class="field field-row">
           <label for="or-enabled">Activer OpenRouter</label>
-          <p-inputSwitch inputId="or-enabled" [(ngModel)]="openRouterEnabled" />
+          <p-toggleswitch inputId="or-enabled" [(ngModel)]="openRouterEnabled" />
         </div>
         <div class="field">
           <label for="or-display">Nom affiché</label>
@@ -330,7 +330,7 @@ interface InferenceDeviceOption {
         </p>
         <div class="field field-row">
           <label for="cursor-enabled">Activer Cursor</label>
-          <p-inputSwitch inputId="cursor-enabled" [(ngModel)]="cursorEnabled" />
+          <p-toggleswitch inputId="cursor-enabled" [(ngModel)]="cursorEnabled" />
         </div>
         <div class="field">
           <label for="cursor-display">Nom affiché</label>

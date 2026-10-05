@@ -30,7 +30,7 @@ import { InputTextModule } from 'primeng/inputtext';
 
 import { InputNumberModule } from 'primeng/inputnumber';
 
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
 import { SelectModule } from 'primeng/select';
 
@@ -140,7 +140,7 @@ export interface PromotionFormValue {
 
     InputNumberModule,
 
-    InputSwitchModule,
+    ToggleSwitchModule,
 
     SelectModule,
 
@@ -240,7 +240,7 @@ export interface PromotionFormValue {
 
               (ngModelChange)="onProductChange($event)"
 
-              field="label"
+              optionLabel="label"
 
               [forceSelection]="true"
 
@@ -314,7 +314,7 @@ export interface PromotionFormValue {
 
               (ngModelChange)="onClientChange($event)"
 
-              field="label"
+              optionLabel="label"
 
               [forceSelection]="true"
 
@@ -472,7 +472,7 @@ export interface PromotionFormValue {
 
         <div class="promotion-form-dialog__status ft-field ft-field--inline">
 
-          <p-inputSwitch [(ngModel)]="form.isActive" inputId="pr-active" [disabled]="saving"></p-inputSwitch>
+          <p-toggleswitch [(ngModel)]="form.isActive" inputId="pr-active" [disabled]="saving"></p-toggleswitch>
 
           <label for="pr-active" i18n="@@settings.promotions.promotion.active.9ee0381f">Promotion active</label>
 

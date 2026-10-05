@@ -13,7 +13,7 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { SelectModule } from 'primeng/select';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { InputTextModule } from 'primeng/inputtext';
 import { DatePickerModule } from 'primeng/datepicker';
 import { TooltipModule } from 'primeng/tooltip';
@@ -49,7 +49,7 @@ import type { FtTone } from '@core/ui/badge/ft-badge.component';
     ButtonModule,
     DialogModule,
     SelectModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     InputTextModule,
     DatePickerModule,
     TooltipModule,
@@ -164,7 +164,7 @@ import type { FtTone } from '@core/ui/badge/ft-badge.component';
         </div>
         <div class="field">
           <label class="checkbox">
-            <p-inputSwitch [(ngModel)]="formEnabled" [disabled]="busy()" />
+            <p-toggleswitch [(ngModel)]="formEnabled" [disabled]="busy()" />
             <span>{{ formEnabled ? 'Activer ce module' : 'Désactiver ce module' }}</span>
           </label>
         </div>

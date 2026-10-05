@@ -8,7 +8,7 @@ import { DialogModule } from 'primeng/dialog';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TagModule } from 'primeng/tag';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -50,7 +50,7 @@ function parseDate(value: string): Date | null {
     SelectModule,
     DatePickerModule,
     InputTextModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     TagModule,
     ButtonComponent,
     PageHeaderComponent
@@ -125,11 +125,11 @@ function parseDate(value: string): Date | null {
       <div class="payroll-form-row">
         <div class="payroll-form-group switch-row">
           <label for="holidayPaid" i18n="@@payroll.settings.remunere.6447ac33">Rémunéré</label>
-          <p-inputSwitch inputId="holidayPaid" [(ngModel)]="formIsPaid" />
+          <p-toggleswitch inputId="holidayPaid" [(ngModel)]="formIsPaid" />
         </div>
         <div class="payroll-form-group switch-row">
           <label for="holidayEstimated" i18n="@@payroll.settings.date.estimee.f9532d05">Date estimée</label>
-          <p-inputSwitch inputId="holidayEstimated" [(ngModel)]="formIsEstimated" />
+          <p-toggleswitch inputId="holidayEstimated" [(ngModel)]="formIsEstimated" />
         </div>
       </div>
       <div class="payroll-form-group">

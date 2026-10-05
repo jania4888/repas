@@ -9,7 +9,7 @@ import { DialogModule } from 'primeng/dialog';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { Textarea } from 'primeng/textarea';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { PayrollService, EmployeePayrollSuspension } from '@core/services/payroll.service';
 import { ToastService } from '@core/services/toast.service';
@@ -42,7 +42,7 @@ function parseIsoDate(value?: string): Date | null {
     SelectModule,
     DatePickerModule,
     Textarea,
-    InputSwitchModule,
+    ToggleSwitchModule,
     ButtonComponent
   ],
   template: `
@@ -112,7 +112,7 @@ function parseIsoDate(value?: string): Date | null {
       </div>
       <div class="payroll-form-group switch-row mb-2">
         <label for="isPaid" i18n="@@payroll.employees.suspension.remuneree.fe8572b6">Suspension rémunérée</label>
-        <p-inputSwitch inputId="isPaid" [(ngModel)]="formIsPaid" />
+        <p-toggleswitch inputId="isPaid" [(ngModel)]="formIsPaid" />
       </div>
       <div class="payroll-form-group mb-2">
         <label i18n="@@payroll.employees.motif.2a198f47">Motif</label>

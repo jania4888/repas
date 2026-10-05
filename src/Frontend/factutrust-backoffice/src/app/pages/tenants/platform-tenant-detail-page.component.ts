@@ -213,7 +213,7 @@ import { FtSkeletonComponent } from '@core/ui/skeleton/ft-skeleton.component';
                 <dt>Migrations tenant</dt>
                 <dd>
                   <p-tag
-                    [severity]="d.hasMigrationsApplied ? 'success' : 'warning'"
+                    [severity]="d.hasMigrationsApplied ? 'success' : 'warn'"
                     [value]="d.hasMigrationsApplied ? 'À jour' : 'Manquantes'" />
                 </dd>
                 <dt></dt>
@@ -638,7 +638,7 @@ export class PlatformTenantDetailPageComponent implements OnInit {
       });
   }
 
-  onTabChange(index: string | number): void {
+  onTabChange(index: string | number | undefined): void {
     const tabIndex = typeof index === 'number' ? index : Number(index);
     if (Number.isNaN(tabIndex)) {
       return;

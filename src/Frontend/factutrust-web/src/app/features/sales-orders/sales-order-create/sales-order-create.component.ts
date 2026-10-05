@@ -138,7 +138,7 @@ interface DraftLine extends LinePromotionPreview {
             (completeMethod)="searchClients($event)"
             (onSelect)="onClientChange()"
             (onClear)="onClientChange()"
-            field="label"
+            optionLabel="label"
             [forceSelection]="true"
             [dropdown]="true"
             placeholder="Rechercher un client" i18n-placeholder="@@sales-orders.sales-order-create.rechercher.un.client.723cebe6"
@@ -207,7 +207,7 @@ interface DraftLine extends LinePromotionPreview {
               [(ngModel)]="newProduct"
               [suggestions]="productSuggestions()"
               (completeMethod)="searchProducts($event)"
-              field="label"
+              optionLabel="label"
               [forceSelection]="true"
               [dropdown]="true"
               placeholder="Rechercher par code ou nom" i18n-placeholder="@@sales-orders.sales-order-create.rechercher.par.code.ou.nom.46838c72"
@@ -306,7 +306,7 @@ interface DraftLine extends LinePromotionPreview {
                   }
                   @if (line.priceOverridden) {
                     <p-tag
-                      severity="warning"
+                      severity="warn"
                       value="Saisi"
                       pTooltip="Prix imposé à la main : il remplace le prix résolu." i18n-pTooltip="@@sales-orders.sales-order-create.prix.impose.a.la.main.il.remplace.le.prix.resolu.739be845"></p-tag>
                   } @else if (line.priceSource === 'ClientPrice') {

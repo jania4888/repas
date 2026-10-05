@@ -86,7 +86,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                   <p-tag severity="secondary" value="Désactivée"></p-tag>
                 } @else if (!row.isApplicableToday) {
                   <p-tag
-                    severity="warning"
+                    severity="warn"
                     value="Hors période"
                     pTooltip="Grille active mais en dehors de sa période de validité : elle n'applique aucun prix aujourd'hui." i18n-pTooltip="@@pricing.price-list-list.grille.active.mais.en.dehors.de.sa.periode.de.va.77529196"></p-tag>
                 } @else {

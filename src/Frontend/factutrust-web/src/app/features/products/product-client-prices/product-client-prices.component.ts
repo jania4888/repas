@@ -6,7 +6,7 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
@@ -40,7 +40,7 @@ interface ClientOption {
     ButtonModule,
     InputTextModule,
     InputNumberModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     TagModule,
     TooltipModule,
     DialogModule,
@@ -154,7 +154,7 @@ interface ClientOption {
             [(ngModel)]="selectedClient"
             [suggestions]="clientSuggestions()"
             (completeMethod)="searchClients($event)"
-            field="label"
+            optionLabel="label"
             [forceSelection]="true"
             [dropdown]="true"
             placeholder="Rechercher par nom" i18n-placeholder="@@products.product-client-prices.rechercher.par.nom.88b5f2ab"
@@ -216,7 +216,7 @@ interface ClientOption {
       <small class="ft-hint client-price-dialog__dates-hint" i18n="@@products.product-client-prices.format.affiche.selon.votre.systeme.laissez.vide..d0c19b95"> Format affiché selon votre système. Laissez vide pour une validité sans limite. </small>
 
       <div class="ft-field ft-field--inline client-price-dialog__active">
-        <p-inputSwitch [(ngModel)]="formIsActive" inputId="cp-active" [disabled]="saving()"></p-inputSwitch>
+        <p-toggleswitch [(ngModel)]="formIsActive" inputId="cp-active" [disabled]="saving()"></p-toggleswitch>
         <label for="cp-active" i18n="@@products.product-client-prices.tarif.actif.989d1fb6">Tarif actif</label>
       </div>
       <small class="ft-hint client-price-dialog__active-hint" i18n="@@products.product-client-prices.desactiver.est.reversible.n.affecte.pas.les.docu.f09cf48c"> Désactiver est réversible ; n'affecte pas les documents déjà émis. </small>
@@ -529,12 +529,12 @@ export class ProductClientPricesComponent implements OnInit, OnChanges {
     return 'Applicable';
   }
 
-  statusSeverity(item: ProductClientPrice): 'success' | 'warning' | 'secondary' {
+  statusSeverity(item: ProductClientPrice): 'success' | 'warn' | 'secondary' {
     if (!item.isActive) {
       return 'secondary';
     }
     if (!item.isApplicableToday) {
-      return 'warning';
+      return 'warn';
     }
     return 'success';
   }

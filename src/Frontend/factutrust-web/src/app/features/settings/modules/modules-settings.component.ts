@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TooltipModule } from 'primeng/tooltip';
 import { ButtonModule } from 'primeng/button';
 import { Subject, takeUntil } from 'rxjs';
@@ -32,7 +32,7 @@ import { backendDisplayLabel } from '@shared/pipes/backend-label.pipe';
     CommonModule,
     RouterModule,
     FormsModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     TooltipModule,
     ButtonModule,
     PageHeaderComponent,

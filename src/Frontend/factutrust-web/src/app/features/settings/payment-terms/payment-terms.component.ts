@@ -7,7 +7,7 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { SelectModule } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
@@ -44,7 +44,7 @@ interface DueModeOption {
     ButtonModule,
     InputTextModule,
     InputNumberModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     SelectModule,
     TagModule,
     TooltipModule,
@@ -195,12 +195,12 @@ interface DueModeOption {
         </div>
 
         <div class="ft-field ft-field--inline">
-          <p-inputSwitch [(ngModel)]="form.isActive" inputId="pt-active"></p-inputSwitch>
+          <p-toggleswitch [(ngModel)]="form.isActive" inputId="pt-active"></p-toggleswitch>
           <label for="pt-active" i18n="@@settings.payment-terms.condition.active.a7d42119">Condition active</label>
         </div>
 
         <div class="ft-field ft-field--inline">
-          <p-inputSwitch [(ngModel)]="form.isDefault" inputId="pt-default"></p-inputSwitch>
+          <p-toggleswitch [(ngModel)]="form.isDefault" inputId="pt-default"></p-toggleswitch>
           <label for="pt-default" i18n="@@settings.payment-terms.proposee.par.defaut.cfc08e05">Proposée par défaut</label>
           <small class="ft-hint" i18n="@@settings.payment-terms.une.seule.condition.peut.l.etre.l.ancienne.est.l.ddd37b25">Une seule condition peut l'être : l'ancienne est libérée.</small>
         </div>

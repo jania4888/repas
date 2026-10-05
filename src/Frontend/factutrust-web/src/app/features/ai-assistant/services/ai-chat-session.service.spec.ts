@@ -1,6 +1,6 @@
-import { DOCUMENT } from '@angular/common';
+
 import { TestBed, fakeAsync, flushMicrotasks, tick } from '@angular/core/testing';
-import { signal, computed } from '@angular/core';
+import { signal, computed, DOCUMENT } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { AuthService, User } from '@core/services/auth.service';
 import { AiChatSessionService } from './ai-chat-session.service';

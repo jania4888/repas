@@ -352,7 +352,7 @@ export class PurchasesJournalReportsComponent implements OnInit, OnDestroy {
     this.reloadTrigger$.complete();
   }
 
-  onViewModeChange(tab: string | number): void {
+  onViewModeChange(tab: string | number | undefined): void {
     const n = typeof tab === 'number' ? tab : Number(tab);
     if (Number.isNaN(n)) return;
     this.viewModeTab.set(n);

@@ -14,7 +14,7 @@ import { StepsModule } from 'primeng/steps';
 import { MessageModule } from 'primeng/message';
 import { DividerModule } from 'primeng/divider';
 import { CheckboxModule } from 'primeng/checkbox';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { MenuItem } from '@shared/models/menu-item.model';
 import { AuthService, RegisterRequest } from '@core/services/auth.service';
 import { WarehouseContextService } from '@core/services/warehouse-context.service';
@@ -70,7 +70,7 @@ interface TaxRegime {
     MessageModule,
     DividerModule,
     CheckboxModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     AuthShellComponent
   ],
   animations: [

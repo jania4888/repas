@@ -253,10 +253,10 @@ export class FirmDossierAffectationComponent implements OnInit {
     }
   }
 
-  dpSeverity(status?: number | null): 'success' | 'info' | 'warning' | 'danger' | 'secondary' {
+  dpSeverity(status?: number | null): 'success' | 'info' | 'warn' | 'danger' | 'secondary' {
     switch (status) {
       case 2: return 'success';
-      case 1: return 'warning';
+      case 1: return 'warn';
       case 9: return 'secondary';
       default: return 'info';
     }

@@ -11,7 +11,7 @@ import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DividerModule } from 'primeng/divider';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ToastModule } from 'primeng/toast';
 import { ToastService } from '@core/services/toast.service';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -50,7 +50,7 @@ interface GovernorateOption {
     ButtonModule,
     CardModule,
     DividerModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     ToastModule,
     PageHeaderComponent,
     BreadcrumbComponent,
@@ -146,10 +146,10 @@ interface GovernorateOption {
               <div class="form-group">
                 <label for="isActive" i18n="@@clients.client-form.statut.659499f3">Statut</label>
                 <div class="status-switch">
-                  <p-inputSwitch 
+                  <p-toggleswitch 
                     id="isActive"
                     formControlName="isActive">
-                  </p-inputSwitch>
+                  </p-toggleswitch>
                   <span [class.active]="form.get('isActive')?.value">
                     {{ form.get('isActive')?.value ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033 }}
                   </span>

@@ -86,6 +86,8 @@ export function rewriteExpression(source, ast, isText, prefix) {
     return out;
   };
   const isStr = n => n instanceof ng.LiteralPrimitive && typeof n.value === 'string';
+  // Angular 20 : le parseur conserve les parenthèses sous forme de nœud ParenthesizedExpression.
+  const isParen = n => typeof ng.ParenthesizedExpression !== 'undefined' && n instanceof ng.ParenthesizedExpression;
   const phName = (n, used) => {
     const src = source.slice(n.span.start, n.span.end);
     const ids = src.match(/[A-Za-z_][A-Za-z0-9_]*/g) ?? ['p'];
@@ -116,13 +118,21 @@ export function rewriteExpression(source, ast, isText, prefix) {
             params.push(`p${args.length}`);
             message += `\${p${args.length}}:${name}:`;
             idText += `{${name}}`;
-            args.push(render(p));
+            // Un argument parenthèsé (`(i + 1)`) est rendu sans ses parenthèses.
+            args.push(render(isParen(p) ? p.expression : p));
           }
         }
         const name = `loc_${slug(idText).replace(/\./g, '_').slice(0, 36)}_${hash(idText, 6)}`;
         members.push({ kind: 'method', name, id: `${prefix}.tpl.${slug(idText)}.${hash(idText, 8)}`, params, message });
         return `${name}(${args.join(', ')})`;
       }
+    }
+    // Parenthèses : réécriture du contenu, parenthèses préservées autour.
+    if (isParen(n)) {
+      const inner = render(n.expression);
+      const origInner = source.slice(n.expression.span.start, n.expression.span.end);
+      if (inner === origInner) return source.slice(n.span.start, n.span.end);
+      return '(' + inner + ')';
     }
     const children = [];
     if (n instanceof ng.Conditional) children.push(n.trueExp, n.falseExp);

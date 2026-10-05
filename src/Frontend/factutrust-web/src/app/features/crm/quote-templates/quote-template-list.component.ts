@@ -7,7 +7,7 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TooltipModule } from 'primeng/tooltip';
 import { ToastModule } from 'primeng/toast';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
@@ -41,7 +41,7 @@ interface ActiveFilterOption {
     ButtonModule,
     InputTextModule,
     SelectModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     TooltipModule,
     ToastModule,
     PageHeaderComponent,
@@ -135,7 +135,7 @@ interface ActiveFilterOption {
               <td>{{ t.usageCount }}</td>
               <td>
                 @if (canUpdate()) {
-                  <p-inputSwitch
+                  <p-toggleswitch
                     [ngModel]="t.isActive"
                     (ngModelChange)="onToggleActive(t, $event)"
                     [inputId]="'act-' + t.id"

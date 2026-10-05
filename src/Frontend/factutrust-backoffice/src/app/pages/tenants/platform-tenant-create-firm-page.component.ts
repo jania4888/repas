@@ -6,7 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { CheckboxModule } from 'primeng/checkbox';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { MessageModule } from 'primeng/message';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
@@ -43,7 +43,7 @@ import { TENANTS_FR } from './tenants.i18n.fr';
     InputTextModule,
     PasswordModule,
     CheckboxModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     MessageModule,
     SelectModule,
     TextareaModule,
@@ -177,7 +177,7 @@ import { TENANTS_FR } from './tenants.i18n.fr';
         </fieldset>
 
         <div class="firm-switch">
-          <p-inputSwitch inputId="firmDirectory" formControlName="isPublicInDirectory" />
+          <p-toggleswitch inputId="firmDirectory" formControlName="isPublicInDirectory" />
           <label for="firmDirectory">{{ t('createFirm.field.directory') }}</label>
         </div>
 

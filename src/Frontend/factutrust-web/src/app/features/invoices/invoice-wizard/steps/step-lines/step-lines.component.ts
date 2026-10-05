@@ -201,7 +201,7 @@ interface WizardProductSuggestion {
                             [suggestions]="productSuggestions()"
                             (completeMethod)="searchProducts($event)"
                             (onSelect)="onProductSelect($event)"
-                            field="name"
+                            optionLabel="name"
                             [forceSelection]="false"
                             [dropdown]="true"
                             [minLength]="0"
@@ -343,7 +343,7 @@ interface WizardProductSuggestion {
                 <td>
                   @if (editingLineId === line.id) {
                     @if (editLine.priceOverridden) {
-                      <p-tag severity="warning" value="Saisi"></p-tag>
+                      <p-tag severity="warn" value="Saisi"></p-tag>
                     } @else if (editLine.priceSource === 'ClientPrice') {
                       <p-tag severity="success" value="Prix négocié"></p-tag>
                     } @else if (editLine.priceSource === 'PriceList') {
@@ -353,7 +353,7 @@ interface WizardProductSuggestion {
                     }
                   } @else {
                     @if (line.priceOverridden) {
-                      <p-tag severity="warning" value="Saisi"></p-tag>
+                      <p-tag severity="warn" value="Saisi"></p-tag>
                     } @else if (line.priceSource === 'ClientPrice') {
                       <p-tag severity="success" value="Prix négocié"></p-tag>
                     } @else if (line.priceSource === 'PriceList') {

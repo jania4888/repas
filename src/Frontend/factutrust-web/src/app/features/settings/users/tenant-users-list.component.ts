@@ -9,7 +9,7 @@ import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { DialogModule } from 'primeng/dialog';
 import { SelectModule } from 'primeng/select';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { CheckboxModule } from 'primeng/checkbox';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
@@ -58,7 +58,7 @@ interface ModuleDraft extends UserModuleAccessItem {
     TagModule,
     DialogModule,
     SelectModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     CheckboxModule,
     PasswordModule,
     InputTextModule,
@@ -191,10 +191,10 @@ interface ModuleDraft extends UserModuleAccessItem {
                         <span class="default-badge" i18n="@@settings.users.inclus.par.defaut.0d38cc2c">Inclus par défaut</span>
                       }
                     </label>
-                    <p-inputSwitch
+                    <p-toggleswitch
                       [(ngModel)]="m.enabled"
                       (ngModelChange)="afterCreateModuleEnabledChange(m)"
-                      [inputId]="'createMod' + m.module"></p-inputSwitch>
+                      [inputId]="'createMod' + m.module"></p-toggleswitch>
                   </div>
                   @if (m.enabled && catalogVisibleFeatures(createCatalogModule(m.module)).length) {
                     <div
@@ -264,7 +264,7 @@ interface ModuleDraft extends UserModuleAccessItem {
             <div class="form-field switch-field">
               <label class="field-label" for="activeSw" i18n="@@settings.users.compte.actif.ea95f801">Compte actif</label>
               <div class="switch-field-control">
-                <p-inputSwitch inputId="activeSw" [(ngModel)]="editActive"></p-inputSwitch>
+                <p-toggleswitch inputId="activeSw" [(ngModel)]="editActive"></p-toggleswitch>
               </div>
             </div>
           </div>
@@ -304,11 +304,11 @@ interface ModuleDraft extends UserModuleAccessItem {
                           <span class="default-badge" i18n="@@settings.users.inclus.par.defaut.0d38cc2c">Inclus par défaut</span>
                         }
                       </label>
-                      <p-inputSwitch
+                      <p-toggleswitch
                         [(ngModel)]="m.enabled"
                         (ngModelChange)="afterEditModuleEnabledChange(m)"
                         [inputId]="'editMod' + m.module"
-                        [disabled]="isAdministrationModuleLockedForEdit(m)"></p-inputSwitch>
+                        [disabled]="isAdministrationModuleLockedForEdit(m)"></p-toggleswitch>
                     </div>
                     @if (m.enabled && catalogVisibleFeatures(editCatalogModule(m.module)).length) {
                       <div

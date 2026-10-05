@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { FormsModule } from '@angular/forms';
 import { TooltipModule } from 'primeng/tooltip';
 import { AppModule } from '@core/models/app-module';
@@ -10,7 +10,7 @@ import { HEADCOUNT_BANDS, HeadcountBand, ModuleCatalogEntry, RegistrationCatalog
 @Component({
   selector: 'app-step-configuration',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, InputSwitchModule, TooltipModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ToggleSwitchModule, TooltipModule],
   templateUrl: './step-configuration.component.html',
   styleUrl: './step-configuration.component.scss'
 })

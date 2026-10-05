@@ -56,6 +56,14 @@ const calendarView: CustomRecordViewDto = {
   definition: { ...definition, calendar: { startFieldKey: 'debut', endFieldKey: null, titleFieldKey: 'nom', colorFieldKey: 'statut' } }
 };
 
+
+/** Décale une date ISO YYYY-MM-DD de `days` jours (midi UTC : pas de bascule DST). */
+function shiftIsoDateDays(iso: string, days: number): string {
+  const d = new Date(`${iso}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
 describe('StudioRecordViewRunnerComponent', () => {
   let fixture: ComponentFixture<StudioRecordViewRunnerComponent>;
   let component: StudioRecordViewRunnerComponent;
@@ -222,17 +230,25 @@ describe('StudioRecordViewRunnerComponent', () => {
 
   it('mode Calendrier : un changement de plage relance /run avec les nouvelles bornes', () => {
     setInputs(calendarView);
-    httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/views/vc/run`)
-      .flush({ success: true, data: { mode: 'Calendar', items: [], total: 0, page: 1, pageSize: 1000, events: [], truncated: false }, message: null, errors: [] });
+    const initial = httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/views/vc/run`);
+    initial.flush({ success: true, data: { mode: 'Calendar', items: [], total: 0, page: 1, pageSize: 1000, events: [], truncated: false }, message: null, errors: [] });
 
-    component.onCalendarRange({ rangeStart: '2026-10-05', rangeEnd: '2026-10-11' });
+    // La nouvelle plage doit différer de la plage initiale (semaine courante, émise au
+    // montage du calendrier) : une plage figée coïncide avec « aujourd'hui » une semaine
+    // sur ~2600 et le dédoublonnage d'onCalendarRange avale alors la requête attendue.
+    // On décale donc la plage réellement émise de 7 jours.
+    const shifted = {
+      rangeStart: shiftIsoDateDays(initial.request.body.rangeStart as string, 7),
+      rangeEnd: shiftIsoDateDays(initial.request.body.rangeEnd as string, 7)
+    };
+    component.onCalendarRange(shifted);
     const req = httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/views/vc/run`);
-    expect(req.request.body.rangeStart).toBe('2026-10-05');
-    expect(req.request.body.rangeEnd).toBe('2026-10-11');
+    expect(req.request.body.rangeStart).toBe(shifted.rangeStart);
+    expect(req.request.body.rangeEnd).toBe(shifted.rangeEnd);
     req.flush({ success: true, data: { mode: 'Calendar', items: [], total: 0, page: 1, pageSize: 1000, events: [], truncated: false }, message: null, errors: [] });
 
     // Réémission de la même plage (recréation du calendrier) : aucune requête en double.
-    component.onCalendarRange({ rangeStart: '2026-10-05', rangeEnd: '2026-10-11' });
+    component.onCalendarRange(shifted);
     httpMock.expectNone(`${environment.apiUrl}/studio/records/interventions/views/vc/run`);
   });
 

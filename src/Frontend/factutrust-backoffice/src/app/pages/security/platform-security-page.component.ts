@@ -555,8 +555,9 @@ export class PlatformSecurityPageComponent implements OnInit {
     else this.loadFailed();
   }
 
-  onTabChange(index: string | number): void {
+  onTabChange(index: string | number | undefined): void {
     const tabIndex = typeof index === 'number' ? index : Number(index);
+    if (Number.isNaN(tabIndex)) return;
     this.activeTab.set(tabIndex);
     if (tabIndex === 0 && !this.sessionsPage()) this.loadSessions();
     if (tabIndex === 1 && !this.failedPage()) this.loadFailed();

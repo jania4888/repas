@@ -1,5 +1,5 @@
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Injectable, PLATFORM_ID, inject, DOCUMENT } from '@angular/core';
 import { environment } from '@environments/environment';
 import { TURNSTILE_LOAD_TIMEOUT_MS, TURNSTILE_SCRIPT_ID, TURNSTILE_SCRIPT_URL, type TurnstileApi } from './turnstile.types';
 
