@@ -79,6 +79,8 @@ export default defineConfig({
     command: 'npm start',
     url: 'http://localhost:4200',
     reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
+    // Build Angular à froid en CI : 120 s ne suffisent pas (dépassement observé
+    // sans le moindre cache de prébundling) ; 5 min donnent une marge sûre.
+    timeout: 300 * 1000,
   },
 });

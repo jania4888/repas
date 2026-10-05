@@ -96,7 +96,10 @@ jobs:
           fetch-depth: 0
       - name: Lockfile aligné sur le build Docker (node:20-alpine)
         run: |
-          docker run --rm -v "$PWD:/work" -w /work node:20-alpine \
+          # Le conteneur tourne avec l'UID du runner : sinon node_modules appartient à root et le
+          # `npm ci` suivant (côté hôte) échoue avec EACCES en le supprimant.
+          docker run --rm -u "$(id -u):$(id -g)" -e HOME=/tmp \
+            -v "$PWD:/work" -w /work node:20-alpine \
             sh -c "npm ci --legacy-peer-deps"
       - uses: actions/setup-node@v7
         with:
@@ -132,6 +135,10 @@ jobs:
       - name: Gardes landing (copy + CSS physique)
         run: npm run test:landing
       - name: Specs Jasmine (headless)
+        # Heap Node élargi : le bundling de test dépasse la limite par défaut (~2 Gio)
+        # et plantait en OOM (exit 134) pendant « Generating browser application bundles ».
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
         run: npx ng test --watch=false --browsers=ChromeHeadless
       - name: Build production
         run: npm run build:prod
