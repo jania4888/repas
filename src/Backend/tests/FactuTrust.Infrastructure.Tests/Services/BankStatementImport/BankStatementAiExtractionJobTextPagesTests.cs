@@ -179,11 +179,12 @@ public sealed class BankStatementAiExtractionJobTextPagesTests : IDisposable
     }
 
     [Theory]
+    // Budget = pages × (délai d'appel + 60 s) × 1,5 (marge rendu + repli), plancher 20 min, plafond AiJobBudgetMinutes.
     [InlineData(1, 180, 120, 20)]
-    [InlineData(10, 180, 120, 40)]
+    [InlineData(10, 180, 120, 60)]
     [InlineData(30, 180, 120, 120)]
     [InlineData(60, 180, 120, 120)]
-    [InlineData(30, 180, 240, 120)]
+    [InlineData(30, 180, 240, 180)]
     public void Budget_grows_with_the_number_of_calls_within_bounds(int calls, int llmSeconds, int maxMinutes, int expectedMinutes) =>
         Assert.Equal(TimeSpan.FromMinutes(expectedMinutes), BankStatementAiExtractionJob.ComputeBudget(calls, llmSeconds, maxMinutes));
 }

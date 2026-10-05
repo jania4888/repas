@@ -512,7 +512,15 @@ builder.Services.AddHealthChecks()
     .AddSqlServer(
         builder.Configuration.GetConnectionString("MasterConnection")!,
         name: "master-db",
-        tags: new[] { "ready", "db" });
+        tags: new[] { "ready", "db" })
+    // Modèle vision des relevés bancaires (GLM-OCR sur Ollama). Tag « ai » seulement, jamais
+    // « ready » : absent de /health/ready (le healthcheck Docker ne dépend pas d'Ollama), visible
+    // dans /api/platform/ops/health (PlatformAdmin). Unhealthy = moteur injoignable ;
+    // Degraded = modèle vision absent / sans mémoire, repli texte prêt ; Healthy sinon.
+    .AddCheck<FactuTrust.Infrastructure.Services.AI.OllamaVisionModelHealthCheck>(
+        FactuTrust.Infrastructure.Services.AI.OllamaVisionModelHealthCheck.Name,
+        tags: new[] { FactuTrust.Infrastructure.Services.AI.OllamaVisionModelHealthCheck.Tag },
+        timeout: FactuTrust.Infrastructure.Services.AI.OllamaVisionModelHealthCheck.Timeout);
 
 // Lot B5 — Hangfire (recurring + queued background jobs).
 // Storage : table dans la base master, schéma "hangfire" pour isolation visuelle.
@@ -544,7 +552,9 @@ builder.Services.AddHangfireServer(options =>
 
 builder.Services.AddHangfireServer(options =>
 {
-    var aiWorkers = builder.Configuration.GetValue("Accounting:BankStatementImport:AiWorkerCount", 2);
+    // Défaut 1 (comme BankStatementImportLimits.AiWorkerCount) : Ollama:MaxConcurrentGenerations
+    // vaut 1, un second ouvrier attendrait derrière le sémaphore pendant que son budget s'écoule.
+    var aiWorkers = builder.Configuration.GetValue("Accounting:BankStatementImport:AiWorkerCount", 1);
     options.WorkerCount = Math.Clamp(aiWorkers, 1, 4);
     options.Queues = new[] { "bank_statement_ai" };
     options.ServerName = $"factutrust-bank-ai-{Environment.MachineName}";
@@ -761,19 +771,67 @@ app.MapControllers();
             "Accounting:BankStatementAiPostingEnabled=true sans BrouillardEnabled : les relevés peuvent être analysés mais aucune écriture ne sera générée (brouillard obligatoire).");
     }
 
+    // Lecture GLM-OCR de tout relevé : la ligne porte tout ce qu'un opérateur doit lire sans ouvrir
+    // les appsettings (modèles résolus, drapeaux D1/D4, pilote, plafonds, délais, concurrence).
+    // Aucune donnée de relevé ni secret : noms de modèles et nombres seulement.
     var bsImport = accountingSettings.BankStatementImport;
+    var ollamaSettings = app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<FactuTrust.Application.Configuration.OllamaSettings>>().Value;
+    var bsVisionModel = FactuTrust.Application.Features.AI.ImportAiModelResolver.ResolveBankStatementVisionModelId(ollamaSettings);
+    var bsTextFallbackModel = FactuTrust.Application.Features.AI.ImportAiModelResolver.ResolveServerImportModel(ollamaSettings).ProviderModelId;
     featureLogger.LogInformation(
-        "Bank statement import IA: VisionReading={VisionReadingEnabled} AiForAllDocuments={AiForAll} VisionSendTextLayer={VisionSendTextLayer} AiWorkers={AiWorkers}",
+        "Bank statement import IA: VisionReading={VisionReadingEnabled} AiForAllDocuments={AiForAll} AiOnlyReading={AiOnlyReading} BalanceAsWarning={BalanceAsWarning} PilotTenants={PilotTenants} VisionModel={VisionModel} TextFallbackModel={TextFallbackModel} VisionTextFallback={VisionTextFallbackEnabled} VisionSendTextLayer={VisionSendTextLayer} VisionRenderDpi={VisionRenderDpi} VisionMaxOutputTokens={VisionMaxOutputTokens} MaxPages={MaxPages} MaxAiPages={MaxAiPages} AiJobBudgetMinutes={AiJobBudgetMinutes} AiWorkers={AiWorkers} MaxConcurrentGenerations={MaxConcurrentGenerations} VisionCallTimeoutSeconds={VisionCallTimeoutSeconds} OllamaTimeoutSeconds={OllamaTimeoutSeconds}",
         bsImport.VisionReadingEnabled,
         accountingSettings.BankStatementAiForAllDocumentsEnabled,
+        bsImport.AiOnlyReadingEnabled,
+        bsImport.AiBalanceMismatchAsWarning,
+        bsImport.AiPilotTenantIds.Count,
+        bsVisionModel ?? "(aucun)",
+        bsTextFallbackModel,
+        bsImport.VisionTextFallbackEnabled,
         bsImport.VisionSendTextLayer,
-        bsImport.EffectiveAiWorkerCount);
-    if (bsImport.VisionReadingEnabled && string.IsNullOrWhiteSpace(
-            FactuTrust.Application.Features.AI.ImportAiModelResolver.ResolveBankStatementVisionModelId(
-                app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<FactuTrust.Application.Configuration.OllamaSettings>>().Value)))
+        bsImport.VisionRenderDpi,
+        bsImport.VisionMaxOutputTokens,
+        bsImport.EffectiveMaxPages,
+        bsImport.EffectiveMaxAiPages,
+        bsImport.EffectiveAiJobBudgetMinutes,
+        bsImport.EffectiveAiWorkerCount,
+        ollamaSettings.MaxConcurrentGenerations,
+        bsImport.EffectiveVisionCallTimeoutSeconds,
+        ollamaSettings.TimeoutSeconds);
+    if (bsImport.VisionReadingEnabled && string.IsNullOrWhiteSpace(bsVisionModel))
     {
         featureLogger.LogWarning(
-            "Accounting:BankStatementImport:VisionReadingEnabled=true sans modèle vision (Ollama:BankStatementImportVisionModel ou InvoiceImportVisionModel).");
+            "Accounting:BankStatementImport:VisionReadingEnabled=true sans modèle vision (Ollama:BankStatementImportVisionModel ou InvoiceImportVisionModel) : l'import de relevés annoncera l'IA indisponible.");
+    }
+    if (bsImport.EffectiveAiWorkerCount > Math.Max(1, ollamaSettings.MaxConcurrentGenerations))
+    {
+        featureLogger.LogWarning(
+            "Accounting:BankStatementImport:AiWorkerCount={AiWorkers} > Ollama:MaxConcurrentGenerations={MaxConcurrentGenerations} : les ouvriers excédentaires attendent derrière le sémaphore du moteur pendant que leur budget s'écoule. Règle : AiWorkerCount ≤ MaxConcurrentGenerations.",
+            bsImport.EffectiveAiWorkerCount,
+            ollamaSettings.MaxConcurrentGenerations);
+    }
+    if (bsImport.VisionReadingEnabled && ollamaSettings.TimeoutSeconds < bsImport.EffectiveVisionCallTimeoutSeconds + 60)
+    {
+        featureLogger.LogWarning(
+            "Ollama:TimeoutSeconds={OllamaTimeoutSeconds} < Accounting:BankStatementImport:VisionCallTimeoutSeconds={VisionCallTimeoutSeconds} + 60 : le délai HTTP du client Ollama tombera avant celui de l'appel GLM-OCR (premier jeton d'une page sur processeur : 1 à 2 min). Règle : TimeoutSeconds ≥ VisionCallTimeoutSeconds + 60.",
+            ollamaSettings.TimeoutSeconds,
+            bsImport.EffectiveVisionCallTimeoutSeconds);
+    }
+    if (bsImport.AiOnlyReadingEnabled && !bsImport.VisionReadingEnabled)
+    {
+        featureLogger.LogWarning(
+            "Accounting:BankStatementImport:AiOnlyReadingEnabled=true sans VisionReadingEnabled : toutes les pages seront lues par le modèle texte « {TextFallbackModel} » (réglage de dépannage, pas la cible GLM-OCR).",
+            bsTextFallbackModel);
+    }
+    if (bsImport.AiOnlyReadingEnabled && !accountingSettings.BankStatementAiForAllDocumentsEnabled)
+    {
+        featureLogger.LogWarning(
+            "Accounting:BankStatementImport:AiOnlyReadingEnabled=true sans Accounting:BankStatementAiForAllDocumentsEnabled : la lecture « IA seule » n'est pas appliquée (le plan ai_only exige « tout document par l'IA »).");
+    }
+    if (bsImport.AiComplementAllowExternal)
+    {
+        featureLogger.LogWarning(
+            "Accounting:BankStatementImport:AiComplementAllowExternal=true : des pages de relevés pourraient partir vers une IA externe. Décision du responsable du traitement requise ; false attendu en production.");
     }
 }
 

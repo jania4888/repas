@@ -58,6 +58,18 @@ public sealed class LlmBankStatementPage
     public decimal? OpeningBalance { get; set; }
     public decimal? ClosingBalance { get; set; }
     public List<LlmBankStatementPageLine> Lines { get; set; } = new();
+
+    /// <summary>RIB (20 chiffres) lu sur la page par le modèle vision, déjà normalisé ; null sinon.</summary>
+    public string? Rib { get; set; }
+
+    /// <summary>Nombre de décimales imprimées (mode des montants de la page) ; null si inconnu.</summary>
+    public int? PrintedDecimals { get; set; }
+
+    /// <summary>Vrai quand le signe du solde d'ouverture est imprimé (« D »/« C », « - ») et non supposé.</summary>
+    public bool OpeningBalanceSigned { get; set; }
+
+    /// <summary>Vrai quand le signe du solde de clôture est imprimé et non supposé.</summary>
+    public bool ClosingBalanceSigned { get; set; }
 }
 
 public sealed class LlmBankStatementPageLine
@@ -70,17 +82,66 @@ public sealed class LlmBankStatementPageLine
 }
 
 /// <summary>
+/// Options de lecture d'une page IA.
+/// </summary>
+/// <param name="AcceptDayFirstDates">
+/// Une date recopiée telle qu'imprimée (« 14/07/2026 », jour d'abord comme sur tous les relevés
+/// tunisiens) est admise en plus du format ISO. Toujours vrai en lecture 100 % IA (les dates sont
+/// recopiées telles qu'imprimées, pages scannées comprises).
+/// </param>
+/// <param name="KeepUnreadableLines">
+/// Lecture 100 % IA : une ligne au montant/à la date illisible est conservée et signalée
+/// (<see cref="StatementIssueCodes.AiLineNeedsReview"/>, bloquant) au lieu d'être abandonnée.
+/// </param>
+/// <param name="GroundingSeverity">
+/// Sévérité de <see cref="StatementIssueCodes.AiAmountNotGrounded"/> : Info sur une page scannée
+/// (le texte de recoupement est lui-même issu de l'OCR), Warning sur une page avec couche texte.
+/// </param>
+/// <param name="PeriodStart">Date de repli d'une ligne sans date lisible quand aucune ligne précédente n'existe.</param>
+/// <param name="PeriodEnd">
+/// Fin de la période imprimée : avec <paramref name="PeriodStart"/>, borne le contrôle de
+/// plausibilité des dates (ai_only uniquement — une date hors [début − 31 j ; fin + 31 j] est
+/// signalée <see cref="StatementIssueCodes.AiLineNeedsReview"/>, jamais écartée).
+/// </param>
+public sealed record BankStatementAiReadOptions(
+    bool AcceptDayFirstDates,
+    bool KeepUnreadableLines,
+    StatementIssueSeverity GroundingSeverity = StatementIssueSeverity.Warning,
+    DateOnly? PeriodStart = null,
+    DateOnly? PeriodEnd = null)
+{
+    /// <summary>Lecture historique (complément des pages non lues par la mise en page).</summary>
+    public static BankStatementAiReadOptions Legacy(bool acceptDayFirstDates) => new(acceptDayFirstDates, false);
+
+    /// <summary>Lecture 100 % IA d'une page scannée (recoupement sur texte OCR : informatif).</summary>
+    public static BankStatementAiReadOptions AiOnlyScanned(DateOnly? periodStart = null, DateOnly? periodEnd = null) =>
+        new(true, true, StatementIssueSeverity.Info, periodStart, periodEnd);
+
+    /// <summary>Lecture 100 % IA d'une page à couche texte (recoupement fiable : avertissement).</summary>
+    public static BankStatementAiReadOptions AiOnlyText(DateOnly? periodStart = null, DateOnly? periodEnd = null) =>
+        new(true, true, StatementIssueSeverity.Warning, periodStart, periodEnd);
+}
+
+/// <summary>
 /// Validation d'une page lue par l'IA : ce qui n'est pas certain devient un signalement — jamais
 /// une valeur inventée. Aucune date « du jour » par défaut, aucun montant nul ou ambigu accepté.
 /// L'ancrage vérifie que chaque montant figure dans le texte OCR de la page (quand il y en a).
 /// </summary>
 public static partial class BankStatementAiPageReader
 {
+    /// <param name="Rib">RIB lu sur la page (20 chiffres) quand le modèle vision l'a vu ; null sinon.</param>
+    /// <param name="PrintedDecimals">Décimales imprimées (mode des montants de la page) ; null si inconnu.</param>
+    /// <param name="OpeningBalanceSigned">Signe du solde d'ouverture imprimé (sinon supposé).</param>
+    /// <param name="ClosingBalanceSigned">Signe du solde de clôture imprimé (sinon supposé).</param>
     public sealed record PageReading(
         IReadOnlyList<ExtractedStatementLine> Lines,
         decimal? OpeningBalance,
         decimal? ClosingBalance,
-        IReadOnlyList<StatementExtractionIssue> Issues);
+        IReadOnlyList<StatementExtractionIssue> Issues,
+        string? Rib = null,
+        int? PrintedDecimals = null,
+        bool OpeningBalanceSigned = false,
+        bool ClosingBalanceSigned = false);
 
     public static PageReading Read(string rawLlmOutput, int pageNumber, string? ocrText) =>
         Read(rawLlmOutput, pageNumber, ocrText, acceptDayFirstDates: false);
@@ -89,7 +150,11 @@ public static partial class BankStatementAiPageReader
     /// Extraits de pages texte : une date recopiée telle qu'imprimée (« 14/07/2026 », jour d'abord comme
     /// sur tous les relevés tunisiens) est admise en plus du format ISO. Pages scannées : ISO seulement.
     /// </param>
-    public static PageReading Read(string rawLlmOutput, int pageNumber, string? ocrText, bool acceptDayFirstDates)
+    public static PageReading Read(string rawLlmOutput, int pageNumber, string? ocrText, bool acceptDayFirstDates) =>
+        Read(rawLlmOutput, pageNumber, ocrText, new BankStatementAiReadOptions(acceptDayFirstDates, KeepUnreadableLines: false));
+
+    /// <summary>Lit la sortie brute du modèle (JSON éventuellement enrobé) avec des options explicites.</summary>
+    public static PageReading Read(string rawLlmOutput, int pageNumber, string? ocrText, BankStatementAiReadOptions options)
     {
         var json = InvoiceImportParsing.ExtractFirstJsonObject(rawLlmOutput);
         LlmBankStatementPage? page = null;
@@ -105,11 +170,22 @@ public static partial class BankStatementAiPageReader
             }
         }
 
-        return Read(page, pageNumber, ocrText, acceptDayFirstDates);
+        return Read(page, pageNumber, ocrText, options);
     }
 
     /// <summary>Lit une page déjà désérialisée (vision verbatim normalisée ou texte).</summary>
-    public static PageReading Read(LlmBankStatementPage? page, int pageNumber, string? ocrText, bool acceptDayFirstDates)
+    public static PageReading Read(LlmBankStatementPage? page, int pageNumber, string? ocrText, bool acceptDayFirstDates) =>
+        Read(page, pageNumber, ocrText, new BankStatementAiReadOptions(acceptDayFirstDates, KeepUnreadableLines: false));
+
+    /// <summary>
+    /// Lecture d'une page avec options. En mode <see cref="BankStatementAiReadOptions.KeepUnreadableLines"/>
+    /// (lecture 100 % IA), une ligne au montant ou à la date illisible n'est plus abandonnée : elle est
+    /// conservée avec un signalement bloquant <see cref="StatementIssueCodes.AiLineNeedsReview"/> portant
+    /// son index de page (1-based, remappé par la fusion), pour que l'utilisateur la corrige à l'écran
+    /// plutôt que de la ressaisir. Aucune valeur n'est inventée : montant 0 et date de repli explicitement
+    /// signalés.
+    /// </summary>
+    public static PageReading Read(LlmBankStatementPage? page, int pageNumber, string? ocrText, BankStatementAiReadOptions options)
     {
         var issues = new List<StatementExtractionIssue>();
         if (page is null)
@@ -119,20 +195,42 @@ public static partial class BankStatementAiPageReader
             return new PageReading(Array.Empty<ExtractedStatementLine>(), null, null, issues);
         }
 
+        var acceptDayFirstDates = options.AcceptDayFirstDates;
         var groundingDigits = string.IsNullOrWhiteSpace(ocrText) ? null : DigitsOnlyRuns(ocrText);
         var lines = new List<ExtractedStatementLine>();
         var position = 0;
+        DateOnly? previousDate = null;
         foreach (var raw in page.Lines)
         {
             position++;
             var label = (raw.Label ?? string.Empty).Trim();
             var where = $"page {pageNumber}, ligne {position}";
+            var needsReview = new List<string>();
 
+            var hasValueDate = TryParseDate(raw.ValueDate, acceptDayFirstDates, out var valueDate);
             if (!TryParseDate(raw.Date, acceptDayFirstDates, out var date))
             {
-                issues.Add(new StatementExtractionIssue(StatementIssueCodes.LineInvalidDate, StatementIssueSeverity.Blocking,
-                    $"Date d'opération illisible ({where}).", pageNumber));
-                continue;
+                if (!options.KeepUnreadableLines)
+                {
+                    issues.Add(new StatementExtractionIssue(StatementIssueCodes.LineInvalidDate, StatementIssueSeverity.Blocking,
+                        $"Date d'opération illisible ({where}).", pageNumber));
+                    continue;
+                }
+
+                var fallback = previousDate ?? options.PeriodStart ?? (hasValueDate ? valueDate : (DateOnly?)null);
+                if (fallback is null)
+                {
+                    issues.Add(new StatementExtractionIssue(StatementIssueCodes.LineInvalidDate, StatementIssueSeverity.Blocking,
+                        $"Date d'opération illisible ({where}).", pageNumber));
+                    continue;
+                }
+
+                date = fallback.Value;
+                needsReview.Add($"date illisible : {Truncate(raw.Date, 16)}");
+            }
+            else if (options.KeepUnreadableLines && IsOutOfPeriod(date, options))
+            {
+                needsReview.Add($"date hors période du relevé : {raw.Date}");
             }
 
             var debit = raw.Debit is { } d && d != 0 ? d : (decimal?)null;
@@ -150,30 +248,51 @@ public static partial class BankStatementAiPageReader
                 amount = Math.Abs(credit.Value);
                 isDebit = credit.Value < 0;
             }
-            else
+            else if (!options.KeepUnreadableLines)
             {
                 issues.Add(new StatementExtractionIssue(StatementIssueCodes.LineAmbiguousSide, StatementIssueSeverity.Blocking,
                     $"Montant absent ou à la fois au débit et au crédit ({where}).", pageNumber));
                 continue;
+            }
+            else if (debit is not null && credit is not null)
+            {
+                amount = Math.Abs(debit.Value);
+                isDebit = true;
+                needsReview.Add("débit et crédit lus");
+            }
+            else
+            {
+                amount = 0m;
+                isDebit = true;
+                needsReview.Add("montant illisible");
             }
 
             amount = Math.Round(amount, 3, MidpointRounding.AwayFromZero);
             if (label.Length == 0)
                 label = "(libellé illisible)";
 
-            if (groundingDigits is not null && !IsGrounded(amount, groundingDigits))
+            if (amount != 0m && groundingDigits is not null && !IsGrounded(amount, groundingDigits))
             {
-                issues.Add(new StatementExtractionIssue(StatementIssueCodes.AiAmountNotGrounded, StatementIssueSeverity.Warning,
+                issues.Add(new StatementExtractionIssue(StatementIssueCodes.AiAmountNotGrounded, options.GroundingSeverity,
                     $"Montant {amount.ToString("0.000", CultureInfo.InvariantCulture)} non retrouvé dans le texte de la page ({where}) : vérifiez-le.",
                     pageNumber));
             }
 
+            if (needsReview.Count > 0)
+            {
+                var lineIndex = lines.Count + 1;
+                issues.Add(new StatementExtractionIssue(StatementIssueCodes.AiLineNeedsReview, StatementIssueSeverity.Blocking,
+                    $"Ligne {lineIndex} : {string.Join(", ", needsReview)}. Corrigez-la avant de confirmer.",
+                    pageNumber, lineIndex));
+            }
+
+            previousDate = date;
             lines.Add(new ExtractedStatementLine
             {
                 Index = 0,
                 PageNumber = pageNumber,
                 TransactionDate = date,
-                ValueDate = TryParseDate(raw.ValueDate, acceptDayFirstDates, out var valueDate) ? valueDate : null,
+                ValueDate = hasValueDate ? valueDate : null,
                 Label = label,
                 LabelLines = new[] { label },
                 Amount = amount,
@@ -182,7 +301,23 @@ public static partial class BankStatementAiPageReader
             });
         }
 
-        return new PageReading(lines, Round(page.OpeningBalance), Round(page.ClosingBalance), issues);
+        return new PageReading(
+            lines,
+            Round(page.OpeningBalance),
+            Round(page.ClosingBalance),
+            issues,
+            page.Rib,
+            page.PrintedDecimals,
+            page.OpeningBalanceSigned,
+            page.ClosingBalanceSigned);
+    }
+
+    private static string Truncate(string? value, int max)
+    {
+        var v = (value ?? string.Empty).Trim();
+        if (v.Length == 0)
+            return "vide";
+        return v.Length <= max ? v : v[..max] + "…";
     }
 
     /// <summary>
@@ -641,7 +776,12 @@ public static partial class BankStatementAiPageReader
     private static decimal? Round(decimal? value) =>
         value is { } v ? Math.Round(v, 3, MidpointRounding.AwayFromZero) : null;
 
-    private static readonly string[] DayFirstFormats = { "dd/MM/yyyy", "dd-MM-yyyy", "dd.MM.yyyy" };
+    /// <summary>Formats jour-d'abord admis : années à 4 chiffres, puis à 2 chiffres (« 05/08/26 », fréquent sur les scans).</summary>
+    private static readonly string[] DayFirstFormats =
+    {
+        "dd/MM/yyyy", "dd-MM-yyyy", "dd.MM.yyyy",
+        "dd/MM/yy", "dd-MM-yy", "dd.MM.yy"
+    };
 
     private static bool TryParseDate(string? value, bool acceptDayFirst, out DateOnly date)
     {
@@ -665,6 +805,11 @@ public static partial class BankStatementAiPageReader
     }
 
     /// <summary>Montant retrouvé dans le texte OCR, séparateurs ignorés (« 1 234,567 » ⇔ 1234567).</summary>
+    /// <summary>Date lue hors de la période imprimée élargie (± 31 jours) ; sans période connue, rien n'est signalé.</summary>
+    private static bool IsOutOfPeriod(DateOnly date, BankStatementAiReadOptions options) =>
+        (options.PeriodStart is { } start && date < start.AddDays(-31))
+        || (options.PeriodEnd is { } end && date > end.AddDays(31));
+
     private static bool IsGrounded(decimal amount, string digitRuns)
     {
         var millimes = ((long)Math.Round(amount * 1000m)).ToString(CultureInfo.InvariantCulture);

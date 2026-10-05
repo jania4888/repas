@@ -166,6 +166,21 @@ public static class StatementIssueCodes
     public const string AiNotStarted = "statement.ai_not_started";
     public const string AiRibMismatch = "statement.ai_rib_mismatch";
 
+    // ── Lecture « IA seule » (toute page de tout relevé lue par GLM-OCR) ──
+
+    /// <summary>Warning (page) : page lue par l'IA sans aucune opération.</summary>
+    public const string AiPageEmpty = "statement.ai_page_empty";
+    /// <summary>Warning (page) : lecture probablement incomplète (plafond d'opérations atteint ou réponse coupée).</summary>
+    public const string AiPageTruncated = "statement.ai_page_truncated";
+    /// <summary>Info (page) : ligne de solde/total reconnue et non importée.</summary>
+    public const string AiSummaryLineDropped = "statement.ai_summary_line_dropped";
+    /// <summary>Warning (page, LineIndex) : première ligne d'une page identique à la dernière de la précédente (report possible).</summary>
+    public const string AiPossibleDuplicate = "statement.ai_possible_duplicate";
+    /// <summary>Warning (page) : page fournie par le modèle texte après échec ou indisponibilité de GLM-OCR (D2).</summary>
+    public const string AiTextFallback = "statement.ai_text_fallback";
+    /// <summary>Blocking (page, LineIndex) : ligne conservée mais incomplète (montant, date ou sens illisible) ; à corriger ou exclure.</summary>
+    public const string AiLineNeedsReview = "statement.ai_line_needs_review";
+
     /// <summary>Le fichier contient plusieurs relevés (périodes distinctes) : à lire relevé par relevé.</summary>
     public const string MultipleStatements = "statement.multiple_statements";
     public const string TooManyStatements = "statement.too_many_statements";

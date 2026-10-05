@@ -62,7 +62,7 @@ public sealed class ProjectTimeEntryTests
     [Fact]
     public void AlreadyInvoicedHours_CannotBeInvoicedAgain()
     {
-        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, true, null, null).Value;
+        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, true, null, Guid.NewGuid()).Value;
         Assert.True(entry.Submit().IsSuccess);
         Assert.True(entry.Validate().IsSuccess);
         var invoiceId = Guid.NewGuid();
@@ -75,14 +75,14 @@ public sealed class ProjectTimeEntryTests
     [Fact]
     public void DraftHours_CannotBeInvoiced()
     {
-        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, true, null, null).Value;
+        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, true, null, Guid.NewGuid()).Value;
         Assert.True(entry.MarkInvoiced(Guid.NewGuid()).IsFailure);
     }
 
     [Fact]
     public void InvoicedHours_CannotBeReopened()
     {
-        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, true, null, null).Value;
+        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, true, null, Guid.NewGuid()).Value;
         Assert.True(entry.Submit().IsSuccess);
         Assert.True(entry.Validate().IsSuccess);
         Assert.True(entry.MarkInvoiced(Guid.NewGuid()).IsSuccess);
@@ -92,17 +92,34 @@ public sealed class ProjectTimeEntryTests
     [Fact]
     public void DraftEntry_CanBeUpdatedDeletedAndSubmitted()
     {
-        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, true, null, null).Value;
+        var taskId = Guid.NewGuid();
+        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, true, null, taskId).Value;
         Assert.True(entry.CanBeDeleted());
-        Assert.True(entry.Update(new DateTime(2026, 8, 2), 6m, false, "note", null).IsSuccess);
+        // Update réécrit TaskId : sans le repasser, la soumission échouerait (« La tâche est obligatoire »).
+        Assert.True(entry.Update(new DateTime(2026, 8, 2), 6m, false, "note", taskId).IsSuccess);
         Assert.True(entry.Submit().IsSuccess);
         Assert.Equal(ProjectTimeEntryStatus.Submitted, entry.Status);
     }
 
     [Fact]
+    public void Submit_RequiresATask_ExceptForTimeOff()
+    {
+        // Règle métier (d95bf556, « facturation sans tâche ») : un temps manuel sans tâche ne se soumet pas.
+        var noTask = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, true, null, null).Value;
+        var refused = noTask.Submit();
+        Assert.True(refused.IsFailure);
+        Assert.Contains("tâche", refused.Error.Description, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(ProjectTimeEntryStatus.Draft, noTask.Status);
+
+        var timeOff = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, false, null, null,
+            entrySource: TimesheetEntrySource.TimeOff).Value;
+        Assert.True(timeOff.Submit().IsSuccess);
+    }
+
+    [Fact]
     public void SubmittedEntry_CannotBeUpdatedOrDeleted_ButCanReopen()
     {
-        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, true, null, null).Value;
+        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, true, null, Guid.NewGuid()).Value;
         Assert.True(entry.Submit().IsSuccess);
         Assert.False(entry.CanBeDeleted());
         Assert.True(entry.Update(new DateTime(2026, 8, 2), 6m, false, null, null).IsFailure);
@@ -113,7 +130,7 @@ public sealed class ProjectTimeEntryTests
     [Fact]
     public void ValidatedEntry_CannotBeUpdatedOrDeleted_ButCanReopen()
     {
-        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, true, null, null).Value;
+        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, true, null, Guid.NewGuid()).Value;
         Assert.True(entry.Submit().IsSuccess);
         Assert.True(entry.Validate().IsSuccess);
         Assert.False(entry.CanBeDeleted());
@@ -125,7 +142,7 @@ public sealed class ProjectTimeEntryTests
     [Fact]
     public void InvoicedEntry_IsImmutable()
     {
-        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, true, null, null).Value;
+        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, true, null, Guid.NewGuid()).Value;
         Assert.True(entry.Submit().IsSuccess);
         Assert.True(entry.Validate().IsSuccess);
         Assert.True(entry.MarkInvoiced(Guid.NewGuid()).IsSuccess);
@@ -139,7 +156,7 @@ public sealed class ProjectTimeEntryTests
     [Fact]
     public void NonBillableValidatedEntry_CannotBeInvoiced()
     {
-        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, false, null, null).Value;
+        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, false, null, Guid.NewGuid()).Value;
         Assert.True(entry.Submit().IsSuccess);
         Assert.True(entry.Validate().IsSuccess);
         Assert.True(entry.MarkInvoiced(Guid.NewGuid()).IsFailure);
@@ -149,7 +166,7 @@ public sealed class ProjectTimeEntryTests
     [Fact]
     public void DraftEntry_CannotReopenToDraft()
     {
-        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, true, null, null).Value;
+        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), new DateTime(2026, 8, 1), 8m, true, null, Guid.NewGuid()).Value;
         Assert.True(entry.ReopenToDraft().IsFailure);
     }
 

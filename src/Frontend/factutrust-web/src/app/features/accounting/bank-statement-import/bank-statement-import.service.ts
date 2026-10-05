@@ -8,6 +8,7 @@ import {
   BankStatementImportCapabilities,
   BankStatementImportSession,
   BankStatementProposals,
+  ConfirmBankStatementImportRequest,
   ConfirmResult,
   GenerateItem,
   GenerateResult
@@ -76,8 +77,24 @@ export class BankStatementImportService {
     );
   }
 
-  confirm(id: string): Observable<ConfirmResult> {
-    return this.unwrap(this.http.post<ApiEnvelope<ConfirmResult>>(`${this.base}/sessions/${id}/confirm`, { corrections: [] }, { context: this.context }));
+  /**
+   * Relance la lecture complète du fichier sur le même compte (IA indisponible avant lancement,
+   * session en échec) ; renvoie la nouvelle session.
+   */
+  retry(sessionId: string): Observable<BankStatementImportSession> {
+    return this.unwrap(
+      this.http.post<ApiEnvelope<BankStatementImportSession>>(`${this.base}/sessions/${sessionId}/retry`, {}, { context: this.context })
+    );
+  }
+
+  /**
+   * Enregistre le relevé avec les corrections de lignes ; `acknowledgeBalanceWarning` n'est émis
+   * que lorsqu'il vaut vrai (accusé explicite de l'écart de solde, D4).
+   */
+  confirm(id: string, request: ConfirmBankStatementImportRequest = { corrections: [] }): Observable<ConfirmResult> {
+    const body: ConfirmBankStatementImportRequest = { corrections: request.corrections ?? [] };
+    if (request.acknowledgeBalanceWarning === true) body.acknowledgeBalanceWarning = true;
+    return this.unwrap(this.http.post<ApiEnvelope<ConfirmResult>>(`${this.base}/sessions/${id}/confirm`, body, { context: this.context }));
   }
 
   proposals(statementId: string): Observable<BankStatementProposals> {

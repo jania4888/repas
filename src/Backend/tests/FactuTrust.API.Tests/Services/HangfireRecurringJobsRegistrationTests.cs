@@ -12,7 +12,8 @@ namespace FactuTrust.API.Tests.Services;
 /// <c>Jobs</c> (classe <see langword="internal"/>, visible via <c>InternalsVisibleTo</c>) : le 15ᵉ
 /// descripteur est le job des workflows Studio — cron de 10 minutes partagé via
 /// <see cref="StudioWorkflowResumeJob.StudioWorkflowResumeCron"/>, sans concurrence ni retry (attributs
-/// lus sur la méthode <c>ExecuteAsync</c>).
+/// lus sur la méthode <c>ExecuteAsync</c>). Le 16ᵉ descripteur est la purge des demandes de contact
+/// publiques (PR « public-contact », <c>purge-public-contact-requests</c>).
 /// </summary>
 public sealed class HangfireRecurringJobsRegistrationTests
 {
@@ -32,8 +33,12 @@ public sealed class HangfireRecurringJobsRegistrationTests
     }
 
     [Fact]
-    public void Registers_exactly_15_recurring_jobs()
-        => Assert.Equal(15, JobDescriptors().Count);
+    public void Registers_exactly_16_recurring_jobs()
+        => Assert.Equal(16, JobDescriptors().Count);
+
+    [Fact]
+    public void Public_contact_purge_job_is_registered()
+        => Assert.Contains("purge-public-contact-requests", JobDescriptors().Select(JobIdOf));
 
     [Fact]
     public void Job_ids_are_unique()

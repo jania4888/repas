@@ -128,7 +128,7 @@ public static class LlmOutputSchemas
             "closingBalance": { "type": ["string","null"], "maxLength": 32 },
             "lines": {
               "type": "array",
-              "maxItems": 80,
+              "maxItems": 120,
               "items": {
                 "type": "object",
                 "properties": {

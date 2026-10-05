@@ -342,12 +342,19 @@ SMOKE_URL=https://VOTRE_DOMAINE bash deploy/scripts/smoke-test.sh https://VOTRE_
 > **Ne pas tuer de conteneur pendant ce temps** : c'est exactement la fenêtre où l'on
 > interrompt un `MigrateAsync`.
 
-### Modèle de vision d'import — installation manuelle obligatoire
+### Modèle de vision GLM-OCR (import de facture **et** de relevés) — installation manuelle obligatoire
+
+Le même modèle sert à deux fonctions : l'import de facture par photo
+(`Ollama__InvoiceImportVisionModel`) et la lecture de **toutes les pages de tout relevé
+bancaire** (`Ollama__BankStatementImportVisionModel`, lecture « IA seule », repli texte page par
+page sur `qwen2.5:7b-instruct`). Les **deux clés** portent le même identifiant que celui donné à
+`ollama create` ci-dessous ; une clé relevé vide ferait hériter du modèle facture, ce qui est
+toléré par le code mais interdit en production (test `BankStatementVisionSettingsConsistencyTests`).
 
 `pull-ollama-models.sh` **ne télécharge pas** `hf.co/ggml-org/GLM-OCR-GGUF:Q8_0` : il se
-contente de vérifier sa présence. Ollama refuse la redirection de Hugging Face vers son CDN
-Xet (`blocked redirect to a different host`), donc `ollama pull hf.co/...` échoue sur cet
-hôte. Le modèle s'installe en trois temps.
+contente de vérifier sa présence **et** sa capacité vision (`ollama show`). Ollama refuse la
+redirection de Hugging Face vers son CDN Xet (`blocked redirect to a different host`), donc
+`ollama pull hf.co/...` échoue sur cet hôte. Le modèle s'installe en trois temps.
 
 **1. Télécharger les DEUX fichiers.** Le projecteur `mmproj` n'est pas optionnel : sans lui,
 le modèle démarre mais **ignore les images** — il produirait alors un JSON inventé, ce qui
@@ -366,7 +373,8 @@ curl -s https://huggingface.co/api/models/ggml-org/GLM-OCR-GGUF/tree/main | tr '
 Les empreintes doivent correspondre aux `oid` LFS renvoyés par l'API. C'est le seul contrôle
 d'approvisionnement de la chaîne : ne pas le sauter.
 
-**2. Créer le modèle sous le nom exact attendu par `appsettings.Production.json`.**
+**2. Créer le modèle sous le nom exact attendu par `appsettings.Production.json`** (clés
+`InvoiceImportVisionModel` **et** `BankStatementImportVisionModel`).
 
 ```bash
 docker exec factutrust-ollama mkdir -p /root/.ollama/import
@@ -378,19 +386,31 @@ FROM /root/.ollama/import/mmproj-GLM-OCR-Q8_0.gguf
 docker exec factutrust-ollama ollama create 'hf.co/ggml-org/GLM-OCR-GGUF:Q8_0' -f /root/.ollama/import/Modelfile
 ```
 
-**3. Prouver que la vision fonctionne — porte bloquante.**
+**3. Prouver que la vision fonctionne — porte bloquante, trois contrôles.**
 
 ```bash
+# (a) la capacité vision est annoncée (sinon : projecteur mmproj absent, images ignorées)
 docker exec factutrust-ollama ollama show 'hf.co/ggml-org/GLM-OCR-GGUF:Q8_0'   # doit annoncer « vision »
+# (c) le script de provisionnement est vert, en mode vérification (aucun téléchargement)
+VERIFY_ONLY_MODE=1 COMPOSE_EXTRA_FILE=deploy/docker-compose.vps.yml bash deploy/scripts/pull-ollama-models.sh
 ```
 
-Puis un test différentiel : le même prompt envoyé **avec** puis **sans** `images:[...]` doit
-donner des réponses **différentes**, et la première doit restituer du texte réellement
+(b) Puis un test différentiel : le même prompt envoyé **avec** puis **sans** `images:[...]`
+doit donner des réponses **différentes**, et la première doit restituer du texte réellement
 présent sur l'image. Si ce n'est pas le cas, le projecteur n'est pas câblé.
+
+Les trois contrôles doivent passer : `ollama show` dit « vision » **et** le test différentiel
+restitue l'image **et** `pull-ollama-models.sh` est vert. Une fois l'API démarrée, le contrôle
+`ollama-bank-statement-vision` de `GET /api/platform/ops/health` (administrateur plateforme)
+doit être `Healthy` ; `Degraded` = modèle absent ou sans mémoire (l'import de relevés se
+replie sur le modèle texte et le dit) ; `Unhealthy` = moteur IA injoignable. Le journal de
+démarrage de l'API porte aussi le résultat (« Modèle vision des relevés … prêt » ou avertissement).
 
 **Repli** si la porte échoue : `ollama pull glm-ocr:q8_0` — mêmes poids, même quantification,
 distribué par la bibliothèque officielle Ollama et étiqueté `vision`, projecteur inclus. Il
-faut alors aligner `Ollama__InvoiceImportVisionModel=glm-ocr:q8_0` dans `deploy/.env`.
+faut alors aligner les **deux** clés dans `deploy/.env` :
+`Ollama__InvoiceImportVisionModel=glm-ocr:q8_0` **et**
+`Ollama__BankStatementImportVisionModel=glm-ocr:q8_0`, puis `docker compose up -d api`.
 
 Enfin, libérer les ~1,4 Go de fichiers intermédiaires des deux côtés :
 
@@ -405,6 +425,16 @@ rm -rf /opt/factutrust/glm-ocr
 > **renonce** au contrôle de faisabilité mémoire (le contrôle « modèle installé » demeure).
 > Avec une valeur *fausse* — par exemple la RAM de l'hôte au lieu de la limite du conteneur —
 > le contrôle laisserait passer des modèles qu'Ollama ne peut pas charger.
+
+> **Dimensionnement avec les relevés (conteneur `ollama` 12 Go, processeur seul).** Résidents
+> possibles : `qwen2.5:3b-instruct` ≈ 2 Go ; `qwen2.5:7b-instruct` ≈ 5,5 Go + cache KV 16 k
+> ≈ 1,5 Go ; GLM-OCR Q8 0,95 Go + projecteur 0,48 Go + activations ≈ 1,5 Go, soit ≈ 3 Go.
+> Pire cas pendant un relevé avec repli texte : GLM-OCR + 7b ≈ 10 Go (le 3b est évincé par
+> `OLLAMA_MAX_LOADED_MODELS=2`). **Ne pas passer à 3.** Un relevé de 20 pages (plafond
+> `MaxAiPages`) occupe le moteur jusqu'à une heure (≈ 180 s par page) : le chat et l'import
+> de facture attendent derrière le créneau unique (`Ollama__MaxConcurrentGenerations=1`,
+> `Accounting__BankStatementImport__AiWorkerCount=1`). Réglages et retour arrière :
+> `docs/runbooks/bank-statement-ai-import-cutover.md`.
 
 ---
 
@@ -559,6 +589,7 @@ rien avant les migrations et publiait les fronts avant l'API.
 | 6. Archivage | image API en service exportée (`docker save`) et volumes statiques archivés dans `/opt/factutrust/rollback/` — la purge nocturne Hostinger efface les anciennes images |
 | 7. Bascule | `src` → `src-old`, `src-next` → `src`, redémarrage de l'**API seule** |
 | 8. Porte GO/NO-GO | 0 `FATAL`, migration et semis confirmés, nouvelles migrations master **présentes en base**, refresh bidon → **401**, drapeaux en `Production`, 0 `ERR`/`FTL`, bonne image en service |
+| 8 bis. Modèles Ollama | `pull-ollama-models.sh` en mode vérification (`VERIFY_ONLY_MODE=1`, aucun téléchargement) : modèles présents et capacité vision de GLM-OCR annoncée. **Non bloquant**, mais un `[ECHEC]` ici = import de facture par photo et import de relevés bancaires en panne annoncée (voir § 4) |
 | 9. Fronts | publiés **après** l'API |
 | 10. Internet | `/`, `/admin/`, `/health/ready` → 200, `/api/auth/me` → 401, `/hangfire` → 404 |
 
@@ -638,6 +669,7 @@ restaurer les volumes statiques depuis leurs archives, puis les bases si une mig
 | **Code-barres** | back `true`, front `false` | rampe volontaire, voir `docs/runbooks/barcode-cutover.md` |
 | **WhatsApp** | `false` des deux côtés | l'image est construite avec `PUPPETEER_SKIP_DOWNLOAD=1` : activer exige d'ajouter Chromium |
 | **Vérification d'e-mail** | `RequireConfirmedEmail=false`, `BlockLoginIfUnverified=false` | un compte non vérifié peut se connecter |
+| **Relevés bancaires par GLM-OCR** | `Accounting:BankStatementImport:AiOnlyReadingEnabled=true`, `AiBalanceMismatchAsWarning=true`, `VisionReadingEnabled=true` dans `appsettings.Production.json` ; **requiert GLM-OCR installé** (§ 4) sinon l'import de relevés annonce l'IA indisponible | déploiement à comportement constant : `Accounting__BankStatementImport__AiOnlyReadingEnabled=false` et `__AiBalanceMismatchAsWarning=false` dans `deploy/.env` jusqu'au feu vert de la recette D5, puis pilote par `__AiPilotTenantIds__0`. Voir [`docs/runbooks/bank-statement-ai-import-cutover.md`](../docs/runbooks/bank-statement-ai-import-cutover.md) |
 
 La direction dangereuse est **front ON / back OFF** (503 sur tout le module). L'état livré
 est dans le bon sens partout.

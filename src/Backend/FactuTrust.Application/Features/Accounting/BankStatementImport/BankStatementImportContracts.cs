@@ -23,8 +23,20 @@ public interface IBankStatementImportService
     /// <summary>Pièce justificative d'un relevé enregistré par ce parcours (fichier d'origine).</summary>
     Task<Result<BankStatementSourceFile>> GetSourceFileAsync(Guid statementId, CancellationToken cancellationToken = default);
 
-    /// <summary>Relance l'analyse du fichier d'une session sur un autre compte bancaire (ex. RIB corrigé).</summary>
+    /// <summary>
+    /// Relance l'analyse du fichier d'une session sur un autre compte bancaire (ex. RIB corrigé).
+    /// Session <c>AwaitingReview</c> ou <c>Failed</c> seulement, compte différent du compte courant ;
+    /// le contrôle « une analyse par dossier » (409) est fait AVANT d'annuler la session d'origine.
+    /// </summary>
     Task<Result<BankStatementImportSessionDto>> RetargetAsync(Guid sessionId, Guid bankAccountId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Relance la lecture complète du fichier d'une session sur le même compte. Autorisé seulement
+    /// pour une session relançable : <c>AwaitingReview</c> avec signalement bloquant
+    /// <c>statement.ai_unavailable</c> (IA indisponible avant lancement) ou <c>Failed</c> avec un code
+    /// <see cref="BankStatementImportSessionErrorCodes.Relaunchable"/>.
+    /// </summary>
+    Task<Result<BankStatementImportSessionDto>> RetryAsync(Guid sessionId, CancellationToken cancellationToken = default);
 }
 
 /// <param name="FileName">Nom d'origine assaini (affichage et téléchargement seulement, jamais un chemin).</param>
@@ -52,6 +64,14 @@ public sealed record ConfirmBankStatementImportRequest
     /// auditées. Vide dans le cas courant.
     /// </summary>
     public IReadOnlyList<StatementLineCorrection> Corrections { get; init; } = Array.Empty<StatementLineCorrection>();
+
+    /// <summary>
+    /// Accusé explicite (D4) : l'utilisateur confirme l'import d'un relevé lu entièrement par l'IA dont
+    /// le contrôle de solde reste en avertissement (écart au millime, solde non lu). Exigé quand
+    /// <see cref="BankStatementImportSessionDto.RequiresBalanceAcknowledgement"/> est vrai ; sinon
+    /// ignoré. L'écart lui-même est recalculé côté serveur, jamais reçu du client.
+    /// </summary>
+    public bool AcknowledgeBalanceWarning { get; init; }
 }
 
 public sealed record StatementLineCorrection
@@ -61,6 +81,13 @@ public sealed record StatementLineCorrection
     public decimal? Amount { get; init; }
     public bool? IsDebit { get; init; }
     public string? Label { get; init; }
+
+    /// <summary>
+    /// Retire la ligne du relevé (ligne IA fantôme, total de page lu comme une opération…). Les
+    /// autres champs sont ignorés ; les lignes suivantes sont réindexées. Jamais sur une ligne
+    /// de lecture déterministe.
+    /// </summary>
+    public bool Exclude { get; init; }
 }
 
 public sealed record ConfirmBankStatementImportResult(Guid StatementId, int LineCount, int AlreadyImportedCount);
@@ -75,7 +102,10 @@ public sealed record BankStatementImportSessionDto
     public string FileName { get; init; } = string.Empty;
     public int PageCount { get; init; }
 
-    /// <summary>« layout », « layout+ai » ou « ai ».</summary>
+    /// <summary>
+    /// Méthode de lecture (<see cref="BankStatementImportExtractionMethods"/>) : « layout »,
+    /// « layout+ai », « ai » (historique) ; « ai-vision », « ai-text », « none » en lecture IA seule.
+    /// </summary>
     public string? ExtractionMethod { get; init; }
 
     public string? ProfileId { get; init; }
@@ -91,6 +121,14 @@ public sealed record BankStatementImportSessionDto
 
     /// <summary>Vrai si la confirmation est possible (aucun signalement bloquant).</summary>
     public bool CanConfirm { get; init; }
+
+    /// <summary>
+    /// Vrai quand la confirmation exige l'accusé explicite de l'utilisateur
+    /// (<see cref="ConfirmBankStatementImportRequest.AcknowledgeBalanceWarning"/>) : relevé lu
+    /// entièrement par l'IA dont un contrôle de solde reste en avertissement. Calculé côté
+    /// serveur ; le front ne dérive rien.
+    /// </summary>
+    public bool RequiresBalanceAcknowledgement { get; init; }
 
     /// <summary>Rang (1…N) du relevé dans un fichier qui en contient plusieurs ; null = fichier d'un seul relevé.</summary>
     public int? SegmentIndex { get; init; }
@@ -171,6 +209,20 @@ public sealed record BankStatementImportCapabilitiesDto(
 
     /// <summary><c>vision</c> (GLM-OCR) ou <c>text</c> lorsque l'IA est disponible.</summary>
     public string? AiEngine { get; init; }
+
+    /// <summary>
+    /// Pourquoi aucune lecture IA n'est possible (<see cref="BankStatementAiAvailabilityReasons"/> :
+    /// <c>engine_unavailable</c>, <c>external_not_allowed</c>, <c>text_model_unavailable</c>) ;
+    /// null quand l'IA est disponible.
+    /// </summary>
+    public string? AiUnavailableReason { get; init; }
+
+    /// <summary>
+    /// Pourquoi le modèle vision (GLM-OCR) n'est pas prêt alors que l'IA reste disponible via le
+    /// modèle texte (message lisible, sans secret) ; null quand GLM-OCR est prêt ou que l'IA est
+    /// indisponible.
+    /// </summary>
+    public string? VisionUnavailableReason { get; init; }
 }
 
 /// <summary>Codes d'erreur stables de l'import (testés par le front, traduits côté API).</summary>
@@ -193,4 +245,10 @@ public static class BankStatementImportErrorCodes
     public const string CorrectionNotAllowed = "bank_statement_import.correction_not_allowed";
     public const string Storage = "bank_statement_import.storage";
     public const string SourceFileNotFound = "bank_statement_import.source_file_not_found";
+
+    /// <summary>Avertissement de solde (D4) sans <c>AcknowledgeBalanceWarning</c> : HTTP 400.</summary>
+    public const string BalanceWarningNotAcknowledged = "bank_statement_import.balance_warning_not_acknowledged";
+
+    /// <summary>Re-ciblage vers le compte déjà analysé : HTTP 400 (utiliser la relance).</summary>
+    public const string SameBankAccount = "bank_statement_import.same_bank_account";
 }

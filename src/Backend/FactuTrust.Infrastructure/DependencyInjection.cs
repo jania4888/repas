@@ -764,6 +764,10 @@ public static class DependencyInjection
         if (!IsDesignTime())
         {
             services.AddHostedService<OcrStartupCheckHostedService>();
+            // Modèle vision des relevés bancaires (GLM-OCR) : contrôle journalisé ~15 s après le
+            // démarrage, jamais bloquant. Le contrôle de santé « ollama-bank-statement-vision »
+            // (OllamaVisionModelHealthCheck) est enregistré dans Program.cs (AddHealthChecks).
+            services.AddHostedService<OllamaVisionModelStartupCheckHostedService>();
             services.AddHostedService<OllamaKeepAliveService>();
             services.AddHostedService<StorefrontProjectionSyncService>();
         }

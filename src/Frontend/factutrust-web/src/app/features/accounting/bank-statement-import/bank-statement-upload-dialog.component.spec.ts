@@ -203,6 +203,52 @@ describe('BankStatementUploadDialogComponent', () => {
       expect(text()).toContain('rapprochement bancaire');
     });
 
+    it('annonce la lecture page par page par GLM-OCR', async () => {
+      await open([account({ id: 'ok' })], { ...capabilities, aiProviderKind: 'local', allDocumentsViaAi: true, aiEngine: 'vision' }, { origin: 'reconciliation' });
+
+      expect(text()).toContain('GLM-OCR');
+      expect(text()).toContain('une à trois minutes par page');
+      expect(document.body.querySelector('.bsu-hint--blocked')).toBeNull();
+    });
+
+    it('prévient que GLM-OCR est indisponible et que le modèle texte prend le relais', async () => {
+      await open(
+        [account({ id: 'ok' })],
+        { ...capabilities, aiProviderKind: 'local', allDocumentsViaAi: true, aiEngine: 'text', visionUnavailableReason: 'vision_model_unavailable' },
+        { origin: 'reconciliation' }
+      );
+
+      expect(text()).toContain('GLM-OCR est indisponible');
+      expect(text()).toContain('modèle texte local');
+      expect(component.aiBlocked()).toBeFalse();
+    });
+
+    it('suspend l’import quand l’IA de lecture est indisponible et que tout passe par elle', async () => {
+      await open([account({ id: 'ok' })], { ...capabilities, aiAvailable: false, aiProviderKind: 'local', allDocumentsViaAi: true, aiEngine: null }, { origin: 'reconciliation' });
+
+      select(pdf);
+
+      const alert = document.body.querySelector('.bsu-hint--blocked');
+      expect(alert?.getAttribute('role')).toBe('alert');
+      expect(alert?.textContent).toContain('import de relevés est suspendu');
+      expect(component.aiBlocked()).toBeTrue();
+      expect(component.file()).toBe(pdf);
+      expect(component.bankAccountId).toBe('ok');
+      expect(component.journalCode).toBe('JB');
+      expect(component.canAnalyze()).toBeFalse();
+    });
+
+    it('garde l’analyse possible sans IA quand seuls les PDF scannés en dépendent (chemin historique)', async () => {
+      await open([account({ id: 'ok' })], { ...capabilities, aiAvailable: false, allDocumentsViaAi: false });
+
+      select(pdf);
+
+      expect(text()).toContain('seuls les PDF à texte sont acceptés');
+      expect(document.body.querySelector('.bsu-hint--blocked')).toBeNull();
+      expect(component.aiBlocked()).toBeFalse();
+      expect(component.canAnalyze()).toBeTrue();
+    });
+
     it('prévient qu’un compte hors dinars n’est pas pris en charge', async () => {
       await open([account({ id: 'euros', currency: 'EUR', isDefault: true })]);
 

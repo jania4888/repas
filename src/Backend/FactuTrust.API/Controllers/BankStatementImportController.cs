@@ -74,7 +74,7 @@ public sealed class BankStatementImportController : ControllerBase
             AiAvailable: ai?.Available == true,
             AiProviderKind: ai?.Available == true ? ai.ProviderKind : null,
             MaxFileBytes: _settings.BankStatementImport.MaxFileBytes,
-            MaxPages: _settings.BankStatementImport.MaxPages,
+            MaxPages: _settings.BankStatementImport.EffectiveMaxPages,
             AcceptedExtensions: new[] { ".pdf", ".png", ".jpg", ".jpeg", ".webp" },
             RecognizedBanks: _profiles.Profiles
                 .Where(p => p.Id != BankStatementProfileRegistry.GenericProfileId && p.BankName is not null)
@@ -83,7 +83,11 @@ public sealed class BankStatementImportController : ControllerBase
                 .ToArray())
         {
             AllDocumentsViaAi = _settings.IsAiForAllDocumentsEnabledFor(_tenantContext.TenantId),
-            AiEngine = ai?.Available == true ? ai.Engine : null
+            AiEngine = ai?.Available == true ? ai.Engine : null,
+            AiUnavailableReason = canUseAi && ai?.Available != true
+                ? ai?.ReasonCode ?? BankStatementAiAvailabilityReasons.EngineUnavailable
+                : null,
+            VisionUnavailableReason = ai?.Available == true ? ai.VisionUnavailableReason : null
         }));
     }
 
@@ -95,6 +99,24 @@ public sealed class BankStatementImportController : ControllerBase
         if (!_settings.BankStatementAiPostingEnabled)
             return NotFound();
         var result = await _service.RetargetAsync(id, request.BankAccountId, cancellationToken);
+        return result.IsSuccess
+            ? Ok(ApiResponse<BankStatementImportSessionDto>.Ok(result.Value))
+            : Failure(result.Error);
+    }
+
+    /// <summary>
+    /// Relance la lecture d'une session dont l'IA était indisponible, interrompue ou en échec (D3) :
+    /// même fichier, même compte, nouvelle session ; la session d'origine est annulée seulement si la
+    /// relance est acceptée. Aucun paramètre : le modèle n'est jamais choisi par le client.
+    /// </summary>
+    [HttpPost("sessions/{id:guid}/retry")]
+    [Authorize(Policy = PermissionPolicies.AccountingCreate)]
+    [EnableRateLimiting("ai")]
+    public async Task<IActionResult> Retry(Guid id, CancellationToken cancellationToken)
+    {
+        if (!_settings.BankStatementAiPostingEnabled)
+            return NotFound();
+        var result = await _service.RetryAsync(id, cancellationToken);
         return result.IsSuccess
             ? Ok(ApiResponse<BankStatementImportSessionDto>.Ok(result.Value))
             : Failure(result.Error);

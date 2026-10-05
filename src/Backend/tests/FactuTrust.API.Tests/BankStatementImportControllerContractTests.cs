@@ -46,6 +46,8 @@ public sealed class BankStatementImportControllerContractTests
 
     [Theory]
     [InlineData("Start")]
+    [InlineData("Retarget")]
+    [InlineData("Retry")]
     [InlineData("Cancel")]
     [InlineData("Confirm")]
     [InlineData("ClassifyWithAi")]
@@ -55,6 +57,8 @@ public sealed class BankStatementImportControllerContractTests
 
     [Theory]
     [InlineData("Start")]
+    [InlineData("Retarget")]
+    [InlineData("Retry")]
     [InlineData("ClassifyWithAi")]
     public void Ai_actions_are_rate_limited(string action) =>
         Assert.Equal("ai", Action(action).GetCustomAttribute<EnableRateLimitingAttribute>()?.PolicyName);

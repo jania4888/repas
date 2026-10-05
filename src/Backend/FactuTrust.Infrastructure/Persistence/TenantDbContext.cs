@@ -4216,6 +4216,8 @@ public partial class TenantDbContext : DbContext
             entity.Property(e => e.SourceFileName).HasMaxLength(260);
             entity.Property(e => e.SourceFileHash).HasMaxLength(64);
             entity.Property(e => e.ImportMethod).HasConversion<int>();
+            entity.Property(e => e.BalanceDifference).HasPrecision(18, 3);
+            entity.Property(e => e.BalanceAcknowledged).HasDefaultValue(false);
             entity.HasOne<BankAccount>()
                 .WithMany()
                 .HasForeignKey(e => e.BankAccountId)

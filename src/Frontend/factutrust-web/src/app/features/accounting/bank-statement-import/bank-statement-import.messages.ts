@@ -36,6 +36,12 @@ export function importErrorMessage(code: string | null | undefined): string {
       return $localize`:@@accounting.bank-statement-import.ts.cette.analyse.n.est.plus.en.attente.de.relecture.6be1d24c:Cette analyse n'est plus en attente de relecture.`;
     case 'bank_statement_import.blocking_issues':
       return $localize`:@@accounting.bank-statement-import.ts.le.releve.ne.peut.pas.etre.enregistre.tant.que.d.990f3df2:Le relevé ne peut pas être enregistré tant que des contrôles bloquants subsistent.`;
+    case 'bank_statement_import.balance_warning_not_acknowledged':
+      return $localize`:@@accounting.bank-statement-import.ts.confirmez.l.ecart.de.solde:L'enregistrement nécessite de confirmer l'écart de solde.`;
+    case 'bank_statement_import.correction_not_allowed':
+      return $localize`:@@accounting.bank-statement-import.ts.ligne.non.corrigeable:Cette ligne ne peut pas être corrigée : elle a été lue directement dans le PDF.`;
+    case 'bank_statement_import.same_bank_account':
+      return $localize`:@@accounting.bank-statement-import.ts.compte.identique.relance:Ce relevé est déjà analysé sur ce compte bancaire : utilisez « Relancer l'analyse » pour le relire.`;
     case 'bank_statement_import.storage':
       return $localize`:@@accounting.bank-statement-import.ts.le.fichier.n.a.pas.pu.etre.enregistre.sur.le.ser.598253f0:Le fichier n'a pas pu être enregistré sur le serveur.`;
     case 'bank_statement_posting.statement_not_found':
@@ -154,8 +160,51 @@ export function issueTitle(code: string): string {
       return $localize`:@@accounting.bank-statement-import.ts.solde.d.ouverture.discontinu.26349909:Solde d'ouverture discontinu`;
     case 'statement.no_transactions':
       return $localize`:@@accounting.bank-statement-import.ts.aucune.operation.trouvee.b492f86f:Aucune opération trouvée`;
+    case 'statement.ai_page_empty':
+      return $localize`:@@accounting.bank-statement-import.ts.page.sans.operation:Page sans opération`;
+    case 'statement.ai_page_truncated':
+      return $localize`:@@accounting.bank-statement-import.ts.page.peut.etre.incomplete:Page peut-être incomplète`;
+    case 'statement.ai_summary_line_dropped':
+      return $localize`:@@accounting.bank-statement-import.ts.ligne.de.solde.non.importee:Ligne de solde non importée`;
+    case 'statement.ai_possible_duplicate':
+      return $localize`:@@accounting.bank-statement-import.ts.doublon.possible.entre.deux.pages:Doublon possible entre deux pages`;
+    case 'statement.ai_text_fallback':
+      return $localize`:@@accounting.bank-statement-import.ts.page.relue.par.le.modele.texte:Page relue par le modèle texte`;
+    case 'statement.ai_line_needs_review':
+      return $localize`:@@accounting.bank-statement-import.ts.ligne.a.corriger:Ligne à corriger`;
+    case 'statement.line_ambiguous_side':
+      return $localize`:@@accounting.bank-statement-import.ts.sens.d.une.operation.incertain:Sens d'une opération incertain`;
+    case 'statement.currency_not_found':
+      return $localize`:@@accounting.bank-statement-import.ts.devise.non.trouvee.sur.le.releve:Devise non trouvée sur le relevé`;
+    case 'statement.line_invalid_date':
+      return $localize`:@@accounting.bank-statement-import.ts.date.d.operation.illisible:Date d'opération illisible`;
+    case 'statement.orphan_amount':
+      return $localize`:@@accounting.bank-statement-import.ts.montant.sans.operation.associee:Montant sans opération associée`;
+    case 'statement.line_no_amount':
+      return $localize`:@@accounting.bank-statement-import.ts.operation.sans.montant:Opération sans montant`;
+    case 'statement.line_several_amounts':
+      return $localize`:@@accounting.bank-statement-import.ts.plusieurs.montants.sur.une.operation:Plusieurs montants sur une opération`;
+    case 'statement.assumed_balance_sign':
+      return $localize`:@@accounting.bank-statement-import.ts.signe.d.un.solde.suppose:Signe d'un solde supposé`;
     default:
       return $localize`:@@accounting.bank-statement-import.ts.signalement.19e0c078:Signalement`;
+  }
+}
+
+/**
+ * Explication d'une session `Failed` d'après son code d'échec (jamais d'après le texte serveur) ;
+ * chaîne vide pour un code inconnu ou absent (la carte garde alors son titre générique).
+ */
+export function sessionFailureMessage(code: string | null | undefined): string {
+  switch (code) {
+    case 'ai_unavailable':
+      return $localize`:@@accounting.bank-statement-import.ts.echec.ia.indisponible:L'IA de lecture (GLM-OCR) est indisponible sur le serveur : aucune page n'a été lue. Réessayez plus tard ou contactez l'administrateur.`;
+    case 'ai_timeout':
+      return $localize`:@@accounting.bank-statement-import.ts.echec.ia.delai.depasse:La lecture a dépassé le temps alloué. Réessayez avec un relevé plus court ou plus tard.`;
+    case 'ai_failed':
+      return $localize`:@@accounting.bank-statement-import.ts.echec.ia.lecture:La lecture par l'IA a échoué. Réessayez ; si le problème persiste, contactez l'administrateur.`;
+    default:
+      return '';
   }
 }
 

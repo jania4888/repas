@@ -4,7 +4,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { BankStatementReviewComponent } from './bank-statement-review.component';
-import { BankAccountService } from '@core/services/bank-account.service';
+import { BankAccountDto, BankAccountService } from '@core/services/bank-account.service';
 import { BankStatementImportError, BankStatementImportService } from './bank-statement-import.service';
 import { EntryReferenceStore } from '../manual-entry/services/entry-reference.store';
 import { ConfirmationService } from '@core/services/confirmation.service';
@@ -14,8 +14,11 @@ import { PERMISSIONS } from '@core/config/permission-keys';
 import { ThirdPartyRef } from '../manual-entry/models/entry-form.model';
 import {
   BankLineProposal,
+  BankStatementAiPlan,
   BankStatementImportSession,
+  BankStatementPageReading,
   BankStatementProposals,
+  ExtractedStatementLine,
   GenerateItem,
   GenerateResult
 } from './bank-statement-import.models';
@@ -132,6 +135,8 @@ describe('BankStatementReviewComponent', () => {
   let params: BehaviorSubject<ReturnType<typeof convertToParamMap>>;
   let employees: jasmine.SpyObj<EmployeeService>;
   let permissions: string[];
+  let bankAccounts: Partial<BankAccountDto>[];
+  let confirmation: { confirm: jasmine.Spy };
   const thirdPartySuggestions = signal<ThirdPartyRef[]>([]);
 
   const refs = {
@@ -155,10 +160,10 @@ describe('BankStatementReviewComponent', () => {
         provideRouter([]),
         { provide: ActivatedRoute, useValue: activatedRoute },
         { provide: BankStatementImportService, useValue: api },
-        { provide: ConfirmationService, useValue: { confirm: (c: { accept?: () => void }) => c.accept?.() } },
+        { provide: ConfirmationService, useValue: confirmation },
         { provide: AuthService, useValue: { hasPermission: (p: string) => permissions.includes(p) } },
         { provide: EmployeeService, useValue: employees },
-        { provide: BankAccountService, useValue: { list: () => of({ success: true, data: [] }) } }
+        { provide: BankAccountService, useValue: { list: () => of({ success: true, data: bankAccounts }) } }
       ]
     })
       .overrideComponent(BankStatementReviewComponent, { set: { providers: [{ provide: EntryReferenceStore, useValue: refs }] } })
@@ -173,6 +178,8 @@ describe('BankStatementReviewComponent', () => {
 
   beforeEach(() => {
     permissions = [PERMISSIONS.accounting.create];
+    bankAccounts = [];
+    confirmation = { confirm: jasmine.createSpy('confirm').and.callFake((c: { accept?: () => void }) => c.accept?.()) };
     thirdPartySuggestions.set([]);
     api = jasmine.createSpyObj<BankStatementImportService>('BankStatementImportService', [
       'capabilities',
@@ -182,7 +189,9 @@ describe('BankStatementReviewComponent', () => {
       'proposals',
       'classifyWithAi',
       'generate',
-      'sourceFile'
+      'sourceFile',
+      'retry',
+      'retarget'
     ]);
     api.capabilities.and.returnValue(of(null));
     employees = jasmine.createSpyObj<EmployeeService>('EmployeeService', ['list']);
@@ -201,7 +210,7 @@ describe('BankStatementReviewComponent', () => {
 
     component.confirmStatement();
 
-    expect(api.confirm).toHaveBeenCalledOnceWith('s-1');
+    expect(api.confirm).toHaveBeenCalledOnceWith('s-1', { corrections: [] });
     expect(router.navigate).toHaveBeenCalledWith(['/accounting/bank-statement-import/statement', 'st-9'], jasmine.objectContaining({ replaceUrl: true }));
   });
 
@@ -373,6 +382,399 @@ describe('BankStatementReviewComponent', () => {
 
     const extras = (router.navigate as jasmine.Spy).calls.mostRecent().args[1];
     expect(extras.state.pendingSiblings.map((x: { id: string }) => x.id)).toEqual(['s-2']);
+  });
+
+  // ── Lecture IA seule (GLM-OCR page par page) ──────────────────────────────────────────
+
+  describe('lecture IA seule (GLM-OCR)', () => {
+    const base = session();
+    const aiLine = (index: number, pageNumber: number, amount = 10): ExtractedStatementLine => ({
+      index,
+      pageNumber,
+      transactionDate: '2026-03-02',
+      valueDate: null,
+      label: `OPERATION ${index}`,
+      labelLines: [`OPERATION ${index}`],
+      amount,
+      isDebit: true,
+      source: 'Ai'
+    });
+    const visionPlan = (overrides: Partial<BankStatementAiPlan> = {}): BankStatementAiPlan => ({
+      scannedPages: [1, 2, 3, 4],
+      textPages: [],
+      reason: 'scanned' as const,
+      estimatedCalls: 4,
+      estimatedSeconds: 480,
+      engine: 'vision' as const,
+      mode: 'ai_only' as const,
+      ...overrides
+    });
+    const reading = (page: number, engine: string, lineCount = 3): BankStatementPageReading => ({ page, engine, model: null, attempts: 1, durationMs: 1000, lineCount, failureReason: null });
+    const text = () => (fixture.nativeElement as HTMLElement).textContent ?? '';
+    const el = () => fixture.nativeElement as HTMLElement;
+
+    it('affiche la page en cours, les pastilles de pages et le temps écoulé pendant la lecture', fakeAsync(() => {
+      api.session.and.returnValue(
+        of(
+          session({
+            status: 'Extracting',
+            progressPercent: 50,
+            pageCount: 4,
+            canConfirm: false,
+            extraction: { ...base.extraction!, lines: [], aiPlan: visionPlan({ pageReadings: [reading(1, 'glm-ocr'), reading(2, 'text-model')] }) }
+          })
+        )
+      );
+      void create({ sessionId: 's-1' });
+      tick();
+      fixture.detectChanges();
+
+      expect(text()).toContain('Lecture des pages par GLM-OCR');
+      expect(text()).toContain('page 3 sur 4');
+      expect(text()).toContain('50 %');
+      expect(text()).toContain('releve.pdf');
+      expect(text()).toContain('environ 4 min');
+      expect(el().querySelectorAll('.bsr-page').length).toBe(4);
+      expect(el().querySelectorAll('.bsr-page.is-done').length).toBe(1);
+      expect(el().querySelectorAll('.bsr-page.is-fallback').length).toBe(1);
+      expect(el().querySelector('.bsr-page.is-current')?.textContent).toContain('Page 3 · en cours');
+      expect(el().querySelector('.bsr-fallback-note')?.textContent).toContain('Pages 2 : GLM-OCR n\'a pas pu lire la page');
+      expect(el().querySelector('.bsr-bar')?.getAttribute('aria-valuenow')).toBe('50');
+
+      tick(3_000);
+      fixture.detectChanges();
+      expect(text()).toContain('3 s écoulées');
+
+      fixture.destroy();
+    }));
+
+    it('décrit la méthode de lecture GLM-OCR et ses replis, et déduit la page en cours de l’avancement', async () => {
+      api.session.and.returnValue(of(session()));
+      await create({ sessionId: 's-1' });
+      const vision = (pageCount: number, readings: BankStatementPageReading[] = []) =>
+        session({ extractionMethod: 'ai-vision', pageCount, extraction: { ...base.extraction!, aiPlan: visionPlan({ pageReadings: readings }) } });
+
+      expect(component.totalPages(session({ pageCount: 5, extraction: { ...base.extraction!, aiPlan: visionPlan({ scannedPages: [1, 2, 3, 4, 5] }) } }))).toBe(5);
+      expect(component.currentPage(session({ status: 'Extracting', progressPercent: 40, pageCount: 5, extraction: { ...base.extraction!, aiPlan: visionPlan({ scannedPages: [1, 2, 3, 4, 5] }) } }))).toBe(3);
+      expect(component.methodLabel(vision(3))).toBe('Lu par GLM-OCR (3 pages)');
+      expect(component.methodLabel(vision(1))).toBe('Lu par GLM-OCR (1 page)');
+      expect(component.methodLabel(vision(4, [reading(1, 'glm-ocr'), reading(2, 'text-model'), reading(3, 'text-model'), reading(4, 'glm-ocr-table')]))).toBe('Lu par GLM-OCR — pages 2, 3 relues par le modèle texte');
+      expect(component.methodLabel(vision(4, [reading(1, 'glm-ocr'), reading(2, 'text-model')]))).toBe('Lu par GLM-OCR — page 2 relue par le modèle texte');
+      expect(component.methodLabel(session({ extractionMethod: 'ai-text' }))).toBe('Lu par le modèle texte local (GLM-OCR indisponible)');
+      expect(component.methodLabel(session({ extractionMethod: 'none' }))).toBe('Lecture IA non effectuée');
+      expect(
+        component.methodLabel(
+          session({
+            extractionMethod: 'ai-vision',
+            extraction: { ...base.extraction!, issues: [{ code: 'statement.ai_unavailable', severity: 'Blocking', message: '', pageNumber: null, lineIndex: null }] }
+          })
+        )
+      ).toBe('Lecture IA non effectuée');
+      expect(component.methodLabel(session({ extractionMethod: 'layout' }))).toBe('Lecture directe du PDF (aucune IA)');
+      expect(component.methodLabel(session({ extractionMethod: 'autre' }))).toBe('—');
+    });
+
+    it('signale les pages relues par le modèle texte et marque leurs opérations', async () => {
+      api.session.and.returnValue(
+        of(
+          session({
+            extractionMethod: 'ai-vision',
+            pageCount: 2,
+            extraction: {
+              ...base.extraction!,
+              lines: [aiLine(0, 1), aiLine(1, 2)],
+              aiPlan: visionPlan({ scannedPages: [1, 2], pageReadings: [reading(1, 'glm-ocr'), reading(2, 'text-model')] })
+            }
+          })
+        )
+      );
+      await create({ sessionId: 's-1' });
+
+      expect(el().querySelector('.bsr-fallback-note')?.getAttribute('role')).toBe('note');
+      expect(el().querySelector('.bsr-fallback-note')?.textContent).toContain('GLM-OCR n\'a pas pu lire la page 2');
+      expect(el().querySelectorAll('.bsr-badge--fallback').length).toBe(1);
+      expect(el().querySelectorAll('.bsr-badge--ai').length).toBe(2);
+      expect(text()).toContain('Lu par GLM-OCR — page 2 relue par le modèle texte');
+    });
+
+    it('affiche un état vide quand aucune opération n’a été lue et « non lu » pour un RIB absent', async () => {
+      api.session.and.returnValue(
+        of(
+          session({
+            extractionMethod: 'ai-vision',
+            canConfirm: false,
+            balanceCheck: null,
+            extraction: { ...base.extraction!, header: { ...base.extraction!.header, rib: null }, lines: [], aiPlan: visionPlan() }
+          })
+        )
+      );
+      await create({ sessionId: 's-1' });
+
+      expect(el().querySelector('.bsr-empty')?.getAttribute('role')).toBe('status');
+      expect(text()).toContain('Aucune opération n\'a été lue sur ce relevé');
+      expect(text()).toContain('non lu');
+      expect(el().querySelector('.bsr-balance')).toBeNull();
+    });
+
+    it('marque le RIB « à vérifier » quand l’IA n’est pas sûre de sa lecture', async () => {
+      api.session.and.returnValue(
+        of(
+          session({
+            extractionMethod: 'ai-vision',
+            extraction: {
+              ...base.extraction!,
+              lines: [aiLine(0, 1)],
+              issues: [{ code: 'statement.ai_rib_mismatch', severity: 'Warning', message: 'RIB lu différent', pageNumber: 1, lineIndex: null }],
+              aiPlan: visionPlan({ scannedPages: [1] })
+            }
+          })
+        )
+      );
+      await create({ sessionId: 's-1' });
+
+      expect(text()).toContain('à vérifier');
+      expect(text()).toContain('Page 1 · ');
+      expect(text()).toContain('RIB à vérifier');
+    });
+
+    it('exige l’accusé de l’écart de solde puis l’envoie au serveur après confirmation', async () => {
+      api.session.and.returnValue(
+        of(
+          session({
+            extractionMethod: 'ai-vision',
+            requiresBalanceAcknowledgement: true,
+            balanceCheck: { sumDebits: 10, sumCredits: 0, computedClosing: 90, difference: 12.5, isBalanced: false },
+            extraction: { ...base.extraction!, lines: [aiLine(0, 1)], aiPlan: visionPlan({ scannedPages: [1] }) }
+          })
+        )
+      );
+      api.confirm.and.returnValue(of({ statementId: 'st-9', lineCount: 1, alreadyImportedCount: 0 }));
+      await create({ sessionId: 's-1' });
+
+      const balance = el().querySelector('.bsr-balance');
+      expect(component.balanceMode()).toBe('warning');
+      expect(balance?.classList.contains('is-warning')).toBeTrue();
+      expect(balance?.getAttribute('role')).toBe('alert');
+      expect(text()).toContain('Écart de solde de');
+      expect(text()).toContain('Total débits imprimé — / calculé');
+      expect(el().querySelector<HTMLInputElement>('#bsr-ack')).not.toBeNull();
+
+      component.confirmStatement();
+      expect(confirmation.confirm).not.toHaveBeenCalled();
+      expect(api.confirm).not.toHaveBeenCalled();
+
+      component.balanceAcknowledged.set(true);
+      fixture.detectChanges();
+      component.confirmStatement();
+
+      expect(confirmation.confirm).toHaveBeenCalledOnceWith(jasmine.objectContaining({ header: 'Enregistrer malgré l\'écart de solde ?', acceptLabel: 'Enregistrer malgré l\'écart', rejectLabel: 'Revenir au contrôle' }));
+      expect(api.confirm).toHaveBeenCalledOnceWith('s-1', { corrections: [], acknowledgeBalanceWarning: true });
+      expect(router.navigate).toHaveBeenCalledWith(['/accounting/bank-statement-import/statement', 'st-9'], jasmine.objectContaining({ replaceUrl: true }));
+    });
+
+    it('reste bloquant sans décision explicite du serveur et recharge la session sur un refus 400', async () => {
+      const s = session({
+        extractionMethod: 'ai-vision',
+        balanceCheck: { sumDebits: 10, sumCredits: 0, computedClosing: 90, difference: 12.5, isBalanced: false },
+        extraction: { ...base.extraction!, lines: [aiLine(0, 1)], aiPlan: visionPlan({ scannedPages: [1] }) }
+      });
+      api.session.and.returnValue(of(s));
+      api.confirm.and.returnValue(throwError(() => new BankStatementImportError('', 'bank_statement_import.balance_warning_not_acknowledged', 400)));
+      await create({ sessionId: 's-1' });
+
+      expect(component.balanceMode()).toBe('blocking');
+      expect(el().querySelector('.bsr-balance')?.classList.contains('is-ko')).toBeTrue();
+
+      component.confirmStatement();
+
+      expect(api.confirm).toHaveBeenCalledOnceWith('s-1', { corrections: [] });
+      expect(component.error()).toContain('confirmer l\'écart de solde');
+      expect(api.session).toHaveBeenCalledTimes(2);
+    });
+
+    it('corrige et exclut des lignes lues par l’IA puis envoie uniquement les champs modifiés', async () => {
+      api.session.and.returnValue(
+        of(
+          session({
+            extractionMethod: 'ai-vision',
+            extraction: {
+              ...base.extraction!,
+              lines: [aiLine(0, 1), aiLine(1, 1, 20), { ...aiLine(2, 1, 30), source: 'Layout' }],
+              issues: [{ code: 'statement.ai_line_needs_review', severity: 'Warning', message: 'Montant douteux', pageNumber: 1, lineIndex: 0 }],
+              aiPlan: visionPlan({ scannedPages: [1] })
+            }
+          })
+        )
+      );
+      api.confirm.and.returnValue(of({ statementId: 'st-9', lineCount: 2, alreadyImportedCount: 0 }));
+      await create({ sessionId: 's-1' });
+
+      expect(component.hasEditableLines()).toBeTrue();
+      expect(component.isEditable(component.displayLines()[2])).toBeFalse();
+      expect(text()).toContain('Ligne 1 · ');
+      expect(text()).toContain('Corriger cette ligne');
+
+      component.editLineFromIssue(0);
+      expect(component.editingIndex()).toBe(0);
+      expect(component.draft).toEqual(jasmine.objectContaining({ lineIndex: 0, transactionDate: '2026-03-02', label: 'OPERATION 0', amount: 10, isDebit: true }));
+
+      component.draft.amount = 12.5;
+      component.draft.label = '  Virement reçu ';
+      component.draft.isDebit = false;
+      component.saveLineEdit(component.displayLines()[0]);
+      fixture.detectChanges();
+
+      expect(component.editingIndex()).toBeNull();
+      expect(component.corrections().get(0)).toEqual({ lineIndex: 0, amount: 12.5, isDebit: false, label: 'Virement reçu' });
+      expect(component.displayLines()[0]).toEqual(jasmine.objectContaining({ amount: 12.5, isDebit: false, label: 'Virement reçu', corrected: true, excluded: false }));
+      expect(el().querySelectorAll('.bsr-badge--manual').length).toBe(1);
+
+      component.toggleExclude(component.displayLines()[1]);
+      fixture.detectChanges();
+      expect(component.excludedCount()).toBe(1);
+      expect(component.correctedCount()).toBe(1);
+      expect(el().querySelectorAll('.bsr-row--excluded').length).toBe(1);
+      expect(text()).toContain('1 ligne(s) corrigée(s), 1 exclue(s)');
+
+      component.toggleExclude(component.displayLines()[1]);
+      expect(component.excludedCount()).toBe(0);
+      expect(component.corrections().has(1)).toBeFalse();
+      component.toggleExclude(component.displayLines()[1]);
+
+      component.confirmStatement();
+
+      expect(api.confirm).toHaveBeenCalledOnceWith('s-1', {
+        corrections: [
+          { lineIndex: 0, amount: 12.5, isDebit: false, label: 'Virement reçu' },
+          { lineIndex: 1, exclude: true }
+        ]
+      });
+    });
+
+    it('refuse un brouillon invalide et oublie une correction identique à la lecture', async () => {
+      api.session.and.returnValue(
+        of(session({ extractionMethod: 'ai-vision', extraction: { ...base.extraction!, lines: [aiLine(0, 1)], aiPlan: visionPlan({ scannedPages: [1] }) } }))
+      );
+      await create({ sessionId: 's-1' });
+
+      component.startLineEdit(component.displayLines()[0]);
+      component.draft.amount = 0;
+      expect(component.draftValid()).toBeFalse();
+      component.saveLineEdit(component.displayLines()[0]);
+      expect(component.editingIndex()).toBe(0);
+
+      component.draft.amount = 10;
+      component.draft.label = 'OPERATION 0';
+      expect(component.draftValid()).toBeTrue();
+      component.saveLineEdit(component.displayLines()[0]);
+      expect(component.editingIndex()).toBeNull();
+      expect(component.corrections().size).toBe(0);
+    });
+
+    it('explique que « Analyser avec ce compte » relance la lecture complète par GLM-OCR', async () => {
+      bankAccounts = [{ id: 'bank-2', bankName: 'BIAT', rib: '08001234567890123456', isActive: true }];
+      api.session.and.returnValue(
+        of(
+          session({
+            extractionMethod: 'ai-vision',
+            pageCount: 5,
+            canConfirm: false,
+            extraction: {
+              ...base.extraction!,
+              header: { ...base.extraction!.header, rib: '08001234567890123456' },
+              lines: [aiLine(0, 1)],
+              issues: [{ code: 'statement.rib_mismatch', severity: 'Blocking', message: 'Autre compte', pageNumber: null, lineIndex: null }],
+              aiPlan: visionPlan({ scannedPages: [1, 2, 3, 4, 5], estimatedSeconds: 600 })
+            }
+          })
+        )
+      );
+      await create({ sessionId: 's-1' });
+
+      expect(component.suggestedRetargetAccount()?.id).toBe('bank-2');
+      expect(component.missingAccountRibTail()).toBeNull();
+      expect(text()).toContain('relance la lecture complète du fichier par GLM-OCR (5 pages, environ 10 min)');
+      expect(text()).toContain('Analyser avec ce compte');
+    });
+
+    it('indique qu’il faut créer le compte bancaire quand le RIB lu n’existe pas dans le dossier', async () => {
+      bankAccounts = [{ id: 'bank-1', bankName: 'STB', rib: '10006035123456789012', isActive: true }];
+      api.session.and.returnValue(
+        of(
+          session({
+            extractionMethod: 'ai-vision',
+            canConfirm: false,
+            extraction: {
+              ...base.extraction!,
+              header: { ...base.extraction!.header, rib: '08001234567890123456' },
+              lines: [aiLine(0, 1)],
+              issues: [{ code: 'statement.rib_mismatch', severity: 'Blocking', message: 'Autre compte', pageNumber: null, lineIndex: null }],
+              aiPlan: visionPlan({ scannedPages: [1] })
+            }
+          })
+        )
+      );
+      await create({ sessionId: 's-1' });
+
+      expect(component.suggestedRetargetAccount()).toBeNull();
+      expect(component.missingAccountRibTail()).toBe('3456');
+      expect(text()).toContain('(RIB …3456) qui n\'existe pas dans ce dossier');
+      expect(text()).toContain('Paiements › Comptes bancaires');
+      expect(text()).not.toContain('Analyser avec ce compte');
+    });
+
+    it('propose de relancer l’analyse quand l’IA était indisponible avant toute lecture', async () => {
+      api.session.and.returnValue(
+        of(
+          session({
+            extractionMethod: 'none',
+            pageCount: 5,
+            canConfirm: false,
+            balanceCheck: null,
+            extraction: {
+              ...base.extraction!,
+              lines: [],
+              issues: [{ code: 'statement.ai_unavailable', severity: 'Blocking', message: 'Modèle non chargé', pageNumber: null, lineIndex: null }],
+              aiPlan: visionPlan({ scannedPages: [1, 2, 3, 4, 5], estimatedSeconds: 900 })
+            }
+          })
+        )
+      );
+      api.retry.and.returnValue(of(session({ id: 's-9', status: 'Pending', canConfirm: false, extraction: null, balanceCheck: null })));
+      await create({ sessionId: 's-1' }, { from: 'reconciliation' });
+
+      expect(component.aiUnavailableBlocking()).toBeTrue();
+      expect(component.canRetry()).toBeTrue();
+      expect(text()).toContain('Lecture IA non effectuée');
+      expect(text()).toContain('Lecture IA indisponible');
+      expect(text()).toContain('la relance reprend le fichier complet (5 pages, environ 15 min)');
+      expect(text()).toContain('Relancer l\'analyse');
+
+      component.retry();
+
+      expect(api.retry).toHaveBeenCalledOnceWith('s-1');
+      expect(router.navigate).toHaveBeenCalledWith(['/accounting/bank-statement-import/session', 's-9'], { queryParams: { from: 'reconciliation' }, replaceUrl: true });
+    });
+
+    it('explique l’échec d’une session et ne propose la relance que pour un motif IA', async () => {
+      api.session.and.returnValue(of(session({ status: 'Failed', errorCode: 'ai_timeout', canConfirm: false, extraction: null, balanceCheck: null })));
+      await create({ sessionId: 's-1' });
+
+      expect(text()).toContain('L\'analyse de ce relevé n\'a pas abouti.');
+      expect(text()).toContain('dépassé le temps alloué');
+      expect(component.canRetry()).toBeTrue();
+      expect(text()).toContain('Relancer l\'analyse');
+
+      component.session.set(session({ status: 'Failed', errorCode: 'autre', canConfirm: false, extraction: null, balanceCheck: null }));
+      fixture.detectChanges();
+      expect(component.canRetry()).toBeFalse();
+      expect(text()).not.toContain('Relancer l\'analyse');
+
+      component.session.set(session({ status: 'Cancelled', canConfirm: false, extraction: null, balanceCheck: null }));
+      fixture.detectChanges();
+      expect(text()).toContain('L\'analyse de ce relevé n\'a pas abouti.');
+      expect(text()).not.toContain('dépassé le temps alloué');
+    });
   });
 
   it('affiche un message de reconnexion sur un 403', async () => {

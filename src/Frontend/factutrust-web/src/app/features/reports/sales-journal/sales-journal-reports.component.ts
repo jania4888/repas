@@ -182,7 +182,7 @@ import {
     .client-select { min-width: 220px; }
     .table-wrap { overflow-x: auto; }
     :host ::ng-deep .table-wrap .p-datatable-table { min-width: 68rem; }
-    .text-right { text-align: right; }
+    .text-right { text-align: end; }
     .empty-placeholder, .error-placeholder { padding: var(--spacing-8); text-align: center; color: var(--color-text-secondary); }
     .error-placeholder p { margin-bottom: var(--spacing-4); color: var(--color-text-primary); }
     .back-link-wrap { margin-top: var(--spacing-6); }
