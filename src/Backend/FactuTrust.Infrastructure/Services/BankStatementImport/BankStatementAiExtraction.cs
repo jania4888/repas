@@ -26,6 +26,7 @@ public sealed class BankStatementAiExtraction : IBankStatementAiExtraction
     private readonly IOllamaModelReadinessChecker _readiness;
     private readonly IBackgroundJobClient _jobs;
     private readonly ILogger<BankStatementAiExtraction> _logger;
+    private readonly IImportAiModelResolutionService _importModelResolver;
     private readonly OllamaSettings _ollamaSettings;
     private readonly BankStatementImportLimits _limits;
 
@@ -35,6 +36,7 @@ public sealed class BankStatementAiExtraction : IBankStatementAiExtraction
         IOllamaModelReadinessChecker readiness,
         IBackgroundJobClient jobs,
         ILogger<BankStatementAiExtraction> logger,
+        IImportAiModelResolutionService importModelResolver,
         IOptions<OllamaSettings> ollamaSettings,
         IOptions<AccountingSettings> accountingSettings)
     {
@@ -43,6 +45,7 @@ public sealed class BankStatementAiExtraction : IBankStatementAiExtraction
         _readiness = readiness;
         _jobs = jobs;
         _logger = logger;
+        _importModelResolver = importModelResolver;
         _ollamaSettings = ollamaSettings.Value;
         _limits = accountingSettings.Value.BankStatementImport;
     }
@@ -68,7 +71,7 @@ public sealed class BankStatementAiExtraction : IBankStatementAiExtraction
 
             string? visionUnavailableReason = null;
             string? visionReasonCode = null;
-            var visionId = ImportAiModelResolver.ResolveBankStatementVisionModelId(_ollamaSettings);
+            var visionId = await _importModelResolver.ResolveEffectiveVisionModelIdAsync(null, forBankStatement: true, cancellationToken);
             if (_limits.VisionReadingEnabled && !string.IsNullOrWhiteSpace(visionId))
             {
                 var visionRef = ModelRef.Parse(visionId);
@@ -87,7 +90,7 @@ public sealed class BankStatementAiExtraction : IBankStatementAiExtraction
                             true, "local", textModel.CanonicalModelRef, null, BankStatementAiEngines.Vision, visionRef.CanonicalModelRef);
                     }
 
-                    visionUnavailableReason = readiness.UserMessage ?? "le modèle vision des relevés n'est pas prêt.";
+                    visionUnavailableReason = readiness.UserMessage ?? "le modèle d'import multimodal n'est pas prêt.";
                     visionReasonCode = BankStatementAiAvailabilityReasons.VisionModelUnavailable;
                 }
                 else if (!_limits.AiComplementAllowExternal)
@@ -104,7 +107,7 @@ public sealed class BankStatementAiExtraction : IBankStatementAiExtraction
             else
             {
                 visionUnavailableReason = _limits.VisionReadingEnabled
-                    ? "aucun modèle vision n'est configuré pour les relevés."
+                    ? "aucun modèle d'import multimodal n'est configuré dans l'administration plateforme."
                     : "la lecture vision des relevés est désactivée.";
                 visionReasonCode = BankStatementAiAvailabilityReasons.VisionModelUnavailable;
             }

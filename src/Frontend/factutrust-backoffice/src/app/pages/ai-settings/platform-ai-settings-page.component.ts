@@ -106,9 +106,9 @@ interface InferenceDeviceOption {
             UseCompactChatPromptOnCpu. Redémarrer l'API après modification.
           </p>
         }
-        @if (selectedInferenceDevice === 'CpuOnly' && d.serverInvoiceImportVisionModel) {
+        @if (selectedInferenceDevice === 'CpuOnly' && d.effectiveImportVisionCapable) {
           <p class="warn">
-            Import photo (vision) activé : l'analyse d'images sera significativement plus lente en mode CPU uniquement.
+            Import documentaire multimodal : l'analyse d'images sera significativement plus lente en mode CPU uniquement.
           </p>
         }
       </section>
@@ -146,12 +146,18 @@ interface InferenceDeviceOption {
       </section>
 
       <section class="card">
-        <h3>Modèle IA — Import de factures</h3>
+        <h3>Modèle IA — Import documentaire (factures et relevés bancaires)</h3>
         <p class="hint">
-          Modèle dédié à l'extraction des factures PDF (plus léger et rapide que le modèle assistant).
-          Prioritaire sur la configuration serveur. Utilisez un modèle de génération (instruct),
-          pas un modèle d'embedding.
+          Modèle utilisé pour l'import de factures, de pièces comptables scannées et la lecture IA des relevés bancaires.
+          Prioritaire sur la configuration serveur. Utilisez un modèle instruct ; pour les PDF scannés et photos,
+          choisissez un modèle multimodal (ex. GLM-OCR, gemma3).
         </p>
+        @if (selectedImportModelRef && !importModelSupportsVision()) {
+          <p class="warn">
+            Le modèle d'import sélectionné ne semble pas multimodal : les relevés scannés et les photos de factures
+            pourront échouer ou repasser par le repli texte uniquement.
+          </p>
+        }
         @if (isImportModelInvalid()) {
           <p class="warn">
             Le modèle d'import actuel n'est pas adapté (embedding). Choisissez un modèle instruct
@@ -235,16 +241,20 @@ interface InferenceDeviceOption {
       </section>
 
       <section class="card">
-        <h3>Modèle IA — Import photos (vision)</h3>
+        <h3>Import — modèle effectif</h3>
         <p class="hint">
-          Utilisé en secours lorsque l'OCR ne suffit pas (bons de livraison photographiés, manuscrit).
-          Configuré dans la configuration serveur (<code>InvoiceImportVisionModel</code>), ex. llava.
+          Modèle réellement utilisé par l'API (plateforme prioritaire). La vision repose sur le même modèle s'il est multimodal.
         </p>
         <p class="reco-model">
-          @if (d.serverInvoiceImportVisionModel) {
-            {{ d.serverInvoiceImportVisionModel }}
+          @if (d.effectiveImportModelRef) {
+            {{ d.effectiveImportModelRef }}
+            @if (d.effectiveImportVisionCapable) {
+              <span class="hint"> — vision activée</span>
+            } @else {
+              <span class="hint"> — texte seul</span>
+            }
           } @else {
-            <span class="empty">Non configuré (fallback vision désactivé)</span>
+            <span class="empty">Configuration serveur (aucun modèle plateforme)</span>
           }
         </p>
       </section>
@@ -610,6 +620,16 @@ export class PlatformAiSettingsPageComponent implements OnInit {
     const model = d?.availableModels.find(m => m.modelRef === ref);
     if (model) return model.supportsChat === false;
     return /embed/i.test(ref);
+  }
+
+  protected importModelSupportsVision(): boolean {
+    const ref = this.selectedImportModelRef?.trim();
+    if (!ref) return false;
+    const d = this.data();
+    const model = d?.availableModels.find(m => m.modelRef === ref);
+    if (model?.supportsVision === true) return true;
+    const lower = ref.toLowerCase();
+    return /glm-ocr|gemma3|llava|vision|qwen2-vl|qwen-vl|ocr-gguf/.test(lower);
   }
 
   ngOnInit(): void {

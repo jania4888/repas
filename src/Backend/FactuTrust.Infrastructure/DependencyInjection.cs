@@ -722,6 +722,7 @@ public static class DependencyInjection
         services.AddScoped<IOllamaModelReadinessChecker, OllamaModelReadinessChecker>();
         services.AddScoped<IAiModelRecommender, OllamaModelRecommender>();
         services.AddScoped<IPlatformAiSettingsService, FactuTrust.Infrastructure.Services.AI.PlatformAiSettingsService>();
+        services.AddScoped<IImportAiModelResolutionService, FactuTrust.Application.Features.AI.ImportAiModelResolutionService>();
         services.AddScoped<ITenantModalSettingsService, FactuTrust.Infrastructure.Services.AI.TenantModalSettingsService>();
         services.AddScoped<IModalCredentialsResolver, FactuTrust.Infrastructure.Services.AI.ModalCredentialsResolver>();
         services.AddScoped<IOllamaInferenceProfileResolver, OllamaInferenceProfileResolver>();

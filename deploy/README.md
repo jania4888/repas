@@ -351,6 +351,12 @@ page sur `qwen2.5:7b-instruct`). Les **deux clés** portent le même identifiant
 `ollama create` ci-dessous ; une clé relevé vide ferait hériter du modèle facture, ce qui est
 toléré par le code mais interdit en production (test `BankStatementVisionSettingsConsistencyTests`).
 
+> **Depuis la bascule « modèle d'import plateforme »** (`Ollama:HonorLegacyImportVisionModels=false`,
+> défaut en production) : le modèle utilisé pour l'import de factures **et** la lecture IA des relevés
+> est celui choisi dans le back-office **Configuration IA › Modèle d'import documentaire** (ex. le
+> même identifiant `hf.co/ggml-org/GLM-OCR-GGUF:Q8_0`). Les clés `Ollama__InvoiceImportVisionModel` /
+> `Ollama__BankStatementImportVisionModel` ne s'appliquent qu'avec `HonorLegacyImportVisionModels=true`.
+
 `pull-ollama-models.sh` **ne télécharge pas** `hf.co/ggml-org/GLM-OCR-GGUF:Q8_0` : il se
 contente de vérifier sa présence **et** sa capacité vision (`ollama show`). Ollama refuse la
 redirection de Hugging Face vers son CDN Xet (`blocked redirect to a different host`), donc
@@ -608,12 +614,36 @@ Si la version ajoute des migrations EF, le déploiement réel **refuse** de part
 **pré-contrôler leurs conditions d'échec sur les données de production** (collisions, doublons,
 index uniques). Les migrations tenant s'appliquent au premier accès de chaque dossier.
 
+### Changement d'infrastructure (compose, Dockerfiles, Nginx)
+
+Si le delta modifie l'un de ces fichiers, `deploy.sh` s'arrête à l'étape 1 et écrit le diff dans
+`/opt/factutrust/logs/infra-diff-<ancien>-<cible>-<date>.log`. Après **relecture** de ce diff :
+
+1. Vérifier les prérequis métier (ex. modèles Ollama, `deploy/.env`, runbooks concernés).
+2. Relancer avec `-AcceptInfrastructure` (PowerShell) ou `--accept-infrastructure` (script serveur).
+3. En déploiement réel, le script **recrée le conteneur `ollama`** lorsque
+   `deploy/docker-compose.yml` ou `deploy/docker-compose.vps.yml` change, puis enchaîne la
+   bascule API et les fronts comme d'habitude.
+
+Exemple (migrations + compose) :
+
+```powershell
+.\deploy\scripts\Deploy-Hostinger.ps1 -DryRun -AcceptInfrastructure
+.\deploy\scripts\Deploy-Hostinger.ps1 -AcceptMigrations -AcceptInfrastructure
+```
+
+> Tant que la version cible sur `origin/main` ne contient pas encore le flag
+> `--accept-infrastructure` dans `deploy/scripts/deploy.sh`, copier le script à jour depuis le
+> dépôt vers le serveur (`/opt/factutrust/.deploy-run-manual.sh`) avant de lancer la commande
+> ci-dessus, ou fusionner d'abord la PR qui ajoute ce flag.
+
 ### Depuis un terminal
 
 ```powershell
 .\deploy\scripts\Deploy-Hostinger.ps1 -DryRun            # à blanc : rien ne bascule
 .\deploy\scripts\Deploy-Hostinger.ps1                    # déploie origin/main
 .\deploy\scripts\Deploy-Hostinger.ps1 -AcceptMigrations  # idem, migrations revues
+.\deploy\scripts\Deploy-Hostinger.ps1 -AcceptMigrations -AcceptInfrastructure  # + delta compose/Dockerfile/Nginx
 .\deploy\scripts\Deploy-Hostinger.ps1 -Ref origin/ma-branche -DryRun -AllowUnmerged  # tester une PR
 ```
 

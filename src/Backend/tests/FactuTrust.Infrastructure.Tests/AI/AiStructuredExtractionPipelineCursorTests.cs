@@ -63,12 +63,22 @@ public sealed class AiStructuredExtractionPipelineCursorTests
                 PageCount = 1
             });
 
+        var importResolver = new ImportAiModelResolutionService(
+            platform.Object,
+            Options.Create(new OllamaSettings
+            {
+                InvoiceImportModel = "qwen2.5:7b-instruct",
+                ImportMaxOutputTokens = 1536
+            }),
+            NullLogger<ImportAiModelResolutionService>.Instance);
+
         var pipeline = new AiStructuredExtractionPipeline(
             Mock.Of<IOllamaClient>(),
             openAi.Object,
             extractor.Object,
             Mock.Of<IOllamaModelReadinessChecker>(),
             platform.Object,
+            importResolver,
             new OllamaInferenceProfileResolver(platform.Object, Options.Create(new OllamaSettings())),
             NullLogger<AiStructuredExtractionPipeline>.Instance,
             Options.Create(new OllamaSettings

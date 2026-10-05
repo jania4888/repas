@@ -563,7 +563,14 @@ public sealed class OllamaSettings
     public bool UseCompactImportPrompt { get; set; }
 
     /// <summary>
+    /// Si true, les clés <see cref="InvoiceImportVisionModel"/> / <see cref="BankStatementImportVisionModel"/>
+    /// reprennent le dessus pour la vision (repli opérationnel). Nominal : false — modèle admin unique.
+    /// </summary>
+    public bool HonorLegacyImportVisionModels { get; set; }
+
+    /// <summary>
     /// Modèle vision Ollama pour photos / OCR insuffisant (ex. llava, qwen2.5-vl). Vide = désactivé.
+    /// Obsolète lorsque <see cref="HonorLegacyImportVisionModels"/> est false : utiliser le modèle d'import plateforme.
     /// </summary>
     public string InvoiceImportVisionModel { get; set; } = "";
 

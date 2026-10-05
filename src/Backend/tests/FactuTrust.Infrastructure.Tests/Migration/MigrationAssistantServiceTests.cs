@@ -87,6 +87,9 @@ public sealed class MigrationAssistantServiceTests
 
         public string? ResolveVisionModelId() => null;
 
+        public Task<string?> ResolveEffectiveVisionModelIdAsync(string? modelOverride, CancellationToken cancellationToken = default)
+            => Task.FromResult<string?>(null);
+
         public Task<InvoiceImportWarmUpResult> WarmUpAsync(CancellationToken cancellationToken)
             => Task.FromResult(new InvoiceImportWarmUpResult(true, true, "stub", null, null, null));
     }

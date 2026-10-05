@@ -1,4 +1,6 @@
+using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Services;
+using FactuTrust.Application.Features.AI;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Infrastructure.Services.AI;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,8 +51,23 @@ public sealed class OllamaVisionModelHealthCheckTests
                 null,
                 null));
 
-    private OllamaVisionModelHealthCheck CreateSut() =>
-        new(_client.Object, _readiness.Object, Options.Create(_ollama), Options.Create(_accounting));
+    private Mock<IImportAiModelResolutionService> CreateImportResolver(string? visionId = GlmOcr)
+    {
+        var import = new Mock<IImportAiModelResolutionService>();
+        import.Setup(x => x.ResolveAsync(null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new DocumentImportModelResolution(
+                ModelRef.Parse($"ollama:{TextModel}"),
+                DocumentImportModelSource.ServerFallback,
+                visionId is not null,
+                false,
+                visionId is not null ? ImportVisionStrategy.GlmOcrOptimized : ImportVisionStrategy.None));
+        import.Setup(x => x.ResolveEffectiveVisionModelIdAsync(null, true, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(visionId);
+        return import;
+    }
+
+    private OllamaVisionModelHealthCheck CreateSut(Mock<IImportAiModelResolutionService>? import = null) =>
+        new(_client.Object, _readiness.Object, (import ?? CreateImportResolver()).Object, Options.Create(_ollama), Options.Create(_accounting));
 
     private static HealthCheckContext Context(HealthStatus failureStatus = HealthStatus.Unhealthy) => new()
     {
@@ -123,23 +140,29 @@ public sealed class OllamaVisionModelHealthCheckTests
     }
 
     [Fact]
-    public async Task Missing_vision_model_is_degraded_and_points_to_the_configuration_keys()
+    public async Task Missing_vision_model_is_degraded_and_points_to_platform_import()
     {
-        _ollama.InvoiceImportVisionModel = "";
-        _ollama.BankStatementImportVisionModel = "";
-
-        var result = await CreateSut().CheckHealthAsync(Context());
+        var result = await CreateSut(CreateImportResolver(visionId: null)).CheckHealthAsync(Context());
 
         Assert.Equal(HealthStatus.Degraded, result.Status);
-        Assert.Contains("BankStatementImportVisionModel", result.Description);
+        Assert.Contains("multimodal", result.Description, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
     public async Task Non_ollama_vision_model_is_degraded_because_vision_is_local_only()
     {
-        _ollama.BankStatementImportVisionModel = "openrouter:google/gemma-3-27b-it";
+        var import = new Mock<IImportAiModelResolutionService>();
+        import.Setup(x => x.ResolveAsync(null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new DocumentImportModelResolution(
+                ModelRef.Parse($"ollama:{TextModel}"),
+                DocumentImportModelSource.ServerFallback,
+                true,
+                false,
+                ImportVisionStrategy.GenericMultimodal));
+        import.Setup(x => x.ResolveEffectiveVisionModelIdAsync(null, true, It.IsAny<CancellationToken>()))
+            .ReturnsAsync("openrouter:google/gemma-3-27b-it");
 
-        var result = await CreateSut().CheckHealthAsync(Context());
+        var result = await CreateSut(import).CheckHealthAsync(Context());
 
         Assert.Equal(HealthStatus.Degraded, result.Status);
         Assert.Contains("hors Ollama", result.Description);
@@ -165,6 +188,7 @@ public sealed class OllamaVisionModelHealthCheckTests
         var services = new ServiceCollection();
         services.AddScoped(_ => _client.Object);
         services.AddScoped(_ => _readiness.Object);
+        services.AddScoped(_ => CreateImportResolver().Object);
         services.AddSingleton(Options.Create(_ollama));
         services.AddSingleton(Options.Create(_accounting));
         await using var provider = services.BuildServiceProvider();

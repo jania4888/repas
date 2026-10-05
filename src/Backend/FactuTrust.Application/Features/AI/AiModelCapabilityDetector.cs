@@ -17,7 +17,8 @@ public static class AiModelCapabilityDetector
         "phi-3.5-vision", "phi-4-vision",
         "claude-3", "claude-4",
         "gpt-4o", "gpt-4-turbo", "gpt-4v",
-        "gemini-1.5", "gemini-2"
+        "gemini-1.5", "gemini-2",
+        "glm-ocr", "glm_ocr", "glmocr", "ocr-gguf"
     };
 
     private static readonly string[] EmbeddingMarkers =

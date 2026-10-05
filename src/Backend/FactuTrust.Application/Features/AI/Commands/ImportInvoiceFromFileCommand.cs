@@ -107,11 +107,17 @@ Schéma: documentType, invoiceNumber, issueDate, dueDate, currency, seller{name,
         IMediator mediator,
         ILogger<ImportInvoiceFromFileHandler> logger,
         IOptions<OllamaSettings> ollamaSettings,
-        IAiStructuredExtractionPipeline? pipeline = null)
+        IAiStructuredExtractionPipeline? pipeline = null,
+        IImportAiModelResolutionService? importModelResolver = null)
     {
         _mediator = mediator;
         _logger = logger;
         _ollamaSettings = ollamaSettings.Value;
+
+        importModelResolver ??= new ImportAiModelResolutionService(
+            platformAiSettings,
+            ollamaSettings,
+            NullLogger<ImportAiModelResolutionService>.Instance);
 
         // Le pipeline est injecté en production. Le repli construit la même implémentation à partir
         // des dépendances déjà reçues : les appelants historiques (dont les tests) restent valides.
@@ -121,6 +127,7 @@ Schéma: documentType, invoiceNumber, issueDate, dueDate, currency, seller{name,
             documentTextExtractor,
             readinessChecker,
             platformAiSettings,
+            importModelResolver,
             inferenceProfileResolver,
             NullLogger<AiStructuredExtractionPipeline>.Instance,
             ollamaSettings,

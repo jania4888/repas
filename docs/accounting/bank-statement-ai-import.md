@@ -31,8 +31,9 @@ retour arrière : [`docs/runbooks/bank-statement-ai-import-cutover.md`](../runbo
 
 ## Lecture vision GLM-OCR (`BankStatementImport:VisionReadingEnabled`)
 
-Le modèle est celui de l'import de facture : `Ollama:BankStatementImportVisionModel`
-(= `hf.co/ggml-org/GLM-OCR-GGUF:Q8_0` en production ; vide, la clé hérite d'`InvoiceImportVisionModel`). Il est
+Le modèle de lecture page par page est le **modèle d'import documentaire** configuré dans l'administration plateforme
+(Configuration IA). En production, choisir un modèle multimodal (ex. `hf.co/ggml-org/GLM-OCR-GGUF:Q8_0`). Repli ops :
+`Ollama:HonorLegacyImportVisionModels=true` pour réactiver les clés appsettings vision. Le modèle est
 installé à la main sur le serveur (`deploy/README.md`, section GLM-OCR) et vérifié à chaque livraison
 (`pull-ollama-models.sh`, `VERIFY_ONLY_MODE=1`), au démarrage de l'API (journal « Modèle vision des relevés … ») et
 par le contrôle de santé `ollama-bank-statement-vision` (`GET /api/platform/ops/health`, administrateurs plateforme ;

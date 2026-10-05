@@ -32,6 +32,9 @@ public static class BankStatementPageReadingEngines
     /// <summary>Étage 1 : GLM-OCR, gabarit JSON natif.</summary>
     public const string GlmOcr = "glm-ocr";
 
+    /// <summary>Modèle d'import multimodal générique (non GLM-OCR).</summary>
+    public const string VisionImport = "vision-import";
+
     /// <summary>Étage 2 : GLM-OCR « Table Recognition: » + analyseur déterministe.</summary>
     public const string GlmOcrTable = "glm-ocr-table";
 

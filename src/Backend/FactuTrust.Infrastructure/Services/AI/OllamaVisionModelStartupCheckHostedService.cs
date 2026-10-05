@@ -1,3 +1,4 @@
+using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -96,7 +97,8 @@ public sealed class OllamaVisionModelStartupCheckHostedService : IHostedService
                 provider.GetRequiredService<IOllamaModelReadinessChecker>(),
                 ollama,
                 limits,
-                cancellationToken);
+                cancellationToken,
+                provider.GetRequiredService<IImportAiModelResolutionService>());
 
             Log(status);
             return status;

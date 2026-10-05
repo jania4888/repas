@@ -776,8 +776,15 @@ app.MapControllers();
     // Aucune donnée de relevé ni secret : noms de modèles et nombres seulement.
     var bsImport = accountingSettings.BankStatementImport;
     var ollamaSettings = app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<FactuTrust.Application.Configuration.OllamaSettings>>().Value;
-    var bsVisionModel = FactuTrust.Application.Features.AI.ImportAiModelResolver.ResolveBankStatementVisionModelId(ollamaSettings);
-    var bsTextFallbackModel = FactuTrust.Application.Features.AI.ImportAiModelResolver.ResolveServerImportModel(ollamaSettings).ProviderModelId;
+    string? bsVisionModel;
+    string? bsTextFallbackModel;
+    using (var importScope = app.Services.CreateScope())
+    {
+        var importResolver = importScope.ServiceProvider.GetRequiredService<FactuTrust.Application.Common.Interfaces.IImportAiModelResolutionService>();
+        var importResolution = importResolver.ResolveAsync(null).GetAwaiter().GetResult();
+        bsTextFallbackModel = importResolution.Model.ProviderModelId;
+        bsVisionModel = importResolver.ResolveEffectiveVisionModelIdAsync(null, forBankStatement: true).GetAwaiter().GetResult();
+    }
     featureLogger.LogInformation(
         "Bank statement import IA: VisionReading={VisionReadingEnabled} AiForAllDocuments={AiForAll} AiOnlyReading={AiOnlyReading} BalanceAsWarning={BalanceAsWarning} PilotTenants={PilotTenants} VisionModel={VisionModel} TextFallbackModel={TextFallbackModel} VisionTextFallback={VisionTextFallbackEnabled} VisionSendTextLayer={VisionSendTextLayer} VisionRenderDpi={VisionRenderDpi} VisionMaxOutputTokens={VisionMaxOutputTokens} MaxPages={MaxPages} MaxAiPages={MaxAiPages} AiJobBudgetMinutes={AiJobBudgetMinutes} AiWorkers={AiWorkers} MaxConcurrentGenerations={MaxConcurrentGenerations} VisionCallTimeoutSeconds={VisionCallTimeoutSeconds} OllamaTimeoutSeconds={OllamaTimeoutSeconds}",
         bsImport.VisionReadingEnabled,
@@ -801,7 +808,7 @@ app.MapControllers();
     if (bsImport.VisionReadingEnabled && string.IsNullOrWhiteSpace(bsVisionModel))
     {
         featureLogger.LogWarning(
-            "Accounting:BankStatementImport:VisionReadingEnabled=true sans modèle vision (Ollama:BankStatementImportVisionModel ou InvoiceImportVisionModel) : l'import de relevés annoncera l'IA indisponible.");
+            "Accounting:BankStatementImport:VisionReadingEnabled=true sans modèle d'import multimodal (Configuration IA plateforme) : l'import de relevés annoncera l'IA indisponible.");
     }
     if (bsImport.EffectiveAiWorkerCount > Math.Max(1, ollamaSettings.MaxConcurrentGenerations))
     {

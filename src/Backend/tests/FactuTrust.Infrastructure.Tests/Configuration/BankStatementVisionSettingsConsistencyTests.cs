@@ -83,16 +83,27 @@ public sealed class BankStatementVisionSettingsConsistencyTests
     private JsonElement? Dev(params string[] path) => Resolve(_development, _base, path);
 
     [Fact]
+    public void Production_disables_legacy_import_vision_appsettings_by_default()
+    {
+        var honorLegacy = Bool(Prod("Ollama", "HonorLegacyImportVisionModels"), "Ollama:HonorLegacyImportVisionModels");
+        Assert.False(honorLegacy, "Production must use the platform admin import model (HonorLegacyImportVisionModels=false).");
+    }
+
+    [Fact]
     public void Production_statement_vision_model_is_glm_ocr_and_equals_the_invoice_vision_model()
     {
-        var statement = Str(Prod("Ollama", "BankStatementImportVisionModel"), "Ollama:BankStatementImportVisionModel");
-        var invoice = Str(Prod("Ollama", "InvoiceImportVisionModel"), "Ollama:InvoiceImportVisionModel");
+        var honorLegacy = TryGet(_production, "Ollama", "HonorLegacyImportVisionModels");
+        if (honorLegacy is { ValueKind: JsonValueKind.True })
+        {
+            var statement = Str(Prod("Ollama", "BankStatementImportVisionModel"), "Ollama:BankStatementImportVisionModel");
+            var invoice = Str(Prod("Ollama", "InvoiceImportVisionModel"), "Ollama:InvoiceImportVisionModel");
 
-        Assert.Equal(GlmOcr, statement);
-        Assert.Equal(invoice, statement);
-        Assert.True(
-            TryGet(_production, "Ollama", "BankStatementImportVisionModel").HasValue,
-            "Production must name the statement vision model explicitly (no silent inheritance from InvoiceImportVisionModel).");
+            Assert.Equal(GlmOcr, statement);
+            Assert.Equal(invoice, statement);
+            Assert.True(
+                TryGet(_production, "Ollama", "BankStatementImportVisionModel").HasValue,
+                "Production must name the statement vision model explicitly (no silent inheritance from InvoiceImportVisionModel).");
+        }
     }
 
     [Fact]

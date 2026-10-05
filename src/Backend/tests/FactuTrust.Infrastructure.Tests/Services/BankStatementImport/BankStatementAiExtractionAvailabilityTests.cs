@@ -1,3 +1,4 @@
+using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.Features.AI;
@@ -44,9 +45,13 @@ public sealed class BankStatementAiExtractionAvailabilityTests
             }
         });
 
+        var import = new Mock<IImportAiModelResolutionService>();
+        import.Setup(x => x.ResolveEffectiveVisionModelIdAsync(null, true, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(string.IsNullOrWhiteSpace(visionModel) ? null : visionModel);
+
         var service = new BankStatementAiExtraction(
             pipeline.Object, ollama.Object, readiness.Object, Mock.Of<IBackgroundJobClient>(),
-            NullLogger<BankStatementAiExtraction>.Instance, ollamaSettings, accounting);
+            NullLogger<BankStatementAiExtraction>.Instance, import.Object, ollamaSettings, accounting);
 
         return (service, pipeline, ollama, readiness);
     }

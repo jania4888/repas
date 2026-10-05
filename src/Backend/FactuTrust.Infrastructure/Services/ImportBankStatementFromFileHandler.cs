@@ -22,6 +22,7 @@ public sealed class ImportBankStatementFromFileHandler
     private readonly ICursorAgentClient? _cursorAgentClient;
     private readonly IOllamaModelReadinessChecker _readinessChecker;
     private readonly IPlatformAiSettingsService _platformAiSettings;
+    private readonly IImportAiModelResolutionService _importModelResolver;
     private readonly IModalCredentialsResolver _modalCredentials;
     private readonly ITenantContext _tenantContext;
     private readonly IOllamaInferenceProfileResolver _inferenceProfileResolver;
@@ -73,6 +74,7 @@ Schéma :
         IOpenAiChatCompletionsClient openAiClient,
         IOllamaModelReadinessChecker readinessChecker,
         IPlatformAiSettingsService platformAiSettings,
+        IImportAiModelResolutionService importModelResolver,
         IOllamaInferenceProfileResolver inferenceProfileResolver,
         ILogger<ImportBankStatementFromFileHandler> logger,
         IOptions<OllamaSettings> ollamaSettings,
@@ -86,6 +88,7 @@ Schéma :
         _cursorAgentClient = cursorAgentClient;
         _readinessChecker = readinessChecker;
         _platformAiSettings = platformAiSettings;
+        _importModelResolver = importModelResolver;
         _inferenceProfileResolver = inferenceProfileResolver;
         _logger = logger;
         _ollamaSettings = ollamaSettings.Value;
@@ -315,19 +318,7 @@ Analyse ce relevé bancaire tunisien et extrais toutes les opérations.
 
     private async Task<ParsedModelRef> ResolveModelRefAsync(CancellationToken cancellationToken)
     {
-        var model = ImportAiModelResolver.ResolveServerBankStatementImportModelName(_ollamaSettings);
-
-        try
-        {
-            var platform = await _platformAiSettings.GetInvoiceImportModelRefAsync(cancellationToken);
-            if (ImportAiModelResolver.TryResolvePlatformImportModel(platform, _logger, out var platformModel))
-                return platformModel;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogDebug(ex, "Import relevé : modèle plateforme indisponible.");
-        }
-
-        return ModelRef.Parse(model);
+        var resolution = await _importModelResolver.ResolveAsync(null, cancellationToken);
+        return resolution.Model;
     }
 }

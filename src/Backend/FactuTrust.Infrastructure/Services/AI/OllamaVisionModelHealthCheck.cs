@@ -1,3 +1,4 @@
+using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.Features.AI;
@@ -42,15 +43,18 @@ public sealed class OllamaVisionModelHealthCheck : IHealthCheck
     private readonly IOllamaModelReadinessChecker _readiness;
     private readonly IOptions<OllamaSettings> _ollamaSettings;
     private readonly IOptions<AccountingSettings> _accountingSettings;
+    private readonly IImportAiModelResolutionService _importModelResolver;
 
     public OllamaVisionModelHealthCheck(
         IOllamaClient ollamaClient,
         IOllamaModelReadinessChecker readiness,
+        IImportAiModelResolutionService importModelResolver,
         IOptions<OllamaSettings> ollamaSettings,
         IOptions<AccountingSettings> accountingSettings)
     {
         _ollamaClient = ollamaClient;
         _readiness = readiness;
+        _importModelResolver = importModelResolver;
         _ollamaSettings = ollamaSettings;
         _accountingSettings = accountingSettings;
     }
@@ -67,7 +71,8 @@ public sealed class OllamaVisionModelHealthCheck : IHealthCheck
                 _readiness,
                 _ollamaSettings.Value,
                 _accountingSettings.Value.BankStatementImport,
-                timeoutCts.Token);
+                timeoutCts.Token,
+                _importModelResolver);
 
             return new HealthCheckResult(status.Status, status.Description);
         }
@@ -96,10 +101,26 @@ public sealed class OllamaVisionModelHealthCheck : IHealthCheck
         IOllamaModelReadinessChecker readiness,
         OllamaSettings ollama,
         BankStatementImportLimits limits,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        IImportAiModelResolutionService? importModelResolver = null)
     {
-        var textModel = ImportAiModelResolver.ResolveServerImportModel(ollama).ProviderModelId;
-        var visionId = ImportAiModelResolver.ResolveBankStatementVisionModelId(ollama);
+        string? textModel;
+        string? visionId;
+        if (importModelResolver is not null)
+        {
+            var resolution = await importModelResolver.ResolveAsync(null, cancellationToken);
+            textModel = resolution.Model.ProviderModelId;
+            visionId = await importModelResolver.ResolveEffectiveVisionModelIdAsync(null, forBankStatement: true, cancellationToken);
+        }
+        else
+        {
+            textModel = ImportAiModelResolver.ResolveServerImportModel(ollama).ProviderModelId;
+            visionId = ollama.HonorLegacyImportVisionModels
+                ? ImportAiModelResolver.ResolveBankStatementVisionModelId(ollama)
+                : null;
+        }
+
+        textModel ??= ImportAiModelResolver.ResolveServerImportModel(ollama).ProviderModelId;
         var visionRef = ModelRef.Parse(visionId);
         var visionModel = string.IsNullOrWhiteSpace(visionRef.ProviderModelId) ? null : visionRef.ProviderModelId;
 
@@ -115,7 +136,7 @@ public sealed class OllamaVisionModelHealthCheck : IHealthCheck
                 TextFallbackReady: false);
         }
 
-        var textReadiness = await readiness.CheckAsync(textModel, cancellationToken);
+        var textReadiness = await readiness.CheckAsync(textModel!, cancellationToken);
         var textNote = textReadiness.IsReady
             ? $"repli texte « {textModel} » prêt"
             : $"repli texte « {textModel} » non prêt ({Trim(textReadiness.UserMessage)})";
@@ -130,8 +151,8 @@ public sealed class OllamaVisionModelHealthCheck : IHealthCheck
         if (visionModel is null)
         {
             return Fallback(
-                $"Aucun modèle vision configuré pour les relevés (Ollama:BankStatementImportVisionModel, sinon InvoiceImportVisionModel) ; {textNote}.",
-                visionModel, textModel, textReadiness.IsReady);
+                $"Aucun modèle d'import multimodal configuré (administration plateforme) ; {textNote}.",
+                visionModel, textModel!, textReadiness.IsReady);
         }
 
         if (visionRef.Kind != LlmProviderKind.Ollama)

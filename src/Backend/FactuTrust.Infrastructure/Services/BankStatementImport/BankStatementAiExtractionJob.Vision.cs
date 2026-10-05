@@ -83,6 +83,9 @@ public sealed partial class BankStatementAiExtractionJob
     {
         var jobSw = Stopwatch.StartNew();
         var pipeline = services.GetRequiredService<IAiStructuredExtractionPipeline>();
+        var importResolver = services.GetRequiredService<IImportAiModelResolutionService>();
+        var importResolution = await importResolver.ResolveAsync(null, cancellationToken);
+        var visionStrategy = importResolution.VisionStrategy;
         var ollamaSettings = services.GetRequiredService<IOptions<OllamaSettings>>().Value;
         var accountingSettings = services.GetService<IOptions<AccountingSettings>>()?.Value;
         var tenantId = services.GetService<ITenantContext>()?.TenantId;
@@ -92,7 +95,7 @@ public sealed partial class BankStatementAiExtractionJob
         var aiOnly = plan.IsAiOnly;
         var visionPlanned = string.Equals(plan.Engine, BankStatementAiEngines.Vision, StringComparison.Ordinal);
         var visionModel = visionPlanned && limits.VisionReadingEnabled
-            ? ImportAiModelResolver.ResolveBankStatementVisionModelId(ollamaSettings)
+            ? await importResolver.ResolveEffectiveVisionModelIdAsync(null, forBankStatement: true, cancellationToken)
             : null;
         var visionModelLabel = string.IsNullOrWhiteSpace(visionModel) ? null : ModelRef.Parse(visionModel).ProviderModelId;
         var textModelLabel = await ResolveTextModelLabelAsync(pipeline, cancellationToken);
@@ -169,56 +172,85 @@ public sealed partial class BankStatementAiExtractionJob
 
             if (!circuitOpen)
             {
-                // ---- Étage 1 : GLM-OCR, consigne native d'extraction JSON.
-                attempts++;
-                stage1 = await RunVisionJsonStageAsync(pipeline, pageBytes, pageFileName, pageContentType, visionModel!, pageNumber, limits, readOptions, cancellationToken);
-                LogPage(session.Id, pageNumber, BankStatementPageReadingEngines.GlmOcr, visionModelLabel, attempts, stage1);
-                truncated |= stage1.Truncated;
-                groundingText ??= stage1.GroundingText;
-                if (stage1.ProviderUnavailable)
-                {
-                    circuitOpen = true;
-                    circuitReason = PageFailureReasons.VisionUnavailable;
-                }
-
-                if (stage1.Succeeded)
-                {
-                    consecutiveVisionFailures = 0;
-                    RecordPage(pageNumber, stage1.Reading!, BankStatementPageReadingEngines.GlmOcr, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, stage1.Reading!.Lines.Count, null, truncated);
-                    await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
-                    continue;
-                }
-
-                lastFailure = stage1.FailureReason;
-                if (await IsCancelledAsync(ctx, session.Id, cancellationToken))
-                    return;
-
-                // ---- Étage 2 : GLM-OCR « Table Recognition: », tableau analysé côté serveur.
-                if (!circuitOpen)
+                if (visionStrategy == ImportVisionStrategy.GenericMultimodal)
                 {
                     attempts++;
-                    stage2 = await RunVisionTableStageAsync(pipeline, pageBytes, pageFileName, pageContentType, visionModel!, pageNumber, limits, readOptions, cancellationToken);
-                    LogPage(session.Id, pageNumber, BankStatementPageReadingEngines.GlmOcrTable, visionModelLabel, attempts, stage2);
-                    groundingText = stage2.GroundingText ?? groundingText;
-                    truncated |= stage2.Truncated;
-                    if (stage2.ProviderUnavailable)
+                    var generic = await RunGenericVisionStageAsync(
+                        pipeline, pageBytes, pageFileName, pageContentType, visionModel!, pageNumber, limits, readOptions, cancellationToken);
+                    LogPage(session.Id, pageNumber, BankStatementPageReadingEngines.VisionImport, visionModelLabel, attempts, generic);
+                    truncated |= generic.Truncated;
+                    groundingText ??= generic.GroundingText;
+                    if (generic.ProviderUnavailable)
                     {
                         circuitOpen = true;
                         circuitReason = PageFailureReasons.VisionUnavailable;
                     }
 
-                    if (stage2.Succeeded)
+                    if (generic.Succeeded)
                     {
                         consecutiveVisionFailures = 0;
-                        RecordPage(pageNumber, stage2.Reading!, BankStatementPageReadingEngines.GlmOcrTable, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, stage2.Reading!.Lines.Count, null, truncated);
+                        RecordPage(pageNumber, generic.Reading!, BankStatementPageReadingEngines.VisionImport, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, generic.Reading!.Lines.Count, null, truncated);
                         await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
                         continue;
                     }
 
-                    lastFailure = stage2.FailureReason ?? lastFailure;
+                    lastFailure = generic.FailureReason;
+                    consecutiveVisionFailures++;
+                }
+                else
+                {
+                    // ---- Étage 1 : GLM-OCR, consigne native d'extraction JSON.
+                    attempts++;
+                    stage1 = await RunVisionJsonStageAsync(pipeline, pageBytes, pageFileName, pageContentType, visionModel!, pageNumber, limits, readOptions, cancellationToken);
+                    LogPage(session.Id, pageNumber, BankStatementPageReadingEngines.GlmOcr, visionModelLabel, attempts, stage1);
+                    truncated |= stage1.Truncated;
+                    groundingText ??= stage1.GroundingText;
+                    if (stage1.ProviderUnavailable)
+                    {
+                        circuitOpen = true;
+                        circuitReason = PageFailureReasons.VisionUnavailable;
+                    }
+
+                    if (stage1.Succeeded)
+                    {
+                        consecutiveVisionFailures = 0;
+                        RecordPage(pageNumber, stage1.Reading!, BankStatementPageReadingEngines.GlmOcr, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, stage1.Reading!.Lines.Count, null, truncated);
+                        await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
+                        continue;
+                    }
+
+                    lastFailure = stage1.FailureReason;
+                    if (await IsCancelledAsync(ctx, session.Id, cancellationToken))
+                        return;
+
+                    // ---- Étage 2 : GLM-OCR « Table Recognition: », tableau analysé côté serveur.
+                    if (!circuitOpen)
+                    {
+                        attempts++;
+                        stage2 = await RunVisionTableStageAsync(pipeline, pageBytes, pageFileName, pageContentType, visionModel!, pageNumber, limits, readOptions, cancellationToken);
+                        LogPage(session.Id, pageNumber, BankStatementPageReadingEngines.GlmOcrTable, visionModelLabel, attempts, stage2);
+                        groundingText = stage2.GroundingText ?? groundingText;
+                        truncated |= stage2.Truncated;
+                        if (stage2.ProviderUnavailable)
+                        {
+                            circuitOpen = true;
+                            circuitReason = PageFailureReasons.VisionUnavailable;
+                        }
+
+                        if (stage2.Succeeded)
+                        {
+                            consecutiveVisionFailures = 0;
+                            RecordPage(pageNumber, stage2.Reading!, BankStatementPageReadingEngines.GlmOcrTable, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, stage2.Reading!.Lines.Count, null, truncated);
+                            await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
+                            continue;
+                        }
+
+                        lastFailure = stage2.FailureReason ?? lastFailure;
+                    }
+
+                    consecutiveVisionFailures++;
                 }
 
-                consecutiveVisionFailures++;
                 if (consecutiveVisionFailures >= 2 && !circuitOpen)
                 {
                     circuitOpen = true;
@@ -426,6 +458,56 @@ public sealed partial class BankStatementAiExtractionJob
             RenderDpi = limits.EffectiveVisionRenderDpi,
             MaxPages = 1
         };
+
+    private static async Task<StageResult> RunGenericVisionStageAsync(
+        IAiStructuredExtractionPipeline pipeline,
+        byte[] pageBytes,
+        string fileName,
+        string contentType,
+        string visionModel,
+        int pageNumber,
+        BankStatementImportLimits limits,
+        BankStatementAiReadOptions readOptions,
+        CancellationToken cancellationToken)
+    {
+        var sw = Stopwatch.StartNew();
+        await using var stream = new MemoryStream(pageBytes);
+        var outcome = await RunPipelineForPageAsync(pipeline, new AiStructuredExtractionRequest
+        {
+            FileStream = stream,
+            FileName = fileName,
+            ContentType = contentType,
+            SystemPrompt = BankStatementAiPrompt.System,
+            UserInstruction = BankStatementAiPrompt.UserInstruction,
+            OutputSchema = LlmOutputSchemas.BankStatementPage,
+            ErrorCode = "BankStatementImport",
+            MaxImages = 1,
+            ForceVision = true,
+            RequireVision = true,
+            VisionModelOverride = visionModel,
+            SkipOcrWhenRendering = true,
+            MaxOutputTokens = limits.EffectiveVisionMaxOutputTokens,
+            LlmTimeoutSeconds = limits.EffectiveVisionCallTimeoutSeconds,
+            RenderDpi = limits.EffectiveVisionRenderDpi,
+            MaxPages = 1
+        }, cancellationToken);
+
+        if (outcome.IsFailure)
+            return FailedStage(outcome.Error.Description, sw.ElapsedMilliseconds);
+        if (!outcome.Value.VisionUsed)
+            return new StageResult(null, PageFailureReasons.VisionNotUsed, "failed", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.RawContent?.Length ?? 0, null, false, false);
+
+        var raw = outcome.Value.RawContent ?? string.Empty;
+        var grounding = string.IsNullOrWhiteSpace(outcome.Value.Extraction.Text) ? null : outcome.Value.Extraction.Text;
+        var reading = ReadRaw(raw, pageNumber, grounding, readOptions);
+        var looksTruncated = !raw.TrimEnd().EndsWith('}');
+        if (reading.Issues.Any(i => i.Code == StatementIssueCodes.AiPageFailed))
+            return new StageResult(reading, PageFailureReasons.JsonInvalid, "invalid_json", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, raw.Length, grounding, looksTruncated, false);
+        if (reading.Lines.Count == 0)
+            return new StageResult(reading, PageFailureReasons.JsonEmpty, "empty", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, raw.Length, grounding, looksTruncated, false);
+
+        return new StageResult(reading, null, "ok", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, raw.Length, grounding, looksTruncated, false);
+    }
 
     private static async Task<StageResult> RunVisionJsonStageAsync(
         IAiStructuredExtractionPipeline pipeline,

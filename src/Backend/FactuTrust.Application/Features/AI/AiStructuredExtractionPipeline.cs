@@ -122,6 +122,11 @@ public interface IAiStructuredExtractionPipeline
     /// <summary>Identifiant du modèle vision d'import, ou null si aucun n'est configuré.</summary>
     string? ResolveVisionModelId();
 
+    /// <summary>Modèle vision effectif (plateforme admin ou legacy appsettings).</summary>
+    Task<string?> ResolveEffectiveVisionModelIdAsync(
+        string? modelOverride,
+        CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Identifiant du modèle vision à utiliser pour un flux donné : <paramref name="explicitModel"/>
     /// s'il est renseigné (ex. modèle vision des relevés bancaires), sinon le modèle vision d'import.
@@ -151,6 +156,7 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
     private readonly IAiDocumentTextExtractor _documentTextExtractor;
     private readonly IOllamaModelReadinessChecker _readinessChecker;
     private readonly IPlatformAiSettingsService _platformAiSettings;
+    private readonly IImportAiModelResolutionService _importModelResolver;
     private readonly IModalCredentialsResolver _modalCredentials;
     private readonly ITenantContext _tenantContext;
     private readonly IOllamaInferenceProfileResolver _inferenceProfileResolver;
@@ -164,6 +170,7 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
         IAiDocumentTextExtractor documentTextExtractor,
         IOllamaModelReadinessChecker readinessChecker,
         IPlatformAiSettingsService platformAiSettings,
+        IImportAiModelResolutionService importModelResolver,
         IOllamaInferenceProfileResolver inferenceProfileResolver,
         ILogger<AiStructuredExtractionPipeline> logger,
         IOptions<OllamaSettings> ollamaSettings,
@@ -178,6 +185,7 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
         _documentTextExtractor = documentTextExtractor;
         _readinessChecker = readinessChecker;
         _platformAiSettings = platformAiSettings;
+        _importModelResolver = importModelResolver;
         _inferenceProfileResolver = inferenceProfileResolver;
         _logger = logger;
         _ollamaSettings = ollamaSettings.Value;
@@ -196,7 +204,7 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
         var modelRef = await ResolveModelRefAsync(request.ModelOverride, cancellationToken);
         var visionModelId = !string.IsNullOrWhiteSpace(request.VisionModelOverride)
             ? request.VisionModelOverride.Trim()
-            : ResolveVisionModelId();
+            : await ResolveEffectiveVisionModelIdAsync(request.ModelOverride, cancellationToken);
         var wantPrimaryVision = AiModelCapabilityDetector.DetectVisionSupport(modelRef);
 
         // 2. Extraction du texte (+ image base64 pour fallback vision sur photos et scans).
@@ -258,8 +266,8 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
             }
 
             return Result.Failure<AiStructuredExtractionOutcome>(Error.Validation(code,
-                "Photo illisible : OCR vide et aucun modèle vision d'import configuré (clé InvoiceImportVisionModel, ex. gemma3:4b). "
-                + "Exécutez scripts/install-tessdata.ps1 ou contactez l'administrateur plateforme."));
+                "Photo illisible : OCR vide et aucun modèle d'import multimodal configuré dans l'administration plateforme. "
+                + "Exécutez scripts/install-tessdata.ps1 ou contactez l'administrateur InstaFact."));
         }
 
         if (request.RequireVision && !useVisionFallback)
@@ -411,8 +419,11 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
                     readiness.AvailableGiB);
             }
 
+            var effectiveVision = !string.IsNullOrWhiteSpace(visionModelId)
+                ? visionModelId
+                : await ResolveEffectiveVisionModelIdAsync(null, cancellationToken);
             await WarmUpVisionModelBestEffortAsync(
-                ResolveVisionModelId(visionModelId), keepAlive, inferenceProfile, cancellationToken);
+                effectiveVision, keepAlive, inferenceProfile, cancellationToken);
             return new InvoiceImportWarmUpResult(true, true, modelName, null, readiness.RequiredGiB, readiness.AvailableGiB);
         }
         catch (Exception ex)
@@ -468,31 +479,23 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
     /// </summary>
     public async Task<ParsedModelRef> ResolveModelRefAsync(string? explicitModel, CancellationToken cancellationToken)
     {
-        if (!string.IsNullOrWhiteSpace(explicitModel))
-            return NormalizeModelRef(explicitModel.Trim());
-
-        try
-        {
-            var platformImport = await _platformAiSettings.GetInvoiceImportModelRefAsync(cancellationToken);
-            if (ImportAiModelResolver.TryResolvePlatformImportModel(platformImport, _logger, out var platformModel))
-                return platformModel;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex,
-                "Import IA : lecture du modèle d'import plateforme impossible ; utilisation de la configuration serveur.");
-        }
-
-        return ImportAiModelResolver.ResolveServerImportModel(_ollamaSettings);
+        var resolution = await _importModelResolver.ResolveAsync(explicitModel, cancellationToken);
+        return resolution.Model;
     }
+
+    public Task<string?> ResolveEffectiveVisionModelIdAsync(
+        string? modelOverride,
+        CancellationToken cancellationToken = default) =>
+        _importModelResolver.ResolveEffectiveVisionModelIdAsync(modelOverride, forBankStatement: false, cancellationToken);
 
     public string? ResolveVisionModelId(string? explicitModel) =>
         string.IsNullOrWhiteSpace(explicitModel) ? ResolveVisionModelId() : explicitModel.Trim();
 
     public string? ResolveVisionModelId()
     {
-        var model = _ollamaSettings.InvoiceImportVisionModel?.Trim();
-        return string.IsNullOrWhiteSpace(model) ? null : model;
+        if (_ollamaSettings.HonorLegacyImportVisionModels)
+            return ImportAiModelResolver.ResolveLegacyInvoiceVisionModelId(_ollamaSettings);
+        return null;
     }
 
     private static ParsedModelRef NormalizeModelRef(string model)

@@ -90,7 +90,7 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
         var outcome = outcomeResult.Value;
         var parsed = TryParseLlmDocument(outcome.RawContent, out var json, out var jsonError);
 
-        if (parsed is null && ShouldRetryWithVision(outcome))
+        if (parsed is null && await ShouldRetryWithVisionAsync(outcome, request.ModelOverride, cancellationToken))
         {
             _logger.LogWarning(
                 "[{Scope}] Réponse inexploitable sur le chemin texte pour {FileName} ; repli vision.",
@@ -108,7 +108,8 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
         {
             LogUnparseableLlmResponse(request.FileName, outcome.RawContent, json, jsonError);
             return Result.Failure<AccountingDocumentExtractionDto>(
-                Error.Validation(ErrorCode, BuildUnparseableMessage(json, jsonError, outcome)));
+                Error.Validation(ErrorCode,
+                    await BuildUnparseableMessageAsync(json, jsonError, outcome, request.ModelOverride, cancellationToken)));
         }
 
         var method = outcome.VisionUsed
@@ -166,7 +167,10 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
     /// s'exécuter. La règle correcte tient en quatre conditions, exprimées ici et nulle part
     /// ailleurs.</para>
     /// </summary>
-    private bool ShouldRetryWithVision(AiStructuredExtractionOutcome outcome)
+    private async Task<bool> ShouldRetryWithVisionAsync(
+        AiStructuredExtractionOutcome outcome,
+        string? modelOverride,
+        CancellationToken cancellationToken)
     {
         if (!_ollamaSettings.InvoiceImportVisionRetryEnabled)
             return false;
@@ -175,7 +179,8 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
         if (outcome.VisionUsed)
             return false;
 
-        if (string.IsNullOrWhiteSpace(_ollamaSettings.InvoiceImportVisionModel))
+        var visionId = await _pipeline.ResolveEffectiveVisionModelIdAsync(modelOverride, cancellationToken);
+        if (string.IsNullOrWhiteSpace(visionId))
             return false;
 
         // Critère réel : disposer d'une image à soumettre — quel que soit le format d'origine.
@@ -230,8 +235,12 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
     /// comme observé en production, quand gemma3:4b était installé, prêt, et avait effectivement
     /// produit la réponse. Il envoyait donc l'utilisateur corriger une configuration déjà correcte.
     /// </summary>
-    private string BuildUnparseableMessage(
-        string? json, JsonException? jsonError, AiStructuredExtractionOutcome outcome)
+    private async Task<string> BuildUnparseableMessageAsync(
+        string? json,
+        JsonException? jsonError,
+        AiStructuredExtractionOutcome outcome,
+        string? modelOverride,
+        CancellationToken cancellationToken)
     {
         if (json is null)
         {
@@ -249,11 +258,11 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
         // La vision n'est évoquée QUE si elle manque réellement sur une pièce qui en aurait besoin.
         var isScanOrPhoto = outcome.Extraction.OcrApplied
             || string.Equals(outcome.Extraction.Format, "image", StringComparison.OrdinalIgnoreCase);
-        if (isScanOrPhoto && string.IsNullOrWhiteSpace(_ollamaSettings.InvoiceImportVisionModel))
+        var visionId = await _pipeline.ResolveEffectiveVisionModelIdAsync(modelOverride, cancellationToken);
+        if (isScanOrPhoto && string.IsNullOrWhiteSpace(visionId))
         {
-            message += " Cette pièce est un scan ou une photo et aucun modèle vision n'est configuré "
-                       + "(clé « InvoiceImportVisionModel », ex. gemma3:4b) : en installer un "
-                       + "améliorerait nettement la lecture.";
+            message += " Cette pièce est un scan ou une photo : configurez un modèle d'import multimodal "
+                       + "dans l'administration plateforme (Configuration IA) pour améliorer la lecture.";
         }
 
         return message;

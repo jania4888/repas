@@ -1,6 +1,7 @@
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
+using FactuTrust.Application.Features.AI;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.AI;
 using FactuTrust.Infrastructure.MultiTenancy;
@@ -67,11 +68,17 @@ public sealed class BankStatementPdfImportServiceTests
         var matcher = new BankAccountMatcher(factory);
 
         var documentExtractor = new Mock<IAiDocumentTextExtractor>();
+        var platform = new Mock<IPlatformAiSettingsService>().Object;
+        var importResolver = new ImportAiModelResolutionService(
+            platform,
+            Options.Create(new OllamaSettings()),
+            NullLogger<ImportAiModelResolutionService>.Instance);
         var llmHandler = new ImportBankStatementFromFileHandler(
             new Mock<IOllamaClient>().Object,
             new Mock<IOpenAiChatCompletionsClient>().Object,
             new Mock<IOllamaModelReadinessChecker>().Object,
-            new Mock<IPlatformAiSettingsService>().Object,
+            platform,
+            importResolver,
             new Mock<IOllamaInferenceProfileResolver>().Object,
             NullLogger<ImportBankStatementFromFileHandler>.Instance,
             Options.Create(new OllamaSettings()));

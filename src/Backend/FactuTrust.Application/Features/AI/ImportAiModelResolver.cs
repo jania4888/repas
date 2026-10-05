@@ -44,6 +44,13 @@ public static class ImportAiModelResolver
         return NormalizeModelRef(model);
     }
 
+    /// <summary>Modèle vision facture (legacy appsettings). Obsolète si HonorLegacyImportVisionModels=false.</summary>
+    public static string? ResolveLegacyInvoiceVisionModelId(OllamaSettings settings)
+    {
+        var model = settings.InvoiceImportVisionModel?.Trim();
+        return string.IsNullOrWhiteSpace(model) ? null : model;
+    }
+
     /// <summary>Modèle vision relevé : BankStatementImportVisionModel → InvoiceImportVisionModel, ou null.</summary>
     public static string? ResolveBankStatementVisionModelId(OllamaSettings settings)
     {
@@ -53,13 +60,31 @@ public static class ImportAiModelResolver
         return string.IsNullOrWhiteSpace(model) ? null : model;
     }
 
-    /// <summary>Chaîne relevé bancaire : BankStatementImportModel → InvoiceImportModel → DefaultModel.</summary>
+    /// <summary>Chaîne relevé bancaire : alignée sur InvoiceImportModel (même modèle que les factures).</summary>
     public static string ResolveServerBankStatementImportModelName(OllamaSettings settings) =>
-        !string.IsNullOrWhiteSpace(settings.BankStatementImportModel)
-            ? settings.BankStatementImportModel.Trim()
-            : !string.IsNullOrWhiteSpace(settings.InvoiceImportModel)
-                ? settings.InvoiceImportModel.Trim()
-                : settings.DefaultModel.Trim();
+        ResolveServerImportModel(settings).ProviderModelId ?? settings.DefaultModel.Trim();
+
+    /// <summary>Détermine la stratégie de lecture vision relevé pour le modèle effectif.</summary>
+    public static ImportVisionStrategy ResolveVisionStrategy(ParsedModelRef model)
+    {
+        if (!AiModelCapabilityDetector.DetectVisionSupport(model))
+            return ImportVisionStrategy.None;
+
+        var id = model.ProviderModelId ?? model.CanonicalModelRef ?? string.Empty;
+        return DetectGlmOcrModel(id) ? ImportVisionStrategy.GlmOcrOptimized : ImportVisionStrategy.GenericMultimodal;
+    }
+
+    public static bool DetectGlmOcrModel(string? modelId)
+    {
+        if (string.IsNullOrWhiteSpace(modelId))
+            return false;
+        var name = modelId.ToLowerInvariant();
+        return name.Contains("glm-ocr", StringComparison.Ordinal)
+               || name.Contains("glm_ocr", StringComparison.Ordinal)
+               || name.Contains("glmocr", StringComparison.Ordinal);
+    }
+
+    public static ParsedModelRef NormalizeModelRefPublic(string model) => NormalizeModelRef(model);
 
     private static ParsedModelRef NormalizeModelRef(string model)
     {

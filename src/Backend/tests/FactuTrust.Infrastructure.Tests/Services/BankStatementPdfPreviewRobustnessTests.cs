@@ -1,6 +1,7 @@
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
+using FactuTrust.Application.Features.AI;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.AI;
 using FactuTrust.Domain.Common;
@@ -42,11 +43,17 @@ public sealed class BankStatementPdfPreviewRobustnessTests
     private BankStatementPdfImportService Service(bool layoutParser, int timeoutSeconds = 240)
     {
         var matcher = new BankAccountMatcher(new InMemoryFactory($"BankPdfPreview_{Guid.NewGuid()}"));
+        var platform = new Mock<IPlatformAiSettingsService>().Object;
+        var importResolver = new ImportAiModelResolutionService(
+            platform,
+            Options.Create(new OllamaSettings()),
+            NullLogger<ImportAiModelResolutionService>.Instance);
         var llm = new ImportBankStatementFromFileHandler(
             new Mock<IOllamaClient>().Object,
             new Mock<IOpenAiChatCompletionsClient>().Object,
             new Mock<IOllamaModelReadinessChecker>().Object,
-            new Mock<IPlatformAiSettingsService>().Object,
+            platform,
+            importResolver,
             new Mock<IOllamaInferenceProfileResolver>().Object,
             NullLogger<ImportBankStatementFromFileHandler>.Instance,
             Options.Create(new OllamaSettings()));

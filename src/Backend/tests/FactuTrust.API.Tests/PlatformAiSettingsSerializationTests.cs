@@ -32,6 +32,8 @@ public sealed class PlatformAiSettingsSerializationTests
             null,
             null,
             null,
+            null,
+            false,
             OllamaInferenceDevice.CpuOnly,
             true,
             Array.Empty<UnifiedAiModelInfo>(),

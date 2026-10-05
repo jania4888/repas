@@ -18,8 +18,12 @@ public sealed record PlatformAiSettingsDto(
     /// du Studio ; null = aucun modèle avancé configuré. Doit différer de <c>StudioAiModelRef</c>.
     /// </summary>
     string? StudioAiAdvancedModelRef,
-    /// <summary>Modèle vision serveur (appsettings Ollama:InvoiceImportVisionModel), lecture seule.</summary>
+    /// <summary>Modèle vision serveur (obsolète ; null si HonorLegacyImportVisionModels=false).</summary>
     string? ServerInvoiceImportVisionModel,
+    /// <summary>Modèle d'import effectif (plateforme prioritaire sur appsettings).</summary>
+    string? EffectiveImportModelRef,
+    /// <summary>True si le modèle d'import effectif supporte la vision.</summary>
+    bool EffectiveImportVisionCapable,
     OllamaInferenceDevice InferenceDevice,
     bool IsOllamaAssistantConfigured,
     IReadOnlyList<UnifiedAiModelInfo> AvailableModels,

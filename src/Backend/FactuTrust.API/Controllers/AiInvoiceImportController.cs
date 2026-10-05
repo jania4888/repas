@@ -28,6 +28,7 @@ public sealed class AiInvoiceImportController : ControllerBase
 
     private readonly ImportInvoiceFromFileHandler _handler;
     private readonly IAiOcrService _ocr;
+    private readonly IImportAiModelResolutionService _importModelResolver;
     private readonly ICurrentUser _currentUser;
     private readonly OllamaSettings _ollamaSettings;
     private readonly ILogger<AiInvoiceImportController> _logger;
@@ -36,6 +37,7 @@ public sealed class AiInvoiceImportController : ControllerBase
     public AiInvoiceImportController(
         ImportInvoiceFromFileHandler handler,
         IAiOcrService ocr,
+        IImportAiModelResolutionService importModelResolver,
         ICurrentUser currentUser,
         IOptions<OllamaSettings> ollamaSettings,
         ILogger<AiInvoiceImportController> logger,
@@ -43,6 +45,7 @@ public sealed class AiInvoiceImportController : ControllerBase
     {
         _handler = handler;
         _ocr = ocr;
+        _importModelResolver = importModelResolver;
         _currentUser = currentUser;
         _ollamaSettings = ollamaSettings.Value;
         _logger = logger;
@@ -52,16 +55,17 @@ public sealed class AiInvoiceImportController : ControllerBase
     /// <summary>Capacités d'import (OCR, modèles configurés) pour diagnostic support.</summary>
     [HttpGet("invoice-import/capabilities")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult GetCapabilities()
+    public async Task<IActionResult> GetCapabilities(CancellationToken cancellationToken)
     {
-        var vision = _ollamaSettings.InvoiceImportVisionModel?.Trim();
+        var resolution = await _importModelResolver.ResolveAsync(null, cancellationToken);
+        var visionModel = await _importModelResolver.ResolveEffectiveVisionModelIdAsync(null, forBankStatement: false, cancellationToken);
         return Ok(new
         {
             ocrAvailable = _ocr.IsAvailable,
-            importModel = string.IsNullOrWhiteSpace(_ollamaSettings.InvoiceImportModel)
-                ? _ollamaSettings.DefaultModel
-                : _ollamaSettings.InvoiceImportModel,
-            visionModel = string.IsNullOrWhiteSpace(vision) ? null : vision,
+            importModel = resolution.Model.ProviderModelId ?? resolution.Model.CanonicalModelRef,
+            effectiveImportModelSource = resolution.Source.ToString(),
+            visionCapable = resolution.IsVisionCapable,
+            visionModel,
             visionMinOcrChars = _ollamaSettings.InvoiceImportVisionMinOcrChars,
             visionOnEmptyOcr = _ollamaSettings.InvoiceImportVisionOnEmptyOcr
         });
@@ -77,7 +81,6 @@ public sealed class AiInvoiceImportController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ImportInvoice(
         IFormFile file,
-        [FromQuery] string? model = null,
         CancellationToken cancellationToken = default)
     {
         if (_currentUser.IsAccountingFirmDelegatedContext)
@@ -94,7 +97,7 @@ public sealed class AiInvoiceImportController : ControllerBase
         {
             await using var stream = file.OpenReadStream();
             var command = new ImportInvoiceFromFileCommand(
-                stream, file.FileName, file.ContentType ?? string.Empty, model);
+                stream, file.FileName, file.ContentType ?? string.Empty, null);
             var result = await _handler.HandleAsync(command, cancellationToken);
 
             return result.IsSuccess

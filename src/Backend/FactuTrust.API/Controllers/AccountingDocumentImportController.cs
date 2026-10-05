@@ -34,6 +34,7 @@ public sealed class AccountingDocumentImportController : ControllerBase
     private readonly IAiOcrService _ocr;
     private readonly IOllamaModelReadinessChecker _readinessChecker;
     private readonly ICurrentUser _currentUser;
+    private readonly IImportAiModelResolutionService _importModelResolver;
     private readonly AccountingSettings _accountingSettings;
     private readonly OllamaSettings _ollamaSettings;
     private readonly ILogger<AccountingDocumentImportController> _logger;
@@ -44,6 +45,7 @@ public sealed class AccountingDocumentImportController : ControllerBase
         IAccountingEntryProposalService proposalService,
         IAiOcrService ocr,
         IOllamaModelReadinessChecker readinessChecker,
+        IImportAiModelResolutionService importModelResolver,
         ICurrentUser currentUser,
         IOptions<AccountingSettings> accountingSettings,
         IOptions<OllamaSettings> ollamaSettings,
@@ -54,6 +56,7 @@ public sealed class AccountingDocumentImportController : ControllerBase
         _proposalService = proposalService;
         _ocr = ocr;
         _readinessChecker = readinessChecker;
+        _importModelResolver = importModelResolver;
         _currentUser = currentUser;
         _accountingSettings = accountingSettings.Value;
         _ollamaSettings = ollamaSettings.Value;
@@ -69,7 +72,8 @@ public sealed class AccountingDocumentImportController : ControllerBase
         if (!_accountingSettings.DocumentImportEnabled)
             return NotFound();
 
-        var vision = _ollamaSettings.InvoiceImportVisionModel?.Trim();
+        var resolution = await _importModelResolver.ResolveAsync(null, cancellationToken);
+        var vision = await _importModelResolver.ResolveEffectiveVisionModelIdAsync(null, forBankStatement: false, cancellationToken);
         var visionModelReady = false;
         if (!string.IsNullOrWhiteSpace(vision))
         {
@@ -85,10 +89,10 @@ public sealed class AccountingDocumentImportController : ControllerBase
             nativeParserEnabled = true,
             aiFallbackAvailable = CanUseAi(),
             ocrAvailable = _ocr.IsAvailable,
-            importModel = string.IsNullOrWhiteSpace(_ollamaSettings.InvoiceImportModel)
-                ? _ollamaSettings.DefaultModel
-                : _ollamaSettings.InvoiceImportModel,
-            visionModel = string.IsNullOrWhiteSpace(vision) ? null : vision,
+            importModel = resolution.Model.ProviderModelId ?? resolution.Model.CanonicalModelRef,
+            effectiveImportModelSource = resolution.Source.ToString(),
+            visionCapable = resolution.IsVisionCapable,
+            visionModel = vision,
             visionModelReady
         });
     }
@@ -109,7 +113,6 @@ public sealed class AccountingDocumentImportController : ControllerBase
     public async Task<IActionResult> Propose(
         IFormFile file,
         [FromQuery] string? direction = null,
-        [FromQuery] string? model = null,
         CancellationToken cancellationToken = default)
     {
         if (!_accountingSettings.DocumentImportEnabled)
@@ -135,7 +138,7 @@ public sealed class AccountingDocumentImportController : ControllerBase
                     FileStream = stream,
                     FileName = file.FileName,
                     ContentType = file.ContentType ?? string.Empty,
-                    ModelOverride = model,
+                    ModelOverride = null,
                     AllowAiFallback = CanUseAi()
                 },
                 cancellationToken);

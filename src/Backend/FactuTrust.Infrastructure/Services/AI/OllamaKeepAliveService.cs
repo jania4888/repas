@@ -79,7 +79,10 @@ public sealed class OllamaKeepAliveService : BackgroundService
                     // de RAM gaspillés en continu. Il se charge à la demande lors d'un import photo.
                     if (_settings.KeepVisionModelWarm)
                     {
-                        var vision = _settings.InvoiceImportVisionModel?.Trim();
+                        using var importScope = _scopeFactory.CreateScope();
+                        var importResolver = importScope.ServiceProvider.GetRequiredService<IImportAiModelResolutionService>();
+                        var vision = await importResolver.ResolveEffectiveVisionModelIdAsync(
+                            null, forBankStatement: false, stoppingToken);
                         if (!string.IsNullOrWhiteSpace(vision)
                             && !string.Equals(vision, model, StringComparison.OrdinalIgnoreCase))
                         {

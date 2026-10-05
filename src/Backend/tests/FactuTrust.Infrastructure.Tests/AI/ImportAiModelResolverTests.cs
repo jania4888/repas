@@ -111,6 +111,23 @@ public sealed class ImportAiModelResolverTests
     }
 
     [Fact]
+    public void DetectGlmOcrModel_recognizes_glm_ocr_ids()
+    {
+        Assert.True(ImportAiModelResolver.DetectGlmOcrModel(GlmOcr));
+        Assert.False(ImportAiModelResolver.DetectGlmOcrModel("qwen2.5:7b-instruct"));
+    }
+
+    [Fact]
+    public void ResolveVisionStrategy_maps_glm_ocr_to_optimized()
+    {
+        var glm = ModelRef.Parse($"ollama:{GlmOcr}");
+        var qwen = ModelRef.Parse("ollama:qwen2.5:7b-instruct");
+
+        Assert.Equal(ImportVisionStrategy.GlmOcrOptimized, ImportAiModelResolver.ResolveVisionStrategy(glm));
+        Assert.Equal(ImportVisionStrategy.None, ImportAiModelResolver.ResolveVisionStrategy(qwen));
+    }
+
+    [Fact]
     public void ResolveServerImportModel_falls_back_to_default_model_then_mistral()
     {
         Assert.Equal(

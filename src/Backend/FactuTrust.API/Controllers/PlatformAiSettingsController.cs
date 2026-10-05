@@ -43,6 +43,7 @@ public sealed class PlatformAiSettingsController : ControllerBase
     private readonly IOpenAiChatCompletionsClient _openAiClient;
     private readonly ICursorAgentClient _cursorAgentClient;
     private readonly IAiModelRecommender _modelRecommender;
+    private readonly IImportAiModelResolutionService _importModelResolver;
     private readonly OllamaSettings _ollamaSettings;
     private readonly CursorSdkSettings _cursorSdkSettings;
     private readonly ModalSettings _modalSettings;
@@ -54,6 +55,7 @@ public sealed class PlatformAiSettingsController : ControllerBase
         IOpenAiChatCompletionsClient openAiClient,
         ICursorAgentClient cursorAgentClient,
         IAiModelRecommender modelRecommender,
+        IImportAiModelResolutionService importModelResolver,
         IOptions<OllamaSettings> ollamaSettings,
         IOptions<CursorSdkSettings> cursorSdkSettings,
         IOptions<ModalSettings> modalSettings,
@@ -64,6 +66,7 @@ public sealed class PlatformAiSettingsController : ControllerBase
         _openAiClient = openAiClient;
         _cursorAgentClient = cursorAgentClient;
         _modelRecommender = modelRecommender;
+        _importModelResolver = importModelResolver;
         _ollamaSettings = ollamaSettings.Value;
         _cursorSdkSettings = cursorSdkSettings.Value;
         _modalSettings = modalSettings.Value;
@@ -192,9 +195,10 @@ public sealed class PlatformAiSettingsController : ControllerBase
             _logger.LogWarning(ex, "Failed to compute the model recommendation for platform AI settings.");
         }
 
-        var visionServer = string.IsNullOrWhiteSpace(_ollamaSettings.InvoiceImportVisionModel)
-            ? null
-            : _ollamaSettings.InvoiceImportVisionModel.Trim();
+        var importResolution = await _importModelResolver.ResolveAsync(null, cancellationToken);
+        var visionServer = _ollamaSettings.HonorLegacyImportVisionModels
+            ? ImportAiModelResolver.ResolveLegacyInvoiceVisionModelId(_ollamaSettings)
+            : null;
         var effectiveAssistantModel = string.IsNullOrWhiteSpace(configured)
             ? _ollamaSettings.DefaultModel
             : configured;
@@ -206,6 +210,8 @@ public sealed class PlatformAiSettingsController : ControllerBase
             studioModel,
             studioAdvancedModel,
             visionServer,
+            importResolution.Model.CanonicalModelRef,
+            importResolution.IsVisionCapable,
             inferenceDevice,
             isOllamaAssistant,
             models,

@@ -31,6 +31,9 @@
     Reconstruit les trois images meme si leur code n'a pas change.
 .PARAMETER AllowUnmerged
     Autorise une version hors d'origin/main, en mode a blanc UNIQUEMENT (tester une PR avant fusion).
+.PARAMETER AcceptInfrastructure
+    Obligatoire si le delta modifie deploy/docker-compose.yml, Dockerfiles ou Nginx. Journalise le diff sur le
+    serveur et recree Ollama si le compose de base change.
 
 .EXAMPLE
     .\deploy\scripts\Deploy-Hostinger.ps1 -DryRun
@@ -46,6 +49,7 @@ param(
     [switch]$AcceptMigrations,
     [switch]$BuildAll,
     [switch]$AllowUnmerged,
+    [switch]$AcceptInfrastructure,
     [string]$Server = '187.124.214.123',
     [string]$User = 'deploy',
     [string]$Domain = 'instafact.shop'
@@ -134,6 +138,7 @@ if ($LASTEXITCODE -ne 0) { Fail "connexion SSH a $User@$Server impossible (cle, 
 $flags = @()
 if ($DryRun) { $flags += '--dry-run' }
 if ($AcceptMigrations) { $flags += '--accept-migrations' }
+if ($AcceptInfrastructure) { $flags += '--accept-infrastructure' }
 if ($BuildAll) { $flags += '--build-all' }
 if ($AllowUnmerged) { $flags += '--allow-unmerged' }
 $log = "logs/deploy-$short-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"

@@ -127,11 +127,17 @@ public sealed class ImportBankStatementLlmProviderTests
         resolver.Setup(x => x.ResolveForPlatformAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new OllamaInferenceProfile(OllamaInferenceDevice.Gpu, null, null, null, false));
 
+        var importResolver = new ImportAiModelResolutionService(
+            platform,
+            Options.Create(new OllamaSettings()),
+            NullLogger<ImportAiModelResolutionService>.Instance);
+
         return new ImportBankStatementFromFileHandler(
             Mock.Of<IOllamaClient>(),
             openAi,
             Mock.Of<IOllamaModelReadinessChecker>(),
             platform,
+            importResolver,
             resolver.Object,
             NullLogger<ImportBankStatementFromFileHandler>.Instance,
             Options.Create(new OllamaSettings()),

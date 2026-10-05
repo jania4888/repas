@@ -6,13 +6,15 @@
 # version cible elle-meme : c'est toujours le script de la version deployee qui s'execute.
 #
 # Usage :
-#   deploy.sh <sha> [--dry-run] [--build-all] [--accept-migrations] [--allow-unmerged]
+#   deploy.sh <sha> [--dry-run] [--build-all] [--accept-migrations] [--accept-infrastructure] [--allow-unmerged]
 #
 #   --dry-run            tout jusqu'a la construction des images, puis retour a l'etat initial :
 #                        aucune sauvegarde, aucune bascule, production intacte
 #   --build-all          reconstruit les trois images meme si leur code n'a pas change
 #   --accept-migrations  obligatoire (hors --dry-run) si le delta ajoute des migrations EF
 #   --allow-unmerged     autorise une cible hors d'origin/main, en --dry-run UNIQUEMENT
+#   --accept-infrastructure  obligatoire (hors --dry-run) si le delta modifie compose/Dockerfiles/Nginx ;
+#                        journalise le diff et recree ollama si le compose de base change
 #
 # Deroulement d'un deploiement reel, arret au premier echec :
 #    1. controles : verrou, utilisateur, pile entierement en service, disque, cible descendante
@@ -42,7 +44,8 @@ ROOT=/opt/factutrust
 COMPOSE_FILES=(-f deploy/docker-compose.yml -f deploy/docker-compose.vps.yml)
 export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/id_ed25519_deploykey -o BatchMode=yes"
 
-TGT_ARG=""; DRY=0; BUILD_ALL=0; ACCEPT_MIG=0; ALLOW_UNMERGED=0
+TGT_ARG=""; DRY=0; BUILD_ALL=0; ACCEPT_MIG=0; ACCEPT_INFRA=0; ALLOW_UNMERGED=0
+INFRA=""
 SWITCHED=0; API_RESTARTED=0; WEB_PUBLISHED=0; ADMIN_PUBLISHED=0
 CUR=""; CUR_SHORT="?"; TGT=""; TGT_SHORT="?"; T0=""
 RUN_API_ID=""; RB_DIR=""; BACKUP_DIR=""; MASTER_MIGS=""; TENANT_MIGS=""
@@ -191,6 +194,7 @@ for a in "$@"; do
     --dry-run) DRY=1 ;;
     --build-all) BUILD_ALL=1 ;;
     --accept-migrations) ACCEPT_MIG=1 ;;
+    --accept-infrastructure) ACCEPT_INFRA=1 ;;
     --allow-unmerged) ALLOW_UNMERGED=1 ;;
     -*) die "option inconnue : $a" ;;
     *) TGT_ARG="$a" ;;
@@ -229,8 +233,21 @@ else
 fi
 
 INFRA=$(git -C src diff --name-only "$CUR" "$TGT" -- deploy/docker-compose.yml deploy/docker-compose.vps.yml 'deploy/Dockerfile*' deploy/nginx)
-[ -z "$INFRA" ] || die "changement d'infrastructure, deploiement MANUEL requis (voir deploy/README.md) : $(printf '%s ' $INFRA)"
-ok "aucun changement d'infrastructure (compose, Dockerfiles, Nginx)"
+if [ -n "$INFRA" ]; then
+  INFRA_LOG="$ROOT/logs/infra-diff-$CUR_SHORT-$TGT_SHORT-$TS.log"
+  {
+    echo "Delta infrastructure $CUR_SHORT..$TGT_SHORT"
+    git -C src diff "$CUR" "$TGT" -- deploy/docker-compose.yml deploy/docker-compose.vps.yml 'deploy/Dockerfile*' deploy/nginx
+  } > "$INFRA_LOG" 2>&1 || die "journalisation du diff infrastructure impossible"
+  if [ "$ACCEPT_INFRA" = 1 ]; then
+    say "  [ATTENTION] changement d'infrastructure accepte (--accept-infrastructure) : $(printf '%s ' $INFRA)"
+    say "  diff enregistre : $INFRA_LOG"
+  else
+    die "changement d'infrastructure : relancer avec --accept-infrastructure apres relecture du diff (deploy/README.md §9) : $(printf '%s ' $INFRA) (journal : $INFRA_LOG)"
+  fi
+else
+  ok "aucun changement d'infrastructure (compose, Dockerfiles, Nginx)"
+fi
 
 for c in factutrust-sqlserver factutrust-ollama factutrust-api factutrust-nginx; do
   st=$(docker inspect -f '{{.State.Status}}/{{if .State.Health}}{{.State.Health.Status}}{{else}}-{{end}}' "$c" 2>/dev/null) || st=absent
@@ -396,6 +413,21 @@ SWITCHED=1
 mv src-next src || die "bascule des repertoires impossible (src-next -> src)"
 rm -f src/.deploy-staging
 ok "src = $TGT_SHORT, src-old = $CUR_SHORT"
+
+if [ "$ACCEPT_INFRA" = 1 ] && [ -n "$INFRA" ]; then
+  step "7 bis. BASCULE INFRASTRUCTURE"
+  if printf '%s\n' $INFRA | grep -qE 'deploy/docker-compose\.(yml|vps\.yml)'; then
+    compose_in src up -d --force-recreate ollama >/dev/null 2>&1 || die "recreate du service ollama impossible"
+    for i in $(seq 1 24); do
+      st=$(docker inspect -f '{{.State.Status}}' factutrust-ollama 2>/dev/null) || st=absent
+      [ "$st" = running ] && { ok "factutrust-ollama : running"; break; }
+      [ "$i" = 24 ] && die "factutrust-ollama ne demarre pas apres recreate"
+      sleep 5
+    done
+  else
+    say "  compose ollama inchange dans le delta : pas de recreate ollama automatique"
+  fi
+fi
 
 gate() {
   local fail=0 L n ip code list want got

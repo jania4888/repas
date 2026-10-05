@@ -1110,6 +1110,8 @@ export interface PlatformAiSettingsDto {
   /** Modèle Studio avancé (GPU / cloud) proposé derrière la bascule « Modèle avancé » du Studio. */
   studioAiAdvancedModelRef: string | null;
   serverInvoiceImportVisionModel: string | null;
+  effectiveImportModelRef: string | null;
+  effectiveImportVisionCapable: boolean;
   inferenceDevice: OllamaInferenceDevice;
   isOllamaAssistantConfigured: boolean;
   availableModels: AiModelInfoDto[];
