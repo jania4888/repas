@@ -293,7 +293,7 @@ public sealed class PlatformTenantQueryService : IPlatformTenantQueryService
             CompanyName = tenant.CompanyName,
             CompanyEmail = tenant.Email?.Value ?? string.Empty,
             Nif = tenant.NIF.Value,
-            Phone = tenant.Phone.Value,
+            Phone = tenant.Phone?.Value ?? string.Empty,
             City = tenant.Address.City,
             Governorate = tenant.Address.Governorate,
             Website = tenant.Website,

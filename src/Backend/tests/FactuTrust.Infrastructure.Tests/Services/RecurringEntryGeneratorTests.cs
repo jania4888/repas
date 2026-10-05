@@ -134,7 +134,9 @@ public sealed class RecurringEntryGeneratorTests
         var entry = check.JournalEntries.AsNoTracking().Include(e => e.Lines).Single();
         Assert.Equal("JOD", entry.JournalCode);
         Assert.Equal(new DateTime(2026, 5, 5), entry.EntryDate);
-        Assert.Equal(JournalEntryStatus.Brouillon, entry.Status); // brouillard actif
+        Assert.Equal(JournalEntryStatus.Validee, entry.Status); // pièce automatique : le brouillard ne s'applique pas
+        Assert.Null(entry.ValidatedBy);
+        Assert.Null(entry.ValidatedAt);
         Assert.Contains("05/2026", entry.Label);
         Assert.Equal(RecurringEntryGenerator.SourceRecurringTemplate, entry.SourceEntityType);
         Assert.Equal(templateId, entry.SourceEntityId);

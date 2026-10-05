@@ -57,7 +57,7 @@ public sealed class ExportStockStatusPdfQueryHandler
                 return Result.Failure<InvoicePdfResult>(Error.NotFound("Warehouse", request.WarehouseId.Value));
             if (!warehouse.IsActive)
                 return Result.Failure<InvoicePdfResult>(
-                    Error.Validation("Warehouse", "Cet entrepôt est désactivé."));
+                    Error.Validation("Warehouse", StockStatusLabels.WarehouseDisabled()));
             warehouseName = warehouse.Name;
         }
 
@@ -81,11 +81,11 @@ public sealed class ExportStockStatusPdfQueryHandler
 
         if (count == 0)
             return Result.Failure<InvoicePdfResult>(
-                new Error("NoData", StockStatusReportConstants.EmptyReportMessage));
+                new Error("NoData", StockStatusLabels.Empty()));
 
         if (count > StockStatusReportConstants.MaxLinesForPdf)
             return Result.Failure<InvoicePdfResult>(
-                new Error("TooManyLines", StockStatusReportConstants.TooManyLinesForPdfMessage));
+                new Error("TooManyLines", StockStatusLabels.TooManyLines()));
 
         var (rows, _) = await _stockItemRepository.GetStockStatusReportRowsAsync(
             request.WarehouseId,
@@ -101,11 +101,12 @@ public sealed class ExportStockStatusPdfQueryHandler
         var grandValue = rows.Sum(r => r.StockValue);
 
         var company = await _companyRepository.GetDefaultAsync(cancellationToken);
-        var filtersSummary = BuildFiltersSummary(warehouseName, categoryName, search, request.IncludeZeroStock);
+        var filtersSummary = StockStatusReportAssembler.BuildFiltersSummary(
+            warehouseName, categoryName, search, request.IncludeZeroStock);
         var generatedLocal = _timeProvider.GetUtcNow().ToOffset(TimeSpan.FromHours(1)).DateTime;
 
         var context = new StockStatusPdfContext(
-            Title: "État de stock",
+            Title: StockStatusLabels.Title(),
             GroupingModeLabel: StockStatusReportAssembler.GroupingModeDisplayLabel(request.GroupingMode),
             CompanyName: company?.Name,
             MatriculeFiscal: company?.Nif.Value,
@@ -115,7 +116,8 @@ public sealed class ExportStockStatusPdfQueryHandler
             Rows: rows,
             GrandTotalQuantity: grandQty,
             GrandTotalValue: grandValue,
-            Currency: "TND");
+            Currency: "TND",
+            RightToLeft: StockStatusLabels.IsArabic);
 
         var pdfBytes = await _pdfService.GenerateStockStatusReportPdfAsync(context, cancellationToken);
         var fileName = $"Etat_stock_{generatedLocal:yyyy-MM-dd_HHmm}.pdf";
@@ -127,23 +129,5 @@ public sealed class ExportStockStatusPdfQueryHandler
             cancellationToken: cancellationToken);
 
         return Result.Success(new InvoicePdfResult(pdfBytes, fileName, "application/pdf"));
-    }
-
-    private static string? BuildFiltersSummary(
-        string? warehouseName,
-        string? categoryName,
-        string? search,
-        bool includeZeroStock)
-    {
-        var parts = new List<string>();
-        if (!string.IsNullOrWhiteSpace(warehouseName))
-            parts.Add($"Entrepôt : {warehouseName}");
-        if (!string.IsNullOrWhiteSpace(categoryName))
-            parts.Add($"Catégorie : {categoryName}");
-        if (!string.IsNullOrWhiteSpace(search))
-            parts.Add($"Recherche : {search}");
-        if (includeZeroStock)
-            parts.Add("Inclut stock à zéro");
-        return parts.Count == 0 ? null : string.Join(" — ", parts);
     }
 }

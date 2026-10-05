@@ -34,6 +34,19 @@ public sealed class TenantFirmManagedTests
     }
 
     [Fact]
+    public void CreateFirmManaged_allows_null_phone()
+    {
+        var (nif, address, email, _) = ValidValueObjects();
+
+        var result = Tenant.CreateFirmManaged(
+            FirmId, "Client Géré SARL", nif, address, email, null, TaxRegime.RealRegime);
+
+        Assert.True(result.IsSuccess);
+        Assert.Null(result.Value.Phone);
+        Assert.Equal(FirmId, result.Value.ManagedByFirmTenantId);
+    }
+
+    [Fact]
     public void CreateFirmManaged_rejects_empty_firm_id()
     {
         var (nif, address, email, phone) = ValidValueObjects();

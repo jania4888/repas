@@ -15,7 +15,7 @@ public sealed class Tenant : AggregateRoot
     public NIF NIF { get; private set; } = null!;
     public Address Address { get; private set; } = null!;
     public Email? Email { get; private set; }
-    public PhoneNumber Phone { get; private set; } = null!;
+    public PhoneNumber? Phone { get; private set; }
     public string? Website { get; private set; }
     public string? LogoUrl { get; private set; }
     
@@ -109,7 +109,7 @@ public sealed class Tenant : AggregateRoot
         NIF nif,
         Address address,
         Email? email,
-        PhoneNumber phone,
+        PhoneNumber? phone,
         TaxRegime taxRegime,
         string? website,
         TenantProvisioningStatus provisioningStatus)
@@ -142,7 +142,7 @@ public sealed class Tenant : AggregateRoot
 
     /// <summary>
     /// Crée un tenant société géré par un cabinet comptable (client sans compte utilisateur sur la plateforme).
-    /// L'email de contact est facultatif : seul ce chemin peut persister <c>null</c>.
+    /// L'email et le téléphone de contact sont facultatifs : seul ce chemin peut persister <c>null</c>.
     /// </summary>
     public static Result<Tenant> CreateFirmManaged(
         Guid managedByFirmTenantId,
@@ -150,7 +150,7 @@ public sealed class Tenant : AggregateRoot
         NIF nif,
         Address address,
         Email? email,
-        PhoneNumber phone,
+        PhoneNumber? phone,
         TaxRegime taxRegime,
         string? website = null)
     {

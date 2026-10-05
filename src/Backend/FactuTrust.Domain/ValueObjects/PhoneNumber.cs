@@ -65,6 +65,21 @@ public sealed partial class PhoneNumber : ValueObject
         return Result.Success(new PhoneNumber(formattedValue, countryCode, localNumber));
     }
 
+    /// <summary>
+    /// Absent (null, vide ou blancs) devient <c>null</c>. Toute valeur non vide reste validée par <see cref="Create"/>.
+    /// </summary>
+    public static Result<PhoneNumber?> CreateOptional(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return Result.Success<PhoneNumber?>(null);
+
+        var created = Create(value);
+        if (created.IsFailure)
+            return Result.Failure<PhoneNumber?>(created.Error);
+
+        return Result.Success<PhoneNumber?>(created.Value);
+    }
+
     public string ToLocalFormat() => $"{LocalNumber[..2]} {LocalNumber[2..5]} {LocalNumber[5..]}";
     
     public string ToInternationalFormat() => $"{CountryCode} {LocalNumber[..2]} {LocalNumber[2..5]} {LocalNumber[5..]}";

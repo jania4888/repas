@@ -63,6 +63,10 @@ import { AgentSuggestionCategory } from '../../config/agent-scopes.config';
         max-width: 1040px;
       }
 
+      :host-context(.embedded-page) {
+        max-width: 1120px;
+      }
+
       .suggestion-catalog {
         width: 100%;
         text-align: start;

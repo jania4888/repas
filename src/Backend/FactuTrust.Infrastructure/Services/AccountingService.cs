@@ -157,11 +157,20 @@ public sealed class AccountingService : IAccountingService
     }
 
     /// <summary>
-    /// Statut des écritures générées automatiquement : brouillon quand le workflow brouillard est
-    /// activé (validation par l'expert), sinon validé (comportement historique, aucun impact états).
+    /// Statut des écritures générées automatiquement depuis une pièce métier (facture, achat,
+    /// paiement, caisse, paie, immobilisation, à-nouveau et extourne de ces pièces). Elles naissent
+    /// <see cref="JournalEntryStatus.Validee"/> : équilibre, période ouverte et plan comptable sont
+    /// déjà contrôlés à la création. <see cref="JournalEntry.Validate"/> n'est pas appelé : ni
+    /// <c>ValidatedBy</c> ni <c>ValidatedAt</c> ne sont renseignés, comme le chemin historique
+    /// « brouillard désactivé ».
     /// </summary>
-    private JournalEntryStatus NewEntryStatus =>
-        _settings.BrouillardEnabled ? JournalEntryStatus.Brouillon : JournalEntryStatus.Validee;
+    /// <remarks>
+    /// <see cref="AccountingSettings.BrouillardEnabled"/> ne s'applique plus ici. Il reste réservé
+    /// à la saisie manuelle, aux imports, aux relevés IA, à l'assistant d'inventaire, au
+    /// rapprochement « créer écriture » et à l'extourne manuelle
+    /// (<see cref="ReverseJournalEntryAsync"/>).
+    /// </remarks>
+    private JournalEntryStatus NewEntryStatus => JournalEntryStatus.Validee;
 
     /// <summary>
     /// Validates that all account numbers in the given lines exist in the Chart of Accounts.
@@ -824,6 +833,12 @@ public sealed class AccountingService : IAccountingService
         if (label.Length > 500)
             label = label[..500];
 
+        // Extourne saisie par l'utilisateur : elle suit le brouillard. Les extournes des pièces
+        // métier passent par NewEntryStatus et naissent Validée.
+        var manualReversalStatus = _settings.BrouillardEnabled
+            ? JournalEntryStatus.Brouillon
+            : JournalEntryStatus.Validee;
+
         var n = await _journalEntries.ReserveNextEntryNumberAsync(original.JournalCode, reversalDate.Year, cancellationToken);
         var create = JournalEntry.Create(
             n,
@@ -837,7 +852,7 @@ public sealed class AccountingService : IAccountingService
             revLines,
             currency,
             original.Id,
-            NewEntryStatus);
+            manualReversalStatus);
 
         if (create.IsFailure)
             return Result.Failure<Guid>(create.Error);
@@ -2071,9 +2086,9 @@ public sealed class AccountingService : IAccountingService
             return Result.Failure<Guid>(create.Error);
 
         var entry = create.Value;
-        // T10 — statut Validee FORCÉ explicitement (NE PAS utiliser NewEntryStatus) : avec
-        // BrouillardEnabled, un brouillon resterait invisible des états NCT (Status != Brouillon),
-        // cassant la réconciliation feuille/livres de la finalisation et laissant l'impôt hors bilan.
+        // T10 — statut Validee écrit explicitement, même si NewEntryStatus vaut déjà Validee :
+        // un retour du brouillard sur les pièces métier ne doit pas pouvoir cacher l'impôt des
+        // états NCT (Status != Brouillon) ni casser la réconciliation feuille/livres.
         entry.MarkInitialStatus(JournalEntryStatus.Validee);
         entry.SetAuditInfo("system", false);
         await _journalEntries.AddAsync(entry, cancellationToken);

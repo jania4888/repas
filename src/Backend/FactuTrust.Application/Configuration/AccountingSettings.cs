@@ -14,10 +14,18 @@ public sealed class AccountingSettings
     public const string SectionName = "Accounting";
 
     /// <summary>
-    /// Active le workflow brouillard/validation : les écritures (auto + manuelles) sont créées en
-    /// brouillon et doivent être validées. Quand false, toute écriture naît <c>Validee</c>
-    /// (comportement historique, aucun impact sur les états).
+    /// Active le workflow brouillard/validation pour les écritures qui exigent une relecture :
+    /// saisie manuelle, imports de dossier, relevés bancaires IA, assistant d'inventaire,
+    /// « créer écriture » du rapprochement et extourne manuelle. Quand false, ces écritures
+    /// naissent <c>Validee</c>.
     /// </summary>
+    /// <remarks>
+    /// Les écritures générées automatiquement depuis une pièce métier (factures, achats, paiements,
+    /// caisse, paie, immobilisations, à-nouveaux, modèles récurrents et leurs extournes) naissent
+    /// toujours <c>Validee</c>, que ce drapeau soit actif ou non. L'éteindre ne les change pas ;
+    /// il retire seulement le brouillon des saisies et imports ci-dessus. La génération des relevés
+    /// IA reste refusée quand le drapeau est inactif.
+    /// </remarks>
     public bool BrouillardEnabled { get; set; }
 
     /// <summary>

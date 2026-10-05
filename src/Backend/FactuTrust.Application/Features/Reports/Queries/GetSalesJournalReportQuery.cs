@@ -43,7 +43,7 @@ public sealed class GetSalesJournalReportQueryHandler
         {
             var client = await _clientRepository.GetByIdAsync(request.ClientId.Value, cancellationToken);
             if (client is null)
-                return Result.Failure<SalesJournalReportResultDto>(Error.Validation("Client", "Client introuvable."));
+                return Result.Failure<SalesJournalReportResultDto>(Error.Validation("Client", SalesJournalLabels.ClientNotFound()));
         }
 
         var page = Math.Max(1, request.Page);

@@ -357,7 +357,7 @@ public class CompanyController : ControllerBase
                 FullAddress = tenant.Address.ToSingleLine()
             },
             Email = tenant.Email?.Value ?? string.Empty,
-            Phone = tenant.Phone.Value,
+            Phone = tenant.Phone?.Value ?? string.Empty,
             Website = tenant.Website,
             LogoUrl = tenant.LogoUrl ?? company?.LogoUrl,
             BankName = company?.BankName,

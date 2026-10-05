@@ -24,7 +24,7 @@ public sealed record CreateFirmManagedClientDto
     public string? PostalCode { get; init; }
 
     public string? Email { get; init; }
-    public string Phone { get; init; } = null!;
+    public string? Phone { get; init; }
     public string? Website { get; init; }
 
     // ── Étape 2 : Options comptables ─────────────────────────────────────────────
@@ -40,10 +40,6 @@ public sealed record CreateFirmManagedClientDto
     public string? TaxOffice { get; init; }
     /// <summary>Taux IS de droit commun (%) — si renseigné, remplace le défaut légal de l'exercice.</summary>
     public decimal? IsStandardRate { get; init; }
-    /// <summary>Taux CNSS salarial (%) — si renseigné, remplace le défaut légal de l'exercice.</summary>
-    public decimal? CnssEmployeeRate { get; init; }
-    /// <summary>Taux CNSS patronal (%) — si renseigné, remplace le défaut légal de l'exercice.</summary>
-    public decimal? CnssEmployerRate { get; init; }
 
     // ── Étape 4 : Paramètres du dossier cabinet ──────────────────────────────────
     public decimal? AnnualFeeAmount { get; init; }

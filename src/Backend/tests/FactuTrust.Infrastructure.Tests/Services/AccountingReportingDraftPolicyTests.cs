@@ -144,6 +144,54 @@ public sealed class AccountingReportingDraftPolicyTests
     }
 
     [Fact]
+    public async Task Synthesis_IncludesValidatedAutoEntry_ExcludesManualDraftOfSamePeriod()
+    {
+        await using (var ctx = _factory.CreateContext())
+        {
+            ctx.ChartOfAccounts.Add(ChartOfAccount.Create("607", "Achats", 6, null, AccountNatureType.Debit).Value);
+            ctx.ChartOfAccounts.Add(ChartOfAccount.Create("401", "Fournisseurs", 4, null, AccountNatureType.Credit).Value);
+
+            var autoLines = new[]
+            {
+                new JournalLineInput("607", "Achats", 100m, 0m, null, ThirdPartyKind.None),
+                new JournalLineInput("401", "Fournisseur", 0m, 100m, null, ThirdPartyKind.None)
+            };
+            var auto = JournalEntry.Create(
+                30, "JA", new DateTime(2026, 5, 16), "Facture fournisseur", Guid.NewGuid(),
+                true, "SupplierInvoice", Guid.NewGuid(), autoLines,
+                initialStatus: JournalEntryStatus.Validee).Value;
+            auto.SetAuditInfo("system", false);
+
+            var draftLines = new[]
+            {
+                new JournalLineInput("607", "Achats brouillon", 40m, 0m, null, ThirdPartyKind.None),
+                new JournalLineInput("401", "Fournisseur brouillon", 0m, 40m, null, ThirdPartyKind.None)
+            };
+            var draft = JournalEntry.Create(
+                31, "JA", new DateTime(2026, 5, 16), "OD manuelle", Guid.NewGuid(),
+                false, "Manual", null, draftLines,
+                initialStatus: JournalEntryStatus.Brouillon).Value;
+            draft.SetAuditInfo("user", false);
+
+            ctx.JournalEntries.Add(auto);
+            ctx.JournalEntries.Add(draft);
+            await ctx.SaveChangesAsync();
+        }
+
+        var service = BuildService(includeDrafts: true);
+        var income = await service.GetIncomeStatementAsync(2026);
+        var balance = await service.GetBalanceSheetAsync(2026);
+
+        Assert.True(income.IsSuccess);
+        Assert.Equal(100m, income.Value.TotalExpenses);
+        Assert.Equal(100m, income.Value.Expenses.Single(e => e.AccountNumber == "607").Amount);
+
+        Assert.True(balance.IsSuccess);
+        var supplier = balance.Value.Liabilities.Single(l => l.AccountNumber == "401");
+        Assert.Equal(100m, supplier.Amount);
+    }
+
+    [Fact]
     public async Task SumDebitsByAccount_AlwaysExcludesDrafts()
     {
         var repo = new JournalEntryRepository(_factory);

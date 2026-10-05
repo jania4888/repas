@@ -67,7 +67,7 @@ public sealed class GetStockStatusReportQueryHandler
                     Error.NotFound("Warehouse", request.WarehouseId.Value));
             if (!warehouse.IsActive)
                 return Result.Failure<StockStatusReportResultDto>(
-                    Error.Validation("Warehouse", "Cet entrepôt est désactivé."));
+                    Error.Validation("Warehouse", StockStatusLabels.WarehouseDisabled()));
             warehouseName = warehouse.Name;
         }
 
@@ -113,7 +113,8 @@ public sealed class GetStockStatusReportQueryHandler
         _ = await _companyRepository.GetDefaultAsync(cancellationToken);
         const string currency = "TND";
 
-        var filtersSummary = BuildFiltersSummary(warehouseName, categoryName, search, request.IncludeZeroStock);
+        var filtersSummary = StockStatusReportAssembler.BuildFiltersSummary(
+            warehouseName, categoryName, search, request.IncludeZeroStock);
 
         return Result.Success(new StockStatusReportResultDto
         {
@@ -128,23 +129,5 @@ public sealed class GetStockStatusReportQueryHandler
             FiltersSummary = filtersSummary,
             Rows = rows
         });
-    }
-
-    private static string? BuildFiltersSummary(
-        string? warehouseName,
-        string? categoryName,
-        string? search,
-        bool includeZeroStock)
-    {
-        var parts = new List<string>();
-        if (!string.IsNullOrWhiteSpace(warehouseName))
-            parts.Add($"Entrepôt : {warehouseName}");
-        if (!string.IsNullOrWhiteSpace(categoryName))
-            parts.Add($"Catégorie : {categoryName}");
-        if (!string.IsNullOrWhiteSpace(search))
-            parts.Add($"Recherche : {search}");
-        if (includeZeroStock)
-            parts.Add("Inclut stock à zéro");
-        return parts.Count == 0 ? null : string.Join(" — ", parts);
     }
 }

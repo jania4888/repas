@@ -17,9 +17,25 @@ public static class StockStatusReportAssembler
     }
 
     public static string GroupingModeDisplayLabel(StockStatusGroupingMode mode) =>
-        mode == StockStatusGroupingMode.CategoryThenWarehouse
-            ? "Par catégorie puis entrepôt"
-            : "Par entrepôt puis catégorie";
+        StockStatusLabels.GroupingMode(mode);
+
+    public static string? BuildFiltersSummary(
+        string? warehouseName,
+        string? categoryName,
+        string? search,
+        bool includeZeroStock)
+    {
+        var parts = new List<string>();
+        if (!string.IsNullOrWhiteSpace(warehouseName))
+            parts.Add($"{StockStatusLabels.Warehouse()} : {warehouseName}");
+        if (!string.IsNullOrWhiteSpace(categoryName))
+            parts.Add($"{StockStatusLabels.Category()} : {categoryName}");
+        if (!string.IsNullOrWhiteSpace(search))
+            parts.Add($"{StockStatusLabels.Search()} : {search}");
+        if (includeZeroStock)
+            parts.Add(StockStatusLabels.IncludesZeroStock());
+        return parts.Count == 0 ? null : string.Join(" — ", parts);
+    }
 
     public static string? SanitizeSearch(string? search)
     {

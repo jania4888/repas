@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, from, of, throwError } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { catchError, switchMap } from 'rxjs/operators';
 import { environment } from '@environments/environment';
 import { ApiResponse } from './auth.service';
 
@@ -49,6 +49,17 @@ export interface SupplierTransactionReportRow {
   currency: string;
   supplierInvoiceId: string | null;
   paymentId: string | null;
+}
+
+/** Erreur PDF de l'état de stock : le code API (ex. NoData) reste stable quand le message est traduit. */
+export class StockStatusPdfError extends Error {
+  readonly code?: string;
+
+  constructor(message: string, code?: string) {
+    super(message);
+    this.name = 'StockStatusPdfError';
+    this.code = code;
+  }
 }
 
 @Injectable({ providedIn: 'root' })
@@ -186,19 +197,11 @@ export class ReportsApiService {
         const body = response.body;
         if (contentType.includes('application/json') && body) {
           return from(body.text()).pipe(
-            switchMap(text => {
-              try {
-                const parsed = JSON.parse(text) as { message?: string; errors?: string[] };
-                const msg = parsed.errors?.[0] ?? parsed.message ?? 'Impossible de générer le PDF';
-                return throwError(() => new Error(msg));
-              } catch {
-                return throwError(() => new Error('Impossible de générer le PDF'));
-              }
-            })
+            switchMap(text => throwError(() => stockStatusPdfErrorFromText(text)))
           );
         }
         if (!body || body.size === 0) {
-          return throwError(() => new Error('Impossible de générer le PDF'));
+          return throwError(() => new StockStatusPdfError(stockStatusPdfFallback()));
         }
         return of(body);
       })
@@ -270,22 +273,15 @@ export class ReportsApiService {
         const body = response.body;
         if (contentType.includes('application/json') && body) {
           return from(body.text()).pipe(
-            switchMap(text => {
-              try {
-                const parsed = JSON.parse(text) as { message?: string; errors?: string[] };
-                const msg = parsed.errors?.[0] ?? parsed.message ?? 'Impossible de générer le PDF';
-                return throwError(() => new Error(msg));
-              } catch {
-                return throwError(() => new Error('Impossible de générer le PDF'));
-              }
-            })
+            switchMap(text => throwError(() => salesJournalPdfErrorFromText(text)))
           );
         }
         if (!body || body.size === 0) {
-          return throwError(() => new Error('Impossible de générer le PDF'));
+          return throwError(() => new SalesJournalPdfError(salesJournalPdfFallback()));
         }
         return of(body);
-      })
+      }),
+      catchError(err => throwError(() => toSalesJournalPdfError(err)))
     );
   }
 
@@ -332,22 +328,15 @@ export class ReportsApiService {
         const body = response.body;
         if (contentType.includes('application/json') && body) {
           return from(body.text()).pipe(
-            switchMap(text => {
-              try {
-                const parsed = JSON.parse(text) as { message?: string; errors?: string[] };
-                const msg = parsed.errors?.[0] ?? parsed.message ?? 'Impossible de générer le PDF';
-                return throwError(() => new Error(msg));
-              } catch {
-                return throwError(() => new Error('Impossible de générer le PDF'));
-              }
-            })
+            switchMap(text => throwError(() => purchasesJournalPdfErrorFromText(text)))
           );
         }
         if (!body || body.size === 0) {
-          return throwError(() => new Error('Impossible de générer le PDF'));
+          return throwError(() => new PurchasesJournalPdfError(purchasesJournalPdfFallback()));
         }
         return of(body);
-      })
+      }),
+      catchError(err => throwError(() => toPurchasesJournalPdfError(err)))
     );
   }
 }
@@ -564,6 +553,52 @@ export interface BasketMetricsReportDto {
 
 export type SalesJournalViewMode = 'Detail' | 'Day' | 'Month' | 'Year';
 
+/** Erreur PDF du journal de ventes : le code API (ex. NoData) reste stable quand le message est traduit. */
+export class SalesJournalPdfError extends Error {
+  readonly code?: string;
+
+  constructor(message: string, code?: string) {
+    super(message);
+    this.name = 'SalesJournalPdfError';
+    this.code = code;
+  }
+}
+
+function salesJournalPdfFallback(): string {
+  return $localize`:@@reports.sales-journal.pdf.error.1f2e3d4c:Impossible de générer le PDF`;
+}
+
+function salesJournalPdfErrorFromText(text: string): SalesJournalPdfError {
+  try {
+    const parsed = JSON.parse(text) as { message?: string; error?: string; errors?: string[]; code?: string };
+    const msg = parsed.errors?.[0] ?? parsed.message ?? parsed.error ?? salesJournalPdfFallback();
+    return new SalesJournalPdfError(msg, parsed.code);
+  } catch {
+    return new SalesJournalPdfError(salesJournalPdfFallback());
+  }
+}
+
+function toSalesJournalPdfError(err: unknown): SalesJournalPdfError {
+  if (err instanceof SalesJournalPdfError) {
+    return err;
+  }
+  const body = (err as { error?: unknown } | null)?.error;
+  if (typeof body === 'string') {
+    return salesJournalPdfErrorFromText(body);
+  }
+  if (body && typeof body === 'object' && !(body instanceof Blob)) {
+    const parsed = body as { message?: string; error?: string; errors?: string[]; code?: string };
+    const msg = parsed.errors?.[0]
+      ?? parsed.message
+      ?? parsed.error
+      ?? (err as { message?: string }).message
+      ?? salesJournalPdfFallback();
+    return new SalesJournalPdfError(msg, typeof parsed.code === 'string' ? parsed.code : undefined);
+  }
+  const message = (err as { message?: string } | null)?.message;
+  return new SalesJournalPdfError(message || salesJournalPdfFallback());
+}
+
 export interface SalesJournalDetailRow {
   issueDate: string;
   invoiceId: string;
@@ -620,6 +655,17 @@ export interface SalesJournalReportResult {
 
 export type PurchasesJournalSource = 'Invoice' | 'Receipt';
 
+/** Erreur PDF du journal d'achats : le code API (ex. NoData) reste stable quand le message est traduit. */
+export class PurchasesJournalPdfError extends Error {
+  readonly code?: string;
+
+  constructor(message: string, code?: string) {
+    super(message);
+    this.name = 'PurchasesJournalPdfError';
+    this.code = code;
+  }
+}
+
 export interface PurchasesJournalDetailRow {
   entryDate: string;
   documentId: string;
@@ -672,4 +718,52 @@ export interface PurchasesJournalReportResult {
   totals: PurchasesJournalTotals;
   detailRows: PurchasesJournalDetailRow[];
   aggregatedRows: PurchasesJournalAggregatedRow[];
+}
+
+function purchasesJournalPdfFallback(): string {
+  return $localize`:@@reports.purchases-journal.pdf.error.1f2e3d4c:Impossible de générer le PDF`;
+}
+
+function purchasesJournalPdfErrorFromText(text: string): PurchasesJournalPdfError {
+  try {
+    const parsed = JSON.parse(text) as { message?: string; errors?: string[]; code?: string };
+    const msg = parsed.errors?.[0] ?? parsed.message ?? purchasesJournalPdfFallback();
+    return new PurchasesJournalPdfError(msg, parsed.code);
+  } catch {
+    return new PurchasesJournalPdfError(purchasesJournalPdfFallback());
+  }
+}
+
+function toPurchasesJournalPdfError(err: unknown): PurchasesJournalPdfError {
+  if (err instanceof PurchasesJournalPdfError) {
+    return err;
+  }
+  const body = (err as { error?: unknown } | null)?.error;
+  if (typeof body === 'string') {
+    return purchasesJournalPdfErrorFromText(body);
+  }
+  if (body && typeof body === 'object' && !(body instanceof Blob)) {
+    const parsed = body as { message?: string; errors?: string[]; code?: string };
+    const msg = parsed.errors?.[0]
+      ?? parsed.message
+      ?? (err as { message?: string }).message
+      ?? purchasesJournalPdfFallback();
+    return new PurchasesJournalPdfError(msg, typeof parsed.code === 'string' ? parsed.code : undefined);
+  }
+  const message = (err as { message?: string } | null)?.message;
+  return new PurchasesJournalPdfError(message || purchasesJournalPdfFallback());
+}
+
+function stockStatusPdfFallback(): string {
+  return $localize`:@@reports.stock-status.pdf.error:Impossible de générer le PDF`;
+}
+
+function stockStatusPdfErrorFromText(text: string): StockStatusPdfError {
+  try {
+    const parsed = JSON.parse(text) as { message?: string; error?: string; errors?: string[]; code?: string };
+    const msg = parsed.errors?.[0] ?? parsed.message ?? parsed.error ?? stockStatusPdfFallback();
+    return new StockStatusPdfError(msg, parsed.code);
+  } catch {
+    return new StockStatusPdfError(stockStatusPdfFallback());
+  }
 }

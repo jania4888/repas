@@ -17,12 +17,14 @@ import { PowerPointExportService } from '../../services/powerpoint-export.servic
       [isOpen]="true"
       [embedded]="embedded"
       [workspaceTab]="workspaceTab"
+      [pageFill]="pageFill"
       (close)="onClose()" />
   `
 })
 class HostComponent {
   embedded = false;
   workspaceTab = false;
+  pageFill = false;
   closeCount = 0;
 
   onClose(): void {
@@ -115,5 +117,22 @@ describe('ChatPanelComponent', () => {
 
     closeBtn.click();
     expect(host.closeCount).toBe(1);
+  });
+
+  it('keeps the drawer close button and omits the page-fill class by default', () => {
+    const panel = fixture.nativeElement.querySelector('.chat-panel') as HTMLElement;
+    expect(panel.classList.contains('embedded-page')).toBe(false);
+    expect(fixture.nativeElement.querySelector('.panel-header .icon-btn[title="Fermer"]')).toBeTruthy();
+  });
+
+  it('applies the page-fill class and hides close when embedded and pageFill', () => {
+    host.embedded = true;
+    host.pageFill = true;
+    fixture.detectChanges();
+
+    const panel = fixture.nativeElement.querySelector('.chat-panel') as HTMLElement;
+    expect(panel.classList.contains('embedded')).toBe(true);
+    expect(panel.classList.contains('embedded-page')).toBe(true);
+    expect(fixture.nativeElement.querySelector('.panel-header .icon-btn[title="Fermer"]')).toBeNull();
   });
 });
