@@ -197,6 +197,14 @@ public sealed record OllamaModelShowResponse
 
     [JsonPropertyName("model_info")]
     public Dictionary<string, object?>? ModelInfo { get; init; }
+
+    /// <summary>
+    /// Capacités déclarées par le moteur, par ex. <c>["completion", "vision", "tools"]</c>.
+    /// Absente des moteurs trop anciens pour les publier : la liste est alors nulle, et
+    /// l'appelant retombe sur l'heuristique de nom.
+    /// </summary>
+    [JsonPropertyName("capabilities")]
+    public List<string>? Capabilities { get; init; }
 }
 
 public sealed record OllamaModelDetails

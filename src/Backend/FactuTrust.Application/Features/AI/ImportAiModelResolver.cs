@@ -64,15 +64,22 @@ public static class ImportAiModelResolver
     public static string ResolveServerBankStatementImportModelName(OllamaSettings settings) =>
         ResolveServerImportModel(settings).ProviderModelId ?? settings.DefaultModel.Trim();
 
-    /// <summary>Détermine la stratégie de lecture vision relevé pour le modèle effectif.</summary>
-    public static ImportVisionStrategy ResolveVisionStrategy(ParsedModelRef model)
+    /// <summary>
+    /// Stratégie de lecture vision pour le modèle effectif, la capacité étant déjà établie
+    /// (déclarée par le moteur de préférence, devinée d'après le nom à défaut).
+    /// </summary>
+    public static ImportVisionStrategy ResolveVisionStrategy(ParsedModelRef model, bool visionCapable)
     {
-        if (!AiModelCapabilityDetector.DetectVisionSupport(model))
+        if (!visionCapable)
             return ImportVisionStrategy.None;
 
         var id = model.ProviderModelId ?? model.CanonicalModelRef ?? string.Empty;
         return DetectGlmOcrModel(id) ? ImportVisionStrategy.GlmOcrOptimized : ImportVisionStrategy.GenericMultimodal;
     }
+
+    /// <summary>Variante sans sonde : la capacité est devinée d'après le nom du modèle.</summary>
+    public static ImportVisionStrategy ResolveVisionStrategy(ParsedModelRef model) =>
+        ResolveVisionStrategy(model, AiModelCapabilityDetector.DetectVisionSupport(model));
 
     public static bool DetectGlmOcrModel(string? modelId)
     {

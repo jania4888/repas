@@ -627,9 +627,11 @@ export class PlatformAiSettingsPageComponent implements OnInit {
     if (!ref) return false;
     const d = this.data();
     const model = d?.availableModels.find(m => m.modelRef === ref);
-    if (model?.supportsVision === true) return true;
+    // L'API renvoie la capacité déclarée par le moteur : elle fait foi, dans les deux sens.
+    if (model) return model.supportsVision === true;
+    // Modèle saisi à la main, absent de la liste : repli sur le nom.
     const lower = ref.toLowerCase();
-    return /glm-ocr|gemma3|llava|vision|qwen2-vl|qwen-vl|ocr-gguf/.test(lower);
+    return /glm-ocr|gemma3|llava|vision|-vl[-:]|qwen-vl|-ocr|ocr-|surya/.test(lower);
   }
 
   ngOnInit(): void {

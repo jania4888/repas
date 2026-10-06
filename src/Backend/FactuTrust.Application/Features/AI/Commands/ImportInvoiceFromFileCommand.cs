@@ -116,6 +116,7 @@ Schéma: documentType, invoiceNumber, issueDate, dueDate, currency, seller{name,
 
         importModelResolver ??= new ImportAiModelResolutionService(
             platformAiSettings,
+            NullAiModelVisionProbe.Instance,
             ollamaSettings,
             NullLogger<ImportAiModelResolutionService>.Instance);
 

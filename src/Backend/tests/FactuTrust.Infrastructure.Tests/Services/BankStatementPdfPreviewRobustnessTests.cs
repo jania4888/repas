@@ -46,6 +46,7 @@ public sealed class BankStatementPdfPreviewRobustnessTests
         var platform = new Mock<IPlatformAiSettingsService>().Object;
         var importResolver = new ImportAiModelResolutionService(
             platform,
+            NullAiModelVisionProbe.Instance,
             Options.Create(new OllamaSettings()),
             NullLogger<ImportAiModelResolutionService>.Instance);
         var llm = new ImportBankStatementFromFileHandler(
