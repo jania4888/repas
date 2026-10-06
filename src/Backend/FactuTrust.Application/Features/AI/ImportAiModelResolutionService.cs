@@ -1,4 +1,5 @@
 using FactuTrust.Application.Common.Interfaces;
+using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -8,15 +9,18 @@ namespace FactuTrust.Application.Features.AI;
 public sealed class ImportAiModelResolutionService : IImportAiModelResolutionService
 {
     private readonly IPlatformAiSettingsService _platformAiSettings;
+    private readonly IAiModelVisionProbe _visionProbe;
     private readonly OllamaSettings _ollamaSettings;
     private readonly ILogger<ImportAiModelResolutionService> _logger;
 
     public ImportAiModelResolutionService(
         IPlatformAiSettingsService platformAiSettings,
+        IAiModelVisionProbe visionProbe,
         IOptions<OllamaSettings> ollamaSettings,
         ILogger<ImportAiModelResolutionService> logger)
     {
         _platformAiSettings = platformAiSettings;
+        _visionProbe = visionProbe;
         _ollamaSettings = ollamaSettings.Value;
         _logger = logger;
     }
@@ -28,14 +32,14 @@ public sealed class ImportAiModelResolutionService : IImportAiModelResolutionSer
         if (!string.IsNullOrWhiteSpace(modelOverride))
         {
             var explicitRef = ImportAiModelResolver.NormalizeModelRefPublic(modelOverride.Trim());
-            return Build(explicitRef, DocumentImportModelSource.RequestOverride, usesLegacyVision: false);
+            return await BuildAsync(explicitRef, DocumentImportModelSource.RequestOverride, usesLegacyVision: false, cancellationToken);
         }
 
         try
         {
             var platformImport = await _platformAiSettings.GetInvoiceImportModelRefAsync(cancellationToken);
             if (ImportAiModelResolver.TryResolvePlatformImportModel(platformImport, _logger, out var platformModel))
-                return Build(platformModel, DocumentImportModelSource.Platform, usesLegacyVision: false);
+                return await BuildAsync(platformModel, DocumentImportModelSource.Platform, usesLegacyVision: false, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -44,7 +48,7 @@ public sealed class ImportAiModelResolutionService : IImportAiModelResolutionSer
         }
 
         var server = ImportAiModelResolver.ResolveServerImportModel(_ollamaSettings);
-        return Build(server, DocumentImportModelSource.ServerFallback, usesLegacyVision: false);
+        return await BuildAsync(server, DocumentImportModelSource.ServerFallback, usesLegacyVision: false, cancellationToken);
     }
 
     public async Task<string?> ResolveEffectiveVisionModelIdAsync(
@@ -70,15 +74,24 @@ public sealed class ImportAiModelResolutionService : IImportAiModelResolutionSer
         return null;
     }
 
-    private DocumentImportModelResolution Build(
+    private async Task<DocumentImportModelResolution> BuildAsync(
         ParsedModelRef model,
         DocumentImportModelSource source,
-        bool usesLegacyVision)
+        bool usesLegacyVision,
+        CancellationToken cancellationToken)
     {
-        var visionCapable = AiModelCapabilityDetector.DetectVisionSupport(model);
-        var strategy = ImportAiModelResolver.ResolveVisionStrategy(model);
-        if (!visionCapable)
-            strategy = ImportVisionStrategy.None;
+        // Le moteur fait foi ; l'heuristique de nom ne sert qu'à défaut de réponse.
+        var declared = await _visionProbe.TryDetectVisionAsync(model, cancellationToken);
+        var visionCapable = AiModelCapabilityDetector.ResolveVisionSupport(declared, model);
+
+        if (declared is null && visionCapable)
+        {
+            _logger.LogDebug(
+                "Import IA : capacité vision de {Model} déduite du nom (le moteur ne l'a pas déclarée).",
+                model.ProviderModelId);
+        }
+
+        var strategy = ImportAiModelResolver.ResolveVisionStrategy(model, visionCapable);
 
         return new DocumentImportModelResolution(
             model,

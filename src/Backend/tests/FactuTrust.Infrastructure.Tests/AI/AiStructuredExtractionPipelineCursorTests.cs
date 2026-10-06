@@ -65,6 +65,7 @@ public sealed class AiStructuredExtractionPipelineCursorTests
 
         var importResolver = new ImportAiModelResolutionService(
             platform.Object,
+            NullAiModelVisionProbe.Instance,
             Options.Create(new OllamaSettings
             {
                 InvoiceImportModel = "qwen2.5:7b-instruct",

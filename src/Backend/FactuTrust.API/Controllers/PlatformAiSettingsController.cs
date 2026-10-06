@@ -44,6 +44,7 @@ public sealed class PlatformAiSettingsController : ControllerBase
     private readonly ICursorAgentClient _cursorAgentClient;
     private readonly IAiModelRecommender _modelRecommender;
     private readonly IImportAiModelResolutionService _importModelResolver;
+    private readonly IAiModelVisionProbe _visionProbe;
     private readonly OllamaSettings _ollamaSettings;
     private readonly CursorSdkSettings _cursorSdkSettings;
     private readonly ModalSettings _modalSettings;
@@ -56,6 +57,7 @@ public sealed class PlatformAiSettingsController : ControllerBase
         ICursorAgentClient cursorAgentClient,
         IAiModelRecommender modelRecommender,
         IImportAiModelResolutionService importModelResolver,
+        IAiModelVisionProbe visionProbe,
         IOptions<OllamaSettings> ollamaSettings,
         IOptions<CursorSdkSettings> cursorSdkSettings,
         IOptions<ModalSettings> modalSettings,
@@ -67,6 +69,7 @@ public sealed class PlatformAiSettingsController : ControllerBase
         _cursorAgentClient = cursorAgentClient;
         _modelRecommender = modelRecommender;
         _importModelResolver = importModelResolver;
+        _visionProbe = visionProbe;
         _ollamaSettings = ollamaSettings.Value;
         _cursorSdkSettings = cursorSdkSettings.Value;
         _modalSettings = modalSettings.Value;
@@ -94,13 +97,18 @@ public sealed class PlatformAiSettingsController : ControllerBase
             var ollamaModels = await _ollamaClient.ListModelsAsync(cancellationToken);
             foreach (var m in ollamaModels)
             {
+                var modelRef = $"{ModelRef.OllamaPrefix}{m.Name}";
+                // Capacité publiée par le moteur ; le nom ne sert que s'il ne la déclare pas.
+                var declaredVision = await _visionProbe.TryDetectVisionAsync(
+                    ModelRef.Parse(modelRef), cancellationToken);
+
                 models.Add(new UnifiedAiModelInfo(
-                    $"{ModelRef.OllamaPrefix}{m.Name}",
+                    modelRef,
                     "ollama",
                     m.Name,
                     m.Size,
                     m.ModifiedAt,
-                    SupportsVision: AiModelCapabilityDetector.DetectVisionSupport(m.Name),
+                    SupportsVision: AiModelCapabilityDetector.ResolveVisionSupport(declaredVision, m.Name),
                     SupportsChat: AiModelCapabilityDetector.DetectChatCapable(m.Name)));
             }
         }

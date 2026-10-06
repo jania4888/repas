@@ -21,6 +21,7 @@ public sealed class ImportAiModelResolutionServiceTests
 
         var service = new ImportAiModelResolutionService(
             platform.Object,
+            NullAiModelVisionProbe.Instance,
             Options.Create(new OllamaSettings { InvoiceImportModel = "qwen2.5:7b-instruct" }),
             NullLogger<ImportAiModelResolutionService>.Instance);
 
@@ -40,6 +41,7 @@ public sealed class ImportAiModelResolutionServiceTests
 
         var service = new ImportAiModelResolutionService(
             platform.Object,
+            NullAiModelVisionProbe.Instance,
             Options.Create(new OllamaSettings { HonorLegacyImportVisionModels = false }),
             NullLogger<ImportAiModelResolutionService>.Instance);
 
@@ -57,6 +59,7 @@ public sealed class ImportAiModelResolutionServiceTests
 
         var service = new ImportAiModelResolutionService(
             platform.Object,
+            NullAiModelVisionProbe.Instance,
             Options.Create(new OllamaSettings
             {
                 HonorLegacyImportVisionModels = true,

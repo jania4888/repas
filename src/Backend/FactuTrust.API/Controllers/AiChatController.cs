@@ -33,6 +33,7 @@ public class AiChatController : ControllerBase
     private readonly IMediator _mediator;
     private readonly SendChatMessageHandler _chatHandler;
     private readonly IOllamaClient _ollamaClient;
+    private readonly IAiModelVisionProbe _visionProbe;
     private readonly IOpenAiChatCompletionsClient _openAiClient;
     private readonly ICursorAgentClient _cursorAgentClient;
     private readonly IPlatformAiSettingsService _platformAiSettings;
@@ -51,6 +52,7 @@ public class AiChatController : ControllerBase
         IMediator mediator,
         SendChatMessageHandler chatHandler,
         IOllamaClient ollamaClient,
+        IAiModelVisionProbe visionProbe,
         IOpenAiChatCompletionsClient openAiClient,
         ICursorAgentClient cursorAgentClient,
         IPlatformAiSettingsService platformAiSettings,
@@ -68,6 +70,7 @@ public class AiChatController : ControllerBase
         _mediator = mediator;
         _chatHandler = chatHandler;
         _ollamaClient = ollamaClient;
+        _visionProbe = visionProbe;
         _openAiClient = openAiClient;
         _cursorAgentClient = cursorAgentClient;
         _platformAiSettings = platformAiSettings;
@@ -330,13 +333,18 @@ public class AiChatController : ControllerBase
         var ollamaModels = await _ollamaClient.ListModelsAsync(cancellationToken);
         foreach (var m in ollamaModels)
         {
+            var modelRef = $"{ModelRef.OllamaPrefix}{m.Name}";
+            // Capacité publiée par le moteur ; le nom ne sert que s'il ne la déclare pas.
+            var declaredVision = await _visionProbe.TryDetectVisionAsync(
+                ModelRef.Parse(modelRef), cancellationToken);
+
             unified.Add(new UnifiedAiModelInfo(
-                $"{ModelRef.OllamaPrefix}{m.Name}",
+                modelRef,
                 "ollama",
                 m.Name,
                 m.Size,
                 m.ModifiedAt,
-                SupportsVision: AiModelCapabilityDetector.DetectVisionSupport(m.Name),
+                SupportsVision: AiModelCapabilityDetector.ResolveVisionSupport(declaredVision, m.Name),
                 SupportsChat: AiModelCapabilityDetector.DetectChatCapable(m.Name)));
         }
 

@@ -720,6 +720,7 @@ public static class DependencyInjection
         // (ValidateOnBuild), une dépendance conditionnelle ferait échouer le boot.
         services.AddScoped<IAiEngineMemoryProbe, AiEngineMemoryProbe>();
         services.AddScoped<IOllamaModelReadinessChecker, OllamaModelReadinessChecker>();
+        services.AddScoped<IAiModelVisionProbe, FactuTrust.Infrastructure.Services.AI.OllamaModelVisionProbe>();
         services.AddScoped<IAiModelRecommender, OllamaModelRecommender>();
         services.AddScoped<IPlatformAiSettingsService, FactuTrust.Infrastructure.Services.AI.PlatformAiSettingsService>();
         services.AddScoped<IImportAiModelResolutionService, FactuTrust.Application.Features.AI.ImportAiModelResolutionService>();

@@ -4,6 +4,11 @@ namespace FactuTrust.Application.Features.AI;
 /// Heuristiques d'auto-détection des capacités d'un modèle LLM à partir de son
 /// nom/référence. Utilisé pour décider, par exemple, si on doit envoyer les
 /// images d'une pièce jointe au modèle (modèles vision multimodaux).
+///
+/// <para><b>Repli, pas référence.</b> Pour un modèle Ollama, la capacité est publiée par le
+/// moteur lui-même (<see cref="Common.Interfaces.Services.IAiModelVisionProbe"/>) : c'est elle
+/// qui fait foi. Ces listes ne servent que lorsque le moteur ne répond pas, ou pour les
+/// fournisseurs distants qui n'exposent pas leurs capacités.</para>
 /// </summary>
 public static class AiModelCapabilityDetector
 {
@@ -18,7 +23,11 @@ public static class AiModelCapabilityDetector
         "claude-3", "claude-4",
         "gpt-4o", "gpt-4-turbo", "gpt-4v",
         "gemini-1.5", "gemini-2",
-        "glm-ocr", "glm_ocr", "glmocr", "ocr-gguf"
+        "glm-ocr", "glm_ocr", "glmocr",
+        // Familles OCR / VL dont le nom ne porte ni « vision » ni un millésime connu.
+        // « -ocr » couvre surya-ocr-2, deepseek-ocr-2, olmocr ; « -vl- » / « -vl: » couvrent
+        // qwen3-vl et les suivants, là où « qwen-vl » ne matchait que les deux premiers.
+        "-ocr", "ocr-", "-vl-", "-vl:", "surya"
     };
 
     private static readonly string[] EmbeddingMarkers =
@@ -72,4 +81,16 @@ public static class AiModelCapabilityDetector
 
     public static bool DetectChatCapable(ParsedModelRef parsed) =>
         parsed.Kind == LlmProviderKind.Cursor || DetectChatCapable(parsed.ProviderModelId);
+
+    /// <summary>
+    /// Règle unique de décision : la capacité déclarée par le moteur l'emporte toujours ; à
+    /// défaut seulement (<paramref name="engineDeclared"/> nul), on devine d'après le nom.
+    /// </summary>
+    /// <param name="engineDeclared">Verdict de <see cref="Common.Interfaces.Services.IAiModelVisionProbe"/>, ou nul si inconnu.</param>
+    public static bool ResolveVisionSupport(bool? engineDeclared, ParsedModelRef parsed) =>
+        engineDeclared ?? DetectVisionSupport(parsed);
+
+    /// <inheritdoc cref="ResolveVisionSupport(bool?, ParsedModelRef)"/>
+    public static bool ResolveVisionSupport(bool? engineDeclared, string? modelRef) =>
+        engineDeclared ?? DetectVisionSupport(modelRef);
 }

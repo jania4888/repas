@@ -129,6 +129,7 @@ public sealed class ImportBankStatementLlmProviderTests
 
         var importResolver = new ImportAiModelResolutionService(
             platform,
+            NullAiModelVisionProbe.Instance,
             Options.Create(new OllamaSettings()),
             NullLogger<ImportAiModelResolutionService>.Instance);
 
