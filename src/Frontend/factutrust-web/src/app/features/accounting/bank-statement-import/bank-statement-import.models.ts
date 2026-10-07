@@ -71,10 +71,17 @@ export interface ExtractedBankStatement {
 export type AiReadingReason = 'scanned' | 'line_issues' | 'unverified' | 'all_documents';
 
 /**
- * Moteur qui a fourni une page (lecture « IA seule ») : GLM-OCR (gabarit JSON), GLM-OCR en
+ * Moteur qui a fourni une page (lecture « IA seule ») : vision (gabarit JSON), vision en
  * reconnaissance de tableau, modèle texte local (repli D2) ou échec des trois étages.
  */
-export type BankStatementPageReadingEngine = 'glm-ocr' | 'glm-ocr-table' | 'text-model' | 'failed' | (string & {});
+export type BankStatementPageReadingEngine =
+  | 'glm-ocr'
+  | 'glm-ocr-table'
+  | 'vision-import'
+  | 'vision-import-table'
+  | 'text-model'
+  | 'failed'
+  | (string & {});
 
 /** Trace de lecture d'une page, alimentée au fil de la lecture ; aucune donnée de relevé. */
 export interface BankStatementPageReading {
@@ -195,7 +202,7 @@ export interface BankStatementImportCapabilities {
   aiEngine?: 'vision' | 'text' | null;
   /** Pourquoi aucune lecture IA n'est possible (code court) ; null quand l'IA est disponible. */
   aiUnavailableReason?: string | null;
-  /** Pourquoi GLM-OCR n'est pas prêt alors que le modèle texte reste disponible ; null sinon. */
+  /** Pourquoi la lecture des images n'est pas prête alors que la lecture sans image reste possible ; null sinon. */
   visionUnavailableReason?: string | null;
 }
 

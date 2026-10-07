@@ -280,7 +280,10 @@ public sealed class InvoiceImportHandlerContractTests
             {
                 InvoiceImportModel = "qwen2.5:7b-instruct",
                 InvoiceImportVisionModel = "llava",
-                InvoiceImportVisionOnEmptyOcr = true
+                InvoiceImportVisionOnEmptyOcr = true,
+                // Le modele vision de ce scenario vient des cles appsettings, que le commit
+                // 4064593c n'honore plus que sous ce drapeau : le test couvre ce chemin precis.
+                HonorLegacyImportVisionModels = true
             }));
 
         await using var stream = new MemoryStream([0x89, 0x50, 0x4E, 0x47]);

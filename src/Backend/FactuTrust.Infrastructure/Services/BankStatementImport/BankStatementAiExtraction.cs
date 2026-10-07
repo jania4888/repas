@@ -382,8 +382,10 @@ public sealed partial class BankStatementAiExtractionJob
         new(Array.Empty<ExtractedStatementLine>(), null, null,
             new[]
             {
+                // Message unique avec la fusion : le motif technique (json_empty, table_not_recognized…)
+                // reste dans les journaux et dans la trace de page, jamais dans l'écran de relecture.
                 new StatementExtractionIssue(StatementIssueCodes.AiPageFailed, StatementIssueSeverity.Blocking,
-                    $"Page {pageNumber} non lue par l'IA : {reason}", pageNumber)
+                    BankStatementAiOnlyMerge.PageNotReadMessage(pageNumber), pageNumber)
             });
 
     /// <summary>

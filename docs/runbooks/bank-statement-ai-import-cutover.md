@@ -1,8 +1,14 @@
 # Runbook — Mise en service de l'import IA de relevés bancaires
 
-Rampe d'activation de l'import de relevés vers le journal de banque, jusqu'à la **lecture GLM-OCR de toute page de
+Rampe d'activation de l'import de relevés vers le journal de banque, jusqu'à la **lecture par l'IA de toute page de
 tout relevé** (étape 9). Chaque étape est réversible. Fonctionnement : `docs/accounting/bank-statement-ai-import.md`.
 Installation du modèle et dimensionnement du serveur : `deploy/README.md`, section GLM-OCR.
+
+> **La rampe ci-dessous est un historique : elle a été exécutée jusqu'à l'étape 9 et les drapeaux sont allumés en
+> production.** Deux points ont changé depuis, et priment sur ce qui suit : l'échelle de lecture compte désormais
+> **deux essais vision pour tout modèle multimodal** (et non une passe propre à GLM-OCR), et le **repli vers le
+> modèle texte est éteint** — une page non lue bloque et le dit. Voir la section « Lecture vision » du document de
+> fonctionnement.
 
 ## Drapeaux
 
@@ -17,11 +23,11 @@ Installation du modèle et dimensionnement du serveur : `deploy/README.md`, sect
 | `Accounting:BankStatementImport:AiOnlyReadingEnabled` | idem | `false` | `true` | **D1/D3** : les opérations viennent uniquement de l'IA (plan `ai_only`), la lecture directe ne fournit que des métadonnées, un RIB différent n'empêche pas la lecture. Sans effet si « tout document par l'IA » est éteint |
 | `Accounting:BankStatementImport:AiBalanceMismatchAsWarning` | idem | `false` | `true` | **D4** : écart de solde = avertissement à reconnaître (`acknowledgeBalanceWarning`) quand toutes les lignes viennent de l'IA ; éteint, l'écart bloque |
 | `Accounting:BankStatementImport:AiPilotTenantIds` | idem (`__0`, `__1`…) | `[]` | `[]` | Liste de dossiers pilotes : non vide, `AiOnlyReadingEnabled` et `AiBalanceMismatchAsWarning` ne s'appliquent qu'à eux |
-| `Accounting:BankStatementImport:VisionReadingEnabled` | idem | `false` | `true` | GLM-OCR page par page ; éteint, le plan `ai_only` lit tout avec le modèle texte (dépannage) |
-| `Accounting:BankStatementImport:VisionTextFallbackEnabled` | idem | `true` | `true` | Étage 3 : page non lue par GLM-OCR relue par le modèle texte, signalée (`statement.ai_text_fallback`) |
+| `Accounting:BankStatementImport:VisionReadingEnabled` | idem | `false` | `true` | Lecture vision page par page par le modèle d'import configuré ; éteint, le plan `ai_only` lit tout avec le modèle texte (dépannage) |
+| `Accounting:BankStatementImport:VisionTextFallbackEnabled` | idem | `true` | **`false`** | Éteint : une page non lue par la vision bloque et le dit, au lieu d'être relue sans son image. Rallumer relève du dépannage |
 | `Accounting:BankStatementImport:VisionSendTextLayer` | idem | `false` | `false` | Image de page seule ; la couche texte n'est pas jointe à l'appel vision |
 | `Accounting:BankStatementImport:MaxAiPages` / `MaxPages` | idem | `20` / `50` | `20` / `50` | Pages lues par l'IA par relevé / pages par fichier |
-| `Accounting:BankStatementImport:VisionCallTimeoutSeconds` | idem | `300` | `300` | Délai d'un appel GLM-OCR par page |
+| `Accounting:BankStatementImport:VisionCallTimeoutSeconds` | idem | `300` | `300` | Délai d'un appel vision par page |
 | `Accounting:BankStatementImport:AiJobBudgetMinutes` | idem | `120` | `180` | Budget de la tâche Hangfire, attente de la file comprise (20 × 360 s × 1,5) |
 | `Accounting:BankStatementImport:AiWorkerCount` | idem | `1` | `1` | Ouvriers de la file `bank_statement_ai` ; jamais plus que `Ollama:MaxConcurrentGenerations` (1) |
 | `Accounting:BankStatementImport:AiComplementAllowExternal` | idem | `false` | `false` | Autorise l'envoi de pages à une IA externe (jamais en production sans décision du responsable du traitement) |

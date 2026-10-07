@@ -335,7 +335,8 @@ public sealed class BankStatementImportServiceAiForAllDocumentsTests : IDisposab
         var spec = StbSpec();
         var accountId = SeedBankAccount(spec.Rib);
 
-        var result = await AiOnlyService().StartAsync(Request(StbLike(spec), accountId));
+        // Chemin de dépannage : il faut l'allumer explicitement, il est éteint par défaut.
+        var result = await AiOnlyService(l => l.VisionTextFallbackEnabled = true).StartAsync(Request(StbLike(spec), accountId));
 
         Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
         Assert.Equal(nameof(BankStatementImportSessionStatus.Extracting), result.Value.Status);
@@ -344,7 +345,9 @@ public sealed class BankStatementImportServiceAiForAllDocumentsTests : IDisposab
         Assert.True(plan.IsAiOnly);
         var global = Assert.Single(result.Value.Extraction.Issues, i => i.Code == StatementIssueCodes.AiUnavailable);
         Assert.Equal(StatementIssueSeverity.Warning, global.Severity);
-        Assert.Contains("GLM-OCR indisponible", global.Message, StringComparison.Ordinal);
+        Assert.Contains("Lecture des images indisponible", global.Message, StringComparison.Ordinal);
+        // Le motif de diagnostic (« modèle … non installé ») est repris tel quel : il est destiné à
+        // l'administrateur. Ce sont les LIBELLÉS de méthode qui ne nomment plus de modèle.
         Assert.Contains("non installé", global.Message, StringComparison.Ordinal);
         var page = Assert.Single(result.Value.Extraction.Issues, i => i.Code == StatementIssueCodes.AiTextFallback);
         Assert.Equal(StatementIssueSeverity.Warning, page.Severity);

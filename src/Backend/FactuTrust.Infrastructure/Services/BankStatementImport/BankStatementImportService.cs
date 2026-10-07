@@ -931,11 +931,11 @@ public sealed class BankStatementImportService : IBankStatementImportService
             if (Limits.VisionReadingEnabled)
             {
                 issues.Add(new StatementExtractionIssue(StatementIssueCodes.AiUnavailable, StatementIssueSeverity.Warning,
-                    $"Modèle GLM-OCR indisponible ({cause}) : le relevé est lu par le modèle texte local, moins précis sur les pages scannées."));
+                    $"Lecture des images indisponible ({cause}) : le relevé est lu sans l'image des pages, moins précisément sur les pages scannées."));
                 foreach (var page in plan.PlannedPages)
                 {
                     issues.Add(new StatementExtractionIssue(StatementIssueCodes.AiTextFallback, StatementIssueSeverity.Warning,
-                        $"Page {page} : lue par le modèle texte local (GLM-OCR indisponible).", page));
+                        $"Page {page} : lue en secours, sans l'image de la page.", page));
                 }
             }
 

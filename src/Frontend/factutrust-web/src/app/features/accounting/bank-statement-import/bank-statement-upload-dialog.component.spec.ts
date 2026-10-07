@@ -203,23 +203,24 @@ describe('BankStatementUploadDialogComponent', () => {
       expect(text()).toContain('rapprochement bancaire');
     });
 
-    it('annonce la lecture page par page par GLM-OCR', async () => {
+    it('annonce la lecture page par page par l’IA, sans nommer le modèle', async () => {
       await open([account({ id: 'ok' })], { ...capabilities, aiProviderKind: 'local', allDocumentsViaAi: true, aiEngine: 'vision' }, { origin: 'reconciliation' });
 
-      expect(text()).toContain('GLM-OCR');
+      expect(text()).toContain('lu page par page par l\'IA de la plateforme');
+      expect(text()).not.toContain('GLM-OCR');
       expect(text()).toContain('une à trois minutes par page');
       expect(document.body.querySelector('.bsu-hint--blocked')).toBeNull();
     });
 
-    it('prévient que GLM-OCR est indisponible et que le modèle texte prend le relais', async () => {
+    it('prévient que la lecture des images est indisponible et que le secours prend le relais', async () => {
       await open(
         [account({ id: 'ok' })],
         { ...capabilities, aiProviderKind: 'local', allDocumentsViaAi: true, aiEngine: 'text', visionUnavailableReason: 'vision_model_unavailable' },
         { origin: 'reconciliation' }
       );
 
-      expect(text()).toContain('GLM-OCR est indisponible');
-      expect(text()).toContain('modèle texte local');
+      expect(text()).toContain('La lecture des images est indisponible');
+      expect(text()).toContain('sans l\'image des pages');
       expect(component.aiBlocked()).toBeFalse();
     });
 

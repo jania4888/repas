@@ -143,12 +143,27 @@ public sealed class BankStatementVisionSettingsConsistencyTests
     [InlineData("AiOnlyReadingEnabled")]
     [InlineData("AiBalanceMismatchAsWarning")]
     [InlineData("VisionReadingEnabled")]
-    [InlineData("VisionTextFallbackEnabled")]
-    public void Production_enables_glm_ocr_reading_of_every_statement(string flag)
+    public void Production_enables_vision_reading_of_every_statement(string flag)
     {
         Assert.True(Bool(Prod("Accounting", "BankStatementImport", flag), $"Accounting:BankStatementImport:{flag}"), $"{flag} must be true in production");
         Assert.True(Bool(Prod("Accounting", "BankStatementAiForAllDocumentsEnabled"), "Accounting:BankStatementAiForAllDocumentsEnabled"));
         Assert.True(Bool(Prod("Accounting", "BankStatementAiPostingEnabled"), "Accounting:BankStatementAiPostingEnabled"));
+    }
+
+    /// <summary>
+    /// Le repli « modèle texte » (même modèle, SANS l'image) est un interrupteur de dépannage : éteint
+    /// partout. Une page que la vision ne lit pas est signalée non lue, et le relevé est bloqué — plutôt
+    /// qu'enregistré amputé à partir d'une lecture dégradée.
+    /// </summary>
+    [Theory]
+    [InlineData("appsettings.json")]
+    [InlineData("appsettings.Development.json")]
+    [InlineData("appsettings.Production.json")]
+    public void The_text_fallback_is_off_everywhere(string file)
+    {
+        var value = TryGet(ReadRoot(file), "Accounting", "BankStatementImport", "VisionTextFallbackEnabled");
+        Assert.False(Bool(value, $"{file} → Accounting:BankStatementImport:VisionTextFallbackEnabled"),
+            $"{file}: VisionTextFallbackEnabled must stay off; turning it on re-enables reading pages without their image.");
     }
 
     [Fact]

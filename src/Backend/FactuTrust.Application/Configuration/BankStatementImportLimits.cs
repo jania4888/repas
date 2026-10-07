@@ -78,8 +78,21 @@ public sealed class BankStatementImportLimits
     /// <summary>Dossiers pilotes (GUID). Vide = tous les dossiers.</summary>
     public List<Guid> AiPilotTenantIds { get; set; } = new();
 
-    /// <summary>Repli qwen / chemin historique si GLM-OCR échoue sur une page.</summary>
-    public bool VisionTextFallbackEnabled { get; set; } = true;
+    /// <summary>
+    /// Repli sur le modèle d'import SANS l'image (dit « modèle texte ») quand la lecture vision échoue.
+    /// OFF par défaut : une page que la vision ne lit pas est signalée non lue, et le relevé est bloqué.
+    /// Interrupteur de dépannage, à n'allumer que pour comparer deux comportements.
+    /// </summary>
+    public bool VisionTextFallbackEnabled { get; set; }
+
+    /// <summary>
+    /// Forme d'invite de l'étage 1 pour un modèle multimodal NON GLM-OCR. OFF (défaut) : prompt système
+    /// vide + consigne brute + schéma verbatim, la seule forme éprouvée — voir
+    /// <see cref="Features.Accounting.BankStatementImport.BankStatementVisionPrompt"/>, dont la
+    /// documentation rappelle qu'un prompt système en français avec grammaire <c>format</c> fait rendre
+    /// « un JSON valide mais vide ». ON : ancienne passe unique (prompt français + schéma typé).
+    /// </summary>
+    public bool VisionLegacyGenericPromptEnabled { get; set; }
 
     /// <summary>Inclure le texte OCR/couche texte dans le message utilisateur avec l'image.</summary>
     public bool VisionSendTextLayer { get; set; }

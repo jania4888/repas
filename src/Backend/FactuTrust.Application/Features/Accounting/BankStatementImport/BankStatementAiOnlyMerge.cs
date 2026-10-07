@@ -237,12 +237,16 @@ public static class BankStatementAiOnlyMerge
             return;
         }
 
+        // Le repli « modèle texte » n'est plus qu'un interrupteur de dépannage : quand il est allumé,
+        // l'avertissement reste, mais sans exposer le motif technique (json_empty…) à l'utilisateur.
         if (trace.IsTextFallback && !issues.Any(i => i.Code == StatementIssueCodes.AiTextFallback && i.PageNumber == page))
         {
             issues.Add(new StatementExtractionIssue(StatementIssueCodes.AiTextFallback, StatementIssueSeverity.Warning,
-                $"Page {page} relue par le modèle texte{(string.IsNullOrWhiteSpace(trace.FailureReason) ? string.Empty : " : " + trace.FailureReason)}.", page));
+                $"Page {page} : lecture de secours, sans l'image de la page. Vérifiez attentivement ces opérations.", page));
         }
 
+        // Page LUE mais sans opération (page de garde, conditions générales) : avertissement, pas blocage.
+        // Une page que l'IA n'a pas su lire suit l'autre branche (trace.IsFailed) et bloque, elle.
         if (reading.Lines.Count == 0 && !issues.Any(i => i.Code == StatementIssueCodes.AiPageEmpty && i.PageNumber == page))
         {
             issues.Add(new StatementExtractionIssue(StatementIssueCodes.AiPageEmpty, StatementIssueSeverity.Warning,
@@ -294,8 +298,13 @@ public static class BankStatementAiOnlyMerge
         && a.IsDebit == b.IsDebit
         && string.Equals(NormalizeLabel(a.Label), NormalizeLabel(b.Label), StringComparison.Ordinal);
 
-    private static string PageNotReadMessage(int page, string? reason) =>
-        $"Page {page} non lue par l'IA{(string.IsNullOrWhiteSpace(reason) ? string.Empty : " : " + reason)}.";
+    /// <summary>
+    /// Message d'une page non lue. Le motif technique (<c>json_empty</c>, <c>table_empty</c>…) reste dans les
+    /// journaux : il n'apprend rien à l'utilisateur et laisse croire à une panne de son côté.
+    /// </summary>
+    public static string PageNotReadMessage(int page, string? reason = null) =>
+        $"Page {page} : l'IA n'a pas pu lire cette page. Le relevé ne peut pas être enregistré. "
+        + "Si elle contient bien des opérations, signalez-le à votre administrateur : le modèle d'IA de la plateforme doit être changé.";
 
     private static int ModalPrintedDecimals(IEnumerable<int?> values)
     {

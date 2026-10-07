@@ -169,7 +169,7 @@ export function issueTitle(code: string): string {
     case 'statement.ai_possible_duplicate':
       return $localize`:@@accounting.bank-statement-import.ts.doublon.possible.entre.deux.pages:Doublon possible entre deux pages`;
     case 'statement.ai_text_fallback':
-      return $localize`:@@accounting.bank-statement-import.ts.page.relue.par.le.modele.texte:Page relue par le modèle texte`;
+      return $localize`:@@accounting.bank-statement-import.ts.page.lue.en.secours.72ee0df3:Page lue en secours`;
     case 'statement.ai_line_needs_review':
       return $localize`:@@accounting.bank-statement-import.ts.ligne.a.corriger:Ligne à corriger`;
     case 'statement.line_ambiguous_side':
@@ -198,7 +198,7 @@ export function issueTitle(code: string): string {
 export function sessionFailureMessage(code: string | null | undefined): string {
   switch (code) {
     case 'ai_unavailable':
-      return $localize`:@@accounting.bank-statement-import.ts.echec.ia.indisponible:L'IA de lecture (GLM-OCR) est indisponible sur le serveur : aucune page n'a été lue. Réessayez plus tard ou contactez l'administrateur.`;
+      return $localize`:@@accounting.bank-statement-import.ts.l.ia.de.lecture.est.indisponible.sur.le.serveur.be549353:L'IA de lecture est indisponible sur le serveur : aucune page n'a été lue. Réessayez plus tard ou contactez l'administrateur.`;
     case 'ai_timeout':
       return $localize`:@@accounting.bank-statement-import.ts.echec.ia.delai.depasse:La lecture a dépassé le temps alloué. Réessayez avec un relevé plus court ou plus tard.`;
     case 'ai_failed':

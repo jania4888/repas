@@ -12593,6 +12593,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.ts.l.ia.de.lecture.est.indisponible.sur.le.serveur.be549353": "L'IA de lecture est indisponible sur le serveur : aucune page n'a été lue. Réessayez plus tard ou contactez l'administrateur.",
+  "@accounting.bank-statement-import.ts.l.ia.de.lecture.est.indisponible.sur.le.serveur.be549353": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.ts.ecriture.existante.0263c7b5": "Écriture existante",
   "@accounting.bank-statement-import.ts.ecriture.existante.0263c7b5": {
     "x-files": [
@@ -12670,6 +12677,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.lecture.des.pages.par.l.ia.page.currentpage.s.su.0ba333ec": "Lecture des pages par l'IA… page {$INTERPOLATION} sur {$INTERPOLATION_1} — {$INTERPOLATION_2} %",
+  "@accounting.bank-statement-import.lecture.des.pages.par.l.ia.page.currentpage.s.su.0ba333ec": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.relecture.par.l.ia.des.lignes.non.lues.avec.cert.a39a7373": "Relecture par l'IA des lignes non lues avec certitude… {$INTERPOLATION} %",
   "@accounting.bank-statement-import.relecture.par.l.ia.des.lignes.non.lues.avec.cert.a39a7373": {
     "x-files": [
@@ -12679,6 +12693,13 @@
   },
   "accounting.bank-statement-import.relecture.du.releve.par.l.ia.solde.non.verifie.s.725c03c7": "Relecture du relevé par l'IA (solde non vérifié)… {$INTERPOLATION} %",
   "@accounting.bank-statement-import.relecture.du.releve.par.l.ia.solde.non.verifie.s.725c03c7": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.lecture.du.releve.par.l.ia.sans.l.image.des.page.6c59fbc2": "Lecture du relevé par l'IA, sans l'image des pages… {$INTERPOLATION} %",
+  "@accounting.bank-statement-import.lecture.du.releve.par.l.ia.sans.l.image.des.page.6c59fbc2": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
     ],
@@ -13099,6 +13120,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.ts.page.lue.en.secours.sans.l.image.f2ded7f1": "Page lue en secours, sans l'image",
+  "@accounting.bank-statement-import.ts.page.lue.en.secours.sans.l.image.f2ded7f1": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.ts.journal.de.banque.b0b1e524": "Journal de Banque",
   "@accounting.bank-statement-import.ts.journal.de.banque.b0b1e524": {
     "x-files": [
@@ -13344,6 +13372,20 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.chaque.releve.pdf.texte.pdf.scanne.ou.image.est.ff546aeb": "Chaque relevé — PDF texte, PDF scanné ou image — est lu page par page par l'IA de la plateforme : comptez une à trois minutes par page sur le serveur. Les opérations lues sont ensuite à contrôler avant l'enregistrement.",
+  "@accounting.bank-statement-import.chaque.releve.pdf.texte.pdf.scanne.ou.image.est.ff546aeb": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.la.lecture.des.images.est.indisponible.les.relev.5d7babb6": "La lecture des images est indisponible : les relevés seront lus sans l'image des pages, moins précisément sur les pages scannées.",
+  "@accounting.bank-statement-import.la.lecture.des.images.est.indisponible.les.relev.5d7babb6": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.67692986": " Pages scannées ou non lues avec certitude : relecture par une IA externe (fournisseur configuré par la plateforme). ",
   "@accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.67692986": {
     "x-files": [
@@ -13353,6 +13395,13 @@
   },
   "accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.ad04271e": " Pages scannées ou non lues avec certitude : relecture par l'IA locale du serveur. ",
   "@accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.ad04271e": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ia.de.lecture.indisponible.modele.non.charge.ou.f636f257": "IA de lecture indisponible (modèle non chargé ou moteur arrêté) : l'import de relevés est suspendu. Réessayez dans quelques minutes ou contactez l'administrateur de la plateforme.",
+  "@accounting.bank-statement-import.ia.de.lecture.indisponible.modele.non.charge.ou.f636f257": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-upload-dialog.component.ts"
     ],
@@ -13381,6 +13430,20 @@
   },
   "accounting.bank-statement-import.ce.releve.appartient.au.compte.suggere": "Ce relevé appartient au compte {$INTERPOLATION} (…{$INTERPOLATION_1}).",
   "@accounting.bank-statement-import.ce.releve.appartient.au.compte.suggere": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.analyser.avec.ce.compte.relance.la.lecture.compl.2996c3d3": "Analyser avec ce compte relance la lecture complète du fichier par l'IA ({$INTERPOLATION} pages, environ {$INTERPOLATION_1} min). Les opérations déjà lues ci-dessous sont présentées à titre indicatif.",
+  "@accounting.bank-statement-import.analyser.avec.ce.compte.relance.la.lecture.compl.2996c3d3": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.analyser.avec.ce.compte.relance.la.lecture.compl.4e3d199b": "Analyser avec ce compte relance la lecture complète du fichier par l'IA ({$INTERPOLATION} pages). Les opérations déjà lues ci-dessous sont présentées à titre indicatif.",
+  "@accounting.bank-statement-import.analyser.avec.ce.compte.relance.la.lecture.compl.4e3d199b": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
     ],
@@ -13505,6 +13568,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.ts.page.lue.en.secours.72ee0df3": "Page lue en secours",
+  "@accounting.bank-statement-import.ts.page.lue.en.secours.72ee0df3": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.ts.page.relue.par.le.modele.texte": "Page relue par le modèle texte",
   "@accounting.bank-statement-import.ts.page.relue.par.le.modele.texte": {
     "x-files": [
@@ -13617,6 +13687,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.page.p.page.lecture.de.secours.e9790bef": "Page {$INTERPOLATION} · lecture de secours",
+  "@accounting.bank-statement-import.page.p.page.lecture.de.secours.e9790bef": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.page.etat.relue": "Page {$INTERPOLATION} · relue par le modèle texte",
   "@accounting.bank-statement-import.page.etat.relue": {
     "x-files": [
@@ -13640,6 +13717,13 @@
   },
   "accounting.bank-statement-import.page.etat.a.lire": "Page {$INTERPOLATION} · à lire",
   "@accounting.bank-statement-import.page.etat.a.lire": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.pages.pagelist.fallback.lues.en.secours.sans.l.i.1c30311a": "Pages {$INTERPOLATION} : lues en secours, sans l'image de la page.",
+  "@accounting.bank-statement-import.pages.pagelist.fallback.lues.en.secours.sans.l.i.1c30311a": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
     ],
@@ -13773,6 +13857,20 @@
   },
   "accounting.bank-statement-import.releve.d.un.compte.absent.du.dossier": "Ce relevé appartient à un autre compte (RIB …{$INTERPOLATION}) qui n'existe pas dans ce dossier. Créez-le dans Paiements › Comptes bancaires (compte en dinars relié à un compte 532), puis relancez l'import.",
   "@accounting.bank-statement-import.releve.d.un.compte.absent.du.dossier": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.les.pages.pagelist.fallback.94d40cd2": "L'IA n'a pas pu lire les pages {$INTERPOLATION} : elles ont été lues en secours, sans leur image. Vérifiez attentivement ces opérations. Vérifiez attentivement ces opérations.",
+  "@accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.les.pages.pagelist.fallback.94d40cd2": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.la.page.fallback.0.elle.a.e.32d72468": "L'IA n'a pas pu lire la page {$INTERPOLATION} : elle a été lue en secours, sans son image. Vérifiez attentivement ces opérations. Vérifiez attentivement ces opérations.",
+  "@accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.la.page.fallback.0.elle.a.e.32d72468": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
     ],
@@ -13955,6 +14053,41 @@
   },
   "accounting.bank-statement-import.ts.lecture.ia.non.effectuee": "Lecture IA non effectuée",
   "@accounting.bank-statement-import.ts.lecture.ia.non.effectuee": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.l.ia.pages.lues.en.secours.9c5e1339": "Lu par l'IA — pages {$pages} lues en secours",
+  "@accounting.bank-statement-import.ts.lu.par.l.ia.pages.lues.en.secours.9c5e1339": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.l.ia.page.lue.en.secours.6fa79a4c": "Lu par l'IA — page {$page} lue en secours",
+  "@accounting.bank-statement-import.ts.lu.par.l.ia.page.lue.en.secours.6fa79a4c": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.l.ia.1.page.0bb90ccc": "Lu par l'IA (1 page)",
+  "@accounting.bank-statement-import.ts.lu.par.l.ia.1.page.0bb90ccc": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.l.ia.pages.d44397d6": "Lu par l'IA ({$count} pages)",
+  "@accounting.bank-statement-import.ts.lu.par.l.ia.pages.d44397d6": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.l.ia.sans.l.image.des.pages.21167785": "Lu par l'IA, sans l'image des pages",
+  "@accounting.bank-statement-import.ts.lu.par.l.ia.sans.l.image.des.pages.21167785": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
     ],

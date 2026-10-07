@@ -103,6 +103,27 @@ public sealed record OllamaChatChunk
 
     [JsonPropertyName("done_reason")]
     public string? DoneReason { get; init; }
+
+    /// <summary>
+    /// Jetons d'entrée réellement évalués par le modèle (dernier fragment, <c>done = true</c>).
+    /// Diagnostic décisif pour la lecture vision : une page jointe en image pèse des centaines de
+    /// jetons, donc un compte proche de la seule longueur du prompt signale que l'image n'a pas
+    /// été prise en compte par le modèle.
+    /// </summary>
+    [JsonPropertyName("prompt_eval_count")]
+    public int? PromptEvalCount { get; init; }
+
+    /// <summary>Jetons produits (dernier fragment) : distingue « rien produit » de « produit puis illisible ».</summary>
+    [JsonPropertyName("eval_count")]
+    public int? EvalCount { get; init; }
+
+    /// <summary>Durée d'évaluation de l'entrée, en nanosecondes (dernier fragment).</summary>
+    [JsonPropertyName("prompt_eval_duration")]
+    public long? PromptEvalDurationNs { get; init; }
+
+    /// <summary>Durée de production, en nanosecondes (dernier fragment).</summary>
+    [JsonPropertyName("eval_duration")]
+    public long? EvalDurationNs { get; init; }
 }
 
 public sealed record OllamaToolDefinition

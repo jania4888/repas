@@ -9,6 +9,7 @@ using FactuTrust.Application.Features.AI.Json;
 using FactuTrust.Application.Features.Accounting.BankStatementImport;
 using FactuTrust.Domain.Banking;
 using FactuTrust.Domain.Common;
+using FactuTrust.Domain.Enums;
 using FactuTrust.Domain.Entities;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
@@ -57,6 +58,9 @@ public sealed partial class BankStatementAiExtractionJob
         long DurationMs,
         long? FirstTokenMs,
         int StreamChunkCount,
+        // Compteurs de jetons du moteur local pour CET appel. Null hors moteur local et pour
+        // l'étage 3, qui découpe la page en plusieurs appels sans mesure agrégée.
+        AiCallTokenMetrics? Metrics,
         int RawChars,
         string? GroundingText,
         bool Truncated,
@@ -108,7 +112,10 @@ public sealed partial class BankStatementAiExtractionJob
             (int)ComputeBudget(pages.Count, limits.EffectiveVisionCallTimeoutSeconds, limits.EffectiveAiJobBudgetMinutes).TotalMinutes);
 
         if (visionModel is not null)
+        {
             await WarmUpBestEffortAsync(pipeline, visionModel, cancellationToken);
+            await WarnIfGpuSettingWithoutGpuAsync(services, visionModelLabel, cancellationToken);
+        }
 
         var readings = new Dictionary<int, BankStatementAiPageReader.PageReading>();
         var textReadings = new Dictionary<int, BankStatementAiPageReader.TextPageReading>();
@@ -172,12 +179,22 @@ public sealed partial class BankStatementAiExtractionJob
 
             if (!circuitOpen)
             {
-                if (visionStrategy == ImportVisionStrategy.GenericMultimodal)
+                // Même échelle à DEUX essais VISION pour tout modèle multimodal, GLM-OCR ou non :
+                // l'étage 1 n'emploie que la forme éprouvée (prompt système vide, consigne brute, schéma
+                // verbatim) et l'étage 2 redemande la page SANS aucun schéma. Voir BankStatementVisionPrompt :
+                // une consigne en français avec grammaire « format » fait rendre « un JSON valide mais vide »,
+                // ce que l'ancienne passe unique générique provoquait sur chaque page.
+                var glmOptimized = visionStrategy == ImportVisionStrategy.GlmOcrOptimized;
+                var stage1Engine = glmOptimized ? BankStatementPageReadingEngines.GlmOcr : BankStatementPageReadingEngines.VisionImport;
+                var stage2Engine = glmOptimized ? BankStatementPageReadingEngines.GlmOcrTable : BankStatementPageReadingEngines.VisionImportTable;
+
+                if (!glmOptimized && limits.VisionLegacyGenericPromptEnabled)
                 {
+                    // Recours (réglage de dépannage) : ancienne passe unique, prompt français + schéma typé.
                     attempts++;
                     var generic = await RunGenericVisionStageAsync(
                         pipeline, pageBytes, pageFileName, pageContentType, visionModel!, pageNumber, limits, readOptions, cancellationToken);
-                    LogPage(session.Id, pageNumber, BankStatementPageReadingEngines.VisionImport, visionModelLabel, attempts, generic);
+                    LogPage(session.Id, pageNumber, stage1Engine, visionModelLabel, attempts, generic);
                     truncated |= generic.Truncated;
                     groundingText ??= generic.GroundingText;
                     if (generic.ProviderUnavailable)
@@ -189,7 +206,7 @@ public sealed partial class BankStatementAiExtractionJob
                     if (generic.Succeeded)
                     {
                         consecutiveVisionFailures = 0;
-                        RecordPage(pageNumber, generic.Reading!, BankStatementPageReadingEngines.VisionImport, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, generic.Reading!.Lines.Count, null, truncated);
+                        RecordPage(pageNumber, generic.Reading!, stage1Engine, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, generic.Reading!.Lines.Count, null, truncated);
                         await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
                         continue;
                     }
@@ -199,10 +216,10 @@ public sealed partial class BankStatementAiExtractionJob
                 }
                 else
                 {
-                    // ---- Étage 1 : GLM-OCR, consigne native d'extraction JSON.
+                    // ---- Étage 1 : gabarit JSON natif, consigne brute, schéma verbatim.
                     attempts++;
                     stage1 = await RunVisionJsonStageAsync(pipeline, pageBytes, pageFileName, pageContentType, visionModel!, pageNumber, limits, readOptions, cancellationToken);
-                    LogPage(session.Id, pageNumber, BankStatementPageReadingEngines.GlmOcr, visionModelLabel, attempts, stage1);
+                    LogPage(session.Id, pageNumber, stage1Engine, visionModelLabel, attempts, stage1);
                     truncated |= stage1.Truncated;
                     groundingText ??= stage1.GroundingText;
                     if (stage1.ProviderUnavailable)
@@ -214,7 +231,7 @@ public sealed partial class BankStatementAiExtractionJob
                     if (stage1.Succeeded)
                     {
                         consecutiveVisionFailures = 0;
-                        RecordPage(pageNumber, stage1.Reading!, BankStatementPageReadingEngines.GlmOcr, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, stage1.Reading!.Lines.Count, null, truncated);
+                        RecordPage(pageNumber, stage1.Reading!, stage1Engine, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, stage1.Reading!.Lines.Count, null, truncated);
                         await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
                         continue;
                     }
@@ -223,12 +240,12 @@ public sealed partial class BankStatementAiExtractionJob
                     if (await IsCancelledAsync(ctx, session.Id, cancellationToken))
                         return;
 
-                    // ---- Étage 2 : GLM-OCR « Table Recognition: », tableau analysé côté serveur.
+                    // ---- Étage 2 : « Table Recognition: » SANS schéma, tableau analysé côté serveur.
                     if (!circuitOpen)
                     {
                         attempts++;
                         stage2 = await RunVisionTableStageAsync(pipeline, pageBytes, pageFileName, pageContentType, visionModel!, pageNumber, limits, readOptions, cancellationToken);
-                        LogPage(session.Id, pageNumber, BankStatementPageReadingEngines.GlmOcrTable, visionModelLabel, attempts, stage2);
+                        LogPage(session.Id, pageNumber, stage2Engine, visionModelLabel, attempts, stage2);
                         groundingText = stage2.GroundingText ?? groundingText;
                         truncated |= stage2.Truncated;
                         if (stage2.ProviderUnavailable)
@@ -240,7 +257,7 @@ public sealed partial class BankStatementAiExtractionJob
                         if (stage2.Succeeded)
                         {
                             consecutiveVisionFailures = 0;
-                            RecordPage(pageNumber, stage2.Reading!, BankStatementPageReadingEngines.GlmOcrTable, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, stage2.Reading!.Lines.Count, null, truncated);
+                            RecordPage(pageNumber, stage2.Reading!, stage2Engine, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, stage2.Reading!.Lines.Count, null, truncated);
                             await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
                             continue;
                         }
@@ -250,7 +267,6 @@ public sealed partial class BankStatementAiExtractionJob
 
                     consecutiveVisionFailures++;
                 }
-
                 if (consecutiveVisionFailures >= 2 && !circuitOpen)
                 {
                     circuitOpen = true;
@@ -495,18 +511,18 @@ public sealed partial class BankStatementAiExtractionJob
         if (outcome.IsFailure)
             return FailedStage(outcome.Error.Description, sw.ElapsedMilliseconds);
         if (!outcome.Value.VisionUsed)
-            return new StageResult(null, PageFailureReasons.VisionNotUsed, "failed", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.RawContent?.Length ?? 0, null, false, false);
+            return new StageResult(null, PageFailureReasons.VisionNotUsed, "failed", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.TokenMetrics, outcome.Value.RawContent?.Length ?? 0, null, false, false);
 
         var raw = outcome.Value.RawContent ?? string.Empty;
         var grounding = string.IsNullOrWhiteSpace(outcome.Value.Extraction.Text) ? null : outcome.Value.Extraction.Text;
         var reading = ReadRaw(raw, pageNumber, grounding, readOptions);
         var looksTruncated = !raw.TrimEnd().EndsWith('}');
         if (reading.Issues.Any(i => i.Code == StatementIssueCodes.AiPageFailed))
-            return new StageResult(reading, PageFailureReasons.JsonInvalid, "invalid_json", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, raw.Length, grounding, looksTruncated, false);
+            return new StageResult(reading, PageFailureReasons.JsonInvalid, "invalid_json", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.TokenMetrics, raw.Length, grounding, looksTruncated, false);
         if (reading.Lines.Count == 0)
-            return new StageResult(reading, PageFailureReasons.JsonEmpty, "empty", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, raw.Length, grounding, looksTruncated, false);
+            return new StageResult(reading, PageFailureReasons.JsonEmpty, "empty", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.TokenMetrics, raw.Length, grounding, looksTruncated, false);
 
-        return new StageResult(reading, null, "ok", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, raw.Length, grounding, looksTruncated, false);
+        return new StageResult(reading, null, "ok", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.TokenMetrics, raw.Length, grounding, looksTruncated, false);
     }
 
     private static async Task<StageResult> RunVisionJsonStageAsync(
@@ -529,7 +545,7 @@ public sealed partial class BankStatementAiExtractionJob
         if (outcome.IsFailure)
             return FailedStage(outcome.Error.Description, sw.ElapsedMilliseconds);
         if (!outcome.Value.VisionUsed)
-            return new StageResult(null, PageFailureReasons.VisionNotUsed, "failed", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.RawContent?.Length ?? 0, null, false, false);
+            return new StageResult(null, PageFailureReasons.VisionNotUsed, "failed", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.TokenMetrics, outcome.Value.RawContent?.Length ?? 0, null, false, false);
 
         var raw = outcome.Value.RawContent ?? string.Empty;
         // La couche texte PdfPig est extraite quoiqu'il arrive (VisionSendTextLayer ne pilote que
@@ -539,7 +555,7 @@ public sealed partial class BankStatementAiExtractionJob
         var json = InvoiceImportParsing.ExtractFirstJsonObject(raw);
         var looksTruncated = !raw.TrimEnd().EndsWith('}');
         if (string.IsNullOrWhiteSpace(json))
-            return new StageResult(null, looksTruncated ? PageFailureReasons.Truncated : PageFailureReasons.JsonInvalid, "invalid_json", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, raw.Length, grounding, looksTruncated, false);
+            return new StageResult(null, looksTruncated ? PageFailureReasons.Truncated : PageFailureReasons.JsonInvalid, "invalid_json", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.TokenMetrics, raw.Length, grounding, looksTruncated, false);
 
         LlmBankStatementPage typed;
         try
@@ -548,15 +564,15 @@ public sealed partial class BankStatementAiExtractionJob
         }
         catch (JsonException)
         {
-            return new StageResult(null, looksTruncated ? PageFailureReasons.Truncated : PageFailureReasons.JsonInvalid, "invalid_json", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, raw.Length, grounding, looksTruncated, false);
+            return new StageResult(null, looksTruncated ? PageFailureReasons.Truncated : PageFailureReasons.JsonInvalid, "invalid_json", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.TokenMetrics, raw.Length, grounding, looksTruncated, false);
         }
 
         var reading = BankStatementAiPageReader.Read(typed, pageNumber, grounding, readOptions);
         var truncated = looksTruncated || typed.Lines.Count >= VisionMaxLinesPerPage;
         if (reading.Lines.Count == 0)
-            return new StageResult(reading, PageFailureReasons.JsonEmpty, "empty", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, raw.Length, grounding, truncated, false);
+            return new StageResult(reading, PageFailureReasons.JsonEmpty, "empty", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.TokenMetrics, raw.Length, grounding, truncated, false);
 
-        return new StageResult(reading, null, "ok", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, raw.Length, grounding, truncated, false);
+        return new StageResult(reading, null, "ok", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.TokenMetrics, raw.Length, grounding, truncated, false);
     }
 
     private static async Task<StageResult> RunVisionTableStageAsync(
@@ -579,26 +595,26 @@ public sealed partial class BankStatementAiExtractionJob
         if (outcome.IsFailure)
             return FailedStage(outcome.Error.Description, sw.ElapsedMilliseconds);
         if (!outcome.Value.VisionUsed)
-            return new StageResult(null, PageFailureReasons.VisionNotUsed, "failed", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.RawContent?.Length ?? 0, null, false, false);
+            return new StageResult(null, PageFailureReasons.VisionNotUsed, "failed", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.TokenMetrics, outcome.Value.RawContent?.Length ?? 0, null, false, false);
 
         var raw = outcome.Value.RawContent ?? string.Empty;
         var table = BankStatementTableTextParser.Parse(raw, pageNumber);
         if (table.Page is null)
-            return new StageResult(null, PageFailureReasons.TableNotRecognized, "invalid_json", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, raw.Length, null, false, false);
+            return new StageResult(null, PageFailureReasons.TableNotRecognized, "invalid_json", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.TokenMetrics, raw.Length, null, false, false);
 
         var grounding = table.PlainText;
         if (table.IsConfirmedEmpty)
         {
             // Page sans opération confirmée : lecture vide réussie (signalée « page vide » à la fusion).
             var empty = BankStatementAiPageReader.Read(table.Page, pageNumber, null, readOptions);
-            return new StageResult(empty, null, "empty", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, raw.Length, grounding, false, false);
+            return new StageResult(empty, null, "empty", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.TokenMetrics, raw.Length, grounding, false, false);
         }
 
         var reading = BankStatementAiPageReader.Read(table.Page, pageNumber, grounding, readOptions);
         if (reading.Lines.Count == 0)
-            return new StageResult(reading, PageFailureReasons.TableEmpty, "empty", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, raw.Length, grounding, false, false);
+            return new StageResult(reading, PageFailureReasons.TableEmpty, "empty", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.TokenMetrics, raw.Length, grounding, false, false);
 
-        return new StageResult(reading, null, "ok", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, raw.Length, grounding, table.Page.Lines.Count >= VisionMaxLinesPerPage, false);
+        return new StageResult(reading, null, "ok", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.TokenMetrics, raw.Length, grounding, table.Page.Lines.Count >= VisionMaxLinesPerPage, false);
     }
 
     /// <summary>
@@ -627,10 +643,10 @@ public sealed partial class BankStatementAiExtractionJob
             if (failed is not null)
             {
                 var description = failed.Message;
-                return new StageResult(reading, ShortFailure(description), "failed", sw.ElapsedMilliseconds, null, 0, 0, tableText, false, IsProviderUnavailable(description));
+                return new StageResult(reading, ShortFailure(description), "failed", sw.ElapsedMilliseconds, null, 0, null, 0, tableText, false, IsProviderUnavailable(description));
             }
 
-            return new StageResult(reading, null, reading.Lines.Count == 0 ? "empty" : "ok", sw.ElapsedMilliseconds, null, 0, 0, tableText, false, false);
+            return new StageResult(reading, null, reading.Lines.Count == 0 ? "empty" : "ok", sw.ElapsedMilliseconds, null, 0, null, 0, tableText, false, false);
         }
         catch (OperationCanceledException)
         {
@@ -638,7 +654,7 @@ public sealed partial class BankStatementAiExtractionJob
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
-            return new StageResult(FailedReading(pageNumber, "erreur du modèle texte"), "text_model_error", "failed", sw.ElapsedMilliseconds, null, 0, 0, tableText, false, false);
+            return new StageResult(FailedReading(pageNumber, "erreur du modèle texte"), "text_model_error", "failed", sw.ElapsedMilliseconds, null, 0, null, 0, tableText, false, false);
         }
     }
 
@@ -935,8 +951,59 @@ public sealed partial class BankStatementAiExtractionJob
 
         var level = stage.Outcome is "empty" or "invalid_json" ? LogLevel.Warning : LogLevel.Information;
         _logger.Log(level,
-            "Lecture IA relevé : session {SessionId}, page {Page}, moteur {Engine}, modèle {Model}, essai {Attempts}, durée {DurationMs} ms, premier jeton {FirstTokenMs} ms, fragments {StreamChunkCount}, caractères {RawChars}, lignes {Lines}, codes {IssueCodes}, issue {Outcome}, raison {Reason}",
-            sessionId, page, engine, model, attempts, stage.DurationMs, stage.FirstTokenMs, stage.StreamChunkCount, stage.RawChars, lines, issueCodes, stage.Outcome, stage.FailureReason);
+            "Lecture IA relevé : session {SessionId}, page {Page}, moteur {Engine}, modèle {Model}, essai {Attempts}, durée {DurationMs} ms, premier jeton {FirstTokenMs} ms, fragments {StreamChunkCount}, caractères {RawChars}, lignes {Lines}, jetons entrée {PromptEvalCount}, jetons sortie {EvalCount}, codes {IssueCodes}, issue {Outcome}, raison {Reason}",
+            sessionId, page, engine, model, attempts, stage.DurationMs, stage.FirstTokenMs, stage.StreamChunkCount, stage.RawChars, lines, stage.Metrics?.PromptEvalCount, stage.Metrics?.EvalCount, issueCodes, stage.Outcome, stage.FailureReason);
+    }
+
+    /// <summary>
+    /// Avertit quand le réglage d'exécution vaut « GPU » alors que le modèle vient d'être chargé
+    /// entièrement en RAM (<c>size_vram = 0</c>).
+    ///
+    /// Le contrôle n'est concluant qu'ICI, après le préchauffage : au démarrage du service aucun
+    /// modèle n'est chargé, et /api/ps ne permet alors pas de distinguer « pas de GPU » de « rien à
+    /// mesurer » — un avertissement au démarrage serait un faux positif sur une machine équipée.
+    ///
+    /// L'enjeu n'est pas cosmétique : en mode « CPU uniquement », le profil d'inférence applique un
+    /// num_thread et un num_batch calibrés (voir OllamaInferenceProfileResolver) ; laissé sur « GPU »,
+    /// Ollama retombe bien sur le processeur mais sans ce calibrage.
+    /// </summary>
+    private async Task WarnIfGpuSettingWithoutGpuAsync(
+        IServiceProvider services,
+        string? modelLabel,
+        CancellationToken cancellationToken)
+    {
+        var resolver = services.GetService<IOllamaInferenceProfileResolver>();
+        var ollama = services.GetService<IOllamaClient>();
+        if (resolver is null || ollama is null)
+            return;
+
+        try
+        {
+            var profile = await resolver.ResolveForPlatformAsync(cancellationToken);
+            if (profile.Device != OllamaInferenceDevice.Gpu)
+                return;
+
+            var loaded = (await ollama.ListRunningModelsAsync(cancellationToken))?.Models;
+
+            // Aucun modèle listé : le préchauffage a pu échouer, rien n'est démontré.
+            if (loaded is null || loaded.Count == 0)
+                return;
+
+            if (loaded.Any(m => m.SizeVram > 0))
+                return;
+
+            _logger.LogWarning(
+                "Réglage d'exécution « GPU » alors qu'aucun des {Count} modèle(s) chargé(s) n'occupe de VRAM "
+                + "(modèle de lecture {Model}) : l'inférence tourne sur le processeur sans le calibrage CPU. "
+                + "Basculez « Exécution » sur « CPU uniquement » dans la configuration IA de la plateforme pour "
+                + "appliquer les num_thread et num_batch adaptés.",
+                loaded.Count, modelLabel);
+        }
+        catch (Exception ex)
+        {
+            // Diagnostic seul : jamais au prix de la lecture du relevé.
+            _logger.LogDebug(ex, "Contrôle du réglage d'exécution impossible.");
+        }
     }
 
     private async Task WarmUpBestEffortAsync(IAiStructuredExtractionPipeline pipeline, string visionModel, CancellationToken cancellationToken)
@@ -1005,7 +1072,7 @@ public sealed partial class BankStatementAiExtractionJob
     {
         var isTimeout = string.Equals(description, "timeout", StringComparison.OrdinalIgnoreCase);
         return new StageResult(null, isTimeout ? "timeout" : ShortFailure(description), isTimeout ? "timeout" : "failed",
-            durationMs, null, 0, 0, null, false, IsProviderUnavailable(description));
+            durationMs, null, 0, null, 0, null, false, IsProviderUnavailable(description));
     }
 
     /// <summary>Raison courte et sans donnée du relevé, affichable à l'utilisateur.</summary>

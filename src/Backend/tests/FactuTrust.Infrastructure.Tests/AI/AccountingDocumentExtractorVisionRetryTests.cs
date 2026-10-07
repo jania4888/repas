@@ -61,6 +61,11 @@ public sealed class AccountingDocumentExtractorVisionRetryTests
             1,
             20);
 
+        // Depuis le commit 4064593c, la porte de repli vision interroge le pipeline au lieu de lire
+        // OllamaSettings.InvoiceImportVisionModel : sans ce stub, elle rend null et aucun repli n'a lieu.
+        pipeline.Setup(x => x.ResolveEffectiveVisionModelIdAsync(It.IsAny<string?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync("ollama:gemma3:4b");
+
         var call = 0;
         pipeline.Setup(x => x.RunAsync(It.IsAny<AiStructuredExtractionRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(() =>

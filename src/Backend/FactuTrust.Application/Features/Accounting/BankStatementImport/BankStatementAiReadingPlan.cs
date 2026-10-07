@@ -38,6 +38,9 @@ public static class BankStatementPageReadingEngines
     /// <summary>Étage 2 : GLM-OCR « Table Recognition: » + analyseur déterministe.</summary>
     public const string GlmOcrTable = "glm-ocr-table";
 
+    /// <summary>Étage 2 d'un modèle multimodal générique : même consigne de tableau, sans schéma.</summary>
+    public const string VisionImportTable = "vision-import-table";
+
     /// <summary>Étage 3 : modèle texte local (repli D2).</summary>
     public const string TextModel = "text-model";
 

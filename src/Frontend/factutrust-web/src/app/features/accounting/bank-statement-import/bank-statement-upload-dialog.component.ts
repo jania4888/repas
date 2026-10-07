@@ -110,9 +110,9 @@ export type BankStatementImportOrigin = 'manual-entry' | 'reconciliation';
               @if (caps.aiAvailable) {
                 <p class="bsu-hint" [class.bsu-hint--warn]="caps.aiEngine === 'text' && !!caps.visionUnavailableReason">
                   @if (caps.aiEngine === 'vision') {
-                    <ng-container i18n="@@accounting.bank-statement-import.lecture.page.par.page.glm.ocr.une.a.trois.minutes.par.page">Chaque relevé — PDF texte, PDF scanné ou image — est lu page par page par l'IA locale GLM-OCR : comptez une à trois minutes par page sur le serveur. Les opérations lues sont ensuite à contrôler avant l'enregistrement.</ng-container>
+                    <ng-container i18n="@@accounting.bank-statement-import.chaque.releve.pdf.texte.pdf.scanne.ou.image.est.ff546aeb">Chaque relevé — PDF texte, PDF scanné ou image — est lu page par page par l'IA de la plateforme : comptez une à trois minutes par page sur le serveur. Les opérations lues sont ensuite à contrôler avant l'enregistrement.</ng-container>
                   } @else if (caps.aiEngine === 'text' && caps.visionUnavailableReason) {
-                    <ng-container i18n="@@accounting.bank-statement-import.glm.ocr.indisponible.lecture.par.le.modele.texte">GLM-OCR est indisponible : les relevés seront lus par le modèle texte local, moins précis sur les pages scannées.</ng-container>
+                    <ng-container i18n="@@accounting.bank-statement-import.la.lecture.des.images.est.indisponible.les.relev.5d7babb6">La lecture des images est indisponible : les relevés seront lus sans l'image des pages, moins précisément sur les pages scannées.</ng-container>
                   } @else if (caps.aiProviderKind === 'external') {<ng-container i18n="@@accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.67692986">
                     Pages scannées ou non lues avec certitude : relecture par une IA externe (fournisseur configuré par la plateforme).
                   </ng-container>} @else {<ng-container i18n="@@accounting.bank-statement-import.pages.scannees.ou.non.lues.avec.certitude.relect.ad04271e">
@@ -120,7 +120,7 @@ export type BankStatementImportOrigin = 'manual-entry' | 'reconciliation';
                   </ng-container>}
                 </p>
               } @else {
-                <p class="bsu-hint bsu-hint--blocked" role="alert" i18n="@@accounting.bank-statement-import.ia.de.lecture.indisponible.import.suspendu">IA de lecture indisponible (modèle GLM-OCR non chargé ou service Ollama arrêté) : l'import de relevés est suspendu. Réessayez dans quelques minutes ou contactez l'administrateur de la plateforme.</p>
+                <p class="bsu-hint bsu-hint--blocked" role="alert" i18n="@@accounting.bank-statement-import.ia.de.lecture.indisponible.modele.non.charge.ou.f636f257">IA de lecture indisponible (modèle non chargé ou moteur arrêté) : l'import de relevés est suspendu. Réessayez dans quelques minutes ou contactez l'administrateur de la plateforme.</p>
               }
             } @else if (caps.aiAvailable) {
               <p class="bsu-hint">

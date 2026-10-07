@@ -384,9 +384,9 @@ describe('BankStatementReviewComponent', () => {
     expect(extras.state.pendingSiblings.map((x: { id: string }) => x.id)).toEqual(['s-2']);
   });
 
-  // ── Lecture IA seule (GLM-OCR page par page) ──────────────────────────────────────────
+  // ── Lecture IA seule (vision page par page) ───────────────────────────────────────────
 
-  describe('lecture IA seule (GLM-OCR)', () => {
+  describe('lecture IA seule (vision)', () => {
     const base = session();
     const aiLine = (index: number, pageNumber: number, amount = 10): ExtractedStatementLine => ({
       index,
@@ -429,7 +429,8 @@ describe('BankStatementReviewComponent', () => {
       tick();
       fixture.detectChanges();
 
-      expect(text()).toContain('Lecture des pages par GLM-OCR');
+      expect(text()).toContain("Lecture des pages par l'IA");
+      expect(text()).not.toContain('GLM-OCR');
       expect(text()).toContain('page 3 sur 4');
       expect(text()).toContain('50 %');
       expect(text()).toContain('releve.pdf');
@@ -438,7 +439,7 @@ describe('BankStatementReviewComponent', () => {
       expect(el().querySelectorAll('.bsr-page.is-done').length).toBe(1);
       expect(el().querySelectorAll('.bsr-page.is-fallback').length).toBe(1);
       expect(el().querySelector('.bsr-page.is-current')?.textContent).toContain('Page 3 · en cours');
-      expect(el().querySelector('.bsr-fallback-note')?.textContent).toContain('Pages 2 : GLM-OCR n\'a pas pu lire la page');
+      expect(el().querySelector('.bsr-fallback-note')?.textContent).toContain('Pages 2 : lues en secours');
       expect(el().querySelector('.bsr-bar')?.getAttribute('aria-valuenow')).toBe('50');
 
       tick(3_000);
@@ -448,7 +449,7 @@ describe('BankStatementReviewComponent', () => {
       fixture.destroy();
     }));
 
-    it('décrit la méthode de lecture GLM-OCR et ses replis, et déduit la page en cours de l’avancement', async () => {
+    it('décrit la méthode de lecture par l’IA et ses replis, et déduit la page en cours de l’avancement', async () => {
       api.session.and.returnValue(of(session()));
       await create({ sessionId: 's-1' });
       const vision = (pageCount: number, readings: BankStatementPageReading[] = []) =>
@@ -456,11 +457,13 @@ describe('BankStatementReviewComponent', () => {
 
       expect(component.totalPages(session({ pageCount: 5, extraction: { ...base.extraction!, aiPlan: visionPlan({ scannedPages: [1, 2, 3, 4, 5] }) } }))).toBe(5);
       expect(component.currentPage(session({ status: 'Extracting', progressPercent: 40, pageCount: 5, extraction: { ...base.extraction!, aiPlan: visionPlan({ scannedPages: [1, 2, 3, 4, 5] }) } }))).toBe(3);
-      expect(component.methodLabel(vision(3))).toBe('Lu par GLM-OCR (3 pages)');
-      expect(component.methodLabel(vision(1))).toBe('Lu par GLM-OCR (1 page)');
-      expect(component.methodLabel(vision(4, [reading(1, 'glm-ocr'), reading(2, 'text-model'), reading(3, 'text-model'), reading(4, 'glm-ocr-table')]))).toBe('Lu par GLM-OCR — pages 2, 3 relues par le modèle texte');
-      expect(component.methodLabel(vision(4, [reading(1, 'glm-ocr'), reading(2, 'text-model')]))).toBe('Lu par GLM-OCR — page 2 relue par le modèle texte');
-      expect(component.methodLabel(session({ extractionMethod: 'ai-text' }))).toBe('Lu par le modèle texte local (GLM-OCR indisponible)');
+      expect(component.methodLabel(vision(3))).toBe('Lu par l\'IA (3 pages)');
+      expect(component.methodLabel(vision(1))).toBe('Lu par l\'IA (1 page)');
+      expect(component.methodLabel(vision(4, [reading(1, 'glm-ocr'), reading(2, 'text-model'), reading(3, 'text-model'), reading(4, 'glm-ocr-table')]))).toBe('Lu par l\'IA — pages 2, 3 lues en secours');
+      expect(component.methodLabel(vision(4, [reading(1, 'glm-ocr'), reading(2, 'text-model')]))).toBe('Lu par l\'IA — page 2 lue en secours');
+      // Un modèle multimodal générique compte comme une page lue, au même titre que GLM-OCR.
+      expect(component.methodLabel(vision(2, [reading(1, 'vision-import'), reading(2, 'vision-import-table')]))).toBe('Lu par l\'IA (2 pages)');
+      expect(component.methodLabel(session({ extractionMethod: 'ai-text' }))).toBe('Lu par l\'IA, sans l\'image des pages');
       expect(component.methodLabel(session({ extractionMethod: 'none' }))).toBe('Lecture IA non effectuée');
       expect(
         component.methodLabel(
@@ -491,10 +494,10 @@ describe('BankStatementReviewComponent', () => {
       await create({ sessionId: 's-1' });
 
       expect(el().querySelector('.bsr-fallback-note')?.getAttribute('role')).toBe('note');
-      expect(el().querySelector('.bsr-fallback-note')?.textContent).toContain('GLM-OCR n\'a pas pu lire la page 2');
+      expect(el().querySelector('.bsr-fallback-note')?.textContent).toContain('n\'a pas pu lire la page 2');
       expect(el().querySelectorAll('.bsr-badge--fallback').length).toBe(1);
       expect(el().querySelectorAll('.bsr-badge--ai').length).toBe(2);
-      expect(text()).toContain('Lu par GLM-OCR — page 2 relue par le modèle texte');
+      expect(text()).toContain('Lu par l\'IA — page 2 lue en secours');
     });
 
     it('affiche un état vide quand aucune opération n’a été lue et « non lu » pour un RIB absent', async () => {
@@ -671,7 +674,7 @@ describe('BankStatementReviewComponent', () => {
       expect(component.corrections().size).toBe(0);
     });
 
-    it('explique que « Analyser avec ce compte » relance la lecture complète par GLM-OCR', async () => {
+    it('explique que « Analyser avec ce compte » relance la lecture complète par l’IA', async () => {
       bankAccounts = [{ id: 'bank-2', bankName: 'BIAT', rib: '08001234567890123456', isActive: true }];
       api.session.and.returnValue(
         of(
@@ -693,7 +696,7 @@ describe('BankStatementReviewComponent', () => {
 
       expect(component.suggestedRetargetAccount()?.id).toBe('bank-2');
       expect(component.missingAccountRibTail()).toBeNull();
-      expect(text()).toContain('relance la lecture complète du fichier par GLM-OCR (5 pages, environ 10 min)');
+      expect(text()).toContain('relance la lecture complète du fichier par l\'IA (5 pages, environ 10 min)');
       expect(text()).toContain('Analyser avec ce compte');
     });
 

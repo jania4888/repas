@@ -7,7 +7,7 @@ describe('bank-statement-import.messages', () => {
       expect(issueTitle('statement.ai_page_truncated')).toBe('Page peut-être incomplète');
       expect(issueTitle('statement.ai_summary_line_dropped')).toBe('Ligne de solde non importée');
       expect(issueTitle('statement.ai_possible_duplicate')).toBe('Doublon possible entre deux pages');
-      expect(issueTitle('statement.ai_text_fallback')).toBe('Page relue par le modèle texte');
+      expect(issueTitle('statement.ai_text_fallback')).toBe('Page lue en secours');
       expect(issueTitle('statement.ai_line_needs_review')).toBe('Ligne à corriger');
       expect(issueTitle('statement.ai_unavailable')).toBe('Lecture IA indisponible');
     });
@@ -44,7 +44,7 @@ describe('bank-statement-import.messages', () => {
 
   describe('sessionFailureMessage', () => {
     it('décrit l’échec selon le code de la session', () => {
-      expect(sessionFailureMessage('ai_unavailable')).toContain('GLM-OCR');
+      expect(sessionFailureMessage('ai_unavailable')).toContain('indisponible');
       expect(sessionFailureMessage('ai_unavailable')).toContain('aucune page n\'a été lue');
       expect(sessionFailureMessage('ai_timeout')).toContain('temps alloué');
       expect(sessionFailureMessage('ai_failed')).toContain('a échoué');

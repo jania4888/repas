@@ -91,6 +91,16 @@ public sealed record AiStructuredExtractionRequest
     public int? MaxPages { get; init; }
 }
 
+/// <summary>
+/// Mesures de jetons rendues par le moteur local en fin de flux. Absentes des fournisseurs
+/// distants (OpenRouter, Modal, Cursor), d'où les champs tous optionnels.
+/// </summary>
+public sealed record AiCallTokenMetrics(
+    int? PromptEvalCount,
+    int? EvalCount,
+    long? PromptEvalMs,
+    long? EvalMs);
+
 /// <summary>Résultat brut d'un appel d'extraction structurée, avant désérialisation.</summary>
 public sealed record AiStructuredExtractionOutcome(
     string RawContent,
@@ -99,7 +109,8 @@ public sealed record AiStructuredExtractionOutcome(
     string? ModelUsed,
     bool VisionUsed,
     int StreamChunkCount,
-    long? FirstTokenMs);
+    long? FirstTokenMs,
+    AiCallTokenMetrics? TokenMetrics = null);
 
 /// <summary>
 /// Mécanique commune à toutes les extractions documentaires pilotées par un LLM :
@@ -201,11 +212,15 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
         var code = request.ErrorCode;
 
         // 1. Résolution du modèle texte (JSON structuré).
-        var modelRef = await ResolveModelRefAsync(request.ModelOverride, cancellationToken);
+        // La capacité vision est celle que le MOTEUR déclare (sonde /api/show) ; le nom du modèle n'est
+        // qu'un repli quand le moteur ne répond pas. Deviner d'après le nom faisait diverger ce choix de
+        // celui du modèle vision résolu deux lignes plus bas.
+        var resolution = await _importModelResolver.ResolveAsync(request.ModelOverride, cancellationToken);
+        var modelRef = resolution.Model;
         var visionModelId = !string.IsNullOrWhiteSpace(request.VisionModelOverride)
             ? request.VisionModelOverride.Trim()
             : await ResolveEffectiveVisionModelIdAsync(request.ModelOverride, cancellationToken);
-        var wantPrimaryVision = AiModelCapabilityDetector.DetectVisionSupport(modelRef);
+        var wantPrimaryVision = resolution.IsVisionCapable;
 
         // 2. Extraction du texte (+ image base64 pour fallback vision sur photos et scans).
         var hasVisionModel = !string.IsNullOrWhiteSpace(visionModelId);
@@ -314,11 +329,12 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
         string raw;
         int chunkCount;
         long? firstTokenMs;
+        AiCallTokenMetrics? tokenMetrics;
 
         try
         {
             var promptText = useVisionFallback && !request.IncludeExtractedTextWithImages ? string.Empty : extractedText;
-            (raw, chunkCount, firstTokenMs) = await CallLlmAsync(
+            (raw, chunkCount, firstTokenMs, tokenMetrics) = await CallLlmAsync(
                 activeModelRef, request.SystemPrompt, promptText, llmImages, code,
                 useSchema ? request.OutputSchema : null, cancellationToken, request.UserInstruction,
                 request.MaxOutputTokens, request.LlmTimeoutSeconds, request.RawUserPrompt);
@@ -333,7 +349,7 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
                 code, ex.HttpStatusCode);
 
             var promptText = useVisionFallback && !request.IncludeExtractedTextWithImages ? string.Empty : extractedText;
-            (raw, chunkCount, firstTokenMs) = await CallLlmAsync(
+            (raw, chunkCount, firstTokenMs, tokenMetrics) = await CallLlmAsync(
                 activeModelRef, request.SystemPrompt, promptText, llmImages, code,
                 outputSchema: null, cancellationToken, request.UserInstruction,
                 request.MaxOutputTokens, request.LlmTimeoutSeconds, request.RawUserPrompt);
@@ -348,8 +364,10 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
         if (string.IsNullOrWhiteSpace(raw))
         {
             _logger.LogWarning(
-                "[{Scope}] Appel LLM sans contenu en {ElapsedMs} ms : modèle={Model} chunks={Chunks} firstTokenMs={FirstTokenMs}",
-                code, llmSw.ElapsedMilliseconds, modelRef.ProviderModelId, chunkCount, firstTokenMs);
+                "[{Scope}] Appel LLM sans contenu en {ElapsedMs} ms : modèle={Model} usedVision={UsedVision} chunks={Chunks} "
+                + "firstTokenMs={FirstTokenMs} promptEvalCount={PromptEvalCount} evalCount={EvalCount}",
+                code, llmSw.ElapsedMilliseconds, activeModelRef.ProviderModelId, useVisionFallback, chunkCount, firstTokenMs,
+                tokenMetrics?.PromptEvalCount, tokenMetrics?.EvalCount);
             return Result.Failure<AiStructuredExtractionOutcome>(Error.Validation(code,
                 "L'IA n'a renvoyé aucune donnée (modèle surchargé ou mémoire insuffisante). "
                 + "Réessayez ou configurez un modèle d'import plus léger dans les paramètres plateforme."));
@@ -357,9 +375,11 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
 
         _logger.LogInformation(
             "[{Scope}] Appel LLM terminé en {ElapsedMs} ms : modèle={Model} usedVision={UsedVision} caractères={Chars} "
-            + "chunks={Chunks} firstTokenMs={FirstTokenMs}",
+            + "chunks={Chunks} firstTokenMs={FirstTokenMs} promptEvalCount={PromptEvalCount} evalCount={EvalCount} "
+            + "promptEvalMs={PromptEvalMs} evalMs={EvalMs}",
             code, llmSw.ElapsedMilliseconds, activeModelRef.ProviderModelId, useVisionFallback, raw.Length,
-            chunkCount, firstTokenMs);
+            chunkCount, firstTokenMs, tokenMetrics?.PromptEvalCount, tokenMetrics?.EvalCount,
+            tokenMetrics?.PromptEvalMs, tokenMetrics?.EvalMs);
 
         return Result.Success(new AiStructuredExtractionOutcome(
             raw,
@@ -368,7 +388,8 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
             activeModelRef.ProviderModelId,
             useVisionFallback,
             chunkCount,
-            firstTokenMs));
+            firstTokenMs,
+            tokenMetrics));
     }
 
     // ========================================================================
@@ -607,7 +628,7 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
     private static bool IsSchemaRejection(OllamaRequestException ex) =>
         ex.HttpStatusCode is 400 or 422 or 500;
 
-    private async Task<(string Raw, int ChunkCount, long? FirstTokenMs)> CallLlmAsync(
+    private async Task<(string Raw, int ChunkCount, long? FirstTokenMs, AiCallTokenMetrics? Metrics)> CallLlmAsync(
         ParsedModelRef modelRef,
         string systemPrompt,
         string text,
@@ -628,6 +649,7 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
         var streamTimeout = ResolveImportLlmTimeout(llmTimeoutSeconds);
         var chunkCount = 0;
         long? firstTokenMs = null;
+        AiCallTokenMetrics? metrics = null;
         var llmSw = Stopwatch.StartNew();
 
         switch (modelRef.Kind)
@@ -687,6 +709,17 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
             await foreach (var chunk in _ollamaClient.StreamChatAsync(request, cancellationToken, streamTimeout))
             {
                 chunkCount++;
+
+                // Le fragment final porte les compteurs de jetons : les retenir tels quels.
+                if (chunk.PromptEvalCount is not null || chunk.EvalCount is not null)
+                {
+                    metrics = new AiCallTokenMetrics(
+                        chunk.PromptEvalCount,
+                        chunk.EvalCount,
+                        chunk.PromptEvalDurationNs / 1_000_000,
+                        chunk.EvalDurationNs / 1_000_000);
+                }
+
                 if (!string.IsNullOrEmpty(chunk.Message?.Content))
                 {
                     firstTokenMs ??= llmSw.ElapsedMilliseconds;
@@ -806,7 +839,7 @@ public sealed class AiStructuredExtractionPipeline : IAiStructuredExtractionPipe
             throw new InvalidOperationException($"Fournisseur LLM non géré : {modelRef.Kind}.");
         }
 
-        return (sb.ToString(), chunkCount, firstTokenMs);
+        return (sb.ToString(), chunkCount, firstTokenMs, metrics);
     }
 
     internal static string BuildUserPrompt(string text, bool hasImages, string? userInstruction = null)

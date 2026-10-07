@@ -121,7 +121,7 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
           <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
           <div class="bsr-progress__body">
             @if (s.extraction?.aiPlan?.engine === 'vision') {
-              <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.des.pages.par.glm.ocr.page.sur.pourcent">Lecture des pages par GLM-OCR… page {{ currentPage(s) }} sur {{ totalPages(s) }} — {{ s.progressPercent }} %</p>
+              <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.des.pages.par.l.ia.page.currentpage.s.su.0ba333ec">Lecture des pages par l'IA… page {{ currentPage(s) }} sur {{ totalPages(s) }} — {{ s.progressPercent }} %</p>
               <p class="bsr-muted bsr-progress__meta">
                 <span>{{ s.fileName }}</span>
                 <span aria-hidden="true" i18n="@@accounting.bank-statement-import.secondes.ecoulees">{{ elapsedSeconds() }} s écoulées</span>
@@ -135,7 +135,7 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
                   <p class="bsr-strong" i18n="@@accounting.bank-statement-import.relecture.du.releve.par.l.ia.solde.non.verifie.s.725c03c7">Relecture du relevé par l'IA (solde non vérifié)… {{ s.progressPercent }} %</p>
                 }
                 @case ('all_documents') {
-                  <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.du.releve.par.le.modele.texte.glm.ocr.indisponible">Lecture du relevé par le modèle texte local (GLM-OCR indisponible)… {{ s.progressPercent }} %</p>
+                  <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.du.releve.par.l.ia.sans.l.image.des.page.6c59fbc2">Lecture du relevé par l'IA, sans l'image des pages… {{ s.progressPercent }} %</p>
                 }
                 @default {
                   <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.des.pages.scannees.ebb6ce2d">Lecture des pages scannées… {{ s.progressPercent }} %</p>
@@ -157,7 +157,7 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
                       <li class="bsr-page" [class.is-done]="p.state === 'done'" [class.is-fallback]="p.state === 'fallback'" [class.is-failed]="p.state === 'failed'" [class.is-current]="p.state === 'current'">
                         @switch (p.state) {
                           @case ('done') {<ng-container i18n="@@accounting.bank-statement-import.page.etat.lue">Page {{ p.page }} · lue</ng-container>}
-                          @case ('fallback') {<ng-container i18n="@@accounting.bank-statement-import.page.etat.relue">Page {{ p.page }} · relue par le modèle texte</ng-container>}
+                          @case ('fallback') {<ng-container i18n="@@accounting.bank-statement-import.page.p.page.lecture.de.secours.e9790bef">Page {{ p.page }} · lecture de secours</ng-container>}
                           @case ('failed') {<ng-container i18n="@@accounting.bank-statement-import.page.etat.echouee">Page {{ p.page }} · échouée</ng-container>}
                           @case ('current') {<ng-container i18n="@@accounting.bank-statement-import.page.etat.en.cours">Page {{ p.page }} · en cours</ng-container>}
                           @default {<ng-container i18n="@@accounting.bank-statement-import.page.etat.a.lire">Page {{ p.page }} · à lire</ng-container>}
@@ -169,7 +169,7 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
               }
               @if (fallbackPagesOf(s); as fallback) {
                 @if (fallback.length > 0) {
-                  <p class="bsr-muted bsr-fallback-note" role="note" i18n="@@accounting.bank-statement-import.pages.relues.par.le.modele.texte.en.cours">Pages {{ pageList(fallback) }} : GLM-OCR n'a pas pu lire la page, relecture par le modèle texte.</p>
+                  <p class="bsr-muted bsr-fallback-note" role="note" i18n="@@accounting.bank-statement-import.pages.pagelist.fallback.lues.en.secours.sans.l.i.1c30311a">Pages {{ pageList(fallback) }} : lues en secours, sans l'image de la page.</p>
                 }
               }
             } @else {
@@ -310,9 +310,9 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
               <p class="bsr-muted" i18n="@@accounting.bank-statement-import.ce.releve.appartient.au.compte.suggere">Ce relevé appartient au compte {{ match.bankName }} (…{{ ribTail(match.rib) }}).</p>
               @if (s.extraction?.aiPlan?.engine === 'vision') {
                 @if (plannedMinutes(s); as minutes) {
-                  <p class="bsr-muted bsr-small" i18n="@@accounting.bank-statement-import.relance.lecture.complete.pages.environ.min">Analyser avec ce compte relance la lecture complète du fichier par GLM-OCR ({{ s.pageCount }} pages, environ {{ minutes }} min). Les opérations déjà lues ci-dessous sont présentées à titre indicatif.</p>
+                  <p class="bsr-muted bsr-small" i18n="@@accounting.bank-statement-import.analyser.avec.ce.compte.relance.la.lecture.compl.2996c3d3">Analyser avec ce compte relance la lecture complète du fichier par l'IA ({{ s.pageCount }} pages, environ {{ minutes }} min). Les opérations déjà lues ci-dessous sont présentées à titre indicatif.</p>
                 } @else {
-                  <p class="bsr-muted bsr-small" i18n="@@accounting.bank-statement-import.relance.lecture.complete.pages">Analyser avec ce compte relance la lecture complète du fichier par GLM-OCR ({{ s.pageCount }} pages). Les opérations déjà lues ci-dessous sont présentées à titre indicatif.</p>
+                  <p class="bsr-muted bsr-small" i18n="@@accounting.bank-statement-import.analyser.avec.ce.compte.relance.la.lecture.compl.4e3d199b">Analyser avec ce compte relance la lecture complète du fichier par l'IA ({{ s.pageCount }} pages). Les opérations déjà lues ci-dessous sont présentées à titre indicatif.</p>
                 }
               }
               <app-button variant="secondary" icon="pi-refresh" iconPos="left" (clicked)="retargetToAccount(match.id)" [disabled]="busy()"
@@ -329,9 +329,9 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
 
           @if (fallbackPagesOf(s); as fallback) {
             @if (fallback.length > 1) {
-              <p class="bsr-fallback-note" role="note" i18n="@@accounting.bank-statement-import.pages.relues.par.le.modele.texte.verifiez">GLM-OCR n'a pas pu lire les pages {{ pageList(fallback) }} : elles ont été relues par le modèle texte local, moins précis. Vérifiez attentivement ces opérations.</p>
+              <p class="bsr-fallback-note" role="note" i18n="@@accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.les.pages.pagelist.fallback.94d40cd2">L'IA n'a pas pu lire les pages {{ pageList(fallback) }} : elles ont été lues en secours, sans leur image. Vérifiez attentivement ces opérations. Vérifiez attentivement ces opérations.</p>
             } @else if (fallback.length === 1) {
-              <p class="bsr-fallback-note" role="note" i18n="@@accounting.bank-statement-import.page.relue.par.le.modele.texte.verifiez">GLM-OCR n'a pas pu lire la page {{ fallback[0] }} : elle a été relue par le modèle texte local, moins précis. Vérifiez attentivement ces opérations.</p>
+              <p class="bsr-fallback-note" role="note" i18n="@@accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.la.page.fallback.0.elle.a.e.32d72468">L'IA n'a pas pu lire la page {{ fallback[0] }} : elle a été lue en secours, sans son image. Vérifiez attentivement ces opérations. Vérifiez attentivement ces opérations.</p>
             }
           }
 
@@ -719,7 +719,7 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
   draft: LineDraft = { lineIndex: -1, transactionDate: '', label: '', amount: null, isDebit: true };
 
   readonly ribToCheckTitle = issueTitle('statement.ai_rib_mismatch');
-  readonly fallbackBadgeTitle = $localize`:@@accounting.bank-statement-import.page.relue.par.le.modele.texte.aria:Page relue par le modèle texte`;
+  readonly fallbackBadgeTitle = $localize`:@@accounting.bank-statement-import.ts.page.lue.en.secours.sans.l.image.f2ded7f1:Page lue en secours, sans l'image`;
 
   journalCode = 'JB';
   private polling?: Subscription;
@@ -1489,18 +1489,18 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
         const fallback = this.fallbackPagesOf(s);
         if (fallback.length > 1) {
           const pages = this.pageList(fallback);
-          return $localize`:@@accounting.bank-statement-import.ts.lu.par.glm.ocr.pages.relues.par.le.modele.texte:Lu par GLM-OCR — pages ${pages}:pages: relues par le modèle texte`;
+          return $localize`:@@accounting.bank-statement-import.ts.lu.par.l.ia.pages.lues.en.secours.9c5e1339:Lu par l'IA — pages ${pages}:pages: lues en secours`;
         }
         if (fallback.length === 1) {
           const page = String(fallback[0]);
-          return $localize`:@@accounting.bank-statement-import.ts.lu.par.glm.ocr.page.relue.par.le.modele.texte:Lu par GLM-OCR — page ${page}:page: relue par le modèle texte`;
+          return $localize`:@@accounting.bank-statement-import.ts.lu.par.l.ia.page.lue.en.secours.6fa79a4c:Lu par l'IA — page ${page}:page: lue en secours`;
         }
         const count = s.pageCount ?? 0;
-        if (count === 1) return $localize`:@@accounting.bank-statement-import.ts.lu.par.glm.ocr.une.page:Lu par GLM-OCR (1 page)`;
-        return $localize`:@@accounting.bank-statement-import.ts.lu.par.glm.ocr.pages:Lu par GLM-OCR (${String(count)}:count: pages)`;
+        if (count === 1) return $localize`:@@accounting.bank-statement-import.ts.lu.par.l.ia.1.page.0bb90ccc:Lu par l'IA (1 page)`;
+        return $localize`:@@accounting.bank-statement-import.ts.lu.par.l.ia.pages.d44397d6:Lu par l'IA (${String(count)}:count: pages)`;
       }
       case 'ai-text':
-        return $localize`:@@accounting.bank-statement-import.ts.lu.par.le.modele.texte.local.glm.ocr.indisponible:Lu par le modèle texte local (GLM-OCR indisponible)`;
+        return $localize`:@@accounting.bank-statement-import.ts.lu.par.l.ia.sans.l.image.des.pages.21167785:Lu par l'IA, sans l'image des pages`;
       case 'layout':
         return $localize`:@@accounting.bank-statement-import.ts.lecture.directe.du.pdf.aucune.ia.ba300454:Lecture directe du PDF (aucune IA)`;
       case 'layout+ai':
