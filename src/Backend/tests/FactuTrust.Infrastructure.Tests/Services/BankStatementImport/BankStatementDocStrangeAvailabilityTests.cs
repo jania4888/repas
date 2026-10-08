@@ -14,34 +14,22 @@ using Xunit;
 namespace FactuTrust.Infrastructure.Tests.Services.BankStatementImport;
 
 /// <summary>
-/// Autorisation d'envoyer des relevés au service d'extraction externe (Docstrange).
+/// Qui lit un relevé : la carte Docstrange du back-office, et elle seule.
 ///
-/// <para>Deux interrupteurs INDÉPENDANTS gouvernent les deux chemins de sortie des données :
-/// <c>AiComplementAllowExternal</c> pour les fournisseurs LLM, <c>DocStrangeEnabled</c> pour ce
-/// service. Ces tests vérifient qu'aucun n'ouvre la porte de l'autre.</para>
+/// <para>Depuis le 2026-10-08, le second interrupteur <c>DocStrangeEnabled</c> d'<c>appsettings</c>
+/// n'existe plus : la carte gouverne les deux flux (pièces et relevés), comme pour les factures.
+/// Ces tests épinglent la nouvelle règle ET le fait que <c>AiComplementAllowExternal</c>, qui
+/// gouverne les fournisseurs <b>LLM</b>, continue de ne rien décider ici — ni dans un sens, ni
+/// dans l'autre.</para>
 /// </summary>
 public sealed class BankStatementDocStrangeAvailabilityTests
 {
     private const string TextModel = "qwen2.5:7b-instruct";
 
     [Fact]
-    public async Task Without_the_flag_the_provider_is_never_even_consulted()
+    public async Task A_configured_card_makes_docstrange_the_announced_reader()
     {
-        // Mock strict : toute sollicitation du fournisseur ferait echouer le test.
-        var provider = new Mock<IDocumentExtractionProvider>(MockBehavior.Strict);
-
-        var availability = await Sut(docStrangeEnabled: false, provider: provider).CheckAvailabilityAsync();
-
-        Assert.Equal("local", availability.ProviderKind);
-        provider.VerifyNoOtherCalls();
-    }
-
-    [Fact]
-    public async Task With_the_flag_and_a_configured_provider_the_statement_reading_is_announced_as_docstrange()
-    {
-        var provider = AvailableProvider();
-
-        var availability = await Sut(docStrangeEnabled: true, provider: provider).CheckAvailabilityAsync();
+        var availability = await Sut(AvailableProvider()).CheckAvailabilityAsync();
 
         Assert.True(availability.Available);
         Assert.Equal("docstrange", availability.ProviderKind);
@@ -57,41 +45,60 @@ public sealed class BankStatementDocStrangeAvailabilityTests
     }
 
     [Fact]
-    public async Task The_flag_alone_without_a_key_changes_nothing()
+    public async Task A_card_without_a_usable_key_changes_nothing()
     {
+        // IsAvailableAsync porte les DEUX conditions : carte activee ET cle dechiffrable. Faux ici,
+        // donc la lecture locale reprend exactement son cours.
         var provider = new Mock<IDocumentExtractionProvider>();
         provider.SetupGet(x => x.Name).Returns("docstrange");
         provider.Setup(x => x.IsAvailableAsync(It.IsAny<CancellationToken>())).ReturnsAsync(false);
 
-        var availability = await Sut(docStrangeEnabled: true, provider: provider).CheckAvailabilityAsync();
+        var availability = await Sut(provider).CheckAvailabilityAsync();
 
-        // Retombe sur la logique habituelle : le drapeau n'est PAS une autorisation a lui seul.
         Assert.Equal("local", availability.ProviderKind);
     }
 
     [Fact]
-    public async Task Allowing_external_llm_providers_does_not_enable_docstrange()
+    public async Task No_provider_registered_at_all_falls_back_to_the_local_reading()
     {
-        var provider = new Mock<IDocumentExtractionProvider>(MockBehavior.Strict);
+        var availability = await Sut(provider: null).CheckAvailabilityAsync();
 
-        var availability = await Sut(docStrangeEnabled: false, provider: provider, allowExternal: true)
-            .CheckAvailabilityAsync();
+        Assert.Equal("local", availability.ProviderKind);
+    }
 
-        Assert.NotEqual("docstrange", availability.ProviderKind);
-        provider.VerifyNoOtherCalls();
+    [Fact]
+    public async Task Allowing_external_llm_providers_neither_enables_nor_disables_docstrange()
+    {
+        // Les deux chemins de sortie restent INDEPENDANTS : ouvrir celui des LLM ne change pas
+        // la reponse de Docstrange, et la fermer ne la ferme pas non plus.
+        var opened = await Sut(AvailableProvider(), allowExternal: true).CheckAvailabilityAsync();
+        var closed = await Sut(AvailableProvider(), allowExternal: false).CheckAvailabilityAsync();
+
+        Assert.Equal("docstrange", opened.ProviderKind);
+        Assert.Equal("docstrange", closed.ProviderKind);
     }
 
     [Fact]
     public async Task Docstrange_reads_even_when_the_local_engine_is_down()
     {
         // Le service externe ne depend d'aucun modele local : il doit rester disponible moteur arrete.
-        var provider = AvailableProvider();
-
-        var availability = await Sut(docStrangeEnabled: true, provider: provider, ollamaUp: false)
-            .CheckAvailabilityAsync();
+        var availability = await Sut(AvailableProvider(), ollamaUp: false).CheckAvailabilityAsync();
 
         Assert.True(availability.Available);
         Assert.Equal("docstrange", availability.ProviderKind);
+    }
+
+    [Fact]
+    public async Task Docstrange_does_not_depend_on_the_local_vision_reading_switch()
+    {
+        // VisionReadingEnabled gouverne le modele vision LOCAL. Docstrange n'en est pas un : le
+        // confondre renverrait le relevé vers le modele texte local, c'est-a-dire vers l'IA que
+        // l'activation de la carte est censee ecarter.
+        var availability = await Sut(AvailableProvider(), visionReadingEnabled: false).CheckAvailabilityAsync();
+
+        Assert.True(availability.Available);
+        Assert.Equal("docstrange", availability.ProviderKind);
+        Assert.Equal(BankStatementAiEngines.Vision, availability.Engine);
     }
 
     // ---- outillage -----------------------------------------------------------------------
@@ -105,10 +112,10 @@ public sealed class BankStatementDocStrangeAvailabilityTests
     }
 
     private static BankStatementAiExtraction Sut(
-        bool docStrangeEnabled,
-        Mock<IDocumentExtractionProvider> provider,
+        Mock<IDocumentExtractionProvider>? provider,
         bool allowExternal = false,
-        bool ollamaUp = true)
+        bool ollamaUp = true,
+        bool visionReadingEnabled = true)
     {
         var pipeline = new Mock<IAiStructuredExtractionPipeline>();
         pipeline.Setup(p => p.ResolveModelRefAsync(null, It.IsAny<CancellationToken>()))
@@ -137,11 +144,10 @@ public sealed class BankStatementDocStrangeAvailabilityTests
             {
                 BankStatementImport = new BankStatementImportLimits
                 {
-                    VisionReadingEnabled = true,
-                    AiComplementAllowExternal = allowExternal,
-                    DocStrangeEnabled = docStrangeEnabled
+                    VisionReadingEnabled = visionReadingEnabled,
+                    AiComplementAllowExternal = allowExternal
                 }
             }),
-            provider.Object);
+            provider?.Object);
     }
 }

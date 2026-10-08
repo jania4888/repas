@@ -47,6 +47,7 @@ public sealed partial class BankStatementAiExtractionJob
         public const string CircuitOpen = "circuit_open";
         public const string RenderGuard = "page trop grande pour la lecture vision";
         public const string PageNotExtracted = "page non extraite du PDF";
+        public const string ExternalExtractionFailed = "service d'extraction documentaire indisponible";
     }
 
     /// <summary>Nombre d'opérations au-delà duquel une page vision est tenue pour tronquée (= maxItems du schéma).</summary>
@@ -95,26 +96,37 @@ public sealed partial class BankStatementAiExtractionJob
         var accountingSettings = services.GetService<IOptions<AccountingSettings>>()?.Value;
         var tenantId = services.GetService<ITenantContext>()?.TenantId;
         var pdfRenderer = services.GetService<IAiPdfRenderer>();
-        // Étage 0 : service d'extraction externe, sous son propre drapeau. Résolu une fois ici ;
-        // null = l'échelle vision d'aujourd'hui, inchangée.
-        var externalExtraction = limits.DocStrangeEnabled ? services.GetService<IDocumentExtractionProvider>() : null;
+        // Étage 0 : service d'extraction documentaire externe (Docstrange). La carte du back-office
+        // décide SEULE — aucun réglage d'appsettings ne double la décision. Disponible, ce service
+        // devient le SEUL lecteur ; absent ou mal configuré, l'échelle vision reste inchangée.
+        var externalExtraction = services.GetService<IDocumentExtractionProvider>();
         var externalAvailable = externalExtraction is not null
             && await externalExtraction.IsAvailableAsync(cancellationToken);
         var extractor = services.GetService<BankStatementLayoutExtractor>() ?? new BankStatementLayoutExtractor();
         var plan = layout.AiPlan ?? throw new InvalidOperationException("Plan IA absent.");
         var aiOnly = plan.IsAiOnly;
         var visionPlanned = string.Equals(plan.Engine, BankStatementAiEngines.Vision, StringComparison.Ordinal);
-        var visionModel = visionPlanned && limits.VisionReadingEnabled
+        // Docstrange lit SEUL : aucun modèle local n'est résolu, donc aucun n'est préchauffé
+        // (le préchauffage ci-dessous est gardé par « visionModel is not null »). Résoudre le
+        // modèle vision coûterait des dizaines de secondes et plusieurs gigaoctets de mémoire pour
+        // charger un modèle qui ne lira pas une seule page.
+        var visionModel = !externalAvailable && visionPlanned && limits.VisionReadingEnabled
             ? await importResolver.ResolveEffectiveVisionModelIdAsync(null, forBankStatement: true, cancellationToken)
             : null;
         var visionModelLabel = string.IsNullOrWhiteSpace(visionModel) ? null : ModelRef.Parse(visionModel).ProviderModelId;
-        var textModelLabel = await ResolveTextModelLabelAsync(pipeline, cancellationToken);
-        var pages = plan.PlannedPages.Take(limits.EffectiveMaxAiPages).ToList();
+        var textModelLabel = externalAvailable ? null : await ResolveTextModelLabelAsync(pipeline, cancellationToken);
+        // Le même plafond que celui qui a accepté la session : sans cela, un relevé de 21 pages
+        // admis par Docstrange serait silencieusement tronqué à 20 pages ici.
+        var maxAiPages = externalAvailable
+            ? (services.GetService<IOptions<DocStrangeSettings>>()?.Value ?? new DocStrangeSettings()).EffectiveMaxStatementPages
+            : limits.EffectiveMaxAiPages;
+        var pages = plan.PlannedPages.Take(maxAiPages).ToList();
         var totalPages = Math.Max(1, pages.Count);
 
         _logger.LogInformation(
             "Lecture IA relevé : session {SessionId}, dossier {TenantId}, moteur {Engine}, modèle {Model}, pages {Pages}, budget {BudgetMinutes} min",
-            session.Id, tenantId, plan.Engine, visionModelLabel ?? textModelLabel, pages.Count,
+            session.Id, tenantId, plan.Engine,
+            externalAvailable ? externalExtraction!.Name : visionModelLabel ?? textModelLabel, pages.Count,
             (int)ComputeBudget(pages.Count, limits.EffectiveVisionCallTimeoutSeconds, limits.EffectiveAiJobBudgetMinutes).TotalMinutes);
 
         if (visionModel is not null)
@@ -166,7 +178,12 @@ public sealed partial class BankStatementAiExtractionJob
                 continue;
             }
 
-            if (isPdf && pageContentType == "application/pdf" && ExceedsRenderGuard(pageBytes, limits))
+            // Le garde de rendu borne une RASTÉRISATION locale : format de page × DPI ⇒ pixels et
+            // mégapixels. Docstrange reçoit la page PDF telle quelle et fait son OCR chez lui — rien
+            // n'est rastérisé ici, le garde n'a donc pas lieu de s'appliquer. L'appliquer quand même
+            // enverrait la page au modèle texte local, c'est-à-dire à l'IA que l'activation de la
+            // carte écarte, et ferait refuser des pages grand format qu'il sait lire.
+            if (!externalAvailable && isPdf && pageContentType == "application/pdf" && ExceedsRenderGuard(pageBytes, limits))
             {
                 var reason = PageFailureReasons.RenderGuard;
                 var fallback = await RunStage3Async(pipeline, extractor, content, isPdf, session, pageNumber, plan, limits, readOptions, null, cancellationToken);
@@ -204,10 +221,20 @@ public sealed partial class BankStatementAiExtractionJob
                     continue;
                 }
 
-                // Échec : l'échelle vision reprend la main telle quelle.
-                lastFailure = external.FailureReason;
-                if (await IsCancelledAsync(ctx, session.Id, cancellationToken))
-                    return;
+                // Échec : Docstrange lit SEUL, donc la page est signalée non lue avec sa raison et la
+                // suivante est tentée. C'est exactement le traitement que reçoit déjà une page que la
+                // vision ne lit pas quand le repli texte est éteint ; aucun modèle local ne prend le
+                // relais. Contrepartie assumée de l'exclusivité : le retour arrière tient en un clic,
+                // désactiver la carte rend exactement le comportement d'avant.
+                //
+                // Le coupe-circuit « deux pages consécutives » ne s'applique pas : il protège d'un
+                // modèle local qui s'effondre et dont chaque appel coûte des minutes, pas d'un service
+                // HTTP dont les pages sont indépendantes.
+                var externalReason = external.FailureReason ?? PageFailureReasons.ExternalExtractionFailed;
+                RecordPage(pageNumber, FailedReading(pageNumber, externalReason), BankStatementPageReadingEngines.Failed,
+                    externalExtraction.Name, attempts, pageSw.ElapsedMilliseconds, 0, externalReason, truncated);
+                await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
+                continue;
             }
 
             if (!circuitOpen)

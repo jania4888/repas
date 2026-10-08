@@ -12726,6 +12726,41 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.lecture.des.pages.par.le.service.d.extraction.do.9953b468": "Lecture des pages par le service d'extraction documentaire… page {$INTERPOLATION} sur {$INTERPOLATION_1} — {$INTERPOLATION_2} %",
+  "@accounting.bank-statement-import.lecture.des.pages.par.le.service.d.extraction.do.9953b468": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.page.d0085280": "Lu par le service d'extraction documentaire ({$count} pages)",
+  "@accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.page.d0085280": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.1.pa.d281f138": "Lu par le service d'extraction documentaire (1 page)",
+  "@accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.1.pa.d281f138": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lecture.directe.completee.par.le.service.d.extra.e232c028": "Lecture directe complétée par le service d'extraction documentaire",
+  "@accounting.bank-statement-import.ts.lecture.directe.completee.par.le.service.d.extra.e232c028": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.27912217": "Lu par le service d'extraction documentaire",
+  "@accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.27912217": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.duree.estimee.environ.minutes.min.vous.pouvez.qu.8c3f8b0a": "Durée estimée : environ {$INTERPOLATION} min. Vous pouvez quitter cet écran et y revenir.",
   "@accounting.bank-statement-import.duree.estimee.environ.minutes.min.vous.pouvez.qu.8c3f8b0a": {
     "x-files": [
@@ -26900,6 +26935,18 @@
     "x-files": [
       "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
     ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-document-import.ts.lecture.par.le.service.d.extraction.documentaire.837158cd": "Lecture par le service d'extraction documentaire externe",
+  "@accounting.accounting-document-import.ts.lecture.par.le.service.d.extraction.documentaire.837158cd": {
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.lecture.par.le.service.d.extraction.documentaire.4802f22f": "Lecture par le service d'extraction documentaire configuré par la plateforme : la pièce quitte le serveur. Aucune analyse par l'IA locale.",
+  "@accounting.manual-entry.lecture.par.le.service.d.extraction.documentaire.4802f22f": {
+    "x-wave": "v7"
+  },
+  "invoices.invoice-import-dialog.lecture.par.le.service.d.extraction.documentaire.ff6aaca8": "Lecture par le service d'extraction documentaire configuré par la plateforme : le fichier quitte le serveur. Aucune analyse par l'IA locale.",
+  "@invoices.invoice-import-dialog.lecture.par.le.service.d.extraction.documentaire.ff6aaca8": {
     "x-wave": "v7"
   },
   "accounting.manual-entry.lecture.du.document.et.detection.des.zon.71726a65": " Lecture du document et détection des zones… ",

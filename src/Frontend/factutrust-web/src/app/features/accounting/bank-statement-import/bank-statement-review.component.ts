@@ -120,7 +120,13 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
         <div class="card bsr-card bsr-progress" role="status" aria-live="polite">
           <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
           <div class="bsr-progress__body">
-            @if (s.extraction?.aiPlan?.engine === 'vision') {
+            @if (viaDocStrange(s)) {
+              <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.des.pages.par.le.service.d.extraction.do.9953b468">Lecture des pages par le service d'extraction documentaire… page {{ currentPage(s) }} sur {{ totalPages(s) }} — {{ s.progressPercent }} %</p>
+              <p class="bsr-muted bsr-progress__meta">
+                <span>{{ s.fileName }}</span>
+                <span aria-hidden="true" i18n="@@accounting.bank-statement-import.secondes.ecoulees">{{ elapsedSeconds() }} s écoulées</span>
+              </p>
+            } @else if (s.extraction?.aiPlan?.engine === 'vision') {
               <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.des.pages.par.l.ia.page.currentpage.s.su.0ba333ec">Lecture des pages par l'IA… page {{ currentPage(s) }} sur {{ totalPages(s) }} — {{ s.progressPercent }} %</p>
               <p class="bsr-muted bsr-progress__meta">
                 <span>{{ s.fileName }}</span>
@@ -145,7 +151,13 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
             <div class="bsr-bar" role="progressbar" [attr.aria-valuenow]="s.progressPercent" aria-valuemin="0" aria-valuemax="100"
                  i18n-aria-label="@@accounting.bank-statement-import.progression.lecture.aria" aria-label="Progression de la lecture"><div class="bsr-bar__fill" [style.width.%]="s.progressPercent"></div></div>
             @if (s.extraction?.aiPlan?.engine === 'vision') {
-              @if (estimatedMinutes(s); as minutes) {
+              <!-- Le service externe lit une page en quelques dizaines de secondes : ni le mot « IA »,
+                   ni la fourchette d'une à trois minutes, qui est celle du modèle vision local. -->
+              @if (viaDocStrange(s)) {
+                @if (estimatedMinutes(s); as minutes) {
+                  <p class="bsr-muted bsr-estimate" i18n="@@accounting.bank-statement-import.duree.estimee.environ.minutes.min.vous.pouvez.qu.8c3f8b0a">Durée estimée : environ {{ minutes }} min. Vous pouvez quitter cet écran et y revenir.</p>
+                }
+              } @else if (estimatedMinutes(s); as minutes) {
                 <p class="bsr-muted bsr-estimate" i18n="@@accounting.bank-statement-import.temps.restant.estime.environ.min.une.a.trois.minutes.par.page">Temps restant estimé : environ {{ minutes }} min (une à trois minutes par page sur le serveur). Vous pouvez quitter cet écran et y revenir.</p>
               } @else {
                 <p class="bsr-muted" i18n="@@accounting.bank-statement-import.une.page.prend.une.a.trois.minutes.avec.l.ia.locale">Une page prend une à trois minutes avec l'IA locale. Vous pouvez quitter cet écran et y revenir.</p>
@@ -1188,6 +1200,16 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Le relevé est lu par le service d'extraction documentaire externe, et par lui seul : ni modèle
+   * vision local, ni modèle texte. Le moteur du plan vaut « vision » dans les DEUX cas — c'est le
+   * fournisseur, pas le moteur, qui distingue les deux lectures, et les confondre fait annoncer
+   * « l'IA » et « une à trois minutes par page » là où rien de tout cela n'a lieu.
+   */
+  viaDocStrange(s: BankStatementImportSession): boolean {
+    return s.aiProviderKind === 'docstrange';
+  }
+
   /** Durée estimée de la lecture IA restante (minutes, arrondie au supérieur) ; null sans estimation. */
   estimatedMinutes(s: BankStatementImportSession): number | null {
     const seconds = s.extraction?.aiPlan?.estimatedSeconds ?? 0;
@@ -1484,6 +1506,29 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
     if (this.hasIssue(s, 'statement.ai_unavailable', 'Blocking') || s.extractionMethod === 'none') {
       return $localize`:@@accounting.bank-statement-import.ts.lecture.ia.non.effectuee:Lecture IA non effectuée`;
     }
+    // Le service d'extraction documentaire lit SEUL : aucune page n'est « lue en secours », et
+    // aucune de ces lectures n'est le fait d'une IA — locale ou non. Les libellés qui suivent
+    // parlent du service, sans jamais le nommer à l'utilisateur.
+    if (this.viaDocStrange(s)) {
+      switch (s.extractionMethod) {
+        case 'ai-vision': {
+          const count = s.pageCount ?? 0;
+          if (count === 1) return $localize`:@@accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.1.pa.d281f138:Lu par le service d'extraction documentaire (1 page)`;
+          if (count > 1) return $localize`:@@accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.page.d0085280:Lu par le service d'extraction documentaire (${String(count)}:count: pages)`;
+          return $localize`:@@accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.27912217:Lu par le service d'extraction documentaire`;
+        }
+        case 'layout+ai':
+          return $localize`:@@accounting.bank-statement-import.ts.lecture.directe.completee.par.le.service.d.extra.e232c028:Lecture directe complétée par le service d'extraction documentaire`;
+        case 'ai':
+        case 'ai-text':
+          return $localize`:@@accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.27912217:Lu par le service d'extraction documentaire`;
+        case 'layout':
+          return $localize`:@@accounting.bank-statement-import.ts.lecture.directe.du.pdf.aucune.ia.ba300454:Lecture directe du PDF (aucune IA)`;
+        default:
+          return '—';
+      }
+    }
+
     switch (s.extractionMethod) {
       case 'ai-vision': {
         const fallback = this.fallbackPagesOf(s);

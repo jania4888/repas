@@ -4,6 +4,7 @@ using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.AI;
+using FactuTrust.Application.Features.AI.DocumentExtraction;
 using FactuTrust.Application.Features.Accounting.DocumentImport;
 using FactuTrust.Domain.Enums;
 using FactuTrust.Infrastructure.Services.AI;
@@ -39,6 +40,7 @@ public sealed class AccountingDocumentImportController : ControllerBase
     private readonly OllamaSettings _ollamaSettings;
     private readonly ILogger<AccountingDocumentImportController> _logger;
     private readonly IHostEnvironment _environment;
+    private readonly IDocumentExtractionProvider? _externalExtraction;
 
     public AccountingDocumentImportController(
         IAccountingDocumentExtractor extractor,
@@ -50,8 +52,10 @@ public sealed class AccountingDocumentImportController : ControllerBase
         IOptions<AccountingSettings> accountingSettings,
         IOptions<OllamaSettings> ollamaSettings,
         ILogger<AccountingDocumentImportController> logger,
-        IHostEnvironment environment)
+        IHostEnvironment environment,
+        IDocumentExtractionProvider? externalExtraction = null)
     {
+        _externalExtraction = externalExtraction;
         _extractor = extractor;
         _proposalService = proposalService;
         _ocr = ocr;
@@ -72,6 +76,14 @@ public sealed class AccountingDocumentImportController : ControllerBase
         if (!_accountingSettings.DocumentImportEnabled)
             return NotFound();
 
+        // Nom du service d'extraction externe lorsqu'il est actif — JAMAIS sa clé ni son URL.
+        // Le front en a besoin pour dire quel moteur lit réellement la pièce : sans lui, l'écran
+        // annonçait « analyse IA … 3 minutes » même quand le LLM n'était pas sollicité.
+        var externalProvider = _externalExtraction is not null
+            && await _externalExtraction.IsAvailableAsync(cancellationToken)
+                ? _externalExtraction.Name
+                : null;
+
         var resolution = await _importModelResolver.ResolveAsync(null, cancellationToken);
         var vision = await _importModelResolver.ResolveEffectiveVisionModelIdAsync(null, forBankStatement: false, cancellationToken);
         var visionModelReady = false;
@@ -84,9 +96,11 @@ public sealed class AccountingDocumentImportController : ControllerBase
         return Ok(new
         {
             enabled = true,
+            // Actif, ce service est le SEUL lecteur : ni parseur natif, ni LLM.
+            documentExtractionProvider = externalProvider,
             // Le parseur natif fonctionne sans IA ni OCR : il lit la couche texte des factures
-            // émises par InstaFact.
-            nativeParserEnabled = true,
+            // émises par InstaFact. Contourné lorsque le service externe est actif.
+            nativeParserEnabled = externalProvider is null,
             aiFallbackAvailable = CanUseAi(),
             ocrAvailable = _ocr.IsAvailable,
             importModel = resolution.Model.ProviderModelId ?? resolution.Model.CanonicalModelRef,

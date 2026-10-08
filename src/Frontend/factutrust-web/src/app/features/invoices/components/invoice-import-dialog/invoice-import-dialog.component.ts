@@ -62,7 +62,8 @@ type ImportPhase = 'idle' | 'extracting' | 'error';
                 @if (selectedFileName()) {
                   <span class="iid-filename">{{ selectedFileName() }}</span>
                 }
-                @if (elapsedSeconds() < 30) {<ng-container i18n="@@invoices.components.lecture.et.preparation.du.document.80e2b53a">
+@if (externalProvider()) {<ng-container i18n="@@invoices.invoice-import-dialog.lecture.par.le.service.d.extraction.documentaire.ff6aaca8">Lecture par le service d'extraction documentaire configuré par la plateforme : le fichier quitte le serveur. Aucune analyse par l'IA locale.</ng-container>}
+                @else if (elapsedSeconds() < 30) {<ng-container i18n="@@invoices.components.lecture.et.preparation.du.document.80e2b53a">
                   Lecture et préparation du document…
                 </ng-container>} @else {<ng-container i18n="@@invoices.components.l.analyse.peut.prendre.jusqu.a.3.minutes.7ca553dc">
                   L'analyse peut prendre jusqu'à 3 minutes la première fois.
@@ -211,6 +212,14 @@ export class InvoiceImportDialogComponent implements OnDestroy {
       this.modelReady.set(null);
       this.warmUpMessage.set(null);
       this.progressLabel.set($localize`:@@invoices.invoice-import-dialog.ts.lecture.du.document.f74989d0:Lecture du document…`);
+      // Un service d'extraction externe actif rend le préchauffage du modèle local inutile,
+      // mais l'appel reste inoffensif : on se contente de ne plus annoncer une analyse IA.
+      this.capabilitiesSub?.unsubscribe();
+      this.capabilitiesSub = this.importService.capabilities().subscribe({
+        next: (caps) => this.externalProvider.set(caps?.documentExtractionProvider ?? null),
+        error: () => this.externalProvider.set(null)
+      });
+
       this.warmUpSub?.unsubscribe();
       this.warmUpSub = this.importService.warmUpModel().subscribe({
         next: (res) => {
@@ -250,9 +259,12 @@ export class InvoiceImportDialogComponent implements OnDestroy {
   readonly progressLabel = signal($localize`:@@invoices.invoice-import-dialog.ts.lecture.du.document.f74989d0:Lecture du document…`);
   readonly modelReady = signal<boolean | null>(null);
   readonly warmUpMessage = signal<string | null>(null);
+  /** Nom du service d'extraction externe quand il est actif ; pilote le message d'attente. */
+  readonly externalProvider = signal<string | null>(null);
 
   private importSub: Subscription | null = null;
   private warmUpSub: Subscription | null = null;
+  private capabilitiesSub: Subscription | null = null;
   private elapsedTimer: ReturnType<typeof setInterval> | null = null;
 
   /** Limite alignée sur le backend (AiInvoiceImportController.ImportMaxBytes). */
@@ -261,6 +273,7 @@ export class InvoiceImportDialogComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.importSub?.unsubscribe();
     this.warmUpSub?.unsubscribe();
+    this.capabilitiesSub?.unsubscribe();
     this.stopElapsedTimer();
   }
 

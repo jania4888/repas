@@ -42,6 +42,34 @@ public sealed record BankStatementAiAvailability(
         new(false, null, null, reason, ReasonCode: reasonCode);
 
     public bool IsVision => Available && string.Equals(Engine, BankStatementAiEngines.Vision, StringComparison.Ordinal);
+
+    /// <summary>
+    /// Le service d'extraction documentaire externe lit, et lui seul : ni modèle vision local, ni
+    /// modèle texte, ni parseur. Distinct d'<see cref="BankStatementAiProviderKinds.External"/>,
+    /// qui désigne un fournisseur <b>LLM</b> hors plateforme et reste gouverné par
+    /// <c>AiComplementAllowExternal</c>.
+    /// </summary>
+    public bool IsDocStrange => Available && string.Equals(ProviderKind, BankStatementAiProviderKinds.DocStrange, StringComparison.Ordinal);
+}
+
+/// <summary>
+/// Valeurs de <see cref="BankStatementAiAvailability.ProviderKind"/>, persistées dans
+/// <c>BankStatementImportSession.AiProviderKind</c> et publiées à l'écran de relecture.
+/// </summary>
+public static class BankStatementAiProviderKinds
+{
+    /// <summary>Moteur local (Ollama) : rien ne quitte le serveur.</summary>
+    public const string Local = "local";
+
+    /// <summary>Fournisseur <b>LLM</b> hors plateforme, gouverné par <c>AiComplementAllowExternal</c>.</summary>
+    public const string External = "external";
+
+    /// <summary>
+    /// Service d'extraction documentaire externe (Docstrange). Volontairement DISTINCT de
+    /// <see cref="External"/> : les gardes <c>AiComplementAllowExternal</c> ne gouvernent que les
+    /// fournisseurs LLM, et confondre les deux ferait qu'ouvrir l'un ouvrirait l'autre.
+    /// </summary>
+    public const string DocStrange = "docstrange";
 }
 
 /// <summary>Moteurs de lecture IA d'un relevé (valeurs de <see cref="BankStatementAiAvailability.Engine"/> et de <see cref="BankStatementAiPlan.Engine"/>).</summary>

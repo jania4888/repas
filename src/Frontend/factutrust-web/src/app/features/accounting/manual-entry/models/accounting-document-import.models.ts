@@ -19,7 +19,7 @@ export type ProposedLineRole =
   | 'fodec'
   | 'stamp';
 
-export type ExtractionMethod = 'native-pdf' | 'llm-text' | 'llm-vision' | '';
+export type ExtractionMethod = 'native-pdf' | 'llm-text' | 'llm-vision' | 'external-extraction' | '';
 
 export interface ExtractedParty {
   name: string | null;
@@ -131,6 +131,11 @@ export interface JournalEntryProposal {
 
 export interface DocumentImportCapabilities {
   enabled: boolean;
+  /**
+   * Nom du service d'extraction documentaire externe quand il est actif, sinon null. Actif, il
+   * est le SEUL lecteur : ni parseur natif, ni IA locale. Jamais une clé ni une URL.
+   */
+  documentExtractionProvider: string | null;
   nativeParserEnabled: boolean;
   aiFallbackAvailable: boolean;
   ocrAvailable: boolean;
@@ -148,6 +153,8 @@ export function extractionMethodLabel(method: ExtractionMethod): string {
       return $localize`:@@accounting.accounting-document-import.ts.analyse.ia.du.texte.du.document.d5e78bfb:Analyse IA du texte du document`;
     case 'llm-vision':
       return $localize`:@@accounting.accounting-document-import.ts.analyse.ia.visuelle.document.scanne.ou.p.3f8c2dca:Analyse IA visuelle (document scanné ou photographié)`;
+    case 'external-extraction':
+      return $localize`:@@accounting.accounting-document-import.ts.lecture.par.le.service.d.extraction.documentaire.837158cd:Lecture par le service d'extraction documentaire externe`;
     default:
       return $localize`:@@accounting.accounting-document-import.ts.methode.inconnue.a2ec5941:Méthode inconnue`;
   }

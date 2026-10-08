@@ -881,5 +881,6 @@
   "invoices.invoice-detail.ts.creee.a570b396": "مُنشأة",
   "invoices.invoice-detail.ts.validee.2cc6c327": "مثبّتة",
   "invoices.invoice-detail.ts.signee.be13d5cd": "ممضاة",
-  "invoices.invoice-detail.ts.payee.65b240e8": "مسددة"
+  "invoices.invoice-detail.ts.payee.65b240e8": "مسددة",
+  "invoices.invoice-import-dialog.lecture.par.le.service.d.extraction.documentaire.ff6aaca8": "قراءة بواسطة خدمة استخراج المستندات المُهيّأة من المنصّة: الملف يغادر الخادم. لا يوجد تحليل بالذكاء الاصطناعي المحلّي."
 }

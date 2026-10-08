@@ -66,20 +66,21 @@ public sealed class BankStatementAiExtraction : IBankStatementAiExtraction
     {
         try
         {
-            // Docstrange remplace la lecture locale quand il est EXPLICITEMENT autorisé — y compris
-            // moteur Ollama arrêté, puisqu'il n'en dépend pas.
+            // Docstrange, quand la carte du back-office est activée et sa clé déchiffrable, devient le
+            // SEUL lecteur — y compris moteur Ollama arrêté, puisqu'il n'en dépend pas. Cette carte
+            // décide seule : aucun réglage d'appsettings ne double la décision, et l'éteindre rend
+            // exactement le comportement d'avant.
             //
             // ProviderKind vaut « docstrange », volontairement DISTINCT de « external » : les deux
             // gardes AiComplementAllowExternal de BankStatementImportService continuent de ne
-            // gouverner que les fournisseurs LLM. L'autorisation de Docstrange est son propre
-            // drapeau, vérifié juste ici. Confondre les deux ferait qu'ouvrir l'un ouvrirait l'autre.
-            if (_limits.DocStrangeEnabled
-                && _externalExtraction is not null
+            // gouverner que les fournisseurs LLM. Confondre les deux ferait qu'ouvrir l'un ouvrirait
+            // l'autre.
+            if (_externalExtraction is not null
                 && await _externalExtraction.IsAvailableAsync(cancellationToken))
             {
                 return new BankStatementAiAvailability(
                     true,
-                    "docstrange",
+                    BankStatementAiProviderKinds.DocStrange,
                     ModelRef: null,
                     Reason: null,
                     Engine: BankStatementAiEngines.Vision,

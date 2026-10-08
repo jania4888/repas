@@ -177,26 +177,30 @@ public sealed class BankStatementVisionSettingsConsistencyTests
             "AiComplementAllowExternal must be absent or false: no statement page may leave the local engine.");
 
         // Docstrange est un SECOND chemin de sortie, independant du precedent : il ne passe pas
-        // par LlmProviderKind, donc AiComplementAllowExternal ne le couvre pas. Les deux doivent
-        // etre epingles separement, sans quoi fermer l'un laisserait l'autre ouvert.
-        var docStrange = Prod("Accounting", "BankStatementImport", "DocStrangeEnabled");
-        Assert.True(
-            docStrange is null || docStrange.Value.ValueKind == JsonValueKind.False,
-            "DocStrangeEnabled must be absent or false: no statement page may be sent to Nanonets.");
+        // par LlmProviderKind, donc AiComplementAllowExternal ne le couvre pas. Mais il n'est plus
+        // gouverne ici : depuis le 2026-10-08, la carte du back-office decide SEULE, pour les
+        // releves comme pour les pieces. Voir The_docstrange_statement_switch_no_longer_exists.
     }
 
+    /// <summary>
+    /// Le second interrupteur a ete SUPPRIME le 2026-10-08 : la carte du back-office gouverne seule
+    /// les deux flux (pieces et releves). Ce test epingle son absence plutot que sa valeur, car le
+    /// reintroduire produirait de la configuration MORTE : un administrateur lirait
+    /// « DocStrangeEnabled: false » et croirait les releves proteges alors que la carte, seule
+    /// decideuse, continuerait de les envoyer. Un reglage qui ment est pire qu'un reglage absent.
+    /// </summary>
     [Theory]
     [InlineData("appsettings.json")]
     [InlineData("appsettings.Development.json")]
     [InlineData("appsettings.Production.json")]
-    public void The_docstrange_statement_switch_is_off_everywhere(string file)
+    public void The_docstrange_statement_switch_no_longer_exists(string file)
     {
-        // Absent partout aujourd'hui : la valeur par defaut du code (false) fait foi. Le jour ou
-        // quelqu'un l'ecrit dans un appsettings, ce test exige qu'il l'ecrive a false.
         var value = TryGet(ReadRoot(file), "Accounting", "BankStatementImport", "DocStrangeEnabled");
         Assert.True(
-            value is null || value.Value.ValueKind == JsonValueKind.False,
-            $"{file}: DocStrangeEnabled must stay absent or false; turning it on sends bank statement pages to a third party.");
+            value is null,
+            $"{file}: DocStrangeEnabled must stay absent. The back-office card alone decides whether "
+            + "Docstrange reads; a settings key next to it would be dead configuration that lies about "
+            + "where bank statement pages go.");
     }
 
     [Fact]

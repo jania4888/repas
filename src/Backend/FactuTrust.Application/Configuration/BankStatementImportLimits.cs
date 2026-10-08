@@ -58,17 +58,6 @@ public sealed class BankStatementImportLimits
     /// Autorise l'envoi des pages de relevés au service d'extraction documentaire externe
     /// Docstrange (Nanonets). <b>OFF par défaut.</b>
     ///
-    /// <para>Interrupteur <b>distinct</b> de <see cref="AiComplementAllowExternal"/>, et volontairement :
-    /// celui-ci gouverne les fournisseurs LLM (OpenRouter, Modal, Cursor), celui-là un service
-    /// d'OCR qui ne passe pas par <c>LlmProviderKind</c>. Les deux se cumulent, aucun n'ouvre
-    /// la porte de l'autre.</para>
-    ///
-    /// <para>Activer ce réglage fait <b>sortir des données bancaires du serveur</b> vers un tiers
-    /// qui ne publie aucune politique de rétention pour son offre cloud : décision du responsable
-    /// du traitement, jamais un défaut.</para>
-    /// </summary>
-    public bool DocStrangeEnabled { get; set; }
-
     // ── Lecture vision GLM-OCR (relevés non prouvés) ──
 
     /// <summary>Active la lecture page par page via le modèle vision (GLM-OCR).</summary>

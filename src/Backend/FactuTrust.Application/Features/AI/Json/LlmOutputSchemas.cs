@@ -112,6 +112,95 @@ public static class LlmOutputSchemas
     public static JsonElement AccountingDocumentVerbatim { get; } =
         JsonDocument.Parse(AccountingDocumentVerbatimSchemaJson).RootElement.Clone();
 
+    /// <summary>
+    /// Schéma de <c>LlmInvoiceExtraction</c> (import de facture du wizard), <b>tout montant typé
+    /// en chaîne</b>. Même raison d'être que <see cref="AccountingDocumentVerbatim"/> : un service
+    /// d'extraction externe lit la virgule tunisienne comme un séparateur de milliers et rend les
+    /// montants multipliés par 1000, sans aucun signal. En chaîne, la valeur est recopiée telle
+    /// qu'imprimée et la conversion reste serveur (<c>LlmJsonOptions.Tolerant</c> →
+    /// <c>TunisianNumberParsing</c>).
+    ///
+    /// <para>Ce schéma n'est PAS envoyé au LLM : ce chemin décrit son format dans le prompt. Il ne
+    /// sert qu'au service d'extraction externe, qui, lui, exige un schéma pour être déterministe.
+    /// Les définitions sont inlinées (pas de <c>$ref</c>), dont la prise en charge n'est pas établie.</para>
+    /// </summary>
+    public static JsonElement InvoiceImportVerbatim { get; } =
+        JsonDocument.Parse(InvoiceImportVerbatimSchemaJson).RootElement.Clone();
+
+    private const string InvoiceImportVerbatimSchemaJson = """
+        {
+          "type": "object",
+          "properties": {
+            "documentType": { "type": ["string","null"] },
+            "invoiceNumber": { "type": ["string","null"] },
+            "issueDate": { "type": ["string","null"] },
+            "dueDate": { "type": ["string","null"] },
+            "currency": { "type": ["string","null"] },
+            "seller": {
+              "type": ["object","null"],
+              "properties": {
+                "name": { "type": ["string","null"] },
+                "nif": { "type": ["string","null"] },
+                "email": { "type": ["string","null"] },
+                "phone": { "type": ["string","null"] },
+                "address": {
+                  "type": ["object","null"],
+                  "properties": {
+                    "street": { "type": ["string","null"] },
+                    "city": { "type": ["string","null"] },
+                    "postalCode": { "type": ["string","null"] },
+                    "governorate": { "type": ["string","null"] }
+                  }
+                }
+              }
+            },
+            "client": {
+              "type": ["object","null"],
+              "properties": {
+                "name": { "type": ["string","null"] },
+                "nif": { "type": ["string","null"] },
+                "email": { "type": ["string","null"] },
+                "phone": { "type": ["string","null"] },
+                "address": {
+                  "type": ["object","null"],
+                  "properties": {
+                    "street": { "type": ["string","null"] },
+                    "city": { "type": ["string","null"] },
+                    "postalCode": { "type": ["string","null"] },
+                    "governorate": { "type": ["string","null"] }
+                  }
+                }
+              }
+            },
+            "lines": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "designation": { "type": ["string","null"] },
+                  "description": { "type": ["string","null"] },
+                  "quantity": { "type": ["string","null"] },
+                  "unit": { "type": ["string","null"] },
+                  "unitPriceHT": { "type": ["string","null"] },
+                  "discountPercent": { "type": ["string","null"] },
+                  "vatRatePercent": { "type": ["string","null"] }
+                }
+              }
+            },
+            "totals": {
+              "type": ["object","null"],
+              "properties": {
+                "totalHT": { "type": ["string","null"] },
+                "totalVat": { "type": ["string","null"] },
+                "totalTTC": { "type": ["string","null"] }
+              }
+            },
+            "confidence": { "type": ["string","null"], "enum": ["high","medium","low",null] },
+            "warnings": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+        """;
+
     private const string AccountingDocumentVerbatimSchemaJson = """
         {
           "type": "object",

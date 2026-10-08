@@ -45,6 +45,7 @@ public sealed class BankStatementImportService : IBankStatementImportService
     private readonly BankStatementLayoutExtractor _extractor;
     private readonly AccountingSettings _settings;
     private readonly TimeProvider _time;
+    private readonly DocStrangeSettings _docStrange;
     private readonly ILogger<BankStatementImportService> _logger;
 
     public BankStatementImportService(
@@ -57,7 +58,8 @@ public sealed class BankStatementImportService : IBankStatementImportService
         BankStatementLayoutExtractor extractor,
         IOptions<AccountingSettings> settings,
         ILogger<BankStatementImportService> logger,
-        TimeProvider? time = null)
+        TimeProvider? time = null,
+        IOptions<DocStrangeSettings>? docStrange = null)
     {
         _contextFactory = contextFactory;
         _tenantContext = tenantContext;
@@ -69,9 +71,18 @@ public sealed class BankStatementImportService : IBankStatementImportService
         _settings = settings.Value;
         _logger = logger;
         _time = time ?? TimeProvider.System;
+        _docStrange = docStrange?.Value ?? new DocStrangeSettings();
     }
 
     private BankStatementImportLimits Limits => _settings.BankStatementImport;
+
+    /// <summary>
+    /// Plafonds propres au service d'extraction documentaire externe. Ceux de <see cref="Limits"/>
+    /// sont calibrés pour le modèle vision local (une à trois minutes par page) ; les appliquer
+    /// à un service qui lit une page en quelques dizaines de secondes refuserait des relevés
+    /// qu'il lit sans peine.
+    /// </summary>
+    private DocStrangeSettings DocStrange => _docStrange;
 
     private Guid? CurrentTenantId => _tenantContext.TenantId ?? _currentUser.TenantId;
 
@@ -195,7 +206,7 @@ public sealed class BankStatementImportService : IBankStatementImportService
         var json = JsonSerializer.Serialize(extraction, JsonOptions);
         var aiScheduled = needsAi && ai is { Available: true };
         if (aiScheduled)
-            session.StartAiExtraction(ai!.ProviderKind ?? "local", json, extraction.ProfileId, extraction.PageCount);
+            session.StartAiExtraction(ai!.ProviderKind ?? BankStatementAiProviderKinds.Local, json, extraction.ProfileId, extraction.PageCount);
         else
             session.CompleteExtraction(json, ExtractionMethodWithoutAi(plan, extension), extraction.ProfileId, extraction.PageCount);
 
@@ -365,7 +376,7 @@ public sealed class BankStatementImportService : IBankStatementImportService
             var json = JsonSerializer.Serialize(extraction, JsonOptions);
             var aiScheduled = needsAi && ai is { Available: true };
             if (aiScheduled)
-                session.StartAiExtraction(ai!.ProviderKind ?? "local", json, extraction.ProfileId, extraction.PageCount);
+                session.StartAiExtraction(ai!.ProviderKind ?? BankStatementAiProviderKinds.Local, json, extraction.ProfileId, extraction.PageCount);
             else
                 session.CompleteExtraction(json, ExtractionMethodWithoutAi(extraction.AiPlan, extension), extraction.ProfileId, extraction.PageCount);
 
@@ -901,26 +912,37 @@ public sealed class BankStatementImportService : IBankStatementImportService
             return (plan, ai, issues);
         }
 
-        if (string.Equals(ai.ProviderKind, "external", StringComparison.Ordinal) && !Limits.AiComplementAllowExternal)
+        if (string.Equals(ai.ProviderKind, BankStatementAiProviderKinds.External, StringComparison.Ordinal) && !Limits.AiComplementAllowExternal)
         {
             const string reason = "IA externe non autorisée pour les relevés bancaires : le document ne quitte pas la plateforme";
             issues.Add(Blocking(StatementIssueCodes.AiUnavailable, $"Lecture IA impossible : {reason}. Contactez l'administrateur."));
             return (plan, BankStatementAiAvailability.Unavailable(reason, BankStatementAiAvailabilityReasons.ExternalNotAllowed), issues);
         }
 
+        // Le lecteur retenu commande le plafond ET l'estimation : Docstrange lit une page en
+        // quelques dizaines de secondes, le modèle vision local en une à trois minutes.
+        var viaDocStrange = ai.IsDocStrange;
+        var maxPages = viaDocStrange ? DocStrange.EffectiveMaxStatementPages : Limits.EffectiveMaxAiPages;
+
         var pages = plan.PlannedPages.Count;
-        if (pages > Limits.EffectiveMaxAiPages)
+        if (pages > maxPages)
         {
             // Refus déterministe (ni relançable ni transitoire) : code dédié, distinct de ai_unavailable,
             // pour que « Relancer l'analyse » ne propose pas une action vouée au même échec.
-            var reason = $"Trop de pages à lire ({pages}, maximum {Limits.EffectiveMaxAiPages}). Scindez le PDF par relevé ou par mois.";
+            var reason = $"Trop de pages à lire ({pages}, maximum {maxPages}). Scindez le PDF par relevé ou par mois.";
             issues.Add(Blocking(StatementIssueCodes.TooManyPages, reason));
             return (plan, BankStatementAiAvailability.Unavailable(reason), issues);
         }
 
-        if (ai.IsVision && Limits.VisionReadingEnabled)
+        // VisionReadingEnabled gouverne le modèle vision LOCAL. Docstrange n'en est pas un : l'y
+        // soumettre renverrait le relevé au modèle texte local dès que ce réglage serait éteint,
+        // c'est-à-dire à l'IA que l'activation de la carte écarte.
+        if (ai.IsVision && (viaDocStrange || Limits.VisionReadingEnabled))
         {
-            plan = BankStatementAiReadingPlanner.WithVisionEstimate(plan with { Engine = BankStatementAiEngines.Vision }, Limits.EffectiveVisionEstimatedSecondsPerPage);
+            var secondsPerPage = viaDocStrange
+                ? DocStrange.EffectiveEstimatedSecondsPerPage
+                : Limits.EffectiveVisionEstimatedSecondsPerPage;
+            plan = BankStatementAiReadingPlanner.WithVisionEstimate(plan with { Engine = BankStatementAiEngines.Vision }, secondsPerPage);
             return (plan, ai, issues);
         }
 
@@ -959,7 +981,7 @@ public sealed class BankStatementImportService : IBankStatementImportService
         BankStatementAiPlan plan, BankStatementAiAvailability ai, byte[] content, string extension)
     {
         StatementExtractionIssue? issue = null;
-        if (plan.TextPages.Count > 0 && string.Equals(ai.ProviderKind, "external", StringComparison.Ordinal) && !Limits.AiComplementAllowExternal)
+        if (plan.TextPages.Count > 0 && string.Equals(ai.ProviderKind, BankStatementAiProviderKinds.External, StringComparison.Ordinal) && !Limits.AiComplementAllowExternal)
         {
             issue = new StatementExtractionIssue(StatementIssueCodes.AiUnavailable, StatementIssueSeverity.Blocking,
                 "Pages lisibles non relues : la relecture du texte d'un relevé par une IA externe n'est pas autorisée sur cette plateforme.");
@@ -970,14 +992,20 @@ public sealed class BankStatementImportService : IBankStatementImportService
             };
         }
 
-        if (string.Equals(ai.Engine, "vision", StringComparison.Ordinal) && Limits.VisionReadingEnabled)
+        // Même règle que dans FitAiOnlyPlan : Docstrange ne dépend pas de VisionReadingEnabled, et
+        // porte ses propres plafonds.
+        var viaDocStrange = ai.IsDocStrange;
+        if (string.Equals(ai.Engine, "vision", StringComparison.Ordinal) && (viaDocStrange || Limits.VisionReadingEnabled))
         {
             plan = plan with { Engine = "vision" };
-            plan = BankStatementAiReadingPlanner.WithVisionEstimate(plan, Limits.EffectiveVisionEstimatedSecondsPerPage);
+            plan = BankStatementAiReadingPlanner.WithVisionEstimate(plan, viaDocStrange
+                ? DocStrange.EffectiveEstimatedSecondsPerPage
+                : Limits.EffectiveVisionEstimatedSecondsPerPage);
             var pageCount = plan.ScannedPages.Count + plan.TextPages.Count;
-            if (pageCount > Limits.MaxAiPages)
+            var maxPages = viaDocStrange ? DocStrange.EffectiveMaxStatementPages : Limits.MaxAiPages;
+            if (pageCount > maxPages)
             {
-                ai = BankStatementAiAvailability.Unavailable($"Trop de pages à lire ({pageCount}, maximum {Limits.MaxAiPages}).");
+                ai = BankStatementAiAvailability.Unavailable($"Trop de pages à lire ({pageCount}, maximum {maxPages}).");
             }
             else if (plan.EstimatedCalls > Limits.EffectiveMaxAiCalls)
             {

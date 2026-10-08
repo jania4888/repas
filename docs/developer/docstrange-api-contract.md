@@ -113,6 +113,88 @@ multiplication. Sur une comptabilité en dinars/millimes, c'est indétectable à
 
 ---
 
+## Docstrange activé = seul lecteur, pièces **et** relevés
+
+Depuis le 2026-10-08, activer la carte Docstrange au back-office ne l'ajoute plus comme étage
+supplémentaire : elle en fait le **seul lecteur** de l'import de pièces, sur les **deux** points
+d'entrée — `POST /accounting/document-import/propose` (saisie comptable) et
+`POST /ai/invoice-import` (assistant de facturation) — **et** de l'import de relevés bancaires.
+
+| | Carte éteinte | Carte allumée |
+|---|---|---|
+| Parseur natif InstaFact | prioritaire | **contourné** |
+| LLM local (pièces) | utilisé | **jamais appelé** |
+| Échelle vision locale (relevés) | 2 essais + repli texte | **jamais appelée** |
+| Modèle vision local | résolu et préchauffé | **ni résolu, ni préchauffé** |
+| Échec du service (pièces) | — | **l'import échoue**, avec un message actionnable |
+| Échec du service (une page de relevé) | — | **cette page seule** est non lue, les suivantes continuent |
+
+### La carte décide seule
+
+Le second interrupteur `Accounting:BankStatementImport:DocStrangeEnabled` a été **supprimé**. Il
+doublait la décision pour les seuls relevés, alors que les pièces n'obéissaient déjà qu'à la carte :
+une même case du back-office gouvernait donc deux flux selon deux règles différentes. Le modèle est
+désormais uniforme — une carte, deux flux.
+
+**La contrepartie, à assumer :** la garde au niveau de la configuration serveur n'existe plus.
+Activer la carte pour les factures envoie désormais **aussi** les relevés chez Nanonets, sans
+seconde décision écrite dans un fichier. C'est précisément ce que le second interrupteur empêchait.
+Un test (`The_docstrange_statement_switch_no_longer_exists`) épingle l'**absence** du réglage :
+le réintroduire produirait de la configuration morte, un administrateur lisant
+« DocStrangeEnabled: false » et croyant les relevés protégés alors que la carte continuerait de les
+envoyer. Un réglage qui mente est pire qu'un réglage absent.
+
+### Plafonds propres à ce lecteur (`DocStrange:*`)
+
+| Réglage | Défaut | Pourquoi pas celui du modèle local |
+|---|---|---|
+| `MaxStatementPages` | 60 (borné 1 à 60) | `MaxAiPages` vaut 20, calibré sur 180 s/page ; à 30 s/page un relevé de 21 pages se lit en ~11 min — le refus observé n'avait plus lieu d'être |
+| `EstimatedSecondsPerPage` | 30 (borné 5 à 300) | `VisionEstimatedSecondsPerPage` vaut 180 s ; l'écran annonçait six fois le temps réel |
+
+60 pages à 35 s (le haut de la fourchette mesurée) font 35 min, sous les 120 min du budget de tâche
+par défaut : `AiJobBudgetMinutes` n'a donc pas de jumeau Docstrange, un réglage de plus qui ne
+changerait rien.
+
+Deux détails qui se déduisent mal du code :
+
+- **Le garde de rendu ne s'applique pas.** Il borne une rastérisation locale (format × DPI ⇒ pixels
+  et mégapixels) pour un modèle vision. Docstrange reçoit la page PDF telle quelle et fait son OCR
+  chez lui : rien n'est rastérisé. L'appliquer quand même aurait envoyé les pages grand format au
+  modèle texte local — soit à l'IA que l'activation de la carte écarte.
+- **`VisionReadingEnabled` ne le gouverne pas.** Ce réglage concerne le modèle vision **local**. L'y
+  soumettre aurait fait retomber le plan sur le moteur texte dès qu'il serait éteint.
+
+### Conséquences communes aux deux flux
+
+Trois conséquences à connaître avant d'activer :
+
+1. **Plus de repli.** L'ancien comportement rattrapait silencieusement tout échec par le LLM :
+   l'utilisateur attendait le service externe *puis* le modèle local, sans qu'aucun écran ne le
+   dise. C'est ce que montrait une capture à 48 s. Désormais, chaque cause produit un message
+   distinct — injoignable, quota épuisé, clé refusée, réponse inexploitable.
+2. **Le parseur natif est contourné** : vos propres factures InstaFact, qu'il lit localement,
+   gratuitement et exactement, partent chez Nanonets et consomment du quota. Décision assumée ;
+   elle tient à une seule condition dans `AccountingDocumentExtractor.ExtractAsync`, et un test
+   l'épingle sur une vraie fixture InstaFact.
+3. **Disponibilité** : conjuguées, les deux règles ci-dessus signifient que si Nanonets ne répond
+   pas, **aucune facture ne peut plus être importée**. Le retour arrière est immédiat : désactiver
+   la carte rend exactement le comportement d'avant.
+
+La permission `ai:chat` **reste exigée** sur les deux chemins : ce service fait sortir des données
+du serveur, l'activer ne dispense personne.
+
+Les deux endpoints de capacités publient `documentExtractionProvider` — le **nom** du service, et
+jamais sa clé ni son URL — pour que l'écran annonce le bon moteur au lieu de parler d'« analyse IA ».
+Côté relevés, c'est `session.aiProviderKind = "docstrange"` qui porte l'information, et l'écran de
+relecture en dérive sa bannière, son estimation et son libellé de méthode. Aucun de ces textes ne
+nomme le fournisseur à l'utilisateur, la règle « ne jamais nommer le moteur » restant entière.
+
+Le coupe-circuit « deux pages consécutives en échec » **ne s'applique pas** à ce service : il protège
+d'un modèle local qui s'effondre et dont chaque appel coûte des minutes, pas d'un service HTTP dont
+les pages sont indépendantes.
+
+---
+
 ## Comportement de `json_options`
 
 | Entrée | Résultat |

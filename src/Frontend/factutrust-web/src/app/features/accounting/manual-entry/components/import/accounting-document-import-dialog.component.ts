@@ -72,7 +72,8 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
               @if (selectedFileName()) {
                 <span class="adi-filename">{{ selectedFileName() }}</span>
               }
-              @if (elapsedSeconds() < 20) {<ng-container i18n="@@accounting.manual-entry.lecture.du.document.et.detection.des.zon.71726a65">
+@if (externalProvider()) {<ng-container i18n="@@accounting.manual-entry.lecture.par.le.service.d.extraction.documentaire.4802f22f">Lecture par le service d'extraction documentaire configuré par la plateforme : la pièce quitte le serveur. Aucune analyse par l'IA locale.</ng-container>}
+              @else if (elapsedSeconds() < 20) {<ng-container i18n="@@accounting.manual-entry.lecture.du.document.et.detection.des.zon.71726a65">
                 Lecture du document et détection des zones…
               </ng-container>} @else {<ng-container i18n="@@accounting.manual-entry.le.document.n.est.pas.au.format.instafac.1a09b4ea">
                 Le document n'est pas au format InstaFact : l'analyse IA peut prendre
@@ -338,6 +339,8 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
   readonly proposal = signal<JournalEntryProposal | null>(null);
   readonly reanalyzing = signal(false);
   readonly capabilityHint = signal<string | null>(null);
+  /** Nom du service d'extraction externe quand il est actif ; pilote le message d'attente. */
+  readonly externalProvider = signal<string | null>(null);
   readonly displayDiagnostics = signal<ProposalDiagnostic[]>([]);
 
   readonly methodLabel = computed(() => {
@@ -364,6 +367,7 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
   loadCapabilities(): void {
     this.importService.capabilities().subscribe({
       next: (caps) => {
+        this.externalProvider.set(caps.documentExtractionProvider ?? null);
         if (!caps.aiFallbackAvailable) {
           this.capabilityHint.set(
             $localize`:@@accounting.accounting-document-import-dialog.ts.analyse.ia.indisponible.pour.votre.compt.4c261844:Analyse IA indisponible pour votre compte : seules les factures émises par InstaFact pourront être lues.`);

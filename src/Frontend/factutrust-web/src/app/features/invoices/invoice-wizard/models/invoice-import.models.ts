@@ -70,3 +70,15 @@ export interface InvoiceImportResult {
   extractionFormat: string;
   ocrApplied: boolean;
 }
+
+/** Capacités d'import de facture. Jamais de clé ni d'URL de fournisseur. */
+export interface InvoiceImportCapabilities {
+  /**
+   * Nom du service d'extraction documentaire externe quand il est actif, sinon null. Actif, il est
+   * le SEUL lecteur : le modèle d'IA local n'est pas sollicité.
+   */
+  documentExtractionProvider: string | null;
+  ocrAvailable: boolean;
+  importModel: string | null;
+  visionModel: string | null;
+}

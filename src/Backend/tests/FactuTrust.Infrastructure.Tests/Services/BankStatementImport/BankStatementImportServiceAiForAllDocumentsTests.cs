@@ -48,7 +48,7 @@ public sealed class BankStatementImportServiceAiForAllDocumentsTests : IDisposab
         public TenantDbContext CreateContext() => new(new DbContextOptionsBuilder<TenantDbContext>().UseInMemoryDatabase(name).Options);
     }
 
-    private BankStatementImportService Service(bool allDocuments = true, Action<BankStatementImportLimits>? limits = null, bool aiOnly = false, bool userHasAiRight = true)
+    private BankStatementImportService Service(bool allDocuments = true, Action<BankStatementImportLimits>? limits = null, bool aiOnly = false, bool userHasAiRight = true, DocStrangeSettings? docStrange = null)
     {
         var settings = new AccountingSettings
         {
@@ -67,16 +67,25 @@ public sealed class BankStatementImportServiceAiForAllDocumentsTests : IDisposab
         user.Setup(u => u.HasPermission(It.IsAny<string>())).Returns(userHasAiRight);
         return new BankStatementImportService(_factory, tenant.Object, user.Object, _audit.Object, _ai.Object,
             new BankStatementFileStore(options), new BankStatementLayoutExtractor(), options,
-            NullLogger<BankStatementImportService>.Instance);
+            NullLogger<BankStatementImportService>.Instance,
+            time: null,
+            docStrange: Options.Create(docStrange ?? new DocStrangeSettings()));
     }
 
     /// <summary>Mode « IA seule » (D1) avec lecture vision autorisée par la configuration.</summary>
-    private BankStatementImportService AiOnlyService(Action<BankStatementImportLimits>? limits = null, bool userHasAiRight = true) =>
-        Service(aiOnly: true, userHasAiRight: userHasAiRight, limits: l =>
+    private BankStatementImportService AiOnlyService(
+        Action<BankStatementImportLimits>? limits = null,
+        bool userHasAiRight = true,
+        DocStrangeSettings? docStrange = null) =>
+        Service(aiOnly: true, userHasAiRight: userHasAiRight, docStrange: docStrange, limits: l =>
         {
             l.VisionReadingEnabled = true;
             limits?.Invoke(l);
         });
+
+    /// <summary>La carte du back-office est activée et sa clé utilisable : ce service lit, et lui seul.</summary>
+    private static BankStatementAiAvailability DocStrangeReady() =>
+        new(true, BankStatementAiProviderKinds.DocStrange, null, null, Engine: BankStatementAiEngines.Vision);
 
     private static BankStatementAiAvailability GlmOcrReady() =>
         new(true, "local", "ollama:qwen2.5:7b-instruct", null, Engine: BankStatementAiEngines.Vision, VisionModelRef: "hf.co/ggml-org/GLM-OCR-GGUF:Q8_0");
@@ -432,6 +441,78 @@ public sealed class BankStatementImportServiceAiForAllDocumentsTests : IDisposab
         Assert.Equal("Trop de pages à lire (3, maximum 2). Scindez le PDF par relevé ou par mois.", issue.Message);
         Assert.Equal(new[] { 1, 2, 3 }, result.Value.Extraction.AiPlan!.PlannedPages);
         _ai.Verify(a => a.Schedule(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
+    }
+
+    /// <summary>
+    /// Le plafond de 20 pages et l'estimation de 180 s/page sont calibrés pour le modèle vision
+    /// LOCAL. Mesuré contre l'API réelle, le service d'extraction documentaire lit une page en 6 à
+    /// 35 s : lui appliquer ces bornes faisait refuser des relevés qu'il lit sans peine — un relevé
+    /// de 21 pages, exactement le cas signalé.
+    /// </summary>
+    [Fact]
+    public async Task Docstrange_reads_a_statement_that_the_local_page_cap_would_refuse()
+    {
+        _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>())).ReturnsAsync(DocStrangeReady());
+        var accountId = SeedBankAccount(StbSpec().Rib);
+
+        var result = await AiOnlyService(l => l.MaxAiPages = 20).StartAsync(Request(ManyPages(21), accountId));
+
+        Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
+        Assert.DoesNotContain(result.Value.Extraction!.Issues, i => i.Code == StatementIssueCodes.TooManyPages);
+        Assert.Equal(BankStatementAiEngines.Vision, result.Value.Extraction.AiPlan!.Engine);
+
+        // L'écran annonce la durée de CE lecteur : 21 × 30 s, non 21 × 180 s (qui donnait 63 min).
+        Assert.Equal(21 * 30, result.Value.Extraction.AiPlan.EstimatedSeconds);
+    }
+
+    [Fact]
+    public async Task The_same_statement_stays_refused_when_the_local_model_is_the_reader()
+    {
+        // Même relevé, même plafond : sans la carte, le refus d'avant est inchangé.
+        _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>())).ReturnsAsync(GlmOcrReady());
+        var accountId = SeedBankAccount(StbSpec().Rib);
+
+        var result = await AiOnlyService(l => l.MaxAiPages = 20).StartAsync(Request(ManyPages(21), accountId));
+
+        Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
+        var issue = Assert.Single(result.Value.Extraction!.Issues, i => i.Code == StatementIssueCodes.TooManyPages);
+        Assert.Equal("Trop de pages à lire (21, maximum 20). Scindez le PDF par relevé ou par mois.", issue.Message);
+    }
+
+    [Fact]
+    public async Task Docstrange_keeps_a_cap_of_its_own()
+    {
+        // Plus haut, mais pas absent : un relevé de 300 pages reste un refus, et le message porte
+        // le plafond réellement appliqué plutôt que celui du modèle local.
+        _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>())).ReturnsAsync(DocStrangeReady());
+        var accountId = SeedBankAccount(StbSpec().Rib);
+
+        var result = await AiOnlyService(
+            l => l.MaxAiPages = 20,
+            docStrange: new DocStrangeSettings { MaxStatementPages = 2 }).StartAsync(Request(ManyPages(3), accountId));
+
+        Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
+        var issue = Assert.Single(result.Value.Extraction!.Issues, i => i.Code == StatementIssueCodes.TooManyPages);
+        Assert.Equal(StatementIssueSeverity.Blocking, issue.Severity);
+        Assert.Equal("Trop de pages à lire (3, maximum 2). Scindez le PDF par relevé ou par mois.", issue.Message);
+        _ai.Verify(a => a.Schedule(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Docstrange_does_not_depend_on_the_local_vision_reading_switch()
+    {
+        // VisionReadingEnabled gouverne le modèle vision LOCAL. L'appliquer à ce service ferait
+        // retomber le plan sur le moteur texte, c'est-à-dire sur l'IA locale que la carte écarte.
+        _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>())).ReturnsAsync(DocStrangeReady());
+        var spec = StbSpec();
+        var accountId = SeedBankAccount(spec.Rib);
+
+        var result = await Service(aiOnly: true, limits: l => l.VisionReadingEnabled = false)
+            .StartAsync(Request(StbLike(spec), accountId));
+
+        Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
+        Assert.Equal(BankStatementAiEngines.Vision, result.Value.Extraction!.AiPlan!.Engine);
+        Assert.DoesNotContain(result.Value.Extraction.Issues, i => i.Code == StatementIssueCodes.AiUnavailable);
     }
 
     [Fact]

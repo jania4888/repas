@@ -5,6 +5,7 @@ using FactuTrust.Application.Configuration;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.AI;
 using FactuTrust.Application.Features.AI.Commands;
+using FactuTrust.Application.Features.AI.DocumentExtraction;
 using FactuTrust.Application.Features.AI.DTOs;
 using FactuTrust.Infrastructure.Services.AI;
 using Microsoft.AspNetCore.Authorization;
@@ -33,6 +34,7 @@ public sealed class AiInvoiceImportController : ControllerBase
     private readonly OllamaSettings _ollamaSettings;
     private readonly ILogger<AiInvoiceImportController> _logger;
     private readonly IHostEnvironment _environment;
+    private readonly IDocumentExtractionProvider? _externalExtraction;
 
     public AiInvoiceImportController(
         ImportInvoiceFromFileHandler handler,
@@ -41,8 +43,10 @@ public sealed class AiInvoiceImportController : ControllerBase
         ICurrentUser currentUser,
         IOptions<OllamaSettings> ollamaSettings,
         ILogger<AiInvoiceImportController> logger,
-        IHostEnvironment environment)
+        IHostEnvironment environment,
+        IDocumentExtractionProvider? externalExtraction = null)
     {
+        _externalExtraction = externalExtraction;
         _handler = handler;
         _ocr = ocr;
         _importModelResolver = importModelResolver;
@@ -57,10 +61,18 @@ public sealed class AiInvoiceImportController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetCapabilities(CancellationToken cancellationToken)
     {
+        // Nom du service d'extraction externe lorsqu'il est actif -- JAMAIS sa cle ni son URL.
+        var externalProvider = _externalExtraction is not null
+            && await _externalExtraction.IsAvailableAsync(cancellationToken)
+                ? _externalExtraction.Name
+                : null;
+
         var resolution = await _importModelResolver.ResolveAsync(null, cancellationToken);
         var visionModel = await _importModelResolver.ResolveEffectiveVisionModelIdAsync(null, forBankStatement: false, cancellationToken);
         return Ok(new
         {
+            // Actif, ce service est le SEUL lecteur : le LLM n'est jamais appele.
+            documentExtractionProvider = externalProvider,
             ocrAvailable = _ocr.IsAvailable,
             importModel = resolution.Model.ProviderModelId ?? resolution.Model.CanonicalModelRef,
             effectiveImportModelSource = resolution.Source.ToString(),

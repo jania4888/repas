@@ -5,7 +5,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { environment } from '@environments/environment';
 import { ApiResponse } from '@core/services/auth.service';
 import { createHttpContextSkipGlobalErrorUi } from '@core/http-context';
-import { InvoiceImportResult, InvoiceImportWarmUpResponse } from '../models/invoice-import.models';
+import { InvoiceImportCapabilities, InvoiceImportResult, InvoiceImportWarmUpResponse } from '../models/invoice-import.models';
 
 /**
  * Service d'import de facture depuis un fichier (PDF / image / Word / Excel).
@@ -53,6 +53,17 @@ export class InvoiceImportService {
           return throwError(() => err);
         })
       );
+  }
+
+  /**
+   * Capacités d'import. Sert à savoir si un service d'extraction documentaire externe est actif :
+   * dans ce cas il est le SEUL lecteur, et l'écran doit le dire plutôt que d'annoncer une analyse
+   * IA locale qui n'aura pas lieu.
+   */
+  capabilities(): Observable<InvoiceImportCapabilities> {
+    return this.http.get<InvoiceImportCapabilities>(`${this.baseUrl}/invoice-import/capabilities`, {
+      context: createHttpContextSkipGlobalErrorUi()
+    });
   }
 
   /**

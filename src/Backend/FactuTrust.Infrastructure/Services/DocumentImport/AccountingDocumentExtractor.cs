@@ -57,6 +57,24 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
             return Result.Failure<AccountingDocumentExtractionDto>(
                 Error.Validation(ErrorCode, "Le fichier est vide."));
 
+        // Le service d'extraction externe, lorsqu'il est activé au back-office, devient le SEUL
+        // lecteur : ni parseur natif, ni LLM, et un échec est dit au lieu d'être rattrapé.
+        //
+        // La permission reste exigée en amont (AllowAiFallback) : ce service fait sortir des
+        // données du serveur, l'activer ne doit élargir l'accès de personne.
+        var externalAvailable = _externalExtraction is not null
+            && await _externalExtraction.IsAvailableAsync(cancellationToken);
+
+        if (externalAvailable)
+        {
+            if (!request.AllowAiFallback)
+                return Result.Failure<AccountingDocumentExtractionDto>(Error.Validation(ErrorCode, NoAiPermissionMessage));
+
+            return await ExtractExternallyAsync(bytes, request, cancellationToken);
+        }
+
+        // ---- À partir d'ici, comportement strictement inchangé. ----
+
         if (LooksLikePdf(bytes))
         {
             var native = _nativeParser.TryParse(bytes, request.FileName);
@@ -73,38 +91,42 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
 
         if (!request.AllowAiFallback)
         {
-            return Result.Failure<AccountingDocumentExtractionDto>(Error.Validation(ErrorCode,
-                "Cette pièce n'est pas au format des factures émises par InstaFact et son analyse "
-                + "nécessite l'assistant IA, pour lequel vous n'avez pas d'autorisation. "
-                + "Contactez votre administrateur ou saisissez l'écriture manuellement."));
+            return Result.Failure<AccountingDocumentExtractionDto>(Error.Validation(ErrorCode, NoAiPermissionMessage));
         }
 
         return await ExtractWithAiAsync(bytes, request, cancellationToken);
     }
 
+    /// <summary>Message unique du refus pour défaut de permission, repris par les deux chemins.</summary>
+    private const string NoAiPermissionMessage =
+        "Cette pièce n'est pas au format des factures émises par InstaFact et son analyse "
+        + "nécessite l'assistant IA, pour lequel vous n'avez pas d'autorisation. "
+        + "Contactez votre administrateur ou saisissez l'écriture manuellement.";
+
     /// <summary>
-    /// Tente l'extraction par le service externe. Rend <c>null</c> dès que quoi que ce soit
-    /// empêche d'aboutir — fournisseur absent, éteint, en erreur, quota épuisé, JSON
-    /// inexploitable — pour que l'appelant reprenne le chemin LLM sans rien savoir de l'incident.
+    /// Lecture par le service d'extraction externe, <b>seul lecteur</b> lorsqu'il est activé.
+    ///
+    /// <para>Un échec est RENDU À L'APPELANT, jamais rattrapé par le LLM. L'ancien repli silencieux
+    /// faisait attendre l'utilisateur le temps du service externe PUIS celui du modèle local, sans
+    /// qu'aucun écran ne dise ce qui se passait.</para>
     ///
     /// <para>Le schéma envoyé est le <b>verbatim</b> : tout montant en chaîne. Demander des
     /// nombres ferait sortir les montants multipliés par 1000, silencieusement (virgule
     /// tunisienne lue comme séparateur de milliers). La conversion reste serveur, par
     /// <c>LlmJsonOptions.Tolerant</c> et <c>TunisianNumberParsing</c>.</para>
     /// </summary>
-    private async Task<AccountingDocumentExtractionDto?> TryExtractExternallyAsync(
+    private async Task<Result<AccountingDocumentExtractionDto>> ExtractExternallyAsync(
         byte[] bytes,
         AccountingDocumentExtractionRequest request,
         CancellationToken cancellationToken)
     {
-        if (_externalExtraction is null || !await _externalExtraction.IsAvailableAsync(cancellationToken))
-            return null;
+        var provider = _externalExtraction!;
 
         Result<string> extraction;
         try
         {
             await using var stream = new MemoryStream(bytes, writable: false);
-            extraction = await _externalExtraction.ExtractStructuredAsync(
+            extraction = await provider.ExtractStructuredAsync(
                 stream,
                 request.FileName,
                 request.ContentType,
@@ -117,18 +139,21 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
         }
         catch (Exception ex)
         {
+            // Le détail technique reste au journal ; l'utilisateur reçoit un message stable (CWE-209).
             _logger.LogWarning(ex,
-                "[{Scope}] Extraction externe ({Provider}) en erreur pour {FileName} ; repli sur le chemin IA.",
-                ErrorCode, _externalExtraction.Name, request.FileName);
-            return null;
+                "[{Scope}] Service d'extraction {Provider} injoignable pour {FileName}.",
+                ErrorCode, provider.Name, request.FileName);
+            return Failure("Le service d'extraction documentaire est injoignable. Réessayez plus tard "
+                + "ou désactivez-le dans la configuration IA de la plateforme pour revenir à la lecture locale.");
         }
 
         if (extraction.IsFailure)
         {
             _logger.LogWarning(
-                "[{Scope}] Extraction externe ({Provider}) refusée pour {FileName} : {Reason}. Repli sur le chemin IA.",
-                ErrorCode, _externalExtraction.Name, request.FileName, extraction.Error.Description);
-            return null;
+                "[{Scope}] Service d'extraction {Provider} en échec pour {FileName} : {Reason}",
+                ErrorCode, provider.Name, request.FileName, extraction.Error.Description);
+            // Le message du client est déjà assaini et actionnable (clé refusée, quota épuisé…).
+            return Failure(extraction.Error.Description);
         }
 
         // Désérialisation et mapping INCHANGÉS : aucun contrôle existant n'est contourné.
@@ -136,34 +161,31 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
         if (parsed is null)
         {
             LogUnparseableLlmResponse(request.FileName, extraction.Value, json, jsonError);
-            _logger.LogWarning(
-                "[{Scope}] Réponse de l'extraction externe ({Provider}) inexploitable ; repli sur le chemin IA.",
-                ErrorCode, _externalExtraction.Name);
-            return null;
+            return Failure("Le service d'extraction documentaire a renvoyé une réponse inexploitable "
+                + "pour cette pièce. Saisissez l'écriture manuellement, ou signalez le document à l'administrateur.");
         }
 
         _logger.LogInformation(
             "[{Scope}] Pièce {FileName} lue par le service d'extraction {Provider} (aucun appel LLM).",
-            ErrorCode, request.FileName, _externalExtraction.Name);
+            ErrorCode, request.FileName, provider.Name);
 
-        return AccountingDocumentMapping.FromLlm(
+        return Result.Success(AccountingDocumentMapping.FromLlm(
             parsed,
             AccountingDocumentExtractionMethods.ExternalExtraction,
             ocrApplied: false,
-            textTruncated: false);
+            textTruncated: false));
     }
+
+    private static Result<AccountingDocumentExtractionDto> Failure(string message) =>
+        Result.Failure<AccountingDocumentExtractionDto>(Error.Validation(ErrorCode, message));
 
     private async Task<Result<AccountingDocumentExtractionDto>> ExtractWithAiAsync(
         byte[] bytes,
         AccountingDocumentExtractionRequest request,
         CancellationToken cancellationToken)
     {
-        // Étage externe, avant le LLM. Tout échec retombe SILENCIEUSEMENT sur le chemin
-        // historique : éteindre le fournisseur rend exactement le comportement d'avant.
-        var external = await TryExtractExternallyAsync(bytes, request, cancellationToken);
-        if (external is not null)
-            return Result.Success(external);
-
+        // Ce chemin n'est atteint QUE si le service d'extraction externe est inactif : la
+        // décision est prise en amont, dans ExtractAsync.
         var outcomeResult = await RunPipelineAsync(bytes, request, forceVision: false, cancellationToken);
         if (outcomeResult.IsFailure)
             return Result.Failure<AccountingDocumentExtractionDto>(outcomeResult.Error);

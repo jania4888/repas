@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
 using FactuTrust.Application.Features.AI.Json;
+using FactuTrust.Application.Features.Accounting.DocumentImport;
+using FactuTrust.Application.Features.AI.DocumentExtraction;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
@@ -37,6 +39,7 @@ public sealed class ImportInvoiceFromFileHandler
     private const string ErrorCode = "InvoiceImport";
 
     private readonly IAiStructuredExtractionPipeline _pipeline;
+    private readonly IDocumentExtractionProvider? _externalExtraction;
     private readonly IMediator _mediator;
     private readonly ILogger<ImportInvoiceFromFileHandler> _logger;
     private readonly OllamaSettings _ollamaSettings;
@@ -108,11 +111,13 @@ Schéma: documentType, invoiceNumber, issueDate, dueDate, currency, seller{name,
         ILogger<ImportInvoiceFromFileHandler> logger,
         IOptions<OllamaSettings> ollamaSettings,
         IAiStructuredExtractionPipeline? pipeline = null,
-        IImportAiModelResolutionService? importModelResolver = null)
+        IImportAiModelResolutionService? importModelResolver = null,
+        IDocumentExtractionProvider? externalExtraction = null)
     {
         _mediator = mediator;
         _logger = logger;
         _ollamaSettings = ollamaSettings.Value;
+        _externalExtraction = externalExtraction;
 
         importModelResolver ??= new ImportAiModelResolutionService(
             platformAiSettings,
@@ -141,6 +146,15 @@ Schéma: documentType, invoiceNumber, issueDate, dueDate, currency, seller{name,
         CancellationToken cancellationToken)
     {
         var totalSw = Stopwatch.StartNew();
+
+        // Service d'extraction externe activé au back-office : il lit SEUL, le LLM n'est jamais
+        // appelé, et un échec est dit au lieu d'être rattrapé. Voir AccountingDocumentExtractor,
+        // qui applique la même règle à l'import de pièces comptables.
+        if (_externalExtraction is not null
+            && await _externalExtraction.IsAvailableAsync(cancellationToken))
+        {
+            return await HandleWithExternalExtractionAsync(command, totalSw, cancellationToken);
+        }
 
         // 1-5. Extraction documentaire (texte/OCR), repli vision, disponibilité du fournisseur
         //      puis appel LLM one-shot — mutualisés dans le pipeline d'extraction structurée.
@@ -222,6 +236,99 @@ Schéma: documentType, invoiceNumber, issueDate, dueDate, currency, seller{name,
     // ========================================================================
     // Validation / normalisation / rapprochement
     // ========================================================================
+
+    /// <summary>
+    /// Lecture par le service d'extraction externe, <b>seul lecteur</b> lorsqu'il est activé :
+    /// le LLM n'est pas appelé, et un échec est rendu à l'appelant au lieu d'être rattrapé.
+    ///
+    /// <para>Le schéma envoyé est <see cref="LlmOutputSchemas.InvoiceImportVerbatim"/> : tout
+    /// montant en chaîne. Demander des nombres ferait sortir les montants multipliés par 1000,
+    /// silencieusement — la virgule tunisienne étant lue comme un séparateur de milliers. La
+    /// conversion reste serveur, par <c>LlmJsonOptions.Tolerant</c> et <c>TunisianNumberParsing</c>.</para>
+    /// </summary>
+    private async Task<Result<InvoiceImportResultDto>> HandleWithExternalExtractionAsync(
+        ImportInvoiceFromFileCommand command,
+        Stopwatch totalSw,
+        CancellationToken cancellationToken)
+    {
+        var provider = _externalExtraction!;
+
+        Result<string> extracted;
+        try
+        {
+            extracted = await provider.ExtractStructuredAsync(
+                command.FileStream,
+                command.FileName,
+                command.ContentType,
+                LlmOutputSchemas.InvoiceImportVerbatim,
+                cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            // Le détail technique reste au journal ; l'utilisateur reçoit un message stable (CWE-209).
+            _logger.LogWarning(ex,
+                "[{Scope}] Service d'extraction {Provider} injoignable pour {FileName}.",
+                ErrorCode, provider.Name, command.FileName);
+            return Failure("Le service d'extraction documentaire est injoignable. Réessayez plus tard "
+                + "ou désactivez-le dans la configuration IA de la plateforme pour revenir à la lecture locale.");
+        }
+
+        if (extracted.IsFailure)
+        {
+            _logger.LogWarning(
+                "[{Scope}] Service d'extraction {Provider} en échec pour {FileName} : {Reason}",
+                ErrorCode, provider.Name, command.FileName, extracted.Error.Description);
+            return Failure(extracted.Error.Description);
+        }
+
+        // Parsing et validation INCHANGÉS : aucun contrôle existant n'est contourné.
+        var json = InvoiceImportParsing.ExtractFirstJsonObject(extracted.Value);
+        LlmInvoiceExtraction? parsed = null;
+        if (!string.IsNullOrWhiteSpace(json))
+        {
+            try
+            {
+                parsed = JsonSerializer.Deserialize<LlmInvoiceExtraction>(json, LlmJsonOptions.Tolerant);
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogWarning(ex,
+                    "[{Scope}] JSON du service d'extraction non désérialisable.", ErrorCode);
+            }
+        }
+
+        if (parsed is null)
+        {
+            return Failure("Le service d'extraction documentaire a renvoyé une réponse inexploitable "
+                + "pour ce fichier. Saisissez la facture manuellement, ou signalez le document à l'administrateur.");
+        }
+
+        // Le format n'a plus de couche OCR locale : on le dit, plutôt que de laisser croire
+        // à une extraction texte qui n'a pas eu lieu.
+        var surrogate = new AiDocumentExtractionResult
+        {
+            Success = true,
+            Format = AccountingDocumentExtractionMethods.ExternalExtraction,
+            OcrApplied = false
+        };
+
+        var dto = await MapValidateAndMatchAsync(parsed, surrogate, textTruncated: false, cancellationToken);
+
+        totalSw.Stop();
+        _logger.LogInformation(
+            "[{Scope}] Facture {FileName} lue par le service d'extraction {Provider} en {TotalMs} ms "
+            + "(aucun appel LLM) : lignes={LineCount}",
+            ErrorCode, command.FileName, provider.Name, totalSw.ElapsedMilliseconds, dto.Lines.Count);
+
+        return Result.Success(dto);
+    }
+
+    private static Result<InvoiceImportResultDto> Failure(string message) =>
+        Result.Failure<InvoiceImportResultDto>(Error.Validation(ErrorCode, message));
 
     private async Task<InvoiceImportResultDto> MapValidateAndMatchAsync(
         LlmInvoiceExtraction parsed,

@@ -33,4 +33,32 @@ public sealed class DocStrangeSettings
 
     /// <summary>Attente maximale d'un résultat asynchrone, en secondes.</summary>
     public int AsyncMaxWaitSeconds { get; set; } = 600;
+
+    // ── Relevés bancaires : plafonds propres à ce lecteur ──
+    //
+    // Ceux de BankStatementImportLimits (MaxAiPages = 20, VisionEstimatedSecondsPerPage = 180) sont
+    // calibrés pour le modèle vision LOCAL, qui lit une page en une à trois minutes. Mesuré contre
+    // l'API réelle, ce service lit une page en 6 à 35 s (voir docs/developer/docstrange-api-contract.md) :
+    // appliquer les plafonds du modèle local ferait refuser des relevés qu'il lit sans peine et
+    // annoncerait à l'écran un temps d'attente six fois trop long.
+
+    /// <summary>
+    /// Pages de relevé au plus par session quand ce service lit. 60 est aussi la borne haute du
+    /// plafond général (<c>BankStatementImportLimits.EffectiveMaxAiPages</c>) : aucune borne à
+    /// déplacer ailleurs. Le budget du travail de fond reste large — 60 pages à 35 s font 35 min,
+    /// sous les 120 min par défaut.
+    /// </summary>
+    public int MaxStatementPages { get; set; } = 60;
+
+    /// <summary>
+    /// Durée estimée par page, en secondes, pour l'affichage du temps restant. 30 s couvre le haut
+    /// de la fourchette mesurée sans promettre l'optimisme de 6 s.
+    /// </summary>
+    public int EstimatedSecondsPerPage { get; set; } = 30;
+
+    /// <summary>Plafond de pages borné à la plage du plafond général (1 à 60).</summary>
+    public int EffectiveMaxStatementPages => Math.Clamp(MaxStatementPages, 1, 60);
+
+    /// <summary>Estimation bornée à la fourchette plausible d'un service d'OCR distant (5 à 300 s).</summary>
+    public int EffectiveEstimatedSecondsPerPage => Math.Clamp(EstimatedSecondsPerPage, 5, 300);
 }

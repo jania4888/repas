@@ -220,7 +220,7 @@ Aucun paramètre `model` n'est exposé par l'API.
 | Lecture d'une page (essais 1 et 2) | **Image de cette page uniquement** (200 dpi, côté long ≤ 3000 px) et le gabarit JSON ; **pas de couche texte** (`VisionSendTextLayer=false`) | Chaque page, droit `ai:chat`, moteur local |
 | Repli texte d'une page (dépannage seul) | Texte de **cette page** (couche texte du PDF ou OCR), RIB/IBAN masqués | Éteint en production ; `VisionTextFallbackEnabled` |
 | Classification des libellés | **Cœur normalisé du libellé** (sans numéros) + sens (D/C), et la liste fermée des comptes actifs autorisés | Bouton « Classer par l'IA », droit `ai:chat` |
-| Lecture d'une page par Docstrange | **Image de cette page uniquement**, envoyée à Nanonets (**hors du serveur**) | `DocStrangeEnabled` **ET** une clé configurée au back-office ; éteint par défaut |
+| Lecture d'une page par Docstrange | **La page seule** (PDF isolé), envoyée à Nanonets (**hors du serveur**) | Carte Docstrange activée au back-office **avec** une clé utilisable ; éteinte par défaut |
 
 Si la plateforme désigne une IA **externe** pour l'import, aucune page de relevé ne lui est envoyée tant que
 `AiComplementAllowExternal` est `false` (valeur de production) : l'import annonce l'IA indisponible
@@ -256,23 +256,46 @@ budget maximal (tâche perdue) ne bloque plus le dossier. Limite de débit `ai` 
 et la classification. Un relevé de 20 pages représente environ une heure de lecture sur processeur ; pendant ce temps,
 le chat attend derrière l'unique créneau de génération.
 
-### Service d'extraction externe Docstrange (`BankStatementImport:DocStrangeEnabled`)
+### Service d'extraction externe Docstrange (carte du back-office)
 
-Docstrange (Nanonets) peut remplacer la lecture locale. **Éteint par défaut**, et l'activer exige
-**deux** choses : le drapeau serveur ci-dessus *et* une clé saisie au back-office plateforme
-(Configuration IA › Docstrange). L'un sans l'autre ne change rien.
+Docstrange (Nanonets) **remplace** la lecture locale. **Éteint par défaut**, et l'activer tient à une
+seule décision : la carte du back-office plateforme (Configuration IA › Docstrange), activée avec une
+clé utilisable. Depuis le 2026-10-08, **aucun réglage d'`appsettings` ne double cette décision** —
+l'ancien `BankStatementImport:DocStrangeEnabled` a été supprimé, et un test épingle son absence.
 
-Interrupteur **distinct** de `AiComplementAllowExternal`, délibérément : celui-ci gouverne les
+**Ce que cela coûte, à savoir avant d'activer :** la même case gouverne les pièces et les relevés.
+L'activer pour les factures envoie donc aussi les relevés chez Nanonets. Le second interrupteur
+l'empêchait ; il a été retiré pour que le modèle soit uniforme et explicable.
+
+Reste **distinct** de `AiComplementAllowExternal`, délibérément : celui-ci gouverne les
 fournisseurs LLM (OpenRouter, Modal, Cursor) via `LlmProviderKind`, alors que Docstrange est un
-service d'OCR qui ne passe pas par cette énumération. Les deux se cumulent, aucun n'ouvre la porte
-de l'autre. `capabilities` annonce alors `aiProviderKind = "docstrange"`, et l'écran d'import
-prévient que **les pages quittent le serveur**.
+service d'OCR qui ne passe pas par cette énumération. Aucun n'ouvre la porte de l'autre.
+`capabilities` annonce alors `aiProviderKind = "docstrange"`, et l'écran d'import prévient que
+**les pages quittent le serveur**.
+
+**Plafonds propres à ce lecteur**, parce qu'il lit une page en 6 à 35 s là où le modèle vision local
+en met une à trois minutes :
+
+| Paramètre | Valeur | Rôle |
+|---|---|---|
+| `DocStrange:MaxStatementPages` | 60 (borné 1 à 60) | remplace `MaxAiPages` (20) quand ce service lit |
+| `DocStrange:EstimatedSecondsPerPage` | 30 (borné 5 à 300) | remplace `VisionEstimatedSecondsPerPage` (180) dans l'estimation affichée |
+
+Un relevé de 21 pages était refusé (« maximum 20 ») et annoncé à « environ 63 min » : les deux
+venaient d'un calibrage fait pour le modèle local.
 
 Fonctionnement : le service ne fait que l'OCR. Le texte rendu (tableaux en `<table>` HTML) est
 analysé par `BankStatementTableTextParser` — qui gère déjà HTML et Markdown, ayant été écrit pour
 le mode « Table Recognition » de GLM-OCR — puis lu par `BankStatementAiPageReader` comme toute
-autre page : ancrage des montants, arrondi millime, codes d'anomalie. Un échec rend la main à
-l'échelle vision locale, inchangée.
+autre page : ancrage des montants, arrondi millime, codes d'anomalie.
+
+**Il lit seul.** L'échelle vision locale n'est pas appelée, le modèle vision n'est ni résolu ni
+préchauffé, et le garde de rendu ne s'applique pas (il borne une rastérisation qui n'a pas lieu).
+Une page en échec est marquée **non lue avec sa raison**, et la suivante est tentée : aucun modèle
+local ne prend le relais, et le coupe-circuit « deux échecs consécutifs » ne s'applique pas — il
+protège d'un modèle local qui s'effondre, pas d'un service HTTP dont les pages sont indépendantes.
+L'écran de relecture dérive ses textes de `aiProviderKind` : plus de « par l'IA », plus de « une à
+trois minutes par page », plus de « l'IA locale » dans le libellé de méthode.
 
 **Pourquoi du texte et jamais du JSON typé.** Mesuré le 2026-10-08 : un montant demandé en `number`
 revient multiplié par 1000 (« 1138,155 » → `1138155`), la virgule tunisienne étant lue comme un
@@ -280,10 +303,16 @@ séparateur de milliers. L'erreur est silencieuse — le JSON est valide et le n
 voie texte recopie la valeur telle qu'imprimée. Voir
 [`docs/developer/docstrange-api-contract.md`](../developer/docstrange-api-contract.md).
 
+**Portée.** La carte gouverne les **deux** flux. Pour les **pièces comptables et factures**, elle
+contourne aussi le parseur natif InstaFact, et un échec fait échouer l'import au lieu d'être
+rattrapé. Voir [`docs/developer/docstrange-api-contract.md`](../developer/docstrange-api-contract.md).
+
 **Confidentialité.** Nanonets **ne publie aucune politique de rétention** pour son offre cloud.
 Activer ce réglage fait sortir du serveur des RIB, des noms et des montants : c'est une décision du
-responsable du traitement, jamais un défaut. Un avertissement au démarrage le rappelle. Retour
-arrière : éteindre le drapeau suffit, la lecture locale reprend immédiatement.
+responsable du traitement, jamais un défaut. Retour arrière : désactiver la carte au back-office
+suffit, la lecture locale reprend immédiatement et à l'identique — c'est la garantie de
+non-régression, et un test l'épingle
+(`Without_an_available_card_the_local_ladder_is_the_one_that_runs`).
 
 ### Réglage « Exécution » sur un serveur sans GPU
 

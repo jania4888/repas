@@ -75,6 +75,8 @@ export type AiReadingReason = 'scanned' | 'line_issues' | 'unverified' | 'all_do
  * reconnaissance de tableau, modèle texte local (repli D2) ou échec des trois étages.
  */
 export type BankStatementPageReadingEngine =
+  /** Service d'extraction documentaire externe : OCR seul, tableau analysé côté serveur. */
+  | 'docstrange'
   | 'glm-ocr'
   | 'glm-ocr-table'
   | 'vision-import'

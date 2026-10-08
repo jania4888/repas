@@ -20,8 +20,13 @@ namespace FactuTrust.Application.Features.AI.DocumentExtraction;
 /// silence, tests verts. Aucun fournisseur d'extraction ne doit apparaître dans
 /// <c>ModelRef</c> : l'autorisation d'envoi passe par un drapeau explicite, pas par un modèle.</para>
 ///
-/// <para>Chaque appelant reste responsable de son repli : un échec ici ne doit jamais bloquer
-/// l'import, le chemin LLM existant reprend la main.</para>
+/// <para><b>Plus de repli depuis le 2026-10-08.</b> Quand ce fournisseur est disponible, il est le
+/// <b>seul</b> lecteur de son flux — pièces comptables, factures et relevés bancaires. Un échec
+/// n'est plus rattrapé par le LLM : il fait échouer l'import de la pièce, ou marque la page de
+/// relevé non lue avec sa raison. Le repli silencieux d'avant faisait attendre l'utilisateur deux
+/// fois, le service externe <i>puis</i> le modèle local, sans qu'aucun écran ne le dise, et masquait
+/// une panne du service derrière une lecture dégradée. Le retour arrière tient en un clic :
+/// désactiver la carte au back-office rend exactement le comportement précédent.</para>
 /// </summary>
 public interface IDocumentExtractionProvider
 {

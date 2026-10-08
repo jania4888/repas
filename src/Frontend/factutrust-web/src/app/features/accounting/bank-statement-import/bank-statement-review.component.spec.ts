@@ -326,6 +326,114 @@ describe('BankStatementReviewComponent', () => {
     expect(component.methodLabel({ ...s, extraction: base.extraction })).toContain('pages scannées');
   });
 
+  // ── Service d'extraction documentaire externe : il lit SEUL, et l'écran doit le dire ──
+  //
+  // Jusqu'ici aucun test ne couvrait `aiProviderKind: 'docstrange'`. L'écran annonçait donc « Lecture
+  // des pages par l'IA… », « une à trois minutes par page sur le serveur » et « Lu par l'IA », alors
+  // que ni le modèle vision local ni le modèle texte n'intervenaient — trois phrases fausses sur le
+  // seul chemin réellement emprunté en production.
+  describe('lecture par le service d’extraction documentaire', () => {
+    const plan = (pages: number, estimatedSeconds: number): BankStatementAiPlan => ({
+      scannedPages: Array.from({ length: pages }, (_, i) => i + 1),
+      textPages: [],
+      reason: 'all_documents',
+      estimatedCalls: pages,
+      estimatedSeconds,
+      engine: 'vision',
+      mode: 'ai_only'
+    });
+
+    it('n’annonce ni l’IA ni la fourchette du modèle local pendant la lecture', fakeAsync(() => {
+      const base = session();
+      api.session.and.returnValue(
+        of(
+          session({
+            status: 'Extracting',
+            progressPercent: 50,
+            pageCount: 4,
+            canConfirm: false,
+            aiProviderKind: 'docstrange',
+            // 4 pages × 30 s : l'estimation du lecteur réellement employé, pas les 180 s/page du modèle local.
+            extraction: { ...base.extraction!, lines: [], aiPlan: plan(4, 120) }
+          })
+        )
+      );
+      void create({ sessionId: 's-1' });
+      tick();
+      fixture.detectChanges();
+
+      const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+      expect(text).toContain("Lecture des pages par le service d'extraction documentaire");
+      expect(text).toContain('page 3 sur 4');
+      expect(text).toContain('50 %');
+      expect(text).toContain('environ 1 min');
+
+      // Les trois mensonges d'avant.
+      expect(text).not.toContain("Lecture des pages par l'IA");
+      expect(text).not.toContain('une à trois minutes par page');
+      expect(text).not.toContain("l'IA locale");
+      // La règle « ne jamais nommer le moteur » vaut aussi pour le fournisseur.
+      expect(text).not.toContain('Docstrange');
+      expect(text).not.toContain('Nanonets');
+
+      fixture.destroy();
+    }));
+
+    it('décrit la méthode de lecture sans attribuer le travail à une IA', async () => {
+      const base = session();
+      await create({ sessionId: 's-1' });
+      const read = (extractionMethod: string, pageCount = 3) =>
+        session({ extractionMethod, pageCount, aiProviderKind: 'docstrange', extraction: { ...base.extraction!, aiPlan: plan(pageCount, 90) } });
+
+      expect(component.methodLabel(read('ai-vision', 3))).toBe("Lu par le service d'extraction documentaire (3 pages)");
+      expect(component.methodLabel(read('ai-vision', 1))).toBe("Lu par le service d'extraction documentaire (1 page)");
+      expect(component.methodLabel(read('ai', 2))).toBe("Lu par le service d'extraction documentaire");
+      expect(component.methodLabel(read('layout+ai', 2))).toBe("Lecture directe complétée par le service d'extraction documentaire");
+
+      // Une lecture directe sans IA reste une lecture directe, carte activée ou non.
+      expect(component.methodLabel(read('layout', 2))).toBe('Lecture directe du PDF (aucune IA)');
+
+      // Aucun de ces libellés ne doit parler d'IA locale, le reproche d'origine.
+      for (const method of ['ai-vision', 'ai', 'layout+ai']) {
+        expect(component.methodLabel(read(method, 2))).not.toContain("l'IA");
+      }
+    });
+
+    it('marque les pages lues par le service comme lues, et celles en échec comme échouées', fakeAsync(() => {
+      const base = session();
+      const reading = (page: number, engine: string): BankStatementPageReading =>
+        ({ page, engine, model: null, attempts: 1, durationMs: 900, lineCount: 3, failureReason: null });
+      api.session.and.returnValue(
+        of(
+          session({
+            status: 'Extracting',
+            progressPercent: 75,
+            pageCount: 4,
+            canConfirm: false,
+            aiProviderKind: 'docstrange',
+            extraction: {
+              ...base.extraction!,
+              lines: [],
+              aiPlan: { ...plan(4, 120), pageReadings: [reading(1, 'docstrange'), reading(2, 'docstrange'), reading(3, 'failed')] }
+            }
+          })
+        )
+      );
+      void create({ sessionId: 's-1' });
+      tick();
+      fixture.detectChanges();
+
+      const el = fixture.nativeElement as HTMLElement;
+      expect(el.querySelectorAll('.bsr-page.is-done').length).toBe(2);
+      expect(el.querySelectorAll('.bsr-page.is-failed').length).toBe(1);
+      // Aucun repli n'existe sur ce chemin : aucune page ne peut être « lue en secours ».
+      expect(el.querySelectorAll('.bsr-page.is-fallback').length).toBe(0);
+      expect(el.querySelector('.bsr-fallback-note')).toBeNull();
+
+      fixture.destroy();
+    }));
+  });
+
   it('refuse l’enregistrement quand le serveur ne l’autorise pas', async () => {
     api.session.and.returnValue(
       of(session({ canConfirm: false, balanceCheck: { sumDebits: 10, sumCredits: 0, computedClosing: 90, difference: 0.001, isBalanced: false } }))

@@ -20,8 +20,13 @@ namespace FactuTrust.Infrastructure.Tests.AI;
 /// <summary>
 /// Branchement d'un service d'extraction documentaire externe sur l'import de pièces comptables.
 ///
-/// <para>Ces tests portent la garantie de non-régression : <b>sans fournisseur, ou avec un
-/// fournisseur en échec, le chemin IA historique est emprunté à l'identique</b>.</para>
+/// <para>Deux garanties, symétriques :</para>
+/// <list type="bullet">
+/// <item><b>Fournisseur actif</b> : il est le SEUL lecteur. Ni parseur natif, ni LLM — même quand
+/// il échoue. Un échec est dit à l'utilisateur, jamais rattrapé en silence.</item>
+/// <item><b>Fournisseur inactif</b> : le chemin historique est emprunté à l'identique. C'est la
+/// garantie de non-régression, et elle est réversible d'un clic au back-office.</item>
+/// </list>
 /// </summary>
 public sealed class AccountingDocumentExternalExtractionTests
 {
@@ -101,45 +106,105 @@ public sealed class AccountingDocumentExternalExtractionTests
     }
 
     [Fact]
-    public async Task A_failing_provider_falls_back_to_the_ai_path_without_blocking_the_import()
+    public async Task A_failing_provider_fails_the_import_and_never_calls_the_llm()
     {
         var provider = AvailableProvider(
             Result.Failure<string>(Error.Validation("DocStrange", "Le quota Docstrange est épuisé.")));
-        var pipeline = PipelineReturning(VerbatimJson);
+        // Strict : le moindre appel au pipeline ferait echouer le test.
+        var pipeline = new Mock<IAiStructuredExtractionPipeline>(MockBehavior.Strict);
 
         var result = await CreateSut(pipeline, provider).ExtractAsync(Request(), CancellationToken.None);
 
-        Assert.True(result.IsSuccess);
-        Assert.NotEqual(AccountingDocumentExtractionMethods.ExternalExtraction, result.Value.ExtractionMethod);
+        Assert.True(result.IsFailure);
+        // Le message du client, deja assaini et actionnable, est repris tel quel.
+        Assert.Contains("quota", result.Error.Description, StringComparison.OrdinalIgnoreCase);
+        pipeline.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public async Task An_unparseable_provider_answer_falls_back_to_the_ai_path()
+    public async Task An_unparseable_provider_answer_fails_the_import_and_never_calls_the_llm()
     {
         var provider = AvailableProvider(Result.Success("ceci n'est pas du JSON"));
-        var pipeline = PipelineReturning(VerbatimJson);
+        var pipeline = new Mock<IAiStructuredExtractionPipeline>(MockBehavior.Strict);
 
         var result = await CreateSut(pipeline, provider).ExtractAsync(Request(), CancellationToken.None);
 
-        Assert.True(result.IsSuccess);
-        Assert.NotEqual(AccountingDocumentExtractionMethods.ExternalExtraction, result.Value.ExtractionMethod);
+        Assert.True(result.IsFailure);
+        Assert.Contains("inexploitable", result.Error.Description, StringComparison.OrdinalIgnoreCase);
+        pipeline.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public async Task A_throwing_provider_falls_back_instead_of_propagating()
+    public async Task A_throwing_provider_fails_the_import_without_propagating_and_without_leaking()
     {
         var provider = new Mock<IDocumentExtractionProvider>();
         provider.SetupGet(x => x.Name).Returns("docstrange");
         provider.Setup(x => x.IsAvailableAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true);
         provider.Setup(x => x.ExtractStructuredAsync(
                 It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<JsonElement>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new InvalidOperationException("panne"));
-        var pipeline = PipelineReturning(VerbatimJson);
+            .ThrowsAsync(new InvalidOperationException("panne interne cote fournisseur"));
+        var pipeline = new Mock<IAiStructuredExtractionPipeline>(MockBehavior.Strict);
 
         var result = await CreateSut(pipeline, provider).ExtractAsync(Request(), CancellationToken.None);
 
+        Assert.True(result.IsFailure);
+        Assert.Contains("injoignable", result.Error.Description, StringComparison.OrdinalIgnoreCase);
+        // Le detail technique reste au journal (CWE-209).
+        Assert.DoesNotContain("panne interne", result.Error.Description, StringComparison.OrdinalIgnoreCase);
+        pipeline.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task An_active_provider_bypasses_the_native_InstaFact_parser()
+    {
+        // Conséquence ASSUMÉE de la décision « tout passe par Docstrange » : même une facture
+        // InstaFact, que le parseur local lit parfaitement et gratuitement, part chez le tiers.
+        // Épinglé ici pour que le jour où l'on veut revenir en arrière, le test le dise.
+        var realInstaFactInvoice = File.ReadAllBytes(
+            Path.Combine(AppContext.BaseDirectory, "Fixtures", "accounting-documents", "Facture_FAC-2026-000012.pdf"));
+
+        var provider = AvailableProvider(Result.Success(VerbatimJson));
+        var pipeline = new Mock<IAiStructuredExtractionPipeline>(MockBehavior.Strict);
+
+        var result = await CreateSut(pipeline, provider).ExtractAsync(
+            new AccountingDocumentExtractionRequest
+            {
+                FileStream = new MemoryStream(realInstaFactInvoice),
+                FileName = "Facture_FAC-2026-000012.pdf",
+                ContentType = "application/pdf",
+                AllowAiFallback = true
+            },
+            CancellationToken.None);
+
         Assert.True(result.IsSuccess);
-        Assert.NotEqual(AccountingDocumentExtractionMethods.ExternalExtraction, result.Value.ExtractionMethod);
+        Assert.Equal(AccountingDocumentExtractionMethods.ExternalExtraction, result.Value.ExtractionMethod);
+        Assert.NotEqual(AccountingDocumentExtractionMethods.NativePdf, result.Value.ExtractionMethod);
+        pipeline.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task An_active_provider_still_requires_the_ai_permission()
+    {
+        // Le service externe fait SORTIR des données : l'activer ne doit dispenser personne de
+        // la permission. Mock strict : le fournisseur ne doit même pas être sollicité.
+        var provider = new Mock<IDocumentExtractionProvider>(MockBehavior.Strict);
+        provider.SetupGet(x => x.Name).Returns("docstrange");
+        provider.Setup(x => x.IsAvailableAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true);
+        var pipeline = new Mock<IAiStructuredExtractionPipeline>(MockBehavior.Strict);
+
+        var result = await CreateSut(pipeline, provider).ExtractAsync(
+            new AccountingDocumentExtractionRequest
+            {
+                FileStream = new MemoryStream(Encoding.UTF8.GetBytes("image-factice")),
+                FileName = "facture.png",
+                ContentType = "image/png",
+                AllowAiFallback = false
+            },
+            CancellationToken.None);
+
+        Assert.True(result.IsFailure);
+        Assert.Contains("autorisation", result.Error.Description, StringComparison.OrdinalIgnoreCase);
+        pipeline.VerifyNoOtherCalls();
     }
 
     [Fact]
