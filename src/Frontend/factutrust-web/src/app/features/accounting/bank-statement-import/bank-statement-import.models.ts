@@ -136,7 +136,11 @@ export interface BankStatementImportSession {
   pageCount: number;
   extractionMethod: ExtractionMethod | null;
   profileId: string | null;
-  aiProviderKind: 'local' | 'external' | null;
+  /**
+   * `docstrange` : service d'EXTRACTION documentaire externe, distinct de `external` qui
+   * designe un fournisseur LLM. Les deux sont gouvernes par des drapeaux independants.
+   */
+  aiProviderKind: 'local' | 'external' | 'docstrange' | null;
   errorCode: SessionErrorCode | null;
   statementId: string | null;
   expiresAt: string;
@@ -192,7 +196,11 @@ export interface ConfirmResult {
 export interface BankStatementImportCapabilities {
   enabled: boolean;
   aiAvailable: boolean;
-  aiProviderKind: 'local' | 'external' | null;
+  /**
+   * `docstrange` : service d'EXTRACTION documentaire externe, distinct de `external` qui
+   * designe un fournisseur LLM. Les deux sont gouvernes par des drapeaux independants.
+   */
+  aiProviderKind: 'local' | 'external' | 'docstrange' | null;
   maxFileBytes: number;
   maxPages: number;
   acceptedExtensions: string[];

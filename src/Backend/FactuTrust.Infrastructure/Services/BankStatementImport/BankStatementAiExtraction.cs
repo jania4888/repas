@@ -4,6 +4,7 @@ using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.Features.AI;
+using FactuTrust.Application.Features.AI.DocumentExtraction;
 using FactuTrust.Application.Features.AI.Json;
 using FactuTrust.Application.Features.Accounting.BankStatementImport;
 using FactuTrust.Domain.Entities;
@@ -29,6 +30,7 @@ public sealed class BankStatementAiExtraction : IBankStatementAiExtraction
     private readonly IImportAiModelResolutionService _importModelResolver;
     private readonly OllamaSettings _ollamaSettings;
     private readonly BankStatementImportLimits _limits;
+    private readonly IDocumentExtractionProvider? _externalExtraction;
 
     public BankStatementAiExtraction(
         IAiStructuredExtractionPipeline pipeline,
@@ -38,8 +40,10 @@ public sealed class BankStatementAiExtraction : IBankStatementAiExtraction
         ILogger<BankStatementAiExtraction> logger,
         IImportAiModelResolutionService importModelResolver,
         IOptions<OllamaSettings> ollamaSettings,
-        IOptions<AccountingSettings> accountingSettings)
+        IOptions<AccountingSettings> accountingSettings,
+        IDocumentExtractionProvider? externalExtraction = null)
     {
+        _externalExtraction = externalExtraction;
         _pipeline = pipeline;
         _ollama = ollama;
         _readiness = readiness;
@@ -62,6 +66,26 @@ public sealed class BankStatementAiExtraction : IBankStatementAiExtraction
     {
         try
         {
+            // Docstrange remplace la lecture locale quand il est EXPLICITEMENT autorisé — y compris
+            // moteur Ollama arrêté, puisqu'il n'en dépend pas.
+            //
+            // ProviderKind vaut « docstrange », volontairement DISTINCT de « external » : les deux
+            // gardes AiComplementAllowExternal de BankStatementImportService continuent de ne
+            // gouverner que les fournisseurs LLM. L'autorisation de Docstrange est son propre
+            // drapeau, vérifié juste ici. Confondre les deux ferait qu'ouvrir l'un ouvrirait l'autre.
+            if (_limits.DocStrangeEnabled
+                && _externalExtraction is not null
+                && await _externalExtraction.IsAvailableAsync(cancellationToken))
+            {
+                return new BankStatementAiAvailability(
+                    true,
+                    "docstrange",
+                    ModelRef: null,
+                    Reason: null,
+                    Engine: BankStatementAiEngines.Vision,
+                    VisionModelRef: null);
+            }
+
             var textModel = await _pipeline.ResolveModelRefAsync(null, cancellationToken);
             if (string.IsNullOrWhiteSpace(textModel.ProviderModelId))
             {

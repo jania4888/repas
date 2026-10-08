@@ -117,5 +117,11 @@ public static class AccountingDocumentExtractionMethods
     /// <summary>LLM en mode vision (document scanné ou photographié).</summary>
     public const string LlmVision = "llm-vision";
 
+    /// <summary>
+    /// Service d'extraction documentaire externe (Docstrange). Les montants sont demandés en
+    /// chaîne et convertis côté serveur : voir <c>LlmOutputSchemas.AccountingDocumentVerbatim</c>.
+    /// </summary>
+    public const string ExternalExtraction = "external-extraction";
+
     public const string Unknown = "";
 }

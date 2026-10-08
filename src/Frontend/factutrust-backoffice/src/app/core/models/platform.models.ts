@@ -1071,6 +1071,28 @@ export interface UpdatePlatformModalRequest {
   apiKey?: string | null;
 }
 
+/**
+ * Réglages Docstrange (Nanonets) masqués — jamais la clé, seulement l'indicateur et les
+ * 4 derniers caractères. Service d'EXTRACTION documentaire : il n'apparaît pas dans le
+ * catalogue de modèles et ne se choisit pas comme modèle.
+ */
+export interface PlatformDocStrangeSettingsDto {
+  isEnabled: boolean;
+  displayName: string | null;
+  baseUrl: string | null;
+  defaultBaseUrl: string;
+  isApiKeyConfigured: boolean;
+  apiKeyLast4: string | null;
+}
+
+export interface UpdatePlatformDocStrangeRequest {
+  isEnabled: boolean;
+  displayName?: string | null;
+  baseUrl?: string | null;
+  /** Clé en clair. Null/vide = conserver la clé existante. */
+  apiKey?: string | null;
+}
+
 /** Snapshot masqué de l'endpoint Modal plateforme (jamais de secret). */
 export interface TenantModalPlatformSnapshotDto {
   isEnabled: boolean;
@@ -1119,6 +1141,7 @@ export interface PlatformAiSettingsDto {
   openRouter: PlatformOpenRouterSettingsDto;
   cursor: PlatformCursorSettingsDto;
   modal: PlatformModalSettingsDto;
+  docStrange: PlatformDocStrangeSettingsDto;
 }
 
 export interface UpdatePlatformAiSettingsRequest {
@@ -1131,6 +1154,7 @@ export interface UpdatePlatformAiSettingsRequest {
   openRouter?: UpdatePlatformOpenRouterRequest | null;
   cursor?: UpdatePlatformCursorRequest | null;
   modal?: UpdatePlatformModalRequest | null;
+  docStrange?: UpdatePlatformDocStrangeRequest | null;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -108,8 +108,10 @@ export type BankStatementImportOrigin = 'manual-entry' | 'reconciliation';
           @if (capabilities(); as caps) {
             @if (caps.allDocumentsViaAi) {
               @if (caps.aiAvailable) {
-                <p class="bsu-hint" [class.bsu-hint--warn]="caps.aiEngine === 'text' && !!caps.visionUnavailableReason">
-                  @if (caps.aiEngine === 'vision') {
+                <p class="bsu-hint" [class.bsu-hint--warn]="(caps.aiEngine === 'text' && !!caps.visionUnavailableReason) || caps.aiProviderKind === 'docstrange'">
+                  @if (caps.aiProviderKind === 'docstrange') {
+                    <ng-container i18n="@@accounting.bank-statement-import.chaque.releve.est.lu.page.par.page.par.un.servic.597de247">Chaque relevé est lu page par page par un service d'extraction documentaire externe configuré par la plateforme : les pages quittent le serveur. Les opérations lues sont ensuite à contrôler avant l'enregistrement.</ng-container>
+                  } @else if (caps.aiEngine === 'vision') {
                     <ng-container i18n="@@accounting.bank-statement-import.chaque.releve.pdf.texte.pdf.scanne.ou.image.est.ff546aeb">Chaque relevé — PDF texte, PDF scanné ou image — est lu page par page par l'IA de la plateforme : comptez une à trois minutes par page sur le serveur. Les opérations lues sont ensuite à contrôler avant l'enregistrement.</ng-container>
                   } @else if (caps.aiEngine === 'text' && caps.visionUnavailableReason) {
                     <ng-container i18n="@@accounting.bank-statement-import.la.lecture.des.images.est.indisponible.les.relev.5d7babb6">La lecture des images est indisponible : les relevés seront lus sans l'image des pages, moins précisément sur les pages scannées.</ng-container>

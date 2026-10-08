@@ -26,6 +26,7 @@ Installation du modèle et dimensionnement du serveur : `deploy/README.md`, sect
 | `Accounting:BankStatementImport:VisionReadingEnabled` | idem | `false` | `true` | Lecture vision page par page par le modèle d'import configuré ; éteint, le plan `ai_only` lit tout avec le modèle texte (dépannage) |
 | `Accounting:BankStatementImport:VisionTextFallbackEnabled` | idem | `true` | **`false`** | Éteint : une page non lue par la vision bloque et le dit, au lieu d'être relue sans son image. Rallumer relève du dépannage |
 | `Accounting:BankStatementImport:VisionSendTextLayer` | idem | `false` | `false` | Image de page seule ; la couche texte n'est pas jointe à l'appel vision |
+| `Accounting:BankStatementImport:DocStrangeEnabled` | idem | `false` | `false` | Envoie les pages au service externe Docstrange (Nanonets), **hors du serveur**. Exige EN PLUS une clé au back-office. Distinct d'`AiComplementAllowExternal`, qui ne gouverne que les fournisseurs LLM. N'activer qu'avec l'accord écrit du responsable du traitement |
 | `Accounting:BankStatementImport:MaxAiPages` / `MaxPages` | idem | `20` / `50` | `20` / `50` | Pages lues par l'IA par relevé / pages par fichier |
 | `Accounting:BankStatementImport:VisionCallTimeoutSeconds` | idem | `300` | `300` | Délai d'un appel vision par page |
 | `Accounting:BankStatementImport:AiJobBudgetMinutes` | idem | `120` | `180` | Budget de la tâche Hangfire, attente de la file comprise (20 × 360 s × 1,5) |

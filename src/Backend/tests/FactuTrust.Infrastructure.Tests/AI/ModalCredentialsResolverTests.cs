@@ -33,6 +33,7 @@ public sealed class ModalCredentialsResolverTests
             protection,
             Options.Create(new OpenRouterSettings { DefaultBaseUrl = "https://openrouter.ai/api/v1" }),
             modal,
+            Options.Create(new DocStrangeSettings()),
             NullLogger<PlatformAiSettingsService>.Instance);
         await platform.SetModalConfigAsync(
             true,

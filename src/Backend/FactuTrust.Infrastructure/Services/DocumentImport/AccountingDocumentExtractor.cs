@@ -1,6 +1,7 @@
 using System.Text.Json;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.Features.AI;
+using FactuTrust.Application.Features.AI.DocumentExtraction;
 using FactuTrust.Application.Features.AI.Json;
 using FactuTrust.Application.Features.Accounting.DocumentImport;
 using FactuTrust.Domain.Common;
@@ -27,17 +28,20 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
     private readonly IAiStructuredExtractionPipeline _pipeline;
     private readonly OllamaSettings _ollamaSettings;
     private readonly ILogger<AccountingDocumentExtractor> _logger;
+    private readonly IDocumentExtractionProvider? _externalExtraction;
 
     public AccountingDocumentExtractor(
         InstaFactInvoicePdfParser nativeParser,
         IAiStructuredExtractionPipeline pipeline,
         IOptions<OllamaSettings> ollamaSettings,
-        ILogger<AccountingDocumentExtractor> logger)
+        ILogger<AccountingDocumentExtractor> logger,
+        IDocumentExtractionProvider? externalExtraction = null)
     {
         _nativeParser = nativeParser;
         _pipeline = pipeline;
         _ollamaSettings = ollamaSettings.Value;
         _logger = logger;
+        _externalExtraction = externalExtraction;
     }
 
     public async Task<Result<AccountingDocumentExtractionDto>> ExtractAsync(
@@ -78,11 +82,88 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
         return await ExtractWithAiAsync(bytes, request, cancellationToken);
     }
 
+    /// <summary>
+    /// Tente l'extraction par le service externe. Rend <c>null</c> dès que quoi que ce soit
+    /// empêche d'aboutir — fournisseur absent, éteint, en erreur, quota épuisé, JSON
+    /// inexploitable — pour que l'appelant reprenne le chemin LLM sans rien savoir de l'incident.
+    ///
+    /// <para>Le schéma envoyé est le <b>verbatim</b> : tout montant en chaîne. Demander des
+    /// nombres ferait sortir les montants multipliés par 1000, silencieusement (virgule
+    /// tunisienne lue comme séparateur de milliers). La conversion reste serveur, par
+    /// <c>LlmJsonOptions.Tolerant</c> et <c>TunisianNumberParsing</c>.</para>
+    /// </summary>
+    private async Task<AccountingDocumentExtractionDto?> TryExtractExternallyAsync(
+        byte[] bytes,
+        AccountingDocumentExtractionRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (_externalExtraction is null || !await _externalExtraction.IsAvailableAsync(cancellationToken))
+            return null;
+
+        Result<string> extraction;
+        try
+        {
+            await using var stream = new MemoryStream(bytes, writable: false);
+            extraction = await _externalExtraction.ExtractStructuredAsync(
+                stream,
+                request.FileName,
+                request.ContentType,
+                LlmOutputSchemas.AccountingDocumentVerbatim,
+                cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex,
+                "[{Scope}] Extraction externe ({Provider}) en erreur pour {FileName} ; repli sur le chemin IA.",
+                ErrorCode, _externalExtraction.Name, request.FileName);
+            return null;
+        }
+
+        if (extraction.IsFailure)
+        {
+            _logger.LogWarning(
+                "[{Scope}] Extraction externe ({Provider}) refusée pour {FileName} : {Reason}. Repli sur le chemin IA.",
+                ErrorCode, _externalExtraction.Name, request.FileName, extraction.Error.Description);
+            return null;
+        }
+
+        // Désérialisation et mapping INCHANGÉS : aucun contrôle existant n'est contourné.
+        var parsed = TryParseLlmDocument(extraction.Value, out var json, out var jsonError);
+        if (parsed is null)
+        {
+            LogUnparseableLlmResponse(request.FileName, extraction.Value, json, jsonError);
+            _logger.LogWarning(
+                "[{Scope}] Réponse de l'extraction externe ({Provider}) inexploitable ; repli sur le chemin IA.",
+                ErrorCode, _externalExtraction.Name);
+            return null;
+        }
+
+        _logger.LogInformation(
+            "[{Scope}] Pièce {FileName} lue par le service d'extraction {Provider} (aucun appel LLM).",
+            ErrorCode, request.FileName, _externalExtraction.Name);
+
+        return AccountingDocumentMapping.FromLlm(
+            parsed,
+            AccountingDocumentExtractionMethods.ExternalExtraction,
+            ocrApplied: false,
+            textTruncated: false);
+    }
+
     private async Task<Result<AccountingDocumentExtractionDto>> ExtractWithAiAsync(
         byte[] bytes,
         AccountingDocumentExtractionRequest request,
         CancellationToken cancellationToken)
     {
+        // Étage externe, avant le LLM. Tout échec retombe SILENCIEUSEMENT sur le chemin
+        // historique : éteindre le fournisseur rend exactement le comportement d'avant.
+        var external = await TryExtractExternallyAsync(bytes, request, cancellationToken);
+        if (external is not null)
+            return Result.Success(external);
+
         var outcomeResult = await RunPipelineAsync(bytes, request, forceVision: false, cancellationToken);
         if (outcomeResult.IsFailure)
             return Result.Failure<AccountingDocumentExtractionDto>(outcomeResult.Error);

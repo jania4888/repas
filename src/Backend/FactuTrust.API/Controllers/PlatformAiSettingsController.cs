@@ -90,6 +90,7 @@ public sealed class PlatformAiSettingsController : ControllerBase
         var openRouter = await _settings.GetOpenRouterSettingsAsync(cancellationToken);
         var cursor = await _settings.GetCursorSettingsAsync(cancellationToken);
         var modal = await _settings.GetModalSettingsAsync(cancellationToken);
+        var docStrange = await _settings.GetDocStrangeSettingsAsync(cancellationToken);
 
         var models = new List<UnifiedAiModelInfo>();
         try
@@ -226,7 +227,8 @@ public sealed class PlatformAiSettingsController : ControllerBase
             recommendation,
             openRouter,
             cursor,
-            modal);
+            modal,
+            docStrange);
         return Ok(ApiResponse<PlatformAiSettingsDto>.Ok(dto));
     }
 
@@ -298,6 +300,24 @@ public sealed class PlatformAiSettingsController : ControllerBase
                 "Platform admin {ActorId} updated Modal settings (enabled={Enabled})",
                 actorId,
                 modalUpdate.IsEnabled);
+        }
+
+        if (request.DocStrange is { } docStrangeUpdate)
+        {
+            var (success, error) = await _settings.SetDocStrangeConfigAsync(
+                docStrangeUpdate.IsEnabled,
+                docStrangeUpdate.DisplayName,
+                docStrangeUpdate.BaseUrl,
+                docStrangeUpdate.ApiKey,
+                actorId,
+                cancellationToken);
+            if (!success)
+                return BadRequest(ApiResponse<object>.Fail(error ?? "Configuration Docstrange invalide."));
+
+            _logger.LogInformation(
+                "Platform admin {ActorId} updated Docstrange settings (enabled={Enabled})",
+                actorId,
+                docStrangeUpdate.IsEnabled);
         }
 
         if (!string.IsNullOrWhiteSpace(request.ModelRef))

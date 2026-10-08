@@ -32,6 +32,7 @@ public sealed class PlatformAiSettingsServiceTests
             protection,
             openRouter,
             modal,
+            Options.Create(new DocStrangeSettings()),
             NullLogger<PlatformAiSettingsService>.Instance);
     }
 
@@ -626,5 +627,118 @@ public sealed class PlatformAiSettingsServiceTests
         }
 
         // EF InMemory : pas de throw. Documenté, pas un faux vert sur le provider de prod.
+    }
+
+    // ---- Docstrange ----------------------------------------------------------------------
+    // Service d'EXTRACTION documentaire externe : meme exigence de secret que les trois
+    // fournisseurs LLM, mais il n'est jamais selectionnable comme modele.
+
+    [Fact]
+    public async Task SetDocStrangeConfigAsync_EncryptsAndMasksKey()
+    {
+        var options = new DbContextOptionsBuilder<MasterDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        await using var db = new MasterDbContext(options);
+        var service = CreateService(db);
+        const string key = "ns-abcdefghijklmnop1234";
+
+        var (ok, error) = await service.SetDocStrangeConfigAsync(
+            isEnabled: true,
+            displayName: "Docstrange",
+            baseUrl: "https://extraction-api.nanonets.com/",
+            apiKey: key,
+            actorUserId: Guid.NewGuid());
+
+        Assert.True(ok);
+        Assert.Null(error);
+
+        var masked = await service.GetDocStrangeSettingsAsync();
+        Assert.True(masked.IsEnabled);
+        Assert.Equal("Docstrange", masked.DisplayName);
+        Assert.Equal("https://extraction-api.nanonets.com", masked.BaseUrl);
+        Assert.True(masked.IsApiKeyConfigured);
+        Assert.Equal("1234", masked.ApiKeyLast4);
+
+        var creds = await service.GetDocStrangeCredentialsAsync();
+        Assert.True(creds.IsEnabled);
+        Assert.Equal(key, creds.ApiKey);
+
+        // La colonne ne contient jamais la cle en clair.
+        var stored = await db.PlatformAiSettings.AsNoTracking().SingleAsync();
+        Assert.NotEqual(key, stored.DocStrangeEncryptedApiKey);
+        Assert.NotNull(stored.DocStrangeEncryptedApiKey);
+    }
+
+    [Fact]
+    public async Task SetDocStrangeConfigAsync_EmptyApiKey_KeepsExistingSecret()
+    {
+        var options = new DbContextOptionsBuilder<MasterDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        await using var db = new MasterDbContext(options);
+        var service = CreateService(db);
+        var actorId = Guid.NewGuid();
+        const string key = "ns-firstkey000000abcd";
+
+        await service.SetDocStrangeConfigAsync(true, "Docstrange", null, key, actorId);
+
+        // Re-enregistrer la page sans resaisir la cle ne doit pas l'effacer.
+        var (ok, _) = await service.SetDocStrangeConfigAsync(true, "Docstrange renomme", null, null, actorId);
+        Assert.True(ok);
+
+        var creds = await service.GetDocStrangeCredentialsAsync();
+        Assert.Equal(key, creds.ApiKey);
+
+        var masked = await service.GetDocStrangeSettingsAsync();
+        Assert.Equal("Docstrange renomme", masked.DisplayName);
+        Assert.Equal("abcd", masked.ApiKeyLast4);
+    }
+
+    [Fact]
+    public async Task SetDocStrangeConfigAsync_EnableWithoutKey_Fails()
+    {
+        var options = new DbContextOptionsBuilder<MasterDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        await using var db = new MasterDbContext(options);
+        var service = CreateService(db);
+
+        var (ok, error) = await service.SetDocStrangeConfigAsync(
+            isEnabled: true, displayName: null, baseUrl: null, apiKey: null, actorUserId: Guid.NewGuid());
+
+        Assert.False(ok);
+        Assert.NotNull(error);
+
+        var creds = await service.GetDocStrangeCredentialsAsync();
+        Assert.Null(creds.ApiKey);
+    }
+
+    [Fact]
+    public async Task GetDocStrangeCredentialsAsync_WhenDisabled_ReturnsNoKey()
+    {
+        var options = new DbContextOptionsBuilder<MasterDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        await using var db = new MasterDbContext(options);
+        var service = CreateService(db);
+        var actorId = Guid.NewGuid();
+
+        await service.SetDocStrangeConfigAsync(true, null, null, "ns-key0000000000wxyz", actorId);
+        await service.SetDocStrangeConfigAsync(false, null, null, null, actorId);
+
+        // Desactive : la cle reste en base mais n'est plus servie au runtime.
+        var creds = await service.GetDocStrangeCredentialsAsync();
+        Assert.False(creds.IsEnabled);
+        Assert.Null(creds.ApiKey);
+
+        // ...et le back-office continue d'afficher qu'une cle est configuree.
+        var masked = await service.GetDocStrangeSettingsAsync();
+        Assert.True(masked.IsApiKeyConfigured);
+        Assert.Equal("wxyz", masked.ApiKeyLast4);
     }
 }

@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using FactuTrust.Application.Features.AI.DTOs;
@@ -23,6 +24,9 @@ public sealed class PlatformAiSettingsSerializationTests
     private static PlatformModalSettingsDto EmptyModal =>
         new(false, null, null, "", "moonshotai/Kimi-K3", false, null);
 
+    private static PlatformDocStrangeSettingsDto EmptyDocStrange =>
+        new(false, null, null, "https://extraction-api.nanonets.com", false, null);
+
     [Fact]
     public void InferenceDevice_serializes_as_pascal_case_string()
     {
@@ -40,7 +44,8 @@ public sealed class PlatformAiSettingsSerializationTests
             null,
             EmptyOpenRouter,
             EmptyCursor,
-            EmptyModal);
+            EmptyModal,
+            EmptyDocStrange);
 
         var json = JsonSerializer.Serialize(dto, ApiJsonOptions);
 
@@ -50,6 +55,7 @@ public sealed class PlatformAiSettingsSerializationTests
         Assert.Contains("\"openRouter\"", json);
         Assert.Contains("\"cursor\"", json);
         Assert.Contains("\"modal\"", json);
+        Assert.Contains("\"docStrange\"", json);
         Assert.DoesNotContain("sk-", json);
         Assert.DoesNotContain("cursor_", json);
         Assert.DoesNotContain("wk-", json);
@@ -205,5 +211,57 @@ public sealed class PlatformAiSettingsSerializationTests
         Assert.DoesNotContain("wk-", json);
         Assert.DoesNotContain("ws-", json);
         Assert.DoesNotContain("TOKEN_SECRET", json);
+    }
+
+    [Fact]
+    public void DocStrange_settings_expose_no_field_able_to_carry_the_api_key()
+    {
+        // La cle Docstrange est une chaine hexadecimale SANS prefixe : un Assert.DoesNotContain
+        // sur un prefixe ne prouverait rien. On verifie donc le contrat de forme : le DTO masque
+        // ne publie que l'indicateur et les 4 derniers caracteres.
+        const string fullKey = "7ed2ae00112233445566778899aabbccddeeffb11b";
+
+        var dto = new PlatformDocStrangeSettingsDto(
+            IsEnabled: true,
+            DisplayName: "Docstrange",
+            BaseUrl: "https://extraction-api.nanonets.com",
+            DefaultBaseUrl: "https://extraction-api.nanonets.com",
+            IsApiKeyConfigured: true,
+            ApiKeyLast4: fullKey[^4..]);
+
+        var json = JsonSerializer.Serialize(dto, ApiJsonOptions);
+
+        Assert.DoesNotContain(fullKey, json);
+        Assert.Contains("\"isApiKeyConfigured\":true", json);
+        Assert.Contains("\"apiKeyLast4\":\"b11b\"", json);
+
+        // Aucune propriete dont le nom suggere un secret, hors les deux champs masques attendus.
+        using var parsed = JsonDocument.Parse(json);
+        var names = parsed.RootElement.EnumerateObject().Select(x => x.Name).ToArray();
+        Assert.Equal(
+            new[] { "isEnabled", "displayName", "baseUrl", "defaultBaseUrl", "isApiKeyConfigured", "apiKeyLast4" },
+            names);
+    }
+
+    [Fact]
+    public void DocStrange_deserializes_from_a_payload_without_the_section()
+    {
+        // Charge utile anterieure a Docstrange : la section absente ne doit pas faire echouer
+        // la deserialisation (meme tolerance que pour studioAiAdvancedModelRef et cursor).
+        const string json = """
+            {
+              "configuredModelRef": null,
+              "invoiceImportModelRef": null,
+              "inferenceDevice": "Gpu",
+              "isOllamaAssistantConfigured": true,
+              "availableModels": [],
+              "recommendation": null
+            }
+            """;
+
+        var dto = JsonSerializer.Deserialize<PlatformAiSettingsDto>(json, ApiJsonOptions);
+
+        Assert.NotNull(dto);
+        Assert.Null(dto!.DocStrange);
     }
 }

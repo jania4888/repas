@@ -304,5 +304,6 @@
   "accounting.bank-statement-import.ts.lu.par.l.ia.pages.d44397d6": "مقروء بالذكاء الاصطناعي ({$count} صفحة)",
   "accounting.bank-statement-import.ts.lu.par.l.ia.sans.l.image.des.pages.21167785": "مقروء بالذكاء الاصطناعي، دون صورة الصفحات",
   "accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.les.pages.pagelist.fallback.94d40cd2": "لم يتمكّن الذكاء الاصطناعي من قراءة الصفحات {$INTERPOLATION}: قُرئت احتياطيًا، دون صورتها. تحقّق من هذه العمليات بعناية.",
-  "accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.la.page.fallback.0.elle.a.e.32d72468": "لم يتمكّن الذكاء الاصطناعي من قراءة الصفحة {$INTERPOLATION}: قُرئت احتياطيًا، دون صورتها. تحقّق من هذه العمليات بعناية."
+  "accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.la.page.fallback.0.elle.a.e.32d72468": "لم يتمكّن الذكاء الاصطناعي من قراءة الصفحة {$INTERPOLATION}: قُرئت احتياطيًا، دون صورتها. تحقّق من هذه العمليات بعناية.",
+  "accounting.bank-statement-import.chaque.releve.est.lu.page.par.page.par.un.servic.597de247": "يُقرأ كل كشف صفحةً صفحةً بواسطة خدمة استخراج مستندات خارجية مُهيّأة من المنصّة: الصفحات تغادر الخادم. ثمّ يجب مراجعة العمليات المقروءة قبل الحفظ."
 }

@@ -175,6 +175,28 @@ public sealed class BankStatementVisionSettingsConsistencyTests
         Assert.True(
             external is null || external.Value.ValueKind == JsonValueKind.False,
             "AiComplementAllowExternal must be absent or false: no statement page may leave the local engine.");
+
+        // Docstrange est un SECOND chemin de sortie, independant du precedent : il ne passe pas
+        // par LlmProviderKind, donc AiComplementAllowExternal ne le couvre pas. Les deux doivent
+        // etre epingles separement, sans quoi fermer l'un laisserait l'autre ouvert.
+        var docStrange = Prod("Accounting", "BankStatementImport", "DocStrangeEnabled");
+        Assert.True(
+            docStrange is null || docStrange.Value.ValueKind == JsonValueKind.False,
+            "DocStrangeEnabled must be absent or false: no statement page may be sent to Nanonets.");
+    }
+
+    [Theory]
+    [InlineData("appsettings.json")]
+    [InlineData("appsettings.Development.json")]
+    [InlineData("appsettings.Production.json")]
+    public void The_docstrange_statement_switch_is_off_everywhere(string file)
+    {
+        // Absent partout aujourd'hui : la valeur par defaut du code (false) fait foi. Le jour ou
+        // quelqu'un l'ecrit dans un appsettings, ce test exige qu'il l'ecrive a false.
+        var value = TryGet(ReadRoot(file), "Accounting", "BankStatementImport", "DocStrangeEnabled");
+        Assert.True(
+            value is null || value.Value.ValueKind == JsonValueKind.False,
+            $"{file}: DocStrangeEnabled must stay absent or false; turning it on sends bank statement pages to a third party.");
     }
 
     [Fact]

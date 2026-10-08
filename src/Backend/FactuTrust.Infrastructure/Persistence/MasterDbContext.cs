@@ -664,6 +664,11 @@ public class MasterDbContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.Property(p => p.ModalBaseUrl).HasMaxLength(500);
             entity.Property(p => p.ModalEncryptedApiKey).HasMaxLength(4000);
             entity.Property(p => p.ModalApiKeyLast4).HasMaxLength(4);
+            entity.Property(p => p.DocStrangeIsEnabled).HasDefaultValue(false);
+            entity.Property(p => p.DocStrangeDisplayName).HasMaxLength(200);
+            entity.Property(p => p.DocStrangeBaseUrl).HasMaxLength(500);
+            entity.Property(p => p.DocStrangeEncryptedApiKey).HasMaxLength(4000);
+            entity.Property(p => p.DocStrangeApiKeyLast4).HasMaxLength(4);
             entity.Property(p => p.CreatedBy).HasMaxLength(450);
             entity.Property(p => p.UpdatedBy).HasMaxLength(450);
         });

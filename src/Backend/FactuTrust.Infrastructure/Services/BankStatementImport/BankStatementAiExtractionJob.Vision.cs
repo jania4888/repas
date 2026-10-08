@@ -5,6 +5,7 @@ using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.Features.AI;
+using FactuTrust.Application.Features.AI.DocumentExtraction;
 using FactuTrust.Application.Features.AI.Json;
 using FactuTrust.Application.Features.Accounting.BankStatementImport;
 using FactuTrust.Domain.Banking;
@@ -94,6 +95,11 @@ public sealed partial class BankStatementAiExtractionJob
         var accountingSettings = services.GetService<IOptions<AccountingSettings>>()?.Value;
         var tenantId = services.GetService<ITenantContext>()?.TenantId;
         var pdfRenderer = services.GetService<IAiPdfRenderer>();
+        // Étage 0 : service d'extraction externe, sous son propre drapeau. Résolu une fois ici ;
+        // null = l'échelle vision d'aujourd'hui, inchangée.
+        var externalExtraction = limits.DocStrangeEnabled ? services.GetService<IDocumentExtractionProvider>() : null;
+        var externalAvailable = externalExtraction is not null
+            && await externalExtraction.IsAvailableAsync(cancellationToken);
         var extractor = services.GetService<BankStatementLayoutExtractor>() ?? new BankStatementLayoutExtractor();
         var plan = layout.AiPlan ?? throw new InvalidOperationException("Plan IA absent.");
         var aiOnly = plan.IsAiOnly;
@@ -176,6 +182,33 @@ public sealed partial class BankStatementAiExtractionJob
             var truncated = false;
             StageResult? stage1 = null;
             StageResult? stage2 = null;
+
+            // ---- Étage 0 : extraction externe (Docstrange). Placé AVANT le coupe-circuit, car il
+            // ne dépend d'aucun modèle local : il doit pouvoir lire même moteur Ollama arrêté.
+            // Le service ne fait que l'OCR ; le tableau rendu est analysé par
+            // BankStatementTableTextParser, puis lu par BankStatementAiPageReader comme toute autre
+            // page — ancrage des montants, arrondi millime, codes d'anomalie. Rien n'est inventé.
+            if (externalAvailable)
+            {
+                attempts++;
+                var external = await RunExternalExtractionStageAsync(
+                    externalExtraction!, pageBytes, pageFileName, pageContentType, pageNumber, readOptions, cancellationToken);
+                LogPage(session.Id, pageNumber, BankStatementPageReadingEngines.DocStrange, externalExtraction!.Name, attempts, external);
+                groundingText ??= external.GroundingText;
+                truncated |= external.Truncated;
+
+                if (external.Succeeded)
+                {
+                    RecordPage(pageNumber, external.Reading!, BankStatementPageReadingEngines.DocStrange, externalExtraction.Name, attempts, pageSw.ElapsedMilliseconds, external.Reading!.Lines.Count, null, truncated);
+                    await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
+                    continue;
+                }
+
+                // Échec : l'échelle vision reprend la main telle quelle.
+                lastFailure = external.FailureReason;
+                if (await IsCancelledAsync(ctx, session.Id, cancellationToken))
+                    return;
+            }
 
             if (!circuitOpen)
             {
@@ -573,6 +606,63 @@ public sealed partial class BankStatementAiExtractionJob
             return new StageResult(reading, PageFailureReasons.JsonEmpty, "empty", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.TokenMetrics, raw.Length, grounding, truncated, false);
 
         return new StageResult(reading, null, "ok", sw.ElapsedMilliseconds, outcome.Value.FirstTokenMs, outcome.Value.StreamChunkCount, outcome.Value.TokenMetrics, raw.Length, grounding, truncated, false);
+    }
+
+    /// <summary>
+    /// Étage 0 : le service externe rend le texte de la page (Markdown, tableaux en
+    /// <c>&lt;table&gt;</c> HTML) et <see cref="BankStatementTableTextParser"/> le convertit — il
+    /// gère déjà les deux formes, ayant été écrit pour le mode « Table Recognition » de GLM-OCR.
+    ///
+    /// <para>Le texte est demandé, jamais du JSON typé : ces services convertissent les nombres
+    /// eux-mêmes et lisent la virgule tunisienne comme un séparateur de milliers, ce qui multiplie
+    /// les montants par 1000 en silence (mesuré, voir docs/developer/docstrange-api-contract.md).</para>
+    /// </summary>
+    private static async Task<StageResult> RunExternalExtractionStageAsync(
+        IDocumentExtractionProvider provider,
+        byte[] pageBytes,
+        string fileName,
+        string contentType,
+        int pageNumber,
+        BankStatementAiReadOptions readOptions,
+        CancellationToken cancellationToken)
+    {
+        var sw = Stopwatch.StartNew();
+
+        Result<string> text;
+        try
+        {
+            await using var stream = new MemoryStream(pageBytes, writable: false);
+            text = await provider.ExtractTextAsync(stream, fileName, contentType, cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            return FailedStage(null, sw.ElapsedMilliseconds);
+        }
+
+        if (text.IsFailure)
+            return FailedStage(text.Error.Description, sw.ElapsedMilliseconds);
+
+        var raw = text.Value ?? string.Empty;
+        var table = BankStatementTableTextParser.Parse(raw, pageNumber);
+        if (table.Page is null)
+            return new StageResult(null, PageFailureReasons.TableNotRecognized, "invalid_json", sw.ElapsedMilliseconds, null, 0, null, raw.Length, null, false, false);
+
+        var grounding = table.PlainText;
+        if (table.IsConfirmedEmpty)
+        {
+            var empty = BankStatementAiPageReader.Read(table.Page, pageNumber, null, readOptions);
+            return new StageResult(empty, null, "empty", sw.ElapsedMilliseconds, null, 0, null, raw.Length, grounding, false, false);
+        }
+
+        var reading = BankStatementAiPageReader.Read(table.Page, pageNumber, grounding, readOptions);
+        if (reading.Lines.Count == 0)
+            return new StageResult(reading, PageFailureReasons.TableEmpty, "empty", sw.ElapsedMilliseconds, null, 0, null, raw.Length, grounding, false, false);
+
+        return new StageResult(reading, null, "ok", sw.ElapsedMilliseconds, null, 0, null, raw.Length, grounding, table.Page.Lines.Count >= VisionMaxLinesPerPage, false);
     }
 
     private static async Task<StageResult> RunVisionTableStageAsync(

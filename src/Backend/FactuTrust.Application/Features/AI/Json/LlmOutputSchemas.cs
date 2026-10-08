@@ -92,6 +92,100 @@ public static class LlmOutputSchemas
     public static JsonElement AccountingDocument { get; } =
         JsonDocument.Parse(AccountingDocumentSchemaJson).RootElement.Clone();
 
+    /// <summary>
+    /// Même document, mais TOUT MONTANT TYPÉ EN CHAÎNE : recopie telle qu'imprimée.
+    ///
+    /// <para>Destiné aux services d'extraction documentaire externes, qui convertissent les
+    /// nombres eux-mêmes. Mesuré sur Docstrange le 2026-10-08 : « 1138,155 » demandé en
+    /// <c>number</c> revient <c>1138155</c> — la virgule décimale tunisienne est lue comme un
+    /// séparateur de milliers et le montant sort multiplié par 1000, sans aucun signal. Voir
+    /// <c>docs/developer/docstrange-api-contract.md</c>.</para>
+    ///
+    /// <para>En chaîne, la valeur est recopiée et la conversion reste serveur :
+    /// <c>LlmJsonOptions.Tolerant</c> la confie à <c>TunisianNumberParsing.ParseDecimal</c>, qui
+    /// connaît la convention TND. Même raison d'être que
+    /// <see cref="BankStatementPageVerbatim"/>.</para>
+    ///
+    /// <para>Les définitions sont inlinées : la prise en charge de <c>$ref</c> / <c>$defs</c> par
+    /// ces services n'est pas établie.</para>
+    /// </summary>
+    public static JsonElement AccountingDocumentVerbatim { get; } =
+        JsonDocument.Parse(AccountingDocumentVerbatimSchemaJson).RootElement.Clone();
+
+    private const string AccountingDocumentVerbatimSchemaJson = """
+        {
+          "type": "object",
+          "properties": {
+            "documentType": { "type": "string", "enum": ["INVOICE","CREDIT_NOTE","DELIVERY_NOTE","PROFORMA","UNKNOWN"] },
+            "documentNumber": { "type": ["string","null"] },
+            "issueDate": { "type": ["string","null"] },
+            "dueDate": { "type": ["string","null"] },
+            "documentStatus": { "type": ["string","null"] },
+            "currency": { "type": ["string","null"] },
+            "seller": {
+              "type": ["object","null"],
+              "properties": {
+                "name": { "type": ["string","null"] },
+                "nif": { "type": ["string","null"] },
+                "email": { "type": ["string","null"] },
+                "phone": { "type": ["string","null"] },
+                "street": { "type": ["string","null"] },
+                "city": { "type": ["string","null"] },
+                "postalCode": { "type": ["string","null"] },
+                "governorate": { "type": ["string","null"] }
+              }
+            },
+            "buyer": {
+              "type": ["object","null"],
+              "properties": {
+                "name": { "type": ["string","null"] },
+                "nif": { "type": ["string","null"] },
+                "email": { "type": ["string","null"] },
+                "phone": { "type": ["string","null"] },
+                "street": { "type": ["string","null"] },
+                "city": { "type": ["string","null"] },
+                "postalCode": { "type": ["string","null"] },
+                "governorate": { "type": ["string","null"] }
+              }
+            },
+            "lines": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "designation": { "type": ["string","null"] },
+                  "reference": { "type": ["string","null"] },
+                  "quantity": { "type": ["string","null"] },
+                  "unit": { "type": ["string","null"] },
+                  "unitPriceHt": { "type": ["string","null"] },
+                  "discountPercent": { "type": ["string","null"] },
+                  "vatRatePercent": { "type": ["string","null"] }
+                }
+              }
+            },
+            "vatBreakdown": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ratePercent": { "type": ["string","null"] },
+                  "baseAmount": { "type": ["string","null"] },
+                  "vatAmount": { "type": ["string","null"] }
+                }
+              }
+            },
+            "totalHt": { "type": ["string","null"] },
+            "totalVat": { "type": ["string","null"] },
+            "fodecAmount": { "type": ["string","null"] },
+            "fiscalStampAmount": { "type": ["string","null"] },
+            "withholdingAmount": { "type": ["string","null"] },
+            "totalTtc": { "type": ["string","null"] },
+            "confidence": { "type": ["string","null"], "enum": ["high","medium","low",null] },
+            "warnings": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+        """;
+
     private const string BankStatementPageSchemaJson = """
         {
           "type": "object",

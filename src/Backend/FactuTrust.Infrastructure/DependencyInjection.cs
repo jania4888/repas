@@ -11,6 +11,7 @@ using FactuTrust.Application.Features.Stock.Queries;
 using FactuTrust.Application.Features.Studio.Common;
 using FactuTrust.Application.Features.Studio.Workflows.Engine;
 using FactuTrust.Application.Features.AI;
+using FactuTrust.Application.Features.AI.DocumentExtraction;
 using FactuTrust.Application.Features.AI.Commands;
 using FactuTrust.Application.Features.AI.DTOs;
 using FactuTrust.Application.Features.AI.Tools;
@@ -589,6 +590,7 @@ public static class DependencyInjection
         services.Configure<ScreenAnalysisOptions>(configuration.GetSection(ScreenAnalysisOptions.SectionName));
         services.Configure<OpenRouterSettings>(configuration.GetSection(OpenRouterSettings.SectionName));
         services.Configure<ModalSettings>(configuration.GetSection(ModalSettings.SectionName));
+        services.Configure<DocStrangeSettings>(configuration.GetSection(DocStrangeSettings.SectionName));
         services.Configure<CursorSdkSettings>(configuration.GetSection(CursorSdkSettings.SectionName));
         services.Configure<CashDeskFeaturesOptions>(configuration.GetSection(CashDeskFeaturesOptions.SectionName));
         services.Configure<FixedAssetsOptions>(configuration.GetSection(FixedAssetsOptions.SectionName));
@@ -684,6 +686,13 @@ public static class DependencyInjection
             var settings = configuration.GetSection(ModalSettings.SectionName).Get<ModalSettings>() ?? new ModalSettings();
             client.Timeout = TimeSpan.FromSeconds(Math.Clamp(settings.TimeoutSeconds, 30, 600));
         });
+        services.AddHttpClient(DocStrangeHttpClient.HttpClientName, (sp, client) =>
+        {
+            var settings = configuration.GetSection(DocStrangeSettings.SectionName).Get<DocStrangeSettings>() ?? new DocStrangeSettings();
+            client.Timeout = TimeSpan.FromSeconds(Math.Clamp(settings.TimeoutSeconds, 30, 600));
+        });
+        services.AddScoped<IDocStrangeClient, DocStrangeHttpClient>();
+        services.AddScoped<IDocumentExtractionProvider, DocStrangeDocumentExtractionProvider>();
         services.AddScoped<IOpenAiChatCompletionsClient, OpenAiChatCompletionsClient>();
         services.AddSingleton<ICursorToolRunRegistry, CursorToolRunRegistry>();
         services.AddSingleton<CursorSdkBridgeHost>();

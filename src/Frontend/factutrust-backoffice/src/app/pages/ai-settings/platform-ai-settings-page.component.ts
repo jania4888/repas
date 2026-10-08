@@ -394,6 +394,63 @@ interface InferenceDeviceOption {
           [warning]="modalWarning()" />
       </section>
 
+      <section class="card">
+        <h3>Docstrange (cloud)</h3>
+        <p class="hint">
+          Service d'extraction documentaire de Nanonets, utilisable pour la lecture des factures et
+          des relevés bancaires. Ce n'est pas un modèle de conversation : il n'apparaît pas dans les
+          listes de modèles ci-dessus.
+        </p>
+        <p class="warn">
+          Les documents envoyés <strong>quittent le serveur</strong> vers Nanonets, qui ne publie
+          aucune politique de rétention pour son offre cloud. Activer cette carte ne suffit pas à
+          envoyer des relevés&nbsp;: cela exige en plus le réglage serveur
+          <code>BankStatementImport:DocStrangeEnabled</code>, éteint par défaut.
+        </p>
+        <div class="field field-row">
+          <label for="ds-enabled">Activer Docstrange</label>
+          <p-toggleswitch inputId="ds-enabled" [(ngModel)]="docStrangeEnabled" />
+        </div>
+        <div class="field">
+          <label for="ds-display">Nom affiché</label>
+          <input id="ds-display" type="text" pInputText class="w-full" [(ngModel)]="docStrangeDisplayName" />
+        </div>
+        <div class="field">
+          <label for="ds-base">URL de base (optionnel)</label>
+          <input
+            id="ds-base"
+            type="url"
+            pInputText
+            class="w-full"
+            [(ngModel)]="docStrangeBaseUrl"
+            [placeholder]="docStrangeDefaultBaseUrl" />
+          <small class="hint">Par défaut : {{ docStrangeDefaultBaseUrl }}</small>
+        </div>
+        <div class="field">
+          <label for="ds-key">Clé API</label>
+          <input
+            id="ds-key"
+            type="password"
+            pInputText
+            class="w-full"
+            autocomplete="off"
+            [(ngModel)]="docStrangeApiKey"
+            [placeholder]="docStrangeKeyPlaceholder()" />
+          @if (docStrangeApiKeyConfigured) {
+            <small class="hint">Clé configurée (se termine par …{{ docStrangeApiKeyLast4 }})</small>
+          }
+          @else {
+            <small class="hint">Laisser vide conserve la clé déjà enregistrée.</small>
+          }
+        </div>
+        @if (needsDocStrangeKeyWarning()) {
+          <p class="warn">
+            Docstrange est activé mais aucune clé API n'est configurée. Les extractions échoueront
+            et l'import retombera sur le moteur local.
+          </p>
+        }
+      </section>
+
       <div class="footer-actions">
         <p-button
           label="Enregistrer"
@@ -513,6 +570,9 @@ export class PlatformAiSettingsPageComponent implements OnInit {
   protected readonly savedModalEnabled = signal<boolean>(false);
   protected readonly savedModalDisplayName = signal<string>('');
   protected readonly savedModalBaseUrl = signal<string>('');
+  protected readonly savedDocStrangeEnabled = signal<boolean>(false);
+  protected readonly savedDocStrangeDisplayName = signal<string>('');
+  protected readonly savedDocStrangeBaseUrl = signal<string>('');
 
   /** Liée par [(ngModel)] au sélecteur. */
   protected selectedModelRef = '';
@@ -520,6 +580,15 @@ export class PlatformAiSettingsPageComponent implements OnInit {
   protected selectedStudioModelRef = '';
   protected selectedStudioAdvancedModelRef = '';
   protected selectedInferenceDevice: OllamaInferenceDevice = 'Gpu';
+
+  /** Docstrange (cloud) : extraction documentaire, jamais un modèle sélectionnable. */
+  protected docStrangeEnabled = false;
+  protected docStrangeDisplayName = '';
+  protected docStrangeBaseUrl = '';
+  protected docStrangeDefaultBaseUrl = 'https://extraction-api.nanonets.com';
+  protected docStrangeApiKey = '';
+  protected docStrangeApiKeyConfigured = false;
+  protected docStrangeApiKeyLast4: string | null = null;
 
   /** OpenRouter (cloud) : clé partagée assistant/WhatsApp/imports. */
   protected openRouterEnabled = false;
@@ -683,6 +752,18 @@ export class PlatformAiSettingsPageComponent implements OnInit {
     this.savedOpenRouterDisplayName.set(this.openRouterDisplayName);
     this.savedOpenRouterBaseUrl.set(this.openRouterBaseUrl);
 
+    const ds = d.docStrange;
+    this.docStrangeEnabled = ds?.isEnabled ?? false;
+    this.docStrangeDisplayName = ds?.displayName ?? '';
+    this.docStrangeBaseUrl = ds?.baseUrl ?? '';
+    this.docStrangeDefaultBaseUrl = ds?.defaultBaseUrl || 'https://extraction-api.nanonets.com';
+    this.docStrangeApiKeyConfigured = ds?.isApiKeyConfigured ?? false;
+    this.docStrangeApiKeyLast4 = ds?.apiKeyLast4 ?? null;
+    this.docStrangeApiKey = '';
+    this.savedDocStrangeEnabled.set(this.docStrangeEnabled);
+    this.savedDocStrangeDisplayName.set(this.docStrangeDisplayName);
+    this.savedDocStrangeBaseUrl.set(this.docStrangeBaseUrl);
+
     const cursor = d.cursor;
     this.cursorEnabled = cursor?.isEnabled ?? false;
     this.cursorDisplayName = cursor?.displayName ?? '';
@@ -723,13 +804,28 @@ export class PlatformAiSettingsPageComponent implements OnInit {
       || this.modalDisplayName !== this.savedModalDisplayName()
       || this.modalBaseUrl !== this.savedModalBaseUrl()
       || !!this.modalTokenId.trim()
-      || !!this.modalTokenSecret.trim();
+      || !!this.modalTokenSecret.trim()
+      || this.docStrangeEnabled !== this.savedDocStrangeEnabled()
+      || this.docStrangeDisplayName !== this.savedDocStrangeDisplayName()
+      || this.docStrangeBaseUrl !== this.savedDocStrangeBaseUrl()
+      || !!this.docStrangeApiKey.trim();
   }
 
   protected openRouterKeyPlaceholder(): string {
     return this.openRouterApiKeyConfigured
       ? `••••••••${this.openRouterApiKeyLast4 ?? ''}`
       : 'sk-or-…';
+  }
+
+  protected docStrangeKeyPlaceholder(): string {
+    return this.docStrangeApiKeyConfigured
+      ? `••••••••${this.docStrangeApiKeyLast4 ?? ''}`
+      : 'clé Docstrange…';
+  }
+
+  /** Activé sans clé : les extractions échoueraient silencieusement. */
+  protected needsDocStrangeKeyWarning(): boolean {
+    return this.docStrangeEnabled && !this.docStrangeApiKeyConfigured && !this.docStrangeApiKey.trim();
   }
 
   protected cursorKeyPlaceholder(): string {
@@ -879,6 +975,12 @@ export class PlatformAiSettingsPageComponent implements OnInit {
         displayName: this.modalDisplayName.trim() || null,
         baseUrl: this.modalBaseUrl.trim() || null,
         apiKey: modalApiKey
+      },
+      docStrange: {
+        isEnabled: this.docStrangeEnabled,
+        displayName: this.docStrangeDisplayName.trim() || null,
+        baseUrl: this.docStrangeBaseUrl.trim() || null,
+        apiKey: this.docStrangeApiKey.trim() || null
       }
     }).subscribe({
       next: (res) => {

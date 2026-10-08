@@ -115,4 +115,24 @@ public interface IPlatformAiSettingsService
     /// Resolves runtime Modal credentials. ApiKey is null when disabled or missing/invalid.
     /// </summary>
     Task<PlatformModalCredentials> GetModalCredentialsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>Masked Docstrange settings for the back-office (never returns plaintext key).</summary>
+    Task<PlatformDocStrangeSettingsDto> GetDocStrangeSettingsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Updates Docstrange settings. Empty/null <paramref name="apiKey"/> keeps the existing secret.
+    /// Returns false when enabling without any configured key.
+    /// </summary>
+    Task<(bool Success, string? Error)> SetDocStrangeConfigAsync(
+        bool isEnabled,
+        string? displayName,
+        string? baseUrl,
+        string? apiKey,
+        Guid actorUserId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Resolves runtime Docstrange credentials. ApiKey is null when disabled or missing/invalid.
+    /// </summary>
+    Task<PlatformDocStrangeCredentials> GetDocStrangeCredentialsAsync(CancellationToken cancellationToken = default);
 }

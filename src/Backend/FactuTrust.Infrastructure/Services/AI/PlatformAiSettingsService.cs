@@ -23,6 +23,7 @@ public sealed class PlatformAiSettingsService : IPlatformAiSettingsService
     public const string DataProtectionPurpose = "PlatformAiProviderSecrets";
     public const string CursorDataProtectionPurpose = "PlatformCursorSecrets";
     public const string ModalDataProtectionPurpose = "PlatformModalSecrets";
+    public const string DocStrangeDataProtectionPurpose = "PlatformDocStrangeSecrets";
 
     private const string CacheKeyDefaultModel = "platform:ai:default-model";
     private const string CacheKeyImportModel = "platform:ai:import-model";
@@ -32,6 +33,7 @@ public sealed class PlatformAiSettingsService : IPlatformAiSettingsService
     private const string CacheKeyOpenRouter = "platform:ai:openrouter";
     private const string CacheKeyCursor = "platform:ai:cursor";
     private const string CacheKeyModal = "platform:ai:modal";
+    private const string CacheKeyDocStrange = "platform:ai:docstrange";
     private static readonly TimeSpan CacheTtl = TimeSpan.FromSeconds(60);
 
     private readonly MasterDbContext _db;
@@ -39,8 +41,10 @@ public sealed class PlatformAiSettingsService : IPlatformAiSettingsService
     private readonly IDataProtector _protector;
     private readonly IDataProtector _cursorProtector;
     private readonly IDataProtector _modalProtector;
+    private readonly IDataProtector _docStrangeProtector;
     private readonly OpenRouterSettings _openRouterDefaults;
     private readonly ModalSettings _modalDefaults;
+    private readonly DocStrangeSettings _docStrangeDefaults;
     private readonly ILogger<PlatformAiSettingsService> _logger;
 
     public PlatformAiSettingsService(
@@ -49,6 +53,7 @@ public sealed class PlatformAiSettingsService : IPlatformAiSettingsService
         IDataProtectionProvider dataProtectionProvider,
         IOptions<OpenRouterSettings> openRouterSettings,
         IOptions<ModalSettings> modalSettings,
+        IOptions<DocStrangeSettings> docStrangeSettings,
         ILogger<PlatformAiSettingsService> logger)
     {
         _db = db;
@@ -56,8 +61,10 @@ public sealed class PlatformAiSettingsService : IPlatformAiSettingsService
         _protector = dataProtectionProvider.CreateProtector(DataProtectionPurpose);
         _cursorProtector = dataProtectionProvider.CreateProtector(CursorDataProtectionPurpose);
         _modalProtector = dataProtectionProvider.CreateProtector(ModalDataProtectionPurpose);
+        _docStrangeProtector = dataProtectionProvider.CreateProtector(DocStrangeDataProtectionPurpose);
         _openRouterDefaults = openRouterSettings.Value;
         _modalDefaults = modalSettings.Value;
+        _docStrangeDefaults = docStrangeSettings.Value;
         _logger = logger;
     }
 
@@ -659,6 +666,144 @@ public sealed class PlatformAiSettingsService : IPlatformAiSettingsService
         return current;
     }
 
+    // ---- Docstrange (Nanonets) -----------------------------------------------------------
+    // Même dualité que les trois autres fournisseurs : Get*SettingsAsync est masqué et caché,
+    // Get*CredentialsAsync déchiffre et n'est JAMAIS caché.
+
+    public async Task<PlatformDocStrangeSettingsDto> GetDocStrangeSettingsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var cached = await _cache.GetOrCreateAsync(CacheKeyDocStrange, async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = CacheTtl;
+            try
+            {
+                return await _db.PlatformAiSettings
+                    .AsNoTracking()
+                    .Select(s => new DocStrangeCacheRow(
+                        s.DocStrangeIsEnabled,
+                        s.DocStrangeDisplayName,
+                        s.DocStrangeBaseUrl,
+                        s.DocStrangeEncryptedApiKey,
+                        s.DocStrangeApiKeyLast4))
+                    .FirstOrDefaultAsync(cancellationToken);
+            }
+            catch (Exception ex) when (ex is SqlException or DbUpdateException or InvalidOperationException)
+            {
+                _logger.LogWarning(ex,
+                    "Impossible de lire les credentials Docstrange depuis PlatformAiSettings.");
+                return null;
+            }
+        });
+
+        return MapDocStrangeDto(cached);
+    }
+
+    public async Task<(bool Success, string? Error)> SetDocStrangeConfigAsync(
+        bool isEnabled,
+        string? displayName,
+        string? baseUrl,
+        string? apiKey,
+        Guid actorUserId,
+        CancellationToken cancellationToken = default)
+    {
+        var current = await GetOrCreateRowAsync(actorUserId, cancellationToken);
+
+        string? encrypted = null;
+        string? last4 = null;
+        var hasNewKey = !string.IsNullOrWhiteSpace(apiKey);
+        if (hasNewKey)
+        {
+            var plain = apiKey!.Trim();
+            encrypted = _docStrangeProtector.Protect(plain);
+            last4 = plain.Length >= 4 ? plain[^4..] : plain;
+        }
+        else if (isEnabled && !current.HasDocStrangeApiKey)
+        {
+            return (false, "Une clé API est requise pour activer Docstrange.");
+        }
+
+        current.SetDocStrangeConfig(
+            isEnabled,
+            displayName,
+            baseUrl,
+            hasNewKey ? encrypted : null,
+            hasNewKey ? last4 : null);
+        current.SetAuditInfo(actorUserId.ToString(), isUpdate: true);
+
+        await _db.SaveChangesAsync(cancellationToken);
+        InvalidateReadCache();
+
+        // Jamais la clé ni ses quatre derniers caractères dans le journal.
+        _logger.LogInformation(
+            "Configuration Docstrange mise à jour par {ActorId} (activé={IsEnabled}, nouvelle clé={HasNewKey}).",
+            actorUserId, isEnabled, hasNewKey);
+        return (true, null);
+    }
+
+    public async Task<PlatformDocStrangeCredentials> GetDocStrangeCredentialsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var defaultBase = ResolveDocStrangeDefaultBaseUrl();
+
+        DocStrangeCacheRow? row;
+        try
+        {
+            row = await _db.PlatformAiSettings
+                .AsNoTracking()
+                .Select(s => new DocStrangeCacheRow(
+                    s.DocStrangeIsEnabled,
+                    s.DocStrangeDisplayName,
+                    s.DocStrangeBaseUrl,
+                    s.DocStrangeEncryptedApiKey,
+                    s.DocStrangeApiKeyLast4))
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+        catch (Exception ex) when (ex is SqlException or DbUpdateException or InvalidOperationException)
+        {
+            _logger.LogWarning(ex, "Impossible de lire les credentials Docstrange plateforme.");
+            return new PlatformDocStrangeCredentials(false, null, defaultBase);
+        }
+
+        var baseUrl = !string.IsNullOrWhiteSpace(row?.BaseUrl) ? row!.BaseUrl!.TrimEnd('/') : defaultBase;
+
+        if (row is null || !row.IsEnabled || string.IsNullOrWhiteSpace(row.EncryptedApiKey))
+            return new PlatformDocStrangeCredentials(row?.IsEnabled ?? false, null, baseUrl);
+
+        try
+        {
+            var plain = _docStrangeProtector.Unprotect(row.EncryptedApiKey);
+            return new PlatformDocStrangeCredentials(true, string.IsNullOrWhiteSpace(plain) ? null : plain, baseUrl);
+        }
+        catch (Exception ex)
+        {
+            // Trousseau différent ou clé corrompue : on dégrade, on ne lève jamais vers l'appelant.
+            _logger.LogWarning(ex, "Échec du déchiffrement de la clé Docstrange plateforme.");
+            return new PlatformDocStrangeCredentials(true, null, baseUrl);
+        }
+    }
+
+    private PlatformDocStrangeSettingsDto MapDocStrangeDto(DocStrangeCacheRow? row)
+    {
+        var defaultBase = ResolveDocStrangeDefaultBaseUrl();
+        var configured = row is not null
+            && !string.IsNullOrWhiteSpace(row.EncryptedApiKey)
+            && !string.IsNullOrWhiteSpace(row.ApiKeyLast4);
+
+        return new PlatformDocStrangeSettingsDto(
+            row?.IsEnabled ?? false,
+            row?.DisplayName,
+            row?.BaseUrl,
+            defaultBase,
+            configured,
+            configured ? row!.ApiKeyLast4 : null);
+    }
+
+    private string ResolveDocStrangeDefaultBaseUrl() =>
+        string.IsNullOrWhiteSpace(_docStrangeDefaults.DefaultBaseUrl)
+            ? string.Empty
+            : _docStrangeDefaults.DefaultBaseUrl.Trim().TrimEnd('/');
+
     private void InvalidateReadCache()
     {
         _cache.Remove(CacheKeyDefaultModel);
@@ -669,6 +814,7 @@ public sealed class PlatformAiSettingsService : IPlatformAiSettingsService
         _cache.Remove(CacheKeyOpenRouter);
         _cache.Remove(CacheKeyCursor);
         _cache.Remove(CacheKeyModal);
+        _cache.Remove(CacheKeyDocStrange);
     }
 
     private sealed record OpenRouterCacheRow(
@@ -685,6 +831,13 @@ public sealed class PlatformAiSettingsService : IPlatformAiSettingsService
         string? ApiKeyLast4);
 
     private sealed record ModalCacheRow(
+        bool IsEnabled,
+        string? DisplayName,
+        string? BaseUrl,
+        string? EncryptedApiKey,
+        string? ApiKeyLast4);
+
+    private sealed record DocStrangeCacheRow(
         bool IsEnabled,
         string? DisplayName,
         string? BaseUrl,

@@ -30,7 +30,8 @@ public sealed record PlatformAiSettingsDto(
     AiModelRecommendationDto? Recommendation,
     PlatformOpenRouterSettingsDto OpenRouter,
     PlatformCursorSettingsDto Cursor,
-    PlatformModalSettingsDto Modal);
+    PlatformModalSettingsDto Modal,
+    PlatformDocStrangeSettingsDto DocStrange);
 
 /// <summary>Masked OpenRouter credentials for the platform back-office.</summary>
 public sealed record PlatformOpenRouterSettingsDto(
@@ -69,6 +70,9 @@ public sealed class UpdatePlatformAiSettingsRequest
 
     /// <summary>When set, updates shared Modal (Kimi) credentials. Empty ApiKey keeps the existing secret.</summary>
     public UpdatePlatformModalRequest? Modal { get; init; }
+
+    /// <summary>When set, updates shared Docstrange credentials. Empty ApiKey keeps the existing secret.</summary>
+    public UpdatePlatformDocStrangeRequest? DocStrange { get; init; }
 }
 
 /// <summary>OpenRouter credential update payload (nested under UpdatePlatformAiSettingsRequest).</summary>
@@ -130,6 +134,35 @@ public sealed class UpdatePlatformModalRequest
 
 /// <summary>Runtime Modal credentials. ApiKey is null when disabled or missing/invalid.</summary>
 public sealed record PlatformModalCredentials(
+    bool IsEnabled,
+    string? ApiKey,
+    string BaseUrl);
+
+/// <summary>
+/// Masked Docstrange (Nanonets) credentials for the platform back-office.
+/// Docstrange is a DOCUMENT EXTRACTION service, not a conversational LLM: it is deliberately
+/// absent from LlmProviderKind and ModelRef, and is never selectable as a model.
+/// </summary>
+public sealed record PlatformDocStrangeSettingsDto(
+    bool IsEnabled,
+    string? DisplayName,
+    string? BaseUrl,
+    string DefaultBaseUrl,
+    bool IsApiKeyConfigured,
+    string? ApiKeyLast4);
+
+/// <summary>Docstrange credential update payload.</summary>
+public sealed class UpdatePlatformDocStrangeRequest
+{
+    public bool IsEnabled { get; init; }
+    public string? DisplayName { get; init; }
+    public string? BaseUrl { get; init; }
+    /// <summary>Plaintext API key. Null/empty = keep existing encrypted key.</summary>
+    public string? ApiKey { get; init; }
+}
+
+/// <summary>Runtime Docstrange credentials. ApiKey is null when disabled or missing/invalid.</summary>
+public sealed record PlatformDocStrangeCredentials(
     bool IsEnabled,
     string? ApiKey,
     string BaseUrl);

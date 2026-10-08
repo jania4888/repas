@@ -220,6 +220,7 @@ Aucun paramètre `model` n'est exposé par l'API.
 | Lecture d'une page (essais 1 et 2) | **Image de cette page uniquement** (200 dpi, côté long ≤ 3000 px) et le gabarit JSON ; **pas de couche texte** (`VisionSendTextLayer=false`) | Chaque page, droit `ai:chat`, moteur local |
 | Repli texte d'une page (dépannage seul) | Texte de **cette page** (couche texte du PDF ou OCR), RIB/IBAN masqués | Éteint en production ; `VisionTextFallbackEnabled` |
 | Classification des libellés | **Cœur normalisé du libellé** (sans numéros) + sens (D/C), et la liste fermée des comptes actifs autorisés | Bouton « Classer par l'IA », droit `ai:chat` |
+| Lecture d'une page par Docstrange | **Image de cette page uniquement**, envoyée à Nanonets (**hors du serveur**) | `DocStrangeEnabled` **ET** une clé configurée au back-office ; éteint par défaut |
 
 Si la plateforme désigne une IA **externe** pour l'import, aucune page de relevé ne lui est envoyée tant que
 `AiComplementAllowExternal` est `false` (valeur de production) : l'import annonce l'IA indisponible
@@ -254,6 +255,35 @@ Une seule lecture IA de relevé à la fois par dossier (HTTP 409 sinon) ; une se
 budget maximal (tâche perdue) ne bloque plus le dossier. Limite de débit `ai` sur la création de session, la relance
 et la classification. Un relevé de 20 pages représente environ une heure de lecture sur processeur ; pendant ce temps,
 le chat attend derrière l'unique créneau de génération.
+
+### Service d'extraction externe Docstrange (`BankStatementImport:DocStrangeEnabled`)
+
+Docstrange (Nanonets) peut remplacer la lecture locale. **Éteint par défaut**, et l'activer exige
+**deux** choses : le drapeau serveur ci-dessus *et* une clé saisie au back-office plateforme
+(Configuration IA › Docstrange). L'un sans l'autre ne change rien.
+
+Interrupteur **distinct** de `AiComplementAllowExternal`, délibérément : celui-ci gouverne les
+fournisseurs LLM (OpenRouter, Modal, Cursor) via `LlmProviderKind`, alors que Docstrange est un
+service d'OCR qui ne passe pas par cette énumération. Les deux se cumulent, aucun n'ouvre la porte
+de l'autre. `capabilities` annonce alors `aiProviderKind = "docstrange"`, et l'écran d'import
+prévient que **les pages quittent le serveur**.
+
+Fonctionnement : le service ne fait que l'OCR. Le texte rendu (tableaux en `<table>` HTML) est
+analysé par `BankStatementTableTextParser` — qui gère déjà HTML et Markdown, ayant été écrit pour
+le mode « Table Recognition » de GLM-OCR — puis lu par `BankStatementAiPageReader` comme toute
+autre page : ancrage des montants, arrondi millime, codes d'anomalie. Un échec rend la main à
+l'échelle vision locale, inchangée.
+
+**Pourquoi du texte et jamais du JSON typé.** Mesuré le 2026-10-08 : un montant demandé en `number`
+revient multiplié par 1000 (« 1138,155 » → `1138155`), la virgule tunisienne étant lue comme un
+séparateur de milliers. L'erreur est silencieuse — le JSON est valide et le nombre plausible. La
+voie texte recopie la valeur telle qu'imprimée. Voir
+[`docs/developer/docstrange-api-contract.md`](../developer/docstrange-api-contract.md).
+
+**Confidentialité.** Nanonets **ne publie aucune politique de rétention** pour son offre cloud.
+Activer ce réglage fait sortir du serveur des RIB, des noms et des montants : c'est une décision du
+responsable du traitement, jamais un défaut. Un avertissement au démarrage le rappelle. Retour
+arrière : éteindre le drapeau suffit, la lecture locale reprend immédiatement.
 
 ### Réglage « Exécution » sur un serveur sans GPU
 

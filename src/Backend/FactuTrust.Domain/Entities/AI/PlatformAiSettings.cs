@@ -62,6 +62,21 @@ public sealed class PlatformAiSettings : Entity
 
     public string? ModalApiKeyLast4 { get; private set; }
 
+    // ---- Docstrange (Nanonets) : extraction documentaire, PAS un LLM conversationnel.
+    // Volontairement absent de LlmProviderKind et de ModelRef : ce service ne se choisit pas
+    // comme un modele, il se branche au-dessus du pipeline. Voir IDocumentExtractionProvider.
+
+    public bool DocStrangeIsEnabled { get; private set; }
+
+    public string? DocStrangeDisplayName { get; private set; }
+
+    /// <summary>Optional Docstrange base URL override (no trailing slash); null = appsettings default.</summary>
+    public string? DocStrangeBaseUrl { get; private set; }
+
+    public string? DocStrangeEncryptedApiKey { get; private set; }
+
+    public string? DocStrangeApiKeyLast4 { get; private set; }
+
     private PlatformAiSettings() { }
 
     public static PlatformAiSettings CreateDefaults() => new() { DefaultModelRef = null };
@@ -152,4 +167,28 @@ public sealed class PlatformAiSettings : Entity
     }
 
     public bool HasModalApiKey => !string.IsNullOrWhiteSpace(ModalEncryptedApiKey);
+
+    public void SetDocStrangeConfig(
+        bool isEnabled,
+        string? displayName,
+        string? baseUrl,
+        string? encryptedApiKey,
+        string? apiKeyLast4)
+    {
+        DocStrangeIsEnabled = isEnabled;
+        DocStrangeDisplayName = string.IsNullOrWhiteSpace(displayName)
+            ? (string.IsNullOrWhiteSpace(DocStrangeDisplayName) ? "Docstrange" : DocStrangeDisplayName)
+            : displayName.Trim();
+        DocStrangeBaseUrl = string.IsNullOrWhiteSpace(baseUrl) ? null : baseUrl.Trim().TrimEnd('/');
+
+        // null = conserver le secret existant (meme semantique que les trois autres fournisseurs) :
+        // c'est ce qui permet de re-enregistrer la page sans resaisir la cle.
+        if (encryptedApiKey is not null)
+        {
+            DocStrangeEncryptedApiKey = string.IsNullOrWhiteSpace(encryptedApiKey) ? null : encryptedApiKey;
+            DocStrangeApiKeyLast4 = string.IsNullOrWhiteSpace(apiKeyLast4) ? null : apiKeyLast4.Trim();
+        }
+    }
+
+    public bool HasDocStrangeApiKey => !string.IsNullOrWhiteSpace(DocStrangeEncryptedApiKey);
 }

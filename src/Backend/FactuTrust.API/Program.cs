@@ -840,6 +840,11 @@ app.MapControllers();
         featureLogger.LogWarning(
             "Accounting:BankStatementImport:AiComplementAllowExternal=true : des pages de relevés pourraient partir vers une IA externe. Décision du responsable du traitement requise ; false attendu en production.");
     }
+    if (bsImport.DocStrangeEnabled)
+    {
+        featureLogger.LogWarning(
+            "Accounting:BankStatementImport:DocStrangeEnabled=true : les pages de relevés sont envoyées à Docstrange (Nanonets), hors du serveur. Le fournisseur ne publie aucune politique de rétention pour son offre cloud. Décision du responsable du traitement requise ; false attendu en production.");
+    }
 }
 
 // Note : l'enregistrement des jobs récurrents Hangfire (anciennement ici, en inline) est

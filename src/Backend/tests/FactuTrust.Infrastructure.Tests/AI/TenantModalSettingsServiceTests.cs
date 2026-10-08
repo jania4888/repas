@@ -295,6 +295,7 @@ public sealed class TenantModalSettingsServiceTests
             protection,
             openRouter,
             modal,
+            Options.Create(new DocStrangeSettings()),
             NullLogger<PlatformAiSettingsService>.Instance);
         var tenantService = new TenantModalSettingsService(
             db,

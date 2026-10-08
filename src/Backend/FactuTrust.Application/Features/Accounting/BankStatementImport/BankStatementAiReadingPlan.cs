@@ -29,6 +29,9 @@ public static class BankStatementAiReadingModes
 /// <summary>Moteur qui a fourni une page (valeurs de <see cref="BankStatementPageReading.Engine"/>).</summary>
 public static class BankStatementPageReadingEngines
 {
+    /// <summary>Service d'extraction documentaire externe (Docstrange) : OCR seul, tableau analysé côté serveur.</summary>
+    public const string DocStrange = "docstrange";
+
     /// <summary>Étage 1 : GLM-OCR, gabarit JSON natif.</summary>
     public const string GlmOcr = "glm-ocr";
 
