@@ -186,6 +186,21 @@ Un compte absent du plan du dossier n'est **jamais créé** ; on remonte au pare
 
 ## Garanties
 
+- **Ce qui entre dans le tableau est une opération.** Une lecture par IA recopie le tableau tel
+  qu'il est imprimé : l'en-tête des colonnes et la ligne de solde initial y figuraient au même titre
+  que les opérations, recevaient une date de repli et gonflaient les totaux. Depuis le 2026-10-09,
+  une ligne est écartée quand elle **n'a pas de date à elle** *et* qu'elle n'a aucun montant, ou que
+  son libellé annonce un solde ou un total. « Avoir une date à soi » est le discriminant : un
+  virement « SOLDE DE TOUT COMPTE » daté reste une opération, un « SOLDE AU » sans date n'en est pas
+  une. Chaque ligne écartée est nommée dans un signalement `statement.ai_summary_line_dropped`
+  (information) : rien ne disparaît sans trace. Une ligne sans date mais au libellé ordinaire et au
+  montant lisible est, elle, **conservée et signalée à vérifier** — perdre une opération en silence
+  coûterait plus cher qu'une ligne à relire.
+- **Année déduite, jamais inventée.** Certains relevés impriment l'opération au jour et au mois
+  seulement (BH : « 05-06 »). L'année retenue est celle qui place la date dans la période du relevé,
+  élargie de 45 jours, au plus près de la date valeur — l'algorithme de la lecture directe, partagé
+  via `BankStatementDayMonthDate` pour que les deux chemins datent un même relevé à l'identique. Si
+  aucune année ne convient, la date reste non lue et la ligne est signalée. Jamais la date du jour.
 - **Montants et dates venant du serveur** : à la génération, le client n'envoie que l'identifiant de ligne,
   le compte, le tiers, la TVA détectée et « mémoriser ». Montant, date et sens sont relus en base.
 - **Écart de solde reconnu (D4)** : quand toutes les lignes viennent de l'IA et que `AiBalanceMismatchAsWarning`
@@ -284,10 +299,11 @@ en met une à trois minutes :
 Un relevé de 21 pages était refusé (« maximum 20 ») et annoncé à « environ 63 min » : les deux
 venaient d'un calibrage fait pour le modèle local.
 
-Fonctionnement : le service ne fait que l'OCR. Le texte rendu (tableaux en `<table>` HTML) est
-analysé par `BankStatementTableTextParser` — qui gère déjà HTML et Markdown, ayant été écrit pour
-le mode « Table Recognition » de GLM-OCR — puis lu par `BankStatementAiPageReader` comme toute
-autre page : ancrage des montants, arrondi millime, codes d'anomalie.
+Fonctionnement : le service ne fait que l'extraction. Depuis le 2026-10-09 on lui demande du **JSON
+structuré** sous `LlmOutputSchemas.BankStatementPageVerbatim` — le même schéma que l'étage vision
+local, donc le même chemin derrière : `BankStatementVisionPageNormalizer` (montants tunisiens,
+dates jour-d'abord, RIB avec contrôle de clé) puis `BankStatementAiPageReader` comme toute autre
+page. Aucun code d'analyse propre à ce service.
 
 **Il lit seul.** L'échelle vision locale n'est pas appelée, le modèle vision n'est ni résolu ni
 préchauffé, et le garde de rendu ne s'applique pas (il borne une rastérisation qui n'a pas lieu).
@@ -297,11 +313,19 @@ protège d'un modèle local qui s'effondre, pas d'un service HTTP dont les pages
 L'écran de relecture dérive ses textes de `aiProviderKind` : plus de « par l'IA », plus de « une à
 trois minutes par page », plus de « l'IA locale » dans le libellé de méthode.
 
-**Pourquoi du texte et jamais du JSON typé.** Mesuré le 2026-10-08 : un montant demandé en `number`
+**Un schéma à chaînes, jamais des nombres.** Mesuré le 2026-10-08 : un montant demandé en `number`
 revient multiplié par 1000 (« 1138,155 » → `1138155`), la virgule tunisienne étant lue comme un
-séparateur de milliers. L'erreur est silencieuse — le JSON est valide et le nombre plausible. La
-voie texte recopie la valeur telle qu'imprimée. Voir
-[`docs/developer/docstrange-api-contract.md`](../developer/docstrange-api-contract.md).
+séparateur de milliers. L'erreur est silencieuse — le JSON est valide et le nombre plausible. Tout
+champ du schéma est donc une **chaîne** recopiée telle qu'imprimée, et la conversion reste serveur ;
+un test de forme l'épingle.
+
+**Pourquoi plus de Markdown.** Le tableau textuel obligeait `BankStatementTableTextParser` à deviner
+les colonnes. Sur un relevé BH réel il prenait le numéro de pièce du libellé pour un montant
+(« VRST. 5055968 » lu 5 055 968,000 au débit, au lieu d'un crédit de 2 500,000) et datait les
+opérations par la colonne valeur. Le schéma nomme les champs : la devinette disparaît, et les
+soldes vont dans `openingBalance` / `closingBalance` au lieu de grossir le tableau. Sondé le
+2026-10-09 sur ce relevé : 18 opérations, débits 28 708,342, crédits 32 100,000 — il boucle au
+millime. Voir [`docs/developer/docstrange-api-contract.md`](../developer/docstrange-api-contract.md).
 
 **Portée.** La carte gouverne les **deux** flux. Pour les **pièces comptables et factures**, elle
 contourne aussi le parseur natif InstaFact, et un échec fait échouer l'import au lieu d'être

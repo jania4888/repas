@@ -1,4 +1,5 @@
 using FactuTrust.Application.Features.AI;
+using FactuTrust.Application.Features.AI.Json;
 using FactuTrust.Application.Features.Accounting.BankStatementImport;
 using FactuTrust.Infrastructure.Services.BankStatementImport;
 using UglyToad.PdfPig;
@@ -12,6 +13,41 @@ namespace FactuTrust.Infrastructure.Tests.Services.BankStatementImport;
 /// </summary>
 public sealed class BankStatementAiPageReaderTests
 {
+    /// <summary>
+    /// Garde de conception, la plus importante de ce fichier.
+    ///
+    /// <para>Ce schema est celui qui part au service d'extraction documentaire externe. Mesure le
+    /// 2026-10-08 : un montant demande en <c>number</c> revient multiplie par 1000 (« 1138,155 »
+    /// -> <c>1138155</c>), la virgule tunisienne etant lue comme un separateur de milliers. Le
+    /// JSON est valide, le nombre est plausible, rien ne signale l'erreur -- sur une comptabilite
+    /// en dinars et millimes, elle est indetectable a l'oeil.</para>
+    ///
+    /// <para>Retyper un seul de ces champs en <c>number</c> rouvrirait la faille en silence.</para>
+    /// </summary>
+    [Fact]
+    public void The_statement_verbatim_schema_types_every_amount_and_date_as_a_string()
+    {
+        var props = LlmOutputSchemas.BankStatementPageVerbatim.GetProperty("properties");
+
+        static void AssertString(System.Text.Json.JsonElement owner, string name)
+        {
+            var types = owner.GetProperty(name).GetProperty("type").EnumerateArray().Select(x => x.GetString()).ToArray();
+            Assert.Contains("string", types);
+            Assert.DoesNotContain("number", types);
+            Assert.DoesNotContain("integer", types);
+        }
+
+        foreach (var name in new[] { "openingBalance", "closingBalance" })
+            AssertString(props, name);
+
+        var line = props.GetProperty("lines").GetProperty("items").GetProperty("properties");
+        foreach (var name in new[] { "date", "valueDate", "label", "debit", "credit" })
+            AssertString(line, name);
+
+        // Surface de reponse bornee par le schema lui-meme.
+        Assert.Equal(120, props.GetProperty("lines").GetProperty("maxItems").GetInt32());
+    }
+
     [Fact]
     public void Valid_page_is_read_with_sides_and_ai_source()
     {
@@ -230,6 +266,148 @@ public sealed class BankStatementAiPageReaderTests
         Assert.Equal(2, page.Lines.Count);
         Assert.Equal(new DateOnly(2026, 1, 9), page.Lines[1].TransactionDate);
         Assert.Contains(page.Issues, i => i.Code == StatementIssueCodes.AiLineNeedsReview && i.LineIndex == 2);
+    }
+
+    // ---- Ce qui entre dans le tableau est une OPERATION, pas une ligne du document. ----
+    //
+    // Une lecture par IA recopie le tableau tel qu'il est imprime : l'en-tete des colonnes et la
+    // ligne de solde initial y figurent au meme titre que les operations. Sans filtre, elles
+    // recevaient une date de repli et entraient dans le releve -- le solde initial gonflait les
+    // credits (releve BH : « Total des credits lus 20 584,536 != total imprime 32 100,000 ») et
+    // l'en-tete, a montant nul, bloquait l'enregistrement jusqu'a exclusion manuelle.
+    //
+    // Le discriminant est « avoir une date a soi », celui qu'emploie deja
+    // BankStatementTableTextParser. Il n'ecarte JAMAIS une ligne qui porte sa propre date.
+
+    [Fact]
+    public void A_column_header_copied_as_a_row_is_not_an_operation()
+    {
+        const string raw = """{"lines":[{"date":null,"label":"TND / LIBELLE / Credit","debit":null,"credit":null}]}""";
+
+        var page = BankStatementAiPageReader.Read(raw, 1, ocrText: null,
+            BankStatementAiReadOptions.AiOnlyText(new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 30)));
+
+        Assert.Empty(page.Lines);
+        Assert.Contains(page.Issues, i => i.Code == StatementIssueCodes.AiSummaryLineDropped
+            && i.Severity == StatementIssueSeverity.Info);
+        // Jamais bloquant : ce n'est pas une anomalie du releve, c'est une ligne qui n'avait rien a y faire.
+        Assert.DoesNotContain(page.Issues, i => i.Severity == StatementIssueSeverity.Blocking);
+    }
+
+    [Fact]
+    public void An_undated_opening_balance_row_is_not_an_operation()
+    {
+        // Le cas BH : « SOLDE AU 31-05-26 » recopie dans le tableau, credit 965,323. Importe, il
+        // gonfle les credits de tout le solde initial.
+        const string raw = """{"lines":[{"date":null,"label":"SOLDE AU 31-05-26","debit":null,"credit":965.323}]}""";
+
+        var page = BankStatementAiPageReader.Read(raw, 1, ocrText: null,
+            BankStatementAiReadOptions.AiOnlyText(new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 30)));
+
+        Assert.Empty(page.Lines);
+        Assert.Contains(page.Issues, i => i.Code == StatementIssueCodes.AiSummaryLineDropped);
+    }
+
+    [Fact]
+    public void A_dated_transfer_whose_label_mentions_a_balance_stays_an_operation()
+    {
+        // La contrepartie indispensable du test precedent : le libelle seul n'ecarte jamais rien.
+        const string raw = """{"lines":[{"date":"2026-06-12","label":"VIREMENT SOLDE DE TOUT COMPTE","debit":1200.000,"credit":null}]}""";
+
+        var page = BankStatementAiPageReader.Read(raw, 1, ocrText: null,
+            BankStatementAiReadOptions.AiOnlyText(new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 30)));
+
+        var line = Assert.Single(page.Lines);
+        Assert.Equal(1200.000m, line.Amount);
+        Assert.DoesNotContain(page.Issues, i => i.Code == StatementIssueCodes.AiSummaryLineDropped);
+    }
+
+    [Fact]
+    public void An_undated_ordinary_line_with_an_amount_is_kept_and_flagged()
+    {
+        // Decision assumee : une ligne qui ressemble a une operation mais a qui il manque la date
+        // reste affichee et signalee. La perdre en silence couterait une operation reelle.
+        const string raw = """{"lines":[{"date":null,"label":"VIREMENT RECU SOCIETE ALPHA","debit":null,"credit":2149.079}]}""";
+
+        var page = BankStatementAiPageReader.Read(raw, 1, ocrText: null,
+            BankStatementAiReadOptions.AiOnlyText(new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 30)));
+
+        var line = Assert.Single(page.Lines);
+        Assert.Equal(2149.079m, line.Amount);
+        Assert.Contains(page.Issues, i => i.Code == StatementIssueCodes.AiLineNeedsReview);
+        Assert.DoesNotContain(page.Issues, i => i.Code == StatementIssueCodes.AiSummaryLineDropped);
+    }
+
+    [Fact]
+    public void Dropping_a_non_operation_does_not_disturb_the_lines_around_it()
+    {
+        const string raw = """{"lines":[{"date":null,"label":"SOLDE AU 31-05-26","debit":null,"credit":965.323},{"date":"2026-06-05","label":"VIREMENT A","debit":56.090,"credit":null},{"date":"2026-06-09","label":"VRST.","debit":null,"credit":2500.000}]}""";
+
+        var page = BankStatementAiPageReader.Read(raw, 1, ocrText: null,
+            BankStatementAiReadOptions.AiOnlyText(new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 30)));
+
+        Assert.Equal(2, page.Lines.Count);
+        Assert.Equal(56.090m, page.Lines[0].Amount);
+        Assert.Equal(2500.000m, page.Lines[1].Amount);
+        Assert.False(page.Lines[1].IsDebit);
+    }
+
+    // ---- Dates imprimees sans annee (BH « 05-06 »). ----
+
+    [Fact]
+    public void A_day_month_date_takes_the_year_of_the_statement_period()
+    {
+        // Sans cette completion, « 05-06 » etait juge illisible et la ligne heritait de la date de
+        // la precedente -- toutes les operations du releve BH etaient datees du mauvais jour.
+        const string raw = """{"lines":[{"date":"05-06","valueDate":"2026-06-04","label":"TBIA","debit":56.090,"credit":null}]}""";
+
+        var page = BankStatementAiPageReader.Read(raw, 1, ocrText: null,
+            BankStatementAiReadOptions.AiOnlyText(new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 30)));
+
+        var line = Assert.Single(page.Lines);
+        Assert.Equal(new DateOnly(2026, 6, 5), line.TransactionDate);
+        Assert.Equal(new DateOnly(2026, 6, 4), line.ValueDate);
+        // Aucune mention « date illisible » : la date a bien ete lue, pas rattrapee.
+        Assert.DoesNotContain(page.Issues, i => i.Code == StatementIssueCodes.AiLineNeedsReview);
+    }
+
+    [Fact]
+    public void The_operation_date_is_the_printed_one_not_the_value_date()
+    {
+        // Le defaut constate sur BH : TABKA etait datee du 15/06 (sa date valeur) au lieu du 12/06.
+        const string raw = """{"lines":[{"date":"12-06","valueDate":"2026-06-15","label":"TABKA WAFA B MEHREZ","debit":null,"credit":10000.000}]}""";
+
+        var page = BankStatementAiPageReader.Read(raw, 1, ocrText: null,
+            BankStatementAiReadOptions.AiOnlyText(new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 30)));
+
+        var line = Assert.Single(page.Lines);
+        Assert.Equal(new DateOnly(2026, 6, 12), line.TransactionDate);
+        Assert.Equal(new DateOnly(2026, 6, 15), line.ValueDate);
+    }
+
+    [Fact]
+    public void A_day_month_value_date_borrows_the_year_of_its_operation()
+    {
+        const string raw = """{"lines":[{"date":"12-06","valueDate":"15-06","label":"X","debit":null,"credit":10.000}]}""";
+
+        var page = BankStatementAiPageReader.Read(raw, 1, ocrText: null,
+            BankStatementAiReadOptions.AiOnlyText(new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 30)));
+
+        var line = Assert.Single(page.Lines);
+        Assert.Equal(new DateOnly(2026, 6, 12), line.TransactionDate);
+        Assert.Equal(new DateOnly(2026, 6, 15), line.ValueDate);
+    }
+
+    [Fact]
+    public void Legacy_reading_does_not_complete_a_missing_year()
+    {
+        // Le chemin historique (complement) n'a pas de periode fiable : rien n'y est deduit.
+        const string raw = """{"lines":[{"date":"05-06","label":"X","debit":10}]}""";
+
+        var page = BankStatementAiPageReader.Read(raw, 1, ocrText: null, BankStatementAiReadOptions.Legacy(false));
+
+        Assert.Empty(page.Lines);
+        Assert.Contains(page.Issues, i => i.Code == StatementIssueCodes.LineInvalidDate);
     }
 
     [Fact]

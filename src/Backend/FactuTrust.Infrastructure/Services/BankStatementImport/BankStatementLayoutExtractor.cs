@@ -1650,30 +1650,20 @@ public sealed partial class BankStatementLayoutExtractor
     }
 
     private static bool IsValid(int day, int month, int year) =>
-        year is >= 2000 and <= 2100 && month is >= 1 and <= 12 && day >= 1 && day <= DateTime.DaysInMonth(year, month);
+        BankStatementDayMonthDate.IsValid(day, month, year);
 
     /// <summary>
-    /// Date complète d'une opération. Sans année imprimée (BH « 05-06 »), l'année est celle qui
-    /// place la date dans la période (± 45 jours) au plus près de la date valeur ; à défaut, au
-    /// plus près de la fin de période. Jamais la date du jour.
+    /// Date complète d'une opération. Sans année imprimée (BH « 05-06 »), l'année est déduite par
+    /// <see cref="BankStatementDayMonthDate.Resolve"/>, partagé avec la lecture par IA pour que les
+    /// deux chemins datent un même relevé à l'identique. Jamais la date du jour.
     /// </summary>
     private static DateOnly? ResolveDate(DateParts parts, int? referenceYear, DateOnly? periodStart, DateOnly? periodEnd, DateParts? valueDate)
     {
         if (parts.Year is { } year)
             return IsValid(parts.Day, parts.Month, year) ? new DateOnly(year, parts.Month, parts.Day) : null;
-        if (referenceYear is not { } reference)
-            return null;
 
         DateOnly? valueAnchor = valueDate is { Year: { } vy } v && IsValid(v.Day, v.Month, vy) ? new DateOnly(vy, v.Month, v.Day) : null;
-        var target = valueAnchor ?? periodEnd ?? new DateOnly(reference, 12, 31);
-        var candidates = new[] { reference - 1, reference, reference + 1 }
-            .Where(y => IsValid(parts.Day, parts.Month, y))
-            .Select(y => new DateOnly(y, parts.Month, parts.Day))
-            .Where(d => (periodStart is null || d >= periodStart.Value.AddDays(-45)) && (periodEnd is null || d <= periodEnd.Value.AddDays(45)))
-            .ToList();
-        if (candidates.Count == 0)
-            return null;
-        return candidates.MinBy(d => Math.Abs(d.DayNumber - target.DayNumber));
+        return BankStatementDayMonthDate.Resolve(parts.Day, parts.Month, referenceYear, periodStart, periodEnd, valueAnchor);
     }
 
     // ── Utilitaires ─────────────────────────────────────────────────────────────────────────

@@ -28,6 +28,19 @@ public static class BankStatementAiOnlyMerge
         "SOLDE", "REPORT", "TOTAL", "TOTAUX", "A NOUVEAU", "ANCIEN SOLDE", "NOUVEAU SOLDE", "SOLDE PRECEDENT", "A REPORTER"
     };
 
+    /// <summary>
+    /// Le libellé annonce-t-il un solde ou un total plutôt qu'une opération ? Critère de <b>libellé
+    /// seul</b> : il ne suffit jamais à lui-même à écarter une ligne, car un virement « SOLDE DE
+    /// TOUT COMPTE » en porte un. Les appelants le conjuguent à une seconde condition — montant
+    /// égal à un solde de page ici, absence de date propre dans <c>BankStatementAiPageReader</c>.
+    /// </summary>
+    internal static bool IsSummaryLabel(string? label)
+    {
+        var normalized = NormalizeLabel(label);
+        return normalized.Length > 0
+               && SummaryLabelPrefixes.Any(p => normalized.StartsWith(p, StringComparison.Ordinal));
+    }
+
     /// <param name="layout">Relevé issu de la mise en page (métadonnées, plan IA).</param>
     /// <param name="plannedPages">Pages que l'IA devait lire (ordre d'impression).</param>
     /// <param name="readings">Pages effectivement lues (clé = numéro de page), échouées comprises (lecture vide + signalement).</param>
@@ -267,8 +280,7 @@ public static class BankStatementAiOnlyMerge
         IReadOnlyDictionary<int, (decimal? Opening, decimal? Closing)> balances,
         IReadOnlyDictionary<int, (decimal Debit, decimal Credit)> sums)
     {
-        var normalized = NormalizeLabel(line.Label);
-        if (!SummaryLabelPrefixes.Any(p => normalized.StartsWith(p, StringComparison.Ordinal)))
+        if (!IsSummaryLabel(line.Label))
             return false;
 
         var amount = line.Amount;

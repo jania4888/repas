@@ -6,6 +6,7 @@ using FactuTrust.Application.Configuration;
 using FactuTrust.Application.Features.AI;
 using FactuTrust.Application.Features.AI.DTOs;
 using FactuTrust.Application.Features.AI.DocumentExtraction;
+using FactuTrust.Application.Features.AI.Json;
 using FactuTrust.Application.Features.Accounting.BankStatementImport;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
@@ -56,6 +57,9 @@ public sealed class BankStatementDocStrangeExclusiveReadingTests : IDisposable
     /// <summary>Pages demandées au service externe, dans l'ordre (lues depuis le nom de fichier).</summary>
     private readonly List<int> _pagesSentOut = new();
 
+    /// <summary>Schemas reellement transmis : la garde contre un retour aux nombres.</summary>
+    private readonly List<JsonElement> _schemasSentOut = new();
+
     public void Dispose()
     {
         try { if (Directory.Exists(_storage)) Directory.Delete(_storage, recursive: true); }
@@ -105,19 +109,21 @@ public sealed class BankStatementDocStrangeExclusiveReadingTests : IDisposable
         return services.BuildServiceProvider();
     }
 
-    /// <summary>Le service rend un tableau Markdown par page ; <c>null</c> = la page échoue.</summary>
+    /// <summary>Le service rend un JSON verbatim par page ; <c>null</c> = la page échoue.</summary>
     private void ProviderAnswers(Func<int, string?> perPage)
     {
         _provider
-            .Setup(x => x.ExtractTextAsync(It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .Returns<Stream, string, string, CancellationToken>((_, fileName, _, _) =>
+            .Setup(x => x.ExtractStructuredAsync(
+                It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<JsonElement>(), It.IsAny<CancellationToken>()))
+            .Returns<Stream, string, string, JsonElement, CancellationToken>((_, fileName, _, schema, _) =>
             {
                 var page = PageOf(fileName);
                 _pagesSentOut.Add(page);
-                var markdown = perPage(page);
-                return Task.FromResult(markdown is null
+                _schemasSentOut.Add(schema);
+                var json = perPage(page);
+                return Task.FromResult(json is null
                     ? Result.Failure<string>(Error.Validation("DocStrange", "Service d'extraction injoignable."))
-                    : Result.Success(markdown));
+                    : Result.Success(json));
             });
     }
 
@@ -152,17 +158,17 @@ public sealed class BankStatementDocStrangeExclusiveReadingTests : IDisposable
         return new Spec("10", 1_000.000m, ops);
     }
 
-    private const string TwoOperationsTable = """
-        | Date | Libellé | Débit | Crédit |
-        | --- | --- | --- | --- |
-        | 02/01/2026 | VIREMENT REÇU SOCIETE ALPHA |  | 2 149,079 |
-        | 05/01/2026 | RÈG CHÈQUE N° 0001234 | 2 400,000 |  |
+    // Forme réelle de la réponse, relevée contre l'API le 2026-10-09 : montants et dates en
+    // CHAÎNES, recopiés tels qu'imprimés, virgule tunisienne intacte. C'est ce qui rend le ×1000
+    // impossible — demander un « number » ferait lire « 2 400,000 » comme 2 400 000.
+    private const string TwoOperationsJson = """
+        {"rib":null,"openingBalance":null,"closingBalance":null,"lines":[
+          {"date":"02/01/2026","valueDate":"05/01/2026","label":"VIREMENT REÇU SOCIETE ALPHA","debit":null,"credit":"2 149,079"},
+          {"date":"05/01/2026","valueDate":"02/01/2026","label":"RÈG CHÈQUE N° 0001234","debit":"2 400,000","credit":null}]}
         """;
 
-    private static string OneOperationTable(int page) => $"""
-        | Date | Libellé | Débit | Crédit |
-        | --- | --- | --- | --- |
-        | {((page % 27) + 1):D2}/01/2026 | VIREMENT DEMO PAGE {page:D3} |  | 10,000 |
+    private static string OneOperationJson(int page) => $$"""
+        {"lines":[{"date":"{{((page % 27) + 1):D2}}/01/2026","valueDate":null,"label":"VIREMENT DEMO PAGE {{page:D3}}","debit":null,"credit":"10,000"}]}
         """;
 
     private async Task<(Guid SessionId, int PageCount)> SeedAsync(IServiceProvider services, byte[] pdf)
@@ -221,7 +227,7 @@ public sealed class BankStatementDocStrangeExclusiveReadingTests : IDisposable
     {
         var services = Services();
         var (sessionId, _) = await SeedAsync(services, StbLike(OnePageSpec()));
-        ProviderAnswers(_ => TwoOperationsTable);
+        ProviderAnswers(_ => TwoOperationsJson);
 
         await RunAsync(services, sessionId);
 
@@ -232,6 +238,19 @@ public sealed class BankStatementDocStrangeExclusiveReadingTests : IDisposable
         var reading = Assert.Single(dto.Extraction.AiPlan!.PageReadings!);
         Assert.Equal(BankStatementPageReadingEngines.DocStrange, reading.Engine);
         Assert.Null(reading.FailureReason);
+
+        // Les montants transmis en chaînes (« 2 149,079 ») sont convertis côté serveur par la
+        // convention tunisienne, et non par le fournisseur — c'est ce qui écarte le ×1000.
+        Assert.Equal(2_149.079m, dto.Extraction.Lines[0].Amount);
+        Assert.False(dto.Extraction.Lines[0].IsDebit);
+        Assert.Equal(2_400.000m, dto.Extraction.Lines[1].Amount);
+        Assert.True(dto.Extraction.Lines[1].IsDebit);
+
+        // Le schéma réellement transmis ne demande aucun nombre. Le jour où il en demanderait,
+        // les montants reviendraient multipliés par 1000 sans que rien ne le signale.
+        var schema = Assert.Single(_schemasSentOut);
+        Assert.Equal(LlmOutputSchemas.BankStatementPageVerbatim.GetRawText(), schema.GetRawText());
+        Assert.DoesNotContain("\"number\"", schema.GetRawText(), StringComparison.Ordinal);
 
         AssertNoLocalModelTouched();
     }
@@ -260,12 +279,12 @@ public sealed class BankStatementDocStrangeExclusiveReadingTests : IDisposable
     }
 
     [Fact]
-    public async Task An_unreadable_table_is_a_page_failure_not_a_fallback_to_the_local_model()
+    public async Task An_unreadable_answer_is_a_page_failure_not_a_fallback_to_the_local_model()
     {
         var services = Services();
         var (sessionId, _) = await SeedAsync(services, StbLike(OnePageSpec()));
-        // Réponse HTTP valide mais inexploitable : aucun tableau reconnaissable.
-        ProviderAnswers(_ => "Relevé de compte. Aucun tableau ici, seulement de la prose.");
+        // Réponse HTTP valide mais inexploitable : pas le moindre objet JSON.
+        ProviderAnswers(_ => "Relevé de compte. Aucun JSON ici, seulement de la prose.");
 
         await RunAsync(services, sessionId);
 
@@ -283,7 +302,7 @@ public sealed class BankStatementDocStrangeExclusiveReadingTests : IDisposable
         // retomberait sur le modèle texte local, c'est-à-dire sur l'IA que la carte écarte.
         var services = Services(visionReadingEnabled: false);
         var (sessionId, _) = await SeedAsync(services, StbLike(OnePageSpec()));
-        ProviderAnswers(_ => TwoOperationsTable);
+        ProviderAnswers(_ => TwoOperationsJson);
 
         await RunAsync(services, sessionId);
 
@@ -303,7 +322,7 @@ public sealed class BankStatementDocStrangeExclusiveReadingTests : IDisposable
 
         // Les DEUX premières pages échouent : l'ancien coupe-circuit « deux échecs consécutifs »
         // aurait fermé la lecture ici et renvoyé tout le reste au modèle texte local.
-        ProviderAnswers(page => page <= 2 ? null : OneOperationTable(page));
+        ProviderAnswers(page => page <= 2 ? null : OneOperationJson(page));
 
         await RunAsync(services, sessionId);
 
@@ -350,7 +369,8 @@ public sealed class BankStatementDocStrangeExclusiveReadingTests : IDisposable
         // Le service n'a même pas été sollicité pour une page.
         Assert.Empty(_pagesSentOut);
         _provider.Verify(
-            x => x.ExtractTextAsync(It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            x => x.ExtractStructuredAsync(
+                It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<JsonElement>(), It.IsAny<CancellationToken>()),
             Times.Never);
     }
 }

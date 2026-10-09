@@ -202,9 +202,9 @@ public sealed partial class BankStatementAiExtractionJob
 
             // ---- Étage 0 : extraction externe (Docstrange). Placé AVANT le coupe-circuit, car il
             // ne dépend d'aucun modèle local : il doit pouvoir lire même moteur Ollama arrêté.
-            // Le service ne fait que l'OCR ; le tableau rendu est analysé par
-            // BankStatementTableTextParser, puis lu par BankStatementAiPageReader comme toute autre
-            // page — ancrage des montants, arrondi millime, codes d'anomalie. Rien n'est inventé.
+            // Le service ne fait que l'extraction ; son JSON verbatim est normalisé par
+            // BankStatementVisionPageNormalizer puis lu par BankStatementAiPageReader comme toute
+            // autre page — arrondi millime, codes d'anomalie. Rien n'est inventé.
             if (externalAvailable)
             {
                 attempts++;
@@ -636,13 +636,22 @@ public sealed partial class BankStatementAiExtractionJob
     }
 
     /// <summary>
-    /// Étage 0 : le service externe rend le texte de la page (Markdown, tableaux en
-    /// <c>&lt;table&gt;</c> HTML) et <see cref="BankStatementTableTextParser"/> le convertit — il
-    /// gère déjà les deux formes, ayant été écrit pour le mode « Table Recognition » de GLM-OCR.
+    /// Étage 0 : le service externe est interrogé en <b>JSON structuré</b> sous
+    /// <see cref="LlmOutputSchemas.BankStatementPageVerbatim"/> — le même schéma que l'étage vision,
+    /// donc le même chemin de normalisation derrière et aucun code d'analyse propre à ce service.
     ///
-    /// <para>Le texte est demandé, jamais du JSON typé : ces services convertissent les nombres
-    /// eux-mêmes et lisent la virgule tunisienne comme un séparateur de milliers, ce qui multiplie
-    /// les montants par 1000 en silence (mesuré, voir docs/developer/docstrange-api-contract.md).</para>
+    /// <para><b>Un schéma à chaînes, jamais des nombres.</b> Demander un <c>number</c> fait lire la
+    /// virgule tunisienne comme un séparateur de milliers : « 1138,155 » revient <c>1138155</c>,
+    /// multiplié par 1000, sans le moindre signal. Tout champ de ce schéma est donc une chaîne
+    /// recopiée telle qu'imprimée, et la conversion reste serveur. Sondé le 2026-10-09 contre l'API
+    /// réelle : 18 lignes sur 18 rendues en chaînes, virgule intacte, relevé bouclant au millime.</para>
+    ///
+    /// <para><b>Pourquoi plus de Markdown.</b> Le tableau textuel obligeait
+    /// <see cref="BankStatementTableTextParser"/> à deviner les colonnes : sur un relevé BH il prenait
+    /// le numéro de pièce du libellé pour un montant (« VRST. 5055968 » lu 5 055 968,000) et décalait
+    /// la date d'opération sur la colonne valeur. Le schéma nomme les champs : la devinette disparaît,
+    /// et les soldes vont dans <c>openingBalance</c> / <c>closingBalance</c> au lieu de grossir le
+    /// tableau des opérations. Ce parseur reste employé par l'étage 2 (« Table Recognition »).</para>
     /// </summary>
     private static async Task<StageResult> RunExternalExtractionStageAsync(
         IDocumentExtractionProvider provider,
@@ -655,11 +664,12 @@ public sealed partial class BankStatementAiExtractionJob
     {
         var sw = Stopwatch.StartNew();
 
-        Result<string> text;
+        Result<string> answer;
         try
         {
             await using var stream = new MemoryStream(pageBytes, writable: false);
-            text = await provider.ExtractTextAsync(stream, fileName, contentType, cancellationToken);
+            answer = await provider.ExtractStructuredAsync(
+                stream, fileName, contentType, LlmOutputSchemas.BankStatementPageVerbatim, cancellationToken);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -670,26 +680,35 @@ public sealed partial class BankStatementAiExtractionJob
             return FailedStage(null, sw.ElapsedMilliseconds);
         }
 
-        if (text.IsFailure)
-            return FailedStage(text.Error.Description, sw.ElapsedMilliseconds);
+        if (answer.IsFailure)
+            return FailedStage(answer.Error.Description, sw.ElapsedMilliseconds);
 
-        var raw = text.Value ?? string.Empty;
-        var table = BankStatementTableTextParser.Parse(raw, pageNumber);
-        if (table.Page is null)
-            return new StageResult(null, PageFailureReasons.TableNotRecognized, "invalid_json", sw.ElapsedMilliseconds, null, 0, null, raw.Length, null, false, false);
+        var raw = answer.Value ?? string.Empty;
+        var json = InvoiceImportParsing.ExtractFirstJsonObject(raw);
+        if (string.IsNullOrWhiteSpace(json))
+            return new StageResult(null, PageFailureReasons.JsonInvalid, "invalid_json", sw.ElapsedMilliseconds, null, 0, null, raw.Length, null, false, false);
 
-        var grounding = table.PlainText;
-        if (table.IsConfirmedEmpty)
+        LlmBankStatementPage typed;
+        try
         {
-            var empty = BankStatementAiPageReader.Read(table.Page, pageNumber, null, readOptions);
-            return new StageResult(empty, null, "empty", sw.ElapsedMilliseconds, null, 0, null, raw.Length, grounding, false, false);
+            // Même normalisation que l'étage vision : montants tunisiens, dates jour-d'abord, RIB
+            // avec contrôle de clé, décimales imprimées. Rien n'est inventé.
+            typed = BankStatementVisionPageNormalizer.Normalize(json, pageNumber);
+        }
+        catch (JsonException)
+        {
+            return new StageResult(null, PageFailureReasons.JsonInvalid, "invalid_json", sw.ElapsedMilliseconds, null, 0, null, raw.Length, null, false, false);
         }
 
-        var reading = BankStatementAiPageReader.Read(table.Page, pageNumber, grounding, readOptions);
+        // Aucun ancrage des montants ici, et ce n'est pas une perte : le Markdown ancrait la lecture
+        // contre le texte rendu par CE MÊME service, ce qui ne pouvait rien attester. Un ancrage réel
+        // demanderait la couche texte locale de la page.
+        var reading = BankStatementAiPageReader.Read(typed, pageNumber, ocrText: null, readOptions);
+        var truncated = typed.Lines.Count >= VisionMaxLinesPerPage;
         if (reading.Lines.Count == 0)
-            return new StageResult(reading, PageFailureReasons.TableEmpty, "empty", sw.ElapsedMilliseconds, null, 0, null, raw.Length, grounding, false, false);
+            return new StageResult(reading, PageFailureReasons.JsonEmpty, "empty", sw.ElapsedMilliseconds, null, 0, null, raw.Length, null, truncated, false);
 
-        return new StageResult(reading, null, "ok", sw.ElapsedMilliseconds, null, 0, null, raw.Length, grounding, table.Page.Lines.Count >= VisionMaxLinesPerPage, false);
+        return new StageResult(reading, null, "ok", sw.ElapsedMilliseconds, null, 0, null, raw.Length, null, truncated, false);
     }
 
     private static async Task<StageResult> RunVisionTableStageAsync(

@@ -102,14 +102,44 @@ multiplication. Sur une comptabilité en dinars/millimes, c'est indétectable à
 
 ### Conséquence pour l'implémentation
 
-1. **Relevés bancaires** : demander `markdown`. La `<table>` HTML rendue entre directement dans
-   `BankStatementTableTextParser`, qui gère déjà HTML et Markdown (écrit pour le mode
-   « Table Recognition » de GLM-OCR), puis dans `BankStatementAiPageReader` — arrondi millime,
-   ancrage des montants, codes d'anomalie. Aucun code d'analyse nouveau.
-2. **Factures** : ne jamais demander de **nombres** à Docstrange. Le schéma envoyé doit typer tout
-   montant en **chaîne**, pour obtenir une recopie verbatim, et la conversion reste serveur. C'est
-   exactement la raison d'être de `LlmOutputSchemas.BankStatementPageVerbatim`, qui type déjà
-   `debit` / `credit` / soldes en chaînes — précédent à suivre, pas à réinventer.
+La règle vaut pour les **deux** flux : ne jamais demander de **nombres**. Le schéma type tout
+montant et toute date en **chaîne**, la valeur est recopiée telle qu'imprimée, et la conversion
+reste serveur (`LlmJsonOptions.Tolerant` → `TunisianNumberParsing.ParseDecimal`). Schémas :
+`BankStatementPageVerbatim` pour les relevés, `AccountingDocumentVerbatim` et
+`InvoiceImportVerbatim` pour les pièces. Un test de forme épingle chacun des trois.
+
+### Le markdown a été abandonné pour les relevés le 2026-10-09
+
+Le premier jet demandait `markdown` et confiait la `<table>` à `BankStatementTableTextParser`. Sur
+un relevé **BH** réel, ce parseur doit deviner les colonnes à partir d'un rendu textuel, et il se
+trompe :
+
+| Imprimé | Lu en markdown | Lu en JSON schématisé |
+|---|---|---|
+| `VRST. 5055968` — crédit 2 500,000 | **débit 5 055 968,000** (le n° de pièce du libellé) | crédit 2 500,000 |
+| `TBIA…521265 615610200640C` — débit 56,090 | **crédit 615 610 200 640,000** | débit 56,090 |
+| `TABKA` — opération le 12-06, valeur 15-06 | daté du **15/06**, la colonne valeur | 12-06 / 15-06 |
+| `SOLDE AU 31-05-26` | **opération au crédit** de 965,323 | `openingBalance` |
+| en-tête `TND / LIBELLE / Crédit` | **opération** à 0,000 | absente |
+
+Sonde du 2026-10-09 sur ce même relevé, avec `BankStatementPageVerbatim` : **18 lignes sur 18 en
+chaînes**, virgule intacte, et le relevé **boucle au millime** — débits 28 708,342, crédits
+32 100,000, et 965,323 + 32 100,000 − 28 708,342 = 4 356,981, le solde final imprimé.
+
+Deux enseignements qui valaient la sonde :
+
+- **Le schéma oriente les soldes.** Nommer `openingBalance` et `closingBalance` suffit : le service
+  y range les soldes au lieu de les recopier parmi les opérations. Aucune ligne « SOLDE » rendue.
+- **Les dates d'opération arrivent sans année** (`"05-06"`), là où la date valeur est complète
+  (`"2026-06-04"`). L'année est déduite côté serveur par `BankStatementDayMonthDate`, partagé avec
+  la lecture directe pour que les deux chemins datent un même relevé à l'identique.
+
+`BankStatementTableTextParser` reste employé par l'étage 2 du modèle vision local
+(« Table Recognition ») : il n'est ni supprimé ni modifié.
+
+La recette `BankStatementDocStrangeRecetteTests` rejoue cette réponse réelle de bout en bout. Elle
+vit sous `[Trait("Category", "PrivateBankFixtures")]`, et la réponse — un relevé bancaire réel —
+n'est **jamais** commitée.
 
 ---
 

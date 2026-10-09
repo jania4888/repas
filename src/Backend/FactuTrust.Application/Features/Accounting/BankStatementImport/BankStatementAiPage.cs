@@ -208,12 +208,45 @@ public static partial class BankStatementAiPageReader
             var needsReview = new List<string>();
 
             var hasValueDate = TryParseDate(raw.ValueDate, acceptDayFirstDates, out var valueDate);
-            if (!TryParseDate(raw.Date, acceptDayFirstDates, out var date))
+            var hasOwnDate = TryParseDate(
+                raw.Date, acceptDayFirstDates, options, hasValueDate ? valueDate : null, previousDate, out var date);
+
+            // Date valeur imprimée sans année : elle emprunte celle de l'opération, comme le fait
+            // la lecture directe une fois la date d'opération résolue.
+            if (!hasValueDate && hasOwnDate && acceptDayFirstDates
+                && BankStatementDayMonthDate.TryParseDayMonth(raw.ValueDate) is { } vdm
+                && BankStatementDayMonthDate.Resolve(vdm.Day, vdm.Month, date.Year, null, null, date) is { } resolvedValueDate)
+            {
+                valueDate = resolvedValueDate;
+                hasValueDate = true;
+            }
+
+            if (!hasOwnDate)
             {
                 if (!options.KeepUnreadableLines)
                 {
                     issues.Add(new StatementExtractionIssue(StatementIssueCodes.LineInvalidDate, StatementIssueSeverity.Blocking,
                         $"Date d'opération illisible ({where}).", pageNumber));
+                    continue;
+                }
+
+                // ---- Sans date à elle, cette ligne est-elle encore une opération ?
+                //
+                // Les lectures par IA recopient le tableau tel qu'il est imprimé : l'en-tête des
+                // colonnes et la ligne de solde initial y figurent au même titre que les opérations.
+                // Sans ce filtre elles reçoivent une date de repli et entrent dans le relevé — le
+                // solde initial gonfle alors les crédits, et l'en-tête (montant 0) bloque
+                // l'enregistrement jusqu'à exclusion manuelle.
+                //
+                // « Avoir une date à soi » est le discriminant, celui qu'emploie déjà
+                // BankStatementTableTextParser : un virement « SOLDE DE TOUT COMPTE » daté reste une
+                // opération, un « SOLDE AU » sans date n'en est pas une. Une ligne au libellé
+                // ordinaire et au montant lisible, elle, est CONSERVÉE et signalée : mieux vaut une
+                // ligne à vérifier qu'une opération perdue en silence.
+                if (IsNotAnOperation(label, raw))
+                {
+                    issues.Add(new StatementExtractionIssue(StatementIssueCodes.AiSummaryLineDropped, StatementIssueSeverity.Info,
+                        $"Page {pageNumber} : ligne « {Truncate(label.Length == 0 ? raw.Date : label, 40)} » sans date d'opération, non importée.", pageNumber));
                     continue;
                 }
 
@@ -782,6 +815,43 @@ public static partial class BankStatementAiPageReader
         "dd/MM/yyyy", "dd-MM-yyyy", "dd.MM.yyyy",
         "dd/MM/yy", "dd-MM-yy", "dd.MM.yy"
     };
+
+    /// <summary>
+    /// Une ligne sans date propre qui n'est manifestement pas une opération : soit elle ne porte
+    /// aucun montant (en-tête de colonnes, ligne vide, suite d'un libellé), soit son libellé
+    /// annonce un solde ou un total recopié au milieu du tableau.
+    /// </summary>
+    private static bool IsNotAnOperation(string label, LlmBankStatementPageLine raw)
+    {
+        var hasAmount = (raw.Debit is { } d && d != 0m) || (raw.Credit is { } c && c != 0m);
+        return !hasAmount || BankStatementAiOnlyMerge.IsSummaryLabel(label);
+    }
+
+    /// <summary>
+    /// Date d'opération, avec l'année déduite quand elle n'est pas imprimée (BH « 05-06 »).
+    /// La déduction est confiée à <see cref="BankStatementDayMonthDate"/>, partagé avec la lecture
+    /// directe : un même relevé est daté à l'identique quel que soit le chemin qui l'a lu.
+    /// </summary>
+    private static bool TryParseDate(
+        string? value,
+        bool acceptDayFirst,
+        BankStatementAiReadOptions options,
+        DateOnly? valueAnchor,
+        DateOnly? previousDate,
+        out DateOnly date)
+    {
+        if (TryParseDate(value, acceptDayFirst, out date))
+            return true;
+        if (!acceptDayFirst || BankStatementDayMonthDate.TryParseDayMonth(value) is not { } dayMonth)
+            return false;
+
+        var reference = options.PeriodStart?.Year ?? options.PeriodEnd?.Year ?? valueAnchor?.Year ?? previousDate?.Year;
+        if (BankStatementDayMonthDate.Resolve(dayMonth.Day, dayMonth.Month, reference, options.PeriodStart, options.PeriodEnd, valueAnchor) is not { } resolved)
+            return false;
+
+        date = resolved;
+        return true;
+    }
 
     private static bool TryParseDate(string? value, bool acceptDayFirst, out DateOnly date)
     {
