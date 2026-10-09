@@ -102,13 +102,17 @@ public sealed class TenantAuthTokenServicePayrollFirmManagedTests
             })
             .Build();
 
+        var accountingFirmsOptions =
+            Microsoft.Extensions.Options.Options.Create(new AccountingFirmsOptions { Enabled = true });
+
         return new TenantAuthTokenService(
             userManager.Object,
             permissions.Object,
             firmAssignmentService,
+            new FirmDelegatedAccessProjector(db, accountingFirmsOptions),
             db,
             config,
-            Microsoft.Extensions.Options.Options.Create(new AccountingFirmsOptions { Enabled = true }),
+            accountingFirmsOptions,
             Microsoft.Extensions.Options.Options.Create(new PayrollOptions { FirmExclusiveOperations = firmExclusiveOperations }),
             Microsoft.Extensions.Options.Options.Create(new AccountingSettings { MultiCurrencyEnabled = true }),
             Microsoft.Extensions.Options.Options.Create(new FirmGovernanceOptions { Enabled = true }),

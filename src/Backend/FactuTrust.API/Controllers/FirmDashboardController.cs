@@ -10,6 +10,10 @@ namespace FactuTrust.API.Controllers;
 [ApiController]
 [Route("api/firm/dashboard")]
 [Authorize(Roles = $"{nameof(UserRole.FirmManager)},{nameof(UserRole.FirmAccountant)}")]
+// Ceinture : le tableau de bord cabinet lit le tenant du CABINET (claim tenant_id). Sous un jeton
+// positionne sur un dossier client, il servait les donnees de tout le cabinet. Le middleware ferme
+// deja la zone ; cette politique le dit aussi au niveau du point d'entree.
+[Authorize(Policy = Authorization.PermissionPolicies.FirmNativeContext)]
 [Filters.RequireAccountingFirmsFeature]
 public sealed class FirmDashboardController : ControllerBase
 {

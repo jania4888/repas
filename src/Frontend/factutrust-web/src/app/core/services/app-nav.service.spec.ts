@@ -879,3 +879,43 @@ describe('AppNavService — Assistance société', () => {
     expect(nav.navItems().map(i => i.label)).not.toContain('Assistance');
   });
 });
+
+describe('AppNavService — lien du logo', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        {
+          provide: FirmAssignmentService,
+          useValue: {
+            getActiveClients: () => of({ success: true, data: [] }),
+            getIncomingInvitations: () => of({ success: true, data: [] })
+          }
+        },
+        {
+          provide: AccountingFeatureFlagsService,
+          useValue: { flags: () => ({ fixedAssetsEnabled: true }) }
+        },
+        { provide: StudioNavService, useValue: { items: () => [] } },
+        { provide: StudioAiCapabilitiesService, useValue: makeCapsStub() },
+        { provide: StudioApprovalsBadgeService, useValue: makeBadgeStub() }
+      ]
+    });
+  });
+
+  it('pointe vers le dossier en mode délégué, vers le cabinet en natif, vers /dashboard ailleurs', () => {
+    const auth = TestBed.inject(AuthService);
+    const nav = TestBed.inject(AppNavService);
+
+    setUser(auth, companyUser);
+    expect(nav.dashboardHomeLink()).toBe('/dashboard');
+
+    setUser(auth, firmUser);
+    expect(nav.dashboardHomeLink()).toBe('/firm/dashboard');
+
+    setUser(auth, delegatedUser);
+    expect(nav.dashboardHomeLink()).toBe('/accounting/chart');
+  });
+});

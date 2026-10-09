@@ -28,7 +28,12 @@ describe('AiChatSessionService', () => {
 
   function setup(initialUser: User | null = mockUser): ReturnType<typeof signal<User | null>> {
     const userSig = signal<User | null>(initialUser);
-    const authMock = { user: computed(() => userSig()) };
+    const authMock = {
+      user: computed(() => userSig()),
+      // Le service derive la surface HTTP du scope ET du mode : un onglet cabinet laisse ouvert
+      // ne doit pas interroger l'assistant du cabinet depuis un dossier client.
+      isDelegatedMode: () => userSig()?.accessMode === 'delegated'
+    };
 
     chatApi = jasmine.createSpyObj<AiChatService>('AiChatService', [
       'getConfiguredStatus',
@@ -182,6 +187,18 @@ describe('AiChatSessionService', () => {
     service.setAgentScope(AssistantAgentScope.FirmMission);
 
     expect(chatApi.getConversations).toHaveBeenCalledWith(AssistantAgentScope.FirmMission, true);
+  });
+
+  it('le scope Chef de mission reste sur la surface tenant en mode dossier delegue', () => {
+    TestBed.resetTestingModule();
+    const userSig = setup({ ...mockUser, accessMode: 'delegated', contextTenantId: 'tenant-9' });
+    service.initialize();
+    chatApi.getConversations.calls.reset();
+
+    service.setAgentScope(AssistantAgentScope.FirmMission);
+
+    expect(chatApi.getConversations).toHaveBeenCalledWith(AssistantAgentScope.FirmMission, false);
+    expect(userSig()?.accessMode).toBe('delegated');
   });
 
   it('setAgentScope est un no-op quand le scope ne change pas', () => {

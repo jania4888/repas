@@ -5,6 +5,8 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { FirmAssignmentService, FirmClientDossier } from '@core/services/firm-assignment.service';
 import { FirmContextService } from '@core/services/firm-context.service';
+import { FirmAreaCoherenceService } from '@core/services/firm-area-coherence.service';
+import { FIRM_DELEGATED_HOME_ROUTE } from '@core/config/firm-area-access';
 import { AuthService } from '@core/services/auth.service';
 import { ToastService } from '@core/services/toast.service';
 import { ConfirmationService } from '@core/services/confirmation.service';
@@ -166,6 +168,7 @@ export class FirmClientsComponent implements OnInit {
   readonly auth = inject(AuthService);
   private readonly assignments = inject(FirmAssignmentService);
   private readonly firmContext = inject(FirmContextService);
+  private readonly firmCoherence = inject(FirmAreaCoherenceService);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
   private readonly confirmation = inject(ConfirmationService);
@@ -218,7 +221,11 @@ export class FirmClientsComponent implements OnInit {
   async openDossier(row: FirmClientDossier): Promise<void> {
     try {
       await this.firmContext.switchClient(row.companyTenantId);
-      await this.router.navigate(['/accounting/chart']);
+      const navigated = await this.router.navigate([FIRM_DELEGATED_HOME_ROUTE]);
+      if (!navigated) {
+        // Navigation annulée ou redirigée : recaler l'URL sur le mode du jeton.
+        this.firmCoherence.enforceNow();
+      }
     } catch {
       this.toast.add({ severity: 'error', summary: 'Erreur', detail: "Impossible d'ouvrir le dossier." });
     }

@@ -173,4 +173,74 @@ public sealed class DelegatedAccessMiddlewareTests
         Assert.True(nextCalled);
         Assert.Equal(StatusCodes.Status200OK, statusCode);
     }
+
+    /// <summary>
+    /// L'espace cabinet doit rester fermé tant que la session est sur un dossier client, LECTURES
+    /// COMPRISES : c'est par un GET que le tableau de bord cabinet s'affichait dans l'habillage du
+    /// dossier.
+    /// </summary>
+    [Theory]
+    [InlineData("GET", "/api/firm/dashboard")]
+    [InlineData("GET", "/api/firm/governance/time-sheets")]
+    [InlineData("GET", "/api/firm/fiscal-schedule")]
+    [InlineData("GET", "/api/firm/payroll/provisioning-status")]
+    [InlineData("GET", "/api/firm/users/assignable")]
+    [InlineData("GET", "/api/firm/revision/dossiers")]
+    [InlineData("GET", "/api/firm/managed-clients")]
+    [InlineData("POST", "/api/firm/ai/chat")]
+    [InlineData("GET", "/api/firm-assignments/firm/incoming")]
+    [InlineData("POST", "/api/firm-assignments/firm/00000000-0000-0000-0000-000000000001/accept")]
+    [InlineData("GET", "/api/accounting-firms/me/profile")]
+    public async Task Delegated_mode_blocks_the_whole_firm_area(string method, string path)
+    {
+        var (statusCode, nextCalled) = await InvokeAsync(method, path, "delegated");
+
+        Assert.False(nextCalled);
+        Assert.Equal(StatusCodes.Status403Forbidden, statusCode);
+    }
+
+    /// <summary>
+    /// Exception de lecture assumée : des écrans DU DOSSIER (duplication d'une configuration de
+    /// déclaration, sélecteur des échanges) listent le portefeuille du cabinet.
+    /// </summary>
+    [Fact]
+    public async Task Delegated_mode_still_lists_the_dossier_portfolio()
+    {
+        var (statusCode, nextCalled) = await InvokeAsync("GET", "/api/firm-assignments/firm/clients", "delegated");
+
+        Assert.True(nextCalled);
+        Assert.Equal(StatusCodes.Status200OK, statusCode);
+    }
+
+    [Theory]
+    [InlineData("GET", "/api/firm/dashboard")]
+    [InlineData("GET", "/api/firm-assignments/firm/clients")]
+    [InlineData("GET", "/api/accounting-firms/me/profile")]
+    public async Task Native_mode_keeps_the_firm_area_open(string method, string path)
+    {
+        var (statusCode, nextCalled) = await InvokeAsync(method, path, "native");
+
+        Assert.True(nextCalled);
+        Assert.Equal(StatusCodes.Status200OK, statusCode);
+
+        var (noClaimStatus, noClaimNext) = await InvokeAsync(method, path, accessMode: null);
+
+        Assert.True(noClaimNext);
+        Assert.Equal(StatusCodes.Status200OK, noClaimStatus);
+    }
+
+    /// <summary>
+    /// `/api/firm/payroll` (paie interne du cabinet) n'est pas `/api/payroll` (paie du dossier
+    /// client, qui reste une responsabilité déléguée).
+    /// </summary>
+    [Theory]
+    [InlineData("POST", "/api/payroll/cycles")]
+    [InlineData("GET", "/api/payroll/employees")]
+    public async Task Delegated_mode_still_allows_client_payroll(string method, string path)
+    {
+        var (statusCode, nextCalled) = await InvokeAsync(method, path, "delegated");
+
+        Assert.True(nextCalled);
+        Assert.Equal(StatusCodes.Status200OK, statusCode);
+    }
 }

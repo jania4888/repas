@@ -41,6 +41,44 @@ public sealed class DelegatedAccessMiddleware
         "/api/me/onboarding"
     };
 
+    /// <summary>
+    /// Exception de LECTURE à la fermeture de l'espace cabinet : la liste des dossiers du portefeuille
+    /// est consommée par des écrans DU DOSSIER (duplication d'une configuration de déclaration depuis
+    /// un autre dossier, sélecteur de société des échanges). La fermer casserait ces fonctions sans
+    /// rapport avec le symptôme corrigé ; la portée du collaborateur est déjà appliquée côté service.
+    /// Les invitations (`firm/incoming`) et toutes les écritures restent fermées.
+    /// </summary>
+    private static readonly HashSet<string> DelegatedReadableFirmPrefixes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "/api/firm-assignments/firm/clients"
+    };
+
+    /// <summary>
+    /// Espace CABINET : interdit tant que la session est positionnée sur un dossier client, lectures
+    /// comprises. Sans cela, <c>GET /api/firm/dashboard</c> répondait 200 avec les données du cabinet
+    /// (tous les dossiers, échéances, heures facturables) sous un jeton délégué — le court-circuit des
+    /// GET plus bas laissait passer toute la zone.
+    ///
+    /// <c>/api/firm/context</c> en est volontairement absent : quitter ou changer de dossier doit
+    /// rester possible, c'est la seule sortie du mode délégué.
+    /// Attention : <c>/api/firm/payroll</c> (paie interne du cabinet) n'est pas <c>/api/payroll</c>
+    /// (paie du dossier client, elle autorisée) ; <c>/api/firm-assignments</c> et
+    /// <c>/api/accounting-firms</c> ne sont pas sous <c>/api/firm/</c>.
+    /// </summary>
+    private static readonly HashSet<string> NativeOnlyPrefixes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "/api/firm/dashboard",
+        "/api/firm/governance",
+        "/api/firm/fiscal-schedule",
+        "/api/firm/payroll",
+        "/api/firm/users",
+        "/api/firm/managed-clients",
+        "/api/firm/revision",
+        "/api/firm/ai",
+        "/api/firm-assignments",
+        "/api/accounting-firms"
+    };
+
     private static readonly HashSet<string> BlockedPrefixes = new(StringComparer.OrdinalIgnoreCase)
     {
         "/api/tenant-users",
@@ -75,6 +113,31 @@ public sealed class DelegatedAccessMiddleware
         var method = context.Request.Method;
         var path = context.Request.Path.Value ?? "";
 
+        // Testé AVANT la zone cabinet : sortir du dossier, changer de dossier et rafraîchir la
+        // session doivent rester possibles, quelle que soit la méthode.
+        if (AllowedDelegatedSessionPrefixes.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
+        {
+            await _next(context);
+            return;
+        }
+
+        // Lectures de l'espace cabinet explicitement nécessaires à des écrans du dossier.
+        if ((HttpMethods.IsGet(method) || HttpMethods.IsHead(method))
+            && DelegatedReadableFirmPrefixes.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
+        {
+            await _next(context);
+            return;
+        }
+
+        // Zone cabinet : refusée aussi en lecture, contrairement au reste de ce middleware.
+        if (NativeOnlyPrefixes.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
+        {
+            await WriteForbiddenAsync(
+                context,
+                "Espace cabinet indisponible en mode dossier client. Quittez le dossier pour y revenir.");
+            return;
+        }
+
         if (HttpMethods.IsGet(method) || HttpMethods.IsHead(method) || HttpMethods.IsOptions(method))
         {
             await _next(context);
@@ -88,12 +151,6 @@ public sealed class DelegatedAccessMiddleware
                 await WriteForbiddenAsync(context, "Action interdite en mode dossier client délégué.");
                 return;
             }
-        }
-
-        if (AllowedDelegatedSessionPrefixes.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
-        {
-            await _next(context);
-            return;
         }
 
         var allowed = AllowedWritePrefixes.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase));

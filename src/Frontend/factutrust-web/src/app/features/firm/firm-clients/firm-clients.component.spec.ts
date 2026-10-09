@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 import { FirmClientsComponent } from './firm-clients.component';
 import { FirmAssignmentService } from '@core/services/firm-assignment.service';
 import { FirmContextService } from '@core/services/firm-context.service';
+import { FirmAreaCoherenceService } from '@core/services/firm-area-coherence.service';
 import { AuthService } from '@core/services/auth.service';
 import { ToastService } from '@core/services/toast.service';
 import { ConfirmationService } from '@core/services/confirmation.service';
@@ -34,6 +35,8 @@ describe('FirmClientsComponent', () => {
           }
         },
         { provide: FirmContextService, useValue: { switchClient: jasmine.createSpy('switchClient').and.returnValue(Promise.resolve()) } },
+        // Stub : le service reel s'abonne a router.events, absent du Router simule ci-dessous.
+        { provide: FirmAreaCoherenceService, useValue: { enforceNow: () => undefined } },
         { provide: Router, useValue: { navigate: jasmine.createSpy('navigate').and.returnValue(Promise.resolve(true)) } },
         { provide: AuthService, useValue: { isFirmManager: () => false, isFirmAccountant: () => true } },
         { provide: ToastService, useValue: { add: jasmine.createSpy('add') } },

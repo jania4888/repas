@@ -206,6 +206,10 @@ builder.Services.AddAuthorization(options =>
         policy.RequireAuthenticatedUser()
             .AddRequirements(new FirmDelegatedContextRequirement()));
 
+    options.AddPolicy(PermissionPolicies.FirmNativeContext, policy =>
+        policy.RequireAuthenticatedUser()
+            .AddRequirements(new FirmNativeContextRequirement()));
+
     options.AddPolicy(PermissionPolicies.PayrollFirmOperation, policy =>
         policy.RequireAuthenticatedUser()
             .AddRequirements(new PayrollFirmOperationRequirement()));
@@ -213,6 +217,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, FirmDelegatedContextAuthorizationHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, FirmNativeContextAuthorizationHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, PayrollFirmOperationAuthorizationHandler>();
 
 var isDevelopment = builder.Environment.IsDevelopment();

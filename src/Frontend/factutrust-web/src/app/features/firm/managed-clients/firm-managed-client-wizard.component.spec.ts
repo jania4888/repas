@@ -6,6 +6,7 @@ import { FirmManagedClientWizardComponent } from './firm-managed-client-wizard.c
 import { FirmManagedClientsService } from '@core/services/firm-managed-clients.service';
 import { FirmGovernanceService } from '@core/services/firm-governance.service';
 import { FirmContextService } from '@core/services/firm-context.service';
+import { FirmAreaCoherenceService } from '@core/services/firm-area-coherence.service';
 import { ToastService } from '@core/services/toast.service';
 
 describe('FirmManagedClientWizardComponent', () => {
@@ -24,6 +25,7 @@ describe('FirmManagedClientWizardComponent', () => {
         { provide: FirmManagedClientsService, useValue: { create } },
         { provide: FirmGovernanceService, useValue: { listAssignableAccountants: () => NEVER } },
         { provide: FirmContextService, useValue: { switchClient: () => Promise.resolve() } },
+        { provide: FirmAreaCoherenceService, useValue: { enforceNow: () => undefined } },
         { provide: ToastService, useValue: { add: jasmine.createSpy('add') } }
       ]
     }).compileComponents();

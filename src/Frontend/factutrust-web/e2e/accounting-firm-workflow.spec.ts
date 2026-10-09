@@ -96,6 +96,40 @@ test.describe('Cabinet comptable — authenticated (staging)', () => {
     // 7. Repeat with "Changer de dossier" → /firm/clients, no 403 modal
   });
 
+  test('delegated session never shows the cabinet dashboard', async ({ page }) => {
+    // 1. Login as FirmManager → open a client dossier (lands on /accounting/chart)
+    // 2. await page.goto('/firm/dashboard');
+    // 3. await expect(page).toHaveURL(/\/accounting\/chart/);
+    // 4. await expect(page.getByRole('heading', { name: /tableau de bord cabinet/i })).not.toBeVisible();
+    // 5. await expect(page.locator('.main-header__firm-context')).toContainText('Dossier :');
+    // 6. Same with /firm/clients and /firm/governance/time-sheets
+  });
+
+  test('reload inside a dossier keeps one coherent state', async ({ page }) => {
+    // 1. Login as FirmManager → open a client dossier → /accounting/ledger
+    // 2. await page.reload();
+    // 3. await expect(page.locator('.main-header__firm-context')).toContainText('Dossier :');
+    // 4. await expect(page.getByRole('heading', { name: /tableau de bord cabinet/i })).not.toBeVisible();
+    // 5. await expect(page.getByRole('navigation', { name: /navigation principale/i })).toContainText('Comptabilité');
+  });
+
+  test('token refresh inside a dossier does not reveal the cabinet area', async ({ page }) => {
+    // Needs JwtSettings:ExpiryMinutes shortened on the test API (or page.clock.fastForward).
+    // 1. Login as FirmManager → open a client dossier
+    // 2. await page.clock.fastForward('16:00'); trigger any API call
+    // 3. await expect(page).not.toHaveURL(/\/firm\//);
+    // 4. await expect(page.getByRole('heading', { name: /tableau de bord cabinet/i })).not.toBeVisible();
+    // 5. await expect(page.getByRole('dialog', { name: /accès refusé/i })).not.toBeVisible();
+  });
+
+  test('firm API is refused while a dossier is open', async ({ page }) => {
+    // 1. Login as FirmManager → open a client dossier
+    // 2. const res = await page.request.get('/api/firm/dashboard');
+    // 3. expect(res.status()).toBe(403);
+    // 4. expect((await res.json()).success).toBe(false);
+    // 5. const clear = await page.request.post('/api/firm/context/clear'); expect(clear.ok()).toBeTruthy();
+  });
+
   test('firm opens vat-declaration without 403 modal', async ({ page }) => {
     // Login as FirmManager → open client dossier → /accounting/vat-declaration
     // await expect(page.getByRole('dialog', { name: /accès refusé/i })).not.toBeVisible();

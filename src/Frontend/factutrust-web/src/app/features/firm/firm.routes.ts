@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { firmNativeGuard, accountingFirmsFeatureGuard } from '@core/guards/accounting-firms.guard';
+import { firmDelegatedAreaGuard } from '@core/guards/firm-delegated-area.guard';
 import { firmManagerGuard } from '@core/guards/firm-manager.guard';
 import { firmGovernanceFeatureGuard } from '@core/guards/firm-governance.guard';
 import { firmRevisionFeatureGuard } from '@core/guards/firm-revision.guard';
@@ -7,7 +8,10 @@ import { firmRevisionFeatureGuard } from '@core/guards/firm-revision.guard';
 export const FIRM_ROUTES: Routes = [
   {
     path: '',
-    canActivate: [accountingFirmsFeatureGuard, firmNativeGuard],
+    // Les gardes d'un noeud de route ne rejouent pas quand seul un enfant change : sans ceci, une
+    // navigation interne a /firm/** (depuis /firm/open/:id notamment) ne reverifierait pas le mode.
+    runGuardsAndResolvers: 'always',
+    canActivate: [accountingFirmsFeatureGuard, firmDelegatedAreaGuard, firmNativeGuard],
     children: [
       {
         path: 'dashboard',

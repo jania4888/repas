@@ -16,6 +16,7 @@ import { resolveScopeFromUrl } from '../../../features/ai-assistant/config/agent
 import { canUseAiAssistant } from '../../../features/ai-assistant/utils/ai-access.util';
 import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
 import { FirmContextService } from '../../services/firm-context.service';
+import { FirmAreaCoherenceService } from '../../services/firm-area-coherence.service';
 import { LayoutRouteService } from '../layout-route.service';
 import { DrawerOverlayService } from '../../services/drawer-overlay.service';
 import { AppNavService } from '../../services/app-nav.service';
@@ -332,6 +333,7 @@ export class MainLayoutComponent implements OnInit {
   private readonly breadcrumb = inject(BreadcrumbService);
   private readonly layoutRoute = inject(LayoutRouteService);
   private readonly firmContext = inject(FirmContextService);
+  private readonly firmCoherence = inject(FirmAreaCoherenceService);
   readonly appNav = inject(AppNavService);
   readonly drawerOverlay = inject(DrawerOverlayService);
   private readonly productOnboarding = inject(ProductOnboardingApiService);
@@ -440,6 +442,9 @@ export class MainLayoutComponent implements OnInit {
 
   ngOnInit(): void {
     this.firmContext.syncFromUser();
+    // Tient l'invariant « zone <-> mode » quand le jeton change sans navigation (rafraîchissement
+    // silencieux) : les gardes de route, eux, ne rejouent qu'en cas de navigation.
+    this.firmCoherence.start();
     if (this.hasAiAccess()) {
       this.aiSession.initialize();
     }

@@ -105,6 +105,9 @@ public static class PermissionPolicies
 
     /// <summary>Accounting firm operating on a delegated client dossier (not native firm home).</summary>
     public const string FirmDelegatedContext = "firm:delegated-context";
+
+    /// <summary>Accounting firm operating at the firm itself (never inside a client dossier).</summary>
+    public const string FirmNativeContext = "firm:native-context";
     public const string AccountingReverse = "perm:" + Permissions.Accounting.Reverse;
     public const string AccountingImport = "perm:" + Permissions.Accounting.Import;
     public const string AccountingDeclare = "perm:" + Permissions.Accounting.Declare;

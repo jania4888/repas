@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, firstValueFrom, tap, catchError, of, finalize, shareReplay } from 'rxjs';
 import { environment } from '@environments/environment';
+import { isUserPayloadCoherentWithToken, readAccessTokenContext } from './access-token-claims';
 import { AppModule } from '@core/models/app-module';
 import { createHttpContextSkipGlobalErrorUi } from '@core/http-context';
 import { clearWarehouseStorage } from './warehouse-storage';
@@ -629,6 +630,12 @@ export class AuthService {
     return this.http.get<ApiResponse<User>>(`${this.API_URL}/me`).pipe(
       tap(response => {
         if (response.success && response.data) {
+          // Ceinture : le JWT fait foi sur le mode de session. Une charge utile qui le contredit
+          // (cabinet « natif » alors que le jeton est sur un dossier) décrirait une session
+          // inexistante et ferait basculer la navigation dans la mauvaise zone.
+          if (!isUserPayloadCoherentWithToken(response.data, readAccessTokenContext(this.getAccessToken()))) {
+            return;
+          }
           const user = normalizeUserFields(response.data);
           this.persistUser(user);
           this.userSignal.set(user);

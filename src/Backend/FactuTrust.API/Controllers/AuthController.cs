@@ -48,6 +48,7 @@ public class AuthController : ControllerBase
     private readonly IEmailService _emailService;
     private readonly IClientPortalService _clientPortalService;
     private readonly IFirmContextService _firmContextService;
+    private readonly IFirmDelegatedAccessProjector _firmDelegatedAccessProjector;
     private readonly IRegistrationSectorService _registrationSectorService;
     private readonly ISectorCatalogProvider _sectorCatalogProvider;
     private readonly RegistrationSectorOptions _registrationSectorOptions;
@@ -72,6 +73,7 @@ public class AuthController : ControllerBase
         IEmailService emailService,
         IClientPortalService clientPortalService,
         IFirmContextService firmContextService,
+        IFirmDelegatedAccessProjector firmDelegatedAccessProjector,
         IRegistrationSectorService registrationSectorService,
         ISectorCatalogProvider sectorCatalogProvider,
         IOptions<RegistrationSectorOptions> registrationSectorOptions,
@@ -95,6 +97,7 @@ public class AuthController : ControllerBase
         _emailService = emailService;
         _clientPortalService = clientPortalService;
         _firmContextService = firmContextService;
+        _firmDelegatedAccessProjector = firmDelegatedAccessProjector;
         _registrationSectorService = registrationSectorService;
         _sectorCatalogProvider = sectorCatalogProvider;
         _registrationSectorOptions = registrationSectorOptions.Value;
@@ -578,6 +581,7 @@ public class AuthController : ControllerBase
         }
 
         var dto = await BuildUserProfileDtoAsync(user, tenant, cancellationToken);
+        dto = await ApplyDelegatedContextAsync(dto, user, cancellationToken);
         return Ok(ApiResponse<UserDto>.Ok(dto));
     }
 
@@ -633,6 +637,51 @@ public class AuthController : ControllerBase
         var roles = await _userManager.GetRolesAsync(user);
         var snapshot = await _effectivePermissionService.GetUserAccessSnapshotAsync(user.Id, cancellationToken);
         return CreateUserDto(user, tenant, snapshot, roles);
+    }
+
+    /// <summary>
+    /// Un cabinet positionné sur un dossier client doit se voir décrit COMME TEL.
+    ///
+    /// Sans cela, <c>/auth/me</c> renvoyait « native » avec les droits natifs du cabinet alors que le
+    /// JWT restait délégué : au démarrage de l'application (F5 dans un dossier) le front croyait être
+    /// revenu au cabinet, affichait l'espace cabinet, puis le premier rafraîchissement silencieux
+    /// rebasculait l'habillage en mode dossier autour de cet écran cabinet.
+    ///
+    /// Les claims sont fiables ici : <c>TenantMiddleware</c> revalide l'affectation active et l'ACL du
+    /// dossier avant le contrôleur. La projection est la MÊME que celle de l'émission du jeton, filtre
+    /// devises compris (miroir obligatoire, cf. <see cref="CreateUserDto"/>).
+    /// </summary>
+    private async Task<UserDto> ApplyDelegatedContextAsync(
+        UserDto dto,
+        ApplicationUser user,
+        CancellationToken cancellationToken)
+    {
+        if (!AccountingValidationAccess.IsAccountingFirmDelegatedContext(User))
+            return dto;
+
+        if (!Guid.TryParse(User.FindFirstValue(AuthClaimTypes.ContextTenantId), out var contextTenantId)
+            || contextTenantId == Guid.Empty)
+        {
+            return dto;
+        }
+
+        var projection = await _firmDelegatedAccessProjector.ProjectAsync(
+            dto.Role, user.TenantId, contextTenantId, cancellationToken);
+
+        var permissions = AccountingCurrencyAccess
+            .FilterWhenDisabled(projection.Permissions, _accountingSettings.MultiCurrencyEnabled);
+
+        return dto with
+        {
+            AccessMode = "delegated",
+            ContextTenantId = contextTenantId,
+            ContextCompanyName = User.FindFirstValue(AuthClaimTypes.ContextCompanyName)
+                ?? projection.ContextCompanyName,
+            IsFirmManaged = projection.IsFirmManaged,
+            IsPayrollFirmManaged = false,
+            EnabledModuleIds = projection.ModuleIds.ToList(),
+            EffectivePermissions = permissions.ToList()
+        };
     }
 
     private UserDto CreateUserDto(ApplicationUser user, Tenant? tenant, UserAccessSnapshot snapshot, IList<string> roles)

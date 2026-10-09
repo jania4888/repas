@@ -25,6 +25,7 @@ public sealed class TenantAuthTokenService : ITenantAuthTokenService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEffectivePermissionService _effectivePermissionService;
     private readonly IFirmAssignmentService _firmAssignmentService;
+    private readonly IFirmDelegatedAccessProjector _delegatedAccessProjector;
     private readonly MasterDbContext _masterContext;
     private readonly IConfiguration _configuration;
     private readonly AccountingFirmsOptions _accountingFirmsOptions;
@@ -37,6 +38,7 @@ public sealed class TenantAuthTokenService : ITenantAuthTokenService
         UserManager<ApplicationUser> userManager,
         IEffectivePermissionService effectivePermissionService,
         IFirmAssignmentService firmAssignmentService,
+        IFirmDelegatedAccessProjector delegatedAccessProjector,
         MasterDbContext masterContext,
         IConfiguration configuration,
         IOptions<AccountingFirmsOptions> accountingFirmsOptions,
@@ -48,6 +50,7 @@ public sealed class TenantAuthTokenService : ITenantAuthTokenService
         _userManager = userManager;
         _effectivePermissionService = effectivePermissionService;
         _firmAssignmentService = firmAssignmentService;
+        _delegatedAccessProjector = delegatedAccessProjector;
         _masterContext = masterContext;
         _configuration = configuration;
         _accountingFirmsOptions = accountingFirmsOptions.Value;
@@ -89,31 +92,14 @@ public sealed class TenantAuthTokenService : ITenantAuthTokenService
         var isFirmManaged = false;
         if (isDelegated)
         {
-            var contextTenant = await _masterContext.Tenants.AsNoTracking()
-                .FirstOrDefaultAsync(t => t.Id == contextTenantId!.Value, cancellationToken);
-            // Only dossiers managed by *this* firm (cabinet-created, no platform account).
-            isFirmManaged = contextTenant?.ManagedByFirmTenantId == homeTenantId;
+            // Projection PARTAGEE avec GET /api/auth/me : les deux doivent decrire la meme session,
+            // sinon le front croit etre sorti du dossier alors que le jeton y est reste.
+            var delegatedAccess = await _delegatedAccessProjector.ProjectAsync(
+                roleEnum, homeTenantId, contextTenantId!.Value, cancellationToken);
 
-            effectivePermissions = DelegatedPermissionCatalog.GetDelegatedPermissions(roleEnum).ToList();
-            enabledModuleIds = isFirmManaged
-                ? BuildFirmManagedDelegatedModuleIds()
-                : BuildPlatformClientDelegatedModuleIds();
-
-            if (!_accountingFirmsOptions.AiAccountingEnabled)
-            {
-                effectivePermissions = effectivePermissions
-                    .Where(p => !string.Equals(p, Permissions.AI.Chat, StringComparison.Ordinal))
-                    .ToList();
-                enabledModuleIds = enabledModuleIds
-                    .Where(id => id != (int)AppModule.AI)
-                    .ToList();
-            }
-
-            if (!isFirmManaged)
-            {
-                enabledModuleIds = await AppendProjectsIfClientLicensedAsync(
-                    contextTenantId!.Value, enabledModuleIds, cancellationToken);
-            }
+            isFirmManaged = delegatedAccess.IsFirmManaged;
+            effectivePermissions = delegatedAccess.Permissions;
+            enabledModuleIds = delegatedAccess.ModuleIds;
         }
         else if (homeTenant.Kind == TenantKind.AccountingFirm)
         {
@@ -251,77 +237,6 @@ public sealed class TenantAuthTokenService : ITenantAuthTokenService
             User = CreateUserDto(user, homeTenant, roleEnum, enabledModuleIds, effectivePermissions, isDelegated, contextTenantId, contextCompanyName, isFirmManaged, isPayrollFirmManaged),
             Requires2Fa = false
         };
-    }
-
-    private static IReadOnlyList<int> BuildFirmManagedDelegatedModuleIds() =>
-        new[]
-        {
-            (int)AppModule.Accounting,
-            (int)AppModule.Fiscal,
-            (int)AppModule.Reports,
-            (int)AppModule.Payroll,
-            (int)AppModule.AI
-        };
-
-    private static IReadOnlyList<int> BuildPlatformClientDelegatedModuleIds() =>
-        new[]
-        {
-            (int)AppModule.Accounting,
-            (int)AppModule.Fiscal,
-            (int)AppModule.Sales,
-            (int)AppModule.Treasury,
-            (int)AppModule.Reports,
-            (int)AppModule.Purchases,
-            (int)AppModule.Payroll,
-            (int)AppModule.AI
-        };
-
-    /// <summary>
-    /// Adds <see cref="AppModule.Projects"/> only when the client tenant's plan or override includes it.
-    /// Firm-managed dossiers stay on the accounting/payroll dump (no Projects in V1).
-    /// </summary>
-    private async Task<IReadOnlyList<int>> AppendProjectsIfClientLicensedAsync(
-        Guid clientTenantId,
-        IReadOnlyList<int> moduleIds,
-        CancellationToken cancellationToken)
-    {
-        if (moduleIds.Contains((int)AppModule.Projects))
-            return moduleIds;
-
-        var now = DateTime.UtcNow;
-        var overrideRow = await _masterContext.TenantModuleOverrides.AsNoTracking()
-            .Where(o => o.TenantId == clientTenantId && o.Module == (int)AppModule.Projects)
-            .Where(o => o.ExpiresAt == null || o.ExpiresAt > now)
-            .OrderByDescending(o => o.CreatedAt)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        bool licensed;
-        if (overrideRow is not null)
-        {
-            licensed = overrideRow.IsEnabled;
-        }
-        else
-        {
-            var planId = await _masterContext.Subscriptions.AsNoTracking()
-                .Where(s => s.TenantId == clientTenantId)
-                .Select(s => s.PlanId)
-                .FirstOrDefaultAsync(cancellationToken);
-
-            if (planId is null || planId == Guid.Empty)
-                licensed = false;
-            else
-                licensed = await _masterContext.PlanModules.AsNoTracking()
-                    .AnyAsync(
-                        m => m.PlanId == planId.Value && m.Module == (int)AppModule.Projects && m.IsIncluded,
-                        cancellationToken);
-        }
-
-        if (!licensed)
-            return moduleIds;
-
-        var list = moduleIds.ToList();
-        list.Add((int)AppModule.Projects);
-        return list;
     }
 
     private static UserDto CreateUserDto(

@@ -125,6 +125,7 @@ public static class DependencyInjection
             services.AddScoped<ITenantRuntimeCatalogSeeder, TenantRuntimeCatalogSeeder>();
             services.AddScoped<ITenantService, TenantService>();
             services.AddScoped<ITenantAuthTokenService, TenantAuthTokenService>();
+            services.AddScoped<IFirmDelegatedAccessProjector, FirmDelegatedAccessProjector>();
             // Nettoyage des artefacts orphelins de la mini-saga d'inscription (bases sans Tenant,
             // Tenant Pending/Failed sans base) — voir OrphanTenantDatabaseCleanupJob.
             services.AddScoped<Services.Background.OrphanTenantDatabaseCleanupJob>();

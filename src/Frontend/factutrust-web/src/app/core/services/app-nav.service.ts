@@ -34,6 +34,7 @@ import { environment } from '@environments/environment';
 import { AccountingFeatureFlagsService } from '@features/accounting/shared/accounting-feature-flags.service';
 import { AppModule } from '@core/models/app-module';
 import { PERMISSIONS } from '@core/config/permission-keys';
+import { FIRM_DELEGATED_HOME_ROUTE } from '@core/config/firm-area-access';
 import { StudioNavService } from '@features/studio/studio-nav.service';
 import { StudioAiCapabilitiesService } from '@features/studio/ai/studio-ai-capabilities.service';
 import { StudioApprovalsBadgeService } from '@features/studio/approvals/studio-approvals-badge.service';
@@ -73,9 +74,16 @@ export class AppNavService {
       : this.approvalsBadge.available()
   );
 
-  readonly dashboardHomeLink = computed(() =>
-    this.auth.isAccountingFirm() ? '/firm/dashboard' : '/dashboard'
-  );
+  /**
+   * En mode délégué le logo ramène à l'accueil du DOSSIER : une URL cabinet n'est plus une sortie
+   * implicite du dossier, la sortie passe par « Retour au cabinet ».
+   */
+  readonly dashboardHomeLink = computed(() => {
+    if (!this.auth.isAccountingFirm()) {
+      return '/dashboard';
+    }
+    return this.auth.isDelegatedMode() ? FIRM_DELEGATED_HOME_ROUTE : '/firm/dashboard';
+  });
 
   /** Arbre complet visible (identique à l’ancien `SidebarComponent.navItems`). */
   readonly navItems = computed(() => {

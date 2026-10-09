@@ -273,7 +273,9 @@ export class AiChatSessionService {
    * diverger du scope actif.
    */
   private isFirmSurface(): boolean {
-    return this.agentScope() === AssistantAgentScope.FirmMission;
+    // Le mode compte autant que le scope : un onglet IA laisse ouvert sur /firm/assistant garde son
+    // scope apres l'ouverture d'un dossier, et interrogerait l'assistant DU CABINET depuis le dossier.
+    return this.agentScope() === AssistantAgentScope.FirmMission && !this.auth.isDelegatedMode();
   }
 
   private apiBasePath(): string {

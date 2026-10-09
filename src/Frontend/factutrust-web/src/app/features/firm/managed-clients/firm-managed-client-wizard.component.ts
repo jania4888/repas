@@ -7,6 +7,8 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
 import { FirmManagedClientsService, CreateFirmManagedClient, FirmManagedClientCreated } from '@core/services/firm-managed-clients.service';
 import { FirmGovernanceService, FirmAssignableAccountant } from '@core/services/firm-governance.service';
 import { FirmContextService } from '@core/services/firm-context.service';
+import { FirmAreaCoherenceService } from '@core/services/firm-area-coherence.service';
+import { FIRM_DELEGATED_HOME_ROUTE } from '@core/config/firm-area-access';
 import { ToastService } from '@core/services/toast.service';
 import { canonicalizeNif, NIF_PATTERN, TUNISIAN_GOVERNORATE_OPTIONS } from '@shared/validation/validation-rules';
 import { TunisianValidators } from '@shared/validation/tunisian-validators';
@@ -484,6 +486,7 @@ export class FirmManagedClientWizardComponent implements OnInit, OnDestroy {
   private readonly managedClients = inject(FirmManagedClientsService);
   private readonly governance = inject(FirmGovernanceService);
   private readonly firmContext = inject(FirmContextService);
+  private readonly firmCoherence = inject(FirmAreaCoherenceService);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
 
@@ -691,7 +694,11 @@ export class FirmManagedClientWizardComponent implements OnInit, OnDestroy {
     this.opening.set(true);
     try {
       await this.firmContext.switchClient(result.companyTenantId);
-      await this.router.navigate(['/accounting/chart']);
+      const navigated = await this.router.navigate([FIRM_DELEGATED_HOME_ROUTE]);
+      if (!navigated) {
+        // Navigation annulée ou redirigée : recaler l'URL sur le mode du jeton.
+        this.firmCoherence.enforceNow();
+      }
     } catch {
       this.toast.add({ severity: 'error', summary: 'Erreur', detail: "Impossible d'ouvrir le dossier." });
     } finally {

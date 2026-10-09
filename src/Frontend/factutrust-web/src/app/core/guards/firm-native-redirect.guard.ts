@@ -30,7 +30,7 @@ const FIRM_NATIVE_BLOCKED_SEGMENTS = new Set([
 ]);
 
 /** Segments allowed only when the firm user has switched into a client dossier. */
-const FIRM_DELEGATED_ONLY_SEGMENTS = new Set(['accounting', 'withholding-tax']);
+export const FIRM_DELEGATED_ONLY_SEGMENTS = new Set(['accounting', 'withholding-tax']);
 
 function pathWithoutQuery(url: string): string {
   const q = url.indexOf('?');
