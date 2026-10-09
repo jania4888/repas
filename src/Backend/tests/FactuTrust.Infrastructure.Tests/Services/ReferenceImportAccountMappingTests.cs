@@ -9,6 +9,7 @@ using FactuTrust.Infrastructure.MultiTenancy;
 using FactuTrust.Infrastructure.Persistence;
 using FactuTrust.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
@@ -53,8 +54,13 @@ public sealed class ReferenceImportAccountMappingTests
                 p.SetAuditInfo("test", false);
                 return Result.Success(p);
             });
+        var projection = new Mock<IBankGlTreasuryProjectionService>();
+        projection.Setup(p => p.EnsureMissingAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success(new BankGlProjectionEnsureResult(0, 0)));
         return new ReferenceDataImportService(_factory, periodService.Object,
-            Options.Create(new AccountingSettings { DossierImportEnabled = true }));
+            Options.Create(new AccountingSettings { DossierImportEnabled = true }),
+            projection.Object,
+            NullLogger<ReferenceDataImportService>.Instance);
     }
 
     private void SeedChart(params string[] accounts)

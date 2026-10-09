@@ -20,6 +20,9 @@ public interface IBankAccountRepository : IRepository<BankAccount>
     /// </summary>
     Task<bool> ExistsIbanForCompanyAsync(Guid companyId, string normalizedIban, Guid? excludeAccountId, CancellationToken cancellationToken = default);
 
+    /// <summary>Projection ou compte déjà lié à ce numéro de plan, actif ou non.</summary>
+    Task<BankAccount?> GetByCompanyAndChartNumberAsync(Guid companyId, string chartOfAccountNumber, CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Clears <see cref="BankAccount.IsDefault"/> for all active accounts of the company.
     /// </summary>

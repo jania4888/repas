@@ -76,6 +76,15 @@ public sealed class UpdateBankAccountCommandHandler : IRequestHandler<UpdateBank
         if (entity is null)
             return Result.Failure<BankAccountDto>(Error.NotFound("BankAccount", request.Id));
 
+        if (!string.IsNullOrWhiteSpace(request.Request.ChartOfAccountNumber))
+        {
+            var owner = await _bankAccountRepository.GetByCompanyAndChartNumberAsync(
+                companyId, request.Request.ChartOfAccountNumber.Trim(), cancellationToken);
+            if (owner is not null && owner.Id != entity.Id)
+                return Result.Failure<BankAccountDto>(Error.Conflict(
+                    "Ce compte comptable est déjà relié à un autre compte bancaire."));
+        }
+
         var update = entity.Update(
             request.Request.BankCode,
             request.Request.BankName.Trim(),

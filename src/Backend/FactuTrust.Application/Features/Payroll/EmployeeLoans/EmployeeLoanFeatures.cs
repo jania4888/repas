@@ -121,6 +121,9 @@ public sealed class CreateEmployeeLoanCommandHandler : IRequestHandler<CreateEmp
                 bankAccount = await _bankAccounts.GetByIdAsync(bankAccountId, ct);
                 if (bankAccount is null)
                     return Result.Failure<Guid>(Error.NotFound("BankAccount", bankAccountId));
+                var identity = bankAccount.RequireCompleteIdentity();
+                if (identity.IsFailure)
+                    return Result.Failure<Guid>(identity.Error);
             }
 
             var entry = await _accounting.GenerateEmployeeLoanDisbursementEntryAsync(

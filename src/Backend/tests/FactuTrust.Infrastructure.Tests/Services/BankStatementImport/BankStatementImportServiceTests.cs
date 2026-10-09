@@ -459,6 +459,39 @@ public sealed class BankStatementImportServiceTests : IDisposable
         Assert.False(StatementSegmentFingerprint.TryParse(hash, out _, out _, out _));
     }
 
+    [Fact]
+    public async Task Projection_without_rib_can_start_import()
+    {
+        var spec = StbSpec();
+        var account = BankAccount.CreateFromChartProjection(Guid.NewGuid(), "53210001", "Banque Biat", "BIAT", "TND", true).Value;
+        using (var ctx = _factory.CreateContext())
+        {
+            ctx.BankAccounts.Add(account);
+            ctx.SaveChanges();
+        }
+
+        var result = await Service().StartAsync(Request(StbLike(spec), account.Id));
+
+        Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
+        Assert.NotEqual(BankStatementImportErrorCodes.BankAccountWithoutGlAccount, result.Error.Code);
+    }
+
+    [Fact]
+    public async Task Fx_projection_is_rejected_as_currency_not_supported()
+    {
+        var account = BankAccount.CreateFromChartProjection(Guid.NewGuid(), "53241", "Compte devise", "AUTRE", "XXX", true).Value;
+        using (var ctx = _factory.CreateContext())
+        {
+            ctx.BankAccounts.Add(account);
+            ctx.SaveChanges();
+        }
+
+        var result = await Service().StartAsync(Request(StbLike(StbSpec()), account.Id));
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(BankStatementImportErrorCodes.CurrencyNotSupported, result.Error.Code);
+    }
+
     /// <summary>PNG minimal valide (signature + IHDR) : suffit au contrôle de signature.</summary>
     private static byte[] PngBytes() => Convert.FromBase64String(
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==");

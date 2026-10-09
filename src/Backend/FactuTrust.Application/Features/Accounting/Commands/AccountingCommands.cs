@@ -10,6 +10,7 @@ using FactuTrust.Domain.Authorization;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
+using FactuTrust.Domain.Services.Accounting;
 using FactuTrust.Domain.ValueObjects;
 using AuditActions = FactuTrust.Domain.Entities.AuditActions;
 using MediatR;
@@ -25,15 +26,21 @@ public sealed class CreateSubAccountCommandHandler : IRequestHandler<CreateSubAc
     private readonly IChartOfAccountRepository _chartOfAccounts;
     private readonly IAuditService _auditService;
     private readonly ICurrentUser _currentUser;
+    private readonly IBankGlTreasuryProjectionService _bankProjection;
+    private readonly ILogger<CreateSubAccountCommandHandler> _logger;
 
     public CreateSubAccountCommandHandler(
         IChartOfAccountRepository chartOfAccounts,
         IAuditService auditService,
-        ICurrentUser currentUser)
+        ICurrentUser currentUser,
+        IBankGlTreasuryProjectionService bankProjection,
+        ILogger<CreateSubAccountCommandHandler> logger)
     {
         _chartOfAccounts = chartOfAccounts;
         _auditService = auditService;
         _currentUser = currentUser;
+        _bankProjection = bankProjection;
+        _logger = logger;
     }
 
     public async Task<Result<Guid>> Handle(CreateSubAccountCommand request, CancellationToken cancellationToken)
@@ -44,6 +51,13 @@ public sealed class CreateSubAccountCommandHandler : IRequestHandler<CreateSubAc
         if (existing is not null)
             return Result.Failure<Guid>(Error.Conflict(
                 $"Le compte {existing.AccountNumber} existe déjà ({existing.Label})."));
+
+        if (BankGlAccountRules.IsProvisionableLeafNumber(accountNumber))
+        {
+            var identity = BankAccount.ValidateOptionalIdentity(r.Rib, r.Iban, r.SwiftBic);
+            if (identity.IsFailure)
+                return Result.Failure<Guid>(identity.Error);
+        }
 
         var nature = (AccountNatureType)r.NatureType;
         var create = ChartOfAccount.Create(
@@ -69,6 +83,31 @@ public sealed class CreateSubAccountCommandHandler : IRequestHandler<CreateSubAc
             entity.Id,
             newValues: new { r.AccountNumber, r.Label, r.AccountClass },
             cancellationToken: cancellationToken);
+
+        if (BankGlAccountRules.IsProvisionableLeaf(entity.AccountNumber, entity.IsActive))
+        {
+            try
+            {
+                var projected = await _bankProjection.EnsureForChartAccountAsync(
+                    entity,
+                    new BankGlProjectionIdentity
+                    {
+                        BankCode = r.BankCode,
+                        Rib = r.Rib,
+                        Iban = r.Iban,
+                        Currency = r.BankCurrency,
+                        SwiftBic = r.SwiftBic
+                    },
+                    cancellationToken);
+                if (projected.IsFailure)
+                    _logger.LogWarning("Projection trésorerie non créée pour {Account}: {Error}",
+                        entity.AccountNumber, projected.Error.Description);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Projection trésorerie échouée pour {Account} ; l'import la rattrapera.", entity.AccountNumber);
+            }
+        }
 
         return Result.Success(entity.Id);
     }
@@ -198,11 +237,16 @@ public sealed class UpdateAccountLabelCommandHandler : IRequestHandler<UpdateAcc
 {
     private readonly IChartOfAccountRepository _chartOfAccounts;
     private readonly IAuditService _auditService;
+    private readonly IBankGlTreasuryProjectionService _bankProjection;
 
-    public UpdateAccountLabelCommandHandler(IChartOfAccountRepository chartOfAccounts, IAuditService auditService)
+    public UpdateAccountLabelCommandHandler(
+        IChartOfAccountRepository chartOfAccounts,
+        IAuditService auditService,
+        IBankGlTreasuryProjectionService bankProjection)
     {
         _chartOfAccounts = chartOfAccounts;
         _auditService = auditService;
+        _bankProjection = bankProjection;
     }
 
     public async Task<Result> Handle(UpdateAccountLabelCommand request, CancellationToken cancellationToken)
@@ -217,6 +261,7 @@ public sealed class UpdateAccountLabelCommandHandler : IRequestHandler<UpdateAcc
             return result;
 
         await _chartOfAccounts.UpdateAsync(account, cancellationToken);
+        await _bankProjection.SyncLabelAsync(account.AccountNumber, oldLabel, request.Label, cancellationToken);
 
         await _auditService.LogAsync(
             AuditActions.Accounting.AccountLabelUpdated,
@@ -236,11 +281,16 @@ public sealed class ToggleAccountActiveCommandHandler : IRequestHandler<ToggleAc
 {
     private readonly IChartOfAccountRepository _chartOfAccounts;
     private readonly IAuditService _auditService;
+    private readonly IBankGlTreasuryProjectionService _bankProjection;
 
-    public ToggleAccountActiveCommandHandler(IChartOfAccountRepository chartOfAccounts, IAuditService auditService)
+    public ToggleAccountActiveCommandHandler(
+        IChartOfAccountRepository chartOfAccounts,
+        IAuditService auditService,
+        IBankGlTreasuryProjectionService bankProjection)
     {
         _chartOfAccounts = chartOfAccounts;
         _auditService = auditService;
+        _bankProjection = bankProjection;
     }
 
     public async Task<Result> Handle(ToggleAccountActiveCommand request, CancellationToken cancellationToken)
@@ -255,6 +305,7 @@ public sealed class ToggleAccountActiveCommandHandler : IRequestHandler<ToggleAc
         var wasActive = account.IsActive;
         account.ToggleActive();
         await _chartOfAccounts.UpdateAsync(account, cancellationToken);
+        await _bankProjection.SyncActiveFlagAsync(account.AccountNumber, account.IsActive, cancellationToken);
 
         await _auditService.LogAsync(
             AuditActions.Accounting.AccountToggled,

@@ -16,13 +16,17 @@ public sealed record BankAccountDto
     public string BankName { get; init; } = null!;
     public string? Designation { get; init; }
     public string? AgencyName { get; init; }
-    public string Rib { get; init; } = null!;
-    public string Iban { get; init; } = null!;
+    public string Rib { get; init; } = "";
+    public string Iban { get; init; } = "";
     public string? SwiftBic { get; init; }
     public bool IsDefault { get; init; }
     public bool IsActive { get; init; }
     public string? ChartOfAccountNumber { get; init; }
     public string Currency { get; init; } = "TND";
+    /// <summary>RIB et IBAN tunisiens complets. Faux pour une projection issue du plan comptable.</summary>
+    public bool HasBankingIdentity { get; init; }
+    /// <summary>Vrai seulement sur la réponse de création quand un 532x déjà projeté a été complété.</summary>
+    public bool LinkedExistingChartProjection { get; init; }
 }
 
 public sealed record CreateBankAccountRequest
@@ -41,6 +45,20 @@ public sealed record CreateBankAccountRequest
     /// <summary>Crée automatiquement un sous-compte auxiliaire 532x si aucun compte n'est fourni.</summary>
     public bool AutoCreateChartAccount { get; init; } = true;
     public string Currency { get; init; } = "TND";
+}
+
+/// <summary>Compte bancaire visible dans l'import de relevés, sans RIB ni IBAN en clair.</summary>
+public sealed record ImportableBankAccountDto
+{
+    public Guid Id { get; init; }
+    public string BankName { get; init; } = "";
+    public string? Designation { get; init; }
+    public string ChartOfAccountNumber { get; init; } = "";
+    public string Currency { get; init; } = "TND";
+    public bool IsActive { get; init; }
+    public bool IsDefault { get; init; }
+    public bool HasBankingIdentity { get; init; }
+    public string? RibMasked { get; init; }
 }
 
 public sealed record UpdateBankAccountRequest

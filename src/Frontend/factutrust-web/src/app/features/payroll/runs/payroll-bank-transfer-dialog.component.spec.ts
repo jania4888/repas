@@ -77,6 +77,45 @@ describe('PayrollBankTransferDialogComponent', () => {
     expect(text).toContain('Télécharger CSV');
   });
 
+  it('hides an incomplete chart projection from the transfer account list', () => {
+    fixture.componentInstance.accounts.set([
+      {
+        id: 'complete',
+        companyId: 'c1',
+        bankCode: '10',
+        bankName: 'STB',
+        designation: null,
+        agencyName: null,
+        rib: '10006035123456789012',
+        iban: 'TN5910006035123456789012',
+        swiftBic: null,
+        isDefault: true,
+        isActive: true,
+        chartOfAccountNumber: '53210001',
+        currency: 'TND',
+        hasBankingIdentity: true
+      },
+      {
+        id: 'projection',
+        companyId: 'c1',
+        bankCode: '08',
+        bankName: 'Banque Biat',
+        designation: 'Banque Biat',
+        agencyName: null,
+        rib: '',
+        iban: '',
+        swiftBic: null,
+        isDefault: false,
+        isActive: true,
+        chartOfAccountNumber: '53211',
+        currency: 'TND',
+        hasBankingIdentity: false
+      }
+    ]);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.accountOptions().map(o => o.value)).toEqual(['complete']);
+  });
+
   it('enables download when eligible lines exist', () => {
     payroll.getBankTransferPreview.and.returnValue(of({ success: true, data: fullPreview }));
     fixture.componentInstance.onOpen();

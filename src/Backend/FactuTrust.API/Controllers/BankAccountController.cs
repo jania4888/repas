@@ -65,7 +65,10 @@ public class BankAccountController : ControllerBase
             return MapFailure(result.Error);
         }
 
-        return Ok(ApiResponse<BankAccountDto>.Ok(result.Value, "Compte bancaire créé."));
+        var message = result.Value.LinkedExistingChartProjection
+            ? $"Coordonnées enregistrées sur le compte {result.Value.ChartOfAccountNumber}."
+            : "Compte bancaire créé.";
+        return Ok(ApiResponse<BankAccountDto>.Ok(result.Value, message));
     }
 
     [HttpPut("{id:guid}")]

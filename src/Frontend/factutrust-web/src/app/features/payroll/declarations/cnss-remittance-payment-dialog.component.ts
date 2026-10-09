@@ -8,7 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DatePickerModule } from 'primeng/datepicker';
 import { finalize } from 'rxjs';
 import { PayrollService } from '@core/services/payroll.service';
-import { BankAccountService, type BankAccountDto } from '@core/services/bank-account.service';
+import { BankAccountService, hasCompleteBankIdentity, type BankAccountDto } from '@core/services/bank-account.service';
 import { ToastService } from '@core/services/toast.service';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { PayrollAmountPipe } from '../shared';
@@ -129,7 +129,7 @@ export class CnssRemittancePaymentDialogComponent implements OnInit {
 
   accountOptions = computed(() =>
     this.accounts()
-      .filter(a => a.isActive)
+      .filter(a => a.isActive && hasCompleteBankIdentity(a))
       .map(a => ({
         value: a.id,
         label: `${a.designation || a.bankName} — ${a.iban}`
@@ -140,7 +140,7 @@ export class CnssRemittancePaymentDialogComponent implements OnInit {
     this.bankAccounts.list().subscribe({
       next: res => {
         this.accounts.set(res.data ?? []);
-        const def = (res.data ?? []).find(a => a.isDefault);
+        const def = (res.data ?? []).find(a => a.isDefault && hasCompleteBankIdentity(a));
         if (def) this.bankAccountId = def.id;
       },
       error: () => this.accounts.set([])

@@ -11,6 +11,7 @@ using FactuTrust.Domain.Enums;
 using FactuTrust.Domain.ValueObjects;
 using FactuTrust.Infrastructure.MultiTenancy;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 // Alias distinct : le namespace enfant FactuTrust.Infrastructure.Services.Email masque le value object.
 using EmailVo = FactuTrust.Domain.ValueObjects.Email;
@@ -29,15 +30,21 @@ public sealed class ReferenceDataImportService : IReferenceDataImportService
 
     private readonly ITenantDbContextFactory _contextFactory;
     private readonly IAccountingPeriodService _periodService;
+    private readonly IBankGlTreasuryProjectionService _bankProjection;
+    private readonly ILogger<ReferenceDataImportService> _logger;
     private readonly AccountingSettings _settings;
 
     public ReferenceDataImportService(
         ITenantDbContextFactory contextFactory,
         IAccountingPeriodService periodService,
-        IOptions<AccountingSettings> settings)
+        IOptions<AccountingSettings> settings,
+        IBankGlTreasuryProjectionService bankProjection,
+        ILogger<ReferenceDataImportService> logger)
     {
         _contextFactory = contextFactory;
         _periodService = periodService;
+        _bankProjection = bankProjection;
+        _logger = logger;
         _settings = settings.Value;
     }
 
@@ -92,6 +99,21 @@ public sealed class ReferenceDataImportService : IReferenceDataImportService
             ReferenceImportTarget.OpeningBalance => await CommitOpeningBalanceAsync(ctx, prepared.Value.Rows, fiscalYear!.Value, cancellationToken),
             _ => Result.Failure<ReferenceImportCommitResultDto>(Error.Validation("Target", "Cible d'import inconnue."))
         };
+
+        if (result.IsSuccess && target == ReferenceImportTarget.ChartOfAccounts)
+        {
+            try
+            {
+                var ensured = await _bankProjection.EnsureMissingAsync(cancellationToken);
+                if (ensured.IsFailure)
+                    _logger.LogWarning("Projection banques après import du plan : {Error}", ensured.Error.Description);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Projection banques après import du plan échouée.");
+            }
+        }
+
         return result;
     }
 

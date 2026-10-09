@@ -446,4 +446,18 @@ public sealed class AccountingEntryProposalServiceTests
         Assert.NotEmpty(proposal.Lines);
         Assert.DoesNotContain(proposal.Diagnostics, d => d.Code == ProposalDiagnosticCodes.AlreadyPosted);
     }
+
+    [Fact]
+    public async Task ProposeAsync_PageWindowWarning_StaysAWarning()
+    {
+        var warning = InvoicePdfReadingWindow.DescribeSkippedPages(12, new[] { 1, 2, 10, 11, 12 });
+        var document = SampleInvoice() with { Warnings = new[] { warning } };
+
+        var proposal = await ProposeAsync(BuildHarness(), document);
+
+        var diagnostic = Assert.Single(proposal.Diagnostics, d => d.Message == warning);
+        Assert.Equal(ProposalDiagnosticCodes.ExtractionWarning, diagnostic.Code);
+        Assert.Equal(ProposalSeverities.Warning, diagnostic.Severity);
+        Assert.NotEqual(ProposalSeverities.Blocking, diagnostic.Severity);
+    }
 }

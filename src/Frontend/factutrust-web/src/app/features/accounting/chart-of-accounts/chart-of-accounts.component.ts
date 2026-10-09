@@ -9,7 +9,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
-import { AccountingService, ChartOfAccountDto, CreateSubAccountRequest } from '../services/accounting.service';
+import { AccountingService, ChartOfAccountDto, CreateSubAccountRequest, TunisianBankCatalogEntry } from '../services/accounting.service';
 import { AccountingFilterBarComponent } from '../shared/accounting-filter-bar.component';
 import { AccountingStatusBannerComponent } from '../shared/accounting-status-banner.component';
 import { AnalyzeWithAiButtonComponent } from '@features/ai-assistant/components/analyze-with-ai-button/analyze-with-ai-button.component';
@@ -33,6 +33,28 @@ export function sceAccountDigitCount(accountNumber: string): number {
     if (c >= '0' && c <= '9') count++;
   }
   return count;
+}
+
+/** Feuille 5321x (dinars) ou 5324x (devises). Les collectifs 532 / 5321 / 5324 sont exclus. */
+export function isProvisionableBankLeaf(accountNumber: string | null | undefined): boolean {
+  const digits = (accountNumber ?? '').replace(/\D/g, '');
+  if (digits === '532' || digits === '5321' || digits === '5324') return false;
+  return digits.startsWith('5321') || digits.startsWith('5324');
+}
+
+/** Encadré bancaire : numéro déjà une feuille, ou parent 5321/5324 tant que le numéro n'est pas un autre compte. */
+export function showsBankImportPanel(accountNumber: string, parent: string | null): boolean {
+  const digits = accountNumber.replace(/\D/g, '');
+  if (digits.length >= 5) return isProvisionableBankLeaf(digits);
+  const parentDigits = (parent ?? '').replace(/\D/g, '');
+  return parentDigits.startsWith('5321') || parentDigits.startsWith('5324');
+}
+
+export function isFxBankLeaf(accountNumber: string, parent: string | null): boolean {
+  const digits = accountNumber.replace(/\D/g, '');
+  if (digits.startsWith('5321')) return false;
+  if (digits.startsWith('5324')) return true;
+  return (parent ?? '').replace(/\D/g, '').startsWith('5324');
 }
 
 @Component({
@@ -261,6 +283,38 @@ export function sceAccountDigitCount(accountNumber: string): number {
             </div>
           </div>
 
+          @if (showsBankPanel()) {
+            <h3 class="coa-sec" i18n="@@accounting.chart-of-accounts.compte.bancaire.import.releves">Compte bancaire (import de relevés)</h3>
+            <p class="coa-bank-hint" i18n="@@accounting.chart-of-accounts.ce.compte.apparaitra.dans.l.import">
+              Ce compte apparaîtra dans l'import de relevés. Le RIB est facultatif : vous pourrez le compléter dans Paiements › Comptes bancaires.
+            </p>
+            <div class="coa-grid">
+              <div class="coa-field coa-field-wide">
+                <label class="coa-lbl" for="coa-bank" i18n="@@accounting.chart-of-accounts.banque.facultative">Banque (facultatif)</label>
+                <select id="coa-bank" class="coa-inp" [(ngModel)]="form.bankCode">
+                  <option value="" i18n="@@accounting.chart-of-accounts.detecter.depuis.le.libelle">Détecter depuis le libellé</option>
+                  @for (bank of tunisianBanks(); track bank.code) {
+                    <option [value]="bank.code">{{ bank.name }}</option>
+                  }
+                </select>
+              </div>
+              <div class="coa-field">
+                <label class="coa-lbl" for="coa-rib" i18n="@@accounting.chart-of-accounts.rib.facultatif">RIB (facultatif)</label>
+                <input id="coa-rib" class="coa-inp" [(ngModel)]="form.rib" maxlength="32" autocomplete="off" />
+              </div>
+              <div class="coa-field coa-field-wide">
+                <label class="coa-lbl" for="coa-iban" i18n="@@accounting.chart-of-accounts.iban.facultatif">IBAN (facultatif)</label>
+                <input id="coa-iban" class="coa-inp" [(ngModel)]="form.iban" maxlength="34" autocomplete="off" />
+              </div>
+              @if (showsFxCurrency()) {
+                <div class="coa-field">
+                  <label class="coa-lbl" for="coa-ccy" i18n="@@accounting.chart-of-accounts.devise.iso">Devise ISO</label>
+                  <input id="coa-ccy" class="coa-inp" [(ngModel)]="form.bankCurrency" maxlength="3" placeholder="EUR" />
+                </div>
+              }
+            </div>
+          }
+
           @if (createError()) {
             <p class="coa-create-error" role="alert">{{ createError() }}</p>
           }
@@ -446,6 +500,11 @@ export function sceAccountDigitCount(accountNumber: string): number {
     .coa-field-wide { flex: 2 1 16rem; }
     .coa-lbl { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
     .coa-inp { padding: var(--spacing-2) var(--spacing-3); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-background-elevated); color: var(--color-text-primary); font-size: var(--font-size-sm); width: 100%; }
+    .coa-bank-hint {
+      margin: 0 0 var(--spacing-3);
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-sm);
+    }
     .coa-create-error {
       margin: var(--spacing-4) 0 0;
       padding: var(--spacing-2) var(--spacing-3);
@@ -505,6 +564,7 @@ export class ChartOfAccountsComponent implements OnInit {
   readonly showCreate = signal(false);
   readonly creating = signal(false);
   readonly togglingId = signal<string | null>(null);
+  readonly tunisianBanks = signal<TunisianBankCatalogEntry[]>([]);
 
   form = this.emptyForm();
   lastSuggestedNumber = '';
@@ -518,8 +578,20 @@ export class ChartOfAccountsComponent implements OnInit {
       parentAccountNumber: null as string | null,
       affectationAccountNumber: null as string | null,
       accountNumber: '',
-      label: ''
+      label: '',
+      bankCode: '',
+      rib: '',
+      iban: '',
+      bankCurrency: ''
     };
+  }
+
+  showsBankPanel(): boolean {
+    return showsBankImportPanel(this.form.accountNumber, this.form.parentAccountNumber);
+  }
+
+  showsFxCurrency(): boolean {
+    return isFxBankLeaf(this.form.accountNumber, this.form.parentAccountNumber);
   }
 
   openCreate(): void {
@@ -527,6 +599,12 @@ export class ChartOfAccountsComponent implements OnInit {
     this.lastSuggestedNumber = '';
     this.createError.set(null);
     this.showCreate.set(true);
+    if (this.tunisianBanks().length === 0) {
+      this.api.getTunisianBanks().subscribe({
+        next: res => this.tunisianBanks.set(res?.data ?? []),
+        error: () => this.tunisianBanks.set([])
+      });
+    }
   }
 
   closeCreate(): void {
@@ -674,13 +752,32 @@ export class ChartOfAccountsComponent implements OnInit {
       isAuxiliary: this.form.isAuxiliary,
       affectationAccountNumber: this.form.isAuxiliary ? (this.form.affectationAccountNumber || null) : null
     };
+    if (isProvisionableBankLeaf(num)) {
+      const rib = this.form.rib.trim();
+      const iban = this.form.iban.trim();
+      request.bankCode = this.form.bankCode.trim() || null;
+      request.rib = rib || null;
+      request.iban = iban || null;
+      request.swiftBic = null;
+      if (isFxBankLeaf(num, this.form.parentAccountNumber) && this.form.bankCurrency.trim()) {
+        request.bankCurrency = this.form.bankCurrency.trim();
+      }
+    }
     this.creating.set(true);
     this.api.createSubAccount(request).subscribe({
       next: res => {
         this.creating.set(false);
         if (res.success) {
           this.createError.set(null);
-          this.toast.add({ severity: 'success', summary: $localize`:@@chart-of-accounts.component.summary.Comptecréé:Compte créé`, detail: `${num} — ${request.label}`, life: 4000 });
+          const importHint = isProvisionableBankLeaf(num)
+            ? $localize`:@@accounting.chart-of-accounts.ts.disponible.pour.l.import.de.releves:disponible pour l'import de relevés`
+            : '';
+          this.toast.add({
+            severity: 'success',
+            summary: $localize`:@@chart-of-accounts.component.summary.Comptecréé:Compte créé`,
+            detail: importHint ? `${num} — ${request.label} — ${importHint}` : `${num} — ${request.label}`,
+            life: 4000
+          });
           this.showCreate.set(false);
           this.load();
         } else {

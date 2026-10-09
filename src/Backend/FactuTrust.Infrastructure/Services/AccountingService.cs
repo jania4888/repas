@@ -2616,6 +2616,13 @@ public sealed class AccountingService : IAccountingService
         if (periodResult.IsFailure)
             return Result.Failure(periodResult.Error);
 
+        if (method != PaymentMethod.Cash && bankAccount is not null)
+        {
+            var identity = bankAccount.RequireCompleteIdentity();
+            if (identity.IsFailure)
+                return identity;
+        }
+
         var creditAccount = method == PaymentMethod.Cash
             ? TreasuryAccount(PaymentMethod.Cash)
             : (bankAccount?.ChartOfAccountNumber ?? TreasuryAccount(method));
@@ -2882,6 +2889,13 @@ public sealed class AccountingService : IAccountingService
 
         var period = periodResult.Value;
         var currency = payment.Amount.Currency;
+        if (payment.Method != PaymentMethod.Cash && bankAccount is not null)
+        {
+            var identity = bankAccount.RequireCompleteIdentity();
+            if (identity.IsFailure)
+                return identity;
+        }
+
         var creditAccount = payment.Method == PaymentMethod.Cash
             ? TreasuryAccount(PaymentMethod.Cash)
             : (bankAccount?.ChartOfAccountNumber ?? TreasuryAccount(payment.Method));
@@ -3076,6 +3090,13 @@ public sealed class AccountingService : IAccountingService
 
         var period = periodResult.Value;
         var currency = payment.Amount.Currency;
+        if (payment.Method != PaymentMethod.Cash && bankAccount is not null)
+        {
+            var identity = bankAccount.RequireCompleteIdentity();
+            if (identity.IsFailure)
+                return identity;
+        }
+
         var creditAccount = payment.Method == PaymentMethod.Cash
             ? TreasuryAccount(PaymentMethod.Cash)
             : (bankAccount?.ChartOfAccountNumber ?? TreasuryAccount(payment.Method));

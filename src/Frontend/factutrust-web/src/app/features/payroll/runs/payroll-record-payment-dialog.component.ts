@@ -14,7 +14,7 @@ import {
   type PayslipListItem,
   type RecordPayrollRunPaymentRequest
 } from '@core/services/payroll.service';
-import { BankAccountService } from '@core/services/bank-account.service';
+import { BankAccountService, hasCompleteBankIdentity } from '@core/services/bank-account.service';
 import { ToastService } from '@core/services/toast.service';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { PayrollAmountPipe } from '../shared';
@@ -205,12 +205,13 @@ export class PayrollRecordPaymentDialogComponent implements OnInit {
     );
     this.banks.list().subscribe({
       next: res => {
-        const items = (res.data ?? []).map(a => ({
+        const usable = (res.data ?? []).filter(a => hasCompleteBankIdentity(a));
+        const items = usable.map(a => ({
           label: `${a.designation || a.bankName} — ${a.iban}`,
           value: a.id
         }));
         this.accountOptions.set(items);
-        const def = (res.data ?? []).find(a => a.isDefault);
+        const def = usable.find(a => a.isDefault);
         if (def) this.bankAccountId = def.id;
       }
     });

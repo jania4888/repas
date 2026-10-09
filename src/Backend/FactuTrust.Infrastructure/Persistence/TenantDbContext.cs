@@ -1757,12 +1757,10 @@ public partial class TenantDbContext : DbContext
                 .HasMaxLength(200);
 
             entity.Property(e => e.Rib)
-                .HasMaxLength(20)
-                .IsRequired();
+                .HasMaxLength(20);
 
             entity.Property(e => e.Iban)
-                .HasMaxLength(34)
-                .IsRequired();
+                .HasMaxLength(34);
 
             entity.Property(e => e.SwiftBic)
                 .HasMaxLength(11);
@@ -1787,7 +1785,12 @@ public partial class TenantDbContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasIndex(e => e.CompanyId);
-            entity.HasIndex(e => new { e.CompanyId, e.Iban }).IsUnique();
+            entity.HasIndex(e => new { e.CompanyId, e.Iban })
+                .IsUnique()
+                .HasFilter("[Iban] IS NOT NULL");
+            entity.HasIndex(e => new { e.CompanyId, e.ChartOfAccountNumber })
+                .IsUnique()
+                .HasFilter("[ChartOfAccountNumber] IS NOT NULL");
             entity.HasIndex(e => e.IsDefault);
         });
     }

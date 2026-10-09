@@ -116,6 +116,9 @@ public sealed class RecordCnssContributionPaymentCommandHandler
                 bankAccount = await _bankAccounts.GetByIdAsync(req.BankAccountId.Value, ct);
                 if (bankAccount is null)
                     return Result.Failure<Guid>(Error.NotFound("BankAccount", req.BankAccountId.Value));
+                var identity = bankAccount.RequireCompleteIdentity();
+                if (identity.IsFailure)
+                    return Result.Failure<Guid>(identity.Error);
             }
 
             var paymentResult = CnssContributionPayment.Create(

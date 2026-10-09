@@ -106,6 +106,9 @@ public sealed class RecordPayrollRunPaymentCommandHandler
                 bankAccount = await _bankAccounts.GetByIdAsync(request.Request.BankAccountId.Value, ct);
                 if (bankAccount is null)
                     return Result.Failure<Guid>(Error.NotFound("BankAccount", request.Request.BankAccountId.Value));
+                var identity = bankAccount.RequireCompleteIdentity();
+                if (identity.IsFailure)
+                    return Result.Failure<Guid>(identity.Error);
             }
 
             var lineInputs = BuildLineInputs(run, request.Request.PayslipAmounts);

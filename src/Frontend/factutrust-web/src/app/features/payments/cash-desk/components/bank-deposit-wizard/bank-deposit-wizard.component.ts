@@ -19,7 +19,7 @@ import {
   BankDepositListItem,
   BankDepositType
 } from '@core/services/bank-deposit.service';
-import { BankAccountDto, BankAccountService } from '@core/services/bank-account.service';
+import { BankAccountDto, BankAccountService, hasCompleteBankIdentity } from '@core/services/bank-account.service';
 import { AddBankAccountDialogComponent } from '../../../bank-accounts/components/add-bank-account-dialog/add-bank-account-dialog.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ApiResponse } from '@core/services/client.service';
@@ -182,7 +182,7 @@ export class BankDepositWizardComponent implements OnChanges, OnInit {
     this.bankAccountService.list().subscribe({
       next: res => {
         if (res.success && res.data) {
-          this.bankAccounts = res.data.filter(a => a.isActive);
+          this.bankAccounts = res.data.filter(a => a.isActive && hasCompleteBankIdentity(a));
           if (this.bankAccounts.length === 1 && !this.bankAccountId) {
             this.bankAccountId = this.bankAccounts[0].id;
           }

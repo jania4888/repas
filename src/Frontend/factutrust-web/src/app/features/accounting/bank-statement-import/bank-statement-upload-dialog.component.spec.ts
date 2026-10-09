@@ -1,10 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { Router, provideRouter } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { of, throwError } from 'rxjs';
 import { BankStatementImportOrigin, BankStatementUploadDialogComponent } from './bank-statement-upload-dialog.component';
 import { BankStatementImportError, BankStatementImportService } from './bank-statement-import.service';
-import { BankAccountDto, BankAccountService } from '@core/services/bank-account.service';
+import { BankAccountDto } from '@core/services/bank-account.service';
+import { AccountingService } from '../services/accounting.service';
 import { AccountingJournalCatalogService } from '../shared/accounting-journal-catalog.service';
 import { BankStatementImportCapabilities, BankStatementImportSession } from './bank-statement-import.models';
 
@@ -54,7 +56,13 @@ describe('BankStatementUploadDialogComponent', () => {
         provideNoopAnimations(),
         provideRouter([]),
         { provide: BankStatementImportService, useValue: api },
-        { provide: BankAccountService, useValue: { list: () => of({ success: true, data: accounts }) } },
+        {
+          provide: AccountingService,
+          useValue: {
+            ensureBankGlProjections: () => of({ success: true, data: { createdCount: 0, skippedCount: 0 } }),
+            listImportableBankAccounts: () => of({ success: true, data: accounts })
+          }
+        },
         {
           provide: AccountingJournalCatalogService,
           useValue: {
@@ -251,10 +259,43 @@ describe('BankStatementUploadDialogComponent', () => {
     });
 
     it('prévient qu’un compte hors dinars n’est pas pris en charge', async () => {
-      await open([account({ id: 'euros', currency: 'EUR', isDefault: true })]);
+      await open([account({ id: 'euros', currency: 'EUR', isDefault: true, chartOfAccountNumber: '53241', bankName: 'Compte devise' })]);
 
-      expect(component.bankAccountId).toBe('euros');
+      expect(component.bankAccountId).toBeNull();
+      component.bankAccountId = 'euros';
+      fixture.detectChanges();
       expect(text()).toContain('pas en dinars');
+      select(new File([new Uint8Array(8)], 'releve.pdf', { type: 'application/pdf' }));
+      expect(component.canAnalyze()).toBeFalse();
+    });
+
+    it('affiche 53211 dans la liste et signale un refus 403', async () => {
+      await open([account({ id: 'biat', bankName: 'Banque Biat', chartOfAccountNumber: '53211', currency: 'TND' })]);
+      expect(text()).toContain('53211 — Banque Biat');
+
+      TestBed.resetTestingModule();
+      api.capabilities.and.returnValue(of(capabilities));
+      await TestBed.configureTestingModule({
+        imports: [BankStatementUploadDialogComponent],
+        providers: [
+          provideNoopAnimations(),
+          provideRouter([]),
+          { provide: BankStatementImportService, useValue: api },
+          {
+            provide: AccountingService,
+            useValue: {
+              ensureBankGlProjections: () => of({ success: true, data: { createdCount: 1, skippedCount: 0 } }),
+              listImportableBankAccounts: () => throwError(() => new HttpErrorResponse({ status: 403 }))
+            }
+          },
+          { provide: AccountingJournalCatalogService, useValue: { list: () => of([]) } }
+        ]
+      }).compileComponents();
+      const denied = TestBed.createComponent(BankStatementUploadDialogComponent);
+      denied.componentRef.setInput('visible', true);
+      denied.detectChanges();
+      expect(denied.componentInstance.accountsError()).toContain('droit');
+      expect(denied.componentInstance.bankAccounts()).toEqual([]);
     });
   });
 

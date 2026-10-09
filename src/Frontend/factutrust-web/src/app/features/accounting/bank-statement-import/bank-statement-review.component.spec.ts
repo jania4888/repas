@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angul
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { BankStatementReviewComponent } from './bank-statement-review.component';
 import { BankAccountDto, BankAccountService } from '@core/services/bank-account.service';
+import { AccountingService } from '../services/accounting.service';
 import { BankStatementImportError, BankStatementImportService } from './bank-statement-import.service';
 import { EntryReferenceStore } from '../manual-entry/services/entry-reference.store';
 import { ConfirmationService } from '@core/services/confirmation.service';
@@ -163,7 +164,27 @@ describe('BankStatementReviewComponent', () => {
         { provide: ConfirmationService, useValue: confirmation },
         { provide: AuthService, useValue: { hasPermission: (p: string) => permissions.includes(p) } },
         { provide: EmployeeService, useValue: employees },
-        { provide: BankAccountService, useValue: { list: () => of({ success: true, data: bankAccounts }) } }
+        { provide: BankAccountService, useValue: { list: () => of({ success: true, data: bankAccounts }) } },
+        {
+          provide: AccountingService,
+          useValue: {
+            ensureBankGlProjections: () => of({ success: true, data: { createdCount: 0, skippedCount: 0 } }),
+            listImportableBankAccounts: () => of({
+              success: true,
+              data: bankAccounts.map(a => ({
+                id: a.id,
+                bankName: a.bankName,
+                designation: a.designation,
+                chartOfAccountNumber: a.chartOfAccountNumber ?? '',
+                currency: a.currency ?? 'TND',
+                isActive: a.isActive,
+                isDefault: a.isDefault,
+                hasBankingIdentity: !!a.rib,
+                ribMasked: a.rib ? `…${a.rib.slice(-4)}` : null
+              }))
+            })
+          }
+        }
       ]
     })
       .overrideComponent(BankStatementReviewComponent, { set: { providers: [{ provide: EntryReferenceStore, useValue: refs }] } })

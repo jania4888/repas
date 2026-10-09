@@ -57,7 +57,7 @@ public sealed class GetBankDepositListQueryHandler
                 BankName = account.BankName,
                 AccountDesignation = account.Designation,
                 BankCode = account.BankCode,
-                Iban = account.Iban,
+                Iban = account.Iban ?? string.Empty,
                 Amount = d.Amount.Amount,
                 Currency = d.Amount.Currency,
                 Quantity = d.Quantity,

@@ -38,6 +38,7 @@ describe('ChartOfAccountsComponent', () => {
           provide: AccountingService,
           useValue: {
             getChartOfAccounts: () => of({ success: true, data: [] }),
+            getTunisianBanks: () => of({ success: true, data: [] }),
             createSubAccount: jasmine.createSpy('createSubAccount').and.returnValue(
               overrides.createSubAccount ?? of({ success: true, data: 'id' })
             ),
@@ -251,5 +252,22 @@ describe('ChartOfAccountsComponent', () => {
 
     expect(extractErrorMessage).toHaveBeenCalled();
     expect(component.error()).toBe('Un compte système ne peut pas être désactivé.');
+  });
+
+  it('affiche l’encadré bancaire sous 5321 et enregistre sans RIB', () => {
+    const { component } = createComponent();
+    component.form.parentAccountNumber = '5321';
+    expect(component.showsBankPanel()).toBeTrue();
+
+    component.form.accountNumber = '53211';
+    component.form.label = 'Banque Biat';
+    component.create();
+
+    const api = TestBed.inject(AccountingService) as unknown as { createSubAccount: jasmine.Spy };
+    const request = api.createSubAccount.calls.mostRecent().args[0];
+    expect(request.accountNumber).toBe('53211');
+    expect(request.rib).toBeNull();
+    expect(request.iban).toBeNull();
+    expect(component.showsFxCurrency()).toBeFalse();
   });
 });

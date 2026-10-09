@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using FactuTrust.Domain.Banking;
 using FactuTrust.Domain.Common;
+using FactuTrust.Domain.Services.Accounting;
 
 namespace FactuTrust.Domain.Entities;
 
@@ -21,11 +22,11 @@ public sealed partial class BankAccount : AggregateRoot
 
     public string? AgencyName { get; private set; }
 
-    /// <summary>20-digit RIB, digits only.</summary>
-    public string Rib { get; private set; } = null!;
+    /// <summary>20-digit RIB, digits only. Null pour une projection plan comptable encore incomplète.</summary>
+    public string? Rib { get; private set; }
 
-    /// <summary>24-char Tunisian IBAN without spaces (TN + 22 digits).</summary>
-    public string Iban { get; private set; } = null!;
+    /// <summary>24-char Tunisian IBAN without spaces (TN + 22 digits). Null tant que le RIB n'est pas saisi.</summary>
+    public string? Iban { get; private set; }
 
     public string? SwiftBic { get; private set; }
 
@@ -79,6 +80,84 @@ public sealed partial class BankAccount : AggregateRoot
         return Result.Success(account);
     }
 
+    /// <summary>
+    /// Projection trésorerie d'une feuille 5321/5324. Le RIB et l'IBAN sont facultatifs, mais inséparables.
+    /// N'est jamais le compte par défaut.
+    /// </summary>
+    public static Result<BankAccount> CreateFromChartProjection(
+        Guid companyId,
+        string chartOfAccountNumber,
+        string bankName,
+        string bankCode,
+        string currency,
+        bool isActive,
+        string? rib = null,
+        string? iban = null,
+        string? swiftBic = null)
+    {
+        if (companyId == Guid.Empty)
+            return Result.Failure<BankAccount>(Error.Validation("CompanyId", "L'entreprise est obligatoire"));
+
+        var number = chartOfAccountNumber?.Trim() ?? string.Empty;
+        if (!BankGlAccountRules.IsProvisionableLeafNumber(number))
+            return Result.Failure<BankAccount>(Error.Validation("ChartOfAccountNumber",
+                "Seule une feuille 5321 (dinars) ou 5324 (devises) peut être projetée vers la trésorerie."));
+
+        if (string.IsNullOrWhiteSpace(bankName))
+            return Result.Failure<BankAccount>(Error.Validation("BankName", "Le nom de la banque est obligatoire"));
+
+        var name = bankName.Trim();
+        if (name.Length > 100)
+            name = name[..100];
+
+        if (string.IsNullOrWhiteSpace(bankCode))
+            return Result.Failure<BankAccount>(Error.Validation("BankCode", "La banque est obligatoire"));
+
+        var code = bankCode.Trim().ToUpperInvariant();
+        if (code.Length > 32)
+            return Result.Failure<BankAccount>(Error.Validation("BankCode", "Le code banque est trop long"));
+
+        var identity = NormalizeIdentityPair(rib, iban);
+        if (identity.IsFailure)
+            return Result.Failure<BankAccount>(identity.Error);
+
+        if (identity.Value.Rib is not null)
+        {
+            var validate = ValidateBankingFields(code, name, identity.Value.Rib, identity.Value.Iban!, swiftBic, null, null);
+            if (validate.IsFailure)
+                return Result.Failure<BankAccount>(validate.Error);
+        }
+
+        var account = new BankAccount
+        {
+            CompanyId = companyId,
+            BankCode = code,
+            BankName = name,
+            Rib = identity.Value.Rib,
+            Iban = identity.Value.Iban,
+            SwiftBic = NormalizeSwift(swiftBic),
+            IsDefault = false,
+            IsActive = isActive,
+            ChartOfAccountNumber = number,
+            Currency = BankGlAccountRules.ResolveProjectionCurrency(number, currency)
+        };
+
+        return Result.Success(account);
+    }
+
+    /// <summary>RIB 20 chiffres et IBAN TN valides. Requis pour virements, paie et dépôts — pas pour l'import de relevés.</summary>
+    public bool HasBankingIdentity =>
+        Rib is { Length: 20 } && Iban is { Length: 24 } && Iban.StartsWith("TN", StringComparison.Ordinal);
+
+    public Result RequireCompleteIdentity()
+    {
+        if (HasBankingIdentity)
+            return Result.Success();
+
+        return Result.Failure(Error.Validation("BankAccount",
+            "Ce compte bancaire n'a pas de RIB et d'IBAN complets : complétez-le dans Paiements › Comptes bancaires avant un virement ou un dépôt."));
+    }
+
     public Result Update(
         string bankCode,
         string bankName,
@@ -106,9 +185,74 @@ public sealed partial class BankAccount : AggregateRoot
         return Result.Success();
     }
 
-    public void SetAsDefault()
+    /// <summary>Complète une projection sans RIB, ou met à jour le même IBAN. Refuse un IBAN différent.</summary>
+    public Result CompleteBankingIdentity(
+        string bankCode,
+        string bankName,
+        string rib,
+        string iban,
+        string? designation = null,
+        string? agencyName = null,
+        string? swiftBic = null)
     {
+        var incomingIban = NormalizeIban(iban);
+        if (HasBankingIdentity && !string.Equals(Iban, incomingIban, StringComparison.Ordinal))
+            return Result.Failure(Error.Conflict("Ce compte comptable est déjà relié à un autre IBAN."));
+
+        return Update(bankCode, bankName, rib, iban, designation, agencyName, swiftBic);
+    }
+
+    /// <summary>Vide accepté. Un seul des deux champs, ou une paire invalide, est refusé.</summary>
+    public static Result ValidateOptionalIdentity(string? rib, string? iban, string? swiftBic = null)
+    {
+        var pair = NormalizeIdentityPair(rib, iban);
+        if (pair.IsFailure)
+            return Result.Failure(pair.Error);
+        if (pair.Value.Rib is null)
+            return Result.Success();
+
+        return ValidateBankingFields("AUTRE", "Banque", pair.Value.Rib, pair.Value.Iban!, swiftBic, null, null);
+    }
+
+    public Result SetAsDefault()
+    {
+        if (!HasBankingIdentity)
+            return Result.Failure(Error.Validation("BankAccount",
+                "Complétez le RIB et l'IBAN avant de définir ce compte par défaut."));
+
         IsDefault = true;
+        IncrementVersion();
+        return Result.Success();
+    }
+
+    public void SetActive(bool isActive)
+    {
+        if (IsActive == isActive)
+            return;
+
+        IsActive = isActive;
+        if (!isActive)
+            IsDefault = false;
+        IncrementVersion();
+    }
+
+    /// <summary>
+    /// Aligne le libellé plan. Un nom saisi dans Paiements (code catalogue ou désignation propre) n'est pas écrasé.
+    /// </summary>
+    public void SyncChartLabel(string? oldLabel, string? newLabel)
+    {
+        var next = string.IsNullOrWhiteSpace(newLabel) ? BankName : newLabel.Trim();
+        if (next.Length > 200)
+            next = next[..200];
+
+        var previous = oldLabel?.Trim();
+        var autoName = string.Equals(BankCode, "AUTRE", StringComparison.OrdinalIgnoreCase)
+            && string.Equals(BankName, previous, StringComparison.Ordinal);
+        if (autoName)
+            BankName = next.Length > 100 ? next[..100] : next;
+        else if (Designation is null || string.Equals(Designation, previous, StringComparison.Ordinal))
+            Designation = next;
+
         IncrementVersion();
     }
 
@@ -195,6 +339,21 @@ public sealed partial class BankAccount : AggregateRoot
             return Result.Failure(Error.Validation("SwiftBic", "Le code SWIFT/BIC est invalide"));
 
         return Result.Success();
+    }
+
+    private readonly record struct IdentityPair(string? Rib, string? Iban);
+
+    private static Result<IdentityPair> NormalizeIdentityPair(string? rib, string? iban)
+    {
+        var hasRib = !string.IsNullOrWhiteSpace(rib);
+        var hasIban = !string.IsNullOrWhiteSpace(iban);
+        if (!hasRib && !hasIban)
+            return Result.Success(new IdentityPair(null, null));
+        if (hasRib != hasIban)
+            return Result.Failure<IdentityPair>(Error.Validation("Rib",
+                "Le RIB et l'IBAN doivent être saisis ensemble, ou laissés vides."));
+
+        return Result.Success(new IdentityPair(NormalizeDigits(rib), NormalizeIban(iban)));
     }
 
     private static string NormalizeDigits(string? value)

@@ -11,6 +11,7 @@ import { ButtonComponent } from '@shared/components/button/button.component';
 import { ConfirmationService } from '@core/services/confirmation.service';
 import { AuthService } from '@core/services/auth.service';
 import { BankAccountDto, BankAccountService } from '@core/services/bank-account.service';
+import { AccountingService } from '../services/accounting.service';
 import { EmployeeService } from '@core/services/employee.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { EntryReferenceStore } from '../manual-entry/services/entry-reference.store';
@@ -411,6 +412,10 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
             </div>
           }
 
+          @if (bankAccountsError(); as accountsError) {
+            <p class="bsr-fallback-note" role="alert">{{ accountsError }}</p>
+          }
+
           @if (suggestedRetargetAccount(); as match) {
             <div class="bsr-retarget" role="status">
               <p class="bsr-muted" i18n="@@accounting.bank-statement-import.ce.releve.appartient.au.compte.suggere">Ce relevé appartient au compte {{ match.bankName }} (…{{ ribTail(match.rib) }}).</p>
@@ -802,6 +807,7 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly api = inject(BankStatementImportService);
   private readonly bankAccountsApi = inject(BankAccountService);
+  private readonly accounting = inject(AccountingService);
   private readonly refs = inject(EntryReferenceStore);
   private readonly confirmation = inject(ConfirmationService);
   private readonly auth = inject(AuthService);
@@ -831,6 +837,9 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
   readonly bankAccounts = signal<BankAccountDto[]>([]);
   /** Comptes bancaires du dossier chargés (sinon on ne peut pas affirmer qu'un compte est absent). */
   private readonly bankAccountsLoaded = signal(false);
+  /** Le rapprochement RIB exige la liste paiements (RIB en clair). Sinon on n'invente pas « compte absent ». */
+  private readonly ribMatchReady = signal(false);
+  readonly bankAccountsError = signal<string | null>(null);
 
   /** Secondes écoulées depuis l'ouverture d'une lecture en cours (compteur local, 1 s). */
   readonly elapsedSeconds = signal(0);
@@ -905,7 +914,7 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
    */
   readonly missingAccountRibTail = computed(() => {
     const s = this.session();
-    if (!s?.extraction || !this.bankAccountsLoaded() || this.suggestedRetargetAccount()) return null;
+    if (!s?.extraction || !this.bankAccountsLoaded() || !this.ribMatchReady() || this.suggestedRetargetAccount()) return null;
     if (!s.extraction.issues.some(i => i.code === 'statement.rib_mismatch')) return null;
     const readRib = this.normalizeRibDigits(s.extraction.header.rib);
     return readRib.length === 20 ? readRib.slice(-4) : null;
@@ -986,12 +995,45 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.origin.set(this.route.snapshot?.queryParamMap?.get('from') === 'reconciliation' ? 'reconciliation' : null);
     this.refs.loadAll();
-    this.bankAccountsApi.list().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: res => {
-        this.bankAccounts.set((res?.data ?? []).filter(a => a.isActive));
-        this.bankAccountsLoaded.set(true);
-      },
-      error: () => this.bankAccounts.set([])
+    const ensure$ = this.auth.hasPermission('accounting:create')
+      ? this.accounting.ensureBankGlProjections().pipe(catchError(() => of(null)))
+      : of(null);
+    ensure$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.accounting.listImportableBankAccounts().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: imported => {
+          this.bankAccountsApi.list().pipe(catchError(() => of(null)), takeUntilDestroyed(this.destroyRef)).subscribe(payments => {
+            const byId = new Map((payments?.data ?? []).map(a => [a.id, a]));
+            this.ribMatchReady.set(payments != null);
+            this.bankAccounts.set((imported?.data ?? []).filter(a => a.isActive).map(a => {
+              const full = byId.get(a.id);
+              return {
+                id: a.id,
+                companyId: full?.companyId ?? '',
+                bankCode: full?.bankCode ?? '',
+                bankName: a.bankName,
+                designation: a.designation ?? full?.designation ?? null,
+                agencyName: full?.agencyName ?? null,
+                rib: full?.rib ?? '',
+                iban: full?.iban ?? '',
+                swiftBic: full?.swiftBic ?? null,
+                isDefault: a.isDefault,
+                isActive: a.isActive,
+                chartOfAccountNumber: a.chartOfAccountNumber,
+                currency: a.currency,
+                hasBankingIdentity: a.hasBankingIdentity
+              };
+            }));
+            this.bankAccountsLoaded.set(true);
+            this.bankAccountsError.set(null);
+          });
+        },
+        error: () => {
+          this.bankAccounts.set([]);
+          this.bankAccountsLoaded.set(true);
+          this.ribMatchReady.set(false);
+          this.bankAccountsError.set($localize`:@@accounting.bank-statement-import.ts.chargement.comptes.impossible:Impossible de charger les comptes bancaires.`);
+        }
+      });
     });
     this.api.capabilities().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(caps => this.capabilities.set(caps));
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {

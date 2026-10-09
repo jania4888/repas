@@ -13,12 +13,13 @@ internal static class BankAccountMapping
         BankName = b.BankName,
         Designation = b.Designation,
         AgencyName = b.AgencyName,
-        Rib = b.Rib,
-        Iban = b.Iban,
+        Rib = b.Rib ?? string.Empty,
+        Iban = b.Iban ?? string.Empty,
         SwiftBic = b.SwiftBic,
         IsDefault = b.IsDefault,
         IsActive = b.IsActive,
         ChartOfAccountNumber = b.ChartOfAccountNumber,
-        Currency = b.Currency
+        Currency = b.Currency,
+        HasBankingIdentity = b.HasBankingIdentity
     };
 }

@@ -8,7 +8,7 @@ import { ButtonComponent } from '@shared/components/button/button.component';
 import { TagModule } from 'primeng/tag';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
-import { BankAccountDto, BankAccountService } from '@core/services/bank-account.service';
+import { BankAccountDto, BankAccountService, hasCompleteBankIdentity } from '@core/services/bank-account.service';
 import { ToastService } from '@core/services/toast.service';
 import { ConfirmationService } from '@core/services/confirmation.service';
 import { AuthService } from '@core/services/auth.service';
@@ -78,6 +78,9 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
                 @if (a.isDefault) {
                   <p-tag severity="success" value="Par défaut" styleClass="tag-compact"></p-tag>
                 }
+                @if (!completeIdentity(a)) {
+                  <p-tag severity="warn" value="RIB à compléter" styleClass="tag-compact"></p-tag>
+                }
               </div>
               <p class="bank-sub">{{ a.bankName }}</p>
               @if (a.agencyName) {
@@ -107,7 +110,16 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
               </div>
               @if (!auth.isFirmDelegatedReadonly() && canUpdate()) {
                 <div class="bank-actions">
-                  @if (!a.isDefault) {
+                  @if (!completeIdentity(a)) {
+                    <app-button
+                      variant="outline"
+                      size="sm"
+                      icon="pi pi-pencil"
+                      (click)="openEdit(a)"
+                      ariaLabel="Compléter le RIB" i18n-ariaLabel="@@payments.bank-accounts.completer.le.rib.aria"
+                      i18n="@@payments.bank-accounts.completer.le.rib"> Compléter le RIB </app-button>
+                  }
+                  @if (!a.isDefault && completeIdentity(a)) {
                     <app-button
                       variant="outline"
                       size="sm"
@@ -368,14 +380,20 @@ export class BankAccountsComponent implements OnInit {
     });
   }
 
+  completeIdentity(account: BankAccountDto): boolean {
+    return hasCompleteBankIdentity(account);
+  }
+
   formatIban(iban: string): string {
-    const c = iban.replace(/\s/g, '').toUpperCase();
+    const c = (iban ?? '').replace(/\s/g, '').toUpperCase();
+    if (!c) return '—';
     if (c.length !== 24) return iban;
     return c.replace(/(.{4})/g, '$1 ').trim();
   }
 
   formatRib(rib: string): string {
-    const d = rib.replace(/\D/g, '');
+    const d = (rib ?? '').replace(/\D/g, '');
+    if (!d) return '—';
     if (d.length !== 20) return rib;
     return `${d.slice(0, 2)} ${d.slice(2, 5)} ${d.slice(5, 18)} ${d.slice(18, 20)}`;
   }

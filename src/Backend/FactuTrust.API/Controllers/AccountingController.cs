@@ -2,11 +2,13 @@ using System.Text;
 using FactuTrust.API.Authorization;
 using FactuTrust.Application.Common.Enums;
 using FactuTrust.Application.Common.Interfaces;
+using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.Accounting.Budgeting;
 using FactuTrust.Application.Features.Accounting.CurrencyCatalog;
 using FactuTrust.Application.Features.Accounting.ThirdPartyDirectory;
 using FactuTrust.Application.Features.Accounting.Commands;
+using FactuTrust.Application.Features.BankAccounts.Queries;
 using FactuTrust.Application.Features.Accounting.Fiscal;
 using FactuTrust.Application.Features.Accounting.JournalCatalog;
 using FactuTrust.Application.Features.Accounting.Loans;
@@ -58,6 +60,37 @@ public sealed class AccountingController : ControllerBase
         if (r.IsFailure)
             return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
         return Ok(ApiResponse<Guid>.Ok(r.Value));
+    }
+
+    /// <summary>Backfill idempotent des feuilles 5321/5324 vers la trésorerie (ouverture de l'import).</summary>
+    [HttpPost("bank-gl-projections/ensure")]
+    [Authorize(Policy = PermissionPolicies.AccountingCreate)]
+    public async Task<IActionResult> EnsureBankGlProjections(CancellationToken cancellationToken)
+    {
+        var r = await _mediator.Send(new EnsureBankGlProjectionsCommand(), cancellationToken);
+        if (r.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+        return Ok(ApiResponse<BankGlProjectionEnsureResult>.Ok(r.Value));
+    }
+
+    /// <summary>Comptes 532 actifs importables. Pas de RIB/IBAN en clair (permission accounting:read).</summary>
+    [HttpGet("importable-bank-accounts")]
+    [Authorize(Policy = PermissionPolicies.AccountingRead)]
+    public async Task<IActionResult> GetImportableBankAccounts(CancellationToken cancellationToken)
+    {
+        var r = await _mediator.Send(new GetImportableBankAccountsQuery(), cancellationToken);
+        if (r.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+        return Ok(ApiResponse<IReadOnlyList<ImportableBankAccountDto>>.Ok(r.Value));
+    }
+
+    /// <summary>Catalogue banques tunisiennes, sans donnée personnelle, pour le plan comptable.</summary>
+    [HttpGet("tunisian-banks")]
+    [Authorize(Policy = PermissionPolicies.AccountingRead)]
+    public async Task<IActionResult> GetTunisianBanks(CancellationToken cancellationToken)
+    {
+        var list = await _mediator.Send(new GetTunisianBanksQuery(), cancellationToken);
+        return Ok(ApiResponse<IReadOnlyList<TunisianBankReferenceDto>>.Ok(list));
     }
 
     [HttpPut("chart-of-accounts/{id:guid}")]

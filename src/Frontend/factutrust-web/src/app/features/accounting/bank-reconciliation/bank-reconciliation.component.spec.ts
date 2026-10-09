@@ -64,7 +64,13 @@ describe('BankReconciliationComponent — import d’un fichier à plusieurs rel
         provideRouter([]),
         { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({}) } } },
         { provide: BankReconciliationService, useValue: api },
-        { provide: AccountingService, useValue: {} },
+        {
+          provide: AccountingService,
+          useValue: {
+            ensureBankGlProjections: () => of({ success: true, data: { createdCount: 0, skippedCount: 0 } }),
+            listImportableBankAccounts: () => of({ success: true, data: [] })
+          }
+        },
         { provide: BankAccountService, useValue: { list: () => of({ success: true, data: [] }) } },
         { provide: ToastService, useValue: { add: jasmine.createSpy('add') } },
         { provide: ErrorHandlerService, useValue: { extractErrorMessage: (_: unknown, fallback: string) => fallback } },

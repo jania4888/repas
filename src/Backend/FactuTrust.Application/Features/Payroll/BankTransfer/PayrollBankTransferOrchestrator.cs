@@ -113,7 +113,7 @@ internal static class PayrollBankTransferOrchestrator
             account = await bankAccounts.GetDefaultAsync(company.Id, cancellationToken);
         }
 
-        if (account is null)
+        if (account is null || !account.HasBankingIdentity || account.Rib is null || account.Iban is null)
             return (null, null);
 
         return (

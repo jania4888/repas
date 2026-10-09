@@ -14,7 +14,7 @@ import {
   PayrollService,
   type PayrollBankTransferPreview
 } from '@core/services/payroll.service';
-import { BankAccountService, type BankAccountDto } from '@core/services/bank-account.service';
+import { BankAccountService, hasCompleteBankIdentity, type BankAccountDto } from '@core/services/bank-account.service';
 import { ToastService } from '@core/services/toast.service';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { PayrollAmountPipe, formatPayrollAmount } from '../shared';
@@ -191,7 +191,7 @@ export class PayrollBankTransferDialogComponent implements OnInit {
 
   accountOptions = computed(() =>
     this.accounts()
-      .filter(a => a.isActive)
+      .filter(a => a.isActive && hasCompleteBankIdentity(a))
       .map(a => ({
         value: a.id,
         label: `${a.bankName}${a.isDefault ? $localize`:@@ui.tern.defaut.f21337: (défaut)` : ''} — …${a.rib.slice(-4)}`
@@ -206,7 +206,7 @@ export class PayrollBankTransferDialogComponent implements OnInit {
       next: res => {
         const list = res.data ?? [];
         this.accounts.set(list);
-        const def = list.find(a => a.isDefault && a.isActive);
+        const def = list.find(a => a.isDefault && a.isActive && hasCompleteBankIdentity(a));
         this.selectedAccountId = def?.id ?? null;
       },
       error: () => this.accounts.set([])

@@ -1,6 +1,7 @@
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Features.Accounting.Commands;
+using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
 using Moq;
@@ -26,7 +27,11 @@ public sealed class ToggleAccountActiveHandlerTests
                 It.IsAny<object?>(), It.IsAny<object?>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
-        return (new ToggleAccountActiveCommandHandler(repo.Object, audit.Object), repo);
+        var projection = new Mock<IBankGlTreasuryProjectionService>();
+        projection.Setup(p => p.SyncActiveFlagAsync(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+
+        return (new ToggleAccountActiveCommandHandler(repo.Object, audit.Object, projection.Object), repo);
     }
 
     [Fact]

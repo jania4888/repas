@@ -81,6 +81,17 @@ public sealed class BankAccountRepository : IBankAccountRepository
         return await query.AnyAsync(cancellationToken);
     }
 
+    public async Task<BankAccount?> GetByCompanyAndChartNumberAsync(
+        Guid companyId,
+        string chartOfAccountNumber,
+        CancellationToken cancellationToken = default)
+    {
+        await using var context = _contextFactory.CreateContext();
+        var number = chartOfAccountNumber.Trim();
+        return await context.BankAccounts
+            .FirstOrDefaultAsync(b => b.CompanyId == companyId && b.ChartOfAccountNumber == number, cancellationToken);
+    }
+
     public async Task ClearDefaultFlagsForCompanyAsync(Guid companyId, CancellationToken cancellationToken = default)
     {
         await using var context = _contextFactory.CreateContext();

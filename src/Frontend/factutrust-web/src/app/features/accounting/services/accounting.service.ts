@@ -1434,6 +1434,36 @@ export interface CreateSubAccountRequest {
   accountType?: number;
   isAuxiliary?: boolean;
   affectationAccountNumber?: string | null;
+  /** Ignorés si le compte n'est pas une feuille 5321/5324. */
+  bankCode?: string | null;
+  rib?: string | null;
+  iban?: string | null;
+  bankCurrency?: string | null;
+  swiftBic?: string | null;
+}
+
+/** Compte 532 visible dans l'import de relevés, sans RIB/IBAN en clair. */
+export interface ImportableBankAccountDto {
+  id: string;
+  bankName: string;
+  designation?: string | null;
+  chartOfAccountNumber: string;
+  currency: string;
+  isActive: boolean;
+  isDefault: boolean;
+  hasBankingIdentity: boolean;
+  ribMasked?: string | null;
+}
+
+export interface BankGlProjectionEnsureResult {
+  createdCount: number;
+  skippedCount: number;
+}
+
+export interface TunisianBankCatalogEntry {
+  code: string;
+  name: string;
+  defaultSwiftBic?: string | null;
 }
 
 export interface JournalEntryTemplateLineDto {
@@ -2370,6 +2400,24 @@ export class AccountingService {
     if (fiscalYear != null) form.append('fiscalYear', String(fiscalYear));
     if (accountMapping) form.append('accountMapping', accountMapping);
     return this.http.post<ApiResponse<ReferenceImportCommitResultDto>>(`${this.base}/reference-import/commit`, form);
+  }
+
+  ensureBankGlProjections(): Observable<ApiResponse<BankGlProjectionEnsureResult>> {
+    return this.http.post<ApiResponse<BankGlProjectionEnsureResult>>(`${this.base}/bank-gl-projections/ensure`, {}, {
+      context: createHttpContextSkipGlobalErrorUi()
+    });
+  }
+
+  listImportableBankAccounts(): Observable<ApiResponse<ImportableBankAccountDto[]>> {
+    return this.http.get<ApiResponse<ImportableBankAccountDto[]>>(`${this.base}/importable-bank-accounts`, {
+      context: createHttpContextSkipGlobalErrorUi()
+    });
+  }
+
+  getTunisianBanks(): Observable<ApiResponse<TunisianBankCatalogEntry[]>> {
+    return this.http.get<ApiResponse<TunisianBankCatalogEntry[]>>(`${this.base}/tunisian-banks`, {
+      context: createHttpContextSkipGlobalErrorUi()
+    });
   }
 
   createSubAccount(request: CreateSubAccountRequest): Observable<ApiResponse<string>> {

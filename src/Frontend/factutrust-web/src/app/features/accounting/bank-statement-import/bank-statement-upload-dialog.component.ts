@@ -1,11 +1,14 @@
 /// <reference types="@angular/localize" />
 import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild, computed, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { catchError, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonComponent } from '@shared/components/button/button.component';
-import { BankAccountDto, BankAccountService } from '@core/services/bank-account.service';
+import { BankAccountDto } from '@core/services/bank-account.service';
+import { AccountingService, ImportableBankAccountDto } from '../services/accounting.service';
 import { AccountingJournalCatalogService } from '../shared/accounting-journal-catalog.service';
 import { AccountingJournalTab } from '../shared/accounting-journal-tabs.model';
 import { BankStatementImportError, BankStatementImportService } from './bank-statement-import.service';
@@ -14,6 +17,25 @@ import { importErrorMessage } from './bank-statement-import.messages';
 
 /** Journaux standards qui ne sont jamais des journaux de banque. */
 const NON_BANK_JOURNALS = new Set(['JV', 'JA', 'JC', 'JOD', 'JIM', 'JAN']);
+
+function toBankAccountOption(account: ImportableBankAccountDto): BankAccountDto {
+  return {
+    id: account.id,
+    companyId: '',
+    bankCode: '',
+    bankName: account.bankName,
+    designation: account.designation ?? null,
+    agencyName: null,
+    rib: '',
+    iban: '',
+    swiftBic: null,
+    isDefault: account.isDefault,
+    isActive: account.isActive,
+    chartOfAccountNumber: account.chartOfAccountNumber,
+    currency: account.currency,
+    hasBankingIdentity: account.hasBankingIdentity
+  };
+}
 
 /** Écran d'où la modale est ouverte : l'analyse y ramène après relecture. */
 export type BankStatementImportOrigin = 'manual-entry' | 'reconciliation';
@@ -82,8 +104,10 @@ export type BankStatementImportOrigin = 'manual-entry' | 'reconciliation';
               </p>
             }
           }
-          @if (bankAccounts().length === 0 && !loading()) {
-            <p class="bsu-hint bsu-hint--warn" role="status" i18n="@@accounting.bank-statement-import.aucun.compte.bancaire.actif.creez.en.un.0eedb1be">Aucun compte bancaire actif : créez-en un dans Paiements › Comptes bancaires.</p>
+          @if (accountsError(); as accountsMessage) {
+            <p class="bsu-error" role="alert">{{ accountsMessage }}</p>
+          } @else if (bankAccounts().length === 0 && !loading()) {
+            <p class="bsu-hint bsu-hint--warn" role="status" i18n="@@accounting.bank-statement-import.aucun.compte.532.creez.en.un">Créez un compte 5321/5324 dans le plan comptable, ou un compte dans Paiements › Comptes bancaires.</p>
           } @else if (origin === 'reconciliation' && accountsLoaded() && !hasEligibleAccount()) {
             <p class="bsu-hint bsu-hint--warn bsu-no-eligible" role="status" i18n="@@accounting.bank-statement-import.aucun.compte.bancaire.n.est.pret.pour.l.import.d.d519959a">
               Aucun compte bancaire n'est prêt pour l'import du relevé (compte en dinars relié à un compte comptable 532) :
@@ -184,7 +208,7 @@ export class BankStatementUploadDialogComponent implements OnChanges {
   @ViewChild('fileInput') private fileInput?: ElementRef<HTMLInputElement>;
 
   private readonly api = inject(BankStatementImportService);
-  private readonly bankAccountsApi = inject(BankAccountService);
+  private readonly accounting = inject(AccountingService);
   private readonly journalCatalog = inject(AccountingJournalCatalogService);
   private readonly router = inject(Router);
 
@@ -199,6 +223,7 @@ export class BankStatementUploadDialogComponent implements OnChanges {
   readonly busy = signal(false);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
+  readonly accountsError = signal<string | null>(null);
   readonly accountsLoaded = signal(false);
 
   bankAccountId: string | null = null;
@@ -230,7 +255,8 @@ export class BankStatementUploadDialogComponent implements OnChanges {
 
   canAnalyze(): boolean {
     const account = this.selectedAccount();
-    return !this.busy() && !!this.capabilities() && !this.aiBlocked() && !!this.file() && !!account?.chartOfAccountNumber && !!this.journalCode;
+    return !this.busy() && !!this.capabilities() && !this.aiBlocked() && !!this.file()
+      && !!account?.chartOfAccountNumber && this.isDinarAccount(account) && !!this.journalCode;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -243,9 +269,8 @@ export class BankStatementUploadDialogComponent implements OnChanges {
   }
 
   accountLabel(account: BankAccountDto): string {
-    const rib = account.rib ? `…${account.rib.slice(-4)}` : '';
-    const gl = account.chartOfAccountNumber ? ` — ${account.chartOfAccountNumber}` : '';
-    return `${account.designation || account.bankName} ${rib}${gl}`.trim();
+    const name = account.designation || account.bankName;
+    return account.chartOfAccountNumber ? `${account.chartOfAccountNumber} — ${name}` : name;
   }
 
   chooseFile(): void {
@@ -304,6 +329,7 @@ export class BankStatementUploadDialogComponent implements OnChanges {
   private reset(): void {
     this.file.set(null);
     this.error.set(null);
+    this.accountsError.set(null);
     this.busy.set(false);
     this.accountsLoaded.set(false);
   }
@@ -317,20 +343,28 @@ export class BankStatementUploadDialogComponent implements OnChanges {
       const file = this.file();
       if (file && caps && file.size > caps.maxFileBytes) this.useFile(file);
     });
-    this.bankAccountsApi.list().subscribe({
-      next: res => {
-        const accounts = (res?.data ?? []).filter(a => a.isActive);
-        this.bankAccounts.set(accounts);
-        this.accountsLoaded.set(true);
-        if (!this.bankAccountId) {
-          const preferred = accounts.find(a => a.isDefault && a.chartOfAccountNumber) ?? accounts.find(a => a.chartOfAccountNumber);
-          this.bankAccountId = preferred?.id ?? null;
+    this.accounting.ensureBankGlProjections().pipe(catchError(() => of(null))).subscribe(() => {
+      this.accounting.listImportableBankAccounts().subscribe({
+        next: res => {
+          const accounts = (res?.data ?? []).filter(a => a.isActive).map(toBankAccountOption);
+          this.bankAccounts.set(accounts);
+          this.accountsLoaded.set(true);
+          this.accountsError.set(null);
+          if (!this.bankAccountId) {
+            const dinar = (a: BankAccountDto) => !!a.chartOfAccountNumber && this.isDinarAccount(a);
+            const preferred = accounts.find(a => a.isDefault && dinar(a)) ?? accounts.find(dinar);
+            this.bankAccountId = preferred?.id ?? null;
+          }
+        },
+        error: (err: unknown) => {
+          this.bankAccounts.set([]);
+          this.accountsLoaded.set(true);
+          const status = err instanceof HttpErrorResponse ? err.status : 0;
+          this.accountsError.set(status === 403
+            ? $localize`:@@accounting.bank-statement-import.ts.droit.comptes.import.refuse:Vous n'avez pas le droit de consulter les comptes bancaires de l'import.`
+            : $localize`:@@accounting.bank-statement-import.ts.chargement.comptes.impossible:Impossible de charger les comptes bancaires.`);
         }
-      },
-      error: () => {
-        this.bankAccounts.set([]);
-        this.accountsLoaded.set(true);
-      }
+      });
     });
     this.journalCatalog.list().subscribe(journals => {
       const bankJournals = journals.filter(j => j.code === 'JB' || !NON_BANK_JOURNALS.has(j.code));

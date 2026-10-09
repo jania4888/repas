@@ -105,8 +105,9 @@ public sealed class BankAccountChartProvisioningService : IBankAccountChartProvi
         return $"{bankAccount.BankName} — {suffix}";
     }
 
-    private static string MaskRib(string rib)
+    private static string MaskRib(string? rib)
     {
+        if (string.IsNullOrEmpty(rib)) return "sans RIB";
         if (rib.Length <= 4) return rib;
         return "…" + rib[^4..];
     }

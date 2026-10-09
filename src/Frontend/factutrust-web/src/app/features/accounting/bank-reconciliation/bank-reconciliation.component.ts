@@ -2,7 +2,7 @@
 import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
-import { concatMap, from, map } from 'rxjs';
+import { catchError, concatMap, from, map, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -32,7 +32,7 @@ import {
   ReconcilePairRequest,
   normalizeExtractionMethod
 } from '../services/bank-reconciliation.service';
-import { BankAccountDto, BankAccountService } from '@core/services/bank-account.service';
+import { BankAccountDto } from '@core/services/bank-account.service';
 import { formatLocalDate, parseLocalDateString } from '../shared/accounting-date-utils';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { BankStatementImportService } from '../bank-statement-import/bank-statement-import.service';
@@ -255,9 +255,12 @@ function previewErrorCode(err: unknown): string | null {
             <select id="br-bank-acc" class="br-input" [(ngModel)]="selectedBankAccountId" [disabled]="busy() || loadingBankAccounts()">
               <option value="" i18n="@@accounting.bank-reconciliation.selectionner.7ae1afc7">— Sélectionner —</option>
               @for (ba of bankAccounts(); track ba.id) {
-                <option [ngValue]="ba.id">{{ ba.bankName }} — {{ formatRib(ba.rib) }} {{ ba.chartOfAccountNumber ? ('(' + ba.chartOfAccountNumber + ')') : '' }}</option>
+                <option [ngValue]="ba.id">{{ ba.chartOfAccountNumber ? (ba.chartOfAccountNumber + ' — ') : '' }}{{ ba.designation || ba.bankName }}</option>
               }
             </select>
+            @if (bankAccountsError(); as bankMessage) {
+              <small class="br-help" role="alert">{{ bankMessage }}</small>
+            }
             @if (preview()?.detectedRib && !preview()?.matchedBankAccountId) {
               <small class="br-help br-rib-hint" i18n="@@accounting.bank-reconciliation.rib.detecte.creez.un.compte.bancaire.ou.17e867bf">
                 RIB détecté {{ formatRib(preview()!.detectedRib!) }} — créez un compte bancaire ou sélectionnez-le manuellement.
@@ -913,7 +916,6 @@ export class BankReconciliationComponent implements OnInit {
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(BankReconciliationService);
   private readonly accounting = inject(AccountingService);
-  private readonly bankAccountsApi = inject(BankAccountService);
   private readonly toast = inject(ToastService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -942,6 +944,7 @@ export class BankReconciliationComponent implements OnInit {
 
   readonly bankAccounts = signal<BankAccountDto[]>([]);
   readonly loadingBankAccounts = signal(false);
+  readonly bankAccountsError = signal<string | null>(null);
   selectedBankAccountId = '';
   private lastImportMethod = 0;
   private lastSourceFileName: string | null = null;
@@ -1070,12 +1073,35 @@ export class BankReconciliationComponent implements OnInit {
 
   loadBankAccounts(): void {
     this.loadingBankAccounts.set(true);
-    this.bankAccountsApi.list().subscribe({
-      next: res => {
-        this.loadingBankAccounts.set(false);
-        if (res.success && res.data) this.bankAccounts.set(res.data);
-      },
-      error: () => this.loadingBankAccounts.set(false)
+    this.bankAccountsError.set(null);
+    this.accounting.ensureBankGlProjections().pipe(catchError(() => of(null))).subscribe(() => {
+      this.accounting.listImportableBankAccounts().subscribe({
+        next: res => {
+          this.loadingBankAccounts.set(false);
+          const rows = (res.data ?? []).filter(a => a.isActive).map(a => ({
+            id: a.id,
+            companyId: '',
+            bankCode: '',
+            bankName: a.bankName,
+            designation: a.designation ?? null,
+            agencyName: null,
+            rib: '',
+            iban: '',
+            swiftBic: null,
+            isDefault: a.isDefault,
+            isActive: a.isActive,
+            chartOfAccountNumber: a.chartOfAccountNumber,
+            currency: a.currency,
+            hasBankingIdentity: a.hasBankingIdentity
+          }) satisfies BankAccountDto);
+          this.bankAccounts.set(rows);
+        },
+        error: () => {
+          this.loadingBankAccounts.set(false);
+          this.bankAccounts.set([]);
+          this.bankAccountsError.set($localize`:@@accounting.bank-reconciliation.ts.chargement.comptes.impossible:Impossible de charger les comptes bancaires.`);
+        }
+      });
     });
   }
 

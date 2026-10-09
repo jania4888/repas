@@ -66,11 +66,14 @@ public sealed class DeleteBankAccountCommandHandler : IRequestHandler<DeleteBank
         if (wasDefault)
         {
             var remaining = await _bankAccountRepository.GetActiveByCompanyAsync(companyId, cancellationToken);
-            if (remaining.Count > 0)
+            var next = remaining.Where(b => b.HasBankingIdentity).OrderBy(b => b.CreatedAt).FirstOrDefault();
+            if (next is not null)
             {
-                var next = remaining.OrderBy(b => b.CreatedAt).First();
                 await _bankAccountRepository.ClearDefaultFlagsForCompanyAsync(companyId, cancellationToken);
-                next.SetAsDefault();
+                var setDefault = next.SetAsDefault();
+                if (setDefault.IsFailure)
+                    return Result.Success();
+
                 next.SetAuditInfo(_currentUser.UserId?.ToString() ?? "system", isUpdate: true);
                 await _bankAccountRepository.UpdateAsync(next, cancellationToken);
 

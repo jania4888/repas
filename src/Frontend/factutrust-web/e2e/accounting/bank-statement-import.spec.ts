@@ -159,6 +159,21 @@ async function installImportMocks(page: Page, sessions: Record<string, () => unk
   }, JSON.stringify(firmUser));
   await page.route('**/api/auth/me', route => json(route, ok(firmUser)));
   await page.route('**/api/bank-accounts**', route => json(route, ok(BANK_ACCOUNTS)));
+  await page.route('**/api/accounting/bank-gl-projections/ensure**', route =>
+    json(route, ok({ createdCount: 0, skippedCount: 0 })));
+  await page.route('**/api/accounting/importable-bank-accounts**', route => json(route, ok(
+    BANK_ACCOUNTS.map(a => ({
+      id: a.id,
+      bankName: a.bankName,
+      designation: a.bankName,
+      chartOfAccountNumber: a.chartOfAccountNumber,
+      currency: a.currency,
+      isActive: a.isActive,
+      isDefault: a.id === 'bank-1',
+      hasBankingIdentity: true,
+      ribMasked: `…${a.rib.slice(-4)}`
+    }))
+  )));
   await page.route(`${IMPORT_API}/capabilities**`, route => json(route, ok(CAPABILITIES)));
   await page.route(/\/api\/accounting\/bank-statement-import\/sessions\/([^/?]+)(\?.*)?$/, route => {
     const id = decodeURIComponent(route.request().url().match(/sessions\/([^/?]+)/)![1]);
@@ -387,7 +402,7 @@ test('RIB d\'un autre compte : relance complète par GLM-OCR expliquée, ou comp
 
   await expect(page.getByText('Ce relevé appartient au compte BIAT (…3456).')).toBeVisible({ timeout: 30_000 });
   await expect(
-    page.getByText('Analyser avec ce compte relance la lecture complète du fichier par GLM-OCR (5 pages, environ 10 min).', { exact: false })
+    page.getByText("Analyser avec ce compte relance la lecture complète du fichier par l'IA (5 pages, environ 10 min).", { exact: false })
   ).toBeVisible();
   await expect(page.getByRole('button', { name: 'Analyser avec ce compte bancaire' })).toBeEnabled();
   await expect(page.getByRole('button', { name: 'Enregistrer le relevé et passer aux propositions' })).toBeDisabled();

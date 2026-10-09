@@ -505,7 +505,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Iban")
-                        .IsRequired()
                         .HasMaxLength(34)
                         .HasColumnType("nvarchar(34)");
 
@@ -516,7 +515,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasColumnType("bit");
 
                     b.Property<string>("Rib")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -539,8 +537,13 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasIndex("IsDefault");
 
+                    b.HasIndex("CompanyId", "ChartOfAccountNumber")
+                        .IsUnique()
+                        .HasFilter("[ChartOfAccountNumber] IS NOT NULL");
+
                     b.HasIndex("CompanyId", "Iban")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Iban] IS NOT NULL");
 
                     b.ToTable("BankAccounts", (string)null);
                 });

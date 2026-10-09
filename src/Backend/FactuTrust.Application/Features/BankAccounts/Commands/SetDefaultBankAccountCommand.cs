@@ -54,7 +54,10 @@ public sealed class SetDefaultBankAccountCommandHandler : IRequestHandler<SetDef
 
         await _bankAccountRepository.ClearDefaultFlagsForCompanyAsync(companyId, cancellationToken);
 
-        entity.SetAsDefault();
+        var setDefault = entity.SetAsDefault();
+        if (setDefault.IsFailure)
+            return setDefault;
+
         entity.SetAuditInfo(_currentUser.UserId?.ToString() ?? "system", isUpdate: true);
         await _bankAccountRepository.UpdateAsync(entity, cancellationToken);
 

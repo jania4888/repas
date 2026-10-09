@@ -361,6 +361,7 @@ public static class DependencyInjection
         services.AddScoped<IFiscalScheduleAttachmentService, FiscalScheduleAttachmentService>();
         services.AddScoped<IBankReconciliationService, BankReconciliationService>();
         services.AddScoped<IBankAccountChartProvisioningService, BankAccountChartProvisioningService>();
+        services.AddScoped<IBankGlTreasuryProjectionService, BankGlTreasuryProjectionService>();
         services.AddScoped<BankAccountMatcher>();
         services.AddScoped<ImportBankStatementFromFileHandler>();
         services.AddScoped<IBankStatementPdfImportService, BankStatementPdfImportService>();

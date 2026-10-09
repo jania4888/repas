@@ -6,6 +6,7 @@ using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.BankAccounts;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
+using FactuTrust.Domain.Services.Accounting;
 using AuditActions = FactuTrust.Domain.Entities.AuditActions;
 using FluentValidation;
 using MediatR;
@@ -69,6 +70,15 @@ public sealed class CreateBankAccountCommandHandler : IRequestHandler<CreateBank
             return Result.Failure<BankAccountDto>(companyIdResult.Error);
 
         var companyId = companyIdResult.Value;
+
+        if (!string.IsNullOrWhiteSpace(request.Request.ChartOfAccountNumber))
+        {
+            var linked = await _bankAccountRepository.GetByCompanyAndChartNumberAsync(
+                companyId, request.Request.ChartOfAccountNumber.Trim(), cancellationToken);
+            if (linked is not null)
+                return await EnrichExistingProjectionAsync(linked, request.Request, cancellationToken);
+        }
+
         var normalizedIban = BankAccountNormalization.NormalizeIban(request.Request.Iban);
 
         if (await _bankAccountRepository.ExistsIbanForCompanyAsync(companyId, normalizedIban, null, cancellationToken))
@@ -127,5 +137,48 @@ public sealed class CreateBankAccountCommandHandler : IRequestHandler<CreateBank
             cancellationToken: cancellationToken);
 
         return Result.Success(saved.ToDto());
+    }
+
+    private async Task<Result<BankAccountDto>> EnrichExistingProjectionAsync(
+        BankAccount existing,
+        CreateBankAccountRequest request,
+        CancellationToken cancellationToken)
+    {
+        var complete = existing.CompleteBankingIdentity(
+            request.BankCode,
+            request.BankName.Trim(),
+            request.Rib,
+            request.Iban,
+            request.Designation,
+            request.AgencyName,
+            request.SwiftBic);
+        if (complete.IsFailure)
+            return Result.Failure<BankAccountDto>(complete.Error);
+
+        var currency = BankGlAccountRules.IsDinarLeaf(existing.ChartOfAccountNumber)
+            ? "TND"
+            : request.Currency;
+        existing.SetCurrency(currency);
+        if (!existing.IsActive)
+            existing.SetActive(true);
+
+        if (request.SetAsDefault && existing.HasBankingIdentity)
+        {
+            await _bankAccountRepository.ClearDefaultFlagsForCompanyAsync(existing.CompanyId, cancellationToken);
+            existing.SetAsDefault();
+        }
+
+        existing.SetAuditInfo(_currentUser.UserId?.ToString() ?? "system", isUpdate: true);
+        await _bankAccountRepository.UpdateAsync(existing, cancellationToken);
+
+        await _auditService.LogAsync(
+            AuditActions.BankAccount.Updated,
+            "BankAccount",
+            existing.Id,
+            newValues: new { bankCode = existing.BankCode, chartOfAccountNumber = existing.ChartOfAccountNumber, enriched = true },
+            cancellationToken: cancellationToken);
+
+        var dto = existing.ToDto() with { LinkedExistingChartProjection = true };
+        return Result.Success(dto);
     }
 }

@@ -745,6 +745,12 @@ public sealed record CreateSubAccountRequest
     public int AccountType { get; init; }
     public bool IsAuxiliary { get; init; }
     public string? AffectationAccountNumber { get; init; }
+    /// <summary>Ignorés si le compte n'est pas une feuille 5321/5324. RIB et IBAN facultatifs, mais ensemble.</summary>
+    public string? BankCode { get; init; }
+    public string? Rib { get; init; }
+    public string? Iban { get; init; }
+    public string? BankCurrency { get; init; }
+    public string? SwiftBic { get; init; }
 }
 
 public sealed record CreateManualJournalEntryRequest

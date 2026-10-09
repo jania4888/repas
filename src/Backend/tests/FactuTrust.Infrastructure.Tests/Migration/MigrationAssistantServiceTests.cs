@@ -458,9 +458,14 @@ public sealed class MigrationAssistantServiceTests
 
         // Pipeline existant, INCHANGÉ (même fabrique InMemory que ReferenceDataImportServiceTests).
         var periodService = new Mock<FactuTrust.Application.Common.Interfaces.Services.IAccountingPeriodService>();
+        var projection = new Mock<IBankGlTreasuryProjectionService>();
+        projection.Setup(p => p.EnsureMissingAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success(new BankGlProjectionEnsureResult(0, 0)));
         var importService = new FactuTrust.Infrastructure.Services.ReferenceDataImportService(
             _factory, periodService.Object,
-            Options.Create(new AccountingSettings { DossierImportEnabled = true }));
+            Options.Create(new AccountingSettings { DossierImportEnabled = true }),
+            projection.Object,
+            NullLogger<FactuTrust.Infrastructure.Services.ReferenceDataImportService>.Instance);
         var preview = await importService.PreviewAsync(
             transformed.Value, ReferenceImportTarget.ChartOfAccounts, JournalImportFormat.Csv);
 

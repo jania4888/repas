@@ -26,6 +26,17 @@ export interface BankAccountDto {
   isActive: boolean;
   chartOfAccountNumber?: string | null;
   currency?: string;
+  /** Faux pour une projection plan comptable sans coordonnées. Absent = dérivé du RIB/IBAN. */
+  hasBankingIdentity?: boolean;
+}
+
+/** RIB 20 chiffres et IBAN TN : requis pour paie, virements et dépôts. */
+export function hasCompleteBankIdentity(account: Pick<BankAccountDto, 'rib' | 'iban' | 'hasBankingIdentity'>): boolean {
+  if (account.hasBankingIdentity === false) return false;
+  if (account.hasBankingIdentity === true) return true;
+  const rib = (account.rib ?? '').replace(/\D/g, '');
+  const iban = (account.iban ?? '').replace(/\s/g, '').toUpperCase();
+  return rib.length === 20 && iban.startsWith('TN') && iban.length === 24;
 }
 
 export interface CreateBankAccountPayload {

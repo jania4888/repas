@@ -67,6 +67,9 @@ public sealed class CreateBankDepositCommandHandler
         var bankAccount = await _bankAccountRepository.GetByIdAndCompanyAsync(req.BankAccountId, companyId, cancellationToken);
         if (bankAccount is null)
             return Result.Failure<BankDepositListItemDto>(Error.NotFound("BankAccount", req.BankAccountId));
+        var identity = bankAccount.RequireCompleteIdentity();
+        if (identity.IsFailure)
+            return Result.Failure<BankDepositListItemDto>(identity.Error);
 
         var paymentMethod = req.DepositType.ToPaymentMethod();
         var balance = await _cashOperationRepository.GetNetBalanceForMethodUpToDateAsync(
@@ -186,7 +189,7 @@ public sealed class CreateBankDepositCommandHandler
         BankName = account.BankName,
         AccountDesignation = account.Designation,
         BankCode = account.BankCode,
-        Iban = account.Iban,
+        Iban = account.Iban ?? string.Empty,
         Amount = d.Amount.Amount,
         Currency = d.Amount.Currency,
         Quantity = d.Quantity,
