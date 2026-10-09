@@ -29,6 +29,7 @@ import {
   stripPathForMatch,
   pathMatchesRoute
 } from '@core/utils/nav-path-match';
+import { NAV_REPORTS_SECTION_LABEL, showReportsSeparator as shouldShowReportsSeparator } from '@core/utils/nav-section';
 
 @Component({
   selector: 'app-secondary-nav',
@@ -38,6 +39,7 @@ import {
   styleUrl: './secondary-nav.component.scss'
 })
 export class SecondaryNavComponent {
+  readonly reportsSectionLabel = NAV_REPORTS_SECTION_LABEL;
   private readonly appNav = inject(AppNavService);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
@@ -105,6 +107,10 @@ export class SecondaryNavComponent {
 
   childDisplayLabel(child: NavSubItem): string {
     return resolveSubNavLabel(child);
+  }
+
+  showReportsSeparator(children: readonly NavSubItem[] | undefined, index: number): boolean {
+    return shouldShowReportsSeparator(children ?? [], index);
   }
 
   navId(item: NavItem | NavSubItem): string {

@@ -363,7 +363,19 @@
 
                   <ul class="delegated-footer-submenu" role="list">
 
-                    @for (child of item.children; track child.label) {
+                    @for (child of item.children; track child.id ?? child.route ?? child.label; let childIdx = $index) {
+
+                      @if (showReportsSeparator(item.children, childIdx)) {
+
+                        <li class="submenu-separator" role="presentation">
+
+                          <h4
+                            class="submenu-separator__label"
+                            [class.submenu-separator__label--ruled]="childIdx > 0">{{ reportsSectionLabel }}</h4>
+
+                        </li>
+
+                      }
 
                       <li>
 
@@ -447,7 +459,19 @@
 
             <ul class="submenu-list" role="list">
 
-              @for (child of item.children; track child.label) {
+              @for (child of item.children; track child.id ?? child.route ?? child.label; let childIdx = $index) {
+
+                @if (showReportsSeparator(item.children, childIdx)) {
+
+                  <li class="submenu-separator" role="presentation">
+
+                    <h4
+                      class="submenu-separator__label"
+                      [class.submenu-separator__label--ruled]="childIdx > 0">{{ reportsSectionLabel }}</h4>
+
+                  </li>
+
+                }
 
                 <li>
 

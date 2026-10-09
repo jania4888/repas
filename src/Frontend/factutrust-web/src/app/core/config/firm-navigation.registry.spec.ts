@@ -11,8 +11,9 @@ import {
   isFirmDelegatedReadonly
 } from './firm-navigation.registry';
 import { filterFirmManagerNav } from './firm-manager-access.config';
-import { NavItem, NavSubItem } from './app-navigation.registry';
+import { ALL_NAV_ITEMS, NavItem, NavSubItem } from './app-navigation.registry';
 import { NAV_ID } from './nav-item-ids';
+import { showReportsSeparator } from '@core/utils/nav-section';
 
 describe('firm-navigation.registry — FIRM_NATIVE_NAV', () => {
   const governanceRoutes = [
@@ -208,6 +209,44 @@ describe('firm-navigation.registry — delegated firm sales/purchases', () => {
   it('filterDelegatedFirmSectionChildren keeps only allowed ventes items', () => {
     const filtered = filterDelegatedFirmSectionChildren(NAV_ID.sales, ventesChildren);
     expect(filtered.map(c => c.label)).toEqual(['Factures', 'Factures impayées', 'Rapports']);
+  });
+
+  it('filterDelegatedFirmSectionChildren keeps the real ventes allowlist and its report flags', () => {
+    const sales = ALL_NAV_ITEMS.find(i => i.id === 'sales');
+    const filtered = filterDelegatedFirmSectionChildren(NAV_ID.sales, sales?.children ?? []);
+
+    expect(filtered.map(c => c.route)).toEqual([
+      '/invoices',
+      '/invoices/unpaid',
+      '/reports/client-balances',
+      '/reports/sales'
+    ]);
+    expect(filtered.map(c => c.navGroup ?? null)).toEqual([null, null, 'reports', 'reports']);
+    expect(filtered.some(c => !c.route)).toBeFalse();
+    expect(filtered.some(c => c.route === '/reports/sales-journal')).toBeFalse();
+    expect(filtered.some(c => c.route === '/reports/profit')).toBeFalse();
+    expect(showReportsSeparator(filtered, 2)).toBeTrue();
+    expect(showReportsSeparator(filtered, 1)).toBeFalse();
+    expect(showReportsSeparator(filtered, 3)).toBeFalse();
+  });
+
+  it('filterDelegatedFirmSectionChildren keeps the real achats allowlist without analytics', () => {
+    const purchases = ALL_NAV_ITEMS.find(i => i.id === 'purchases');
+    const filtered = filterDelegatedFirmSectionChildren(NAV_ID.purchases, purchases?.children ?? []);
+
+    expect(filtered.map(c => c.route)).toEqual([
+      '/purchase-receipts',
+      '/supplier-invoices',
+      '/supplier-invoices/unpaid',
+      '/reports/purchases-journal',
+      '/reports/supplier-balances',
+      '/reports/purchases'
+    ]);
+    expect(filtered.some(c => c.route === '/reports/purchases-analytics')).toBeFalse();
+    expect(filtered.some(c => !c.route)).toBeFalse();
+    expect(showReportsSeparator(filtered, 3)).toBeTrue();
+    expect(showReportsSeparator(filtered, 2)).toBeFalse();
+    expect(showReportsSeparator(filtered, 4)).toBeFalse();
   });
 
   it('filterDelegatedFirmSectionChildren keeps only allowed achats items', () => {

@@ -25,12 +25,19 @@ namespace FactuTrust.Infrastructure.Services.BankStatementImport;
 public sealed partial class BankStatementAiExtractionJob
 {
     [Queue("bank_statement_ai")]
-    [AutomaticRetry(Attempts = 0)]
+    [AutomaticRetry(Attempts = 1)]
     public async Task ExecuteManyAsync(Guid tenantId, IReadOnlyList<Guid> sessionIds, CancellationToken cancellationToken)
     {
         foreach (var sessionId in sessionIds)
         {
-            await ExecuteAsync(tenantId, sessionId, cancellationToken);
+            try
+            {
+                await ExecuteAsync(tenantId, sessionId, cancellationToken);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                _logger.LogError(ex, "Lecture IA de relevé : échec de la session {SessionId} dans un lot multi-relevés ; les suivantes continuent.", sessionId);
+            }
         }
     }
 
@@ -137,17 +144,26 @@ public sealed partial class BankStatementAiExtractionJob
 
         var readings = new Dictionary<int, BankStatementAiPageReader.PageReading>();
         var textReadings = new Dictionary<int, BankStatementAiPageReader.TextPageReading>();
-        var pageReadings = new List<BankStatementPageReading>();
+        var pageReadings = plan.PageReadings.Count > 0
+            ? plan.PageReadings.ToList()
+            : new List<BankStatementPageReading>();
+        RestoreReadingsFromPersistedLines(layout, pages, pageReadings, readings);
         var consecutiveVisionFailures = 0;
         var circuitOpen = visionModel is null;
         var circuitReason = visionModel is null ? PageFailureReasons.VisionUnavailable : PageFailureReasons.CircuitOpen;
-        var done = 0;
+        var done = pages.Count(p => pageReadings.Any(r => r.Page == p));
         var textModelMissing = false;
 
         foreach (var pageNumber in pages)
         {
             if (await IsCancelledAsync(ctx, session.Id, cancellationToken))
                 return;
+
+            if (TrySkipAlreadyReadPage(pageNumber, pageReadings, readings, out var skipReading))
+            {
+                readings[pageNumber] = skipReading!;
+                continue;
+            }
 
             var pageSw = Stopwatch.StartNew();
             var isScanned = plan.ScannedPages.Contains(pageNumber);
@@ -174,7 +190,7 @@ public sealed partial class BankStatementAiExtractionJob
             if (extractionFailure is not null)
             {
                 RecordPage(pageNumber, FailedReading(pageNumber, extractionFailure), BankStatementPageReadingEngines.Failed, null, 0, pageSw.ElapsedMilliseconds, 0, extractionFailure);
-                await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
+                await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, aiOnly, pages, readings, cancellationToken);
                 continue;
             }
 
@@ -189,7 +205,7 @@ public sealed partial class BankStatementAiExtractionJob
                 var fallback = await RunStage3Async(pipeline, extractor, content, isPdf, session, pageNumber, plan, limits, readOptions, null, cancellationToken);
                 RecordStage3(pageNumber, fallback, reason, pageSw);
                 if (fallback.ProviderUnavailable) textModelMissing = true;
-                await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
+                await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, aiOnly, pages, readings, cancellationToken);
                 continue;
             }
 
@@ -217,7 +233,7 @@ public sealed partial class BankStatementAiExtractionJob
                 if (external.Succeeded)
                 {
                     RecordPage(pageNumber, external.Reading!, BankStatementPageReadingEngines.DocStrange, externalExtraction.Name, attempts, pageSw.ElapsedMilliseconds, external.Reading!.Lines.Count, null, truncated);
-                    await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
+                    await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, aiOnly, pages, readings, cancellationToken);
                     continue;
                 }
 
@@ -233,7 +249,7 @@ public sealed partial class BankStatementAiExtractionJob
                 var externalReason = external.FailureReason ?? PageFailureReasons.ExternalExtractionFailed;
                 RecordPage(pageNumber, FailedReading(pageNumber, externalReason), BankStatementPageReadingEngines.Failed,
                     externalExtraction.Name, attempts, pageSw.ElapsedMilliseconds, 0, externalReason, truncated);
-                await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
+                await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, aiOnly, pages, readings, cancellationToken);
                 continue;
             }
 
@@ -267,7 +283,7 @@ public sealed partial class BankStatementAiExtractionJob
                     {
                         consecutiveVisionFailures = 0;
                         RecordPage(pageNumber, generic.Reading!, stage1Engine, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, generic.Reading!.Lines.Count, null, truncated);
-                        await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
+                        await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, aiOnly, pages, readings, cancellationToken);
                         continue;
                     }
 
@@ -292,7 +308,7 @@ public sealed partial class BankStatementAiExtractionJob
                     {
                         consecutiveVisionFailures = 0;
                         RecordPage(pageNumber, stage1.Reading!, stage1Engine, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, stage1.Reading!.Lines.Count, null, truncated);
-                        await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
+                        await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, aiOnly, pages, readings, cancellationToken);
                         continue;
                     }
 
@@ -318,7 +334,7 @@ public sealed partial class BankStatementAiExtractionJob
                         {
                             consecutiveVisionFailures = 0;
                             RecordPage(pageNumber, stage2.Reading!, stage2Engine, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, stage2.Reading!.Lines.Count, null, truncated);
-                            await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
+                            await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, aiOnly, pages, readings, cancellationToken);
                             continue;
                         }
 
@@ -349,7 +365,7 @@ public sealed partial class BankStatementAiExtractionJob
             {
                 var reason = lastFailure ?? PageFailureReasons.VisionNotUsed;
                 RecordPage(pageNumber, FailedReading(pageNumber, reason), BankStatementPageReadingEngines.Failed, visionModelLabel, attempts, pageSw.ElapsedMilliseconds, 0, reason, truncated);
-                await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
+                await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, aiOnly, pages, readings, cancellationToken);
                 continue;
             }
 
@@ -359,7 +375,7 @@ public sealed partial class BankStatementAiExtractionJob
             if (stage3.ProviderUnavailable)
                 textModelMissing = true;
             RecordStage3(pageNumber, stage3, lastFailure ?? PageFailureReasons.VisionNotUsed, pageSw, attempts);
-            await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, cancellationToken);
+            await PersistProgressAsync(ctx, session, layout, plan, pageReadings, ++done, totalPages, aiOnly, pages, readings, cancellationToken);
 
             if (textModelMissing && circuitOpen)
             {
@@ -1059,6 +1075,9 @@ public sealed partial class BankStatementAiExtractionJob
         List<BankStatementPageReading> pageReadings,
         int done,
         int totalPages,
+        bool aiOnly,
+        IReadOnlyList<int> plannedPages,
+        IReadOnlyDictionary<int, BankStatementAiPageReader.PageReading> readings,
         CancellationToken cancellationToken)
     {
         var interim = layout with
@@ -1069,6 +1088,9 @@ public sealed partial class BankStatementAiExtractionJob
                 FallbackPages = BankStatementAiReadingPlanner.FallbackPagesOf(pageReadings)
             }
         };
+        if (aiOnly && readings.Count > 0)
+            interim = BankStatementAiOnlyMerge.Merge(interim, plannedPages, readings, pageReadings);
+
         session.StartAiExtraction(
             session.AiProviderKind ?? "local",
             JsonSerializer.Serialize(interim, BankStatementImportService.JsonOptions),
@@ -1076,6 +1098,51 @@ public sealed partial class BankStatementAiExtractionJob
             session.PageCount);
         session.ReportProgress(Math.Min(99, done * 100 / Math.Max(1, totalPages)));
         await ctx.SaveChangesAsync(cancellationToken);
+    }
+
+    private static void RestoreReadingsFromPersistedLines(
+        ExtractedBankStatement layout,
+        IReadOnlyList<int> plannedPages,
+        IReadOnlyList<BankStatementPageReading> pageReadings,
+        Dictionary<int, BankStatementAiPageReader.PageReading> readings)
+    {
+        if (layout.Lines.Count == 0)
+            return;
+
+        foreach (var page in plannedPages)
+        {
+            var trace = pageReadings.LastOrDefault(r => r.Page == page);
+            if (trace is null || trace.IsFailed || readings.ContainsKey(page))
+                continue;
+
+            var lines = layout.Lines.Where(l => l.PageNumber == page).ToList();
+            if (lines.Count == 0 && trace.LineCount > 0)
+                continue;
+
+            readings[page] = new BankStatementAiPageReader.PageReading(
+                lines, null, null, Array.Empty<StatementExtractionIssue>());
+        }
+    }
+
+    internal static bool TrySkipAlreadyReadPage(
+        int pageNumber,
+        IReadOnlyList<BankStatementPageReading> pageReadings,
+        IReadOnlyDictionary<int, BankStatementAiPageReader.PageReading> readings,
+        out BankStatementAiPageReader.PageReading? reading)
+    {
+        reading = null;
+        var trace = pageReadings.LastOrDefault(r => r.Page == pageNumber);
+        if (trace is null || trace.IsFailed)
+            return false;
+
+        if (!readings.TryGetValue(pageNumber, out var existing))
+            return false;
+
+        if (existing.Issues.Any(i => i.Code == StatementIssueCodes.AiPageFailed))
+            return false;
+
+        reading = existing;
+        return true;
     }
 
     private void LogPage(Guid sessionId, int page, string engine, string? model, int attempts, StageResult stage)

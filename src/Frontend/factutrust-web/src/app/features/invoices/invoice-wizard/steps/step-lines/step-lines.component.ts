@@ -1,6 +1,6 @@
 /// <reference types="@angular/localize" />
 import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
-import { Component, OnInit, OnDestroy, inject, signal, computed, effect } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, effect, LOCALE_ID } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged, switchMap, catchError, of, tap } from 'rxjs';
@@ -156,32 +156,59 @@ interface WizardProductSuggestion {
 
       <!-- Lines Table -->
       @if (lines().length > 0) {
-        <div class="lines-table-container">
+        <div class="lines-table-container" [class.lines-advanced]="!simpleMode()">
           <p-table 
             [value]="lines()" 
             [scrollable]="true"
             scrollHeight="55vh"
             styleClass="p-datatable-sm lines-table"
-            [reorderableColumns]="true">
+            [reorderableColumns]="false">
+
+            <ng-template pTemplate="colgroup">
+              <colgroup>
+                @if (simpleMode()) {
+                  <col style="width: 4%" />
+                  <col style="width: 40%" />
+                  <col style="width: 10%" />
+                  <col style="width: 14%" />
+                  <col style="width: 10%" />
+                  <col style="width: 14%" />
+                  <col style="width: 8%" />
+                } @else {
+                  <col style="width: 3%" />
+                  <col style="width: 18%" />
+                  <col style="width: 8%" />
+                  <col style="width: 6%" />
+                  <col style="width: 10%" />
+                  <col style="width: 7%" />
+                  <col style="width: 11%" />
+                  <col style="width: 8%" />
+                  <col style="width: 7%" />
+                  <col style="width: 7%" />
+                  <col style="width: 7%" />
+                  <col style="width: 8%" />
+                }
+              </colgroup>
+            </ng-template>
             
             <ng-template pTemplate="header">
               <tr>
-                <th style="width: 3%" i18n="@@invoices.invoice-wizard.text.d08f88df">#</th>
-                <th style="width: 28%" i18n="@@invoices.invoice-wizard.designation.63a9062c">Désignation</th>
-                <th style="width: 8%" class="text-right" i18n="@@invoices.invoice-wizard.quantite.09a38fda">Quantité</th>
+                <th i18n="@@invoices.invoice-wizard.text.d08f88df">#</th>
+                <th i18n="@@invoices.invoice-wizard.designation.63a9062c">Désignation</th>
+                <th class="text-right" i18n="@@invoices.invoice-wizard.quantite.09a38fda">Quantité</th>
                 @if (!simpleMode()) {
-                  <th style="width: 7%" i18n="@@invoices.invoice-wizard.unite.388fd9c4">Unité</th>
+                  <th i18n="@@invoices.invoice-wizard.unite.388fd9c4">Unité</th>
                 }
-                <th style="width: 10%" class="text-right" i18n="@@invoices.invoice-wizard.prix.unit.ht.5fbbfe6f">Prix unit. HT</th>
-                <th style="width: 9%" i18n="@@invoices.invoice-wizard.origine.62e96258">Origine</th>
+                <th class="text-right" i18n="@@invoices.invoice-wizard.prix.unit.ht.5fbbfe6f">Prix unit. HT</th>
+                <th i18n="@@invoices.invoice-wizard.origine.62e96258">Origine</th>
                 @if (!simpleMode()) {
-                  <th style="width: 10%" i18n="@@invoices.invoice-wizard.remise.ce12d942">Remise</th>
-                  <th style="width: 8%" class="col-vat-rate" i18n="@@invoices.invoice-wizard.tva.fb62cb5d">TVA</th>
-                  <th style="width: 9%" class="text-right" i18n="@@invoices.invoice-wizard.total.ht.2ca17ae6">Total HT</th>
-                  <th style="width: 6%" class="text-right" i18n="@@invoices.invoice-wizard.tva.fb62cb5d">TVA</th>
+                  <th i18n="@@invoices.invoice-wizard.remise.ce12d942">Remise</th>
+                  <th class="col-vat-rate" i18n="@@invoices.invoice-wizard.taux.tva.c0830fcc">Taux TVA</th>
+                  <th class="text-right" i18n="@@invoices.invoice-wizard.total.ht.2ca17ae6">Total HT</th>
+                  <th class="text-right" i18n="@@invoices.invoice-wizard.montant.tva.f0c1b7cc">Montant TVA</th>
                 }
-                <th style="width: 10%" class="text-right" i18n="@@invoices.invoice-wizard.total.ttc.9e80ff7c">Total TTC</th>
-                <th style="width: 7%" i18n="@@invoices.invoice-wizard.actions.c3cd636a">Actions</th>
+                <th class="text-right" i18n="@@invoices.invoice-wizard.total.ttc.9e80ff7c">Total TTC</th>
+                <th i18n="@@invoices.invoice-wizard.actions.c3cd636a">Actions</th>
               </tr>
             </ng-template>
 
@@ -293,7 +320,8 @@ interface WizardProductSuggestion {
                       [minFractionDigits]="0"
                       [maxFractionDigits]="3"
                       mode="decimal"
-                      [style]="{ width: '80px' }"
+                      [showButtons]="false"
+                      [locale]="numberLocale"
                       (onInput)="onQuantityEdit()">
                     </p-inputNumber>
                   } @else {
@@ -309,7 +337,7 @@ interface WizardProductSuggestion {
                       pInputText
                       [(ngModel)]="editLine.unit"
                       placeholder="Unité" i18n-placeholder="@@invoices.invoice-wizard.unite.388fd9c4"
-                      [style]="{ width: '80px' }">
+                      class="unit-input">
                   } @else {
                     {{ line.unit || 'Unité' }}
                   }
@@ -329,8 +357,8 @@ interface WizardProductSuggestion {
                         [minFractionDigits]="3"
                         [maxFractionDigits]="3"
                         mode="decimal"
-                        suffix=" TND"
-                        [style]="{ width: '120px' }"
+                        [showButtons]="false"
+                        [locale]="numberLocale"
                         (onInput)="onUnitPriceManualEdit()">
                       </p-inputNumber>
                     </div>
@@ -340,7 +368,7 @@ interface WizardProductSuggestion {
                 </td>
 
                 <!-- Price source -->
-                <td>
+                <td class="origin-cell">
                   @if (editingLineId === line.id) {
                     @if (editLine.priceOverridden) {
                       <p-tag severity="warn" value="Saisi"></p-tag>
@@ -374,7 +402,9 @@ interface WizardProductSuggestion {
                         [min]="0"
                         [maxFractionDigits]="2"
                         mode="decimal"
-                        [style]="{ width: '60px' }">
+                        [showButtons]="false"
+                        [locale]="numberLocale"
+                        styleClass="discount-value-input">
                       </p-inputNumber>
                       <p-select
                         [(ngModel)]="editLine.discountType"
@@ -383,7 +413,6 @@ interface WizardProductSuggestion {
                         optionValue="value"
                         appendTo="body"
                         styleClass="discount-type-dropdown"
-                        [style]="{ width: '56px' }"
                         [panelStyle]="{ minWidth: '72px' }">
                       </p-select>
                     </div>
@@ -405,13 +434,15 @@ interface WizardProductSuggestion {
                   @if (editingLineId === line.id) {
                     <p-select
                       [(ngModel)]="editLine.vatRate"
-                      [options]="vatRateOptions"
-                      optionLabel="label"
+                      [options]="vatRateGridOptions"
+                      optionLabel="shortLabel"
                       optionValue="value"
                       appendTo="body"
                       styleClass="vat-rate-dropdown"
-                      [style]="{ width: '80px' }"
                       [panelStyle]="{ minWidth: '12rem' }">
+                      <ng-template let-option pTemplate="item">
+                        <span>{{ option.label }}</span>
+                      </ng-template>
                     </p-select>
                   } @else {
                     <span class="vat-badge" [class]="'vat-' + line.vatRate">
@@ -442,7 +473,7 @@ interface WizardProductSuggestion {
                 </td>
 
                 <!-- Actions -->
-                <td>
+                <td class="col-actions">
                   <div class="line-actions">
                     @if (editingLineId === line.id) {
                       <p-button
@@ -451,6 +482,7 @@ interface WizardProductSuggestion {
                         [rounded]="true"
                         severity="success"
                         pTooltip="Valider" i18n-pTooltip="@@invoices.invoice-wizard.valider.be4220f7"
+                        ariaLabel="Valider" i18n-ariaLabel="@@invoices.invoice-wizard.valider.be4220f7"
                         (click)="saveLineEdit()">
                       </p-button>
                       <p-button
@@ -459,6 +491,7 @@ interface WizardProductSuggestion {
                         [rounded]="true"
                         severity="secondary"
                         pTooltip="Annuler" i18n-pTooltip="@@invoices.invoice-wizard.annuler.49ba3292"
+                        ariaLabel="Annuler" i18n-ariaLabel="@@invoices.invoice-wizard.annuler.49ba3292"
                         (click)="cancelLineEdit()">
                       </p-button>
                     } @else {
@@ -467,6 +500,7 @@ interface WizardProductSuggestion {
                         [text]="true"
                         [rounded]="true"
                         pTooltip="Modifier" i18n-pTooltip="@@invoices.invoice-wizard.modifier.f260e757"
+                        ariaLabel="Modifier" i18n-ariaLabel="@@invoices.invoice-wizard.modifier.f260e757"
                         (click)="startEditLine(line)">
                       </p-button>
                       <p-button
@@ -475,6 +509,7 @@ interface WizardProductSuggestion {
                         [rounded]="true"
                         severity="danger"
                         pTooltip="Supprimer" i18n-pTooltip="@@invoices.invoice-wizard.supprimer.1acfc1c7"
+                        ariaLabel="Supprimer" i18n-ariaLabel="@@invoices.invoice-wizard.supprimer.1acfc1c7"
                         (click)="deleteLine(line)">
                       </p-button>
                     }
@@ -718,6 +753,7 @@ interface WizardProductSuggestion {
       align-items: center;
       gap: var(--spacing-2);
       flex-wrap: wrap;
+      min-width: 0;
     }
 
     .unmatched-badge {
@@ -741,8 +777,10 @@ interface WizardProductSuggestion {
       background: white;
       border-radius: var(--radius-xl);
       border: 1px solid var(--color-neutral-200);
-      overflow-x: hidden;
-      overflow-y: visible;
+    }
+
+    .lines-table-container.lines-advanced ::ng-deep .p-datatable-table {
+      min-width: 78rem;
     }
 
     ::ng-deep .lines-table {
@@ -757,17 +795,18 @@ interface WizardProductSuggestion {
         font-size: var(--font-size-xs);
         text-transform: uppercase;
         color: var(--color-neutral-600);
-        padding: var(--spacing-3) var(--spacing-4);
-      }
-
-      th.col-vat-rate,
-      .p-datatable-tbody > tr > td.col-vat {
-        min-width: 80px;
+        padding: var(--spacing-2);
+        white-space: normal;
+        line-height: 1.2;
+        overflow-wrap: normal;
+        word-break: keep-all;
+        min-width: 0;
       }
 
       .p-datatable-tbody > tr > td {
-        padding: var(--spacing-3) var(--spacing-4);
+        padding: var(--spacing-2);
         vertical-align: middle;
+        min-width: 0;
       }
 
       .p-datatable-tbody > tr.editing {
@@ -775,46 +814,70 @@ interface WizardProductSuggestion {
       }
 
       .p-datatable-tbody > tr > td input,
+      .p-datatable-tbody > tr > td textarea,
       .p-datatable-tbody > tr > td .p-inputnumber,
       .p-datatable-tbody > tr > td .p-select,
-      .p-datatable-tbody > tr > td .p-autocomplete {
+      .p-datatable-tbody > tr > td .p-autocomplete,
+      .p-datatable-tbody > tr > td p-inputnumber,
+      .p-datatable-tbody > tr > td p-select,
+      .p-datatable-tbody > tr > td p-autocomplete {
+        width: 100%;
         max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
       }
 
-      .p-datatable-tbody > tr > td .p-select {
-        min-width: 90px;
+      .p-inputnumber,
+      .p-inputnumber-input,
+      .p-autocomplete,
+      .p-autocomplete-input {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
       }
 
-      /* Exception: dropdown type remise (%/TND) plus compact */
-      .col-discount .p-select.discount-type-dropdown {
-        min-width: unset;
+      td.text-right .p-inputnumber-input {
+        text-align: end;
       }
 
-      /* Dropdown TVA (taux) : largeur adaptée pour afficher le % */
+      .col-discount .discount-input .p-inputnumber.discount-value-input {
+        flex: 1 1 auto;
+        width: 1%;
+        min-width: 0;
+        max-width: none;
+      }
+
+      .col-discount .discount-input .p-select.discount-type-dropdown {
+        flex: 0 0 3.25rem;
+        width: 3.25rem;
+        min-width: 0;
+        max-width: 3.25rem;
+      }
+
       .col-vat .p-select.vat-rate-dropdown {
-        width: 80px;
-        min-width: 80px;
+        width: 100%;
+        min-width: 0;
       }
 
       .col-vat .p-select.vat-rate-dropdown .p-select-label {
         min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        padding-inline: 0.35rem 0;
+        overflow: visible;
+        text-overflow: clip;
         white-space: nowrap;
       }
 
-      .p-select .p-select-label {
-        min-width: 2.5rem;
+      .col-vat .p-select.vat-rate-dropdown .p-select-dropdown {
+        width: 1.25rem;
+        flex: 0 0 1.25rem;
       }
-    }
 
-    /* Espacement entre colonne Remise et colonne TVA (taux) */
-    ::ng-deep .lines-table .col-discount {
-      padding-inline-end: 2.25rem;
-    }
-
-    ::ng-deep .lines-table .p-datatable-tbody > tr > td.col-vat {
-      padding-inline-start: 0.75rem;
+      .col-actions .p-button {
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+        flex-shrink: 0;
+      }
     }
 
     .line-number {
@@ -827,31 +890,53 @@ interface WizardProductSuggestion {
       display: flex;
       flex-direction: column;
       gap: var(--spacing-1);
+      min-width: 0;
     }
 
     .designation-main {
       font-weight: var(--font-weight-medium);
       color: var(--color-neutral-800);
+      overflow-wrap: anywhere;
+      min-width: 0;
     }
 
     .designation-desc {
       font-size: var(--font-size-xs);
       color: var(--color-neutral-500);
+      overflow-wrap: anywhere;
+      min-width: 0;
     }
 
     .edit-cell {
       display: flex;
       flex-direction: column;
       gap: var(--spacing-2);
+      min-width: 0;
+      width: 100%;
     }
 
     .description-input {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      height: auto;
+      min-height: 3.25rem;
+      line-height: 1.3;
+      overflow: auto;
       font-size: var(--font-size-sm);
       resize: none;
     }
 
+    .unit-input {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
     .amount {
       font-family: 'JetBrains Mono', monospace;
+      font-variant-numeric: tabular-nums;
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-medium);
 
@@ -870,6 +955,8 @@ interface WizardProductSuggestion {
       flex-wrap: nowrap;
       align-items: center;
       gap: var(--spacing-1);
+      min-width: 0;
+      width: 100%;
     }
 
     .discount-badge {
@@ -912,7 +999,20 @@ interface WizardProductSuggestion {
 
     .line-actions {
       display: flex;
+      flex-wrap: nowrap;
       gap: var(--spacing-1);
+    }
+
+    ::ng-deep .lines-table .col-actions .line-actions .p-button {
+      flex-shrink: 0;
+    }
+
+    .origin-cell {
+      min-width: 0;
+    }
+
+    ::ng-deep .lines-table .origin-cell .p-tag {
+      max-width: 100%;
     }
 
     // Product Suggestion
@@ -987,16 +1087,45 @@ interface WizardProductSuggestion {
       display: flex;
       flex-direction: row;
       align-items: center;
-      gap: var(--spacing-2);
+      gap: var(--spacing-1);
+      min-width: 0;
+      width: 100%;
     }
 
     .edit-cell .product-cell-input {
-      flex: 1;
+      flex: 1 1 auto;
       min-width: 0;
+      width: 1%;
     }
 
     :host ::ng-deep .edit-cell .product-cell-input .p-autocomplete {
+      display: inline-flex;
       width: 100%;
+      min-width: 0;
+    }
+
+    :host ::ng-deep .edit-cell .product-cell-input .p-autocomplete-input {
+      flex: 1 1 auto;
+      width: 1%;
+      min-width: 0;
+    }
+
+    :host ::ng-deep .edit-cell .product-cell-input .p-autocomplete-dropdown {
+      flex: 0 0 1.75rem;
+      width: 1.75rem;
+    }
+
+    :host ::ng-deep .edit-cell-product-row app-button {
+      flex: 0 0 2rem;
+      width: 2rem;
+      height: 2rem;
+    }
+
+    :host ::ng-deep .edit-cell-product-row app-button .btn {
+      width: 2rem;
+      height: 2rem;
+      min-width: 0;
+      padding: 0;
     }
 
     .btn-add-product-circle {
@@ -1187,12 +1316,21 @@ interface WizardProductSuggestion {
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      gap: var(--spacing-2);
+      gap: var(--spacing-1);
+      min-width: 0;
+      width: 100%;
     }
 
     .price-resolving {
       color: var(--color-primary-500);
       font-size: var(--font-size-sm);
+      flex-shrink: 0;
+    }
+
+    ::ng-deep .lines-table .price-cell .p-inputnumber {
+      flex: 1 1 auto;
+      min-width: 0;
+      width: 100%;
     }
   `]
 })
@@ -1200,6 +1338,7 @@ export class StepLinesComponent implements OnInit, OnDestroy {
   readonly loc_ui_tern_mode_avance_f0a7a0 = $localize`:@@ui.tern.mode.avance.f0a7a0:Mode avancé`;
   readonly loc_ui_tern_mode_simple_c08361 = $localize`:@@ui.tern.mode.simple.c08361:Mode simple`;
   readonly loc_ui_tern_tnd_9aaf5c = $localize`:@@ui.tern.tnd.9aaf5c: TND`;
+  readonly numberLocale = inject(LOCALE_ID);
   readonly wizardService = inject(InvoiceWizardService);
   private readonly productAutocomplete = inject(ProductAutocompleteService);
   private readonly pricingService = inject(PricingService);
@@ -1229,8 +1368,12 @@ export class StepLinesComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Options
-  vatRateOptions = VAT_RATE_OPTIONS;
+  // Options — libellé court dans la cellule, libellé long dans le panneau. Les valeurs restent les taux.
+  readonly vatRateGridOptions = VAT_RATE_OPTIONS.map(option => ({
+    value: option.value,
+    label: option.label,
+    shortLabel: `${option.value}%`
+  }));
   discountTypeOptions = [
     { label: '%', value: 'PERCENT' },
     { label: 'TND', value: 'AMOUNT' }

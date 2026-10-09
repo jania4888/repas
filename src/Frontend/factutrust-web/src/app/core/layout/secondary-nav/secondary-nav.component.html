@@ -44,7 +44,13 @@
               [id]="menuId(section)"
               [attr.aria-labelledby]="'secondary-nav-trigger-' + section.label"
               role="menu">
-              @for (child of section.children; track child.route ?? child.label) {
+              @for (child of section.children; track child.id ?? child.route ?? child.label; let childIdx = $index) {
+                @if (showReportsSeparator(section.children, childIdx)) {
+                  <h4
+                    class="secondary-nav__section-label"
+                    role="presentation"
+                    [class.secondary-nav__section-label--ruled]="childIdx > 0">{{ reportsSectionLabel }}</h4>
+                }
                 @if (hasNestedChildren(child)) {
                   <div
                     class="secondary-nav__submenu"

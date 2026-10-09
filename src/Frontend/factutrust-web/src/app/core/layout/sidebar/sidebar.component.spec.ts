@@ -772,4 +772,75 @@ describe('SidebarComponent — collapse', () => {
     fixture.componentInstance.restoreSectionAfterTour(previous);
     expect(fixture.componentInstance.expandedParentId).toBe(previous);
   });
+
+  const reportsCompanyUser: User = {
+    ...firmUser,
+    role: 'Administrator',
+    roleDisplay: 'Administrateur',
+    tenantKind: 'Company',
+    companyName: 'Ste Test',
+    enabledModuleIds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 17],
+    effectivePermissions: ['invoices:read', 'reports:view', 'recurring_contracts:read', 'crm:read']
+  };
+
+  function expandSection(fixture: ReturnType<typeof TestBed.createComponent<SidebarComponent>>, label: string): void {
+    const section = fixture.componentInstance.navItems().find(item => item.label === label);
+    expect(section).withContext(label).toBeTruthy();
+    fixture.componentInstance.toggleSubmenu(section!);
+    fixture.detectChanges();
+  }
+
+  it('draws a non-link Rapports heading before sales report forms', () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, reportsCompanyUser);
+    TestBed.inject(FirmContextService).syncFromUser();
+
+    const fixture = TestBed.createComponent(SidebarComponent);
+    fixture.detectChanges();
+    expandSection(fixture, 'Ventes');
+
+    const heading = fixture.nativeElement.querySelector('.submenu-separator__label') as HTMLElement | null;
+    expect(heading?.tagName).toBe('H4');
+    expect(heading?.textContent?.trim()).toBe('Rapports');
+    expect(heading?.closest('a,button')).toBeNull();
+
+    const links = Array.from(
+      fixture.nativeElement.querySelectorAll('a.submenu-link') as NodeListOf<HTMLAnchorElement>
+    );
+    const labels = links.map(link => link.textContent?.trim());
+    expect(labels.indexOf('Contrats récurrents')).toBeLessThan(labels.indexOf('Journal de ventes'));
+    const hub = links.find(link => link.textContent?.trim() === 'Rapports');
+    expect(hub?.getAttribute('href')).toContain('/reports/sales');
+    expect(fixture.nativeElement.querySelectorAll('.submenu-separator').length).toBe(1);
+  });
+
+  it('omits the Rapports heading when no report child is visible', () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, {
+      ...reportsCompanyUser,
+      effectivePermissions: ['invoices:read', 'recurring_contracts:read']
+    });
+    TestBed.inject(FirmContextService).syncFromUser();
+
+    const fixture = TestBed.createComponent(SidebarComponent);
+    fixture.detectChanges();
+    expandSection(fixture, 'Ventes');
+
+    expect(fixture.nativeElement.querySelector('.submenu-separator')).toBeNull();
+    expect(fixture.nativeElement.textContent).toContain('Factures');
+    expect(fixture.nativeElement.textContent).not.toContain('Journal de ventes');
+  });
+
+  it('does not draw a Rapports heading in a section without report forms', () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, reportsCompanyUser);
+    TestBed.inject(FirmContextService).syncFromUser();
+
+    const fixture = TestBed.createComponent(SidebarComponent);
+    fixture.detectChanges();
+    expandSection(fixture, 'CRM Commercial');
+
+    expect(fixture.nativeElement.querySelector('.submenu-separator')).toBeNull();
+    expect(fixture.nativeElement.textContent).toContain('Opportunités');
+  });
 });

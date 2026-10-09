@@ -2415,6 +2415,8 @@
   "invoices.invoice-wizard.personne.de.contact.148fdd96": "شخص الاتصال",
   "invoices.invoice-wizard.nom.de.la.banque.9848ce74": "اسم البنك",
   "invoices.invoice-wizard.tva.fb62cb5d": "TVA",
+  "invoices.invoice-wizard.taux.tva.c0830fcc": "نسبة TVA",
+  "invoices.invoice-wizard.montant.tva.f0c1b7cc": "مبلغ TVA",
   "payments.cash-desk.nom.de.la.banque.9848ce74": "اسم البنك",
   "payroll.employees.date.de.debut.706438ab": "تاريخ البداية",
   "payroll.employees.solde.initial.78a4e543": "الرصيد الافتتاحي",
@@ -3267,11 +3269,8 @@
   "auto.8f88b8df": "⇆ موازنة آلية",
   "accounting.manual-entry.equilibrer.auto.1d16ebc0": "⇆ موازنة آلية",
   "accounting.manual-entry.restaurer.le.brouillon.6208ee6f": "استرجاع المسودة",
-  "accounting.manual-entry.ventilation.analytique.779559f6": "التوزيع التحليلي",
   "accounting.manual-entry.ajouter.un.fichier.2651b7a1": "إضافة ملف",
   "accounting.manual-entry.note.de.travail.non.comptabilisee.b9b1000f": "ملاحظة عمل (غير مسجَّلة محاسبيًا)",
-  "accounting.manual-entry.le.module.de.ventilation.analytique.n.est.pas.en.4c084952": "وحدة التوزيع التحليلي غير متاحة بعد في هذا الملف.",
-  "accounting.manual-entry.cette.fonctionnalite.sera.proposee.dans.une.proc.c71a6744": "ستُتاح هذه الخاصية في إصدار قادم.",
   "accounting.manual-entry.options.piece.35e73236": "خيارات الوثيقة",
   "accounting.manual-entry.n.piece.a5108f6f": "رقم الوثيقة",
   "accounting.manual-entry.date.piece.8364a00e": "تاريخ الوثيقة",
@@ -5204,5 +5203,6 @@
   "invoices.invoice-list.report.empty.creditNotes": "لا توجد إشعارات دائنة في هذه الفترة لكشف الحالة.",
   "invoices.invoice-list.report.empty.cancelledFilter": "كشف الحالة لا يتضمن الفواتير الملغاة.",
   "delivery-notes.delivery-note-list.report.toast.summary.information": "معلومة",
-  "delivery-notes.delivery-note-list.report.empty.deliveryNotes": "لا توجد أوامر تسليم في هذه الفترة لكشف الحالة."
+  "delivery-notes.delivery-note-list.report.empty.deliveryNotes": "لا توجد أوامر تسليم في هذه الفترة لكشف الحالة.",
+  "core.nav.section.reports": "التقارير"
 }

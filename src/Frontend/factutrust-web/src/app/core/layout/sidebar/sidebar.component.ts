@@ -25,6 +25,7 @@ import { AiAssistantShellService } from '@features/ai-assistant/services/ai-assi
 import { canUseAiAssistant } from '@features/ai-assistant/utils/ai-access.util';
 import { resolveNavLabel, resolveSubNavLabel } from '@core/i18n/erp-nav-label.util';
 import { getNavId, NAV_ID } from '@core/config/nav-item-ids';
+import { NAV_REPORTS_SECTION_LABEL, showReportsSeparator as shouldShowReportsSeparator } from '@core/utils/nav-section';
 
 @Component({
   selector: 'app-sidebar',
@@ -42,6 +43,7 @@ export class SidebarComponent implements OnInit {
 
   readonly sidebarExpandTitle = $localize`:@@core.header.expandSidebar:Agrandir le menu latéral`;
   readonly sidebarCollapseTitle = $localize`:@@core.header.collapseSidebar:Réduire le menu latéral`;
+  readonly reportsSectionLabel = NAV_REPORTS_SECTION_LABEL;
 
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
@@ -54,6 +56,10 @@ export class SidebarComponent implements OnInit {
 
   subNavLabel(item: NavSubItem): string {
     return resolveSubNavLabel(item);
+  }
+
+  showReportsSeparator(children: readonly NavSubItem[] | undefined, index: number): boolean {
+    return shouldShowReportsSeparator(children ?? [], index);
   }
 
   brandDashboardAriaLabel(): string {

@@ -465,6 +465,134 @@ describe('BankStatementReviewComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/accounting/bank-statement-import/statement', 'st-3'], { replaceUrl: true });
   });
 
+  it('continue à interroger le serveur tant qu’un relevé frère est en lecture', fakeAsync(async () => {
+    const sibling = {
+      id: 's-2',
+      segmentIndex: 2,
+      periodStart: '2026-08-01',
+      periodEnd: '2026-08-31',
+      status: 'Extracting' as const,
+      statementId: null
+    };
+    api.session.and.returnValues(
+      of(session({ segmentIndex: 1, segmentCount: 2, siblings: [sibling] })),
+      of(session({ segmentIndex: 1, segmentCount: 2, siblings: [{ ...sibling, status: 'AwaitingReview' }] })),
+      of(session({ segmentIndex: 1, segmentCount: 2, siblings: [{ ...sibling, status: 'AwaitingReview' }] }))
+    );
+    await create({ sessionId: 's-1' });
+    expect(api.session).toHaveBeenCalledTimes(1);
+
+    tick(2_000);
+    expect(api.session).toHaveBeenCalledTimes(3);
+    expect(api.session).toHaveBeenCalledWith('s-2');
+    expect(component.siblingState({ ...sibling, status: 'AwaitingReview' })).toContain('contrôler');
+
+    tick(20_000);
+    expect(api.session).toHaveBeenCalledTimes(3);
+  }));
+
+  it('conserve les corrections locales pendant le suivi d’un relevé frère', fakeAsync(async () => {
+    api.session.and.returnValue(
+      of(
+        session({
+          segmentIndex: 1,
+          segmentCount: 2,
+          siblings: [
+            {
+              id: 's-2',
+              segmentIndex: 2,
+              periodStart: '2026-08-01',
+              periodEnd: '2026-08-31',
+              status: 'Extracting',
+              statementId: null
+            }
+          ]
+        })
+      )
+    );
+    await create({ sessionId: 's-1' });
+    component.corrections.set(new Map([[0, { lineIndex: 0, label: 'CORRIGÉ LOCAL' }]]));
+
+    tick(2_000);
+
+    expect(component.corrections().get(0)?.label).toBe('CORRIGÉ LOCAL');
+  }));
+
+  it('affiche l’aperçu des opérations d’un relevé frère prêt à contrôler', fakeAsync(async () => {
+    const siblingReady = session({
+      id: 's-2',
+      fileName: 'releve-aout.pdf',
+      extraction: {
+        header: {
+          rib: '10006035123456789012',
+          bankCode: '10',
+          currency: 'TND',
+          periodStart: '2026-08-01',
+          periodEnd: '2026-08-31',
+          openingBalance: { value: 100, printedDecimals: 3, signSource: 'Column' },
+          closingBalance: { value: 90, printedDecimals: 3, signSource: 'Column' },
+          totalDebits: null,
+          totalCredits: null,
+          totalsLabelled: false
+        },
+        lines: [
+          {
+            index: 0,
+            pageNumber: 2,
+            transactionDate: '2026-08-02',
+            valueDate: null,
+            label: 'VIREMENT AOÛT',
+            labelLines: ['VIREMENT AOÛT'],
+            amount: 50,
+            isDebit: false,
+            source: 'Ai'
+          }
+        ],
+        issues: [],
+        profileId: 'stb-historique',
+        pageCount: 1,
+        unresolvedPages: []
+      },
+      balanceCheck: { sumDebits: 0, sumCredits: 50, computedClosing: 150, difference: 0, isBalanced: true }
+    });
+    api.session.and.callFake((id: string) => {
+      if (id === 's-1') {
+        return of(
+          session({
+            segmentIndex: 1,
+            segmentCount: 2,
+            siblings: [
+              {
+                id: 's-2',
+                segmentIndex: 2,
+                periodStart: '2026-08-01',
+                periodEnd: '2026-08-31',
+                status: 'AwaitingReview',
+                statementId: null
+              }
+            ]
+          })
+        );
+      }
+      if (id === 's-2') return of(siblingReady);
+      return of(session());
+    });
+    await create({ sessionId: 's-1' });
+    tick();
+
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(text).toContain('VIREMENT AOÛT');
+    expect(text).toContain('aperçu');
+    expect(api.session).toHaveBeenCalledWith('s-2');
+  }));
+
+  it('n’interroge plus le serveur après relecture lorsqu’il n’y a qu’un seul relevé', fakeAsync(async () => {
+    api.session.and.returnValue(of(session({ status: 'AwaitingReview' })));
+    await create({ sessionId: 's-1' });
+    tick(15_000);
+    expect(api.session).toHaveBeenCalledTimes(1);
+  }));
+
   it('signale les autres relevés du même fichier et transmet ceux qui restent à contrôler', async () => {
     api.session.and.returnValue(
       of(
@@ -549,10 +677,41 @@ describe('BankStatementReviewComponent', () => {
       expect(el().querySelector('.bsr-page.is-current')?.textContent).toContain('Page 3 · en cours');
       expect(el().querySelector('.bsr-fallback-note')?.textContent).toContain('Pages 2 : lues en secours');
       expect(el().querySelector('.bsr-bar')?.getAttribute('aria-valuenow')).toBe('50');
+      expect(el().querySelector('.bsr-bar')?.getAttribute('aria-valuetext')).toContain('50');
+      expect(el().querySelector('.bsr-bar')?.classList.contains('is-indeterminate')).toBeFalse();
+      expect((el().querySelector('.bsr-bar__fill') as HTMLElement | null)?.style.width).toBe('50%');
+      expect(el().querySelector('.bsr-progress__pct')?.textContent?.trim()).toBe('50 %');
+      expect(el().querySelector('.bsr-progress__summary')?.textContent).toContain('1 lues');
+      expect(el().querySelector('.bsr-progress__summary')?.textContent).toContain('1 en cours');
+      expect(el().querySelector('.bsr-pages-wrap')).toBeTruthy();
 
       tick(3_000);
       fixture.detectChanges();
       expect(text()).toContain('3 s écoulées');
+
+      fixture.destroy();
+    }));
+
+    it('affiche une barre indéterminée et 0 % tant que la progression serveur vaut zéro', fakeAsync(() => {
+      api.session.and.returnValue(
+        of(
+          session({
+            status: 'Pending',
+            progressPercent: 0,
+            pageCount: 4,
+            canConfirm: false,
+            extraction: { ...base.extraction!, lines: [], aiPlan: visionPlan() }
+          })
+        )
+      );
+      void create({ sessionId: 's-1' });
+      tick();
+      fixture.detectChanges();
+
+      expect(el().querySelector('.bsr-bar')?.classList.contains('is-indeterminate')).toBeTrue();
+      expect(el().querySelector('.bsr-bar')?.getAttribute('aria-valuenow')).toBe('0');
+      expect(el().querySelector('.bsr-bar__indeterminate')).toBeTruthy();
+      expect(el().querySelector('.bsr-progress__pct')?.textContent?.trim()).toBe('0 %');
 
       fixture.destroy();
     }));

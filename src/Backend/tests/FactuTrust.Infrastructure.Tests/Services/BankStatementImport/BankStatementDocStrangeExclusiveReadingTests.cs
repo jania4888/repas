@@ -344,6 +344,67 @@ public sealed class BankStatementDocStrangeExclusiveReadingTests : IDisposable
     }
 
     [Fact]
+    public async Task Resuming_an_extracting_session_with_persisted_pages_does_not_recall_docstrange()
+    {
+        var services = Services();
+        var (sessionId, _) = await SeedAsync(services, StbLike(OnePageSpec()));
+        ProviderAnswers(_ => TwoOperationsJson);
+
+        await RunAsync(services, sessionId);
+
+        var dto = await SessionAsync(services, sessionId);
+        Assert.Equal(nameof(BankStatementImportSessionStatus.AwaitingReview), dto.Status);
+        _pagesSentOut.Clear();
+
+        await using (var ctx = services.GetRequiredService<ITenantDbContextFactory>().CreateContext())
+        {
+            var session = await ctx.BankStatementImportSessions.SingleAsync(s => s.Id == sessionId);
+            session.StartAiExtraction(
+                session.AiProviderKind ?? BankStatementAiProviderKinds.DocStrange,
+                session.ResultJson!,
+                session.ProfileId ?? dto.Extraction!.ProfileId,
+                session.PageCount);
+            await ctx.SaveChangesAsync();
+        }
+
+        await RunAsync(services, sessionId);
+
+        Assert.Empty(_pagesSentOut);
+        Assert.Equal(nameof(BankStatementImportSessionStatus.AwaitingReview), (await SessionAsync(services, sessionId)).Status);
+        AssertNoLocalModelTouched();
+    }
+
+    [Fact]
+    public void TrySkipAlreadyReadPage_skips_when_trace_and_lines_are_present()
+    {
+        var pageReadings = new List<BankStatementPageReading>
+        {
+            new(1, BankStatementPageReadingEngines.DocStrange, "docstrange", 1, 100, 2, null)
+        };
+        var lines = new List<ExtractedStatementLine>
+        {
+            new()
+            {
+                Index = 0,
+                PageNumber = 1,
+                TransactionDate = new DateOnly(2026, 1, 2),
+                Label = "OP",
+                Amount = 10m,
+                IsDebit = true,
+                Source = StatementLineSource.Ai
+            }
+        };
+        var readings = new Dictionary<int, BankStatementAiPageReader.PageReading>
+        {
+            [1] = new(lines, null, null, Array.Empty<StatementExtractionIssue>())
+        };
+
+        Assert.True(BankStatementAiExtractionJob.TrySkipAlreadyReadPage(1, pageReadings, readings, out var skipped));
+        Assert.NotNull(skipped);
+        Assert.Single(skipped!.Lines);
+    }
+
+    [Fact]
     public async Task Without_an_available_card_the_local_ladder_is_the_one_that_runs()
     {
         // Garantie de non-régression : désactiver la carte rend exactement le comportement d'avant.

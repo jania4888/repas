@@ -462,6 +462,25 @@
   z-index: 1000;
 }
 
+/* Menu téléporté dans body : le filet « Rapports » ne dépend pas de l'encapsulation. */
+.secondary-nav__dropdown .secondary-nav__section-label {
+  margin: 0.35rem 0.75rem 0.15rem;
+  padding-block: 0.45rem 0.25rem;
+  padding-inline: 0.15rem;
+  color: var(--color-neutral-500, #64748b);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  pointer-events: none;
+  user-select: none;
+}
+
+.secondary-nav__dropdown .secondary-nav__section-label--ruled {
+  border-block-start: 1px solid var(--color-neutral-200, #e5e7eb);
+}
+
 // --------------------------------------------
 // SUPERIEUR ADMIN — shell overrides (scoped)
 // Activé uniquement sous html.theme-superieur

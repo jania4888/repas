@@ -4,12 +4,12 @@
     "reason": "Attributs entrepôt via $localize (« Entrepôt actif : » / « Entrepôt : » + nom, texte identique) ; sélecteur de langue ajouté (masqué si erp.arabicEnabled est faux)."
   },
   "src/app/core/layout/secondary-nav/secondary-nav.component.html": {
-    "sha": "75c830c22123121c155b6045b30c57399a3b5e1fbf1c089c25ba5b61046917a2",
-    "reason": "Libellés via resolveSubNavLabel : texte source identique au registre (nav-labels.spec.ts)."
+    "sha": "a6fb6431fd3318e2978f54dd4ce36b45178c13190c98ebab7517e5374f741cee",
+    "reason": "Libellés via resolveSubNavLabel : texte source identique au registre (nav-labels.spec.ts). Titre de groupe non cliquable « Rapports » ($localize @@core.nav.section.reports) devant le premier enfant navGroup reports ; le lien hub homonyme et ses routes restent inchangés."
   },
   "src/app/core/layout/sidebar/sidebar.component.html": {
-    "sha": "5bbb3101685a8da0bcc09f8e330189beb39fbf9ed8ad194fe34dadcc9b01d12a",
-    "reason": "Libellés via resolveNavLabel/resolveSubNavLabel (nav-labels.spec.ts) ; aria-label marque et badge via $localize (même texte, doublon d'interpolation corrigé)."
+    "sha": "6b20c6c807a5ec757c04fec87433d4b1040c9ae4317270e2620447ccd9f69b8f",
+    "reason": "Libellés via resolveNavLabel/resolveSubNavLabel (nav-labels.spec.ts) ; aria-label marque et badge via $localize (même texte, doublon d'interpolation corrigé). Titre de groupe non cliquable « Rapports » ($localize @@core.nav.section.reports) dans le panneau et le pied délégué ; le lien hub homonyme et ses routes restent inchangés."
   },
   "src/app/features/accounting/balance/balance.component.ts#BalanceComponent": {
     "sha": "47237104018367066250425f55b3ea1ec105b60d5e5d9fe5a48e490597bc3607",
@@ -160,8 +160,8 @@
     "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
   },
   "src/app/features/invoices/invoice-wizard/steps/step-lines/step-lines.component.ts#StepLinesComponent": {
-    "sha": "bfa06c4dec150cbcb3e29647fbae9f254049142326a71814509e4f2dd745bb63",
-    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+    "sha": "8d01ccff87485a5cebf9cc3e811a41af810aaab89ba7f62901be5114c4595dba",
+    "reason": "Affichage de la grille des lignes : largeurs portées par colgroup (somme 100 %), en-têtes « Taux TVA » et « Montant TVA », aria-label des actions identiques aux infobulles. Les montants, taux et libellés métier restent ceux d'avant."
   },
   "src/app/features/invoices/invoice-wizard/steps/step-preview/step-preview.component.ts#StepPreviewComponent": {
     "sha": "fc47e4a535323f1c0f8edd502de78369eb83558077187ceddccb36b690115533",

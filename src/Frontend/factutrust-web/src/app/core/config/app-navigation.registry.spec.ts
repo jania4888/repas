@@ -7,8 +7,10 @@ import {
   buildFlatNavSearchEntries,
   filterNavItems,
   getVisibleNavSearchEntries,
-  NavItem
+  NavItem,
+  NavSubItem
 } from './app-navigation.registry';
+import { reportsGroupIsContiguousSuffix } from '@core/utils/nav-section';
 import { VARIANT_AXES_PATH } from '@features/settings/variant-axes/variant-axes.paths';
 
 const companyUser: User = {
@@ -337,6 +339,74 @@ describe('app-navigation.registry', () => {
       // `treasury:read` n'existe dans aucune policy backend : l'ancienne valeur rendait
       // cette entrée invisible pour tout le monde, quel que soit le rôle.
       expect(entry!.permissionsAll).toEqual(['treasury_forecast:view']);
+    });
+  });
+
+  describe('reports submenu group', () => {
+    function isSidebarReportRoute(route: string | undefined): boolean {
+      if (!route) {
+        return false;
+      }
+      const path = route.split('?')[0].split('#')[0];
+      return path === '/reports' || path.startsWith('/reports/') || path.startsWith('/payroll/reports/');
+    }
+
+    function assertChildren(children: NavSubItem[] | undefined): void {
+      expect(reportsGroupIsContiguousSuffix(children)).toBeTrue();
+      for (const child of children ?? []) {
+        const marked = child.navGroup === 'reports';
+        expect(marked).toBe(isSidebarReportRoute(child.route));
+        if (marked) {
+          expect(child.route).toBeTruthy();
+          expect(child.permissionsAll?.length).toBeGreaterThan(0);
+        }
+        assertChildren(child.children);
+      }
+    }
+
+    it('marks only real report routes and keeps each group as a contiguous suffix', () => {
+      for (const item of ALL_NAV_ITEMS) {
+        assertChildren(item.children);
+      }
+    });
+
+    it('keeps Contrats récurrents operational and ahead of the sales report block', () => {
+      const sales = ALL_NAV_ITEMS.find(i => i.id === 'sales');
+      const routes = sales?.children?.map(c => c.route) ?? [];
+      const contracts = routes.indexOf('/recurring-contracts');
+      const journal = routes.indexOf('/reports/sales-journal');
+
+      expect(contracts).toBeGreaterThanOrEqual(0);
+      expect(journal).toBeGreaterThan(contracts);
+      expect(sales?.children?.find(c => c.route === '/recurring-contracts')?.navGroup).toBeUndefined();
+      expect(sales?.children?.find(c => c.route === '/recurring-contracts')?.permissionsAll).toEqual([
+        'recurring_contracts:read'
+      ]);
+    });
+
+    it('places payroll report forms after the operational and settings entries', () => {
+      const hr = ALL_NAV_ITEMS.find(i => i.id === 'hr-payroll');
+      expect(hr?.children?.slice(-2).map(c => c.route)).toEqual([
+        '/payroll/reports/payroll-book',
+        '/payroll/reports/payroll-journal'
+      ]);
+      expect(hr?.children?.find(c => c.route === '/payroll/declarations')?.navGroup).toBeUndefined();
+    });
+
+    it('leaves the treasury cash journal outside the reports group', () => {
+      const treasury = ALL_NAV_ITEMS.find(i => i.id === 'treasury');
+      expect(treasury?.children?.find(c => c.route === '/payments/cash-journal')?.navGroup).toBeUndefined();
+    });
+
+    it('keeps the same report routes in search', () => {
+      const routes = buildFlatNavSearchEntries().map(e => e.route);
+      expect(routes).toContain('/reports/sales');
+      expect(routes).toContain('/reports/sales-journal');
+      expect(routes).toContain('/reports/purchases');
+      expect(routes).toContain('/reports/stock-status');
+      expect(routes).toContain('/payroll/reports/payroll-book');
+      expect(routes).toContain('/payroll/reports/payroll-journal');
+      expect(routes).toContain('/recurring-contracts');
     });
   });
 });

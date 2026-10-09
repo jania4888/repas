@@ -347,4 +347,64 @@ describe('SecondaryNavComponent', () => {
     expect(aiShell.aiTabOpen()).toBeTrue();
     expect(aiShell.activePane()).toBe('ai');
   }));
+
+  it('draws a non-menuitem Rapports heading before sales report links', fakeAsync(() => {
+    findTrigger(fixture.nativeElement, 'Ventes')!.click();
+    fixture.detectChanges();
+    tick();
+
+    const menu = document.getElementById('secondary-nav-menu-sales');
+    expect(menu).toBeTruthy();
+    const heading = menu!.querySelector('.secondary-nav__section-label') as HTMLElement | null;
+    expect(heading?.tagName).toBe('H4');
+    expect(heading?.textContent?.trim()).toBe('Rapports');
+    expect(heading?.getAttribute('role')).not.toBe('menuitem');
+    expect(heading?.closest('a,button')).toBeNull();
+    expect(menu!.querySelectorAll('.secondary-nav__section-label').length).toBe(1);
+
+    const hub = Array.from(menu!.querySelectorAll('a.secondary-nav__link')).find(el =>
+      el.textContent?.trim() === 'Rapports'
+    ) as HTMLAnchorElement | undefined;
+    expect(hub?.getAttribute('href')).toContain('/reports/sales');
+  }));
+
+  it('draws the Rapports heading after payroll settings', fakeAsync(() => {
+    findTrigger(fixture.nativeElement, 'RH & Paie')!.click();
+    fixture.detectChanges();
+    tick();
+
+    const menu = document.getElementById('secondary-nav-menu-hr-payroll');
+    expect(menu?.querySelector('.secondary-nav__section-label')?.textContent?.trim()).toBe('Rapports');
+    const labels = Array.from(menu!.querySelectorAll('a.secondary-nav__link')).map(el => el.textContent?.trim());
+    expect(labels.slice(-2)).toEqual(['Livre de paie', 'Journal de paie']);
+    expect(labels.indexOf('Primes annuelles')).toBeLessThan(labels.indexOf('Livre de paie'));
+  }));
+
+  it('omits the Rapports heading when report children are filtered out', fakeAsync(() => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, {
+      ...companyUser,
+      effectivePermissions: (companyUser.effectivePermissions ?? []).filter(permission => permission !== 'reports:view')
+    });
+    fixture.detectChanges();
+
+    findTrigger(fixture.nativeElement, 'Ventes')!.click();
+    fixture.detectChanges();
+    tick();
+
+    const menu = document.getElementById('secondary-nav-menu-sales');
+    expect(menu?.querySelector('.secondary-nav__section-label')).toBeNull();
+    expect(menu?.textContent).toContain('Factures');
+    expect(menu?.textContent).not.toContain('Journal de ventes');
+  }));
+
+  it('does not draw a Rapports heading in Comptabilité', fakeAsync(() => {
+    findTrigger(fixture.nativeElement, 'Comptabilité')!.click();
+    fixture.detectChanges();
+    tick();
+
+    const menu = document.getElementById('secondary-nav-menu-accounting');
+    expect(menu).toBeTruthy();
+    expect(menu?.querySelector('.secondary-nav__section-label')).toBeNull();
+  }));
 });

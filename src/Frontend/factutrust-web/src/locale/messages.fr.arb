@@ -25746,13 +25746,6 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.manual-entry.ventilation.analytique.779559f6": "Ventilation analytique",
-  "@accounting.manual-entry.ventilation.analytique.779559f6": {
-    "x-files": [
-      "src/app/features/accounting/manual-entry/components/entry-bottom-tabs.component.ts"
-    ],
-    "x-wave": "v7"
-  },
   "accounting.manual-entry.historique.34f3a06a": "Historique",
   "@accounting.manual-entry.historique.34f3a06a": {
     "x-files": [
@@ -25793,20 +25786,6 @@
   },
   "accounting.manual-entry.notes.internes.pour.cette.saisie.57ce68d7": "Notes internes pour cette saisie…",
   "@accounting.manual-entry.notes.internes.pour.cette.saisie.57ce68d7": {
-    "x-files": [
-      "src/app/features/accounting/manual-entry/components/entry-bottom-tabs.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.manual-entry.le.module.de.ventilation.analytique.n.est.pas.en.4c084952": "Le module de ventilation analytique n'est pas encore disponible dans ce dossier.",
-  "@accounting.manual-entry.le.module.de.ventilation.analytique.n.est.pas.en.4c084952": {
-    "x-files": [
-      "src/app/features/accounting/manual-entry/components/entry-bottom-tabs.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.manual-entry.cette.fonctionnalite.sera.proposee.dans.une.proc.c71a6744": "Cette fonctionnalité sera proposée dans une prochaine version.",
-  "@accounting.manual-entry.cette.fonctionnalite.sera.proposee.dans.une.proc.c71a6744": {
     "x-files": [
       "src/app/features/accounting/manual-entry/components/entry-bottom-tabs.component.ts"
     ],
@@ -58696,6 +58675,20 @@
   },
   "invoices.invoice-wizard.tva.fb62cb5d": "TVA",
   "@invoices.invoice-wizard.tva.fb62cb5d": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/steps/step-lines/step-lines.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-wizard.taux.tva.c0830fcc": "Taux TVA",
+  "@invoices.invoice-wizard.taux.tva.c0830fcc": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/steps/step-lines/step-lines.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-wizard.montant.tva.f0c1b7cc": "Montant TVA",
+  "@invoices.invoice-wizard.montant.tva.f0c1b7cc": {
     "x-files": [
       "src/app/features/invoices/invoice-wizard/steps/step-lines/step-lines.component.ts"
     ],
@@ -125191,5 +125184,12 @@
       "src/app/features/payments/cash-journal/cash-journal.component.ts"
     ],
     "x-wave": "v5"
+  },
+  "core.nav.section.reports": "Rapports",
+  "@core.nav.section.reports": {
+    "x-files": [
+      "src/app/core/utils/nav-section.ts"
+    ],
+    "x-wave": "v1"
   }
 }

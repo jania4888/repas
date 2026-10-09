@@ -28,6 +28,11 @@ export interface NavSubItem {
   managerOnly?: boolean;
   /** Compteur affiché à droite du libellé (ex. approbations en attente). */
   badge?: number | null;
+  /**
+   * Groupe de présentation. `reports` forme un suffixe contigu du sous-menu ;
+   * l'UI dessine un titre non cliquable, sans route ni permission propre.
+   */
+  navGroup?: 'reports';
   /** One nesting level max (e.g. secondary-nav flyout). UI must not recurse further. */
   children?: NavSubItem[];
 }
@@ -203,14 +208,6 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['invoices:read']
       },
       {
-        id: 'sales--sales-journal',
-        label: $localize`:@@core.app-navigation.registry.ts.journal.de.ventes.a1b2c3d4:Journal de ventes`,
-        route: '/reports/sales-journal',
-        icon: 'fa-solid fa-book',
-        modules: [M.Reports, M.Sales],
-        permissionsAll: ['reports:view', 'invoices:read']
-      },
-      {
         id: 'sales--recurring-contracts',
         label: $localize`:@@core.app-navigation.registry.ts.contrats.recurrents.e773e54a:Contrats récurrents`,
         route: '/recurring-contracts',
@@ -219,12 +216,22 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: [PERMISSIONS.recurringContracts.read]
       },
       {
+        id: 'sales--sales-journal',
+        label: $localize`:@@core.app-navigation.registry.ts.journal.de.ventes.a1b2c3d4:Journal de ventes`,
+        route: '/reports/sales-journal',
+        icon: 'fa-solid fa-book',
+        modules: [M.Reports, M.Sales],
+        permissionsAll: ['reports:view', 'invoices:read'],
+        navGroup: 'reports'
+      },
+      {
         id: 'sales--reports-client-balances',
         label: $localize`:@@core.app-navigation.registry.ts.solde.par.client.dc39ad70:Solde par client`,
         route: '/reports/client-balances',
         icon: 'fa-solid fa-wallet',
         modules: [M.Reports, M.Sales],
-        permissionsAll: ['reports:view', 'invoices:read']
+        permissionsAll: ['reports:view', 'invoices:read'],
+        navGroup: 'reports'
       },
       {
         id: 'sales--reports-analytics',
@@ -232,7 +239,8 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         route: '/reports/analytics',
         icon: 'fa-solid fa-chart-line',
         modules: [M.Reports, M.Sales],
-        permissionsAll: ['reports:view', 'invoices:read']
+        permissionsAll: ['reports:view', 'invoices:read'],
+        navGroup: 'reports'
       },
       {
         id: 'sales--reports-sales',
@@ -240,7 +248,8 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         route: '/reports/sales',
         icon: 'fa-solid fa-chart-column',
         modules: [M.Reports, M.Sales],
-        permissionsAll: ['reports:view', 'invoices:read']
+        permissionsAll: ['reports:view', 'invoices:read'],
+        navGroup: 'reports'
       },
       {
         id: 'sales--reports-profit',
@@ -248,7 +257,8 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         route: '/reports/profit',
         icon: 'fa-solid fa-percent',
         modules: [M.Reports, M.Sales],
-        permissionsAll: ['reports:view', 'invoices:read']
+        permissionsAll: ['reports:view', 'invoices:read'],
+        navGroup: 'reports'
       }
     ]
   },
@@ -312,7 +322,8 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         route: '/reports/purchases-journal',
         icon: 'fa-solid fa-book',
         modules: [M.Reports, M.Purchases],
-        permissionsAll: ['reports:view', 'supplier_invoices:read']
+        permissionsAll: ['reports:view', 'supplier_invoices:read'],
+        navGroup: 'reports'
       },
       {
         id: 'purchases--reports-supplier-balances',
@@ -320,7 +331,8 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         route: '/reports/supplier-balances',
         icon: 'fa-solid fa-wallet',
         modules: [M.Reports, M.Purchases],
-        permissionsAll: ['reports:view', 'supplier_invoices:read']
+        permissionsAll: ['reports:view', 'supplier_invoices:read'],
+        navGroup: 'reports'
       },
       {
         id: 'purchases--reports-analytics',
@@ -328,7 +340,8 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         route: '/reports/purchases-analytics',
         icon: 'fa-solid fa-chart-line',
         modules: [M.Reports, M.Purchases],
-        permissionsAll: ['reports:view', 'suppliers:read']
+        permissionsAll: ['reports:view', 'suppliers:read'],
+        navGroup: 'reports'
       },
       {
         id: 'purchases--reports-sales',
@@ -336,7 +349,8 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         route: '/reports/purchases',
         icon: 'fa-solid fa-chart-column',
         modules: [M.Reports, M.Purchases],
-        permissionsAll: ['reports:view', 'suppliers:read']
+        permissionsAll: ['reports:view', 'suppliers:read'],
+        navGroup: 'reports'
       }
     ]
   },
@@ -376,7 +390,8 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         route: '/reports/fiches',
         icon: 'fa-solid fa-chart-column',
         modules: [M.Reports],
-        permissionsAll: ['reports:view']
+        permissionsAll: ['reports:view'],
+        navGroup: 'reports'
       }
     ]
   },
@@ -448,7 +463,8 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         route: '/reports/stock-status',
         icon: 'fa-solid fa-table-list',
         modules: [M.Reports, M.Stock],
-        permissionsAll: ['reports:view', 'stock:read']
+        permissionsAll: ['reports:view', 'stock:read'],
+        navGroup: 'reports'
       },
       {
         id: 'stock--reports-sales',
@@ -456,7 +472,8 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         route: '/reports/stock',
         icon: 'fa-solid fa-chart-column',
         modules: [M.Reports, M.Stock],
-        permissionsAll: ['reports:view', 'stock:read']
+        permissionsAll: ['reports:view', 'stock:read'],
+        navGroup: 'reports'
       }
     ]
   },
@@ -528,7 +545,8 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         route: '/reports/payments',
         icon: 'fa-solid fa-chart-column',
         modules: [M.Reports, M.Treasury],
-        permissionsAll: ['reports:view', 'payments:read']
+        permissionsAll: ['reports:view', 'payments:read'],
+        navGroup: 'reports'
       }
     ]
   },
@@ -687,22 +705,6 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: [PERMISSIONS.payroll.read]
       },
       {
-        id: 'hr-payroll--payroll-reports-payroll-book',
-        label: $localize`:@@core.app-navigation.registry.ts.livre.de.paie.ccdfc623:Livre de paie`,
-        route: '/payroll/reports/payroll-book',
-        icon: 'fa-solid fa-book',
-        modules: [M.Payroll],
-        permissionsAll: [PERMISSIONS.payroll.read]
-      },
-      {
-        id: 'hr-payroll--payroll-reports-payroll-journal',
-        label: $localize`:@@core.app-navigation.registry.ts.journal.de.paie.240f3575:Journal de paie`,
-        route: '/payroll/reports/payroll-journal',
-        icon: 'fa-solid fa-list-check',
-        modules: [M.Payroll],
-        permissionsAll: [PERMISSIONS.payroll.read]
-      },
-      {
         id: 'hr-payroll--payroll-declarations',
         label: $localize`:@@core.app-navigation.registry.ts.declarations.paie.135c2aa8:Déclarations paie`,
         route: '/payroll/declarations',
@@ -733,6 +735,24 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         icon: 'fa-solid fa-gift',
         modules: [M.Payroll],
         permissionsAll: [PERMISSIONS.payroll.settings]
+      },
+      {
+        id: 'hr-payroll--payroll-reports-payroll-book',
+        label: $localize`:@@core.app-navigation.registry.ts.livre.de.paie.ccdfc623:Livre de paie`,
+        route: '/payroll/reports/payroll-book',
+        icon: 'fa-solid fa-book',
+        modules: [M.Payroll],
+        permissionsAll: [PERMISSIONS.payroll.read],
+        navGroup: 'reports'
+      },
+      {
+        id: 'hr-payroll--payroll-reports-payroll-journal',
+        label: $localize`:@@core.app-navigation.registry.ts.journal.de.paie.240f3575:Journal de paie`,
+        route: '/payroll/reports/payroll-journal',
+        icon: 'fa-solid fa-list-check',
+        modules: [M.Payroll],
+        permissionsAll: [PERMISSIONS.payroll.read],
+        navGroup: 'reports'
       }
     ]
   },

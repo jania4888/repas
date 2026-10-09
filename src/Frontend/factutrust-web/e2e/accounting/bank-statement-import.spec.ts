@@ -192,8 +192,17 @@ test('lecture en cours : page en cours, pastilles de pages et temps écoulé', a
 
   await openReview(page, 's-run');
 
-  await expect(page.getByText('Lecture des pages par GLM-OCR… page 3 sur 4 — 50 %')).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByText(/Lecture des pages par l'IA… page 3 sur 4 — 50 %/)).toBeVisible({ timeout: 30_000 });
   await expect(page.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '50');
+  await expect(page.locator('.bsr-progress__pct')).toHaveText('50 %');
+  const fill = page.locator('.bsr-bar__fill');
+  await expect(fill).toHaveAttribute('style', /width:\s*50%/);
+  await expect(fill).toHaveCSS('width', /.+/);
+  const fillWidth = await fill.evaluate(node => node.getBoundingClientRect().width);
+  const barWidth = await page.locator('.bsr-bar').evaluate(node => node.getBoundingClientRect().width);
+  expect(fillWidth).toBeGreaterThan(0);
+  expect(fillWidth / barWidth).toBeGreaterThan(0.45);
+  expect(fillWidth / barWidth).toBeLessThan(0.55);
   await expect(page.getByText('Temps restant estimé : environ 4 min', { exact: false })).toBeVisible();
 
   const chips = page.locator('.bsr-pages .bsr-page');
@@ -202,7 +211,7 @@ test('lecture en cours : page en cours, pastilles de pages et temps écoulé', a
   await expect(chips.nth(1)).toHaveClass(/is-fallback/);
   await expect(chips.nth(2)).toHaveClass(/is-current/);
   await expect(chips.nth(2)).toHaveText(/Page 3 · en cours/);
-  await expect(page.getByText('Pages 2 : GLM-OCR n\'a pas pu lire la page, relecture par le modèle texte.')).toBeVisible();
+  await expect(page.getByText('Pages 2 : lues en secours, sans l\'image de la page.')).toBeVisible();
   await expect(page.getByText(/\d+ s écoulées/)).toBeVisible();
   await expect(page.getByRole('button', { name: 'Enregistrer le relevé et passer aux propositions' })).toHaveCount(0);
 });

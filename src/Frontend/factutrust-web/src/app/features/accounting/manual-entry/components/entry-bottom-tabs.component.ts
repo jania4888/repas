@@ -23,8 +23,7 @@ const MAX_BYTES = 10 * 1024 * 1024;
       <p-tablist>
         <p-tab [value]="0" i18n="@@accounting.manual-entry.pieces.jointes.894a3774">Pièces jointes ({{ pendingFiles.length }})</p-tab>
         <p-tab [value]="1" i18n="@@accounting.manual-entry.notes.70440046">Notes</p-tab>
-        <p-tab [value]="2" i18n="@@accounting.manual-entry.ventilation.analytique.779559f6">Ventilation analytique</p-tab>
-        <p-tab [value]="3" i18n="@@accounting.manual-entry.historique.34f3a06a">Historique</p-tab>
+        <p-tab [value]="2" i18n="@@accounting.manual-entry.historique.34f3a06a">Historique</p-tab>
       </p-tablist>
       <p-tabpanels>
       <p-tabpanel [value]="0">
@@ -56,13 +55,6 @@ const MAX_BYTES = 10 * 1024 * 1024;
       </p-tabpanel>
 
       <p-tabpanel [value]="2">
-        <div class="locked-panel">
-          <p i18n="@@accounting.manual-entry.le.module.de.ventilation.analytique.n.est.pas.en.4c084952">Le module de ventilation analytique n'est pas encore disponible dans ce dossier.</p>
-          <p class="locked-panel__sub" i18n="@@accounting.manual-entry.cette.fonctionnalite.sera.proposee.dans.une.proc.c71a6744">Cette fonctionnalité sera proposée dans une prochaine version.</p>
-        </div>
-      </p-tabpanel>
-
-      <p-tabpanel [value]="3">
         <div class="locked-panel">
           <p i18n="@@accounting.manual-entry.l.historique.des.modifications.sera.disponible.a.48142acd">L'historique des modifications sera disponible après l'enregistrement de l'écriture.</p>
         </div>

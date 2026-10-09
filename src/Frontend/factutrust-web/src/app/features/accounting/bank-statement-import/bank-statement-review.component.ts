@@ -117,53 +117,94 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
     <!-- ══ Lecture en cours (pages lues par l'IA) ══ -->
     @if (session(); as s) {
       @if (s.status === 'Extracting' || s.status === 'Pending') {
-        <div class="card bsr-card bsr-progress" role="status" aria-live="polite">
-          <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
-          <div class="bsr-progress__body">
-            @if (viaDocStrange(s)) {
-              <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.des.pages.par.le.service.d.extraction.do.9953b468">Lecture des pages par le service d'extraction documentaire… page {{ currentPage(s) }} sur {{ totalPages(s) }} — {{ s.progressPercent }} %</p>
-              <p class="bsr-muted bsr-progress__meta">
-                <span>{{ s.fileName }}</span>
-                <span aria-hidden="true" i18n="@@accounting.bank-statement-import.secondes.ecoulees">{{ elapsedSeconds() }} s écoulées</span>
-              </p>
-            } @else if (s.extraction?.aiPlan?.engine === 'vision') {
-              <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.des.pages.par.l.ia.page.currentpage.s.su.0ba333ec">Lecture des pages par l'IA… page {{ currentPage(s) }} sur {{ totalPages(s) }} — {{ s.progressPercent }} %</p>
-              <p class="bsr-muted bsr-progress__meta">
-                <span>{{ s.fileName }}</span>
-                <span aria-hidden="true" i18n="@@accounting.bank-statement-import.secondes.ecoulees">{{ elapsedSeconds() }} s écoulées</span>
-              </p>
-            } @else {
-              @switch (s.extraction?.aiPlan?.reason) {
-                @case ('line_issues') {
-                  <p class="bsr-strong" i18n="@@accounting.bank-statement-import.relecture.par.l.ia.des.lignes.non.lues.avec.cert.a39a7373">Relecture par l'IA des lignes non lues avec certitude… {{ s.progressPercent }} %</p>
+        <div class="card bsr-card bsr-progress">
+          <div class="bsr-progress__top">
+            <div class="bsr-progress__header">
+              <i class="pi pi-spin pi-spinner bsr-progress__spinner" aria-hidden="true"></i>
+              <div class="bsr-progress__head-copy">
+                @if (viaDocStrange(s)) {
+                  <p class="bsr-strong bsr-progress__status" aria-live="polite" i18n="@@accounting.bank-statement-import.lecture.des.pages.par.le.service.d.extraction.do.9953b468">Lecture des pages par le service d'extraction documentaire… page {{ currentPage(s) }} sur {{ totalPages(s) }} — {{ displayPercent(s) }} %</p>
+                } @else if (s.extraction?.aiPlan?.engine === 'vision') {
+                  <p class="bsr-strong bsr-progress__status" aria-live="polite" i18n="@@accounting.bank-statement-import.lecture.des.pages.par.l.ia.page.currentpage.s.su.0ba333ec">Lecture des pages par l'IA… page {{ currentPage(s) }} sur {{ totalPages(s) }} — {{ displayPercent(s) }} %</p>
+                } @else {
+                  @switch (s.extraction?.aiPlan?.reason) {
+                    @case ('line_issues') {
+                      <p class="bsr-strong bsr-progress__status" aria-live="polite" i18n="@@accounting.bank-statement-import.relecture.par.l.ia.des.lignes.non.lues.avec.cert.a39a7373">Relecture par l'IA des lignes non lues avec certitude… {{ displayPercent(s) }} %</p>
+                    }
+                    @case ('unverified') {
+                      <p class="bsr-strong bsr-progress__status" aria-live="polite" i18n="@@accounting.bank-statement-import.relecture.du.releve.par.l.ia.solde.non.verifie.s.725c03c7">Relecture du relevé par l'IA (solde non vérifié)… {{ displayPercent(s) }} %</p>
+                    }
+                    @case ('all_documents') {
+                      <p class="bsr-strong bsr-progress__status" aria-live="polite" i18n="@@accounting.bank-statement-import.lecture.du.releve.par.l.ia.sans.l.image.des.page.6c59fbc2">Lecture du relevé par l'IA, sans l'image des pages… {{ displayPercent(s) }} %</p>
+                    }
+                    @default {
+                      <p class="bsr-strong bsr-progress__status" aria-live="polite" i18n="@@accounting.bank-statement-import.lecture.des.pages.scannees.ebb6ce2d">Lecture des pages scannées… {{ displayPercent(s) }} %</p>
+                    }
+                  }
                 }
-                @case ('unverified') {
-                  <p class="bsr-strong" i18n="@@accounting.bank-statement-import.relecture.du.releve.par.l.ia.solde.non.verifie.s.725c03c7">Relecture du relevé par l'IA (solde non vérifié)… {{ s.progressPercent }} %</p>
-                }
-                @case ('all_documents') {
-                  <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.du.releve.par.l.ia.sans.l.image.des.page.6c59fbc2">Lecture du relevé par l'IA, sans l'image des pages… {{ s.progressPercent }} %</p>
-                }
-                @default {
-                  <p class="bsr-strong" i18n="@@accounting.bank-statement-import.lecture.des.pages.scannees.ebb6ce2d">Lecture des pages scannées… {{ s.progressPercent }} %</p>
-                }
+                <p class="bsr-muted bsr-progress__meta">
+                  <span>{{ s.fileName }}</span>
+                  <span i18n="@@accounting.bank-statement-import.secondes.ecoulees">{{ elapsedSeconds() }} s écoulées</span>
+                </p>
+              </div>
+            </div>
+            <p class="bsr-progress__pct" aria-hidden="true">{{ displayPercent(s) }} %</p>
+          </div>
+          <div class="bsr-bar" role="progressbar"
+               [class.is-indeterminate]="displayPercent(s) === 0"
+               [attr.aria-valuenow]="displayPercent(s)"
+               [attr.aria-valuetext]="progressAriaValueText(s)"
+               aria-valuemin="0"
+               aria-valuemax="100"
+               i18n-aria-label="@@accounting.bank-statement-import.progression.lecture.aria"
+               aria-label="Progression de la lecture">
+            <div class="bsr-bar__fill" [style.width.%]="displayPercent(s)">
+              @if (displayPercent(s) > 0) {
+                <span class="bsr-bar__pulse" aria-hidden="true"></span>
               }
+            </div>
+            @if (displayPercent(s) === 0) {
+              <div class="bsr-bar__indeterminate" aria-hidden="true"></div>
             }
-            <div class="bsr-bar" role="progressbar" [attr.aria-valuenow]="s.progressPercent" aria-valuemin="0" aria-valuemax="100"
-                 i18n-aria-label="@@accounting.bank-statement-import.progression.lecture.aria" aria-label="Progression de la lecture"><div class="bsr-bar__fill" [style.width.%]="s.progressPercent"></div></div>
-            @if (s.extraction?.aiPlan?.engine === 'vision') {
-              <!-- Le service externe lit une page en quelques dizaines de secondes : ni le mot « IA »,
-                   ni la fourchette d'une à trois minutes, qui est celle du modèle vision local. -->
-              @if (viaDocStrange(s)) {
-                @if (estimatedMinutes(s); as minutes) {
-                  <p class="bsr-muted bsr-estimate" i18n="@@accounting.bank-statement-import.duree.estimee.environ.minutes.min.vous.pouvez.qu.8c3f8b0a">Durée estimée : environ {{ minutes }} min. Vous pouvez quitter cet écran et y revenir.</p>
-                }
-              } @else if (estimatedMinutes(s); as minutes) {
-                <p class="bsr-muted bsr-estimate" i18n="@@accounting.bank-statement-import.temps.restant.estime.environ.min.une.a.trois.minutes.par.page">Temps restant estimé : environ {{ minutes }} min (une à trois minutes par page sur le serveur). Vous pouvez quitter cet écran et y revenir.</p>
-              } @else {
-                <p class="bsr-muted" i18n="@@accounting.bank-statement-import.une.page.prend.une.a.trois.minutes.avec.l.ia.locale">Une page prend une à trois minutes avec l'IA locale. Vous pouvez quitter cet écran et y revenir.</p>
+          </div>
+          @if (s.extraction?.aiPlan?.engine === 'vision') {
+            <!-- Le service externe lit une page en quelques dizaines de secondes : ni le mot « IA »,
+                 ni la fourchette d'une à trois minutes, qui est celle du modèle vision local. -->
+            @if (viaDocStrange(s)) {
+              @if (estimatedMinutes(s); as minutes) {
+                <p class="bsr-muted bsr-estimate" i18n="@@accounting.bank-statement-import.duree.estimee.environ.minutes.min.vous.pouvez.qu.8c3f8b0a">Durée estimée : environ {{ minutes }} min. Vous pouvez quitter cet écran et y revenir.</p>
               }
-              @if (pageStates(s); as pages) {
-                @if (pages.length > 0) {
+            } @else if (estimatedMinutes(s); as minutes) {
+              <p class="bsr-muted bsr-estimate" i18n="@@accounting.bank-statement-import.temps.restant.estime.environ.min.une.a.trois.minutes.par.page">Temps restant estimé : environ {{ minutes }} min (une à trois minutes par page sur le serveur). Vous pouvez quitter cet écran et y revenir.</p>
+            } @else {
+              <p class="bsr-muted" i18n="@@accounting.bank-statement-import.une.page.prend.une.a.trois.minutes.avec.l.ia.locale">Une page prend une à trois minutes avec l'IA locale. Vous pouvez quitter cet écran et y revenir.</p>
+            }
+            @if (pageStates(s); as pages) {
+              @if (pages.length > 0) {
+                @if (pageSummaryCounts(s); as c) {
+                  <p class="bsr-muted bsr-progress__summary">
+                    @if (c.done) {
+                      <span i18n="@@accounting.bank-statement-import.progress.summary.pages.lues">{{ c.done }} lues</span>
+                    }
+                    @if (c.fallback) {
+                      @if (c.done) {<span class="bsr-progress__sep" aria-hidden="true"> · </span>}
+                      <span i18n="@@accounting.bank-statement-import.progress.summary.pages.secours">{{ c.fallback }} lecture de secours</span>
+                    }
+                    @if (c.failed) {
+                      @if (c.done || c.fallback) {<span class="bsr-progress__sep" aria-hidden="true"> · </span>}
+                      <span i18n="@@accounting.bank-statement-import.progress.summary.pages.echouees">{{ c.failed }} échouée(s)</span>
+                    }
+                    @if (c.current) {
+                      @if (c.done || c.fallback || c.failed) {<span class="bsr-progress__sep" aria-hidden="true"> · </span>}
+                      <span i18n="@@accounting.bank-statement-import.progress.summary.pages.en.cours">{{ c.current }} en cours</span>
+                    }
+                    @if (c.todo) {
+                      @if (c.done || c.fallback || c.failed || c.current) {<span class="bsr-progress__sep" aria-hidden="true"> · </span>}
+                      <span i18n="@@accounting.bank-statement-import.progress.summary.pages.a.lire">{{ c.todo }} à lire</span>
+                    }
+                  </p>
+                }
+                <div class="bsr-pages-wrap">
                   <ul class="bsr-pages">
                     @for (p of pages; track p.page) {
                       <li class="bsr-page" [class.is-done]="p.state === 'done'" [class.is-fallback]="p.state === 'fallback'" [class.is-failed]="p.state === 'failed'" [class.is-current]="p.state === 'current'">
@@ -177,22 +218,24 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
                       </li>
                     }
                   </ul>
-                }
-              }
-              @if (fallbackPagesOf(s); as fallback) {
-                @if (fallback.length > 0) {
-                  <p class="bsr-muted bsr-fallback-note" role="note" i18n="@@accounting.bank-statement-import.pages.pagelist.fallback.lues.en.secours.sans.l.i.1c30311a">Pages {{ pageList(fallback) }} : lues en secours, sans l'image de la page.</p>
-                }
-              }
-            } @else {
-              @if (estimatedMinutes(s); as minutes) {
-                <p class="bsr-muted bsr-estimate" i18n="@@accounting.bank-statement-import.duree.estimee.environ.minutes.min.vous.pouvez.qu.8c3f8b0a">Durée estimée : environ {{ minutes }} min. Vous pouvez quitter cet écran et y revenir.</p>
-              } @else {
-                <p class="bsr-muted" i18n="@@accounting.bank-statement-import.une.page.prend.une.a.trois.minutes.avec.l.ia.locale">Une page prend une à trois minutes avec l'IA locale. Vous pouvez quitter cet écran et y revenir.</p>
+                </div>
               }
             }
+            @if (fallbackPagesOf(s); as fallback) {
+              @if (fallback.length > 0) {
+                <p class="bsr-muted bsr-fallback-note" role="note" i18n="@@accounting.bank-statement-import.pages.pagelist.fallback.lues.en.secours.sans.l.i.1c30311a">Pages {{ pageList(fallback) }} : lues en secours, sans l'image de la page.</p>
+              }
+            }
+          } @else {
+            @if (estimatedMinutes(s); as minutes) {
+              <p class="bsr-muted bsr-estimate" i18n="@@accounting.bank-statement-import.duree.estimee.environ.minutes.min.vous.pouvez.qu.8c3f8b0a">Durée estimée : environ {{ minutes }} min. Vous pouvez quitter cet écran et y revenir.</p>
+            } @else {
+              <p class="bsr-muted" i18n="@@accounting.bank-statement-import.une.page.prend.une.a.trois.minutes.avec.l.ia.locale">Une page prend une à trois minutes avec l'IA locale. Vous pouvez quitter cet écran et y revenir.</p>
+            }
+          }
+          <div class="bsr-progress__footer">
+            <app-button variant="secondary" icon="pi-times" iconPos="left" (clicked)="cancelSession()" [disabled]="busy()" ariaLabel="Annuler l'import" i18n-ariaLabel="@@accounting.bank-statement-import.annuler.l.import.8c2b45d2" i18n="@@accounting.bank-statement-import.annuler.49ba3292">Annuler</app-button>
           </div>
-          <app-button variant="secondary" icon="pi-times" iconPos="left" (clicked)="cancelSession()" [disabled]="busy()" ariaLabel="Annuler l'import" i18n-ariaLabel="@@accounting.bank-statement-import.annuler.l.import.8c2b45d2" i18n="@@accounting.bank-statement-import.annuler.49ba3292">Annuler</app-button>
         </div>
       }
 
@@ -231,6 +274,57 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
             }
           </ul>
         </div>
+      }
+
+      @for (entry of siblingPreviewEntries(); track entry.sib.id) {
+        @if (entry.preview?.extraction; as sx) {
+          <div class="card bsr-card bsr-sibling-preview" role="region" [attr.aria-label]="siblingPreviewAria(entry.sib)">
+            <h2 class="bsr-title" i18n="@@accounting.bank-statement-import.releve.preview.titre">
+              Relevé {{ entry.sib.segmentIndex }} — {{ entry.sib.periodStart | date: 'MM/yyyy' }} · aperçu
+            </h2>
+            <p class="bsr-muted bsr-small" i18n="@@accounting.bank-statement-import.releve.preview.hint">
+              Contrôle et enregistrement sur l'écran du relevé (lien ci-dessus). Les opérations ci-dessous sont en lecture seule.
+            </p>
+            <div class="bsr-facts">
+              <div><span class="bsr-muted" i18n="@@accounting.bank-statement-import.operations.lues.p.e06736ac">Opérations lues</span><span>{{ sx.lines.length }} ({{ entry.preview!.pageCount }} p.)</span></div>
+            </div>
+            @if (entry.preview!.balanceCheck; as b) {
+              <div class="bsr-balance" [class.is-ok]="siblingBalanceMode(entry.preview!) === 'ok'" [class.is-ko]="siblingBalanceMode(entry.preview!) === 'blocking'" [class.is-warning]="siblingBalanceMode(entry.preview!) === 'warning'">
+                <p class="bsr-muted bsr-num">
+                  {{ sx.header.openingBalance?.value | number: '1.3-3' }} + {{ b.sumCredits | number: '1.3-3' }}
+                  − {{ b.sumDebits | number: '1.3-3' }} = {{ b.computedClosing | number: '1.3-3' }}
+                  / {{ sx.header.closingBalance?.value | number: '1.3-3' }}
+                </p>
+              </div>
+            }
+            <p-table [value]="sx.lines" dataKey="index" [paginator]="sx.lines.length > 50" [rows]="50" styleClass="p-datatable-sm" [tableStyle]="{ 'min-width': '720px' }">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th i18n="@@accounting.bank-statement-import.date.eb9a4bc1">Date</th>
+                  <th i18n="@@accounting.bank-statement-import.valeur.68f92b0d">Valeur</th>
+                  <th i18n="@@accounting.bank-statement-import.libelle.f5485bba">Libellé</th>
+                  <th class="bsr-right" i18n="@@accounting.bank-statement-import.debit.f528224f">Débit</th>
+                  <th class="bsr-right" i18n="@@accounting.bank-statement-import.credit.19194bdf">Crédit</th>
+                  <th i18n="@@accounting.bank-statement-import.page.fb06270f">Page</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-line>
+                <tr>
+                  <td>{{ line.transactionDate | date: 'dd/MM/yyyy' }}</td>
+                  <td>{{ line.valueDate | date: 'dd/MM/yyyy' }}</td>
+                  <td>
+                    @for (part of line.labelLines.length ? line.labelLines : [line.label]; track $index) {
+                      <div>{{ part }}</div>
+                    }
+                  </td>
+                  <td class="bsr-right">{{ line.isDebit ? (line.amount | number: '1.3-3') : '' }}</td>
+                  <td class="bsr-right">{{ !line.isDebit ? (line.amount | number: '1.3-3') : '' }}</td>
+                  <td>{{ line.pageNumber }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        }
       }
 
       <!-- ══ Étape 1 : contrôle de l'extraction ══ -->
@@ -605,17 +699,35 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
     .bsr-credit { color:var(--color-success); }
     .bsr-alert { display:flex; gap:var(--spacing-2); align-items:center; padding:var(--spacing-3); border-radius:var(--radius-md); margin-block-end:var(--spacing-3); }
     .bsr-alert--error { background:var(--color-danger-subtle, transparent); color:var(--color-danger); border:1px solid var(--color-danger); }
-    .bsr-progress { flex-direction:row; align-items:center; }
-    .bsr-progress__body { flex:1; display:flex; flex-direction:column; gap:var(--spacing-2); }
-    .bsr-progress__meta { display:flex; gap:var(--spacing-3); flex-wrap:wrap; font-size:var(--font-size-sm); }
-    .bsr-bar { height:6px; background:var(--color-border-subtle); border-radius:3px; overflow:hidden; }
-    .bsr-bar__fill { height:100%; background:var(--color-primary); transition:width .3s; }
+    .bsr-progress { gap:var(--spacing-3); }
+    .bsr-progress__top { display:flex; align-items:flex-start; justify-content:space-between; gap:var(--spacing-4); }
+    .bsr-progress__header { display:flex; align-items:flex-start; gap:var(--spacing-3); flex:1; min-width:0; }
+    .bsr-progress__spinner { flex-shrink:0; margin-block-start:2px; font-size:1.25rem; color:var(--color-primary-600); }
+    .bsr-progress__head-copy { flex:1; min-width:0; display:flex; flex-direction:column; gap:var(--spacing-1); }
+    .bsr-progress__status { margin:0; }
+    .bsr-progress__meta { display:flex; gap:var(--spacing-3); flex-wrap:wrap; font-size:var(--font-size-sm); margin:0; }
+    .bsr-progress__pct { margin:0; flex-shrink:0; font-size:var(--font-size-2xl); font-weight:var(--font-weight-bold); color:var(--color-primary-800); font-variant-numeric:tabular-nums; line-height:var(--line-height-tight); }
+    .bsr-bar { position:relative; block-size:10px; background:var(--color-neutral-200); border-radius:var(--radius-full); overflow:hidden; }
+    .bsr-bar__fill { block-size:100%; background:var(--color-primary-600); transition:width var(--transition-normal); position:relative; min-inline-size:0; }
+    .bsr-bar__pulse { position:absolute; inset-block:0; inset-inline-end:0; inline-size:6px; background:var(--color-primary-400); border-radius:var(--radius-full); animation:bsr-bar-pulse 1.2s ease-in-out infinite; }
+    .bsr-bar__indeterminate { position:absolute; inset-block:0; inline-size:35%; background:var(--color-primary-600); border-radius:var(--radius-full); animation:bsr-bar-slide 1.4s ease-in-out infinite; }
+    .bsr-bar.is-indeterminate .bsr-bar__fill { inline-size:0 !important; }
+    @keyframes bsr-bar-slide { 0% { inset-inline-start:-35%; } 100% { inset-inline-start:100%; } }
+    @keyframes bsr-bar-pulse { 0%, 100% { opacity:.35; } 50% { opacity:1; } }
+    @media (prefers-reduced-motion: reduce) {
+      .bsr-progress__spinner { animation:none; }
+      .bsr-bar__indeterminate, .bsr-bar__pulse { animation:none; }
+    }
+    .bsr-progress__summary { margin:0; font-size:var(--font-size-sm); }
+    .bsr-progress__sep { color:var(--color-text-tertiary); }
+    .bsr-pages-wrap { max-block-size:5.75rem; overflow:auto; padding-inline-end:var(--spacing-1); }
     .bsr-pages { list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:var(--spacing-1); }
-    .bsr-page { font-size:var(--font-size-xs); padding:1px var(--spacing-2); border-radius:999px; border:1px solid var(--color-border-default); color:var(--color-text-secondary); }
-    .bsr-page.is-done { border-color:var(--color-success); color:var(--color-success); }
-    .bsr-page.is-fallback { border-color:var(--color-warning); color:var(--color-warning); }
-    .bsr-page.is-failed { border-color:var(--color-danger); color:var(--color-danger); }
-    .bsr-page.is-current { border-color:var(--color-primary); color:var(--color-primary); font-weight:600; }
+    .bsr-page { font-size:var(--font-size-xs); padding:2px var(--spacing-2); border-radius:var(--radius-full); border:1px solid var(--color-border-default); color:var(--color-text-secondary); background:var(--color-background-elevated); }
+    .bsr-page.is-done { border-color:var(--color-success-600); background:var(--color-success-50); color:var(--color-success-700); }
+    .bsr-page.is-fallback { border-color:var(--color-warning-600); background:var(--color-warning-50); color:var(--color-warning-700); }
+    .bsr-page.is-failed { border-color:var(--color-error-600); background:var(--color-error-50); color:var(--color-error-700); }
+    .bsr-page.is-current { border-color:var(--color-primary-600); background:var(--color-primary-50); color:var(--color-primary-700); font-weight:var(--font-weight-semibold); }
+    .bsr-progress__footer { display:flex; justify-content:flex-end; padding-block-start:var(--spacing-2); margin-block-start:var(--spacing-1); border-block-start:1px solid var(--color-border-subtle); }
     .bsr-facts { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:var(--spacing-2); }
     .bsr-facts > div { display:flex; flex-direction:column; gap:2px; }
     .bsr-balance { display:flex; gap:var(--spacing-3); align-items:flex-start; padding:var(--spacing-3); border-radius:var(--radius-md); border:1px solid var(--color-border-default); }
@@ -737,6 +849,9 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
   private polling?: Subscription;
   private pollAttempt = 0;
   private elapsedTimer?: ReturnType<typeof setInterval>;
+  /** Sessions frères chargées pour aperçu (ids autorisés via `siblings` du serveur). */
+  private readonly siblingPreviews = signal<Map<string, BankStatementImportSession>>(new Map());
+  private readonly siblingPreviewLoading = signal<Set<string>>(new Set());
 
   readonly subtitle = computed(() => {
     const p = this.proposals();
@@ -858,6 +973,16 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
       : $localize`:@@accounting.bank-statement-import.enregistrer.le.releve.et.passer.aux.prop.932225f1:Enregistrer le relevé et passer aux propositions`
   );
 
+  readonly siblingPreviewEntries = computed(() => {
+    const s = this.session();
+    if (!s?.siblings?.length) return [];
+    const previews = this.siblingPreviews();
+    return s.siblings
+      .filter(sib => sib.status === 'AwaitingReview' && !sib.statementId)
+      .map(sib => ({ sib, preview: previews.get(sib.id) ?? null }))
+      .sort((a, b) => a.sib.segmentIndex - b.sib.segmentIndex);
+  });
+
   ngOnInit(): void {
     this.origin.set(this.route.snapshot?.queryParamMap?.get('from') === 'reconciliation' ? 'reconciliation' : null);
     this.refs.loadAll();
@@ -884,30 +1009,93 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
 
   // ── Session ─────────────────────────────────────────────────────────────────────────────
 
-  private loadSession(id: string): void {
+  private loadSession(id: string, siblingsOnly = false): void {
     this.api.session(id).subscribe({
       next: s => {
-        this.session.set(s);
-        this.balanceAcknowledged.set(false);
-        this.corrections.set(new Map());
-        this.editingIndex.set(null);
         if (s.status === 'Confirmed' && s.statementId) {
           this.stopElapsedTimer();
+          this.polling?.unsubscribe();
           if (this.origin() === 'reconciliation') this.returnToReconciliation(s, s.statementId);
           else void this.router.navigate(['/accounting/bank-statement-import/statement', s.statementId], { replaceUrl: true });
           return;
         }
-        if (s.status === 'Extracting' || s.status === 'Pending') {
-          this.startElapsedTimer(id);
-          this.schedulePoll(id);
-        } else {
-          this.stopElapsedTimer();
-          this.pollAttempt = 0;
+        if (siblingsOnly) {
+          const current = this.session();
+          if (current?.id === id) {
+            this.session.set({ ...current, siblings: s.siblings, segmentCount: s.segmentCount });
+            this.syncSiblingPreviews();
+            this.schedulePollIfNeeded(id);
+            return;
+          }
         }
+        this.session.set(s);
+        this.balanceAcknowledged.set(false);
+        this.corrections.set(new Map());
+        this.editingIndex.set(null);
+        this.syncSiblingPreviews();
+        this.schedulePollIfNeeded(id);
         this.journalCode = s.journalCode || 'JB';
       },
       error: (err: unknown) => this.fail(err)
     });
+  }
+
+  private schedulePollIfNeeded(sessionId: string): void {
+    const s = this.session();
+    if (!s) return;
+    if (s.status === 'Extracting' || s.status === 'Pending') {
+      this.startElapsedTimer(sessionId);
+      this.schedulePoll(sessionId, 'full');
+      return;
+    }
+    this.stopElapsedTimer();
+    if (this.hasSiblingReading(s)) {
+      this.schedulePoll(sessionId, 'siblings');
+    } else {
+      this.polling?.unsubscribe();
+      this.pollAttempt = 0;
+    }
+  }
+
+  private hasSiblingReading(s: BankStatementImportSession): boolean {
+    return (s.siblings ?? []).some(x => x.status === 'Extracting' || x.status === 'Pending');
+  }
+
+  private syncSiblingPreviews(): void {
+    const s = this.session();
+    if (!s) return;
+    const allowed = new Set((s.siblings ?? []).map(x => x.id));
+    const next = new Map(this.siblingPreviews());
+    for (const key of [...next.keys()]) {
+      if (!allowed.has(key)) next.delete(key);
+    }
+    if (next.size !== this.siblingPreviews().size) {
+      this.siblingPreviews.set(next);
+    }
+    for (const sib of s.siblings ?? []) {
+      if (sib.status !== 'AwaitingReview' || sib.statementId) continue;
+      if (next.has(sib.id) || this.siblingPreviewLoading().has(sib.id)) continue;
+      this.siblingPreviewLoading.update(set => new Set(set).add(sib.id));
+      this.api.session(sib.id).subscribe({
+        next: preview => {
+          this.siblingPreviewLoading.update(set => {
+            const copy = new Set(set);
+            copy.delete(sib.id);
+            return copy;
+          });
+          const current = this.session();
+          if (!(current?.siblings ?? []).some(x => x.id === preview.id)) return;
+          this.siblingPreviews.update(m => new Map(m).set(preview.id, preview));
+        },
+        error: () => {
+          this.siblingPreviewLoading.update(set => {
+            const copy = new Set(set);
+            copy.delete(sib.id);
+            return copy;
+          });
+        }
+      });
+    }
   }
 
   private elapsedSessionId: string | null = null;
@@ -927,10 +1115,10 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
   }
 
   /** Interrogation avec temporisation croissante (2 s → 10 s). */
-  private schedulePoll(id: string): void {
+  private schedulePoll(id: string, mode: 'full' | 'siblings'): void {
     this.polling?.unsubscribe();
     const delay = Math.min(10_000, 2_000 + this.pollAttempt++ * 1_000);
-    this.polling = timer(delay).subscribe(() => this.loadSession(id));
+    this.polling = timer(delay).subscribe(() => this.loadSession(id, mode === 'siblings'));
   }
 
   cancelSession(): void {
@@ -1015,6 +1203,53 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
 
   hasIssue(s: BankStatementImportSession, code: string, severity?: IssueSeverity): boolean {
     return (s.extraction?.issues ?? []).some(i => i.code === code && (!severity || i.severity === severity));
+  }
+
+  /** Pourcentage affiché (0–100), identique au serveur. */
+  displayPercent(s: BankStatementImportSession): number {
+    return Math.min(100, Math.max(0, s.progressPercent ?? 0));
+  }
+
+  /** Texte court pour la barre de progression (lecteurs d'écran). */
+  progressAriaValueText(s: BankStatementImportSession): string {
+    const pct = this.displayPercent(s);
+    const total = this.totalPages(s);
+    if (total > 0 && (s.extraction?.aiPlan?.engine === 'vision' || this.viaDocStrange(s))) {
+      const page = this.currentPage(s);
+      return $localize`:@@accounting.bank-statement-import.progress.aria.page.et.pct:${pct}:percent: %, page ${page}:current: sur ${total}:total:`;
+    }
+    return $localize`:@@accounting.bank-statement-import.progress.aria.pct.seul:${pct}:percent: %`;
+  }
+
+  /** Décompte par état pour la synthèse sous la barre (lecture page par page). */
+  pageSummaryCounts(s: BankStatementImportSession): { done: number; fallback: number; failed: number; current: number; todo: number } | null {
+    const pages = this.pageStates(s);
+    if (pages.length === 0) return null;
+    let done = 0;
+    let fallback = 0;
+    let failed = 0;
+    let current = 0;
+    let todo = 0;
+    for (const p of pages) {
+      switch (p.state) {
+        case 'done':
+          done++;
+          break;
+        case 'fallback':
+          fallback++;
+          break;
+        case 'failed':
+          failed++;
+          break;
+        case 'current':
+          current++;
+          break;
+        default:
+          todo++;
+          break;
+      }
+    }
+    return { done, fallback, failed, current, todo };
   }
 
   /** Nombre de pages à lire : celles du plan IA, sinon le nombre de pages du fichier. */
@@ -1470,6 +1705,17 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
       default:
         return $localize`:@@accounting.bank-statement-import.ts.indisponible.1ad054af:indisponible`;
     }
+  }
+
+  siblingBalanceMode(s: BankStatementImportSession): 'ok' | 'warning' | 'blocking' | null {
+    const b = s.balanceCheck;
+    if (!b) return null;
+    if (b.isBalanced) return 'ok';
+    return s.requiresBalanceAcknowledgement === true ? 'warning' : 'blocking';
+  }
+
+  siblingPreviewAria(sib: BankStatementImportSibling): string {
+    return $localize`:@@accounting.bank-statement-import.ts.apercu.releve.frere:Aperçu du relevé ${sib.segmentIndex}:segmentIndex:`;
   }
 
   maskRib(rib: string | null): string {

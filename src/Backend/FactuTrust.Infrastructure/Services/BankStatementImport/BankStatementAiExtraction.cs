@@ -219,7 +219,7 @@ public sealed partial class BankStatementAiExtractionJob
     }
 
     [Queue("bank_statement_ai")]
-    [AutomaticRetry(Attempts = 0)]
+    [AutomaticRetry(Attempts = 1)]
     public async Task ExecuteAsync(Guid tenantId, Guid sessionId, CancellationToken cancellationToken)
     {
         var connectionString = await _tenantService.GetConnectionStringAsync(tenantId, cancellationToken);
