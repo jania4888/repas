@@ -407,4 +407,36 @@ describe('SecondaryNavComponent', () => {
     expect(menu).toBeTruthy();
     expect(menu?.querySelector('.secondary-nav__section-label')).toBeNull();
   }));
+
+  it('places the treasury journal immediately above the Rapports link', fakeAsync(() => {
+    findTrigger(fixture.nativeElement, 'Trésorerie')!.click();
+    fixture.detectChanges();
+    tick();
+
+    const menu = document.getElementById('secondary-nav-menu-treasury');
+    expect(menu).toBeTruthy();
+
+    const links = Array.from(menu!.querySelectorAll('a.secondary-nav__link')) as HTMLAnchorElement[];
+    expect(links.map(link => link.textContent?.trim())).toEqual([
+      'Caisse',
+      'Comptes bancaires',
+      'Paiements clients',
+      'Paiements fournisseurs',
+      'Journal de trésorerie',
+      'Rapports'
+    ]);
+
+    const heading = menu!.querySelector('.secondary-nav__section-label') as HTMLElement | null;
+    expect(heading?.tagName).toBe('H4');
+    expect(heading?.textContent?.trim()).toBe('Rapports');
+    expect(heading?.getAttribute('role')).not.toBe('menuitem');
+    expect(heading?.closest('a,button')).toBeNull();
+    expect(menu!.querySelectorAll('.secondary-nav__section-label').length).toBe(1);
+
+    const journal = links.find(link => link.textContent?.trim() === 'Journal de trésorerie');
+    const hub = links.find(link => link.textContent?.trim() === 'Rapports');
+    expect(hub?.getAttribute('href')).toContain('/reports/payments');
+    expect(journal?.nextElementSibling).toBe(heading);
+    expect(heading?.nextElementSibling).toBe(hub);
+  }));
 });

@@ -146,6 +146,9 @@ describe('FirmClientsComponent', () => {
 
     it('affiche le bouton initialiser dossier permanent quand gouvernance activée', () => {
       expect(text()).toContain('Initialiser dossier permanent');
+      expect(fixture.nativeElement.querySelector('.fc-actions i.pi.pi-folder-open')).not.toBeNull();
+      expect(fixture.nativeElement.querySelector('[aria-label="Initialiser dossier permanent"] i.pi.pi-file-plus')).not.toBeNull();
+      expect(fixture.nativeElement.querySelector('.fc-actions i.pi.pi-book')).toBeNull();
     });
 
     it('masque créer, affecter et résilier', () => {
@@ -222,6 +225,29 @@ describe('FirmClientsComponent', () => {
       fixture.detectChanges();
       expect(fixture.componentInstance.search()).toBe('Texto');
       expect(fixture.componentInstance.filteredClients().map(r => r.assignmentId)).toEqual(['a-texto']);
+    });
+
+    it('affiche le glyphe prévu sur chaque action', () => {
+      const root = fixture.nativeElement as HTMLElement;
+      expect(root.querySelector('i.pi.pi-plus')).not.toBeNull();
+
+      const actions = root.querySelectorAll('.fc-actions');
+      expect(actions.length).toBe(2);
+
+      const first = actions[0];
+      expect(first.querySelector('i.pi.pi-folder-open')).not.toBeNull();
+      expect(first.querySelector('i.pi.pi-book')).not.toBeNull();
+      expect(first.querySelector('i.pi.pi-file-plus')).toBeNull();
+      expect(first.querySelector('[aria-label="Affecter"] i.pi.pi-user-plus')).not.toBeNull();
+      expect(first.querySelector('[aria-label="Résilier"] i.pi.pi-times')).not.toBeNull();
+
+      const withPermanentFile = actions[1];
+      expect(withPermanentFile.querySelector('i.pi.pi-book')).not.toBeNull();
+      expect(withPermanentFile.querySelector('i.pi.pi-file-plus')).toBeNull();
+
+      fixture.componentInstance.onSearchChange('Texto');
+      fixture.detectChanges();
+      expect(root.querySelector('.ft-filters__reset i.pi.pi-filter-slash')).not.toBeNull();
     });
 
     it('expose les actions manager et exige une confirmation avant résiliation', () => {

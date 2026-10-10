@@ -29471,7 +29471,16 @@
   "ui.tern.modifier.la.rubrique.035400": "Modifier la rubrique ",
   "@ui.tern.modifier.la.rubrique.035400": {
     "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-rubric-form.component.ts"
+      "src/app/features/accounting/monthly-declaration/dm-rubric-form.component.ts",
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.ts.nouvelle.rubrique.f16710ee": "Nouvelle rubrique",
+  "@accounting.monthly-declaration-config.ts.nouvelle.rubrique.f16710ee": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/dm-rubric-form.component.ts",
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.component.ts"
     ],
     "x-wave": "v7"
   },
@@ -125191,5 +125200,110 @@
       "src/app/core/utils/nav-section.ts"
     ],
     "x-wave": "v1"
+  },
+  "accounting.manual-entry.fichier.refuse.27013a1f": "Fichier refusé",
+  "@accounting.manual-entry.fichier.refuse.27013a1f": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.fichier.vide.2ff144e8": "Fichier vide.",
+  "@accounting.manual-entry.fichier.vide.2ff144e8": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.fichier.trop.volumineux.maximum.10.mo.717ddc82": "Fichier trop volumineux (maximum 10 Mo).",
+  "@accounting.manual-entry.fichier.trop.volumineux.maximum.10.mo.717ddc82": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.ce.fichier.n.est.pas.un.format.accepte.9119584c": "Ce fichier n'est pas un format accepté.",
+  "@accounting.manual-entry.ce.fichier.n.est.pas.un.format.accepte.9119584c": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.le.contenu.du.fichier.ne.correspond.pas.a.son.ex.e6448e8b": "Le contenu du fichier ne correspond pas à son extension.",
+  "@accounting.manual-entry.le.contenu.du.fichier.ne.correspond.pas.a.son.ex.e6448e8b": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.relancer.l.analyse.904749cc": "Relancer l'analyse",
+  "@accounting.manual-entry.relancer.l.analyse.904749cc": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.analyser.la.facture.09be38e9": "Analyser la facture",
+  "@accounting.manual-entry.analyser.la.facture.09be38e9": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.apercu.de.la.facture.a6a8b8c5": "Aperçu de la facture",
+  "@accounting.manual-entry.apercu.de.la.facture.a6a8b8c5": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-preview.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.zoom.de.l.apercu.423fabdb": "Zoom de l'aperçu",
+  "@accounting.manual-entry.zoom.de.l.apercu.423fabdb": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-preview.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.ajuster.b65f8ead": "Ajuster",
+  "@accounting.manual-entry.ajuster.b65f8ead": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-preview.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.100.ff376401": "100 %",
+  "@accounting.manual-entry.100.ff376401": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-preview.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.150.d153f7f9": "150 %",
+  "@accounting.manual-entry.150.d153f7f9": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-preview.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.le.navigateur.n.affiche.pas.ce.pdf.l.analyse.res.ef3e0be6": "Le navigateur n'affiche pas ce PDF. L'analyse reste possible.",
+  "@accounting.manual-entry.le.navigateur.n.affiche.pas.ce.pdf.l.analyse.res.ef3e0be6": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-preview.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.apercu.visuel.indisponible.pour.ce.format.l.anal.fa01f148": "Aperçu visuel indisponible pour ce format. L'analyse reste possible.",
+  "@accounting.manual-entry.apercu.visuel.indisponible.pour.ce.format.l.anal.fa01f148": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-preview.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.ce.format.pourra.etre.analyse.mais.la.piece.join.d207f9a0": "Ce format pourra être analysé, mais la pièce jointe risque d'être refusée à l'enregistrement (PDF, JPEG, PNG, WebP, Excel, Word uniquement).",
+  "@accounting.manual-entry.ce.format.pourra.etre.analyse.mais.la.piece.join.d207f9a0": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-preview.component.ts"
+    ],
+    "x-wave": "v7"
   }
 }

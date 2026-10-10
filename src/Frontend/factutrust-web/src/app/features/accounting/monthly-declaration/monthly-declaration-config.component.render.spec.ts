@@ -2,7 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { Subject, of, throwError } from 'rxjs';
 import { AuthService, User } from '@core/services/auth.service';
 import { ConfirmationService } from '@core/services/confirmation.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
@@ -211,6 +212,7 @@ describe('MonthlyDeclarationConfigComponent render', () => {
       imports: [MonthlyDeclarationConfigComponent],
       providers: [
         provideRouter([]),
+        provideNoopAnimations(),
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: AccountingService, useValue: api },
@@ -243,6 +245,126 @@ describe('MonthlyDeclarationConfigComponent render', () => {
   function text(): string {
     return fixture.nativeElement.textContent as string;
   }
+
+  function dialog(): HTMLElement | null {
+    return document.querySelector('.dm-rubric-dialog');
+  }
+
+  async function settle(): Promise<void> {
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+  }
+
+  describe('fiche de rubrique en boîte de dialogue', () => {
+    it('n’ouvre aucune boîte au repos', async () => {
+      await renderForUser(firmDelegatedUser);
+      expect(dialog()).toBeNull();
+      expect(document.querySelector('#dm-code')).toBeNull();
+    });
+
+    it('ouvre la création dans la boîte, titre en en-tête et non répété', async () => {
+      await renderForUser(firmDelegatedUser);
+      fixture.componentInstance.startCreate();
+      await settle();
+
+      const box = dialog();
+      expect(box).not.toBeNull();
+      expect(box!.querySelector('.p-dialog-title')?.textContent).toContain('Nouvelle rubrique');
+      expect(box!.querySelector('.dm-form__title')).toBeNull();
+      expect(box!.querySelector<HTMLInputElement>('#dm-code')?.disabled).toBeFalse();
+      expect(document.querySelectorAll('#dm-code').length).toBe(1);
+    });
+
+    it('ouvre la modification avec le code en en-tête et verrouillé', async () => {
+      await renderForUser(firmDelegatedUser);
+      fixture.componentInstance.startEdit(tclRubric);
+      await settle();
+
+      const box = dialog()!;
+      expect(box.querySelector('.p-dialog-title')?.textContent).toContain('Modifier la rubrique F9_TCL');
+      expect(box.querySelector<HTMLInputElement>('#dm-code')?.disabled).toBeTrue();
+    });
+
+    it('se ferme après un enregistrement réussi', async () => {
+      await renderForUser(firmDelegatedUser);
+      fixture.componentInstance.startEdit(tclRubric);
+      await settle();
+      fixture.componentInstance.saveRubric();
+      await settle();
+
+      expect(fixture.componentInstance.form()).toBeNull();
+      expect(document.querySelector('#dm-code')).toBeNull();
+    });
+
+    it('reste ouverte sur un refus serveur, message lisible dans la boîte', async () => {
+      api.updateMonthlyDeclarationRubric.and.returnValue(
+        of({ success: false, error: 'Source de retenue déjà lue par F1_3' })
+      );
+      await renderForUser(firmDelegatedUser);
+      fixture.componentInstance.startEdit(tclRubric);
+      await settle();
+      fixture.componentInstance.saveRubric();
+      await settle();
+
+      expect(fixture.componentInstance.form()).not.toBeNull();
+      expect(dialog()?.textContent).toContain('Source de retenue déjà lue par F1_3');
+    });
+
+    it('Annuler, la croix et Échap ferment sans aucun appel', async () => {
+      await renderForUser(firmDelegatedUser);
+      fixture.componentInstance.startEdit(tclRubric);
+      await settle();
+
+      fixture.componentInstance.onDialogVisible(false);
+      await settle();
+
+      expect(fixture.componentInstance.form()).toBeNull();
+      expect(api.updateMonthlyDeclarationRubric).not.toHaveBeenCalled();
+      expect(api.createMonthlyDeclarationRubric).not.toHaveBeenCalled();
+    });
+
+    it('refuse la fermeture pendant l’enregistrement', async () => {
+      const pending = new Subject<{ success: boolean; data: boolean }>();
+      api.updateMonthlyDeclarationRubric.and.returnValue(pending.asObservable());
+      await renderForUser(firmDelegatedUser);
+      fixture.componentInstance.startEdit(tclRubric);
+      await settle();
+      fixture.componentInstance.saveRubric();
+      await settle();
+
+      fixture.componentInstance.onDialogVisible(false);
+      fixture.componentInstance.closeForm();
+      await settle();
+      expect(fixture.componentInstance.form()).not.toBeNull();
+      expect(dialog()?.querySelector('.p-dialog-close-button')).toBeNull();
+
+      pending.next({ success: true, data: true });
+      pending.complete();
+      await settle();
+      expect(fixture.componentInstance.form()).toBeNull();
+    });
+
+    it('se ferme au changement de famille', async () => {
+      await renderForUser(firmDelegatedUser);
+      fixture.componentInstance.startCreate();
+      await settle();
+      fixture.componentInstance.selectFamily(MonthlyDeclarationFamily.Tfp);
+      await settle();
+
+      expect(document.querySelector('#dm-code')).toBeNull();
+    });
+
+    it('société connectée : aucune boîte même sollicitée', async () => {
+      await renderForUser(companyUser);
+      fixture.componentInstance.startCreate();
+      fixture.componentInstance.startEdit(tclRubric);
+      await settle();
+
+      expect(fixture.componentInstance.form()).toBeNull();
+      expect(document.querySelector('#dm-code')).toBeNull();
+    });
+  });
 
   it('affiche les onze familles en onglets', async () => {
     await renderForUser(firmDelegatedUser);

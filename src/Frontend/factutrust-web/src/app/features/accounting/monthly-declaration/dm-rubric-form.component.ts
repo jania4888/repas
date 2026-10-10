@@ -38,9 +38,11 @@ import {
   template: `
     @if (form; as f) {
       <div class="dm-form">
-        <h3 class="dm-form__title">
-          {{ f.id ? loc_ui_tern_modifier_la_rubrique_035400 + f.code : 'Nouvelle rubrique' }}
-        </h3>
+        @if (showHeading) {
+          <h3 class="dm-form__title">
+            {{ f.id ? loc_ui_tern_modifier_la_rubrique_035400 + f.code : loc_nouvelle_rubrique }}
+          </h3>
+        }
 
         <div class="dm-grid">
           <div class="dm-field">
@@ -354,6 +356,7 @@ import {
 })
 export class DmRubricFormComponent {
   readonly loc_ui_tern_modifier_la_rubrique_035400 = $localize`:@@ui.tern.modifier.la.rubrique.035400:Modifier la rubrique `;
+  readonly loc_nouvelle_rubrique = $localize`:@@accounting.monthly-declaration-config.ts.nouvelle.rubrique.f16710ee:Nouvelle rubrique`;
   readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
   readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
   /** Brouillon modifié en place ; le conteneur en garde la propriété. */
@@ -362,6 +365,8 @@ export class DmRubricFormComponent {
   @Input() saving = false;
   /** Lecture seule : l'appelant n'a pas le droit d'écrire la configuration du dossier. */
   @Input() disabled = false;
+  /** `false` quand le conteneur porte déjà le titre (en-tête de la boîte de dialogue). */
+  @Input() showHeading = true;
 
   @Output() readonly save = new EventEmitter<void>();
   @Output() readonly cancel = new EventEmitter<void>();

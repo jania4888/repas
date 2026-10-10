@@ -88,8 +88,8 @@
     "reason": "Réécriture erpPlural / fusion de phrase / correctif de regroupement : texte FR rendu identique (vérifié par catégorie CLDR fr : one = singulier, other/many = pluriel)"
   },
   "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts": {
-    "sha": "efb33cab3632c6edccffedd87e0e5fe6f2005456a46dc197223bdcce7ade486d",
-    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
+    "sha": "cd540663b96690f471d19c17058ce8cd10d8396aefc90f9aeb800d1277cfc583",
+    "reason": "Phrase découpée par concaténation fusionnée en un seul $localize (texte français identique). Aperçu local : noms de phase, largeurs de dialogue et sélecteur du bouton Analyser — les libellés visibles sont dans le template."
   },
   "src/app/features/accounting/manual-entry/manual-entry.component.ts": {
     "sha": "807ac2d592bf70e6aae6f794b148ab591c2493f77f8a4a9fcc0bcefb38a972ae",
@@ -302,6 +302,10 @@
   "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts": {
     "sha": "2f96263d667f6d0f243097a96abbe58868115676641378c67dca7ca570390651",
     "reason": "Retrait du calcul historique (livraison A) : origine « Documents » (valeurs documentaires et leurs libellés), TFP par activité, messages de validation miroir du serveur."
+  },
+  "src/app/features/accounting/monthly-declaration/monthly-declaration-config.component.ts": {
+    "sha": "766e907d8c80c4f20cf65744be6f92b01ea1a0278211b2e5598cdee0817b3fc7",
+    "reason": "Fiche de rubrique en boîte de dialogue : le titre (« Modifier la rubrique » + code, « Nouvelle rubrique ») passe du template du formulaire à l'en-tête du p-dialog, mêmes libellés français."
   },
   "src/app/features/accounting/monthly-declaration/monthly-declaration-model.view-model.ts": {
     "sha": "eb9b9017523e5f808bad468e04f7b191a1c9cf48137f2188b1fc58acf0ef9c1b",

@@ -1,5 +1,5 @@
 import { AppModule } from '../models/app-module';
-import { AI_ASSISTANT_MARK_SRC } from '../constants/ai-assistant-brand';
+import { AI_ASSISTANT_ICON_CLASS } from '../constants/ai-assistant-brand';
 import { PERMISSIONS } from './permission-keys';
 import { VARIANT_AXES_PATH } from '@features/settings/variant-axes/variant-axes.paths';
 import { AuthService } from '../services/auth.service';
@@ -44,6 +44,8 @@ export interface NavItem {
   icon?: string;
   railIconAsset?: string;
   route?: string;
+  /** Pastille BETA du rail. Indépendante du pictogramme (l’assistant n’utilise plus une image). */
+  beta?: boolean;
   /** Stable product-tour anchor (`data-tour="nav-{tourId}"`). Optional — missing ids are skipped. */
   tourId?: string;
   /** External help / support link (opens in a new tab). */
@@ -82,7 +84,8 @@ export const ALL_NAV_ITEMS: NavItem[] = [
   {
     id: 'ai-assistant',
     label: $localize`:@@core.app-navigation.registry.ts.assistant.ia.94f6f208:Assistant IA`,
-    railIconAsset: AI_ASSISTANT_MARK_SRC,
+    icon: AI_ASSISTANT_ICON_CLASS,
+    beta: true,
     route: '/ai-assistant',
     tourId: 'ai-assistant',
     modules: [M.AI],
@@ -508,14 +511,6 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['payments:read']
       },
       {
-        id: 'treasury--payments-cash-journal',
-        label: $localize`:@@core.nav.treasury.payments-cash-journal:Journal de trésorerie`,
-        route: '/payments/cash-journal',
-        icon: 'fa-solid fa-book',
-        modules: [M.Treasury],
-        permissionsAll: ['payments:read']
-      },
-      {
         id: 'treasury--payments-bank-accounts',
         label: $localize`:@@core.app-navigation.registry.ts.comptes.bancaires.3af6caeb:Comptes bancaires`,
         route: '/payments/bank-accounts',
@@ -536,6 +531,14 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         label: $localize`:@@core.app-navigation.registry.ts.paiements.fournisseurs.416577a5:Paiements fournisseurs`,
         route: '/payments/suppliers',
         icon: 'fa-solid fa-building',
+        modules: [M.Treasury],
+        permissionsAll: ['payments:read']
+      },
+      {
+        id: 'treasury--payments-cash-journal',
+        label: $localize`:@@core.nav.treasury.payments-cash-journal:Journal de trésorerie`,
+        route: '/payments/cash-journal',
+        icon: 'fa-solid fa-book',
         modules: [M.Treasury],
         permissionsAll: ['payments:read']
       },

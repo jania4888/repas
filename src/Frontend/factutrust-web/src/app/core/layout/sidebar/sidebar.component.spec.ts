@@ -337,6 +337,30 @@ describe('SidebarComponent — firm navigation', () => {
     expect(items.map(i => i.label)).not.toContain('Documentation');
   });
 
+  it('renders the Assistant IA rail glyph and BETA badge without the company logo', () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, {
+      ...firmUser,
+      tenantKind: 'Company',
+      role: 'Admin',
+      roleDisplay: 'Administrateur',
+      effectivePermissions: ['accounting:read', 'accounting:create', 'ai:chat']
+    });
+    TestBed.inject(FirmContextService).syncFromUser();
+
+    const fixture = TestBed.createComponent(SidebarComponent);
+    fixture.detectChanges();
+
+    const links = Array.from(
+      fixture.nativeElement.querySelectorAll('a.rail-link')
+    ) as HTMLElement[];
+    const assistant = links.find(link => link.textContent?.includes('Assistant IA'));
+    expect(assistant).toBeTruthy();
+    expect(assistant!.querySelector('i.fa-wand-magic-sparkles')).toBeTruthy();
+    expect(assistant!.querySelector('.rail-beta-badge')?.textContent).toContain('BETA');
+    expect(assistant!.querySelector('img.rail-icon-img--assistant')).toBeNull();
+  });
+
   it('hides accounting assistant submenu when company user lacks ai:chat', () => {
     const auth = TestBed.inject(AuthService);
     setUser(auth, {
@@ -842,5 +866,74 @@ describe('SidebarComponent — collapse', () => {
 
     expect(fixture.nativeElement.querySelector('.submenu-separator')).toBeNull();
     expect(fixture.nativeElement.textContent).toContain('Opportunités');
+  });
+
+  const treasuryCompanyUser: User = {
+    ...firmUser,
+    role: 'Administrator',
+    roleDisplay: 'Administrateur',
+    tenantKind: 'Company',
+    companyName: 'Ste Test',
+    enabledModuleIds: [3, 4],
+    effectivePermissions: ['payments:read', 'reports:view']
+  };
+
+  it('places the treasury journal immediately above the Rapports link', () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, treasuryCompanyUser);
+    TestBed.inject(FirmContextService).syncFromUser();
+
+    const fixture = TestBed.createComponent(SidebarComponent);
+    fixture.detectChanges();
+    expandSection(fixture, 'Trésorerie');
+
+    const list = fixture.nativeElement.querySelector('ul.submenu-list') as HTMLElement;
+    const links = Array.from(list.querySelectorAll('a.submenu-link') as NodeListOf<HTMLAnchorElement>);
+    const labels = links.map(link => link.textContent?.trim());
+    expect(labels).toEqual([
+      'Caisse',
+      'Comptes bancaires',
+      'Paiements clients',
+      'Paiements fournisseurs',
+      'Journal de trésorerie',
+      'Rapports'
+    ]);
+
+    const hub = links.find(link => link.textContent?.trim() === 'Rapports');
+    expect(hub?.getAttribute('href')).toContain('/reports/payments');
+
+    const heading = list.querySelector('.submenu-separator__label') as HTMLElement | null;
+    expect(heading?.tagName).toBe('H4');
+    expect(heading?.textContent?.trim()).toBe('Rapports');
+    expect(heading?.closest('a,button')).toBeNull();
+    expect(list.querySelectorAll('.submenu-separator').length).toBe(1);
+
+    const journalItem = links.find(link => link.textContent?.trim() === 'Journal de trésorerie')?.closest('li');
+    const separator = heading?.closest('li');
+    const reportsItem = hub?.closest('li');
+    expect(journalItem?.nextElementSibling).toBe(separator);
+    expect(separator?.nextElementSibling).toBe(reportsItem);
+  });
+
+  it('omits the treasury Rapports heading when reports:view is missing', () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, {
+      ...treasuryCompanyUser,
+      effectivePermissions: ['payments:read']
+    });
+    TestBed.inject(FirmContextService).syncFromUser();
+
+    const fixture = TestBed.createComponent(SidebarComponent);
+    fixture.detectChanges();
+    expandSection(fixture, 'Trésorerie');
+
+    const links = Array.from(
+      fixture.nativeElement.querySelectorAll('a.submenu-link') as NodeListOf<HTMLAnchorElement>
+    );
+    const labels = links.map(link => link.textContent?.trim());
+    expect(labels.at(-1)).toBe('Journal de trésorerie');
+    expect(labels).not.toContain('Rapports');
+    expect(fixture.nativeElement.querySelector('.submenu-separator')).toBeNull();
+    expect(links.some(link => link.getAttribute('href')?.includes('/reports/payments'))).toBeFalse();
   });
 });

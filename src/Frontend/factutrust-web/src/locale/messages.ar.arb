@@ -5204,5 +5204,18 @@
   "invoices.invoice-list.report.empty.cancelledFilter": "كشف الحالة لا يتضمن الفواتير الملغاة.",
   "delivery-notes.delivery-note-list.report.toast.summary.information": "معلومة",
   "delivery-notes.delivery-note-list.report.empty.deliveryNotes": "لا توجد أوامر تسليم في هذه الفترة لكشف الحالة.",
-  "core.nav.section.reports": "التقارير"
+  "core.nav.section.reports": "التقارير",
+  "accounting.manual-entry.fichier.refuse.27013a1f": "تم رفض الملف",
+  "accounting.manual-entry.fichier.vide.2ff144e8": "الملف فارغ.",
+  "accounting.manual-entry.fichier.trop.volumineux.maximum.10.mo.717ddc82": "الملف كبير جدًا (الحد الأقصى 10 ميغابايت).",
+  "accounting.manual-entry.ce.fichier.n.est.pas.un.format.accepte.9119584c": "صيغة هذا الملف غير مقبولة.",
+  "accounting.manual-entry.le.contenu.du.fichier.ne.correspond.pas.a.son.ex.e6448e8b": "محتوى الملف لا يطابق امتداده.",
+  "accounting.manual-entry.relancer.l.analyse.904749cc": "إعادة التحليل",
+  "accounting.manual-entry.analyser.la.facture.09be38e9": "تحليل الفاتورة",
+  "accounting.manual-entry.apercu.de.la.facture.a6a8b8c5": "معاينة الفاتورة",
+  "accounting.manual-entry.zoom.de.l.apercu.423fabdb": "تكبير المعاينة",
+  "accounting.manual-entry.ajuster.b65f8ead": "ملاءمة",
+  "accounting.manual-entry.le.navigateur.n.affiche.pas.ce.pdf.l.analyse.res.ef3e0be6": "لا يعرض المتصفح ملف PDF هذا. يبقى التحليل ممكنًا.",
+  "accounting.manual-entry.apercu.visuel.indisponible.pour.ce.format.l.anal.fa01f148": "المعاينة المرئية غير متاحة لهذه الصيغة. يبقى التحليل ممكنًا.",
+  "accounting.manual-entry.ce.format.pourra.etre.analyse.mais.la.piece.join.d207f9a0": "يمكن تحليل هذه الصيغة، لكن قد يُرفض المرفق عند الحفظ (PDF وJPEG وPNG وWebP وExcel وWord فقط)."
 }

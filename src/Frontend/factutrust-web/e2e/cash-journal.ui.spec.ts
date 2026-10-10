@@ -111,7 +111,7 @@ async function installJournalMocks(page: Page): Promise<void> {
   );
 }
 
-test('le journal suit la Caisse, regroupe les catégories et imprime', async ({ page }) => {
+test('le journal précède le lien Rapports, regroupe les catégories et imprime', async ({ page }) => {
   await installErpSession(page, { locale: 'fr' });
   await installJournalMocks(page);
 
@@ -134,11 +134,14 @@ test('le journal suit la Caisse, regroupe les catégories et imprime', async ({ 
   await expect(page.getByText('ENC-2026-000001')).toBeVisible();
 
   await page.locator('button.rail-parent', { hasText: 'Trésorerie' }).click();
-  const labels = await page.locator('a.submenu-link span').allInnerTexts();
-  const caisse = labels.findIndex(label => label.trim() === 'Caisse');
-  const journal = labels.findIndex(label => label.trim() === 'Journal de trésorerie');
+  const labels = (await page.locator('a.submenu-link span').allInnerTexts()).map(label => label.trim());
+  const caisse = labels.indexOf('Caisse');
+  const journal = labels.indexOf('Journal de trésorerie');
+  const rapports = labels.indexOf('Rapports');
   expect(caisse).toBeGreaterThanOrEqual(0);
-  expect(journal).toBe(caisse + 1);
+  expect(labels[caisse + 1]).not.toBe('Journal de trésorerie');
+  expect(journal).toBeGreaterThanOrEqual(0);
+  expect(rapports).toBe(journal + 1);
 
   await page.locator('input[name="from"]').fill('2026-09-01');
   await page.locator('input[name="to"]').fill('2026-09-30');

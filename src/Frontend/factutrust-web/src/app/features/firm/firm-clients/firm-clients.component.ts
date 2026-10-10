@@ -364,6 +364,14 @@ const DP_FILTERS = new Set(['all', 'absent', '0', '1', '2', '9']);
     }
     .fc-btn:disabled { opacity: 0.6; cursor: not-allowed; }
     .fc-btn--icon { padding: 0.4rem 0.5rem; }
+    /* Pluto impose color #fff sur button i. Heriter la couleur du bouton
+       rend les glyphes lisibles sur fond clair, sans changer les primaires. */
+    .fc-btn > i,
+    .ft-filters__reset > i {
+      color: inherit;
+      font-style: normal;
+      line-height: 1;
+    }
     .fc-btn--primary { background: var(--color-primary-600, #2563eb); color: #fff; }
     .fc-btn--primary:hover:not(:disabled) { background: var(--color-primary-700, #1d4ed8); }
     .fc-btn--secondary {

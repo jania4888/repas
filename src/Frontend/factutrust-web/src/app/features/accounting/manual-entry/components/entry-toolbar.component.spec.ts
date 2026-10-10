@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
 import { EntryToolbarComponent } from './entry-toolbar.component';
 import { EntryFormStore } from '../services/entry-form.store';
 import { AuthService } from '@core/services/auth.service';
@@ -50,7 +49,6 @@ describe('EntryToolbarComponent', () => {
     await TestBed.configureTestingModule({
       imports: [EntryToolbarComponent],
       providers: [
-        provideRouter([]),
         EntryFormStore,
         { provide: AuthService, useValue: authMock }
       ]
@@ -228,14 +226,18 @@ describe('EntryToolbarComponent', () => {
     }
   });
 
-  it("conserve les accès historiques à l'import de fichier et au brouillard", () => {
+  it("n'expose plus l'import de fichier ni les écritures en brouillard", () => {
     click(toggleButton('Import'));
 
-    const hrefs = Array.from(
-      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLAnchorElement>('.dropdown-menu a')
-    ).map(a => a.getAttribute('href'));
+    const menu = openMenus()[0];
+    const hrefs = Array.from(menu.querySelectorAll<HTMLAnchorElement>('a')).map(a => a.getAttribute('href'));
+    const text = menu.textContent ?? '';
 
-    expect(hrefs).toContain('/accounting/import');
-    expect(hrefs).toContain('/accounting/draft-batch');
+    expect(hrefs).not.toContain('/accounting/import');
+    expect(hrefs).not.toContain('/accounting/draft-batch');
+    expect(text).not.toContain('Import de fichier');
+    expect(text).not.toContain('Écritures en brouillard');
+    expect(text).toContain('Importer une facture');
+    expect(menu.querySelector('.dropdown-divider')).toBeNull();
   });
 });

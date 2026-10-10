@@ -3,6 +3,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TabsModule } from 'primeng/tabs';
+import { DialogModule } from 'primeng/dialog';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { AuthService } from '@core/services/auth.service';
@@ -62,6 +63,7 @@ import {
     CommonModule,
     FormsModule,
     TabsModule,
+    DialogModule,
     PageHeaderComponent,
     ButtonComponent,
     AccountingStatusBannerComponent,
@@ -167,18 +169,6 @@ import {
               <span class="dm-family__count" i18n="@@accounting.monthly-declaration.rubrique.s.active.s.2f5fcdaa">{{ activeCount() }} rubrique(s) active(s)</span>
             </div>
 
-            @if (form(); as draft) {
-              <div class="dm-editor">
-                <app-dm-rubric-form
-                  [form]="draft"
-                  [accountOptions]="accountOptions()"
-                  [saving]="savingRubric()"
-                  [disabled]="!editable()"
-                  (save)="saveRubric()"
-                  (cancel)="form.set(null)" />
-              </div>
-            }
-
             <app-accounting-table-shell [loadingOverlay]="loading()" loadingMessage="Chargement de la configuration…" i18n-loadingMessage="@@accounting.monthly-declaration-config.chargement.de.la.configuration.55f25203">
               <app-dm-rubric-table
                 [rubrics]="visibleRubrics()"
@@ -203,6 +193,36 @@ import {
         </div>
       }
     }
+
+    <!-- Le masque n'abandonne pas la fiche au clic : seuls Annuler, la croix et Échap la ferment. -->
+    <p-dialog
+      [header]="formTitle()"
+      [visible]="form() !== null"
+      (visibleChange)="onDialogVisible($event)"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [dismissableMask]="false"
+      [closable]="!savingRubric()"
+      [closeOnEscape]="!savingRubric()"
+      [style]="{ width: 'min(960px, 98vw)' }"
+      [contentStyle]="{ maxHeight: 'min(75vh, 40rem)', overflow: 'auto' }"
+      styleClass="dm-rubric-dialog">
+      @if (form(); as draft) {
+        <!-- Le masque cache le bandeau de page : le refus d'enregistrement doit se lire ici. -->
+        @if (error(); as message) {
+          <app-accounting-status-banner variant="error" [message]="message" />
+        }
+        <app-dm-rubric-form
+          [form]="draft"
+          [accountOptions]="accountOptions()"
+          [saving]="savingRubric()"
+          [disabled]="!editable()"
+          [showHeading]="false"
+          (save)="saveRubric()"
+          (cancel)="closeForm()" />
+      }
+    </p-dialog>
   `,
   styles: `
     .dm-state, .dm-panel { padding: var(--spacing-4); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); margin-bottom: var(--spacing-4); }
@@ -218,7 +238,6 @@ import {
     .dm-family__include { display: flex; align-items: center; gap: var(--spacing-2); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); }
     .dm-family__toolbar { display: flex; gap: var(--spacing-3); align-items: center; }
     .dm-family__count { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
-    .dm-editor { border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); padding: var(--spacing-4); }
     .dm-dot { margin-inline-start: var(--spacing-1); color: var(--color-warning-600, #d97706); }
   `
 })
@@ -286,6 +305,16 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
   readonly knownAccounts = computed<ReadonlySet<string>>(
     () => new Set(this.chart().map(a => a.accountNumber))
   );
+
+  readonly formTitle = computed(() => {
+    const draft = this.form();
+    if (!draft) {
+      return '';
+    }
+    return draft.id
+      ? $localize`:@@ui.tern.modifier.la.rubrique.035400:Modifier la rubrique ` + draft.code
+      : $localize`:@@accounting.monthly-declaration-config.ts.nouvelle.rubrique.f16710ee:Nouvelle rubrique`;
+  });
 
   ngOnInit(): void {
     this.load();
@@ -389,6 +418,20 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
       return;
     }
     this.form.set(toRubricForm(rubric));
+  }
+
+  /** Abandon de la fiche, refusé pendant l'enregistrement : la réponse doit retrouver son brouillon. */
+  closeForm(): void {
+    if (this.savingRubric()) {
+      return;
+    }
+    this.form.set(null);
+  }
+
+  onDialogVisible(visible: boolean): void {
+    if (!visible) {
+      this.closeForm();
+    }
   }
 
   saveRubric(): void {

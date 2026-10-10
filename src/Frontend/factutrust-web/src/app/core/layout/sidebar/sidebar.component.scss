@@ -381,6 +381,7 @@
    Chaque rubrique de 1er niveau possède une icône FontAwesome unique. */
 .rail-link i {
   &.fa-gauge-high          { color: #2563eb; } /* Tableau de bord — primary */
+  &.fa-wand-magic-sparkles { color: #7c3aed; } /* Assistant IA — violet */
   &.fa-chart-line          { color: #059669; } /* Prévisions IA — emerald */
   &.fa-cash-register       { color: #ea580c; } /* Point de Vente — orange */
   &.fa-bag-shopping        { color: #db2777; } /* Ventes — pink */
@@ -710,6 +711,7 @@
     &[data-icon='fa-credit-card'] { background: var(--sidebar-delegated-icon-box-credit-card); }
     &[data-icon='fa-file-invoice-dollar'] { background: var(--sidebar-delegated-icon-box-file-invoice-dollar); }
     &[data-icon='fa-users-gear'] { background: var(--sidebar-delegated-icon-box-users-gear); }
+    &[data-icon='fa-wand-magic-sparkles'] { background: var(--sidebar-delegated-icon-box-wand-magic-sparkles); }
     &[data-icon='fa-table-cells-large'] { background: var(--sidebar-delegated-icon-box-table-cells-large); }
     &[data-icon='fa-chart-column'] { background: var(--sidebar-delegated-icon-box-chart-column); }
     &[data-icon='fa-file-signature'] { background: var(--sidebar-delegated-icon-box-file-signature); }

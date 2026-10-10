@@ -2045,6 +2045,20 @@ button.proj-tasks-tool-btn > i {
   color: inherit;
 }
 
+// Assistant IA : les hôtes ci-dessous portent leurs icônes dans des boutons à fond clair
+// (trombone, copie, chevron, pièce jointe). `button i { color: #fff }` de Pluto les effaçait.
+// Spécificité (0, 0, 3), sans !important, sans classes génériques partagées hors assistant.
+// Les boutons déjà blancs (envoyer, arrêter, confirmer) restent blancs via inherit.
+app-chat-panel button > i,
+app-chat-input button > i,
+app-chat-message button > i,
+app-assistant-progress-timeline button > i,
+app-chat-attachment-card button > i,
+app-ai-dashboard-renderer button > i,
+app-conversation-list button > i {
+  color: inherit;
+}
+
 // Renfort : la pile Font Awesome doit gagner sur la police de texte si un thème
 // impose `font-family: inherit` sur des `i` (glyphs « tofu » sinon).
 .fa-solid,

@@ -14,6 +14,7 @@ import {
   signal
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DialogModule } from 'primeng/dialog';
 import { Subscription } from 'rxjs';
 import { ButtonComponent } from '@shared/components/button/button.component';
@@ -27,27 +28,36 @@ import {
 } from '../../models/accounting-document-import.models';
 import { ThirdPartyQuickCreateComponent } from './third-party-quick-create.component';
 import { ImportProposalEditorComponent } from './import-proposal-editor.component';
+import { AccountingDocumentPreviewComponent } from './accounting-document-preview.component';
+import {
+  AcceptedDocumentPreview,
+  PreviewKind,
+  PreviewRejectionReason,
+  classifyDocumentFile
+} from './accounting-document-preview.util';
 
-type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
+type ImportPhase = 'idle' | 'preview' | 'extracting' | 'review' | 'error';
 
 /**
  * Import d'une facture (vente ou achat) depuis la saisie manuelle d'écritures.
  *
- * Parcours : choix du fichier → détection des zones → écran de RELECTURE (sens, tiers, totaux
+ * Parcours : choix du fichier → aperçu local → analyse → écran de RELECTURE (sens, tiers, totaux
  * détectés, lignes proposées, diagnostics) → application au formulaire de saisie.
  * Rien n'est enregistré ici : l'écriture part par le chemin habituel « Enregistrer ».
+ * L'aperçu reste dans le navigateur : le fichier n'est envoyé qu'au clic « Analyser ».
  */
 @Component({
   selector: 'app-accounting-document-import-dialog',
   standalone: true,
-  imports: [CommonModule, DialogModule, ButtonComponent, ThirdPartyQuickCreateComponent, ImportProposalEditorComponent],
+  imports: [CommonModule, DialogModule, ButtonComponent, ThirdPartyQuickCreateComponent, ImportProposalEditorComponent, AccountingDocumentPreviewComponent],
   providers: [AccountingDocumentImportService],
   template: `
     <p-dialog
       header="Importer une facture" i18n-header="@@accounting.manual-entry.importer.une.facture.66ed8807"
       [(visible)]="visible"
       [modal]="true"
-      [style]="{ width: phase() === 'review' ? '1100px' : '560px', maxWidth: '98vw' }"
+      [style]="{ width: dialogWidth(), maxWidth: '98vw' }"
+      [contentStyle]="{ overflow: 'auto', maxHeight: 'calc(100vh - 9rem)' }"
       [draggable]="false"
       [resizable]="false"
       [closable]="true"
@@ -65,39 +75,74 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
 
       @switch (phase()) {
         @case ('extracting') {
-          <div class="adi-state" role="status" aria-live="polite">
-            <i class="pi pi-spin pi-spinner adi-spinner" aria-hidden="true"></i>
-            <p class="adi-title" i18n="@@accounting.manual-entry.analyse.de.la.piece.s.b321b13b">Analyse de la pièce… ({{ elapsedSeconds() }} s)</p>
-            <p class="adi-text">
-              @if (selectedFileName()) {
-                <span class="adi-filename">{{ selectedFileName() }}</span>
-              }
-@if (externalProvider()) {<ng-container i18n="@@accounting.manual-entry.lecture.par.le.service.d.extraction.documentaire.4802f22f">Lecture par le service d'extraction documentaire configuré par la plateforme : la pièce quitte le serveur. Aucune analyse par l'IA locale.</ng-container>}
-              @else if (elapsedSeconds() < 20) {<ng-container i18n="@@accounting.manual-entry.lecture.du.document.et.detection.des.zon.71726a65">
-                Lecture du document et détection des zones…
-              </ng-container>} @else {<ng-container i18n="@@accounting.manual-entry.le.document.n.est.pas.au.format.instafac.1a09b4ea">
-                Le document n'est pas au format InstaFact : l'analyse IA peut prendre
-                jusqu'à 3 minutes la première fois.
-              </ng-container>}
-            </p>
-            <app-button variant="secondary" icon="pi-times" iconPos="left"
-                        (click)="cancelImport()" ariaLabel="Annuler l'analyse" i18n-ariaLabel="@@accounting.manual-entry.annuler.l.analyse.f487f0e5" i18n="@@accounting.manual-entry.annuler.49ba3292"> Annuler </app-button>
+          <div class="adi-with-preview">
+            <div class="adi-extract-bar" role="status" aria-live="polite">
+              <i class="pi pi-spin pi-spinner adi-spinner" aria-hidden="true"></i>
+              <div class="adi-extract-copy">
+                <p class="adi-title" i18n="@@accounting.manual-entry.analyse.de.la.piece.s.b321b13b">Analyse de la pièce… ({{ elapsedSeconds() }} s)</p>
+                <p class="adi-text">
+                  @if (selectedFileName()) {
+                    <span class="adi-filename">{{ selectedFileName() }}</span>
+                  }
+                  @if (externalProvider()) {<ng-container i18n="@@accounting.manual-entry.lecture.par.le.service.d.extraction.documentaire.4802f22f">Lecture par le service d'extraction documentaire configuré par la plateforme : la pièce quitte le serveur. Aucune analyse par l'IA locale.</ng-container>}
+                  @else if (elapsedSeconds() < 20) {<ng-container i18n="@@accounting.manual-entry.lecture.du.document.et.detection.des.zon.71726a65">
+                    Lecture du document et détection des zones…
+                  </ng-container>} @else {<ng-container i18n="@@accounting.manual-entry.le.document.n.est.pas.au.format.instafac.1a09b4ea">
+                    Le document n'est pas au format InstaFact : l'analyse IA peut prendre
+                    jusqu'à 3 minutes la première fois.
+                  </ng-container>}
+                </p>
+              </div>
+              <app-button variant="secondary" icon="pi-times" iconPos="left"
+                          (click)="cancelImport()" ariaLabel="Annuler l'analyse" i18n-ariaLabel="@@accounting.manual-entry.annuler.l.analyse.f487f0e5" i18n="@@accounting.manual-entry.annuler.49ba3292"> Annuler </app-button>
+            </div>
+            <ng-container [ngTemplateOutlet]="documentPreview" [ngTemplateOutletContext]="{ layout: 'full' }" />
           </div>
         }
 
         @case ('error') {
-          <div class="adi-state" role="alert">
-            <i class="pi pi-exclamation-triangle adi-icon adi-icon-error" aria-hidden="true"></i>
-            <p class="adi-title" i18n="@@accounting.manual-entry.l.analyse.a.echoue.14b05060">L'analyse a échoué</p>
-            <p class="adi-text">{{ errorMessage() }}</p>
-            <app-button variant="primary" icon="pi-refresh" iconPos="left"
-                        (click)="chooseFile()" ariaLabel="Choisir un autre fichier" i18n-ariaLabel="@@accounting.manual-entry.choisir.un.autre.fichier.c0cbec19" i18n="@@accounting.manual-entry.reessayer.895d416b"> Réessayer </app-button>
+          <div [class.adi-with-preview]="!!previewKind()" [class.adi-state]="!previewKind()" role="alert">
+            <div [class.adi-extract-bar]="!!previewKind()">
+              @if (!previewKind()) {
+                <i class="pi pi-exclamation-triangle adi-icon adi-icon-error" aria-hidden="true"></i>
+              }
+              <div class="adi-extract-copy">
+                @if (rejection()) {
+                  <p class="adi-title" i18n="@@accounting.manual-entry.fichier.refuse.27013a1f">Fichier refusé</p>
+                } @else {
+                  <p class="adi-title" i18n="@@accounting.manual-entry.l.analyse.a.echoue.14b05060">L'analyse a échoué</p>
+                }
+                <ng-container [ngTemplateOutlet]="errorCopy" />
+              </div>
+              <ng-container [ngTemplateOutlet]="errorActions" />
+            </div>
+            @if (previewKind()) {
+              <ng-container [ngTemplateOutlet]="documentPreview" [ngTemplateOutletContext]="{ layout: 'full' }" />
+            }
+          </div>
+        }
+
+        @case ('preview') {
+          <div class="adi-preview-stage">
+            @if (externalProvider()) {
+              <p class="adi-banner" role="status" i18n="@@accounting.manual-entry.lecture.par.le.service.d.extraction.documentaire.4802f22f">Lecture par le service d'extraction documentaire configuré par la plateforme : la pièce quitte le serveur. Aucune analyse par l'IA locale.</p>
+            }
+            @if (capabilityHint(); as hint) {
+              <p class="adi-hint adi-hint-warn" role="status">{{ hint }}</p>
+            }
+            <ng-container [ngTemplateOutlet]="documentPreview" [ngTemplateOutletContext]="{ layout: 'full' }" />
           </div>
         }
 
         @case ('review') {
           @if (proposal(); as p) {
-            <div class="adi-review">
+            <div class="adi-review-layout">
+              @if (previewKind()) {
+                <div class="adi-preview-pane">
+                  <ng-container [ngTemplateOutlet]="documentPreview" [ngTemplateOutletContext]="{ layout: 'pane' }" />
+                </div>
+              }
+              <div class="adi-review">
               <!-- Sens de la pièce -->
               <section class="adi-card">
                 <header class="adi-card__header">
@@ -222,6 +267,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
                 </section>
               }
             </div>
+            </div>
           }
         }
 
@@ -242,8 +288,62 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
         }
       }
 
+      <ng-template #documentPreview let-layout="layout">
+        @if (previewKind(); as kind) {
+          <app-accounting-document-preview
+            [kind]="kind"
+            [imageUrl]="imageUrl()"
+            [pdfUrl]="pdfUrl()"
+            [fileName]="selectedFileName()"
+            [fileSize]="previewFileSize()"
+            [attachmentMayBeRejected]="attachmentMayBeRejected()"
+            [layout]="layout" />
+        }
+      </ng-template>
+
+      <ng-template #errorCopy>
+        @switch (rejection()) {
+          @case ('empty') {
+            <p class="adi-text" i18n="@@accounting.manual-entry.fichier.vide.2ff144e8">Fichier vide.</p>
+          }
+          @case ('too-large') {
+            <p class="adi-text" i18n="@@accounting.manual-entry.fichier.trop.volumineux.maximum.10.mo.717ddc82">Fichier trop volumineux (maximum 10 Mo).</p>
+          }
+          @case ('extension') {
+            <p class="adi-text" i18n="@@accounting.manual-entry.ce.fichier.n.est.pas.un.format.accepte.9119584c">Ce fichier n'est pas un format accepté.</p>
+          }
+          @case ('signature') {
+            <p class="adi-text" i18n="@@accounting.manual-entry.le.contenu.du.fichier.ne.correspond.pas.a.son.ex.e6448e8b">Le contenu du fichier ne correspond pas à son extension.</p>
+          }
+          @default {
+            <p class="adi-text">{{ errorMessage() }}</p>
+          }
+        }
+      </ng-template>
+
+      <ng-template #errorActions>
+        <div class="adi-inline-actions">
+          @if (previewKind()) {
+            <app-button variant="primary" icon="pi-refresh" iconPos="left"
+                        (click)="analyze()" ariaLabel="Relancer l'analyse" i18n-ariaLabel="@@accounting.manual-entry.relancer.l.analyse.904749cc" i18n="@@accounting.manual-entry.relancer.l.analyse.904749cc">Relancer l'analyse</app-button>
+            <app-button variant="secondary" (click)="chooseFile()" ariaLabel="Choisir un autre fichier" i18n-ariaLabel="@@accounting.manual-entry.choisir.un.autre.fichier.c0cbec19" i18n="@@accounting.manual-entry.choisir.un.autre.fichier.c0cbec19">Choisir un autre fichier</app-button>
+          } @else {
+            <app-button variant="primary" icon="pi-upload" iconPos="left"
+                        (click)="chooseFile()" ariaLabel="Choisir un autre fichier" i18n-ariaLabel="@@accounting.manual-entry.choisir.un.autre.fichier.c0cbec19" i18n="@@accounting.manual-entry.choisir.un.autre.fichier.c0cbec19">Choisir un autre fichier</app-button>
+          }
+        </div>
+      </ng-template>
+
       <ng-template pTemplate="footer">
-        @if (phase() === 'review') {
+        @if (phase() === 'preview') {
+          <div class="adi-footer">
+            <app-button variant="secondary" (click)="chooseFile()" ariaLabel="Choisir un autre fichier" i18n-ariaLabel="@@accounting.manual-entry.choisir.un.autre.fichier.c0cbec19" i18n="@@accounting.manual-entry.choisir.un.autre.fichier.c0cbec19">Choisir un autre fichier</app-button>
+            <span data-adi-analyze="true">
+              <app-button variant="primary" icon="pi-search" iconPos="left"
+                          (click)="analyze()" ariaLabel="Analyser la facture" i18n-ariaLabel="@@accounting.manual-entry.analyser.la.facture.09be38e9" i18n="@@accounting.manual-entry.analyser.la.facture.09be38e9">Analyser la facture</app-button>
+            </span>
+          </div>
+        } @else if (phase() === 'review') {
           <div class="adi-footer">
             <app-button variant="secondary" (click)="chooseFile()" ariaLabel="Analyser une autre pièce" i18n-ariaLabel="@@accounting.manual-entry.analyser.une.autre.piece.09bd4d3a" i18n="@@accounting.manual-entry.autre.piece.de18e3bf"> Autre pièce </app-button>
             <app-button variant="primary" icon="pi-check" iconPos="left"
@@ -313,6 +413,53 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
     .adi-diagnostic--info { color:var(--color-text-secondary); }
 
     .adi-footer { display:flex; justify-content:flex-end; gap:var(--spacing-2); }
+
+    .adi-preview-stage, .adi-with-preview { display:flex; flex-direction:column; gap:var(--spacing-3); }
+    .adi-banner {
+      margin:0;
+      padding:var(--spacing-2) var(--spacing-3);
+      border-radius:var(--radius-md);
+      background:var(--color-warning-subtle, transparent);
+      color:var(--color-warning);
+      font-size:var(--font-size-sm);
+    }
+    .adi-extract-bar {
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:var(--spacing-2);
+      padding:var(--spacing-2) var(--spacing-3);
+      border:1px solid var(--color-border-default);
+      border-radius:var(--radius-md);
+      background:var(--color-background-elevated);
+    }
+    .adi-extract-copy { flex:1 1 16rem; min-inline-size:0; }
+    .adi-extract-bar .adi-title { margin:0; }
+    .adi-extract-bar .adi-text { text-align:start; max-inline-size:none; }
+    .adi-inline-actions { display:flex; flex-wrap:wrap; gap:var(--spacing-2); margin-inline-start:auto; }
+    .adi-review-layout {
+      display:grid;
+      grid-template-columns:minmax(280px, 42%) minmax(0, 1fr);
+      gap:var(--spacing-3);
+      align-items:stretch;
+    }
+    .adi-review-layout:not(:has(.adi-preview-pane)) { grid-template-columns:minmax(0, 1fr); }
+    .adi-preview-pane {
+      min-inline-size:0;
+      min-block-size:0;
+      block-size:min(78vh, 860px);
+      max-block-size:min(78vh, 860px);
+    }
+    .adi-review-layout > .adi-review {
+      overflow:auto;
+      min-inline-size:0;
+      min-block-size:0;
+      max-block-size:min(78vh, 860px);
+    }
+    @media (max-width: 960px) {
+      .adi-review-layout { grid-template-columns:minmax(0, 1fr); }
+      .adi-preview-pane { block-size:40vh; max-block-size:40vh; }
+    }
   `
 })
 export class AccountingDocumentImportDialogComponent implements OnChanges, OnDestroy {
@@ -322,6 +469,8 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
   readonly loc_ui_tern_par_nom_4c4de0 = $localize`:@@ui.tern.par.nom.4c4de0: par nom`;
   private readonly importService = inject(AccountingDocumentImportService);
   private readonly confirmationService = inject(ConfirmationService);
+  private readonly sanitizer = inject(DomSanitizer);
+  private readonly host = inject(ElementRef<HTMLElement>);
 
   @Input() visible = false;
   @Output() visibleChange = new EventEmitter<boolean>();
@@ -342,13 +491,34 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
   /** Nom du service d'extraction externe quand il est actif ; pilote le message d'attente. */
   readonly externalProvider = signal<string | null>(null);
   readonly displayDiagnostics = signal<ProposalDiagnostic[]>([]);
+  readonly previewKind = signal<PreviewKind | null>(null);
+  readonly imageUrl = signal<string | null>(null);
+  readonly pdfUrl = signal<SafeResourceUrl | null>(null);
+  readonly previewFileSize = signal(0);
+  readonly attachmentMayBeRejected = signal(false);
+  readonly rejection = signal<PreviewRejectionReason | null>(null);
 
   readonly methodLabel = computed(() => {
     const p = this.proposal();
     return p ? extractionMethodLabel(p.extraction.extractionMethod) : '';
   });
 
+  readonly dialogWidth = computed(() => {
+    const phase = this.phase();
+    if (phase === 'review') {
+      return 'min(1200px, 98vw)';
+    }
+    if (phase === 'preview' || phase === 'extracting' || (phase === 'error' && this.previewKind())) {
+      return 'min(920px, 98vw)';
+    }
+    return '560px';
+  });
+
   private currentFile: File | null = null;
+  private objectUrl: string | null = null;
+  private selectionSeq = 0;
+  /** Sens imposé par l'utilisateur, rejoué si l'analyse est relancée. */
+  private forcedDirection: DocumentDirection | undefined;
   private subscription?: Subscription;
   private timer?: ReturnType<typeof setInterval>;
 
@@ -359,8 +529,10 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
   }
 
   ngOnDestroy(): void {
+    this.selectionSeq++;
     this.stopTimer();
     this.subscription?.unsubscribe();
+    this.revokePreviewUrl();
   }
 
   /** Appelé par le parent à l'ouverture : signale une éventuelle indisponibilité de l'IA. */
@@ -385,20 +557,38 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
   }
 
   chooseFile(): void {
-    this.phase.set('idle');
     this.fileInput?.nativeElement.click();
   }
 
-  onFileSelected(event: Event): void {
+  async onFileSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     input.value = '';
     if (!file) {
       return;
     }
-    this.currentFile = file;
-    this.selectedFileName.set(file.name);
-    this.runAnalysis();
+    const seq = ++this.selectionSeq;
+    const classified = await classifyDocumentFile(file);
+    if (seq !== this.selectionSeq) {
+      return;
+    }
+    if (!classified.accepted) {
+      this.clearHeldFile();
+      this.rejection.set(classified.reason);
+      this.errorMessage.set('');
+      this.phase.set('error');
+      return;
+    }
+    this.mountPreview(file, classified);
+  }
+
+  /** Envoie la pièce déjà montrée. Aucun octet ne part avant cet appel. */
+  analyze(): void {
+    if (!this.currentFile || !this.previewKind()) {
+      return;
+    }
+    this.rejection.set(null);
+    this.runAnalysis(this.forcedDirection);
   }
 
   changeDirection(direction: DocumentDirection): void {
@@ -428,6 +618,7 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
 
   private reanalyzeWithDirection(direction: DocumentDirection): void {
     if (!this.currentFile) return;
+    this.forcedDirection = direction;
     this.reanalyzing.set(true);
     this.subscription?.unsubscribe();
     this.subscription = this.importService.propose(this.currentFile, direction).subscribe({
@@ -438,6 +629,7 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
       },
       error: (err: Error) => {
         this.reanalyzing.set(false);
+        this.rejection.set(null);
         this.errorMessage.set(err.message);
         this.phase.set('error');
       }
@@ -446,6 +638,7 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
 
   private reanalyzeAfterThirdPartyCreated(direction: DocumentDirection): void {
     if (!this.currentFile) return;
+    this.forcedDirection = direction;
     this.reanalyzing.set(true);
     this.subscription?.unsubscribe();
     this.subscription = this.importService.propose(this.currentFile, direction).subscribe({
@@ -503,6 +696,11 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
   cancelImport(): void {
     this.subscription?.unsubscribe();
     this.stopTimer();
+    if (this.currentFile && this.previewKind()) {
+      this.phase.set('preview');
+      this.focusAnalyze();
+      return;
+    }
     this.phase.set('idle');
   }
 
@@ -520,17 +718,23 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
     return value.toLocaleString('fr-TN', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
   }
 
-  private runAnalysis(): void {
+  private runAnalysis(direction?: DocumentDirection): void {
     if (!this.currentFile) {
       return;
     }
+    this.forcedDirection = direction;
     this.phase.set('extracting');
+    this.rejection.set(null);
     this.errorMessage.set('');
     this.proposal.set(null);
     this.startTimer();
 
+    const file = this.currentFile;
+    const request = direction
+      ? this.importService.propose(file, direction)
+      : this.importService.propose(file);
     this.subscription?.unsubscribe();
-    this.subscription = this.importService.propose(this.currentFile).subscribe({
+    this.subscription = request.subscribe({
       next: (p) => {
         this.stopTimer();
         this.proposal.set(p);
@@ -539,8 +743,66 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
       },
       error: (err: Error) => {
         this.stopTimer();
+        this.rejection.set(null);
         this.errorMessage.set(err.message || $localize`:@@accounting.accounting-document-import-dialog.ts.l.analyse.de.la.piece.a.echoue.b308ea32:L'analyse de la pièce a échoué.`);
         this.phase.set('error');
+      }
+    });
+  }
+
+  private mountPreview(file: File, classified: AcceptedDocumentPreview): void {
+    this.revokePreviewUrl();
+    this.currentFile = file;
+    this.forcedDirection = undefined;
+    this.selectedFileName.set(file.name);
+    this.previewKind.set(classified.kind);
+    this.previewFileSize.set(file.size);
+    this.attachmentMayBeRejected.set(classified.attachmentMayBeRejected);
+    this.rejection.set(null);
+    this.errorMessage.set('');
+    if (classified.kind !== 'unsupported') {
+      const typed = new Blob([file], { type: classified.mime });
+      const url = URL.createObjectURL(typed);
+      this.objectUrl = url;
+      if (classified.kind === 'pdf') {
+        // Uniquement l'URL créée ci-dessus, jamais une adresse fournie par l'utilisateur.
+        this.pdfUrl.set(this.sanitizer.bypassSecurityTrustResourceUrl(url));
+        this.imageUrl.set(null);
+      } else {
+        this.imageUrl.set(url);
+        this.pdfUrl.set(null);
+      }
+    }
+    this.phase.set('preview');
+    this.focusAnalyze();
+  }
+
+  private clearHeldFile(): void {
+    this.revokePreviewUrl();
+    this.currentFile = null;
+    this.forcedDirection = undefined;
+    this.previewKind.set(null);
+    this.previewFileSize.set(0);
+    this.attachmentMayBeRejected.set(false);
+    this.selectedFileName.set('');
+    this.imageUrl.set(null);
+    this.pdfUrl.set(null);
+  }
+
+  private revokePreviewUrl(): void {
+    if (this.objectUrl) {
+      URL.revokeObjectURL(this.objectUrl);
+      this.objectUrl = null;
+    }
+    this.imageUrl.set(null);
+    this.pdfUrl.set(null);
+  }
+
+  private focusAnalyze(): void {
+    setTimeout(() => {
+      const button = this.host.nativeElement.querySelector('[data-adi-analyze] button');
+      if (button instanceof HTMLButtonElement) {
+        button.focus();
       }
     });
   }
@@ -565,12 +827,13 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
   }
 
   private reset(): void {
+    this.selectionSeq++;
+    this.clearHeldFile();
     this.phase.set('idle');
     this.proposal.set(null);
     this.displayDiagnostics.set([]);
     this.errorMessage.set('');
-    this.selectedFileName.set('');
+    this.rejection.set(null);
     this.reanalyzing.set(false);
-    this.currentFile = null;
   }
 }

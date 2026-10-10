@@ -10,7 +10,8 @@ import {
   NavItem,
   NavSubItem
 } from './app-navigation.registry';
-import { reportsGroupIsContiguousSuffix } from '@core/utils/nav-section';
+import { AppModule } from '@core/models/app-module';
+import { reportsGroupIsContiguousSuffix, showReportsSeparator } from '@core/utils/nav-section';
 import { VARIANT_AXES_PATH } from '@features/settings/variant-axes/variant-axes.paths';
 
 const companyUser: User = {
@@ -398,6 +399,36 @@ describe('app-navigation.registry', () => {
       expect(treasury?.children?.find(c => c.route === '/payments/cash-journal')?.navGroup).toBeUndefined();
     });
 
+    it('places the treasury cash journal immediately above the reports link', () => {
+      const treasury = ALL_NAV_ITEMS.find(i => i.id === 'treasury');
+      const children = treasury?.children ?? [];
+      expect(children.map(c => c.route)).toEqual([
+        '/treasury/cash-forecast',
+        '/ai-assistant/tresorerie',
+        '/payments/cash-desk',
+        '/payments/bank-accounts',
+        '/payments/clients',
+        '/payments/suppliers',
+        '/payments/cash-journal',
+        '/reports/payments'
+      ]);
+
+      const journal = children.find(c => c.route === '/payments/cash-journal');
+      expect(journal?.permissionsAll).toEqual(['payments:read']);
+      expect(journal?.modules).toEqual([AppModule.Treasury]);
+      expect(journal?.navGroup).toBeUndefined();
+
+      const reports = children[children.length - 1];
+      expect(reports?.route).toBe('/reports/payments');
+      expect(reports?.navGroup).toBe('reports');
+      expect(reports?.permissionsAll).toEqual(['reports:view', 'payments:read']);
+
+      const reportsIndex = children.findIndex(c => c.route === '/reports/payments');
+      expect(children.map((_, index) => showReportsSeparator(children, index))).toEqual(
+        children.map((_, index) => index === reportsIndex)
+      );
+    });
+
     it('keeps the same report routes in search', () => {
       const routes = buildFlatNavSearchEntries().map(e => e.route);
       expect(routes).toContain('/reports/sales');
@@ -407,6 +438,18 @@ describe('app-navigation.registry', () => {
       expect(routes).toContain('/payroll/reports/payroll-book');
       expect(routes).toContain('/payroll/reports/payroll-journal');
       expect(routes).toContain('/recurring-contracts');
+    });
+  });
+
+  describe('Assistant IA rail icon', () => {
+    it('uses the sparkles glyph and a beta flag, not the company logo', () => {
+      const item = ALL_NAV_ITEMS.find(i => i.id === 'ai-assistant');
+      expect(item?.icon).toBe('fa-solid fa-wand-magic-sparkles');
+      expect(item?.beta).toBeTrue();
+      expect(item?.railIconAsset).toBeUndefined();
+      expect(item?.route).toBe('/ai-assistant');
+      expect(item?.permissionsAll).toEqual(['ai:chat']);
+      expect(item?.modules).toEqual([AppModule.AI]);
     });
   });
 });

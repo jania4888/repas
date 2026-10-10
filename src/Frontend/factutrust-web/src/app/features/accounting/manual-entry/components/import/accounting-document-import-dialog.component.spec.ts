@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { AccountingDocumentImportDialogComponent } from './accounting-document-import-dialog.component';
 import { AccountingDocumentImportService } from '../../services/accounting-document-import.service';
 import { AccountingService } from '../../../services/accounting.service';
@@ -13,6 +13,7 @@ import { SupplierService } from '@core/services/supplier.service';
 import { JournalEntryProposal } from '../../models/accounting-document-import.models';
 import { ImportProposalEditorComponent } from './import-proposal-editor.component';
 import { ConfirmationService } from '@core/services/confirmation.service';
+import { ACCOUNTING_DOCUMENT_MAX_BYTES } from './accounting-document-preview.util';
 
 function sampleProposal(): JournalEntryProposal {
   return {
@@ -87,6 +88,8 @@ describe('AccountingDocumentImportDialogComponent', () => {
   let proposeSpy: jasmine.Spy;
 
   beforeEach(async () => {
+    spyOn(URL, 'createObjectURL').and.returnValue('blob:preview-test');
+    spyOn(URL, 'revokeObjectURL');
     proposeSpy = jasmine.createSpy('propose').and.returnValue(of(sampleProposal()));
 
     await TestBed.configureTestingModule({
@@ -135,7 +138,23 @@ describe('AccountingDocumentImportDialogComponent', () => {
           useValue: { getSuppliers: () => of({ success: true, data: { items: [] } }) }
         }
       ]
-    }).compileComponents();
+    });
+
+    TestBed.overrideComponent(AccountingDocumentImportDialogComponent, {
+      set: {
+        providers: [
+          {
+            provide: AccountingDocumentImportService,
+            useValue: {
+              capabilities: () => of({ enabled: true, aiFallbackAvailable: true }),
+              propose: proposeSpy
+            }
+          }
+        ]
+      }
+    });
+
+    await TestBed.compileComponents();
 
     fixture = TestBed.createComponent(AccountingDocumentImportDialogComponent);
     component = fixture.componentInstance;
@@ -169,4 +188,135 @@ describe('AccountingDocumentImportDialogComponent', () => {
     expect(confirmSpy).toHaveBeenCalled();
     expect(proposeSpy).not.toHaveBeenCalled();
   });
+
+  it('shows a preview and does not propose until the user analyzes', async () => {
+    const file = pdfFile();
+    await component.onFileSelected(fileEvent(file));
+    fixture.detectChanges();
+
+    expect(component.phase()).toBe('preview');
+    expect(proposeSpy).not.toHaveBeenCalled();
+    expect(URL.createObjectURL).toHaveBeenCalledTimes(1);
+    expect(fixture.nativeElement.querySelector('object')).not.toBeNull();
+
+    component.analyze();
+    expect(proposeSpy).toHaveBeenCalledOnceWith(file);
+    expect(component.phase()).toBe('review');
+  });
+
+  it('rejects an oversized file before any preview url or propose call', async () => {
+    const oversized = {
+      name: 'gros.pdf',
+      size: ACCOUNTING_DOCUMENT_MAX_BYTES + 1,
+      slice: () => new Blob()
+    } as unknown as File;
+
+    await component.onFileSelected(fileEvent(oversized));
+    fixture.detectChanges();
+
+    expect(component.phase()).toBe('error');
+    expect(component.rejection()).toBe('too-large');
+    expect(URL.createObjectURL).not.toHaveBeenCalled();
+    expect(proposeSpy).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.textContent).toContain('Fichier trop volumineux');
+  });
+
+  it('rejects a PDF whose bytes are HTML', async () => {
+    const file = new File(['<!doctype html>'], 'note.pdf', { type: 'text/html' });
+    await component.onFileSelected(fileEvent(file));
+    fixture.detectChanges();
+
+    expect(component.phase()).toBe('error');
+    expect(component.rejection()).toBe('signature');
+    expect(URL.createObjectURL).not.toHaveBeenCalled();
+    expect(proposeSpy).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.querySelector('object')).toBeNull();
+  });
+
+  it('returns to the preview when analysis is cancelled and ignores a late response', async () => {
+    const pending = new Subject<ReturnType<typeof sampleProposal>>();
+    proposeSpy.and.returnValue(pending.asObservable());
+    const file = pdfFile();
+    await component.onFileSelected(fileEvent(file));
+    component.analyze();
+    expect(component.phase()).toBe('extracting');
+
+    component.cancelImport();
+    expect(component.phase()).toBe('preview');
+    expect(URL.revokeObjectURL).not.toHaveBeenCalled();
+
+    pending.next(sampleProposal());
+    expect(component.phase()).toBe('preview');
+    expect(component.proposal()).toBeNull();
+  });
+
+  it('revokes the object url when the dialog closes', async () => {
+    await component.onFileSelected(fileEvent(pdfFile()));
+    component.onHide();
+    expect(URL.revokeObjectURL).toHaveBeenCalledOnceWith('blob:preview-test');
+  });
+
+  it('revokes the object url on destroy', async () => {
+    await component.onFileSelected(fileEvent(pdfFile()));
+    component.ngOnDestroy();
+    expect(URL.revokeObjectURL).toHaveBeenCalledOnceWith('blob:preview-test');
+  });
+
+  it('applies the original File after preview', async () => {
+    const file = pdfFile();
+    const emitted: { proposal: ReturnType<typeof sampleProposal>; file: File }[] = [];
+    component.applied.subscribe((event) => emitted.push(event));
+
+    await component.onFileSelected(fileEvent(file));
+    component.analyze();
+    fixture.detectChanges();
+    component.proposalEditor = {
+      getMergedProposal: () => sampleProposal(),
+      isBalanced: () => true,
+      hasManualEdits: () => false
+    } as ImportProposalEditorComponent;
+
+    component.apply();
+    expect(emitted.length).toBe(1);
+    expect(emitted[0].file).toBe(file);
+    expect(emitted[0].proposal.pieceRef).toBe('FAC-1');
+    expect(URL.revokeObjectURL).toHaveBeenCalledOnceWith('blob:preview-test');
+  });
+
+  it('keeps the current phase when the file picker is cancelled', () => {
+    component.phase.set('review');
+    component.proposal.set(sampleProposal());
+    fixture.detectChanges();
+
+    component.chooseFile();
+    component.onFileSelected(fileEvent(undefined));
+    expect(component.phase()).toBe('review');
+    expect(component.proposal()?.pieceRef).toBe('FAC-1');
+  });
+
+  it('shows an Office file without an image or pdf viewer and still allows analysis', async () => {
+    const file = new File([new Uint8Array([0x50, 0x4b, 0x03, 0x04, 0, 0])], 'facture.docx', {
+      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    });
+    await component.onFileSelected(fileEvent(file));
+    fixture.detectChanges();
+
+    expect(component.phase()).toBe('preview');
+    expect(URL.createObjectURL).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.querySelector('object')).toBeNull();
+    expect(fixture.nativeElement.querySelector('img')).toBeNull();
+    expect(fixture.nativeElement.textContent).toContain('Analyser la facture');
+    expect(fixture.nativeElement.textContent).toContain('Aperçu visuel indisponible');
+    expect(proposeSpy).not.toHaveBeenCalled();
+  });
 });
+
+function pdfFile(): File {
+  return new File([new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34])], 'facture.pdf', {
+    type: 'application/pdf'
+  });
+}
+
+function fileEvent(file: File | undefined): Event {
+  return { target: { files: file ? [file] : [], value: 'x' } } as unknown as Event;
+}

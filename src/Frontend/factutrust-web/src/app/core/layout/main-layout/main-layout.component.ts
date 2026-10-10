@@ -14,7 +14,7 @@ import { AiChatSessionService } from '../../../features/ai-assistant/services/ai
 import { AiAssistantShellService } from '../../../features/ai-assistant/services/ai-assistant-shell.service';
 import { resolveScopeFromUrl } from '../../../features/ai-assistant/config/agent-scopes.config';
 import { canUseAiAssistant } from '../../../features/ai-assistant/utils/ai-access.util';
-import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
+import { AI_ASSISTANT_ICON_CLASS } from '@core/constants/ai-assistant-brand';
 import { FirmContextService } from '../../services/firm-context.service';
 import { FirmAreaCoherenceService } from '../../services/firm-area-coherence.service';
 import { LayoutRouteService } from '../layout-route.service';
@@ -134,11 +134,7 @@ import { ProductOnboardingApiService } from '../../onboarding/product-onboarding
         [hidden]="tourRunning()"
         [attr.inert]="tourRunning() ? '' : null"
         title="Assistant IA" i18n-title="@@core.layout.main-layout.main-layout.assistant.ia.94f6f208">
-        <img
-          [src]="aiMarkSrc"
-          alt=""
-          class="ai-fab-mark"
-          aria-hidden="true" />
+        <i [class]="aiAssistantIconClass" aria-hidden="true"></i>
       </button>
     }
   `,
@@ -283,13 +279,9 @@ import { ProductOnboardingApiService } from '../../onboarding/product-onboarding
       display: none !important;
     }
 
-    .ai-fab-mark {
-      width: 34px;
-      height: 34px;
-      object-fit: contain;
-      border-radius: 50%;
-      flex-shrink: 0;
-      image-rendering: auto;
+    .ai-fab > i {
+      font-size: 22px;
+      line-height: 1;
     }
 
     @media (max-width: 768px) {
@@ -313,15 +305,14 @@ import { ProductOnboardingApiService } from '../../onboarding/product-onboarding
         height: 48px;
       }
 
-      .ai-fab-mark {
-        width: 31px;
-        height: 31px;
+      .ai-fab > i {
+        font-size: 20px;
       }
     }
   `]
 })
 export class MainLayoutComponent implements OnInit {
-  readonly aiMarkSrc = AI_ASSISTANT_MARK_SRC;
+  readonly aiAssistantIconClass = AI_ASSISTANT_ICON_CLASS;
   private readonly sidebar = viewChild(SidebarComponent);
   private readonly workPane = viewChild<ElementRef<HTMLElement>>('workPane');
   private readonly tourLayout = inject(ProductTourLayoutBridge);

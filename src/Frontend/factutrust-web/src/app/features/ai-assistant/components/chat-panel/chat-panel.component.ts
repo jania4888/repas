@@ -30,7 +30,7 @@ import { MessageSelectionService, SelectedAssistantMessage } from '../../service
 import { PowerPointExportDialogComponent } from '../powerpoint-export-dialog/powerpoint-export-dialog.component';
 import { SuggestionCatalogComponent } from '../suggestion-catalog/suggestion-catalog.component';
 import { buildAssistantMarkdownForDisplay } from '../../utils/assistant-message-display';
-import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
+import { AI_ASSISTANT_ICON_CLASS } from '@core/constants/ai-assistant-brand';
 
 @Component({
   selector: 'app-chat-panel',
@@ -61,12 +61,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
               <i class="fa-solid fa-clock-rotate-left"></i>
             </button>
             <div class="ai-avatar" aria-hidden="true">
-              <img
-                class="ai-avatar-img"
-                [src]="aiAssistantMarkSrc"
-                alt=""
-                loading="lazy"
-                decoding="async" />
+              <i [class]="aiAssistantIconClass"></i>
             </div>
             <div class="header-titles">
               <h3>{{ headerTitle() }}</h3>
@@ -171,14 +166,8 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
             <div class="messages-container" #messagesContainer>
               @if (!session.messages().length) {
                 <div class="welcome-state" [class.welcome-state--catalog]="scopedSuggestionCategories().length">
-                  <div class="welcome-icon">
-                    <img
-                      class="welcome-mark-img"
-                      [src]="aiAssistantMarkSrc"
-                      alt=""
-                      aria-hidden="true"
-                      loading="lazy"
-                      decoding="async" />
+                  <div class="welcome-icon" aria-hidden="true">
+                    <i [class]="aiAssistantIconClass"></i>
                   </div>
                   <h4>{{ welcomeTitle() }}</h4>
                   <p>{{ welcomeDescription() }}</p>
@@ -430,13 +419,8 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      overflow: hidden;
-    }
-
-    .ai-avatar-img {
-      width: 26px;
-      height: 26px;
-      object-fit: contain;
+      color: #fff;
+      font-size: 18px;
     }
 
     .ai-status {
@@ -577,24 +561,14 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
       width: 72px;
       height: 72px;
       border-radius: 20px;
-      background: linear-gradient(
-        180deg,
-        var(--ai-accent-50, #f5f3ff) 0%,
-        var(--color-neutral-50, #f9fafb) 100%
-      );
+      background: var(--ai-gradient, linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%));
+      box-shadow: var(--ai-glow, 0 8px 20px rgba(139, 92, 246, 0.35));
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 16px;
-      overflow: hidden;
-    }
-
-    .welcome-mark-img {
-      width: 56px;
-      height: 56px;
-      object-fit: contain;
-      flex-shrink: 0;
-      image-rendering: auto;
+      color: #fff;
+      font-size: 28px;
     }
 
     .welcome-state h4 {
@@ -897,7 +871,7 @@ export class ChatPanelComponent implements AfterViewInit, OnInit, OnChanges, OnD
   readonly selection = inject(MessageSelectionService);
   private readonly router = inject(Router);
   readonly MessageRole = MessageRole;
-  readonly aiAssistantMarkSrc = AI_ASSISTANT_MARK_SRC;
+  readonly aiAssistantIconClass = AI_ASSISTANT_ICON_CLASS;
 
   /** Config UI de l'expert actif (undefined = assistant global). Dérivée de la session, pas de l'input. */
   readonly scopeConfig = computed(() => getAgentScopeConfig(this.session.agentScope()));

@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 import { EntryFormStore } from '../services/entry-form.store';
 import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
@@ -8,7 +7,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
 @Component({
   selector: 'app-entry-toolbar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule],
   template: `
     <div class="entry-toolbar" role="toolbar" aria-label="Actions d'écriture" i18n-aria-label="@@accounting.manual-entry.actions.d.ecriture.7657e8cb">
       <div class="entry-toolbar__left">
@@ -78,9 +77,6 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                         i18n-title="@@accounting.manual-entry.importer.un.releve.bancaire.et.proposer.les.ecri.864c2618"
                         (click)="importBankStatement.emit(); importOpen = false" i18n="@@accounting.manual-entry.importer.un.releve.bancaire.pdf.image.72caac7e"> Importer un relevé bancaire (PDF / image) </button>
               }
-              <div class="dropdown-divider"></div>
-              <a routerLink="/accounting/import" class="dropdown-item" i18n="@@accounting.manual-entry.import.de.fichier.csv.excel.77102ff0"> Import de fichier (CSV / Excel) </a>
-              <a routerLink="/accounting/draft-batch" class="dropdown-item" i18n="@@accounting.manual-entry.ecritures.en.brouillard.4d98b8f8"> Écritures en brouillard </a>
             </div>
           }
         </div>
