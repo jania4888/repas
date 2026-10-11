@@ -80,8 +80,8 @@
     "reason": "Lot 7 : concaténations de liaisons converties en méthodes $localize (un message à placeholders, même texte FR) ; écarts antérieurs du fichier déjà relus (pluriels erpPlural, options partagées)"
   },
   "src/app/features/accounting/lettering/lettering.component.ts": {
-    "sha": "90976648c710d94dbe44aac5587bac9d106c1d05387d45a715f95cf181846a3c",
-    "reason": "PR1 non-regressif : bouton « Compléter le lettrage » (code P) + gestion centralisée des erreurs letter/complete/unletter/settle (LETTERING_PERIOD_LOCKED, LETTERING_ALREADY_LETTERED, 403) sur l'écran legacy ; ces constantes de code et le libellé sont de nouveaux segments, aucun texte existant modifié."
+    "sha": "1448a43d73f107f617138e42d5992637274107ce8b7b3d15c874d724a5186cbe",
+    "reason": "Réécriture complète du conteneur de lettrage (Phase 2 du plan) : logique déplacée vers LetteringStore et 5 nouveaux composants (filtres, deux volets, synthèse, règlement d'écart, tiroir de groupe)."
   },
   "src/app/features/accounting/manual-entry/components/draft-banner.component.ts": {
     "sha": "20b57da282da309811c893407c53c23489b7fe157ce5c8cfbe658de5a94fc6f9",
@@ -312,8 +312,8 @@
     "reason": "Retrait du calcul historique (livraison A) : format courant dm-model-v2 / tn-2026-v2, compte rendu des familles passées en v2 et des inclusions ignorées."
   },
   "src/app/features/accounting/services/accounting.service.ts": {
-    "sha": "f8e21c3bde41a3b9b45287526d36ba26740b4f3f0f246c58c0210e098d7d81ae",
-    "reason": "Nouveau client HTTP du lettrage (contrat §4) : getLetteringLines/getLetteringGroup/completePartialLettering ajoutés pour l'écran legacy (plan PR1, item 4). Segments nouveaux : noms de paramètres de requête et fragments d'URL (/lettering/lines, /lettering/groups/, /complete), pas de texte traduisible modifié."
+    "sha": "51e0c94cb3eda6434212d0bb3e595cd5645bd77ec46c52409007b0f7e048dca9",
+    "reason": "Nouveaux appels client pour l'API de lettrage Phase 1 (getLetteringLines, getLetteringGroup, completePartialLettering, letterEntries) : chaînes additives, aucune route existante modifiée."
   },
   "src/app/features/accounting/accounting.routes.ts": {
     "sha": "dde0f683180aa4b8ee682b8d4f3d84ee8e43254d8637661ed8995510005faf13",
@@ -329,6 +329,6 @@
   },
   "src/app/core/config/permission-keys.ts": {
     "sha": "3e8bc1dfe74d46d92fe8e179d38e65542cb2356f40079cc2e3188eb58ad68741",
-    "reason": "Nouvelle clé de permission 'accounting:unletter' (plan D6) distincte de accounting:delete/create ; aucun texte traduisible modifié."
+    "reason": "Nouvelle permission accounting:unletter (délettrage, plan refonte lettrage)."
   }
 }

@@ -1,0 +1,164 @@
+<app-accounting-filter-bar
+  ariaLabel="Filtres de lettrage"
+  i18n-ariaLabel="@@accounting.lettering.filters.tpl.filtres.de.lettrage"
+>
+  <div accountingFilterFields class="accounting-filters-grid">
+    <div class="accounting-filter-field">
+      <label class="accounting-filter-label" for="lettering-account" i18n="@@accounting.lettering.filters.tpl.compte">Compte</label>
+      <p-autoComplete
+        inputId="lettering-account"
+        class="accounting-filter-input"
+        [(ngModel)]="accountQuery"
+        [suggestions]="accountSuggestions"
+        (completeMethod)="filterAccounts($event)"
+        (ngModelChange)="onAccountInputChange($event)"
+        [minLength]="1"
+        [forceSelection]="false"
+        placeholder="Ex. 4111"
+        i18n-placeholder="@@accounting.lettering.filters.tpl.placeholder.compte"
+      ></p-autoComplete>
+      @if (accountHint) {
+        <p class="accounting-filter-hint">{{ accountHint }}</p>
+      }
+    </div>
+
+    <div class="accounting-filter-field">
+      <label class="accounting-filter-label" for="lettering-third-party" i18n="@@accounting.lettering.filters.tpl.tiers">Tiers</label>
+      <p-autoComplete
+        inputId="lettering-third-party"
+        class="accounting-filter-input"
+        [ngModel]="thirdPartyQuery"
+        [suggestions]="thirdPartySuggestions"
+        (completeMethod)="filterThirdParties($event)"
+        (onSelect)="onThirdPartySelect($event.value)"
+        (onClear)="onThirdPartyClear()"
+        optionLabel="name"
+        [minLength]="1"
+        [forceSelection]="false"
+        [showClear]="true"
+        placeholder="Nom du tiers…"
+        i18n-placeholder="@@accounting.lettering.filters.tpl.placeholder.tiers"
+      >
+        <ng-template let-row pTemplate="item">
+          <span class="lettering-third-party-suggestion__name">{{ row.name }}</span>
+          <span class="lettering-third-party-suggestion__account">{{ row.collectiveAccountNumber }}</span>
+        </ng-template>
+      </p-autoComplete>
+    </div>
+
+    <div class="accounting-filter-field">
+      <label class="accounting-filter-label" for="lettering-from" i18n="@@accounting.lettering.filters.tpl.du">Du</label>
+      <input
+        id="lettering-from"
+        class="accounting-filter-input"
+        type="date"
+        [ngModel]="filters.from"
+        (ngModelChange)="onDateChange('from', $event)"
+      />
+    </div>
+
+    <div class="accounting-filter-field">
+      <label class="accounting-filter-label" for="lettering-to" i18n="@@accounting.lettering.filters.tpl.au">Au</label>
+      <input
+        id="lettering-to"
+        class="accounting-filter-input"
+        type="date"
+        [ngModel]="filters.to"
+        (ngModelChange)="onDateChange('to', $event)"
+      />
+    </div>
+
+    <div class="accounting-filter-field">
+      <label class="accounting-filter-label" for="lettering-journal" i18n="@@accounting.lettering.filters.tpl.journal">Journal</label>
+      <select
+        id="lettering-journal"
+        class="accounting-filter-input"
+        [ngModel]="filters.journalCode ?? ''"
+        (ngModelChange)="onJournalChange($event)"
+      >
+        <option value="" i18n="@@accounting.lettering.filters.tpl.tous.les.journaux">Tous les journaux</option>
+        @for (j of journalOptions(); track j.code) {
+          <option [value]="j.code">{{ j.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="accounting-filter-field">
+      <label class="accounting-filter-label" for="lettering-state" i18n="@@accounting.lettering.filters.tpl.etat">État</label>
+      <select
+        id="lettering-state"
+        class="accounting-filter-input"
+        [ngModel]="filters.state"
+        (ngModelChange)="onStateChange($event)"
+      >
+        @for (s of states; track s.value) {
+          <option [value]="s.value">{{ s.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="accounting-filter-field accounting-filter-field--toggle">
+      <button
+        type="button"
+        class="lettering-filters__advanced-toggle"
+        [attr.aria-expanded]="showAdvanced()"
+        aria-controls="lettering-advanced-filters"
+        (click)="toggleAdvanced()"
+      >
+        <i class="pi" [class.pi-chevron-down]="!showAdvanced()" [class.pi-chevron-up]="showAdvanced()"></i>
+        <span i18n="@@accounting.lettering.filters.tpl.plus.de.filtres">Plus de filtres</span>
+      </button>
+    </div>
+
+    @if (showAdvanced()) {
+      <div id="lettering-advanced-filters" class="lettering-filters__advanced">
+        <div class="accounting-filter-field">
+          <label class="accounting-filter-label" for="lettering-min" i18n="@@accounting.lettering.filters.tpl.montant.min">Montant min.</label>
+          <app-accounting-amount-input
+            inputId="lettering-min"
+            [compact]="true"
+            [ngModel]="filters.minAmount"
+            (ngModelChange)="onMinAmountChange($event)"
+          />
+        </div>
+        <div class="accounting-filter-field">
+          <label class="accounting-filter-label" for="lettering-max" i18n="@@accounting.lettering.filters.tpl.montant.max">Montant max.</label>
+          <app-accounting-amount-input
+            inputId="lettering-max"
+            [compact]="true"
+            [ngModel]="filters.maxAmount"
+            (ngModelChange)="onMaxAmountChange($event)"
+          />
+        </div>
+        <div class="accounting-filter-field accounting-filter-field--checkbox">
+          <label class="lettering-filters__checkbox-label">
+            <input
+              type="checkbox"
+              [ngModel]="filters.accountMatch === 'prefix'"
+              (ngModelChange)="onIncludeSubAccountsChange($event)"
+            />
+            <span i18n="@@accounting.lettering.filters.tpl.inclure.sous.comptes">Inclure les sous-comptes</span>
+          </label>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div accountingFilterActions>
+    <app-button
+      variant="primary"
+      icon="pi-search"
+      iconPos="left"
+      type="button"
+      [disabled]="loading"
+      (clicked)="submit()"
+    >
+      <span i18n="@@accounting.lettering.filters.tpl.charger.les.ecritures">Charger les écritures</span>
+    </app-button>
+    <app-analyze-with-ai-button
+      screenId="accounting-lettering"
+      [payloadBuilder]="payloadBuilder"
+      density="toolbar"
+    />
+  </div>
+</app-accounting-filter-bar>

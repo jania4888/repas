@@ -1,310 +1,145 @@
 <app-page-header
-  title="Lettrage" i18n-title="@@accounting.lettering.lettrage.cfcdd333"
-  subtitle="Rapprochez les écritures débitrices et créditrices d'un même compte" i18n-subtitle="@@accounting.lettering.rapprochez.les.ecritures.debitrices.et.c.d58e33ee" />
+  title="Lettrage" i18n-title="@@accounting.lettering.tpl.lettrage"
+  subtitle="Rapprochez les écritures débitrices et créditrices d'un même compte" i18n-subtitle="@@accounting.lettering.tpl.rapprochez.les.ecritures"
+>
+  <app-accounting-toolbar-actions>
+    @if (flags.isEnabled('letteringProposals')) {
+      <!-- Phase 3 (hors périmètre de cette livraison) : moteur de propositions non branché. -->
+      <button
+        type="button"
+        class="btn btn-secondary"
+        disabled
+        i18n="@@accounting.lettering.tpl.propositions.automatiques"
+      >
+        Propositions automatiques
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        disabled
+        i18n="@@accounting.lettering.tpl.lettrage.en.masse"
+      >
+        Lettrage en masse
+      </button>
+    }
+    <app-document-actions-menu [items]="actionsMenuItems()" />
+  </app-accounting-toolbar-actions>
+</app-page-header>
 
 <app-accounting-correction-banner />
 
 @if (accountHint) {
-  <p class="lettering-hint" role="note" i18n="@@accounting.lettering.vous.pouvez.aussi.consulter.le.compte.adf6a9f4">Vous pouvez aussi consulter le compte {{ accountHint }}.</p>
+  <p class="lettering-hint" role="note" i18n="@@accounting.lettering.tpl.vous.pouvez.aussi.consulter">
+    Vous pouvez aussi consulter le compte {{ accountHint }}.
+  </p>
 }
 
 <div class="lettering-page accounting-page">
-  <!-- Filters -->
-  <p-card
-    styleClass="p-card--static lettering-filters-card"
-    header="Critères de sélection" i18n-header="@@accounting.lettering.criteres.de.selection.c512aace"
-    subheader="Choisissez un compte et une période, puis chargez les écritures à lettrer." i18n-subheader="@@accounting.lettering.choisissez.un.compte.et.une.periode.puis.a61a930e">
-    <p-toolbar styleClass="lettering-toolbar accounting-prime-toolbar">
-      <ng-template pTemplate="start">
-        <div class="lettering-filters-grid accounting-filters-grid">
-          <div class="lettering-field">
-            <label class="lettering-label" for="lettering-account" i18n="@@accounting.lettering.compte.c45740bb">Compte</label>
-            <p-autoComplete
-              [(ngModel)]="account"
-              [suggestions]="accountSuggestions"
-              (completeMethod)="filterAccounts($event)"
-              [minLength]="1"
-              [forceSelection]="false"
-              placeholder="Ex: 4111 – Clients" i18n-placeholder="@@accounting.lettering.ex.4111.clients.32d600da"
-              inputId="lettering-account"
-              [inputStyle]="{'width':'100%'}"
-              [style]="{'width':'100%'}"
-            />
-          </div>
-          <div class="lettering-field">
-            <label class="lettering-label" for="lettering-from" i18n="@@accounting.lettering.du.84814985">Du</label>
-            <input id="lettering-from" type="date" class="p-inputtext" [(ngModel)]="fromStr" />
-          </div>
-          <div class="lettering-field">
-            <label class="lettering-label" for="lettering-to" i18n="@@accounting.lettering.au.7a1732d5">Au</label>
-            <input id="lettering-to" type="date" class="p-inputtext" [(ngModel)]="toStr" />
-          </div>
-        </div>
-      </ng-template>
-      <ng-template pTemplate="end">
-        <app-accounting-toolbar-actions>
-          <app-button
-            variant="secondary"
-            icon="pi pi-search"
-            iconPos="left"
-            type="button"
-            (click)="load()"
-            [disabled]="loading()"
-            [attr.aria-label]="loc_charger_les_ecritures_du_compte_acco_592654(account)" i18n="@@accounting.lettering.charger.8f860300"> Charger </app-button>
-          <app-analyze-with-ai-button
-            screenId="accounting-lettering"
-            density="toolbar"
-            [payloadBuilder]="buildLetteringAnalyzePayload"
-            [disabled]="loading()" />
-        </app-accounting-toolbar-actions>
-      </ng-template>
-    </p-toolbar>
-  </p-card>
+  <div class="accounting-filters-card">
+    <app-lettering-filters
+      [filters]="store.filters()"
+      [accountHint]="accountHint"
+      [loading]="store.loading()"
+      [payloadBuilder]="buildAnalyzePayload"
+      (filtersChange)="store.updateFilters($event)"
+      (load)="store.load()"
+    />
+  </div>
 
-  <!-- Messages -->
-  @if (error()) {
+  @if (store.error()) {
     <div class="lettering-message lettering-message--error" role="alert">
-      <i class="pi pi-exclamation-triangle"></i>
-      <span>{{ error() }}</span>
+      <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+      <span>{{ store.error() }}</span>
     </div>
   }
 
-  @if (successMessage()) {
+  @if (store.success()) {
     <div class="lettering-message lettering-message--success" role="status">
-      <i class="pi pi-check-circle"></i>
-      <span>{{ successMessage() }}</span>
+      <i class="pi pi-check-circle" aria-hidden="true"></i>
+      <span>{{ store.success() }}</span>
     </div>
   }
 
-  <!-- Selection summary -->
-  @if (selectedLines().length > 0) {
-    <div class="lettering-summary" role="region" aria-label="Résumé de la sélection" i18n-aria-label="@@accounting.lettering.resume.de.la.selection.d784aaed">
-      <div class="lettering-summary-stats">
-        <div class="lettering-summary-item">
-          <span class="lettering-summary-label" i18n="@@accounting.lettering.lignes.selectionnees.e818a41b">Lignes sélectionnées</span>
-          <span class="lettering-summary-value">{{ selectionSummary().count }}</span>
-        </div>
-        @if (selectionSummary().foreign) {
-          <div class="lettering-summary-item" i18n="@@accounting.lettering.total.debit.5125e43d">
-            <span class="lettering-summary-label">Total débit {{ selectionSummary().currency }}</span>
-            <span class="lettering-summary-value lettering-amount">{{ selectionSummary().debitCurrency | number : '1.3-3' }}</span>
-          </div>
-          <div class="lettering-summary-item" i18n="@@accounting.lettering.total.credit.ff28b1c8">
-            <span class="lettering-summary-label">Total crédit {{ selectionSummary().currency }}</span>
-            <span class="lettering-summary-value lettering-amount">{{ selectionSummary().creditCurrency | number : '1.3-3' }}</span>
-          </div>
-        }
-        <div class="lettering-summary-item">
-          <span class="lettering-summary-label" i18n="@@accounting.lettering.total.debit.ea9c4853">Total débit</span>
-          <span class="lettering-summary-value lettering-amount">{{ selectionSummary().debit | number : '1.3-3' }}</span>
-        </div>
-        <div class="lettering-summary-item">
-          <span class="lettering-summary-label" i18n="@@accounting.lettering.total.credit.98c95962">Total crédit</span>
-          <span class="lettering-summary-value lettering-amount">{{ selectionSummary().credit | number : '1.3-3' }}</span>
-        </div>
-        <div class="lettering-summary-item" [class.lettering-summary-item--balanced]="selectionSummary().balanced"
-          [class.lettering-summary-item--unbalanced]="!selectionSummary().balanced && selectionSummary().count > 0">
-          <span class="lettering-summary-label" i18n="@@accounting.lettering.ecart.6ae8dce8">Écart</span>
-          <span class="lettering-summary-value lettering-amount">{{ selectionSummary().gap | number : '1.3-3' }}</span>
-        </div>
-      </div>
-      <div class="lettering-actions-group">
-        @if (!selectionSummary().balanced && selectionSummary().count >= 2) {
-          <label class="lettering-partial-toggle" for="lettering-partial">
-            <p-checkbox inputId="lettering-partial" [binary]="true" [(ngModel)]="allowPartial" />
-            <span><ng-container i18n="@@accounting.lettering.lettrage.partiel.fc201a43">Lettrage partiel </ng-container> <span class="lettering-partial-hint" i18n="@@accounting.lettering.reglement.incomplet.code.p.2c32c024">(règlement incomplet — code « P »)</span></span>
-          </label>
-        }
-        @if (selectionSummary().hasExchangeDifference) {
-          <p class="lettering-exchange-hint" role="status" i18n="@@accounting.lettering.selection.soldee.en.mais.pas.en.dinars.d.9413fc0c">
-            Sélection soldée en {{ selectionSummary().currency }} mais pas en dinars :
-            {{ selectionSummary().gap | number : '1.3-3' }} d'écart de change.
-          </p>
-          <p-button
-            label="Équilibrer" i18n-label="@@accounting.lettering.equilibrer.320b5f90"
-            icon="pi pi-sliders-h"
-            severity="warn"
-            [outlined]="true"
-            [disabled]="settling()"
-            (onClick)="openSettle()"
-            aria-label="Apurer l'écart de change puis lettrer" i18n-aria-label="@@accounting.lettering.apurer.l.ecart.de.change.puis.lettrer.0c7cad24" />
-        }
-        @if (isCompletionSelection()) {
-          <div class="lettering-complete-group">
-            <p-button
-              [label]="selectedPartialCode() ? loc_completer_le_lettrage_code_c0d1e2(selectedPartialCode()) : loc_completer_le_lettrage_a1b2c3"
-              icon="pi pi-link"
-              [disabled]="!canComplete()"
-              [loading]="lettering()"
-              (onClick)="completeSelected()"
-              severity="success"
-              [attr.aria-label]="completeSelectedAriaLabel()"
-            />
-            @if (completionBlockedReason()) {
-              <p class="lettering-complete-hint" role="status">{{ completionBlockedReason() }}</p>
-            }
-          </div>
-        } @else {
-          <p-button
-            [label]="!selectionSummary().balanced && allowPartial ? 'Lettrer partiellement' : loc_lettrer_la_selection_826ebb"
-            icon="pi pi-link"
-            [disabled]="!canLetter()"
-            [loading]="lettering()"
-            (onClick)="letterSelected()"
-            [severity]="!selectionSummary().balanced && allowPartial ? 'warn' : 'success'"
-            [attr.aria-label]="letterSelectedAriaLabel()"
-          />
-        }
-      </div>
-    </div>
+  @if (store.selectedLines().length > 0) {
+    <app-lettering-selection-summary
+      [summary]="store.summary()"
+      [sideCounts]="sideCounts()"
+      [guards]="store.guards()"
+      [allowPartial]="store.allowPartial()"
+      [canLetter]="store.canLetter()"
+      [isPartialMode]="store.isPartialMode()"
+      [busyAction]="store.busyAction()"
+      [accountLabel]="store.filters().account"
+      (allowPartialChange)="store.setAllowPartial($event)"
+      (reset)="store.reset()"
+      (validate)="store.letter()"
+      (settle)="openSettle()"
+    />
   }
 
-  <!-- Table -->
-  <p-card
-    styleClass="p-card--static lettering-table-card"
-    header="Écritures" i18n-header="@@accounting.lettering.ecritures.7bfac2f6"
-    subheader="Sélectionnez les lignes à rapprocher. Le lettrage n'est possible que si le total débit = total crédit." i18n-subheader="@@accounting.lettering.selectionnez.les.lignes.a.rapprocher.le.5454d78a">
-    @if (loading() && lines().length === 0) {
-      <div class="lettering-loading" role="status" aria-live="polite">
-        <p-progressSpinner strokeWidth="4" />
-        <span class="sr-only" i18n="@@accounting.lettering.chargement.01cba1df">Chargement…</span>
-      </div>
-    } @else if (showEmpty()) {
-      <app-empty-state
-        icon="pi-link"
-        title="Aucune écriture à afficher" i18n-title="@@accounting.lettering.aucune.ecriture.a.afficher.2d513276"
-        description="Saisissez un numéro de compte et cliquez sur Charger pour afficher les écritures à lettrer." i18n-description="@@accounting.lettering.saisissez.un.numero.de.compte.et.cliquez.097e5113"
-        [showAction]="false"
-      />
-    } @else {
-      <div class="lettering-table-wrap">
-        <p-table
-          [value]="lines()"
-          [(selection)]="selectedLines"
-          (selectionChange)="onSelectionChange($event)"
-          [rowSelectable]="isSelectableRow"
-          dataKey="lineId"
-          [paginator]="true"
-          [rows]="25"
-          [rowsPerPageOptions]="[15, 25, 50, 100]"
-          [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="@@accounting.lettering.affichage.de.first.a.last.sur.totalrecords.ligne.3b382824"
-          [rowHover]="true"
-          [scrollable]="true"
-          scrollHeight="min(56vh, 32rem)"
-          styleClass="lettering-table"
-        >
-          <ng-template pTemplate="caption">
-            <span class="sr-only" i18n="@@accounting.lettering.ecritures.du.compte.selectionnez.les.lignes.a.le.5d46181d"> Écritures du compte : sélectionnez les lignes à lettrer en cochant les cases. </span>
-          </ng-template>
-          <ng-template pTemplate="header">
-            <tr>
-              <th style="width: 3.5rem">
-                <p-tableHeaderCheckbox />
-              </th>
-              <th scope="col" pSortableColumn="entryDate">
-                <ng-container i18n="@@accounting.lettering.date.eb9a4bc1"> Date </ng-container> <p-sortIcon field="entryDate" />
-              </th>
-              <th scope="col" pSortableColumn="journalCode">
-                <ng-container i18n="@@accounting.lettering.journal.57d7f743"> Journal </ng-container> <p-sortIcon field="journalCode" />
-              </th>
-              <th scope="col" pSortableColumn="entryNumber">
-                <ng-container i18n="@@accounting.lettering.n.754e6095"> N° </ng-container> <p-sortIcon field="entryNumber" />
-              </th>
-              <th scope="col" i18n="@@accounting.lettering.libelle.f5485bba">Libellé</th>
-              @if (hasForeignLines()) {
-                <th scope="col" i18n="@@accounting.lettering.devise.eb2e42c4">Devise</th>
-              }
-              <th scope="col" class="text-right" pSortableColumn="debit">
-                <ng-container i18n="@@accounting.lettering.debit.f528224f"> Débit </ng-container> <p-sortIcon field="debit" />
-              </th>
-              <th scope="col" class="text-right" pSortableColumn="credit">
-                <ng-container i18n="@@accounting.lettering.credit.19194bdf"> Crédit </ng-container> <p-sortIcon field="credit" />
-              </th>
-              <th scope="col" i18n="@@accounting.lettering.lettrage.cfcdd333">Lettrage</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-line>
-            <tr [class.lettering-row--lettered]="isLettered(line)">
-              <td>
-                <p-tableCheckbox [value]="line" [disabled]="!isRowSelectable(line)" />
-              </td>
-              <td>{{ line.entryDate | date : 'shortDate' }}</td>
-              <td><span class="lettering-code">{{ line.journalCode }}</span></td>
-              <td><span class="lettering-code">{{ line.entryNumber }}</span></td>
-              <td class="lettering-label-cell">{{ line.label }}</td>
-              @if (hasForeignLines()) {
-                <td class="lettering-currency-cell">
-                  @if (line.currency !== functionalCurrency) {
-                    <span class="lettering-code">{{ line.currency }}</span>
-                    <span class="lettering-currency-amount">
-                      {{ (line.debitInCurrency || line.creditInCurrency) | number : '1.2-2' }}
-                    </span>
-                  } @else {
-                    <span class="lettering-currency-none" i18n="@@accounting.lettering.text.1b93795b">—</span>
-                  }
-                </td>
-              }
-              <td class="text-right lettering-amount">{{ line.debit | number : '1.3-3' }}</td>
-              <td class="text-right lettering-amount">{{ line.credit | number : '1.3-3' }}</td>
-              <td>
-                @if (line.letteringCode) {
-                  <span class="lettering-code-cell">
-                    <p-tag
-                      [value]="line.letteringCode"
-                      [severity]="isPartialCode(line.letteringCode) ? 'warn' : 'info'"
-                      [rounded]="true"
-                      [attr.title]="isPartialCode(line.letteringCode) ? loc_lettrage_partiel_fc201a : loc_lettrage_cfcdd3" />
-                    @if (canUnletter()) {
-                      <button
-                        type="button"
-                        class="lettering-unletter-btn"
-                        [disabled]="unlettering() === line.letteringCode"
-                        (click)="unletter(line.letteringCode)"
-                        [attr.aria-label]="loc_delettrer_le_groupe_letteringcode_0aecd2(line.letteringCode)"
-                        title="Délettrer ce groupe" i18n-title="@@accounting.lettering.delettrer.ce.groupe.210d5232">
-                        <i class="pi pi-times" aria-hidden="true"></i>
-                      </button>
-                    }
-                  </span>
-                } @else {
-                  <span class="lettering-unlettered" i18n="@@accounting.lettering.text.1b93795b">—</span>
-                }
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
+  @if (store.loading() && !store.loadedOnce()) {
+    <div class="lettering-loading" role="status" aria-live="polite">
+      <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+      <span class="sr-only" i18n="@@accounting.lettering.tpl.chargement">Chargement…</span>
+    </div>
+  } @else if (!store.loadedOnce()) {
+    <app-empty-state
+      icon="pi-link"
+      title="Aucune écriture à afficher" i18n-title="@@accounting.lettering.tpl.aucune.ecriture.a.afficher"
+      description="Saisissez un numéro de compte et cliquez sur Charger les écritures pour afficher les lignes à lettrer." i18n-description="@@accounting.lettering.tpl.saisissez.un.numero.de.compte"
+      [showAction]="false"
+    />
+  } @else {
+    @if (store.truncated()) {
+      <p class="lettering-truncated-note" role="note" i18n="@@accounting.lettering.tpl.resultats.tronques">
+        Résultats tronqués : affinez les filtres pour voir toutes les lignes.
+      </p>
     }
-  </p-card>
+    <div class="lettering-panes">
+      <app-lettering-ledger-pane
+        side="debit"
+        [lines]="store.debitLines()"
+        [selectedIds]="debitSelectedIds()"
+        [hasForeignLines]="hasForeignLines()"
+        [loading]="store.loading()"
+        [total]="store.debitPaneTotal().amount"
+        [totalInCurrency]="store.debitPaneTotal().amountInCurrency"
+        (selectionChange)="store.setPaneSelection('debit', $event)"
+        (openGroup)="openGroup($event)"
+      />
+      <app-lettering-ledger-pane
+        side="credit"
+        [lines]="store.creditLines()"
+        [selectedIds]="creditSelectedIds()"
+        [hasForeignLines]="hasForeignLines()"
+        [loading]="store.loading()"
+        [total]="store.creditPaneTotal().amount"
+        [totalInCurrency]="store.creditPaneTotal().amountInCurrency"
+        (selectionChange)="store.setPaneSelection('credit', $event)"
+        (openGroup)="openGroup($event)"
+      />
+    </div>
+  }
 </div>
 
-<!-- Apurement de l'écart de change. Le compte est saisi à chaque fois : aucun défaut n'est
-     persisté, le catalogue NCT 01 fournissant 655 / 756 mais un dossier non migré seulement 6613. -->
-@if (settleOpen()) {
-  <div class="lettering-modal-backdrop" role="presentation" (click)="closeSettle()"></div>
-  <div class="lettering-modal" role="dialog" aria-modal="true" aria-labelledby="settle-title">
-    <h2 id="settle-title" class="lettering-modal__title" i18n="@@accounting.lettering.equilibrer.l.ecart.de.change.37fe00be">Équilibrer l'écart de change</h2>
+<app-lettering-settle-exchange-dialog
+  [visible]="settleOpen"
+  [currency]="store.summary().currency"
+  [gap]="store.summary().gap"
+  [busy]="store.busyAction() === 'settle'"
+  (visibleChange)="onSettleVisibleChange($event)"
+  (settle)="onSettle($event)"
+/>
 
-    <p class="lettering-modal__intro" i18n="@@accounting.lettering.la.selection.est.soldee.en.mais.laisse.e.2d3b428b">
-      La sélection est soldée en {{ selectionSummary().currency }} mais laisse
-      <strong>{{ selectionSummary().gap | number : '1.3-3' }}</strong> en dinars. Une écriture
-      d'opérations diverses apurera cet écart, puis le lettrage sera effectué.
-    </p>
-
-    <label class="lettering-modal__label" for="settle-account" i18n="@@accounting.lettering.compte.d.imputation.de.l.ecart.5774ab5d">Compte d'imputation de l'écart</label>
-    <input id="settle-account" class="lettering-modal__input" type="text"
-           [(ngModel)]="settleAccount" placeholder="Ex. 655 ou 756" i18n-placeholder="@@accounting.lettering.ex.655.ou.756.e22b14a2" autocomplete="off" />
-    <p class="lettering-modal__hint" i18n="@@accounting.lettering.charges.ou.produits.classe.6.ou.7.ou.ecarts.de.c.0ab34cdc"> Charges ou produits (classe 6 ou 7), ou écarts de conversion (185 / 275).
-      Dans le plan NCT 01 : 655 pertes de change, 756 gains de change. </p>
-
-    <div class="lettering-modal__actions">
-      <p-button label="Annuler" i18n-label="@@accounting.lettering.annuler.49ba3292" severity="secondary" [outlined]="true"
-                [disabled]="settling()" (onClick)="closeSettle()" />
-      <p-button label="Équilibrer et lettrer" i18n-label="@@accounting.lettering.equilibrer.et.lettrer.9d7ad95d" icon="pi pi-check"
-                [disabled]="!settleAccount.trim() || settling()"
-                [loading]="settling()"
-                (onClick)="settleExchangeDifference()" />
-    </div>
-  </div>
-}
+<app-lettering-group-drawer
+  [visible]="groupDrawerOpen"
+  [group]="store.group()"
+  [loading]="store.groupLoading()"
+  [error]="store.groupError()"
+  [canUnletterPermission]="store.canUnletter()"
+  [unlettering]="store.busyAction() === 'unletter'"
+  [hasSelection]="store.selectedLines().length > 0"
+  (visibleChange)="onGroupDrawerVisibleChange($event)"
+  (unletter)="store.unletter($event)"
+  (complete)="store.complete($event)"
+/>

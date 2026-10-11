@@ -1,0 +1,113 @@
+:host {
+  display: block;
+}
+
+.lettering-pane {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  min-width: 0;
+}
+
+.lettering-pane__header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-3);
+  flex-wrap: wrap;
+}
+
+.lettering-pane__title {
+  margin: 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.lettering-pane--debit .lettering-pane__title {
+  border-inline-start: 3px solid var(--color-primary-500);
+  padding-inline-start: var(--spacing-2);
+}
+
+.lettering-pane--credit .lettering-pane__title {
+  border-inline-start: 3px solid var(--color-success-500, #22c55e);
+  padding-inline-start: var(--spacing-2);
+}
+
+.lettering-pane__total {
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  margin-inline-start: auto;
+}
+
+.lettering-pane__total-currency {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.lettering-pane__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8) 0;
+  color: var(--color-text-tertiary);
+}
+
+.lettering-pane__table-wrap {
+  overflow-x: auto;
+}
+
+.lettering-amount {
+  font-variant-numeric: tabular-nums;
+}
+
+.lettering-code {
+  font-family: var(--font-family-mono, monospace);
+  font-size: var(--font-size-xs);
+}
+
+.lettering-label-cell {
+  max-width: 20rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lettering-currency-cell {
+  white-space: nowrap;
+}
+
+.lettering-currency-amount {
+  margin-inline-start: var(--spacing-1);
+  font-variant-numeric: tabular-nums;
+}
+
+.lettering-currency-none,
+.lettering-unlettered {
+  color: var(--color-text-tertiary);
+}
+
+.lettering-code-badge {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.lettering-row--lettered {
+  background: var(--color-success-50, #f0fdf4);
+}
+
+.lettering-row--locked {
+  opacity: 0.75;
+}
+
+.lettering-row__lock-icon {
+  margin-inline-start: var(--spacing-2);
+  color: var(--color-text-tertiary);
+}
+
+@media (max-width: 48rem) {
+  .lettering-pane__table-wrap {
+    overflow-x: scroll;
+  }
+}

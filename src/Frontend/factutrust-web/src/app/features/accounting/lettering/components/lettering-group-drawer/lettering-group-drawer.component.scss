@@ -1,0 +1,66 @@
+:host {
+  display: block;
+}
+
+.lettering-group-drawer__head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.lettering-group-drawer__account {
+  font-family: var(--font-family-mono, monospace);
+  color: var(--color-text-secondary);
+}
+
+.lettering-group-drawer__loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-8) 0;
+}
+
+.lettering-group-drawer__error {
+  color: var(--color-danger-600, #dc2626);
+}
+
+.lettering-group-drawer__meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+}
+
+.lettering-group-drawer__meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.lettering-group-drawer__meta-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+}
+
+.lettering-label-cell {
+  max-width: 14rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lettering-group-drawer__blocked {
+  margin: var(--spacing-3) 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-warning-700, #b45309);
+}
+
+.lettering-group-drawer__actions {
+  display: flex;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-4);
+}
+
+.lettering-amount {
+  font-variant-numeric: tabular-nums;
+}

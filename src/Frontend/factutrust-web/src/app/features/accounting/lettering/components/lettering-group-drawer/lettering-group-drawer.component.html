@@ -1,0 +1,104 @@
+<p-drawer
+  [visible]="visible"
+  (visibleChange)="visibleChange.emit($event)"
+  [position]="position()"
+  [modal]="true"
+  [blockScroll]="true"
+  appendTo="body"
+  styleClass="lettering-group-drawer"
+  [style]="{ width: 'min(32rem, 100vw)' }"
+>
+  <ng-template pTemplate="header">
+    <div class="lettering-group-drawer__head">
+      @if (group) {
+        <p-tag
+          [value]="group.code"
+          [severity]="isPartialCode(group.code) ? 'warn' : 'success'"
+          [rounded]="true"
+        />
+        <span class="lettering-group-drawer__account">{{ group.accountNumber }}</span>
+      } @else {
+        <span i18n="@@accounting.lettering.group.drawer.tpl.groupe.de.lettrage">Groupe de lettrage</span>
+      }
+    </div>
+  </ng-template>
+
+  @if (loading) {
+    <div class="lettering-group-drawer__loading" role="status" aria-live="polite">
+      <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+      <span class="sr-only" i18n="@@accounting.lettering.group.drawer.tpl.chargement">Chargement…</span>
+    </div>
+  } @else if (error) {
+    <p class="lettering-group-drawer__error" role="alert">{{ error }}</p>
+  } @else if (group; as g) {
+    <div class="lettering-group-drawer__meta">
+      <div class="lettering-group-drawer__meta-item">
+        <span class="lettering-group-drawer__meta-label" i18n="@@accounting.lettering.group.drawer.tpl.type">Type</span>
+        <span>
+          {{ g.isPartial
+            ? loc_partiel
+            : loc_definitif }}
+        </span>
+      </div>
+      <div class="lettering-group-drawer__meta-item">
+        <span class="lettering-group-drawer__meta-label" i18n="@@accounting.lettering.group.drawer.tpl.date">Date</span>
+        <span>{{ g.letteredAt | date : 'short' }}</span>
+      </div>
+      <div class="lettering-group-drawer__meta-item">
+        <span class="lettering-group-drawer__meta-label" i18n="@@accounting.lettering.group.drawer.tpl.montant">Montant</span>
+        <span class="lettering-amount">{{ g.amount | number : '1.3-3' }} {{ g.currency !== functionalCurrency ? g.currency : '' }}</span>
+      </div>
+      @if (g.createdByDisplayName) {
+        <div class="lettering-group-drawer__meta-item">
+          <span class="lettering-group-drawer__meta-label" i18n="@@accounting.lettering.group.drawer.tpl.par">Par</span>
+          <span>{{ g.createdByDisplayName }}</span>
+        </div>
+      }
+    </div>
+
+    <p-table [value]="g.lines" dataKey="lineId" styleClass="lettering-group-drawer__table">
+      <ng-template pTemplate="header">
+        <tr>
+          <th scope="col" i18n="@@accounting.lettering.group.drawer.tpl.date.col">Date</th>
+          <th scope="col" i18n="@@accounting.lettering.group.drawer.tpl.libelle">Libellé</th>
+          <th scope="col" class="text-right" i18n="@@accounting.lettering.group.drawer.tpl.debit">Débit</th>
+          <th scope="col" class="text-right" i18n="@@accounting.lettering.group.drawer.tpl.credit">Crédit</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-line>
+        <tr>
+          <td>{{ line.entryDate | date : 'shortDate' }}</td>
+          <td class="lettering-label-cell">{{ line.label }}</td>
+          <td class="text-right lettering-amount">{{ line.debit | number : '1.3-3' }}</td>
+          <td class="text-right lettering-amount">{{ line.credit | number : '1.3-3' }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    @if (!canUnletterGroup() && g.unletterBlockedReason) {
+      <p class="lettering-group-drawer__blocked" role="note">{{ blockedReasonLabel() }}</p>
+    }
+
+    <div class="lettering-group-drawer__actions">
+      @if (canUnletterGroup()) {
+        <p-button
+          label="Délettrer" i18n-label="@@accounting.lettering.group.drawer.tpl.delettrer"
+          icon="pi pi-times"
+          severity="danger"
+          [outlined]="true"
+          [loading]="unlettering"
+          [disabled]="unlettering"
+          (onClick)="onUnletter()"
+        />
+      }
+      @if (g.canComplete) {
+        <p-button
+          label="Compléter ce lettrage" i18n-label="@@accounting.lettering.group.drawer.tpl.completer.ce.lettrage"
+          icon="pi pi-check"
+          [disabled]="!hasSelection"
+          (onClick)="onComplete()"
+        />
+      }
+    </div>
+  }
+</p-drawer>

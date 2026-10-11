@@ -56,8 +56,8 @@
     "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
   },
   "src/app/features/accounting/lettering/lettering.component.html": {
-    "sha": "491ff2779adabddc0e3f95568b90ccfd70eff121e7427f4fcc2930be144d17b3",
-    "reason": "PR1 non-regressif (plan §5.4/§5.5/§6 item 8/§10) : bouton « Compléter le lettrage » sur l'écran legacy pour terminer un groupe P (deja requis quand accounting:unletter remplace accounting:create côté serveur), [rowSelectable] + case de ligne alignés sur isRowSelectable (P sélectionnable, L non). Texte français équivalent, aucune régression de contenu."
+    "sha": "da45df2e310c4acaf8f32d37132320a4b4f5cd69150b6ae1aabf2e1d812140b7",
+    "reason": "Refonte complète de l'écran de lettrage (Phase 2 du plan) : l'ancienne table unique p-table + carte de synthèse inline est remplacée par app-lettering-filters, deux app-lettering-ledger-pane (débit/crédit), app-lettering-selection-summary, app-lettering-settle-exchange-dialog et app-lettering-group-drawer, pilotés par LetteringStore. Boutons Phase 3 masqués par défaut derrière le flag letteringProposals."
   },
   "src/app/features/accounting/loans/loans-list.component.ts#LoansListComponent": {
     "sha": "09e469a0c14c0b06fc682a00eab850ecc18e0f42434e4be7aaac1341a7282426",
