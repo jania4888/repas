@@ -403,6 +403,14 @@ export class LetteringComponent implements OnInit {
   }
 
   /**
+   * Donnée pour `[rowSelectable]` du `p-table` : sans cette fonction, la case « tout sélectionner »
+   * de l'en-tête (`p-tableHeaderCheckbox`) sélectionne TOUTES les lignes, y compris celles déjà
+   * lettrées dont la case individuelle est désactivée (`[disabled]="isLettered(line)"`) — elle
+   * doit respecter exactement la même règle que la case de ligne.
+   */
+  isSelectableRow = (event: { data: LetteringLine }): boolean => !this.isLettered(event.data);
+
+  /**
    * Droit requis pour délettrer (plan de refonte, D6) : `accounting:unletter`, distinct de
    * `accounting:create` utilisé jusqu'ici. Affichage seulement — le serveur revérifie la policy
    * `AccountingUnletter` à l'action, et refuse en outre toujours en période clôturée.

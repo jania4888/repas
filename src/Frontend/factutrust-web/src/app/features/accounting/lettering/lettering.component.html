@@ -165,6 +165,7 @@
           [value]="lines()"
           [(selection)]="selectedLines"
           (selectionChange)="onSelectionChange($event)"
+          [rowSelectable]="isSelectableRow"
           dataKey="lineId"
           [paginator]="true"
           [rows]="25"

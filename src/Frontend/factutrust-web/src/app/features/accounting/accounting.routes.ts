@@ -298,6 +298,8 @@ export const ACCOUNTING_ROUTES: Routes = [
   },
   {
     path: 'lettering',
+    canActivate: [permissionGuard],
+    data: { permissions: [PERMISSIONS.accounting.read] },
     loadComponent: () =>
       import('./lettering/lettering.component').then(m => m.LetteringComponent),
     title: $localize`:@@accounting.routes.title.Lettrage_InstaFact:Lettrage - InstaFact`
