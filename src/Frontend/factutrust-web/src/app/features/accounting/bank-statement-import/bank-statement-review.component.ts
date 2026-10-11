@@ -287,7 +287,7 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
               Contrôle et enregistrement sur l'écran du relevé (lien ci-dessus). Les opérations ci-dessous sont en lecture seule.
             </p>
             <div class="bsr-facts">
-              <div><span class="bsr-muted" i18n="@@accounting.bank-statement-import.operations.lues.p.e06736ac">Opérations lues</span><span>{{ sx.lines.length }} ({{ entry.preview!.pageCount }} p.)</span></div>
+              <div i18n="@@accounting.bank-statement-import.operations.lues.p.e06736ac"><span class="bsr-muted">Opérations lues</span><span>{{ sx.lines.length }} ({{ entry.preview!.pageCount }} p.)</span></div>
             </div>
             @if (entry.preview!.balanceCheck; as b) {
               <div class="bsr-balance" [class.is-ok]="siblingBalanceMode(entry.preview!) === 'ok'" [class.is-ko]="siblingBalanceMode(entry.preview!) === 'blocking'" [class.is-warning]="siblingBalanceMode(entry.preview!) === 'warning'">
