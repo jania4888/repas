@@ -26,6 +26,18 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
     /// <c>EntryNumber</c>, <c>AccountingPeriodId</c>) — filtre de dates de l'écran, aujourd'hui
     /// absent.</item>
     /// </list>
+    /// <para>
+    /// Plan §6 item 5 — les DEUX index UNIQUE (<c>IX_LetteringGroups_Code</c>,
+    /// <c>IX_LetteringGroupMembers_JournalEntryLineId</c>) ne sont posés QUE si aucun doublon
+    /// n'existe (<c>GROUP BY ... HAVING COUNT(*) &gt; 1</c>). Un tenant non assaini par le pré-scan
+    /// (<c>docs/runbooks/lettering-integrity.md</c>, <c>ScanLetteringIntegrity_AllTenants.sql</c> ou
+    /// l'endpoint plateforme) ne doit jamais faire échouer la migration ni être bloqué au démarrage
+    /// par <c>TenantMigrationGuard</c> : si des doublons sont trouvés, la migration <c>PRINT</c> un
+    /// message explicite et **ne pose pas** l'index unique — pour <c>LetteringGroupMembers</c>,
+    /// l'index non-unique existant est explicitement conservé (ni DROP ni CREATE). La transaction
+    /// Serializable de <c>LetteringService</c> reste la protection principale contre les doublons ;
+    /// ces deux index sont une défense ultime en base, pas la source de vérité applicative.
+    /// </para>
     /// Additif pur (aucune donnée touchée), écrit à la main (pas de <c>dotnet ef migrations add</c> —
     /// la dérive préexistante du snapshot sur des entités sans rapport aurait tout mélangé), idempotent,
     /// jumeau SQL : <c>docs/runbooks/sql/AddLetteringIntegrityIndexes_Tenant.idempotent.sql</c>.
@@ -37,21 +49,40 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql("""
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_LetteringGroups_Code' AND object_id = OBJECT_ID(N'[dbo].[LetteringGroups]'))
+-- IX_LetteringGroups_Code UNIQUE : seulement si aucun doublon de Code n'existe (le pré-scan
+-- ScanLetteringIntegrity_AllTenants.sql / l'endpoint plateforme doivent avoir réparé le tenant
+-- avant la mise en production, cf. runbook docs/runbooks/lettering-integrity.md). Un tenant non
+-- réparé ne doit JAMAIS faire échouer la migration ni bloquer son démarrage (TenantMigrationGuard) :
+-- on se contente de ne pas poser l'index unique et de l'annoncer en clair.
+IF EXISTS (SELECT 1 FROM [dbo].[LetteringGroups] GROUP BY [Code] HAVING COUNT(*) > 1)
+BEGIN
+    PRINT 'AddLetteringIntegrityIndexes_Tenant : des doublons de Code existent dans LetteringGroups, IX_LetteringGroups_Code (UNIQUE) n''est PAS posé. Réparer via le runbook docs/runbooks/lettering-integrity.md puis rejouer la migration.';
+END
+ELSE IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_LetteringGroups_Code' AND object_id = OBJECT_ID(N'[dbo].[LetteringGroups]'))
 BEGIN
     CREATE UNIQUE NONCLUSTERED INDEX [IX_LetteringGroups_Code]
         ON [dbo].[LetteringGroups] ([Code]);
 END;
 
-IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_LetteringGroupMembers_JournalEntryLineId' AND object_id = OBJECT_ID(N'[dbo].[LetteringGroupMembers]') AND is_unique = 0)
+-- IX_LetteringGroupMembers_JournalEntryLineId UNIQUE : idem, seulement si aucune ligne d'écriture
+-- n'appartient déjà à plusieurs groupes. Si des doublons existent, on GARDE l'index non-unique posé
+-- par AddAccountingModule_Tenant (ne pas le DROP sans pouvoir recréer l'unique derrière).
+IF EXISTS (SELECT 1 FROM [dbo].[LetteringGroupMembers] GROUP BY [JournalEntryLineId] HAVING COUNT(*) > 1)
 BEGIN
-    DROP INDEX [IX_LetteringGroupMembers_JournalEntryLineId] ON [dbo].[LetteringGroupMembers];
-END;
+    PRINT 'AddLetteringIntegrityIndexes_Tenant : des lignes d''écriture appartiennent déjà à plusieurs groupes de lettrage, IX_LetteringGroupMembers_JournalEntryLineId (UNIQUE) n''est PAS posé — l''index non-unique existant est conservé. Réparer via le runbook docs/runbooks/lettering-integrity.md puis rejouer la migration.';
+END
+ELSE
+BEGIN
+    IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_LetteringGroupMembers_JournalEntryLineId' AND object_id = OBJECT_ID(N'[dbo].[LetteringGroupMembers]') AND is_unique = 0)
+    BEGIN
+        DROP INDEX [IX_LetteringGroupMembers_JournalEntryLineId] ON [dbo].[LetteringGroupMembers];
+    END;
 
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_LetteringGroupMembers_JournalEntryLineId' AND object_id = OBJECT_ID(N'[dbo].[LetteringGroupMembers]'))
-BEGIN
-    CREATE UNIQUE NONCLUSTERED INDEX [IX_LetteringGroupMembers_JournalEntryLineId]
-        ON [dbo].[LetteringGroupMembers] ([JournalEntryLineId]);
+    IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_LetteringGroupMembers_JournalEntryLineId' AND object_id = OBJECT_ID(N'[dbo].[LetteringGroupMembers]'))
+    BEGIN
+        CREATE UNIQUE NONCLUSTERED INDEX [IX_LetteringGroupMembers_JournalEntryLineId]
+            ON [dbo].[LetteringGroupMembers] ([JournalEntryLineId]);
+    END;
 END;
 
 IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_JournalEntryLines_AccountNumber' AND object_id = OBJECT_ID(N'[dbo].[JournalEntryLines]'))

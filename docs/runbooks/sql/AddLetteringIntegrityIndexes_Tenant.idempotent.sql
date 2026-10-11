@@ -6,7 +6,13 @@
 
 -- 1) IX_LetteringGroups_Code UNIQUE : compteur partagé L/P garanti unique en base (D7/D8),
 --    défense ultime derrière la transaction Serializable de LetteringService.
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_LetteringGroups_Code' AND object_id = OBJECT_ID(N'[dbo].[LetteringGroups]'))
+--    Posé SEULEMENT si aucun doublon de Code n'existe (plan §6 item 5) : un tenant non assaini par
+--    le pré-scan (runbook docs/runbooks/lettering-integrity.md) ne doit jamais être bloqué.
+IF EXISTS (SELECT 1 FROM [dbo].[LetteringGroups] GROUP BY [Code] HAVING COUNT(*) > 1)
+BEGIN
+    PRINT 'AddLetteringIntegrityIndexes_Tenant : des doublons de Code existent dans LetteringGroups, IX_LetteringGroups_Code (UNIQUE) n''est PAS posé. Réparer via le runbook docs/runbooks/lettering-integrity.md puis rejouer ce script.';
+END
+ELSE IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_LetteringGroups_Code' AND object_id = OBJECT_ID(N'[dbo].[LetteringGroups]'))
 BEGIN
     CREATE UNIQUE NONCLUSTERED INDEX [IX_LetteringGroups_Code]
         ON [dbo].[LetteringGroups] ([Code]);
@@ -15,17 +21,24 @@ GO
 
 -- 2) IX_LetteringGroupMembers_JournalEntryLineId UNIQUE : remplace l'index non-unique posé par
 --    AddAccountingModule_Tenant — une ligne d'écriture ne peut appartenir qu'à un seul groupe de
---    lettrage à la fois.
-IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_LetteringGroupMembers_JournalEntryLineId' AND object_id = OBJECT_ID(N'[dbo].[LetteringGroupMembers]') AND is_unique = 0)
+--    lettrage à la fois. Posé SEULEMENT si aucun doublon de JournalEntryLineId n'existe (plan §6
+--    item 5) ; sinon l'index non-unique existant est explicitement conservé (ni DROP ni CREATE).
+IF EXISTS (SELECT 1 FROM [dbo].[LetteringGroupMembers] GROUP BY [JournalEntryLineId] HAVING COUNT(*) > 1)
 BEGIN
-    DROP INDEX [IX_LetteringGroupMembers_JournalEntryLineId] ON [dbo].[LetteringGroupMembers];
-END;
-GO
+    PRINT 'AddLetteringIntegrityIndexes_Tenant : des lignes d''écriture appartiennent déjà à plusieurs groupes de lettrage, IX_LetteringGroupMembers_JournalEntryLineId (UNIQUE) n''est PAS posé — l''index non-unique existant est conservé. Réparer via le runbook docs/runbooks/lettering-integrity.md puis rejouer ce script.';
+END
+ELSE
+BEGIN
+    IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_LetteringGroupMembers_JournalEntryLineId' AND object_id = OBJECT_ID(N'[dbo].[LetteringGroupMembers]') AND is_unique = 0)
+    BEGIN
+        DROP INDEX [IX_LetteringGroupMembers_JournalEntryLineId] ON [dbo].[LetteringGroupMembers];
+    END;
 
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_LetteringGroupMembers_JournalEntryLineId' AND object_id = OBJECT_ID(N'[dbo].[LetteringGroupMembers]'))
-BEGIN
-    CREATE UNIQUE NONCLUSTERED INDEX [IX_LetteringGroupMembers_JournalEntryLineId]
-        ON [dbo].[LetteringGroupMembers] ([JournalEntryLineId]);
+    IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_LetteringGroupMembers_JournalEntryLineId' AND object_id = OBJECT_ID(N'[dbo].[LetteringGroupMembers]'))
+    BEGIN
+        CREATE UNIQUE NONCLUSTERED INDEX [IX_LetteringGroupMembers_JournalEntryLineId]
+            ON [dbo].[LetteringGroupMembers] ([JournalEntryLineId]);
+    END;
 END;
 GO
 

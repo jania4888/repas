@@ -236,6 +236,61 @@ public sealed class PayrollPaymentLetteringTests : IDisposable
         Assert.Equal(900m, letteredRunLine.CreditAmount.Amount);
     }
 
+    /// <summary>
+    /// Plan §11 PR1 : <see cref="LetteringService.UnletterPayrollPaymentAsync"/> est « best-effort »
+    /// (D8) — si l'exercice a été verrouillé entre le lettrage et l'annulation du paiement, le
+    /// délettrage échoue silencieusement (warning journalisé), mais l'annulation du paiement
+    /// elle-même ne doit JAMAIS échouer à cause de ça, et le groupe de lettrage doit rester intact.
+    /// </summary>
+    [Fact]
+    public async Task CancelPayment_RunInClosedPeriod_CancelsAndKeepsLettering()
+    {
+        if (!_canRun) return;
+
+        var runId = Guid.NewGuid();
+        var paymentId = Guid.NewGuid();
+        var employeeId = Guid.NewGuid();
+
+        await SeedAsync(
+            runId,
+            paymentId,
+            runCredits: new[] { ("4250001", 400m, (Guid?)employeeId, ThirdPartyKind.Employee) },
+            paymentDebits: new[] { ("4250001", 400m, (Guid?)employeeId, ThirdPartyKind.Employee) });
+
+        var letterResult = await _lettering!.AutoLetterPayrollPaymentAsync(paymentId, runId);
+        Assert.True(letterResult.IsSuccess);
+
+        string? codeBefore;
+        await using (var ctx = _factory!.CreateIsolatedContext())
+        {
+            codeBefore = await ctx.JournalEntryLines.AsNoTracking()
+                .Where(l => l.AccountNumber == "4250001" && l.LetteringCode != null)
+                .Select(l => l.LetteringCode)
+                .FirstAsync();
+
+            // Verrouille l'exercice 2026 APRÈS le lettrage, pour reproduire la fenêtre où
+            // l'annulation du paiement intervient alors que la période a été clôturée depuis.
+            ctx.AccountingYearLocks.Add(AccountingYearLock.Create(2026, "test"));
+            await ctx.SaveChangesAsync();
+        }
+
+        var cancelResult = await _lettering!.UnletterPayrollPaymentAsync(paymentId);
+
+        // L'annulation du paiement ne doit jamais échouer à cause d'un délettrage impossible.
+        Assert.True(cancelResult.IsSuccess);
+
+        await using var verify = _factory!.CreateIsolatedContext();
+        var codeAfter = await verify.JournalEntryLines.AsNoTracking()
+            .Where(l => l.AccountNumber == "4250001" && l.LetteringCode != null)
+            .Select(l => l.LetteringCode)
+            .FirstOrDefaultAsync();
+
+        // Le groupe reste lettré : le délettrage interne a été refusé (période verrouillée) et
+        // ignoré en best-effort, sans annuler ce qui précède.
+        Assert.Equal(codeBefore, codeAfter);
+        Assert.True(await verify.LetteringGroups.AsNoTracking().AnyAsync(g => g.Code == codeBefore));
+    }
+
     // ── Helpers ──
 
     private async Task SeedAsync(

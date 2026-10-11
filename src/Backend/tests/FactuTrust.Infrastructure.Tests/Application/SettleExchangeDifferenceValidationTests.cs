@@ -3,6 +3,8 @@ using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.Features.Accounting.Commands;
+using FactuTrust.Application.Features.Accounting.Lettering;
+using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
 using Microsoft.Extensions.Options;
@@ -161,5 +163,88 @@ public sealed class SettleExchangeDifferenceValidationTests
         Assert.True(result.IsFailure);
         Assert.DoesNotContain("classe 6 ou 7", result.Error.Description);
         Assert.DoesNotContain("n'existe pas", result.Error.Description);
+    }
+
+    /// <summary>
+    /// Plan §5.5/§5.3 (D8/D9) : le verrou de période est contrôlé AVANT la création de l'écriture
+    /// d'ajustement — aucune écriture orpheline ne doit jamais être construite. Reproduit l'exemple
+    /// de la docstring de la classe (1 000 EUR à 3,31420 puis réglé à 3,30200, écart de 12,200 TND),
+    /// avec l'année de la ligne de règlement verrouillée.
+    /// </summary>
+    [Fact]
+    public async Task IsRefusedWhenALineIsInALockedPeriodBeforeAnyAdjustmentEntryIsCreated()
+    {
+        var thirdPartyId = Guid.NewGuid();
+
+        var invoiceEntry = JournalEntry.Create(
+            1, "JOA", new DateTime(2026, 3, 1), "Facture EUR",
+            Guid.NewGuid(), false, "Manual", Guid.NewGuid(),
+            new[]
+            {
+                new JournalLineInput("4111", "Facture", 3314.200m, 0m, thirdPartyId, ThirdPartyKind.Client, 1000m, 0m),
+                new JournalLineInput("707", "Vente", 0m, 3314.200m, null, ThirdPartyKind.None),
+            },
+            currency: "EUR",
+            exchangeRate: 3.3142m).Value;
+        invoiceEntry.SetAuditInfo("test", false);
+
+        var paymentEntry = JournalEntry.Create(
+            2, "JB", new DateTime(2026, 3, 15), "Règlement EUR",
+            Guid.NewGuid(), false, "Manual", Guid.NewGuid(),
+            new[]
+            {
+                new JournalLineInput("5321", "Banque", 3302.000m, 0m, null, ThirdPartyKind.None),
+                new JournalLineInput("4111", "Règlement", 0m, 3302.000m, thirdPartyId, ThirdPartyKind.Client, 0m, 1000m),
+            },
+            currency: "EUR",
+            exchangeRate: 3.3020m).Value;
+        paymentEntry.SetAuditInfo("test", false);
+
+        var invoiceLine = invoiceEntry.Lines.Single(l => l.AccountNumber == "4111");
+        var paymentLine = paymentEntry.Lines.Single(l => l.AccountNumber == "4111");
+
+        var chart = new Mock<IChartOfAccountRepository>();
+        chart.Setup(c => c.GetByAccountNumberAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(Account("655"));
+
+        var journalEntries = new Mock<IJournalEntryRepository>();
+        journalEntries
+            .Setup(j => j.GetLinesByIdsAsync(It.IsAny<IReadOnlyList<Guid>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new[] { invoiceLine, paymentLine });
+        // Année 2026 verrouillée : les deux écritures datent de 2026 (fallback EntryDate.Year, pas
+        // d'AccountingPeriod chargée dans ce test unitaire — même prédicat que LetteringPeriodLock).
+        journalEntries
+            .Setup(j => j.GetLockedFiscalYearsAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new HashSet<int> { 2026 });
+
+        var unitOfWork = new Mock<ITenantUnitOfWork>();
+        var settings = Options.Create(new AccountingSettings { MultiCurrencyEnabled = true });
+
+        var handler = new SettleExchangeDifferenceCommandHandler(
+            journalEntries.Object,
+            chart.Object,
+            new Mock<IAccountingPeriodService>().Object,
+            new Mock<ILetteringService>().Object,
+            unitOfWork.Object,
+            new Mock<IAuditService>().Object,
+            new Mock<ICurrentUser>().Object,
+            settings);
+
+        var result = await handler.Handle(
+            new SettleExchangeDifferenceCommand(new[] { invoiceLine.Id, paymentLine.Id }, "655"),
+            CancellationToken.None);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(LetteringErrorCodes.PeriodLocked, result.Error.Code);
+        Assert.Contains("clôturée", result.Error.Description);
+
+        // Cœur du test : aucune écriture d'ajustement n'a été construite, et la transaction qui
+        // l'aurait créée n'a même pas démarré.
+        journalEntries.Verify(
+            j => j.AddAsync(It.IsAny<JournalEntry>(), It.IsAny<CancellationToken>()), Times.Never);
+        journalEntries.Verify(
+            j => j.ReserveNextEntryNumberAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+        unitOfWork.Verify(
+            u => u.ExecuteAsync(It.IsAny<Func<CancellationToken, Task<Result>>>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }

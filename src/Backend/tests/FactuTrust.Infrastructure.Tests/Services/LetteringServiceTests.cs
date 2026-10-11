@@ -210,4 +210,64 @@ public sealed class LetteringServiceTests
         Assert.True(again.IsFailure);
         Assert.Contains("déjà lettrées", again.Error.Description);
     }
+
+    /// <summary>
+    /// Plan §5.5 (D9) : <c>AutoLetterPaymentAsync</c> doit TOUJOURS pouvoir lettrer un règlement
+    /// (période ouverte) avec sa facture, même si la facture appartient à une période déjà
+    /// clôturée — c'est l'exception "Allow" du verrou (flux automatique interne, pas d'origine
+    /// HTTP possible pour cette valeur, cf. <c>LetterAccountEntriesCommandValidator</c>).
+    /// </summary>
+    [Fact]
+    public async Task AutoLetterPaymentAsync_InvoiceInClosedPeriod_StillLetters()
+    {
+        var closedPeriod = AccountingPeriod.Create(2026, 4, new DateTime(2026, 4, 1), new DateTime(2026, 4, 30));
+        closedPeriod.Close("test");
+
+        using (var ctx = _factory.CreateContext())
+        {
+            ctx.AccountingPeriods.Add(closedPeriod);
+            ctx.SaveChanges();
+        }
+
+        var clientId = Guid.NewGuid();
+        var invoiceId = Guid.NewGuid();
+        var paymentId = Guid.NewGuid();
+
+        var invoiceEntry = JournalEntry.Create(
+            10, "JV", new DateTime(2026, 4, 15), "Facture avril (clôturée)",
+            closedPeriod.Id, false, "Invoice", invoiceId,
+            new[]
+            {
+                new JournalLineInput("4111", "Client", 500m, 0m, clientId, ThirdPartyKind.Client),
+                new JournalLineInput("707", "Vente", 0m, 500m, null, ThirdPartyKind.None)
+            }).Value;
+        invoiceEntry.SetAuditInfo("test", false);
+
+        var paymentEntry = JournalEntry.Create(
+            11, "JB", new DateTime(2026, 5, 20), "Règlement mai (ouverte)",
+            _accountingPeriodId, false, "Payment", paymentId,
+            new[]
+            {
+                new JournalLineInput("532", "Banque", 500m, 0m, null, ThirdPartyKind.None),
+                new JournalLineInput("4111", "Client", 0m, 500m, clientId, ThirdPartyKind.Client)
+            }).Value;
+        paymentEntry.SetAuditInfo("test", false);
+
+        using (var ctx = _factory.CreateContext())
+        {
+            ctx.JournalEntries.AddRange(invoiceEntry, paymentEntry);
+            ctx.SaveChanges();
+        }
+
+        var result = await BuildService().AutoLetterPaymentAsync("Payment", paymentId, "Invoice", invoiceId);
+
+        Assert.True(result.IsSuccess);
+
+        using var verify = _factory.CreateContext();
+        var invoiceLine = verify.JournalEntryLines.AsNoTracking().Single(l => l.JournalEntryId == invoiceEntry.Id && l.AccountNumber == "4111");
+        var paymentLine = verify.JournalEntryLines.AsNoTracking().Single(l => l.JournalEntryId == paymentEntry.Id && l.AccountNumber == "4111");
+
+        Assert.NotNull(invoiceLine.LetteringCode);
+        Assert.Equal(invoiceLine.LetteringCode, paymentLine.LetteringCode);
+    }
 }
