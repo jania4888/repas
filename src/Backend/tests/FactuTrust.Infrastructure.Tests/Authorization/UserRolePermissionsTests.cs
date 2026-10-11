@@ -27,6 +27,55 @@ public sealed class UserRolePermissionsTests
         Assert.Contains(Permissions.Accounting.Validate, DelegatedPermissionCatalog.FirmManagerDelegated);
     }
 
+    #region Lettering (plan de refonte §6, D6/D7)
+
+    [Theory]
+    [InlineData(UserRole.Administrator)]
+    [InlineData(UserRole.Supervisor)]
+    public void AdministratorAndSupervisor_Include_AccountingUnletter(UserRole role)
+    {
+        Assert.Contains(Permissions.Accounting.Unletter, role.GetPermissions());
+    }
+
+    [Theory]
+    [InlineData(UserRole.Accountant)]
+    [InlineData(UserRole.Auditor)]
+    [InlineData(UserRole.SalesRep)]
+    [InlineData(UserRole.SalesManager)]
+    [InlineData(UserRole.Client)]
+    [InlineData(UserRole.Cashier)]
+    [InlineData(UserRole.Warehouse)]
+    [InlineData(UserRole.Purchaser)]
+    [InlineData(UserRole.Developer)]
+    public void CompanyAccountantAndOtherRoles_DoNotInclude_AccountingUnletter(UserRole role)
+    {
+        // D6 : le comptable entreprise ne peut plus délettrer ; il garde `accounting:create`
+        // (lettrage et complétion restent permis). Les autres rôles n'ont jamais eu ce droit.
+        Assert.DoesNotContain(Permissions.Accounting.Unletter, role.GetPermissions());
+    }
+
+    [Fact]
+    public void Accountant_StillIncludes_AccountingCreate()
+    {
+        // D7 : le comptable entreprise peut toujours compléter un lettrage partiel (action
+        // couverte par `accounting:create`), seul le délettrage lui est retiré.
+        Assert.Contains(Permissions.Accounting.Create, UserRole.Accountant.GetPermissions());
+    }
+
+    [Fact]
+    public void FirmAccountantDelegated_Includes_AccountingUnletter()
+    {
+        Assert.Contains(Permissions.Accounting.Unletter, DelegatedPermissionCatalog.FirmAccountantDelegated);
+    }
+
+    [Fact]
+    public void FirmManagerDelegated_Includes_AccountingUnletter()
+    {
+        Assert.Contains(Permissions.Accounting.Unletter, DelegatedPermissionCatalog.FirmManagerDelegated);
+    }
+
+    #endregion
+
     #region SalesOrders permissions
 
     [Theory]
