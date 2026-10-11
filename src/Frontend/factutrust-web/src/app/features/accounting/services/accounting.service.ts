@@ -106,6 +106,108 @@ export interface LedgerRowDto {
   runningBalance: number;
 }
 
+// ── Lettrage (contrat §4 du plan de refonte) ──
+
+export interface LetteringLineDto {
+  lineId: string;
+  entryId: string;
+  entryDate: string;
+  journalCode: string;
+  entryNumber: number;
+  lineNumber: number;
+  accountNumber: string;
+  label: string;
+  entryLabel: string;
+  pieceRef?: string | null;
+  /** Code stable : invoice, credit_note, payment, payroll, opening, reversal, exchange, manual, other. */
+  sourceCategory: string;
+  /** Devise de tenue (TND). */
+  debit: number;
+  credit: number;
+  /** Devise de l'opération. JAMAIS la devise de tenue (voir `JournalEntryLineDto.currency`). */
+  operationCurrency: string;
+  debitInCurrency: number;
+  creditInCurrency: number;
+  letteringCode?: string | null;
+  isPartiallyLettered: boolean;
+  thirdPartyId?: string | null;
+  thirdPartyKind?: number | null;
+  thirdPartyName?: string | null;
+  isDraft: boolean;
+  isReversed: boolean;
+  isReversal: boolean;
+  /** Règle stricte D8 : exercice/période clôturé(e). */
+  periodLocked: boolean;
+}
+
+export interface LetteringTotalsDto {
+  count: number;
+  debitCount: number;
+  creditCount: number;
+  totalDebit: number;
+  totalCredit: number;
+  balance: number;
+  unletteredDebit: number;
+  unletteredCredit: number;
+  unletteredBalance: number;
+  singleForeignCurrency?: string | null;
+  totalDebitInCurrency?: number | null;
+  totalCreditInCurrency?: number | null;
+}
+
+export interface LetteringLinesPageDto {
+  items: LetteringLineDto[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  truncated: boolean;
+  totals: LetteringTotalsDto;
+}
+
+export interface LetteringLinesQuery {
+  account: string;
+  accountMatch?: 'exact' | 'prefix';
+  from: string;
+  to: string;
+  state?: 'all' | 'unlettered' | 'partial' | 'lettered';
+  journalCode?: string | null;
+  sourceCategories?: readonly string[];
+  thirdPartyId?: string | null;
+  thirdPartyKind?: number | null;
+  side?: 'all' | 'debit' | 'credit';
+  minAmount?: number | null;
+  maxAmount?: number | null;
+  search?: string | null;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface LetteringGroupDto {
+  id: string;
+  code: string;
+  accountNumber: string;
+  amount: number;
+  operationCurrency: string;
+  isPartial: boolean;
+  letteredAt: string;
+  createdByDisplayName?: string | null;
+  lines: LetteringLineDto[];
+  canUnletter: boolean;
+  /** `null` | `"permission"` | `"period_locked"`. */
+  unletterBlockedReason?: 'permission' | 'period_locked' | null;
+  canComplete: boolean;
+}
+
+/** Réponse enrichie de `POST letter` / `POST .../complete` (contrat §4.3/§4.4). */
+export interface LetteringResultDto {
+  code: string;
+  groupId: string;
+  isPartial: boolean;
+  lineCount: number;
+  /** Rempli seulement par « Compléter » (§4.4), `null` sinon. */
+  previousCode?: string | null;
+}
+
 export interface BalanceRowDto {
   /**
    * Devises etrangeres presentes sur le compte. Une LISTE : une ligne de balance agrege un compte
@@ -2434,17 +2536,59 @@ export class AccountingService {
     return this.http.patch<ApiResponse<boolean>>(`${this.base}/chart-of-accounts/${id}/toggle-active`, {});
   }
 
-  letterEntries(journalEntryLineIds: string[], allowPartial = false): Observable<ApiResponse<boolean>> {
-    return this.http.post<ApiResponse<boolean>>(`${this.base}/letter`, { journalEntryLineIds, allowPartial });
+  /** Lettre un ensemble de lignes. Réponse enrichie avec le code créé (contrat §4.3). */
+  letterEntries(journalEntryLineIds: string[], allowPartial = false): Observable<ApiResponse<LetteringResultDto>> {
+    return this.http.post<ApiResponse<LetteringResultDto>>(`${this.base}/letter`, { journalEntryLineIds, allowPartial });
   }
 
-  /** Délettre un groupe par son code : libère les lignes et supprime le groupe. */
   settleExchangeDifference(journalEntryLineIds: string[], accountNumber: string): Observable<ApiResponse<string>> {
     return this.http.post<ApiResponse<string>>(
       `${this.base}/lettering/settle-exchange-difference`, { journalEntryLineIds, accountNumber });
   }
+
+  /** Délettre un groupe par son code : libère les lignes et supprime le groupe. */
   unletterEntries(code: string): Observable<ApiResponse<boolean>> {
     return this.http.post<ApiResponse<boolean>>(`${this.base}/unletter`, { code });
+  }
+
+  /** Lignes candidates au lettrage, filtrées et paginées (contrat §4.1). Écran : lettering. */
+  getLetteringLines(query: LetteringLinesQuery): Observable<ApiResponse<LetteringLinesPageDto>> {
+    let p = new HttpParams()
+      .set('account', query.account)
+      .set('from', query.from)
+      .set('to', query.to)
+      .set('page', String(query.page ?? 1))
+      .set('pageSize', String(query.pageSize ?? 2000));
+    if (query.accountMatch) p = p.set('accountMatch', query.accountMatch);
+    if (query.state) p = p.set('state', query.state);
+    if (query.journalCode) p = p.set('journalCode', query.journalCode);
+    if (query.side) p = p.set('side', query.side);
+    if (query.thirdPartyId) {
+      p = p.set('thirdPartyId', query.thirdPartyId);
+      if (query.thirdPartyKind !== null && query.thirdPartyKind !== undefined) {
+        p = p.set('thirdPartyKind', String(query.thirdPartyKind));
+      }
+    }
+    if (query.minAmount !== null && query.minAmount !== undefined) p = p.set('minAmount', String(query.minAmount));
+    if (query.maxAmount !== null && query.maxAmount !== undefined) p = p.set('maxAmount', String(query.maxAmount));
+    if (query.search) p = p.set('search', query.search);
+    for (const code of query.sourceCategories ?? []) {
+      p = p.append('sourceCategories', code);
+    }
+    return this.http.get<ApiResponse<LetteringLinesPageDto>>(`${this.base}/lettering/lines`, { params: p });
+  }
+
+  /** Détail d'un groupe de lettrage, pour le tiroir de l'écran (contrat §4.2). */
+  getLetteringGroup(code: string): Observable<ApiResponse<LetteringGroupDto>> {
+    return this.http.get<ApiResponse<LetteringGroupDto>>(`${this.base}/lettering/groups/${encodeURIComponent(code)}`);
+  }
+
+  /** Complète un lettrage partiel (D7). Réponse avec `previousCode` renseigné (contrat §4.4). */
+  completePartialLettering(
+    code: string, journalEntryLineIds: string[], allowPartial = false
+  ): Observable<ApiResponse<LetteringResultDto>> {
+    return this.http.post<ApiResponse<LetteringResultDto>>(
+      `${this.base}/lettering/groups/${encodeURIComponent(code)}/complete`, { journalEntryLineIds, allowPartial });
   }
 
   // ---------------------------------------------------------------------------

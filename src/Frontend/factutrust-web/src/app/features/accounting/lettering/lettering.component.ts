@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -36,6 +37,14 @@ import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { FUNCTIONAL_CURRENCY } from '../manual-entry/models/entry-form.model';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
+
+/**
+ * Codes stables du lettrage (plan de refonte §4.6). Toutes les routes letter/complete/unletter/
+ * settle répondent par un statut HTTP non-2xx sur échec (409/404/400) : Angular livre donc ces
+ * échecs via le callback `error` de l'Observable, jamais via `next` avec `success:false`.
+ */
+const LETTERING_PERIOD_LOCKED_CODE = 'LETTERING_PERIOD_LOCKED';
+const LETTERING_ALREADY_LETTERED_CODE = 'LETTERING_ALREADY_LETTERED';
 
 interface LetteringLine {
   lineId: string;
@@ -94,11 +103,26 @@ export class LetteringComponent implements OnInit {
   protected loc_delettrer_le_groupe_letteringcode_0aecd2(p0: unknown): string {
     return $localize`:@@accounting.lettering.tpl.delettrer.le.groupe.letteringcode.0aecd2b5:Délettrer le groupe ${p0}:letteringCode:`;
   }
+  protected readonly loc_completer_le_lettrage_a1b2c3 = $localize`:@@accounting.lettering.tpl.completer.le.lettrage.a1b2c3d4:Compléter le lettrage`;
+  protected loc_completer_le_lettrage_code_c0d1e2(p0: unknown): string {
+    return $localize`:@@accounting.lettering.tpl.completer.le.lettrage.code.c0d1e2f3:Compléter le lettrage ${p0}:code:`;
+  }
+  protected readonly loc_retirez_les_lignes_deja_lettrees_b1c2d3 = $localize`:@@accounting.lettering.ts.retirez.les.lignes.deja.lettrees.b1c2d3e4:Retirez les lignes déjà lettrées définitivement (code « L ») de la sélection.`;
+  protected readonly loc_un_seul_groupe_partiel_c2d3e4 = $localize`:@@accounting.lettering.ts.selectionnez.un.seul.groupe.partiel.c2d3e4f5:Sélectionnez les lignes d'un seul groupe partiel (« P ») à la fois pour le compléter.`;
+  protected readonly loc_ajoutez_une_ligne_non_lettree_d3e4f5 = $localize`:@@accounting.lettering.ts.ajoutez.au.moins.une.ligne.non.lettree.d3e4f5a6:Ajoutez au moins une ligne non lettrée à la sélection pour compléter ce groupe.`;
+  protected readonly loc_droit_insuffisant_e4f5a6 = $localize`:@@accounting.lettering.ts.droit.insuffisant.e4f5a6b7:Droit insuffisant pour effectuer cette action.`;
+  protected readonly loc_periode_ou_exercice_cloture_f5a6b7 = $localize`:@@accounting.lettering.ts.periode.ou.exercice.cloture.f5a6b7c8:Action impossible : une des écritures sélectionnées appartient à une période ou un exercice clôturé.`;
 
   protected letterSelectedAriaLabel(): string {
     return this.canLetter()
       ? this.loc_lettrer_les_count_lignes_selectionne_2f8a67(this.selectionSummary().count)
       : this.loc_selection_non_equilibree_cochez_lett_b9e132;
+  }
+
+  protected completeSelectedAriaLabel(): string {
+    const code = this.selectedPartialCode();
+    if (this.canComplete() && code) return this.loc_completer_le_lettrage_code_c0d1e2(code);
+    return this.completionBlockedReason() ?? this.loc_completer_le_lettrage_a1b2c3;
   }
 
   private readonly errors = inject(ErrorHandlerService);
@@ -274,11 +298,69 @@ export class LetteringComponent implements OnInit {
     this.successMessage.set(null);
   }
 
-  /** Lettrage possible : ≥ 2 lignes, équilibrées OU partiel explicitement coché. */
+  /**
+   * Lettrage possible : ≥ 2 lignes, équilibrées OU partiel explicitement coché. Désactivé dès que
+   * la sélection contient une ligne « P » : dans ce cas, c'est le bouton « Compléter » (ci-dessous)
+   * qui gère l'action, pour forcer l'appel au bon endpoint (`.../groups/{code}/complete`).
+   */
   canLetter(): boolean {
+    if (this.isCompletionSelection()) return false;
     const s = this.selectionSummary();
     return s.count >= 2 && (s.balanced || this.allowPartial);
   }
+
+  /** Codes de groupes partiels (préfixe « P ») présents dans la sélection actuelle. */
+  readonly selectedPartialCodes = computed<ReadonlySet<string>>(() => {
+    const codes = new Set<string>();
+    for (const l of this.selectedLines()) {
+      if (this.isPartialCode(l.letteringCode)) codes.add(l.letteringCode as string);
+    }
+    return codes;
+  });
+
+  /** Un seul code « P » dans la sélection — pour l'affichage du bouton, même si l'action n'est
+   * pas encore valide (cf. {@link completionBlockedReason}). `null` si 0 ou ≥ 2 groupes. */
+  readonly selectedPartialCode = computed<string | null>(() => {
+    const codes = this.selectedPartialCodes();
+    return codes.size === 1 ? [...codes][0] : null;
+  });
+
+  /** Lignes déjà lettrées DÉFINITIVEMENT (code « L ») glissées dans la sélection : ne devrait pas
+   * arriver via l'UI (`isSelectableRow` les exclut déjà), mais reste défensif. */
+  readonly selectedFullyLetteredCount = computed(() =>
+    this.selectedLines().filter(l => this.isLettered(l) && !this.isPartialCode(l.letteringCode)).length
+  );
+
+  readonly selectedUnletteredCount = computed(() =>
+    this.selectedLines().filter(l => !this.isLettered(l)).length
+  );
+
+  /** La sélection contient au moins une ligne « P » : le bouton principal devient « Compléter ». */
+  readonly isCompletionSelection = computed(() => this.selectedPartialCodes().size > 0);
+
+  /**
+   * Code du groupe partiel à compléter si la sélection s'y prête exactement : un seul groupe
+   * « P » et au moins une ligne non lettrée ajoutée. `null` sinon (bouton désactivé).
+   */
+  readonly completionCode = computed<string | null>(() => {
+    if (this.selectedFullyLetteredCount() > 0) return null;
+    if (this.selectedUnletteredCount() < 1) return null;
+    return this.selectedPartialCode();
+  });
+
+  canComplete(): boolean {
+    return this.completionCode() !== null;
+  }
+
+  /** Explication affichée quand le bouton « Compléter » est désactivé. `null` si activable. */
+  readonly completionBlockedReason = computed<string | null>(() => {
+    const codes = this.selectedPartialCodes();
+    if (codes.size === 0) return null;
+    if (this.selectedFullyLetteredCount() > 0) return this.loc_retirez_les_lignes_deja_lettrees_b1c2d3;
+    if (codes.size >= 2) return this.loc_un_seul_groupe_partiel_c2d3e4;
+    if (this.selectedUnletteredCount() < 1) return this.loc_ajoutez_une_ligne_non_lettree_d3e4f5;
+    return null;
+  });
 
   readonly functionalCurrency = FUNCTIONAL_CURRENCY;
 
@@ -331,7 +413,7 @@ export class LetteringComponent implements OnInit {
             this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.l.equilibrage.564a12:Erreur lors de l'équilibrage.`);
           }
         },
-        error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.lettering.ts.erreur.reseau.lors.de.l.equilibrage.86743867:Erreur réseau lors de l'équilibrage.`))
+        error: err => this.handleLetteringError(err, $localize`:@@accounting.lettering.ts.erreur.reseau.lors.de.l.equilibrage.86743867:Erreur réseau lors de l'équilibrage.`)
       });
   }
 
@@ -360,7 +442,44 @@ export class LetteringComponent implements OnInit {
             this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.lettrage.8e822f:Erreur lors du lettrage.`);
           }
         },
-        error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.lettering.ts.erreur.reseau.lors.du.lettrage.1358d80e:Erreur réseau lors du lettrage.`))
+        error: err => this.handleLetteringError(err, $localize`:@@accounting.lettering.ts.erreur.reseau.lors.du.lettrage.1358d80e:Erreur réseau lors du lettrage.`)
+      });
+  }
+
+  /**
+   * Complète un lettrage partiel « P » (D7) : envoie UNIQUEMENT les lignes non lettrées ajoutées
+   * à la sélection — les autres membres du groupe (déjà lettrés en « P ») sont connus du serveur
+   * via le code, pas renvoyés. Le serveur recalcule l'équilibre sur l'ensemble du groupe ; l'écran
+   * n'a pas besoin de voir les membres du groupe absents de la page courante.
+   */
+  completeSelected(): void {
+    const code = this.completionCode();
+    if (!code || this.lettering()) return;
+    const ids = this.selectedLines().filter(l => !this.isLettered(l)).map(l => l.lineId);
+    if (ids.length === 0) return;
+
+    this.lettering.set(true);
+    this.error.set(null);
+    this.successMessage.set(null);
+
+    this.api
+      .completePartialLettering(code, ids, this.allowPartial)
+      .pipe(finalize(() => this.lettering.set(false)))
+      .subscribe({
+        next: res => {
+          if (res.success && res.data) {
+            const result = res.data;
+            this.successMessage.set(result.isPartial
+              ? $localize`:@@accounting.lettering.ts.lettrage.partiel.code.complete.reste.partiel.a6b7c8d9:Lettrage partiel ${result.code}:code: complété (reste partiel).`
+              : $localize`:@@accounting.lettering.ts.lettrage.code.finalise.b7c8d9e0:Lettrage ${result.code}:code: finalisé.`);
+            this.selectedLines.set([]);
+            this.allowPartial = false;
+            this.load();
+          } else {
+            this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.completion.du.lettrage.c8d9e0f1:Erreur lors de la complétion du lettrage.`);
+          }
+        },
+        error: err => this.handleLetteringError(err, $localize`:@@accounting.lettering.ts.erreur.reseau.lors.de.la.completion.du.lettrage.d9e0f1a2:Erreur réseau lors de la complétion du lettrage.`)
       });
   }
 
@@ -392,10 +511,38 @@ export class LetteringComponent implements OnInit {
                 this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.delettrage.a7b9e5:Erreur lors du délettrage.`);
               }
             },
-            error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.lettering.ts.erreur.reseau.lors.du.delettrage.ae259626:Erreur réseau lors du délettrage.`))
+            error: err => this.handleLetteringError(err, $localize`:@@accounting.lettering.ts.erreur.reseau.lors.du.delettrage.ae259626:Erreur réseau lors du délettrage.`)
           });
       }
     });
+  }
+
+  /**
+   * Gère l'échec HTTP des 4 actions de lettrage (letter/complete/unletter/settle), toutes
+   * mappées sur un statut non-2xx (plan §4.6) :
+   * - 403 (policy d'autorisation refusée) → message fixe « Droit insuffisant », pas de rechargement.
+   * - `LETTERING_PERIOD_LOCKED` → message traduit clair, sélection conservée, pas de rechargement.
+   * - `LETTERING_ALREADY_LETTERED` → message serveur + rechargement (l'état a changé entre-temps).
+   * - autres codes → message serveur, comportement inchangé (pas de rechargement).
+   */
+  private handleLetteringError(err: unknown, networkFallback: string): void {
+    const status = (err as HttpErrorResponse)?.status;
+    if (status === 403) {
+      this.error.set(this.loc_droit_insuffisant_e4f5a6);
+      return;
+    }
+    const code = this.errors.getApiErrorCode(err);
+    if (code === LETTERING_PERIOD_LOCKED_CODE) {
+      this.error.set(this.loc_periode_ou_exercice_cloture_f5a6b7);
+      return;
+    }
+    if (code === LETTERING_ALREADY_LETTERED_CODE) {
+      this.error.set(this.errors.extractErrorMessage(err, networkFallback));
+      this.selectedLines.set([]);
+      this.load();
+      return;
+    }
+    this.error.set(this.errors.extractErrorMessage(err, networkFallback));
   }
 
   isLettered(line: LetteringLine): boolean {
@@ -403,12 +550,21 @@ export class LetteringComponent implements OnInit {
   }
 
   /**
+   * Sélectionnable : ligne non lettrée, OU lettrée partiellement (code « P », D7 — on peut encore
+   * y ajouter des lignes pour la compléter). Les lignes lettrées DÉFINITIVEMENT (code « L »)
+   * restent exclues.
+   */
+  isRowSelectable(line: LetteringLine): boolean {
+    return !this.isLettered(line) || this.isPartialCode(line.letteringCode);
+  }
+
+  /**
    * Donnée pour `[rowSelectable]` du `p-table` : sans cette fonction, la case « tout sélectionner »
    * de l'en-tête (`p-tableHeaderCheckbox`) sélectionne TOUTES les lignes, y compris celles déjà
-   * lettrées dont la case individuelle est désactivée (`[disabled]="isLettered(line)"`) — elle
-   * doit respecter exactement la même règle que la case de ligne.
+   * lettrées, en contradiction avec la case de ligne (`[disabled]="!isRowSelectable(line)"`) —
+   * elle doit respecter exactement la même règle.
    */
-  isSelectableRow = (event: { data: LetteringLine }): boolean => !this.isLettered(event.data);
+  isSelectableRow = (event: { data: LetteringLine }): boolean => this.isRowSelectable(event.data);
 
   /**
    * Droit requis pour délettrer (plan de refonte, D6) : `accounting:unletter`, distinct de

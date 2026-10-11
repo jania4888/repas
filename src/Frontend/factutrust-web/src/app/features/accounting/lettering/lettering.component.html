@@ -129,15 +129,32 @@
             (onClick)="openSettle()"
             aria-label="Apurer l'écart de change puis lettrer" i18n-aria-label="@@accounting.lettering.apurer.l.ecart.de.change.puis.lettrer.0c7cad24" />
         }
-        <p-button
-          [label]="!selectionSummary().balanced && allowPartial ? 'Lettrer partiellement' : loc_lettrer_la_selection_826ebb"
-          icon="pi pi-link"
-          [disabled]="!canLetter()"
-          [loading]="lettering()"
-          (onClick)="letterSelected()"
-          [severity]="!selectionSummary().balanced && allowPartial ? 'warn' : 'success'"
-          [attr.aria-label]="letterSelectedAriaLabel()"
-        />
+        @if (isCompletionSelection()) {
+          <div class="lettering-complete-group">
+            <p-button
+              [label]="selectedPartialCode() ? loc_completer_le_lettrage_code_c0d1e2(selectedPartialCode()) : loc_completer_le_lettrage_a1b2c3"
+              icon="pi pi-link"
+              [disabled]="!canComplete()"
+              [loading]="lettering()"
+              (onClick)="completeSelected()"
+              severity="success"
+              [attr.aria-label]="completeSelectedAriaLabel()"
+            />
+            @if (completionBlockedReason()) {
+              <p class="lettering-complete-hint" role="status">{{ completionBlockedReason() }}</p>
+            }
+          </div>
+        } @else {
+          <p-button
+            [label]="!selectionSummary().balanced && allowPartial ? 'Lettrer partiellement' : loc_lettrer_la_selection_826ebb"
+            icon="pi pi-link"
+            [disabled]="!canLetter()"
+            [loading]="lettering()"
+            (onClick)="letterSelected()"
+            [severity]="!selectionSummary().balanced && allowPartial ? 'warn' : 'success'"
+            [attr.aria-label]="letterSelectedAriaLabel()"
+          />
+        }
       </div>
     </div>
   }
@@ -210,7 +227,7 @@
           <ng-template pTemplate="body" let-line>
             <tr [class.lettering-row--lettered]="isLettered(line)">
               <td>
-                <p-tableCheckbox [value]="line" [disabled]="isLettered(line)" />
+                <p-tableCheckbox [value]="line" [disabled]="!isRowSelectable(line)" />
               </td>
               <td>{{ line.entryDate | date : 'shortDate' }}</td>
               <td><span class="lettering-code">{{ line.journalCode }}</span></td>
