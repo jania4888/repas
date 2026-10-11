@@ -146,7 +146,15 @@ export const PERMISSIONS = {
      * Saisir un taux de change different de celui de la table. Le taux determine le montant en
      * dinar porte en comptabilite : sans cette permission le champ est en lecture seule.
      */
-    exchangeRateOverride: 'accounting:exchange_rate_override'
+    exchangeRateOverride: 'accounting:exchange_rate_override',
+    /**
+     * Délettrer un groupe de lettrage existant (écran de lettrage, Phase 2). Clé définie par le
+     * contrat §4/D6 du plan de refonte du lettrage ; ajoutée de façon provisoire ici en Phase 2
+     * pour permettre la compilation/les tests de ce dépôt avant le rebase sur la Phase 1 (backend,
+     * branche `vorflux/lettering-p1-backend-security`), qui ajoute la même clé indépendamment.
+     * Conflit de rebase attendu et trivial à résoudre (les deux valeurs sont identiques).
+     */
+    unletter: 'accounting:unletter'
   },
   audit: {
     read: 'audit:read'
