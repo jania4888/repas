@@ -25,7 +25,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.AI.AiExportAudit", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ConversationIdsJson")
@@ -107,7 +106,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.AI.Conversation", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("AgentScope")
@@ -156,7 +154,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.AI.ConversationMessage", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Content")
@@ -207,7 +204,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.AI.TenantAiProvider", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BaseUrl")
@@ -256,10 +252,482 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("TenantAiProviders", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.AccountingAudit.AccountingAnomaly", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccountRef")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<Guid?>("AssignedToUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AssignedToUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeepLinkRoute")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<DateTime>("DetectedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Fingerprint")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("IgnoreReason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Impact")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("ModuleCode")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateOnly?>("PeriodFrom")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("PeriodTo")
+                        .HasColumnType("date");
+
+                    b.Property<string>("RecommendationsJson")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<DateTime?>("ResolvedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RuleCode")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<Guid>("RunId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Fingerprint")
+                        .IsUnique();
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("RunId", "Severity");
+
+                    b.ToTable("AccountingAnomalies", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.AccountingAudit.AccountingAnomalyActivity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ActivityType")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("AnomalyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("NewValue")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("OldValue")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnomalyId");
+
+                    b.ToTable("AccountingAnomalyActivities", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.AccountingAudit.AccountingAnomalyLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccountNumber")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<Guid>("AnomalyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Credit")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("Debit")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime?>("EntryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("JournalEntryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("JournalEntryLineId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("JustificationStatus")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("Label")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("PieceRef")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnomalyId");
+
+                    b.ToTable("AccountingAnomalyLines", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.AccountingAudit.AccountingControlRuleSetting", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("DecimalThreshold")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<int?>("IntThreshold")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("JsonOptions")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("RuleCode")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RuleCode")
+                        .IsUnique();
+
+                    b.ToTable("AccountingControlRuleSettings", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.AccountingAudit.AccountingControlRun", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("BlockingCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("ComplianceRate")
+                        .HasPrecision(5, 1)
+                        .HasColumnType("decimal(5,1)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<int>("EvaluatedRuleCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<int>("FiscalYear")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InfoCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModuleCodesFilter")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateOnly>("PeriodFrom")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("PeriodTo")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalAnomalies")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("TriggeredByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TriggeredByUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("WarningCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FiscalYear", "CompletedAt");
+
+                    b.ToTable("AccountingControlRuns", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.AccountingAudit.AccountingControlSchedule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CronExpression")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("FiscalYearOffset")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastRunAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModuleCodesFilter")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("NotifyEmails")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AccountingControlSchedules", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.AccountingAudit.AccountingRevisionNote", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("AiGenerated")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("AnomalyCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BlockingCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExecutiveSummary")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("FallbackReason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("FiscalYear")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("GeneratedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("GeneratedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("GeneratedByUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ItemsJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModelRef")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateOnly>("PeriodFrom")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("PeriodTo")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("RunId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("TotalImpactAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RunId")
+                        .IsUnique();
+
+                    b.HasIndex("FiscalYear", "GeneratedAt");
+
+                    b.ToTable("AccountingRevisionNotes", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.AccountingPeriod", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("ClosedAt")
@@ -306,7 +774,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.AccountingYearLock", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -343,7 +810,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.AppliedSectorTemplate", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("AppliedAtUtc")
@@ -380,7 +846,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.AuditLog", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Action")
@@ -463,7 +928,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.BankAccount", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AgencyName")
@@ -551,7 +1015,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.BankDeposit", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("BankAccountId")
@@ -615,10 +1078,131 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("BankDeposits", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.BankLabelClassification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccountNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("IsDebit")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LabelHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("ModelRef")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("NormalizedLabel")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LabelHash")
+                        .IsUnique();
+
+                    b.ToTable("BankLabelClassifications", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.BankPostingRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccountNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<Guid?>("BankAccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<int>("Direction")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastUsedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MatchKind")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Pattern")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("SplitEmbeddedVat")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ThirdPartyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ThirdPartyKind")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<int>("UsageCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("VatAccountNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BankAccountId", "Direction", "MatchKind", "Pattern")
+                        .IsUnique()
+                        .HasDatabaseName("IX_BankPostingRules_Scope_Pattern")
+                        .HasFilter("[BankAccountId] IS NOT NULL");
+
+                    b.ToTable("BankPostingRules", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.BankStatement", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AccountNumber")
@@ -691,10 +1275,107 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("BankStatements", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.BankStatementImportSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AiProviderKind")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<Guid>("BankAccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ErrorCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ExtractionMethod")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("FileHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("JournalCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("PageCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProfileId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("ProgressPercent")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ResultJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid?>("StatementId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StoragePath")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BankAccountId", "FileHash");
+
+                    b.HasIndex("Status", "ExpiresAt");
+
+                    b.ToTable("BankStatementImportSessions", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.BankStatementLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("BankStatementId")
@@ -755,7 +1436,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.BudgetLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Amount")
@@ -799,7 +1479,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.BudgetPost", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AccountPrefixes")
@@ -849,7 +1528,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.BudgetYear", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -888,7 +1566,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.CashOperation", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CancellationReason")
@@ -897,6 +1574,9 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.Property<DateTime?>("CancelledAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CashRegisterSessionId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int?>("Category")
                         .HasColumnType("int");
@@ -956,10 +1636,16 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("VatRate")
+                        .HasColumnType("int");
+
                     b.Property<int>("Version")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CashRegisterSessionId")
+                        .HasFilter("[CashRegisterSessionId] IS NOT NULL");
 
                     b.HasIndex("Method");
 
@@ -978,10 +1664,118 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("CashExpenses", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.CashRegister", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("WarehouseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("IsActive");
+
+                    b.HasIndex("WarehouseId");
+
+                    b.ToTable("CashRegisters", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.CashRegisterSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CashRegisterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ClosedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ClosedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("OpenedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("OpenedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("ZReportId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CashRegisterId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_CashRegisterSessions_OpenPerRegister")
+                        .HasFilter("[Status] = 0");
+
+                    b.HasIndex("ZReportId")
+                        .IsUnique()
+                        .HasFilter("[ZReportId] IS NOT NULL");
+
+                    b.HasIndex("CashRegisterId", "OpenedAt");
+
+                    b.ToTable("CashRegisterSessions", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.Channels.ChannelIdentityLink", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("ChannelType")
@@ -1037,7 +1831,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Channels.ChannelInboundMessageLog", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("ChannelType")
@@ -1086,7 +1879,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Channels.ChannelLinkCode", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("AttemptCount")
@@ -1137,7 +1929,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.ChartOfAccount", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("AccountClass")
@@ -1206,7 +1997,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Client", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Activity")
@@ -1231,18 +2021,18 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal?>("CreditLimit")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
-                    b.Property<int?>("DefaultPaymentTermDays")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("DefaultPaymentTermDays")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1301,15 +2091,82 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("Clients", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.ClientPortalContact", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("AcceptedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime>("InvitedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastAccessAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("ClientId", "Email");
+
+                    b.ToTable("ClientPortalContacts", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.Company", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BankName")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("ClientPortalEnabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("CnssEmployerNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("CommerceRegistry")
                         .HasMaxLength(50)
@@ -1382,10 +2239,103 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("Companies", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Currency", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DecimalPlaces")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFunctional")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<int>("RatePeriodicity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("IsFunctional")
+                        .IsUnique()
+                        .HasFilter("[IsFunctional] = 1");
+
+                    b.ToTable("Currencies", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.CurrencyExchangeRate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CurrencyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("FiscalYear")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Rate")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CurrencyId", "FiscalYear")
+                        .IsUnique()
+                        .HasFilter("[Month] IS NULL");
+
+                    b.HasIndex("CurrencyId", "FiscalYear", "Month")
+                        .IsUnique()
+                        .HasFilter("[Month] IS NOT NULL");
+
+                    b.ToTable("CurrencyExchangeRates", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.DeliveryNote", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("AllowGroupInvoicing")
@@ -1470,6 +2420,7 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Version")
+                        .IsConcurrencyToken()
                         .HasColumnType("int");
 
                     b.Property<Guid?>("WarehouseId")
@@ -1498,8 +2449,14 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.DeliveryNoteLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AppliedPromotionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AppliedPromotionName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1561,6 +2518,10 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<decimal>("ReturnedQuantity")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
                     b.Property<string>("Unit")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -1591,7 +2552,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.DemoDataset", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("AppliedAtUtc")
@@ -1625,7 +2585,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.DepreciationRateCategory", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Code")
@@ -1691,7 +2650,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.DepreciationScheduleLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("AccountingPeriodId")
@@ -1851,7 +2809,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Fiscal.FiscalAdjustmentLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Amount")
@@ -1898,7 +2855,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Fiscal.FiscalCarryForwardItem", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -1943,7 +2899,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Fiscal.FiscalResultDeclaration", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("AccountingResult")
@@ -2015,7 +2970,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Fiscal.IncomeTaxYearParameter", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("AcompteCount")
@@ -2103,7 +3057,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.FiscalScheduleAttachment", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ContentType")
@@ -2149,7 +3102,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.FiscalScheduleEntry", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -2267,7 +3219,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.FiscalScheduleHistoryEntry", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Action")
@@ -2313,7 +3264,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.FixedAsset", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("AccelerationCoefficient")
@@ -2378,11 +3328,11 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
-                    b.Property<string>("DisposalTreasuryAccount")
+                    b.Property<string>("DisposalReceivableAccount")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("DisposalReceivableAccount")
+                    b.Property<string>("DisposalTreasuryAccount")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -2443,6 +3393,7 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasColumnType("decimal(18,3)");
 
                     b.Property<bool>("VatCapitalized")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
@@ -2469,7 +3420,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.FixedAssetEvent", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("Amount")
@@ -2520,7 +3470,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.FixedAssetSettings", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -2529,16 +3478,17 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("FiscalYearStartMonth")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
-
                     b.Property<string>("FiscalYearLabelFormat")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)")
                         .HasDefaultValue("N/N+1");
+
+                    b.Property<int>("FiscalYearStartMonth")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -2554,7 +3504,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Forecasting.ForecastRecomputeAudit", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("ClassificationsUpdated")
@@ -2618,7 +3567,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Forecasting.ProductAbcXyzClassification", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("AbcClass")
@@ -2673,7 +3621,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Forecasting.PromotionRecommendation", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CategoryId")
@@ -2757,7 +3704,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Forecasting.ReplenishmentDecisionAudit", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ActedAt")
@@ -2815,7 +3761,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Forecasting.ReplenishmentRecommendation", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -2927,6 +3872,11 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.HasIndex("ProductId", "GeneratedAt")
                         .HasDatabaseName("IX_ReplenishmentRecommendations_ProductGenerated");
 
+                    b.HasIndex("ProductId", "WarehouseId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_ReplenishmentRecommendations_Pending_ProductWarehouse")
+                        .HasFilter("[Status] = 1");
+
                     b.HasIndex("WarehouseId", "Status");
 
                     b.ToTable("ReplenishmentRecommendations", (string)null);
@@ -2935,7 +3885,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Forecasting.SalesForecast", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("ConfidencePercent")
@@ -2993,10 +3942,449 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("SalesForecasts", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Honoraires.HonorairesAttachment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("DocumentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("DocumentKind")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(260)
+                        .HasColumnType("nvarchar(260)");
+
+                    b.Property<long>("SizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StorageRelativePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UploadedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentKind", "DocumentId");
+
+                    b.ToTable("HonorairesAttachments", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Honoraires.HonorairesInvoice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BankAccountLabel")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("CancellationReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ClientAddress")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ClientName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ClientNif")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ContactEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ContactName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ContactPhone")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FirmClientAssignmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsRecurring")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("IssueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LinkedInvoiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Number")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentMethod")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PaymentTerms")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<int?>("RecurrenceFrequency")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("SourceQuoteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LinkedInvoiceId");
+
+                    b.HasIndex("Number")
+                        .IsUnique()
+                        .HasFilter("[Number] IS NOT NULL");
+
+                    b.HasIndex("SourceQuoteId");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("Type");
+
+                    b.HasIndex("FirmClientAssignmentId", "IssueDate");
+
+                    b.ToTable("HonorairesInvoices", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Honoraires.HonorairesInvoiceLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ActivityCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Designation")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<decimal?>("DiscountPercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<Guid>("HonorairesInvoiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("LineNumber")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VatRate")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HonorairesInvoiceId");
+
+                    b.ToTable("HonorairesInvoiceLines", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Honoraires.HonorairesPayment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BankAccountLabel")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("HonorairesInvoiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Method")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Reference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HonorairesInvoiceId");
+
+                    b.HasIndex("PaymentDate");
+
+                    b.ToTable("HonorairesPayments", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Honoraires.HonorairesQuote", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ClientAddress")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ClientName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ClientNif")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ContactEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ContactName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ContactPhone")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("ConvertedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ConvertedInvoiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<Guid>("FirmClientAssignmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("IssueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Number")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("PaymentTerms")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Reference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ValidUntil")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConvertedInvoiceId");
+
+                    b.HasIndex("Number")
+                        .IsUnique()
+                        .HasFilter("[Number] IS NOT NULL");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("FirmClientAssignmentId", "IssueDate");
+
+                    b.ToTable("HonorairesQuotes", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Honoraires.HonorairesQuoteLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ActivityCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Designation")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<decimal?>("DiscountPercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<Guid>("HonorairesQuoteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("LineNumber")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VatRate")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HonorairesQuoteId");
+
+                    b.ToTable("HonorairesQuoteLines", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.InventoryCountLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("CountedAt")
@@ -3015,11 +4403,18 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<Guid>("InventoryId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("LotNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("ProductCode")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ProductLotId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ProductName")
@@ -3043,8 +4438,7 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("InventoryId", "ProductId")
-                        .IsUnique();
+                    b.HasIndex("ProductLotId");
 
                     b.ToTable("InventoryCountLines", (string)null);
                 });
@@ -3052,7 +4446,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Invoice", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BankName")
@@ -3064,6 +4457,9 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.Property<DateTime?>("CancelledAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CashRegisterSessionId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
@@ -3083,6 +4479,10 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<string>("ElectronicInvoiceTtn")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal?>("GlobalDiscountPercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<string>("Iban")
                         .HasColumnType("nvarchar(max)");
@@ -3134,7 +4534,19 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<Guid?>("SourceDeliveryNoteId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("SourceProjectBillingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SourceProjectId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("SourceQuoteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SourceRecurringContractBillingRunId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SourceRecurringContractId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("SourceSalesOrderId")
@@ -3161,11 +4573,10 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<Guid?>("WarehouseId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("GlobalDiscountPercent")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("CashRegisterSessionId")
+                        .HasFilter("[CashRegisterSessionId] IS NOT NULL");
 
                     b.HasIndex("ClientId");
 
@@ -3181,7 +4592,19 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.HasIndex("SourceDeliveryNoteId")
                         .HasFilter("[SourceDeliveryNoteId] IS NOT NULL");
 
+                    b.HasIndex("SourceProjectBillingId")
+                        .HasFilter("[SourceProjectBillingId] IS NOT NULL");
+
+                    b.HasIndex("SourceProjectId")
+                        .HasFilter("[SourceProjectId] IS NOT NULL");
+
                     b.HasIndex("SourceQuoteId");
+
+                    b.HasIndex("SourceRecurringContractBillingRunId")
+                        .HasFilter("[SourceRecurringContractBillingRunId] IS NOT NULL");
+
+                    b.HasIndex("SourceRecurringContractId")
+                        .HasFilter("[SourceRecurringContractId] IS NOT NULL");
 
                     b.HasIndex("SourceSalesOrderId")
                         .HasFilter("[SourceSalesOrderId] IS NOT NULL");
@@ -3196,7 +4619,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.InvoiceDraft", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("ClientId")
@@ -3275,8 +4697,14 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.InvoiceLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AppliedPromotionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AppliedPromotionName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -3345,7 +4773,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Journal", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Code")
@@ -3390,7 +4817,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.JournalEntry", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AccountingPeriodId")
@@ -3402,11 +4828,29 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CurrencyCode")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)")
+                        .HasDefaultValue("TND");
+
                     b.Property<DateTime>("EntryDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("EntryNumber")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("ExchangeRate")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)")
+                        .HasDefaultValue(1m);
+
+                    b.Property<bool>("ExchangeRateOverridden")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsAutoGenerated")
                         .HasColumnType("bit");
@@ -3469,6 +4913,9 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasIndex("AccountingPeriodId");
 
+                    b.HasIndex("EntryDate")
+                        .HasDatabaseName("IX_JournalEntries_EntryDate");
+
                     b.HasIndex("PieceRef");
 
                     b.HasIndex("Status");
@@ -3479,13 +4926,16 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasIndex("JournalCode", "EntryNumber", "EntryDate");
 
+                    b.HasIndex(new[] { "SourceEntityType", "SourceEntityId" }, "IX_JournalEntries_BankStatementLineSource")
+                        .IsUnique()
+                        .HasFilter("[IsReversed] = 0 AND [SourceEntityType] = N'BankStatementLine'");
+
                     b.ToTable("JournalEntries", (string)null);
                 });
 
             modelBuilder.Entity("FactuTrust.Domain.Entities.JournalEntryAttachment", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ContentType")
@@ -3531,7 +4981,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.JournalEntryLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AccountNumber")
@@ -3544,6 +4993,18 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("CreditAmountInCurrency")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)")
+                        .HasDefaultValue(0m);
+
+                    b.Property<decimal>("DebitAmountInCurrency")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)")
+                        .HasDefaultValue(0m);
 
                     b.Property<Guid>("JournalEntryId")
                         .HasColumnType("uniqueidentifier");
@@ -3574,9 +5035,14 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountNumber");
-
                     b.HasIndex("JournalEntryId");
+
+                    b.HasIndex("AccountNumber", "LetteringCode")
+                        .HasDatabaseName("IX_JournalEntryLines_AccountNumber_LetteringCode");
+
+                    b.HasIndex("ThirdPartyKind", "ThirdPartyId")
+                        .HasDatabaseName("IX_JournalEntryLines_ThirdPartyKind_ThirdPartyId")
+                        .HasFilter("[ThirdPartyId] IS NOT NULL");
 
                     b.ToTable("JournalEntryLines", (string)null);
                 });
@@ -3584,7 +5050,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.JournalEntrySequence", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -3621,7 +5086,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.JournalEntryTemplate", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -3693,7 +5157,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.JournalEntryTemplateLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AccountNumber")
@@ -3741,7 +5204,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.JournalFamily", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Code")
@@ -3777,7 +5239,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.LetteringGroup", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AccountNumber")
@@ -3813,13 +5274,15 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code")
+                        .IsUnique();
+
                     b.ToTable("LetteringGroups", (string)null);
                 });
 
             modelBuilder.Entity("FactuTrust.Domain.Entities.LetteringGroupMember", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -3842,7 +5305,8 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasKey("Id");
 
-                    b.HasIndex("JournalEntryLineId");
+                    b.HasIndex("JournalEntryLineId")
+                        .IsUnique();
 
                     b.HasIndex("LetteringGroupId");
 
@@ -3852,7 +5316,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Loan", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("AnnualRatePercent")
@@ -3943,7 +5406,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.LoanScheduleLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("ClosingBalance")
@@ -3997,10 +5459,258 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("LoanScheduleLines", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.MonthlyDeclarationFamilySetting", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Family")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsIncluded")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Family")
+                        .IsUnique();
+
+                    b.ToTable("MonthlyDeclarationFamilySettings", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.MonthlyDeclarationRubric", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EffectiveFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EffectiveTo")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Family")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("FixedGrossAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal?>("FixedWithheldAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<int?>("GrossDocumentSource")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GrossKind")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GrossSide")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int?>("PayrollComponent")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("RatePercent")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
+
+                    b.Property<string>("ReportCode")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WithheldDocumentSource")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WithheldKind")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WithheldPayrollComponent")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WithheldSide")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("Family", "DisplayOrder");
+
+                    b.ToTable("MonthlyDeclarationRubrics", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.MonthlyDeclarationRubricAccount", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccountNumber")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MatchMode")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("RubricId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountNumber");
+
+                    b.HasIndex("RubricId", "Role", "AccountNumber")
+                        .IsUnique();
+
+                    b.ToTable("MonthlyDeclarationRubricAccounts", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.MonthlyDeclarationRubricSeedLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("AppliedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CatalogVersion")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CatalogVersion")
+                        .IsUnique();
+
+                    b.ToTable("MonthlyDeclarationRubricSeedLogs", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.MonthlyDeclarationSettings", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ConfiguredSince")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("LastParityMaxGapMillimes")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("LastParityPeriodKey")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastParityRunAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Mode")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ParityCleanStreak")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ParityOverrideBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ParityOverrideReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MonthlyDeclarationSettings", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.NctNoteOverride", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -4043,7 +5753,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Opportunity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("ActualCloseDate")
@@ -4121,7 +5830,9 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payment", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CashRegisterSessionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("ClientWithholdingAmount")
@@ -4181,6 +5892,9 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CashRegisterSessionId")
+                        .HasFilter("[CashRegisterSessionId] IS NOT NULL");
+
                     b.HasIndex("InvoiceId");
 
                     b.HasIndex("PaymentDate");
@@ -4188,10 +5902,223 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("Payments", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.AnnualBonusRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("FiscalYear")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("FixedAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<int>("Formula")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal>("MonthsOfBase")
+                        .HasPrecision(8, 4)
+                        .HasColumnType("decimal(8,4)");
+
+                    b.Property<int>("PaymentMonth")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("RatePercent")
+                        .HasPrecision(8, 4)
+                        .HasColumnType("decimal(8,4)");
+
+                    b.Property<bool>("SubjectToCnss")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Taxable")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("AnnualBonusRules", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.CnssContributionPayment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("BankAccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CancellationReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CancelledBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Method")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("PayrollRunId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Reference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("TotalCnssEmployee")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("TotalCnssEmployer")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("TotalDue")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("TotalWorkAccident")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PayrollRunId");
+
+                    b.HasIndex("Year", "Month")
+                        .IsUnique()
+                        .HasFilter("[IsCancelled] = 0");
+
+                    b.HasIndex("Year", "Month", "IsCancelled");
+
+                    b.ToTable("CnssContributionPayments", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.CnssIjClaim", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("LeaveRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("Year", "Month");
+
+                    b.HasIndex("LeaveRequestId", "Year", "Month")
+                        .IsUnique();
+
+                    b.ToTable("CnssIjClaims", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.ContractAllowance", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Amount")
@@ -4234,7 +6161,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.Employee", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AuxiliaryAccountNumber")
@@ -4346,7 +6272,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.EmployeeAdvance", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Amount")
@@ -4372,14 +6297,14 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<Guid?>("SettledInPayrollRunId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal>("SettledAmount")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)")
                         .HasDefaultValue(0m);
+
+                    b.Property<Guid?>("SettledInPayrollRunId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -4397,15 +6322,539 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("EmployeeAdvances", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.EmployeeAnnualBonusRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AnnualBonusRuleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("OverrideFixedAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal?>("OverrideMonthsOfBase")
+                        .HasPrecision(8, 4)
+                        .HasColumnType("decimal(8,4)");
+
+                    b.Property<decimal?>("OverrideRatePercent")
+                        .HasPrecision(8, 4)
+                        .HasColumnType("decimal(8,4)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("EmployeeId", "AnnualBonusRuleId")
+                        .IsUnique();
+
+                    b.ToTable("EmployeeAnnualBonusRules", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.EmployeeDependentParent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Kinship")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ParentCin")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("ParentCin")
+                        .IsUnique()
+                        .HasDatabaseName("IX_EmployeeDependentParents_ParentCin_Active")
+                        .HasFilter("[EndDate] IS NULL");
+
+                    b.ToTable("EmployeeDependentParents", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.EmployeeGarnishment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BeneficiaryName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("BeneficiaryRib")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("FixedAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("IssuedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("PercentOfNet")
+                        .HasPrecision(8, 4)
+                        .HasColumnType("decimal(8,4)");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("TotalAmountDue")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("EmployeeGarnishments", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.EmployeeGarnishmentInstallment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("AppliedAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("CarriedOverAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EmployeeGarnishmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("PayrollRunId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("RequestedAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeGarnishmentId");
+
+                    b.HasIndex("PayrollRunId");
+
+                    b.ToTable("EmployeeGarnishmentInstallments", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.EmployeeInKindBenefit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal>("MonthlyValue")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("EmployeeInKindBenefits", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.EmployeeLoan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("InstallmentCount")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("MonthlyInstallmentAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<decimal>("Principal")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("StartMonth")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StartYear")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("Reference");
+
+                    b.ToTable("EmployeeLoans", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.EmployeeLoanInstallment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EmployeeLoanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsSettled")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SequenceNumber")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("SettledInPayrollRunId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeLoanId");
+
+                    b.HasIndex("Year", "Month", "IsSettled");
+
+                    b.ToTable("EmployeeLoanInstallments", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.EmployeePayrollSuspension", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ApprovedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("StartDate", "EndDate");
+
+                    b.ToTable("EmployeePayrollSuspensions", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.EmployeeSocialFundEnrollment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("OverrideEmployeeAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal?>("OverrideEmployerAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<Guid>("SocialFundSchemeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("SocialFundSchemeId");
+
+                    b.ToTable("EmployeeSocialFundEnrollments", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.EmploymentContract", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AnetiReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("BaseSalary")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("CivpEmployerAllowance")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)")
+                        .HasDefaultValue(0m);
+
+                    b.Property<DateTime?>("CivpEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CivpStartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("CivpStateGrant")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)")
+                        .HasDefaultValue(0m);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -4460,7 +6909,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.LeaveBalanceAccrual", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("AccruedDays")
@@ -4511,8 +6959,10 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.LeaveRequest", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ActualBirthDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("ApprovedAt")
                         .HasColumnType("datetime2");
@@ -4520,6 +6970,10 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<string>("ApprovedBy")
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ChildBirthCertificateNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -4534,11 +6988,28 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("EmployerTopUpDays")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("EmployerTopUpPercent")
+                        .HasPrecision(8, 4)
+                        .HasColumnType("decimal(8,4)");
+
                     b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ExpectedBirthDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsApproved")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("MedicalCertificateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MedicalCertificateNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Reason")
                         .HasMaxLength(500)
@@ -4546,6 +7017,9 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("SubrogationEnabled")
+                        .HasColumnType("bit");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
@@ -4568,10 +7042,44 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("LeaveRequests", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayrollGarnishmentBracket", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("LowerBoundMonthlyNet")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<Guid>("PayrollYearParametersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("SeizableFraction")
+                        .HasPrecision(8, 4)
+                        .HasColumnType("decimal(8,4)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PayrollYearParametersId");
+
+                    b.ToTable("PayrollGarnishmentBrackets", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayrollIrppBracket", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -4604,122 +7112,9 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("PayrollIrppBrackets", (string)null);
                 });
 
-            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayrollOvertimeLine", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("ComputedAmount")
-                        .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Hours")
-                        .HasPrecision(8, 2)
-                        .HasColumnType("decimal(8,2)");
-
-                    b.Property<bool>("IsOverridden")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Month")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("OverrideAmount")
-                        .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)");
-
-                    b.Property<decimal>("RatePercent")
-                        .HasPrecision(8, 2)
-                        .HasColumnType("decimal(8,2)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Version")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Year", "Month");
-
-                    b.HasIndex("EmployeeId", "Year", "Month");
-
-                    b.ToTable("PayrollOvertimeLines", (string)null);
-                });
-
-            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayrollVariableAllowanceLine", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Amount")
-                        .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Label")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int>("Month")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("SubjectToCnss")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Taxable")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Version")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Year", "Month");
-
-                    b.HasIndex("EmployeeId", "Year", "Month");
-
-                    b.ToTable("PayrollVariableAllowanceLines", (string)null);
-                });
-
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayrollIrppRegularization", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("ComputedCssDelta")
@@ -4805,10 +7200,115 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("PayrollIrppRegularizations", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayrollMealVoucherLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Days")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("EmployerContributionRate")
+                        .HasPrecision(8, 4)
+                        .HasColumnType("decimal(8,4)");
+
+                    b.Property<decimal>("FaceValue")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Year", "Month");
+
+                    b.HasIndex("EmployeeId", "Year", "Month");
+
+                    b.ToTable("PayrollMealVoucherLines", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayrollOvertimeLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("ComputedAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Hours")
+                        .HasPrecision(8, 2)
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<bool>("IsOverridden")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("OverrideAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("RatePercent")
+                        .HasPrecision(8, 2)
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Year", "Month");
+
+                    b.HasIndex("EmployeeId", "Year", "Month");
+
+                    b.ToTable("PayrollOvertimeLines", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayrollPayment", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("BankAccountId")
@@ -4872,7 +7372,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayrollPaymentLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -4881,13 +7380,13 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("EmployeeAuxiliaryAccount")
                         .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("PayrollPaymentId")
                         .HasColumnType("uniqueidentifier");
@@ -4905,16 +7404,72 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasIndex("EmployeeId");
 
+                    b.HasIndex("PayrollPaymentId");
+
                     b.HasIndex("PayslipId");
 
                     b.ToTable("PayrollPaymentLines", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayrollPublicHoliday", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DecreeReference")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsEstimated")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Date");
+
+                    b.HasIndex("Year", "Date")
+                        .IsUnique();
+
+                    b.ToTable("PayrollPublicHolidays", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayrollRun", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("AppliedTfpRate")
+                        .HasPrecision(8, 4)
+                        .HasColumnType("decimal(8,4)");
 
                     b.Property<DateTime?>("CalculatedAt")
                         .HasColumnType("datetime2");
@@ -4954,11 +7509,17 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
-                    b.Property<decimal>("TotalFoprolos")
+                    b.Property<decimal>("TotalCssEmployer")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
-                    b.Property<decimal>("TotalCssEmployer")
+                    b.Property<decimal>("TotalCssRegularization")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)")
+                        .HasDefaultValue(0m);
+
+                    b.Property<decimal>("TotalFoprolos")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
@@ -4969,22 +7530,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<decimal>("TotalIrpp")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
-
-                    b.Property<decimal>("TotalNet")
-                        .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)");
-
-                    b.Property<decimal>("TotalNetTaxable")
-                        .ValueGeneratedOnAdd()
-                        .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)")
-                        .HasDefaultValue(0m);
-
-                    b.Property<decimal>("TotalCssRegularization")
-                        .ValueGeneratedOnAdd()
-                        .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)")
-                        .HasDefaultValue(0m);
 
                     b.Property<decimal>("TotalIrppRegularization")
                         .ValueGeneratedOnAdd()
@@ -4998,6 +7543,16 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasColumnType("decimal(18,3)")
                         .HasDefaultValue(0m);
 
+                    b.Property<decimal>("TotalNet")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("TotalNetTaxable")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)")
+                        .HasDefaultValue(0m);
+
                     b.Property<decimal>("TotalOtherDeductions")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
@@ -5005,10 +7560,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<decimal?>("TotalPayrollTaxBase")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
-
-                    b.Property<decimal?>("AppliedTfpRate")
-                        .HasPrecision(8, 4)
-                        .HasColumnType("decimal(8,4)");
 
                     b.Property<decimal>("TotalTfp")
                         .HasPrecision(18, 3)
@@ -5032,8 +7583,8 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Version")
-                        .HasColumnType("int")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .HasColumnType("int");
 
                     b.Property<int>("Year")
                         .HasColumnType("int");
@@ -5048,13 +7599,88 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("PayrollRuns", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayrollVariableAllowanceLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<Guid?>("AnnualBonusRuleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Source")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<bool>("SubjectToCnss")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Taxable")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Year", "Month");
+
+                    b.HasIndex("EmployeeId", "Year", "Month");
+
+                    b.HasIndex("EmployeeId", "Year", "Month", "AnnualBonusRuleId", "Source");
+
+                    b.ToTable("PayrollVariableAllowanceLines", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayrollYearParameters", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal?>("AccidentWorkMonthlyCeiling")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<bool>("ApplyCnssCeilingToPayrollTaxes")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
                     b.Property<decimal>("ChildAnnualDeduction")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal?>("CnssDailyCeiling")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
@@ -5074,6 +7700,10 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasPrecision(8, 4)
                         .HasColumnType("decimal(8,4)");
 
+                    b.Property<decimal?>("CnssMonthlyCeiling")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -5088,6 +7718,10 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasPrecision(8, 4)
                         .HasColumnType("decimal(8,4)");
 
+                    b.Property<decimal?>("CssMonthlyCeiling")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
                     b.Property<decimal>("CssRate")
                         .HasPrecision(8, 4)
                         .HasColumnType("decimal(8,4)");
@@ -5100,6 +7734,11 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.Property<bool>("EnableAllowanceQuadrantMatrix")
                         .HasColumnType("bit");
+
+                    b.Property<bool>("EnableAutomaticProrata")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("EnableExtendedOvertimeRates")
                         .HasColumnType("bit");
@@ -5123,36 +7762,34 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
-                    b.Property<bool>("ApplyCnssCeilingToPayrollTaxes")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<int>("PayrollTaxBaseMode")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
                     b.Property<bool>("IsIndustrialSector")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<decimal>("MaternityEmployerTopUpDefault")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(8, 4)
+                        .HasColumnType("decimal(8,4)")
+                        .HasDefaultValue(100m);
+
+                    b.Property<int>("MaternityLeaveDurationDays")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(60);
+
                     b.Property<int>("MaxDeductibleChildren")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("MealVoucherDailyExemptionCap")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)")
+                        .HasDefaultValue(3.000m);
 
                     b.Property<decimal>("MonthlySmig")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
-
-                    b.Property<int>("SmigIrppExemptionMode")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
-                    b.Property<decimal?>("SmigIrppExemptionRateOverride")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
 
                     b.Property<decimal>("ParentAnnualDeductionCap")
                         .ValueGeneratedOnAdd()
@@ -5166,6 +7803,16 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasColumnType("decimal(8,4)")
                         .HasDefaultValue(5m);
 
+                    b.Property<int>("PaternityLeaveDurationDays")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(2);
+
+                    b.Property<int>("PayrollTaxBaseMode")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
                     b.Property<decimal>("ProfessionalExpensesAnnualCap")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
@@ -5173,6 +7820,26 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<decimal>("ProfessionalExpensesRate")
                         .HasPrecision(8, 4)
                         .HasColumnType("decimal(8,4)");
+
+                    b.Property<decimal>("SickLeaveIjRatePercent")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(8, 4)
+                        .HasColumnType("decimal(8,4)")
+                        .HasDefaultValue(66.67m);
+
+                    b.Property<int>("SickLeaveWaitingDays")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(5);
+
+                    b.Property<int>("SmigIrppExemptionMode")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<decimal?>("SmigIrppExemptionRateOverride")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<decimal>("StudentChildAnnualDeduction")
                         .ValueGeneratedOnAdd()
@@ -5208,7 +7875,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.Payslip", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("AnnualNetTaxable")
@@ -5220,6 +7886,10 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasColumnType("decimal(8,4)");
 
                     b.Property<decimal>("AppliedCnssEmployerRate")
+                        .HasPrecision(8, 4)
+                        .HasColumnType("decimal(8,4)");
+
+                    b.Property<decimal?>("AppliedTfpRate")
                         .HasPrecision(8, 4)
                         .HasColumnType("decimal(8,4)");
 
@@ -5249,11 +7919,19 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
+                    b.Property<decimal>("CssEmployer")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
                     b.Property<decimal>("CssRegularization")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)")
                         .HasDefaultValue(0m);
+
+                    b.Property<string>("EmployeeAuxiliaryAccount")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
@@ -5268,10 +7946,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("EmployeeAuxiliaryAccount")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
                     b.Property<decimal>("FamilyDeductions")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
@@ -5280,13 +7954,14 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
-                    b.Property<decimal>("CssEmployer")
-                        .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)");
-
                     b.Property<decimal>("GrossSalary")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
+
+                    b.Property<bool>("HasPartialDeductions")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<decimal>("Irpp")
                         .HasPrecision(18, 3)
@@ -5298,19 +7973,13 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasColumnType("decimal(18,3)")
                         .HasDefaultValue(0m);
 
-                    b.Property<decimal>("IrppSmigExemption")
-                        .ValueGeneratedOnAdd()
-                        .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)")
-                        .HasDefaultValue(0m);
-
-                    b.Property<decimal>("SmigAnnualDeductionAmount")
-                        .ValueGeneratedOnAdd()
-                        .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)")
-                        .HasDefaultValue(0m);
-
                     b.Property<decimal>("IrppRegularization")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)")
+                        .HasDefaultValue(0m);
+
+                    b.Property<decimal>("IrppSmigExemption")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)")
@@ -5344,6 +8013,12 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<DateTime?>("PaidAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal>("PartialDeductionCarryOver")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)")
+                        .HasDefaultValue(0m);
+
                     b.Property<Guid>("PayrollRunId")
                         .HasColumnType("uniqueidentifier");
 
@@ -5351,13 +8026,27 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
-                    b.Property<decimal?>("AppliedTfpRate")
-                        .HasPrecision(8, 4)
-                        .HasColumnType("decimal(8,4)");
-
                     b.Property<decimal>("ProfessionalExpenses")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("ProrataDeductionAmount")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)")
+                        .HasDefaultValue(0m);
+
+                    b.Property<decimal>("ProrataNonWorkedDays")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)")
+                        .HasDefaultValue(0m);
+
+                    b.Property<decimal>("ProrataWorkedDays")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)")
+                        .HasDefaultValue(0m);
 
                     b.Property<decimal>("RegularizationDeferred")
                         .ValueGeneratedOnAdd()
@@ -5365,12 +8054,7 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasColumnType("decimal(18,3)")
                         .HasDefaultValue(0m);
 
-                    b.Property<bool>("HasPartialDeductions")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<decimal>("PartialDeductionCarryOver")
+                    b.Property<decimal>("SmigAnnualDeductionAmount")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)")
@@ -5401,10 +8085,10 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasIndex("PayrollRunId");
 
-                    b.HasIndex("EmployeeId", "Year", "Month");
-
                     b.HasIndex("PayrollRunId", "EmployeeId")
                         .IsUnique();
+
+                    b.HasIndex("EmployeeId", "Year", "Month");
 
                     b.ToTable("Payslips", (string)null);
                 });
@@ -5412,14 +8096,21 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayslipLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccountSce")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
                     b.Property<decimal?>("Base")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal?>("CarriedOverAmount")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
@@ -5434,21 +8125,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.Property<int?>("EarningKind")
                         .HasColumnType("int");
-
-                    b.Property<string>("AccountSce")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<Guid?>("SourceEntityId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal?>("RequestedAmount")
-                        .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)");
-
-                    b.Property<decimal?>("CarriedOverAmount")
-                        .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)");
 
                     b.Property<int>("Kind")
                         .HasColumnType("int");
@@ -5468,6 +8144,13 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasPrecision(8, 4)
                         .HasColumnType("decimal(8,4)");
 
+                    b.Property<decimal?>("RequestedAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<Guid?>("SourceEntityId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -5481,10 +8164,164 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("PayslipLines", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.SocialFundScheme", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Base")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EffectiveFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EffectiveTo")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EmployeeAccountSce")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<decimal>("EmployeeRatePercent")
+                        .HasPrecision(8, 4)
+                        .HasColumnType("decimal(8,4)");
+
+                    b.Property<string>("EmployerAccountSce")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<decimal>("EmployerRatePercent")
+                        .HasPrecision(8, 4)
+                        .HasColumnType("decimal(8,4)");
+
+                    b.Property<decimal>("FixedEmployeeAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("FixedEmployerAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("MonthlyEmployeeCap")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("SocialFundSchemes", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.TerminationSettlement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("GrossMonthlyReference")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("LegalIndemnityAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<decimal>("NoticeIndemnityAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("OtherIndemnityAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<int>("Reason")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SeniorityMonths")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TerminationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("UnusedLeaveAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Year", "Month");
+
+                    b.HasIndex("EmployeeId", "Year", "Month")
+                        .IsUnique();
+
+                    b.ToTable("TerminationSettlements", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.PayrollAccountingSettings", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("AccountProfile")
@@ -5534,7 +8371,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.PhysicalInventory", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("CompletedAt")
@@ -5592,10 +8428,112 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("PhysicalInventories", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.PosCartDraft", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CashRegisterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StateJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CashRegisterId");
+
+                    b.HasIndex("UserId", "CashRegisterId")
+                        .IsUnique();
+
+                    b.ToTable("PosCartDrafts", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.PosHeldTicket", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CashRegisterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CashRegisterSessionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("HeldAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("HeldByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("LineCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StateJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalTtc")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CashRegisterId");
+
+                    b.HasIndex("CashRegisterSessionId")
+                        .HasFilter("[CashRegisterSessionId] IS NOT NULL");
+
+                    b.HasIndex("HeldAt");
+
+                    b.HasIndex("HeldByUserId");
+
+                    b.ToTable("PosHeldTickets", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.Pricing.ClientProductPrice", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ClientId")
@@ -5636,122 +8574,9 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("ClientProductPrices", (string)null);
                 });
 
-            modelBuilder.Entity("FactuTrust.Domain.Entities.Pricing.PriceList", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ValidFrom")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ValidUntil")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Version")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IsActive");
-
-                    b.ToTable("PriceLists", (string)null);
-                });
-
-            modelBuilder.Entity("FactuTrust.Domain.Entities.Pricing.PriceListItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("PriceListId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PriceListId", "ProductId")
-                        .IsUnique();
-
-                    b.ToTable("PriceListItems", (string)null);
-                });
-
-            modelBuilder.Entity("FactuTrust.Domain.Entities.Pricing.PriceListItemTier", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("MinQuantity")
-                        .HasPrecision(18, 4)
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<Guid>("PriceListItemId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PriceListItemId", "MinQuantity")
-                        .IsUnique();
-
-                    b.ToTable("PriceListItemTiers", (string)null);
-                });
-
             modelBuilder.Entity("FactuTrust.Domain.Entities.Pricing.PaymentTermTemplate", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -5805,10 +8630,118 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("PaymentTermTemplates", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Pricing.PriceList", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ValidFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ValidUntil")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsActive");
+
+                    b.ToTable("PriceLists", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Pricing.PriceListItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PriceListId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PriceListId", "ProductId")
+                        .IsUnique();
+
+                    b.ToTable("PriceListItems", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Pricing.PriceListItemTier", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("MinQuantity")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<Guid>("PriceListItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PriceListItemId", "MinQuantity")
+                        .IsUnique();
+
+                    b.ToTable("PriceListItemTiers", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.Pricing.Promotion", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("ClientId")
@@ -5879,7 +8812,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Product", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CategoryId")
@@ -5890,6 +8822,11 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int>("CostingMethod")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -5899,6 +8836,14 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("ExpiryAlertDays")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("HasExpiryTracking")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("ImageUrl")
                         .HasMaxLength(500)
@@ -5925,6 +8870,11 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<bool>("IsStockManaged")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsVariantTemplate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<int?>("LeadTimeDaysOverride")
                         .HasColumnType("int");
 
@@ -5949,12 +8899,31 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<Guid?>("ParentProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("PickingPolicy")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
                     b.Property<Guid?>("PreferredSupplierId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("ProfitMarginPercent")
                         .HasPrecision(7, 3)
                         .HasColumnType("decimal(7,3)");
+
+                    b.Property<int>("ServiceCreateOnOrder")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServiceInvoicingPolicy")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TrackingMode")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
@@ -5986,15 +8955,100 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasIndex("IsPubliclyListed");
 
+                    b.HasIndex("IsVariantTemplate");
+
                     b.HasIndex("Name");
 
+                    b.HasIndex("ParentProductId");
+
                     b.ToTable("Products", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.ProductAttributeDefinition", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("ProductAttributeDefinitions", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.ProductAttributeValue", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("DefinitionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DefinitionId", "Code")
+                        .IsUnique();
+
+                    b.ToTable("ProductAttributeValues", (string)null);
                 });
 
             modelBuilder.Entity("FactuTrust.Domain.Entities.ProductCategory", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Code")
@@ -6035,10 +9089,1149 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("ProductCategories", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.ProductLot", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LotNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("ManufacturedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpiryDate");
+
+                    b.HasIndex("ProductId", "LotNumber")
+                        .IsUnique();
+
+                    b.ToTable("ProductLots", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.ProductSerial", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ProductLotId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SerialNumber")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("WarehouseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductLotId");
+
+                    b.HasIndex("ProductId", "SerialNumber")
+                        .IsUnique();
+
+                    b.HasIndex("ProductId", "WarehouseId", "Status");
+
+                    b.ToTable("ProductSerials", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.ProductVariantAttributeValue", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AttributeValueId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttributeValueId");
+
+                    b.HasIndex("ProductId", "AttributeValueId")
+                        .IsUnique();
+
+                    b.ToTable("ProductVariantAttributeValues", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.ProductVariantAxis", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("DefinitionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ParentProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DefinitionId");
+
+                    b.HasIndex("ParentProductId", "DefinitionId")
+                        .IsUnique();
+
+                    b.ToTable("ProductVariantAxes", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.EmployeeBillingTimeTarget", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TargetHours")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "Year", "Month")
+                        .IsUnique();
+
+                    b.ToTable("EmployeeBillingTimeTargets", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.Project", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("AllocatedHours")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("AnalyticAccountCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("BillingMode")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("BudgetHt")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContractNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("MilestonesEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid?>("OwnerUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SalesOrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SiteAddress")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("TimesheetsEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("Kind");
+
+                    b.HasIndex("SalesOrderId");
+
+                    b.HasIndex("Status");
+
+                    b.ToTable("Projects", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.ProjectActivity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ActorUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TaskId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId", "CreatedAt");
+
+                    b.ToTable("ProjectActivities", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.ProjectAttachment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(260)
+                        .HasColumnType("nvarchar(260)");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("SizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StoragePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid?>("TaskId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UploadedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("TaskId");
+
+                    b.ToTable("ProjectAttachments", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.ProjectBilling", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("AmountHt")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("ProjectBillings", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.ProjectComment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AuthorUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TaskId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TaskId");
+
+                    b.HasIndex("ProjectId", "CreatedAt");
+
+                    b.ToTable("ProjectComments", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.ProjectCostLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("AmountHt")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("OccurredOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Source")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("SourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TimeEntryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("SourceId");
+
+                    b.ToTable("ProjectCostLines", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.ProjectMember", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("HourlyCost")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("SalesRate")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("WeeklyCapacityHours")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("ProjectMembers", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.ProjectMilestone", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("AmountHt")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("InvoicedInvoiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsReached")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal>("Percent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ReachedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("SalesOrderLineId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoicedInvoiceId")
+                        .HasFilter("[InvoicedInvoiceId] IS NOT NULL");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("SalesOrderLineId");
+
+                    b.ToTable("ProjectMilestones", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.ProjectPhase", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Color")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId", "SortOrder");
+
+                    b.ToTable("ProjectPhases", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.ProjectSituation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("CumulativePercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("GrossAmountHt")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<Guid?>("InvoiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PeriodEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("PeriodStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("RetainageAmountHt")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VatRatePercent")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoiceId")
+                        .HasFilter("[InvoiceId] IS NOT NULL");
+
+                    b.HasIndex("ProjectId", "Number")
+                        .IsUnique();
+
+                    b.ToTable("ProjectSituations", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.ProjectSubcontractor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("AmountHt")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<string>("ContractReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("RetainagePercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<Guid>("SupplierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("SupplierId");
+
+                    b.ToTable("ProjectSubcontractors", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.ProjectTask", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AssigneeUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("EstimatedHours")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("InvoicedBillingMethod")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("InvoicedInvoiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("MilestoneId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ParentTaskId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PhaseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProgressPercent")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssigneeUserId");
+
+                    b.HasIndex("InvoicedInvoiceId")
+                        .HasFilter("[InvoicedInvoiceId] IS NOT NULL");
+
+                    b.HasIndex("ParentTaskId");
+
+                    b.HasIndex("PhaseId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("ProjectTasks", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.ProjectTaskDependency", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PredecessorTaskId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SuccessorTaskId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PredecessorTaskId", "SuccessorTaskId")
+                        .IsUnique();
+
+                    b.ToTable("ProjectTaskDependencies", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.ProjectTimeEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EntrySource")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Hours")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid?>("InvoicedInvoiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsBillable")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SalesOrderLineId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("SubmittedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("TaskId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("TimerStartedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ValidatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("WorkDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoicedInvoiceId")
+                        .HasFilter("[InvoicedInvoiceId] IS NOT NULL");
+
+                    b.HasIndex("SalesOrderLineId");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("ProjectId", "WorkDate");
+
+                    b.ToTable("ProjectTimeEntries", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.ProjectUpdate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AuthorUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(8000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProgressPercent")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("ProjectUpdates", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.TenantTimesheetSettings", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("BillingRateIndicatorsEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("BillingRateLeaderboardEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("DefaultDailyWorkingHours")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("EncodingMethod")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("TimeOffEntriesEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("TimeOffProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TimeOffTaskId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TenantTimesheetSettings", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.TimeOffRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("HoursPerDay")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("RequiresApproval")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("TimesheetEntryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TypeName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TimeOffRequests", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Projects.TimesheetTip", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TimesheetTips", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.PurchaseOrder", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CancellationReason")
@@ -6070,6 +10263,9 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("ReceivedAt")
                         .HasColumnType("datetime2");
 
@@ -6099,6 +10295,9 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasIndex("OrderDate");
 
+                    b.HasIndex("ProjectId")
+                        .HasFilter("[ProjectId] IS NOT NULL");
+
                     b.HasIndex("Status");
 
                     b.HasIndex("SupplierId");
@@ -6111,7 +10310,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.PurchaseOrderLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -6119,6 +10317,10 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("InvoicedQuantity")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<int>("LineNumber")
                         .HasColumnType("int");
@@ -6176,7 +10378,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.PurchaseReceipt", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CancellationReason")
@@ -6254,7 +10455,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.PurchaseReceiptAttachment", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ContentType")
@@ -6307,7 +10507,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.PurchaseReceiptLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -6319,6 +10518,10 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<decimal?>("DiscountPercent")
                         .HasPrecision(5, 2)
                         .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("InvoicedQuantity")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<int>("LineNumber")
                         .HasColumnType("int");
@@ -6381,7 +10584,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Quote", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("AcceptedAt")
@@ -6414,6 +10616,10 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("GlobalDiscountPercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<DateTime>("IssueDate")
                         .HasColumnType("datetime2");
@@ -6455,10 +10661,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<int>("Version")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("GlobalDiscountPercent")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
@@ -6486,8 +10688,14 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.QuoteLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AppliedPromotionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AppliedPromotionName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -6558,7 +10766,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.QuoteTemplate", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -6610,7 +10817,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.QuoteTemplateLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -6651,10 +10857,388 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("QuoteTemplateLines", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.RecurringContracts.RecurringContract", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("AutoRenew")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("BillingDayOfMonth")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BillingFrequency")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastBilledPeriodEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("NextBillingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<int>("NoticePeriodDays")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Number")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<Guid?>("PaymentTermTemplateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Reference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("SetupFeeBilled")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("SourceQuoteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("NextBillingDate")
+                        .HasFilter("[NextBillingDate] IS NOT NULL");
+
+                    b.HasIndex("Number")
+                        .IsUnique()
+                        .HasFilter("[Number] IS NOT NULL");
+
+                    b.HasIndex("Status");
+
+                    b.ToTable("RecurringContracts", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.RecurringContracts.RecurringContractAmendment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AmendmentType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("EffectiveDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<int>("ProrationPolicy")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("RecurringContractId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SnapshotAfterJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SnapshotBeforeJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecurringContractId");
+
+                    b.ToTable("RecurringContractAmendments", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.RecurringContracts.RecurringContractBillingRun", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<decimal>("FixedAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<Guid?>("InvoiceDraftId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("InvoiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("PeriodFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("PeriodTo")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("ProrationAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<Guid>("RecurringContractId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("UsageAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("RecurringContractId", "PeriodFrom", "PeriodTo")
+                        .IsUnique();
+
+                    b.ToTable("RecurringContractBillingRuns", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.RecurringContracts.RecurringContractLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("EffectiveFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EffectiveTo")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("IncludedQuantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LineType")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("OverageUnitPriceHT")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<Guid>("RecurringContractId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("UnitPriceHT")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("UsageMetricId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("VatRate")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecurringContractId");
+
+                    b.HasIndex("RecurringContractId", "IsActive");
+
+                    b.ToTable("RecurringContractLines", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.RecurringContracts.UsageMetric", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AggregationMode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("UsageMetrics", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.RecurringContracts.UsageRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("PeriodFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("PeriodTo")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<Guid?>("RecordedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RecurringContractId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Source")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UsageMetricId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecurringContractId", "PeriodFrom", "PeriodTo");
+
+                    b.HasIndex("RecurringContractId", "UsageMetricId", "PeriodFrom", "PeriodTo", "Source");
+
+                    b.ToTable("UsageRecords", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.SalesActivity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AssignedUserId")
@@ -6730,15 +11314,14 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.SalesOrder", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CancelledAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("CancellationReason")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
@@ -6765,6 +11348,10 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<DateTime?>("ExpectedDeliveryDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal?>("GlobalDiscountPercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
                     b.Property<bool>("IsStockReserved")
                         .HasColumnType("bit");
 
@@ -6778,6 +11365,9 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<string>("PaymentTerms")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Reference")
                         .HasMaxLength(100)
@@ -6801,10 +11391,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<Guid?>("WarehouseId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("GlobalDiscountPercent")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
@@ -6826,8 +11412,14 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.SalesOrderLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AppliedPromotionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AppliedPromotionName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -6882,6 +11474,10 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
+                    b.Property<decimal>("ReturnedQuantity")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
                     b.Property<Guid>("SalesOrderId")
                         .HasColumnType("uniqueidentifier");
 
@@ -6907,10 +11503,157 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("SalesOrderLines", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.SalesReturnNote", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ConfirmedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("DeliveryNoteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("ReturnDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("WarehouseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("DeliveryNoteId");
+
+                    b.HasIndex("ReturnDate");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("WarehouseId");
+
+                    b.ToTable("SalesReturnNotes", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.SalesReturnNoteLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("DeliveryNoteLineId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Designation")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal?>("DiscountPercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("FodecRatePercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<bool>("IsFodecApplicable")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LineNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ProductCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("ReturnedQuantity")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<Guid>("SalesReturnNoteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("UnitPriceHT")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VatRatePercent")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeliveryNoteLineId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("SalesReturnNoteId");
+
+                    b.ToTable("SalesReturnNoteLines", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.SalesTarget", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -6947,10 +11690,62 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("SalesTargets", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.StockDocumentAllocation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DocumentKind")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("DocumentLineId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ProductLotId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<Guid?>("SerialId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("UnitCost")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ProductLotId");
+
+                    b.HasIndex("SerialId");
+
+                    b.HasIndex("DocumentKind", "DocumentLineId");
+
+                    b.ToTable("StockDocumentAllocations", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.StockItem", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("AverageCost")
@@ -7011,10 +11806,50 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("StockItems", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.StockLotBalance", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProductLotId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("QuantityOnHand")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal>("QuantityReserved")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<Guid>("StockItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductLotId");
+
+                    b.HasIndex("StockItemId", "ProductLotId")
+                        .IsUnique();
+
+                    b.ToTable("StockLotBalances", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.StockMovement", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("BalanceAfter")
@@ -7034,6 +11869,9 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<DateTime>("OccurredAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("ProductLotId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<decimal>("Quantity")
                         .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
@@ -7044,6 +11882,9 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<string>("Reference")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("SerialId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("ShortfallQuantity")
                         .HasPrecision(18, 4)
@@ -7065,17 +11906,26 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("ValuationLayerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OccurredAt");
+
+                    b.HasIndex("ProductLotId");
 
                     b.HasIndex("Reason");
 
                     b.HasIndex("Reference");
 
+                    b.HasIndex("SerialId");
+
                     b.HasIndex("StockItemId");
 
                     b.HasIndex("Type");
+
+                    b.HasIndex("ValuationLayerId");
 
                     b.HasIndex("StockItemId", "OccurredAt");
 
@@ -7085,7 +11935,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.StockTransfer", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CancellationReason")
@@ -7152,7 +12001,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.StockTransferLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -7207,10 +12055,193 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("StockTransferLines", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.StockValuationLayer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("OriginalQuantity")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<Guid?>("ProductLotId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ReceivedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("RemainingQuantity")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<string>("SourceReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("StockItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("UnitCost")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductLotId");
+
+                    b.HasIndex("StockItemId", "ReceivedAt");
+
+                    b.ToTable("StockValuationLayers", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.StockVoucher", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CancellationReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExternalReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<int>("Reason")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ValidatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("VoucherDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("WarehouseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Kind");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("VoucherDate");
+
+                    b.HasIndex("WarehouseId");
+
+                    b.HasIndex("Kind", "Status");
+
+                    b.ToTable("StockVouchers", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.StockVoucherLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("LineNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ProductCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<Guid>("StockVoucherId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Unit")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("UnitCost")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("StockVoucherId");
+
+                    b.HasIndex("StockVoucherId", "ProductId")
+                        .IsUnique();
+
+                    b.ToTable("StockVoucherLines", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.Storefront.StorefrontOutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AggregateId")
@@ -7742,6 +12773,8 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EntityDefinitionId");
+
                     b.HasIndex("TenantId", "EntityDefinitionId", "IsDefault")
                         .HasDatabaseName("IX_CustomRecordViewDefinitions_Tenant_Entity_Default");
 
@@ -8050,14 +13083,14 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasKey("Id");
 
+                    b.HasIndex("TenantId", "InstanceId")
+                        .HasDatabaseName("IX_StudioWorkflowApprovals_Tenant_Instance");
+
                     b.HasIndex("TenantId", "AssigneeRole", "Status")
                         .HasDatabaseName("IX_StudioWorkflowApprovals_Tenant_AssigneeRole_Status");
 
                     b.HasIndex("TenantId", "AssigneeUserId", "Status")
                         .HasDatabaseName("IX_StudioWorkflowApprovals_Tenant_AssigneeUser_Status");
-
-                    b.HasIndex("TenantId", "InstanceId")
-                        .HasDatabaseName("IX_StudioWorkflowApprovals_Tenant_Instance");
 
                     b.ToTable("StudioWorkflowApprovals", (string)null);
                 });
@@ -8300,7 +13333,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Supplier", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Activity")
@@ -8383,7 +13415,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.SupplierInvoice", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CancellationReason")
@@ -8440,6 +13471,9 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<Guid?>("PurchaseOrderId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("SourcePurchaseReceiptId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -8480,6 +13514,8 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasIndex("PurchaseOrderId");
 
+                    b.HasIndex("SourcePurchaseReceiptId");
+
                     b.HasIndex("Status");
 
                     b.HasIndex("SupplierId");
@@ -8492,7 +13528,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.SupplierInvoiceLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AssetAccountNumber")
@@ -8531,6 +13566,12 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<Guid?>("PurchaseOrderLineId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("PurchaseReceiptLineId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<decimal>("Quantity")
                         .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
@@ -8555,6 +13596,10 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasIndex("IsFixedAsset");
 
+                    b.HasIndex("PurchaseOrderLineId");
+
+                    b.HasIndex("PurchaseReceiptLineId");
+
                     b.HasIndex("SupplierInvoiceId");
 
                     b.ToTable("SupplierInvoiceLines", (string)null);
@@ -8563,7 +13608,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.SupplierPayment", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -8619,7 +13663,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.Tax", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Context")
@@ -8683,7 +13726,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.TejXmlExportLog", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("CertificateCount")
@@ -8743,7 +13785,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.ThirdPartyAccountingProfile", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AccountingNotes")
@@ -8792,6 +13833,476 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("ThirdPartyAccountingProfiles", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Treasury.CashFlowForecastBucket", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("ClosingBalance")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ForecastRunId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("HighClosingBalance")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("Inflows")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("LowClosingBalance")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("NetFlow")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("OpeningBalance")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("Outflows")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("PeriodEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("PeriodStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SequenceIndex")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ForecastRunId", "SequenceIndex")
+                        .IsUnique()
+                        .HasDatabaseName("IX_CashFlowForecastBuckets_RunSequence");
+
+                    b.ToTable("CashFlowForecastBuckets", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Treasury.CashFlowForecastInsight", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Detail")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<decimal?>("EstimatedBalance")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<Guid>("ForecastRunId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("Impact")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ImpactDirection")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Origin")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("PeriodStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ForecastRunId", "Kind", "SortOrder")
+                        .HasDatabaseName("IX_CashFlowForecastInsights_RunKindSort");
+
+                    b.ToTable("CashFlowForecastInsights", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Treasury.CashFlowForecastLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("ContractualDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Direction")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ExpectedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ForecastRunId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<decimal>("ProbabilityPercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<Guid?>("SourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SourceReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("SourceType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ThirdPartyName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("WeightedAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ForecastRunId", "Direction")
+                        .HasDatabaseName("IX_CashFlowForecastLines_RunDirection");
+
+                    b.HasIndex("ForecastRunId", "ExpectedDate")
+                        .HasDatabaseName("IX_CashFlowForecastLines_RunExpectedDate");
+
+                    b.HasIndex("SourceType", "SourceId")
+                        .HasDatabaseName("IX_CashFlowForecastLines_Source");
+
+                    b.ToTable("CashFlowForecastLines", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Treasury.CashFlowForecastRun", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("AiAdjustmentApplied")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("AiAnalyzedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("AiModelRef")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal>("ClosingBalance")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("ComputedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ComputedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("ConfidencePercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<int>("DurationMs")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<int>("HorizonMonths")
+                        .HasColumnType("int");
+
+                    b.Property<string>("InputsJson")
+                        .HasMaxLength(8000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MethodUsed")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("NetFlow")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("OpeningBalance")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("PeriodEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("PeriodStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalInflows")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("TotalOutflows")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ComputedAt");
+
+                    b.HasIndex("Status", "ComputedAt")
+                        .HasDatabaseName("IX_CashFlowForecastRuns_StatusComputed");
+
+                    b.ToTable("CashFlowForecastRuns", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Treasury.CashFlowForecastSettings", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("AlertThreshold")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("ComfortThreshold")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("CriticalThreshold")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<int?>("PayrollPaymentDayOfMonth")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CashFlowForecastSettings", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Treasury.CashFlowScenario", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AiRationale")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("AssumptionsJson")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<decimal>("ClosingBalance")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("DeterministicProbabilityPercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<Guid>("ForecastRunId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("NetFlow")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("ProbabilityPercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<int>("ProbabilitySource")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ForecastRunId", "Kind")
+                        .IsUnique()
+                        .HasDatabaseName("IX_CashFlowScenarios_RunKind");
+
+                    b.ToTable("CashFlowScenarios", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Treasury.RecurringCashCommitment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<string>("Category")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<int>("DayOfMonth")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Direction")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Frequency")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsActive", "StartDate")
+                        .HasDatabaseName("IX_RecurringCashCommitments_ActiveStart");
+
+                    b.ToTable("RecurringCashCommitments", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.UserDashboardLayout", b =>
                 {
                     b.Property<Guid>("Id")
@@ -8831,10 +14342,20 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.VatDeclaration", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Acomptes")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)")
+                        .HasDefaultValue(0m);
+
+                    b.Property<int>("CalculationOrigin")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<decimal>("ConsumptionDuty")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)")
@@ -8864,10 +14385,22 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasColumnType("decimal(18,3)")
                         .HasDefaultValue(0m);
 
+                    b.Property<decimal>("HotelTax")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)")
+                        .HasDefaultValue(0m);
+
                     b.Property<bool>("IsRectificative")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
+
+                    b.Property<decimal>("LicenceFee")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)")
+                        .HasDefaultValue(0m);
 
                     b.Property<DateTime?>("LockedAt")
                         .HasColumnType("datetime2");
@@ -8924,10 +14457,84 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.ToTable("VatDeclarations", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.VatDeclarationLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("ComputedGrossAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("ComputedWithheldAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Family")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("GrossAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Origin")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("RatePercentApplied")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
+
+                    b.Property<string>("ReportCode")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<string>("RubricCode")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<Guid?>("RubricId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("VatDeclarationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("WithheldAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VatDeclarationId", "RubricCode")
+                        .IsUnique();
+
+                    b.ToTable("VatDeclarationLines", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.Warehouse", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Address")
@@ -8980,7 +14587,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.WithholdingFiscalYearParameter", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -9013,7 +14619,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("FactuTrust.Domain.Entities.WithholdingTaxType", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("ApplicableToNonResident")
@@ -9087,6 +14692,47 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.HasIndex("IsActive");
 
                     b.ToTable("WithholdingTaxTypes", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.ZReport", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CashRegisterSessionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("GeneratedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SnapshotJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CashRegisterSessionId")
+                        .IsUnique();
+
+                    b.HasIndex("GeneratedAt");
+
+                    b.ToTable("ZReports", (string)null);
                 });
 
             modelBuilder.Entity("FactuTrust.Domain.Services.BankDepositNumberSequence", b =>
@@ -9257,6 +14903,50 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasForeignKey("ConversationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.AccountingAudit.AccountingAnomaly", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.AccountingAudit.AccountingControlRun", "Run")
+                        .WithMany("Anomalies")
+                        .HasForeignKey("RunId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Run");
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.AccountingAudit.AccountingAnomalyActivity", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.AccountingAudit.AccountingAnomaly", "Anomaly")
+                        .WithMany("Activities")
+                        .HasForeignKey("AnomalyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Anomaly");
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.AccountingAudit.AccountingAnomalyLine", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.AccountingAudit.AccountingAnomaly", "Anomaly")
+                        .WithMany("Lines")
+                        .HasForeignKey("AnomalyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Anomaly");
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.AccountingAudit.AccountingRevisionNote", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.AccountingAudit.AccountingControlRun", "Run")
+                        .WithMany()
+                        .HasForeignKey("RunId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Run");
                 });
 
             modelBuilder.Entity("FactuTrust.Domain.Entities.BankAccount", b =>
@@ -9523,6 +15213,133 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.CashRegister", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Warehouse", "Warehouse")
+                        .WithMany()
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.CashRegisterSession", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.CashRegister", "CashRegister")
+                        .WithMany()
+                        .HasForeignKey("CashRegisterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "CashVariance", b1 =>
+                        {
+                            b1.Property<Guid>("CashRegisterSessionId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("CashVariance");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("CashVarianceCurrency");
+
+                            b1.HasKey("CashRegisterSessionId");
+
+                            b1.ToTable("CashRegisterSessions");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CashRegisterSessionId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "ClosingCountedCash", b1 =>
+                        {
+                            b1.Property<Guid>("CashRegisterSessionId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("ClosingCountedCash");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("ClosingCountedCashCurrency");
+
+                            b1.HasKey("CashRegisterSessionId");
+
+                            b1.ToTable("CashRegisterSessions");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CashRegisterSessionId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "ClosingExpectedCash", b1 =>
+                        {
+                            b1.Property<Guid>("CashRegisterSessionId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("ClosingExpectedCash");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("ClosingExpectedCashCurrency");
+
+                            b1.HasKey("CashRegisterSessionId");
+
+                            b1.ToTable("CashRegisterSessions");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CashRegisterSessionId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "OpeningFloat", b1 =>
+                        {
+                            b1.Property<Guid>("CashRegisterSessionId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("OpeningFloat");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("OpeningFloatCurrency");
+
+                            b1.HasKey("CashRegisterSessionId");
+
+                            b1.ToTable("CashRegisterSessions");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CashRegisterSessionId");
+                        });
+
+                    b.Navigation("CashRegister");
+
+                    b.Navigation("CashVariance");
+
+                    b.Navigation("ClosingCountedCash");
+
+                    b.Navigation("ClosingExpectedCash");
+
+                    b.Navigation("OpeningFloat")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.Client", b =>
                 {
                     b.OwnsOne("FactuTrust.Domain.ValueObjects.Address", "Address", b1 =>
@@ -9785,6 +15602,17 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Navigation("Phone");
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.CurrencyExchangeRate", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Currency");
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.DeliveryNote", b =>
                 {
                     b.HasOne("FactuTrust.Domain.Entities.Client", "Client")
@@ -10016,6 +15844,585 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Honoraires.HonorairesInvoice", b =>
+                {
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "AmountPaid", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesInvoiceId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("AmountPaid");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("AmountPaidCurrency");
+
+                            b1.HasKey("HonorairesInvoiceId");
+
+                            b1.ToTable("HonorairesInvoices");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesInvoiceId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "SubTotal", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesInvoiceId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("SubTotal");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("SubTotalCurrency");
+
+                            b1.HasKey("HonorairesInvoiceId");
+
+                            b1.ToTable("HonorairesInvoices");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesInvoiceId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "TotalAmount", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesInvoiceId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("TotalAmount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("TotalAmountCurrency");
+
+                            b1.HasKey("HonorairesInvoiceId");
+
+                            b1.ToTable("HonorairesInvoices");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesInvoiceId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "TotalVat", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesInvoiceId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("TotalVat");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("TotalVatCurrency");
+
+                            b1.HasKey("HonorairesInvoiceId");
+
+                            b1.ToTable("HonorairesInvoices");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesInvoiceId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "WithholdingAmount", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesInvoiceId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("WithholdingAmount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("WithholdingAmountCurrency");
+
+                            b1.HasKey("HonorairesInvoiceId");
+
+                            b1.ToTable("HonorairesInvoices");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesInvoiceId");
+                        });
+
+                    b.Navigation("AmountPaid")
+                        .IsRequired();
+
+                    b.Navigation("SubTotal")
+                        .IsRequired();
+
+                    b.Navigation("TotalAmount")
+                        .IsRequired();
+
+                    b.Navigation("TotalVat")
+                        .IsRequired();
+
+                    b.Navigation("WithholdingAmount")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Honoraires.HonorairesInvoiceLine", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Honoraires.HonorairesInvoice", "Invoice")
+                        .WithMany("Lines")
+                        .HasForeignKey("HonorairesInvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "DiscountAmount", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesInvoiceLineId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("DiscountAmount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("DiscountAmountCurrency");
+
+                            b1.HasKey("HonorairesInvoiceLineId");
+
+                            b1.ToTable("HonorairesInvoiceLines");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesInvoiceLineId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "SubTotal", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesInvoiceLineId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("SubTotal");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("SubTotalCurrency");
+
+                            b1.HasKey("HonorairesInvoiceLineId");
+
+                            b1.ToTable("HonorairesInvoiceLines");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesInvoiceLineId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "Total", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesInvoiceLineId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("Total");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("TotalCurrency");
+
+                            b1.HasKey("HonorairesInvoiceLineId");
+
+                            b1.ToTable("HonorairesInvoiceLines");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesInvoiceLineId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "UnitPrice", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesInvoiceLineId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("UnitPrice");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("UnitPriceCurrency");
+
+                            b1.HasKey("HonorairesInvoiceLineId");
+
+                            b1.ToTable("HonorairesInvoiceLines");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesInvoiceLineId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "VatAmount", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesInvoiceLineId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("VatAmount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("VatAmountCurrency");
+
+                            b1.HasKey("HonorairesInvoiceLineId");
+
+                            b1.ToTable("HonorairesInvoiceLines");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesInvoiceLineId");
+                        });
+
+                    b.Navigation("DiscountAmount")
+                        .IsRequired();
+
+                    b.Navigation("Invoice");
+
+                    b.Navigation("SubTotal")
+                        .IsRequired();
+
+                    b.Navigation("Total")
+                        .IsRequired();
+
+                    b.Navigation("UnitPrice")
+                        .IsRequired();
+
+                    b.Navigation("VatAmount")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Honoraires.HonorairesPayment", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Honoraires.HonorairesInvoice", "Invoice")
+                        .WithMany("Payments")
+                        .HasForeignKey("HonorairesInvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "Amount", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesPaymentId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("Amount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("AmountCurrency");
+
+                            b1.HasKey("HonorairesPaymentId");
+
+                            b1.ToTable("HonorairesPayments");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesPaymentId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "ClientWithholdingAmount", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesPaymentId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("ClientWithholdingAmount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("ClientWithholdingAmountCurrency");
+
+                            b1.HasKey("HonorairesPaymentId");
+
+                            b1.ToTable("HonorairesPayments");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesPaymentId");
+                        });
+
+                    b.Navigation("Amount")
+                        .IsRequired();
+
+                    b.Navigation("ClientWithholdingAmount")
+                        .IsRequired();
+
+                    b.Navigation("Invoice");
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Honoraires.HonorairesQuote", b =>
+                {
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "SubTotal", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesQuoteId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("SubTotal");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("SubTotalCurrency");
+
+                            b1.HasKey("HonorairesQuoteId");
+
+                            b1.ToTable("HonorairesQuotes");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesQuoteId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "TotalAmount", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesQuoteId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("TotalAmount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("TotalAmountCurrency");
+
+                            b1.HasKey("HonorairesQuoteId");
+
+                            b1.ToTable("HonorairesQuotes");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesQuoteId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "TotalVat", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesQuoteId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("TotalVat");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("TotalVatCurrency");
+
+                            b1.HasKey("HonorairesQuoteId");
+
+                            b1.ToTable("HonorairesQuotes");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesQuoteId");
+                        });
+
+                    b.Navigation("SubTotal")
+                        .IsRequired();
+
+                    b.Navigation("TotalAmount")
+                        .IsRequired();
+
+                    b.Navigation("TotalVat")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Honoraires.HonorairesQuoteLine", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Honoraires.HonorairesQuote", "Quote")
+                        .WithMany("Lines")
+                        .HasForeignKey("HonorairesQuoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "DiscountAmount", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesQuoteLineId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("DiscountAmount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("DiscountAmountCurrency");
+
+                            b1.HasKey("HonorairesQuoteLineId");
+
+                            b1.ToTable("HonorairesQuoteLines");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesQuoteLineId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "SubTotal", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesQuoteLineId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("SubTotal");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("SubTotalCurrency");
+
+                            b1.HasKey("HonorairesQuoteLineId");
+
+                            b1.ToTable("HonorairesQuoteLines");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesQuoteLineId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "Total", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesQuoteLineId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("Total");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("TotalCurrency");
+
+                            b1.HasKey("HonorairesQuoteLineId");
+
+                            b1.ToTable("HonorairesQuoteLines");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesQuoteLineId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "UnitPrice", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesQuoteLineId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("UnitPrice");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("UnitPriceCurrency");
+
+                            b1.HasKey("HonorairesQuoteLineId");
+
+                            b1.ToTable("HonorairesQuoteLines");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesQuoteLineId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "VatAmount", b1 =>
+                        {
+                            b1.Property<Guid>("HonorairesQuoteLineId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("VatAmount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("VatAmountCurrency");
+
+                            b1.HasKey("HonorairesQuoteLineId");
+
+                            b1.ToTable("HonorairesQuoteLines");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HonorairesQuoteLineId");
+                        });
+
+                    b.Navigation("DiscountAmount")
+                        .IsRequired();
+
+                    b.Navigation("Quote");
+
+                    b.Navigation("SubTotal")
+                        .IsRequired();
+
+                    b.Navigation("Total")
+                        .IsRequired();
+
+                    b.Navigation("UnitPrice")
+                        .IsRequired();
+
+                    b.Navigation("VatAmount")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.InventoryCountLine", b =>
                 {
                     b.HasOne("FactuTrust.Domain.Entities.PhysicalInventory", null)
@@ -10077,6 +16484,30 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                                 .HasMaxLength(3)
                                 .HasColumnType("nvarchar(3)")
                                 .HasColumnName("FodecAmountCurrency");
+
+                            b1.HasKey("InvoiceId");
+
+                            b1.ToTable("Invoices");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InvoiceId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "GlobalDiscountAmount", b1 =>
+                        {
+                            b1.Property<Guid>("InvoiceId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("GlobalDiscountAmount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("GlobalDiscountAmountCurrency");
 
                             b1.HasKey("InvoiceId");
 
@@ -10205,6 +16636,9 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Navigation("FodecAmount")
                         .IsRequired();
 
+                    b.Navigation("GlobalDiscountAmount")
+                        .IsRequired();
+
                     b.Navigation("Number")
                         .IsRequired();
 
@@ -10232,6 +16666,30 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "AllocatedGlobalDiscount", b1 =>
+                        {
+                            b1.Property<Guid>("InvoiceLineId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("AllocatedGlobalDiscount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("AllocatedGlobalDiscountCurrency");
+
+                            b1.HasKey("InvoiceLineId");
+
+                            b1.ToTable("InvoiceLines");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InvoiceLineId");
+                        });
 
                     b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "DiscountAmount", b1 =>
                         {
@@ -10368,30 +16826,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                                 .HasMaxLength(3)
                                 .HasColumnType("nvarchar(3)")
                                 .HasColumnName("VatAmountCurrency");
-
-                            b1.HasKey("InvoiceLineId");
-
-                            b1.ToTable("InvoiceLines");
-
-                            b1.WithOwner()
-                                .HasForeignKey("InvoiceLineId");
-                        });
-
-                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "AllocatedGlobalDiscount", b1 =>
-                        {
-                            b1.Property<Guid>("InvoiceLineId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 3)
-                                .HasColumnType("decimal(18,3)")
-                                .HasColumnName("AllocatedGlobalDiscount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("nvarchar(3)")
-                                .HasColumnName("AllocatedGlobalDiscountCurrency");
 
                             b1.HasKey("InvoiceLineId");
 
@@ -10577,6 +17011,15 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Navigation("Loan");
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.MonthlyDeclarationRubricAccount", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.MonthlyDeclarationRubric", null)
+                        .WithMany("Accounts")
+                        .HasForeignKey("RubricId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.Opportunity", b =>
                 {
                     b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "ExpectedAmount", b1 =>
@@ -10643,6 +17086,44 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .IsRequired();
 
                     b.Navigation("Invoice");
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.CnssContributionPayment", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Payroll.PayrollRun", "PayrollRun")
+                        .WithMany()
+                        .HasForeignKey("PayrollRunId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "Amount", b1 =>
+                        {
+                            b1.Property<Guid>("CnssContributionPaymentId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("Amount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("AmountCurrency");
+
+                            b1.HasKey("CnssContributionPaymentId");
+
+                            b1.ToTable("CnssContributionPayments");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CnssContributionPaymentId");
+                        });
+
+                    b.Navigation("Amount")
+                        .IsRequired();
+
+                    b.Navigation("PayrollRun");
                 });
 
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.ContractAllowance", b =>
@@ -10760,6 +17241,24 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Navigation("Phone");
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.EmployeeGarnishmentInstallment", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Payroll.EmployeeGarnishment", null)
+                        .WithMany("Installments")
+                        .HasForeignKey("EmployeeGarnishmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.EmployeeLoanInstallment", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Payroll.EmployeeLoan", null)
+                        .WithMany("Installments")
+                        .HasForeignKey("EmployeeLoanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.EmploymentContract", b =>
                 {
                     b.HasOne("FactuTrust.Domain.Entities.Payroll.Employee", null)
@@ -10769,29 +17268,20 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayrollIrppBracket", b =>
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayrollGarnishmentBracket", b =>
                 {
                     b.HasOne("FactuTrust.Domain.Entities.Payroll.PayrollYearParameters", null)
-                        .WithMany("IrppBrackets")
+                        .WithMany("GarnishmentBrackets")
                         .HasForeignKey("PayrollYearParametersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.Payslip", b =>
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayrollIrppBracket", b =>
                 {
-                    b.HasOne("FactuTrust.Domain.Entities.Payroll.PayrollRun", null)
-                        .WithMany("Payslips")
-                        .HasForeignKey("PayrollRunId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayslipLine", b =>
-                {
-                    b.HasOne("FactuTrust.Domain.Entities.Payroll.Payslip", null)
-                        .WithMany("Lines")
-                        .HasForeignKey("PayslipId")
+                    b.HasOne("FactuTrust.Domain.Entities.Payroll.PayrollYearParameters", null)
+                        .WithMany("IrppBrackets")
+                        .HasForeignKey("PayrollYearParametersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -10870,15 +17360,24 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FactuTrust.Domain.Entities.Studio.CustomRecordViewDefinition", b =>
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.Payslip", b =>
                 {
-                    b.HasOne("FactuTrust.Domain.Entities.Studio.CustomEntityDefinition", null)
-                        .WithMany()
-                        .HasForeignKey("EntityDefinitionId")
+                    b.HasOne("FactuTrust.Domain.Entities.Payroll.PayrollRun", null)
+                        .WithMany("Payslips")
+                        .HasForeignKey("PayrollRunId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_CustomRecordViewDefinitions_CustomEntityDefinitions");
+                        .IsRequired();
                 });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayslipLine", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Payroll.Payslip", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("PayslipId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.PhysicalInventory", b =>
                 {
                     b.HasOne("FactuTrust.Domain.Entities.Warehouse", "Warehouse")
@@ -11005,6 +17504,7 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                                 .HasColumnName("DiscountAmount");
 
                             b1.Property<string>("Currency")
+                                .IsRequired()
                                 .HasMaxLength(3)
                                 .HasColumnType("nvarchar(3)")
                                 .HasColumnName("DiscountAmountCurrency");
@@ -11022,34 +17522,16 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
             modelBuilder.Entity("FactuTrust.Domain.Entities.Product", b =>
                 {
-                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Barcode", "Barcode", b1 =>
-                        {
-                            b1.Property<Guid>("ProductId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(48)
-                                .HasColumnType("nvarchar(48)")
-                                .HasColumnName("Barcode");
-
-                            b1.HasKey("ProductId");
-
-                            b1.HasIndex("Value")
-                                .HasDatabaseName("IX_Products_Barcode")
-                                .HasFilter("[Barcode] IS NOT NULL");
-
-                            b1.ToTable("Products");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ProductId");
-                        });
-
                     b.HasOne("FactuTrust.Domain.Entities.ProductCategory", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("FactuTrust.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ParentProductId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "LastPurchasePrice", b1 =>
                         {
@@ -11123,6 +17605,29 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                                 .HasForeignKey("ProductId");
                         });
 
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Barcode", "Barcode", b1 =>
+                        {
+                            b1.Property<Guid>("ProductId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(48)
+                                .HasColumnType("nvarchar(48)")
+                                .HasColumnName("Barcode");
+
+                            b1.HasKey("ProductId");
+
+                            b1.HasIndex("Value")
+                                .HasDatabaseName("IX_Products_Barcode")
+                                .HasFilter("[Barcode] IS NOT NULL");
+
+                            b1.ToTable("Products");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProductId");
+                        });
+
                     b.Navigation("Barcode");
 
                     b.Navigation("Category");
@@ -11132,6 +17637,68 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Navigation("PurchasePrice");
 
                     b.Navigation("UnitPrice")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.ProductAttributeValue", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.ProductAttributeDefinition", null)
+                        .WithMany("Values")
+                        .HasForeignKey("DefinitionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.ProductLot", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.ProductSerial", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FactuTrust.Domain.Entities.ProductLot", null)
+                        .WithMany()
+                        .HasForeignKey("ProductLotId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.ProductVariantAttributeValue", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.ProductAttributeValue", null)
+                        .WithMany()
+                        .HasForeignKey("AttributeValueId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FactuTrust.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.ProductVariantAxis", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.ProductAttributeDefinition", null)
+                        .WithMany()
+                        .HasForeignKey("DefinitionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FactuTrust.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ParentProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -11689,30 +18256,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "SubTotal", b1 =>
-                        {
-                            b1.Property<Guid>("QuoteId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 3)
-                                .HasColumnType("decimal(18,3)")
-                                .HasColumnName("SubTotal");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("nvarchar(3)")
-                                .HasColumnName("SubTotalCurrency");
-
-                            b1.HasKey("QuoteId");
-
-                            b1.ToTable("Quotes");
-
-                            b1.WithOwner()
-                                .HasForeignKey("QuoteId");
-                        });
-
                     b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "FiscalStampAmount", b1 =>
                         {
                             b1.Property<Guid>("QuoteId")
@@ -11752,6 +18295,54 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                                 .HasMaxLength(3)
                                 .HasColumnType("nvarchar(3)")
                                 .HasColumnName("FodecAmountCurrency");
+
+                            b1.HasKey("QuoteId");
+
+                            b1.ToTable("Quotes");
+
+                            b1.WithOwner()
+                                .HasForeignKey("QuoteId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "GlobalDiscountAmount", b1 =>
+                        {
+                            b1.Property<Guid>("QuoteId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("GlobalDiscountAmount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("GlobalDiscountAmountCurrency");
+
+                            b1.HasKey("QuoteId");
+
+                            b1.ToTable("Quotes");
+
+                            b1.WithOwner()
+                                .HasForeignKey("QuoteId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "SubTotal", b1 =>
+                        {
+                            b1.Property<Guid>("QuoteId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("SubTotal");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("SubTotalCurrency");
 
                             b1.HasKey("QuoteId");
 
@@ -11850,6 +18441,9 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Navigation("FodecAmount")
                         .IsRequired();
 
+                    b.Navigation("GlobalDiscountAmount")
+                        .IsRequired();
+
                     b.Navigation("Number")
                         .IsRequired();
 
@@ -11876,7 +18470,7 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "FodecAmount", b1 =>
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "AllocatedGlobalDiscount", b1 =>
                         {
                             b1.Property<Guid>("QuoteLineId")
                                 .HasColumnType("uniqueidentifier");
@@ -11884,13 +18478,13 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                             b1.Property<decimal>("Amount")
                                 .HasPrecision(18, 3)
                                 .HasColumnType("decimal(18,3)")
-                                .HasColumnName("FodecAmount");
+                                .HasColumnName("AllocatedGlobalDiscount");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
                                 .HasMaxLength(3)
                                 .HasColumnType("nvarchar(3)")
-                                .HasColumnName("FodecAmountCurrency");
+                                .HasColumnName("AllocatedGlobalDiscountCurrency");
 
                             b1.HasKey("QuoteLineId");
 
@@ -11915,6 +18509,30 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                                 .HasMaxLength(3)
                                 .HasColumnType("nvarchar(3)")
                                 .HasColumnName("DiscountAmountCurrency");
+
+                            b1.HasKey("QuoteLineId");
+
+                            b1.ToTable("QuoteLines");
+
+                            b1.WithOwner()
+                                .HasForeignKey("QuoteLineId");
+                        });
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "FodecAmount", b1 =>
+                        {
+                            b1.Property<Guid>("QuoteLineId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("FodecAmount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("FodecAmountCurrency");
 
                             b1.HasKey("QuoteLineId");
 
@@ -12020,30 +18638,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                                 .HasForeignKey("QuoteLineId");
                         });
 
-                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "AllocatedGlobalDiscount", b1 =>
-                        {
-                            b1.Property<Guid>("QuoteLineId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 3)
-                                .HasColumnType("decimal(18,3)")
-                                .HasColumnName("AllocatedGlobalDiscount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("nvarchar(3)")
-                                .HasColumnName("AllocatedGlobalDiscountCurrency");
-
-                            b1.HasKey("QuoteLineId");
-
-                            b1.ToTable("QuoteLines");
-
-                            b1.WithOwner()
-                                .HasForeignKey("QuoteLineId");
-                        });
-
                     b.Navigation("AllocatedGlobalDiscount")
                         .IsRequired();
 
@@ -12107,6 +18701,15 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Navigation("QuoteTemplate");
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.RecurringContracts.RecurringContractLine", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.RecurringContracts.RecurringContract", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("RecurringContractId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.SalesOrder", b =>
                 {
                     b.HasOne("FactuTrust.Domain.Entities.Client", "Client")
@@ -12168,35 +18771,23 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                                 .HasForeignKey("SalesOrderId");
                         });
 
-                    b.OwnsOne("FactuTrust.Domain.ValueObjects.SalesOrderNumber", "Number", b1 =>
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "GlobalDiscountAmount", b1 =>
                         {
                             b1.Property<Guid>("SalesOrderId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<string>("Prefix")
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("GlobalDiscountAmount");
+
+                            b1.Property<string>("Currency")
                                 .IsRequired()
-                                .HasMaxLength(10)
-                                .HasColumnType("nvarchar(10)")
-                                .HasColumnName("NumberPrefix");
-
-                            b1.Property<int>("Sequence")
-                                .HasColumnType("int")
-                                .HasColumnName("NumberSequence");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(50)
-                                .HasColumnType("nvarchar(50)")
-                                .HasColumnName("Number");
-
-                            b1.Property<int>("Year")
-                                .HasColumnType("int")
-                                .HasColumnName("NumberYear");
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("GlobalDiscountAmountCurrency");
 
                             b1.HasKey("SalesOrderId");
-
-                            b1.HasIndex("Value")
-                                .HasDatabaseName("IX_SalesOrders_Number");
 
                             b1.ToTable("SalesOrders");
 
@@ -12276,12 +18867,51 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                                 .HasForeignKey("SalesOrderId");
                         });
 
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.SalesOrderNumber", "Number", b1 =>
+                        {
+                            b1.Property<Guid>("SalesOrderId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Prefix")
+                                .IsRequired()
+                                .HasMaxLength(10)
+                                .HasColumnType("nvarchar(10)")
+                                .HasColumnName("NumberPrefix");
+
+                            b1.Property<int>("Sequence")
+                                .HasColumnType("int")
+                                .HasColumnName("NumberSequence");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("nvarchar(50)")
+                                .HasColumnName("Number");
+
+                            b1.Property<int>("Year")
+                                .HasColumnType("int")
+                                .HasColumnName("NumberYear");
+
+                            b1.HasKey("SalesOrderId");
+
+                            b1.HasIndex("Value")
+                                .HasDatabaseName("IX_SalesOrders_Number");
+
+                            b1.ToTable("SalesOrders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SalesOrderId");
+                        });
+
                     b.Navigation("Client");
 
                     b.Navigation("FiscalStampAmount")
                         .IsRequired();
 
                     b.Navigation("FodecAmount")
+                        .IsRequired();
+
+                    b.Navigation("GlobalDiscountAmount")
                         .IsRequired();
 
                     b.Navigation("Number")
@@ -12312,6 +18942,30 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasForeignKey("SalesOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "AllocatedGlobalDiscount", b1 =>
+                        {
+                            b1.Property<Guid>("SalesOrderLineId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 3)
+                                .HasColumnType("decimal(18,3)")
+                                .HasColumnName("AllocatedGlobalDiscount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("AllocatedGlobalDiscountCurrency");
+
+                            b1.HasKey("SalesOrderLineId");
+
+                            b1.ToTable("SalesOrderLines");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SalesOrderLineId");
+                        });
 
                     b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "DiscountAmount", b1 =>
                         {
@@ -12457,30 +19111,6 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                                 .HasForeignKey("SalesOrderLineId");
                         });
 
-                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "AllocatedGlobalDiscount", b1 =>
-                        {
-                            b1.Property<Guid>("SalesOrderLineId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 3)
-                                .HasColumnType("decimal(18,3)")
-                                .HasColumnName("AllocatedGlobalDiscount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("nvarchar(3)")
-                                .HasColumnName("AllocatedGlobalDiscountCurrency");
-
-                            b1.HasKey("SalesOrderLineId");
-
-                            b1.ToTable("SalesOrderLines");
-
-                            b1.WithOwner()
-                                .HasForeignKey("SalesOrderLineId");
-                        });
-
                     b.Navigation("AllocatedGlobalDiscount")
                         .IsRequired();
 
@@ -12505,6 +19135,90 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.Navigation("VatAmount")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.SalesReturnNote", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FactuTrust.Domain.Entities.DeliveryNote", "DeliveryNote")
+                        .WithMany()
+                        .HasForeignKey("DeliveryNoteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FactuTrust.Domain.Entities.Warehouse", "Warehouse")
+                        .WithMany()
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.SalesReturnNoteNumber", "Number", b1 =>
+                        {
+                            b1.Property<Guid>("SalesReturnNoteId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int>("Sequence")
+                                .HasColumnType("int")
+                                .HasColumnName("NumberSequence");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("nvarchar(50)")
+                                .HasColumnName("Number");
+
+                            b1.Property<int>("Year")
+                                .HasColumnType("int")
+                                .HasColumnName("NumberYear");
+
+                            b1.HasKey("SalesReturnNoteId");
+
+                            b1.HasIndex("Value")
+                                .IsUnique();
+
+                            b1.ToTable("SalesReturnNotes");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SalesReturnNoteId");
+                        });
+
+                    b.Navigation("Client");
+
+                    b.Navigation("DeliveryNote");
+
+                    b.Navigation("Number")
+                        .IsRequired();
+
+                    b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.SalesReturnNoteLine", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.DeliveryNoteLine", null)
+                        .WithMany()
+                        .HasForeignKey("DeliveryNoteLineId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FactuTrust.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FactuTrust.Domain.Entities.SalesReturnNote", "SalesReturnNote")
+                        .WithMany("Lines")
+                        .HasForeignKey("SalesReturnNoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("SalesReturnNote");
                 });
 
             modelBuilder.Entity("FactuTrust.Domain.Entities.SalesTarget", b =>
@@ -12534,6 +19248,40 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         });
 
                     b.Navigation("TargetAmount")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.StockDocumentAllocation", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FactuTrust.Domain.Entities.ProductLot", null)
+                        .WithMany()
+                        .HasForeignKey("ProductLotId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FactuTrust.Domain.Entities.ProductSerial", null)
+                        .WithMany()
+                        .HasForeignKey("SerialId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.StockLotBalance", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.ProductLot", null)
+                        .WithMany()
+                        .HasForeignKey("ProductLotId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FactuTrust.Domain.Entities.StockItem", null)
+                        .WithMany()
+                        .HasForeignKey("StockItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -12610,6 +19358,91 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .IsRequired();
 
                     b.Navigation("StockTransfer");
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.StockValuationLayer", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.ProductLot", null)
+                        .WithMany()
+                        .HasForeignKey("ProductLotId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FactuTrust.Domain.Entities.StockItem", null)
+                        .WithMany()
+                        .HasForeignKey("StockItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.StockVoucher", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Warehouse", "Warehouse")
+                        .WithMany()
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.StockVoucherNumber", "Number", b1 =>
+                        {
+                            b1.Property<Guid>("StockVoucherId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Prefix")
+                                .IsRequired()
+                                .HasMaxLength(10)
+                                .HasColumnType("nvarchar(10)")
+                                .HasColumnName("NumberPrefix");
+
+                            b1.Property<int>("Sequence")
+                                .HasColumnType("int")
+                                .HasColumnName("NumberSequence");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("nvarchar(50)")
+                                .HasColumnName("Number");
+
+                            b1.Property<int>("Year")
+                                .HasColumnType("int")
+                                .HasColumnName("NumberYear");
+
+                            b1.HasKey("StockVoucherId");
+
+                            b1.HasIndex("Value")
+                                .IsUnique();
+
+                            b1.ToTable("StockVouchers");
+
+                            b1.WithOwner()
+                                .HasForeignKey("StockVoucherId");
+                        });
+
+                    b.Navigation("Number")
+                        .IsRequired();
+
+                    b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.StockVoucherLine", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.StockVoucher", "StockVoucher")
+                        .WithMany("Lines")
+                        .HasForeignKey("StockVoucherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("StockVoucher");
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Studio.CustomRecordViewDefinition", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Studio.CustomEntityDefinition", null)
+                        .WithMany()
+                        .HasForeignKey("EntityDefinitionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_CustomRecordViewDefinitions_CustomEntityDefinitions");
                 });
 
             modelBuilder.Entity("FactuTrust.Domain.Entities.Supplier", b =>
@@ -12735,6 +19568,11 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .HasForeignKey("PurchaseOrderId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("FactuTrust.Domain.Entities.PurchaseReceipt", "SourcePurchaseReceipt")
+                        .WithMany()
+                        .HasForeignKey("SourcePurchaseReceiptId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("FactuTrust.Domain.Entities.Supplier", "Supplier")
                         .WithMany()
                         .HasForeignKey("SupplierId")
@@ -12846,6 +19684,8 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .IsRequired();
 
                     b.Navigation("PurchaseOrder");
+
+                    b.Navigation("SourcePurchaseReceipt");
 
                     b.Navigation("SubTotal")
                         .IsRequired();
@@ -13016,6 +19856,42 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .IsRequired();
 
                     b.Navigation("SupplierInvoice");
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Treasury.CashFlowForecastBucket", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Treasury.CashFlowForecastRun", null)
+                        .WithMany("Buckets")
+                        .HasForeignKey("ForecastRunId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Treasury.CashFlowForecastInsight", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Treasury.CashFlowForecastRun", null)
+                        .WithMany("Insights")
+                        .HasForeignKey("ForecastRunId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Treasury.CashFlowForecastLine", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Treasury.CashFlowForecastRun", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("ForecastRunId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Treasury.CashFlowScenario", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.Treasury.CashFlowForecastRun", null)
+                        .WithMany("Scenarios")
+                        .HasForeignKey("ForecastRunId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("FactuTrust.Domain.Entities.VatDeclaration", b =>
@@ -13237,9 +20113,66 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.VatDeclarationLine", b =>
+                {
+                    b.HasOne("FactuTrust.Domain.Entities.VatDeclaration", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("VatDeclarationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.ZReport", b =>
+                {
+                    b.OwnsOne("FactuTrust.Domain.ValueObjects.ZReportNumber", "Number", b1 =>
+                        {
+                            b1.Property<Guid>("ZReportId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int>("Sequence")
+                                .HasColumnType("int")
+                                .HasColumnName("NumberSequence");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("nvarchar(50)")
+                                .HasColumnName("Number");
+
+                            b1.Property<int>("Year")
+                                .HasColumnType("int")
+                                .HasColumnName("NumberYear");
+
+                            b1.HasKey("ZReportId");
+
+                            b1.HasIndex("Value")
+                                .IsUnique();
+
+                            b1.ToTable("ZReports");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ZReportId");
+                        });
+
+                    b.Navigation("Number")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.AI.Conversation", b =>
                 {
                     b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.AccountingAudit.AccountingAnomaly", b =>
+                {
+                    b.Navigation("Activities");
+
+                    b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.AccountingAudit.AccountingControlRun", b =>
+                {
+                    b.Navigation("Anomalies");
                 });
 
             modelBuilder.Entity("FactuTrust.Domain.Entities.BankStatement", b =>
@@ -13278,35 +20211,20 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Navigation("ScheduleLines");
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Honoraires.HonorairesInvoice", b =>
+                {
+                    b.Navigation("Lines");
+
+                    b.Navigation("Payments");
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Honoraires.HonorairesQuote", b =>
+                {
+                    b.Navigation("Lines");
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.Invoice", b =>
                 {
-                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "GlobalDiscountAmount", b1 =>
-                        {
-                            b1.Property<Guid>("InvoiceId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 3)
-                                .HasColumnType("decimal(18,3)")
-                                .HasColumnName("GlobalDiscountAmount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("nvarchar(3)")
-                                .HasColumnName("GlobalDiscountAmountCurrency");
-
-                            b1.HasKey("InvoiceId");
-
-                            b1.ToTable("Invoices");
-
-                            b1.WithOwner()
-                                .HasForeignKey("InvoiceId");
-                        });
-
-                    b.Navigation("GlobalDiscountAmount")
-                        .IsRequired();
-
                     b.Navigation("Lines");
                 });
 
@@ -13330,9 +20248,24 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Navigation("ScheduleLines");
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.MonthlyDeclarationRubric", b =>
+                {
+                    b.Navigation("Accounts");
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.Employee", b =>
                 {
                     b.Navigation("Contracts");
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.EmployeeGarnishment", b =>
+                {
+                    b.Navigation("Installments");
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.EmployeeLoan", b =>
+                {
+                    b.Navigation("Installments");
                 });
 
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.EmploymentContract", b =>
@@ -13352,6 +20285,8 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
             modelBuilder.Entity("FactuTrust.Domain.Entities.Payroll.PayrollYearParameters", b =>
                 {
+                    b.Navigation("GarnishmentBrackets");
+
                     b.Navigation("IrppBrackets");
                 });
 
@@ -13375,6 +20310,11 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Navigation("Tiers");
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.ProductAttributeDefinition", b =>
+                {
+                    b.Navigation("Values");
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.PurchaseOrder", b =>
                 {
                     b.Navigation("Lines");
@@ -13389,69 +20329,25 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
             modelBuilder.Entity("FactuTrust.Domain.Entities.Quote", b =>
                 {
-                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "GlobalDiscountAmount", b1 =>
-                        {
-                            b1.Property<Guid>("QuoteId")
-                                .HasColumnType("uniqueidentifier");
+                    b.Navigation("Lines");
+                });
 
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 3)
-                                .HasColumnType("decimal(18,3)")
-                                .HasColumnName("GlobalDiscountAmount");
+            modelBuilder.Entity("FactuTrust.Domain.Entities.QuoteTemplate", b =>
+                {
+                    b.Navigation("Lines");
+                });
 
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("nvarchar(3)")
-                                .HasColumnName("GlobalDiscountAmountCurrency");
-
-                            b1.HasKey("QuoteId");
-
-                            b1.ToTable("Quotes");
-
-                            b1.WithOwner()
-                                .HasForeignKey("QuoteId");
-                        });
-
-                    b.Navigation("GlobalDiscountAmount")
-                        .IsRequired();
-
+            modelBuilder.Entity("FactuTrust.Domain.Entities.RecurringContracts.RecurringContract", b =>
+                {
                     b.Navigation("Lines");
                 });
 
             modelBuilder.Entity("FactuTrust.Domain.Entities.SalesOrder", b =>
                 {
-                    b.OwnsOne("FactuTrust.Domain.ValueObjects.Money", "GlobalDiscountAmount", b1 =>
-                        {
-                            b1.Property<Guid>("SalesOrderId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 3)
-                                .HasColumnType("decimal(18,3)")
-                                .HasColumnName("GlobalDiscountAmount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("nvarchar(3)")
-                                .HasColumnName("GlobalDiscountAmountCurrency");
-
-                            b1.HasKey("SalesOrderId");
-
-                            b1.ToTable("SalesOrders");
-
-                            b1.WithOwner()
-                                .HasForeignKey("SalesOrderId");
-                        });
-
-                    b.Navigation("GlobalDiscountAmount")
-                        .IsRequired();
-
                     b.Navigation("Lines");
                 });
 
-            modelBuilder.Entity("FactuTrust.Domain.Entities.QuoteTemplate", b =>
+            modelBuilder.Entity("FactuTrust.Domain.Entities.SalesReturnNote", b =>
                 {
                     b.Navigation("Lines");
                 });
@@ -13466,6 +20362,11 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Navigation("Lines");
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.StockVoucher", b =>
+                {
+                    b.Navigation("Lines");
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.Supplier", b =>
                 {
                     b.Navigation("PurchaseOrders");
@@ -13476,6 +20377,22 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Navigation("Lines");
 
                     b.Navigation("Payments");
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Treasury.CashFlowForecastRun", b =>
+                {
+                    b.Navigation("Buckets");
+
+                    b.Navigation("Insights");
+
+                    b.Navigation("Lines");
+
+                    b.Navigation("Scenarios");
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.VatDeclaration", b =>
+                {
+                    b.Navigation("Lines");
                 });
 #pragma warning restore 612, 618
         }

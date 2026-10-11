@@ -32,6 +32,8 @@ import { AccountingToolbarActionsComponent } from '../shared/accounting-toolbar-
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { AccountingCorrectionBannerComponent } from '../shared/accounting-correction-banner.component';
 import { ConfirmationService } from '@core/services/confirmation.service';
+import { AuthService } from '@core/services/auth.service';
+import { PERMISSIONS } from '@core/config/permission-keys';
 import { FUNCTIONAL_CURRENCY } from '../manual-entry/models/entry-form.model';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 
@@ -103,7 +105,7 @@ export class LetteringComponent implements OnInit {
   private readonly api = inject(AccountingService);
   private readonly route = inject(ActivatedRoute);
   private readonly confirmationService = inject(ConfirmationService);
-
+  private readonly auth = inject(AuthService);
   account = '';
   fromStr = '';
   toStr = '';
@@ -398,6 +400,15 @@ export class LetteringComponent implements OnInit {
 
   isLettered(line: LetteringLine): boolean {
     return !!line.letteringCode;
+  }
+
+  /**
+   * Droit requis pour délettrer (plan de refonte, D6) : `accounting:unletter`, distinct de
+   * `accounting:create` utilisé jusqu'ici. Affichage seulement — le serveur revérifie la policy
+   * `AccountingUnletter` à l'action, et refuse en outre toujours en période clôturée.
+   */
+  canUnletter(): boolean {
+    return this.auth.hasPermission(PERMISSIONS.accounting.unletter);
   }
 
   /** Code de lettrage partiel (préfixe « P ») vs définitif (« L »). */

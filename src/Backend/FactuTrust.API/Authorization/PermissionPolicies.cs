@@ -103,6 +103,9 @@ public static class PermissionPolicies
     public const string AccountingClose = "perm:" + Permissions.Accounting.Close;
     public const string AccountingValidate = "perm:" + Permissions.Accounting.Validate;
 
+    /// <summary>Défaire un lettrage (D6) : séparation des tâches, distinct de <see cref="AccountingCreate"/>.</summary>
+    public const string AccountingUnletter = "perm:" + Permissions.Accounting.Unletter;
+
     /// <summary>Accounting firm operating on a delegated client dossier (not native firm home).</summary>
     public const string FirmDelegatedContext = "firm:delegated-context";
 

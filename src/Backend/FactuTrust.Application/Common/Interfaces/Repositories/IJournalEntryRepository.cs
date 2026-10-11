@@ -91,10 +91,13 @@ public interface IJournalEntryRepository
         GetOpenForeignCurrencyPositionsAsync(DateTime asOf, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Lignes désignées, avec leur écriture (donc leur devise de transaction). Lecture seule ;
-    /// rejoint la transaction ambiante si elle existe.
+    /// Lignes désignées, avec leur écriture (donc leur devise de transaction) et sa période. Lecture
+    /// seule ; rejoint la transaction ambiante si elle existe.
     /// </summary>
     Task<IReadOnlyList<JournalEntryLine>> GetLinesByIdsAsync(IReadOnlyList<Guid> lineIds, CancellationToken cancellationToken = default);
+
+    /// <summary>Exercices fiscaux verrouillés définitivement (<c>AccountingYearLocks</c>, D8).</summary>
+    Task<HashSet<int>> GetLockedFiscalYearsAsync(CancellationToken cancellationToken = default);
 
     Task<JournalEntry> AddAsync(JournalEntry entity, CancellationToken cancellationToken = default);
     Task UpdateAsync(JournalEntry entity, CancellationToken cancellationToken = default);

@@ -11,9 +11,11 @@ using FactuTrust.Application.Features.Accounting.Commands;
 using FactuTrust.Application.Features.BankAccounts.Queries;
 using FactuTrust.Application.Features.Accounting.Fiscal;
 using FactuTrust.Application.Features.Accounting.JournalCatalog;
+using FactuTrust.Application.Features.Accounting.Lettering;
 using FactuTrust.Application.Features.Accounting.Loans;
 using FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
 using FactuTrust.Application.Features.Accounting.Queries;
+using FactuTrust.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -1882,10 +1884,74 @@ public sealed class AccountingController : ControllerBase
     [Authorize(Policy = PermissionPolicies.AccountingCreate)]
     public async Task<IActionResult> Letter([FromBody] LetterEntriesRequest request, CancellationToken cancellationToken)
     {
-        var r = await _mediator.Send(new LetterAccountEntriesCommand(request.JournalEntryLineIds, request.AllowPartial), cancellationToken);
-        if (r.IsFailure)
-            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
-        return Ok(ApiResponse<bool>.Ok(true));
+        var origin = ParseOrigin(request.Origin);
+        var r = await _mediator.Send(
+            new LetterAccountEntriesCommand(request.JournalEntryLineIds, request.AllowPartial, origin, request.SuggestionKey),
+            cancellationToken);
+        return r.IsFailure ? LetteringFailure(r.Error) : Ok(ApiResponse<LetteringResultDto>.Ok(r.Value));
+    }
+
+    /// <summary>« Compléter un lettrage partiel » (plan §4.4, D7) : termine un groupe « P » sans délettrage.</summary>
+    [HttpPost("lettering/groups/{code}/complete")]
+    [Authorize(Policy = PermissionPolicies.AccountingCreate)]
+    public async Task<IActionResult> CompletePartialLettering(
+        string code, [FromBody] CompletePartialLetteringRequest request, CancellationToken cancellationToken)
+    {
+        var r = await _mediator.Send(
+            new CompletePartialLetteringCommand(code, request.JournalEntryLineIds, request.AllowPartial), cancellationToken);
+        return r.IsFailure ? LetteringFailure(r.Error) : Ok(ApiResponse<LetteringResultDto>.Ok(r.Value));
+    }
+
+    /// <summary>Lignes de l'écran de lettrage, filtrées et paginées côté serveur (plan §4.1).</summary>
+    [HttpGet("lettering/lines")]
+    [Authorize(Policy = PermissionPolicies.AccountingRead)]
+    public async Task<IActionResult> GetLetteringLines(
+        [FromQuery] string account,
+        [FromQuery] LetteringAccountMatch accountMatch = LetteringAccountMatch.Exact,
+        [FromQuery] DateTime from = default,
+        [FromQuery] DateTime to = default,
+        [FromQuery] LetteringStateFilter state = LetteringStateFilter.All,
+        [FromQuery] string? journalCode = null,
+        [FromQuery] IReadOnlyList<string>? sourceCategories = null,
+        [FromQuery] Guid? thirdPartyId = null,
+        [FromQuery] ThirdPartyKind? thirdPartyKind = null,
+        [FromQuery] LetteringSideFilter side = LetteringSideFilter.All,
+        [FromQuery] decimal? minAmount = null,
+        [FromQuery] decimal? maxAmount = null,
+        [FromQuery] string? search = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 500,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new GetLetteringLinesQuery(
+            account, accountMatch, from, to, state, journalCode, sourceCategories,
+            thirdPartyId, thirdPartyKind, side, minAmount, maxAmount, search, page, pageSize);
+        var r = await _mediator.Send(query, cancellationToken);
+        return r.IsFailure ? LetteringFailure(r.Error) : Ok(ApiResponse<LetteringLinesPageDto>.Ok(r.Value));
+    }
+
+    /// <summary>Détail d'un groupe de lettrage, avant délettrage ou complétion (plan §4.2).</summary>
+    [HttpGet("lettering/groups/{code}")]
+    [Authorize(Policy = PermissionPolicies.AccountingRead)]
+    public async Task<IActionResult> GetLetteringGroup(string code, CancellationToken cancellationToken)
+    {
+        var r = await _mediator.Send(new GetLetteringGroupQuery(code), cancellationToken);
+        return r.IsFailure ? LetteringFailure(r.Error) : Ok(ApiResponse<LetteringGroupDto>.Ok(r.Value));
+    }
+
+    private static LetteringOrigin ParseOrigin(string? origin) =>
+        Enum.TryParse<LetteringOrigin>(origin, ignoreCase: true, out var parsed) ? parsed : LetteringOrigin.Manual;
+
+    /// <summary>Mappe les codes d'erreur stables du lettrage (plan §4.6) vers le statut HTTP attendu.</summary>
+    private IActionResult LetteringFailure(FactuTrust.Domain.Common.Error error)
+    {
+        var body = ApiResponse<object>.FailWithCode(error.Description, error.Code);
+        return error.Code switch
+        {
+            LetteringErrorCodes.AlreadyLettered or LetteringErrorCodes.PeriodLocked => Conflict(body),
+            LetteringErrorCodes.GroupNotFound => NotFound(body),
+            _ => BadRequest(body)
+        };
     }
 
     [HttpPost("lettering/settle-exchange-difference")]
@@ -1895,18 +1961,16 @@ public sealed class AccountingController : ControllerBase
         var r = await _mediator.Send(
             new SettleExchangeDifferenceCommand(request.JournalEntryLineIds, request.AccountNumber), cancellationToken);
         if (r.IsFailure)
-            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+            return LetteringFailure(r.Error);
         return Ok(ApiResponse<Guid>.Ok(r.Value));
     }
 
     [HttpPost("unletter")]
-    [Authorize(Policy = PermissionPolicies.AccountingCreate)]
+    [Authorize(Policy = PermissionPolicies.AccountingUnletter)]
     public async Task<IActionResult> Unletter([FromBody] UnletterEntriesRequest request, CancellationToken cancellationToken)
     {
         var r = await _mediator.Send(new UnletterAccountEntriesCommand(request.Code), cancellationToken);
-        if (r.IsFailure)
-            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
-        return Ok(ApiResponse<bool>.Ok(true));
+        return r.IsFailure ? LetteringFailure(r.Error) : Ok(ApiResponse<bool>.Ok(true));
     }
 
     [HttpGet("journal/export")]

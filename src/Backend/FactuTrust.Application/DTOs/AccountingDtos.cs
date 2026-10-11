@@ -1327,6 +1327,22 @@ public sealed record LetterEntriesRequest
 {
     public IReadOnlyList<Guid> JournalEntryLineIds { get; init; } = Array.Empty<Guid>();
     public bool AllowPartial { get; init; }
+
+    /// <summary>
+    /// « Manual » (défaut) ou « Suggestion » (Phase 3, informatif). Toute autre valeur est
+    /// refusée par <c>LetterAccountEntriesCommandValidator</c> (plan §4.3).
+    /// </summary>
+    public string? Origin { get; init; }
+
+    /// <summary>Phase 3 : identifiant de la proposition validée, recopié dans l'audit (≤ 32 caractères).</summary>
+    public string? SuggestionKey { get; init; }
+}
+
+/// <summary>« Compléter un lettrage partiel » (plan §4.4, D7) : ajoute des lignes à un groupe « P ».</summary>
+public sealed record CompletePartialLetteringRequest
+{
+    public IReadOnlyList<Guid> JournalEntryLineIds { get; init; } = Array.Empty<Guid>();
+    public bool AllowPartial { get; init; }
 }
 
 /// <summary>Délettrage d'un groupe par son code (libère les lignes et supprime le groupe).</summary>

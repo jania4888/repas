@@ -165,7 +165,98 @@ public sealed class LetterAccountEntriesCommandValidator : AbstractValidator<Let
         RuleFor(x => x.JournalEntryLineIds)
             .NotEmpty().WithMessage("Au moins une ligne est requise.")
             .Must(ids => ids.Count >= 2)
-            .WithMessage("Au moins deux lignes sont requises pour le lettrage.");
+            .WithMessage("Au moins deux lignes sont requises pour le lettrage.")
+            .Must(ids => ids.Count <= 500)
+            .WithMessage("500 lignes au maximum peuvent être lettrées en une seule fois.")
+            .Must(ids => ids.All(id => id != Guid.Empty))
+            .WithMessage("Identifiant de ligne invalide.")
+            .Must(ids => ids.Distinct().Count() == ids.Count)
+            .WithMessage("Une même ligne est sélectionnée plusieurs fois.");
+
+        // Plan §4.3 : seules Manual et Suggestion sont acceptées depuis le corps HTTP de
+        // POST letter. Bulk/DraftUpdate/PayrollCancellation/Automatic/ExchangeDifference ne
+        // viennent que de flux internes qui n'empruntent pas cette commande.
+        RuleFor(x => x.Origin)
+            .Must(o => o == FactuTrust.Application.Features.Accounting.Lettering.LetteringOrigin.Manual
+                       || o == FactuTrust.Application.Features.Accounting.Lettering.LetteringOrigin.Suggestion)
+            .WithMessage("Origine de lettrage invalide.");
+
+        RuleFor(x => x.SuggestionKey)
+            .MaximumLength(32).WithMessage("La clé de proposition ne peut pas dépasser 32 caractères.");
+    }
+}
+
+public sealed class UnletterAccountEntriesCommandValidator : AbstractValidator<UnletterAccountEntriesCommand>
+{
+    private static readonly System.Text.RegularExpressions.Regex CodePattern =
+        new("^[LP]\\d{5,15}$", System.Text.RegularExpressions.RegexOptions.Compiled);
+
+    public UnletterAccountEntriesCommandValidator()
+    {
+        RuleFor(x => x.Code)
+            .NotEmpty().WithMessage("Le code de lettrage est obligatoire.")
+            .MaximumLength(16).WithMessage("Le code de lettrage ne peut pas dépasser 16 caractères.")
+            .Must(code => CodePattern.IsMatch(code.Trim().ToUpperInvariant()))
+            .WithMessage("Le code de lettrage doit être au format L00001 ou P00001.");
+    }
+}
+
+public sealed class CompletePartialLetteringCommandValidator : AbstractValidator<CompletePartialLetteringCommand>
+{
+    private static readonly System.Text.RegularExpressions.Regex CodePattern =
+        new("^P\\d{5,15}$", System.Text.RegularExpressions.RegexOptions.Compiled);
+
+    public CompletePartialLetteringCommandValidator()
+    {
+        RuleFor(x => x.Code)
+            .NotEmpty().WithMessage("Le code du groupe partiel est obligatoire.")
+            .MaximumLength(16).WithMessage("Le code de lettrage ne peut pas dépasser 16 caractères.")
+            .Must(code => CodePattern.IsMatch(code.Trim().ToUpperInvariant()))
+            .WithMessage("Seul un groupe partiel (code « P ») peut être complété.");
+
+        RuleFor(x => x.JournalEntryLineIds)
+            .NotEmpty().WithMessage("Au moins une nouvelle ligne est requise.")
+            .Must(ids => ids.Count <= 500)
+            .WithMessage("500 lignes au maximum peuvent être ajoutées en une seule fois.")
+            .Must(ids => ids.All(id => id != Guid.Empty))
+            .WithMessage("Identifiant de ligne invalide.")
+            .Must(ids => ids.Distinct().Count() == ids.Count)
+            .WithMessage("Une même ligne est sélectionnée plusieurs fois.");
+    }
+}
+
+public sealed class GetLetteringLinesQueryValidator : AbstractValidator<FactuTrust.Application.Features.Accounting.Lettering.GetLetteringLinesQuery>
+{
+    public GetLetteringLinesQueryValidator()
+    {
+        RuleFor(x => x.Account)
+            .NotEmpty().WithMessage("Le compte est obligatoire.")
+            .MaximumLength(32).WithMessage("Le compte ne peut pas dépasser 32 caractères.")
+            .Matches("^\\d{1,32}$").WithMessage("Le compte doit être composé de chiffres.");
+
+        RuleFor(x => x.To)
+            .GreaterThanOrEqualTo(x => x.From).WithMessage("La date de fin doit être postérieure ou égale à la date de début.");
+
+        RuleFor(x => x)
+            .Must(x => (x.To.Date - x.From.Date).TotalDays <= 732)
+            .WithMessage("La période ne peut pas dépasser 732 jours.");
+
+        RuleFor(x => x.PageSize)
+            .InclusiveBetween(1, 2000).WithMessage("La taille de page doit être entre 1 et 2000.");
+
+        RuleFor(x => x.Page)
+            .GreaterThanOrEqualTo(1).WithMessage("Le numéro de page doit être au moins 1.");
+
+        RuleFor(x => x)
+            .Must(x => !x.MinAmount.HasValue || !x.MaxAmount.HasValue || x.MinAmount.Value <= x.MaxAmount.Value)
+            .WithMessage("Le montant minimum doit être inférieur ou égal au montant maximum.");
+
+        RuleFor(x => x.Search)
+            .MaximumLength(100).WithMessage("La recherche ne peut pas dépasser 100 caractères.");
+
+        RuleFor(x => x)
+            .Must(x => !x.ThirdPartyId.HasValue || x.ThirdPartyKind.HasValue)
+            .WithMessage("Le type de tiers est obligatoire si un tiers est précisé.");
     }
 }
 

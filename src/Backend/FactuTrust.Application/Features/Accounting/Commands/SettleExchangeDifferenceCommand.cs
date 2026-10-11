@@ -91,6 +91,16 @@ public sealed class SettleExchangeDifferenceCommandHandler
         if (analysis.IsFailure)
             return Result.Failure<Guid>(analysis.Error);
 
+        // Verrou de période (D8/D9) : contrôlé AVANT la création de l'écriture d'ajustement, pour
+        // qu'aucune écriture d'écart orpheline ne soit jamais même construite.
+        var lockedYears = await _journalEntries.GetLockedFiscalYearsAsync(cancellationToken);
+        var lockedLine = lines.FirstOrDefault(l => IsLineLocked(l, lockedYears));
+        if (lockedLine is not null)
+        {
+            return Result.Failure<Guid>(FactuTrust.Application.Features.Accounting.Lettering.LetteringErrors.PeriodLocked(
+                $"Lettrage impossible : la ligne {lockedLine.JournalEntry?.PieceRef ?? lockedLine.Id.ToString()} appartient à une période clôturée."));
+        }
+
         var (thirdPartyAccount, gap, entryDate) = analysis.Value;
 
         Guid createdEntryId = Guid.Empty;
@@ -131,7 +141,9 @@ public sealed class SettleExchangeDifferenceCommandHandler
             var adjustmentLine = entry.Lines.First(l => l.AccountNumber == thirdPartyAccount);
             var toLetter = request.JournalEntryLineIds.Append(adjustmentLine.Id).ToList();
 
-            return await _lettering.ManualLetterAsync(toLetter, allowPartial: false, ct);
+            var letterResult = await _lettering.ManualLetterAsync(
+                toLetter, allowPartial: false, FactuTrust.Application.Features.Accounting.Lettering.LetteringOrigin.ExchangeDifference, ct);
+            return letterResult.IsFailure ? Result.Failure(letterResult.Error) : Result.Success();
         }, cancellationToken);
 
         if (result.IsFailure)
@@ -219,5 +231,20 @@ public sealed class SettleExchangeDifferenceCommandHandler
         var entryDate = lines.Max(l => l.JournalEntry?.EntryDate ?? DateTime.UtcNow.Date);
 
         return Result.Success((account, gap, entryDate));
+    }
+
+    /// <summary>Même règle stricte que <c>LetteringPeriodLock</c> (Infrastructure, D8) : statut
+    /// <see cref="JournalEntryStatus.Cloturee"/>, période <c>IsClosed</c>, ou exercice verrouillé.</summary>
+    private static bool IsLineLocked(JournalEntryLine line, HashSet<int> lockedYears)
+    {
+        var entry = line.JournalEntry;
+        if (entry is null)
+            return false;
+        if (entry.Status == JournalEntryStatus.Cloturee)
+            return true;
+        if (entry.AccountingPeriod?.IsClosed == true)
+            return true;
+        var fiscalYear = entry.AccountingPeriod?.FiscalYear ?? entry.EntryDate.Year;
+        return lockedYears.Contains(fiscalYear);
     }
 }

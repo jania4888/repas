@@ -237,15 +237,17 @@
                       [severity]="isPartialCode(line.letteringCode) ? 'warn' : 'info'"
                       [rounded]="true"
                       [attr.title]="isPartialCode(line.letteringCode) ? loc_lettrage_partiel_fc201a : loc_lettrage_cfcdd3" />
-                    <button
-                      type="button"
-                      class="lettering-unletter-btn"
-                      [disabled]="unlettering() === line.letteringCode"
-                      (click)="unletter(line.letteringCode)"
-                      [attr.aria-label]="loc_delettrer_le_groupe_letteringcode_0aecd2(line.letteringCode)"
-                      title="Délettrer ce groupe" i18n-title="@@accounting.lettering.delettrer.ce.groupe.210d5232">
-                      <i class="pi pi-times" aria-hidden="true"></i>
-                    </button>
+                    @if (canUnletter()) {
+                      <button
+                        type="button"
+                        class="lettering-unletter-btn"
+                        [disabled]="unlettering() === line.letteringCode"
+                        (click)="unletter(line.letteringCode)"
+                        [attr.aria-label]="loc_delettrer_le_groupe_letteringcode_0aecd2(line.letteringCode)"
+                        title="Délettrer ce groupe" i18n-title="@@accounting.lettering.delettrer.ce.groupe.210d5232">
+                        <i class="pi pi-times" aria-hidden="true"></i>
+                      </button>
+                    }
                   </span>
                 } @else {
                   <span class="lettering-unlettered" i18n="@@accounting.lettering.text.1b93795b">—</span>

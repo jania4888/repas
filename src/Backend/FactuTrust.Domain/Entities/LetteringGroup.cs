@@ -52,4 +52,37 @@ public sealed class LetteringGroup : AggregateRoot
 
         return Result.Success(g);
     }
+
+    /// <summary>
+    /// Ajoute de nouvelles lignes à un groupe existant (action « Compléter », D7). Les lignes déjà
+    /// membres du groupe ne sont pas dupliquées.
+    /// </summary>
+    public Result AddMembers(IReadOnlyList<Guid> journalEntryLineIds)
+    {
+        var existing = _members.Select(m => m.JournalEntryLineId).ToHashSet();
+        foreach (var id in journalEntryLineIds)
+        {
+            if (existing.Add(id))
+                _members.Add(LetteringGroupMember.CreateForGroup(this, id));
+        }
+
+        return Result.Success();
+    }
+
+    /// <summary>
+    /// Transforme un groupe partiel (« P ») en groupe définitif (« L ») avec le même numéro, à
+    /// l'issue de la complétion (D7). Le montant est recalculé par l'appelant avec la même règle
+    /// que <see cref="Create"/>.
+    /// </summary>
+    public Result Finalize(string newCode, Money amount)
+    {
+        newCode = newCode?.Trim() ?? string.Empty;
+        if (string.IsNullOrEmpty(newCode))
+            return Result.Failure(Error.Validation("Code", "Code obligatoire"));
+
+        Code = newCode;
+        Amount = amount;
+        IsPartial = false;
+        return Result.Success();
+    }
 }

@@ -1,0 +1,291 @@
+using FactuTrust.Application.Common.Interfaces;
+using FactuTrust.Application.DTOs;
+using FactuTrust.Infrastructure.Persistence;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+namespace FactuTrust.Infrastructure.Scripts;
+
+/// <summary>
+/// Balayage plateforme de l'intégrité du lettrage (<c>LetteringGroups</c> /
+/// <c>LetteringGroupMembers</c> / <c>JournalEntryLines.LetteringCode</c>) sur toutes les
+/// bases tenant. Préalable obligatoire avant de déployer la migration ajoutant les deux
+/// index UNIQUE (<c>LetteringGroups.Code</c>, <c>LetteringGroupMembers.JournalEntryLineId</c>) :
+/// une migration unique appliquée sur une base contenant des anomalies échouerait et
+/// bloquerait le tenant via <c>TenantMigrationGuard</c>.
+/// Fail-closed : un tenant injoignable, ou avec une quelconque anomalie, n'est JAMAIS
+/// compté comme propre (<see cref="LetteringIntegrityReportDto.IsUniqueIndexSafe"/>).
+/// Modèle : <see cref="InvoiceNumberIntegrityHelper"/>.
+/// </summary>
+public static class LetteringIntegrityHelper
+{
+    private const string CountsSql = @"
+SELECT
+    (SELECT COUNT(*) FROM [dbo].[LetteringGroups]),
+    (SELECT COUNT(*) FROM [dbo].[JournalEntryLines] WHERE [LetteringCode] IS NOT NULL);";
+
+    private static string UniqueIndexSql(string table, string column) => $@"
+SELECT CASE WHEN EXISTS (
+    SELECT 1
+    FROM sys.indexes ix
+    INNER JOIN sys.index_columns ic
+        ON ic.object_id = ix.object_id AND ic.index_id = ix.index_id AND ic.key_ordinal = 1
+    INNER JOIN sys.columns c
+        ON c.object_id = ic.object_id AND c.column_id = ic.column_id
+    WHERE ix.object_id = OBJECT_ID(N'[dbo].[{table}]')
+      AND ix.is_unique = 1
+      AND c.[name] = N'{column}') THEN 1 ELSE 0 END;";
+
+    private const string DuplicateCodesSql = @"
+SELECT [Code], COUNT(*) AS [GroupCount]
+FROM [dbo].[LetteringGroups]
+GROUP BY [Code]
+HAVING COUNT(*) > 1
+ORDER BY [Code];";
+
+    private const string LinesInMultipleGroupsSql = @"
+SELECT m.[JournalEntryLineId], g.[Code]
+FROM [dbo].[LetteringGroupMembers] m
+INNER JOIN [dbo].[LetteringGroups] g ON g.[Id] = m.[LetteringGroupId]
+WHERE m.[JournalEntryLineId] IN (
+    SELECT [JournalEntryLineId] FROM [dbo].[LetteringGroupMembers]
+    GROUP BY [JournalEntryLineId] HAVING COUNT(*) > 1)
+ORDER BY m.[JournalEntryLineId], g.[Code];";
+
+    private const string OrphanMembersSql = @"
+SELECT m.[JournalEntryLineId], g.[Code]
+FROM [dbo].[LetteringGroupMembers] m
+INNER JOIN [dbo].[LetteringGroups] g ON g.[Id] = m.[LetteringGroupId]
+LEFT JOIN [dbo].[JournalEntryLines] l ON l.[Id] = m.[JournalEntryLineId]
+WHERE l.[Id] IS NULL
+ORDER BY g.[Code], m.[JournalEntryLineId];";
+
+    private const string DanglingLetteringCodeLinesSql = @"
+SELECT l.[Id], l.[LetteringCode]
+FROM [dbo].[JournalEntryLines] l
+LEFT JOIN [dbo].[LetteringGroups] g ON g.[Code] = l.[LetteringCode]
+WHERE l.[LetteringCode] IS NOT NULL AND g.[Id] IS NULL
+ORDER BY l.[LetteringCode], l.[Id];";
+
+    private const string MismatchedLetteringCodesSql = @"
+SELECT m.[JournalEntryLineId], g.[Code], l.[LetteringCode]
+FROM [dbo].[LetteringGroupMembers] m
+INNER JOIN [dbo].[LetteringGroups] g ON g.[Id] = m.[LetteringGroupId]
+INNER JOIN [dbo].[JournalEntryLines] l ON l.[Id] = m.[JournalEntryLineId]
+WHERE l.[LetteringCode] IS NULL OR l.[LetteringCode] <> g.[Code]
+ORDER BY g.[Code], m.[JournalEntryLineId];";
+
+    /// <summary>Balaye tous les tenants actifs et consolide le rapport d'intégrité du lettrage.</summary>
+    public static async Task<LetteringIntegrityReportDto> ScanAllTenantsAsync(
+        IServiceProvider serviceProvider,
+        CancellationToken cancellationToken = default)
+    {
+        var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
+        var logger = loggerFactory.CreateLogger(typeof(LetteringIntegrityHelper).FullName
+            ?? nameof(LetteringIntegrityHelper));
+
+        await using var scope = serviceProvider.CreateAsyncScope();
+        var masterContext = scope.ServiceProvider.GetRequiredService<MasterDbContext>();
+        var tenantService = scope.ServiceProvider.GetRequiredService<ITenantService>();
+
+        var tenants = await masterContext.Tenants
+            .AsNoTracking()
+            .Where(t => t.IsActive)
+            .OrderBy(t => t.CompanyName)
+            .Select(t => new { t.Id, t.CompanyName })
+            .ToListAsync(cancellationToken);
+
+        logger.LogInformation(
+            "Lettering integrity scan started for {Count} active tenant(s)", tenants.Count);
+
+        var results = new List<TenantLetteringIntegrityDto>(tenants.Count);
+
+        foreach (var tenant in tenants)
+        {
+            results.Add(await ScanTenantAsync(tenantService, tenant.Id, tenant.CompanyName, logger, cancellationToken));
+        }
+
+        var clean = results.Count(r => r.Status == TenantLetteringIntegrityDto.StatusClean);
+        var withAnomalies = results.Count(r => r.Status == TenantLetteringIntegrityDto.StatusAnomaliesFound);
+        var unreachable = results.Count(r => r.Status == TenantLetteringIntegrityDto.StatusUnreachable);
+
+        var report = new LetteringIntegrityReportDto
+        {
+            ScannedAtUtc = DateTime.UtcNow,
+            TotalTenants = results.Count,
+            CleanTenants = clean,
+            TenantsWithAnomalies = withAnomalies,
+            UnreachableTenants = unreachable,
+            IsUniqueIndexSafe = results.Count > 0 && clean == results.Count,
+            Tenants = results
+        };
+
+        logger.LogInformation(
+            "Lettering integrity scan completed. Total: {Total}, Clean: {Clean}, Anomalies: {Anomalies}, Unreachable: {Unreachable}",
+            report.TotalTenants, report.CleanTenants, report.TenantsWithAnomalies, report.UnreachableTenants);
+
+        return report;
+    }
+
+    private static async Task<TenantLetteringIntegrityDto> ScanTenantAsync(
+        ITenantService tenantService,
+        Guid tenantId,
+        string tenantName,
+        ILogger logger,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var connectionString = await tenantService.GetConnectionStringAsync(tenantId, cancellationToken);
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                return Unreachable(tenantId, tenantName, "Chaîne de connexion introuvable.");
+            }
+
+            await using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync(cancellationToken);
+
+            int groupCount, letteredLineCount;
+            await using (var countCommand = new SqlCommand(CountsSql, connection))
+            await using (var reader = await countCommand.ExecuteReaderAsync(cancellationToken))
+            {
+                await reader.ReadAsync(cancellationToken);
+                groupCount = reader.GetInt32(0);
+                letteredLineCount = reader.GetInt32(1);
+            }
+
+            var hasGroupCodeIndex = await ScalarBoolAsync(connection, UniqueIndexSql("LetteringGroups", "Code"), cancellationToken);
+            var hasMemberLineIndex = await ScalarBoolAsync(connection, UniqueIndexSql("LetteringGroupMembers", "JournalEntryLineId"), cancellationToken);
+
+            var duplicateCodes = await ReadDuplicateCodesAsync(connection, cancellationToken);
+            var multiGroupLines = await ReadMultiGroupLinesAsync(connection, cancellationToken);
+            var orphanMembers = await ReadOrphanMembersAsync(connection, cancellationToken);
+            var danglingLines = await ReadDanglingLetteringCodeLinesAsync(connection, cancellationToken);
+            var mismatches = await ReadMismatchedLetteringCodesAsync(connection, cancellationToken);
+
+            var hasAnomaly = duplicateCodes.Count > 0 || multiGroupLines.Count > 0
+                || orphanMembers.Count > 0 || danglingLines.Count > 0 || mismatches.Count > 0;
+
+            return new TenantLetteringIntegrityDto
+            {
+                TenantId = tenantId,
+                TenantName = tenantName,
+                Status = hasAnomaly
+                    ? TenantLetteringIntegrityDto.StatusAnomaliesFound
+                    : TenantLetteringIntegrityDto.StatusClean,
+                LetteringGroupCount = groupCount,
+                LetteredLineCount = letteredLineCount,
+                HasUniqueGroupCodeIndex = hasGroupCodeIndex,
+                HasUniqueMemberLineIndex = hasMemberLineIndex,
+                DuplicateCodes = duplicateCodes,
+                LinesInMultipleGroups = multiGroupLines,
+                OrphanMembers = orphanMembers,
+                DanglingLetteringCodeLines = danglingLines,
+                MismatchedLetteringCodes = mismatches
+            };
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex,
+                "Lettering integrity scan failed for tenant {TenantId} ({TenantName})",
+                tenantId, tenantName);
+            return Unreachable(tenantId, tenantName, ex.Message);
+        }
+    }
+
+    private static async Task<bool> ScalarBoolAsync(SqlConnection connection, string sql, CancellationToken cancellationToken)
+    {
+        await using var command = new SqlCommand(sql, connection);
+        return (int)(await command.ExecuteScalarAsync(cancellationToken) ?? 0) == 1;
+    }
+
+    private static async Task<List<DuplicateLetteringCodeDto>> ReadDuplicateCodesAsync(
+        SqlConnection connection, CancellationToken cancellationToken)
+    {
+        var list = new List<DuplicateLetteringCodeDto>();
+        await using var command = new SqlCommand(DuplicateCodesSql, connection);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            list.Add(new DuplicateLetteringCodeDto { Code = reader.GetString(0), GroupCount = reader.GetInt32(1) });
+        }
+        return list;
+    }
+
+    private static async Task<List<MultiGroupLetteringLineDto>> ReadMultiGroupLinesAsync(
+        SqlConnection connection, CancellationToken cancellationToken)
+    {
+        var byLine = new Dictionary<Guid, List<string>>();
+        await using var command = new SqlCommand(LinesInMultipleGroupsSql, connection);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            var lineId = reader.GetGuid(0);
+            if (!byLine.TryGetValue(lineId, out var codes))
+            {
+                codes = new List<string>();
+                byLine[lineId] = codes;
+            }
+            codes.Add(reader.GetString(1));
+        }
+        return byLine
+            .Select(kvp => new MultiGroupLetteringLineDto { JournalEntryLineId = kvp.Key, GroupCodes = kvp.Value })
+            .OrderBy(d => d.JournalEntryLineId)
+            .ToList();
+    }
+
+    private static async Task<List<OrphanLetteringMemberDto>> ReadOrphanMembersAsync(
+        SqlConnection connection, CancellationToken cancellationToken)
+    {
+        var list = new List<OrphanLetteringMemberDto>();
+        await using var command = new SqlCommand(OrphanMembersSql, connection);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            list.Add(new OrphanLetteringMemberDto { JournalEntryLineId = reader.GetGuid(0), GroupCode = reader.GetString(1) });
+        }
+        return list;
+    }
+
+    private static async Task<List<DanglingLetteringCodeLineDto>> ReadDanglingLetteringCodeLinesAsync(
+        SqlConnection connection, CancellationToken cancellationToken)
+    {
+        var list = new List<DanglingLetteringCodeLineDto>();
+        await using var command = new SqlCommand(DanglingLetteringCodeLinesSql, connection);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            list.Add(new DanglingLetteringCodeLineDto { JournalEntryLineId = reader.GetGuid(0), LetteringCode = reader.GetString(1) });
+        }
+        return list;
+    }
+
+    private static async Task<List<MismatchedLetteringCodeDto>> ReadMismatchedLetteringCodesAsync(
+        SqlConnection connection, CancellationToken cancellationToken)
+    {
+        var list = new List<MismatchedLetteringCodeDto>();
+        await using var command = new SqlCommand(MismatchedLetteringCodesSql, connection);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            list.Add(new MismatchedLetteringCodeDto
+            {
+                JournalEntryLineId = reader.GetGuid(0),
+                GroupCode = reader.GetString(1),
+                LineLetteringCode = reader.IsDBNull(2) ? null : reader.GetString(2)
+            });
+        }
+        return list;
+    }
+
+    private static TenantLetteringIntegrityDto Unreachable(Guid tenantId, string tenantName, string error) =>
+        new()
+        {
+            TenantId = tenantId,
+            TenantName = tenantName,
+            Status = TenantLetteringIntegrityDto.StatusUnreachable,
+            Error = error
+        };
+}

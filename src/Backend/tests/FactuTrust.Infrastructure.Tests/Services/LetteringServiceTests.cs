@@ -16,10 +16,22 @@ public sealed class LetteringServiceTests
 {
     private readonly string _dbName = $"LetteringDb_{Guid.NewGuid()}";
     private readonly TestTenantDbContextFactory _factory;
+    private readonly Guid _accountingPeriodId;
 
     public LetteringServiceTests()
     {
         _factory = new TestTenantDbContextFactory(_dbName);
+
+        // Une AccountingPeriod réelle est requise : JournalEntry.AccountingPeriod est une relation
+        // requise (FK non-nullable). Un Guid orphelin « marchait » par accident avec le provider
+        // InMemory sur un .Count()/.Any(), mais le fait échouer silencieusement (0 ligne matérialisée)
+        // dès qu'une requête fait .Include(JournalEntry).ThenInclude(AccountingPeriod) + ToListAsync —
+        // le provider InMemory traite la relation requise comme une jointure interne.
+        using var ctx = _factory.CreateContext();
+        var period = AccountingPeriod.Create(2026, 5, new DateTime(2026, 5, 1), new DateTime(2026, 5, 31));
+        ctx.AccountingPeriods.Add(period);
+        ctx.SaveChanges();
+        _accountingPeriodId = period.Id;
     }
 
     private sealed class TestTenantDbContextFactory : ITenantDbContextFactory
@@ -51,7 +63,7 @@ public sealed class LetteringServiceTests
             };
 
         var entry = JournalEntry.Create(number, clientIsDebit ? "JV" : "JB",
-            new DateTime(2026, 5, 10), $"Écriture {number}", Guid.NewGuid(),
+            new DateTime(2026, 5, 10), $"Écriture {number}", _accountingPeriodId,
             false, "Manual", null, lines).Value;
         entry.SetAuditInfo("test", false);
 
