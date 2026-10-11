@@ -26,6 +26,13 @@ export class AccountingDocumentImportService {
   private static readonly ImportTimeoutMs = 190_000;
 
   /**
+   * Message stable affiché pour un 502/503/504 (passerelle/proxy), à la place du texte brut du
+   * fournisseur (p. ex. « Bad Gateway »). Local à ce service : le gestionnaire d'erreurs global
+   * et le message de délai (`TimeoutError`) ne sont pas concernés.
+   */
+  private static readonly GatewayErrorMessage = $localize`:@@accounting.accounting-document-import.ts.l.analyse.n.a.pas.abouti.le.serveur.d.an.35b77eb9:L'analyse n'a pas abouti : le serveur d'analyse n'a pas répondu à temps. Réessayez dans un instant ; si la pièce est longue, seules les pages 1, 2 et les 3 dernières sont lues.`;
+
+  /**
    * Analyse la pièce et renvoie la proposition d'écriture.
    *
    * @param direction Force le sens (vente/achat) lorsque l'utilisateur corrige la détection,
@@ -58,6 +65,9 @@ export class AccountingDocumentImportService {
             return throwError(() => new Error(
               "L'analyse a dépassé le délai maximal. Le modèle IA est peut-être en cours "
               + 'de chargement — réessayez dans un instant.'));
+          }
+          if (err instanceof HttpErrorResponse && (err.status === 502 || err.status === 503 || err.status === 504)) {
+            return throwError(() => new Error(AccountingDocumentImportService.GatewayErrorMessage));
           }
           const message = this.errorHandler.extractErrorMessage(err).trim();
           if (message && !(err instanceof HttpErrorResponse && err.status === 0)) {

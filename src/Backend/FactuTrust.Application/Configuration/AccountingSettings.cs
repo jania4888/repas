@@ -179,6 +179,19 @@ public sealed class AccountingSettings
     public bool DocumentImportEnabled { get; set; } = true;
 
     /// <summary>
+    /// Délai maximal, en secondes, accordé au service d'extraction documentaire (Docstrange) pour
+    /// l'import d'une pièce depuis la saisie manuelle. Il reste sous le délai du navigateur (190 s),
+    /// lui-même sous nginx (300 s) et Traefik : c'est donc l'application qui rend le message, pas
+    /// un proxy (« Bad Gateway »). N'affecte ni les relevés bancaires ni l'import Ventes/Achats,
+    /// qui gardent <c>DocStrange:TimeoutSeconds</c>. Défaut 170, borné à [30 ; 280].
+    /// </summary>
+    public int DocumentImportExternalBudgetSeconds { get; set; } = 170;
+
+    /// <summary>Valeur bornée de <see cref="DocumentImportExternalBudgetSeconds"/>.</summary>
+    public int EffectiveDocumentImportExternalBudgetSeconds =>
+        Math.Clamp(DocumentImportExternalBudgetSeconds, 30, 280);
+
+    /// <summary>
     /// Fenêtre de dates (± jours) utilisée par l'association automatique du rapprochement bancaire
     /// pour apparier une ligne de relevé à une écriture de même montant. Défaut : 10 jours.
     /// </summary>

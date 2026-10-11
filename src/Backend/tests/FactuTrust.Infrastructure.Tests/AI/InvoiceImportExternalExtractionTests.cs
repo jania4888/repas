@@ -165,6 +165,33 @@ public sealed class InvoiceImportExternalExtractionTests
         }
     }
 
+    [Fact]
+    public async Task The_invoice_wizard_sends_a_long_pdf_unchanged_because_the_page_window_is_out_of_scope()
+    {
+        // Hors périmètre : la fenêtre 2 + 3 ne concerne que l'import de pièce comptable.
+        var original = FactuTrust.Infrastructure.Tests.Services.DocumentImport.InvoicePageMarkPdf.Create(8);
+        byte[]? sent = null;
+        var provider = new Mock<IDocumentExtractionProvider>();
+        provider.SetupGet(x => x.Name).Returns("docstrange");
+        provider.Setup(x => x.IsAvailableAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true);
+        provider.Setup(x => x.ExtractStructuredAsync(
+                It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<JsonElement>(), It.IsAny<CancellationToken>()))
+            .Callback<Stream, string, string, JsonElement, CancellationToken>((stream, _, _, _, _) =>
+            {
+                using var copy = new MemoryStream();
+                stream.CopyTo(copy);
+                sent = copy.ToArray();
+            })
+            .ReturnsAsync(Result.Success(VerbatimJson));
+
+        await CreateSut(PipelineReturning(VerbatimJson), provider).HandleAsync(
+            new ImportInvoiceFromFileCommand(new MemoryStream(original), "longue.pdf", "application/pdf"),
+            CancellationToken.None);
+
+        Assert.NotNull(sent);
+        Assert.Equal(original, sent);
+    }
+
     // ---- outillage -----------------------------------------------------------------------
 
     private static ImportInvoiceFromFileCommand Command() =>

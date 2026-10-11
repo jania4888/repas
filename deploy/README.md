@@ -77,6 +77,19 @@ docker network inspect <réseau>        # IPAM.Config[].Subnet -> TRUSTED_PROXY_
 | Nom du `--certificatesresolvers.<nom>` | `TRAEFIK_CERTRESOLVER` |
 | Sous-réseau du réseau Traefik | `TRUSTED_PROXY_CIDR` |
 
+**Délais de l'entrypoint TLS (`respondingTimeouts`)**, à relever **avant** tout changement
+(`docker inspect traefik-traefik-1 --format '{{json .Config.Cmd}}' | tr ',' '\n' | grep -i timeout`) :
+
+| `respondingTimeouts` | Défaut Traefik v3 (si absent de la commande) | Valeur retenue | Rôle |
+|---|---|---|---|
+| `readTimeout` | `60s` | **`1500s`** (§9, procédure hors dépôt) | protection *Slowloris* : délai max pour que le client envoie l'intégralité de la requête |
+| `writeTimeout` | `0s` (aucune limite) | **à relever sur l'hôte avant d'y toucher** — ne pas supposer `0s` sans l'avoir vérifié | délai max d'écriture de la réponse |
+| `idleTimeout` | `180s` | **conservé à 180 s** | durée max d'inactivité d'une connexion *keep-alive* ; ne borne pas une requête en cours |
+
+Une coupure franche, sans page HTML, après ~60 s sur une analyse longue (import de pièce comptable
+de nombreuses pages) est la signature du `readTimeout` par défaut de Traefik (proxy inverse Go) —
+voir `docs/developer/accounting-document-import-page-window.md` §7 pour le diagnostic complet.
+
 > ### Valeurs relevées sur le VPS `srv1995368` (template d'août 2026)
 > À revérifier sur tout autre hôte — `cat /docker/traefik/docker-compose.yml`.
 >
@@ -636,6 +649,50 @@ Exemple (migrations + compose) :
 > `--accept-infrastructure` dans `deploy/scripts/deploy.sh`, copier le script à jour depuis le
 > dépôt vers le serveur (`/opt/factutrust/.deploy-run-manual.sh`) avant de lancer la commande
 > ci-dessus, ou fusionner d'abord la PR qui ajoute ce flag.
+
+### Traefik — changement hors dépôt (`respondingTimeouts`)
+
+`/docker/traefik/docker-compose.yml` **n'est pas versionné dans ce dépôt** : `deploy.sh` ne le
+voit pas et ne le touche jamais. Toute modification de ses `respondingTimeouts` (§1) est donc une
+opération manuelle sur le VPS, à faire **séparément** d'une livraison applicative.
+
+Valeur retenue : `readTimeout = 1500s` sur l'entrypoint TLS. `idleTimeout` reste à son défaut
+(180 s) : il borne l'inactivité d'une connexion *keep-alive*, pas une requête en cours, et n'a donc
+aucun effet sur une analyse longue. `writeTimeout` n'est pas modifié par cette procédure — relever
+sa valeur réelle avant d'y toucher un jour (§1).
+
+```bash
+# 1) Sauvegarde
+cp /docker/traefik/docker-compose.yml /docker/traefik/docker-compose.yml.bak-$(date +%F)
+
+# 2) Dans la commande Traefik (entrypoint TLS, ex. websecure), ajouter :
+#    --entrypoints.websecure.transport.respondingTimeouts.readTimeout=1500s
+
+# 3) Appliquer
+cd /docker/traefik && docker compose up -d
+
+# 4) Vérifier
+docker inspect traefik-traefik-1 --format '{{json .Config.Cmd}}' | tr ',' '\n' | grep -i timeout
+```
+
+**Rollback** : restaurer la sauvegarde (`cp docker-compose.yml.bak-<date> docker-compose.yml`) puis
+`docker compose up -d`. Aucune donnée persistée n'est affectée.
+
+**Compromis de sécurité à connaître avant d'appliquer ce changement** : `readTimeout` est la
+protection de l'entrypoint contre les requêtes lentes de type *Slowloris*. La valeur retenue
+**1500 s garde un plafond** — contrairement à `0`, qui le supprimerait — mais elle est nettement
+plus permissive que les 330 s initialement envisagés : une connexion lente peut occuper un fil
+Traefik pendant ~25 min au lieu de ~5,5 min. L'exposition réelle reste bornée en aval par Nginx
+(`proxy_read_timeout 300s`, `client_max_body_size 50M`, template `deploy/nginx/templates/default.conf.template`)
+et par l'API (upload plafonné à 10 Mo, limite de débit « ai » 20/min/utilisateur). **Après ce
+changement, c'est Nginx qui borne effectivement** la durée d'une requête d'analyse — Traefik à
+1500 s ne joue plus aucun rôle de coupure sur ce chemin, il se contente de laisser passer.
+
+Ordre recommandé avant d'appliquer ce changement en production : diagnostiquer d'abord un éventuel
+« Bad Gateway » avec la procédure de `docs/developer/accounting-document-import-page-window.md` §7
+(elle peut, à elle seule, expliquer un 502 sans toucher à Traefik) ; livrer le correctif backend et
+front de la fenêtre de pages ; appliquer ce changement Traefik seulement s'il reste nécessaire ;
+revérifier avec un PDF long (import de pièce comptable, Docstrange actif).
 
 ### Depuis un terminal
 

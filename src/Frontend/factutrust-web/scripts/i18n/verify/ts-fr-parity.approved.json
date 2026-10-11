@@ -322,5 +322,9 @@
   "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts": {
     "sha": "4051586459dd618f63107b9a767692966d8eb35e228cbc3c83ee473b70843798",
     "reason": "Import d'un fichier à plusieurs relevés (libellé du bouton, bilan, échec partiel) et messages par code des échecs de l'aperçu (délai IA, moteur IA indisponible, 504) : ajouts purs. Tout document par l'IA : retour de l'import IA (relevé enregistré, opérations déjà présentes) et code « import IA requis » : ajouts purs."
+  },
+  "src/app/features/accounting/manual-entry/services/accounting-document-import.service.ts": {
+    "sha": "0504dc6f69b8c0c89cb79180a7ddedd43d014e82ca087e1a0f6f3f9240389304",
+    "reason": "Mapping 502/503/504 (passerelle) vers un message i18n stable : nouveau texte $localize ajouté dans catchError (Bad Gateway/503/504), sans toucher au message de délai (TimeoutError) ni à ErrorHandlerService."
   }
 }

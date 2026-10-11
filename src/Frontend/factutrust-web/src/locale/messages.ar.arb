@@ -5217,5 +5217,6 @@
   "accounting.manual-entry.ajuster.b65f8ead": "ملاءمة",
   "accounting.manual-entry.le.navigateur.n.affiche.pas.ce.pdf.l.analyse.res.ef3e0be6": "لا يعرض المتصفح ملف PDF هذا. يبقى التحليل ممكنًا.",
   "accounting.manual-entry.apercu.visuel.indisponible.pour.ce.format.l.anal.fa01f148": "المعاينة المرئية غير متاحة لهذه الصيغة. يبقى التحليل ممكنًا.",
-  "accounting.manual-entry.ce.format.pourra.etre.analyse.mais.la.piece.join.d207f9a0": "يمكن تحليل هذه الصيغة، لكن قد يُرفض المرفق عند الحفظ (PDF وJPEG وPNG وWebP وExcel وWord فقط)."
+  "accounting.manual-entry.ce.format.pourra.etre.analyse.mais.la.piece.join.d207f9a0": "يمكن تحليل هذه الصيغة، لكن قد يُرفض المرفق عند الحفظ (PDF وJPEG وPNG وWebP وExcel وWord فقط).",
+  "accounting.accounting-document-import.ts.l.analyse.n.a.pas.abouti.le.serveur.d.an.35b77eb9": "لم ينجح التحليل: لم يستجب خادم التحليل في الوقت المحدد. أعد المحاولة بعد قليل؛ وإذا كانت الوثيقة طويلة، فلن تُقرأ سوى الصفحتين 1 و2 والصفحات الثلاث الأخيرة."
 }
