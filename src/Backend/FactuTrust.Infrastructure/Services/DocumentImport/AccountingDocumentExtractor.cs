@@ -178,6 +178,18 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
 
         Result<string> extraction;
         var elapsed = Stopwatch.StartNew();
+
+        // Seul le budget propre à ce chemin a expiré : message stable, sans détail fournisseur.
+        Result<AccountingDocumentExtractionDto> BudgetExceeded(string reason)
+        {
+            _logger.LogWarning(
+                "[{Scope}] Service d'extraction {Provider} : budget de {BudgetSeconds} s dépassé pour {FileName} "
+                + "après {ElapsedMs} ms ({Reason}).",
+                ErrorCode, provider.Name, (int)_externalBudget.TotalSeconds, request.FileName,
+                elapsed.ElapsedMilliseconds, reason);
+            return Failure(InvoicePdfReadingWindow.ExternalBudgetExceededMessage);
+        }
+
         using var budget = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         budget.CancelAfter(_externalBudget);
         try
@@ -196,13 +208,7 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
         }
         catch (Exception ex) when (budget.IsCancellationRequested && ex is OperationCanceledException or TimeoutException)
         {
-            // Seul le budget propre à ce chemin a expiré : message stable, sans détail fournisseur.
-            _logger.LogWarning(
-                "[{Scope}] Service d'extraction {Provider} : budget de {BudgetSeconds} s dépassé pour {FileName} "
-                + "après {ElapsedMs} ms.",
-                ErrorCode, provider.Name, (int)_externalBudget.TotalSeconds, request.FileName,
-                elapsed.ElapsedMilliseconds);
-            return Failure(InvoicePdfReadingWindow.ExternalBudgetExceededMessage);
+            return BudgetExceeded(ex.GetType().Name);
         }
         catch (Exception ex)
         {
@@ -220,14 +226,9 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
 
         if (extraction.IsFailure && budget.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
         {
-            // Le client HTTP convertit lui-même l'annulation par le budget en échec « injoignable » :
+            // Un fournisseur peut convertir lui-même l'annulation en échec « injoignable » :
             // on rétablit le message du budget, plus juste pour l'utilisateur.
-            _logger.LogWarning(
-                "[{Scope}] Service d'extraction {Provider} : budget de {BudgetSeconds} s dépassé pour {FileName} "
-                + "après {ElapsedMs} ms ({Reason}).",
-                ErrorCode, provider.Name, (int)_externalBudget.TotalSeconds, request.FileName,
-                elapsed.ElapsedMilliseconds, extraction.Error.Description);
-            return Failure(InvoicePdfReadingWindow.ExternalBudgetExceededMessage);
+            return BudgetExceeded(extraction.Error.Description);
         }
 
         if (extraction.IsFailure)

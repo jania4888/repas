@@ -92,10 +92,9 @@ public static class InvoicePdfReadingWindow
     {
         ArgumentNullException.ThrowIfNull(pagesRead);
 
-        var read = new HashSet<int>(pagesRead);
-        var skipped = Enumerable.Range(1, Math.Max(pageCount, 0)).Where(p => !read.Contains(p)).ToList();
+        var skipped = Enumerable.Range(1, Math.Max(pageCount, 0)).Except(pagesRead).ToList();
         var skippedSentence = skipped.Count == 1
-            ? $"La page {FormatPageList(skipped)} n'a pas été analysée : contrôlez le détail avant d'enregistrer."
+            ? $"La page {skipped[0]} n'a pas été analysée : contrôlez le détail avant d'enregistrer."
             : "Les pages intermédiaires n'ont pas été analysées : contrôlez le détail avant d'enregistrer.";
 
         return $"Cette pièce compte {pageCount} pages. Seules les pages {FormatPageList(pagesRead)} ont été lues. "

@@ -102,7 +102,6 @@ public sealed class AccountingDocumentPageWindowTests
         Assert.Contains(
             InvoicePdfReadingWindow.DescribeSkippedPages(6, new[] { 1, 2, 4, 5, 6 }),
             result.Value.Warnings);
-        Assert.Contains(result.Value.Warnings, w => w.Contains("La page 3 n'a pas été analysée", StringComparison.Ordinal));
         pipeline.VerifyNoOtherCalls();
     }
 

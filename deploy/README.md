@@ -82,7 +82,7 @@ docker network inspect <réseau>        # IPAM.Config[].Subnet -> TRUSTED_PROXY_
 
 | `respondingTimeouts` | Défaut Traefik v3 (si absent de la commande) | Valeur retenue | Rôle |
 |---|---|---|---|
-| `readTimeout` | `60s` | **`1500s`** (§9, procédure hors dépôt) | protection *Slowloris* : délai max pour que le client envoie l'intégralité de la requête |
+| `readTimeout` | `60s` | **`1500s`** (§9, procédure hors dépôt) | protection *Slowloris* : délai max de lecture de la requête ; en pratique (serveur HTTP Go), cette échéance court aussi pendant le traitement côté backend, d'où la coupure des requêtes longues vers 60 s |
 | `writeTimeout` | `0s` (aucune limite) | **à relever sur l'hôte avant d'y toucher** — ne pas supposer `0s` sans l'avoir vérifié | délai max d'écriture de la réponse |
 | `idleTimeout` | `180s` | **conservé à 180 s** | durée max d'inactivité d'une connexion *keep-alive* ; ne borne pas une requête en cours |
 

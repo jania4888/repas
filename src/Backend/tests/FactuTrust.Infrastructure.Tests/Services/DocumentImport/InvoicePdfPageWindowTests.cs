@@ -39,21 +39,6 @@ public sealed class InvoicePdfPageWindowTests
     }
 
     [Fact]
-    public void Prepare_six_pages_keeps_the_first_two_and_the_last_three()
-    {
-        var original = InvoicePageMarkPdf.Create(6);
-
-        var reading = new InvoicePdfPageWindow().Prepare(original);
-
-        Assert.True(reading.WindowApplied);
-        Assert.Equal(6, reading.SourcePageCount);
-        Assert.Equal(new[] { 1, 2, 4, 5, 6 }, reading.PagesRead.ToArray());
-        var texts = InvoicePageMarkPdf.ReadTexts(reading.Bytes);
-        Assert.Equal(5, texts.Count);
-        Assert.DoesNotContain(InvoicePageMarkPdf.Mark(3), string.Join("\n", texts));
-    }
-
-    [Fact]
     public void Prepare_five_pages_returns_the_original_bytes()
     {
         var called = false;

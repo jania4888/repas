@@ -52,12 +52,4 @@ public sealed class InvoicePdfReadingWindowTests
             + "La page 3 n'a pas été analysée : contrôlez le détail avant d'enregistrer.",
             warning);
     }
-
-    [Fact]
-    public void Messages_do_not_expose_a_hard_coded_threshold_that_disagrees_with_the_rule()
-    {
-        Assert.Contains($"{InvoicePdfReadingWindow.MaxPagesWithoutWindow + 1} pages ou plus", InvoicePdfReadingWindow.ReductionFailedMessage, StringComparison.Ordinal);
-        Assert.False(string.IsNullOrWhiteSpace(InvoicePdfReadingWindow.PageCountUnavailableMessage));
-        Assert.False(string.IsNullOrWhiteSpace(InvoicePdfReadingWindow.ExternalBudgetExceededMessage));
-    }
 }

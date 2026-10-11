@@ -140,7 +140,7 @@ que le message vienne toujours de l'application plutôt que d'un proxy :
 | Traefik `respondingTimeouts.idleTimeout` | 180 s (conservé) | idem — ne borne que l'inactivité d'une connexion keep-alive, pas une requête en cours |
 | Nginx `proxy_read_timeout` / `proxy_send_timeout` | 300 s (inchangé) | `deploy/nginx/templates/default.conf.template` |
 | Front `ImportTimeoutMs` | 190 s (inchangé) | `accounting-document-import.service.ts` |
-| Budget Docstrange de `/propose` | **170 s** (option `Accounting:DocumentImportExternalBudgetSeconds`, bornée 30-280 s) | `appsettings.json`, encadre uniquement l'appel Docstrange de ce chemin |
+| Budget Docstrange de `/propose` | **170 s** (option `Accounting:DocumentImportExternalBudgetSeconds`, bornée 30-180 s : 10 s de marge sous le délai du navigateur) | `appsettings.json`, encadre uniquement l'appel Docstrange de ce chemin |
 | `HttpClient "DocStrange"` | 300 s (inchangé, clamp 30-600) | partagé avec les relevés bancaires et l'import Ventes/Achats — non touché |
 
 **Après le changement Traefik, c'est Nginx (300 s) qui borne effectivement** la durée d'une
@@ -153,7 +153,7 @@ erreur de passerelle).
 Avec 5 pages à 6-35 s par page mesurés côté fournisseur, le pire cas attendu est d'environ 175 s :
 le budget de 170 s est délibérément serré, pour qu'un dépassement soit un signal plutôt qu'une
 attente silencieuse. Si la pratique montre régulièrement plus de 170 s, la valeur est ajustable
-par configuration (sans redéploiement de code), dans la borne 30-280 s.
+par configuration (sans redéploiement de code), dans la borne 30-180 s (le plafond reste sous le délai fixe du navigateur, 190 s).
 
 ### 6.1 Journal attendu
 

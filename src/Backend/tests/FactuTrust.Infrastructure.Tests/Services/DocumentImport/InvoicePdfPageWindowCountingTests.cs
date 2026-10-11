@@ -130,14 +130,34 @@ public sealed class InvoicePdfPageWindowCountingTests
     }
 
     [Fact]
-    public void Prepare_never_modifies_the_input_array()
+    public void Prepare_finds_a_pdf_header_preceded_by_a_few_bytes_and_never_lets_it_through_whole()
     {
-        var original = InvoicePageMarkPdf.Create(12);
-        var snapshot = original.ToArray();
+        var pdf = InvoicePageMarkPdf.Create(8);
+        var prefixed = new byte[] { 0xEF, 0xBB, 0xBF, 0x20, 0x0A }.Concat(pdf).ToArray();
 
-        _ = new InvoicePdfPageWindow().Prepare(original);
+        var reading = new InvoicePdfPageWindow().Prepare(prefixed);
 
-        Assert.Equal(snapshot, original);
+        // Le comptage voit les 8 pages : la pièce doit être réduite, ou refusée si la réduction
+        // échoue. Jamais le passage intégral réservé aux non-PDF.
+        Assert.Equal(8, reading.SourcePageCount);
+        Assert.NotSame(prefixed, reading.Bytes);
+        Assert.True(reading.WindowApplied || reading.IsFailure);
+        if (reading.WindowApplied)
+            Assert.Equal(5, InvoicePageMarkPdf.ReadTexts(reading.Bytes).Count);
+    }
+
+    [Fact]
+    public void Prepare_ignores_a_pdf_marker_beyond_the_header_search_range()
+    {
+        var bytes = new byte[InvoicePdfPageWindow.PdfHeaderSearchLength]
+            .Concat(Encoding.ASCII.GetBytes("%PDF-1.7"))
+            .ToArray();
+
+        var reading = new InvoicePdfPageWindow().Prepare(bytes);
+
+        Assert.Same(bytes, reading.Bytes);
+        Assert.False(reading.PageCountUnavailable);
+        Assert.False(reading.WindowApplied);
     }
 
     private static byte[] Encrypt(byte[] pdf, string? userPassword, string ownerPassword)

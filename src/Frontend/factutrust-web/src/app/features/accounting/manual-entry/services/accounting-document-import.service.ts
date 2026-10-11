@@ -26,7 +26,7 @@ export class AccountingDocumentImportService {
   private static readonly ImportTimeoutMs = 190_000;
 
   /**
-   * Message stable affiché pour un 502/503/504 (passerelle/proxy), à la place du texte brut du
+   * Message stable affiché pour un 502/503/504 (passerelle/proxy) sans erreur API structurée, à la place du texte brut du
    * fournisseur (p. ex. « Bad Gateway »). Local à ce service : le gestionnaire d'erreurs global
    * et le message de délai (`TimeoutError`) ne sont pas concernés.
    */
@@ -66,7 +66,11 @@ export class AccountingDocumentImportService {
               "L'analyse a dépassé le délai maximal. Le modèle IA est peut-être en cours "
               + 'de chargement — réessayez dans un instant.'));
           }
-          if (err instanceof HttpErrorResponse && (err.status === 502 || err.status === 503 || err.status === 504)) {
+          // Seulement si la réponse ne porte pas d'erreur API structurée (ex. 503 TENANT_MIGRATION_FAILED,
+          // dont le message propre doit rester visible).
+          if (err instanceof HttpErrorResponse
+            && [502, 503, 504].includes(err.status)
+            && !this.errorHandler.getApiErrorCode(err)) {
             return throwError(() => new Error(AccountingDocumentImportService.GatewayErrorMessage));
           }
           const message = this.errorHandler.extractErrorMessage(err).trim();

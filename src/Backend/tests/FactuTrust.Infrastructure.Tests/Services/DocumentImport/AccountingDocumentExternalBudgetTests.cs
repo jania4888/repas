@@ -58,6 +58,17 @@ public sealed class AccountingDocumentExternalBudgetTests
     }
 
     [Fact]
+    public async Task A_cancellation_by_the_client_during_the_call_propagates_even_with_the_budget_armed()
+    {
+        var provider = SlowProvider(throwOnCancel: true);
+        var pipeline = new Mock<IAiStructuredExtractionPipeline>(MockBehavior.Strict);
+        using var client = new CancellationTokenSource(TimeSpan.FromMilliseconds(100));
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            CreateSut(pipeline, provider, TimeSpan.FromSeconds(30)).ExtractAsync(Request(), client.Token));
+    }
+
+    [Fact]
     public async Task A_provider_failure_inside_the_budget_keeps_its_own_message()
     {
         var provider = new Mock<IDocumentExtractionProvider>();

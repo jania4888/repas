@@ -33,7 +33,9 @@ public sealed class InvoicePdfReadingWindowInvariantTests
     [Theory]
     [InlineData(170, 170)]
     [InlineData(5, 30)]
-    [InlineData(10_000, 280)]
+    [InlineData(180, 180)]
+    [InlineData(280, 180)]
+    [InlineData(10_000, 180)]
     public void The_external_budget_is_clamped(int configured, int expected)
     {
         var settings = new AccountingSettings { DocumentImportExternalBudgetSeconds = configured };
@@ -42,8 +44,9 @@ public sealed class InvoicePdfReadingWindowInvariantTests
     }
 
     [Fact]
-    public void The_default_budget_stays_below_the_front_timeout_of_190_seconds()
+    public void Every_allowed_budget_stays_below_the_front_timeout_of_190_seconds()
     {
         Assert.True(new AccountingSettings().EffectiveDocumentImportExternalBudgetSeconds < 190);
+        Assert.True(AccountingSettings.MaxDocumentImportExternalBudgetSeconds < 190);
     }
 }

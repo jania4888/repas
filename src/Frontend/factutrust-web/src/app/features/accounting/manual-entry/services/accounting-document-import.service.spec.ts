@@ -72,6 +72,16 @@ describe('AccountingDocumentImportService', () => {
     expect(error?.message).not.toContain('Gateway Timeout');
   });
 
+  it("garde le message propre d'un 503 structuré (TENANT_MIGRATION_FAILED), sans le masquer", () => {
+    const error = proposeAndFlush(503, 'Service Unavailable', {
+      success: false,
+      code: 'TENANT_MIGRATION_FAILED',
+      message: 'Mise à jour de la base en cours.'
+    });
+
+    expect(error?.message).not.toContain("n'a pas répondu à temps");
+  });
+
   it('conserve le message métier serveur sur un 400 (refus applicatif)', () => {
     const error = proposeAndFlush(400, 'Bad Request', {
       success: false,

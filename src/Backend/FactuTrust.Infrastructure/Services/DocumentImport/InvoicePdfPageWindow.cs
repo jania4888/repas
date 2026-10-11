@@ -96,9 +96,9 @@ internal sealed class InvoicePdfReading
         byte[] reduced,
         int pageCount,
         IReadOnlyList<int> pages,
-        InvoicePageCountSource source = InvoicePageCountSource.None,
-        int originalByteCount = 0,
-        TimeSpan? duration = null) => new()
+        InvoicePageCountSource source,
+        int originalByteCount,
+        TimeSpan duration) => new()
     {
         Bytes = reduced,
         WindowApplied = true,
@@ -113,9 +113,9 @@ internal sealed class InvoicePdfReading
     public static InvoicePdfReading Failed(
         int pageCount,
         Exception failure,
-        InvoicePageCountSource source = InvoicePageCountSource.None,
-        int originalByteCount = 0,
-        TimeSpan? duration = null) => new()
+        InvoicePageCountSource source,
+        int originalByteCount,
+        TimeSpan duration) => new()
     {
         Bytes = Array.Empty<byte>(),
         SourcePageCount = pageCount,
@@ -200,45 +200,35 @@ internal sealed class InvoicePdfPageWindow : IInvoicePdfPageWindow
         out InvoicePageCountSource source,
         out Exception? failure)
     {
-        Exception? pdfPigFailure;
-        try
+        var readers = new[]
         {
-            pageCount = _countWithPdfPig(pdf);
-            if (pageCount > 0)
+            (Source: InvoicePageCountSource.PdfPig, Count: _countWithPdfPig),
+            (Source: InvoicePageCountSource.PdfSharp, Count: _countWithPdfSharp)
+        };
+        var failures = new List<Exception>(readers.Length);
+        foreach (var reader in readers)
+        {
+            try
             {
-                source = InvoicePageCountSource.PdfPig;
-                failure = null;
-                return true;
+                pageCount = reader.Count(pdf);
+                if (pageCount > 0)
+                {
+                    source = reader.Source;
+                    failure = null;
+                    return true;
+                }
+
+                failures.Add(new InvoicePdfWindowException($"Comptage {reader.Source} non positif."));
             }
-
-            pdfPigFailure = new InvoicePdfWindowException("Comptage PdfPig non positif.");
-        }
-        catch (Exception ex) when (ex is not OutOfMemoryException)
-        {
-            pdfPigFailure = ex;
-        }
-
-        Exception? pdfSharpFailure;
-        try
-        {
-            pageCount = _countWithPdfSharp(pdf);
-            if (pageCount > 0)
+            catch (Exception ex) when (ex is not OutOfMemoryException)
             {
-                source = InvoicePageCountSource.PdfSharp;
-                failure = null;
-                return true;
+                failures.Add(ex);
             }
-
-            pdfSharpFailure = new InvoicePdfWindowException("Comptage PdfSharp non positif.");
-        }
-        catch (Exception ex) when (ex is not OutOfMemoryException)
-        {
-            pdfSharpFailure = ex;
         }
 
         pageCount = 0;
         source = InvoicePageCountSource.None;
-        failure = new AggregateException("Nombre de pages illisible.", pdfPigFailure, pdfSharpFailure);
+        failure = new AggregateException("Nombre de pages illisible.", failures);
         return false;
     }
 
@@ -290,9 +280,17 @@ internal sealed class InvoicePdfPageWindow : IInvoicePdfPageWindow
         return buffer.ToArray();
     }
 
+    /// <summary>
+    /// Les lecteurs PDF acceptent l'en-tête <c>%PDF</c> dans le premier kilo-octet (BOM, espaces,
+    /// octets parasites). On le cherche sur la même plage : sinon un PDF précédé de quelques octets
+    /// échapperait à la fenêtre et au refus, et partirait en entier.
+    /// </summary>
+    internal const int PdfHeaderSearchLength = 1024;
+
+    private static readonly byte[] PdfHeader = "%PDF"u8.ToArray();
+
     private static bool LooksLikePdf(byte[] bytes) =>
-        bytes.Length >= 5
-        && bytes[0] == 0x25 && bytes[1] == 0x50 && bytes[2] == 0x44 && bytes[3] == 0x46;
+        bytes.AsSpan(0, Math.Min(bytes.Length, PdfHeaderSearchLength)).IndexOf(PdfHeader) >= 0;
 
     private sealed class InvoicePdfWindowException : Exception
     {
