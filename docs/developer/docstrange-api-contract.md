@@ -225,6 +225,33 @@ les pages sont indépendantes.
 
 ---
 
+## Pages envoyées — import de pièce comptable (`POST /accounting/document-import/propose`)
+
+Ce point d'entrée **n'envoie jamais plus de 5 pages** à Docstrange. La fenêtre de lecture
+« 2 premières + 3 dernières » (`InvoicePdfReadingWindow`) s'applique **dès 6 pages** — et non
+au-delà de 6 pages : une pièce de 6 pages part donc déjà réduite (pages 1, 2, 4, 5, 6). Détail de la
+règle, de la matrice complète et du diagnostic : `docs/developer/accounting-document-import-page-window.md`.
+
+Conséquence directe sur le contrat ci-dessus : avec ce plafond de 5 pages, **aucune pièce envoyée
+depuis ce chemin ne peut déclencher la voie asynchrone** décrite dans « Pièges » (le fournisseur
+l'annonce au-delà de 5 pages). `DocStrangeSettings.SyncPageThreshold` (5) n'est donc plus seulement
+une valeur de configuration : c'est un **invariant testé** (voir
+`InvoicePdfReadingWindowInvariantTests`) et une **garde défensive** à l'exécution — si une pièce
+dont le nombre de pages est connu dépassait ce seuil sans fenêtre appliquée, un avertissement serait
+journalisé (grep `SyncPageThreshold`) ; après ce correctif, ce journal ne doit **jamais** apparaître
+pour ce chemin. S'il apparaît, c'est un défaut, pas un cas fonctionnel.
+
+Quand la pagination de la pièce est **illisible** (PDF chiffré, tronqué, ou non reconnu par les deux
+lecteurs de comptage) et que Docstrange est le lecteur actif, l'import est **refusé sans qu'aucun
+octet ne soit envoyé** au fournisseur (comportement fail-closed, propre à ce chemin). Sans Docstrange
+actif, le comportement est inchangé : l'IA locale reçoit la pièce telle quelle (passthrough).
+
+La voie asynchrone Docstrange (`/api/v1/extract/async` + sondage) reste **non implémentée** côté
+InstaFact, pour ce chemin comme pour les autres : elle est inutile tant que la fenêtre ramène toute
+pièce longue à 5 pages au plus.
+
+---
+
 ## Comportement de `json_options`
 
 | Entrée | Résultat |

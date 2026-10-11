@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.Features.AI;
@@ -18,8 +19,9 @@ namespace FactuTrust.Infrastructure.Services.DocumentImport;
 /// <item>extraction IA (OCR + LLM) pour toute autre pièce — typiquement une facture fournisseur
 /// tierce, scannée ou photographiée.</item>
 /// </list>
-/// Au-delà de 6 pages, Docstrange et l'IA locale ne reçoivent que les deux premières et les
-/// trois dernières. Le parseur natif continue de lire le PDF complet.
+/// À partir de 6 pages, Docstrange et l'IA locale ne reçoivent que les deux premières et les
+/// trois dernières. Le parseur natif continue de lire le PDF complet. Si le nombre de pages est
+/// illisible, rien n'est envoyé à Docstrange.
 /// </summary>
 public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
 {
@@ -32,24 +34,36 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
     private readonly ILogger<AccountingDocumentExtractor> _logger;
     private readonly IDocumentExtractionProvider? _externalExtraction;
     private readonly IInvoicePdfPageWindow _pageWindow;
+    private readonly int _syncPageThreshold;
+    private readonly TimeSpan _externalBudget;
 
     public AccountingDocumentExtractor(
         InstaFactInvoicePdfParser nativeParser,
         IAiStructuredExtractionPipeline pipeline,
         IOptions<OllamaSettings> ollamaSettings,
         ILogger<AccountingDocumentExtractor> logger,
-        IDocumentExtractionProvider? externalExtraction = null)
-        : this(nativeParser, pipeline, ollamaSettings, logger, externalExtraction, pageWindow: null)
+        IDocumentExtractionProvider? externalExtraction = null,
+        IOptions<DocStrangeSettings>? docStrangeSettings = null,
+        IOptions<AccountingSettings>? accountingSettings = null)
+        : this(nativeParser, pipeline, ollamaSettings, logger, externalExtraction, pageWindow: null,
+            docStrangeSettings, accountingSettings)
     {
     }
 
+    /// <param name="externalBudget">
+    /// Substitut de test du budget Docstrange. La production laisse <c>null</c> et utilise
+    /// <see cref="AccountingSettings.EffectiveDocumentImportExternalBudgetSeconds"/>.
+    /// </param>
     internal AccountingDocumentExtractor(
         InstaFactInvoicePdfParser nativeParser,
         IAiStructuredExtractionPipeline pipeline,
         IOptions<OllamaSettings> ollamaSettings,
         ILogger<AccountingDocumentExtractor> logger,
         IDocumentExtractionProvider? externalExtraction,
-        IInvoicePdfPageWindow? pageWindow)
+        IInvoicePdfPageWindow? pageWindow,
+        IOptions<DocStrangeSettings>? docStrangeSettings = null,
+        IOptions<AccountingSettings>? accountingSettings = null,
+        TimeSpan? externalBudget = null)
     {
         _nativeParser = nativeParser;
         _pipeline = pipeline;
@@ -57,6 +71,9 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
         _logger = logger;
         _externalExtraction = externalExtraction;
         _pageWindow = pageWindow ?? new InvoicePdfPageWindow();
+        _syncPageThreshold = (docStrangeSettings?.Value ?? new DocStrangeSettings()).SyncPageThreshold;
+        _externalBudget = externalBudget ?? TimeSpan.FromSeconds(
+            (accountingSettings?.Value ?? new AccountingSettings()).EffectiveDocumentImportExternalBudgetSeconds);
     }
 
     public async Task<Result<AccountingDocumentExtractionDto>> ExtractAsync(
@@ -66,7 +83,7 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
         ArgumentNullException.ThrowIfNull(request);
 
         // Le flux est lu une seule fois. Le parseur natif reçoit ces octets. Docstrange et l'IA
-        // locale reçoivent, au-delà de 6 pages, un PDF réduit construit en mémoire.
+        // locale reçoivent, à partir de 6 pages, un PDF réduit construit en mémoire.
         var bytes = await ReadAllBytesAsync(request.FileStream, cancellationToken);
         if (bytes.Length == 0)
             return Result.Failure<AccountingDocumentExtractionDto>(
@@ -85,7 +102,7 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
             if (!request.AllowAiFallback)
                 return Result.Failure<AccountingDocumentExtractionDto>(Error.Validation(ErrorCode, NoAiPermissionMessage));
 
-            var externalReading = ResolveReading(bytes, request.FileName);
+            var externalReading = ResolveReading(bytes, request.FileName, forExternalProvider: true);
             if (externalReading.IsFailure)
                 return Result.Failure<AccountingDocumentExtractionDto>(externalReading.Error);
 
@@ -113,7 +130,7 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
             return Result.Failure<AccountingDocumentExtractionDto>(Error.Validation(ErrorCode, NoAiPermissionMessage));
         }
 
-        var aiReading = ResolveReading(bytes, request.FileName);
+        var aiReading = ResolveReading(bytes, request.FileName, forExternalProvider: false);
         if (aiReading.IsFailure)
             return Result.Failure<AccountingDocumentExtractionDto>(aiReading.Error);
 
@@ -145,20 +162,53 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
     {
         var provider = _externalExtraction!;
 
+        // Garde défensive : avec la fenêtre 2 + 3 appliquée dès 6 pages, aucune pièce de plus de
+        // SyncPageThreshold pages ne doit partir sur la voie synchrone. Ce journal signale une régression.
+        if (!reading.WindowApplied
+            && reading.SourcePageCount is int sentPages
+            && sentPages > _syncPageThreshold)
+        {
+            _logger.LogWarning(
+                "[{Scope}] {PageCount} pages envoyées sur la voie synchrone, seuil annoncé {Threshold}.",
+                ErrorCode, sentPages, _syncPageThreshold);
+        }
+
+        // Le PDF réduit est produit par PdfSharp : son type est connu, quel que soit celui annoncé.
+        var contentType = reading.WindowApplied ? "application/pdf" : request.ContentType;
+
         Result<string> extraction;
+        var elapsed = Stopwatch.StartNew();
+
+        // Seul le budget propre à ce chemin a expiré : message stable, sans détail fournisseur.
+        Result<AccountingDocumentExtractionDto> BudgetExceeded(string reason)
+        {
+            _logger.LogWarning(
+                "[{Scope}] Service d'extraction {Provider} : budget de {BudgetSeconds} s dépassé pour {FileName} "
+                + "après {ElapsedMs} ms ({Reason}).",
+                ErrorCode, provider.Name, (int)_externalBudget.TotalSeconds, request.FileName,
+                elapsed.ElapsedMilliseconds, reason);
+            return Failure(InvoicePdfReadingWindow.ExternalBudgetExceededMessage);
+        }
+
+        using var budget = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        budget.CancelAfter(_externalBudget);
         try
         {
             await using var stream = new MemoryStream(reading.Bytes, writable: false);
             extraction = await provider.ExtractStructuredAsync(
                 stream,
                 request.FileName,
-                request.ContentType,
+                contentType,
                 LlmOutputSchemas.AccountingDocumentVerbatim,
-                cancellationToken);
+                budget.Token);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
             throw;
+        }
+        catch (Exception ex) when (budget.IsCancellationRequested && ex is OperationCanceledException or TimeoutException)
+        {
+            return BudgetExceeded(ex.GetType().Name);
         }
         catch (Exception ex)
         {
@@ -168,6 +218,17 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
                 ErrorCode, provider.Name, request.FileName);
             return Failure("Le service d'extraction documentaire est injoignable. Réessayez plus tard "
                 + "ou désactivez-le dans la configuration IA de la plateforme pour revenir à la lecture locale.");
+        }
+
+        _logger.LogInformation(
+            "[{Scope}] Service d'extraction {Provider} : réponse pour {FileName} en {ElapsedMs} ms (côté import).",
+            ErrorCode, provider.Name, request.FileName, elapsed.ElapsedMilliseconds);
+
+        if (extraction.IsFailure && budget.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
+        {
+            // Un fournisseur peut convertir lui-même l'annulation en échec « injoignable » :
+            // on rétablit le message du budget, plus juste pour l'utilisateur.
+            return BudgetExceeded(extraction.Error.Description);
         }
 
         if (extraction.IsFailure)
@@ -403,33 +464,56 @@ public sealed class AccountingDocumentExtractor : IAccountingDocumentExtractor
     /// Choisit les octets à lire. Le parseur natif n'emprunte pas ce chemin : il reçoit le PDF
     /// complet. Un échec de réduction n'envoie jamais le fichier d'origine à la place.
     /// </summary>
-    private Result<InvoicePdfReading> ResolveReading(byte[] bytes, string fileName)
+    /// <param name="forExternalProvider">
+    /// Vrai pour Docstrange : un PDF dont le nombre de pages est illisible est alors REFUSÉ, car on
+    /// ne peut pas garantir que seules les pages autorisées quitteraient le serveur. L'IA locale
+    /// (données restant sur le serveur) garde la lecture du fichier tel quel.
+    /// </param>
+    private Result<InvoicePdfReading> ResolveReading(byte[] bytes, string fileName, bool forExternalProvider)
     {
         var reading = _pageWindow.Prepare(bytes);
+        var reader = forExternalProvider ? "docstrange" : "llm";
         if (reading.Failure is { } failure)
         {
             _logger.LogWarning(
                 failure,
-                "[{Scope}] Réduction aux pages utiles impossible pour {FileName} ({PageCount} pages). "
+                "[{Scope}] Réduction aux pages utiles impossible pour {FileName} ({PageCount} pages, lecteur={Reader}). "
                 + "Le fichier complet n'est pas envoyé.",
-                ErrorCode, fileName, reading.SourcePageCount);
+                ErrorCode, fileName, reading.SourcePageCount, reader);
             return Result.Failure<InvoicePdfReading>(
                 Error.Validation(ErrorCode, InvoicePdfReadingWindow.ReductionFailedMessage));
         }
 
         if (reading.PageCountUnavailable)
         {
+            if (forExternalProvider)
+            {
+                _logger.LogWarning(
+                    reading.CountFailure,
+                    "[{Scope}] Nombre de pages illisible pour {FileName} : rien n'est envoyé au service "
+                    + "d'extraction documentaire (lecteur={Reader}, octetsAvant={OriginalBytes}).",
+                    ErrorCode, fileName, reader, reading.OriginalByteCount);
+                return Result.Failure<InvoicePdfReading>(
+                    Error.Validation(ErrorCode, InvoicePdfReadingWindow.PageCountUnavailableMessage));
+            }
+
             _logger.LogWarning(
                 reading.CountFailure,
-                "[{Scope}] Nombre de pages illisible pour {FileName} : le fichier est transmis tel quel.",
+                "[{Scope}] Nombre de pages illisible pour {FileName} : le fichier est transmis tel quel à l'IA locale.",
                 ErrorCode, fileName);
+            return Result.Success(reading);
         }
-        else if (reading.WindowApplied)
-        {
-            _logger.LogInformation(
-                "[{Scope}] Pièce {FileName} : {PageCount} pages, lecture limitée aux pages {Pages}.",
-                ErrorCode, fileName, reading.SourcePageCount, string.Join(", ", reading.PagesRead));
-        }
+
+        // Une entrée structurée par analyse, sans aucun contenu de la pièce.
+        _logger.LogInformation(
+            "[{Scope}] Pièce {FileName} : lecteur={Reader} pagesSource={SourcePageCount} "
+            + "sourceComptage={PageCountSource} pagesLues={Pages} octetsAvant={OriginalBytes} "
+            + "octetsApres={ReducedBytes} reductionMs={ReductionMs} fenetre={WindowApplied}.",
+            ErrorCode, fileName, reader, reading.SourcePageCount, reading.PageCountSource,
+            reading.WindowApplied ? string.Join(", ", reading.PagesRead) : "toutes",
+            reading.OriginalByteCount, reading.ReducedByteCount,
+            reading.ReductionDuration is { } duration ? (long)duration.TotalMilliseconds : null,
+            reading.WindowApplied);
 
         return Result.Success(reading);
     }

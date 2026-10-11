@@ -125305,5 +125305,12 @@
       "src/app/features/accounting/manual-entry/components/import/accounting-document-preview.component.ts"
     ],
     "x-wave": "v7"
+  },
+  "accounting.accounting-document-import.ts.l.analyse.n.a.pas.abouti.le.serveur.d.an.35b77eb9": "L'analyse n'a pas abouti : le serveur d'analyse n'a pas répondu à temps. Réessayez dans un instant ; si la pièce est longue, seules les pages 1, 2 et les 3 dernières sont lues.",
+  "@accounting.accounting-document-import.ts.l.analyse.n.a.pas.abouti.le.serveur.d.an.35b77eb9": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/services/accounting-document-import.service.ts"
+    ],
+    "x-wave": "v7"
   }
 }

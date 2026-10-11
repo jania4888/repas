@@ -16,7 +16,8 @@ namespace FactuTrust.Infrastructure.Tests.Services.DocumentImport;
 
 /// <summary>
 /// La fenêtre de pages ne concerne que Docstrange et l'IA locale. Le parseur natif et les
-/// pièces d'au plus 6 pages restent sur les octets d'origine.
+/// pièces d'au plus 5 pages restent sur les octets d'origine. Une pièce dont le nombre de pages
+/// est illisible n'est jamais envoyée à Docstrange.
 /// </summary>
 public sealed class AccountingDocumentPageWindowTests
 {
@@ -65,9 +66,9 @@ public sealed class AccountingDocumentPageWindowTests
     }
 
     [Fact]
-    public async Task External_reader_receives_a_six_page_pdf_unchanged_and_without_warning()
+    public async Task External_reader_receives_a_five_page_pdf_unchanged_and_without_warning()
     {
-        var original = InvoicePageMarkPdf.Create(6);
+        var original = InvoicePageMarkPdf.Create(5);
         byte[]? sent = null;
         var provider = AvailableProvider(Result.Success(VerbatimJson), captured => sent = captured);
         var pipeline = new Mock<IAiStructuredExtractionPipeline>(MockBehavior.Strict);
@@ -78,6 +79,61 @@ public sealed class AccountingDocumentPageWindowTests
         Assert.Equal(original, sent);
         Assert.DoesNotContain(result.Value.Warnings, w => w.Contains("pages intermédiaires", StringComparison.Ordinal));
         pipeline.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task External_reader_receives_five_pages_of_a_six_page_pdf_with_a_singular_warning()
+    {
+        var original = InvoicePageMarkPdf.Create(6);
+        byte[]? sent = null;
+        string? sentContentType = null;
+        var provider = AvailableProvider(Result.Success(VerbatimJson), captured => sent = captured,
+            contentType => sentContentType = contentType);
+        var pipeline = new Mock<IAiStructuredExtractionPipeline>(MockBehavior.Strict);
+
+        var result = await CreateSut(pipeline, provider).ExtractAsync(
+            Request(original, "six.pdf", "application/octet-stream"), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        var texts = InvoicePageMarkPdf.ReadTexts(sent!);
+        Assert.Equal(5, texts.Count);
+        Assert.DoesNotContain(InvoicePageMarkPdf.Mark(3), string.Join("\n", texts));
+        Assert.Equal("application/pdf", sentContentType);
+        Assert.Contains(
+            InvoicePdfReadingWindow.DescribeSkippedPages(6, new[] { 1, 2, 4, 5, 6 }),
+            result.Value.Warnings);
+        pipeline.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task Local_ai_receives_five_pages_of_a_six_page_pdf()
+    {
+        var original = InvoicePageMarkPdf.Create(6);
+        byte[]? sent = null;
+        var pipeline = new Mock<IAiStructuredExtractionPipeline>();
+        pipeline.Setup(x => x.RunAsync(It.IsAny<AiStructuredExtractionRequest>(), It.IsAny<CancellationToken>()))
+            .Callback<AiStructuredExtractionRequest, CancellationToken>((request, _) => sent = ReadAll(request.FileStream))
+            .ReturnsAsync(Result.Success(Outcome(VerbatimJson)));
+
+        var result = await CreateSut(pipeline, provider: null).ExtractAsync(Request(original, "six.pdf"), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(5, InvoicePageMarkPdf.ReadTexts(sent!).Count);
+    }
+
+    [Fact]
+    public async Task External_reader_keeps_the_declared_content_type_when_no_window_is_applied()
+    {
+        var original = InvoicePageMarkPdf.Create(2);
+        string? sentContentType = null;
+        var provider = AvailableProvider(Result.Success(VerbatimJson), _ => { }, contentType => sentContentType = contentType);
+        var pipeline = new Mock<IAiStructuredExtractionPipeline>(MockBehavior.Strict);
+
+        var result = await CreateSut(pipeline, provider).ExtractAsync(
+            Request(original, "court.pdf", "application/x-pdf"), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal("application/x-pdf", sentContentType);
     }
 
     [Fact]
@@ -98,19 +154,39 @@ public sealed class AccountingDocumentPageWindowTests
     }
 
     [Fact]
-    public async Task External_reader_keeps_an_unreadable_pdf_and_does_not_claim_pages_were_skipped()
+    public async Task External_reader_refuses_an_unreadable_pdf_and_sends_nothing()
     {
         var garbage = Encoding.ASCII.GetBytes("%PDF-1.7 corrompu");
-        byte[]? sent = null;
-        var provider = AvailableProvider(Result.Success(VerbatimJson), captured => sent = captured);
+        var provider = new Mock<IDocumentExtractionProvider>(MockBehavior.Strict);
+        provider.SetupGet(x => x.Name).Returns("docstrange");
+        provider.Setup(x => x.IsAvailableAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true);
         var pipeline = new Mock<IAiStructuredExtractionPipeline>(MockBehavior.Strict);
 
         var result = await CreateSut(pipeline, provider).ExtractAsync(Request(garbage, "illisible.pdf"), CancellationToken.None);
 
+        Assert.True(result.IsFailure);
+        Assert.Equal(InvoicePdfReadingWindow.PageCountUnavailableMessage, result.Error.Description);
+        provider.Verify(x => x.ExtractStructuredAsync(
+            It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<JsonElement>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+        pipeline.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task Local_ai_still_reads_an_unreadable_pdf_as_is_when_the_provider_is_inactive()
+    {
+        var garbage = Encoding.ASCII.GetBytes("%PDF-1.7 corrompu");
+        byte[]? sent = null;
+        var pipeline = new Mock<IAiStructuredExtractionPipeline>();
+        pipeline.Setup(x => x.RunAsync(It.IsAny<AiStructuredExtractionRequest>(), It.IsAny<CancellationToken>()))
+            .Callback<AiStructuredExtractionRequest, CancellationToken>((request, _) => sent = ReadAll(request.FileStream))
+            .ReturnsAsync(Result.Success(Outcome(VerbatimJson)));
+
+        var result = await CreateSut(pipeline, provider: null).ExtractAsync(Request(garbage, "illisible.pdf"), CancellationToken.None);
+
         Assert.True(result.IsSuccess);
         Assert.Equal(garbage, sent);
         Assert.DoesNotContain(result.Value.Warnings, w => w.Contains("pages intermédiaires", StringComparison.Ordinal));
-        pipeline.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -180,14 +256,21 @@ public sealed class AccountingDocumentPageWindowTests
             AllowAiFallback = true
         };
 
-    private static Mock<IDocumentExtractionProvider> AvailableProvider(Result<string> answer, Action<byte[]> capture)
+    private static Mock<IDocumentExtractionProvider> AvailableProvider(
+        Result<string> answer,
+        Action<byte[]> capture,
+        Action<string>? captureContentType = null)
     {
         var provider = new Mock<IDocumentExtractionProvider>();
         provider.SetupGet(x => x.Name).Returns("docstrange");
         provider.Setup(x => x.IsAvailableAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true);
         provider.Setup(x => x.ExtractStructuredAsync(
                 It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<JsonElement>(), It.IsAny<CancellationToken>()))
-            .Callback<Stream, string, string, JsonElement, CancellationToken>((stream, _, _, _, _) => capture(ReadAll(stream)))
+            .Callback<Stream, string, string, JsonElement, CancellationToken>((stream, _, contentType, _, _) =>
+            {
+                capture(ReadAll(stream));
+                captureContentType?.Invoke(contentType);
+            })
             .ReturnsAsync(answer);
         return provider;
     }

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
@@ -158,9 +159,52 @@ public sealed class DocStrangeHttpClient : IDocStrangeClient
         file.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
         {
             Name = "\"file\"",
-            FileName = $"\"{fileName}\""
+            FileName = $"\"{SanitizeFileName(fileName)}\""
         };
         content.Add(file);
+    }
+
+    /// <summary>Longueur maximale du nom de fichier transmis au fournisseur.</summary>
+    internal const int MaxFileNameLength = 120;
+
+    /// <summary>Nom transmis lorsque le nom reçu est vide après nettoyage.</summary>
+    internal const string FallbackFileName = "document.pdf";
+
+    private static readonly char[] ForbiddenFileNameChars = { '"', '\\', '/', ':', '*', '?', '<', '>', '|' };
+
+    /// <summary>
+    /// Nom de fichier sûr pour l'en-tête multipart : le nom vient de l'utilisateur et est placé
+    /// entre guillemets dans <c>Content-Disposition</c>. Les caractères de contrôle (dont CR/LF),
+    /// les guillemets et les séparateurs de chemin sont retirés pour qu'aucun nom ne puisse
+    /// fermer le paramètre ou injecter un en-tête. Un nom normal est transmis à l'identique.
+    /// </summary>
+    internal static string SanitizeFileName(string? fileName)
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+            return FallbackFileName;
+
+        var builder = new StringBuilder(fileName.Length);
+        foreach (var c in fileName)
+        {
+            if (char.IsControl(c) || Array.IndexOf(ForbiddenFileNameChars, c) >= 0)
+                continue;
+            builder.Append(c);
+        }
+
+        var cleaned = builder.ToString().Trim();
+        if (cleaned.Length == 0)
+            return FallbackFileName;
+
+        if (cleaned.Length <= MaxFileNameLength)
+            return cleaned;
+
+        // Tronque en conservant l'extension (le fournisseur peut s'appuyer dessus).
+        var extension = Path.GetExtension(cleaned);
+        if (extension.Length is 0 or > 10)
+            return cleaned[..MaxFileNameLength];
+
+        var stem = cleaned[..(cleaned.Length - extension.Length)];
+        return stem[..(MaxFileNameLength - extension.Length)] + extension;
     }
 
     /// <summary>

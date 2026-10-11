@@ -162,6 +162,42 @@ public sealed class DocStrangeHttpClientTests
         Assert.DoesNotContain("maintenance", result.Error.Description, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task The_file_name_sent_in_the_multipart_cannot_inject_a_header()
+    {
+        var handler = new RecordingHandler();
+        handler.Enqueue(HttpStatusCode.OK, """{"result":{"markdown":{"content":"ok"}}}""");
+
+        await CreateSut(handler).ExtractAsync(
+            Request(DocStrangeOutput.Markdown) with { FileName = "fac\"\r\nX-Evil: 1.pdf" },
+            CancellationToken.None);
+
+        Assert.DoesNotContain("\r\nX-Evil", handler.LastBody, StringComparison.Ordinal);
+        Assert.Contains("filename=\"facX-Evil 1.pdf\"", handler.LastBody, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("Facture 592.pdf", "Facture 592.pdf")]
+    [InlineData("fac\"\r\nX-Evil: 1.pdf", "facX-Evil 1.pdf")]
+    [InlineData("..\\..\\etc/passwd.pdf", "....etcpasswd.pdf")]
+    [InlineData("", DocStrangeHttpClient.FallbackFileName)]
+    [InlineData("   ", DocStrangeHttpClient.FallbackFileName)]
+    [InlineData("\"\"::", DocStrangeHttpClient.FallbackFileName)]
+    [InlineData(null, DocStrangeHttpClient.FallbackFileName)]
+    public void SanitizeFileName_keeps_normal_names_and_cleans_dangerous_ones(string? input, string expected)
+    {
+        Assert.Equal(expected, DocStrangeHttpClient.SanitizeFileName(input));
+    }
+
+    [Fact]
+    public void SanitizeFileName_truncates_long_names_and_keeps_the_extension()
+    {
+        var sanitized = DocStrangeHttpClient.SanitizeFileName(new string('a', 300) + ".pdf");
+
+        Assert.Equal(DocStrangeHttpClient.MaxFileNameLength, sanitized.Length);
+        Assert.EndsWith(".pdf", sanitized, StringComparison.Ordinal);
+    }
+
     // ---- outillage -----------------------------------------------------------------------
 
     private static DocStrangeExtractRequest Request(DocStrangeOutput output) =>

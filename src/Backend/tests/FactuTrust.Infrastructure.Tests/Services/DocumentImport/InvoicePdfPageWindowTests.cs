@@ -39,10 +39,10 @@ public sealed class InvoicePdfPageWindowTests
     }
 
     [Fact]
-    public void Prepare_six_pages_returns_the_original_bytes()
+    public void Prepare_five_pages_returns_the_original_bytes()
     {
         var called = false;
-        var original = InvoicePageMarkPdf.Create(6);
+        var original = InvoicePageMarkPdf.Create(5);
         var window = new InvoicePdfPageWindow((_, _, _) =>
         {
             called = true;
@@ -56,7 +56,7 @@ public sealed class InvoicePdfPageWindowTests
         Assert.False(reading.IsFailure);
         Assert.False(reading.PageCountUnavailable);
         Assert.Same(original, reading.Bytes);
-        Assert.Equal(6, reading.SourcePageCount);
+        Assert.Equal(5, reading.SourcePageCount);
     }
 
     [Fact]
