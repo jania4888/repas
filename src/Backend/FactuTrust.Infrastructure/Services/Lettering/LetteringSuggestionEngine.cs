@@ -27,10 +27,12 @@ internal static class LetteringSuggestionEngine
     internal const int BaseScoreDocumentLink = 95;
     internal const int BaseScoreSameReference = 85;
     internal const int BaseScoreSameThirdPartyAmount = 70;
+    internal const int BaseScoreSubsetSum = 60;
+    internal const int BaseScoreAmountOnly = 30;
 
     private delegate IEnumerable<EngineSuggestion> Rule(Partition partition, EngineState state);
 
-    // Ordre des règles = priorité. R4 et R5 arrivent dans la PR p3-7.
+    // Ordre des règles = priorité.
     private static readonly Rule[] Rules =
     {
         R1DocumentLink,
@@ -51,7 +53,7 @@ internal static class LetteringSuggestionEngine
         ArgumentNullException.ThrowIfNull(options);
 
         var partitions = BuildPartitions(candidates);
-        var state = new EngineState(links, options);
+        var state = new EngineState(links, options, cancellationToken);
 
         foreach (var rule in Rules)
         {
@@ -97,11 +99,6 @@ internal static class LetteringSuggestionEngine
         c = a.MinOrderRank.CompareTo(b.MinOrderRank);
         return c != 0 ? c : string.CompareOrdinal(a.Key, b.Key);
     }
-
-    internal static SuggestionConfidence ConfidenceFor(int score)
-        => score >= 85 ? SuggestionConfidence.High
-         : score >= 60 ? SuggestionConfidence.Medium
-         : SuggestionConfidence.Low;
 
     // ---------------------------------------------------------------- R1 : lien documentaire
 
@@ -156,6 +153,7 @@ internal static class LetteringSuggestionEngine
                 : invoiceLine.PieceRef.Trim();
 
             yield return Build(
+                state,
                 SuggestionKind.DocumentLink,
                 group.Count == 2 ? SuggestionCategory.Exact : SuggestionCategory.Multiple,
                 ruleRank: 1,
@@ -203,6 +201,7 @@ internal static class LetteringSuggestionEngine
             if (IsBalanced(lines) && TryCommonThirdParty(lines, out _, out _))
             {
                 yield return Build(
+                    state,
                     SuggestionKind.SameReference,
                     lines.Count == 2 ? SuggestionCategory.Exact : SuggestionCategory.Multiple,
                     ruleRank: 2,
@@ -216,6 +215,7 @@ internal static class LetteringSuggestionEngine
             foreach (var (debit, credit, _) in PairSameAmount(partition.AccountNumber, debits, credits, requireThirdParty: false))
             {
                 yield return Build(
+                    state,
                     SuggestionKind.SameReference,
                     SuggestionCategory.Exact,
                     ruleRank: 2,
@@ -266,6 +266,7 @@ internal static class LetteringSuggestionEngine
                 }
 
                 yield return Build(
+                    state,
                     SuggestionKind.SameThirdPartyAmount,
                     SuggestionCategory.SameAmount,
                     ruleRank: 3,
@@ -385,13 +386,226 @@ internal static class LetteringSuggestionEngine
     internal static int DaysBetween(LetteringCandidate a, LetteringCandidate b)
         => Math.Abs((a.EntryDate.Date - b.EntryDate.Date).Days);
 
-    /// <summary>R4 « somme de sous-ensemble » : branchée en p3-7.</summary>
-    private static IEnumerable<EngineSuggestion> R4SubsetSum(Partition partition, EngineState state)
-        => Array.Empty<EngineSuggestion>();
+    // ---------------------------------------------------------------- R4 : somme de sous-ensemble
 
-    /// <summary>R5 « montant identique sans tiers » : branchée en p3-7.</summary>
+    /// <summary>
+    /// R4 : N-pour-1 et 1-pour-N, même tiers obligatoire (jamais sans tiers). Cibles : chaque ligne
+    /// restante, par montant absolu décroissant puis rang d'ordre. Candidats : lignes de sens opposé de
+    /// montant ≤ cible, au plus <c>SubsetMaxCandidates</c>, les plus proches en date. Recherche
+    /// <see cref="SubsetSumSearch"/> bornée par <c>SubsetNodeBudgetPerTarget</c> et par le budget global
+    /// <c>SubsetGlobalNodeBudget</c> ; un budget épuisé marque la sortie <c>"SearchBudget"</c>. Les lignes
+    /// d'une solution sont réservées : une cible suivante ne peut plus les reprendre.
+    /// </summary>
+    private static IEnumerable<EngineSuggestion> R4SubsetSum(Partition partition, EngineState state)
+    {
+        var byThirdParty = new SortedDictionary<(ThirdPartyKind Kind, Guid Id), List<LetteringCandidate>>();
+        foreach (var line in partition.Lines)
+        {
+            if (!state.IsConsumed(line) && line.ThirdPartyId is { } id)
+                Add(byThirdParty, (line.ThirdPartyKind, id), line);
+        }
+
+        var results = new List<EngineSuggestion>();
+        foreach (var lines in byThirdParty.Values)
+        {
+            if (lines.Count < 3)
+                continue; // R4 produit au moins 3 lignes (cible + 2) ; le 1-pour-1 relève de R3
+            if (!SearchThirdParty(partition, lines, state, results))
+                break;
+        }
+        return results;
+    }
+
+    /// <summary>Faux si la recherche doit s'arrêter (budget global épuisé ou fusible).</summary>
+    private static bool SearchThirdParty(Partition partition, List<LetteringCandidate> lines, EngineState state, List<EngineSuggestion> results)
+    {
+        // Lignes de chaque sens triées par date puis rang : la proximité de date se lit par deux curseurs.
+        var debits = lines.Where(l => l.SignedForBalance > 0).OrderBy(l => l.EntryDate.Ticks).ThenBy(l => l.OrderRank).ToList();
+        var credits = lines.Where(l => l.SignedForBalance < 0).OrderBy(l => l.EntryDate.Ticks).ThenBy(l => l.OrderRank).ToList();
+        if (debits.Count == 0 || credits.Count == 0)
+            return true;
+
+        var targets = lines
+            .OrderByDescending(l => Math.Abs(l.SignedForBalance))
+            .ThenBy(l => l.OrderRank)
+            .ToList();
+        var reserved = new HashSet<Guid>();
+        var picked = new List<LetteringCandidate>(state.Options.SubsetMaxCandidates);
+        var items = new List<SubsetItem>(state.Options.SubsetMaxCandidates);
+
+        foreach (var target in targets)
+        {
+            if (state.CancellationToken.IsCancellationRequested)
+            {
+                state.Truncate(LetteringEngineOutput.ReasonTimeFuse);
+                return false;
+            }
+            if (reserved.Contains(target.LineId))
+                continue;
+
+            var targetAmount = Math.Abs(target.SignedForBalance);
+            PickNearest(target, target.SignedForBalance > 0 ? credits : debits, targetAmount, reserved, state.Options.SubsetMaxCandidates, picked);
+            if (picked.Count < SubsetSumSearch.MinSize)
+                continue;
+
+            var remaining = state.Options.SubsetGlobalNodeBudget - state.NodesUsed;
+            if (remaining <= 0)
+            {
+                state.Truncate(LetteringEngineOutput.ReasonSearchBudget);
+                return false;
+            }
+
+            items.Clear();
+            for (var i = 0; i < picked.Count; i++)
+                items.Add(new SubsetItem(i, Math.Abs(picked[i].SignedForBalance), picked[i].EntryDate.Ticks, picked[i].OrderRank));
+
+            var budget = (int)Math.Min(state.Options.SubsetNodeBudgetPerTarget, remaining);
+            var found = SubsetSumSearch.Find(targetAmount, items, state.Options.SubsetMaxSize, budget);
+            state.NodesUsed += found.NodesVisited;
+            if (found.BudgetExhausted)
+                state.Truncate(LetteringEngineOutput.ReasonSearchBudget);
+            if (!found.Found)
+                continue;
+
+            var group = new List<LetteringCandidate>(found.ItemIndexes.Count + 1) { target };
+            foreach (var index in found.ItemIndexes)
+                group.Add(picked[index]);
+            foreach (var line in group)
+                reserved.Add(line.LineId);
+
+            var reasons = new List<EngineReason>
+            {
+                EngineReason.Of(EngineReasonCodes.SameThirdParty),
+                EngineReason.Of(EngineReasonCodes.SubsetSum, ("count", group.Count.ToString(CultureInfo.InvariantCulture))),
+            };
+            if (found.AlternativeCount > 1)
+            {
+                reasons.Add(EngineReason.Of(EngineReasonCodes.AmbiguousAmount,
+                    ("alternatives", (found.AlternativeCount - 1).ToString(CultureInfo.InvariantCulture))));
+            }
+
+            results.Add(Build(state, SuggestionKind.SubsetSum, SuggestionCategory.Multiple, ruleRank: 4, BaseScoreSubsetSum, partition, group, reasons));
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// Au plus <paramref name="max"/> lignes de <paramref name="opposite"/> (triées par date) de montant
+    /// ≤ cible et non réservées, les plus proches en date de la cible (égalité : rang d'ordre), puis triées
+    /// par montant décroissant. Deux curseurs partent de la date de la cible : coût linéaire, aucun tri global.
+    /// </summary>
+    private static void PickNearest(
+        LetteringCandidate target,
+        List<LetteringCandidate> opposite,
+        long targetAmount,
+        HashSet<Guid> reserved,
+        int max,
+        List<LetteringCandidate> picked)
+    {
+        picked.Clear();
+        var ticks = target.EntryDate.Ticks;
+        var right = LowerBound(opposite, ticks);
+        var left = right - 1;
+
+        while (picked.Count < max && (left >= 0 || right < opposite.Count))
+        {
+            left = Skip(opposite, left, -1, targetAmount, reserved);
+            right = Skip(opposite, right, +1, targetAmount, reserved);
+            if (left < 0 && right >= opposite.Count)
+                break;
+
+            bool takeLeft;
+            if (left < 0) takeLeft = false;
+            else if (right >= opposite.Count) takeLeft = true;
+            else
+            {
+                var gapLeft = ticks - opposite[left].EntryDate.Ticks;
+                var gapRight = opposite[right].EntryDate.Ticks - ticks;
+                takeLeft = gapLeft != gapRight ? gapLeft < gapRight : opposite[left].OrderRank < opposite[right].OrderRank;
+            }
+
+            if (takeLeft) picked.Add(opposite[left--]);
+            else picked.Add(opposite[right++]);
+        }
+
+        picked.Sort((a, b) =>
+        {
+            var c = Math.Abs(b.SignedForBalance).CompareTo(Math.Abs(a.SignedForBalance));
+            return c != 0 ? c : a.OrderRank.CompareTo(b.OrderRank);
+        });
+    }
+
+    private static int Skip(List<LetteringCandidate> lines, int index, int step, long targetAmount, HashSet<Guid> reserved)
+    {
+        while (index >= 0 && index < lines.Count
+               && (Math.Abs(lines[index].SignedForBalance) > targetAmount || reserved.Contains(lines[index].LineId)))
+        {
+            index += step;
+        }
+        return index;
+    }
+
+    private static int LowerBound(List<LetteringCandidate> lines, long ticks)
+    {
+        int lo = 0, hi = lines.Count;
+        while (lo < hi)
+        {
+            var mid = (lo + hi) >>> 1;
+            if (lines[mid].EntryDate.Ticks < ticks) lo = mid + 1;
+            else hi = mid;
+        }
+        return lo;
+    }
+
+    // ---------------------------------------------------------------- R5 : montant identique sans tiers
+
+    /// <summary>
+    /// R5 : paire 1-pour-1 de même montant dans <c>(compte, devise)</c>, au moins une ligne sans tiers
+    /// (deux tiers différents : jamais), et seulement si l'appariement est unique (une seule ligne de chaque
+    /// sens pour ce montant parmi les lignes restantes). Confiance toujours <c>Low</c>.
+    /// </summary>
     private static IEnumerable<EngineSuggestion> R5AmountOnly(Partition partition, EngineState state)
-        => Array.Empty<EngineSuggestion>();
+    {
+        var byAmount = new SortedDictionary<long, (List<LetteringCandidate> Debits, List<LetteringCandidate> Credits)>();
+        foreach (var line in partition.Lines)
+        {
+            if (state.IsConsumed(line))
+                continue;
+            var amount = Math.Abs(line.SignedForBalance);
+            if (!byAmount.TryGetValue(amount, out var sides))
+            {
+                sides = (new List<LetteringCandidate>(), new List<LetteringCandidate>());
+                byAmount[amount] = sides;
+            }
+            (line.SignedForBalance > 0 ? sides.Debits : sides.Credits).Add(line);
+        }
+
+        foreach (var (amount, (debits, credits)) in byAmount)
+        {
+            if (debits.Count != 1 || credits.Count != 1)
+                continue;
+            var (debit, credit) = (debits[0], credits[0]);
+            if (debit.HasThirdParty && credit.HasThirdParty)
+                continue; // même tiers : rôle de R3 ; tiers différents : jamais
+
+            yield return Build(
+                state,
+                SuggestionKind.AmountOnly,
+                SuggestionCategory.SameAmount,
+                ruleRank: 5,
+                BaseScoreAmountOnly,
+                partition,
+                new List<LetteringCandidate> { debit, credit },
+                new List<EngineReason>
+                {
+                    EngineReason.Of(EngineReasonCodes.AmountOnly),
+                    EngineReason.Of(EngineReasonCodes.ExactAmount,
+                        ("amount", FormatMillimes(amount)),
+                        ("currency", partition.CurrencyCode)),
+                },
+                forceLowConfidence: true);
+        }
+    }
 
     // ---------------------------------------------------------------- outils communs
 
@@ -417,36 +631,63 @@ internal static class LetteringSuggestionEngine
     }
 
     private static EngineSuggestion Build(
+        EngineState state,
         SuggestionKind kind,
         SuggestionCategory category,
         int ruleRank,
-        int score,
+        int baseScore,
         Partition partition,
         List<LetteringCandidate> lines,
-        List<EngineReason> reasons)
+        List<EngineReason> reasons,
+        bool forceLowConfidence = false)
     {
         lines.Sort(CompareOrder);
         TryCommonThirdParty(lines, out var thirdPartyKind, out var thirdPartyId);
 
         long debitOp = 0, localGap = 0;
+        DateTime minDate = DateTime.MaxValue, maxDate = DateTime.MinValue;
+        bool debitHasThirdParty = false, creditHasThirdParty = false;
         foreach (var line in lines)
         {
             if (line.SignedForBalance > 0)
+            {
                 debitOp += line.SignedMillimesOp;
+                debitHasThirdParty |= line.HasThirdParty;
+            }
+            else
+            {
+                creditHasThirdParty |= line.HasThirdParty;
+            }
             localGap += line.SignedMillimesLocal;
+            if (line.EntryDate.Date < minDate) minDate = line.EntryDate.Date;
+            if (line.EntryDate.Date > maxDate) maxDate = line.EntryDate.Date;
         }
 
+        var dateGapDays = (maxDate - minDate).Days;
+        var sharedReference = kind == SuggestionKind.SameReference ? null : SharedReference(lines, state);
+        if (sharedReference is not null)
+            reasons.Add(EngineReason.Of(EngineReasonCodes.SameReference, ("reference", sharedReference)));
+        if (dateGapDays > LetteringSuggestionScoring.CloseDatesMaxDays)
+            reasons.Add(EngineReason.Of(EngineReasonCodes.DateGap, ("days", dateGapDays.ToString(CultureInfo.InvariantCulture))));
         if (localGap != 0)
             reasons.Add(EngineReason.Of(EngineReasonCodes.ExchangeDifference, ("localGap", FormatMillimes(localGap))));
 
-        var bounded = Math.Clamp(score, 0, 100);
+        var facts = new ScoreFacts(
+            SharedReference: sharedReference is not null,
+            SameThirdPartyBothSides: thirdPartyId is not null && debitHasThirdParty && creditHasThirdParty,
+            DateGapDays: dateGapDays,
+            Ambiguous: reasons.Exists(r => r.Code == EngineReasonCodes.AmbiguousAmount),
+            PaymentBeforeInvoice: GroupPaymentBeforeInvoice(lines, InvoiceIsDebit(partition.AccountNumber)));
+        var score = LetteringSuggestionScoring.Score(baseScore, facts);
+        var confidence = forceLowConfidence ? SuggestionConfidence.Low : LetteringSuggestionScoring.Confidence(score);
+
         return new EngineSuggestion(
             SuggestionKey.Compute(partition.AccountNumber, partition.CurrencyCode, lines.Select(l => l.LineId)),
             kind,
             category,
             ruleRank,
-            bounded,
-            ConfidenceFor(bounded),
+            score,
+            confidence,
             partition.AccountNumber,
             partition.CurrencyCode,
             thirdPartyId,
@@ -455,6 +696,47 @@ internal static class LetteringSuggestionEngine
             debitOp,
             localGap,
             reasons);
+    }
+
+    /// <summary>Plus petit jeton (ordinal) présent à la fois sur un débit et sur un crédit du groupe.</summary>
+    private static string? SharedReference(List<LetteringCandidate> lines, EngineState state)
+    {
+        var debitTokens = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var line in lines)
+        {
+            if (line.SignedForBalance > 0)
+                debitTokens.UnionWith(state.TokensOf(line));
+        }
+        if (debitTokens.Count == 0)
+            return null;
+
+        string? best = null;
+        foreach (var line in lines)
+        {
+            if (line.SignedForBalance > 0)
+                continue;
+            foreach (var token in state.TokensOf(line))
+            {
+                if (debitTokens.Contains(token) && (best is null || string.CompareOrdinal(token, best) < 0))
+                    best = token;
+            }
+        }
+        return best;
+    }
+
+    /// <summary>Vrai si une ligne côté règlement est antérieure à la plus ancienne ligne côté facture.</summary>
+    private static bool GroupPaymentBeforeInvoice(List<LetteringCandidate> lines, bool invoiceIsDebit)
+    {
+        var firstInvoice = DateTime.MaxValue;
+        var firstPayment = DateTime.MaxValue;
+        foreach (var line in lines)
+        {
+            var isInvoice = (line.SignedForBalance > 0) == invoiceIsDebit;
+            var date = line.EntryDate.Date;
+            if (isInvoice && date < firstInvoice) firstInvoice = date;
+            if (!isInvoice && date < firstPayment) firstPayment = date;
+        }
+        return firstPayment < firstInvoice;
     }
 
     /// <summary>Somme signée exactement nulle, avec au moins une ligne de chaque sens.</summary>
@@ -541,11 +823,17 @@ internal static class LetteringSuggestionEngine
         private readonly HashSet<Guid> _consumed = new(); // test d'appartenance seulement, jamais énuméré
         private readonly Dictionary<Guid, IReadOnlyList<string>> _tokens = new(); // cache, jamais énuméré
 
-        internal EngineState(DocumentLinks links, LetteringEngineOptions options)
+        internal EngineState(DocumentLinks links, LetteringEngineOptions options, CancellationToken cancellationToken)
         {
             Links = links;
             Options = options;
+            CancellationToken = cancellationToken;
         }
+
+        internal CancellationToken CancellationToken { get; }
+
+        /// <summary>Nœuds consommés par R4 dans toute la requête (budget <c>SubsetGlobalNodeBudget</c>).</summary>
+        internal long NodesUsed { get; set; }
 
         internal DocumentLinks Links { get; }
         internal LetteringEngineOptions Options { get; }

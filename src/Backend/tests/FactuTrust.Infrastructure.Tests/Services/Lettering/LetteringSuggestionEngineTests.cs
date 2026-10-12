@@ -83,7 +83,7 @@ public sealed class LetteringSuggestionEngineTests
         var s = Assert.Single(output.Suggestions);
         Assert.Equal(SuggestionKind.DocumentLink, s.Kind);
         Assert.Equal(SuggestionCategory.Exact, s.Category);
-        Assert.Equal(95, s.Score);
+        Assert.Equal(100, s.Score); // 95 + même tiers (5) + dates proches (3), borné à 100
         Assert.Equal(SuggestionConfidence.High, s.Confidence);
         Assert.Equal(new[] { invoice.LineId, payment.LineId }, s.Lines.Select(l => l.LineId));
         Assert.Equal(1_190_000, s.TotalMillimesOp);
@@ -259,7 +259,7 @@ public sealed class LetteringSuggestionEngineTests
 
         Assert.Equal(SuggestionKind.SameReference, s.Kind);
         Assert.Equal(SuggestionCategory.Exact, s.Category);
-        Assert.Equal(85, s.Score);
+        Assert.Equal(93, s.Score); // 85 + même tiers (5) + dates proches (3)
         Assert.Equal(2, s.RuleRank);
         var reason = Assert.Single(s.Reasons);
         Assert.Equal(EngineReasonCodes.SameReference, reason.Code);
@@ -318,7 +318,8 @@ public sealed class LetteringSuggestionEngineTests
             lines.Add(Line(-(100_000 + i), pieceRef: "LOT-2026-777"));
         }
 
-        Assert.Empty(Run(lines, DocumentLinks.Empty).Suggestions); // 22 lignes > 20
+        // 22 lignes > 20 : jeton ignoré par R2 (R5 peut encore apparier les montants uniques sans tiers).
+        Assert.DoesNotContain(Run(lines, DocumentLinks.Empty).Suggestions, x => x.Kind == SuggestionKind.SameReference);
 
         lines.RemoveRange(20, 2);
         var s = Assert.Single(Run(lines, DocumentLinks.Empty).Suggestions); // 20 lignes : groupe entier équilibré
@@ -363,7 +364,7 @@ public sealed class LetteringSuggestionEngineTests
 
         Assert.Equal(SuggestionKind.SameThirdPartyAmount, s.Kind);
         Assert.Equal(SuggestionCategory.SameAmount, s.Category);
-        Assert.Equal(70, s.Score);
+        Assert.Equal(78, s.Score); // 70 + même tiers (5) + dates proches (3)
         Assert.Equal(SuggestionConfidence.Medium, s.Confidence);
         Assert.Equal(new[] { EngineReasonCodes.SameThirdParty, EngineReasonCodes.ExactAmount }, s.Reasons.Select(r => r.Code));
         Assert.Equal("250.000", s.Reasons[1].Args["amount"]);
@@ -464,11 +465,12 @@ public sealed class LetteringSuggestionEngineTests
     }
 
     [Fact]
-    public void R3_WithoutThirdParty_ProposesNothing()
+    public void R3_WithoutThirdParty_LeavesThePairToR5()
     {
         var lines = new[] { Line(100_000), Line(-100_000) };
 
-        Assert.Empty(Run(lines, DocumentLinks.Empty).Suggestions);
+        var s = Assert.Single(Run(lines, DocumentLinks.Empty).Suggestions);
+        Assert.Equal(SuggestionKind.AmountOnly, s.Kind);
     }
 
     [Fact]
@@ -488,6 +490,279 @@ public sealed class LetteringSuggestionEngineTests
         var s = Assert.Single(Run(new[] { debit, credit }, DocumentLinks.Empty).Suggestions);
 
         Assert.Equal(SuggestionKind.SameReference, s.Kind);
+    }
+
+    // ------------------------------------------------------------ R4 : somme de sous-ensemble
+
+    [Fact]
+    public void R4_ThreePaymentsForOneInvoice_IsSubsetSum()
+    {
+        var invoice = Line(1_000_000, thirdParty: Client1, day: 0);
+        var p1 = Line(-500_000, thirdParty: Client1, day: 10);
+        var p2 = Line(-300_000, thirdParty: Client1, day: 20);
+        var p3 = Line(-200_000, thirdParty: Client1, day: 30);
+        var noise = Line(-450_000, thirdParty: Client1, day: 5);
+
+        var s = Assert.Single(Run(new[] { invoice, p1, p2, p3, noise }, DocumentLinks.Empty).Suggestions);
+
+        Assert.Equal(SuggestionKind.SubsetSum, s.Kind);
+        Assert.Equal(SuggestionCategory.Multiple, s.Category);
+        Assert.Equal(4, s.RuleRank);
+        Assert.Equal(new[] { invoice.LineId, p1.LineId, p2.LineId, p3.LineId }, s.Lines.Select(l => l.LineId));
+        Assert.Equal("4", Assert.Single(s.Reasons, r => r.Code == EngineReasonCodes.SubsetSum).Args["count"]);
+        Assert.Equal(68, s.Score); // 60 + même tiers (5) + dates proches (3)
+        Assert.Equal(SuggestionConfidence.Medium, s.Confidence);
+    }
+
+    [Fact]
+    public void R4_OnePaymentForThreeInvoices_IsSubsetSum()
+    {
+        var i1 = Line(400_000, thirdParty: Client1, day: 0);
+        var i2 = Line(350_000, thirdParty: Client1, day: 1);
+        var i3 = Line(250_000, thirdParty: Client1, day: 2);
+        var payment = Line(-1_000_000, thirdParty: Client1, day: 20);
+
+        var s = Assert.Single(Run(new[] { i1, i2, i3, payment }, DocumentLinks.Empty).Suggestions);
+
+        Assert.Equal(SuggestionKind.SubsetSum, s.Kind);
+        Assert.Equal(4, s.Lines.Count);
+    }
+
+    [Fact]
+    public void R4_WithoutThirdParty_IsNeverProposed()
+    {
+        var lines = new[] { Line(1_000_000), Line(-600_000), Line(-400_000) };
+
+        Assert.Empty(Run(lines, DocumentLinks.Empty).Suggestions);
+    }
+
+    [Fact]
+    public void R4_MixedThirdParties_AreNeverGrouped()
+    {
+        var lines = new[] { Line(1_000_000, thirdParty: Client1), Line(-600_000, thirdParty: Client1), Line(-400_000, thirdParty: Client2) };
+
+        Assert.Empty(Run(lines, DocumentLinks.Empty).Suggestions);
+    }
+
+    [Fact]
+    public void R4_BudgetExhausted_ReportsSearchBudgetAndIsDeterministic()
+    {
+        // 30 crédits pairs, cibles impaires : aucune solution, l'espace dépasse un budget de 50 nœuds.
+        var lines = new List<LetteringCandidate>();
+        for (var i = 0; i < 3; i++)
+            lines.Add(Line(10_001 + (2 * i), thirdParty: Client1, day: i));
+        for (var i = 0; i < 30; i++)
+            lines.Add(Line(-(1_000 + (2L * i * i)), thirdParty: Client1, day: i));
+        var options = LetteringEngineOptions.From(new LetteringSuggestionSettings { SubsetNodeBudgetPerTarget = 50, SubsetMaxSize = 6 });
+
+        var first = Run(lines, DocumentLinks.Empty, options);
+        var second = Run(lines, DocumentLinks.Empty, options);
+
+        Assert.True(first.Truncated);
+        Assert.Equal(LetteringEngineOutput.ReasonSearchBudget, first.TruncationReason);
+        Assert.Equal(first.Suggestions.Select(s => s.Key), second.Suggestions.Select(s => s.Key));
+        Assert.Equal(first.TruncationReason, second.TruncationReason);
+    }
+
+    [Fact]
+    public void R4_GlobalBudget_StopsTheSearch()
+    {
+        var lines = new List<LetteringCandidate>();
+        for (var c = 0; c < 5; c++)
+        {
+            var client = new Guid(0x100 + c, 0, 0, new byte[8]);
+            lines.Add(Line(10_001, thirdParty: client));
+            for (var i = 0; i < 20; i++)
+                lines.Add(Line(-(1_000 + (2L * i)), thirdParty: client, day: i));
+        }
+        var options = LetteringEngineOptions.From(new LetteringSuggestionSettings { SubsetGlobalNodeBudget = 10 });
+
+        var output = Run(lines, DocumentLinks.Empty, options);
+
+        Assert.Equal(LetteringEngineOutput.ReasonSearchBudget, output.TruncationReason);
+    }
+
+    // ------------------------------------------------------------ R5 : montant identique sans tiers
+
+    [Fact]
+    public void R5_UniquePairWithoutThirdParty_IsLowConfidence()
+    {
+        var debit = Line(321_000, thirdParty: Client1);
+        var credit = Line(-321_000);
+
+        var s = Assert.Single(Run(new[] { debit, credit }, DocumentLinks.Empty).Suggestions);
+
+        Assert.Equal(SuggestionKind.AmountOnly, s.Kind);
+        Assert.Equal(SuggestionCategory.SameAmount, s.Category);
+        Assert.Equal(SuggestionConfidence.Low, s.Confidence);
+        Assert.Equal(33, s.Score); // 30 + dates proches (3)
+        Assert.Equal(Client1, s.ThirdPartyId);
+    }
+
+    [Fact]
+    public void R5_NotUnique_ProposesNothing()
+    {
+        var lines = new[] { Line(321_000), Line(321_000), Line(-321_000) };
+
+        Assert.Empty(Run(lines, DocumentLinks.Empty).Suggestions);
+    }
+
+    [Fact]
+    public void R5_TwoDifferentThirdParties_ProposesNothing()
+    {
+        var lines = new[] { Line(321_000, thirdParty: Client1), Line(-321_000, thirdParty: Client2) };
+
+        Assert.Empty(Run(lines, DocumentLinks.Empty).Suggestions);
+    }
+
+    [Fact]
+    public void R5_HighScoreIsStillLowConfidence()
+    {
+        // Même avec une référence partagée (+5), R5 reste en confiance faible.
+        var lines = new[] { Line(321_000, pieceRef: "AV-2026-001") with { Label = "x" }, Line(-321_000) };
+
+        var s = Assert.Single(Run(lines, DocumentLinks.Empty).Suggestions);
+        Assert.Equal(SuggestionConfidence.Low, s.Confidence);
+    }
+
+    // ------------------------------------------------------------ score
+
+    [Theory]
+    [InlineData(95, true, true, 0, false, false, 100)]   // borné à 100
+    [InlineData(70, false, true, 10, false, false, 78)]
+    [InlineData(70, false, true, 10, true, false, 63)]   // ambiguïté −15
+    [InlineData(70, false, true, 400, false, false, 65)] // écart > 365 j −10, pas de bonus de proximité
+    [InlineData(70, false, true, 365, false, false, 75)] // 365 j : ni bonus ni pénalité
+    [InlineData(70, false, true, 31, false, true, 73)]   // règlement antérieur −5
+    [InlineData(30, false, false, 400, true, true, 0)]   // borné à 0
+    public void Scoring_AppliesBonusesAndPenalties(int baseScore, bool sharedRef, bool sameThirdParty, int gapDays, bool ambiguous, bool paymentBefore, int expected)
+    {
+        var score = LetteringSuggestionScoring.Score(baseScore, new ScoreFacts(sharedRef, sameThirdParty, gapDays, ambiguous, paymentBefore));
+
+        Assert.Equal(expected, score);
+    }
+
+    [Theory]
+    [InlineData(100, "High")]
+    [InlineData(85, "High")]
+    [InlineData(84, "Medium")]
+    [InlineData(60, "Medium")]
+    [InlineData(59, "Low")]
+    public void Scoring_ConfidenceThresholds(int score, string expected)
+        => Assert.Equal(expected, LetteringSuggestionScoring.Confidence(score).ToString());
+
+    [Fact]
+    public void R3_AmbiguityAndLatePayment_LowerTheScore()
+    {
+        // Paire retenue : écart 400 j (−10) ; une autre ligne de même montant reste (−15).
+        var invoice = Line(100_000, thirdParty: Client1, day: 400);
+        var payment = Line(-100_000, thirdParty: Client1, day: 0);
+        var other = Line(-100_000, thirdParty: Client1, day: -500);
+
+        var s = Assert.Single(Run(new[] { invoice, payment, other }, DocumentLinks.Empty).Suggestions);
+
+        // 70 + même tiers 5 − ambiguïté 15 − écart 10 − règlement antérieur 5 = 45.
+        Assert.Equal(45, s.Score);
+        Assert.Equal(SuggestionConfidence.Low, s.Confidence);
+        Assert.Contains(s.Reasons, r => r.Code == EngineReasonCodes.DateGap && r.Args["days"] == "400");
+    }
+
+    [Fact]
+    public void R1_SharedReference_AddsReasonAndBonus()
+    {
+        var inv = Guid.NewGuid();
+        var pay = Guid.NewGuid();
+        var invoice = Invoice(inv, 1_000_000, client: Client1, pieceRef: "FAC-2026-050") with { Label = "x" };
+        var payment = Line(-1_000_000, thirdParty: null, sourceType: AccountingService.SourcePayment, sourceId: pay, pieceRef: "FAC-2026-050");
+
+        var s = Assert.Single(Run(new[] { invoice, payment }, Links((pay, inv))).Suggestions);
+
+        Assert.Equal(SuggestionKind.DocumentLink, s.Kind);
+        Assert.Equal(100, s.Score); // 95 + référence 5 + dates 3, borné
+        Assert.Contains(s.Reasons, r => r.Code == EngineReasonCodes.SameReference && r.Args["reference"] == "FAC-2026-050");
+    }
+
+    // ------------------------------------------------------------ déterminisme et volume
+
+    [Fact]
+    public void Run_MixedDataset_IsDeterministicAcrossShuffles()
+    {
+        var (lines, links) = Generate(seed: 11, count: 600);
+        var expected = Run(lines, links);
+        Assert.NotEmpty(expected.Suggestions);
+        Assert.True(expected.Suggestions.Select(s => s.Kind).Distinct().Count() >= 4, "le jeu doit exercer plusieurs règles");
+
+        var random = new Random(99);
+        for (var round = 0; round < 10; round++)
+        {
+            var shuffled = lines.OrderBy(_ => random.Next()).ToArray();
+            var output = Run(shuffled, links);
+            Assert.Equal(expected.Suggestions.Select(s => s.Key), output.Suggestions.Select(s => s.Key));
+            Assert.Equal(expected.Suggestions.Select(s => s.Score), output.Suggestions.Select(s => s.Score));
+            Assert.Equal(expected.TotalFound, output.TotalFound);
+            Assert.Equal(expected.TruncationReason, output.TruncationReason);
+        }
+    }
+
+    [Fact]
+    public void Run_FiveThousandCandidates_IsFastAndStable()
+    {
+        var (lines, links) = Generate(seed: 2026, count: 5_000);
+        var options = LetteringEngineOptions.From(new LetteringSuggestionSettings { MaxSuggestions = 200 });
+        Run(lines.Take(200).ToArray(), links, options); // échauffement JIT, hors mesure
+
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        var first = Run(lines, links, options);
+        watch.Stop();
+        var second = Run(lines, links, options);
+
+        Assert.True(watch.Elapsed < TimeSpan.FromSeconds(2), $"Durée {watch.Elapsed.TotalMilliseconds:0} ms");
+        Assert.Equal(first.Suggestions.Select(s => s.Key), second.Suggestions.Select(s => s.Key));
+        Assert.Equal(first.TotalFound, second.TotalFound);
+        Assert.True(first.Suggestions.Count <= 200);
+    }
+
+    /// <summary>Jeu mixte à graine fixe : factures liées, références, tiers, montants répétés, EUR.</summary>
+    private (List<LetteringCandidate> Lines, DocumentLinks Links) Generate(int seed, int count)
+    {
+        var random = new Random(seed);
+        var lines = new List<LetteringCandidate>(count);
+        var paymentLinks = new Dictionary<Guid, Guid>();
+        var clients = Enumerable.Range(0, 60).Select(i => new Guid(0x2000 + i, 0, 0, new byte[8])).ToArray();
+        var amounts = new long[] { 100_000, 250_000, 333_000, 500_000, 1_190_000, 75_500 };
+
+        while (lines.Count < count)
+        {
+            var client = random.Next(10) == 0 ? (Guid?)null : clients[random.Next(clients.Length)];
+            var account = random.Next(5) == 0 ? "4112" : "4111";
+            var currency = random.Next(8) == 0 ? "EUR" : "TND";
+            var amount = amounts[random.Next(amounts.Length)] + (random.Next(4) == 0 ? random.Next(1, 999) * 1_000L : 0);
+            var day = random.Next(0, 365);
+            switch (random.Next(5))
+            {
+                case 0: // facture + règlement lié
+                    var (inv, pay) = (Guid.NewGuid(), Guid.NewGuid());
+                    lines.Add(Line(amount, account, currency, client, sourceType: AccountingService.SourceInvoice, sourceId: inv, day: day));
+                    lines.Add(Line(-amount, account, currency, client, sourceType: AccountingService.SourcePayment, sourceId: pay, day: day + random.Next(0, 60)));
+                    paymentLinks[pay] = inv;
+                    break;
+                case 1: // même référence
+                    var reference = $"FAC-2026-{random.Next(1, 400):000}";
+                    lines.Add(Line(amount, account, currency, client, pieceRef: reference, day: day));
+                    lines.Add(Line(-amount, account, currency, null, pieceRef: reference, day: day + random.Next(0, 30)));
+                    break;
+                case 2: // 1 facture, 2 ou 3 règlements partiels
+                    var parts = random.Next(2, 4);
+                    lines.Add(Line(amount * parts, account, currency, client ?? clients[0], day: day));
+                    for (var i = 0; i < parts; i++)
+                        lines.Add(Line(-amount, account, currency, client ?? clients[0], day: day + random.Next(0, 90)));
+                    break;
+                default: // ligne isolée
+                    lines.Add(Line(random.Next(2) == 0 ? amount : -amount, account, currency, client, day: day));
+                    break;
+            }
+        }
+        return (lines.Take(count).ToList(), new DocumentLinks(paymentLinks, new Dictionary<Guid, Guid>()));
     }
 
     [Fact]
