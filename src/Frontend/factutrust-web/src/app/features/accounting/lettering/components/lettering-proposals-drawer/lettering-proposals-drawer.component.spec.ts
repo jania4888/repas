@@ -206,6 +206,7 @@ describe('LetteringProposalsDrawerComponent', () => {
     it('« Valider » désactivé sans droit (info-bulle) ou pendant une action', () => {
       set({ visible: true, suggestions: [suggestion('k1')], canCreate: false, canValidate: false });
       const host = q('lettering-proposals-drawer-validate')!;
+      expect(innerButton(q('lettering-proposals-drawer-select')!).disabled).toBeTrue();
       expect(innerButton(host).disabled).toBeTrue();
       expect(host.parentElement?.getAttribute('title')).toContain('Comptabilité : création');
 

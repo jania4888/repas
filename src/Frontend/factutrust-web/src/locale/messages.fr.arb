@@ -25098,6 +25098,189 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.lettering.suggestions.drawer.title": "Toutes les propositions",
+  "@accounting.lettering.suggestions.drawer.title": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.drawer.filters.aria": "Filtres des propositions",
+  "@accounting.lettering.suggestions.drawer.filters.aria": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.drawer.filter.category": "Catégorie",
+  "@accounting.lettering.suggestions.drawer.filter.category": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.drawer.filter.all": "Toutes",
+  "@accounting.lettering.suggestions.drawer.filter.all": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.drawer.filter.confidence": "Confiance",
+  "@accounting.lettering.suggestions.drawer.filter.confidence": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.drawer.bulk": "Lettrer en masse…",
+  "@accounting.lettering.suggestions.drawer.bulk": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.drawer.truncated": "Liste incomplète : affinez les filtres de l'écran pour obtenir toutes les propositions.",
+  "@accounting.lettering.suggestions.drawer.truncated": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.strip.loading": "Calcul des propositions…",
+  "@accounting.lettering.suggestions.strip.loading": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html",
+      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.strip.empty": "Aucune proposition pour ces filtres.",
+  "@accounting.lettering.suggestions.strip.empty": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html",
+      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.drawer.noMatch": "Aucune proposition ne correspond à ces critères.",
+  "@accounting.lettering.suggestions.drawer.noMatch": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.drawer.resetFilters": "Effacer les critères",
+  "@accounting.lettering.suggestions.drawer.resetFilters": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.strip.fx": "Écart de change",
+  "@accounting.lettering.suggestions.strip.fx": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html",
+      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.strip.debit": "Débit",
+  "@accounting.lettering.suggestions.strip.debit": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html",
+      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.strip.credit": "Crédit",
+  "@accounting.lettering.suggestions.strip.credit": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html",
+      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.drawer.hideDetails": "Masquer le détail",
+  "@accounting.lettering.suggestions.drawer.hideDetails": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.drawer.showDetails": "Voir le détail",
+  "@accounting.lettering.suggestions.drawer.showDetails": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.drawer.select": "Sélectionner",
+  "@accounting.lettering.suggestions.drawer.select": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.strip.validate": "Valider",
+  "@accounting.lettering.suggestions.strip.validate": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html",
+      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.drawer.pager.aria": "Pagination des propositions",
+  "@accounting.lettering.suggestions.drawer.pager.aria": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.drawer.pager.previous": "Page précédente",
+  "@accounting.lettering.suggestions.drawer.pager.previous": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.drawer.pager.range": "{$INTERPOLATION}–{$INTERPOLATION_1} sur {$INTERPOLATION_2}",
+  "@accounting.lettering.suggestions.drawer.pager.range": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.drawer.pager.next": "Page suivante",
+  "@accounting.lettering.suggestions.drawer.pager.next": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.strip.validate.noRight": "Le droit « Comptabilité : création » est requis pour valider une proposition.",
+  "@accounting.lettering.suggestions.strip.validate.noRight": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.ts",
+      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.drawer.select.aria": "Sélectionner la proposition : {$debit} et {$credit}",
+  "@accounting.lettering.suggestions.drawer.select.aria": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.strip.validate.aria": "Valider la proposition : {$debit} et {$credit}",
+  "@accounting.lettering.suggestions.strip.validate.aria": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.ts",
+      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.lettering.suggestions.strip.title": "Propositions de lettrage",
   "@accounting.lettering.suggestions.strip.title": {
     "x-files": [
@@ -25107,6 +25290,13 @@
   },
   "accounting.lettering.suggestions.strip.subtitle": "Rapprochements probables calculés à partir des montants, des pièces et des tiers. Vérifiez avant de valider.",
   "@accounting.lettering.suggestions.strip.subtitle": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.strip.showAll": "Voir toutes les propositions ({$INTERPOLATION})",
+  "@accounting.lettering.suggestions.strip.showAll": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
     ],
@@ -25154,78 +25344,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.suggestions.strip.loading": "Calcul des propositions…",
-  "@accounting.lettering.suggestions.strip.loading": {
-    "x-files": [
-      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.lettering.suggestions.strip.empty": "Aucune proposition pour ces filtres.",
-  "@accounting.lettering.suggestions.strip.empty": {
-    "x-files": [
-      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.lettering.suggestions.strip.debit": "Débit",
-  "@accounting.lettering.suggestions.strip.debit": {
-    "x-files": [
-      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.lettering.suggestions.strip.credit": "Crédit",
-  "@accounting.lettering.suggestions.strip.credit": {
-    "x-files": [
-      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.lettering.suggestions.strip.fx": "Écart de change",
-  "@accounting.lettering.suggestions.strip.fx": {
-    "x-files": [
-      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.lettering.suggestions.strip.validate": "Valider",
-  "@accounting.lettering.suggestions.strip.validate": {
-    "x-files": [
-      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.lettering.suggestions.strip.validate.noRight": "Le droit « Comptabilité : création » est requis pour valider une proposition.",
-  "@accounting.lettering.suggestions.strip.validate.noRight": {
-    "x-files": [
-      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.lettering.suggestions.strip.entryNumber": "N° {$number}",
-  "@accounting.lettering.suggestions.strip.entryNumber": {
-    "x-files": [
-      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.lettering.suggestions.strip.sideWithExtra": "{$piece} + {$count} écriture(s)",
-  "@accounting.lettering.suggestions.strip.sideWithExtra": {
-    "x-files": [
-      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.ts"
-    ],
-    "x-wave": "v7"
-  },
   "accounting.lettering.suggestions.strip.card.aria": "Sélectionner la proposition {$category} : {$debit} au débit, {$credit} au crédit, {$amount}. {$confidence}.",
   "@accounting.lettering.suggestions.strip.card.aria": {
-    "x-files": [
-      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.lettering.suggestions.strip.validate.aria": "Valider la proposition : {$debit} et {$credit}",
-  "@accounting.lettering.suggestions.strip.validate.aria": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.ts"
     ],
@@ -25999,6 +26119,20 @@
   },
   "accounting.lettering.suggestions.confidence.low": "Confiance faible",
   "@accounting.lettering.suggestions.confidence.low": {
+    "x-files": [
+      "src/app/features/accounting/lettering/utils/lettering-suggestions.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.strip.entryNumber": "N° {$number}",
+  "@accounting.lettering.suggestions.strip.entryNumber": {
+    "x-files": [
+      "src/app/features/accounting/lettering/utils/lettering-suggestions.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.strip.sideWithExtra": "{$piece} + {$count} écriture(s)",
+  "@accounting.lettering.suggestions.strip.sideWithExtra": {
     "x-files": [
       "src/app/features/accounting/lettering/utils/lettering-suggestions.ts"
     ],

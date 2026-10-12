@@ -130,6 +130,7 @@
                 severity="secondary"
                 [text]="true"
                 [ariaLabel]="selectLabel(s)"
+                [disabled]="!canCreate()"
                 (onClick)="selectSuggestion.emit(s)"
                 data-testid="lettering-proposals-drawer-select"
               />
