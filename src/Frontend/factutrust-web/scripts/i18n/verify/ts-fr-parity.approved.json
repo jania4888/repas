@@ -80,8 +80,8 @@
     "reason": "Lot 7 : concaténations de liaisons converties en méthodes $localize (un message à placeholders, même texte FR) ; écarts antérieurs du fichier déjà relus (pluriels erpPlural, options partagées)"
   },
   "src/app/features/accounting/lettering/lettering.component.ts": {
-    "sha": "1448a43d73f107f617138e42d5992637274107ce8b7b3d15c874d724a5186cbe",
-    "reason": "Réécriture complète du conteneur de lettrage (Phase 2 du plan) : logique déplacée vers LetteringStore et 5 nouveaux composants (filtres, deux volets, synthèse, règlement d'écart, tiroir de groupe)."
+    "sha": "871e9ec45e9514d3099fc8ba39f421138ed7294e528f1620e7632c9f45531c95",
+    "reason": "Réécriture complète du conteneur de lettrage (Phase 2 du plan) : logique déplacée vers LetteringStore et 5 nouveaux composants (filtres, deux volets, synthèse, règlement d'écart, tiroir de groupe). (révision : sha mis à jour après correctifs de revue phase 2 — B1/B2/M2/M3 : messages de confirmation déplacés dans LetteringStore, ajout du message « Code de groupe invalide », openLedger, syncUrl ; tous les textes visibles restent $localize/i18n.)"
   },
   "src/app/features/accounting/manual-entry/components/draft-banner.component.ts": {
     "sha": "20b57da282da309811c893407c53c23489b7fe157ce5c8cfbe658de5a94fc6f9",
@@ -312,8 +312,8 @@
     "reason": "Retrait du calcul historique (livraison A) : format courant dm-model-v2 / tn-2026-v2, compte rendu des familles passées en v2 et des inclusions ignorées."
   },
   "src/app/features/accounting/services/accounting.service.ts": {
-    "sha": "51e0c94cb3eda6434212d0bb3e595cd5645bd77ec46c52409007b0f7e048dca9",
-    "reason": "Nouveaux appels client pour l'API de lettrage Phase 1 (getLetteringLines, getLetteringGroup, completePartialLettering, letterEntries) : chaînes additives, aucune route existante modifiée."
+    "sha": "f8e21c3bde41a3b9b45287526d36ba26740b4f3f0f246c58c0210e098d7d81ae",
+    "reason": "Nouveaux appels client pour l'API de lettrage Phase 1 (getLetteringLines, getLetteringGroup, completePartialLettering, letterEntries) : chaînes additives, aucune route existante modifiée. (révision : sha mis à jour après ajout d'encodeURIComponent sur le code de groupe dans getLetteringGroup/completePartialLettering — correctif de revue M2.)"
   },
   "src/app/features/accounting/accounting.routes.ts": {
     "sha": "dde0f683180aa4b8ee682b8d4f3d84ee8e43254d8637661ed8995510005faf13",

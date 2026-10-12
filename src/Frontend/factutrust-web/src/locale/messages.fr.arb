@@ -17144,7 +17144,8 @@
   "@ui.tern.brouillon.57d2d7": {
     "x-files": [
       "src/app/features/accounting/entry-search/entry-search.component.ts",
-      "src/app/features/accounting/journal/journal.component.ts"
+      "src/app/features/accounting/journal/journal.component.ts",
+      "src/app/features/accounting/lettering/components/lettering-ledger-pane/lettering-ledger-pane.component.html"
     ],
     "x-wave": "v7"
   },
@@ -23647,7 +23648,8 @@
   "accounting.journal.ecriture.extournee.85db3ad3": "Écriture extournée",
   "@accounting.journal.ecriture.extournee.85db3ad3": {
     "x-files": [
-      "src/app/features/accounting/journal/journal.component.ts"
+      "src/app/features/accounting/journal/journal.component.ts",
+      "src/app/features/accounting/lettering/components/lettering-ledger-pane/lettering-ledger-pane.component.html"
     ],
     "x-wave": "v7"
   },
@@ -24662,8 +24664,29 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.lettering.filters.tpl.type.de.piece": "Type de pièce",
+  "@accounting.lettering.filters.tpl.type.de.piece": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-filters/lettering-filters.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.filters.tpl.tous.les.types": "Tous les types",
+  "@accounting.lettering.filters.tpl.tous.les.types": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-filters/lettering-filters.component.html"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.lettering.filters.tpl.inclure.sous.comptes": "Inclure les sous-comptes",
   "@accounting.lettering.filters.tpl.inclure.sous.comptes": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-filters/lettering-filters.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.filters.tpl.montant.min.superieur.max": "Le montant min. doit être inférieur ou égal au montant max.",
+  "@accounting.lettering.filters.tpl.montant.min.superieur.max": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-filters/lettering-filters.component.html"
     ],
@@ -24699,6 +24722,69 @@
   },
   "accounting.lettering.filters.ts.toutes": "Toutes",
   "@accounting.lettering.filters.ts.toutes": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-filters/lettering-filters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.filters.ts.doctype.facture": "Facture",
+  "@accounting.lettering.filters.ts.doctype.facture": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-filters/lettering-filters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.filters.ts.doctype.avoir": "Avoir",
+  "@accounting.lettering.filters.ts.doctype.avoir": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-filters/lettering-filters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.filters.ts.doctype.reglement": "Règlement",
+  "@accounting.lettering.filters.ts.doctype.reglement": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-filters/lettering-filters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.filters.ts.doctype.paie": "Paie",
+  "@accounting.lettering.filters.ts.doctype.paie": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-filters/lettering-filters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.filters.ts.doctype.a.nouveau": "À-nouveau",
+  "@accounting.lettering.filters.ts.doctype.a.nouveau": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-filters/lettering-filters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.filters.ts.doctype.extourne": "Extourne",
+  "@accounting.lettering.filters.ts.doctype.extourne": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-filters/lettering-filters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.filters.ts.doctype.ecart.de.change": "Écart de change",
+  "@accounting.lettering.filters.ts.doctype.ecart.de.change": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-filters/lettering-filters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.filters.ts.doctype.manuel": "Manuel",
+  "@accounting.lettering.filters.ts.doctype.manuel": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-filters/lettering-filters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.filters.ts.doctype.autre": "Autre",
+  "@accounting.lettering.filters.ts.doctype.autre": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-filters/lettering-filters.component.ts"
     ],
@@ -24816,6 +24902,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.lettering.ledger.pane.tpl.total.selectionne": "Total sélectionné",
+  "@accounting.lettering.ledger.pane.tpl.total.selectionne": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-ledger-pane/lettering-ledger-pane.component.html"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.lettering.ledger.pane.tpl.chargement": "Chargement…",
   "@accounting.lettering.ledger.pane.tpl.chargement": {
     "x-files": [
@@ -24865,6 +24958,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.lettering.ledger.pane.tpl.tiers": "Tiers",
+  "@accounting.lettering.ledger.pane.tpl.tiers": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-ledger-pane/lettering-ledger-pane.component.html"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.lettering.ledger.pane.tpl.devise": "Devise",
   "@accounting.lettering.ledger.pane.tpl.devise": {
     "x-files": [
@@ -24886,6 +24986,20 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.journal.extourne.a84e7737": "Extournée",
+  "@accounting.journal.extourne.a84e7737": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-ledger-pane/lettering-ledger-pane.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.ledger.pane.tpl.extourne": "Extourne",
+  "@accounting.lettering.ledger.pane.tpl.extourne": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-ledger-pane/lettering-ledger-pane.component.html"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.lettering.ledger.pane.tpl.tiret": "—",
   "@accounting.lettering.ledger.pane.tpl.tiret": {
     "x-files": [
@@ -24900,8 +25014,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.ledger.pane.tpl.periode.cloturee": "Période clôturée",
-  "@accounting.lettering.ledger.pane.tpl.periode.cloturee": {
+  "accounting.lettering.ledger.pane.tpl.periode.cloturee.badge": "Période clôturée",
+  "@accounting.lettering.ledger.pane.tpl.periode.cloturee.badge": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-ledger-pane/lettering-ledger-pane.component.html"
     ],
@@ -24928,15 +25042,22 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.ledger.pane.ts.debit": "Débit",
-  "@accounting.lettering.ledger.pane.ts.debit": {
+  "accounting.lettering.ledger.pane.ts.debit.n": "Écritures au débit ({$count})",
+  "@accounting.lettering.ledger.pane.ts.debit.n": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-ledger-pane/lettering-ledger-pane.component.ts"
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.ledger.pane.ts.credit": "Crédit",
-  "@accounting.lettering.ledger.pane.ts.credit": {
+  "accounting.lettering.ledger.pane.ts.credit.n": "Écritures au crédit ({$count})",
+  "@accounting.lettering.ledger.pane.ts.credit.n": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-ledger-pane/lettering-ledger-pane.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.ledger.pane.ts.selectionner.la.ligne.verrouillee": "Ligne du {$date} — {$label} — verrouillée, période clôturée",
+  "@accounting.lettering.ledger.pane.ts.selectionner.la.ligne.verrouillee": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-ledger-pane/lettering-ledger-pane.component.ts"
     ],
@@ -24944,6 +25065,20 @@
   },
   "accounting.lettering.ledger.pane.ts.selectionner.la.ligne.du.date.mo": "Sélectionner la ligne du {$date} — {$label}",
   "@accounting.lettering.ledger.pane.ts.selectionner.la.ligne.du.date.mo": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-ledger-pane/lettering-ledger-pane.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.ledger.pane.ts.piece.numero": "N° {$number}",
+  "@accounting.lettering.ledger.pane.ts.piece.numero": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-ledger-pane/lettering-ledger-pane.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.ledger.pane.ts.lettrage.impossible.periode.cloturee": "Lettrage impossible : période clôturée",
+  "@accounting.lettering.ledger.pane.ts.lettrage.impossible.periode.cloturee": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-ledger-pane/lettering-ledger-pane.component.ts"
     ],
@@ -24998,8 +25133,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.selection.summary.tpl.ecart": "Écart",
-  "@accounting.lettering.selection.summary.tpl.ecart": {
+  "accounting.lettering.ecart.6ae8dce8": "Écart",
+  "@accounting.lettering.ecart.6ae8dce8": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-selection-summary/lettering-selection-summary.component.html"
     ],
@@ -25026,6 +25161,20 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.lettering.selection.summary.tpl.plusieurs.groupes.partiels": "La sélection contient plusieurs lettrages partiels à la fois : désélectionnez-en un pour continuer.",
+  "@accounting.lettering.selection.summary.tpl.plusieurs.groupes.partiels": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-selection-summary/lettering-selection-summary.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.selection.summary.tpl.selectionnez.les.lignes.a.ajouter": " Sélectionnez les lignes à ajouter pour compléter le lettrage {$INTERPOLATION}. ",
+  "@accounting.lettering.selection.summary.tpl.selectionnez.les.lignes.a.ajouter": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-selection-summary/lettering-selection-summary.component.html"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.lettering.selection.summary.tpl.lettrage.partiel": "Lettrage partiel",
   "@accounting.lettering.selection.summary.tpl.lettrage.partiel": {
     "x-files": [
@@ -25047,15 +25196,15 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.selection.summary.tpl.equilibrer": "Équilibrer",
-  "@accounting.lettering.selection.summary.tpl.equilibrer": {
+  "accounting.lettering.equilibrer.320b5f90": "Équilibrer",
+  "@accounting.lettering.equilibrer.320b5f90": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-selection-summary/lettering-selection-summary.component.html"
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.selection.summary.tpl.apurer.l.ecart": "Apurer l'écart de change puis lettrer",
-  "@accounting.lettering.selection.summary.tpl.apurer.l.ecart": {
+  "accounting.lettering.apurer.l.ecart.de.change.puis.lettrer.0c7cad24": "Apurer l'écart de change puis lettrer",
+  "@accounting.lettering.apurer.l.ecart.de.change.puis.lettrer.0c7cad24": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-selection-summary/lettering-selection-summary.component.html"
     ],
@@ -25063,6 +25212,20 @@
   },
   "accounting.lettering.selection.summary.tpl.reinitialiser": "Réinitialiser",
   "@accounting.lettering.selection.summary.tpl.reinitialiser": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-selection-summary/lettering-selection-summary.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.selection.summary.tpl.aria.live.singulier": "1 ligne sélectionnée, écart {$INTERPOLATION}.",
+  "@accounting.lettering.selection.summary.tpl.aria.live.singulier": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-selection-summary/lettering-selection-summary.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.selection.summary.tpl.aria.live.pluriel": "{$INTERPOLATION} lignes sélectionnées, écart {$INTERPOLATION_1}.",
+  "@accounting.lettering.selection.summary.tpl.aria.live.pluriel": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-selection-summary/lettering-selection-summary.component.html"
     ],
@@ -25082,85 +25245,78 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.settle.dialog.tpl.equilibrer.l.ecart": "Équilibrer l'écart de change",
-  "@accounting.lettering.settle.dialog.tpl.equilibrer.l.ecart": {
+  "accounting.lettering.selection.summary.ts.completer.le.lettrage.code": "Compléter le lettrage {$code}",
+  "@accounting.lettering.selection.summary.ts.completer.le.lettrage.code": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-selection-summary/lettering-selection-summary.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.equilibrer.l.ecart.de.change.37fe00be": "Équilibrer l'écart de change",
+  "@accounting.lettering.equilibrer.l.ecart.de.change.37fe00be": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-settle-exchange-dialog/lettering-settle-exchange-dialog.component.html"
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.settle.dialog.tpl.la.selection.est.soldee": " La sélection est soldée en {$INTERPOLATION} mais laisse {$START_TAG_STRONG}{$INTERPOLATION_1}{$CLOSE_TAG_STRONG} en dinars. Une écriture d'opérations diverses apurera cet écart, puis le lettrage sera effectué. ",
-  "@accounting.lettering.settle.dialog.tpl.la.selection.est.soldee": {
+  "accounting.lettering.la.selection.est.soldee.en.mais.laisse.e.2d3b428b": " La sélection est soldée en {$INTERPOLATION} mais laisse {$START_TAG_STRONG}{$INTERPOLATION_1}{$CLOSE_TAG_STRONG} en dinars. Une écriture d'opérations diverses apurera cet écart, puis le lettrage sera effectué. ",
+  "@accounting.lettering.la.selection.est.soldee.en.mais.laisse.e.2d3b428b": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-settle-exchange-dialog/lettering-settle-exchange-dialog.component.html"
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.settle.dialog.tpl.compte.d.imputation": " Compte d'imputation de l'écart ",
-  "@accounting.lettering.settle.dialog.tpl.compte.d.imputation": {
+  "accounting.lettering.compte.d.imputation.de.l.ecart.5774ab5d": " Compte d'imputation de l'écart ",
+  "@accounting.lettering.compte.d.imputation.de.l.ecart.5774ab5d": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-settle-exchange-dialog/lettering-settle-exchange-dialog.component.html"
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.settle.dialog.tpl.ex.655.ou.756": "Ex. 655 ou 756",
-  "@accounting.lettering.settle.dialog.tpl.ex.655.ou.756": {
+  "accounting.lettering.ex.655.ou.756.e22b14a2": "Ex. 655 ou 756",
+  "@accounting.lettering.ex.655.ou.756.e22b14a2": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-settle-exchange-dialog/lettering-settle-exchange-dialog.component.html"
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.settle.dialog.tpl.charges.ou.produits": " Charges ou produits (classe 6 ou 7), ou écarts de conversion (185 / 275). Dans le plan NCT 01 : 655 pertes de change, 756 gains de change. ",
-  "@accounting.lettering.settle.dialog.tpl.charges.ou.produits": {
+  "accounting.lettering.charges.ou.produits.classe.6.ou.7.ou.ecarts.de.c.0ab34cdc": " Charges ou produits (classe 6 ou 7), ou écarts de conversion (185 / 275). Dans le plan NCT 01 : 655 pertes de change, 756 gains de change. ",
+  "@accounting.lettering.charges.ou.produits.classe.6.ou.7.ou.ecarts.de.c.0ab34cdc": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-settle-exchange-dialog/lettering-settle-exchange-dialog.component.html"
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.settle.dialog.tpl.annuler": "Annuler",
-  "@accounting.lettering.settle.dialog.tpl.annuler": {
+  "accounting.lettering.annuler.49ba3292": "Annuler",
+  "@accounting.lettering.annuler.49ba3292": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-settle-exchange-dialog/lettering-settle-exchange-dialog.component.html"
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.settle.dialog.tpl.equilibrer.et.lettrer": "Équilibrer et lettrer",
-  "@accounting.lettering.settle.dialog.tpl.equilibrer.et.lettrer": {
+  "accounting.lettering.equilibrer.et.lettrer.9d7ad95d": "Équilibrer et lettrer",
+  "@accounting.lettering.equilibrer.et.lettrer.9d7ad95d": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-settle-exchange-dialog/lettering-settle-exchange-dialog.component.html"
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.tpl.lettrage": "Lettrage",
-  "@accounting.lettering.tpl.lettrage": {
+  "accounting.lettering.lettrage.cfcdd333": "Lettrage",
+  "@accounting.lettering.lettrage.cfcdd333": {
     "x-files": [
       "src/app/features/accounting/lettering/lettering.component.html"
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.tpl.rapprochez.les.ecritures": "Rapprochez les écritures débitrices et créditrices d'un même compte",
-  "@accounting.lettering.tpl.rapprochez.les.ecritures": {
+  "accounting.lettering.rapprochez.les.ecritures.debitrices.et.c.d58e33ee": "Rapprochez les écritures débitrices et créditrices d'un même compte",
+  "@accounting.lettering.rapprochez.les.ecritures.debitrices.et.c.d58e33ee": {
     "x-files": [
       "src/app/features/accounting/lettering/lettering.component.html"
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.tpl.propositions.automatiques": " Propositions automatiques ",
-  "@accounting.lettering.tpl.propositions.automatiques": {
-    "x-files": [
-      "src/app/features/accounting/lettering/lettering.component.html"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.lettering.tpl.lettrage.en.masse": " Lettrage en masse ",
-  "@accounting.lettering.tpl.lettrage.en.masse": {
-    "x-files": [
-      "src/app/features/accounting/lettering/lettering.component.html"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.lettering.tpl.vous.pouvez.aussi.consulter": " Vous pouvez aussi consulter le compte {$INTERPOLATION}. ",
-  "@accounting.lettering.tpl.vous.pouvez.aussi.consulter": {
+  "accounting.lettering.tpl.lecture.seule": " Lecture seule : vous pouvez consulter la sélection et les totaux, mais le droit « Comptabilité : création » est requis pour valider un lettrage. ",
+  "@accounting.lettering.tpl.lecture.seule": {
     "x-files": [
       "src/app/features/accounting/lettering/lettering.component.html"
     ],
@@ -25187,7 +25343,7 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.tpl.resultats.tronques": " Résultats tronqués : affinez les filtres pour voir toutes les lignes. ",
+  "accounting.lettering.tpl.resultats.tronques": " Résultats tronqués : {$INTERPOLATION} ligne(s) supplémentaire(s) non affichée(s). Affinez les filtres pour voir toutes les lignes. ",
   "@accounting.lettering.tpl.resultats.tronques": {
     "x-files": [
       "src/app/features/accounting/lettering/lettering.component.html"
@@ -25224,6 +25380,13 @@
   },
   "accounting.lettering.ts.delettrer": "Délettrer",
   "@accounting.lettering.ts.delettrer": {
+    "x-files": [
+      "src/app/features/accounting/lettering/lettering.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.ts.code.de.groupe.invalide": "Code de groupe invalide : attendu un « L » ou un « P » suivi de chiffres (ex. L00001).",
+  "@accounting.lettering.ts.code.de.groupe.invalide": {
     "x-files": [
       "src/app/features/accounting/lettering/lettering.component.ts"
     ],
@@ -25278,15 +25441,15 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.store.erreur.reseau.lettrage": "Erreur réseau lors du lettrage.",
-  "@accounting.lettering.store.erreur.reseau.lettrage": {
+  "accounting.lettering.ts.erreur.reseau.lors.du.lettrage.1358d80e": "Erreur réseau lors du lettrage.",
+  "@accounting.lettering.ts.erreur.reseau.lors.du.lettrage.1358d80e": {
     "x-files": [
       "src/app/features/accounting/lettering/store/lettering.store.ts"
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.store.ecart.change.apure": "Écart de change apuré sur le compte {$account}, puis lettrage effectué.",
-  "@accounting.lettering.store.ecart.change.apure": {
+  "accounting.lettering.ts.ecart.de.change.apure.sur.le.compte.acco.662b4773": "Écart de change apuré sur le compte {$account}, puis lettrage effectué.",
+  "@accounting.lettering.ts.ecart.de.change.apure.sur.le.compte.acco.662b4773": {
     "x-files": [
       "src/app/features/accounting/lettering/store/lettering.store.ts"
     ],
@@ -25299,8 +25462,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.store.erreur.reseau.equilibrage": "Erreur réseau lors de l'équilibrage.",
-  "@accounting.lettering.store.erreur.reseau.equilibrage": {
+  "accounting.lettering.ts.erreur.reseau.lors.de.l.equilibrage.86743867": "Erreur réseau lors de l'équilibrage.",
+  "@accounting.lettering.ts.erreur.reseau.lors.de.l.equilibrage.86743867": {
     "x-files": [
       "src/app/features/accounting/lettering/store/lettering.store.ts"
     ],
@@ -25320,36 +25483,36 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.store.confirm.delettrer": "Délettrer le groupe {$code} ? Toutes ses lignes redeviendront lettrables.",
-  "@accounting.lettering.store.confirm.delettrer": {
+  "accounting.lettering.ts.delettrer.le.groupe.code.toutes.ses.lign.aa9895a9": "Délettrer le groupe {$code} ? Toutes ses lignes redeviendront lettrables.",
+  "@accounting.lettering.ts.delettrer.le.groupe.code.toutes.ses.lign.aa9895a9": {
     "x-files": [
       "src/app/features/accounting/lettering/store/lettering.store.ts"
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.store.confirm.header": "Confirmation de délettrage",
-  "@accounting.lettering.store.confirm.header": {
+  "accounting.lettering.ts.confirmation.de.delettrage.db4ca457": "Confirmation de délettrage",
+  "@accounting.lettering.ts.confirmation.de.delettrage.db4ca457": {
     "x-files": [
       "src/app/features/accounting/lettering/store/lettering.store.ts"
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.store.confirm.accept": "Délettrer",
-  "@accounting.lettering.store.confirm.accept": {
+  "lettering.component.acceptLabel.Délettrer": "Délettrer",
+  "@lettering.component.acceptLabel.Délettrer": {
     "x-files": [
       "src/app/features/accounting/lettering/store/lettering.store.ts"
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.store.confirm.reject": "Annuler",
-  "@accounting.lettering.store.confirm.reject": {
+  "lettering.component.rejectLabel.Annuler": "Annuler",
+  "@lettering.component.rejectLabel.Annuler": {
     "x-files": [
       "src/app/features/accounting/lettering/store/lettering.store.ts"
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.store.groupe.delettre": "Groupe {$code} délettré.",
-  "@accounting.lettering.store.groupe.delettre": {
+  "accounting.lettering.ts.groupe.code.delettre.7a5b5fd3": "Groupe {$code} délettré.",
+  "@accounting.lettering.ts.groupe.code.delettre.7a5b5fd3": {
     "x-files": [
       "src/app/features/accounting/lettering/store/lettering.store.ts"
     ],
@@ -25362,8 +25525,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.store.erreur.reseau.delettrage": "Erreur réseau lors du délettrage.",
-  "@accounting.lettering.store.erreur.reseau.delettrage": {
+  "accounting.lettering.ts.erreur.reseau.lors.du.delettrage.ae259626": "Erreur réseau lors du délettrage.",
+  "@accounting.lettering.ts.erreur.reseau.lors.du.delettrage.ae259626": {
     "x-files": [
       "src/app/features/accounting/lettering/store/lettering.store.ts"
     ],
@@ -25390,8 +25553,15 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.store.erreur.periode.cloturee": "Impossible : la période est clôturée.",
-  "@accounting.lettering.store.erreur.periode.cloturee": {
+  "accounting.lettering.store.erreur.validation": "Requête invalide.",
+  "@accounting.lettering.store.erreur.validation": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.store.erreur.lignes.introuvables": "Une ou plusieurs lignes sont introuvables. La liste a été actualisée.",
+  "@accounting.lettering.store.erreur.lignes.introuvables": {
     "x-files": [
       "src/app/features/accounting/lettering/store/lettering.store.ts"
     ],
@@ -25399,6 +25569,62 @@
   },
   "accounting.lettering.store.erreur.deja.lettree": "Une ligne est déjà lettrée. La liste a été actualisée.",
   "@accounting.lettering.store.erreur.deja.lettree": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.store.erreur.compte.incoherent": "Les lignes sélectionnées ne portent pas toutes sur le même compte.",
+  "@accounting.lettering.store.erreur.compte.incoherent": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.store.erreur.devise.incoherente": "Les lignes sélectionnées ne sont pas dans la même devise.",
+  "@accounting.lettering.store.erreur.devise.incoherente": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.store.erreur.non.equilibre": "La sélection n'est pas équilibrée (débit ≠ crédit).",
+  "@accounting.lettering.store.erreur.non.equilibre": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.store.erreur.periode.cloturee": "Impossible : la période est clôturée. La liste a été actualisée.",
+  "@accounting.lettering.store.erreur.periode.cloturee": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.store.erreur.groupe.introuvable": "Ce groupe de lettrage n'existe pas ou plus.",
+  "@accounting.lettering.store.erreur.groupe.introuvable": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.store.erreur.groupe.non.partiel": "Ce groupe n'est pas (ou plus) un lettrage partiel.",
+  "@accounting.lettering.store.erreur.groupe.non.partiel": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.store.erreur.ecart.de.change": "La sélection présente un écart de change : utilisez « Équilibrer ».",
+  "@accounting.lettering.store.erreur.ecart.de.change": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.store.erreur.fonctionnalite.desactivee": "Cette fonctionnalité n'est pas activée.",
+  "@accounting.lettering.store.erreur.fonctionnalite.desactivee": {
     "x-files": [
       "src/app/features/accounting/lettering/store/lettering.store.ts"
     ],
