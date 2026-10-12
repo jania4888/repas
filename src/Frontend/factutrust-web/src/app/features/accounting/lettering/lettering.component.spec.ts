@@ -234,6 +234,40 @@ describe('LetteringComponent', () => {
       expect((on['summary'] as Record<string, unknown>)['suggestionsCount']).toBe(1);
     });
 
+    it('payload IA : aucune proposition si le bandeau est masqué, avant le premier chargement ou pendant un recalcul', () => {
+      const real = mapSuggestion({
+        key: 'k1', kind: 'SameReference', category: 'Exact', score: 90, confidence: 'High',
+        accountNumber: '4111', currencyCode: 'TND', thirdPartyId: null, thirdPartyKind: 0, thirdPartyName: null,
+        debitLines: [], creditLines: [], totalAmount: 10, localGap: 0, hasExchangeDifference: false,
+        bulkEligible: true, reasons: []
+      });
+      const store = component['suggestions'];
+      store.suggestions.set([real]);
+      store.totalFound.set(1);
+      proposalsFlag.set(true);
+      const hasProposals = () =>
+        'suggestionsCount' in ((component.buildAnalyzePayload() as Record<string, unknown>)['summary'] as object);
+
+      component['store'].loadedOnce.set(false);
+      expect(hasProposals()).withContext('avant le premier chargement').toBeFalse();
+
+      component['store'].loadedOnce.set(true);
+      expect(hasProposals()).withContext('bandeau affiché').toBeTrue();
+
+      store.hidden.set(true);
+      expect(hasProposals()).withContext('bandeau masqué').toBeFalse();
+      store.hidden.set(false);
+
+      store.pending.set(true);
+      expect(hasProposals()).withContext('recalcul demandé (liste périmée)').toBeFalse();
+      store.pending.set(false);
+
+      store.loading.set(true);
+      expect(hasProposals()).withContext('recalcul en cours').toBeFalse();
+      store.loading.set(false);
+      expect(hasProposals()).toBeTrue();
+    });
+
     it('« Lettrer en masse… » du tiroir : ferme le tiroir et ouvre le dialogue de masse', () => {
       const open = spyOn(component['suggestions'], 'openBulkDialog');
       component.proposalsDrawerOpen.set(true);

@@ -123,8 +123,9 @@ export class LetteringComponent implements OnInit {
       lines: this.store.lines(),
       selectedCount: this.store.selectedLines().length,
       selectionBalanced: this.store.summary().balanced,
-      // Drapeau éteint ou liste vide : aucune clé ajoutée (payload identique à la Phase 2).
-      suggestions: this.showProposals()
+      // Drapeau éteint, liste vide ou recalcul en cours (liste et total périmés, par exemple juste
+      // après une validation) : aucune clé ajoutée (payload identique à la Phase 2).
+      suggestions: this.showProposals() && !this.suggestions.pending() && !this.suggestions.loading()
         ? {
             list: this.suggestions.suggestions(),
             totalFound: this.suggestions.totalFound(),

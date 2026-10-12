@@ -1,5 +1,6 @@
 import {
   LETTERING_AI_MAX_HIGHLIGHTS,
+  LETTERING_AI_MAX_PIECE_REFS,
   LETTERING_AI_MAX_TEXT,
   LetteringAiPayloadState,
   buildLetteringAnalyzePayload
@@ -113,22 +114,24 @@ describe('buildLetteringAnalyzePayload', () => {
       expect(Object.keys(reference['summary'] as object).sort()).toEqual(['selectedCount', 'selectionBalanced', 'totalLines']);
     });
 
-    it('avec 15 propositions : 10 points au plus, meilleurs scores d\'abord, résumé scalaire', () => {
+    it('avec 15 propositions : 5 points au plus, meilleurs scores d\'abord, résumé scalaire', () => {
       const list = Array.from({ length: 15 }, (_, i) => suggestion(i));
       const payload = buildLetteringAnalyzePayload({ ...base, suggestions: { list, totalFound: 15, truncated: false } }) as Record<string, unknown>;
 
       const summary = payload['summary'] as Record<string, unknown>;
       expect(summary['suggestionsCount']).toBe(15);
-      expect(summary['suggestionsHigh']).toBe(7);
+      expect(summary['suggestionsHighCount']).toBe(7);
+      expect('suggestionsHigh' in summary).toBeFalse();
       expect(summary['suggestionsTruncated']).toBeFalse();
       for (const v of Object.values(summary)) expect(['number', 'boolean', 'string']).toContain(typeof v);
 
       const highlights = payload['highlights'] as Array<Record<string, unknown>>;
+      expect(LETTERING_AI_MAX_HIGHLIGHTS).toBe(5);
       expect(highlights.length).toBe(LETTERING_AI_MAX_HIGHLIGHTS);
-      expect(highlights.map(h => (h['value'] as { score: number }).score)).toEqual([64, 63, 62, 61, 60, 59, 58, 57, 56, 55]);
+      expect(highlights.map(h => (h['value'] as { score: number }).score)).toEqual([64, 63, 62, 61, 60]);
       expect(highlights[0]).toEqual({
         type: 'top',
-        label: 'Proposition de lettrage : match exact',
+        label: 'Lettrage : match exact · 24 EUR',
         value: { score: 64, confidence: 'Medium', amount: 24, currency: 'EUR', lineCount: 2, reason: 'SAME_REFERENCE', pieceRefs: ['FAC-14', 'REG-14'] },
         context: 'Même référence de pièce'
       });
@@ -152,6 +155,16 @@ describe('buildLetteringAnalyzePayload', () => {
       expect((truncated['summary'] as Record<string, unknown>)['suggestionsTruncated']).toBeTrue();
     });
 
+    it('scores égaux : ordre stable par clé, quel que soit l\'ordre reçu', () => {
+      const b = suggestion(1, { score: 80, key: 'b', debitLines: [sLine('x', { debit: 1, pieceRef: 'REF-B' })] });
+      const a = suggestion(2, { score: 80, key: 'a', debitLines: [sLine('y', { debit: 1, pieceRef: 'REF-A' })] });
+      for (const list of [[b, a], [a, b]]) {
+        const payload = buildLetteringAnalyzePayload({ ...base, suggestions: { list, totalFound: 2, truncated: false } }) as Record<string, unknown>;
+        const refs = (payload['highlights'] as Array<{ value: { pieceRefs: string[] } }>).map(h => h.value.pieceRefs[0]);
+        expect(refs).toEqual(['REF-A', 'REF-B']);
+      }
+    });
+
     it('aucun id, aucun tiers, aucun compte de proposition dans le JSON envoyé', () => {
       const list = Array.from({ length: 15 }, (_, i) => suggestion(i));
       const serialized = JSON.stringify(buildLetteringAnalyzePayload({ ...base, suggestions: { list, totalFound: 15, truncated: false } }));
@@ -160,7 +173,7 @@ describe('buildLetteringAnalyzePayload', () => {
       }
     });
 
-    it('chaînes bornées à 50 caractères, 4 références de pièce au plus, sans doublon ni vide', () => {
+    it('chaînes bornées à 50 caractères, 2 références de pièce au plus, sans doublon ni vide', () => {
       const long = 'R'.repeat(80);
       const s = suggestion(1, {
         currencyCode: 'C'.repeat(70),
@@ -175,7 +188,9 @@ describe('buildLetteringAnalyzePayload', () => {
       const h = (payload['highlights'] as Array<Record<string, unknown>>)[0];
       const value = h['value'] as { pieceRefs: string[]; currency: string; reason: string };
 
-      expect(value.pieceRefs).toEqual(['R'.repeat(LETTERING_AI_MAX_TEXT), 'P1', 'P2', 'P3']);
+      expect(LETTERING_AI_MAX_PIECE_REFS).toBe(2);
+      expect(value.pieceRefs).toEqual(['R'.repeat(LETTERING_AI_MAX_TEXT), 'P1']);
+      expect((h['label'] as string).length).toBe(LETTERING_AI_MAX_TEXT);
       expect(value.currency.length).toBe(LETTERING_AI_MAX_TEXT);
       expect(value.reason.length).toBe(LETTERING_AI_MAX_TEXT);
       const strings: string[] = [];

@@ -1,3 +1,4 @@
+import type { ScreenAnalysisHighlight } from '@features/ai-assistant/models/ai-screen-analysis-payload.schema';
 import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen-payload.factory';
 import type { LetteringSuggestionCategory, LetteringSuggestionKind } from '../../services/accounting.service';
 import { LetteringLine } from '../models/lettering.models';
@@ -22,17 +23,23 @@ export interface LetteringAiPayloadState {
   suggestions?: LetteringAiSuggestionsState | null;
 }
 
-/** Au plus 10 propositions résumées ; le serveur n'en affiche que 5 dans « Points d'attention ». */
-export const LETTERING_AI_MAX_HIGHLIGHTS = 10;
+/**
+ * Au plus 5 propositions résumées (le plan en prévoyait 10). Le serveur n'en affiche que 5 dans
+ * « Points d'attention », et le payload volatil est coupé à 8 192 caractères côté client : dix
+ * points (2 à 4 k caractères) retiraient des lignes du payload et le rendaient illisible pour le
+ * texte de repli du serveur sur les écrans moyens.
+ */
+export const LETTERING_AI_MAX_HIGHLIGHTS = 5;
 /** Longueur maximale de toute chaîne issue d'une proposition. */
 export const LETTERING_AI_MAX_TEXT = 50;
-const MAX_PIECE_REFS = 4;
+/** Deux références de pièce par proposition (le plan en prévoyait 4), pour la même raison de budget. */
+export const LETTERING_AI_MAX_PIECE_REFS = 2;
 
 /** Libellés stables en français (pas de `$localize` : la requête au LLM ne doit pas varier). */
 const CATEGORY_LABEL: Record<LetteringSuggestionCategory, string> = {
-  Exact: 'Proposition de lettrage : match exact',
-  Multiple: 'Proposition de lettrage : match multiple',
-  SameAmount: 'Proposition de lettrage : montant identique'
+  Exact: 'Lettrage : match exact',
+  Multiple: 'Lettrage : match multiple',
+  SameAmount: 'Lettrage : montant identique'
 };
 
 const KIND_CONTEXT: Record<LetteringSuggestionKind, string> = {
@@ -54,10 +61,11 @@ const KIND_CONTEXT: Record<LetteringSuggestionKind, string> = {
  *
  * Seule extension autorisée (plan v2, Phase 3, décision 17) : les propositions de lettrage, et
  * seulement si `state.suggestions` contient au moins une proposition. Alors :
- * - `summary` reçoit trois scalaires : `suggestionsCount`, `suggestionsHigh`, `suggestionsTruncated` ;
- * - `highlights` reçoit au plus 10 entrées `{ type: 'top', label, value, context }` (meilleurs
- *   scores d'abord) : libellé et contexte stables en français, `value` = score, confiance, montant,
- *   devise, nombre de lignes, code de la raison principale et au plus 4 références de pièce.
+ * - `summary` reçoit trois scalaires : `suggestionsCount`, `suggestionsHighCount`, `suggestionsTruncated` ;
+ * - `highlights` reçoit au plus 5 entrées `{ type: 'top', label, value, context }` (meilleurs
+ *   scores d'abord, puis clé) : libellé (catégorie + montant) et contexte stables en français,
+ *   `value` = score, confiance, montant, devise, nombre de lignes, code de la raison principale et
+ *   au plus 2 références de pièce.
  * Jamais d'id (ligne, écriture, proposition), de tiers ni de compte ; chaînes ≤ 50 caractères.
  */
 export function buildLetteringAnalyzePayload(state: LetteringAiPayloadState): unknown {
@@ -98,20 +106,23 @@ function suggestionsSummary(state: LetteringAiSuggestionsState | null | undefine
   if (!hasSuggestions(state)) return {};
   return {
     suggestionsCount: Math.max(state.totalFound, state.list.length),
-    suggestionsHigh: state.list.filter(s => s.confidence === 'High').length,
+    // Suffixe « Count » : le texte de repli du serveur n'ajoute pas d'unité monétaire. Compté sur
+    // la liste chargée seulement (≤ 200), alors que suggestionsCount est le total du serveur.
+    suggestionsHighCount: state.list.filter(s => s.confidence === 'High').length,
     suggestionsTruncated: state.truncated || state.totalFound > state.list.length
   };
 }
 
-function suggestionsHighlights(state: LetteringAiSuggestionsState | null | undefined): { highlights?: unknown[] } {
+function suggestionsHighlights(state: LetteringAiSuggestionsState | null | undefined): { highlights?: ScreenAnalysisHighlight[] } {
   if (!hasSuggestions(state)) return {};
   const top = [...state.list]
     .sort((a, b) => b.score - a.score || (a.key < b.key ? -1 : a.key > b.key ? 1 : 0))
     .slice(0, LETTERING_AI_MAX_HIGHLIGHTS);
   return {
-    highlights: top.map(s => ({
+    highlights: top.map((s): ScreenAnalysisHighlight => ({
       type: 'top',
-      label: clip(CATEGORY_LABEL[s.category] ?? 'Proposition de lettrage'),
+      // Catégorie + montant : distingue les points dans le texte de repli (format neutre, sans locale).
+      label: clip(`${CATEGORY_LABEL[s.category] ?? 'Lettrage : proposition'} · ${s.totalAmount} ${s.currency}`),
       value: {
         score: s.score,
         confidence: clip(s.confidence),
@@ -131,7 +142,7 @@ function pieceRefs(s: LetteringSuggestion): string[] {
   for (const l of [...s.debit.lines, ...s.credit.lines]) {
     const ref = l.pieceRef?.trim();
     if (ref) refs.add(clip(ref));
-    if (refs.size >= MAX_PIECE_REFS) break;
+    if (refs.size >= LETTERING_AI_MAX_PIECE_REFS) break;
   }
   return [...refs];
 }
