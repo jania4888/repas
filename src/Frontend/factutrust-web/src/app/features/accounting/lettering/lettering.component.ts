@@ -180,7 +180,11 @@ export class LetteringComponent implements OnInit {
   }
 
   onSelectSuggestion(suggestion: LetteringSuggestion): void {
-    this.proposalsNotice.set(this.suggestions.select(suggestion));
+    // Lecture seule : les volets ne sont pas sélectionnables, une carte ne doit pas les remplir.
+    if (!this.store.canCreate()) return;
+    const result = this.suggestions.select(suggestion);
+    // `busy` pendant une complétion : attendre ne sert à rien, il faut la terminer ou l'annuler.
+    this.proposalsNotice.set(result === 'busy' && this.store.completionGroup() !== null ? 'completion' : result);
   }
 
   /** « Sélectionner » depuis le tiroir : le tiroir se ferme pour montrer les volets ; le message

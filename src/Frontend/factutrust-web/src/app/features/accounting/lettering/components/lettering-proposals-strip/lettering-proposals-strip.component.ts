@@ -12,7 +12,7 @@ import {
 } from '../../utils/lettering-suggestions';
 
 /** Message affiché après un clic sur une carte (géré par le conteneur). */
-export type LetteringProposalsNotice = 'selected' | 'linesNotVisible' | 'busy' | null;
+export type LetteringProposalsNotice = 'selected' | 'linesNotVisible' | 'busy' | 'completion' | null;
 
 /**
  * Bandeau « Propositions de lettrage » (plan v2, Phase 3, annexe C §5) : les 3 meilleures
@@ -87,6 +87,13 @@ export class LetteringProposalsStripComponent {
 
   protected cardLabel(s: LetteringSuggestion): string {
     return $localize`:@@accounting.lettering.suggestions.strip.card.aria:Sélectionner la proposition ${this.category(s)}:category: : ${this.sideLabel(s.debit)}:debit: au débit, ${this.sideLabel(s.credit)}:credit: au crédit, ${this.amount(s)}:amount:. ${this.confidence(s)}:confidence:.`;
+  }
+
+  /** Identifiants des textes visibles lus en description du bouton de carte (raison, écart de change). */
+  protected describedBy(s: LetteringSuggestion): string {
+    const ids = [`lettering-proposal-reason-${s.key}`];
+    if (s.hasExchangeDifference) ids.push(`lettering-proposal-fx-${s.key}`);
+    return ids.join(' ');
   }
 
   protected validateLabel(s: LetteringSuggestion): string {

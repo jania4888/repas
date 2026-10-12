@@ -9,7 +9,7 @@
         icon="pi pi-lightbulb"
         type="button"
         [disabled]="!store.loadedOnce() || suggestions.loading()"
-        (click)="showProposalsStrip()"
+        (clicked)="showProposalsStrip()"
         data-testid="lettering-proposals-header-button"
         i18n="@@accounting.lettering.suggestions.header.button">Propositions automatiques</app-button>
     }
@@ -161,6 +161,7 @@
   [error]="store.groupError()"
   [canUnletterPermission]="store.canUnletter()"
   [unlettering]="store.busyAction() === 'unletter'"
+  [actionLocked]="store.busyAction() !== null"
   (visibleChange)="onGroupDrawerVisibleChange($event)"
   (unletter)="store.unletter($event)"
   (complete)="onDrawerComplete($event)"

@@ -31,6 +31,8 @@ export class LetteringGroupDrawerComponent {
   @Input() error: string | null = null;
   @Input() canUnletterPermission = false;
   @Input() unlettering = false;
+  /** Une autre action d'écriture est en cours (ex. validation d'une proposition) : « Délettrer » attend. */
+  @Input() actionLocked = false;
 
   @Output() readonly visibleChange = new EventEmitter<boolean>();
   @Output() readonly unletter = new EventEmitter<string>();

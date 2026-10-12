@@ -431,6 +431,30 @@ describe('LetteringSuggestionsStore', () => {
       expect(store.busyKey()).toBeNull();
     });
 
+    it('libère le verrou après une erreur HTTP', fakeAsync(() => {
+      api.letterEntries.and.returnValue(throwError(() => apiError(400, 'LETTERING_UNBALANCED')));
+      api.getLetteringSuggestions.and.returnValue(of(result([])));
+
+      store.validate(store.suggestions()[0]);
+      tick(LETTERING_SUGGESTIONS_DEBOUNCE_MS);
+
+      expect(lettering.busyAction()).toBeNull();
+      expect(store.busyKey()).toBeNull();
+    }));
+
+    it('libère le verrou après un succès ; le rechargement de l\'écran reste suivi par loading', () => {
+      const lines = new Subject<never>();
+      api.letterEntries.and.returnValue(of({ success: true, data: { code: 'L00042', groupId: 'g', isPartial: false, lineCount: 2 } }));
+      api.getLetteringLines.and.returnValue(lines);
+
+      store.validate(store.suggestions()[0]);
+
+      expect(lettering.busyAction()).toBeNull();
+      expect(lettering.loading()).toBeTrue();
+      expect(lettering.busy()).toBeTrue();
+      expect(store.canValidate()).toBeFalse();
+    });
+
     it('ne lettre pas si l\'état a changé pendant la confirmation', () => {
       confirmation.confirm.and.callFake(c => {
         store.busyKey.set('other');

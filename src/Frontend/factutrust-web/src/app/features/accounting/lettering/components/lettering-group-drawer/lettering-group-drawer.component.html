@@ -93,7 +93,7 @@
           severity="danger"
           [outlined]="true"
           [loading]="unlettering"
-          [disabled]="unlettering"
+          [disabled]="unlettering || actionLocked"
           (onClick)="onUnletter()"
         />
       }

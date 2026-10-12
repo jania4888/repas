@@ -24,6 +24,11 @@
       <span i18n="@@accounting.lettering.suggestions.strip.notice.linesNotVisible">Certaines lignes de cette proposition ne sont pas affichées (filtre d'état) : affichez toutes les lignes pour la sélectionner.</span>
       <button type="button" class="proposals__link" (click)="dismissNotice.emit()" i18n="@@accounting.lettering.suggestions.strip.notice.dismiss">Fermer</button>
     </div>
+  } @else if (notice() === 'completion') {
+    <div class="proposals__notice proposals__notice--warn" role="status" data-testid="lettering-proposals-notice-completion">
+      <span i18n="@@accounting.lettering.suggestions.strip.notice.completion">Une complétion de lettrage partiel est en cours : terminez-la ou annulez-la pour utiliser une proposition.</span>
+      <button type="button" class="proposals__link" (click)="dismissNotice.emit()" i18n="@@accounting.lettering.suggestions.strip.notice.dismiss">Fermer</button>
+    </div>
   } @else if (notice() === 'busy') {
     <div class="proposals__notice proposals__notice--warn" role="status" data-testid="lettering-proposals-notice-busy">
       <span i18n="@@accounting.lettering.suggestions.strip.notice.busy">Une action est en cours : réessayez dans un instant.</span>
@@ -47,7 +52,7 @@
     <ul class="proposals__cards" role="list">
       @for (s of suggestions(); track s.key) {
         <li class="proposals__card" [class.proposals__card--busy]="busyKey() === s.key" data-testid="lettering-proposal-card">
-          <button type="button" class="proposals__card-body" [attr.aria-label]="cardLabel(s)" (click)="selectSuggestion.emit(s)" data-testid="lettering-proposal-select">
+          <button type="button" class="proposals__card-body" [attr.aria-label]="cardLabel(s)" [attr.aria-describedby]="describedBy(s)" [disabled]="!canCreate()" (click)="selectSuggestion.emit(s)" data-testid="lettering-proposal-select">
             <span class="proposals__card-top">
               <span class="proposals__category">{{ category(s) }}</span>
               <span class="proposals__confidence" [attr.data-confidence]="s.confidence">{{ confidence(s) }}</span>
@@ -69,13 +74,13 @@
                 <span class="proposals__date">{{ s.debit.first?.entryDate | date: 'dd/MM/yyyy' }}</span>
               }
               @if (s.hasExchangeDifference) {
-                <span class="proposals__fx" data-testid="lettering-proposal-fx">
+                <span class="proposals__fx" [id]="'lettering-proposal-fx-' + s.key" data-testid="lettering-proposal-fx">
                   <i class="pi pi-sliders-h" aria-hidden="true"></i>
                   <span i18n="@@accounting.lettering.suggestions.strip.fx">Écart de change</span>
                 </span>
               }
             </span>
-            <span class="proposals__reason">{{ reason(s) }}</span>
+            <span class="proposals__reason" [id]="'lettering-proposal-reason-' + s.key">{{ reason(s) }}</span>
           </button>
           <div class="proposals__card-actions">
             <span [attr.title]="canCreate() ? null : loc_validateDisabled">

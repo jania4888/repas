@@ -25140,6 +25140,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.lettering.suggestions.strip.notice.completion": "Une complétion de lettrage partiel est en cours : terminez-la ou annulez-la pour utiliser une proposition.",
+  "@accounting.lettering.suggestions.strip.notice.completion": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.lettering.suggestions.strip.notice.busy": "Une action est en cours : réessayez dans un instant.",
   "@accounting.lettering.suggestions.strip.notice.busy": {
     "x-files": [

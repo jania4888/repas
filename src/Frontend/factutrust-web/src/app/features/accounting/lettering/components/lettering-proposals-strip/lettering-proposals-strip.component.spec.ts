@@ -100,13 +100,35 @@ describe('LetteringProposalsStripComponent', () => {
 
   it('clic sur la carte → selectSuggestion', () => {
     const s = suggestion('k1');
-    set({ suggestions: [s] });
+    set({ suggestions: [s], canCreate: true });
     const emitted: LetteringSuggestion[] = [];
     component.selectSuggestion.subscribe(v => emitted.push(v));
 
     q('lettering-proposal-select')!.click();
 
     expect(emitted).toEqual([s]);
+  });
+
+  it('lecture seule : le corps de carte est désactivé (les volets ne sont pas sélectionnables)', () => {
+    set({ suggestions: [suggestion('k1')], canCreate: false });
+    const emitted: LetteringSuggestion[] = [];
+    component.selectSuggestion.subscribe(v => emitted.push(v));
+
+    const body = q('lettering-proposal-select') as HTMLButtonElement;
+    expect(body.disabled).toBeTrue();
+    body.click();
+    expect(emitted).toEqual([]);
+  });
+
+  it('le bouton de carte est décrit par la raison et l\'écart de change (lecteurs d\'écran)', () => {
+    set({ suggestions: [suggestion('k1', { hasExchangeDifference: true, currencyCode: 'EUR' })] });
+    const body = q('lettering-proposal-select') as HTMLButtonElement;
+    const ids = (body.getAttribute('aria-describedby') ?? '').split(' ');
+
+    expect(ids.length).toBe(2);
+    const texts = ids.map(id => el().querySelector(`#${id}`)?.textContent ?? '');
+    expect(texts[0]).toContain('Rapprochement détecté');
+    expect(texts[1]).toContain('Écart de change');
   });
 
   it('« Valider » → validateSuggestion quand la validation est possible', () => {
@@ -218,6 +240,11 @@ describe('LetteringProposalsStripComponent', () => {
       (notice.querySelector('button') as HTMLButtonElement).click();
 
       expect(dismissed).toBe(1);
+    });
+
+    it('complétion en cours : message qui dit de la terminer ou de l\'annuler', () => {
+      set({ suggestions: [suggestion('k1')], notice: 'completion' });
+      expect(q('lettering-proposals-notice-completion')?.textContent).toContain('terminez-la ou annulez-la');
     });
 
     it('action en cours : message dédié', () => {

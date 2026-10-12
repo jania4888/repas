@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '@shared/components/button/button.component';
@@ -217,6 +217,33 @@ describe('LetteringComponent', () => {
       expect(component.proposalsNotice()).toBe('linesNotVisible');
     });
 
+    it('clic sur une carte pendant une complétion : message « complétion » (pas « réessayez »)', () => {
+      spyOn(component['suggestions'], 'select').and.returnValue('busy');
+      component['store'].completionGroup.set({ code: 'P00001' } as never);
+      component.onSelectSuggestion(suggestion);
+      expect(component.proposalsNotice()).toBe('completion');
+    });
+
+    it('clic sur une carte sans le droit de créer : rien ne change', () => {
+      const select = spyOn(component['suggestions'], 'select');
+      spyOn(component['store'], 'canCreate').and.returnValue(false);
+      component.onSelectSuggestion(suggestion);
+      expect(select).not.toHaveBeenCalled();
+      expect(component.proposalsNotice()).toBeNull();
+    });
+
+    it('« Réinitialiser » oublie l\'instantané de « Sélectionner » et le message', () => {
+      const forget = spyOn(component['suggestions'], 'forgetSelectSnapshot');
+      const reset = spyOn(component['store'], 'reset');
+      component.proposalsNotice.set('selected');
+
+      component.onResetSelection();
+
+      expect(reset).toHaveBeenCalledTimes(1);
+      expect(forget).toHaveBeenCalledTimes(1);
+      expect(component.proposalsNotice()).toBeNull();
+    });
+
     it('une sélection manuelle oublie l\'instantané de « Sélectionner » et le message', () => {
       const forget = spyOn(component['suggestions'], 'forgetSelectSnapshot');
       const setPane = spyOn(component['store'], 'setPaneSelection');
@@ -272,10 +299,11 @@ describe('LetteringComponent — rendu des propositions', () => {
   let fixture: ComponentFixture<LetteringComponent>;
   let component: LetteringComponent;
   const proposalsFlag = signal(false);
+  let api: jasmine.SpyObj<AccountingService>;
   const query = (testId: string) => fixture.nativeElement.querySelector(`[data-testid="${testId}"]`);
 
   beforeEach(() => {
-    const api = jasmine.createSpyObj<AccountingService>('AccountingService', ['getLetteringSuggestions']);
+    api = jasmine.createSpyObj<AccountingService>('AccountingService', ['getLetteringSuggestions']);
     api.getLetteringSuggestions.and.returnValue(EMPTY);
     const auth = jasmine.createSpyObj<AuthService>('AuthService', ['hasPermission', 'user']);
     auth.hasPermission.and.returnValue(true);
@@ -317,6 +345,16 @@ describe('LetteringComponent — rendu des propositions', () => {
     expect(query('lettering-proposals-header-button')).toBeNull();
     expect(fixture.nativeElement.querySelector('app-lettering-proposals-drawer')).toBeNull();
   });
+
+  it('drapeau front éteint : un chargement réussi ne déclenche aucun appel de propositions', fakeAsync(() => {
+    component['store'].loadedOnce.set(true);
+    component['store'].loadedFilters.set({ ...component['store'].filters(), account: '4111' });
+    component['store'].reloadSeq.set(1);
+    fixture.detectChanges();
+    tick(1000);
+
+    expect(api.getLetteringSuggestions).not.toHaveBeenCalled();
+  }));
 
   it('drapeau actif et écran chargé : bandeau et bouton d\'en-tête présents', () => {
     proposalsFlag.set(true);
