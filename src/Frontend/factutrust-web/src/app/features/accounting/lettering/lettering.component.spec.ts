@@ -1,3 +1,4 @@
+import { mapSuggestion } from './utils/lettering-suggestions';
 import { By } from '@angular/platform-browser';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
@@ -211,6 +212,27 @@ describe('LetteringComponent', () => {
 
   describe('propositions (Phase 3)', () => {
     const suggestion = { key: 'k1', lineIds: ['d1', 'c1'] } as unknown as LetteringSuggestion;
+
+    it('payload IA : propositions ajoutées seulement si le bandeau est affiché (drapeau actif)', () => {
+      const real = mapSuggestion({
+        key: 'k1', kind: 'SameReference', category: 'Exact', score: 90, confidence: 'High',
+        accountNumber: '4111', currencyCode: 'TND', thirdPartyId: null, thirdPartyKind: 0, thirdPartyName: null,
+        debitLines: [], creditLines: [], totalAmount: 10, localGap: 0, hasExchangeDifference: false,
+        bulkEligible: true, reasons: []
+      });
+      component['suggestions'].suggestions.set([real]);
+      component['suggestions'].totalFound.set(1);
+      component['store'].loadedOnce.set(true);
+
+      const off = component.buildAnalyzePayload() as Record<string, unknown>;
+      expect(off['highlights']).toEqual([]);
+      expect('suggestionsCount' in (off['summary'] as object)).toBeFalse();
+
+      proposalsFlag.set(true);
+      const on = component.buildAnalyzePayload() as Record<string, unknown>;
+      expect((on['highlights'] as unknown[]).length).toBe(1);
+      expect((on['summary'] as Record<string, unknown>)['suggestionsCount']).toBe(1);
+    });
 
     it('« Lettrer en masse… » du tiroir : ferme le tiroir et ouvre le dialogue de masse', () => {
       const open = spyOn(component['suggestions'], 'openBulkDialog');

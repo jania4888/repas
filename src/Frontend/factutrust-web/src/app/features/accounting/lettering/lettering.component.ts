@@ -122,7 +122,15 @@ export class LetteringComponent implements OnInit {
       to: this.store.filters().to,
       lines: this.store.lines(),
       selectedCount: this.store.selectedLines().length,
-      selectionBalanced: this.store.summary().balanced
+      selectionBalanced: this.store.summary().balanced,
+      // Drapeau éteint ou liste vide : aucune clé ajoutée (payload identique à la Phase 2).
+      suggestions: this.showProposals()
+        ? {
+            list: this.suggestions.suggestions(),
+            totalFound: this.suggestions.totalFound(),
+            truncated: this.suggestions.truncated()
+          }
+        : null
     });
 
   constructor() {
