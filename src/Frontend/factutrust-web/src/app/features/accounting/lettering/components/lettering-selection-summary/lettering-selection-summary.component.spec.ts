@@ -27,7 +27,7 @@ function sideCounts(overrides: Partial<LetteringSideCounts> = {}): LetteringSide
 }
 
 function guards(overrides: Partial<LetteringSelectionGuards> = {}): LetteringSelectionGuards {
-  return { mixedCurrencies: false, multipleAccounts: false, partialGroupCodes: [], ...overrides };
+  return { mixedCurrencies: false, multipleAccounts: false, partialGroupCodes: [], lockedLines: false, ...overrides };
 }
 
 describe('LetteringSelectionSummaryComponent', () => {

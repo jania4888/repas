@@ -155,6 +155,43 @@ describe('LetteringFiltersComponent', () => {
     });
   });
 
+  describe('onSearchChange (recherche libre)', () => {
+    it('émet la recherche, bornée à 100 caractères, et null si vide', () => {
+      const emitted: any[] = [];
+      component.filtersChange.subscribe(f => emitted.push(f));
+      component.onSearchChange('FAC');
+      component.onSearchChange('z'.repeat(120));
+      component.onSearchChange('   ');
+      expect(emitted[0].search).toBe('FAC');
+      expect(emitted[1].search.length).toBe(100);
+      expect(emitted[2].search).toBeNull();
+    });
+
+    it('expose la limite maxlength au gabarit', () => {
+      expect(component.searchMaxLength).toBe(100);
+    });
+  });
+
+  describe('accountTypeChange (type du compte pour la synthèse)', () => {
+    it('émet le type du compte saisi s’il est connu, null sinon', () => {
+      const emitted: (number | null)[] = [];
+      component.accountTypeChange.subscribe(t => emitted.push(t));
+      component.onAccountInputChange('4111');
+      component.onAccountInputChange('999');
+      expect(emitted).toEqual([1, null]);
+    });
+  });
+
+  describe('lien profond avec un filtre avancé', () => {
+    it('ouvre « Plus de filtres » quand une recherche est déjà appliquée', () => {
+      const fixture = TestBed.createComponent(LetteringFiltersComponent);
+      fixture.componentInstance.filters = { ...createDefaultLetteringFilters('2026-01-01', '2026-01-31'), search: 'FAC' };
+      fixture.componentInstance.payloadBuilder = () => ({});
+      fixture.detectChanges();
+      expect(fixture.componentInstance.showAdvanced()).toBeTrue();
+    });
+  });
+
   describe('toggleAdvanced', () => {
     it('bascule la visibilité du bloc « Plus de filtres »', () => {
       expect(component.showAdvanced()).toBe(false);

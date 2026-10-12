@@ -23,6 +23,7 @@
       [loading]="store.loading()"
       [payloadBuilder]="buildAnalyzePayload"
       (filtersChange)="store.updateFilters($event)"
+      (accountTypeChange)="accountType.set($event)"
       (load)="load()"
     />
   </div>
@@ -41,6 +42,13 @@
     </div>
   }
 
+  @if (store.info()) {
+    <div class="lettering-message lettering-message--info" role="status" data-testid="lettering-info">
+      <i class="pi pi-info-circle" aria-hidden="true"></i>
+      <span>{{ store.info() }}</span>
+    </div>
+  }
+
   @if (store.loadedOnce()) {
     <app-lettering-selection-summary
       [summary]="store.summary()"
@@ -55,6 +63,7 @@
       [isPartialMode]="store.isPartialMode()"
       [busyAction]="store.busyAction()"
       [accountLabel]="store.filters().account"
+      [accountTypeLabel]="accountTypeLabel()"
       [readOnly]="!store.canCreate()"
       (allowPartialChange)="store.setAllowPartial($event)"
       (reset)="store.reset()"

@@ -11,9 +11,11 @@ import {
   LetteringLineDto
 } from '../../services/accounting.service';
 import { parseLocalDateString, validateDateRange } from '../../shared/accounting-date-utils';
+import { downloadBlob, exportExtension } from '../../shared/accounting-download.util';
 import {
   LETTERING_ERROR_CODES,
   LETTERING_FUNCTIONAL_CURRENCY,
+  LETTERING_SEARCH_MAX_LENGTH,
   LetteringBusyAction,
   LetteringFilters,
   LetteringGroup,
@@ -96,6 +98,9 @@ export class LetteringStore {
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
   readonly success = signal<string | null>(null);
+  /** Information neutre (zone `role="status"`), distincte du succès : p. ex. une complétion
+   *  abandonnée par un rechargement des écritures. Effacée au chargement suivant et à toute action. */
+  readonly info = signal<string | null>(null);
 
   // ── Sélection ──
   private readonly debitSelectedIds = signal<ReadonlySet<string>>(new Set<string>());
@@ -113,6 +118,9 @@ export class LetteringStore {
 
   // ── Actions en cours ──
   readonly busyAction = signal<LetteringBusyAction>(null);
+  /** Export du grand livre en cours (menu Actions). Distinct de `busyAction` : un export ne bloque
+   *  pas la sélection ni la validation d'un lettrage. */
+  readonly exporting = signal(false);
 
   // ── Tiroir du groupe ──
   readonly group = signal<LetteringGroup | null>(null);
@@ -150,7 +158,7 @@ export class LetteringStore {
   });
 
   readonly summary = computed(() => computeSelectionSummary(this.selectedLines()));
-  readonly guards = computed(() => selectionGuards(this.selectedLines()));
+  readonly guards = computed(() => selectionGuards(this.selectedLines(), this.completionMemberIds()));
 
   readonly debitPaneTotal = computed(() => paneTotal(this.debitLines(), 'debit'));
   readonly creditPaneTotal = computed(() => paneTotal(this.creditLines(), 'credit'));
@@ -172,6 +180,9 @@ export class LetteringStore {
   readonly completionTarget = computed<string | null>(() => {
     const completion = this.completionGroup();
     if (completion) {
+      // Même garde-fou qu'hors complétion : un AUTRE groupe partiel dans la sélection rend la
+      // cible ambiguë (le bandeau « plusieurs lettrages partiels » s'affiche alors).
+      if (this.guards().partialGroupCodes.some(c => c !== completion.code)) return null;
       const hasNew = this.selectedLines().some(l => !this.completionMemberIds().has(l.lineId));
       return hasNew ? completion.code : null;
     }
@@ -191,6 +202,7 @@ export class LetteringStore {
       (s.balanced || this.allowPartial()) &&
       !g.mixedCurrencies &&
       !g.multipleAccounts &&
+      !g.lockedLines &&
       this.canCreate() &&
       this.busyAction() === null
     );
@@ -200,11 +212,18 @@ export class LetteringStore {
   readonly canComplete = computed(() => {
     if (this.completionTarget() === null) return false;
     const g = this.guards();
-    return !g.mixedCurrencies && !g.multipleAccounts && this.canCreate() && this.busyAction() === null;
+    return !g.mixedCurrencies && !g.multipleAccounts && !g.lockedLines && this.canCreate() && this.busyAction() === null;
   });
 
+  /** Désactivé pendant une complétion : « Équilibrer » enverrait aussi les membres déjà lettrés du
+   *  groupe P, que le serveur refuserait (`LETTERING_ALREADY_LETTERED`). */
   readonly canSettleExchangeDifference = computed(
-    () => this.summary().hasExchangeDifference && this.canCreate() && this.busyAction() === null
+    () =>
+      this.summary().hasExchangeDifference &&
+      this.completionGroup() === null &&
+      !this.guards().lockedLines &&
+      this.canCreate() &&
+      this.busyAction() === null
   );
 
   readonly busy = computed(() => this.loading() || this.busyAction() !== null);
@@ -227,22 +246,42 @@ export class LetteringStore {
     this.creditSelectedIds.set(new Set());
     this.error.set(null);
     this.success.set(null);
+    this.info.set(null);
   }
 
-  /** Abandonne la complétion en cours : les membres du groupe sortent de la sélection. */
+  /**
+   * Abandonne la complétion en cours : les membres du groupe sortent de la sélection, y compris
+   * ceux affichés dans les volets (filtres « Toutes » / « Partiellement lettrées ») que les volets
+   * auraient renvoyés dans leur sélection.
+   */
   cancelCompletion(): void {
+    const members = this.completionMemberIds();
     this.completionGroup.set(null);
+    this.debitSelectedIds.update(ids => LetteringStore.without(ids, members));
+    this.creditSelectedIds.update(ids => LetteringStore.without(ids, members));
   }
 
-  /** Remplace la sélection d'un seul volet (débit ou crédit), conserve l'autre. */
+  /**
+   * Remplace la sélection d'un seul volet (débit ou crédit), conserve l'autre. Pendant une
+   * complétion, les membres du groupe ne sont jamais stockés ici : ils restent portés par
+   * `completionGroup` (cochés et inclus tant que la complétion est active), sinon ils
+   * survivraient à « Annuler la complétion ».
+   */
   setPaneSelection(side: 'debit' | 'credit', ids: readonly string[]): void {
-    const set = new Set(ids);
+    const set = LetteringStore.without(new Set(ids), this.completionMemberIds());
     if (side === 'debit') {
       this.debitSelectedIds.set(set);
     } else {
       this.creditSelectedIds.set(set);
     }
     this.success.set(null);
+  }
+
+  private static without(ids: ReadonlySet<string>, excluded: ReadonlySet<string>): ReadonlySet<string> {
+    if (excluded.size === 0) return ids;
+    const next = new Set<string>();
+    for (const id of ids) if (!excluded.has(id)) next.add(id);
+    return next;
   }
 
   updateFilters(patch: Partial<LetteringFilters>): void {
@@ -256,6 +295,7 @@ export class LetteringStore {
     this.allowPartial.set(false);
     this.error.set(null);
     this.success.set(null);
+    this.info.set(null);
   }
 
   setAllowPartial(value: boolean): void {
@@ -283,6 +323,7 @@ export class LetteringStore {
     const seq = ++this.loadSeq;
     this.loading.set(true);
     this.error.set(null);
+    this.info.set(null);
 
     this.api
       .getLetteringLines({
@@ -297,6 +338,7 @@ export class LetteringStore {
         thirdPartyKind: f.thirdParty?.kind ?? undefined,
         minAmount: f.minAmount ?? undefined,
         maxAmount: f.maxAmount ?? undefined,
+        search: f.search?.trim().slice(0, LETTERING_SEARCH_MAX_LENGTH) || undefined,
         page: 1,
         pageSize: 2000
       })
@@ -321,7 +363,15 @@ export class LetteringStore {
             this.loadedOnce.set(true);
             this.debitSelectedIds.set(new Set());
             this.creditSelectedIds.set(new Set());
-            this.completionGroup.set(null);
+            // Un rechargement vide la sélection : une complétion encore active est donc abandonnée.
+            // L'utilisateur en est informé (avant, elle disparaissait sans message).
+            const dropped = this.completionGroup();
+            if (dropped) {
+              this.completionGroup.set(null);
+              this.info.set(
+                $localize`:@@accounting.lettering.store.info.completion.abandonnee:La complétion du lettrage ${dropped.code}:code: est annulée : les écritures ont été rechargées.`
+              );
+            }
             onSuccess?.();
           } else {
             // `ApiResponse.error` n'embarque pas de code métier (ce champ n'existe que sur les
@@ -347,6 +397,7 @@ export class LetteringStore {
     this.busyAction.set('letter');
     this.error.set(null);
     this.success.set(null);
+    this.info.set(null);
 
     this.api
       .letterEntries(ids, partial)
@@ -389,6 +440,7 @@ export class LetteringStore {
     this.busyAction.set('settle');
     this.error.set(null);
     this.success.set(null);
+    this.info.set(null);
 
     this.api
       .settleExchangeDifference(ids, account)
@@ -413,6 +465,39 @@ export class LetteringStore {
           if (this.shouldReloadOnError(err)) this.load();
           this.error.set(message);
         }
+      });
+  }
+
+  /**
+   * Exporte au format Excel le grand livre du compte filtré, sur la période filtrée (plan §7.6),
+   * via l'export existant `GET accounting/ledger/export` (droit lecture comptable). Sans effet si
+   * aucun compte n'est saisi ou si un export est déjà en cours.
+   */
+  exportLedger(): void {
+    const f = this.filters();
+    const account = f.account.trim();
+    if (!account || this.exporting()) return;
+    const from = parseLocalDateString(f.from);
+    const to = parseLocalDateString(f.to);
+    const range = validateDateRange(from, to);
+    if (!range.valid) {
+      this.error.set(range.message ?? $localize`:@@accounting.lettering.store.dates.invalides:Dates invalides.`);
+      return;
+    }
+    this.exporting.set(true);
+    this.error.set(null);
+    this.api
+      .exportLedger(account, from, to, 'excel')
+      .pipe(finalize(() => this.exporting.set(false)))
+      .subscribe({
+        next: blob => downloadBlob(blob, `grand_livre_${account}_${f.from}_${f.to}.${exportExtension('excel')}`),
+        error: err =>
+          this.error.set(
+            this.errors.extractErrorMessage(
+              err,
+              $localize`:@@accounting.lettering.store.erreur.export.grand.livre:Erreur lors de l'export du grand livre.`
+            )
+          )
       });
   }
 
@@ -454,6 +539,7 @@ export class LetteringStore {
         this.busyAction.set('unletter');
         this.error.set(null);
         this.success.set(null);
+        this.info.set(null);
 
         this.api
           .unletterEntries(code)
@@ -493,6 +579,7 @@ export class LetteringStore {
     this.busyAction.set('complete');
     this.error.set(null);
     this.success.set(null);
+    this.info.set(null);
 
     this.api
       .completePartialLettering(code, ids, partial)
@@ -501,6 +588,8 @@ export class LetteringStore {
         next: res => {
           if (res.success && res.data) {
             this.success.set($localize`:@@accounting.lettering.store.lettrage.complete:Lettrage complété (code ${res.data.code}:code:).`);
+            // Complétion terminée : ce n'est pas un abandon, le rechargement ne doit pas l'annoncer.
+            this.completionGroup.set(null);
             this.debitSelectedIds.set(new Set());
             this.creditSelectedIds.set(new Set());
             this.allowPartial.set(false);
@@ -520,13 +609,11 @@ export class LetteringStore {
 
   /**
    * Recharge automatiquement la liste quand l'erreur reflète un état serveur désynchronisé de ce
-   * que l'utilisateur voit (ligne déjà lettrée par quelqu'un d'autre, ou période clôturée entre le
-   * chargement et l'action) : la liste affichée redevient cohérente sans action de l'utilisateur.
+   * que l'utilisateur voit (ligne déjà lettrée par quelqu'un d'autre) : la liste affichée redevient
+   * cohérente sans action de l'utilisateur. `LETTERING_PERIOD_LOCKED` n'en fait PAS partie (plan
+   * §4.6/§5.5) : le message s'affiche, la sélection est conservée et rien n'est rechargé.
    */
-  private readonly RELOAD_ON_CODES: readonly string[] = [
-    LETTERING_ERROR_CODES.alreadyLettered,
-    LETTERING_ERROR_CODES.periodLocked
-  ];
+  private readonly RELOAD_ON_CODES: readonly string[] = [LETTERING_ERROR_CODES.alreadyLettered];
 
   private shouldReloadOnError(err: unknown): boolean {
     const code = apiErrorCode(err);
@@ -550,7 +637,7 @@ export class LetteringStore {
       case LETTERING_ERROR_CODES.unbalanced:
         return $localize`:@@accounting.lettering.store.erreur.non.equilibre:La sélection n'est pas équilibrée (débit ≠ crédit).`;
       case LETTERING_ERROR_CODES.periodLocked:
-        return $localize`:@@accounting.lettering.store.erreur.periode.cloturee:Impossible : la période est clôturée. La liste a été actualisée.`;
+        return $localize`:@@accounting.lettering.store.erreur.periode.cloturee.v2:Impossible : une ligne sélectionnée appartient à une période clôturée. Retirez-la de la sélection.`;
       case LETTERING_ERROR_CODES.groupNotFound:
         return $localize`:@@accounting.lettering.store.erreur.groupe.introuvable:Ce groupe de lettrage n'existe pas ou plus.`;
       case LETTERING_ERROR_CODES.groupNotPartial:

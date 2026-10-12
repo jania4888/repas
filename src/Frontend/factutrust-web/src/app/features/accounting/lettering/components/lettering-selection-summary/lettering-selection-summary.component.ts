@@ -33,6 +33,8 @@ export class LetteringSelectionSummaryComponent {
   @Input() isPartialMode = false;
   @Input() busyAction: LetteringBusyAction = null;
   @Input() accountLabel = '';
+  /** Type du compte (« Compte client »…), affiché sous le numéro ; `null` si inconnu. */
+  @Input() accountTypeLabel: string | null = null;
   @Input() readOnly = false;
   /** B1 : code du groupe « P » que la sélection complète, le cas échéant. */
   @Input() completionTarget: string | null = null;

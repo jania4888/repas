@@ -27,7 +27,7 @@ function createStore(permissionsAllowed: boolean): {
 } {
   const api = jasmine.createSpyObj<AccountingService>('AccountingService', [
     'getLetteringLines', 'getLetteringGroup', 'letterEntries', 'settleExchangeDifference',
-    'unletterEntries', 'completePartialLettering'
+    'unletterEntries', 'completePartialLettering', 'exportLedger'
   ]);
   const auth = jasmine.createSpyObj<AuthService>('AuthService', ['hasPermission']);
   auth.hasPermission.and.returnValue(permissionsAllowed);
@@ -56,6 +56,17 @@ describe('LetteringStore', () => {
   beforeEach(() => {
     ({ store, api, confirmation } = createStore(true));
   });
+
+  function loadLines(items: LetteringLineDto[]): void {
+    api.getLetteringLines.and.returnValue(of({
+      success: true,
+      data: {
+        items, page: 1, pageSize: 2000, totalCount: items.length, truncated: false,
+        totals: { count: items.length, debitCount: 0, creditCount: 0, totalDebit: 0, totalCredit: 0, balance: 0, unletteredDebit: 0, unletteredCredit: 0, unletteredBalance: 0 }
+      }
+    }));
+    store.load();
+  }
 
   it('rejects load() when the account is empty', () => {
     store.updateFilters({ account: '' });
@@ -184,7 +195,7 @@ describe('LetteringStore', () => {
     expect(api.getLetteringLines).toHaveBeenCalledTimes(2);
   });
 
-  it('settle() reloads automatically on LETTERING_PERIOD_LOCKED (M6: reload-on-error extended beyond letter())', () => {
+  it('settle() on LETTERING_PERIOD_LOCKED shows the message, keeps the selection and does NOT reload (plan §4.6/§5.5)', () => {
     api.getLetteringLines.and.returnValue(of({
       success: true,
       data: {
@@ -206,8 +217,92 @@ describe('LetteringStore', () => {
 
     store.settle('655');
 
-    expect(store.error()).toContain('clôturée');
-    expect(api.getLetteringLines).toHaveBeenCalledTimes(2);
+    expect(store.error()).toContain('période clôturée');
+    expect(store.error()).toContain('Retirez-la');
+    expect(api.getLetteringLines).toHaveBeenCalledTimes(1);
+    expect(store.isSelected('d1')).toBeTrue();
+    expect(store.isSelected('c1')).toBeTrue();
+  });
+
+  it('letter() on LETTERING_PERIOD_LOCKED keeps the selection and does NOT reload', () => {
+    loadLines([lineDto({ lineId: 'd1', debit: 100 }), lineDto({ lineId: 'c1', debit: 0, credit: 100 })]);
+    store.setPaneSelection('debit', ['d1']);
+    store.setPaneSelection('credit', ['c1']);
+    api.letterEntries.and.returnValue(
+      throwError(() => new HttpErrorResponse({ status: 409, error: { code: 'LETTERING_PERIOD_LOCKED', error: 'x' } }))
+    );
+
+    store.letter();
+
+    expect(api.getLetteringLines).toHaveBeenCalledTimes(1);
+    expect(store.selectedLines().map(l => l.lineId).sort()).toEqual(['c1', 'd1']);
+  });
+
+  it('lockedLines (a selected line in a closed period) blocks canLetter, canComplete and settle', () => {
+    loadLines([
+      lineDto({ lineId: 'd1', debit: 100, periodLocked: true }),
+      lineDto({ lineId: 'c1', debit: 0, credit: 100 })
+    ]);
+    store.setPaneSelection('debit', ['d1']);
+    store.setPaneSelection('credit', ['c1']);
+
+    expect(store.guards().lockedLines).toBeTrue();
+    expect(store.summary().balanced).toBeTrue();
+    expect(store.canLetter()).toBeFalse();
+
+    store.setPaneSelection('debit', []);
+    expect(store.guards().lockedLines).toBeFalse();
+  });
+
+  it('sends the trimmed free-text search (≤ 100 characters) and omits it when empty', () => {
+    loadLines([]);
+    expect(api.getLetteringLines.calls.mostRecent().args[0].search).toBeUndefined();
+
+    store.updateFilters({ search: '  FAC-2026  ' });
+    store.load();
+    expect(api.getLetteringLines.calls.mostRecent().args[0].search).toBe('FAC-2026');
+
+    store.updateFilters({ search: 'x'.repeat(150) });
+    store.load();
+    expect(api.getLetteringLines.calls.mostRecent().args[0].search?.length).toBe(100);
+  });
+
+  describe('exportLedger() (menu Actions, plan §7.6)', () => {
+    it('downloads the Excel ledger of the filtered account and period', () => {
+      const click = jasmine.createSpy('click');
+      const realCreate = document.createElement.bind(document);
+      spyOn(document, 'createElement').and.callFake((tag: string) => {
+        const el = realCreate(tag);
+        if (tag === 'a') (el as HTMLAnchorElement).click = click;
+        return el;
+      });
+      spyOn(URL, 'createObjectURL').and.returnValue('blob:x');
+      spyOn(URL, 'revokeObjectURL');
+      api.exportLedger.and.returnValue(of(new Blob(['x'])));
+
+      store.exportLedger();
+
+      const [account, from, to, format] = api.exportLedger.calls.mostRecent().args;
+      expect(account).toBe('4111');
+      expect(from.getFullYear()).toBe(2026);
+      expect(to.getMonth()).toBe(11);
+      expect(format).toBe('excel');
+      expect(click).toHaveBeenCalled();
+      expect(store.exporting()).toBeFalse();
+    });
+
+    it('is a no-op without an account', () => {
+      store.updateFilters({ account: '  ' });
+      store.exportLedger();
+      expect(api.exportLedger).not.toHaveBeenCalled();
+    });
+
+    it('shows an error when the export fails', () => {
+      api.exportLedger.and.returnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
+      store.exportLedger();
+      expect(store.error()).toBeTruthy();
+      expect(store.exporting()).toBeFalse();
+    });
   });
 
   it('maps a 403 to "droit insuffisant" and does not reload', () => {
@@ -412,6 +507,106 @@ describe('LetteringStore', () => {
       store.reset();
       expect(store.completionGroup()).toBeNull();
       expect(store.selectedLines()).toEqual([]);
+    });
+
+    it('cancelCompletion() retire aussi les membres AFFICHÉS que les volets ont renvoyés (filtre « Toutes »)', () => {
+      // Filtre « Toutes » : les membres du groupe P sont dans les lignes chargées.
+      loadLines([
+        lineDto({ lineId: 'member-d', debit: 100, letteringCode: 'P00002', isPartiallyLettered: true }),
+        lineDto({ lineId: 'member-c', debit: 0, credit: 40, letteringCode: 'P00002', isPartiallyLettered: true }),
+        lineDto({ lineId: 'new-line', debit: 0, credit: 60 })
+      ]);
+      api.getLetteringGroup.and.returnValue(of({ success: true, data: partialGroupDto }));
+      store.openGroup('P00002');
+      store.startCompletion(store.group()!);
+      // Les volets renvoient leur sélection complète (membres cochés compris).
+      store.setPaneSelection('debit', ['member-d']);
+      store.setPaneSelection('credit', ['member-c', 'new-line']);
+
+      store.cancelCompletion();
+
+      expect(store.selectedLines().map(l => l.lineId)).toEqual(['new-line']);
+      expect(store.isSelected('member-d')).toBeFalse();
+      expect(store.isSelected('member-c')).toBeFalse();
+    });
+
+    it('un AUTRE groupe partiel dans la sélection bloque la complétion (cible ambiguë)', () => {
+      loadLines([
+        lineDto({ lineId: 'other-p', debit: 0, credit: 10, letteringCode: 'P00009', isPartiallyLettered: true }),
+        lineDto({ lineId: 'new-line', debit: 0, credit: 60 })
+      ]);
+      api.getLetteringGroup.and.returnValue(of({ success: true, data: partialGroupDto }));
+      store.openGroup('P00002');
+      store.startCompletion(store.group()!);
+      store.setPaneSelection('credit', ['new-line']);
+      expect(store.completionTarget()).toBe('P00002');
+
+      store.setPaneSelection('credit', ['new-line', 'other-p']);
+
+      expect(store.completionTarget()).toBeNull();
+      expect(store.canComplete()).toBeFalse();
+      expect(store.canLetter()).toBeFalse();
+    });
+
+    it("« Équilibrer » est désactivé pendant une complétion (les membres seraient renvoyés au serveur)", () => {
+      loadLines([lineDto({ lineId: 'new-usd', debit: 0, credit: 99, operationCurrency: 'USD', creditInCurrency: 50 })]);
+      const usdGroup: LetteringGroupDto = {
+        ...partialGroupDto,
+        operationCurrency: 'USD',
+        lines: [lineDto({ lineId: 'member-usd', debit: 100, operationCurrency: 'USD', debitInCurrency: 50, letteringCode: 'P00002', isPartiallyLettered: true })]
+      };
+      api.getLetteringGroup.and.returnValue(of({ success: true, data: usdGroup }));
+      store.openGroup('P00002');
+      store.startCompletion(store.group()!);
+      store.setPaneSelection('credit', ['new-usd']);
+
+      expect(store.summary().hasExchangeDifference).toBeTrue();
+      expect(store.canSettleExchangeDifference()).toBeFalse();
+
+      store.cancelCompletion();
+      expect(store.canSettleExchangeDifference()).toBeFalse(); // une seule ligne : plus d'écart à apurer
+    });
+
+    it('un rechargement pendant une complétion l\'annule ET l\'annonce (message info)', () => {
+      loadUnletteredOnly();
+      store.startCompletion(store.group()!);
+      expect(store.info()).toBeNull();
+
+      store.load();
+
+      expect(store.completionGroup()).toBeNull();
+      expect(store.info()).toContain('P00002');
+      expect(store.info()).toContain('rechargées');
+
+      store.load();
+      expect(store.info()).toBeNull();
+    });
+
+    it('une complétion réussie ne déclenche PAS le message « annulée »', () => {
+      loadUnletteredOnly();
+      store.startCompletion(store.group()!);
+      store.setPaneSelection('credit', ['new-line']);
+      api.completePartialLettering.and.returnValue(of({ success: true, data: { code: 'L00003', groupId: 'g2', isPartial: false, lineCount: 3, previousCode: 'P00002' } }));
+
+      store.complete('P00002');
+
+      expect(store.success()).toContain('L00003');
+      expect(store.info()).toBeNull();
+    });
+
+    it('un membre du groupe en période clôturée ne bloque pas la complétion (garde-fou limité aux nouvelles lignes)', () => {
+      loadUnletteredOnly();
+      const lockedMemberGroup: LetteringGroupDto = {
+        ...partialGroupDto,
+        lines: partialGroupDto.lines.map(l => ({ ...l, periodLocked: true }))
+      };
+      api.getLetteringGroup.and.returnValue(of({ success: true, data: lockedMemberGroup }));
+      store.openGroup('P00002');
+      store.startCompletion(store.group()!);
+      store.setPaneSelection('credit', ['new-line']);
+
+      expect(store.guards().lockedLines).toBeFalse();
+      expect(store.canComplete()).toBeTrue();
     });
 
     it("startCompletion() ignore un groupe non partiel", () => {
