@@ -88,6 +88,8 @@ public static class DependencyInjection
 
             // Unité de travail tenant : transaction ambiante partagée par les repositories.
             services.AddScoped<TenantAmbientTransaction>();
+            // Même instance que TenantAmbientTransaction (sonde en lecture seule pour l'Application).
+            services.AddScoped<IAmbientTransactionState>(sp => sp.GetRequiredService<TenantAmbientTransaction>());
             services.AddScoped<ITenantUnitOfWork, TenantUnitOfWork>();
         }
 

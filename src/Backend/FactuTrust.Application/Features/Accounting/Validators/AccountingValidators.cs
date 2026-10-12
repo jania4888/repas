@@ -206,6 +206,97 @@ public sealed class LetterAccountEntriesCommandValidator : AbstractValidator<Let
 }
 
 /// <summary>
+/// Validation du lot de lettrage en masse (plan v2, Phase 3, annexe C §4). Une seule erreur rejette
+/// toute la requête (400), avant tout lettrage.
+/// </summary>
+/// <remarks>
+/// Les plafonds viennent des réglages, ramenés dans leurs bornes dures
+/// (<see cref="LetteringSuggestionSettings.Clamped"/>) : une configuration hors bornes ne peut pas
+/// élargir un lot au-delà de 200 groupes, 50 lignes par groupe et 2 000 lignes.
+/// </remarks>
+public sealed class BulkLetterCommandValidator : AbstractValidator<BulkLetterCommand>
+{
+    public const int ClientKeyMaxLength = 32;
+
+    // Classe de caractères simple, sans groupe ni alternative : aucun retour arrière possible.
+    private static readonly Regex ClientKeyPattern = new("^[A-Za-z0-9_-]+$", RegexOptions.Compiled);
+
+    public BulkLetterCommandValidator(IOptions<AccountingSettings> settings)
+    {
+        var caps = settings.Value.LetteringSuggestions.Clamped();
+        var maxGroups = caps.BulkMaxGroups;
+        var maxLinesPerGroup = caps.BulkMaxLinesPerGroup;
+        var maxTotalLines = caps.BulkMaxTotalLines;
+
+        RuleFor(x => x.RequestId)
+            .NotEmpty().WithMessage("L'identifiant de lot est obligatoire.");
+
+        // Cascade Stop : après un NotNull en échec, les règles suivantes ne lisent pas la liste.
+        RuleFor(x => x.Groups)
+            .Cascade(CascadeMode.Stop)
+            .NotNull().WithMessage("Au moins un groupe est requis.")
+            .Must(g => g.Count >= 1).WithMessage("Au moins un groupe est requis.")
+            .Must(g => g.Count <= maxGroups)
+            .WithMessage($"{maxGroups} groupes au maximum peuvent être lettrés en une seule fois.");
+
+        RuleForEach(x => x.Groups)
+            .NotNull().WithMessage("Groupe invalide.");
+
+        // Where : un élément null (JSON « null ») est signalé ci-dessus, jamais passé aux règles.
+        RuleForEach(x => x.Groups).Where(g => g is not null).ChildRules(group =>
+        {
+            group.RuleFor(g => g.ClientKey)
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty().WithMessage("La clé de proposition est obligatoire.")
+                .MaximumLength(ClientKeyMaxLength)
+                .WithMessage($"La clé de proposition ne peut pas dépasser {ClientKeyMaxLength} caractères.")
+                .Must(k => ClientKeyPattern.IsMatch(k))
+                .WithMessage("La clé de proposition contient des caractères invalides.");
+
+            group.RuleFor(g => g.JournalEntryLineIds)
+                .Cascade(CascadeMode.Stop)
+                .NotNull().WithMessage("Au moins deux lignes sont requises par groupe.")
+                .Must(ids => ids.Count >= 2).WithMessage("Au moins deux lignes sont requises par groupe.")
+                .Must(ids => ids.Count <= maxLinesPerGroup)
+                .WithMessage($"{maxLinesPerGroup} lignes au maximum par groupe.")
+                .Must(ids => ids.All(id => id != Guid.Empty)).WithMessage("Identifiant de ligne invalide.")
+                .Must(ids => ids.Distinct().Count() == ids.Count)
+                .WithMessage("Une même ligne est sélectionnée plusieurs fois dans un groupe.");
+        });
+
+        // Contrôles inter-groupes : seulement si la liste est utilisable (les règles ci-dessus
+        // signalent déjà une liste ou un groupe manquant).
+        When(x => x.Groups is not null && x.Groups.All(g => g is not null), () =>
+        {
+            RuleFor(x => x.Groups)
+                .Must(g => g.Sum(x => x.JournalEntryLineIds?.Count ?? 0) <= maxTotalLines)
+                .WithMessage($"{maxTotalLines} lignes au maximum peuvent être lettrées en une seule fois.")
+                .Must(NoLineInTwoGroups)
+                .WithMessage("Une même ligne apparaît dans plusieurs groupes.")
+                .Must(g => g.Where(x => !string.IsNullOrEmpty(x.ClientKey))
+                            .Select(x => x.ClientKey).Distinct(StringComparer.Ordinal).Count()
+                           == g.Count(x => !string.IsNullOrEmpty(x.ClientKey)))
+                .WithMessage("Une même clé de proposition apparaît dans plusieurs groupes.");
+        });
+    }
+
+    private static bool NoLineInTwoGroups(IReadOnlyList<BulkLetterGroup> groups)
+    {
+        var seen = new HashSet<Guid>();
+        foreach (var group in groups)
+        {
+            // Distinct par groupe : un doublon interne est signalé par la règle du groupe.
+            foreach (var id in (group.JournalEntryLineIds ?? Array.Empty<Guid>()).Distinct())
+            {
+                if (!seen.Add(id))
+                    return false;
+            }
+        }
+        return true;
+    }
+}
+
+/// <summary>
 /// Règle partagée du format de code de lettrage « L00001 » / « P00001 » (plan §4.6) : une seule
 /// implémentation pour le délettrage (<see cref="UnletterAccountEntriesCommandValidator"/>) et la
 /// consultation de groupe (<see cref="GetLetteringGroupQueryValidator"/>).

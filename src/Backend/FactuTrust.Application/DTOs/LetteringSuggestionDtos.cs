@@ -54,3 +54,35 @@ public sealed record LetteringSuggestionLineDto(
 /// insère <see cref="Args"/> (annexe C §2.5).
 /// </summary>
 public sealed record LetteringSuggestionReasonDto(string Code, IReadOnlyDictionary<string, string> Args);
+
+/// <summary>
+/// Réponse de <c>POST api/accounting/lettering/bulk</c> (plan v2, Phase 3, annexe C §4). Renvoyée
+/// avec 200 même en cas de succès partiel : chaque groupe a son propre résultat.
+/// </summary>
+/// <param name="RequestId">Identifiant de lot fourni par le client (idempotence).</param>
+/// <param name="Total">Nombre de groupes reçus.</param>
+/// <param name="Results">Un résultat par groupe, dans l'ordre reçu.</param>
+public sealed record BulkLetteringResultDto(
+    Guid RequestId, int Total, int Lettered, int AlreadyLettered, int Rejected, int NotProcessed,
+    IReadOnlyList<BulkLetteringGroupResultDto> Results);
+
+/// <summary>Résultat d'un groupe d'un lot de lettrage.</summary>
+/// <param name="ClientKey">Clé de la proposition, renvoyée telle quelle.</param>
+/// <param name="Status">Une valeur de <see cref="BulkLetteringStatuses"/>.</param>
+/// <param name="Code">Code créé, ou code existant si <see cref="BulkLetteringStatuses.AlreadyLettered"/>.</param>
+/// <param name="ErrorCode">
+/// Code d'erreur stable <c>LETTERING_*</c> si le groupe est rejeté. L'annexe C proposait des codes
+/// courts (<c>Balance</c>, <c>Currency</c>…) ; les codes de la Phase 1 sont déjà stables et traduits
+/// côté front, ils sont donc réutilisés.
+/// </param>
+public sealed record BulkLetteringGroupResultDto(
+    string ClientKey, string Status, string? Code, string? ErrorCode, string? Message);
+
+/// <summary>Statuts d'un groupe d'un lot de lettrage (annexe C §4).</summary>
+public static class BulkLetteringStatuses
+{
+    public const string Lettered = "Lettered";
+    public const string AlreadyLettered = "AlreadyLettered";
+    public const string Rejected = "Rejected";
+    public const string NotProcessed = "NotProcessed";
+}

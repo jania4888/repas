@@ -81,6 +81,20 @@ public sealed class LetteringQueryService : ILetteringQueryService
         return Result.Success(dto);
     }
 
+    public async Task<IReadOnlyDictionary<Guid, string?>> GetLineCodesAsync(
+        IReadOnlyCollection<Guid> lineIds, CancellationToken cancellationToken = default)
+    {
+        if (lineIds.Count == 0)
+            return new Dictionary<Guid, string?>();
+
+        var ids = lineIds.Distinct().ToList();
+        await using var ctx = _contextFactory.CreateContext();
+        return await ctx.JournalEntryLines.AsNoTracking()
+            .Where(l => ids.Contains(l.Id))
+            .Select(l => new { l.Id, l.LetteringCode })
+            .ToDictionaryAsync(l => l.Id, l => l.LetteringCode, cancellationToken);
+    }
+
     public async Task<Result<LetteringGroupDto>> GetGroupAsync(string code, CancellationToken cancellationToken = default)
     {
         var normalized = (code ?? string.Empty).Trim().ToUpperInvariant();
