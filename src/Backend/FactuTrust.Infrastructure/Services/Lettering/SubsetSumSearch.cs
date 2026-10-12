@@ -43,7 +43,8 @@ internal sealed record SubsetSearchResult(
 /// dépassent) ; montants égaux à la même profondeur explorés une seule fois.
 /// </para>
 /// <para>
-/// Départage entre solutions de même taille : plus faible étalement de dates, puis ordre lexicographique
+/// Départage entre solutions de même taille : plus faible étalement de dates (cible comprise si sa date est
+/// fournie par <c>anchorTicks</c>), puis ordre lexicographique
 /// des <see cref="SubsetItem.OrderRank"/> triés. Les solutions sont comptées par multi-ensemble de montants :
 /// entre lignes de même montant, la ligne au plus petit <see cref="SubsetItem.OrderRank"/> est retenue.
 /// Aucune allocation par nœud : tableaux de travail réutilisés.
@@ -54,12 +55,17 @@ internal static class SubsetSumSearch
     /// <summary>Taille minimale d'un sous-ensemble (une seule ligne relève de R3, pas de R4).</summary>
     internal const int MinSize = 2;
 
-    // Garde contre le dépassement : au plus 64 montants ≤ cible sont additionnés.
+    // Garde contre le dépassement : les sommes préfixes additionnent au plus n montants ≤ cible ; la
+    // cible est donc bornée par long.MaxValue / max(64, n) (vérifié après filtrage, voir Find).
     private const long MaxTarget = long.MaxValue / 64;
 
     private static readonly SubsetSearchResult Empty = new(Array.Empty<int>(), 0, false, 0);
 
-    internal static SubsetSearchResult Find(long target, IReadOnlyList<SubsetItem> items, int maxSize, int nodeBudget)
+    /// <param name="anchorTicks">
+    /// Date de la cible (ticks), si connue : l'étalement d'une solution se mesure alors cible comprise, pour
+    /// préférer des lignes proches de la cible plutôt que des lignes proches entre elles mais lointaines.
+    /// </param>
+    internal static SubsetSearchResult Find(long target, IReadOnlyList<SubsetItem> items, int maxSize, int nodeBudget, long? anchorTicks = null)
     {
         ArgumentNullException.ThrowIfNull(items);
         if (target <= 0 || target > MaxTarget || maxSize < MinSize || nodeBudget <= 0)
@@ -71,10 +77,10 @@ internal static class SubsetSumSearch
             .ThenBy(i => i.OrderRank)
             .ThenBy(i => i.Index)
             .ToArray();
-        if (sorted.Length < MinSize)
+        if (sorted.Length < MinSize || target > long.MaxValue / Math.Max(64, sorted.Length))
             return Empty;
 
-        var search = new Search(sorted, target, Math.Min(maxSize, sorted.Length), nodeBudget);
+        var search = new Search(sorted, target, Math.Min(maxSize, sorted.Length), nodeBudget, anchorTicks);
         return search.Run();
     }
 
@@ -84,6 +90,7 @@ internal static class SubsetSumSearch
         private readonly long _target;
         private readonly int _maxSize;
         private readonly long _nodeBudget;
+        private readonly long? _anchorTicks;
         private readonly long[] _prefix;   // _prefix[i] = somme des i premiers montants (plus grands d'abord).
         private readonly int[] _path;      // positions de la solution en cours, réutilisé.
         private readonly int[] _best;      // positions de la meilleure solution, réutilisé.
@@ -96,8 +103,9 @@ internal static class SubsetSumSearch
         private int _solutions;
         private long _bestSpread;
 
-        internal Search(SubsetItem[] items, long target, int maxSize, int nodeBudget)
+        internal Search(SubsetItem[] items, long target, int maxSize, int nodeBudget, long? anchorTicks)
         {
+            _anchorTicks = anchorTicks;
             _items = items;
             _target = target;
             _maxSize = maxSize;
@@ -190,7 +198,7 @@ internal static class SubsetSumSearch
 
         private long Spread(int[] positions)
         {
-            long min = long.MaxValue, max = long.MinValue;
+            long min = _anchorTicks ?? long.MaxValue, max = _anchorTicks ?? long.MinValue;
             for (var i = 0; i < _size; i++)
             {
                 var ticks = _items[positions[i]].DateTicks;

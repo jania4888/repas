@@ -179,18 +179,26 @@ internal static class LetteringSuggestionEngine
     /// </summary>
     private static IEnumerable<EngineSuggestion> R2SameReference(Partition partition, EngineState state)
     {
+        // Le seuil « jeton trop générique » se compte sur TOUTES les lignes de la partition, y compris
+        // celles déjà prises par R1 : un jeton ne devient pas spécifique parce que R1 a consommé des lignes.
         var byToken = new SortedDictionary<string, List<LetteringCandidate>>(StringComparer.Ordinal);
+        var tokenLineCount = new Dictionary<string, int>(StringComparer.Ordinal); // consulté, jamais énuméré
         foreach (var line in partition.Lines)
         {
-            if (state.IsConsumed(line))
-                continue;
             foreach (var token in state.TokensOf(line))
-                Add(byToken, token, line);
+            {
+                tokenLineCount[token] = tokenLineCount.GetValueOrDefault(token) + 1;
+                if (!state.IsConsumed(line))
+                    Add(byToken, token, line);
+            }
         }
 
+        // Deux lignes qui partagent plusieurs jetons donneraient plusieurs propositions de même clé :
+        // seule la première est gardée (jetons parcourus en ordre ordinal, donc le plus petit jeton).
+        var emittedKeys = new HashSet<string>(StringComparer.Ordinal); // appartenance seulement
         foreach (var (token, lines) in byToken)
         {
-            if (lines.Count < 2 || lines.Count > state.Options.MaxLinesPerReference)
+            if (lines.Count < 2 || tokenLineCount[token] > state.Options.MaxLinesPerReference)
                 continue;
 
             var debits = lines.Where(l => l.SignedForBalance > 0).ToList();
@@ -200,6 +208,8 @@ internal static class LetteringSuggestionEngine
 
             if (IsBalanced(lines) && TryCommonThirdParty(lines, out _, out _))
             {
+                if (!emittedKeys.Add(SuggestionKey.Compute(partition.AccountNumber, partition.CurrencyCode, lines.Select(l => l.LineId))))
+                    continue;
                 yield return Build(
                     state,
                     SuggestionKind.SameReference,
@@ -212,8 +222,10 @@ internal static class LetteringSuggestionEngine
                 continue;
             }
 
-            foreach (var (debit, credit, _) in PairSameAmount(partition.AccountNumber, debits, credits, requireThirdParty: false))
+            foreach (var (debit, credit, _) in PairSameAmount(state, partition.AccountNumber, debits, credits, requireThirdParty: false))
             {
+                if (!emittedKeys.Add(SuggestionKey.Compute(partition.AccountNumber, partition.CurrencyCode, new[] { debit.LineId, credit.LineId })))
+                    continue;
                 yield return Build(
                     state,
                     SuggestionKind.SameReference,
@@ -250,7 +262,7 @@ internal static class LetteringSuggestionEngine
             if (debits.Count == 0 || credits.Count == 0)
                 continue;
 
-            foreach (var (debit, credit, alternatives) in PairSameAmount(partition.AccountNumber, debits, credits, requireThirdParty: true))
+            foreach (var (debit, credit, alternatives) in PairSameAmount(state, partition.AccountNumber, debits, credits, requireThirdParty: true))
             {
                 var reasons = new List<EngineReason>
                 {
@@ -290,6 +302,7 @@ internal static class LetteringSuggestionEngine
     /// autres lignes de même montant (des deux côtés) qui auraient pu être choisies à la place.
     /// </summary>
     private static List<(LetteringCandidate Debit, LetteringCandidate Credit, int Alternatives)> PairSameAmount(
+        EngineState state,
         string accountNumber,
         List<LetteringCandidate> debits,
         List<LetteringCandidate> credits,
@@ -334,8 +347,15 @@ internal static class LetteringSuggestionEngine
                 continue;
             }
 
+            // Repli glouton (quadratique) : le fusible est vérifié à chaque débit. Les paires déjà
+            // formées restent valides ; la sortie est marquée tronquée.
             foreach (var debit in sameDebits)
             {
+                if (state.CancellationToken.IsCancellationRequested)
+                {
+                    state.Truncate(LetteringEngineOutput.ReasonTimeFuse);
+                    return result;
+                }
                 LetteringCandidate? best = null;
                 foreach (var credit in sameCredits)
                 {
@@ -420,9 +440,11 @@ internal static class LetteringSuggestionEngine
     private static bool SearchThirdParty(Partition partition, List<LetteringCandidate> lines, EngineState state, List<EngineSuggestion> results)
     {
         // Lignes de chaque sens triées par date puis rang : la proximité de date se lit par deux curseurs.
-        var debits = lines.Where(l => l.SignedForBalance > 0).OrderBy(l => l.EntryDate.Ticks).ThenBy(l => l.OrderRank).ToList();
-        var credits = lines.Where(l => l.SignedForBalance < 0).OrderBy(l => l.EntryDate.Ticks).ThenBy(l => l.OrderRank).ToList();
-        if (debits.Count == 0 || credits.Count == 0)
+        // Chaque sens est vu dans deux ordres : date croissante (curseur droit) et date décroissante (curseur
+        // gauche) ; dans les deux, à date égale, le plus petit rang d'ordre vient d'abord.
+        var debits = ByDate.Create(lines.Where(l => l.SignedForBalance > 0));
+        var credits = ByDate.Create(lines.Where(l => l.SignedForBalance < 0));
+        if (debits.Ascending.Count == 0 || credits.Ascending.Count == 0)
             return true;
 
         var targets = lines
@@ -460,7 +482,7 @@ internal static class LetteringSuggestionEngine
                 items.Add(new SubsetItem(i, Math.Abs(picked[i].SignedForBalance), picked[i].EntryDate.Ticks, picked[i].OrderRank));
 
             var budget = (int)Math.Min(state.Options.SubsetNodeBudgetPerTarget, remaining);
-            var found = SubsetSumSearch.Find(targetAmount, items, state.Options.SubsetMaxSize, budget);
+            var found = SubsetSumSearch.Find(targetAmount, items, state.Options.SubsetMaxSize, budget, target.EntryDate.Ticks);
             state.NodesUsed += found.NodesVisited;
             if (found.BudgetExhausted)
                 state.Truncate(LetteringEngineOutput.ReasonSearchBudget);
@@ -478,10 +500,13 @@ internal static class LetteringSuggestionEngine
                 EngineReason.Of(EngineReasonCodes.SameThirdParty),
                 EngineReason.Of(EngineReasonCodes.SubsetSum, ("count", group.Count.ToString(CultureInfo.InvariantCulture))),
             };
-            if (found.AlternativeCount > 1)
+            // Ambiguïté : autres solutions de même taille (comptées par montants), plus chaque candidat non
+            // retenu de même montant qu'une ligne retenue (il donnerait une autre solution par échange).
+            var alternatives = found.AlternativeCount - 1 + CountSameAmountOutside(picked, found.ItemIndexes);
+            if (alternatives > 0)
             {
                 reasons.Add(EngineReason.Of(EngineReasonCodes.AmbiguousAmount,
-                    ("alternatives", (found.AlternativeCount - 1).ToString(CultureInfo.InvariantCulture))));
+                    ("alternatives", alternatives.ToString(CultureInfo.InvariantCulture))));
             }
 
             results.Add(Build(state, SuggestionKind.SubsetSum, SuggestionCategory.Multiple, ruleRank: 4, BaseScoreSubsetSum, partition, group, reasons));
@@ -490,13 +515,14 @@ internal static class LetteringSuggestionEngine
     }
 
     /// <summary>
-    /// Au plus <paramref name="max"/> lignes de <paramref name="opposite"/> (triées par date) de montant
-    /// ≤ cible et non réservées, les plus proches en date de la cible (égalité : rang d'ordre), puis triées
-    /// par montant décroissant. Deux curseurs partent de la date de la cible : coût linéaire, aucun tri global.
+    /// Au plus <paramref name="max"/> lignes de <paramref name="opposite"/> de montant ≤ cible et non
+    /// réservées, les plus proches en date de la cible (à écart égal, et à date égale, plus petit rang
+    /// d'ordre d'abord), puis triées par montant décroissant. Deux curseurs partent de la date de la
+    /// cible, l'un sur l'ordre croissant, l'autre sur l'ordre décroissant : coût linéaire, aucun tri global.
     /// </summary>
     private static void PickNearest(
         LetteringCandidate target,
-        List<LetteringCandidate> opposite,
+        ByDate opposite,
         long targetAmount,
         HashSet<Guid> reserved,
         int max,
@@ -504,28 +530,32 @@ internal static class LetteringSuggestionEngine
     {
         picked.Clear();
         var ticks = target.EntryDate.Ticks;
-        var right = LowerBound(opposite, ticks);
-        var left = right - 1;
+        var asc = opposite.Ascending;
+        var desc = opposite.Descending;
+        var right = LowerBound(asc, ticks);       // asc[right..] : date ≥ cible
+        var left = asc.Count - right;             // desc[left..] : date < cible, de la plus proche à la plus lointaine
 
-        while (picked.Count < max && (left >= 0 || right < opposite.Count))
+        while (picked.Count < max)
         {
-            left = Skip(opposite, left, -1, targetAmount, reserved);
-            right = Skip(opposite, right, +1, targetAmount, reserved);
-            if (left < 0 && right >= opposite.Count)
+            left = Skip(desc, left, targetAmount, reserved);
+            right = Skip(asc, right, targetAmount, reserved);
+            var hasLeft = left < desc.Count;
+            var hasRight = right < asc.Count;
+            if (!hasLeft && !hasRight)
                 break;
 
             bool takeLeft;
-            if (left < 0) takeLeft = false;
-            else if (right >= opposite.Count) takeLeft = true;
+            if (!hasLeft) takeLeft = false;
+            else if (!hasRight) takeLeft = true;
             else
             {
-                var gapLeft = ticks - opposite[left].EntryDate.Ticks;
-                var gapRight = opposite[right].EntryDate.Ticks - ticks;
-                takeLeft = gapLeft != gapRight ? gapLeft < gapRight : opposite[left].OrderRank < opposite[right].OrderRank;
+                var gapLeft = ticks - desc[left].EntryDate.Ticks;
+                var gapRight = asc[right].EntryDate.Ticks - ticks;
+                takeLeft = gapLeft != gapRight ? gapLeft < gapRight : desc[left].OrderRank < asc[right].OrderRank;
             }
 
-            if (takeLeft) picked.Add(opposite[left--]);
-            else picked.Add(opposite[right++]);
+            if (takeLeft) picked.Add(desc[left++]);
+            else picked.Add(asc[right++]);
         }
 
         picked.Sort((a, b) =>
@@ -535,12 +565,43 @@ internal static class LetteringSuggestionEngine
         });
     }
 
-    private static int Skip(List<LetteringCandidate> lines, int index, int step, long targetAmount, HashSet<Guid> reserved)
+    /// <summary>Candidats non retenus de même montant absolu qu'une ligne retenue.</summary>
+    private static int CountSameAmountOutside(List<LetteringCandidate> picked, IReadOnlyList<int> chosen)
     {
-        while (index >= 0 && index < lines.Count
+        var count = 0;
+        for (var i = 0; i < picked.Count; i++)
+        {
+            var isChosen = false;
+            var sameAmount = false;
+            var amount = Math.Abs(picked[i].SignedForBalance);
+            foreach (var index in chosen)
+            {
+                if (index == i) { isChosen = true; break; }
+                if (Math.Abs(picked[index].SignedForBalance) == amount) sameAmount = true;
+            }
+            if (!isChosen && sameAmount)
+                count++;
+        }
+        return count;
+    }
+
+    /// <summary>Lignes d'un sens, triées par date croissante et décroissante (à date égale : rang d'ordre).</summary>
+    private sealed record ByDate(List<LetteringCandidate> Ascending, List<LetteringCandidate> Descending)
+    {
+        internal static ByDate Create(IEnumerable<LetteringCandidate> lines)
+        {
+            var ascending = lines.OrderBy(l => l.EntryDate.Ticks).ThenBy(l => l.OrderRank).ToList();
+            var descending = ascending.OrderByDescending(l => l.EntryDate.Ticks).ThenBy(l => l.OrderRank).ToList();
+            return new ByDate(ascending, descending);
+        }
+    }
+
+    private static int Skip(List<LetteringCandidate> lines, int index, long targetAmount, HashSet<Guid> reserved)
+    {
+        while (index < lines.Count
                && (Math.Abs(lines[index].SignedForBalance) > targetAmount || reserved.Contains(lines[index].LineId)))
         {
-            index += step;
+            index++;
         }
         return index;
     }
