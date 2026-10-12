@@ -362,6 +362,7 @@ public static class AuditActions
         public const string Lettered = "Accounting.Lettered";
         public const string Unlettered = "Accounting.Unlettered";
         public const string LetteringCompleted = "Accounting.LetteringCompleted";
+        public const string LetteredBulk = "Accounting.LetteredBulk";
         public const string SubAccountCreated = "Accounting.SubAccountCreated";
         public const string AccountLabelUpdated = "Accounting.AccountLabelUpdated";
         public const string AccountToggled = "Accounting.AccountToggled";
