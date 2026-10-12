@@ -20,6 +20,7 @@ public sealed class AccountingControllerLetteringAuthorizationTests
     [InlineData(nameof(AccountingController.Letter), PermissionPolicies.AccountingCreate)]
     [InlineData(nameof(AccountingController.CompletePartialLettering), PermissionPolicies.AccountingCreate)]
     [InlineData(nameof(AccountingController.SettleExchangeDifference), PermissionPolicies.AccountingCreate)]
+    [InlineData(nameof(AccountingController.BulkLetter), PermissionPolicies.AccountingCreate)]
     [InlineData(nameof(AccountingController.GetLetteringLines), PermissionPolicies.AccountingRead)]
     [InlineData(nameof(AccountingController.GetLetteringGroup), PermissionPolicies.AccountingRead)]
     [InlineData(nameof(AccountingController.GetLetteringSuggestions), PermissionPolicies.AccountingRead)]
