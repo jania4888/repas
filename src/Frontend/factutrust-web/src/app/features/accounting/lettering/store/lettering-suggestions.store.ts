@@ -120,6 +120,12 @@ export class LetteringSuggestionsStore {
    * le serveur renvoie le rapport en cache ou classe les groupes déjà faits « Déjà lettré ».
    */
   private readonly bulkRetry = signal<BulkAttempt | null>(null);
+  /**
+   * Vrai si le serveur a pu lettrer une partie du lot depuis l'ouverture du dialogue (rapport reçu,
+   * ou issue inconnue : 5xx, coupure, 409). Survit à un changement de sélection : la fermeture
+   * recharge alors les lignes, pas seulement les propositions.
+   */
+  private bulkMaybeWritten = false;
   readonly canRetryBulk = computed(() => this.bulkRetry() !== null && !this.bulkRunning() && !this.lettering.busy());
 
   private readonly snapshot = signal<SelectionSnapshot | null>(null);
@@ -255,22 +261,25 @@ export class LetteringSuggestionsStore {
     this.bulkResult.set(null);
     this.bulkError.set(null);
     this.bulkRetry.set(null);
+    this.bulkMaybeWritten = false;
     this.bulkDialogOpen.set(true);
   }
 
   /**
-   * Ferme le dialogue (refusé pendant l'envoi). Après un rapport : rechargement des lignes, qui
-   * recalcule les propositions. Après un échec sans rapport : recalcul des propositions seulement.
+   * Ferme le dialogue (refusé pendant l'envoi). Après un rapport ou une issue inconnue (une partie
+   * a pu être lettrée) : rechargement des lignes, qui recalcule les propositions. Après un refus
+   * du lot entier (400, rien n'est écrit) : recalcul des propositions seulement.
    */
   closeBulkDialog(): void {
     if (this.bulkRunning()) return;
     this.bulkDialogOpen.set(false);
-    const hadResult = this.bulkResult() !== null;
-    const hadError = this.bulkError() !== null || this.bulkRetry() !== null;
+    const maybeWritten = this.bulkMaybeWritten;
+    const hadError = this.bulkError() !== null;
     this.bulkResult.set(null);
     this.bulkError.set(null);
     this.bulkRetry.set(null);
-    if (hadResult) this.lettering.load();
+    this.bulkMaybeWritten = false;
+    if (maybeWritten) this.lettering.load();
     else if (hadError) this.refresh();
   }
 
@@ -289,20 +298,26 @@ export class LetteringSuggestionsStore {
     if (next.has(key)) next.delete(key);
     else next.add(key);
     this.bulkSelection.set(next);
-    this.bulkRetry.set(null);
+    this.selectionChanged();
   }
 
   /** Coche toutes les propositions éligibles (toutes confiances), dans les plafonds. */
   selectAllBulk(): void {
     if (this.bulkRunning() || this.bulkResult() !== null) return;
     this.bulkSelection.set(new Set(defaultBulkSelection(this.suggestions(), { onlyHighConfidence: false })));
-    this.bulkRetry.set(null);
+    this.selectionChanged();
   }
 
   clearBulkSelection(): void {
     if (this.bulkRunning() || this.bulkResult() !== null) return;
     this.bulkSelection.set(new Set<string>());
+    this.selectionChanged();
+  }
+
+  /** Un autre lot : le rejeu du précédent et son message d'erreur ne s'appliquent plus. */
+  private selectionChanged(): void {
     this.bulkRetry.set(null);
+    this.bulkError.set(null);
   }
 
   /**
@@ -343,6 +358,7 @@ export class LetteringSuggestionsStore {
           if (res.success && res.data) {
             // Les réponses demandées avant le lot contiennent des propositions lettrées depuis.
             this.acceptFrom = this.requestSeq + 1;
+            this.bulkMaybeWritten = true;
             this.bulkResult.set(res.data);
           } else {
             this.bulkError.set(
@@ -358,14 +374,17 @@ export class LetteringSuggestionsStore {
     const code = apiErrorCode(err);
     const status = (err as { status?: number } | null)?.status ?? 0;
     if (code === LETTERING_ERROR_CODES.featureDisabled) {
+      // Le panneau disparaît (et le dialogue avec lui) : le message va dans la bannière de l'écran.
       this.hidden.set(true);
       this.pending.set(false);
       this.clear();
-      this.bulkError.set(translateLetteringError(err, '', this.errors));
+      this.bulkDialogOpen.set(false);
+      this.lettering.error.set(translateLetteringError(err, '', this.errors));
       return;
     }
     if (code === LETTERING_ERROR_CODES.bulkInProgress) {
       // 409 : ce même lot tourne encore. Le rejouer plus tard renvoie son rapport.
+      this.bulkMaybeWritten = true;
       this.bulkRetry.set(attempt);
       this.bulkError.set(translateLetteringError(err, '', this.errors));
       return;
@@ -380,6 +399,7 @@ export class LetteringSuggestionsStore {
     }
     if (status === 0 || status >= 500) {
       // Issue inconnue : une partie du lot a pu être lettrée. Le rejeu est sûr (même identifiant).
+      this.bulkMaybeWritten = true;
       this.bulkRetry.set(attempt);
       this.bulkError.set(
         $localize`:@@accounting.lettering.suggestions.bulk.error.unknown:Le serveur n'a pas confirmé le lot : une partie a pu être lettrée. « Réessayer » renvoie le même lot ; une proposition déjà lettrée ne l'est pas deux fois.`

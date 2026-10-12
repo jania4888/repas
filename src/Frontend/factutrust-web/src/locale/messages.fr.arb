@@ -23550,7 +23550,8 @@
   "3584269125067295164": "{VAR_PLURAL, plural, =1 {ligne} other {lignes}}",
   "@3584269125067295164": {
     "x-files": [
-      "src/app/features/accounting/journal/journal.component.ts"
+      "src/app/features/accounting/journal/journal.component.ts",
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
     ],
     "x-wave": "v7"
   },
@@ -24587,8 +24588,15 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.suggestions.bulk.report.summary": "Lot traité : {$INTERPOLATION} lettrées, {$INTERPOLATION_1} déjà lettrées, {$INTERPOLATION_2} refusées, {$INTERPOLATION_3} non traitées.",
-  "@accounting.lettering.suggestions.bulk.report.summary": {
+  "accounting.lettering.suggestions.bulk.report.summary.v2": "Lot traité. Lettrées : {$INTERPOLATION} · déjà lettrées : {$INTERPOLATION_1} · refusées : {$INTERPOLATION_2} · non traitées : {$INTERPOLATION_3}.",
+  "@accounting.lettering.suggestions.bulk.report.summary.v2": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.report.notProcessedHint": "Une partie du lot n'a pas été traitée. Fermez ce dialogue : les propositions restantes s'affichent de nouveau, et vous pouvez relancer un lot.",
+  "@accounting.lettering.suggestions.bulk.report.notProcessedHint": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
     ],
@@ -24622,8 +24630,15 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.suggestions.bulk.confirm.question": "Lettrer {$INTERPOLATION} propositions ({$INTERPOLATION_1} lignes) ?",
-  "@accounting.lettering.suggestions.bulk.confirm.question": {
+  "accounting.lettering.suggestions.bulk.confirm.question.v2": "Lettrer {$INTERPOLATION} {$ICU} ({$INTERPOLATION_1} {$ICU_1}) ?",
+  "@accounting.lettering.suggestions.bulk.confirm.question.v2": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "5178920069137094996": "{VAR_PLURAL, plural, =0 {proposition} =1 {proposition} other {propositions}}",
+  "@5178920069137094996": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
     ],
@@ -24671,8 +24686,15 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.lettering.suggestions.bulk.summary.count": "{$INTERPOLATION} propositions cochées · {$INTERPOLATION_1} lignes",
-  "@accounting.lettering.suggestions.bulk.summary.count": {
+  "accounting.lettering.suggestions.bulk.summary.count.v2": "{$INTERPOLATION} {$ICU} · {$INTERPOLATION_1} {$ICU_1}",
+  "@accounting.lettering.suggestions.bulk.summary.count.v2": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "4239899681521596931": "{VAR_PLURAL, plural, =0 {proposition cochée} =1 {proposition cochée} other {propositions cochées}}",
+  "@4239899681521596931": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
     ],

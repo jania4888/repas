@@ -1,7 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   LOCALE_ID,
+  ViewChild,
   computed,
   effect,
   inject,
@@ -100,6 +102,36 @@ export class LetteringBulkDialogComponent {
 
   private readonly byKey = computed(() => new Map(this.suggestions().map(s => [s.key, s])));
 
+  /** Retour au choix demandé par « Retour » : le focus va sur l'introduction de la vue. */
+  private focusChooseOnRender = false;
+
+  /*
+   * Focus à chaque changement de vue. L'élément focalisé (« Continuer », « Confirmer »…) est
+   * détruit par le changement de vue : sans cela, le focus retombe sur <body> et la touche Tab
+   * sort de la modale. Les setters s'exécutent quand l'élément apparaît dans le DOM.
+   */
+  @ViewChild('confirmQuestion')
+  set confirmQuestion(el: ElementRef<HTMLElement> | undefined) {
+    el?.nativeElement.focus({ preventScroll: true });
+  }
+
+  @ViewChild('reportSummary')
+  set reportSummary(el: ElementRef<HTMLElement> | undefined) {
+    el?.nativeElement.focus({ preventScroll: true });
+  }
+
+  @ViewChild('errorMessage')
+  set errorMessage(el: ElementRef<HTMLElement> | undefined) {
+    el?.nativeElement.focus({ preventScroll: true });
+  }
+
+  @ViewChild('chooseIntro')
+  set chooseIntro(el: ElementRef<HTMLElement> | undefined) {
+    if (!el || !this.focusChooseOnRender) return;
+    this.focusChooseOnRender = false;
+    el.nativeElement.focus({ preventScroll: true });
+  }
+
   constructor() {
     // Chaque ouverture repart de la vue « choix ».
     effect(() => {
@@ -122,7 +154,9 @@ export class LetteringBulkDialogComponent {
   }
 
   back(): void {
-    if (!this.running()) this.step.set('choose');
+    if (this.running()) return;
+    this.focusChooseOnRender = true;
+    this.step.set('choose');
   }
 
   confirm(): void {

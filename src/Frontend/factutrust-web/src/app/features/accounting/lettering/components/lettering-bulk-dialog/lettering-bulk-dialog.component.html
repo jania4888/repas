@@ -14,7 +14,10 @@
   <div class="bulk" data-testid="lettering-bulk-dialog" [attr.aria-busy]="running()">
     @if (result(); as r) {
       <!-- Vue 3 : rapport -->
-      <p class="bulk__intro" role="status" data-testid="lettering-bulk-report-summary" i18n="@@accounting.lettering.suggestions.bulk.report.summary">Lot traité : {{ r.lettered }} lettrées, {{ r.alreadyLettered }} déjà lettrées, {{ r.rejected }} refusées, {{ r.notProcessed }} non traitées.</p>
+      <p #reportSummary class="bulk__intro" role="status" tabindex="-1" data-testid="lettering-bulk-report-summary" i18n="@@accounting.lettering.suggestions.bulk.report.summary.v2">Lot traité. Lettrées : {{ r.lettered }} · déjà lettrées : {{ r.alreadyLettered }} · refusées : {{ r.rejected }} · non traitées : {{ r.notProcessed }}.</p>
+      @if (r.notProcessed > 0) {
+        <p class="bulk__hint" data-testid="lettering-bulk-not-processed-hint" i18n="@@accounting.lettering.suggestions.bulk.report.notProcessedHint">Une partie du lot n'a pas été traitée. Fermez ce dialogue : les propositions restantes s'affichent de nouveau, et vous pouvez relancer un lot.</p>
+      }
       <dl class="bulk__counters">
         <div class="bulk__counter bulk__counter--ok">
           <dt i18n="@@accounting.lettering.suggestions.bulk.report.lettered">Lettrées</dt>
@@ -44,7 +47,7 @@
     } @else if (step() === 'confirm') {
       <!-- Vue 2 : confirmation explicite -->
       <div class="bulk__confirm" data-testid="lettering-bulk-confirm">
-        <p class="bulk__confirm-question" i18n="@@accounting.lettering.suggestions.bulk.confirm.question">Lettrer {{ selectedCount() }} propositions ({{ lineCount() }} lignes) ?</p>
+        <p #confirmQuestion class="bulk__confirm-question" tabindex="-1" data-testid="lettering-bulk-confirm-question" i18n="@@accounting.lettering.suggestions.bulk.confirm.question.v2">Lettrer {{ selectedCount() }} {selectedCount(), plural, =0 {proposition} =1 {proposition} other {propositions}} ({{ lineCount() }} {lineCount(), plural, =1 {ligne} other {lignes}}) ?</p>
         <ul class="bulk__confirm-points">
           <li i18n="@@accounting.lettering.suggestions.bulk.confirm.transaction">Chaque proposition est lettrée seule : un refus ne bloque pas les autres.</li>
           <li i18n="@@accounting.lettering.suggestions.bulk.confirm.final">Le lettrage est définitif : seul un délettrage, groupe par groupe, peut l'annuler.</li>
@@ -53,7 +56,7 @@
       </div>
     } @else {
       <!-- Vue 1 : choix -->
-      <p class="bulk__intro" i18n="@@accounting.lettering.suggestions.bulk.intro">Les propositions de confiance haute sont cochées. Une proposition avec un écart de change ou trop de lignes se valide seule.</p>
+      <p #chooseIntro class="bulk__intro" tabindex="-1" data-testid="lettering-bulk-intro" i18n="@@accounting.lettering.suggestions.bulk.intro">Les propositions de confiance haute sont cochées. Une proposition avec un écart de change ou trop de lignes se valide seule.</p>
       <div class="bulk__toolbar">
         <button type="button" class="bulk__link" [disabled]="eligibleCount() === 0" (click)="selectAll.emit()" data-testid="lettering-bulk-select-all" i18n="@@accounting.lettering.suggestions.bulk.selectAll">Cocher toutes les éligibles</button>
         <button type="button" class="bulk__link" [disabled]="selectedCount() === 0" (click)="clearAll.emit()" data-testid="lettering-bulk-clear" i18n="@@accounting.lettering.suggestions.bulk.clear">Tout décocher</button>
@@ -91,13 +94,13 @@
     }
 
     @if (error()) {
-      <p class="bulk__error" role="alert" data-testid="lettering-bulk-error">{{ error() }}</p>
+      <p #errorMessage class="bulk__error" role="alert" tabindex="-1" data-testid="lettering-bulk-error">{{ error() }}</p>
     }
   </div>
 
   <ng-template #summary>
     <div class="bulk__summary" data-testid="lettering-bulk-summary" aria-live="polite">
-      <p class="bulk__summary-count" i18n="@@accounting.lettering.suggestions.bulk.summary.count">{{ selectedCount() }} propositions cochées · {{ lineCount() }} lignes</p>
+      <p class="bulk__summary-count" i18n="@@accounting.lettering.suggestions.bulk.summary.count.v2">{{ selectedCount() }} {selectedCount(), plural, =0 {proposition cochée} =1 {proposition cochée} other {propositions cochées}} · {{ lineCount() }} {lineCount(), plural, =1 {ligne} other {lignes}}</p>
       @if (totalsList().length > 0) {
         <p class="bulk__summary-line">
           <span class="bulk__summary-label" i18n="@@accounting.lettering.suggestions.bulk.summary.totals">Total par devise :</span>

@@ -657,16 +657,24 @@ describe('LetteringSuggestionsStore', () => {
       expect(store.canRetryBulk()).toBeTrue();
     });
 
-    it('409 LETTERING_BULK_IN_PROGRESS : message traduit et rejeu possible', () => {
-      api.bulkLetter.and.returnValue(throwError(() => apiError(409, 'LETTERING_BULK_IN_PROGRESS')));
+    it('409 LETTERING_BULK_IN_PROGRESS : message traduit, puis le rejeu (même lot) renvoie le rapport', () => {
+      api.bulkLetter.and.returnValues(throwError(() => apiError(409, 'LETTERING_BULK_IN_PROGRESS')), of(report()));
       store.openBulkDialog();
       store.runBulk();
-      expect(store.bulkError()).toBeTruthy();
+      expect(store.bulkError()).toContain('déjà en cours');
       expect(store.canRetryBulk()).toBeTrue();
+
+      store.retryBulk();
+
+      const [first, second] = api.bulkLetter.calls.allArgs();
+      expect(second).toEqual(first);
+      expect(store.bulkResult()?.lettered).toBe(2);
+      expect(store.bulkError()).toBeNull();
     });
 
     it('400 : lot refusé en entier, sans rejeu ; la fermeture recalcule les propositions', fakeAsync(() => {
-      api.bulkLetter.and.returnValue(throwError(() => apiError(400, 'LETTERING_BULK_TOO_LARGE')));
+      api.bulkLetter.and.returnValue(throwError(() => apiError(400, 'LETTERING_VALIDATION')));
+      const load = spyOn(lettering, 'load');
       api.getLetteringSuggestions.and.returnValue(of(result([])));
       store.openBulkDialog();
       store.runBulk();
@@ -679,15 +687,67 @@ describe('LetteringSuggestionsStore', () => {
       store.closeBulkDialog();
       tick(LETTERING_SUGGESTIONS_DEBOUNCE_MS);
       expect(api.getLetteringSuggestions).toHaveBeenCalledTimes(1);
+      expect(load).not.toHaveBeenCalled();
       expect(store.bulkError()).toBeNull();
     }));
 
-    it('LETTERING_FEATURE_DISABLED : le panneau est masqué', () => {
-      api.bulkLetter.and.returnValue(throwError(() => apiError(404, 'LETTERING_FEATURE_DISABLED')));
+    it('400 puis changement de sélection : le message ne s\'applique plus, un nouveau lot est possible', () => {
+      api.bulkLetter.and.returnValue(throwError(() => apiError(400, 'LETTERING_VALIDATION')));
+      store.openBulkDialog();
+      store.runBulk();
+      expect(store.bulkError()).not.toBeNull();
+
+      store.toggleBulk('a');
+
+      expect(store.bulkError()).toBeNull();
+      expect(store.canRunBulk()).toBeTrue();
+    });
+
+    it('5xx puis changement de sélection : erreur et rejeu effacés, mais la fermeture recharge les lignes', () => {
+      api.bulkLetter.and.returnValue(throwError(() => apiError(500)));
+      const load = spyOn(lettering, 'load');
+      store.openBulkDialog();
+      store.runBulk();
+
+      store.selectAllBulk();
+      expect(store.bulkError()).toBeNull();
+      expect(store.canRetryBulk()).toBeFalse();
+      store.clearBulkSelection();
+
+      store.closeBulkDialog();
+      // Une partie du lot a pu être lettrée : les lignes sont rechargées, pas seulement les propositions.
+      expect(load).toHaveBeenCalledTimes(1);
+    });
+
+    it('fermeture après une coupure (issue inconnue) : recharge les lignes', () => {
+      api.bulkLetter.and.returnValue(throwError(() => apiError(0)));
+      const load = spyOn(lettering, 'load');
+      store.openBulkDialog();
+      store.runBulk();
+
+      store.closeBulkDialog();
+
+      expect(load).toHaveBeenCalledTimes(1);
+      expect(store.canRetryBulk()).toBeFalse();
+    });
+
+    it('fermeture sans envoi : ni rechargement ni recalcul', () => {
+      const load = spyOn(lettering, 'load');
+      store.openBulkDialog();
+      store.closeBulkDialog();
+      expect(load).not.toHaveBeenCalled();
+      expect(api.getLetteringSuggestions).not.toHaveBeenCalled();
+    });
+
+    it('LETTERING_FEATURE_DISABLED (400) : panneau masqué, dialogue fermé, message dans la bannière', () => {
+      api.bulkLetter.and.returnValue(throwError(() => apiError(400, 'LETTERING_FEATURE_DISABLED')));
       store.openBulkDialog();
       store.runBulk();
       expect(store.hidden()).toBeTrue();
+      expect(store.bulkDialogOpen()).toBeFalse();
       expect(store.canRetryBulk()).toBeFalse();
+      expect(lettering.error()).toBeTruthy();
+      expect(store.bulkError()).toBeNull();
     });
 
     it('réponse 200 sans succès : message du serveur, pas de rapport', () => {
