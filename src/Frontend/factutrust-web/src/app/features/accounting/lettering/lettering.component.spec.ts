@@ -1,3 +1,4 @@
+import { By } from '@angular/platform-browser';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -282,6 +283,29 @@ describe('LetteringComponent', () => {
       expect(component.proposalsNotice()).toBe('selected');
     });
 
+    it('« Sélectionner » depuis le tiroir sans sélection : le tiroir reste ouvert avec la raison', () => {
+      spyOn(component['suggestions'], 'select').and.returnValue('linesNotVisible');
+      component.proposalsDrawerOpen.set(true);
+
+      component.onSelectSuggestionFromDrawer(suggestion);
+
+      expect(component.proposalsDrawerOpen()).toBeTrue();
+      expect(component.proposalsNotice()).toBe('linesNotVisible');
+    });
+
+    it('ouverture du tiroir : efface les messages de la page et le message du bandeau', () => {
+      component['store'].success.set('Lettrage L00001 créé.');
+      component['store'].error.set('Erreur');
+      component.proposalsNotice.set('busy');
+
+      component.openProposalsDrawer();
+
+      expect(component.proposalsDrawerOpen()).toBeTrue();
+      expect(component['store'].success()).toBeNull();
+      expect(component['store'].error()).toBeNull();
+      expect(component.proposalsNotice()).toBeNull();
+    });
+
     it('bouton d\'en-tête : relance le calcul', () => {
       const refresh = spyOn(component['suggestions'], 'refresh');
       component.showProposalsStrip();
@@ -364,6 +388,32 @@ describe('LetteringComponent — rendu des propositions', () => {
     expect(query('lettering-proposals-strip')).not.toBeNull();
     expect(query('lettering-proposals-header-button')).not.toBeNull();
     expect(fixture.nativeElement.querySelector('app-lettering-proposals-drawer')).not.toBeNull();
+  });
+
+  it('« Voir toutes les propositions » du bandeau ouvre le tiroir', () => {
+    proposalsFlag.set(true);
+    component['store'].loadedOnce.set(true);
+    fixture.detectChanges();
+
+    const strip = fixture.debugElement.query(By.directive(LetteringProposalsStripComponent));
+    (strip.componentInstance as LetteringProposalsStripComponent).showAll.emit();
+
+    expect(component.proposalsDrawerOpen()).toBeTrue();
+  });
+
+  it('bandeau masqué (drapeau coupé) : le tiroir se ferme et ne se rouvre pas seul', () => {
+    proposalsFlag.set(true);
+    component['store'].loadedOnce.set(true);
+    fixture.detectChanges();
+    component.proposalsDrawerOpen.set(true);
+
+    proposalsFlag.set(false);
+    fixture.detectChanges();
+    expect(component.proposalsDrawerOpen()).toBeFalse();
+
+    proposalsFlag.set(true);
+    fixture.detectChanges();
+    expect(component.proposalsDrawerOpen()).toBeFalse();
   });
 
   it('drapeau actif avant le premier chargement : bouton d\'en-tête présent mais désactivé, pas de bandeau', () => {

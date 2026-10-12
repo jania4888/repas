@@ -12,7 +12,7 @@ import {
   LetteringSuggestionsResultDto
 } from '../../services/accounting.service';
 import { LETTERING_ERROR_CODES, LetteringFilters } from '../models/lettering.models';
-import { LetteringSuggestion } from '../models/lettering-suggestions.models';
+import { LETTERING_SUGGESTIONS_MAX, LetteringSuggestion } from '../models/lettering-suggestions.models';
 import {
   bulkLineCount,
   bulkTotalsByCurrency,
@@ -285,7 +285,8 @@ export class LetteringSuggestionsStore {
         thirdPartyId: filters.thirdParty?.id ?? undefined,
         thirdPartyKind: filters.thirdParty?.kind ?? undefined,
         minAmount: filters.minAmount ?? undefined,
-        maxAmount: filters.maxAmount ?? undefined
+        maxAmount: filters.maxAmount ?? undefined,
+        maxResults: LETTERING_SUGGESTIONS_MAX
       })
     ).pipe(
         map((res): SuggestionsOutcome =>

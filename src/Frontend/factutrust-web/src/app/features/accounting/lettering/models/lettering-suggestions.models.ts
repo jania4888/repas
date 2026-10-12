@@ -24,6 +24,13 @@ export const LETTERING_BULK_MAX_TOTAL_LINES = 2000;
 /** Nombre de cartes du bandeau. */
 export const LETTERING_TOP_SUGGESTIONS = 3;
 
+/**
+ * Nombre de propositions demandées (`maxResults`). Le serveur renvoie 50 par défaut et borne la
+ * valeur à `AccountingSettings.MaxSuggestions` (200 par défaut) : le tiroir et le lot portent sur
+ * au plus 200 propositions.
+ */
+export const LETTERING_SUGGESTIONS_MAX = 200;
+
 export interface LetteringSuggestionLine {
   lineId: string;
   entryId: string;

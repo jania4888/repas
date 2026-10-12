@@ -139,6 +139,12 @@ export class LetteringComponent implements OnInit {
     effect(() => {
       if (this.store.reloadSeq() > 0) untracked(() => this.proposalsNotice.set(null));
     });
+
+    // Bandeau masqué (drapeau, `LETTERING_FEATURE_DISABLED`) : le tiroir ne doit pas se rouvrir seul
+    // quand le bloc réapparaît.
+    effect(() => {
+      if (!this.showProposals()) untracked(() => this.proposalsDrawerOpen.set(false));
+    });
   }
 
   ngOnInit(): void {
@@ -187,11 +193,24 @@ export class LetteringComponent implements OnInit {
     this.proposalsNotice.set(result === 'busy' && this.store.completionGroup() !== null ? 'completion' : result);
   }
 
-  /** « Sélectionner » depuis le tiroir : le tiroir se ferme pour montrer les volets ; le message
-   *  (« Sélection remplacée », lignes masquées…) s'affiche dans le bandeau. */
+  /**
+   * Ouvre le tiroir. Les messages de la page (lettrage, erreur) sont effacés : le tiroir affiche
+   * ceux des actions faites depuis le tiroir, que le masque cache sur la page.
+   */
+  openProposalsDrawer(): void {
+    this.store.success.set(null);
+    this.store.error.set(null);
+    this.proposalsNotice.set(null);
+    this.proposalsDrawerOpen.set(true);
+  }
+
+  /**
+   * « Sélectionner » depuis le tiroir : si la sélection a eu lieu, le tiroir se ferme pour montrer
+   * les volets (« Annuler » dans le bandeau) ; sinon il reste ouvert et affiche la raison.
+   */
   onSelectSuggestionFromDrawer(suggestion: LetteringSuggestion): void {
-    this.proposalsDrawerOpen.set(false);
     this.onSelectSuggestion(suggestion);
+    if (this.proposalsNotice() === 'selected') this.proposalsDrawerOpen.set(false);
   }
 
   onValidateSuggestion(suggestion: LetteringSuggestion): void {

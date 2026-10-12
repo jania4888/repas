@@ -1,3 +1,4 @@
+import { LETTERING_SUGGESTIONS_MAX } from '../models/lettering-suggestions.models';
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, Subject, of, throwError } from 'rxjs';
@@ -122,6 +123,8 @@ describe('LetteringSuggestionsStore', () => {
       expect(query.from).toBe('2026-01-01');
       expect(query.to).toBe('2026-12-31');
       expect('state' in query).toBeFalse();
+      // Sans maxResults, le serveur n'en renvoie que 50 : le tiroir et le lot en veulent 200.
+      expect(query.maxResults).toBe(LETTERING_SUGGESTIONS_MAX);
       expect(store.suggestions().map(s => s.key)).toEqual(['k1']);
       expect(store.loading()).toBeFalse();
     }));

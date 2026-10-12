@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   LOCALE_ID,
   computed,
   effect,
@@ -8,7 +9,8 @@ import {
   input,
   output,
   signal,
-  untracked
+  untracked,
+  viewChild
 } from '@angular/core';
 import { CommonModule, formatNumber } from '@angular/common';
 import { DrawerModule } from 'primeng/drawer';
@@ -20,6 +22,7 @@ import {
   LetteringSuggestionReasonDto
 } from '../../../services/accounting.service';
 import { LetteringSuggestion } from '../../models/lettering-suggestions.models';
+import type { LetteringProposalsNotice } from '../lettering-proposals-strip/lettering-proposals-strip.component';
 import {
   SuggestionAmountFormatter,
   categoryText,
@@ -73,11 +76,19 @@ export class LetteringProposalsDrawerComponent {
   /** Affiche l'accès au lettrage en masse (dialogue livré par p3-20). */
   readonly showBulk = input(false);
   readonly bulkEligibleCount = input(0);
+  /** Résultat de la dernière action (« Valider ») : le message de la page est caché par le masque. */
+  readonly successMessage = input<string | null>(null);
+  readonly errorMessage = input<string | null>(null);
+  /** Message de « Sélectionner » quand la sélection n'a pas eu lieu (le tiroir reste ouvert). */
+  readonly notice = input<LetteringProposalsNotice>(null);
 
   readonly visibleChange = output<boolean>();
   readonly selectSuggestion = output<LetteringSuggestion>();
   readonly validateSuggestion = output<LetteringSuggestion>();
   readonly openBulk = output<void>();
+  readonly dismissNotice = output<void>();
+
+  private readonly list = viewChild<ElementRef<HTMLElement>>('list');
 
   protected readonly categories = CATEGORIES;
   protected readonly confidences = CONFIDENCES;
@@ -114,6 +125,9 @@ export class LetteringProposalsDrawerComponent {
   readonly rangeStart = computed(() => (this.filtered().length === 0 ? 0 : this.currentPage() * LETTERING_PROPOSALS_PAGE_SIZE + 1));
   readonly rangeEnd = computed(() => Math.min(this.filtered().length, (this.currentPage() + 1) * LETTERING_PROPOSALS_PAGE_SIZE));
 
+  /** Propositions trouvées par le moteur mais non renvoyées (au-delà de la limite `maxResults`). */
+  readonly notReturned = computed(() => Math.max(0, this.totalFound() - this.suggestions().length));
+
   protected readonly loc_validateDisabled = $localize`:@@accounting.lettering.suggestions.strip.validate.noRight:Le droit « Comptabilité : création » est requis pour valider une proposition.`;
 
   /** Montants : 3 décimales, séparateurs de la langue de l'écran, devise après le montant. */
@@ -145,11 +159,26 @@ export class LetteringProposalsDrawerComponent {
   }
 
   previousPage(): void {
-    this.page.set(Math.max(0, this.currentPage() - 1));
+    this.goToPage(this.currentPage() - 1);
   }
 
   nextPage(): void {
-    this.page.set(Math.min(this.pageCount() - 1, this.currentPage() + 1));
+    this.goToPage(this.currentPage() + 1);
+  }
+
+  /**
+   * Change de page, puis met le focus sur la liste : le bouton cliqué peut devenir désactivé
+   * (première ou dernière page) et la liste revient en haut.
+   */
+  private goToPage(target: number): void {
+    const page = Math.max(0, Math.min(this.pageCount() - 1, target));
+    if (page === this.currentPage()) return;
+    this.page.set(page);
+    // La liste reste dans le DOM d'une page à l'autre : focus immédiat, puis retour en haut.
+    const list = this.list()?.nativeElement;
+    if (!list) return;
+    list.focus({ preventScroll: true });
+    if (typeof list.scrollIntoView === 'function') list.scrollIntoView({ block: 'start' });
   }
 
   isExpanded(key: string): boolean {
@@ -163,10 +192,6 @@ export class LetteringProposalsDrawerComponent {
       else next.add(key);
       return next;
     });
-  }
-
-  close(): void {
-    this.visibleChange.emit(false);
   }
 
   protected categoryLabel(c: LetteringSuggestionCategory): string {

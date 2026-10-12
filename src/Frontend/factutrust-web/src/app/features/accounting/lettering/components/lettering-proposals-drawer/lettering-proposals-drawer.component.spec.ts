@@ -252,6 +252,18 @@ describe('LetteringProposalsDrawerComponent', () => {
       expect(qa('lettering-proposals-drawer-item').length).toBe(5);
     });
 
+    it('changement de page : le focus passe sur la liste (le bouton cliqué peut devenir désactivé)', () => {
+      set({ visible: true, suggestions: many(25) });
+      const next = innerButton(q('lettering-proposals-drawer-next')!);
+      next.focus();
+
+      next.click();
+      fixture.detectChanges();
+
+      expect(next.disabled).toBeTrue();
+      expect(document.activeElement).toBe(q('lettering-proposals-drawer-list'));
+    });
+
     it('pas de pagination pour une seule page', () => {
       set({ visible: true, suggestions: many(3) });
       expect(q('lettering-proposals-drawer-next')).toBeNull();
@@ -268,6 +280,48 @@ describe('LetteringProposalsDrawerComponent', () => {
       expect(q('lettering-proposals-drawer-error')?.getAttribute('role')).toBe('alert');
       expect(q('lettering-proposals-drawer-truncated')).toBeNull();
       expect(qa('lettering-proposals-drawer-item').length).toBe(0);
+    });
+
+    it('propositions non renvoyées (limite serveur) : note « n affichées sur N trouvées »', () => {
+      set({ visible: true, suggestions: many(3), totalFound: 3 });
+      expect(q('lettering-proposals-drawer-partial')).toBeNull();
+
+      set({ totalFound: 120, truncated: true });
+      expect(component.notReturned()).toBe(117);
+      expect(q('lettering-proposals-drawer-partial')?.textContent).toContain('3 propositions affichées sur 120');
+      expect(q('lettering-proposals-drawer-truncated')).toBeNull();
+    });
+
+    it('résultat de « Valider » visible dans le tiroir (erreur prioritaire)', () => {
+      set({ visible: true, suggestions: [suggestion('k1')], successMessage: 'Proposition validée : lettrage L00042 créé.' });
+      expect(q('lettering-proposals-drawer-action-success')?.getAttribute('role')).toBe('status');
+      expect(q('lettering-proposals-drawer-action-success')?.textContent).toContain('L00042');
+
+      set({ errorMessage: 'Une ligne est déjà lettrée.' });
+      expect(q('lettering-proposals-drawer-action-error')?.getAttribute('role')).toBe('alert');
+      expect(q('lettering-proposals-drawer-action-success')).toBeNull();
+    });
+
+    it('message de « Sélectionner » refusé, avec « Fermer »', () => {
+      set({ visible: true, suggestions: [suggestion('k1')], notice: 'completion' });
+      let dismissed = 0;
+      component.dismissNotice.subscribe(() => dismissed++);
+
+      const notice = q('lettering-proposals-drawer-notice')!;
+      expect(notice.textContent).toContain('terminez-la ou annulez-la');
+      (notice.querySelector('button') as HTMLButtonElement).click();
+      expect(dismissed).toBe(1);
+
+      set({ notice: null });
+      expect(q('lettering-proposals-drawer-notice')).toBeNull();
+    });
+
+    it('« Sélectionner » désactivé n\'émet rien', () => {
+      set({ visible: true, suggestions: [suggestion('k1')], canCreate: false });
+      const selected: LetteringSuggestion[] = [];
+      component.selectSuggestion.subscribe(v => selected.push(v));
+      innerButton(q('lettering-proposals-drawer-select')!).click();
+      expect(selected).toEqual([]);
     });
 
     it('lettrage en masse : masqué par défaut ; visible, il émet openBulk', () => {

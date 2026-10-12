@@ -53,7 +53,32 @@
       }
     </div>
 
-    @if (truncated() && !error()) {
+    @if (errorMessage()) {
+      <p class="drawer__message drawer__message--error" role="alert" data-testid="lettering-proposals-drawer-action-error">{{ errorMessage() }}</p>
+    } @else if (successMessage()) {
+      <p class="drawer__message drawer__message--success" role="status" data-testid="lettering-proposals-drawer-action-success">{{ successMessage() }}</p>
+    }
+
+    @if (notice() === 'linesNotVisible') {
+      <div class="drawer__message drawer__message--warn" role="status" data-testid="lettering-proposals-drawer-notice">
+        <span i18n="@@accounting.lettering.suggestions.strip.notice.linesNotVisible">Certaines lignes de cette proposition ne sont pas affichées (filtre d'état) : affichez toutes les lignes pour la sélectionner.</span>
+        <button type="button" class="drawer__link" (click)="dismissNotice.emit()" i18n="@@accounting.lettering.suggestions.strip.notice.dismiss">Fermer</button>
+      </div>
+    } @else if (notice() === 'completion') {
+      <div class="drawer__message drawer__message--warn" role="status" data-testid="lettering-proposals-drawer-notice">
+        <span i18n="@@accounting.lettering.suggestions.strip.notice.completion">Une complétion de lettrage partiel est en cours : terminez-la ou annulez-la pour utiliser une proposition.</span>
+        <button type="button" class="drawer__link" (click)="dismissNotice.emit()" i18n="@@accounting.lettering.suggestions.strip.notice.dismiss">Fermer</button>
+      </div>
+    } @else if (notice() === 'busy') {
+      <div class="drawer__message drawer__message--warn" role="status" data-testid="lettering-proposals-drawer-notice">
+        <span i18n="@@accounting.lettering.suggestions.strip.notice.busy">Une action est en cours : réessayez dans un instant.</span>
+        <button type="button" class="drawer__link" (click)="dismissNotice.emit()" i18n="@@accounting.lettering.suggestions.strip.notice.dismiss">Fermer</button>
+      </div>
+    }
+
+    @if (notReturned() > 0 && !error()) {
+      <p class="drawer__note" role="note" data-testid="lettering-proposals-drawer-partial" i18n="@@accounting.lettering.suggestions.drawer.partial">{{ suggestions().length }} propositions affichées sur {{ totalFound() }} trouvées : les meilleures d'abord. Affinez les filtres de l'écran pour voir les autres.</p>
+    } @else if (truncated() && !error()) {
       <p class="drawer__note" role="note" data-testid="lettering-proposals-drawer-truncated" i18n="@@accounting.lettering.suggestions.drawer.truncated">Liste incomplète : affinez les filtres de l'écran pour obtenir toutes les propositions.</p>
     }
 
@@ -72,7 +97,7 @@
         <button type="button" class="drawer__link" (click)="resetFilters()" i18n="@@accounting.lettering.suggestions.drawer.resetFilters">Effacer les critères</button>
       </div>
     } @else {
-      <ul class="drawer__list" role="list">
+      <ul class="drawer__list" role="list" tabindex="-1" #list data-testid="lettering-proposals-drawer-list">
         @for (s of pageItems(); track s.key) {
           <li class="drawer__item" [class.drawer__item--busy]="busyKey() === s.key" data-testid="lettering-proposals-drawer-item">
             <div class="drawer__item-main">

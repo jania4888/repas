@@ -91,7 +91,7 @@
       (validateSuggestion)="onValidateSuggestion($event)"
       (undo)="onUndoSuggestion()"
       (dismissNotice)="proposalsNotice.set(null)"
-      (showAll)="proposalsDrawerOpen.set(true)"
+      (showAll)="openProposalsDrawer()"
     />
   }
 
@@ -180,7 +180,11 @@
     [busyKey]="suggestions.busyKey()"
     [showBulk]="false"
     [bulkEligibleCount]="suggestions.bulkEligible().length"
+    [successMessage]="store.success()"
+    [errorMessage]="store.error()"
+    [notice]="proposalsNotice() === 'selected' ? null : proposalsNotice()"
     (visibleChange)="proposalsDrawerOpen.set($event)"
+    (dismissNotice)="proposalsNotice.set(null)"
     (selectSuggestion)="onSelectSuggestionFromDrawer($event)"
     (validateSuggestion)="onValidateSuggestion($event)"
   />

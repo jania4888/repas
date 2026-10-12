@@ -25140,6 +25140,45 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.lettering.suggestions.strip.notice.linesNotVisible": "Certaines lignes de cette proposition ne sont pas affichées (filtre d'état) : affichez toutes les lignes pour la sélectionner.",
+  "@accounting.lettering.suggestions.strip.notice.linesNotVisible": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html",
+      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.strip.notice.dismiss": "Fermer",
+  "@accounting.lettering.suggestions.strip.notice.dismiss": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html",
+      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.strip.notice.completion": "Une complétion de lettrage partiel est en cours : terminez-la ou annulez-la pour utiliser une proposition.",
+  "@accounting.lettering.suggestions.strip.notice.completion": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html",
+      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.strip.notice.busy": "Une action est en cours : réessayez dans un instant.",
+  "@accounting.lettering.suggestions.strip.notice.busy": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html",
+      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.drawer.partial": "{$INTERPOLATION} propositions affichées sur {$INTERPOLATION_1} trouvées : les meilleures d'abord. Affinez les filtres de l'écran pour voir les autres.",
+  "@accounting.lettering.suggestions.drawer.partial": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-proposals-drawer/lettering-proposals-drawer.component.html"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.lettering.suggestions.drawer.truncated": "Liste incomplète : affinez les filtres de l'écran pour obtenir toutes les propositions.",
   "@accounting.lettering.suggestions.drawer.truncated": {
     "x-files": [
@@ -25311,34 +25350,6 @@
   },
   "accounting.lettering.suggestions.strip.notice.undo": "Annuler",
   "@accounting.lettering.suggestions.strip.notice.undo": {
-    "x-files": [
-      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.lettering.suggestions.strip.notice.linesNotVisible": "Certaines lignes de cette proposition ne sont pas affichées (filtre d'état) : affichez toutes les lignes pour la sélectionner.",
-  "@accounting.lettering.suggestions.strip.notice.linesNotVisible": {
-    "x-files": [
-      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.lettering.suggestions.strip.notice.dismiss": "Fermer",
-  "@accounting.lettering.suggestions.strip.notice.dismiss": {
-    "x-files": [
-      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.lettering.suggestions.strip.notice.completion": "Une complétion de lettrage partiel est en cours : terminez-la ou annulez-la pour utiliser une proposition.",
-  "@accounting.lettering.suggestions.strip.notice.completion": {
-    "x-files": [
-      "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.lettering.suggestions.strip.notice.busy": "Une action est en cours : réessayez dans un instant.",
-  "@accounting.lettering.suggestions.strip.notice.busy": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-proposals-strip/lettering-proposals-strip.component.html"
     ],
