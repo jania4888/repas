@@ -340,6 +340,23 @@ builder.Services.AddRateLimiter(options =>
             });
     });
 
+    // Lettrage en masse (plan v2, Phase 3) : jusqu'à 200 groupes et 2 000 lignes par appel, une
+    // transaction Serializable par groupe. Même partition que « accounting-suggestions ».
+    options.AddPolicy("accounting-bulk", context =>
+    {
+        var userId = context.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var partitionKey = string.IsNullOrEmpty(userId)
+            ? $"ip:{context.Connection.RemoteIpAddress?.ToString() ?? "unknown"}"
+            : $"user:{userId}";
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey,
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = isDevelopment ? 100 : 10,
+                Window = TimeSpan.FromMinutes(1)
+            });
+    });
+
     options.AddPolicy("public-street-read", context =>
         RateLimitPartition.GetFixedWindowLimiter(
             context.Connection.RemoteIpAddress?.ToString() ?? "unknown",

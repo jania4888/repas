@@ -48,6 +48,7 @@ public sealed class RateLimitPolicyRegistrationTests : IClassFixture<ChannelsDis
             .ToList();
 
         Assert.Contains("accounting-suggestions", used);
+        Assert.Contains("accounting-bulk", used);
         Assert.All(used, name => Assert.True(registered.Contains(name!), $"Politique de débit non enregistrée : {name}"));
     }
 }

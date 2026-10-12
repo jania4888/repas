@@ -1338,6 +1338,26 @@ public sealed record LetterEntriesRequest
     public string? SuggestionKey { get; init; }
 }
 
+/// <summary>
+/// Lettrage en masse de propositions confirmées (plan v2, Phase 3, annexe C §4). Aucun champ
+/// d'origine, de partiel ni d'écart de change : le serveur force <c>Origin = Bulk</c>,
+/// <c>AllowPartial = false</c> et le refus de tout écart de change.
+/// </summary>
+public sealed record BulkLetterRequest
+{
+    /// <summary>Guid généré par le client à l'ouverture de la confirmation (rejeu idempotent 15 min).</summary>
+    public Guid RequestId { get; init; }
+
+    public IReadOnlyList<BulkLetterRequestGroup>? Groups { get; init; }
+}
+
+/// <summary>Un groupe d'un lot : la clé de la proposition et ses lignes.</summary>
+public sealed record BulkLetterRequestGroup
+{
+    public string? ClientKey { get; init; }
+    public IReadOnlyList<Guid>? JournalEntryLineIds { get; init; }
+}
+
 /// <summary>« Compléter un lettrage partiel » (plan §4.4, D7) : ajoute des lignes à un groupe « P ».</summary>
 public sealed record CompletePartialLetteringRequest
 {

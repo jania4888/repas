@@ -1966,6 +1966,31 @@ public sealed class AccountingController : ControllerBase
             cancellationToken);
     }
 
+    /// <summary>
+    /// Lettrage en masse de propositions confirmées (plan v2, Phase 3, annexe C §4). Une transaction
+    /// par groupe : la réponse est 200 même en succès partiel, avec le résultat de chaque groupe.
+    /// Lot déjà en cours (même <c>RequestId</c>) → 409 <c>LETTERING_BULK_IN_PROGRESS</c> ; drapeau
+    /// éteint → 400 <c>LETTERING_FEATURE_DISABLED</c> ; lot invalide → 400 <c>LETTERING_VALIDATION</c>.
+    /// </summary>
+    [HttpPost("lettering/bulk")]
+    [Authorize(Policy = PermissionPolicies.AccountingCreate)]
+    [EnableRateLimiting("accounting-bulk")]
+    [RequestSizeLimit(BulkLetterMaxBodyBytes)]
+    public async Task<IActionResult> BulkLetter([FromBody] BulkLetterRequest request, CancellationToken cancellationToken)
+    {
+        // Les éléments null sont transmis tels quels : le validator les refuse (400 LETTERING_VALIDATION).
+        var groups = (request.Groups ?? Array.Empty<BulkLetterRequestGroup>())
+            .Select(g => g is null ? null! : new BulkLetterGroup(g.ClientKey!, g.JournalEntryLineIds!))
+            .ToList();
+        return await SendLetteringAsync(
+            new BulkLetterCommand(request.RequestId, groups),
+            value => Ok(ApiResponse<BulkLetteringResultDto>.Ok(value)),
+            cancellationToken);
+    }
+
+    /// <summary>Taille maximale du corps de <see cref="BulkLetter"/> : 2 000 Guid ≈ 80 Ko, marge comprise.</summary>
+    public const long BulkLetterMaxBodyBytes = 256 * 1024;
+
     /// <summary>Détail d'un groupe de lettrage, avant délettrage ou complétion (plan §4.2).</summary>
     [HttpGet("lettering/groups/{code}")]
     [Authorize(Policy = PermissionPolicies.AccountingRead)]
