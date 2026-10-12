@@ -17,7 +17,7 @@ import { StatCardComponent } from '@shared/components/stat-card/stat-card.compon
 import { ChartCardComponent } from '@shared/components/dashboard/chart-card.component';
 import { DashboardPanelComponent } from '@shared/components/dashboard/dashboard-panel.component';
 import { InvoiceService, InvoiceListItem } from '@core/services/invoice.service';
-import { isUnpaidInvoice, sumRealizedRevenue } from '@core/utils/invoice-metrics.util';
+import { getMonthToDateRange, isUnpaidInvoice, sumRealizedRevenueHt } from '@core/utils/invoice-metrics.util';
 import { AuthService } from '@core/services/auth.service';
 import { WarehouseContextService } from '@core/services/warehouse-context.service';
 import { StockService, StockAlertsResult } from '@core/services/stock.service';
@@ -25,7 +25,7 @@ import { DeliveryNoteService } from '../../features/delivery-notes/services/deli
 import { DeliveryNoteListDto, DeliveryNoteStatus } from '../../features/delivery-notes/models/delivery-note.model';
 import { DecimalPipe, DatePipe, CurrencyPipe } from '@angular/common';
 import { QuoteListItem } from '@core/services/quote.service';
-import { DashboardService, MonthlyRevenueData, TopClientData, ActivityItem, KpiTrends, KpiSparklines } from './services/dashboard.service';
+import { DashboardService, MonthlyRevenueData, TopClientData, ActivityItem, KpiTrends, KpiSparklines, RevenueKpis } from './services/dashboard.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { AppModule } from '@core/models/app-module';
 import { AccountingService, AccountingDashboardDto } from '../accounting/services/accounting.service';
@@ -189,7 +189,7 @@ import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
       <div class="kpi-row" data-tour="dash-kpi">
         @if (canReadInvoices()) {
         <app-stat-card
-          label="Chiffre d'affaires" i18n-label="@@dashboard.dashboard.chiffre.d.affaires.0a341b9f"
+          label="Chiffre d'affaires HT" i18n-label="@@dashboard.dashboard.chiffre.d.affaires.ht.170920d6"
           [value]="totalRevenue()"
           icon="fa-solid fa-sack-dollar"
           variant="primary"
@@ -214,8 +214,9 @@ import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
           [navigationAriaLabel]="drillDown('salesToday')?.ariaLabel">
         </app-stat-card>
         <app-stat-card
-          label="CA du mois en cours" i18n-label="@@dashboard.dashboard.ca.du.mois.en.cours.c561d920"
+          label="CA HT du mois en cours" i18n-label="@@dashboard.dashboard.ca.ht.du.mois.en.cours.2d9a457c"
           [value]="currentMonthRevenue()"
+          [valueTitle]="currentMonthRevenueHint()"
           icon="fa-solid fa-calendar-check"
           variant="success"
           tone="emerald"
@@ -583,9 +584,9 @@ import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
     <!-- Revenue Chart Section (Superieur chart-card + p-chart area) -->
     @if (!loading() && monthlyRevenue().length > 0) {
       <app-chart-card
-        title="Évolution du CA" i18n-title="@@dashboard.dashboard.evolution.du.ca.ba7ac89b"
+        title="Évolution du CA HT" i18n-title="@@dashboard.dashboard.evolution.du.ca.ht.ba8a25a8"
         subtitle="6 derniers mois" i18n-subtitle="@@dashboard.dashboard.6.derniers.mois.d1f0b2a7"
-        aria-label="Évolution du chiffre d'affaires sur 6 mois" i18n-aria-label="@@dashboard.dashboard.evolution.du.chiffre.d.affaires.sur.6.mois.b7b26b8f">
+        aria-label="Évolution du chiffre d'affaires HT sur 6 mois" i18n-aria-label="@@dashboard.dashboard.evolution.du.chiffre.d.affaires.ht.sur.6.mois.b354147d">
         <div chart-actions>
           @if (drillDown('totalRevenue'); as revenueTarget) {
             <a [routerLink]="revenueTarget.route" [queryParams]="revenueTarget.queryParams" class="section-link" [attr.aria-label]="revenueTarget.ariaLabel" i18n="@@dashboard.dashboard.details.aaa029e6"> Détails </a>
@@ -703,7 +704,7 @@ import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
       <div class="dashboard-col-right">
         <!-- Top Clients -->
         @if (!loading() && topClients().length > 0 && canReadClients()) {
-          <div class="section" aria-label="Top 5 clients par chiffre d'affaires" i18n-aria-label="@@dashboard.dashboard.top.5.clients.par.chiffre.d.affaires.af9ec46c">
+          <div class="section" aria-label="Top 5 clients par montants facturés TTC" i18n-aria-label="@@dashboard.dashboard.top.5.clients.par.montants.factures.ttc.6c98c4ba">
             <div class="section-header">
               <h2 class="section-title" i18n="@@dashboard.dashboard.top.clients.dd696714">Top clients</h2>
               <a routerLink="/clients" class="section-link" i18n="@@dashboard.dashboard.voir.tout.7b7d86e8"> Voir tout </a>
@@ -2160,6 +2161,7 @@ export class DashboardComponent implements OnInit {
   recentActivity = signal<ActivityItem[]>([]);
   kpiTrends = signal<KpiTrends | null>(null);
   kpiSparklines = signal<KpiSparklines | null>(null);
+  revenueKpis = signal<RevenueKpis | null>(null);
   activeQuotesCount = signal<number>(0);
   accountingKpis = signal<AccountingDashboardDto | null>(null);
   crmRemindersCount = signal(0);
@@ -2601,6 +2603,7 @@ export class DashboardComponent implements OnInit {
         this.recentActivity.set(data.recentActivity);
         this.kpiTrends.set(data.kpiTrends);
         this.kpiSparklines.set(data.kpiSparklines);
+        this.revenueKpis.set(data.revenueKpis);
         this.activeQuotesCount.set(data.activeQuotesCount);
 
         const revenues = data.monthlyRevenue.map(m => m.revenue);
@@ -2652,8 +2655,10 @@ export class DashboardComponent implements OnInit {
   // Statistiques calculées
   totalRevenue = computed(() => {
     const invoices = this.allInvoices();
-    // Chiffre d'affaires cumulé (tout l'historique) — réalisé = Payée + Validée.
-    const total = sumRealizedRevenue(invoices);
+    // Chiffre d'affaires HT cumulé (tout l'historique) — réalisé = Payée + Validée.
+    // Lu depuis le résumé serveur (identique à /invoices/revenue) ; repli client si absent.
+    const kpis = this.revenueKpis();
+    const total = kpis?.totalHt ?? sumRealizedRevenueHt(invoices);
     const currency = invoices.length > 0 ? invoices[0].currency : 'TND';
 
     const formatted = this.decimalPipe.transform(total, '1.3-3') || '0,000';
@@ -2682,13 +2687,22 @@ export class DashboardComponent implements OnInit {
   });
 
   currentMonthRevenue = computed(() => {
-    const months = this.monthlyRevenue();
     const invoices = this.allInvoices();
-    const currentMonthEntry = months.length > 0 ? months[months.length - 1] : null;
-    const total = currentMonthEntry?.revenue ?? 0;
+    // CA HT du 1er du mois à aujourd'hui — lu depuis le résumé serveur (identique au
+    // lien de la carte, /invoices/revenue) ; repli client si absent.
+    const kpis = this.revenueKpis();
+    const total = kpis?.monthToDateHt ?? sumRealizedRevenueHt(invoices, getMonthToDateRange().current);
     const currency = invoices.length > 0 ? invoices[0].currency : 'TND';
     const formatted = this.decimalPipe.transform(total, '1.3-3') || '0,000';
     return `${formatted} ${currency}`;
+  });
+
+  /** Tooltip of the "CA HT du mois en cours" card: period and status rule covered. */
+  currentMonthRevenueHint = computed(() => {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    return $localize`:@@dashboard.dashboard.ts.du.1er.au.day.month.factures.et.avoirs.p.56168873:du 1er au ${day}:day:/${month}:month:, factures et avoirs Payée + Validée`;
   });
 
   pendingInvoicesCount = computed(() => {
@@ -2731,8 +2745,12 @@ export class DashboardComponent implements OnInit {
         loading: this.loading(),
         warehouseId: this.warehouseContext.selectedWarehouseId(),
         kpis: {
-          totalRevenue: this.totalRevenue(),
-          currentMonthRevenue: this.currentMonthRevenue(),
+          // CA HT total et du mois (HT, Payée + Validée) — distincts du TTC pour que
+          // l'assistant IA ne les présente jamais comme du TTC. revenueChange compare
+          // les mêmes jours du mois précédent (voir computeKpiTrends).
+          revenueHtTotal: this.totalRevenue(),
+          revenueHtMonthToDate: this.currentMonthRevenue(),
+          revenueChangeBasis: 'Tendance vs mêmes jours du mois précédent',
           salesToday: this.salesToday(),
           pendingInvoices: this.pendingInvoicesCount(),
           overdueInvoices: this.overdueInvoicesCount(),
@@ -2796,7 +2814,7 @@ export class DashboardComponent implements OnInit {
       labels: months.map(m => m.monthShort),
       datasets: [
         {
-          label: $localize`:@@dashboard.dashboard.ts.ca.tnd.2da09e4f:CA (TND)`,
+          label: $localize`:@@dashboard.dashboard.ts.ca.ht.tnd.166bc7d7:CA HT (TND)`,
           data: months.map(m => m.revenue),
           fill: true,
           borderColor: '#3862f5',

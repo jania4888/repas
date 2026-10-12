@@ -1,6 +1,7 @@
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { AppModule } from '@core/models/app-module';
 import { DeliveryNoteStatus } from '../delivery-notes/models/delivery-note.model';
+import { toIsoDateLocal } from '@core/utils/invoice-metrics.util';
 
 export interface DrillDownMonthData {
   month: string;
@@ -51,11 +52,9 @@ const MONTH_SHORT_KEYS = ['jan', 'fev', 'mar', 'avr', 'mai', 'juin', 'juil', 'ao
 
 export const INVOICE_STATUS_OVERDUE = 6;
 
+/** `YYYY-MM-DD` local date. Delegates to {@link toIsoDateLocal} (kept exported for callers/specs). */
 export function formatIsoDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return toIsoDateLocal(date);
 }
 
 function normalizeMonthToken(value: string): string {
@@ -120,8 +119,8 @@ export function getDrillDownTarget(
     case 'currentMonthRevenue': {
       const bounds = currentMonthBounds(now);
       return {
-        route: '/invoices',
-        queryParams: bounds,
+        route: '/invoices/revenue',
+        queryParams: { ...bounds, realizedRevenueOnly: 'true' },
         requiredPermission: PERMISSIONS.invoices.read,
         ariaLabel: $localize`:@@dashboard.dashboard-drill-down.ts.voir.le.detail.du.chiffre.d.affaires.du.64dfc081:Voir le detail du chiffre d affaires du mois en cours`
       };
@@ -173,8 +172,8 @@ export function getDrillDownTarget(
       }
       const bounds = monthBoundsFromRevenueData(context.month);
       return {
-        route: '/invoices',
-        queryParams: bounds ?? undefined,
+        route: '/invoices/revenue',
+        queryParams: bounds ? { ...bounds, realizedRevenueOnly: 'true' } : undefined,
         requiredPermission: PERMISSIONS.invoices.read,
         ariaLabel: $localize`:@@dashboard.dashboard-drill-down.ts.voir.le.detail.des.factures.de.month.yea.c608c550:Voir le detail des factures de ${context.month.month}:month: ${context.month.year}:year:`
       };

@@ -17,7 +17,9 @@ public sealed record GetInvoicesSummaryQuery(
     DateTime? ToDate = null,
     Guid? ClientId = null,
     bool UnpaidOnly = false,
-    InvoiceType? Type = null) : IRequest<InvoiceListSummaryDto>;
+    InvoiceType? Type = null,
+    // When true, restricts the summary to realized revenue documents (Paid + Validated).
+    bool RealizedRevenueOnly = false) : IRequest<InvoiceListSummaryDto>;
 
 /// <summary>
 /// Handler for GetInvoicesSummaryQuery.
@@ -41,5 +43,6 @@ public sealed class GetInvoicesSummaryQueryHandler
             request.ClientId,
             request.UnpaidOnly,
             request.Type,
+            request.RealizedRevenueOnly,
             cancellationToken);
 }

@@ -25,7 +25,7 @@ import {
     ],
     template: `
     <app-page-header
-      title="Chiffre d'affaires" i18n-title="@@reports.analytics.chiffre.d.affaires.0a341b9f"
+      title="Chiffre d'affaires HT" i18n-title="@@reports.analytics.chiffre.d.affaires.ht.170920d6"
       subtitle="Suivez l'évolution de votre chiffre d'affaires au fil du temps" i18n-subtitle="@@reports.analytics.suivez.l.evolution.de.votre.chiffre.d.af.76e29594">
       <app-button
         variant="secondary"
@@ -76,14 +76,14 @@ import {
     } @else if (data()) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Chiffre d'affaires" i18n-label="@@reports.analytics.chiffre.d.affaires.0a341b9f"
+          label="Chiffre d'affaires HT" i18n-label="@@reports.analytics.chiffre.d.affaires.ht.170920d6"
           [value]="formatAmount(data()!.totalRevenue)"
           icon="pi-dollar"
           variant="success"
           [change]="data()!.comparison.changePercent">
         </app-stat-card>
         <app-stat-card
-          label="Factures émises" i18n-label="@@reports.analytics.factures.emises.25238c12"
+          label="Documents comptés" i18n-label="@@reports.analytics.documents.comptes.ef17ff03"
           [value]="data()!.totalInvoices"
           icon="pi-file"
           variant="primary">
@@ -100,7 +100,7 @@ import {
     <!-- Revenue Chart -->
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title" i18n="@@reports.analytics.evolution.du.chiffre.d.affaires.59b2f451">Évolution du chiffre d'affaires</h2>
+        <h2 class="section-title" i18n="@@reports.analytics.evolution.du.chiffre.d.affaires.ht.58b3551f">Évolution du chiffre d'affaires HT</h2>
         <span class="section-hint" i18n="@@reports.analytics.ce.graphique.montre.vos.revenus.sur.la.p.a0a9ea52">
           <i class="pi pi-info-circle"></i>
           Ce graphique montre vos revenus sur la période sélectionnée
@@ -138,7 +138,8 @@ import {
                     <div
                       class="bar"
                       [style.height.%]="getBarHeight(item.revenue)"
-                      [class.bar-zero]="item.revenue === 0">
+                      [class.bar-zero]="item.revenue === 0"
+                      [class.bar-negative]="item.revenue < 0">
                     </div>
                   </div>
                   <span class="bar-label">{{ item.labelShort }}</span>
@@ -162,7 +163,7 @@ import {
     <div class="grid-2-cols">
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title" i18n="@@reports.analytics.ca.par.client.ffe5c6ae">CA par client</h2>
+          <h2 class="section-title" i18n="@@reports.analytics.ca.ht.par.client.4e8ae89a">CA HT par client</h2>
           <span class="section-hint" i18n="@@reports.analytics.vos.meilleurs.clients.par.montant.total.b23d587d">
             <i class="pi pi-info-circle"></i>
             Vos meilleurs clients par montant total des factures payées
@@ -217,9 +218,9 @@ import {
                 <i class="pi pi-check-circle"></i>
               </div>
               <div class="summary-content">
-                <span class="summary-label" i18n="@@reports.analytics.total.encaisse.1d142e41">Total encaissé</span>
+                <span class="summary-label" i18n="@@reports.analytics.total.ca.ht.payee.validee.b4cd5bf1">Total CA HT (Payée + Validée)</span>
                 <span class="summary-value">{{ formatAmount(data()!.totalRevenue) }}</span>
-                <span class="summary-desc" i18n="@@reports.analytics.montant.total.des.factures.payees.sur.la.periode.8354cb1d">Montant total des factures payées sur la période</span>
+                <span class="summary-desc" i18n="@@reports.analytics.factures.moins.avoirs.montants.ht.c85ec87d">Factures moins avoirs, montants HT</span>
               </div>
             </div>
             <div class="summary-item">
@@ -227,7 +228,7 @@ import {
                 <i class="pi pi-file"></i>
               </div>
               <div class="summary-content">
-                <span class="summary-label" i18n="@@reports.analytics.factures.emises.25238c12">Factures émises</span>
+                <span class="summary-label" i18n="@@reports.analytics.documents.comptes.ef17ff03">Documents comptés</span>
                 <span class="summary-value">{{ data()!.totalInvoices }}</span>
                 <span class="summary-desc" i18n="@@reports.analytics.nombre.total.de.factures.sur.la.periode.9c4fbfde">Nombre total de factures sur la période</span>
               </div>
@@ -237,7 +238,7 @@ import {
                 <i class="pi pi-chart-line"></i>
               </div>
               <div class="summary-content">
-                <span class="summary-label" i18n="@@reports.analytics.moyenne.par.facture.b3785f82">Moyenne par facture</span>
+                <span class="summary-label" i18n="@@reports.analytics.moyenne.ht.par.document.0290e01c">Moyenne HT par document</span>
                 <span class="summary-value">{{ data()!.totalInvoices > 0 ? formatAmount(data()!.totalRevenue / data()!.totalInvoices) : '0' }}</span>
                 <span class="summary-desc" i18n="@@reports.analytics.montant.moyen.par.facture.payee.4c9910ff">Montant moyen par facture payée</span>
               </div>
@@ -250,7 +251,7 @@ import {
     <!-- Print-only section -->
     <div class="print-only print-report">
       <div class="print-header">
-        <h1 class="print-title" i18n="@@reports.analytics.chiffre.d.affaires.c2a496b1">Chiffre d'Affaires</h1>
+        <h1 class="print-title" i18n="@@reports.analytics.chiffre.d.affaires.ht.bca48774">Chiffre d'Affaires HT</h1>
         <div class="print-logo" i18n="@@reports.analytics.logo.83fce832">Logo</div>
       </div>
       <div class="print-separator"></div>
@@ -570,6 +571,14 @@ import {
 
     .bar-zero {
       background: var(--color-neutral-200);
+    }
+
+    .bar-negative {
+      background: linear-gradient(180deg, var(--color-error-400), var(--color-error-600));
+    }
+
+    .bar-negative:hover {
+      background: linear-gradient(180deg, var(--color-error-300), var(--color-error-500));
     }
 
     .bar-tooltip {
@@ -965,7 +974,9 @@ export class RevenueAnalyticsComponent implements OnInit {
         this.analyticsService.loadRevenueData(this.selectedPeriod).subscribe({
             next: (result) => {
                 this.data.set(result);
-                this.maxRevenue = Math.max(...result.chartData.map(d => d.revenue), 1);
+                // Bars can be negative (avoirs > factures on a given period) :
+                // size the axis on magnitude, not the signed value.
+                this.maxRevenue = Math.max(...result.chartData.map(d => Math.abs(d.revenue)), 1);
                 this.loading.set(false);
             },
             error: () => this.loading.set(false)
@@ -973,7 +984,7 @@ export class RevenueAnalyticsComponent implements OnInit {
     }
 
     hasChartData(): boolean {
-        return this.data()?.chartData.some(d => d.revenue > 0) || false;
+        return this.data()?.chartData.some(d => d.revenue !== 0) || false;
     }
 
     getVisibleChartData() {
@@ -987,7 +998,7 @@ export class RevenueAnalyticsComponent implements OnInit {
 
     getBarHeight(revenue: number): number {
         if (this.maxRevenue === 0) return 2;
-        return Math.max((revenue / this.maxRevenue) * 100, 2);
+        return Math.max((Math.abs(revenue) / this.maxRevenue) * 100, 2);
     }
 
     formatAmount(amount: number): string {

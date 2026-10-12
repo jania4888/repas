@@ -22,6 +22,11 @@ export interface InvoiceListItem {
   clientName: string;
   /** Signed total: positive on FAC, negative on AVO. */
   totalAmount: number;
+  /**
+   * Signed HT (excl. VAT, FODEC and stamp duty), net of global discount: positive on FAC,
+   * negative on AVO. Optional to tolerate an API not yet deployed.
+   */
+  subTotal?: number;
   currency: string;
   isOverdue: boolean;
   paidAt?: string | null;
@@ -168,6 +173,12 @@ export interface InvoiceSearchParams {
   unpaidOnly?: boolean;
   /** Discriminates FAC vs AVO. Omitted = all document types (dashboard, reports, search). */
   type?: InvoiceTypeCode;
+  /**
+   * When true, only documents counted in realized revenue (Payée + Validée) are returned.
+   * Mirrors the backend rule (InvoiceStatusExtensions.IsRealizedRevenue) and
+   * REALIZED_REVENUE_STATUSES in invoice-metrics.util.ts.
+   */
+  realizedRevenueOnly?: boolean;
   /** When true, global 403 modal / toast is suppressed (e.g. dashboard aggregate). */
   skipGlobalErrorUi?: boolean;
 }
@@ -191,6 +202,15 @@ export interface InvoiceListSummary {
   /** Nombre de factures filtrées en retard. */
   overdueCount: number;
   currency: string;
+  /**
+   * CA HT signé : somme du HT des documents filtrés au statut Payée ou Validée, calculée
+   * quel que soit `realizedRevenueOnly` (égale à `totalHt` quand ce filtre est actif).
+   */
+  realizedRevenueHt?: number;
+  /** Somme du HT des factures (FAC) filtrées (>= 0). */
+  invoicesHt?: number;
+  /** Somme du HT des avoirs (AVO) filtrés (<= 0). */
+  creditNotesHt?: number;
 }
 
 export interface RecordPaymentRequest {
@@ -240,6 +260,7 @@ export class InvoiceService {
     if (params.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
     if (params.unpaidOnly === true) httpParams = httpParams.set('unpaidOnly', 'true');
     if (params.type) httpParams = httpParams.set('type', params.type);
+    if (params.realizedRevenueOnly === true) httpParams = httpParams.set('realizedRevenueOnly', 'true');
 
     // Créer une clé unique pour cette requête basée sur les paramètres (+ sémantique UI erreur)
     const cacheKey = `${httpParams.toString()}|skipUi:${skipGlobalErrorUi ? '1' : '0'}`;
@@ -302,6 +323,7 @@ export class InvoiceService {
     if (params.clientId) httpParams = httpParams.set('clientId', params.clientId);
     if (params.unpaidOnly === true) httpParams = httpParams.set('unpaidOnly', 'true');
     if (params.type) httpParams = httpParams.set('type', params.type);
+    if (params.realizedRevenueOnly === true) httpParams = httpParams.set('realizedRevenueOnly', 'true');
 
     const requestOptions: {
       params: HttpParams;
@@ -379,12 +401,19 @@ export class InvoiceService {
     );
   }
 
-  downloadReportPdf(fromDate?: string, toDate?: string, clientId?: string, type?: InvoiceTypeCode): Observable<Blob> {
+  downloadReportPdf(
+    fromDate?: string,
+    toDate?: string,
+    clientId?: string,
+    type?: InvoiceTypeCode,
+    realizedRevenueOnly?: boolean
+  ): Observable<Blob> {
     let httpParams = new HttpParams();
     if (fromDate) httpParams = httpParams.set('fromDate', fromDate);
     if (toDate) httpParams = httpParams.set('toDate', toDate);
     if (clientId) httpParams = httpParams.set('clientId', clientId);
     if (type) httpParams = httpParams.set('type', type);
+    if (realizedRevenueOnly === true) httpParams = httpParams.set('realizedRevenueOnly', 'true');
 
     return this.http.get(`${this.API_URL}/report/pdf`, {
       params: httpParams,

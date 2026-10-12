@@ -787,6 +787,7 @@ public sealed class InvoiceRepository : IInvoiceRepository
         DateTime? toDate,
         Guid? clientId = null,
         InvoiceType? type = null,
+        bool realizedRevenueOnly = false,
         CancellationToken cancellationToken = default)
     {
         await using var context = _contextFactory.CreateContext();
@@ -810,6 +811,11 @@ public sealed class InvoiceRepository : IInvoiceRepository
 
         if (type.HasValue)
             query = query.Where(i => i.Type == type.Value);
+
+        // CA = revenu réalisé : seules les factures Payée ou Validée comptent (miroir de
+        // InvoiceStatusExtensions.IsRealizedRevenue / REALIZED_REVENUE_STATUSES côté frontend).
+        if (realizedRevenueOnly)
+            query = query.Where(i => i.Status == InvoiceStatus.Paid || i.Status == InvoiceStatus.Validated);
 
         return await query
             .OrderByDescending(i => i.IssueDate)
@@ -866,6 +872,7 @@ public sealed class InvoiceRepository : IInvoiceRepository
         int pageSize,
         bool unpaidOnly = false,
         InvoiceType? type = null,
+        bool realizedRevenueOnly = false,
         CancellationToken cancellationToken = default)
     {
         await using var context = _contextFactory.CreateContext();
@@ -876,7 +883,7 @@ public sealed class InvoiceRepository : IInvoiceRepository
                 .Include(i => i.Client)
                 .Include(i => i.Warehouse)
                 .AsQueryable(),
-            searchTerm, status, fromDate, toDate, clientId, unpaidOnly, type);
+            searchTerm, status, fromDate, toDate, clientId, unpaidOnly, type, realizedRevenueOnly);
 
         var totalCount = await query.CountAsync(cancellationToken);
 
@@ -890,9 +897,9 @@ public sealed class InvoiceRepository : IInvoiceRepository
     }
 
     /// <summary>
-    /// Applies the invoice list filters (search, status, period, client, unpaid-only, type) to a query.
-    /// Single source of truth shared by <see cref="SearchAsync"/> and <see cref="GetSummaryAsync"/>
-    /// so the list and its totals zone can never diverge.
+    /// Applies the invoice list filters (search, status, period, client, unpaid-only, type,
+    /// realized-revenue-only) to a query. Single source of truth shared by <see cref="SearchAsync"/>
+    /// and <see cref="GetSummaryAsync"/> so the list and its totals zone can never diverge.
     /// </summary>
     private static IQueryable<Invoice> ApplyInvoiceFilters(
         IQueryable<Invoice> query,
@@ -902,7 +909,8 @@ public sealed class InvoiceRepository : IInvoiceRepository
         DateTime? toDate,
         Guid? clientId,
         bool unpaidOnly,
-        InvoiceType? type)
+        InvoiceType? type,
+        bool realizedRevenueOnly = false)
     {
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
@@ -934,6 +942,12 @@ public sealed class InvoiceRepository : IInvoiceRepository
         if (type.HasValue)
             query = query.Where(i => i.Type == type.Value);
 
+        // CA = revenu réalisé : seules les factures Payée ou Validée comptent (miroir de
+        // InvoiceStatusExtensions.IsRealizedRevenue / REALIZED_REVENUE_STATUSES côté frontend).
+        // Condition inlinée car une méthode d'extension ne se traduit pas en SQL via EF Core.
+        if (realizedRevenueOnly)
+            query = query.Where(i => i.Status == InvoiceStatus.Paid || i.Status == InvoiceStatus.Validated);
+
         return query;
     }
 
@@ -945,13 +959,14 @@ public sealed class InvoiceRepository : IInvoiceRepository
         Guid? clientId,
         bool unpaidOnly = false,
         InvoiceType? type = null,
+        bool realizedRevenueOnly = false,
         CancellationToken cancellationToken = default)
     {
         await using var context = _contextFactory.CreateContext();
 
         var filtered = ApplyInvoiceFilters(
             context.Invoices.AsNoTracking(),
-            searchTerm, status, fromDate, toDate, clientId, unpaidOnly, type);
+            searchTerm, status, fromDate, toDate, clientId, unpaidOnly, type, realizedRevenueOnly);
 
         // Lightweight per-invoice projection (scalar columns only, no entity graph).
         var rows = await filtered
@@ -963,6 +978,7 @@ public sealed class InvoiceRepository : IInvoiceRepository
                 Vat = i.TotalVat.Amount,
                 i.DueDate,
                 i.Status,
+                i.Type,
                 Currency = i.TotalAmount.Currency
             })
             .ToListAsync(cancellationToken);
@@ -987,6 +1003,7 @@ public sealed class InvoiceRepository : IInvoiceRepository
 
         var today = DateTime.UtcNow.Date;
         decimal totalTtc = 0m, totalHt = 0m, totalVat = 0m, totalPaid = 0m, totalRemaining = 0m;
+        decimal realizedRevenueHt = 0m, invoicesHt = 0m, creditNotesHt = 0m;
         var overdueCount = 0;
 
         foreach (var r in rows)
@@ -1003,6 +1020,15 @@ public sealed class InvoiceRepository : IInvoiceRepository
             {
                 overdueCount++;
             }
+
+            // Mirrors InvoiceStatusExtensions.IsRealizedRevenue / frontend REALIZED_REVENUE_STATUSES.
+            if (r.Status == InvoiceStatus.Paid || r.Status == InvoiceStatus.Validated)
+                realizedRevenueHt += r.Ht;
+
+            if (r.Type == InvoiceType.CreditNote)
+                creditNotesHt += r.Ht;
+            else
+                invoicesHt += r.Ht;
         }
 
         return new InvoiceListSummaryDto
@@ -1014,7 +1040,10 @@ public sealed class InvoiceRepository : IInvoiceRepository
             TotalPaid = Math.Round(totalPaid, 3),
             TotalRemaining = Math.Round(totalRemaining, 3),
             OverdueCount = overdueCount,
-            Currency = rows[0].Currency
+            Currency = rows[0].Currency,
+            RealizedRevenueHt = Math.Round(realizedRevenueHt, 3),
+            InvoicesHt = Math.Round(invoicesHt, 3),
+            CreditNotesHt = Math.Round(creditNotesHt, 3)
         };
     }
 

@@ -14,7 +14,9 @@ public sealed record ExportInvoiceReportPdfQuery(
     DateTime? FromDate,
     DateTime? ToDate,
     Guid? ClientId = null,
-    InvoiceType? Type = null) : IRequest<Result<InvoicePdfResult>>;
+    InvoiceType? Type = null,
+    // When true, restricts the report to realized revenue documents (Paid + Validated).
+    bool RealizedRevenueOnly = false) : IRequest<Result<InvoicePdfResult>>;
 
 /// <summary>
 /// Handler for ExportInvoiceReportPdfQuery.
@@ -49,7 +51,7 @@ public sealed class ExportInvoiceReportPdfQueryHandler : IRequestHandler<ExportI
             return Result.Failure<InvoicePdfResult>(Error.Validation("Period", "La date de début doit être antérieure à la date de fin."));
 
         var invoices = await _invoiceRepository.GetForReportAsync(
-            request.FromDate, request.ToDate, request.ClientId, request.Type, cancellationToken);
+            request.FromDate, request.ToDate, request.ClientId, request.Type, request.RealizedRevenueOnly, cancellationToken);
 
         var nonCancelled = invoices
             .Where(i => i.Status != InvoiceStatus.Cancelled)
@@ -80,7 +82,8 @@ public sealed class ExportInvoiceReportPdfQueryHandler : IRequestHandler<ExportI
             request.FromDate,
             request.ToDate,
             company,
-            clientName);
+            clientName,
+            request.Type is null ? "Rapport des factures et avoirs" : null);
         
         var filePrefix = isCreditNotes ? "Etat_avoirs_ventes" : "Etat_factures_ventes";
         var fileName = request.FromDate.HasValue && request.ToDate.HasValue

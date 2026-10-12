@@ -95,7 +95,8 @@ describe('DashboardComponent — gating par permission (§7.3.3)', () => {
         recentActivity: [],
         kpiTrends: { revenueChange: undefined, salesTodayChange: undefined, pendingChange: undefined },
         kpiSparklines: { revenue: [], salesToday: [], currentMonth: [], pending: [] },
-        activeQuotesCount: 0
+        activeQuotesCount: 0,
+        revenueKpis: { totalHt: null, monthToDateHt: null, previousMonthToDateHt: null }
       })
     );
     selectedWarehouseId = jasmine.createSpy('selectedWarehouseId').and.returnValue(null);
@@ -267,6 +268,56 @@ describe('DashboardComponent — gating par permission (§7.3.3)', () => {
     expect(html).toContain('Factures impayées');
     expect(html).toContain('Devis récents');
   });
+
+  it('affiche la carte « CA HT du mois en cours » avec revenueKpis.monthToDateHt (serveur), pas le TTC', () => {
+    configure();
+    getInvoices.and.returnValue(of({
+      success: true,
+      data: {
+        items: [
+          // Si la carte retombait sur le TTC/allInvoices, elle afficherait cette valeur-ci.
+          { id: '1', number: 'FAC-1', type: 'INVOICE', isCreditNote: false, issueDate: '2026-01-01', dueDate: null, status: 'Payée', statusCssClass: '', clientName: 'C', totalAmount: 999, currency: 'TND', isOverdue: false, totalPaid: 0, remainingAmount: 0 }
+        ]
+      },
+      message: null,
+      errors: [] as string[]
+    }));
+    loadDashboardData.and.returnValue(
+      of({
+        allInvoices: [],
+        recentInvoices: [],
+        allQuotes: [],
+        recentQuotes: [],
+        topClients: [],
+        monthlyRevenue: [],
+        recentActivity: [],
+        kpiTrends: { revenueChange: undefined, salesTodayChange: undefined, pendingChange: undefined },
+        kpiSparklines: { revenue: [], salesToday: [], currentMonth: [], pending: [] },
+        activeQuotesCount: 0,
+        revenueKpis: { totalHt: 1234.567, monthToDateHt: 345.123, previousMonthToDateHt: 300 }
+      })
+    );
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, makeUser(['invoices:read'], ALL_MODULES));
+
+    const fixture = TestBed.createComponent(DashboardComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+
+    expect(component.totalRevenue()).toContain('234');
+    expect(component.totalRevenue()).toContain('567');
+    expect(component.totalRevenue()).toContain('TND');
+    expect(component.currentMonthRevenue()).toContain('345');
+    expect(component.currentMonthRevenue()).toContain('123');
+    expect(component.currentMonthRevenue()).toContain('TND');
+    // 300 (previousMonthToDateHt) should never leak into the formatted display.
+    expect(component.currentMonthRevenue()).not.toContain('300');
+
+    const html: string = fixture.nativeElement.textContent ?? '';
+    expect(html).toContain('CA HT du mois en cours');
+    expect(html).toContain("Chiffre d'affaires HT");
+    expect(html).not.toContain('999');
+  });
 });
 
 /**
@@ -302,7 +353,8 @@ describe('DashboardComponent — tâche 1.7 (sections vides / cartes hors-sujet)
                 recentActivity: [],
                 kpiTrends: { revenueChange: undefined, salesTodayChange: undefined, pendingChange: undefined },
                 kpiSparklines: { revenue: [], salesToday: [], currentMonth: [], pending: [] },
-                activeQuotesCount: 0
+                activeQuotesCount: 0,
+                revenueKpis: { totalHt: null, monthToDateHt: null, previousMonthToDateHt: null }
               })
             )
           }
@@ -469,7 +521,8 @@ describe('DashboardComponent — plan v1 §2.5 (dashboard adaptatif sectoriel)',
                 recentActivity: [],
                 kpiTrends: { revenueChange: undefined, salesTodayChange: undefined, pendingChange: undefined },
                 kpiSparklines: { revenue: [], salesToday: [], currentMonth: [], pending: [] },
-                activeQuotesCount: 0
+                activeQuotesCount: 0,
+                revenueKpis: { totalHt: null, monthToDateHt: null, previousMonthToDateHt: null }
               })
             )
           }

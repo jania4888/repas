@@ -36,6 +36,52 @@ export interface RevenueInvoiceLike {
   issueDate: string | Date;
   /** Signed total (TTC): positive on FAC, negative on AVO (credit notes). */
   totalAmount: number;
+  /**
+   * Signed HT (excl. VAT, FODEC and stamp duty), net of global discount: positive on FAC,
+   * negative on AVO. Source of every revenue (chiffre d'affaires) figure.
+   */
+  subTotal?: number;
+}
+
+const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+/**
+ * Parses an invoice issue date as a local calendar instant.
+ * Date-only `YYYY-MM-DD` strings are treated as local midnight (not UTC, unlike `new Date(string)`).
+ */
+export function parseIssueDateLocal(issueDate: string | Date): Date | null {
+  if (issueDate instanceof Date) {
+    return Number.isNaN(issueDate.getTime()) ? null : new Date(issueDate.getTime());
+  }
+  if (typeof issueDate !== 'string' || !issueDate.trim()) {
+    return null;
+  }
+  const trimmed = issueDate.trim();
+  const dateOnly = DATE_ONLY.exec(trimmed);
+  if (dateOnly) {
+    const parsed = new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]));
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }
+  const parsed = new Date(trimmed);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+/** Formats a date as `YYYY-MM-DD` using local calendar fields (for backend date params). */
+export function toIsoDateLocal(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * Signed HT amount of a document, used for every revenue (CA) figure.
+ * Returns 0 when `subTotal` is missing or not finite — never falls back to the TTC
+ * `totalAmount`, which would silently mix HT and TTC.
+ */
+export function revenueAmountHt(invoice: Pick<RevenueInvoiceLike, 'subTotal'>): number {
+  const value = invoice.subTotal;
+  return typeof value === 'number' && Number.isFinite(value) ? value : 0;
 }
 
 function stripDiacritics(value: string): string {
@@ -154,8 +200,11 @@ export function isWithinRange(date: Date, from: Date, to: Date): boolean {
 }
 
 /**
- * Sums realized-revenue (Payée + Validée) totals, optionally restricted to a date range.
+ * Sums realized-revenue (Payée + Validée) TTC totals, optionally restricted to a date range.
  * Signed `totalAmount` is preserved, so credit notes (negative) correctly reduce the total.
+ *
+ * TTC — kept for backward compatibility. Do NOT use it for revenue (CA) figures:
+ * use {@link sumRealizedRevenueHt}.
  */
 export function sumRealizedRevenue(
   invoices: ReadonlyArray<RevenueInvoiceLike>,
@@ -173,4 +222,111 @@ export function sumRealizedRevenue(
     }
     return sum + inv.totalAmount;
   }, 0);
+}
+
+/**
+ * Sums the signed HT (see {@link revenueAmountHt}) of realized-revenue documents
+ * (Payée + Validée, invoices and credit notes), optionally restricted to an inclusive
+ * date range. Issue dates are parsed as local calendar dates.
+ */
+export function sumRealizedRevenueHt(
+  invoices: ReadonlyArray<RevenueInvoiceLike>,
+  range?: { from: Date; to: Date }
+): number {
+  return invoices.reduce((sum, inv) => {
+    if (!isRealizedRevenue(inv.status)) {
+      return sum;
+    }
+    if (range) {
+      const d = parseIssueDateLocal(inv.issueDate);
+      if (!d || !isWithinRange(d, range.from, range.to)) {
+        return sum;
+      }
+    }
+    return sum + revenueAmountHt(inv);
+  }, 0);
+}
+
+export interface DateRange {
+  from: Date;
+  to: Date;
+}
+
+export interface MonthToDateRanges {
+  /** 1st of the current month 00:00:00.000 → today 23:59:59.999. */
+  current: DateRange;
+  /**
+   * 1st of the previous month 00:00:00.000 → same day-of-month of the previous month
+   * (capped to its last day) 23:59:59.999.
+   */
+  previous: DateRange;
+}
+
+function lastDayOfMonth(year: number, monthIndex: number): number {
+  return new Date(year, monthIndex + 1, 0).getDate();
+}
+
+/**
+ * Month-to-date range (1st → today) and the comparable range of the previous month
+ * (same number of elapsed days, capped to the previous month's last day so that
+ * e.g. March 31 compares with February 1 → 28/29 and never overflows into March).
+ */
+export function getMonthToDateRange(now: Date = new Date()): MonthToDateRanges {
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const prevYear = month === 0 ? year - 1 : year;
+  const prevMonth = month === 0 ? 11 : month - 1;
+  const prevDay = Math.min(now.getDate(), lastDayOfMonth(prevYear, prevMonth));
+  return {
+    current: {
+      from: new Date(year, month, 1, 0, 0, 0, 0),
+      to: new Date(year, month, now.getDate(), 23, 59, 59, 999)
+    },
+    previous: {
+      from: new Date(prevYear, prevMonth, 1, 0, 0, 0, 0),
+      to: new Date(prevYear, prevMonth, prevDay, 23, 59, 59, 999)
+    }
+  };
+}
+
+/**
+ * Period-to-date range for revenue reports, with a comparable previous range.
+ * - `month`: {@link getMonthToDateRange}.
+ * - `year`: January 1st → today, compared with the same dates of last year
+ *   (February 29 capped to February 28).
+ * - `day` / `all`: identical to {@link getPeriodRange}.
+ */
+export function getPeriodToDateRange(period: RevenuePeriod, now: Date = new Date()): PeriodRange {
+  if (period === 'month') {
+    const { current, previous } = getMonthToDateRange(now);
+    return {
+      currentFrom: current.from,
+      currentTo: current.to,
+      previousFrom: previous.from,
+      previousTo: previous.to
+    };
+  }
+  if (period === 'year') {
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const prevDay = Math.min(now.getDate(), lastDayOfMonth(year - 1, month));
+    return {
+      currentFrom: new Date(year, 0, 1, 0, 0, 0, 0),
+      currentTo: new Date(year, month, now.getDate(), 23, 59, 59, 999),
+      previousFrom: new Date(year - 1, 0, 1, 0, 0, 0, 0),
+      previousTo: new Date(year - 1, month, prevDay, 23, 59, 59, 999)
+    };
+  }
+  return getPeriodRange(period, now);
+}
+
+/**
+ * Percent change between two revenue values. Revenue can be negative (credit notes),
+ * so the base is |previous| to keep the sign of the trend meaningful.
+ * - both 0 → undefined; previous 0 → 100 when current > 0, otherwise undefined.
+ */
+export function computeRevenuePercentChange(previous: number, current: number): number | undefined {
+  if (previous === 0 && current === 0) return undefined;
+  if (previous === 0) return current > 0 ? 100 : undefined;
+  return Math.round(((current - previous) / Math.abs(previous)) * 100);
 }

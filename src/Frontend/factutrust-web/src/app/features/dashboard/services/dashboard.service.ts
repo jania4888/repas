@@ -1,12 +1,20 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { InvoiceService, InvoiceListItem } from '@core/services/invoice.service';
+import { InvoiceService, InvoiceListItem, InvoiceListSummary } from '@core/services/invoice.service';
 import { QuoteService, QuoteListItem } from '@core/services/quote.service';
 import { ClientService, ClientListItem } from '@core/services/client.service';
 import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
-import { isRealizedRevenue } from '@core/utils/invoice-metrics.util';
+import {
+  computeRevenuePercentChange,
+  getMonthToDateRange,
+  isRealizedRevenue,
+  parseIssueDateLocal,
+  revenueAmountHt,
+  sumRealizedRevenueHt,
+  toIsoDateLocal
+} from '@core/utils/invoice-metrics.util';
 import { buildKpiSparklines, type KpiSparklines } from './dashboard-kpi-series.util';
 import { erpDateLocale } from '@core/i18n/erp-format';
 
@@ -46,6 +54,19 @@ export interface KpiTrends {
   pendingChange: number | undefined;
 }
 
+/**
+ * CA HT (Payée + Validée) read from the backend summary endpoint, with exactly the
+ * same parameters as the "Factures et avoirs" drill-down (`/invoices/revenue`), so the
+ * dashboard card and the detail view are equal by construction. `null` when the
+ * permission is missing or the request failed — callers fall back to the client-side
+ * computation ({@link sumRealizedRevenueHt}).
+ */
+export interface RevenueKpis {
+  totalHt: number | null;
+  monthToDateHt: number | null;
+  previousMonthToDateHt: number | null;
+}
+
 export interface DashboardAggregatedData {
   allInvoices: InvoiceListItem[];
   recentInvoices: InvoiceListItem[];
@@ -57,6 +78,7 @@ export interface DashboardAggregatedData {
   kpiTrends: KpiTrends;
   kpiSparklines: KpiSparklines;
   activeQuotesCount: number;
+  revenueKpis: RevenueKpis;
 }
 
 const MONTH_NAMES_FR = [
@@ -81,6 +103,9 @@ export class DashboardService {
     const canReadQuotes = this.authService.hasPermission(PERMISSIONS.quotes.read);
     const canReadClients = this.authService.hasPermission(PERMISSIONS.clients.read);
 
+    const now = new Date();
+    const { current, previous } = getMonthToDateRange(now);
+
     return forkJoin({
       invoices: canReadInvoices
         ? this.invoiceService.getInvoices({ pageSize: 1000, skipGlobalErrorUi: true }).pipe(
@@ -101,12 +126,51 @@ export class DashboardService {
           }).pipe(
             catchError(() => of({ success: false, data: { items: [] as ClientListItem[] } } as any))
           )
-        : of({ success: true, data: { items: [] as ClientListItem[] } } as any)
+        : of({ success: true, data: { items: [] as ClientListItem[] } } as any),
+      // CA HT (Payée + Validée) read from the server, with the same filters as the
+      // "Factures et avoirs" drill-down — see RevenueKpis for why. `null` on missing
+      // permission or request failure; callers fall back to sumRealizedRevenueHt.
+      revenueTotal: canReadInvoices
+        ? this.invoiceService.getInvoicesSummary({ realizedRevenueOnly: true, skipGlobalErrorUi: true }).pipe(
+            map(res => (res.success ? res.data : null)),
+            catchError(() => of(null as InvoiceListSummary | null))
+          )
+        : of(null as InvoiceListSummary | null),
+      revenueMonthToDate: canReadInvoices
+        ? this.invoiceService.getInvoicesSummary({
+            realizedRevenueOnly: true,
+            fromDate: toIsoDateLocal(current.from),
+            toDate: toIsoDateLocal(current.to),
+            skipGlobalErrorUi: true
+          }).pipe(
+            map(res => (res.success ? res.data : null)),
+            catchError(() => of(null as InvoiceListSummary | null))
+          )
+        : of(null as InvoiceListSummary | null),
+      revenuePreviousMonthToDate: canReadInvoices
+        ? this.invoiceService.getInvoicesSummary({
+            realizedRevenueOnly: true,
+            fromDate: toIsoDateLocal(previous.from),
+            toDate: toIsoDateLocal(previous.to),
+            skipGlobalErrorUi: true
+          }).pipe(
+            map(res => (res.success ? res.data : null)),
+            catchError(() => of(null as InvoiceListSummary | null))
+          )
+        : of(null as InvoiceListSummary | null)
     }).pipe(
-      map(({ invoices, quotes, clients }) => {
+      map(({ invoices, quotes, clients, revenueTotal, revenueMonthToDate, revenuePreviousMonthToDate }) => {
         const allInvoices: InvoiceListItem[] = invoices.success ? invoices.data.items : [];
         const allQuotes: QuoteListItem[] = quotes.success ? quotes.data.items : [];
         const allClients: ClientListItem[] = clients.success ? clients.data.items : [];
+
+        const revenueKpis: RevenueKpis = {
+          totalHt: revenueTotal ? revenueTotal.realizedRevenueHt ?? revenueTotal.totalHt : null,
+          monthToDateHt: revenueMonthToDate ? revenueMonthToDate.realizedRevenueHt ?? revenueMonthToDate.totalHt : null,
+          previousMonthToDateHt: revenuePreviousMonthToDate
+            ? revenuePreviousMonthToDate.realizedRevenueHt ?? revenuePreviousMonthToDate.totalHt
+            : null
+        };
 
         return {
           allInvoices,
@@ -114,11 +178,12 @@ export class DashboardService {
           allQuotes,
           recentQuotes: allQuotes.slice(0, 5),
           topClients: this.computeTopClients(allClients),
-          monthlyRevenue: this.computeMonthlyRevenue(allInvoices),
+          monthlyRevenue: this.computeMonthlyRevenue(allInvoices, now),
           recentActivity: this.buildRecentActivity(allInvoices, allQuotes),
-          kpiTrends: this.computeKpiTrends(allInvoices),
-          kpiSparklines: buildKpiSparklines(allInvoices),
-          activeQuotesCount: this.countActiveQuotes(allQuotes)
+          kpiTrends: this.computeKpiTrends(allInvoices, revenueKpis, now),
+          kpiSparklines: buildKpiSparklines(allInvoices, now),
+          activeQuotesCount: this.countActiveQuotes(allQuotes),
+          revenueKpis
         };
       })
     );
@@ -142,8 +207,7 @@ export class DashboardService {
     }));
   }
 
-  private computeMonthlyRevenue(invoices: InvoiceListItem[]): MonthlyRevenueData[] {
-    const now = new Date();
+  private computeMonthlyRevenue(invoices: InvoiceListItem[], now: Date = new Date()): MonthlyRevenueData[] {
     const months: MonthlyRevenueData[] = [];
 
     for (let i = 5; i >= 0; i--) {
@@ -160,13 +224,16 @@ export class DashboardService {
     const paidInvoices = invoices.filter(inv => isRealizedRevenue(inv.status));
 
     paidInvoices.forEach(inv => {
-      const invDate = new Date(inv.issueDate);
+      const invDate = parseIssueDateLocal(inv.issueDate);
+      if (!invDate) {
+        return;
+      }
       const monthEntry = months.find(
         m => m.year === invDate.getFullYear() &&
              MONTH_NAMES_FR[invDate.getMonth()] === m.month
       );
       if (monthEntry) {
-        monthEntry.revenue += inv.totalAmount;
+        monthEntry.revenue += revenueAmountHt(inv);
         monthEntry.invoiceCount++;
       }
     });
@@ -174,29 +241,29 @@ export class DashboardService {
     return months;
   }
 
-  private computeKpiTrends(invoices: InvoiceListItem[]): KpiTrends {
-    const now = new Date();
-    const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  /**
+   * `revenueChange` is read from the server summary values (same rule as the card and
+   * the drill-down) when available; it falls back to a client-side computation over
+   * `invoices` (first 1000 documents) if the server summary is missing (no permission
+   * or request failure). `pendingChange` is unaffected (unchanged TTC-agnostic logic).
+   */
+  private computeKpiTrends(
+    invoices: InvoiceListItem[],
+    revenueKpis: RevenueKpis,
+    now: Date = new Date()
+  ): KpiTrends {
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
 
     const thisMonthInvoices = invoices.filter(inv => {
       const d = new Date(inv.issueDate);
-      return d >= thisMonthStart && d <= now;
+      return d >= new Date(now.getFullYear(), now.getMonth(), 1) && d <= now;
     });
 
     const lastMonthInvoices = invoices.filter(inv => {
       const d = new Date(inv.issueDate);
       return d >= lastMonthStart && d <= lastMonthEnd;
     });
-
-    const thisMonthRevenue = thisMonthInvoices
-      .filter(inv => isRealizedRevenue(inv.status))
-      .reduce((sum, inv) => sum + inv.totalAmount, 0);
-
-    const lastMonthRevenue = lastMonthInvoices
-      .filter(inv => isRealizedRevenue(inv.status))
-      .reduce((sum, inv) => sum + inv.totalAmount, 0);
 
     const thisMonthPending = thisMonthInvoices.filter(inv => {
       const s = inv.status?.toLowerCase() || '';
@@ -210,8 +277,18 @@ export class DashboardService {
              s.includes('envoyé') || s.includes('sent');
     }).length;
 
+    let revenueChange: number | undefined;
+    if (revenueKpis.monthToDateHt !== null && revenueKpis.previousMonthToDateHt !== null) {
+      revenueChange = computeRevenuePercentChange(revenueKpis.previousMonthToDateHt, revenueKpis.monthToDateHt);
+    } else {
+      const { current, previous } = getMonthToDateRange(now);
+      const monthToDateHt = sumRealizedRevenueHt(invoices, current);
+      const previousMonthToDateHt = sumRealizedRevenueHt(invoices, previous);
+      revenueChange = computeRevenuePercentChange(previousMonthToDateHt, monthToDateHt);
+    }
+
     return {
-      revenueChange: this.computePercentChange(lastMonthRevenue, thisMonthRevenue),
+      revenueChange,
       salesTodayChange: undefined,
       pendingChange: this.computePercentChange(lastMonthPending, thisMonthPending)
     };

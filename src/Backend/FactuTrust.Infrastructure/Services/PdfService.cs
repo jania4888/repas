@@ -166,10 +166,12 @@ public partial class PdfService : IPdfService
         DateTime? toDate = null,
         Company? company = null,
         string? clientName = null,
+        string? title = null,
         CancellationToken cancellationToken = default)
     {
         var invoiceList = invoices.ToList();
         var companyName = company?.Name ?? BrandConstants.Name;
+        var reportTitle = string.IsNullOrWhiteSpace(title) ? "Rapport des Factures" : title;
         var generatedAt = DateTime.UtcNow;
 
         var currency = invoiceList.First().TotalAmount.Currency;
@@ -195,7 +197,7 @@ public partial class PdfService : IPdfService
                         });
                         row.RelativeItem().AlignRight().Column(c =>
                         {
-                            c.Item().Text("Rapport des Factures").FontSize(18).Bold().FontColor(Colors.Blue.Darken2);
+                            c.Item().Text(reportTitle).FontSize(18).Bold().FontColor(Colors.Blue.Darken2);
                             if (fromDate.HasValue && toDate.HasValue)
                                 c.Item().Text($"Du {fromDate.Value:dd/MM/yyyy} au {toDate.Value:dd/MM/yyyy}").FontSize(10).FontColor(Colors.Grey.Darken1);
                             if (!string.IsNullOrEmpty(clientName))
