@@ -1,0 +1,19 @@
+{
+  "accounting.lettering.suggestions.reason.documentLink": "الفاتورة {$invoiceNumber} وتسديداتها المرتبطة ({$paymentCount}).",
+  "accounting.lettering.suggestions.reason.sameReference": "المرجع نفسه: {$reference}.",
+  "accounting.lettering.suggestions.reason.sameThirdParty": "الطرف نفسه في الجانبين.",
+  "accounting.lettering.suggestions.reason.exactAmount": "مبلغ مطابق: {$amount}.",
+  "accounting.lettering.suggestions.reason.subsetSum": "تركيبة من {$count} أسطر مجموعها صفر.",
+  "accounting.lettering.suggestions.reason.amountOnly": "تقريب على أساس المبلغ وحده: يجب التحقق منه.",
+  "accounting.lettering.suggestions.reason.ambiguousAmount": "أسطر أخرى بالمبلغ نفسه: {$alternatives}.",
+  "accounting.lettering.suggestions.reason.dateGap": "فارق التواريخ: {$days} يومًا.",
+  "accounting.lettering.suggestions.reason.exchangeDifference": "فارق الصرف: {$gap}.",
+  "accounting.lettering.suggestions.reason.other": "تقريب اكتشفته القواعد المحاسبية.",
+  "accounting.lettering.suggestions.category.exact": "مطابقة تامة",
+  "accounting.lettering.suggestions.category.multiple": "مطابقة متعددة",
+  "accounting.lettering.suggestions.category.sameAmount": "مبلغ مطابق",
+  "accounting.lettering.suggestions.category.other": "اقتراح",
+  "accounting.lettering.suggestions.confidence.high": "ثقة عالية",
+  "accounting.lettering.suggestions.confidence.medium": "ثقة متوسطة",
+  "accounting.lettering.suggestions.confidence.low": "ثقة ضعيفة"
+}
