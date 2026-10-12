@@ -297,15 +297,35 @@ test('lettrage en masse : après une erreur serveur, « Réessayer » renvoie le
 
 test('drapeau serveur éteint (LETTERING_FEATURE_DISABLED) : le bandeau disparaît, l\'écran reste utilisable', async ({ page }) => {
   await installMocks(page, { flag: true });
-  await page.route(LINES_API, route => json(route, ok(linesPage(ALL_LINES))));
-  await page.route(SUGGESTIONS_API, route =>
-    json(route, fail('LETTERING_FEATURE_DISABLED', 'Les propositions de lettrage sont désactivées.'), 400)
-  );
+  let lineLoads = 0;
+  await page.route(LINES_API, route => {
+    lineLoads++;
+    return json(route, ok(linesPage(ALL_LINES)));
+  });
+  let suggestionCalls = 0;
+  await page.route(SUGGESTIONS_API, route => {
+    suggestionCalls++;
+    return json(route, fail('LETTERING_FEATURE_DISABLED', 'Les propositions de lettrage sont désactivées.'), 400);
+  });
 
   await openLettering(page);
-  await page.waitForTimeout(1_000);
+  // Attend la réponse 400 au lieu d'une pause fixe.
+  await expect.poll(() => suggestionCalls).toBe(1);
 
   await expect(page.getByTestId('lettering-proposal-card')).toHaveCount(0);
   await expect(page.getByTestId('lettering-proposals-strip')).toHaveCount(0);
+  await expect(page.getByTestId('lettering-proposals-header-button')).toHaveCount(0);
+  // Le refus serveur est silencieux : aucun bandeau d'erreur sur l'écran.
+  await expect(page.locator('.lettering-message--error')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Valider le lettrage' })).toBeVisible();
+
+  // Un nouveau chargement avec d'autres filtres recharge les lignes, mais ne
+  // relance plus la requête des propositions (« hidden » reste vrai pour la session).
+  const loadsBefore = lineLoads;
+  await page.locator('#lettering-from').fill('2026-02-01');
+  await page.getByRole('button', { name: 'Charger les écritures' }).click();
+  await expect.poll(() => lineLoads).toBeGreaterThan(loadsBefore);
+  // Laisse passer l'anti-rebond (300 ms) du calcul des propositions.
+  await page.waitForTimeout(1_000);
+  expect(suggestionCalls).toBe(1);
 });
