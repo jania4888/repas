@@ -80,8 +80,8 @@
     "reason": "Lot 7 : concaténations de liaisons converties en méthodes $localize (un message à placeholders, même texte FR) ; écarts antérieurs du fichier déjà relus (pluriels erpPlural, options partagées)"
   },
   "src/app/features/accounting/lettering/lettering.component.ts": {
-    "sha": "3c35838b051019938c2bb75017c9647a2f263fb00c45a9ad10934358869ac5a0",
-    "reason": "Lot 7 : concaténations de liaisons converties en méthodes $localize (un message à placeholders, même texte FR) ; écarts antérieurs du fichier déjà relus (pluriels erpPlural, options partagées)"
+    "sha": "90976648c710d94dbe44aac5587bac9d106c1d05387d45a715f95cf181846a3c",
+    "reason": "PR1 non-regressif : bouton « Compléter le lettrage » (code P) + gestion centralisée des erreurs letter/complete/unletter/settle (LETTERING_PERIOD_LOCKED, LETTERING_ALREADY_LETTERED, 403) sur l'écran legacy ; ces constantes de code et le libellé sont de nouveaux segments, aucun texte existant modifié."
   },
   "src/app/features/accounting/manual-entry/components/draft-banner.component.ts": {
     "sha": "20b57da282da309811c893407c53c23489b7fe157ce5c8cfbe658de5a94fc6f9",
@@ -312,8 +312,8 @@
     "reason": "Retrait du calcul historique (livraison A) : format courant dm-model-v2 / tn-2026-v2, compte rendu des familles passées en v2 et des inclusions ignorées."
   },
   "src/app/features/accounting/services/accounting.service.ts": {
-    "sha": "498b4f2d794228999a4437354b7806b5b602549878b1f1a712e4fa9465987967",
-    "reason": "Retrait du calcul historique (livraison A) : route du rapport de parité et ses paramètres (année, mois de début et de fin)."
+    "sha": "f8e21c3bde41a3b9b45287526d36ba26740b4f3f0f246c58c0210e098d7d81ae",
+    "reason": "Nouveau client HTTP du lettrage (contrat §4) : getLetteringLines/getLetteringGroup/completePartialLettering ajoutés pour l'écran legacy (plan PR1, item 4). Segments nouveaux : noms de paramètres de requête et fragments d'URL (/lettering/lines, /lettering/groups/, /complete), pas de texte traduisible modifié."
   },
   "src/app/features/accounting/accounting.routes.ts": {
     "sha": "dde0f683180aa4b8ee682b8d4f3d84ee8e43254d8637661ed8995510005faf13",
@@ -326,5 +326,9 @@
   "src/app/features/accounting/manual-entry/services/accounting-document-import.service.ts": {
     "sha": "0504dc6f69b8c0c89cb79180a7ddedd43d014e82ca087e1a0f6f3f9240389304",
     "reason": "Mapping 502/503/504 (passerelle) vers un message i18n stable : nouveau texte $localize ajouté dans catchError (Bad Gateway/503/504), sans toucher au message de délai (TimeoutError) ni à ErrorHandlerService."
+  },
+  "src/app/core/config/permission-keys.ts": {
+    "sha": "3e8bc1dfe74d46d92fe8e179d38e65542cb2356f40079cc2e3188eb58ad68741",
+    "reason": "Nouvelle clé de permission 'accounting:unletter' (plan D6) distincte de accounting:delete/create ; aucun texte traduisible modifié."
   }
 }

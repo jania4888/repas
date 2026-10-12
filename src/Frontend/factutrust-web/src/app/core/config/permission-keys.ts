@@ -138,6 +138,8 @@ export const PERMISSIONS = {
     reverse: 'accounting:reverse',
     import: 'accounting:import',
     declare: 'accounting:declare',
+    /** Délettrer un groupe de lettrage (refonte lettrage, D6) — distincte de `delete`. */
+    unletter: 'accounting:unletter',
     /** Configurer le catalogue des devises et leurs taux de change. */
     currenciesManage: 'accounting:currencies_manage',
     /**

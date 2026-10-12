@@ -152,6 +152,7 @@ public static class UserRoleExtensions
             Permissions.Accounting.Close,
             Permissions.Accounting.CurrenciesManage,
             Permissions.Accounting.ExchangeRateOverride,
+            Permissions.Accounting.Unletter,
             Permissions.Accounting.Reverse,
             Permissions.Accounting.Import,
             Permissions.Accounting.Declare,
@@ -426,6 +427,7 @@ public static class UserRoleExtensions
             Permissions.Accounting.Close,
             Permissions.Accounting.CurrenciesManage,
             Permissions.Accounting.ExchangeRateOverride,
+            Permissions.Accounting.Unletter,
             Permissions.Accounting.Reverse,
             Permissions.Accounting.Import,
             Permissions.Accounting.Declare,
@@ -690,6 +692,13 @@ public static class Permissions
         /// permission le champ est en lecture seule, et toute dérogation est tracée à l'audit.
         /// </summary>
         public const string ExchangeRateOverride = "accounting:exchange_rate_override";
+
+        /// <summary>
+        /// Défaire un lettrage (manuel). Séparation des tâches (D6) : un comptable société peut
+        /// lettrer (<see cref="Create"/>) mais ne peut pas défaire ; seuls les rôles de supervision
+        /// et le cabinet comptable délégué le peuvent.
+        /// </summary>
+        public const string Unletter = "accounting:unletter";
     }
 
     public static class Audit

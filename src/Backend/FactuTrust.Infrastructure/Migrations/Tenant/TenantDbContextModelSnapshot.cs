@@ -3479,6 +3479,13 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasIndex("JournalCode", "EntryNumber", "EntryDate");
 
+                    // Filtre de dates de l'écran de lettrage (plan de refonte, §6/§15), absent
+                    // jusqu'ici. INCLUDE(Status, JournalCode, EntryNumber, AccountingPeriodId)
+                    // posé en SQL brut par la migration (owned types non modélisables via
+                    // IncludeProperties EF, cf. IX_AuditLogs_EntityHistory pour le même choix).
+                    b.HasIndex("EntryDate")
+                        .HasDatabaseName("IX_JournalEntries_EntryDate");
+
                     b.ToTable("JournalEntries", (string)null);
                 });
 
@@ -3574,9 +3581,22 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountNumber");
+                    // Remplace l'ancien IX_JournalEntryLines_AccountNumber (plan de refonte du
+                    // lettrage, §6/§15) : requête principale de l'écran de lettrage, agrégats,
+                    // contrôles de pré-clôture. INCLUDE(JournalEntryId, DebitAmount, CreditAmount,
+                    // ThirdPartyId, ThirdPartyKind) posé en SQL brut par la migration (owned types
+                    // non modélisables via IncludeProperties EF).
+                    b.HasIndex("AccountNumber", "LetteringCode")
+                        .HasDatabaseName("IX_JournalEntryLines_AccountNumber_LetteringCode");
 
                     b.HasIndex("JournalEntryId");
+
+                    // Filtre tiers de l'écran de lettrage et lettrage auto des paiements (plan de
+                    // refonte du lettrage, §6/§15) : filtré, les lignes sans tiers (la grande
+                    // majorité) n'alourdissent pas l'index.
+                    b.HasIndex("ThirdPartyKind", "ThirdPartyId")
+                        .HasFilter("[ThirdPartyId] IS NOT NULL")
+                        .HasDatabaseName("IX_JournalEntryLines_ThirdPartyKind_ThirdPartyId");
 
                     b.ToTable("JournalEntryLines", (string)null);
                 });
@@ -3813,6 +3833,12 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasKey("Id");
 
+                    // Compteur partagé L/P garanti unique en base (plan de refonte du lettrage,
+                    // §6/§15, D7/D8), défense ultime contre toute course ayant échappé à la
+                    // transaction Serializable de LetteringService.
+                    b.HasIndex("Code")
+                        .IsUnique();
+
                     b.ToTable("LetteringGroups", (string)null);
                 });
 
@@ -3842,7 +3868,10 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasKey("Id");
 
-                    b.HasIndex("JournalEntryLineId");
+                    // Unique : une ligne d'écriture ne peut appartenir qu'à un seul groupe de
+                    // lettrage à la fois (plan de refonte du lettrage, §6/§15).
+                    b.HasIndex("JournalEntryLineId")
+                        .IsUnique();
 
                     b.HasIndex("LetteringGroupId");
 

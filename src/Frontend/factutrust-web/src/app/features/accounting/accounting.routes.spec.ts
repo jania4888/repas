@@ -58,6 +58,18 @@ describe('accounting.routes — gardes des écrans de devises', () => {
   });
 });
 
+describe('accounting.routes — écran de lettrage', () => {
+  // PR1 (plan refonte lettrage §6 item 8) : la route n'avait aucun canActivate avant ce round,
+  // contrairement à ses soeurs (currencies, fiscal-parameters…).
+
+  it('route "lettering" exige accounting:read via permissionGuard', () => {
+    const route = ACCOUNTING_ROUTES.find(r => r.path === 'lettering');
+    expect(route).toBeTruthy();
+    expect(route?.canActivate).toEqual([permissionGuard]);
+    expect(route?.data?.['permissions']).toEqual([PERMISSIONS.accounting.read]);
+  });
+});
+
 describe('accounting.routes — écrans DM', () => {
   for (const path of ['dm/configuration', 'dm/calcul', 'dm/modele', 'dm/suivi']) {
     describe(path, () => {

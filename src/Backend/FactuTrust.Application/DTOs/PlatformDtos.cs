@@ -314,3 +314,90 @@ public sealed record InvoiceNumberIntegrityReportDto
     public bool IsUniqueIndexSafe { get; init; }
     public IReadOnlyList<TenantInvoiceNumberIntegrityDto> Tenants { get; init; } = Array.Empty<TenantInvoiceNumberIntegrityDto>();
 }
+
+// ---------------------------------------------------------------------------
+// Balayage d'intégrité du lettrage (plan de refonte, Annexe A §4.2). Préalable
+// avant de déployer la migration ajoutant les index UNIQUE sur
+// LetteringGroups.Code et LetteringGroupMembers.JournalEntryLineId : une
+// migration qui échoue bloquerait le tenant au boot via TenantMigrationGuard.
+// ---------------------------------------------------------------------------
+
+/// <summary>Un code de groupe de lettrage porté par plusieurs <c>LetteringGroups</c>.</summary>
+public sealed record DuplicateLetteringCodeDto
+{
+    public string Code { get; init; } = null!;
+    public int GroupCount { get; init; }
+}
+
+/// <summary>Une ligne d'écriture membre de plusieurs groupes de lettrage à la fois.</summary>
+public sealed record MultiGroupLetteringLineDto
+{
+    public Guid JournalEntryLineId { get; init; }
+    public IReadOnlyList<string> GroupCodes { get; init; } = Array.Empty<string>();
+}
+
+/// <summary>Un <c>LetteringGroupMembers</c> dont la ligne d'écriture a été supprimée.</summary>
+public sealed record OrphanLetteringMemberDto
+{
+    public Guid JournalEntryLineId { get; init; }
+    public string GroupCode { get; init; } = null!;
+}
+
+/// <summary><c>JournalEntryLines.LetteringCode</c> renseigné sans groupe correspondant.</summary>
+public sealed record DanglingLetteringCodeLineDto
+{
+    public Guid JournalEntryLineId { get; init; }
+    public string LetteringCode { get; init; } = null!;
+}
+
+/// <summary>
+/// Une ligne membre d'un groupe dont le code (<c>LetteringGroupMembers</c> ↔ <c>LetteringGroups</c>)
+/// ne correspond pas à <c>JournalEntryLines.LetteringCode</c> pour cette même ligne.
+/// </summary>
+public sealed record MismatchedLetteringCodeDto
+{
+    public Guid JournalEntryLineId { get; init; }
+    public string GroupCode { get; init; } = null!;
+    public string? LineLetteringCode { get; init; }
+}
+
+/// <summary>Résultat du balayage d'intégrité du lettrage pour un tenant.</summary>
+public sealed record TenantLetteringIntegrityDto
+{
+    public const string StatusClean = "Clean";
+    public const string StatusAnomaliesFound = "AnomaliesFound";
+    public const string StatusUnreachable = "Unreachable";
+
+    public Guid TenantId { get; init; }
+    public string TenantName { get; init; } = null!;
+    /// <summary>Clean | AnomaliesFound | Unreachable.</summary>
+    public string Status { get; init; } = null!;
+    public int LetteringGroupCount { get; init; }
+    public int LetteredLineCount { get; init; }
+    /// <summary>Vrai si <c>IX_LetteringGroups_Code</c> (UNIQUE sur Code) existe déjà.</summary>
+    public bool HasUniqueGroupCodeIndex { get; init; }
+    /// <summary>Vrai si <c>IX_LetteringGroupMembers_JournalEntryLineId</c> (UNIQUE) existe déjà.</summary>
+    public bool HasUniqueMemberLineIndex { get; init; }
+    public IReadOnlyList<DuplicateLetteringCodeDto> DuplicateCodes { get; init; } = Array.Empty<DuplicateLetteringCodeDto>();
+    public IReadOnlyList<MultiGroupLetteringLineDto> LinesInMultipleGroups { get; init; } = Array.Empty<MultiGroupLetteringLineDto>();
+    public IReadOnlyList<OrphanLetteringMemberDto> OrphanMembers { get; init; } = Array.Empty<OrphanLetteringMemberDto>();
+    public IReadOnlyList<DanglingLetteringCodeLineDto> DanglingLetteringCodeLines { get; init; } = Array.Empty<DanglingLetteringCodeLineDto>();
+    public IReadOnlyList<MismatchedLetteringCodeDto> MismatchedLetteringCodes { get; init; } = Array.Empty<MismatchedLetteringCodeDto>();
+    public string? Error { get; init; }
+}
+
+/// <summary>Rapport consolidé du balayage d'intégrité du lettrage (tous tenants actifs).</summary>
+public sealed record LetteringIntegrityReportDto
+{
+    public DateTime ScannedAtUtc { get; init; }
+    public int TotalTenants { get; init; }
+    public int CleanTenants { get; init; }
+    public int TenantsWithAnomalies { get; init; }
+    public int UnreachableTenants { get; init; }
+    /// <summary>
+    /// Fail-closed : vrai UNIQUEMENT si tous les tenants ont été joints ET qu'aucun n'a
+    /// d'anomalie de données. Un tenant injoignable suffit à rendre les index non sûrs.
+    /// </summary>
+    public bool IsUniqueIndexSafe { get; init; }
+    public IReadOnlyList<TenantLetteringIntegrityDto> Tenants { get; init; } = Array.Empty<TenantLetteringIntegrityDto>();
+}

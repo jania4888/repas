@@ -210,9 +210,19 @@ public sealed class JournalEntryRepository : IJournalEntryRepository
         await using var context = _contextFactory.CreateContext();
         return await context.JournalEntryLines
             .AsNoTracking()
-            .Include(l => l.JournalEntry)
+            .Include(l => l.JournalEntry).ThenInclude(e => e.AccountingPeriod)
             .Where(l => lineIds.Contains(l.Id))
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<HashSet<int>> GetLockedFiscalYearsAsync(CancellationToken cancellationToken = default)
+    {
+        await using var context = _contextFactory.CreateContext();
+        var years = await context.AccountingYearLocks
+            .AsNoTracking()
+            .Select(y => y.FiscalYear)
+            .ToListAsync(cancellationToken);
+        return new HashSet<int>(years);
     }
 
     public async Task<JournalEntry> AddAsync(JournalEntry entity, CancellationToken cancellationToken = default)

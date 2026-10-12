@@ -15,7 +15,7 @@ public sealed class LetteringGroup : AggregateRoot
 
     /// <summary>
     /// Lettrage partiel : le groupe couvre un règlement incomplet (débits ≠ crédits).
-    /// Code préfixé « P » ; se complète en délettrant puis relettrant l'ensemble soldé.
+    /// Code préfixé « P » ; se complète via l'action « Compléter » (D7), sans délettrage.
     /// </summary>
     public bool IsPartial { get; private set; }
 
@@ -51,5 +51,51 @@ public sealed class LetteringGroup : AggregateRoot
             g._members.Add(LetteringGroupMember.CreateForGroup(g, id));
 
         return Result.Success(g);
+    }
+
+    /// <summary>
+    /// Ajoute de nouvelles lignes à un groupe existant (action « Compléter », D7). Les lignes déjà
+    /// membres du groupe ne sont pas dupliquées.
+    /// </summary>
+    public void AddMembers(IReadOnlyList<Guid> journalEntryLineIds)
+    {
+        var existing = _members.Select(m => m.JournalEntryLineId).ToHashSet();
+        foreach (var id in journalEntryLineIds)
+        {
+            if (existing.Add(id))
+                _members.Add(LetteringGroupMember.CreateForGroup(this, id));
+        }
+    }
+
+    /// <summary>
+    /// Recalcule le montant d'un groupe qui RESTE partiel après une complétion (D7) : la partie
+    /// couverte a changé. La règle de calcul (min(débit, crédit) en devise de tenue) reste chez
+    /// l'appelant, identique à <see cref="Create"/>. Sans cette mise à jour, le montant du groupe
+    /// « P » resterait figé à sa valeur d'avant l'ajout des lignes.
+    /// </summary>
+    public Result UpdatePartialAmount(Money amount)
+    {
+        if (!IsPartial)
+            return Result.Failure(Error.Validation("IsPartial", "Seul un groupe partiel peut voir son montant recalculé."));
+
+        Amount = amount;
+        return Result.Success();
+    }
+
+    /// <summary>
+    /// Transforme un groupe partiel (« P ») en groupe définitif (« L ») avec le même numéro, à
+    /// l'issue de la complétion (D7). Le montant est recalculé par l'appelant avec la même règle
+    /// que <see cref="Create"/>.
+    /// </summary>
+    public Result Finalize(string newCode, Money amount)
+    {
+        newCode = newCode?.Trim() ?? string.Empty;
+        if (string.IsNullOrEmpty(newCode))
+            return Result.Failure(Error.Validation("Code", "Code obligatoire"));
+
+        Code = newCode;
+        Amount = amount;
+        IsPartial = false;
+        return Result.Success();
     }
 }

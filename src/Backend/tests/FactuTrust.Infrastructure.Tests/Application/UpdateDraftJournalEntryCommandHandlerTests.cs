@@ -518,4 +518,70 @@ public sealed class UpdateDraftJournalEntryCommandHandlerTests
         Assert.Equal(150m, (decimal)type.GetProperty("NewTotalDebit")!.GetValue(newValues)!);
         Assert.True((bool)type.GetProperty("WasLettered")!.GetValue(newValues)!);
     }
+
+    /// <summary>
+    /// D8/D7 (revue PR 1, 2e passe) : l'édition d'un brouillon lettré par le cabinet passe par le
+    /// délettrage automatique — si une ligne du groupe est en période verrouillée, le délettrage
+    /// est refusé (<c>LETTERING_PERIOD_LOCKED</c>) et TOUTE la mise à jour échoue sans aucun effet
+    /// de bord : brouillon inchangé, groupe et codes de lettrage intacts.
+    /// </summary>
+    [Fact]
+    public async Task Update_LetteredDraft_InLockedPeriod_FailsWithoutSideEffects()
+    {
+        var factory = new TestTenantDbContextFactory($"UpdateDraft_{Guid.NewGuid()}");
+        var period = SeedPeriod(factory);
+        var draft = JournalEntry.Create(41, "JV", new DateTime(2026, 8, 14), "Vente", period.Id,
+            false, "Manual", null, SaleLines(100m),
+            initialStatus: JournalEntryStatus.Brouillon).Value;
+        draft.SetAuditInfo("test", false);
+        var other = JournalEntry.Create(42, "JB", new DateTime(2026, 8, 15), "Règlement", period.Id,
+            false, "Manual", null,
+            new[]
+            {
+                new JournalLineInput("532", "Banque", 100m, 0m, null, ThirdPartyKind.None),
+                new JournalLineInput("4111", "Client", 0m, 100m, null, ThirdPartyKind.None)
+            }, initialStatus: JournalEntryStatus.Validee).Value;
+        other.SetAuditInfo("test", false);
+
+        using (var seed = factory.CreateContext())
+        {
+            seed.JournalEntries.AddRange(draft, other);
+            seed.SaveChanges();
+        }
+
+        var draftLineId = draft.Lines.Single(l => l.AccountNumber == "4111").Id;
+        var otherLineId = other.Lines.Single(l => l.AccountNumber == "4111").Id;
+        var lettering = new LetteringService(factory, new TenantAmbientTransaction());
+        var lettered = await lettering.ManualLetterAsync(new[] { draftLineId, otherLineId });
+        Assert.True(lettered.IsSuccess);
+        var code = lettered.Value.Code;
+
+        // Verrou de l'exercice APRÈS le lettrage (D8, cause « exercice verrouillé »).
+        using (var seed = factory.CreateContext())
+        {
+            seed.AccountingYearLocks.Add(AccountingYearLock.Create(2026, "test"));
+            seed.SaveChanges();
+        }
+
+        var handler = BuildHandler(factory, ChartMock(), new RecordingAuditService(), isFirm: true);
+
+        var result = await handler.Handle(
+            new UpdateDraftJournalEntryCommand(draft.Id, BalancedRequest(150m, "Modifié par le cabinet")),
+            CancellationToken.None);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(
+            FactuTrust.Application.Features.Accounting.Lettering.LetteringErrorCodes.PeriodLocked,
+            result.Error.Code);
+
+        // Aucun effet de bord : brouillon intact, groupe et codes de lettrage intacts.
+        using var ctx = factory.CreateContext();
+        var reloaded = await ctx.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.Id == draft.Id);
+        Assert.Equal("Vente", reloaded.Label);
+        Assert.Equal(100m, reloaded.Lines.OrderBy(l => l.LineNumber).First().DebitAmount.Amount);
+        Assert.Equal(code, reloaded.Lines.First(l => l.AccountNumber == "4111").LetteringCode);
+        Assert.True(await ctx.LetteringGroups.AnyAsync(g => g.Code == code));
+        var otherLine = await ctx.JournalEntryLines.SingleAsync(l => l.Id == otherLineId);
+        Assert.Equal(code, otherLine.LetteringCode);
+    }
 }

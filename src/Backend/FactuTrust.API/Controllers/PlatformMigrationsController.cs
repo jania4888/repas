@@ -244,6 +244,46 @@ public sealed class PlatformMigrationsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Balayage d'intégrité du lettrage (codes dupliqués, lignes membres de plusieurs
+    /// groupes, membres orphelins, lignes au <c>LetteringCode</c> sans groupe, incohérences
+    /// groupe/ligne, présence des deux index UNIQUE) sur tous les tenants actifs.
+    /// Recommandé avant de livrer la migration d'index UNIQUE du lettrage (plan de refonte,
+    /// Annexe A §4.2) : la migration est désormais gardée (elle n'échoue plus sur doublons et
+    /// ne peut plus bloquer un tenant via TenantMigrationGuard), mais un tenant avec anomalies
+    /// resterait sans protection par index unique — tant que <c>IsUniqueIndexSafe</c> est faux
+    /// (anomalie ou tenant injoignable — fail-closed), une réparation manuelle reste requise
+    /// (runbook docs/runbooks/lettering-integrity.md).
+    /// </summary>
+    [HttpGet("tenants/lettering-integrity")]
+    [ProducesResponseType(typeof(ApiResponse<LetteringIntegrityReportDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> ScanLetteringIntegrity(CancellationToken cancellationToken)
+    {
+        try
+        {
+            _logger.LogInformation("Platform admin requested lettering integrity scan for all tenants");
+
+            var report = await LetteringIntegrityHelper.ScanAllTenantsAsync(_serviceProvider, cancellationToken);
+
+            var message = report.IsUniqueIndexSafe
+                ? $"Aucune anomalie détectée sur {report.CleanTenants} tenant(s) : les index uniques peuvent être déployés."
+                : $"Index uniques NON déployables partout : {report.TenantsWithAnomalies} tenant(s) avec anomalies, " +
+                  $"{report.UnreachableTenants} injoignable(s) sur {report.TotalTenants}.";
+
+            return Ok(ApiResponse<LetteringIntegrityReportDto>.Ok(report, message));
+        }
+        catch (Exception ex)
+        {
+            // Pas de ex.Message dans la réponse : il peut contenir des fragments de connexion ou
+            // de schéma tenant. Le détail reste dans les logs (réservés plateforme).
+            _logger.LogError(ex, "Error during lettering integrity scan");
+            return StatusCode(500, ApiResponse<LetteringIntegrityReportDto>.Fail(
+                "Erreur lors du balayage d'intégrité du lettrage."));
+        }
+    }
+
     [HttpGet("tenants/migrations-status")]
     [ProducesResponseType(typeof(ApiResponse<List<MigrationStatusResultDto>>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllTenantsMigrationStatus(CancellationToken cancellationToken)

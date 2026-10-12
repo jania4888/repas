@@ -129,15 +129,32 @@
             (onClick)="openSettle()"
             aria-label="Apurer l'écart de change puis lettrer" i18n-aria-label="@@accounting.lettering.apurer.l.ecart.de.change.puis.lettrer.0c7cad24" />
         }
-        <p-button
-          [label]="!selectionSummary().balanced && allowPartial ? 'Lettrer partiellement' : loc_lettrer_la_selection_826ebb"
-          icon="pi pi-link"
-          [disabled]="!canLetter()"
-          [loading]="lettering()"
-          (onClick)="letterSelected()"
-          [severity]="!selectionSummary().balanced && allowPartial ? 'warn' : 'success'"
-          [attr.aria-label]="letterSelectedAriaLabel()"
-        />
+        @if (isCompletionSelection()) {
+          <div class="lettering-complete-group">
+            <p-button
+              [label]="selectedPartialCode() ? loc_completer_le_lettrage_code_c0d1e2(selectedPartialCode()) : loc_completer_le_lettrage_a1b2c3"
+              icon="pi pi-link"
+              [disabled]="!canComplete()"
+              [loading]="lettering()"
+              (onClick)="completeSelected()"
+              severity="success"
+              [attr.aria-label]="completeSelectedAriaLabel()"
+            />
+            @if (completionBlockedReason()) {
+              <p class="lettering-complete-hint" role="status">{{ completionBlockedReason() }}</p>
+            }
+          </div>
+        } @else {
+          <p-button
+            [label]="!selectionSummary().balanced && allowPartial ? 'Lettrer partiellement' : loc_lettrer_la_selection_826ebb"
+            icon="pi pi-link"
+            [disabled]="!canLetter()"
+            [loading]="lettering()"
+            (onClick)="letterSelected()"
+            [severity]="!selectionSummary().balanced && allowPartial ? 'warn' : 'success'"
+            [attr.aria-label]="letterSelectedAriaLabel()"
+          />
+        }
       </div>
     </div>
   }
@@ -165,6 +182,7 @@
           [value]="lines()"
           [(selection)]="selectedLines"
           (selectionChange)="onSelectionChange($event)"
+          [rowSelectable]="isSelectableRow"
           dataKey="lineId"
           [paginator]="true"
           [rows]="25"
@@ -209,7 +227,7 @@
           <ng-template pTemplate="body" let-line>
             <tr [class.lettering-row--lettered]="isLettered(line)">
               <td>
-                <p-tableCheckbox [value]="line" [disabled]="isLettered(line)" />
+                <p-tableCheckbox [value]="line" [disabled]="!isRowSelectable(line)" />
               </td>
               <td>{{ line.entryDate | date : 'shortDate' }}</td>
               <td><span class="lettering-code">{{ line.journalCode }}</span></td>
@@ -237,15 +255,17 @@
                       [severity]="isPartialCode(line.letteringCode) ? 'warn' : 'info'"
                       [rounded]="true"
                       [attr.title]="isPartialCode(line.letteringCode) ? loc_lettrage_partiel_fc201a : loc_lettrage_cfcdd3" />
-                    <button
-                      type="button"
-                      class="lettering-unletter-btn"
-                      [disabled]="unlettering() === line.letteringCode"
-                      (click)="unletter(line.letteringCode)"
-                      [attr.aria-label]="loc_delettrer_le_groupe_letteringcode_0aecd2(line.letteringCode)"
-                      title="Délettrer ce groupe" i18n-title="@@accounting.lettering.delettrer.ce.groupe.210d5232">
-                      <i class="pi pi-times" aria-hidden="true"></i>
-                    </button>
+                    @if (canUnletter()) {
+                      <button
+                        type="button"
+                        class="lettering-unletter-btn"
+                        [disabled]="unlettering() === line.letteringCode"
+                        (click)="unletter(line.letteringCode)"
+                        [attr.aria-label]="loc_delettrer_le_groupe_letteringcode_0aecd2(line.letteringCode)"
+                        title="Délettrer ce groupe" i18n-title="@@accounting.lettering.delettrer.ce.groupe.210d5232">
+                        <i class="pi pi-times" aria-hidden="true"></i>
+                      </button>
+                    }
                   </span>
                 } @else {
                   <span class="lettering-unlettered" i18n="@@accounting.lettering.text.1b93795b">—</span>

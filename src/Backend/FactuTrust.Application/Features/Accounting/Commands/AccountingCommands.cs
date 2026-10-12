@@ -4,6 +4,7 @@ using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.Accounting.FiscalSchedule;
+using FactuTrust.Application.Features.Accounting.Lettering;
 using FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
 using FactuTrust.Application.Features.Accounting.Queries;
 using FactuTrust.Domain.Authorization;
@@ -639,9 +640,13 @@ public sealed class SaveVatDeclarationCommandHandler : IRequestHandler<SaveVatDe
     }
 }
 
-public sealed record LetterAccountEntriesCommand(IReadOnlyList<Guid> JournalEntryLineIds, bool AllowPartial = false) : IRequest<Result>;
+public sealed record LetterAccountEntriesCommand(
+    IReadOnlyList<Guid> JournalEntryLineIds,
+    bool AllowPartial = false,
+    LetteringOrigin Origin = LetteringOrigin.Manual,
+    string? SuggestionKey = null) : IRequest<Result<LetteringResultDto>>;
 
-public sealed class LetterAccountEntriesCommandHandler : IRequestHandler<LetterAccountEntriesCommand, Result>
+public sealed class LetterAccountEntriesCommandHandler : IRequestHandler<LetterAccountEntriesCommand, Result<LetteringResultDto>>
 {
     private readonly ILetteringService _lettering;
     private readonly IAuditService _auditService;
@@ -652,19 +657,78 @@ public sealed class LetterAccountEntriesCommandHandler : IRequestHandler<LetterA
         _auditService = auditService;
     }
 
-    public async Task<Result> Handle(LetterAccountEntriesCommand request, CancellationToken cancellationToken)
+    public async Task<Result<LetteringResultDto>> Handle(LetterAccountEntriesCommand request, CancellationToken cancellationToken)
     {
-        var result = await _lettering.ManualLetterAsync(request.JournalEntryLineIds, request.AllowPartial, cancellationToken);
-        if (result.IsSuccess)
-        {
-            await _auditService.LogAsync(
-                AuditActions.Accounting.Lettered,
-                "LetteringGroup",
-                newValues: new { LineCount = request.JournalEntryLineIds.Count, request.AllowPartial },
-                cancellationToken: cancellationToken);
-        }
+        var result = await _lettering.ManualLetterAsync(
+            request.JournalEntryLineIds, request.AllowPartial, request.Origin, cancellationToken);
+        if (result.IsFailure)
+            return Result.Failure<LetteringResultDto>(result.Error);
 
-        return result;
+        var outcome = result.Value;
+        await _auditService.LogAsync(
+            AuditActions.Accounting.Lettered,
+            "LetteringGroup",
+            entityId: outcome.GroupId,
+            newValues: new
+            {
+                outcome.Code,
+                outcome.AccountNumber,
+                outcome.Amount,
+                outcome.Currency,
+                outcome.IsPartial,
+                LineIds = outcome.LineIds,
+                LineCount = outcome.LineIds.Count,
+                request.AllowPartial,
+                Origin = request.Origin.ToString(),
+                request.SuggestionKey
+            },
+            cancellationToken: cancellationToken);
+
+        return Result.Success(new LetteringResultDto(outcome.Code, outcome.GroupId, outcome.IsPartial, outcome.LineIds.Count, outcome.PreviousCode));
+    }
+}
+
+public sealed record CompletePartialLetteringCommand(
+    string Code,
+    IReadOnlyList<Guid> JournalEntryLineIds,
+    bool AllowPartial = false) : IRequest<Result<LetteringResultDto>>;
+
+public sealed class CompletePartialLetteringCommandHandler : IRequestHandler<CompletePartialLetteringCommand, Result<LetteringResultDto>>
+{
+    private readonly ILetteringService _lettering;
+    private readonly IAuditService _auditService;
+
+    public CompletePartialLetteringCommandHandler(ILetteringService lettering, IAuditService auditService)
+    {
+        _lettering = lettering;
+        _auditService = auditService;
+    }
+
+    public async Task<Result<LetteringResultDto>> Handle(CompletePartialLetteringCommand request, CancellationToken cancellationToken)
+    {
+        var result = await _lettering.CompletePartialAsync(
+            request.Code, request.JournalEntryLineIds, request.AllowPartial, cancellationToken);
+        if (result.IsFailure)
+            return Result.Failure<LetteringResultDto>(result.Error);
+
+        var outcome = result.Value;
+        await _auditService.LogAsync(
+            AuditActions.Accounting.LetteringCompleted,
+            "LetteringGroup",
+            entityId: outcome.GroupId,
+            newValues: new
+            {
+                outcome.PreviousCode,
+                outcome.Code,
+                AddedLineIds = request.JournalEntryLineIds,
+                LineIds = outcome.LineIds,
+                outcome.Amount,
+                outcome.Currency,
+                outcome.IsPartial
+            },
+            cancellationToken: cancellationToken);
+
+        return Result.Success(new LetteringResultDto(outcome.Code, outcome.GroupId, outcome.IsPartial, outcome.LineIds.Count, outcome.PreviousCode));
     }
 }
 
@@ -686,10 +750,21 @@ public sealed class UnletterAccountEntriesCommandHandler : IRequestHandler<Unlet
         var result = await _lettering.UnletterAsync(request.Code, cancellationToken);
         if (result.IsSuccess)
         {
+            var outcome = result.Value;
             await _auditService.LogAsync(
                 AuditActions.Accounting.Unlettered,
                 "LetteringGroup",
-                newValues: new { request.Code },
+                entityId: outcome.GroupId,
+                oldValues: new
+                {
+                    outcome.Code,
+                    outcome.AccountNumber,
+                    outcome.Amount,
+                    outcome.Currency,
+                    outcome.IsPartial,
+                    LineIds = outcome.LineIds,
+                    TriggeredBy = "Manual"
+                },
                 cancellationToken: cancellationToken);
         }
 

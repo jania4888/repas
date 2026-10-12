@@ -331,6 +331,21 @@
   color: var(--color-text-tertiary);
 }
 
+.lettering-complete-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-1);
+}
+
+.lettering-complete-hint {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  text-align: end;
+  max-width: 22rem;
+}
+
 .lettering-exchange-hint {
   margin: 0;
   font-size: var(--font-size-sm);

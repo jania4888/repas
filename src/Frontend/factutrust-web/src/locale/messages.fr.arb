@@ -24943,6 +24943,55 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.lettering.tpl.completer.le.lettrage.a1b2c3d4": "Compléter le lettrage",
+  "@accounting.lettering.tpl.completer.le.lettrage.a1b2c3d4": {
+    "x-files": [
+      "src/app/features/accounting/lettering/lettering.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.tpl.completer.le.lettrage.code.c0d1e2f3": "Compléter le lettrage {$code}",
+  "@accounting.lettering.tpl.completer.le.lettrage.code.c0d1e2f3": {
+    "x-files": [
+      "src/app/features/accounting/lettering/lettering.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.ts.retirez.les.lignes.deja.lettrees.b1c2d3e4": "Retirez les lignes déjà lettrées définitivement (code « L ») de la sélection.",
+  "@accounting.lettering.ts.retirez.les.lignes.deja.lettrees.b1c2d3e4": {
+    "x-files": [
+      "src/app/features/accounting/lettering/lettering.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.ts.selectionnez.un.seul.groupe.partiel.c2d3e4f5": "Sélectionnez les lignes d'un seul groupe partiel (« P ») à la fois pour le compléter.",
+  "@accounting.lettering.ts.selectionnez.un.seul.groupe.partiel.c2d3e4f5": {
+    "x-files": [
+      "src/app/features/accounting/lettering/lettering.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.ts.ajoutez.au.moins.une.ligne.non.lettree.d3e4f5a6": "Ajoutez au moins une ligne non lettrée à la sélection pour compléter ce groupe.",
+  "@accounting.lettering.ts.ajoutez.au.moins.une.ligne.non.lettree.d3e4f5a6": {
+    "x-files": [
+      "src/app/features/accounting/lettering/lettering.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.ts.droit.insuffisant.e4f5a6b7": "Droit insuffisant pour effectuer cette action.",
+  "@accounting.lettering.ts.droit.insuffisant.e4f5a6b7": {
+    "x-files": [
+      "src/app/features/accounting/lettering/lettering.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.ts.periode.ou.exercice.cloture.f5a6b7c8": "Action impossible : une des écritures sélectionnées appartient à une période ou un exercice clôturé.",
+  "@accounting.lettering.ts.periode.ou.exercice.cloture.f5a6b7c8": {
+    "x-files": [
+      "src/app/features/accounting/lettering/lettering.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.lettering.ts.veuillez.saisir.un.numero.de.compte.7beae1c2": "Veuillez saisir un numéro de compte.",
   "@accounting.lettering.ts.veuillez.saisir.un.numero.de.compte.7beae1c2": {
     "x-files": [
@@ -25008,6 +25057,34 @@
   },
   "accounting.lettering.ts.erreur.reseau.lors.du.lettrage.1358d80e": "Erreur réseau lors du lettrage.",
   "@accounting.lettering.ts.erreur.reseau.lors.du.lettrage.1358d80e": {
+    "x-files": [
+      "src/app/features/accounting/lettering/lettering.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.ts.lettrage.partiel.code.complete.reste.partiel.a6b7c8d9": "Lettrage partiel {$code} complété (reste partiel).",
+  "@accounting.lettering.ts.lettrage.partiel.code.complete.reste.partiel.a6b7c8d9": {
+    "x-files": [
+      "src/app/features/accounting/lettering/lettering.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.ts.lettrage.code.finalise.b7c8d9e0": "Lettrage {$code} finalisé.",
+  "@accounting.lettering.ts.lettrage.code.finalise.b7c8d9e0": {
+    "x-files": [
+      "src/app/features/accounting/lettering/lettering.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "ui.tern.erreur.lors.de.la.completion.du.lettrage.c8d9e0f1": "Erreur lors de la complétion du lettrage.",
+  "@ui.tern.erreur.lors.de.la.completion.du.lettrage.c8d9e0f1": {
+    "x-files": [
+      "src/app/features/accounting/lettering/lettering.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.ts.erreur.reseau.lors.de.la.completion.du.lettrage.d9e0f1a2": "Erreur réseau lors de la complétion du lettrage.",
+  "@accounting.lettering.ts.erreur.reseau.lors.de.la.completion.du.lettrage.d9e0f1a2": {
     "x-files": [
       "src/app/features/accounting/lettering/lettering.component.ts"
     ],

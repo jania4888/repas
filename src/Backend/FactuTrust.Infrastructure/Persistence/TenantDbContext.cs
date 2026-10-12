@@ -3877,6 +3877,13 @@ public partial class TenantDbContext : DbContext
             entity.HasIndex(e => e.PieceRef);
             entity.HasIndex(e => e.Status);
             entity.HasIndex(e => new { e.JournalCode, e.EntryNumber, e.EntryDate });
+            // Filtre de dates de l'écran de lettrage (plan de refonte, §6/§15) : absent jusqu'ici,
+            // seul AccountingPeriodId/PieceRef/Status/(JournalCode,EntryNumber,EntryDate) l'étaient.
+            // Nom figé : jumeau SQL IncludeProperties(Status, JournalCode, EntryNumber,
+            // AccountingPeriodId) posé en SQL brut par la migration (owned types non modélisables
+            // via IncludeProperties EF, cf. IX_AuditLogs_EntityHistory pour le même choix).
+            entity.HasIndex(e => e.EntryDate)
+                  .HasDatabaseName("IX_JournalEntries_EntryDate");
             // R-16/M2 : une seule écriture sourcing ACTIVE par entité source, pour les types de
             // « comptabilisation aller » de la paie (PayrollRun, PayrollPayment,
             // CnssContributionPayment). Index unique FILTRÉ : exclut les écritures extournées
@@ -4109,7 +4116,13 @@ public partial class TenantDbContext : DbContext
                 m.Property(x => x.Amount).HasColumnName("CreditAmount").HasPrecision(18, 3);
                 m.Property(x => x.Currency).HasColumnName("CreditCurrency").HasMaxLength(3);
             });
-            entity.HasIndex(e => e.AccountNumber);
+            entity.HasIndex(e => new { e.AccountNumber, e.LetteringCode })
+                  .HasDatabaseName("IX_JournalEntryLines_AccountNumber_LetteringCode");
+            // Filtre tiers de l'écran de lettrage et lettrage auto des paiements (plan de refonte,
+            // §6/§15) : filtré, les lignes sans tiers (la grande majorité) n'alourdissent pas l'index.
+            entity.HasIndex(e => new { e.ThirdPartyKind, e.ThirdPartyId })
+                  .HasFilter("[ThirdPartyId] IS NOT NULL")
+                  .HasDatabaseName("IX_JournalEntryLines_ThirdPartyKind_ThirdPartyId");
         });
     }
 
@@ -4121,6 +4134,9 @@ public partial class TenantDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Code).HasMaxLength(16).IsRequired();
             entity.Property(e => e.AccountNumber).HasMaxLength(32).IsRequired();
+            // Compteur partagé L/P garanti unique en base (D7/D8, défense ultime contre toute
+            // course ayant échappé à la transaction Serializable de LetteringService).
+            entity.HasIndex(e => e.Code).IsUnique();
             entity.OwnsOne(e => e.Amount, m =>
             {
                 m.Property(x => x.Amount).HasColumnName("Amount").HasPrecision(18, 3);
@@ -4139,7 +4155,9 @@ public partial class TenantDbContext : DbContext
         {
             entity.ToTable("LetteringGroupMembers");
             entity.HasKey(e => e.Id);
-            entity.HasIndex(e => e.JournalEntryLineId);
+            // Unique : une ligne d'écriture ne peut appartenir qu'à un seul groupe de lettrage à la
+            // fois (le lettrage précédent du membre, s'il existe, a été supprimé par UnletterAsync).
+            entity.HasIndex(e => e.JournalEntryLineId).IsUnique();
         });
     }
 

@@ -2,6 +2,7 @@ using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
+using FactuTrust.Application.Features.Accounting.Lettering;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
@@ -91,6 +92,17 @@ public sealed class SettleExchangeDifferenceCommandHandler
         if (analysis.IsFailure)
             return Result.Failure<Guid>(analysis.Error);
 
+        // Verrou de période (D8/D9) : contrôlé AVANT la création de l'écriture d'ajustement, pour
+        // qu'aucune écriture d'écart orpheline ne soit jamais même construite. Prédicat unique
+        // partagé (LetteringPeriodLock) — ne jamais le dupliquer ici.
+        var lockedYears = await _journalEntries.GetLockedFiscalYearsAsync(cancellationToken);
+        var lockedLine = lines.FirstOrDefault(l => LetteringPeriodLock.IsLocked(l, lockedYears));
+        if (lockedLine is not null)
+        {
+            return Result.Failure<Guid>(LetteringErrors.PeriodLocked(
+                $"Lettrage impossible : la ligne {LetteringPeriodLock.DescribeLine(lockedLine)} appartient à une période clôturée."));
+        }
+
         var (thirdPartyAccount, gap, entryDate) = analysis.Value;
 
         Guid createdEntryId = Guid.Empty;
@@ -131,7 +143,9 @@ public sealed class SettleExchangeDifferenceCommandHandler
             var adjustmentLine = entry.Lines.First(l => l.AccountNumber == thirdPartyAccount);
             var toLetter = request.JournalEntryLineIds.Append(adjustmentLine.Id).ToList();
 
-            return await _lettering.ManualLetterAsync(toLetter, allowPartial: false, ct);
+            // Result<LetteringOutcome> hérite de Result : l'erreur remonte telle quelle.
+            return await _lettering.ManualLetterAsync(
+                toLetter, allowPartial: false, LetteringOrigin.ExchangeDifference, ct);
         }, cancellationToken);
 
         if (result.IsFailure)
