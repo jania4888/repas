@@ -22,6 +22,7 @@ public sealed class AccountingControllerLetteringAuthorizationTests
     [InlineData(nameof(AccountingController.SettleExchangeDifference), PermissionPolicies.AccountingCreate)]
     [InlineData(nameof(AccountingController.GetLetteringLines), PermissionPolicies.AccountingRead)]
     [InlineData(nameof(AccountingController.GetLetteringGroup), PermissionPolicies.AccountingRead)]
+    [InlineData(nameof(AccountingController.GetLetteringSuggestions), PermissionPolicies.AccountingRead)]
     [InlineData(nameof(AccountingController.Unletter), PermissionPolicies.AccountingUnletter)]
     public void LetteringEndpoint_RequiresExpectedPolicy(string methodName, string expectedPolicy)
     {

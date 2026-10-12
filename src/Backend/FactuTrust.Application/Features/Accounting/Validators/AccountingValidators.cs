@@ -276,6 +276,27 @@ public sealed class GetLetteringLinesQueryValidator : AbstractValidator<GetLette
 }
 
 /// <summary>
+/// <c>GET api/accounting/lettering/suggestions</c> (plan v2, Phase 3, annexe C §3) : mêmes règles de
+/// filtre que <c>lettering/lines</c> (compte et période obligatoires, période ≤ 732 jours), plus une
+/// borne sur le nombre de propositions demandées.
+/// </summary>
+public sealed class GetLetteringSuggestionsQueryValidator : AbstractValidator<GetLetteringSuggestionsQuery>
+{
+    public const int MaxResultsLimit = 200;
+
+    public GetLetteringSuggestionsQueryValidator()
+    {
+        RuleFor(x => x.Filter)
+            .NotNull().WithMessage("Le filtre est obligatoire.")
+            .SetValidator(new GetLetteringLinesQueryValidator());
+
+        RuleFor(x => x.MaxResults)
+            .InclusiveBetween(1, MaxResultsLimit)
+            .WithMessage($"Le nombre de propositions doit être entre 1 et {MaxResultsLimit}.");
+    }
+}
+
+/// <summary>
 /// <c>GET api/accounting/lettering/groups/{code}</c> : le code est normalisé en majuscules puis
 /// validé au format L/P + 5 à 15 chiffres (même règle que <see cref="UnletterAccountEntriesCommandValidator"/>),
 /// afin qu'un segment d'URL arbitraire soit rejeté en 400 et non en 404 « introuvable ».

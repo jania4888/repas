@@ -323,6 +323,23 @@ builder.Services.AddRateLimiter(options =>
             });
     });
 
+    // Propositions de lettrage (plan v2, Phase 3) : calcul borné mais coûteux (jusqu'à 5 000 lignes et
+    // un fusible de 3 s). Même partition que « ai » : par utilisateur, repli sur l'IP.
+    options.AddPolicy("accounting-suggestions", context =>
+    {
+        var userId = context.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var partitionKey = string.IsNullOrEmpty(userId)
+            ? $"ip:{context.Connection.RemoteIpAddress?.ToString() ?? "unknown"}"
+            : $"user:{userId}";
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey,
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = isDevelopment ? 300 : 30,
+                Window = TimeSpan.FromMinutes(1)
+            });
+    });
+
     options.AddPolicy("public-street-read", context =>
         RateLimitPartition.GetFixedWindowLimiter(
             context.Connection.RemoteIpAddress?.ToString() ?? "unknown",

@@ -301,6 +301,81 @@ public sealed class AccountingControllerLetteringTests
         Assert.Equal(LetteringErrorCodes.Validation, body.Code);
     }
 
+    // ---- GetLetteringSuggestions (plan v2, Phase 3, annexe C §3) ----
+
+    private static LetteringSuggestionsResultDto EmptySuggestions() =>
+        new(Array.Empty<LetteringSuggestionDto>(), 0, 0, 0, false, null, new DateTime(2026, 10, 12, 0, 0, 0, DateTimeKind.Utc));
+
+    [Fact]
+    public async Task GetLetteringSuggestions_Success_ReturnsOk_AndSendsTheScreenFilter()
+    {
+        var dto = EmptySuggestions();
+        GetLetteringSuggestionsQuery? sent = null;
+        var mediator = new Mock<IMediator>(MockBehavior.Strict);
+        mediator.Setup(m => m.Send(It.IsAny<GetLetteringSuggestionsQuery>(), It.IsAny<CancellationToken>()))
+            .Callback<IRequest<Result<LetteringSuggestionsResultDto>>, CancellationToken>((q, _) => sent = (GetLetteringSuggestionsQuery)q)
+            .ReturnsAsync(Result.Success(dto));
+        var controller = NewController(mediator.Object);
+        var thirdParty = Guid.NewGuid();
+
+        var result = await controller.GetLetteringSuggestions(
+            account: "411", accountMatch: LetteringAccountMatch.Prefix,
+            from: new DateTime(2026, 1, 1), to: new DateTime(2026, 12, 31),
+            journalCode: "VT", thirdPartyId: thirdParty, thirdPartyKind: Domain.Enums.ThirdPartyKind.Client,
+            minAmount: 10m, maxAmount: 99m, search: "FAC", maxResults: 20,
+            cancellationToken: CancellationToken.None);
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var body = Assert.IsType<FactuTrust.API.Controllers.ApiResponse<LetteringSuggestionsResultDto>>(ok.Value);
+        Assert.True(body.Success);
+        Assert.Equal(dto, body.Data);
+
+        Assert.NotNull(sent);
+        Assert.Equal(20, sent!.MaxResults);
+        var f = sent.Filter;
+        Assert.Equal(("411", LetteringAccountMatch.Prefix), (f.Account, f.AccountMatch));
+        Assert.Equal((new DateTime(2026, 1, 1), new DateTime(2026, 12, 31)), (f.From, f.To));
+        Assert.Equal(("VT", thirdParty, (Domain.Enums.ThirdPartyKind?)Domain.Enums.ThirdPartyKind.Client), (f.JournalCode, f.ThirdPartyId, f.ThirdPartyKind));
+        Assert.Equal((10m, 99m, "FAC"), (f.MinAmount, f.MaxAmount, f.Search));
+        Assert.Equal((LetteringStateFilter.Unlettered, LetteringSideFilter.All), (f.State, f.Side));
+    }
+
+    [Fact]
+    public async Task GetLetteringSuggestions_FeatureDisabled_Returns400_WithItsCode()
+    {
+        var mediator = new Mock<IMediator>(MockBehavior.Strict);
+        mediator.Setup(m => m.Send(It.IsAny<GetLetteringSuggestionsQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure<LetteringSuggestionsResultDto>(
+                LetteringErrors.FeatureDisabled("Les propositions de lettrage ne sont pas activées.")));
+        var controller = NewController(mediator.Object);
+
+        var result = await controller.GetLetteringSuggestions(account: "411000", cancellationToken: CancellationToken.None);
+
+        var objectResult = Assert.IsAssignableFrom<ObjectResult>(result);
+        Assert.Equal(400, objectResult.StatusCode);
+        var body = Assert.IsType<FactuTrust.API.Controllers.ApiResponse<object>>(objectResult.Value);
+        Assert.Equal(LetteringErrorCodes.FeatureDisabled, body.Code);
+    }
+
+    [Fact]
+    public async Task GetLetteringSuggestions_ValidationException_Returns400_WithLetteringValidationCode()
+    {
+        var mediator = new Mock<IMediator>(MockBehavior.Strict);
+        mediator.Setup(m => m.Send(It.IsAny<GetLetteringSuggestionsQuery>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new FluentValidation.ValidationException(new[]
+            {
+                new FluentValidation.Results.ValidationFailure("MaxResults", "Le nombre de propositions doit être entre 1 et 200.")
+            }));
+        var controller = NewController(mediator.Object);
+
+        var result = await controller.GetLetteringSuggestions(account: "411000", maxResults: 500, cancellationToken: CancellationToken.None);
+
+        var objectResult = Assert.IsAssignableFrom<ObjectResult>(result);
+        Assert.Equal(400, objectResult.StatusCode);
+        var body = Assert.IsType<FactuTrust.API.Controllers.ApiResponse<object>>(objectResult.Value);
+        Assert.Equal(LetteringErrorCodes.Validation, body.Code);
+    }
+
     /// <summary>Le code de groupe est normalisé (trim + majuscules) AVANT l'envoi au pipeline.</summary>
     [Fact]
     public async Task GetLetteringGroup_LowercaseCode_IsNormalizedBeforeDispatch()

@@ -20,6 +20,7 @@ using FactuTrust.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace FactuTrust.API.Controllers;
 
@@ -1929,6 +1930,38 @@ public sealed class AccountingController : ControllerBase
             account, accountMatch, from, to, state, journalCode, sourceCategories,
             thirdPartyId, thirdPartyKind, side, minAmount, maxAmount, search, page, pageSize);
         return await SendLetteringAsync(query, value => Ok(ApiResponse<LetteringLinesPageDto>.Ok(value)), cancellationToken);
+    }
+
+    /// <summary>
+    /// Propositions de lettrage pour le filtre de l'écran (plan v2, Phase 3, annexe C §3). Lecture
+    /// seule, recalculée à chaque appel. Mêmes filtres que <c>lettering/lines</c>, sans état, sens ni
+    /// pagination. Drapeau éteint → 400 <c>LETTERING_FEATURE_DISABLED</c>, sans calcul.
+    /// </summary>
+    [HttpGet("lettering/suggestions")]
+    [Authorize(Policy = PermissionPolicies.AccountingRead)]
+    [EnableRateLimiting("accounting-suggestions")]
+    public async Task<IActionResult> GetLetteringSuggestions(
+        [FromQuery] string account,
+        [FromQuery] LetteringAccountMatch accountMatch = LetteringAccountMatch.Exact,
+        [FromQuery] DateTime from = default,
+        [FromQuery] DateTime to = default,
+        [FromQuery] string? journalCode = null,
+        [FromQuery] IReadOnlyList<string>? sourceCategories = null,
+        [FromQuery] Guid? thirdPartyId = null,
+        [FromQuery] ThirdPartyKind? thirdPartyKind = null,
+        [FromQuery] decimal? minAmount = null,
+        [FromQuery] decimal? maxAmount = null,
+        [FromQuery] string? search = null,
+        [FromQuery] int maxResults = 50,
+        CancellationToken cancellationToken = default)
+    {
+        var filter = new GetLetteringLinesQuery(
+            account, accountMatch, from, to, LetteringStateFilter.Unlettered, journalCode, sourceCategories,
+            thirdPartyId, thirdPartyKind, LetteringSideFilter.All, minAmount, maxAmount, search);
+        return await SendLetteringAsync(
+            new GetLetteringSuggestionsQuery(filter, maxResults),
+            value => Ok(ApiResponse<LetteringSuggestionsResultDto>.Ok(value)),
+            cancellationToken);
     }
 
     /// <summary>Détail d'un groupe de lettrage, avant délettrage ou complétion (plan §4.2).</summary>
