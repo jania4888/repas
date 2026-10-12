@@ -1909,7 +1909,7 @@ public sealed class AccountingController : ControllerBase
     [HttpGet("lettering/lines")]
     [Authorize(Policy = PermissionPolicies.AccountingRead)]
     public async Task<IActionResult> GetLetteringLines(
-        [FromQuery] string account,
+        [FromQuery] string? account,
         [FromQuery] LetteringAccountMatch accountMatch = LetteringAccountMatch.Exact,
         [FromQuery] DateTime from = default,
         [FromQuery] DateTime to = default,
@@ -1926,8 +1926,10 @@ public sealed class AccountingController : ControllerBase
         [FromQuery] int pageSize = 500,
         CancellationToken cancellationToken = default)
     {
+        // « account » nullable : un compte absent atteint le validator (400 LETTERING_VALIDATION,
+        // code stable) au lieu du [Required] implicite d'ASP.NET (ProblemDetails sans code).
         var query = new GetLetteringLinesQuery(
-            account, accountMatch, from, to, state, journalCode, sourceCategories,
+            account ?? string.Empty, accountMatch, from, to, state, journalCode, sourceCategories,
             thirdPartyId, thirdPartyKind, side, minAmount, maxAmount, search, page, pageSize);
         return await SendLetteringAsync(query, value => Ok(ApiResponse<LetteringLinesPageDto>.Ok(value)), cancellationToken);
     }
@@ -1941,7 +1943,7 @@ public sealed class AccountingController : ControllerBase
     [Authorize(Policy = PermissionPolicies.AccountingRead)]
     [EnableRateLimiting("accounting-suggestions")]
     public async Task<IActionResult> GetLetteringSuggestions(
-        [FromQuery] string account,
+        [FromQuery] string? account,
         [FromQuery] LetteringAccountMatch accountMatch = LetteringAccountMatch.Exact,
         [FromQuery] DateTime from = default,
         [FromQuery] DateTime to = default,
@@ -1956,7 +1958,7 @@ public sealed class AccountingController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         var filter = new GetLetteringLinesQuery(
-            account, accountMatch, from, to, LetteringStateFilter.Unlettered, journalCode, sourceCategories,
+            account ?? string.Empty, accountMatch, from, to, LetteringStateFilter.Unlettered, journalCode, sourceCategories,
             thirdPartyId, thirdPartyKind, LetteringSideFilter.All, minAmount, maxAmount, search);
         return await SendLetteringAsync(
             new GetLetteringSuggestionsQuery(filter, maxResults),

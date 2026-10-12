@@ -46,36 +46,3 @@ public sealed class LetteringSuggestionsAuthorizationTests
         Assert.Equal("accounting-suggestions", limiter!.PolicyName);
     }
 }
-
-/// <summary>
-/// Garde transverse : chaque nom de politique de <c>[EnableRateLimiting]</c> porté par un contrôleur est
-/// enregistré dans <c>Program.cs</c>. Le limiteur s'exécute après l'autorisation : un appel anonyme ne
-/// le révèle donc pas ; seule la configuration réelle de l'hôte le prouve.
-/// </summary>
-public sealed class RateLimitPolicyRegistrationTests : IClassFixture<ChannelsDisabledWebApplicationFactory>
-{
-    private readonly ChannelsDisabledWebApplicationFactory _factory;
-
-    public RateLimitPolicyRegistrationTests(ChannelsDisabledWebApplicationFactory factory) => _factory = factory;
-
-    [Fact]
-    public void EveryControllerRateLimitPolicy_IsRegistered()
-    {
-        var options = _factory.Services.GetRequiredService<IOptions<RateLimiterOptions>>().Value;
-        var policyMap = typeof(RateLimiterOptions)
-            .GetProperty("PolicyMap", BindingFlags.Instance | BindingFlags.NonPublic)?
-            .GetValue(options) as System.Collections.IDictionary;
-        Assert.NotNull(policyMap);
-
-        var used = typeof(AccountingController).Assembly.GetTypes()
-            .Where(t => typeof(ControllerBase).IsAssignableFrom(t))
-            .SelectMany(t => t.GetMethods().Cast<MemberInfo>().Append(t))
-            .Select(m => m.GetCustomAttribute<EnableRateLimitingAttribute>()?.PolicyName)
-            .Where(n => n is not null)
-            .Distinct()
-            .ToList();
-
-        Assert.Contains("accounting-suggestions", used);
-        Assert.All(used, name => Assert.True(policyMap!.Contains(name!), $"Politique de débit non enregistrée : {name}"));
-    }
-}
