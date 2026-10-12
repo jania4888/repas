@@ -13,6 +13,11 @@ public interface ILetteringSuggestionService
     /// <summary>
     /// Calcule les propositions pour le filtre de l'écran. Les filtres d'état et de sens sont ignorés.
     /// </summary>
+    /// <remarks>
+    /// Le fusible de temps (<c>TimeFuseMilliseconds</c>) borne seulement le calcul du moteur. La lecture
+    /// des candidats et des noms de tiers suit le jeton du client : la durée totale d'un appel peut
+    /// donc dépasser le fusible.
+    /// </remarks>
     /// <param name="filter">Filtre de l'écran (compte et période obligatoires, validés en amont).</param>
     /// <param name="maxResults">Nombre maximal de propositions renvoyées, borné à <c>MaxSuggestions</c>.</param>
     /// <param name="cancellationToken">Annulation du client : elle est propagée normalement.</param>
