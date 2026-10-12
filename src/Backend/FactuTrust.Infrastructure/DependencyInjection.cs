@@ -351,6 +351,7 @@ public static class DependencyInjection
         services.AddScoped<IFixedAssetExportService, FixedAssetExportService>();
         services.AddScoped<ILetteringService, LetteringService>();
         services.AddScoped<ILetteringQueryService, LetteringQueryService>();
+        services.AddScoped<ILetteringSuggestionService, FactuTrust.Infrastructure.Services.Lettering.LetteringSuggestionService>();
         services.AddScoped<IAuditLogQueryService, AuditLogQueryService>();
         services.AddScoped<IFecExportService, FecExportService>();
         services.AddScoped<IJournalImportService, JournalImportService>();
