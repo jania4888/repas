@@ -4,6 +4,7 @@ import { Observable, Subject, catchError, debounceTime, defer, finalize, map, of
 import { apiErrorCode } from '@core/utils/api-error-code';
 import { ConfirmationService } from '@core/services/confirmation.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
+import { AccountingFeatureFlagsService } from '../../shared/accounting-feature-flags.service';
 import {
   AccountingService,
   BulkLetteringResultDto,
@@ -35,18 +36,28 @@ interface SelectionSnapshot {
   credit: string[];
 }
 
-type SuggestionsOutcome =
+type SuggestionsOutcome = { seq: number } & (
   | { kind: 'ok'; data: LetteringSuggestionsResultDto }
-  | { kind: 'error'; err: unknown; message: string | null };
+  | { kind: 'error'; err: unknown; message: string | null }
+);
+
+interface RefreshRequest {
+  seq: number;
+  filters: LetteringFilters;
+}
 
 /**
  * État des propositions de lettrage (plan v2, Phase 3, annexe C §5). Store séparé de
  * `LetteringStore` pour ne pas l'alourdir ; fourni par `LetteringComponent` à côté de lui.
  *
  * Règles :
- * - aucun appel tant que le serveur n'a pas répondu une première fois : la réponse
- *   `LETTERING_FEATURE_DISABLED` (drapeau OFF) masque le panneau (`hidden`) et coupe tout appel
- *   ultérieur ;
+ * - aucun appel si le drapeau front `letteringProposals` est éteint (défaut) ; la réponse
+ *   `LETTERING_FEATURE_DISABLED` (drapeau serveur éteint) masque le panneau (`hidden`) et coupe
+ *   tout appel ultérieur ; la requête ne déclenche jamais le toast d'erreur global ;
+ * - les propositions portent sur les filtres du dernier chargement réussi (`loadedFilters`),
+ *   jamais sur le brouillon des filtres ;
+ * - pendant un recalcul (`pending`), la liste affichée est périmée : « Valider » est désactivé ;
+ *   une réponse partie avant une validation réussie est ignorée (la proposition ne revient pas) ;
  * - recalcul après chaque chargement réussi de `LetteringStore` (`reloadSeq`, observé ici) ; anti-rebond de 300 ms et `switchMap` : seule la dernière réponse compte ;
  * - « Valider » passe par `POST letter` avec `origin = 'Suggestion'` et la clé, puis recharge
  *   l'écran (ce qui recalcule les propositions) ;
@@ -58,6 +69,7 @@ export class LetteringSuggestionsStore {
   private readonly confirmation = inject(ConfirmationService);
   private readonly errors = inject(ErrorHandlerService);
   private readonly lettering = inject(LetteringStore);
+  private readonly flags = inject(AccountingFeatureFlagsService);
 
   readonly suggestions = signal<readonly LetteringSuggestion[]>([]);
   readonly loading = signal(false);
@@ -67,6 +79,8 @@ export class LetteringSuggestionsStore {
   readonly totalFound = signal(0);
   /** Vrai après `LETTERING_FEATURE_DISABLED` : le panneau disparaît et plus aucun appel ne part. */
   readonly hidden = signal(false);
+  /** Vrai entre une demande de recalcul et sa réponse : la liste affichée est périmée. */
+  readonly pending = signal(false);
   /** Clé de la proposition en cours de validation (bouton désactivé + indicateur). */
   readonly busyKey = signal<string | null>(null);
 
@@ -82,35 +96,58 @@ export class LetteringSuggestionsStore {
   readonly bulkEligible = computed(() => this.suggestions().filter(isBulkCandidate));
   readonly bulkTotalsByCurrency = computed(() => bulkTotalsByCurrency(this.suggestions(), this.bulkSelection()));
   readonly bulkLineCount = computed(() => bulkLineCount(this.suggestions(), this.bulkSelection()));
-  readonly canValidate = computed(() => this.lettering.canCreate() && this.busyKey() === null && !this.lettering.busy());
+  readonly canValidate = computed(
+    () => this.lettering.canCreate() && this.busyKey() === null && !this.lettering.busy() && !this.pending()
+  );
 
-  private readonly refresh$ = new Subject<LetteringFilters>();
+  private readonly refresh$ = new Subject<RefreshRequest | null>();
+  /** Numéro de la dernière demande de recalcul. */
+  private requestSeq = 0;
+  /** Les réponses de numéro inférieur sont ignorées (relevé après une validation réussie). */
+  private acceptFrom = 0;
 
   constructor() {
     this.refresh$
       .pipe(
         debounceTime(LETTERING_SUGGESTIONS_DEBOUNCE_MS),
-        switchMap(filters => this.fetch(filters)),
+        switchMap(request => (request ? this.fetch(request) : of(null))),
         takeUntilDestroyed(inject(DestroyRef))
       )
-      .subscribe(outcome => this.apply(outcome));
+      .subscribe(outcome => {
+        if (outcome) this.apply(outcome);
+      });
 
     // Recalcul après chaque chargement réussi de l'écran (filtres appliqués, lettrage, délettrage,
     // complétion). `reloadSeq` vaut 0 avant le premier chargement : aucun appel à l'ouverture.
+    // L'instantané de « Sélectionner » est oublié : load() a vidé la sélection.
     effect(() => {
-      if (this.lettering.reloadSeq() > 0) untracked(() => this.refresh());
+      if (this.lettering.reloadSeq() === 0) return;
+      untracked(() => {
+        this.snapshot.set(null);
+        this.refresh();
+      });
     });
   }
 
-  /** Demande un recalcul pour les filtres courants de l'écran (sans effet si le panneau est masqué). */
+  /** Vrai si le drapeau front est allumé et que le serveur n'a pas répondu « désactivé ». */
+  readonly enabled = computed(() => this.flags.isEnabled('letteringProposals') && !this.hidden());
+
+  /**
+   * Demande un recalcul pour les filtres du dernier chargement réussi. Sans effet si le drapeau
+   * front est éteint ou si le panneau est masqué. Sans chargement réussi : vide la liste et
+   * annule une demande en attente.
+   */
   refresh(): void {
-    if (this.hidden()) return;
-    const filters = this.lettering.filters();
-    if (!filters.account) {
+    if (!this.enabled()) return;
+    const filters = this.lettering.loadedFilters();
+    if (!filters?.account) {
+      this.refresh$.next(null);
+      this.pending.set(false);
       this.clear();
       return;
     }
-    this.refresh$.next({ ...filters });
+    this.pending.set(true);
+    this.refresh$.next({ seq: ++this.requestSeq, filters: { ...filters } });
   }
 
   /**
@@ -135,7 +172,7 @@ export class LetteringSuggestionsStore {
    * (filtre d'état, par exemple) ou si une action est en cours.
    */
   select(suggestion: LetteringSuggestion): LetteringSuggestionSelectResult {
-    if (this.lettering.busy() || this.lettering.completionGroup() !== null) return 'busy';
+    if (this.lettering.busy() || this.busyKey() !== null || this.lettering.completionGroup() !== null) return 'busy';
     const visible = new Set(this.lettering.lines().map(l => l.lineId));
     if (!suggestion.lineIds.every(id => visible.has(id))) return 'linesNotVisible';
 
@@ -184,7 +221,8 @@ export class LetteringSuggestionsStore {
   }
 
   private letter(suggestion: LetteringSuggestion): void {
-    if (this.busyKey() !== null) return;
+    // L'état a pu changer pendant que la confirmation était ouverte.
+    if (!this.canValidate()) return;
     this.busyKey.set(suggestion.key);
     this.lettering.error.set(null);
     this.lettering.success.set(null);
@@ -195,6 +233,9 @@ export class LetteringSuggestionsStore {
       .subscribe({
         next: res => {
           if (res.success && res.data) {
+            // Toute réponse demandée avant ce lettrage est périmée (elle contiendrait encore la
+            // proposition) ; le rechargement ci-dessous déclenche un recalcul accepté.
+            this.acceptFrom = this.requestSeq + 1;
             this.suggestions.update(list => list.filter(s => s.key !== suggestion.key));
             this.snapshot.set(null);
             this.lettering.load();
@@ -222,7 +263,7 @@ export class LetteringSuggestionsStore {
       });
   }
 
-  private fetch(filters: LetteringFilters): Observable<SuggestionsOutcome> {
+  private fetch({ seq, filters }: RefreshRequest): Observable<SuggestionsOutcome> {
     this.loading.set(true);
     // `defer` : une exception synchrone reste dans ce flux (catchError) au lieu de couper le Subject.
     return defer(() =>
@@ -241,15 +282,17 @@ export class LetteringSuggestionsStore {
     ).pipe(
         map((res): SuggestionsOutcome =>
           res.success && res.data
-            ? { kind: 'ok', data: res.data }
-            : { kind: 'error', err: null, message: res.error ?? null }
+            ? { seq, kind: 'ok', data: res.data }
+            : { seq, kind: 'error', err: null, message: res.error ?? null }
         ),
-        catchError(err => of<SuggestionsOutcome>({ kind: 'error', err, message: null })),
+        catchError(err => of<SuggestionsOutcome>({ seq, kind: 'error', err, message: null })),
         finalize(() => this.loading.set(false))
       );
   }
 
   private apply(outcome: SuggestionsOutcome): void {
+    if (outcome.seq < this.acceptFrom) return;
+    if (outcome.seq === this.requestSeq) this.pending.set(false);
     if (outcome.kind === 'ok') {
       const data = outcome.data;
       this.suggestions.set((data.suggestions ?? []).map(mapSuggestion));
@@ -261,6 +304,7 @@ export class LetteringSuggestionsStore {
     }
     if (apiErrorCode(outcome.err) === LETTERING_ERROR_CODES.featureDisabled) {
       this.hidden.set(true);
+      this.pending.set(false);
       this.clear();
       return;
     }

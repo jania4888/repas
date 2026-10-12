@@ -96,6 +96,11 @@ export class LetteringStore {
    * se recalculent après tout lettrage, délettrage ou complétion sans toucher à ces méthodes.
    */
   readonly reloadSeq = signal(0);
+  /**
+   * Filtres effectivement utilisés par le dernier chargement réussi (Phase 3). `filters` est un
+   * brouillon modifié à chaque frappe : les propositions doivent porter sur les lignes affichées.
+   */
+  readonly loadedFilters = signal<LetteringFilters | null>(null);
 
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
@@ -326,6 +331,7 @@ export class LetteringStore {
             this.debitSelectedIds.set(new Set());
             this.creditSelectedIds.set(new Set());
             this.completionGroup.set(null);
+            this.loadedFilters.set({ ...f });
             this.reloadSeq.update(n => n + 1);
             onSuccess?.();
           } else {

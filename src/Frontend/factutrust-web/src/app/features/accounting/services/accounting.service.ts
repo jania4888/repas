@@ -2691,7 +2691,12 @@ export class AccountingService {
   getLetteringSuggestions(query: LetteringSuggestionsQuery): Observable<ApiResponse<LetteringSuggestionsResultDto>> {
     let p = this.letteringFilterParams(query);
     if (query.maxResults !== null && query.maxResults !== undefined) p = p.set('maxResults', String(query.maxResults));
-    return this.http.get<ApiResponse<LetteringSuggestionsResultDto>>(`${this.base}/lettering/suggestions`, { params: p });
+    // Pas de toast global : l'écran affiche l'erreur dans le bandeau des propositions, et masque
+    // le bandeau sur `LETTERING_FEATURE_DISABLED` (drapeau serveur éteint).
+    return this.http.get<ApiResponse<LetteringSuggestionsResultDto>>(`${this.base}/lettering/suggestions`, {
+      params: p,
+      context: createHttpContextSkipGlobalErrorUi()
+    });
   }
 
   /**

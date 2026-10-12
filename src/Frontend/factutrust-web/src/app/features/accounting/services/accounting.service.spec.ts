@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { AccountingService } from './accounting.service';
+import { SKIP_ERROR_TOAST } from '@core/http-context';
 import { environment } from '@environments/environment';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
@@ -303,6 +304,14 @@ describe('AccountingService', () => {
 
       const req = httpMock.expectOne(r => r.url === `${base}/lettering/suggestions`);
       expect(req.request.params.keys().sort()).toEqual(['account', 'from', 'to']);
+      req.flush({ success: true, data: null });
+    });
+
+    it('getLetteringSuggestions désactive le toast d’erreur global (erreur affichée dans le bandeau)', () => {
+      service.getLetteringSuggestions({ account: '4111', from: '2026-01-01', to: '2026-12-31' }).subscribe();
+
+      const req = httpMock.expectOne(r => r.url === `${base}/lettering/suggestions`);
+      expect(req.request.context.get(SKIP_ERROR_TOAST)).toBeTrue();
       req.flush({ success: true, data: null });
     });
 

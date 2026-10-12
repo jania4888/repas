@@ -11,6 +11,8 @@ import {
 import { AuthService } from '@core/services/auth.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { ConfirmationService } from '@core/services/confirmation.service';
+import { signal } from '@angular/core';
+import { AccountingFeatureFlagsService } from '../../shared/accounting-feature-flags.service';
 import { createDefaultLetteringFilters } from '../models/lettering.models';
 import { LetteringStore } from './lettering.store';
 import { LETTERING_SUGGESTIONS_DEBOUNCE_MS, LetteringSuggestionsStore } from './lettering-suggestions.store';
@@ -61,6 +63,7 @@ describe('LetteringSuggestionsStore', () => {
   let api: jasmine.SpyObj<AccountingService>;
   let confirmation: jasmine.SpyObj<ConfirmationService>;
   let auth: jasmine.SpyObj<AuthService>;
+  const proposalsFlag = signal(true);
 
   beforeEach(() => {
     api = jasmine.createSpyObj<AccountingService>('AccountingService', [
@@ -79,12 +82,16 @@ describe('LetteringSuggestionsStore', () => {
         { provide: AccountingService, useValue: api },
         { provide: AuthService, useValue: auth },
         { provide: ErrorHandlerService, useValue: new ErrorHandlerService() },
-        { provide: ConfirmationService, useValue: confirmation }
+        { provide: ConfirmationService, useValue: confirmation },
+        { provide: AccountingFeatureFlagsService, useValue: { isEnabled: (key: string) => key === 'letteringProposals' && proposalsFlag() } }
       ]
     });
+    proposalsFlag.set(true);
     lettering = TestBed.inject(LetteringStore);
     store = TestBed.inject(LetteringSuggestionsStore);
     lettering.updateFilters({ ...createDefaultLetteringFilters('2026-01-01', '2026-12-31'), account: '4111' });
+    // Simule un chargement réussi (les propositions portent sur les filtres chargés).
+    lettering.loadedFilters.set({ ...lettering.filters() });
   });
 
   function loadLines(ids: Array<[string, number, number]>): void {
@@ -196,8 +203,59 @@ describe('LetteringSuggestionsStore', () => {
       expect(store.suggestions().length).toBe(1);
     }));
 
+    it('drapeau front éteint : aucun appel, même après un chargement réussi', fakeAsync(() => {
+      proposalsFlag.set(false);
+      api.getLetteringSuggestions.and.returnValue(of(result([])));
+
+      loadLines([['d1', 100, 0]]);
+      TestBed.flushEffects();
+      store.refresh();
+      tick(LETTERING_SUGGESTIONS_DEBOUNCE_MS);
+
+      expect(store.enabled()).toBeFalse();
+      expect(api.getLetteringSuggestions).not.toHaveBeenCalled();
+    }));
+
+    it('utilise les filtres chargés, jamais le brouillon des filtres', fakeAsync(() => {
+      api.getLetteringSuggestions.and.returnValue(of(result([])));
+      lettering.updateFilters({ account: '9999', minAmount: 5 });
+
+      store.refresh();
+      tick(LETTERING_SUGGESTIONS_DEBOUNCE_MS);
+
+      const query = api.getLetteringSuggestions.calls.mostRecent().args[0];
+      expect(query.account).toBe('4111');
+      expect(query.minAmount).toBeUndefined();
+    }));
+
+    it('liste périmée pendant le recalcul : « Valider » désactivé jusqu\'à la réponse', fakeAsync(() => {
+      const pending = new Subject<SuggestionsResponse>();
+      api.getLetteringSuggestions.and.returnValue(pending);
+
+      store.refresh();
+      expect(store.pending()).toBeTrue();
+      expect(store.canValidate()).toBeFalse();
+      tick(LETTERING_SUGGESTIONS_DEBOUNCE_MS);
+      pending.next(result([suggestionDto('k1', 'd1', 'c1')]));
+
+      expect(store.pending()).toBeFalse();
+      expect(store.canValidate()).toBeTrue();
+    }));
+
+    it('sans chargement réussi : annule la demande en attente et vide la liste sans appel', fakeAsync(() => {
+      api.getLetteringSuggestions.and.returnValue(of(result([suggestionDto('k1', 'd1', 'c1')])));
+      store.refresh();
+      lettering.loadedFilters.set(null);
+      store.refresh();
+      tick(LETTERING_SUGGESTIONS_DEBOUNCE_MS);
+
+      expect(api.getLetteringSuggestions).not.toHaveBeenCalled();
+      expect(store.suggestions()).toEqual([]);
+      expect(store.pending()).toBeFalse();
+    }));
+
     it('sans compte : vide la liste sans appel', fakeAsync(() => {
-      lettering.updateFilters({ account: '' });
+      lettering.loadedFilters.set({ ...lettering.filters(), account: '' });
       store.refresh();
       tick(LETTERING_SUGGESTIONS_DEBOUNCE_MS);
       expect(api.getLetteringSuggestions).not.toHaveBeenCalled();
@@ -285,6 +343,22 @@ describe('LetteringSuggestionsStore', () => {
       expect(store.canUndoSelect()).toBeFalse();
     });
 
+    it('un rechargement oublie l\'instantané de « Sélectionner »', fakeAsync(() => {
+      store.select(store.suggestions()[0]);
+      expect(store.canUndoSelect()).toBeTrue();
+
+      lettering.load();
+      TestBed.flushEffects();
+      tick(LETTERING_SUGGESTIONS_DEBOUNCE_MS);
+
+      expect(store.canUndoSelect()).toBeFalse();
+    }));
+
+    it('refuse pendant la validation d\'une proposition', () => {
+      store.busyKey.set('other');
+      expect(store.select(store.suggestions()[0])).toBe('busy');
+    });
+
     it('refuse si une ligne de la proposition n\'est pas affichée, sans toucher la sélection', () => {
       lettering.setPaneSelection('debit', ['d9']);
       expect(store.select(store.suggestions()[1])).toBe('linesNotVisible');
@@ -315,6 +389,36 @@ describe('LetteringSuggestionsStore', () => {
       expect(lettering.success()).toContain('L00042');
       expect(store.busyKey()).toBeNull();
       expect(lettering.reloadSeq()).toBe(2);
+    });
+
+    it('une réponse demandée avant la fin de la validation ne fait pas revenir la proposition', fakeAsync(() => {
+      const letterReply = new Subject<{ success: boolean; data: { code: string; groupId: string; isPartial: boolean; lineCount: number } }>();
+      const inFlight = new Subject<SuggestionsResponse>();
+      api.letterEntries.and.returnValue(letterReply);
+      api.getLetteringSuggestions.and.returnValues(inFlight, of(result([suggestionDto('k2', 'd2', 'c2')])));
+
+      // La validation part, puis un recalcul (rechargement manuel, par exemple) part avant sa fin.
+      store.validate(store.suggestions()[0]);
+      store.refresh();
+      tick(LETTERING_SUGGESTIONS_DEBOUNCE_MS);
+      letterReply.next({ success: true, data: { code: 'L00042', groupId: 'g', isPartial: false, lineCount: 2 } });
+      letterReply.complete();
+      inFlight.next(result([suggestionDto('k1', 'd1', 'c1'), suggestionDto('k2', 'd2', 'c2')]));
+
+      expect(store.suggestions().map(s => s.key)).toEqual(['k2']);
+      TestBed.flushEffects();
+      tick(LETTERING_SUGGESTIONS_DEBOUNCE_MS);
+      expect(store.suggestions().map(s => s.key)).toEqual(['k2']);
+      expect(store.pending()).toBeFalse();
+    }));
+
+    it('ne lettre pas si l\'état a changé pendant la confirmation', () => {
+      confirmation.confirm.and.callFake(c => {
+        store.busyKey.set('other');
+        c.accept?.();
+      });
+      store.validate(store.suggestions()[0]);
+      expect(api.letterEntries).not.toHaveBeenCalled();
     });
 
     it('n\'envoie rien si l\'utilisateur annule la confirmation', () => {
