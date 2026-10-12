@@ -33,11 +33,12 @@ public sealed class BulkLetterCommandHandlerTests
     private readonly MemoryCache _cache = new(new MemoryCacheOptions());
     private readonly List<LetterAccountEntriesCommand> _sent = new();
     private bool _enabled = true;
+    private bool _identified = true;
 
     private BulkLetterCommandHandler Handler()
     {
         var user = new Mock<ICurrentUser>();
-        user.SetupGet(u => u.TenantId).Returns(_tenantId);
+        user.SetupGet(u => u.TenantId).Returns(_identified ? _tenantId : null);
         user.SetupGet(u => u.UserId).Returns(_userId);
         var settings = Options.Create(new AccountingSettings { LetteringSuggestionsEnabled = _enabled });
         return new BulkLetterCommandHandler(
@@ -181,19 +182,119 @@ public sealed class BulkLetterCommandHandlerTests
         Assert.Same(firstResult.Value, third.Value);
     }
 
+    /// <summary>
+    /// Revue p3-13 (M1) : une erreur inattendue arrête le lot SANS perdre le rapport ni l'audit de
+    /// lot ; les groupes suivants sortent en NotProcessed, le lot n'est pas gardé et le verrou est
+    /// relâché (le rejeu reprend tout).
+    /// </summary>
     [Fact]
-    public async Task Bulk_LockIsReleased_WhenAGroupThrows()
+    public async Task Bulk_UnexpectedError_StopsTheBatch_KeepsTheReportAndTheBatchAudit()
     {
+        var failing = Group("b");
+        SenderReturns(cmd => cmd.SuggestionKey == "b" ? throw new InvalidOperationException("panne") : Lettered("L00001"));
+        _queries.Setup(q => q.GetLineCodesAsync(failing.JournalEntryLineIds, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(failing.JournalEntryLineIds.ToDictionary(id => id, _ => (string?)"L00009"));
+        object? audited = null;
+        _audit.Setup(a => a.LogAsync(AuditActions.Accounting.LetteredBulk, "LetteringBulk", It.IsAny<Guid?>(), null,
+                It.IsAny<object?>(), It.IsAny<CancellationToken>()))
+            .Callback<string, string, Guid?, object?, object?, CancellationToken>((_, _, _, _, nv, _) => audited = nv)
+            .Returns(Task.CompletedTask);
+        var command = new BulkLetterCommand(Guid.NewGuid(), new[] { Group("a"), failing, Group("c") });
+
+        var result = await Handler().Handle(command, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(new[] { "a", "b" }, _sent.Select(c => c.SuggestionKey));
+        var r = result.Value.Results;
+        Assert.Equal(BulkLetteringStatuses.Lettered, r[0].Status);
+        Assert.Equal((BulkLetteringStatuses.Rejected, LetteringErrorCodes.Unexpected, "L00009"), (r[1].Status, r[1].ErrorCode, r[1].Code));
+        Assert.Equal(BulkLetteringStatuses.NotProcessed, r[2].Status);
+        using var json = JsonDocument.Parse(JsonSerializer.Serialize(audited));
+        Assert.True(json.RootElement.GetProperty("Aborted").GetBoolean());
+        Assert.Equal(1, json.RootElement.GetProperty("NotProcessed").GetInt32());
+
+        await Handler().Handle(command, CancellationToken.None);
+        Assert.Equal(4, _sent.Count);   // pas de cache, verrou relâché : le rejeu reprend
+    }
+
+    [Fact]
+    public async Task Bulk_UnexpectedErrorOnTheLastGroup_IsStillNotCached()
+    {
+        var failing = Group("a");
         _sender.Setup(s => s.Send(It.IsAny<LetterAccountEntriesCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new InvalidOperationException("panne"));
-        var command = new BulkLetterCommand(Guid.NewGuid(), new[] { Group("a") });
+        _queries.Setup(q => q.GetLineCodesAsync(failing.JournalEntryLineIds, It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new InvalidOperationException("base indisponible"));
+        var command = new BulkLetterCommand(Guid.NewGuid(), new[] { failing });
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() => Handler().Handle(command, CancellationToken.None));
+        var first = await Handler().Handle(command, CancellationToken.None);
 
+        var r = Assert.Single(first.Value.Results);
+        Assert.Equal((LetteringErrorCodes.Unexpected, (string?)null), (r.ErrorCode, r.Code));
         _sender.Reset();
         SenderReturns(_ => Lettered("L00001"));
         var retry = await Handler().Handle(command, CancellationToken.None);
-        Assert.True(retry.IsSuccess);
+        Assert.Equal(BulkLetteringStatuses.Lettered, Assert.Single(retry.Value.Results).Status);
+    }
+
+    /// <summary>Revue p3-13 (L1) : même RequestId, autre sélection → refus, jamais l'ancien rapport.</summary>
+    [Fact]
+    public async Task Bulk_SameRequestIdWithOtherContent_IsRefused()
+    {
+        SenderReturns(_ => Lettered("L00001"));
+        var requestId = Guid.NewGuid();
+        var a = Group("a");
+        await Handler().Handle(new BulkLetterCommand(requestId, new[] { a, Group("b") }), CancellationToken.None);
+
+        var changed = await Handler().Handle(new BulkLetterCommand(requestId, new[] { a }), CancellationToken.None);
+
+        Assert.True(changed.IsFailure);
+        Assert.Equal(LetteringErrorCodes.Validation, changed.Error.Code);
+        Assert.Equal(2, _sent.Count);
+    }
+
+    [Fact]
+    public void Fingerprint_DependsOnKeysLinesAndOrder()
+    {
+        var a = Group("a");
+        var b = Group("b");
+        var reference = BulkLetterCommandHandler.Fingerprint(new[] { a, b });
+        Assert.Equal(reference, BulkLetterCommandHandler.Fingerprint(new[] { a, b }));
+        Assert.NotEqual(reference, BulkLetterCommandHandler.Fingerprint(new[] { b, a }));
+        Assert.NotEqual(reference, BulkLetterCommandHandler.Fingerprint(new[] { a, new BulkLetterGroup("c", b.JournalEntryLineIds) }));
+        Assert.NotEqual(reference, BulkLetterCommandHandler.Fingerprint(
+            new[] { a, new BulkLetterGroup("b", b.JournalEntryLineIds.Reverse().ToList()) }));
+    }
+
+    [Fact]
+    public async Task Bulk_UnidentifiedUser_IsRefusedWithoutSending()
+    {
+        _identified = false;
+
+        var result = await Handler().Handle(new BulkLetterCommand(Guid.NewGuid(), new[] { Group("a") }), CancellationToken.None);
+
+        Assert.Equal(LetteringErrorCodes.Validation, result.Error.Code);
+        _sender.VerifyNoOtherCalls();
+        _audit.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task Bulk_AlreadyCancelled_SendsNothing_AuditsOnce_AndIsNotCached()
+    {
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+        var command = new BulkLetterCommand(Guid.NewGuid(), new[] { Group("a"), Group("b") });
+
+        var result = await Handler().Handle(command, cts.Token);
+
+        Assert.All(result.Value.Results, r => Assert.Equal(BulkLetteringStatuses.NotProcessed, r.Status));
+        _sender.VerifyNoOtherCalls();
+        _audit.Verify(a => a.LogAsync(AuditActions.Accounting.LetteredBulk, It.IsAny<string>(), It.IsAny<Guid?>(),
+            It.IsAny<object?>(), It.IsAny<object?>(), It.IsAny<CancellationToken>()), Times.Once);
+
+        SenderReturns(_ => Lettered("L00001"));
+        await Handler().Handle(command, CancellationToken.None);
+        Assert.Equal(2, _sent.Count);
     }
 
     [Fact]
@@ -258,6 +359,7 @@ public sealed class BulkLetterCommandHandlerTests
         SenderReturns(_ => Result.Failure<LetteringResultDto>(LetteringErrors.AlreadyLettered("Déjà lettrée.")));
         _queries.Setup(q => q.GetLineCodesAsync(group.JournalEntryLineIds, It.IsAny<CancellationToken>()))
             .ReturnsAsync(group.JournalEntryLineIds.ToDictionary(id => id, _ => (string?)"L00042"));
+        ExistingGroup("L00042", group.JournalEntryLineIds);
 
         var result = await Handler().Handle(new BulkLetterCommand(Guid.NewGuid(), new[] { group }), CancellationToken.None);
 
@@ -265,6 +367,47 @@ public sealed class BulkLetterCommandHandlerTests
         Assert.Equal((BulkLetteringStatuses.AlreadyLettered, "L00042"), (r.Status, r.Code));
         Assert.Null(r.ErrorCode);
         Assert.Equal(1, result.Value.AlreadyLettered);
+    }
+
+    private void ExistingGroup(string code, IEnumerable<Guid> members)
+    {
+        var lines = members.Select(id => new LetteringLineDto(
+            id, Guid.NewGuid(), new DateTime(2026, 5, 1), "JV", 1, 1, "4111", "Ligne", "Écriture", null, "Manual",
+            10m, 0m, "TND", 0m, 0m, code, false, null, 0, null, false, false, false, false)).ToList();
+        _queries.Setup(q => q.GetGroupAsync(code, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success(new LetteringGroupDto(
+                Guid.NewGuid(), code, "4111", 10m, "TND", code.StartsWith('P'), DateTime.UtcNow, null, lines, true, null, false)));
+    }
+
+    /// <summary>Revue p3-13 (L3) : un groupe existant plus large n'est pas la proposition.</summary>
+    [Fact]
+    public async Task Bulk_AlreadyLetteredInALargerGroup_IsRejected()
+    {
+        var group = Group("a");
+        SenderReturns(_ => Result.Failure<LetteringResultDto>(LetteringErrors.AlreadyLettered("Déjà lettrée.")));
+        _queries.Setup(q => q.GetLineCodesAsync(group.JournalEntryLineIds, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(group.JournalEntryLineIds.ToDictionary(id => id, _ => (string?)"L00005"));
+        ExistingGroup("L00005", group.JournalEntryLineIds.Append(Guid.NewGuid()));
+
+        var result = await Handler().Handle(new BulkLetterCommand(Guid.NewGuid(), new[] { group }), CancellationToken.None);
+
+        var r = Assert.Single(result.Value.Results);
+        Assert.Equal((BulkLetteringStatuses.Rejected, LetteringErrorCodes.AlreadyLettered), (r.Status, r.ErrorCode));
+    }
+
+    /// <summary>Revue p3-13 (L3) : un groupe partiel (P…) n'est jamais « déjà lettré » (pas de lecture du groupe).</summary>
+    [Fact]
+    public async Task Bulk_AlreadyInAPartialGroup_IsRejected()
+    {
+        var group = Group("a");
+        SenderReturns(_ => Result.Failure<LetteringResultDto>(LetteringErrors.AlreadyLettered("Déjà lettrée.")));
+        _queries.Setup(q => q.GetLineCodesAsync(group.JournalEntryLineIds, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(group.JournalEntryLineIds.ToDictionary(id => id, _ => (string?)"P00003"));
+
+        var result = await Handler().Handle(new BulkLetterCommand(Guid.NewGuid(), new[] { group }), CancellationToken.None);
+
+        Assert.Equal(BulkLetteringStatuses.Rejected, Assert.Single(result.Value.Results).Status);
+        _queries.Verify(q => q.GetGroupAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     public static TheoryData<string?, string?> MixedCodes() => new()
@@ -326,6 +469,8 @@ public sealed class BulkLetterCommandHandlerTests
         Assert.False(auditToken.CanBeCanceled);
         using var json = JsonDocument.Parse(JsonSerializer.Serialize(audited));
         var root = json.RootElement;
+        Assert.Equal(requestId, root.GetProperty("RequestId").GetGuid());
+        Assert.False(root.GetProperty("Aborted").GetBoolean());
         Assert.Equal(2, root.GetProperty("Total").GetInt32());
         Assert.Equal(1, root.GetProperty("Lettered").GetInt32());
         Assert.Equal(1, root.GetProperty("Rejected").GetInt32());

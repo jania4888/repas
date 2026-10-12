@@ -37,6 +37,12 @@ public static class LetteringErrorCodes
 
     /// <summary>Phase 3 : un lettrage en masse portant le même identifiant de requête est déjà en cours (409).</summary>
     public const string BulkInProgress = "LETTERING_BULK_IN_PROGRESS";
+
+    /// <summary>
+    /// Phase 3, rapport de lettrage en masse uniquement : un groupe a levé une erreur inattendue
+    /// (base indisponible, audit en échec…). Le lot s'arrête ; le groupe est à vérifier avant relance.
+    /// </summary>
+    public const string Unexpected = "LETTERING_UNEXPECTED";
 }
 
 /// <summary>Fabriques d'<see cref="Error"/> portant les codes stables ci-dessus.</summary>
