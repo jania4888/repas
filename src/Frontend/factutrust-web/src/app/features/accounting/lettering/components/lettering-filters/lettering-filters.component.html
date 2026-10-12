@@ -2,13 +2,14 @@
   ariaLabel="Filtres de lettrage"
   i18n-ariaLabel="@@accounting.lettering.filters.tpl.filtres.de.lettrage"
 >
-  <div accountingFilterFields class="accounting-filters-grid">
+  <form accountingFilterFields class="accounting-filters-grid" (ngSubmit)="submit()">
     <div class="accounting-filter-field">
       <label class="accounting-filter-label" for="lettering-account" i18n="@@accounting.lettering.filters.tpl.compte">Compte</label>
       <p-autoComplete
         inputId="lettering-account"
         class="accounting-filter-input"
         [(ngModel)]="accountQuery"
+        [ngModelOptions]="{ standalone: true }"
         [suggestions]="accountSuggestions"
         (completeMethod)="filterAccounts($event)"
         (ngModelChange)="onAccountInputChange($event)"
@@ -28,6 +29,7 @@
         inputId="lettering-third-party"
         class="accounting-filter-input"
         [ngModel]="thirdPartyQuery"
+        [ngModelOptions]="{ standalone: true }"
         [suggestions]="thirdPartySuggestions"
         (completeMethod)="filterThirdParties($event)"
         (onSelect)="onThirdPartySelect($event.value)"
@@ -53,6 +55,7 @@
         class="accounting-filter-input"
         type="date"
         [ngModel]="filters.from"
+        [ngModelOptions]="{ standalone: true }"
         (ngModelChange)="onDateChange('from', $event)"
       />
     </div>
@@ -64,6 +67,7 @@
         class="accounting-filter-input"
         type="date"
         [ngModel]="filters.to"
+        [ngModelOptions]="{ standalone: true }"
         (ngModelChange)="onDateChange('to', $event)"
       />
     </div>
@@ -74,6 +78,7 @@
         id="lettering-journal"
         class="accounting-filter-input"
         [ngModel]="filters.journalCode ?? ''"
+        [ngModelOptions]="{ standalone: true }"
         (ngModelChange)="onJournalChange($event)"
       >
         <option value="" i18n="@@accounting.lettering.filters.tpl.tous.les.journaux">Tous les journaux</option>
@@ -89,6 +94,7 @@
         id="lettering-state"
         class="accounting-filter-input"
         [ngModel]="filters.state"
+        [ngModelOptions]="{ standalone: true }"
         (ngModelChange)="onStateChange($event)"
       >
         @for (s of states; track s.value) {
@@ -118,6 +124,7 @@
             inputId="lettering-min"
             [compact]="true"
             [ngModel]="filters.minAmount"
+            [ngModelOptions]="{ standalone: true }"
             (ngModelChange)="onMinAmountChange($event)"
           />
         </div>
@@ -127,22 +134,44 @@
             inputId="lettering-max"
             [compact]="true"
             [ngModel]="filters.maxAmount"
+            [ngModelOptions]="{ standalone: true }"
             (ngModelChange)="onMaxAmountChange($event)"
           />
+        </div>
+        <div class="accounting-filter-field">
+          <label class="accounting-filter-label" for="lettering-doctype" i18n="@@accounting.lettering.filters.tpl.type.de.piece">Type de pièce</label>
+          <select
+            id="lettering-doctype"
+            class="accounting-filter-input"
+            [ngModel]="filters.documentType ?? ''"
+            [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="onDocumentTypeChange($event)"
+          >
+            <option value="" i18n="@@accounting.lettering.filters.tpl.tous.les.types">Tous les types</option>
+            @for (t of documentTypes; track t.value) {
+              <option [value]="t.value">{{ t.label }}</option>
+            }
+          </select>
         </div>
         <div class="accounting-filter-field accounting-filter-field--checkbox">
           <label class="lettering-filters__checkbox-label">
             <input
               type="checkbox"
               [ngModel]="filters.accountMatch === 'prefix'"
+              [ngModelOptions]="{ standalone: true }"
               (ngModelChange)="onIncludeSubAccountsChange($event)"
             />
             <span i18n="@@accounting.lettering.filters.tpl.inclure.sous.comptes">Inclure les sous-comptes</span>
           </label>
         </div>
+        @if (amountRangeInvalid()) {
+          <p class="lettering-filters__error" role="alert" i18n="@@accounting.lettering.filters.tpl.montant.min.superieur.max">Le montant min. doit être inférieur ou égal au montant max.</p>
+        }
       </div>
     }
-  </div>
+    <!-- Bouton submit masqué : active la soumission du formulaire à la touche Entrée (chargement). -->
+    <button type="submit" class="lettering-filters__submit-proxy" [disabled]="loading" tabindex="-1" aria-hidden="true"></button>
+  </form>
 
   <div accountingFilterActions>
     <app-button

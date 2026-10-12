@@ -172,6 +172,51 @@ describe('LetteringFiltersComponent', () => {
       component.submit();
       expect(count).toBe(1);
     });
+
+    it('bloque le chargement quand min > max et signale l’incohérence', () => {
+      let count = 0;
+      component.load.subscribe(() => count++);
+      component.filters = { ...component.filters, minAmount: 1000, maxAmount: 100 };
+      component.submit();
+      expect(count).toBe(0);
+      expect(component.amountRangeInvalid()).toBe(true);
+    });
+
+    it('recharge après correction de la plage min/max', () => {
+      let count = 0;
+      component.load.subscribe(() => count++);
+      component.filters = { ...component.filters, minAmount: 1000, maxAmount: 100 };
+      component.submit();
+      component.filters = { ...component.filters, minAmount: 100, maxAmount: 1000 };
+      component.submit();
+      expect(count).toBe(1);
+      expect(component.amountRangeInvalid()).toBe(false);
+    });
+  });
+
+  describe('onDocumentTypeChange', () => {
+    it('émet le type de pièce choisi puis le réinitialise sur la valeur vide', () => {
+      const emitted: any[] = [];
+      component.filtersChange.subscribe(f => emitted.push(f));
+      component.onDocumentTypeChange('invoice');
+      component.onDocumentTypeChange('');
+      expect(emitted[0].documentType).toBe('invoice');
+      expect(emitted[1].documentType).toBeNull();
+    });
+  });
+
+  describe('lien profond', () => {
+    it('affiche le nom du tiers déjà résolu dans le champ tiers', () => {
+      const fixture = TestBed.createComponent(LetteringFiltersComponent);
+      const cmp = fixture.componentInstance;
+      cmp.filters = {
+        ...createDefaultLetteringFilters('2026-01-01', '2026-01-31'),
+        thirdParty: { id: 'tp1', kind: 1, name: 'Client ABC' }
+      };
+      cmp.payloadBuilder = () => ({});
+      fixture.detectChanges();
+      expect(cmp.thirdPartyQuery).toBe('Client ABC');
+    });
   });
 
   describe('onStateChange / onJournalChange / onDateChange / montants', () => {

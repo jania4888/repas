@@ -48,6 +48,8 @@ export class LetteringFiltersComponent implements OnInit {
 
   readonly journalOptions = signal<readonly AccountingJournalTab[]>([]);
   readonly showAdvanced = signal(false);
+  /** Vrai quand min > max : bloque le chargement tant que la plage est incohérente. */
+  readonly amountRangeInvalid = signal(false);
 
   accountQuery = '';
   accountSuggestions: string[] = [];
@@ -63,8 +65,25 @@ export class LetteringFiltersComponent implements OnInit {
     { value: 'all', label: $localize`:@@accounting.lettering.filters.ts.toutes:Toutes` }
   ];
 
+  /** Types de pièce (`sourceCategory`, contrat §4.1) pour le filtre « Type de pièce ». */
+  readonly documentTypes: { value: string; label: string }[] = [
+    { value: 'invoice', label: $localize`:@@accounting.lettering.filters.ts.doctype.facture:Facture` },
+    { value: 'credit_note', label: $localize`:@@accounting.lettering.filters.ts.doctype.avoir:Avoir` },
+    { value: 'payment', label: $localize`:@@accounting.lettering.filters.ts.doctype.reglement:Règlement` },
+    { value: 'payroll', label: $localize`:@@accounting.lettering.filters.ts.doctype.paie:Paie` },
+    { value: 'opening', label: $localize`:@@accounting.lettering.filters.ts.doctype.a.nouveau:À-nouveau` },
+    { value: 'reversal', label: $localize`:@@accounting.lettering.filters.ts.doctype.extourne:Extourne` },
+    { value: 'exchange', label: $localize`:@@accounting.lettering.filters.ts.doctype.ecart.de.change:Écart de change` },
+    { value: 'manual', label: $localize`:@@accounting.lettering.filters.ts.doctype.manuel:Manuel` },
+    { value: 'other', label: $localize`:@@accounting.lettering.filters.ts.doctype.autre:Autre` }
+  ];
+
   ngOnInit(): void {
     this.accountQuery = this.filters.account;
+    // Lien profond : affiche le nom du tiers déjà résolu côté conteneur (query param `thirdPartyName`).
+    if (this.filters.thirdParty) {
+      this.thirdPartyQuery = this.filters.thirdParty.name;
+    }
     this.api.getChartOfAccounts().subscribe({
       next: res => {
         if (res.success && res.data) this.allAccounts = res.data;
@@ -124,11 +143,17 @@ export class LetteringFiltersComponent implements OnInit {
     this.emitPatch({ [key]: value } as Partial<LetteringFilters>);
   }
 
+  onDocumentTypeChange(value: string): void {
+    this.emitPatch({ documentType: value || null });
+  }
+
   onMinAmountChange(value: number | null): void {
+    this.amountRangeInvalid.set(false);
     this.emitPatch({ minAmount: value });
   }
 
   onMaxAmountChange(value: number | null): void {
+    this.amountRangeInvalid.set(false);
     this.emitPatch({ maxAmount: value });
   }
 
@@ -141,6 +166,12 @@ export class LetteringFiltersComponent implements OnInit {
   }
 
   submit(): void {
+    const { minAmount, maxAmount } = this.filters;
+    if (minAmount != null && maxAmount != null && minAmount > maxAmount) {
+      this.amountRangeInvalid.set(true);
+      return;
+    }
+    this.amountRangeInvalid.set(false);
     this.load.emit();
   }
 
