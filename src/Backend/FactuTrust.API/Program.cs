@@ -765,6 +765,15 @@ app.MapControllers();
         accountingSettings.BrouillardEnabled,
         accountingSettings.BankStatementLayoutParserEnabled,
         accountingSettings.BankStatementPreviewTimeoutSeconds);
+    var letteringSuggestions = accountingSettings.LetteringSuggestions.Clamped();
+    featureLogger.LogInformation(
+        "Effective feature flags: Accounting.LetteringSuggestions={LetteringSuggestionsEnabled} MaxCandidateLines={MaxCandidateLines} MaxSuggestions={MaxSuggestions} SubsetMaxSize={SubsetMaxSize} TimeFuseMilliseconds={TimeFuseMilliseconds} BulkMaxGroups={BulkMaxGroups}",
+        accountingSettings.LetteringSuggestionsEnabled,
+        letteringSuggestions.MaxCandidateLines,
+        letteringSuggestions.MaxSuggestions,
+        letteringSuggestions.SubsetMaxSize,
+        letteringSuggestions.TimeFuseMilliseconds,
+        letteringSuggestions.BulkMaxGroups);
     if (accountingSettings.BankStatementAiForAllDocumentsEnabled && !accountingSettings.BankStatementAiPostingEnabled)
     {
         featureLogger.LogWarning(

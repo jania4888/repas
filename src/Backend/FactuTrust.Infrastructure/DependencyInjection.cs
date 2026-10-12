@@ -626,6 +626,17 @@ public static class DependencyInjection
                         + "l'utilisent seront refusées à la création du compte.",
                         key, value, FactuTrust.Domain.Services.Accounting.AccountNumberRules.MaxDigits);
                 }
+
+                // Phase 3 du lettrage : une borne dépassée est ramenée dans ses limites par
+                // LetteringSuggestionSettings.Clamped() ; on le signale sans bloquer le démarrage.
+                foreach (var (key, value, min, max) in settings.LetteringSuggestions.OutOfRangeKeys())
+                {
+                    Microsoft.Extensions.Logging.LoggerExtensions.LogWarning(
+                        logger,
+                        "Configuration comptable : LetteringSuggestions:{Key} = {Value} est hors bornes "
+                        + "[{Min} ; {Max}]. La valeur bornée sera utilisée.",
+                        key, value, min, max);
+                }
             });
 
         services.Configure<ProductOnboardingSettings>(configuration.GetSection(ProductOnboardingSettings.SectionName));

@@ -1955,7 +1955,8 @@ public sealed class AccountingController : ControllerBase
         return error.Code switch
         {
             LetteringErrorCodes.AlreadyLettered or LetteringErrorCodes.PeriodLocked
-                or LetteringErrorCodes.GroupInconsistent => Conflict(body),
+                or LetteringErrorCodes.GroupInconsistent
+                or LetteringErrorCodes.BulkInProgress => Conflict(body),
             LetteringErrorCodes.GroupNotFound => NotFound(body),
             _ => BadRequest(body)
         };
