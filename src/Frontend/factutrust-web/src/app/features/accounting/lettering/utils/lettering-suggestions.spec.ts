@@ -6,7 +6,10 @@ import {
   LetteringSuggestion
 } from '../models/lettering-suggestions.models';
 import {
+  bulkAccounts,
   bulkGroups,
+  bulkIneligibleReason,
+  canAddToBulk,
   bulkLineCount,
   bulkTotalsByCurrency,
   categoryText,
@@ -166,6 +169,72 @@ describe('lettering-suggestions (utilitaires purs)', () => {
     it('isBulkCandidate exige au moins deux lignes', () => {
       expect(isBulkCandidate(suggestion({ creditLines: [] }))).toBeFalse();
       expect(isBulkCandidate(suggestion())).toBeTrue();
+    });
+  });
+
+  describe('sélection manuelle du lot', () => {
+    it('onlyHighConfidence: false retient aussi la confiance moyenne', () => {
+      const high = suggestion({ confidence: 'High' });
+      const medium = suggestion({ confidence: 'Medium' });
+      const fx = suggestion({ confidence: 'Medium', bulkEligible: false, hasExchangeDifference: true });
+
+      expect(defaultBulkSelection([high, medium, fx], { onlyHighConfidence: false })).toEqual([high.key, medium.key]);
+      expect(defaultBulkSelection([high, medium, fx], {})).toEqual([high.key]);
+    });
+
+    it('canAddToBulk refuse une proposition inéligible, déjà cochée ou qui partage une ligne', () => {
+      const a = suggestion();
+      const sameLine = suggestion({ creditLines: [lineDto({ lineId: a.lineIds[1], credit: 100 })] });
+      const fx = suggestion({ bulkEligible: false, hasExchangeDifference: true });
+      const free = suggestion();
+      const list = [a, sameLine, fx, free];
+      const keys = new Set([a.key]);
+
+      expect(canAddToBulk(list, keys, a)).toBeFalse();
+      expect(canAddToBulk(list, keys, sameLine)).toBeFalse();
+      expect(canAddToBulk(list, keys, fx)).toBeFalse();
+      expect(canAddToBulk(list, keys, free)).toBeTrue();
+      // Une clé cochée absente de la liste ne bloque aucune ligne.
+      expect(canAddToBulk(list, new Set(['inconnue']), sameLine)).toBeTrue();
+    });
+
+    it('canAddToBulk respecte le plafond de groupes', () => {
+      const list = Array.from({ length: LETTERING_BULK_MAX_GROUPS + 1 }, () => suggestion());
+      const full = new Set(list.slice(0, LETTERING_BULK_MAX_GROUPS).map(s => s.key));
+      const almost = new Set(list.slice(0, LETTERING_BULK_MAX_GROUPS - 1).map(s => s.key));
+
+      expect(canAddToBulk(list, full, list[LETTERING_BULK_MAX_GROUPS])).toBeFalse();
+      expect(canAddToBulk(list, almost, list[LETTERING_BULK_MAX_GROUPS])).toBeTrue();
+    });
+
+    it('canAddToBulk respecte le plafond de lignes au total', () => {
+      const perGroup = LETTERING_BULK_MAX_LINES_PER_GROUP;
+      const fill = Array.from({ length: LETTERING_BULK_MAX_TOTAL_LINES / perGroup }, () => withLines(perGroup));
+      const extra = suggestion();
+      const list = [...fill, extra];
+      const keys = new Set(fill.map(s => s.key));
+
+      expect(canAddToBulk(list, keys, extra)).toBeFalse();
+      keys.delete(fill[0].key);
+      expect(canAddToBulk(list, keys, extra)).toBeTrue();
+    });
+
+    it('bulkIneligibleReason donne la raison affichée', () => {
+      expect(bulkIneligibleReason(suggestion())).toBeNull();
+      expect(bulkIneligibleReason(suggestion({ bulkEligible: false, hasExchangeDifference: true }))).toBe('exchangeDifference');
+      expect(bulkIneligibleReason(withLines(LETTERING_BULK_MAX_LINES_PER_GROUP + 1))).toBe('tooManyLines');
+      expect(bulkIneligibleReason(suggestion({ bulkEligible: false }))).toBe('notEligible');
+      expect(bulkIneligibleReason(suggestion({ creditLines: [] }))).toBe('notEligible');
+    });
+
+    it('bulkAccounts liste les comptes touchés sans doublon', () => {
+      const a = suggestion({ accountNumber: '4111' });
+      const b = suggestion({ accountNumber: '4011' });
+      const c = suggestion({ accountNumber: '4111' });
+      const d = suggestion({ accountNumber: '4012' });
+
+      expect(bulkAccounts([a, b, c, d], [c.key, b.key, a.key])).toEqual(['4111', '4011']);
+      expect(bulkAccounts([a], [])).toEqual([]);
     });
   });
 

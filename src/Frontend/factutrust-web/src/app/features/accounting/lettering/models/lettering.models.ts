@@ -172,7 +172,8 @@ export const LETTERING_ERROR_CODES = {
 } as const;
 
 /**
- * Action en cours sur l'écran (verrou unique). `'suggestion'` : validation d'une proposition
- * (Phase 3, `LetteringSuggestionsStore`) ; elle désactive aussi les actions principales.
+ * Action en cours sur l'écran (verrou unique). `'suggestion'` : validation d'une proposition ;
+ * `'bulk'` : lettrage en masse (Phase 3, `LetteringSuggestionsStore`). Les deux désactivent aussi
+ * les actions principales.
  */
-export type LetteringBusyAction = 'letter' | 'settle' | 'unletter' | 'complete' | 'suggestion' | null;
+export type LetteringBusyAction = 'letter' | 'settle' | 'unletter' | 'complete' | 'suggestion' | 'bulk' | null;

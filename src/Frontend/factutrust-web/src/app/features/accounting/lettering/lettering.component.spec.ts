@@ -212,6 +212,22 @@ describe('LetteringComponent', () => {
   describe('propositions (Phase 3)', () => {
     const suggestion = { key: 'k1', lineIds: ['d1', 'c1'] } as unknown as LetteringSuggestion;
 
+    it('« Lettrer en masse… » du tiroir : ferme le tiroir et ouvre le dialogue de masse', () => {
+      const open = spyOn(component['suggestions'], 'openBulkDialog');
+      component.proposalsDrawerOpen.set(true);
+      component.onOpenBulk();
+      expect(component.proposalsDrawerOpen()).toBeFalse();
+      expect(open).toHaveBeenCalledTimes(1);
+    });
+
+    it('fermeture du dialogue de masse : délègue au store, ignore une ouverture', () => {
+      const close = spyOn(component['suggestions'], 'closeBulkDialog');
+      component.onBulkDialogVisibleChange(true);
+      expect(close).not.toHaveBeenCalled();
+      component.onBulkDialogVisibleChange(false);
+      expect(close).toHaveBeenCalledTimes(1);
+    });
+
     it('clic sur une carte : le message reflète le résultat de select()', () => {
       spyOn(component['suggestions'], 'select').and.returnValue('linesNotVisible');
       component.onSelectSuggestion(suggestion);
@@ -368,6 +384,7 @@ describe('LetteringComponent — rendu des propositions', () => {
     expect(query('lettering-proposals-strip')).toBeNull();
     expect(query('lettering-proposals-header-button')).toBeNull();
     expect(fixture.nativeElement.querySelector('app-lettering-proposals-drawer')).toBeNull();
+    expect(fixture.nativeElement.querySelector('app-lettering-bulk-dialog')).toBeNull();
   });
 
   it('drapeau front éteint : un chargement réussi ne déclenche aucun appel de propositions', fakeAsync(() => {
@@ -388,6 +405,7 @@ describe('LetteringComponent — rendu des propositions', () => {
     expect(query('lettering-proposals-strip')).not.toBeNull();
     expect(query('lettering-proposals-header-button')).not.toBeNull();
     expect(fixture.nativeElement.querySelector('app-lettering-proposals-drawer')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('app-lettering-bulk-dialog')).not.toBeNull();
   });
 
   it('« Voir toutes les propositions » du bandeau ouvre le tiroir', () => {

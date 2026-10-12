@@ -97,14 +97,17 @@ export function isBulkCandidate(s: LetteringSuggestion): boolean {
  * refuserait tout le lot (400, une ligne dans deux groupes ou clé en double). Le moteur ne produit
  * pas de chevauchement dans une même réponse ; la garde protège d'une fusion de listes.
  */
-export function defaultBulkSelection(list: readonly LetteringSuggestion[]): string[] {
+export function defaultBulkSelection(
+  list: readonly LetteringSuggestion[], options: { onlyHighConfidence?: boolean } = {}
+): string[] {
+  const onlyHigh = options.onlyHighConfidence ?? true;
   const keys: string[] = [];
   const usedKeys = new Set<string>();
   const usedLines = new Set<string>();
   let lines = 0;
   for (const s of list) {
     if (keys.length >= LETTERING_BULK_MAX_GROUPS) break;
-    if (s.confidence !== 'High' || !isBulkCandidate(s)) continue;
+    if ((onlyHigh && s.confidence !== 'High') || !isBulkCandidate(s)) continue;
     if (lines + s.lineIds.length > LETTERING_BULK_MAX_TOTAL_LINES) continue;
     if (usedKeys.has(s.key) || s.lineIds.some(id => usedLines.has(id))) continue;
     keys.push(s.key);
@@ -113,6 +116,38 @@ export function defaultBulkSelection(list: readonly LetteringSuggestion[]): stri
     lines += s.lineIds.length;
   }
   return keys;
+}
+
+/**
+ * Vrai si `candidate` peut rejoindre le lot `keys` sans que le serveur refuse tout le lot :
+ * proposition éligible, pas déjà cochée, plafonds de groupes et de lignes respectés, aucune ligne
+ * commune avec une proposition déjà cochée.
+ */
+export function canAddToBulk(
+  list: readonly LetteringSuggestion[], keys: ReadonlySet<string>, candidate: LetteringSuggestion
+): boolean {
+  if (!isBulkCandidate(candidate) || keys.has(candidate.key)) return false;
+  const current = selected(list, keys);
+  if (current.length >= LETTERING_BULK_MAX_GROUPS) return false;
+  const lines = current.reduce((sum, s) => sum + s.lineIds.length, 0);
+  if (lines + candidate.lineIds.length > LETTERING_BULK_MAX_TOTAL_LINES) return false;
+  const used = new Set(current.flatMap(s => s.lineIds));
+  return !candidate.lineIds.some(id => used.has(id));
+}
+
+/** Pourquoi une proposition ne peut pas partir dans un lot ; `null` si elle le peut. */
+export type BulkIneligibleReason = 'exchangeDifference' | 'tooManyLines' | 'notEligible';
+
+export function bulkIneligibleReason(s: LetteringSuggestion): BulkIneligibleReason | null {
+  if (isBulkCandidate(s)) return null;
+  if (s.hasExchangeDifference) return 'exchangeDifference';
+  if (s.lineIds.length > LETTERING_BULK_MAX_LINES_PER_GROUP) return 'tooManyLines';
+  return 'notEligible';
+}
+
+/** Comptes touchés par le lot, sans doublon, dans l'ordre de la liste. */
+export function bulkAccounts(list: readonly LetteringSuggestion[], keys: Iterable<string>): string[] {
+  return [...new Set(selected(list, keys).map(s => s.accountNumber))];
 }
 
 function selected(list: readonly LetteringSuggestion[], keys: Iterable<string>): LetteringSuggestion[] {

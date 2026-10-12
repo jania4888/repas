@@ -1,0 +1,163 @@
+<p-dialog
+  [visible]="visible()"
+  (visibleChange)="onVisibleChange($event)"
+  [modal]="true"
+  [closable]="!running()"
+  [closeOnEscape]="!running()"
+  [draggable]="false"
+  [resizable]="false"
+  appendTo="body"
+  styleClass="lettering-bulk-dialog"
+  [style]="{ width: 'min(48rem, 96vw)' }"
+  header="Lettrer en masse" i18n-header="@@accounting.lettering.suggestions.bulk.title"
+>
+  <div class="bulk" data-testid="lettering-bulk-dialog" [attr.aria-busy]="running()">
+    @if (result(); as r) {
+      <!-- Vue 3 : rapport -->
+      <p class="bulk__intro" role="status" data-testid="lettering-bulk-report-summary" i18n="@@accounting.lettering.suggestions.bulk.report.summary">Lot traité : {{ r.lettered }} lettrées, {{ r.alreadyLettered }} déjà lettrées, {{ r.rejected }} refusées, {{ r.notProcessed }} non traitées.</p>
+      <dl class="bulk__counters">
+        <div class="bulk__counter bulk__counter--ok">
+          <dt i18n="@@accounting.lettering.suggestions.bulk.report.lettered">Lettrées</dt>
+          <dd data-testid="lettering-bulk-count-lettered">{{ r.lettered }}</dd>
+        </div>
+        <div class="bulk__counter">
+          <dt i18n="@@accounting.lettering.suggestions.bulk.report.already">Déjà lettrées</dt>
+          <dd data-testid="lettering-bulk-count-already">{{ r.alreadyLettered }}</dd>
+        </div>
+        <div class="bulk__counter bulk__counter--error">
+          <dt i18n="@@accounting.lettering.suggestions.bulk.report.rejected">Refusées</dt>
+          <dd data-testid="lettering-bulk-count-rejected">{{ r.rejected }}</dd>
+        </div>
+        <div class="bulk__counter bulk__counter--warn">
+          <dt i18n="@@accounting.lettering.suggestions.bulk.report.notProcessed">Non traitées</dt>
+          <dd data-testid="lettering-bulk-count-not-processed">{{ r.notProcessed }}</dd>
+        </div>
+      </dl>
+      <ul class="bulk__list" role="list">
+        @for (g of r.results; track g.clientKey) {
+          <li class="bulk__result" [attr.data-status]="g.status" data-testid="lettering-bulk-result">
+            <span class="bulk__result-label">{{ resultLabel(g) }}</span>
+            <span class="bulk__result-status">{{ resultText(g) }}</span>
+          </li>
+        }
+      </ul>
+    } @else if (step() === 'confirm') {
+      <!-- Vue 2 : confirmation explicite -->
+      <div class="bulk__confirm" data-testid="lettering-bulk-confirm">
+        <p class="bulk__confirm-question" i18n="@@accounting.lettering.suggestions.bulk.confirm.question">Lettrer {{ selectedCount() }} propositions ({{ lineCount() }} lignes) ?</p>
+        <ul class="bulk__confirm-points">
+          <li i18n="@@accounting.lettering.suggestions.bulk.confirm.transaction">Chaque proposition est lettrée seule : un refus ne bloque pas les autres.</li>
+          <li i18n="@@accounting.lettering.suggestions.bulk.confirm.final">Le lettrage est définitif : seul un délettrage, groupe par groupe, peut l'annuler.</li>
+        </ul>
+        <ng-container [ngTemplateOutlet]="summary" />
+      </div>
+    } @else {
+      <!-- Vue 1 : choix -->
+      <p class="bulk__intro" i18n="@@accounting.lettering.suggestions.bulk.intro">Les propositions de confiance haute sont cochées. Une proposition avec un écart de change ou trop de lignes se valide seule.</p>
+      <div class="bulk__toolbar">
+        <button type="button" class="bulk__link" [disabled]="eligibleCount() === 0" (click)="selectAll.emit()" data-testid="lettering-bulk-select-all" i18n="@@accounting.lettering.suggestions.bulk.selectAll">Cocher toutes les éligibles</button>
+        <button type="button" class="bulk__link" [disabled]="selectedCount() === 0" (click)="clearAll.emit()" data-testid="lettering-bulk-clear" i18n="@@accounting.lettering.suggestions.bulk.clear">Tout décocher</button>
+      </div>
+      <ul class="bulk__list" role="list" data-testid="lettering-bulk-list">
+        @for (row of rows(); track row.suggestion.key) {
+          <li class="bulk__row" [class.bulk__row--blocked]="row.blocked !== null" data-testid="lettering-bulk-row">
+            <input
+              type="checkbox"
+              class="bulk__check"
+              [id]="checkboxId(row.suggestion)"
+              [checked]="row.checked"
+              [disabled]="row.blocked !== null"
+              [attr.aria-describedby]="row.blocked !== null ? checkboxId(row.suggestion) + '-why' : null"
+              (change)="toggle.emit(row.suggestion.key)"
+              data-testid="lettering-bulk-check"
+            />
+            <label class="bulk__row-main" [for]="checkboxId(row.suggestion)">
+              <span class="bulk__row-top">
+                <span class="bulk__category">{{ categoryLabel(row.suggestion) }}</span>
+                <span class="bulk__confidence" [attr.data-confidence]="row.suggestion.confidence">{{ confidenceLabel(row.suggestion) }}</span>
+                <span class="bulk__amount lettering-amount" dir="ltr">{{ formatAmount(row.suggestion.totalAmount, row.suggestion.currency) }}</span>
+              </span>
+              <span class="bulk__sides">{{ sides(row.suggestion) }}</span>
+              @if (row.blocked !== null) {
+                <span class="bulk__why" [id]="checkboxId(row.suggestion) + '-why'" data-testid="lettering-bulk-why">{{ blockedText(row.blocked) }}</span>
+              }
+            </label>
+          </li>
+        } @empty {
+          <li class="bulk__empty" i18n="@@accounting.lettering.suggestions.bulk.empty">Aucune proposition.</li>
+        }
+      </ul>
+      <ng-container [ngTemplateOutlet]="summary" />
+    }
+
+    @if (error()) {
+      <p class="bulk__error" role="alert" data-testid="lettering-bulk-error">{{ error() }}</p>
+    }
+  </div>
+
+  <ng-template #summary>
+    <div class="bulk__summary" data-testid="lettering-bulk-summary" aria-live="polite">
+      <p class="bulk__summary-count" i18n="@@accounting.lettering.suggestions.bulk.summary.count">{{ selectedCount() }} propositions cochées · {{ lineCount() }} lignes</p>
+      @if (totalsList().length > 0) {
+        <p class="bulk__summary-line">
+          <span class="bulk__summary-label" i18n="@@accounting.lettering.suggestions.bulk.summary.totals">Total par devise :</span>
+          @for (t of totalsList(); track $index) {
+            <span class="bulk__total lettering-amount" dir="ltr" data-testid="lettering-bulk-total">{{ t }}</span>
+          }
+        </p>
+      }
+      @if (accounts().length > 0) {
+        <p class="bulk__summary-line">
+          <span class="bulk__summary-label" i18n="@@accounting.lettering.suggestions.bulk.summary.accounts">Comptes :</span>
+          <span data-testid="lettering-bulk-accounts">{{ accounts().join(', ') }}</span>
+        </p>
+      }
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    @if (result()) {
+      <p-button label="Fermer" i18n-label="@@accounting.lettering.suggestions.bulk.close" (onClick)="close()" data-testid="lettering-bulk-close" />
+    } @else if (step() === 'confirm') {
+      <p-button
+        label="Retour" i18n-label="@@accounting.lettering.suggestions.bulk.back"
+        severity="secondary" [outlined]="true"
+        [disabled]="running()"
+        (onClick)="back()"
+        data-testid="lettering-bulk-back"
+      />
+      @if (canRetry()) {
+        <p-button
+          label="Réessayer" i18n-label="@@accounting.lettering.suggestions.bulk.retry"
+          icon="pi pi-refresh"
+          [loading]="running()"
+          (onClick)="retry.emit()"
+          data-testid="lettering-bulk-retry"
+        />
+      } @else {
+        <p-button
+          label="Confirmer le lettrage" i18n-label="@@accounting.lettering.suggestions.bulk.confirm"
+          icon="pi pi-check"
+          severity="success"
+          [loading]="running()"
+          [disabled]="!canRun() || running()"
+          (onClick)="confirm()"
+          data-testid="lettering-bulk-run"
+        />
+      }
+    } @else {
+      <p-button
+        label="Annuler" i18n-label="@@lettering.component.rejectLabel.Annuler"
+        severity="secondary" [outlined]="true"
+        (onClick)="close()"
+        data-testid="lettering-bulk-cancel"
+      />
+      <p-button
+        label="Continuer" i18n-label="@@accounting.lettering.suggestions.bulk.next"
+        [disabled]="selectedCount() === 0"
+        (onClick)="toConfirm()"
+        data-testid="lettering-bulk-next"
+      />
+    }
+  </ng-template>
+</p-dialog>
