@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
@@ -64,34 +65,7 @@ public sealed class LetteringQueryService : ILetteringQueryService
             .ThenBy(l => l.Id)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Select(l => new RawLineRow
-            {
-                LineId = l.Id,
-                EntryId = l.JournalEntryId,
-                EntryDate = l.JournalEntry.EntryDate,
-                JournalCode = l.JournalEntry.JournalCode,
-                EntryNumber = l.JournalEntry.EntryNumber,
-                LineNumber = l.LineNumber,
-                AccountNumber = l.AccountNumber,
-                Label = l.Label,
-                EntryLabel = l.JournalEntry.Label,
-                PieceRef = l.JournalEntry.PieceRef,
-                SourceEntityType = l.JournalEntry.SourceEntityType,
-                Debit = l.DebitAmount.Amount,
-                Credit = l.CreditAmount.Amount,
-                OperationCurrency = l.JournalEntry.CurrencyCode,
-                DebitInCurrency = l.DebitAmountInCurrency,
-                CreditInCurrency = l.CreditAmountInCurrency,
-                LetteringCode = l.LetteringCode,
-                ThirdPartyId = l.ThirdPartyId,
-                ThirdPartyKind = l.ThirdPartyKind,
-                IsDraft = l.JournalEntry.Status == JournalEntryStatus.Brouillon,
-                IsReversed = l.JournalEntry.IsReversed,
-                IsReversal = l.JournalEntry.ReversesEntryId != null,
-                Status = l.JournalEntry.Status,
-                PeriodIsClosed = l.JournalEntry.AccountingPeriod != null && l.JournalEntry.AccountingPeriod.IsClosed,
-                FiscalYear = l.JournalEntry.AccountingPeriod != null ? l.JournalEntry.AccountingPeriod.FiscalYear : l.JournalEntry.EntryDate.Year
-            })
+            .Select(RawLineProjection)
             .ToListAsync(cancellationToken);
 
         var lockedYears = await LetteringLockedYears.LoadAsync(ctx, cancellationToken);
@@ -100,7 +74,7 @@ public sealed class LetteringQueryService : ILetteringQueryService
         var items = rawRows.Select(r => ToDto(r, lockedYears, names)).ToList();
 
         var totalCount = totalsRow?.Count ?? 0;
-        var totals = BuildTotalsDto(totalsRow, items);
+        var totals = BuildTotalsDto(totalsRow);
 
         var dto = new LetteringLinesPageDto(items, page, pageSize, totalCount, totalCount > items.Count, totals);
         return Result.Success(dto);
@@ -124,34 +98,7 @@ public sealed class LetteringQueryService : ILetteringQueryService
 
         var rawRows = await ctx.JournalEntryLines.AsNoTracking()
             .Where(l => lineIds.Contains(l.Id))
-            .Select(l => new RawLineRow
-            {
-                LineId = l.Id,
-                EntryId = l.JournalEntryId,
-                EntryDate = l.JournalEntry.EntryDate,
-                JournalCode = l.JournalEntry.JournalCode,
-                EntryNumber = l.JournalEntry.EntryNumber,
-                LineNumber = l.LineNumber,
-                AccountNumber = l.AccountNumber,
-                Label = l.Label,
-                EntryLabel = l.JournalEntry.Label,
-                PieceRef = l.JournalEntry.PieceRef,
-                SourceEntityType = l.JournalEntry.SourceEntityType,
-                Debit = l.DebitAmount.Amount,
-                Credit = l.CreditAmount.Amount,
-                OperationCurrency = l.JournalEntry.CurrencyCode,
-                DebitInCurrency = l.DebitAmountInCurrency,
-                CreditInCurrency = l.CreditAmountInCurrency,
-                LetteringCode = l.LetteringCode,
-                ThirdPartyId = l.ThirdPartyId,
-                ThirdPartyKind = l.ThirdPartyKind,
-                IsDraft = l.JournalEntry.Status == JournalEntryStatus.Brouillon,
-                IsReversed = l.JournalEntry.IsReversed,
-                IsReversal = l.JournalEntry.ReversesEntryId != null,
-                Status = l.JournalEntry.Status,
-                PeriodIsClosed = l.JournalEntry.AccountingPeriod != null && l.JournalEntry.AccountingPeriod.IsClosed,
-                FiscalYear = l.JournalEntry.AccountingPeriod != null ? l.JournalEntry.AccountingPeriod.FiscalYear : l.JournalEntry.EntryDate.Year
-            })
+            .Select(RawLineProjection)
             .ToListAsync(cancellationToken);
 
         var lockedYears = await LetteringLockedYears.LoadAsync(ctx, cancellationToken);
@@ -349,7 +296,7 @@ public sealed class LetteringQueryService : ILetteringQueryService
         return totals;
     }
 
-    private static LetteringTotalsDto BuildTotalsDto(TotalsRow? row, List<LetteringLineDto> pageItems)
+    private static LetteringTotalsDto BuildTotalsDto(TotalsRow? row)
     {
         if (row is null)
             return new LetteringTotalsDto(0, 0, 0, 0m, 0m, 0m, 0m, 0m, 0m, null, null, null);
@@ -436,6 +383,40 @@ public sealed class LetteringQueryService : ILetteringQueryService
             r.IsDraft, r.IsReversed, r.IsReversal,
             periodLocked);
     }
+
+    /// <summary>
+    /// Projection unique ligne d'écriture → <see cref="RawLineRow"/>, partagée par les deux
+    /// requêtes (lignes filtrées et contenu d'un groupe) : les faits scalaires du prédicat D8
+    /// (statut, période close, exercice) y sont lus une seule fois.
+    /// </summary>
+    private static readonly Expression<Func<JournalEntryLine, RawLineRow>> RawLineProjection = l => new RawLineRow
+    {
+        LineId = l.Id,
+        EntryId = l.JournalEntryId,
+        EntryDate = l.JournalEntry.EntryDate,
+        JournalCode = l.JournalEntry.JournalCode,
+        EntryNumber = l.JournalEntry.EntryNumber,
+        LineNumber = l.LineNumber,
+        AccountNumber = l.AccountNumber,
+        Label = l.Label,
+        EntryLabel = l.JournalEntry.Label,
+        PieceRef = l.JournalEntry.PieceRef,
+        SourceEntityType = l.JournalEntry.SourceEntityType,
+        Debit = l.DebitAmount.Amount,
+        Credit = l.CreditAmount.Amount,
+        OperationCurrency = l.JournalEntry.CurrencyCode,
+        DebitInCurrency = l.DebitAmountInCurrency,
+        CreditInCurrency = l.CreditAmountInCurrency,
+        LetteringCode = l.LetteringCode,
+        ThirdPartyId = l.ThirdPartyId,
+        ThirdPartyKind = l.ThirdPartyKind,
+        IsDraft = l.JournalEntry.Status == JournalEntryStatus.Brouillon,
+        IsReversed = l.JournalEntry.IsReversed,
+        IsReversal = l.JournalEntry.ReversesEntryId != null,
+        Status = l.JournalEntry.Status,
+        PeriodIsClosed = l.JournalEntry.AccountingPeriod != null && l.JournalEntry.AccountingPeriod.IsClosed,
+        FiscalYear = l.JournalEntry.AccountingPeriod != null ? l.JournalEntry.AccountingPeriod.FiscalYear : l.JournalEntry.EntryDate.Year
+    };
 
     private sealed class RawLineRow
     {

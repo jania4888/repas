@@ -57,7 +57,7 @@ public sealed class LetteringGroup : AggregateRoot
     /// Ajoute de nouvelles lignes à un groupe existant (action « Compléter », D7). Les lignes déjà
     /// membres du groupe ne sont pas dupliquées.
     /// </summary>
-    public Result AddMembers(IReadOnlyList<Guid> journalEntryLineIds)
+    public void AddMembers(IReadOnlyList<Guid> journalEntryLineIds)
     {
         var existing = _members.Select(m => m.JournalEntryLineId).ToHashSet();
         foreach (var id in journalEntryLineIds)
@@ -65,8 +65,6 @@ public sealed class LetteringGroup : AggregateRoot
             if (existing.Add(id))
                 _members.Add(LetteringGroupMember.CreateForGroup(this, id));
         }
-
-        return Result.Success();
     }
 
     /// <summary>

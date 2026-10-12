@@ -4,6 +4,7 @@ using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.Accounting.FiscalSchedule;
+using FactuTrust.Application.Features.Accounting.Lettering;
 using FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
 using FactuTrust.Application.Features.Accounting.Queries;
 using FactuTrust.Domain.Authorization;
@@ -642,8 +643,7 @@ public sealed class SaveVatDeclarationCommandHandler : IRequestHandler<SaveVatDe
 public sealed record LetterAccountEntriesCommand(
     IReadOnlyList<Guid> JournalEntryLineIds,
     bool AllowPartial = false,
-    FactuTrust.Application.Features.Accounting.Lettering.LetteringOrigin Origin =
-        FactuTrust.Application.Features.Accounting.Lettering.LetteringOrigin.Manual,
+    LetteringOrigin Origin = LetteringOrigin.Manual,
     string? SuggestionKey = null) : IRequest<Result<LetteringResultDto>>;
 
 public sealed class LetterAccountEntriesCommandHandler : IRequestHandler<LetterAccountEntriesCommand, Result<LetteringResultDto>>
@@ -707,8 +707,7 @@ public sealed class CompletePartialLetteringCommandHandler : IRequestHandler<Com
     public async Task<Result<LetteringResultDto>> Handle(CompletePartialLetteringCommand request, CancellationToken cancellationToken)
     {
         var result = await _lettering.CompletePartialAsync(
-            request.Code, request.JournalEntryLineIds, request.AllowPartial,
-            FactuTrust.Application.Features.Accounting.Lettering.LetteringOrigin.Manual, cancellationToken);
+            request.Code, request.JournalEntryLineIds, request.AllowPartial, cancellationToken);
         if (result.IsFailure)
             return Result.Failure<LetteringResultDto>(result.Error);
 
@@ -748,8 +747,7 @@ public sealed class UnletterAccountEntriesCommandHandler : IRequestHandler<Unlet
 
     public async Task<Result> Handle(UnletterAccountEntriesCommand request, CancellationToken cancellationToken)
     {
-        var result = await _lettering.UnletterAsync(
-            request.Code, FactuTrust.Application.Features.Accounting.Lettering.LetteringOrigin.Manual, cancellationToken);
+        var result = await _lettering.UnletterAsync(request.Code, cancellationToken);
         if (result.IsSuccess)
         {
             var outcome = result.Value;
@@ -1110,8 +1108,7 @@ public sealed class UpdateDraftJournalEntryCommandHandler : IRequestHandler<Upda
             {
                 foreach (var code in letteringCodes)
                 {
-                    var unletter = await _lettering.UnletterAsync(
-                        code, FactuTrust.Application.Features.Accounting.Lettering.LetteringOrigin.DraftUpdate, ct);
+                    var unletter = await _lettering.UnletterAsync(code, ct);
                     if (unletter.IsFailure)
                         return unletter;
                 }

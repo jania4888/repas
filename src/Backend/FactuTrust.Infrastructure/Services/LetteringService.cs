@@ -57,11 +57,8 @@ public sealed class LetteringService : ILetteringService
         if (journalEntryLineIds.Count < 2)
             return Result.Failure<LetteringOutcome>(Error.Validation("Lines", "Au moins deux lignes d'écriture sont requises pour le lettrage."));
 
-        // Doublons d'identifiants = entrée invalide (LETTERING_VALIDATION), pas « lignes
-        // introuvables » : la comparaison de comptages aval ne pourrait pas les distinguer.
-        if (journalEntryLineIds.Distinct().Count() != journalEntryLineIds.Count)
-            return Result.Failure<LetteringOutcome>(LetteringErrors.Validation("La liste des lignes contient des doublons."));
-
+        // Les doublons d'identifiants sont rejetés plus bas par LoadUnletteredLinesAsync
+        // (LETTERING_VALIDATION) — inutile de les tester ici.
         var lockPolicy = PolicyFor(origin);
 
         if (_ambient.IsActive)
@@ -70,6 +67,30 @@ public sealed class LetteringService : ILetteringService
             return await LetterInContextAsync(ctx, journalEntryLineIds, allowPartial, lockPolicy, saveChanges: true, cancellationToken);
         }
 
+        return await ExecuteIsolatedAsync(async (ctx, uniqueViolation, ct) =>
+        {
+            // Validation DANS la transaction Serializable (et non avant) : plus de fenêtre de
+            // course entre « lignes libres » et l'écriture du lettrage (voir ValidateLinesAsync).
+            var validation = await ValidateLinesAsync(ctx, journalEntryLineIds, allowPartial, lockPolicy, ct);
+            if (validation.IsFailure)
+                return Result.Failure<LetteringOutcome>(validation.Error);
+
+            return await LetterInContextAsync(
+                ctx, journalEntryLineIds, allowPartial, lockPolicy, saveChanges: true, ct, validation.Value, uniqueViolation);
+        }, cancellationToken);
+    }
+
+    /// <summary>
+    /// Exécute <paramref name="operation"/> hors de toute transaction ambiante : contexte ISOLÉ +
+    /// transaction Serializable (validation et écriture dedans, sans fenêtre de course), avec
+    /// reprise bornée (<see cref="MaxConcurrencyRetries"/>) UNIQUEMENT quand l'opération a signalé
+    /// une violation d'index unique perdue en course (ex. fenêtre résiduelle hors transaction) —
+    /// jamais sur un refus de validation déterministe, qui échouerait à l'identique à chaque essai.
+    /// </summary>
+    private async Task<Result<T>> ExecuteIsolatedAsync<T>(
+        Func<TenantDbContext, UniqueViolationFlag, CancellationToken, Task<Result<T>>> operation,
+        CancellationToken cancellationToken)
+    {
         await using var strategyContext = _contextFactory.CreateIsolatedContext();
         var strategy = strategyContext.Database.CreateExecutionStrategy();
 
@@ -78,30 +99,16 @@ public sealed class LetteringService : ILetteringService
             for (var attempt = 0; attempt < MaxConcurrencyRetries; attempt++)
             {
                 await using var ctx = _contextFactory.CreateIsolatedContext();
-                // Validation DANS la transaction Serializable (et non avant) : plus de fenêtre de
-                // course entre « lignes libres » et l'écriture du lettrage (voir ValidateLinesAsync).
                 await using var transaction = ctx.Database.IsRelational()
                     ? await ctx.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken)
                     : null;
 
-                var validation = await ValidateLinesAsync(ctx, journalEntryLineIds, allowPartial, lockPolicy, cancellationToken);
-                if (validation.IsFailure)
-                {
-                    if (transaction is not null) await transaction.RollbackAsync(cancellationToken);
-                    return Result.Failure<LetteringOutcome>(validation.Error);
-                }
-
                 var uniqueViolation = new UniqueViolationFlag();
-                var result = await LetterInContextAsync(
-                    ctx, journalEntryLineIds, allowPartial, lockPolicy, saveChanges: true, cancellationToken, validation.Value, uniqueViolation);
+                var result = await operation(ctx, uniqueViolation, cancellationToken);
 
                 if (result.IsFailure)
                 {
                     if (transaction is not null) await transaction.RollbackAsync(cancellationToken);
-
-                    // Ne retenter QUE sur une vraie violation d'index unique perdue en course
-                    // (ex. fenêtre résiduelle hors transaction) — jamais sur un refus de
-                    // validation déterministe, qui échouerait à l'identique à chaque essai.
                     if (uniqueViolation.Occurred && attempt < MaxConcurrencyRetries - 1)
                         continue;
 
@@ -112,7 +119,7 @@ public sealed class LetteringService : ILetteringService
                 return result;
             }
 
-            return Result.Failure<LetteringOutcome>(
+            return Result.Failure<T>(
                 LetteringErrors.AlreadyLettered("Une ou plusieurs lignes ont été lettrées entre-temps."));
         });
     }
@@ -132,7 +139,6 @@ public sealed class LetteringService : ILetteringService
         string code,
         IReadOnlyList<Guid> newLineIds,
         bool allowPartial,
-        LetteringOrigin origin = LetteringOrigin.Manual,
         CancellationToken cancellationToken = default)
     {
         code = code?.Trim().ToUpperInvariant() ?? string.Empty;
@@ -142,58 +148,21 @@ public sealed class LetteringService : ILetteringService
         if (newLineIds.Count == 0)
             return Result.Failure<LetteringOutcome>(Error.Validation("Lines", "Au moins une nouvelle ligne est requise."));
 
-        // Doublons d'identifiants = entrée invalide (LETTERING_VALIDATION), pas « lignes
-        // introuvables » (même règle que ManualLetterAsync).
-        if (newLineIds.Distinct().Count() != newLineIds.Count)
-            return Result.Failure<LetteringOutcome>(LetteringErrors.Validation("La liste des lignes contient des doublons."));
-
         // Complément : toujours d'origine utilisateur côté verrou de période (D9) — l'auto-lettrage
-        // ne passe jamais par cette action.
-        const PeriodLockPolicy lockPolicy = PeriodLockPolicy.Reject;
+        // ne passe jamais par cette action. Les doublons d'identifiants sont rejetés plus bas par
+        // LoadUnletteredLinesAsync (LETTERING_VALIDATION).
 
         // Transaction ambiante active (ex. flux interne englobant) : on la rejoint, comme
         // ManualLetterAsync — jamais de contexte isolé en parallèle de la transaction englobante.
         if (_ambient.IsActive)
         {
             await using var ambientCtx = _contextFactory.CreateContext();
-            return await CompleteInContextAsync(ambientCtx, code, newLineIds, allowPartial, lockPolicy, null, cancellationToken);
+            return await CompleteInContextAsync(ambientCtx, code, newLineIds, allowPartial, null, cancellationToken);
         }
 
-        await using var strategyContext = _contextFactory.CreateIsolatedContext();
-        var strategy = strategyContext.Database.CreateExecutionStrategy();
-
-        return await strategy.ExecuteAsync(async () =>
-        {
-            for (var attempt = 0; attempt < MaxConcurrencyRetries; attempt++)
-            {
-                await using var ctx = _contextFactory.CreateIsolatedContext();
-                await using var transaction = ctx.Database.IsRelational()
-                    ? await ctx.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken)
-                    : null;
-
-                var uniqueViolation = new UniqueViolationFlag();
-                var result = await CompleteInContextAsync(ctx, code, newLineIds, allowPartial, lockPolicy, uniqueViolation, cancellationToken);
-
-                if (result.IsFailure)
-                {
-                    if (transaction is not null) await transaction.RollbackAsync(cancellationToken);
-
-                    // Ne retenter QUE sur une vraie violation d'index unique perdue en course —
-                    // jamais sur un refus de validation déterministe (« déjà lettrée »,
-                    // « déjà membre »…), qui échouerait à l'identique à chaque essai.
-                    if (uniqueViolation.Occurred && attempt < MaxConcurrencyRetries - 1)
-                        continue;
-
-                    return result;
-                }
-
-                if (transaction is not null) await transaction.CommitAsync(cancellationToken);
-                return result;
-            }
-
-            return Result.Failure<LetteringOutcome>(
-                LetteringErrors.AlreadyLettered("Une ou plusieurs lignes ont été lettrées entre-temps."));
-        });
+        return await ExecuteIsolatedAsync(
+            (ctx, uniqueViolation, ct) => CompleteInContextAsync(ctx, code, newLineIds, allowPartial, uniqueViolation, ct),
+            cancellationToken);
     }
 
     private async Task<Result<LetteringOutcome>> CompleteInContextAsync(
@@ -201,7 +170,6 @@ public sealed class LetteringService : ILetteringService
         string code,
         IReadOnlyList<Guid> newLineIds,
         bool allowPartial,
-        PeriodLockPolicy lockPolicy,
         UniqueViolationFlag? uniqueViolation,
         CancellationToken cancellationToken)
     {
@@ -251,15 +219,13 @@ public sealed class LetteringService : ILetteringService
 
         var allLines = existingLines.Concat(newLines).ToList();
 
-        if (lockPolicy == PeriodLockPolicy.Reject)
+        // Verrou de période toujours appliqué ici (D9 : complétion = action utilisateur).
+        var lockedYears = await LetteringLockedYears.LoadAsync(ctx, cancellationToken);
+        var lockedLine = allLines.FirstOrDefault(l => LetteringPeriodLock.IsLocked(l, lockedYears));
+        if (lockedLine is not null)
         {
-            var lockedYears = await LetteringLockedYears.LoadAsync(ctx, cancellationToken);
-            var lockedLine = allLines.FirstOrDefault(l => LetteringPeriodLock.IsLocked(l, lockedYears));
-            if (lockedLine is not null)
-            {
-                return Result.Failure<LetteringOutcome>(LetteringErrors.PeriodLocked(
-                    $"Lettrage impossible : la ligne {LetteringPeriodLock.DescribeLine(lockedLine)} appartient à une période clôturée."));
-            }
+            return Result.Failure<LetteringOutcome>(LetteringErrors.PeriodLocked(
+                $"Lettrage impossible : la ligne {LetteringPeriodLock.DescribeLine(lockedLine)} appartient à une période clôturée."));
         }
 
         var debit = allLines.Sum(l => l.DebitAmount.Amount);
@@ -294,9 +260,7 @@ public sealed class LetteringService : ILetteringService
                 return Result.Failure<LetteringOutcome>(partialAmount.Error);
         }
 
-        var addResult = group.AddMembers(newLineIds);
-        if (addResult.IsFailure)
-            return Result.Failure<LetteringOutcome>(addResult.Error);
+        group.AddMembers(newLineIds);
 
         group.SetAuditInfo(ActingUser, true);
         foreach (var line in newLines)
@@ -491,7 +455,6 @@ public sealed class LetteringService : ILetteringService
 
     public async Task<Result<UnletteringOutcome>> UnletterAsync(
         string code,
-        LetteringOrigin origin = LetteringOrigin.Manual,
         CancellationToken cancellationToken = default)
     {
         code = code?.Trim().ToUpperInvariant() ?? string.Empty;
@@ -508,26 +471,11 @@ public sealed class LetteringService : ILetteringService
             return await UnletterInContextAsync(ambientCtx, code, cancellationToken);
         }
 
-        await using var strategyContext = _contextFactory.CreateIsolatedContext();
-        var strategy = strategyContext.Database.CreateExecutionStrategy();
-
-        return await strategy.ExecuteAsync(async () =>
-        {
-            await using var ctx = _contextFactory.CreateIsolatedContext();
-            await using var transaction = ctx.Database.IsRelational()
-                ? await ctx.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken)
-                : null;
-
-            var result = await UnletterInContextAsync(ctx, code, cancellationToken);
-            if (result.IsFailure)
-            {
-                if (transaction is not null) await transaction.RollbackAsync(cancellationToken);
-                return result;
-            }
-
-            if (transaction is not null) await transaction.CommitAsync(cancellationToken);
-            return result;
-        });
+        // Pas de reprise ici : UnletterInContextAsync ne signale jamais de violation d'index
+        // unique, donc ExecuteIsolatedAsync n'exécute qu'une seule tentative.
+        return await ExecuteIsolatedAsync(
+            (ctx, _, ct) => UnletterInContextAsync(ctx, code, ct),
+            cancellationToken);
     }
 
     private async Task<Result<UnletteringOutcome>> UnletterInContextAsync(
@@ -581,6 +529,8 @@ public sealed class LetteringService : ILetteringService
     /// </summary>
     private static async Task<string> NextCodeAsync(TenantDbContext ctx, bool isPartial, CancellationToken cancellationToken)
     {
+        static int CodeNumber(string c) => c.Length > 1 && int.TryParse(c.AsSpan(1), out var n) ? n : 0;
+
         var pendingCodes = ctx.ChangeTracker.Entries<LetteringGroup>()
             .Where(e => e.State == EntityState.Added)
             .Select(e => e.Entity.Code)
@@ -593,10 +543,7 @@ public sealed class LetteringService : ILetteringService
                 + "FROM [LetteringGroups] WITH (UPDLOCK, HOLDLOCK)").ToListAsync(cancellationToken);
             var maxFromDb = maxRows.Single();
 
-            var maxPending = pendingCodes
-                .Select(c => c.Length > 1 && int.TryParse(c.AsSpan(1), out var n) ? n : 0)
-                .DefaultIfEmpty(0)
-                .Max();
+            var maxPending = pendingCodes.Select(CodeNumber).DefaultIfEmpty(0).Max();
 
             var next = Math.Max(maxFromDb ?? 0, maxPending) + 1;
             return $"{(isPartial ? 'P' : 'L')}{next:D5}";
@@ -608,7 +555,7 @@ public sealed class LetteringService : ILetteringService
             .ToListAsync(cancellationToken);
 
         var nextInMemory = codes.Concat(pendingCodes)
-            .Select(c => c.Length > 1 && int.TryParse(c.AsSpan(1), out var n) ? n : 0)
+            .Select(CodeNumber)
             .DefaultIfEmpty(0)
             .Max() + 1;
 
@@ -809,7 +756,7 @@ public sealed class LetteringService : ILetteringService
 
         foreach (var code in codes)
         {
-            var result = await UnletterAsync(code!, LetteringOrigin.PayrollCancellation, cancellationToken);
+            var result = await UnletterAsync(code!, cancellationToken);
             if (result.IsFailure)
             {
                 // Best-effort (comme avant D8) : une période verrouillée depuis le lettrage ne doit

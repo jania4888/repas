@@ -384,11 +384,6 @@ public sealed record TenantLetteringIntegrityDto
     public IReadOnlyList<DanglingLetteringCodeLineDto> DanglingLetteringCodeLines { get; init; } = Array.Empty<DanglingLetteringCodeLineDto>();
     public IReadOnlyList<MismatchedLetteringCodeDto> MismatchedLetteringCodes { get; init; } = Array.Empty<MismatchedLetteringCodeDto>();
     public string? Error { get; init; }
-
-    /// <summary>Vrai si aucune anomalie des 4 catégories de données n'a été trouvée.</summary>
-    public bool HasNoDataAnomaly =>
-        DuplicateCodes.Count == 0 && LinesInMultipleGroups.Count == 0
-        && OrphanMembers.Count == 0 && DanglingLetteringCodeLines.Count == 0 && MismatchedLetteringCodes.Count == 0;
 }
 
 /// <summary>Rapport consolidé du balayage d'intégrité du lettrage (tous tenants actifs).</summary>

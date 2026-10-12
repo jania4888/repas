@@ -99,7 +99,7 @@ public sealed class SettleExchangeDifferenceCommandHandler
         var lockedLine = lines.FirstOrDefault(l => LetteringPeriodLock.IsLocked(l, lockedYears));
         if (lockedLine is not null)
         {
-            return Result.Failure<Guid>(FactuTrust.Application.Features.Accounting.Lettering.LetteringErrors.PeriodLocked(
+            return Result.Failure<Guid>(LetteringErrors.PeriodLocked(
                 $"Lettrage impossible : la ligne {LetteringPeriodLock.DescribeLine(lockedLine)} appartient à une période clôturée."));
         }
 
@@ -143,9 +143,9 @@ public sealed class SettleExchangeDifferenceCommandHandler
             var adjustmentLine = entry.Lines.First(l => l.AccountNumber == thirdPartyAccount);
             var toLetter = request.JournalEntryLineIds.Append(adjustmentLine.Id).ToList();
 
-            var letterResult = await _lettering.ManualLetterAsync(
-                toLetter, allowPartial: false, FactuTrust.Application.Features.Accounting.Lettering.LetteringOrigin.ExchangeDifference, ct);
-            return letterResult.IsFailure ? Result.Failure(letterResult.Error) : Result.Success();
+            // Result<LetteringOutcome> hérite de Result : l'erreur remonte telle quelle.
+            return await _lettering.ManualLetterAsync(
+                toLetter, allowPartial: false, LetteringOrigin.ExchangeDifference, ct);
         }, cancellationToken);
 
         if (result.IsFailure)

@@ -1,7 +1,9 @@
+using System.Text.RegularExpressions;
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.Accounting.Commands;
+using FactuTrust.Application.Features.Accounting.Lettering;
 using FactuTrust.Domain.Services.Accounting;
 using FluentValidation;
 using Microsoft.Extensions.Options;
@@ -177,8 +179,7 @@ public sealed class LetterAccountEntriesCommandValidator : AbstractValidator<Let
         // POST letter. Bulk/DraftUpdate/PayrollCancellation/Automatic/ExchangeDifference ne
         // viennent que de flux internes qui n'empruntent pas cette commande.
         RuleFor(x => x.Origin)
-            .Must(o => o == FactuTrust.Application.Features.Accounting.Lettering.LetteringOrigin.Manual
-                       || o == FactuTrust.Application.Features.Accounting.Lettering.LetteringOrigin.Suggestion)
+            .Must(o => o == LetteringOrigin.Manual || o == LetteringOrigin.Suggestion)
             .WithMessage("Origine de lettrage invalide.");
 
         RuleFor(x => x.SuggestionKey)
@@ -186,32 +187,40 @@ public sealed class LetterAccountEntriesCommandValidator : AbstractValidator<Let
     }
 }
 
-public sealed class UnletterAccountEntriesCommandValidator : AbstractValidator<UnletterAccountEntriesCommand>
+/// <summary>
+/// Règle partagée du format de code de lettrage « L00001 » / « P00001 » (plan §4.6) : une seule
+/// implémentation pour le délettrage (<see cref="UnletterAccountEntriesCommandValidator"/>) et la
+/// consultation de groupe (<see cref="GetLetteringGroupQueryValidator"/>).
+/// </summary>
+internal static class LetteringCodeRule
 {
-    private static readonly System.Text.RegularExpressions.Regex CodePattern =
-        new("^[LP]\\d{5,15}$", System.Text.RegularExpressions.RegexOptions.Compiled);
+    private static readonly Regex CodePattern = new("^[LP]\\d{5,15}$", RegexOptions.Compiled);
 
-    public UnletterAccountEntriesCommandValidator()
-    {
-        RuleFor(x => x.Code)
-            .NotEmpty().WithMessage("Le code de lettrage est obligatoire.")
+    internal static IRuleBuilderOptions<T, string> LetteringCode<T>(this IRuleBuilder<T, string> rule) =>
+        rule.NotEmpty().WithMessage("Le code de lettrage est obligatoire.")
             .MaximumLength(16).WithMessage("Le code de lettrage ne peut pas dépasser 16 caractères.")
             .Must(code => CodePattern.IsMatch(code.Trim().ToUpperInvariant()))
             .WithMessage("Le code de lettrage doit être au format L00001 ou P00001.");
+}
+
+public sealed class UnletterAccountEntriesCommandValidator : AbstractValidator<UnletterAccountEntriesCommand>
+{
+    public UnletterAccountEntriesCommandValidator()
+    {
+        RuleFor(x => x.Code).LetteringCode();
     }
 }
 
 public sealed class CompletePartialLetteringCommandValidator : AbstractValidator<CompletePartialLetteringCommand>
 {
-    private static readonly System.Text.RegularExpressions.Regex CodePattern =
-        new("^P\\d{5,15}$", System.Text.RegularExpressions.RegexOptions.Compiled);
+    private static readonly Regex PartialCodePattern = new("^P\\d{5,15}$", RegexOptions.Compiled);
 
     public CompletePartialLetteringCommandValidator()
     {
         RuleFor(x => x.Code)
             .NotEmpty().WithMessage("Le code du groupe partiel est obligatoire.")
             .MaximumLength(16).WithMessage("Le code de lettrage ne peut pas dépasser 16 caractères.")
-            .Must(code => CodePattern.IsMatch(code.Trim().ToUpperInvariant()))
+            .Must(code => PartialCodePattern.IsMatch(code.Trim().ToUpperInvariant()))
             .WithMessage("Seul un groupe partiel (code « P ») peut être complété.");
 
         RuleFor(x => x.JournalEntryLineIds)
@@ -225,7 +234,7 @@ public sealed class CompletePartialLetteringCommandValidator : AbstractValidator
     }
 }
 
-public sealed class GetLetteringLinesQueryValidator : AbstractValidator<FactuTrust.Application.Features.Accounting.Lettering.GetLetteringLinesQuery>
+public sealed class GetLetteringLinesQueryValidator : AbstractValidator<GetLetteringLinesQuery>
 {
     public GetLetteringLinesQueryValidator()
     {
@@ -271,18 +280,11 @@ public sealed class GetLetteringLinesQueryValidator : AbstractValidator<FactuTru
 /// validé au format L/P + 5 à 15 chiffres (même règle que <see cref="UnletterAccountEntriesCommandValidator"/>),
 /// afin qu'un segment d'URL arbitraire soit rejeté en 400 et non en 404 « introuvable ».
 /// </summary>
-public sealed class GetLetteringGroupQueryValidator : AbstractValidator<FactuTrust.Application.Features.Accounting.Lettering.GetLetteringGroupQuery>
+public sealed class GetLetteringGroupQueryValidator : AbstractValidator<GetLetteringGroupQuery>
 {
-    private static readonly System.Text.RegularExpressions.Regex CodePattern =
-        new("^[LP]\\d{5,15}$", System.Text.RegularExpressions.RegexOptions.Compiled);
-
     public GetLetteringGroupQueryValidator()
     {
-        RuleFor(x => x.Code)
-            .NotEmpty().WithMessage("Le code de lettrage est obligatoire.")
-            .MaximumLength(16).WithMessage("Le code de lettrage ne peut pas dépasser 16 caractères.")
-            .Must(code => CodePattern.IsMatch(code.Trim().ToUpperInvariant()))
-            .WithMessage("Le code de lettrage doit être au format L00001 ou P00001.");
+        RuleFor(x => x.Code).LetteringCode();
     }
 }
 

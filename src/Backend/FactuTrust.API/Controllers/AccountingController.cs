@@ -15,6 +15,7 @@ using FactuTrust.Application.Features.Accounting.Lettering;
 using FactuTrust.Application.Features.Accounting.Loans;
 using FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
 using FactuTrust.Application.Features.Accounting.Queries;
+using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -1948,7 +1949,7 @@ public sealed class AccountingController : ControllerBase
         Enum.TryParse<LetteringOrigin>(origin, ignoreCase: true, out var parsed) ? parsed : LetteringOrigin.Manual;
 
     /// <summary>Mappe les codes d'erreur stables du lettrage (plan §4.6) vers le statut HTTP attendu.</summary>
-    private IActionResult LetteringFailure(FactuTrust.Domain.Common.Error error)
+    private IActionResult LetteringFailure(Error error)
     {
         var body = ApiResponse<object>.FailWithCode(error.Description, error.Code);
         return error.Code switch
@@ -1959,6 +1960,13 @@ public sealed class AccountingController : ControllerBase
         };
     }
 
+    /// <summary>Échec de validation FluentValidation mappé sur <c>LETTERING_VALIDATION</c> (contrat §4.6).</summary>
+    private IActionResult LetteringValidationFailure(FluentValidation.ValidationException ex)
+    {
+        var message = ex.Errors.FirstOrDefault()?.ErrorMessage ?? "Entrée invalide.";
+        return BadRequest(ApiResponse<object>.FailWithCode(message, LetteringErrorCodes.Validation));
+    }
+
     /// <summary>
     /// Envoie une commande/requête de lettrage en appliquant le contrat §4.6 : les erreurs métier
     /// portent leur code stable via <see cref="LetteringFailure"/>, et les échecs de validation
@@ -1967,7 +1975,7 @@ public sealed class AccountingController : ControllerBase
     /// <c>VALIDATION_FAILED</c> restent inchangés pour tous les autres endpoints.
     /// </summary>
     private async Task<IActionResult> SendLetteringAsync<T>(
-        IRequest<FactuTrust.Domain.Common.Result<T>> request,
+        IRequest<Result<T>> request,
         Func<T, IActionResult> ok,
         CancellationToken cancellationToken)
     {
@@ -1978,14 +1986,13 @@ public sealed class AccountingController : ControllerBase
         }
         catch (FluentValidation.ValidationException ex)
         {
-            var message = ex.Errors.FirstOrDefault()?.ErrorMessage ?? "Entrée invalide.";
-            return BadRequest(ApiResponse<object>.FailWithCode(message, LetteringErrorCodes.Validation));
+            return LetteringValidationFailure(ex);
         }
     }
 
     /// <summary>Variante sans valeur de retour (ex. délettrage) — même contrat §4.6.</summary>
     private async Task<IActionResult> SendLetteringAsync(
-        IRequest<FactuTrust.Domain.Common.Result> request,
+        IRequest<Result> request,
         Func<IActionResult> ok,
         CancellationToken cancellationToken)
     {
@@ -1996,8 +2003,7 @@ public sealed class AccountingController : ControllerBase
         }
         catch (FluentValidation.ValidationException ex)
         {
-            var message = ex.Errors.FirstOrDefault()?.ErrorMessage ?? "Entrée invalide.";
-            return BadRequest(ApiResponse<object>.FailWithCode(message, LetteringErrorCodes.Validation));
+            return LetteringValidationFailure(ex);
         }
     }
 

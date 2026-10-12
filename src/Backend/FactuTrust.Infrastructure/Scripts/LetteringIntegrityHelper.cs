@@ -168,11 +168,28 @@ ORDER BY g.[Code], m.[JournalEntryLineId];";
             var hasGroupCodeIndex = await ScalarBoolAsync(connection, UniqueIndexSql("LetteringGroups", "Code"), cancellationToken);
             var hasMemberLineIndex = await ScalarBoolAsync(connection, UniqueIndexSql("LetteringGroupMembers", "JournalEntryLineId"), cancellationToken);
 
-            var duplicateCodes = await ReadDuplicateCodesAsync(connection, cancellationToken);
-            var multiGroupLines = await ReadMultiGroupLinesAsync(connection, cancellationToken);
-            var orphanMembers = await ReadOrphanMembersAsync(connection, cancellationToken);
-            var danglingLines = await ReadDanglingLetteringCodeLinesAsync(connection, cancellationToken);
-            var mismatches = await ReadMismatchedLetteringCodesAsync(connection, cancellationToken);
+            var duplicateCodes = await ReadRowsAsync(DuplicateCodesSql, connection,
+                r => new DuplicateLetteringCodeDto { Code = r.GetString(0), GroupCount = r.GetInt32(1) }, cancellationToken);
+            var multiGroupRows = await ReadRowsAsync(LinesInMultipleGroupsSql, connection,
+                r => (LineId: r.GetGuid(0), Code: r.GetString(1)), cancellationToken);
+            var orphanMembers = await ReadRowsAsync(OrphanMembersSql, connection,
+                r => new OrphanLetteringMemberDto { JournalEntryLineId = r.GetGuid(0), GroupCode = r.GetString(1) }, cancellationToken);
+            var danglingLines = await ReadRowsAsync(DanglingLetteringCodeLinesSql, connection,
+                r => new DanglingLetteringCodeLineDto { JournalEntryLineId = r.GetGuid(0), LetteringCode = r.GetString(1) }, cancellationToken);
+            var mismatches = await ReadRowsAsync(MismatchedLetteringCodesSql, connection,
+                r => new MismatchedLetteringCodeDto
+                {
+                    JournalEntryLineId = r.GetGuid(0),
+                    GroupCode = r.GetString(1),
+                    LineLetteringCode = r.IsDBNull(2) ? null : r.GetString(2)
+                }, cancellationToken);
+
+            // Une ligne membre de plusieurs groupes est rapportée UNE fois, avec tous ses codes.
+            var multiGroupLines = multiGroupRows
+                .GroupBy(r => r.LineId)
+                .Select(g => new MultiGroupLetteringLineDto { JournalEntryLineId = g.Key, GroupCodes = g.Select(r => r.Code).ToList() })
+                .OrderBy(d => d.JournalEntryLineId)
+                .ToList();
 
             var hasAnomaly = duplicateCodes.Count > 0 || multiGroupLines.Count > 0
                 || orphanMembers.Count > 0 || danglingLines.Count > 0 || mismatches.Count > 0;
@@ -214,81 +231,16 @@ ORDER BY g.[Code], m.[JournalEntryLineId];";
         return (int)(await command.ExecuteScalarAsync(cancellationToken) ?? 0) == 1;
     }
 
-    private static async Task<List<DuplicateLetteringCodeDto>> ReadDuplicateCodesAsync(
-        SqlConnection connection, CancellationToken cancellationToken)
+    /// <summary>Lit les lignes d'une requête d'anomalie et les projette via <paramref name="map"/>.</summary>
+    private static async Task<List<T>> ReadRowsAsync<T>(
+        string sql, SqlConnection connection, Func<SqlDataReader, T> map, CancellationToken cancellationToken)
     {
-        var list = new List<DuplicateLetteringCodeDto>();
-        await using var command = CreateCommand(DuplicateCodesSql, connection);
+        var list = new List<T>();
+        await using var command = CreateCommand(sql, connection);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
         {
-            list.Add(new DuplicateLetteringCodeDto { Code = reader.GetString(0), GroupCount = reader.GetInt32(1) });
-        }
-        return list;
-    }
-
-    private static async Task<List<MultiGroupLetteringLineDto>> ReadMultiGroupLinesAsync(
-        SqlConnection connection, CancellationToken cancellationToken)
-    {
-        var byLine = new Dictionary<Guid, List<string>>();
-        await using var command = CreateCommand(LinesInMultipleGroupsSql, connection);
-        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
-        while (await reader.ReadAsync(cancellationToken))
-        {
-            var lineId = reader.GetGuid(0);
-            if (!byLine.TryGetValue(lineId, out var codes))
-            {
-                codes = new List<string>();
-                byLine[lineId] = codes;
-            }
-            codes.Add(reader.GetString(1));
-        }
-        return byLine
-            .Select(kvp => new MultiGroupLetteringLineDto { JournalEntryLineId = kvp.Key, GroupCodes = kvp.Value })
-            .OrderBy(d => d.JournalEntryLineId)
-            .ToList();
-    }
-
-    private static async Task<List<OrphanLetteringMemberDto>> ReadOrphanMembersAsync(
-        SqlConnection connection, CancellationToken cancellationToken)
-    {
-        var list = new List<OrphanLetteringMemberDto>();
-        await using var command = CreateCommand(OrphanMembersSql, connection);
-        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
-        while (await reader.ReadAsync(cancellationToken))
-        {
-            list.Add(new OrphanLetteringMemberDto { JournalEntryLineId = reader.GetGuid(0), GroupCode = reader.GetString(1) });
-        }
-        return list;
-    }
-
-    private static async Task<List<DanglingLetteringCodeLineDto>> ReadDanglingLetteringCodeLinesAsync(
-        SqlConnection connection, CancellationToken cancellationToken)
-    {
-        var list = new List<DanglingLetteringCodeLineDto>();
-        await using var command = CreateCommand(DanglingLetteringCodeLinesSql, connection);
-        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
-        while (await reader.ReadAsync(cancellationToken))
-        {
-            list.Add(new DanglingLetteringCodeLineDto { JournalEntryLineId = reader.GetGuid(0), LetteringCode = reader.GetString(1) });
-        }
-        return list;
-    }
-
-    private static async Task<List<MismatchedLetteringCodeDto>> ReadMismatchedLetteringCodesAsync(
-        SqlConnection connection, CancellationToken cancellationToken)
-    {
-        var list = new List<MismatchedLetteringCodeDto>();
-        await using var command = CreateCommand(MismatchedLetteringCodesSql, connection);
-        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
-        while (await reader.ReadAsync(cancellationToken))
-        {
-            list.Add(new MismatchedLetteringCodeDto
-            {
-                JournalEntryLineId = reader.GetGuid(0),
-                GroupCode = reader.GetString(1),
-                LineLetteringCode = reader.IsDBNull(2) ? null : reader.GetString(2)
-            });
+            list.Add(map(reader));
         }
         return list;
     }

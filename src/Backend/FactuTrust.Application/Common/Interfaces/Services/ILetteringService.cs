@@ -33,7 +33,6 @@ public interface ILetteringService
     /// </summary>
     Task<Result<UnletteringOutcome>> UnletterAsync(
         string code,
-        LetteringOrigin origin = LetteringOrigin.Manual,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -46,7 +45,6 @@ public interface ILetteringService
         string code,
         IReadOnlyList<Guid> newLineIds,
         bool allowPartial,
-        LetteringOrigin origin = LetteringOrigin.Manual,
         CancellationToken cancellationToken = default);
 
     /// <summary>
