@@ -33,6 +33,11 @@ public sealed class AccountingControllerLetteringTests
     [InlineData(LetteringErrorCodes.Validation, 400)]
     [InlineData(LetteringErrorCodes.Unbalanced, 400)]
     [InlineData(LetteringErrorCodes.AccountMismatch, 400)]
+    [InlineData(LetteringErrorCodes.GroupInconsistent, 409)]
+    // Phase 3 : lot en cours → 409 ; drapeau éteint et écart de change → 400 (contrat §4.6).
+    [InlineData(LetteringErrorCodes.BulkInProgress, 409)]
+    [InlineData(LetteringErrorCodes.FeatureDisabled, 400)]
+    [InlineData(LetteringErrorCodes.ExchangeDifference, 400)]
     public async Task Letter_MapsErrorCode_ToExpectedStatus(string code, int expectedStatus)
     {
         var mediator = new Mock<IMediator>(MockBehavior.Strict);

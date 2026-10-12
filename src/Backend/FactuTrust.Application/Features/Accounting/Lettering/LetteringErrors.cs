@@ -26,11 +26,17 @@ public static class LetteringErrorCodes
     /// </summary>
     public const string GroupInconsistent = "LETTERING_GROUP_INCONSISTENT";
 
-    /// <summary>Phase 3 (lettrage en masse) : réservé, non émis en Phase 1.</summary>
+    /// <summary>
+    /// Phase 3 (proposition validée, lettrage en masse) : le groupe demande un apurement d'écart
+    /// de change, que ces voies ne font jamais implicitement.
+    /// </summary>
     public const string ExchangeDifference = "LETTERING_EXCHANGE_DIFFERENCE";
 
-    /// <summary>Phase 3 (propositions / masse) : réservé, non émis en Phase 1.</summary>
+    /// <summary>Phase 3 : propositions ou lettrage en masse demandés alors que le drapeau serveur est éteint.</summary>
     public const string FeatureDisabled = "LETTERING_FEATURE_DISABLED";
+
+    /// <summary>Phase 3 : un lettrage en masse portant le même identifiant de requête est déjà en cours (409).</summary>
+    public const string BulkInProgress = "LETTERING_BULK_IN_PROGRESS";
 }
 
 /// <summary>Fabriques d'<see cref="Error"/> portant les codes stables ci-dessus.</summary>
@@ -55,4 +61,10 @@ public static class LetteringErrors
     public static Error GroupNotPartial(string message) => new(LetteringErrorCodes.GroupNotPartial, message);
 
     public static Error GroupInconsistent(string message) => new(LetteringErrorCodes.GroupInconsistent, message);
+
+    public static Error ExchangeDifference(string message) => new(LetteringErrorCodes.ExchangeDifference, message);
+
+    public static Error FeatureDisabled(string message) => new(LetteringErrorCodes.FeatureDisabled, message);
+
+    public static Error BulkInProgress(string message) => new(LetteringErrorCodes.BulkInProgress, message);
 }
