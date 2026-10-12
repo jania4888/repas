@@ -228,6 +228,110 @@ describe('AccountingService', () => {
     });
   });
 
+  describe('lettering (contrat Phase 1 §4)', () => {
+    it('getLetteringLines appelle GET lettering/lines avec tous les filtres', () => {
+      service.getLetteringLines({
+        account: '4111',
+        accountMatch: 'prefix',
+        from: '2026-01-01',
+        to: '2026-12-31',
+        state: 'unlettered',
+        journalCode: 'JOD',
+        sourceCategories: ['invoice', 'payment'],
+        thirdPartyId: 'tp-1',
+        thirdPartyKind: 1,
+        side: 'debit',
+        minAmount: 100,
+        maxAmount: 5000,
+        search: 'facture',
+        page: 2,
+        pageSize: 500
+      }).subscribe();
+
+      const req = httpMock.expectOne(r => r.url === `${base}/lettering/lines`);
+      expect(req.request.method).toBe('GET');
+      const p = req.request.params;
+      expect(p.get('account')).toBe('4111');
+      expect(p.get('accountMatch')).toBe('prefix');
+      expect(p.get('from')).toBe('2026-01-01');
+      expect(p.get('to')).toBe('2026-12-31');
+      expect(p.get('state')).toBe('unlettered');
+      expect(p.get('journalCode')).toBe('JOD');
+      expect(p.getAll('sourceCategories')).toEqual(['invoice', 'payment']);
+      expect(p.get('thirdPartyId')).toBe('tp-1');
+      expect(p.get('thirdPartyKind')).toBe('1');
+      expect(p.get('side')).toBe('debit');
+      expect(p.get('minAmount')).toBe('100');
+      expect(p.get('maxAmount')).toBe('5000');
+      expect(p.get('search')).toBe('facture');
+      expect(p.get('page')).toBe('2');
+      expect(p.get('pageSize')).toBe('500');
+      req.flush({ success: true, data: { items: [], page: 2, pageSize: 500, totalCount: 0, truncated: false, totals: null } });
+    });
+
+    it('getLetteringLines n’émet pas les paramètres facultatifs absents', () => {
+      service.getLetteringLines({ account: '4111', from: '2026-01-01', to: '2026-12-31' }).subscribe();
+
+      const req = httpMock.expectOne(r => r.url === `${base}/lettering/lines`);
+      const p = req.request.params;
+      expect(p.get('account')).toBe('4111');
+      expect(p.has('journalCode')).toBe(false);
+      expect(p.has('state')).toBe(false);
+      expect(p.has('thirdPartyId')).toBe(false);
+      expect(p.has('minAmount')).toBe(false);
+      expect(p.has('sourceCategories')).toBe(false);
+      // Pagination par défaut du contrat.
+      expect(p.get('page')).toBe('1');
+      expect(p.get('pageSize')).toBe('2000');
+      req.flush({ success: true, data: { items: [], page: 1, pageSize: 2000, totalCount: 0, truncated: false, totals: null } });
+    });
+
+    it('getLetteringGroup appelle GET lettering/groups/{code} en encodant le code', () => {
+      service.getLetteringGroup('P00002').subscribe();
+
+      const req = httpMock.expectOne(`${base}/lettering/groups/P00002`);
+      expect(req.request.method).toBe('GET');
+      req.flush({ success: true, data: null });
+    });
+
+    it('getLetteringGroup encode les caractères spéciaux du code dans le path', () => {
+      // Défense en profondeur : le segment de path doit être encodé (M2).
+      service.getLetteringGroup('P 2/3').subscribe();
+      const req = httpMock.expectOne(`${base}/lettering/groups/P%202%2F3`);
+      expect(req.request.method).toBe('GET');
+      req.flush({ success: true, data: null });
+    });
+
+    it('completePartialLettering appelle POST lettering/groups/{code}/complete avec les ids', () => {
+      const ids = ['new-line-1', 'new-line-2'];
+      service.completePartialLettering('P00002', ids, true).subscribe();
+
+      const req = httpMock.expectOne(`${base}/lettering/groups/P00002/complete`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ journalEntryLineIds: ids, allowPartial: true });
+      req.flush({ success: true, data: { code: 'L00002', previousCode: 'P00002' } });
+    });
+
+    it('settleExchangeDifference appelle POST lettering/settle-exchange-difference', () => {
+      const ids = ['id1', 'id2'];
+      service.settleExchangeDifference(ids, '655').subscribe();
+
+      const req = httpMock.expectOne(`${base}/lettering/settle-exchange-difference`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ journalEntryLineIds: ids, accountNumber: '655' });
+      req.flush({ success: true, data: 'L00009' });
+    });
+
+    it('unletterEntries appelle POST unletter avec le code du groupe', () => {
+      service.unletterEntries('L00007').subscribe();
+
+      const req = httpMock.expectOne(`${base}/unletter`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ code: 'L00007' });
+      req.flush({ success: true, data: true });
+    });
+  });
+
   describe('getBudgetPosts', () => {
     it('should call GET budget-posts with includeInactive param', () => {
       service.getBudgetPosts(true).subscribe();

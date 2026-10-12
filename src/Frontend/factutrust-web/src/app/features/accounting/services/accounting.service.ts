@@ -2580,7 +2580,7 @@ export class AccountingService {
 
   /** Détail d'un groupe de lettrage, pour le tiroir de l'écran (contrat §4.2). */
   getLetteringGroup(code: string): Observable<ApiResponse<LetteringGroupDto>> {
-    return this.http.get<ApiResponse<LetteringGroupDto>>(`${this.base}/lettering/groups/${code}`);
+    return this.http.get<ApiResponse<LetteringGroupDto>>(`${this.base}/lettering/groups/${encodeURIComponent(code)}`);
   }
 
   /** Complète un lettrage partiel (D7). Réponse avec `previousCode` renseigné (contrat §4.4). */
@@ -2588,7 +2588,7 @@ export class AccountingService {
     code: string, journalEntryLineIds: string[], allowPartial = false
   ): Observable<ApiResponse<LetteringResultDto>> {
     return this.http.post<ApiResponse<LetteringResultDto>>(
-      `${this.base}/lettering/groups/${code}/complete`, { journalEntryLineIds, allowPartial });
+      `${this.base}/lettering/groups/${encodeURIComponent(code)}/complete`, { journalEntryLineIds, allowPartial });
   }
 
   // ---------------------------------------------------------------------------
