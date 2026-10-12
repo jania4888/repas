@@ -741,6 +741,173 @@ public sealed class InvoiceRepositoryTests : IDisposable
         await context.SaveChangesAsync();
     }
 
+    private async Task<Invoice> AddTypedInvoiceWithLineAsync(
+        Client client,
+        Product product,
+        DateTime issueDate,
+        int sequence,
+        InvoiceType type,
+        Guid? linkedInvoiceId,
+        Action<Invoice> mutate)
+    {
+        var invoice = type == InvoiceType.CreditNote
+            ? Invoice.CreateCreditNote(
+                number: InvoiceNumber.Create("AVO", 2026, sequence),
+                client: client,
+                issueDate: issueDate,
+                linkedInvoiceId: linkedInvoiceId ?? Guid.NewGuid(),
+                dueDate: issueDate.AddDays(30),
+                reference: $"AVO-REF-{sequence:000}").Value
+            : Invoice.Create(
+                number: InvoiceNumber.Create("FAC", 2026, sequence),
+                client: client,
+                issueDate: issueDate,
+                dueDate: issueDate.AddDays(30),
+                reference: $"REF-{sequence:000}").Value;
+
+        Assert.True(invoice.AddLine(product, 1).IsSuccess);
+        mutate(invoice);
+        return await _repository.AddAsync(invoice);
+    }
+
+    [Fact]
+    public async Task SearchAsync_RealizedRevenueOnly_ReturnsOnlyPaidAndValidated()
+    {
+        // Arrange — un document par statut : Brouillon, Validée, Signée, Payée, Annulée.
+        var client = await CreateClientAsync(
+            name: "Client CA Statuts",
+            email: "castatuts@test.com",
+            nifValue: "1234567/A/B/C/080");
+        var product = await CreateProductAsync(code: "PRODSTAT", unitPrice: 100.000m);
+        var issue = new DateTime(2026, 6, 1);
+
+        var draft = await AddInvoiceWithStatusAsync(client, product, issue, 1, _ => { });
+        var validated = await AddInvoiceWithStatusAsync(client, product, issue, 2,
+            inv => Assert.True(inv.Validate().IsSuccess));
+        var signed = await AddInvoiceWithStatusAsync(client, product, issue, 3, inv =>
+        {
+            Assert.True(inv.Validate().IsSuccess);
+            Assert.True(inv.Sign("hash", "tester").IsSuccess);
+        });
+        var paid = await AddInvoiceWithStatusAsync(client, product, issue, 4, inv =>
+        {
+            Assert.True(inv.Validate().IsSuccess);
+            inv.ReconcilePaymentStatus(inv.TotalAmount.Amount, issue);
+        });
+        var cancelled = await AddInvoiceWithStatusAsync(client, product, issue, 5,
+            inv => Assert.True(inv.Cancel("test").IsSuccess));
+
+        // Act
+        var (items, count) = await _repository.SearchAsync(
+            null, null, null, null, null, 1, 20, unpaidOnly: false, type: null, realizedRevenueOnly: true);
+
+        // Assert — seules Validée et Payée comptent (miroir de IsRealizedRevenue / REALIZED_REVENUE_STATUSES).
+        Assert.Equal(2, count);
+        Assert.Equal(2, items.Count);
+        Assert.Contains(items, i => i.Id == validated.Id);
+        Assert.Contains(items, i => i.Id == paid.Id);
+        Assert.DoesNotContain(items, i => i.Id == draft.Id);
+        Assert.DoesNotContain(items, i => i.Id == signed.Id);
+        Assert.DoesNotContain(items, i => i.Id == cancelled.Id);
+    }
+
+    [Fact]
+    public async Task SearchAsync_RealizedRevenueOnlyAndUnpaidOnly_ReturnsValidatedOnly()
+    {
+        // Arrange — realizedRevenueOnly ∧ unpaidOnly ne laisse que Validée (Payée est exclue par unpaidOnly).
+        var client = await CreateClientAsync(
+            name: "Client CA Unpaid",
+            email: "caunpaid@test.com",
+            nifValue: "1234567/A/B/C/081");
+        var product = await CreateProductAsync(code: "PRODUNPAID", unitPrice: 100.000m);
+        var issue = new DateTime(2026, 6, 1);
+
+        var validated = await AddInvoiceWithStatusAsync(client, product, issue, 1,
+            inv => Assert.True(inv.Validate().IsSuccess));
+        await AddInvoiceWithStatusAsync(client, product, issue, 2, inv =>
+        {
+            Assert.True(inv.Validate().IsSuccess);
+            inv.ReconcilePaymentStatus(inv.TotalAmount.Amount, issue);
+        });
+
+        // Act
+        var (items, count) = await _repository.SearchAsync(
+            null, null, null, null, null, 1, 20, unpaidOnly: true, type: null, realizedRevenueOnly: true);
+
+        // Assert
+        Assert.Equal(1, count);
+        var only = Assert.Single(items);
+        Assert.Equal(validated.Id, only.Id);
+    }
+
+    [Fact]
+    public async Task GetSummaryAsync_RealizedRevenueOnly_SumsSignedHtOfInvoicesAndCreditNotes()
+    {
+        // Arrange — une FAC validée avec ligne, un AVO validé avec ligne (HT signé négatif).
+        var client = await CreateClientAsync(
+            name: "Client CA Mix",
+            email: "camix@test.com",
+            nifValue: "1234567/A/B/C/082");
+        var product = await CreateProductAsync(code: "PRODMIX", unitPrice: 100.000m);
+        var issue = new DateTime(2026, 6, 1);
+
+        var fac = await AddTypedInvoiceWithLineAsync(client, product, issue, 1, InvoiceType.Standard, null,
+            inv => Assert.True(inv.Validate().IsSuccess));
+        var avo = await AddTypedInvoiceWithLineAsync(client, product, issue, 2, InvoiceType.CreditNote, fac.Id,
+            inv => Assert.True(inv.Validate().IsSuccess));
+
+        Assert.True(avo.SubTotal.Amount < 0, "Un avoir doit avoir un HT signé négatif");
+
+        // Sanity : un AVO sans ligne vaut 0 (invariant utilisé par RealizedRevenueHt / CreditNotesHt).
+        var emptyCreditNote = Invoice.CreateCreditNote(
+            number: InvoiceNumber.Create("AVO", 2026, 99),
+            client: client,
+            issueDate: issue,
+            linkedInvoiceId: fac.Id).Value;
+        Assert.Equal(0m, emptyCreditNote.SubTotal.Amount);
+
+        // Act — filtre actif : seuls FAC validée + AVO validé comptent (il n'y en a pas d'autres ici).
+        var summary = await _repository.GetSummaryAsync(
+            null, null, null, null, null, false, type: null, realizedRevenueOnly: true);
+
+        // Assert
+        var expectedHt = Math.Round(fac.SubTotal.Amount + avo.SubTotal.Amount, 3);
+        Assert.Equal(2, summary.Count);
+        Assert.Equal(expectedHt, summary.TotalHt);
+        Assert.Equal(expectedHt, summary.RealizedRevenueHt);
+        Assert.Equal(Math.Round(fac.SubTotal.Amount, 3), summary.InvoicesHt);
+        Assert.Equal(Math.Round(avo.SubTotal.Amount, 3), summary.CreditNotesHt);
+    }
+
+    [Fact]
+    public async Task GetSummaryAsync_WithoutFilter_RealizedRevenueHtIgnoresNonRealized()
+    {
+        // Arrange — une Validée (comptée) et une Signée (comptée dans TotalHt, pas dans RealizedRevenueHt).
+        var client = await CreateClientAsync(
+            name: "Client CA Signee",
+            email: "casignee@test.com",
+            nifValue: "1234567/A/B/C/083");
+        var product = await CreateProductAsync(code: "PRODSIGNEE", unitPrice: 100.000m);
+        var issue = new DateTime(2026, 6, 1);
+
+        var validated = await AddInvoiceWithStatusAsync(client, product, issue, 1,
+            inv => Assert.True(inv.Validate().IsSuccess));
+        var signed = await AddInvoiceWithStatusAsync(client, product, issue, 2, inv =>
+        {
+            Assert.True(inv.Validate().IsSuccess);
+            Assert.True(inv.Sign("hash", "tester").IsSuccess);
+        });
+
+        // Act — pas de filtre : TotalHt inclut tout, RealizedRevenueHt exclut la Signée.
+        var summary = await _repository.GetSummaryAsync(
+            null, null, null, null, null, false, type: null, realizedRevenueOnly: false);
+
+        // Assert
+        Assert.Equal(2, summary.Count);
+        Assert.Equal(Math.Round(validated.SubTotal.Amount + signed.SubTotal.Amount, 3), summary.TotalHt);
+        Assert.Equal(Math.Round(validated.SubTotal.Amount, 3), summary.RealizedRevenueHt);
+    }
+
     public void Dispose()
     {
         // Nettoyer la base de données InMemory

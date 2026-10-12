@@ -45,12 +45,26 @@ describe('dashboard-drill-down.config', () => {
       expect(target.route).toBe('/invoices/unpaid');
     });
 
-    it('maps chartMonth to invoice list for selected month', () => {
+    it('maps currentMonthRevenue to the "Factures et avoirs" view, HT-restricted, month-to-date', () => {
+      const target = getDrillDownTarget('currentMonthRevenue', { now: fixedNow });
+      expect(target.route).toBe('/invoices/revenue');
+      expect(target.queryParams).toEqual({
+        fromDate: '2026-06-01',
+        toDate: '2026-06-16',
+        realizedRevenueOnly: 'true'
+      });
+    });
+
+    it('maps chartMonth to the "Factures et avoirs" view for the selected month, HT-restricted', () => {
       const target = getDrillDownTarget('chartMonth', {
         month: { month: 'Mars', monthShort: 'Mar', year: 2026, revenue: 100, invoiceCount: 2 }
       });
-      expect(target.route).toBe('/invoices');
-      expect(target.queryParams).toEqual({ fromDate: '2026-03-01', toDate: '2026-03-31' });
+      expect(target.route).toBe('/invoices/revenue');
+      expect(target.queryParams).toEqual({
+        fromDate: '2026-03-01',
+        toDate: '2026-03-31',
+        realizedRevenueOnly: 'true'
+      });
     });
   });
 

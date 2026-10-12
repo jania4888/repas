@@ -5,7 +5,13 @@ import { InvoiceService, InvoiceListItem } from '@core/services/invoice.service'
 import { QuoteService, QuoteListItem } from '@core/services/quote.service';
 import { ProductService, ProductListItem } from '@core/services/product.service';
 import { ClientService, ClientListItem } from '@core/services/client.service';
-import { isRealizedRevenue, getPeriodRange, RevenuePeriod } from '@core/utils/invoice-metrics.util';
+import {
+  getPeriodToDateRange,
+  isRealizedRevenue,
+  parseIssueDateLocal,
+  revenueAmountHt,
+  RevenuePeriod
+} from '@core/utils/invoice-metrics.util';
 
 // ── Types ──────────────────────────────────────────────────────────────
 
@@ -162,7 +168,8 @@ export class AnalyticsService {
     const { currentFrom, currentTo, previousFrom, previousTo } = this.getDateRanges(period);
 
     return forkJoin({
-      allInvoices: this.invoiceService.getInvoices({ pageSize: 2000 }).pipe(
+      // CA HT (Payée + Validée) — same rule as the dashboard and /invoices/revenue.
+      allInvoices: this.invoiceService.getInvoices({ pageSize: 2000, realizedRevenueOnly: true }).pipe(
         catchError(() => of({ success: false, data: { items: [] as InvoiceListItem[] } } as any))
       )
     }).pipe(
@@ -170,21 +177,21 @@ export class AnalyticsService {
         const invoices: InvoiceListItem[] = allInvoices.success ? allInvoices.data.items : [];
         const currency = invoices.length > 0 ? invoices[0].currency : 'TND';
 
-        // Filter current + previous periods
+        // Filter current + previous periods (realized revenue already restricted server-side).
         const currentInvoices = invoices.filter(inv => {
-          const d = new Date(inv.issueDate);
-          return d >= currentFrom && d <= currentTo;
+          const d = parseIssueDateLocal(inv.issueDate);
+          return d !== null && d >= currentFrom && d <= currentTo;
         });
         const previousInvoices = invoices.filter(inv => {
-          const d = new Date(inv.issueDate);
-          return d >= previousFrom && d <= previousTo;
+          const d = parseIssueDateLocal(inv.issueDate);
+          return d !== null && d >= previousFrom && d <= previousTo;
         });
 
         const currentPaid = currentInvoices.filter(inv => this.isPaid(inv.status));
         const previousPaid = previousInvoices.filter(inv => this.isPaid(inv.status));
 
-        const currentRevenue = currentPaid.reduce((s, inv) => s + inv.totalAmount, 0);
-        const previousRevenue = previousPaid.reduce((s, inv) => s + inv.totalAmount, 0);
+        const currentRevenue = currentPaid.reduce((s, inv) => s + revenueAmountHt(inv), 0);
+        const previousRevenue = previousPaid.reduce((s, inv) => s + revenueAmountHt(inv), 0);
 
         const comparison = this.buildComparison(currentRevenue, previousRevenue, period, currency);
         const chartData = this.buildRevenueChart(currentPaid, period);
@@ -207,8 +214,10 @@ export class AnalyticsService {
   private getDateRanges(period: AnalyticsPeriod): {
     currentFrom: Date; currentTo: Date; previousFrom: Date; previousTo: Date;
   } {
-    // Canonical period bounds shared with the dashboard (incl. 'all' = cumulative).
-    return getPeriodRange(period);
+    // Canonical period bounds shared with the dashboard: 'month'/'year' are
+    // to-date (1st → today) so this report matches the dashboard CA HT card.
+    // 'day' and 'all' are unchanged (full calendar day / cumulative).
+    return getPeriodToDateRange(period);
   }
 
   private buildComparison(current: number, previous: number, period: AnalyticsPeriod, currency: string): PeriodComparison {
@@ -224,8 +233,8 @@ export class AnalyticsService {
     }
 
     let changePercent = 0;
-    if (previous > 0) {
-      changePercent = ((current - previous) / previous) * 100;
+    if (previous !== 0) {
+      changePercent = ((current - previous) / Math.abs(previous)) * 100;
     } else if (current > 0) {
       changePercent = 100;
     }
@@ -259,7 +268,7 @@ export class AnalyticsService {
         result.push({
           label: `${h}h`,
           labelShort: `${h}h`,
-          revenue: inv.reduce((s, i) => s + i.totalAmount, 0),
+          revenue: inv.reduce((s, i) => s + revenueAmountHt(i), 0),
           invoiceCount: inv.length
         });
       }
@@ -267,20 +276,20 @@ export class AnalyticsService {
     }
 
     if (period === 'month') {
-      // Days of the current month
+      // Days of the current month (future days stay at 0; see getPeriodToDateRange).
       const result: RevenueChartPoint[] = [];
       const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
       for (let d = 1; d <= daysInMonth; d++) {
         const dayStart = new Date(now.getFullYear(), now.getMonth(), d);
         const dayEnd = new Date(now.getFullYear(), now.getMonth(), d, 23, 59, 59);
         const inv = paidInvoices.filter(i => {
-          const dt = new Date(i.issueDate);
-          return dt >= dayStart && dt <= dayEnd;
+          const dt = parseIssueDateLocal(i.issueDate);
+          return dt !== null && dt >= dayStart && dt <= dayEnd;
         });
         result.push({
           label: `${d} ${MONTH_SHORT_FR[now.getMonth()]}`,
           labelShort: `${d}`,
-          revenue: inv.reduce((s, i) => s + i.totalAmount, 0),
+          revenue: inv.reduce((s, i) => s + revenueAmountHt(i), 0),
           invoiceCount: inv.length
         });
       }
@@ -291,9 +300,13 @@ export class AnalyticsService {
       // Cumulative: one bucket per calendar year present in the data.
       const byYear = new Map<number, { revenue: number; invoiceCount: number }>();
       paidInvoices.forEach(i => {
-        const y = new Date(i.issueDate).getFullYear();
+        const d = parseIssueDateLocal(i.issueDate);
+        if (!d) {
+          return;
+        }
+        const y = d.getFullYear();
         const e = byYear.get(y) ?? { revenue: 0, invoiceCount: 0 };
-        e.revenue += i.totalAmount;
+        e.revenue += revenueAmountHt(i);
         e.invoiceCount++;
         byYear.set(y, e);
       });
@@ -313,13 +326,13 @@ export class AnalyticsService {
       const monthStart = new Date(now.getFullYear(), m, 1);
       const monthEnd = new Date(now.getFullYear(), m + 1, 0, 23, 59, 59);
       const inv = paidInvoices.filter(i => {
-        const dt = new Date(i.issueDate);
-        return dt >= monthStart && dt <= monthEnd;
+        const dt = parseIssueDateLocal(i.issueDate);
+        return dt !== null && dt >= monthStart && dt <= monthEnd;
       });
       result.push({
         label: MONTH_NAMES_FR[m],
         labelShort: MONTH_SHORT_FR[m],
-        revenue: inv.reduce((s, i) => s + i.totalAmount, 0),
+        revenue: inv.reduce((s, i) => s + revenueAmountHt(i), 0),
         invoiceCount: inv.length
       });
     }
@@ -329,14 +342,15 @@ export class AnalyticsService {
   private buildRevenueByClient(paidInvoices: InvoiceListItem[], totalRevenue: number, currency: string): RevenueByClient[] {
     const clientMap = new Map<string, RevenueByClient>();
     paidInvoices.forEach(inv => {
+      const amountHt = revenueAmountHt(inv);
       const existing = clientMap.get(inv.clientName);
       if (existing) {
-        existing.totalAmount += inv.totalAmount;
+        existing.totalAmount += amountHt;
         existing.invoiceCount++;
       } else {
         clientMap.set(inv.clientName, {
           clientName: inv.clientName,
-          totalAmount: inv.totalAmount,
+          totalAmount: amountHt,
           invoiceCount: 1,
           currency,
           percentOfTotal: 0
@@ -346,7 +360,9 @@ export class AnalyticsService {
     const result = Array.from(clientMap.values())
       .sort((a, b) => b.totalAmount - a.totalAmount)
       .slice(0, 15);
-    result.forEach(r => r.percentOfTotal = totalRevenue > 0 ? (r.totalAmount / totalRevenue) * 100 : 0);
+    // percentOfTotal is computed on the signed HT total: a client can end up
+    // with a negative share when its avoirs outweigh its factures.
+    result.forEach(r => r.percentOfTotal = totalRevenue !== 0 ? (r.totalAmount / totalRevenue) * 100 : 0);
     return result;
   }
 

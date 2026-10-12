@@ -14,9 +14,10 @@ const NOW = new Date(2026, 7, 17, 15, 0, 0); // 17 August 2026
 function inv(
   issueDate: string,
   totalAmount: number,
-  status: string
+  status: string,
+  subTotal: number = totalAmount
 ): RevenueInvoiceLike {
-  return { issueDate, totalAmount, status };
+  return { issueDate, totalAmount, status, subTotal };
 }
 
 describe('dashboard-kpi-series.util', () => {
@@ -57,6 +58,15 @@ describe('dashboard-kpi-series.util', () => {
         320
       ]);
     });
+
+    it('sums the HT (subTotal), not the TTC (totalAmount)', () => {
+      const invoices: RevenueInvoiceLike[] = [
+        inv('2026-08-17', 119, 'Payée', 100) // TTC 119, HT 100
+      ];
+      expect(buildCumulativeMonthlyRealizedRevenue(invoices, NOW)).toEqual([
+        0, 0, 0, 0, 0, 100
+      ]);
+    });
   });
 
   describe('buildDailyIssuedAmount', () => {
@@ -87,6 +97,14 @@ describe('dashboard-kpi-series.util', () => {
       expect(series[0]).toBe(10);
       expect(series[16]).toBe(40);
       expect(series.slice(1, 16).every(value => value === 0)).toBeTrue();
+    });
+
+    it('sums the HT (subTotal), not the TTC (totalAmount)', () => {
+      const invoices: RevenueInvoiceLike[] = [
+        inv('2026-08-17', 119, 'Validée', 100) // TTC 119, HT 100
+      ];
+      const series = buildCurrentMonthDailyRealizedRevenue(invoices, NOW);
+      expect(series[16]).toBe(100);
     });
   });
 

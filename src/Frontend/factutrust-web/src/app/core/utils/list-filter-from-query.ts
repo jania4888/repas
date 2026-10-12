@@ -37,6 +37,13 @@ export interface InvoiceListFilterState {
   dateRange: Date[] | null;
   selectedClientId: string | null;
   search: string | null;
+  /**
+   * Vue « Factures et avoirs » uniquement : filtre « Comptés dans le CA (Payée + Validée) ».
+   * Optionnel pour ne pas impacter les autres modes de la liste. Le paramètre d'URL
+   * `realizedRevenueOnly=false` le désactive ; toute autre valeur (ou son absence) garde
+   * l'état courant, dont la valeur par défaut est `true` côté composant.
+   */
+  realizedRevenueOnly?: boolean;
 }
 
 export function applyInvoiceListFiltersFromQuery(
@@ -47,7 +54,8 @@ export function applyInvoiceListFiltersFromQuery(
     selectedStatus: state.selectedStatus,
     dateRange: state.dateRange ? [...state.dateRange] : null,
     selectedClientId: state.selectedClientId,
-    search: state.search
+    search: state.search,
+    realizedRevenueOnly: state.realizedRevenueOnly
   };
 
   const statusRaw = params.get('status');
@@ -72,6 +80,11 @@ export function applyInvoiceListFiltersFromQuery(
   const search = parseSearchQueryParam(params);
   if (search) {
     next.search = search;
+  }
+
+  const realizedRevenueOnlyRaw = params.get('realizedRevenueOnly');
+  if (realizedRevenueOnlyRaw !== null) {
+    next.realizedRevenueOnly = realizedRevenueOnlyRaw !== 'false';
   }
 
   return next;

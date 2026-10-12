@@ -7,6 +7,7 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
+import { CheckboxModule } from 'primeng/checkbox';
 import { DatePickerModule } from 'primeng/datepicker';
 import { PaginatorModule } from 'primeng/paginator';
 import { ToastModule } from 'primeng/toast';
@@ -42,8 +43,9 @@ import {
   INVOICE_LIST_STATUS_CANCELLED,
   isEmptyInvoiceReportError
 } from '@core/utils/report-pdf-empty.util';
+import { isRealizedRevenue, revenueAmountHt } from '@core/utils/invoice-metrics.util';
 
-type InvoiceListMode = 'invoices' | 'unpaid' | 'creditNotes';
+type InvoiceListMode = 'invoices' | 'unpaid' | 'creditNotes' | 'revenue';
 
 interface StatusOption {
   label: string;
@@ -62,6 +64,7 @@ interface StatusOption {
     ButtonModule,
     InputTextModule,
     SelectModule,
+    CheckboxModule,
     DatePickerModule,
     PaginatorModule,
     ToastModule,
@@ -158,8 +161,8 @@ interface StatusOption {
           (onSelect)="onFilterChange()">
         </p-datepicker>
 
-        <p-select 
-          [options]="clientOptions" 
+        <p-select
+          [options]="clientOptions"
           [(ngModel)]="selectedClient"
           optionLabel="name"
           placeholder="Tous les clients" i18n-placeholder="@@invoices.invoice-list.tous.les.clients.56f5092c"
@@ -168,6 +171,24 @@ interface StatusOption {
           filterBy="name,code"
           (onChange)="onFilterChange()">
         </p-select>
+
+        @if (revenueMode()) {
+          <span class="filter-check">
+            <p-checkbox
+              [ngModel]="realizedRevenueOnly()"
+              (ngModelChange)="onRealizedRevenueOnlyChange($event)"
+              [binary]="true"
+              inputId="realizedRevenueOnly"
+              ariaLabelledBy="realizedRevenueOnlyLabel">
+            </p-checkbox>
+            <label id="realizedRevenueOnlyLabel" for="realizedRevenueOnly" i18n="@@invoices.invoice-list.comptes.dans.le.ca.payee.validee.f9d71768">Comptés dans le CA (Payée + Validée)</label>
+            <span
+              class="filter-check-hint"
+              title="Seuls les documents aux statuts Payée et Validée alimentent le chiffre d'affaires du tableau de bord." i18n-title="@@invoices.invoice-list.seuls.les.documents.aux.statuts.payee.et.validee.3d82aaff">
+              <i class="pi pi-info-circle" aria-hidden="true"></i>
+            </span>
+          </span>
+        }
       </div>
     </div>
 
@@ -222,10 +243,18 @@ interface StatusOption {
         <ng-template pTemplate="header">
           <tr>
             <th pSortableColumn="number"><ng-container i18n="@@invoices.invoice-list.numero.15e73db0">Numéro </ng-container> <p-sortIcon field="number"></p-sortIcon></th>
+            @if (revenueMode()) {
+              <th i18n="@@invoices.invoice-list.type.3deb7456">Type</th>
+            }
             <th i18n="@@invoices.invoice-list.client.1bdd79b1">Client</th>
             <th pSortableColumn="issueDate"><ng-container i18n="@@invoices.invoice-list.date.eb9a4bc1">Date </ng-container> <p-sortIcon field="issueDate"></p-sortIcon></th>
             <th i18n="@@invoices.invoice-list.echeance.f9a77ff6">Échéance</th>
-            <th pSortableColumn="totalAmount"><ng-container i18n="@@invoices.invoice-list.montant.4adcd9fc">Montant </ng-container> <p-sortIcon field="totalAmount"></p-sortIcon></th>
+            @if (revenueMode()) {
+              <th pSortableColumn="subTotal"><ng-container i18n="@@invoices.invoice-list.montant.ht.3df1d6fe">Montant HT </ng-container> <p-sortIcon field="subTotal"></p-sortIcon></th>
+              <th pSortableColumn="totalAmount"><ng-container i18n="@@invoices.invoice-list.montant.ttc.a742433a">Montant TTC </ng-container> <p-sortIcon field="totalAmount"></p-sortIcon></th>
+            } @else {
+              <th pSortableColumn="totalAmount"><ng-container i18n="@@invoices.invoice-list.montant.4adcd9fc">Montant </ng-container> <p-sortIcon field="totalAmount"></p-sortIcon></th>
+            }
             <th i18n="@@invoices.invoice-list.montant.paye.40c0b255">Montant payé</th>
             <th>{{ remainingColumnLabel() }}</th>
             <th i18n="@@invoices.invoice-list.statut.659499f3">Statut</th>
@@ -234,15 +263,26 @@ interface StatusOption {
         </ng-template>
 
         <ng-template pTemplate="body" let-invoice>
-          <tr [class.overdue]="invoice.isOverdue" [class.row-avoir]="invoice.isCreditNote">
+          <tr [class.overdue]="invoice.isOverdue" [class.row-avoir]="invoice.isCreditNote" [class.row-excluded]="isExcludedFromRevenue(invoice)">
             <td>
               <a [routerLink]="invoiceDetailLink(invoice)" class="invoice-number">
                 {{ invoice.number }}
               </a>
-              @if (invoice.isCreditNote && !creditNotesOnlyMode()) {
+              @if (invoice.isCreditNote && !creditNotesOnlyMode() && !revenueMode()) {
                 <span class="doc-type-chip" title="Facture d'avoir" i18n-title="@@invoices.invoice-list.facture.d.avoir.541e4451" i18n="@@invoices.invoice-list.avoir.8ee24717">Avoir</span>
               }
             </td>
+            @if (revenueMode()) {
+              <td class="cell-type">
+                <span class="doc-type-chip" [class.doc-type-chip--facture]="!invoice.isCreditNote">
+                  @if (invoice.isCreditNote) {
+                    <ng-container i18n="@@invoices.invoice-list.avoir.8ee24717">Avoir</ng-container>
+                  } @else {
+                    <ng-container i18n="@@ui.tern.facture.3953b9">Facture</ng-container>
+                  }
+                </span>
+              </td>
+            }
             <td>{{ invoice.clientName }}</td>
             <td>{{ invoice.issueDate | date:'dd/MM/yyyy' }}</td>
             <td>
@@ -254,14 +294,20 @@ interface StatusOption {
                 <span class="text-muted">-</span>
               }
             </td>
+            @if (revenueMode()) {
+              <td class="amount">{{ revenueAmountHtOf(invoice) | number:'1.3-3' }} {{ invoice.currency }}</td>
+            }
             <td class="amount">{{ invoice.totalAmount | number:'1.3-3' }} {{ invoice.currency }}</td>
             <td class="amount">{{ invoice.totalPaid | number:'1.3-3' }} {{ invoice.currency }}</td>
             <td class="amount">{{ invoice.remainingAmount | number:'1.3-3' }} {{ invoice.currency }}</td>
-            <td>
-              <app-status-badge 
+            <td [class.cell-status]="revenueMode()">
+              <app-status-badge
                 [status]="getStatusBadgeStatus(invoice.status)"
                 [label]="invoice.status | backendLabel">
               </app-status-badge>
+              @if (isExcludedFromRevenue(invoice)) {
+                <span class="ca-flag" i18n="@@invoices.invoice-list.non.compte.dans.le.ca.dafda2d1">Non compté dans le CA</span>
+              }
             </td>
             <td>
               <div class="actions">
@@ -290,8 +336,14 @@ interface StatusOption {
 
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="9" class="text-center p-6">
-              @if (unpaidOnlyMode()) {
+            <td [attr.colspan]="revenueMode() ? 11 : 9" class="text-center p-6">
+              @if (revenueMode()) {
+                <app-empty-state
+                  illustration="empty-invoices.svg"
+                  title="Aucun document" i18n-title="@@invoices.invoice-list.aucun.document.1e1d774d"
+                  description="Aucune facture ni avoir ne correspond aux filtres." i18n-description="@@invoices.invoice-list.aucune.facture.ni.avoir.ne.correspond.aux.filtre.9120f3ee">
+                </app-empty-state>
+              } @else if (unpaidOnlyMode()) {
                 <app-empty-state
                   illustration="empty-invoices.svg"
                   title="Aucune facture impayée" i18n-title="@@invoices.invoice-list.aucune.facture.impayee.6da9b1d9"
@@ -349,6 +401,60 @@ interface StatusOption {
       font-weight: var(--font-weight-semibold);
       text-transform: uppercase;
       letter-spacing: 0.04em;
+    }
+
+    /* Colonne Type (mode revenue) : la puce n'a pas la marge de la cellule Numéro. */
+    td.cell-type .doc-type-chip {
+      margin-inline-start: 0;
+    }
+
+    .doc-type-chip--facture {
+      background: var(--color-primary-50, #eff6ff);
+      color: var(--color-primary-700, #1d4ed8);
+      border-color: var(--color-primary-200, #bfdbfe);
+    }
+
+    .filter-check {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-2);
+      min-height: 40px;
+    }
+
+    .filter-check label {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-primary, var(--color-neutral-900));
+      font-weight: var(--font-weight-medium);
+    }
+
+    .filter-check-hint {
+      display: inline-flex;
+      align-items: center;
+      color: var(--color-text-secondary, var(--color-neutral-500));
+    }
+
+    /* Mode revenue, filtre CA désactivé : lignes hors « Payée + Validée » grisées. */
+    tr.row-excluded td {
+      background: var(--color-neutral-50, #f8fafc);
+    }
+
+    tr.row-excluded td:not(:last-child),
+    tr.row-excluded .amount {
+      color: var(--color-neutral-600, #475569);
+    }
+
+    td.cell-status {
+      white-space: normal;
+    }
+
+    .ca-flag {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-1);
+      margin-top: 2px;
+      font-size: var(--font-size-xs);
+      color: var(--color-neutral-500, #64748b);
+      font-style: italic;
     }
 
     .amount {
@@ -429,11 +535,14 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
   listMode = signal<InvoiceListMode>('invoices');
   unpaidOnlyMode = computed(() => this.listMode() === 'unpaid');
   creditNotesOnlyMode = computed(() => this.listMode() === 'creditNotes');
+  /** Vue « Factures et avoirs » (/invoices/revenue) : FAC + AVO, CA HT signé. */
+  revenueMode = computed(() => this.listMode() === 'revenue');
 
   pageTitle = computed(() => {
     switch (this.listMode()) {
       case 'unpaid': return $localize`:@@invoices.invoice-list.ts.factures.impayees.dc3cffa5:Factures impayées`;
       case 'creditNotes': return $localize`:@@invoices.invoice-list.ts.avoirs.de.vente.63b21d70:Avoirs de vente`;
+      case 'revenue': return $localize`:@@invoices.invoice-list.ts.factures.et.avoirs.efa96afa:Factures et avoirs`;
       default: return $localize`:@@invoices.invoice-list.ts.factures.da35e4f2:Factures`;
     }
   });
@@ -442,22 +551,34 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
     switch (this.listMode()) {
       case 'unpaid': return $localize`:@@invoices.invoice-list.ts.factures.clients.non.reglees.ou.partiell.e3555d85:Factures clients non réglées ou partiellement réglées.`;
       case 'creditNotes': return $localize`:@@invoices.invoice-list.ts.gerez.vos.avoirs.de.vente.4ef43a4a:Gérez vos avoirs de vente`;
+      case 'revenue': return $localize`:@@invoices.invoice-list.ts.factures.fac.et.avoirs.avo.montants.ht.signes.17b0cf71:Factures (FAC) et avoirs (AVO) — montants HT signés`;
       default: return $localize`:@@invoices.invoice-list.ts.gerez.vos.factures.8f0170ed:Gérez vos factures`;
     }
   });
 
-  analyzeScreenId = computed(() => this.creditNotesOnlyMode() ? 'credit-note-list' : 'invoice-list');
+  analyzeScreenId = computed(() => {
+    if (this.revenueMode()) {
+      return 'revenue-document-list';
+    }
+    return this.creditNotesOnlyMode() ? 'credit-note-list' : 'invoice-list';
+  });
   remainingColumnLabel = computed(() => this.creditNotesOnlyMode() ? $localize`:@@ui.tern.reste.a.rembourser.551580:Reste à rembourser` : $localize`:@@ui.tern.reste.a.payer.968444:Reste à payer`);
-  paginatorTemplate = computed(() =>
-    this.creditNotesOnlyMode()
+  paginatorTemplate = computed(() => {
+    if (this.revenueMode()) {
+      return $localize`:@@invoices.invoice-list.ts.affichage.de.first.a.last.sur.totalrecords.docum.d2b49537:Affichage de {first} à {last} sur {totalRecords} documents`;
+    }
+    return this.creditNotesOnlyMode()
       ? $localize`:@@ui.tern.affichage.de.first.a.last.sur.totalrecords.b122ac:Affichage de {first} à {last} sur {totalRecords} avoirs`
-      : $localize`:@@ui.tern.affichage.de.first.a.last.sur.totalrecords.5b810a:Affichage de {first} à {last} sur {totalRecords} factures`
-  );
-  printAriaLabel = computed(() =>
-    this.creditNotesOnlyMode()
+      : $localize`:@@ui.tern.affichage.de.first.a.last.sur.totalrecords.5b810a:Affichage de {first} à {last} sur {totalRecords} factures`;
+  });
+  printAriaLabel = computed(() => {
+    if (this.revenueMode()) {
+      return $localize`:@@invoices.invoice-list.ts.imprimer.l.etat.des.factures.et.avoirs.periode.e.b594cddd:Imprimer l'état des factures et avoirs (période et client optionnels)`;
+    }
+    return this.creditNotesOnlyMode()
       ? $localize`:@@ui.tern.imprimer.l.etat.des.avoirs.periode.et.clie.1f08fb:Imprimer l'état des avoirs (période et client optionnels)`
-      : $localize`:@@ui.tern.imprimer.l.etat.des.factures.periode.et.cl.728ed9:Imprimer l'état des factures (période et client optionnels)`
-  );
+      : $localize`:@@ui.tern.imprimer.l.etat.des.factures.periode.et.cl.728ed9:Imprimer l'état des factures (période et client optionnels)`;
+  });
 
   /** False while loading or when no document is eligible for the period PDF (état excludes cancelled). */
   canPrintInvoiceReport = computed(() => {
@@ -469,7 +590,14 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
     }
     return (this.summary()?.count ?? 0) > 0;
   });
-  viewAriaLabel = computed(() => this.creditNotesOnlyMode() ? $localize`:@@ui.tern.voir.l.avoir.1dce8e:Voir l'avoir` : $localize`:@@ui.tern.voir.la.facture.e4bdde:Voir la facture`);
+  viewAriaLabel = computed(() => {
+    if (this.revenueMode()) {
+      return $localize`:@@invoices.invoice-list.ts.voir.le.document.d865fc48:Voir le document`;
+    }
+    return this.creditNotesOnlyMode()
+      ? $localize`:@@ui.tern.voir.l.avoir.1dce8e:Voir l'avoir`
+      : $localize`:@@ui.tern.voir.la.facture.e4bdde:Voir la facture`;
+  });
 
   canCreateInvoice = computed(
     () => !this.auth.isFirmDelegatedReadonly() && this.auth.hasPermission(PERMISSIONS.invoices.create)
@@ -501,6 +629,19 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
     const s = this.summary();
     const currency = s?.currency ?? 'TND';
     const creditNotes = this.creditNotesOnlyMode();
+    if (this.revenueMode()) {
+      // « Total CA HT » suit la règle Payée + Validée quelle que soit la case ; si l'API
+      // n'envoie pas encore realizedRevenueHt, repli sur totalHt quand le filtre est actif
+      // (les deux sont alors égaux côté backend), sinon « — » (undefined).
+      const realizedRevenueHt = s?.realizedRevenueHt ?? (this.realizedRevenueOnly() ? s?.totalHt : undefined);
+      return [
+        { label: $localize`:@@invoices.invoice-list.ts.documents.687c8286:Documents`, value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
+        { label: $localize`:@@invoices.invoice-list.ts.total.ca.ht.db6b172a:Total CA HT`, value: realizedRevenueHt, format: 'currency', currency, icon: 'pi-chart-line', tone: 'primary', accent: true, hint: $localize`:@@invoices.invoice-list.ts.payee.validee.5cc111ce:Payée + Validée` },
+        { label: $localize`:@@invoices.invoice-list.ts.total.factures.ht.9e644aba:Total factures HT`, value: s?.invoicesHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
+        { label: $localize`:@@invoices.invoice-list.ts.total.avoirs.ht.85d73be4:Total avoirs HT`, value: s?.creditNotesHt, format: 'currency', currency, icon: 'pi-receipt', tone: 'rose' },
+        { label: $localize`:@@invoices.invoice-list.ts.total.ttc.9e80ff7c:Total TTC`, value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' }
+      ];
+    }
     return [
       { label: creditNotes ? $localize`:@@ui.tern.avoirs.38b0e7:Avoirs` : $localize`:@@ui.tern.factures.da35e4:Factures`, value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
       { label: $localize`:@@invoices.invoice-list.ts.total.ttc.9e80ff7c:Total TTC`, value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
@@ -515,6 +656,12 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
   selectedStatus: number | null = null;
   dateRange: Date[] | null = [];
   selectedClient: ClientListItem | null = null;
+  /**
+   * Vue revenue uniquement : « Comptés dans le CA (Payée + Validée) », coché par défaut.
+   * Lu depuis l'URL (`realizedRevenueOnly=false` le désactive) et renvoyé au backend ;
+   * ignoré dans les autres modes.
+   */
+  realizedRevenueOnly = signal(true);
   clientOptions: ClientListItem[] = [];
   private pendingClientIdFromQuery: string | null = null;
   page = 1;
@@ -524,6 +671,15 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
   private searchSubject = new Subject<string>();
   private subscriptions = new Subscription();
   private isLoadingInProgress = false;
+  /**
+   * Une requête est déjà en cours : la dernière demande de chargement est mise en file
+   * et rejouée avec les filtres les plus récents quand la requête active se termine.
+   * Sans cela, basculer un filtre (ex. « Comptés dans le CA ») pendant le chargement
+   * afficherait une liste et des totaux qui ne correspondent plus aux filtres.
+   */
+  private reloadPending = false;
+  /** Numéro monotone de la dernière requête de totaux : une réponse plus ancienne est ignorée. */
+  private summaryRequestSeq = 0;
   private lastErrorTime = 0;
   private readonly ERROR_DEBOUNCE_MS = 2000; // 2 secondes entre les messages d'erreur
   private readonly SEARCH_DEBOUNCE_MS = 500; // 500ms de debounce pour la recherche
@@ -532,6 +688,13 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
   private isFirstLoad = true;
 
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
+    if (this.revenueMode()) {
+      return [
+        { label: $localize`:@@invoices.invoice-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+        { label: $localize`:@@invoices.invoice-list.ts.factures.da35e4f2:Factures`, route: '/invoices' },
+        { label: $localize`:@@invoices.invoice-list.ts.factures.et.avoirs.efa96afa:Factures et avoirs` }
+      ];
+    }
     const base: BreadcrumbItem[] = [
       { label: $localize`:@@invoices.invoice-list.ts.accueil.a8ff8fd2:Accueil`, route: '/', icon: 'pi-home' }
     ];
@@ -597,7 +760,9 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
   }
 
   private applyListModeFromRouteData(data: { [key: string]: unknown }): void {
-    if (data['creditNotesOnly'] === true) {
+    if (data['revenueMode'] === true) {
+      this.listMode.set('revenue');
+    } else if (data['creditNotesOnly'] === true) {
       this.listMode.set('creditNotes');
     } else if (data['unpaidOnly'] === true) {
       this.listMode.set('unpaid');
@@ -607,6 +772,9 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
   }
 
   invoiceDetailLink(invoice: InvoiceListItem): string[] {
+    if (this.revenueMode()) {
+      return ['/invoices', 'revenue', invoice.id];
+    }
     if (this.creditNotesOnlyMode()) {
       return ['/invoices', 'credit-notes', invoice.id];
     }
@@ -628,7 +796,11 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
     ).catch(() => undefined);
   }
 
-  private documentType(): InvoiceTypeCode {
+  /** Type de document envoyé au backend ; indéfini en mode revenue (FAC + AVO). */
+  private documentType(): InvoiceTypeCode | undefined {
+    if (this.revenueMode()) {
+      return undefined;
+    }
     return this.creditNotesOnlyMode() ? 'CREDIT_NOTE' : 'INVOICE';
   }
 
@@ -637,9 +809,11 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
       selectedStatus: this.selectedStatus,
       dateRange: this.dateRange,
       selectedClientId: this.selectedClient?.id ?? null,
-      search: this.searchTerm || null
+      search: this.searchTerm || null,
+      realizedRevenueOnly: this.realizedRevenueOnly()
     });
     this.selectedStatus = applied.selectedStatus;
+    this.realizedRevenueOnly.set(applied.realizedRevenueOnly ?? true);
     if (applied.dateRange) {
       this.dateRange = applied.dateRange;
     }
@@ -684,6 +858,7 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
   loadInvoices(): void {
     // Empêcher les requêtes multiples simultanées
     if (this.isLoadingInProgress) {
+      this.reloadPending = true;
       return;
     }
 
@@ -701,7 +876,8 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
       page: this.page,
       pageSize: this.pageSize,
       type: this.documentType(),
-      ...(this.unpaidOnlyMode() ? { unpaidOnly: true } : {})
+      ...(this.unpaidOnlyMode() ? { unpaidOnly: true } : {}),
+      ...(this.revenueMode() ? { realizedRevenueOnly: this.realizedRevenueOnly() } : {})
     };
 
     // Totaux conformes aux filtres (mêmes params, ensemble filtré complet côté backend).
@@ -720,20 +896,22 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
         }
         this.loading.set(false);
         this.initialLoad.set(false);
-        this.isLoadingInProgress = false;
+        this.finishLoad();
       },
       error: (error) => {
         this.loading.set(false);
         this.initialLoad.set(false);
-        this.isLoadingInProgress = false;
 
-        // Gestion spécifique des erreurs 429 (rate limiting) — pas de retry automatique côté service
+        // Appliquer l'état d'erreur AVANT de rejouer un chargement mis en file : la
+        // requête rejouée efface le message au départ (loadInvoices), donc un message
+        // écrit après finirait affiché alors que la liste a été rechargée avec succès.
         if (error?.status === 429) {
           this.isRateLimited.set(true);
           const errorMsg = this.errorHandler.extractErrorMessage(error);
           this.errorMessage.set(errorMsg);
           // Ne pas afficher de toast ici car l'intercepteur le gère déjà
           // Le composant affiche juste le message inline
+          this.finishLoad();
           return;
         }
 
@@ -741,6 +919,7 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
         const errorMsg = this.errorHandler.extractErrorMessage(error) || $localize`:@@invoices.invoice-list.ts.impossible.de.charger.les.factures.583c2251:Impossible de charger les factures`;
         this.errorMessage.set(errorMsg);
         this.showErrorToast(errorMsg);
+        this.finishLoad();
       },
       complete: () => {
         this.initialLoadDone = true;
@@ -754,16 +933,37 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
    */
   private loadSummary(params: InvoiceSearchParams): void {
     this.summaryLoading.set(true);
+    // Les requêtes de totaux ne sont pas sérialisées : si une plus récente part (filtre
+    // basculé pendant le chargement), la réponse de l'ancienne ne doit pas l'écraser.
+    const requestSeq = ++this.summaryRequestSeq;
     this.invoiceService.getInvoicesSummary({ ...params, skipGlobalErrorUi: true }).subscribe({
       next: (response) => {
+        if (requestSeq !== this.summaryRequestSeq) {
+          return;
+        }
         this.summary.set(response.success && response.data ? response.data : null);
         this.summaryLoading.set(false);
       },
       error: () => {
+        if (requestSeq !== this.summaryRequestSeq) {
+          return;
+        }
         this.summary.set(null);
         this.summaryLoading.set(false);
       }
     });
+  }
+
+  /**
+   * Termine un chargement. Si une demande de rechargement a été mise en file pendant
+   * la requête, on rejoue immédiatement avec les filtres courants.
+   */
+  private finishLoad(): void {
+    this.isLoadingInProgress = false;
+    if (this.reloadPending) {
+      this.reloadPending = false;
+      this.loadInvoices();
+    }
   }
 
   onSearch(): void {
@@ -779,6 +979,25 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
     this.loadInvoices();
   }
 
+  /** Case « Comptés dans le CA (Payée + Validée) » (mode revenue uniquement). */
+  onRealizedRevenueOnlyChange(checked: boolean): void {
+    this.realizedRevenueOnly.set(checked === true);
+    this.onFilterChange();
+  }
+
+  /**
+   * Mode revenue, filtre CA désactivé : une ligne hors « Payée + Validée » est grisée
+   * et marquée « Non compté dans le CA ».
+   */
+  isExcludedFromRevenue(invoice: InvoiceListItem): boolean {
+    return this.revenueMode() && !this.realizedRevenueOnly() && !isRealizedRevenue(invoice.status);
+  }
+
+  /** Montant HT signé de la ligne (colonne « Montant HT » du mode revenue). */
+  revenueAmountHtOf(invoice: InvoiceListItem): number {
+    return revenueAmountHt(invoice);
+  }
+
   /**
    * Reflète les filtres courants dans l'URL (query params) : URL partageable et conservée au
    * rafraîchissement (lecture symétrique dans applyFiltersFromQuery). `replaceUrl` évite de
@@ -790,7 +1009,10 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
       status: this.selectedStatus ?? null,
       fromDate: this.dateRange?.[0] ? formatLocalDate(this.dateRange[0]) : null,
       toDate: this.dateRange?.[1] ? formatLocalDate(this.dateRange[1]) : null,
-      clientId: this.selectedClient?.id ?? null
+      clientId: this.selectedClient?.id ?? null,
+      // Explicite en mode revenue (true/false) pour que le lien reste juste même si la
+      // valeur par défaut change ; retiré de l'URL dans les autres modes.
+      realizedRevenueOnly: this.revenueMode() ? (this.realizedRevenueOnly() ? 'true' : 'false') : null
     };
     this.router.navigate([], {
       relativeTo: this.route,
@@ -869,33 +1091,39 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
     const clientId = this.selectedClient?.id;
 
     this.printingReport.set(true);
-    this.invoiceService.downloadReportPdf(fromDate, toDate, clientId, this.documentType()).subscribe({
-      next: (blob) => {
-        this.printingReport.set(false);
-        if (!blob || blob.size === 0) return;
-        const prefix = this.creditNotesOnlyMode() ? 'Etat_avoirs_ventes' : 'Etat_factures_ventes';
-        this.printPreviewService.openPdfForPrintPreview(blob, `${prefix}_${fromDate}_${toDate}.pdf`);
-      },
-      error: (error: Error) => {
-        this.printingReport.set(false);
-        const emptyPeriod = isEmptyInvoiceReportError(error.message);
-        this.toastService.add({
-          key: 'invoice-list-print',
-          severity: emptyPeriod ? 'warn' : 'error',
-          summary: emptyPeriod
-            ? $localize`:@@invoices.invoice-list.report.toast.summary.information:Information`
-            : $localize`:@@invoice-list.component.summary.Erreur:Erreur`,
-          detail: error.message || $localize`:@@invoices.invoice-list.ts.impossible.de.generer.le.rapport.pdf.e2243d7a:Impossible de générer le rapport PDF`,
-          life: 5000
-        });
-      }
-    });
+    this.invoiceService
+      .downloadReportPdf(fromDate, toDate, clientId, this.documentType(), this.revenueMode() ? this.realizedRevenueOnly() : undefined)
+      .subscribe({
+        next: (blob) => {
+          this.printingReport.set(false);
+          if (!blob || blob.size === 0) return;
+          const prefix = this.revenueMode()
+            ? 'Etat_factures_avoirs_ventes'
+            : this.creditNotesOnlyMode() ? 'Etat_avoirs_ventes' : 'Etat_factures_ventes';
+          this.printPreviewService.openPdfForPrintPreview(blob, `${prefix}_${fromDate}_${toDate}.pdf`);
+        },
+        error: (error: Error) => {
+          this.printingReport.set(false);
+          const emptyPeriod = isEmptyInvoiceReportError(error.message);
+          this.toastService.add({
+            key: 'invoice-list-print',
+            severity: emptyPeriod ? 'warn' : 'error',
+            summary: emptyPeriod
+              ? $localize`:@@invoices.invoice-list.report.toast.summary.information:Information`
+              : $localize`:@@invoice-list.component.summary.Erreur:Erreur`,
+            detail: error.message || $localize`:@@invoices.invoice-list.ts.impossible.de.generer.le.rapport.pdf.e2243d7a:Impossible de générer le rapport PDF`,
+            life: 5000
+          });
+        }
+      });
   }
 
   private showEmptyInvoiceReportInfoToast(): void {
     let detail: string;
     if (this.selectedStatus === INVOICE_LIST_STATUS_CANCELLED) {
       detail = $localize`:@@invoices.invoice-list.report.empty.cancelledFilter:L'état n'inclut pas les factures annulées.`;
+    } else if (this.revenueMode()) {
+      detail = $localize`:@@invoices.invoice-list.ts.aucun.document.sur.cette.periode.pour.l.etat.8263fbe5:Aucun document sur cette période pour l'état.`;
     } else if (this.creditNotesOnlyMode()) {
       detail = $localize`:@@invoices.invoice-list.report.empty.creditNotes:Aucun avoir sur cette période pour l'état.`;
     } else {
@@ -911,7 +1139,7 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
   }
 
   hasActiveFilters(): boolean {
-    return !!this.searchTerm || this.selectedStatus !== null || (this.dateRange?.length ?? 0) > 0 || this.selectedClient !== null;
+    return this.activeFiltersCount() > 0;
   }
 
   activeFiltersCount(): number {
@@ -920,6 +1148,8 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
     if (this.selectedStatus !== null) count++;
     if ((this.dateRange?.length ?? 0) > 0) count++;
     if (this.selectedClient !== null) count++;
+    // La case CA ne compte comme filtre actif que décochée (écart à la valeur par défaut).
+    if (this.revenueMode() && !this.realizedRevenueOnly()) count++;
     return count;
   }
 
@@ -928,6 +1158,7 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
     this.selectedStatus = null;
     this.dateRange = [];
     this.selectedClient = null;
+    this.realizedRevenueOnly.set(true);
     this.page = 1;
     this.syncFiltersToUrl();
     this.loadInvoices();
@@ -940,6 +1171,11 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
         screen: this.analyzeScreenId(),
         unpaidOnly: this.unpaidOnlyMode(),
         creditNotesOnly: this.creditNotesOnlyMode(),
+        revenueMode: this.revenueMode(),
+        realizedRevenueOnly: this.revenueMode() ? this.realizedRevenueOnly() : null,
+        realizedRevenueHt: this.summary()?.realizedRevenueHt ?? null,
+        invoicesHt: this.summary()?.invoicesHt ?? null,
+        creditNotesHt: this.summary()?.creditNotesHt ?? null,
         filters: {
           search: this.searchTerm || null,
           status: this.selectedStatus,

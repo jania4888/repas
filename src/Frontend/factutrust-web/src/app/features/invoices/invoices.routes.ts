@@ -65,6 +65,19 @@ export const INVOICES_ROUTES: Routes = [
     data: { unpaidOnly: true }
   },
   {
+    // Vue « Factures et avoirs » (CA HT) — doit précéder ':id' pour ne pas être lue comme un identifiant.
+    path: 'revenue',
+    loadComponent: () => import('./invoice-list/invoice-list.component').then(m => m.InvoiceListComponent),
+    title: $localize`:@@invoices.routes.title.factures.et.avoirs.instafact.78c53fc2:Factures et avoirs - InstaFact`,
+    data: { revenueMode: true }
+  },
+  {
+    path: 'revenue/:id',
+    loadComponent: () => import('./invoice-detail/invoice-detail.component').then(m => m.InvoiceDetailComponent),
+    title: $localize`:@@invoices.routes.title.detail.document.instafact.66939a66:Détail document - InstaFact`,
+    data: { revenueMode: true }
+  },
+  {
     path: ':id',
     loadComponent: () => import('./invoice-detail/invoice-detail.component').then(m => m.InvoiceDetailComponent),
     title: $localize`:@@invoices.routes.title.D_tail_facture_InstaFa:Détail facture - InstaFact`
