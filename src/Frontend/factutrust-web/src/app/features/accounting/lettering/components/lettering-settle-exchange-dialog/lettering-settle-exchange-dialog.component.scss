@@ -29,3 +29,12 @@
   font-size: var(--font-size-xs);
   color: var(--color-text-tertiary);
 }
+
+.lettering-settle-dialog__error {
+  margin: var(--spacing-2) 0 0;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-md);
+  background: var(--color-danger-subtle, #fdecec);
+  color: var(--color-danger, #b42318);
+  font-size: var(--font-size-sm);
+}

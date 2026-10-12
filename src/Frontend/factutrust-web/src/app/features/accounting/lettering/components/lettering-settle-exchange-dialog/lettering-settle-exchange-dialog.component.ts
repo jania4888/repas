@@ -21,6 +21,10 @@ export class LetteringSettleExchangeDialogComponent {
   @Input() currency: string | null = null;
   @Input() gap = 0;
   @Input() busy = false;
+  /** Erreur à afficher dans la modale (ex. écart désormais nul après rechargement, droit
+   *  insuffisant...) : la modale ne se ferme plus toute seule à l'échec, le conteneur ne ferme
+   *  qu'au succès (`settle()` avec `onSuccess`). */
+  @Input() error: string | null = null;
 
   @Output() readonly visibleChange = new EventEmitter<boolean>();
   @Output() readonly settle = new EventEmitter<string>();
