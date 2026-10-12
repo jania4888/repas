@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { InvoiceService, InvoiceListItem, InvoiceListSummary } from '@core/services/invoice.service';
+import { InvoiceService, InvoiceListItem } from '@core/services/invoice.service';
 import { QuoteService, QuoteListItem } from '@core/services/quote.service';
 import { ClientService, ClientListItem } from '@core/services/client.service';
 import { AuthService } from '@core/services/auth.service';
@@ -128,36 +128,14 @@ export class DashboardService {
           )
         : of({ success: true, data: { items: [] as ClientListItem[] } } as any),
       // CA HT (Payée + Validée) read from the server, with the same filters as the
-      // "Factures et avoirs" drill-down — see RevenueKpis for why. `null` on missing
-      // permission or request failure; callers fall back to sumRealizedRevenueHt.
-      revenueTotal: canReadInvoices
-        ? this.invoiceService.getInvoicesSummary({ realizedRevenueOnly: true, skipGlobalErrorUi: true }).pipe(
-            map(res => (res.success ? res.data : null)),
-            catchError(() => of(null as InvoiceListSummary | null))
-          )
-        : of(null as InvoiceListSummary | null),
+      // "Factures et avoirs" drill-down — see RevenueKpis for why.
+      revenueTotal: canReadInvoices ? this.loadRevenueSummaryHt() : of(null),
       revenueMonthToDate: canReadInvoices
-        ? this.invoiceService.getInvoicesSummary({
-            realizedRevenueOnly: true,
-            fromDate: toIsoDateLocal(current.from),
-            toDate: toIsoDateLocal(current.to),
-            skipGlobalErrorUi: true
-          }).pipe(
-            map(res => (res.success ? res.data : null)),
-            catchError(() => of(null as InvoiceListSummary | null))
-          )
-        : of(null as InvoiceListSummary | null),
+        ? this.loadRevenueSummaryHt(current.from, current.to)
+        : of(null),
       revenuePreviousMonthToDate: canReadInvoices
-        ? this.invoiceService.getInvoicesSummary({
-            realizedRevenueOnly: true,
-            fromDate: toIsoDateLocal(previous.from),
-            toDate: toIsoDateLocal(previous.to),
-            skipGlobalErrorUi: true
-          }).pipe(
-            map(res => (res.success ? res.data : null)),
-            catchError(() => of(null as InvoiceListSummary | null))
-          )
-        : of(null as InvoiceListSummary | null)
+        ? this.loadRevenueSummaryHt(previous.from, previous.to)
+        : of(null)
     }).pipe(
       map(({ invoices, quotes, clients, revenueTotal, revenueMonthToDate, revenuePreviousMonthToDate }) => {
         const allInvoices: InvoiceListItem[] = invoices.success ? invoices.data.items : [];
@@ -165,11 +143,9 @@ export class DashboardService {
         const allClients: ClientListItem[] = clients.success ? clients.data.items : [];
 
         const revenueKpis: RevenueKpis = {
-          totalHt: revenueTotal ? revenueTotal.realizedRevenueHt ?? revenueTotal.totalHt : null,
-          monthToDateHt: revenueMonthToDate ? revenueMonthToDate.realizedRevenueHt ?? revenueMonthToDate.totalHt : null,
+          totalHt: revenueTotal,
+          monthToDateHt: revenueMonthToDate,
           previousMonthToDateHt: revenuePreviousMonthToDate
-            ? revenuePreviousMonthToDate.realizedRevenueHt ?? revenuePreviousMonthToDate.totalHt
-            : null
         };
 
         return {
@@ -186,6 +162,23 @@ export class DashboardService {
           revenueKpis
         };
       })
+    );
+  }
+
+  /**
+   * Server-side CA HT for an optional date range (Payée + Validée, signed HT).
+   * `null` on request failure — callers fall back to the client-side sumRealizedRevenueHt.
+   * `realizedRevenueHt ?? totalHt`: the two are equal under the filter; totalHt covers an
+   * API not yet deployed with the new field.
+   */
+  private loadRevenueSummaryHt(from?: Date, to?: Date): Observable<number | null> {
+    return this.invoiceService.getInvoicesSummary({
+      realizedRevenueOnly: true,
+      ...(from && to ? { fromDate: toIsoDateLocal(from), toDate: toIsoDateLocal(to) } : {}),
+      skipGlobalErrorUi: true
+    }).pipe(
+      map(res => (res.success && res.data ? res.data.realizedRevenueHt ?? res.data.totalHt : null)),
+      catchError(() => of(null))
     );
   }
 

@@ -792,30 +792,12 @@ public sealed class InvoiceRepository : IInvoiceRepository
     {
         await using var context = _contextFactory.CreateContext();
 
-        var query = context.Invoices
-            .Include(i => i.Client)
-            .AsQueryable();
-
-        if (fromDate.HasValue)
-            query = query.Where(i => i.IssueDate >= fromDate.Value.Date);
-
-        if (toDate.HasValue)
-        {
-            // Borne de fin inclusive sur toute la journée (robuste si IssueDate porte une heure).
-            var toExclusive = toDate.Value.Date.AddDays(1);
-            query = query.Where(i => i.IssueDate < toExclusive);
-        }
-
-        if (clientId.HasValue)
-            query = query.Where(i => i.ClientId == clientId.Value);
-
-        if (type.HasValue)
-            query = query.Where(i => i.Type == type.Value);
-
-        // CA = revenu réalisé : seules les factures Payée ou Validée comptent (miroir de
-        // InvoiceStatusExtensions.IsRealizedRevenue / REALIZED_REVENUE_STATUSES côté frontend).
-        if (realizedRevenueOnly)
-            query = query.Where(i => i.Status == InvoiceStatus.Paid || i.Status == InvoiceStatus.Validated);
+        // Mêmes filtres (période, client, type, CA réalisé) que la liste et le résumé.
+        var query = ApplyInvoiceFilters(
+            context.Invoices
+                .Include(i => i.Client)
+                .AsQueryable(),
+            searchTerm: null, status: null, fromDate, toDate, clientId, unpaidOnly: false, type, realizedRevenueOnly);
 
         return await query
             .OrderByDescending(i => i.IssueDate)
@@ -898,8 +880,9 @@ public sealed class InvoiceRepository : IInvoiceRepository
 
     /// <summary>
     /// Applies the invoice list filters (search, status, period, client, unpaid-only, type,
-    /// realized-revenue-only) to a query. Single source of truth shared by <see cref="SearchAsync"/>
-    /// and <see cref="GetSummaryAsync"/> so the list and its totals zone can never diverge.
+    /// realized-revenue-only) to a query. Single source of truth shared by <see cref="SearchAsync"/>,
+    /// <see cref="GetSummaryAsync"/> and <see cref="GetForReportAsync"/> so the list, its totals
+    /// zone and the PDF report can never diverge.
     /// </summary>
     private static IQueryable<Invoice> ApplyInvoiceFilters(
         IQueryable<Invoice> query,
@@ -910,7 +893,7 @@ public sealed class InvoiceRepository : IInvoiceRepository
         Guid? clientId,
         bool unpaidOnly,
         InvoiceType? type,
-        bool realizedRevenueOnly = false)
+        bool realizedRevenueOnly)
     {
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
