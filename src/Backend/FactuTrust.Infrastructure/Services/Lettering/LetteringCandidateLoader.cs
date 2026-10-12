@@ -62,8 +62,12 @@ internal static class LetteringCandidateLoader
 
         var rows = await LetteringLinesQueryBuilder.Build(ctx, candidateFilter, showDrafts: false)
             .Where(l => !l.JournalEntry.IsReversed && l.JournalEntry.ReversesEntryId == null)
-            .Where(l => l.DebitAmount.Amount != l.CreditAmount.Amount
-                || l.DebitAmountInCurrency != l.CreditAmountInCurrency)
+            // Montant non nul dans la devise qui équilibre le groupe (même règle que SignedForBalance) :
+            // TND pour une opération en TND, devise de l'opération sinon. CurrencyCode est normalisé
+            // (majuscules, vide → TND) par JournalEntry : la comparaison est sûre en SQL.
+            .Where(l => l.JournalEntry.CurrencyCode == Money.DefaultCurrency
+                ? l.DebitAmount.Amount != l.CreditAmount.Amount
+                : l.DebitAmountInCurrency != l.CreditAmountInCurrency)
             .Where(l => l.JournalEntry.Status != JournalEntryStatus.Cloturee
                 && !(l.JournalEntry.AccountingPeriod != null && l.JournalEntry.AccountingPeriod.IsClosed)
                 && !lockedYearList.Contains(l.JournalEntry.AccountingPeriod != null
@@ -104,6 +108,9 @@ internal static class LetteringCandidateLoader
             })
             .ToListAsync(cancellationToken);
 
+        // Calculé avant la revérification en mémoire : celle-ci ne retire une ligne que si SQL et
+        // mémoire divergeaient (filet de sécurité). Dans ce cas rare, Truncated peut être vrai avec
+        // moins de maxCandidateLines candidats ; c'est voulu (le plafond a bien été atteint en SQL).
         var truncated = rows.Count > maxCandidateLines;
         if (truncated)
             rows.RemoveRange(maxCandidateLines, rows.Count - maxCandidateLines);

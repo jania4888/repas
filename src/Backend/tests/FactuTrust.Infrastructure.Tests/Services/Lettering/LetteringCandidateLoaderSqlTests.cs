@@ -52,18 +52,22 @@ public sealed class LetteringCandidateLoaderSqlTests : IDisposable
 
         Guid periodId;
         Guid lockedPeriodId;
+        Guid closedPeriodId;
         await using (var ctx = NewContext())
         {
             var period = AccountingPeriod.Create(2026, 5, new DateTime(2026, 5, 1), new DateTime(2026, 5, 31));
             var locked = AccountingPeriod.Create(2025, 6, new DateTime(2025, 6, 1), new DateTime(2025, 6, 30));
-            ctx.AccountingPeriods.AddRange(period, locked);
+            var closed = AccountingPeriod.Create(2026, 4, new DateTime(2026, 4, 1), new DateTime(2026, 4, 30));
+            closed.Close("test");
+            ctx.AccountingPeriods.AddRange(period, locked, closed);
             ctx.AccountingYearLocks.Add(AccountingYearLock.Create(2025, "test"));
             await ctx.SaveChangesAsync();
             periodId = period.Id;
             lockedPeriodId = locked.Id;
+            closedPeriodId = closed.Id;
         }
 
-        // 300 lignes inutilisables placées EN TÊTE de l'ordre de lecture : si les exclusions
+        // 400 lignes inutilisables placées EN TÊTE de l'ordre de lecture : si les exclusions
         // venaient après le plafond, elles le consommeraient.
         var number = 1;
         var unusable = new List<JournalEntry>();
@@ -73,6 +77,8 @@ public sealed class LetteringCandidateLoaderSqlTests : IDisposable
             unusable.Add(Entry(number++, periodId, new DateTime(2026, 5, 1), 1m, 0m, null, null, JournalEntryStatus.Brouillon));
         for (var i = 0; i < 100; i++)
             unusable.Add(Entry(number++, periodId, new DateTime(2026, 5, 1), 1m, 0m, null, null, JournalEntryStatus.Cloturee));
+        for (var i = 0; i < 100; i++)
+            unusable.Add(Entry(number++, closedPeriodId, new DateTime(2026, 4, 15), 1m, 0m, null, null));
 
         // 5 000 lignes utilisables, dont 1 500 de règlement (identifiants sans paiement réel :
         // seule compte la traduction des paquets ; les liens réels sont couverts en mémoire).
