@@ -158,7 +158,7 @@ public sealed class LetteringSuggestionEngineTests
 
         var output = Run(new[] { supplierInvoice, payment }, Links((pay, sharedId)));
 
-        Assert.Empty(output.Suggestions);
+        Assert.DoesNotContain(output.Suggestions, s => s.Kind == SuggestionKind.DocumentLink);
     }
 
     [Fact]
@@ -247,13 +247,247 @@ public sealed class LetteringSuggestionEngineTests
         Assert.Equal("-50.000", gap.Args["localGap"]);
     }
 
+    // ------------------------------------------------------------ R2 : même référence
+
     [Fact]
-    public void Run_UnlinkedLines_ProduceNothingYet()
+    public void R2_SameReferenceWithDifferentFormatting_IsGrouped()
     {
-        // R2 à R5 ne sont pas encore branchées : sans lien documentaire, aucune proposition.
-        var lines = new[] { Line(500_000, thirdParty: Client1, pieceRef: "FAC-2026-009"), Line(-500_000, thirdParty: Client1, pieceRef: "FAC-2026-009") };
+        var invoice = Line(500_000, thirdParty: Client1, pieceRef: "FAC-2026-001");
+        var payment = Line(-500_000, thirdParty: Client1, pieceRef: "fac 2026/001");
+
+        var s = Assert.Single(Run(new[] { invoice, payment }, DocumentLinks.Empty).Suggestions);
+
+        Assert.Equal(SuggestionKind.SameReference, s.Kind);
+        Assert.Equal(SuggestionCategory.Exact, s.Category);
+        Assert.Equal(85, s.Score);
+        Assert.Equal(2, s.RuleRank);
+        var reason = Assert.Single(s.Reasons);
+        Assert.Equal(EngineReasonCodes.SameReference, reason.Code);
+        Assert.Equal("FAC-2026-001", reason.Args["reference"]);
+    }
+
+    [Fact]
+    public void R2_ReferenceOnlyInEntryLabelOrPieceRef_IsFound()
+    {
+        var invoice = Line(500_000, pieceRef: "FAC-2026-002") with { Label = "Vente" };
+        var payment = Line(-500_000) with { Label = "Virement", EntryLabel = "Règlement FAC 2026 002" };
+
+        var s = Assert.Single(Run(new[] { invoice, payment }, DocumentLinks.Empty).Suggestions);
+
+        Assert.Equal(SuggestionKind.SameReference, s.Kind);
+        Assert.Null(s.ThirdPartyId);
+    }
+
+    [Fact]
+    public void R2_WholeGroupBalanced_IsMultiple()
+    {
+        var lines = new[]
+        {
+            Line(1_000_000, thirdParty: Client1, pieceRef: "FAC-2026-003"),
+            Line(-600_000, thirdParty: Client1, pieceRef: "FAC-2026-003"),
+            Line(-400_000, pieceRef: "FAC-2026-003"),
+        };
+
+        var s = Assert.Single(Run(lines, DocumentLinks.Empty).Suggestions);
+
+        Assert.Equal(SuggestionCategory.Multiple, s.Category);
+        Assert.Equal(3, s.Lines.Count);
+        Assert.Equal(Client1, s.ThirdPartyId);
+    }
+
+    [Fact]
+    public void R2_GroupNotBalanced_FallsBackToSameAmountPair()
+    {
+        var debit = Line(300_000, pieceRef: "FAC-2026-004");
+        var credit = Line(-300_000, pieceRef: "FAC-2026-004");
+        var extra = Line(-120_000, pieceRef: "FAC-2026-004");
+
+        var s = Assert.Single(Run(new[] { debit, credit, extra }, DocumentLinks.Empty).Suggestions);
+
+        Assert.Equal(SuggestionCategory.Exact, s.Category);
+        Assert.Equal(new[] { debit.LineId, credit.LineId }, s.Lines.Select(l => l.LineId));
+    }
+
+    [Fact]
+    public void R2_TokenOnMoreThanMaxLinesPerReference_IsIgnored()
+    {
+        var lines = new List<LetteringCandidate>();
+        for (var i = 0; i < 11; i++)
+        {
+            lines.Add(Line(100_000 + i, pieceRef: "LOT-2026-777"));
+            lines.Add(Line(-(100_000 + i), pieceRef: "LOT-2026-777"));
+        }
+
+        Assert.Empty(Run(lines, DocumentLinks.Empty).Suggestions); // 22 lignes > 20
+
+        lines.RemoveRange(20, 2);
+        var s = Assert.Single(Run(lines, DocumentLinks.Empty).Suggestions); // 20 lignes : groupe entier équilibré
+        Assert.Equal(20, s.Lines.Count);
+        Assert.Equal(SuggestionCategory.Multiple, s.Category);
+    }
+
+    [Fact]
+    public void R2_ContradictoryThirdParties_AreNeverGrouped()
+    {
+        var lines = new[]
+        {
+            Line(500_000, thirdParty: Client1, pieceRef: "FAC-2026-005"),
+            Line(-500_000, thirdParty: Client2, pieceRef: "FAC-2026-005"),
+        };
 
         Assert.Empty(Run(lines, DocumentLinks.Empty).Suggestions);
+    }
+
+    [Fact]
+    public void R1_KeepsPriorityOverR2()
+    {
+        var inv = Guid.NewGuid();
+        var pay = Guid.NewGuid();
+        var invoice = Invoice(inv, 700_000, pieceRef: "FAC-2026-006");
+        var payment = Line(-700_000, thirdParty: Client1, sourceType: AccountingService.SourcePayment, sourceId: pay, pieceRef: "FAC-2026-006");
+
+        var s = Assert.Single(Run(new[] { invoice, payment }, Links((pay, inv))).Suggestions);
+
+        Assert.Equal(SuggestionKind.DocumentLink, s.Kind);
+    }
+
+    // ------------------------------------------------------------ R3 : même tiers + même montant
+
+    [Fact]
+    public void R3_SameThirdPartySameAmount_IsSameAmount()
+    {
+        var debit = Line(250_000, thirdParty: Client1, day: 0);
+        var credit = Line(-250_000, thirdParty: Client1, day: 10);
+
+        var s = Assert.Single(Run(new[] { debit, credit }, DocumentLinks.Empty).Suggestions);
+
+        Assert.Equal(SuggestionKind.SameThirdPartyAmount, s.Kind);
+        Assert.Equal(SuggestionCategory.SameAmount, s.Category);
+        Assert.Equal(70, s.Score);
+        Assert.Equal(SuggestionConfidence.Medium, s.Confidence);
+        Assert.Equal(new[] { EngineReasonCodes.SameThirdParty, EngineReasonCodes.ExactAmount }, s.Reasons.Select(r => r.Code));
+        Assert.Equal("250.000", s.Reasons[1].Args["amount"]);
+        Assert.Equal("TND", s.Reasons[1].Args["currency"]);
+    }
+
+    [Fact]
+    public void R3_TwoDebitsForOneCredit_PicksClosestDateAndFlagsAmbiguity()
+    {
+        var far = Line(100_000, thirdParty: Client1, day: 0);
+        var near = Line(100_000, thirdParty: Client1, day: 40);
+        var credit = Line(-100_000, thirdParty: Client1, day: 45);
+
+        var s = Assert.Single(Run(new[] { far, near, credit }, DocumentLinks.Empty).Suggestions);
+
+        Assert.Equal(new[] { near.LineId, credit.LineId }, s.Lines.Select(l => l.LineId));
+        var ambiguous = Assert.Single(s.Reasons, r => r.Code == EngineReasonCodes.AmbiguousAmount);
+        Assert.Equal("1", ambiguous.Args["alternatives"]);
+    }
+
+    [Fact]
+    public void R3_EqualDateGap_PrefersPaymentAfterInvoice_OnClientAccount()
+    {
+        // Sur 411, la facture est au débit : le crédit postérieur (jour 15) gagne sur l'antérieur (jour 5).
+        var invoice = Line(100_000, thirdParty: Client1, day: 10);
+        var before = Line(-100_000, thirdParty: Client1, day: 5);
+        var after = Line(-100_000, thirdParty: Client1, day: 15);
+
+        var s = Assert.Single(Run(new[] { invoice, before, after }, DocumentLinks.Empty).Suggestions);
+
+        Assert.Contains(s.Lines, l => l.LineId == after.LineId);
+    }
+
+    [Fact]
+    public void R3_EqualDateGap_PrefersPaymentAfterInvoice_OnSupplierAccount()
+    {
+        // Sur 401, la facture est au crédit : le débit (règlement) postérieur gagne.
+        var invoice = Line(-100_000, "4011", thirdParty: Supplier1, kind: ThirdPartyKind.Supplier, day: 10);
+        var before = Line(100_000, "4011", thirdParty: Supplier1, kind: ThirdPartyKind.Supplier, day: 5);
+        var after = Line(100_000, "4011", thirdParty: Supplier1, kind: ThirdPartyKind.Supplier, day: 15);
+
+        var s = Assert.Single(Run(new[] { invoice, before, after }, DocumentLinks.Empty).Suggestions);
+
+        Assert.Contains(s.Lines, l => l.LineId == after.LineId);
+    }
+
+    [Fact]
+    public void R3_PairingIsIndependentOfWhichSideComesFirst()
+    {
+        // Le débit le plus ancien ne « vole » pas le crédit : la paire la plus proche gagne.
+        var oldCredit = Line(-100_000, thirdParty: Client1, day: 0);
+        var debit = Line(100_000, thirdParty: Client1, day: 30);
+        var nearCredit = Line(-100_000, thirdParty: Client1, day: 31);
+        var oldDebit = Line(100_000, thirdParty: Client1, day: 1);
+
+        var output = Run(new[] { oldCredit, debit, nearCredit, oldDebit }, DocumentLinks.Empty);
+
+        Assert.Equal(2, output.Suggestions.Count);
+        Assert.Contains(output.Suggestions, s => s.Lines.Select(l => l.LineId).SequenceEqual(new[] { debit.LineId, nearCredit.LineId }));
+        Assert.Contains(output.Suggestions, s => s.Lines.Select(l => l.LineId).SequenceEqual(new[] { oldCredit.LineId, oldDebit.LineId }));
+    }
+
+    [Fact]
+    public void R3_ManyIdenticalAmounts_StaysBoundedAndPairsEverything()
+    {
+        // 100 × 100 paires possibles > MaxPairsPerAmount : appariement débit par débit, toujours complet.
+        var lines = new List<LetteringCandidate>();
+        for (var i = 0; i < 100; i++)
+        {
+            lines.Add(Line(50_000, thirdParty: Client1, day: i));
+            lines.Add(Line(-50_000, thirdParty: Client1, day: i));
+        }
+
+        var output = Run(lines, DocumentLinks.Empty);
+
+        Assert.Equal(100, output.Suggestions.Count);
+        Assert.All(output.Suggestions, s => Assert.Equal(0, LetteringSuggestionEngine.DaysBetween(s.Lines[0], s.Lines[1])));
+    }
+
+    [Fact]
+    public void R3_DifferentThirdParties_AreNeverPaired()
+    {
+        var lines = new[] { Line(100_000, thirdParty: Client1), Line(-100_000, thirdParty: Client2) };
+
+        Assert.Empty(Run(lines, DocumentLinks.Empty).Suggestions);
+    }
+
+    [Fact]
+    public void R3_SameIdButDifferentKind_AreNeverPaired()
+    {
+        var lines = new[]
+        {
+            Line(100_000, thirdParty: Client1, kind: ThirdPartyKind.Client),
+            Line(-100_000, thirdParty: Client1, kind: ThirdPartyKind.Supplier),
+        };
+
+        Assert.Empty(Run(lines, DocumentLinks.Empty).Suggestions);
+    }
+
+    [Fact]
+    public void R3_WithoutThirdParty_ProposesNothing()
+    {
+        var lines = new[] { Line(100_000), Line(-100_000) };
+
+        Assert.Empty(Run(lines, DocumentLinks.Empty).Suggestions);
+    }
+
+    [Fact]
+    public void R3_OneMillimeGap_IsNeverProposed()
+    {
+        var lines = new[] { Line(100_000, thirdParty: Client1), Line(-99_999, thirdParty: Client1) };
+
+        Assert.Empty(Run(lines, DocumentLinks.Empty).Suggestions);
+    }
+
+    [Fact]
+    public void R2_KeepsPriorityOverR3()
+    {
+        var debit = Line(100_000, thirdParty: Client1, pieceRef: "FAC-2026-010");
+        var credit = Line(-100_000, thirdParty: Client1, pieceRef: "FAC-2026-010");
+
+        var s = Assert.Single(Run(new[] { debit, credit }, DocumentLinks.Empty).Suggestions);
+
+        Assert.Equal(SuggestionKind.SameReference, s.Kind);
     }
 
     [Fact]

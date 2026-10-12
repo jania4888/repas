@@ -25,10 +25,12 @@ namespace FactuTrust.Infrastructure.Services.Lettering;
 internal static class LetteringSuggestionEngine
 {
     internal const int BaseScoreDocumentLink = 95;
+    internal const int BaseScoreSameReference = 85;
+    internal const int BaseScoreSameThirdPartyAmount = 70;
 
     private delegate IEnumerable<EngineSuggestion> Rule(Partition partition, EngineState state);
 
-    // Ordre des règles = priorité. R2 à R5 arrivent dans les PR p3-6 et p3-7.
+    // Ordre des règles = priorité. R4 et R5 arrivent dans la PR p3-7.
     private static readonly Rule[] Rules =
     {
         R1DocumentLink,
@@ -169,15 +171,219 @@ internal static class LetteringSuggestionEngine
         }
     }
 
-    // ---------------------------------------------------------------- R2 à R5 (PR suivantes)
+    // ---------------------------------------------------------------- R2 : même référence
 
-    /// <summary>R2 « même référence » : branchée en p3-6.</summary>
+    /// <summary>
+    /// R2 : lignes de sens opposés qui partagent un jeton de référence (<see cref="ReferenceExtractor"/>).
+    /// Groupe entier si sa somme est nulle et ses tiers compatibles ; sinon paires 1-pour-1 de même
+    /// montant. Jetons portés par plus de <c>MaxLinesPerReference</c> lignes de la partition : ignorés
+    /// (trop génériques). Pas de sous-ensemble (rôle de R4).
+    /// </summary>
     private static IEnumerable<EngineSuggestion> R2SameReference(Partition partition, EngineState state)
-        => Array.Empty<EngineSuggestion>();
+    {
+        var byToken = new SortedDictionary<string, List<LetteringCandidate>>(StringComparer.Ordinal);
+        foreach (var line in partition.Lines)
+        {
+            if (state.IsConsumed(line))
+                continue;
+            foreach (var token in state.TokensOf(line))
+                Add(byToken, token, line);
+        }
 
-    /// <summary>R3 « même tiers + montant exact » : branchée en p3-6.</summary>
+        foreach (var (token, lines) in byToken)
+        {
+            if (lines.Count < 2 || lines.Count > state.Options.MaxLinesPerReference)
+                continue;
+
+            var debits = lines.Where(l => l.SignedForBalance > 0).ToList();
+            var credits = lines.Where(l => l.SignedForBalance < 0).ToList();
+            if (debits.Count == 0 || credits.Count == 0)
+                continue;
+
+            if (IsBalanced(lines) && TryCommonThirdParty(lines, out _, out _))
+            {
+                yield return Build(
+                    SuggestionKind.SameReference,
+                    lines.Count == 2 ? SuggestionCategory.Exact : SuggestionCategory.Multiple,
+                    ruleRank: 2,
+                    BaseScoreSameReference,
+                    partition,
+                    new List<LetteringCandidate>(lines),
+                    new List<EngineReason> { EngineReason.Of(EngineReasonCodes.SameReference, ("reference", token)) });
+                continue;
+            }
+
+            foreach (var (debit, credit, _) in PairSameAmount(partition.AccountNumber, debits, credits, requireThirdParty: false))
+            {
+                yield return Build(
+                    SuggestionKind.SameReference,
+                    SuggestionCategory.Exact,
+                    ruleRank: 2,
+                    BaseScoreSameReference,
+                    partition,
+                    new List<LetteringCandidate> { debit, credit },
+                    new List<EngineReason> { EngineReason.Of(EngineReasonCodes.SameReference, ("reference", token)) });
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------- R3 : même tiers + même montant
+
+    /// <summary>
+    /// R3 : par tiers renseigné, chaque débit est apparié à un crédit de même montant. Doublons de
+    /// montant départagés par <see cref="PairSameAmount"/> ; les autres lignes de même montant non
+    /// choisies sont signalées par la raison <c>AmbiguousAmount</c>.
+    /// </summary>
     private static IEnumerable<EngineSuggestion> R3SameThirdPartyAmount(Partition partition, EngineState state)
-        => Array.Empty<EngineSuggestion>();
+    {
+        var byThirdParty = new SortedDictionary<(ThirdPartyKind Kind, Guid Id), List<LetteringCandidate>>();
+        foreach (var line in partition.Lines)
+        {
+            if (!state.IsConsumed(line) && line.ThirdPartyId is { } id)
+                Add(byThirdParty, (line.ThirdPartyKind, id), line);
+        }
+
+        foreach (var lines in byThirdParty.Values)
+        {
+            var debits = lines.Where(l => l.SignedForBalance > 0).ToList();
+            var credits = lines.Where(l => l.SignedForBalance < 0).ToList();
+            if (debits.Count == 0 || credits.Count == 0)
+                continue;
+
+            foreach (var (debit, credit, alternatives) in PairSameAmount(partition.AccountNumber, debits, credits, requireThirdParty: true))
+            {
+                var reasons = new List<EngineReason>
+                {
+                    EngineReason.Of(EngineReasonCodes.SameThirdParty),
+                    EngineReason.Of(EngineReasonCodes.ExactAmount,
+                        ("amount", FormatMillimes(debit.SignedMillimesOp)),
+                        ("currency", partition.CurrencyCode)),
+                };
+                if (alternatives > 0)
+                {
+                    reasons.Add(EngineReason.Of(EngineReasonCodes.AmbiguousAmount,
+                        ("alternatives", alternatives.ToString(CultureInfo.InvariantCulture))));
+                }
+
+                yield return Build(
+                    SuggestionKind.SameThirdPartyAmount,
+                    SuggestionCategory.SameAmount,
+                    ruleRank: 3,
+                    BaseScoreSameThirdPartyAmount,
+                    partition,
+                    new List<LetteringCandidate> { debit, credit },
+                    reasons);
+            }
+        }
+    }
+
+    /// <summary>Au-delà, un montant est apparié débit par débit (coût linéaire) au lieu de paire par paire.</summary>
+    internal const int MaxPairsPerAmount = 4096;
+
+    /// <summary>
+    /// Paires 1-pour-1 débit/crédit de même montant d'équilibre, aux tiers compatibles. Pour chaque montant,
+    /// les paires possibles sont retenues de la meilleure à la moins bonne : écart de dates le plus faible,
+    /// puis règlement postérieur ou égal à la facture, puis rangs d'ordre. Le résultat ne dépend donc pas du
+    /// sens (débit ou crédit) de la ligne la plus ancienne. Au-delà de <see cref="MaxPairsPerAmount"/> paires
+    /// pour un montant, chaque débit (ordre stable) prend son meilleur crédit libre. <c>Alternatives</c> =
+    /// autres lignes de même montant (des deux côtés) qui auraient pu être choisies à la place.
+    /// </summary>
+    private static List<(LetteringCandidate Debit, LetteringCandidate Credit, int Alternatives)> PairSameAmount(
+        string accountNumber,
+        List<LetteringCandidate> debits,
+        List<LetteringCandidate> credits,
+        bool requireThirdParty)
+    {
+        var debitsByAmount = new SortedDictionary<long, List<LetteringCandidate>>();
+        foreach (var debit in debits)
+            Add(debitsByAmount, debit.SignedForBalance, debit);
+        var creditsByAmount = new Dictionary<long, List<LetteringCandidate>>(); // consulté, jamais énuméré
+        foreach (var credit in credits)
+            Add(creditsByAmount, -credit.SignedForBalance, credit);
+
+        var invoiceIsDebit = InvoiceIsDebit(accountNumber);
+        var result = new List<(LetteringCandidate, LetteringCandidate, int)>();
+        var used = new HashSet<Guid>();
+        foreach (var (amount, sameDebits) in debitsByAmount)
+        {
+            if (!creditsByAmount.TryGetValue(amount, out var sameCredits))
+                continue;
+            var alternatives = sameDebits.Count - 1 + sameCredits.Count - 1;
+
+            if ((long)sameDebits.Count * sameCredits.Count <= MaxPairsPerAmount)
+            {
+                var pairs = new List<(LetteringCandidate Debit, LetteringCandidate Credit)>();
+                foreach (var debit in sameDebits)
+                {
+                    foreach (var credit in sameCredits)
+                    {
+                        if (Compatible(debit, credit, requireThirdParty))
+                            pairs.Add((debit, credit));
+                    }
+                }
+                pairs.Sort((x, y) => ComparePair(x.Debit, x.Credit, y.Debit, y.Credit, invoiceIsDebit));
+                foreach (var (debit, credit) in pairs)
+                {
+                    if (used.Contains(debit.LineId) || used.Contains(credit.LineId))
+                        continue;
+                    used.Add(debit.LineId);
+                    used.Add(credit.LineId);
+                    result.Add((debit, credit, alternatives));
+                }
+                continue;
+            }
+
+            foreach (var debit in sameDebits)
+            {
+                LetteringCandidate? best = null;
+                foreach (var credit in sameCredits)
+                {
+                    if (used.Contains(credit.LineId) || !Compatible(debit, credit, requireThirdParty))
+                        continue;
+                    if (best is null || ComparePair(debit, credit, debit, best, invoiceIsDebit) < 0)
+                        best = credit;
+                }
+                if (best is null)
+                    continue;
+                used.Add(best.LineId);
+                result.Add((debit, best, alternatives));
+            }
+        }
+        return result;
+    }
+
+    private static bool Compatible(LetteringCandidate debit, LetteringCandidate credit, bool requireThirdParty)
+        => requireThirdParty
+            ? debit.ThirdPartyId is not null && credit.ThirdPartyId == debit.ThirdPartyId && credit.ThirdPartyKind == debit.ThirdPartyKind
+            : !debit.HasThirdParty || !credit.HasThirdParty
+              || (credit.ThirdPartyId == debit.ThirdPartyId && credit.ThirdPartyKind == debit.ThirdPartyKind);
+
+    /// <summary>Compare deux paires débit/crédit (négatif : la première est meilleure).</summary>
+    private static int ComparePair(
+        LetteringCandidate debitA, LetteringCandidate creditA,
+        LetteringCandidate debitB, LetteringCandidate creditB,
+        bool invoiceIsDebit)
+    {
+        var c = DaysBetween(debitA, creditA).CompareTo(DaysBetween(debitB, creditB));
+        if (c != 0) return c;
+        c = PaymentBeforeInvoice(debitA, creditA, invoiceIsDebit).CompareTo(PaymentBeforeInvoice(debitB, creditB, invoiceIsDebit));
+        if (c != 0) return c;
+        c = CompareOrder(debitA, debitB);
+        return c != 0 ? c : CompareOrder(creditA, creditB);
+    }
+
+    /// <summary>
+    /// Côté de la facture, déduit du compte : crédit sur les comptes fournisseurs (<c>40…</c>), débit
+    /// partout ailleurs (clients <c>41…</c>, personnel, etc.).
+    /// </summary>
+    internal static bool InvoiceIsDebit(string accountNumber) => !accountNumber.StartsWith("40", StringComparison.Ordinal);
+
+    /// <summary>Vrai si le règlement est antérieur à la facture (cas anormal, moins probable).</summary>
+    internal static bool PaymentBeforeInvoice(LetteringCandidate debit, LetteringCandidate credit, bool invoiceIsDebit)
+        => invoiceIsDebit ? credit.EntryDate.Date < debit.EntryDate.Date : debit.EntryDate.Date < credit.EntryDate.Date;
+
+    internal static int DaysBetween(LetteringCandidate a, LetteringCandidate b)
+        => Math.Abs((a.EntryDate.Date - b.EntryDate.Date).Days);
 
     /// <summary>R4 « somme de sous-ensemble » : branchée en p3-7.</summary>
     private static IEnumerable<EngineSuggestion> R4SubsetSum(Partition partition, EngineState state)
@@ -333,6 +539,7 @@ internal static class LetteringSuggestionEngine
     private sealed class EngineState
     {
         private readonly HashSet<Guid> _consumed = new(); // test d'appartenance seulement, jamais énuméré
+        private readonly Dictionary<Guid, IReadOnlyList<string>> _tokens = new(); // cache, jamais énuméré
 
         internal EngineState(DocumentLinks links, LetteringEngineOptions options)
         {
@@ -346,6 +553,17 @@ internal static class LetteringSuggestionEngine
         internal string? TruncationReason { get; private set; }
 
         internal bool IsConsumed(LetteringCandidate line) => _consumed.Contains(line.LineId);
+
+        /// <summary>Jetons de référence de la ligne, calculés une seule fois par candidat.</summary>
+        internal IReadOnlyList<string> TokensOf(LetteringCandidate line)
+        {
+            if (!_tokens.TryGetValue(line.LineId, out var tokens))
+            {
+                tokens = ReferenceExtractor.Extract(line.PieceRef, line.Label, line.EntryLabel);
+                _tokens[line.LineId] = tokens;
+            }
+            return tokens;
+        }
 
         internal void TryAccept(EngineSuggestion suggestion)
         {
