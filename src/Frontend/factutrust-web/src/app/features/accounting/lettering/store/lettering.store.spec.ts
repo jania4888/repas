@@ -184,6 +184,32 @@ describe('LetteringStore', () => {
     expect(api.getLetteringLines).toHaveBeenCalledTimes(2);
   });
 
+  it('settle() reloads automatically on LETTERING_PERIOD_LOCKED (M6: reload-on-error extended beyond letter())', () => {
+    api.getLetteringLines.and.returnValue(of({
+      success: true,
+      data: {
+        items: [
+          lineDto({ lineId: 'd1', debit: 100, operationCurrency: 'USD', debitInCurrency: 50 }),
+          lineDto({ lineId: 'c1', debit: 0, credit: 99, operationCurrency: 'USD', creditInCurrency: 50 })
+        ],
+        page: 1, pageSize: 2000, totalCount: 2, truncated: false,
+        totals: { count: 2, debitCount: 1, creditCount: 1, totalDebit: 100, totalCredit: 99, balance: 1, unletteredDebit: 100, unletteredCredit: 99, unletteredBalance: 1 }
+      }
+    }));
+    store.load();
+    store.setPaneSelection('debit', ['d1']);
+    store.setPaneSelection('credit', ['c1']);
+    expect(store.canSettleExchangeDifference()).toBeTrue();
+
+    const err = new HttpErrorResponse({ status: 409, error: { code: 'LETTERING_PERIOD_LOCKED', error: 'Période clôturée' } });
+    api.settleExchangeDifference.and.returnValue(throwError(() => err));
+
+    store.settle('655');
+
+    expect(store.error()).toContain('clôturée');
+    expect(api.getLetteringLines).toHaveBeenCalledTimes(2);
+  });
+
   it('maps a 403 to "droit insuffisant" and does not reload', () => {
     api.getLetteringLines.and.returnValue(of({
       success: true,
@@ -228,19 +254,76 @@ describe('LetteringStore', () => {
     expect(api.getLetteringLines).toHaveBeenCalled();
   });
 
-  it('complete() calls completePartialLettering with the selected ids and reloads', () => {
+  it('completionTarget/canComplete only fire for a single partial group with a genuinely new line, and complete() excludes already-member lines (B1/B2)', () => {
     api.getLetteringLines.and.returnValue(of({
       success: true,
-      data: { items: [lineDto({ lineId: 'd1', debit: 100 })], page: 1, pageSize: 2000, totalCount: 1, truncated: false, totals: { count: 1, debitCount: 1, creditCount: 0, totalDebit: 100, totalCredit: 0, balance: 100, unletteredDebit: 100, unletteredCredit: 0, unletteredBalance: 100 } }
+      data: {
+        items: [
+          lineDto({ lineId: 'member', debit: 100, letteringCode: 'P00002', isPartiallyLettered: true }),
+          lineDto({ lineId: 'new-line', credit: 100 })
+        ],
+        page: 1, pageSize: 2000, totalCount: 2, truncated: false,
+        totals: { count: 2, debitCount: 1, creditCount: 1, totalDebit: 100, totalCredit: 100, balance: 0, unletteredDebit: 100, unletteredCredit: 100, unletteredBalance: 0 }
+      }
     }));
     store.load();
-    store.setPaneSelection('debit', ['d1']);
-    store.setAllowPartial(true);
+
+    // Only the already-member line selected: nothing new to add, so completionTarget stays null.
+    store.setPaneSelection('debit', ['member']);
+    expect(store.completionTarget()).toBeNull();
+    expect(store.canComplete()).toBeFalse();
+
+    // Member line + a genuinely new line selected: completionTarget identifies the P group.
+    store.setPaneSelection('credit', ['new-line']);
+    expect(store.completionTarget()).toBe('P00002');
+    expect(store.canComplete()).toBeTrue();
+    expect(store.canLetter()).toBeFalse();
+
     api.completePartialLettering.and.returnValue(of({ success: true, data: { code: 'L00002', groupId: 'g1', isPartial: false, lineCount: 2, previousCode: 'P00002' } }));
 
     store.complete('P00002');
 
-    expect(api.completePartialLettering).toHaveBeenCalledWith('P00002', ['d1'], true);
+    // B2: only the new line is sent — the already-member line is excluded from the payload.
+    expect(api.completePartialLettering).toHaveBeenCalledWith('P00002', ['new-line'], false);
     expect(store.success()).toContain('L00002');
+  });
+
+  it('complete() is a no-op when the selection has no new line to add for the target group', () => {
+    api.getLetteringLines.and.returnValue(of({
+      success: true,
+      data: {
+        items: [lineDto({ lineId: 'member', debit: 100, letteringCode: 'P00002', isPartiallyLettered: true })],
+        page: 1, pageSize: 2000, totalCount: 1, truncated: false,
+        totals: { count: 1, debitCount: 1, creditCount: 0, totalDebit: 100, totalCredit: 0, balance: 100, unletteredDebit: 100, unletteredCredit: 0, unletteredBalance: 100 }
+      }
+    }));
+    store.load();
+    store.setPaneSelection('debit', ['member']);
+
+    store.complete('P00002');
+
+    expect(api.completePartialLettering).not.toHaveBeenCalled();
+  });
+
+  it('ambiguous selection (two partial groups at once) disables both canLetter and canComplete', () => {
+    api.getLetteringLines.and.returnValue(of({
+      success: true,
+      data: {
+        items: [
+          lineDto({ lineId: 'p1', debit: 100, letteringCode: 'P00001', isPartiallyLettered: true }),
+          lineDto({ lineId: 'p2', credit: 100, letteringCode: 'P00002', isPartiallyLettered: true })
+        ],
+        page: 1, pageSize: 2000, totalCount: 2, truncated: false,
+        totals: { count: 2, debitCount: 1, creditCount: 1, totalDebit: 100, totalCredit: 100, balance: 0, unletteredDebit: 0, unletteredCredit: 0, unletteredBalance: 0 }
+      }
+    }));
+    store.load();
+    store.setPaneSelection('debit', ['p1']);
+    store.setPaneSelection('credit', ['p2']);
+
+    expect(store.guards().partialGroupCodes.length).toBe(2);
+    expect(store.completionTarget()).toBeNull();
+    expect(store.canLetter()).toBeFalse();
+    expect(store.canComplete()).toBeFalse();
   });
 });

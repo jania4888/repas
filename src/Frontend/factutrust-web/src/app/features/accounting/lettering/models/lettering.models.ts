@@ -4,14 +4,17 @@
  * `POST lettering/groups/{code}/complete`, `POST unletter`.
  */
 
+import { FUNCTIONAL_CURRENCY } from '../../manual-entry/models/entry-form.model';
+
 /** État de lettrage demandé au serveur (filtre). */
 export type LetteringStateFilter = 'all' | 'unlettered' | 'partial' | 'lettered';
 
 /** Côté d'une ligne dans les deux volets de l'écran. */
 export type LetteringSide = 'debit' | 'credit';
 
-/** Devise de tenue par défaut (dinar tunisien), miroir de `FUNCTIONAL_CURRENCY`. */
-export const LETTERING_FUNCTIONAL_CURRENCY = 'TND';
+/** Devise de tenue par défaut (dinar tunisien). Réexportée pour ne pas faire remonter l'import
+ *  de `manual-entry` partout dans le module lettrage. */
+export const LETTERING_FUNCTIONAL_CURRENCY = FUNCTIONAL_CURRENCY;
 
 /** Référence minimale d'un tiers, utilisée par le filtre et les deep-links. */
 export interface LetteringThirdPartyRef {
@@ -144,6 +147,9 @@ export interface LetteringSideCounts {
 export interface LetteringSelectionGuards {
   mixedCurrencies: boolean;
   multipleAccounts: boolean;
+  /** Codes des groupes « P » (partiels) présents dans la sélection. Un seul code ⇒ complétion
+   *  possible via l'action « Compléter » ; plusieurs ⇒ Valider doit être désactivé (ambigu). */
+  partialGroupCodes: string[];
 }
 
 /** Codes d'erreur métier stables renvoyés par le serveur (contrat §4.6). */

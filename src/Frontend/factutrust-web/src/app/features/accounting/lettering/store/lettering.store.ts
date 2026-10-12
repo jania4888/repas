@@ -146,9 +146,24 @@ export class LetteringStore {
 
   readonly isPartialMode = computed(() => !this.summary().balanced && this.allowPartial());
 
+  /**
+   * Code du groupe « P » que la sélection courante complète (B1) : exactement un groupe partiel
+   * représenté dans la sélection, et au moins une ligne de la sélection qui n'en fait pas déjà
+   * partie (sinon « compléter » n'ajouterait rien). `null` sinon (lettrage normal, ou ambigu
+   * avec plusieurs groupes partiels à la fois).
+   */
+  readonly completionTarget = computed<string | null>(() => {
+    const codes = this.guards().partialGroupCodes;
+    if (codes.length !== 1) return null;
+    const [code] = codes;
+    const hasNewLine = this.selectedLines().some(l => l.letteringCode !== code);
+    return hasNewLine ? code : null;
+  });
+
   readonly canLetter = computed(() => {
     const s = this.summary();
     const g = this.guards();
+    if (this.completionTarget() !== null || g.partialGroupCodes.length >= 2) return false;
     return (
       s.count >= 2 &&
       (s.balanced || this.allowPartial()) &&
@@ -157,6 +172,13 @@ export class LetteringStore {
       this.canCreate() &&
       this.busyAction() === null
     );
+  });
+
+  /** Garde-fous équivalents à `canLetter`, pour l'action « Compléter » (B1). */
+  readonly canComplete = computed(() => {
+    if (this.completionTarget() === null) return false;
+    const g = this.guards();
+    return !g.mixedCurrencies && !g.multipleAccounts && this.canCreate() && this.busyAction() === null;
   });
 
   readonly canSettleExchangeDifference = computed(
@@ -198,8 +220,13 @@ export class LetteringStore {
     this.allowPartial.set(value);
   }
 
-  /** Charge les lignes selon les filtres courants. Ignore toute réponse devenue obsolète. */
-  load(): void {
+  /**
+   * Charge les lignes selon les filtres courants. Ignore toute réponse devenue obsolète.
+   * `onSuccess` est appelé uniquement après un chargement réussi (jamais en cas d'erreur ni de
+   * réponse obsolète) : le conteneur s'en sert pour réécrire l'URL (M3), sans `effect()` réactif
+   * qui s'exécuterait aussi en dehors des chargements explicites.
+   */
+  load(onSuccess?: () => void): void {
     const f = this.filters();
     if (!f.account) {
       this.error.set($localize`:@@accounting.lettering.store.compte.obligatoire:Le compte est obligatoire.`);
@@ -252,7 +279,11 @@ export class LetteringStore {
             this.loadedOnce.set(true);
             this.debitSelectedIds.set(new Set());
             this.creditSelectedIds.set(new Set());
+            onSuccess?.();
           } else {
+            // `ApiResponse.error` n'embarque pas de code métier (ce champ n'existe que sur les
+            // réponses HTTP d'erreur 4xx/409, lues via `apiErrorCode` dans le bloc `error:`
+            // ci-dessous) : ce message est déjà la chaîne renvoyée par le serveur.
             this.error.set(
               res.error ?? $localize`:@@accounting.lettering.store.erreur.chargement:Erreur lors du chargement des écritures.`
             );
@@ -294,16 +325,19 @@ export class LetteringStore {
           }
         },
         error: err => {
-          const message = this.translateError(err, $localize`:@@accounting.lettering.store.erreur.reseau.lettrage:Erreur réseau lors du lettrage.`);
+          const message = this.translateError(err, $localize`:@@accounting.lettering.ts.erreur.reseau.lors.du.lettrage.1358d80e:Erreur réseau lors du lettrage.`);
           // Le rechargement (load()) remet error à null en entrée : on ne fixe le message
           // qu'une fois le rechargement lancé, pour qu'il ne soit pas effacé aussitôt.
-          if (apiErrorCode(err) === LETTERING_ERROR_CODES.alreadyLettered) this.load();
+          if (this.shouldReloadOnError(err)) this.load();
           this.error.set(message);
         }
       });
   }
 
-  settle(accountNumber: string): void {
+  /** `onSuccess` n'est appelé qu'après une mise à l'équilibre réellement réussie : le conteneur
+   *  s'en sert pour ne fermer la modale qu'au succès (jamais sur une erreur affichée dans la
+   *  modale elle-même). */
+  settle(accountNumber: string, onSuccess?: () => void): void {
     if (!this.canSettleExchangeDifference() || this.busyAction() !== null) return;
     const account = accountNumber.trim();
     if (!account) return;
@@ -320,17 +354,22 @@ export class LetteringStore {
         next: res => {
           if (res.success) {
             this.success.set(
-              $localize`:@@accounting.lettering.store.ecart.change.apure:Écart de change apuré sur le compte ${account}:account:, puis lettrage effectué.`
+              $localize`:@@accounting.lettering.ts.ecart.de.change.apure.sur.le.compte.acco.662b4773:Écart de change apuré sur le compte ${account}:account:, puis lettrage effectué.`
             );
             this.debitSelectedIds.set(new Set());
             this.creditSelectedIds.set(new Set());
             this.allowPartial.set(false);
             this.load();
+            onSuccess?.();
           } else {
             this.error.set(res.error ?? $localize`:@@accounting.lettering.store.erreur.equilibrage:Erreur lors de l'équilibrage.`);
           }
         },
-        error: err => this.error.set(this.translateError(err, $localize`:@@accounting.lettering.store.erreur.reseau.equilibrage:Erreur réseau lors de l'équilibrage.`))
+        error: err => {
+          const message = this.translateError(err, $localize`:@@accounting.lettering.ts.erreur.reseau.lors.de.l.equilibrage.86743867:Erreur réseau lors de l'équilibrage.`);
+          if (this.shouldReloadOnError(err)) this.load();
+          this.error.set(message);
+        }
       });
   }
 
@@ -362,11 +401,11 @@ export class LetteringStore {
   unletter(code: string): void {
     if (!code || this.busyAction() !== null) return;
     this.confirmation.confirm({
-      message: $localize`:@@accounting.lettering.store.confirm.delettrer:Délettrer le groupe ${code}:code: ? Toutes ses lignes redeviendront lettrables.`,
-      header: $localize`:@@accounting.lettering.store.confirm.header:Confirmation de délettrage`,
+      message: $localize`:@@accounting.lettering.ts.delettrer.le.groupe.code.toutes.ses.lign.aa9895a9:Délettrer le groupe ${code}:code: ? Toutes ses lignes redeviendront lettrables.`,
+      header: $localize`:@@accounting.lettering.ts.confirmation.de.delettrage.db4ca457:Confirmation de délettrage`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: $localize`:@@accounting.lettering.store.confirm.accept:Délettrer`,
-      rejectLabel: $localize`:@@accounting.lettering.store.confirm.reject:Annuler`,
+      acceptLabel: $localize`:@@lettering.component.acceptLabel.Délettrer:Délettrer`,
+      rejectLabel: $localize`:@@lettering.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.busyAction.set('unletter');
@@ -379,23 +418,31 @@ export class LetteringStore {
           .subscribe({
             next: res => {
               if (res.success) {
-                this.success.set($localize`:@@accounting.lettering.store.groupe.delettre:Groupe ${code}:code: délettré.`);
+                this.success.set($localize`:@@accounting.lettering.ts.groupe.code.delettre.7a5b5fd3:Groupe ${code}:code: délettré.`);
                 this.closeGroup();
                 this.load();
               } else {
                 this.error.set(res.error ?? $localize`:@@accounting.lettering.store.erreur.delettrage:Erreur lors du délettrage.`);
               }
             },
-            error: err => this.error.set(this.translateError(err, $localize`:@@accounting.lettering.store.erreur.reseau.delettrage:Erreur réseau lors du délettrage.`))
+            error: err => {
+              const message = this.translateError(err, $localize`:@@accounting.lettering.ts.erreur.reseau.lors.du.delettrage.ae259626:Erreur réseau lors du délettrage.`);
+              if (this.shouldReloadOnError(err)) this.load();
+              this.error.set(message);
+            }
           });
       }
     });
   }
 
-  /** Complète un lettrage partiel (D7) : ajoute les lignes sélectionnées au groupe P existant. */
+  /** Complète un lettrage partiel (D7) : ajoute à un groupe P existant les lignes sélectionnées
+   *  qui n'en sont pas déjà membres. Le serveur recalcule l'équilibre sur membres + nouvelles
+   *  lignes (contrat §5.4) : seules les nouvelles lignes sont envoyées. */
   complete(code: string): void {
-    if (!code || this.busyAction() !== null) return;
-    const ids = this.selectedLines().map(l => l.lineId);
+    if (!code || this.busyAction() !== null || !this.canComplete() || this.completionTarget() !== code) return;
+    const ids = this.selectedLines()
+      .filter(l => l.letteringCode !== code)
+      .map(l => l.lineId);
     if (ids.length === 0) return;
     const partial = this.isPartialMode();
 
@@ -419,17 +466,57 @@ export class LetteringStore {
             this.error.set(res.error ?? $localize`:@@accounting.lettering.store.erreur.completion:Erreur lors de la complétion du lettrage.`);
           }
         },
-        error: err => this.error.set(this.translateError(err, $localize`:@@accounting.lettering.store.erreur.reseau.completion:Erreur réseau lors de la complétion du lettrage.`))
+        error: err => {
+          const message = this.translateError(err, $localize`:@@accounting.lettering.store.erreur.reseau.completion:Erreur réseau lors de la complétion du lettrage.`);
+          if (this.shouldReloadOnError(err)) this.load();
+          this.error.set(message);
+        }
       });
   }
 
+  /**
+   * Recharge automatiquement la liste quand l'erreur reflète un état serveur désynchronisé de ce
+   * que l'utilisateur voit (ligne déjà lettrée par quelqu'un d'autre, ou période clôturée entre le
+   * chargement et l'action) : la liste affichée redevient cohérente sans action de l'utilisateur.
+   */
+  private readonly RELOAD_ON_CODES: readonly string[] = [
+    LETTERING_ERROR_CODES.alreadyLettered,
+    LETTERING_ERROR_CODES.periodLocked
+  ];
+
+  private shouldReloadOnError(err: unknown): boolean {
+    const code = apiErrorCode(err);
+    return code !== undefined && this.RELOAD_ON_CODES.includes(code);
+  }
+
+  /** Centralise la traduction des 11 codes métier `LETTERING_*` (contrat §5) en messages FR. */
   private translateError(err: unknown, networkFallback: string): string {
     const code = apiErrorCode(err);
-    if (code === LETTERING_ERROR_CODES.periodLocked) {
-      return $localize`:@@accounting.lettering.store.erreur.periode.cloturee:Impossible : la période est clôturée.`;
-    }
-    if (code === LETTERING_ERROR_CODES.alreadyLettered) {
-      return $localize`:@@accounting.lettering.store.erreur.deja.lettree:Une ligne est déjà lettrée. La liste a été actualisée.`;
+    switch (code) {
+      case LETTERING_ERROR_CODES.validation:
+        return $localize`:@@accounting.lettering.store.erreur.validation:Requête invalide.`;
+      case LETTERING_ERROR_CODES.linesNotFound:
+        return $localize`:@@accounting.lettering.store.erreur.lignes.introuvables:Une ou plusieurs lignes sont introuvables. La liste a été actualisée.`;
+      case LETTERING_ERROR_CODES.alreadyLettered:
+        return $localize`:@@accounting.lettering.store.erreur.deja.lettree:Une ligne est déjà lettrée. La liste a été actualisée.`;
+      case LETTERING_ERROR_CODES.accountMismatch:
+        return $localize`:@@accounting.lettering.store.erreur.compte.incoherent:Les lignes sélectionnées ne portent pas toutes sur le même compte.`;
+      case LETTERING_ERROR_CODES.currencyMismatch:
+        return $localize`:@@accounting.lettering.store.erreur.devise.incoherente:Les lignes sélectionnées ne sont pas dans la même devise.`;
+      case LETTERING_ERROR_CODES.unbalanced:
+        return $localize`:@@accounting.lettering.store.erreur.non.equilibre:La sélection n'est pas équilibrée (débit ≠ crédit).`;
+      case LETTERING_ERROR_CODES.periodLocked:
+        return $localize`:@@accounting.lettering.store.erreur.periode.cloturee:Impossible : la période est clôturée. La liste a été actualisée.`;
+      case LETTERING_ERROR_CODES.groupNotFound:
+        return $localize`:@@accounting.lettering.store.erreur.groupe.introuvable:Ce groupe de lettrage n'existe pas ou plus.`;
+      case LETTERING_ERROR_CODES.groupNotPartial:
+        return $localize`:@@accounting.lettering.store.erreur.groupe.non.partiel:Ce groupe n'est pas (ou plus) un lettrage partiel.`;
+      case LETTERING_ERROR_CODES.exchangeDifference:
+        return $localize`:@@accounting.lettering.store.erreur.ecart.de.change:La sélection présente un écart de change : utilisez « Équilibrer ».`;
+      case LETTERING_ERROR_CODES.featureDisabled:
+        return $localize`:@@accounting.lettering.store.erreur.fonctionnalite.desactivee:Cette fonctionnalité n'est pas activée.`;
+      default:
+        break;
     }
     if ((err as { status?: number } | null)?.status === 403) {
       return $localize`:@@accounting.lettering.store.erreur.droit.insuffisant:Droit insuffisant pour effectuer cette action.`;

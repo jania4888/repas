@@ -73,9 +73,15 @@ export function sideCounts(sel: readonly LetteringLine[]): LetteringSideCounts {
 export function selectionGuards(sel: readonly LetteringLine[]): LetteringSelectionGuards {
   const currencies = new Set(sel.map(l => l.currency));
   const accounts = new Set(sel.map(l => l.accountNumber));
+  // Lignes membres d'un groupe « P » (partiel) présentes dans la sélection : une seule ⇒ la
+  // sélection peut compléter ce groupe (B1) ; plusieurs ⇒ ambigu, Valider doit être désactivé.
+  const partialCodes = new Set(
+    sel.filter(l => l.letteringCode && l.isPartiallyLettered).map(l => l.letteringCode as string)
+  );
   return {
     mixedCurrencies: currencies.size > 1,
-    multipleAccounts: accounts.size > 1
+    multipleAccounts: accounts.size > 1,
+    partialGroupCodes: [...partialCodes]
   };
 }
 
