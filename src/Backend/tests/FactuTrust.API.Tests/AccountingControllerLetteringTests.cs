@@ -3,6 +3,7 @@ using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.Accounting.Commands;
 using FactuTrust.Application.Features.Accounting.Lettering;
+using FactuTrust.Application.Features.Accounting.Validators;
 using FactuTrust.Domain.Common;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -72,6 +73,32 @@ public sealed class AccountingControllerLetteringTests
         var body = Assert.IsType<FactuTrust.API.Controllers.ApiResponse<LetteringResultDto>>(ok.Value);
         Assert.True(body.Success);
         Assert.Equal(dto, body.Data);
+    }
+
+    /// <summary>
+    /// p3-11 : le corps HTTP ne peut pas activer la voie de masse. Avec origin « Bulk », le
+    /// contrôleur n'ajoute ni BulkRequestId ni RequireNoExchangeDifference : le validator refusera
+    /// donc la commande (Bulk sans identifiant de lot).
+    /// </summary>
+    [Fact]
+    public async Task Letter_BulkOriginFromHttp_NeverCarriesBulkRequestIdNorExchangeFlag()
+    {
+        LetterAccountEntriesCommand? sent = null;
+        var mediator = new Mock<IMediator>(MockBehavior.Strict);
+        mediator.Setup(m => m.Send(It.IsAny<LetterAccountEntriesCommand>(), It.IsAny<CancellationToken>()))
+            .Callback<IRequest<Result<LetteringResultDto>>, CancellationToken>((c, _) => sent = (LetterAccountEntriesCommand)c)
+            .ReturnsAsync(Result.Success(new LetteringResultDto("L00001", Guid.NewGuid(), false, 2, null)));
+        var controller = NewController(mediator.Object);
+
+        await controller.Letter(
+            new LetterEntriesRequest { JournalEntryLineIds = new[] { Guid.NewGuid(), Guid.NewGuid() }, Origin = "Bulk" },
+            CancellationToken.None);
+
+        Assert.NotNull(sent);
+        Assert.Equal(LetteringOrigin.Bulk, sent!.Origin);
+        Assert.Null(sent.BulkRequestId);
+        Assert.False(sent.RequireNoExchangeDifference);
+        Assert.False(new LetterAccountEntriesCommandValidator().Validate(sent).IsValid);
     }
 
     // ---- GetLetteringLines (plan §4.1) ----

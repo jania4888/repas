@@ -176,11 +176,29 @@ public sealed class LetterAccountEntriesCommandValidator : AbstractValidator<Let
             .WithMessage("Une même ligne est sélectionnée plusieurs fois.");
 
         // Plan §4.3 : seules Manual et Suggestion sont acceptées depuis le corps HTTP de
-        // POST letter. Bulk/DraftUpdate/PayrollCancellation/Automatic/ExchangeDifference ne
-        // viennent que de flux internes qui n'empruntent pas cette commande.
+        // POST letter. Bulk n'est admis qu'avec un BulkRequestId, que seul le handler de masse
+        // renseigne (le contrôleur ne le transmet jamais). DraftUpdate/PayrollCancellation/
+        // Automatic/ExchangeDifference ne viennent que de flux internes qui n'empruntent pas
+        // cette commande.
         RuleFor(x => x.Origin)
-            .Must(o => o == LetteringOrigin.Manual || o == LetteringOrigin.Suggestion)
+            .Must((cmd, o) => o == LetteringOrigin.Manual
+                              || o == LetteringOrigin.Suggestion
+                              || (o == LetteringOrigin.Bulk && cmd.BulkRequestId is not null))
             .WithMessage("Origine de lettrage invalide.");
+
+        // Annexe C §4 : la voie de masse ne lettre que des groupes soldés, sans écart de change.
+        When(x => x.Origin == LetteringOrigin.Bulk, () =>
+        {
+            RuleFor(x => x.RequireNoExchangeDifference)
+                .Equal(true).WithMessage("Le lettrage en masse doit refuser les écarts de change.");
+            RuleFor(x => x.AllowPartial)
+                .Equal(false).WithMessage("Le lettrage en masse n'accepte pas de lettrage partiel.");
+        });
+
+        RuleFor(x => x.BulkRequestId)
+            .Must(id => id != Guid.Empty)
+            .When(x => x.BulkRequestId is not null)
+            .WithMessage("Identifiant de lot invalide.");
 
         RuleFor(x => x.SuggestionKey)
             .MaximumLength(32).WithMessage("La clé de proposition ne peut pas dépasser 32 caractères.");

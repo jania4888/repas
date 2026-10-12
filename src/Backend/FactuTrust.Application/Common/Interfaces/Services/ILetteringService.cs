@@ -19,12 +19,16 @@ public interface ILetteringService
     /// <paramref name="allowPartial"/> : le groupe est alors marqué partiel (code préfixé « P »).
     /// Refuse (<c>LETTERING_PERIOD_LOCKED</c>) toute ligne d'une période verrouillée, sauf pour
     /// <see cref="LetteringOrigin.Automatic"/> (auto-lettrage des paiements et de la paie, D9).
+    /// Avec <paramref name="requireNoExchangeDifference"/> (voie de masse, annexe C §4), un groupe
+    /// soldé en devise mais pas en dinar est refusé (<c>LETTERING_EXCHANGE_DIFFERENCE</c>) avant
+    /// toute écriture. Paramètre en dernière position : les appels existants ne changent pas.
     /// </summary>
     Task<Result<LetteringOutcome>> ManualLetterAsync(
         IReadOnlyList<Guid> journalEntryLineIds,
         bool allowPartial = false,
         LetteringOrigin origin = LetteringOrigin.Manual,
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken = default,
+        bool requireNoExchangeDifference = false);
 
     /// <summary>
     /// Délettre un groupe : libère les lignes (LetteringCode remis à null) et supprime le groupe.

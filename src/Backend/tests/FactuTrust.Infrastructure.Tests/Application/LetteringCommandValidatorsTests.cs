@@ -105,6 +105,62 @@ public sealed class LetteringCommandValidatorsTests
         result.ShouldHaveValidationErrorFor(x => x.Origin);
     }
 
+    /// <summary>p3-11 : Bulk est admis seulement avec un identifiant de lot, sans partiel, sans écart de change.</summary>
+    [Fact]
+    public void Letter_BulkWithRequestIdAndNoExchangeDifference_Passes()
+    {
+        var cmd = new LetterAccountEntriesCommand(
+            new[] { Guid.NewGuid(), Guid.NewGuid() }, Origin: LetteringOrigin.Bulk,
+            RequireNoExchangeDifference: true, BulkRequestId: Guid.NewGuid());
+        _letterValidator.TestValidate(cmd).ShouldNotHaveAnyValidationErrors();
+    }
+
+    [Fact]
+    public void Letter_BulkWithAllowPartial_Fails()
+    {
+        var cmd = new LetterAccountEntriesCommand(
+            new[] { Guid.NewGuid(), Guid.NewGuid() }, AllowPartial: true, Origin: LetteringOrigin.Bulk,
+            RequireNoExchangeDifference: true, BulkRequestId: Guid.NewGuid());
+        _letterValidator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.AllowPartial);
+    }
+
+    [Fact]
+    public void Letter_BulkWithoutRequireNoExchangeDifference_Fails()
+    {
+        var cmd = new LetterAccountEntriesCommand(
+            new[] { Guid.NewGuid(), Guid.NewGuid() }, Origin: LetteringOrigin.Bulk,
+            BulkRequestId: Guid.NewGuid());
+        _letterValidator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.RequireNoExchangeDifference);
+    }
+
+    [Fact]
+    public void Letter_EmptyBulkRequestId_Fails()
+    {
+        var cmd = new LetterAccountEntriesCommand(
+            new[] { Guid.NewGuid(), Guid.NewGuid() }, Origin: LetteringOrigin.Bulk,
+            RequireNoExchangeDifference: true, BulkRequestId: Guid.Empty);
+        _letterValidator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.BulkRequestId);
+    }
+
+    /// <summary>Un identifiant de lot ne rend pas acceptable une origine interne autre que Bulk.</summary>
+    [Fact]
+    public void Letter_AutomaticWithBulkRequestId_StillRejected()
+    {
+        var cmd = new LetterAccountEntriesCommand(
+            new[] { Guid.NewGuid(), Guid.NewGuid() }, Origin: LetteringOrigin.Automatic,
+            RequireNoExchangeDifference: true, BulkRequestId: Guid.NewGuid());
+        _letterValidator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Origin);
+    }
+
+    /// <summary>Le drapeau seul reste permis sur la voie manuelle (il ne fait que restreindre).</summary>
+    [Fact]
+    public void Letter_ManualWithRequireNoExchangeDifference_Passes()
+    {
+        var cmd = new LetterAccountEntriesCommand(
+            new[] { Guid.NewGuid(), Guid.NewGuid() }, RequireNoExchangeDifference: true);
+        _letterValidator.TestValidate(cmd).ShouldNotHaveAnyValidationErrors();
+    }
+
     [Fact]
     public void Letter_SuggestionKeyTooLong_Fails()
     {
