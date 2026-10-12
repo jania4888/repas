@@ -75,6 +75,17 @@ describe('lettering-suggestions (utilitaires purs)', () => {
       expect(s.credit.first?.credit).toBe(310);
     });
 
+    it('prend les montants en TND même si les champs en devise sont remplis', () => {
+      const s = mapSuggestion(dto({
+        currencyCode: 'TND',
+        debitLines: [lineDto({ debit: 100, debitInCurrency: 999 })],
+        creditLines: [lineDto({ credit: 100, creditInCurrency: 999 })]
+      }));
+
+      expect(s.debit.total).toBe(100);
+      expect(s.credit.first?.amount).toBe(100);
+    });
+
     it('normalise les champs facultatifs (pièce, tiers, raisons)', () => {
       const s = mapSuggestion(dto({ thirdPartyKind: 2, reasons: undefined as never }));
       expect(s.thirdPartyId).toBeNull();
@@ -121,6 +132,15 @@ describe('lettering-suggestions (utilitaires purs)', () => {
       const fx = suggestion({ confidence: 'High', bulkEligible: false, hasExchangeDifference: true });
 
       expect(defaultBulkSelection([high, medium, fx])).toEqual([high.key]);
+    });
+
+    it('ignore une proposition qui réutilise une ligne ou une clé déjà retenue', () => {
+      const first = suggestion({ confidence: 'High' });
+      const sameLine = suggestion({ confidence: 'High', debitLines: [lineDto({ lineId: first.lineIds[0], debit: 100 })] });
+      const sameKey = suggestion({ confidence: 'High', key: first.key });
+      const other = suggestion({ confidence: 'High' });
+
+      expect(defaultBulkSelection([first, sameLine, sameKey, other])).toEqual([first.key, other.key]);
     });
 
     it('s’arrête au plafond de groupes', () => {
@@ -188,6 +208,12 @@ describe('lettering-suggestions (utilitaires purs)', () => {
       expect(reasonText({ code: 'AmbiguousAmount', args: { alternatives: '3' } })).toContain('3');
       expect(reasonText({ code: 'DateGap', args: { days: '400' } })).toBe('Écart de dates : 400 jours.');
       expect(reasonText({ code: 'ExchangeDifference', args: { localGap: '-0.250' } })).toBe('Écart de change : -0.250 TND.');
+    });
+
+    it('arguments absents ou illisibles : ni NaN, ni undefined, ni espace avant le point', () => {
+      expect(reasonText({ code: 'ExactAmount', args: {} })).toBe('Montant identique : 0.000.');
+      expect(reasonText({ code: 'ExactAmount', args: { amount: 'abc', currency: 'TND' } })).toBe('Montant identique : 0.000 TND.');
+      expect(reasonText({ code: 'ExchangeDifference', args: {} })).toBe('Écart de change : 0.000 TND.');
     });
 
     it('utilise le formateur de montant fourni', () => {
