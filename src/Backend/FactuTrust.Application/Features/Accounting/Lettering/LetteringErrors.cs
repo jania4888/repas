@@ -19,6 +19,13 @@ public static class LetteringErrorCodes
     public const string GroupNotFound = "LETTERING_GROUP_NOT_FOUND";
     public const string GroupNotPartial = "LETTERING_GROUP_NOT_PARTIAL";
 
+    /// <summary>
+    /// Défensif (donnée historique corrompue, pré-index unique) : un membre du groupe ne porte
+    /// plus le code du groupe. Non listé en §4.6 car jamais atteignable via l'application
+    /// réparée — compléter un tel groupe masquerait l'incohérence au lieu de la signaler.
+    /// </summary>
+    public const string GroupInconsistent = "LETTERING_GROUP_INCONSISTENT";
+
     /// <summary>Phase 3 (lettrage en masse) : réservé, non émis en Phase 1.</summary>
     public const string ExchangeDifference = "LETTERING_EXCHANGE_DIFFERENCE";
 
@@ -46,4 +53,6 @@ public static class LetteringErrors
     public static Error GroupNotFound(string message) => new(LetteringErrorCodes.GroupNotFound, message);
 
     public static Error GroupNotPartial(string message) => new(LetteringErrorCodes.GroupNotPartial, message);
+
+    public static Error GroupInconsistent(string message) => new(LetteringErrorCodes.GroupInconsistent, message);
 }

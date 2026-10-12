@@ -38,6 +38,21 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
     /// Serializable de <c>LetteringService</c> reste la protection principale contre les doublons ;
     /// ces deux index sont une défense ultime en base, pas la source de vérité applicative.
     /// </para>
+    /// <para>
+    /// Créations en <c>WITH (ONLINE = ON)</c> quand l'édition le permet (Enterprise / Azure SQL :
+    /// <c>SERVERPROPERTY('EngineEdition')</c> ∈ 3, 5, 8 — le seul mécanisme fiable de détection),
+    /// repli hors ligne sinon : sur Standard/Express la clause ferait échouer la migration. Les
+    /// CREATE passent donc par <c>sys.sp_executesql</c> (une clause WITH ne se paramètre pas en
+    /// T-SQL statique). Sur les gros dossiers, le runbook impose de pré-exécuter le script jumeau
+    /// hors heures de pointe AVANT le déploiement.
+    /// </para>
+    /// <para>
+    /// Timeout de commande : <c>migrationBuilder.Sql</c> ne permet pas de le régler — il est porté
+    /// par le migrateur (<c>CommandTimeout(600)</c> sur les options SQL Server dans
+    /// <c>TenantService.ApplyMigrationsToNewDatabaseAsync</c> et
+    /// <c>TenantDatabaseProvisioner.ApplyMigrationsAsync</c>, les deux seuls chemins d'exécution des
+    /// migrations tenant : garde de démarrage et provisionnement).
+    /// </para>
     /// Additif pur (aucune donnée touchée), écrit à la main (pas de <c>dotnet ef migrations add</c> —
     /// la dérive préexistante du snapshot sur des entités sans rapport aurait tout mélangé), idempotent,
     /// jumeau SQL : <c>docs/runbooks/sql/AddLetteringIntegrityIndexes_Tenant.idempotent.sql</c>.
@@ -49,6 +64,13 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql("""
+-- ONLINE = ON : réservé aux éditions Enterprise / Azure SQL (EngineEdition 3, 5, 8) ; sur
+-- Standard/Express la clause ferait échouer la migration — repli sur une création hors ligne.
+DECLARE @withOnline nvarchar(40) =
+    CASE WHEN CAST(SERVERPROPERTY('EngineEdition') AS int) IN (3, 5, 8) THEN N' WITH (ONLINE = ON)' ELSE N'' END;
+-- sp_executesql n'accepte pas d'expression : le CREATE est assemblé dans @sql puis exécuté.
+DECLARE @sql nvarchar(max);
+
 -- IX_LetteringGroups_Code UNIQUE : seulement si aucun doublon de Code n'existe (le pré-scan
 -- ScanLetteringIntegrity_AllTenants.sql / l'endpoint plateforme doivent avoir réparé le tenant
 -- avant la mise en production, cf. runbook docs/runbooks/lettering-integrity.md). Un tenant non
@@ -60,8 +82,9 @@ BEGIN
 END
 ELSE IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_LetteringGroups_Code' AND object_id = OBJECT_ID(N'[dbo].[LetteringGroups]'))
 BEGIN
-    CREATE UNIQUE NONCLUSTERED INDEX [IX_LetteringGroups_Code]
-        ON [dbo].[LetteringGroups] ([Code]);
+    SET @sql = N'CREATE UNIQUE NONCLUSTERED INDEX [IX_LetteringGroups_Code]
+        ON [dbo].[LetteringGroups] ([Code])' + @withOnline + N';';
+    EXEC sys.sp_executesql @sql;
 END;
 
 -- IX_LetteringGroupMembers_JournalEntryLineId UNIQUE : idem, seulement si aucune ligne d'écriture
@@ -80,8 +103,9 @@ BEGIN
 
     IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_LetteringGroupMembers_JournalEntryLineId' AND object_id = OBJECT_ID(N'[dbo].[LetteringGroupMembers]'))
     BEGIN
-        CREATE UNIQUE NONCLUSTERED INDEX [IX_LetteringGroupMembers_JournalEntryLineId]
-            ON [dbo].[LetteringGroupMembers] ([JournalEntryLineId]);
+        SET @sql = N'CREATE UNIQUE NONCLUSTERED INDEX [IX_LetteringGroupMembers_JournalEntryLineId]
+            ON [dbo].[LetteringGroupMembers] ([JournalEntryLineId])' + @withOnline + N';';
+        EXEC sys.sp_executesql @sql;
     END;
 END;
 
@@ -92,23 +116,26 @@ END;
 
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_JournalEntryLines_AccountNumber_LetteringCode' AND object_id = OBJECT_ID(N'[dbo].[JournalEntryLines]'))
 BEGIN
-    CREATE NONCLUSTERED INDEX [IX_JournalEntryLines_AccountNumber_LetteringCode]
+    SET @sql = N'CREATE NONCLUSTERED INDEX [IX_JournalEntryLines_AccountNumber_LetteringCode]
         ON [dbo].[JournalEntryLines] ([AccountNumber], [LetteringCode])
-        INCLUDE ([JournalEntryId], [DebitAmount], [CreditAmount], [ThirdPartyId], [ThirdPartyKind]);
+        INCLUDE ([JournalEntryId], [DebitAmount], [CreditAmount], [ThirdPartyId], [ThirdPartyKind])' + @withOnline + N';';
+    EXEC sys.sp_executesql @sql;
 END;
 
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_JournalEntryLines_ThirdPartyKind_ThirdPartyId' AND object_id = OBJECT_ID(N'[dbo].[JournalEntryLines]'))
 BEGIN
-    CREATE NONCLUSTERED INDEX [IX_JournalEntryLines_ThirdPartyKind_ThirdPartyId]
+    SET @sql = N'CREATE NONCLUSTERED INDEX [IX_JournalEntryLines_ThirdPartyKind_ThirdPartyId]
         ON [dbo].[JournalEntryLines] ([ThirdPartyKind], [ThirdPartyId])
-        WHERE [ThirdPartyId] IS NOT NULL;
+        WHERE [ThirdPartyId] IS NOT NULL' + @withOnline + N';';
+    EXEC sys.sp_executesql @sql;
 END;
 
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_JournalEntries_EntryDate' AND object_id = OBJECT_ID(N'[dbo].[JournalEntries]'))
 BEGIN
-    CREATE NONCLUSTERED INDEX [IX_JournalEntries_EntryDate]
+    SET @sql = N'CREATE NONCLUSTERED INDEX [IX_JournalEntries_EntryDate]
         ON [dbo].[JournalEntries] ([EntryDate])
-        INCLUDE ([Status], [JournalCode], [EntryNumber], [AccountingPeriodId]);
+        INCLUDE ([Status], [JournalCode], [EntryNumber], [AccountingPeriodId])' + @withOnline + N';';
+    EXEC sys.sp_executesql @sql;
 END;
 """);
         }

@@ -414,8 +414,14 @@ public sealed class TenantService : ITenantService
 
     private async Task ApplyMigrationsToNewDatabaseAsync(string connectionString, CancellationToken cancellationToken)
     {
+        // Timeout relevé (600 s, aligné sur le provisionneur) : migrationBuilder.Sql ne permet pas
+        // de régler le timeout par migration, et la création d'index du lettrage
+        // (20261012100000_AddLetteringIntegrityIndexes_Tenant) peut dépasser les 30 s par défaut
+        // sur un gros dossier. Le même réglage est posé dans TenantDatabaseProvisioner.
         var options = new DbContextOptionsBuilder<TenantDbContext>()
-            .UseSqlServer(connectionString, b => b.MigrationsAssembly(typeof(TenantDbContext).Assembly.FullName))
+            .UseSqlServer(connectionString, b => b
+                .MigrationsAssembly(typeof(TenantDbContext).Assembly.FullName)
+                .CommandTimeout(600))
             .Options;
 
         await using var context = new TenantDbContext(options);

@@ -485,5 +485,138 @@ public sealed class LetteringServiceAmbientTransactionTests : IDisposable
         Assert.Equal(2, distinctCodes);
     }
 
+    /// <summary>
+    /// Revue PR 1 (2e passe, SQL réel) : la complétion rejoint la transaction ambiante, comme le
+    /// lettrage — un groupe « P » créé dans l'unité de travail peut être complété par une ligne
+    /// elle-même non encore commitée, et le tout est commité (ou annulé) d'un seul tenant.
+    /// </summary>
+    [Fact]
+    public async Task CompletePartial_InsideUnitOfWork_CompletesUncommittedLine()
+    {
+        if (!_canRun) return;
+
+        string? partialCode = null;
+        Guid extraLineId = Guid.Empty;
+
+        var result = await _unitOfWork!.ExecuteAsync(async ct =>
+        {
+            await using var ctx = _factory!.CreateContext();
+            var period = AccountingPeriod.Create(2026, 8, new DateTime(2026, 8, 1), new DateTime(2026, 8, 31));
+            ctx.AccountingPeriods.Add(period);
+
+            var entry = JournalEntry.Create(
+                1, "JOA", new DateTime(2026, 8, 1), "Facture et règlements",
+                period.Id, false, "Manual", Guid.NewGuid(),
+                new[]
+                {
+                    new JournalLineInput("411", "Facture", 100m, 0m, Guid.NewGuid(), ThirdPartyKind.Client),
+                    new JournalLineInput("411", "Règlement 1", 0m, 60m, Guid.NewGuid(), ThirdPartyKind.Client),
+                    new JournalLineInput("411", "Règlement 2", 0m, 40m, Guid.NewGuid(), ThirdPartyKind.Client)
+                }).Value;
+            entry.SetAuditInfo("test", false);
+            ctx.JournalEntries.Add(entry);
+            await ctx.SaveChangesAsync(ct);
+
+            var debit = entry.Lines.Single(l => l.DebitAmount.Amount == 100m).Id;
+            var credit60 = entry.Lines.Single(l => l.CreditAmount.Amount == 60m).Id;
+            var credit40 = entry.Lines.Single(l => l.CreditAmount.Amount == 40m).Id;
+            extraLineId = credit40;
+
+            var letterResult = await _lettering!.ManualLetterAsync(
+                new[] { debit, credit60 }, allowPartial: true, cancellationToken: ct);
+            if (letterResult.IsFailure)
+                return Result.Failure<string>(letterResult.Error);
+            partialCode = letterResult.Value.Code;
+
+            // Complétion DANS la même transaction ambiante : la ligne ajoutée n'est pas commitée.
+            var completeResult = await _lettering!.CompletePartialAsync(
+                partialCode, new[] { credit40 }, allowPartial: false, cancellationToken: ct);
+            return completeResult.IsFailure
+                ? Result.Failure<string>(completeResult.Error)
+                : Result.Success(completeResult.Value.Code);
+        });
+
+        Assert.True(result.IsSuccess, result.Error?.Description);
+        Assert.NotNull(partialCode);
+        Assert.Equal($"L{partialCode!.AsSpan(1)}", result.Value);
+
+        await using var verify = _factory!.CreateIsolatedContext();
+        var group = await verify.LetteringGroups.AsNoTracking().SingleAsync(g => g.Code == result.Value);
+        Assert.False(group.IsPartial);
+        Assert.Equal(100m, group.Amount.Amount);
+        var extraCode = await verify.JournalEntryLines.AsNoTracking()
+            .Where(l => l.Id == extraLineId)
+            .Select(l => l.LetteringCode)
+            .SingleAsync();
+        Assert.Equal(result.Value, extraCode);
+    }
+
+    /// <summary>
+    /// Revue PR 1 (2e passe, SQL réel) : une complétion et un lettrage concurrents sur la MÊME
+    /// ligne doivent se sérialiser — exactement un des deux réussit, l'autre échoue en
+    /// <c>LETTERING_ALREADY_LETTERED</c> (course perdue détectée, jamais de double lettrage).
+    /// </summary>
+    [Fact]
+    public async Task ConcurrentCompleteAndLetter_SameLine_OnlyOneSucceeds()
+    {
+        if (!_canRun) return;
+
+        string partialCode;
+        Guid sharedLineId, otherLineId;
+
+        await using (var ctx = _factory!.CreateIsolatedContext())
+        {
+            var period = AccountingPeriod.Create(2026, 8, new DateTime(2026, 8, 1), new DateTime(2026, 8, 31));
+            ctx.AccountingPeriods.Add(period);
+
+            var entry = JournalEntry.Create(
+                1, "JOA", new DateTime(2026, 8, 1), "Facture multi-règlement",
+                period.Id, false, "Manual", Guid.NewGuid(),
+                new[]
+                {
+                    new JournalLineInput("411", "Facture", 100m, 0m, Guid.NewGuid(), ThirdPartyKind.Client),
+                    new JournalLineInput("411", "Règlement 1", 0m, 60m, Guid.NewGuid(), ThirdPartyKind.Client),
+                    new JournalLineInput("411", "Règlement 2", 0m, 40m, Guid.NewGuid(), ThirdPartyKind.Client),
+                    new JournalLineInput("411", "Avoir", 40m, 0m, Guid.NewGuid(), ThirdPartyKind.Client),
+                    // Équilibrage de l'écriture (140 débit = 140 crédit) — hors compte lettré.
+                    new JournalLineInput("707", "Vente", 0m, 40m, null, ThirdPartyKind.None)
+                }).Value;
+            entry.SetAuditInfo("test", false);
+            ctx.JournalEntries.Add(entry);
+            await ctx.SaveChangesAsync();
+
+            var debit100 = entry.Lines.Single(l => l.DebitAmount.Amount == 100m).Id;
+            var credit60 = entry.Lines.Single(l => l.CreditAmount.Amount == 60m).Id;
+            sharedLineId = entry.Lines.Single(l => l.AccountNumber == "411" && l.CreditAmount.Amount == 40m).Id;
+            otherLineId = entry.Lines.Single(l => l.AccountNumber == "411" && l.DebitAmount.Amount == 40m).Id;
+
+            var letter = await _lettering!.ManualLetterAsync(new[] { debit100, credit60 }, allowPartial: true);
+            Assert.True(letter.IsSuccess, letter.Error?.Description);
+            partialCode = letter.Value.Code;
+        }
+
+        // Complétion (P + règlement 2 → équilibré) contre lettrage (règlement 2 + avoir) : même
+        // ligne partagée, un seul gagnant.
+        var completeTask = _lettering!.CompletePartialAsync(partialCode, new[] { sharedLineId }, allowPartial: false);
+        var letterTask = _lettering!.ManualLetterAsync(new[] { sharedLineId, otherLineId });
+        await Task.WhenAll(completeTask, letterTask);
+
+        var results = new[] { completeTask.Result, letterTask.Result };
+        Assert.Single(results, r => r.IsSuccess);
+        var loser = Assert.Single(results, r => r.IsFailure);
+        Assert.Equal(LetteringErrorCodes.AlreadyLettered, loser.Error.Code);
+
+        await using var verify = _factory!.CreateIsolatedContext();
+        var sharedCode = await verify.JournalEntryLines.AsNoTracking()
+            .Where(l => l.Id == sharedLineId)
+            .Select(l => l.LetteringCode)
+            .SingleAsync();
+        Assert.NotNull(sharedCode);
+        // Exactement un groupe contient la ligne partagée.
+        var membershipCount = await verify.LetteringGroupMembers.AsNoTracking()
+            .CountAsync(m => m.JournalEntryLineId == sharedLineId);
+        Assert.Equal(1, membershipCount);
+    }
+
     public void Dispose() => _sqlDb.Dispose();
 }

@@ -99,6 +99,25 @@ sur ce tenant pour créer l'index désormais possible.
    accepter qu'ils restent temporairement sans index unique (le contrôle
    applicatif — transaction `Serializable` + validation — reste actif dans
    tous les cas).
-3. Sur les plus gros dossiers, exécuter le script jumeau des index hors heures
-   de pointe avant le déploiement : la migration devient alors sans effet
-   (`IF NOT EXISTS`) au démarrage du tenant.
+3. **Étape de déploiement OBLIGATOIRE sur les gros dossiers** : exécuter le
+   script jumeau
+   [`AddLetteringIntegrityIndexes_Tenant.idempotent.sql`](sql/AddLetteringIntegrityIndexes_Tenant.idempotent.sql)
+   hors heures de pointe **avant** le déploiement, sur chaque tenant volumineux.
+   La migration devient alors sans effet (`IF NOT EXISTS`) au démarrage du
+   tenant — aucun risque de création d'index longue pendant le boot
+   (`TenantMigrationGuard`). Le timeout de commande du migrateur est relevé à
+   600 s (`TenantService` / `TenantDatabaseProvisioner`), mais une création en
+   ligne sur des millions de lignes peut dépasser toute fenêtre de déploiement.
+4. Les créations d'index utilisent `WITH (ONLINE = ON)` quand l'édition le
+   permet (Enterprise / Azure SQL : `SERVERPROPERTY('EngineEdition')` ∈ 3, 5,
+   8) et basculent sinon en création hors ligne (Standard/Express) — sur ces
+   éditions, prévoir une fenêtre sans activité ou l'étape 3.
+
+## Note permissions (D6)
+
+La PR 1 retire la permission `accounting:unletter` aux comptables société et
+l'attribue aux rôles de supervision. Les **revendications de permission sont
+embarquées dans le JWT** : un utilisateur déjà connecté conserve ses anciens
+droits jusqu'au prochain rafraîchissement de jeton (ou reconnexion). Prévenir
+les cabinets : après le déploiement, demander une reconnexion aux comptables
+pour que l'écran reflète immédiatement la séparation des tâches.

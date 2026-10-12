@@ -88,6 +88,24 @@ public sealed class GetLetteringLinesQueryValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.Account);
     }
 
+    /// <summary>
+    /// Bornes de période OBLIGATOIRES (revue PR 1, 2e passe) : un <c>DateTime</c> non renseigné
+    /// (defaut, liaison de requête absente) balaierait tout l'historique du compte.
+    /// </summary>
+    [Fact]
+    public void MissingFrom_Fails()
+    {
+        var result = _validator.TestValidate(NewQuery(from: new DateTime()));
+        result.ShouldHaveValidationErrorFor(x => x.From);
+    }
+
+    [Fact]
+    public void MissingTo_Fails()
+    {
+        var result = _validator.TestValidate(NewQuery(to: new DateTime()));
+        result.ShouldHaveValidationErrorFor(x => x.To);
+    }
+
     [Fact]
     public void ToBeforeFrom_Fails()
     {

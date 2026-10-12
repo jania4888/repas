@@ -247,11 +247,13 @@ public sealed class PlatformMigrationsController : ControllerBase
     /// <summary>
     /// Balayage d'intégrité du lettrage (codes dupliqués, lignes membres de plusieurs
     /// groupes, membres orphelins, lignes au <c>LetteringCode</c> sans groupe, incohérences
-    /// groupe/ligne, présence des deux index UNIQUE) sur tous les tenants actifs. Préalable
-    /// OBLIGATOIRE avant de livrer la migration d'index UNIQUE du lettrage (plan de refonte,
-    /// Annexe A §4.2) : tant que <c>IsUniqueIndexSafe</c> est faux (anomalie ou tenant
-    /// injoignable — fail-closed), la migration ne doit PAS être déployée partout, sinon
-    /// elle échouerait au boot du tenant et le bloquerait via TenantMigrationGuard.
+    /// groupe/ligne, présence des deux index UNIQUE) sur tous les tenants actifs.
+    /// Recommandé avant de livrer la migration d'index UNIQUE du lettrage (plan de refonte,
+    /// Annexe A §4.2) : la migration est désormais gardée (elle n'échoue plus sur doublons et
+    /// ne peut plus bloquer un tenant via TenantMigrationGuard), mais un tenant avec anomalies
+    /// resterait sans protection par index unique — tant que <c>IsUniqueIndexSafe</c> est faux
+    /// (anomalie ou tenant injoignable — fail-closed), une réparation manuelle reste requise
+    /// (runbook docs/runbooks/lettering-integrity.md).
     /// </summary>
     [HttpGet("tenants/lettering-integrity")]
     [ProducesResponseType(typeof(ApiResponse<LetteringIntegrityReportDto>), StatusCodes.Status200OK)]
@@ -274,9 +276,11 @@ public sealed class PlatformMigrationsController : ControllerBase
         }
         catch (Exception ex)
         {
+            // Pas de ex.Message dans la réponse : il peut contenir des fragments de connexion ou
+            // de schéma tenant. Le détail reste dans les logs (réservés plateforme).
             _logger.LogError(ex, "Error during lettering integrity scan");
             return StatusCode(500, ApiResponse<LetteringIntegrityReportDto>.Fail(
-                $"Erreur lors du balayage d'intégrité du lettrage : {ex.Message}"));
+                "Erreur lors du balayage d'intégrité du lettrage."));
         }
     }
 

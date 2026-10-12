@@ -6,7 +6,9 @@ using FactuTrust.Application.Features.Accounting.Lettering;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
+using FactuTrust.Domain.ValueObjects;
 using FactuTrust.Infrastructure.MultiTenancy;
+using FactuTrust.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -24,13 +26,18 @@ public sealed class LetteringQueryService : ILetteringQueryService
     private readonly ITenantDbContextFactory _contextFactory;
     private readonly AccountingSettings _settings;
     private readonly ICurrentUser _currentUser;
+    private readonly MasterDbContext? _masterDb;
 
     public LetteringQueryService(
-        ITenantDbContextFactory contextFactory, IOptions<AccountingSettings> settings, ICurrentUser currentUser)
+        ITenantDbContextFactory contextFactory,
+        IOptions<AccountingSettings> settings,
+        ICurrentUser currentUser,
+        MasterDbContext? masterDb = null)
     {
         _contextFactory = contextFactory;
         _settings = settings.Value;
         _currentUser = currentUser;
+        _masterDb = masterDb;
     }
 
     private bool ShowDrafts => _settings.IncludeBrouillardInReports;
@@ -87,7 +94,7 @@ public sealed class LetteringQueryService : ILetteringQueryService
             })
             .ToListAsync(cancellationToken);
 
-        var lockedYears = await LetteringPeriodLock.LockedYearsAsync(ctx, cancellationToken);
+        var lockedYears = await LetteringLockedYears.LoadAsync(ctx, cancellationToken);
         var names = await ResolveThirdPartyNamesAsync(ctx, rawRows, cancellationToken);
 
         var items = rawRows.Select(r => ToDto(r, lockedYears, names)).ToList();
@@ -147,7 +154,7 @@ public sealed class LetteringQueryService : ILetteringQueryService
             })
             .ToListAsync(cancellationToken);
 
-        var lockedYears = await LetteringPeriodLock.LockedYearsAsync(ctx, cancellationToken);
+        var lockedYears = await LetteringLockedYears.LoadAsync(ctx, cancellationToken);
         var names = await ResolveThirdPartyNamesAsync(ctx, rawRows, cancellationToken);
 
         var lines = rawRows
@@ -156,8 +163,13 @@ public sealed class LetteringQueryService : ILetteringQueryService
             .ToList();
 
         var anyLocked = lines.Any(l => l.PeriodLocked);
-        var canComplete = group.IsPartial;
-        var createdByDisplayName = ResolveDisplayName(group.CreatedBy);
+
+        // CanComplete : affichage seulement (le serveur revérifie tout à l'action). Il faut le
+        // droit de lettrage (AccountingCreate) ET qu'aucune ligne du groupe ne soit verrouillée
+        // (D8) — sinon le bouton « Compléter » proposerait une action vouée au refus.
+        var hasCreatePermission = _currentUser.HasPermission(Permissions.Accounting.Create);
+        var canComplete = group.IsPartial && hasCreatePermission && !anyLocked;
+        var createdByDisplayName = await ResolveDisplayNameAsync(group.CreatedBy, cancellationToken);
 
         // CanUnletter / UnletterBlockedReason : affichage seulement, le serveur revérifie tout à
         // l'action (policy AccountingUnletter + relecture du verrou d'exercice par UnletterAsync).
@@ -165,18 +177,43 @@ public sealed class LetteringQueryService : ILetteringQueryService
         bool canUnletter = hasUnletterPermission && !anyLocked;
         string? blockedReason = !hasUnletterPermission ? "permission" : anyLocked ? "period_locked" : null;
 
+        // Devise d'opération : celle des ÉCRITURES du groupe (CurrencyCode des lignes), pas celle
+        // du montant du groupe — celui-ci est toujours exprimé en devise de tenue (TND).
+        var operationCurrency = lines.Count > 0 && !string.IsNullOrEmpty(lines[0].OperationCurrency)
+            ? lines[0].OperationCurrency
+            : group.Amount.Currency;
+
         var dto = new LetteringGroupDto(
-            group.Id, group.Code, group.AccountNumber, group.Amount.Amount, group.Amount.Currency, group.IsPartial,
+            group.Id, group.Code, group.AccountNumber, group.Amount.Amount, operationCurrency, group.IsPartial,
             group.LetteredAt, createdByDisplayName, lines, canUnletter, blockedReason, canComplete);
 
         return Result.Success(dto);
     }
 
-    private static string ResolveDisplayName(string? createdBy)
+    /// <summary>
+    /// Nom d'affichage du créateur du groupe (§4.2) : « Prénom Nom » résolu depuis la base master
+    /// (le lettrage trace l'email technique). L'identifiant brut / l'email ne sont JAMAIS exposés :
+    /// à défaut de résolution, un libellé neutre est renvoyé (« Système » pour les flux
+    /// automatiques, « Utilisateur » pour un compte introuvable ou sans nom).
+    /// </summary>
+    private async Task<string> ResolveDisplayNameAsync(string? createdBy, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(createdBy) || string.Equals(createdBy, "system", StringComparison.OrdinalIgnoreCase))
             return "Système";
-        return createdBy;
+
+        if (_masterDb is not null)
+        {
+            var email = createdBy.Trim();
+            var displayName = await _masterDb.Users
+                .AsNoTracking()
+                .Where(u => u.Email == email)
+                .Select(u => (u.FirstName + " " + u.LastName).Trim())
+                .FirstOrDefaultAsync(cancellationToken);
+            if (!string.IsNullOrWhiteSpace(displayName))
+                return displayName;
+        }
+
+        return "Utilisateur";
     }
 
     private IQueryable<JournalEntryLine> BuildFilteredQuery(Persistence.TenantDbContext ctx, GetLetteringLinesQuery query)
@@ -265,23 +302,51 @@ public sealed class LetteringQueryService : ILetteringQueryService
 
     private static async Task<TotalsRow?> ComputeTotalsAsync(IQueryable<JournalEntryLine> q, CancellationToken cancellationToken)
     {
-        return await q
+        // Deux requêtes simples, toutes deux traduisibles en SQL (EF Core 8 ne traduit ni les
+        // agrégats sur des groupes d'entités avec types possédés Money, ni les sous-requêtes
+        // Where/Distinct imbriquées dans une projection de GroupBy) :
+        //  A) totaux scalaires via projection en colonnes AVANT le GroupBy constant ;
+        //  B) sondage des devises étrangères DISTINCTES du filtre, plafonné à 2 lignes
+        //     (Take(2)) — la seule information utile est « 0, 1 ou plusieurs » (§4.1 : totaux
+        //     en devise exposés seulement s'il y a EXACTEMENT une devise étrangère ; la devise
+        //     de tenue TND ne compte pas). Déterministe, pas de FirstOrDefault sur un groupe.
+        var totals = await q
+            .Select(l => new
+            {
+                Debit = l.DebitAmount.Amount,
+                Credit = l.CreditAmount.Amount,
+                l.DebitAmountInCurrency,
+                l.CreditAmountInCurrency,
+                IsUnlettered = l.LetteringCode == null || l.LetteringCode == string.Empty
+            })
             .GroupBy(_ => 1)
             .Select(g => new TotalsRow
             {
                 Count = g.Count(),
-                DebitCount = g.Count(l => l.DebitAmount.Amount > 0),
-                CreditCount = g.Count(l => l.CreditAmount.Amount > 0),
-                TotalDebit = g.Sum(l => l.DebitAmount.Amount),
-                TotalCredit = g.Sum(l => l.CreditAmount.Amount),
-                UnletteredDebit = g.Sum(l => (l.LetteringCode == null || l.LetteringCode == string.Empty) ? l.DebitAmount.Amount : 0m),
-                UnletteredCredit = g.Sum(l => (l.LetteringCode == null || l.LetteringCode == string.Empty) ? l.CreditAmount.Amount : 0m),
-                DistinctForeignCurrencies = g.Select(l => l.JournalEntry.CurrencyCode).Distinct().Count(),
-                TotalDebitInCurrency = g.Sum(l => l.DebitAmountInCurrency),
-                TotalCreditInCurrency = g.Sum(l => l.CreditAmountInCurrency),
-                SingleCurrency = g.Select(l => l.JournalEntry.CurrencyCode).FirstOrDefault()
+                DebitCount = g.Sum(x => x.Debit > 0 ? 1 : 0),
+                CreditCount = g.Sum(x => x.Credit > 0 ? 1 : 0),
+                TotalDebit = g.Sum(x => x.Debit),
+                TotalCredit = g.Sum(x => x.Credit),
+                UnletteredDebit = g.Sum(x => x.IsUnlettered ? x.Debit : 0m),
+                UnletteredCredit = g.Sum(x => x.IsUnlettered ? x.Credit : 0m),
+                TotalDebitInCurrency = g.Sum(x => x.DebitAmountInCurrency),
+                TotalCreditInCurrency = g.Sum(x => x.CreditAmountInCurrency)
             })
             .SingleOrDefaultAsync(cancellationToken);
+
+        var foreignCurrencies = await q
+            .Where(l => l.JournalEntry.CurrencyCode != Money.DefaultCurrency)
+            .Select(l => l.JournalEntry.CurrencyCode)
+            .Distinct()
+            .Take(2)
+            .ToListAsync(cancellationToken);
+
+        if (totals is null)
+            return null;
+
+        totals.DistinctForeignCurrencies = foreignCurrencies.Count; // plafonné à 2 = « plusieurs »
+        totals.SingleForeignCurrency = foreignCurrencies.Count == 1 ? foreignCurrencies[0] : null;
+        return totals;
     }
 
     private static LetteringTotalsDto BuildTotalsDto(TotalsRow? row, List<LetteringLineDto> pageItems)
@@ -292,9 +357,9 @@ public sealed class LetteringQueryService : ILetteringQueryService
         string? singleForeignCurrency = null;
         decimal? totalDebitInCurrency = null;
         decimal? totalCreditInCurrency = null;
-        if (row.DistinctForeignCurrencies == 1 && row.SingleCurrency is not null)
+        if (row.DistinctForeignCurrencies == 1 && row.SingleForeignCurrency is not null)
         {
-            singleForeignCurrency = row.SingleCurrency;
+            singleForeignCurrency = row.SingleForeignCurrency;
             totalDebitInCurrency = row.TotalDebitInCurrency;
             totalCreditInCurrency = row.TotalCreditInCurrency;
         }
@@ -356,7 +421,9 @@ public sealed class LetteringQueryService : ILetteringQueryService
             ? n
             : null;
 
-        var periodLocked = r.Status == JournalEntryStatus.Cloturee || r.PeriodIsClosed || lockedYears.Contains(r.FiscalYear);
+        // Prédicat unique (D8) : la projection fournit les trois faits scalaires, la règle reste
+        // celle de LetteringPeriodLock — jamais de logique de verrou dupliquée ici.
+        var periodLocked = LetteringPeriodLock.IsLocked(r.Status, r.PeriodIsClosed, r.FiscalYear, lockedYears);
 
         return new LetteringLineDto(
             r.LineId, r.EntryId, r.EntryDate, r.JournalCode, r.EntryNumber, r.LineNumber,
@@ -411,6 +478,6 @@ public sealed class LetteringQueryService : ILetteringQueryService
         public int DistinctForeignCurrencies { get; set; }
         public decimal TotalDebitInCurrency { get; set; }
         public decimal TotalCreditInCurrency { get; set; }
-        public string? SingleCurrency { get; set; }
+        public string? SingleForeignCurrency { get; set; }
     }
 }

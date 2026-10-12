@@ -15,7 +15,7 @@ public sealed class LetteringGroup : AggregateRoot
 
     /// <summary>
     /// Lettrage partiel : le groupe couvre un règlement incomplet (débits ≠ crédits).
-    /// Code préfixé « P » ; se complète en délettrant puis relettrant l'ensemble soldé.
+    /// Code préfixé « P » ; se complète via l'action « Compléter » (D7), sans délettrage.
     /// </summary>
     public bool IsPartial { get; private set; }
 
@@ -66,6 +66,21 @@ public sealed class LetteringGroup : AggregateRoot
                 _members.Add(LetteringGroupMember.CreateForGroup(this, id));
         }
 
+        return Result.Success();
+    }
+
+    /// <summary>
+    /// Recalcule le montant d'un groupe qui RESTE partiel après une complétion (D7) : la partie
+    /// couverte a changé. La règle de calcul (min(débit, crédit) en devise de tenue) reste chez
+    /// l'appelant, identique à <see cref="Create"/>. Sans cette mise à jour, le montant du groupe
+    /// « P » resterait figé à sa valeur d'avant l'ajout des lignes.
+    /// </summary>
+    public Result UpdatePartialAmount(Money amount)
+    {
+        if (!IsPartial)
+            return Result.Failure(Error.Validation("IsPartial", "Seul un groupe partiel peut voir son montant recalculé."));
+
+        Amount = amount;
         return Result.Success();
     }
 

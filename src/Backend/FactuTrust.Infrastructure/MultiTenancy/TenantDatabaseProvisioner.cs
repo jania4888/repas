@@ -226,8 +226,12 @@ WITH
         CancellationToken cancellationToken)
     {
         var sw = Stopwatch.StartNew();
+        // Timeout relevé (600 s) : migrationBuilder.Sql ne permet pas de régler le timeout par
+        // migration — voir TenantService.ApplyMigrationsToNewDatabaseAsync (même réglage).
         var options = new DbContextOptionsBuilder<TenantDbContext>()
-            .UseSqlServer(connectionString, b => b.MigrationsAssembly(typeof(TenantDbContext).Assembly.FullName))
+            .UseSqlServer(connectionString, b => b
+                .MigrationsAssembly(typeof(TenantDbContext).Assembly.FullName)
+                .CommandTimeout(600))
             .Options;
 
         await using var context = new TenantDbContext(options);

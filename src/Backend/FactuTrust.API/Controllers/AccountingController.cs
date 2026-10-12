@@ -1885,10 +1885,10 @@ public sealed class AccountingController : ControllerBase
     public async Task<IActionResult> Letter([FromBody] LetterEntriesRequest request, CancellationToken cancellationToken)
     {
         var origin = ParseOrigin(request.Origin);
-        var r = await _mediator.Send(
+        return await SendLetteringAsync(
             new LetterAccountEntriesCommand(request.JournalEntryLineIds, request.AllowPartial, origin, request.SuggestionKey),
+            value => Ok(ApiResponse<LetteringResultDto>.Ok(value)),
             cancellationToken);
-        return r.IsFailure ? LetteringFailure(r.Error) : Ok(ApiResponse<LetteringResultDto>.Ok(r.Value));
     }
 
     /// <summary>« Compléter un lettrage partiel » (plan §4.4, D7) : termine un groupe « P » sans délettrage.</summary>
@@ -1897,9 +1897,10 @@ public sealed class AccountingController : ControllerBase
     public async Task<IActionResult> CompletePartialLettering(
         string code, [FromBody] CompletePartialLetteringRequest request, CancellationToken cancellationToken)
     {
-        var r = await _mediator.Send(
-            new CompletePartialLetteringCommand(code, request.JournalEntryLineIds, request.AllowPartial), cancellationToken);
-        return r.IsFailure ? LetteringFailure(r.Error) : Ok(ApiResponse<LetteringResultDto>.Ok(r.Value));
+        return await SendLetteringAsync(
+            new CompletePartialLetteringCommand(code, request.JournalEntryLineIds, request.AllowPartial),
+            value => Ok(ApiResponse<LetteringResultDto>.Ok(value)),
+            cancellationToken);
     }
 
     /// <summary>Lignes de l'écran de lettrage, filtrées et paginées côté serveur (plan §4.1).</summary>
@@ -1926,8 +1927,7 @@ public sealed class AccountingController : ControllerBase
         var query = new GetLetteringLinesQuery(
             account, accountMatch, from, to, state, journalCode, sourceCategories,
             thirdPartyId, thirdPartyKind, side, minAmount, maxAmount, search, page, pageSize);
-        var r = await _mediator.Send(query, cancellationToken);
-        return r.IsFailure ? LetteringFailure(r.Error) : Ok(ApiResponse<LetteringLinesPageDto>.Ok(r.Value));
+        return await SendLetteringAsync(query, value => Ok(ApiResponse<LetteringLinesPageDto>.Ok(value)), cancellationToken);
     }
 
     /// <summary>Détail d'un groupe de lettrage, avant délettrage ou complétion (plan §4.2).</summary>
@@ -1935,8 +1935,13 @@ public sealed class AccountingController : ControllerBase
     [Authorize(Policy = PermissionPolicies.AccountingRead)]
     public async Task<IActionResult> GetLetteringGroup(string code, CancellationToken cancellationToken)
     {
-        var r = await _mediator.Send(new GetLetteringGroupQuery(code), cancellationToken);
-        return r.IsFailure ? LetteringFailure(r.Error) : Ok(ApiResponse<LetteringGroupDto>.Ok(r.Value));
+        // Normalisé en majuscules AVANT validation : « l00001 » est accepté, un format arbitraire
+        // est rejeté en 400 LETTERING_VALIDATION (et non en 404 « introuvable »).
+        var normalized = (code ?? string.Empty).Trim().ToUpperInvariant();
+        return await SendLetteringAsync(
+            new GetLetteringGroupQuery(normalized),
+            value => Ok(ApiResponse<LetteringGroupDto>.Ok(value)),
+            cancellationToken);
     }
 
     private static LetteringOrigin ParseOrigin(string? origin) =>
@@ -1954,23 +1959,66 @@ public sealed class AccountingController : ControllerBase
         };
     }
 
+    /// <summary>
+    /// Envoie une commande/requête de lettrage en appliquant le contrat §4.6 : les erreurs métier
+    /// portent leur code stable via <see cref="LetteringFailure"/>, et les échecs de validation
+    /// FluentValidation (levés en exception par le pipeline MediatR global) sont mappés ICI sur
+    /// <c>LETTERING_VALIDATION</c> — le middleware global et son enveloppe
+    /// <c>VALIDATION_FAILED</c> restent inchangés pour tous les autres endpoints.
+    /// </summary>
+    private async Task<IActionResult> SendLetteringAsync<T>(
+        IRequest<FactuTrust.Domain.Common.Result<T>> request,
+        Func<T, IActionResult> ok,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var r = await _mediator.Send(request, cancellationToken);
+            return r.IsFailure ? LetteringFailure(r.Error) : ok(r.Value);
+        }
+        catch (FluentValidation.ValidationException ex)
+        {
+            var message = ex.Errors.FirstOrDefault()?.ErrorMessage ?? "Entrée invalide.";
+            return BadRequest(ApiResponse<object>.FailWithCode(message, LetteringErrorCodes.Validation));
+        }
+    }
+
+    /// <summary>Variante sans valeur de retour (ex. délettrage) — même contrat §4.6.</summary>
+    private async Task<IActionResult> SendLetteringAsync(
+        IRequest<FactuTrust.Domain.Common.Result> request,
+        Func<IActionResult> ok,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var r = await _mediator.Send(request, cancellationToken);
+            return r.IsFailure ? LetteringFailure(r.Error) : ok();
+        }
+        catch (FluentValidation.ValidationException ex)
+        {
+            var message = ex.Errors.FirstOrDefault()?.ErrorMessage ?? "Entrée invalide.";
+            return BadRequest(ApiResponse<object>.FailWithCode(message, LetteringErrorCodes.Validation));
+        }
+    }
+
     [HttpPost("lettering/settle-exchange-difference")]
     [Authorize(Policy = PermissionPolicies.AccountingCreate)]
     public async Task<IActionResult> SettleExchangeDifference([FromBody] SettleExchangeDifferenceRequest request, CancellationToken cancellationToken)
     {
-        var r = await _mediator.Send(
-            new SettleExchangeDifferenceCommand(request.JournalEntryLineIds, request.AccountNumber), cancellationToken);
-        if (r.IsFailure)
-            return LetteringFailure(r.Error);
-        return Ok(ApiResponse<Guid>.Ok(r.Value));
+        return await SendLetteringAsync(
+            new SettleExchangeDifferenceCommand(request.JournalEntryLineIds, request.AccountNumber),
+            value => Ok(ApiResponse<Guid>.Ok(value)),
+            cancellationToken);
     }
 
     [HttpPost("unletter")]
     [Authorize(Policy = PermissionPolicies.AccountingUnletter)]
     public async Task<IActionResult> Unletter([FromBody] UnletterEntriesRequest request, CancellationToken cancellationToken)
     {
-        var r = await _mediator.Send(new UnletterAccountEntriesCommand(request.Code), cancellationToken);
-        return r.IsFailure ? LetteringFailure(r.Error) : Ok(ApiResponse<bool>.Ok(true));
+        return await SendLetteringAsync(
+            new UnletterAccountEntriesCommand(request.Code),
+            () => Ok(ApiResponse<bool>.Ok(true)),
+            cancellationToken);
     }
 
     [HttpGet("journal/export")]

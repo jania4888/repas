@@ -234,7 +234,13 @@ public sealed class GetLetteringLinesQueryValidator : AbstractValidator<FactuTru
             .MaximumLength(32).WithMessage("Le compte ne peut pas dépasser 32 caractères.")
             .Matches("^\\d{1,32}$").WithMessage("Le compte doit être composé de chiffres.");
 
+        // Bornes de période obligatoires (plan §4.1) : sans elles, un appel « nu » balaierait tout
+        // l'historique du compte — exactement le comportement que la refonte supprime.
+        RuleFor(x => x.From)
+            .NotEmpty().WithMessage("La date de début est obligatoire.");
+
         RuleFor(x => x.To)
+            .NotEmpty().WithMessage("La date de fin est obligatoire.")
             .GreaterThanOrEqualTo(x => x.From).WithMessage("La date de fin doit être postérieure ou égale à la date de début.");
 
         RuleFor(x => x)
@@ -257,6 +263,26 @@ public sealed class GetLetteringLinesQueryValidator : AbstractValidator<FactuTru
         RuleFor(x => x)
             .Must(x => !x.ThirdPartyId.HasValue || x.ThirdPartyKind.HasValue)
             .WithMessage("Le type de tiers est obligatoire si un tiers est précisé.");
+    }
+}
+
+/// <summary>
+/// <c>GET api/accounting/lettering/groups/{code}</c> : le code est normalisé en majuscules puis
+/// validé au format L/P + 5 à 15 chiffres (même règle que <see cref="UnletterAccountEntriesCommandValidator"/>),
+/// afin qu'un segment d'URL arbitraire soit rejeté en 400 et non en 404 « introuvable ».
+/// </summary>
+public sealed class GetLetteringGroupQueryValidator : AbstractValidator<FactuTrust.Application.Features.Accounting.Lettering.GetLetteringGroupQuery>
+{
+    private static readonly System.Text.RegularExpressions.Regex CodePattern =
+        new("^[LP]\\d{5,15}$", System.Text.RegularExpressions.RegexOptions.Compiled);
+
+    public GetLetteringGroupQueryValidator()
+    {
+        RuleFor(x => x.Code)
+            .NotEmpty().WithMessage("Le code de lettrage est obligatoire.")
+            .MaximumLength(16).WithMessage("Le code de lettrage ne peut pas dépasser 16 caractères.")
+            .Must(code => CodePattern.IsMatch(code.Trim().ToUpperInvariant()))
+            .WithMessage("Le code de lettrage doit être au format L00001 ou P00001.");
     }
 }
 

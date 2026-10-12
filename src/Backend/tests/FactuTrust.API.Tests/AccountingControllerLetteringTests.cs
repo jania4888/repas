@@ -230,4 +230,86 @@ public sealed class AccountingControllerLetteringTests
         var objectResult = Assert.IsAssignableFrom<ObjectResult>(result);
         Assert.Equal(409, objectResult.StatusCode);
     }
+
+    // ---- Contrat §4.6 : échecs de validation FluentValidation → 400 LETTERING_VALIDATION ----
+    // (revue PR 1, 2e passe : le pipeline MediatR lève ValidationException ; les endpoints de
+    // lettrage la mappent sur le code stable, sans toucher au middleware global des autres routes).
+
+    [Fact]
+    public async Task Letter_ValidationException_Returns400_WithLetteringValidationCode()
+    {
+        var mediator = new Mock<IMediator>(MockBehavior.Strict);
+        mediator.Setup(m => m.Send(It.IsAny<LetterAccountEntriesCommand>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new FluentValidation.ValidationException(new[]
+            {
+                new FluentValidation.Results.ValidationFailure(
+                    "JournalEntryLineIds", "Au moins deux lignes d'écriture sont requises pour le lettrage.")
+            }));
+        var controller = NewController(mediator.Object);
+
+        var result = await controller.Letter(
+            new LetterEntriesRequest { JournalEntryLineIds = new[] { Guid.NewGuid() } }, CancellationToken.None);
+
+        var objectResult = Assert.IsAssignableFrom<ObjectResult>(result);
+        Assert.Equal(400, objectResult.StatusCode);
+        var body = Assert.IsType<FactuTrust.API.Controllers.ApiResponse<object>>(objectResult.Value);
+        Assert.False(body.Success);
+        Assert.Equal(LetteringErrorCodes.Validation, body.Code);
+        Assert.Contains("deux lignes", body.Message);
+    }
+
+    [Fact]
+    public async Task Unletter_ValidationException_Returns400_WithLetteringValidationCode()
+    {
+        var mediator = new Mock<IMediator>(MockBehavior.Strict);
+        mediator.Setup(m => m.Send(It.IsAny<UnletterAccountEntriesCommand>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new FluentValidation.ValidationException(new[]
+            {
+                new FluentValidation.Results.ValidationFailure("Code", "Le code de lettrage est obligatoire.")
+            }));
+        var controller = NewController(mediator.Object);
+
+        var result = await controller.Unletter(new UnletterEntriesRequest { Code = "" }, CancellationToken.None);
+
+        var objectResult = Assert.IsAssignableFrom<ObjectResult>(result);
+        Assert.Equal(400, objectResult.StatusCode);
+        var body = Assert.IsType<FactuTrust.API.Controllers.ApiResponse<object>>(objectResult.Value);
+        Assert.Equal(LetteringErrorCodes.Validation, body.Code);
+    }
+
+    [Fact]
+    public async Task GetLetteringLines_ValidationException_Returns400_WithLetteringValidationCode()
+    {
+        var mediator = new Mock<IMediator>(MockBehavior.Strict);
+        mediator.Setup(m => m.Send(It.IsAny<GetLetteringLinesQuery>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new FluentValidation.ValidationException(new[]
+            {
+                new FluentValidation.Results.ValidationFailure("From", "La date de début est obligatoire.")
+            }));
+        var controller = NewController(mediator.Object);
+
+        var result = await controller.GetLetteringLines(account: "411000", cancellationToken: CancellationToken.None);
+
+        var objectResult = Assert.IsAssignableFrom<ObjectResult>(result);
+        Assert.Equal(400, objectResult.StatusCode);
+        var body = Assert.IsType<FactuTrust.API.Controllers.ApiResponse<object>>(objectResult.Value);
+        Assert.Equal(LetteringErrorCodes.Validation, body.Code);
+    }
+
+    /// <summary>Le code de groupe est normalisé (trim + majuscules) AVANT l'envoi au pipeline.</summary>
+    [Fact]
+    public async Task GetLetteringGroup_LowercaseCode_IsNormalizedBeforeDispatch()
+    {
+        var group = new LetteringGroupDto(
+            Guid.NewGuid(), "L00001", "411000", 100m, "TND", false,
+            DateTime.UtcNow, "Jean Test", Array.Empty<LetteringLineDto>(), true, null, false);
+        var mediator = new Mock<IMediator>(MockBehavior.Strict);
+        mediator.Setup(m => m.Send(It.Is<GetLetteringGroupQuery>(q => q.Code == "L00001"), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success(group));
+        var controller = NewController(mediator.Object);
+
+        var result = await controller.GetLetteringGroup("  l00001  ", CancellationToken.None);
+
+        Assert.IsType<OkObjectResult>(result);
+    }
 }

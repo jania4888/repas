@@ -192,4 +192,31 @@ public sealed class LetteringCommandValidatorsTests
         var result = _completeValidator.TestValidate(cmd);
         result.ShouldHaveValidationErrorFor(x => x.JournalEntryLineIds);
     }
+
+    // ---- GetLetteringGroupQuery ----
+
+    private readonly GetLetteringGroupQueryValidator _groupValidator = new();
+
+    [Theory]
+    [InlineData("L00001")]
+    [InlineData("P00001")]
+    [InlineData("l00001")]   // normalisé en majuscules avant validation
+    [InlineData("  P12345  ")]
+    public void GetGroup_ValidCode_Passes(string code)
+    {
+        var result = _groupValidator.TestValidate(new GetLetteringGroupQuery(code));
+        result.ShouldNotHaveValidationErrorFor(x => x.Code);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("00001")]
+    [InlineData("X00001")]
+    [InlineData("L1")]
+    [InlineData("L1234567890123456")]
+    public void GetGroup_InvalidCode_Fails(string code)
+    {
+        var result = _groupValidator.TestValidate(new GetLetteringGroupQuery(code));
+        result.ShouldHaveValidationErrorFor(x => x.Code);
+    }
 }

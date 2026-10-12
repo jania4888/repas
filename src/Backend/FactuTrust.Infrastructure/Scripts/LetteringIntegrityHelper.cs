@@ -11,16 +11,25 @@ namespace FactuTrust.Infrastructure.Scripts;
 /// <summary>
 /// Balayage plateforme de l'intégrité du lettrage (<c>LetteringGroups</c> /
 /// <c>LetteringGroupMembers</c> / <c>JournalEntryLines.LetteringCode</c>) sur toutes les
-/// bases tenant. Préalable obligatoire avant de déployer la migration ajoutant les deux
-/// index UNIQUE (<c>LetteringGroups.Code</c>, <c>LetteringGroupMembers.JournalEntryLineId</c>) :
-/// une migration unique appliquée sur une base contenant des anomalies échouerait et
-/// bloquerait le tenant via <c>TenantMigrationGuard</c>.
+/// bases tenant. Recommandé avant le déploiement de la migration
+/// <c>20261012100000_AddLetteringIntegrityIndexes_Tenant</c> : la migration est gardée (elle
+/// n'échoue plus sur doublons), mais un tenant avec anomalies resterait sans protection par
+/// index unique jusqu'à réparation — cf. runbook <c>docs/runbooks/lettering-integrity.md</c>.
 /// Fail-closed : un tenant injoignable, ou avec une quelconque anomalie, n'est JAMAIS
 /// compté comme propre (<see cref="LetteringIntegrityReportDto.IsUniqueIndexSafe"/>).
+/// Les listes d'anomalies sont bornées (<see cref="MaxAnomalyRows"/>) : le rapport sert au
+/// diagnostic, pas à l'exhaustivité ; un timeout de commande est posé pour ne jamais bloquer
+/// l'endpoint plateforme sur une grosse base.
 /// Modèle : <see cref="InvoiceNumberIntegrityHelper"/>.
 /// </summary>
 public static class LetteringIntegrityHelper
 {
+    /// <summary>Borne haute des listes d'anomalies du rapport (diagnostic, pas exhaustivité).</summary>
+    private const int MaxAnomalyRows = 500;
+
+    /// <summary>Timeout par commande SQL (secondes) : le balayage ne doit jamais bloquer l'endpoint.</summary>
+    private const int SqlCommandTimeoutSeconds = 120;
+
     private const string CountsSql = @"
 SELECT
     (SELECT COUNT(*) FROM [dbo].[LetteringGroups]),
@@ -38,15 +47,15 @@ SELECT CASE WHEN EXISTS (
       AND ix.is_unique = 1
       AND c.[name] = N'{column}') THEN 1 ELSE 0 END;";
 
-    private const string DuplicateCodesSql = @"
-SELECT [Code], COUNT(*) AS [GroupCount]
+    private static readonly string DuplicateCodesSql = $@"
+SELECT TOP ({MaxAnomalyRows}) [Code], COUNT(*) AS [GroupCount]
 FROM [dbo].[LetteringGroups]
 GROUP BY [Code]
 HAVING COUNT(*) > 1
 ORDER BY [Code];";
 
-    private const string LinesInMultipleGroupsSql = @"
-SELECT m.[JournalEntryLineId], g.[Code]
+    private static readonly string LinesInMultipleGroupsSql = $@"
+SELECT TOP ({MaxAnomalyRows}) m.[JournalEntryLineId], g.[Code]
 FROM [dbo].[LetteringGroupMembers] m
 INNER JOIN [dbo].[LetteringGroups] g ON g.[Id] = m.[LetteringGroupId]
 WHERE m.[JournalEntryLineId] IN (
@@ -54,23 +63,23 @@ WHERE m.[JournalEntryLineId] IN (
     GROUP BY [JournalEntryLineId] HAVING COUNT(*) > 1)
 ORDER BY m.[JournalEntryLineId], g.[Code];";
 
-    private const string OrphanMembersSql = @"
-SELECT m.[JournalEntryLineId], g.[Code]
+    private static readonly string OrphanMembersSql = $@"
+SELECT TOP ({MaxAnomalyRows}) m.[JournalEntryLineId], g.[Code]
 FROM [dbo].[LetteringGroupMembers] m
 INNER JOIN [dbo].[LetteringGroups] g ON g.[Id] = m.[LetteringGroupId]
 LEFT JOIN [dbo].[JournalEntryLines] l ON l.[Id] = m.[JournalEntryLineId]
 WHERE l.[Id] IS NULL
 ORDER BY g.[Code], m.[JournalEntryLineId];";
 
-    private const string DanglingLetteringCodeLinesSql = @"
-SELECT l.[Id], l.[LetteringCode]
+    private static readonly string DanglingLetteringCodeLinesSql = $@"
+SELECT TOP ({MaxAnomalyRows}) l.[Id], l.[LetteringCode]
 FROM [dbo].[JournalEntryLines] l
 LEFT JOIN [dbo].[LetteringGroups] g ON g.[Code] = l.[LetteringCode]
 WHERE l.[LetteringCode] IS NOT NULL AND g.[Id] IS NULL
 ORDER BY l.[LetteringCode], l.[Id];";
 
-    private const string MismatchedLetteringCodesSql = @"
-SELECT m.[JournalEntryLineId], g.[Code], l.[LetteringCode]
+    private static readonly string MismatchedLetteringCodesSql = $@"
+SELECT TOP ({MaxAnomalyRows}) m.[JournalEntryLineId], g.[Code], l.[LetteringCode]
 FROM [dbo].[LetteringGroupMembers] m
 INNER JOIN [dbo].[LetteringGroups] g ON g.[Id] = m.[LetteringGroupId]
 INNER JOIN [dbo].[JournalEntryLines] l ON l.[Id] = m.[JournalEntryLineId]
@@ -148,7 +157,7 @@ ORDER BY g.[Code], m.[JournalEntryLineId];";
             await connection.OpenAsync(cancellationToken);
 
             int groupCount, letteredLineCount;
-            await using (var countCommand = new SqlCommand(CountsSql, connection))
+            await using (var countCommand = CreateCommand(CountsSql, connection))
             await using (var reader = await countCommand.ExecuteReaderAsync(cancellationToken))
             {
                 await reader.ReadAsync(cancellationToken);
@@ -195,9 +204,13 @@ ORDER BY g.[Code], m.[JournalEntryLineId];";
         }
     }
 
+    /// <summary>Commande SQL avec timeout explicite : le balayage ne doit jamais bloquer l'endpoint plateforme.</summary>
+    private static SqlCommand CreateCommand(string sql, SqlConnection connection) =>
+        new(sql, connection) { CommandTimeout = SqlCommandTimeoutSeconds };
+
     private static async Task<bool> ScalarBoolAsync(SqlConnection connection, string sql, CancellationToken cancellationToken)
     {
-        await using var command = new SqlCommand(sql, connection);
+        await using var command = CreateCommand(sql, connection);
         return (int)(await command.ExecuteScalarAsync(cancellationToken) ?? 0) == 1;
     }
 
@@ -205,7 +218,7 @@ ORDER BY g.[Code], m.[JournalEntryLineId];";
         SqlConnection connection, CancellationToken cancellationToken)
     {
         var list = new List<DuplicateLetteringCodeDto>();
-        await using var command = new SqlCommand(DuplicateCodesSql, connection);
+        await using var command = CreateCommand(DuplicateCodesSql, connection);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
         {
@@ -218,7 +231,7 @@ ORDER BY g.[Code], m.[JournalEntryLineId];";
         SqlConnection connection, CancellationToken cancellationToken)
     {
         var byLine = new Dictionary<Guid, List<string>>();
-        await using var command = new SqlCommand(LinesInMultipleGroupsSql, connection);
+        await using var command = CreateCommand(LinesInMultipleGroupsSql, connection);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
         {
@@ -240,7 +253,7 @@ ORDER BY g.[Code], m.[JournalEntryLineId];";
         SqlConnection connection, CancellationToken cancellationToken)
     {
         var list = new List<OrphanLetteringMemberDto>();
-        await using var command = new SqlCommand(OrphanMembersSql, connection);
+        await using var command = CreateCommand(OrphanMembersSql, connection);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
         {
@@ -253,7 +266,7 @@ ORDER BY g.[Code], m.[JournalEntryLineId];";
         SqlConnection connection, CancellationToken cancellationToken)
     {
         var list = new List<DanglingLetteringCodeLineDto>();
-        await using var command = new SqlCommand(DanglingLetteringCodeLinesSql, connection);
+        await using var command = CreateCommand(DanglingLetteringCodeLinesSql, connection);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
         {
@@ -266,7 +279,7 @@ ORDER BY g.[Code], m.[JournalEntryLineId];";
         SqlConnection connection, CancellationToken cancellationToken)
     {
         var list = new List<MismatchedLetteringCodeDto>();
-        await using var command = new SqlCommand(MismatchedLetteringCodesSql, connection);
+        await using var command = CreateCommand(MismatchedLetteringCodesSql, connection);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
         {

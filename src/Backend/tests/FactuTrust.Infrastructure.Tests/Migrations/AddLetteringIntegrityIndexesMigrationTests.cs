@@ -104,6 +104,36 @@ public sealed class AddLetteringIntegrityIndexesMigrationTests
             downBody);
     }
 
+    /// <summary>
+    /// Les créations d'index doivent être <c>WITH (ONLINE = ON)</c> quand l'édition le permet —
+    /// Enterprise / Azure SQL uniquement (<c>SERVERPROPERTY('EngineEdition')</c> ∈ 3, 5, 8), sinon
+    /// la clause ferait échouer la migration sur Standard/Express. La clause WITH ne se paramétrant
+    /// pas en T-SQL statique, les cinq CREATE passent par <c>sys.sp_executesql</c> ; le jumeau SQL
+    /// (rejouable batch par batch) redéclare la variable dans chaque batch.
+    /// </summary>
+    [Fact]
+    public void Migration_and_twin_guard_online_index_creation_by_engine_edition()
+    {
+        var source = File.ReadAllText(MigrationSourcePath());
+        var script = File.ReadAllText(TwinScriptPath());
+
+        foreach (var text in new[] { source, script })
+        {
+            Assert.Contains("CAST(SERVERPROPERTY('EngineEdition') AS int) IN (3, 5, 8)", text);
+            Assert.Contains("N' WITH (ONLINE = ON)'", text);
+        }
+
+        // Cinq CREATE dynamiques dans le Up de la migration, cinq dans le jumeau (le Down reste
+        // volontairement statique et hors ligne : pas de risque de blocage long en rollback).
+        Assert.Equal(5, Regex.Matches(source, "EXEC sys\\.sp_executesql").Count);
+        Assert.Equal(5, Regex.Matches(script, "EXEC sys\\.sp_executesql").Count);
+
+        // La migration Up est un batch unique ; le jumeau est découpé par GO (variable locale
+        // réinitialisée à chaque GO) : 5 redéclarations attendues.
+        Assert.Equal(1, Regex.Matches(source, "DECLARE @withOnline").Count);
+        Assert.Equal(5, Regex.Matches(script, "DECLARE @withOnline").Count);
+    }
+
     [Fact]
     public void Migration_id_is_present_and_ordered_after_its_predecessor()
     {
