@@ -1,4 +1,8 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ButtonComponent } from '@shared/components/button/button.component';
+import { LetteringProposalsStripComponent } from './components/lettering-proposals-strip/lettering-proposals-strip.component';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
@@ -10,6 +14,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { ConfirmationService } from '@core/services/confirmation.service';
 import { ErpLocaleService } from '@core/i18n/erp-locale.service';
 import { LetteringLine } from './models/lettering.models';
+import { AccountingFeatureFlagsService } from '../shared/accounting-feature-flags.service';
+import { LetteringSuggestion } from './models/lettering-suggestions.models';
 
 /**
  * Tests ciblés du conteneur. `TestBed.createComponent` instancie déjà les composants enfants
@@ -36,6 +42,7 @@ describe('LetteringComponent', () => {
   let component: LetteringComponent;
   let router: jasmine.SpyObj<Router>;
   let confirmation: jasmine.SpyObj<ConfirmationService>;
+  const proposalsFlag = signal(false);
 
   beforeEach(() => {
     const api = jasmine.createSpyObj<AccountingService>('AccountingService', [
@@ -68,10 +75,15 @@ describe('LetteringComponent', () => {
           provide: ActivatedRoute,
           useValue: { snapshot: { queryParams: {}, queryParamMap: convertToParamMap({}) } }
         },
-        { provide: ErpLocaleService, useValue: { isRtl: () => false } }
+        { provide: ErpLocaleService, useValue: { isRtl: () => false } },
+        {
+          provide: AccountingFeatureFlagsService,
+          useValue: { isEnabled: (key: string) => key === 'letteringProposals' && proposalsFlag() }
+        }
       ]
     });
 
+    proposalsFlag.set(false);
     const fixture = TestBed.createComponent(LetteringComponent);
     component = fixture.componentInstance;
   });
@@ -194,5 +206,132 @@ describe('LetteringComponent', () => {
   it('load() does not touch the URL when the account is missing (store.load() fails fast)', () => {
     component.load();
     expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  describe('propositions (Phase 3)', () => {
+    const suggestion = { key: 'k1', lineIds: ['d1', 'c1'] } as unknown as LetteringSuggestion;
+
+    it('clic sur une carte : le message reflète le résultat de select()', () => {
+      spyOn(component['suggestions'], 'select').and.returnValue('linesNotVisible');
+      component.onSelectSuggestion(suggestion);
+      expect(component.proposalsNotice()).toBe('linesNotVisible');
+    });
+
+    it('une sélection manuelle oublie l\'instantané de « Sélectionner » et le message', () => {
+      const forget = spyOn(component['suggestions'], 'forgetSelectSnapshot');
+      const setPane = spyOn(component['store'], 'setPaneSelection');
+      component.proposalsNotice.set('selected');
+
+      component.onPaneSelection('debit', ['d1']);
+
+      expect(forget).toHaveBeenCalledTimes(1);
+      expect(component.proposalsNotice()).toBeNull();
+      expect(setPane).toHaveBeenCalledOnceWith('debit', ['d1']);
+    });
+
+    it('« Valider » efface le message puis délègue au store', () => {
+      const validate = spyOn(component['suggestions'], 'validate');
+      component.proposalsNotice.set('busy');
+      component.onValidateSuggestion(suggestion);
+      expect(component.proposalsNotice()).toBeNull();
+      expect(validate).toHaveBeenCalledOnceWith(suggestion);
+    });
+
+    it('« Annuler » rétablit la sélection précédente', () => {
+      const undo = spyOn(component['suggestions'], 'undoSelect');
+      component.proposalsNotice.set('selected');
+      component.onUndoSuggestion();
+      expect(undo).toHaveBeenCalledTimes(1);
+      expect(component.proposalsNotice()).toBeNull();
+    });
+
+    it('bouton d\'en-tête : relance le calcul', () => {
+      const refresh = spyOn(component['suggestions'], 'refresh');
+      component.showProposalsStrip();
+      expect(refresh).toHaveBeenCalledTimes(1);
+    });
+  });
+});
+
+/**
+ * Rendu du bandeau des propositions (Phase 3). Les enfants lourds (filtres, volets, tiroirs…) sont
+ * retirés des `imports` et rendus comme éléments inconnus (`CUSTOM_ELEMENTS_SCHEMA`) : seuls le
+ * bandeau et le bouton d'en-tête sont de vrais composants. On teste ainsi le seul `@if` du drapeau.
+ */
+describe('LetteringComponent — rendu des propositions', () => {
+  let fixture: ComponentFixture<LetteringComponent>;
+  let component: LetteringComponent;
+  const proposalsFlag = signal(false);
+  const query = (testId: string) => fixture.nativeElement.querySelector(`[data-testid="${testId}"]`);
+
+  beforeEach(() => {
+    const api = jasmine.createSpyObj<AccountingService>('AccountingService', ['getLetteringSuggestions']);
+    api.getLetteringSuggestions.and.returnValue(EMPTY);
+    const auth = jasmine.createSpyObj<AuthService>('AuthService', ['hasPermission', 'user']);
+    auth.hasPermission.and.returnValue(true);
+    auth.user.and.returnValue(null);
+    const router = jasmine.createSpyObj<Router>('Router', ['navigate']);
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: AccountingService, useValue: api },
+        { provide: AuthService, useValue: auth },
+        { provide: ErrorHandlerService, useValue: { extractErrorMessage: (_: unknown, fallback: string) => fallback } },
+        { provide: ConfirmationService, useValue: jasmine.createSpyObj('ConfirmationService', ['confirm', 'prompt']) },
+        { provide: Router, useValue: router },
+        { provide: ActivatedRoute, useValue: { snapshot: { queryParams: {}, queryParamMap: convertToParamMap({}) } } },
+        {
+          provide: AccountingFeatureFlagsService,
+          useValue: { isEnabled: (key: string) => key === 'letteringProposals' && proposalsFlag() }
+        }
+      ]
+    });
+    TestBed.overrideComponent(LetteringComponent, {
+      set: {
+        imports: [CommonModule, LetteringProposalsStripComponent, ButtonComponent],
+        schemas: [CUSTOM_ELEMENTS_SCHEMA]
+      }
+    });
+
+    proposalsFlag.set(false);
+    fixture = TestBed.createComponent(LetteringComponent);
+    component = fixture.componentInstance;
+  });
+
+  it('drapeau front éteint : ni bandeau ni bouton d\'en-tête dans le DOM, même écran chargé', () => {
+    component['store'].loadedOnce.set(true);
+    fixture.detectChanges();
+
+    expect(component.showProposals()).toBeFalse();
+    expect(query('lettering-proposals-strip')).toBeNull();
+    expect(query('lettering-proposals-header-button')).toBeNull();
+  });
+
+  it('drapeau actif et écran chargé : bandeau et bouton d\'en-tête présents', () => {
+    proposalsFlag.set(true);
+    component['store'].loadedOnce.set(true);
+    fixture.detectChanges();
+
+    expect(query('lettering-proposals-strip')).not.toBeNull();
+    expect(query('lettering-proposals-header-button')).not.toBeNull();
+  });
+
+  it('drapeau actif avant le premier chargement : bouton d\'en-tête présent mais désactivé, pas de bandeau', () => {
+    proposalsFlag.set(true);
+    fixture.detectChanges();
+
+    expect(query('lettering-proposals-strip')).toBeNull();
+    const button = (query('lettering-proposals-header-button') as HTMLElement).querySelector('button') as HTMLButtonElement;
+    expect(button.disabled).toBeTrue();
+  });
+
+  it('drapeau actif mais fonction coupée côté serveur (hidden) : rien n\'est affiché', () => {
+    proposalsFlag.set(true);
+    component['store'].loadedOnce.set(true);
+    component['suggestions'].hidden.set(true);
+    fixture.detectChanges();
+
+    expect(query('lettering-proposals-strip')).toBeNull();
+    expect(query('lettering-proposals-header-button')).toBeNull();
   });
 });

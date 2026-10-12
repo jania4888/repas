@@ -3,6 +3,16 @@
   subtitle="Rapprochez les écritures débitrices et créditrices d'un même compte" i18n-subtitle="@@accounting.lettering.rapprochez.les.ecritures.debitrices.et.c.d58e33ee"
 >
   <app-accounting-toolbar-actions>
+    @if (flags.isEnabled('letteringProposals') && !suggestions.hidden()) {
+      <app-button
+        variant="secondary"
+        icon="pi pi-lightbulb"
+        type="button"
+        [disabled]="!store.loadedOnce() || suggestions.loading()"
+        (click)="showProposalsStrip()"
+        data-testid="lettering-proposals-header-button"
+        i18n="@@accounting.lettering.suggestions.header.button">Propositions automatiques</app-button>
+    }
     <app-document-actions-menu [items]="actionsMenuItems()" />
   </app-accounting-toolbar-actions>
 </app-page-header>
@@ -57,10 +67,30 @@
       [accountLabel]="store.filters().account"
       [readOnly]="!store.canCreate()"
       (allowPartialChange)="store.setAllowPartial($event)"
-      (reset)="store.reset()"
+      (reset)="onResetSelection()"
       (validate)="onValidate()"
       (settle)="openSettle()"
       (cancelCompletion)="store.cancelCompletion()"
+    />
+  }
+
+  @if (showProposals()) {
+    <app-lettering-proposals-strip
+      [suggestions]="suggestions.topSuggestions()"
+      [totalFound]="suggestions.totalFound()"
+      [loading]="suggestions.loading() || suggestions.pending()"
+      [error]="suggestions.error()"
+      [truncated]="suggestions.truncated()"
+      [truncationReason]="suggestions.truncationReason()"
+      [canCreate]="store.canCreate()"
+      [canValidate]="suggestions.canValidate()"
+      [busyKey]="suggestions.busyKey()"
+      [canUndo]="suggestions.canUndoSelect()"
+      [notice]="proposalsNotice()"
+      (selectSuggestion)="onSelectSuggestion($event)"
+      (validateSuggestion)="onValidateSuggestion($event)"
+      (undo)="onUndoSuggestion()"
+      (dismissNotice)="proposalsNotice.set(null)"
     />
   }
 
@@ -93,7 +123,7 @@
         [currency]="store.summary().currency"
         [total]="store.debitSelectedTotal().amount"
         [totalInCurrency]="store.debitSelectedTotal().amountInCurrency"
-        (selectionChange)="store.setPaneSelection('debit', $event)"
+        (selectionChange)="onPaneSelection('debit', $event)"
         (openGroup)="openGroup($event)"
       />
       <app-lettering-ledger-pane
@@ -106,7 +136,7 @@
         [currency]="store.summary().currency"
         [total]="store.creditSelectedTotal().amount"
         [totalInCurrency]="store.creditSelectedTotal().amountInCurrency"
-        (selectionChange)="store.setPaneSelection('credit', $event)"
+        (selectionChange)="onPaneSelection('credit', $event)"
         (openGroup)="openGroup($event)"
       />
     </div>

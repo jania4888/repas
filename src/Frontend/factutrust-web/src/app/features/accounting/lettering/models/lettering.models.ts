@@ -171,4 +171,8 @@ export const LETTERING_ERROR_CODES = {
   unexpected: 'LETTERING_UNEXPECTED'
 } as const;
 
-export type LetteringBusyAction = 'letter' | 'settle' | 'unletter' | 'complete' | null;
+/**
+ * Action en cours sur l'écran (verrou unique). `'suggestion'` : validation d'une proposition
+ * (Phase 3, `LetteringSuggestionsStore`) ; elle désactive aussi les actions principales.
+ */
+export type LetteringBusyAction = 'letter' | 'settle' | 'unletter' | 'complete' | 'suggestion' | null;

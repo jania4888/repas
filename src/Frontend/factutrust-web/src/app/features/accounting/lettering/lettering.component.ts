@@ -1,5 +1,5 @@
 /// <reference types="@angular/localize" />
-import { Component, OnInit, ViewChild, computed, effect, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, computed, effect, inject, signal, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -7,6 +7,8 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
 import { DocumentActionsMenuComponent } from '@shared/components/document-actions-menu/document-actions-menu.component';
 import { MenuItem } from '@shared/models/menu-item.model';
 import { ConfirmationService } from '@core/services/confirmation.service';
+import { ButtonComponent } from '@shared/components/button/button.component';
+import { AccountingFeatureFlagsService } from '../shared/accounting-feature-flags.service';
 import { AccountingToolbarActionsComponent } from '../shared/accounting-toolbar-actions.component';
 import { AccountingCorrectionBannerComponent } from '../shared/accounting-correction-banner.component';
 import { LetteringStore } from './store/lettering.store';
@@ -16,7 +18,12 @@ import { LetteringLedgerPaneComponent } from './components/lettering-ledger-pane
 import { LetteringSelectionSummaryComponent } from './components/lettering-selection-summary/lettering-selection-summary.component';
 import { LetteringSettleExchangeDialogComponent } from './components/lettering-settle-exchange-dialog/lettering-settle-exchange-dialog.component';
 import { LetteringGroupDrawerComponent } from './components/lettering-group-drawer/lettering-group-drawer.component';
-import { LETTERING_FUNCTIONAL_CURRENCY } from './models/lettering.models';
+import {
+  LetteringProposalsNotice,
+  LetteringProposalsStripComponent
+} from './components/lettering-proposals-strip/lettering-proposals-strip.component';
+import { LETTERING_FUNCTIONAL_CURRENCY, LetteringSide } from './models/lettering.models';
+import { LetteringSuggestion } from './models/lettering-suggestions.models';
 import { parseLetteringQueryParams, serializeLetteringFilters } from './utils/lettering-query-params';
 import { sideCounts } from './utils/lettering-selection';
 import { buildLetteringAnalyzePayload } from './utils/lettering-ai-payload';
@@ -40,7 +47,9 @@ import { buildLetteringAnalyzePayload } from './utils/lettering-ai-payload';
     LetteringLedgerPaneComponent,
     LetteringSelectionSummaryComponent,
     LetteringSettleExchangeDialogComponent,
-    LetteringGroupDrawerComponent
+    LetteringGroupDrawerComponent,
+    LetteringProposalsStripComponent,
+    ButtonComponent
   ],
   providers: [LetteringStore, LetteringSuggestionsStore],
   templateUrl: './lettering.component.html',
@@ -53,12 +62,23 @@ export class LetteringComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly confirmation = inject(ConfirmationService);
+  protected readonly flags = inject(AccountingFeatureFlagsService);
 
   @ViewChild(LetteringSelectionSummaryComponent) private readonly summaryComponent?: LetteringSelectionSummaryComponent;
+  @ViewChild(LetteringProposalsStripComponent, { read: ElementRef })
+  private readonly proposalsStrip?: ElementRef<HTMLElement>;
 
   accountHint = '';
   settleOpen = false;
   groupDrawerOpen = false;
+
+  /** Message du bandeau après un clic sur une carte (« Sélection remplacée », lignes masquées…). */
+  readonly proposalsNotice = signal<LetteringProposalsNotice>(null);
+
+  /** Bandeau des propositions : drapeau front actif, écran chargé, fonction non coupée côté serveur. */
+  readonly showProposals = computed(
+    () => this.flags.isEnabled('letteringProposals') && this.store.loadedOnce() && !this.suggestions.hidden()
+  );
 
   readonly sideCounts = computed(() => sideCounts(this.store.selectedLines()));
 
@@ -109,6 +129,11 @@ export class LetteringComponent implements OnInit {
         this.groupDrawerOpen = false;
       }
     });
+
+    // Un rechargement réussi rend le message du bandeau obsolète (lignes et propositions changent).
+    effect(() => {
+      if (this.store.reloadSeq() > 0) untracked(() => this.proposalsNotice.set(null));
+    });
   }
 
   ngOnInit(): void {
@@ -134,6 +159,42 @@ export class LetteringComponent implements OnInit {
       autoLoad: true
     });
     this.router.navigate([], { relativeTo: this.route, queryParams, replaceUrl: true });
+  }
+
+  /** Sélection manuelle dans un volet : l'instantané de « Sélectionner » n'a plus de sens. */
+  onPaneSelection(side: LetteringSide, ids: readonly string[]): void {
+    this.store.setPaneSelection(side, ids);
+    this.suggestions.forgetSelectSnapshot();
+    this.proposalsNotice.set(null);
+  }
+
+  onResetSelection(): void {
+    this.store.reset();
+    this.suggestions.forgetSelectSnapshot();
+    this.proposalsNotice.set(null);
+  }
+
+  onSelectSuggestion(suggestion: LetteringSuggestion): void {
+    this.proposalsNotice.set(this.suggestions.select(suggestion));
+  }
+
+  onValidateSuggestion(suggestion: LetteringSuggestion): void {
+    this.proposalsNotice.set(null);
+    this.suggestions.validate(suggestion);
+  }
+
+  onUndoSuggestion(): void {
+    this.suggestions.undoSelect();
+    this.proposalsNotice.set(null);
+  }
+
+  /** Bouton d'en-tête « Propositions automatiques » : relance le calcul et amène le bandeau à l'écran. */
+  showProposalsStrip(): void {
+    this.suggestions.refresh();
+    const el = this.proposalsStrip?.nativeElement;
+    if (el && typeof el.scrollIntoView === 'function') {
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
   }
 
   openGroup(code: string): void {

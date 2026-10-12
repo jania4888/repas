@@ -224,12 +224,20 @@ export class LetteringSuggestionsStore {
     // L'état a pu changer pendant que la confirmation était ouverte.
     if (!this.canValidate()) return;
     this.busyKey.set(suggestion.key);
+    // Verrou partagé : les actions principales (Valider, Équilibrer, Délettrer, Compléter)
+    // vérifient toutes `busyAction` et restent désactivées pendant l'appel.
+    this.lettering.busyAction.set('suggestion');
     this.lettering.error.set(null);
     this.lettering.success.set(null);
 
     this.api
       .letterEntries(suggestion.lineIds, false, 'Suggestion', suggestion.key)
-      .pipe(finalize(() => this.busyKey.set(null)))
+      .pipe(
+        finalize(() => {
+          this.busyKey.set(null);
+          if (this.lettering.busyAction() === 'suggestion') this.lettering.busyAction.set(null);
+        })
+      )
       .subscribe({
         next: res => {
           if (res.success && res.data) {

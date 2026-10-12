@@ -412,6 +412,25 @@ describe('LetteringSuggestionsStore', () => {
       expect(store.pending()).toBeFalse();
     }));
 
+    it('verrouille les actions principales pendant l\'appel (busyAction = suggestion)', () => {
+      const letterReply = new Subject<{ success: boolean; error?: string }>();
+      api.letterEntries.and.returnValue(letterReply);
+      api.getLetteringSuggestions.and.returnValue(of(result([])));
+      lettering.setPaneSelection('debit', ['d1']);
+      lettering.setPaneSelection('credit', ['c1']);
+      expect(lettering.canLetter()).toBeTrue();
+
+      store.validate(store.suggestions()[0]);
+
+      expect(lettering.busyAction()).toBe('suggestion');
+      expect(lettering.canLetter()).toBeFalse();
+      expect(store.canValidate()).toBeFalse();
+      letterReply.next({ success: false, error: 'Refus serveur' });
+      letterReply.complete();
+      expect(lettering.busyAction()).toBeNull();
+      expect(store.busyKey()).toBeNull();
+    });
+
     it('ne lettre pas si l\'état a changé pendant la confirmation', () => {
       confirmation.confirm.and.callFake(c => {
         store.busyKey.set('other');
