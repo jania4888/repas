@@ -678,6 +678,8 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
    * afficherait une liste et des totaux qui ne correspondent plus aux filtres.
    */
   private reloadPending = false;
+  /** Numéro monotone de la dernière requête de totaux : une réponse plus ancienne est ignorée. */
+  private summaryRequestSeq = 0;
   private lastErrorTime = 0;
   private readonly ERROR_DEBOUNCE_MS = 2000; // 2 secondes entre les messages d'erreur
   private readonly SEARCH_DEBOUNCE_MS = 500; // 500ms de debounce pour la recherche
@@ -931,12 +933,21 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
    */
   private loadSummary(params: InvoiceSearchParams): void {
     this.summaryLoading.set(true);
+    // Les requêtes de totaux ne sont pas sérialisées : si une plus récente part (filtre
+    // basculé pendant le chargement), la réponse de l'ancienne ne doit pas l'écraser.
+    const requestSeq = ++this.summaryRequestSeq;
     this.invoiceService.getInvoicesSummary({ ...params, skipGlobalErrorUi: true }).subscribe({
       next: (response) => {
+        if (requestSeq !== this.summaryRequestSeq) {
+          return;
+        }
         this.summary.set(response.success && response.data ? response.data : null);
         this.summaryLoading.set(false);
       },
       error: () => {
+        if (requestSeq !== this.summaryRequestSeq) {
+          return;
+        }
         this.summary.set(null);
         this.summaryLoading.set(false);
       }

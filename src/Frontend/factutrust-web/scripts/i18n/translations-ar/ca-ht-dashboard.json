@@ -14,5 +14,6 @@
   "reports.analytics.factures.moins.avoirs.montants.ht.c85ec87d": "الفواتير مطروحًا منها إشعارات الدائن، مبالغ دون أداءات",
   "reports.analytics.documents.comptes.ef17ff03": "الوثائق المحتسبة",
   "reports.analytics.moyenne.ht.par.document.0290e01c": "المتوسط دون أداءات لكل وثيقة",
-  "reports.analytics.chiffre.d.affaires.ht.bca48774": "رقم المعاملات دون أداءات"
+  "reports.analytics.chiffre.d.affaires.ht.bca48774": "رقم المعاملات دون أداءات",
+  "dashboard.dashboard.montants.factures.ttc.39b575ce": "المبالغ المفوترة شاملة الضريبة"
 }

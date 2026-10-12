@@ -47082,6 +47082,13 @@
     ],
     "x-wave": "v3"
   },
+  "dashboard.dashboard.montants.factures.ttc.39b575ce": "Montants facturés TTC",
+  "@dashboard.dashboard.montants.factures.ttc.39b575ce": {
+    "x-files": [
+      "src/app/features/dashboard/dashboard.component.ts"
+    ],
+    "x-wave": "v3"
+  },
   "dashboard.dashboard.facture.ebb8b8ef.pl": "{$START_TAG_SPAN}{$INTERPOLATION}{$CLOSE_TAG_SPAN}{$START_TAG_SPAN_1}{$INTERPOLATION_1} {$ICU}{$CLOSE_TAG_SPAN}",
   "@dashboard.dashboard.facture.ebb8b8ef.pl": {
     "x-files": [

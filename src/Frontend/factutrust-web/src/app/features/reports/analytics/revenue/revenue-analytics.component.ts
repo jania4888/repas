@@ -574,11 +574,13 @@ import {
     }
 
     .bar-negative {
-      background: linear-gradient(180deg, var(--color-error-400), var(--color-error-600));
+      /* --color-error-300/400 n'existent pas dans la palette : replis explicites,
+         sinon la déclaration entière est invalide et la barre garde le bleu positif. */
+      background: linear-gradient(180deg, var(--color-error-500, #ef4444), var(--color-error-600, #dc2626));
     }
 
     .bar-negative:hover {
-      background: linear-gradient(180deg, var(--color-error-300), var(--color-error-500));
+      background: linear-gradient(180deg, var(--color-error-500, #ef4444), var(--color-error-700, #b91c1c));
     }
 
     .bar-tooltip {

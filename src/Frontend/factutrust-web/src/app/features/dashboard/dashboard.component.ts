@@ -706,7 +706,11 @@ import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
         @if (!loading() && topClients().length > 0 && canReadClients()) {
           <div class="section" aria-label="Top 5 clients par montants facturés TTC" i18n-aria-label="@@dashboard.dashboard.top.5.clients.par.montants.factures.ttc.6c98c4ba">
             <div class="section-header">
-              <h2 class="section-title" i18n="@@dashboard.dashboard.top.clients.dd696714">Top clients</h2>
+              <div>
+                <h2 class="section-title" i18n="@@dashboard.dashboard.top.clients.dd696714">Top clients</h2>
+                <!-- Montants TTC, tous statuts : ce n'est pas le CA HT (voir plan §7). -->
+                <p class="section-subtitle" i18n="@@dashboard.dashboard.montants.factures.ttc.39b575ce">Montants facturés TTC</p>
+              </div>
               <a routerLink="/clients" class="section-link" i18n="@@dashboard.dashboard.voir.tout.7b7d86e8"> Voir tout </a>
             </div>
             <div class="top-clients-list">
