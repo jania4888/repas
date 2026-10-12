@@ -129,12 +129,14 @@ public interface IPdfService
     /// <param name="toDate">Optional end date for the period (displayed in header).</param>
     /// <param name="company">Optional company for branding in the report header.</param>
     /// <param name="clientName">Optional client name when report is filtered by client.</param>
+    /// <param name="title">Optional report title override (defaults to "Rapport des Factures").</param>
     Task<byte[]> GenerateInvoiceReportPdfAsync(
         IEnumerable<Invoice> invoices,
         DateTime? fromDate = null,
         DateTime? toDate = null,
         Company? company = null,
         string? clientName = null,
+        string? title = null,
         CancellationToken cancellationToken = default);
     
     /// <summary>

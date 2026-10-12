@@ -1334,7 +1334,15 @@ export class InvoiceDetailComponent implements OnInit {
     return this.route.snapshot.data['creditNotesOnly'] === true;
   }
 
+  /** Détail ouvert depuis la vue « Factures et avoirs » (/invoices/revenue/:id). */
+  private get revenueModeFromRoute(): boolean {
+    return this.route.snapshot.data['revenueMode'] === true;
+  }
+
   get listBackRoute(): string {
+    if (this.revenueModeFromRoute) {
+      return '/invoices/revenue';
+    }
     if (this.creditNotesOnlyFromRoute) {
       return '/invoices/credit-notes';
     }
@@ -1346,7 +1354,10 @@ export class InvoiceDetailComponent implements OnInit {
     const base: BreadcrumbItem[] = [
       { label: $localize`:@@invoices.invoice-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' }
     ];
-    if (this.creditNotesOnlyFromRoute) {
+    if (this.revenueModeFromRoute) {
+      base.push({ label: $localize`:@@invoices.invoice-detail.ts.factures.da35e4f2:Factures`, route: '/invoices' });
+      base.push({ label: $localize`:@@invoices.invoice-list.ts.factures.et.avoirs.efa96afa:Factures et avoirs`, route: '/invoices/revenue' });
+    } else if (this.creditNotesOnlyFromRoute) {
       base.push({ label: $localize`:@@invoices.invoice-detail.ts.avoirs.de.vente.63b21d70:Avoirs de vente`, route: '/invoices/credit-notes' });
     } else {
       base.push({ label: $localize`:@@invoices.invoice-detail.ts.factures.da35e4f2:Factures`, route: '/invoices' });
@@ -1354,7 +1365,12 @@ export class InvoiceDetailComponent implements OnInit {
         base.push({ label: $localize`:@@invoices.invoice-detail.ts.factures.impayees.dc3cffa5:Factures impayées`, route: '/invoices/unpaid' });
       }
     }
-    base.push({ label: inv?.number || (this.creditNotesOnlyFromRoute ? $localize`:@@ui.tern.avoir.8ee247:Avoir` : $localize`:@@ui.tern.facture.3953b9:Facture`) });
+    const fallbackLabel = this.revenueModeFromRoute
+      ? $localize`:@@invoices.invoice-detail.ts.document.e214b8a2:Document`
+      : this.creditNotesOnlyFromRoute
+        ? $localize`:@@ui.tern.avoir.8ee247:Avoir`
+        : $localize`:@@ui.tern.facture.3953b9:Facture`;
+    base.push({ label: inv?.number || fallbackLabel });
     return base;
   });
 

@@ -19,6 +19,8 @@ export interface TotalMetric {
   icon?: string;
   /** Petit complément sous la valeur (ex. une devise ou une précision). */
   hint?: string;
+  /** Met la tuile en avant (liseré primaire), ex. « Total CA HT » de la vue Factures et avoirs. */
+  accent?: boolean;
 }
 
 /**
@@ -49,7 +51,7 @@ export interface TotalMetric {
         }
       } @else {
         @for (m of metrics; track m.label) {
-          <div class="total-tile">
+          <div class="total-tile" [class.total-tile--accent]="m.accent">
             @if (m.icon) {
               <span class="total-badge ft-icon-badge ft-icon-badge--sm"
                     [class]="'ft-icon-badge--' + (m.tone || 'neutral')">
@@ -123,6 +125,17 @@ export interface TotalMetric {
     .total-hint {
       font-size: var(--font-size-xs);
       color: var(--color-text-tertiary, var(--color-text-secondary));
+    }
+
+    /* Tuile mise en avant (accent) — liseré primaire + fond teinté. */
+    .total-tile--accent {
+      border-color: var(--color-primary-500, #3862f5);
+      border-inline-start-width: 4px;
+      background: var(--color-primary-50, #eff6ff);
+    }
+
+    .total-tile--accent .total-label {
+      color: var(--color-primary-700, #1e4fd6);
     }
 
     /* Squelettes de chargement */

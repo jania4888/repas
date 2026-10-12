@@ -20,6 +20,8 @@ public sealed record InvoiceListDto
     public string ClientName { get; init; } = null!;
     /// <summary>Signed total: positive on FAC, negative on AVO.</summary>
     public decimal TotalAmount { get; init; }
+    /// <summary>HT signé (négatif pour un avoir), net de remise globale, hors FODEC/TVA/timbre.</summary>
+    public decimal SubTotal { get; init; }
     public string Currency { get; init; } = null!;
     public bool IsOverdue { get; init; }
     public DateTime? PaidAt { get; init; }
@@ -51,6 +53,16 @@ public sealed record InvoiceListSummaryDto
     /// <summary>Number of filtered invoices currently overdue.</summary>
     public int OverdueCount { get; init; }
     public string Currency { get; init; } = "TND";
+    /// <summary>
+    /// Sum of signed HT totals restricted to Paid + Validated documents (see
+    /// InvoiceStatusExtensions.IsRealizedRevenue / frontend REALIZED_REVENUE_STATUSES), regardless of
+    /// whether the <c>realizedRevenueOnly</c> filter is active. Equals <see cref="TotalHt"/> when it is.
+    /// </summary>
+    public decimal RealizedRevenueHt { get; init; }
+    /// <summary>Sum of signed HT totals for documents of type INVOICE (FAC) among the filtered set.</summary>
+    public decimal InvoicesHt { get; init; }
+    /// <summary>Sum of signed HT totals for documents of type CREDIT_NOTE (AVO) among the filtered set.</summary>
+    public decimal CreditNotesHt { get; init; }
 }
 
 /// <summary>

@@ -27,6 +27,11 @@ public class InvoicesController : ControllerBase
     /// <summary>
     /// Get paginated list of invoices with optional filtering.
     /// </summary>
+    /// <remarks>
+    /// <paramref name="realizedRevenueOnly"/> combines with <paramref name="status"/> and
+    /// <paramref name="unpaidOnly"/> as an AND: e.g. realizedRevenueOnly + unpaidOnly only returns
+    /// Validated documents, and realizedRevenueOnly + status=Signed returns an empty list.
+    /// </remarks>
     [HttpGet]
     [Authorize(Policy = PermissionPolicies.InvoicesRead)]
     [ProducesResponseType(typeof(ApiResponse<PagedResult<InvoiceListDto>>), StatusCodes.Status200OK)]
@@ -40,12 +45,13 @@ public class InvoicesController : ControllerBase
         [FromQuery] int pageSize = 20,
         [FromQuery] bool unpaidOnly = false,
         [FromQuery] string? type = null,
+        [FromQuery] bool realizedRevenueOnly = false,
         CancellationToken cancellationToken = default)
     {
         if (!TryResolveInvoiceType(type, out var parsedType, out var errorResult))
             return errorResult!;
 
-        var query = new GetInvoicesQuery(search, status, fromDate, toDate, clientId, page, pageSize, unpaidOnly, parsedType);
+        var query = new GetInvoicesQuery(search, status, fromDate, toDate, clientId, page, pageSize, unpaidOnly, parsedType, realizedRevenueOnly);
         var result = await _mediator.Send(query, cancellationToken);
 
         return Ok(ApiResponse<PagedResult<InvoiceListDto>>.Ok(result));
@@ -66,12 +72,13 @@ public class InvoicesController : ControllerBase
         [FromQuery] Guid? clientId,
         [FromQuery] bool unpaidOnly = false,
         [FromQuery] string? type = null,
+        [FromQuery] bool realizedRevenueOnly = false,
         CancellationToken cancellationToken = default)
     {
         if (!TryResolveInvoiceType(type, out var parsedType, out var errorResult))
             return errorResult!;
 
-        var query = new GetInvoicesSummaryQuery(search, status, fromDate, toDate, clientId, unpaidOnly, parsedType);
+        var query = new GetInvoicesSummaryQuery(search, status, fromDate, toDate, clientId, unpaidOnly, parsedType, realizedRevenueOnly);
         var result = await _mediator.Send(query, cancellationToken);
 
         return Ok(ApiResponse<InvoiceListSummaryDto>.Ok(result));
@@ -90,12 +97,13 @@ public class InvoicesController : ControllerBase
         [FromQuery] DateTime? toDate,
         [FromQuery] Guid? clientId,
         [FromQuery] string? type = null,
+        [FromQuery] bool realizedRevenueOnly = false,
         CancellationToken cancellationToken = default)
     {
         if (!TryResolveInvoiceType(type, out var parsedType, out var errorResult))
             return errorResult!;
 
-        var query = new ExportInvoiceReportPdfQuery(fromDate, toDate, clientId, parsedType);
+        var query = new ExportInvoiceReportPdfQuery(fromDate, toDate, clientId, parsedType, realizedRevenueOnly);
         var result = await _mediator.Send(query, cancellationToken);
 
         if (result.IsFailure)

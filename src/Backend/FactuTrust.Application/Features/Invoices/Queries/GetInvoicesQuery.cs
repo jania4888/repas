@@ -17,7 +17,9 @@ public sealed record GetInvoicesQuery(
     int Page = 1,
     int PageSize = 20,
     bool UnpaidOnly = false,
-    InvoiceType? Type = null) : IRequest<PagedResult<InvoiceListDto>>;
+    InvoiceType? Type = null,
+    // When true, restricts the list to realized revenue documents (Paid + Validated).
+    bool RealizedRevenueOnly = false) : IRequest<PagedResult<InvoiceListDto>>;
 
 /// <summary>
 /// Handler for GetInvoicesQuery.
@@ -45,6 +47,7 @@ public sealed class GetInvoicesQueryHandler : IRequestHandler<GetInvoicesQuery, 
             request.PageSize,
             request.UnpaidOnly,
             request.Type,
+            request.RealizedRevenueOnly,
             cancellationToken);
 
         var totalPaidByInvoice = await _paymentRepository.GetTotalPaidByInvoiceIdsAsync(
@@ -70,6 +73,7 @@ public sealed class GetInvoicesQueryHandler : IRequestHandler<GetInvoicesQuery, 
                 StatusCssClass = i.Status.ToCssClass(),
                 ClientName = i.Client.Name,
                 TotalAmount = totalAmount,
+                SubTotal = i.SubTotal.Amount,
                 Currency = i.TotalAmount.Currency,
                 IsOverdue = i.DueDate.HasValue && i.DueDate.Value < DateTime.UtcNow.Date &&
                            i.Status != InvoiceStatus.Paid && i.Status != InvoiceStatus.Cancelled,

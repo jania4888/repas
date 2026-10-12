@@ -1,10 +1,10 @@
 import {
   isRealizedRevenue,
   isUnpaidInvoice,
+  parseIssueDateLocal,
+  revenueAmountHt,
   RevenueInvoiceLike
 } from '@core/utils/invoice-metrics.util';
-
-const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 export interface KpiSparklines {
   revenue: number[];
@@ -13,26 +13,8 @@ export interface KpiSparklines {
   pending: number[];
 }
 
-/**
- * Parses an invoice issue date as a local calendar instant.
- * Date-only `YYYY-MM-DD` strings are treated as local midnight (not UTC).
- */
-export function parseIssueDateLocal(issueDate: string | Date): Date | null {
-  if (issueDate instanceof Date) {
-    return Number.isNaN(issueDate.getTime()) ? null : new Date(issueDate.getTime());
-  }
-  if (typeof issueDate !== 'string' || !issueDate.trim()) {
-    return null;
-  }
-  const trimmed = issueDate.trim();
-  const dateOnly = DATE_ONLY.exec(trimmed);
-  if (dateOnly) {
-    const parsed = new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]));
-    return Number.isNaN(parsed.getTime()) ? null : parsed;
-  }
-  const parsed = new Date(trimmed);
-  return Number.isNaN(parsed.getTime()) ? null : parsed;
-}
+/** Re-exported for backward compatibility; the implementation lives in invoice-metrics.util. */
+export { parseIssueDateLocal };
 
 export function toLocalDayKey(issueDate: string | Date): string | null {
   const date = parseIssueDateLocal(issueDate);
@@ -51,7 +33,7 @@ export function toLocalMonthKey(issueDate: string | Date): string | null {
 }
 
 /**
- * 6-month running total of realized revenue (Payée + Validée), including AVO negatives.
+ * 6-month running total of realized revenue (Payée + Validée) HT, including AVO negatives.
  */
 export function buildCumulativeMonthlyRealizedRevenue(
   invoices: ReadonlyArray<RevenueInvoiceLike>,
@@ -68,7 +50,7 @@ export function buildCumulativeMonthlyRealizedRevenue(
     if (!key || !totals.has(key)) {
       continue;
     }
-    totals.set(key, (totals.get(key) ?? 0) + coerceAmount(invoice.totalAmount));
+    totals.set(key, (totals.get(key) ?? 0) + revenueAmountHt(invoice));
   }
   let running = 0;
   return keys.map(key => {
@@ -99,7 +81,7 @@ export function buildDailyIssuedAmount(
 }
 
 /**
- * Realized revenue per calendar day from the 1st of the current month through today.
+ * Realized revenue HT per calendar day from the 1st of the current month through today.
  */
 export function buildCurrentMonthDailyRealizedRevenue(
   invoices: ReadonlyArray<RevenueInvoiceLike>,
@@ -115,7 +97,7 @@ export function buildCurrentMonthDailyRealizedRevenue(
     if (!key || !totals.has(key)) {
       continue;
     }
-    totals.set(key, (totals.get(key) ?? 0) + coerceAmount(invoice.totalAmount));
+    totals.set(key, (totals.get(key) ?? 0) + revenueAmountHt(invoice));
   }
   return keys.map(key => totals.get(key) ?? 0);
 }
