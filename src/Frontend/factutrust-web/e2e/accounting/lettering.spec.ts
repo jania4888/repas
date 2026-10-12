@@ -475,3 +475,42 @@ test('compléter depuis le tiroir : les membres du groupe P non chargés restent
   expect(completeBodies).toEqual([{ journalEntryLineIds: ['n1'], allowPartial: false }]);
   expect(letterBodies).toEqual([]);
 });
+
+test('correctifs revue P2 : recherche en lien profond, état d\'équilibre en texte, ligne clôturée non cochable, menu « Ouvrir un groupe »', async ({ page }) => {
+  const debit = line({ lineId: 'd1', debit: 100, credit: 0 });
+  const credit = line({ lineId: 'c1', debit: 0, credit: 100 });
+  const locked = line({ lineId: 'c2', debit: 0, credit: 30, periodLocked: true });
+  await installLetteringMocks(page, { lines: [debit, credit, locked], permissionOverride: 'no-unletter' });
+  const requests: string[] = [];
+  await page.route(LINES_API, route => {
+    requests.push(route.request().url());
+    return json(route, ok(linesPage([debit, credit, locked])));
+  });
+
+  await openLettering(page, '?account=4111&search=FAC-12&autoLoad=1');
+  await expect(page.getByRole('heading', { name: 'Débit' })).toBeVisible({ timeout: 15_000 });
+
+  // La recherche du lien profond est envoyée au serveur et reste visible (« Plus de filtres » ouvert).
+  expect(new URL(requests[0]).searchParams.get('search')).toBe('FAC-12');
+  await expect(page.getByTestId('lettering-filter-search')).toHaveValue('FAC-12');
+
+  // Sélection équilibrée : l'état s'affiche en texte (pas seulement en couleur).
+  await page.locator('.lettering-pane--debit p-tablecheckbox input[type="checkbox"]').first().check();
+  const creditBoxes = page.locator('.lettering-pane--credit p-tablecheckbox input[type="checkbox"]');
+  await creditBoxes.nth(0).check();
+  await expect(page.getByTestId('lettering-balance-state')).toHaveText(/Équilibré/);
+  await expect(page.getByRole('button', { name: 'Valider le lettrage' })).toBeEnabled();
+
+  // Ligne d'une période clôturée : jamais cochable dans le volet (règle D9) ; le store la bloque
+  // aussi (garde-fou `lockedLines`, testé en unitaire) au cas où elle entrerait dans la sélection.
+  await expect(creditBoxes.nth(1)).toBeDisabled();
+  await creditBoxes.nth(0).uncheck();
+  await expect(page.getByTestId('lettering-balance-state')).toHaveText(/Non équilibré/);
+  await expect(page.getByRole('button', { name: 'Valider le lettrage' })).toBeDisabled();
+
+  // Menu Actions : « Ouvrir un groupe par code… » est proposé même sans le droit de délettrer.
+  await page.getByRole('button', { name: 'Menu des actions' }).click();
+  await expect(page.getByText('Ouvrir un groupe par code…')).toBeVisible();
+  await expect(page.getByText('Exporter le grand livre (Excel)')).toBeVisible();
+  await expect(page.getByText('Délettrer un groupe par code…')).toHaveCount(0);
+});

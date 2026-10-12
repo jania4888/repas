@@ -503,6 +503,19 @@ describe('LetteringSuggestionsStore', () => {
       expect(lettering.error()).toContain('équilibrée');
     }));
 
+    it('LETTERING_PERIOD_LOCKED : message neutre, pas de rechargement de l\'écran, recalcul des propositions (plan §4.6)', fakeAsync(() => {
+      api.letterEntries.and.returnValue(throwError(() => apiError(409, 'LETTERING_PERIOD_LOCKED')));
+      api.getLetteringSuggestions.and.returnValue(of(result([])));
+
+      store.validate(store.suggestions()[0]);
+      tick(LETTERING_SUGGESTIONS_DEBOUNCE_MS);
+
+      expect(api.getLetteringLines).not.toHaveBeenCalled();
+      expect(api.getLetteringSuggestions).toHaveBeenCalledTimes(1);
+      expect(lettering.error()).toContain('période clôturée');
+      expect(lettering.error()).toContain("Rien n'a été lettré");
+    }));
+
     it('réponse 200 sans succès : affiche l\'erreur du serveur', fakeAsync(() => {
       api.letterEntries.and.returnValue(of({ success: false, error: 'Refus serveur' }));
       api.getLetteringSuggestions.and.returnValue(of(result([])));

@@ -1,5 +1,10 @@
 import { Params } from '@angular/router';
-import { LetteringFilters, LetteringStateFilter, createDefaultLetteringFilters } from '../models/lettering.models';
+import {
+  LETTERING_SEARCH_MAX_LENGTH,
+  LetteringFilters,
+  LetteringStateFilter,
+  createDefaultLetteringFilters
+} from '../models/lettering.models';
 import { firstDayOfYearLocalYmd, todayLocalYmd } from '../../shared/accounting-date-utils';
 
 const VALID_STATES: readonly LetteringStateFilter[] = ['all', 'unlettered', 'partial', 'lettered'];
@@ -55,6 +60,9 @@ export function parseLetteringQueryParams(params: Params): ParsedLetteringQueryP
   const maxRaw = get('max');
   const min = minRaw !== null ? Number(minRaw) : NaN;
   const max = maxRaw !== null ? Number(maxRaw) : NaN;
+  // Recherche libre : bornée comme côté serveur (≤ 100 caractères) pour qu'un lien trop long ne
+  // provoque pas un 400 au chargement automatique.
+  const search = get('search')?.trim().slice(0, LETTERING_SEARCH_MAX_LENGTH) || null;
 
   const filters: LetteringFilters = {
     ...createDefaultLetteringFilters(from, to),
@@ -65,6 +73,7 @@ export function parseLetteringQueryParams(params: Params): ParsedLetteringQueryP
     documentType: get('docType'),
     minAmount: Number.isFinite(min) ? min : null,
     maxAmount: Number.isFinite(max) ? max : null,
+    search,
     thirdParty: thirdPartyId && Number.isFinite(thirdPartyKind)
       ? { id: thirdPartyId, kind: thirdPartyKind, name: thirdPartyName ?? '' }
       : null
@@ -96,6 +105,8 @@ export function serializeLetteringFilters(
   if (filters.documentType) params['docType'] = filters.documentType;
   if (filters.minAmount !== null && filters.minAmount !== undefined) params['min'] = String(filters.minAmount);
   if (filters.maxAmount !== null && filters.maxAmount !== undefined) params['max'] = String(filters.maxAmount);
+  const search = filters.search?.trim();
+  if (search) params['search'] = search;
   if (filters.thirdParty) {
     params['thirdPartyId'] = filters.thirdParty.id;
     params['thirdPartyKind'] = String(filters.thirdParty.kind);

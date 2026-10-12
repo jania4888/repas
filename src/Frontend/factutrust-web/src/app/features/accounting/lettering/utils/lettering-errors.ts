@@ -10,13 +10,12 @@ import { LETTERING_ERROR_CODES } from '../models/lettering.models';
 
 /**
  * Codes qui reflètent un état serveur désynchronisé de ce que l'utilisateur voit (ligne déjà
- * lettrée par quelqu'un d'autre, période clôturée entre le chargement et l'action) : l'écran
- * recharge la liste pour redevenir cohérent sans action de l'utilisateur.
+ * lettrée par quelqu'un d'autre) : l'écran recharge la liste pour redevenir cohérent sans action
+ * de l'utilisateur. `LETTERING_PERIOD_LOCKED` n'en fait PAS partie (plan §4.6/§5.5) : le message
+ * s'affiche, la sélection est conservée et rien n'est rechargé (les propositions, elles, sont
+ * recalculées par `LetteringSuggestionsStore.refresh()`).
  */
-export const LETTERING_RELOAD_ON_CODES: readonly string[] = [
-  LETTERING_ERROR_CODES.alreadyLettered,
-  LETTERING_ERROR_CODES.periodLocked
-];
+export const LETTERING_RELOAD_ON_CODES: readonly string[] = [LETTERING_ERROR_CODES.alreadyLettered];
 
 export function shouldReloadOnLetteringError(err: unknown): boolean {
   const code = apiErrorCode(err);
@@ -39,7 +38,8 @@ export function letteringCodeMessage(code: string | null | undefined): string | 
     case LETTERING_ERROR_CODES.unbalanced:
       return $localize`:@@accounting.lettering.store.erreur.non.equilibre:La sélection n'est pas équilibrée (débit ≠ crédit).`;
     case LETTERING_ERROR_CODES.periodLocked:
-      return $localize`:@@accounting.lettering.store.erreur.periode.cloturee:Impossible : la période est clôturée. La liste a été actualisée.`;
+      // Texte neutre : il sert aussi à la validation d'une proposition (pas de sélection manuelle).
+      return $localize`:@@accounting.lettering.store.erreur.periode.cloturee.v2:Impossible : une des lignes appartient à une période clôturée. Rien n'a été lettré.`;
     case LETTERING_ERROR_CODES.groupNotFound:
       return $localize`:@@accounting.lettering.store.erreur.groupe.introuvable:Ce groupe de lettrage n'existe pas ou plus.`;
     case LETTERING_ERROR_CODES.groupNotPartial:

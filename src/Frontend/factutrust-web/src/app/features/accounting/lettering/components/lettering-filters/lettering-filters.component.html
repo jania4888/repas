@@ -118,6 +118,22 @@
 
     @if (showAdvanced()) {
       <div id="lettering-advanced-filters" class="lettering-filters__advanced">
+        <div class="accounting-filter-field lettering-filters__search">
+          <label class="accounting-filter-label" for="lettering-search" i18n="@@accounting.lettering.filters.tpl.recherche">Recherche</label>
+          <input
+            id="lettering-search"
+            class="accounting-filter-input"
+            type="search"
+            autocomplete="off"
+            [attr.maxlength]="searchMaxLength"
+            placeholder="Libellé, pièce, tiers…"
+            i18n-placeholder="@@accounting.lettering.filters.tpl.placeholder.recherche"
+            data-testid="lettering-filter-search"
+            [ngModel]="filters.search ?? ''"
+            [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="onSearchChange($event)"
+          />
+        </div>
         <div class="accounting-filter-field">
           <label class="accounting-filter-label" for="lettering-min" i18n="@@accounting.lettering.filters.tpl.montant.min">Montant min.</label>
           <app-accounting-amount-input
