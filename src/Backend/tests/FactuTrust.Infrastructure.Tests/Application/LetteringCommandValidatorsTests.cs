@@ -152,6 +152,26 @@ public sealed class LetteringCommandValidatorsTests
         _letterValidator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Origin);
     }
 
+    /// <summary>Revue p3-11 : BulkRequestId est refusé hors de l'origine Bulk (sens de l'audit).</summary>
+    [Theory]
+    [InlineData(LetteringOrigin.Manual)]
+    [InlineData(LetteringOrigin.Suggestion)]
+    public void Letter_BulkRequestIdOnNonBulkOrigin_Fails(LetteringOrigin origin)
+    {
+        var cmd = new LetterAccountEntriesCommand(
+            new[] { Guid.NewGuid(), Guid.NewGuid() }, Origin: origin, BulkRequestId: Guid.NewGuid());
+        _letterValidator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.BulkRequestId);
+    }
+
+    /// <summary>Revue p3-11 : un corps HTTP « Bulk » reçoit un seul message, sur l'origine.</summary>
+    [Fact]
+    public void Letter_BulkWithoutRequestId_ReportsOnlyTheOrigin()
+    {
+        var cmd = new LetterAccountEntriesCommand(new[] { Guid.NewGuid(), Guid.NewGuid() }, Origin: LetteringOrigin.Bulk);
+        var error = Assert.Single(_letterValidator.TestValidate(cmd).Errors);
+        Assert.Equal(nameof(LetterAccountEntriesCommand.Origin), error.PropertyName);
+    }
+
     /// <summary>Le drapeau seul reste permis sur la voie manuelle (il ne fait que restreindre).</summary>
     [Fact]
     public void Letter_ManualWithRequireNoExchangeDifference_Passes()

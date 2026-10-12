@@ -736,6 +736,38 @@ public sealed class LetteringServiceTests
         Assert.StartsWith("L", LoadState(payment).Code);
     }
 
+    /// <summary>
+    /// Revue p3-11 : un groupe partiel n'a pas d'écart de change (l'écart en dinars n'est que le reste
+    /// non lettré). Avec le drapeau, le lettrage partiel reste possible, sans code trompeur.
+    /// </summary>
+    [Fact]
+    public async Task Letter_EuroPartial_RequireNoExchangeDifference_StillLettersPartially()
+    {
+        var invoice = SeedEuroClientDebitLine(1, 1000m, 3.0m);
+        var payment = SeedEuroClientLine(2, 400m, 3.1m);
+
+        var result = await BuildService().ManualLetterAsync(
+            new[] { invoice, payment }, allowPartial: true, requireNoExchangeDifference: true);
+
+        Assert.True(result.IsSuccess);
+        Assert.True(result.Value.IsPartial);
+        Assert.StartsWith("P", LoadState(invoice).Code);
+    }
+
+    /// <summary>Sans partiel, un groupe EUR déséquilibré reste « Unbalanced » (classement de p3-13).</summary>
+    [Fact]
+    public async Task Letter_EuroUnbalanced_RequireNoExchangeDifference_FailsUnbalanced()
+    {
+        var invoice = SeedEuroClientDebitLine(1, 1000m, 3.0m);
+        var payment = SeedEuroClientLine(2, 400m, 3.1m);
+
+        var result = await BuildService().ManualLetterAsync(
+            new[] { invoice, payment }, requireNoExchangeDifference: true);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(LetteringErrorCodes.Unbalanced, result.Error.Code);
+    }
+
     [Fact]
     public async Task Complete_OtherCurrency_FailsCurrencyMismatch()
     {

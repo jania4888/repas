@@ -187,7 +187,9 @@ public sealed class LetterAccountEntriesCommandValidator : AbstractValidator<Let
             .WithMessage("Origine de lettrage invalide.");
 
         // Annexe C §4 : la voie de masse ne lettre que des groupes soldés, sans écart de change.
-        When(x => x.Origin == LetteringOrigin.Bulk, () =>
+        // Condition sur BulkRequestId aussi : un corps HTTP « Bulk » (sans identifiant) reçoit le
+        // seul message « Origine de lettrage invalide », pas des messages sur des champs internes.
+        When(x => x.Origin == LetteringOrigin.Bulk && x.BulkRequestId is not null, () =>
         {
             RuleFor(x => x.RequireNoExchangeDifference)
                 .Equal(true).WithMessage("Le lettrage en masse doit refuser les écarts de change.");
@@ -199,6 +201,12 @@ public sealed class LetterAccountEntriesCommandValidator : AbstractValidator<Let
             .Must(id => id != Guid.Empty)
             .When(x => x.BulkRequestId is not null)
             .WithMessage("Identifiant de lot invalide.");
+
+        // L'audit « Lettered » porte BulkRequestId : il ne doit désigner qu'un groupe d'un lot.
+        RuleFor(x => x.BulkRequestId)
+            .Null()
+            .When(x => x.Origin != LetteringOrigin.Bulk)
+            .WithMessage("L'identifiant de lot est réservé au lettrage en masse.");
 
         RuleFor(x => x.SuggestionKey)
             .MaximumLength(32).WithMessage("La clé de proposition ne peut pas dépasser 32 caractères.");
