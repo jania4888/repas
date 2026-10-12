@@ -326,4 +326,103 @@ describe('LetteringStore', () => {
     expect(store.canLetter()).toBeFalse();
     expect(store.canComplete()).toBeFalse();
   });
+  describe('complétion depuis le tiroir avec le filtre « non lettrées » (correctif Qodex)', () => {
+    const totals = { count: 1, debitCount: 0, creditCount: 1, totalDebit: 0, totalCredit: 60, balance: -60, unletteredDebit: 0, unletteredCredit: 60, unletteredBalance: -60 };
+    const partialGroupDto: LetteringGroupDto = {
+      id: 'g2', code: 'P00002', accountNumber: '4111', amount: 40, operationCurrency: 'TND',
+      isPartial: true, letteredAt: '2026-01-02T00:00:00Z', createdByDisplayName: null,
+      lines: [
+        lineDto({ lineId: 'member-d', debit: 100, letteringCode: 'P00002', isPartiallyLettered: true }),
+        lineDto({ lineId: 'member-c', debit: 0, credit: 40, letteringCode: 'P00002', isPartiallyLettered: true })
+      ],
+      canUnletter: true, unletterBlockedReason: null, canComplete: true
+    };
+
+    function loadUnletteredOnly(): void {
+      // Filtre « non lettrées » : les membres du groupe P ne sont PAS dans les lignes chargées.
+      api.getLetteringLines.and.returnValue(of({
+        success: true,
+        data: { items: [lineDto({ lineId: 'new-line', debit: 0, credit: 60 })], page: 1, pageSize: 2000, totalCount: 1, truncated: false, totals }
+      }));
+      store.load();
+      api.getLetteringGroup.and.returnValue(of({ success: true, data: partialGroupDto }));
+      store.openGroup('P00002');
+    }
+
+    it('garde les membres hors filtre dans la sélection et cible le groupe P', () => {
+      loadUnletteredOnly();
+      store.startCompletion(store.group()!);
+      store.closeGroup();
+
+      expect(store.completionGroup()?.code).toBe('P00002');
+      // Seuls les membres : rien de nouveau à ajouter.
+      expect(store.completionTarget()).toBeNull();
+      expect(store.canComplete()).toBeFalse();
+      expect(store.canLetter()).toBeFalse();
+      expect(store.isSelected('member-d')).toBeTrue();
+
+      store.setPaneSelection('credit', ['new-line']);
+
+      expect(store.selectedLines().map(l => l.lineId).sort()).toEqual(['member-c', 'member-d', 'new-line']);
+      expect(store.completionTarget()).toBe('P00002');
+      expect(store.canComplete()).toBeTrue();
+      expect(store.canLetter()).toBeFalse();
+      // La synthèse inclut les membres : 100 au débit, 40 + 60 au crédit → équilibré.
+      expect(store.summary().balanced).toBeTrue();
+      expect(store.debitSelectedTotal().amount).toBe(100);
+      expect(store.creditSelectedTotal().amount).toBe(100);
+    });
+
+    it('complete() envoie seulement les nouvelles lignes, puis la complétion est vidée au rechargement', () => {
+      loadUnletteredOnly();
+      store.startCompletion(store.group()!);
+      store.closeGroup();
+      store.setPaneSelection('credit', ['new-line']);
+      api.completePartialLettering.and.returnValue(of({ success: true, data: { code: 'L00003', groupId: 'g2', isPartial: false, lineCount: 3, previousCode: 'P00002' } }));
+
+      store.complete('P00002');
+
+      expect(api.completePartialLettering).toHaveBeenCalledWith('P00002', ['new-line'], false);
+      expect(api.letterEntries).not.toHaveBeenCalled();
+      expect(store.completionGroup()).toBeNull();
+    });
+
+    it('une erreur sans rechargement garde la complétion pour réessayer', () => {
+      loadUnletteredOnly();
+      store.startCompletion(store.group()!);
+      store.setPaneSelection('credit', ['new-line']);
+      api.completePartialLettering.and.returnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
+
+      store.complete('P00002');
+
+      expect(store.completionGroup()?.code).toBe('P00002');
+      expect(store.error()).toBeTruthy();
+    });
+
+    it('cancelCompletion() et reset() retirent les membres de la sélection', () => {
+      loadUnletteredOnly();
+      store.startCompletion(store.group()!);
+      store.setPaneSelection('credit', ['new-line']);
+
+      store.cancelCompletion();
+      expect(store.selectedLines().map(l => l.lineId)).toEqual(['new-line']);
+      expect(store.completionTarget()).toBeNull();
+
+      store.startCompletion(partialGroupDtoAsGroup());
+      store.reset();
+      expect(store.completionGroup()).toBeNull();
+      expect(store.selectedLines()).toEqual([]);
+    });
+
+    it("startCompletion() ignore un groupe non partiel", () => {
+      store.startCompletion({ ...partialGroupDtoAsGroup(), isPartial: false, code: 'L00001' });
+      expect(store.completionGroup()).toBeNull();
+    });
+
+    function partialGroupDtoAsGroup() {
+      api.getLetteringGroup.and.returnValue(of({ success: true, data: partialGroupDto }));
+      store.openGroup('P00002');
+      return store.group()!;
+    }
+  });
 });

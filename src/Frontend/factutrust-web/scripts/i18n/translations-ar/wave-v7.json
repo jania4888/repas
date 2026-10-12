@@ -2219,5 +2219,9 @@
   "accounting.lettering.ts.delettrer.un.groupe": "إلغاء مطابقة مجموعة",
   "accounting.lettering.ts.menu.consulter.le.grand.livre": "الاطلاع على دفتر الأستاذ لهذا الحساب",
   "accounting.lettering.ts.menu.delettrer.un.groupe.par.code": "إلغاء مطابقة مجموعة بالرمز…",
-  "accounting.lettering.ts.saisissez.le.code.du.groupe.a.delettre": "أدخلوا رمز المجموعة المراد إلغاء مطابقتها (مثال L00001 أو P00003):"
+  "accounting.lettering.ts.saisissez.le.code.du.groupe.a.delettre": "أدخلوا رمز المجموعة المراد إلغاء مطابقتها (مثال L00001 أو P00003):",
+  "accounting.lettering.group.drawer.tpl.montant.devise": "المبلغ بالعملة",
+  "accounting.lettering.selection.summary.tpl.completion.en.cours": "إتمام المطابقة {$INTERPOLATION}: {$INTERPOLATION_1} {$ICU} ضمن التحديد.",
+  "7203063169475348509": "{VAR_PLURAL, plural, zero {سطر مطابق مسبقًا مُدرج} one {سطر مطابق مسبقًا مُدرج} two {سطران مطابقان مسبقًا مُدرجان} few {أسطر مطابقة مسبقًا مُدرجة} many {سطرًا مطابقًا مسبقًا مُدرجًا} other {سطر مطابق مسبقًا مُدرج}}",
+  "accounting.lettering.selection.summary.tpl.annuler.completion": "إلغاء الإتمام"
 }

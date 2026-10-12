@@ -69,4 +69,17 @@ describe('LetteringSelectionSummaryComponent', () => {
       expect(component.busyAction).toBeNull();
     });
   });
+  describe('complétion depuis le tiroir', () => {
+    it('aucune complétion par défaut', () => {
+      expect(component.completionGroupCode).toBeNull();
+      expect(component.completionMemberCount).toBe(0);
+    });
+
+    it('émet cancelCompletion', () => {
+      let emitted = 0;
+      component.cancelCompletion.subscribe(() => emitted++);
+      component.cancelCompletion.emit();
+      expect(emitted).toBe(1);
+    });
+  });
 });

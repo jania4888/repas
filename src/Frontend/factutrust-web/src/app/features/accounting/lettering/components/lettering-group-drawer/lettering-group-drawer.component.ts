@@ -39,6 +39,27 @@ export class LetteringGroupDrawerComponent {
   readonly functionalCurrency = LETTERING_FUNCTIONAL_CURRENCY;
   readonly position = computed<'left' | 'right'>(() => (this.locale.isRtl() ? 'left' : 'right'));
 
+  /**
+   * Montant du groupe dans la devise de l'opération, seulement si elle diffère de la devise de
+   * tenue. Le serveur exprime `amount` en devise de tenue (TND) : l'afficher avec la devise de
+   * l'opération serait faux (300 TND affichés « 300 EUR »). Le montant en devise est recalculé à
+   * partir des lignes, avec la même règle que le serveur : somme des débits pour un groupe soldé,
+   * minimum des deux côtés pour un groupe partiel. `null` si les lignes ne portent aucun montant en
+   * devise (rien n'est inventé).
+   */
+  amountInCurrency(): { amount: number; currency: string } | null {
+    const g = this.group;
+    if (!g || !g.currency || g.currency === this.functionalCurrency) return null;
+    let debit = 0;
+    let credit = 0;
+    for (const line of g.lines) {
+      debit += line.debitInCurrency || 0;
+      credit += line.creditInCurrency || 0;
+    }
+    const amount = g.isPartial ? Math.min(debit, credit) : debit;
+    return amount > 0 ? { amount, currency: g.currency } : null;
+  }
+
   close(): void {
     this.visibleChange.emit(false);
   }

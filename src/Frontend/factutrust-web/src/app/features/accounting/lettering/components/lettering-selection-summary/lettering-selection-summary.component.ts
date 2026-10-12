@@ -37,11 +37,16 @@ export class LetteringSelectionSummaryComponent {
   /** B1 : code du groupe « P » que la sélection complète, le cas échéant. */
   @Input() completionTarget: string | null = null;
   @Input() canComplete = false;
+  /** Groupe « P » en cours de complétion depuis le tiroir, et nombre de ses lignes déjà lettrées
+   *  incluses dans la sélection (même si elles ne sont pas affichées dans les volets). */
+  @Input() completionGroupCode: string | null = null;
+  @Input() completionMemberCount = 0;
 
   @Output() readonly allowPartialChange = new EventEmitter<boolean>();
   @Output() readonly reset = new EventEmitter<void>();
   @Output() readonly validate = new EventEmitter<void>();
   @Output() readonly settle = new EventEmitter<void>();
+  @Output() readonly cancelCompletion = new EventEmitter<void>();
 
   /** Référence du bouton « Équilibrer » : le conteneur y rend le focus à la fermeture de la
    *  modale d'équilibrage, puisque c'est ce bouton qui l'a ouverte. */

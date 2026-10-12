@@ -69,6 +69,20 @@
     }
   </div>
 
+  @if (completionGroupCode) {
+    <div class="lettering-summary__completion-group" role="status" data-testid="lettering-completion-group">
+      <span i18n="@@accounting.lettering.selection.summary.tpl.completion.en.cours">Complétion du lettrage {{ completionGroupCode }} : {{ completionMemberCount }} {completionMemberCount, plural, =0 {ligne déjà lettrée incluse} =1 {ligne déjà lettrée incluse} other {lignes déjà lettrées incluses}} dans la sélection.</span>
+      <button
+        type="button"
+        class="btn btn-link btn-sm lettering-summary__completion-cancel"
+        data-testid="lettering-completion-cancel"
+        [disabled]="busyAction !== null"
+        (click)="cancelCompletion.emit()"
+        i18n="@@accounting.lettering.selection.summary.tpl.annuler.completion"
+      >Annuler la complétion</button>
+    </div>
+  }
+
   @if (completionTarget) {
     <p class="lettering-summary__completion-hint" role="status" i18n="@@accounting.lettering.selection.summary.tpl.selectionnez.les.lignes.a.ajouter">
       Sélectionnez les lignes à ajouter pour compléter le lettrage {{ completionTarget }}.

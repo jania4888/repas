@@ -433,3 +433,45 @@ test('tiroir : position par défaut (session cabinet, toujours en français) ouv
   await expect(drawer).toBeVisible();
   await expect(page.locator('.p-drawer-right')).toBeVisible();
 });
+
+test('compléter depuis le tiroir : les membres du groupe P non chargés restent inclus, seules les nouvelles lignes sont envoyées', async ({ page }) => {
+  // Le membre « m1 » est chargé (il ouvre le tiroir) ; le membre « m2 » ne l'est pas (hors filtre).
+  const m1 = line({ lineId: 'm1', debit: 100, credit: 0, letteringCode: 'P00002', isPartiallyLettered: true });
+  const m2 = line({ lineId: 'm2', debit: 0, credit: 40, letteringCode: 'P00002', isPartiallyLettered: true, entryDate: '2025-12-30' });
+  const fresh = line({ lineId: 'n1', debit: 0, credit: 60 });
+  await installLetteringMocks(page, { lines: [m1, fresh] });
+  await page.route(GROUP_API_PATTERN, route =>
+    json(route, ok(groupDto({ code: 'P00002', isPartial: true, amount: 40, canComplete: true, lines: [m1, m2] })))
+  );
+  const completeBodies: unknown[] = [];
+  await page.route('**/api/accounting/lettering/groups/P00002/complete', route => {
+    completeBodies.push(route.request().postDataJSON());
+    return json(route, ok({ code: 'L00007', groupId: 'g-1', isPartial: false, lineCount: 3, previousCode: 'P00002' }));
+  });
+  const letterBodies: unknown[] = [];
+  await page.route(LETTER_API, route => {
+    letterBodies.push(route.request().postDataJSON());
+    return json(route, ok({ code: 'L09999', groupId: 'g-x', isPartial: false, lineCount: 2, previousCode: null }));
+  });
+
+  await openLettering(page, '?account=4111&state=all&autoLoad=1');
+  await expect(page.getByRole('heading', { name: 'Débit' })).toBeVisible({ timeout: 15_000 });
+
+  await page.locator('.lettering-code-badge').first().click();
+  const drawer = page.locator('.lettering-group-drawer');
+  await expect(drawer).toBeVisible();
+  await drawer.getByRole('button', { name: 'Compléter ce lettrage' }).click();
+
+  await expect(page.getByTestId('lettering-completion-group')).toContainText('P00002');
+  await expect(page.getByTestId('lettering-completion-group')).toContainText('2');
+
+  await page.locator('.lettering-pane--credit p-tablecheckbox input[type="checkbox"]').first().check();
+
+  const validate = page.getByRole('button', { name: /Compléter le lettrage P00002/ });
+  await expect(validate).toBeEnabled();
+  await validate.click();
+
+  await expect(page.getByText(/Lettrage complété \(code L00007\)/)).toBeVisible({ timeout: 10_000 });
+  expect(completeBodies).toEqual([{ journalEntryLineIds: ['n1'], allowPartial: false }]);
+  expect(letterBodies).toEqual([]);
+});

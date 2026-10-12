@@ -46,8 +46,14 @@
       </div>
       <div class="lettering-group-drawer__meta-item">
         <span class="lettering-group-drawer__meta-label" i18n="@@accounting.lettering.group.drawer.tpl.montant">Montant</span>
-        <span class="lettering-amount">{{ g.amount | number : '1.3-3' }} {{ g.currency !== functionalCurrency ? g.currency : '' }}</span>
+        <span class="lettering-amount" data-testid="lettering-group-amount">{{ g.amount | number : '1.3-3' }} {{ functionalCurrency }}</span>
       </div>
+      @if (amountInCurrency(); as fx) {
+        <div class="lettering-group-drawer__meta-item">
+          <span class="lettering-group-drawer__meta-label" i18n="@@accounting.lettering.group.drawer.tpl.montant.devise">Montant en devise</span>
+          <span class="lettering-amount" data-testid="lettering-group-amount-currency">{{ fx.amount | number : '1.3-3' }} {{ fx.currency }}</span>
+        </div>
+      }
       @if (g.createdByDisplayName) {
         <div class="lettering-group-drawer__meta-item">
           <span class="lettering-group-drawer__meta-label" i18n="@@accounting.lettering.group.drawer.tpl.par">Par</span>

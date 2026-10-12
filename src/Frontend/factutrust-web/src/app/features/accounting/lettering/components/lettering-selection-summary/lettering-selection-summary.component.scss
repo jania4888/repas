@@ -89,3 +89,20 @@
 .lettering-amount {
   font-variant-numeric: tabular-nums;
 }
+
+.lettering-summary__completion-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-block-start: 0.5rem;
+  padding-block: 0.375rem;
+  padding-inline: 0.75rem;
+  border-inline-start: 3px solid var(--bs-warning, #f59e0b);
+  background: var(--bs-warning-bg-subtle, #fff8e6);
+  font-size: 0.875rem;
+}
+
+.lettering-summary__completion-cancel {
+  padding: 0;
+}

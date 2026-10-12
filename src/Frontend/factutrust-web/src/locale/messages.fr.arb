@@ -24832,6 +24832,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.lettering.group.drawer.tpl.montant.devise": "Montant en devise",
+  "@accounting.lettering.group.drawer.tpl.montant.devise": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-group-drawer/lettering-group-drawer.component.html"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.lettering.group.drawer.tpl.par": "Par",
   "@accounting.lettering.group.drawer.tpl.par": {
     "x-files": [
@@ -25170,6 +25177,27 @@
   },
   "accounting.lettering.selection.summary.tpl.plusieurs.groupes.partiels": "La sélection contient plusieurs lettrages partiels à la fois : désélectionnez-en un pour continuer.",
   "@accounting.lettering.selection.summary.tpl.plusieurs.groupes.partiels": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-selection-summary/lettering-selection-summary.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.selection.summary.tpl.completion.en.cours": "Complétion du lettrage {$INTERPOLATION} : {$INTERPOLATION_1} {$ICU} dans la sélection.",
+  "@accounting.lettering.selection.summary.tpl.completion.en.cours": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-selection-summary/lettering-selection-summary.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "7203063169475348509": "{VAR_PLURAL, plural, =0 {ligne déjà lettrée incluse} =1 {ligne déjà lettrée incluse} other {lignes déjà lettrées incluses}}",
+  "@7203063169475348509": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-selection-summary/lettering-selection-summary.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.selection.summary.tpl.annuler.completion": "Annuler la complétion",
+  "@accounting.lettering.selection.summary.tpl.annuler.completion": {
     "x-files": [
       "src/app/features/accounting/lettering/components/lettering-selection-summary/lettering-selection-summary.component.html"
     ],

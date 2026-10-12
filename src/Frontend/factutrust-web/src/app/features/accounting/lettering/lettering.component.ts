@@ -17,7 +17,7 @@ import { LetteringSettleExchangeDialogComponent } from './components/lettering-s
 import { LetteringGroupDrawerComponent } from './components/lettering-group-drawer/lettering-group-drawer.component';
 import { LETTERING_FUNCTIONAL_CURRENCY } from './models/lettering.models';
 import { parseLetteringQueryParams, serializeLetteringFilters } from './utils/lettering-query-params';
-import { sideCounts, splitBySide } from './utils/lettering-selection';
+import { sideCounts } from './utils/lettering-selection';
 import { buildLetteringAnalyzePayload } from './utils/lettering-ai-payload';
 
 /**
@@ -139,16 +139,15 @@ export class LetteringComponent implements OnInit {
   }
 
   /** B2 : « Compléter ce lettrage » depuis le tiroir ne complète pas directement — il ferme le
-   *  tiroir et présélectionne les lignes du groupe dans les deux volets ; l'utilisateur ajoute
-   *  ensuite les lignes à lettrer et valide depuis la synthèse (B1, `completionTarget`). */
+   *  tiroir et garde le groupe et TOUS ses membres dans le store (`startCompletion`), même s'ils ne
+   *  sont pas chargés (filtre « non lettrées ») ; l'utilisateur ajoute ensuite les lignes à lettrer
+   *  et valide depuis la synthèse (B1, `completionTarget`). */
   onDrawerComplete(code: string): void {
     const group = this.store.group();
     if (!group || group.code !== code) return;
-    const { debit, credit } = splitBySide(group.lines);
     this.groupDrawerOpen = false;
+    this.store.startCompletion(group);
     this.store.closeGroup();
-    this.store.setPaneSelection('debit', debit.map(l => l.lineId));
-    this.store.setPaneSelection('credit', credit.map(l => l.lineId));
   }
 
   /** Décide, selon la sélection courante, s'il faut compléter un groupe partiel (B1) ou lettrer

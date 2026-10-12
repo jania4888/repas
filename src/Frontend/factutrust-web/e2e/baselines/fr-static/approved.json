@@ -56,8 +56,8 @@
     "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus"
   },
   "src/app/features/accounting/lettering/lettering.component.html": {
-    "sha": "03c92886ea6be48e12b43d6b4c0527eeaf4f09c7afb2035ee5df00501843dd64",
-    "reason": "Refonte complète de l'écran de lettrage (plan v2-lettering-refonte.md, phase 2/Annexe B) : l'ancien template (filtres inline, p-table unique, résumé/dialog settle inline) est remplacé par des sous-composants dédiés (app-lettering-filters, app-lettering-ledger-pane x2, app-lettering-selection-summary, app-lettering-settle-exchange-dialog, app-lettering-group-drawer). Tout le texte visible reste localisé via $localize/i18n ids dédiés ; aucune chaîne non traduite introduite."
+    "sha": "d61e6c5e5a61e6d96beb0dc565cc60b92b1cb1543c7981df6c4c39693b7ee1d5",
+    "reason": "Refonte complète de l'écran de lettrage (plan v2-lettering-refonte.md, phase 2/Annexe B) : l'ancien template (filtres inline, p-table unique, résumé/dialog settle inline) est remplacé par des sous-composants dédiés (app-lettering-filters, app-lettering-ledger-pane x2, app-lettering-selection-summary, app-lettering-settle-exchange-dialog, app-lettering-group-drawer). Tout le texte visible reste localisé via $localize/i18n ids dédiés ; aucune chaîne non traduite introduite. Correctif Qodex (complétion depuis le tiroir) : liaisons completionGroupCode, completionMemberCount et cancelCompletion ajoutées à app-lettering-selection-summary, sans texte visible nouveau."
   },
   "src/app/features/accounting/loans/loans-list.component.ts#LoansListComponent": {
     "sha": "09e469a0c14c0b06fc682a00eab850ecc18e0f42434e4be7aaac1341a7282426",

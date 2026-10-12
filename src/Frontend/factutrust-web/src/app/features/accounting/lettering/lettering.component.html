@@ -50,6 +50,8 @@
       [canLetter]="store.canLetter()"
       [completionTarget]="store.completionTarget()"
       [canComplete]="store.canComplete()"
+      [completionGroupCode]="store.completionGroup()?.code ?? null"
+      [completionMemberCount]="store.completionGroup()?.lines?.length ?? 0"
       [isPartialMode]="store.isPartialMode()"
       [busyAction]="store.busyAction()"
       [accountLabel]="store.filters().account"
@@ -58,6 +60,7 @@
       (reset)="store.reset()"
       (validate)="onValidate()"
       (settle)="openSettle()"
+      (cancelCompletion)="store.cancelCompletion()"
     />
   }
 

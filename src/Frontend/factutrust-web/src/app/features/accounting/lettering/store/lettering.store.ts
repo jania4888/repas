@@ -102,6 +102,15 @@ export class LetteringStore {
   private readonly creditSelectedIds = signal<ReadonlySet<string>>(new Set<string>());
   readonly allowPartial = signal(false);
 
+  /**
+   * Groupe partiel « P » en cours de complétion depuis le tiroir (« Compléter ce lettrage »), avec
+   * TOUS ses membres. Indépendant des lignes chargées : avec le filtre par défaut « non lettrées »,
+   * les membres du groupe ne sont pas dans `lines()`. Sans ce signal, ils seraient perdus et la
+   * validation créerait un nouveau groupe au lieu de compléter le groupe P (correctif Qodex).
+   * Les membres comptent toujours dans la sélection tant que la complétion est active.
+   */
+  readonly completionGroup = signal<LetteringGroup | null>(null);
+
   // ── Actions en cours ──
   readonly busyAction = signal<LetteringBusyAction>(null);
 
@@ -124,9 +133,20 @@ export class LetteringStore {
     return merged;
   });
 
+  private readonly completionMemberIds = computed(
+    () => new Set<string>((this.completionGroup()?.lines ?? []).map(l => l.lineId))
+  );
+
+  /** Lignes chargées sélectionnées, plus tous les membres du groupe en cours de complétion (sans
+   *  doublon). Sans complétion active, identique au comportement historique. */
   readonly selectedLines = computed(() => {
     const ids = this.selectedIds();
-    return this.lines().filter(l => ids.has(l.lineId));
+    const selected = this.lines().filter(l => ids.has(l.lineId));
+    const completion = this.completionGroup();
+    if (!completion) return selected;
+    const seen = new Set(selected.map(l => l.lineId));
+    const members = completion.lines.filter(l => !seen.has(l.lineId));
+    return [...selected, ...members];
   });
 
   readonly summary = computed(() => computeSelectionSummary(this.selectedLines()));
@@ -135,14 +155,11 @@ export class LetteringStore {
   readonly debitPaneTotal = computed(() => paneTotal(this.debitLines(), 'debit'));
   readonly creditPaneTotal = computed(() => paneTotal(this.creditLines(), 'credit'));
 
-  readonly debitSelectedTotal = computed(() => {
-    const ids = this.debitSelectedIds();
-    return paneTotal(this.debitLines().filter(l => ids.has(l.lineId)), 'debit');
-  });
-  readonly creditSelectedTotal = computed(() => {
-    const ids = this.creditSelectedIds();
-    return paneTotal(this.creditLines().filter(l => ids.has(l.lineId)), 'credit');
-  });
+  /** Totaux sélectionnés par volet. Calculés sur `selectedLines` pour inclure les membres d'un
+   *  groupe en cours de complétion, même s'ils ne sont pas affichés (filtre « non lettrées »). */
+  private readonly selectedBySide = computed(() => splitBySide(this.selectedLines()));
+  readonly debitSelectedTotal = computed(() => paneTotal(this.selectedBySide().debit, 'debit'));
+  readonly creditSelectedTotal = computed(() => paneTotal(this.selectedBySide().credit, 'credit'));
 
   readonly isPartialMode = computed(() => !this.summary().balanced && this.allowPartial());
 
@@ -153,6 +170,11 @@ export class LetteringStore {
    * avec plusieurs groupes partiels à la fois).
    */
   readonly completionTarget = computed<string | null>(() => {
+    const completion = this.completionGroup();
+    if (completion) {
+      const hasNew = this.selectedLines().some(l => !this.completionMemberIds().has(l.lineId));
+      return hasNew ? completion.code : null;
+    }
     const codes = this.guards().partialGroupCodes;
     if (codes.length !== 1) return null;
     const [code] = codes;
@@ -163,7 +185,7 @@ export class LetteringStore {
   readonly canLetter = computed(() => {
     const s = this.summary();
     const g = this.guards();
-    if (this.completionTarget() !== null || g.partialGroupCodes.length >= 2) return false;
+    if (this.completionGroup() !== null || this.completionTarget() !== null || g.partialGroupCodes.length >= 2) return false;
     return (
       s.count >= 2 &&
       (s.balanced || this.allowPartial()) &&
@@ -190,7 +212,26 @@ export class LetteringStore {
   private loadSeq = 0;
 
   isSelected(id: string): boolean {
-    return this.selectedIds().has(id);
+    return this.selectedIds().has(id) || this.completionMemberIds().has(id);
+  }
+
+  /**
+   * Démarre la complétion d'un groupe partiel depuis le tiroir : garde le groupe et tous ses
+   * membres dans le store, indépendamment des lignes chargées, puis vide la sélection des volets
+   * pour que l'utilisateur y choisisse les lignes à ajouter.
+   */
+  startCompletion(group: LetteringGroup): void {
+    if (!group.isPartial || group.lines.length === 0) return;
+    this.completionGroup.set(group);
+    this.debitSelectedIds.set(new Set());
+    this.creditSelectedIds.set(new Set());
+    this.error.set(null);
+    this.success.set(null);
+  }
+
+  /** Abandonne la complétion en cours : les membres du groupe sortent de la sélection. */
+  cancelCompletion(): void {
+    this.completionGroup.set(null);
   }
 
   /** Remplace la sélection d'un seul volet (débit ou crédit), conserve l'autre. */
@@ -209,6 +250,7 @@ export class LetteringStore {
   }
 
   reset(): void {
+    this.completionGroup.set(null);
     this.debitSelectedIds.set(new Set());
     this.creditSelectedIds.set(new Set());
     this.allowPartial.set(false);
@@ -279,6 +321,7 @@ export class LetteringStore {
             this.loadedOnce.set(true);
             this.debitSelectedIds.set(new Set());
             this.creditSelectedIds.set(new Set());
+            this.completionGroup.set(null);
             onSuccess?.();
           } else {
             // `ApiResponse.error` n'embarque pas de code métier (ce champ n'existe que sur les
@@ -440,8 +483,9 @@ export class LetteringStore {
    *  lignes (contrat §5.4) : seules les nouvelles lignes sont envoyées. */
   complete(code: string): void {
     if (!code || this.busyAction() !== null || !this.canComplete() || this.completionTarget() !== code) return;
+    const members = this.completionMemberIds();
     const ids = this.selectedLines()
-      .filter(l => l.letteringCode !== code)
+      .filter(l => l.letteringCode !== code && !members.has(l.lineId))
       .map(l => l.lineId);
     if (ids.length === 0) return;
     const partial = this.isPartialMode();
