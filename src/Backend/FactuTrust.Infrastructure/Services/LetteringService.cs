@@ -439,8 +439,9 @@ public sealed class LetteringService : ILetteringService
 
         // Voie de masse (annexe C §4) : un groupe équilibré en devise mais pas en dinar demande
         // une écriture d'ajustement ; il se lettre donc à l'unité, jamais en masse. Refus AVANT
-        // toute écriture dans le contexte.
-        if (requireNoExchangeDifference && Math.Round(debit - credit, 3) != 0m)
+        // toute écriture dans le contexte. Seul un groupe équilibré peut avoir un écart de change :
+        // pour un groupe partiel, l'écart en dinars n'est que le reste non lettré.
+        if (requireNoExchangeDifference && balanced && Math.Round(debit - credit, 3) != 0m)
         {
             return Result.Failure<LetteringValidation>(LetteringErrors.ExchangeDifference(
                 "Le groupe présente un écart de change : à lettrer à l'unité puis à apurer."));
