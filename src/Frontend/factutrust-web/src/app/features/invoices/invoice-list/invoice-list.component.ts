@@ -671,6 +671,13 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
   private searchSubject = new Subject<string>();
   private subscriptions = new Subscription();
   private isLoadingInProgress = false;
+  /**
+   * Une requête est déjà en cours : la dernière demande de chargement est mise en file
+   * et rejouée avec les filtres les plus récents quand la requête active se termine.
+   * Sans cela, basculer un filtre (ex. « Comptés dans le CA ») pendant le chargement
+   * afficherait une liste et des totaux qui ne correspondent plus aux filtres.
+   */
+  private reloadPending = false;
   private lastErrorTime = 0;
   private readonly ERROR_DEBOUNCE_MS = 2000; // 2 secondes entre les messages d'erreur
   private readonly SEARCH_DEBOUNCE_MS = 500; // 500ms de debounce pour la recherche
@@ -849,6 +856,7 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
   loadInvoices(): void {
     // Empêcher les requêtes multiples simultanées
     if (this.isLoadingInProgress) {
+      this.reloadPending = true;
       return;
     }
 
@@ -886,12 +894,12 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
         }
         this.loading.set(false);
         this.initialLoad.set(false);
-        this.isLoadingInProgress = false;
+        this.finishLoad();
       },
       error: (error) => {
         this.loading.set(false);
         this.initialLoad.set(false);
-        this.isLoadingInProgress = false;
+        this.finishLoad();
 
         // Gestion spécifique des erreurs 429 (rate limiting) — pas de retry automatique côté service
         if (error?.status === 429) {
@@ -930,6 +938,18 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
         this.summaryLoading.set(false);
       }
     });
+  }
+
+  /**
+   * Termine un chargement. Si une demande de rechargement a été mise en file pendant
+   * la requête, on rejoue immédiatement avec les filtres courants.
+   */
+  private finishLoad(): void {
+    this.isLoadingInProgress = false;
+    if (this.reloadPending) {
+      this.reloadPending = false;
+      this.loadInvoices();
+    }
   }
 
   onSearch(): void {

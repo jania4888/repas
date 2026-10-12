@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { InvoiceListComponent } from './invoice-list.component';
 import { InvoiceDetailComponent } from '../invoice-detail/invoice-detail.component';
@@ -147,6 +147,26 @@ describe('InvoiceListComponent', () => {
       expect(component.realizedRevenueOnly()).toBe(false);
       const navArgs = mocks.navigate.calls.mostRecent().args[1] as { queryParams: Record<string, unknown> };
       expect(navArgs.queryParams['realizedRevenueOnly']).toBe('false');
+      expect(mocks.getInvoices.calls.mostRecent().args[0].realizedRevenueOnly).toBe(false);
+    });
+
+    it('queues a reload with the latest filters when the checkbox toggles during loading', () => {
+      createComponent({ revenueMode: true });
+      const initialCalls = mocks.getInvoices.calls.count();
+
+      // Requête en vol : la réponse n'arrive que lorsque le Subject émet.
+      const inFlight = new Subject<unknown>();
+      mocks.getInvoices.and.returnValue(inFlight.asObservable());
+      component.loadInvoices();
+      expect(mocks.getInvoices.calls.count()).toBe(initialCalls + 1);
+
+      // Basculer la case pendant le chargement ne doit pas lancer une requête parallèle…
+      component.onRealizedRevenueOnlyChange(false);
+      expect(mocks.getInvoices.calls.count()).toBe(initialCalls + 1);
+
+      // … mais rejouer le chargement avec les filtres les plus récents à la fin de la requête.
+      inFlight.next({ success: true, data: { items: [], totalCount: 0 } });
+      expect(mocks.getInvoices.calls.count()).toBe(initialCalls + 2);
       expect(mocks.getInvoices.calls.mostRecent().args[0].realizedRevenueOnly).toBe(false);
     });
 
