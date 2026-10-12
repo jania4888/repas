@@ -85,7 +85,9 @@ public sealed class ExportInvoiceReportPdfQueryHandler : IRequestHandler<ExportI
             clientName,
             request.Type is null ? "Rapport des factures et avoirs" : null);
         
-        var filePrefix = isCreditNotes ? "Etat_avoirs_ventes" : "Etat_factures_ventes";
+        var filePrefix = isCreditNotes
+            ? "Etat_avoirs_ventes"
+            : (request.Type is null ? "Etat_factures_avoirs_ventes" : "Etat_factures_ventes");
         var fileName = request.FromDate.HasValue && request.ToDate.HasValue
             ? $"{filePrefix}_{request.FromDate.Value:yyyy-MM-dd}_{request.ToDate.Value:yyyy-MM-dd}.pdf"
             : (!request.FromDate.HasValue && !request.ToDate.HasValue

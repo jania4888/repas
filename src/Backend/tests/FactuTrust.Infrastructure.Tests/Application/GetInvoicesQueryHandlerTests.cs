@@ -17,7 +17,7 @@ public sealed class GetInvoicesQueryHandlerTests
 {
     private static Client CreateClient(string name = "Client Test")
     {
-        var address = Address.Create("1 Rue Test", "Tunis", "1000", "Tunisie").Value;
+        var address = Address.Create(street: "1 Rue Test", city: "Tunis", governorate: "Tunis", postalCode: "1000").Value;
         var email = Email.Create("client@test.com").Value;
         var nif = NIF.Create("1234567/A/B/C/000").Value;
 
