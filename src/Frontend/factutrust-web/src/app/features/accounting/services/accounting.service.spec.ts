@@ -226,6 +226,90 @@ describe('AccountingService', () => {
       expect(req.request.body).toEqual({ journalEntryLineIds: ids, allowPartial: false });
       req.flush({ success: true, data: true });
     });
+
+    it('n’ajoute aucun champ au corps historique (égalité stricte des clés)', () => {
+      service.letterEntries(['id1'], true).subscribe();
+
+      const req = httpMock.expectOne(`${base}/letter`);
+      expect(Object.keys(req.request.body)).toEqual(['journalEntryLineIds', 'allowPartial']);
+      expect(req.request.body).toEqual({ journalEntryLineIds: ['id1'], allowPartial: true });
+      req.flush({ success: true, data: null });
+    });
+
+    it('envoie l’origine et la clé de proposition quand elles sont fournies', () => {
+      service.letterEntries(['id1', 'id2'], false, 'Suggestion', 'k_abc-1').subscribe();
+
+      const req = httpMock.expectOne(`${base}/letter`);
+      expect(req.request.body).toEqual({
+        journalEntryLineIds: ['id1', 'id2'], allowPartial: false, origin: 'Suggestion', suggestionKey: 'k_abc-1'
+      });
+      req.flush({ success: true, data: null });
+    });
+
+    it('envoie l’origine seule si la clé est absente', () => {
+      service.letterEntries(['id1'], false, 'Manual').subscribe();
+
+      const req = httpMock.expectOne(`${base}/letter`);
+      expect(req.request.body).toEqual({ journalEntryLineIds: ['id1'], allowPartial: false, origin: 'Manual' });
+      req.flush({ success: true, data: null });
+    });
+  });
+
+  describe('propositions et lettrage en masse (Phase 3)', () => {
+    it('getLetteringSuggestions appelle GET lettering/suggestions avec les filtres et maxResults', () => {
+      service.getLetteringSuggestions({
+        account: '411',
+        accountMatch: 'prefix',
+        from: '2026-01-01',
+        to: '2026-12-31',
+        journalCode: 'JV',
+        sourceCategories: ['invoice', 'payment'],
+        thirdPartyId: 'tp-1',
+        thirdPartyKind: 1,
+        minAmount: 10,
+        maxAmount: 900,
+        search: 'FAC',
+        maxResults: 20
+      }).subscribe();
+
+      const req = httpMock.expectOne(r => r.url === `${base}/lettering/suggestions`);
+      expect(req.request.method).toBe('GET');
+      const p = req.request.params;
+      expect(p.get('account')).toBe('411');
+      expect(p.get('accountMatch')).toBe('prefix');
+      expect(p.get('from')).toBe('2026-01-01');
+      expect(p.get('to')).toBe('2026-12-31');
+      expect(p.get('journalCode')).toBe('JV');
+      expect(p.getAll('sourceCategories')).toEqual(['invoice', 'payment']);
+      expect(p.get('thirdPartyId')).toBe('tp-1');
+      expect(p.get('thirdPartyKind')).toBe('1');
+      expect(p.get('minAmount')).toBe('10');
+      expect(p.get('maxAmount')).toBe('900');
+      expect(p.get('search')).toBe('FAC');
+      expect(p.get('maxResults')).toBe('20');
+      req.flush({ success: true, data: null });
+    });
+
+    it('getLetteringSuggestions n’émet ni pagination, ni état, ni sens, ni maxResults absent', () => {
+      service.getLetteringSuggestions({ account: '4111', from: '2026-01-01', to: '2026-12-31' }).subscribe();
+
+      const req = httpMock.expectOne(r => r.url === `${base}/lettering/suggestions`);
+      expect(req.request.params.keys().sort()).toEqual(['account', 'from', 'to']);
+      req.flush({ success: true, data: null });
+    });
+
+    it('bulkLetter appelle POST lettering/bulk avec le requestId et les groupes', () => {
+      const groups = [
+        { clientKey: 'k1', journalEntryLineIds: ['a', 'b'] },
+        { clientKey: 'k2', journalEntryLineIds: ['c', 'd', 'e'] }
+      ];
+      service.bulkLetter('7b0c2f6e-0000-4000-8000-000000000001', groups).subscribe();
+
+      const req = httpMock.expectOne(`${base}/lettering/bulk`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ requestId: '7b0c2f6e-0000-4000-8000-000000000001', groups });
+      req.flush({ success: true, data: null });
+    });
   });
 
   describe('lettering (contrat Phase 1 §4)', () => {

@@ -164,7 +164,11 @@ export const LETTERING_ERROR_CODES = {
   groupNotFound: 'LETTERING_GROUP_NOT_FOUND',
   groupNotPartial: 'LETTERING_GROUP_NOT_PARTIAL',
   exchangeDifference: 'LETTERING_EXCHANGE_DIFFERENCE',
-  featureDisabled: 'LETTERING_FEATURE_DISABLED'
+  featureDisabled: 'LETTERING_FEATURE_DISABLED',
+  /** Phase 3 : le même lot est déjà en cours (HTTP 409). */
+  bulkInProgress: 'LETTERING_BULK_IN_PROGRESS',
+  /** Phase 3 : erreur inattendue sur un groupe d'un lot (rapport de masse seulement). */
+  unexpected: 'LETTERING_UNEXPECTED'
 } as const;
 
 export type LetteringBusyAction = 'letter' | 'settle' | 'unletter' | 'complete' | null;
