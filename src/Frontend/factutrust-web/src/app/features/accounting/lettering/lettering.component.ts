@@ -1,5 +1,5 @@
 /// <reference types="@angular/localize" />
-import { Component, OnInit, computed, effect, inject } from '@angular/core';
+import { Component, OnInit, ViewChild, computed, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -9,7 +9,6 @@ import { MenuItem } from '@shared/models/menu-item.model';
 import { ConfirmationService } from '@core/services/confirmation.service';
 import { AccountingToolbarActionsComponent } from '../shared/accounting-toolbar-actions.component';
 import { AccountingCorrectionBannerComponent } from '../shared/accounting-correction-banner.component';
-import { AccountingFeatureFlagsService } from '../shared/accounting-feature-flags.service';
 import { LetteringStore } from './store/lettering.store';
 import { LetteringFiltersComponent } from './components/lettering-filters/lettering-filters.component';
 import { LetteringLedgerPaneComponent } from './components/lettering-ledger-pane/lettering-ledger-pane.component';
@@ -18,7 +17,7 @@ import { LetteringSettleExchangeDialogComponent } from './components/lettering-s
 import { LetteringGroupDrawerComponent } from './components/lettering-group-drawer/lettering-group-drawer.component';
 import { LETTERING_FUNCTIONAL_CURRENCY } from './models/lettering.models';
 import { parseLetteringQueryParams, serializeLetteringFilters } from './utils/lettering-query-params';
-import { sideCounts } from './utils/lettering-selection';
+import { sideCounts, splitBySide } from './utils/lettering-selection';
 import { buildLetteringAnalyzePayload } from './utils/lettering-ai-payload';
 
 /**
@@ -51,7 +50,8 @@ export class LetteringComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly confirmation = inject(ConfirmationService);
-  protected readonly flags = inject(AccountingFeatureFlagsService);
+
+  @ViewChild(LetteringSelectionSummaryComponent) private readonly summaryComponent?: LetteringSelectionSummaryComponent;
 
   accountHint = '';
   settleOpen = false;
@@ -80,7 +80,8 @@ export class LetteringComponent implements OnInit {
     {
       label: $localize`:@@accounting.lettering.ts.menu.delettrer.un.groupe.par.code:Délettrer un groupe par code…`,
       icon: 'pi pi-times-circle',
-      command: () => this.promptUnletterByCode()
+      command: () => this.promptUnletterByCode(),
+      visible: this.store.canUnletter()
     }
   ]);
 
@@ -95,13 +96,6 @@ export class LetteringComponent implements OnInit {
     });
 
   constructor() {
-    // Synchronise l'URL (deep-link) après chaque chargement réussi, sans empiler d'historique.
-    effect(() => {
-      if (!this.store.loadedOnce()) return;
-      const queryParams = serializeLetteringFilters(this.store.filters());
-      this.router.navigate([], { relativeTo: this.route, queryParams, replaceUrl: true });
-    });
-
     // Ferme le tiroir après un délettrage/complétion réussis : le store vide `group` (et `groupError`)
     // sans savoir si le tiroir est ouvert (composant « bête »). Ne touche pas aux états chargement/erreur.
     effect(() => {
@@ -120,13 +114,52 @@ export class LetteringComponent implements OnInit {
     this.accountHint = accountHint;
     this.store.updateFilters(filters);
     if (autoLoad && filters.account) {
-      this.store.load();
+      this.load();
     }
+  }
+
+  /** Déclenché par le bouton « Charger les écritures » des filtres (M3) : contrairement à l'ancien
+   *  `effect()` réactif, l'URL n'est réécrite qu'après un chargement effectivement réussi, jamais
+   *  en réaction à un changement de signal quelconque. */
+  load(): void {
+    this.store.load(() => this.syncUrl());
+  }
+
+  private syncUrl(): void {
+    const queryParams = serializeLetteringFilters(this.store.filters(), {
+      accountHint: this.accountHint,
+      autoLoad: true
+    });
+    this.router.navigate([], { relativeTo: this.route, queryParams, replaceUrl: true });
   }
 
   openGroup(code: string): void {
     this.groupDrawerOpen = true;
     this.store.openGroup(code);
+  }
+
+  /** B2 : « Compléter ce lettrage » depuis le tiroir ne complète pas directement — il ferme le
+   *  tiroir et présélectionne les lignes du groupe dans les deux volets ; l'utilisateur ajoute
+   *  ensuite les lignes à lettrer et valide depuis la synthèse (B1, `completionTarget`). */
+  onDrawerComplete(code: string): void {
+    const group = this.store.group();
+    if (!group || group.code !== code) return;
+    const { debit, credit } = splitBySide(group.lines);
+    this.groupDrawerOpen = false;
+    this.store.closeGroup();
+    this.store.setPaneSelection('debit', debit.map(l => l.lineId));
+    this.store.setPaneSelection('credit', credit.map(l => l.lineId));
+  }
+
+  /** Décide, selon la sélection courante, s'il faut compléter un groupe partiel (B1) ou lettrer
+   *  normalement. Appelé par le bouton « Valider » de la synthèse de sélection. */
+  onValidate(): void {
+    const code = this.store.completionTarget();
+    if (code) {
+      this.store.complete(code);
+    } else {
+      this.store.letter();
+    }
   }
 
   /** Reçoit l'écho `visibleChange` du tiroir (ouverture ET fermeture, bouton croix, Échap, clic sur le masque) : ne ferme réellement que si la valeur reçue est `false`. */
@@ -142,29 +175,56 @@ export class LetteringComponent implements OnInit {
     this.settleOpen = true;
   }
 
+  /** Reçoit l'écho `visibleChange` de la modale : ne rend le focus au bouton déclencheur que
+   *  lorsqu'elle se ferme (croix, Échap, clic hors modale) — le succès de `onSettle` fait de même. */
   onSettleVisibleChange(visible: boolean): void {
     this.settleOpen = visible;
+    if (!visible) {
+      this.summaryComponent?.focusSettleTrigger();
+    }
   }
 
+  /** Ne ferme la modale (et ne rend le focus) qu'au succès réel de l'équilibrage : en cas
+   *  d'erreur, l'utilisateur la voit affichée dans la modale et peut corriger sans tout refaire. */
   onSettle(account: string): void {
-    this.store.settle(account);
-    this.settleOpen = false;
+    this.store.settle(account, () => {
+      this.settleOpen = false;
+      this.summaryComponent?.focusSettleTrigger();
+    });
   }
 
   private openLedger(): void {
-    const account = this.store.filters().account;
-    this.router.navigate(['/accounting/ledger'], { queryParams: account ? { account } : {} });
+    const f = this.store.filters();
+    const queryParams: Record<string, string> = {};
+    if (f.account) queryParams['account'] = f.account;
+    if (f.from) queryParams['from'] = f.from;
+    if (f.to) queryParams['to'] = f.to;
+    this.router.navigate(['/accounting/ledger'], { queryParams });
   }
 
+  /** Format d'un code de groupe de lettrage : `L` (complet) ou `P` (partiel) suivi d'au moins 5 chiffres. */
+  private static readonly GROUP_CODE_PATTERN = /^[LP]\d{5,}$/;
+
   private async promptUnletterByCode(): Promise<void> {
-    const code = await this.confirmation.prompt({
+    const raw = await this.confirmation.prompt({
       header: $localize`:@@accounting.lettering.ts.delettrer.un.groupe:Délettrer un groupe`,
       message: $localize`:@@accounting.lettering.ts.saisissez.le.code.du.groupe.a.delettre:Saisissez le code du groupe à délettrer (ex. L00001 ou P00003) :`,
       placeholder: 'L00001',
       acceptLabel: $localize`:@@accounting.lettering.ts.delettrer:Délettrer`,
       acceptButtonStyleClass: 'btn-danger',
-      required: true
+      required: true,
+      maxLength: 16
     });
-    if (code) this.store.unletter(code.trim());
+    if (!raw) return;
+    const code = raw.trim().toUpperCase();
+    if (!LetteringComponent.GROUP_CODE_PATTERN.test(code)) {
+      this.store.error.set(
+        $localize`:@@accounting.lettering.ts.code.de.groupe.invalide:Code de groupe invalide : attendu un « L » ou un « P » suivi de chiffres (ex. L00001).`
+      );
+      return;
+    }
+    // Ouvre le tiroir (plutôt que délettrer directement) : l'utilisateur confirme/choisit depuis
+    // le tiroir, qui porte déjà sa propre confirmation de délettrage (cohérent avec le flux B2).
+    this.openGroup(code);
   }
 }

@@ -82,7 +82,10 @@ export function parseLetteringQueryParams(params: Params): ParsedLetteringQueryP
  * Sérialise les filtres courants en paramètres d'URL, en omettant les valeurs vides. Appelé après
  * chaque chargement réussi (`replaceUrl: true`), jamais au premier rendu.
  */
-export function serializeLetteringFilters(filters: LetteringFilters, extra?: { accountHint?: string }): Params {
+export function serializeLetteringFilters(
+  filters: LetteringFilters,
+  extra?: { accountHint?: string; autoLoad?: boolean }
+): Params {
   const params: Params = {};
   if (filters.account) params['account'] = filters.account;
   if (filters.from) params['from'] = filters.from;
@@ -99,5 +102,6 @@ export function serializeLetteringFilters(filters: LetteringFilters, extra?: { a
     if (filters.thirdParty.name) params['thirdPartyName'] = filters.thirdParty.name;
   }
   if (extra?.accountHint) params['accountHint'] = extra.accountHint;
+  if (extra?.autoLoad) params['autoLoad'] = '1';
   return params;
 }

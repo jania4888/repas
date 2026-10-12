@@ -1,36 +1,17 @@
 <app-page-header
-  title="Lettrage" i18n-title="@@accounting.lettering.tpl.lettrage"
-  subtitle="Rapprochez les écritures débitrices et créditrices d'un même compte" i18n-subtitle="@@accounting.lettering.tpl.rapprochez.les.ecritures"
+  title="Lettrage" i18n-title="@@accounting.lettering.lettrage.cfcdd333"
+  subtitle="Rapprochez les écritures débitrices et créditrices d'un même compte" i18n-subtitle="@@accounting.lettering.rapprochez.les.ecritures.debitrices.et.c.d58e33ee"
 >
   <app-accounting-toolbar-actions>
-    @if (flags.isEnabled('letteringProposals')) {
-      <!-- Phase 3 (hors périmètre de cette livraison) : moteur de propositions non branché. -->
-      <button
-        type="button"
-        class="btn btn-secondary"
-        disabled
-        i18n="@@accounting.lettering.tpl.propositions.automatiques"
-      >
-        Propositions automatiques
-      </button>
-      <button
-        type="button"
-        class="btn btn-secondary"
-        disabled
-        i18n="@@accounting.lettering.tpl.lettrage.en.masse"
-      >
-        Lettrage en masse
-      </button>
-    }
     <app-document-actions-menu [items]="actionsMenuItems()" />
   </app-accounting-toolbar-actions>
 </app-page-header>
 
 <app-accounting-correction-banner />
 
-@if (accountHint) {
-  <p class="lettering-hint" role="note" i18n="@@accounting.lettering.tpl.vous.pouvez.aussi.consulter">
-    Vous pouvez aussi consulter le compte {{ accountHint }}.
+@if (store.loadedOnce() && !store.canCreate()) {
+  <p class="lettering-hint lettering-hint--readonly" role="note" i18n="@@accounting.lettering.tpl.lecture.seule">
+    Lecture seule : vous pouvez consulter la sélection et les totaux, mais le droit « Comptabilité : création » est requis pour valider un lettrage.
   </p>
 }
 
@@ -42,7 +23,7 @@
       [loading]="store.loading()"
       [payloadBuilder]="buildAnalyzePayload"
       (filtersChange)="store.updateFilters($event)"
-      (load)="store.load()"
+      (load)="load()"
     />
   </div>
 
@@ -60,19 +41,22 @@
     </div>
   }
 
-  @if (store.selectedLines().length > 0) {
+  @if (store.loadedOnce()) {
     <app-lettering-selection-summary
       [summary]="store.summary()"
       [sideCounts]="sideCounts()"
       [guards]="store.guards()"
       [allowPartial]="store.allowPartial()"
       [canLetter]="store.canLetter()"
+      [completionTarget]="store.completionTarget()"
+      [canComplete]="store.canComplete()"
       [isPartialMode]="store.isPartialMode()"
       [busyAction]="store.busyAction()"
       [accountLabel]="store.filters().account"
+      [readOnly]="!store.canCreate()"
       (allowPartialChange)="store.setAllowPartial($event)"
       (reset)="store.reset()"
-      (validate)="store.letter()"
+      (validate)="onValidate()"
       (settle)="openSettle()"
     />
   }
@@ -91,8 +75,8 @@
     />
   } @else {
     @if (store.truncated()) {
-      <p class="lettering-truncated-note" role="note" i18n="@@accounting.lettering.tpl.resultats.tronques">
-        Résultats tronqués : affinez les filtres pour voir toutes les lignes.
+      <p class="lettering-truncated-note" role="status" i18n="@@accounting.lettering.tpl.resultats.tronques">
+        Résultats tronqués : {{ store.totals().count - store.lines().length }} ligne(s) supplémentaire(s) non affichée(s). Affinez les filtres pour voir toutes les lignes.
       </p>
     }
     <div class="lettering-panes">
@@ -102,8 +86,10 @@
         [selectedIds]="debitSelectedIds()"
         [hasForeignLines]="hasForeignLines()"
         [loading]="store.loading()"
-        [total]="store.debitPaneTotal().amount"
-        [totalInCurrency]="store.debitPaneTotal().amountInCurrency"
+        [readOnly]="!store.canCreate()"
+        [currency]="store.summary().currency"
+        [total]="store.debitSelectedTotal().amount"
+        [totalInCurrency]="store.debitSelectedTotal().amountInCurrency"
         (selectionChange)="store.setPaneSelection('debit', $event)"
         (openGroup)="openGroup($event)"
       />
@@ -113,8 +99,10 @@
         [selectedIds]="creditSelectedIds()"
         [hasForeignLines]="hasForeignLines()"
         [loading]="store.loading()"
-        [total]="store.creditPaneTotal().amount"
-        [totalInCurrency]="store.creditPaneTotal().amountInCurrency"
+        [readOnly]="!store.canCreate()"
+        [currency]="store.summary().currency"
+        [total]="store.creditSelectedTotal().amount"
+        [totalInCurrency]="store.creditSelectedTotal().amountInCurrency"
         (selectionChange)="store.setPaneSelection('credit', $event)"
         (openGroup)="openGroup($event)"
       />
@@ -127,6 +115,7 @@
   [currency]="store.summary().currency"
   [gap]="store.summary().gap"
   [busy]="store.busyAction() === 'settle'"
+  [error]="settleOpen ? store.error() : null"
   (visibleChange)="onSettleVisibleChange($event)"
   (settle)="onSettle($event)"
 />
@@ -138,8 +127,7 @@
   [error]="store.groupError()"
   [canUnletterPermission]="store.canUnletter()"
   [unlettering]="store.busyAction() === 'unletter'"
-  [hasSelection]="store.selectedLines().length > 0"
   (visibleChange)="onGroupDrawerVisibleChange($event)"
   (unletter)="store.unletter($event)"
-  (complete)="store.complete($event)"
+  (complete)="onDrawerComplete($event)"
 />
