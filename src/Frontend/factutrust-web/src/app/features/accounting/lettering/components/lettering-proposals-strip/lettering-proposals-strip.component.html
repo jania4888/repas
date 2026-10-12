@@ -9,6 +9,9 @@
       </h2>
       <p class="proposals__subtitle" i18n="@@accounting.lettering.suggestions.strip.subtitle">Rapprochements probables calculés à partir des montants, des pièces et des tiers. Vérifiez avant de valider.</p>
     </div>
+    @if (!error() && suggestions().length > 0) {
+      <button type="button" class="proposals__link proposals__show-all" (click)="showAll.emit()" data-testid="lettering-proposals-show-all" i18n="@@accounting.lettering.suggestions.strip.showAll">Voir toutes les propositions ({{ badge() }})</button>
+    }
   </header>
 
   @if (notice() === 'selected' && canUndo()) {

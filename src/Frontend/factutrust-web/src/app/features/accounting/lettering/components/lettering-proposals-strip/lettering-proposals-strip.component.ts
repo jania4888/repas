@@ -7,7 +7,8 @@ import {
   SuggestionAmountFormatter,
   categoryText,
   confidenceText,
-  mainReasonText
+  mainReasonText,
+  suggestionSideText
 } from '../../utils/lettering-suggestions';
 
 /** Message affiché après un clic sur une carte (géré par le conteneur). */
@@ -53,6 +54,8 @@ export class LetteringProposalsStripComponent {
   readonly validateSuggestion = output<LetteringSuggestion>();
   readonly undo = output<void>();
   readonly dismissNotice = output<void>();
+  /** Ouvre le tiroir « Toutes les propositions ». */
+  readonly showAll = output<void>();
 
   /** Montants : 3 décimales, séparateurs de la langue de l'écran, devise après le montant. */
   protected readonly formatAmount: SuggestionAmountFormatter = (value, currency) =>
@@ -79,12 +82,7 @@ export class LetteringProposalsStripComponent {
   }
 
   protected sideLabel(side: LetteringSuggestionSide): string {
-    const first = side.first;
-    if (!first) return '—';
-    const piece = first.pieceRef || $localize`:@@accounting.lettering.suggestions.strip.entryNumber:N° ${first.entryNumber}:number:`;
-    return side.extraCount > 0
-      ? $localize`:@@accounting.lettering.suggestions.strip.sideWithExtra:${piece}:piece: + ${side.extraCount}:count: écriture(s)`
-      : piece;
+    return suggestionSideText(side);
   }
 
   protected cardLabel(s: LetteringSuggestion): string {

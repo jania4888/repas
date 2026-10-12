@@ -138,6 +138,22 @@ describe('LetteringProposalsStripComponent', () => {
     expect((qa('lettering-proposal-validate')[0].parentElement as HTMLElement).getAttribute('title')).toBeNull();
   });
 
+  it('« Voir toutes les propositions » → showAll ; absent sans liste ou en erreur', () => {
+    set({ suggestions: [suggestion('k1')], totalFound: 9 });
+    let shown = 0;
+    component.showAll.subscribe(() => shown++);
+
+    const link = q('lettering-proposals-show-all')!;
+    expect(link.textContent).toContain('(9)');
+    link.click();
+    expect(shown).toBe(1);
+
+    set({ error: 'x' });
+    expect(q('lettering-proposals-show-all')).toBeNull();
+    set({ error: null, suggestions: [] });
+    expect(q('lettering-proposals-show-all')).toBeNull();
+  });
+
   describe('états', () => {
     it('chargement sans liste : indicateur annoncé, pas de badge', () => {
       set({ loading: true, totalFound: 4 });

@@ -91,6 +91,7 @@
       (validateSuggestion)="onValidateSuggestion($event)"
       (undo)="onUndoSuggestion()"
       (dismissNotice)="proposalsNotice.set(null)"
+      (showAll)="proposalsDrawerOpen.set(true)"
     />
   }
 
@@ -164,3 +165,22 @@
   (unletter)="store.unletter($event)"
   (complete)="onDrawerComplete($event)"
 />
+
+@if (showProposals()) {
+  <app-lettering-proposals-drawer
+    [visible]="proposalsDrawerOpen()"
+    [suggestions]="suggestions.suggestions()"
+    [totalFound]="suggestions.totalFound()"
+    [loading]="suggestions.loading() || suggestions.pending()"
+    [error]="suggestions.error()"
+    [truncated]="suggestions.truncated()"
+    [canCreate]="store.canCreate()"
+    [canValidate]="suggestions.canValidate()"
+    [busyKey]="suggestions.busyKey()"
+    [showBulk]="false"
+    [bulkEligibleCount]="suggestions.bulkEligible().length"
+    (visibleChange)="proposalsDrawerOpen.set($event)"
+    (selectSuggestion)="onSelectSuggestionFromDrawer($event)"
+    (validateSuggestion)="onValidateSuggestion($event)"
+  />
+}

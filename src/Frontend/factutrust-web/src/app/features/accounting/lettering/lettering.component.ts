@@ -22,6 +22,7 @@ import {
   LetteringProposalsNotice,
   LetteringProposalsStripComponent
 } from './components/lettering-proposals-strip/lettering-proposals-strip.component';
+import { LetteringProposalsDrawerComponent } from './components/lettering-proposals-drawer/lettering-proposals-drawer.component';
 import { LETTERING_FUNCTIONAL_CURRENCY, LetteringSide } from './models/lettering.models';
 import { LetteringSuggestion } from './models/lettering-suggestions.models';
 import { parseLetteringQueryParams, serializeLetteringFilters } from './utils/lettering-query-params';
@@ -49,6 +50,7 @@ import { buildLetteringAnalyzePayload } from './utils/lettering-ai-payload';
     LetteringSettleExchangeDialogComponent,
     LetteringGroupDrawerComponent,
     LetteringProposalsStripComponent,
+    LetteringProposalsDrawerComponent,
     ButtonComponent
   ],
   providers: [LetteringStore, LetteringSuggestionsStore],
@@ -74,6 +76,9 @@ export class LetteringComponent implements OnInit {
 
   /** Message du bandeau après un clic sur une carte (« Sélection remplacée », lignes masquées…). */
   readonly proposalsNotice = signal<LetteringProposalsNotice>(null);
+
+  /** Tiroir « Toutes les propositions » (p3-19). */
+  readonly proposalsDrawerOpen = signal(false);
 
   /** Bandeau des propositions : drapeau front actif, écran chargé, fonction non coupée côté serveur. */
   readonly showProposals = computed(
@@ -176,6 +181,13 @@ export class LetteringComponent implements OnInit {
 
   onSelectSuggestion(suggestion: LetteringSuggestion): void {
     this.proposalsNotice.set(this.suggestions.select(suggestion));
+  }
+
+  /** « Sélectionner » depuis le tiroir : le tiroir se ferme pour montrer les volets ; le message
+   *  (« Sélection remplacée », lignes masquées…) s'affiche dans le bandeau. */
+  onSelectSuggestionFromDrawer(suggestion: LetteringSuggestion): void {
+    this.proposalsDrawerOpen.set(false);
+    this.onSelectSuggestion(suggestion);
   }
 
   onValidateSuggestion(suggestion: LetteringSuggestion): void {

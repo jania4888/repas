@@ -1,0 +1,182 @@
+<p-drawer
+  [visible]="visible()"
+  (visibleChange)="visibleChange.emit($event)"
+  [position]="position()"
+  [modal]="true"
+  [blockScroll]="true"
+  appendTo="body"
+  styleClass="lettering-proposals-drawer"
+  [style]="{ width: 'min(40rem, 100vw)' }"
+>
+  <ng-template pTemplate="header">
+    <div class="drawer__head">
+      <h2 class="drawer__title" i18n="@@accounting.lettering.suggestions.drawer.title">Toutes les propositions</h2>
+      @if (!loading() && !error()) {
+        <span class="drawer__badge" data-testid="lettering-proposals-drawer-count">{{ filtered().length }}</span>
+      }
+    </div>
+  </ng-template>
+
+  <div class="drawer" data-testid="lettering-proposals-drawer" [attr.aria-busy]="loading()">
+    <div class="drawer__toolbar">
+      <div class="drawer__filters" role="group" aria-label="Filtres des propositions" i18n-aria-label="@@accounting.lettering.suggestions.drawer.filters.aria">
+        <label class="drawer__filter">
+          <span i18n="@@accounting.lettering.suggestions.drawer.filter.category">Catégorie</span>
+          <select class="p-inputtext" [value]="category()" (change)="setCategory($any($event.target).value)" data-testid="lettering-proposals-filter-category">
+            <option value="all" i18n="@@accounting.lettering.suggestions.drawer.filter.all">Toutes</option>
+            @for (c of categories; track c) {
+              <option [value]="c" [selected]="category() === c">{{ categoryLabel(c) }}</option>
+            }
+          </select>
+        </label>
+        <label class="drawer__filter">
+          <span i18n="@@accounting.lettering.suggestions.drawer.filter.confidence">Confiance</span>
+          <select class="p-inputtext" [value]="confidence()" (change)="setConfidence($any($event.target).value)" data-testid="lettering-proposals-filter-confidence">
+            <option value="all" i18n="@@accounting.lettering.suggestions.drawer.filter.all">Toutes</option>
+            @for (c of confidences; track c) {
+              <option [value]="c" [selected]="confidence() === c">{{ confidenceLabel(c) }}</option>
+            }
+          </select>
+        </label>
+      </div>
+      @if (showBulk()) {
+        <span [attr.title]="canCreate() ? null : loc_validateDisabled">
+          <p-button
+            label="Lettrer en masse…" i18n-label="@@accounting.lettering.suggestions.drawer.bulk"
+            icon="pi pi-check-square"
+            size="small"
+            [disabled]="!canValidate() || bulkEligibleCount() === 0"
+            (onClick)="openBulk.emit()"
+            data-testid="lettering-proposals-open-bulk"
+          />
+        </span>
+      }
+    </div>
+
+    @if (truncated() && !error()) {
+      <p class="drawer__note" role="note" data-testid="lettering-proposals-drawer-truncated" i18n="@@accounting.lettering.suggestions.drawer.truncated">Liste incomplète : affinez les filtres de l'écran pour obtenir toutes les propositions.</p>
+    }
+
+    @if (loading() && suggestions().length === 0) {
+      <div class="drawer__state" role="status" aria-live="polite">
+        <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+        <span i18n="@@accounting.lettering.suggestions.strip.loading">Calcul des propositions…</span>
+      </div>
+    } @else if (error()) {
+      <p class="drawer__state drawer__state--error" role="alert" data-testid="lettering-proposals-drawer-error">{{ error() }}</p>
+    } @else if (suggestions().length === 0) {
+      <p class="drawer__state" data-testid="lettering-proposals-drawer-empty" i18n="@@accounting.lettering.suggestions.strip.empty">Aucune proposition pour ces filtres.</p>
+    } @else if (filtered().length === 0) {
+      <div class="drawer__state" data-testid="lettering-proposals-drawer-no-match">
+        <span i18n="@@accounting.lettering.suggestions.drawer.noMatch">Aucune proposition ne correspond à ces critères.</span>
+        <button type="button" class="drawer__link" (click)="resetFilters()" i18n="@@accounting.lettering.suggestions.drawer.resetFilters">Effacer les critères</button>
+      </div>
+    } @else {
+      <ul class="drawer__list" role="list">
+        @for (s of pageItems(); track s.key) {
+          <li class="drawer__item" [class.drawer__item--busy]="busyKey() === s.key" data-testid="lettering-proposals-drawer-item">
+            <div class="drawer__item-main">
+              <div class="drawer__item-top">
+                <span class="drawer__category">{{ categoryLabel(s.category) }}</span>
+                <span class="drawer__confidence" [attr.data-confidence]="s.confidence">{{ confidenceLabel(s.confidence) }}</span>
+                @if (s.hasExchangeDifference) {
+                  <span class="drawer__fx">
+                    <i class="pi pi-sliders-h" aria-hidden="true"></i>
+                    <span i18n="@@accounting.lettering.suggestions.strip.fx">Écart de change</span>
+                  </span>
+                }
+              </div>
+              <div class="drawer__sides">
+                <span><span class="drawer__side-label" i18n="@@accounting.lettering.suggestions.strip.debit">Débit</span> {{ side(s, 'debit') }}</span>
+                <i class="pi pi-arrow-right-arrow-left" aria-hidden="true"></i>
+                <span><span class="drawer__side-label" i18n="@@accounting.lettering.suggestions.strip.credit">Crédit</span> {{ side(s, 'credit') }}</span>
+              </div>
+              <div class="drawer__item-meta">
+                <span class="drawer__amount lettering-amount" dir="ltr">{{ amount(s) }}</span>
+                @if (s.thirdPartyName) {
+                  <span class="drawer__third-party">{{ s.thirdPartyName }}</span>
+                }
+              </div>
+              <p class="drawer__reason">{{ mainReason(s) }}</p>
+              <button
+                type="button"
+                class="drawer__link"
+                [attr.aria-expanded]="isExpanded(s.key)"
+                [attr.aria-controls]="detailsId(s)"
+                (click)="toggleDetails(s.key)"
+                data-testid="lettering-proposals-drawer-toggle"
+              >
+                @if (isExpanded(s.key)) {
+                  <span i18n="@@accounting.lettering.suggestions.drawer.hideDetails">Masquer le détail</span>
+                } @else {
+                  <span i18n="@@accounting.lettering.suggestions.drawer.showDetails">Voir le détail</span>
+                }
+              </button>
+              @if (isExpanded(s.key)) {
+                <ul class="drawer__reasons" [id]="detailsId(s)" data-testid="lettering-proposals-drawer-reasons">
+                  @for (r of s.reasons; track $index) {
+                    <li>{{ reason(r) }}</li>
+                  } @empty {
+                    <li>{{ mainReason(s) }}</li>
+                  }
+                </ul>
+              }
+            </div>
+            <div class="drawer__item-actions">
+              <p-button
+                label="Sélectionner" i18n-label="@@accounting.lettering.suggestions.drawer.select"
+                icon="pi pi-list-check"
+                size="small"
+                severity="secondary"
+                [text]="true"
+                [ariaLabel]="selectLabel(s)"
+                (onClick)="selectSuggestion.emit(s)"
+                data-testid="lettering-proposals-drawer-select"
+              />
+              <span [attr.title]="canCreate() ? null : loc_validateDisabled">
+                <p-button
+                  label="Valider" i18n-label="@@accounting.lettering.suggestions.strip.validate"
+                  icon="pi pi-check"
+                  size="small"
+                  severity="success"
+                  [outlined]="true"
+                  [disabled]="!canValidate()"
+                  [loading]="busyKey() === s.key"
+                  [ariaLabel]="validateLabel(s)"
+                  (onClick)="validateSuggestion.emit(s)"
+                  data-testid="lettering-proposals-drawer-validate"
+                />
+              </span>
+            </div>
+          </li>
+        }
+      </ul>
+
+      @if (pageCount() > 1) {
+        <nav class="drawer__pager" aria-label="Pagination des propositions" i18n-aria-label="@@accounting.lettering.suggestions.drawer.pager.aria">
+          <p-button
+            icon="pi pi-angle-left"
+            size="small"
+            severity="secondary"
+            [text]="true"
+            [disabled]="currentPage() === 0"
+            ariaLabel="Page précédente" i18n-ariaLabel="@@accounting.lettering.suggestions.drawer.pager.previous"
+            (onClick)="previousPage()"
+            data-testid="lettering-proposals-drawer-prev"
+          />
+          <span class="drawer__range" data-testid="lettering-proposals-drawer-range" i18n="@@accounting.lettering.suggestions.drawer.pager.range">{{ rangeStart() }}–{{ rangeEnd() }} sur {{ filtered().length }}</span>
+          <p-button
+            icon="pi pi-angle-right"
+            size="small"
+            severity="secondary"
+            [text]="true"
+            [disabled]="currentPage() >= pageCount() - 1"
+            ariaLabel="Page suivante" i18n-ariaLabel="@@accounting.lettering.suggestions.drawer.pager.next"
+            (onClick)="nextPage()"
+            data-testid="lettering-proposals-drawer-next"
+          />
+        </nav>
+      }
+    }
+  </div>
+</p-drawer>

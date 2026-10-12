@@ -248,3 +248,8 @@
   font-size: var(--font-size-xs);
   color: var(--color-warning-700, #b45309);
 }
+
+.proposals__show-all {
+  flex-shrink: 0;
+  white-space: nowrap;
+}

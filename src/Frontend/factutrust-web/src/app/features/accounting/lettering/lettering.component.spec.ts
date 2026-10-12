@@ -245,6 +245,16 @@ describe('LetteringComponent', () => {
       expect(component.proposalsNotice()).toBeNull();
     });
 
+    it('« Sélectionner » depuis le tiroir : ferme le tiroir et affiche le message dans le bandeau', () => {
+      spyOn(component['suggestions'], 'select').and.returnValue('selected');
+      component.proposalsDrawerOpen.set(true);
+
+      component.onSelectSuggestionFromDrawer(suggestion);
+
+      expect(component.proposalsDrawerOpen()).toBeFalse();
+      expect(component.proposalsNotice()).toBe('selected');
+    });
+
     it('bouton d\'en-tête : relance le calcul', () => {
       const refresh = spyOn(component['suggestions'], 'refresh');
       component.showProposalsStrip();
@@ -305,6 +315,7 @@ describe('LetteringComponent — rendu des propositions', () => {
     expect(component.showProposals()).toBeFalse();
     expect(query('lettering-proposals-strip')).toBeNull();
     expect(query('lettering-proposals-header-button')).toBeNull();
+    expect(fixture.nativeElement.querySelector('app-lettering-proposals-drawer')).toBeNull();
   });
 
   it('drapeau actif et écran chargé : bandeau et bouton d\'en-tête présents', () => {
@@ -314,6 +325,7 @@ describe('LetteringComponent — rendu des propositions', () => {
 
     expect(query('lettering-proposals-strip')).not.toBeNull();
     expect(query('lettering-proposals-header-button')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('app-lettering-proposals-drawer')).not.toBeNull();
   });
 
   it('drapeau actif avant le premier chargement : bouton d\'en-tête présent mais désactivé, pas de bandeau', () => {

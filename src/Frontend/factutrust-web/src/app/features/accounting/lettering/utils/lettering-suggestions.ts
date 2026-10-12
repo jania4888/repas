@@ -231,3 +231,16 @@ export function confidenceText(confidence: LetteringSuggestionConfidence): strin
       return $localize`:@@accounting.lettering.suggestions.confidence.low:Confiance faible`;
   }
 }
+
+/**
+ * Libellé court d'un côté d'une proposition : première pièce (ou « N° n ») et « + n écriture(s) ».
+ * Partagé par le bandeau et le tiroir des propositions.
+ */
+export function suggestionSideText(side: LetteringSuggestionSide): string {
+  const first = side.first;
+  if (!first) return '—';
+  const piece = first.pieceRef || $localize`:@@accounting.lettering.suggestions.strip.entryNumber:N° ${first.entryNumber}:number:`;
+  return side.extraCount > 0
+    ? $localize`:@@accounting.lettering.suggestions.strip.sideWithExtra:${piece}:piece: + ${side.extraCount}:count: écriture(s)`
+    : piece;
+}
