@@ -156,8 +156,10 @@ describe('LetteringBulkDialogComponent', () => {
     expect(totals[1]).toContain('EUR');
     expect(totals[1]).toContain('50');
     expect(q('lettering-bulk-accounts')?.textContent).toContain('4111, 4011');
-    expect(q('lettering-bulk-summary')?.textContent).toContain('3');
-    expect(q('lettering-bulk-summary')?.textContent).toContain('7');
+    expect(q('lettering-bulk-summary')?.textContent).toContain('3 propositions cochées · 7 lignes');
+
+    set({ selectedCount: 1, lineCount: 1 });
+    expect(q('lettering-bulk-summary')?.textContent).toContain('1 proposition cochée · 1 ligne');
   });
 
   describe('vue « confirmation »', () => {
@@ -167,8 +169,9 @@ describe('LetteringBulkDialogComponent', () => {
       fixture.detectChanges();
     });
 
-    it('demande une confirmation explicite avant tout envoi', () => {
+    it('demande une confirmation explicite avant tout envoi, au singulier pour une proposition', () => {
       expect(component.step()).toBe('confirm');
+      expect(q('lettering-bulk-confirm-question')?.textContent?.trim()).toBe('Lettrer 1 proposition (2 lignes) ?');
       expect(q('lettering-bulk-confirm')?.textContent).toContain('définitif');
       expect(q('lettering-bulk-list')).toBeNull();
     });
@@ -184,6 +187,26 @@ describe('LetteringBulkDialogComponent', () => {
       expect(innerButton(q('lettering-bulk-run')).disabled).toBeTrue();
       component.confirm();
       expect(runs.length).toBe(1);
+    });
+
+    it('focus : la question reçoit le focus à l\'entrée de la vue (le bouton « Continuer » a disparu)', () => {
+      expect(document.activeElement).toBe(q('lettering-bulk-confirm-question'));
+    });
+
+    it('focus : « Retour » le place sur l\'introduction du choix', () => {
+      innerButton(q('lettering-bulk-back')).click();
+      fixture.detectChanges();
+      expect(document.activeElement).toBe(q('lettering-bulk-intro'));
+    });
+
+    it('focus : une erreur (« Confirmer » remplacé par « Réessayer ») reçoit le focus', () => {
+      set({ canRetry: true, error: 'Coupure.' });
+      expect(document.activeElement).toBe(q('lettering-bulk-error'));
+    });
+
+    it('focus : le rapport reçoit le focus à son arrivée', () => {
+      set({ result: report() });
+      expect(document.activeElement).toBe(q('lettering-bulk-report-summary'));
     });
 
     it('« Retour » revient au choix, sauf pendant l\'envoi', () => {
@@ -250,8 +273,15 @@ describe('LetteringBulkDialogComponent', () => {
       // Le rapport n'annonce pas un rechargement qui n'a lieu qu'à la fermeture.
       expect(results[2].textContent).not.toContain('actualisée');
       expect(results[3].textContent).toContain('zz');
+      expect(q('lettering-bulk-report-summary')?.textContent).toContain('Lettrées : 1');
+      expect(q('lettering-bulk-not-processed-hint')).not.toBeNull();
       expect(q('lettering-bulk-list')).toBeNull();
       expect(q('lettering-bulk-run')).toBeNull();
+    });
+
+    it('rapport sans proposition non traitée : pas d\'indication de relance', () => {
+      set({ result: report({ notProcessed: 0, results: [{ clientKey: 'a', status: 'Lettered', code: 'AB' }] }) });
+      expect(q('lettering-bulk-not-processed-hint')).toBeNull();
     });
 
     it('refus sans code connu : texte générique', () => {
