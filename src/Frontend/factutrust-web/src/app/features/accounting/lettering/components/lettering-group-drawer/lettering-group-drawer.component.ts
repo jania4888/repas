@@ -31,7 +31,6 @@ export class LetteringGroupDrawerComponent {
   @Input() error: string | null = null;
   @Input() canUnletterPermission = false;
   @Input() unlettering = false;
-  @Input() hasSelection = false;
 
   @Output() readonly visibleChange = new EventEmitter<boolean>();
   @Output() readonly unletter = new EventEmitter<string>();
@@ -67,6 +66,9 @@ export class LetteringGroupDrawerComponent {
     if (this.group) this.unletter.emit(this.group.code);
   }
 
+  /** N'exécute pas la complétion ici : émet le code pour que le conteneur ferme le tiroir et
+   *  présélectionne les lignes du groupe dans les deux volets (B2) ; l'utilisateur ajoute ensuite
+   *  les lignes à lettrer puis valide depuis la synthèse de sélection. */
   onComplete(): void {
     if (this.group) this.complete.emit(this.group.code);
   }
