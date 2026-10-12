@@ -287,6 +287,60 @@ public sealed class LetteringCandidateLoaderTests
         Assert.Equal(new HashSet<Guid> { kept }, Ids(loaded));
     }
 
+    /// <summary>
+    /// Revue interne p3-8 (Test 1) : les lignes verrouillées sont exclues AVANT le plafond. Elles sont
+    /// datées avant les deux lignes valides ; si le filtre SQL disparaissait, elles prendraient les
+    /// places du plafond, la revérification en mémoire les retirerait ensuite, et une ligne valide
+    /// manquerait.
+    /// </summary>
+    [Fact]
+    public async Task LockedLines_AreExcludedBeforeTheCap()
+    {
+        Guid closedPeriodId;
+        Guid yearLockedPeriodId;
+        await using (var ctx = NewContext())
+        {
+            var closed = AccountingPeriod.Create(2026, 4, new DateTime(2026, 4, 1), new DateTime(2026, 4, 30));
+            closed.Close("test");
+            var year2025 = AccountingPeriod.Create(2025, 12, new DateTime(2025, 12, 1), new DateTime(2025, 12, 31));
+            ctx.AccountingPeriods.AddRange(closed, year2025);
+            ctx.AccountingYearLocks.Add(AccountingYearLock.Create(2025, "test"));
+            await ctx.SaveChangesAsync();
+            closedPeriodId = closed.Id;
+            yearLockedPeriodId = year2025.Id;
+        }
+        Seed(new SeedOptions { Debit = 20m, Date = new DateTime(2026, 5, 1), Status = JournalEntryStatus.Cloturee });
+        Seed(new SeedOptions { Debit = 30m, Date = new DateTime(2026, 4, 10), PeriodId = closedPeriodId });
+        Seed(new SeedOptions { Credit = 40m, Date = new DateTime(2025, 12, 10), PeriodId = yearLockedPeriodId });
+        var first = Seed(new SeedOptions { Debit = 10m, Date = new DateTime(2026, 5, 20) });
+        var second = Seed(new SeedOptions { Credit = 10m, Date = new DateTime(2026, 5, 21) });
+
+        var loaded = await LoadAsync(max: 2);
+
+        Assert.False(loaded.Truncated);
+        Assert.Equal(new[] { first, second }, loaded.Candidates.Select(c => c.LineId));
+    }
+
+    /// <summary>
+    /// Revue interne p3-8 (Low 1) : une ligne en devise sans montant dans la devise de l'opération est
+    /// exclue en SQL, avant le plafond ; elle ne prend pas la place d'une ligne valide.
+    /// </summary>
+    [Fact]
+    public async Task ForeignLinesWithoutOperationAmount_AreExcludedBeforeTheCap()
+    {
+        Seed(new SeedOptions { Credit = 34m, Date = new DateTime(2026, 5, 1), Currency = "EUR", ExchangeRate = 3.4m });
+        var first = Seed(new SeedOptions { Debit = 10m, Date = new DateTime(2026, 5, 20) });
+        var second = Seed(new SeedOptions
+        {
+            Credit = 34m, Date = new DateTime(2026, 5, 21), Currency = "EUR", ExchangeRate = 3.4m, CreditInCurrency = 10m,
+        });
+
+        var loaded = await LoadAsync(max: 2);
+
+        Assert.False(loaded.Truncated);
+        Assert.Equal(new[] { first, second }, loaded.Candidates.Select(c => c.LineId));
+    }
+
     [Fact]
     public async Task FillsPaymentLinks_ForClientAndSupplierPayments()
     {
