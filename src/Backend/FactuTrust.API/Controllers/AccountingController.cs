@@ -1970,7 +1970,8 @@ public sealed class AccountingController : ControllerBase
     /// Lettrage en masse de propositions confirmées (plan v2, Phase 3, annexe C §4). Une transaction
     /// par groupe : la réponse est 200 même en succès partiel, avec le résultat de chaque groupe.
     /// Lot déjà en cours (même <c>RequestId</c>) → 409 <c>LETTERING_BULK_IN_PROGRESS</c> ; drapeau
-    /// éteint → 400 <c>LETTERING_FEATURE_DISABLED</c> ; lot invalide → 400 <c>LETTERING_VALIDATION</c>.
+    /// éteint (<c>Accounting:LetteringSuggestionsEnabled</c>) → 400 <c>LETTERING_FEATURE_DISABLED</c>, une fois la
+    /// requête valide (le validator passe avant le drapeau) ; lot invalide → 400 <c>LETTERING_VALIDATION</c>.
     /// </summary>
     [HttpPost("lettering/bulk")]
     [Authorize(Policy = PermissionPolicies.AccountingCreate)]

@@ -46,12 +46,37 @@ public sealed class LetteringBulkEndpointTests
         Assert.Null(Action.GetCustomAttribute<AllowAnonymousAttribute>());
     }
 
+    /// <summary>
+    /// Contrat JSON consommé par le front (p3-15) : corps camelCase lu avec les options web de
+    /// l'API (<see cref="System.Text.Json.JsonSerializerDefaults.Web"/>).
+    /// </summary>
+    [Fact]
+    public void Request_BindsFromTheCamelCaseFrontBody()
+    {
+        var requestId = Guid.NewGuid();
+        var a = Guid.NewGuid();
+        var b = Guid.NewGuid();
+        var json = $$"""{"requestId":"{{requestId}}","groups":[{"clientKey":"k_1","journalEntryLineIds":["{{a}}","{{b}}"]}]}""";
+
+        var request = System.Text.Json.JsonSerializer.Deserialize<BulkLetterRequest>(
+            json, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web));
+
+        Assert.NotNull(request);
+        Assert.Equal(requestId, request!.RequestId);
+        var group = Assert.Single(request.Groups!);
+        Assert.Equal("k_1", group.ClientKey);
+        Assert.Equal(new[] { a, b }, group.JournalEntryLineIds);
+    }
+
     [Fact]
     public void Endpoint_UsesTheBulkRateLimit_AndABoundedBody()
     {
         Assert.Equal("accounting-bulk", Action.GetCustomAttribute<EnableRateLimitingAttribute>()?.PolicyName);
         var size = Action.GetCustomAttribute<RequestSizeLimitAttribute>();
         Assert.NotNull(size);
+        Assert.Equal(
+            AccountingController.BulkLetterMaxBodyBytes,
+            ((Microsoft.AspNetCore.Http.Metadata.IRequestSizeLimitMetadata)size!).MaxRequestBodySize);
         Assert.Equal(256 * 1024, AccountingController.BulkLetterMaxBodyBytes);
         // 2 000 Guid sérialisés (≈ 40 octets chacun) tiennent largement dans la limite.
         Assert.True(2000 * 40 < AccountingController.BulkLetterMaxBodyBytes);
