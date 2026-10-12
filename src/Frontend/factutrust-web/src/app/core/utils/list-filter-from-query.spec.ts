@@ -64,6 +64,34 @@ describe('list-filter-from-query', () => {
       expect(result.dateRange?.[1]?.getMonth()).toBe(0);
       expect(result.dateRange?.[1]?.getDate()).toBe(31);
     });
+
+    it('keeps realizedRevenueOnly at the current state when the param is absent (default true)', () => {
+      const result = applyInvoiceListFiltersFromQuery(
+        paramMap({}) as any,
+        { selectedStatus: null, dateRange: [], selectedClientId: null, search: null, realizedRevenueOnly: true }
+      );
+      expect(result.realizedRevenueOnly).toBe(true);
+    });
+
+    it('disables realizedRevenueOnly only on the explicit value false', () => {
+      const off = applyInvoiceListFiltersFromQuery(
+        paramMap({ realizedRevenueOnly: 'false' }) as any,
+        { selectedStatus: null, dateRange: [], selectedClientId: null, search: null, realizedRevenueOnly: true }
+      );
+      expect(off.realizedRevenueOnly).toBe(false);
+
+      const explicitTrue = applyInvoiceListFiltersFromQuery(
+        paramMap({ realizedRevenueOnly: 'true' }) as any,
+        { selectedStatus: null, dateRange: [], selectedClientId: null, search: null, realizedRevenueOnly: false }
+      );
+      expect(explicitTrue.realizedRevenueOnly).toBe(true);
+
+      const otherValue = applyInvoiceListFiltersFromQuery(
+        paramMap({ realizedRevenueOnly: '0' }) as any,
+        { selectedStatus: null, dateRange: [], selectedClientId: null, search: null, realizedRevenueOnly: false }
+      );
+      expect(otherValue.realizedRevenueOnly).toBe(true);
+    });
   });
 
   describe('applySupplierInvoiceListFiltersFromQuery', () => {

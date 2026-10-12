@@ -22,4 +22,9 @@ describe('isDelegatedWritePath', () => {
     expect(isDelegatedWritePath('/invoices/unpaid')).toBe(false);
     expect(isDelegatedWritePath('/invoices/inv-1')).toBe(false);
   });
+
+  it('allows the revenue view (Factures et avoirs) list and detail', () => {
+    expect(isDelegatedWritePath('/invoices/revenue')).toBe(false);
+    expect(isDelegatedWritePath('/invoices/revenue/inv-1')).toBe(false);
+  });
 });

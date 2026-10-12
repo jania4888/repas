@@ -1423,6 +1423,13 @@
     ],
     "x-wave": "v1"
   },
+  "core.app-navigation.registry.ts.factures.et.avoirs.ca.ht.eebf3385": "Factures et avoirs (CA HT)",
+  "@core.app-navigation.registry.ts.factures.et.avoirs.ca.ht.eebf3385": {
+    "x-files": [
+      "src/app/core/config/app-navigation.registry.ts"
+    ],
+    "x-wave": "v1"
+  },
   "core.app-navigation.registry.ts.ajouter.un.client.1b5b4358": "Ajouter un client",
   "@core.app-navigation.registry.ts.ajouter.un.client.1b5b4358": {
     "x-files": [
@@ -46606,8 +46613,8 @@
     ],
     "x-wave": "v3"
   },
-  "dashboard.dashboard-layout.ts.evolution.du.ca.ba7ac89b": "Évolution du CA",
-  "@dashboard.dashboard-layout.ts.evolution.du.ca.ba7ac89b": {
+  "dashboard.dashboard-layout.ts.evolution.du.ca.ht.ba8a25a8": "Évolution du CA HT",
+  "@dashboard.dashboard-layout.ts.evolution.du.ca.ht.ba8a25a8": {
     "x-files": [
       "src/app/features/dashboard/dashboard-layout.config.ts"
     ],
@@ -46746,8 +46753,8 @@
     ],
     "x-wave": "v3"
   },
-  "dashboard.dashboard.chiffre.d.affaires.0a341b9f": "Chiffre d'affaires",
-  "@dashboard.dashboard.chiffre.d.affaires.0a341b9f": {
+  "dashboard.dashboard.chiffre.d.affaires.ht.170920d6": "Chiffre d'affaires HT",
+  "@dashboard.dashboard.chiffre.d.affaires.ht.170920d6": {
     "x-files": [
       "src/app/features/dashboard/dashboard.component.ts"
     ],
@@ -46760,8 +46767,8 @@
     ],
     "x-wave": "v3"
   },
-  "dashboard.dashboard.ca.du.mois.en.cours.c561d920": "CA du mois en cours",
-  "@dashboard.dashboard.ca.du.mois.en.cours.c561d920": {
+  "dashboard.dashboard.ca.ht.du.mois.en.cours.2d9a457c": "CA HT du mois en cours",
+  "@dashboard.dashboard.ca.ht.du.mois.en.cours.2d9a457c": {
     "x-files": [
       "src/app/features/dashboard/dashboard.component.ts"
     ],
@@ -47026,8 +47033,8 @@
     ],
     "x-wave": "v3"
   },
-  "dashboard.dashboard.evolution.du.ca.ba7ac89b": "Évolution du CA",
-  "@dashboard.dashboard.evolution.du.ca.ba7ac89b": {
+  "dashboard.dashboard.evolution.du.ca.ht.ba8a25a8": "Évolution du CA HT",
+  "@dashboard.dashboard.evolution.du.ca.ht.ba8a25a8": {
     "x-files": [
       "src/app/features/dashboard/dashboard.component.ts"
     ],
@@ -47040,8 +47047,8 @@
     ],
     "x-wave": "v3"
   },
-  "dashboard.dashboard.evolution.du.chiffre.d.affaires.sur.6.mois.b7b26b8f": "Évolution du chiffre d'affaires sur 6 mois",
-  "@dashboard.dashboard.evolution.du.chiffre.d.affaires.sur.6.mois.b7b26b8f": {
+  "dashboard.dashboard.evolution.du.chiffre.d.affaires.ht.sur.6.mois.b354147d": "Évolution du chiffre d'affaires HT sur 6 mois",
+  "@dashboard.dashboard.evolution.du.chiffre.d.affaires.ht.sur.6.mois.b354147d": {
     "x-files": [
       "src/app/features/dashboard/dashboard.component.ts"
     ],
@@ -47138,8 +47145,8 @@
     ],
     "x-wave": "v3"
   },
-  "dashboard.dashboard.top.5.clients.par.chiffre.d.affaires.af9ec46c": "Top 5 clients par chiffre d'affaires",
-  "@dashboard.dashboard.top.5.clients.par.chiffre.d.affaires.af9ec46c": {
+  "dashboard.dashboard.top.5.clients.par.montants.factures.ttc.6c98c4ba": "Top 5 clients par montants facturés TTC",
+  "@dashboard.dashboard.top.5.clients.par.montants.factures.ttc.6c98c4ba": {
     "x-files": [
       "src/app/features/dashboard/dashboard.component.ts"
     ],
@@ -47147,6 +47154,13 @@
   },
   "dashboard.dashboard.top.clients.dd696714": "Top clients",
   "@dashboard.dashboard.top.clients.dd696714": {
+    "x-files": [
+      "src/app/features/dashboard/dashboard.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "dashboard.dashboard.montants.factures.ttc.39b575ce": "Montants facturés TTC",
+  "@dashboard.dashboard.montants.factures.ttc.39b575ce": {
     "x-files": [
       "src/app/features/dashboard/dashboard.component.ts"
     ],
@@ -47254,8 +47268,15 @@
     ],
     "x-wave": "v3"
   },
-  "dashboard.dashboard.ts.ca.tnd.2da09e4f": "CA (TND)",
-  "@dashboard.dashboard.ts.ca.tnd.2da09e4f": {
+  "dashboard.dashboard.ts.du.1er.au.day.month.factures.et.avoirs.p.56168873": "du 1er au {$day}/{$month}, factures et avoirs Payée + Validée",
+  "@dashboard.dashboard.ts.du.1er.au.day.month.factures.et.avoirs.p.56168873": {
+    "x-files": [
+      "src/app/features/dashboard/dashboard.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "dashboard.dashboard.ts.ca.ht.tnd.166bc7d7": "CA HT (TND)",
+  "@dashboard.dashboard.ts.ca.ht.tnd.166bc7d7": {
     "x-files": [
       "src/app/features/dashboard/dashboard.component.ts"
     ],
@@ -55499,14 +55520,8 @@
   "invoices.invoice-detail.ts.tableau.de.bord.a524057f": "Tableau de bord",
   "@invoices.invoice-detail.ts.tableau.de.bord.a524057f": {
     "x-files": [
-      "src/app/features/invoices/invoice-detail/invoice-detail.component.ts"
-    ],
-    "x-wave": "v4"
-  },
-  "invoices.invoice-detail.ts.avoirs.de.vente.63b21d70": "Avoirs de vente",
-  "@invoices.invoice-detail.ts.avoirs.de.vente.63b21d70": {
-    "x-files": [
-      "src/app/features/invoices/invoice-detail/invoice-detail.component.ts"
+      "src/app/features/invoices/invoice-detail/invoice-detail.component.ts",
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
     ],
     "x-wave": "v4"
   },
@@ -55517,8 +55532,30 @@
     ],
     "x-wave": "v4"
   },
+  "invoices.invoice-list.ts.factures.et.avoirs.efa96afa": "Factures et avoirs",
+  "@invoices.invoice-list.ts.factures.et.avoirs.efa96afa": {
+    "x-files": [
+      "src/app/features/invoices/invoice-detail/invoice-detail.component.ts",
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-detail.ts.avoirs.de.vente.63b21d70": "Avoirs de vente",
+  "@invoices.invoice-detail.ts.avoirs.de.vente.63b21d70": {
+    "x-files": [
+      "src/app/features/invoices/invoice-detail/invoice-detail.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "invoices.invoice-detail.ts.factures.impayees.dc3cffa5": "Factures impayées",
   "@invoices.invoice-detail.ts.factures.impayees.dc3cffa5": {
+    "x-files": [
+      "src/app/features/invoices/invoice-detail/invoice-detail.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-detail.ts.document.e214b8a2": "Document",
+  "@invoices.invoice-detail.ts.document.e214b8a2": {
     "x-files": [
       "src/app/features/invoices/invoice-detail/invoice-detail.component.ts"
     ],
@@ -55954,6 +55991,20 @@
     ],
     "x-wave": "v4"
   },
+  "invoices.invoice-list.comptes.dans.le.ca.payee.validee.f9d71768": "Comptés dans le CA (Payée + Validée)",
+  "@invoices.invoice-list.comptes.dans.le.ca.payee.validee.f9d71768": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-list.seuls.les.documents.aux.statuts.payee.et.validee.3d82aaff": "Seuls les documents aux statuts Payée et Validée alimentent le chiffre d'affaires du tableau de bord.",
+  "@invoices.invoice-list.seuls.les.documents.aux.statuts.payee.et.validee.3d82aaff": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "invoices.invoice-list.erreur.de.chargement.d7568404": "Erreur de chargement",
   "@invoices.invoice-list.erreur.de.chargement.d7568404": {
     "x-files": [
@@ -55982,6 +56033,13 @@
     ],
     "x-wave": "v4"
   },
+  "invoices.invoice-list.type.3deb7456": "Type",
+  "@invoices.invoice-list.type.3deb7456": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "invoices.invoice-list.client.1bdd79b1": "Client",
   "@invoices.invoice-list.client.1bdd79b1": {
     "x-files": [
@@ -55998,6 +56056,20 @@
   },
   "invoices.invoice-list.echeance.f9a77ff6": "Échéance",
   "@invoices.invoice-list.echeance.f9a77ff6": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-list.montant.ht.3df1d6fe": "Montant HT ",
+  "@invoices.invoice-list.montant.ht.3df1d6fe": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-list.montant.ttc.a742433a": "Montant TTC ",
+  "@invoices.invoice-list.montant.ttc.a742433a": {
     "x-files": [
       "src/app/features/invoices/invoice-list/invoice-list.component.ts"
     ],
@@ -56045,8 +56117,29 @@
     ],
     "x-wave": "v4"
   },
+  "invoices.invoice-list.non.compte.dans.le.ca.dafda2d1": "Non compté dans le CA",
+  "@invoices.invoice-list.non.compte.dans.le.ca.dafda2d1": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "invoices.invoice-list.telecharger.le.pdf.27f91e86": "Télécharger le PDF",
   "@invoices.invoice-list.telecharger.le.pdf.27f91e86": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-list.aucun.document.1e1d774d": "Aucun document",
+  "@invoices.invoice-list.aucun.document.1e1d774d": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-list.aucune.facture.ni.avoir.ne.correspond.aux.filtre.9120f3ee": "Aucune facture ni avoir ne correspond aux filtres.",
+  "@invoices.invoice-list.aucune.facture.ni.avoir.ne.correspond.aux.filtre.9120f3ee": {
     "x-files": [
       "src/app/features/invoices/invoice-list/invoice-list.component.ts"
     ],
@@ -56150,6 +56243,13 @@
     ],
     "x-wave": "v4"
   },
+  "invoices.invoice-list.ts.factures.fac.et.avoirs.avo.montants.ht.signes.17b0cf71": "Factures (FAC) et avoirs (AVO) — montants HT signés",
+  "@invoices.invoice-list.ts.factures.fac.et.avoirs.avo.montants.ht.signes.17b0cf71": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "invoices.invoice-list.ts.gerez.vos.factures.8f0170ed": "Gérez vos factures",
   "@invoices.invoice-list.ts.gerez.vos.factures.8f0170ed": {
     "x-files": [
@@ -56171,6 +56271,13 @@
     ],
     "x-wave": "v4"
   },
+  "invoices.invoice-list.ts.affichage.de.first.a.last.sur.totalrecords.docum.d2b49537": "Affichage de {first} à {last} sur {totalRecords} documents",
+  "@invoices.invoice-list.ts.affichage.de.first.a.last.sur.totalrecords.docum.d2b49537": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "ui.tern.affichage.de.first.a.last.sur.totalrecords.b122ac": "Affichage de {first} à {last} sur {totalRecords} avoirs",
   "@ui.tern.affichage.de.first.a.last.sur.totalrecords.b122ac": {
     "x-files": [
@@ -56180,6 +56287,13 @@
   },
   "ui.tern.affichage.de.first.a.last.sur.totalrecords.5b810a": "Affichage de {first} à {last} sur {totalRecords} factures",
   "@ui.tern.affichage.de.first.a.last.sur.totalrecords.5b810a": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-list.ts.imprimer.l.etat.des.factures.et.avoirs.periode.e.b594cddd": "Imprimer l'état des factures et avoirs (période et client optionnels)",
+  "@invoices.invoice-list.ts.imprimer.l.etat.des.factures.et.avoirs.periode.e.b594cddd": {
     "x-files": [
       "src/app/features/invoices/invoice-list/invoice-list.component.ts"
     ],
@@ -56199,8 +56313,57 @@
     ],
     "x-wave": "v4"
   },
+  "invoices.invoice-list.ts.voir.le.document.d865fc48": "Voir le document",
+  "@invoices.invoice-list.ts.voir.le.document.d865fc48": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "ui.tern.voir.l.avoir.1dce8e": "Voir l'avoir",
   "@ui.tern.voir.l.avoir.1dce8e": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-list.ts.documents.687c8286": "Documents",
+  "@invoices.invoice-list.ts.documents.687c8286": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-list.ts.total.ca.ht.db6b172a": "Total CA HT",
+  "@invoices.invoice-list.ts.total.ca.ht.db6b172a": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-list.ts.payee.validee.5cc111ce": "Payée + Validée",
+  "@invoices.invoice-list.ts.payee.validee.5cc111ce": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-list.ts.total.factures.ht.9e644aba": "Total factures HT",
+  "@invoices.invoice-list.ts.total.factures.ht.9e644aba": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-list.ts.total.avoirs.ht.85d73be4": "Total avoirs HT",
+  "@invoices.invoice-list.ts.total.avoirs.ht.85d73be4": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-list.ts.total.ttc.9e80ff7c": "Total TTC",
+  "@invoices.invoice-list.ts.total.ttc.9e80ff7c": {
     "x-files": [
       "src/app/features/invoices/invoice-list/invoice-list.component.ts"
     ],
@@ -56215,13 +56378,6 @@
   },
   "ui.tern.factures.da35e4": "Factures",
   "@ui.tern.factures.da35e4": {
-    "x-files": [
-      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
-    ],
-    "x-wave": "v4"
-  },
-  "invoices.invoice-list.ts.total.ttc.9e80ff7c": "Total TTC",
-  "@invoices.invoice-list.ts.total.ttc.9e80ff7c": {
     "x-files": [
       "src/app/features/invoices/invoice-list/invoice-list.component.ts"
     ],
@@ -56341,6 +56497,13 @@
   },
   "invoices.invoice-list.report.empty.cancelledFilter": "L'état n'inclut pas les factures annulées.",
   "@invoices.invoice-list.report.empty.cancelledFilter": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-list.ts.aucun.document.sur.cette.periode.pour.l.etat.8263fbe5": "Aucun document sur cette période pour l'état.",
+  "@invoices.invoice-list.ts.aucun.document.sur.cette.periode.pour.l.etat.8263fbe5": {
     "x-files": [
       "src/app/features/invoices/invoice-list/invoice-list.component.ts"
     ],
@@ -60130,6 +60293,20 @@
   },
   "invoices.routes.title.D_tail_facture_InstaFa": "Détail facture - InstaFact",
   "@invoices.routes.title.D_tail_facture_InstaFa": {
+    "x-files": [
+      "src/app/features/invoices/invoices.routes.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.routes.title.factures.et.avoirs.instafact.78c53fc2": "Factures et avoirs - InstaFact",
+  "@invoices.routes.title.factures.et.avoirs.instafact.78c53fc2": {
+    "x-files": [
+      "src/app/features/invoices/invoices.routes.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.routes.title.detail.document.instafact.66939a66": "Détail document - InstaFact",
+  "@invoices.routes.title.detail.document.instafact.66939a66": {
     "x-files": [
       "src/app/features/invoices/invoices.routes.ts"
     ],
@@ -89063,8 +89240,7 @@
   "reports.analytics.chiffre.d.affaires.0a341b9f": "Chiffre d'affaires",
   "@reports.analytics.chiffre.d.affaires.0a341b9f": {
     "x-files": [
-      "src/app/features/reports/analytics/clients/clients-analytics.component.ts",
-      "src/app/features/reports/analytics/revenue/revenue-analytics.component.ts"
+      "src/app/features/reports/analytics/clients/clients-analytics.component.ts"
     ],
     "x-wave": "v6"
   },
@@ -89197,6 +89373,13 @@
     ],
     "x-wave": "v6"
   },
+  "reports.analytics.chiffre.d.affaires.ht.170920d6": "Chiffre d'affaires HT",
+  "@reports.analytics.chiffre.d.affaires.ht.170920d6": {
+    "x-files": [
+      "src/app/features/reports/analytics/revenue/revenue-analytics.component.ts"
+    ],
+    "x-wave": "v6"
+  },
   "reports.analytics.suivez.l.evolution.de.votre.chiffre.d.af.76e29594": "Suivez l'évolution de votre chiffre d'affaires au fil du temps",
   "@reports.analytics.suivez.l.evolution.de.votre.chiffre.d.af.76e29594": {
     "x-files": [
@@ -89211,8 +89394,8 @@
     ],
     "x-wave": "v6"
   },
-  "reports.analytics.factures.emises.25238c12": "Factures émises",
-  "@reports.analytics.factures.emises.25238c12": {
+  "reports.analytics.documents.comptes.ef17ff03": "Documents comptés",
+  "@reports.analytics.documents.comptes.ef17ff03": {
     "x-files": [
       "src/app/features/reports/analytics/revenue/revenue-analytics.component.ts"
     ],
@@ -89225,8 +89408,8 @@
     ],
     "x-wave": "v6"
   },
-  "reports.analytics.evolution.du.chiffre.d.affaires.59b2f451": "Évolution du chiffre d'affaires",
-  "@reports.analytics.evolution.du.chiffre.d.affaires.59b2f451": {
+  "reports.analytics.evolution.du.chiffre.d.affaires.ht.58b3551f": "Évolution du chiffre d'affaires HT",
+  "@reports.analytics.evolution.du.chiffre.d.affaires.ht.58b3551f": {
     "x-files": [
       "src/app/features/reports/analytics/revenue/revenue-analytics.component.ts"
     ],
@@ -89267,8 +89450,8 @@
     ],
     "x-wave": "v6"
   },
-  "reports.analytics.ca.par.client.ffe5c6ae": "CA par client",
-  "@reports.analytics.ca.par.client.ffe5c6ae": {
+  "reports.analytics.ca.ht.par.client.4e8ae89a": "CA HT par client",
+  "@reports.analytics.ca.ht.par.client.4e8ae89a": {
     "x-files": [
       "src/app/features/reports/analytics/revenue/revenue-analytics.component.ts"
     ],
@@ -89309,15 +89492,15 @@
     ],
     "x-wave": "v6"
   },
-  "reports.analytics.total.encaisse.1d142e41": "Total encaissé",
-  "@reports.analytics.total.encaisse.1d142e41": {
+  "reports.analytics.total.ca.ht.payee.validee.b4cd5bf1": "Total CA HT (Payée + Validée)",
+  "@reports.analytics.total.ca.ht.payee.validee.b4cd5bf1": {
     "x-files": [
       "src/app/features/reports/analytics/revenue/revenue-analytics.component.ts"
     ],
     "x-wave": "v6"
   },
-  "reports.analytics.montant.total.des.factures.payees.sur.la.periode.8354cb1d": "Montant total des factures payées sur la période",
-  "@reports.analytics.montant.total.des.factures.payees.sur.la.periode.8354cb1d": {
+  "reports.analytics.factures.moins.avoirs.montants.ht.c85ec87d": "Factures moins avoirs, montants HT",
+  "@reports.analytics.factures.moins.avoirs.montants.ht.c85ec87d": {
     "x-files": [
       "src/app/features/reports/analytics/revenue/revenue-analytics.component.ts"
     ],
@@ -89330,8 +89513,8 @@
     ],
     "x-wave": "v6"
   },
-  "reports.analytics.moyenne.par.facture.b3785f82": "Moyenne par facture",
-  "@reports.analytics.moyenne.par.facture.b3785f82": {
+  "reports.analytics.moyenne.ht.par.document.0290e01c": "Moyenne HT par document",
+  "@reports.analytics.moyenne.ht.par.document.0290e01c": {
     "x-files": [
       "src/app/features/reports/analytics/revenue/revenue-analytics.component.ts"
     ],
@@ -89344,8 +89527,8 @@
     ],
     "x-wave": "v6"
   },
-  "reports.analytics.chiffre.d.affaires.c2a496b1": "Chiffre d'Affaires",
-  "@reports.analytics.chiffre.d.affaires.c2a496b1": {
+  "reports.analytics.chiffre.d.affaires.ht.bca48774": "Chiffre d'Affaires HT",
+  "@reports.analytics.chiffre.d.affaires.ht.bca48774": {
     "x-files": [
       "src/app/features/reports/analytics/revenue/revenue-analytics.component.ts"
     ],

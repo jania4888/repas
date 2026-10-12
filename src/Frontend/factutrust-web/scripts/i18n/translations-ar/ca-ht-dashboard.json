@@ -1,0 +1,19 @@
+{
+  "dashboard.dashboard.chiffre.d.affaires.ht.170920d6": "رقم المعاملات دون أداءات",
+  "dashboard.dashboard.ca.ht.du.mois.en.cours.2d9a457c": "رقم معاملات الشهر الجاري دون أداءات",
+  "dashboard.dashboard.ts.du.1er.au.day.month.factures.et.avoirs.p.56168873": "من 1 إلى {$day}/{$month}، الفواتير وإشعارات الدائن المسددة والمثبّتة",
+  "dashboard.dashboard.ts.ca.ht.tnd.166bc7d7": "رقم المعاملات دون أداءات (دينار تونسي)",
+  "dashboard.dashboard.evolution.du.ca.ht.ba8a25a8": "تطور رقم المعاملات دون أداءات",
+  "dashboard.dashboard-layout.ts.evolution.du.ca.ht.ba8a25a8": "تطور رقم المعاملات دون أداءات",
+  "dashboard.dashboard.evolution.du.chiffre.d.affaires.ht.sur.6.mois.b354147d": "تطور رقم المعاملات دون أداءات على مدى 6 أشهر",
+  "dashboard.dashboard.top.5.clients.par.montants.factures.ttc.6c98c4ba": "أفضل 5 حرفاء حسب المبالغ المفوترة شاملة الضريبة",
+  "reports.analytics.chiffre.d.affaires.ht.170920d6": "رقم المعاملات دون أداءات",
+  "reports.analytics.evolution.du.chiffre.d.affaires.ht.58b3551f": "تطور رقم المعاملات دون أداءات",
+  "reports.analytics.ca.ht.par.client.4e8ae89a": "رقم المعاملات دون أداءات حسب الحريف",
+  "reports.analytics.total.ca.ht.payee.validee.b4cd5bf1": "إجمالي رقم المعاملات دون أداءات (مسددة + مثبّتة)",
+  "reports.analytics.factures.moins.avoirs.montants.ht.c85ec87d": "الفواتير مطروحًا منها إشعارات الدائن، مبالغ دون أداءات",
+  "reports.analytics.documents.comptes.ef17ff03": "الوثائق المحتسبة",
+  "reports.analytics.moyenne.ht.par.document.0290e01c": "المتوسط دون أداءات لكل وثيقة",
+  "reports.analytics.chiffre.d.affaires.ht.bca48774": "رقم المعاملات دون أداءات",
+  "dashboard.dashboard.montants.factures.ttc.39b575ce": "المبالغ المفوترة شاملة الضريبة"
+}

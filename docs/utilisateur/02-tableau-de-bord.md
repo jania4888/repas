@@ -20,11 +20,21 @@ En haut de la page, cinq cartes affichent vos chiffres clés :
 
 | Indicateur | Signification | Clic → destination |
 |------------|---------------|-------------------|
-| **Chiffre d'affaires** | Montant total des ventes (factures payées, validées ou signées) | Rapports → Analyse du CA |
+| **Chiffre d'affaires HT** | Montant total hors taxes des ventes (factures moins avoirs, statuts Payée et Validée) | Rapports → Analyse du CA |
 | **Ventes aujourd'hui** | Encaissements du jour | Liste des factures du jour |
-| **CA du mois en cours** | Chiffre d'affaires du mois en cours | Liste des factures du mois |
+| **CA HT du mois en cours** | Chiffre d'affaires hors taxes du 1er du mois à aujourd'hui (factures moins avoirs, statuts Payée et Validée) | Factures et avoirs du mois en cours |
 | **Factures impayées** | Factures non payées et non annulées | Liste des factures impayées |
 | **Produits en alerte** | Produits en rupture ou stock faible | Stock (section alertes) |
+
+---
+
+## Factures et avoirs
+
+Un clic sur **CA HT du mois en cours** (ou sur une barre du graphique) ouvre la vue **Factures et avoirs**. Elle liste les factures (FAC) et les avoirs (AVO) sur la période choisie, avec leur montant hors taxes (HT) et toutes taxes comprises (TTC) — les montants des avoirs sont négatifs.
+
+La case **Comptés dans le CA (Payée + Validée)**, cochée par défaut, limite la liste aux documents au statut Payée ou Validée : ce sont ceux qui composent le chiffre d'affaires affiché sur le tableau de bord. Décochez-la pour voir aussi les documents à d'autres statuts (Brouillon, Signée...), qui n'entrent pas dans le calcul du CA.
+
+Le total **CA HT** affiché en haut de la liste correspond toujours exactement à la carte du tableau de bord pour la même période.
 
 ---
 
@@ -48,7 +58,7 @@ Cliquez sur une alerte pour accéder directement à la page concernée avec le f
 |------|-------------------|
 | **Livraisons en attente** (carte à droite des actions rapides) | Bons de livraison en attente |
 | **Devis en cours** | Liste des devis actifs |
-| **Évolution du CA** (titre ou barre d'un mois) | Analyse du CA ou factures du mois sélectionné |
+| **Évolution du CA HT** (titre ou barre d'un mois) | Analyse du CA ou Factures et avoirs du mois sélectionné |
 
 ---
 

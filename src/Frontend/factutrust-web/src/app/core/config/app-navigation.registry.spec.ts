@@ -6,6 +6,7 @@ import {
   ALL_NAV_ITEMS,
   buildFlatNavSearchEntries,
   filterNavItems,
+  getAllNavSearchEntries,
   getVisibleNavSearchEntries,
   NavItem,
   NavSubItem
@@ -297,6 +298,40 @@ describe('app-navigation.registry', () => {
       expect(entry).toBeDefined();
       expect(entry!.label).toBe('Avoir de vente');
       expect(entry!.permissionsAll).toContain('invoices:read');
+    });
+  });
+
+  describe('Factures et avoirs (CA HT) search entry', () => {
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        providers: [provideHttpClient(), provideHttpClientTesting()]
+      });
+    });
+
+    it('is search-only: no sidebar entry under Ventes', () => {
+      const ventes = ALL_NAV_ITEMS.find(i => i.label === 'Ventes');
+      const routes = ventes?.children?.map(c => c.route) ?? [];
+      expect(routes).not.toContain('/invoices/revenue');
+    });
+
+    it('is exposed to global search with invoices:read + Sales module', () => {
+      const auth = TestBed.inject(AuthService);
+      setUser(auth, companyUser);
+
+      const entry = getAllNavSearchEntries(auth).find(e => e.route === '/invoices/revenue');
+      expect(entry).toBeDefined();
+      expect(entry!.group).toBe('page');
+      expect(entry!.permissionsAll).toEqual(['invoices:read']);
+      expect(entry!.modules).toEqual([AppModule.Sales]);
+      expect(entry!.keywords?.some(k => k.includes('ca ht'))).toBe(true);
+    });
+
+    it('is hidden from search without invoices:read', () => {
+      const auth = TestBed.inject(AuthService);
+      setUser(auth, { ...companyUser, effectivePermissions: ['accounting:read'] });
+
+      const routes = getAllNavSearchEntries(auth).map(e => e.route);
+      expect(routes).not.toContain('/invoices/revenue');
     });
   });
 

@@ -152,6 +152,9 @@ public interface IInvoiceRepository : IRepository<Invoice>
         DateTime? toDate,
         Guid? clientId = null,
         InvoiceType? type = null,
+        // When true, restricts the report to realized revenue documents (Paid + Validated); see
+        // InvoiceStatusExtensions.IsRealizedRevenue / frontend REALIZED_REVENUE_STATUSES.
+        bool realizedRevenueOnly = false,
         CancellationToken cancellationToken = default);
     
     /// <summary>
@@ -183,6 +186,9 @@ public interface IInvoiceRepository : IRepository<Invoice>
         int pageSize,
         bool unpaidOnly = false,
         InvoiceType? type = null,
+        // When true, restricts the list to realized revenue documents (Paid + Validated); see
+        // InvoiceStatusExtensions.IsRealizedRevenue / frontend REALIZED_REVENUE_STATUSES.
+        bool realizedRevenueOnly = false,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -197,6 +203,9 @@ public interface IInvoiceRepository : IRepository<Invoice>
         Guid? clientId,
         bool unpaidOnly = false,
         InvoiceType? type = null,
+        // When true, restricts the summary to realized revenue documents (Paid + Validated); see
+        // InvoiceStatusExtensions.IsRealizedRevenue / frontend REALIZED_REVENUE_STATUSES.
+        bool realizedRevenueOnly = false,
         CancellationToken cancellationToken = default);
 
     /// <summary>

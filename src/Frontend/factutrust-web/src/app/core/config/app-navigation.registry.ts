@@ -1239,6 +1239,23 @@ export function filterNavItems(auth: AuthService, items: NavItem[]): NavItem[] {
   return out;
 }
 
+/** Additional read pages reachable from search only (no sidebar entry). */
+export const EXTRA_PAGE_ROUTES: NavSearchEntry[] = [
+  {
+    // Vue « Factures et avoirs » (CA HT) — ouverte depuis la carte du tableau de bord ;
+    // indexée pour la recherche globale, sans entrée dans la barre latérale.
+    id: 'invoices-revenue',
+    label: $localize`:@@core.app-navigation.registry.ts.factures.et.avoirs.ca.ht.eebf3385:Factures et avoirs (CA HT)`,
+    route: '/invoices/revenue',
+    icon: 'fa-solid fa-file-invoice',
+    group: 'page',
+    breadcrumb: 'Ventes > Factures et avoirs',
+    keywords: ['ca ht', 'chiffre d\'affaires', 'factures et avoirs', 'revenue', 'réalisé'],
+    modules: [M.Sales],
+    permissionsAll: ['invoices:read']
+  }
+];
+
 /** Additional create routes not in quick-access or sidebar. */
 export const EXTRA_CREATE_ROUTES: NavSearchEntry[] = [
   {
@@ -1274,7 +1291,7 @@ export function getAllNavSearchEntries(auth: AuthService): NavSearchEntry[] {
   const base = getVisibleNavSearchEntries(auth);
   const seen = new Set(base.map(e => e.route));
   const delegatedFirm = auth.isAccountingFirm() && auth.isDelegatedMode();
-  for (const extra of EXTRA_CREATE_ROUTES) {
+  for (const extra of [...EXTRA_PAGE_ROUTES, ...EXTRA_CREATE_ROUTES]) {
     if (delegatedFirm && isDelegatedFirmBlockedSalesPurchasesRoute(extra.route)) {
       continue;
     }
