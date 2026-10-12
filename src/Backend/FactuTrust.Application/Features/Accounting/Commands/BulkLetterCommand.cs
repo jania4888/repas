@@ -1,4 +1,6 @@
 using System.Collections.Concurrent;
+using System.Security.Cryptography;
+using System.Text;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
@@ -41,8 +43,10 @@ public sealed record BulkLetterGroup(string ClientKey, IReadOnlyList<Guid> Journ
 /// <para>
 /// <b>Idempotence :</b> le rapport d'un lot terminé est gardé 15 minutes sous la clé
 /// <c>bulk-letter:{TenantId}:{UserId}:{RequestId}</c> ; un rejeu renvoie ce rapport sans rien
-/// renvoyer au service. Un lot interrompu (groupes <c>NotProcessed</c>) n'est PAS gardé : un
-/// rejeu reprend le lot, et les groupes déjà lettrés sortent en <c>AlreadyLettered</c>.
+/// renvoyer au service. Le rapport garde l'empreinte du contenu : le même <c>RequestId</c> avec une
+/// autre sélection est refusé (<c>LETTERING_VALIDATION</c>). Un lot interrompu (annulation ou
+/// erreur inattendue, groupes <c>NotProcessed</c>) n'est PAS gardé : un rejeu reprend le lot, et
+/// les groupes déjà lettrés sortent en <c>AlreadyLettered</c>.
 /// </para>
 /// <para>
 /// <b>Exclusion :</b> un même lot ne s'exécute qu'une fois à la fois (<c>TryAdd</c> atomique
@@ -50,6 +54,11 @@ public sealed record BulkLetterGroup(string ClientKey, IReadOnlyList<Guid> Journ
 /// <c>LETTERING_BULK_IN_PROGRESS</c>. Le cache et le verrou sont locaux au processus : la
 /// correction reste garantie par les données (contrôle « déjà lettrée » en Serializable, index
 /// unique), le verrou évite seulement un double travail.
+/// </para>
+/// <para>
+/// <b>Erreur inattendue</b> (hors validation) sur un groupe : le groupe sort en
+/// <c>Rejected / LETTERING_UNEXPECTED</c>, les suivants en <c>NotProcessed</c>, et l'audit de lot
+/// est écrit quand même (<c>Aborted = true</c>) : les groupes déjà lettrés restent tracés.
 /// </para>
 /// </remarks>
 public sealed class BulkLetterCommandHandler : IRequestHandler<BulkLetterCommand, Result<BulkLetteringResultDto>>
@@ -109,8 +118,9 @@ public sealed class BulkLetterCommandHandler : IRequestHandler<BulkLetterCommand
                 LetteringErrors.Validation("Utilisateur ou société non identifié."));
 
         var key = ReportCacheKey(tenantId, userId, request.RequestId);
-        if (_cache.TryGetValue(key, out BulkLetteringResultDto? cached) && cached is not null)
-            return Result.Success(cached);
+        var fingerprint = Fingerprint(request.Groups);
+        if (TryGetReport(key, fingerprint, out var replay))
+            return replay;
 
         if (!RunningRequests.TryAdd(key, 0))
             return Result.Failure<BulkLetteringResultDto>(
@@ -119,13 +129,14 @@ public sealed class BulkLetterCommandHandler : IRequestHandler<BulkLetterCommand
         try
         {
             // Second contrôle : le lot a pu se terminer entre la lecture du cache et le verrou.
-            if (_cache.TryGetValue(key, out cached) && cached is not null)
-                return Result.Success(cached);
+            if (TryGetReport(key, fingerprint, out replay))
+                return replay;
 
             var results = new List<BulkLetteringGroupResultDto>(request.Groups.Count);
+            var aborted = false;
             foreach (var group in request.Groups)
             {
-                if (cancellationToken.IsCancellationRequested)
+                if (aborted || cancellationToken.IsCancellationRequested)
                 {
                     results.Add(new BulkLetteringGroupResultDto(
                         group.ClientKey, BulkLetteringStatuses.NotProcessed, null, null, null));
@@ -133,7 +144,9 @@ public sealed class BulkLetterCommandHandler : IRequestHandler<BulkLetterCommand
                 }
 
                 // CancellationToken.None : un groupe commencé va au bout (jamais à moitié fait).
-                results.Add(await LetterGroupAsync(request.RequestId, group));
+                var (outcome, unexpected) = await LetterGroupAsync(request.RequestId, group);
+                results.Add(outcome);
+                aborted = unexpected;
             }
 
             var report = new BulkLetteringResultDto(
@@ -151,21 +164,25 @@ public sealed class BulkLetterCommandHandler : IRequestHandler<BulkLetterCommand
                 entityId: request.RequestId,
                 newValues: new
                 {
+                    request.RequestId,
                     report.Total,
                     report.Lettered,
                     report.AlreadyLettered,
                     report.Rejected,
                     report.NotProcessed,
+                    Aborted = aborted,
                     Groups = results.Select(r => new { r.ClientKey, r.Status, r.Code, r.ErrorCode }).ToList()
                 },
                 cancellationToken: CancellationToken.None);
 
             _logger.LogInformation(
-                "Lettrage en masse {RequestId} : {Total} groupes, {Lettered} lettrés, {AlreadyLettered} déjà lettrés, {Rejected} refusés, {NotProcessed} non traités.",
-                request.RequestId, report.Total, report.Lettered, report.AlreadyLettered, report.Rejected, report.NotProcessed);
+                "Lettrage en masse {RequestId} : {Total} groupes, {Lettered} lettrés, {AlreadyLettered} déjà lettrés, {Rejected} refusés, {NotProcessed} non traités, interrompu : {Aborted}.",
+                request.RequestId, report.Total, report.Lettered, report.AlreadyLettered, report.Rejected, report.NotProcessed, aborted);
 
-            if (report.NotProcessed == 0)
-                _cache.Set(key, report, new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = ReportRetention });
+            // Un lot interrompu (annulation ou erreur inattendue) n'est pas gardé : le rejeu le reprend.
+            if (!aborted && report.NotProcessed == 0)
+                _cache.Set(key, new CachedReport(fingerprint, report),
+                    new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = ReportRetention });
 
             return Result.Success(report);
         }
@@ -175,7 +192,45 @@ public sealed class BulkLetterCommandHandler : IRequestHandler<BulkLetterCommand
         }
     }
 
-    private async Task<BulkLetteringGroupResultDto> LetterGroupAsync(Guid requestId, BulkLetterGroup group)
+    /// <summary>Rapport gardé et empreinte du contenu qui l'a produit.</summary>
+    private sealed record CachedReport(string Fingerprint, BulkLetteringResultDto Report);
+
+    /// <summary>
+    /// Rapport gardé pour ce lot. Même <c>RequestId</c> avec un contenu différent → refus explicite
+    /// (jamais l'ancien rapport : le client croirait la nouvelle sélection traitée).
+    /// </summary>
+    private bool TryGetReport(string key, string fingerprint, out Result<BulkLetteringResultDto> result)
+    {
+        result = default!;
+        if (!_cache.TryGetValue(key, out CachedReport? cached) || cached is null)
+            return false;
+
+        result = cached.Fingerprint == fingerprint
+            ? Result.Success(cached.Report)
+            : Result.Failure<BulkLetteringResultDto>(LetteringErrors.Validation(
+                "Cet identifiant de lot a déjà servi pour une autre sélection : relancez la confirmation."));
+        return true;
+    }
+
+    /// <summary>Empreinte SHA-256 du contenu ordonné du lot (clés et identifiants de lignes).</summary>
+    public static string Fingerprint(IReadOnlyList<BulkLetterGroup> groups)
+    {
+        var builder = new StringBuilder();
+        foreach (var group in groups)
+        {
+            builder.Append(group.ClientKey).Append(':');
+            foreach (var id in group.JournalEntryLineIds)
+                builder.Append(id.ToString("N")).Append(',');
+            builder.Append(';');
+        }
+        return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(builder.ToString())));
+    }
+
+    /// <summary>
+    /// Lettre un groupe. <c>Unexpected = true</c> quand le groupe a levé une erreur hors validation
+    /// (base indisponible, audit en échec après validation…) : le lot s'arrête là.
+    /// </summary>
+    private async Task<(BulkLetteringGroupResultDto Outcome, bool Unexpected)> LetterGroupAsync(Guid requestId, BulkLetterGroup group)
     {
         Result<LetteringResultDto> result;
         try
@@ -193,27 +248,78 @@ public sealed class BulkLetterCommandHandler : IRequestHandler<BulkLetterCommand
         catch (ValidationException ex)
         {
             var message = string.Join(" ", ex.Errors.Select(e => e.ErrorMessage).Distinct());
-            return new BulkLetteringGroupResultDto(
-                group.ClientKey, BulkLetteringStatuses.Rejected, null, LetteringErrorCodes.Validation, message);
+            return (new BulkLetteringGroupResultDto(
+                group.ClientKey, BulkLetteringStatuses.Rejected, null, LetteringErrorCodes.Validation, message), false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Lettrage en masse {RequestId} : erreur inattendue sur le groupe {ClientKey}, lot interrompu.",
+                requestId, group.ClientKey);
+            return (await UnexpectedOutcomeAsync(group), true);
         }
 
         if (result.IsSuccess)
-            return new BulkLetteringGroupResultDto(
-                group.ClientKey, BulkLetteringStatuses.Lettered, result.Value.Code, null, null);
+            return (new BulkLetteringGroupResultDto(
+                group.ClientKey, BulkLetteringStatuses.Lettered, result.Value.Code, null, null), false);
 
-        if (result.Error.Code == LetteringErrorCodes.AlreadyLettered)
+        if (result.Error.Code == LetteringErrorCodes.AlreadyLettered
+            && await ExistingGroupCodeAsync(group) is { } existing)
+            return (new BulkLetteringGroupResultDto(
+                group.ClientKey, BulkLetteringStatuses.AlreadyLettered, existing, null, null), false);
+
+        return (new BulkLetteringGroupResultDto(
+            group.ClientKey, BulkLetteringStatuses.Rejected, null, result.Error.Code, result.Error.Description), false);
+    }
+
+    /// <summary>
+    /// Code du groupe de lettrage <b>définitif</b> dont les membres sont exactement les lignes
+    /// demandées, sinon null. Un groupe plus large ou partiel n'est pas la proposition : la
+    /// déclarer « déjà lettrée » ferait croire qu'elle a été appliquée telle quelle.
+    /// </summary>
+    private async Task<string?> ExistingGroupCodeAsync(BulkLetterGroup group)
+    {
+        var codes = await _queries.GetLineCodesAsync(group.JournalEntryLineIds, CancellationToken.None);
+        var code = SharedCode(group, codes);
+        if (code is null || code.StartsWith('P'))
+            return null;
+
+        var existing = await _queries.GetGroupAsync(code, CancellationToken.None);
+        if (existing.IsFailure)
+            return null;
+
+        var members = existing.Value.Lines.Select(l => l.LineId).ToHashSet();
+        return members.SetEquals(group.JournalEntryLineIds) ? code : null;
+    }
+
+    /// <summary>Code commun à toutes les lignes du groupe (null si une ligne est libre, inconnue ou d'un autre groupe).</summary>
+    private static string? SharedCode(BulkLetterGroup group, IReadOnlyDictionary<Guid, string?> codes)
+    {
+        var distinct = group.JournalEntryLineIds
+            .Select(id => codes.TryGetValue(id, out var c) ? c : null)
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
+        return distinct.Count == 1 && !string.IsNullOrEmpty(distinct[0]) ? distinct[0] : null;
+    }
+
+    /// <summary>
+    /// Résultat d'un groupe en erreur inattendue : refusé avec <c>LETTERING_UNEXPECTED</c>. Si toutes
+    /// ses lignes portent désormais un même code (erreur après l'écriture), ce code est renvoyé pour
+    /// que l'utilisateur vérifie le groupe avant de le relancer.
+    /// </summary>
+    private async Task<BulkLetteringGroupResultDto> UnexpectedOutcomeAsync(BulkLetterGroup group)
+    {
+        string? code = null;
+        try
         {
-            var codes = await _queries.GetLineCodesAsync(group.JournalEntryLineIds, CancellationToken.None);
-            var distinct = group.JournalEntryLineIds
-                .Select(id => codes.TryGetValue(id, out var c) ? c : null)
-                .Distinct(StringComparer.Ordinal)
-                .ToList();
-            if (distinct.Count == 1 && !string.IsNullOrEmpty(distinct[0]))
-                return new BulkLetteringGroupResultDto(
-                    group.ClientKey, BulkLetteringStatuses.AlreadyLettered, distinct[0], null, null);
+            code = SharedCode(group, await _queries.GetLineCodesAsync(group.JournalEntryLineIds, CancellationToken.None));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Lettrage en masse : état du groupe {ClientKey} illisible après l'erreur.", group.ClientKey);
         }
 
         return new BulkLetteringGroupResultDto(
-            group.ClientKey, BulkLetteringStatuses.Rejected, null, result.Error.Code, result.Error.Description);
+            group.ClientKey, BulkLetteringStatuses.Rejected, code, LetteringErrorCodes.Unexpected,
+            "Erreur inattendue : vérifiez l'état de ce groupe avant de le relancer.");
     }
 }

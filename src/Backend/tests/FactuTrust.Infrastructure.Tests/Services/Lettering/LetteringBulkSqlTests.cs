@@ -98,7 +98,7 @@ public sealed class LetteringBulkSqlTests : IDisposable
             throw new NotSupportedException();
     }
 
-    private BulkLetterCommandHandler Handler(IMemoryCache? cache = null)
+    private BulkLetterCommandHandler Handler(IMemoryCache? cache = null, Action? afterEachLetteredGroup = null)
     {
         var user = new Mock<ICurrentUser>();
         user.SetupGet(u => u.TenantId).Returns(_tenantId);
@@ -108,7 +108,11 @@ public sealed class LetteringBulkSqlTests : IDisposable
         audit.Setup(a => a.LogAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid?>(), It.IsAny<object?>(),
                 It.IsAny<object?>(), It.IsAny<CancellationToken>()))
             .Callback<string, string, Guid?, object?, object?, CancellationToken>((action, _, id, _, values, _) =>
-                _audits.Enqueue((action, id, values)))
+            {
+                _audits.Enqueue((action, id, values));
+                if (action == AuditActions.Accounting.Lettered)
+                    afterEachLetteredGroup?.Invoke();
+            })
             .Returns(Task.CompletedTask);
         var settings = Options.Create(new AccountingSettings { LetteringSuggestionsEnabled = true });
         var lettering = new LetteringService(_factory!, _ambient, user.Object);
@@ -260,19 +264,64 @@ public sealed class LetteringBulkSqlTests : IDisposable
         Assert.Equal(1, await ctx.LetteringGroups.AsNoTracking().CountAsync());
     }
 
+    /// <summary>
+    /// Lot interrompu après le premier groupe (client déconnecté), puis rejoué avec le même
+    /// RequestId : le rapport partiel n'a pas été gardé, le rejeu reprend le lot. Le premier groupe
+    /// sort en AlreadyLettered avec son code, les suivants sont lettrés. Un second rejeu renvoie
+    /// le rapport désormais gardé, sans nouveau lettrage.
+    /// </summary>
     [Fact]
-    public async Task Bulk_Replay_ReturnsTheCachedReport_WithoutLetteringAgain()
+    public async Task Bulk_InterruptedThenReplayed_ResumesWithoutLetteringTwice()
     {
         if (!_sqlDb.CanRun) return;
 
         var cache = new MemoryCache(new MemoryCacheOptions());
-        var command = new BulkLetterCommand(Guid.NewGuid(), new[] { Pair("a") });
+        var a = Pair("a");
+        var b = Pair("b", 60m);
+        var c = Pair("c", 70m);
+        var command = new BulkLetterCommand(Guid.NewGuid(), new[] { a, b, c });
+        using var cts = new CancellationTokenSource();
 
-        var first = await Handler(cache).Handle(command, CancellationToken.None);
+        var interrupted = await Handler(cache, afterEachLetteredGroup: cts.Cancel).Handle(command, cts.Token);
+
+        Assert.Equal(
+            new[] { BulkLetteringStatuses.Lettered, BulkLetteringStatuses.NotProcessed, BulkLetteringStatuses.NotProcessed },
+            interrupted.Value.Results.Select(r => r.Status));
+        Assert.Null(CodeOf(b.JournalEntryLineIds[0]));
+        var codeA = interrupted.Value.Results[0].Code;
+
+        var resumed = await Handler(cache).Handle(command, CancellationToken.None);
+
+        Assert.Equal(
+            new[] { BulkLetteringStatuses.AlreadyLettered, BulkLetteringStatuses.Lettered, BulkLetteringStatuses.Lettered },
+            resumed.Value.Results.Select(r => r.Status));
+        Assert.Equal(codeA, resumed.Value.Results[0].Code);
+        Assert.NotNull(CodeOf(c.JournalEntryLineIds[1]));
+
         var replay = await Handler(cache).Handle(command, CancellationToken.None);
+        Assert.Same(resumed.Value, replay.Value);
+        await using var ctx = _factory!.CreateIsolatedContext();
+        Assert.Equal(3, await ctx.LetteringGroups.AsNoTracking().CountAsync());
+        Assert.Equal(3, _audits.Count(x => x.Action == AuditActions.Accounting.Lettered));
+        Assert.Equal(2, _audits.Count(x => x.Action == AuditActions.Accounting.LetteredBulk));
+    }
 
-        Assert.Same(first.Value, replay.Value);
-        Assert.Equal(BulkLetteringStatuses.Lettered, replay.Value.Results.Single().Status);
-        Assert.Single(_audits, x => x.Action == AuditActions.Accounting.LetteredBulk);
+    /// <summary>Revue p3-13 (L3) : lignes déjà lettrées dans un groupe plus large → refus, pas « déjà lettré ».</summary>
+    [Fact]
+    public async Task Bulk_LinesAlreadyInALargerGroup_AreRejected()
+    {
+        if (!_sqlDb.CanRun) return;
+
+        var debit = SeedClientLine(100m, true);
+        var credit1 = SeedClientLine(60m, false);
+        var credit2 = SeedClientLine(40m, false);
+        Assert.True((await new LetteringService(_factory!, _ambient).ManualLetterAsync(new[] { debit, credit1, credit2 })).IsSuccess);
+
+        var result = await Handler().Handle(
+            new BulkLetterCommand(Guid.NewGuid(), new[] { new BulkLetterGroup("sub", new[] { debit, credit1 }) }),
+            CancellationToken.None);
+
+        var r = Assert.Single(result.Value.Results);
+        Assert.Equal((BulkLetteringStatuses.Rejected, LetteringErrorCodes.AlreadyLettered), (r.Status, r.ErrorCode));
     }
 }

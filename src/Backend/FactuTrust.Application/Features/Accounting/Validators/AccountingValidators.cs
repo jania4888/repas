@@ -227,7 +227,8 @@ public sealed class BulkLetterCommandValidator : AbstractValidator<BulkLetterCom
     public const int ClientKeyMaxLength = 32;
 
     // Classe de caractères simple, sans groupe ni alternative : aucun retour arrière possible.
-    private static readonly Regex ClientKeyPattern = new("^[A-Za-z0-9_-]+$", RegexOptions.Compiled);
+    // \z (et non $) : en .NET, $ accepte aussi un « \n » final.
+    private static readonly Regex ClientKeyPattern = new(@"^[A-Za-z0-9_-]+\z", RegexOptions.Compiled);
 
     public BulkLetterCommandValidator(IOptions<AccountingSettings> settings)
     {
@@ -247,44 +248,50 @@ public sealed class BulkLetterCommandValidator : AbstractValidator<BulkLetterCom
             .Must(g => g.Count <= maxGroups)
             .WithMessage($"{maxGroups} groupes au maximum peuvent être lettrés en une seule fois.");
 
-        RuleForEach(x => x.Groups)
-            .NotNull().WithMessage("Groupe invalide.");
-
-        // Where : un élément null (JSON « null ») est signalé ci-dessus, jamais passé aux règles.
-        RuleForEach(x => x.Groups).Where(g => g is not null).ChildRules(group =>
+        // Au-delà du plafond de groupes, la règle ci-dessus suffit : aucune règle par groupe ni
+        // inter-groupes ne parcourt une liste trop longue (le validator ne dépend pas de la limite
+        // de taille du corps HTTP).
+        When(x => x.Groups is not null && x.Groups.Count <= maxGroups, () =>
         {
-            group.RuleFor(g => g.ClientKey)
-                .Cascade(CascadeMode.Stop)
-                .NotEmpty().WithMessage("La clé de proposition est obligatoire.")
-                .MaximumLength(ClientKeyMaxLength)
-                .WithMessage($"La clé de proposition ne peut pas dépasser {ClientKeyMaxLength} caractères.")
-                .Must(k => ClientKeyPattern.IsMatch(k))
-                .WithMessage("La clé de proposition contient des caractères invalides.");
+            RuleForEach(x => x.Groups)
+                .NotNull().WithMessage("Groupe invalide.");
 
-            group.RuleFor(g => g.JournalEntryLineIds)
-                .Cascade(CascadeMode.Stop)
-                .NotNull().WithMessage("Au moins deux lignes sont requises par groupe.")
-                .Must(ids => ids.Count >= 2).WithMessage("Au moins deux lignes sont requises par groupe.")
-                .Must(ids => ids.Count <= maxLinesPerGroup)
-                .WithMessage($"{maxLinesPerGroup} lignes au maximum par groupe.")
-                .Must(ids => ids.All(id => id != Guid.Empty)).WithMessage("Identifiant de ligne invalide.")
-                .Must(ids => ids.Distinct().Count() == ids.Count)
-                .WithMessage("Une même ligne est sélectionnée plusieurs fois dans un groupe.");
-        });
+            // Where : un élément null (JSON « null ») est signalé ci-dessus, jamais passé aux règles.
+            RuleForEach(x => x.Groups).Where(g => g is not null).ChildRules(group =>
+            {
+                group.RuleFor(g => g.ClientKey)
+                    .Cascade(CascadeMode.Stop)
+                    .NotEmpty().WithMessage("La clé de proposition est obligatoire.")
+                    .MaximumLength(ClientKeyMaxLength)
+                    .WithMessage($"La clé de proposition ne peut pas dépasser {ClientKeyMaxLength} caractères.")
+                    .Must(k => ClientKeyPattern.IsMatch(k))
+                    .WithMessage("La clé de proposition contient des caractères invalides.");
 
-        // Contrôles inter-groupes : seulement si la liste est utilisable (les règles ci-dessus
-        // signalent déjà une liste ou un groupe manquant).
-        When(x => x.Groups is not null && x.Groups.All(g => g is not null), () =>
-        {
-            RuleFor(x => x.Groups)
-                .Must(g => g.Sum(x => x.JournalEntryLineIds?.Count ?? 0) <= maxTotalLines)
-                .WithMessage($"{maxTotalLines} lignes au maximum peuvent être lettrées en une seule fois.")
-                .Must(NoLineInTwoGroups)
-                .WithMessage("Une même ligne apparaît dans plusieurs groupes.")
-                .Must(g => g.Where(x => !string.IsNullOrEmpty(x.ClientKey))
-                            .Select(x => x.ClientKey).Distinct(StringComparer.Ordinal).Count()
-                           == g.Count(x => !string.IsNullOrEmpty(x.ClientKey)))
-                .WithMessage("Une même clé de proposition apparaît dans plusieurs groupes.");
+                group.RuleFor(g => g.JournalEntryLineIds)
+                    .Cascade(CascadeMode.Stop)
+                    .NotNull().WithMessage("Au moins deux lignes sont requises par groupe.")
+                    .Must(ids => ids.Count >= 2).WithMessage("Au moins deux lignes sont requises par groupe.")
+                    .Must(ids => ids.Count <= maxLinesPerGroup)
+                    .WithMessage($"{maxLinesPerGroup} lignes au maximum par groupe.")
+                    .Must(ids => ids.All(id => id != Guid.Empty)).WithMessage("Identifiant de ligne invalide.")
+                    .Must(ids => ids.Distinct().Count() == ids.Count)
+                    .WithMessage("Une même ligne est sélectionnée plusieurs fois dans un groupe.");
+            });
+
+            // Contrôles inter-groupes : seulement si la liste est utilisable (les règles ci-dessus
+            // signalent déjà une liste ou un groupe manquant).
+            When(x => x.Groups is not null && x.Groups.All(g => g is not null), () =>
+            {
+                RuleFor(x => x.Groups)
+                    .Must(g => g.Sum(x => x.JournalEntryLineIds?.Count ?? 0) <= maxTotalLines)
+                    .WithMessage($"{maxTotalLines} lignes au maximum peuvent être lettrées en une seule fois.")
+                    .Must(NoLineInTwoGroups)
+                    .WithMessage("Une même ligne apparaît dans plusieurs groupes.")
+                    .Must(g => g.Where(x => !string.IsNullOrEmpty(x.ClientKey))
+                                .Select(x => x.ClientKey).Distinct(StringComparer.Ordinal).Count()
+                               == g.Count(x => !string.IsNullOrEmpty(x.ClientKey)))
+                    .WithMessage("Une même clé de proposition apparaît dans plusieurs groupes.");
+            });
         });
     }
 

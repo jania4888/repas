@@ -90,6 +90,41 @@ public sealed class BulkLetterCommandValidatorTests
         Validator(s => s.BulkMaxGroups = 10_000).TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Groups);
     }
 
+    [Fact]
+    public void ConfiguredLinesPerGroupCap_IsApplied_AndClamped()
+    {
+        Validator(s => s.BulkMaxLinesPerGroup = 3).TestValidate(Command(Group("a1", 4)))
+            .ShouldHaveValidationErrorFor("Groups[0].JournalEntryLineIds")
+            .WithErrorMessage("3 lignes au maximum par groupe.");
+        Validator(s => s.BulkMaxLinesPerGroup = 10_000).TestValidate(Command(Group("a1", 51)))
+            .ShouldHaveValidationErrorFor("Groups[0].JournalEntryLineIds")
+            .WithErrorMessage("50 lignes au maximum par groupe.");
+    }
+
+    [Fact]
+    public void ConfiguredTotalLinesCap_IsApplied_AndClamped()
+    {
+        Validator(s => s.BulkMaxTotalLines = 5).TestValidate(Command(Group("a", 3), Group("b", 3)))
+            .ShouldHaveValidationErrorFor(x => x.Groups)
+            .WithErrorMessage("5 lignes au maximum peuvent être lettrées en une seule fois.");
+        var cmd = Command(Enumerable.Range(0, 41).Select(i => Group($"k{i}", 50)).ToArray());
+        Validator(s => s.BulkMaxTotalLines = 1_000_000).TestValidate(cmd)
+            .ShouldHaveValidationErrorFor(x => x.Groups)
+            .WithErrorMessage("2000 lignes au maximum peuvent être lettrées en une seule fois.");
+    }
+
+    /// <summary>Revue p3-12 : au-delà du plafond de groupes, aucune règle par groupe ne s'exécute.</summary>
+    [Fact]
+    public void AboveGroupCap_ReportsOnlyTheCap_WithoutPerGroupRules()
+    {
+        var groups = Enumerable.Range(0, 201).Select(_ => new BulkLetterGroup("bad key", new[] { Guid.Empty })).ToArray();
+
+        var result = Validator().Validate(Command(groups));
+
+        var error = Assert.Single(result.Errors);
+        Assert.Equal("200 groupes au maximum peuvent être lettrés en une seule fois.", error.ErrorMessage);
+    }
+
     [Theory]
     [InlineData(1)]
     [InlineData(51)]
@@ -160,6 +195,7 @@ public sealed class BulkLetterCommandValidatorTests
     [InlineData("clé")]
     [InlineData("a/b")]
     [InlineData("<script>")]
+    [InlineData("a1\n")]   // revue p3-12 : « $ » acceptait un saut de ligne final
     public void InvalidClientKey_Fails(string key)
     {
         Validator().TestValidate(Command(Group(key))).ShouldHaveValidationErrorFor("Groups[0].ClientKey");
