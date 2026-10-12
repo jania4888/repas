@@ -899,15 +899,17 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
       error: (error) => {
         this.loading.set(false);
         this.initialLoad.set(false);
-        this.finishLoad();
 
-        // Gestion spécifique des erreurs 429 (rate limiting) — pas de retry automatique côté service
+        // Appliquer l'état d'erreur AVANT de rejouer un chargement mis en file : la
+        // requête rejouée efface le message au départ (loadInvoices), donc un message
+        // écrit après finirait affiché alors que la liste a été rechargée avec succès.
         if (error?.status === 429) {
           this.isRateLimited.set(true);
           const errorMsg = this.errorHandler.extractErrorMessage(error);
           this.errorMessage.set(errorMsg);
           // Ne pas afficher de toast ici car l'intercepteur le gère déjà
           // Le composant affiche juste le message inline
+          this.finishLoad();
           return;
         }
 
@@ -915,6 +917,7 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
         const errorMsg = this.errorHandler.extractErrorMessage(error) || $localize`:@@invoices.invoice-list.ts.impossible.de.charger.les.factures.583c2251:Impossible de charger les factures`;
         this.errorMessage.set(errorMsg);
         this.showErrorToast(errorMsg);
+        this.finishLoad();
       },
       complete: () => {
         this.initialLoadDone = true;

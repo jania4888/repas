@@ -170,6 +170,26 @@ describe('InvoiceListComponent', () => {
       expect(mocks.getInvoices.calls.mostRecent().args[0].realizedRevenueOnly).toBe(false);
     });
 
+    it('applies error state before replaying a queued reload (no stale error after success)', () => {
+      createComponent({ revenueMode: true });
+
+      const failed = new Subject<unknown>();
+      const replayed = new Subject<unknown>();
+      mocks.getInvoices.and.returnValues(failed.asObservable(), replayed.asObservable());
+      component.loadInvoices();
+
+      // La case bascule pendant la requête en vol, qui échoue ensuite ; le chargement
+      // est rejoué à la fin de la requête en échec.
+      component.onRealizedRevenueOnlyChange(false);
+      failed.error({ status: 500 });
+
+      // La requête rejouée réussit : le message d'erreur de la requête précédente
+      // ne doit pas rester affiché (l'état d'erreur est appliqué avant le rejeu).
+      replayed.next({ success: true, data: { items: [], totalCount: 0 } });
+      expect(component.errorMessage()).toBeNull();
+      expect(component.invoices()).toEqual([]);
+    });
+
     it('counts the checkbox as an active filter only when unchecked', () => {
       createComponent({ revenueMode: true });
       expect(component.hasActiveFilters()).toBe(false);
