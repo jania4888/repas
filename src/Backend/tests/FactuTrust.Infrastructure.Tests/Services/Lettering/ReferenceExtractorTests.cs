@@ -79,6 +79,30 @@ public sealed class ReferenceExtractorTests
         Assert.Empty(ReferenceExtractor.Extract(input, null, null));
     }
 
+    [Fact]
+    public void Extract_EmojiCrossingTruncationBoundary_KeepsEarlierReferences()
+    {
+        // L'emoji (paire de substitution) commence à l'index 599 : la coupe ne doit pas la scinder.
+        var prefix = "FAC-2026-001 ";
+        var input = prefix + new string('x', ReferenceExtractor.MaxInputLength - 1 - prefix.Length) + "😀 fin";
+        Assert.True(char.IsHighSurrogate(input[ReferenceExtractor.MaxInputLength - 1]));
+
+        Assert.Equal(new[] { "FAC-2026-001" }, ReferenceExtractor.Extract(input, null, null));
+        Assert.Equal(ReferenceExtractor.MaxInputLength - 1, ReferenceExtractor.Normalize(input).Length);
+    }
+
+    [Fact]
+    public void Extract_LoneSurrogates_DoNotThrow()
+    {
+        var input = "REG-2026-005 \uD83D seul \uDE00 et FAC\uD83D2026-001";
+        input = System.Text.RegularExpressions.Regex.Unescape(input);
+
+        var tokens = ReferenceExtractor.Extract(input, input, null);
+
+        Assert.Contains("REG-2026-005", tokens);
+        Assert.Contains("FAC-2026-001", tokens);
+    }
+
     public static TheoryData<string> PathologicalInputs() => new()
     {
         string.Concat(Enumerable.Repeat("FAC-", 125)),

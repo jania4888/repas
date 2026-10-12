@@ -83,8 +83,11 @@ internal static class ReferenceExtractor
     /// </summary>
     internal static string Normalize(string input)
     {
-        var truncated = input.Length > MaxInputLength ? input[..MaxInputLength] : input;
-        var decomposed = truncated.ToUpperInvariant().Normalize(NormalizationForm.FormD);
+        var length = Math.Min(input.Length, MaxInputLength);
+        // Ne jamais couper une paire de substitution (emoji…) : on recule d'un caractère.
+        if (length < input.Length && length > 0 && char.IsHighSurrogate(input[length - 1]))
+            length--;
+        var decomposed = WithoutLoneSurrogates(input.AsSpan(0, length)).ToUpperInvariant().Normalize(NormalizationForm.FormD);
 
         var sb = new StringBuilder(decomposed.Length);
         var previousDash = false;
@@ -107,6 +110,28 @@ internal static class ReferenceExtractor
             sb.Append(c);
         }
 
+        return sb.ToString();
+    }
+
+    /// <summary>
+    /// Remplace chaque demi-paire de substitution isolée par <c>-</c> : <see cref="string.Normalize()"/>
+    /// lève une exception sur un texte UTF-16 invalide, et une référence ne contient jamais de tel caractère.
+    /// </summary>
+    private static string WithoutLoneSurrogates(ReadOnlySpan<char> text)
+    {
+        var sb = new StringBuilder(text.Length);
+        for (var i = 0; i < text.Length; i++)
+        {
+            var ch = text[i];
+            if (char.IsHighSurrogate(ch) && i + 1 < text.Length && char.IsLowSurrogate(text[i + 1]))
+            {
+                sb.Append(ch).Append(text[++i]);
+            }
+            else
+            {
+                sb.Append(char.IsSurrogate(ch) ? '-' : ch);
+            }
+        }
         return sb.ToString();
     }
 
