@@ -140,11 +140,14 @@ describe('LetteringLedgerPaneComponent', () => {
   });
 
   describe('paneTitle', () => {
-    it('affiche Débit ou Crédit selon side', () => {
+    it('affiche le libellé débit ou crédit avec le nombre de lignes selon side', () => {
+      component.lines = [line({ lineId: 'l1' }), line({ lineId: 'l2' })];
       component.side = 'debit';
-      expect(component.paneTitle()).toContain('Débit');
+      expect(component.paneTitle()).toContain('débit');
+      expect(component.paneTitle()).toContain('2');
       component.side = 'credit';
-      expect(component.paneTitle()).toContain('Crédit');
+      expect(component.paneTitle()).toContain('crédit');
+      expect(component.paneTitle()).toContain('2');
     });
   });
 });

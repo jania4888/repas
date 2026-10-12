@@ -42,6 +42,11 @@ export class LetteringLedgerPaneComponent {
     return this.lines as LetteringLine[];
   }
 
+  /** Champ de tri de la colonne Montant : chaque volet trie sur son propre côté. */
+  get amountSortField(): string {
+    return this.side === 'debit' ? 'debit' : 'credit';
+  }
+
   /** Lié en propriété de classe (et non en expression de template) : Angular n'autorise pas les
    *  arrow functions inline dans les expressions de liaison. */
   readonly rowSelectableFn = (row: { data: LetteringLine }): boolean => this.isRowSelectable(row.data);
@@ -81,11 +86,23 @@ export class LetteringLedgerPaneComponent {
 
   paneTitle(): string {
     return this.side === 'debit'
-      ? $localize`:@@accounting.lettering.ledger.pane.ts.debit:Débit`
-      : $localize`:@@accounting.lettering.ledger.pane.ts.credit:Crédit`;
+      ? $localize`:@@accounting.lettering.ledger.pane.ts.debit.n:Écritures au débit (${this.lines.length}:count:)`
+      : $localize`:@@accounting.lettering.ledger.pane.ts.credit.n:Écritures au crédit (${this.lines.length}:count:)`;
   }
 
   checkboxAriaLabel(line: LetteringLine): string {
+    if (line.periodLocked) {
+      return $localize`:@@accounting.lettering.ledger.pane.ts.selectionner.la.ligne.verrouillee:Ligne du ${line.entryDate}:date: — ${line.label}:label: — verrouillée, période clôturée`;
+    }
     return $localize`:@@accounting.lettering.ledger.pane.ts.selectionner.la.ligne.du.date.mo:Sélectionner la ligne du ${line.entryDate}:date: — ${line.label}:label:`;
+  }
+
+  /** Évite la concaténation de chaînes dans le template (gate i18n). */
+  pieceLabel(line: LetteringLine): string {
+    return line.pieceRef || $localize`:@@accounting.lettering.ledger.pane.ts.piece.numero:N° ${line.entryNumber}:number:`;
+  }
+
+  lockedTooltip(): string {
+    return $localize`:@@accounting.lettering.ledger.pane.ts.lettrage.impossible.periode.cloturee:Lettrage impossible : période clôturée`;
   }
 }
