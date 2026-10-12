@@ -19,8 +19,9 @@ export interface AccountingFeatureFlags {
   multiCurrencyEnabled: boolean;
   /**
    * Propositions de lettrage déterministes + lettrage en masse (Phase 3 de la refonte du
-   * lettrage). Éteint par défaut : seuls les emplacements (placeholders) du nouvel écran de
-   * lettrage sont visibles tant que le moteur de proposition (back) n'est pas livré.
+   * lettrage). Éteint par défaut : le bandeau, le tiroir et le bouton « Propositions
+   * automatiques » ne sont pas rendus et aucun appel `lettering/suggestions` ne part. Le serveur a
+   * son propre interrupteur (`Accounting:LetteringSuggestionsEnabled`) : les deux doivent être actifs.
    */
   letteringProposals: boolean;
 }
