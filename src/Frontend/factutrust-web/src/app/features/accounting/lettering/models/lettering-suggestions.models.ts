@@ -10,7 +10,13 @@ import type {
   LetteringSuggestionReasonDto
 } from '../../services/accounting.service';
 
-/** Plafonds du lot, alignés sur les défauts serveur (`AccountingSettings.BulkMax*`). */
+/**
+ * Plafonds du lot, alignés sur les défauts serveur (`AccountingSettings.BulkMax*`).
+ * Dépendance connue : le serveur peut être configuré plus bas (`Clamped()` ne fixe que des
+ * maximums). Dans ce cas, un lot construit avec ces valeurs reçoit un 400 `LETTERING_VALIDATION`
+ * pour tout le lot ; le dialogue de masse (p3-20) affiche alors un message clair. Le plafond de
+ * lignes par groupe est sûr : `bulkEligible` (serveur) l'applique déjà.
+ */
 export const LETTERING_BULK_MAX_GROUPS = 200;
 export const LETTERING_BULK_MAX_LINES_PER_GROUP = 50;
 export const LETTERING_BULK_MAX_TOTAL_LINES = 2000;
