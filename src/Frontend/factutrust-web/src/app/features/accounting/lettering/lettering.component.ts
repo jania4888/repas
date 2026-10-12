@@ -131,10 +131,7 @@ export class LetteringComponent implements OnInit {
       label: $localize`:@@accounting.lettering.ts.menu.exporter.le.grand.livre:Exporter le grand livre (Excel)`,
       icon: 'pi pi-file-excel',
       command: () => this.store.exportLedger(),
-      disabled:
-        !this.store.filters().account.trim() ||
-        this.store.filters().accountMatch === 'prefix' ||
-        this.store.exporting()
+      disabled: !this.store.canExportLedger()
     },
     {
       // Lecture seule suffisante (plan §7.6) : l'action ouvre seulement le tiroir du groupe ; le

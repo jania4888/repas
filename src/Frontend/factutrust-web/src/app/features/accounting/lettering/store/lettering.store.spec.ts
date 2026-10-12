@@ -279,7 +279,11 @@ describe('LetteringStore', () => {
       spyOn(URL, 'createObjectURL').and.returnValue('blob:x');
       spyOn(URL, 'revokeObjectURL');
       api.exportLedger.and.returnValue(of(new Blob(['x'])));
+      loadLines([]);
+      // Brouillon modifié sans recharger : l'export suit l'écran affiché, pas la saisie.
+      store.updateFilters({ account: '9999', from: '2025-01-01' });
 
+      expect(store.canExportLedger()).toBeTrue();
       store.exportLedger();
 
       const [account, from, to, format] = api.exportLedger.calls.mostRecent().args;
@@ -291,14 +295,23 @@ describe('LetteringStore', () => {
       expect(store.exporting()).toBeFalse();
     });
 
-    it('is a no-op without an account', () => {
-      store.updateFilters({ account: '  ' });
+    it('is a no-op before a successful load', () => {
+      expect(store.canExportLedger()).toBeFalse();
+      store.exportLedger();
+      expect(api.exportLedger).not.toHaveBeenCalled();
+    });
+
+    it('is a no-op when the loaded account uses the prefix mode', () => {
+      store.updateFilters({ accountMatch: 'prefix' });
+      loadLines([]);
+      expect(store.canExportLedger()).toBeFalse();
       store.exportLedger();
       expect(api.exportLedger).not.toHaveBeenCalled();
     });
 
     it('shows an error when the export fails', () => {
       api.exportLedger.and.returnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
+      loadLines([]);
       store.exportLedger();
       expect(store.error()).toBeTruthy();
       expect(store.exporting()).toBeFalse();

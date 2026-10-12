@@ -208,13 +208,18 @@ describe('LetteringComponent', () => {
       expect(component.actionsMenuItems().some(i => (i.label ?? '').startsWith('Délettrer'))).toBeFalse();
     });
 
-    it('disables the ledger export without an exact account, enables it otherwise', () => {
+    it('enables the ledger export only for a loaded exact account', () => {
       const store = component['store'];
+      store.loadedFilters.set(null);
       expect(item('Exporter le grand livre').disabled).toBeTrue();
-      store.updateFilters({ ...store.filters(), account: '4111', accountMatch: 'exact' });
+      store.loadedFilters.set({ ...store.filters(), account: '4111', accountMatch: 'exact' });
       expect(item('Exporter le grand livre').disabled).toBeFalse();
-      store.updateFilters({ ...store.filters(), accountMatch: 'prefix' });
+      store.loadedFilters.set({ ...store.filters(), account: '4111', accountMatch: 'prefix' });
       expect(item('Exporter le grand livre').disabled).toBeTrue();
+      // Le brouillon des filtres n'a pas d'effet : seul le dernier chargement compte.
+      store.updateFilters({ ...store.filters(), account: '' });
+      store.loadedFilters.set({ ...store.filters(), account: '4111', accountMatch: 'exact' });
+      expect(item('Exporter le grand livre').disabled).toBeFalse();
     });
 
     it('delegates the ledger export to the store', () => {

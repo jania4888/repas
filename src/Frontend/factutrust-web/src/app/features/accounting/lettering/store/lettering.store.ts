@@ -480,14 +480,27 @@ export class LetteringStore {
   }
 
   /**
-   * Exporte au format Excel le grand livre du compte filtré, sur la période filtrée (plan §7.6),
+   * Filtres de l'export du grand livre : ceux du DERNIER chargement réussi (ce que l'écran
+   * affiche), jamais le brouillon en cours de saisie. `null` sans chargement, sans compte, ou en
+   * mode préfixe (l'export existant ne couvre pas les sous-comptes).
+   */
+  private readonly exportTarget = computed<LetteringFilters | null>(() => {
+    const f = this.loadedFilters();
+    if (!f || !f.account.trim() || f.accountMatch === 'prefix') return null;
+    return f;
+  });
+
+  readonly canExportLedger = computed(() => this.exportTarget() !== null && !this.exporting());
+
+  /**
+   * Exporte au format Excel le grand livre du compte affiché, sur la période affichée (plan §7.6),
    * via l'export existant `GET accounting/ledger/export` (droit lecture comptable). Sans effet si
-   * aucun compte n'est saisi ou si un export est déjà en cours.
+   * `canExportLedger()` est faux (aucun chargement, compte vide, mode préfixe, export en cours).
    */
   exportLedger(): void {
-    const f = this.filters();
+    const f = this.exportTarget();
+    if (!f || this.exporting()) return;
     const account = f.account.trim();
-    if (!account || this.exporting()) return;
     const from = parseLocalDateString(f.from);
     const to = parseLocalDateString(f.to);
     const range = validateDateRange(from, to);
