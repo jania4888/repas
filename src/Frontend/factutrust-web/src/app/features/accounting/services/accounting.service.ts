@@ -263,7 +263,10 @@ export interface LetteringSuggestionDto {
   /** Écart en devise de tenue (≠ 0 seulement en devise étrangère). */
   localGap: number;
   hasExchangeDifference: boolean;
-  /** Vrai si la proposition peut partir dans un lot (pas d'écart de change). */
+  /**
+   * Vrai si la proposition peut partir dans un lot : pas d'écart de change ET nombre de lignes
+   * dans la limite serveur `BulkMaxLinesPerGroup` (`LetteringSuggestionService.ToDto`).
+   */
   bulkEligible: boolean;
   reasons: LetteringSuggestionReasonDto[];
 }
@@ -279,7 +282,10 @@ export interface LetteringSuggestionsResultDto {
 }
 
 /** Filtres de `GET lettering/suggestions` : ceux de `lettering/lines`, sans état, sens ni pagination. */
-export interface LetteringSuggestionsQuery extends Omit<LetteringLinesQuery, 'state' | 'side' | 'page' | 'pageSize'> {
+/** Filtres partagés par `lettering/lines` et `lettering/suggestions`. */
+export type LetteringSharedFilters = Omit<LetteringLinesQuery, 'state' | 'side' | 'page' | 'pageSize'>;
+
+export interface LetteringSuggestionsQuery extends LetteringSharedFilters {
   /** 50 par défaut côté serveur. */
   maxResults?: number;
 }
@@ -2697,8 +2703,11 @@ export class AccountingService {
     return this.http.post<ApiResponse<BulkLetteringResultDto>>(`${this.base}/lettering/bulk`, { requestId, groups });
   }
 
-  /** Paramètres de filtre communs à `lettering/lines` et `lettering/suggestions`. */
-  private letteringFilterParams(query: LetteringSuggestionsQuery): HttpParams {
+  /**
+   * Paramètres de filtre communs à `lettering/lines` et `lettering/suggestions`. Le type exclut
+   * ce qui est propre à chaque route (`state`, `side`, pagination ; `maxResults`).
+   */
+  private letteringFilterParams(query: LetteringSharedFilters): HttpParams {
     let p = new HttpParams()
       .set('account', query.account)
       .set('from', query.from)

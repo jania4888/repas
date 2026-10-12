@@ -253,6 +253,14 @@ describe('AccountingService', () => {
       expect(req.request.body).toEqual({ journalEntryLineIds: ['id1'], allowPartial: false, origin: 'Manual' });
       req.flush({ success: true, data: null });
     });
+
+    it('envoie la clé seule si l’origine est absente', () => {
+      service.letterEntries(['id1'], true, undefined, 'k1').subscribe();
+
+      const req = httpMock.expectOne(`${base}/letter`);
+      expect(req.request.body).toEqual({ journalEntryLineIds: ['id1'], allowPartial: true, suggestionKey: 'k1' });
+      req.flush({ success: true, data: null });
+    });
   });
 
   describe('propositions et lettrage en masse (Phase 3)', () => {
@@ -295,6 +303,14 @@ describe('AccountingService', () => {
 
       const req = httpMock.expectOne(r => r.url === `${base}/lettering/suggestions`);
       expect(req.request.params.keys().sort()).toEqual(['account', 'from', 'to']);
+      req.flush({ success: true, data: null });
+    });
+
+    it('getLetteringSuggestions transmet maxResults = 0 tel quel (le serveur le refuse en 400)', () => {
+      service.getLetteringSuggestions({ account: '4111', from: '2026-01-01', to: '2026-12-31', maxResults: 0 }).subscribe();
+
+      const req = httpMock.expectOne(r => r.url === `${base}/lettering/suggestions`);
+      expect(req.request.params.get('maxResults')).toBe('0');
       req.flush({ success: true, data: null });
     });
 
