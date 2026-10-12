@@ -51,12 +51,14 @@ public sealed class LetteringSuggestionServiceTests
     }
 
     /// <summary>Horloge figée ; si <c>fireTimersAtOnce</c>, chaque minuterie expire dès sa création.</summary>
-    private sealed class TestTimeProvider(bool fireTimersAtOnce) : TimeProvider
+    /// <remarks><c>onCreateTimer</c> s'exécute à la création du fusible, juste avant le moteur.</remarks>
+    private sealed class TestTimeProvider(bool fireTimersAtOnce, Action? onCreateTimer = null) : TimeProvider
     {
         public override DateTimeOffset GetUtcNow() => Now;
 
         public override ITimer CreateTimer(TimerCallback callback, object? state, TimeSpan dueTime, TimeSpan period)
         {
+            onCreateTimer?.Invoke();
             if (fireTimersAtOnce)
                 callback(state);
             return new NoTimer();
@@ -74,7 +76,8 @@ public sealed class LetteringSuggestionServiceTests
         bool enabled = true,
         Action<LetteringSuggestionSettings>? configure = null,
         bool fireFuseAtOnce = false,
-        Factory? factory = null)
+        Factory? factory = null,
+        TimeProvider? timeProvider = null)
     {
         var settings = new AccountingSettings { LetteringSuggestionsEnabled = enabled };
         configure?.Invoke(settings.LetteringSuggestions);
@@ -82,7 +85,7 @@ public sealed class LetteringSuggestionServiceTests
             factory ?? new Factory(NewContext),
             Options.Create(settings),
             NullLogger<LetteringSuggestionService>.Instance,
-            new TestTimeProvider(fireFuseAtOnce));
+            timeProvider ?? new TestTimeProvider(fireFuseAtOnce));
     }
 
     private static GetLetteringLinesQuery Filter(string account = "4111") =>
@@ -269,6 +272,21 @@ public sealed class LetteringSuggestionServiceTests
         cts.Cancel();
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => Service().SuggestAsync(Filter(), 50, cts.Token));
+    }
+
+    /// <summary>
+    /// Revue interne p3-9 (Test 3) : le client annule après le chargement, pendant le moteur. Le moteur
+    /// voit un jeton annulé et répond « TimeFuse » ; le service doit pourtant lever l'annulation, et
+    /// non renvoyer un succès partiel.
+    /// </summary>
+    [Fact]
+    public async Task ClientCancellationDuringTheEngine_IsPropagated_NotReportedAsTimeFuse()
+    {
+        SeedAmountOnlyPairs(3);
+        using var cts = new CancellationTokenSource();
+        var service = Service(timeProvider: new TestTimeProvider(fireTimersAtOnce: false, onCreateTimer: cts.Cancel));
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => service.SuggestAsync(Filter(), 50, cts.Token));
     }
 
     [Fact]

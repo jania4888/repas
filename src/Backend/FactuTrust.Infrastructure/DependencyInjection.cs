@@ -21,6 +21,7 @@ using FactuTrust.Infrastructure.MultiTenancy;
 using FactuTrust.Infrastructure.Persistence;
 using FactuTrust.Infrastructure.Repositories;
 using FactuTrust.Infrastructure.Services;
+using FactuTrust.Infrastructure.Services.Lettering;
 using FactuTrust.Infrastructure.Services.AI;
 using FactuTrust.Infrastructure.Services.Forecasting;
 using FactuTrust.Infrastructure.Services.Forecasting.Background;
@@ -351,7 +352,7 @@ public static class DependencyInjection
         services.AddScoped<IFixedAssetExportService, FixedAssetExportService>();
         services.AddScoped<ILetteringService, LetteringService>();
         services.AddScoped<ILetteringQueryService, LetteringQueryService>();
-        services.AddScoped<ILetteringSuggestionService, FactuTrust.Infrastructure.Services.Lettering.LetteringSuggestionService>();
+        services.AddScoped<ILetteringSuggestionService, LetteringSuggestionService>();
         services.AddScoped<IAuditLogQueryService, AuditLogQueryService>();
         services.AddScoped<IFecExportService, FecExportService>();
         services.AddScoped<IJournalImportService, JournalImportService>();
