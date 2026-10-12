@@ -1954,7 +1954,8 @@ public sealed class AccountingController : ControllerBase
         var body = ApiResponse<object>.FailWithCode(error.Description, error.Code);
         return error.Code switch
         {
-            LetteringErrorCodes.AlreadyLettered or LetteringErrorCodes.PeriodLocked => Conflict(body),
+            LetteringErrorCodes.AlreadyLettered or LetteringErrorCodes.PeriodLocked
+                or LetteringErrorCodes.GroupInconsistent => Conflict(body),
             LetteringErrorCodes.GroupNotFound => NotFound(body),
             _ => BadRequest(body)
         };
