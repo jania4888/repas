@@ -15,5 +15,12 @@
   "accounting.lettering.suggestions.category.other": "اقتراح",
   "accounting.lettering.suggestions.confidence.high": "ثقة عالية",
   "accounting.lettering.suggestions.confidence.medium": "ثقة متوسطة",
-  "accounting.lettering.suggestions.confidence.low": "ثقة ضعيفة"
+  "accounting.lettering.suggestions.confidence.low": "ثقة ضعيفة",
+  "accounting.lettering.suggestions.confirm.message": "مطابقة الأسطر {$count} لهذا الاقتراح؟",
+  "accounting.lettering.suggestions.confirm.header": "اعتماد الاقتراح",
+  "accounting.lettering.suggestions.confirm.accept": "مطابقة",
+  "accounting.lettering.suggestions.validated": "تم اعتماد الاقتراح: أُنشئت المطابقة {$code}.",
+  "accounting.lettering.suggestions.error.load": "خطأ أثناء حساب الاقتراحات.",
+  "accounting.lettering.store.erreur.lot.en.cours": "دفعة المطابقة هذه قيد المعالجة. انتظر ثم حدّث الصفحة.",
+  "accounting.lettering.store.erreur.inattendue": "خطأ غير متوقع: تحقّق من حالة هذه المجموعة قبل إعادة المحاولة."
 }

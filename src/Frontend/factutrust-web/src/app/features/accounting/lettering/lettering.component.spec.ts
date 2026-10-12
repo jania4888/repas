@@ -40,8 +40,9 @@ describe('LetteringComponent', () => {
   beforeEach(() => {
     const api = jasmine.createSpyObj<AccountingService>('AccountingService', [
       'getLetteringLines', 'getLetteringGroup', 'letterEntries', 'settleExchangeDifference',
-      'unletterEntries', 'completePartialLettering'
+      'unletterEntries', 'completePartialLettering', 'getLetteringSuggestions'
     ]);
+    api.getLetteringSuggestions.and.returnValue(EMPTY);
     const auth = jasmine.createSpyObj<AuthService>('AuthService', ['hasPermission', 'user']);
     auth.hasPermission.and.returnValue(true);
     // `AnalyzeWithAiButtonComponent` (dans `app-lettering-filters`, rendu sans condition) construit

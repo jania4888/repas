@@ -10,6 +10,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
 import { AccountingToolbarActionsComponent } from '../shared/accounting-toolbar-actions.component';
 import { AccountingCorrectionBannerComponent } from '../shared/accounting-correction-banner.component';
 import { LetteringStore } from './store/lettering.store';
+import { LetteringSuggestionsStore } from './store/lettering-suggestions.store';
 import { LetteringFiltersComponent } from './components/lettering-filters/lettering-filters.component';
 import { LetteringLedgerPaneComponent } from './components/lettering-ledger-pane/lettering-ledger-pane.component';
 import { LetteringSelectionSummaryComponent } from './components/lettering-selection-summary/lettering-selection-summary.component';
@@ -41,12 +42,14 @@ import { buildLetteringAnalyzePayload } from './utils/lettering-ai-payload';
     LetteringSettleExchangeDialogComponent,
     LetteringGroupDrawerComponent
   ],
-  providers: [LetteringStore],
+  providers: [LetteringStore, LetteringSuggestionsStore],
   templateUrl: './lettering.component.html',
   styleUrl: './lettering.component.scss'
 })
 export class LetteringComponent implements OnInit {
   protected readonly store = inject(LetteringStore);
+  /** Propositions (Phase 3) : le store se recalcule seul après chaque chargement réussi. */
+  protected readonly suggestions = inject(LetteringSuggestionsStore);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly confirmation = inject(ConfirmationService);

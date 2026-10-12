@@ -25427,6 +25427,65 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.lettering.suggestions.confirm.message": "Lettrer les {$count} lignes de cette proposition ?",
+  "@accounting.lettering.suggestions.confirm.message": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering-suggestions.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.confirm.header": "Valider la proposition",
+  "@accounting.lettering.suggestions.confirm.header": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering-suggestions.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.confirm.accept": "Lettrer",
+  "@accounting.lettering.suggestions.confirm.accept": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering-suggestions.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "lettering.component.rejectLabel.Annuler": "Annuler",
+  "@lettering.component.rejectLabel.Annuler": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering-suggestions.store.ts",
+      "src/app/features/accounting/lettering/store/lettering.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.validated": "Proposition validée : lettrage {$code} créé.",
+  "@accounting.lettering.suggestions.validated": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering-suggestions.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.store.erreur.lettrage": "Erreur lors du lettrage.",
+  "@accounting.lettering.store.erreur.lettrage": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering-suggestions.store.ts",
+      "src/app/features/accounting/lettering/store/lettering.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.ts.erreur.reseau.lors.du.lettrage.1358d80e": "Erreur réseau lors du lettrage.",
+  "@accounting.lettering.ts.erreur.reseau.lors.du.lettrage.1358d80e": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering-suggestions.store.ts",
+      "src/app/features/accounting/lettering/store/lettering.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.error.load": "Erreur lors du calcul des propositions.",
+  "@accounting.lettering.suggestions.error.load": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering-suggestions.store.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.lettering.store.compte.obligatoire": "Le compte est obligatoire.",
   "@accounting.lettering.store.compte.obligatoire": {
     "x-files": [
@@ -25464,20 +25523,6 @@
   },
   "accounting.lettering.store.lettrage.succes": "Lettrage effectué avec succès (code {$code}).",
   "@accounting.lettering.store.lettrage.succes": {
-    "x-files": [
-      "src/app/features/accounting/lettering/store/lettering.store.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.lettering.store.erreur.lettrage": "Erreur lors du lettrage.",
-  "@accounting.lettering.store.erreur.lettrage": {
-    "x-files": [
-      "src/app/features/accounting/lettering/store/lettering.store.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.lettering.ts.erreur.reseau.lors.du.lettrage.1358d80e": "Erreur réseau lors du lettrage.",
-  "@accounting.lettering.ts.erreur.reseau.lors.du.lettrage.1358d80e": {
     "x-files": [
       "src/app/features/accounting/lettering/store/lettering.store.ts"
     ],
@@ -25539,13 +25584,6 @@
     ],
     "x-wave": "v7"
   },
-  "lettering.component.rejectLabel.Annuler": "Annuler",
-  "@lettering.component.rejectLabel.Annuler": {
-    "x-files": [
-      "src/app/features/accounting/lettering/store/lettering.store.ts"
-    ],
-    "x-wave": "v7"
-  },
   "accounting.lettering.ts.groupe.code.delettre.7a5b5fd3": "Groupe {$code} délettré.",
   "@accounting.lettering.ts.groupe.code.delettre.7a5b5fd3": {
     "x-files": [
@@ -25591,84 +25629,98 @@
   "accounting.lettering.store.erreur.validation": "Requête invalide.",
   "@accounting.lettering.store.erreur.validation": {
     "x-files": [
-      "src/app/features/accounting/lettering/store/lettering.store.ts"
+      "src/app/features/accounting/lettering/utils/lettering-errors.ts"
     ],
     "x-wave": "v7"
   },
   "accounting.lettering.store.erreur.lignes.introuvables": "Une ou plusieurs lignes sont introuvables. La liste a été actualisée.",
   "@accounting.lettering.store.erreur.lignes.introuvables": {
     "x-files": [
-      "src/app/features/accounting/lettering/store/lettering.store.ts"
+      "src/app/features/accounting/lettering/utils/lettering-errors.ts"
     ],
     "x-wave": "v7"
   },
   "accounting.lettering.store.erreur.deja.lettree": "Une ligne est déjà lettrée. La liste a été actualisée.",
   "@accounting.lettering.store.erreur.deja.lettree": {
     "x-files": [
-      "src/app/features/accounting/lettering/store/lettering.store.ts"
+      "src/app/features/accounting/lettering/utils/lettering-errors.ts"
     ],
     "x-wave": "v7"
   },
   "accounting.lettering.store.erreur.compte.incoherent": "Les lignes sélectionnées ne portent pas toutes sur le même compte.",
   "@accounting.lettering.store.erreur.compte.incoherent": {
     "x-files": [
-      "src/app/features/accounting/lettering/store/lettering.store.ts"
+      "src/app/features/accounting/lettering/utils/lettering-errors.ts"
     ],
     "x-wave": "v7"
   },
   "accounting.lettering.store.erreur.devise.incoherente": "Les lignes sélectionnées ne sont pas dans la même devise.",
   "@accounting.lettering.store.erreur.devise.incoherente": {
     "x-files": [
-      "src/app/features/accounting/lettering/store/lettering.store.ts"
+      "src/app/features/accounting/lettering/utils/lettering-errors.ts"
     ],
     "x-wave": "v7"
   },
   "accounting.lettering.store.erreur.non.equilibre": "La sélection n'est pas équilibrée (débit ≠ crédit).",
   "@accounting.lettering.store.erreur.non.equilibre": {
     "x-files": [
-      "src/app/features/accounting/lettering/store/lettering.store.ts"
+      "src/app/features/accounting/lettering/utils/lettering-errors.ts"
     ],
     "x-wave": "v7"
   },
   "accounting.lettering.store.erreur.periode.cloturee": "Impossible : la période est clôturée. La liste a été actualisée.",
   "@accounting.lettering.store.erreur.periode.cloturee": {
     "x-files": [
-      "src/app/features/accounting/lettering/store/lettering.store.ts"
+      "src/app/features/accounting/lettering/utils/lettering-errors.ts"
     ],
     "x-wave": "v7"
   },
   "accounting.lettering.store.erreur.groupe.introuvable": "Ce groupe de lettrage n'existe pas ou plus.",
   "@accounting.lettering.store.erreur.groupe.introuvable": {
     "x-files": [
-      "src/app/features/accounting/lettering/store/lettering.store.ts"
+      "src/app/features/accounting/lettering/utils/lettering-errors.ts"
     ],
     "x-wave": "v7"
   },
   "accounting.lettering.store.erreur.groupe.non.partiel": "Ce groupe n'est pas (ou plus) un lettrage partiel.",
   "@accounting.lettering.store.erreur.groupe.non.partiel": {
     "x-files": [
-      "src/app/features/accounting/lettering/store/lettering.store.ts"
+      "src/app/features/accounting/lettering/utils/lettering-errors.ts"
     ],
     "x-wave": "v7"
   },
   "accounting.lettering.store.erreur.ecart.de.change": "La sélection présente un écart de change : utilisez « Équilibrer ».",
   "@accounting.lettering.store.erreur.ecart.de.change": {
     "x-files": [
-      "src/app/features/accounting/lettering/store/lettering.store.ts"
+      "src/app/features/accounting/lettering/utils/lettering-errors.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.store.erreur.lot.en.cours": "Ce lot de lettrage est déjà en cours de traitement. Patientez puis actualisez.",
+  "@accounting.lettering.store.erreur.lot.en.cours": {
+    "x-files": [
+      "src/app/features/accounting/lettering/utils/lettering-errors.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.store.erreur.inattendue": "Erreur inattendue : vérifiez l'état de ce groupe avant de le relancer.",
+  "@accounting.lettering.store.erreur.inattendue": {
+    "x-files": [
+      "src/app/features/accounting/lettering/utils/lettering-errors.ts"
     ],
     "x-wave": "v7"
   },
   "accounting.lettering.store.erreur.fonctionnalite.desactivee": "Cette fonctionnalité n'est pas activée.",
   "@accounting.lettering.store.erreur.fonctionnalite.desactivee": {
     "x-files": [
-      "src/app/features/accounting/lettering/store/lettering.store.ts"
+      "src/app/features/accounting/lettering/utils/lettering-errors.ts"
     ],
     "x-wave": "v7"
   },
   "accounting.lettering.store.erreur.droit.insuffisant": "Droit insuffisant pour effectuer cette action.",
   "@accounting.lettering.store.erreur.droit.insuffisant": {
     "x-files": [
-      "src/app/features/accounting/lettering/store/lettering.store.ts"
+      "src/app/features/accounting/lettering/utils/lettering-errors.ts"
     ],
     "x-wave": "v7"
   },

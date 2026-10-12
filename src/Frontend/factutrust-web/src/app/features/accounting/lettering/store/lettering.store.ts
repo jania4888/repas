@@ -2,7 +2,6 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
-import { apiErrorCode } from '@core/utils/api-error-code';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { ConfirmationService } from '@core/services/confirmation.service';
 import {
@@ -12,7 +11,6 @@ import {
 } from '../../services/accounting.service';
 import { parseLocalDateString, validateDateRange } from '../../shared/accounting-date-utils';
 import {
-  LETTERING_ERROR_CODES,
   LETTERING_FUNCTIONAL_CURRENCY,
   LetteringBusyAction,
   LetteringFilters,
@@ -23,6 +21,7 @@ import {
 } from '../models/lettering.models';
 import { LETTERING_UNLETTER_PERMISSION } from '../lettering-permissions';
 import { computeSelectionSummary, paneTotal, selectionGuards, splitBySide } from '../utils/lettering-selection';
+import { shouldReloadOnLetteringError, translateLetteringError } from '../utils/lettering-errors';
 
 const EMPTY_TOTALS: LetteringTotals = { count: 0, debitCount: 0, creditCount: 0, totalDebit: 0, totalCredit: 0 };
 
@@ -92,6 +91,11 @@ export class LetteringStore {
   readonly totals = signal<LetteringTotals>(EMPTY_TOTALS);
   readonly truncated = signal(false);
   readonly loadedOnce = signal(false);
+  /**
+   * Incrémenté à chaque chargement réussi (Phase 3) : seul point d'accroche des propositions, qui
+   * se recalculent après tout lettrage, délettrage ou complétion sans toucher à ces méthodes.
+   */
+  readonly reloadSeq = signal(0);
 
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
@@ -322,6 +326,7 @@ export class LetteringStore {
             this.debitSelectedIds.set(new Set());
             this.creditSelectedIds.set(new Set());
             this.completionGroup.set(null);
+            this.reloadSeq.update(n => n + 1);
             onSuccess?.();
           } else {
             // `ApiResponse.error` n'embarque pas de code métier (ce champ n'existe que sur les
@@ -518,53 +523,11 @@ export class LetteringStore {
       });
   }
 
-  /**
-   * Recharge automatiquement la liste quand l'erreur reflète un état serveur désynchronisé de ce
-   * que l'utilisateur voit (ligne déjà lettrée par quelqu'un d'autre, ou période clôturée entre le
-   * chargement et l'action) : la liste affichée redevient cohérente sans action de l'utilisateur.
-   */
-  private readonly RELOAD_ON_CODES: readonly string[] = [
-    LETTERING_ERROR_CODES.alreadyLettered,
-    LETTERING_ERROR_CODES.periodLocked
-  ];
-
   private shouldReloadOnError(err: unknown): boolean {
-    const code = apiErrorCode(err);
-    return code !== undefined && this.RELOAD_ON_CODES.includes(code);
+    return shouldReloadOnLetteringError(err);
   }
 
-  /** Centralise la traduction des 11 codes métier `LETTERING_*` (contrat §5) en messages FR. */
   private translateError(err: unknown, networkFallback: string): string {
-    const code = apiErrorCode(err);
-    switch (code) {
-      case LETTERING_ERROR_CODES.validation:
-        return $localize`:@@accounting.lettering.store.erreur.validation:Requête invalide.`;
-      case LETTERING_ERROR_CODES.linesNotFound:
-        return $localize`:@@accounting.lettering.store.erreur.lignes.introuvables:Une ou plusieurs lignes sont introuvables. La liste a été actualisée.`;
-      case LETTERING_ERROR_CODES.alreadyLettered:
-        return $localize`:@@accounting.lettering.store.erreur.deja.lettree:Une ligne est déjà lettrée. La liste a été actualisée.`;
-      case LETTERING_ERROR_CODES.accountMismatch:
-        return $localize`:@@accounting.lettering.store.erreur.compte.incoherent:Les lignes sélectionnées ne portent pas toutes sur le même compte.`;
-      case LETTERING_ERROR_CODES.currencyMismatch:
-        return $localize`:@@accounting.lettering.store.erreur.devise.incoherente:Les lignes sélectionnées ne sont pas dans la même devise.`;
-      case LETTERING_ERROR_CODES.unbalanced:
-        return $localize`:@@accounting.lettering.store.erreur.non.equilibre:La sélection n'est pas équilibrée (débit ≠ crédit).`;
-      case LETTERING_ERROR_CODES.periodLocked:
-        return $localize`:@@accounting.lettering.store.erreur.periode.cloturee:Impossible : la période est clôturée. La liste a été actualisée.`;
-      case LETTERING_ERROR_CODES.groupNotFound:
-        return $localize`:@@accounting.lettering.store.erreur.groupe.introuvable:Ce groupe de lettrage n'existe pas ou plus.`;
-      case LETTERING_ERROR_CODES.groupNotPartial:
-        return $localize`:@@accounting.lettering.store.erreur.groupe.non.partiel:Ce groupe n'est pas (ou plus) un lettrage partiel.`;
-      case LETTERING_ERROR_CODES.exchangeDifference:
-        return $localize`:@@accounting.lettering.store.erreur.ecart.de.change:La sélection présente un écart de change : utilisez « Équilibrer ».`;
-      case LETTERING_ERROR_CODES.featureDisabled:
-        return $localize`:@@accounting.lettering.store.erreur.fonctionnalite.desactivee:Cette fonctionnalité n'est pas activée.`;
-      default:
-        break;
-    }
-    if ((err as { status?: number } | null)?.status === 403) {
-      return $localize`:@@accounting.lettering.store.erreur.droit.insuffisant:Droit insuffisant pour effectuer cette action.`;
-    }
-    return this.errors.extractErrorMessage(err, networkFallback);
+    return translateLetteringError(err, networkFallback, this.errors);
   }
 }
