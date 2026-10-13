@@ -16,6 +16,7 @@ using FactuTrust.Domain.Services.Payroll;
 using FactuTrust.Domain.ValueObjects;
 using FactuTrust.Infrastructure.MultiTenancy;
 using FactuTrust.Infrastructure.Persistence;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -377,7 +378,8 @@ public sealed class BankStatementPostingService : IBankStatementPostingService
         var counterparts = await ctx.JournalEntryLines.AsNoTracking()
             .Where(l => entryIds.Contains(l.JournalEntryId)
                         && !l.AccountNumber.StartsWith(bankGl)
-                        && !l.AccountNumber.StartsWith("4366"))
+                        && !l.AccountNumber.StartsWith("4366")
+                        && !l.AccountNumber.StartsWith(BankStatementProposalEngine.SuspenseAccountRoot))
             .Select(l => new { l.JournalEntryId, l.AccountNumber })
             .ToListAsync(cancellationToken);
         var byEntry = counterparts.GroupBy(l => l.JournalEntryId)
@@ -642,7 +644,7 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
         if (!_settings.BrouillardEnabled)
             return Fail<GenerateBankStatementEntriesResult>(BankStatementPostingErrorCodes.DraftsDisabled,
                 "Le brouillard est désactivé : les écritures d'un relevé ne peuvent être générées qu'en brouillard, pour être validées ensuite.");
-        if (request.Items.Count == 0)
+        if (request.Items.Count == 0 && !request.Atomic)
             return Result.Success(new GenerateBankStatementEntriesResult { Atomic = request.Atomic });
 
         var journalCode = (string.IsNullOrWhiteSpace(request.JournalCode) ? BankJournalRules.DefaultBankJournalCode : request.JournalCode).Trim().ToUpperInvariant();
@@ -768,7 +770,7 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
 
         var byLine = proposals.ToDictionary(p => p.LineId);
         var lines = statement.Lines.ToDictionary(l => l.Id);
-        var excluded = request.ExcludedLineIds.ToHashSet();
+        var excluded = (request.ExcludedLineIds ?? Array.Empty<Guid>()).ToHashSet();
         var requested = request.Items.DistinctBy(i => i.LineId).ToList();
         var requestedIds = requested.Select(i => i.LineId).ToHashSet();
         var settledStatuses = new[]
@@ -776,8 +778,21 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
             BankLineStatuses.Generated, BankLineStatuses.Reconciled, BankLineStatuses.AlreadyPosted, BankLineStatuses.AlreadyImported
         };
 
+        // Une ligne ne peut pas être à la fois soumise et explicitement exclue : rejet net plutôt
+        // qu'un double traitement implicite dépendant de l'ordre d'exécution.
+        var overlap = requestedIds.Intersect(excluded).ToList();
+        if (overlap.Count > 0)
+        {
+            return Result.Failure<GenerateBankStatementEntriesResult>(new Error(BankStatementPostingErrorCodes.AtomicOverlap,
+                "Une ou plusieurs lignes figurent à la fois dans les lignes soumises et dans les lignes exclues.")
+            {
+                Metadata = new Dictionary<string, object?> { ["data"] = new { overlappingLineIds = overlap } }
+            });
+        }
+
         // Couverture explicite : chaque ligne non réglée doit figurer soit dans Items, soit dans
-        // ExcludedLineIds (plan §3.10 point 2). Protège contre un écran périmé.
+        // ExcludedLineIds (plan §3.10 point 2). Protège contre un écran périmé. S'applique même si
+        // Items est vide (ne jamais passer sous silence des lignes non couvertes).
         var missing = statement.Lines
             .Where(l => !requestedIds.Contains(l.Id) && !excluded.Contains(l.Id))
             .Where(l => !byLine.TryGetValue(l.Id, out var p) || !settledStatuses.Contains(p.Status))
@@ -861,7 +876,7 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
         // réservation des numéros par exercice DANS la transaction, création ordonnée. Le premier
         // échec (y compris une DbUpdateException sur l'index unique) annule tout — jamais convertie
         // en « already_posted » comme en mode ligne par ligne.
-        Result<List<(Guid LineId, Guid EntryId, int Number)>> atomicResult;
+        Result<AtomicWriteResult> atomicResult;
         try
         {
             atomicResult = await _unitOfWork.ExecuteAsync(async ct =>
@@ -891,53 +906,95 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
                     .Where(e => !e.IsReversed && e.SourceEntityId != null && ids.Contains(e.SourceEntityId.Value) && SourceTypes.Contains(e.SourceEntityType!))
                     .AnyAsync(ct);
                 if (alreadyPosted)
-                    return Result.Failure<List<(Guid, Guid, int)>>(new Error(BankStatementPostingErrorCodes.AtomicConflict,
+                    return Result.Failure<AtomicWriteResult>(new Error(BankStatementPostingErrorCodes.AtomicConflict,
                         "Une autre génération a déjà comptabilisé au moins une de ces lignes."));
 
-                // Un bloc de numéros par exercice fiscal représenté : un relevé peut chevaucher
-                // décembre et janvier.
+                // 1) Résoudre/ouvrir TOUTES les périodes concernées d'abord (un seul passage), avant
+                // de réserver des numéros ou d'insérer quoi que ce soit : raccourcit la fenêtre où le
+                // verrou applicatif est détenu et évite d'entrelacer la création de période avec la
+                // réservation de numéros/l'insertion (contention cross-connexion non diagnosticable).
+                var periodsByMonth = new Dictionary<(int Year, int Month), AccountingPeriod>();
+                foreach (var (line, _) in ordered)
+                {
+                    var key = (line.TransactionDate.Year, line.TransactionDate.Month);
+                    if (periodsByMonth.ContainsKey(key))
+                        continue;
+                    var period = await _periods.EnsureOpenPeriodAsync(line.TransactionDate, ct);
+                    if (period.IsFailure)
+                        return Result.Failure<AtomicWriteResult>(new Error(BankStatementPostingErrorCodes.AtomicConflict, period.Error.Description));
+                    periodsByMonth[key] = period.Value;
+                }
+
+                // 2) Réserver les blocs de numéros par exercice fiscal représenté : un relevé peut
+                // chevaucher décembre et janvier.
                 var nextNumberByYear = new Dictionary<int, int>();
                 foreach (var yearGroup in ordered.GroupBy(x => x.Line.TransactionDate.Year))
                     nextNumberByYear[yearGroup.Key] = await _journalEntries.ReserveEntryNumberBlockAsync(journalCode, yearGroup.Key, yearGroup.Count(), ct);
 
-                var createdEntries = new List<(Guid LineId, Guid EntryId, int Number)>();
+                // 3) Construire puis insérer toutes les écritures via le même contexte, en un seul
+                // SaveChanges pour tout le lot (plutôt qu'un aller-retour par écriture).
+                var createdEntries = new List<(Guid LineId, Guid EntryId, int Number, int FiscalYear)>();
+                var ruleAudits = new List<BankPostingRuleSaveInfo>();
                 foreach (var (line, item) in ordered)
                 {
-                    var period = await _periods.EnsureOpenPeriodAsync(line.TransactionDate, ct);
-                    if (period.IsFailure)
-                        return Result.Failure<List<(Guid, Guid, int)>>(new Error(BankStatementPostingErrorCodes.AtomicConflict, period.Error.Description));
-
+                    var period = periodsByMonth[(line.TransactionDate.Year, line.TransactionDate.Month)];
                     var number = nextNumberByYear[line.TransactionDate.Year]++;
                     var inputs = validated[item.LineId];
                     var reference = BankLabelReferences.Extract(line.Description)?.Number ?? (string.IsNullOrWhiteSpace(line.Reference) ? null : line.Reference);
                     var create = JournalEntry.Create(
-                        number, journalCode, line.TransactionDate.Date, inputs[0].Label, period.Value.Id,
+                        number, journalCode, line.TransactionDate.Date, inputs[0].Label, period.Id,
                         isAutoGenerated: false, TenantDbContext.BankStatementLineSourceType, line.Id,
                         inputs.Select(i => new JournalLineInput(i.Account, i.Label, i.Debit, i.Credit, i.ThirdPartyId, i.Kind)).ToList(),
                         Money.DefaultCurrency, reversesEntryId: null, initialStatus: JournalEntryStatus.Brouillon,
                         pieceRef: reference is null ? null : Truncate(reference, 50), pieceDate: line.TransactionDate.Date);
                     if (create.IsFailure)
-                        return Result.Failure<List<(Guid, Guid, int)>>(new Error(BankStatementPostingErrorCodes.AtomicConflict, create.Error.Description));
+                        return Result.Failure<AtomicWriteResult>(new Error(BankStatementPostingErrorCodes.AtomicRejected, create.Error.Description));
 
                     var entry = create.Value;
                     entry.SetAuditInfo(UserLabel, false);
-                    await _journalEntries.AddAsync(entry, ct);
-                    createdEntries.Add((line.Id, entry.Id, number));
+                    ctx.JournalEntries.Add(entry);
+                    createdEntries.Add((line.Id, entry.Id, number, line.TransactionDate.Year));
 
+                    // L'audit « règle mémorisée » n'est écrit qu'après le commit de cette transaction
+                    // (voir appel après l'issue de _unitOfWork.ExecuteAsync) : ne pas l'écrire ici,
+                    // sous peine de laisser un audit mensonger si le lot est annulé plus loin.
                     if (item.RememberRule)
-                        await RememberRuleAsync(ctx, statement, line, item, ct);
+                    {
+                        var ruleInfo = await PersistRememberedRuleAsync(ctx, statement, line, item, ct);
+                        if (ruleInfo is not null)
+                            ruleAudits.Add(ruleInfo);
+                    }
                 }
 
-                return Result.Success(createdEntries);
+                await ctx.SaveChangesAsync(ct);
+
+                return Result.Success(new AtomicWriteResult(createdEntries, ruleAudits));
             }, cancellationToken);
         }
-        catch (DbUpdateException ex)
+        catch (SqlException ex) when (ex.Number == 51000)
+        {
+            // Timeout de sp_getapplock (10 s) : une autre génération détient le verrou. Conflit de
+            // concurrence propre, pas une erreur serveur — nouvelle tentative possible côté client.
+            _logger.LogWarning(ex, "Génération atomique : verrou applicatif non obtenu sur le relevé {StatementId}.", statementId);
+            atomicResult = Result.Failure<AtomicWriteResult>(new Error(BankStatementPostingErrorCodes.AtomicConflict,
+                "Le verrou de génération n'a pas pu être obtenu (une autre génération est en cours) : nouvelle tentative possible."));
+        }
+        catch (DbUpdateException ex) when (ex.GetBaseException() is SqlException { Number: 2601 or 2627 })
         {
             // Index unique filtré : une autre génération a créé une écriture entre notre contrôle
             // d'idempotence et notre commit.
             _logger.LogWarning(ex, "Génération atomique : conflit d'idempotence sur le relevé {StatementId}.", statementId);
-            atomicResult = Result.Failure<List<(Guid, Guid, int)>>(new Error(BankStatementPostingErrorCodes.AtomicConflict,
+            atomicResult = Result.Failure<AtomicWriteResult>(new Error(BankStatementPostingErrorCodes.AtomicConflict,
                 "Une autre génération a déjà comptabilisé au moins une de ces lignes."));
+        }
+        catch (DbUpdateException ex)
+        {
+            // Toute AUTRE DbUpdateException (ex. une période close entre-temps par un autre
+            // processus, une contrainte différente) n'est PAS un conflit de concurrence : rejet
+            // définitif, sans jamais exposer le message d'exception brut au client.
+            _logger.LogError(ex, "Génération atomique : échec d'écriture non lié à une collision d'idempotence sur le relevé {StatementId}.", statementId);
+            atomicResult = Result.Failure<AtomicWriteResult>(new Error(BankStatementPostingErrorCodes.AtomicRejected,
+                "L'écriture n'a pas pu être enregistrée : aucune écriture n'a été créée."));
         }
 
         if (atomicResult.IsFailure)
@@ -945,14 +1002,23 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
             await _audit.LogAsync(AuditActions.Accounting.BankStatementEntriesGenerated, nameof(BankStatement), statement.Id,
                 newValues: new { JournalCode = journalCode, Atomic = true, Committed = false, Requested = request.Items.Count },
                 cancellationToken: cancellationToken);
-            return Result.Failure<GenerateBankStatementEntriesResult>(new Error(BankStatementPostingErrorCodes.AtomicConflict, atomicResult.Error.Description));
+            return Result.Failure<GenerateBankStatementEntriesResult>(atomicResult.Error);
         }
 
-        var created = atomicResult.Value;
+        var created = atomicResult.Value.Entries;
         var createdById = created.ToDictionary(c => c.LineId);
         var finalOutcomes = outcomes.Select(o => createdById.TryGetValue(o.LineId, out var c)
             ? new GenerateBankStatementLineOutcome(o.LineId, "created", null, null, c.EntryId, c.Number)
             : o).ToList();
+
+        // Plage de numéros : globale seulement quand un unique exercice fiscal est couvert — sinon
+        // chevauchement décembre/janvier et First/Last ne voudraient plus rien dire mélangés.
+        var yearRanges = created
+            .GroupBy(c => c.FiscalYear)
+            .OrderBy(g => g.Key)
+            .Select(g => new EntryNumberRangeDto(g.Key, g.Min(c => c.Number), g.Max(c => c.Number)))
+            .ToList();
+        var singleFiscalYear = yearRanges.Count <= 1;
 
         var result = new GenerateBankStatementEntriesResult
         {
@@ -961,8 +1027,9 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
             Created = created.Count,
             Skipped = finalOutcomes.Count(o => o.Outcome == "already_posted"),
             Failed = finalOutcomes.Count(o => o.Outcome == "failed"),
-            FirstEntryNumber = created.Count == 0 ? null : created.Min(c => c.Number),
-            LastEntryNumber = created.Count == 0 ? null : created.Max(c => c.Number),
+            FirstEntryNumber = singleFiscalYear && created.Count > 0 ? created.Min(c => c.Number) : null,
+            LastEntryNumber = singleFiscalYear && created.Count > 0 ? created.Max(c => c.Number) : null,
+            EntryNumberRangesByYear = yearRanges,
             Outcomes = finalOutcomes
         };
 
@@ -971,12 +1038,25 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
             {
                 JournalCode = journalCode, Atomic = true, Committed = true,
                 Requested = request.Items.Count, result.Created, result.Skipped, result.Failed,
-                result.FirstEntryNumber, result.LastEntryNumber
+                result.FirstEntryNumber, result.LastEntryNumber, YearRanges = yearRanges
             },
             cancellationToken: cancellationToken);
 
+        // Audits « règle mémorisée » différés jusqu'ici : écrits seulement une fois le commit de la
+        // transaction englobante confirmé, pour ne jamais laisser un audit mensonger après rollback.
+        foreach (var info in atomicResult.Value.RuleAudits)
+        {
+            await _audit.LogAsync(AuditActions.Accounting.BankPostingRuleSaved, nameof(BankPostingRule), info.RuleId,
+                newValues: new { info.Pattern, info.Account, info.Direction, info.ThirdPartyKind, info.SplitVat },
+                cancellationToken: cancellationToken);
+        }
+
         return Result.Success(result);
     }
+
+    private sealed record AtomicWriteResult(
+        List<(Guid LineId, Guid EntryId, int Number, int FiscalYear)> Entries,
+        List<BankPostingRuleSaveInfo> RuleAudits);
 
     /// <summary>Contrôles serveur d'une ligne à générer ; rend les lignes d'écriture (montants relus en base).</summary>
     private async Task<Result<IReadOnlyList<JournalLineInputDraft>>> ValidateItemAsync(
@@ -1125,9 +1205,26 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
     /// <summary>« Mémoriser » : règle du dossier, propre au compte bancaire, sur le cœur du libellé (sans numéros).</summary>
     private async Task RememberRuleAsync(TenantDbContext ctx, BankStatement statement, BankStatementLine line, GenerateBankStatementEntryItem item, CancellationToken cancellationToken)
     {
+        var info = await PersistRememberedRuleAsync(ctx, statement, line, item, cancellationToken);
+        if (info is null)
+            return;
+        await _audit.LogAsync(AuditActions.Accounting.BankPostingRuleSaved, nameof(BankPostingRule), info.RuleId,
+            newValues: new { info.Pattern, info.Account, info.Direction, info.ThirdPartyKind, info.SplitVat },
+            cancellationToken: cancellationToken);
+    }
+
+    /// <summary>
+    /// Persiste la règle « mémoriser » (fait partie de la transaction ambiante via <paramref name="ctx"/>)
+    /// SANS écrire l'audit : en génération atomique, l'audit ne doit être écrit qu'après le commit de la
+    /// transaction englobante — sinon un rollback plus tard dans le lot laisserait un audit « rule saved »
+    /// mensonger pour une règle qui n'a en réalité jamais été enregistrée.
+    /// </summary>
+    private async Task<BankPostingRuleSaveInfo?> PersistRememberedRuleAsync(
+        TenantDbContext ctx, BankStatement statement, BankStatementLine line, GenerateBankStatementEntryItem item, CancellationToken cancellationToken)
+    {
         var pattern = BankLabelNormalizer.Core(line.Description);
         if (pattern.Length < 3)
-            return;
+            return null;
         if (pattern.Length > BankPostingRule.PatternMaxLength)
             pattern = pattern[..BankPostingRule.PatternMaxLength];
 
@@ -1155,10 +1252,10 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
         }
 
         await ctx.SaveChangesAsync(cancellationToken);
-        await _audit.LogAsync(AuditActions.Accounting.BankPostingRuleSaved, nameof(BankPostingRule), saved.Id,
-            newValues: new { Pattern = pattern, Account = item.AccountNumber, Direction = direction.ToString(), item.ThirdPartyKind, SplitVat = split },
-            cancellationToken: cancellationToken);
+        return new BankPostingRuleSaveInfo(saved.Id, pattern, item.AccountNumber, direction.ToString(), item.ThirdPartyKind, split);
     }
+
+    private sealed record BankPostingRuleSaveInfo(Guid RuleId, string Pattern, string Account, string Direction, ThirdPartyKind ThirdPartyKind, bool SplitVat);
 
     private static ThirdPartyKind ExpectedKind(string account) => account switch
     {

@@ -1,5 +1,6 @@
 using System.IO.Compression;
 using System.Text;
+using ClosedXML.Excel;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.Features.Accounting.BankStatementImport;
 using FactuTrust.Infrastructure.Services.BankStatementImport;
@@ -30,6 +31,16 @@ public sealed class BankStatementTabularReaderTests
     };
 
     private static byte[] Csv(string content) => Encoding.UTF8.GetBytes(content);
+
+    private static byte[] Xlsx(Action<IXLWorksheet> build)
+    {
+        using var workbook = new XLWorkbook();
+        var sheet = workbook.AddWorksheet("Relevé");
+        build(sheet);
+        using var ms = new MemoryStream();
+        workbook.SaveAs(ms);
+        return ms.ToArray();
+    }
 
     // ── Chargement CSV : délimiteur / en-tête ──────────────────────────────────────────────
 
@@ -330,5 +341,268 @@ public sealed class BankStatementTabularReaderTests
 
         Assert.True(result.IsSuccess);
         Assert.Equal(1000.000m, result.Value.Header.OpeningBalance!.Value);
+    }
+
+    // ── §1 : cellules de date XLSX / détection du format suggéré ──────────────────────────
+
+    [Fact]
+    public void A_real_xlsx_date_cell_is_read_regardless_of_the_mapping_date_format()
+    {
+        var content = Xlsx(sheet =>
+        {
+            sheet.Cell(1, 1).Value = "Date";
+            sheet.Cell(1, 2).Value = "Libelle";
+            sheet.Cell(1, 3).Value = "Debit";
+            sheet.Cell(1, 4).Value = "Credit";
+            sheet.Cell(2, 1).Value = new DateTime(2026, 3, 25); // 25/03/2026 — invalide en MM/dd/yyyy
+            sheet.Cell(2, 2).Value = "VIREMENT";
+            sheet.Cell(2, 3).Value = 10.000;
+        });
+        var table = BankStatementTabularReader.LoadRawTable(content, ".xlsx", Limits).Value;
+        // Mappage délibérément incohérent avec le réglage habituel : la cellule réelle est une date
+        // ISO sous le capot, indépendamment du dateFormat choisi par l'utilisateur.
+        var mapping = DebitCreditMapping() with { DateFormat = "MM/dd/yyyy" };
+
+        var parsed = BankStatementTabularReader.ParseLines(table, mapping);
+
+        var line = Assert.Single(parsed);
+        Assert.Null(line.Error);
+        Assert.Equal(new DateOnly(2026, 3, 25), line.TransactionDate);
+    }
+
+    [Theory]
+    [InlineData("2026-03-25", "2026-03-26", "yyyy-MM-dd")]
+    [InlineData("25.03.2026", "26.03.2026", "dd.MM.yyyy")]
+    public void Suggested_date_format_is_the_one_reading_the_whole_sample(string first, string second, string expectedFormat)
+    {
+        var content = Csv($"Date;Libelle;Debit;Credit\n{first};A;10,000;\n{second};B;;5,000\n");
+        var table = BankStatementTabularReader.LoadRawTable(content, ".csv", Limits).Value;
+
+        var suggested = BankStatementTabularReader.SuggestMapping(table);
+
+        Assert.Equal(expectedFormat, suggested.DateFormat);
+    }
+
+    [Fact]
+    public void Suggested_date_format_defaults_to_ddMMyyyy_when_the_sample_is_ambiguous()
+    {
+        var content = Csv("Date;Libelle;Debit;Credit\n03/04/2026;A;10,000;\n");
+        var table = BankStatementTabularReader.LoadRawTable(content, ".csv", Limits).Value;
+
+        var suggested = BankStatementTabularReader.SuggestMapping(table);
+
+        Assert.Equal("dd/MM/yyyy", suggested.DateFormat);
+    }
+
+    // ── §2 : ordre inversé — paires du même jour autorisées ───────────────────────────────
+
+    [Fact]
+    public void Same_day_pairs_do_not_prevent_reversed_order_detection()
+    {
+        // 05/01 puis 05/01 (même jour) puis 02/01 : aucune paire n'avance, au moins une recule.
+        var content = Csv("Date;Libelle;Debit;Credit\n05/01/2026;B1;10,000;\n05/01/2026;B2;5,000;\n02/01/2026;A;5,000;\n");
+        var table = BankStatementTabularReader.LoadRawTable(content, ".csv", Limits).Value;
+
+        var result = BankStatementTabularReader.BuildExtraction(table, DebitCreditMapping(), Limits, rib: null);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal("A", result.Value.Lines[0].Label);
+        Assert.Contains(result.Value.Issues, i => i.Code == StatementIssueCodes.TabularReversedOrder);
+    }
+
+    [Fact]
+    public void A_single_increasing_pair_prevents_reversed_order_detection_even_with_same_day_pairs()
+    {
+        var content = Csv("Date;Libelle;Debit;Credit\n02/01/2026;A;10,000;\n02/01/2026;A2;5,000;\n05/01/2026;B;5,000;\n");
+        var table = BankStatementTabularReader.LoadRawTable(content, ".csv", Limits).Value;
+
+        var result = BankStatementTabularReader.BuildExtraction(table, DebitCreditMapping(), Limits, rib: null);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal("A", result.Value.Lines[0].Label);
+        Assert.DoesNotContain(result.Value.Issues, i => i.Code == StatementIssueCodes.TabularReversedOrder);
+    }
+
+    // ── §3 : montants selon decimalSeparator ──────────────────────────────────────────────
+
+    [Theory]
+    [InlineData(",", "1.190", 1190)] // mode virgule : le point est TOUJOURS un séparateur de milliers
+    [InlineData(",", "17.837,479", 17837.479)]
+    [InlineData(".", "1,190.500", 1190.500)] // mode point : la virgule est TOUJOURS un séparateur de milliers
+    public void Amount_parsing_follows_the_decimal_separator_setting(string decimalSeparator, string amountText, decimal expected)
+    {
+        var content = Csv($"Date;Libelle;Debit;Credit\n01/01/2026;VIREMENT;{amountText};\n");
+        var table = BankStatementTabularReader.LoadRawTable(content, ".csv", Limits).Value;
+        var mapping = DebitCreditMapping() with { DecimalSeparator = decimalSeparator };
+
+        var parsed = BankStatementTabularReader.ParseLines(table, mapping);
+
+        var line = Assert.Single(parsed);
+        Assert.Null(line.Error);
+        Assert.Equal(expected, line.Amount);
+    }
+
+    [Fact]
+    public void An_amount_with_more_than_three_decimals_is_rounded_and_flagged_as_info()
+    {
+        var content = Csv("Date;Libelle;Debit;Credit\n01/01/2026;VIREMENT;10,12345;\n");
+        var table = BankStatementTabularReader.LoadRawTable(content, ".csv", Limits).Value;
+
+        var parsed = BankStatementTabularReader.ParseLines(table, DebitCreditMapping());
+
+        var line = Assert.Single(parsed);
+        Assert.Null(line.Error);
+        Assert.True(line.AmountRounded);
+        Assert.Equal(10.123m, line.Amount);
+
+        var result = BankStatementTabularReader.BuildExtraction(table, DebitCreditMapping(), Limits, rib: null);
+        Assert.True(result.IsSuccess);
+        Assert.Contains(result.Value.Issues, i => i.Code == StatementIssueCodes.TabularAmountRounded
+            && i.Severity == StatementIssueSeverity.Info);
+    }
+
+    [Fact]
+    public void An_implausibly_large_operation_amount_is_a_blocking_anomaly()
+    {
+        var content = Csv("Date;Libelle;Debit;Credit\n01/01/2026;VIREMENT;99999999999,000;\n");
+        var table = BankStatementTabularReader.LoadRawTable(content, ".csv", Limits).Value;
+
+        var parsed = BankStatementTabularReader.ParseLines(table, DebitCreditMapping());
+
+        Assert.NotNull(Assert.Single(parsed).Error);
+    }
+
+    // ── §6 : sécurité XLSX (macros, exceptions) ───────────────────────────────────────────
+
+    [Fact]
+    public void A_macro_declared_via_content_types_is_rejected_even_with_an_xlsx_filename_inside()
+    {
+        using var ms = new MemoryStream();
+        using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, leaveOpen: true))
+        {
+            var contentTypes = archive.CreateEntry("[Content_Types].xml");
+            using (var writer = new StreamWriter(contentTypes.Open()))
+                writer.Write("<Types><Override PartName=\"/xl/vbaProject.bin\" ContentType=\"application/vnd.ms-office.vbaProject\"/></Types>");
+
+            var sheet = archive.CreateEntry("xl/worksheets/sheet1.xml");
+            using (var writer = new StreamWriter(sheet.Open()))
+                writer.Write("<worksheet/>");
+        }
+
+        var result = BankStatementTabularReader.LoadRawTable(ms.ToArray(), ".xlsx", Limits);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(BankStatementTabularErrorCodes.TabularRejected, result.Error.Code);
+    }
+
+    [Fact]
+    public void Zip_entries_are_bounded_by_actual_streamed_bytes_not_declared_metadata()
+    {
+        // L'entrée annonce une taille modeste dans ses métadonnées mais le contenu réellement
+        // décompressé dépasse la limite — seul le flux réel doit être compté (§6).
+        using var ms = new MemoryStream();
+        using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, leaveOpen: true))
+        {
+            var entry = archive.CreateEntry("xl/worksheets/sheet1.xml", CompressionLevel.SmallestSize);
+            using var writer = new StreamWriter(entry.Open());
+            writer.Write(new string('A', 500_000));
+        }
+
+        var limits = new BankStatementImportLimits { XlsxMaxUncompressedBytes = 1_000, XlsxMaxCompressionRatio = 100_000 };
+        var result = BankStatementTabularReader.LoadRawTable(ms.ToArray(), ".xlsx", limits);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(BankStatementTabularErrorCodes.TabularRejected, result.Error.Code);
+    }
+
+    [Fact]
+    public void A_corrupted_but_zip_valid_xlsx_is_mapped_to_a_stable_unreadable_error()
+    {
+        using var ms = new MemoryStream();
+        using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, leaveOpen: true))
+        {
+            var entry = archive.CreateEntry("xl/workbook.xml");
+            using var writer = new StreamWriter(entry.Open());
+            writer.Write("not even close to valid OOXML <<<>>>");
+        }
+
+        var result = BankStatementTabularReader.LoadRawTable(ms.ToArray(), ".xlsx", Limits);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(BankStatementTabularErrorCodes.TabularUnreadable, result.Error.Code);
+    }
+
+    // ── §13 : convention 1-based de IgnoredRows ───────────────────────────────────────────
+
+    [Fact]
+    public void IgnoredRows_uses_the_same_one_based_convention_as_rowNumber()
+    {
+        var content = Csv("Date;Libelle;Debit;Credit\n01/01/2026;A;10,000;\n02/01/2026;B;5,000;\n03/01/2026;C;;5,000\n");
+        var table = BankStatementTabularReader.LoadRawTable(content, ".csv", Limits).Value;
+        // En-tête = rowNumber 1, "A" = rowNumber 2, "B" = rowNumber 3, "C" = rowNumber 4 : IgnoredRows=[3]
+        // doit ignorer "B", pas une 2e ligne 0-based interne (qui désignerait "C").
+        var mapping = DebitCreditMapping() with { IgnoredRows = new[] { 3 } };
+
+        var parsed = BankStatementTabularReader.ParseLines(table, mapping);
+
+        Assert.Equal(2, parsed.Count);
+        Assert.DoesNotContain(parsed, p => p.Label == "B");
+        Assert.Contains(parsed, p => p.Label == "A");
+        Assert.Contains(parsed, p => p.Label == "C");
+    }
+
+    // ── §14 : encodage forcé / BOM UTF-16 ──────────────────────────────────────────────────
+
+    [Fact]
+    public void A_windows_1252_file_without_bom_is_read_correctly_once_the_client_forces_the_encoding()
+    {
+        var text = "Date;Libelle;Debit;Credit\n01/01/2026;Dépôt éspèces;10,000;\n";
+        // Les caractères utilisés ici occupent les mêmes points de code en Latin-1 et en Windows-1252
+        // (0xA0-0xFF) : on évite ainsi de dépendre de CodePagesEncodingProvider côté test, seul le
+        // lecteur (via encodingOverride) a besoin de l'enregistrer pour décoder réellement en 1252.
+        var content = Encoding.Latin1.GetBytes(text);
+
+        var table = BankStatementTabularReader.LoadRawTable(content, ".csv", Limits, encodingOverride: "windows-1252").Value;
+
+        Assert.Equal("windows-1252", table.Encoding);
+        Assert.Contains(table.Rows[1], c => c.Contains("Dépôt éspèces"));
+    }
+
+    [Fact]
+    public void A_utf16_little_endian_bom_is_detected_automatically_without_an_override()
+    {
+        var text = "Date;Libelle;Debit;Credit\n01/01/2026;VIREMENT;10,000;\n";
+        var bom = new byte[] { 0xFF, 0xFE };
+        var content = bom.Concat(Encoding.Unicode.GetBytes(text)).ToArray();
+
+        var table = BankStatementTabularReader.LoadRawTable(content, ".csv", Limits).Value;
+
+        Assert.Equal("utf-16", table.Encoding);
+        Assert.Equal(2, table.TotalRowCount);
+    }
+
+    // ── §5 : SheetIndex forcé par le mappage client ───────────────────────────────────────
+
+    [Fact]
+    public void An_explicit_sheet_index_override_wins_over_auto_detection()
+    {
+        using var workbook = new XLWorkbook();
+        var first = workbook.AddWorksheet("Résumé");
+        first.Cell(1, 1).Value = "Rien ici";
+        var second = workbook.AddWorksheet("Opérations");
+        second.Cell(1, 1).Value = "Date";
+        second.Cell(1, 2).Value = "Libelle";
+        second.Cell(1, 3).Value = "Debit";
+        second.Cell(1, 4).Value = "Credit";
+        second.Cell(2, 1).Value = new DateTime(2026, 1, 1);
+        second.Cell(2, 2).Value = "VIREMENT";
+        second.Cell(2, 3).Value = 10.000;
+        using var ms = new MemoryStream();
+        workbook.SaveAs(ms);
+
+        var table = BankStatementTabularReader.LoadRawTable(ms.ToArray(), ".xlsx", Limits, sheetIndexOverride: 1).Value;
+
+        Assert.Equal(1, table.SheetIndex);
+        Assert.Equal("Date", table.Rows[0][0]);
     }
 }

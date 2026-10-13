@@ -94,17 +94,32 @@ public sealed class BankStatementTabularImportService : IBankStatementTabularImp
             return Fail<BankStatementTabularPreviewDto>(BankStatementTabularErrorCodes.TabularRejected,
                 $"Fichier trop volumineux (maximum {Limits.MaxFileBytes / (1024 * 1024)} Mo).");
 
-        if (extension == ".xlsx")
-        {
-            var head = content.AsMemory(0, Math.Min(UploadValidator.RequiredHeaderBytes, content.Length));
-            if (!UploadValidator.MatchesMagicBytes(".xlsx", head))
-                return Fail<BankStatementTabularPreviewDto>(BankStatementTabularErrorCodes.TabularRejected, "Fichier non reconnu comme XLSX valide.");
-        }
+        // Même contrôle que StartAsync (magie/MIME/extension/double-extension), pas seulement les
+        // octets magiques XLSX : un fichier refusé au démarrage doit l'être dès l'aperçu.
+        var previewHeader = content.AsMemory(0, Math.Min(UploadValidator.RequiredHeaderBytes, content.Length));
+        var previewValidation = UploadValidator.Validate(request.FileName ?? string.Empty, request.ContentType ?? string.Empty,
+            content.Length, previewHeader, Limits.MaxFileBytes);
+        if (!previewValidation.IsValid)
+            return Fail<BankStatementTabularPreviewDto>(BankStatementTabularErrorCodes.TabularRejected, previewValidation.ErrorMessage ?? "Fichier refusé.");
 
-        var tableResult = BankStatementTabularReader.LoadRawTable(content, extension, Limits);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        // SheetIndex/Encoding/Delimiter du mappage explicitement fourni par le client honorés dès le
+        // chargement (un mappage mémorisé/suggéré n'a pas encore été résolu à ce stade).
+        var tableResult = BankStatementTabularReader.LoadRawTable(
+            content, extension, Limits, request.Mapping?.Encoding, request.Mapping?.Delimiter, request.Mapping?.SheetIndex);
         if (tableResult.IsFailure)
             return Result.Failure<BankStatementTabularPreviewDto>(tableResult.Error);
         var table = tableResult.Value;
+
+        // Mappage CLIENT (explicitement fourni) validé avant toute interprétation : un mappage
+        // suggéré ou mémorisé est toujours valide par construction, celui-ci ne l'est pas forcément.
+        if (request.Mapping is not null)
+        {
+            var clientMappingCheck = BankStatementTabularReader.ValidateMapping(request.Mapping, table.ColumnCount);
+            if (clientMappingCheck is not null)
+                return Result.Failure<BankStatementTabularPreviewDto>(clientMappingCheck);
+        }
 
         BankStatementTabularMappingDto? savedMapping = null;
         DateTime? savedMappingUpdatedAt = null;
@@ -125,6 +140,7 @@ public sealed class BankStatementTabularImportService : IBankStatementTabularImp
             }
         }
 
+        cancellationToken.ThrowIfCancellationRequested();
         var suggested = BankStatementTabularReader.SuggestMapping(table);
         var effective = request.Mapping ?? savedMapping ?? suggested;
 
@@ -133,7 +149,8 @@ public sealed class BankStatementTabularImportService : IBankStatementTabularImp
         var footerCount = parsed.Count(p => p.IsFooter);
         var ambiguous = BankStatementTabularReader.DetectAmbiguousDateFormat(table, effective.DateColumn);
 
-        var columns = BuildColumns(table);
+        cancellationToken.ThrowIfCancellationRequested();
+        var columns = BuildColumns(table, effective.HeaderRowIndex);
         var rows = table.Rows.Take(20)
             .Select((r, i) => new BankStatementTabularRowDto(i + 1, r.Select(c => Truncate(c, 200)).ToList()))
             .ToList();
@@ -168,15 +185,16 @@ public sealed class BankStatementTabularImportService : IBankStatementTabularImp
         return Result.Success(dto);
     }
 
-    private static IReadOnlyList<BankStatementTabularColumnDto> BuildColumns(BankStatementTabularReader.RawTable table)
+    private static IReadOnlyList<BankStatementTabularColumnDto> BuildColumns(BankStatementTabularReader.RawTable table, int? headerRowIndexOverride = null)
     {
+        var headerRowIndex = headerRowIndexOverride is { } idx && idx >= 0 ? idx : table.HeaderRowIndex;
         var columnCount = table.ColumnCount > 0 ? table.ColumnCount : (table.Rows.Count > 0 ? table.Rows.Max(r => r.Length) : 0);
-        var headerRow = table.HeaderRowIndex < table.Rows.Count ? table.Rows[table.HeaderRowIndex] : Array.Empty<string>();
+        var headerRow = headerRowIndex < table.Rows.Count ? table.Rows[headerRowIndex] : Array.Empty<string>();
         var columns = new List<BankStatementTabularColumnDto>(columnCount);
         for (var c = 0; c < columnCount; c++)
         {
             var columnHeader = c < headerRow.Length ? headerRow[c] : string.Empty;
-            var samples = table.Rows.Skip(table.HeaderRowIndex + 1)
+            var samples = table.Rows.Skip(headerRowIndex + 1)
                 .Select(r => c < r.Length ? r[c] : string.Empty)
                 .Where(v => !string.IsNullOrWhiteSpace(v))
                 .Take(5)
@@ -258,7 +276,8 @@ public sealed class BankStatementTabularImportService : IBankStatementTabularImp
             return Fail<BankStatementImportSessionDto>(BankStatementImportErrorCodes.JournalInvalid,
                 $"Le journal « {journalCode} » n'est pas un journal de banque actif.");
 
-        var tableResult = BankStatementTabularReader.LoadRawTable(content, extension, Limits);
+        var tableResult = BankStatementTabularReader.LoadRawTable(
+            content, extension, Limits, mapping.Encoding, mapping.Delimiter, mapping.SheetIndex);
         if (tableResult.IsFailure)
             return Result.Failure<BankStatementImportSessionDto>(tableResult.Error);
         var table = tableResult.Value;
@@ -295,7 +314,9 @@ public sealed class BankStatementTabularImportService : IBankStatementTabularImp
         var isNewSession = existing is null;
         if (existing is not null)
         {
-            existing.ReplaceResult(json);
+            // Même fichier, nouveau mappage soumis par l'utilisateur : le journal choisi et
+            // l'expiration doivent eux aussi être rafraîchis, pas seulement le résultat.
+            existing.RenewForReimport(journalCode, json, now.AddHours(Math.Max(1, Limits.SessionRetentionHours)));
             session = existing;
         }
         else
@@ -360,14 +381,34 @@ public sealed class BankStatementTabularImportService : IBankStatementTabularImp
             entity = FactuTrust.Domain.Entities.BankStatementTabularMapping.Create(bankAccountId, format, json);
             entity.SetAuditInfo(UserLabel, false);
             ctx.BankStatementTabularMappings.Add(entity);
+
+            try
+            {
+                await ctx.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateException)
+            {
+                // Course concurrente : une autre requête a inséré la ligne de ce compte entre notre
+                // lecture et notre écriture (index unique sur BankAccountId) — on retente en UPDATE
+                // plutôt que de renvoyer une 500 pour un simple doublon de mémorisation de mappage.
+                ctx.Entry(entity).State = EntityState.Detached;
+                var concurrent = await ctx.BankStatementTabularMappings.FirstOrDefaultAsync(m => m.BankAccountId == bankAccountId, cancellationToken);
+                if (concurrent is null)
+                    throw;
+
+                concurrent.Update(format, json);
+                concurrent.SetAuditInfo(UserLabel, true);
+                await ctx.SaveChangesAsync(cancellationToken);
+                entity = concurrent;
+            }
         }
         else
         {
             entity.Update(format, json);
             entity.SetAuditInfo(UserLabel, true);
+            await ctx.SaveChangesAsync(cancellationToken);
         }
 
-        await ctx.SaveChangesAsync(cancellationToken);
         await _audit.LogAsync(AuditActions.Accounting.BankStatementTabularMappingSaved, nameof(FactuTrust.Domain.Entities.BankStatementTabularMapping), entity.Id,
             newValues: new Dictionary<string, object?>(StringComparer.Ordinal) { ["BankAccountId"] = bankAccountId, ["Format"] = format },
             cancellationToken: cancellationToken);

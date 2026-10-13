@@ -502,6 +502,14 @@ public sealed class BankStatementImportService : IBankStatementImportService
         if (session is null || string.IsNullOrEmpty(session.StoragePath))
             return Fail<BankStatementImportSessionDto>(BankStatementImportErrorCodes.SessionNotFound, "Analyse de relevé introuvable.");
 
+        // Les sessions CSV/XLSX n'ont jamais fait l'objet d'une lecture IA : rien à relancer. Ce
+        // contrôle précède toute mutation (annulation/suppression de la session d'origine).
+        if (session.ExtractionMethod is BankStatementImportExtractionMethods.Csv or BankStatementImportExtractionMethods.Xlsx)
+        {
+            return Fail<BankStatementImportSessionDto>(BankStatementImportErrorCodes.TabularRelaunchNotSupported,
+                "Un relevé CSV/XLSX ne se relance pas : soumettez à nouveau le fichier, au besoin avec un mappage corrigé.");
+        }
+
         if (session.Status is not (BankStatementImportSessionStatus.AwaitingReview or BankStatementImportSessionStatus.Failed))
         {
             return Fail<BankStatementImportSessionDto>(BankStatementImportErrorCodes.SessionNotReviewable,
@@ -788,19 +796,29 @@ public sealed class BankStatementImportService : IBankStatementImportService
         if (!_settings.BankStatementAiPostingEnabled)
             return null;
 
-        await using var ctx = _contextFactory.CreateContext();
-        const string root = BankStatementProposalEngine.SuspenseAccountRoot;
-        var candidates = await ctx.ChartOfAccounts.AsNoTracking()
-            .Where(c => c.AccountNumber == root || c.AccountNumber.StartsWith(root))
-            .Select(c => new { c.AccountNumber, c.IsActive })
-            .ToListAsync(cancellationToken);
+        try
+        {
+            await using var ctx = _contextFactory.CreateContext();
+            const string root = BankStatementProposalEngine.SuspenseAccountRoot;
+            var candidates = await ctx.ChartOfAccounts.AsNoTracking()
+                .Where(c => c.AccountNumber == root || c.AccountNumber.StartsWith(root))
+                .Select(c => new { c.AccountNumber, c.IsActive })
+                .ToListAsync(cancellationToken);
 
-        var exact = candidates.FirstOrDefault(c => c.AccountNumber == root);
-        if (exact is not null)
-            return exact.IsActive ? exact.AccountNumber : null;
+            var exact = candidates.FirstOrDefault(c => c.AccountNumber == root);
+            if (exact is not null)
+                return exact.IsActive ? exact.AccountNumber : null;
 
-        var activeChildren = candidates.Where(c => c.IsActive).ToList();
-        return activeChildren.Count == 1 ? activeChildren[0].AccountNumber : null;
+            var activeChildren = candidates.Where(c => c.IsActive).ToList();
+            return activeChildren.Count == 1 ? activeChildren[0].AccountNumber : null;
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            // Les capacités affichées ne doivent jamais échouer pour un simple compte 471 introuvable
+            // ou une erreur de plan comptable (ex. incohérence de données) : on dégrade en silence.
+            _logger.LogWarning(ex, "Import relevé : résolution du compte d'attente 471 impossible pour l'affichage des capacités.");
+            return null;
+        }
     }
 
     private static string SourceContentType(string extension) => extension switch
@@ -1241,13 +1259,14 @@ public sealed class BankStatementImportService : IBankStatementImportService
             if (issue.Code == StatementIssueCodes.AiAmountNotGrounded && fields.HasFlag(CorrectedFields.Amount))
                 continue;
             // Signalements de l'import tabulaire (§3.5) : levés quand le champ en cause a été corrigé,
-            // sur le modèle de AiAmountNotGrounded ci-dessus.
+            // sur le modèle de AiAmountNotGrounded ci-dessus. Un montant illisible ou un débit/crédit
+            // simultané sont ambigus sur LE SENS de l'opération : une simple correction du montant ne
+            // suffit pas à lever ces deux signalements, le sens (débit/crédit) doit être corrigé aussi.
             if (issue.Code == StatementIssueCodes.TabularDateInvalid && fields.HasFlag(CorrectedFields.Date))
                 continue;
-            if (issue.Code == StatementIssueCodes.TabularAmountInvalid && fields.HasFlag(CorrectedFields.Amount))
+            if (issue.Code == StatementIssueCodes.TabularAmountInvalid && fields.HasFlag(CorrectedFields.Side))
                 continue;
-            if (issue.Code == StatementIssueCodes.TabularBothSides
-                && (fields.HasFlag(CorrectedFields.Amount) || fields.HasFlag(CorrectedFields.Side)))
+            if (issue.Code == StatementIssueCodes.TabularBothSides && fields.HasFlag(CorrectedFields.Side))
                 continue;
 
             var shift = excluded.Count(e => e < lineIndex);

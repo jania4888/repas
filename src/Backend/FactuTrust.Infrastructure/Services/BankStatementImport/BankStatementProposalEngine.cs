@@ -307,7 +307,7 @@ public static class BankStatementProposalEngine
         {
             var historyConfidence = history.Occurrences >= 2 ? BankLineConfidences.Probable : BankLineConfidences.ToCheck;
             return new Classification(history.AccountNumber, null, ThirdPartyKind.None, null, historyConfidence, BankLineSources.History,
-                $"Déjà comptabilisé {history.Occurrences} fois en 6xx pour ce libellé.", null, null);
+                $"Déjà comptabilisé {history.Occurrences} fois sur le compte {history.AccountNumber} pour ce libellé.", null, null);
         }
 
         // 4. Cache de classification IA (libellé distinct déjà classé).
@@ -481,6 +481,9 @@ public static class BankStatementProposalEngine
                 source = BankLineSources.Fallback;
                 confidence = BankLineConfidences.ToCheck;
                 explanation = "Compte ou tiers non identifié : affecté au compte d'attente 471, à reclasser.";
+                // Le repli abandonne la classification pré-repli : toute ventilation TVA calculée pour
+                // le compte initialement visé n'a plus de sens sur le compte d'attente.
+                vat = null;
                 diagnostics.RemoveAll(d => d.Code is "account_missing" or "account_inactive");
                 diagnostics.Add(new("suspense_account", "warning", "Compte d'attente : à reclasser."));
             }

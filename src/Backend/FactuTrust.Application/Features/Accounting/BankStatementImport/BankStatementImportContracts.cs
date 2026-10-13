@@ -274,4 +274,11 @@ public static class BankStatementImportErrorCodes
 
     /// <summary>Re-ciblage vers le compte déjà analysé : HTTP 400 (utiliser la relance).</summary>
     public const string SameBankAccount = "bank_statement_import.same_bank_account";
+
+    /// <summary>
+    /// Relance (retarget/retry) demandée pour une session CSV/XLSX : HTTP 400. Ces sessions n'ont
+    /// jamais fait l'objet d'une lecture IA — rien à relancer ; l'utilisateur doit soumettre à
+    /// nouveau le fichier (éventuellement avec un mappage corrigé) via l'import tabulaire.
+    /// </summary>
+    public const string TabularRelaunchNotSupported = "bank_statement_import.tabular_relaunch_not_supported";
 }

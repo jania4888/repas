@@ -194,8 +194,22 @@ public sealed record GenerateBankStatementEntriesResult
     public int Created { get; init; }
     public int Skipped { get; init; }
     public int Failed { get; init; }
+
+    /// <summary>
+    /// Numéro de la première/dernière écriture créée. Renseigné seulement quand toutes les
+    /// écritures créées relèvent du MÊME exercice fiscal (une plage globale n'aurait pas de sens
+    /// si plusieurs exercices sont couverts — voir <see cref="EntryNumberRangesByYear"/>).
+    /// </summary>
     public int? FirstEntryNumber { get; init; }
     public int? LastEntryNumber { get; init; }
+
+    /// <summary>
+    /// Plage de numéros par exercice fiscal couvert par cette génération (un ou plusieurs
+    /// exercices). Toujours renseigné quand <see cref="Created"/> &gt; 0 ; champ additif, à
+    /// préférer à <see cref="FirstEntryNumber"/>/<see cref="LastEntryNumber"/> pour un relevé
+    /// à cheval sur deux exercices.
+    /// </summary>
+    public IReadOnlyList<EntryNumberRangeDto> EntryNumberRangesByYear { get; init; } = Array.Empty<EntryNumberRangeDto>();
     public IReadOnlyList<GenerateBankStatementLineOutcome> Outcomes { get; init; } = Array.Empty<GenerateBankStatementLineOutcome>();
 
     /// <summary>Génération tout ou rien demandée (reflète <c>GenerateBankStatementEntriesRequest.Atomic</c>).</summary>
@@ -215,6 +229,9 @@ public sealed record GenerateBankStatementEntriesResult
 
 /// <param name="Outcome">« created », « already_posted », « excluded », « ready », « failed ».</param>
 public sealed record GenerateBankStatementLineOutcome(Guid LineId, string Outcome, string? Code, string? Message, Guid? JournalEntryId, int? EntryNumber);
+
+/// <summary>Plage de numéros d'écriture réservée pour un exercice fiscal donné (voir <see cref="GenerateBankStatementEntriesResult.EntryNumberRangesByYear"/>).</summary>
+public sealed record EntryNumberRangeDto(int FiscalYear, int First, int Last);
 
 /// <summary>Un relevé comptabilisé par ce parcours (hors import par rapprochement) — historique.</summary>
 public sealed record BankStatementImportHistoryItemDto
@@ -254,9 +271,12 @@ public static class BankStatementPostingErrorCodes
     /// <summary>Génération atomique : une ligne non réglée du relevé n'est ni soumise, ni explicitement exclue.</summary>
     public const string AtomicIncomplete = "bank_statement_posting.atomic_incomplete";
 
+    /// <summary>Génération atomique : une ligne figure à la fois dans les lignes soumises et dans les lignes explicitement exclues.</summary>
+    public const string AtomicOverlap = "bank_statement_posting.atomic_overlap";
+
     /// <summary>Génération atomique : la pré-validation a trouvé au moins un échec ; rien n'a été écrit.</summary>
     public const string AtomicRejected = "bank_statement_posting.atomic_rejected";
 
-    /// <summary>Génération atomique : conflit de concurrence (verrou non obtenu ou index unique violé).</summary>
+    /// <summary>Génération atomique : conflit de concurrence (verrou non obtenu ou index unique violé) — nouvelle tentative possible.</summary>
     public const string AtomicConflict = "bank_statement_posting.atomic_conflict";
 }

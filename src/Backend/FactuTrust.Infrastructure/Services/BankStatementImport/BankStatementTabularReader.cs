@@ -81,6 +81,9 @@ internal static class BankStatementTabularReader
 
         /// <summary>Pied « TOTAL » lisible : total crédits de la colonne mappée, le cas échéant.</summary>
         public decimal? FooterTotalCredit { get; init; }
+
+        /// <summary>Le montant comportait plus de 3 décimales et a été arrondi (<see cref="MaxDecimalsBeforeRounding"/>).</summary>
+        public bool AmountRounded { get; init; }
     }
 
     private static Error Unreadable() => new(BankStatementTabularErrorCodes.TabularUnreadable, "Fichier illisible.");
@@ -90,28 +93,35 @@ internal static class BankStatementTabularReader
 
     // ── Chargement ──────────────────────────────────────────────────────────────────────────
 
-    public static Result<RawTable> LoadRawTable(byte[] content, string extension, BankStatementImportLimits limits) =>
+    /// <summary>
+    /// <paramref name="encodingOverride"/>/<paramref name="delimiterOverride"/>/<paramref name="sheetIndexOverride"/>
+    /// viennent du mappage client (préview ou démarrage) : honorés quand fournis plutôt que l'auto-détection,
+    /// avec repli silencieux sur l'auto-détection si la valeur forcée est invalide/inconnue.
+    /// </summary>
+    public static Result<RawTable> LoadRawTable(
+        byte[] content, string extension, BankStatementImportLimits limits,
+        string? encodingOverride = null, string? delimiterOverride = null, int? sheetIndexOverride = null) =>
         extension switch
         {
-            ".csv" => LoadCsv(content, limits),
-            ".xlsx" => LoadXlsx(content, limits),
+            ".csv" => LoadCsv(content, limits, encodingOverride, delimiterOverride),
+            ".xlsx" => LoadXlsx(content, limits, sheetIndexOverride),
             _ => Result.Failure<RawTable>(Unreadable())
         };
 
-    private static Result<RawTable> LoadCsv(byte[] content, BankStatementImportLimits limits)
+    private static Result<RawTable> LoadCsv(byte[] content, BankStatementImportLimits limits, string? encodingOverride = null, string? delimiterOverride = null)
     {
         string text;
         string encodingName;
         try
         {
-            (text, encodingName) = DecodeText(content);
+            (text, encodingName) = DecodeText(content, encodingOverride);
         }
         catch (DecoderFallbackException)
         {
             return Result.Failure<RawTable>(Unreadable());
         }
 
-        var delimiter = DetectDelimiter(text);
+        var delimiter = !string.IsNullOrEmpty(delimiterOverride) ? delimiterOverride : DetectDelimiter(text);
         var rows = new List<string[]>();
         var cap = limits.MaxTabularRows + HeaderScanRows + 64;
         var truncated = false;
@@ -172,7 +182,7 @@ internal static class BankStatementTabularReader
         });
     }
 
-    private static Result<RawTable> LoadXlsx(byte[] content, BankStatementImportLimits limits)
+    private static Result<RawTable> LoadXlsx(byte[] content, BankStatementImportLimits limits, int? sheetIndexOverride = null)
     {
         var zipCheck = CheckXlsxZipSafety(content, limits);
         if (zipCheck is not null)
@@ -190,8 +200,11 @@ internal static class BankStatementTabularReader
             using var workbook = new XLWorkbook(stream);
             sheetNames = workbook.Worksheets.Select(w => w.Name).ToList();
 
-            var sheet = workbook.Worksheets.FirstOrDefault(w => w.Visibility == XLWorksheetVisibility.Visible && w.RangeUsed() is not null)
-                        ?? workbook.Worksheets.FirstOrDefault();
+            var sheet = sheetIndexOverride is { } idx && idx >= 0
+                ? workbook.Worksheets.ElementAtOrDefault(idx)
+                : null;
+            sheet ??= workbook.Worksheets.FirstOrDefault(w => w.Visibility == XLWorksheetVisibility.Visible && w.RangeUsed() is not null)
+                      ?? workbook.Worksheets.FirstOrDefault();
             if (sheet is null)
                 return Result.Failure<RawTable>(NoLines());
 
@@ -244,16 +257,21 @@ internal static class BankStatementTabularReader
                 HasFormulaCells = hasFormulaCells
             });
         }
-        catch (Exception ex) when (ex is OpenXmlPackageException or InvalidDataException or IOException or FormatException or InvalidOperationException)
+        // ClosedXML / DocumentFormat.OpenXml peuvent lever des types variés sur un fichier corrompu,
+        // chiffré ou malveillant (KeyNotFoundException, XmlException, NullReferenceException…) : tout
+        // sauf l'annulation retombe sur un code stable, jamais le message de l'exception.
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
             return Result.Failure<RawTable>(Unreadable());
         }
     }
 
     /// <summary>
-    /// Pré-contrôle avant ClosedXML : nombre d'entrées, taille décompressée totale, ratio de
-    /// compression par entrée (bombe zip) ; refus si une macro est présente. Renvoie <c>null</c>
-    /// si le fichier passe le contrôle.
+    /// Pré-contrôle avant ClosedXML : nombre d'entrées, taille décompressée totale (comptée en
+    /// streamant réellement chaque entrée — <c>entry.Length</c> seul n'est qu'une métadonnée du zip et
+    /// peut être falsifié), ratio de compression déclaré par entrée (bombe zip) ; refus si une macro
+    /// est présente (nom de fichier <c>xl/vbaProject.bin</c> OU type de contenu <c>vbaProject</c>
+    /// déclaré dans <c>[Content_Types].xml</c>). Renvoie <c>null</c> si le fichier passe le contrôle.
     /// </summary>
     private static Error? CheckXlsxZipSafety(byte[] content, BankStatementImportLimits limits)
     {
@@ -266,25 +284,33 @@ internal static class BankStatementTabularReader
                 return Rejected();
 
             long totalUncompressed = 0;
+            var buffer = new byte[81920];
             foreach (var entry in archive.Entries)
             {
                 if (string.Equals(entry.FullName, "xl/vbaProject.bin", StringComparison.OrdinalIgnoreCase))
                     return Rejected();
 
-                totalUncompressed += entry.Length;
-                if (totalUncompressed > limits.XlsxMaxUncompressedBytes)
-                    return Rejected();
-
-                if (entry.CompressedLength > 0)
+                if (entry.CompressedLength > 0 && entry.Length > 0)
                 {
                     var ratio = (double)entry.Length / entry.CompressedLength;
                     if (ratio > limits.XlsxMaxCompressionRatio)
                         return Rejected();
                 }
-                else if (entry.Length > 0)
+                else if (entry.CompressedLength == 0 && entry.Length > 0)
                 {
                     // Taille compressée nulle pour un contenu non vide : forme suspecte, refusée par prudence.
                     return Rejected();
+                }
+
+                // Octets réellement décompressés, pas la métadonnée `entry.Length` (falsifiable) : seule
+                // façon fiable de borner une bombe zip.
+                using var entryStream = entry.Open();
+                int read;
+                while ((read = entryStream.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    totalUncompressed += read;
+                    if (totalUncompressed > limits.XlsxMaxUncompressedBytes)
+                        return Rejected();
                 }
             }
 
@@ -294,7 +320,8 @@ internal static class BankStatementTabularReader
                 using var entryStream = contentTypes.Open();
                 using var sr = new StreamReader(entryStream, System.Text.Encoding.UTF8);
                 var xml = sr.ReadToEnd();
-                if (xml.Contains("macroEnabled", StringComparison.OrdinalIgnoreCase))
+                if (xml.Contains("macroEnabled", StringComparison.OrdinalIgnoreCase)
+                    || xml.Contains("vbaProject", StringComparison.OrdinalIgnoreCase))
                     return Rejected();
             }
 
@@ -318,9 +345,41 @@ internal static class BankStatementTabularReader
 
     // ── Encodage / délimiteur / en-tête ────────────────────────────────────────────────────────
 
-    private static (string Text, string EncodingName) DecodeText(byte[] content)
+    /// <summary>
+    /// Décode le CSV en texte. <paramref name="encodingOverride"/> (venant du mappage client, ex.
+    /// <c>windows-1256</c>, <c>utf-16</c>) force l'encodage au lieu de l'auto-détection ; un nom
+    /// inconnu retombe sur l'auto-détection. BOM UTF-16 (LE/BE) détecté explicitement avant UTF-8.
+    /// </summary>
+    private static (string Text, string EncodingName) DecodeText(byte[] content, string? encodingOverride = null)
     {
+        if (!string.IsNullOrWhiteSpace(encodingOverride))
+        {
+            try
+            {
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            }
+            catch (InvalidOperationException)
+            {
+                // Déjà enregistré : sans effet.
+            }
+
+            try
+            {
+                var forced = Encoding.GetEncoding(encodingOverride.Trim());
+                return (forced.GetString(StripKnownBom(content, forced)), encodingOverride.Trim().ToLowerInvariant());
+            }
+            catch (ArgumentException)
+            {
+                // Nom d'encodage inconnu : on retombe sur l'auto-détection ci-dessous.
+            }
+        }
+
         var span = content.AsSpan();
+        if (span.Length >= 2 && span[0] == 0xFF && span[1] == 0xFE)
+            return (Encoding.Unicode.GetString(content, 2, content.Length - 2), "utf-16");
+        if (span.Length >= 2 && span[0] == 0xFE && span[1] == 0xFF)
+            return (Encoding.BigEndianUnicode.GetString(content, 2, content.Length - 2), "utf-16be");
+
         var offset = span.Length >= 3 && span[0] == 0xEF && span[1] == 0xBB && span[2] == 0xBF ? 3 : 0;
         var bytes = content.AsSpan(offset).ToArray();
 
@@ -335,6 +394,14 @@ internal static class BankStatementTabularReader
             var legacy = Encoding.GetEncoding(1252);
             return (legacy.GetString(bytes), "windows-1252");
         }
+    }
+
+    private static byte[] StripKnownBom(byte[] content, Encoding encoding)
+    {
+        var preamble = encoding.GetPreamble();
+        if (preamble.Length > 0 && content.Length >= preamble.Length && content.AsSpan(0, preamble.Length).SequenceEqual(preamble))
+            return content[preamble.Length..];
+        return content;
     }
 
     private static string DetectDelimiter(string text)
@@ -402,13 +469,13 @@ internal static class BankStatementTabularReader
             : new List<int>();
 
         var hasDebitCredit = map["debit"] >= 0 || map["credit"] >= 0;
-        var ambiguous = DetectAmbiguousDateFormat(table, map["date"]);
+        var dateFormat = DetectDateFormat(table, map["date"]);
 
         return new BankStatementTabularMappingDto
         {
             HeaderRowIndex = table.HeaderRowIndex,
             SheetIndex = table.Format == BankStatementImportExtractionMethods.Xlsx ? table.SheetIndex : null,
-            DateFormat = "dd/MM/yyyy",
+            DateFormat = dateFormat,
             DecimalSeparator = ",",
             AmountMode = hasDebitCredit ? "debitCredit" : "signed",
             SignConvention = hasDebitCredit ? null : "negativeIsDebit",
@@ -423,6 +490,35 @@ internal static class BankStatementTabularReader
             Encoding = table.Encoding,
             Delimiter = table.Delimiter
         };
+    }
+
+    /// <summary>
+    /// Format de date suggéré : le premier de <see cref="SupportedDateFormats"/> (dans cet ordre,
+    /// <c>dd/MM/yyyy</c> d'abord) qui lit 100 % de l'échantillon de la colonne date — couvre les
+    /// fichiers XLSX (dates réelles toujours formatées en <c>yyyy-MM-dd</c> par <see cref="FormatCellValue"/>)
+    /// et les CSV <c>yyyy-MM-dd</c> / <c>dd.MM.yyyy</c>. Aucun format ne lit tout l'échantillon
+    /// (ambigu ou données hétérogènes) : repli sur <c>dd/MM/yyyy</c>.
+    /// </summary>
+    private static string DetectDateFormat(RawTable table, int dateColumn)
+    {
+        const string defaultFormat = "dd/MM/yyyy";
+        if (dateColumn < 0)
+            return defaultFormat;
+
+        var sample = table.Rows.Skip(table.HeaderRowIndex + 1).Take(HeaderScanRows)
+            .Select(r => dateColumn < r.Length ? r[dateColumn] : string.Empty)
+            .Where(v => !string.IsNullOrWhiteSpace(v))
+            .ToList();
+        if (sample.Count == 0)
+            return defaultFormat;
+
+        foreach (var format in SupportedDateFormats)
+        {
+            if (sample.All(v => DateOnly.TryParseExact(v, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out _)))
+                return format;
+        }
+
+        return defaultFormat;
     }
 
     public static bool DetectAmbiguousDateFormat(RawTable table, int dateColumn)
@@ -451,8 +547,25 @@ internal static class BankStatementTabularReader
 
     // ── Interprétation des lignes avec un mappage ──────────────────────────────────────────────
 
+    /// <summary>
+    /// Essaie <paramref name="dateFormat"/> (celui du mappage) puis, pour un fichier XLSX seulement,
+    /// le format ISO <c>yyyy-MM-dd</c> que <see cref="FormatCellValue"/> produit toujours pour une
+    /// vraie cellule date — accepté quel que soit le <c>dateFormat</c> choisi par l'utilisateur (§1).
+    /// </summary>
+    private static bool TryParseMappedDate(string dateText, string dateFormat, string tableFormat, out DateOnly result)
+    {
+        if (DateOnly.TryParseExact(dateText, dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+            return true;
+        if (tableFormat == BankStatementImportExtractionMethods.Xlsx && dateFormat != "yyyy-MM-dd"
+            && DateOnly.TryParseExact(dateText, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+            return true;
+        return false;
+    }
+
     public static IReadOnlyList<ParsedLine> ParseLines(RawTable table, BankStatementTabularMappingDto mapping)
     {
+        // Même convention 1-based que rows[]/parsedLines[].RowNumber (§13) : un IgnoredRows de 1
+        // désigne la première ligne de données après l'en-tête, jamais un index 0-based interne.
         var ignoredRows = mapping.IgnoredRows is { Count: > 0 } ? new HashSet<int>(mapping.IgnoredRows) : null;
         var decimalSeparator = string.IsNullOrEmpty(mapping.DecimalSeparator) ? "," : mapping.DecimalSeparator;
         var dateFormat = SupportedDateFormats.Contains(mapping.DateFormat) ? mapping.DateFormat : "dd/MM/yyyy";
@@ -460,20 +573,20 @@ internal static class BankStatementTabularReader
 
         for (var rowIndex = mapping.HeaderRowIndex + 1; rowIndex < table.Rows.Count; rowIndex++)
         {
-            if (ignoredRows is not null && ignoredRows.Contains(rowIndex))
+            var rowNumber = rowIndex + 1; // 1-based, affiché à l'utilisateur et référencé par IgnoredRows
+            if (ignoredRows is not null && ignoredRows.Contains(rowNumber))
                 continue;
 
             var row = table.Rows[rowIndex];
             if (row.All(string.IsNullOrWhiteSpace))
                 continue;
 
-            var rowNumber = rowIndex + 1; // 1-based, affiché à l'utilisateur
             var label = string.Join(" ", mapping.LabelColumns
                 .Select(c => Cell(row, c))
                 .Where(v => !string.IsNullOrWhiteSpace(v))).Trim();
 
             var dateText = Cell(row, mapping.DateColumn);
-            var hasDate = DateOnly.TryParseExact(dateText, dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var transactionDate);
+            var hasDate = TryParseMappedDate(dateText, dateFormat, table.Format, out var transactionDate);
 
             if (!hasDate && LooksLikeFooter(label, dateText))
             {
@@ -492,7 +605,7 @@ internal static class BankStatementTabularReader
             if (mapping.ValueDateColumn is { } valueDateColumn)
             {
                 var valueDateText = Cell(row, valueDateColumn);
-                if (DateOnly.TryParseExact(valueDateText, dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedValueDate))
+                if (TryParseMappedDate(valueDateText, dateFormat, table.Format, out var parsedValueDate))
                     valueDate = parsedValueDate;
             }
 
@@ -511,23 +624,25 @@ internal static class BankStatementTabularReader
             string? error = null;
             decimal? amount = null;
             bool? isDebit = null;
+            var amountRounded = false;
 
             if (string.Equals(mapping.AmountMode, "signed", StringComparison.OrdinalIgnoreCase))
             {
                 var amountText = Cell(row, mapping.AmountColumn ?? -1);
-                if (TryParseAmount(amountText, decimalSeparator, out var signed))
+                if (TryParseOperationAmount(amountText, decimalSeparator, out var signed, out var rounded))
                 {
                     var negativeIsDebit = !string.Equals(mapping.SignConvention, "negativeIsCredit", StringComparison.OrdinalIgnoreCase);
                     isDebit = negativeIsDebit ? signed < 0 : signed >= 0;
                     amount = Math.Abs(signed);
+                    amountRounded = rounded;
                 }
             }
             else
             {
                 var debitText = Cell(row, mapping.DebitColumn ?? -1);
                 var creditText = Cell(row, mapping.CreditColumn ?? -1);
-                var hasDebit = TryParseAmount(debitText, decimalSeparator, out var debitValue) && debitValue != 0;
-                var hasCredit = TryParseAmount(creditText, decimalSeparator, out var creditValue) && creditValue != 0;
+                var hasDebit = TryParseOperationAmount(debitText, decimalSeparator, out var debitValue, out var debitRounded) && debitValue != 0;
+                var hasCredit = TryParseOperationAmount(creditText, decimalSeparator, out var creditValue, out var creditRounded) && creditValue != 0;
 
                 if (hasDebit && hasCredit)
                 {
@@ -538,11 +653,13 @@ internal static class BankStatementTabularReader
                 {
                     amount = Math.Abs(debitValue);
                     isDebit = true;
+                    amountRounded = debitRounded;
                 }
                 else if (hasCredit)
                 {
                     amount = Math.Abs(creditValue);
                     isDebit = false;
+                    amountRounded = creditRounded;
                 }
             }
 
@@ -558,7 +675,10 @@ internal static class BankStatementTabularReader
                 amount ??= 0m;
             }
 
-            result.Add(new ParsedLine(rowIndex, rowNumber, transactionDate, valueDate, label, reference, amount, isDebit, balance, error, IsFooter: false));
+            result.Add(new ParsedLine(rowIndex, rowNumber, transactionDate, valueDate, label, reference, amount, isDebit, balance, error, IsFooter: false)
+            {
+                AmountRounded = amountRounded
+            });
         }
 
         return result;
@@ -649,14 +769,19 @@ internal static class BankStatementTabularReader
         if (operationLines.Count == 0)
             return Result.Failure<ExtractedBankStatement>(NoLines());
 
+        // Fichier antichronologique (plus récent en premier) : aucune paire consécutive n'avance dans le
+        // temps et au moins une recule (lignes de même jour autorisées, ni avance ni recul).
         var reversed = false;
+        var increasing = 0;
         var decreasing = 0;
         for (var i = 1; i < operationLines.Count; i++)
         {
-            if (operationLines[i].TransactionDate < operationLines[i - 1].TransactionDate)
+            if (operationLines[i].TransactionDate > operationLines[i - 1].TransactionDate)
+                increasing++;
+            else if (operationLines[i].TransactionDate < operationLines[i - 1].TransactionDate)
                 decreasing++;
         }
-        if (operationLines.Count >= 2 && decreasing >= operationLines.Count - 1)
+        if (operationLines.Count >= 2 && increasing == 0 && decreasing >= 1)
         {
             operationLines = Enumerable.Reverse(operationLines).ToList();
             reversed = true;
@@ -685,6 +810,12 @@ internal static class BankStatementTabularReader
 
             if (p.Error is not null)
                 issues.Add(new StatementExtractionIssue(p.Error, StatementIssueSeverity.Blocking, FriendlyMessage(p.Error, p.RowNumber), LineIndex: i));
+
+            if (p.AmountRounded)
+            {
+                issues.Add(new StatementExtractionIssue(StatementIssueCodes.TabularAmountRounded, StatementIssueSeverity.Info,
+                    $"Montant arrondi à 3 décimales à la ligne {p.RowNumber} du fichier.", LineIndex: i));
+            }
         }
 
         if (reversed)
@@ -784,12 +915,28 @@ internal static class BankStatementTabularReader
     };
 
     /// <summary>
-    /// Montant tunisien tolérant les espaces (dont insécables), parenthèses et signe en fin ; délègue
-    /// ensuite à <see cref="TunisianBankAmountParsing.TryParseTunisianBankAmount"/>.
+    /// Montant tolérant les espaces (dont insécables), parenthèses et signe en fin, strictement
+    /// piloté par <paramref name="decimalSeparator"/> (§3) : <c>","</c> = convention tunisienne
+    /// (point = milliers, virgule = décimales) ; <c>"."</c> = convention internationale (virgule =
+    /// milliers, point = décimales). Plus de 3 décimales : arrondi (<paramref name="rounded"/> = true).
+    /// Utilisé pour les colonnes solde / pied de page : aucune borne de plausibilité appliquée ici
+    /// (un solde peut être négatif ou nul).
     /// </summary>
-    private static bool TryParseAmount(string? value, string decimalSeparator, out decimal amount)
+    private static bool TryParseAmount(string? value, string decimalSeparator, out decimal amount) =>
+        TryParseAmountCore(value, decimalSeparator, applyOperationBounds: false, out amount, out _);
+
+    /// <summary>
+    /// Comme <see cref="TryParseAmount(string?, string, out decimal)"/>, pour un montant d'opération
+    /// (débit/crédit/montant signé) : applique en plus <see cref="TunisianBankAmountParsing.IsPlausibleOperationAmount"/>
+    /// (échoue si le montant lu est invraisemblable).
+    /// </summary>
+    private static bool TryParseOperationAmount(string? value, string decimalSeparator, out decimal amount, out bool rounded) =>
+        TryParseAmountCore(value, decimalSeparator, applyOperationBounds: true, out amount, out rounded);
+
+    private static bool TryParseAmountCore(string? value, string decimalSeparator, bool applyOperationBounds, out decimal amount, out bool rounded)
     {
         amount = 0m;
+        rounded = false;
         if (string.IsNullOrWhiteSpace(value))
             return false;
 
@@ -810,16 +957,55 @@ internal static class BankStatementTabularReader
             text = text[..^1];
         }
 
-        if (decimalSeparator == "." && text.Contains(',') && !text.Contains('.'))
-        {
-            // Le mappage force le point mais la cellule reste virgule décimale : on la convertit.
-            text = text.Replace(",", ".");
-        }
-
-        if (!TunisianBankAmountParsing.TryParseTunisianBankAmount(text, out var parsed))
+        var parsedOk = decimalSeparator == "."
+            ? TryParseDotDecimal(text, out var parsed)
+            : TryParseCommaDecimal(text, out parsed);
+        if (!parsedOk)
             return false;
 
-        amount = negative ? -Math.Abs(parsed) : parsed;
+        if (CountDecimals(parsed) > MaxDecimalsBeforeRounding)
+        {
+            parsed = Math.Round(parsed, MaxDecimalsBeforeRounding, MidpointRounding.AwayFromZero);
+            rounded = true;
+        }
+
+        if (applyOperationBounds && !TunisianBankAmountParsing.IsPlausibleOperationAmount(parsed))
+            return false;
+
+        amount = negative ? -parsed : parsed;
         return true;
+    }
+
+    /// <summary>Point décimal : la virgule n'est jamais qu'un séparateur de milliers, à n'importe quelle position.</summary>
+    private static bool TryParseDotDecimal(string text, out decimal amount) =>
+        decimal.TryParse(text.Replace(",", string.Empty), NumberStyles.Number | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out amount);
+
+    /// <summary>
+    /// Virgule décimale (convention tunisienne) : la dernière virgule sépare les décimales, tout point
+    /// avant elle est un séparateur de milliers ; sans virgule, un point éventuel est TOUJOURS un
+    /// séparateur de milliers (jamais une décimale) — ex. <c>"1.190"</c> = 1190, pas 1,19.
+    /// </summary>
+    private static bool TryParseCommaDecimal(string text, out decimal amount)
+    {
+        string normalized;
+        var lastComma = text.LastIndexOf(',');
+        if (lastComma >= 0)
+        {
+            var intPart = text[..lastComma].Replace(".", string.Empty);
+            var fracPart = text[(lastComma + 1)..];
+            normalized = intPart + "." + fracPart;
+        }
+        else
+        {
+            normalized = text.Replace(".", string.Empty);
+        }
+
+        return decimal.TryParse(normalized, NumberStyles.Number | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out amount);
+    }
+
+    private static int CountDecimals(decimal value)
+    {
+        var bits = decimal.GetBits(value);
+        return (bits[3] >> 16) & 0x7F;
     }
 }

@@ -132,6 +132,23 @@ public sealed class BankStatementImportSession : Entity
         ResultJson = resultJson;
     }
 
+    /// <summary>
+    /// Même fichier (même compte, même empreinte) réanalysé avec un nouveau mappage CSV/XLSX : le
+    /// résultat ET le journal choisi ET l'expiration sont tous rafraîchis — contrairement à
+    /// <see cref="ReplaceResult"/>, qui ne touche que le résultat (corrections de relecture).
+    /// </summary>
+    public void RenewForReimport(string journalCode, string resultJson, DateTime expiresAt)
+    {
+        if (Status != BankStatementImportSessionStatus.AwaitingReview)
+            throw new InvalidOperationException("Seule une extraction en attente de relecture peut être corrigée.");
+        if (string.IsNullOrWhiteSpace(journalCode))
+            throw new ArgumentException("Journal requis.", nameof(journalCode));
+
+        JournalCode = journalCode.Trim().ToUpperInvariant();
+        ResultJson = resultJson;
+        ExpiresAt = expiresAt;
+    }
+
     public void Fail(string errorCode)
     {
         ErrorCode = errorCode;

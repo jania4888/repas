@@ -282,8 +282,13 @@ public sealed class JournalEntryRepository : IJournalEntryRepository
             await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
             try
             {
-                var seq = await context.JournalEntrySequences
-                    .FirstOrDefaultAsync(s => s.JournalCode == code && s.FiscalYear == fiscalYear, cancellationToken);
+                var relational = context.Database.IsRelational();
+                var seq = relational
+                    ? await context.JournalEntrySequences
+                        .FromSqlRaw("SELECT * FROM JournalEntrySequences WITH (UPDLOCK, HOLDLOCK) WHERE JournalCode = {0} AND FiscalYear = {1}", code, fiscalYear)
+                        .FirstOrDefaultAsync(cancellationToken)
+                    : await context.JournalEntrySequences
+                        .FirstOrDefaultAsync(s => s.JournalCode == code && s.FiscalYear == fiscalYear, cancellationToken);
 
                 if (seq is null)
                 {
@@ -317,8 +322,17 @@ public sealed class JournalEntryRepository : IJournalEntryRepository
         // Un rollback de cette transaction restaure la séquence — aucun numéro n'est brûlé.
         await using var context = _contextFactory.CreateContext();
 
-        var seq = await context.JournalEntrySequences
-            .FirstOrDefaultAsync(s => s.JournalCode == code && s.FiscalYear == fiscalYear, cancellationToken);
+        // Verrou de ligne (SQL Server uniquement ; le provider InMemory des tests ne supporte ni
+        // FromSqlRaw ni les verrous) : deux générations concurrentes sur le même (JournalCode,
+        // FiscalYear) doivent se sérialiser sur CETTE ligne plutôt que de lire la même valeur de
+        // départ avant que l'une des deux n'ait eu l'occasion de la faire avancer.
+        var relational = context.Database.IsRelational();
+        var seq = relational
+            ? await context.JournalEntrySequences
+                .FromSqlRaw("SELECT * FROM JournalEntrySequences WITH (UPDLOCK, HOLDLOCK) WHERE JournalCode = {0} AND FiscalYear = {1}", code, fiscalYear)
+                .FirstOrDefaultAsync(cancellationToken)
+            : await context.JournalEntrySequences
+                .FirstOrDefaultAsync(s => s.JournalCode == code && s.FiscalYear == fiscalYear, cancellationToken);
         if (seq is null)
         {
             seq = JournalEntrySequence.Create(code, fiscalYear);

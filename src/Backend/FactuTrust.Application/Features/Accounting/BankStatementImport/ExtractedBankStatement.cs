@@ -195,6 +195,8 @@ public static class StatementIssueCodes
     public const string TabularReversedOrder = "tabular_reversed_order";
     /// <summary>Info (LineIndex) : la cellule est une formule ; sa valeur mise en cache a été lue sans l'évaluer.</summary>
     public const string TabularFormulaCells = "tabular_formula_cells";
+    /// <summary>Info (LineIndex) : le montant comportait plus de 3 décimales et a été arrondi.</summary>
+    public const string TabularAmountRounded = "tabular_amount_rounded";
 
     // ── Lecture « IA seule » (toute page de tout relevé lue par GLM-OCR) ──
 

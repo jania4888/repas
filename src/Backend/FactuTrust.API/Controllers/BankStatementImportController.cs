@@ -201,6 +201,7 @@ public sealed class BankStatementImportController : ControllerBase
         {
             Content = stream,
             FileName = file.FileName,
+            ContentType = file.ContentType,
             Length = file.Length,
             Mapping = mappingDto,
             BankAccountId = bankAccountId

@@ -91,6 +91,7 @@ public sealed class BankStatementTabularImportServiceTests : IDisposable
     {
         Content = new MemoryStream(content),
         FileName = "releve.csv",
+        ContentType = "text/csv",
         Length = content.Length,
         Mapping = mapping,
         BankAccountId = bankAccountId
@@ -236,5 +237,106 @@ public sealed class BankStatementTabularImportServiceTests : IDisposable
         var again = await Service().StartAsync(StartRequest(content, accountId), Mapping());
 
         Assert.Equal(BankStatementImportErrorCodes.AlreadyImported, again.Error.Code);
+    }
+
+    // ── §4 : mappage CLIENT invalide refusé en aperçu, avant toute lecture dépendante ─────
+
+    [Fact]
+    public async Task Preview_rejects_an_invalid_client_mapping_before_parsing()
+    {
+        var accountId = SeedBankAccount(Rib);
+        var badMapping = Mapping() with { DateColumn = 99 };
+
+        var preview = await Service().PreviewAsync(PreviewRequest(Csv(SimpleCsv), accountId, badMapping));
+
+        Assert.Equal(BankStatementTabularErrorCodes.TabularMappingInvalid, preview.Error.Code);
+    }
+
+    // ── §9 : même fichier, nouveau mappage → journal et expiration rafraîchis ────────────
+
+    [Fact]
+    public async Task Same_file_with_a_different_mapping_also_renews_the_journal_code_and_expiry()
+    {
+        var accountId = SeedBankAccount(Rib);
+        var content = Csv(SimpleCsv);
+
+        await using (var seedCtx = _factory.CreateContext())
+        {
+            var family = JournalFamily.Create("TRE", "Trésorerie").Value;
+            seedCtx.JournalFamilies.Add(family);
+            seedCtx.Journals.Add(Journal.Create("JB", "Banque", family.Id).Value);
+            seedCtx.Journals.Add(Journal.Create("JB2", "Banque 2", family.Id).Value);
+            await seedCtx.SaveChangesAsync();
+        }
+
+        var first = await Service().StartAsync(StartRequest(content, accountId) with { JournalCode = "JB" }, Mapping());
+        Assert.True(first.IsSuccess, first.IsFailure ? first.Error.Description : null);
+        DateTime firstExpiresAt;
+        await using (var ctx = _factory.CreateContext())
+            firstExpiresAt = (await ctx.BankStatementImportSessions.SingleAsync(s => s.Id == first.Value.Id)).ExpiresAt;
+
+        await Task.Delay(10);
+        var second = await Service().StartAsync(StartRequest(content, accountId) with { JournalCode = "JB2" }, Mapping());
+        Assert.True(second.IsSuccess, second.IsFailure ? second.Error.Description : null);
+
+        await using var ctx2 = _factory.CreateContext();
+        var renewed = await ctx2.BankStatementImportSessions.SingleAsync(s => s.Id == first.Value.Id);
+        Assert.Equal("JB2", renewed.JournalCode);
+        Assert.True(renewed.ExpiresAt > firstExpiresAt);
+    }
+
+    // ── §11 : Preview applique le même UploadValidator.Validate que Start ────────────────
+
+    [Fact]
+    public async Task Preview_rejects_a_content_type_mismatch_just_like_start()
+    {
+        var accountId = SeedBankAccount(Rib);
+        var request = PreviewRequest(Csv(SimpleCsv), accountId) with { ContentType = "application/octet-stream" };
+
+        var preview = await Service().PreviewAsync(request);
+
+        Assert.Equal(BankStatementTabularErrorCodes.TabularRejected, preview.Error.Code);
+    }
+
+    [Fact]
+    public async Task Preview_rejects_a_double_extension_name_just_like_start()
+    {
+        var accountId = SeedBankAccount(Rib);
+        // Extension finale ".csv" acceptée par le pré-contrôle rapide de PreviewAsync, mais
+        // l'extension intermédiaire ".exe" doit être repérée par UploadValidator.Validate.
+        var request = PreviewRequest(Csv(SimpleCsv), accountId) with { FileName = "releve.exe.csv" };
+
+        var preview = await Service().PreviewAsync(request);
+
+        Assert.Equal(BankStatementTabularErrorCodes.TabularRejected, preview.Error.Code);
+    }
+
+    // ── §10 : mémorisation concurrente du mappage sans 500 ────────────────────────────────
+
+    // NOTE : le fournisseur EF Core InMemory utilisé par ces tests n'applique pas la contrainte
+    // d'unicité réelle de l'index SQL Server IX_BankStatementTabularMappings_BankAccountId, donc
+    // une vraie course (deux insertions concurrentes aboutissant toutes deux à SaveChangesAsync
+    // avant qu'aucune n'ait vu la ligne de l'autre) ne lève PAS de DbUpdateException ici — c'est
+    // une limite connue du harnais de test, pas une absence de couverture du code de production :
+    // le chemin « new()/Add puis SaveChangesAsync » et le chemin « update » restent chacun exercés
+    // (voir Remember_mapping_persists_a_reusable_entry_without_balances_or_ignored_rows et
+    // A_saved_mapping_whose_columns_no_longer_fit_the_file_is_not_proposed_in_preview). Ce test ne
+    // vérifie donc que l'absence d'exception et la cohérence du résultat sous course simulée,
+    // pas le déclenchement effectif du bloc catch (DbUpdateException).
+    [Fact]
+    public async Task Concurrent_remember_mapping_for_the_same_account_never_throws()
+    {
+        var accountId = SeedBankAccount(Rib);
+        var contentA = Csv(SimpleCsv);
+        var contentB = Csv("Date;Libelle;Debit;Credit\n01/01/2026;AUTRE;;50,000\n");
+
+        var resultA = Service().StartAsync(StartRequest(contentA, accountId, "a.csv"), Mapping(remember: true));
+        var resultB = Service().StartAsync(StartRequest(contentB, accountId, "b.csv"), Mapping(remember: true));
+        await Task.WhenAll(resultA, resultB);
+
+        Assert.True(resultA.Result.IsSuccess, resultA.Result.IsFailure ? resultA.Result.Error.Description : null);
+        Assert.True(resultB.Result.IsSuccess, resultB.Result.IsFailure ? resultB.Result.Error.Description : null);
+        await using var ctx = _factory.CreateContext();
+        Assert.True(await ctx.BankStatementTabularMappings.CountAsync(m => m.BankAccountId == accountId) >= 1);
     }
 }

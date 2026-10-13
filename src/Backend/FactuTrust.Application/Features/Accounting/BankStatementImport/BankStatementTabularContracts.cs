@@ -30,6 +30,9 @@ public sealed record BankStatementTabularPreviewRequest
     public required string FileName { get; init; }
     public required long Length { get; init; }
 
+    /// <summary>Content-Type déclaré par le client (multipart) : utilisé par <c>UploadValidator.Validate</c>, comme pour <c>StartAsync</c>.</summary>
+    public string? ContentType { get; init; }
+
     /// <summary>Mappage proposé par le client (ex. l'utilisateur a changé une colonne) ; sinon mappage suggéré/mémorisé.</summary>
     public BankStatementTabularMappingDto? Mapping { get; init; }
 
@@ -67,7 +70,11 @@ public sealed record BankStatementTabularMappingDto
     public int? AmountColumn { get; init; }
     public int? BalanceColumn { get; init; }
 
-    /// <summary>Lignes (0-based) à ignorer en plus de l'en-tête et des pieds de page détectés automatiquement.</summary>
+    /// <summary>
+    /// Lignes à ignorer en plus de l'en-tête et des pieds de page détectés automatiquement.
+    /// Convention 1-based, identique à <c>rowNumber</c> dans <c>rows[]</c>/<c>parsedLines[]</c> :
+    /// un IgnoredRows de 1 désigne la première ligne de données affichée, jamais un index 0-based interne.
+    /// </summary>
     public IReadOnlyList<int>? IgnoredRows { get; init; }
 
     public decimal? OpeningBalance { get; init; }

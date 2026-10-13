@@ -345,6 +345,87 @@ public sealed class BankStatementAtomicGenerationSqlTests : IDisposable
         Assert.Equal(firstNumber, sequence.LastSequence);
     }
 
+    [Fact]
+    public async Task A_line_present_in_both_items_and_excluded_is_rejected_before_any_write()
+    {
+        if (!_canRun) return;
+        var (statementId, lines) = await SeedAsync();
+
+        var result = await Service().GenerateAsync(statementId, new GenerateBankStatementEntriesRequest
+        {
+            Atomic = true,
+            Items = new[] { Item(lines["swift1"]), Item(lines["swift2"]) },
+            ExcludedLineIds = new[] { lines["swift2"] }
+        });
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(BankStatementPostingErrorCodes.AtomicOverlap, result.Error.Code);
+
+        await using var verify = _factory!.CreateIsolatedContext();
+        Assert.Equal(0, await verify.JournalEntries.CountAsync());
+    }
+
+    [Fact]
+    public async Task Atomic_with_no_items_and_no_exclusions_still_runs_the_coverage_check()
+    {
+        if (!_canRun) return;
+        var (statementId, _) = await SeedAsync();
+
+        // Items vide en mode atomique : ne doit jamais être traité comme « rien à faire » (c'était
+        // le cas avant correctif, en NRE potentielle sur ExcludedLineIds=null) — la couverture reste
+        // incomplète (swift1/swift2 ni envoyées ni exclues) donc rejet avant toute écriture.
+        var result = await Service().GenerateAsync(statementId, new GenerateBankStatementEntriesRequest
+        {
+            Atomic = true,
+            Items = Array.Empty<GenerateBankStatementEntryItem>(),
+            ExcludedLineIds = null
+        });
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(BankStatementPostingErrorCodes.AtomicIncomplete, result.Error.Code);
+
+        await using var verify = _factory!.CreateIsolatedContext();
+        Assert.Equal(0, await verify.JournalEntries.CountAsync());
+    }
+
+    [Fact]
+    public async Task A_statement_spanning_two_fiscal_years_reports_a_range_per_year_and_a_null_global_range()
+    {
+        if (!_canRun) return;
+        await using var ctx = _factory!.CreateIsolatedContext();
+        ctx.ChartOfAccounts.Add(ChartOfAccount.Create(BankGl, $"Compte {BankGl}", int.Parse(BankGl[..1]), null, AccountNatureType.Debit).Value);
+        ctx.ChartOfAccounts.Add(ChartOfAccount.Create("6278", "Compte 6278", 6, null, AccountNatureType.Debit).Value);
+
+        var statement = BankStatement.Create("STB", "10100000000123456793", new DateTime(2026, 1, 2), new DateTime(2025, 12, 31),
+            new DateTime(2026, 1, 2), Money.Create(1_000m), Money.Create(1_000m));
+        statement.SetProvenance(null, BankGl, "releve.pdf", "HASH2", BankStatementImportMethod.PdfText);
+
+        var december = BankStatementLine.Create(statement.Id, new DateTime(2025, 12, 31), string.Empty, "SWIFT", Money.Create(10.000m), true);
+        var january = BankStatementLine.Create(statement.Id, new DateTime(2026, 1, 2), string.Empty, "SWIFT", Money.Create(20.000m), true);
+        statement.Lines.Add(december);
+        statement.Lines.Add(january);
+        ctx.BankStatements.Add(statement);
+        await ctx.SaveChangesAsync();
+
+        var result = await Service().GenerateAsync(statement.Id, new GenerateBankStatementEntriesRequest
+        {
+            Atomic = true,
+            Items = new[] { Item(december.Id), Item(january.Id) }
+        });
+
+        Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
+        Assert.Equal(2, result.Value.Created);
+        Assert.Null(result.Value.FirstEntryNumber);
+        Assert.Null(result.Value.LastEntryNumber);
+        Assert.Equal(2, result.Value.EntryNumberRangesByYear.Count);
+        Assert.Contains(result.Value.EntryNumberRangesByYear, r => r.FiscalYear == 2025 && r.First == r.Last);
+        Assert.Contains(result.Value.EntryNumberRangesByYear, r => r.FiscalYear == 2026 && r.First == r.Last);
+
+        await using var verify = _factory!.CreateIsolatedContext();
+        var entries = await verify.JournalEntries.Where(e => e.SourceEntityId == december.Id || e.SourceEntityId == january.Id).ToListAsync();
+        Assert.Equal(2, entries.Count);
+    }
+
     public void Dispose() => _sqlDb.Dispose();
 }
 
