@@ -23,6 +23,15 @@ public static class BankStatementImportExtractionMethods
 
     /// <summary>Plan « IA seule » sans lecture : IA indisponible avant lancement (session relançable).</summary>
     public const string None = "none";
+
+    /// <summary>Lecture tabulaire d'un fichier CSV mappé par colonnes (sans IA).</summary>
+    public const string Csv = "csv";
+
+    /// <summary>Lecture tabulaire d'un fichier XLSX mappé par colonnes (sans IA).</summary>
+    public const string Xlsx = "xlsx";
+
+    /// <summary><c>BankStatementImportSession.ProfileId</c> commun aux imports CSV et XLSX.</summary>
+    public const string TabularProfileId = "tabular";
 }
 
 /// <summary>Valeurs stables de <c>BankStatementImportSession.ErrorCode</c> (session <c>Failed</c>), lues par le front.</summary>

@@ -268,6 +268,25 @@ public sealed class JournalEntryRepository : IJournalEntryRepository
         return Result.Success();
     }
 
+    /// <summary>
+    /// Lit la ligne <see cref="JournalEntrySequence"/> (JournalCode, FiscalYear) sous verrou
+    /// <c>UPDLOCK, HOLDLOCK</c> sur SQL Server, afin que deux générations concurrentes sur le même
+    /// couple se sérialisent sur CETTE ligne plutôt que de lire la même valeur de départ avant que
+    /// l'une des deux n'ait eu l'occasion de la faire avancer. Repli en lecture simple (sans
+    /// verrou) sur le provider InMemory des tests, qui ne supporte ni <c>FromSqlRaw</c> ni les
+    /// verrous. Partagée par <see cref="ReserveNextEntryNumberAsync"/> et
+    /// <see cref="ReserveEntryNumberBlockAsync"/> (même requête de verrouillage, deux stratégies de
+    /// transaction différentes).
+    /// </summary>
+    private static async Task<JournalEntrySequence?> FindSequenceForUpdateAsync(
+        TenantDbContext context, string code, int fiscalYear, CancellationToken cancellationToken) =>
+        context.Database.IsRelational()
+            ? await context.JournalEntrySequences
+                .FromSqlRaw("SELECT * FROM JournalEntrySequences WITH (UPDLOCK, HOLDLOCK) WHERE JournalCode = {0} AND FiscalYear = {1}", code, fiscalYear)
+                .FirstOrDefaultAsync(cancellationToken)
+            : await context.JournalEntrySequences
+                .FirstOrDefaultAsync(s => s.JournalCode == code && s.FiscalYear == fiscalYear, cancellationToken);
+
     public async Task<int> ReserveNextEntryNumberAsync(string journalCode, int fiscalYear, CancellationToken cancellationToken = default)
     {
         var code = journalCode.Trim().ToUpperInvariant();
@@ -282,8 +301,7 @@ public sealed class JournalEntryRepository : IJournalEntryRepository
             await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
             try
             {
-                var seq = await context.JournalEntrySequences
-                    .FirstOrDefaultAsync(s => s.JournalCode == code && s.FiscalYear == fiscalYear, cancellationToken);
+                var seq = await FindSequenceForUpdateAsync(context, code, fiscalYear, cancellationToken);
 
                 if (seq is null)
                 {
@@ -305,6 +323,31 @@ public sealed class JournalEntryRepository : IJournalEntryRepository
                 throw;
             }
         });
+    }
+
+    public async Task<int> ReserveEntryNumberBlockAsync(string journalCode, int fiscalYear, int count, CancellationToken cancellationToken = default)
+    {
+        if (count <= 0)
+            throw new ArgumentOutOfRangeException(nameof(count), "Le bloc réservé doit contenir au moins un numéro.");
+
+        var code = journalCode.Trim().ToUpperInvariant();
+        // Contexte AMBIANT (pas isolé) : rejoint la transaction appelante (génération atomique).
+        // Un rollback de cette transaction restaure la séquence — aucun numéro n'est brûlé.
+        await using var context = _contextFactory.CreateContext();
+
+        var seq = await FindSequenceForUpdateAsync(context, code, fiscalYear, cancellationToken);
+        if (seq is null)
+        {
+            seq = JournalEntrySequence.Create(code, fiscalYear);
+            seq.SetAuditInfo("system", isUpdate: false);
+            context.JournalEntrySequences.Add(seq);
+        }
+
+        var first = seq.Advance(count);
+        if (context.Entry(seq).State != EntityState.Added)
+            context.JournalEntrySequences.Update(seq);
+        await context.SaveChangesAsync(cancellationToken);
+        return first;
     }
 
     public async Task<decimal> SumDebitsByAccountAsync(string accountNumber, DateTime from, DateTime to, CancellationToken cancellationToken = default)

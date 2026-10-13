@@ -1,5 +1,6 @@
 /// <reference types="@angular/localize" />
 import { LineConfidence, LineProposalSource, LineStatus } from './bank-statement-import.models';
+import { BankStatementImportError } from './bank-statement-import.service';
 
 /**
  * Textes affichés selon les CODES stables renvoyés par l'API (jamais selon le texte français du
@@ -52,9 +53,41 @@ export function importErrorMessage(code: string | null | undefined): string {
       return $localize`:@@accounting.bank-statement-import.ts.le.brouillard.est.desactive.les.ecritures.d.un.r.9e2641b0:Le brouillard est désactivé : les écritures d'un relevé ne peuvent être générées qu'en brouillard.`;
     case 'bank_statement_posting.ai_unavailable':
       return $localize`:@@accounting.bank-statement-import.ts.la.classification.par.l.ia.est.indisponible.pour.a391504b:La classification par l'IA est indisponible pour le moment.`;
+    case 'bank_statement_import.tabular_unreadable':
+      return $localize`:@@accounting.bank-statement-import.ts.fichier.csv.ou.excel.illisible.verifiez.l.encoda.7b5cf56e:Fichier CSV ou Excel illisible : vérifiez l'encodage ou le format du fichier.`;
+    case 'bank_statement_import.tabular_mapping_invalid':
+      return $localize`:@@accounting.bank-statement-import.ts.mappage.de.colonnes.invalide.verifiez.les.roles.dcb2b879:Mappage de colonnes invalide : vérifiez les rôles choisis pour chaque colonne.`;
+    case 'bank_statement_import.tabular_no_lines':
+      return $localize`:@@accounting.bank-statement-import.ts.aucune.operation.trouvee.avec.ce.mappage.4f9174e9:Aucune opération trouvée avec ce mappage.`;
+    case 'bank_statement_import.tabular_too_many_rows':
+      return $localize`:@@accounting.bank-statement-import.ts.trop.de.lignes.dans.ce.fichier.pour.un.import.ta.09354ea0:Trop de lignes dans ce fichier pour un import tabulaire.`;
+    case 'bank_statement_import.tabular_rejected':
+      return $localize`:@@accounting.bank-statement-import.ts.ce.fichier.csv.ou.excel.a.ete.refuse.ca1118ef:Ce fichier CSV ou Excel a été refusé.`;
+    case 'bank_statement_import.tabular_disabled':
+      return $localize`:@@accounting.bank-statement-import.ts.l.import.csv.excel.n.est.pas.active.pour.ce.doss.bb7f2644:L'import CSV/Excel n'est pas activé pour ce dossier.`;
+    case 'bank_statement_posting.atomic_rejected':
+      return $localize`:@@accounting.bank-statement-import.ts.generation.refusee.au.moins.une.ligne.cochee.ne.1225763c:Génération refusée : au moins une ligne cochée ne peut pas être générée. Rien n’a été créé.`;
+    case 'bank_statement_posting.atomic_overlap':
+      return $localize`:@@accounting.bank-statement-import.ts.ecran.perime.des.lignes.sont.a.la.fois.cochees.0d3c7a51:Écran périmé : des lignes sont à la fois cochées pour la génération et exclues. Rechargez la page puis réessayez.`;
+    case 'bank_statement_posting.atomic_incomplete':
+      return $localize`:@@accounting.bank-statement-import.ts.certaines.lignes.ne.sont.ni.cochees.ni.explicite.98fdb994:Certaines lignes ne sont ni cochées ni explicitement exclues : complétez la sélection avant de générer.`;
+    case 'bank_statement_posting.atomic_too_many_lines':
+      return $localize`:@@accounting.bank-statement-import.ts.trop.de.lignes.pour.une.generation.en.une.seule.b7aa5129:Trop de lignes pour une génération en une seule fois.`;
+    case 'bank_statement_posting.atomic_conflict':
+      return $localize`:@@accounting.bank-statement-import.ts.un.autre.enregistrement.est.en.cours.pour.ce.rel.695a4ac4:Un autre enregistrement est en cours pour ce relevé : rechargez puis réessayez.`;
     default:
       return $localize`:@@accounting.bank-statement-import.ts.l.operation.a.echoue.reessayez.ou.contactez.le.s.23720b33:L'opération a échoué. Réessayez ou contactez le support.`;
   }
+}
+
+/** Message selon le CODE d'une erreur d'API (jamais selon `err.message`, qui peut porter du texte serveur). */
+export function importErrorOf(err: unknown): string {
+  return importErrorMessage(err instanceof BankStatementImportError ? err.code : null);
+}
+
+/** Après une relecture de sécurité suivant une erreur réseau/concurrence à la génération : résultat incertain. */
+export function uncertainResultAfterReloadMessage(): string {
+  return $localize`:@@accounting.bank-statement-import.ts.resultat.incertain.propositions.rechargees.b7e1a4c2:Le résultat est incertain : les propositions ont été rechargées. Vérifiez puis relancez.`;
 }
 
 /** Libellé court d'un motif de refus à la génération d'une ligne. */
@@ -186,6 +219,18 @@ export function issueTitle(code: string): string {
       return $localize`:@@accounting.bank-statement-import.ts.plusieurs.montants.sur.une.operation:Plusieurs montants sur une opération`;
     case 'statement.assumed_balance_sign':
       return $localize`:@@accounting.bank-statement-import.ts.signe.d.un.solde.suppose:Signe d'un solde supposé`;
+    case 'tabular_date_invalid':
+      return $localize`:@@accounting.bank-statement-import.ts.date.illisible.sur.cette.ligne.3e8d10a4:Date illisible sur cette ligne.`;
+    case 'tabular_amount_invalid':
+      return $localize`:@@accounting.bank-statement-import.ts.montant.illisible.sur.cette.ligne.ced218bc:Montant illisible sur cette ligne.`;
+    case 'tabular_both_sides':
+      return $localize`:@@accounting.bank-statement-import.ts.debit.et.credit.renseignes.sur.la.meme.ligne.b2b7fce3:Débit et crédit renseignés sur la même ligne.`;
+    case 'tabular_running_balance_mismatch':
+      return $localize`:@@accounting.bank-statement-import.ts.solde.cumule.incoherent.avec.les.montants.de.la.4d172371:Solde cumulé incohérent avec les montants de la ligne.`;
+    case 'tabular_reversed_order':
+      return $localize`:@@accounting.bank-statement-import.ts.ordre.des.lignes.inverse.par.rapport.au.releve.be647ced:Ordre des lignes inversé par rapport au relevé.`;
+    case 'tabular_formula_cells':
+      return $localize`:@@accounting.bank-statement-import.ts.cellules.calculees.formules.detectees.verifiez.l.3bb6a207:Cellules calculées (formules) détectées : vérifiez les valeurs.`;
     default:
       return $localize`:@@accounting.bank-statement-import.ts.signalement.19e0c078:Signalement`;
   }
@@ -221,6 +266,10 @@ export function proposalSourceLabel(source: LineProposalSource | null): string {
       return $localize`:@@accounting.bank-statement-import.ts.tiers.reconnu.c8bf88a3:Tiers reconnu`;
     case 'Ai':
       return $localize`:@@accounting.bank-statement-import.ts.suggestion.de.l.ia.7a2e0944:Suggestion de l'IA`;
+    case 'History':
+      return $localize`:@@accounting.bank-statement-import.ts.historique.operation.similaire.deja.comptabilise.f7c508ac:Historique (opération similaire déjà comptabilisée)`;
+    case 'Fallback':
+      return $localize`:@@accounting.bank-statement-import.ts.compte.d.attente.471.7725ea67:Compte d'attente (471)`;
     default:
       return '';
   }
@@ -238,6 +287,10 @@ export function proposalDiagnosticMessage(code: string, account: string | null):
       return $localize`:@@accounting.bank-statement-import.ts.periode.close.ou.exercice.verrouille.aucune.ecri.bb3d8ddf:Période close ou exercice verrouillé : aucune écriture ne peut y être passée.`;
     case 'third_party_required':
       return $localize`:@@accounting.bank-statement-import.ts.compte.collectif.precisez.le.tiers.be8367d1:Compte collectif : précisez le tiers.`;
+    case 'suspense_account':
+      return $localize`:@@accounting.bank-statement-import.ts.compte.d.attente.utilise.en.l.absence.de.contrep.4a2ceeb2:Compte d'attente utilisé en l'absence de contrepartie identifiée : à corriger avant comptabilisation définitive.`;
+    case 'suspense_missing':
+      return $localize`:@@accounting.bank-statement-import.ts.compte.d.attente.471.introuvable.ou.desactive.co.0d0d2976:Compte d'attente (471) introuvable ou désactivé : complétez cette ligne manuellement.`;
     default:
       return $localize`:@@accounting.bank-statement-import.ts.point.a.verifier.3fd65f17:Point à vérifier.`;
   }

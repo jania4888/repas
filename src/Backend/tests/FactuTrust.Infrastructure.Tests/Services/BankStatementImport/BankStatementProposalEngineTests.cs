@@ -336,4 +336,161 @@ public sealed class BankStatementProposalEngineTests
         Assert.Equal(BankLineConfidences.ToCheck, cached.Confidence);
         Assert.False(cached.SelectedByDefault);
     }
+
+    // ── Propositions enrichies (assist=full) : historique + repli 471 ──────────────────────
+
+    private static readonly Dictionary<string, Engine.ChartAccount> ChartWithSuspense = new(FullChart)
+    {
+        ["471"] = new("Compte d'attente", true)
+    };
+
+    [Fact]
+    public void Without_assist_history_and_fallback_never_apply_even_if_eligible()
+    {
+        // Même libellé/sens vu plusieurs fois dans l'historique, et compte introuvable : sans
+        // Options.Full, le moteur doit se comporter exactement comme avant (régression).
+        var line = Line("REG REMISE IMP / CPTE DT /N°RID26/10001", 53_693.042m, true);
+        var ctx = Ctx(line) with
+        {
+            Chart = ChartWithSuspense,
+            Options = BankProposalOptions.None,
+            History = new Dictionary<(string, bool), Engine.HistoryMatch>
+            {
+                [(BankLabelNormalizer.Core(line.Description), true)] = new("616", 5)
+            }
+        };
+
+        var proposal = Single(ctx);
+
+        Assert.Equal(BankLineStatuses.ToComplete, proposal.Status);
+        Assert.Null(proposal.Source);
+        Assert.Null(proposal.AccountNumber);
+    }
+
+    [Fact]
+    public void History_match_seen_at_least_twice_is_probable()
+    {
+        var line = Line("REG REMISE IMP / CPTE DT /N°RID26/10001", 53_693.042m, true);
+        var core = BankLabelNormalizer.Core(line.Description);
+        var ctx = Ctx(line) with
+        {
+            Options = BankProposalOptions.Full,
+            History = new Dictionary<(string, bool), Engine.HistoryMatch> { [(core, true)] = new("616", 2) }
+        };
+
+        var proposal = Single(ctx);
+
+        Assert.Equal(BankLineSources.History, proposal.Source);
+        Assert.Equal(BankLineConfidences.Probable, proposal.Confidence);
+        Assert.Equal("616", proposal.AccountNumber);
+        Assert.Equal(BankLineStatuses.Proposed, proposal.Status);
+        Assert.True(proposal.SelectedByDefault);
+    }
+
+    [Fact]
+    public void History_match_seen_only_once_stays_to_check_and_unselected()
+    {
+        var line = Line("REG REMISE IMP / CPTE DT /N°RID26/10001", 53_693.042m, true);
+        var core = BankLabelNormalizer.Core(line.Description);
+        var ctx = Ctx(line) with
+        {
+            Options = BankProposalOptions.Full,
+            History = new Dictionary<(string, bool), Engine.HistoryMatch> { [(core, true)] = new("616", 1) }
+        };
+
+        var proposal = Single(ctx);
+
+        Assert.Equal(BankLineSources.History, proposal.Source);
+        Assert.Equal(BankLineConfidences.ToCheck, proposal.Confidence);
+        Assert.False(proposal.SelectedByDefault);
+    }
+
+    [Fact]
+    public void Dossier_rule_and_catalog_beat_history()
+    {
+        var core = "SWIFT";
+        var line = Line("SWIFT", 10m, true);
+        var ctx = Ctx(line) with
+        {
+            Options = BankProposalOptions.Full,
+            History = new Dictionary<(string, bool), Engine.HistoryMatch> { [(core, true)] = new("616", 9) }
+        };
+
+        var proposal = Single(ctx);
+
+        // Catalogue ("SWIFT" ⇒ bank-fees) l'emporte sur l'historique.
+        Assert.Equal(BankLineSources.Catalog, proposal.Source);
+        Assert.NotEqual("616", proposal.AccountNumber);
+    }
+
+    [Fact]
+    public void Unresolved_line_falls_back_to_the_suspense_account_and_is_selected_by_default()
+    {
+        var ctx = Ctx(Line("REG REMISE IMP / CPTE DT /N°RID26/10001", 53_693.042m, true)) with
+        {
+            Chart = ChartWithSuspense,
+            Options = BankProposalOptions.Full
+        };
+
+        var proposal = Single(ctx);
+
+        Assert.Equal("471", proposal.AccountNumber);
+        Assert.Equal(BankLineSources.Fallback, proposal.Source);
+        Assert.Equal(BankLineConfidences.ToCheck, proposal.Confidence);
+        Assert.Equal(BankLineStatuses.Proposed, proposal.Status);
+        Assert.True(proposal.SelectedByDefault); // coché par défaut (plan §3.9), malgré la confiance « à vérifier ».
+        Assert.Contains(proposal.Diagnostics, d => d.Code == "suspense_account");
+    }
+
+    [Fact]
+    public void Collective_account_without_identified_third_party_falls_back_to_the_suspense_account()
+    {
+        var ctx = Ctx(Line("VIREMENT REÇU LES ATELIERS DE SFAX .", 1_876.211m, isDebit: false)) with
+        {
+            Chart = ChartWithSuspense,
+            Options = BankProposalOptions.Full,
+            Parties = new[] { new Engine.Party(Guid.NewGuid(), ThirdPartyKind.Client, "Sfax Distribution", "SFAX DISTRIBUTION", null) }
+        };
+
+        var proposal = Single(ctx);
+
+        Assert.Equal("471", proposal.AccountNumber);
+        Assert.Equal(BankLineSources.Fallback, proposal.Source);
+        Assert.False(proposal.RequiresThirdParty);
+        Assert.Null(proposal.ThirdPartyId);
+        Assert.Equal(BankLineStatuses.Proposed, proposal.Status);
+    }
+
+    [Fact]
+    public void Missing_suspense_account_leaves_the_line_to_complete_and_never_creates_471()
+    {
+        var ctx = Ctx(Line("REG REMISE IMP / CPTE DT /N°RID26/10001", 53_693.042m, true)) with
+        {
+            Chart = new Dictionary<string, Engine.ChartAccount>(), // ni le compte visé ni 471
+            Options = BankProposalOptions.Full
+        };
+
+        var proposal = Single(ctx);
+
+        Assert.Equal(BankLineStatuses.ToComplete, proposal.Status);
+        Assert.Null(proposal.AccountNumber);
+        Assert.Contains(proposal.Diagnostics, d => d.Code == "suspense_missing");
+        Assert.DoesNotContain(proposal.Diagnostics, d => d.Code == "suspense_account");
+    }
+
+    [Fact]
+    public void Closed_period_is_never_overridden_by_the_suspense_fallback()
+    {
+        var ctx = Ctx(Line("SWIFT", 10m, true, "2026-01-10")) with
+        {
+            Chart = ChartWithSuspense,
+            Options = BankProposalOptions.Full,
+            ClosedPeriods = new HashSet<(int, int)> { (2026, 1) }
+        };
+
+        var proposal = Single(ctx);
+
+        Assert.Equal(BankLineStatuses.Blocked, proposal.Status);
+        Assert.NotEqual(BankLineSources.Fallback, proposal.Source);
+    }
 }

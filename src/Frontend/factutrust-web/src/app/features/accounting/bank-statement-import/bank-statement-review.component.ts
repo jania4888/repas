@@ -30,14 +30,13 @@ import {
   GenerateItem,
   GenerateOutcome,
   IssueSeverity,
-  SETTLED_STATUSES,
   StatementAmount,
   StatementLineCorrection,
   expectedThirdPartyKind,
-  requiresThirdParty,
-  thirdPartyKindCode,
-  thirdPartyKindName
+  SOURCE_EXTENSIONS
 } from './bank-statement-import.models';
+import * as logic from './bank-statement-posting.logic';
+import { PageState } from './bank-statement-posting.logic';
 import {
   confidenceLabel,
   generationFailureMessage,
@@ -82,19 +81,10 @@ interface LineDraft {
   isDebit: boolean;
 }
 
-type PageState = 'done' | 'fallback' | 'failed' | 'current' | 'todo';
-
 /** Codes d'échec d'une session `Failed` pour lesquels une relance complète a un sens. */
 const RETRYABLE_FAILURES = ['ai_unavailable', 'ai_timeout', 'ai_failed'];
 
 const GENERATION_BATCH = 200;
-
-const SOURCE_EXTENSIONS: Record<string, string> = {
-  'application/pdf': '.pdf',
-  'image/png': '.png',
-  'image/jpeg': '.jpg',
-  'image/webp': '.webp'
-};
 
 /**
  * Relecture d'un relevé bancaire importé : contrôle de l'extraction (soldes, lignes), puis
@@ -1244,7 +1234,7 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
   // ── Lecture page par page ──────────────────────────────────────────────────────────────
 
   hasIssue(s: BankStatementImportSession, code: string, severity?: IssueSeverity): boolean {
-    return (s.extraction?.issues ?? []).some(i => i.code === code && (!severity || i.severity === severity));
+    return logic.hasIssue(s, code, severity);
   }
 
   /** Pourcentage affiché (0–100), identique au serveur. */
@@ -1296,62 +1286,27 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
 
   /** Nombre de pages à lire : celles du plan IA, sinon le nombre de pages du fichier. */
   totalPages(s: BankStatementImportSession): number {
-    const plan = s.extraction?.aiPlan;
-    const planned = plan ? (plan.scannedPages?.length ?? 0) + (plan.textPages?.length ?? 0) : 0;
-    return planned > 0 ? planned : Math.max(0, s.pageCount ?? 0);
+    return logic.totalPages(s);
   }
 
   /** Page en cours : la suivante des pages déjà lues, sinon déduite de l'avancement ; bornée au total. */
   currentPage(s: BankStatementImportSession): number {
-    const total = this.totalPages(s);
-    if (total === 0) return 0;
-    const readings = s.extraction?.aiPlan?.pageReadings;
-    if (readings && readings.length > 0) return Math.min(total, readings.length + 1);
-    const percent = Math.min(100, Math.max(0, s.progressPercent ?? 0));
-    return Math.min(total, Math.floor((percent * total) / 100) + 1);
+    return logic.currentPage(s);
   }
 
   /** État de chaque page du plan, pour les pastilles de progression. */
   pageStates(s: BankStatementImportSession): { page: number; state: PageState }[] {
-    const total = this.totalPages(s);
-    if (total === 0) return [];
-    const plan = s.extraction?.aiPlan;
-    const planned = [...(plan?.scannedPages ?? []), ...(plan?.textPages ?? [])].sort((a, b) => a - b);
-    const pages = planned.length === total ? planned : Array.from({ length: total }, (_, i) => i + 1);
-    const readings = new Map((plan?.pageReadings ?? []).map(r => [r.page, r]));
-    const current = this.currentPage(s);
-    let currentAssigned = false;
-    return pages.map((page, position) => {
-      const reading = readings.get(page);
-      if (reading) {
-        const state: PageState = reading.engine === 'text-model' ? 'fallback' : reading.engine === 'failed' ? 'failed' : 'done';
-        return { page, state };
-      }
-      if (readings.size === 0) {
-        if (position + 1 < current) return { page, state: 'done' as const };
-        if (position + 1 === current) return { page, state: 'current' as const };
-        return { page, state: 'todo' as const };
-      }
-      if (!currentAssigned) {
-        currentAssigned = true;
-        return { page, state: 'current' as const };
-      }
-      return { page, state: 'todo' as const };
-    });
+    return logic.pageStates(s);
   }
 
   /** Pages relues par le modèle texte : lectures page par page si présentes, sinon `fallbackPages` du plan. */
   fallbackPagesOf(s: BankStatementImportSession): number[] {
-    const plan = s.extraction?.aiPlan;
-    if (!plan) return [];
-    const readings = plan.pageReadings ?? [];
-    const pages = readings.length > 0 ? readings.filter(r => r.engine === 'text-model').map(r => r.page) : (plan.fallbackPages ?? []);
-    return [...new Set(pages)].sort((a, b) => a - b);
+    return logic.fallbackPagesOf(s);
   }
 
   /** Liste de numéros de pages triée, séparée par « , » (un seul placeholder dans le message traduit). */
   pageList(pages: number[]): string {
-    return [...pages].sort((a, b) => a - b).join(', ');
+    return logic.pageList(pages);
   }
 
   /** Durée totale prévue de la lecture complète (minutes, ≥ 1) ; null sans estimation. */
@@ -1484,7 +1439,7 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
    * « l'IA » et « une à trois minutes par page » là où rien de tout cela n'a lieu.
    */
   viaDocStrange(s: BankStatementImportSession): boolean {
-    return s.aiProviderKind === 'docstrange';
+    return logic.viaDocStrange(s);
   }
 
   /** Durée estimée de la lecture IA restante (minutes, arrondie au supérieur) ; null sans estimation. */
@@ -1511,24 +1466,15 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
   }
 
   private toRow(proposal: BankLineProposal): ReviewRow {
-    return {
-      proposal,
-      selected: proposal.selectedByDefault,
-      account: proposal.accountNumber ?? '',
-      thirdPartyId: proposal.thirdPartyId,
-      thirdPartyKind: thirdPartyKindCode(proposal.thirdPartyKind),
-      thirdPartyName: proposal.thirdPartyName ?? '',
-      splitVat: !!proposal.vatSplit && !proposal.vatSplit.implied,
-      remember: false
-    };
+    return logic.toReviewRow(proposal);
   }
 
   isSettled(row: ReviewRow): boolean {
-    return SETTLED_STATUSES.includes(row.proposal.status);
+    return logic.isSettledRow(row);
   }
 
   needsThirdParty(row: ReviewRow): boolean {
-    return requiresThirdParty(row.account);
+    return logic.needsThirdPartyRow(row);
   }
 
   allVisibleSelected(): boolean {
@@ -1661,23 +1607,11 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
   }
 
   private isReady(row: ReviewRow): boolean {
-    const account = row.account?.trim();
-    if (!account || !this.refs.findAccountByNumber(account)?.isActive) return false;
-    if (!requiresThirdParty(account)) return true;
-    return !!row.thirdPartyId && row.thirdPartyKind === expectedThirdPartyKind(account);
+    return logic.isRowReady(row, account => !!this.refs.findAccountByNumber(account)?.isActive);
   }
 
   private runGeneration(statementId: string, rows: ReviewRow[]): void {
-    const items: GenerateItem[] = rows.map(r => ({
-      lineId: r.proposal.lineId,
-      accountNumber: r.account.trim(),
-      thirdPartyId: requiresThirdParty(r.account) ? r.thirdPartyId : null,
-      thirdPartyKind: thirdPartyKindName(requiresThirdParty(r.account) ? r.thirdPartyKind : 0),
-      vatAmount: r.splitVat && r.proposal.vatSplit && r.proposal.isDebit ? r.proposal.vatSplit.vatAmount : null,
-      vatAccountNumber: r.splitVat && r.proposal.vatSplit ? r.proposal.vatSplit.vatAccountNumber : null,
-      label: null,
-      rememberRule: r.remember
-    }));
+    const items: GenerateItem[] = rows.map(r => logic.rowToGenerateItem(r));
 
     const total = { created: 0, skipped: 0, failed: 0, failures: [] as GenerateOutcome[] };
     const batches: GenerateItem[][] = [];
@@ -1761,12 +1695,11 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
   }
 
   maskRib(rib: string | null): string {
-    return rib ? `${rib.slice(0, 2)} … ${rib.slice(-4)}` : '—';
+    return logic.maskRib(rib);
   }
 
   ribTail(rib: string): string {
-    const digits = this.normalizeRibDigits(rib);
-    return digits.length >= 4 ? digits.slice(-4) : '????';
+    return logic.ribTail(rib);
   }
 
   private normalizeRibDigits(rib: string | null | undefined): string {
@@ -1791,67 +1724,7 @@ export class BankStatementReviewComponent implements OnInit, OnDestroy {
   }
 
   methodLabel(s: BankStatementImportSession): string {
-    if (this.hasIssue(s, 'statement.ai_unavailable', 'Blocking') || s.extractionMethod === 'none') {
-      return $localize`:@@accounting.bank-statement-import.ts.lecture.ia.non.effectuee:Lecture IA non effectuée`;
-    }
-    // Le service d'extraction documentaire lit SEUL : aucune page n'est « lue en secours », et
-    // aucune de ces lectures n'est le fait d'une IA — locale ou non. Les libellés qui suivent
-    // parlent du service, sans jamais le nommer à l'utilisateur.
-    if (this.viaDocStrange(s)) {
-      switch (s.extractionMethod) {
-        case 'ai-vision': {
-          const count = s.pageCount ?? 0;
-          if (count === 1) return $localize`:@@accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.1.pa.d281f138:Lu par le service d'extraction documentaire (1 page)`;
-          if (count > 1) return $localize`:@@accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.page.d0085280:Lu par le service d'extraction documentaire (${String(count)}:count: pages)`;
-          return $localize`:@@accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.27912217:Lu par le service d'extraction documentaire`;
-        }
-        case 'layout+ai':
-          return $localize`:@@accounting.bank-statement-import.ts.lecture.directe.completee.par.le.service.d.extra.e232c028:Lecture directe complétée par le service d'extraction documentaire`;
-        case 'ai':
-        case 'ai-text':
-          return $localize`:@@accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.27912217:Lu par le service d'extraction documentaire`;
-        case 'layout':
-          return $localize`:@@accounting.bank-statement-import.ts.lecture.directe.du.pdf.aucune.ia.ba300454:Lecture directe du PDF (aucune IA)`;
-        default:
-          return '—';
-      }
-    }
-
-    switch (s.extractionMethod) {
-      case 'ai-vision': {
-        const fallback = this.fallbackPagesOf(s);
-        if (fallback.length > 1) {
-          const pages = this.pageList(fallback);
-          return $localize`:@@accounting.bank-statement-import.ts.lu.par.l.ia.pages.lues.en.secours.9c5e1339:Lu par l'IA — pages ${pages}:pages: lues en secours`;
-        }
-        if (fallback.length === 1) {
-          const page = String(fallback[0]);
-          return $localize`:@@accounting.bank-statement-import.ts.lu.par.l.ia.page.lue.en.secours.6fa79a4c:Lu par l'IA — page ${page}:page: lue en secours`;
-        }
-        const count = s.pageCount ?? 0;
-        if (count === 1) return $localize`:@@accounting.bank-statement-import.ts.lu.par.l.ia.1.page.0bb90ccc:Lu par l'IA (1 page)`;
-        return $localize`:@@accounting.bank-statement-import.ts.lu.par.l.ia.pages.d44397d6:Lu par l'IA (${String(count)}:count: pages)`;
-      }
-      case 'ai-text':
-        return $localize`:@@accounting.bank-statement-import.ts.lu.par.l.ia.sans.l.image.des.pages.21167785:Lu par l'IA, sans l'image des pages`;
-      case 'layout':
-        return $localize`:@@accounting.bank-statement-import.ts.lecture.directe.du.pdf.aucune.ia.ba300454:Lecture directe du PDF (aucune IA)`;
-      case 'layout+ai':
-        if (s.extraction?.aiPlan?.textPages?.length) {
-          return s.aiProviderKind === 'external'
-            ? $localize`:@@accounting.bank-statement-import.ts.lecture.directe.completee.par.une.ia.externe.b4615235:Lecture directe complétée par une IA externe`
-            : $localize`:@@accounting.bank-statement-import.ts.lecture.directe.completee.par.l.ia.locale.bdf8d38c:Lecture directe complétée par l'IA locale`;
-        }
-        return s.aiProviderKind === 'external'
-          ? $localize`:@@accounting.bank-statement-import.ts.lecture.directe.pages.scannees.lues.par.une.ia.e.1e33d5e5:Lecture directe + pages scannées lues par une IA externe`
-          : $localize`:@@accounting.bank-statement-import.ts.lecture.directe.pages.scannees.lues.par.l.ia.loc.9d423ab4:Lecture directe + pages scannées lues par l'IA locale`;
-      case 'ai':
-        return s.aiProviderKind === 'external'
-          ? $localize`:@@accounting.bank-statement-import.ts.lu.par.une.ia.externe.ba81ec2a:Lu par une IA externe`
-          : $localize`:@@accounting.bank-statement-import.ts.lu.par.l.ia.locale.04535067:Lu par l'IA locale`;
-      default:
-        return '—';
-    }
+    return logic.methodLabel(s);
   }
 
   private fail(err: unknown): void {

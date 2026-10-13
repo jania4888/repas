@@ -10,7 +10,7 @@ export type SessionStatus = 'Pending' | 'Extracting' | 'AwaitingReview' | 'Confi
 
 export type IssueSeverity = 'Info' | 'Warning' | 'Blocking';
 
-export type LineSource = 'Layout' | 'Ai' | 'Manual';
+export type LineSource = 'Layout' | 'Ai' | 'Manual' | 'Tabular';
 
 export interface StatementAmount {
   value: number;
@@ -43,6 +43,10 @@ export interface ExtractedStatementLine {
   amount: number;
   isDebit: boolean;
   source: LineSource;
+  /** Numéro de ligne dans le fichier source (CSV/XLSX uniquement) ; absent pour PDF/image. */
+  sourceRow?: number | null;
+  /** Référence lue sur le relevé (CSV/XLSX, parfois PDF) ; absent sinon. */
+  reference?: string | null;
 }
 
 export interface StatementExtractionIssue {
@@ -214,6 +218,16 @@ export interface BankStatementImportCapabilities {
   aiUnavailableReason?: string | null;
   /** Pourquoi la lecture des images n'est pas prête alors que la lecture sans image reste possible ; null sinon. */
   visionUnavailableReason?: string | null;
+  /** CSV/Excel disponible, indépendamment de l'IA (fonctionne sans IA). */
+  tabularEnabled?: boolean;
+  /** Extensions de fichiers tabulaires acceptées (ex. `.csv`, `.xlsx`). */
+  tabularExtensions?: string[];
+  /** Nombre maximal de lignes d'opérations acceptées dans un import tabulaire. */
+  maxTabularRows?: number;
+  /** Nombre maximal de lignes dans une génération atomique (« tout ou rien »). */
+  maxAtomicLines?: number;
+  /** Numéro du compte d'attente (471) utilisé en repli ; jamais créé automatiquement. */
+  suspenseAccountNumber?: string | null;
 }
 
 export type LineStatus =
@@ -228,7 +242,7 @@ export type LineStatus =
 
 export type LineConfidence = 'Certain' | 'Probable' | 'ToCheck';
 
-export type LineProposalSource = 'ExistingEntry' | 'DossierRule' | 'Catalog' | 'ThirdPartyMatch' | 'Ai';
+export type LineProposalSource = 'ExistingEntry' | 'DossierRule' | 'Catalog' | 'ThirdPartyMatch' | 'Ai' | 'History' | 'Fallback';
 
 /** `ThirdPartyKind` du domaine, tel que sérialisé par l'API (nom de l'énumération). */
 export type ThirdPartyKindName = 'None' | 'Client' | 'Supplier' | 'Employee';
@@ -321,20 +335,37 @@ export interface GenerateItem {
 
 export interface GenerateOutcome {
   lineId: string;
-  outcome: 'created' | 'already_posted' | 'failed';
+  /** `excluded`/`ready` n'apparaissent qu'en mode atomique (ligne exclue ou pré-validée mais pas encore écrite). */
+  outcome: 'created' | 'already_posted' | 'excluded' | 'ready' | 'failed';
   code: string | null;
   message: string | null;
   journalEntryId: string | null;
   entryNumber: number | null;
 }
 
+/** Plage de numéros de pièce réservée pour un exercice donné (génération multi-exercices). */
+export interface EntryNumberRange {
+  fiscalYear: number;
+  first: number;
+  last: number;
+}
+
 export interface GenerateResult {
   created: number;
   skipped: number;
   failed: number;
+  /** Non nuls uniquement quand toutes les écritures créées relèvent du même exercice ; sinon voir `entryNumberRangesByYear`. */
   firstEntryNumber: number | null;
   lastEntryNumber: number | null;
+  /** Toujours renseigné dès que `created > 0` ; une entrée par exercice couvert (préférée à first/lastEntryNumber au-delà d'un seul exercice). */
+  entryNumberRangesByYear?: EntryNumberRange[];
   outcomes: GenerateOutcome[];
+  /** Génération atomique demandée (« tout ou rien ») ; absent/false = mode historique inchangé. */
+  atomic?: boolean;
+  /** En mode atomique : vrai si tout a été écrit, faux si la pré-validation a tout rejeté (rien créé). */
+  committed?: boolean;
+  /** Code d'échec de la pré-validation atomique (ex. `bank_statement_posting.atomic_rejected`) ; absent sinon. */
+  code?: string | null;
 }
 
 export interface AiClassificationResult {
@@ -345,7 +376,6 @@ export interface AiClassificationResult {
 
 /** Statuts pour lesquels aucune écriture n'est à créer. */
 export const SETTLED_STATUSES: readonly LineStatus[] = ['Generated', 'Reconciled', 'AlreadyPosted', 'AlreadyImported'];
-
 /** Racines des comptes collectifs : un tiers est obligatoire. */
 export const COLLECTIVE_ROOTS: readonly string[] = ['411', '401', '413', '403', '425', '421'];
 
@@ -361,3 +391,126 @@ export function expectedThirdPartyKind(account: string | null | undefined): numb
   if (account.startsWith('425') || account.startsWith('421')) return 3;
   return 0;
 }
+
+/** Extension de fichier source par type MIME, pour nommer un téléchargement (PDF/image + CSV/XLSX). */
+export const SOURCE_EXTENSIONS: Record<string, string> = {
+  'application/pdf': '.pdf',
+  'image/png': '.png',
+  'image/jpeg': '.jpg',
+  'image/webp': '.webp',
+  'text/csv': '.csv',
+  'application/vnd.ms-excel': '.csv',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '.xlsx'
+};
+
+// ── Import tabulaire (CSV / Excel) ───────────────────────────────────────────────────────────
+
+/** Rôle de colonne reconnu par le mappage ; un champ de `BankStatementTabularMapping` par rôle. */
+export interface BankStatementTabularColumn {
+  index: number;
+  letter: string;
+  header: string | null;
+  samples: string[];
+}
+
+/** Ligne brute d'aperçu (CSV/XLSX), cellules tronquées à 200 caractères côté serveur. */
+export interface BankStatementTabularRow {
+  rowNumber: number;
+  cells: string[];
+}
+
+export interface BankStatementTabularParsedLine {
+  rowNumber: number;
+  transactionDate: string | null;
+  valueDate: string | null;
+  label: string | null;
+  amount: number | null;
+  isDebit: boolean | null;
+  error?: string | null;
+}
+
+export interface BankStatementTabularIssue {
+  code: string;
+  severity: IssueSeverity;
+  rowNumber?: number | null;
+}
+
+export type TabularDateFormat = 'dd/MM/yyyy' | 'dd-MM-yyyy' | 'dd.MM.yyyy' | 'yyyy-MM-dd' | 'MM/dd/yyyy' | 'dd/MM/yy' | (string & {});
+export type TabularDecimalSeparator = ',' | '.';
+export type TabularAmountMode = 'debitCredit' | 'signed';
+export type TabularSignConvention = 'negativeIsDebit' | 'negativeIsCredit';
+
+/** Mappage des colonnes d'un fichier CSV/XLSX, envoyé à `tabular/preview` et `sessions/tabular`. */
+export interface BankStatementTabularMapping {
+  headerRowIndex: number;
+  sheetIndex?: number | null;
+  dateFormat: TabularDateFormat;
+  decimalSeparator: TabularDecimalSeparator;
+  amountMode: TabularAmountMode;
+  signConvention?: TabularSignConvention;
+  dateColumn: number;
+  valueDateColumn?: number | null;
+  labelColumns: number[];
+  referenceColumn?: number | null;
+  debitColumn?: number | null;
+  creditColumn?: number | null;
+  amountColumn?: number | null;
+  balanceColumn?: number | null;
+  ignoredRows?: number[];
+  openingBalance?: number | null;
+  closingBalance?: number | null;
+  rememberMapping?: boolean;
+  encoding?: string | null;
+  delimiter?: string | null;
+}
+
+/** Réponse de `POST tabular/preview` : aperçu brut + lecture simulée avec le mappage courant. */
+export interface BankStatementTabularPreview {
+  format: 'csv' | 'xlsx';
+  encoding: string | null;
+  delimiter: string | null;
+  headerRowIndex: number;
+  sheetNames: string[];
+  totalRowCount: number;
+  columns: BankStatementTabularColumn[];
+  suggestedMapping: BankStatementTabularMapping | null;
+  savedMapping?: BankStatementTabularMapping | null;
+  savedMappingUpdatedAt?: string | null;
+  /** Au plus 20 lignes brutes, cellules tronquées à 200 caractères. */
+  rows: BankStatementTabularRow[];
+  /** Au plus 20 lignes interprétées avec le mappage courant. */
+  parsedLines: BankStatementTabularParsedLine[];
+  issues: BankStatementTabularIssue[];
+  operationRowCount: number;
+  ignoredFooterRows: number;
+  ambiguousDateFormat: boolean;
+}
+
+/** Une entrée de l'historique des relevés importés (`GET statements`). */
+export interface BankStatementImportHistoryItem {
+  id: string;
+  bankName: string;
+  maskedRib: string;
+  periodStart: string;
+  periodEnd: string;
+  lineCount: number;
+  postedCount: number;
+  importMethod: 'Manual' | 'Csv' | 'Excel' | 'PdfText' | 'PdfOcr' | 'PdfLlm' | 'Image' | (string & {});
+  importedAt: string;
+  importedBy: string | null;
+}
+
+export interface BankStatementImportHistoryPage {
+  items: BankStatementImportHistoryItem[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+}
+
+/** Options de génération atomique (`POST statements/{id}/generate`) ; sans objet, comportement historique inchangé. */
+export interface GenerateOptions {
+  atomic?: boolean;
+  assist?: boolean;
+  excludedLineIds?: string[];
+}
+

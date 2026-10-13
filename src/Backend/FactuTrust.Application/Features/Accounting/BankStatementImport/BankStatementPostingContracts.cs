@@ -1,3 +1,4 @@
+using FactuTrust.Application.DTOs;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Enums;
 
@@ -9,13 +10,37 @@ namespace FactuTrust.Application.Features.Accounting.BankStatementImport;
 /// </summary>
 public interface IBankStatementPostingService
 {
-    Task<Result<BankStatementProposalsDto>> GetProposalsAsync(Guid statementId, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Propositions ligne par ligne. <paramref name="options"/> par défaut (<c>None</c>) : sortie
+    /// IDENTIQUE au comportement historique (ni historique de comptabilisation, ni repli 471).
+    /// </summary>
+    Task<Result<BankStatementProposalsDto>> GetProposalsAsync(Guid statementId, BankProposalOptions? options = null, CancellationToken cancellationToken = default);
 
     /// <summary>Classe par l'IA un lot de libellés DISTINCTS encore inconnus (résultats mis en cache).</summary>
     Task<Result<BankStatementAiClassificationResult>> ClassifyWithAiAsync(Guid statementId, CancellationToken cancellationToken = default);
 
     /// <summary>Génère les brouillons demandés ; montants, dates et sens relus en base, jamais pris dans la requête.</summary>
     Task<Result<GenerateBankStatementEntriesResult>> GenerateAsync(Guid statementId, GenerateBankStatementEntriesRequest request, CancellationToken cancellationToken = default);
+
+    /// <summary>Historique paginé des relevés comptabilisés par ce parcours (hors import par rapprochement).</summary>
+    Task<Result<PagedResult<BankStatementImportHistoryItemDto>>> GetHistoryAsync(int page, int pageSize, Guid? bankAccountId, CancellationToken cancellationToken = default);
+}
+
+/// <summary>
+/// Options d'assistance des propositions (étape « historique » + repli 471). Par défaut
+/// (<see cref="None"/>), aucune des deux n'est activée : sortie IDENTIQUE au comportement
+/// historique — contrat de non-régression explicite (plan §3.9).
+/// </summary>
+public sealed record BankProposalOptions
+{
+    public static readonly BankProposalOptions None = new();
+    public static readonly BankProposalOptions Full = new() { IncludeHistory = true, SuspenseFallback = true };
+
+    /// <summary>Propose la contrepartie majoritaire déjà utilisée pour un libellé/sens proches (étape 3, avant l'IA).</summary>
+    public bool IncludeHistory { get; init; }
+
+    /// <summary>Replie sur le compte d'attente 471 quand le compte reste introuvable (jamais créé).</summary>
+    public bool SuspenseFallback { get; init; }
 }
 
 public static class BankLineStatuses
@@ -58,6 +83,12 @@ public static class BankLineSources
     public const string Catalog = "Catalog";
     public const string ThirdPartyMatch = "ThirdPartyMatch";
     public const string Ai = "Ai";
+
+    /// <summary>Contrepartie déjà utilisée pour ce libellé / ce sens dans l'historique du compte (assist=full).</summary>
+    public const string History = "History";
+
+    /// <summary>Repli sur le compte d'attente 471 (assist=full), jamais pré-coché par hasard : à reclasser.</summary>
+    public const string Fallback = "Fallback";
 }
 
 public sealed record BankStatementProposalsDto
@@ -128,6 +159,15 @@ public sealed record GenerateBankStatementEntriesRequest
 {
     public string JournalCode { get; init; } = "JB";
     public IReadOnlyList<GenerateBankStatementEntryItem> Items { get; init; } = Array.Empty<GenerateBankStatementEntryItem>();
+
+    /// <summary>Génération tout ou rien : voir <see cref="BankStatementPostingErrorCodes"/> (atomic_*).</summary>
+    public bool Atomic { get; init; }
+
+    /// <summary>Active l'historique + le repli 471 dans les propositions utilisées par la génération (voir <see cref="BankProposalOptions"/>).</summary>
+    public bool Assist { get; init; }
+
+    /// <summary>Lignes du relevé explicitement exclues de cette génération (choix délibéré de l'utilisateur, mode atomique).</summary>
+    public IReadOnlyList<Guid> ExcludedLineIds { get; init; } = Array.Empty<Guid>();
 }
 
 public sealed record GenerateBankStatementEntryItem
@@ -154,13 +194,59 @@ public sealed record GenerateBankStatementEntriesResult
     public int Created { get; init; }
     public int Skipped { get; init; }
     public int Failed { get; init; }
+
+    /// <summary>
+    /// Numéro de la première/dernière écriture créée. Renseigné seulement quand toutes les
+    /// écritures créées relèvent du MÊME exercice fiscal (une plage globale n'aurait pas de sens
+    /// si plusieurs exercices sont couverts — voir <see cref="EntryNumberRangesByYear"/>).
+    /// </summary>
     public int? FirstEntryNumber { get; init; }
     public int? LastEntryNumber { get; init; }
+
+    /// <summary>
+    /// Plage de numéros par exercice fiscal couvert par cette génération (un ou plusieurs
+    /// exercices). Toujours renseigné quand <see cref="Created"/> &gt; 0 ; champ additif, à
+    /// préférer à <see cref="FirstEntryNumber"/>/<see cref="LastEntryNumber"/> pour un relevé
+    /// à cheval sur deux exercices.
+    /// </summary>
+    public IReadOnlyList<EntryNumberRangeDto> EntryNumberRangesByYear { get; init; } = Array.Empty<EntryNumberRangeDto>();
     public IReadOnlyList<GenerateBankStatementLineOutcome> Outcomes { get; init; } = Array.Empty<GenerateBankStatementLineOutcome>();
+
+    /// <summary>Génération tout ou rien demandée (reflète <c>GenerateBankStatementEntriesRequest.Atomic</c>).</summary>
+    public bool Atomic { get; init; }
+
+    /// <summary>
+    /// En mode atomique : <c>true</c> si les écritures ont été écrites, <c>false</c> si la
+    /// transaction a été annulée (pré-validation en échec ou conflit de concurrence) — alors
+    /// <see cref="Outcomes"/> détaille chaque ligne (« failed »/code, ou « ready ») et
+    /// <see cref="Code"/> porte le code de rejet. Toujours <c>true</c> hors mode atomique.
+    /// </summary>
+    public bool Committed { get; init; } = true;
+
+    /// <summary>Code de rejet atomique (<c>atomic_rejected</c> / <c>atomic_conflict</c>) quand <see cref="Committed"/> est faux.</summary>
+    public string? Code { get; init; }
 }
 
-/// <param name="Outcome">« created », « already_posted », « failed ».</param>
+/// <param name="Outcome">« created », « already_posted », « excluded », « ready », « failed ».</param>
 public sealed record GenerateBankStatementLineOutcome(Guid LineId, string Outcome, string? Code, string? Message, Guid? JournalEntryId, int? EntryNumber);
+
+/// <summary>Plage de numéros d'écriture réservée pour un exercice fiscal donné (voir <see cref="GenerateBankStatementEntriesResult.EntryNumberRangesByYear"/>).</summary>
+public sealed record EntryNumberRangeDto(int FiscalYear, int First, int Last);
+
+/// <summary>Un relevé comptabilisé par ce parcours (hors import par rapprochement) — historique.</summary>
+public sealed record BankStatementImportHistoryItemDto
+{
+    public Guid Id { get; init; }
+    public string BankName { get; init; } = string.Empty;
+    public string MaskedRib { get; init; } = "????";
+    public DateTime PeriodStart { get; init; }
+    public DateTime PeriodEnd { get; init; }
+    public int LineCount { get; init; }
+    public int PostedCount { get; init; }
+    public BankStatementImportMethod ImportMethod { get; init; }
+    public DateTime ImportedAt { get; init; }
+    public string? ImportedBy { get; init; }
+}
 
 /// <summary>Codes d'erreur stables de la comptabilisation assistée.</summary>
 public static class BankStatementPostingErrorCodes
@@ -178,4 +264,19 @@ public static class BankStatementPostingErrorCodes
     public const string VatInvalid = "bank_statement_posting.vat_invalid";
     public const string PeriodClosed = "bank_statement_posting.period_closed";
     public const string AiUnavailable = "bank_statement_posting.ai_unavailable";
+
+    /// <summary>Génération atomique : plus de lignes que <c>MaxAtomicGenerationLines</c> ; scinder par période.</summary>
+    public const string AtomicTooManyLines = "bank_statement_posting.atomic_too_many_lines";
+
+    /// <summary>Génération atomique : une ligne non réglée du relevé n'est ni soumise, ni explicitement exclue.</summary>
+    public const string AtomicIncomplete = "bank_statement_posting.atomic_incomplete";
+
+    /// <summary>Génération atomique : une ligne figure à la fois dans les lignes soumises et dans les lignes explicitement exclues.</summary>
+    public const string AtomicOverlap = "bank_statement_posting.atomic_overlap";
+
+    /// <summary>Génération atomique : la pré-validation a trouvé au moins un échec ; rien n'a été écrit.</summary>
+    public const string AtomicRejected = "bank_statement_posting.atomic_rejected";
+
+    /// <summary>Génération atomique : conflit de concurrence (verrou non obtenu ou index unique violé) — nouvelle tentative possible.</summary>
+    public const string AtomicConflict = "bank_statement_posting.atomic_conflict";
 }

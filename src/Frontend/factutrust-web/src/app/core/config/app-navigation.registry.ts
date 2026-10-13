@@ -8,7 +8,9 @@ import { QUICK_ACCESS_ITEMS } from './quick-access.config';
 import { isDelegatedFirmBlockedSalesPurchasesRoute } from './firm-navigation.registry';
 import {
   filterCompanyAccountingSearchEntries,
-  isCompanyAccountingRestricted
+  isCompanyAccountingRestricted,
+  isCompanyAllowedAccountingPath,
+  isAccountingGuardedPath
 } from './company-accounting-nav.config';
 
 export type NavSubItemAction = 'returnToFirm' | 'changeDossier';
@@ -1253,6 +1255,19 @@ export const EXTRA_PAGE_ROUTES: NavSearchEntry[] = [
     keywords: ['ca ht', 'chiffre d\'affaires', 'factures et avoirs', 'revenue', 'réalisé'],
     modules: [M.Sales],
     permissionsAll: ['invoices:read']
+  },
+  {
+    // Page dédiée « Relevé bancaire → écritures » (sans rapprochement) — indexée pour la
+    // recherche globale (Ctrl+K), en plus de son entrée dans le menu Traitements.
+    id: 'accounting-bank-statement-entries',
+    label: $localize`:@@core.app-navigation.registry.ts.releve.bancaire.ecritures.426df845:Relevé bancaire → écritures`,
+    route: '/accounting/bank-statement-entries',
+    icon: 'fa-solid fa-money-bill-transfer',
+    group: 'page',
+    breadcrumb: 'Comptabilité > Relevé bancaire → écritures',
+    keywords: ['relevé', 'banque', 'import relevé', 'écritures bancaires', 'csv', 'excel'],
+    modules: [M.Accounting],
+    permissionsAll: ['accounting:create']
   }
 ];
 
@@ -1291,8 +1306,12 @@ export function getAllNavSearchEntries(auth: AuthService): NavSearchEntry[] {
   const base = getVisibleNavSearchEntries(auth);
   const seen = new Set(base.map(e => e.route));
   const delegatedFirm = auth.isAccountingFirm() && auth.isDelegatedMode();
+  const companyRestricted = isCompanyAccountingRestricted(auth);
   for (const extra of [...EXTRA_PAGE_ROUTES, ...EXTRA_CREATE_ROUTES]) {
     if (delegatedFirm && isDelegatedFirmBlockedSalesPurchasesRoute(extra.route)) {
+      continue;
+    }
+    if (companyRestricted && isAccountingGuardedPath(extra.route) && !isCompanyAllowedAccountingPath(extra.route)) {
       continue;
     }
     if (!seen.has(extra.route) && canSeeNavEntry(auth, extra)) {

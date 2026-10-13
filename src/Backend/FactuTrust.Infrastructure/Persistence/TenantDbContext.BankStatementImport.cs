@@ -17,6 +17,7 @@ public partial class TenantDbContext
     public DbSet<BankStatementImportSession> BankStatementImportSessions => Set<BankStatementImportSession>();
     public DbSet<BankPostingRule> BankPostingRules => Set<BankPostingRule>();
     public DbSet<BankLabelClassification> BankLabelClassifications => Set<BankLabelClassification>();
+    public DbSet<BankStatementTabularMapping> BankStatementTabularMappings => Set<BankStatementTabularMapping>();
 
     private static void ConfigureBankStatementImport(ModelBuilder builder)
     {
@@ -71,6 +72,17 @@ public partial class TenantDbContext
             entity.Property(e => e.AccountNumber).HasMaxLength(20);
             entity.Property(e => e.ModelRef).HasMaxLength(200).IsRequired();
             entity.HasIndex(e => e.LabelHash).IsUnique();
+        });
+
+        builder.Entity<BankStatementTabularMapping>(entity =>
+        {
+            entity.ToTable("BankStatementTabularMappings");
+            entity.Property(e => e.CreatedBy).HasMaxLength(256);
+            entity.Property(e => e.UpdatedBy).HasMaxLength(256);
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Format).HasMaxLength(BankStatementTabularMapping.FormatMaxLength).IsRequired();
+            entity.Property(e => e.MappingJson).HasMaxLength(BankStatementTabularMapping.MappingJsonMaxLength).IsRequired();
+            entity.HasIndex(e => e.BankAccountId).IsUnique().HasDatabaseName("IX_BankStatementTabularMappings_BankAccountId");
         });
 
         // Idempotence en base : une ligne de relevé ne porte qu'UNE écriture non extournée.

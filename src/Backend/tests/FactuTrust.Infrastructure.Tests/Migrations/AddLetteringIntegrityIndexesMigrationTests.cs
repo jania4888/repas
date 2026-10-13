@@ -46,7 +46,9 @@ public sealed class AddLetteringIntegrityIndexesMigrationTests
     {
         var sourcePath = MigrationSourcePath();
         Assert.True(File.Exists(sourcePath), $"Migration source not found: {sourcePath}");
-        var source = File.ReadAllText(sourcePath);
+        // Le runner Windows extrait le dépôt en CRLF (core.autocrlf) : on normalise pour que
+        // les assertions multi-lignes ne dépendent pas des fins de ligne.
+        var source = File.ReadAllText(sourcePath).Replace("\r\n", "\n");
 
         Assert.Contains($"[Migration(\"{MigrationId}\")]", source);
         Assert.Contains("[DbContext(typeof(TenantDbContext))]", source);

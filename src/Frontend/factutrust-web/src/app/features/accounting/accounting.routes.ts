@@ -333,6 +333,36 @@ export const ACCOUNTING_ROUTES: Routes = [
     title: $localize`:@@accounting.routes.title.Releve_bancaire_comptab:Relevé bancaire - InstaFact`
   },
   {
+    // Page dédiée « Relevé bancaire → écritures » (sans rapprochement). Routes séparées de
+    // bank-statement-import/* ci-dessus : composants et store distincts, aucun lien avec le
+    // rapprochement bancaire. Réservé aux cabinets (hors COMPANY_ACCOUNTING_ALLOWED_ROUTE_PREFIXES).
+    path: 'bank-statement-entries',
+    loadComponent: () =>
+      import('./bank-statement-entries/bank-statement-entries-page.component').then(m => m.BankStatementEntriesPageComponent),
+    canActivate: [permissionGuard],
+    canDeactivate: [(component: { canDeactivate: () => boolean }) => component.canDeactivate()],
+    data: { permissions: [PERMISSIONS.accounting.create] },
+    title: $localize`:@@accounting.routes.title.Releve_bancaire_ecritures:Relevé bancaire → écritures - InstaFact`
+  },
+  {
+    path: 'bank-statement-entries/session/:sessionId',
+    loadComponent: () =>
+      import('./bank-statement-entries/bank-statement-entries-session.component').then(m => m.BankStatementEntriesSessionComponent),
+    canActivate: [permissionGuard],
+    canDeactivate: [(component: { canDeactivate: () => boolean }) => component.canDeactivate()],
+    data: { permissions: [PERMISSIONS.accounting.create] },
+    title: $localize`:@@accounting.routes.title.Releve_bancaire_ecritures:Relevé bancaire → écritures - InstaFact`
+  },
+  {
+    path: 'bank-statement-entries/statement/:statementId',
+    loadComponent: () =>
+      import('./bank-statement-entries/bank-statement-entries-posting.component').then(m => m.BankStatementEntriesPostingComponent),
+    canActivate: [permissionGuard],
+    canDeactivate: [(component: { canDeactivate: () => boolean }) => component.canDeactivate()],
+    data: { permissions: [PERMISSIONS.accounting.create] },
+    title: $localize`:@@accounting.routes.title.Releve_bancaire_ecritures:Relevé bancaire → écritures - InstaFact`
+  },
+  {
     path: 'bank-statement-import/statement/:statementId',
     loadComponent: () =>
       import('./bank-statement-import/bank-statement-review.component').then(m => m.BankStatementReviewComponent),

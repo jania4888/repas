@@ -213,6 +213,19 @@ public sealed class AccountingSettings
     public bool BankStatementAiPostingEnabled { get; set; }
 
     /// <summary>
+    /// Sous-drapeau de <see cref="BankStatementAiPostingEnabled"/> : active l'entrée CSV / XLSX
+    /// (mappage de colonnes) dans le même pipeline d'import vers des brouillons du journal de
+    /// banque. OFF par défaut : sans lui, <c>tabular/preview</c> et <c>sessions/tabular</c>
+    /// répondent 404, comme le drapeau maître désactivé. N'a d'effet que si
+    /// <see cref="BankStatementAiPostingEnabled"/> est aussi actif (voir
+    /// <see cref="TabularImportEffective"/>).
+    /// </summary>
+    public bool BankStatementTabularImportEnabled { get; set; }
+
+    /// <summary>Effet réel de <see cref="BankStatementTabularImportEnabled"/> : l'import maître doit être actif.</summary>
+    public bool TabularImportEffective => BankStatementAiPostingEnabled && BankStatementTabularImportEnabled;
+
+    /// <summary>
     /// Tout relevé PDF ou image passe par l'import IA : la lecture directe reste la première passe et
     /// l'IA relit automatiquement chaque page non lue avec certitude (page scannée, banque inconnue,
     /// ligne douteuse, solde qui ne boucle pas). L'assistant de rapprochement bascule alors ces

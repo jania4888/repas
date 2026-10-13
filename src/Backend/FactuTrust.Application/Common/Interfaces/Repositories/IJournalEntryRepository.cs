@@ -103,6 +103,17 @@ public interface IJournalEntryRepository
     Task UpdateAsync(JournalEntry entity, CancellationToken cancellationToken = default);
     Task RemoveAsync(JournalEntry entity, CancellationToken cancellationToken = default);
     Task<int> ReserveNextEntryNumberAsync(string journalCode, int fiscalYear, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Réserve un BLOC de <paramref name="count"/> numéros contigus et rend le PREMIER numéro du
+    /// bloc. À la différence de <see cref="ReserveNextEntryNumberAsync"/> (contexte isolé, commit
+    /// immédiat, numéro perdu si l'appelant échoue ensuite), cette méthode avance la séquence dans
+    /// le contexte AMBIANT : appelée depuis l'intérieur d'une <c>ITenantUnitOfWork.ExecuteAsync</c>
+    /// active, elle rejoint la même transaction et un rollback de l'appelant restaure la séquence
+    /// (aucun trou). Ne JAMAIS appeler hors d'une unité de travail ambiante active.
+    /// </summary>
+    Task<int> ReserveEntryNumberBlockAsync(string journalCode, int fiscalYear, int count, CancellationToken cancellationToken = default);
+
     Task<decimal> SumDebitsByAccountAsync(string accountNumber, DateTime from, DateTime to, CancellationToken cancellationToken = default);
 
     /// <summary>

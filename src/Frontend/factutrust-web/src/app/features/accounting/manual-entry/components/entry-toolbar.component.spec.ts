@@ -226,6 +226,43 @@ describe('EntryToolbarComponent', () => {
     }
   });
 
+  // ---------------------------------------------------------------------------
+  // Relevé bancaire → écritures (page dédiée, sans rapprochement) : visible dès
+  // que le droit de création comptable est présent, indépendamment de l'IA.
+  // ---------------------------------------------------------------------------
+
+  function bankStatementEntriesItem(): HTMLButtonElement | null {
+    return (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('[data-testid="open-bank-statement-entries"]');
+  }
+
+  it("affiche l'entrée « Relevé bancaire → écritures » même quand l'import IA est désactivé, et émet une seule fois", () => {
+    const emitted: void[] = [];
+    fixture.componentInstance.openBankStatementEntries.subscribe(() => emitted.push(undefined));
+
+    click(toggleButton('Import'));
+    const item = bankStatementEntriesItem();
+    expect(item).withContext('entrée « Relevé bancaire → écritures » introuvable').toBeTruthy();
+
+    click(item!);
+
+    expect(emitted.length).toBe(1);
+    expect(openMenus().length).toBe(0);
+  });
+
+  it("masque l'entrée « Relevé bancaire → écritures » sans le droit de création comptable", () => {
+    const original = authMock.hasPermission;
+    authMock.hasPermission = () => false;
+    try {
+      fixture.detectChanges();
+
+      click(toggleButton('Import'));
+
+      expect(bankStatementEntriesItem()).toBeNull();
+    } finally {
+      authMock.hasPermission = original;
+    }
+  });
+
   it("n'expose plus l'import de fichier ni les écritures en brouillard", () => {
     click(toggleButton('Import'));
 

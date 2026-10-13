@@ -16,7 +16,7 @@ public sealed class BankStatementFileStore
 {
     private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
-        ".pdf", ".png", ".jpg", ".jpeg", ".webp"
+        ".pdf", ".png", ".jpg", ".jpeg", ".webp", ".csv", ".xlsx"
     };
 
     private readonly string _basePath;

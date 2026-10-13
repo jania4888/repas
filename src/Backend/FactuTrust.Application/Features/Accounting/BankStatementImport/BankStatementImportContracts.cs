@@ -37,6 +37,13 @@ public interface IBankStatementImportService
     /// <see cref="BankStatementImportSessionErrorCodes.Relaunchable"/>.
     /// </summary>
     Task<Result<BankStatementImportSessionDto>> RetryAsync(Guid sessionId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Numéro du compte d'attente 471 actif résolu dans le plan comptable du dossier (compte exact,
+    /// sinon unique enfant actif, sinon parent actif le plus proche), ou <c>null</c> si absent/inactif.
+    /// Jamais créé. Utilisé seulement pour l'affichage des capacités (<c>GET capabilities</c>).
+    /// </summary>
+    Task<string?> GetSuspenseAccountNumberAsync(CancellationToken cancellationToken = default);
 }
 
 /// <param name="FileName">Nom d'origine assaini (affichage et téléchargement seulement, jamais un chemin).</param>
@@ -223,6 +230,22 @@ public sealed record BankStatementImportCapabilitiesDto(
     /// indisponible.
     /// </summary>
     public string? VisionUnavailableReason { get; init; }
+
+    // ── Import tabulaire (CSV / XLSX) ──
+
+    /// <summary>Sous-drapeau <c>BankStatementTabularImportEnabled</c> effectif (exige <see cref="Enabled"/>).</summary>
+    public bool TabularEnabled { get; init; }
+
+    /// <summary>Extensions tabulaires acceptées, p. ex. <c>[".csv", ".xlsx"]</c> ; vide si <see cref="TabularEnabled"/> est faux.</summary>
+    public IReadOnlyList<string> TabularExtensions { get; init; } = Array.Empty<string>();
+
+    public int MaxTabularRows { get; init; }
+
+    /// <summary>Nombre maximal de lignes pour une génération atomique (tout ou rien).</summary>
+    public int MaxAtomicLines { get; init; }
+
+    /// <summary>Numéro du compte d'attente 471 actif résolu dans le plan du dossier ; null si introuvable.</summary>
+    public string? SuspenseAccountNumber { get; init; }
 }
 
 /// <summary>Codes d'erreur stables de l'import (testés par le front, traduits côté API).</summary>
@@ -251,4 +274,11 @@ public static class BankStatementImportErrorCodes
 
     /// <summary>Re-ciblage vers le compte déjà analysé : HTTP 400 (utiliser la relance).</summary>
     public const string SameBankAccount = "bank_statement_import.same_bank_account";
+
+    /// <summary>
+    /// Relance (retarget/retry) demandée pour une session CSV/XLSX : HTTP 400. Ces sessions n'ont
+    /// jamais fait l'objet d'une lecture IA — rien à relancer ; l'utilisateur doit soumettre à
+    /// nouveau le fichier (éventuellement avec un mappage corrigé) via l'import tabulaire.
+    /// </summary>
+    public const string TabularRelaunchNotSupported = "bank_statement_import.tabular_relaunch_not_supported";
 }

@@ -166,4 +166,83 @@ describe('BankStatementImportService', () => {
     expect(JSON.stringify(req.request.body)).not.toContain('amount"');
     req.flush({ success: true, data: { created: 1, skipped: 0, failed: 0, firstEntryNumber: 1, lastEntryNumber: 1, outcomes: [] } });
   });
+
+  it('sans options, génère exactement le corps historique { journalCode, items } (aucune régression)', () => {
+    const items: GenerateItem[] = [];
+    service.generate('st-1', 'JB', items).subscribe();
+
+    const req = http.expectOne(`${base}/statements/st-1/generate`);
+    expect(Object.keys(req.request.body as object).sort()).toEqual(['items', 'journalCode']);
+    req.flush({ success: true, data: { created: 0, skipped: 0, failed: 0, firstEntryNumber: null, lastEntryNumber: null, outcomes: [] } });
+  });
+
+  it('ajoute atomic/assist/excludedLineIds uniquement quand ils sont fournis', () => {
+    const items: GenerateItem[] = [];
+    service.generate('st-1', 'JB', items, { atomic: true, assist: true, excludedLineIds: ['l-2'] }).subscribe();
+
+    const req = http.expectOne(`${base}/statements/st-1/generate`);
+    expect(req.request.body).toEqual({ journalCode: 'JB', items, atomic: true, assist: true, excludedLineIds: ['l-2'] });
+    req.flush({
+      success: true,
+      data: { created: 0, skipped: 0, failed: 1, firstEntryNumber: null, lastEntryNumber: null, outcomes: [], atomic: true, committed: false }
+    });
+  });
+
+  it('demande les propositions avec assist=full seulement si demandé', () => {
+    service.proposals('st-1', { assist: true }).subscribe();
+    const req = http.expectOne(r => r.url === `${base}/statements/st-1/proposals`);
+    expect(req.request.params.get('assist')).toBe('full');
+    req.flush({ success: true, data: { statementId: 'st-1', bankAccountId: null, bankName: '', bankGlAccount: null, periodStart: '', periodEnd: '', openingBalance: 0, closingBalance: 0, lines: [], unclassifiedDistinctLabels: 0 } });
+
+    service.proposals('st-2').subscribe();
+    const plain = http.expectOne(r => r.url === `${base}/statements/st-2/proposals`);
+    expect(plain.request.params.has('assist')).toBeFalse();
+    plain.flush({ success: true, data: { statementId: 'st-2', bankAccountId: null, bankName: '', bankGlAccount: null, periodStart: '', periodEnd: '', openingBalance: 0, closingBalance: 0, lines: [], unclassifiedDistinctLabels: 0 } });
+  });
+
+  it('aperçoit un fichier tabulaire sans écrire côté serveur (preview multipart)', () => {
+    const file = new File(['a;b\n1;2'], 'releve.csv', { type: 'text/csv' });
+    service.tabularPreview(file, undefined, 'bank-1').subscribe();
+
+    const req = http.expectOne(`${base}/tabular/preview`);
+    expect(req.request.method).toBe('POST');
+    const body = req.request.body as FormData;
+    expect((body.get('file') as File).name).toBe('releve.csv');
+    expect(body.get('bankAccountId')).toBe('bank-1');
+    expect(body.has('mapping')).toBeFalse();
+    req.flush({
+      success: true,
+      data: {
+        format: 'csv', encoding: 'utf-8', delimiter: ';', headerRowIndex: 0, sheetNames: [], totalRowCount: 1,
+        columns: [], suggestedMapping: null, rows: [], parsedLines: [], issues: [], operationRowCount: 1,
+        ignoredFooterRows: 0, ambiguousDateFormat: false
+      }
+    });
+  });
+
+  it('démarre une session tabulaire avec le fichier, le compte, le journal et le mappage', () => {
+    const file = new File(['a;b\n1;2'], 'releve.csv', { type: 'text/csv' });
+    const mapping = {
+      headerRowIndex: 0, dateFormat: 'dd/MM/yyyy' as const, decimalSeparator: ',' as const, amountMode: 'signed' as const,
+      dateColumn: 0, labelColumns: [1]
+    };
+    service.startTabular(file, 'bank-1', 'JB', mapping).subscribe();
+
+    const req = http.expectOne(`${base}/sessions/tabular`);
+    expect(req.request.method).toBe('POST');
+    const body = req.request.body as FormData;
+    expect(body.get('bankAccountId')).toBe('bank-1');
+    expect(body.get('journalCode')).toBe('JB');
+    expect(JSON.parse(body.get('mapping') as string)).toEqual(mapping);
+    req.flush({ success: true, data: { id: 's-1', status: 'AwaitingReview' } });
+  });
+
+  it("lit l'historique paginé avec le compte bancaire optionnel", () => {
+    service.history(2, 20, 'bank-1').subscribe();
+    const req = http.expectOne(r => r.url === `${base}/statements`);
+    expect(req.request.params.get('page')).toBe('2');
+    expect(req.request.params.get('pageSize')).toBe('20');
+    expect(req.request.params.get('bankAccountId')).toBe('bank-1');
+    req.flush({ success: true, data: { items: [], page: 2, pageSize: 20, totalCount: 0 } });
+  });
 });
