@@ -1,6 +1,7 @@
 {
   "core.nav.stock.stock-status": "حالة المخزون",
   "core.breadcrumb.ts.etat.de.stock.7c4e2a91": "حالة المخزون",
+  "reports.routes.title.Etat_de_stock_InstaFa": "حالة المخزون - InstaFact",
   "reports.reports-hub.ts.etat.de.stock.actuel.a7b8c9d0": "حالة المخزون (الحالية)",
   "reports.stock-status.etat.de.stock.title": "حالة المخزون",
   "reports.stock-status.subtitle": "الكميات والقيم الحالية في المخزون، حسب المستودع والفئة",

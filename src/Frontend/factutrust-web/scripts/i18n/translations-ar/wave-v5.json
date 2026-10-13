@@ -6,6 +6,8 @@
   "activity-list.component.summary.Activité sup": "تم حذف النشاط",
   "activity-list.component.summary.Erreur résea": "خطأ في الشبكة",
   "assistance.assistance-page.fichier.s.selectionne.s.d143cce6": "{$INTERPOLATION} ملف (ملفات) محدد",
+  "assistance.assistance-page.joindre.des.fichiers": "إرفاق ملفات",
+  "assistance.assistance-page.plafond.fichiers.rappel": "حتى 5 ملفات. يتم التحقق من النوع والحجم عند الإرسال.",
   "assistance.assistance-page.posez.une.question.envoyez.une.proposition.ou.un.db9ac792": "اطرحوا سؤالًا أو أرسلوا مقترحًا أو شكوى إلى فريق InstaFact.",
   "assistance.assistance-page.ts.envoi.impossible.87446704": "تعذّر الإرسال.",
   "assistance.assistance-page.ts.impossible.de.charger.la.conversation.46fe4578": "تعذّر تحميل المحادثة.",
