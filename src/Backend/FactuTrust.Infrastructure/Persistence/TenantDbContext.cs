@@ -183,7 +183,6 @@ public partial class TenantDbContext : DbContext
 
     // Déclaration mensuelle paramétrable (« Configuration DM »).
     public DbSet<VatDeclarationLine> VatDeclarationLines => Set<VatDeclarationLine>();
-    public DbSet<MonthlyDeclarationSettings> MonthlyDeclarationSettings => Set<MonthlyDeclarationSettings>();
     public DbSet<MonthlyDeclarationFamilySetting> MonthlyDeclarationFamilySettings => Set<MonthlyDeclarationFamilySetting>();
     public DbSet<MonthlyDeclarationRubric> MonthlyDeclarationRubrics => Set<MonthlyDeclarationRubric>();
     public DbSet<MonthlyDeclarationRubricAccount> MonthlyDeclarationRubricAccounts => Set<MonthlyDeclarationRubricAccount>();
@@ -3999,16 +3998,6 @@ public partial class TenantDbContext : DbContext
 
     private static void ConfigureMonthlyDeclarationConfig(ModelBuilder builder)
     {
-        builder.Entity<MonthlyDeclarationSettings>(entity =>
-        {
-            entity.ToTable("MonthlyDeclarationSettings");
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Mode).HasConversion<int>();
-            entity.Property(e => e.ParityOverrideBy).HasMaxLength(256);
-            entity.Property(e => e.ParityOverrideReason)
-                .HasMaxLength(Domain.Entities.MonthlyDeclarationSettings.MaxOverrideReasonLength);
-        });
-
         builder.Entity<MonthlyDeclarationFamilySetting>(entity =>
         {
             entity.ToTable("MonthlyDeclarationFamilySettings");

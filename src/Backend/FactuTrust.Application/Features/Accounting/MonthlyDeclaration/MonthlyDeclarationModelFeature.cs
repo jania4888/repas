@@ -104,7 +104,7 @@ public sealed class ImportMonthlyDeclarationModelCommandHandler
     public async Task<Result<MonthlyDeclarationModelImportResultDto>> Handle(
         ImportMonthlyDeclarationModelCommand request, CancellationToken cancellationToken)
     {
-        if (!_settings.ConfigurableLinesActive)
+        if (!_settings.MonthlyDeclarationV2Enabled)
             return Result.Failure<MonthlyDeclarationModelImportResultDto>(MonthlyDeclarationGuard.Disabled);
         if (!_currentUser.IsAccountingFirmDelegatedContext)
             return Result.Failure<MonthlyDeclarationModelImportResultDto>(MonthlyDeclarationGuard.WriteDenied);

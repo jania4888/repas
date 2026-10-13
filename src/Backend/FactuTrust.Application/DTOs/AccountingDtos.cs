@@ -503,8 +503,7 @@ public sealed record VatDeclarationDto
     public decimal WithholdingTax { get; init; }
     public decimal Acomptes { get; init; }
 
-    // ── Familles produites par la déclaration paramétrable ───────────────────
-    // Valent 0 pour tout dossier resté en calcul historique.
+    // ── Familles sans champ de saisie : leur seule source est la configuration ──
 
     /// <summary>Droit de consommation.</summary>
     public decimal ConsumptionDuty { get; init; }
@@ -516,30 +515,29 @@ public sealed record VatDeclarationDto
     public decimal LicenceFee { get; init; }
 
     /// <summary>
-    /// Régime de calcul appliqué à cette période : 0 = historique, 1 = contrôle de parité,
-    /// 2 = paramétré. Renseigné par le serveur ; l'écran s'en sert pour dire d'où viennent les
-    /// montants plutôt que de le deviner.
+    /// Calcul qui a produit la déclaration <b>déposée</b> : 0 = historique, 1 = paramétré.
+    /// <c>null</c> tant qu'aucune déclaration n'est enregistrée pour la période.
     /// </summary>
-    public int MonthlyDeclarationMode { get; init; }
+    /// <remarks>
+    /// Le calcul historique a été retiré ; cette valeur ne sert donc plus qu'à relire le passé.
+    /// C'est elle, avec le détail figé du dépôt, qui décide si le formulaire officiel reconstitue la
+    /// ventilation de la retenue à la source par article.
+    /// </remarks>
+    public int? CalculationOrigin { get; init; }
 
     /// <summary>
-    /// Détail par rubrique produit par le moteur paramétré. Vide en calcul historique.
+    /// Détail par rubrique produit par le moteur. Pour une déclaration déposée, c'est le détail
+    /// <b>figé</b> au dépôt — même vide.
     /// </summary>
     public IReadOnlyList<MonthlyDeclarationLineDto> Lines { get; init; } =
         Array.Empty<MonthlyDeclarationLineDto>();
 
     /// <summary>
     /// Signalements du calcul (compte inconnu, cycle de paie non arrêté, famille incluse sans
-    /// rubrique…). Vide en calcul historique.
+    /// rubrique…). Jamais exposés à la société : ce sont des éléments de travail du cabinet.
     /// </summary>
     public IReadOnlyList<MonthlyDeclarationDiagnosticDto> MonthlyDeclarationDiagnostics { get; init; } =
         Array.Empty<MonthlyDeclarationDiagnosticDto>();
-
-    /// <summary>
-    /// Écart maximal, en millimes, entre le calcul historique et le calcul paramétré sur cette
-    /// période. C'est la mesure qui autorise — ou non — la bascule du dossier.
-    /// </summary>
-    public long ParityMaxGapMillimes { get; init; }
 
     /// <summary>Total net à payer = TVA due + FODEC + timbre + TCL + TFP + FOPROLOS + RS + DC + taxe hôtelière + droit de licence − acomptes (plancher 0).</summary>
     public decimal TotalToPay { get; init; }
@@ -667,18 +665,6 @@ public sealed record VatDeclarationComputedDto
     public decimal Tfp { get; init; }
     public decimal Foprolos { get; init; }
     public decimal WithholdingTax { get; init; }
-
-    /// <summary>Part de la RS provenant des factures fournisseurs.</summary>
-    public decimal WithholdingFromInvoices { get; init; }
-
-    /// <summary>Part de la RS provenant des traitements et salaires (IRPP + CSS).</summary>
-    public decimal WithholdingFromSalaries { get; init; }
-
-    /// <summary>Part de la RS provenant des débits journal 613 (loyers PP 10 %).</summary>
-    public decimal WithholdingFromRentJournal { get; init; }
-
-    /// <summary>Part de la RS produite par les rubriques paramétrées (0 en calcul historique).</summary>
-    public decimal WithholdingFromRubrics { get; init; }
 
     /// <summary>Droit de consommation.</summary>
     public decimal ConsumptionDuty { get; init; }

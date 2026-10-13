@@ -5,19 +5,26 @@ namespace FactuTrust.Infrastructure.Tests.Configuration;
 
 /// <summary>
 /// Déclaration mensuelle paramétrable — activée pour toute la plateforme depuis le 2026-09-24 par
-/// <c>appsettings.json</c>. Les deux clés dont <c>AccountingSettings.ConfigurableLinesActive</c> fait
+/// <c>appsettings.json</c>. Les deux clés dont <c>AccountingSettings.MonthlyDeclarationV2Enabled</c> fait
 /// la conjonction doivent y valoir <c>true</c>, et aucun fichier d'environnement ne doit les
 /// rabattre à <c>false</c> : une surcharge oubliée rallumerait en production le refus « non
-/// activée » que ce changement supprime. Le repli opérationnel passe par variable d'environnement
-/// (<c>Accounting__MonthlyDeclarationConfigurableLinesEnabled=false</c>), qui prime sur les fichiers,
-/// pas par le dépôt. Motif <c>RepoRelativePath</c> repris de <c>ProductionStudioFlagsTests</c>.
+/// activée » que ce changement supprime. Depuis le retrait du calcul câblé, il n'y a plus
+/// d'interrupteur de repli : le retour arrière est un retour d'image.
+/// Motif <c>RepoRelativePath</c> repris de <c>ProductionStudioFlagsTests</c>.
 /// </summary>
 public sealed class MonthlyDeclarationFlagsConfigurationTests
 {
-    private static readonly string[] Flags =
+    private static readonly string[] Flags = ["MonthlyDeclarationV2Enabled"];
+
+    /// <summary>
+    /// Clés retirées avec le calcul câblé. Elles ne doivent plus apparaître nulle part : laisser
+    /// traîner un interrupteur mort ferait croire qu'on peut encore revenir en arrière par la
+    /// configuration, alors que le repli est désormais le retour d'image.
+    /// </summary>
+    private static readonly string[] RemovedFlags =
     [
-        "MonthlyDeclarationV2Enabled",
-        "MonthlyDeclarationConfigurableLinesEnabled"
+        "MonthlyDeclarationConfigurableLinesEnabled",
+        "MonthlyDeclarationCatalogV2UpgradeEnabled"
     ];
 
     private static string RepoRelativePath(params string[] segments) => Path.GetFullPath(Path.Combine(
@@ -70,7 +77,8 @@ public sealed class MonthlyDeclarationFlagsConfigurationTests
         if (accounting is null)
             return;
 
-        Assert.False(accounting.Value.TryGetProperty("MonthlyDeclarationCatalogV2UpgradeEnabled", out _));
+        foreach (var flag in RemovedFlags)
+            Assert.False(accounting.Value.TryGetProperty(flag, out _), $"{fileName} porte encore {flag}");
     }
 
     [Theory]

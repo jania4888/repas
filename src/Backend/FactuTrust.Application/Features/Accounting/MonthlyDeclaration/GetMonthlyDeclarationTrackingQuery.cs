@@ -1,4 +1,6 @@
 using FactuTrust.Application.Common;
+using FactuTrust.Application.Common.Interfaces;
+using FactuTrust.Domain.Authorization;
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.DTOs;
@@ -33,15 +35,18 @@ public sealed class GetMonthlyDeclarationTrackingQueryHandler
 {
     private readonly IVatDeclarationRepository _declarations;
     private readonly IMonthlyDeclarationConfigRepository _config;
+    private readonly ICurrentUser _currentUser;
     private readonly AccountingSettings _settings;
 
     public GetMonthlyDeclarationTrackingQueryHandler(
         IVatDeclarationRepository declarations,
         IMonthlyDeclarationConfigRepository config,
+        ICurrentUser currentUser,
         IOptions<AccountingSettings> settings)
     {
         _declarations = declarations;
         _config = config;
+        _currentUser = currentUser;
         _settings = settings.Value;
     }
 
@@ -54,27 +59,29 @@ public sealed class GetMonthlyDeclarationTrackingQueryHandler
         var declarations = await _declarations.GetByYearAsync(request.Year, cancellationToken);
         var byMonth = declarations.ToDictionary(d => d.Month);
 
-        var settings = await _config.GetSettingsAsync(cancellationToken);
+        var catalogApplied = await _config.IsCatalogAppliedAsync(cancellationToken);
         var v2 = _settings.MonthlyDeclarationV2Enabled;
+
+        // La société ne voit que ses dépôts. Cet écran rend les douze mois d'un exercice, brouillons
+        // compris : hors contexte cabinet délégué, les périodes qu'elle n'a pas le droit de voir
+        // sont rendues comme des trous, exactement comme si rien n'était déposé.
+        var visibleOnly = !_currentUser.IsAccountingFirmDelegatedContext;
 
         var months = new List<MonthlyDeclarationTrackingRowDto>(12);
         for (var month = 1; month <= 12; month++)
         {
-            // Le régime est celui de la période, pas celui du dossier aujourd'hui : un dossier
-            // basculé en juillet a des mois de janvier à juin restés au calcul historique, et les
-            // afficher tous « paramétrés » raconterait une histoire fausse.
-            var mode = settings?.ResolveModeFor(request.Year, month)
-                       ?? Domain.Enums.MonthlyDeclarationMode.Legacy;
+            var visible = byMonth.TryGetValue(month, out var declaration)
+                          && (!visibleOnly || VatDeclarationAccess.IsVisibleToCompany(declaration.Status));
 
-            months.Add(byMonth.TryGetValue(month, out var declaration)
-                ? Map(declaration, mode, v2)
-                : Missing(request.Year, month, mode));
+            months.Add(visible
+                ? Map(declaration!, v2)
+                : Missing(request.Year, month));
         }
 
         return Result.Success(new MonthlyDeclarationTrackingDto
         {
             Year = request.Year,
-            Settings = MonthlyDeclarationConfigMapper.Map(settings, _settings.ConfigurableLinesActive),
+            Settings = MonthlyDeclarationConfigMapper.Map(v2, catalogApplied),
             Months = months
         });
     }
@@ -83,17 +90,14 @@ public sealed class GetMonthlyDeclarationTrackingQueryHandler
     /// Une période sans dépôt reste une ligne, avec son échéance. C'est le trou que l'écran doit
     /// montrer ; l'omettre le rendrait invisible au moment où il compte le plus.
     /// </summary>
-    private static MonthlyDeclarationTrackingRowDto Missing(
-        int year, int month, Domain.Enums.MonthlyDeclarationMode mode) => new()
+    private static MonthlyDeclarationTrackingRowDto Missing(int year, int month) => new()
     {
         Month = month,
         Exists = false,
-        FilingDeadline = VatFilingDeadline.ForPeriod(year, month),
-        Mode = (int)mode
+        FilingDeadline = VatFilingDeadline.ForPeriod(year, month)
     };
 
-    private static MonthlyDeclarationTrackingRowDto Map(
-        VatDeclaration d, Domain.Enums.MonthlyDeclarationMode mode, bool v2) => new()
+    private static MonthlyDeclarationTrackingRowDto Map(VatDeclaration d, bool v2) => new()
     {
         Month = d.Month,
         Exists = true,
@@ -108,6 +112,8 @@ public sealed class GetMonthlyDeclarationTrackingQueryHandler
         RevisionNumber = d.RevisionNumber,
         IsRectificative = d.IsRectificative,
         FilingDeadline = VatFilingDeadline.ForPeriod(d.Year, d.Month),
-        Mode = (int)mode
+        // Le calcul qui a produit ce dépôt. Les périodes antérieures au retrait du calcul câblé
+        // restent marquées « historique » : c'est ce qu'elles sont.
+        CalculationOrigin = (int)d.CalculationOrigin
     };
 }

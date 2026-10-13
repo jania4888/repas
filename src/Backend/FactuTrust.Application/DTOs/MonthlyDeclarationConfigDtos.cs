@@ -76,23 +76,20 @@ public sealed record MonthlyDeclarationFamilySettingDto
     public bool IsIncluded { get; init; }
 }
 
-/// <summary>Régime de calcul du dossier et état de sa rampe de bascule.</summary>
+/// <summary>Ce que les écrans doivent savoir de l'état de la déclaration mensuelle du dossier.</summary>
 public sealed record MonthlyDeclarationSettingsDto
 {
-    /// <summary>0 = Legacy (calcul historique), 1 = Parity (recette), 2 = Configured.</summary>
-    public int Mode { get; init; }
+    /// <summary>
+    /// Reflet de <c>AccountingSettings.MonthlyDeclarationV2Enabled</c> : pilote l'affichage. Éteint,
+    /// les écrans grisent leurs actions au lieu d'échouer.
+    /// </summary>
+    public bool Enabled { get; init; }
 
-    public DateTime? ConfiguredSince { get; init; }
-    public DateTime? LastParityRunAt { get; init; }
-    public long LastParityMaxGapMillimes { get; init; }
-    public int ParityCleanStreak { get; init; }
-    public int RequiredCleanParityPeriods { get; init; }
-    public bool CanSwitchToConfigured { get; init; }
-    public string? ParityOverrideBy { get; init; }
-    public string? ParityOverrideReason { get; init; }
-
-    /// <summary>Reflet de <c>AccountingSettings.ConfigurableLinesActive</c> : pilote l'affichage.</summary>
-    public bool ConfigurableLinesEnabled { get; init; }
+    /// <summary>
+    /// Le catalogue de rubriques a-t-il été posé sur ce dossier ? Faux pendant la brève fenêtre où
+    /// sa pose a échoué : les écrans le disent, et toute écriture est refusée.
+    /// </summary>
+    public bool CatalogApplied { get; init; }
 }
 
 /// <summary>Configuration complète du dossier, en une lecture pour l'écran Configuration DM.</summary>
@@ -238,22 +235,6 @@ public sealed record MonthlyDeclarationDuplicationResultDto
     public IReadOnlyList<string> UnknownAccounts { get; init; } = Array.Empty<string>();
 }
 
-/// <summary>Changement de régime de calcul du dossier.</summary>
-public sealed record SetMonthlyDeclarationModeRequest
-{
-    /// <summary>0 = Legacy, 1 = Parity, 2 = Configured.</summary>
-    public int Mode { get; init; }
-
-    /// <summary>Premier jour du mois d'effet ; requis pour passer en mode configuré.</summary>
-    public DateTime? ConfiguredSince { get; init; }
-
-    /// <summary>
-    /// Motif de dérogation, exigé lorsque la série de contrôles de parité sans écart n'est pas
-    /// atteinte. Conservé dans l'audit : c'est la trace de qui a décidé de passer outre.
-    /// </summary>
-    public string? OverrideReason { get; init; }
-}
-
 /// <summary>Fichier de modèle produit par l'export de la configuration DM.</summary>
 public sealed record MonthlyDeclarationModelFileDto
 {
@@ -348,13 +329,13 @@ public sealed record MonthlyDeclarationTrackingRowDto
     public DateTime FilingDeadline { get; init; }
 
     /// <summary>
-    /// Régime qui s'applique à <b>cette</b> période, et non le régime courant du dossier : une
-    /// période antérieure à la date d'effet reste calculée à l'ancienne.
+    /// Calcul qui a produit le dépôt de cette période : 0 = historique, 1 = paramétré.
+    /// <c>null</c> sans dépôt.
     /// </summary>
-    public int Mode { get; init; }
+    public int? CalculationOrigin { get; init; }
 }
 
-/// <summary>Les douze mois d'un exercice, et l'état de la rampe du dossier.</summary>
+/// <summary>Les douze mois d'un exercice.</summary>
 public sealed record MonthlyDeclarationTrackingDto
 {
     public int Year { get; init; }

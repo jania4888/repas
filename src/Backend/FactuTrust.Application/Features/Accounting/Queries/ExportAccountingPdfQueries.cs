@@ -94,21 +94,20 @@ public sealed class ExportMonthlyDeclarationOfficialFormQueryHandler
 
         var dto = declaration.Value;
 
-        // Détail issu des rubriques paramétrées, projeté sur les cases du millésime en cours. Quand
-        // il ventile déjà la retenue à la source, la ventilation historique est SAUTÉE : les deux
-        // chemins sont exclusifs (voir MonthlyDeclarationOfficialFormInputs).
+        // Détail issu des rubriques, projeté sur les cases du millésime en cours.
         var configuredBoxes = MonthlyDeclarationOfficialFormInputs.ConfiguredBoxes(dto);
 
-        if (MonthlyDeclarationOfficialFormInputs.IsWithholdingConfigured(configuredBoxes))
+        if (!MonthlyDeclarationOfficialFormInputs.NeedsHistoricWithholdingLines(dto))
         {
             var configuredBytes = await _pdf.GenerateMonthlyDeclarationOfficialFormPdfAsync(
                 dto, WithholdingFormLineMapper.Empty, configuredBoxes, cancellationToken);
             return Result.Success(configuredBytes);
         }
 
-        // Ventilation de la retenue à la source sur les lignes réglementaires. Best-effort : une
-        // indisponibilité du rapport RS ne doit jamais empêcher l'édition de la déclaration, le
-        // montant total restant porté par la page 4 et le récapitulatif.
+        // Dépôt antérieur au retrait du calcul câblé : il n'a aucune ligne de retenue, mais son
+        // formulaire en ventilait le détail par article. La réimpression le reconstitue, sous le
+        // garde-fou du total DÉPOSÉ. Best-effort : une indisponibilité du rapport RS ne doit jamais
+        // empêcher l'édition, le montant total restant porté par la page 4 et le récapitulatif.
         IReadOnlyList<WithholdingReportByCategoryDto>? invoiceWithholding = null;
         try
         {

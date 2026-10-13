@@ -142,10 +142,11 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
         // des éléments de travail du cabinet, pas le contenu de la déclaration déposée.
         if (request.EnforceCompanySubmittedOnly)
         {
+            // L'origine du calcul reste exposée : l'impression société du formulaire officiel en
+            // dépend pour ventiler la retenue à la source des dépôts antérieurs au retrait.
             return Result.Success(dto with
             {
-                MonthlyDeclarationDiagnostics = Array.Empty<MonthlyDeclarationDiagnosticDto>(),
-                ParityMaxGapMillimes = 0
+                MonthlyDeclarationDiagnostics = Array.Empty<MonthlyDeclarationDiagnosticDto>()
             });
         }
 
@@ -204,10 +205,11 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
             ConsumptionDuty = declared.ConsumptionDuty,
             HotelTax = declared.HotelTax,
             LicenceFee = declared.LicenceFee,
-            MonthlyDeclarationMode = (int)composed.Mode,
+            // Le calcul qui a produit un dépôt ; null tant qu'il n'y en a pas. C'est lui qui décide
+            // de la ventilation de la retenue à la source sur le formulaire officiel.
+            CalculationOrigin = saved is not null ? (int)saved.CalculationOrigin : null,
             Lines = lines,
             MonthlyDeclarationDiagnostics = MapDiagnostics(composed.Diagnostics),
-            ParityMaxGapMillimes = MaxGapMillimes(live, composed),
             TotalToPay = TotalToPay(declared, v2),
             Version = saved?.RevisionNumber ?? 1,
             IsRectificative = saved?.IsRectificative ?? false,
@@ -248,61 +250,12 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
             Suggested = v2 ? MapComputed(live, context, v2) : null
         };
 
-    // ── Rapport de parité : les deux calculs d'une période, sans rien écrire ─────
-
     /// <summary>
-    /// Les deux calculs d'une même période, sur le même contexte : l'historique, et le paramétré
-    /// tel qu'il sera une fois l'historique retiré.
+    /// Remontée du calcul paramétré : chaque famille vaut la somme des retenues de ses lignes, et
+    /// <b>0 si le dossier ne la déclare pas</b>. La T.V.A reste celle du module T.V.A — ses montants
+    /// viennent des documents de facture, et son crédit se chaîne d'un mois sur l'autre.
     /// </summary>
-    /// <param name="SavedStatus">Statut de la déclaration enregistrée, <c>null</c> si aucune.</param>
-    internal sealed record ParityProbe(
-        VatDeclarationDto Legacy,
-        VatDeclarationDto Configured,
-        ComposedDeclarationLines Composed,
-        IReadOnlyList<WithholdingReportByCategoryDto> WithholdingReportRows,
-        VatDeclarationStatus? SavedStatus);
-
-    /// <summary>
-    /// Calcule une période des deux façons, en valorisation « en direct ».
-    /// </summary>
-    /// <remarks>
-    /// <b>Lecture pure</b> : le composeur est forcé en calcul paramétré sans lire ni écrire le
-    /// régime du dossier, et rien n'est enregistré. Le contexte de période est construit une seule
-    /// fois pour les deux calculs : un écart ne peut donc venir que du calcul lui-même.
-    /// </remarks>
-    internal async Task<Result<ParityProbe>> ProbeParityAsync(int year, int month, CancellationToken cancellationToken)
-    {
-        var request = new GetVatDeclarationQuery(year, month, Valuation: VatDeclarationValuation.Live);
-
-        var context = await BuildPeriodContextAsync(request, cancellationToken);
-        if (context.Error is not null)
-            return Result.Failure<ParityProbe>(context.Error);
-
-        var legacy = ComputeLive(request, context, v2: true, ComposedDeclarationLines.Inactive);
-        var composed = await _composer.ComposeAsConfiguredAsync(
-            year, month, context.Payroll, context.Documents, cancellationToken);
-        var configured = RollUpConfigured(legacy, composed);
-
-        var saved = await _vatDeclarationRepository.GetByYearMonthAsync(year, month, cancellationToken);
-        var tenantSummary = await _tenantCompanySummary.GetCurrentTenantSummaryAsync(cancellationToken);
-
-        var legacyDto = CreateDto(
-            request, context, saved: null, legacy, legacy, Array.Empty<MonthlyDeclarationLineDto>(),
-            ComposedDeclarationLines.Inactive, v2: true, tenantSummary);
-        var configuredDto = CreateDto(
-            request, context, saved: null, configured, configured, MapLines(composed),
-            composed, v2: true, tenantSummary);
-
-        return Result.Success(new ParityProbe(
-            legacyDto, configuredDto, composed, context.WithholdingReportRows, saved?.Status));
-    }
-
-    /// <summary>
-    /// Remontée du calcul paramétré tel qu'il sera après le retrait de l'historique : chaque famille
-    /// vaut la somme de ses lignes, et <b>0 si elle n'est pas incluse</b> — plus aucun repli sur le
-    /// calcul historique. La T.V.A reste celle du module TVA.
-    /// </summary>
-    internal static TaxAmounts RollUpConfigured(TaxAmounts vat, ComposedDeclarationLines composed)
+    internal static TaxAmounts RollUp(TaxAmounts vat, ComposedDeclarationLines composed)
     {
         var withholding = composed.WithheldFor(MonthlyDeclarationFamily.Withholding);
 
@@ -316,11 +269,7 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
             ConsumptionDuty = composed.WithheldFor(MonthlyDeclarationFamily.ConsumptionDuty),
             HotelTax = composed.WithheldFor(MonthlyDeclarationFamily.HotelTax),
             LicenceFee = composed.WithheldFor(MonthlyDeclarationFamily.LicenceFee),
-            WithholdingTax = withholding,
-            WithholdingFromInvoices = 0m,
-            WithholdingFromSalaries = 0m,
-            WithholdingFromRentJournal = 0m,
-            WithholdingFromRubrics = withholding
+            WithholdingTax = withholding
         };
     }
 
@@ -547,114 +496,7 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
         if (!v2)
             return vat;
 
-        // Retenue à la source : factures fournisseurs, traitements et salaires (IRPP + CSS),
-        // et loyers journal 613 (article 4 personnes physiques 10 %). Les valeurs des documents
-        // sont celles du contexte : les mêmes que lisent les rubriques « documents ».
-        var withholdingFromInvoices = context.InvoiceWithholdingTotal;
-        var withholdingFromSalaries = context.Payroll.WithholdingTotal;
-        var withholdingFromRentJournal = context.RentWithholdingAmount;
-
-        var legacy = vat with
-        {
-            Fodec = context.Documents.FodecAmount,
-            DroitTimbre = context.Documents.FiscalStampAmount,
-            Tcl = Math.Round(_settings.TclRatePercent / 100m * context.SalesGrossBase, 3),
-            Tfp = context.Payroll.Tfp,
-            Foprolos = context.Payroll.Foprolos,
-            WithholdingFromInvoices = withholdingFromInvoices,
-            WithholdingFromSalaries = withholdingFromSalaries,
-            WithholdingFromRentJournal = withholdingFromRentJournal,
-            WithholdingTax = withholdingFromInvoices + withholdingFromSalaries + withholdingFromRentJournal
-            // Acomptes provisionnels : aucune source automatique, saisie manuelle uniquement.
-        };
-
-        // Déclaration paramétrable. Hors mode configuré — drapeau éteint, dossier en calcul
-        // historique, ou contrôle de parité — `legacy` est rendu tel quel : c'est la garantie de
-        // non-régression, vérifiable à l'octet près.
-        return composed.Mode switch
-        {
-            // Contrôle de parité : les deux calculs tournent, mais ce sont les montants
-            // historiques qui font foi. Seul l'écart est exposé, pour que la bascule se constate
-            // avant de se subir.
-            MonthlyDeclarationMode.Configured => ApplyRollUp(legacy, composed),
-            _ => legacy
-        };
-    }
-
-    /// <summary>
-    /// Remplace, famille par famille, les scalaires historiques par le total des rubriques.
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    /// Fonction pure et cloisonnée par famille : une famille sans rubrique applicable conserve sa
-    /// valeur historique, de sorte qu'un paramétrage partiel ne fabrique jamais un montant hybride.
-    /// </para>
-    /// <para>
-    /// La T.V.A est délibérément exclue. Ses montants ne viennent pas du journal mais des documents
-    /// de facture, l'enregistrement les redérive systématiquement, et <c>VatDue</c> /
-    /// <c>CreditToCarry</c> sont le produit d'une arithmétique de solde chaînée d'un mois sur
-    /// l'autre — pas d'une ligne paramétrable. La famille reste donc calculée par le chemin
-    /// historique tant qu'un lot dédié n'aura pas traité le chaînage du crédit.
-    /// </para>
-    /// </remarks>
-    internal static TaxAmounts ApplyRollUp(TaxAmounts legacy, ComposedDeclarationLines composed)
-    {
-        decimal Resolve(MonthlyDeclarationFamily family, decimal fallback) =>
-            composed.ActiveFamilies.Contains(family) ? composed.WithheldFor(family) : fallback;
-
-        var withholding = Resolve(MonthlyDeclarationFamily.Withholding, legacy.WithholdingTax);
-        var withholdingIsConfigured = composed.ActiveFamilies.Contains(MonthlyDeclarationFamily.Withholding);
-
-        return legacy with
-        {
-            Fodec = Resolve(MonthlyDeclarationFamily.OtherTurnoverTaxes, legacy.Fodec),
-            DroitTimbre = Resolve(MonthlyDeclarationFamily.StampDuty, legacy.DroitTimbre),
-            Tcl = Resolve(MonthlyDeclarationFamily.Tcl, legacy.Tcl),
-            Tfp = Resolve(MonthlyDeclarationFamily.Tfp, legacy.Tfp),
-            Foprolos = Resolve(MonthlyDeclarationFamily.Foprolos, legacy.Foprolos),
-            ConsumptionDuty = Resolve(MonthlyDeclarationFamily.ConsumptionDuty, legacy.ConsumptionDuty),
-            HotelTax = Resolve(MonthlyDeclarationFamily.HotelTax, legacy.HotelTax),
-            LicenceFee = Resolve(MonthlyDeclarationFamily.LicenceFee, legacy.LicenceFee),
-            WithholdingTax = withholding,
-            // La ventilation historique de la retenue (factures / salaires / loyers) n'a plus de
-            // sens dès que les rubriques la produisent : la laisser renseignée ferait apparaître à
-            // l'écran une décomposition qui ne totalise pas le montant affiché.
-            WithholdingFromInvoices = withholdingIsConfigured ? 0m : legacy.WithholdingFromInvoices,
-            WithholdingFromSalaries = withholdingIsConfigured ? 0m : legacy.WithholdingFromSalaries,
-            WithholdingFromRentJournal = withholdingIsConfigured ? 0m : legacy.WithholdingFromRentJournal,
-            WithholdingFromRubrics = withholdingIsConfigured ? withholding : 0m
-        };
-    }
-
-    /// <summary>
-    /// Écart, en millimes, entre le calcul historique et le calcul paramétré pour chaque famille
-    /// prise en charge. Sert de preuve chiffrée avant la bascule d'un dossier.
-    /// </summary>
-    /// <remarks>
-    /// N'a de sens qu'en <b>contrôle de parité</b>, seul régime où les deux calculs coexistent. Une
-    /// fois le dossier basculé, le montant paramétré <i>est</i> le montant : il n'y a plus rien à
-    /// comparer, et l'écart vaut zéro par construction.
-    /// </remarks>
-    internal static long MaxGapMillimes(TaxAmounts legacy, ComposedDeclarationLines composed)
-    {
-        if (composed.Mode != MonthlyDeclarationMode.Parity || composed.ActiveFamilies.Count == 0)
-            return 0;
-
-        var configured = ApplyRollUp(legacy, composed);
-        var gaps = new[]
-        {
-            configured.Fodec - legacy.Fodec,
-            configured.DroitTimbre - legacy.DroitTimbre,
-            configured.Tcl - legacy.Tcl,
-            configured.Tfp - legacy.Tfp,
-            configured.Foprolos - legacy.Foprolos,
-            configured.WithholdingTax - legacy.WithholdingTax,
-            configured.ConsumptionDuty - legacy.ConsumptionDuty,
-            configured.HotelTax - legacy.HotelTax,
-            configured.LicenceFee - legacy.LicenceFee
-        };
-
-        return gaps.Select(g => (long)Math.Round(Math.Abs(g) * 1000m, MidpointRounding.AwayFromZero)).Max();
+        return RollUp(vat, composed);
     }
 
     /// <summary>
@@ -706,10 +548,6 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
         Tfp = live.Tfp,
         Foprolos = live.Foprolos,
         WithholdingTax = live.WithholdingTax,
-        WithholdingFromInvoices = live.WithholdingFromInvoices,
-        WithholdingFromSalaries = live.WithholdingFromSalaries,
-        WithholdingFromRentJournal = live.WithholdingFromRentJournal,
-        WithholdingFromRubrics = live.WithholdingFromRubrics,
         ConsumptionDuty = live.ConsumptionDuty,
         HotelTax = live.HotelTax,
         LicenceFee = live.LicenceFee,
@@ -740,12 +578,6 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
         public decimal Tfp { get; init; }
         public decimal Foprolos { get; init; }
         public decimal WithholdingTax { get; init; }
-        public decimal WithholdingFromInvoices { get; init; }
-        public decimal WithholdingFromSalaries { get; init; }
-        public decimal WithholdingFromRentJournal { get; init; }
-
-        /// <summary>Part de la RS produite par les rubriques paramétrées (0 hors mode configuré).</summary>
-        public decimal WithholdingFromRubrics { get; init; }
 
         /// <summary>Droit de consommation — famille produite uniquement par le moteur paramétré.</summary>
         public decimal ConsumptionDuty { get; init; }

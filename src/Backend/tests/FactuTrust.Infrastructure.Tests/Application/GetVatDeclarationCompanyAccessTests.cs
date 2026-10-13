@@ -74,7 +74,7 @@ public sealed class GetVatDeclarationCompanyAccessTests
             supplierInvoices.Object,
             CreateTenantSummaryMock().Object,
             CreatePayrollProvider(),
-            MonthlyDeclarationTestComposer.Inactive(settings),
+            MonthlyDeclarationTestComposer.NoFamilyIncluded(settings),
             settings);
     }
 

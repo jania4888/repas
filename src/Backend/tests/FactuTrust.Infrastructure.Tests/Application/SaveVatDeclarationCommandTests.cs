@@ -274,10 +274,9 @@ public sealed class SaveVatDeclarationCommandTests
 
     // ── Famille incluse sans rubrique applicable ──────────────────────────
 
-    private static VatDeclarationDto WithMissingRubric(MonthlyDeclarationMode mode, params MonthlyDeclarationFamily[] families) =>
+    private static VatDeclarationDto WithMissingRubric(params MonthlyDeclarationFamily[] families) =>
         Dto() with
         {
-            MonthlyDeclarationMode = (int)mode,
             MonthlyDeclarationDiagnostics = families
                 .Select(f => new MonthlyDeclarationDiagnosticDto
                 {
@@ -298,7 +297,7 @@ public sealed class SaveVatDeclarationCommandTests
             .ReturnsAsync((VatDeclaration?)null);
 
         var result = await BuildHandler(dto: WithMissingRubric(
-                MonthlyDeclarationMode.Configured, MonthlyDeclarationFamily.Tfp, MonthlyDeclarationFamily.StampDuty))
+                MonthlyDeclarationFamily.Tfp, MonthlyDeclarationFamily.StampDuty))
             .Handle(Command(submit: true), CancellationToken.None);
 
         Assert.True(result.IsFailure);
@@ -320,7 +319,6 @@ public sealed class SaveVatDeclarationCommandTests
 
         var dto = Dto() with
         {
-            MonthlyDeclarationMode = (int)MonthlyDeclarationMode.Configured,
             MonthlyDeclarationDiagnostics = new[]
             {
                 new MonthlyDeclarationDiagnosticDto
@@ -339,16 +337,12 @@ public sealed class SaveVatDeclarationCommandTests
     }
 
     /// <summary>
-    /// L'origine du calcul est consignée au dépôt : c'est elle, et non le régime actuel du
-    /// dossier, qui dira plus tard d'où viennent les montants. Le contrôle de parité reste
-    /// historique : ses montants le sont.
+    /// L'origine du calcul est consignée au dépôt. Tout ce qui s'enregistre aujourd'hui est produit
+    /// par la configuration : c'est ce que la trace doit dire, pour que les dépôts antérieurs au
+    /// retrait du calcul câblé restent reconnaissables.
     /// </summary>
-    [Theory]
-    [InlineData(MonthlyDeclarationMode.Configured, DeclarationCalculationOrigin.Configured)]
-    [InlineData(MonthlyDeclarationMode.Parity, DeclarationCalculationOrigin.Historic)]
-    [InlineData(MonthlyDeclarationMode.Legacy, DeclarationCalculationOrigin.Historic)]
-    public async Task L_enregistrement_consigne_l_origine_du_calcul(
-        MonthlyDeclarationMode mode, DeclarationCalculationOrigin expected)
+    [Fact]
+    public async Task L_enregistrement_consigne_l_origine_du_calcul()
     {
         _repo.Setup(r => r.GetByYearMonthAsync(2026, 7, It.IsAny<CancellationToken>()))
             .ReturnsAsync((VatDeclaration?)null);
@@ -357,29 +351,59 @@ public sealed class SaveVatDeclarationCommandTests
             .Callback<VatDeclaration, CancellationToken>((d, _) => added = d)
             .ReturnsAsync((VatDeclaration d, CancellationToken _) => d);
 
-        var result = await BuildHandler(dto: Dto() with { MonthlyDeclarationMode = (int)mode })
-            .Handle(Command(), CancellationToken.None);
+        var result = await BuildHandler().Handle(Command(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(expected, added!.CalculationOrigin);
+        Assert.Equal(DeclarationCalculationOrigin.Configured, added!.CalculationOrigin);
     }
 
     /// <summary>
-    /// Hors mode configuré, la famille sans rubrique retombe sur le calcul historique : aucun zéro,
-    /// donc aucune raison de refuser.
+    /// Une rectificative aussi : elle est produite par le calcul d'aujourd'hui. L'oublier laisserait
+    /// une déclaration corrigée se dire « historique », et son formulaire officiel reconstituerait
+    /// une ventilation de retenue qui n'est plus la sienne.
     /// </summary>
-    [Theory]
-    [InlineData(MonthlyDeclarationMode.Legacy)]
-    [InlineData(MonthlyDeclarationMode.Parity)]
-    public async Task Hors_mode_configure_la_famille_sans_rubrique_ne_bloque_pas(MonthlyDeclarationMode mode)
+    [Fact]
+    public async Task Une_rectificative_consigne_aussi_l_origine_du_calcul()
+    {
+        var submitted = Draft();
+        submitted.Submit();
+        submitted.SetCalculationOrigin(DeclarationCalculationOrigin.Historic);
+        _repo.Setup(r => r.GetByYearMonthAsync(2026, 7, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(submitted);
+
+        var result = await BuildHandler()
+            .Handle(Command(submit: true, rectificative: true), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(DeclarationCalculationOrigin.Configured, submitted.CalculationOrigin);
+    }
+
+    /// <summary>
+    /// Catalogue non posé : la configuration ne reproduit pas ce que le dossier déclarait. Mieux
+    /// vaut refuser le dépôt que déposer des montants faux.
+    /// </summary>
+    [Fact]
+    public async Task Une_configuration_non_initialisee_refuse_l_enregistrement()
     {
         _repo.Setup(r => r.GetByYearMonthAsync(2026, 7, It.IsAny<CancellationToken>()))
             .ReturnsAsync((VatDeclaration?)null);
+        var dto = Dto() with
+        {
+            MonthlyDeclarationDiagnostics = new[]
+            {
+                new MonthlyDeclarationDiagnosticDto
+                {
+                    Kind = (int)RubricDiagnosticKind.ConfigurationNotInitialized,
+                    Detail = "pas encore initialisée"
+                }
+            }
+        };
 
-        var result = await BuildHandler(dto: WithMissingRubric(mode, MonthlyDeclarationFamily.Tfp))
-            .Handle(Command(), CancellationToken.None);
+        var result = await BuildHandler(dto: dto).Handle(Command(), CancellationToken.None);
 
-        Assert.True(result.IsSuccess);
+        Assert.True(result.IsFailure);
+        Assert.Contains("n'est pas encore initialisée", result.Error.Description);
+        _repo.Verify(r => r.AddAsync(It.IsAny<VatDeclaration>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     /// <summary>

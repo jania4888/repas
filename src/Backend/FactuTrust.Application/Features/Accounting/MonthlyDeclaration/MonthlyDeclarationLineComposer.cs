@@ -13,9 +13,21 @@ namespace FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
 /// </summary>
 public sealed record ComposedDeclarationLines
 {
-    public required MonthlyDeclarationMode Mode { get; init; }
+    /// <summary>
+    /// La configuration a-t-elle été évaluée ? Fausse seulement quand la déclaration mensuelle
+    /// unique est éteinte sur la plateforme — il n'y a alors aucun montant à composer.
+    /// </summary>
+    public bool IsActive { get; init; }
 
     public IReadOnlyList<RubricEvaluation> Lines { get; init; } = Array.Empty<RubricEvaluation>();
+
+    /// <summary>Familles que le dossier déclare — cochées dans sa configuration.</summary>
+    /// <remarks>
+    /// C'est cette liste, et non la présence de lignes, qui décide d'un montant : une famille cochée
+    /// sans rubrique vaut 0 <b>et</b> le signale, une famille décochée vaut 0 sans discussion.
+    /// </remarks>
+    public IReadOnlySet<MonthlyDeclarationFamily> IncludedFamilies { get; init; } =
+        new HashSet<MonthlyDeclarationFamily>();
 
     /// <summary>Familles incluses par le dossier <b>et</b> pourvues d'au moins une rubrique applicable.</summary>
     public IReadOnlySet<MonthlyDeclarationFamily> ActiveFamilies { get; init; } =
@@ -30,9 +42,8 @@ public sealed record ComposedDeclarationLines
 
     public IReadOnlyList<RubricDiagnostic> Diagnostics { get; init; } = Array.Empty<RubricDiagnostic>();
 
-    /// <summary>Rien à composer : dossier en calcul historique, ou drapeau éteint.</summary>
-    public static ComposedDeclarationLines Inactive { get; } =
-        new() { Mode = MonthlyDeclarationMode.Legacy };
+    /// <summary>Rien à composer : déclaration mensuelle unique éteinte sur la plateforme.</summary>
+    public static ComposedDeclarationLines Inactive { get; } = new();
 
     /// <summary>Total de la colonne retenue pour une famille.</summary>
     public decimal WithheldFor(MonthlyDeclarationFamily family) =>
@@ -84,46 +95,15 @@ public sealed class MonthlyDeclarationLineComposer
         DeclarationDocumentContribution? documents = null,
         CancellationToken cancellationToken = default)
     {
-        // Drapeau éteint : un test booléen, aucune requête. C'est ce qui garantit qu'un dossier non
-        // concerné ne paie strictement rien pour l'existence de cette fonctionnalité.
-        if (!_settings.ConfigurableLinesActive)
+        // Déclaration mensuelle unique éteinte : un test booléen, aucune requête. Les scalaires que
+        // le moteur alimente n'existent pas dans ce mode, il n'y a rien à composer.
+        if (!_settings.MonthlyDeclarationV2Enabled)
             return ComposedDeclarationLines.Inactive;
 
-        var settings = await _config.GetSettingsAsync(cancellationToken);
-        var mode = settings?.ResolveModeFor(year, month) ?? MonthlyDeclarationMode.Legacy;
-        if (mode == MonthlyDeclarationMode.Legacy)
-            return ComposedDeclarationLines.Inactive;
-
-        return await ComposeInModeAsync(year, month, mode, payroll, documents, cancellationToken);
-    }
-
-    /// <summary>
-    /// Compose la période comme si le dossier était en calcul paramétré, <b>sans lire ni écrire</b>
-    /// son régime. Réservé au rapport de parité, qui doit montrer ce que produira le calcul
-    /// paramétré une fois l'historique retiré, sans déplacer la rampe ni toucher aux réglages.
-    /// </summary>
-    /// <remarks>
-    /// Seul l'interrupteur de plateforme est respecté : éteint, il n'y a pas de calcul paramétré à
-    /// montrer.
-    /// </remarks>
-    public Task<ComposedDeclarationLines> ComposeAsConfiguredAsync(
-        int year,
-        int month,
-        PayrollMonthlyContribution payroll,
-        DeclarationDocumentContribution documents,
-        CancellationToken cancellationToken = default) =>
-        _settings.ConfigurableLinesActive
-            ? ComposeInModeAsync(year, month, MonthlyDeclarationMode.Configured, payroll, documents, cancellationToken)
-            : Task.FromResult(ComposedDeclarationLines.Inactive);
-
-    private async Task<ComposedDeclarationLines> ComposeInModeAsync(
-        int year,
-        int month,
-        MonthlyDeclarationMode mode,
-        PayrollMonthlyContribution payroll,
-        DeclarationDocumentContribution? documents,
-        CancellationToken cancellationToken)
-    {
+        // Le catalogue n'a pas encore été posé sur ce dossier : sa configuration ne reproduit pas ce
+        // qu'il déclarait. On compose tout de même — l'écran doit montrer ce qu'il y a — mais le
+        // signalement rend l'enregistrement impossible.
+        var catalogApplied = await _config.IsCatalogAppliedAsync(cancellationToken);
 
         var familySettings = await _config.GetFamilySettingsAsync(cancellationToken);
         var includedFamilies = familySettings
@@ -131,47 +111,77 @@ public sealed class MonthlyDeclarationLineComposer
             .Select(f => f.Family)
             .ToHashSet();
 
-        // Aucune famille cochée : rien à composer. Un dossier CONFIGURÉ reste pourtant configuré —
-        // le rendre « historique » faisait afficher « Calcul historique » à un dossier basculé.
-        // En contrôle de parité, en revanche, on reste inactif : un contrôle qui ne mesure aucune
-        // famille ne doit pas allonger la série sans écart qui ouvre la bascule.
-        if (includedFamilies.Count == 0)
-        {
-            return mode == MonthlyDeclarationMode.Configured
-                ? new ComposedDeclarationLines { Mode = MonthlyDeclarationMode.Configured }
-                : ComposedDeclarationLines.Inactive;
-        }
-
+        // TOUTES les rubriques applicables sont évaluées, y compris celles des familles décochées :
+        // c'est ce qui permet de dire « cette famille que vous ne déclarez pas aurait produit tant ».
         var rubrics = (await _config.GetRubricsAsync(includeInactive: false, cancellationToken))
-            .Where(r => includedFamilies.Contains(r.Family) && r.IsApplicableTo(year, month))
+            .Where(r => r.IsApplicableTo(year, month))
             .ToList();
-
-        var withRubric = rubrics.Select(r => r.Family).ToHashSet();
-        var withoutRubric = includedFamilies.Where(f => !withRubric.Contains(f)).ToHashSet();
 
         var data = await ResolvePeriodDataAsync(
             year, month, rubrics, payroll, documents ?? DeclarationDocumentContribution.None, cancellationToken);
-        var lines = MonthlyDeclarationRubricEvaluator.Evaluate(rubrics, data);
+        var evaluated = MonthlyDeclarationRubricEvaluator.Evaluate(rubrics, data);
+
+        var lines = evaluated.Where(l => includedFamilies.Contains(l.Family)).ToList();
+        var withRubric = lines.Select(l => l.Family).ToHashSet();
+        var withoutRubric = includedFamilies
+            .Where(f => !withRubric.Contains(f) && MovesAnAmount(f))
+            .ToHashSet();
+
+        // Les signalements ne portent que sur ce que le dossier déclare : une rubrique cassée dans
+        // une famille décochée ne doit pas bloquer l'enregistrement d'une déclaration qui l'ignore.
+        var includedRubrics = rubrics.Where(r => includedFamilies.Contains(r.Family)).ToList();
 
         var diagnostics = lines
             .SelectMany(l => l.Diagnostics)
             .Concat(withoutRubric.Select(f =>
                 new RubricDiagnostic(RubricDiagnosticKind.MissingRubricForFamily, f.ToString())))
-            .Concat(MonthlyDeclarationSourceOverlap.AllConflicts(rubrics).Select(c =>
+            .Concat(MonthlyDeclarationSourceOverlap.AllConflicts(includedRubrics).Select(c =>
                 new RubricDiagnostic(
                     RubricDiagnosticKind.DuplicateSourceRead,
                     MonthlyDeclarationSourceOverlap.Refusal(c).Description)))
+            .Concat(ExcludedFamiliesWithAmount(evaluated, includedFamilies))
             .ToList();
+
+        if (!catalogApplied)
+        {
+            diagnostics.Insert(0, new RubricDiagnostic(
+                RubricDiagnosticKind.ConfigurationNotInitialized,
+                "La configuration de la déclaration mensuelle de ce dossier n'est pas encore "
+                + "initialisée : les montants ci-dessous ne font pas foi."));
+        }
 
         return new ComposedDeclarationLines
         {
-            Mode = mode,
+            IsActive = true,
             Lines = lines,
+            IncludedFamilies = includedFamilies,
             ActiveFamilies = withRubric,
             FamiliesWithoutRubric = withoutRubric,
             Diagnostics = diagnostics
         };
     }
+
+    /// <summary>
+    /// Une famille décochée dont les rubriques auraient produit un montant : le dossier a choisi de
+    /// ne pas la déclarer, le montant vaut donc 0 — mais ce 0 doit se voir.
+    /// </summary>
+    private static IEnumerable<RubricDiagnostic> ExcludedFamiliesWithAmount(
+        IReadOnlyList<RubricEvaluation> evaluated,
+        IReadOnlySet<MonthlyDeclarationFamily> includedFamilies) =>
+        evaluated
+            .Where(l => !includedFamilies.Contains(l.Family) && MovesAnAmount(l.Family))
+            .GroupBy(l => l.Family)
+            .Where(g => g.Sum(l => l.Withheld) != 0m)
+            .OrderBy(g => g.Key)
+            .Select(g => new RubricDiagnostic(RubricDiagnosticKind.ExcludedFamilyWithAmount, g.Key.ToString()));
+
+    /// <summary>
+    /// La famille déplace-t-elle un montant déclaré ? La T.V.A vient du module T.V.A, et les
+    /// « autres informations » n'ont que des cases de contexte : ni l'une ni l'autre ne doit faire
+    /// refuser un enregistrement, ni produire un avertissement d'exclusion.
+    /// </summary>
+    private static bool MovesAnAmount(MonthlyDeclarationFamily family) =>
+        family is not (MonthlyDeclarationFamily.Vat or MonthlyDeclarationFamily.OtherInformation);
 
     /// <summary>
     /// Résout les mouvements des comptes de toutes les rubriques en UNE interrogation du journal,

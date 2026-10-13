@@ -446,24 +446,21 @@ public sealed class SaveVatDeclarationCommandHandler : IRequestHandler<SaveVatDe
             _settings.MonthlyDeclarationV2Enabled);
 
     /// <summary>
-    /// Calcul qui vient de produire les montants enregistrés : paramétré si la période est en mode
-    /// configuré, historique sinon — y compris en contrôle de parité, où les montants restent ceux
-    /// du calcul historique.
-    /// </summary>
-    private static DeclarationCalculationOrigin CalculationOriginOf(VatDeclarationDto dto) =>
-        (MonthlyDeclarationMode)dto.MonthlyDeclarationMode == MonthlyDeclarationMode.Configured
-            ? DeclarationCalculationOrigin.Configured
-            : DeclarationCalculationOrigin.Historic;
-
-    /// <summary>
     /// Refus d'une période configurée dont la configuration produirait un montant faux sans que
     /// rien ne le signale une fois la déclaration déposée : famille incluse sans rubrique applicable
     /// (un zéro), ou même source reprise par deux rubriques (un double).
     /// </summary>
-    private static Error? ConfiguredPeriodRefusal(VatDeclarationDto dto)
+    private static Error? PeriodRefusal(VatDeclarationDto dto)
     {
-        if ((MonthlyDeclarationMode)dto.MonthlyDeclarationMode != MonthlyDeclarationMode.Configured)
-            return null;
+        if (dto.MonthlyDeclarationDiagnostics.Any(
+                d => d.Kind == (int)RubricDiagnosticKind.ConfigurationNotInitialized))
+        {
+            return Error.Validation(
+                "MonthlyDeclaration",
+                "Enregistrement refusé : la configuration de la déclaration mensuelle de ce dossier "
+                + "n'est pas encore initialisée. Rouvrez le dossier dans un instant ; si le message "
+                + "persiste, contactez l'administrateur de la plateforme.");
+        }
 
         var duplicate = dto.MonthlyDeclarationDiagnostics
             .FirstOrDefault(d => d.Kind == (int)RubricDiagnosticKind.DuplicateSourceRead);
@@ -526,7 +523,7 @@ public sealed class SaveVatDeclarationCommandHandler : IRequestHandler<SaveVatDe
         var v2 = _settings.MonthlyDeclarationV2Enabled;
         var user = _currentUser.Email ?? "system";
 
-        if (v2 && ConfiguredPeriodRefusal(dto) is { } refusal)
+        if (v2 && PeriodRefusal(dto) is { } refusal)
             return Result.Failure<Guid>(refusal);
 
         var existing = await _vatDecl.GetByYearMonthAsync(r.Year, r.Month, cancellationToken);
@@ -557,8 +554,7 @@ public sealed class SaveVatDeclarationCommandHandler : IRequestHandler<SaveVatDe
                     // direct — comme la TVA. Valent 0 pour un dossier en calcul historique.
                     existing.SetConfiguredFamilyTaxes(dto.ConsumptionDuty, dto.HotelTax, dto.LicenceFee);
                     existing.ReplaceLines(MonthlyDeclarationLineSnapshot.Freeze(dto.Lines));
-            existing.SetCalculationOrigin(CalculationOriginOf(dto));
-                    existing.SetCalculationOrigin(CalculationOriginOf(dto));
+                    existing.SetCalculationOrigin(DeclarationCalculationOrigin.Configured);
                 }
 
                 if (r.Submit)
@@ -596,6 +592,8 @@ public sealed class SaveVatDeclarationCommandHandler : IRequestHandler<SaveVatDe
             // Une rectificative produit un NOUVEAU détail : les lignes de la version précédente
             // sont remplacées, la version étant portée par RevisionNumber.
             existing.ReplaceLines(MonthlyDeclarationLineSnapshot.Freeze(dto.Lines));
+            // Une rectificative est produite par le calcul d'aujourd'hui : son origine aussi.
+            existing.SetCalculationOrigin(DeclarationCalculationOrigin.Configured);
             if (r.Submit)
                 existing.Submit();
             existing.SetAuditInfo(user, isUpdate: true);
@@ -630,7 +628,7 @@ public sealed class SaveVatDeclarationCommandHandler : IRequestHandler<SaveVatDe
             draft.SetAdditionalTaxes(r.Fodec, r.DroitTimbre, r.Tcl, r.Tfp, r.Foprolos, r.WithholdingTax, r.Acomptes);
             draft.SetConfiguredFamilyTaxes(dto.ConsumptionDuty, dto.HotelTax, dto.LicenceFee);
             draft.ReplaceLines(MonthlyDeclarationLineSnapshot.Freeze(dto.Lines));
-            draft.SetCalculationOrigin(CalculationOriginOf(dto));
+            draft.SetCalculationOrigin(DeclarationCalculationOrigin.Configured);
         }
 
         draft.SetAuditInfo(user, false);

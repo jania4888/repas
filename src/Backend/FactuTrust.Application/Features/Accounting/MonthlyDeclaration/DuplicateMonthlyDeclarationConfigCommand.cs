@@ -44,7 +44,7 @@ public sealed class DuplicateMonthlyDeclarationConfigCommandHandler
     public async Task<Result<MonthlyDeclarationDuplicationResultDto>> Handle(
         DuplicateMonthlyDeclarationConfigCommand request, CancellationToken cancellationToken)
     {
-        if (!_settings.ConfigurableLinesActive)
+        if (!_settings.MonthlyDeclarationV2Enabled)
             return Result.Failure<MonthlyDeclarationDuplicationResultDto>(MonthlyDeclarationGuard.Disabled);
         if (!_currentUser.IsAccountingFirmDelegatedContext)
             return Result.Failure<MonthlyDeclarationDuplicationResultDto>(MonthlyDeclarationGuard.WriteDenied);

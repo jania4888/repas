@@ -13,32 +13,20 @@ using Xunit;
 namespace FactuTrust.Infrastructure.Tests.Application;
 
 /// <summary>
-/// Articulation entre le calcul historique et le moteur paramétré : ce qui est vérifié ici n'est
-/// pas une somme, c'est la frontière. Tant qu'un dossier n'a pas basculé, la déclaration doit
-/// sortir <b>identique à l'octet</b> — et le coût de la fonctionnalité doit être nul.
+/// Remontée des lignes vers les montants déclarés, et ce que le composeur signale au passage.
 /// </summary>
+/// <remarks>
+/// La configuration est la seule source des montants : une famille que le dossier ne déclare pas
+/// vaut 0, sans repli ni rattrapage. Ce qui est vérifié ici, c'est que ce 0 n'est jamais silencieux.
+/// </remarks>
 public sealed class MonthlyDeclarationRollUpTests
 {
-    private static GetVatDeclarationQueryHandler.TaxAmounts Legacy() => new()
+    private static readonly GetVatDeclarationQueryHandler.TaxAmounts Vat = new()
     {
-        CollectedVat19 = 1_900m,
-        CollectedVat13 = 130m,
-        CollectedVat7 = 70m,
-        DeductibleVatGoods = 500m,
-        DeductibleVatAssets = 120m,
-        PreviousCredit = 0m,
-        VatDue = 1_480m,
-        CreditToCarry = 0m,
-        Fodec = 10m,
-        DroitTimbre = 12m,
-        Tcl = 6.511m,
-        Tfp = 120.500m,
-        Foprolos = 60.250m,
-        WithholdingTax = 1_050.750m,
-        WithholdingFromInvoices = 40m,
-        WithholdingFromSalaries = 1_000.750m,
-        WithholdingFromRentJournal = 10m,
-        Acomptes = 0m
+        CollectedVat19 = 190m,
+        DeductibleVatGoods = 57m,
+        VatDue = 133m,
+        CreditToCarry = 0m
     };
 
     private static RubricEvaluation Line(
@@ -53,349 +41,205 @@ public sealed class MonthlyDeclarationRollUpTests
             RatePercentApplied = 0m
         };
 
-    private static ComposedDeclarationLines Composed(
-        MonthlyDeclarationMode mode, params RubricEvaluation[] lines) => new()
-        {
-            Mode = mode,
-            Lines = lines,
-            ActiveFamilies = lines.Select(l => l.Family).ToHashSet()
-        };
-
-    // ── Non-régression ────────────────────────────────────────────────────────
-
-    /// <summary>
-    /// Aucune famille active : la remontée rend le jeu historique <b>tel quel</b>. C'est la
-    /// propriété qui autorise à livrer le chantier sans toucher au calcul existant.
-    /// </summary>
-    [Fact]
-    public void Sans_famille_active_la_remontee_rend_le_calcul_historique_inchange()
+    private static ComposedDeclarationLines Composed(params RubricEvaluation[] lines) => new()
     {
-        var legacy = Legacy();
+        IsActive = true,
+        Lines = lines,
+        IncludedFamilies = lines.Select(l => l.Family).ToHashSet(),
+        ActiveFamilies = lines.Select(l => l.Family).ToHashSet()
+    };
 
-        var rolled = GetVatDeclarationQueryHandler.ApplyRollUp(
-            legacy, Composed(MonthlyDeclarationMode.Configured));
+    // ── Remontée ──────────────────────────────────────────────────────────────
 
-        Assert.Equal(legacy, rolled);
-    }
-
-    /// <summary>
-    /// Les trois familles ajoutées par le chantier valent zéro sur un dossier non paramétré : le
-    /// total à payer est donc, en valeur, celui d'avant.
-    /// </summary>
+    /// <summary>Le montant d'une famille est la somme des retenues de ses lignes.</summary>
     [Fact]
-    public void Les_trois_familles_ajoutees_valent_zero_sur_un_dossier_non_parametre()
+    public void Une_famille_vaut_la_somme_des_retenues_de_ses_lignes()
     {
-        var legacy = Legacy();
+        var composed = Composed(
+            Line(MonthlyDeclarationFamily.Withholding, "F1_1", 150m, 25.5m),
+            Line(MonthlyDeclarationFamily.Withholding, "F1_3", 150m, 4.5m),
+            Line(MonthlyDeclarationFamily.Tcl, "F9_3_1", 1190m, 2.38m));
 
-        Assert.Equal(0m, legacy.ConsumptionDuty);
-        Assert.Equal(0m, legacy.HotelTax);
-        Assert.Equal(0m, legacy.LicenceFee);
-        Assert.Equal(0m, legacy.WithholdingFromRubrics);
-    }
+        var result = GetVatDeclarationQueryHandler.RollUp(Vat, composed);
 
-    // ── Remontée par famille ──────────────────────────────────────────────────
-
-    /// <summary>
-    /// Le remplacement est cloisonné par famille : une famille paramétrée prend le total de ses
-    /// rubriques, les autres gardent leur valeur historique. Un paramétrage partiel ne fabrique
-    /// donc jamais un montant hybride dont plus personne ne saurait dire d'où il vient.
-    /// </summary>
-    [Fact]
-    public void Seule_la_famille_parametree_voit_son_scalaire_remplace()
-    {
-        var legacy = Legacy();
-
-        var rolled = GetVatDeclarationQueryHandler.ApplyRollUp(legacy, Composed(
-            MonthlyDeclarationMode.Configured,
-            Line(MonthlyDeclarationFamily.Tcl, "F9_3_1", 3_255m, 6.510m)));
-
-        Assert.Equal(6.510m, rolled.Tcl);
-        Assert.Equal(legacy.Fodec, rolled.Fodec);
-        Assert.Equal(legacy.Tfp, rolled.Tfp);
-        Assert.Equal(legacy.WithholdingTax, rolled.WithholdingTax);
-    }
-
-    [Fact]
-    public void Une_famille_parametree_somme_toutes_ses_rubriques()
-    {
-        var rolled = GetVatDeclarationQueryHandler.ApplyRollUp(Legacy(), Composed(
-            MonthlyDeclarationMode.Configured,
-            Line(MonthlyDeclarationFamily.Withholding, "F1_1", 11_500m, 990.750m),
-            Line(MonthlyDeclarationFamily.Withholding, "F1_3", 11_500m, 60.000m),
-            Line(MonthlyDeclarationFamily.Withholding, "F1_4_1", 2_500m, 250.000m)));
-
-        Assert.Equal(1_300.750m, rolled.WithholdingTax);
+        Assert.Equal(30m, result.WithholdingTax);
+        Assert.Equal(2.38m, result.Tcl);
     }
 
     /// <summary>
-    /// Dès que les rubriques produisent la retenue, la ventilation historique (factures / salaires /
-    /// loyers) est remise à zéro : la laisser renseignée afficherait une décomposition qui ne
-    /// totalise pas le montant déclaré.
+    /// Une famille que le dossier ne déclare pas vaut 0. C'est tout le sens de la case d'inclusion :
+    /// un dossier non assujetti ne déclare pas une taxe parce qu'une rubrique existe.
     /// </summary>
     [Fact]
-    public void La_ventilation_historique_de_la_retenue_est_remplacee_et_non_cumulee()
+    public void Une_famille_non_declaree_vaut_zero()
     {
-        var rolled = GetVatDeclarationQueryHandler.ApplyRollUp(Legacy(), Composed(
-            MonthlyDeclarationMode.Configured,
-            Line(MonthlyDeclarationFamily.Withholding, "F1_1", 11_500m, 800m)));
+        var result = GetVatDeclarationQueryHandler.RollUp(
+            Vat, Composed(Line(MonthlyDeclarationFamily.Tfp, "F2_1", 168m, 1.68m)));
 
-        Assert.Equal(800m, rolled.WithholdingTax);
-        Assert.Equal(0m, rolled.WithholdingFromInvoices);
-        Assert.Equal(0m, rolled.WithholdingFromSalaries);
-        Assert.Equal(0m, rolled.WithholdingFromRentJournal);
-        Assert.Equal(800m, rolled.WithholdingFromRubrics);
-    }
-
-    [Theory]
-    [InlineData(MonthlyDeclarationFamily.ConsumptionDuty)]
-    [InlineData(MonthlyDeclarationFamily.HotelTax)]
-    [InlineData(MonthlyDeclarationFamily.LicenceFee)]
-    public void Les_familles_sans_equivalent_historique_sont_alimentees_par_les_rubriques(
-        MonthlyDeclarationFamily family)
-    {
-        var rolled = GetVatDeclarationQueryHandler.ApplyRollUp(Legacy(), Composed(
-            MonthlyDeclarationMode.Configured, Line(family, "FX", 1_000m, 42.500m)));
-
-        var value = family switch
-        {
-            MonthlyDeclarationFamily.ConsumptionDuty => rolled.ConsumptionDuty,
-            MonthlyDeclarationFamily.HotelTax => rolled.HotelTax,
-            _ => rolled.LicenceFee
-        };
-
-        Assert.Equal(42.500m, value);
+        Assert.Equal(1.68m, result.Tfp);
+        Assert.Equal(0m, result.Foprolos);
+        Assert.Equal(0m, result.Fodec);
+        Assert.Equal(0m, result.DroitTimbre);
+        Assert.Equal(0m, result.WithholdingTax);
+        Assert.Equal(0m, result.ConsumptionDuty);
+        Assert.Equal(0m, result.HotelTax);
+        Assert.Equal(0m, result.LicenceFee);
     }
 
     /// <summary>
-    /// La T.V.A est délibérément hors du périmètre : ses montants viennent des documents de facture,
-    /// l'enregistrement les redérive systématiquement, et le solde est chaîné d'un mois sur l'autre.
-    /// Une rubrique de famille TVA reste donc visible à l'écran sans déplacer un seul scalaire.
+    /// La T.V.A ne vient jamais des rubriques : ses montants sont ceux du module T.V.A, et son
+    /// crédit se chaîne d'un mois sur l'autre. Les rubriques de cette famille sont informatives.
     /// </summary>
     [Fact]
-    public void Une_rubrique_de_famille_TVA_ne_deplace_aucun_scalaire_de_TVA()
+    public void La_TVA_n_est_jamais_deplacee_par_les_rubriques()
     {
-        var legacy = Legacy();
+        var result = GetVatDeclarationQueryHandler.RollUp(
+            Vat, Composed(Line(MonthlyDeclarationFamily.Vat, "F5_1_3", 1000m, 999m)));
 
-        var rolled = GetVatDeclarationQueryHandler.ApplyRollUp(legacy, Composed(
-            MonthlyDeclarationMode.Configured,
-            Line(MonthlyDeclarationFamily.Vat, "F5_1_3", 12_500m, 2_375m)));
-
-        Assert.Equal(legacy.CollectedVat19, rolled.CollectedVat19);
-        Assert.Equal(legacy.CollectedVat13, rolled.CollectedVat13);
-        Assert.Equal(legacy.CollectedVat7, rolled.CollectedVat7);
-        Assert.Equal(legacy.DeductibleVatGoods, rolled.DeductibleVatGoods);
-        Assert.Equal(legacy.DeductibleVatAssets, rolled.DeductibleVatAssets);
-        Assert.Equal(legacy.VatDue, rolled.VatDue);
-        Assert.Equal(legacy.CreditToCarry, rolled.CreditToCarry);
+        Assert.Equal(Vat.CollectedVat19, result.CollectedVat19);
+        Assert.Equal(Vat.DeductibleVatGoods, result.DeductibleVatGoods);
+        Assert.Equal(Vat.VatDue, result.VatDue);
+        Assert.Equal(Vat.CreditToCarry, result.CreditToCarry);
     }
 
-    // ── Écart de parité ───────────────────────────────────────────────────────
+    // ── Ce que le composeur signale ───────────────────────────────────────────
 
-    [Fact]
-    public void L_ecart_de_parite_mesure_la_difference_maximale_en_millimes()
+    private static IOptions<AccountingSettings> Settings(bool v2 = true) =>
+        Options.Create(new AccountingSettings { MonthlyDeclarationV2Enabled = v2 });
+
+    private static MonthlyDeclarationRubric Fixed(
+        MonthlyDeclarationFamily family, string code, decimal withheld) =>
+        MonthlyDeclarationTestComposer.FixedRubric(family, code, "1", gross: 0m, withheld: withheld);
+
+    private static Task<ComposedDeclarationLines> ComposeAsync(
+        IReadOnlyList<MonthlyDeclarationRubric> rubrics,
+        bool catalogApplied = true,
+        params MonthlyDeclarationFamily[] included)
     {
-        var gap = GetVatDeclarationQueryHandler.MaxGapMillimes(Legacy(), Composed(
-            MonthlyDeclarationMode.Parity,
-            Line(MonthlyDeclarationFamily.Tcl, "F9_3_1", 3_255m, 6.514m)));
-
-        // 6,514 contre 6,511 → 3 millimes.
-        Assert.Equal(3, gap);
-    }
-
-    [Fact]
-    public void Un_calcul_parametre_conforme_donne_un_ecart_nul()
-    {
-        var gap = GetVatDeclarationQueryHandler.MaxGapMillimes(Legacy(), Composed(
-            MonthlyDeclarationMode.Parity,
-            Line(MonthlyDeclarationFamily.Tcl, "F9_3_1", 3_255m, 6.511m)));
-
-        Assert.Equal(0, gap);
-    }
-
-    /// <summary>
-    /// Une fois le dossier basculé, le montant paramétré <i>est</i> le montant : il n'y a plus rien
-    /// à comparer, et publier un écart laisserait croire à une divergence inexistante.
-    /// </summary>
-    [Fact]
-    public void L_ecart_n_est_mesure_qu_en_controle_de_parite()
-    {
-        var gap = GetVatDeclarationQueryHandler.MaxGapMillimes(Legacy(), Composed(
-            MonthlyDeclarationMode.Configured,
-            Line(MonthlyDeclarationFamily.Tcl, "F9_3_1", 3_255m, 999m)));
-
-        Assert.Equal(0, gap);
-    }
-
-    // ── Inertie du composeur ──────────────────────────────────────────────────
-
-    /// <summary>
-    /// Drapeau éteint, le composeur ne doit pas émettre une seule requête : c'est ce qui garantit
-    /// qu'un dossier non concerné ne paie rien pour l'existence de la fonctionnalité.
-    /// </summary>
-    [Fact]
-    public async Task Drapeau_eteint_le_composeur_n_interroge_aucun_depot()
-    {
-        var config = new Mock<IMonthlyDeclarationConfigRepository>(MockBehavior.Strict);
-        var journals = new Mock<IJournalEntryRepository>(MockBehavior.Strict);
-        var chart = new Mock<IChartOfAccountRepository>(MockBehavior.Strict);
-        var settings = Options.Create(new AccountingSettings { MonthlyDeclarationV2Enabled = true });
-
-        var composer = new MonthlyDeclarationLineComposer(
-            config.Object, journals.Object, chart.Object, settings);
-
-        var composed = await composer.ComposeAsync(2026, 9, PayrollMonthlyContribution.None);
-
-        Assert.Equal(MonthlyDeclarationMode.Legacy, composed.Mode);
-        Assert.Empty(composed.Lines);
-        config.VerifyNoOtherCalls();
-        journals.VerifyNoOtherCalls();
-        chart.VerifyNoOtherCalls();
-    }
-
-    /// <summary>
-    /// Drapeau allumé mais dossier en calcul historique : même inertie. Allumer le drapeau ne change
-    /// donc rien tant qu'aucun dossier n'a explicitement quitté ce régime.
-    /// </summary>
-    [Fact]
-    public async Task Dossier_en_calcul_historique_le_composeur_s_arrete_apres_la_lecture_des_reglages()
-    {
-        var config = new Mock<IMonthlyDeclarationConfigRepository>(MockBehavior.Strict);
-        config.Setup(c => c.GetSettingsAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(MonthlyDeclarationSettings.CreateDefault());
-
-        var journals = new Mock<IJournalEntryRepository>(MockBehavior.Strict);
-        var chart = new Mock<IChartOfAccountRepository>(MockBehavior.Strict);
-        var settings = Options.Create(new AccountingSettings
-        {
-            MonthlyDeclarationV2Enabled = true,
-            MonthlyDeclarationConfigurableLinesEnabled = true
-        });
-
-        var composer = new MonthlyDeclarationLineComposer(
-            config.Object, journals.Object, chart.Object, settings);
-
-        var composed = await composer.ComposeAsync(2026, 9, PayrollMonthlyContribution.None);
-
-        Assert.Equal(MonthlyDeclarationMode.Legacy, composed.Mode);
-        journals.VerifyNoOtherCalls();
-        chart.VerifyNoOtherCalls();
-    }
-
-    /// <summary>
-    /// Drapeau allumé, dossier qui n'a <b>jamais</b> touché à son régime : aucune ligne de réglages
-    /// n'existe (elle ne naît qu'au premier changement de régime). C'est l'état de tous les dossiers
-    /// à l'activation du drapeau ; il doit valoir calcul historique, sans autre lecture.
-    /// </summary>
-    [Fact]
-    public async Task Dossier_sans_reglages_le_composeur_rend_le_calcul_historique_sans_autre_lecture()
-    {
-        var config = new Mock<IMonthlyDeclarationConfigRepository>(MockBehavior.Strict);
-        config.Setup(c => c.GetSettingsAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync((MonthlyDeclarationSettings?)null);
-
-        var journals = new Mock<IJournalEntryRepository>(MockBehavior.Strict);
-        var chart = new Mock<IChartOfAccountRepository>(MockBehavior.Strict);
-        var settings = Options.Create(new AccountingSettings
-        {
-            MonthlyDeclarationV2Enabled = true,
-            MonthlyDeclarationConfigurableLinesEnabled = true
-        });
-
-        var composer = new MonthlyDeclarationLineComposer(
-            config.Object, journals.Object, chart.Object, settings);
-
-        var composed = await composer.ComposeAsync(2026, 9, PayrollMonthlyContribution.None);
-
-        Assert.Same(ComposedDeclarationLines.Inactive, composed);
-        config.Verify(c => c.GetSettingsAsync(It.IsAny<CancellationToken>()), Times.Once);
-        config.VerifyNoOtherCalls();
-        journals.VerifyNoOtherCalls();
-        chart.VerifyNoOtherCalls();
-    }
-
-    // ── Aucune famille cochée ─────────────────────────────────────────────────
-
-    private static MonthlyDeclarationSettings SettingsIn(MonthlyDeclarationMode mode)
-    {
-        var settings = MonthlyDeclarationSettings.CreateDefault();
-        settings.SwitchToParity();
-        if (mode == MonthlyDeclarationMode.Configured)
-            settings.SwitchToConfigured(new DateTime(2026, 7, 1), "comptable@cabinet.tn", "test");
-        return settings;
-    }
-
-    private static (MonthlyDeclarationLineComposer Composer, Mock<IMonthlyDeclarationConfigRepository> Config,
-        Mock<IJournalEntryRepository> Journals, Mock<IChartOfAccountRepository> Chart) ComposerWithoutFamily(
-        MonthlyDeclarationMode mode)
-    {
-        var config = new Mock<IMonthlyDeclarationConfigRepository>(MockBehavior.Strict);
-        config.Setup(c => c.GetSettingsAsync(It.IsAny<CancellationToken>())).ReturnsAsync(SettingsIn(mode));
+        var config = new Mock<IMonthlyDeclarationConfigRepository>();
+        config.Setup(c => c.IsCatalogAppliedAsync(It.IsAny<CancellationToken>())).ReturnsAsync(catalogApplied);
         config.Setup(c => c.GetFamilySettingsAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new[]
-            {
-                MonthlyDeclarationFamilySetting.Create(MonthlyDeclarationFamily.Tfp, isIncluded: false).Value
-            });
+            .ReturnsAsync(included
+                .Select(f => MonthlyDeclarationFamilySetting.Create(f, isIncluded: true).Value)
+                .ToList());
+        config.Setup(c => c.GetRubricsAsync(false, It.IsAny<CancellationToken>())).ReturnsAsync(rubrics);
 
+        var journals = new Mock<IJournalEntryRepository>();
+        journals.Setup(j => j.SumMovementsByAccountsAsync(
+                It.IsAny<IReadOnlyCollection<string>>(), It.IsAny<IReadOnlyCollection<string>>(),
+                It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new Dictionary<string, AccountPeriodMovement>(StringComparer.Ordinal));
+
+        var chart = new Mock<IChartOfAccountRepository>();
+        chart.Setup(c => c.GetAllActiveAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Array.Empty<ChartOfAccount>());
+
+        return new MonthlyDeclarationLineComposer(config.Object, journals.Object, chart.Object, Settings())
+            .ComposeAsync(2026, 7, PayrollMonthlyContribution.None);
+    }
+
+    /// <summary>
+    /// Une famille décochée dont les rubriques auraient produit un montant : le dossier a choisi de
+    /// ne pas la déclarer, le montant vaut donc 0 — mais ce 0 doit se voir.
+    /// </summary>
+    [Fact]
+    public async Task Une_famille_decochee_qui_aurait_produit_un_montant_est_signalee()
+    {
+        var composed = await ComposeAsync(
+            new[]
+            {
+                Fixed(MonthlyDeclarationFamily.Tfp, "F2_1", 1.68m),
+                Fixed(MonthlyDeclarationFamily.Tcl, "F9_3_1", 2.38m)
+            },
+            included: MonthlyDeclarationFamily.Tcl);
+
+        Assert.Equal("F9_3_1", Assert.Single(composed.Lines).Code);
+        var warning = Assert.Single(
+            composed.Diagnostics.Where(d => d.Kind == RubricDiagnosticKind.ExcludedFamilyWithAmount));
+        Assert.Equal(nameof(MonthlyDeclarationFamily.Tfp), warning.Detail);
+    }
+
+    /// <summary>Une famille décochée qui n'aurait rien produit n'encombre pas l'écran.</summary>
+    [Fact]
+    public async Task Une_famille_decochee_a_zero_n_est_pas_signalee()
+    {
+        var composed = await ComposeAsync(
+            new[] { Fixed(MonthlyDeclarationFamily.Tfp, "F2_1", 0m) },
+            included: MonthlyDeclarationFamily.Tcl);
+
+        Assert.DoesNotContain(
+            composed.Diagnostics, d => d.Kind == RubricDiagnosticKind.ExcludedFamilyWithAmount);
+    }
+
+    /// <summary>
+    /// La T.V.A et les « autres informations » ne déplacent aucun montant déclaré : les décocher
+    /// n'est pas un renoncement, et les cocher sans rubrique ne doit pas bloquer l'enregistrement de
+    /// toute la déclaration.
+    /// </summary>
+    [Fact]
+    public async Task Les_familles_hors_montants_ne_produisent_ni_avertissement_ni_blocage()
+    {
+        var composed = await ComposeAsync(
+            new[] { Fixed(MonthlyDeclarationFamily.Vat, "F5_1_3", 999m) },
+            included: MonthlyDeclarationFamily.OtherInformation);
+
+        Assert.DoesNotContain(
+            composed.Diagnostics, d => d.Kind == RubricDiagnosticKind.ExcludedFamilyWithAmount);
+        Assert.DoesNotContain(
+            composed.Diagnostics, d => d.Kind == RubricDiagnosticKind.MissingRubricForFamily);
+        Assert.Empty(composed.FamiliesWithoutRubric);
+    }
+
+    /// <summary>
+    /// Une famille cochée sans rubrique applicable produirait un zéro qu'aucun contrôle ne
+    /// rattraperait : elle est signalée, et l'enregistrement la refuse.
+    /// </summary>
+    [Fact]
+    public async Task Une_famille_cochee_sans_rubrique_est_signalee()
+    {
+        var composed = await ComposeAsync(
+            Array.Empty<MonthlyDeclarationRubric>(), included: MonthlyDeclarationFamily.Tfp);
+
+        Assert.Equal(MonthlyDeclarationFamily.Tfp, Assert.Single(composed.FamiliesWithoutRubric));
+        Assert.Contains(
+            composed.Diagnostics, d => d.Kind == RubricDiagnosticKind.MissingRubricForFamily);
+    }
+
+    /// <summary>
+    /// Catalogue non posé : la configuration du dossier ne reproduit pas ce qu'il déclarait. Les
+    /// montants restent affichés — l'écran doit montrer ce qu'il y a — mais le signalement bloquant
+    /// interdit de les déposer.
+    /// </summary>
+    [Fact]
+    public async Task Un_catalogue_non_pose_est_signale_comme_bloquant()
+    {
+        var composed = await ComposeAsync(
+            new[] { Fixed(MonthlyDeclarationFamily.Tcl, "F9_3_1", 2.38m) },
+            catalogApplied: false,
+            included: MonthlyDeclarationFamily.Tcl);
+
+        Assert.Equal(RubricDiagnosticKind.ConfigurationNotInitialized, composed.Diagnostics[0].Kind);
+    }
+
+    /// <summary>
+    /// Déclaration mensuelle unique éteinte : un test booléen, et pas une requête. Les dépôts sont
+    /// en mode strict — qu'aucun appel ne leur soit fait est la démonstration recherchée.
+    /// </summary>
+    [Fact]
+    public async Task Declaration_unique_eteinte_le_composeur_n_emet_aucune_requete()
+    {
+        var config = new Mock<IMonthlyDeclarationConfigRepository>(MockBehavior.Strict);
         var journals = new Mock<IJournalEntryRepository>(MockBehavior.Strict);
         var chart = new Mock<IChartOfAccountRepository>(MockBehavior.Strict);
-        var settings = Options.Create(new AccountingSettings
-        {
-            MonthlyDeclarationV2Enabled = true,
-            MonthlyDeclarationConfigurableLinesEnabled = true
-        });
+        var composer = new MonthlyDeclarationLineComposer(
+            config.Object, journals.Object, chart.Object, Settings(v2: false));
 
-        return (new MonthlyDeclarationLineComposer(config.Object, journals.Object, chart.Object, settings),
-            config, journals, chart);
-    }
+        var composed = await composer.ComposeAsync(2026, 7, PayrollMonthlyContribution.None);
 
-    /// <summary>
-    /// Un dossier basculé en calcul paramétré qui n'a encore coché aucune famille reste paramétré.
-    /// Le rendre « historique » faisait afficher « Calcul historique » sur l'écran Calcul DM d'un
-    /// dossier configuré depuis des mois.
-    /// </summary>
-    [Fact]
-    public async Task Dossier_configure_sans_famille_cochee_reste_configure_sans_rien_composer()
-    {
-        var (composer, config, journals, chart) = ComposerWithoutFamily(MonthlyDeclarationMode.Configured);
-
-        var composed = await composer.ComposeAsync(2026, 9, PayrollMonthlyContribution.None);
-
-        Assert.Equal(MonthlyDeclarationMode.Configured, composed.Mode);
+        Assert.False(composed.IsActive);
         Assert.Empty(composed.Lines);
-        Assert.Empty(composed.ActiveFamilies);
-        config.Verify(c => c.GetRubricsAsync(It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
+        config.VerifyNoOtherCalls();
         journals.VerifyNoOtherCalls();
         chart.VerifyNoOtherCalls();
-    }
-
-    /// <summary>
-    /// En contrôle de parité, un calcul qui ne mesure aucune famille ne doit pas passer pour un
-    /// contrôle : il reste inactif, sans quoi il allongerait la série sans écart qui ouvre la bascule.
-    /// </summary>
-    [Fact]
-    public async Task Controle_de_parite_sans_famille_cochee_reste_inactif()
-    {
-        var (composer, _, journals, chart) = ComposerWithoutFamily(MonthlyDeclarationMode.Parity);
-
-        var composed = await composer.ComposeAsync(2026, 9, PayrollMonthlyContribution.None);
-
-        Assert.Same(ComposedDeclarationLines.Inactive, composed);
-        journals.VerifyNoOtherCalls();
-        chart.VerifyNoOtherCalls();
-    }
-
-    /// <summary>
-    /// Sans famille composée, le mode configuré ne change aucun montant : le repli famille par
-    /// famille rend le calcul historique tel quel.
-    /// </summary>
-    [Fact]
-    public void Dossier_configure_sans_famille_cochee_garde_les_montants_historiques()
-    {
-        var legacy = Legacy();
-
-        var rolled = GetVatDeclarationQueryHandler.ApplyRollUp(
-            legacy, new ComposedDeclarationLines { Mode = MonthlyDeclarationMode.Configured });
-
-        Assert.Equal(legacy, rolled);
     }
 }

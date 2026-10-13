@@ -1,3 +1,4 @@
+using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
@@ -16,7 +17,7 @@ namespace FactuTrust.Infrastructure.Tests.Application;
 /// </summary>
 public sealed class GetMonthlyDeclarationTrackingTests
 {
-    private static VatDeclaration Declaration(int year, int month, decimal collected)
+    private static VatDeclaration Declaration(int year, int month, decimal collected = 0m)
     {
         var d = VatDeclaration.CreateDraft(
             year, month,
@@ -27,25 +28,23 @@ public sealed class GetMonthlyDeclarationTrackingTests
 
     private static GetMonthlyDeclarationTrackingQueryHandler Handler(
         IReadOnlyList<VatDeclaration> declarations,
-        MonthlyDeclarationSettings? settings = null,
         bool v2 = true,
-        bool configurableActive = true)
+        bool catalogApplied = true,
+        bool firmContext = true)
     {
         var vat = new Mock<IVatDeclarationRepository>();
         vat.Setup(r => r.GetByYearAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(declarations);
 
         var config = new Mock<IMonthlyDeclarationConfigRepository>();
-        config.Setup(r => r.GetSettingsAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(settings);
+        config.Setup(r => r.IsCatalogAppliedAsync(It.IsAny<CancellationToken>())).ReturnsAsync(catalogApplied);
 
-        var options = Options.Create(new AccountingSettings
-        {
-            MonthlyDeclarationV2Enabled = v2,
-            MonthlyDeclarationConfigurableLinesEnabled = configurableActive
-        });
+        var user = new Mock<ICurrentUser>();
+        user.SetupGet(u => u.IsAccountingFirmDelegatedContext).Returns(firmContext);
 
-        return new GetMonthlyDeclarationTrackingQueryHandler(vat.Object, config.Object, options);
+        var options = Options.Create(new AccountingSettings { MonthlyDeclarationV2Enabled = v2 });
+
+        return new GetMonthlyDeclarationTrackingQueryHandler(vat.Object, config.Object, user.Object, options);
     }
 
     [Fact]
@@ -130,54 +129,49 @@ public sealed class GetMonthlyDeclarationTrackingTests
     }
 
     /// <summary>
-    /// Le cœur du suivi pendant la migration : un dossier basculé en juillet a ses six premiers mois
-    /// restés au calcul historique. Les afficher tous « paramétrés » raconterait une histoire fausse.
+    /// L'origine du calcul est celle du <b>dépôt</b> : les déclarations antérieures au retrait du
+    /// calcul câblé restent marquées « historique », c'est ce qu'elles sont. Sans dépôt, la question
+    /// ne se pose pas.
     /// </summary>
     [Fact]
-    public async Task Le_regime_affiche_est_celui_de_la_periode_pas_celui_du_dossier()
+    public async Task L_origine_affichee_est_celle_du_depot()
     {
-        var settings = MonthlyDeclarationSettings.CreateDefault();
-        settings.SwitchToParity();
-        for (var month = 1; month <= 3; month++)
-            settings.RecordParityRun(2026, month, 0);
-        var switched = settings.SwitchToConfigured(new DateTime(2026, 7, 1), null, null);
-        Assert.True(switched.IsSuccess, switched.Error?.Description);
+        var historic = Declaration(2026, 6);
+        historic.SetCalculationOrigin(DeclarationCalculationOrigin.Historic);
+        var configured = Declaration(2026, 7);
+        configured.SetCalculationOrigin(DeclarationCalculationOrigin.Configured);
 
-        var result = await Handler([], settings).Handle(
+        var result = await Handler([historic, configured]).Handle(
             new GetMonthlyDeclarationTrackingQuery(2026), CancellationToken.None);
 
         Assert.Equal(
-            (int)MonthlyDeclarationMode.Legacy,
-            result.Value.Months.Single(m => m.Month == 6).Mode);
+            (int)DeclarationCalculationOrigin.Historic,
+            result.Value.Months.Single(m => m.Month == 6).CalculationOrigin);
         Assert.Equal(
-            (int)MonthlyDeclarationMode.Configured,
-            result.Value.Months.Single(m => m.Month == 7).Mode);
+            (int)DeclarationCalculationOrigin.Configured,
+            result.Value.Months.Single(m => m.Month == 7).CalculationOrigin);
+        Assert.Null(result.Value.Months.Single(m => m.Month == 8).CalculationOrigin);
     }
 
+    /// <summary>
+    /// Le suivi rend les douze mois, brouillons compris. La société ne voit que ses dépôts : hors
+    /// contexte cabinet délégué, un brouillon est un trou, exactement comme s'il n'existait pas.
+    /// </summary>
     [Fact]
-    public async Task Un_dossier_jamais_parametre_est_en_calcul_historique_partout()
+    public async Task La_societe_ne_voit_pas_les_brouillons()
     {
-        var result = await Handler([]).Handle(
+        var draft = Declaration(2026, 3);
+        var submitted = Declaration(2026, 4);
+        submitted.Submit();
+
+        var firm = await Handler([draft, submitted]).Handle(
+            new GetMonthlyDeclarationTrackingQuery(2026), CancellationToken.None);
+        var company = await Handler([draft, submitted], firmContext: false).Handle(
             new GetMonthlyDeclarationTrackingQuery(2026), CancellationToken.None);
 
-        Assert.All(
-            result.Value.Months,
-            m => Assert.Equal((int)MonthlyDeclarationMode.Legacy, m.Mode));
-    }
-
-    [Fact]
-    public async Task Rend_l_etat_de_la_rampe_avec_les_mois()
-    {
-        var settings = MonthlyDeclarationSettings.CreateDefault();
-        settings.SwitchToParity();
-        settings.RecordParityRun(2026, 1, 0);
-
-        var result = await Handler([], settings).Handle(
-            new GetMonthlyDeclarationTrackingQuery(2026), CancellationToken.None);
-
-        Assert.Equal((int)MonthlyDeclarationMode.Parity, result.Value.Settings.Mode);
-        Assert.Equal(1, result.Value.Settings.ParityCleanStreak);
-        Assert.True(result.Value.Settings.ConfigurableLinesEnabled);
+        Assert.True(firm.Value.Months.Single(m => m.Month == 3).Exists);
+        Assert.False(company.Value.Months.Single(m => m.Month == 3).Exists);
+        Assert.True(company.Value.Months.Single(m => m.Month == 4).Exists);
     }
 
     /// <summary>
@@ -186,12 +180,24 @@ public sealed class GetMonthlyDeclarationTrackingTests
     [Fact]
     public async Task Reste_lisible_drapeau_eteint_en_le_signalant()
     {
-        var result = await Handler([], configurableActive: false).Handle(
+        var result = await Handler([], v2: false).Handle(
             new GetMonthlyDeclarationTrackingQuery(2026), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(12, result.Value.Months.Count);
-        Assert.False(result.Value.Settings.ConfigurableLinesEnabled);
+        Assert.False(result.Value.Settings.Enabled);
+    }
+
+    /// <summary>
+    /// Catalogue non posé : l'écran doit pouvoir le dire, puisque toute écriture y est refusée.
+    /// </summary>
+    [Fact]
+    public async Task Signale_un_catalogue_non_pose()
+    {
+        var result = await Handler([], catalogApplied: false).Handle(
+            new GetMonthlyDeclarationTrackingQuery(2026), CancellationToken.None);
+
+        Assert.False(result.Value.Settings.CatalogApplied);
     }
 
     [Theory]

@@ -1508,7 +1508,7 @@ public sealed class AccountingController : ControllerBase
     // ── Déclaration mensuelle paramétrable ──────────────────────────────────
 
     /// <summary>
-    /// Configuration de la déclaration mensuelle du dossier : régime de calcul, inclusion
+    /// Configuration de la déclaration mensuelle du dossier : inclusion
     /// des onze familles et rubriques avec leurs comptes.
     /// </summary>
     /// <remarks>
@@ -1582,7 +1582,7 @@ public sealed class AccountingController : ControllerBase
 
     /// <summary>
     /// « Calcul DM » : évalue la configuration du dossier sur une période et rend le détail obtenu,
-    /// sans rien déposer. En contrôle de parité, consigne l'écart avec le calcul historique.
+    /// sans rien déposer. Le résultat est consigné dans l'audit, avec ses signalements.
     /// </summary>
     [HttpPost("monthly-declaration/compute")]
     [Authorize(Policy = PermissionPolicies.AccountingDeclare)]
@@ -1593,28 +1593,6 @@ public sealed class AccountingController : ControllerBase
         if (r.IsFailure)
             return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
         return Ok(ApiResponse<VatDeclarationDto>.Ok(r.Value));
-    }
-
-    /// <summary>
-    /// Rapport de parité : pour chaque mois de la plage, le calcul historique face au calcul
-    /// paramétré tel qu'il sera après le retrait de l'historique — montants par famille et cases du
-    /// formulaire officiel. Lecture pure : ni le régime ni la rampe ne sont touchés.
-    /// </summary>
-    /// <remarks>
-    /// Sous <c>accounting:declare</c> et réservé au cabinet délégué (vérifié par le handler) : le
-    /// rapport expose des montants de brouillon, que la société ne voit pas. Route temporaire,
-    /// retirée avec le calcul historique.
-    /// </remarks>
-    [HttpGet("monthly-declaration/parity-report")]
-    [Authorize(Policy = PermissionPolicies.AccountingDeclare)]
-    public async Task<IActionResult> GetMonthlyDeclarationParityReport(
-        [FromQuery] int year, [FromQuery] int fromMonth, [FromQuery] int toMonth, CancellationToken cancellationToken)
-    {
-        var r = await _mediator.Send(
-            new GetMonthlyDeclarationParityReportQuery(year, fromMonth, toMonth), cancellationToken);
-        if (r.IsFailure)
-            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
-        return Ok(ApiResponse<MonthlyDeclarationParityReportDto>.Ok(r.Value));
     }
 
     /// <summary>
@@ -1634,7 +1612,7 @@ public sealed class AccountingController : ControllerBase
 
     /// <summary>
     /// « Suivi DM » : les douze mois d'un exercice — ce qui est déposé, ce qui ne l'est pas, sous
-    /// quel régime, et où en est la rampe du dossier.
+    /// quel calcul a produit chaque dépôt.
     /// </summary>
     /// <remarks>
     /// Lecture seule, ouverte à la société comme au cabinet : le suivi ne dit rien qu'un dossier ne
@@ -1685,21 +1663,6 @@ public sealed class AccountingController : ControllerBase
         if (r.IsFailure)
             return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
         return Ok(ApiResponse<MonthlyDeclarationModelImportResultDto>.Ok(r.Value));
-    }
-
-    /// <summary>
-    /// Change le régime de calcul du dossier (historique / contrôle de parité / configuré).
-    /// Le passage en configuré exige une série de contrôles sans écart, ou une dérogation motivée.
-    /// </summary>
-    [HttpPut("monthly-declaration/mode")]
-    [Authorize(Policy = PermissionPolicies.AccountingDeclare)]
-    public async Task<IActionResult> SetMonthlyDeclarationMode(
-        [FromBody] SetMonthlyDeclarationModeRequest request, CancellationToken cancellationToken)
-    {
-        var r = await _mediator.Send(new SetMonthlyDeclarationModeCommand(request), cancellationToken);
-        if (r.IsFailure)
-            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
-        return Ok(ApiResponse<bool>.Ok(true));
     }
 
     // ── Comptabilité budgétaire ─────────────────────────────────────────────

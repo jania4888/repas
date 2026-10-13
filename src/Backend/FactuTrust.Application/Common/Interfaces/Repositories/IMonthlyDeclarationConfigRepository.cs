@@ -4,8 +4,8 @@ using FactuTrust.Domain.Enums;
 namespace FactuTrust.Application.Common.Interfaces.Repositories;
 
 /// <summary>
-/// Configuration paramétrable de la déclaration mensuelle du dossier : régime de calcul, inclusion
-/// des familles, rubriques et comptes sélectionnés.
+/// Configuration de la déclaration mensuelle du dossier : inclusion des familles, rubriques et
+/// comptes sélectionnés. C'est la seule source des montants calculés.
 /// </summary>
 /// <remarks>
 /// Les lectures destinées au moteur chargent toujours les comptes avec leurs rubriques : le
@@ -14,14 +14,6 @@ namespace FactuTrust.Application.Common.Interfaces.Repositories;
 /// </remarks>
 public interface IMonthlyDeclarationConfigRepository
 {
-    /// <summary>
-    /// Réglages du dossier, ou <c>null</c> s'il n'a jamais été paramétré — ce qui vaut
-    /// <see cref="MonthlyDeclarationMode.Legacy"/> sans écrire la moindre ligne.
-    /// </summary>
-    Task<MonthlyDeclarationSettings?> GetSettingsAsync(CancellationToken cancellationToken = default);
-
-    Task SaveSettingsAsync(MonthlyDeclarationSettings settings, CancellationToken cancellationToken = default);
-
     Task<IReadOnlyList<MonthlyDeclarationFamilySetting>> GetFamilySettingsAsync(
         CancellationToken cancellationToken = default);
 

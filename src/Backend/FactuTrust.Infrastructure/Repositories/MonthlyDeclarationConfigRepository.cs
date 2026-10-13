@@ -20,29 +20,6 @@ public sealed class MonthlyDeclarationConfigRepository : IMonthlyDeclarationConf
         _contextFactory = contextFactory;
     }
 
-    public async Task<MonthlyDeclarationSettings?> GetSettingsAsync(CancellationToken cancellationToken = default)
-    {
-        await using var context = _contextFactory.CreateContext();
-        return await context.MonthlyDeclarationSettings
-            .OrderBy(s => s.CreatedAt)
-            .FirstOrDefaultAsync(cancellationToken);
-    }
-
-    public async Task SaveSettingsAsync(
-        MonthlyDeclarationSettings settings, CancellationToken cancellationToken = default)
-    {
-        await using var context = _contextFactory.CreateContext();
-        var exists = await context.MonthlyDeclarationSettings
-            .AnyAsync(s => s.Id == settings.Id, cancellationToken);
-
-        if (exists)
-            context.MonthlyDeclarationSettings.Update(settings);
-        else
-            context.MonthlyDeclarationSettings.Add(settings);
-
-        await context.SaveChangesAsync(cancellationToken);
-    }
-
     public async Task<IReadOnlyList<MonthlyDeclarationFamilySetting>> GetFamilySettingsAsync(
         CancellationToken cancellationToken = default)
     {

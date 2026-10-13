@@ -28,6 +28,18 @@ namespace FactuTrust.Infrastructure.Tests.Application;
 /// </remarks>
 internal static class MonthlyDeclarationTestComposer
 {
+    /// <summary>
+    /// Composeur d'un dossier qui ne déclare AUCUNE famille : il lit sa configuration, n'en tire
+    /// aucune ligne, et tous les montants du moteur valent donc 0.
+    /// </summary>
+    public static MonthlyDeclarationLineComposer NoFamilyIncluded(IOptions<AccountingSettings> settings) =>
+        ConfiguredOn(new Mock<IMonthlyDeclarationConfigRepository>(), settings, Array.Empty<MonthlyDeclarationRubric>());
+
+    /// <summary>
+    /// Composeur inerte : déclaration mensuelle unique éteinte, aucune requête émise. Les dépôts
+    /// simulés n'ont volontairement aucun appel prévu — que les tests passent tout de même est la
+    /// démonstration que la fonctionnalité ne coûte rien dans ce mode.
+    /// </summary>
     public static MonthlyDeclarationLineComposer Inactive(IOptions<AccountingSettings> settings) =>
         new(
             new Mock<IMonthlyDeclarationConfigRepository>().Object,
@@ -36,10 +48,9 @@ internal static class MonthlyDeclarationTestComposer
             settings);
 
     /// <summary>
-    /// Composeur d'un dossier en calcul paramétré depuis janvier 2026, dont les familles
-    /// <paramref name="included"/> sont cochées et dont les rubriques actives sont
-    /// <paramref name="rubrics"/>. Les rubriques n'étant pas assises sur des comptes, le journal ne
-    /// rend aucun mouvement et le plan comptable n'est pas lu.
+    /// Composeur d'un dossier dont les familles <paramref name="included"/> sont cochées et dont les
+    /// rubriques actives sont <paramref name="rubrics"/>. Les rubriques n'étant pas assises sur des
+    /// comptes, le journal ne rend aucun mouvement et le plan comptable n'est pas lu.
     /// </summary>
     public static MonthlyDeclarationLineComposer Configured(
         IOptions<AccountingSettings> settings,
@@ -70,11 +81,9 @@ internal static class MonthlyDeclarationTestComposer
         IReadOnlyDictionary<string, AccountPeriodMovement> movements,
         params MonthlyDeclarationFamily[] included)
     {
-        var regime = MonthlyDeclarationSettings.CreateDefault();
-        regime.SwitchToParity();
-        regime.SwitchToConfigured(new DateTime(2026, 1, 1), "comptable@cabinet.tn", "test");
-
-        config.Setup(c => c.GetSettingsAsync(It.IsAny<CancellationToken>())).ReturnsAsync(regime);
+        // Le catalogue est posé : sans son marqueur, le moteur signale une configuration non
+        // initialisée et l'enregistrement d'une déclaration est refusé.
+        config.Setup(c => c.IsCatalogAppliedAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true);
         config.Setup(c => c.GetFamilySettingsAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(included
                 .Select(f => MonthlyDeclarationFamilySetting.Create(f, isIncluded: true).Value)

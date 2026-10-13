@@ -73,32 +73,6 @@ public static class MonthlyDeclarationFamilyExtensions
     };
 }
 
-/// <summary>
-/// Régime de calcul de la déclaration mensuelle pour un dossier. C'est la rampe de bascule vers le
-/// moteur paramétré : elle existe pour que le remplacement du calcul historique se constate avant
-/// de se subir.
-/// </summary>
-public enum MonthlyDeclarationMode
-{
-    /// <summary>
-    /// Calcul historique câblé en dur. Défaut, et seul comportement d'un dossier qui n'a jamais
-    /// ouvert l'écran de configuration.
-    /// </summary>
-    Legacy = 0,
-
-    /// <summary>
-    /// Les deux calculs tournent. Les montants <b>déclarés</b> restent ceux du calcul historique ;
-    /// le calcul paramétré n'est exposé qu'en comparaison, écart en millimes à l'appui. Aucune
-    /// écriture ne change : c'est le mode de recette.
-    /// </summary>
-    Parity = 1,
-
-    /// <summary>
-    /// Le moteur paramétré est la source unique. Une famille incluse sans rubrique applicable
-    /// bloque l'enregistrement plutôt que de produire un zéro silencieux.
-    /// </summary>
-    Configured = 2
-}
 
 /// <summary>Origine du montant brut d'une rubrique (colonne « Type Calcul Montant Brut »).</summary>
 public enum RubricGrossKind

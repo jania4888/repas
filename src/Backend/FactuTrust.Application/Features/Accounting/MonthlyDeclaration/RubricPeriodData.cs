@@ -39,7 +39,28 @@ public enum RubricDiagnosticKind
     /// Deux rubriques applicables reprennent la même source (IRPP de la paie, retenue « honoraires »
     /// du rapport RS…) : le montant serait déclaré deux fois. Le détail est la phrase à afficher.
     /// </summary>
-    DuplicateSourceRead = 7
+    DuplicateSourceRead = 7,
+
+    /// <summary>
+    /// Une famille que le dossier ne déclare pas aurait pourtant produit un montant.
+    /// </summary>
+    /// <remarks>
+    /// Avertissement, non bloquant : décocher une famille est un choix légitime — le dossier n'y est
+    /// pas assujetti — mais un choix qui met un montant à zéro. Il doit se voir, sans quoi le zéro
+    /// serait silencieux. La T.V.A et les « autres informations » en sont exclues : elles ne
+    /// déplacent aucun montant déclaré.
+    /// </remarks>
+    ExcludedFamilyWithAmount = 8,
+
+    /// <summary>
+    /// Le catalogue de rubriques n'a pas encore été posé sur ce dossier.
+    /// </summary>
+    /// <remarks>
+    /// Bloquant. La configuration est la seule source des montants : tant qu'elle n'est pas celle
+    /// qui reproduit ce que le dossier déclarait, mieux vaut refuser l'enregistrement que déposer
+    /// des montants faux.
+    /// </remarks>
+    ConfigurationNotInitialized = 9
 }
 
 /// <summary>Signalement attaché à une rubrique évaluée.</summary>

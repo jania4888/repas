@@ -137,7 +137,7 @@ public sealed class GetVatDeclarationCashVatTests
 
         return new GetVatDeclarationQueryHandler(
             mediator.Object, vatRepo, journals, invoices.Object, supplierInvoices.Object,
-            CreateTenantSummaryMock().Object, CreatePayrollProvider(), MonthlyDeclarationTestComposer.Inactive(settings), settings);
+            CreateTenantSummaryMock().Object, CreatePayrollProvider(), MonthlyDeclarationTestComposer.NoFamilyIncluded(settings), settings);
     }
 
     // ── Édition cabinet (plan v3, tâche 6, niveau query) ─────────────────────

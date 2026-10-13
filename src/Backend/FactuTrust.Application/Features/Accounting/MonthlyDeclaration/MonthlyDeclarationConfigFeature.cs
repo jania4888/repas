@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 namespace FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
 
 // Configuration DM : le paramétrage, par dossier, du calcul de chaque rubrique de la déclaration
-// mensuelle. Les ÉCRITURES sont gardées par AccountingSettings.ConfigurableLinesActive et par le
+// mensuelle. Les ÉCRITURES sont gardées par AccountingSettings.MonthlyDeclarationV2Enabled et par le
 // contexte cabinet délégué ; la LECTURE reste ouverte drapeau éteint, et se contente de le signaler
 // — un écran qui explique « fonctionnalité non activée » vaut mieux qu'un écran en erreur, et la
 // configuration amorcée n'est que de la donnée de référence inerte.
@@ -94,23 +94,11 @@ internal static class MonthlyDeclarationConfigMapper
             .ToList()
     };
 
-    public static MonthlyDeclarationSettingsDto Map(MonthlyDeclarationSettings? s, bool enabled)
+    public static MonthlyDeclarationSettingsDto Map(bool enabled, bool catalogApplied) => new()
     {
-        var settings = s ?? MonthlyDeclarationSettings.CreateDefault();
-        return new MonthlyDeclarationSettingsDto
-        {
-            Mode = (int)settings.Mode,
-            ConfiguredSince = settings.ConfiguredSince,
-            LastParityRunAt = settings.LastParityRunAt,
-            LastParityMaxGapMillimes = settings.LastParityMaxGapMillimes,
-            ParityCleanStreak = settings.ParityCleanStreak,
-            RequiredCleanParityPeriods = MonthlyDeclarationSettings.RequiredCleanParityPeriods,
-            CanSwitchToConfigured = settings.CanSwitchToConfigured,
-            ParityOverrideBy = settings.ParityOverrideBy,
-            ParityOverrideReason = settings.ParityOverrideReason,
-            ConfigurableLinesEnabled = enabled
-        };
-    }
+        Enabled = enabled,
+        CatalogApplied = catalogApplied
+    };
 
     /// <summary>
     /// Traduit les comptes reçus de l'écran. Les valeurs d'énumération hors bornes sont refusées
@@ -209,7 +197,7 @@ public sealed class GetMonthlyDeclarationConfigurationQueryHandler
     public async Task<Result<MonthlyDeclarationConfigurationDto>> Handle(
         GetMonthlyDeclarationConfigurationQuery request, CancellationToken cancellationToken)
     {
-        var settings = await _config.GetSettingsAsync(cancellationToken);
+        var catalogApplied = await _config.IsCatalogAppliedAsync(cancellationToken);
         var families = await _config.GetFamilySettingsAsync(cancellationToken);
         var rubrics = await _config.GetRubricsAsync(request.IncludeInactive, cancellationToken);
 
@@ -226,7 +214,7 @@ public sealed class GetMonthlyDeclarationConfigurationQueryHandler
 
         return Result.Success(new MonthlyDeclarationConfigurationDto
         {
-            Settings = MonthlyDeclarationConfigMapper.Map(settings, _settings.ConfigurableLinesActive),
+            Settings = MonthlyDeclarationConfigMapper.Map(_settings.MonthlyDeclarationV2Enabled, catalogApplied),
             Families = allFamilies,
             Rubrics = rubrics.Select(MonthlyDeclarationConfigMapper.Map).ToList(),
             Warnings = MonthlyDeclarationConfigMapper.Warnings(rubrics)
@@ -262,7 +250,7 @@ public sealed class CreateMonthlyDeclarationRubricCommandHandler
     public async Task<Result<Guid>> Handle(
         CreateMonthlyDeclarationRubricCommand request, CancellationToken cancellationToken)
     {
-        if (!_settings.ConfigurableLinesActive)
+        if (!_settings.MonthlyDeclarationV2Enabled)
             return Result.Failure<Guid>(MonthlyDeclarationGuard.Disabled);
         if (!_currentUser.IsAccountingFirmDelegatedContext)
             return Result.Failure<Guid>(MonthlyDeclarationGuard.WriteDenied);
@@ -350,7 +338,7 @@ public sealed class UpdateMonthlyDeclarationRubricCommandHandler
     public async Task<Result> Handle(
         UpdateMonthlyDeclarationRubricCommand request, CancellationToken cancellationToken)
     {
-        if (!_settings.ConfigurableLinesActive)
+        if (!_settings.MonthlyDeclarationV2Enabled)
             return Result.Failure(MonthlyDeclarationGuard.Disabled);
         if (!_currentUser.IsAccountingFirmDelegatedContext)
             return Result.Failure(MonthlyDeclarationGuard.WriteDenied);
@@ -433,7 +421,7 @@ public sealed class ToggleMonthlyDeclarationRubricCommandHandler
     public async Task<Result> Handle(
         ToggleMonthlyDeclarationRubricCommand request, CancellationToken cancellationToken)
     {
-        if (!_settings.ConfigurableLinesActive)
+        if (!_settings.MonthlyDeclarationV2Enabled)
             return Result.Failure(MonthlyDeclarationGuard.Disabled);
         if (!_currentUser.IsAccountingFirmDelegatedContext)
             return Result.Failure(MonthlyDeclarationGuard.WriteDenied);
@@ -492,7 +480,7 @@ public sealed class DeleteMonthlyDeclarationRubricCommandHandler
     public async Task<Result> Handle(
         DeleteMonthlyDeclarationRubricCommand request, CancellationToken cancellationToken)
     {
-        if (!_settings.ConfigurableLinesActive)
+        if (!_settings.MonthlyDeclarationV2Enabled)
             return Result.Failure(MonthlyDeclarationGuard.Disabled);
         if (!_currentUser.IsAccountingFirmDelegatedContext)
             return Result.Failure(MonthlyDeclarationGuard.WriteDenied);
@@ -543,7 +531,7 @@ public sealed class SetMonthlyDeclarationFamilyCommandHandler
     public async Task<Result> Handle(
         SetMonthlyDeclarationFamilyCommand request, CancellationToken cancellationToken)
     {
-        if (!_settings.ConfigurableLinesActive)
+        if (!_settings.MonthlyDeclarationV2Enabled)
             return Result.Failure(MonthlyDeclarationGuard.Disabled);
         if (!_currentUser.IsAccountingFirmDelegatedContext)
             return Result.Failure(MonthlyDeclarationGuard.WriteDenied);
@@ -584,80 +572,3 @@ public sealed class SetMonthlyDeclarationFamilyCommandHandler
     }
 }
 
-public sealed record SetMonthlyDeclarationModeCommand(SetMonthlyDeclarationModeRequest Request)
-    : IRequest<Result>;
-
-/// <summary>
-/// Change le régime de calcul du dossier. C'est la seule commande qui déplace des montants : elle
-/// décide si la déclaration est produite par le calcul historique ou par la configuration.
-/// </summary>
-public sealed class SetMonthlyDeclarationModeCommandHandler
-    : IRequestHandler<SetMonthlyDeclarationModeCommand, Result>
-{
-    private readonly IMonthlyDeclarationConfigRepository _config;
-    private readonly IAuditService _auditService;
-    private readonly ICurrentUser _currentUser;
-    private readonly AccountingSettings _settings;
-
-    public SetMonthlyDeclarationModeCommandHandler(
-        IMonthlyDeclarationConfigRepository config,
-        IAuditService auditService,
-        ICurrentUser currentUser,
-        IOptions<AccountingSettings> settings)
-    {
-        _config = config;
-        _auditService = auditService;
-        _currentUser = currentUser;
-        _settings = settings.Value;
-    }
-
-    public async Task<Result> Handle(
-        SetMonthlyDeclarationModeCommand request, CancellationToken cancellationToken)
-    {
-        if (!_settings.ConfigurableLinesActive)
-            return Result.Failure(MonthlyDeclarationGuard.Disabled);
-        if (!_currentUser.IsAccountingFirmDelegatedContext)
-            return Result.Failure(MonthlyDeclarationGuard.WriteDenied);
-
-        var requested = request.Request.Mode;
-        if (!Enum.IsDefined((MonthlyDeclarationMode)requested))
-            return Result.Failure(Error.Validation("Mode", $"Régime inconnu : {requested}."));
-
-        var mode = (MonthlyDeclarationMode)requested;
-        var settings = await _config.GetSettingsAsync(cancellationToken)
-                       ?? MonthlyDeclarationSettings.CreateDefault();
-        var previousMode = settings.Mode;
-
-        var user = _currentUser.Email ?? "system";
-        var applied = mode switch
-        {
-            MonthlyDeclarationMode.Legacy => settings.SwitchToLegacy(),
-            MonthlyDeclarationMode.Parity => settings.SwitchToParity(),
-            _ => settings.SwitchToConfigured(
-                request.Request.ConfiguredSince ?? default,
-                user,
-                request.Request.OverrideReason)
-        };
-
-        if (applied.IsFailure)
-            return applied;
-
-        settings.SetAuditInfo(user, isUpdate: settings.CreatedBy is not null);
-        await _config.SaveSettingsAsync(settings, cancellationToken);
-
-        await _auditService.LogAsync(
-            AuditActions.Accounting.MonthlyDeclarationModeChanged,
-            nameof(MonthlyDeclarationSettings), settings.Id,
-            oldValues: new { Mode = previousMode.ToString() },
-            newValues: new
-            {
-                Mode = settings.Mode.ToString(),
-                settings.ConfiguredSince,
-                settings.ParityCleanStreak,
-                settings.ParityOverrideReason
-            },
-            cancellationToken: cancellationToken);
-
-        return Result.Success();
-    }
-}

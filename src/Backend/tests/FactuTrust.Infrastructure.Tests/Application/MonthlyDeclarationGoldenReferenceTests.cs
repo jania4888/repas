@@ -8,6 +8,8 @@ using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
 using FactuTrust.Domain.ValueObjects;
 using FactuTrust.Infrastructure.Accounting;
+using FactuTrust.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
@@ -15,8 +17,9 @@ using Xunit;
 namespace FactuTrust.Infrastructure.Tests.Application;
 
 /// <summary>
-/// <b>References dorees de la declaration mensuelle.</b> Ce que le calcul <b>historique</b> produit
-/// sur la periode « pleine » de juillet 2026, fige ici <b>avant</b> son retrait.
+/// <b>References dorees de la declaration mensuelle.</b> Ce que le calcul <b>cable</b> produisait
+/// sur la periode « pleine » de juillet 2026, fige avant son retrait — et ce que la configuration
+/// doit continuer de produire.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -213,31 +216,12 @@ public sealed class MonthlyDeclarationGoldenReferenceTests
     // -- La periode « pleine » : montants et cases ------------------------------
 
     /// <summary>
-    /// Le releve lui-meme : tant que le calcul historique existe, il doit rendre exactement les
-    /// constantes figees. Ce test disparaitra avec lui ; les constantes, non.
-    /// </summary>
-    [Fact]
-    public async Task Le_calcul_historique_rend_les_montants_dores() =>
-        AssertGoldenAmounts(await RichPeriodAsync());
-
-    /// <summary>
     /// <b>La preuve du chantier.</b> Le catalogue v2 reproduit le calcul historique au millime,
     /// famille par famille — c'est ce qui autorise a retirer l'historique sans changer un montant.
     /// </summary>
     [Fact]
     public async Task Le_catalogue_v2_rend_les_montants_dores() =>
         AssertGoldenAmounts(await RichPeriodAsync(ConfiguredV2));
-
-    /// <summary>Meme exigence sur le formulaire officiel : les 77 cases, a l'identique.</summary>
-    [Fact]
-    public async Task Le_calcul_historique_rend_les_cases_dorees()
-    {
-        var historic = await RichPeriodAsync();
-
-        Assert.Equal(
-            GoldenBoxText,
-            Canonical(MonthlyDeclarationOfficialFormInputs.Values(historic, NoWithholdingRows)));
-    }
 
     /// <summary>
     /// Le catalogue v2 tamponne les memes cases que l'historique. Une regression de montant qui se
@@ -251,6 +235,45 @@ public sealed class MonthlyDeclarationGoldenReferenceTests
         Assert.Equal(
             GoldenBoxText,
             Canonical(MonthlyDeclarationOfficialFormInputs.Values(configured, NoWithholdingRows)));
+    }
+
+    /// <summary>
+    /// <b>La preuve de bout en bout.</b> Non plus le catalogue lu depuis sa ressource, mais la
+    /// configuration telle que la POSE l'ecrit reellement en base, relue puis evaluee. C'est la
+    /// chaine complete — pose, lecture, composition, remontee, formulaire — confrontee a ce que le
+    /// calcul cable produisait.
+    /// </summary>
+    [Fact]
+    public async Task La_configuration_posee_en_base_rend_les_montants_et_les_cases_dores()
+    {
+        var name = $"DmGolden_{Guid.NewGuid()}";
+        var options = new DbContextOptionsBuilder<TenantDbContext>().UseInMemoryDatabase(name).Options;
+
+        await using (var context = new TenantDbContext(options))
+        {
+            var reset = await MonthlyDeclarationCatalogReset.EnsureAppliedAsync(
+                context, new MonthlyDeclarationCatalogOptions(TclRatePercent: 0.2m));
+            Assert.Equal(MonthlyDeclarationCatalogResetOutcome.Applied, reset.Outcome);
+        }
+
+        List<MonthlyDeclarationRubric> posed;
+        await using (var context = new TenantDbContext(options))
+        {
+            posed = await context.MonthlyDeclarationRubrics
+                .Include(r => r.Accounts)
+                .Where(r => r.IsActive)
+                .ToListAsync();
+        }
+
+        var declaration = await RichPeriodAsync(
+            settings => MonthlyDeclarationTestComposer.ConfiguredWithMovements(
+                new Mock<IMonthlyDeclarationConfigRepository>(), settings, posed, RichPeriodMovements(),
+                Enum.GetValues<MonthlyDeclarationFamily>()));
+
+        AssertGoldenAmounts(declaration);
+        Assert.Equal(
+            GoldenBoxText,
+            Canonical(MonthlyDeclarationOfficialFormInputs.Values(declaration, NoWithholdingRows)));
     }
 
     // -- Reimpression d'un depot : ce qui ne doit jamais changer ----------------

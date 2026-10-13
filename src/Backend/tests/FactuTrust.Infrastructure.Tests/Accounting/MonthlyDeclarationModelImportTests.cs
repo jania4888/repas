@@ -61,7 +61,6 @@ public sealed class MonthlyDeclarationModelImportTests
         var settings = Options.Create(new AccountingSettings
         {
             MonthlyDeclarationV2Enabled = true,
-            MonthlyDeclarationConfigurableLinesEnabled = true,
             TclRatePercent = 0.2m
         });
 

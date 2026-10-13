@@ -59,7 +59,6 @@ public sealed class MonthlyDeclarationConfigFeatureTests
         Options.Create(new AccountingSettings
         {
             MonthlyDeclarationV2Enabled = enabled,
-            MonthlyDeclarationConfigurableLinesEnabled = enabled
         });
 
     private static ICurrentUser User(bool delegatedFirm = true)
@@ -134,7 +133,6 @@ public sealed class MonthlyDeclarationConfigFeatureTests
         var settings = Options.Create(new AccountingSettings
         {
             MonthlyDeclarationV2Enabled = false,
-            MonthlyDeclarationConfigurableLinesEnabled = true
         });
         var handler = new CreateMonthlyDeclarationRubricCommandHandler(
             _repository, Audit(), User(), settings);
@@ -172,8 +170,7 @@ public sealed class MonthlyDeclarationConfigFeatureTests
             new GetMonthlyDeclarationConfigurationQuery(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        Assert.False(result.Value.Settings.ConfigurableLinesEnabled);
-        Assert.Equal((int)MonthlyDeclarationMode.Legacy, result.Value.Settings.Mode);
+        Assert.False(result.Value.Settings.Enabled);
     }
 
     // ── Lecture ───────────────────────────────────────────────────────────────
@@ -360,66 +357,5 @@ public sealed class MonthlyDeclarationConfigFeatureTests
             new() { Family = 1234, IsIncluded = true }), CancellationToken.None);
 
         Assert.True(result.IsFailure);
-    }
-
-    /// <summary>
-    /// La bascule directe vers le mode configuré est refusée par le domaine ; la commande doit la
-    /// relayer telle quelle, sans écrire de réglage.
-    /// </summary>
-    [Fact]
-    public async Task Le_passage_direct_en_mode_configure_est_refuse_et_n_ecrit_rien()
-    {
-        var handler = new SetMonthlyDeclarationModeCommandHandler(
-            _repository, Audit(), User(), Settings());
-
-        var result = await handler.Handle(new SetMonthlyDeclarationModeCommand(new()
-        {
-            Mode = (int)MonthlyDeclarationMode.Configured,
-            ConfiguredSince = new DateTime(2026, 10, 1),
-            OverrideReason = "bascule immédiate"
-        }), CancellationToken.None);
-
-        Assert.True(result.IsFailure);
-        Assert.Null(await _repository.GetSettingsAsync());
-    }
-
-    [Fact]
-    public async Task Le_passage_en_controle_de_parite_est_persiste()
-    {
-        var handler = new SetMonthlyDeclarationModeCommandHandler(
-            _repository, Audit(), User(), Settings());
-
-        var result = await handler.Handle(new SetMonthlyDeclarationModeCommand(
-            new() { Mode = (int)MonthlyDeclarationMode.Parity }), CancellationToken.None);
-
-        Assert.True(result.IsSuccess);
-        var settings = await _repository.GetSettingsAsync();
-        Assert.NotNull(settings);
-        Assert.Equal(MonthlyDeclarationMode.Parity, settings!.Mode);
-    }
-
-    [Fact]
-    public async Task Un_regime_inconnu_est_refuse()
-    {
-        var handler = new SetMonthlyDeclarationModeCommandHandler(
-            _repository, Audit(), User(), Settings());
-
-        var result = await handler.Handle(new SetMonthlyDeclarationModeCommand(
-            new() { Mode = 77 }), CancellationToken.None);
-
-        Assert.True(result.IsFailure);
-    }
-
-    [Fact]
-    public async Task Le_changement_de_regime_exige_le_contexte_cabinet_delegue()
-    {
-        var handler = new SetMonthlyDeclarationModeCommandHandler(
-            _repository, Audit(), User(delegatedFirm: false), Settings());
-
-        var result = await handler.Handle(new SetMonthlyDeclarationModeCommand(
-            new() { Mode = (int)MonthlyDeclarationMode.Parity }), CancellationToken.None);
-
-        Assert.True(result.IsFailure);
-        Assert.Null(await _repository.GetSettingsAsync());
     }
 }

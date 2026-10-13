@@ -23,8 +23,9 @@ namespace FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
 /// qu'il le faut sans toucher au document.
 /// </para>
 /// <para>
-/// En contrôle de parité, elle enregistre le résultat de la comparaison sur les réglages du dossier :
-/// c'est cette série de contrôles, et elle seule, qui autorise ensuite la bascule.
+/// C'est une lecture, mais une lecture <b>auditée</b> : la trace dit quels montants la configuration
+/// produisait ce jour-là, et avec quels signalements. Elle garde donc le même verrou que les
+/// écritures — c'est aussi ce qui évite qu'une société puisse sonder les brouillons de son dossier.
 /// </para>
 /// </remarks>
 public sealed record ComputeMonthlyDeclarationCommand(int Year, int Month)
@@ -34,20 +35,17 @@ public sealed class ComputeMonthlyDeclarationCommandHandler
     : IRequestHandler<ComputeMonthlyDeclarationCommand, Result<VatDeclarationDto>>
 {
     private readonly IMediator _mediator;
-    private readonly IMonthlyDeclarationConfigRepository _config;
     private readonly IAuditService _auditService;
     private readonly ICurrentUser _currentUser;
     private readonly AccountingSettings _settings;
 
     public ComputeMonthlyDeclarationCommandHandler(
         IMediator mediator,
-        IMonthlyDeclarationConfigRepository config,
         IAuditService auditService,
         ICurrentUser currentUser,
         IOptions<AccountingSettings> settings)
     {
         _mediator = mediator;
-        _config = config;
         _auditService = auditService;
         _currentUser = currentUser;
         _settings = settings.Value;
@@ -56,7 +54,7 @@ public sealed class ComputeMonthlyDeclarationCommandHandler
     public async Task<Result<VatDeclarationDto>> Handle(
         ComputeMonthlyDeclarationCommand request, CancellationToken cancellationToken)
     {
-        if (!_settings.ConfigurableLinesActive)
+        if (!_settings.MonthlyDeclarationV2Enabled)
             return Result.Failure<VatDeclarationDto>(MonthlyDeclarationGuard.Disabled);
         if (!_currentUser.IsAccountingFirmDelegatedContext)
             return Result.Failure<VatDeclarationDto>(MonthlyDeclarationGuard.WriteDenied);
@@ -75,7 +73,6 @@ public sealed class ComputeMonthlyDeclarationCommandHandler
             return computed;
 
         var dto = computed.Value;
-        await RecordParityAsync(request, dto, cancellationToken);
 
         await _auditService.LogAsync(
             AuditActions.Accounting.MonthlyDeclarationComputed,
@@ -84,9 +81,7 @@ public sealed class ComputeMonthlyDeclarationCommandHandler
             {
                 request.Year,
                 request.Month,
-                Mode = ((MonthlyDeclarationMode)dto.MonthlyDeclarationMode).ToString(),
                 LineCount = dto.Lines.Count,
-                dto.ParityMaxGapMillimes,
                 FamilyTotals = FamilyTotals(dto),
                 // Les codes de diagnostic, et pas seulement leur nombre : c'est la trace qui
                 // expliquera, des mois plus tard, pourquoi un montant déposé diffère d'un recalcul.
@@ -97,28 +92,6 @@ public sealed class ComputeMonthlyDeclarationCommandHandler
             cancellationToken: cancellationToken);
 
         return Result.Success(dto);
-    }
-
-    /// <summary>
-    /// Consigne le résultat du contrôle de parité. N'a lieu qu'en mode <c>Parity</c> : c'est le seul
-    /// régime où les deux calculs coexistent, donc le seul où la comparaison a un sens.
-    /// </summary>
-    private async Task RecordParityAsync(
-        ComputeMonthlyDeclarationCommand request, VatDeclarationDto dto, CancellationToken cancellationToken)
-    {
-        if ((MonthlyDeclarationMode)dto.MonthlyDeclarationMode != MonthlyDeclarationMode.Parity)
-            return;
-
-        var settings = await _config.GetSettingsAsync(cancellationToken);
-        if (settings is null)
-            return;
-
-        var recorded = settings.RecordParityRun(request.Year, request.Month, dto.ParityMaxGapMillimes);
-        if (recorded.IsFailure)
-            return;
-
-        settings.SetAuditInfo(_currentUser.Email ?? "system", isUpdate: true);
-        await _config.SaveSettingsAsync(settings, cancellationToken);
     }
 
     private static Dictionary<string, decimal> FamilyTotals(VatDeclarationDto dto) =>
