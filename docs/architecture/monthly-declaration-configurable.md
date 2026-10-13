@@ -17,33 +17,27 @@ ligne sans modification de code. Quatre familles du formulaire — droit de cons
 hôtelière, droit de licence, autres informations — n'existaient pas du tout dans le domaine : le
 gabarit PDF a leurs cases, aucun code ne les alimentait.
 
-## Le remplacement se fait par rampe, pas par bascule
+## Le calcul câblé a été retiré
 
-Le moteur paramétré **remplace** le calcul historique ; c'est l'état visé. Mais la bascule sèche
-transformerait toute rubrique oubliée en zéro silencieux — et un zéro silencieux sur une déclaration
-part à la recette des finances.
+La déclaration était câblée en dur. Le remplacement s'est fait par étapes — un régime par dossier,
+une rampe de contrôles de parité, un rapport qui opposait les deux calculs — et **ces étapes
+n'existent plus**. La configuration du dossier est la seule source des montants.
 
-`MonthlyDeclarationSettings.Mode`, par dossier :
+Ce que cela veut dire, concrètement :
 
-| Mode | Effet |
+| | |
 |---|---|
-| `Legacy` (défaut) | Calcul historique. Le composeur sort sur un test booléen : **zéro requête**. |
-| `Parity` | Les deux calculs tournent. Les montants **déclarés** restent ceux du calcul historique ; l'écart est publié en millimes. Aucune écriture ne change. |
-| `Configured` | Le moteur paramétré est la source unique. Une famille incluse sans rubrique applicable produit `MissingRubricForFamily` au lieu d'un zéro. |
+| Une famille **cochée** | vaut la somme des retenues de ses lignes. |
+| Une famille **décochée** | vaut 0. Si ses rubriques auraient produit un montant, un avertissement le dit. |
+| Une famille cochée **sans rubrique applicable** | fait **refuser** l'enregistrement, plutôt que de déposer un zéro que rien ne rattraperait. |
 
-Le passage `Parity` vers `Configured` exige trois périodes **consécutives** sans écart, ou une
-dérogation nominative et motivée, conservée dans l'entité et dans l'audit. `ConfiguredSince` fige la
-frontière : une période antérieure reste calculée comme avant, de sorte qu'une déclaration ancienne
-rouverte se recalcule à l'identique.
+Il n'y a plus de repli : c'est précisément le repli famille par famille qui masquait le symptôme
+d'origine — un dossier basculé qui déclarait encore à l'ancienne sans que rien ne le dise.
 
-La série ne s'allonge que sur des périodes contiguës et ne se rallonge pas en rejouant le même mois —
-sans quoi relancer trois fois le contrôle de janvier suffirait à ouvrir la bascule.
-
-**Limite connue : l'écart ne mesure que ce qui est inclus.** Un contrôle dont les familles incluses
-ne déplacent aucun scalaire (famille sans rubrique active, T.V.A seule, hors moteur) rend un écart
-nul par construction et allonge la série sans rien prouver. Consigne d'exploitation, en attendant un
-lot dédié : inclure **toutes** les familles visées **avant** les contrôles de parité, et repasser en
-parité si une famille est incluse après la bascule.
+**La preuve que le retrait n'a rien changé** vit dans `MonthlyDeclarationGoldenReferenceTests` :
+les montants et les 77 cases du formulaire officiel d'une période de référence ont été figés en
+constantes **pendant que le calcul câblé existait encore**, et la configuration doit continuer de
+les produire — y compris quand elle est posée pour de vrai en base, relue, puis évaluée.
 
 ## Ce qui reste hors du périmètre, et pourquoi
 
@@ -102,9 +96,9 @@ en littéral. Rien n'est concaténé dans le texte de la requête.
 
 **L'arrondi au millime intervient une seule fois, en sortie de colonne.** Arrondir les intermédiaires
 ferait dériver « brut × taux » d'un millime sur les grandes assiettes. Les sites historiques
-(`Tcl`, retenue sur loyers) utilisent un arrondi bancaire et **ne sont pas rétro-corrigés** : les
-toucher déplacerait des montants déjà déposés. Les deux ne coexistent jamais dans une même
-déclaration, le régime étant global au dossier.
+(`Tcl`, retenue sur loyers) utilisaient un arrondi bancaire et **n'ont pas été rétro-corrigés** :
+toucher aux déclarations déposées déplacerait des montants déjà partis à la recette. Un écart d'un
+demi-millime entre un ancien dépôt et un recalcul d'aujourd'hui vient de là, et de là seulement.
 
 **Le code rapport n'est pas une clé de case.** La carte géométrique du formulaire appartient au
 millésime, pas au dossier : un nouveau millésime se traite en remplaçant le **triplet** (gabarit,
@@ -150,49 +144,46 @@ erreur, et la configuration amorcée n'est que de la donnée de référence iner
 **Le drapeau est global à la plateforme, pas propre au dossier.** Le refus serveur et les bandeaux le
 disent — l'ancien libellé « n'est pas activée pour ce dossier » a fait chercher un réglage de dossier
 qui n'existe pas. Drapeau éteint, les écrans ne proposent plus d'action vouée au refus : Calcul DM
-grise le calcul et le panneau de régime, Configuration DM passe ses écritures en lecture seule,
+grise le calcul, Configuration DM passe ses écritures en lecture seule,
 Modèle Intégration DM ferme l'import (l'export reste ouvert). Réglages non chargés sur Calcul et
 Configuration = indisponible ; sur Modèle, seul un « éteint » explicite ferme l'import, une panne de
 lecture laissant le serveur juge. Ce ne sont que des reflets : le serveur revérifie à chaque écriture.
 
-## Activation
+## Activation et retour arrière
 
-Depuis le **2026-09-24**, `MonthlyDeclarationConfigurableLinesEnabled` vaut `true` dans
-`appsettings.json`, à côté de `MonthlyDeclarationV2Enabled` — une seule source, héritée par les
-fichiers d'environnement. Le défaut du code reste `false`, filet si la clé disparaissait.
-`MonthlyDeclarationFlagsConfigurationTests` fait échouer la suite si l'une des deux clés manque dans
-la base ou si un fichier d'environnement la rabat à `false`.
+`MonthlyDeclarationV2Enabled` vaut `true` dans `appsettings.json` — une seule source, héritée par
+les fichiers d'environnement. Le défaut du code reste `false`, filet si la clé disparaissait.
+`MonthlyDeclarationFlagsConfigurationTests` fait échouer la suite si la clé manque, si un fichier
+d'environnement la rabat à `false`, ou si l'une des deux clés retirées avec le calcul câblé
+(`MonthlyDeclarationConfigurableLinesEnabled`, `MonthlyDeclarationCatalogV2UpgradeEnabled`)
+réapparaît quelque part.
 
-**Retour arrière** sans reconstruire l'image : `Accounting__MonthlyDeclarationConfigurableLinesEnabled=false`
-dans `deploy/.env` (la variable prime sur les fichiers), puis recréation du conteneur `api`. Les
-réglages et rubriques saisis entre-temps restent en base, inertes, et reprennent effet à la
-réactivation.
+**Il n'y a plus d'interrupteur de repli.** L'ancien
+`Accounting__MonthlyDeclarationConfigurableLinesEnabled=false` rendait le moteur inerte et faisait
+retomber la déclaration sur le calcul câblé ; ce calcul n'existe plus, et l'éteindre ne ferait que
+vider la déclaration. Le retour arrière est donc un **retour d'image**, accompagné de
+`docs/runbooks/sql/DropMonthlyDeclarationSettings_Tenant.rollback.sql` sur chaque base : il recrée
+la table du régime, vide, de sorte que l'image précédente y retrouve un dossier sans réglage —
+c'est-à-dire en calcul historique, cohérent avec ses périodes antérieures. Pour retrouver les
+réglages eux-mêmes, il faut la sauvegarde prise par `deploy.sh` avant la bascule.
 
-## Garantie de non-régression
+## La déclaration déposée ne bouge jamais
 
-**Drapeau allumé**, un dossier qui n'a jamais quitté le calcul historique — aucune ligne
-`MonthlyDeclarationSettings`, état de tous les dossiers à l'activation puisque seul
-`SetMonthlyDeclarationModeCommand` en crée une — ne paie qu'**une** lecture de ses réglages : le
-composeur rend alors `Inactive`, et `Legacy` comme `Parity` rendent le jeu historique tel quel. La
-preuve est prise de bout en bout : `GetVatDeclarationV2Tests` compare, champ par champ, la
-déclaration d'une période pleine drapeau éteint puis allumé, dans les deux valorisations, avec et
-sans dépôt ; `MonthlyDeclarationRollUpTests` vérifie, dépôts en `MockBehavior.Strict`, qu'aucune
-autre lecture n'a lieu.
+Un dépôt fait foi, montants **et** détail — même quand ce détail est vide. C'est le cas de toutes
+les déclarations enregistrées avant le retrait : le calcul câblé ne produisait pas de lignes.
 
-**Drapeau éteint**, en conjonction obligatoire avec `MonthlyDeclarationV2Enabled` : les scalaires
-alimentés par le moteur ne sont calculés ni persistés hors V2.
+Leur formulaire officiel doit pourtant continuer de ventiler la retenue à la source par article.
+La règle, portée par `MonthlyDeclarationOfficialFormInputs` et par elle seule :
 
-Les trois familles ajoutées à `TotalToPay` (droit de consommation, taxe hôtelière, droit de licence)
-valent `0` par défaut sur l'entité comme sur le jeu de montants : l'expression est **prouvablement
-identique en valeur** pour tout dossier resté en calcul historique. L'échéancier consomme
-`TotalToPay` et ne bouge donc que sur activation explicite ; le tableau de bord ne lit que `VatDue`
-et la liasse fiscale ne lit pas la déclaration — tous deux intacts.
+> la ventilation est reconstituée si, et seulement si, la déclaration **a un dépôt** et que son
+> détail figé ne porte **aucune ligne de retenue**.
 
-Les suites `GetVatDeclarationV2Tests`, `GetVatDeclarationCashVatTests` et
-`GetVatDeclarationCompanyAccessTests` passent avec leurs assertions **inchangées** : seule la liste
-d'arguments du constructeur a évolué. `MonthlyDeclarationRollUpTests` ajoute la preuve directe —
-sans famille active la remontée rend le jeu historique tel quel, et le composeur monté sur des dépôts
-`MockBehavior.Strict` n'émet aucun appel.
+Deux cas que cette formulation couvre, et qu'une règle fondée sur la seule origine du dépôt aurait
+manqués :
+
+- un dépôt d'un dossier « paramétré » **qui n'avait coché aucune famille** : ses montants venaient
+  du calcul câblé, mais son origine enregistrée dit « paramétré » ;
+- une période **sans dépôt** : on n'imprime pas un détail que le calcul en vigueur ne produit pas.
 
 ## Amorçage et duplication
 
@@ -273,20 +264,18 @@ l'écran en lecture seule ailleurs. Enfin, `/accounting/dm/*` est **délibérém
 rien** : séparer le calcul de l'enregistrement permet de le relancer autant de fois qu'il le faut
 sans toucher au document.
 
-**Le calcul est néanmoins une écriture**, et l'écran est construit autour de ce fait. En contrôle
-de parité, il consigne le résultat de la comparaison sur les réglages du dossier, et c'est cette
-série — elle seule — qui ouvre ensuite la bascule. D'où deux conséquences : la route est gardée
-comme la configuration (`accounting:read` à l'entrée, `accounting:declare` **et** contexte cabinet
-délégué côté serveur), et les réglages sont **relus après chaque calcul** — afficher une rampe
-périmée à côté du résultat qui vient de la faire avancer serait le plus sûr moyen de faire douter
-du chiffre.
+**Le calcul est néanmoins audité** : la trace dit quels montants la configuration produisait ce
+jour-là, et avec quels signalements. D'où la même garde que les écritures (`accounting:read` à
+l'entrée, `accounting:declare` **et** contexte cabinet délégué côté serveur) — ce qui ferme aussi
+la porte à une société qui voudrait sonder les brouillons de son dossier. Les réglages sont relus
+après chaque calcul : la pose du catalogue a pu aboutir entre-temps, et afficher à côté du résultat
+un blocage qui n'existe plus ferait douter du chiffre.
 
 **Le rapprochement vit dans l'en-tête de chaque famille**, pas dans une table à part : total du
-détail, montant porté par la déclaration, et la phrase qui dit ce que l'écart signifie. Cette
-phrase dépend entièrement du régime, et c'est ce qui la rend utile — en contrôle de parité
-l'écart **est** l'objet de la mesure, en mode paramétré le détail et la case déclarée sont le même
-calcul et toute différence est une anomalie. La table de correspondance famille → case reprend
-exactement `GetVatDeclarationQuery.ApplyRollUp`, et un test l'énumère : la T.V.A et « Autres
+détail, montant porté par la déclaration, et la phrase qui dit ce que l'écart signifie. Le détail
+et la case déclarée sont le même calcul : toute différence est une anomalie, et la phrase le dit
+comme tel. La table de correspondance famille → case reprend exactement
+`GetVatDeclarationQuery.RollUp`, et un test l'énumère : la T.V.A et « Autres
 renseignements » n'alimentent aucune case chiffrée, et l'écran le dit plutôt que d'afficher un
 zéro trompeur.
 
@@ -298,10 +287,10 @@ gravités seulement, et le critère est ce que le lecteur doit en faire — « e
 produit est faux tant que la configuration n'est pas corrigée, « avertissement » quand le montant
 est juste mais que son sort mérite d'être dit.
 
-Le changement de régime vit sur cet écran et non dans la configuration : c'est ici qu'on accumule
-la preuve, c'est ici qu'on décide. Le panneau chiffre la rampe (« 1 sur 3, encore 2 périodes »)
-plutôt que d'annoncer un verdict, et le champ « motif de dérogation » n'apparaît **que** lorsqu'il
-est exigé — l'offrir en permanence suggérerait qu'on peut passer outre la série à volonté.
+**Une famille que le dossier ne déclare pas est signalée si elle aurait produit un montant.** C'est
+un avertissement, pas une erreur : décocher est un choix légitime — le dossier n'y est pas
+assujetti. Mais c'est un choix qui met un montant à zéro, et ce zéro doit se voir. La T.V.A et les
+« autres renseignements » en sont exclues : elles ne déplacent aucun montant déclaré.
 
 ## Le modèle d'intégration
 
@@ -329,10 +318,9 @@ intacte : sans cette distinction, importer un catalogue réactiverait une rubriq
 avait écartée. Le modèle porte pour la même raison les montants fixes et les bornes de période,
 que le catalogue ignore — sinon un aller-retour export/import les effacerait en silence.
 
-**Ce que le modèle ne transporte pas**, délibérément : le régime de calcul et l'état de la rampe
-de parité. Ils appartiennent au dossier et à son historique de contrôles ; les importer ferait
-basculer un dossier en calcul paramétré sur la foi d'un fichier. Un test vérifie leur absence du
-document sérialisé.
+**Un fichier antérieur au catalogue en vigueur est toujours transformé** avant d'être appliqué.
+Le dossier qui le reçoit porte le catalogue v2 ; y réinjecter des définitions v1 lui ferait
+déclarer des zéros. La transformation est la même fonction pure que celle du catalogue, par code.
 
 L'écriture passe par le **point d'écriture commun** à l'import et à la duplication
 (`MonthlyDeclarationConfigWriter`) : même politique « insérer ou remplacer, jamais supprimer en
@@ -348,19 +336,21 @@ refléter des données déjà lisibles à l'écran. L'import est une écriture, 
 ## L'écran Suivi DM
 
 `/accounting/dm/suivi` — les douze mois d'un exercice en une page : ce qui est déposé, ce qui
-manque, sous quel régime, et où en est la rampe. C'est l'écran qui rend la migration observable :
-tout le reste du chantier la rend *possible*.
+manque, et par quel calcul.
 
 **Les douze mois sont toujours rendus, même vides.** Une période sans dépôt est une ligne, avec
 son échéance : c'est le trou que l'écran doit montrer, et l'omettre le rendrait invisible au
 moment où il compte le plus. Un mois sans dépôt dont l'échéance est passée est « en retard »,
 pas « à déposer » — les deux disent qu'il n'y a rien, mais l'un appelle une action aujourd'hui.
 
-**Le régime affiché est celui de la période, pas celui du dossier.** Un dossier basculé en juillet
-a ses six premiers mois restés au calcul historique ; les afficher tous « paramétrés »
-raconterait une histoire fausse. La ligne passe par `MonthlyDeclarationSettings.ResolveModeFor`,
-la même méthode que le moteur — et la synthèse compte les mois **effectivement** calculés par la
-configuration, ce qui n'est pas la même chose que le régime déclaré du dossier.
+**L'origine affichée est celle du dépôt, pas celle du dossier.** Une déclaration enregistrée avant
+le retrait du calcul câblé reste marquée « calcul historique » : c'est ce qu'elle est, et le dire
+évite de laisser croire qu'elle a été recalculée depuis. Sans dépôt, la question ne se pose pas et
+la colonne reste vide.
+
+**La société ne voit que ses dépôts.** L'écran est ouvert en lecture (`accounting:read`) et rend
+les douze mois, brouillons compris : hors contexte cabinet délégué, une période qu'elle n'a pas le
+droit de voir est rendue comme un trou, exactement comme si rien n'était déposé.
 
 **Un brouillon n'entre pas dans le cumul à payer.** Le total de l'exercice n'agrège que les
 périodes réellement déposées ; y ajouter les brouillons annoncerait une dette qui n'est pas
@@ -390,7 +380,6 @@ est une décision de navigation à prendre pour elle-même, pas un effet de bord
   `tools/official-form-calibration`.
 - Duplication inter-dossiers : étudier si elle doit, comme le modèle, transporter les inclusions
   de familles et l'état actif des rubriques. Comportement actuel conservé faute de décision.
-- Retrait de l'ancien calcul une fois tous les dossiers actifs en mode configuré.
 
 ## Réserve fiscale
 
@@ -398,5 +387,9 @@ Les taux et les comptes du catalogue sont des **valeurs de départ**, pas une do
 reprennent ce que le formulaire officiel énonce (TFP 1 %/2 %, FOPROLOS 1 %, TCL 0,2 %/0,1 %, TVA
 7/13/19 %, retenues 3 %, 10 %, 15 %, 20 %, 25 %, 100 %…) et les seuls comptes dont le dépôt porte
 déjà la constante (436711, 43666, 43662, 43652, 4371, 613). Tout le reste est laissé « à saisir »
-plutôt qu'inventé. Aucune famille n'étant cochée par défaut, rien n'est calculé tant qu'un dossier
-ne l'a pas explicitement décidé — et le contrôle de parité reste le verrou avant toute bascule.
+plutôt qu'inventé.
+
+Depuis le retrait du calcul câblé, **les onze familles sont cochées** à la pose du catalogue : c'est
+ce qui fait que les montants restent ceux que le dossier déclarait. Le verrou n'est donc plus un
+régime à franchir, mais la revue de la configuration elle-même — un comptable qui décoche une
+famille le fait désormais sciemment, l'écran le lui demande, et un montant mis à zéro se signale.
