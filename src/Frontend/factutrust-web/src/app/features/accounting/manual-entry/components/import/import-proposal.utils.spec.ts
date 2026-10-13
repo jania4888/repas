@@ -7,8 +7,11 @@ import {
   hasMeaningfulLineEdits,
   isImportProposalBalanced,
   mergeProposalWithStore,
-  recomputeImportDiagnostics
+  recomputeImportDiagnostics,
+  submittableRowNumbers,
+  withRowNumberPrefix
 } from './import-proposal.utils';
+import { formatLocalDate } from '../../../shared/accounting-date-utils';
 import { JournalEntryProposal } from '../../models/accounting-document-import.models';
 
 const accounts = [
@@ -258,5 +261,143 @@ describe('import-proposal.utils', () => {
       true
     );
     expect(hasMeaningfulEdits(p, snapshot)).toBe(false);
+  });
+
+  describe('lines editing and diagnostics', () => {
+    function header(entryDate = '2026-08-01') {
+      return { journalCode: 'JA', entryDate, entryLabel: 'Facture', pieceRef: 'FAC-001', pieceDate: '2026-08-01' };
+    }
+
+    function vatProposal(): JournalEntryProposal {
+      const p = baseProposal();
+      return {
+        ...p,
+        lines: [
+          { ...p.lines[0], debit: 100 },
+          { accountNumber: '43666', accountLabel: 'TVA', accountStatus: 'found', role: 'vat', label: 'TVA 19 %', debit: 19, credit: 0, vatRatePercent: 19, thirdPartyId: null, thirdPartyKind: null },
+          { ...p.lines[1], credit: 119 }
+        ]
+      };
+    }
+
+    function dateOffset(days: number): string {
+      const d = new Date();
+      d.setDate(d.getDate() + days);
+      return formatLocalDate(d);
+    }
+
+    it('keeps role and VAT rate on the matching line after deleting the first line', () => {
+      const p = vatProposal();
+      const lines = [
+        { ...createEmptyLine(), accountNumber: '43666', debit: 19 },
+        { ...createEmptyLine(), accountNumber: '4011', credit: 119 }
+      ];
+      const proposed = entryLinesToProposedLines(lines, p.lines, accounts, p.direction);
+      expect(proposed[0]).toEqual(jasmine.objectContaining({ accountNumber: '43666', role: 'vat', vatRatePercent: 19 }));
+      expect(proposed[1]).toEqual(jasmine.objectContaining({ accountNumber: '4011', role: 'thirdparty', vatRatePercent: null }));
+    });
+
+    it('infers the role of an added line and does not steal the VAT rate on duplicates', () => {
+      const p = vatProposal();
+      const lines = [
+        { ...createEmptyLine(), accountNumber: '607', debit: 100 },
+        { ...createEmptyLine(), accountNumber: '607', debit: 5 },
+        { ...createEmptyLine(), accountNumber: '43666', debit: 19 },
+        { ...createEmptyLine(), accountNumber: '4011', credit: 124 }
+      ];
+      const proposed = entryLinesToProposedLines(lines, p.lines, accounts, p.direction);
+      expect(proposed[1].role).toBe('expense');
+      expect(proposed[1].vatRatePercent).toBeNull();
+      expect(proposed[2].vatRatePercent).toBe(19);
+    });
+
+    it('carries the chosen third party name', () => {
+      const p = baseProposal();
+      const lines = [
+        { ...createEmptyLine(), accountNumber: '607', debit: 100 },
+        { ...createEmptyLine(), accountNumber: '4011', credit: 100, thirdParty: { id: 'sup-9', kind: 2, name: 'ACME SARL', display: 'Fournisseur — ACME SARL' } }
+      ];
+      const proposed = entryLinesToProposedLines(lines, p.lines, accounts, p.direction);
+      expect(proposed[1]).toEqual(jasmine.objectContaining({ thirdPartyId: 'sup-9', thirdPartyKind: 2, thirdPartyName: 'ACME SARL' }));
+    });
+
+    it('reports a blocking MissingIssueDate when the entry date is empty', () => {
+      const p = baseProposal();
+      const lines = [
+        { ...createEmptyLine(), accountNumber: '607', debit: 100 },
+        { ...createEmptyLine(), accountNumber: '4011', credit: 100 }
+      ];
+      const snapshot = buildStoreSnapshot(header(''), lines, false, true);
+      const proposed = entryLinesToProposedLines(lines, p.lines, accounts, p.direction);
+      const diagnostics = recomputeImportDiagnostics(p, proposed, snapshot, accounts);
+      expect(diagnostics.find(d => d.code === 'MissingIssueDate')?.severity).toBe('blocking');
+    });
+
+    it('accepts tomorrow (server tolerance) and blocks later dates', () => {
+      const p = baseProposal();
+      const lines = [
+        { ...createEmptyLine(), accountNumber: '607', debit: 100 },
+        { ...createEmptyLine(), accountNumber: '4011', credit: 100 }
+      ];
+      const proposed = entryLinesToProposedLines(lines, p.lines, accounts, p.direction);
+      const tomorrow = recomputeImportDiagnostics(p, proposed, buildStoreSnapshot(header(dateOffset(1)), lines, false, true), accounts);
+      const later = recomputeImportDiagnostics(p, proposed, buildStoreSnapshot(header(dateOffset(2)), lines, false, true), accounts);
+      expect(tomorrow.some(d => d.code === 'FutureDate')).toBe(false);
+      expect(later.some(d => d.code === 'FutureDate')).toBe(true);
+    });
+
+    it('keeps server account controls and adds none while the chart is unavailable', () => {
+      const p = {
+        ...baseProposal(),
+        diagnostics: [{ severity: 'blocking' as const, code: 'AccountMissing', message: 'serveur', relatedLineIndex: 0 }]
+      };
+      const lines = [
+        { ...createEmptyLine(), accountNumber: '8888', debit: 100 },
+        { ...createEmptyLine(), accountNumber: '7777', credit: 100 }
+      ];
+      const proposed = entryLinesToProposedLines(lines, p.lines, [], p.direction);
+      const diagnostics = recomputeImportDiagnostics(
+        p, proposed, buildStoreSnapshot(header(), lines, false, true), [], { accountsAvailable: false }
+      );
+      const accountDiagnostics = diagnostics.filter(d => d.code === 'AccountMissing');
+      expect(accountDiagnostics.length).toBe(1);
+      expect(accountDiagnostics[0].message).toBe('serveur');
+    });
+
+    it('keeps the server PeriodClosed control until periods are loaded or the date changes', () => {
+      const p = {
+        ...baseProposal(),
+        diagnostics: [{ severity: 'blocking' as const, code: 'PeriodClosed', message: 'clôturée (serveur)', relatedLineIndex: null }]
+      };
+      const lines = [
+        { ...createEmptyLine(), accountNumber: '607', debit: 100 },
+        { ...createEmptyLine(), accountNumber: '4011', credit: 100 }
+      ];
+      const proposed = entryLinesToProposedLines(lines, p.lines, accounts, p.direction);
+      const notLoaded = recomputeImportDiagnostics(p, proposed, buildStoreSnapshot(header(), lines, false, false), accounts);
+      const sameDate = recomputeImportDiagnostics(p, proposed, buildStoreSnapshot(header(), lines, false, true), accounts);
+      const sameDateClientClosed = recomputeImportDiagnostics(p, proposed, buildStoreSnapshot(header(), lines, true, true), accounts);
+      const otherDate = recomputeImportDiagnostics(p, proposed, buildStoreSnapshot(header('2026-08-02'), lines, false, true), accounts);
+      expect(notLoaded.filter(d => d.code === 'PeriodClosed').length).toBe(1);
+      expect(sameDate.filter(d => d.code === 'PeriodClosed').length).toBe(1);
+      expect(sameDateClientClosed.filter(d => d.code === 'PeriodClosed').length).toBe(1);
+      expect(otherDate.some(d => d.code === 'PeriodClosed')).toBe(false);
+    });
+
+    it('maps submittable indexes to grid row numbers and prefixes messages', () => {
+      const lines = [
+        { ...createEmptyLine(), accountNumber: '607', debit: 100 },
+        createEmptyLine(),
+        { ...createEmptyLine(), accountNumber: '4011', credit: 100 }
+      ];
+      const rows = submittableRowNumbers(lines);
+      expect(rows).toEqual([1, 3]);
+      const prefixed = withRowNumberPrefix({ severity: 'blocking', code: 'AccountMissing', message: 'Absent.', relatedLineIndex: 1 }, rows);
+      expect(prefixed.message).toBe('Ligne 3 — Absent.');
+      const untouched = { severity: 'info' as const, code: 'X', message: 'Global.', relatedLineIndex: null };
+      expect(withRowNumberPrefix(untouched, rows)).toBe(untouched);
+      const outOfRange = { severity: 'info' as const, code: 'X', message: 'Hors plage.', relatedLineIndex: 5 };
+      expect(withRowNumberPrefix(outOfRange, rows)).toBe(outOfRange);
+    });
   });
 });

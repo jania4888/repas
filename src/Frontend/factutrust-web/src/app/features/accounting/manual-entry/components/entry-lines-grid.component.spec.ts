@@ -127,4 +127,67 @@ describe('EntryLinesGridComponent', () => {
       expect(headerText()).toContain('Débit (TND)');
     });
   });
+
+  describe('édition dans la modale d’import', () => {
+    it('met à jour le compte tapé directement, sans sélection', () => {
+      fixture.componentInstance.onAccountInput(0, '6071');
+      expect(store.lines()[0].accountNumber).toBe('6071');
+    });
+
+    it('ignore la valeur objet émise par la sélection', () => {
+      store.updateLine(0, { accountNumber: '607' });
+      fixture.componentInstance.onAccountInput(0, { accountNumber: '401', label: 'X' } as never);
+      expect(store.lines()[0].accountNumber).toBe('607');
+    });
+
+    it('préfixe les identifiants quand idPrefix est fourni', () => {
+      const el = fixture.nativeElement as HTMLElement;
+      expect(el.querySelector('#lines-title')).not.toBeNull();
+      fixture.componentRef.setInput('idPrefix', 'ipe-');
+      fixture.detectChanges();
+      expect(el.querySelector('#lines-title')).toBeNull();
+      expect(el.querySelector('#ipe-lines-title')).not.toBeNull();
+      expect(el.querySelector('[id^="debit-"], [id^="credit-"]')).toBeNull();
+    });
+
+    it('suit les lignes par identifiant client', () => {
+      const line = createEmptyLine();
+      expect(fixture.componentInstance.trackLine(0, line)).toBe(line.clientLineId);
+      expect(fixture.componentInstance.trackLine(3, { ...line, lineLabel: 'modifié' })).toBe(line.clientLineId);
+    });
+
+    it('garde le focus et l’élément du libellé pendant la frappe', () => {
+      const el = fixture.nativeElement as HTMLElement;
+      const before = el.querySelectorAll<HTMLInputElement>('tbody tr')[0].querySelector<HTMLInputElement>('input[type="text"], input:not([type])');
+      expect(before).toBeTruthy();
+      before!.focus();
+      store.updateLine(0, { lineLabel: 'A' });
+      fixture.detectChanges();
+      store.updateLine(0, { lineLabel: 'AB' });
+      fixture.detectChanges();
+      const after = el.querySelectorAll<HTMLInputElement>('tbody tr')[0].querySelector<HTMLInputElement>('input[type="text"], input:not([type])');
+      expect(after).toBe(before);
+      expect(document.activeElement).toBe(before);
+    });
+  });
+
+  it('ne relance pas l’assistant TVA en validant une ligne de TVA importée (régression double TVA)', () => {
+    const vatAssist = TestBed.inject(VatAssistService) as unknown as { applyVatToLine: jasmine.Spy };
+    vatAssist.applyVatToLine.calls.reset();
+    store.applyDocumentProposal({
+      journalCode: 'JA', entryDate: '2026-08-01', label: 'Facture', pieceRef: null, pieceDate: null, totalDebit: 119,
+      thirdParty: null, extraction: { totalHt: 100, totalVat: 19, totalTtc: 119 },
+      lines: [
+        { accountNumber: '607', label: 'HT', debit: 100, credit: 0, vatRatePercent: null, thirdPartyId: null, thirdPartyKind: null },
+        { accountNumber: '43666', label: 'TVA 19 %', debit: 19, credit: 0, vatRatePercent: 19, thirdPartyId: null, thirdPartyKind: null },
+        { accountNumber: '4011', label: 'Fournisseur', debit: 0, credit: 119, vatRatePercent: null, thirdPartyId: null, thirdPartyKind: null }
+      ]
+    });
+    fixture.detectChanges();
+    fixture.componentInstance.onDebitCommit(1);
+    fixture.componentInstance.onDebitCommit(0);
+    expect(vatAssist.applyVatToLine).not.toHaveBeenCalled();
+    expect(store.lines().length).toBe(3);
+    expect(store.lines().some(l => l.isVatGenerated)).toBe(false);
+  });
 });

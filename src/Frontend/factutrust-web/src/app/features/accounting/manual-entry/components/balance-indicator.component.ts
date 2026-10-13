@@ -17,6 +17,8 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
         <span class="me-balance-icon" aria-hidden="true">{{ balanceIcon() }}</span>
         @if (isEmpty()) {
           <span class="me-balance-label" i18n="@@accounting.manual-entry.saisissez.vos.lignes.d.ecriture.bd13992e">Saisissez vos lignes d'écriture</span>
+        } @else if (isBalanced() && neutralBalancedLabel()) {
+          <span class="me-balance-label" i18n="@@accounting.manual-entry.ecriture.equilibree.4c532ec5">Écriture équilibrée</span>
         } @else if (isBalanced()) {
           <span class="me-balance-label" i18n="@@accounting.manual-entry.ecriture.equilibree.vous.pouvez.enregistrer.45eefb66">Écriture équilibrée — vous pouvez enregistrer</span>
         } @else {
@@ -50,6 +52,8 @@ export class BalanceIndicatorComponent {
   readonly totalDebit = input.required<number>();
   readonly totalCredit = input.required<number>();
   readonly canAutoBalance = input<boolean>(false);
+  /** Vrai : « Écriture équilibrée » seul, sans « vous pouvez enregistrer » (ex. modale d'import). */
+  readonly neutralBalancedLabel = input<boolean>(false);
 
   /**
    * Devise de l'écart : celle de la SAISIE, jamais la devise de tenue. L'équilibre s'apprécie sur

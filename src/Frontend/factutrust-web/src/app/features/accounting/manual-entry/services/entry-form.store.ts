@@ -27,6 +27,7 @@ import {
   MILLIME_DECIMALS,
   toMillime
 } from '../models/entry-form.model';
+import { buildThirdPartyDisplay } from './entry-reference.store';
 
 const DEFAULT_JOURNAL_OPTIONS: { code: string; label: string }[] = [
   { code: 'JOD', label: $localize`:@@accounting.entry-form.ts.operations.diverses.1735f774:Opérations diverses` },
@@ -706,9 +707,13 @@ export class EntryFormStore {
    * Points de vigilance :
    * - les lignes de TVA proposées ne sont PAS des lignes assistées : `isVatGenerated` reste faux
    *   et `vatLinkId` nul, sinon `VatAssistService` et `autoBalance()` les traiteraient à tort ;
-   * - `vatRatePercent` n'est qu'une indication d'affichage (non transmis à l'API) ;
+   * - le taux de TVA proposé n'est PAS recopié sur la ligne (`vatRatePercent` reste nul) : sinon
+   *   la validation du montant d'une ligne de TVA proposée relancerait l'assistant TVA et créerait
+   *   une seconde ligne de TVA. Le taux reste lisible dans le libellé de la ligne ;
    * - l'auxiliaire n'est posé que si le tiers a été rapproché : un `thirdPartyId` sans
-   *   `thirdPartyKind` valide est rejeté par le serveur.
+   *   `thirdPartyKind` valide est rejeté par le serveur ;
+   * - le nom affiché du tiers vient de `thirdPartyName` (tiers choisi dans la modale), sinon du
+   *   tiers rapproché s'il s'agit du même identifiant ; jamais du code numérique du type.
    */
   applyDocumentProposal(proposal: {
     journalCode: string;
@@ -727,6 +732,7 @@ export class EntryFormStore {
       vatRatePercent: number | null;
       thirdPartyId: string | null;
       thirdPartyKind: number | null;
+      thirdPartyName?: string | null;
     }[];
   }): void {
     if (proposal.journalCode) {
@@ -743,27 +749,39 @@ export class EntryFormStore {
     this.amountVat.set(proposal.extraction?.totalVat ?? null);
     this.amountTtc.set(proposal.extraction?.totalTtc ?? null);
 
-    const matchedName = proposal.thirdParty?.matchedName ?? proposal.thirdParty?.kind ?? '';
+    const matched = proposal.thirdParty;
+    const resolveThirdPartyName = (l: { thirdPartyId: string | null; thirdPartyName?: string | null }): string => {
+      const own = l.thirdPartyName?.trim();
+      if (own) return own;
+      if (l.thirdPartyId && matched?.matchedId && l.thirdPartyId === matched.matchedId) {
+        return matched.matchedName?.trim() ?? '';
+      }
+      return '';
+    };
 
-    const mapped: EntryLine[] = proposal.lines.map(l => ({
-      ...createEmptyLine(),
-      accountNumber: l.accountNumber,
-      lineLabel: l.label,
-      debit: l.debit > 0 ? l.debit : null,
-      credit: l.credit > 0 ? l.credit : null,
-      vatRatePercent: l.vatRatePercent ?? null,
-      isVatGenerated: false,
-      vatLinkId: null,
-      thirdParty:
-        l.thirdPartyId && l.thirdPartyKind
-          ? {
-              id: l.thirdPartyId,
-              kind: l.thirdPartyKind,
-              name: String(matchedName),
-              display: String(matchedName)
-            }
-          : null
-    }));
+    const mapped: EntryLine[] = proposal.lines.map(l => {
+      let thirdParty: ThirdPartyRef | null = null;
+      if (l.thirdPartyId && l.thirdPartyKind) {
+        const name = resolveThirdPartyName(l);
+        thirdParty = {
+          id: l.thirdPartyId,
+          kind: l.thirdPartyKind,
+          name,
+          display: buildThirdPartyDisplay(l.thirdPartyKind, name)
+        };
+      }
+      return {
+        ...createEmptyLine(),
+        accountNumber: l.accountNumber,
+        lineLabel: l.label,
+        debit: l.debit > 0 ? l.debit : null,
+        credit: l.credit > 0 ? l.credit : null,
+        vatRatePercent: null,
+        isVatGenerated: false,
+        vatLinkId: null,
+        thirdParty
+      };
+    });
 
     while (mapped.length < 2) {
       mapped.push(createEmptyLine());

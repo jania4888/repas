@@ -49,6 +49,23 @@ describe('BalanceIndicatorComponent', () => {
     expect(el.querySelector('.me-balanced')).toBeTruthy();
   });
 
+  it('shows the neutral balanced label without the save hint when requested', () => {
+    fixture = TestBed.createComponent(BalanceIndicatorComponent);
+    fixture.componentRef.setInput('totalDebit', 100);
+    fixture.componentRef.setInput('totalCredit', 100);
+    fixture.componentRef.setInput('neutralBalancedLabel', true);
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.textContent).toContain('Écriture équilibrée');
+    expect(el.textContent).not.toContain('vous pouvez enregistrer');
+    expect(el.querySelector('.me-balanced')).toBeTruthy();
+  });
+
+  it('keeps the save hint by default', () => {
+    create(100, 100);
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('vous pouvez enregistrer');
+  });
+
   it('shows auto-balance button when enabled', () => {
     create(100, 50, true);
     const btn = fixture.nativeElement.querySelector('.me-auto-balance-btn');

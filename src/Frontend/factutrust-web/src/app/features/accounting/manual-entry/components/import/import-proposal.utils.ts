@@ -18,8 +18,23 @@ export const CLIENT_RECALC_DIAGNOSTIC_CODES = new Set([
   'PeriodClosed',
   'FutureDate',
   'ThirdPartyNotMatched',
-  'TotalsMismatch'
+  'TotalsMismatch',
+  'MissingIssueDate'
 ]);
+
+/** Codes de contrôle de compte : recalculés seulement quand le plan comptable est disponible. */
+const ACCOUNT_DIAGNOSTIC_CODES = new Set(['AccountMissing', 'AccountInactive']);
+
+export interface ImportDiagnosticsOptions {
+  /**
+   * Faux tant que le plan comptable n'est pas chargé (ou si son chargement a échoué) : les
+   * contrôles de compte du serveur sont alors conservés, au lieu de marquer chaque ligne
+   * « absente du plan comptable » à partir d'une liste vide.
+   */
+  accountsAvailable: boolean;
+}
+
+const DEFAULT_DIAGNOSTICS_OPTIONS: ImportDiagnosticsOptions = { accountsAvailable: true };
 
 export interface ImportProposalHeaderSnapshot {
   journalCode: string;
@@ -45,7 +60,7 @@ export function buildStoreSnapshot(
   return { header, lines, periodClosed, periodsLoaded };
 }
 
-function inferLineRole(accountNumber: string, direction: DocumentDirection): ProposedLineRole {
+export function inferLineRole(accountNumber: string, direction: DocumentDirection): ProposedLineRole {
   const n = accountNumber.trim();
   if (n.startsWith('411') || n.startsWith('401')) return 'thirdparty';
   if (n.startsWith('436')) return 'vat';
@@ -72,12 +87,14 @@ function resolveAccountLabel(accountNumber: string, accounts: ChartOfAccountDto[
 }
 
 /** Lignes avec compte et montant — alignées sur getSubmittableLines du store. */
+export function isSubmittableEntryLine(l: EntryLine): boolean {
+  const d = Number(l.debit) || 0;
+  const c = Number(l.credit) || 0;
+  return l.accountNumber.trim().length > 0 && (d > 0 || c > 0);
+}
+
 export function getSubmittableEntryLines(lines: EntryLine[]): EntryLine[] {
-  return lines.filter(l => {
-    const d = Number(l.debit) || 0;
-    const c = Number(l.credit) || 0;
-    return l.accountNumber.trim().length > 0 && (d > 0 || c > 0);
-  });
+  return lines.filter(isSubmittableEntryLine);
 }
 
 export function entryLinesToProposedLines(
@@ -87,9 +104,21 @@ export function entryLinesToProposedLines(
   direction: DocumentDirection
 ): ProposedLine[] {
   const submittable = getSubmittableEntryLines(lines);
-  return submittable.map((line, index) => {
-    const orig = originalLines[index];
+  // Rattachement à la ligne d'origine par compte et sens (et non par index) : après un ajout, une
+  // suppression ou une duplication, le rôle et le taux de TVA restent sur la bonne ligne.
+  const used = new Set<number>();
+  const findOrigin = (accountNumber: string, isDebit: boolean): ProposedLine | undefined => {
+    const idx = originalLines.findIndex(
+      (o, k) => !used.has(k) && o.accountNumber.trim() === accountNumber && (o.debit > 0) === isDebit
+    );
+    if (idx < 0) return undefined;
+    used.add(idx);
+    return originalLines[idx];
+  };
+  return submittable.map(line => {
     const accountNumber = line.accountNumber.trim();
+    const debit = Number(line.debit) || 0;
+    const orig = findOrigin(accountNumber, debit > 0);
     const tp = line.thirdParty && typeof line.thirdParty === 'object' ? line.thirdParty : null;
     return {
       accountNumber,
@@ -97,11 +126,12 @@ export function entryLinesToProposedLines(
       accountStatus: resolveAccountStatus(accountNumber, accounts),
       role: orig?.role ?? inferLineRole(accountNumber, direction),
       label: line.lineLabel,
-      debit: Number(line.debit) || 0,
+      debit,
       credit: Number(line.credit) || 0,
       vatRatePercent: line.vatRatePercent ?? orig?.vatRatePercent ?? null,
       thirdPartyId: tp?.id ?? null,
-      thirdPartyKind: tp?.kind ?? null
+      thirdPartyKind: tp?.kind ?? null,
+      thirdPartyName: tp?.name ?? null
     };
   });
 }
@@ -171,8 +201,28 @@ export function hasMeaningfulEdits(
   return hasMeaningfulLineEdits(original.lines, snapshot.lines);
 }
 
-function preserveServerDiagnostics(original: JournalEntryProposal): ProposalDiagnostic[] {
-  return original.diagnostics.filter(d => !CLIENT_RECALC_DIAGNOSTIC_CODES.has(d.code));
+function preserveServerDiagnostics(
+  original: JournalEntryProposal,
+  recalculatedCodes: ReadonlySet<string>
+): ProposalDiagnostic[] {
+  return original.diagnostics.filter(d => !recalculatedCodes.has(d.code));
+}
+
+/**
+ * Codes réellement recalculés :
+ * - sans plan comptable, les contrôles de compte du serveur sont gardés ;
+ * - la clôture de période signalée par le serveur est gardée tant que les périodes ne sont pas
+ *   chargées, ou tant que la date d'écriture est celle que le serveur a contrôlée : il fait foi
+ *   pour cette date, même si la liste des périodes côté client ne la couvre pas.
+ */
+function effectiveRecalcCodes(
+  options: ImportDiagnosticsOptions,
+  keepServerPeriodClosed: boolean
+): ReadonlySet<string> {
+  if (options.accountsAvailable && !keepServerPeriodClosed) return CLIENT_RECALC_DIAGNOSTIC_CODES;
+  return new Set([...CLIENT_RECALC_DIAGNOSTIC_CODES].filter(c =>
+    (options.accountsAvailable || !ACCOUNT_DIAGNOSTIC_CODES.has(c))
+    && (!keepServerPeriodClosed || c !== 'PeriodClosed')));
 }
 
 function buildAccountDiagnostics(
@@ -208,10 +258,20 @@ function buildPeriodDiagnostics(
   periodsLoaded: boolean
 ): ProposalDiagnostic[] {
   const out: ProposalDiagnostic[] = [];
-  if (!entryDate) return out;
+  if (!entryDate) {
+    out.push({
+      severity: 'blocking',
+      code: 'MissingIssueDate',
+      message: $localize`:@@accounting.import-proposal.ts.la.date.d.ecriture.est.obligatoire.8392af27:La date d'écriture est obligatoire.`,
+      relatedLineIndex: null
+    });
+    return out;
+  }
 
-  const today = formatLocalDate(new Date());
-  if (entryDate > today) {
+  // Même tolérance que le serveur (proposition et validation de l'écriture) : J+1 accepté.
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  if (entryDate > formatLocalDate(tomorrow)) {
     out.push({
       severity: 'blocking',
       code: 'FutureDate',
@@ -279,17 +339,23 @@ export function recomputeImportDiagnostics(
   original: JournalEntryProposal,
   proposedLines: ProposedLine[],
   snapshot: ImportProposalStoreSnapshot,
-  accounts: ChartOfAccountDto[]
+  accounts: ChartOfAccountDto[],
+  options: ImportDiagnosticsOptions = DEFAULT_DIAGNOSTICS_OPTIONS
 ): ProposalDiagnostic[] {
   const submittable = getSubmittableEntryLines(snapshot.lines);
   const totals = computeTotals(submittable);
 
+  const entryDate = snapshot.header.entryDate;
+  const keepServerPeriodClosed = !snapshot.periodsLoaded || (!!entryDate && entryDate === original.entryDate);
+  const preserved = preserveServerDiagnostics(original, effectiveRecalcCodes(options, keepServerPeriodClosed));
+  const serverPeriodClosed = preserved.some(d => d.code === 'PeriodClosed');
+
   const diagnostics: ProposalDiagnostic[] = [
-    ...preserveServerDiagnostics(original),
-    ...buildAccountDiagnostics(proposedLines, accounts),
+    ...preserved,
+    ...(options.accountsAvailable ? buildAccountDiagnostics(proposedLines, accounts) : []),
     ...buildPeriodDiagnostics(
-      snapshot.header.entryDate,
-      snapshot.periodClosed,
+      entryDate,
+      snapshot.periodClosed && !serverPeriodClosed,
       snapshot.periodsLoaded
     ),
     ...buildThirdPartyDiagnostics(original, proposedLines)
@@ -308,7 +374,8 @@ export function hasBlockingDiagnostics(diagnostics: ProposalDiagnostic[]): boole
 export function mergeProposalWithStore(
   original: JournalEntryProposal,
   snapshot: ImportProposalStoreSnapshot,
-  accounts: ChartOfAccountDto[]
+  accounts: ChartOfAccountDto[],
+  options: ImportDiagnosticsOptions = DEFAULT_DIAGNOSTICS_OPTIONS
 ): JournalEntryProposal {
   const proposedLines = entryLinesToProposedLines(
     snapshot.lines,
@@ -318,7 +385,7 @@ export function mergeProposalWithStore(
   );
   const submittable = getSubmittableEntryLines(snapshot.lines);
   const totals = computeTotals(submittable);
-  const diagnostics = recomputeImportDiagnostics(original, proposedLines, snapshot, accounts);
+  const diagnostics = recomputeImportDiagnostics(original, proposedLines, snapshot, accounts, options);
 
   return {
     ...original,
@@ -332,6 +399,30 @@ export function mergeProposalWithStore(
     totalCredit: totals.credit,
     diagnostics,
     hasBlockingDiagnostic: hasBlockingDiagnostics(diagnostics)
+  };
+}
+
+/**
+ * Numéro de rangée de la grille (à partir de 1) de chaque ligne exploitable, dans l'ordre :
+ * `relatedLineIndex` d'un contrôle désigne une ligne exploitable, pas une rangée de la grille.
+ */
+export function submittableRowNumbers(lines: EntryLine[]): number[] {
+  const out: number[] = [];
+  lines.forEach((l, i) => {
+    if (isSubmittableEntryLine(l)) out.push(i + 1);
+  });
+  return out;
+}
+
+/** Préfixe « Ligne N — » le message d'un contrôle rattaché à une ligne exploitable. */
+export function withRowNumberPrefix(diagnostic: ProposalDiagnostic, rowNumbers: number[]): ProposalDiagnostic {
+  const idx = diagnostic.relatedLineIndex;
+  if (idx == null || idx < 0 || idx >= rowNumbers.length) return diagnostic;
+  const rowNumber = rowNumbers[idx];
+  const message = diagnostic.message;
+  return {
+    ...diagnostic,
+    message: $localize`:@@accounting.import-proposal.ts.ligne.dffa3808:Ligne ${rowNumber}:rowNumber: — ${message}:message:`
   };
 }
 

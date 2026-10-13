@@ -109,6 +109,11 @@ export interface ProposedLine {
   vatRatePercent: number | null;
   thirdPartyId: string | null;
   thirdPartyKind: number | null;
+  /**
+   * Frontend uniquement : nom affiché du tiers choisi dans la modale d'import. Jamais renvoyé par
+   * l'API ni transmis à l'enregistrement (seuls l'identifiant et le type le sont).
+   */
+  thirdPartyName?: string | null;
 }
 
 export interface JournalEntryProposal {
