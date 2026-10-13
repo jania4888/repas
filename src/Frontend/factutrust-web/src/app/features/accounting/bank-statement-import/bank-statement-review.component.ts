@@ -440,9 +440,9 @@ const SOURCE_EXTENSIONS: Record<string, string> = {
 
           @if (fallbackPagesOf(s); as fallback) {
             @if (fallback.length > 1) {
-              <p class="bsr-fallback-note" role="note" i18n="@@accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.les.pages.pagelist.fallback.94d40cd2">L'IA n'a pas pu lire les pages {{ pageList(fallback) }} : elles ont été lues en secours, sans leur image. Vérifiez attentivement ces opérations. Vérifiez attentivement ces opérations.</p>
+              <p class="bsr-fallback-note" role="note" i18n="@@accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.les.pages.pagelist.fallback.94d40cd2">L'IA n'a pas pu lire les pages {{ pageList(fallback) }} : elles ont été lues en secours, sans leur image. Vérifiez attentivement ces opérations.</p>
             } @else if (fallback.length === 1) {
-              <p class="bsr-fallback-note" role="note" i18n="@@accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.la.page.fallback.0.elle.a.e.32d72468">L'IA n'a pas pu lire la page {{ fallback[0] }} : elle a été lue en secours, sans son image. Vérifiez attentivement ces opérations. Vérifiez attentivement ces opérations.</p>
+              <p class="bsr-fallback-note" role="note" i18n="@@accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.la.page.fallback.0.elle.a.e.32d72468">L'IA n'a pas pu lire la page {{ fallback[0] }} : elle a été lue en secours, sans son image. Vérifiez attentivement ces opérations.</p>
             }
           }
 
