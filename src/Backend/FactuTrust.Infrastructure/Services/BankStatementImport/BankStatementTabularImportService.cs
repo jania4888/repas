@@ -69,8 +69,6 @@ public sealed class BankStatementTabularImportService : IBankStatementTabularImp
 
     private string UserLabel => _currentUser.Email ?? "system";
 
-    private static string MaskRib(string? rib) => string.IsNullOrEmpty(rib) || rib.Length < 4 ? "????" : rib[^4..];
-
     private static Result<T> Fail<T>(string code, string message) => Result.Failure<T>(new Error(code, message));
 
     // ── Aperçu (sans effet de bord) ────────────────────────────────────────────────────────────
@@ -152,7 +150,7 @@ public sealed class BankStatementTabularImportService : IBankStatementTabularImp
         cancellationToken.ThrowIfCancellationRequested();
         var columns = BuildColumns(table, effective.HeaderRowIndex);
         var rows = table.Rows.Take(20)
-            .Select((r, i) => new BankStatementTabularRowDto(i + 1, r.Select(c => Truncate(c, 200)).ToList()))
+            .Select((r, i) => new BankStatementTabularRowDto(i + 1, r.Select(c => BankStatementImportGuards.Truncate(c, 200)).ToList()))
             .ToList();
         var parsedLines = operationLines.Take(20)
             .Select(p => new BankStatementTabularParsedLineDto(p.RowNumber, p.TransactionDate, p.ValueDate, p.Label, p.Amount, p.IsDebit, p.Error))
@@ -169,7 +167,7 @@ public sealed class BankStatementTabularImportService : IBankStatementTabularImp
             Delimiter = table.Delimiter,
             HeaderRowIndex = table.HeaderRowIndex,
             SheetNames = table.SheetNames,
-            TotalRowCount = table.TotalRowCount,
+            TotalRowCount = table.Rows.Count,
             Columns = columns,
             SuggestedMapping = suggested,
             SavedMapping = savedMapping,
@@ -188,7 +186,7 @@ public sealed class BankStatementTabularImportService : IBankStatementTabularImp
     private static IReadOnlyList<BankStatementTabularColumnDto> BuildColumns(BankStatementTabularReader.RawTable table, int? headerRowIndexOverride = null)
     {
         var headerRowIndex = headerRowIndexOverride is { } idx && idx >= 0 ? idx : table.HeaderRowIndex;
-        var columnCount = table.ColumnCount > 0 ? table.ColumnCount : (table.Rows.Count > 0 ? table.Rows.Max(r => r.Length) : 0);
+        var columnCount = table.ColumnCount;
         var headerRow = headerRowIndex < table.Rows.Count ? table.Rows[headerRowIndex] : Array.Empty<string>();
         var columns = new List<BankStatementTabularColumnDto>(columnCount);
         for (var c = 0; c < columnCount; c++)
@@ -216,8 +214,6 @@ public sealed class BankStatementTabularImportService : IBankStatementTabularImp
         }
         return letters;
     }
-
-    private static string Truncate(string value, int max) => value.Length <= max ? value : value[..max];
 
     private static BankStatementTabularMappingDto? TryDeserializeMapping(string json)
     {
@@ -299,8 +295,9 @@ public sealed class BankStatementTabularImportService : IBankStatementTabularImp
 
         await BankStatementImportGuards.PurgeExpiredAsync(ctx, _files, PurgeBatchSize, now, cancellationToken);
 
-        var extractionMethod = extension == ".csv" ? BankStatementImportExtractionMethods.Csv : BankStatementImportExtractionMethods.Xlsx;
+        var extractionMethod = table.Format;
         var json = JsonSerializer.Serialize(extraction, BankStatementImportService.JsonOptions);
+        var expiresAt = now.AddHours(Math.Max(1, Limits.SessionRetentionHours));
 
         // Même fichier (même compte, même empreinte), nouveau mappage soumis par l'utilisateur : la
         // session déjà ouverte voit son résultat remplacé plutôt que d'en ouvrir une seconde.
@@ -316,13 +313,13 @@ public sealed class BankStatementTabularImportService : IBankStatementTabularImp
         {
             // Même fichier, nouveau mappage soumis par l'utilisateur : le journal choisi et
             // l'expiration doivent eux aussi être rafraîchis, pas seulement le résultat.
-            existing.RenewForReimport(journalCode, json, now.AddHours(Math.Max(1, Limits.SessionRetentionHours)));
+            existing.RenewForReimport(journalCode, json, expiresAt);
             session = existing;
         }
         else
         {
             session = BankStatementImportSession.Create(account.Id, journalCode, validation.SafeFileName ?? "releve" + extension, hash,
-                content.Length, request.ContentType ?? string.Empty, now.AddHours(Math.Max(1, Limits.SessionRetentionHours)));
+                content.Length, request.ContentType ?? string.Empty, expiresAt);
             session.SetAuditInfo(UserLabel, false);
 
             try
@@ -358,7 +355,7 @@ public sealed class BankStatementTabularImportService : IBankStatementTabularImp
 
         _logger.LogInformation(
             "Import relevé CSV/XLSX : session {SessionId}, {Lines} ligne(s), RIB …{Rib}.",
-            session.Id, extraction.Lines.Count, MaskRib(extraction.Header.Rib));
+            session.Id, extraction.Lines.Count, BankStatementImportGuards.MaskRib(extraction.Header.Rib));
 
         return Result.Success(BankStatementImportService.ToDto(session, AiBalanceMismatchAsWarning));
     }
@@ -374,6 +371,13 @@ public sealed class BankStatementTabularImportService : IBankStatementTabularImp
         var json = JsonSerializer.Serialize(reusable, BankStatementImportService.JsonOptions);
         if (json.Length > FactuTrust.Domain.Entities.BankStatementTabularMapping.MappingJsonMaxLength)
             return; // Garde-fou silencieux : un mappage anormalement long n'est simplement pas mémorisé.
+
+        async Task UpdateExistingAsync(FactuTrust.Domain.Entities.BankStatementTabularMapping target)
+        {
+            target.Update(format, json);
+            target.SetAuditInfo(UserLabel, true);
+            await ctx.SaveChangesAsync(cancellationToken);
+        }
 
         var entity = await ctx.BankStatementTabularMappings.FirstOrDefaultAsync(m => m.BankAccountId == bankAccountId, cancellationToken);
         if (entity is null)
@@ -396,17 +400,13 @@ public sealed class BankStatementTabularImportService : IBankStatementTabularImp
                 if (concurrent is null)
                     throw;
 
-                concurrent.Update(format, json);
-                concurrent.SetAuditInfo(UserLabel, true);
-                await ctx.SaveChangesAsync(cancellationToken);
+                await UpdateExistingAsync(concurrent);
                 entity = concurrent;
             }
         }
         else
         {
-            entity.Update(format, json);
-            entity.SetAuditInfo(UserLabel, true);
-            await ctx.SaveChangesAsync(cancellationToken);
+            await UpdateExistingAsync(entity);
         }
 
         await _audit.LogAsync(AuditActions.Accounting.BankStatementTabularMappingSaved, nameof(FactuTrust.Domain.Entities.BankStatementTabularMapping), entity.Id,

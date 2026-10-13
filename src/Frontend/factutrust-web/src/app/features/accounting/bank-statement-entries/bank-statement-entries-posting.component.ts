@@ -2,7 +2,7 @@ import { Component, DestroyRef, HostListener, OnInit, computed, inject, signal }
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { catchError, of } from 'rxjs';
+import { catchError, combineLatest, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
@@ -22,7 +22,16 @@ import {
   expectedThirdPartyKind
 } from '../bank-statement-import/bank-statement-import.models';
 import * as logic from '../bank-statement-import/bank-statement-posting.logic';
-import { confidenceLabel, generationFailureMessage, importErrorMessage, issueTitle, lineStatusLabel, proposalDiagnosticMessage, proposalSourceLabel } from '../bank-statement-import/bank-statement-import.messages';
+import {
+  confidenceLabel,
+  generationFailureMessage,
+  importErrorOf,
+  issueTitle,
+  lineStatusLabel,
+  proposalDiagnosticMessage,
+  proposalSourceLabel,
+  uncertainResultAfterReloadMessage
+} from '../bank-statement-import/bank-statement-import.messages';
 import { BankStatementEntriesStore, EntriesRow, EntriesRowFilter } from './bank-statement-entries.store';
 import { BseStepperComponent } from './bse-stepper.component';
 
@@ -50,7 +59,7 @@ interface GenerationSummary {
   imports: [CommonModule, FormsModule, RouterModule, PageHeaderComponent, ButtonComponent, BseStepperComponent],
   template: `
     <app-page-header
-      i18n-title="@@accounting.bank-statement-entries.ts.releve.bancaire.ecritures.426df845"
+      i18n-title="@@accounting.bank-statement-entries.releve.bancaire.ecritures.426df845"
       title="Relevé bancaire → écritures"
     />
     <app-bse-stepper [activeIndex]="view() === 'result' ? 4 : 3" />
@@ -109,7 +118,7 @@ interface GenerationSummary {
       }
     } @else {
       <div class="bse-toolbar">
-        <span i18n="@@accounting.bank-statement-entries.ts.journal.57d7f743">Journal</span> : {{ journalCode() }}
+        <span i18n="@@accounting.bank-statement-entries.ts.journal.57d7f743">Journal</span> : {{ store.journalCode() }}
         <app-button variant="secondary" (clicked)="downloadSource()" [disabled]="busy()" data-testid="bse-download-source"
           i18n="@@accounting.bank-statement-entries.ts.telecharger.la.piece.justificative.4ae35fd4">Télécharger la pièce justificative</app-button>
         @if (canClassifyWithAi(); as unclassified) {
@@ -129,6 +138,10 @@ interface GenerationSummary {
           i18n="@@accounting.bank-statement-entries.ts.au.compte.d.attente.471.f72babdb">Au compte d'attente 471</button>
         <button type="button" [class.active]="store.rowFilter() === 'settled'" (click)="setRowFilter('settled')" data-testid="bse-filter-settled"
           i18n="@@accounting.bank-statement-entries.ts.deja.comptabilisees.d9d7cf7c">Déjà comptabilisées</button>
+        @if (hasRowsNeedingCorrection()) {
+          <button type="button" [class.active]="store.rowFilter() === 'rejected'" (click)="setRowFilter('rejected')" data-testid="bse-filter-rejected"
+            i18n="@@accounting.bank-statement-entries.ts.a.corriger.filtre.9b1f2e3a">À corriger</button>
+        }
       </div>
 
       @if (store.selectedCount() > 0) {
@@ -172,7 +185,7 @@ interface GenerationSummary {
         </thead>
         <tbody>
           @for (row of pagedRows(); track row.proposal.lineId) {
-            <tr [class.bse-row--settled]="isSettled(row)" [attr.data-testid]="'bse-row-' + row.proposal.lineId">
+            <tr [class.bse-row--settled]="isSettled(row)" [class.bse-row--needs-correction]="row.needsCorrection" [attr.data-testid]="'bse-row-' + row.proposal.lineId">
               <td class="bse-check">
                 <input type="checkbox" [checked]="row.selected" [disabled]="isSettled(row) || row.proposal.status === 'Blocked'"
                   (change)="store.setRowSelected(row.proposal.lineId, $any($event.target).checked)"
@@ -280,7 +293,52 @@ interface GenerationSummary {
         }
       </div>
     }
-  `
+  `,
+  styles: [
+    `
+      .bse-banner { padding: 0.6rem 0.9rem; border-radius: 6px; margin: 0.5rem 0; }
+      .bse-banner--error { background: #f8d7da; color: #842029; }
+      .bse-toolbar { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+      .bse-filters { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+      .bse-filters button { border: 1px solid #dee2e6; background: #fff; border-radius: 999px; padding: 0.3rem 0.8rem; font-size: 0.85rem; cursor: pointer; }
+      .bse-filters button.active { background: #0d6efd; color: #fff; border-color: #0d6efd; }
+      .bse-bulk { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; background: #e7f1ff; border-radius: 6px; padding: 0.5rem 0.75rem; margin-bottom: 0.75rem; }
+      .bse-input { border: 1px solid #ced4da; border-radius: 4px; padding: 0.3rem 0.5rem; font: inherit; width: 100%; }
+      .bse-input--account { min-width: 8rem; }
+      .bse-grid { width: 100%; border-collapse: collapse; }
+      .bse-grid th, .bse-grid td { padding: 0.4rem 0.5rem; border-bottom: 1px solid #e9ecef; text-align: start; vertical-align: top; }
+      .bse-grid tr.bse-row--settled { background: #f8f9fa; color: #6c757d; }
+      .bse-grid tr.bse-row--needs-correction { background: #fff3cd; }
+      .bse-check { width: 2rem; text-align: center; }
+      .bse-right { text-align: end; }
+      .bse-num { font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+      .bse-label { min-width: 10rem; }
+      .bse-tp { position: relative; min-width: 10rem; }
+      .bse-small { font-size: 0.78rem; }
+      .bse-muted { color: #6c757d; }
+      .bse-danger { color: #842029; }
+      .bse-warn { color: #664d03; }
+      .bse-inline { display: flex; align-items: center; gap: 0.3rem; }
+      .bse-badge { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 4px; background: #e7f1ff; color: #0d6efd; font-size: 0.75rem; }
+      .bse-badge--generated, .bse-badge--reconciled, .bse-badge--alreadyposted { background: #e6f6ec; color: #1a7f4e; }
+      .bse-badge--ambiguous, .bse-badge--toverify { background: #fff3cd; color: #664d03; }
+      .bse-badge--blocked { background: #f8d7da; color: #842029; }
+      .bse-badge--proposed { background: #e7f1ff; color: #0d6efd; }
+      .bse-badge--tocomplete { background: #e9ecef; color: #495057; }
+      .bse-suggestions { position: absolute; inset-inline-start: 0; top: 100%; z-index: 20; margin: 0.1rem 0 0; padding: 0.2rem 0; list-style: none; background: #fff; border: 1px solid #dee2e6; border-radius: 6px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); max-height: 12rem; overflow-y: auto; min-width: 12rem; }
+      .bse-suggestion { display: block; width: 100%; text-align: start; background: none; border: none; padding: 0.3rem 0.6rem; cursor: pointer; font: inherit; }
+      .bse-suggestion:hover, .bse-suggestion:focus { background: #e7f1ff; }
+      .bse-pagination { display: flex; align-items: center; gap: 0.75rem; justify-content: center; margin: 0.75rem 0; }
+      .bse-totals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 0.75rem 1rem; margin: 0.75rem 0; }
+      .bse-actions { display: flex; align-items: center; gap: 0.75rem; justify-content: flex-end; margin-top: 1rem; }
+      .bse-hint { color: #6c757d; font-size: 0.85rem; }
+      .bse-result { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1.25rem; }
+      .bse-result--success { border-inline-start: 4px solid #1a7f4e; }
+      .bse-result--failed { border-inline-start: 4px solid #842029; }
+      .bse-result-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-top: 1rem; }
+      .bse-link { color: #0d6efd; }
+    `
+  ]
 })
 export class BankStatementEntriesPostingComponent implements OnInit {
   readonly store = inject(BankStatementEntriesStore);
@@ -296,7 +354,6 @@ export class BankStatementEntriesPostingComponent implements OnInit {
   readonly error = signal<string | null>(null);
   readonly busy = signal(false);
   readonly view = signal<'grid' | 'result'>('grid');
-  readonly journalCode = signal('JB');
   readonly activeRowId = signal<string | null>(null);
   readonly employeeSuggestions = signal<ThirdPartyRef[]>([]);
   readonly lastGeneration = signal<GenerationSummary | null>(null);
@@ -309,8 +366,11 @@ export class BankStatementEntriesPostingComponent implements OnInit {
 
   readonly accountOptions = computed(() => this.refs.accounts().filter(a => a.isActive));
 
+  /** Lignes sélectionnées, hors lignes déjà comptabilisées — base commune des totaux et de la génération. */
+  private readonly selectedPending = computed(() => this.store.rows().filter(r => r.selected && !this.isSettled(r)));
+
   readonly totals = computed(() => {
-    const selected = this.store.rows().filter(r => r.selected && !this.isSettled(r));
+    const selected = this.selectedPending();
     return {
       debit: selected.filter(r => r.proposal.isDebit).reduce((sum, r) => sum + r.proposal.amount, 0),
       credit: selected.filter(r => !r.proposal.isDebit).reduce((sum, r) => sum + r.proposal.amount, 0)
@@ -320,19 +380,18 @@ export class BankStatementEntriesPostingComponent implements OnInit {
   /** Lignes visibles de la page courante (pagination 50, plan §4.7 perf.) ; se recale si le filtre change. */
   readonly pagedRows = computed(() => {
     const all = this.store.visibleRows();
-    const pageCount = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
-    const current = Math.min(this.page(), pageCount);
+    const current = Math.min(this.page(), this.pageCount());
     return all.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
   });
 
   readonly pageCount = computed(() => Math.max(1, Math.ceil(this.store.visibleRows().length / PAGE_SIZE)));
 
   /** Lignes au compte d'attente 471 parmi les lignes sélectionnées à générer (résumé de confirmation). */
-  readonly selectedSuspenseCount = computed(
-    () => this.store.rows().filter(r => r.selected && !this.isSettled(r) && r.proposal.source === 'Fallback').length
-  );
+  readonly selectedSuspenseCount = computed(() => this.selectedPending().filter(r => r.proposal.source === 'Fallback').length);
 
   readonly uncheckedCount = computed(() => this.store.rows().filter(r => !r.selected && !this.isSettled(r)).length);
+
+  readonly hasRowsNeedingCorrection = computed(() => this.store.rows().some(r => r.needsCorrection));
 
   readonly lineStatusLabel = lineStatusLabel;
   readonly confidenceLabel = confidenceLabel;
@@ -344,10 +403,16 @@ export class BankStatementEntriesPostingComponent implements OnInit {
   ngOnInit(): void {
     this.refs.loadAll();
     this.api.capabilities().subscribe(c => this.store.capabilities.set(c));
-    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
-      const statementId = params.get('statementId');
-      if (statementId) this.loadProposals(statementId);
-    });
+    combineLatest([this.route.paramMap, this.route.queryParamMap])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(([params, query]) => {
+        const statementId = params.get('statementId');
+        if (!statementId) return;
+        // Code de journal transmis par l'étape « Contrôle » (query param `journal`) ; validé contre
+        // les journaux de banque actifs du dossier, retombe sur JB (plan HIGH 1 — jamais codé en dur).
+        this.store.loadJournalCode(query.get('journal'));
+        this.loadProposals(statementId);
+      });
   }
 
   /** Des contreparties ont été modifiées et aucune écriture n'a encore été générée (plan §4.6). */
@@ -379,7 +444,7 @@ export class BankStatementEntriesPostingComponent implements OnInit {
     this.error.set(null);
     this.api.proposals(statementId, { assist: true }).subscribe({
       next: p => this.store.setProposals(p),
-      error: (err: unknown) => this.error.set(importErrorMessage(err instanceof BankStatementImportError ? err.code : null))
+      error: (err: unknown) => this.error.set(importErrorOf(err))
     });
   }
 
@@ -505,7 +570,7 @@ export class BankStatementEntriesPostingComponent implements OnInit {
       },
       error: (err: unknown) => {
         this.busy.set(false);
-        this.error.set(importErrorMessage(err instanceof BankStatementImportError ? err.code : null));
+        this.error.set(importErrorOf(err));
       }
     });
   }
@@ -534,7 +599,7 @@ export class BankStatementEntriesPostingComponent implements OnInit {
         this.error.set(
           err instanceof BankStatementImportError && err.status === 404
             ? $localize`:@@accounting.bank-statement-entries.ts.aucune.piece.justificative.pour.ce.releve.e7f06a74:Aucune pièce justificative pour ce relevé.`
-            : importErrorMessage(null)
+            : importErrorOf(err)
         )
     });
   }
@@ -546,7 +611,7 @@ export class BankStatementEntriesPostingComponent implements OnInit {
   journalLinkParams(): { journalCode: string; from: string; to: string } {
     const p = this.store.proposals();
     return {
-      journalCode: this.journalCode(),
+      journalCode: this.store.journalCode(),
       from: p?.periodStart ?? '',
       to: p?.periodEnd ?? ''
     };
@@ -556,7 +621,7 @@ export class BankStatementEntriesPostingComponent implements OnInit {
     const p = this.store.proposals();
     if (!p || !this.statementId) return;
     this.error.set(null);
-    const selected = this.store.rows().filter(r => r.selected && !this.isSettled(r));
+    const selected = this.selectedPending();
     if (selected.length === 0) return;
 
     const invalid = selected.filter(r => !this.isReady(r));
@@ -578,7 +643,7 @@ export class BankStatementEntriesPostingComponent implements OnInit {
     const excludedLineIds = this.store.rows().filter(r => !r.selected && !this.isSettled(r)).map(r => r.proposal.lineId);
     const items: GenerateItem[] = selected.map(r => logic.rowToGenerateItem(r, r.label.trim() || null));
     const statementId = this.statementId;
-    const journal = this.journalCode();
+    const journal = this.store.journalCode();
     const suspenseCount = this.selectedSuspenseCount();
     const unchecked = this.uncheckedCount();
 
@@ -600,7 +665,7 @@ export class BankStatementEntriesPostingComponent implements OnInit {
     uncheckedCount: number
   ): string {
     const base = $localize`:@@accounting.bank-statement-entries.ts.ecriture.s.seront.creees.en.brouillard.dans.le.j.3d3c6933:${count}:count: écriture(s) seront créées en brouillard dans le journal ${journal}:journal:, une par ligne de relevé. Si une seule ligne échoue, aucune écriture n'est créée (tout ou rien).`;
-    const period = $localize`:@@accounting.bank-statement-entries.ts.periode.du.au.d2e3f901:Période du ${p.periodStart}:from: au ${p.periodEnd}:to:.`;
+    const period = $localize`:@@accounting.bank-statement-entries.ts.periode.du.au.d2e3f901:Période du ${logic.formatDateFr(p.periodStart)}:from: au ${logic.formatDateFr(p.periodEnd)}:to:.`;
     const parts = [base, period];
     if (suspenseCount > 0) {
       parts.push(
@@ -626,7 +691,7 @@ export class BankStatementEntriesPostingComponent implements OnInit {
       error: (err: unknown) => {
         this.busy.set(false);
         const code = err instanceof BankStatementImportError ? err.code : null;
-        this.error.set(importErrorMessage(code));
+        this.error.set(importErrorOf(err));
         if (code === 'bank_statement_posting.atomic_rejected' && err instanceof BankStatementImportError && err.data) {
           // Pré-validation entièrement rejetée (HTTP 400) : rien n'a été écrit côté serveur, le résultat
           // complet (avec le motif par ligne) voyage dans la charge utile de l'erreur ; pas de relecture.
@@ -643,8 +708,11 @@ export class BankStatementEntriesPostingComponent implements OnInit {
           return;
         }
         // Résultat réel inconnu (conflit de concurrence, réseau/délai…) : on relit les propositions avant
-        // toute nouvelle tentative, par sécurité d'idempotence (l'écriture a pu partiellement réussir).
+        // toute nouvelle tentative, par sécurité d'idempotence (l'écriture a pu partiellement réussir), et on
+        // efface les modifications locales devenues incertaines (plan MED 5 — l'utilisateur doit tout revérifier).
         this.loadProposals(statementId);
+        this.dirty.set(false);
+        this.error.set(uncertainResultAfterReloadMessage());
       }
     });
   }
@@ -672,6 +740,13 @@ export class BankStatementEntriesPostingComponent implements OnInit {
   }
 
   backToGrid(): void {
+    // Les lignes refusées par la dernière génération atomique (plan MED 6) restent visibles via le
+    // filtre « À corriger » pour que l'utilisateur les retrouve facilement avant de relancer.
+    const rejectedLineIds = this.store.rejectedOutcomes().map(o => o.lineId);
+    if (rejectedLineIds.length > 0) {
+      this.store.markNeedsCorrection(rejectedLineIds);
+      this.setRowFilter('rejected');
+    }
     this.view.set('grid');
   }
 
@@ -685,7 +760,7 @@ export class BankStatementEntriesPostingComponent implements OnInit {
   }
 
   successMessage(result: GenerationSummary): string {
-    return $localize`:@@accounting.bank-statement-entries.ts.ecriture.s.creee.s.en.brouillard.dans.le.journal.18a7e099:${result.created}:count: écriture(s) créée(s) en brouillard dans le journal ${this.journalCode()}:journal:.`;
+    return $localize`:@@accounting.bank-statement-entries.ts.ecriture.s.creee.s.en.brouillard.dans.le.journal.18a7e099:${result.created}:count: écriture(s) créée(s) en brouillard dans le journal ${this.store.journalCode()}:journal:.`;
   }
 
   entryNumbersMessage(result: GenerationSummary): string {

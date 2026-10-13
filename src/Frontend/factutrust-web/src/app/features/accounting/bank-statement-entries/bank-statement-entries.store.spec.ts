@@ -58,7 +58,7 @@ describe('BankStatementEntriesStore', () => {
 
   beforeEach(() => {
     accounting = jasmine.createSpyObj<AccountingService>('AccountingService', ['ensureBankGlProjections', 'listImportableBankAccounts']);
-    journalCatalog = jasmine.createSpyObj<AccountingJournalCatalogService>('AccountingJournalCatalogService', ['list']);
+    journalCatalog = jasmine.createSpyObj<AccountingJournalCatalogService>('AccountingJournalCatalogService', ['list', 'listBankJournals']);
     accounting.ensureBankGlProjections.and.returnValue(of({ success: true, data: { createdCount: 0, skippedCount: 0 } }));
     accounting.listImportableBankAccounts.and.returnValue(
       of({
@@ -68,7 +68,7 @@ describe('BankStatementEntriesStore', () => {
         ]
       })
     );
-    journalCatalog.list.and.returnValue(of([{ code: 'JV', label: 'Ventes', icon: '', shortLabel: 'JV' }, { code: 'JB', label: 'Banque', icon: '', shortLabel: 'JB' }]));
+    journalCatalog.listBankJournals.and.returnValue(of([{ code: 'JB', label: 'Banque', icon: '', shortLabel: 'JB' }]));
 
     TestBed.configureTestingModule({
       providers: [

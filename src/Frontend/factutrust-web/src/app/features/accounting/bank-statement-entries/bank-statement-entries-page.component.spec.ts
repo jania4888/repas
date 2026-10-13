@@ -5,7 +5,22 @@ import { BankStatementEntriesPageComponent } from './bank-statement-entries-page
 import { AccountingService } from '../services/accounting.service';
 import { AccountingJournalCatalogService } from '../shared/accounting-journal-catalog.service';
 import { BankStatementImportError, BankStatementImportService } from '../bank-statement-import/bank-statement-import.service';
-import { BankStatementImportHistoryPage, BankStatementImportSession, BankStatementTabularMapping, BankStatementTabularPreview } from '../bank-statement-import/bank-statement-import.models';
+import { BankStatementImportCapabilities, BankStatementImportHistoryPage, BankStatementImportSession, BankStatementTabularMapping, BankStatementTabularPreview } from '../bank-statement-import/bank-statement-import.models';
+
+function capabilities(overrides: Partial<BankStatementImportCapabilities> = {}): BankStatementImportCapabilities {
+  return {
+    enabled: true,
+    aiAvailable: true,
+    aiProviderKind: 'local',
+    maxFileBytes: 10 * 1024 * 1024,
+    maxPages: 20,
+    acceptedExtensions: ['.pdf', '.png', '.jpg', '.jpeg', '.webp'],
+    recognizedBanks: [],
+    tabularEnabled: true,
+    tabularExtensions: ['.csv', '.xlsx'],
+    ...overrides
+  } as BankStatementImportCapabilities;
+}
 
 function tabularMapping(overrides: Partial<BankStatementTabularMapping> = {}): BankStatementTabularMapping {
   return {
@@ -88,12 +103,14 @@ describe('BankStatementEntriesPageComponent', () => {
       'history',
       'tabularPreview',
       'start',
-      'startTabular'
+      'startTabular',
+      'capabilities'
     ]);
     api.history.and.returnValue(of(historyPage()));
     api.tabularPreview.and.returnValue(of(tabularPreview()));
     api.start.and.returnValue(of(session()));
     api.startTabular.and.returnValue(of(session()));
+    api.capabilities.and.returnValue(of(capabilities()));
 
     accounting = jasmine.createSpyObj<AccountingService>('AccountingService', ['ensureBankGlProjections', 'listImportableBankAccounts']);
     accounting.ensureBankGlProjections.and.returnValue(of({ success: true, data: { createdCount: 0, skippedCount: 0 } }));
@@ -106,8 +123,8 @@ describe('BankStatementEntriesPageComponent', () => {
       })
     );
 
-    journalCatalog = jasmine.createSpyObj<AccountingJournalCatalogService>('AccountingJournalCatalogService', ['list']);
-    journalCatalog.list.and.returnValue(of([{ code: 'JB', label: 'Banque', icon: '', shortLabel: 'JB' }]));
+    journalCatalog = jasmine.createSpyObj<AccountingJournalCatalogService>('AccountingJournalCatalogService', ['list', 'listBankJournals']);
+    journalCatalog.listBankJournals.and.returnValue(of([{ code: 'JB', label: 'Banque', icon: '', shortLabel: 'JB' }]));
 
     TestBed.configureTestingModule({
       imports: [BankStatementEntriesPageComponent],
@@ -240,5 +257,45 @@ describe('BankStatementEntriesPageComponent', () => {
 
     expect(navigateSpy).not.toHaveBeenCalled();
     expect(component['store'].tabularPreviewError()).toBeTruthy();
+  });
+
+  it("isDirty() redevient faux dès qu'un import a réussi, même avant la résolution de la navigation", () => {
+    component['store'].bankAccountId.set('a1');
+    component['store'].setFile(new File(['x'], 'r.pdf', { type: 'application/pdf' }), 'document');
+    expect(component.isDirty()).toBe(true);
+
+    component.startDocumentImport();
+
+    expect(component.isDirty()).toBe(false);
+    expect(component.canDeactivate()).toBe(true);
+  });
+
+  it("bloque le choix « PDF/image » quand les capacités serveur indiquent l'IA indisponible", () => {
+    api.capabilities.and.returnValue(of(capabilities({ aiAvailable: false })));
+    fixture = TestBed.createComponent(BankStatementEntriesPageComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(component.aiBlocked()).toBe(true);
+    expect(component.tabularBlocked()).toBe(false);
+  });
+
+  it("bloque le choix « CSV/Excel » quand l'import tabulaire est désactivé côté serveur", () => {
+    api.capabilities.and.returnValue(of(capabilities({ tabularEnabled: false })));
+    fixture = TestBed.createComponent(BankStatementEntriesPageComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(component.tabularBlocked()).toBe(true);
+  });
+
+  it("patchLabelColumn ne touche que le premier emplacement de libellé", () => {
+    component['store'].setFile(csvFile(), 'tabular');
+    component.goToMapping();
+    component.patchMapping({ labelColumns: [2, 3] });
+
+    component.patchLabelColumn(5);
+
+    expect(component['store'].mapping()?.labelColumns).toEqual([5, 3]);
   });
 });

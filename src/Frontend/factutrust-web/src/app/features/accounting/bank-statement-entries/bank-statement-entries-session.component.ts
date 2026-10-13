@@ -12,7 +12,7 @@ import { BankAccountDto, BankAccountService } from '@core/services/bank-account.
 import { AccountingService } from '../services/accounting.service';
 import { BankStatementEntriesStore } from './bank-statement-entries.store';
 import { BseStepperComponent } from './bse-stepper.component';
-import { BankStatementImportError, BankStatementImportService } from '../bank-statement-import/bank-statement-import.service';
+import { BankStatementImportService } from '../bank-statement-import/bank-statement-import.service';
 import {
   BankStatementImportSession,
   BankStatementImportSibling,
@@ -20,7 +20,7 @@ import {
   StatementLineCorrection
 } from '../bank-statement-import/bank-statement-import.models';
 import * as logic from '../bank-statement-import/bank-statement-posting.logic';
-import { issueTitle, sessionFailureMessage } from '../bank-statement-import/bank-statement-import.messages';
+import { importErrorOf, issueTitle, sessionFailureMessage } from '../bank-statement-import/bank-statement-import.messages';
 
 const RETRYABLE_FAILURES = ['ai_unavailable', 'ai_timeout', 'ai_failed'];
 
@@ -90,11 +90,11 @@ interface DisplayLine extends ExtractedStatementLine {
 
       @if (s.segmentCount && s.segmentCount > 1) {
         <section class="bse-card" data-testid="bse-siblings" role="status">
-          <p class="bse-strong" i18n="@@accounting.bank-statement-entries.ts.ce.fichier.contient.plusieurs.releves.sess0001">
+          <p class="bse-strong" i18n="@@accounting.bank-statement-entries.ts.ce.fichier.contient.plusieurs.releves.aaf84d84">
             Ce fichier contient {{ s.segmentCount }} relevés : chacun est contrôlé et enregistré séparément.
           </p>
           <ul class="bse-siblings-list">
-            <li i18n="@@accounting.bank-statement-entries.ts.releve.affiche.ci.dessous.sess0002">Relevé {{ s.segmentIndex }} — affiché ci-dessous</li>
+            <li i18n="@@accounting.bank-statement-entries.ts.releve.affiche.ci.dessous.a7b05a90">Relevé {{ s.segmentIndex }} — affiché ci-dessous</li>
             @for (sib of s.siblings ?? []; track sib.id) {
               <li>
                 @if (siblingLink(sib); as link) {
@@ -123,11 +123,11 @@ interface DisplayLine extends ExtractedStatementLine {
 
           @if (s.balanceCheck; as bc) {
             <dl class="bse-summary" data-testid="bse-balance-check">
-              <dt i18n="@@accounting.bank-statement-entries.solde.d.ouverture.69f2e147">Solde d'ouverture</dt><dd>{{ s.extraction?.header?.openingBalance?.value | number: '1.3-3' }}</dd>
-              <dt i18n="@@accounting.bank-statement-entries.total.credits.ec8c5525">Total crédits</dt><dd>{{ bc.sumCredits | number: '1.3-3' }}</dd>
-              <dt i18n="@@accounting.bank-statement-entries.total.debits.9acf4842">Total débits</dt><dd>{{ bc.sumDebits | number: '1.3-3' }}</dd>
-              <dt i18n="@@accounting.bank-statement-entries.solde.calcule.0e690941">Solde calculé</dt><dd>{{ bc.computedClosing | number: '1.3-3' }}</dd>
-              <dt i18n="@@accounting.bank-statement-entries.ecart.6ae8dce8">Écart</dt><dd>{{ bc.difference | number: '1.3-3' }}</dd>
+              <dt i18n="@@accounting.bank-statement-entries.solde.d.ouverture.69f2e147">Solde d'ouverture</dt><dd class="bse-num">{{ s.extraction?.header?.openingBalance?.value | number: '1.3-3' }}</dd>
+              <dt i18n="@@accounting.bank-statement-entries.total.credits.ec8c5525">Total crédits</dt><dd class="bse-num">{{ bc.sumCredits | number: '1.3-3' }}</dd>
+              <dt i18n="@@accounting.bank-statement-entries.total.debits.9acf4842">Total débits</dt><dd class="bse-num">{{ bc.sumDebits | number: '1.3-3' }}</dd>
+              <dt i18n="@@accounting.bank-statement-entries.solde.calcule.0e690941">Solde calculé</dt><dd class="bse-num">{{ bc.computedClosing | number: '1.3-3' }}</dd>
+              <dt i18n="@@accounting.bank-statement-entries.ecart.6ae8dce8">Écart</dt><dd class="bse-num">{{ bc.difference | number: '1.3-3' }}</dd>
             </dl>
             @if (bc.isBalanced) {
               <p class="bse-alert bse-alert--ok" i18n="@@accounting.bank-statement-entries.soldes.coherents.34d6074c">Soldes cohérents</p>
@@ -144,15 +144,15 @@ interface DisplayLine extends ExtractedStatementLine {
           @if (!isTabularSession(s)) {
             @if (suggestedRetargetAccount(); as match) {
               <div class="bse-retarget" role="status" data-testid="bse-retarget-suggestion">
-                <p i18n="@@accounting.bank-statement-entries.ts.ce.releve.appartient.au.compte.sess0003">
+                <p i18n="@@accounting.bank-statement-entries.ts.ce.releve.appartient.au.compte.9322c6fb">
                   Ce relevé appartient au compte {{ match.bankName }} (…{{ ribTail(match.rib) }}).
                 </p>
                 <app-button variant="secondary" data-testid="bse-retarget-apply" (clicked)="retargetToAccount(match.id)" [disabled]="busy()"
-                            ariaLabel="Analyser avec ce compte bancaire" i18n-ariaLabel="@@accounting.bank-statement-entries.ts.analyser.avec.ce.compte.aria.sess0004"
-                            i18n="@@accounting.bank-statement-entries.ts.analyser.avec.ce.compte.sess0005">Analyser avec ce compte</app-button>
+                            ariaLabel="Analyser avec ce compte bancaire" i18n-ariaLabel="@@accounting.bank-statement-entries.ts.analyser.avec.ce.compte.aria.e97511c9"
+                            i18n="@@accounting.bank-statement-entries.ts.analyser.avec.ce.compte.5beb184b">Analyser avec ce compte</app-button>
               </div>
             } @else if (missingAccountRibTail(); as tail) {
-              <p class="bse-hint" role="status" data-testid="bse-retarget-missing" i18n="@@accounting.bank-statement-entries.ts.releve.d.un.compte.absent.sess0006">
+              <p class="bse-hint" role="status" data-testid="bse-retarget-missing" i18n="@@accounting.bank-statement-entries.ts.releve.d.un.compte.absent.a37e5d71">
                 Ce relevé appartient à un autre compte (RIB …{{ tail }}) qui n'existe pas dans ce dossier. Créez-le dans Paiements › Comptes bancaires, puis relancez l'import.
               </p>
             }
@@ -163,11 +163,10 @@ interface DisplayLine extends ExtractedStatementLine {
               @for (issue of s.extraction?.issues; track issue.code + issue.lineIndex) {
                 <li [class]="'bse-issue bse-issue--' + issue.severity.toLowerCase()">
                   <strong>{{ issueTitle(issue.code) }}</strong>
-                  <span class="bse-hint">{{ issue.message }}</span>
                   @if (issue.lineIndex != null && isEditableIndex(issue.lineIndex)) {
                     <app-button variant="secondary" size="sm" (clicked)="editLineFromIssue(issue.lineIndex)"
                                 [attr.data-testid]="'bse-correct-line-' + issue.lineIndex"
-                                i18n="@@accounting.bank-statement-entries.ts.corriger.cette.ligne.sess0007">Corriger cette ligne</app-button>
+                                i18n="@@accounting.bank-statement-entries.ts.corriger.cette.ligne.1afe38ba">Corriger cette ligne</app-button>
                   }
                 </li>
               }
@@ -181,8 +180,8 @@ interface DisplayLine extends ExtractedStatementLine {
                   <th i18n="@@accounting.bank-statement-entries.date.operation.957dc298">Date opération</th>
                   <th i18n="@@accounting.bank-statement-entries.libelle.f5485bba">Libellé</th>
                   <th i18n="@@accounting.bank-statement-entries.montant.4adcd9fc">Montant</th>
-                  <th i18n="@@accounting.bank-statement-entries.ts.sens.sess0008">Sens</th>
-                  <th i18n="@@accounting.bank-statement-entries.ts.actions.sess0009">Actions</th>
+                  <th i18n="@@accounting.bank-statement-entries.ts.sens.55928a79">Sens</th>
+                  <th i18n="@@accounting.bank-statement-entries.ts.actions.c3cd636a">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -194,20 +193,20 @@ interface DisplayLine extends ExtractedStatementLine {
                       <td><input type="number" step="0.001" min="0.001" [attr.data-testid]="'bse-edit-amount-' + line.index" [(ngModel)]="draft.amount" /></td>
                       <td>
                         <select [attr.data-testid]="'bse-edit-side-' + line.index" [ngModel]="draft.isDebit" (ngModelChange)="onSideChange($event)">
-                          <option [ngValue]="true" i18n="@@accounting.bank-statement-entries.ts.debit.sess0010">Débit</option>
-                          <option [ngValue]="false" i18n="@@accounting.bank-statement-entries.ts.credit.sess0011">Crédit</option>
+                          <option [ngValue]="true" i18n="@@accounting.bank-statement-entries.ts.debit.f528224f">Débit</option>
+                          <option [ngValue]="false" i18n="@@accounting.bank-statement-entries.ts.credit.19194bdf">Crédit</option>
                         </select>
                         @if (sideRequired(line.index) && !draft.sideChosen) {
-                          <p class="bse-hint" role="alert" i18n="@@accounting.bank-statement-entries.ts.le.sens.doit.etre.choisi.sess0012">Le sens doit être choisi avant d'enregistrer cette ligne.</p>
+                          <p class="bse-hint" role="alert" i18n="@@accounting.bank-statement-entries.ts.le.sens.doit.etre.choisi.05ab1c57">Le sens doit être choisi avant d'enregistrer cette ligne.</p>
                         }
                       </td>
                       <td class="bse-row-actions">
                         <app-button variant="primary" size="sm" icon="pi-check" [iconOnly]="true" [disabled]="!draftValid()" (clicked)="saveLineEdit(line)"
                                     [attr.data-testid]="'bse-save-line-' + line.index"
-                                    ariaLabel="Enregistrer la correction" i18n-ariaLabel="@@accounting.bank-statement-entries.ts.enregistrer.la.correction.aria.sess0013">Enregistrer</app-button>
+                                    ariaLabel="Enregistrer la correction" i18n-ariaLabel="@@accounting.bank-statement-entries.ts.enregistrer.la.correction.aria.fc417966">Enregistrer</app-button>
                         <app-button variant="secondary" size="sm" icon="pi-times" [iconOnly]="true" (clicked)="cancelLineEdit()"
                                     [attr.data-testid]="'bse-cancel-line-' + line.index"
-                                    ariaLabel="Annuler la correction" i18n-ariaLabel="@@accounting.bank-statement-entries.ts.annuler.la.correction.aria.sess0014">Annuler</app-button>
+                                    ariaLabel="Annuler la correction" i18n-ariaLabel="@@accounting.bank-statement-entries.ts.annuler.la.correction.aria.d446c36a">Annuler</app-button>
                       </td>
                     </tr>
                   } @else {
@@ -216,26 +215,26 @@ interface DisplayLine extends ExtractedStatementLine {
                       <td>
                         {{ line.label }}
                         @if (line.corrected) {
-                          <span class="bse-badge" i18n="@@accounting.bank-statement-entries.ts.corrigee.sess0015">Corrigée</span>
+                          <span class="bse-badge" i18n="@@accounting.bank-statement-entries.ts.corrigee.5282db93">Corrigée</span>
                         }
                         @if (line.excluded) {
-                          <span class="bse-badge bse-badge--muted" i18n="@@accounting.bank-statement-entries.ts.exclue.sess0016">Exclue</span>
+                          <span class="bse-badge bse-badge--muted" i18n="@@accounting.bank-statement-entries.ts.exclue.a7d097b5">Exclue</span>
                         }
                       </td>
-                      <td>{{ line.amount | number: '1.3-3' }}</td>
+                      <td class="bse-num">{{ line.amount | number: '1.3-3' }}</td>
                       <td>{{ line.isDebit ? debitLabel : creditLabel }}</td>
                       <td class="bse-row-actions">
                         @if (isEditable(line)) {
                           @if (!line.excluded) {
                             <app-button variant="secondary" size="sm" icon="pi-pencil" [iconOnly]="true" (clicked)="startLineEdit(line)" [disabled]="busy()"
                                         [attr.data-testid]="'bse-edit-' + line.index"
-                                        ariaLabel="Modifier cette ligne" i18n-ariaLabel="@@accounting.bank-statement-entries.ts.modifier.cette.ligne.aria.sess0017">Modifier</app-button>
+                                        ariaLabel="Modifier cette ligne" i18n-ariaLabel="@@accounting.bank-statement-entries.ts.modifier.cette.ligne.aria.390d3bd2">Modifier</app-button>
                             <app-button variant="secondary" size="sm" icon="pi-ban" [iconOnly]="true" (clicked)="toggleExclude(line)" [disabled]="busy()"
                                         [attr.data-testid]="'bse-exclude-' + line.index"
-                                        ariaLabel="Exclure cette ligne" i18n-ariaLabel="@@accounting.bank-statement-entries.ts.exclure.cette.ligne.aria.sess0018">Exclure</app-button>
+                                        ariaLabel="Exclure cette ligne" i18n-ariaLabel="@@accounting.bank-statement-entries.ts.exclure.cette.ligne.aria.b670e204">Exclure</app-button>
                           } @else {
                             <button type="button" class="bse-link-button" [attr.data-testid]="'bse-restore-' + line.index" (click)="toggleExclude(line)" [disabled]="busy()"
-                                    i18n="@@accounting.bank-statement-entries.ts.retablir.sess0019">Rétablir</button>
+                                    i18n="@@accounting.bank-statement-entries.ts.retablir.91f08ee4">Rétablir</button>
                           }
                         }
                       </td>
@@ -247,7 +246,7 @@ interface DisplayLine extends ExtractedStatementLine {
           }
 
           @if (correctedCount() > 0 || excludedCount() > 0) {
-            <p class="bse-hint" data-testid="bse-correction-summary" i18n="@@accounting.bank-statement-entries.ts.lignes.corrigees.exclues.sess0020">
+            <p class="bse-hint" data-testid="bse-correction-summary" i18n="@@accounting.bank-statement-entries.ts.lignes.corrigees.exclues.38e2f6e7">
               {{ correctedCount() }} ligne(s) corrigée(s), {{ excludedCount() }} exclue(s) — le contrôle de solde sera recalculé par le serveur à l'enregistrement.
             </p>
           }
@@ -292,6 +291,7 @@ interface DisplayLine extends ExtractedStatementLine {
       .bse-badge--muted { background: #e9ecef; color: #6c757d; }
       .bse-link-button { background: none; border: none; color: #0d6efd; cursor: pointer; padding: 0; font: inherit; }
       .bse-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem; }
+      .bse-num { direction: ltr; unicode-bidi: isolate; }
     `
   ]
 })
@@ -310,8 +310,8 @@ export class BankStatementEntriesSessionComponent implements OnInit {
   protected readonly issueTitle = issueTitle;
   protected readonly ribTail = logic.ribTail;
 
-  protected readonly debitLabel = $localize`:@@accounting.bank-statement-entries.ts.debit.sess0010:Débit`;
-  protected readonly creditLabel = $localize`:@@accounting.bank-statement-entries.ts.credit.sess0011:Crédit`;
+  protected readonly debitLabel = $localize`:@@accounting.bank-statement-entries.ts.debit.f528224f:Débit`;
+  protected readonly creditLabel = $localize`:@@accounting.bank-statement-entries.ts.credit.19194bdf:Crédit`;
 
   readonly session = signal<BankStatementImportSession | null>(null);
   readonly error = signal<string | null>(null);
@@ -364,22 +364,32 @@ export class BankStatementEntriesSessionComponent implements OnInit {
     const s = this.session();
     const readRib = logic.normalizeRibDigits(s?.extraction?.header?.rib);
     if (!s || readRib.length !== 20) return null;
-    if (!s.extraction?.issues.some(i => i.code === 'statement.rib_mismatch' && i.severity === 'Blocking')) return null;
+    if (!logic.hasIssue(s, 'statement.rib_mismatch', 'Blocking')) return null;
     return this.bankAccounts().find(a => a.isActive && logic.normalizeRibDigits(a.rib) === readRib && a.id !== s.bankAccountId) ?? null;
   });
 
   readonly missingAccountRibTail = computed(() => {
     const s = this.session();
     if (!s?.extraction || !this.bankAccountsLoaded() || !this.ribMatchReady() || this.suggestedRetargetAccount()) return null;
-    if (!s.extraction.issues.some(i => i.code === 'statement.rib_mismatch')) return null;
+    if (!logic.hasIssue(s, 'statement.rib_mismatch')) return null;
     const readRib = logic.normalizeRibDigits(s.extraction.header.rib);
     return readRib.length === 20 ? readRib.slice(-4) : null;
   });
 
   ngOnInit(): void {
     this.loadBankAccounts();
-    const sessionId = this.route.snapshot.paramMap.get('sessionId');
-    if (sessionId) this.loadSession(sessionId);
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+      const sessionId = params.get('sessionId');
+      if (!sessionId) return;
+      // Le même composant est réutilisé lorsque retry()/retargetToAccount() ou le polling des
+      // relevés frères navigue vers un nouvel id de session (plan HIGH 2) : on repart donc d'un
+      // état local propre à chaque changement d'id plutôt que de ne lire la route qu'une fois.
+      this.pollAttempt = 0;
+      this.balanceAcknowledged = false;
+      this.corrections.set(new Map());
+      this.editingIndex.set(null);
+      this.loadSession(sessionId);
+    });
   }
 
   /** Comptes bancaires actifs avec RIB (pour la relance ciblée), ignorés pour un relevé CSV/XLSX. */
@@ -479,7 +489,8 @@ export class BankStatementEntriesSessionComponent implements OnInit {
 
   private fail(err: unknown): void {
     this.busy.set(false);
-    this.error.set(err instanceof BankStatementImportError ? err.message || 'Erreur' : 'Erreur');
+    // Jamais de texte serveur brut à l'écran (plan MED 7) : toujours un libellé i18n connu via le code.
+    this.error.set(importErrorOf(err));
   }
 
   canRetry(s: BankStatementImportSession): boolean {
@@ -647,17 +658,17 @@ export class BankStatementEntriesSessionComponent implements OnInit {
   }
 
   siblingState(sib: BankStatementImportSibling): string {
-    if (sib.statementId) return $localize`:@@accounting.bank-statement-entries.ts.releve.enregistre.sess0021:Relevé ${sib.segmentIndex}:index: — déjà enregistré`;
+    if (sib.statementId) return $localize`:@@accounting.bank-statement-entries.ts.releve.enregistre.d9b64443:Relevé ${sib.segmentIndex}:index: — déjà enregistré`;
     switch (sib.status) {
       case 'Extracting':
       case 'Pending':
-        return $localize`:@@accounting.bank-statement-entries.ts.releve.en.cours.de.lecture.sess0022:Relevé ${sib.segmentIndex}:index: — en cours de lecture`;
+        return $localize`:@@accounting.bank-statement-entries.ts.releve.en.cours.de.lecture.ca7d820f:Relevé ${sib.segmentIndex}:index: — en cours de lecture`;
       case 'AwaitingReview':
-        return $localize`:@@accounting.bank-statement-entries.ts.releve.en.attente.de.controle.sess0023:Relevé ${sib.segmentIndex}:index: — en attente de contrôle`;
+        return $localize`:@@accounting.bank-statement-entries.ts.releve.en.attente.de.controle.60ba996d:Relevé ${sib.segmentIndex}:index: — en attente de contrôle`;
       case 'Failed':
-        return $localize`:@@accounting.bank-statement-entries.ts.releve.en.echec.sess0024:Relevé ${sib.segmentIndex}:index: — analyse en échec`;
+        return $localize`:@@accounting.bank-statement-entries.ts.releve.en.echec.d819b983:Relevé ${sib.segmentIndex}:index: — analyse en échec`;
       default:
-        return $localize`:@@accounting.bank-statement-entries.ts.releve.annule.sess0025:Relevé ${sib.segmentIndex}:index: — annulé`;
+        return $localize`:@@accounting.bank-statement-entries.ts.releve.annule.f81a7fd0:Relevé ${sib.segmentIndex}:index: — annulé`;
     }
   }
 
@@ -674,7 +685,14 @@ export class BankStatementEntriesSessionComponent implements OnInit {
         this.api.confirm(s.id, { corrections, acknowledgeBalanceWarning: this.balanceAcknowledged || undefined }).subscribe({
           next: result => {
             this.busy.set(false);
-            void this.router.navigate(['/accounting/bank-statement-entries/statement', result.statementId], { replaceUrl: true });
+            // Enregistrement réussi : plus rien à enregistrer, pour éviter une fausse alerte de
+            // modifications non sauvegardées (isDirty/canDeactivate) juste après la navigation (plan MED 4).
+            this.corrections.set(new Map());
+            this.balanceAcknowledged = false;
+            void this.router.navigate(['/accounting/bank-statement-entries/statement', result.statementId], {
+              replaceUrl: true,
+              queryParams: { journal: s.journalCode }
+            });
           },
           error: (err: unknown) => this.fail(err)
         });

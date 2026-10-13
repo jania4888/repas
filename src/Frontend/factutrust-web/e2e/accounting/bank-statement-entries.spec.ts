@@ -246,10 +246,9 @@ async function installEntriesMocks(
   userOverrides: Record<string, unknown> | null = {}
 ): Promise<void> {
   await installErpSession(page, { locale: 'fr' });
-  // `canDeactivate()` (fichier sélectionné non encore envoyé) ouvre un `window.confirm()` natif ;
-  // Playwright le refuse par défaut (dialogue non géré = annulé), ce qui bloquerait la navigation
-  // vers l'étape suivante une fois l'import lancé avec succès. On l'accepte systématiquement ici.
-  page.on('dialog', dialog => dialog.accept());
+  // `canDeactivate()` (fichier sélectionné non encore envoyé) ouvre un `window.confirm()` natif,
+  // mais pas après un import réussi (isDirty() retombe à faux dès que l'envoi réussit) : aucun
+  // scénario de ce fichier ne doit donc déclencher de dialogue natif non géré.
   if (userOverrides !== null) {
     const user = firmUser(userOverrides);
     await page.addInitScript(userJson => localStorage.setItem('ft_user', userJson), JSON.stringify(user));
@@ -354,7 +353,7 @@ test('1. CSV → mappage → contrôle → contreparties (dont repli 471) → N 
   await expect(confirmModal).toBeVisible();
   await confirmModal.getByRole('button', { name: 'Oui' }).click();
 
-  await expect(page).toHaveURL(/\/statement\/st-csv-1$/);
+  await expect(page).toHaveURL(/\/statement\/st-csv-1(?:\?.*)?$/);
   expect(confirmBodies).toHaveLength(1);
   await expect(page.getByTestId('bse-rows-table')).toBeVisible({ timeout: 15_000 });
   await expect(page.getByTestId('bse-row-line-1')).toBeVisible();
@@ -562,7 +561,7 @@ test('4. PDF — lecture simulée par l\'IA → contrôle du relevé → proposi
   await expect(modal).toBeVisible();
   await modal.getByRole('button', { name: 'Oui' }).click();
 
-  await expect(page).toHaveURL(/\/statement\/st-pdf-1$/);
+  await expect(page).toHaveURL(/\/statement\/st-pdf-1(?:\?.*)?$/);
   expect(confirmBodies).toHaveLength(1);
   await expect(page.getByTestId('bse-rows-table')).toBeVisible({ timeout: 15_000 });
   await expect(page.getByTestId('bse-row-line-pdf-1')).toBeVisible();

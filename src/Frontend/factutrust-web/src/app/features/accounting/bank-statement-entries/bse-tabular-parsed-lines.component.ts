@@ -32,7 +32,7 @@ import { BankStatementTabularIssue, BankStatementTabularParsedLine } from '../ba
               <td>{{ line.transactionDate ?? '—' }}</td>
               <td>{{ line.valueDate ?? '—' }}</td>
               <td>{{ line.label ?? '—' }}</td>
-              <td class="bse-right" [class.bse-debit]="line.isDebit === true" [class.bse-credit]="line.isDebit === false">
+              <td class="bse-right" [class.bse-debit]="line.isDebit === true" [class.bse-credit]="line.isDebit === false" dir="ltr">
                 {{ line.amount ?? '—' }}
               </td>
               <td>{{ line.error ?? '' }}</td>
@@ -64,7 +64,7 @@ import { BankStatementTabularIssue, BankStatementTabularParsedLine } from '../ba
       .bse-credit { color: #16a34a; }
       .bse-line-error td { background: #fef2f2; color: #b91c1c; }
       .bse-issue-list { list-style: none; margin: 0.75rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
-      .bse-issue-list li { padding: 0.4rem 0.75rem; border-radius: 0 6px 6px 0; border-left: 3px solid #94a3b8; background: #f8fafc; font-size: 0.85rem; }
+      .bse-issue-list li { padding: 0.4rem 0.75rem; border-start-start-radius: 0; border-start-end-radius: 6px; border-end-end-radius: 6px; border-end-start-radius: 0; border-inline-start: 3px solid #94a3b8; background: #f8fafc; font-size: 0.85rem; }
       .bse-issue-error { border-color: #dc2626; background: #fef2f2; color: #7f1d1d; }
       .bse-issue-warning { border-color: #d97706; background: #fffbeb; color: #78350f; }
     `

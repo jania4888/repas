@@ -77,10 +77,12 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                         i18n-title="@@accounting.manual-entry.importer.un.releve.bancaire.et.proposer.les.ecri.864c2618"
                         (click)="importBankStatement.emit(); importOpen = false" i18n="@@accounting.manual-entry.importer.un.releve.bancaire.pdf.image.72caac7e"> Importer un relevé bancaire (PDF / image) </button>
               }
-              <button type="button" class="dropdown-item" data-testid="open-bank-statement-entries"
-                      title="Ouvre la page dédiée d'import de relevé bancaire (CSV/Excel ou PDF/image) vers des écritures en brouillard"
-                      i18n-title="@@accounting.manual-entry.ouvre.la.page.dediee.d.import.de.releve.bancaire.adc9cd05"
-                      (click)="openBankStatementEntries.emit(); importOpen = false" i18n="@@accounting.manual-entry.releve.bancaire.ecritures.426df845"> Relevé bancaire → écritures </button>
+              @if (canOpenBankStatementEntries()) {
+                <button type="button" class="dropdown-item" data-testid="open-bank-statement-entries"
+                        title="Ouvre la page dédiée d'import de relevé bancaire (CSV/Excel ou PDF/image) vers des écritures en brouillard"
+                        i18n-title="@@accounting.manual-entry.ouvre.la.page.dediee.d.import.de.releve.bancaire.adc9cd05"
+                        (click)="openBankStatementEntries.emit(); importOpen = false" i18n="@@accounting.manual-entry.releve.bancaire.ecritures.426df845"> Relevé bancaire → écritures </button>
+              }
             </div>
           }
         </div>
@@ -170,6 +172,14 @@ export class EntryToolbarComponent {
 
   canImportBankStatement(): boolean {
     return this.bankStatementImportEnabled && this.auth.hasPermission(PERMISSIONS.accounting.create);
+  }
+
+  /**
+   * La page dédiée « Relevé bancaire → écritures » couvre aussi le CSV/Excel (indépendant de l'IA) :
+   * son entrée de menu ne dépend donc pas de `bankStatementImportEnabled`, seulement du droit de création.
+   */
+  canOpenBankStatementEntries(): boolean {
+    return this.auth.hasPermission(PERMISSIONS.accounting.create);
   }
 
   // Chaque bouton d'ouverture DOIT arrêter la propagation : sans cela le clic remonte jusqu'à

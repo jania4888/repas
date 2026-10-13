@@ -227,7 +227,8 @@ describe('EntryToolbarComponent', () => {
   });
 
   // ---------------------------------------------------------------------------
-  // Relevé bancaire → écritures (page dédiée, sans rapprochement) : toujours visible
+  // Relevé bancaire → écritures (page dédiée, sans rapprochement) : visible dès
+  // que le droit de création comptable est présent, indépendamment de l'IA.
   // ---------------------------------------------------------------------------
 
   function bankStatementEntriesItem(): HTMLButtonElement | null {
@@ -246,6 +247,20 @@ describe('EntryToolbarComponent', () => {
 
     expect(emitted.length).toBe(1);
     expect(openMenus().length).toBe(0);
+  });
+
+  it("masque l'entrée « Relevé bancaire → écritures » sans le droit de création comptable", () => {
+    const original = authMock.hasPermission;
+    authMock.hasPermission = () => false;
+    try {
+      fixture.detectChanges();
+
+      click(toggleButton('Import'));
+
+      expect(bankStatementEntriesItem()).toBeNull();
+    } finally {
+      authMock.hasPermission = original;
+    }
   });
 
   it("n'expose plus l'import de fichier ni les écritures en brouillard", () => {

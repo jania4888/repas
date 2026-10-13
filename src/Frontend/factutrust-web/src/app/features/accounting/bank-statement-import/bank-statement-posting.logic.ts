@@ -180,6 +180,14 @@ export function ribTail(rib: string): string {
   return digits.length >= 4 ? digits.slice(-4) : '????';
 }
 
+/** Date (ISO ou yyyy-MM-dd) affichée en dd/MM/yyyy pour les messages de confirmation (plan LOW). */
+export function formatDateFr(iso: string | null | undefined): string {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
 /** Libellé de la méthode de lecture d'une session (IA, lecture directe, service d'extraction…). */
 export function methodLabel(s: BankStatementImportSession): string {
   if (hasIssue(s, 'statement.ai_unavailable', 'Blocking') || s.extractionMethod === 'none') {

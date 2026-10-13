@@ -1264,9 +1264,8 @@ public sealed class BankStatementImportService : IBankStatementImportService
             // suffit pas à lever ces deux signalements, le sens (débit/crédit) doit être corrigé aussi.
             if (issue.Code == StatementIssueCodes.TabularDateInvalid && fields.HasFlag(CorrectedFields.Date))
                 continue;
-            if (issue.Code == StatementIssueCodes.TabularAmountInvalid && fields.HasFlag(CorrectedFields.Side))
-                continue;
-            if (issue.Code == StatementIssueCodes.TabularBothSides && fields.HasFlag(CorrectedFields.Side))
+            if (issue.Code is StatementIssueCodes.TabularAmountInvalid or StatementIssueCodes.TabularBothSides
+                && fields.HasFlag(CorrectedFields.Side))
                 continue;
 
             var shift = excluded.Count(e => e < lineIndex);
@@ -1480,9 +1479,11 @@ public sealed class BankStatementImportService : IBankStatementImportService
 
     private string UserLabel => _currentUser.Email ?? "system";
 
-    private static string MaskRib(string? rib) => string.IsNullOrEmpty(rib) || rib.Length < 4 ? "????" : rib[^4..];
+    /// <summary>Partagé avec le chemin CSV/XLSX : voir <see cref="BankStatementImportGuards.MaskRib"/>.</summary>
+    private static string MaskRib(string? rib) => BankStatementImportGuards.MaskRib(rib);
 
-    private static string Truncate(string value, int max) => value.Length <= max ? value : value[..max];
+    /// <summary>Partagé avec le chemin CSV/XLSX : voir <see cref="BankStatementImportGuards.Truncate"/>.</summary>
+    private static string Truncate(string value, int max) => BankStatementImportGuards.Truncate(value, max);
 
     private static Result<T> Fail<T>(string code, string message) => Result.Failure<T>(new Error(code, message));
 

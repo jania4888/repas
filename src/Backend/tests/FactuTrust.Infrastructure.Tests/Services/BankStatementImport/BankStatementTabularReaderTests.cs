@@ -30,6 +30,18 @@ public sealed class BankStatementTabularReaderTests
         BalanceColumn = 4
     };
 
+    private static BankStatementTabularMappingDto SignedMapping(int header = 0) => new()
+    {
+        HeaderRowIndex = header,
+        DateFormat = "dd/MM/yyyy",
+        DecimalSeparator = ",",
+        AmountMode = "signed",
+        DateColumn = 0,
+        LabelColumns = new[] { 1 },
+        AmountColumn = 2,
+        BalanceColumn = 3
+    };
+
     private static byte[] Csv(string content) => Encoding.UTF8.GetBytes(content);
 
     private static byte[] Xlsx(Action<IXLWorksheet> build)
@@ -54,7 +66,7 @@ public sealed class BankStatementTabularReaderTests
         Assert.True(table.IsSuccess);
         Assert.Equal(";", table.Value.Delimiter);
         Assert.Equal(0, table.Value.HeaderRowIndex);
-        Assert.Equal(2, table.Value.TotalRowCount);
+        Assert.Equal(2, table.Value.Rows.Count);
     }
 
     [Fact]
@@ -472,6 +484,142 @@ public sealed class BankStatementTabularReaderTests
         Assert.NotNull(Assert.Single(parsed).Error);
     }
 
+    // ── §3bis : signe en tête/parenthèses/fin — mode signé et débit négatif ──────────────
+
+    [Theory]
+    [InlineData("-125,500")] // signe en tête (export courant)
+    [InlineData("125,500-")] // signe en fin
+    [InlineData("(125,500)")] // parenthèses
+    public void Signed_mode_negative_amount_is_parsed_as_a_plausible_debit_regardless_of_notation(string amountText)
+    {
+        var content = Csv($"Date;Libelle;Montant;Solde\n01/01/2026;VIREMENT;{amountText};\n");
+        var table = BankStatementTabularReader.LoadRawTable(content, ".csv", Limits).Value;
+
+        var parsed = BankStatementTabularReader.ParseLines(table, SignedMapping());
+
+        var line = Assert.Single(parsed);
+        Assert.Null(line.Error);
+        Assert.True(line.IsDebit);
+        Assert.Equal(125.500m, line.Amount);
+    }
+
+    [Fact]
+    public void Signed_mode_positive_amount_with_a_leading_plus_sign_is_parsed_as_a_credit()
+    {
+        var content = Csv("Date;Libelle;Montant;Solde\n01/01/2026;VIREMENT;+125,500;\n");
+        var table = BankStatementTabularReader.LoadRawTable(content, ".csv", Limits).Value;
+
+        var parsed = BankStatementTabularReader.ParseLines(table, SignedMapping());
+
+        var line = Assert.Single(parsed);
+        Assert.Null(line.Error);
+        Assert.False(line.IsDebit);
+        Assert.Equal(125.500m, line.Amount);
+    }
+
+    [Fact]
+    public void Negative_amount_in_the_debit_column_of_a_debitCredit_mapping_is_still_a_plausible_debit()
+    {
+        var content = Csv("Date;Libelle;Debit;Credit\n01/01/2026;VIREMENT;-10,000;\n");
+        var table = BankStatementTabularReader.LoadRawTable(content, ".csv", Limits).Value;
+
+        var parsed = BankStatementTabularReader.ParseLines(table, DebitCreditMapping());
+
+        var line = Assert.Single(parsed);
+        Assert.Null(line.Error);
+        Assert.True(line.IsDebit);
+        Assert.Equal(10.000m, line.Amount);
+    }
+
+    [Fact]
+    public void CountDecimals_normalization_does_not_flag_trailing_zero_decimals_as_rounded()
+    {
+        var content = Csv("Date;Libelle;Debit;Credit\n01/01/2026;VIREMENT;10,0000;\n");
+        var table = BankStatementTabularReader.LoadRawTable(content, ".csv", Limits).Value;
+
+        var parsed = BankStatementTabularReader.ParseLines(table, DebitCreditMapping());
+
+        var line = Assert.Single(parsed);
+        Assert.Null(line.Error);
+        Assert.False(line.AmountRounded);
+        Assert.Equal(10m, line.Amount);
+    }
+
+    // ── §3ter : cellules numériques XLSX lues en invariant, quel que soit decimalSeparator ─
+
+    [Fact]
+    public void Xlsx_numeric_amount_cells_are_read_in_invariant_culture_even_when_the_mapping_uses_a_comma_decimal_separator()
+    {
+        var content = Xlsx(sheet =>
+        {
+            sheet.Cell("A1").Value = "Date";
+            sheet.Cell("B1").Value = "Libelle";
+            sheet.Cell("C1").Value = "Debit";
+            sheet.Cell("D1").Value = "Credit";
+            sheet.Cell("E1").Value = "Solde";
+            sheet.Cell("A2").Value = "01/01/2026";
+            sheet.Cell("B2").Value = "VIREMENT";
+            sheet.Cell("C2").Value = 125.750; // vraie cellule numérique XLSX
+            sheet.Cell("E2").Value = 1190.5;
+        });
+        var table = BankStatementTabularReader.LoadRawTable(content, ".xlsx", Limits).Value;
+        var mapping = DebitCreditMapping() with { DecimalSeparator = "," };
+
+        var parsed = BankStatementTabularReader.ParseLines(table, mapping);
+
+        var line = Assert.Single(parsed);
+        Assert.Null(line.Error);
+        Assert.True(line.IsDebit);
+        Assert.Equal(125.75m, line.Amount);
+        Assert.Equal(1190.5m, line.Balance);
+    }
+
+    [Fact]
+    public void Xlsx_numeric_amount_cell_with_one_decimal_is_not_misread_as_a_thousands_separated_integer()
+    {
+        var content = Xlsx(sheet =>
+        {
+            sheet.Cell("A1").Value = "Date";
+            sheet.Cell("B1").Value = "Libelle";
+            sheet.Cell("C1").Value = "Debit";
+            sheet.Cell("D1").Value = "Credit";
+            sheet.Cell("A2").Value = "01/01/2026";
+            sheet.Cell("B2").Value = "VIREMENT";
+            sheet.Cell("C2").Value = 1.5;
+        });
+        var table = BankStatementTabularReader.LoadRawTable(content, ".xlsx", Limits).Value;
+        var mapping = DebitCreditMapping() with { DecimalSeparator = "," };
+
+        var parsed = BankStatementTabularReader.ParseLines(table, mapping);
+
+        var line = Assert.Single(parsed);
+        Assert.Null(line.Error);
+        Assert.Equal(1.5m, line.Amount);
+    }
+
+    [Fact]
+    public void SuggestMapping_suggests_the_dot_decimal_separator_when_xlsx_amount_columns_are_numeric_cell_dominant()
+    {
+        var content = Xlsx(sheet =>
+        {
+            sheet.Cell("A1").Value = "Date";
+            sheet.Cell("B1").Value = "Libelle";
+            sheet.Cell("C1").Value = "Debit";
+            for (var row = 2; row <= 4; row++)
+            {
+                sheet.Cell($"A{row}").Value = $"0{row - 1}/01/2026";
+                sheet.Cell($"B{row}").Value = "VIREMENT";
+                sheet.Cell($"C{row}").Value = row * 10.5;
+            }
+        });
+        var table = BankStatementTabularReader.LoadRawTable(content, ".xlsx", Limits).Value;
+
+        var suggested = BankStatementTabularReader.SuggestMapping(table);
+
+        Assert.Equal(2, suggested.DebitColumn);
+        Assert.Equal(".", suggested.DecimalSeparator);
+    }
+
     // ── §6 : sécurité XLSX (macros, exceptions) ───────────────────────────────────────────
 
     [Fact]
@@ -578,7 +726,7 @@ public sealed class BankStatementTabularReaderTests
         var table = BankStatementTabularReader.LoadRawTable(content, ".csv", Limits).Value;
 
         Assert.Equal("utf-16", table.Encoding);
-        Assert.Equal(2, table.TotalRowCount);
+        Assert.Equal(2, table.Rows.Count);
     }
 
     // ── §5 : SheetIndex forcé par le mappage client ───────────────────────────────────────

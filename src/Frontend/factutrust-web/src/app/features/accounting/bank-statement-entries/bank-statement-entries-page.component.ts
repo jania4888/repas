@@ -1,5 +1,6 @@
 /// <reference types="@angular/localize" />
-import { Component, ElementRef, HostListener, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, HostListener, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -13,10 +14,10 @@ import { BseTabularSettingsComponent } from './bse-tabular-settings.component';
 import { BseTabularColumnRolesComponent } from './bse-tabular-column-roles.component';
 import { BseTabularRowsPreviewComponent } from './bse-tabular-rows-preview.component';
 import { BseTabularParsedLinesComponent } from './bse-tabular-parsed-lines.component';
-import { BankStatementImportError, BankStatementImportService } from '../bank-statement-import/bank-statement-import.service';
-import { BankStatementImportCapabilities, BankStatementImportHistoryItem, BankStatementTabularMapping, BankStatementTabularPreview } from '../bank-statement-import/bank-statement-import.models';
-import { importErrorMessage } from '../bank-statement-import/bank-statement-import.messages';
-import { mappingHasUsableBalance } from '../bank-statement-import/bank-statement-tabular-mapping.logic';
+import { BankStatementImportService } from '../bank-statement-import/bank-statement-import.service';
+import { BankStatementTabularMapping } from '../bank-statement-import/bank-statement-import.models';
+import { importErrorMessage, importErrorOf, sessionFailureMessage } from '../bank-statement-import/bank-statement-import.messages';
+import { columnLabel, mappingHasUsableBalance, withLabelColumnSlot } from '../bank-statement-import/bank-statement-tabular-mapping.logic';
 
 const DOCUMENT_EXTENSIONS = ['.pdf', '.png', '.jpg', '.jpeg', '.webp'];
 const TABULAR_EXTENSIONS = ['.csv', '.xlsx'];
@@ -79,17 +80,23 @@ type PageView = 'source' | 'mapping';
         <fieldset class="bse-filetype">
           <legend i18n="@@accounting.bank-statement-entries.type.de.fichier.58a0c10e">Type de fichier</legend>
           <label>
-            <input type="radio" name="bse-filetype" value="document" [(ngModel)]="fileKindChoice" (ngModelChange)="onFileKindChoiceChange()" />
+            <input type="radio" name="bse-filetype" value="document" [(ngModel)]="fileKindChoice" (ngModelChange)="onFileKindChoiceChange()" [disabled]="aiBlocked()" />
             <span i18n="@@accounting.bank-statement-entries.pdf.ou.image.analyse.par.l.ia.54432f1b">PDF ou image — analysé par l'IA</span>
           </label>
+          @if (aiBlocked()) {
+            <p class="bse-hint bse-hint--blocked" role="alert" data-testid="bse-ai-blocked">{{ aiUnavailableHint() }}</p>
+          }
           <label>
-            <input type="radio" name="bse-filetype" value="tabular" [(ngModel)]="fileKindChoice" (ngModelChange)="onFileKindChoiceChange()" />
+            <input type="radio" name="bse-filetype" value="tabular" [(ngModel)]="fileKindChoice" (ngModelChange)="onFileKindChoiceChange()" [disabled]="tabularBlocked()" />
             <span i18n="@@accounting.bank-statement-entries.csv.ou.excel.xlsx.1f85a221">CSV ou Excel (.xlsx)</span>
           </label>
+          @if (tabularBlocked()) {
+            <p class="bse-hint bse-hint--blocked" role="alert" data-testid="bse-tabular-blocked">{{ tabularDisabledHint() }}</p>
+          }
         </fieldset>
 
-        <label class="bse-label" i18n="@@accounting.bank-statement-entries.fichier.du.releve.515edb30">Fichier du relevé</label>
-        <input #fileInput type="file" class="bse-file-input" tabindex="-1" aria-hidden="true"
+        <label class="bse-label" for="bse-file-input" i18n="@@accounting.bank-statement-entries.fichier.du.releve.515edb30">Fichier du relevé</label>
+        <input #fileInput id="bse-file-input" type="file" class="bse-file-input"
                [attr.accept]="acceptAttr()" (change)="onFileSelected($event)" />
         <div class="bse-dropzone" data-testid="bse-dropzone" (dragover)="$event.preventDefault()" (drop)="onDrop($event)">
           @if (store.file(); as f) {
@@ -102,9 +109,9 @@ type PageView = 'source' | 'mapping';
           }
         </div>
         @if (fileKindChoice === 'tabular') {
-          <p class="bse-hint" i18n="@@accounting.bank-statement-entries.csv.ou.xlsx.taille.maximale.10.mo.2f86101b">CSV ou XLSX — taille maximale : 10 Mo.</p>
+          <p class="bse-hint" i18n="@@accounting.bank-statement-entries.csv.ou.xlsx.taille.maximale.mo.1f3b2c9a">CSV ou XLSX — taille maximale : {{ maxMegabytes() }} Mo.</p>
         } @else {
-          <p class="bse-hint" i18n="@@accounting.bank-statement-entries.pdf.ou.image.taille.maximale.10.mo.29271946">PDF ou image — taille maximale : 10 Mo.</p>
+          <p class="bse-hint" i18n="@@accounting.bank-statement-entries.pdf.ou.image.taille.maximale.mo.2a7f1b9e">PDF ou image — taille maximale : {{ maxMegabytes() }} Mo.</p>
         }
 
         @if (store.sourceError(); as err) {
@@ -179,22 +186,22 @@ type PageView = 'source' | 'mapping';
           }
 
           <h3 i18n="@@accounting.bank-statement-entries.lecture.du.fichier.6a0f3b9e">Lecture du fichier</h3>
-          <app-bse-tabular-settings [mapping]="mapping()!" [format]="preview.format" [sheetNames]="preview.sheetNames"
+          <app-bse-tabular-settings [mapping]="store.mapping()!" [format]="preview.format" [sheetNames]="preview.sheetNames"
                                      [disabled]="store.submitting()" (mappingChange)="patchMapping($event)" />
 
           <h3 i18n="@@accounting.bank-statement-entries.apercu.des.lignes.brutes.1b7d4e2a">Aperçu des lignes brutes</h3>
-          <app-bse-tabular-rows-preview [rows]="preview.rows" [columns]="preview.columns" [headerRowIndex]="mapping()?.headerRowIndex ?? 0" />
+          <app-bse-tabular-rows-preview [rows]="preview.rows" [columns]="preview.columns" [headerRowIndex]="store.mapping()?.headerRowIndex ?? 0" />
 
           <h3 i18n="@@accounting.bank-statement-entries.association.des.colonnes.2c9e4a7f">Association des colonnes</h3>
           <label class="bse-label" for="bse-date-column" i18n="@@accounting.bank-statement-entries.date.d.operation.e0766a55">Date d'opération</label>
-          <select id="bse-date-column" class="bse-input" data-testid="bse-map-date" [ngModel]="mapping()?.dateColumn" (ngModelChange)="patchMapping({ dateColumn: $event })">
+          <select id="bse-date-column" class="bse-input" data-testid="bse-map-date" [ngModel]="store.mapping()?.dateColumn" (ngModelChange)="patchMapping({ dateColumn: $event })">
             @for (col of preview.columns; track col.index) {
               <option [ngValue]="col.index">{{ columnLabel(col) }}</option>
             }
           </select>
 
           <label class="bse-label" for="bse-label-column" i18n="@@accounting.bank-statement-entries.libelle.f5485bba">Libellé</label>
-          <select id="bse-label-column" class="bse-input" data-testid="bse-map-label" [ngModel]="mapping()?.labelColumns?.[0]" (ngModelChange)="patchLabelColumn($event)">
+          <select id="bse-label-column" class="bse-input" data-testid="bse-map-label" [ngModel]="store.mapping()?.labelColumns?.[0]" (ngModelChange)="patchLabelColumn($event)">
             @for (col of preview.columns; track col.index) {
               <option [ngValue]="col.index">{{ columnLabel(col) }}</option>
             }
@@ -202,47 +209,47 @@ type PageView = 'source' | 'mapping';
 
           <label class="bse-label" i18n="@@accounting.bank-statement-entries.sens.des.montants.7028199a">Sens des montants</label>
           <label>
-            <input type="radio" name="bse-amount-mode" value="debitCredit" [ngModel]="mapping()?.amountMode" (ngModelChange)="patchMapping({ amountMode: $event })" />
+            <input type="radio" name="bse-amount-mode" value="debitCredit" [ngModel]="store.mapping()?.amountMode" (ngModelChange)="patchMapping({ amountMode: $event })" />
             <span i18n="@@accounting.bank-statement-entries.deux.colonnes.debit.et.credit.41a73dfa">Deux colonnes : Débit et Crédit</span>
           </label>
           <label>
-            <input type="radio" name="bse-amount-mode" value="signed" [ngModel]="mapping()?.amountMode" (ngModelChange)="patchMapping({ amountMode: $event })" />
+            <input type="radio" name="bse-amount-mode" value="signed" [ngModel]="store.mapping()?.amountMode" (ngModelChange)="patchMapping({ amountMode: $event })" />
             <span i18n="@@accounting.bank-statement-entries.une.colonne.montant.signe.3e9c333e">Une colonne : Montant signé</span>
           </label>
 
-          @if (mapping()?.amountMode === 'signed') {
+          @if (store.mapping()?.amountMode === 'signed') {
             <label class="bse-label" for="bse-amount-column" i18n="@@accounting.bank-statement-entries.montant.4adcd9fc">Montant</label>
-            <select id="bse-amount-column" class="bse-input" data-testid="bse-map-amount" [ngModel]="mapping()?.amountColumn" (ngModelChange)="patchMapping({ amountColumn: $event })">
+            <select id="bse-amount-column" class="bse-input" data-testid="bse-map-amount" [ngModel]="store.mapping()?.amountColumn" (ngModelChange)="patchMapping({ amountColumn: $event })">
               @for (col of preview.columns; track col.index) {
                 <option [ngValue]="col.index">{{ columnLabel(col) }}</option>
               }
             </select>
           } @else {
             <label class="bse-label" for="bse-debit-column" i18n="@@accounting.bank-statement-entries.debit.f528224f">Débit</label>
-            <select id="bse-debit-column" class="bse-input" data-testid="bse-map-debit" [ngModel]="mapping()?.debitColumn" (ngModelChange)="patchMapping({ debitColumn: $event })">
+            <select id="bse-debit-column" class="bse-input" data-testid="bse-map-debit" [ngModel]="store.mapping()?.debitColumn" (ngModelChange)="patchMapping({ debitColumn: $event })">
               @for (col of preview.columns; track col.index) {
                 <option [ngValue]="col.index">{{ columnLabel(col) }}</option>
               }
             </select>
             <label class="bse-label" for="bse-credit-column" i18n="@@accounting.bank-statement-entries.credit.19194bdf">Crédit</label>
-            <select id="bse-credit-column" class="bse-input" data-testid="bse-map-credit" [ngModel]="mapping()?.creditColumn" (ngModelChange)="patchMapping({ creditColumn: $event })">
+            <select id="bse-credit-column" class="bse-input" data-testid="bse-map-credit" [ngModel]="store.mapping()?.creditColumn" (ngModelChange)="patchMapping({ creditColumn: $event })">
               @for (col of preview.columns; track col.index) {
                 <option [ngValue]="col.index">{{ columnLabel(col) }}</option>
               }
             </select>
           }
 
-          <app-bse-tabular-column-roles [mapping]="mapping()!" [columns]="preview.columns" [disabled]="store.submitting()" (mappingChange)="patchMapping($event)" />
+          <app-bse-tabular-column-roles [mapping]="store.mapping()!" [columns]="preview.columns" [disabled]="store.submitting()" (mappingChange)="patchMapping($event)" />
 
           @if (!hasUsableBalance()) {
             <h3 i18n="@@accounting.bank-statement-entries.soldes.d.ouverture.et.de.cloture.0e8d4c2a">Soldes d'ouverture et de clôture</h3>
             <p class="bse-hint" i18n="@@accounting.bank-statement-entries.obligatoires.en.l.absence.de.colonne.solde.9c1a3e7b">Obligatoires en l'absence de colonne solde.</p>
             <label class="bse-label" for="bse-opening-balance" i18n="@@accounting.bank-statement-entries.solde.d.ouverture.3f9b2c1e">Solde d'ouverture</label>
             <input id="bse-opening-balance" type="number" step="0.001" class="bse-input" data-testid="bse-map-opening-balance"
-                   [ngModel]="mapping()?.openingBalance ?? null" (ngModelChange)="patchMapping({ openingBalance: $event })" />
+                   [ngModel]="store.mapping()?.openingBalance ?? null" (ngModelChange)="patchMapping({ openingBalance: $event })" />
             <label class="bse-label" for="bse-closing-balance" i18n="@@accounting.bank-statement-entries.solde.de.cloture.7a1d9c3f">Solde de clôture</label>
             <input id="bse-closing-balance" type="number" step="0.001" class="bse-input" data-testid="bse-map-closing-balance"
-                   [ngModel]="mapping()?.closingBalance ?? null" (ngModelChange)="patchMapping({ closingBalance: $event })" />
+                   [ngModel]="store.mapping()?.closingBalance ?? null" (ngModelChange)="patchMapping({ closingBalance: $event })" />
           }
 
           <h3 i18n="@@accounting.bank-statement-entries.apercu.des.lignes.interpretees.4b7e2d9a">Aperçu des lignes interprétées</h3>
@@ -272,6 +279,7 @@ type PageView = 'source' | 'mapping';
       .bse-label { display: block; margin-top: 0.75rem; font-weight: 600; }
       .bse-input { width: 100%; max-width: 420px; padding: 0.4rem 0.6rem; margin-top: 0.25rem; }
       .bse-hint { color: #6c757d; font-size: 0.85rem; margin: 0.35rem 0; }
+      .bse-hint--blocked { color: var(--color-danger, #842029); font-weight: 600; }
       .bse-alert { padding: 0.6rem 0.9rem; border-radius: 6px; margin: 0.5rem 0; }
       .bse-alert--error { background: #f8d7da; color: #842029; }
       .bse-alert--warning { background: #fff3cd; color: #664d03; }
@@ -292,20 +300,49 @@ export class BankStatementEntriesPageComponent implements OnInit {
   private readonly router = inject(Router);
 
   @ViewChild('fileInput') private readonly fileInputRef?: ElementRef<HTMLInputElement>;
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly view = signal<PageView>('source');
   fileKindChoice: 'document' | 'tabular' = 'document';
-  readonly capabilities = signal<BankStatementImportCapabilities | null>(null);
   /** Origine du mappage pré-rempli à l'étape 2, pour la bannière d'information. */
   readonly mappingSource = signal<'saved' | 'suggested' | null>(null);
+  /** Vrai dès qu'un import a été envoyé avec succès : plus de confirmation de perte au départ. */
+  private readonly submitted = signal(false);
 
   private readonly mappingChange$ = new Subject<void>();
 
-  readonly mapping = computed(() => this.store.mapping());
+  /** Taille maximale affichée (Mo), déduite des capacités serveur — 10 Mo si pas encore chargées. */
+  readonly maxMegabytes = computed(() => Math.round((this.store.capabilities()?.maxFileBytes ?? 10 * 1024 * 1024) / (1024 * 1024)));
+
+  /** PDF/image bloqué : capacités chargées ET IA indisponible côté serveur. */
+  readonly aiBlocked = computed(() => {
+    const caps = this.store.capabilities();
+    return !!caps && !caps.aiAvailable;
+  });
+
+  /** CSV/Excel bloqué : capacités chargées ET import tabulaire explicitement désactivé. */
+  readonly tabularBlocked = computed(() => {
+    const caps = this.store.capabilities();
+    return !!caps && caps.tabularEnabled === false;
+  });
+
+  aiUnavailableHint(): string {
+    return sessionFailureMessage('ai_unavailable');
+  }
+
+  tabularDisabledHint(): string {
+    return importErrorMessage('bank_statement_import.tabular_disabled');
+  }
 
   ngOnInit(): void {
     this.store.loadSourceReferences();
     this.loadHistory();
+    this.api.capabilities().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(caps => {
+      this.store.capabilities.set(caps);
+      if (!caps) return;
+      if (caps.tabularEnabled === false && this.fileKindChoice === 'tabular') this.fileKindChoice = 'document';
+      if (!caps.aiAvailable && this.fileKindChoice === 'document' && caps.tabularEnabled !== false) this.fileKindChoice = 'tabular';
+    });
 
     this.mappingChange$
       .pipe(
@@ -317,11 +354,12 @@ export class BankStatementEntriesPageComponent implements OnInit {
           this.store.tabularPreviewLoading.set(true);
           return this.api.tabularPreview(file, mapping, this.store.bankAccountId() ?? undefined).pipe(
             catchError((err: unknown) => {
-              this.store.tabularPreviewError.set(importErrorMessage(err instanceof BankStatementImportError ? err.code : null));
+              this.store.tabularPreviewError.set(importErrorOf(err));
               return of(null);
             })
           );
-        })
+        }),
+        takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(preview => {
         this.store.tabularPreviewLoading.set(false);
@@ -334,14 +372,16 @@ export class BankStatementEntriesPageComponent implements OnInit {
 
   private loadHistory(): void {
     this.store.historyLoading.set(true);
-    this.api.history(this.store.historyPage(), this.store.historyPageSize()).subscribe({
-      next: page => {
-        this.store.historyItems.set(page.items);
-        this.store.historyTotal.set(page.totalCount);
-        this.store.historyLoading.set(false);
-      },
-      error: () => this.store.historyLoading.set(false)
-    });
+    this.api.history(this.store.historyPage(), this.store.historyPageSize())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: page => {
+          this.store.historyItems.set(page.items);
+          this.store.historyTotal.set(page.totalCount);
+          this.store.historyLoading.set(false);
+        },
+        error: () => this.store.historyLoading.set(false)
+      });
   }
 
   accountLabel(account: BankAccountDto): string {
@@ -349,9 +389,7 @@ export class BankStatementEntriesPageComponent implements OnInit {
     return account.chartOfAccountNumber ? `${account.chartOfAccountNumber} — ${name}` : name;
   }
 
-  columnLabel(col: { letter: string; header: string | null }): string {
-    return col.header ? `${col.letter} · « ${col.header} »` : col.letter;
-  }
+  readonly columnLabel = columnLabel;
 
   hasUsableBalance(): boolean {
     const mapping = this.store.mapping();
@@ -359,9 +397,13 @@ export class BankStatementEntriesPageComponent implements OnInit {
   }
 
   acceptAttr(): string {
-    return this.fileKindChoice === 'tabular'
-      ? '.csv,.xlsx,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      : '.pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/png,image/jpeg,image/webp';
+    const caps = this.store.capabilities();
+    if (this.fileKindChoice === 'tabular') {
+      const extensions = caps?.tabularExtensions;
+      return extensions && extensions.length > 0 ? extensions.join(',') : TABULAR_EXTENSIONS.join(',');
+    }
+    const extensions = caps?.acceptedExtensions;
+    return extensions && extensions.length > 0 ? extensions.join(',') : DOCUMENT_EXTENSIONS.join(',');
   }
 
   onFileKindChoiceChange(): void {
@@ -382,6 +424,15 @@ export class BankStatementEntriesPageComponent implements OnInit {
   }
 
   private applyFile(file: File): void {
+    if (file.size === 0) {
+      this.store.sourceError.set(importErrorMessage('bank_statement_import.file_rejected'));
+      return;
+    }
+    const maxBytes = this.store.capabilities()?.maxFileBytes ?? 10 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      this.store.sourceError.set(importErrorMessage('bank_statement_import.file_too_large'));
+      return;
+    }
     const name = file.name.toLowerCase();
     const kind = this.fileKindChoice === 'tabular' ? 'tabular' : 'document';
     const expected = kind === 'tabular' ? TABULAR_EXTENSIONS : DOCUMENT_EXTENSIONS;
@@ -397,19 +448,21 @@ export class BankStatementEntriesPageComponent implements OnInit {
     if (!file) return;
     this.view.set('mapping');
     this.store.tabularPreviewLoading.set(true);
-    this.api.tabularPreview(file, undefined, this.store.bankAccountId() ?? undefined).subscribe({
-      next: preview => {
-        this.store.tabularPreviewLoading.set(false);
-        this.store.tabularPreview.set(preview);
-        this.store.mapping.set(preview.savedMapping ?? preview.suggestedMapping ?? null);
-        this.store.rememberMapping.set(!!preview.savedMapping);
-        this.mappingSource.set(preview.savedMapping ? 'saved' : preview.suggestedMapping ? 'suggested' : null);
-      },
-      error: (err: unknown) => {
-        this.store.tabularPreviewLoading.set(false);
-        this.store.tabularPreviewError.set(importErrorMessage(err instanceof BankStatementImportError ? err.code : null));
-      }
-    });
+    this.api.tabularPreview(file, undefined, this.store.bankAccountId() ?? undefined)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: preview => {
+          this.store.tabularPreviewLoading.set(false);
+          this.store.tabularPreview.set(preview);
+          this.store.mapping.set(preview.savedMapping ?? preview.suggestedMapping ?? null);
+          this.store.rememberMapping.set(!!preview.savedMapping);
+          this.mappingSource.set(preview.savedMapping ? 'saved' : preview.suggestedMapping ? 'suggested' : null);
+        },
+        error: (err: unknown) => {
+          this.store.tabularPreviewLoading.set(false);
+          this.store.tabularPreviewError.set(importErrorOf(err));
+        }
+      });
   }
 
   backToSource(): void {
@@ -423,8 +476,9 @@ export class BankStatementEntriesPageComponent implements OnInit {
 
   /** La colonne « Libellé » principale occupe le slot 0 ; les slots 1/2 (optionnels) sont préservés. */
   patchLabelColumn(column: number): void {
-    const rest = this.store.mapping()?.labelColumns?.slice(1) ?? [];
-    this.patchMapping({ labelColumns: [column, ...rest] });
+    const mapping = this.store.mapping();
+    if (!mapping) return;
+    this.patchMapping({ labelColumns: withLabelColumnSlot(mapping, 0, column) });
   }
 
   startDocumentImport(): void {
@@ -436,11 +490,12 @@ export class BankStatementEntriesPageComponent implements OnInit {
     this.api.start(file, bankAccountId, this.store.journalCode()).subscribe({
       next: session => {
         this.store.submitting.set(false);
+        this.submitted.set(true);
         void this.router.navigate(['/accounting/bank-statement-entries/session', session.id]);
       },
       error: (err: unknown) => {
         this.store.submitting.set(false);
-        this.store.sourceError.set(importErrorMessage(err instanceof BankStatementImportError ? err.code : null));
+        this.store.sourceError.set(importErrorOf(err));
       }
     });
   }
@@ -456,18 +511,19 @@ export class BankStatementEntriesPageComponent implements OnInit {
     this.api.startTabular(file, bankAccountId, this.store.journalCode(), finalMapping).subscribe({
       next: session => {
         this.store.submitting.set(false);
+        this.submitted.set(true);
         void this.router.navigate(['/accounting/bank-statement-entries/session', session.id]);
       },
       error: (err: unknown) => {
         this.store.submitting.set(false);
-        this.store.tabularPreviewError.set(importErrorMessage(err instanceof BankStatementImportError ? err.code : null));
+        this.store.tabularPreviewError.set(importErrorOf(err));
       }
     });
   }
 
   /** Fichier choisi non envoyé = perte potentielle si l'utilisateur quitte sans lancer l'import. */
   isDirty(): boolean {
-    return !!this.store.file() && !this.store.submitting();
+    return !!this.store.file() && !this.store.submitting() && !this.submitted();
   }
 
   canDeactivate(): boolean {

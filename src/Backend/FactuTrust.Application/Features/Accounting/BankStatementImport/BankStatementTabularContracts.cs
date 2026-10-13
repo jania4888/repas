@@ -72,8 +72,10 @@ public sealed record BankStatementTabularMappingDto
 
     /// <summary>
     /// Lignes à ignorer en plus de l'en-tête et des pieds de page détectés automatiquement.
-    /// Convention 1-based, identique à <c>rowNumber</c> dans <c>rows[]</c>/<c>parsedLines[]</c> :
-    /// un IgnoredRows de 1 désigne la première ligne de données affichée, jamais un index 0-based interne.
+    /// Numéros de ligne DU FICHIER, 1-based (la 1ère ligne du fichier — généralement l'en-tête — est
+    /// la ligne 1), identique à <c>rowNumber</c> dans <c>rows[]</c>/<c>parsedLines[]</c> : jamais un
+    /// index 0-based interne, et jamais relatif aux lignes de données (une ligne d'en-tête à l'index
+    /// 0 fait que la première ligne de données est le numéro 2, pas 1).
     /// </summary>
     public IReadOnlyList<int>? IgnoredRows { get; init; }
 

@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BankStatementTabularColumn, BankStatementTabularMapping, TabularSignConvention } from '../bank-statement-import/bank-statement-import.models';
-import { labelColumnSlot, withLabelColumnSlot } from '../bank-statement-import/bank-statement-tabular-mapping.logic';
+import { columnLabel, labelColumnSlot, withLabelColumnSlot } from '../bank-statement-import/bank-statement-tabular-mapping.logic';
 
 /**
  * Sélecteurs de rôle de colonne optionnels (étape 2) non couverts par les champs obligatoires
@@ -111,9 +111,8 @@ export class BseTabularColumnRolesComponent {
 
   readonly mappingChange = output<Partial<BankStatementTabularMapping>>();
 
-  columnLabel(col: { letter: string; header: string | null }): string {
-    return col.header ? `${col.letter} · « ${col.header} »` : col.letter;
-  }
+  /** Libellé affiché d'une colonne, partagé avec le composant parent (helper pur). */
+  readonly columnLabel = columnLabel;
 
   labelSlot(slot: 0 | 1 | 2): number | null {
     return labelColumnSlot(this.mapping(), slot);

@@ -29,6 +29,11 @@ export function tabularDateFormatLabel(format: TabularDateFormat): string {
   return DATE_FORMAT_LABELS[format] ?? format;
 }
 
+/** Libellé affiché d'une colonne (lettre + en-tête si connu), utilisé par tous les sélecteurs de colonne. */
+export function columnLabel(col: { letter: string; header: string | null }): string {
+  return col.header ? `${col.letter} · « ${col.header} »` : col.letter;
+}
+
 /** Lit le N-ième (0, 1 ou 2) numéro de colonne « Libellé » du mappage ; `null` si absent. */
 export function labelColumnSlot(mapping: BankStatementTabularMapping, slot: 0 | 1 | 2): number | null {
   return mapping.labelColumns[slot] ?? null;

@@ -1,5 +1,6 @@
 /// <reference types="@angular/localize" />
 import { LineConfidence, LineProposalSource, LineStatus } from './bank-statement-import.models';
+import { BankStatementImportError } from './bank-statement-import.service';
 
 /**
  * Textes affichés selon les CODES stables renvoyés par l'API (jamais selon le texte français du
@@ -77,6 +78,16 @@ export function importErrorMessage(code: string | null | undefined): string {
     default:
       return $localize`:@@accounting.bank-statement-import.ts.l.operation.a.echoue.reessayez.ou.contactez.le.s.23720b33:L'opération a échoué. Réessayez ou contactez le support.`;
   }
+}
+
+/** Message selon le CODE d'une erreur d'API (jamais selon `err.message`, qui peut porter du texte serveur). */
+export function importErrorOf(err: unknown): string {
+  return importErrorMessage(err instanceof BankStatementImportError ? err.code : null);
+}
+
+/** Après une relecture de sécurité suivant une erreur réseau/concurrence à la génération : résultat incertain. */
+export function uncertainResultAfterReloadMessage(): string {
+  return $localize`:@@accounting.bank-statement-import.ts.resultat.incertain.propositions.rechargees.b7e1a4c2:Le résultat est incertain : les propositions ont été rechargées. Vérifiez puis relancez.`;
 }
 
 /** Libellé court d'un motif de refus à la génération d'une ligne. */

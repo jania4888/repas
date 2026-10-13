@@ -66,4 +66,10 @@ internal static class BankStatementImportGuards
         foreach (var session in expired)
             files.TryDelete(session.StoragePath);
     }
+
+    /// <summary>4 derniers chiffres du RIB (jamais le RIB complet dans un log/message au client).</summary>
+    public static string MaskRib(string? rib) => string.IsNullOrEmpty(rib) || rib.Length < 4 ? "????" : rib[^4..];
+
+    /// <summary>Tronque sans dépasser <paramref name="max"/> caractères (libellés/valeurs de cellule bornés avant stockage/affichage).</summary>
+    public static string Truncate(string value, int max) => value.Length <= max ? value : value[..max];
 }

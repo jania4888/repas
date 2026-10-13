@@ -138,7 +138,7 @@ public sealed class BankStatementPostingService : IBankStatementPostingService
             query = query.Where(s => s.BankAccountId == id);
 
         var total = await query.CountAsync(cancellationToken);
-        var page_ = await query
+        var pageRows = await query
             .OrderByDescending(s => s.CreatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -156,7 +156,7 @@ public sealed class BankStatementPostingService : IBankStatementPostingService
             })
             .ToListAsync(cancellationToken);
 
-        var statementIds = page_.Select(s => s.Id).ToList();
+        var statementIds = pageRows.Select(s => s.Id).ToList();
         var postedCounts = statementIds.Count == 0
             ? new Dictionary<Guid, int>()
             : await ctx.BankStatementLines.AsNoTracking()
@@ -166,7 +166,7 @@ public sealed class BankStatementPostingService : IBankStatementPostingService
                 .Select(g => new { StatementId = g.Key, Count = g.Count() })
                 .ToDictionaryAsync(g => g.StatementId, g => g.Count, cancellationToken);
 
-        var bankAccountIds = page_.Where(s => s.BankAccountId is not null).Select(s => s.BankAccountId!.Value).Distinct().ToList();
+        var bankAccountIds = pageRows.Where(s => s.BankAccountId is not null).Select(s => s.BankAccountId!.Value).Distinct().ToList();
         var ribs = bankAccountIds.Count == 0
             ? new Dictionary<Guid, string?>()
             : await ctx.BankAccounts.AsNoTracking()
@@ -174,11 +174,11 @@ public sealed class BankStatementPostingService : IBankStatementPostingService
                 .Select(b => new { b.Id, b.Rib })
                 .ToDictionaryAsync(b => b.Id, b => b.Rib, cancellationToken);
 
-        var items = page_.Select(s => new BankStatementImportHistoryItemDto
+        var items = pageRows.Select(s => new BankStatementImportHistoryItemDto
         {
             Id = s.Id,
             BankName = s.BankName,
-            MaskedRib = MaskRib(s.BankAccountId is { } bid && ribs.TryGetValue(bid, out var rib) ? rib : null),
+            MaskedRib = BankStatementImportGuards.MaskRib(s.BankAccountId is { } bid && ribs.TryGetValue(bid, out var rib) ? rib : null),
             PeriodStart = s.PeriodStart,
             PeriodEnd = s.PeriodEnd,
             LineCount = s.LineCount,
@@ -190,8 +190,6 @@ public sealed class BankStatementPostingService : IBankStatementPostingService
 
         return Result.Success(PagedResult<BankStatementImportHistoryItemDto>.Create(items, page, pageSize, total));
     }
-
-    private static string MaskRib(string? rib) => string.IsNullOrEmpty(rib) || rib.Length < 4 ? "????" : rib[^4..];
 
     private async Task<Result<(BankStatement Statement, BankStatementProposalEngine.Context Context)>> LoadContextAsync(
         TenantDbContext ctx, Guid statementId, BankProposalOptions options, CancellationToken cancellationToken)
@@ -636,6 +634,29 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
 
     // ── Génération ──────────────────────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Prépare une génération (atomique ou non) : vérifie que <paramref name="journalCode"/> est
+    /// un journal de banque actif, charge le relevé + le contexte de proposition, puis calcule les
+    /// propositions. Partagé par <see cref="GenerateAsync"/> et <see cref="GenerateAtomicAsync"/>
+    /// (même préambule, deux stratégies d'écriture différentes ensuite).
+    /// </summary>
+    private async Task<Result<(BankStatement Statement, BankStatementProposalEngine.Context Context, IReadOnlyList<BankLineProposalDto> Proposals)>> LoadGenerationContextAsync(
+        Guid statementId, string journalCode, BankProposalOptions options, CancellationToken cancellationToken)
+    {
+        await using var ctx = _contextFactory.CreateContext();
+        if (!await BankJournalRules.IsBankJournalAsync(ctx, journalCode, cancellationToken))
+            return Fail<(BankStatement, BankStatementProposalEngine.Context, IReadOnlyList<BankLineProposalDto>)>(
+                BankStatementPostingErrorCodes.JournalInvalid, $"Le journal « {journalCode} » n'est pas un journal de banque actif.");
+
+        var loaded = await LoadContextAsync(ctx, statementId, options, cancellationToken);
+        if (loaded.IsFailure)
+            return Result.Failure<(BankStatement, BankStatementProposalEngine.Context, IReadOnlyList<BankLineProposalDto>)>(loaded.Error);
+
+        var (statement, context) = loaded.Value;
+        var proposals = BankStatementProposalEngine.Propose(context);
+        return Result.Success((statement, context, proposals));
+    }
+
     public async Task<Result<GenerateBankStatementEntriesResult>> GenerateAsync(
         Guid statementId, GenerateBankStatementEntriesRequest request, CancellationToken cancellationToken = default)
     {
@@ -645,7 +666,7 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
             return Fail<GenerateBankStatementEntriesResult>(BankStatementPostingErrorCodes.DraftsDisabled,
                 "Le brouillard est désactivé : les écritures d'un relevé ne peuvent être générées qu'en brouillard, pour être validées ensuite.");
         if (request.Items.Count == 0 && !request.Atomic)
-            return Result.Success(new GenerateBankStatementEntriesResult { Atomic = request.Atomic });
+            return Result.Success(new GenerateBankStatementEntriesResult());
 
         var journalCode = (string.IsNullOrWhiteSpace(request.JournalCode) ? BankJournalRules.DefaultBankJournalCode : request.JournalCode).Trim().ToUpperInvariant();
 
@@ -657,21 +678,10 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
                 $"Au plus {_settings.BankStatementImport.MaxGenerationBatch} lignes par envoi.");
 
         var options = request.Assist ? BankProposalOptions.Full : BankProposalOptions.None;
-        BankStatement statement;
-        IReadOnlyList<BankLineProposalDto> proposals;
-        BankStatementProposalEngine.Context context;
-        await using (var ctx = _contextFactory.CreateContext())
-        {
-            if (!await BankJournalRules.IsBankJournalAsync(ctx, journalCode, cancellationToken))
-                return Fail<GenerateBankStatementEntriesResult>(BankStatementPostingErrorCodes.JournalInvalid,
-                    $"Le journal « {journalCode} » n'est pas un journal de banque actif.");
-
-            var loaded = await LoadContextAsync(ctx, statementId, options, cancellationToken);
-            if (loaded.IsFailure)
-                return Result.Failure<GenerateBankStatementEntriesResult>(loaded.Error);
-            (statement, context) = loaded.Value;
-            proposals = BankStatementProposalEngine.Propose(context);
-        }
+        var loadedGeneration = await LoadGenerationContextAsync(statementId, journalCode, options, cancellationToken);
+        if (loadedGeneration.IsFailure)
+            return Result.Failure<GenerateBankStatementEntriesResult>(loadedGeneration.Error);
+        var (statement, context, proposals) = loadedGeneration.Value;
 
         var byLine = proposals.ToDictionary(p => p.LineId);
         var lines = statement.Lines.ToDictionary(l => l.Id);
@@ -752,21 +762,10 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
                 $"Au plus {_settings.BankStatementImport.MaxAtomicGenerationLines} lignes en génération atomique : scindez le relevé par période.");
 
         var options = request.Assist ? BankProposalOptions.Full : BankProposalOptions.None;
-        BankStatement statement;
-        IReadOnlyList<BankLineProposalDto> proposals;
-        BankStatementProposalEngine.Context context;
-        await using (var ctx = _contextFactory.CreateContext())
-        {
-            if (!await BankJournalRules.IsBankJournalAsync(ctx, journalCode, cancellationToken))
-                return Fail<GenerateBankStatementEntriesResult>(BankStatementPostingErrorCodes.JournalInvalid,
-                    $"Le journal « {journalCode} » n'est pas un journal de banque actif.");
-
-            var loaded = await LoadContextAsync(ctx, statementId, options, cancellationToken);
-            if (loaded.IsFailure)
-                return Result.Failure<GenerateBankStatementEntriesResult>(loaded.Error);
-            (statement, context) = loaded.Value;
-            proposals = BankStatementProposalEngine.Propose(context);
-        }
+        var loadedGeneration = await LoadGenerationContextAsync(statementId, journalCode, options, cancellationToken);
+        if (loadedGeneration.IsFailure)
+            return Result.Failure<GenerateBankStatementEntriesResult>(loadedGeneration.Error);
+        var (statement, context, proposals) = loadedGeneration.Value;
 
         var byLine = proposals.ToDictionary(p => p.LineId);
         var lines = statement.Lines.ToDictionary(l => l.Id);
@@ -946,7 +945,7 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
                         isAutoGenerated: false, TenantDbContext.BankStatementLineSourceType, line.Id,
                         inputs.Select(i => new JournalLineInput(i.Account, i.Label, i.Debit, i.Credit, i.ThirdPartyId, i.Kind)).ToList(),
                         Money.DefaultCurrency, reversesEntryId: null, initialStatus: JournalEntryStatus.Brouillon,
-                        pieceRef: reference is null ? null : Truncate(reference, 50), pieceDate: line.TransactionDate.Date);
+                        pieceRef: reference is null ? null : BankStatementImportGuards.Truncate(reference, 50), pieceDate: line.TransactionDate.Date);
                     if (create.IsFailure)
                         return Result.Failure<AtomicWriteResult>(new Error(BankStatementPostingErrorCodes.AtomicRejected, create.Error.Description));
 
@@ -986,6 +985,16 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
             _logger.LogWarning(ex, "Génération atomique : conflit d'idempotence sur le relevé {StatementId}.", statementId);
             atomicResult = Result.Failure<AtomicWriteResult>(new Error(BankStatementPostingErrorCodes.AtomicConflict,
                 "Une autre génération a déjà comptabilisé au moins une de ces lignes."));
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            // Une ligne touchée par l'écriture a été modifiée/supprimée par ailleurs entre notre
+            // lecture et notre commit (jeton de concurrence optimiste périmé) : conflit propre,
+            // nouvelle tentative possible côté client — doit être intercepté avant le catch-all
+            // DbUpdateException générique puisque c'est une sous-classe.
+            _logger.LogWarning(ex, "Génération atomique : conflit de concurrence optimiste sur le relevé {StatementId}.", statementId);
+            atomicResult = Result.Failure<AtomicWriteResult>(new Error(BankStatementPostingErrorCodes.AtomicConflict,
+                "Une donnée a été modifiée entre-temps par un autre processus : nouvelle tentative possible."));
         }
         catch (DbUpdateException ex)
         {
@@ -1045,11 +1054,7 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
         // Audits « règle mémorisée » différés jusqu'ici : écrits seulement une fois le commit de la
         // transaction englobante confirmé, pour ne jamais laisser un audit mensonger après rollback.
         foreach (var info in atomicResult.Value.RuleAudits)
-        {
-            await _audit.LogAsync(AuditActions.Accounting.BankPostingRuleSaved, nameof(BankPostingRule), info.RuleId,
-                newValues: new { info.Pattern, info.Account, info.Direction, info.ThirdPartyKind, info.SplitVat },
-                cancellationToken: cancellationToken);
-        }
+            await LogRuleSavedAsync(info, cancellationToken);
 
         return Result.Success(result);
     }
@@ -1096,7 +1101,7 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
         }
 
         var amount = line.Amount.Amount;
-        var label = Truncate(string.IsNullOrWhiteSpace(item.Label) ? line.Description : item.Label.Trim(), 500);
+        var label = BankStatementImportGuards.Truncate(string.IsNullOrWhiteSpace(item.Label) ? line.Description : item.Label.Trim(), 500);
         var bank = context.BankGlAccount;
 
         // Ventilation HT / TVA : débit seulement, TVA strictement entre 0 et le montant, au millime.
@@ -1172,7 +1177,7 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
                     Money.DefaultCurrency,
                     reversesEntryId: null,
                     initialStatus: JournalEntryStatus.Brouillon,
-                    pieceRef: reference is null ? null : Truncate(reference, 50),
+                    pieceRef: reference is null ? null : BankStatementImportGuards.Truncate(reference, 50),
                     pieceDate: entryDate);
                 if (create.IsFailure)
                     return Result.Failure<(Guid, int)>(create.Error);
@@ -1208,10 +1213,18 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
         var info = await PersistRememberedRuleAsync(ctx, statement, line, item, cancellationToken);
         if (info is null)
             return;
-        await _audit.LogAsync(AuditActions.Accounting.BankPostingRuleSaved, nameof(BankPostingRule), info.RuleId,
+        await LogRuleSavedAsync(info, cancellationToken);
+    }
+
+    /// <summary>
+    /// Écrit l'audit « règle de postage mémorisée » pour <paramref name="info"/>. Partagé par
+    /// <see cref="RememberRuleAsync"/> (hors mode atomique, audit immédiat) et la boucle différée de
+    /// <see cref="GenerateAtomicAsync"/> (audit après commit de la transaction englobante).
+    /// </summary>
+    private Task LogRuleSavedAsync(BankPostingRuleSaveInfo info, CancellationToken cancellationToken) =>
+        _audit.LogAsync(AuditActions.Accounting.BankPostingRuleSaved, nameof(BankPostingRule), info.RuleId,
             newValues: new { info.Pattern, info.Account, info.Direction, info.ThirdPartyKind, info.SplitVat },
             cancellationToken: cancellationToken);
-    }
 
     /// <summary>
     /// Persiste la règle « mémoriser » (fait partie de la transaction ambiante via <paramref name="ctx"/>)
@@ -1266,8 +1279,6 @@ Réponds UNIQUEMENT par un objet JSON : {"items":[{"id":1,"account":"6278"}]}
 
     private static GenerateBankStatementLineOutcome Failed(Guid lineId, string code, string message) =>
         new(lineId, "failed", code, message, null, null);
-
-    private static string Truncate(string value, int max) => value.Length <= max ? value : value[..max];
 
     private static Result<T> Fail<T>(string code, string message) => Result.Failure<T>(new Error(code, message));
 }

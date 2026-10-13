@@ -95,14 +95,20 @@ describe('BankStatementEntriesPostingComponent', () => {
     thirdPartySuggestions: signal([])
   };
 
-  async function create(statementId = 'st-1'): Promise<void> {
+  async function create(statementId = 'st-1', queryJournal: string | null = null): Promise<void> {
     params = new BehaviorSubject(convertToParamMap({ statementId }));
     await TestBed.configureTestingModule({
       imports: [BankStatementEntriesPostingComponent],
       providers: [
         provideNoopAnimations(),
         provideRouter([]),
-        { provide: ActivatedRoute, useValue: { paramMap: params.asObservable() } },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            paramMap: params.asObservable(),
+            queryParamMap: of(convertToParamMap(queryJournal ? { journal: queryJournal } : {}))
+          }
+        },
         { provide: BankStatementImportService, useValue: api },
         { provide: ConfirmationService, useValue: confirmation },
         { provide: AuthService, useValue: { hasPermission: () => false } },
@@ -111,7 +117,13 @@ describe('BankStatementEntriesPostingComponent', () => {
           provide: AccountingService,
           useValue: { getChartOfAccounts: () => of(null), getPeriods: () => of(null), getJournals: () => of(null), getCurrencies: () => of(null) }
         },
-        { provide: AccountingJournalCatalogService, useValue: { list: () => of([]) } }
+        {
+          provide: AccountingJournalCatalogService,
+          useValue: {
+            list: () => of([]),
+            listBankJournals: () => of([{ code: 'JB', label: 'Banque', icon: '', shortLabel: 'JB' }, { code: 'BQ2', label: 'Banque 2', icon: '', shortLabel: 'BQ2' }])
+          }
+        }
       ]
     })
       .overrideComponent(BankStatementEntriesPostingComponent, { set: { providers: [BankStatementEntriesStore, { provide: EntryReferenceStore, useValue: refs }] } })
@@ -142,6 +154,23 @@ describe('BankStatementEntriesPostingComponent', () => {
 
     expect(api.proposals).toHaveBeenCalledOnceWith('st-1', { assist: true });
     expect((fixture.nativeElement as HTMLElement).querySelector('[data-testid="bse-rows-table"]')).toBeTruthy();
+  });
+
+  it('charge le code de journal transmis par la session précédente (query param journal), validé contre les journaux de banque', async () => {
+    api.proposals.and.returnValue(of(proposals([proposal()])));
+    await create('st-1', 'BQ2');
+
+    // Jamais codé en dur à 'JB' (plan HIGH 1) : le journal réellement choisi lors du contrôle du
+    // relevé est propagé par la route et utilisé pour la génération et les liens vers le journal.
+    expect(component.store.journalCode()).toBe('BQ2');
+    expect(component.journalLinkParams().journalCode).toBe('BQ2');
+  });
+
+  it('retombe sur le premier journal de banque actif si le journal transmis est invalide ou absent', async () => {
+    api.proposals.and.returnValue(of(proposals([proposal()])));
+    await create('st-1', 'INVALID');
+
+    expect(component.store.journalCode()).toBe('JB');
   });
 
   it("affiche l'erreur si le chargement des propositions échoue", async () => {
@@ -248,6 +277,9 @@ describe('BankStatementEntriesPostingComponent', () => {
 
     component.backToGrid();
     expect(component.view()).toBe('grid');
+    // Les lignes refusées restent repérables après le retour à la grille (plan MED 6).
+    expect(component.store.rows().find(r => r.proposal.lineId === 'l-1')?.needsCorrection).toBeTrue();
+    expect(component.store.rowFilter()).toBe('rejected');
   });
 
   it('relit les propositions avant toute nouvelle tentative après une erreur réseau', async () => {
@@ -260,6 +292,11 @@ describe('BankStatementEntriesPostingComponent', () => {
 
     expect(api.proposals).toHaveBeenCalledTimes(2);
     expect(component.view()).toBe('grid');
+    // Résultat incertain (réseau) : pas de fausse alerte de modifications non sauvegardées, et un
+    // message explicite (jamais le texte serveur brut) invite à revérifier avant de relancer (plan MED 5).
+    expect(component.dirty()).toBeFalse();
+    expect(component.error()).toBeTruthy();
+    expect(component.error()).not.toContain('Réseau');
   });
 
   it('relit les propositions après un conflit atomique (409) mais pas après une couverture incomplète (400)', async () => {

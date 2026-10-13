@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { BehaviorSubject, of, throwError } from 'rxjs';
 import { BankStatementEntriesSessionComponent } from './bank-statement-entries-session.component';
 import { BankStatementImportError, BankStatementImportService } from '../bank-statement-import/bank-statement-import.service';
 import { ConfirmationService } from '@core/services/confirmation.service';
@@ -76,14 +76,16 @@ describe('BankStatementEntriesSessionComponent', () => {
   let confirmation: { confirm: jasmine.Spy };
   let accounting: { ensureBankGlProjections: jasmine.Spy; listImportableBankAccounts: jasmine.Spy };
   let bankAccountsApi: { list: jasmine.Spy };
+  let params: BehaviorSubject<ReturnType<typeof convertToParamMap>>;
 
   async function create(sessionId = 'sess-1'): Promise<void> {
+    params = new BehaviorSubject(convertToParamMap({ sessionId }));
     await TestBed.configureTestingModule({
       imports: [BankStatementEntriesSessionComponent],
       providers: [
         provideNoopAnimations(),
         provideRouter([]),
-        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap({ sessionId }) } } },
+        { provide: ActivatedRoute, useValue: { paramMap: params.asObservable() } },
         { provide: BankStatementImportService, useValue: api },
         { provide: ConfirmationService, useValue: confirmation },
         { provide: AccountingService, useValue: accounting },
@@ -117,11 +119,33 @@ describe('BankStatementEntriesSessionComponent', () => {
     expect((fixture.nativeElement as HTMLElement).querySelector('[data-testid="bse-lines-table"]')).toBeTruthy();
   });
 
+  it("recharge et réinitialise l'état local quand l'id de session change dans la route (même instance de composant, plan HIGH 2)", async () => {
+    api.session.and.returnValue(of(session({ id: 'sess-1' })));
+    await create('sess-1');
+
+    const displayed = component.displayLines()[0];
+    component.toggleExclude(displayed);
+    expect(component.isDirty()).toBeTrue();
+
+    // retry()/retargetToAccount() ou le polling des relevés frères réutilisent la même instance de
+    // composant en naviguant vers un nouvel id de session : la route émet un nouveau paramMap.
+    api.session.and.returnValue(of(session({ id: 'sess-2' })));
+    params.next(convertToParamMap({ sessionId: 'sess-2' }));
+
+    expect(api.session).toHaveBeenCalledWith('sess-2');
+    expect(component.session()?.id).toBe('sess-2');
+    expect(component.isDirty()).toBeFalse();
+    expect(component.correctedCount()).toBe(0);
+  });
+
   it("affiche l'erreur si le chargement de la session échoue", async () => {
-    api.session.and.returnValue(throwError(() => new BankStatementImportError('Oups', 'bank_statement_import.unknown', 500)));
+    api.session.and.returnValue(throwError(() => new BankStatementImportError('Oups, raw server message', 'bank_statement_import.unknown', 500)));
     await create();
 
     expect(component.error()).toBeTruthy();
+    // Jamais de texte serveur brut à l'écran (plan MED 7) : le message serveur original
+    // ('Oups, raw server message') ne doit jamais apparaître, seul un message traduit mappé par code.
+    expect(component.error()).not.toContain('Oups, raw server message');
   });
 
   it('relance le sondage pendant la lecture IA (Extracting) puis recharge la session', fakeAsync(() => {
@@ -160,7 +184,12 @@ describe('BankStatementEntriesSessionComponent', () => {
       corrections: [{ lineIndex: 0, label: 'Virement client Alpha', amount: 200 }],
       acknowledgeBalanceWarning: undefined
     });
-    expect(router.navigate).toHaveBeenCalledWith(['/accounting/bank-statement-entries/statement', 'st-1'], { replaceUrl: true });
+    expect(router.navigate).toHaveBeenCalledWith(['/accounting/bank-statement-entries/statement', 'st-1'], {
+      replaceUrl: true,
+      queryParams: { journal: 'JB' }
+    });
+    // Plus rien à enregistrer après un enregistrement réussi : pas de fausse alerte (plan MED 4).
+    expect(component.isDirty()).toBeFalse();
   });
 
   it('ne permet pas de corriger une ligne lue directement (Layout)', async () => {

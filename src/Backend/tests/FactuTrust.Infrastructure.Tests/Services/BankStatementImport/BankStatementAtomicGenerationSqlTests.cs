@@ -14,6 +14,7 @@ using FactuTrust.Infrastructure.Services;
 using FactuTrust.Infrastructure.Services.BankStatementImport;
 using FactuTrust.Infrastructure.Tests.Fixtures;
 using MediatR;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -424,6 +425,85 @@ public sealed class BankStatementAtomicGenerationSqlTests : IDisposable
         await using var verify = _factory!.CreateIsolatedContext();
         var entries = await verify.JournalEntries.Where(e => e.SourceEntityId == december.Id || e.SourceEntityId == january.Id).ToListAsync();
         Assert.Equal(2, entries.Count);
+    }
+
+    [Fact]
+    public async Task A_held_applock_times_out_as_an_atomic_conflict()
+    {
+        if (!_canRun) return;
+        var (statementId, lines) = await SeedAsync();
+
+        // Détient le MÊME verrou applicatif (sp_getapplock, ressource "bank-stmt-gen:{id}") que
+        // GenerateAtomicAsync, depuis une connexion/transaction totalement indépendante, pour
+        // reproduire fidèlement le timeout de 10 s (SqlException 51000 levée par le THROW de la
+        // génération) et vérifier son mapping vers 409 atomic_conflict — pas une erreur serveur
+        // générique, et une nouvelle tentative doit rester possible côté client.
+        await using var lockConnection = new SqlConnection(_sqlDb.ConnectionString);
+        await lockConnection.OpenAsync();
+        using var lockTransaction = lockConnection.BeginTransaction();
+        using (var acquire = lockConnection.CreateCommand())
+        {
+            acquire.Transaction = lockTransaction;
+            acquire.CommandText =
+                "EXEC sp_getapplock @Resource = @resource, @LockMode = 'Exclusive', @LockOwner = 'Transaction', @LockTimeout = 0;";
+            acquire.Parameters.AddWithValue("@resource", $"bank-stmt-gen:{statementId}");
+            await acquire.ExecuteNonQueryAsync();
+        }
+
+        try
+        {
+            var result = await Service().GenerateAsync(statementId, new GenerateBankStatementEntriesRequest
+            {
+                Atomic = true,
+                Items = new[] { Item(lines["swift1"]), Item(lines["swift2"]) }
+            });
+
+            Assert.True(result.IsFailure);
+            Assert.Equal(BankStatementPostingErrorCodes.AtomicConflict, result.Error.Code);
+        }
+        finally
+        {
+            lockTransaction.Rollback();
+        }
+
+        await using var verify = _factory!.CreateIsolatedContext();
+        Assert.Equal(0, await verify.JournalEntries.CountAsync());
+    }
+
+    [Fact]
+    public async Task A_non_unique_write_failure_is_rejected_not_treated_as_a_retryable_conflict()
+    {
+        if (!_canRun) return;
+        var (statementId, lines) = await SeedAsync();
+
+        // Contrainte CHECK artificielle qui échoue systématiquement à l'insertion : simule une
+        // DbUpdateException qui n'est NI une violation d'index unique (2601/2627) NI un timeout
+        // de verrou applicatif (51000) — par ex. une contrainte différente ou une période close
+        // entre-temps par un autre processus. Doit être rejetée définitivement (400
+        // atomic_rejected), PAS traitée comme un conflit de concurrence retry-able (409
+        // atomic_conflict).
+        await using (var schema = _factory!.CreateIsolatedContext())
+            await schema.Database.ExecuteSqlRawAsync("ALTER TABLE JournalEntries ADD CONSTRAINT CK_Test_ForceAtomicWriteFailure CHECK (1 = 0);");
+
+        try
+        {
+            var result = await Service().GenerateAsync(statementId, new GenerateBankStatementEntriesRequest
+            {
+                Atomic = true,
+                Items = new[] { Item(lines["swift1"]), Item(lines["swift2"]) }
+            });
+
+            Assert.True(result.IsFailure);
+            Assert.Equal(BankStatementPostingErrorCodes.AtomicRejected, result.Error.Code);
+        }
+        finally
+        {
+            await using var schema = _factory!.CreateIsolatedContext();
+            await schema.Database.ExecuteSqlRawAsync("ALTER TABLE JournalEntries DROP CONSTRAINT CK_Test_ForceAtomicWriteFailure;");
+        }
+
+        await using var verify = _factory!.CreateIsolatedContext();
+        Assert.Equal(0, await verify.JournalEntries.CountAsync());
     }
 
     public void Dispose() => _sqlDb.Dispose();

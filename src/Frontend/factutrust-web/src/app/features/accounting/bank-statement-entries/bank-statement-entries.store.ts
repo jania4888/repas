@@ -15,17 +15,16 @@ import {
 import { ReviewRowLike, isSettledRow, toReviewRow } from '../bank-statement-import/bank-statement-posting.logic';
 import { tabularMappingRolesFilled } from '../bank-statement-import/bank-statement-tabular-mapping.logic';
 
-/** Journaux standards qui ne sont jamais des journaux de banque (hors JB). */
-const NON_BANK_JOURNALS = new Set(['JV', 'JA', 'JC', 'JOD', 'JIM', 'JAN']);
-
 export type BankStatementEntriesFileKind = 'document' | 'tabular';
 
 /** Filtre de la grille de contreparties (étape 4). */
-export type EntriesRowFilter = 'all' | 'todo' | 'at471' | 'proposed' | 'settled';
+export type EntriesRowFilter = 'all' | 'todo' | 'at471' | 'proposed' | 'settled' | 'rejected';
 
 /** `ReviewRowLike` + libellé d'écriture éditable (propre à cette page, ≤ 500 caractères, vide = libellé du relevé). */
 export interface EntriesRow extends ReviewRowLike {
   label: string;
+  /** Vrai si cette ligne a été refusée par une génération atomique précédente (à corriger avant de relancer). */
+  needsCorrection: boolean;
 }
 
 /**
@@ -58,14 +57,17 @@ export class BankStatementEntriesStore {
 
   readonly isDinarAccount = (account: BankAccountDto | null): boolean => (account?.currency ?? 'TND') === 'TND';
 
-  readonly hasEligibleAccount = computed(() =>
-    this.bankAccounts().some(a => !!a.chartOfAccountNumber && this.isDinarAccount(a))
-  );
+  /** Compte éligible pour cette comptabilisation : relié à un plan comptable 532 ET en dinars. */
+  isEligible(account: BankAccountDto | null): boolean {
+    return !!account?.chartOfAccountNumber && this.isDinarAccount(account);
+  }
+
+  readonly hasEligibleAccount = computed(() => this.bankAccounts().some(a => this.isEligible(a)));
 
   readonly canSubmitSource = computed(() => {
     const account = this.selectedAccount();
     const file = this.file();
-    return !!account && !!account.chartOfAccountNumber && this.isDinarAccount(account) && !!this.journalCode() && !!file && !this.submitting();
+    return this.isEligible(account) && !!this.journalCode() && !!file && !this.submitting();
   });
 
   loadSourceReferences(): void {
@@ -93,8 +95,7 @@ export class BankStatementEntriesStore {
           this.bankAccounts.set(accounts);
           this.bankAccountsLoaded.set(true);
           if (!this.bankAccountId()) {
-            const dinar = (a: BankAccountDto): boolean => !!a.chartOfAccountNumber && this.isDinarAccount(a);
-            const preferred = accounts.find(a => a.isDefault && dinar(a)) ?? accounts.find(dinar) ?? null;
+            const preferred = accounts.find(a => a.isDefault && this.isEligible(a)) ?? accounts.find(a => this.isEligible(a)) ?? null;
             if (preferred) this.bankAccountId.set(preferred.id);
           }
         },
@@ -105,8 +106,21 @@ export class BankStatementEntriesStore {
       });
     });
 
-    this.journalCatalog.list().subscribe(journals => {
-      const bankJournals = journals.filter(j => j.code === 'JB' || !NON_BANK_JOURNALS.has(j.code));
+    this.journalCatalog.listBankJournals().subscribe(bankJournals => {
+      this.journals.set([...bankJournals]);
+      if (!bankJournals.some(j => j.code === this.journalCode())) {
+        this.journalCode.set(bankJournals[0]?.code ?? 'JB');
+      }
+    });
+  }
+
+  /**
+   * Charge le code de journal transmis par l'étape précédente (session → contreparties) et le
+   * valide contre les journaux de banque actifs du dossier ; retombe sur `JB` si absent ou invalide.
+   */
+  loadJournalCode(requested: string | null): void {
+    this.journalCode.set(requested ?? 'JB');
+    this.journalCatalog.listBankJournals().subscribe(bankJournals => {
       this.journals.set([...bankJournals]);
       if (!bankJournals.some(j => j.code === this.journalCode())) {
         this.journalCode.set(bankJournals[0]?.code ?? 'JB');
@@ -152,8 +166,6 @@ export class BankStatementEntriesStore {
   readonly proposals = signal<BankStatementProposals | null>(null);
   readonly rows = signal<EntriesRow[]>([]);
   readonly rowFilter = signal<EntriesRowFilter>('all');
-  readonly generating = signal(false);
-  readonly generateError = signal<string | null>(null);
 
   readonly visibleRows = computed(() => {
     const filter = this.rowFilter();
@@ -167,6 +179,8 @@ export class BankStatementEntriesStore {
         return rows.filter(r => !isSettledRow(r) && r.proposal.status === 'Proposed');
       case 'settled':
         return rows.filter(r => isSettledRow(r));
+      case 'rejected':
+        return rows.filter(r => r.needsCorrection);
       default:
         return rows;
     }
@@ -177,7 +191,13 @@ export class BankStatementEntriesStore {
   /** Remplace la liste des propositions reçue du serveur par ses lignes éditables (D2). */
   setProposals(proposals: BankStatementProposals): void {
     this.proposals.set(proposals);
-    this.rows.set(proposals.lines.map(toReviewRow).map(r => ({ ...r, label: '' })));
+    this.rows.set(proposals.lines.map(toReviewRow).map(r => ({ ...r, label: '', needsCorrection: false })));
+  }
+
+  /** Marque les lignes refusées par une génération atomique précédente (plan §4.4 étape 4 — à corriger). */
+  markNeedsCorrection(lineIds: readonly string[]): void {
+    const ids = new Set(lineIds);
+    this.rows.set(this.rows().map(r => (ids.has(r.proposal.lineId) ? { ...r, needsCorrection: true } : r)));
   }
 
   /** Remplace UNE ligne par une nouvelle valeur (jamais de mutation en place). */
@@ -195,7 +215,6 @@ export class BankStatementEntriesStore {
   }
 
   // ── Étape 5 : résultat ────────────────────────────────────────────────────────────────────
-  readonly lastGenerationResult = signal<{ created: number; skipped: number; failed: number; firstEntryNumber: number | null; lastEntryNumber: number | null } | null>(null);
   readonly atomicRejected = signal(false);
   readonly rejectedOutcomes = signal<ReadonlyArray<{ lineId: string; code: string | null; message: string | null }>>([]);
 

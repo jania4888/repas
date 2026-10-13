@@ -17,6 +17,9 @@ export class AccountingJournalCatalogService {
   private readonly api = inject(AccountingService);
   private journals$?: Observable<readonly AccountingJournalTab[]>;
 
+  /** Journaux standards qui ne sont jamais des journaux de banque (JB reste toujours autorisé). */
+  private static readonly NonBankJournalCodes = new Set(['JV', 'JA', 'JC', 'JOD', 'JIM', 'JAN']);
+
   /** Ordre d'affichage historique : les journaux standards d'abord, dans cet ordre. */
   private static readonly PreferredOrder = ACCOUNTING_SUB_JOURNALS.map(j => j.code);
 
@@ -57,5 +60,16 @@ export class AccountingJournalCatalogService {
       const delta = rank(a.code) - rank(b.code);
       return delta !== 0 ? delta : a.code.localeCompare(b.code);
     });
+  }
+
+  /**
+   * Journaux de trésorerie éligibles pour les imports de relevé bancaire : JB est toujours
+   * admis, les autres journaux standards (ventes, achats, OD...) sont exclus. Les journaux
+   * personnalisés créés par le back-office restent admis.
+   */
+  listBankJournals(): Observable<readonly AccountingJournalTab[]> {
+    return this.list().pipe(
+      map(journals => journals.filter(j => j.code === 'JB' || !AccountingJournalCatalogService.NonBankJournalCodes.has(j.code)))
+    );
   }
 }
