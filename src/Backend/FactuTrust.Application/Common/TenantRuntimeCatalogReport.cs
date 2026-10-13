@@ -83,6 +83,16 @@ public sealed record TenantRuntimeCatalogReport
     /// <summary>Version de remap estampillée sur la base, <c>null</c> si jamais appliquée.</summary>
     public string? AppliedMapVersion { get; init; }
 
+    /// <summary>
+    /// La pose du catalogue de rubriques de la déclaration mensuelle a échoué sur ce dossier.
+    /// </summary>
+    /// <remarks>
+    /// Le dossier reste utilisable — il garde sa configuration antérieure — mais l'enregistrement
+    /// d'une déclaration y est refusé jusqu'à ce que la pose aboutisse. L'appelant écourte donc la
+    /// mise en cache de son amorçage, pour que le nouvel essai soit rapide.
+    /// </remarks>
+    public bool MonthlyDeclarationCatalogFailed { get; init; }
+
     /// <summary>Empreinte du catalogue estampillée sur la base, <c>null</c> si inconnue.</summary>
     public string? AppliedCatalogHash { get; init; }
 

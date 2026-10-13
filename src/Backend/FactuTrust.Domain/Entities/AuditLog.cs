@@ -404,6 +404,13 @@ public static class AuditActions
         /// </summary>
         public const string MonthlyDeclarationCatalogUpgraded = "Accounting.MonthlyDeclarationCatalogUpgraded";
         /// <summary>
+        /// Pose du catalogue de rubriques sur un dossier, à l'amorçage. La charge utile ancienne
+        /// porte la configuration remplacée, au format du Modèle d'intégration : relisible et
+        /// réimportable. La nouvelle dit le nombre de rubriques posées, les familles cochées et le
+        /// taux de TCL retenu.
+        /// </summary>
+        public const string MonthlyDeclarationCatalogReset = "Accounting.MonthlyDeclarationCatalogReset";
+        /// <summary>
         /// Exécution du calcul paramétré sur une période. La charge utile porte les totaux par
         /// famille <b>et</b> les codes de diagnostic : c'est la trace qui expliquera, des mois plus
         /// tard, pourquoi un montant déposé diffère d'un recalcul.

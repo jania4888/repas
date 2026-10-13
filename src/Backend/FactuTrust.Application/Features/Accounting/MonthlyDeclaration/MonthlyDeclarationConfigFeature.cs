@@ -38,6 +38,20 @@ internal static class MonthlyDeclarationGuard
         + "la déclaration mensuelle.");
 
     /// <summary>
+    /// Refus tant que le catalogue de rubriques n'a pas été posé sur le dossier.
+    /// </summary>
+    /// <remarks>
+    /// La pose remplace la configuration du dossier. Laisser écrire par-dessus pendant qu'elle est
+    /// en échec ferait perdre ce travail à la première pose réussie — et, d'ici là, le dossier
+    /// calculerait sur une configuration qui ne reproduit pas ce qu'il déclarait.
+    /// </remarks>
+    public static Error CatalogNotApplied { get; } = Error.Validation(
+        "MonthlyDeclaration",
+        "La configuration de la déclaration mensuelle de ce dossier n'est pas encore initialisée. "
+        + "Rouvrez le dossier dans un instant ; si le message persiste, contactez l'administrateur "
+        + "de la plateforme.");
+
+    /// <summary>
     /// Plafond de rubriques par dossier. Il borne l'union des comptes que le moteur interroge en une
     /// requête : sans lui, le nombre de paramètres de cette requête n'aurait aucune limite connue.
     /// </summary>
@@ -252,6 +266,8 @@ public sealed class CreateMonthlyDeclarationRubricCommandHandler
             return Result.Failure<Guid>(MonthlyDeclarationGuard.Disabled);
         if (!_currentUser.IsAccountingFirmDelegatedContext)
             return Result.Failure<Guid>(MonthlyDeclarationGuard.WriteDenied);
+        if (!await _config.IsCatalogAppliedAsync(cancellationToken))
+            return Result.Failure<Guid>(MonthlyDeclarationGuard.CatalogNotApplied);
 
         var r = request.Request;
 
@@ -338,6 +354,8 @@ public sealed class UpdateMonthlyDeclarationRubricCommandHandler
             return Result.Failure(MonthlyDeclarationGuard.Disabled);
         if (!_currentUser.IsAccountingFirmDelegatedContext)
             return Result.Failure(MonthlyDeclarationGuard.WriteDenied);
+        if (!await _config.IsCatalogAppliedAsync(cancellationToken))
+            return Result.Failure(MonthlyDeclarationGuard.CatalogNotApplied);
 
         var rubric = await _config.GetRubricByIdAsync(request.Id, cancellationToken);
         if (rubric is null)
@@ -419,6 +437,8 @@ public sealed class ToggleMonthlyDeclarationRubricCommandHandler
             return Result.Failure(MonthlyDeclarationGuard.Disabled);
         if (!_currentUser.IsAccountingFirmDelegatedContext)
             return Result.Failure(MonthlyDeclarationGuard.WriteDenied);
+        if (!await _config.IsCatalogAppliedAsync(cancellationToken))
+            return Result.Failure(MonthlyDeclarationGuard.CatalogNotApplied);
 
         var rubric = await _config.GetRubricByIdAsync(request.Id, cancellationToken);
         if (rubric is null)
@@ -476,6 +496,8 @@ public sealed class DeleteMonthlyDeclarationRubricCommandHandler
             return Result.Failure(MonthlyDeclarationGuard.Disabled);
         if (!_currentUser.IsAccountingFirmDelegatedContext)
             return Result.Failure(MonthlyDeclarationGuard.WriteDenied);
+        if (!await _config.IsCatalogAppliedAsync(cancellationToken))
+            return Result.Failure(MonthlyDeclarationGuard.CatalogNotApplied);
 
         var rubric = await _config.GetRubricByIdAsync(request.Id, cancellationToken);
         if (rubric is null)
@@ -525,6 +547,8 @@ public sealed class SetMonthlyDeclarationFamilyCommandHandler
             return Result.Failure(MonthlyDeclarationGuard.Disabled);
         if (!_currentUser.IsAccountingFirmDelegatedContext)
             return Result.Failure(MonthlyDeclarationGuard.WriteDenied);
+        if (!await _config.IsCatalogAppliedAsync(cancellationToken))
+            return Result.Failure(MonthlyDeclarationGuard.CatalogNotApplied);
 
         var familyValue = request.Request.Family;
         if (!Enum.IsDefined((MonthlyDeclarationFamily)familyValue))

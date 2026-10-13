@@ -196,20 +196,30 @@ sans famille active la remontée rend le jeu historique tel quel, et le composeu
 
 ## Amorçage et duplication
 
-Le catalogue standard vit dans une ressource JSON embarquée
-(`Resources/Accounting/monthly-declaration-rubrics-tn.json`, 44 rubriques couvrant les onze
+Le catalogue en vigueur vit dans une ressource JSON embarquée
+(`Resources/Accounting/monthly-declaration-rubrics-tn-v2.json`, 46 rubriques couvrant les onze
 familles), régénérable par `tools/monthly-declaration-catalog/build_catalog.py`. Ni `InsertData` ni
 catalogue C# : une migration est le mauvais outil pour des données de référence qui évoluent avec la
-loi de finances, et 44 entrées × 4 énumérations se relisent en tableau, pas en littéral C#.
+loi de finances, et 46 entrées × 4 énumérations se relisent en tableau, pas en littéral C#.
 
-`MonthlyDeclarationRubricInitializer` est appelé en fin de `TenantRuntimeCatalogBootstrapper` — un
-point d'appel unique qui couvre à la fois la création d'un dossier et le rattrapage des dossiers
-existants à leur première requête après déploiement. Son contrat est plus strict qu'« insérer si
-vide » : **insertion seule par code, jamais de mise à jour, jamais de suppression**. Revenir en
-douce sur le taux qu'un comptable a corrigé serait le pire mode de défaillance possible ;
-ressusciter une rubrique qu'il a retirée ferait recommencer la suppression à chaque requête. Le
-journal `MonthlyDeclarationRubricSeedLogs` distingue les deux cas — sans lui, « le dossier a supprimé
-F9_3_1 » et « F9_3_1 n'existait pas encore » sont indiscernables en base.
+`MonthlyDeclarationCatalogReset` est appelé depuis `TenantRuntimeCatalogBootstrapper` — un point
+d'appel unique qui couvre à la fois la création d'un dossier et le rattrapage des dossiers existants
+à leur première requête après déploiement. Il **pose le catalogue une fois pour toutes** et coche les
+onze familles.
+
+**Pourquoi remplacer, et non compléter.** Le catalogue v1 amorcé jusqu'au retrait du calcul
+historique ne reproduisait pas ce calcul — retenues sur honoraires et sur achats à zéro, T.F.P
+comptée deux fois, FODEC et timbre lus sur des comptes au lieu des factures — et ses onze familles
+étaient toutes décochées. Le laisser en place, alors que la configuration est devenue la seule source
+des montants, reviendrait à déclarer des zéros. La configuration antérieure est donc remplacée, et
+**sauvegardée dans l'entrée d'audit** au format du Modèle d'intégration : relisible, réimportable,
+mais ce n'est pas un chemin de retour — ses familles décochées remettraient tout à zéro.
+
+**La pose n'a lieu qu'une fois**, et le journal `MonthlyDeclarationRubricSeedLogs` en porte le
+marqueur (`tn-2026-v2-reset`). C'est ce qui garantit qu'un déploiement n'écrase jamais le travail du
+comptable. Tant que ce marqueur manque — pose en échec —, les écritures de configuration et
+l'enregistrement d'une déclaration sont **refusés** plutôt que faussés, et l'amorçage du dossier est
+remis en cache pour trente secondes au lieu d'une heure, pour que le nouvel essai soit rapide.
 
 L'amorçage tourne **même drapeau éteint** : ce ne sont que des données inertes, et un dossier qui
 activerait le drapeau pour découvrir un écran vide en conclurait que la fonctionnalité est cassée.
@@ -299,8 +309,8 @@ est exigé — l'offrir en permanence suggérerait qu'on peut passer outre la s�
 ailleurs. La duplication inter-dossiers ne franchit pas les frontières du cabinet ; le modèle, si.
 
 **Un seul format, un seul analyseur.** Le fichier d'échange est le même que le catalogue
-d'amorçage embarqué, et `MonthlyDeclarationRubricInitializer` lit désormais son catalogue par
-`MonthlyDeclarationModel.Parse` — exactement l'analyseur de l'import. Un catalogue s'importe donc
+d'amorçage embarqué, que `MonthlyDeclarationCatalogs` lit par `MonthlyDeclarationModel.Parse` —
+exactement l'analyseur de l'import. Un catalogue s'importe donc
 tel quel, et un modèle exporté peut servir de catalogue ; un test l'exerce sur la ressource
 embarquée. Deux analyseurs auraient divergé au premier champ ajouté, et l'utilisateur aurait
 découvert la divergence en important un fichier silencieusement tronqué.

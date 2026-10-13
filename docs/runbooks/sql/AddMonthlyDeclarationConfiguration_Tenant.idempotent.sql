@@ -6,7 +6,7 @@
 -- calcul d'une ligne) et MonthlyDeclarationRubricAccounts (comptes selectionnes par colonne).
 --
 -- Strictement additif et sans donnees : aucune ligne n'est inseree. Le catalogue standard des
--- rubriques est amorce par l'application (MonthlyDeclarationRubricInitializer) depuis une ressource
+-- rubriques est pose par l'application (MonthlyDeclarationCatalogReset) depuis une ressource
 -- JSON versionnee. Tant qu'aucun dossier n'a quitte le mode Legacy, ces tables sont inertes et le
 -- calcul de la declaration mensuelle est inchange.
 --

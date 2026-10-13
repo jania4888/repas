@@ -1,5 +1,6 @@
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Domain.Entities;
+using FactuTrust.Infrastructure.Accounting;
 using FactuTrust.Domain.Enums;
 using FactuTrust.Infrastructure.MultiTenancy;
 using Microsoft.EntityFrameworkCore;
@@ -151,6 +152,14 @@ public sealed class MonthlyDeclarationConfigRepository : IMonthlyDeclarationConf
             context.Entry(account).State = EntityState.Added;
 
         await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<bool> IsCatalogAppliedAsync(CancellationToken cancellationToken = default)
+    {
+        await using var context = _contextFactory.CreateContext();
+        return await context.MonthlyDeclarationRubricSeedLogs
+            .AsNoTracking()
+            .AnyAsync(l => l.CatalogVersion == MonthlyDeclarationCatalogReset.ResetVersion, cancellationToken);
     }
 
     public async Task DeleteRubricAsync(

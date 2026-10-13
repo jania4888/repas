@@ -38,7 +38,7 @@ public sealed class MonthlyDeclarationModelImportTests
         ImportMonthlyDeclarationModelCommandHandler Handler,
         Mock<IMonthlyDeclarationModelImporter> Importer);
 
-    private static Harness Build(bool upgradeEnabled = false, bool tfpIncluded = true)
+    private static Harness Build(bool tfpIncluded = true)
     {
         var importer = new Mock<IMonthlyDeclarationModelImporter>();
         importer.Setup(i => i.ImportAsync(
@@ -48,6 +48,7 @@ public sealed class MonthlyDeclarationModelImportTests
             .ReturnsAsync(Result.Success(new MonthlyDeclarationModelImportOutcome(1, 0, [], [], 0)));
 
         var config = new Mock<IMonthlyDeclarationConfigRepository>();
+        config.Setup(c => c.IsCatalogAppliedAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true);
         config.Setup(c => c.GetRubricsAsync(true, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Array.Empty<MonthlyDeclarationRubric>());
         config.Setup(c => c.GetFamilySettingsAsync(It.IsAny<CancellationToken>()))
@@ -61,7 +62,6 @@ public sealed class MonthlyDeclarationModelImportTests
         {
             MonthlyDeclarationV2Enabled = true,
             MonthlyDeclarationConfigurableLinesEnabled = true,
-            MonthlyDeclarationCatalogV2UpgradeEnabled = upgradeEnabled,
             TclRatePercent = 0.2m
         });
 
@@ -127,15 +127,13 @@ public sealed class MonthlyDeclarationModelImportTests
     }
 
     /// <summary>
-    /// Un fichier ancien n'est passé en v2 que si la montée est permise : sans elle, le dossier
-    /// recevrait des rubriques v2 alors que le reste de sa configuration est en v1.
+    /// Un fichier ancien est TOUJOURS passé en v2 : le dossier qui le reçoit porte le catalogue v2,
+    /// et y réinjecter des définitions v1 lui ferait déclarer des zéros.
     /// </summary>
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task Un_fichier_ancien_n_est_passe_en_v2_que_si_la_montee_est_permise(bool upgradeEnabled)
+    [Fact]
+    public async Task Un_fichier_ancien_est_toujours_passe_en_v2()
     {
-        var harness = Build(upgradeEnabled);
+        var harness = Build();
 
         await harness.Handler.Handle(Command(File("dm-model-v1", includeTfp: true)), CancellationToken.None);
 
@@ -143,7 +141,7 @@ public sealed class MonthlyDeclarationModelImportTests
             It.IsAny<IReadOnlyList<MonthlyDeclarationRubricDraft>>(),
             It.IsAny<IReadOnlyList<MonthlyDeclarationFamilyDraft>>(),
             It.IsAny<bool>(), It.IsAny<CancellationToken>(),
-            It.Is<MonthlyDeclarationImportUpgrade?>(u => upgradeEnabled ? u != null && u.TclRatePercent == 0.2m : u == null)),
+            It.Is<MonthlyDeclarationImportUpgrade?>(u => u != null && u.TclRatePercent == 0.2m)),
             Times.Once);
     }
 

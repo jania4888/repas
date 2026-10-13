@@ -98,25 +98,6 @@ public sealed class AccountingSettings
     public bool ConfigurableLinesActive => MonthlyDeclarationV2Enabled && MonthlyDeclarationConfigurableLinesEnabled;
 
     /// <summary>
-    /// Autorise la montée des dossiers vers le catalogue de rubriques <c>tn-2026-v2</c> (origine
-    /// « documents », TFP par activité…), à l'amorçage de chaque dossier.
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    /// <b>Éteint par défaut, et absent des fichiers de configuration</b> : c'est l'unique
-    /// modification de données du retrait du calcul historique, et elle se déploie après le code,
-    /// jamais avec lui. On ne l'allume qu'après une période stable de la version qui sait lire le
-    /// catalogue v2 (variable d'environnement
-    /// <c>Accounting__MonthlyDeclarationCatalogV2UpgradeEnabled=true</c>).
-    /// </para>
-    /// <para>
-    /// L'éteindre n'annule rien : les dossiers déjà montés le restent. Il empêche seulement les
-    /// suivants de l'être.
-    /// </para>
-    /// </remarks>
-    public bool MonthlyDeclarationCatalogV2UpgradeEnabled { get; set; }
-
-    /// <summary>
     /// Active les états financiers au format NCT (bilan/résultat structurés + flux + variation des
     /// capitaux propres + notes). Quand false, seuls les états historiques sont exposés.
     /// </summary>

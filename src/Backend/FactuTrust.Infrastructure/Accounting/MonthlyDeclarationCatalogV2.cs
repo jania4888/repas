@@ -96,21 +96,6 @@ public static class MonthlyDeclarationCatalogV2
     }
 
     /// <summary>
-    /// Décide de la montée d'une famille, au vu des rubriques du dossier (toutes familles).
-    /// </summary>
-    /// <param name="existing">Rubriques du dossier, actives ou non.</param>
-    /// <param name="rewrite">Image d'un numéro de compte par la renumérotation NCT 01.</param>
-    /// <param name="tclRatePercent">Taux de TCL de la plateforme au moment de la montée.</param>
-    public static MonthlyDeclarationFamilyUpgrade Decide(
-        MonthlyDeclarationFamily family,
-        IReadOnlyCollection<MonthlyDeclarationRubric> existing,
-        MonthlyDeclarationModelParse v1,
-        MonthlyDeclarationModelParse v2,
-        Func<string, string> rewrite,
-        decimal tclRatePercent) =>
-        DecideCore(family, existing.Select(ToDraft).ToList(), v1, v2, rewrite, tclRatePercent);
-
-    /// <summary>
     /// Passe en v2 les familles d'un fichier v1 dont toutes les rubriques sont celles du catalogue
     /// v1 — exactement la règle de la montée des dossiers. Les autres familles du fichier restent
     /// telles quelles.
@@ -204,18 +189,6 @@ public static class MonthlyDeclarationCatalogV2
 
         return new MonthlyDeclarationFamilyUpgrade(family, updates, inserts, null);
     }
-
-    /// <summary>
-    /// Réécrit une rubrique en v2, en gardant le libellé et l'ordre que le dossier lui a donnés.
-    /// </summary>
-    public static Domain.Common.Result ApplyTo(MonthlyDeclarationRubric rubric, MonthlyDeclarationRubricDraft target) =>
-        rubric.Update(
-            rubric.Label, target.ReportCode, target.GrossKind, target.WithheldKind,
-            target.GrossSide, target.WithheldSide, target.RatePercent,
-            target.FixedGrossAmount, target.FixedWithheldAmount,
-            target.PayrollComponent, target.WithheldPayrollComponent,
-            target.EffectiveFrom, target.EffectiveTo, target.Accounts, rubric.DisplayOrder,
-            target.GrossDocumentSource, target.WithheldDocumentSource);
 
     /// <summary>Crée une rubrique propre à la v2.</summary>
     public static Domain.Common.Result<MonthlyDeclarationRubric> Create(MonthlyDeclarationRubricDraft target) =>

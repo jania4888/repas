@@ -486,7 +486,7 @@ public sealed class MonthlyDeclarationModelTests
 
     private static string ReadEmbeddedCatalog()
     {
-        var assembly = typeof(MonthlyDeclarationRubricInitializer).Assembly;
+        var assembly = typeof(MonthlyDeclarationCatalogs).Assembly;
         var name = assembly.GetManifestResourceNames()
             .First(n => n.EndsWith("monthly-declaration-rubrics-tn.json", StringComparison.Ordinal));
         using var stream = assembly.GetManifestResourceStream(name)!;

@@ -143,7 +143,7 @@ doc = {
     "catalogVersion": "tn-2026-v1",
     "_note": (
         "Catalogue standard des rubriques de la declaration mensuelle (Tunisie). Amorce par "
-        "MonthlyDeclarationRubricInitializer : insertion seule par code, jamais de mise a jour ni "
+        "l'amorcage historique : insertion seule par code, jamais de mise a jour ni "
         "de suppression. Les familles restent NON INCLUSES par defaut : rien n'est calcule tant "
         "qu'un dossier ne les coche pas. Les taux et les comptes sont des valeurs de depart, a "
         "confirmer dossier par dossier avant toute bascule."
@@ -242,9 +242,10 @@ doc_v2 = {
     "catalogVersion": "tn-2026-v2",
     "_note": (
         "Catalogue v2 : reproduit le calcul historique par la configuration (origine documents, TFP "
-        "par activite, FOPROLOS de la paie). Applique par MonthlyDeclarationCatalogUpgrade, famille "
-        "par famille, aux seules familles dont toutes les rubriques v1 sont intactes ; jamais aux "
-        "rubriques retouchees par le comptable."
+        "par activite, FOPROLOS de la paie). C'est le catalogue en vigueur : il est pose en entier "
+        "sur chaque dossier par MonthlyDeclarationCatalogReset, une fois, a l'amorcage, et remplace "
+        "la configuration anterieure (sauvegardee dans l'audit). Les retouches faites ensuite par le "
+        "comptable ne sont jamais ecrasees."
     ),
     "rubrics": v2,
 }

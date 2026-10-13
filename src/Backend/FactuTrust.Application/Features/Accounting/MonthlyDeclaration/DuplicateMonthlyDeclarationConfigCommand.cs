@@ -1,3 +1,4 @@
+using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
@@ -21,17 +22,20 @@ public sealed class DuplicateMonthlyDeclarationConfigCommandHandler
     : IRequestHandler<DuplicateMonthlyDeclarationConfigCommand, Result<MonthlyDeclarationDuplicationResultDto>>
 {
     private readonly IMonthlyDeclarationConfigDuplicator _duplicator;
+    private readonly IMonthlyDeclarationConfigRepository _config;
     private readonly IAuditService _auditService;
     private readonly ICurrentUser _currentUser;
     private readonly AccountingSettings _settings;
 
     public DuplicateMonthlyDeclarationConfigCommandHandler(
         IMonthlyDeclarationConfigDuplicator duplicator,
+        IMonthlyDeclarationConfigRepository config,
         IAuditService auditService,
         ICurrentUser currentUser,
         IOptions<AccountingSettings> settings)
     {
         _duplicator = duplicator;
+        _config = config;
         _auditService = auditService;
         _currentUser = currentUser;
         _settings = settings.Value;
@@ -44,6 +48,8 @@ public sealed class DuplicateMonthlyDeclarationConfigCommandHandler
             return Result.Failure<MonthlyDeclarationDuplicationResultDto>(MonthlyDeclarationGuard.Disabled);
         if (!_currentUser.IsAccountingFirmDelegatedContext)
             return Result.Failure<MonthlyDeclarationDuplicationResultDto>(MonthlyDeclarationGuard.WriteDenied);
+        if (!await _config.IsCatalogAppliedAsync(cancellationToken))
+            return Result.Failure<MonthlyDeclarationDuplicationResultDto>(MonthlyDeclarationGuard.CatalogNotApplied);
 
         var result = await _duplicator.DuplicateAsync(
             request.Request.SourceCompanyTenantId, request.Request.Overwrite, cancellationToken);

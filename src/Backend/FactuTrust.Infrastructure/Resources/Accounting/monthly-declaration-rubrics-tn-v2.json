@@ -1,6 +1,6 @@
 {
   "catalogVersion": "tn-2026-v2",
-  "_note": "Catalogue v2 : reproduit le calcul historique par la configuration (origine documents, TFP par activite, FOPROLOS de la paie). Applique par MonthlyDeclarationCatalogUpgrade, famille par famille, aux seules familles dont toutes les rubriques v1 sont intactes ; jamais aux rubriques retouchees par le comptable.",
+  "_note": "Catalogue v2 : reproduit le calcul historique par la configuration (origine documents, TFP par activite, FOPROLOS de la paie). C'est le catalogue en vigueur : il est pose en entier sur chaque dossier par MonthlyDeclarationCatalogReset, une fois, a l'amorcage, et remplace la configuration anterieure (sauvegardee dans l'audit). Les retouches faites ensuite par le comptable ne sont jamais ecrasees.",
   "rubrics": [
     {
       "code": "F1_1",

@@ -3,7 +3,9 @@ using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
+using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
+using FactuTrust.Infrastructure.Accounting;
 using FactuTrust.Infrastructure.MultiTenancy;
 using FactuTrust.Infrastructure.Persistence;
 using FactuTrust.Infrastructure.Repositories;
@@ -27,6 +29,13 @@ public sealed class MonthlyDeclarationConfigFeatureTests
     {
         _factory = new TestTenantDbContextFactory($"MonthlyDeclarationDb_{Guid.NewGuid()}");
         _repository = new MonthlyDeclarationConfigRepository(_factory);
+
+        // Tout dossier porte son catalogue : sans son marqueur, les écritures de configuration sont
+        // refusées — c'est la garde qui empêche d'écrire par-dessus une pose en échec.
+        using var context = _factory.CreateContext();
+        context.MonthlyDeclarationRubricSeedLogs.Add(
+            MonthlyDeclarationRubricSeedLog.Create(MonthlyDeclarationCatalogReset.ResetVersion).Value);
+        context.SaveChanges();
     }
 
     private sealed class TestTenantDbContextFactory : ITenantDbContextFactory

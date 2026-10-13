@@ -1,3 +1,4 @@
+using FactuTrust.Application.Common;
 using System.Collections.Concurrent;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Configuration;
@@ -107,9 +108,16 @@ public sealed class TenantMigrationGuard : ITenantMigrationGuard
                 return schemaCheck;
             }
 
-            await EnsureRuntimeCatalogsAsync(connectionString, _logger, _monthlyDeclarationCatalog, cancellationToken);
+            var catalogs = await EnsureRuntimeCatalogsAsync(
+                connectionString, _logger, _monthlyDeclarationCatalog, cancellationToken);
 
-            var cacheDuration = _environment.IsDevelopment() ? CacheDurationDevelopment : CacheDuration;
+            // Le dossier est accessible — ses migrations sont passées — mais la pose du catalogue de
+            // la déclaration mensuelle a échoué : tant qu'elle n'aboutit pas, l'enregistrement d'une
+            // déclaration y est refusé. On raccourcit donc la mise en cache, pour que le nouvel essai
+            // ait lieu dans la minute et non dans l'heure.
+            var cacheDuration = catalogs.MonthlyDeclarationCatalogFailed
+                ? FailureCacheDuration
+                : _environment.IsDevelopment() ? CacheDurationDevelopment : CacheDuration;
             _cache.Set(cacheKey, true, cacheDuration);
             return Result.Success();
         }
@@ -190,7 +198,8 @@ public sealed class TenantMigrationGuard : ITenantMigrationGuard
         }
     }
 
-    private static async Task EnsureRuntimeCatalogsAsync(
+    /// <returns>Le compte rendu de l'amorçage, dont on ne retient ici que les suites à donner.</returns>
+    private static async Task<TenantRuntimeCatalogReport> EnsureRuntimeCatalogsAsync(
         string connectionString,
         ILogger logger,
         MonthlyDeclarationCatalogOptions monthlyDeclarationCatalog,
@@ -201,7 +210,7 @@ public sealed class TenantMigrationGuard : ITenantMigrationGuard
             .Options;
 
         await using var context = new TenantDbContext(options);
-        await TenantRuntimeCatalogBootstrapper.EnsureAsync(
+        return await TenantRuntimeCatalogBootstrapper.EnsureAsync(
             context, ChartMigrationMode.AutoSafe, cancellationToken, logger, monthlyDeclarationCatalog);
     }
 }

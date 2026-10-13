@@ -308,11 +308,9 @@ public sealed class MonthlyDeclarationParityReportTests
         var name = $"DmV2Parity_{Guid.NewGuid()}";
         await using (var context = NewTenantContext(name))
         {
-            await MonthlyDeclarationRubricInitializer.EnsureDefaultsSeededAsync(context);
-            var upgrade = await MonthlyDeclarationCatalogUpgrade.EnsureAppliedAsync(
-                context, new MonthlyDeclarationCatalogOptions(Enabled: true, TclRatePercent: 0.2m));
-            Assert.NotNull(upgrade);
-            Assert.Empty(upgrade!.SkippedFamilies);
+            var reset = await MonthlyDeclarationCatalogReset.EnsureAppliedAsync(
+                context, new MonthlyDeclarationCatalogOptions(TclRatePercent: 0.2m));
+            Assert.Equal(MonthlyDeclarationCatalogResetOutcome.Applied, reset.Outcome);
         }
 
         List<MonthlyDeclarationRubric> rubrics;

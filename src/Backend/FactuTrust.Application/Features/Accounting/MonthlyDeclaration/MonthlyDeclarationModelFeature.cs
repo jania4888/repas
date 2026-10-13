@@ -108,6 +108,8 @@ public sealed class ImportMonthlyDeclarationModelCommandHandler
             return Result.Failure<MonthlyDeclarationModelImportResultDto>(MonthlyDeclarationGuard.Disabled);
         if (!_currentUser.IsAccountingFirmDelegatedContext)
             return Result.Failure<MonthlyDeclarationModelImportResultDto>(MonthlyDeclarationGuard.WriteDenied);
+        if (!await _config.IsCatalogAppliedAsync(cancellationToken))
+            return Result.Failure<MonthlyDeclarationModelImportResultDto>(MonthlyDeclarationGuard.CatalogNotApplied);
 
         var content = request.Request.Content ?? string.Empty;
         if (Encoding.UTF8.GetByteCount(content) > MonthlyDeclarationModel.MaxDocumentBytes)
@@ -159,7 +161,9 @@ public sealed class ImportMonthlyDeclarationModelCommandHandler
             }
         }
 
-        var upgradeToV2 = isLegacyFile && _settings.MonthlyDeclarationCatalogV2UpgradeEnabled
+        // Un fichier antérieur à la version 2 est TOUJOURS transformé : le dossier qui le reçoit
+        // porte le catalogue v2, et y réinjecter des définitions v1 déclarerait des zéros.
+        var upgradeToV2 = isLegacyFile
             ? new MonthlyDeclarationImportUpgrade(_settings.TclRatePercent)
             : null;
 

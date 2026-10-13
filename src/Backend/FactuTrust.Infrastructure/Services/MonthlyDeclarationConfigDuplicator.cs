@@ -107,6 +107,18 @@ public sealed class MonthlyDeclarationConfigDuplicator : IMonthlyDeclarationConf
                 return Result.Failure<MonthlyDeclarationDuplicationResultDto>(migrated.Error);
         }
 
+        // La garde ci-dessus a normalement posé le catalogue du dossier source. Si elle a échoué, il
+        // porte encore une configuration antérieure à la bascule : la recopier dans un dossier qui,
+        // lui, est à jour lui ferait déclarer des zéros. Message explicite : l'autorisation de
+        // portefeuille a déjà été vérifiée, il n'y a plus rien à cacher sur l'existence du dossier.
+        if (!await IsCatalogAppliedAsync(connectionString, cancellationToken))
+        {
+            return Result.Failure<MonthlyDeclarationDuplicationResultDto>(Error.Validation(
+                "Source",
+                "La configuration de la déclaration mensuelle du dossier source n'est pas encore "
+                + "initialisée. Ouvrez ce dossier puis relancez la copie."));
+        }
+
         var source = await ReadSourceAsync(connectionString, cancellationToken);
         if (source.Count == 0)
         {
@@ -147,6 +159,15 @@ public sealed class MonthlyDeclarationConfigDuplicator : IMonthlyDeclarationConf
     }
 
     /// <summary>Lit la configuration du dossier source, en lecture seule et hors transaction ambiante.</summary>
+    /// <summary>Le dossier source porte-t-il le catalogue de rubriques en vigueur ?</summary>
+    private async Task<bool> IsCatalogAppliedAsync(string connectionString, CancellationToken cancellationToken)
+    {
+        await using var source = _contextFactory.CreateIsolatedContext(connectionString);
+        return await source.MonthlyDeclarationRubricSeedLogs
+            .AsNoTracking()
+            .AnyAsync(l => l.CatalogVersion == MonthlyDeclarationCatalogReset.ResetVersion, cancellationToken);
+    }
+
     private async Task<IReadOnlyList<MonthlyDeclarationRubricDraft>> ReadSourceAsync(
         string connectionString, CancellationToken cancellationToken)
     {

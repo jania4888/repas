@@ -27,7 +27,7 @@ public static class TenantRuntimeCatalogBootstrapper
         ILogger? logger = null,
         MonthlyDeclarationCatalogOptions? monthlyDeclarationCatalog = null)
     {
-        var dmCatalog = monthlyDeclarationCatalog ?? MonthlyDeclarationCatalogOptions.Disabled;
+        var dmCatalog = monthlyDeclarationCatalog ?? MonthlyDeclarationCatalogOptions.Default;
         var report = await Nct01ChartMigrationService.EnsureMigratedAsync(context, chartMode, cancellationToken);
 
         if (report.ChartOutcome == ChartCatalogOutcome.DeferredHasAccountingData)
@@ -50,12 +50,12 @@ public static class TenantRuntimeCatalogBootstrapper
             await WithholdingTaxCatalogInitializer.EnsureSystemTypesSeededAsync(context, cancellationToken);
             await WithholdingFiscalYearParameterInitializer.EnsureDefaultsSeededAsync(context, cancellationToken);
             await IncomeTaxYearParameterInitializer.EnsureDefaultsSeededAsync(context, cancellationToken);
-            await MonthlyDeclarationRubricInitializer.EnsureDefaultsSeededAsync(context, cancellationToken);
-            // Ne dépend pas du plan comptable : les rubriques montées lisent les documents et la
-            // paie, et un compte v1 est reconnu sous son numéro hérité comme sous son image NCT.
-            await MonthlyDeclarationCatalogUpgrade.EnsureAppliedAsync(context, dmCatalog, logger, cancellationToken);
+            // Ne dépend pas du plan comptable : les rubriques posées lisent les documents et la
+            // paie, et les quatre comptes qu'elles citent ne sont pas renumérotés par le remap.
+            var deferredDm = await MonthlyDeclarationCatalogReset.EnsureAppliedAsync(
+                context, dmCatalog, logger, cancellationToken);
 
-            return report;
+            return report with { MonthlyDeclarationCatalogFailed = deferredDm.IsFailure };
         }
 
         await FixedAssetCategoryNctRepairService.EnsureAppliedAsync(context, cancellationToken);
@@ -71,14 +71,12 @@ public static class TenantRuntimeCatalogBootstrapper
         await IncomeTaxYearParameterInitializer.EnsureDefaultsSeededAsync(context, cancellationToken);
         await WithholdingChartAccountsInitializer.EnsureAccountsAsync(context, cancellationToken);
 
-        // Catalogue standard des rubriques de la déclaration mensuelle. Ce point d'appel unique
-        // couvre à la fois la création d'un dossier et le rattrapage des dossiers existants à leur
-        // première requête après déploiement. Données inertes tant qu'aucune famille n'est cochée.
-        await MonthlyDeclarationRubricInitializer.EnsureDefaultsSeededAsync(context, cancellationToken);
-
-        // Montée vers le catalogue v2, derrière son propre interrupteur. Juste après la v1, pour
-        // qu'un dossier neuf reçoive la v2 à sa première requête ; sans effet s'il est déjà monté.
-        await MonthlyDeclarationCatalogUpgrade.EnsureAppliedAsync(context, dmCatalog, logger, cancellationToken);
+        // Catalogue des rubriques de la déclaration mensuelle. Ce point d'appel unique couvre à la
+        // fois la création d'un dossier et le rattrapage des dossiers existants à leur première
+        // requête après déploiement. C'est la seule source des montants calculés : tant qu'il n'est
+        // pas posé, l'enregistrement d'une déclaration est refusé plutôt que faussé.
+        var dmReset = await MonthlyDeclarationCatalogReset.EnsureAppliedAsync(
+            context, dmCatalog, logger, cancellationToken);
 
         if (report.ChartOutcome is ChartCatalogOutcome.Applied or ChartCatalogOutcome.CatalogResynced)
         {
@@ -89,7 +87,7 @@ public static class TenantRuntimeCatalogBootstrapper
                 report.CurrentCatalogHash);
         }
 
-        return report;
+        return report with { MonthlyDeclarationCatalogFailed = dmReset.IsFailure };
     }
 
     /// <summary>

@@ -1,6 +1,6 @@
 {
   "catalogVersion": "tn-2026-v1",
-  "_note": "Catalogue standard des rubriques de la declaration mensuelle (Tunisie). Amorce par MonthlyDeclarationRubricInitializer : insertion seule par code, jamais de mise a jour ni de suppression. Les familles restent NON INCLUSES par defaut : rien n'est calcule tant qu'un dossier ne les coche pas. Les taux et les comptes sont des valeurs de depart, a confirmer dossier par dossier avant toute bascule.",
+  "_note": "Catalogue standard des rubriques de la declaration mensuelle (Tunisie). Amorce par l'amorcage historique : insertion seule par code, jamais de mise a jour ni de suppression. Les familles restent NON INCLUSES par defaut : rien n'est calcule tant qu'un dossier ne les coche pas. Les taux et les comptes sont des valeurs de depart, a confirmer dossier par dossier avant toute bascule.",
   "rubrics": [
     {
       "code": "F1_1",

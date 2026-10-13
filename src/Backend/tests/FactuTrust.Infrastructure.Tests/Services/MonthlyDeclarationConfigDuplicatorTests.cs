@@ -1,6 +1,7 @@
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
+using FactuTrust.Infrastructure.Accounting;
 using FactuTrust.Infrastructure.MultiTenancy;
 using FactuTrust.Infrastructure.Persistence;
 using FactuTrust.Infrastructure.Services;
@@ -85,6 +86,10 @@ public sealed class MonthlyDeclarationConfigDuplicatorTests
             new[] { new RubricAccountInput(RubricAccountRole.Gross, "707", RubricAccountMatchMode.Prefix) }).Value;
         rubric.SetAuditInfo("source");
         source.MonthlyDeclarationRubrics.Add(rubric);
+        // Le dossier source porte son catalogue : sans son marqueur, la copie est refusée — on ne
+        // recopie pas une configuration antérieure à la bascule dans un dossier à jour.
+        source.MonthlyDeclarationRubricSeedLogs.Add(
+            MonthlyDeclarationRubricSeedLog.Create(MonthlyDeclarationCatalogReset.ResetVersion).Value);
         await source.SaveChangesAsync();
     }
 
@@ -229,6 +234,12 @@ public sealed class MonthlyDeclarationConfigDuplicatorTests
         var factory = new TwoTenantContextFactory(_destinationDb, _sourceDb);
         await using var master = CreateMaster($"DupMaster_{Guid.NewGuid()}");
         await LinkToPortfolioAsync(master);
+        await using (var source = factory.CreateIsolatedContext(SourceConnection))
+        {
+            source.MonthlyDeclarationRubricSeedLogs.Add(
+                MonthlyDeclarationRubricSeedLog.Create(MonthlyDeclarationCatalogReset.ResetVersion).Value);
+            await source.SaveChangesAsync();
+        }
 
         var duplicator = new MonthlyDeclarationConfigDuplicator(
             master, TenantService(), factory, User());
@@ -237,5 +248,36 @@ public sealed class MonthlyDeclarationConfigDuplicatorTests
 
         Assert.True(result.IsFailure);
         Assert.Contains("aucune rubrique", result.Error.Description);
+    }
+
+    /// <summary>
+    /// Un dossier source que la pose du catalogue n'a pas encore touché porte une configuration
+    /// antérieure à la bascule : la recopier dans un dossier à jour lui ferait déclarer des zéros.
+    /// </summary>
+    [Fact]
+    public async Task Un_dossier_source_sans_catalogue_pose_est_refuse()
+    {
+        var factory = new TwoTenantContextFactory(_destinationDb, _sourceDb);
+        await using var master = CreateMaster($"DupMaster_{Guid.NewGuid()}");
+        await LinkToPortfolioAsync(master);
+        await using (var source = factory.CreateIsolatedContext(SourceConnection))
+        {
+            var rubric = MonthlyDeclarationRubric.Create(
+                MonthlyDeclarationFamily.Tcl, "F9_3_1", "Le chiffre d'affaires brut local", "3.1",
+                RubricGrossKind.Fixed, RubricWithheldKind.Fixed,
+                AccountBalanceSide.Credit, AccountBalanceSide.Credit,
+                0m, 100m, 1m, null, null, null, null, null).Value;
+            rubric.SetAuditInfo("source");
+            source.MonthlyDeclarationRubrics.Add(rubric);
+            await source.SaveChangesAsync();
+        }
+
+        var duplicator = new MonthlyDeclarationConfigDuplicator(
+            master, TenantService(), factory, User());
+
+        var result = await duplicator.DuplicateAsync(_sourceTenantId, overwrite: false);
+
+        Assert.True(result.IsFailure);
+        Assert.Contains("pas encore initialisée", result.Error.Description);
     }
 }
