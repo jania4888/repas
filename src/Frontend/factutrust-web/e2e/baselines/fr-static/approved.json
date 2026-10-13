@@ -584,8 +584,8 @@
     "reason": "Retrait du calcul historique (livraison A) : avis « fichier antérieur à la version 2 » (inclusions ignorées) et case de confirmation de l'exclusion de familles."
   },
   "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts#AccountingDocumentImportDialogComponent": {
-    "sha": "579ea7f7ebac4a7fae3672effd7b922f7614e1941a2c5375dc8d220ed77dbe80",
-    "reason": "Aperçu local de la facture avant envoi : phase de prévisualisation, message si la pièce quitte le serveur, relecture à côté du document. Textes d'origine de l'état vide et de la relecture inchangés."
+    "sha": "1f418203cf477c15df5595121cfcfacc176037fb07463f1426daf3490915abb1",
+    "reason": "Aperçu local de la facture avant envoi : phase de prévisualisation, message si la pièce quitte le serveur, relecture à côté du document. Textes d'origine de l'état vide et de la relecture inchangés. Libellé voulu par le produit : la mention « Lecture par le service d'extraction documentaire configuré par la plateforme : … quitte le serveur. Aucune analyse par l'IA locale. » devient « Analyse par l'IA » (nouvel ID i18n, traduction arabe mise à jour)."
   },
   "src/app/features/accounting/manual-entry/components/entry-toolbar.component.ts#EntryToolbarComponent": {
     "sha": "5a18a81666c1bfcdd6cda38cae39bae43a111121b913e6905270efa20a91b4bd",
@@ -594,5 +594,9 @@
   "src/app/features/accounting/manual-entry/manual-entry.component.ts#ManualEntryComponent": {
     "sha": "5c2d7931992c709542ba7fdea4fb182881cb9acc5b116691f5af559523ad01ff",
     "reason": "Import IA de relevés : modale d'upload et liaison de la nouvelle entrée du menu Import (ajouts purs)."
+  },
+  "src/app/features/invoices/components/invoice-import-dialog/invoice-import-dialog.component.ts#InvoiceImportDialogComponent": {
+    "sha": "a0e5068edf12516c51e3a1b147bdf6df338ea4c5159ef1766ad9c97b8c40577b",
+    "reason": "Libellé voulu par le produit : la mention « Lecture par le service d'extraction documentaire configuré par la plateforme : … quitte le serveur. Aucune analyse par l'IA locale. » devient « Analyse par l'IA » (nouvel ID i18n, traduction arabe mise à jour)."
   }
 }

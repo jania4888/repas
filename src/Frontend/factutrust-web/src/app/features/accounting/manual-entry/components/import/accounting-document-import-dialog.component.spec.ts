@@ -309,6 +309,24 @@ describe('AccountingDocumentImportDialogComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Aperçu visuel indisponible');
     expect(proposeSpy).not.toHaveBeenCalled();
   });
+
+  it('shows the short "Analyse par l\'IA" banner when a document extraction provider is configured', async () => {
+    component.externalProvider.set('docstrange');
+    await component.onFileSelected(fileEvent(pdfFile()));
+    fixture.detectChanges();
+
+    const banner = fixture.nativeElement.querySelector('.adi-banner') as HTMLElement | null;
+    expect(banner?.textContent?.trim()).toBe("Analyse par l'IA");
+    expect(fixture.nativeElement.textContent).not.toContain('quitte le serveur');
+  });
+
+  it('shows no provider banner when no document extraction provider is configured', async () => {
+    component.externalProvider.set(null);
+    await component.onFileSelected(fileEvent(pdfFile()));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.adi-banner')).toBeNull();
+  });
 });
 
 function pdfFile(): File {

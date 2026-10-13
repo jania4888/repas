@@ -62,7 +62,7 @@ type ImportPhase = 'idle' | 'extracting' | 'error';
                 @if (selectedFileName()) {
                   <span class="iid-filename">{{ selectedFileName() }}</span>
                 }
-@if (externalProvider()) {<ng-container i18n="@@invoices.invoice-import-dialog.lecture.par.le.service.d.extraction.documentaire.ff6aaca8">Lecture par le service d'extraction documentaire configuré par la plateforme : le fichier quitte le serveur. Aucune analyse par l'IA locale.</ng-container>}
+@if (externalProvider()) {<ng-container i18n="@@invoices.invoice-import-dialog.analyse.par.l.ia.1e399c12">Analyse par l'IA</ng-container>}
                 @else if (elapsedSeconds() < 30) {<ng-container i18n="@@invoices.components.lecture.et.preparation.du.document.80e2b53a">
                   Lecture et préparation du document…
                 </ng-container>} @else {<ng-container i18n="@@invoices.components.l.analyse.peut.prendre.jusqu.a.3.minutes.7ca553dc">
