@@ -89,6 +89,24 @@ export class LetteringComponent implements OnInit {
 
   readonly sideCounts = computed(() => sideCounts(this.store.selectedLines()));
 
+  /** Type du compte saisi, remonté par les filtres (plan comptable). `null` : inconnu. */
+  readonly accountType = signal<number | null>(null);
+  /** Libellé du type de compte affiché dans la synthèse à côté du numéro (plan §7.3). */
+  readonly accountTypeLabel = computed<string | null>(() => {
+    switch (this.accountType()) {
+      case 0:
+        return $localize`:@@accounting.lettering.ts.type.compte.general:Compte général`;
+      case 1:
+        return $localize`:@@accounting.lettering.ts.type.compte.client:Compte client`;
+      case 2:
+        return $localize`:@@accounting.lettering.ts.type.compte.fournisseur:Compte fournisseur`;
+      case 3:
+        return $localize`:@@accounting.lettering.ts.type.compte.autre.tiers:Autre compte de tiers`;
+      default:
+        return null;
+    }
+  });
+
   /** La colonne Devise n'apparaît que si le compte porte au moins une opération en devise. */
   readonly hasForeignLines = computed(() =>
     this.store.lines().some(l => l.currency !== LETTERING_FUNCTIONAL_CURRENCY)
@@ -108,10 +126,19 @@ export class LetteringComponent implements OnInit {
       command: () => this.openLedger()
     },
     {
-      label: $localize`:@@accounting.lettering.ts.menu.delettrer.un.groupe.par.code:Délettrer un groupe par code…`,
-      icon: 'pi pi-times-circle',
-      command: () => this.promptUnletterByCode(),
-      visible: this.store.canUnletter()
+      // Export Excel du grand livre de ce compte sur la période (plan §7.6). Réservé à un compte
+      // exact : l'export existant ne couvre pas les sous-comptes (« Inclure les sous-comptes »).
+      label: $localize`:@@accounting.lettering.ts.menu.exporter.le.grand.livre:Exporter le grand livre (Excel)`,
+      icon: 'pi pi-file-excel',
+      command: () => this.store.exportLedger(),
+      disabled: !this.store.canExportLedger()
+    },
+    {
+      // Lecture seule suffisante (plan §7.6) : l'action ouvre seulement le tiroir du groupe ; le
+      // bouton « Délettrer » du tiroir reste soumis au droit `accounting:unletter`.
+      label: $localize`:@@accounting.lettering.ts.menu.ouvrir.un.groupe.par.code:Ouvrir un groupe par code…`,
+      icon: 'pi pi-search',
+      command: () => this.promptOpenGroupByCode()
     }
   ]);
 
@@ -325,13 +352,12 @@ export class LetteringComponent implements OnInit {
   /** Format d'un code de groupe de lettrage : `L` (complet) ou `P` (partiel) suivi d'au moins 5 chiffres. */
   private static readonly GROUP_CODE_PATTERN = /^[LP]\d{5,}$/;
 
-  private async promptUnletterByCode(): Promise<void> {
+  private async promptOpenGroupByCode(): Promise<void> {
     const raw = await this.confirmation.prompt({
-      header: $localize`:@@accounting.lettering.ts.delettrer.un.groupe:Délettrer un groupe`,
-      message: $localize`:@@accounting.lettering.ts.saisissez.le.code.du.groupe.a.delettre:Saisissez le code du groupe à délettrer (ex. L00001 ou P00003) :`,
+      header: $localize`:@@accounting.lettering.ts.ouvrir.un.groupe:Ouvrir un groupe de lettrage`,
+      message: $localize`:@@accounting.lettering.ts.saisissez.le.code.du.groupe.a.ouvrir:Saisissez le code du groupe à ouvrir (ex. L00001 ou P00003) :`,
       placeholder: 'L00001',
-      acceptLabel: $localize`:@@accounting.lettering.ts.delettrer:Délettrer`,
-      acceptButtonStyleClass: 'btn-danger',
+      acceptLabel: $localize`:@@accounting.lettering.ts.ouvrir:Ouvrir`,
       required: true,
       maxLength: 16
     });
@@ -343,8 +369,8 @@ export class LetteringComponent implements OnInit {
       );
       return;
     }
-    // Ouvre le tiroir (plutôt que délettrer directement) : l'utilisateur confirme/choisit depuis
-    // le tiroir, qui porte déjà sa propre confirmation de délettrage (cohérent avec le flux B2).
+    // Ouvre le tiroir : il affiche le détail du groupe ; « Délettrer » y garde sa propre
+    // confirmation et son contrôle de droit (cohérent avec le flux B2).
     this.openGroup(code);
   }
 }

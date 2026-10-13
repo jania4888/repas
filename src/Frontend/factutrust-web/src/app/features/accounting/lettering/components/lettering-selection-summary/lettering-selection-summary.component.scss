@@ -53,6 +53,22 @@
   color: var(--color-danger-600, #dc2626);
 }
 
+.lettering-summary__balance {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.lettering-summary__tile--balanced .lettering-summary__balance {
+  color: var(--color-success-700, #15803d);
+}
+
+.lettering-summary__tile--unbalanced .lettering-summary__balance {
+  color: var(--color-danger-700, #b91c1c);
+}
+
 .lettering-summary__guard {
   flex-basis: 100%;
   margin: 0;

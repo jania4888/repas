@@ -45,16 +45,31 @@
           {{ summary.currency }}
         }
       </span>
+      @if (summary.count > 0) {
+        <!-- État d'équilibre en texte + icône, pas seulement en couleur (plan §7.3, WCAG 1.4.1). -->
+        <span class="lettering-summary__balance" data-testid="lettering-balance-state">
+          @if (summary.balanced) {
+            <i class="pi pi-check-circle" aria-hidden="true"></i>
+            <span i18n="@@accounting.lettering.selection.summary.tpl.equilibre">Équilibré</span>
+          } @else {
+            <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+            <span i18n="@@accounting.lettering.selection.summary.tpl.non.equilibre">Non équilibré</span>
+          }
+        </span>
+      }
     </div>
 
     @if (accountLabel) {
       <div class="lettering-summary__tile">
         <span class="lettering-summary__label" i18n="@@accounting.lettering.selection.summary.tpl.compte">Compte</span>
         <span class="lettering-summary__value">{{ accountLabel }}</span>
+        @if (accountTypeLabel) {
+          <span class="lettering-summary__sub" data-testid="lettering-account-type">{{ accountTypeLabel }}</span>
+        }
       </div>
     }
 
-    @if (guards.mixedCurrencies || guards.multipleAccounts || guards.partialGroupCodes.length >= 2) {
+    @if (guards.mixedCurrencies || guards.multipleAccounts || guards.partialGroupCodes.length >= 2 || guards.lockedLines) {
       <p class="lettering-summary__guard" role="alert">
         @if (guards.mixedCurrencies) {
           <span i18n="@@accounting.lettering.selection.summary.tpl.devises.melangees">La sélection mélange plusieurs devises : impossible de lettrer.</span>
@@ -65,12 +80,17 @@
         @if (guards.partialGroupCodes.length >= 2) {
           <span i18n="@@accounting.lettering.selection.summary.tpl.plusieurs.groupes.partiels">La sélection contient plusieurs lettrages partiels à la fois : désélectionnez-en un pour continuer.</span>
         }
+        @if (guards.lockedLines) {
+          <span i18n="@@accounting.lettering.selection.summary.tpl.periode.cloturee">La sélection contient une ligne d'une période clôturée : impossible de lettrer.</span>
+        }
       </p>
     }
   </div>
 
   @if (completionGroupCode) {
-    <div class="lettering-summary__completion-group" role="status" data-testid="lettering-completion-group">
+    <!-- Pas de role="status" ici : l'annonce passe par la zone aria-live unique en bas de la
+         synthèse (plan §7.3) ; un rôle status englobant le bouton le ferait relire. -->
+    <div class="lettering-summary__completion-group" data-testid="lettering-completion-group">
       <span i18n="@@accounting.lettering.selection.summary.tpl.completion.en.cours">Complétion du lettrage {{ completionGroupCode }} : {{ completionMemberCount }} {completionMemberCount, plural, =0 {ligne déjà lettrée incluse} =1 {ligne déjà lettrée incluse} other {lignes déjà lettrées incluses}} dans la sélection.</span>
       <button
         type="button"
@@ -84,7 +104,7 @@
   }
 
   @if (completionTarget) {
-    <p class="lettering-summary__completion-hint" role="status" i18n="@@accounting.lettering.selection.summary.tpl.selectionnez.les.lignes.a.ajouter">
+    <p class="lettering-summary__completion-hint" i18n="@@accounting.lettering.selection.summary.tpl.selectionnez.les.lignes.a.ajouter">
       Sélectionnez les lignes à ajouter pour compléter le lettrage {{ completionTarget }}.
     </p>
   }
@@ -106,7 +126,7 @@
     }
 
     @if (summary.hasExchangeDifference && !readOnly) {
-      <p class="lettering-summary__exchange-hint" role="status" i18n="@@accounting.lettering.selection.summary.tpl.soldee.en.mais.pas.en.dinars">
+      <p class="lettering-summary__exchange-hint" i18n="@@accounting.lettering.selection.summary.tpl.soldee.en.mais.pas.en.dinars">
         Sélection soldée en {{ summary.currency }} mais pas en dinars : {{ summary.gap | number : '1.3-3' }} d'écart de change.
       </p>
       <p-button
@@ -141,7 +161,8 @@
     }
   </div>
 
-  <span class="sr-only" aria-live="polite">
+  <!-- Zone aria-live UNIQUE de la synthèse : sélection, complétion en cours, écart de change. -->
+  <span class="sr-only" aria-live="polite" data-testid="lettering-summary-live">
     @switch (true) {
       @case (summary.count === 1) {
         <ng-container i18n="@@accounting.lettering.selection.summary.tpl.aria.live.singulier">1 ligne sélectionnée, écart {{ summary.gap | number : '1.3-3' }}.</ng-container>
@@ -149,6 +170,14 @@
       @default {
         <ng-container i18n="@@accounting.lettering.selection.summary.tpl.aria.live.pluriel">{{ summary.count }} lignes sélectionnées, écart {{ summary.gap | number : '1.3-3' }}.</ng-container>
       }
+    }
+    @if (completionTarget) {
+      <ng-container i18n="@@accounting.lettering.selection.summary.tpl.aria.live.completion">Sélection rattachée au lettrage {{ completionTarget }} : la validation le complète.</ng-container>
+    } @else if (completionGroupCode) {
+      <ng-container i18n="@@accounting.lettering.selection.summary.tpl.aria.live.completion.en.cours">Complétion du lettrage {{ completionGroupCode }} en cours.</ng-container>
+    }
+    @if (summary.hasExchangeDifference && !readOnly) {
+      <ng-container i18n="@@accounting.lettering.selection.summary.tpl.aria.live.ecart.change">Écart de change à apurer avec « Équilibrer ».</ng-container>
     }
   </span>
 </div>

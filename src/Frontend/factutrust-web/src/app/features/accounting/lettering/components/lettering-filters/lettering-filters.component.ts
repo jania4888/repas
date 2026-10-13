@@ -11,7 +11,12 @@ import {
   AccountingJournalTab
 } from '../../../shared/accounting-journal-tabs.model';
 import { AccountingService, ChartOfAccountDto, ThirdPartyDirectoryRowDto } from '../../../services/accounting.service';
-import { LetteringFilters, LetteringStateFilter, LetteringThirdPartyRef } from '../../models/lettering.models';
+import {
+  LETTERING_SEARCH_MAX_LENGTH,
+  LetteringFilters,
+  LetteringStateFilter,
+  LetteringThirdPartyRef
+} from '../../models/lettering.models';
 
 /**
  * Carte de filtres de l'écran de lettrage (`accounting-filters-card` / `app-accounting-filter-bar`,
@@ -45,9 +50,14 @@ export class LetteringFiltersComponent implements OnInit {
 
   @Output() readonly filtersChange = new EventEmitter<LetteringFilters>();
   @Output() readonly load = new EventEmitter<void>();
+  /** Type du compte saisi (`AccountType` serveur : 0 général, 1 client, 2 fournisseur, 3 autre
+   *  tiers), lu dans le plan comptable déjà chargé ici ; `null` si le compte est inconnu. La
+   *  synthèse l'affiche à côté du numéro de compte (plan §7.3). */
+  @Output() readonly accountTypeChange = new EventEmitter<number | null>();
 
   readonly journalOptions = signal<readonly AccountingJournalTab[]>([]);
   readonly showAdvanced = signal(false);
+  readonly searchMaxLength = LETTERING_SEARCH_MAX_LENGTH;
   /** Vrai quand min > max : bloque le chargement tant que la plage est incohérente. */
   readonly amountRangeInvalid = signal(false);
 
@@ -80,13 +90,22 @@ export class LetteringFiltersComponent implements OnInit {
 
   ngOnInit(): void {
     this.accountQuery = this.filters.account;
+    // Lien profond avec un filtre avancé actif (recherche, montants, type de pièce, sous-comptes) :
+    // le panneau « Plus de filtres » s'ouvre pour que le filtre appliqué reste visible.
+    const f = this.filters;
+    if (f.search || f.minAmount != null || f.maxAmount != null || f.documentType || f.accountMatch === 'prefix') {
+      this.showAdvanced.set(true);
+    }
     // Lien profond : affiche le nom du tiers déjà résolu côté conteneur (query param `thirdPartyName`).
     if (this.filters.thirdParty) {
       this.thirdPartyQuery = this.filters.thirdParty.name;
     }
     this.api.getChartOfAccounts().subscribe({
       next: res => {
-        if (res.success && res.data) this.allAccounts = res.data;
+        if (res.success && res.data) {
+          this.allAccounts = res.data;
+          this.emitAccountType(this.filters.account);
+        }
       }
     });
     this.journals.list().subscribe(list => this.journalOptions.set(list));
@@ -103,6 +122,7 @@ export class LetteringFiltersComponent implements OnInit {
   onAccountInputChange(value: string): void {
     this.accountQuery = value;
     this.emitPatch({ account: value });
+    this.emitAccountType(value);
   }
 
   filterThirdParties(event: { query: string }): void {
@@ -122,6 +142,7 @@ export class LetteringFiltersComponent implements OnInit {
     if (!this.filters.account) {
       patch.account = row.collectiveAccountNumber;
       this.accountQuery = row.collectiveAccountNumber;
+      this.emitAccountType(row.collectiveAccountNumber);
     }
     this.emitPatch(patch);
   }
@@ -145,6 +166,12 @@ export class LetteringFiltersComponent implements OnInit {
 
   onDocumentTypeChange(value: string): void {
     this.emitPatch({ documentType: value || null });
+  }
+
+  /** Recherche libre : vide ⇒ `null` (paramètre omis), bornée à 100 caractères comme le serveur. */
+  onSearchChange(value: string): void {
+    const search = (value ?? '').slice(0, LETTERING_SEARCH_MAX_LENGTH);
+    this.emitPatch({ search: search.trim() ? search : null });
   }
 
   onMinAmountChange(value: number | null): void {
@@ -173,6 +200,12 @@ export class LetteringFiltersComponent implements OnInit {
     }
     this.amountRangeInvalid.set(false);
     this.load.emit();
+  }
+
+  private emitAccountType(account: string): void {
+    const number = (account ?? '').trim();
+    const match = number ? this.allAccounts.find(a => a.accountNumber === number) : undefined;
+    this.accountTypeChange.emit(match?.accountType ?? null);
   }
 
   private emitPatch(patch: Partial<LetteringFilters>): void {
