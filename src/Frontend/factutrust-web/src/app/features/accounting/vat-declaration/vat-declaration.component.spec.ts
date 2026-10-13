@@ -91,8 +91,6 @@ describe('vat-declaration.view-model', () => {
       tfp: 1.68,
       foprolos: 1.68,
       withholdingTax: 112.65,
-      withholdingFromInvoices: 112.65,
-      withholdingFromSalaries: 0,
       totalToPay: 1938.397,
       payrollRunExists: true,
       payrollRunStatus: 3,

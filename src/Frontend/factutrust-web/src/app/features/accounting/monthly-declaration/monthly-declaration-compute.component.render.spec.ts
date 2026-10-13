@@ -11,7 +11,6 @@ import {
   MonthlyDeclarationConfigurationDto,
   MonthlyDeclarationFamily,
   MonthlyDeclarationLineDto,
-  MonthlyDeclarationMode,
   MonthlyDeclarationSettingsDto,
   RubricDiagnosticKind,
   VatDeclarationDto
@@ -19,19 +18,7 @@ import {
 import { MonthlyDeclarationComputeComponent } from './monthly-declaration-compute.component';
 
 function settings(over: Partial<MonthlyDeclarationSettingsDto> = {}): MonthlyDeclarationSettingsDto {
-  return {
-    mode: MonthlyDeclarationMode.Parity,
-    configuredSince: null,
-    lastParityRunAt: '2026-09-01T08:00:00Z',
-    lastParityMaxGapMillimes: 0,
-    parityCleanStreak: 1,
-    requiredCleanParityPeriods: 3,
-    canSwitchToConfigured: false,
-    parityOverrideBy: null,
-    parityOverrideReason: null,
-    configurableLinesEnabled: true,
-    ...over
-  };
+  return { enabled: true, catalogApplied: true, ...over };
 }
 
 function configuration(
@@ -87,8 +74,6 @@ function declaration(over: Partial<VatDeclarationDto> = {}): VatDeclarationDto {
     deductiblePurchasesTaxableBase: 0,
     salesTaxableBase: 0,
     salesGrossBase: 0,
-    monthlyDeclarationMode: MonthlyDeclarationMode.Parity,
-    parityMaxGapMillimes: 0,
     lines: [line()],
     monthlyDeclarationDiagnostics: [],
     ...over
@@ -139,7 +124,6 @@ describe('MonthlyDeclarationComputeComponent render', () => {
   let api: {
     getMonthlyDeclarationConfiguration: jasmine.Spy;
     computeMonthlyDeclaration: jasmine.Spy;
-    setMonthlyDeclarationMode: jasmine.Spy;
   };
 
   beforeEach(async () => {
@@ -149,10 +133,7 @@ describe('MonthlyDeclarationComputeComponent render', () => {
         .and.returnValue(of({ success: true, data: configuration() })),
       computeMonthlyDeclaration: jasmine
         .createSpy('computeMonthlyDeclaration')
-        .and.returnValue(of({ success: true, data: declaration() })),
-      setMonthlyDeclarationMode: jasmine
-        .createSpy('setMonthlyDeclarationMode')
-        .and.returnValue(of({ success: true, data: true }))
+        .and.returnValue(of({ success: true, data: declaration() }))
     };
 
     await TestBed.configureTestingModule({
@@ -206,30 +187,6 @@ describe('MonthlyDeclarationComputeComponent render', () => {
     expect(text()).toContain('T.C.L');
     expect(text()).toContain('F9_TCL');
     expect(text()).toContain('Identique au montant de la déclaration.');
-  });
-
-  it("nomme le régime qui a produit les montants de la période", () => {
-    fixture.detectChanges();
-    fixture.componentInstance.compute();
-    fixture.detectChanges();
-
-    expect(text()).toContain('Contrôle de parité');
-    expect(text()).toContain('sans écart');
-  });
-
-  it('signale l’écart de parité en clair plutôt que de le laisser deviner', () => {
-    api.computeMonthlyDeclaration.and.returnValue(
-      of({
-        success: true,
-        data: declaration({ tcl: 199, parityMaxGapMillimes: 1000 })
-      })
-    );
-    fixture.detectChanges();
-    fixture.componentInstance.compute();
-    fixture.detectChanges();
-
-    expect(text()).toContain('1,000 DT');
-    expect(text()).toContain('restent ceux du calcul historique');
   });
 
   it('traduit les signalements du moteur en phrases', () => {
@@ -296,84 +253,6 @@ describe('MonthlyDeclarationComputeComponent render', () => {
     expect(api.computeMonthlyDeclaration).not.toHaveBeenCalled();
   });
 
-  describe('régime de calcul', () => {
-    it('chiffre la rampe plutôt que d’annoncer un verdict', () => {
-      fixture.detectChanges();
-      expect(text()).toContain('1 sur 3');
-      expect(text()).toContain('Encore 2');
-    });
-
-    it('n’offre le motif de dérogation que lorsqu’il est exigé', () => {
-      fixture.detectChanges();
-      fixture.componentInstance.modeForm.set({
-        mode: MonthlyDeclarationMode.Configured,
-        configuredSince: '2026-10-01',
-        overrideReason: null
-      });
-      fixture.detectChanges();
-      expect(text()).toContain('Motif de dérogation');
-
-      fixture.componentInstance.settings.set(
-        settings({ parityCleanStreak: 3, canSwitchToConfigured: true })
-      );
-      fixture.detectChanges();
-      expect(text()).not.toContain('Motif de dérogation');
-    });
-
-    it('envoie la demande et relit les réglages', () => {
-      fixture.detectChanges();
-      fixture.componentInstance.modeForm.set({
-        mode: MonthlyDeclarationMode.Configured,
-        configuredSince: '2026-10-01',
-        overrideReason: 'Validé par l’associé.'
-      });
-      api.getMonthlyDeclarationConfiguration.calls.reset();
-
-      fixture.componentInstance.applyMode();
-      fixture.detectChanges();
-
-      expect(api.setMonthlyDeclarationMode).toHaveBeenCalledWith({
-        mode: MonthlyDeclarationMode.Configured,
-        configuredSince: '2026-10-01',
-        overrideReason: 'Validé par l’associé.'
-      });
-      expect(api.getMonthlyDeclarationConfiguration).toHaveBeenCalled();
-    });
-
-    it('bloque une demande que ses propres règles refusent, sans appeler le serveur', () => {
-      fixture.detectChanges();
-      fixture.componentInstance.settings.set(settings({ mode: MonthlyDeclarationMode.Legacy }));
-      fixture.componentInstance.modeForm.set({
-        mode: MonthlyDeclarationMode.Configured,
-        configuredSince: '2026-10-01',
-        overrideReason: null
-      });
-
-      fixture.componentInstance.applyMode();
-
-      expect(api.setMonthlyDeclarationMode).not.toHaveBeenCalled();
-      expect(fixture.componentInstance.error()).toContain('contrôle de parité');
-    });
-
-    it('laisse visible le refus du serveur malgré la relecture qui le suit', () => {
-      api.setMonthlyDeclarationMode.and.returnValue(
-        of({ success: false, error: 'Série de contrôles insuffisante.' })
-      );
-      fixture.detectChanges();
-      fixture.componentInstance.modeForm.set({
-        mode: MonthlyDeclarationMode.Configured,
-        configuredSince: '2026-10-01',
-        overrideReason: 'Motif.'
-      });
-
-      fixture.componentInstance.applyMode();
-      fixture.detectChanges();
-
-      expect(fixture.componentInstance.error()).toBe('Série de contrôles insuffisante.');
-      expect(text()).toContain('Série de contrôles insuffisante.');
-    });
-  });
-
   describe('verrou société', () => {
     beforeEach(() => setUser(TestBed.inject(AuthService), companyUser));
 
@@ -394,14 +273,14 @@ describe('MonthlyDeclarationComputeComponent render', () => {
   describe('drapeau serveur éteint', () => {
     beforeEach(() => {
       api.getMonthlyDeclarationConfiguration.and.returnValue(
-        of({ success: true, data: configuration({ configurableLinesEnabled: false }) })
+        of({ success: true, data: configuration({ enabled: false }) })
       );
     });
 
     it('explique l’inactivité au lieu d’afficher une erreur', () => {
       fixture.detectChanges();
 
-      expect(text()).toContain('Calcul paramétré non activé');
+      expect(text()).toContain('Déclaration mensuelle unique non activée');
       expect(fixture.componentInstance.error()).toBeNull();
     });
 
@@ -413,31 +292,21 @@ describe('MonthlyDeclarationComputeComponent render', () => {
       expect(text()).not.toContain('pour ce dossier');
     });
 
-    it('ne propose ni le calcul ni le changement de régime, voués au refus', () => {
+    it('ne propose pas le calcul, voué au refus', () => {
       fixture.detectChanges();
 
       const compute: HTMLButtonElement | null =
         fixture.nativeElement.querySelector('.dm-period button');
-      const apply: HTMLButtonElement | null =
-        fixture.nativeElement.querySelector('.dm-mode__form .dm-actions button');
       expect(fixture.componentInstance.canCompute()).toBe(false);
       expect(compute?.disabled).toBe(true);
-      expect(apply?.disabled).toBe(true);
     });
 
     it('n’appelle pas le serveur, même sollicité directement', () => {
       fixture.detectChanges();
-      fixture.componentInstance.modeForm.set({
-        mode: MonthlyDeclarationMode.Configured,
-        configuredSince: '2026-10-01',
-        overrideReason: 'Motif.'
-      });
 
       fixture.componentInstance.compute();
-      fixture.componentInstance.applyMode();
 
       expect(api.computeMonthlyDeclaration).not.toHaveBeenCalled();
-      expect(api.setMonthlyDeclarationMode).not.toHaveBeenCalled();
       expect(fixture.componentInstance.error()).toBeNull();
     });
   });

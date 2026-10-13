@@ -12,16 +12,15 @@ import {
   MonthlyDeclarationTrackingDto,
   MonthlyDeclarationTrackingRowDto
 } from '../services/accounting.service';
-import { describeMode } from './monthly-declaration-config.view-model';
+import { describeWriteBlocker } from './monthly-declaration-config.view-model';
 import { formatDateFr } from '../vat-declaration/vat-declaration.view-model';
 import {
   DmTrackingState,
   defaultTrackingYear,
-  describeMigration,
   describeRow,
   isTrackableYear,
   periodLabel,
-  rowModeLabel,
+  rowOriginLabel,
   stateLabel,
   stateNeedsAttention,
   summariseTracking,
@@ -30,7 +29,7 @@ import {
 
 /**
  * Suivi DM — les douze mois d'un exercice en une page : ce qui est déposé, ce qui manque, sous quel
- * régime, et où en est la rampe du dossier.
+ * calcul a produit chaque dépôt.
  *
  * Lecture seule et ouverte à la société : le suivi ne dit rien qu'un dossier ne puisse savoir de
  * ses propres dépôts. C'est le seul écran DM dans ce cas, et c'est pour cela qu'il n'affiche aucune
@@ -51,7 +50,7 @@ import {
   template: `
     <app-page-header
       title="Suivi DM" i18n-title="@@accounting.monthly-declaration.suivi.dm.2089b59a"
-      subtitle="Les douze mois d’un exercice : ce qui est déposé, ce qui manque, et sous quel régime" i18n-subtitle="@@accounting.monthly-declaration.les.douze.mois.d.un.exercice.ce.qui.est.88d07b29" />
+      subtitle="Les douze mois d’un exercice : ce qui est déposé, ce qui manque, et par quel calcul" i18n-subtitle="@@accounting.monthly-declaration-tracking.ts.les.douze.mois.d.un.exercice.2b94e7a1" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
@@ -78,17 +77,15 @@ import {
     </div>
 
     @if (tracking(); as t) {
-      @if (!t.settings.configurableLinesEnabled) {
+      @if (!t.settings.enabled) {
         <app-accounting-status-banner
           variant="info"
-          title="Calcul paramétré non activé" i18n-title="@@accounting.monthly-declaration.calcul.parametre.non.active.504c61d8"
-          message="Toutes les périodes sont produites par le calcul historique. Le suivi des dépôts reste exact." i18n-message="@@accounting.monthly-declaration.toutes.les.periodes.sont.produites.par.l.c46369d1" />
+          title="Déclaration mensuelle unique non activée" i18n-title="@@accounting.monthly-declaration.declaration.unique.non.activee.7c3d9a61"
+          message="Le suivi des dépôts reste exact." i18n-message="@@accounting.monthly-declaration-tracking.ts.le.suivi.reste.exact.d3e71a05" />
       }
-
-      <div class="card dm-state">
-        <p class="dm-state__mode">{{ modeDetail(t) }}</p>
-        <p class="dm-state__migration">{{ migration() }}</p>
-      </div>
+      @if (writeBlocker(); as blocked) {
+        <app-accounting-status-banner variant="warning" [message]="blocked" />
+      }
 
       <div class="card dm-counts">
         <div class="dm-count">
@@ -123,7 +120,7 @@ import {
               <th scope="col" i18n="@@accounting.monthly-declaration.periode.de2110b7">Période</th>
               <th scope="col" i18n="@@accounting.monthly-declaration.etat.d3b28a2a">État</th>
               <th scope="col" i18n="@@accounting.monthly-declaration.echeance.f9a77ff6">Échéance</th>
-              <th scope="col" i18n="@@accounting.monthly-declaration.regime.0020ca1b">Régime</th>
+              <th scope="col" i18n="@@accounting.monthly-declaration-tracking.ts.origine.du.calcul.6b2f8d14">Origine du calcul</th>
               <th scope="col" class="dm-num" i18n="@@accounting.monthly-declaration.t.v.a.due.4ad2ef13">T.V.A due</th>
               <th scope="col" class="dm-num" i18n="@@accounting.monthly-declaration.total.a.payer.d9252b33">Total à payer</th>
             </tr>
@@ -139,7 +136,7 @@ import {
                 <p class="dm-detail">{{ detail(row) }}</p>
               </td>
               <td>{{ deadline(row) }}</td>
-              <td>{{ mode(row) }}</td>
+              <td>{{ origin(row) }}</td>
               <td class="dm-num">{{ row.exists ? (row.vatDue | number: '1.3-3') : '—' }}</td>
               <td class="dm-num dm-num--strong">
                 {{ row.exists ? (row.totalToPay | number: '1.3-3') : '—' }}
@@ -197,9 +194,8 @@ export class MonthlyDeclarationTrackingComponent implements OnInit {
 
   readonly summary = computed(() => summariseTracking(this.tracking()?.months, this.today));
 
-  readonly migration = computed(() =>
-    describeMigration(this.summary(), this.tracking()?.year ?? this.year)
-  );
+  /** Ce qui empêche d'écrire sur ce dossier, quand quelque chose l'empêche. */
+  readonly writeBlocker = computed(() => describeWriteBlocker(this.tracking()?.settings));
 
   ngOnInit(): void {
     this.year = defaultTrackingYear(this.today);
@@ -230,12 +226,8 @@ export class MonthlyDeclarationTrackingComponent implements OnInit {
     return formatDateFr(row.filingDeadline);
   }
 
-  mode(row: MonthlyDeclarationTrackingRowDto): string {
-    return rowModeLabel(row);
-  }
-
-  modeDetail(tracking: MonthlyDeclarationTrackingDto): string {
-    return describeMode(tracking.settings);
+  origin(row: MonthlyDeclarationTrackingRowDto): string {
+    return rowOriginLabel(row);
   }
 
   load(): void {

@@ -15,7 +15,6 @@ import {
   AccountBalanceSide,
   MonthlyDeclarationConfigurationDto,
   MonthlyDeclarationFamily,
-  MonthlyDeclarationMode,
   MonthlyDeclarationRubricDto,
   RubricAccountMatchMode,
   RubricAccountRole,
@@ -61,18 +60,7 @@ function configuration(
   overrides: Partial<MonthlyDeclarationConfigurationDto> = {}
 ): MonthlyDeclarationConfigurationDto {
   return {
-    settings: {
-      mode: MonthlyDeclarationMode.Legacy,
-      configuredSince: null,
-      lastParityRunAt: null,
-      lastParityMaxGapMillimes: 0,
-      parityCleanStreak: 0,
-      requiredCleanParityPeriods: 3,
-      canSwitchToConfigured: false,
-      parityOverrideBy: null,
-      parityOverrideReason: null,
-      configurableLinesEnabled: true
-    },
+    settings: { enabled: true, catalogApplied: true },
     families: [
       { family: MonthlyDeclarationFamily.Withholding, isIncluded: false },
       { family: MonthlyDeclarationFamily.Tcl, isIncluded: true },
@@ -443,13 +431,13 @@ describe('MonthlyDeclarationConfigComponent render', () => {
       of({
         success: true,
         data: configuration({
-          settings: { ...configuration().settings, configurableLinesEnabled: false }
+          settings: { ...configuration().settings, enabled: false }
         })
       })
     );
     await renderForUser(firmDelegatedUser);
 
-    expect(text()).toContain('Calcul paramétré non activé');
+    expect(text()).toContain('Déclaration mensuelle unique non activée');
   });
 
   describe('drapeau serveur éteint, cabinet délégué', () => {
@@ -458,7 +446,7 @@ describe('MonthlyDeclarationConfigComponent render', () => {
         of({
           success: true,
           data: configuration({
-            settings: { ...configuration().settings, configurableLinesEnabled: false }
+            settings: { ...configuration().settings, enabled: false }
           })
         })
       );
@@ -494,7 +482,7 @@ describe('MonthlyDeclarationConfigComponent render', () => {
       instance.startCreate();
       instance.startEdit(tclRubric);
       instance.saveRubric();
-      instance.toggleFamily({ target: { checked: true } } as unknown as Event);
+      instance.toggleFamily({ target: { checked: true } } as unknown as Event, 'T.C.L');
       instance.toggleRubric(tclRubric);
       instance.confirmRemove(tclRubric);
       instance.duplicate({
@@ -512,10 +500,28 @@ describe('MonthlyDeclarationConfigComponent render', () => {
     });
   });
 
-  it('affiche le régime du dossier', async () => {
+  it('dit que cette configuration est la seule source des montants', async () => {
     await renderForUser(firmDelegatedUser);
-    expect(text()).toContain('Calcul historique');
-    expect(text()).toContain('ne déplace aucun montant');
+    expect(text()).toContain('seule source des montants');
+  });
+
+  /**
+   * Catalogue pas encore posé : le serveur refuse toute écriture. L'écran doit le dire et griser
+   * ses actions, plutôt que de laisser l'utilisateur buter sur un refus.
+   */
+  it('signale un catalogue non posé et n’offre aucune écriture', async () => {
+    api.getMonthlyDeclarationConfiguration.and.returnValue(
+      of({
+        success: true,
+        data: configuration({
+          settings: { ...configuration().settings, catalogApplied: false }
+        })
+      })
+    );
+    await renderForUser(firmDelegatedUser);
+
+    expect(text()).toContain("n'est pas encore initialisée");
+    expect(fixture.componentInstance.editable()).toBe(false);
   });
 
   it('société connectée : lecture seule, sans duplication ni écriture', async () => {
@@ -611,9 +617,10 @@ describe('MonthlyDeclarationConfigComponent render', () => {
     await renderForUser(firmDelegatedUser);
     const before = api.getMonthlyDeclarationConfiguration.calls.count();
 
-    fixture.componentInstance.toggleFamily({
-      target: { checked: true }
-    } as unknown as Event);
+    fixture.componentInstance.toggleFamily(
+      { target: { checked: true } } as unknown as Event,
+      'T.C.L'
+    );
     fixture.detectChanges();
 
     expect(fixture.componentInstance.error()).toBe('Refusé');

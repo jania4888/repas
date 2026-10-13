@@ -8,8 +8,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { ToastService } from '@core/services/toast.service';
 import {
   AccountingService,
-  MonthlyDeclarationConfigurationDto,
-  MonthlyDeclarationMode
+  MonthlyDeclarationConfigurationDto
 } from '../services/accounting.service';
 import { MonthlyDeclarationModelComponent } from './monthly-declaration-model.component';
 import { summariseModel } from './monthly-declaration-model.view-model';
@@ -35,20 +34,9 @@ const EXCLUDING_MODEL_JSON = JSON.stringify({
   rubrics: [{ code: 'F2_TFP', family: 'Tfp' }]
 });
 
-function configuration(configurableLinesEnabled = true): MonthlyDeclarationConfigurationDto {
+function configuration(enabled = true): MonthlyDeclarationConfigurationDto {
   return {
-    settings: {
-      mode: MonthlyDeclarationMode.Legacy,
-      configuredSince: null,
-      lastParityRunAt: null,
-      lastParityMaxGapMillimes: 0,
-      parityCleanStreak: 0,
-      requiredCleanParityPeriods: 3,
-      canSwitchToConfigured: false,
-      parityOverrideBy: null,
-      parityOverrideReason: null,
-      configurableLinesEnabled
-    },
+    settings: { enabled, catalogApplied: true },
     families: [],
     rubrics: []
   };
@@ -225,10 +213,10 @@ describe('MonthlyDeclarationModelComponent render', () => {
     expect(api.importMonthlyDeclarationModel).toHaveBeenCalled();
   });
 
-  it('dit ce que le modèle ne transporte pas', () => {
+  it('dit ce que le modèle transporte', () => {
     fixture.detectChanges();
-    expect(text()).toContain('régime de calcul');
-    expect(text()).toContain('n’y figurent pas');
+    expect(text()).toContain('actives comme désactivées');
+    expect(text()).toContain('l’inclusion de chaque famille');
   });
 
   it('télécharge le fichier rendu par le serveur', () => {

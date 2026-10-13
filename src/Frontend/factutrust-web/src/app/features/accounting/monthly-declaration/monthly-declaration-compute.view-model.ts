@@ -2,13 +2,10 @@ import {
   MonthlyDeclarationDiagnosticDto,
   MonthlyDeclarationFamily,
   MonthlyDeclarationLineDto,
-  MonthlyDeclarationMode,
-  MonthlyDeclarationSettingsDto,
   RubricDiagnosticKind,
-  SetMonthlyDeclarationModeRequest,
   VatDeclarationDto
 } from '../services/accounting.service';
-import { familyLabel, modeLabel } from './monthly-declaration-config.view-model';
+import { familyLabel } from './monthly-declaration-config.view-model';
 import { round3, shiftPeriod } from '../vat-declaration/vat-declaration.view-model';
 
 /**
@@ -60,6 +57,7 @@ export function diagnosticSeverity(kind: RubricDiagnosticKind): DmDiagnosticSeve
     case RubricDiagnosticKind.UnsupportedCombination:
     case RubricDiagnosticKind.MissingRubricForFamily:
     case RubricDiagnosticKind.DuplicateSourceRead:
+    case RubricDiagnosticKind.ConfigurationNotInitialized:
       return 'error';
     default:
       return 'warning';
@@ -102,6 +100,15 @@ export function describeDiagnostic(d: MonthlyDeclarationDiagnosticDto): string {
         : $localize`:@@accounting.monthly-declaration-compute.view-model.ts.une.ligne.a.ete.ecartee.du.formulaire.pa.793e3e04:Une ligne a été écartée du formulaire par le contrôle de total de famille.`;
     case RubricDiagnosticKind.DuplicateSourceRead:
       return detail || $localize`:@@accounting.monthly-declaration-compute.view-model.ts.deux.rubriques.reprennent.la.meme.source.0098936d:Deux rubriques reprennent la même source : le montant serait déclaré deux fois.`;
+    case RubricDiagnosticKind.ConfigurationNotInitialized:
+      return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.configuration.pas.encore.initialisee.7d2e94c1:La configuration de ce dossier n'est pas encore initialisée : la déclaration ne peut pas être enregistrée. Rouvrez le dossier dans un instant ; si le message persiste, contactez l'administrateur de la plateforme.`;
+    case RubricDiagnosticKind.ExcludedFamilyWithAmount: {
+      const excluded = detail ? familyFromServerName(detail) : null;
+      const excludedName = excluded === null ? detail : familyLabel(excluded);
+      return excludedName
+        ? $localize`:@@accounting.monthly-declaration-compute.view-model.ts.la.famille.excludedname.n.est.pas.declaree.3f8a1d52:La famille « ${excludedName}:excludedName: » n'est pas déclarée par ce dossier : son montant vaut 0, alors que ses rubriques en auraient produit un.`
+        : $localize`:@@accounting.monthly-declaration-compute.view-model.ts.une.famille.non.declaree.aurait.produit.8c4b7e03:Une famille que ce dossier ne déclare pas aurait produit un montant : il vaut 0.`;
+    }
     case RubricDiagnosticKind.MissingRubricForFamily: {
       const family = detail ? familyFromServerName(detail) : null;
       const name = family === null ? detail : familyLabel(family);
@@ -212,7 +219,7 @@ export function familyDeclaredAmount(
       return d.tcl ?? 0;
     case MonthlyDeclarationFamily.LicenceFee:
       return d.licenceFee ?? 0;
-    // La T.V.A reste au calcul historique, et « Autres renseignements » ne porte aucun impôt.
+    // La T.V.A vient du module T.V.A, et « Autres renseignements » ne porte aucun impôt.
     default:
       return null;
   }
@@ -231,7 +238,7 @@ export interface DmReconciliationRow {
 
 /**
  * Ce qu'une famille affiche à l'écran : son détail, la case qu'elle alimente, et la phrase qui dit
- * ce que l'écart entre les deux signifie dans le régime courant. Le composant n'a plus qu'à rendre.
+ * ce que l'écart entre les deux signifie. Le composant n'a plus qu'à rendre.
  */
 export interface DmComputeFamilyView extends DmComputeFamilyGroup {
   declaredAmount: number | null;
@@ -240,7 +247,6 @@ export interface DmComputeFamilyView extends DmComputeFamilyGroup {
 }
 
 export function buildFamilyViews(d: VatDeclarationDto): DmComputeFamilyView[] {
-  const mode = d.monthlyDeclarationMode ?? MonthlyDeclarationMode.Legacy;
   return groupLinesByFamily(d.lines).map(group => {
     const declaredAmount = familyDeclaredAmount(d, group.family);
     const row: DmReconciliationRow = {
@@ -255,7 +261,7 @@ export function buildFamilyViews(d: VatDeclarationDto): DmComputeFamilyView[] {
       ...group,
       declaredAmount: row.declaredAmount,
       gapMillimes: row.gapMillimes,
-      gapText: describeReconciliationGap(row, mode)
+      gapText: describeReconciliationGap(row)
     };
   });
 }
@@ -280,151 +286,28 @@ export function formatMillimes(millimes: number): string {
 }
 
 /**
- * Ce que l'écart d'une ligne de rapprochement veut dire — et cela dépend entièrement du régime.
- * En contrôle de parité, l'écart **est** l'objet de la mesure ; en mode paramétré, le détail et la
- * case déclarée sont le même calcul, et toute différence est une anomalie à dire comme telle.
+ * Ce que l'écart d'une ligne de rapprochement veut dire. Le détail et la case déclarée sont le même
+ * calcul : toute différence est une anomalie, et doit se dire comme telle.
  */
-export function describeReconciliationGap(
-  row: DmReconciliationRow,
-  mode: MonthlyDeclarationMode
-): string {
+export function describeReconciliationGap(row: DmReconciliationRow): string {
   if (row.declaredAmount === null)
     return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.cette.famille.n.alimente.aucune.case.chi.36184511:Cette famille n'alimente aucune case chiffrée de la déclaration.`;
   if (row.gapMillimes === 0) return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.identique.au.montant.de.la.declaration.3a6bb283:Identique au montant de la déclaration.`;
   const gap = formatMillimes(row.gapMillimes ?? 0);
-  if (mode === MonthlyDeclarationMode.Parity)
-    return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.ecart.de.gap.avec.le.calcul.historique.q.d05499f7:Écart de ${gap}:gap: avec le calcul historique, qui reste le montant déclaré.`;
-  if (mode === MonthlyDeclarationMode.Configured)
-    return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.ecart.de.gap.avec.la.case.declaree.alors.d16d1930:Écart de ${gap}:gap: avec la case déclarée, alors que les deux devraient être le même calcul.`;
-  return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.ecart.de.gap.avec.la.case.declaree.2efc40f5:Écart de ${gap}:gap: avec la case déclarée.`;
+  return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.ecart.de.gap.avec.la.case.declaree.alors.d16d1930:Écart de ${gap}:gap: avec la case déclarée, alors que les deux devraient être le même calcul.`;
 }
 
 // ── Verdict du calcul ────────────────────────────────────────────────────────
 
 /** Phrase d'en-tête : d'où viennent les montants affichés, et ce qu'il faut en conclure. */
 export function describeComputeOutcome(d: VatDeclarationDto): string {
-  const mode = d.monthlyDeclarationMode ?? MonthlyDeclarationMode.Legacy;
-  switch (mode) {
-    case MonthlyDeclarationMode.Legacy:
-      return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.cette.periode.est.calculee.a.l.ancienne.b4d8792d:Cette période est calculée à l'ancienne : la configuration du dossier n'a déplacé aucun montant.`;
-    case MonthlyDeclarationMode.Parity:
-      return (d.parityMaxGapMillimes ?? 0) === 0
-        ? $localize`:@@accounting.monthly-declaration-compute.view-model.ts.controle.de.parite.sans.ecart.la.configu.a30e50b3:Contrôle de parité sans écart : la configuration reproduit exactement le calcul historique sur cette période.`
-        : $localize`:@@accounting.monthly-declaration-compute.view-model.ts.controle.de.parite.ecart.maximal.de.form.2b0e4869:Contrôle de parité : écart maximal de ${formatMillimes(d.parityMaxGapMillimes ?? 0)}:formatMillimes: entre les deux calculs. Les montants déclarés restent ceux du calcul historique.`;
-    case MonthlyDeclarationMode.Configured:
-      return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.les.montants.ci.dessous.sont.ceux.que.la.f8290d4d:Les montants ci-dessous sont ceux que la configuration du dossier produit, et ce sont eux qui seront déclarés.`;
-    default:
-      return '';
-  }
-}
-
-/** Un contrôle de parité sans écart allonge la série ; c'est la seule chose qui la fait avancer. */
-export function isCleanParityRun(d: VatDeclarationDto): boolean {
-  return (
-    (d.monthlyDeclarationMode ?? MonthlyDeclarationMode.Legacy) === MonthlyDeclarationMode.Parity &&
-    (d.parityMaxGapMillimes ?? 0) === 0
-  );
-}
-
-// ── Changement de régime ─────────────────────────────────────────────────────
-
-export interface DmModeForm {
-  mode: MonthlyDeclarationMode;
-  /** Premier jour du mois d'effet, au format `yyyy-MM-dd` attendu par le champ date. */
-  configuredSince: string | null;
-  overrideReason: string | null;
-}
-
-/** Longueur maximale du motif de dérogation, alignée sur `MonthlyDeclarationSettings`. */
-export const DM_MAX_OVERRIDE_REASON_LENGTH = 500;
-
-export const DM_MODE_OPTIONS: readonly { label: string; value: MonthlyDeclarationMode }[] = [
-  { label: modeLabel(MonthlyDeclarationMode.Legacy), value: MonthlyDeclarationMode.Legacy },
-  { label: modeLabel(MonthlyDeclarationMode.Parity), value: MonthlyDeclarationMode.Parity },
-  { label: modeLabel(MonthlyDeclarationMode.Configured), value: MonthlyDeclarationMode.Configured }
-];
-
-/** Premier jour du mois suivant : date d'effet par défaut d'une bascule. */
-export function firstDayOfNextMonth(today: Date): string {
-  const next = shiftPeriod(today.getFullYear(), today.getMonth() + 1, 1);
-  return `${next.year}-${String(next.month).padStart(2, '0')}-01`;
-}
-
-export function newModeForm(settings: MonthlyDeclarationSettingsDto, today: Date): DmModeForm {
-  return {
-    mode: settings.mode,
-    configuredSince: settings.configuredSince
-      ? settings.configuredSince.slice(0, 10)
-      : firstDayOfNextMonth(today),
-    overrideReason: settings.parityOverrideReason ?? null
-  };
-}
-
-/** La dérogation n'est exigée que pour passer en paramétré sans la série de contrôles requise. */
-export function needsOverrideReason(
-  form: DmModeForm,
-  settings: MonthlyDeclarationSettingsDto
-): boolean {
-  return form.mode === MonthlyDeclarationMode.Configured && !settings.canSwitchToConfigured;
-}
-
-/**
- * Reprend les règles de `MonthlyDeclarationSettings` pour épargner un aller-retour sur une erreur
- * évidente. Confort de saisie seulement : le serveur revalide tout et reste seul juge.
- */
-export function validateModeForm(
-  form: DmModeForm,
-  settings: MonthlyDeclarationSettingsDto
-): string | null {
-  if (form.mode === settings.mode && form.mode !== MonthlyDeclarationMode.Configured)
-    return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.le.dossier.est.deja.dans.ce.regime.86e13a75:Le dossier est déjà dans ce régime.`;
-
-  if (form.mode !== MonthlyDeclarationMode.Configured) return null;
-
-  if (settings.mode === MonthlyDeclarationMode.Legacy) {
-    return (
-      $localize`:@@accounting.monthly-declaration-compute.view-model.ts.passez.d.abord.le.dossier.en.controle.de.482faec7:Passez d'abord le dossier en contrôle de parité : la bascule directe ne permet aucune comparaison avec le calcul en place.`
-    );
+  if (
+    (d.monthlyDeclarationDiagnostics ?? []).some(
+      x => x.kind === RubricDiagnosticKind.ConfigurationNotInitialized
+    )
+  ) {
+    return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.configuration.non.initialisee.les.montants.4b1c7a20:La configuration de ce dossier n'est pas encore initialisée : les montants ci-dessous ne font pas foi et la déclaration ne peut pas être enregistrée.`;
   }
 
-  const since = (form.configuredSince ?? '').trim();
-  if (!since) return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.la.date.d.effet.est.requise.pour.passer.2764b6a8:La date d'effet est requise pour passer en calcul paramétré.`;
-  if (!/^\d{4}-\d{2}-01$/.test(since)) return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.la.date.d.effet.doit.etre.le.premier.jou.db8ff117:La date d'effet doit être le premier jour d'un mois.`;
-
-  if (needsOverrideReason(form, settings)) {
-    const reason = (form.overrideReason ?? '').trim();
-    if (!reason) {
-      return (
-        $localize`:@@accounting.monthly-declaration-compute.view-model.ts.requiredcleanparityperiods.periodes.cons.38919651:${settings.requiredCleanParityPeriods}:requiredCleanParityPeriods: périodes consécutives sans écart sont requises (série actuelle : ${settings.parityCleanStreak}:parityCleanStreak:). À défaut, un motif de dérogation est exigé.`
-      );
-    }
-    if (reason.length > DM_MAX_OVERRIDE_REASON_LENGTH)
-      return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.le.motif.ne.peut.pas.depasser.dm.max.ove.23459365:Le motif ne peut pas dépasser ${DM_MAX_OVERRIDE_REASON_LENGTH}:DM_MAX_OVERRIDE_REASON_LENGTH: caractères.`;
-  }
-
-  return null;
-}
-
-export function toModeRequest(form: DmModeForm): SetMonthlyDeclarationModeRequest {
-  const configured = form.mode === MonthlyDeclarationMode.Configured;
-  const reason = (form.overrideReason ?? '').trim();
-  return {
-    mode: form.mode,
-    configuredSince: configured ? (form.configuredSince ?? '').trim() || null : null,
-    overrideReason: configured && reason ? reason : null
-  };
-}
-
-/** État de la rampe, en une phrase : ce qu'il reste à faire avant de pouvoir basculer. */
-export function describeRamp(settings: MonthlyDeclarationSettingsDto): string {
-  if (settings.mode === MonthlyDeclarationMode.Configured)
-    return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.le.dossier.est.en.calcul.parametre.la.ra.06099595:Le dossier est en calcul paramétré ; la rampe est derrière lui.`;
-  if (settings.mode === MonthlyDeclarationMode.Legacy)
-    return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.le.controle.de.parite.n.a.pas.commence.a.b2828062:Le contrôle de parité n'a pas commencé : aucune comparaison n'a encore été enregistrée.`;
-  if (settings.canSwitchToConfigured)
-    return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.serie.atteinte.paritycleanstreak.periode.7c17ba43:Série atteinte : ${settings.parityCleanStreak}:parityCleanStreak: périodes consécutives sans écart. La bascule est ouverte.`;
-  const missing = settings.requiredCleanParityPeriods - settings.parityCleanStreak;
-  return (
-    $localize`:@@accounting.monthly-declaration-compute.view-model.ts.serie.en.cours.paritycleanstreak.sur.req.9ce7f0e5:Série en cours : ${settings.parityCleanStreak}:parityCleanStreak: sur ${settings.requiredCleanParityPeriods}:requiredCleanParityPeriods: périodes consécutives sans écart. Encore ${missing}:missing: période(s), ou une dérogation motivée.`
-  );
+  return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.les.montants.ci.dessous.sont.ceux.que.la.f8290d4d:Les montants ci-dessous sont ceux que la configuration du dossier produit, et ce sont eux qui seront déclarés.`;
 }

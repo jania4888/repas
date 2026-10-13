@@ -525,19 +525,17 @@ export interface VatDeclarationDto {
   /** Droit de licence. */
   licenceFee?: number;
   /**
-   * Régime appliqué à **cette période**, qui n'est pas forcément le régime courant du dossier :
-   * une période antérieure à la date d'effet reste calculée à l'ancienne.
+   * Calcul qui a produit la déclaration **déposée** ; absent tant qu'il n'y a pas de dépôt.
+   * Ne sert plus qu'à relire le passé : le calcul câblé a été retiré.
    */
-  monthlyDeclarationMode?: MonthlyDeclarationMode;
-  /** Détail par rubrique produit par le moteur paramétré. Vide en calcul historique. */
-  lines?: MonthlyDeclarationLineDto[];
-  /** Signalements du calcul (compte inconnu, paie non arrêtée…). Vide en calcul historique. */
-  monthlyDeclarationDiagnostics?: MonthlyDeclarationDiagnosticDto[];
+  calculationOrigin?: DeclarationCalculationOrigin | null;
   /**
-   * Écart maximal, en millimes, entre calcul historique et calcul paramétré sur la période.
-   * C'est la mesure qui autorise — ou non — la bascule du dossier.
+   * Détail par rubrique. Pour une déclaration déposée, c'est le détail **figé** au dépôt —
+   * même vide, auquel cas il s'agit d'un dépôt antérieur au retrait du calcul câblé.
    */
-  parityMaxGapMillimes?: number;
+  lines?: MonthlyDeclarationLineDto[];
+  /** Signalements du calcul (compte inconnu, paie non arrêtée…). Jamais rendus à la société. */
+  monthlyDeclarationDiagnostics?: MonthlyDeclarationDiagnosticDto[];
   // Métadonnées enrichies (additif).
   createdAt?: string | null;
   updatedAt?: string | null;
@@ -598,15 +596,7 @@ export interface VatDeclarationComputed {
   tfp: number;
   foprolos: number;
   withholdingTax: number;
-  /** Part de la RS provenant des factures fournisseurs. */
-  withholdingFromInvoices: number;
-  /** Part de la RS provenant des traitements et salaires (IRPP + CSS). */
-  withholdingFromSalaries: number;
-  /** Part de la RS provenant des loyers du journal (compte 613). */
-  withholdingFromRentJournal?: number;
-  /** Part de la RS produite par les rubriques paramétrées (0 hors calcul paramétré). */
-  withholdingFromRubrics?: number;
-  /** Familles produites uniquement par le calcul paramétré : comprises dans le total à payer. */
+  /** Familles sans champ de saisie : leur seule source est la configuration. */
   consumptionDuty?: number;
   hotelTax?: number;
   licenceFee?: number;
@@ -812,14 +802,12 @@ export enum MonthlyDeclarationFamily {
   OtherInformation = 99
 }
 
-/** Régime de calcul du dossier. */
-export enum MonthlyDeclarationMode {
-  /** Calcul historique câblé. */
-  Legacy = 0,
-  /** Les deux calculs tournent ; le déclaré reste l'historique. */
-  Parity = 1,
-  /** Le moteur paramétré est la source unique. */
-  Configured = 2
+/** Calcul qui a produit une déclaration déposée. Miroir de `DeclarationCalculationOrigin`. */
+export enum DeclarationCalculationOrigin {
+  /** Dépôt antérieur au retrait du calcul câblé. */
+  Historic = 0,
+  /** Dépôt produit par la configuration du dossier. */
+  Configured = 1
 }
 
 /** Origine du montant brut d'une rubrique. */
@@ -965,17 +953,13 @@ export interface MonthlyDeclarationFamilySettingDto {
 }
 
 export interface MonthlyDeclarationSettingsDto {
-  mode: MonthlyDeclarationMode;
-  configuredSince: string | null;
-  lastParityRunAt: string | null;
-  lastParityMaxGapMillimes: number;
-  parityCleanStreak: number;
-  requiredCleanParityPeriods: number;
-  canSwitchToConfigured: boolean;
-  parityOverrideBy: string | null;
-  parityOverrideReason: string | null;
   /** Reflet du drapeau serveur : pilote l'affichage, jamais l'autorisation. */
-  configurableLinesEnabled: boolean;
+  enabled: boolean;
+  /**
+   * Le catalogue de rubriques a-t-il été posé sur ce dossier ? Faux pendant la brève fenêtre où sa
+   * pose a échoué : toute écriture y est alors refusée, et l'écran doit le dire.
+   */
+  catalogApplied: boolean;
 }
 
 export interface MonthlyDeclarationConfigurationDto {
@@ -1055,7 +1039,11 @@ export enum RubricDiagnosticKind {
   /** Famille incluse dans la déclaration sans aucune rubrique applicable à la période. */
   MissingRubricForFamily = 6,
   /** Deux rubriques reprennent la même source : le montant serait déclaré deux fois. */
-  DuplicateSourceRead = 7
+  DuplicateSourceRead = 7,
+  /** Une famille que le dossier ne déclare pas aurait pourtant produit un montant. */
+  ExcludedFamilyWithAmount = 8,
+  /** Le catalogue de rubriques n'a pas encore été posé sur ce dossier. */
+  ConfigurationNotInitialized = 9
 }
 
 export interface MonthlyDeclarationDiagnosticDto {
@@ -1080,18 +1068,6 @@ export interface MonthlyDeclarationLineDto {
   /** La rubrique attend une saisie : type « Fixe » sans constante enregistrée. */
   requiresManualInput: boolean;
   diagnostics: MonthlyDeclarationDiagnosticDto[];
-}
-
-/** Changement de régime de calcul du dossier. */
-export interface SetMonthlyDeclarationModeRequest {
-  mode: MonthlyDeclarationMode;
-  /** Premier jour du mois d'effet ; requis pour passer en mode configuré. */
-  configuredSince?: string | null;
-  /**
-   * Motif de dérogation, exigé lorsque la série de contrôles sans écart n'est pas atteinte.
-   * Conservé dans l'audit : c'est la trace de qui a décidé de passer outre.
-   */
-  overrideReason?: string | null;
 }
 
 /** Fichier de modèle produit par l'export de la configuration DM. */
@@ -1157,75 +1133,11 @@ export interface MonthlyDeclarationTrackingRowDto {
   revisionNumber: number;
   isRectificative: boolean;
   filingDeadline: string;
-  /**
-   * Régime de **cette** période, et non le régime courant du dossier : une période antérieure à
-   * la date d'effet reste calculée à l'ancienne.
-   */
-  mode: MonthlyDeclarationMode;
+  /** Calcul qui a produit le dépôt de cette période ; absent sans dépôt. */
+  calculationOrigin?: DeclarationCalculationOrigin | null;
 }
 
-/** Verdict du rapport de parité. Miroir de `ParityVerdict`. */
-export enum ParityVerdict {
-  /** Identique au millime. */
-  Exact = 0,
-  /** Écart prouvé dû à la seule règle d'arrondi du demi-millime. */
-  Rounding = 1,
-  /** Écart non expliqué : à corriger avant le retrait du calcul historique. */
-  Gap = 2
-}
-
-export interface MonthlyDeclarationParityFamilyDto {
-  family: MonthlyDeclarationFamily;
-  /** Famille cochée dans la configuration ; non cochée, elle vaudra 0 après le retrait. */
-  isIncluded: boolean;
-  legacy: number;
-  configured: number;
-  /** Paramétré − historique. */
-  gap: number;
-  verdict: ParityVerdict;
-}
-
-export interface MonthlyDeclarationParityBoxDto {
-  /** Clé de la case du formulaire officiel (« Withholding.Line5.Amount »). */
-  key: string;
-  /** Valeur telle que tamponnée ; `null` = case vide. */
-  legacy: string | null;
-  configured: string | null;
-  verdict: ParityVerdict;
-}
-
-export interface MonthlyDeclarationParityMonthDto {
-  month: number;
-  /** Statut de la déclaration enregistrée, `null` si aucune. */
-  savedStatus: number | null;
-  verdict: ParityVerdict;
-  /** Motif, quand le mois n'a pas pu être calculé. */
-  error?: string | null;
-  families: MonthlyDeclarationParityFamilyDto[];
-  boxDifferences: MonthlyDeclarationParityBoxDto[];
-  diagnostics: MonthlyDeclarationDiagnosticDto[];
-}
-
-/**
- * Rapport de parité : la preuve, mois par mois, que le calcul paramétré reproduit le calcul
- * historique avant son retrait. À exporter et archiver : il ne sera plus régénérable ensuite.
- */
-export interface MonthlyDeclarationParityReportDto {
-  year: number;
-  fromMonth: number;
-  toMonth: number;
-  generatedAtUtc: string;
-  generatedBy: string;
-  companyName: string;
-  nif: string;
-  months: MonthlyDeclarationParityMonthDto[];
-  exactMonths: number;
-  roundingOnlyMonths: number;
-  monthsWithGap: number;
-  readyForRetirement: boolean;
-}
-
-/** Les douze mois d'un exercice, et l'état de la rampe du dossier. */
+/** Les douze mois d'un exercice. */
 export interface MonthlyDeclarationTrackingDto {
   year: number;
   settings: MonthlyDeclarationSettingsDto;
@@ -3051,9 +2963,9 @@ export class AccountingService {
   // ── Déclaration mensuelle paramétrable (Configuration DM) ──────────────────
 
   /**
-   * Configuration DM du dossier : régime, inclusion des onze familles, rubriques et comptes.
-   * Lisible même drapeau éteint — la réponse porte `settings.configurableLinesEnabled`, que
-   * l'écran utilise pour expliquer l'inactivité plutôt que d'afficher une erreur.
+   * Configuration DM du dossier : inclusion des onze familles, rubriques et comptes.
+   * Lisible même drapeau éteint — la réponse porte `settings.enabled`, que l'écran utilise pour
+   * expliquer l'inactivité plutôt que d'afficher une erreur.
    */
   getMonthlyDeclarationConfiguration(
     includeInactive = true
@@ -3130,16 +3042,6 @@ export class AccountingService {
   }
 
   /**
-   * Change le régime de calcul du dossier. Les règles de rampe (série de contrôles sans écart,
-   * dérogation motivée, date d'effet au premier du mois) sont revalidées côté serveur.
-   */
-  setMonthlyDeclarationMode(
-    request: SetMonthlyDeclarationModeRequest
-  ): Observable<ApiResponse<boolean>> {
-    return this.http.put<ApiResponse<boolean>>(`${this.base}/monthly-declaration/mode`, request);
-  }
-
-  /**
    * « Modèle Intégration DM » — export. Lisible drapeau éteint : le fichier ne fait que refléter
    * des données déjà affichées par l'écran de configuration.
    */
@@ -3166,22 +3068,6 @@ export class AccountingService {
    * « Suivi DM » : les douze mois d'un exercice. Lecture seule, ouverte à la société comme au
    * cabinet, et disponible drapeau éteint — voir les trous de dépôt ne dépend d'aucun drapeau.
    */
-  /**
-   * Rapport de parité : calcul historique face au calcul paramétré, mois par mois. Lecture pure,
-   * réservée au cabinet délégué. Peut prendre plusieurs secondes par mois.
-   */
-  getMonthlyDeclarationParityReport(
-    year: number,
-    fromMonth: number,
-    toMonth: number
-  ): Observable<ApiResponse<MonthlyDeclarationParityReportDto>> {
-    const p = new HttpParams().set('year', year).set('fromMonth', fromMonth).set('toMonth', toMonth);
-    return this.http.get<ApiResponse<MonthlyDeclarationParityReportDto>>(
-      `${this.base}/monthly-declaration/parity-report`,
-      { params: p }
-    );
-  }
-
   getMonthlyDeclarationTracking(
     year: number
   ): Observable<ApiResponse<MonthlyDeclarationTrackingDto>> {

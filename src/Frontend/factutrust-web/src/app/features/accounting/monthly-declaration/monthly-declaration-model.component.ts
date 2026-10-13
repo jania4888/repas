@@ -48,8 +48,7 @@ import {
     <section class="card dm-block">
       <h3 class="dm-block__title" i18n="@@accounting.monthly-declaration.exporter.0cd84bdc">Exporter</h3>
       <p class="dm-block__text" i18n="@@accounting.monthly-declaration.produit.un.fichier.json.portant.les.rubriques.du.c7546c88"> Produit un fichier JSON portant les rubriques du dossier — actives comme désactivées — et
-        l’inclusion de chaque famille. Le régime de calcul et l’historique des contrôles de parité
-        n’y figurent pas : ils appartiennent au dossier, pas au paramétrage. </p>
+        l’inclusion de chaque famille. </p>
       <div class="dm-actions">
         <app-button
           variant="secondary"
@@ -126,8 +125,7 @@ import {
             @if (s.includedFamilies.length) {
               <p class="dm-hint dm-hint--flag" i18n="@@accounting.monthly-declaration.familles.que.le.fichier.demande.d.inclur.856a4115">
                 <ng-container> Familles que le fichier demande d’</ng-container><strong>inclure</strong> :
-                {{ s.includedFamilies.join(', ') }}. Leur inclusion change les montants déclarés dès
-                que le dossier calcule en mode paramétré.
+                {{ s.includedFamilies.join(', ') }}. Leur inclusion change les montants déclarés.
               </p>
             }
             @if (s.excludedFamilies.length) {
@@ -258,7 +256,7 @@ export class MonthlyDeclarationModelComponent implements OnInit {
     this.api.getMonthlyDeclarationConfiguration(false).subscribe({
       next: res => {
         if (res.success && res.data) {
-          this.linesDisabled.set(res.data.settings?.configurableLinesEnabled === false);
+          this.linesDisabled.set(res.data.settings?.enabled === false);
         }
       },
       error: () => undefined

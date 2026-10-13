@@ -1,9 +1,8 @@
 import {
-  MonthlyDeclarationMode,
+  DeclarationCalculationOrigin,
   MonthlyDeclarationTrackingRowDto,
   VatDeclarationStatus
 } from '../services/accounting.service';
-import { modeLabel } from './monthly-declaration-config.view-model';
 import { formatPeriodLabel, round3 } from '../vat-declaration/vat-declaration.view-model';
 
 /**
@@ -97,11 +96,6 @@ export interface DmTrackingSummary {
   missing: number;
   /** Total à payer cumulé sur les périodes effectivement déposées. */
   totalToPay: number;
-  /**
-   * Nombre de mois calculés par le moteur paramétré. Pendant la migration, c'est la mesure qui dit
-   * où en est le dossier — et le motif d'être de cet écran.
-   */
-  configuredMonths: number;
 }
 
 export function summariseTracking(
@@ -113,8 +107,7 @@ export function summariseTracking(
     drafts: 0,
     late: 0,
     missing: 0,
-    totalToPay: 0,
-    configuredMonths: 0
+    totalToPay: 0
   };
 
   for (const row of rows ?? []) {
@@ -134,7 +127,6 @@ export function summariseTracking(
       default:
         summary.missing++;
     }
-    if (row.mode === MonthlyDeclarationMode.Configured) summary.configuredMonths++;
   }
 
   return summary;
@@ -145,20 +137,20 @@ export function periodLabel(year: number, month: number): string {
   return formatPeriodLabel(year, month);
 }
 
-export function rowModeLabel(row: MonthlyDeclarationTrackingRowDto): string {
-  return modeLabel(row.mode);
-}
-
 /**
- * Phrase d'en-tête : où en est le dossier dans sa migration, sur l'exercice affiché.
- *
- * Elle ne parle que des mois **effectivement** calculés par le moteur, pas du régime déclaré du
- * dossier : c'est la différence entre « on a basculé » et « la bascule a produit des déclarations ».
+ * Le calcul qui a produit le dépôt de la période. « — » sans dépôt : la question ne se pose pas.
+ * Les périodes antérieures au retrait du calcul câblé restent marquées « Historique » ; c'est ce
+ * qu'elles sont, et le dire évite de laisser croire qu'elles ont été recalculées.
  */
-export function describeMigration(summary: DmTrackingSummary, year: number): string {
-  if (summary.configuredMonths === 0)
-    return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.aucun.mois.de.year.n.est.calcule.par.la.b7736f24:Aucun mois de ${year}:year: n’est calculé par la configuration du dossier.`;
-  if (summary.configuredMonths === 12)
-    return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.les.douze.mois.de.year.sont.calcules.par.c736b973:Les douze mois de ${year}:year: sont calculés par la configuration du dossier.`;
-  return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.configuredmonths.mois.de.year.sur.12.son.a87ff472:${summary.configuredMonths}:configuredMonths: mois de ${year}:year: sur 12 sont calculés par la configuration du dossier.`;
+export function rowOriginLabel(row: MonthlyDeclarationTrackingRowDto): string {
+  switch (row.calculationOrigin) {
+    case DeclarationCalculationOrigin.Historic:
+      // « Historique » seul est un faux ami : ailleurs dans l'interface, le mot désigne un
+      // journal d'évènements. La forme longue nomme ce dont il s'agit, et se traduit sans ambiguïté.
+      return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.calcul.historique.8e4a1b73:Calcul historique`;
+    case DeclarationCalculationOrigin.Configured:
+      return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.calcul.parametre.5c90f2de:Calcul paramétré`;
+    default:
+      return '—';
+  }
 }

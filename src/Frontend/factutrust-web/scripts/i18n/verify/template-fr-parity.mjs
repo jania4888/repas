@@ -15,6 +15,7 @@ import path from 'node:path';
 import {
   FR_REFERENCE_TAG,
   canonicalTemplate,
+  classifyMissingReference,
   collectTemplates,
   getWebRoot,
   inlineStaticTextFields,
@@ -100,7 +101,7 @@ function fieldsFor(label) {
   return fieldsCache.get(tsRel);
 }
 
-const report = { diffs: [], parseErrors: [], added: [], removed: [], approved: [] };
+const report = { diffs: [], parseErrors: [], added: [], removed: [], approved: [], deleted: [] };
 const seen = new Set();
 
 for (const t of workTemplates) {
@@ -128,8 +129,14 @@ for (const t of workTemplates) {
   const refLines = fs.readFileSync(baselineFile(t.label), 'utf8').replace(/\r\n/g, '\n').replace(/\n$/, '').split('\n');
   report.diffs.push({ label: t.label, sha: workSha, hunks: lineDiff(refLines, lines) });
 }
+// Une suppression de composant est un écart comme un autre : elle doit être APPROUVÉE, pas subie.
+// L'approbation porte `removed: true` et un motif — sans quoi un composant disparu passerait pour
+// une référence manquante, et la porte deviendrait infranchissable sans déplacer le tag de
+// référence, qui est partagé avec les autres branches.
 for (const label of Object.keys(manifest.templates)) {
-  if (!seen.has(label)) report.removed.push(label);
+  if (seen.has(label)) continue;
+  const verdict = classifyMissingReference(approved[label]);
+  report[verdict === 'deleted' ? 'deleted' : 'removed'].push(label);
 }
 
 for (const d of report.diffs) {
@@ -142,6 +149,9 @@ for (const d of report.diffs) {
 }
 for (const e of report.parseErrors) console.error(`[analyse] ${e.label} : ${e.error}`);
 for (const label of report.removed) console.error(`[supprimé] ${label}`);
+for (const label of report.deleted) {
+  console.log(`[suppression approuvée] ${label} — ${approved[label].reason ?? 'sans motif'}`);
+}
 if (report.added.length) console.log(`[info] ${report.added.length} template(s) sans référence (nouveaux)`);
 
 if (jsonOut) fs.writeFileSync(jsonOut, JSON.stringify(report, null, 2), 'utf8');
@@ -150,6 +160,6 @@ const failures = report.diffs.length + report.parseErrors.length + report.remove
 console.log(
   `[template-fr-parity] ${workTemplates.length} templates : ${report.diffs.length} écart(s), ` +
     `${report.parseErrors.length} erreur(s) d'analyse, ${report.removed.length} supprimé(s), ` +
-    `${report.approved.length} écart(s) approuvé(s)`
+    `${report.approved.length} écart(s) approuvé(s), ${report.deleted.length} suppression(s) approuvée(s)`
 );
 process.exit(failures ? 1 : 0);

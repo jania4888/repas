@@ -19,7 +19,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import ts from 'typescript';
-import { getWebRoot, listWorkFiles, readRefFiles, readWorkFile, sha256 } from './_lib.mjs';
+import {
+  classifyMissingReference,
+  getWebRoot,
+  listWorkFiles,
+  readRefFiles,
+  readWorkFile,
+  sha256
+} from './_lib.mjs';
 
 const args = process.argv.slice(2);
 const jsonOut = args.includes('--json') ? args[args.indexOf('--json') + 1] : null;
@@ -104,7 +111,7 @@ function bagDiff(ref, work) {
 
 const refFiles = readRefFiles(isTs);
 const workRels = listWorkFiles(isTs);
-const report = { diffs: [], approved: [], removedFiles: [], addedFiles: [], global: [] };
+const report = { diffs: [], approved: [], removedFiles: [], deletedFiles: [], addedFiles: [], global: [] };
 const globalRef = new Map();
 const globalWork = new Map();
 const merge = (into, bag) => {
@@ -128,7 +135,12 @@ for (const rel of workRels) {
   }
   report.diffs.push({ file: rel, sha, rows });
 }
-for (const rel of refFiles.keys()) if (!workRels.includes(rel)) report.removedFiles.push(rel);
+// Même règle que la porte des gabarits : un fichier supprimé doit être APPROUVÉ, avec son motif.
+for (const rel of refFiles.keys()) {
+  if (workRels.includes(rel)) continue;
+  const verdict = classifyMissingReference(approved[rel]);
+  report[verdict === 'deleted' ? 'deletedFiles' : 'removedFiles'].push(rel);
+}
 // Bilan tous fichiers confondus, en présence : un texte déplacé ou factorisé dans une constante
 // partagée n'est ni perdu ni nouveau ; seul un texte qui n'existe plus (ou pas encore) nulle part ressort.
 report.global = [
@@ -142,6 +154,9 @@ for (const d of report.diffs) {
   if (d.rows.length > 12) console.error(`  … ${d.rows.length - 12} autre(s)`);
 }
 for (const f of report.removedFiles) console.error(`[supprimé] ${f}`);
+for (const f of report.deletedFiles) {
+  console.log(`[suppression approuvée] ${f} — ${approved[f].reason ?? 'sans motif'}`);
+}
 if (report.addedFiles.length) console.log(`[info] ${report.addedFiles.length} fichier(s) TS nouveaux (sans référence)`);
 if (jsonOut) fs.writeFileSync(jsonOut, JSON.stringify(report, null, 2), 'utf8');
 
@@ -150,6 +165,7 @@ const added = report.global.filter(r => r.delta > 0).length;
 console.log(`[ts-fr-parity] bilan global : ${lost} segment(s) disparu(s), ${added} apparu(s) (--json pour le détail)`);
 console.log(
   `[ts-fr-parity] ${workRels.length} fichiers : ${report.diffs.length} écart(s), ` +
-    `${report.removedFiles.length} supprimé(s), ${report.approved.length} écart(s) approuvé(s)`
+    `${report.removedFiles.length} supprimé(s), ${report.approved.length} écart(s) approuvé(s), ` +
+    `${report.deletedFiles.length} suppression(s) approuvée(s)`
 );
 process.exit(report.diffs.length || report.removedFiles.length ? 1 : 0);

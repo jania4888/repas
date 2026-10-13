@@ -502,3 +502,14 @@ export function lineDiff(a, b, context = 2) {
   }
   return hunks;
 }
+
+/**
+ * Une référence n'existe plus dans le travail : suppression approuvée, ou régression ?
+ *
+ * Un composant supprimé est un écart comme un autre — il doit être APPROUVÉ, avec son motif. Sans
+ * cette règle, la seule façon de faire passer la porte après une suppression légitime serait de
+ * déplacer le tag de référence, qui est partagé avec les autres branches.
+ */
+export function classifyMissingReference(entry) {
+  return entry?.removed === true ? 'deleted' : 'removed';
+}

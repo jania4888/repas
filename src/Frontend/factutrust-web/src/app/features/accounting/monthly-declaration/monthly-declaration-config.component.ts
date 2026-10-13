@@ -31,13 +31,12 @@ import {
   DmRubricForm,
   accountPickerOptions,
   countActiveRubrics,
-  describeMode,
+  describeWriteBlocker,
   familyNeedsAttention,
   familyTab,
   isConfigurableLinesActive,
   isFamilyIncluded,
   isFamilyOutOfEngineScope,
-  modeLabel,
   newRubricForm,
   nextDisplayOrder,
   rubricsOfFamily,
@@ -80,19 +79,23 @@ import {
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     @if (configuration(); as config) {
-      @if (!config.settings.configurableLinesEnabled) {
+      @if (!config.settings.enabled) {
         <app-accounting-status-banner
           variant="info"
-          title="Calcul paramétré non activé" i18n-title="@@accounting.monthly-declaration.calcul.parametre.non.active.504c61d8"
+          title="Déclaration mensuelle unique non activée" i18n-title="@@accounting.monthly-declaration.declaration.unique.non.activee.7c3d9a61"
           message="La configuration reste consultable. Sa modification sera possible dès l’activation par l’administrateur de la plateforme ; aucun montant n’en dépend pour l’instant." i18n-message="@@accounting.monthly-declaration.la.configuration.reste.consultable.sa.mo.dea661f7" />
+      }
+
+      @if (writeBlocker(); as blocked) {
+        <app-accounting-status-banner variant="warning" [message]="blocked" />
       }
 
       <div class="card dm-state">
         <div class="dm-state__mode">
-          <span class="dm-badge" [class.dm-badge--live]="config.settings.mode === 2">
-            {{ modeText(config) }}
-          </span>
-          <p class="dm-state__detail">{{ modeDetail(config) }}</p>
+          <p class="dm-state__detail" i18n="@@accounting.monthly-declaration-config.ts.la.configuration.est.la.source.c4a7e812">
+            Cette configuration est la seule source des montants de la déclaration mensuelle : une
+            famille que le dossier ne déclare pas vaut 0.
+          </p>
         </div>
         <app-button
           variant="secondary"
@@ -141,7 +144,7 @@ import {
                   type="checkbox"
                   [checked]="included()"
                   [disabled]="!editable() || savingFamily()"
-                  (change)="toggleFamily($event)" />
+                  (change)="toggleFamily($event, tab.title)" />
                 <span i18n="@@accounting.monthly-declaration.inclure.cette.famille.dans.la.declaration.mensue.4fe1eab3">Inclure cette famille dans la déclaration mensuelle</span>
               </label>
             </div>
@@ -155,7 +158,7 @@ import {
             @if (needsAttention(tab.family)) {
               <app-accounting-status-banner
                 variant="warning"
-                message="Famille incluse sans rubrique active : en mode paramétré, l’enregistrement de la déclaration sera refusé plutôt que de produire un zéro silencieux." i18n-message="@@accounting.monthly-declaration.famille.incluse.sans.rubrique.active.en.dd389647" />
+                message="Famille incluse sans rubrique active : l’enregistrement de la déclaration sera refusé plutôt que de produire un zéro silencieux." i18n-message="@@accounting.monthly-declaration-config.ts.famille.incluse.sans.rubrique.active.b5c91f70" />
             }
 
             <div class="dm-family__toolbar">
@@ -278,6 +281,9 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
     isConfigurableLinesActive(this.configuration()?.settings)
   );
 
+  /** Ce qui empêche d'écrire, quand quelque chose l'empêche : le catalogue pas encore posé. */
+  readonly writeBlocker = computed(() => describeWriteBlocker(this.configuration()?.settings));
+
   /**
    * Écritures proposées : cabinet délégué ET interrupteur allumé. `canWrite` seul reste l'origine
    * du bandeau « lecture seule » destiné à la société, qui ne dépend pas de l'interrupteur.
@@ -320,14 +326,6 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
     this.load();
     this.loadChart();
     this.loadDuplicateSources();
-  }
-
-  modeText(config: MonthlyDeclarationConfigurationDto): string {
-    return modeLabel(config.settings.mode);
-  }
-
-  modeDetail(config: MonthlyDeclarationConfigurationDto): string {
-    return describeMode(config.settings);
   }
 
   needsAttention(family: MonthlyDeclarationFamily): boolean {
@@ -477,11 +475,30 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
     }
   }
 
-  toggleFamily(event: Event): void {
+  /**
+   * Décocher une famille n'est pas un réglage d'affichage : le dossier cesse de la déclarer, et son
+   * montant vaudra 0. On le dit avant, et on remet la case dans son état réel si l'utilisateur
+   * renonce — une case qui reste décochée après un refus ferait croire au contraire de la vérité.
+   */
+  toggleFamily(event: Event, familyTitle: string): void {
+    const input = event.target as HTMLInputElement;
+    const isIncluded = input.checked;
+
     if (!this.editable()) {
+      input.checked = !isIncluded;
       return;
     }
-    const isIncluded = (event.target as HTMLInputElement).checked;
+
+    if (
+      !isIncluded &&
+      !confirm(
+        $localize`:@@accounting.monthly-declaration-config.ts.confirmation.decochage.famille.a92f3d14:Ce dossier cessera de déclarer « ${familyTitle}:familyTitle: » : son montant vaudra 0 sur la déclaration mensuelle. Confirmez-vous ?`
+      )
+    ) {
+      input.checked = true;
+      return;
+    }
+
     this.savingFamily.set(true);
     this.error.set(null);
     this.api
@@ -492,14 +509,16 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
           if (res.success) {
             this.load();
           } else {
-            // La case reflète l'état du serveur : la recharger est la seule façon de ne pas
-            // laisser l'écran afficher une inclusion qui n'a pas été enregistrée.
+            // La case reflète l'état du serveur : la remettre dans son état réel et recharger est
+            // la seule façon de ne pas laisser l'écran afficher une inclusion non enregistrée.
+            input.checked = !isIncluded;
             this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.mise.a.jour.de.la.famill.f72ba5:Erreur lors de la mise à jour de la famille.`);
             this.load(false);
           }
         },
         error: err => {
           this.savingFamily.set(false);
+          input.checked = !isIncluded;
           this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-config.ts.erreur.reseau.0683007f:Erreur réseau`));
           this.load(false);
         }

@@ -1,4 +1,4 @@
-import { VatDeclarationDto } from '../services/accounting.service';
+import { MonthlyDeclarationFamily, VatDeclarationDto } from '../services/accounting.service';
 import { Company } from '@core/services/company.service';
 import { User } from '@core/services/auth.service';
 
@@ -230,6 +230,19 @@ export function payrollHint(d: VatDeclarationDto): string | null {
   return null;
 }
 
+/**
+ * Taux réellement appliqué par la configuration pour une famille, lu sur ses lignes à assiette non
+ * nulle. `null` quand le détail ne le dit pas — aucune ligne, ou plusieurs taux : l'appelant garde
+ * alors le taux de plateforme, qui reste une indication honnête.
+ */
+function appliedRatePercent(d: VatDeclarationDto, family: MonthlyDeclarationFamily): number | null {
+  const rates = (d.lines ?? [])
+    .filter(l => l.family === family && l.gross !== 0 && l.ratePercentApplied)
+    .map(l => l.ratePercentApplied as number);
+  const distinct = [...new Set(rates)];
+  return distinct.length === 1 ? distinct[0] : null;
+}
+
 /** Écart significatif (> 0,001) entre le montant saisi et la valeur suggérée Base × Taux. */
 export function hasSuggestionMismatch(amount: number | null | undefined, suggested: number | null | undefined): boolean {
   if (amount == null || suggested == null) return false;
@@ -322,7 +335,8 @@ export function buildTaxRows(
     rows.push({
       taxLabel: 'FODEC',
       taxableBase: d.fodecTaxableBase ?? d.salesTaxableBase,
-      ratePercent: fodecRatePercent,
+      ratePercent:
+        appliedRatePercent(d, MonthlyDeclarationFamily.OtherTurnoverTaxes) ?? fodecRatePercent,
       amountToPay: extras.fodec,
       deductibleAmount: null,
       netAmount: extras.fodec,
@@ -342,7 +356,11 @@ export function buildTaxRows(
     rows.push({
       taxLabel: 'TCL',
       taxableBase: d.salesGrossBase,
-      ratePercent: tclRatePercent,
+      // Le taux effectivement appliqué par la configuration du dossier, et non celui de la
+      // plateforme : un dossier peut l'avoir corrigé. On ne retient que les lignes à assiette non
+      // nulle — la T.C.L en porte deux (local, totalement exportateur), et celle qui ne produit
+      // rien ne dit rien du taux appliqué.
+      ratePercent: appliedRatePercent(d, MonthlyDeclarationFamily.Tcl) ?? tclRatePercent,
       amountToPay: extras.tcl,
       deductibleAmount: null,
       netAmount: extras.tcl,

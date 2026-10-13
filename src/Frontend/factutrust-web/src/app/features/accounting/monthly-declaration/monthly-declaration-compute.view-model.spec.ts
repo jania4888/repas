@@ -2,34 +2,22 @@ import {
   MonthlyDeclarationDiagnosticDto,
   MonthlyDeclarationFamily,
   MonthlyDeclarationLineDto,
-  MonthlyDeclarationMode,
-  MonthlyDeclarationSettingsDto,
   RubricDiagnosticKind,
   VatDeclarationDto
 } from '../services/accounting.service';
 import {
-  DM_MAX_OVERRIDE_REASON_LENGTH,
-  DM_MODE_OPTIONS,
-  DmModeForm,
   buildReconciliation,
   countBySeverity,
   defaultComputePeriod,
   describeComputeOutcome,
   describeDiagnostic,
-  describeRamp,
   describeReconciliationGap,
   diagnosticSeverity,
   distinctDiagnostics,
   familyDeclaredAmount,
-  firstDayOfNextMonth,
   formatMillimes,
   groupLinesByFamily,
-  isCleanParityRun,
-  isComputablePeriod,
-  needsOverrideReason,
-  newModeForm,
-  toModeRequest,
-  validateModeForm
+  isComputablePeriod
 } from './monthly-declaration-compute.view-model';
 
 function line(over: Partial<MonthlyDeclarationLineDto> = {}): MonthlyDeclarationLineDto {
@@ -81,22 +69,6 @@ function declaration(over: Partial<VatDeclarationDto> = {}): VatDeclarationDto {
     salesGrossBase: 0,
     ...over
   } as VatDeclarationDto;
-}
-
-function settings(over: Partial<MonthlyDeclarationSettingsDto> = {}): MonthlyDeclarationSettingsDto {
-  return {
-    mode: MonthlyDeclarationMode.Parity,
-    configuredSince: null,
-    lastParityRunAt: null,
-    lastParityMaxGapMillimes: 0,
-    parityCleanStreak: 0,
-    requiredCleanParityPeriods: 3,
-    canSwitchToConfigured: false,
-    parityOverrideBy: null,
-    parityOverrideReason: null,
-    configurableLinesEnabled: true,
-    ...over
-  } as MonthlyDeclarationSettingsDto;
 }
 
 describe('monthly-declaration-compute.view-model', () => {
@@ -277,7 +249,7 @@ describe('monthly-declaration-compute.view-model', () => {
       expect(buildReconciliation(d)[0].gapMillimes).toBeNull();
     });
 
-    it("dit que l'écart est l'objet de la mesure en parité, et une anomalie en paramétré", () => {
+    it("dit qu'un écart est une anomalie : détail et case déclarée sont le même calcul", () => {
       const row = {
         family: MonthlyDeclarationFamily.Tfp,
         label: 'TFP',
@@ -285,12 +257,8 @@ describe('monthly-declaration-compute.view-model', () => {
         declaredAmount: 1,
         gapMillimes: 234
       };
-      expect(describeReconciliationGap(row, MonthlyDeclarationMode.Parity)).toContain(
-        'calcul historique'
-      );
-      expect(describeReconciliationGap(row, MonthlyDeclarationMode.Configured)).toContain(
-        'le même calcul'
-      );
+      expect(describeReconciliationGap(row)).toContain('le même calcul');
+      expect(describeReconciliationGap(row)).toContain('0,234 DT');
     });
 
     it('ne commente pas un écart nul', () => {
@@ -301,7 +269,7 @@ describe('monthly-declaration-compute.view-model', () => {
         declaredAmount: 1,
         gapMillimes: 0
       };
-      expect(describeReconciliationGap(row, MonthlyDeclarationMode.Parity)).toContain('Identique');
+      expect(describeReconciliationGap(row)).toContain('Identique');
     });
   });
 
@@ -315,209 +283,36 @@ describe('monthly-declaration-compute.view-model', () => {
   });
 
   describe('verdict du calcul', () => {
-    it('dit que rien n’a bougé en calcul historique', () => {
-      const text = describeComputeOutcome(
-        declaration({ monthlyDeclarationMode: MonthlyDeclarationMode.Legacy })
-      );
-      expect(text).toContain("à l'ancienne");
+    it('annonce que les montants affichés seront déclarés', () => {
+      expect(describeComputeOutcome(declaration({}))).toContain('seront déclarés');
     });
 
-    it('distingue une parité sans écart d’une parité qui en montre un', () => {
-      const clean = describeComputeOutcome(
+    it("dit qu'une configuration non initialisée interdit l'enregistrement", () => {
+      const text = describeComputeOutcome(
         declaration({
-          monthlyDeclarationMode: MonthlyDeclarationMode.Parity,
-          parityMaxGapMillimes: 0
+          monthlyDeclarationDiagnostics: [
+            { kind: RubricDiagnosticKind.ConfigurationNotInitialized, detail: null }
+          ]
         })
       );
-      const dirty = describeComputeOutcome(
-        declaration({
-          monthlyDeclarationMode: MonthlyDeclarationMode.Parity,
-          parityMaxGapMillimes: 1234
-        })
-      );
-      expect(clean).toContain('sans écart');
-      expect(dirty).toContain('1,234 DT');
-      expect(dirty).toContain('restent ceux du calcul historique');
-    });
-
-    it('annonce que les montants seront déclarés en mode paramétré', () => {
-      const text = describeComputeOutcome(
-        declaration({ monthlyDeclarationMode: MonthlyDeclarationMode.Configured })
-      );
-      expect(text).toContain('seront déclarés');
-    });
-
-    it("ne retient comme contrôle probant qu'une parité sans écart", () => {
-      expect(
-        isCleanParityRun(
-          declaration({
-            monthlyDeclarationMode: MonthlyDeclarationMode.Parity,
-            parityMaxGapMillimes: 0
-          })
-        )
-      ).toBe(true);
-      expect(
-        isCleanParityRun(
-          declaration({
-            monthlyDeclarationMode: MonthlyDeclarationMode.Parity,
-            parityMaxGapMillimes: 1
-          })
-        )
-      ).toBe(false);
-      expect(
-        isCleanParityRun(
-          declaration({
-            monthlyDeclarationMode: MonthlyDeclarationMode.Configured,
-            parityMaxGapMillimes: 0
-          })
-        )
-      ).toBe(false);
+      expect(text).toContain("n'est pas encore initialisée");
+      expect(text).toContain('ne peut pas être enregistrée');
     });
   });
 
-  describe('changement de régime', () => {
-    it('propose les trois régimes', () => {
-      expect(DM_MODE_OPTIONS.map(o => o.value)).toEqual([
-        MonthlyDeclarationMode.Legacy,
-        MonthlyDeclarationMode.Parity,
-        MonthlyDeclarationMode.Configured
-      ]);
-    });
-
-    it("propose le premier du mois suivant comme date d'effet", () => {
-      expect(firstDayOfNextMonth(new Date(2026, 8, 15))).toBe('2026-10-01');
-      expect(firstDayOfNextMonth(new Date(2026, 11, 3))).toBe('2027-01-01');
-    });
-
-    it('reprend la date d’effet déjà enregistrée si le dossier en a une', () => {
-      const form = newModeForm(
-        settings({
-          mode: MonthlyDeclarationMode.Configured,
-          configuredSince: '2026-07-01T00:00:00Z'
-        }),
-        new Date(2026, 8, 15)
-      );
-      expect(form.configuredSince).toBe('2026-07-01');
-    });
-
-    it('refuse la bascule directe depuis le calcul historique', () => {
-      const form: DmModeForm = {
-        mode: MonthlyDeclarationMode.Configured,
-        configuredSince: '2026-10-01',
-        overrideReason: null
-      };
-      const error = validateModeForm(form, settings({ mode: MonthlyDeclarationMode.Legacy }));
-      expect(error).toContain('contrôle de parité');
-    });
-
-    it("exige une date d'effet au premier du mois", () => {
-      const form: DmModeForm = {
-        mode: MonthlyDeclarationMode.Configured,
-        configuredSince: '2026-10-15',
-        overrideReason: 'motif'
-      };
-      const error = validateModeForm(form, settings({ canSwitchToConfigured: true }));
-      expect(error).toContain('premier jour');
-    });
-
-    it('exige un motif tant que la série de contrôles n’est pas atteinte', () => {
-      const form: DmModeForm = {
-        mode: MonthlyDeclarationMode.Configured,
-        configuredSince: '2026-10-01',
-        overrideReason: null
-      };
-      expect(needsOverrideReason(form, settings({ parityCleanStreak: 1 }))).toBe(true);
-      const error = validateModeForm(form, settings({ parityCleanStreak: 1 }));
-      expect(error).toContain('série actuelle : 1');
-    });
-
-    it('n’exige plus de motif une fois la série atteinte', () => {
-      const form: DmModeForm = {
-        mode: MonthlyDeclarationMode.Configured,
-        configuredSince: '2026-10-01',
-        overrideReason: null
-      };
-      const ok = settings({ parityCleanStreak: 3, canSwitchToConfigured: true });
-      expect(needsOverrideReason(form, ok)).toBe(false);
-      expect(validateModeForm(form, ok)).toBeNull();
-    });
-
-    it('refuse un motif plus long que ce que le domaine accepte', () => {
-      const form: DmModeForm = {
-        mode: MonthlyDeclarationMode.Configured,
-        configuredSince: '2026-10-01',
-        overrideReason: 'x'.repeat(DM_MAX_OVERRIDE_REASON_LENGTH + 1)
-      };
-      const error = validateModeForm(form, settings({ parityCleanStreak: 1 }));
-      expect(error).toContain('500 caractères');
-    });
-
-    it('refuse de redemander le régime déjà en place', () => {
-      const error = validateModeForm(
-        { mode: MonthlyDeclarationMode.Parity, configuredSince: null, overrideReason: null },
-        settings({ mode: MonthlyDeclarationMode.Parity })
-      );
-      expect(error).toContain('déjà dans ce régime');
-    });
-
-    it('laisse redemander le mode paramétré, dont la date d’effet peut changer', () => {
-      const error = validateModeForm(
-        {
-          mode: MonthlyDeclarationMode.Configured,
-          configuredSince: '2026-11-01',
-          overrideReason: null
-        },
-        settings({ mode: MonthlyDeclarationMode.Configured, canSwitchToConfigured: true })
-      );
-      expect(error).toBeNull();
-    });
-
-    it("n'envoie ni date d'effet ni motif sur un retour au calcul historique", () => {
-      const request = toModeRequest({
-        mode: MonthlyDeclarationMode.Legacy,
-        configuredSince: '2026-10-01',
-        overrideReason: 'inutile ici'
+  describe('familles non déclarées', () => {
+    it("dit qu'une famille décochée aurait produit un montant, et qu'il vaut 0", () => {
+      const text = describeDiagnostic({
+        kind: RubricDiagnosticKind.ExcludedFamilyWithAmount,
+        detail: 'Tfp'
       });
-      expect(request).toEqual({
-        mode: MonthlyDeclarationMode.Legacy,
-        configuredSince: null,
-        overrideReason: null
-      });
+      expect(text).toContain('T.F.P');
+      expect(text).toContain('vaut 0');
     });
 
-    it('transmet la date d’effet et le motif sur une bascule', () => {
-      const request = toModeRequest({
-        mode: MonthlyDeclarationMode.Configured,
-        configuredSince: ' 2026-10-01 ',
-        overrideReason: '  Dérogation validée par l’associé.  '
-      });
-      expect(request.configuredSince).toBe('2026-10-01');
-      expect(request.overrideReason).toBe('Dérogation validée par l’associé.');
-    });
-  });
-
-  describe('rampe', () => {
-    it('dit que rien n’a commencé en calcul historique', () => {
-      expect(describeRamp(settings({ mode: MonthlyDeclarationMode.Legacy }))).toContain(
-        "n'a pas commencé"
-      );
-    });
-
-    it('chiffre ce qu’il reste à faire en contrôle de parité', () => {
-      const text = describeRamp(settings({ parityCleanStreak: 1 }));
-      expect(text).toContain('1 sur 3');
-      expect(text).toContain('Encore 2');
-    });
-
-    it('annonce la bascule ouverte une fois la série atteinte', () => {
-      const text = describeRamp(settings({ parityCleanStreak: 3, canSwitchToConfigured: true }));
-      expect(text).toContain('bascule est ouverte');
-    });
-
-    it('dit que la rampe est derrière un dossier déjà paramétré', () => {
-      expect(describeRamp(settings({ mode: MonthlyDeclarationMode.Configured }))).toContain(
-        'derrière lui'
-      );
+    it('est un avertissement, pas une erreur : le montant reste juste', () => {
+      expect(diagnosticSeverity(RubricDiagnosticKind.ExcludedFamilyWithAmount)).toBe('warning');
+      expect(diagnosticSeverity(RubricDiagnosticKind.ConfigurationNotInitialized)).toBe('error');
     });
   });
 });

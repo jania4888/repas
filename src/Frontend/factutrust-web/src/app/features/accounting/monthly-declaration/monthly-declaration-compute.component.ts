@@ -11,17 +11,13 @@ import { AccountingStatusBannerComponent } from '../shared/accounting-status-ban
 import {
   AccountingService,
   MonthlyDeclarationDiagnosticDto,
-  MonthlyDeclarationMode,
   MonthlyDeclarationSettingsDto,
   VatDeclarationDto
 } from '../services/accounting.service';
 import { DmComputeLinesComponent } from './dm-compute-lines.component';
-import { DmModePanelComponent } from './dm-mode-panel.component';
-import { DmParityReportComponent } from './dm-parity-report.component';
-import { isConfigurableLinesActive, modeLabel } from './monthly-declaration-config.view-model';
+import { describeWriteBlocker, isConfigurableLinesActive } from './monthly-declaration-config.view-model';
 import { formatPeriodLabel } from '../vat-declaration/vat-declaration.view-model';
 import {
-  DmModeForm,
   buildFamilyViews,
   countBySeverity,
   defaultComputePeriod,
@@ -29,21 +25,16 @@ import {
   describeDiagnostic,
   diagnosticSeverity,
   distinctDiagnostics,
-  isCleanParityRun,
-  isComputablePeriod,
-  newModeForm,
-  toModeRequest,
-  validateModeForm
+  isComputablePeriod
 } from './monthly-declaration-compute.view-model';
 
 /**
  * Calcul DM — évalue la configuration du dossier sur une période et rend le détail obtenu, sans
- * rien déposer. C'est l'écran de recette de la déclaration paramétrable : on y compare, on y lit
- * les signalements, et c'est de là qu'on fait avancer la rampe de bascule.
+ * rien déposer. C'est l'écran de recette de la déclaration : on y lit ce que la configuration
+ * produit, famille par famille, et les signalements qui empêcheraient de l'enregistrer.
  *
- * Le calcul **écrit** quand même quelque chose : en contrôle de parité, il consigne le résultat de
- * la comparaison sur les réglages du dossier. C'est cette série, et elle seule, qui autorise
- * ensuite le passage en calcul paramétré — d'où le rechargement des réglages après chaque calcul.
+ * Le calcul ne dépose rien, mais il est **audité** : la trace dit quels montants la configuration
+ * produisait ce jour-là. D'où le même verrou que les écritures.
  */
 @Component({
   selector: 'app-monthly-declaration-compute',
@@ -54,9 +45,7 @@ import {
     PageHeaderComponent,
     ButtonComponent,
     AccountingStatusBannerComponent,
-    DmComputeLinesComponent,
-    DmModePanelComponent,
-    DmParityReportComponent
+    DmComputeLinesComponent
   ],
   template: `
     <app-page-header
@@ -66,11 +55,14 @@ import {
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     @if (settings(); as s) {
-      @if (!s.configurableLinesEnabled) {
+      @if (!s.enabled) {
         <app-accounting-status-banner
           variant="info"
-          title="Calcul paramétré non activé" i18n-title="@@accounting.monthly-declaration.calcul.parametre.non.active.504c61d8"
-          message="Le calcul et le changement de régime sont indisponibles pour tous les dossiers tant que l’administrateur de la plateforme n’a pas activé cette fonctionnalité." i18n-message="@@accounting.monthly-declaration.le.calcul.et.le.changement.de.regime.son.04a1c379" />
+          title="Déclaration mensuelle unique non activée" i18n-title="@@accounting.monthly-declaration.declaration.unique.non.activee.7c3d9a61"
+          message="Le calcul est indisponible pour tous les dossiers tant que l’administrateur de la plateforme n’a pas activé cette fonctionnalité." i18n-message="@@accounting.monthly-declaration.le.calcul.est.indisponible.pour.tous.les.1f5e0b84" />
+      }
+      @if (writeBlocker(); as blocked) {
+        <app-accounting-status-banner variant="warning" [message]="blocked" />
       }
     }
 
@@ -114,15 +106,11 @@ import {
     </div>
 
     @if (result(); as r) {
-      <div class="card dm-outcome" [class.dm-outcome--clean]="cleanRun()">
+      <div class="card dm-outcome">
         <div class="dm-outcome__head">
           <h2 class="dm-outcome__title">{{ periodLabel() }}</h2>
-          <span class="dm-badge">{{ resultModeLabel(r) }}</span>
         </div>
         <p class="dm-outcome__text">{{ outcome(r) }}</p>
-        @if (cleanRun()) {
-          <p class="dm-outcome__text" i18n="@@accounting.monthly-declaration.ce.controle.allonge.la.serie.qui.ouvre.la.bascul.b289ec8b"> Ce contrôle allonge la série qui ouvre la bascule vers le calcul paramétré. </p>
-        }
       </div>
 
       @if (diagnostics(r); as list) {
@@ -145,16 +133,6 @@ import {
 
       <app-dm-compute-lines [views]="familyViews()" />
     }
-
-    <app-dm-mode-panel
-      [settings]="settings()"
-      [form]="modeForm()"
-      [disabled]="!canCompute()"
-      [saving]="savingMode()"
-      (apply)="applyMode()" />
-
-    <!-- Lecture pure, mais réservée au cabinet délégué : le rapport expose des montants de brouillon. -->
-    <app-dm-parity-report [disabled]="!canCompute()" />
   `,
   styles: `
     .dm-period { display: flex; flex-wrap: wrap; gap: var(--spacing-3); align-items: flex-end; }
@@ -163,7 +141,6 @@ import {
     .dm-inp { padding: var(--spacing-2) var(--spacing-3); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-background-elevated); color: var(--color-text-primary); font-size: var(--font-size-sm); }
     .dm-narrow { width: 7rem; }
     .dm-outcome { display: flex; flex-direction: column; gap: var(--spacing-2); border-inline-start: 3px solid var(--color-border-default); }
-    .dm-outcome--clean { border-inline-start-color: var(--color-success-500, #22c55e); }
     .dm-outcome__head { display: flex; flex-wrap: wrap; gap: var(--spacing-3); align-items: center; justify-content: space-between; }
     .dm-outcome__title { margin: 0; font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); }
     .dm-outcome__text { margin: 0; font-size: var(--font-size-sm); color: var(--color-text-secondary); }
@@ -185,38 +162,34 @@ export class MonthlyDeclarationComputeComponent implements OnInit {
 
   readonly settings = signal<MonthlyDeclarationSettingsDto | null>(null);
   readonly result = signal<VatDeclarationDto | null>(null);
-  readonly modeForm = signal<DmModeForm | null>(null);
 
   readonly computing = signal(false);
-  readonly savingMode = signal(false);
   readonly error = signal<string | null>(null);
 
   year = 0;
   month = 0;
 
   /**
-   * Miroir du verrou serveur `IsAccountingFirmDelegatedContext`. Le calcul est une écriture : il
-   * consigne le contrôle de parité sur les réglages du dossier.
+   * Miroir du verrou serveur `IsAccountingFirmDelegatedContext`. Le calcul ne dépose rien, mais il
+   * est audité : il garde le même verrou que les écritures.
    */
   readonly canWrite = computed(() => this.auth.isAccountingFirm() && this.auth.isDelegatedMode());
 
-  /** Reflet de l'interrupteur serveur, global à la plateforme — `false` tant que non chargé. */
+  /** Interrupteur serveur ET catalogue posé — `false` tant que les réglages ne sont pas chargés. */
   readonly linesEnabled = computed(() => isConfigurableLinesActive(this.settings()));
 
+  /** Ce qui empêche d'écrire, quand quelque chose l'empêche. */
+  readonly writeBlocker = computed(() => describeWriteBlocker(this.settings()));
+
   /**
-   * Calcul et changement de régime : cabinet délégué ET interrupteur allumé. Sans le second, le
-   * serveur refuserait à coup sûr ; mieux vaut ne pas proposer l'action que d'afficher son échec.
+   * Calcul : cabinet délégué ET configuration exploitable. Sans la seconde, le serveur refuserait à
+   * coup sûr ; mieux vaut ne pas proposer l'action que d'afficher son échec.
    */
   readonly canCompute = computed(() => this.canWrite() && this.linesEnabled());
 
   readonly familyViews = computed(() => {
     const r = this.result();
     return r ? buildFamilyViews(r) : [];
-  });
-
-  readonly cleanRun = computed(() => {
-    const r = this.result();
-    return !!r && isCleanParityRun(r);
   });
 
   ngOnInit(): void {
@@ -236,10 +209,6 @@ export class MonthlyDeclarationComputeComponent implements OnInit {
 
   outcome(d: VatDeclarationDto): string {
     return describeComputeOutcome(d);
-  }
-
-  resultModeLabel(d: VatDeclarationDto): string {
-    return modeLabel(d.monthlyDeclarationMode ?? MonthlyDeclarationMode.Legacy);
   }
 
   diagnostics(d: VatDeclarationDto): MonthlyDeclarationDiagnosticDto[] {
@@ -275,7 +244,6 @@ export class MonthlyDeclarationComputeComponent implements OnInit {
       next: res => {
         if (res.success && res.data) {
           this.settings.set(res.data.settings);
-          this.modeForm.set(newModeForm(res.data.settings, new Date()));
         } else if (clearError) {
           this.error.set(res.error ?? $localize`:@@ui.tern.erreur.de.chargement.des.reglages.de.la.de.3d201b:Erreur de chargement des réglages de la déclaration.`);
         }
@@ -299,8 +267,8 @@ export class MonthlyDeclarationComputeComponent implements OnInit {
         this.computing.set(false);
         if (res.success && res.data) {
           this.result.set(res.data);
-          // Le contrôle de parité vient peut-être d'allonger la série : relire les réglages plutôt
-          // que d'afficher une rampe périmée à côté de son propre résultat.
+          // La pose du catalogue a pu aboutir entre-temps : relire les réglages plutôt que
+          // d'afficher à côté du résultat un blocage qui n'existe plus.
           this.loadSettings(false);
         } else {
           this.result.set(null);
@@ -315,41 +283,4 @@ export class MonthlyDeclarationComputeComponent implements OnInit {
     });
   }
 
-  applyMode(): void {
-    const form = this.modeForm();
-    const settings = this.settings();
-    if (!this.canCompute() || !form || !settings || this.savingMode()) {
-      return;
-    }
-    const invalid = validateModeForm(form, settings);
-    if (invalid) {
-      this.error.set(invalid);
-      return;
-    }
-
-    this.savingMode.set(true);
-    this.error.set(null);
-    this.api.setMonthlyDeclarationMode(toModeRequest(form)).subscribe({
-      next: res => {
-        this.savingMode.set(false);
-        if (res.success) {
-          this.toast.add({
-            severity: 'success',
-            summary: $localize`:@@monthly-declaration-compute.component.summary.Régime de ca:Régime de calcul modifié`,
-            detail: modeLabel(form.mode),
-            life: 4000
-          });
-          this.loadSettings();
-        } else {
-          this.error.set(res.error ?? $localize`:@@ui.tern.le.changement.de.regime.a.ete.refuse.e7a8db:Le changement de régime a été refusé.`);
-          this.loadSettings(false);
-        }
-      },
-      error: err => {
-        this.savingMode.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-compute.ts.erreur.reseau.0683007f:Erreur réseau`));
-        this.loadSettings(false);
-      }
-    });
-  }
 }

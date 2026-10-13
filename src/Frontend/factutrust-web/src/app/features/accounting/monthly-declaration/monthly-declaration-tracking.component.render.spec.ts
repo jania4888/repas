@@ -6,7 +6,7 @@ import { of, throwError } from 'rxjs';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import {
   AccountingService,
-  MonthlyDeclarationMode,
+  DeclarationCalculationOrigin,
   MonthlyDeclarationSettingsDto,
   MonthlyDeclarationTrackingDto,
   MonthlyDeclarationTrackingRowDto,
@@ -26,23 +26,15 @@ function row(over: Partial<MonthlyDeclarationTrackingRowDto> = {}): MonthlyDecla
     revisionNumber: 1,
     isRectificative: false,
     filingDeadline: '2026-02-22T00:00:00Z',
-    mode: MonthlyDeclarationMode.Legacy,
+    calculationOrigin: null,
     ...over
   };
 }
 
 function settings(over: Partial<MonthlyDeclarationSettingsDto> = {}): MonthlyDeclarationSettingsDto {
   return {
-    mode: MonthlyDeclarationMode.Legacy,
-    configuredSince: null,
-    lastParityRunAt: null,
-    lastParityMaxGapMillimes: 0,
-    parityCleanStreak: 0,
-    requiredCleanParityPeriods: 3,
-    canSwitchToConfigured: false,
-    parityOverrideBy: null,
-    parityOverrideReason: null,
-    configurableLinesEnabled: true,
+    enabled: true,
+    catalogApplied: true,
     ...over
   };
 }
@@ -153,35 +145,15 @@ describe('MonthlyDeclarationTrackingComponent render', () => {
     expect(text()).toMatch(/100[.,]500/);
   });
 
-  it('dit combien de mois le moteur calcule réellement', () => {
+  it('affiche le calcul qui a produit chaque dépôt, et rien sans dépôt', () => {
     api.getMonthlyDeclarationTracking.and.returnValue(
       of({
         success: true,
         data: tracking({
           months: [
-            row({ month: 1, mode: MonthlyDeclarationMode.Legacy }),
-            row({ month: 2, mode: MonthlyDeclarationMode.Configured })
-          ]
-        })
-      })
-    );
-    fixture.detectChanges();
-
-    expect(text()).toContain('1 mois de 2026 sur 12');
-  });
-
-  it('affiche le régime période par période, pas celui du dossier', () => {
-    api.getMonthlyDeclarationTracking.and.returnValue(
-      of({
-        success: true,
-        data: tracking({
-          settings: settings({
-            mode: MonthlyDeclarationMode.Configured,
-            configuredSince: '2026-07-01T00:00:00Z'
-          }),
-          months: [
-            row({ month: 6, mode: MonthlyDeclarationMode.Legacy }),
-            row({ month: 7, mode: MonthlyDeclarationMode.Configured })
+            row({ month: 6, calculationOrigin: DeclarationCalculationOrigin.Historic }),
+            row({ month: 7, calculationOrigin: DeclarationCalculationOrigin.Configured }),
+            row({ month: 8, exists: false, calculationOrigin: null })
           ]
         })
       })
@@ -190,18 +162,19 @@ describe('MonthlyDeclarationTrackingComponent render', () => {
 
     expect(text()).toContain('Calcul historique');
     expect(text()).toContain('Calcul paramétré');
+    expect(text()).toContain('Origine du calcul');
   });
 
   it('explique l’inactivité du drapeau au lieu d’afficher une erreur', () => {
     api.getMonthlyDeclarationTracking.and.returnValue(
       of({
         success: true,
-        data: tracking({ settings: settings({ configurableLinesEnabled: false }) })
+        data: tracking({ settings: settings({ enabled: false }) })
       })
     );
     fixture.detectChanges();
 
-    expect(text()).toContain('Calcul paramétré non activé');
+    expect(text()).toContain('Déclaration mensuelle unique non activée');
     expect(text()).toContain('suivi des dépôts reste exact');
     expect(fixture.componentInstance.error()).toBeNull();
   });

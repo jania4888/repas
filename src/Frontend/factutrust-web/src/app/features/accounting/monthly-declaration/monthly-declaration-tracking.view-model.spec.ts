@@ -1,15 +1,14 @@
 import {
-  MonthlyDeclarationMode,
+  DeclarationCalculationOrigin,
   MonthlyDeclarationTrackingRowDto,
   VatDeclarationStatus
 } from '../services/accounting.service';
 import {
   defaultTrackingYear,
-  describeMigration,
   describeRow,
   isTrackableYear,
   periodLabel,
-  rowModeLabel,
+  rowOriginLabel,
   stateLabel,
   stateNeedsAttention,
   summariseTracking,
@@ -30,7 +29,7 @@ function row(over: Partial<MonthlyDeclarationTrackingRowDto> = {}): MonthlyDecla
     revisionNumber: 1,
     isRectificative: false,
     filingDeadline: '2026-02-22T00:00:00Z',
-    mode: MonthlyDeclarationMode.Legacy,
+    calculationOrigin: null,
     ...over
   };
 }
@@ -151,46 +150,10 @@ describe('monthly-declaration-tracking.view-model', () => {
       expect(summary.totalToPay).toBe(300.75);
     });
 
-    it('compte les mois effectivement calculés par le moteur', () => {
-      const summary = summariseTracking(
-        [
-          row({ month: 6, mode: MonthlyDeclarationMode.Legacy }),
-          row({ month: 7, mode: MonthlyDeclarationMode.Configured }),
-          row({ month: 8, mode: MonthlyDeclarationMode.Configured })
-        ],
-        TODAY
-      );
-
-      expect(summary.configuredMonths).toBe(2);
-    });
-
     it('supporte une liste absente', () => {
       const summary = summariseTracking(null, TODAY);
       expect(summary.filed).toBe(0);
       expect(summary.totalToPay).toBe(0);
-    });
-  });
-
-  describe('avancement de la migration', () => {
-    it('dit qu’aucun mois n’est calculé', () => {
-      expect(describeMigration(summariseTracking([], TODAY), 2026)).toContain('Aucun mois de 2026');
-    });
-
-    it('chiffre un exercice partiellement basculé', () => {
-      const rows = Array.from({ length: 12 }, (_, i) =>
-        row({
-          month: i + 1,
-          mode: i >= 6 ? MonthlyDeclarationMode.Configured : MonthlyDeclarationMode.Legacy
-        })
-      );
-      expect(describeMigration(summariseTracking(rows, TODAY), 2026)).toContain('6 mois de 2026 sur 12');
-    });
-
-    it('annonce un exercice entièrement basculé', () => {
-      const rows = Array.from({ length: 12 }, (_, i) =>
-        row({ month: i + 1, mode: MonthlyDeclarationMode.Configured })
-      );
-      expect(describeMigration(summariseTracking(rows, TODAY), 2026)).toContain('Les douze mois');
     });
   });
 
@@ -199,8 +162,14 @@ describe('monthly-declaration-tracking.view-model', () => {
       expect(periodLabel(2026, 3)).toBe('Mars 2026');
     });
 
-    it('nomme le régime de la ligne', () => {
-      expect(rowModeLabel(row({ mode: MonthlyDeclarationMode.Parity }))).toBe('Contrôle de parité');
+    it('nomme le calcul qui a produit le dépôt, et rien sans dépôt', () => {
+      expect(
+        rowOriginLabel(row({ calculationOrigin: DeclarationCalculationOrigin.Historic }))
+      ).toBe('Calcul historique');
+      expect(
+        rowOriginLabel(row({ calculationOrigin: DeclarationCalculationOrigin.Configured }))
+      ).toBe('Calcul paramétré');
+      expect(rowOriginLabel(row({ calculationOrigin: null }))).toBe('—');
     });
   });
 });

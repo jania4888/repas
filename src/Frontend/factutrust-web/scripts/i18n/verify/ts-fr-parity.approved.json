@@ -96,8 +96,8 @@
     "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
   },
   "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts": {
-    "sha": "657b3d3bf11de053c5e726d079468ca6f0170b045982f9a1419cd8c51d575a0d",
-    "reason": "Réécriture erpPlural / fusion de phrase / correctif de regroupement : texte FR rendu identique (vérifié par catégorie CLDR fr : one = singulier, other/many = pluriel) — Puis retrait du calcul historique (livraison A) : signalement « double lecture d'une même source »."
+    "sha": "55826be9245c812ed686649b53d7f97860ef52b71ed72133b3d92ad9fb4402a5",
+    "reason": "Retrait du calcul cable : plus de verdict par regime, de serie de parite ni de validation du formulaire de bascule. Nouveau libelle du signalement « famille non declaree »."
   },
   "src/app/features/accounting/nct-statements/nct-statements.component.ts": {
     "sha": "d17ceb7f96c0b8a7bbe74bb1c1595c6029ac6ffe78f03fc9ca30d0ddc6d5d554",
@@ -300,12 +300,12 @@
     "reason": "En-tête de la colonne tiers : getter partyColumnLabel en $localize (« Client » / « Fournisseur »), même texte que la valeur partyLabel ; rendu français inchangé."
   },
   "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts": {
-    "sha": "2f96263d667f6d0f243097a96abbe58868115676641378c67dca7ca570390651",
-    "reason": "Retrait du calcul historique (livraison A) : origine « Documents » (valeurs documentaires et leurs libellés), TFP par activité, messages de validation miroir du serveur."
+    "sha": "e11dbae75eeaf8f5900a881f62385301d289a3fe366e702548a3862e5ab2e669",
+    "reason": "Retrait du calcul cable : modeLabel et describeMode disparaissent avec le regime ; describeWriteBlocker explique un catalogue non pose. Le reste est la livraison A, deja approuvee."
   },
   "src/app/features/accounting/monthly-declaration/monthly-declaration-config.component.ts": {
-    "sha": "766e907d8c80c4f20cf65744be6f92b01ea1a0278211b2e5598cdee0817b3fc7",
-    "reason": "Fiche de rubrique en boîte de dialogue : le titre (« Modifier la rubrique » + code, « Nouvelle rubrique ») passe du template du formulaire à l'en-tête du p-dialog, mêmes libellés français."
+    "sha": "01a9a1bf7723a33e14306e5504aa06ccd3bbd2db293bff333d2d4c9c21bdd9b7",
+    "reason": "Retrait du calcul cable : plus de carte de regime. Decocher une famille demande desormais une confirmation, qui nomme la famille et dit que son montant vaudra 0."
   },
   "src/app/features/accounting/monthly-declaration/monthly-declaration-model.view-model.ts": {
     "sha": "eb9b9017523e5f808bad468e04f7b191a1c9cf48137f2188b1fc58acf0ef9c1b",
@@ -330,5 +330,17 @@
   "src/app/core/config/permission-keys.ts": {
     "sha": "3e8bc1dfe74d46d92fe8e179d38e65542cb2356f40079cc2e3188eb58ad68741",
     "reason": "Nouvelle permission accounting:unletter (délettrage, plan refonte lettrage)."
+  },
+  "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.component.ts": {
+    "sha": "13429d6f6202b4ebbdf6f65e2fd0913ef03d03746e232d07fb2dcc513163e797",
+    "reason": "Retrait du calcul cable : l'ecran Calcul DM n'a plus de carte de regime ni de rapport de parite. Seuls des textes de regime disparaissent ; aucun texte d'affichage nouveau."
+  },
+  "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.view-model.ts": {
+    "sha": "c146eb2a4f87610c27a08fc9b7980d36c1607853180aa1c9906bad3fd9176c3d",
+    "reason": "Retrait du calcul cable : la colonne « Regime » devient « Origine du calcul » (Historique / Parametre / tiret), et l'avancement de la migration n'a plus d'objet."
+  },
+  "src/app/features/accounting/monthly-declaration/dm-mode-panel.component.ts": {
+    "removed": true,
+    "reason": "Retrait du calcul cable : le panneau de changement de regime n'a plus d'objet — il n'y a plus de regime a choisir, ni de rampe de controles de parite a suivre. Suppression voulue."
   }
 }

@@ -3,7 +3,6 @@ import {
   ChartOfAccountDto,
   DeclarationDocumentSource,
   MonthlyDeclarationFamily,
-  MonthlyDeclarationMode,
   MonthlyDeclarationRubricDto,
   MonthlyDeclarationSettingsDto,
   PayrollContributionComponent,
@@ -24,7 +23,7 @@ import {
   countSelectedAccounts,
   describeApplicability,
   describeGross,
-  describeMode,
+  describeWriteBlocker,
   describeWithheld,
   familyNeedsAttention,
   isConfigurableLinesActive,
@@ -32,7 +31,6 @@ import {
   isDocumentBase,
   isFamilyOutOfEngineScope,
   isRubricUnsupported,
-  modeLabel,
   newRubricForm,
   nextDisplayOrder,
   parsePrefixList,
@@ -411,54 +409,35 @@ describe('monthly-declaration-config.view-model — lecture de la configuration'
   });
 });
 
-describe('monthly-declaration-config.view-model — régime du dossier', () => {
+describe('monthly-declaration-config.view-model — état du dossier', () => {
   function settings(
     overrides: Partial<MonthlyDeclarationSettingsDto> = {}
   ): MonthlyDeclarationSettingsDto {
-    return {
-      mode: MonthlyDeclarationMode.Legacy,
-      configuredSince: null,
-      lastParityRunAt: null,
-      lastParityMaxGapMillimes: 0,
-      parityCleanStreak: 0,
-      requiredCleanParityPeriods: 3,
-      canSwitchToConfigured: false,
-      parityOverrideBy: null,
-      parityOverrideReason: null,
-      configurableLinesEnabled: true,
-      ...overrides
-    };
+    return { enabled: true, catalogApplied: true, ...overrides };
   }
 
-  it('nomme les trois régimes', () => {
-    expect(modeLabel(MonthlyDeclarationMode.Legacy)).toBe('Calcul historique');
-    expect(modeLabel(MonthlyDeclarationMode.Parity)).toBe('Contrôle de parité');
-    expect(modeLabel(MonthlyDeclarationMode.Configured)).toBe('Calcul paramétré');
-  });
-
-  it('dit en mode historique que la configuration ne déplace aucun montant', () => {
-    expect(describeMode(settings())).toContain('ne déplace aucun montant');
-  });
-
-  it('affiche la progression de la rampe en contrôle de parité', () => {
-    const text = describeMode(
-      settings({ mode: MonthlyDeclarationMode.Parity, parityCleanStreak: 2 })
-    );
-    expect(text).toContain('2 période(s) sans écart sur les 3 requises');
-  });
-
-  it('date la bascule en mode paramétré', () => {
-    const text = describeMode(
-      settings({ mode: MonthlyDeclarationMode.Configured, configuredSince: '2026-09-01T00:00:00' })
-    );
-    expect(text).toContain('2026-09-01');
-  });
-
-  it('lit l’interrupteur de la plateforme, et tient des réglages absents pour « indisponible »', () => {
+  it('exige l’interrupteur ET le catalogue posé pour permettre une écriture', () => {
     expect(isConfigurableLinesActive(settings())).toBe(true);
-    expect(isConfigurableLinesActive(settings({ configurableLinesEnabled: false }))).toBe(false);
+    expect(isConfigurableLinesActive(settings({ enabled: false }))).toBe(false);
+    expect(isConfigurableLinesActive(settings({ catalogApplied: false }))).toBe(false);
+  });
+
+  it('tient des réglages absents pour « indisponible »', () => {
     expect(isConfigurableLinesActive(null)).toBe(false);
     expect(isConfigurableLinesActive(undefined)).toBe(false);
+  });
+
+  /**
+   * L'interrupteur a déjà son propre bandeau : le signaler deux fois noierait le seul cas qui
+   * demande une action de l'utilisateur — rouvrir le dossier.
+   */
+  it('ne signale que le catalogue non posé, pas l’interrupteur ni l’inconnu', () => {
+    expect(describeWriteBlocker(settings({ catalogApplied: false }))).toContain(
+      "n'est pas encore initialisée"
+    );
+    expect(describeWriteBlocker(settings())).toBeNull();
+    expect(describeWriteBlocker(settings({ enabled: false }))).toBeNull();
+    expect(describeWriteBlocker(null)).toBeNull();
   });
 });
 

@@ -30787,8 +30787,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.monthly-declaration.aucune.ligne.produite.pour.cette.periode.soit.le.2599d765": " Aucune ligne produite pour cette période : soit le dossier est resté en calcul historique, soit aucune famille n’est incluse dans sa déclaration. ",
-  "@accounting.monthly-declaration.aucune.ligne.produite.pour.cette.periode.soit.le.2599d765": {
+  "accounting.dm-compute-lines.ts.aucune.ligne.produite.3a7f12c8": " Aucune ligne produite pour cette période : ce dossier ne déclare aucune famille, ou aucune de ses rubriques ne s’applique au mois choisi. Les montants déclarés vaudront 0. ",
+  "@accounting.dm-compute-lines.ts.aucune.ligne.produite.3a7f12c8": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/dm-compute-lines.component.ts"
     ],
@@ -30868,225 +30868,6 @@
   "@ui.tern.dupliquer.c5e1d3": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/dm-duplicate-panel.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.regime.de.calcul.392297bd": "Régime de calcul",
-  "@accounting.monthly-declaration.regime.de.calcul.392297bd": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-mode-panel.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.dernier.controle.9f050453": "Dernier contrôle",
-  "@accounting.monthly-declaration.dernier.controle.9f050453": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-mode-panel.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.dernier.ecart.7947e822": "Dernier écart",
-  "@accounting.monthly-declaration.dernier.ecart.7947e822": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-mode-panel.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.serie.sans.ecart.f7dfdfcc": "Série sans écart",
-  "@accounting.monthly-declaration.serie.sans.ecart.f7dfdfcc": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-mode-panel.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.bascule.par.derogation.de.ee695e54": " Bascule par dérogation de {$INTERPOLATION} : « {$INTERPOLATION_1} » ",
-  "@accounting.monthly-declaration.bascule.par.derogation.de.ee695e54": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-mode-panel.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.passer.en.4dcb22a1": "Passer en",
-  "@accounting.monthly-declaration.passer.en.4dcb22a1": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-mode-panel.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.date.d.effet.ebfb317e": "Date d’effet",
-  "@accounting.monthly-declaration.date.d.effet.ebfb317e": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-mode-panel.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.premier.jour.du.mois.a.partir.duquel.le.calcul.p.83201e1c": " Premier jour du mois à partir duquel le calcul paramétré fait foi. Les périodes antérieures restent calculées à l’ancienne. ",
-  "@accounting.monthly-declaration.premier.jour.du.mois.a.partir.duquel.le.calcul.p.83201e1c": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-mode-panel.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.motif.de.derogation.38926796": "Motif de dérogation",
-  "@accounting.monthly-declaration.motif.de.derogation.38926796": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-mode-panel.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.la.serie.de.controles.sans.ecart.n.est.pas.attei.f05c8902": " La série de contrôles sans écart n’est pas atteinte. Le motif est conservé dans l’audit avec le nom de son auteur. ",
-  "@accounting.monthly-declaration.la.serie.de.controles.sans.ecart.n.est.pas.attei.f05c8902": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-mode-panel.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "ui.tern.application.01a96a": "Application…",
-  "@ui.tern.application.01a96a": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-mode-panel.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "ui.tern.appliquer.a4d661": "Appliquer",
-  "@ui.tern.appliquer.a4d661": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-mode-panel.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.controle.avant.retrait.du.calcul.historique.0aa593e0": "Contrôle avant retrait du calcul historique",
-  "@accounting.monthly-declaration.controle.avant.retrait.du.calcul.historique.0aa593e0": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.compare.mois.par.mois.le.calcul.historique.au.ca.509cf13e": " Compare, mois par mois, le calcul historique au calcul paramétré tel qu’il sera une fois l’historique retiré — montants par famille et cases du formulaire officiel. Rien n’est enregistré, et la rampe de bascule n’est pas modifiée. ",
-  "@accounting.monthly-declaration.compare.mois.par.mois.le.calcul.historique.au.ca.509cf13e": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.exercice.e171e2b0": "Exercice",
-  "@accounting.monthly-declaration.exercice.e171e2b0": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts",
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.component.ts",
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.du.mois.5a23e30b": "Du mois",
-  "@accounting.monthly-declaration.du.mois.5a23e30b": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.au.mois.0f235b41": "Au mois",
-  "@accounting.monthly-declaration.au.mois.0f235b41": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.exporter.la.preuve.json.e995fe42": " Exporter la preuve (JSON) ",
-  "@accounting.monthly-declaration.exporter.la.preuve.json.e995fe42": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.exporter.en.tableur.csv.8c642f15": " Exporter en tableur (CSV) ",
-  "@accounting.monthly-declaration.exporter.en.tableur.csv.8c642f15": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.declaration.enregistree.ed5d4974": "déclaration enregistrée",
-  "@accounting.monthly-declaration.declaration.enregistree.ed5d4974": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.famille.3b0121d3": "Famille",
-  "@accounting.monthly-declaration.famille.3b0121d3": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.historique.34f3a06a": "Historique",
-  "@accounting.monthly-declaration.historique.34f3a06a": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.parametre.4befac1b": "Paramétré",
-  "@accounting.monthly-declaration.parametre.4befac1b": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.ecart.6ae8dce8": "Écart",
-  "@accounting.monthly-declaration.ecart.6ae8dce8": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.verdict.7f6e5a6e": "Verdict",
-  "@accounting.monthly-declaration.verdict.7f6e5a6e": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.non.cochee.ed580872": "non cochée",
-  "@accounting.monthly-declaration.non.cochee.ed580872": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.aucun.montant.sur.ce.mois.d.un.cote.comme.de.l.a.3cd15921": "Aucun montant sur ce mois, d’un côté comme de l’autre.",
-  "@accounting.monthly-declaration.aucun.montant.sur.ce.mois.d.un.cote.comme.de.l.a.3cd15921": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.cases.du.formulaire.officiel.qui.different.85ae6d68": "Cases du formulaire officiel qui diffèrent",
-  "@accounting.monthly-declaration.cases.du.formulaire.officiel.qui.different.85ae6d68": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration.case.9254c4bb": "Case",
-  "@accounting.monthly-declaration.case.9254c4bb": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.dm-parity-report.ts.le.controle.a.echoue.efbcecfe": "Le contrôle a échoué.",
-  "@accounting.dm-parity-report.ts.le.controle.a.echoue.efbcecfe": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.dm-parity-report.ts.erreur.reseau.0683007f": "Erreur réseau",
-  "@accounting.dm-parity-report.ts.erreur.reseau.0683007f": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/dm-parity-report.component.ts"
     ],
     "x-wave": "v7"
   },
@@ -31380,8 +31161,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.monthly-declaration.calcul.parametre.non.active.504c61d8": "Calcul paramétré non activé",
-  "@accounting.monthly-declaration.calcul.parametre.non.active.504c61d8": {
+  "accounting.monthly-declaration.declaration.unique.non.activee.7c3d9a61": "Déclaration mensuelle unique non activée",
+  "@accounting.monthly-declaration.declaration.unique.non.activee.7c3d9a61": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.component.ts",
       "src/app/features/accounting/monthly-declaration/monthly-declaration-config.component.ts",
@@ -31389,8 +31170,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.monthly-declaration.le.calcul.et.le.changement.de.regime.son.04a1c379": "Le calcul et le changement de régime sont indisponibles pour tous les dossiers tant que l’administrateur de la plateforme n’a pas activé cette fonctionnalité.",
-  "@accounting.monthly-declaration.le.calcul.et.le.changement.de.regime.son.04a1c379": {
+  "accounting.monthly-declaration.le.calcul.est.indisponible.pour.tous.les.1f5e0b84": "Le calcul est indisponible pour tous les dossiers tant que l’administrateur de la plateforme n’a pas activé cette fonctionnalité.",
+  "@accounting.monthly-declaration.le.calcul.est.indisponible.pour.tous.les.1f5e0b84": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.component.ts"
     ],
@@ -31403,15 +31184,16 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.monthly-declaration.mois.0d304bea": "Mois",
-  "@accounting.monthly-declaration.mois.0d304bea": {
+  "accounting.monthly-declaration.exercice.e171e2b0": "Exercice",
+  "@accounting.monthly-declaration.exercice.e171e2b0": {
     "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.component.ts"
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.component.ts",
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.component.ts"
     ],
     "x-wave": "v7"
   },
-  "accounting.monthly-declaration.ce.controle.allonge.la.serie.qui.ouvre.la.bascul.b289ec8b": " Ce contrôle allonge la série qui ouvre la bascule vers le calcul paramétré. ",
-  "@accounting.monthly-declaration.ce.controle.allonge.la.serie.qui.ouvre.la.bascul.b289ec8b": {
+  "accounting.monthly-declaration.mois.0d304bea": "Mois",
+  "@accounting.monthly-declaration.mois.0d304bea": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.component.ts"
     ],
@@ -31455,20 +31237,6 @@
   },
   "ui.tern.le.calcul.a.echoue.353312": "Le calcul a échoué.",
   "@ui.tern.le.calcul.a.echoue.353312": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "monthly-declaration-compute.component.summary.Régime de ca": "Régime de calcul modifié",
-  "@monthly-declaration-compute.component.summary.Régime de ca": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "ui.tern.le.changement.de.regime.a.ete.refuse.e7a8db": "Le changement de régime a été refusé.",
-  "@ui.tern.le.changement.de.regime.a.ete.refuse.e7a8db": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.component.ts"
     ],
@@ -31558,6 +31326,27 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.monthly-declaration-compute.view-model.ts.configuration.pas.encore.initialisee.7d2e94c1": "La configuration de ce dossier n'est pas encore initialisée : la déclaration ne peut pas être enregistrée. Rouvrez le dossier dans un instant ; si le message persiste, contactez l'administrateur de la plateforme.",
+  "@accounting.monthly-declaration-compute.view-model.ts.configuration.pas.encore.initialisee.7d2e94c1": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.la.famille.excludedname.n.est.pas.declaree.3f8a1d52": "La famille « {$excludedName} » n'est pas déclarée par ce dossier : son montant vaut 0, alors que ses rubriques en auraient produit un.",
+  "@accounting.monthly-declaration-compute.view-model.ts.la.famille.excludedname.n.est.pas.declaree.3f8a1d52": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.une.famille.non.declaree.aurait.produit.8c4b7e03": "Une famille que ce dossier ne déclare pas aurait produit un montant : il vaut 0.",
+  "@accounting.monthly-declaration-compute.view-model.ts.une.famille.non.declaree.aurait.produit.8c4b7e03": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.monthly-declaration-compute.view-model.ts.la.famille.name.est.incluse.dans.la.decl.be171673": "La famille « {$name} » est incluse dans la déclaration, mais aucune de ses rubriques ne s'applique à la période.",
   "@accounting.monthly-declaration-compute.view-model.ts.la.famille.name.est.incluse.dans.la.decl.be171673": {
     "x-files": [
@@ -31593,13 +31382,6 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.monthly-declaration-compute.view-model.ts.ecart.de.gap.avec.le.calcul.historique.q.d05499f7": "Écart de {$gap} avec le calcul historique, qui reste le montant déclaré.",
-  "@accounting.monthly-declaration-compute.view-model.ts.ecart.de.gap.avec.le.calcul.historique.q.d05499f7": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
   "accounting.monthly-declaration-compute.view-model.ts.ecart.de.gap.avec.la.case.declaree.alors.d16d1930": "Écart de {$gap} avec la case déclarée, alors que les deux devraient être le même calcul.",
   "@accounting.monthly-declaration-compute.view-model.ts.ecart.de.gap.avec.la.case.declaree.alors.d16d1930": {
     "x-files": [
@@ -31607,29 +31389,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.monthly-declaration-compute.view-model.ts.ecart.de.gap.avec.la.case.declaree.2efc40f5": "Écart de {$gap} avec la case déclarée.",
-  "@accounting.monthly-declaration-compute.view-model.ts.ecart.de.gap.avec.la.case.declaree.2efc40f5": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-compute.view-model.ts.cette.periode.est.calculee.a.l.ancienne.b4d8792d": "Cette période est calculée à l'ancienne : la configuration du dossier n'a déplacé aucun montant.",
-  "@accounting.monthly-declaration-compute.view-model.ts.cette.periode.est.calculee.a.l.ancienne.b4d8792d": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-compute.view-model.ts.controle.de.parite.sans.ecart.la.configu.a30e50b3": "Contrôle de parité sans écart : la configuration reproduit exactement le calcul historique sur cette période.",
-  "@accounting.monthly-declaration-compute.view-model.ts.controle.de.parite.sans.ecart.la.configu.a30e50b3": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-compute.view-model.ts.controle.de.parite.ecart.maximal.de.form.2b0e4869": "Contrôle de parité : écart maximal de {$formatMillimes} entre les deux calculs. Les montants déclarés restent ceux du calcul historique.",
-  "@accounting.monthly-declaration-compute.view-model.ts.controle.de.parite.ecart.maximal.de.form.2b0e4869": {
+  "accounting.monthly-declaration-compute.view-model.ts.configuration.non.initialisee.les.montants.4b1c7a20": "La configuration de ce dossier n'est pas encore initialisée : les montants ci-dessous ne font pas foi et la déclaration ne peut pas être enregistrée.",
+  "@accounting.monthly-declaration-compute.view-model.ts.configuration.non.initialisee.les.montants.4b1c7a20": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
     ],
@@ -31637,76 +31398,6 @@
   },
   "accounting.monthly-declaration-compute.view-model.ts.les.montants.ci.dessous.sont.ceux.que.la.f8290d4d": "Les montants ci-dessous sont ceux que la configuration du dossier produit, et ce sont eux qui seront déclarés.",
   "@accounting.monthly-declaration-compute.view-model.ts.les.montants.ci.dessous.sont.ceux.que.la.f8290d4d": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-compute.view-model.ts.le.dossier.est.deja.dans.ce.regime.86e13a75": "Le dossier est déjà dans ce régime.",
-  "@accounting.monthly-declaration-compute.view-model.ts.le.dossier.est.deja.dans.ce.regime.86e13a75": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-compute.view-model.ts.passez.d.abord.le.dossier.en.controle.de.482faec7": "Passez d'abord le dossier en contrôle de parité : la bascule directe ne permet aucune comparaison avec le calcul en place.",
-  "@accounting.monthly-declaration-compute.view-model.ts.passez.d.abord.le.dossier.en.controle.de.482faec7": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-compute.view-model.ts.la.date.d.effet.est.requise.pour.passer.2764b6a8": "La date d'effet est requise pour passer en calcul paramétré.",
-  "@accounting.monthly-declaration-compute.view-model.ts.la.date.d.effet.est.requise.pour.passer.2764b6a8": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-compute.view-model.ts.la.date.d.effet.doit.etre.le.premier.jou.db8ff117": "La date d'effet doit être le premier jour d'un mois.",
-  "@accounting.monthly-declaration-compute.view-model.ts.la.date.d.effet.doit.etre.le.premier.jou.db8ff117": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-compute.view-model.ts.requiredcleanparityperiods.periodes.cons.38919651": "{$requiredCleanParityPeriods} périodes consécutives sans écart sont requises (série actuelle : {$parityCleanStreak}). À défaut, un motif de dérogation est exigé.",
-  "@accounting.monthly-declaration-compute.view-model.ts.requiredcleanparityperiods.periodes.cons.38919651": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-compute.view-model.ts.le.motif.ne.peut.pas.depasser.dm.max.ove.23459365": "Le motif ne peut pas dépasser {$DM_MAX_OVERRIDE_REASON_LENGTH} caractères.",
-  "@accounting.monthly-declaration-compute.view-model.ts.le.motif.ne.peut.pas.depasser.dm.max.ove.23459365": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-compute.view-model.ts.le.dossier.est.en.calcul.parametre.la.ra.06099595": "Le dossier est en calcul paramétré ; la rampe est derrière lui.",
-  "@accounting.monthly-declaration-compute.view-model.ts.le.dossier.est.en.calcul.parametre.la.ra.06099595": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-compute.view-model.ts.le.controle.de.parite.n.a.pas.commence.a.b2828062": "Le contrôle de parité n'a pas commencé : aucune comparaison n'a encore été enregistrée.",
-  "@accounting.monthly-declaration-compute.view-model.ts.le.controle.de.parite.n.a.pas.commence.a.b2828062": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-compute.view-model.ts.serie.atteinte.paritycleanstreak.periode.7c17ba43": "Série atteinte : {$parityCleanStreak} périodes consécutives sans écart. La bascule est ouverte.",
-  "@accounting.monthly-declaration-compute.view-model.ts.serie.atteinte.paritycleanstreak.periode.7c17ba43": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-compute.view-model.ts.serie.en.cours.paritycleanstreak.sur.req.9ce7f0e5": "Série en cours : {$parityCleanStreak} sur {$requiredCleanParityPeriods} périodes consécutives sans écart. Encore {$missing} période(s), ou une dérogation motivée.",
-  "@accounting.monthly-declaration-compute.view-model.ts.serie.en.cours.paritycleanstreak.sur.req.9ce7f0e5": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
     ],
@@ -31729,6 +31420,13 @@
   },
   "accounting.monthly-declaration.la.configuration.reste.consultable.sa.mo.dea661f7": "La configuration reste consultable. Sa modification sera possible dès l’activation par l’administrateur de la plateforme ; aucun montant n’en dépend pour l’instant.",
   "@accounting.monthly-declaration.la.configuration.reste.consultable.sa.mo.dea661f7": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.ts.la.configuration.est.la.source.c4a7e812": " Cette configuration est la seule source des montants de la déclaration mensuelle : une famille que le dossier ne déclare pas vaut 0. ",
+  "@accounting.monthly-declaration-config.ts.la.configuration.est.la.source.c4a7e812": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-config.component.ts"
     ],
@@ -31776,8 +31474,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.monthly-declaration.famille.incluse.sans.rubrique.active.en.dd389647": "Famille incluse sans rubrique active : en mode paramétré, l’enregistrement de la déclaration sera refusé plutôt que de produire un zéro silencieux.",
-  "@accounting.monthly-declaration.famille.incluse.sans.rubrique.active.en.dd389647": {
+  "accounting.monthly-declaration-config.ts.famille.incluse.sans.rubrique.active.b5c91f70": "Famille incluse sans rubrique active : l’enregistrement de la déclaration sera refusé plutôt que de produire un zéro silencieux.",
+  "@accounting.monthly-declaration-config.ts.famille.incluse.sans.rubrique.active.b5c91f70": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-config.component.ts"
     ],
@@ -31827,6 +31525,13 @@
   },
   "monthly-declaration-config.component.summary.Rubrique_enregis": "Rubrique enregistrée",
   "@monthly-declaration-config.component.summary.Rubrique_enregis": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.ts.confirmation.decochage.famille.a92f3d14": "Ce dossier cessera de déclarer « {$familyTitle} » : son montant vaudra 0 sur la déclaration mensuelle. Confirmez-vous ?",
+  "@accounting.monthly-declaration-config.ts.confirmation.decochage.famille.a92f3d14": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-config.component.ts"
     ],
@@ -32553,50 +32258,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.monthly-declaration-config.view-model.ts.controle.de.parite.815aad76": "Contrôle de parité",
-  "@accounting.monthly-declaration-config.view-model.ts.controle.de.parite.815aad76": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-config.view-model.ts.calcul.parametre.ff2c9c1a": "Calcul paramétré",
-  "@accounting.monthly-declaration-config.view-model.ts.calcul.parametre.ff2c9c1a": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-config.view-model.ts.inconnu.f3cfc645": "Inconnu",
-  "@accounting.monthly-declaration-config.view-model.ts.inconnu.f3cfc645": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-config.view-model.ts.la.declaration.est.produite.par.le.calcu.61acc8f4": "La déclaration est produite par le calcul historique. La configuration du dossier est enregistrée mais ne déplace aucun montant.",
-  "@accounting.monthly-declaration-config.view-model.ts.la.declaration.est.produite.par.le.calcu.61acc8f4": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-config.view-model.ts.les.deux.calculs.tournent.les.montants.d.7f0b4d36": "Les deux calculs tournent ; les montants déclarés restent ceux du calcul historique. {$parityCleanStreak} période(s) sans écart sur les {$requiredCleanParityPeriods} requises.",
-  "@accounting.monthly-declaration-config.view-model.ts.les.deux.calculs.tournent.les.montants.d.7f0b4d36": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-config.view-model.ts.le.calcul.parametre.fait.foi.depuis.le.t.4671ab9f": "Le calcul paramétré fait foi depuis le {$toDateInputValue}.",
-  "@accounting.monthly-declaration-config.view-model.ts.le.calcul.parametre.fait.foi.depuis.le.t.4671ab9f": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-config.view-model.ts.le.calcul.parametre.fait.foi.42cd40ec": "Le calcul paramétré fait foi.",
-  "@accounting.monthly-declaration-config.view-model.ts.le.calcul.parametre.fait.foi.42cd40ec": {
+  "accounting.monthly-declaration-config.view-model.ts.catalogue.non.pose.e9d41c37": "La configuration de ce dossier n'est pas encore initialisée : elle n'est pas modifiable et aucune déclaration ne peut être enregistrée. Rouvrez le dossier dans un instant ; si le message persiste, contactez l'administrateur de la plateforme.",
+  "@accounting.monthly-declaration-config.view-model.ts.catalogue.non.pose.e9d41c37": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
     ],
@@ -32623,7 +32286,7 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.monthly-declaration.produit.un.fichier.json.portant.les.rubriques.du.c7546c88": " Produit un fichier JSON portant les rubriques du dossier — actives comme désactivées — et l’inclusion de chaque famille. Le régime de calcul et l’historique des contrôles de parité n’y figurent pas : ils appartiennent au dossier, pas au paramétrage. ",
+  "accounting.monthly-declaration.produit.un.fichier.json.portant.les.rubriques.du.c7546c88": " Produit un fichier JSON portant les rubriques du dossier — actives comme désactivées — et l’inclusion de chaque famille. ",
   "@accounting.monthly-declaration.produit.un.fichier.json.portant.les.rubriques.du.c7546c88": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-model.component.ts"
@@ -32700,7 +32363,7 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.monthly-declaration.familles.que.le.fichier.demande.d.inclur.856a4115": "{$START_TAG_NG_CONTAINER} Familles que le fichier demande d’{$CLOSE_TAG_NG_CONTAINER}{$START_TAG_STRONG}inclure{$CLOSE_TAG_STRONG} : {$INTERPOLATION}. Leur inclusion change les montants déclarés dès que le dossier calcule en mode paramétré. ",
+  "accounting.monthly-declaration.familles.que.le.fichier.demande.d.inclur.856a4115": "{$START_TAG_NG_CONTAINER} Familles que le fichier demande d’{$CLOSE_TAG_NG_CONTAINER}{$START_TAG_STRONG}inclure{$CLOSE_TAG_STRONG} : {$INTERPOLATION}. Leur inclusion change les montants déclarés. ",
   "@accounting.monthly-declaration.familles.que.le.fichier.demande.d.inclur.856a4115": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-model.component.ts"
@@ -32889,69 +32552,6 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.monthly-declaration-parity.view-model.ts.exercice.invalide.3da242b6": "Exercice invalide.",
-  "@accounting.monthly-declaration-parity.view-model.ts.exercice.invalide.3da242b6": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-parity.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-parity.view-model.ts.les.mois.vont.de.1.a.12.dd68f892": "Les mois vont de 1 à 12.",
-  "@accounting.monthly-declaration-parity.view-model.ts.les.mois.vont.de.1.a.12.dd68f892": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-parity.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-parity.view-model.ts.le.premier.mois.doit.preceder.le.dernier.e2f0c500": "Le premier mois doit précéder le dernier.",
-  "@accounting.monthly-declaration-parity.view-model.ts.le.premier.mois.doit.preceder.le.dernier.e2f0c500": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-parity.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-parity.view-model.ts.identique.11720f37": "Identique",
-  "@accounting.monthly-declaration-parity.view-model.ts.identique.11720f37": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-parity.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-parity.view-model.ts.arrondi.prouve.9ddd4891": "Arrondi prouvé",
-  "@accounting.monthly-declaration-parity.view-model.ts.arrondi.prouve.9ddd4891": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-parity.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-parity.view-model.ts.ecart.6ae8dce8": "Écart",
-  "@accounting.monthly-declaration-parity.view-model.ts.ecart.6ae8dce8": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-parity.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-parity.view-model.ts.aucun.ecart.sur.count.mois.exactmonths.i.3c3e901a": "Aucun écart sur {$count} mois : {$exactMonths} identique(s), {$roundingOnlyMonths} dont les seuls écarts sont des arrondis prouvés. Exportez ce rapport et archivez-le : il ne pourra plus être produit après le retrait du calcul historique.",
-  "@accounting.monthly-declaration-parity.view-model.ts.aucun.ecart.sur.count.mois.exactmonths.i.3c3e901a": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-parity.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-parity.view-model.ts.aucun.ecart.sur.count.mois.le.calcul.par.5cef7434": "Aucun écart sur {$count} mois : le calcul paramétré reproduit le calcul historique au millime. Exportez ce rapport et archivez-le : il ne pourra plus être produit après le retrait du calcul historique.",
-  "@accounting.monthly-declaration-parity.view-model.ts.aucun.ecart.sur.count.mois.le.calcul.par.5cef7434": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-parity.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-parity.view-model.ts.monthswithgap.mois.sur.count.portent.un.0f3abbce": "{$monthsWithGap} mois sur {$count} portent un écart non expliqué. Corrigez la configuration (ou cochez les familles manquantes) puis relancez le contrôle : le calcul historique ne peut pas être retiré en l'état.",
-  "@accounting.monthly-declaration-parity.view-model.ts.monthswithgap.mois.sur.count.portent.un.0f3abbce": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-parity.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
   "accounting.monthly-declaration.suivi.dm.2089b59a": "Suivi DM",
   "@accounting.monthly-declaration.suivi.dm.2089b59a": {
     "x-files": [
@@ -32959,15 +32559,15 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.monthly-declaration.les.douze.mois.d.un.exercice.ce.qui.est.88d07b29": "Les douze mois d’un exercice : ce qui est déposé, ce qui manque, et sous quel régime",
-  "@accounting.monthly-declaration.les.douze.mois.d.un.exercice.ce.qui.est.88d07b29": {
+  "accounting.monthly-declaration-tracking.ts.les.douze.mois.d.un.exercice.2b94e7a1": "Les douze mois d’un exercice : ce qui est déposé, ce qui manque, et par quel calcul",
+  "@accounting.monthly-declaration-tracking.ts.les.douze.mois.d.un.exercice.2b94e7a1": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.component.ts"
     ],
     "x-wave": "v7"
   },
-  "accounting.monthly-declaration.toutes.les.periodes.sont.produites.par.l.c46369d1": "Toutes les périodes sont produites par le calcul historique. Le suivi des dépôts reste exact.",
-  "@accounting.monthly-declaration.toutes.les.periodes.sont.produites.par.l.c46369d1": {
+  "accounting.monthly-declaration-tracking.ts.le.suivi.reste.exact.d3e71a05": "Le suivi des dépôts reste exact.",
+  "@accounting.monthly-declaration-tracking.ts.le.suivi.reste.exact.d3e71a05": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.component.ts"
     ],
@@ -33029,8 +32629,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.monthly-declaration.regime.0020ca1b": "Régime",
-  "@accounting.monthly-declaration.regime.0020ca1b": {
+  "accounting.monthly-declaration-tracking.ts.origine.du.calcul.6b2f8d14": "Origine du calcul",
+  "@accounting.monthly-declaration-tracking.ts.origine.du.calcul.6b2f8d14": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.component.ts"
     ],
@@ -33158,22 +32758,15 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.monthly-declaration-tracking.view-model.ts.aucun.mois.de.year.n.est.calcule.par.la.b7736f24": "Aucun mois de {$year} n’est calculé par la configuration du dossier.",
-  "@accounting.monthly-declaration-tracking.view-model.ts.aucun.mois.de.year.n.est.calcule.par.la.b7736f24": {
+  "accounting.monthly-declaration-tracking.view-model.ts.calcul.historique.8e4a1b73": "Calcul historique",
+  "@accounting.monthly-declaration-tracking.view-model.ts.calcul.historique.8e4a1b73": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.view-model.ts"
     ],
     "x-wave": "v7"
   },
-  "accounting.monthly-declaration-tracking.view-model.ts.les.douze.mois.de.year.sont.calcules.par.c736b973": "Les douze mois de {$year} sont calculés par la configuration du dossier.",
-  "@accounting.monthly-declaration-tracking.view-model.ts.les.douze.mois.de.year.sont.calcules.par.c736b973": {
-    "x-files": [
-      "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.view-model.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.monthly-declaration-tracking.view-model.ts.configuredmonths.mois.de.year.sur.12.son.a87ff472": "{$configuredMonths} mois de {$year} sur 12 sont calculés par la configuration du dossier.",
-  "@accounting.monthly-declaration-tracking.view-model.ts.configuredmonths.mois.de.year.sur.12.son.a87ff472": {
+  "accounting.monthly-declaration-tracking.view-model.ts.calcul.parametre.5c90f2de": "Calcul paramétré",
+  "@accounting.monthly-declaration-tracking.view-model.ts.calcul.parametre.5c90f2de": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.view-model.ts"
     ],

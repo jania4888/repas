@@ -572,16 +572,16 @@
     "reason": "Retrait du calcul historique (livraison A) : champs « Valeur des documents » du brut et de la retenue, affichés seulement pour l'origine « Documents ». Fiche en boîte de dialogue : titre masquable (showHeading) et « Nouvelle rubrique » localisé, texte français inchangé."
   },
   "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.component.ts#MonthlyDeclarationComputeComponent": {
-    "sha": "d41726711bbb55c2de7ba013e64fed350f8d8edd40b1bb3dd8ab7887ab62124b",
-    "reason": "Retrait du calcul historique (livraison A) : section « Contrôle avant retrait du calcul historique » (rapport de parité) ajoutée sous le changement de régime."
+    "sha": "0da9de0b00d309caba1421b51e3d4cda77034adaf4246299fe45b01937fead7f",
+    "reason": "Retrait du calcul cable : plus de carte de regime ni de rapport de parite, plus de bordure de serie. Bandeau du drapeau reformule, et nouveau bandeau quand le catalogue n'est pas pose."
   },
   "src/app/features/accounting/monthly-declaration/monthly-declaration-config.component.ts#MonthlyDeclarationConfigComponent": {
-    "sha": "faea4185e846ed025d6da6b96d9fd738041fdd321ed8635aa568fd6477497581",
-    "reason": "Retrait du calcul historique (livraison A) : bandeaux d'avertissement de cohérence de la configuration (double lecture d'une source, même assiette taxée deux fois). Fiche de rubrique déplacée dans une boîte de dialogue p-dialog (titre en en-tête, refus d'enregistrement affiché dans la boîte)."
+    "sha": "2d7b09db5e127e188573236042f25190be76bf488f58a74e974b928945006a5d",
+    "reason": "Retrait du calcul cable : la carte de regime laisse place a une phrase qui dit que cette configuration est la seule source des montants. Nouveau bandeau de catalogue non pose. Le reste est la livraison A, deja approuvee."
   },
   "src/app/features/accounting/monthly-declaration/monthly-declaration-model.component.ts#MonthlyDeclarationModelComponent": {
-    "sha": "1e0f63b261d9cd52a39d8d363a7b315aed1b4f6487d70cf5d13a534b7474530d",
-    "reason": "Retrait du calcul historique (livraison A) : avis « fichier antérieur à la version 2 » (inclusions ignorées) et case de confirmation de l'exclusion de familles."
+    "sha": "131f995f96cbdd8c8c165ee2a0cefa38df0275d4984099fa22d1d2fb68f743fd",
+    "reason": "Retrait du calcul cable : le modele ne peut plus dire qu'il ne transporte « ni regime ni historique de controles de parite », puisqu'il n'y en a plus. Le reste est la livraison A."
   },
   "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts#AccountingDocumentImportDialogComponent": {
     "sha": "1f418203cf477c15df5595121cfcfacc176037fb07463f1426daf3490915abb1",
@@ -598,5 +598,17 @@
   "src/app/features/invoices/components/invoice-import-dialog/invoice-import-dialog.component.ts#InvoiceImportDialogComponent": {
     "sha": "a0e5068edf12516c51e3a1b147bdf6df338ea4c5159ef1766ad9c97b8c40577b",
     "reason": "Libellé voulu par le produit : la mention « Lecture par le service d'extraction documentaire configuré par la plateforme : … quitte le serveur. Aucune analyse par l'IA locale. » devient « Analyse par l'IA » (nouvel ID i18n, traduction arabe mise à jour)."
+  },
+  "src/app/features/accounting/monthly-declaration/dm-compute-lines.component.ts#DmComputeLinesComponent": {
+    "sha": "8bca892db43ec11bdcb1f436d585d6d5742e4e82ab45e2c51a8ac5bf7a160332",
+    "reason": "Retrait du calcul cable : l'etat vide ne peut plus invoquer un dossier « reste en calcul historique ». Il dit desormais ce qui est vrai — aucune famille declaree, ou aucune rubrique applicable — et que les montants vaudront 0."
+  },
+  "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.component.ts#MonthlyDeclarationTrackingComponent": {
+    "sha": "9dd776de9d6f37e20744b53bb2d0bc604dbb164dc25fdc9e1f1d4bc7954ad511",
+    "reason": "Retrait du calcul cable : la colonne « Regime » devient « Origine du calcul », le sous-titre suit, et le bandeau de migration disparait. Nouveau bandeau de catalogue non pose."
+  },
+  "src/app/features/accounting/monthly-declaration/dm-mode-panel.component.ts#DmModePanelComponent": {
+    "removed": true,
+    "reason": "Retrait du calcul cable : le panneau de changement de regime n'a plus d'objet — il n'y a plus de regime a choisir, ni de rampe de controles de parite a suivre. Suppression voulue."
   }
 }

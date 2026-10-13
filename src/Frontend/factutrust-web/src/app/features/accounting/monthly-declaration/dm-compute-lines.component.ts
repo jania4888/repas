@@ -14,7 +14,7 @@ import {
  * donne et n'appelle rien.
  *
  * Chaque en-tête de famille porte le rapprochement — total du détail, montant déclaré, et la
- * phrase qui dit ce que l'écart signifie dans le régime courant. Le mettre là plutôt que dans une
+ * phrase qui dit ce que l'écart signifie. Le mettre là plutôt que dans une
  * table séparée épargne au lecteur d'avoir à faire la correspondance lui-même.
  */
 @Component({
@@ -96,8 +96,8 @@ import {
         </p-table>
       </section>
     } @empty {
-      <div class="card dm-empty" i18n="@@accounting.monthly-declaration.aucune.ligne.produite.pour.cette.periode.soit.le.2599d765"> Aucune ligne produite pour cette période : soit le dossier est resté en calcul historique,
-        soit aucune famille n’est incluse dans sa déclaration. </div>
+      <div class="card dm-empty" i18n="@@accounting.dm-compute-lines.ts.aucune.ligne.produite.3a7f12c8"> Aucune ligne produite pour cette période : ce dossier ne déclare aucune famille, ou aucune de
+        ses rubriques ne s’applique au mois choisi. Les montants déclarés vaudront 0. </div>
     }
   `,
   styles: `

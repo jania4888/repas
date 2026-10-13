@@ -5,7 +5,6 @@ import {
   DeclarationDocumentSource,
   MonthlyDeclarationFamily,
   MonthlyDeclarationFamilySettingDto,
-  MonthlyDeclarationMode,
   MonthlyDeclarationRubricAccountDto,
   MonthlyDeclarationRubricDto,
   MonthlyDeclarationSettingsDto,
@@ -677,8 +676,8 @@ export function countActiveRubrics(
 }
 
 /**
- * Une famille incluse sans rubrique active bloque l'enregistrement en mode configuré ; le
- * signaler dès l'onglet évite de livrer un dossier qui refusera son propre dépôt.
+ * Une famille incluse sans rubrique active bloque l'enregistrement de la déclaration ; le signaler
+ * dès l'onglet évite de livrer un dossier qui refusera son propre dépôt.
  */
 export function familyNeedsAttention(
   families: readonly MonthlyDeclarationFamilySettingDto[],
@@ -688,44 +687,26 @@ export function familyNeedsAttention(
   return isFamilyIncluded(families, family) && countActiveRubrics(rubrics, family) === 0;
 }
 
-export function modeLabel(mode: MonthlyDeclarationMode): string {
-  switch (mode) {
-    case MonthlyDeclarationMode.Legacy:
-      return 'Calcul historique';
-    case MonthlyDeclarationMode.Parity:
-      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.controle.de.parite.815aad76:Contrôle de parité`;
-    case MonthlyDeclarationMode.Configured:
-      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.calcul.parametre.ff2c9c1a:Calcul paramétré`;
-    default:
-      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.inconnu.f3cfc645:Inconnu`;
-  }
-}
-
-/** Phrase d'état affichée sous le titre : ce que le dossier calcule aujourd'hui, et pourquoi. */
-export function describeMode(settings: MonthlyDeclarationSettingsDto): string {
-  switch (settings.mode) {
-    case MonthlyDeclarationMode.Legacy:
-      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.la.declaration.est.produite.par.le.calcu.61acc8f4:La déclaration est produite par le calcul historique. La configuration du dossier est enregistrée mais ne déplace aucun montant.`;
-    case MonthlyDeclarationMode.Parity:
-      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.les.deux.calculs.tournent.les.montants.d.7f0b4d36:Les deux calculs tournent ; les montants déclarés restent ceux du calcul historique. ${settings.parityCleanStreak}:parityCleanStreak: période(s) sans écart sur les ${settings.requiredCleanParityPeriods}:requiredCleanParityPeriods: requises.`;
-    case MonthlyDeclarationMode.Configured:
-      return settings.configuredSince
-        ? $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.calcul.parametre.fait.foi.depuis.le.t.4671ab9f:Le calcul paramétré fait foi depuis le ${toDateInputValue(settings.configuredSince)}:toDateInputValue:.`
-        : $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.calcul.parametre.fait.foi.42cd40ec:Le calcul paramétré fait foi.`;
-    default:
-      return '';
-  }
-}
-
 /**
- * Reflet de l'interrupteur serveur, global à la plateforme. Des réglages pas encore chargés valent
- * « indisponible » : l'écran ne propose pas une écriture que le serveur pourrait refuser. Confort
- * d'affichage seulement — le serveur revérifie l'interrupteur à chaque écriture.
+ * La configuration du dossier est-elle modifiable ? Il y faut l'interrupteur serveur ET le catalogue
+ * posé : tant qu'il ne l'est pas, le serveur refuse toute écriture, parce qu'une configuration posée
+ * à la main serait effacée par la pose réussie juste après. Des réglages pas encore chargés valent
+ * « indisponible ». Confort d'affichage seulement — le serveur revérifie à chaque écriture.
  */
 export function isConfigurableLinesActive(
   settings: MonthlyDeclarationSettingsDto | null | undefined
 ): boolean {
-  return settings?.configurableLinesEnabled === true;
+  return settings?.enabled === true && settings.catalogApplied === true;
+}
+
+/** Ce qui empêche d'écrire, quand quelque chose l'empêche : le drapeau, ou le catalogue. */
+export function describeWriteBlocker(
+  settings: MonthlyDeclarationSettingsDto | null | undefined
+): string | null {
+  if (!settings || settings.enabled !== true) return null;
+  return settings.catalogApplied === true
+    ? null
+    : $localize`:@@accounting.monthly-declaration-config.view-model.ts.catalogue.non.pose.e9d41c37:La configuration de ce dossier n'est pas encore initialisée : elle n'est pas modifiable et aucune déclaration ne peut être enregistrée. Rouvrez le dossier dans un instant ; si le message persiste, contactez l'administrateur de la plateforme.`;
 }
 
 // ── Sélecteur de comptes ─────────────────────────────────────────────────────
