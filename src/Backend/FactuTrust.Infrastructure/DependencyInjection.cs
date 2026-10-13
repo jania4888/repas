@@ -382,6 +382,8 @@ public static class DependencyInjection
         services.AddScoped<Services.BankStatementImport.BankStatementAiExtractionJob>();
         services.AddScoped<Application.Features.Accounting.BankStatementImport.IBankStatementImportService,
             Services.BankStatementImport.BankStatementImportService>();
+        services.AddScoped<Application.Features.Accounting.BankStatementImport.IBankStatementTabularImportService,
+            Services.BankStatementImport.BankStatementTabularImportService>();
         services.AddScoped<Application.Features.Accounting.BankStatementImport.IBankStatementPostingService,
             Services.BankStatementImport.BankStatementPostingService>();
 

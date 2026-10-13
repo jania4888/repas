@@ -307,4 +307,124 @@ public sealed class BankStatementPostingServiceTests
         Assert.Equal(supplierId, proposal.ThirdPartyId);
         Assert.True(proposal.SelectedByDefault);
     }
+
+    // --- GET statements (historique, plan §3.8) ---
+
+    private Guid SeedHistoryStatement(Guid bankAccountId, string rib, DateTime periodStart, DateTime periodEnd,
+        BankStatementImportMethod method, int lineCount = 1)
+    {
+        using var ctx = _factory.CreateContext();
+        if (ctx.BankAccounts.Find(bankAccountId) is null)
+        {
+            var account = BankAccount.Create(Guid.NewGuid(), "STB", "STB", rib, $"TN59{rib}").Value;
+            typeof(BankAccount).GetProperty("Id")!.SetValue(account, bankAccountId);
+            ctx.BankAccounts.Add(account);
+        }
+        if (!ctx.ChartOfAccounts.Any(a => a.AccountNumber == BankGl))
+            ctx.ChartOfAccounts.Add(ChartOfAccount.Create(BankGl, $"Compte {BankGl}", int.Parse(BankGl[..1]), null, AccountNatureType.Debit).Value);
+        if (!ctx.ChartOfAccounts.Any(a => a.AccountNumber == "6278"))
+            ctx.ChartOfAccounts.Add(ChartOfAccount.Create("6278", "Compte 6278", 6, null, AccountNatureType.Debit).Value);
+
+        var statement = BankStatement.Create("STB", rib, periodEnd, periodStart, periodEnd, Money.Create(1_000m), Money.Create(1_000m));
+        statement.SetProvenance(bankAccountId, BankGl, "releve.pdf", $"HASH-{Guid.NewGuid():N}", method);
+        for (var i = 0; i < lineCount; i++)
+            statement.Lines.Add(BankStatementLine.Create(statement.Id, periodStart.AddDays(i), string.Empty, $"ligne {i}", Money.Create(10m), true));
+        ctx.BankStatements.Add(statement);
+        ctx.SaveChanges();
+        return statement.Id;
+    }
+
+    [Fact]
+    public async Task History_lists_only_statements_with_a_bank_account_and_a_recognized_import_method()
+    {
+        var bankAccountId = Guid.NewGuid();
+        SeedHistoryStatement(bankAccountId, "10100000000123456792", new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), BankStatementImportMethod.PdfText);
+
+        // Jamais listé ici : import par rapprochement (hors périmètre du plan §3.8) et relevé sans
+        // compte bancaire identifié (saisie historique antérieure, aucun BankAccountId renseigné).
+        using (var ctx = _factory.CreateContext())
+        {
+            var reconciliation = BankStatement.Create("STB", "10100000000123456793", new DateTime(2026, 1, 31), new DateTime(2026, 1, 1),
+                new DateTime(2026, 1, 31), Money.Create(1_000m), Money.Create(1_000m));
+            reconciliation.SetProvenance(bankAccountId, BankGl, null, null, BankStatementImportMethod.Manual);
+            ctx.BankStatements.Add(reconciliation);
+
+            var withoutAccount = BankStatement.Create("STB", "10100000000123456794", new DateTime(2026, 1, 31), new DateTime(2026, 1, 1),
+                new DateTime(2026, 1, 31), Money.Create(1_000m), Money.Create(1_000m));
+            withoutAccount.SetProvenance(null, BankGl, "releve.pdf", "HASHX", BankStatementImportMethod.PdfText);
+            ctx.BankStatements.Add(withoutAccount);
+            ctx.SaveChanges();
+        }
+
+        var result = await Service().GetHistoryAsync(page: 1, pageSize: 20, bankAccountId: null);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(1, result.Value.TotalCount);
+        var item = result.Value.Items.Single();
+        Assert.Equal("STB", item.BankName);
+        Assert.Equal(BankStatementImportMethod.PdfText, item.ImportMethod);
+        Assert.Equal("6792", item.MaskedRib); // derniers 4 chiffres du RIB uniquement (plan §3.8)
+    }
+
+    [Fact]
+    public async Task History_filters_by_bank_account_when_requested()
+    {
+        var first = Guid.NewGuid();
+        var second = Guid.NewGuid();
+        SeedHistoryStatement(first, "10100000000123456792", new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), BankStatementImportMethod.PdfText);
+        SeedHistoryStatement(second, "10100000000123456795", new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), BankStatementImportMethod.Csv);
+
+        var result = await Service().GetHistoryAsync(page: 1, pageSize: 20, bankAccountId: second);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(1, result.Value.TotalCount);
+        Assert.Equal(BankStatementImportMethod.Csv, result.Value.Items.Single().ImportMethod);
+    }
+
+    [Fact]
+    public async Task History_pagination_clamps_page_size_to_the_configured_maximum()
+    {
+        var bankAccountId = Guid.NewGuid();
+        for (var i = 0; i < 3; i++)
+            SeedHistoryStatement(bankAccountId, "10100000000123456792", new DateTime(2026, 1, 1).AddMonths(i),
+                new DateTime(2026, 1, 31).AddMonths(i), BankStatementImportMethod.PdfText);
+
+        // 500 demandé > 100 (MaxHistoryPageSize) : la page retournée doit refléter la limite
+        // appliquée côté service, pas la valeur brute envoyée par le client (plan §3.8).
+        var result = await Service().GetHistoryAsync(page: 1, pageSize: 500, bankAccountId: null);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(100, result.Value.PageSize);
+        Assert.Equal(3, result.Value.Items.Count);
+    }
+
+    [Fact]
+    public async Task History_counts_posted_lines_without_ever_reconciling_them()
+    {
+        var bankAccountId = Guid.NewGuid();
+        var statementId = SeedHistoryStatement(bankAccountId, "10100000000123456792", new DateTime(2026, 1, 1), new DateTime(2026, 1, 31),
+            BankStatementImportMethod.PdfText, lineCount: 2);
+
+        Guid lineId;
+        using (var ctx = _factory.CreateContext())
+            lineId = ctx.BankStatements.Where(s => s.Id == statementId).SelectMany(s => s.Lines).Select(l => l.Id).First();
+
+        await Service().GenerateAsync(statementId, new GenerateBankStatementEntriesRequest
+        {
+            Items = new[] { new GenerateBankStatementEntryItem { LineId = lineId, AccountNumber = "6278" } }
+        });
+
+        var result = await Service().GetHistoryAsync(page: 1, pageSize: 20, bankAccountId: null);
+
+        Assert.True(result.IsSuccess);
+        var item = result.Value.Items.Single(i => i.Id == statementId);
+        Assert.Equal(1, item.PostedCount);
+        Assert.Equal(2, item.LineCount);
+
+        // Garantie du plan §3.11 : la génération de brouillons n'a jamais rapproché la ligne.
+        using var verify = _factory.CreateContext();
+        var line = verify.BankStatements.Where(s => s.Id == statementId).SelectMany(s => s.Lines).Single(l => l.Id == lineId);
+        Assert.False(line.IsReconciled);
+        Assert.Null(line.ReconciledJournalEntryLineId);
+    }
 }

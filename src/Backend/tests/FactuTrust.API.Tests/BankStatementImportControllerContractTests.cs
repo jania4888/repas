@@ -52,6 +52,8 @@ public sealed class BankStatementImportControllerContractTests
     [InlineData("Confirm")]
     [InlineData("ClassifyWithAi")]
     [InlineData("Generate")]
+    [InlineData("PreviewTabular")]
+    [InlineData("StartTabular")]
     public void Writing_actions_require_accounting_create(string action) =>
         Assert.Contains(Action(action).GetCustomAttributes<AuthorizeAttribute>(), a => a.Policy == PermissionPolicies.AccountingCreate);
 
@@ -64,9 +66,30 @@ public sealed class BankStatementImportControllerContractTests
         Assert.Equal("ai", Action(action).GetCustomAttribute<EnableRateLimitingAttribute>()?.PolicyName);
 
     [Fact]
+    public void Tabular_preview_shares_the_lighter_suggestions_rate_limit()
+        => Assert.Equal("accounting-suggestions", Action("PreviewTabular").GetCustomAttribute<EnableRateLimitingAttribute>()?.PolicyName);
+
+    [Fact]
+    public void Tabular_start_shares_the_bulk_rate_limit_not_the_ai_one()
+        => Assert.Equal("accounting-bulk", Action("StartTabular").GetCustomAttribute<EnableRateLimitingAttribute>()?.PolicyName);
+
+    [Fact]
     public void Upload_size_is_bounded_to_about_ten_megabytes()
     {
         var limit = Action("Start").GetCustomAttribute<RequestSizeLimitAttribute>();
+        Assert.NotNull(limit);
+        var bytes = (long)typeof(RequestSizeLimitAttribute)
+            .GetField("_bytes", BindingFlags.NonPublic | BindingFlags.Instance)!
+            .GetValue(limit)!;
+        Assert.InRange(bytes, 10 * 1024 * 1024, 11 * 1024 * 1024);
+    }
+
+    [Theory]
+    [InlineData("PreviewTabular")]
+    [InlineData("StartTabular")]
+    public void Tabular_upload_size_is_also_bounded_to_about_ten_megabytes(string action)
+    {
+        var limit = Action(action).GetCustomAttribute<RequestSizeLimitAttribute>();
         Assert.NotNull(limit);
         var bytes = (long)typeof(RequestSizeLimitAttribute)
             .GetField("_bytes", BindingFlags.NonPublic | BindingFlags.Instance)!

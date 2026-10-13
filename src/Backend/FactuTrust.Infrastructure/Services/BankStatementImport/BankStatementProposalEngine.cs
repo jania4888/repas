@@ -46,6 +46,12 @@ public static class BankStatementProposalEngine
 
     public sealed record ChartAccount(string Label, bool IsActive);
 
+    /// <summary>Contrepartie majoritaire déjà utilisée pour un libellé « cœur » / sens donnés (étape historique).</summary>
+    public sealed record HistoryMatch(string AccountNumber, int Occurrences);
+
+    /// <summary>Compte d'attente de repli (plan §3.9), résolu une seule fois, jamais créé.</summary>
+    public const string SuspenseAccountRoot = "471";
+
     public sealed record Context
     {
         public required Guid StatementId { get; init; }
@@ -66,6 +72,13 @@ public static class BankStatementProposalEngine
         public IReadOnlySet<(int Year, int Month)> ClosedPeriods { get; init; } = new HashSet<(int, int)>();
         public IReadOnlySet<int> LockedYears { get; init; } = new HashSet<int>();
         public int WindowDays { get; init; } = 10;
+
+        /// <summary>Options d'assistance (défaut <see cref="BankProposalOptions.None"/> : sortie identique à l'historique).</summary>
+        public BankProposalOptions Options { get; init; } = BankProposalOptions.None;
+
+        /// <summary>Contrepartie majoritaire par (libellé « cœur », sens), consommée seulement si <c>Options.IncludeHistory</c>.</summary>
+        public IReadOnlyDictionary<(string Core, bool IsDebit), HistoryMatch> History { get; init; } =
+            new Dictionary<(string, bool), HistoryMatch>();
     }
 
     /// <summary>Clé de cache IA d'un libellé : « cœur » normalisé (sans numéros) + sens.</summary>
@@ -289,7 +302,15 @@ public static class BankStatementProposalEngine
         if (catalogRule is not null)
             return FromCatalog(ctx, line, catalogRule);
 
-        // 3. Cache de classification IA (libellé distinct déjà classé).
+        // 3. Historique du dossier (assist=full) : contrepartie déjà utilisée pour ce libellé / ce sens.
+        if (ctx.Options.IncludeHistory && ctx.History.TryGetValue((core, line.IsDebit), out var history))
+        {
+            var historyConfidence = history.Occurrences >= 2 ? BankLineConfidences.Probable : BankLineConfidences.ToCheck;
+            return new Classification(history.AccountNumber, null, ThirdPartyKind.None, null, historyConfidence, BankLineSources.History,
+                $"Déjà comptabilisé {history.Occurrences} fois en 6xx pour ce libellé.", null, null);
+        }
+
+        // 4. Cache de classification IA (libellé distinct déjà classé).
         if (ctx.AiCache.TryGetValue(LabelHash(line.Description, line.IsDebit), out var aiAccount) && !string.IsNullOrWhiteSpace(aiAccount))
         {
             var party = PartyKindOf(aiAccount);
@@ -427,6 +448,10 @@ public static class BankStatementProposalEngine
 
         var confidence = c.Confidence;
         var explanation = c.Explanation;
+        var source = c.Source;
+        var thirdPartyId = c.ThirdPartyId;
+        var thirdPartyKind = c.ThirdPartyId is null ? ThirdPartyKind.None : c.ThirdPartyKind;
+        var thirdPartyName = c.ThirdPartyName;
         if (vat is { Implied: true })
         {
             confidence = BankLineConfidences.ToCheck;
@@ -437,34 +462,65 @@ public static class BankStatementProposalEngine
         if (periodBlocked)
             diagnostics.Add(new("period_closed", "blocking", $"La période {line.Date:MM/yyyy} est close ou l'exercice est verrouillé : aucune écriture ne peut y être passée."));
 
+        // Repli explicite sur le compte d'attente 471 (assist=full) : compte introuvable/inactif, ou
+        // compte collectif sans tiers identifié. Jamais créé : si 471 est absent ou désactivé, on
+        // laisse la ligne « à compléter » avec un diagnostic dédié.
+        var needsFallback = !periodBlocked && (accountStatus != "found" || (requiresThirdParty && thirdPartyId is null));
+        if (needsFallback && ctx.Options.SuspenseFallback)
+        {
+            var (suspenseAccount, suspenseLabel, suspenseStatus) = ResolveAccount(ctx, SuspenseAccountRoot);
+            if (suspenseStatus == "found")
+            {
+                account = suspenseAccount;
+                accountLabel = suspenseLabel;
+                accountStatus = "found";
+                requiresThirdParty = false;
+                thirdPartyId = null;
+                thirdPartyKind = ThirdPartyKind.None;
+                thirdPartyName = null;
+                source = BankLineSources.Fallback;
+                confidence = BankLineConfidences.ToCheck;
+                explanation = "Compte ou tiers non identifié : affecté au compte d'attente 471, à reclasser.";
+                diagnostics.RemoveAll(d => d.Code is "account_missing" or "account_inactive");
+                diagnostics.Add(new("suspense_account", "warning", "Compte d'attente : à reclasser."));
+            }
+            else
+            {
+                diagnostics.Add(new("suspense_missing", "warning", "Le compte d'attente 471 n'existe pas ou est désactivé dans le plan comptable du dossier."));
+            }
+        }
+
         string status;
         if (periodBlocked)
             status = BankLineStatuses.Blocked;
-        else if (accountStatus != "found" || (requiresThirdParty && c.ThirdPartyId is null))
+        else if (accountStatus != "found" || (requiresThirdParty && thirdPartyId is null))
             status = BankLineStatuses.ToComplete;
         else
             status = BankLineStatuses.Proposed;
 
-        if (requiresThirdParty && c.ThirdPartyId is null && accountStatus == "found")
+        if (requiresThirdParty && thirdPartyId is null && accountStatus == "found")
             diagnostics.Add(new("third_party_required", "warning", $"Le compte {account} est un compte collectif : précisez le tiers."));
 
         return dto with
         {
             Status = status,
-            Confidence = c.Source is null ? null : confidence,
-            Source = c.Source,
+            Confidence = source is null ? null : confidence,
+            Source = source,
             Explanation = explanation,
             AccountNumber = account,
             AccountLabel = accountLabel,
             AccountStatus = accountStatus,
-            ThirdPartyId = c.ThirdPartyId,
-            ThirdPartyKind = c.ThirdPartyId is null ? ThirdPartyKind.None : c.ThirdPartyKind,
-            ThirdPartyName = c.ThirdPartyName,
+            ThirdPartyId = thirdPartyId,
+            ThirdPartyKind = thirdPartyKind,
+            ThirdPartyName = thirdPartyName,
             RequiresThirdParty = requiresThirdParty,
             VatSplit = vat,
             Diagnostics = diagnostics,
+            // Le repli 471 (confiance ToCheck par construction) reste coché par défaut : conforme au
+            // choix « sinon 471 » du dossier et à la maquette (§3.9 du plan).
             SelectedByDefault = status == BankLineStatuses.Proposed
-                                && confidence is BankLineConfidences.Certain or BankLineConfidences.Probable
+                                && (confidence is BankLineConfidences.Certain or BankLineConfidences.Probable
+                                    || source == BankLineSources.Fallback)
         };
     }
 

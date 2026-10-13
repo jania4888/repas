@@ -115,7 +115,9 @@ public sealed class BankStatementImportService : IBankStatementImportService
                 $"Fichier trop volumineux (maximum {Limits.MaxFileBytes / (1024 * 1024)} Mo).");
 
         var extension = Path.GetExtension(request.FileName ?? string.Empty).ToLowerInvariant();
-        if (!BankStatementFileStore.IsAllowedExtension(extension))
+        // Le CSV/XLSX a son propre point d'entrée (import tabulaire) : les accepter ici les ferait
+        // passer par la lecture image/IA, ce qui n'a aucun sens pour ce format.
+        if (!BankStatementFileStore.IsAllowedExtension(extension) || extension is ".csv" or ".xlsx")
             return Fail<BankStatementImportSessionDto>(BankStatementImportErrorCodes.FileRejected,
                 "Format non accepté : PDF ou image (PNG, JPEG, WEBP) uniquement.");
 
@@ -774,12 +776,41 @@ public sealed class BankStatementImportService : IBankStatementImportService
         return Result.Success(new BankStatementSourceFile(content, SourceContentType(extension), DownloadName(source.FileName, extension)));
     }
 
+    /// <summary>
+    /// Compte d'attente 471 actif résolu dans le plan comptable du dossier (plan §3.1/§3.9) :
+    /// compte "471" exact s'il est actif, sinon unique enfant actif de racine "471", sinon
+    /// <c>null</c>. Jamais créé. Logique volontairement dupliquée (et non partagée avec
+    /// <c>BankStatementProposalEngine.ResolveAccount</c>, qui exige un <c>Context</c> complet déjà
+    /// chargé pour la génération d'écritures) : ce chemin ne sert qu'à l'affichage des capacités.
+    /// </summary>
+    public async Task<string?> GetSuspenseAccountNumberAsync(CancellationToken cancellationToken = default)
+    {
+        if (!_settings.BankStatementAiPostingEnabled)
+            return null;
+
+        await using var ctx = _contextFactory.CreateContext();
+        const string root = BankStatementProposalEngine.SuspenseAccountRoot;
+        var candidates = await ctx.ChartOfAccounts.AsNoTracking()
+            .Where(c => c.AccountNumber == root || c.AccountNumber.StartsWith(root))
+            .Select(c => new { c.AccountNumber, c.IsActive })
+            .ToListAsync(cancellationToken);
+
+        var exact = candidates.FirstOrDefault(c => c.AccountNumber == root);
+        if (exact is not null)
+            return exact.IsActive ? exact.AccountNumber : null;
+
+        var activeChildren = candidates.Where(c => c.IsActive).ToList();
+        return activeChildren.Count == 1 ? activeChildren[0].AccountNumber : null;
+    }
+
     private static string SourceContentType(string extension) => extension switch
     {
         ".pdf" => "application/pdf",
         ".png" => "image/png",
         ".jpg" or ".jpeg" => "image/jpeg",
         ".webp" => "image/webp",
+        ".csv" => "text/csv; charset=utf-8",
+        ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         _ => "application/octet-stream"
     };
 
@@ -1067,20 +1098,8 @@ public sealed class BankStatementImportService : IBankStatementImportService
 
     // ── Règles ──────────────────────────────────────────────────────────────────────────────
 
-    private static Error? CheckBankAccount(BankAccount? account)
-    {
-        if (account is null)
-            return new Error(BankStatementImportErrorCodes.BankAccountNotFound, "Compte bancaire introuvable.");
-        if (!account.IsActive)
-            return new Error(BankStatementImportErrorCodes.BankAccountInactive, "Ce compte bancaire est désactivé.");
-        if (string.IsNullOrWhiteSpace(account.ChartOfAccountNumber))
-            return new Error(BankStatementImportErrorCodes.BankAccountWithoutGlAccount,
-                "Ce compte bancaire n'est relié à aucun compte comptable 532 : reliez-le avant d'importer un relevé.");
-        if (!string.Equals(account.Currency, "TND", StringComparison.OrdinalIgnoreCase))
-            return new Error(BankStatementImportErrorCodes.CurrencyNotSupported,
-                "Seuls les comptes en dinars (TND) sont pris en charge par l'import de relevés.");
-        return null;
-    }
+    /// <summary>Partagé avec le chemin CSV/XLSX : voir <see cref="BankStatementImportGuards.CheckBankAccount"/>.</summary>
+    private static Error? CheckBankAccount(BankAccount? account) => BankStatementImportGuards.CheckBankAccount(account);
 
     /// <summary>RIB du relevé ≠ RIB du compte choisi ⇒ bloquant ; devise imprimée ≠ TND ⇒ bloquant.</summary>
     private static ExtractedBankStatement AddAccountChecks(ExtractedBankStatement extraction, BankAccount account)
@@ -1221,6 +1240,15 @@ public sealed class BankStatementImportService : IBankStatementImportService
                 continue;
             if (issue.Code == StatementIssueCodes.AiAmountNotGrounded && fields.HasFlag(CorrectedFields.Amount))
                 continue;
+            // Signalements de l'import tabulaire (§3.5) : levés quand le champ en cause a été corrigé,
+            // sur le modèle de AiAmountNotGrounded ci-dessus.
+            if (issue.Code == StatementIssueCodes.TabularDateInvalid && fields.HasFlag(CorrectedFields.Date))
+                continue;
+            if (issue.Code == StatementIssueCodes.TabularAmountInvalid && fields.HasFlag(CorrectedFields.Amount))
+                continue;
+            if (issue.Code == StatementIssueCodes.TabularBothSides
+                && (fields.HasFlag(CorrectedFields.Amount) || fields.HasFlag(CorrectedFields.Side)))
+                continue;
 
             var shift = excluded.Count(e => e < lineIndex);
             issues.Add(shift == 0 ? issue : issue with { LineIndex = lineIndex - shift });
@@ -1289,6 +1317,8 @@ public sealed class BankStatementImportService : IBankStatementImportService
         var method = session.ExtractionMethod switch
         {
             BankStatementImportExtractionMethods.Layout => BankStatementImportMethod.PdfText,
+            BankStatementImportExtractionMethods.Csv => BankStatementImportMethod.Csv,
+            BankStatementImportExtractionMethods.Xlsx => BankStatementImportMethod.Excel,
             _ when isImage => BankStatementImportMethod.Image,
             _ => BankStatementImportMethod.PdfLlm
         };
@@ -1298,7 +1328,11 @@ public sealed class BankStatementImportService : IBankStatementImportService
         {
             var date = line.TransactionDate.ToDateTime(TimeOnly.MinValue);
             var description = Truncate(line.Label, 500);
-            var reference = BankLabelReferences.Extract(line.Label)?.Number ?? string.Empty;
+            // Import tabulaire : la colonne Référence mappée prime sur la détection heuristique dans
+            // le libellé (BankLabelReferences), réservée aux relevés PDF/IA qui n'ont pas cette colonne.
+            var reference = !string.IsNullOrWhiteSpace(line.Reference)
+                ? line.Reference
+                : BankLabelReferences.Extract(line.Label)?.Number ?? string.Empty;
             var entity = BankStatementLine.Create(
                 statement.Id,
                 date,
@@ -1349,23 +1383,9 @@ public sealed class BankStatementImportService : IBankStatementImportService
         return count;
     }
 
-    private async Task PurgeExpiredAsync(TenantDbContext ctx, DateTime now, CancellationToken cancellationToken)
-    {
-        var expired = await ctx.BankStatementImportSessions
-            .Where(s => s.Status != BankStatementImportSessionStatus.Confirmed && s.ExpiresAt < now)
-            .OrderBy(s => s.ExpiresAt)
-            .Take(PurgeBatchSize)
-            .ToListAsync(cancellationToken);
-        if (expired.Count == 0)
-            return;
-
-        foreach (var session in expired)
-            ctx.BankStatementImportSessions.Remove(session);
-        await ctx.SaveChangesAsync(cancellationToken);
-        // Fichiers supprimés après la base : un fichier orphelin vaut mieux qu'une ligne sans fichier.
-        foreach (var session in expired)
-            _files.TryDelete(session.StoragePath);
-    }
+    /// <summary>Partagé avec le chemin CSV/XLSX : voir <see cref="BankStatementImportGuards.PurgeExpiredAsync"/>.</summary>
+    private Task PurgeExpiredAsync(TenantDbContext ctx, DateTime now, CancellationToken cancellationToken) =>
+        BankStatementImportGuards.PurgeExpiredAsync(ctx, _files, PurgeBatchSize, now, cancellationToken);
 
     // ── Projection ──────────────────────────────────────────────────────────────────────────
 
@@ -1447,18 +1467,7 @@ public sealed class BankStatementImportService : IBankStatementImportService
 
     private static Result<T> Fail<T>(string code, string message) => Result.Failure<T>(new Error(code, message));
 
-    private static async Task<byte[]?> ReadBoundedAsync(Stream stream, long max, CancellationToken cancellationToken)
-    {
-        using var buffer = new MemoryStream();
-        var chunk = new byte[81920];
-        int read;
-        while ((read = await stream.ReadAsync(chunk, cancellationToken)) > 0)
-        {
-            if (buffer.Length + read > max)
-                return null;
-            buffer.Write(chunk, 0, read);
-        }
-
-        return buffer.ToArray();
-    }
+    /// <summary>Partagé avec le chemin CSV/XLSX : voir <see cref="BankStatementImportGuards.ReadBoundedAsync"/>.</summary>
+    private static Task<byte[]?> ReadBoundedAsync(Stream stream, long max, CancellationToken cancellationToken) =>
+        BankStatementImportGuards.ReadBoundedAsync(stream, max, cancellationToken);
 }

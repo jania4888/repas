@@ -103,6 +103,15 @@ public sealed record ExtractedStatementLine
     public required bool IsDebit { get; init; }
 
     public StatementLineSource Source { get; init; } = StatementLineSource.Layout;
+
+    /// <summary>Numéro de ligne dans le fichier source (CSV/XLSX, 1-based) ; null hors import tabulaire.</summary>
+    public int? SourceRow { get; init; }
+
+    /// <summary>
+    /// Référence de l'opération lue depuis la colonne Référence mappée (import tabulaire) ; null si
+    /// absente ou hors import tabulaire (la référence est alors déduite du libellé à la confirmation).
+    /// </summary>
+    public string? Reference { get; init; }
 }
 
 public enum StatementLineSource
@@ -114,7 +123,13 @@ public enum StatementLineSource
     Ai = 1,
 
     /// <summary>Corrigée à la main en relecture (auditée).</summary>
-    Manual = 2
+    Manual = 2,
+
+    /// <summary>
+    /// Lecture déterministe d'un fichier CSV / XLSX mappé par colonnes. Ajoutée en fin : <c>ResultJson</c>
+    /// sérialise les enums en entier, donc l'ajout ne change pas la désérialisation des JSON existants.
+    /// </summary>
+    Tabular = 3
 }
 
 public enum StatementIssueSeverity
@@ -165,6 +180,21 @@ public static class StatementIssueCodes
     public const string AiAmountNotGrounded = "statement.ai_amount_not_grounded";
     public const string AiNotStarted = "statement.ai_not_started";
     public const string AiRibMismatch = "statement.ai_rib_mismatch";
+
+    // ── Import tabulaire (CSV / XLSX) ──
+
+    /// <summary>Blocking (LineIndex) : date illisible avec le format retenu ; date provisoire conservée.</summary>
+    public const string TabularDateInvalid = "tabular_date_invalid";
+    /// <summary>Blocking (LineIndex) : montant illisible ou nul.</summary>
+    public const string TabularAmountInvalid = "tabular_amount_invalid";
+    /// <summary>Blocking (LineIndex) : débit et crédit renseignés sur la même ligne.</summary>
+    public const string TabularBothSides = "tabular_both_sides";
+    /// <summary>Warning (LineIndex) : solde courant calculé ≠ solde imprimé sur la colonne Solde.</summary>
+    public const string TabularRunningBalanceMismatch = "tabular_running_balance_mismatch";
+    /// <summary>Info : les lignes du fichier étaient dans l'ordre antichronologique et ont été inversées.</summary>
+    public const string TabularReversedOrder = "tabular_reversed_order";
+    /// <summary>Info (LineIndex) : la cellule est une formule ; sa valeur mise en cache a été lue sans l'évaluer.</summary>
+    public const string TabularFormulaCells = "tabular_formula_cells";
 
     // ── Lecture « IA seule » (toute page de tout relevé lue par GLM-OCR) ──
 

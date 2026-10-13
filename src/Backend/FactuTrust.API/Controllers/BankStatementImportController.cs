@@ -1,6 +1,8 @@
+using System.Text.Json;
 using FactuTrust.API.Authorization;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Configuration;
+using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.Accounting.BankStatementImport;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Enums;
@@ -29,7 +31,11 @@ namespace FactuTrust.API.Controllers;
 [Authorize]
 public sealed class BankStatementImportController : ControllerBase
 {
+    /// <summary>Options de désérialisation du mappage CSV/XLSX (champ formulaire JSON, camelCase côté client).</summary>
+    private static readonly JsonSerializerOptions MappingJsonOptions = new(JsonSerializerDefaults.Web);
+
     private readonly IBankStatementImportService _service;
+    private readonly IBankStatementTabularImportService _tabular;
     private readonly IBankStatementPostingService _posting;
     private readonly IBankStatementAiExtraction _ai;
     private readonly BankStatementProfileRegistry _profiles;
@@ -39,6 +45,7 @@ public sealed class BankStatementImportController : ControllerBase
 
     public BankStatementImportController(
         IBankStatementImportService service,
+        IBankStatementTabularImportService tabular,
         IBankStatementPostingService posting,
         IBankStatementAiExtraction ai,
         BankStatementProfileRegistry profiles,
@@ -47,6 +54,7 @@ public sealed class BankStatementImportController : ControllerBase
         IOptions<AccountingSettings> settings)
     {
         _service = service;
+        _tabular = tabular;
         _posting = posting;
         _ai = ai;
         _profiles = profiles;
@@ -69,6 +77,7 @@ public sealed class BankStatementImportController : ControllerBase
 
         var canUseAi = includeAi && _currentUser.HasPermission(Permissions.AI.Chat);
         var ai = canUseAi ? await _ai.CheckAvailabilityAsync(cancellationToken) : null;
+        var tabularEnabled = _settings.TabularImportEffective;
         return Ok(ApiResponse<BankStatementImportCapabilitiesDto>.Ok(new BankStatementImportCapabilitiesDto(
             Enabled: true,
             AiAvailable: ai?.Available == true,
@@ -87,7 +96,12 @@ public sealed class BankStatementImportController : ControllerBase
             AiUnavailableReason = canUseAi && ai?.Available != true
                 ? ai?.ReasonCode ?? BankStatementAiAvailabilityReasons.EngineUnavailable
                 : null,
-            VisionUnavailableReason = ai?.Available == true ? ai.VisionUnavailableReason : null
+            VisionUnavailableReason = ai?.Available == true ? ai.VisionUnavailableReason : null,
+            TabularEnabled = tabularEnabled,
+            TabularExtensions = tabularEnabled ? new[] { ".csv", ".xlsx" } : Array.Empty<string>(),
+            MaxTabularRows = _settings.BankStatementImport.MaxTabularRows,
+            MaxAtomicLines = _settings.BankStatementImport.MaxAtomicGenerationLines,
+            SuspenseAccountNumber = await _service.GetSuspenseAccountNumberAsync(cancellationToken)
         }));
     }
 
@@ -158,6 +172,99 @@ public sealed class BankStatementImportController : ControllerBase
             : Failure(result.Error);
     }
 
+    /// <summary>
+    /// Aperçu sans état d'un fichier CSV/XLSX : format/encodage/délimiteur détectés, mappage proposé
+    /// (ou mémorisé pour <paramref name="bankAccountId"/>), 20 premières lignes, signalements. Aucune
+    /// session n'est ouverte, aucun fichier n'est écrit sur le serveur.
+    /// </summary>
+    [HttpPost("tabular/preview")]
+    [Authorize(Policy = PermissionPolicies.AccountingCreate)]
+    [EnableRateLimiting("accounting-suggestions")]
+    [RequestSizeLimit(10 * 1024 * 1024 + 256_000)]
+    public async Task<IActionResult> PreviewTabular(
+        IFormFile? file,
+        [FromForm] string? mapping,
+        [FromForm] Guid? bankAccountId,
+        CancellationToken cancellationToken)
+    {
+        if (!_settings.TabularImportEffective)
+            return NotFound();
+        if (file is null || file.Length == 0)
+            return BadRequest(ApiResponse<object>.FailWithCode("Fichier requis.", BankStatementImportErrorCodes.FileRequired));
+
+        var mappingDto = TryParseMapping(mapping);
+        if (mapping is not null && mappingDto is null)
+            return BadRequest(ApiResponse<object>.FailWithCode("Mappage illisible.", BankStatementTabularErrorCodes.TabularMappingInvalid));
+
+        await using var stream = file.OpenReadStream();
+        var result = await _tabular.PreviewAsync(new BankStatementTabularPreviewRequest
+        {
+            Content = stream,
+            FileName = file.FileName,
+            Length = file.Length,
+            Mapping = mappingDto,
+            BankAccountId = bankAccountId
+        }, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(ApiResponse<BankStatementTabularPreviewDto>.Ok(result.Value))
+            : Failure(result.Error);
+    }
+
+    /// <summary>
+    /// Ouvre une session CSV/XLSX avec le mappage final de colonnes de l'utilisateur. Même cycle de
+    /// vie que <see cref="Start"/> (session en <c>AwaitingReview</c>, correction puis confirmation).
+    /// </summary>
+    [HttpPost("sessions/tabular")]
+    [Authorize(Policy = PermissionPolicies.AccountingCreate)]
+    [EnableRateLimiting("accounting-bulk")]
+    [RequestSizeLimit(10 * 1024 * 1024 + 256_000)]
+    public async Task<IActionResult> StartTabular(
+        IFormFile? file,
+        [FromForm] Guid bankAccountId,
+        [FromForm] string? journalCode,
+        [FromForm] string? mapping,
+        CancellationToken cancellationToken)
+    {
+        if (!_settings.TabularImportEffective)
+            return NotFound();
+        if (file is null || file.Length == 0)
+            return BadRequest(ApiResponse<object>.FailWithCode("Fichier requis.", BankStatementImportErrorCodes.FileRequired));
+
+        var mappingDto = TryParseMapping(mapping);
+        if (mappingDto is null)
+            return BadRequest(ApiResponse<object>.FailWithCode("Mappage requis ou illisible.", BankStatementTabularErrorCodes.TabularMappingInvalid));
+
+        await using var stream = file.OpenReadStream();
+        var result = await _tabular.StartAsync(new StartBankStatementImportRequest
+        {
+            Content = stream,
+            FileName = file.FileName,
+            ContentType = file.ContentType ?? string.Empty,
+            Length = file.Length,
+            BankAccountId = bankAccountId,
+            JournalCode = string.IsNullOrWhiteSpace(journalCode) ? "JB" : journalCode
+        }, mappingDto, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(ApiResponse<BankStatementImportSessionDto>.Ok(result.Value))
+            : Failure(result.Error);
+    }
+
+    private static BankStatementTabularMappingDto? TryParseMapping(string? json)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+            return null;
+        try
+        {
+            return JsonSerializer.Deserialize<BankStatementTabularMappingDto>(json, MappingJsonOptions);
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
+    }
+
     [HttpGet("sessions/{id:guid}")]
     [Authorize(Policy = PermissionPolicies.AccountingRead)]
     public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
@@ -193,15 +300,30 @@ public sealed class BankStatementImportController : ControllerBase
             : Failure(result.Error);
     }
 
-    /// <summary>Propositions de comptabilisation ligne par ligne (lecture seule).</summary>
+    /// <summary>Propositions de comptabilisation ligne par ligne (lecture seule). <c>assist=full</c> : historique du dossier + repli 471.</summary>
     [HttpGet("statements/{statementId:guid}/proposals")]
     [Authorize(Policy = PermissionPolicies.AccountingRead)]
-    public async Task<IActionResult> GetProposals(Guid statementId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetProposals(Guid statementId, [FromQuery] string? assist, CancellationToken cancellationToken)
     {
         if (!_settings.BankStatementAiPostingEnabled)
             return NotFound();
-        var result = await _posting.GetProposalsAsync(statementId, cancellationToken);
+        var options = string.Equals(assist, "full", StringComparison.OrdinalIgnoreCase) ? BankProposalOptions.Full : BankProposalOptions.None;
+        var result = await _posting.GetProposalsAsync(statementId, options, cancellationToken);
         return result.IsSuccess ? Ok(ApiResponse<BankStatementProposalsDto>.Ok(result.Value)) : Failure(result.Error);
+    }
+
+    /// <summary>Historique paginé des relevés importés par ce parcours (plan §3.8).</summary>
+    [HttpGet("statements")]
+    [Authorize(Policy = PermissionPolicies.AccountingRead)]
+    public async Task<IActionResult> GetHistory(
+        [FromQuery] int page, [FromQuery] int pageSize, [FromQuery] Guid? bankAccountId, CancellationToken cancellationToken)
+    {
+        if (!_settings.BankStatementAiPostingEnabled)
+            return NotFound();
+        var result = await _posting.GetHistoryAsync(page, pageSize, bankAccountId, cancellationToken);
+        return result.IsSuccess
+            ? Ok(ApiResponse<PagedResult<BankStatementImportHistoryItemDto>>.Ok(result.Value))
+            : Failure(result.Error);
     }
 
     /// <summary>Pièce justificative : fichier d'origine d'un relevé enregistré par ce parcours (jamais servi statiquement).</summary>
@@ -250,13 +372,17 @@ public sealed class BankStatementImportController : ControllerBase
     private IActionResult Failure(Error error)
     {
         var body = ApiResponse<object>.FailWithCode(error.Description, error.Code);
+        if (error.Metadata is { Count: > 0 } metadata && metadata.TryGetValue("data", out var data))
+            body = body with { Data = data };
+
         return error.Code switch
         {
-            BankStatementImportErrorCodes.Disabled => NotFound(),
+            BankStatementImportErrorCodes.Disabled or BankStatementTabularErrorCodes.TabularDisabled => NotFound(),
             BankStatementImportErrorCodes.SessionNotFound or BankStatementImportErrorCodes.BankAccountNotFound
                 or BankStatementImportErrorCodes.SourceFileNotFound
                 or BankStatementPostingErrorCodes.StatementNotFound => NotFound(body),
-            BankStatementImportErrorCodes.AlreadyImported or BankStatementImportErrorCodes.AnalysisInProgress => Conflict(body),
+            BankStatementImportErrorCodes.AlreadyImported or BankStatementImportErrorCodes.AnalysisInProgress
+                or BankStatementPostingErrorCodes.AtomicConflict => Conflict(body),
             _ when error.Code.StartsWith("Forbidden", StringComparison.OrdinalIgnoreCase) => StatusCode(StatusCodes.Status403Forbidden, body),
             _ => BadRequest(body)
         };

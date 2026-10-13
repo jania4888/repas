@@ -112,14 +112,18 @@ public static class BankStatementBalanceCheck
 
     /// <summary>
     /// D4 — le relevé est-il « tout IA » ? Vrai quand il a des lignes, qu'aucune ne vient de la lecture
-    /// directe (<see cref="StatementLineSource.Layout"/>), qu'aucune page n'est restée illisible et
-    /// qu'aucune page IA n'a échoué. Le chemin historique (lignes <c>Layout</c>) est exclu de lui-même.
+    /// directe (<see cref="StatementLineSource.Layout"/>) ni d'un import tabulaire
+    /// (<see cref="StatementLineSource.Tabular"/>), qu'aucune page n'est restée illisible et qu'aucune
+    /// page IA n'a échoué. Un relevé tabulaire (CSV/XLSX) n'a jamais été lu par l'IA : des lignes
+    /// corrigées en <see cref="StatementLineSource.Manual"/> ne doivent pas le faire passer pour
+    /// « tout IA », ce qui rétrograderait un écart de solde en simple avertissement (D4).
     /// </summary>
     public static bool IsAiOnlyStatement(ExtractedBankStatement statement)
     {
         ArgumentNullException.ThrowIfNull(statement);
         return statement.Lines.Count > 0
-            && statement.Lines.All(l => l.Source != StatementLineSource.Layout)
+            && statement.ProfileId != BankStatementImportExtractionMethods.TabularProfileId
+            && statement.Lines.All(l => l.Source != StatementLineSource.Layout && l.Source != StatementLineSource.Tabular)
             && statement.UnresolvedPages.Count == 0
             && !statement.Issues.Any(i => i.Code == StatementIssueCodes.AiPageFailed);
     }

@@ -21,22 +21,31 @@ public sealed class BankStatementImportCapabilitiesTests
 {
     private readonly Mock<IBankStatementAiExtraction> _ai = new();
     private readonly Mock<ICurrentUser> _user = new();
+    private readonly Mock<IBankStatementImportService> _service = new();
 
-    private BankStatementImportController Controller(bool enabled, bool allDocuments = false, BankStatementAiAvailability? ai = null)
+    private BankStatementImportController Controller(
+        bool enabled, bool allDocuments = false, BankStatementAiAvailability? ai = null, bool tabularEnabled = false, string? suspenseAccountNumber = null)
     {
         _user.Setup(u => u.HasPermission(It.IsAny<string>())).Returns(true);
         _ai.Setup(a => a.CheckAvailabilityAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(ai ?? new BankStatementAiAvailability(true, "local", "ollama:test", null));
+        _service.Setup(s => s.GetSuspenseAccountNumberAsync(It.IsAny<CancellationToken>())).ReturnsAsync(suspenseAccountNumber);
         var tenant = new Mock<ITenantContext>();
         tenant.Setup(t => t.TenantId).Returns(Guid.NewGuid());
         return new BankStatementImportController(
-            Mock.Of<IBankStatementImportService>(),
+            _service.Object,
+            Mock.Of<IBankStatementTabularImportService>(),
             Mock.Of<IBankStatementPostingService>(),
             _ai.Object,
             BankStatementProfileRegistry.Default,
             _user.Object,
             tenant.Object,
-            Options.Create(new AccountingSettings { BankStatementAiPostingEnabled = enabled, BankStatementAiForAllDocumentsEnabled = allDocuments }));
+            Options.Create(new AccountingSettings
+            {
+                BankStatementAiPostingEnabled = enabled,
+                BankStatementAiForAllDocumentsEnabled = allDocuments,
+                BankStatementTabularImportEnabled = tabularEnabled
+            }));
     }
 
     private static BankStatementImportCapabilitiesDto Capabilities(IActionResult result)
@@ -160,7 +169,52 @@ public sealed class BankStatementImportCapabilitiesTests
         var controller = Controller(enabled: false);
 
         Assert.IsType<NotFoundResult>(await controller.Get(Guid.NewGuid(), CancellationToken.None));
-        Assert.IsType<NotFoundResult>(await controller.GetProposals(Guid.NewGuid(), CancellationToken.None));
+        Assert.IsType<NotFoundResult>(await controller.GetProposals(Guid.NewGuid(), null, CancellationToken.None));
         Assert.IsType<NotFoundResult>(await controller.Retry(Guid.NewGuid(), CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task Tabular_capabilities_are_off_by_default_even_when_ai_import_is_enabled()
+    {
+        var caps = Capabilities(await Controller(enabled: true).GetCapabilities());
+
+        Assert.False(caps.TabularEnabled);
+        Assert.Empty(caps.TabularExtensions);
+    }
+
+    [Fact]
+    public async Task Tabular_capabilities_require_both_the_ai_import_switch_and_the_tabular_sub_flag()
+    {
+        var caps = Capabilities(await Controller(enabled: true, tabularEnabled: true).GetCapabilities());
+
+        Assert.True(caps.TabularEnabled);
+        Assert.Equal(new[] { ".csv", ".xlsx" }, caps.TabularExtensions);
+        Assert.True(caps.MaxTabularRows > 0);
+        Assert.True(caps.MaxAtomicLines > 0);
+    }
+
+    [Fact]
+    public async Task Tabular_capabilities_stay_off_when_the_master_switch_is_off_even_with_the_sub_flag_on()
+    {
+        var caps = Capabilities(await Controller(enabled: false, tabularEnabled: true).GetCapabilities());
+
+        Assert.False(caps.TabularEnabled);
+        Assert.Empty(caps.TabularExtensions);
+    }
+
+    [Fact]
+    public async Task Suspense_account_number_is_resolved_through_the_import_service_and_published_as_is()
+    {
+        var caps = Capabilities(await Controller(enabled: true, suspenseAccountNumber: "471000").GetCapabilities());
+
+        Assert.Equal("471000", caps.SuspenseAccountNumber);
+    }
+
+    [Fact]
+    public async Task Disabled_feature_never_resolves_the_suspense_account()
+    {
+        Capabilities(await Controller(enabled: false).GetCapabilities());
+
+        _service.Verify(s => s.GetSuspenseAccountNumberAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 }

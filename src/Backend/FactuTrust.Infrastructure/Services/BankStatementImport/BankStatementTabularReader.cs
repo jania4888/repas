@@ -1,0 +1,825 @@
+using System.Globalization;
+using System.IO.Compression;
+using System.Text;
+using ClosedXML.Excel;
+using CsvHelper;
+using CsvHelper.Configuration;
+using DocumentFormat.OpenXml.Packaging;
+using FactuTrust.Application.Configuration;
+using FactuTrust.Application.Features.Accounting.BankStatementImport;
+using FactuTrust.Domain.Common;
+
+namespace FactuTrust.Infrastructure.Services.BankStatementImport;
+
+/// <summary>
+/// Lecture déterministe d'un relevé bancaire CSV / XLSX mappé par colonnes (sans IA). On ne touche
+/// pas à <c>TabularFileParsing</c> / <c>TabularRowReader</c> (import de journaux, migration), qui
+/// gardent leur comportement — <c>TabularFileParsing.Normalize</c> et
+/// <c>TabularFileParsing.ResolveColumns</c> sont seulement appelés en lecture, jamais modifiés.
+/// Aucune exception n'est jamais exposée au client : seuls des codes stables
+/// (<see cref="BankStatementTabularErrorCodes"/>) et des compteurs sont renvoyés/journalisés.
+/// </summary>
+internal static class BankStatementTabularReader
+{
+    private const int HeaderScanRows = 15;
+    private const int DelimiterSampleLines = 20;
+    private const int MaxDecimalsBeforeRounding = 3;
+
+    private static readonly string[] DelimiterCandidates = { ";", ",", "\t" };
+
+    private static readonly string[] SupportedDateFormats =
+    {
+        "dd/MM/yyyy", "dd-MM-yyyy", "dd.MM.yyyy", "yyyy-MM-dd", "MM/dd/yyyy", "dd/MM/yy"
+    };
+
+    private static readonly string[] FooterKeywords = { "TOTAL", "SOLDE", "REPORT", "NOUVEAUSOLDE" };
+
+    private static readonly Dictionary<string, string[]> ColumnSynonyms = new()
+    {
+        ["date"] = new[] { "date", "dateoperation", "dateop", "datecomptable", "datetransaction", "dateecriture" },
+        ["datevaleur"] = new[] { "datevaleur", "valeur", "datedevaleur" },
+        ["libelle"] = new[] { "libelle", "label", "description", "operation", "intitule", "designation", "libelleoperation", "libellecomplet" },
+        ["reference"] = new[] { "reference", "ref", "refoperation", "numero", "piece", "numpiece", "numerocheque", "numcheque", "numerooperation" },
+        ["debit"] = new[] { "debit", "retrait", "sortie", "decaissement" },
+        ["credit"] = new[] { "credit", "versement", "depot", "entree", "encaissement" },
+        ["montant"] = new[] { "montant", "amount", "valeurmontant" },
+        ["solde"] = new[] { "solde", "soldeprogressif", "soldecourant", "balance", "soldecompte" },
+    };
+
+    // ── Résultat intermédiaire : table brute (toutes les lignes, 0-based) ─────────────────────
+
+    public sealed record RawTable
+    {
+        public required string Format { get; init; }
+        public required string Encoding { get; init; }
+        public string? Delimiter { get; init; }
+        public IReadOnlyList<string> SheetNames { get; init; } = Array.Empty<string>();
+        public int SheetIndex { get; init; }
+        public required int HeaderRowIndex { get; init; }
+        public required IReadOnlyList<string[]> Rows { get; init; }
+        public required int TotalRowCount { get; init; }
+        public int ColumnCount { get; init; }
+        public bool Truncated { get; init; }
+        public bool HasFormulaCells { get; init; }
+    }
+
+    public sealed record ParsedLine(
+        int RowIndex,
+        int RowNumber,
+        DateOnly? TransactionDate,
+        DateOnly? ValueDate,
+        string Label,
+        string? Reference,
+        decimal? Amount,
+        bool? IsDebit,
+        decimal? Balance,
+        string? Error,
+        bool IsFooter)
+    {
+        /// <summary>Pied « TOTAL » lisible (<see cref="LooksLikeFooter"/>) : total débits de la colonne mappée, le cas échéant.</summary>
+        public decimal? FooterTotalDebit { get; init; }
+
+        /// <summary>Pied « TOTAL » lisible : total crédits de la colonne mappée, le cas échéant.</summary>
+        public decimal? FooterTotalCredit { get; init; }
+    }
+
+    private static Error Unreadable() => new(BankStatementTabularErrorCodes.TabularUnreadable, "Fichier illisible.");
+    private static Error Rejected() => new(BankStatementTabularErrorCodes.TabularRejected, "Fichier refusé pour des raisons de sécurité.");
+    private static Error NoLines() => new(BankStatementTabularErrorCodes.TabularNoLines, "Aucune ligne d'opération trouvée.");
+    private static Error TooManyRows(int max) => new(BankStatementTabularErrorCodes.TabularTooManyRows, $"Fichier trop volumineux (maximum {max} lignes).");
+
+    // ── Chargement ──────────────────────────────────────────────────────────────────────────
+
+    public static Result<RawTable> LoadRawTable(byte[] content, string extension, BankStatementImportLimits limits) =>
+        extension switch
+        {
+            ".csv" => LoadCsv(content, limits),
+            ".xlsx" => LoadXlsx(content, limits),
+            _ => Result.Failure<RawTable>(Unreadable())
+        };
+
+    private static Result<RawTable> LoadCsv(byte[] content, BankStatementImportLimits limits)
+    {
+        string text;
+        string encodingName;
+        try
+        {
+            (text, encodingName) = DecodeText(content);
+        }
+        catch (DecoderFallbackException)
+        {
+            return Result.Failure<RawTable>(Unreadable());
+        }
+
+        var delimiter = DetectDelimiter(text);
+        var rows = new List<string[]>();
+        var cap = limits.MaxTabularRows + HeaderScanRows + 64;
+        var truncated = false;
+
+        try
+        {
+            using var reader = new StringReader(text);
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                Delimiter = delimiter,
+                HasHeaderRecord = false,
+                MissingFieldFound = null,
+                BadDataFound = null,
+                TrimOptions = TrimOptions.Trim,
+                DetectDelimiter = false,
+                IgnoreBlankLines = true
+            };
+
+            using var csv = new CsvReader(reader, config);
+            while (csv.Read())
+            {
+                if (rows.Count >= cap)
+                {
+                    truncated = true;
+                    break;
+                }
+
+                var record = csv.Parser.Record ?? Array.Empty<string>();
+                var row = record.Take(limits.MaxTabularColumns)
+                    .Select(c => Truncate(c ?? string.Empty, limits.MaxTabularCellLength))
+                    .ToArray();
+                rows.Add(row);
+            }
+        }
+        catch (CsvHelperException)
+        {
+            return Result.Failure<RawTable>(Unreadable());
+        }
+        catch (FormatException)
+        {
+            return Result.Failure<RawTable>(Unreadable());
+        }
+
+        if (rows.Count == 0)
+            return Result.Failure<RawTable>(NoLines());
+
+        var headerRowIndex = DetectHeaderRow(rows);
+        return Result.Success(new RawTable
+        {
+            Format = BankStatementImportExtractionMethods.Csv,
+            Encoding = encodingName,
+            Delimiter = delimiter,
+            HeaderRowIndex = headerRowIndex,
+            Rows = rows,
+            TotalRowCount = rows.Count,
+            ColumnCount = rows.Max(r => r.Length),
+            Truncated = truncated
+        });
+    }
+
+    private static Result<RawTable> LoadXlsx(byte[] content, BankStatementImportLimits limits)
+    {
+        var zipCheck = CheckXlsxZipSafety(content, limits);
+        if (zipCheck is not null)
+            return Result.Failure<RawTable>(zipCheck);
+
+        List<string> sheetNames;
+        List<string[]> rows;
+        int sheetIndex;
+        var truncated = false;
+        var hasFormulaCells = false;
+
+        try
+        {
+            using var stream = new MemoryStream(content, writable: false);
+            using var workbook = new XLWorkbook(stream);
+            sheetNames = workbook.Worksheets.Select(w => w.Name).ToList();
+
+            var sheet = workbook.Worksheets.FirstOrDefault(w => w.Visibility == XLWorksheetVisibility.Visible && w.RangeUsed() is not null)
+                        ?? workbook.Worksheets.FirstOrDefault();
+            if (sheet is null)
+                return Result.Failure<RawTable>(NoLines());
+
+            sheetIndex = sheet.Position - 1;
+            var lastRow = sheet.LastRowUsed();
+            var lastColumn = sheet.LastColumnUsed();
+            if (lastRow is null || lastColumn is null)
+                return Result.Failure<RawTable>(NoLines());
+
+            var maxRow = lastRow.RowNumber();
+            var maxCol = Math.Min(lastColumn.ColumnNumber(), limits.MaxTabularColumns);
+            var cap = limits.MaxTabularRows + HeaderScanRows + 64;
+
+            rows = new List<string[]>();
+            for (var r = 1; r <= maxRow; r++)
+            {
+                if (rows.Count >= cap)
+                {
+                    truncated = true;
+                    break;
+                }
+
+                var row = new string[maxCol];
+                for (var c = 1; c <= maxCol; c++)
+                {
+                    var cell = sheet.Cell(r, c);
+                    if (cell.HasFormula)
+                        hasFormulaCells = true;
+                    row[c - 1] = Truncate(FormatCellValue(cell.CachedValue), limits.MaxTabularCellLength);
+                }
+
+                rows.Add(row);
+            }
+
+            if (rows.Count == 0)
+                return Result.Failure<RawTable>(NoLines());
+
+            var headerRowIndex = DetectHeaderRow(rows);
+            return Result.Success(new RawTable
+            {
+                Format = BankStatementImportExtractionMethods.Xlsx,
+                Encoding = "utf-8",
+                SheetNames = sheetNames,
+                SheetIndex = sheetIndex,
+                HeaderRowIndex = headerRowIndex,
+                Rows = rows,
+                TotalRowCount = rows.Count,
+                ColumnCount = maxCol,
+                Truncated = truncated,
+                HasFormulaCells = hasFormulaCells
+            });
+        }
+        catch (Exception ex) when (ex is OpenXmlPackageException or InvalidDataException or IOException or FormatException or InvalidOperationException)
+        {
+            return Result.Failure<RawTable>(Unreadable());
+        }
+    }
+
+    /// <summary>
+    /// Pré-contrôle avant ClosedXML : nombre d'entrées, taille décompressée totale, ratio de
+    /// compression par entrée (bombe zip) ; refus si une macro est présente. Renvoie <c>null</c>
+    /// si le fichier passe le contrôle.
+    /// </summary>
+    private static Error? CheckXlsxZipSafety(byte[] content, BankStatementImportLimits limits)
+    {
+        try
+        {
+            using var zipStream = new MemoryStream(content, writable: false);
+            using var archive = new ZipArchive(zipStream, ZipArchiveMode.Read, leaveOpen: true);
+
+            if (archive.Entries.Count > limits.XlsxMaxZipEntries)
+                return Rejected();
+
+            long totalUncompressed = 0;
+            foreach (var entry in archive.Entries)
+            {
+                if (string.Equals(entry.FullName, "xl/vbaProject.bin", StringComparison.OrdinalIgnoreCase))
+                    return Rejected();
+
+                totalUncompressed += entry.Length;
+                if (totalUncompressed > limits.XlsxMaxUncompressedBytes)
+                    return Rejected();
+
+                if (entry.CompressedLength > 0)
+                {
+                    var ratio = (double)entry.Length / entry.CompressedLength;
+                    if (ratio > limits.XlsxMaxCompressionRatio)
+                        return Rejected();
+                }
+                else if (entry.Length > 0)
+                {
+                    // Taille compressée nulle pour un contenu non vide : forme suspecte, refusée par prudence.
+                    return Rejected();
+                }
+            }
+
+            var contentTypes = archive.GetEntry("[Content_Types].xml");
+            if (contentTypes is not null)
+            {
+                using var entryStream = contentTypes.Open();
+                using var sr = new StreamReader(entryStream, System.Text.Encoding.UTF8);
+                var xml = sr.ReadToEnd();
+                if (xml.Contains("macroEnabled", StringComparison.OrdinalIgnoreCase))
+                    return Rejected();
+            }
+
+            return null;
+        }
+        catch (InvalidDataException)
+        {
+            return Unreadable();
+        }
+    }
+
+    private static string FormatCellValue(XLCellValue value)
+    {
+        if (value.IsBlank) return string.Empty;
+        if (value.IsDateTime) return value.GetDateTime().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        if (value.IsNumber) return value.GetNumber().ToString("0.###############", CultureInfo.InvariantCulture);
+        if (value.IsBoolean) return value.GetBoolean() ? "1" : "0";
+        if (value.IsText) return value.GetText();
+        return value.ToString(CultureInfo.InvariantCulture);
+    }
+
+    // ── Encodage / délimiteur / en-tête ────────────────────────────────────────────────────────
+
+    private static (string Text, string EncodingName) DecodeText(byte[] content)
+    {
+        var span = content.AsSpan();
+        var offset = span.Length >= 3 && span[0] == 0xEF && span[1] == 0xBB && span[2] == 0xBF ? 3 : 0;
+        var bytes = content.AsSpan(offset).ToArray();
+
+        try
+        {
+            var strict = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
+            return (strict.GetString(bytes), "utf-8");
+        }
+        catch (DecoderFallbackException)
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            var legacy = Encoding.GetEncoding(1252);
+            return (legacy.GetString(bytes), "windows-1252");
+        }
+    }
+
+    private static string DetectDelimiter(string text)
+    {
+        var lines = text.Split('\n')
+            .Select(l => l.TrimEnd('\r'))
+            .Where(l => l.Length > 0)
+            .Take(DelimiterSampleLines)
+            .ToList();
+
+        if (lines.Count == 0)
+            return ";";
+
+        var best = ";";
+        var bestScore = -1;
+        foreach (var delimiter in DelimiterCandidates)
+        {
+            var ch = delimiter[0];
+            var counts = lines.Select(l => l.Count(c => c == ch)).ToList();
+            if (counts.All(c => c == 0))
+                continue;
+
+            var mode = counts.GroupBy(c => c).OrderByDescending(g => g.Count()).ThenByDescending(g => g.Key).First();
+            var score = mode.Count() * 1000 + mode.Key;
+            if (score > bestScore)
+            {
+                bestScore = score;
+                best = delimiter;
+            }
+        }
+
+        return best;
+    }
+
+    private static int DetectHeaderRow(IReadOnlyList<string[]> rows)
+    {
+        var limit = Math.Min(HeaderScanRows, rows.Count);
+        var bestIndex = 0;
+        var bestScore = -1;
+        for (var i = 0; i < limit; i++)
+        {
+            var map = TabularFileParsing.ResolveColumns(rows[i], ColumnSynonyms);
+            var score = map.Values.Count(v => v >= 0);
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestIndex = i;
+            }
+        }
+
+        return bestScore >= 2 ? bestIndex : 0;
+    }
+
+    private static string Truncate(string value, int max) => value.Length <= max ? value : value[..max];
+
+    // ── Mappage suggéré ─────────────────────────────────────────────────────────────────────
+
+    public static BankStatementTabularMappingDto SuggestMapping(RawTable table)
+    {
+        var header = table.HeaderRowIndex < table.Rows.Count ? table.Rows[table.HeaderRowIndex] : Array.Empty<string>();
+        var map = TabularFileParsing.ResolveColumns(header, ColumnSynonyms);
+
+        var labelColumns = map["libelle"] >= 0
+            ? new List<int> { map["libelle"] }
+            : new List<int>();
+
+        var hasDebitCredit = map["debit"] >= 0 || map["credit"] >= 0;
+        var ambiguous = DetectAmbiguousDateFormat(table, map["date"]);
+
+        return new BankStatementTabularMappingDto
+        {
+            HeaderRowIndex = table.HeaderRowIndex,
+            SheetIndex = table.Format == BankStatementImportExtractionMethods.Xlsx ? table.SheetIndex : null,
+            DateFormat = "dd/MM/yyyy",
+            DecimalSeparator = ",",
+            AmountMode = hasDebitCredit ? "debitCredit" : "signed",
+            SignConvention = hasDebitCredit ? null : "negativeIsDebit",
+            DateColumn = Math.Max(map["date"], 0),
+            ValueDateColumn = map["datevaleur"] >= 0 ? map["datevaleur"] : null,
+            LabelColumns = labelColumns.Count > 0 ? labelColumns : new List<int> { 0 },
+            ReferenceColumn = map["reference"] >= 0 ? map["reference"] : null,
+            DebitColumn = hasDebitCredit && map["debit"] >= 0 ? map["debit"] : null,
+            CreditColumn = hasDebitCredit && map["credit"] >= 0 ? map["credit"] : null,
+            AmountColumn = !hasDebitCredit && map["montant"] >= 0 ? map["montant"] : null,
+            BalanceColumn = map["solde"] >= 0 ? map["solde"] : null,
+            Encoding = table.Encoding,
+            Delimiter = table.Delimiter
+        };
+    }
+
+    public static bool DetectAmbiguousDateFormat(RawTable table, int dateColumn)
+    {
+        if (dateColumn < 0)
+            return false;
+
+        var sample = table.Rows.Skip(table.HeaderRowIndex + 1).Take(HeaderScanRows)
+            .Select(r => dateColumn < r.Length ? r[dateColumn] : string.Empty)
+            .Where(v => !string.IsNullOrWhiteSpace(v))
+            .ToList();
+        if (sample.Count == 0)
+            return false;
+
+        var ddMmReadsAll = sample.All(v => DateOnly.TryParseExact(v, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _));
+        var mmDdReadsAll = sample.All(v => DateOnly.TryParseExact(v, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _));
+        // Ambigu seulement si les deux lectures diffèrent sur au moins un échantillon (jour > 12 tranche sinon).
+        if (!ddMmReadsAll || !mmDdReadsAll)
+            return false;
+
+        return sample.Any(v =>
+            DateOnly.TryParseExact(v, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var a) &&
+            DateOnly.TryParseExact(v, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var b) &&
+            a != b);
+    }
+
+    // ── Interprétation des lignes avec un mappage ──────────────────────────────────────────────
+
+    public static IReadOnlyList<ParsedLine> ParseLines(RawTable table, BankStatementTabularMappingDto mapping)
+    {
+        var ignoredRows = mapping.IgnoredRows is { Count: > 0 } ? new HashSet<int>(mapping.IgnoredRows) : null;
+        var decimalSeparator = string.IsNullOrEmpty(mapping.DecimalSeparator) ? "," : mapping.DecimalSeparator;
+        var dateFormat = SupportedDateFormats.Contains(mapping.DateFormat) ? mapping.DateFormat : "dd/MM/yyyy";
+        var result = new List<ParsedLine>();
+
+        for (var rowIndex = mapping.HeaderRowIndex + 1; rowIndex < table.Rows.Count; rowIndex++)
+        {
+            if (ignoredRows is not null && ignoredRows.Contains(rowIndex))
+                continue;
+
+            var row = table.Rows[rowIndex];
+            if (row.All(string.IsNullOrWhiteSpace))
+                continue;
+
+            var rowNumber = rowIndex + 1; // 1-based, affiché à l'utilisateur
+            var label = string.Join(" ", mapping.LabelColumns
+                .Select(c => Cell(row, c))
+                .Where(v => !string.IsNullOrWhiteSpace(v))).Trim();
+
+            var dateText = Cell(row, mapping.DateColumn);
+            var hasDate = DateOnly.TryParseExact(dateText, dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var transactionDate);
+
+            if (!hasDate && LooksLikeFooter(label, dateText))
+            {
+                var (footerDebit, footerCredit) = label.Contains("TOTAL", StringComparison.OrdinalIgnoreCase)
+                    ? ReadFooterTotals(row, mapping, decimalSeparator)
+                    : (null, null);
+                result.Add(new ParsedLine(rowIndex, rowNumber, null, null, label, null, null, null, null, null, IsFooter: true)
+                {
+                    FooterTotalDebit = footerDebit,
+                    FooterTotalCredit = footerCredit
+                });
+                continue;
+            }
+
+            DateOnly? valueDate = null;
+            if (mapping.ValueDateColumn is { } valueDateColumn)
+            {
+                var valueDateText = Cell(row, valueDateColumn);
+                if (DateOnly.TryParseExact(valueDateText, dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedValueDate))
+                    valueDate = parsedValueDate;
+            }
+
+            var reference = mapping.ReferenceColumn is { } referenceColumn ? Cell(row, referenceColumn) : null;
+            if (string.IsNullOrWhiteSpace(reference))
+                reference = null;
+
+            decimal? balance = null;
+            if (mapping.BalanceColumn is { } balanceColumn)
+            {
+                var balanceText = Cell(row, balanceColumn);
+                if (TryParseAmount(balanceText, decimalSeparator, out var parsedBalance))
+                    balance = parsedBalance;
+            }
+
+            string? error = null;
+            decimal? amount = null;
+            bool? isDebit = null;
+
+            if (string.Equals(mapping.AmountMode, "signed", StringComparison.OrdinalIgnoreCase))
+            {
+                var amountText = Cell(row, mapping.AmountColumn ?? -1);
+                if (TryParseAmount(amountText, decimalSeparator, out var signed))
+                {
+                    var negativeIsDebit = !string.Equals(mapping.SignConvention, "negativeIsCredit", StringComparison.OrdinalIgnoreCase);
+                    isDebit = negativeIsDebit ? signed < 0 : signed >= 0;
+                    amount = Math.Abs(signed);
+                }
+            }
+            else
+            {
+                var debitText = Cell(row, mapping.DebitColumn ?? -1);
+                var creditText = Cell(row, mapping.CreditColumn ?? -1);
+                var hasDebit = TryParseAmount(debitText, decimalSeparator, out var debitValue) && debitValue != 0;
+                var hasCredit = TryParseAmount(creditText, decimalSeparator, out var creditValue) && creditValue != 0;
+
+                if (hasDebit && hasCredit)
+                {
+                    error = StatementIssueCodes.TabularBothSides;
+                    amount = 0m;
+                }
+                else if (hasDebit)
+                {
+                    amount = Math.Abs(debitValue);
+                    isDebit = true;
+                }
+                else if (hasCredit)
+                {
+                    amount = Math.Abs(creditValue);
+                    isDebit = false;
+                }
+            }
+
+            if (!hasDate)
+            {
+                error ??= StatementIssueCodes.TabularDateInvalid;
+                transactionDate = valueDate ?? DateOnly.FromDateTime(DateTime.UtcNow);
+            }
+
+            if (amount is null || amount == 0m || isDebit is null)
+            {
+                error ??= StatementIssueCodes.TabularAmountInvalid;
+                amount ??= 0m;
+            }
+
+            result.Add(new ParsedLine(rowIndex, rowNumber, transactionDate, valueDate, label, reference, amount, isDebit, balance, error, IsFooter: false));
+        }
+
+        return result;
+    }
+
+    private static string Cell(string[] row, int column) => column >= 0 && column < row.Length ? row[column] : string.Empty;
+
+    private static bool LooksLikeFooter(string label, string dateText)
+    {
+        if (!string.IsNullOrWhiteSpace(dateText))
+            return false;
+
+        var normalized = TabularFileParsing.Normalize(label).ToUpperInvariant();
+        return FooterKeywords.Any(k => normalized.Contains(k));
+    }
+
+    /// <summary>
+    /// Pied « TOTAL » lisible (ex. « TOTAL DES MOUVEMENTS ») : lit les mêmes colonnes que les lignes
+    /// d'opération pour alimenter <c>Header.TotalDebits/TotalCredits</c> (<c>TotalsLabelled = true</c>) ;
+    /// le contrôle de totaux existant (<see cref="BankStatementBalanceCheck"/>) s'applique ensuite tel quel.
+    /// </summary>
+    private static (decimal? Debit, decimal? Credit) ReadFooterTotals(string[] row, BankStatementTabularMappingDto mapping, string decimalSeparator)
+    {
+        if (string.Equals(mapping.AmountMode, "signed", StringComparison.OrdinalIgnoreCase))
+        {
+            var amountText = Cell(row, mapping.AmountColumn ?? -1);
+            if (!TryParseAmount(amountText, decimalSeparator, out var signed) || signed == 0m)
+                return (null, null);
+
+            var negativeIsDebit = !string.Equals(mapping.SignConvention, "negativeIsCredit", StringComparison.OrdinalIgnoreCase);
+            var isDebit = negativeIsDebit ? signed < 0 : signed >= 0;
+            return isDebit ? (Math.Abs(signed), null) : (null, Math.Abs(signed));
+        }
+
+        decimal? debit = null;
+        decimal? credit = null;
+        if (TryParseAmount(Cell(row, mapping.DebitColumn ?? -1), decimalSeparator, out var debitValue) && debitValue != 0m)
+            debit = Math.Abs(debitValue);
+        if (TryParseAmount(Cell(row, mapping.CreditColumn ?? -1), decimalSeparator, out var creditValue) && creditValue != 0m)
+            credit = Math.Abs(creditValue);
+        return (debit, credit);
+    }
+
+    // ── Validation du mappage ──────────────────────────────────────────────────────────────
+
+    public static Error? ValidateMapping(BankStatementTabularMappingDto mapping, int columnCount)
+    {
+        Error Invalid() => new(BankStatementTabularErrorCodes.TabularMappingInvalid, "Mappage de colonnes invalide.");
+        bool InRange(int? column) => column is null || (column >= 0 && column < columnCount);
+
+        if (!SupportedDateFormats.Contains(mapping.DateFormat)) return Invalid();
+        if (mapping.DecimalSeparator is not ("," or ".")) return Invalid();
+        if (mapping.AmountMode is not ("debitCredit" or "signed")) return Invalid();
+        if (mapping.SignConvention is not (null or "negativeIsDebit" or "negativeIsCredit")) return Invalid();
+        if (mapping.HeaderRowIndex < 0) return Invalid();
+        if (mapping.DateColumn < 0 || mapping.DateColumn >= columnCount) return Invalid();
+        if (mapping.LabelColumns is null || mapping.LabelColumns.Count is < 1 or > 3) return Invalid();
+        if (mapping.LabelColumns.Any(c => !InRange(c))) return Invalid();
+        if (!InRange(mapping.ValueDateColumn) || !InRange(mapping.ReferenceColumn) || !InRange(mapping.DebitColumn) ||
+            !InRange(mapping.CreditColumn) || !InRange(mapping.AmountColumn) || !InRange(mapping.BalanceColumn))
+            return Invalid();
+
+        if (string.Equals(mapping.AmountMode, "signed", StringComparison.OrdinalIgnoreCase))
+        {
+            if (mapping.AmountColumn is null) return Invalid();
+        }
+        else if (mapping.DebitColumn is null && mapping.CreditColumn is null)
+        {
+            return Invalid();
+        }
+
+        return null;
+    }
+
+    // ── Construction de l'extraction (session CSV/XLSX) ────────────────────────────────────
+
+    public static Result<ExtractedBankStatement> BuildExtraction(
+        RawTable table, BankStatementTabularMappingDto mapping, BankStatementImportLimits limits, string? rib)
+    {
+        if (table.Truncated)
+            return Result.Failure<ExtractedBankStatement>(TooManyRows(limits.MaxTabularRows));
+
+        var parsed = ParseLines(table, mapping);
+        var operationLines = parsed.Where(p => !p.IsFooter).ToList();
+
+        if (operationLines.Count > limits.MaxTabularRows)
+            return Result.Failure<ExtractedBankStatement>(TooManyRows(limits.MaxTabularRows));
+        if (operationLines.Count == 0)
+            return Result.Failure<ExtractedBankStatement>(NoLines());
+
+        var reversed = false;
+        var decreasing = 0;
+        for (var i = 1; i < operationLines.Count; i++)
+        {
+            if (operationLines[i].TransactionDate < operationLines[i - 1].TransactionDate)
+                decreasing++;
+        }
+        if (operationLines.Count >= 2 && decreasing >= operationLines.Count - 1)
+        {
+            operationLines = Enumerable.Reverse(operationLines).ToList();
+            reversed = true;
+        }
+
+        var issues = new List<StatementExtractionIssue>();
+        var lines = new List<ExtractedStatementLine>(operationLines.Count);
+        for (var i = 0; i < operationLines.Count; i++)
+        {
+            var p = operationLines[i];
+            var label = string.IsNullOrEmpty(p.Label) ? string.Empty : p.Label;
+            lines.Add(new ExtractedStatementLine
+            {
+                Index = i,
+                PageNumber = 1,
+                TransactionDate = p.TransactionDate ?? DateOnly.FromDateTime(DateTime.UtcNow),
+                ValueDate = p.ValueDate,
+                Label = label,
+                LabelLines = string.IsNullOrEmpty(label) ? Array.Empty<string>() : new[] { label },
+                Amount = p.Amount ?? 0m,
+                IsDebit = p.IsDebit ?? false,
+                Source = StatementLineSource.Tabular,
+                SourceRow = p.RowNumber,
+                Reference = p.Reference
+            });
+
+            if (p.Error is not null)
+                issues.Add(new StatementExtractionIssue(p.Error, StatementIssueSeverity.Blocking, FriendlyMessage(p.Error, p.RowNumber), LineIndex: i));
+        }
+
+        if (reversed)
+        {
+            issues.Add(new StatementExtractionIssue(StatementIssueCodes.TabularReversedOrder, StatementIssueSeverity.Info,
+                "Lignes réordonnées : le fichier les listait de la plus récente à la plus ancienne."));
+        }
+
+        if (table.HasFormulaCells)
+        {
+            issues.Add(new StatementExtractionIssue(StatementIssueCodes.TabularFormulaCells, StatementIssueSeverity.Info,
+                "Certaines cellules contiennent une formule : la dernière valeur calculée a été lue, sans recalcul."));
+        }
+
+        var opening = mapping.OpeningBalance is { } ob
+            ? new StatementAmount(ob, BankStatementBalanceCheck.CurrencyDecimals)
+            : DeduceOpeningFromColumn(operationLines, lines);
+        var closing = mapping.ClosingBalance is { } cb
+            ? new StatementAmount(cb, BankStatementBalanceCheck.CurrencyDecimals)
+            : operationLines[^1].Balance is { } lastBalance
+                ? new StatementAmount(lastBalance, BankStatementBalanceCheck.CurrencyDecimals)
+                : null;
+
+        if (mapping.BalanceColumn is not null)
+        {
+            decimal? running = opening?.Value;
+            for (var i = 0; i < operationLines.Count; i++)
+            {
+                var p = operationLines[i];
+                if (running is not null && p.Amount is { } amount && p.IsDebit is { } isDebit)
+                    running += isDebit ? -amount : amount;
+
+                if (p.Balance is { } printed && running is not null && Math.Abs(running.Value - printed) > 0.0005m)
+                {
+                    issues.Add(new StatementExtractionIssue(StatementIssueCodes.TabularRunningBalanceMismatch, StatementIssueSeverity.Warning,
+                        $"Solde progressif en désaccord à la ligne {p.RowNumber} du fichier.", LineIndex: i));
+                }
+
+                if (p.Balance is { } b)
+                    running = b; // Le solde imprimé prime pour la suite du contrôle.
+            }
+        }
+
+        decimal? footerTotalDebits = null;
+        decimal? footerTotalCredits = null;
+        foreach (var footerLine in parsed.Where(p => p.IsFooter))
+        {
+            footerTotalDebits ??= footerLine.FooterTotalDebit;
+            footerTotalCredits ??= footerLine.FooterTotalCredit;
+        }
+        var totalsLabelled = footerTotalDebits is not null || footerTotalCredits is not null;
+
+        var header = new ExtractedStatementHeader
+        {
+            Rib = rib,
+            BankCode = rib is { Length: 20 } ? rib[..2] : null,
+            Currency = "TND",
+            PeriodStart = lines.Count > 0 ? lines.Min(l => l.TransactionDate) : null,
+            PeriodEnd = lines.Count > 0 ? lines.Max(l => l.TransactionDate) : null,
+            PeriodPrinted = false,
+            OpeningBalance = opening,
+            ClosingBalance = closing,
+            TotalDebits = footerTotalDebits is { } td ? new StatementAmount(td, BankStatementBalanceCheck.CurrencyDecimals) : null,
+            TotalCredits = footerTotalCredits is { } tc ? new StatementAmount(tc, BankStatementBalanceCheck.CurrencyDecimals) : null,
+            TotalsLabelled = totalsLabelled
+        };
+
+        var extraction = new ExtractedBankStatement
+        {
+            Header = header,
+            Lines = lines,
+            Issues = issues,
+            ProfileId = BankStatementImportExtractionMethods.TabularProfileId,
+            PageCount = 1,
+            UnresolvedPages = Array.Empty<int>()
+        };
+
+        return Result.Success(BankStatementBalanceCheck.Reevaluate(extraction));
+    }
+
+    private static StatementAmount? DeduceOpeningFromColumn(IReadOnlyList<ParsedLine> operationLines, IReadOnlyList<ExtractedStatementLine> lines)
+    {
+        if (operationLines.Count == 0 || operationLines[0].Balance is not { } balanceAfterFirst)
+            return null;
+
+        var firstLine = lines[0];
+        var opening = balanceAfterFirst + (firstLine.IsDebit ? firstLine.Amount : -firstLine.Amount);
+        return new StatementAmount(opening, BankStatementBalanceCheck.CurrencyDecimals);
+    }
+
+    private static string FriendlyMessage(string code, int rowNumber) => code switch
+    {
+        StatementIssueCodes.TabularDateInvalid => $"Date illisible à la ligne {rowNumber} du fichier : corrigez-la ou excluez la ligne.",
+        StatementIssueCodes.TabularAmountInvalid => $"Montant illisible ou nul à la ligne {rowNumber} du fichier : corrigez-le ou excluez la ligne.",
+        StatementIssueCodes.TabularBothSides => $"Débit et crédit renseignés à la ligne {rowNumber} du fichier : corrigez le sens de l'opération.",
+        _ => $"Anomalie à la ligne {rowNumber} du fichier."
+    };
+
+    /// <summary>
+    /// Montant tunisien tolérant les espaces (dont insécables), parenthèses et signe en fin ; délègue
+    /// ensuite à <see cref="TunisianBankAmountParsing.TryParseTunisianBankAmount"/>.
+    /// </summary>
+    private static bool TryParseAmount(string? value, string decimalSeparator, out decimal amount)
+    {
+        amount = 0m;
+        if (string.IsNullOrWhiteSpace(value))
+            return false;
+
+        var text = value.Trim()
+            .Replace(" ", string.Empty)
+            .Replace("\u00A0", string.Empty)
+            .Replace("\u202F", string.Empty);
+
+        var negative = false;
+        if (text.StartsWith('(') && text.EndsWith(')'))
+        {
+            negative = true;
+            text = text[1..^1];
+        }
+        else if (text.EndsWith('-'))
+        {
+            negative = true;
+            text = text[..^1];
+        }
+
+        if (decimalSeparator == "." && text.Contains(',') && !text.Contains('.'))
+        {
+            // Le mappage force le point mais la cellule reste virgule décimale : on la convertit.
+            text = text.Replace(",", ".");
+        }
+
+        if (!TunisianBankAmountParsing.TryParseTunisianBankAmount(text, out var parsed))
+            return false;
+
+        amount = negative ? -Math.Abs(parsed) : parsed;
+        return true;
+    }
+}

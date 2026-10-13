@@ -149,4 +149,27 @@ public sealed class BankStatementImportLimits
     public int EffectiveAiJobBudgetMinutes => Math.Clamp(AiJobBudgetMinutes, 20, 240);
 
     public int EffectiveAiEstimatedSecondsPerCall => Math.Clamp(AiEstimatedSecondsPerCall, 10, 900);
+
+    // ── Import tabulaire (CSV / XLSX, drapeau Accounting:BankStatementTabularImportEnabled) ──
+
+    /// <summary>Nombre maximal de lignes de données lues dans un fichier CSV/XLSX (garde-fou mémoire).</summary>
+    public int MaxTabularRows { get; set; } = 5000;
+
+    /// <summary>Nombre maximal de colonnes lues dans un fichier CSV/XLSX.</summary>
+    public int MaxTabularColumns { get; set; } = 50;
+
+    /// <summary>Longueur maximale (caractères) d'une cellule lue, au-delà troncature silencieuse.</summary>
+    public int MaxTabularCellLength { get; set; } = 1000;
+
+    /// <summary>Nombre maximal de lignes d'un relevé pour la génération atomique (tout ou rien).</summary>
+    public int MaxAtomicGenerationLines { get; set; } = 500;
+
+    /// <summary>XLSX : nombre maximal d'entrées dans l'archive ZIP (anti-bombe zip).</summary>
+    public int XlsxMaxZipEntries { get; set; } = 200;
+
+    /// <summary>XLSX : taille décompressée totale maximale, en octets (anti-bombe zip).</summary>
+    public long XlsxMaxUncompressedBytes { get; set; } = 100 * 1024 * 1024;
+
+    /// <summary>XLSX : ratio taille décompressée / taille compressée maximal par entrée (anti-bombe zip).</summary>
+    public int XlsxMaxCompressionRatio { get; set; } = 100;
 }

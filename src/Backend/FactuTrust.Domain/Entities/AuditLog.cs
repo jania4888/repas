@@ -443,5 +443,7 @@ public static class AuditActions
         public const string BankStatementEntriesGenerated = "Accounting.BankStatementEntriesGenerated";
         public const string BankPostingRuleSaved = "Accounting.BankPostingRuleSaved";
         public const string BankPostingRuleDeleted = "Accounting.BankPostingRuleDeleted";
+        /// <summary>Mémorisation (création ou mise à jour) du mappage de colonnes CSV/XLSX pour un compte bancaire.</summary>
+        public const string BankStatementTabularMappingSaved = "Accounting.BankStatementTabularMappingSaved";
     }
 }

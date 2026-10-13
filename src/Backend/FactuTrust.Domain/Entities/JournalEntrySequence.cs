@@ -28,4 +28,20 @@ public sealed class JournalEntrySequence : Entity
         LastSequence++;
         return LastSequence;
     }
+
+    /// <summary>
+    /// Réserve un bloc de <paramref name="count"/> numéros contigus (génération atomique d'un
+    /// relevé) : avance la séquence d'un coup et rend le PREMIER numéro du bloc. Un rollback de la
+    /// transaction ambiante qui porte cette avance restaure la séquence (aucun commit séparé ici,
+    /// à la différence de <see cref="Next"/> appelé via un contexte isolé).
+    /// </summary>
+    public int Advance(int count)
+    {
+        if (count <= 0)
+            throw new ArgumentOutOfRangeException(nameof(count), "Le bloc réservé doit contenir au moins un numéro.");
+
+        var first = LastSequence + 1;
+        LastSequence += count;
+        return first;
+    }
 }

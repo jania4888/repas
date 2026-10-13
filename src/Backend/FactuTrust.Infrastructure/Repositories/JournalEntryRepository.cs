@@ -307,6 +307,32 @@ public sealed class JournalEntryRepository : IJournalEntryRepository
         });
     }
 
+    public async Task<int> ReserveEntryNumberBlockAsync(string journalCode, int fiscalYear, int count, CancellationToken cancellationToken = default)
+    {
+        if (count <= 0)
+            throw new ArgumentOutOfRangeException(nameof(count), "Le bloc réservé doit contenir au moins un numéro.");
+
+        var code = journalCode.Trim().ToUpperInvariant();
+        // Contexte AMBIANT (pas isolé) : rejoint la transaction appelante (génération atomique).
+        // Un rollback de cette transaction restaure la séquence — aucun numéro n'est brûlé.
+        await using var context = _contextFactory.CreateContext();
+
+        var seq = await context.JournalEntrySequences
+            .FirstOrDefaultAsync(s => s.JournalCode == code && s.FiscalYear == fiscalYear, cancellationToken);
+        if (seq is null)
+        {
+            seq = JournalEntrySequence.Create(code, fiscalYear);
+            seq.SetAuditInfo("system", isUpdate: false);
+            context.JournalEntrySequences.Add(seq);
+        }
+
+        var first = seq.Advance(count);
+        if (context.Entry(seq).State != EntityState.Added)
+            context.JournalEntrySequences.Update(seq);
+        await context.SaveChangesAsync(cancellationToken);
+        return first;
+    }
+
     public async Task<decimal> SumDebitsByAccountAsync(string accountNumber, DateTime from, DateTime to, CancellationToken cancellationToken = default)
     {
         await using var context = _contextFactory.CreateContext();
