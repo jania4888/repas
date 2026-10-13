@@ -28492,8 +28492,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.manual-entry.lecture.par.le.service.d.extraction.documentaire.4802f22f": "Lecture par le service d'extraction documentaire configuré par la plateforme : la pièce quitte le serveur. Aucune analyse par l'IA locale.",
-  "@accounting.manual-entry.lecture.par.le.service.d.extraction.documentaire.4802f22f": {
+  "accounting.manual-entry.analyse.par.l.ia.1e399c12": "Analyse par l'IA",
+  "@accounting.manual-entry.analyse.par.l.ia.1e399c12": {
     "x-files": [
       "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
     ],
@@ -56279,8 +56279,8 @@
     ],
     "x-wave": "v4"
   },
-  "invoices.invoice-import-dialog.lecture.par.le.service.d.extraction.documentaire.ff6aaca8": "Lecture par le service d'extraction documentaire configuré par la plateforme : le fichier quitte le serveur. Aucune analyse par l'IA locale.",
-  "@invoices.invoice-import-dialog.lecture.par.le.service.d.extraction.documentaire.ff6aaca8": {
+  "invoices.invoice-import-dialog.analyse.par.l.ia.1e399c12": "Analyse par l'IA",
+  "@invoices.invoice-import-dialog.analyse.par.l.ia.1e399c12": {
     "x-files": [
       "src/app/features/invoices/components/invoice-import-dialog/invoice-import-dialog.component.ts"
     ],

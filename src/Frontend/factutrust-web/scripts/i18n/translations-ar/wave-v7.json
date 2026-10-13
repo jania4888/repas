@@ -2128,7 +2128,7 @@
   "withholding-tax.withholding-types-settings.tableau.de.bord.817f7ae6": "{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT} لوحة التحكم",
   "withholding-tax.withholding-types-settings.type.s.configure.s.781cc5e5": "{$INTERPOLATION} نوع (أنواع) مضبوطة",
   "accounting.accounting-document-import.ts.lecture.par.le.service.d.extraction.documentaire.837158cd": "قراءة بواسطة خدمة استخراج المستندات الخارجية",
-  "accounting.manual-entry.lecture.par.le.service.d.extraction.documentaire.4802f22f": "قراءة بواسطة خدمة استخراج المستندات المُهيّأة من المنصّة: المستند يغادر الخادم. لا يوجد تحليل بالذكاء الاصطناعي المحلّي.",
+  "accounting.manual-entry.analyse.par.l.ia.1e399c12": "تحليل بواسطة الذكاء الاصطناعي",
   "accounting.bank-statement-import.lecture.des.pages.par.le.service.d.extraction.do.9953b468": "قراءة الصفحات بواسطة خدمة استخراج المستندات… الصفحة {$INTERPOLATION} من {$INTERPOLATION_1} — {$INTERPOLATION_2} ٪",
   "accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.page.d0085280": "قُرئ بواسطة خدمة استخراج المستندات ({$count} صفحات)",
   "accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.1.pa.d281f138": "قُرئ بواسطة خدمة استخراج المستندات (صفحة واحدة)",

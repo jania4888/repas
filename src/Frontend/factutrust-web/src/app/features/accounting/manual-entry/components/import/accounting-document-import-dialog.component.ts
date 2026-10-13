@@ -84,7 +84,7 @@ type ImportPhase = 'idle' | 'preview' | 'extracting' | 'review' | 'error';
                   @if (selectedFileName()) {
                     <span class="adi-filename">{{ selectedFileName() }}</span>
                   }
-                  @if (externalProvider()) {<ng-container i18n="@@accounting.manual-entry.lecture.par.le.service.d.extraction.documentaire.4802f22f">Lecture par le service d'extraction documentaire configuré par la plateforme : la pièce quitte le serveur. Aucune analyse par l'IA locale.</ng-container>}
+                  @if (externalProvider()) {<ng-container i18n="@@accounting.manual-entry.analyse.par.l.ia.1e399c12">Analyse par l'IA</ng-container>}
                   @else if (elapsedSeconds() < 20) {<ng-container i18n="@@accounting.manual-entry.lecture.du.document.et.detection.des.zon.71726a65">
                     Lecture du document et détection des zones…
                   </ng-container>} @else {<ng-container i18n="@@accounting.manual-entry.le.document.n.est.pas.au.format.instafac.1a09b4ea">
@@ -125,7 +125,7 @@ type ImportPhase = 'idle' | 'preview' | 'extracting' | 'review' | 'error';
         @case ('preview') {
           <div class="adi-preview-stage">
             @if (externalProvider()) {
-              <p class="adi-banner" role="status" i18n="@@accounting.manual-entry.lecture.par.le.service.d.extraction.documentaire.4802f22f">Lecture par le service d'extraction documentaire configuré par la plateforme : la pièce quitte le serveur. Aucune analyse par l'IA locale.</p>
+              <p class="adi-banner" role="status" i18n="@@accounting.manual-entry.analyse.par.l.ia.1e399c12">Analyse par l'IA</p>
             }
             @if (capabilityHint(); as hint) {
               <p class="adi-hint adi-hint-warn" role="status">{{ hint }}</p>
