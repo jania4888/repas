@@ -318,7 +318,7 @@ public sealed class ThirdPartyDirectoryTests
             .ReturnsAsync((string acc, CancellationToken _) =>
                 ChartOfAccount.Create(acc, $"Compte {acc}", int.Parse(acc[..1]), null, AccountNatureType.Debit).Value);
         return new UpdateDraftJournalEntryCommandHandler(
-            repository, chart.Object, new Mock<IAuditService>().Object,
+            repository, chart.Object, ExistingThirdParties.Clients().Object, ExistingThirdParties.Suppliers().Object, new Mock<IAuditService>().Object,
             new FakeCurrentUser { IsAccountingFirmDelegatedContext = isFirm },
             lettering,
             new PassthroughTenantUnitOfWork(),

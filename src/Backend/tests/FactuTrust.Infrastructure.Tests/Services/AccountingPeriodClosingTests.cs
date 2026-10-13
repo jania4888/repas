@@ -88,7 +88,7 @@ public sealed class AccountingPeriodClosingTests
             .ReturnsAsync((string acc, CancellationToken _) =>
                 ChartOfAccount.Create(acc, $"Compte {acc}", int.Parse(acc[..1]), null, AccountNatureType.Debit).Value);
         return new UpdateDraftJournalEntryCommandHandler(
-            repo, chart.Object, new Mock<IAuditService>().Object,
+            repo, chart.Object, ExistingThirdParties.Clients().Object, ExistingThirdParties.Suppliers().Object, new Mock<IAuditService>().Object,
             new FakeCurrentUser { IsAccountingFirmDelegatedContext = isFirm },
             lettering,
             new PassthroughTenantUnitOfWork(),
