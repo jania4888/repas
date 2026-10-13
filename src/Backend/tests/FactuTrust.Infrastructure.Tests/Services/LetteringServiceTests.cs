@@ -669,6 +669,105 @@ public sealed class LetteringServiceTests
         return entry.Lines.Single(l => l.AccountNumber == "4111").Id;
     }
 
+    /// <summary>Crée une écriture EUR (taux <paramref name="rate"/>) et renvoie sa ligne 4111 au débit.</summary>
+    private Guid SeedEuroClientDebitLine(int number, decimal debitEur, decimal rate)
+    {
+        var entry = JournalEntry.Create(number, "JV", new DateTime(2026, 5, 10), $"EUR {number}",
+            _accountingPeriodId, false, "Manual", null,
+            new[]
+            {
+                new JournalLineInput("4111", "Facture", debitEur * rate, 0m, null, ThirdPartyKind.None, debitEur, 0m),
+                new JournalLineInput("707", "Vente", 0m, debitEur * rate, null, ThirdPartyKind.None, 0m, debitEur)
+            },
+            currency: "EUR", exchangeRate: rate).Value;
+        entry.SetAuditInfo("test", false);
+        using var ctx = _factory.CreateContext();
+        ctx.JournalEntries.Add(entry);
+        ctx.SaveChanges();
+        return entry.Lines.Single(l => l.AccountNumber == "4111").Id;
+    }
+
+    /// <summary>
+    /// p3-11 (annexe C §4) : la voie de masse refuse un groupe soldé en devise mais pas en dinar
+    /// (écart de change). Refus AVANT toute écriture : aucune ligne ne porte de code, aucun groupe.
+    /// </summary>
+    [Fact]
+    public async Task Letter_EuroBalancedWithTndGap_RequireNoExchangeDifference_FailsWithoutWrite()
+    {
+        var invoice = SeedEuroClientDebitLine(1, 1000m, 3.0m);   // 3 000 TND
+        var payment = SeedEuroClientLine(2, 1000m, 3.1m);        // 3 100 TND
+
+        var result = await BuildService().ManualLetterAsync(
+            new[] { invoice, payment }, requireNoExchangeDifference: true);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(LetteringErrorCodes.ExchangeDifference, result.Error.Code);
+        Assert.Null(LoadState(invoice).Code);
+        Assert.Null(LoadState(payment).Code);
+        using var ctx = _factory.CreateContext();
+        Assert.Empty(ctx.LetteringGroups.AsNoTracking());
+    }
+
+    /// <summary>Comportement actuel inchangé : sans le drapeau, le même groupe se lettre (définitif).</summary>
+    [Fact]
+    public async Task Letter_EuroBalancedWithTndGap_Default_StillLetters()
+    {
+        var invoice = SeedEuroClientDebitLine(1, 1000m, 3.0m);
+        var payment = SeedEuroClientLine(2, 1000m, 3.1m);
+
+        var result = await BuildService().ManualLetterAsync(new[] { invoice, payment });
+
+        Assert.True(result.IsSuccess);
+        Assert.False(result.Value.IsPartial);
+        Assert.StartsWith("L", LoadState(invoice).Code);
+    }
+
+    /// <summary>Sans écart de change, le drapeau ne change rien : le groupe se lettre.</summary>
+    [Fact]
+    public async Task Letter_EuroBalancedWithoutTndGap_RequireNoExchangeDifference_Letters()
+    {
+        var invoice = SeedEuroClientDebitLine(1, 1000m, 3.0m);
+        var payment = SeedEuroClientLine(2, 1000m, 3.0m);
+
+        var result = await BuildService().ManualLetterAsync(
+            new[] { invoice, payment }, requireNoExchangeDifference: true);
+
+        Assert.True(result.IsSuccess);
+        Assert.StartsWith("L", LoadState(payment).Code);
+    }
+
+    /// <summary>
+    /// Revue p3-11 : un groupe partiel n'a pas d'écart de change (l'écart en dinars n'est que le reste
+    /// non lettré). Avec le drapeau, le lettrage partiel reste possible, sans code trompeur.
+    /// </summary>
+    [Fact]
+    public async Task Letter_EuroPartial_RequireNoExchangeDifference_StillLettersPartially()
+    {
+        var invoice = SeedEuroClientDebitLine(1, 1000m, 3.0m);
+        var payment = SeedEuroClientLine(2, 400m, 3.1m);
+
+        var result = await BuildService().ManualLetterAsync(
+            new[] { invoice, payment }, allowPartial: true, requireNoExchangeDifference: true);
+
+        Assert.True(result.IsSuccess);
+        Assert.True(result.Value.IsPartial);
+        Assert.StartsWith("P", LoadState(invoice).Code);
+    }
+
+    /// <summary>Sans partiel, un groupe EUR déséquilibré reste « Unbalanced » (classement de p3-13).</summary>
+    [Fact]
+    public async Task Letter_EuroUnbalanced_RequireNoExchangeDifference_FailsUnbalanced()
+    {
+        var invoice = SeedEuroClientDebitLine(1, 1000m, 3.0m);
+        var payment = SeedEuroClientLine(2, 400m, 3.1m);
+
+        var result = await BuildService().ManualLetterAsync(
+            new[] { invoice, payment }, requireNoExchangeDifference: true);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(LetteringErrorCodes.Unbalanced, result.Error.Code);
+    }
+
     [Fact]
     public async Task Complete_OtherCurrency_FailsCurrencyMismatch()
     {

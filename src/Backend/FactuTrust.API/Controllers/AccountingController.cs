@@ -20,6 +20,7 @@ using FactuTrust.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace FactuTrust.API.Controllers;
 
@@ -1908,7 +1909,7 @@ public sealed class AccountingController : ControllerBase
     [HttpGet("lettering/lines")]
     [Authorize(Policy = PermissionPolicies.AccountingRead)]
     public async Task<IActionResult> GetLetteringLines(
-        [FromQuery] string account,
+        [FromQuery] string? account,
         [FromQuery] LetteringAccountMatch accountMatch = LetteringAccountMatch.Exact,
         [FromQuery] DateTime from = default,
         [FromQuery] DateTime to = default,
@@ -1925,11 +1926,71 @@ public sealed class AccountingController : ControllerBase
         [FromQuery] int pageSize = 500,
         CancellationToken cancellationToken = default)
     {
+        // « account » nullable : un compte absent atteint le validator (400 LETTERING_VALIDATION,
+        // code stable) au lieu du [Required] implicite d'ASP.NET (ProblemDetails sans code).
         var query = new GetLetteringLinesQuery(
-            account, accountMatch, from, to, state, journalCode, sourceCategories,
+            account ?? string.Empty, accountMatch, from, to, state, journalCode, sourceCategories,
             thirdPartyId, thirdPartyKind, side, minAmount, maxAmount, search, page, pageSize);
         return await SendLetteringAsync(query, value => Ok(ApiResponse<LetteringLinesPageDto>.Ok(value)), cancellationToken);
     }
+
+    /// <summary>
+    /// Propositions de lettrage pour le filtre de l'écran (plan v2, Phase 3, annexe C §3). Lecture
+    /// seule, recalculée à chaque appel. Mêmes filtres que <c>lettering/lines</c>, sans état, sens ni
+    /// pagination. Drapeau éteint → 400 <c>LETTERING_FEATURE_DISABLED</c>, sans calcul.
+    /// </summary>
+    [HttpGet("lettering/suggestions")]
+    [Authorize(Policy = PermissionPolicies.AccountingRead)]
+    [EnableRateLimiting("accounting-suggestions")]
+    public async Task<IActionResult> GetLetteringSuggestions(
+        [FromQuery] string? account,
+        [FromQuery] LetteringAccountMatch accountMatch = LetteringAccountMatch.Exact,
+        [FromQuery] DateTime from = default,
+        [FromQuery] DateTime to = default,
+        [FromQuery] string? journalCode = null,
+        [FromQuery] IReadOnlyList<string>? sourceCategories = null,
+        [FromQuery] Guid? thirdPartyId = null,
+        [FromQuery] ThirdPartyKind? thirdPartyKind = null,
+        [FromQuery] decimal? minAmount = null,
+        [FromQuery] decimal? maxAmount = null,
+        [FromQuery] string? search = null,
+        [FromQuery] int maxResults = 50,
+        CancellationToken cancellationToken = default)
+    {
+        var filter = new GetLetteringLinesQuery(
+            account ?? string.Empty, accountMatch, from, to, LetteringStateFilter.Unlettered, journalCode, sourceCategories,
+            thirdPartyId, thirdPartyKind, LetteringSideFilter.All, minAmount, maxAmount, search);
+        return await SendLetteringAsync(
+            new GetLetteringSuggestionsQuery(filter, maxResults),
+            value => Ok(ApiResponse<LetteringSuggestionsResultDto>.Ok(value)),
+            cancellationToken);
+    }
+
+    /// <summary>
+    /// Lettrage en masse de propositions confirmées (plan v2, Phase 3, annexe C §4). Une transaction
+    /// par groupe : la réponse est 200 même en succès partiel, avec le résultat de chaque groupe.
+    /// Lot déjà en cours (même <c>RequestId</c>) → 409 <c>LETTERING_BULK_IN_PROGRESS</c> ; drapeau
+    /// éteint (<c>Accounting:LetteringSuggestionsEnabled</c>) → 400 <c>LETTERING_FEATURE_DISABLED</c>, une fois la
+    /// requête valide (le validator passe avant le drapeau) ; lot invalide → 400 <c>LETTERING_VALIDATION</c>.
+    /// </summary>
+    [HttpPost("lettering/bulk")]
+    [Authorize(Policy = PermissionPolicies.AccountingCreate)]
+    [EnableRateLimiting("accounting-bulk")]
+    [RequestSizeLimit(BulkLetterMaxBodyBytes)]
+    public async Task<IActionResult> BulkLetter([FromBody] BulkLetterRequest request, CancellationToken cancellationToken)
+    {
+        // Les éléments null sont transmis tels quels : le validator les refuse (400 LETTERING_VALIDATION).
+        var groups = (request.Groups ?? Array.Empty<BulkLetterRequestGroup>())
+            .Select(g => g is null ? null! : new BulkLetterGroup(g.ClientKey!, g.JournalEntryLineIds!))
+            .ToList();
+        return await SendLetteringAsync(
+            new BulkLetterCommand(request.RequestId, groups),
+            value => Ok(ApiResponse<BulkLetteringResultDto>.Ok(value)),
+            cancellationToken);
+    }
+
+    /// <summary>Taille maximale du corps de <see cref="BulkLetter"/> : 2 000 Guid ≈ 80 Ko, marge comprise.</summary>
+    public const long BulkLetterMaxBodyBytes = 256 * 1024;
 
     /// <summary>Détail d'un groupe de lettrage, avant délettrage ou complétion (plan §4.2).</summary>
     [HttpGet("lettering/groups/{code}")]
@@ -1955,7 +2016,8 @@ public sealed class AccountingController : ControllerBase
         return error.Code switch
         {
             LetteringErrorCodes.AlreadyLettered or LetteringErrorCodes.PeriodLocked
-                or LetteringErrorCodes.GroupInconsistent => Conflict(body),
+                or LetteringErrorCodes.GroupInconsistent
+                or LetteringErrorCodes.BulkInProgress => Conflict(body),
             LetteringErrorCodes.GroupNotFound => NotFound(body),
             _ => BadRequest(body)
         };

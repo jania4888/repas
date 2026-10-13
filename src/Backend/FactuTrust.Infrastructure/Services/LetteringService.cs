@@ -52,7 +52,8 @@ public sealed class LetteringService : ILetteringService
         IReadOnlyList<Guid> journalEntryLineIds,
         bool allowPartial = false,
         LetteringOrigin origin = LetteringOrigin.Manual,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        bool requireNoExchangeDifference = false)
     {
         if (journalEntryLineIds.Count < 2)
             return Result.Failure<LetteringOutcome>(Error.Validation("Lines", "Au moins deux lignes d'écriture sont requises pour le lettrage."));
@@ -64,14 +65,17 @@ public sealed class LetteringService : ILetteringService
         if (_ambient.IsActive)
         {
             await using var ctx = _contextFactory.CreateContext();
-            return await LetterInContextAsync(ctx, journalEntryLineIds, allowPartial, lockPolicy, saveChanges: true, cancellationToken);
+            return await LetterInContextAsync(
+                ctx, journalEntryLineIds, allowPartial, lockPolicy, saveChanges: true, cancellationToken,
+                requireNoExchangeDifference: requireNoExchangeDifference);
         }
 
         return await ExecuteIsolatedAsync(async (ctx, uniqueViolation, ct) =>
         {
             // Validation DANS la transaction Serializable (et non avant) : plus de fenêtre de
             // course entre « lignes libres » et l'écriture du lettrage (voir ValidateLinesAsync).
-            var validation = await ValidateLinesAsync(ctx, journalEntryLineIds, allowPartial, lockPolicy, ct);
+            var validation = await ValidateLinesAsync(
+                ctx, journalEntryLineIds, allowPartial, lockPolicy, ct, requireNoExchangeDifference);
             if (validation.IsFailure)
                 return Result.Failure<LetteringOutcome>(validation.Error);
 
@@ -297,7 +301,8 @@ public sealed class LetteringService : ILetteringService
         bool saveChanges,
         CancellationToken cancellationToken,
         LetteringValidation? prevalidated = null,
-        UniqueViolationFlag? uniqueViolation = null)
+        UniqueViolationFlag? uniqueViolation = null,
+        bool requireNoExchangeDifference = false)
     {
         LetteringValidation validation;
         if (prevalidated is not null)
@@ -306,7 +311,8 @@ public sealed class LetteringService : ILetteringService
         }
         else
         {
-            var validationResult = await ValidateLinesAsync(ctx, journalEntryLineIds, allowPartial, lockPolicy, cancellationToken);
+            var validationResult = await ValidateLinesAsync(
+                ctx, journalEntryLineIds, allowPartial, lockPolicy, cancellationToken, requireNoExchangeDifference);
             if (validationResult.IsFailure)
                 return Result.Failure<LetteringOutcome>(validationResult.Error);
             validation = validationResult.Value;
@@ -383,7 +389,8 @@ public sealed class LetteringService : ILetteringService
         IReadOnlyList<Guid> journalEntryLineIds,
         bool allowPartial,
         PeriodLockPolicy lockPolicy,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        bool requireNoExchangeDifference = false)
     {
         var loaded = await LoadUnletteredLinesAsync(ctx, journalEntryLineIds, cancellationToken);
         if (loaded.IsFailure)
@@ -428,6 +435,16 @@ public sealed class LetteringService : ILetteringService
         {
             return Result.Failure<LetteringValidation>(LetteringErrors.Unbalanced(
                 "Le lettrage nécessite une égalité débit / crédit (ou cochez « lettrage partiel »)."));
+        }
+
+        // Voie de masse (annexe C §4) : un groupe équilibré en devise mais pas en dinar demande
+        // une écriture d'ajustement ; il se lettre donc à l'unité, jamais en masse. Refus AVANT
+        // toute écriture dans le contexte. Seul un groupe équilibré peut avoir un écart de change :
+        // pour un groupe partiel, l'écart en dinars n'est que le reste non lettré.
+        if (requireNoExchangeDifference && balanced && Math.Round(debit - credit, 3) != 0m)
+        {
+            return Result.Failure<LetteringValidation>(LetteringErrors.ExchangeDifference(
+                "Le groupe présente un écart de change : à lettrer à l'unité puis à apurer."));
         }
 
         var isPartial = !balanced;

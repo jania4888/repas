@@ -3,6 +3,7 @@ using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.Accounting.Commands;
 using FactuTrust.Application.Features.Accounting.Lettering;
+using FactuTrust.Application.Features.Accounting.Validators;
 using FactuTrust.Domain.Common;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,11 @@ public sealed class AccountingControllerLetteringTests
     [InlineData(LetteringErrorCodes.Validation, 400)]
     [InlineData(LetteringErrorCodes.Unbalanced, 400)]
     [InlineData(LetteringErrorCodes.AccountMismatch, 400)]
+    [InlineData(LetteringErrorCodes.GroupInconsistent, 409)]
+    // Phase 3 : lot en cours → 409 ; drapeau éteint et écart de change → 400 (contrat §4.6).
+    [InlineData(LetteringErrorCodes.BulkInProgress, 409)]
+    [InlineData(LetteringErrorCodes.FeatureDisabled, 400)]
+    [InlineData(LetteringErrorCodes.ExchangeDifference, 400)]
     public async Task Letter_MapsErrorCode_ToExpectedStatus(string code, int expectedStatus)
     {
         var mediator = new Mock<IMediator>(MockBehavior.Strict);
@@ -67,6 +73,32 @@ public sealed class AccountingControllerLetteringTests
         var body = Assert.IsType<FactuTrust.API.Controllers.ApiResponse<LetteringResultDto>>(ok.Value);
         Assert.True(body.Success);
         Assert.Equal(dto, body.Data);
+    }
+
+    /// <summary>
+    /// p3-11 : le corps HTTP ne peut pas activer la voie de masse. Avec origin « Bulk », le
+    /// contrôleur n'ajoute ni BulkRequestId ni RequireNoExchangeDifference : le validator refusera
+    /// donc la commande (Bulk sans identifiant de lot).
+    /// </summary>
+    [Fact]
+    public async Task Letter_BulkOriginFromHttp_NeverCarriesBulkRequestIdNorExchangeFlag()
+    {
+        LetterAccountEntriesCommand? sent = null;
+        var mediator = new Mock<IMediator>(MockBehavior.Strict);
+        mediator.Setup(m => m.Send(It.IsAny<LetterAccountEntriesCommand>(), It.IsAny<CancellationToken>()))
+            .Callback<IRequest<Result<LetteringResultDto>>, CancellationToken>((c, _) => sent = (LetterAccountEntriesCommand)c)
+            .ReturnsAsync(Result.Success(new LetteringResultDto("L00001", Guid.NewGuid(), false, 2, null)));
+        var controller = NewController(mediator.Object);
+
+        await controller.Letter(
+            new LetterEntriesRequest { JournalEntryLineIds = new[] { Guid.NewGuid(), Guid.NewGuid() }, Origin = "Bulk" },
+            CancellationToken.None);
+
+        Assert.NotNull(sent);
+        Assert.Equal(LetteringOrigin.Bulk, sent!.Origin);
+        Assert.Null(sent.BulkRequestId);
+        Assert.False(sent.RequireNoExchangeDifference);
+        Assert.False(new LetterAccountEntriesCommandValidator().Validate(sent).IsValid);
     }
 
     // ---- GetLetteringLines (plan §4.1) ----
@@ -289,6 +321,125 @@ public sealed class AccountingControllerLetteringTests
         var controller = NewController(mediator.Object);
 
         var result = await controller.GetLetteringLines(account: "411000", cancellationToken: CancellationToken.None);
+
+        var objectResult = Assert.IsAssignableFrom<ObjectResult>(result);
+        Assert.Equal(400, objectResult.StatusCode);
+        var body = Assert.IsType<FactuTrust.API.Controllers.ApiResponse<object>>(objectResult.Value);
+        Assert.Equal(LetteringErrorCodes.Validation, body.Code);
+    }
+
+    // ---- GetLetteringSuggestions (plan v2, Phase 3, annexe C §3) ----
+
+    private static LetteringSuggestionsResultDto EmptySuggestions() =>
+        new(Array.Empty<LetteringSuggestionDto>(), 0, 0, 0, false, null, new DateTime(2026, 10, 12, 0, 0, 0, DateTimeKind.Utc));
+
+    [Fact]
+    public async Task GetLetteringSuggestions_Success_ReturnsOk_AndSendsTheScreenFilter()
+    {
+        var dto = EmptySuggestions();
+        GetLetteringSuggestionsQuery? sent = null;
+        var mediator = new Mock<IMediator>(MockBehavior.Strict);
+        mediator.Setup(m => m.Send(It.IsAny<GetLetteringSuggestionsQuery>(), It.IsAny<CancellationToken>()))
+            .Callback<IRequest<Result<LetteringSuggestionsResultDto>>, CancellationToken>((q, _) => sent = (GetLetteringSuggestionsQuery)q)
+            .ReturnsAsync(Result.Success(dto));
+        var controller = NewController(mediator.Object);
+        var thirdParty = Guid.NewGuid();
+
+        var result = await controller.GetLetteringSuggestions(
+            account: "411", accountMatch: LetteringAccountMatch.Prefix,
+            from: new DateTime(2026, 1, 1), to: new DateTime(2026, 12, 31),
+            journalCode: "VT", sourceCategories: new[] { "Sales", "Bank" }, thirdPartyId: thirdParty, thirdPartyKind: Domain.Enums.ThirdPartyKind.Client,
+            minAmount: 10m, maxAmount: 99m, search: "FAC", maxResults: 20,
+            cancellationToken: CancellationToken.None);
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var body = Assert.IsType<FactuTrust.API.Controllers.ApiResponse<LetteringSuggestionsResultDto>>(ok.Value);
+        Assert.True(body.Success);
+        Assert.Equal(dto, body.Data);
+
+        Assert.NotNull(sent);
+        Assert.Equal(20, sent!.MaxResults);
+        var f = sent.Filter;
+        Assert.Equal(("411", LetteringAccountMatch.Prefix), (f.Account, f.AccountMatch));
+        Assert.Equal((new DateTime(2026, 1, 1), new DateTime(2026, 12, 31)), (f.From, f.To));
+        Assert.Equal(("VT", thirdParty, (Domain.Enums.ThirdPartyKind?)Domain.Enums.ThirdPartyKind.Client), (f.JournalCode, f.ThirdPartyId, f.ThirdPartyKind));
+        Assert.Equal((10m, 99m, "FAC"), (f.MinAmount, f.MaxAmount, f.Search));
+        Assert.Equal((LetteringStateFilter.Unlettered, LetteringSideFilter.All), (f.State, f.Side));
+        Assert.Equal(new[] { "Sales", "Bank" }, f.SourceCategories);
+    }
+
+    [Fact]
+    public async Task GetLetteringSuggestions_FeatureDisabled_Returns400_WithItsCode()
+    {
+        GetLetteringSuggestionsQuery? sent = null;
+        var mediator = new Mock<IMediator>(MockBehavior.Strict);
+        mediator.Setup(m => m.Send(It.IsAny<GetLetteringSuggestionsQuery>(), It.IsAny<CancellationToken>()))
+            .Callback<IRequest<Result<LetteringSuggestionsResultDto>>, CancellationToken>((q, _) => sent = (GetLetteringSuggestionsQuery)q)
+            .ReturnsAsync(Result.Failure<LetteringSuggestionsResultDto>(
+                LetteringErrors.FeatureDisabled("Les propositions de lettrage ne sont pas activées.")));
+        var controller = NewController(mediator.Object);
+
+        var result = await controller.GetLetteringSuggestions(account: "411000", cancellationToken: CancellationToken.None);
+
+        var objectResult = Assert.IsAssignableFrom<ObjectResult>(result);
+        Assert.Equal(400, objectResult.StatusCode);
+        var body = Assert.IsType<FactuTrust.API.Controllers.ApiResponse<object>>(objectResult.Value);
+        Assert.Equal(LetteringErrorCodes.FeatureDisabled, body.Code);
+        Assert.Equal(50, sent!.MaxResults);   // valeur par défaut de l'annexe C §3
+        Assert.Null(sent.Filter.SourceCategories);
+    }
+
+    /// <summary>
+    /// Revue p3-10 : un compte absent n'est plus refusé par le [Required] implicite d'ASP.NET
+    /// (ProblemDetails sans code) ; il atteint le pipeline, dont le validator répond
+    /// LETTERING_VALIDATION.
+    /// </summary>
+    [Fact]
+    public async Task GetLetteringSuggestions_MissingAccount_ReachesThePipelineWithAnEmptyAccount()
+    {
+        GetLetteringSuggestionsQuery? sent = null;
+        var mediator = new Mock<IMediator>(MockBehavior.Strict);
+        mediator.Setup(m => m.Send(It.IsAny<GetLetteringSuggestionsQuery>(), It.IsAny<CancellationToken>()))
+            .Callback<IRequest<Result<LetteringSuggestionsResultDto>>, CancellationToken>((q, _) => sent = (GetLetteringSuggestionsQuery)q)
+            .ReturnsAsync(Result.Success(EmptySuggestions()));
+        var controller = NewController(mediator.Object);
+
+        await controller.GetLetteringSuggestions(account: null, cancellationToken: CancellationToken.None);
+
+        Assert.Equal(string.Empty, sent!.Filter.Account);
+        var validation = new GetLetteringSuggestionsQueryValidator().Validate(sent);
+        Assert.Contains(validation.Errors, e => e.ErrorMessage == "Le compte est obligatoire.");
+    }
+
+    [Fact]
+    public async Task GetLetteringLines_MissingAccount_ReachesThePipelineWithAnEmptyAccount()
+    {
+        GetLetteringLinesQuery? sent = null;
+        var mediator = new Mock<IMediator>(MockBehavior.Strict);
+        mediator.Setup(m => m.Send(It.IsAny<GetLetteringLinesQuery>(), It.IsAny<CancellationToken>()))
+            .Callback<IRequest<Result<LetteringLinesPageDto>>, CancellationToken>((q, _) => sent = (GetLetteringLinesQuery)q)
+            .ReturnsAsync(Result.Success(new LetteringLinesPageDto(
+                Array.Empty<LetteringLineDto>(), 1, 500, 0, false,
+                new LetteringTotalsDto(0, 0, 0, 0m, 0m, 0m, 0m, 0m, 0m, null, null, null))));
+        var controller = NewController(mediator.Object);
+
+        await controller.GetLetteringLines(account: null, cancellationToken: CancellationToken.None);
+
+        Assert.Equal(string.Empty, sent!.Account);
+    }
+
+    [Fact]
+    public async Task GetLetteringSuggestions_ValidationException_Returns400_WithLetteringValidationCode()
+    {
+        var mediator = new Mock<IMediator>(MockBehavior.Strict);
+        mediator.Setup(m => m.Send(It.IsAny<GetLetteringSuggestionsQuery>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new FluentValidation.ValidationException(new[]
+            {
+                new FluentValidation.Results.ValidationFailure("MaxResults", "Le nombre de propositions doit être entre 1 et 200.")
+            }));
+        var controller = NewController(mediator.Object);
+
+        var result = await controller.GetLetteringSuggestions(account: "411000", maxResults: 500, cancellationToken: CancellationToken.None);
 
         var objectResult = Assert.IsAssignableFrom<ObjectResult>(result);
         Assert.Equal(400, objectResult.StatusCode);

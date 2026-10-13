@@ -542,6 +542,19 @@ public sealed class AccountingSettings
     public bool MultiCurrencyEnabled { get; set; }
 
     /// <summary>
+    /// Active les propositions de lettrage déterministes et le lettrage en masse (Phase 3).
+    /// </summary>
+    /// <remarks>
+    /// OFF par défaut. Drapeau éteint, les endpoints de propositions et de masse renvoient
+    /// <c>LETTERING_FEATURE_DISABLED</c> et l'écran de lettrage est strictement identique.
+    /// </remarks>
+    public bool LetteringSuggestionsEnabled { get; set; }
+
+    /// <summary>Plafonds et budgets du moteur de propositions et du lettrage en masse.</summary>
+    /// <remarks>Les consommateurs lisent toujours <see cref="LetteringSuggestionSettings.Clamped"/>.</remarks>
+    public LetteringSuggestionSettings LetteringSuggestions { get; set; } = new();
+
+    /// <summary>
     /// Écart maximal toléré, en pourcentage, entre un taux saisi manuellement et celui de la table
     /// des taux. Au-delà, la saisie est refusée même avec la permission de surcharge.
     /// </summary>
@@ -563,5 +576,99 @@ public sealed class AccountingSettings
         yield return (nameof(PayrollEmployeeLoansAccount), PayrollEmployeeLoansAccount);
         yield return (nameof(PayrollGarnishmentsAccount), PayrollGarnishmentsAccount);
         yield return (nameof(PayrollMutuelleEmployeeAccount), PayrollMutuelleEmployeeAccount);
+    }
+}
+
+/// <summary>
+/// Réglages du moteur de propositions de lettrage et du lettrage en masse (plan v2, annexe C §2.7).
+/// </summary>
+/// <remarks>
+/// Une valeur hors bornes ne fait jamais échouer le démarrage : elle est signalée par un
+/// avertissement (voir <see cref="OutOfRangeKeys"/>) et ramenée dans ses bornes par
+/// <see cref="Clamped"/>. Les budgets sont exprimés en nœuds explorés, pour un résultat
+/// déterministe ; le fusible en millisecondes n'est qu'une protection de dernier recours.
+/// </remarks>
+public sealed class LetteringSuggestionSettings
+{
+    public int MaxCandidateLines { get; set; } = 5000;
+    public int MaxSuggestions { get; set; } = 200;
+    public int SubsetMaxSize { get; set; } = 4;
+    public int SubsetMaxCandidates { get; set; } = 25;
+    public int SubsetNodeBudgetPerTarget { get; set; } = 20_000;
+    public int SubsetGlobalNodeBudget { get; set; } = 500_000;
+    public int MaxLinesPerReference { get; set; } = 20;
+    public int MaxDocumentPayments { get; set; } = 20;
+    public int TimeFuseMilliseconds { get; set; } = 3000;
+    public int BulkMaxGroups { get; set; } = 200;
+    public int BulkMaxLinesPerGroup { get; set; } = 50;
+    public int BulkMaxTotalLines { get; set; } = 2000;
+
+    private static readonly LetteringSuggestionSettings Defaults = new();
+
+    /// <summary>Bornes dures (min, max) de chaque réglage, par nom de propriété.</summary>
+    public static IReadOnlyList<(string Key, int Min, int Max)> Bounds { get; } =
+    [
+        (nameof(MaxCandidateLines), 1, 5000),
+        (nameof(MaxSuggestions), 1, 200),
+        (nameof(SubsetMaxSize), 2, 6),
+        (nameof(SubsetMaxCandidates), 2, 40),
+        (nameof(SubsetNodeBudgetPerTarget), 1, Defaults.SubsetNodeBudgetPerTarget * 10),
+        (nameof(SubsetGlobalNodeBudget), 1, Defaults.SubsetGlobalNodeBudget * 10),
+        (nameof(MaxLinesPerReference), 1, Defaults.MaxLinesPerReference * 10),
+        (nameof(MaxDocumentPayments), 1, Defaults.MaxDocumentPayments * 10),
+        (nameof(TimeFuseMilliseconds), 100, 10_000),
+        (nameof(BulkMaxGroups), 1, 200),
+        (nameof(BulkMaxLinesPerGroup), 2, 50),
+        (nameof(BulkMaxTotalLines), 2, 2000),
+    ];
+
+    private IEnumerable<(string Key, int Value)> Values()
+    {
+        yield return (nameof(MaxCandidateLines), MaxCandidateLines);
+        yield return (nameof(MaxSuggestions), MaxSuggestions);
+        yield return (nameof(SubsetMaxSize), SubsetMaxSize);
+        yield return (nameof(SubsetMaxCandidates), SubsetMaxCandidates);
+        yield return (nameof(SubsetNodeBudgetPerTarget), SubsetNodeBudgetPerTarget);
+        yield return (nameof(SubsetGlobalNodeBudget), SubsetGlobalNodeBudget);
+        yield return (nameof(MaxLinesPerReference), MaxLinesPerReference);
+        yield return (nameof(MaxDocumentPayments), MaxDocumentPayments);
+        yield return (nameof(TimeFuseMilliseconds), TimeFuseMilliseconds);
+        yield return (nameof(BulkMaxGroups), BulkMaxGroups);
+        yield return (nameof(BulkMaxLinesPerGroup), BulkMaxLinesPerGroup);
+        yield return (nameof(BulkMaxTotalLines), BulkMaxTotalLines);
+    }
+
+    /// <summary>Réglages hors bornes : nom, valeur lue, bornes.</summary>
+    public IEnumerable<(string Key, int Value, int Min, int Max)> OutOfRangeKeys()
+    {
+        var bounds = Bounds.ToDictionary(b => b.Key);
+        foreach (var (key, value) in Values())
+        {
+            var (_, min, max) = bounds[key];
+            if (value < min || value > max)
+                yield return (key, value, min, max);
+        }
+    }
+
+    /// <summary>Copie dont chaque réglage est ramené dans ses bornes dures. Ne modifie pas l'instance.</summary>
+    public LetteringSuggestionSettings Clamped()
+    {
+        var b = Bounds.ToDictionary(x => x.Key, x => (x.Min, x.Max));
+        int C(string key, int value) => Math.Clamp(value, b[key].Min, b[key].Max);
+        return new LetteringSuggestionSettings
+        {
+            MaxCandidateLines = C(nameof(MaxCandidateLines), MaxCandidateLines),
+            MaxSuggestions = C(nameof(MaxSuggestions), MaxSuggestions),
+            SubsetMaxSize = C(nameof(SubsetMaxSize), SubsetMaxSize),
+            SubsetMaxCandidates = C(nameof(SubsetMaxCandidates), SubsetMaxCandidates),
+            SubsetNodeBudgetPerTarget = C(nameof(SubsetNodeBudgetPerTarget), SubsetNodeBudgetPerTarget),
+            SubsetGlobalNodeBudget = C(nameof(SubsetGlobalNodeBudget), SubsetGlobalNodeBudget),
+            MaxLinesPerReference = C(nameof(MaxLinesPerReference), MaxLinesPerReference),
+            MaxDocumentPayments = C(nameof(MaxDocumentPayments), MaxDocumentPayments),
+            TimeFuseMilliseconds = C(nameof(TimeFuseMilliseconds), TimeFuseMilliseconds),
+            BulkMaxGroups = C(nameof(BulkMaxGroups), BulkMaxGroups),
+            BulkMaxLinesPerGroup = C(nameof(BulkMaxLinesPerGroup), BulkMaxLinesPerGroup),
+            BulkMaxTotalLines = C(nameof(BulkMaxTotalLines), BulkMaxTotalLines),
+        };
     }
 }

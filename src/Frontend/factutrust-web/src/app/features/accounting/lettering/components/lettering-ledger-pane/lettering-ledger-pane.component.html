@@ -1,0 +1,129 @@
+<div class="lettering-pane" [class.lettering-pane--debit]="side === 'debit'" [class.lettering-pane--credit]="side === 'credit'">
+  <div class="lettering-pane__header">
+    <h3 class="lettering-pane__title" [id]="'lettering-pane-title-' + side">{{ paneTitle() }}</h3>
+    <span class="lettering-pane__total-label" i18n="@@accounting.lettering.ledger.pane.tpl.total.selectionne">Total sélectionné</span>
+    <span class="lettering-pane__total lettering-amount">{{ total | number : '1.3-3' }}</span>
+    @if (hasForeignLines && currency) {
+      <span class="lettering-pane__total-currency lettering-amount">{{ totalInCurrency | number : '1.3-3' }} {{ currency }}</span>
+    }
+  </div>
+
+  @if (loading && lines.length === 0) {
+    <div class="lettering-pane__loading" role="status" aria-live="polite">
+      <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+      <span class="sr-only" i18n="@@accounting.lettering.ledger.pane.tpl.chargement">Chargement…</span>
+    </div>
+  } @else if (lines.length === 0) {
+    <app-empty-state
+      icon="pi-link"
+      title="Aucune ligne" i18n-title="@@accounting.lettering.ledger.pane.tpl.aucune.ligne"
+      description="Aucune écriture ne correspond aux filtres pour ce volet." i18n-description="@@accounting.lettering.ledger.pane.tpl.aucune.ecriture"
+      [showAction]="false"
+    />
+  } @else {
+    <div class="lettering-pane__table-wrap">
+      <p-table
+        [value]="rows"
+        [(selection)]="selectedLines"
+        dataKey="lineId"
+        [rowSelectable]="rowSelectableFn"
+        [rowHover]="true"
+        [scrollable]="true"
+        scrollHeight="min(48vh, 30rem)"
+        [virtualScroll]="lines.length > 100"
+        [virtualScrollItemSize]="44"
+        styleClass="lettering-pane-table"
+      >
+        <ng-template pTemplate="caption">
+          <span class="sr-only">{{ paneTitle() }}</span>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 2.75rem">
+              <p-tableHeaderCheckbox />
+            </th>
+            <th scope="col" pSortableColumn="entryDate">
+              <ng-container i18n="@@accounting.lettering.ledger.pane.tpl.date">Date</ng-container> <p-sortIcon field="entryDate" />
+            </th>
+            <th scope="col" pSortableColumn="journalCode">
+              <ng-container i18n="@@accounting.lettering.ledger.pane.tpl.journal">Journal</ng-container> <p-sortIcon field="journalCode" />
+            </th>
+            <th scope="col" i18n="@@accounting.lettering.ledger.pane.tpl.piece">Pièce</th>
+            <th scope="col" i18n="@@accounting.lettering.ledger.pane.tpl.libelle">Libellé</th>
+            <th scope="col" i18n="@@accounting.lettering.ledger.pane.tpl.tiers">Tiers</th>
+            @if (hasForeignLines) {
+              <th scope="col" i18n="@@accounting.lettering.ledger.pane.tpl.devise">Devise</th>
+            }
+            <th scope="col" class="text-right" [pSortableColumn]="amountSortField">
+              <ng-container i18n="@@accounting.lettering.ledger.pane.tpl.montant">Montant</ng-container> <p-sortIcon [field]="amountSortField" />
+            </th>
+            <th scope="col" i18n="@@accounting.lettering.ledger.pane.tpl.etat">État</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-line>
+          <tr [class.lettering-row--lettered]="isLettered(line)" [class.lettering-row--locked]="line.periodLocked">
+            <td>
+              <p-tableCheckbox [value]="line" [disabled]="!isRowSelectable(line)" [ariaLabel]="checkboxAriaLabel(line)" />
+            </td>
+            <td>{{ line.entryDate | date : 'shortDate' }}</td>
+            <td><span class="lettering-code">{{ line.journalCode }}</span></td>
+            <td>{{ pieceLabel(line) }}</td>
+            <td class="lettering-label-cell">
+              {{ line.label }}
+              @if (line.isDraft) {
+                <span class="lettering-marker lettering-marker--draft" i18n="@@ui.tern.brouillon.57d2d7">Brouillon</span>
+              }
+              @if (line.isReversed) {
+                <span
+                  class="lettering-marker lettering-marker--reversed"
+                  title="Écriture extournée" i18n-title="@@accounting.journal.ecriture.extournee.85db3ad3"
+                  i18n="@@accounting.journal.extourne.a84e7737"
+                >Extournée</span>
+              }
+              @if (line.isReversal) {
+                <span class="lettering-marker lettering-marker--reversal" i18n="@@accounting.lettering.ledger.pane.tpl.extourne">Extourne</span>
+              }
+            </td>
+            <td class="lettering-third-party-cell">{{ line.thirdPartyName || '—' }}</td>
+            @if (hasForeignLines) {
+              <td class="lettering-currency-cell">
+                @if (line.currency !== functionalCurrency) {
+                  <span class="lettering-code">{{ line.currency }}</span>
+                  <span class="lettering-currency-amount">
+                    {{ (line.debitInCurrency || line.creditInCurrency) | number : '1.3-3' }}
+                  </span>
+                } @else {
+                  <span class="lettering-currency-none" i18n="@@accounting.lettering.ledger.pane.tpl.tiret">—</span>
+                }
+              </td>
+            }
+            <td class="text-right lettering-amount">{{ (side === 'debit' ? line.debit : line.credit) | number : '1.3-3' }}</td>
+            <td>
+              @if (line.letteringCode) {
+                <button
+                  type="button"
+                  class="lettering-code-badge"
+                  (click)="openGroupFor(line)"
+                >
+                  <p-tag
+                    [value]="rowStateLabel(line)"
+                    [severity]="isPartialCode(line.letteringCode) ? 'warn' : 'success'"
+                    [rounded]="true"
+                  />
+                </button>
+              } @else {
+                <span class="lettering-unlettered" i18n="@@accounting.lettering.ledger.pane.tpl.non.lettree">Non lettrée</span>
+              }
+              @if (line.periodLocked) {
+                <span class="lettering-row__lock-badge" [title]="lockedTooltip()">
+                  <i class="pi pi-lock" aria-hidden="true"></i>
+                  <span i18n="@@accounting.lettering.ledger.pane.tpl.periode.cloturee.badge">Période clôturée</span>
+                </span>
+              }
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  }
+</div>

@@ -215,7 +215,7 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
       - name: Smoke e2e (Chromium)
-        run: npx playwright test e2e/sidebar-collapse.spec.ts e2e/test-backend-connection.spec.ts e2e/landing-smoke.spec.ts e2e/landing-cabinets.spec.ts e2e/landing-contact.spec.ts e2e/landing-i18n.spec.ts e2e/accounting/bank-statement-import.spec.ts --project=chromium
+        run: npx playwright test e2e/sidebar-collapse.spec.ts e2e/test-backend-connection.spec.ts e2e/landing-smoke.spec.ts e2e/landing-cabinets.spec.ts e2e/landing-contact.spec.ts e2e/landing-i18n.spec.ts e2e/accounting/bank-statement-import.spec.ts e2e/accounting/lettering.spec.ts --project=chromium
       - name: Upload Test Results to Trunk.io
         if: ${{ !cancelled() }}
         continue-on-error: true

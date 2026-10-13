@@ -17,6 +17,13 @@ export interface AccountingFeatureFlags {
    * drapeau front seul, les ecrans s'ouvrent mais l'API refuse toute ecriture.
    */
   multiCurrencyEnabled: boolean;
+  /**
+   * Propositions de lettrage déterministes + lettrage en masse (Phase 3 de la refonte du
+   * lettrage). Éteint par défaut : le bandeau, le tiroir et le bouton « Propositions
+   * automatiques » ne sont pas rendus et aucun appel `lettering/suggestions` ne part. Le serveur a
+   * son propre interrupteur (`Accounting:LetteringSuggestionsEnabled`) : les deux doivent être actifs.
+   */
+  letteringProposals: boolean;
 }
 
 const DEFAULT_FLAGS: AccountingFeatureFlags = {
@@ -24,7 +31,8 @@ const DEFAULT_FLAGS: AccountingFeatureFlags = {
   tableShellOverlay: true,
   consoleAccountingErrors: false,
   fixedAssetsEnabled: true,
-  multiCurrencyEnabled: true
+  multiCurrencyEnabled: true,
+  letteringProposals: false
 };
 
 @Injectable({ providedIn: 'root' })

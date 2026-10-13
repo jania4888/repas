@@ -175,6 +175,67 @@ public sealed class LetteringServiceAmbientTransactionTests : IDisposable
     }
 
     /// <summary>
+    /// p3-11 : dans une transaction ambiante (chemin sans prévalidation), le refus d'écart de
+    /// change intervient avant toute écriture — rien n'est lettré, même si la transaction englobante
+    /// est validée ensuite.
+    /// </summary>
+    [Fact]
+    public async Task ManualLetterAsync_InsideUnitOfWork_RequireNoExchangeDifference_RejectsEuroGap()
+    {
+        if (!_canRun) return;
+
+        var (invoiceId, paymentId) = (Guid.Empty, Guid.Empty);
+        string? errorCode = null;
+
+        var outcome = await _unitOfWork!.ExecuteAsync(async ct =>
+        {
+            await using var ctx = _factory!.CreateContext();
+            var period = AccountingPeriod.Create(2026, 9, new DateTime(2026, 9, 1), new DateTime(2026, 9, 30));
+            ctx.AccountingPeriods.Add(period);
+
+            var invoice = JournalEntry.Create(
+                1, "JV", new DateTime(2026, 9, 1), "Facture EUR", period.Id, false, "Manual", null,
+                new[]
+                {
+                    new JournalLineInput("411", "Facture", 3000m, 0m, null, ThirdPartyKind.None, 1000m, 0m),
+                    new JournalLineInput("707", "Vente", 0m, 3000m, null, ThirdPartyKind.None, 0m, 1000m)
+                },
+                currency: "EUR", exchangeRate: 3.0m).Value;
+            var payment = JournalEntry.Create(
+                2, "JB", new DateTime(2026, 9, 2), "Règlement EUR", period.Id, false, "Manual", null,
+                new[]
+                {
+                    new JournalLineInput("532", "Banque", 3100m, 0m, null, ThirdPartyKind.None, 1000m, 0m),
+                    new JournalLineInput("411", "Règlement", 0m, 3100m, null, ThirdPartyKind.None, 0m, 1000m)
+                },
+                currency: "EUR", exchangeRate: 3.1m).Value;
+            invoice.SetAuditInfo("test", false);
+            payment.SetAuditInfo("test", false);
+            ctx.JournalEntries.AddRange(invoice, payment);
+            await ctx.SaveChangesAsync(ct);
+
+            invoiceId = invoice.Lines.Single(l => l.AccountNumber == "411").Id;
+            paymentId = payment.Lines.Single(l => l.AccountNumber == "411").Id;
+
+            var letter = await _lettering!.ManualLetterAsync(
+                new[] { invoiceId, paymentId }, cancellationToken: ct, requireNoExchangeDifference: true);
+            errorCode = letter.IsFailure ? letter.Error.Code : null;
+            return Result.Success();
+        });
+
+        Assert.True(outcome.IsSuccess);
+        Assert.Equal(LetteringErrorCodes.ExchangeDifference, errorCode);
+
+        await using var verify = _factory!.CreateIsolatedContext();
+        Assert.False(await verify.LetteringGroups.AsNoTracking().AnyAsync());
+        var codes = await verify.JournalEntryLines.AsNoTracking()
+            .Where(l => l.Id == invoiceId || l.Id == paymentId)
+            .Select(l => l.LetteringCode).ToListAsync();
+        Assert.Equal(2, codes.Count);
+        Assert.All(codes, Assert.Null);
+    }
+
+    /// <summary>
     /// Plan §11 PR1 (SQL réel) : un délettrage réussi, exécuté dans la transaction ambiante du
     /// UoW, doit être annulé intégralement si l'opération englobante échoue ensuite — le groupe et
     /// le code de lettrage des lignes doivent être restaurés à l'identique.

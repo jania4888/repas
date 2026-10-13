@@ -1,0 +1,108 @@
+:host {
+  display: block;
+}
+
+.lettering-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-lg);
+  background: var(--color-background-elevated);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(15, 23, 42, 0.04));
+}
+
+.lettering-summary__tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-4);
+}
+
+.lettering-summary__tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  min-width: 7rem;
+}
+
+.lettering-summary__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.lettering-summary__value {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.lettering-summary__sub {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.lettering-summary__tile--balanced .lettering-summary__value {
+  color: var(--color-success-600, #16a34a);
+}
+
+.lettering-summary__tile--unbalanced .lettering-summary__value {
+  color: var(--color-danger-600, #dc2626);
+}
+
+.lettering-summary__guard {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--color-danger-600, #dc2626);
+  font-size: var(--font-size-sm);
+}
+
+.lettering-summary__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.lettering-summary__partial-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+.lettering-summary__partial-hint {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-xs);
+}
+
+.lettering-summary__exchange-hint {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-warning-700, #b45309);
+}
+
+.lettering-amount {
+  font-variant-numeric: tabular-nums;
+}
+
+.lettering-summary__completion-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-block-start: 0.5rem;
+  padding-block: 0.375rem;
+  padding-inline: 0.75rem;
+  border-inline-start: 3px solid var(--bs-warning, #f59e0b);
+  background: var(--bs-warning-bg-subtle, #fff8e6);
+  font-size: 0.875rem;
+}
+
+.lettering-summary__completion-cancel {
+  padding: 0;
+}

@@ -176,14 +176,138 @@ public sealed class LetterAccountEntriesCommandValidator : AbstractValidator<Let
             .WithMessage("Une même ligne est sélectionnée plusieurs fois.");
 
         // Plan §4.3 : seules Manual et Suggestion sont acceptées depuis le corps HTTP de
-        // POST letter. Bulk/DraftUpdate/PayrollCancellation/Automatic/ExchangeDifference ne
-        // viennent que de flux internes qui n'empruntent pas cette commande.
+        // POST letter. Bulk n'est admis qu'avec un BulkRequestId, que seul le handler de masse
+        // renseigne (le contrôleur ne le transmet jamais). DraftUpdate/PayrollCancellation/
+        // Automatic/ExchangeDifference ne viennent que de flux internes qui n'empruntent pas
+        // cette commande.
         RuleFor(x => x.Origin)
-            .Must(o => o == LetteringOrigin.Manual || o == LetteringOrigin.Suggestion)
+            .Must((cmd, o) => o == LetteringOrigin.Manual
+                              || o == LetteringOrigin.Suggestion
+                              || (o == LetteringOrigin.Bulk && cmd.BulkRequestId is not null))
             .WithMessage("Origine de lettrage invalide.");
+
+        // Annexe C §4 : la voie de masse ne lettre que des groupes soldés, sans écart de change.
+        // Condition sur BulkRequestId aussi : un corps HTTP « Bulk » (sans identifiant) reçoit le
+        // seul message « Origine de lettrage invalide », pas des messages sur des champs internes.
+        When(x => x.Origin == LetteringOrigin.Bulk && x.BulkRequestId is not null, () =>
+        {
+            RuleFor(x => x.RequireNoExchangeDifference)
+                .Equal(true).WithMessage("Le lettrage en masse doit refuser les écarts de change.");
+            RuleFor(x => x.AllowPartial)
+                .Equal(false).WithMessage("Le lettrage en masse n'accepte pas de lettrage partiel.");
+        });
+
+        RuleFor(x => x.BulkRequestId)
+            .Must(id => id != Guid.Empty)
+            .When(x => x.BulkRequestId is not null)
+            .WithMessage("Identifiant de lot invalide.");
+
+        // L'audit « Lettered » porte BulkRequestId : il ne doit désigner qu'un groupe d'un lot.
+        RuleFor(x => x.BulkRequestId)
+            .Null()
+            .When(x => x.Origin != LetteringOrigin.Bulk)
+            .WithMessage("L'identifiant de lot est réservé au lettrage en masse.");
 
         RuleFor(x => x.SuggestionKey)
             .MaximumLength(32).WithMessage("La clé de proposition ne peut pas dépasser 32 caractères.");
+    }
+}
+
+/// <summary>
+/// Validation du lot de lettrage en masse (plan v2, Phase 3, annexe C §4). Une seule erreur rejette
+/// toute la requête (400), avant tout lettrage.
+/// </summary>
+/// <remarks>
+/// Les plafonds viennent des réglages, ramenés dans leurs bornes dures
+/// (<see cref="LetteringSuggestionSettings.Clamped"/>) : une configuration hors bornes ne peut pas
+/// élargir un lot au-delà de 200 groupes, 50 lignes par groupe et 2 000 lignes.
+/// </remarks>
+public sealed class BulkLetterCommandValidator : AbstractValidator<BulkLetterCommand>
+{
+    public const int ClientKeyMaxLength = 32;
+
+    // Classe de caractères simple, sans groupe ni alternative : aucun retour arrière possible.
+    // \z (et non $) : en .NET, $ accepte aussi un « \n » final.
+    private static readonly Regex ClientKeyPattern = new(@"^[A-Za-z0-9_-]+\z", RegexOptions.Compiled);
+
+    public BulkLetterCommandValidator(IOptions<AccountingSettings> settings)
+    {
+        var caps = settings.Value.LetteringSuggestions.Clamped();
+        var maxGroups = caps.BulkMaxGroups;
+        var maxLinesPerGroup = caps.BulkMaxLinesPerGroup;
+        var maxTotalLines = caps.BulkMaxTotalLines;
+
+        RuleFor(x => x.RequestId)
+            .NotEmpty().WithMessage("L'identifiant de lot est obligatoire.");
+
+        // Cascade Stop : après un NotNull en échec, les règles suivantes ne lisent pas la liste.
+        RuleFor(x => x.Groups)
+            .Cascade(CascadeMode.Stop)
+            .NotNull().WithMessage("Au moins un groupe est requis.")
+            .Must(g => g.Count >= 1).WithMessage("Au moins un groupe est requis.")
+            .Must(g => g.Count <= maxGroups)
+            .WithMessage($"{maxGroups} groupes au maximum peuvent être lettrés en une seule fois.");
+
+        // Au-delà du plafond de groupes, la règle ci-dessus suffit : aucune règle par groupe ni
+        // inter-groupes ne parcourt une liste trop longue (le validator ne dépend pas de la limite
+        // de taille du corps HTTP).
+        When(x => x.Groups is not null && x.Groups.Count <= maxGroups, () =>
+        {
+            RuleForEach(x => x.Groups)
+                .NotNull().WithMessage("Groupe invalide.");
+
+            // Where : un élément null (JSON « null ») est signalé ci-dessus, jamais passé aux règles.
+            RuleForEach(x => x.Groups).Where(g => g is not null).ChildRules(group =>
+            {
+                group.RuleFor(g => g.ClientKey)
+                    .Cascade(CascadeMode.Stop)
+                    .NotEmpty().WithMessage("La clé de proposition est obligatoire.")
+                    .MaximumLength(ClientKeyMaxLength)
+                    .WithMessage($"La clé de proposition ne peut pas dépasser {ClientKeyMaxLength} caractères.")
+                    .Must(k => ClientKeyPattern.IsMatch(k))
+                    .WithMessage("La clé de proposition contient des caractères invalides.");
+
+                group.RuleFor(g => g.JournalEntryLineIds)
+                    .Cascade(CascadeMode.Stop)
+                    .NotNull().WithMessage("Au moins deux lignes sont requises par groupe.")
+                    .Must(ids => ids.Count >= 2).WithMessage("Au moins deux lignes sont requises par groupe.")
+                    .Must(ids => ids.Count <= maxLinesPerGroup)
+                    .WithMessage($"{maxLinesPerGroup} lignes au maximum par groupe.")
+                    .Must(ids => ids.All(id => id != Guid.Empty)).WithMessage("Identifiant de ligne invalide.")
+                    .Must(ids => ids.Distinct().Count() == ids.Count)
+                    .WithMessage("Une même ligne est sélectionnée plusieurs fois dans un groupe.");
+            });
+
+            // Contrôles inter-groupes : seulement si la liste est utilisable (les règles ci-dessus
+            // signalent déjà une liste ou un groupe manquant).
+            When(x => x.Groups is not null && x.Groups.All(g => g is not null), () =>
+            {
+                RuleFor(x => x.Groups)
+                    .Must(g => g.Sum(x => x.JournalEntryLineIds?.Count ?? 0) <= maxTotalLines)
+                    .WithMessage($"{maxTotalLines} lignes au maximum peuvent être lettrées en une seule fois.")
+                    .Must(NoLineInTwoGroups)
+                    .WithMessage("Une même ligne apparaît dans plusieurs groupes.")
+                    .Must(g => g.Where(x => !string.IsNullOrEmpty(x.ClientKey))
+                                .Select(x => x.ClientKey).Distinct(StringComparer.Ordinal).Count()
+                               == g.Count(x => !string.IsNullOrEmpty(x.ClientKey)))
+                    .WithMessage("Une même clé de proposition apparaît dans plusieurs groupes.");
+            });
+        });
+    }
+
+    private static bool NoLineInTwoGroups(IReadOnlyList<BulkLetterGroup> groups)
+    {
+        var seen = new HashSet<Guid>();
+        foreach (var group in groups)
+        {
+            // Distinct par groupe : un doublon interne est signalé par la règle du groupe.
+            foreach (var id in (group.JournalEntryLineIds ?? Array.Empty<Guid>()).Distinct())
+            {
+                if (!seen.Add(id))
+                    return false;
+            }
+        }
+        return true;
     }
 }
 
@@ -272,6 +396,27 @@ public sealed class GetLetteringLinesQueryValidator : AbstractValidator<GetLette
         RuleFor(x => x)
             .Must(x => !x.ThirdPartyId.HasValue || x.ThirdPartyKind.HasValue)
             .WithMessage("Le type de tiers est obligatoire si un tiers est précisé.");
+    }
+}
+
+/// <summary>
+/// <c>GET api/accounting/lettering/suggestions</c> (plan v2, Phase 3, annexe C §3) : mêmes règles de
+/// filtre que <c>lettering/lines</c> (compte et période obligatoires, période ≤ 732 jours), plus une
+/// borne sur le nombre de propositions demandées.
+/// </summary>
+public sealed class GetLetteringSuggestionsQueryValidator : AbstractValidator<GetLetteringSuggestionsQuery>
+{
+    public const int MaxResultsLimit = 200;
+
+    public GetLetteringSuggestionsQueryValidator()
+    {
+        RuleFor(x => x.Filter)
+            .NotNull().WithMessage("Le filtre est obligatoire.")
+            .SetValidator(new GetLetteringLinesQueryValidator());
+
+        RuleFor(x => x.MaxResults)
+            .InclusiveBetween(1, MaxResultsLimit)
+            .WithMessage($"Le nombre de propositions doit être entre 1 et {MaxResultsLimit}.");
     }
 }
 

@@ -644,7 +644,9 @@ public sealed record LetterAccountEntriesCommand(
     IReadOnlyList<Guid> JournalEntryLineIds,
     bool AllowPartial = false,
     LetteringOrigin Origin = LetteringOrigin.Manual,
-    string? SuggestionKey = null) : IRequest<Result<LetteringResultDto>>;
+    string? SuggestionKey = null,
+    bool RequireNoExchangeDifference = false,
+    Guid? BulkRequestId = null) : IRequest<Result<LetteringResultDto>>;
 
 public sealed class LetterAccountEntriesCommandHandler : IRequestHandler<LetterAccountEntriesCommand, Result<LetteringResultDto>>
 {
@@ -660,7 +662,8 @@ public sealed class LetterAccountEntriesCommandHandler : IRequestHandler<LetterA
     public async Task<Result<LetteringResultDto>> Handle(LetterAccountEntriesCommand request, CancellationToken cancellationToken)
     {
         var result = await _lettering.ManualLetterAsync(
-            request.JournalEntryLineIds, request.AllowPartial, request.Origin, cancellationToken);
+            request.JournalEntryLineIds, request.AllowPartial, request.Origin, cancellationToken,
+            requireNoExchangeDifference: request.RequireNoExchangeDifference);
         if (result.IsFailure)
             return Result.Failure<LetteringResultDto>(result.Error);
 
@@ -680,7 +683,8 @@ public sealed class LetterAccountEntriesCommandHandler : IRequestHandler<LetterA
                 LineCount = outcome.LineIds.Count,
                 request.AllowPartial,
                 Origin = request.Origin.ToString(),
-                request.SuggestionKey
+                request.SuggestionKey,
+                request.BulkRequestId
             },
             cancellationToken: cancellationToken);
 

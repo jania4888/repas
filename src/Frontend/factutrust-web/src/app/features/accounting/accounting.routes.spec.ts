@@ -58,15 +58,27 @@ describe('accounting.routes — gardes des écrans de devises', () => {
   });
 });
 
-describe('accounting.routes — écran de lettrage', () => {
-  // PR1 (plan refonte lettrage §6 item 8) : la route n'avait aucun canActivate avant ce round,
-  // contrairement à ses soeurs (currencies, fiscal-parameters…).
+describe('accounting.routes — écran de lettrage (Phase 2)', () => {
+  // PR1 a ajouté le canActivate permissionGuard (accounting:read) sur cette route,
+  // auparavant sans garde contrairement à ses sœurs (currencies, fiscal-parameters…).
+  const route = ACCOUNTING_ROUTES.find(r => r.path === 'lettering');
 
-  it('route "lettering" exige accounting:read via permissionGuard', () => {
-    const route = ACCOUNTING_ROUTES.find(r => r.path === 'lettering');
+  it('est déclarée et gardée par permissionGuard sur accounting:read', () => {
     expect(route).toBeTruthy();
     expect(route?.canActivate).toEqual([permissionGuard]);
     expect(route?.data?.['permissions']).toEqual([PERMISSIONS.accounting.read]);
+  });
+
+  it("n'exige ni accounting:create ni accounting:unletter au niveau route", () => {
+    // La route reste en lecture seule : lettrer/délettrer sont gardés dans l'écran
+    // (store.canCreate/canUnletter) et côté serveur. Porter `create`/`unletter` ici
+    // fermerait la consultation, que le serveur autorise sous `accounting:read`.
+    expect(route?.data?.['permissions']).not.toContain(PERMISSIONS.accounting.create);
+    expect(route?.data?.['permissions']).not.toContain(PERMISSIONS.accounting.unletter);
+  });
+
+  it('charge son écran en lazy plutôt que de le lier au module', () => {
+    expect(route?.loadComponent).toBeDefined();
   });
 });
 

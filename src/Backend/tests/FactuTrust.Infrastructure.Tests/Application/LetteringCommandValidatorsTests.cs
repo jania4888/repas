@@ -105,6 +105,82 @@ public sealed class LetteringCommandValidatorsTests
         result.ShouldHaveValidationErrorFor(x => x.Origin);
     }
 
+    /// <summary>p3-11 : Bulk est admis seulement avec un identifiant de lot, sans partiel, sans écart de change.</summary>
+    [Fact]
+    public void Letter_BulkWithRequestIdAndNoExchangeDifference_Passes()
+    {
+        var cmd = new LetterAccountEntriesCommand(
+            new[] { Guid.NewGuid(), Guid.NewGuid() }, Origin: LetteringOrigin.Bulk,
+            RequireNoExchangeDifference: true, BulkRequestId: Guid.NewGuid());
+        _letterValidator.TestValidate(cmd).ShouldNotHaveAnyValidationErrors();
+    }
+
+    [Fact]
+    public void Letter_BulkWithAllowPartial_Fails()
+    {
+        var cmd = new LetterAccountEntriesCommand(
+            new[] { Guid.NewGuid(), Guid.NewGuid() }, AllowPartial: true, Origin: LetteringOrigin.Bulk,
+            RequireNoExchangeDifference: true, BulkRequestId: Guid.NewGuid());
+        _letterValidator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.AllowPartial);
+    }
+
+    [Fact]
+    public void Letter_BulkWithoutRequireNoExchangeDifference_Fails()
+    {
+        var cmd = new LetterAccountEntriesCommand(
+            new[] { Guid.NewGuid(), Guid.NewGuid() }, Origin: LetteringOrigin.Bulk,
+            BulkRequestId: Guid.NewGuid());
+        _letterValidator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.RequireNoExchangeDifference);
+    }
+
+    [Fact]
+    public void Letter_EmptyBulkRequestId_Fails()
+    {
+        var cmd = new LetterAccountEntriesCommand(
+            new[] { Guid.NewGuid(), Guid.NewGuid() }, Origin: LetteringOrigin.Bulk,
+            RequireNoExchangeDifference: true, BulkRequestId: Guid.Empty);
+        _letterValidator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.BulkRequestId);
+    }
+
+    /// <summary>Un identifiant de lot ne rend pas acceptable une origine interne autre que Bulk.</summary>
+    [Fact]
+    public void Letter_AutomaticWithBulkRequestId_StillRejected()
+    {
+        var cmd = new LetterAccountEntriesCommand(
+            new[] { Guid.NewGuid(), Guid.NewGuid() }, Origin: LetteringOrigin.Automatic,
+            RequireNoExchangeDifference: true, BulkRequestId: Guid.NewGuid());
+        _letterValidator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Origin);
+    }
+
+    /// <summary>Revue p3-11 : BulkRequestId est refusé hors de l'origine Bulk (sens de l'audit).</summary>
+    [Theory]
+    [InlineData(LetteringOrigin.Manual)]
+    [InlineData(LetteringOrigin.Suggestion)]
+    public void Letter_BulkRequestIdOnNonBulkOrigin_Fails(LetteringOrigin origin)
+    {
+        var cmd = new LetterAccountEntriesCommand(
+            new[] { Guid.NewGuid(), Guid.NewGuid() }, Origin: origin, BulkRequestId: Guid.NewGuid());
+        _letterValidator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.BulkRequestId);
+    }
+
+    /// <summary>Revue p3-11 : un corps HTTP « Bulk » reçoit un seul message, sur l'origine.</summary>
+    [Fact]
+    public void Letter_BulkWithoutRequestId_ReportsOnlyTheOrigin()
+    {
+        var cmd = new LetterAccountEntriesCommand(new[] { Guid.NewGuid(), Guid.NewGuid() }, Origin: LetteringOrigin.Bulk);
+        var error = Assert.Single(_letterValidator.TestValidate(cmd).Errors);
+        Assert.Equal(nameof(LetterAccountEntriesCommand.Origin), error.PropertyName);
+    }
+
+    /// <summary>Le drapeau seul reste permis sur la voie manuelle (il ne fait que restreindre).</summary>
+    [Fact]
+    public void Letter_ManualWithRequireNoExchangeDifference_Passes()
+    {
+        var cmd = new LetterAccountEntriesCommand(
+            new[] { Guid.NewGuid(), Guid.NewGuid() }, RequireNoExchangeDifference: true);
+        _letterValidator.TestValidate(cmd).ShouldNotHaveAnyValidationErrors();
+    }
+
     [Fact]
     public void Letter_SuggestionKeyTooLong_Fails()
     {

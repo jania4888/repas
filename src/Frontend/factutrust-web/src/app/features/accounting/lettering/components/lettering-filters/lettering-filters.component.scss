@@ -1,0 +1,83 @@
+@use '../../../shared/accounting-layout';
+
+:host {
+  display: block;
+}
+
+:host ::ng-deep .p-autocomplete,
+:host ::ng-deep .p-autocomplete-input {
+  width: 100%;
+}
+
+.accounting-filter-hint {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.lettering-account-suggestion__number,
+.lettering-third-party-suggestion__account {
+  color: var(--color-text-tertiary);
+}
+
+.lettering-third-party-suggestion__name {
+  font-weight: var(--font-weight-medium);
+  margin-inline-end: var(--spacing-2);
+}
+
+.accounting-filter-field--toggle {
+  justify-content: flex-end;
+}
+
+.lettering-filters__advanced-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  background: none;
+  border: none;
+  color: var(--color-primary-600);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  padding: var(--spacing-2) 0;
+}
+
+.lettering-filters__advanced {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--spacing-4);
+  grid-column: 1 / -1;
+}
+
+.accounting-filter-field--checkbox {
+  justify-content: center;
+}
+
+.lettering-filters__checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.lettering-filters__error {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-danger-600, #d32f2f);
+}
+
+/* Bouton submit masqué : permet la soumission du formulaire à la touche Entrée sans doublon visuel. */
+.lettering-filters__submit-proxy {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

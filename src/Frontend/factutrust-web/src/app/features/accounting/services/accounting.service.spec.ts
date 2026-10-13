@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { AccountingService } from './accounting.service';
+import { SKIP_ERROR_TOAST } from '@core/http-context';
 import { environment } from '@environments/environment';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
@@ -224,6 +225,218 @@ describe('AccountingService', () => {
       const req = httpMock.expectOne(`${base}/letter`);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({ journalEntryLineIds: ids, allowPartial: false });
+      req.flush({ success: true, data: true });
+    });
+
+    it('n’ajoute aucun champ au corps historique (égalité stricte des clés)', () => {
+      service.letterEntries(['id1'], true).subscribe();
+
+      const req = httpMock.expectOne(`${base}/letter`);
+      expect(Object.keys(req.request.body)).toEqual(['journalEntryLineIds', 'allowPartial']);
+      expect(req.request.body).toEqual({ journalEntryLineIds: ['id1'], allowPartial: true });
+      req.flush({ success: true, data: null });
+    });
+
+    it('envoie l’origine et la clé de proposition quand elles sont fournies', () => {
+      service.letterEntries(['id1', 'id2'], false, 'Suggestion', 'k_abc-1').subscribe();
+
+      const req = httpMock.expectOne(`${base}/letter`);
+      expect(req.request.body).toEqual({
+        journalEntryLineIds: ['id1', 'id2'], allowPartial: false, origin: 'Suggestion', suggestionKey: 'k_abc-1'
+      });
+      req.flush({ success: true, data: null });
+    });
+
+    it('envoie l’origine seule si la clé est absente', () => {
+      service.letterEntries(['id1'], false, 'Manual').subscribe();
+
+      const req = httpMock.expectOne(`${base}/letter`);
+      expect(req.request.body).toEqual({ journalEntryLineIds: ['id1'], allowPartial: false, origin: 'Manual' });
+      req.flush({ success: true, data: null });
+    });
+
+    it('envoie la clé seule si l’origine est absente', () => {
+      service.letterEntries(['id1'], true, undefined, 'k1').subscribe();
+
+      const req = httpMock.expectOne(`${base}/letter`);
+      expect(req.request.body).toEqual({ journalEntryLineIds: ['id1'], allowPartial: true, suggestionKey: 'k1' });
+      req.flush({ success: true, data: null });
+    });
+  });
+
+  describe('propositions et lettrage en masse (Phase 3)', () => {
+    it('getLetteringSuggestions appelle GET lettering/suggestions avec les filtres et maxResults', () => {
+      service.getLetteringSuggestions({
+        account: '411',
+        accountMatch: 'prefix',
+        from: '2026-01-01',
+        to: '2026-12-31',
+        journalCode: 'JV',
+        sourceCategories: ['invoice', 'payment'],
+        thirdPartyId: 'tp-1',
+        thirdPartyKind: 1,
+        minAmount: 10,
+        maxAmount: 900,
+        search: 'FAC',
+        maxResults: 20
+      }).subscribe();
+
+      const req = httpMock.expectOne(r => r.url === `${base}/lettering/suggestions`);
+      expect(req.request.method).toBe('GET');
+      const p = req.request.params;
+      expect(p.get('account')).toBe('411');
+      expect(p.get('accountMatch')).toBe('prefix');
+      expect(p.get('from')).toBe('2026-01-01');
+      expect(p.get('to')).toBe('2026-12-31');
+      expect(p.get('journalCode')).toBe('JV');
+      expect(p.getAll('sourceCategories')).toEqual(['invoice', 'payment']);
+      expect(p.get('thirdPartyId')).toBe('tp-1');
+      expect(p.get('thirdPartyKind')).toBe('1');
+      expect(p.get('minAmount')).toBe('10');
+      expect(p.get('maxAmount')).toBe('900');
+      expect(p.get('search')).toBe('FAC');
+      expect(p.get('maxResults')).toBe('20');
+      req.flush({ success: true, data: null });
+    });
+
+    it('getLetteringSuggestions n’émet ni pagination, ni état, ni sens, ni maxResults absent', () => {
+      service.getLetteringSuggestions({ account: '4111', from: '2026-01-01', to: '2026-12-31' }).subscribe();
+
+      const req = httpMock.expectOne(r => r.url === `${base}/lettering/suggestions`);
+      expect(req.request.params.keys().sort()).toEqual(['account', 'from', 'to']);
+      req.flush({ success: true, data: null });
+    });
+
+    it('getLetteringSuggestions désactive le toast d’erreur global (erreur affichée dans le bandeau)', () => {
+      service.getLetteringSuggestions({ account: '4111', from: '2026-01-01', to: '2026-12-31' }).subscribe();
+
+      const req = httpMock.expectOne(r => r.url === `${base}/lettering/suggestions`);
+      expect(req.request.context.get(SKIP_ERROR_TOAST)).toBeTrue();
+      req.flush({ success: true, data: null });
+    });
+
+    it('getLetteringSuggestions transmet maxResults = 0 tel quel (le serveur le refuse en 400)', () => {
+      service.getLetteringSuggestions({ account: '4111', from: '2026-01-01', to: '2026-12-31', maxResults: 0 }).subscribe();
+
+      const req = httpMock.expectOne(r => r.url === `${base}/lettering/suggestions`);
+      expect(req.request.params.get('maxResults')).toBe('0');
+      req.flush({ success: true, data: null });
+    });
+
+    it('bulkLetter appelle POST lettering/bulk avec le requestId et les groupes', () => {
+      const groups = [
+        { clientKey: 'k1', journalEntryLineIds: ['a', 'b'] },
+        { clientKey: 'k2', journalEntryLineIds: ['c', 'd', 'e'] }
+      ];
+      service.bulkLetter('7b0c2f6e-0000-4000-8000-000000000001', groups).subscribe();
+
+      const req = httpMock.expectOne(`${base}/lettering/bulk`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ requestId: '7b0c2f6e-0000-4000-8000-000000000001', groups });
+      req.flush({ success: true, data: null });
+    });
+  });
+
+  describe('lettering (contrat Phase 1 §4)', () => {
+    it('getLetteringLines appelle GET lettering/lines avec tous les filtres', () => {
+      service.getLetteringLines({
+        account: '4111',
+        accountMatch: 'prefix',
+        from: '2026-01-01',
+        to: '2026-12-31',
+        state: 'unlettered',
+        journalCode: 'JOD',
+        sourceCategories: ['invoice', 'payment'],
+        thirdPartyId: 'tp-1',
+        thirdPartyKind: 1,
+        side: 'debit',
+        minAmount: 100,
+        maxAmount: 5000,
+        search: 'facture',
+        page: 2,
+        pageSize: 500
+      }).subscribe();
+
+      const req = httpMock.expectOne(r => r.url === `${base}/lettering/lines`);
+      expect(req.request.method).toBe('GET');
+      const p = req.request.params;
+      expect(p.get('account')).toBe('4111');
+      expect(p.get('accountMatch')).toBe('prefix');
+      expect(p.get('from')).toBe('2026-01-01');
+      expect(p.get('to')).toBe('2026-12-31');
+      expect(p.get('state')).toBe('unlettered');
+      expect(p.get('journalCode')).toBe('JOD');
+      expect(p.getAll('sourceCategories')).toEqual(['invoice', 'payment']);
+      expect(p.get('thirdPartyId')).toBe('tp-1');
+      expect(p.get('thirdPartyKind')).toBe('1');
+      expect(p.get('side')).toBe('debit');
+      expect(p.get('minAmount')).toBe('100');
+      expect(p.get('maxAmount')).toBe('5000');
+      expect(p.get('search')).toBe('facture');
+      expect(p.get('page')).toBe('2');
+      expect(p.get('pageSize')).toBe('500');
+      req.flush({ success: true, data: { items: [], page: 2, pageSize: 500, totalCount: 0, truncated: false, totals: null } });
+    });
+
+    it('getLetteringLines n’émet pas les paramètres facultatifs absents', () => {
+      service.getLetteringLines({ account: '4111', from: '2026-01-01', to: '2026-12-31' }).subscribe();
+
+      const req = httpMock.expectOne(r => r.url === `${base}/lettering/lines`);
+      const p = req.request.params;
+      expect(p.get('account')).toBe('4111');
+      expect(p.has('journalCode')).toBe(false);
+      expect(p.has('state')).toBe(false);
+      expect(p.has('thirdPartyId')).toBe(false);
+      expect(p.has('minAmount')).toBe(false);
+      expect(p.has('sourceCategories')).toBe(false);
+      // Pagination par défaut du contrat.
+      expect(p.get('page')).toBe('1');
+      expect(p.get('pageSize')).toBe('2000');
+      req.flush({ success: true, data: { items: [], page: 1, pageSize: 2000, totalCount: 0, truncated: false, totals: null } });
+    });
+
+    it('getLetteringGroup appelle GET lettering/groups/{code} en encodant le code', () => {
+      service.getLetteringGroup('P00002').subscribe();
+
+      const req = httpMock.expectOne(`${base}/lettering/groups/P00002`);
+      expect(req.request.method).toBe('GET');
+      req.flush({ success: true, data: null });
+    });
+
+    it('getLetteringGroup encode les caractères spéciaux du code dans le path', () => {
+      // Défense en profondeur : le segment de path doit être encodé (M2).
+      service.getLetteringGroup('P 2/3').subscribe();
+      const req = httpMock.expectOne(`${base}/lettering/groups/P%202%2F3`);
+      expect(req.request.method).toBe('GET');
+      req.flush({ success: true, data: null });
+    });
+
+    it('completePartialLettering appelle POST lettering/groups/{code}/complete avec les ids', () => {
+      const ids = ['new-line-1', 'new-line-2'];
+      service.completePartialLettering('P00002', ids, true).subscribe();
+
+      const req = httpMock.expectOne(`${base}/lettering/groups/P00002/complete`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ journalEntryLineIds: ids, allowPartial: true });
+      req.flush({ success: true, data: { code: 'L00002', previousCode: 'P00002' } });
+    });
+
+    it('settleExchangeDifference appelle POST lettering/settle-exchange-difference', () => {
+      const ids = ['id1', 'id2'];
+      service.settleExchangeDifference(ids, '655').subscribe();
+
+      const req = httpMock.expectOne(`${base}/lettering/settle-exchange-difference`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ journalEntryLineIds: ids, accountNumber: '655' });
+      req.flush({ success: true, data: 'L00009' });
+    });
+
+    it('unletterEntries appelle POST unletter avec le code du groupe', () => {
+      service.unletterEntries('L00007').subscribe();
+
+      const req = httpMock.expectOne(`${base}/unletter`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ code: 'L00007' });
       req.flush({ success: true, data: true });
     });
   });

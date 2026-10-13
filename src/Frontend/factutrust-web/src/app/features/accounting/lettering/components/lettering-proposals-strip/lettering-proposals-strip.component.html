@@ -1,0 +1,109 @@
+<section class="proposals" aria-labelledby="lettering-proposals-title" [attr.aria-busy]="loading()" data-testid="lettering-proposals-strip">
+  <header class="proposals__header">
+    <div class="proposals__titles">
+      <h2 id="lettering-proposals-title" class="proposals__title">
+        <ng-container i18n="@@accounting.lettering.suggestions.strip.title">Propositions de lettrage</ng-container>
+        @if (!loading() && !error() && badge() > 0) {
+          <span class="proposals__badge" data-testid="lettering-proposals-badge">{{ badge() }}</span>
+        }
+      </h2>
+      <p class="proposals__subtitle" i18n="@@accounting.lettering.suggestions.strip.subtitle">Rapprochements probables calculés à partir des montants, des pièces et des tiers. Vérifiez avant de valider.</p>
+    </div>
+    @if (!error() && suggestions().length > 0) {
+      <button type="button" class="proposals__link proposals__show-all" (click)="showAll.emit()" data-testid="lettering-proposals-show-all" i18n="@@accounting.lettering.suggestions.strip.showAll">Voir toutes les propositions ({{ badge() }})</button>
+    }
+  </header>
+
+  @if (notice() === 'selected' && canUndo()) {
+    <div class="proposals__notice" role="status" data-testid="lettering-proposals-notice-selected">
+      <span i18n="@@accounting.lettering.suggestions.strip.notice.selected">Sélection remplacée par la proposition.</span>
+      <button type="button" class="proposals__link" data-testid="lettering-proposals-undo" (click)="undo.emit()" i18n="@@accounting.lettering.suggestions.strip.notice.undo">Annuler</button>
+    </div>
+  } @else if (notice() === 'linesNotVisible') {
+    <div class="proposals__notice proposals__notice--warn" role="status" data-testid="lettering-proposals-notice-hidden">
+      <span i18n="@@accounting.lettering.suggestions.strip.notice.linesNotVisible">Certaines lignes de cette proposition ne sont pas affichées (filtre d'état) : affichez toutes les lignes pour la sélectionner.</span>
+      <button type="button" class="proposals__link" (click)="dismissNotice.emit()" i18n="@@accounting.lettering.suggestions.strip.notice.dismiss">Fermer</button>
+    </div>
+  } @else if (notice() === 'completion') {
+    <div class="proposals__notice proposals__notice--warn" role="status" data-testid="lettering-proposals-notice-completion">
+      <span i18n="@@accounting.lettering.suggestions.strip.notice.completion">Une complétion de lettrage partiel est en cours : terminez-la ou annulez-la pour utiliser une proposition.</span>
+      <button type="button" class="proposals__link" (click)="dismissNotice.emit()" i18n="@@accounting.lettering.suggestions.strip.notice.dismiss">Fermer</button>
+    </div>
+  } @else if (notice() === 'busy') {
+    <div class="proposals__notice proposals__notice--warn" role="status" data-testid="lettering-proposals-notice-busy">
+      <span i18n="@@accounting.lettering.suggestions.strip.notice.busy">Une action est en cours : réessayez dans un instant.</span>
+      <button type="button" class="proposals__link" (click)="dismissNotice.emit()" i18n="@@accounting.lettering.suggestions.strip.notice.dismiss">Fermer</button>
+    </div>
+  }
+
+  @if (loading() && suggestions().length === 0) {
+    <div class="proposals__state" role="status" aria-live="polite" data-testid="lettering-proposals-loading">
+      <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+      <span i18n="@@accounting.lettering.suggestions.strip.loading">Calcul des propositions…</span>
+    </div>
+  } @else if (error()) {
+    <div class="proposals__state proposals__state--error" role="alert" data-testid="lettering-proposals-error">
+      <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+      <span>{{ error() }}</span>
+    </div>
+  } @else if (suggestions().length === 0) {
+    <p class="proposals__state" data-testid="lettering-proposals-empty" i18n="@@accounting.lettering.suggestions.strip.empty">Aucune proposition pour ces filtres.</p>
+  } @else {
+    <ul class="proposals__cards" role="list">
+      @for (s of suggestions(); track s.key) {
+        <li class="proposals__card" [class.proposals__card--busy]="busyKey() === s.key" data-testid="lettering-proposal-card">
+          <button type="button" class="proposals__card-body" [attr.aria-label]="cardLabel(s)" [attr.aria-describedby]="describedBy(s)" [disabled]="!canCreate()" (click)="selectSuggestion.emit(s)" data-testid="lettering-proposal-select">
+            <span class="proposals__card-top">
+              <span class="proposals__category">{{ category(s) }}</span>
+              <span class="proposals__confidence" [attr.data-confidence]="s.confidence">{{ confidence(s) }}</span>
+            </span>
+            <span class="proposals__sides">
+              <span class="proposals__side">
+                <span class="proposals__side-label" i18n="@@accounting.lettering.suggestions.strip.debit">Débit</span>
+                <span class="proposals__side-value">{{ sideLabel(s.debit) }}</span>
+              </span>
+              <i class="pi pi-arrow-right-arrow-left proposals__exchange" aria-hidden="true"></i>
+              <span class="proposals__side">
+                <span class="proposals__side-label" i18n="@@accounting.lettering.suggestions.strip.credit">Crédit</span>
+                <span class="proposals__side-value">{{ sideLabel(s.credit) }}</span>
+              </span>
+            </span>
+            <span class="proposals__amount-row">
+              <span class="proposals__amount lettering-amount" dir="ltr">{{ amount(s) }}</span>
+              @if (s.debit.first?.entryDate) {
+                <span class="proposals__date">{{ s.debit.first?.entryDate | date: 'dd/MM/yyyy' }}</span>
+              }
+              @if (s.hasExchangeDifference) {
+                <span class="proposals__fx" [id]="'lettering-proposal-fx-' + s.key" data-testid="lettering-proposal-fx">
+                  <i class="pi pi-sliders-h" aria-hidden="true"></i>
+                  <span i18n="@@accounting.lettering.suggestions.strip.fx">Écart de change</span>
+                </span>
+              }
+            </span>
+            <span class="proposals__reason" [id]="'lettering-proposal-reason-' + s.key">{{ reason(s) }}</span>
+          </button>
+          <div class="proposals__card-actions">
+            <span [attr.title]="canCreate() ? null : loc_validateDisabled">
+              <p-button
+                label="Valider" i18n-label="@@accounting.lettering.suggestions.strip.validate"
+                icon="pi pi-check"
+                size="small"
+                severity="success"
+                [outlined]="true"
+                [disabled]="!canValidate()"
+                [loading]="busyKey() === s.key"
+                [ariaLabel]="validateLabel(s)"
+                (onClick)="validateSuggestion.emit(s)"
+                data-testid="lettering-proposal-validate"
+              />
+            </span>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (truncated() && !error()) {
+    <p class="proposals__truncated" role="note" data-testid="lettering-proposals-truncated">{{ truncationText() }}</p>
+  }
+</section>

@@ -1,0 +1,154 @@
+<div
+  class="lettering-summary"
+  role="region"
+  aria-label="Résumé de la sélection"
+  i18n-aria-label="@@accounting.lettering.selection.summary.tpl.resume.de.la.selection"
+>
+  <div class="lettering-summary__tiles">
+    <div class="lettering-summary__tile">
+      <span class="lettering-summary__label" i18n="@@accounting.lettering.selection.summary.tpl.lignes.selectionnees">Lignes sélectionnées</span>
+      <span class="lettering-summary__value">{{ summary.count }}</span>
+      <span class="lettering-summary__sub" i18n="@@accounting.lettering.selection.summary.tpl.debit.credit">
+        {{ sideCounts.debitCount }} au débit · {{ sideCounts.creditCount }} au crédit
+      </span>
+    </div>
+
+    @if (summary.foreign) {
+      <div class="lettering-summary__tile">
+        <span class="lettering-summary__label" i18n="@@accounting.lettering.selection.summary.tpl.total.debit.devise">Total débit {{ summary.currency }}</span>
+        <span class="lettering-summary__value lettering-amount">{{ summary.debitCurrency | number : '1.3-3' }}</span>
+      </div>
+      <div class="lettering-summary__tile">
+        <span class="lettering-summary__label" i18n="@@accounting.lettering.selection.summary.tpl.total.credit.devise">Total crédit {{ summary.currency }}</span>
+        <span class="lettering-summary__value lettering-amount">{{ summary.creditCurrency | number : '1.3-3' }}</span>
+      </div>
+    }
+
+    <div class="lettering-summary__tile">
+      <span class="lettering-summary__label" i18n="@@accounting.lettering.selection.summary.tpl.total.debit">Total débit</span>
+      <span class="lettering-summary__value lettering-amount">{{ summary.debit | number : '1.3-3' }}</span>
+    </div>
+    <div class="lettering-summary__tile">
+      <span class="lettering-summary__label" i18n="@@accounting.lettering.selection.summary.tpl.total.credit">Total crédit</span>
+      <span class="lettering-summary__value lettering-amount">{{ summary.credit | number : '1.3-3' }}</span>
+    </div>
+
+    <div
+      class="lettering-summary__tile"
+      [class.lettering-summary__tile--balanced]="summary.balanced"
+      [class.lettering-summary__tile--unbalanced]="!summary.balanced && summary.count > 0"
+    >
+      <span class="lettering-summary__label" i18n="@@accounting.lettering.ecart.6ae8dce8">Écart</span>
+      <span class="lettering-summary__value lettering-amount">
+        {{ (summary.foreign ? summary.currencyGap : summary.gap) | number : '1.3-3' }}
+        @if (summary.foreign) {
+          {{ summary.currency }}
+        }
+      </span>
+    </div>
+
+    @if (accountLabel) {
+      <div class="lettering-summary__tile">
+        <span class="lettering-summary__label" i18n="@@accounting.lettering.selection.summary.tpl.compte">Compte</span>
+        <span class="lettering-summary__value">{{ accountLabel }}</span>
+      </div>
+    }
+
+    @if (guards.mixedCurrencies || guards.multipleAccounts || guards.partialGroupCodes.length >= 2) {
+      <p class="lettering-summary__guard" role="alert">
+        @if (guards.mixedCurrencies) {
+          <span i18n="@@accounting.lettering.selection.summary.tpl.devises.melangees">La sélection mélange plusieurs devises : impossible de lettrer.</span>
+        }
+        @if (guards.multipleAccounts) {
+          <span i18n="@@accounting.lettering.selection.summary.tpl.comptes.melanges">La sélection porte sur plusieurs comptes : impossible de lettrer.</span>
+        }
+        @if (guards.partialGroupCodes.length >= 2) {
+          <span i18n="@@accounting.lettering.selection.summary.tpl.plusieurs.groupes.partiels">La sélection contient plusieurs lettrages partiels à la fois : désélectionnez-en un pour continuer.</span>
+        }
+      </p>
+    }
+  </div>
+
+  @if (completionGroupCode) {
+    <div class="lettering-summary__completion-group" role="status" data-testid="lettering-completion-group">
+      <span i18n="@@accounting.lettering.selection.summary.tpl.completion.en.cours">Complétion du lettrage {{ completionGroupCode }} : {{ completionMemberCount }} {completionMemberCount, plural, =0 {ligne déjà lettrée incluse} =1 {ligne déjà lettrée incluse} other {lignes déjà lettrées incluses}} dans la sélection.</span>
+      <button
+        type="button"
+        class="btn btn-link btn-sm lettering-summary__completion-cancel"
+        data-testid="lettering-completion-cancel"
+        [disabled]="busyAction !== null"
+        (click)="cancelCompletion.emit()"
+        i18n="@@accounting.lettering.selection.summary.tpl.annuler.completion"
+      >Annuler la complétion</button>
+    </div>
+  }
+
+  @if (completionTarget) {
+    <p class="lettering-summary__completion-hint" role="status" i18n="@@accounting.lettering.selection.summary.tpl.selectionnez.les.lignes.a.ajouter">
+      Sélectionnez les lignes à ajouter pour compléter le lettrage {{ completionTarget }}.
+    </p>
+  }
+
+  <div class="lettering-summary__actions">
+    @if (!summary.balanced && summary.count >= 2 && !readOnly) {
+      <label class="lettering-summary__partial-toggle" for="lettering-summary-partial">
+        <p-checkbox
+          inputId="lettering-summary-partial"
+          [binary]="true"
+          [ngModel]="allowPartial"
+          (ngModelChange)="onAllowPartialChange($event)"
+        />
+        <span>
+          <ng-container i18n="@@accounting.lettering.selection.summary.tpl.lettrage.partiel">Lettrage partiel</ng-container>
+          <span class="lettering-summary__partial-hint" i18n="@@accounting.lettering.selection.summary.tpl.reglement.incomplet">(règlement incomplet — code « P »)</span>
+        </span>
+      </label>
+    }
+
+    @if (summary.hasExchangeDifference && !readOnly) {
+      <p class="lettering-summary__exchange-hint" role="status" i18n="@@accounting.lettering.selection.summary.tpl.soldee.en.mais.pas.en.dinars">
+        Sélection soldée en {{ summary.currency }} mais pas en dinars : {{ summary.gap | number : '1.3-3' }} d'écart de change.
+      </p>
+      <p-button
+        #settleTrigger
+        label="Équilibrer" i18n-label="@@accounting.lettering.equilibrer.320b5f90"
+        icon="pi pi-sliders-h"
+        severity="warn"
+        [outlined]="true"
+        [disabled]="busyAction !== null"
+        (onClick)="settle.emit()"
+        aria-label="Apurer l'écart de change puis lettrer" i18n-aria-label="@@accounting.lettering.apurer.l.ecart.de.change.puis.lettrer.0c7cad24"
+      />
+    }
+
+    @if (!readOnly) {
+      <p-button
+        label="Réinitialiser" i18n-label="@@accounting.lettering.selection.summary.tpl.reinitialiser"
+        severity="secondary"
+        [outlined]="true"
+        [disabled]="summary.count === 0 || busyAction !== null"
+        (onClick)="reset.emit()"
+      />
+
+      <p-button
+        [label]="validateLabel()"
+        icon="pi pi-link"
+        [disabled]="validateDisabled()"
+        [loading]="busyAction === 'letter' || busyAction === 'complete'"
+        [severity]="completionTarget ? 'warn' : (isPartialMode ? 'warn' : 'success')"
+        (onClick)="validate.emit()"
+      />
+    }
+  </div>
+
+  <span class="sr-only" aria-live="polite">
+    @switch (true) {
+      @case (summary.count === 1) {
+        <ng-container i18n="@@accounting.lettering.selection.summary.tpl.aria.live.singulier">1 ligne sélectionnée, écart {{ summary.gap | number : '1.3-3' }}.</ng-container>
+      }
+      @default {
+        <ng-container i18n="@@accounting.lettering.selection.summary.tpl.aria.live.pluriel">{{ summary.count }} lignes sélectionnées, écart {{ summary.gap | number : '1.3-3' }}.</ng-container>
+      }
+    }
+  </span>
+</div>

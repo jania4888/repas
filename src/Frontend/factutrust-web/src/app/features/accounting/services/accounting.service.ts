@@ -208,6 +208,119 @@ export interface LetteringResultDto {
   previousCode?: string | null;
 }
 
+// ── Propositions et lettrage en masse (plan v2, Phase 3, annexe C §3–§4) ──
+
+/** Règle qui a produit la proposition (`SuggestionKind` côté serveur). */
+export type LetteringSuggestionKind = 'DocumentLink' | 'SameReference' | 'SameThirdPartyAmount' | 'SubsetSum' | 'AmountOnly';
+
+/** Badge : « Match exact », « Match multiple », « Montant identique ». */
+export type LetteringSuggestionCategory = 'Exact' | 'Multiple' | 'SameAmount';
+
+export type LetteringSuggestionConfidence = 'High' | 'Medium' | 'Low';
+
+/** Cause d'un résultat incomplet : budget de recherche, fusible de temps ou plafond de candidates. */
+export type LetteringSuggestionTruncationReason = 'SearchBudget' | 'TimeFuse' | 'CandidateCap';
+
+export interface LetteringSuggestionLineDto {
+  lineId: string;
+  entryId: string;
+  entryDate: string;
+  journalCode: string;
+  entryNumber: number;
+  pieceRef?: string | null;
+  label: string;
+  /** Devise de tenue (TND). */
+  debit: number;
+  credit: number;
+  /** Devise de l'opération. */
+  debitInCurrency: number;
+  creditInCurrency: number;
+}
+
+/** Explication non localisée : le front traduit `code` et insère `args` (annexe C §2.5). */
+export interface LetteringSuggestionReasonDto {
+  code: string;
+  args: Record<string, string>;
+}
+
+export interface LetteringSuggestionDto {
+  /** Clé stable d'un appel à l'autre (≤ 32 caractères, `[A-Za-z0-9_-]`). */
+  key: string;
+  kind: LetteringSuggestionKind;
+  category: LetteringSuggestionCategory;
+  score: number;
+  confidence: LetteringSuggestionConfidence;
+  accountNumber: string;
+  /** Devise de l'opération du groupe. */
+  currencyCode: string;
+  thirdPartyId?: string | null;
+  thirdPartyKind: number;
+  thirdPartyName?: string | null;
+  debitLines: LetteringSuggestionLineDto[];
+  creditLines: LetteringSuggestionLineDto[];
+  /** Montant lettré, devise de l'opération. */
+  totalAmount: number;
+  /** Écart en devise de tenue (≠ 0 seulement en devise étrangère). */
+  localGap: number;
+  hasExchangeDifference: boolean;
+  /**
+   * Vrai si la proposition peut partir dans un lot : pas d'écart de change ET nombre de lignes
+   * dans la limite serveur `BulkMaxLinesPerGroup` (`LetteringSuggestionService.ToDto`).
+   */
+  bulkEligible: boolean;
+  reasons: LetteringSuggestionReasonDto[];
+}
+
+export interface LetteringSuggestionsResultDto {
+  suggestions: LetteringSuggestionDto[];
+  totalFound: number;
+  returned: number;
+  candidateLineCount: number;
+  truncated: boolean;
+  truncationReason?: LetteringSuggestionTruncationReason | null;
+  computedAtUtc: string;
+}
+
+/** Filtres de `GET lettering/suggestions` : ceux de `lettering/lines`, sans état, sens ni pagination. */
+/** Filtres partagés par `lettering/lines` et `lettering/suggestions`. */
+export type LetteringSharedFilters = Omit<LetteringLinesQuery, 'state' | 'side' | 'page' | 'pageSize'>;
+
+export interface LetteringSuggestionsQuery extends LetteringSharedFilters {
+  /** 50 par défaut côté serveur. */
+  maxResults?: number;
+}
+
+export type BulkLetteringStatus = 'Lettered' | 'AlreadyLettered' | 'Rejected' | 'NotProcessed';
+
+export interface BulkLetteringGroupResultDto {
+  clientKey: string;
+  status: BulkLetteringStatus;
+  /** Code créé, ou code existant pour `AlreadyLettered`. */
+  code?: string | null;
+  /** Code stable `LETTERING_*` pour `Rejected`. */
+  errorCode?: string | null;
+  message?: string | null;
+}
+
+/** Réponse de `POST lettering/bulk` : 200 même en succès partiel. */
+export interface BulkLetteringResultDto {
+  requestId: string;
+  total: number;
+  lettered: number;
+  alreadyLettered: number;
+  rejected: number;
+  notProcessed: number;
+  results: BulkLetteringGroupResultDto[];
+}
+
+export interface BulkLetterGroupRequest {
+  clientKey: string;
+  journalEntryLineIds: string[];
+}
+
+/** Origine d'un lettrage unitaire. `Bulk` est réservé au serveur. */
+export type LetteringOrigin = 'Manual' | 'Suggestion';
+
 export interface BalanceRowDto {
   /**
    * Devises etrangeres presentes sur le compte. Une LISTE : une ligne de balance agrege un compte
@@ -2536,9 +2649,19 @@ export class AccountingService {
     return this.http.patch<ApiResponse<boolean>>(`${this.base}/chart-of-accounts/${id}/toggle-active`, {});
   }
 
-  /** Lettre un ensemble de lignes. Réponse enrichie avec le code créé (contrat §4.3). */
-  letterEntries(journalEntryLineIds: string[], allowPartial = false): Observable<ApiResponse<LetteringResultDto>> {
-    return this.http.post<ApiResponse<LetteringResultDto>>(`${this.base}/letter`, { journalEntryLineIds, allowPartial });
+  /**
+   * Lettre un ensemble de lignes. Réponse enrichie avec le code créé (contrat §4.3).
+   * `origin` et `suggestionKey` ne partent que s'ils sont définis : le corps des appels existants
+   * reste exactement `{ journalEntryLineIds, allowPartial }`.
+   */
+  letterEntries(
+    journalEntryLineIds: string[], allowPartial = false, origin?: LetteringOrigin, suggestionKey?: string
+  ): Observable<ApiResponse<LetteringResultDto>> {
+    const body: { journalEntryLineIds: string[]; allowPartial: boolean; origin?: LetteringOrigin; suggestionKey?: string } =
+      { journalEntryLineIds, allowPartial };
+    if (origin !== undefined) body.origin = origin;
+    if (suggestionKey !== undefined) body.suggestionKey = suggestionKey;
+    return this.http.post<ApiResponse<LetteringResultDto>>(`${this.base}/letter`, body);
   }
 
   settleExchangeDifference(journalEntryLineIds: string[], accountNumber: string): Observable<ApiResponse<string>> {
@@ -2553,16 +2676,49 @@ export class AccountingService {
 
   /** Lignes candidates au lettrage, filtrées et paginées (contrat §4.1). Écran : lettering. */
   getLetteringLines(query: LetteringLinesQuery): Observable<ApiResponse<LetteringLinesPageDto>> {
+    let p = this.letteringFilterParams(query)
+      .set('page', String(query.page ?? 1))
+      .set('pageSize', String(query.pageSize ?? 2000));
+    if (query.state) p = p.set('state', query.state);
+    if (query.side) p = p.set('side', query.side);
+    return this.http.get<ApiResponse<LetteringLinesPageDto>>(`${this.base}/lettering/lines`, { params: p });
+  }
+
+  /**
+   * Propositions de lettrage (Phase 3, annexe C §3), recalculées à chaque appel. Mêmes filtres que
+   * `lettering/lines`. Drapeau éteint → 400 `LETTERING_FEATURE_DISABLED`.
+   */
+  getLetteringSuggestions(query: LetteringSuggestionsQuery): Observable<ApiResponse<LetteringSuggestionsResultDto>> {
+    let p = this.letteringFilterParams(query);
+    if (query.maxResults !== null && query.maxResults !== undefined) p = p.set('maxResults', String(query.maxResults));
+    // Pas de toast global : l'écran affiche l'erreur dans le bandeau des propositions, et masque
+    // le bandeau sur `LETTERING_FEATURE_DISABLED` (drapeau serveur éteint).
+    return this.http.get<ApiResponse<LetteringSuggestionsResultDto>>(`${this.base}/lettering/suggestions`, {
+      params: p,
+      context: createHttpContextSkipGlobalErrorUi()
+    });
+  }
+
+  /**
+   * Lettrage en masse de propositions confirmées (annexe C §4). `requestId` identifie le lot : le
+   * même id avec une autre sélection est refusé (400). Créer un nouvel id à chaque nouvelle
+   * confirmation ; le réutiliser seulement pour rejouer exactement le même lot.
+   */
+  bulkLetter(requestId: string, groups: BulkLetterGroupRequest[]): Observable<ApiResponse<BulkLetteringResultDto>> {
+    return this.http.post<ApiResponse<BulkLetteringResultDto>>(`${this.base}/lettering/bulk`, { requestId, groups });
+  }
+
+  /**
+   * Paramètres de filtre communs à `lettering/lines` et `lettering/suggestions`. Le type exclut
+   * ce qui est propre à chaque route (`state`, `side`, pagination ; `maxResults`).
+   */
+  private letteringFilterParams(query: LetteringSharedFilters): HttpParams {
     let p = new HttpParams()
       .set('account', query.account)
       .set('from', query.from)
-      .set('to', query.to)
-      .set('page', String(query.page ?? 1))
-      .set('pageSize', String(query.pageSize ?? 2000));
+      .set('to', query.to);
     if (query.accountMatch) p = p.set('accountMatch', query.accountMatch);
-    if (query.state) p = p.set('state', query.state);
     if (query.journalCode) p = p.set('journalCode', query.journalCode);
-    if (query.side) p = p.set('side', query.side);
     if (query.thirdPartyId) {
       p = p.set('thirdPartyId', query.thirdPartyId);
       if (query.thirdPartyKind !== null && query.thirdPartyKind !== undefined) {
@@ -2575,7 +2731,7 @@ export class AccountingService {
     for (const code of query.sourceCategories ?? []) {
       p = p.append('sourceCategories', code);
     }
-    return this.http.get<ApiResponse<LetteringLinesPageDto>>(`${this.base}/lettering/lines`, { params: p });
+    return p;
   }
 
   /** Détail d'un groupe de lettrage, pour le tiroir de l'écran (contrat §4.2). */

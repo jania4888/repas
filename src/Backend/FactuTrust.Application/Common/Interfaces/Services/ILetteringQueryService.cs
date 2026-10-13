@@ -14,4 +14,12 @@ public interface ILetteringQueryService
     Task<Result<LetteringLinesPageDto>> GetLinesAsync(GetLetteringLinesQuery query, CancellationToken cancellationToken = default);
 
     Task<Result<LetteringGroupDto>> GetGroupAsync(string code, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Code de lettrage actuel de chaque ligne demandée (null si la ligne est libre). Une ligne
+    /// introuvable est absente du résultat. Sert au lettrage en masse pour distinguer « déjà lettré
+    /// en un seul groupe » d'un rejet (annexe C §4).
+    /// </summary>
+    Task<IReadOnlyDictionary<Guid, string?>> GetLineCodesAsync(
+        IReadOnlyCollection<Guid> lineIds, CancellationToken cancellationToken = default);
 }

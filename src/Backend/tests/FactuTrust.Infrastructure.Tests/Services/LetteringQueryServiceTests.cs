@@ -191,6 +191,31 @@ public sealed class LetteringQueryServiceTests
 
     // ── États de lettrage ───────────────────────────────────────────────────────────────────
 
+    /// <summary>p3-12 : codes actuels des lignes ; ligne libre → null ; ligne introuvable → absente.</summary>
+    [Fact]
+    public async Task GetLineCodes_ReturnsCurrentCodes_NullWhenFree_AbsentWhenUnknown()
+    {
+        var free = SeedDebitLine(1, "4111", 100m).LineId;
+        var fullD = SeedDebitLine(2, "4111", 100m, date: new DateTime(2026, 5, 12)).LineId;
+        var fullC = SeedCreditLine(3, "4111", 100m);
+        await LetterAsync(fullD, fullC);
+        var unknown = Guid.NewGuid();
+
+        var codes = await BuildService().GetLineCodesAsync(new[] { free, fullD, fullC, unknown, free });
+
+        Assert.Equal(3, codes.Count);
+        Assert.Null(codes[free]);
+        Assert.StartsWith("L", codes[fullD]);
+        Assert.Equal(codes[fullD], codes[fullC]);
+        Assert.False(codes.ContainsKey(unknown));
+    }
+
+    [Fact]
+    public async Task GetLineCodes_EmptyInput_ReturnsEmpty()
+    {
+        Assert.Empty(await BuildService().GetLineCodesAsync(Array.Empty<Guid>()));
+    }
+
     [Fact]
     public async Task GetLines_StateFilters_Unlettered_Partial_Lettered()
     {

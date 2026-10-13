@@ -1,4 +1,5 @@
 using System.Data.Common;
+using FactuTrust.Application.Common.Interfaces;
 
 namespace FactuTrust.Infrastructure.MultiTenancy;
 
@@ -10,7 +11,7 @@ namespace FactuTrust.Infrastructure.MultiTenancy;
 /// Les services qui ouvrent leur propre transaction (audit, numérotation, périodes)
 /// doivent utiliser <see cref="ITenantDbContextFactory.CreateIsolatedContext"/>.
 /// </summary>
-public sealed class TenantAmbientTransaction
+public sealed class TenantAmbientTransaction : IAmbientTransactionState
 {
     public DbConnection? Connection { get; private set; }
     public DbTransaction? Transaction { get; private set; }

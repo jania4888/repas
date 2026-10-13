@@ -323,6 +323,40 @@ builder.Services.AddRateLimiter(options =>
             });
     });
 
+    // Propositions de lettrage (plan v2, Phase 3) : calcul borné mais coûteux (jusqu'à 5 000 lignes et
+    // un fusible de 3 s). Même partition que « ai » : par utilisateur, repli sur l'IP.
+    options.AddPolicy("accounting-suggestions", context =>
+    {
+        var userId = context.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var partitionKey = string.IsNullOrEmpty(userId)
+            ? $"ip:{context.Connection.RemoteIpAddress?.ToString() ?? "unknown"}"
+            : $"user:{userId}";
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey,
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = isDevelopment ? 300 : 30,
+                Window = TimeSpan.FromMinutes(1)
+            });
+    });
+
+    // Lettrage en masse (plan v2, Phase 3) : jusqu'à 200 groupes et 2 000 lignes par appel, une
+    // transaction Serializable par groupe. Même partition que « accounting-suggestions ».
+    options.AddPolicy("accounting-bulk", context =>
+    {
+        var userId = context.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var partitionKey = string.IsNullOrEmpty(userId)
+            ? $"ip:{context.Connection.RemoteIpAddress?.ToString() ?? "unknown"}"
+            : $"user:{userId}";
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey,
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = isDevelopment ? 100 : 10,
+                Window = TimeSpan.FromMinutes(1)
+            });
+    });
+
     options.AddPolicy("public-street-read", context =>
         RateLimitPartition.GetFixedWindowLimiter(
             context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
@@ -765,6 +799,15 @@ app.MapControllers();
         accountingSettings.BrouillardEnabled,
         accountingSettings.BankStatementLayoutParserEnabled,
         accountingSettings.BankStatementPreviewTimeoutSeconds);
+    var letteringSuggestions = accountingSettings.LetteringSuggestions.Clamped();
+    featureLogger.LogInformation(
+        "Effective feature flags: Accounting.LetteringSuggestions={LetteringSuggestionsEnabled} MaxCandidateLines={MaxCandidateLines} MaxSuggestions={MaxSuggestions} SubsetMaxSize={SubsetMaxSize} TimeFuseMilliseconds={TimeFuseMilliseconds} BulkMaxGroups={BulkMaxGroups}",
+        accountingSettings.LetteringSuggestionsEnabled,
+        letteringSuggestions.MaxCandidateLines,
+        letteringSuggestions.MaxSuggestions,
+        letteringSuggestions.SubsetMaxSize,
+        letteringSuggestions.TimeFuseMilliseconds,
+        letteringSuggestions.BulkMaxGroups);
     if (accountingSettings.BankStatementAiForAllDocumentsEnabled && !accountingSettings.BankStatementAiPostingEnabled)
     {
         featureLogger.LogWarning(

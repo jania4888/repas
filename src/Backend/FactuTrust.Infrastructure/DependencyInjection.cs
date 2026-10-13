@@ -21,6 +21,7 @@ using FactuTrust.Infrastructure.MultiTenancy;
 using FactuTrust.Infrastructure.Persistence;
 using FactuTrust.Infrastructure.Repositories;
 using FactuTrust.Infrastructure.Services;
+using FactuTrust.Infrastructure.Services.Lettering;
 using FactuTrust.Infrastructure.Services.AI;
 using FactuTrust.Infrastructure.Services.Forecasting;
 using FactuTrust.Infrastructure.Services.Forecasting.Background;
@@ -87,6 +88,8 @@ public static class DependencyInjection
 
             // Unité de travail tenant : transaction ambiante partagée par les repositories.
             services.AddScoped<TenantAmbientTransaction>();
+            // Même instance que TenantAmbientTransaction (sonde en lecture seule pour l'Application).
+            services.AddScoped<IAmbientTransactionState>(sp => sp.GetRequiredService<TenantAmbientTransaction>());
             services.AddScoped<ITenantUnitOfWork, TenantUnitOfWork>();
         }
 
@@ -351,6 +354,7 @@ public static class DependencyInjection
         services.AddScoped<IFixedAssetExportService, FixedAssetExportService>();
         services.AddScoped<ILetteringService, LetteringService>();
         services.AddScoped<ILetteringQueryService, LetteringQueryService>();
+        services.AddScoped<ILetteringSuggestionService, LetteringSuggestionService>();
         services.AddScoped<IAuditLogQueryService, AuditLogQueryService>();
         services.AddScoped<IFecExportService, FecExportService>();
         services.AddScoped<IJournalImportService, JournalImportService>();
@@ -625,6 +629,17 @@ public static class DependencyInjection
                         + "valide (au plus {MaxDigits} chiffres, classe 1 à 7). Les écritures qui "
                         + "l'utilisent seront refusées à la création du compte.",
                         key, value, FactuTrust.Domain.Services.Accounting.AccountNumberRules.MaxDigits);
+                }
+
+                // Phase 3 du lettrage : une borne dépassée est ramenée dans ses limites par
+                // LetteringSuggestionSettings.Clamped() ; on le signale sans bloquer le démarrage.
+                foreach (var (key, value, min, max) in settings.LetteringSuggestions.OutOfRangeKeys())
+                {
+                    Microsoft.Extensions.Logging.LoggerExtensions.LogWarning(
+                        logger,
+                        "Configuration comptable : LetteringSuggestions:{Key} = {Value} est hors bornes "
+                        + "[{Min} ; {Max}]. La valeur bornée sera utilisée.",
+                        key, value, min, max);
                 }
             });
 

@@ -10,6 +10,7 @@ using FactuTrust.Domain.Enums;
 using FactuTrust.Domain.ValueObjects;
 using FactuTrust.Infrastructure.MultiTenancy;
 using FactuTrust.Infrastructure.Persistence;
+using FactuTrust.Infrastructure.Services.Lettering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -50,7 +51,7 @@ public sealed class LetteringQueryService : ILetteringQueryService
     {
         await using var ctx = _contextFactory.CreateContext();
 
-        var q = BuildFilteredQuery(ctx, query);
+        var q = LetteringLinesQueryBuilder.Build(ctx, query, ShowDrafts);
 
         var totalsRow = await ComputeTotalsAsync(q, cancellationToken);
 
@@ -69,7 +70,7 @@ public sealed class LetteringQueryService : ILetteringQueryService
             .ToListAsync(cancellationToken);
 
         var lockedYears = await LetteringLockedYears.LoadAsync(ctx, cancellationToken);
-        var names = await ResolveThirdPartyNamesAsync(ctx, rawRows, cancellationToken);
+        var names = await LetteringThirdPartyNames.ResolveAsync(ctx, rawRows.Select(r => (r.ThirdPartyId, r.ThirdPartyKind)), cancellationToken);
 
         var items = rawRows.Select(r => ToDto(r, lockedYears, names)).ToList();
 
@@ -78,6 +79,20 @@ public sealed class LetteringQueryService : ILetteringQueryService
 
         var dto = new LetteringLinesPageDto(items, page, pageSize, totalCount, totalCount > items.Count, totals);
         return Result.Success(dto);
+    }
+
+    public async Task<IReadOnlyDictionary<Guid, string?>> GetLineCodesAsync(
+        IReadOnlyCollection<Guid> lineIds, CancellationToken cancellationToken = default)
+    {
+        if (lineIds.Count == 0)
+            return new Dictionary<Guid, string?>();
+
+        var ids = lineIds.Distinct().ToList();
+        await using var ctx = _contextFactory.CreateContext();
+        return await ctx.JournalEntryLines.AsNoTracking()
+            .Where(l => ids.Contains(l.Id))
+            .Select(l => new { l.Id, l.LetteringCode })
+            .ToDictionaryAsync(l => l.Id, l => l.LetteringCode, cancellationToken);
     }
 
     public async Task<Result<LetteringGroupDto>> GetGroupAsync(string code, CancellationToken cancellationToken = default)
@@ -102,7 +117,7 @@ public sealed class LetteringQueryService : ILetteringQueryService
             .ToListAsync(cancellationToken);
 
         var lockedYears = await LetteringLockedYears.LoadAsync(ctx, cancellationToken);
-        var names = await ResolveThirdPartyNamesAsync(ctx, rawRows, cancellationToken);
+        var names = await LetteringThirdPartyNames.ResolveAsync(ctx, rawRows.Select(r => (r.ThirdPartyId, r.ThirdPartyKind)), cancellationToken);
 
         var lines = rawRows
             .OrderBy(r => r.EntryDate).ThenBy(r => r.JournalCode).ThenBy(r => r.EntryNumber).ThenBy(r => r.LineNumber)
@@ -161,90 +176,6 @@ public sealed class LetteringQueryService : ILetteringQueryService
         }
 
         return "Utilisateur";
-    }
-
-    private IQueryable<JournalEntryLine> BuildFilteredQuery(Persistence.TenantDbContext ctx, GetLetteringLinesQuery query)
-    {
-        var account = (query.Account ?? string.Empty).Trim();
-        var q = ctx.JournalEntryLines.AsNoTracking().AsQueryable();
-
-        q = query.AccountMatch == LetteringAccountMatch.Prefix
-            ? q.Where(l => l.AccountNumber.StartsWith(account))
-            : q.Where(l => l.AccountNumber == account);
-
-        var from = query.From.Date;
-        var toExclusive = query.To.Date.AddDays(1);
-        q = q.Where(l => l.JournalEntry.EntryDate >= from && l.JournalEntry.EntryDate < toExclusive);
-
-        if (!ShowDrafts)
-            q = q.Where(l => l.JournalEntry.Status != JournalEntryStatus.Brouillon);
-
-        q = query.State switch
-        {
-            LetteringStateFilter.Unlettered => q.Where(l => l.LetteringCode == null || l.LetteringCode == string.Empty),
-            LetteringStateFilter.Partial => q.Where(l => l.LetteringCode != null && l.LetteringCode.StartsWith("P")),
-            LetteringStateFilter.Lettered => q.Where(l => l.LetteringCode != null && l.LetteringCode != string.Empty && !l.LetteringCode.StartsWith("P")),
-            _ => q
-        };
-
-        if (!string.IsNullOrWhiteSpace(query.JournalCode))
-        {
-            var jc = query.JournalCode.Trim().ToUpperInvariant();
-            q = q.Where(l => l.JournalEntry.JournalCode == jc);
-        }
-
-        var (sourceTypes, includeManual, includeOther) = LetteringSourceCategories.ResolveFilter(query.SourceCategories);
-        if (sourceTypes.Count > 0 || includeManual || includeOther)
-        {
-            var knownTypes = LetteringSourceCategories.KnownSourceEntityTypes;
-            q = q.Where(l =>
-                sourceTypes.Contains(l.JournalEntry.SourceEntityType!)
-                || (includeManual && l.JournalEntry.SourceEntityType == null)
-                || (includeOther && l.JournalEntry.SourceEntityType != null && !knownTypes.Contains(l.JournalEntry.SourceEntityType)));
-        }
-
-        if (query.ThirdPartyId.HasValue)
-        {
-            var tid = query.ThirdPartyId.Value;
-            var tkind = query.ThirdPartyKind!.Value;
-            q = q.Where(l => l.ThirdPartyId == tid && l.ThirdPartyKind == tkind);
-        }
-
-        q = query.Side switch
-        {
-            LetteringSideFilter.Debit => q.Where(l => l.DebitAmount.Amount > 0),
-            LetteringSideFilter.Credit => q.Where(l => l.CreditAmount.Amount > 0),
-            _ => q
-        };
-
-        if (query.MinAmount.HasValue)
-        {
-            var mn = query.MinAmount.Value;
-            q = q.Where(l => l.DebitAmount.Amount + l.CreditAmount.Amount >= mn);
-        }
-        if (query.MaxAmount.HasValue)
-        {
-            var mx = query.MaxAmount.Value;
-            q = q.Where(l => l.DebitAmount.Amount + l.CreditAmount.Amount <= mx);
-        }
-
-        if (!string.IsNullOrWhiteSpace(query.Search))
-        {
-            var term = query.Search.Trim();
-            if (int.TryParse(term, out var entryNumber))
-            {
-                q = q.Where(l => l.JournalEntry.EntryNumber == entryNumber
-                    || l.Label.Contains(term) || l.JournalEntry.Label.Contains(term)
-                    || (l.JournalEntry.PieceRef != null && l.JournalEntry.PieceRef.Contains(term)));
-            }
-            else
-            {
-                q = q.Where(l => l.Label.Contains(term) || l.JournalEntry.Label.Contains(term)
-                    || (l.JournalEntry.PieceRef != null && l.JournalEntry.PieceRef.Contains(term)));
-            }
-        }
-
-        return q;
     }
 
     private static async Task<TotalsRow?> ComputeTotalsAsync(IQueryable<JournalEntryLine> q, CancellationToken cancellationToken)
@@ -316,49 +247,6 @@ public sealed class LetteringQueryService : ILetteringQueryService
             row.TotalDebit, row.TotalCredit, row.TotalDebit - row.TotalCredit,
             row.UnletteredDebit, row.UnletteredCredit, row.UnletteredDebit - row.UnletteredCredit,
             singleForeignCurrency, totalDebitInCurrency, totalCreditInCurrency);
-    }
-
-    private static async Task<Dictionary<(ThirdPartyKind, Guid), string>> ResolveThirdPartyNamesAsync(
-        Persistence.TenantDbContext ctx, List<RawLineRow> rows, CancellationToken cancellationToken)
-    {
-        var result = new Dictionary<(ThirdPartyKind, Guid), string>();
-
-        var clientIds = rows.Where(r => r.ThirdPartyKind == ThirdPartyKind.Client && r.ThirdPartyId.HasValue)
-            .Select(r => r.ThirdPartyId!.Value).Distinct().ToList();
-        var supplierIds = rows.Where(r => r.ThirdPartyKind == ThirdPartyKind.Supplier && r.ThirdPartyId.HasValue)
-            .Select(r => r.ThirdPartyId!.Value).Distinct().ToList();
-        var employeeIds = rows.Where(r => r.ThirdPartyKind == ThirdPartyKind.Employee && r.ThirdPartyId.HasValue)
-            .Select(r => r.ThirdPartyId!.Value).Distinct().ToList();
-
-        if (clientIds.Count > 0)
-        {
-            var clients = await ctx.Clients.AsNoTracking()
-                .Where(c => clientIds.Contains(c.Id))
-                .Select(c => new { c.Id, c.Name })
-                .ToListAsync(cancellationToken);
-            foreach (var c in clients)
-                result[(ThirdPartyKind.Client, c.Id)] = c.Name;
-        }
-        if (supplierIds.Count > 0)
-        {
-            var suppliers = await ctx.Suppliers.AsNoTracking()
-                .Where(s => supplierIds.Contains(s.Id))
-                .Select(s => new { s.Id, s.Name })
-                .ToListAsync(cancellationToken);
-            foreach (var s in suppliers)
-                result[(ThirdPartyKind.Supplier, s.Id)] = s.Name;
-        }
-        if (employeeIds.Count > 0)
-        {
-            var employees = await ctx.Employees.AsNoTracking()
-                .Where(e => employeeIds.Contains(e.Id))
-                .Select(e => new { e.Id, e.FirstName, e.LastName })
-                .ToListAsync(cancellationToken);
-            foreach (var e in employees)
-                result[(ThirdPartyKind.Employee, e.Id)] = $"{e.FirstName} {e.LastName}".Trim();
-        }
-
-        return result;
     }
 
     private static LetteringLineDto ToDto(
