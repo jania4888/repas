@@ -42,7 +42,7 @@ import {
 type ImportPhase = 'idle' | 'preview' | 'extracting' | 'review' | 'error';
 
 /** Bandeau d'état de la section « Lignes d'écriture proposées » (un seul à la fois). */
-export interface LinesBanner {
+interface LinesBanner {
   kind: 'reanalyzing' | 'loading' | 'accountsLoadFailed' | 'empty' | 'blocking' | 'singleLine' | 'unbalanced';
   severity: 'error' | 'warning' | 'info';
   message: string;
@@ -275,7 +275,8 @@ export interface LinesBanner {
                        [attr.aria-busy]="reanalyzing() ? 'true' : null">
                 <header class="adi-card__header adi-lines__header">
                   <h3 id="adi-lines-title" class="adi-card__title" i18n="@@accounting.manual-entry.lignes.d.ecriture.proposees.0c7e6928">Lignes d'écriture proposées</h3>
-                  <p class="adi-lines__summary" aria-live="polite">{{ linesSummary() }}</p>
+                  <!-- Pas de aria-live : la grille annonce déjà le solde ; seul le bandeau est annoncé. -->
+                  <p class="adi-lines__summary">{{ linesSummary() }}</p>
                 </header>
                 @if (linesBanner(); as b) {
                   <div class="adi-lines-banner" [class]="'adi-lines-banner adi-lines-banner--' + b.severity"
@@ -820,11 +821,6 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
       rejectLabel: $localize`:@@accounting.accounting-document-import-dialog.ts.revenir.aux.lignes.0f53977f:Revenir aux lignes`,
       accept: () => this.emitApplied()
     });
-  }
-
-  /** Conservé pour compatibilité : même règle que `canApply`. */
-  canApplyNow(): boolean {
-    return this.canApply();
   }
 
   hasManualEdits(): boolean {

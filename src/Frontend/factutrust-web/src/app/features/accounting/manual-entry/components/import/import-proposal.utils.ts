@@ -60,7 +60,7 @@ export function buildStoreSnapshot(
   return { header, lines, periodClosed, periodsLoaded };
 }
 
-export function inferLineRole(accountNumber: string, direction: DocumentDirection): ProposedLineRole {
+function inferLineRole(accountNumber: string, direction: DocumentDirection): ProposedLineRole {
   const n = accountNumber.trim();
   if (n.startsWith('411') || n.startsWith('401')) return 'thirdparty';
   if (n.startsWith('436')) return 'vat';

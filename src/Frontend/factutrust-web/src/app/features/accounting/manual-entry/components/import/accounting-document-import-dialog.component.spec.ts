@@ -171,7 +171,7 @@ describe('AccountingDocumentImportDialogComponent', () => {
     fixture.detectChanges();
   });
 
-  it('canApplyNow is false when proposal has blocking diagnostic', () => {
+  it('canApply is false when proposal has blocking diagnostic', () => {
     component.proposal.set({
       ...sampleProposal(),
       diagnostics: [{ severity: 'blocking', code: 'PeriodClosed', message: 'Clôturé', relatedLineIndex: null }],
@@ -179,7 +179,7 @@ describe('AccountingDocumentImportDialogComponent', () => {
     });
     component.phase.set('review');
     fixture.detectChanges();
-    expect(component.canApplyNow()).toBe(false);
+    expect(component.canApply()).toBe(false);
   });
 
   it('changeDirection asks confirmation when manual edits exist', () => {
