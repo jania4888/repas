@@ -1253,6 +1253,19 @@ export const EXTRA_PAGE_ROUTES: NavSearchEntry[] = [
     keywords: ['ca ht', 'chiffre d\'affaires', 'factures et avoirs', 'revenue', 'réalisé'],
     modules: [M.Sales],
     permissionsAll: ['invoices:read']
+  },
+  {
+    // Page dédiée « Relevé bancaire → écritures » (sans rapprochement) — indexée pour la
+    // recherche globale (Ctrl+K), en plus de son entrée dans le menu Traitements.
+    id: 'accounting-bank-statement-entries',
+    label: $localize`:@@core.app-navigation.registry.ts.releve.bancaire.ecritures.426df845:Relevé bancaire → écritures`,
+    route: '/accounting/bank-statement-entries',
+    icon: 'fa-solid fa-money-bill-transfer',
+    group: 'page',
+    breadcrumb: 'Comptabilité > Relevé bancaire → écritures',
+    keywords: ['relevé', 'banque', 'import relevé', 'écritures bancaires', 'csv', 'excel'],
+    modules: [M.Accounting],
+    permissionsAll: ['accounting:create']
   }
 ];
 

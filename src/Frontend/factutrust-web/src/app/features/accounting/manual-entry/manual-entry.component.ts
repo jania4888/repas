@@ -108,6 +108,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       (importDocument)="openDocumentImport()"
       [bankStatementImportEnabled]="bankStatementImportEnabled()"
       (importBankStatement)="openBankStatementImport()"
+      (openBankStatementEntries)="openBankStatementEntries()"
       (cancelEdit)="cancelEdit()" />
 
     <app-accounting-document-import-dialog
@@ -424,6 +425,11 @@ export class ManualEntryComponent implements OnInit {
   openBankStatementImport(): void {
     if (this.store.editingLocked() || !this.bankStatementImportEnabled()) return;
     this.bankStatementImportVisible.set(true);
+  }
+
+  /** Ouvre la page dédiée « Relevé bancaire → écritures » (sans rapprochement), nouvel onglet logique. */
+  openBankStatementEntries(): void {
+    void this.router.navigate(['/accounting/bank-statement-entries']);
   }
 
   /**

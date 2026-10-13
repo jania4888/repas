@@ -71,6 +71,7 @@ export const ACCOUNTING_MODULES: AccountingModuleDef[] = [
     description: $localize`:@@core.accounting-modules.ts.saisie.import.lettrage.rapprochement.clo.0e8a5cbc:Saisie, import, lettrage, rapprochement, clôture`,
     links: [
       { id: 'acct-link--accounting-manual-entry', label: $localize`:@@core.accounting-modules.ts.saisie.manuelle.da81002e:Saisie manuelle`, route: '/accounting/manual-entry', icon: 'fa-solid fa-pen-to-square', perms: ['accounting:create'] },
+      { id: 'acct-link--accounting-bank-statement-entries', label: $localize`:@@core.accounting-modules.ts.releve.bancaire.ecritures.426df845:Relevé bancaire → écritures`, route: '/accounting/bank-statement-entries', icon: 'fa-solid fa-money-bill-transfer', perms: ['accounting:create'] },
       { id: 'acct-link--accounting-inventory-assistant', label: $localize`:@@core.accounting-modules.ts.assistant.d.inventaire.e5f0743d:Assistant d'inventaire`, route: '/accounting/inventory-assistant', icon: 'fa-solid fa-clipboard-list', perms: ['accounting:create'] },
       { id: 'acct-link--accounting-import', label: $localize`:@@core.accounting-modules.ts.reprise.import.7f18694d:Reprise (import)`, route: '/accounting/import', icon: 'fa-solid fa-file-import', perms: ['accounting:import'] },
       { id: 'acct-link--accounting-lettering', label: $localize`:@@core.accounting-modules.ts.lettrage.cfcdd333:Lettrage`, route: '/accounting/lettering', icon: 'fa-solid fa-link', perms: ['accounting:create'] },

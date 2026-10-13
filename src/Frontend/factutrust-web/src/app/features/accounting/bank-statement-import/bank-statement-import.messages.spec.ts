@@ -40,6 +40,10 @@ describe('bank-statement-import.messages', () => {
       expect(importErrorMessage('bank_statement_import.blocking_issues')).toContain('contrôles bloquants');
       expect(importErrorMessage(null)).toContain('L\'opération a échoué');
     });
+
+    it('explique le chevauchement entre lignes cochées et exclues à la génération', () => {
+      expect(importErrorMessage('bank_statement_posting.atomic_overlap')).toContain('Rechargez la page');
+    });
   });
 
   describe('sessionFailureMessage', () => {

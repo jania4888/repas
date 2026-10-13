@@ -77,6 +77,10 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                         i18n-title="@@accounting.manual-entry.importer.un.releve.bancaire.et.proposer.les.ecri.864c2618"
                         (click)="importBankStatement.emit(); importOpen = false" i18n="@@accounting.manual-entry.importer.un.releve.bancaire.pdf.image.72caac7e"> Importer un relevé bancaire (PDF / image) </button>
               }
+              <button type="button" class="dropdown-item" data-testid="open-bank-statement-entries"
+                      title="Ouvre la page dédiée d'import de relevé bancaire (CSV/Excel ou PDF/image) vers des écritures en brouillard"
+                      i18n-title="@@accounting.manual-entry.ouvre.la.page.dediee.d.import.de.releve.bancaire.adc9cd05"
+                      (click)="openBankStatementEntries.emit(); importOpen = false" i18n="@@accounting.manual-entry.releve.bancaire.ecritures.426df845"> Relevé bancaire → écritures </button>
             </div>
           }
         </div>
@@ -148,6 +152,8 @@ export class EntryToolbarComponent {
   @Output() importDocument = new EventEmitter<void>();
   /** Ouvre la modale d'import d'un relevé bancaire (écritures du journal de banque). */
   @Output() importBankStatement = new EventEmitter<void>();
+  /** Ouvre la page dédiée « Relevé bancaire → écritures » (sans rapprochement). */
+  @Output() openBankStatementEntries = new EventEmitter<void>();
   /** Fonctionnalité activée côté serveur (capacités de l'import de relevés). */
   @Input() bankStatementImportEnabled = false;
   /** Quitte le mode édition sans enregistrer (retour journal). */
