@@ -7,6 +7,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { AccountingFeatureFlagsService } from '../../shared/accounting-feature-flags.service';
 import {
   AccountingService,
+  BulkLetterGroupRequest,
   BulkLetteringResultDto,
   LetteringSuggestionTruncationReason,
   LetteringSuggestionsResultDto
@@ -14,8 +15,11 @@ import {
 import { LETTERING_ERROR_CODES, LetteringFilters } from '../models/lettering.models';
 import { LETTERING_SUGGESTIONS_MAX, LetteringSuggestion } from '../models/lettering-suggestions.models';
 import {
+  bulkAccounts,
+  bulkGroups,
   bulkLineCount,
   bulkTotalsByCurrency,
+  canAddToBulk,
   defaultBulkSelection,
   isBulkCandidate,
   mapSuggestion,
@@ -44,6 +48,25 @@ type SuggestionsOutcome = { seq: number } & (
 interface RefreshRequest {
   seq: number;
   filters: LetteringFilters;
+}
+
+/** Un lot envoyé : rejouable à l'identique (même `requestId`, mêmes groupes) après une coupure. */
+interface BulkAttempt {
+  requestId: string;
+  groups: BulkLetterGroupRequest[];
+}
+
+/**
+ * Nouvel identifiant de lot (UUID v4). `crypto.randomUUID` n'existe qu'en contexte sécurisé (HTTPS
+ * ou localhost) : sinon, même format construit avec `crypto.getRandomValues`.
+ */
+export function newBulkRequestId(): string {
+  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
 /**
@@ -86,8 +109,24 @@ export class LetteringSuggestionsStore {
 
   readonly bulkDialogOpen = signal(false);
   readonly bulkSelection = signal<ReadonlySet<string>>(new Set<string>());
-  /** Rapport du dernier lot (rempli par `runBulk`, p3-20). */
+  /** Rapport du dernier lot (rempli par `runBulk`). */
   readonly bulkResult = signal<BulkLetteringResultDto | null>(null);
+  /** Vrai pendant `POST lettering/bulk`. */
+  readonly bulkRunning = signal(false);
+  /** Message d'échec du lot entier (aucun rapport reçu). */
+  readonly bulkError = signal<string | null>(null);
+  /**
+   * Lot à rejouer après une coupure réseau, une erreur serveur (5xx) ou un 409 (même lot en cours) :
+   * le serveur renvoie le rapport en cache ou classe les groupes déjà faits « Déjà lettré ».
+   */
+  private readonly bulkRetry = signal<BulkAttempt | null>(null);
+  /**
+   * Vrai si le serveur a pu lettrer une partie du lot depuis l'ouverture du dialogue (rapport reçu,
+   * ou issue inconnue : 5xx, coupure, 409). Survit à un changement de sélection : la fermeture
+   * recharge alors les lignes, pas seulement les propositions.
+   */
+  private bulkMaybeWritten = false;
+  readonly canRetryBulk = computed(() => this.bulkRetry() !== null && !this.bulkRunning() && !this.lettering.busy());
 
   private readonly snapshot = signal<SelectionSnapshot | null>(null);
   readonly canUndoSelect = computed(() => this.snapshot() !== null);
@@ -96,6 +135,23 @@ export class LetteringSuggestionsStore {
   readonly bulkEligible = computed(() => this.suggestions().filter(isBulkCandidate));
   readonly bulkTotalsByCurrency = computed(() => bulkTotalsByCurrency(this.suggestions(), this.bulkSelection()));
   readonly bulkLineCount = computed(() => bulkLineCount(this.suggestions(), this.bulkSelection()));
+  readonly bulkAccounts = computed(() => bulkAccounts(this.suggestions(), this.bulkSelection()));
+  /** Propositions cochées encore présentes dans la liste (une clé disparue ne compte pas). */
+  readonly bulkSelectedCount = computed(() => {
+    const keys = this.bulkSelection();
+    return this.suggestions().filter(s => keys.has(s.key)).length;
+  });
+  /** Envoi possible : droit, aucune action en cours, liste à jour, au moins une proposition cochée. */
+  readonly canRunBulk = computed(
+    () =>
+      this.lettering.canCreate() &&
+      !this.bulkRunning() &&
+      this.busyKey() === null &&
+      !this.lettering.busy() &&
+      !this.pending() &&
+      this.bulkResult() === null &&
+      this.bulkSelectedCount() > 0
+  );
   readonly canValidate = computed(
     () => this.lettering.canCreate() && this.busyKey() === null && !this.lettering.busy() && !this.pending()
   );
@@ -198,26 +254,165 @@ export class LetteringSuggestionsStore {
     this.snapshot.set(null);
   }
 
+  /** Ouvre le dialogue de masse : propositions éligibles de confiance haute cochées par défaut. */
   openBulkDialog(): void {
+    if (!this.canValidate()) return;
     this.bulkSelection.set(new Set(defaultBulkSelection(this.suggestions())));
     this.bulkResult.set(null);
+    this.bulkError.set(null);
+    this.bulkRetry.set(null);
+    this.bulkMaybeWritten = false;
     this.bulkDialogOpen.set(true);
   }
 
+  /**
+   * Ferme le dialogue (refusé pendant l'envoi). Après un rapport ou une issue inconnue (une partie
+   * a pu être lettrée) : rechargement des lignes, qui recalcule les propositions. Après un refus
+   * du lot entier (400, rien n'est écrit) : recalcul des propositions seulement.
+   */
   closeBulkDialog(): void {
+    if (this.bulkRunning()) return;
     this.bulkDialogOpen.set(false);
+    const maybeWritten = this.bulkMaybeWritten;
+    const hadError = this.bulkError() !== null;
+    this.bulkResult.set(null);
+    this.bulkError.set(null);
+    this.bulkRetry.set(null);
+    this.bulkMaybeWritten = false;
+    if (maybeWritten) this.lettering.load();
+    else if (hadError) this.refresh();
   }
 
-  /** Coche ou décoche une proposition du lot ; seules les propositions éligibles sont acceptées. */
+  /**
+   * Coche ou décoche une proposition du lot. Seules les propositions éligibles sont acceptées, et
+   * seulement dans les plafonds serveur et sans ligne commune (sinon tout le lot serait refusé).
+   */
   toggleBulk(key: string): void {
-    const suggestion = this.suggestions().find(s => s.key === key);
+    if (this.bulkRunning() || this.bulkResult() !== null) return;
+    const list = this.suggestions();
+    const suggestion = list.find(s => s.key === key);
     if (!suggestion || !isBulkCandidate(suggestion)) return;
-    this.bulkSelection.update(current => {
-      const next = new Set(current);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
+    const current = this.bulkSelection();
+    if (!current.has(key) && !canAddToBulk(list, current, suggestion)) return;
+    const next = new Set(current);
+    if (next.has(key)) next.delete(key);
+    else next.add(key);
+    this.bulkSelection.set(next);
+    this.selectionChanged();
+  }
+
+  /** Coche toutes les propositions éligibles (toutes confiances), dans les plafonds. */
+  selectAllBulk(): void {
+    if (this.bulkRunning() || this.bulkResult() !== null) return;
+    this.bulkSelection.set(new Set(defaultBulkSelection(this.suggestions(), { onlyHighConfidence: false })));
+    this.selectionChanged();
+  }
+
+  clearBulkSelection(): void {
+    if (this.bulkRunning() || this.bulkResult() !== null) return;
+    this.bulkSelection.set(new Set<string>());
+    this.selectionChanged();
+  }
+
+  /** Un autre lot : le rejeu du précédent et son message d'erreur ne s'appliquent plus. */
+  private selectionChanged(): void {
+    this.bulkRetry.set(null);
+    this.bulkError.set(null);
+  }
+
+  /**
+   * Envoie le lot coché après la confirmation explicite du dialogue. Un nouvel identifiant de lot
+   * par confirmation ; un second appel pendant l'envoi est ignoré (`canRunBulk`).
+   */
+  runBulk(): void {
+    if (!this.canRunBulk()) return;
+    const groups = bulkGroups(this.suggestions(), this.bulkSelection());
+    this.sendBulk({ requestId: newBulkRequestId(), groups });
+  }
+
+  /** Rejoue exactement le dernier lot (même identifiant, mêmes groupes) après une coupure. */
+  retryBulk(): void {
+    const attempt = this.bulkRetry();
+    if (attempt === null || !this.canRetryBulk() || !this.lettering.canCreate()) return;
+    this.sendBulk(attempt);
+  }
+
+  private sendBulk(attempt: BulkAttempt): void {
+    this.bulkRunning.set(true);
+    this.bulkError.set(null);
+    this.bulkRetry.set(null);
+    this.lettering.busyAction.set('bulk');
+    this.lettering.error.set(null);
+    this.lettering.success.set(null);
+
+    this.api
+      .bulkLetter(attempt.requestId, attempt.groups)
+      .pipe(
+        finalize(() => {
+          this.bulkRunning.set(false);
+          if (this.lettering.busyAction() === 'bulk') this.lettering.busyAction.set(null);
+        })
+      )
+      .subscribe({
+        next: res => {
+          if (res.success && res.data) {
+            // Les réponses demandées avant le lot contiennent des propositions lettrées depuis.
+            this.acceptFrom = this.requestSeq + 1;
+            this.bulkMaybeWritten = true;
+            this.bulkResult.set(res.data);
+          } else {
+            this.bulkError.set(
+              res.error ?? $localize`:@@accounting.lettering.suggestions.bulk.error.generic:Le lettrage en masse a échoué.`
+            );
+          }
+        },
+        error: err => this.onBulkError(err, attempt)
+      });
+  }
+
+  private onBulkError(err: unknown, attempt: BulkAttempt): void {
+    const code = apiErrorCode(err);
+    const status = (err as { status?: number } | null)?.status ?? 0;
+    if (code === LETTERING_ERROR_CODES.featureDisabled) {
+      // Le panneau disparaît (et le dialogue avec lui) : le message va dans la bannière de l'écran.
+      this.hidden.set(true);
+      this.pending.set(false);
+      this.clear();
+      this.bulkDialogOpen.set(false);
+      this.lettering.error.set(translateLetteringError(err, '', this.errors));
+      return;
+    }
+    if (code === LETTERING_ERROR_CODES.bulkInProgress) {
+      // 409 : ce même lot tourne encore. Le rejouer plus tard renvoie son rapport.
+      this.bulkMaybeWritten = true;
+      this.bulkRetry.set(attempt);
+      this.bulkError.set(translateLetteringError(err, '', this.errors));
+      return;
+    }
+    if (status === 400) {
+      // Lot refusé en entier (plafonds serveur plus bas, proposition périmée, doublon) : rien n'a
+      // été lettré. Le rejouer à l'identique échouerait de la même façon.
+      this.bulkError.set(
+        $localize`:@@accounting.lettering.suggestions.bulk.error.rejected:Le serveur a refusé le lot entier : aucune écriture n'a été lettrée. Il dépasse peut-être les limites du dossier, ou une proposition n'est plus valable. Fermez ce dialogue, puis réessayez avec moins de propositions.`
+      );
+      return;
+    }
+    if (status === 0 || status >= 500) {
+      // Issue inconnue : une partie du lot a pu être lettrée. Le rejeu est sûr (même identifiant).
+      this.bulkMaybeWritten = true;
+      this.bulkRetry.set(attempt);
+      this.bulkError.set(
+        $localize`:@@accounting.lettering.suggestions.bulk.error.unknown:Le serveur n'a pas confirmé le lot : une partie a pu être lettrée. « Réessayer » renvoie le même lot ; une proposition déjà lettrée ne l'est pas deux fois.`
+      );
+      return;
+    }
+    this.bulkError.set(
+      translateLetteringError(
+        err,
+        $localize`:@@accounting.lettering.suggestions.bulk.error.generic:Le lettrage en masse a échoué.`,
+        this.errors
+      )
+    );
   }
 
   private letter(suggestion: LetteringSuggestion): void {

@@ -22,6 +22,7 @@ import {
   LetteringProposalsNotice,
   LetteringProposalsStripComponent
 } from './components/lettering-proposals-strip/lettering-proposals-strip.component';
+import { LetteringBulkDialogComponent } from './components/lettering-bulk-dialog/lettering-bulk-dialog.component';
 import { LetteringProposalsDrawerComponent } from './components/lettering-proposals-drawer/lettering-proposals-drawer.component';
 import { LETTERING_FUNCTIONAL_CURRENCY, LetteringSide } from './models/lettering.models';
 import { LetteringSuggestion } from './models/lettering-suggestions.models';
@@ -51,6 +52,7 @@ import { buildLetteringAnalyzePayload } from './utils/lettering-ai-payload';
     LetteringGroupDrawerComponent,
     LetteringProposalsStripComponent,
     LetteringProposalsDrawerComponent,
+    LetteringBulkDialogComponent,
     ButtonComponent
   ],
   providers: [LetteringStore, LetteringSuggestionsStore],
@@ -211,6 +213,17 @@ export class LetteringComponent implements OnInit {
   onSelectSuggestionFromDrawer(suggestion: LetteringSuggestion): void {
     this.onSelectSuggestion(suggestion);
     if (this.proposalsNotice() === 'selected') this.proposalsDrawerOpen.set(false);
+  }
+
+  /** « Lettrer en masse… » du tiroir : le tiroir se ferme, le dialogue de masse s'ouvre. */
+  onOpenBulk(): void {
+    this.proposalsDrawerOpen.set(false);
+    this.suggestions.openBulkDialog();
+  }
+
+  /** Fermeture du dialogue de masse (croix, Échap, « Annuler », « Fermer »). */
+  onBulkDialogVisibleChange(visible: boolean): void {
+    if (!visible) this.suggestions.closeBulkDialog();
   }
 
   onValidateSuggestion(suggestion: LetteringSuggestion): void {

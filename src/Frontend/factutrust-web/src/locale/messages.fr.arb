@@ -23550,7 +23550,8 @@
   "3584269125067295164": "{VAR_PLURAL, plural, =1 {ligne} other {lignes}}",
   "@3584269125067295164": {
     "x-files": [
-      "src/app/features/accounting/journal/journal.component.ts"
+      "src/app/features/accounting/journal/journal.component.ts",
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
     ],
     "x-wave": "v7"
   },
@@ -24577,6 +24578,274 @@
   "@accounting.ledger.ts.erreur.lors.de.l.export.cd90f787": {
     "x-files": [
       "src/app/features/accounting/ledger/ledger.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.title": "Lettrer en masse",
+  "@accounting.lettering.suggestions.bulk.title": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.report.summary.v2": "Lot traité. Lettrées : {$INTERPOLATION} · déjà lettrées : {$INTERPOLATION_1} · refusées : {$INTERPOLATION_2} · non traitées : {$INTERPOLATION_3}.",
+  "@accounting.lettering.suggestions.bulk.report.summary.v2": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.report.notProcessedHint": "Une partie du lot n'a pas été traitée. Fermez ce dialogue : les propositions restantes s'affichent de nouveau, et vous pouvez relancer un lot.",
+  "@accounting.lettering.suggestions.bulk.report.notProcessedHint": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.report.lettered": "Lettrées",
+  "@accounting.lettering.suggestions.bulk.report.lettered": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.report.already": "Déjà lettrées",
+  "@accounting.lettering.suggestions.bulk.report.already": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.report.rejected": "Refusées",
+  "@accounting.lettering.suggestions.bulk.report.rejected": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.report.notProcessed": "Non traitées",
+  "@accounting.lettering.suggestions.bulk.report.notProcessed": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.confirm.question.v2": "Lettrer {$INTERPOLATION} {$ICU} ({$INTERPOLATION_1} {$ICU_1}) ?",
+  "@accounting.lettering.suggestions.bulk.confirm.question.v2": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "5178920069137094996": "{VAR_PLURAL, plural, =0 {proposition} =1 {proposition} other {propositions}}",
+  "@5178920069137094996": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.confirm.transaction": "Chaque proposition est lettrée seule : un refus ne bloque pas les autres.",
+  "@accounting.lettering.suggestions.bulk.confirm.transaction": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.confirm.final": "Le lettrage est définitif : seul un délettrage, groupe par groupe, peut l'annuler.",
+  "@accounting.lettering.suggestions.bulk.confirm.final": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.intro": "Les propositions de confiance haute sont cochées. Une proposition avec un écart de change ou trop de lignes se valide seule.",
+  "@accounting.lettering.suggestions.bulk.intro": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.selectAll": "Cocher toutes les éligibles",
+  "@accounting.lettering.suggestions.bulk.selectAll": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.clear": "Tout décocher",
+  "@accounting.lettering.suggestions.bulk.clear": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.empty": "Aucune proposition.",
+  "@accounting.lettering.suggestions.bulk.empty": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.summary.count.v2": "{$INTERPOLATION} {$ICU} · {$INTERPOLATION_1} {$ICU_1}",
+  "@accounting.lettering.suggestions.bulk.summary.count.v2": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "4239899681521596931": "{VAR_PLURAL, plural, =0 {proposition cochée} =1 {proposition cochée} other {propositions cochées}}",
+  "@4239899681521596931": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.summary.totals": "Total par devise :",
+  "@accounting.lettering.suggestions.bulk.summary.totals": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.summary.accounts": "Comptes :",
+  "@accounting.lettering.suggestions.bulk.summary.accounts": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.close": "Fermer",
+  "@accounting.lettering.suggestions.bulk.close": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.back": "Retour",
+  "@accounting.lettering.suggestions.bulk.back": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.retry": "Réessayer",
+  "@accounting.lettering.suggestions.bulk.retry": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.confirm": "Confirmer le lettrage",
+  "@accounting.lettering.suggestions.bulk.confirm": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "lettering.component.rejectLabel.Annuler": "Annuler",
+  "@lettering.component.rejectLabel.Annuler": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html",
+      "src/app/features/accounting/lettering/store/lettering-suggestions.store.ts",
+      "src/app/features/accounting/lettering/store/lettering.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.next": "Continuer",
+  "@accounting.lettering.suggestions.bulk.next": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.blocked.fx": "Écart de change : à valider seule.",
+  "@accounting.lettering.suggestions.bulk.blocked.fx": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.blocked.lines": "Trop de lignes pour un lot : à valider seule.",
+  "@accounting.lettering.suggestions.bulk.blocked.lines": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.blocked.cap": "Plafond du lot atteint, ou une ligne est déjà dans le lot.",
+  "@accounting.lettering.suggestions.bulk.blocked.cap": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.blocked.other": "Non éligible au lettrage en masse.",
+  "@accounting.lettering.suggestions.bulk.blocked.other": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.rejected.alreadyLettered": "une ligne est déjà lettrée.",
+  "@accounting.lettering.suggestions.bulk.rejected.alreadyLettered": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.rejected.linesNotFound": "une ligne est introuvable.",
+  "@accounting.lettering.suggestions.bulk.rejected.linesNotFound": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.rejected.periodLocked": "la période est clôturée.",
+  "@accounting.lettering.suggestions.bulk.rejected.periodLocked": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.result.rejectedGeneric": "refusé par les contrôles du serveur.",
+  "@accounting.lettering.suggestions.bulk.result.rejectedGeneric": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.result.lettered": "Lettré {$code}",
+  "@accounting.lettering.suggestions.bulk.result.lettered": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.result.already": "Déjà lettré ({$code})",
+  "@accounting.lettering.suggestions.bulk.result.already": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.result.alreadyNoCode": "Déjà lettré",
+  "@accounting.lettering.suggestions.bulk.result.alreadyNoCode": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.result.rejected": "Refusé : {$reason}",
+  "@accounting.lettering.suggestions.bulk.result.rejected": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.result.notProcessed": "Non traité (lot interrompu)",
+  "@accounting.lettering.suggestions.bulk.result.notProcessed": {
+    "x-files": [
+      "src/app/features/accounting/lettering/components/lettering-bulk-dialog/lettering-bulk-dialog.component.ts"
     ],
     "x-wave": "v7"
   },
@@ -25740,11 +26009,24 @@
     ],
     "x-wave": "v7"
   },
-  "lettering.component.rejectLabel.Annuler": "Annuler",
-  "@lettering.component.rejectLabel.Annuler": {
+  "accounting.lettering.suggestions.bulk.error.generic": "Le lettrage en masse a échoué.",
+  "@accounting.lettering.suggestions.bulk.error.generic": {
     "x-files": [
-      "src/app/features/accounting/lettering/store/lettering-suggestions.store.ts",
-      "src/app/features/accounting/lettering/store/lettering.store.ts"
+      "src/app/features/accounting/lettering/store/lettering-suggestions.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.error.rejected": "Le serveur a refusé le lot entier : aucune écriture n'a été lettrée. Il dépasse peut-être les limites du dossier, ou une proposition n'est plus valable. Fermez ce dialogue, puis réessayez avec moins de propositions.",
+  "@accounting.lettering.suggestions.bulk.error.rejected": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering-suggestions.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.lettering.suggestions.bulk.error.unknown": "Le serveur n'a pas confirmé le lot : une partie a pu être lettrée. « Réessayer » renvoie le même lot ; une proposition déjà lettrée ne l'est pas deux fois.",
+  "@accounting.lettering.suggestions.bulk.error.unknown": {
+    "x-files": [
+      "src/app/features/accounting/lettering/store/lettering-suggestions.store.ts"
     ],
     "x-wave": "v7"
   },
