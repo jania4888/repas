@@ -132,6 +132,7 @@ export class BankStatementEntriesStore {
     this.file.set(file);
     this.fileKind.set(kind);
     this.sourceError.set(null);
+    this.tabularPreviewError.set(null);
     if (kind !== 'tabular') {
       this.mapping.set(null);
       this.tabularPreview.set(null);

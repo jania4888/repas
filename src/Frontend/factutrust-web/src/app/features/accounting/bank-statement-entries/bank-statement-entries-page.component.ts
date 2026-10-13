@@ -448,6 +448,7 @@ export class BankStatementEntriesPageComponent implements OnInit {
     if (!file) return;
     this.view.set('mapping');
     this.store.tabularPreviewLoading.set(true);
+    this.store.tabularPreviewError.set(null);
     this.api.tabularPreview(file, undefined, this.store.bankAccountId() ?? undefined)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
