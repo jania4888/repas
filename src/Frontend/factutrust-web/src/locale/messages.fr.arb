@@ -13387,14 +13387,14 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.les.pages.pagelist.fallback.94d40cd2": "L'IA n'a pas pu lire les pages {$INTERPOLATION} : elles ont été lues en secours, sans leur image. Vérifiez attentivement ces opérations. Vérifiez attentivement ces opérations.",
+  "accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.les.pages.pagelist.fallback.94d40cd2": "L'IA n'a pas pu lire les pages {$INTERPOLATION} : elles ont été lues en secours, sans leur image. Vérifiez attentivement ces opérations.",
   "@accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.les.pages.pagelist.fallback.94d40cd2": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
     ],
     "x-wave": "v7"
   },
-  "accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.la.page.fallback.0.elle.a.e.32d72468": "L'IA n'a pas pu lire la page {$INTERPOLATION} : elle a été lue en secours, sans son image. Vérifiez attentivement ces opérations. Vérifiez attentivement ces opérations.",
+  "accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.la.page.fallback.0.elle.a.e.32d72468": "L'IA n'a pas pu lire la page {$INTERPOLATION} : elle a été lue en secours, sans son image. Vérifiez attentivement ces opérations.",
   "@accounting.bank-statement-import.l.ia.n.a.pas.pu.lire.la.page.fallback.0.elle.a.e.32d72468": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"

@@ -2,7 +2,9 @@ import { expect, test, type Page, type Route } from '@playwright/test';
 import { installErpSession, settle, ERP_E2E_USER } from '../helpers/erp-session.mock';
 
 /**
- * Import de relevés bancaires — lecture IA seule (GLM-OCR), écran « 1 · Contrôle du relevé ».
+ * Import de relevés bancaires — lecture IA seule (modèle vision local, repli par le modèle texte),
+ * écran « 1 · Contrôle du relevé ». Les libellés affichés parlent de « l'IA » (ou du service
+ * d'extraction documentaire pour le fournisseur dédié), jamais du nom du modèle.
  * API simulée (aucun backend) : chaque scénario sert une session dans l'état voulu et vérifie ce
  * que l'utilisateur voit et ce que l'écran envoie au serveur.
  */
@@ -231,7 +233,7 @@ test('lecture en cours : page en cours, pastilles de pages et temps écoulé', a
   await expect(page.getByRole('button', { name: 'Enregistrer le relevé et passer aux propositions' })).toHaveCount(0);
 });
 
-test('lecture terminée : méthode GLM-OCR, pages relues par le modèle texte et opérations marquées', async ({ page }) => {
+test('lecture terminée : lecture IA, page lue en secours par le modèle texte et opérations marquées', async ({ page }) => {
   const lines = [aiLine(0, 1, 10), aiLine(1, 2, 20, 'VIREMENT FOURNISSEUR'), aiLine(2, 3, 30)];
   const done = session(
     {
@@ -253,9 +255,12 @@ test('lecture terminée : méthode GLM-OCR, pages relues par le modèle texte et
   await openReview(page, 's-done');
 
   await expect(page.getByRole('heading', { name: '1 · Contrôle du relevé' })).toBeVisible({ timeout: 30_000 });
-  await expect(page.getByText('Lu par GLM-OCR — page 2 relue par le modèle texte')).toBeVisible();
-  await expect(page.getByRole('note').filter({ hasText: 'GLM-OCR n\'a pas pu lire la page 2' })).toBeVisible();
-  await expect(page.locator('.bsr-issue', { hasText: 'Page relue par le modèle texte' })).toContainText('Page 2 ·');
+  await expect(page.getByText('Lu par l\'IA — page 2 lue en secours')).toBeVisible();
+  const fallbackNote = page.getByRole('note').filter({ hasText: 'L\'IA n\'a pas pu lire la page 2' });
+  await expect(fallbackNote).toBeVisible();
+  // La consigne de vérification n'apparaît qu'une fois (elle était doublée dans le texte source).
+  await expect(fallbackNote).toHaveText(/lue en secours, sans son image\. Vérifiez attentivement ces opérations\.$/);
+  await expect(page.locator('.bsr-issue', { hasText: 'Page lue en secours' })).toContainText('Page 2 ·');
 
   const fallbackRow = page.locator('tr', { hasText: 'VIREMENT FOURNISSEUR' });
   await expect(fallbackRow.locator('.bsr-badge--fallback')).toHaveText('modèle texte');
@@ -368,10 +373,10 @@ test('IA indisponible avant toute lecture : explication, relance et nouvelle ses
 
   await expect(page).toHaveURL(/\/accounting\/bank-statement-import\/session\/s-9/, { timeout: 15_000 });
   expect(retries).toBe(1);
-  await expect(page.getByText('Lecture des pages par GLM-OCR… page 1 sur 5 — 0 %')).toBeVisible();
+  await expect(page.getByText('Lecture des pages par l\'IA… page 1 sur 5 — 0 %')).toBeVisible();
 });
 
-test('RIB d\'un autre compte : relance complète par GLM-OCR expliquée, ou compte à créer', async ({ page }) => {
+test('RIB d\'un autre compte : relance complète par l\'IA expliquée, ou compte à créer', async ({ page }) => {
   const otherKnown = session(
     {
       id: 's-rib',
