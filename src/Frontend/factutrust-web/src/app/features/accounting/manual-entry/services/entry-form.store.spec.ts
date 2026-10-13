@@ -253,4 +253,68 @@ describe('EntryFormStore', () => {
     store.setAccounts([]);
     expect(store.getLineStatus({ ...createEmptyLine(), accountNumber: '999' })).toBe('unknown');
   });
+
+  describe('applyDocumentProposal', () => {
+  function documentProposal(lines: {
+    accountNumber: string; label: string; debit: number; credit: number; vatRatePercent: number | null;
+    thirdPartyId: string | null; thirdPartyKind: number | null; thirdPartyName?: string | null;
+  }[], thirdParty: { kind: number; matchedId: string | null; matchedName: string | null } | null = null) {
+    return {
+      journalCode: 'JA', entryDate: '2026-08-01', label: 'Facture', pieceRef: 'FAC-1', pieceDate: '2026-08-01',
+      totalDebit: 119, thirdParty, extraction: { totalHt: 100, totalVat: 19, totalTtc: 119 }, lines
+    };
+  }
+
+  function line(accountNumber: string, debit: number, credit: number, extra: Partial<{
+    vatRatePercent: number | null; thirdPartyId: string | null; thirdPartyKind: number | null; thirdPartyName: string | null;
+  }> = {}) {
+    return { accountNumber, label: accountNumber, debit, credit, vatRatePercent: null, thirdPartyId: null, thirdPartyKind: null, ...extra };
+  }
+
+    it('ne recopie jamais le taux de TVA et ne crée pas de ligne assistée', () => {
+      store.applyDocumentProposal(documentProposal([
+        line('607', 100, 0), line('43666', 19, 0, { vatRatePercent: 19 }), line('4011', 0, 119)
+      ]));
+      expect(store.lines().length).toBe(3);
+      expect(store.lines().every(l => l.vatRatePercent === null && !l.isVatGenerated && l.vatLinkId === null)).toBe(true);
+    });
+
+    it('prend le nom du tiers choisi, puis le tiers rapproché, jamais le code du type', () => {
+      store.applyDocumentProposal(documentProposal(
+        [
+          line('607', 100, 0),
+          line('4011', 0, 60, { thirdPartyId: 'sup-1', thirdPartyKind: 2 }),
+          line('4011', 0, 40, { thirdPartyId: 'sup-2', thirdPartyKind: 2, thirdPartyName: 'Beta SARL' }),
+          line('4012', 0, 19, { thirdPartyId: 'sup-3', thirdPartyKind: 2 })
+        ],
+        { kind: 2, matchedId: 'sup-1', matchedName: 'ACME' }
+      ));
+      const [, matched, chosen, unknown] = store.lines();
+      expect(matched.thirdParty).toEqual(jasmine.objectContaining({ id: 'sup-1', name: 'ACME' }));
+      expect(matched.thirdParty?.display).toContain('ACME');
+      expect(chosen.thirdParty).toEqual(jasmine.objectContaining({ id: 'sup-2', name: 'Beta SARL' }));
+      expect(chosen.thirdParty?.display).toContain('Beta SARL');
+      expect(unknown.thirdParty?.name).toBe('');
+      for (const l of store.lines().slice(1)) {
+        expect(l.thirdParty?.name).not.toBe('2');
+        expect(l.thirdParty?.display).not.toMatch(/^\s*[12]\s*$/);
+      }
+    });
+
+    it('n’attache pas d’auxiliaire sans type de tiers', () => {
+      store.applyDocumentProposal(documentProposal([line('607', 100, 0), line('4011', 0, 100, { thirdPartyId: 'sup-1' })]));
+      expect(store.lines()[1].thirdParty).toBeNull();
+    });
+
+    it('garde la date courante quand la pièce n’en a pas', () => {
+      store.entryDate.set('2026-09-30');
+      store.applyDocumentProposal({ ...documentProposal([line('607', 100, 0), line('4011', 0, 100)]), entryDate: null });
+      expect(store.entryDate()).toBe('2026-09-30');
+    });
+
+    it('complète à deux lignes minimum', () => {
+      store.applyDocumentProposal(documentProposal([line('607', 100, 0)]));
+      expect(store.lines().length).toBe(2);
+    });
+  });
 });

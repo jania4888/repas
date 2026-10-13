@@ -16,6 +16,22 @@ import { SupplierService } from '@core/services/supplier.service';
 import { ThirdPartyRef } from '../models/entry-form.model';
 import { buildDefaultVatRateOptions } from './vat-rate-fallback';
 
+/**
+ * Libellé affiché d'un tiers dans la colonne « Auxiliaire » : « Client — X » / « Fournisseur — X ».
+ * Sans nom, on retombe sur le seul type, jamais sur le code numérique.
+ */
+export function buildThirdPartyDisplay(kind: number, name: string | null | undefined): string {
+  const trimmed = (name ?? '').trim();
+  if (kind === 1) {
+    return trimmed
+      ? $localize`:@@accounting.entry-reference.ts.client.name.9124c16d:Client — ${trimmed}:name:`
+      : $localize`:@@ui.tern.client.1bdd79:Client`;
+  }
+  return trimmed
+    ? $localize`:@@accounting.entry-reference.ts.fournisseur.name.a20a36f3:Fournisseur — ${trimmed}:name:`
+    : $localize`:@@ui.tern.fournisseur.97d91d:Fournisseur`;
+}
+
 export interface AccountSuggestion {
   number: string;
   label: string;
@@ -45,11 +61,14 @@ export class EntryReferenceStore {
    */
   readonly currencies = signal<CurrencyDto[]>([]);
   readonly loading = signal(true);
+  /** Vrai quand le plan comptable n'a pas pu être chargé (erreur réseau ou réponse en échec). */
+  readonly accountsLoadFailed = signal(false);
   readonly accountSuggestions = signal<AccountSuggestion[]>([]);
   readonly thirdPartySuggestions = signal<ThirdPartyRef[]>([]);
 
   loadAll(): void {
     this.loading.set(true);
+    this.accountsLoadFailed.set(false);
     forkJoin({
       accounts: this.api.getChartOfAccounts().pipe(catchError(() => of(null))),
       periods: this.api.getPeriods().pipe(catchError(() => of(null))),
@@ -61,7 +80,11 @@ export class EntryReferenceStore {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ({ accounts, periods, journals, vatRates, banks, currencies }) => {
-          if (accounts?.success && accounts.data) this.accounts.set(accounts.data);
+          if (accounts?.success && accounts.data) {
+            this.accounts.set(accounts.data);
+          } else {
+            this.accountsLoadFailed.set(true);
+          }
           if (periods?.success && periods.data) this.periods.set(periods.data);
           if (journals?.success && journals.data) this.journals.set(journals.data);
           if (vatRates?.success && vatRates.data?.length) {
@@ -75,7 +98,10 @@ export class EntryReferenceStore {
           if (currencies?.success && currencies.data) this.currencies.set(currencies.data.filter(c => c.isActive));
           this.loading.set(false);
         },
-        error: () => this.loading.set(false)
+        error: () => {
+          this.accountsLoadFailed.set(true);
+          this.loading.set(false);
+        }
       });
   }
 
@@ -117,10 +143,10 @@ export class EntryReferenceStore {
         map(({ clients, suppliers }) => {
           const out: ThirdPartyRef[] = [];
           for (const c of clients?.data?.items ?? []) {
-            out.push({ id: c.id, kind: 1, name: c.name, display: $localize`:@@accounting.entry-reference.ts.client.name.9124c16d:Client — ${c.name}:name:` });
+            out.push({ id: c.id, kind: 1, name: c.name, display: buildThirdPartyDisplay(1, c.name) });
           }
           for (const s of suppliers?.data?.items ?? []) {
-            out.push({ id: s.id, kind: 2, name: s.name, display: $localize`:@@accounting.entry-reference.ts.fournisseur.name.a20a36f3:Fournisseur — ${s.name}:name:` });
+            out.push({ id: s.id, kind: 2, name: s.name, display: buildThirdPartyDisplay(2, s.name) });
           }
           return out;
         })

@@ -34,9 +34,9 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
   template: `
 
-    <section class="entry-header card" aria-labelledby="entry-header-title">
+    <section class="entry-header card" [attr.aria-labelledby]="idPrefix() + 'entry-header-title'">
 
-      <h2 id="entry-header-title" class="entry-header__title" i18n="@@accounting.manual-entry.informations.generales.be6ba6e5">Informations générales</h2>
+      <h2 [id]="idPrefix() + 'entry-header-title'" class="entry-header__title" i18n="@@accounting.manual-entry.informations.generales.be6ba6e5">Informations générales</h2>
 
 
 
@@ -44,9 +44,9 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
         <div class="form-field">
 
-          <label class="field-label" for="eh-journal"><ng-container i18n="@@accounting.manual-entry.journal.57d7f743">Journal </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
+          <label class="field-label" [attr.for]="idPrefix() + 'eh-journal'"><ng-container i18n="@@accounting.manual-entry.journal.57d7f743">Journal </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
 
-          <select id="eh-journal" class="me-input"
+          <select [id]="idPrefix() + 'eh-journal'" class="me-input"
                   [ngModel]="store.journalCode()" (ngModelChange)="store.journalCode.set($event)"
                   [disabled]="lockJournal() || store.editingLocked()">
 
@@ -64,9 +64,9 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
         <div class="form-field">
 
-          <label class="field-label" for="eh-date"><ng-container i18n="@@accounting.manual-entry.date.d.ecriture.1cca6f03">Date d'écriture </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
+          <label class="field-label" [attr.for]="idPrefix() + 'eh-date'"><ng-container i18n="@@accounting.manual-entry.date.d.ecriture.1cca6f03">Date d'écriture </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
 
-          <input id="eh-date" type="date" class="me-input"
+          <input [id]="idPrefix() + 'eh-date'" type="date" class="me-input"
 
                  [ngModel]="store.entryDate()" (ngModelChange)="store.setEntryDate($event)"
                  [disabled]="lockDate() || store.editingLocked()" />
@@ -83,9 +83,9 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
         <div class="form-field">
 
-          <label class="field-label" for="eh-period"><ng-container i18n="@@accounting.manual-entry.periode.de2110b7">Période </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
+          <label class="field-label" [attr.for]="idPrefix() + 'eh-period'"><ng-container i18n="@@accounting.manual-entry.periode.de2110b7">Période </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
 
-          <select id="eh-period" class="me-input"
+          <select [id]="idPrefix() + 'eh-period'" class="me-input"
 
                   [ngModel]="store.periodId()" (ngModelChange)="store.setPeriodId($event || null)"
                   [disabled]="lockDate() || store.editingLocked()">
@@ -108,9 +108,9 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
           <div class="form-field">
 
-            <label class="field-label" for="eh-currency"><ng-container i18n="@@accounting.manual-entry.devise.eb2e42c4">Devise </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
+            <label class="field-label" [attr.for]="idPrefix() + 'eh-currency'"><ng-container i18n="@@accounting.manual-entry.devise.eb2e42c4">Devise </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
 
-            <select id="eh-currency" class="me-input"
+            <select [id]="idPrefix() + 'eh-currency'" class="me-input"
                     [ngModel]="store.currency()" (ngModelChange)="onCurrencyChange($event)"
                     [disabled]="store.editingLocked()">
 
@@ -132,9 +132,9 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
           <div class="form-field">
 
-            <label class="field-label" for="eh-rate"><ng-container i18n="@@accounting.manual-entry.taux.18bc95b8">Taux </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
+            <label class="field-label" [attr.for]="idPrefix() + 'eh-rate'"><ng-container i18n="@@accounting.manual-entry.taux.18bc95b8">Taux </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
 
-            <input id="eh-rate" type="number" step="0.00001" min="0" class="me-input"
+            <input [id]="idPrefix() + 'eh-rate'" type="number" step="0.00001" min="0" class="me-input"
                    [class.me-input--locked]="!canOverrideRate()"
                    [readonly]="!canOverrideRate()"
                    [ngModel]="store.exchangeRate()" (ngModelChange)="onRateChange($event)"
@@ -158,9 +158,9 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
         <div class="form-field form-field--wide">
 
-          <label class="field-label" for="eh-label"><ng-container i18n="@@accounting.manual-entry.libelle.general.777f3fa8">Libellé général </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
+          <label class="field-label" [attr.for]="idPrefix() + 'eh-label'"><ng-container i18n="@@accounting.manual-entry.libelle.general.777f3fa8">Libellé général </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
 
-          <input id="eh-label" type="text" class="me-input" placeholder="Libellé de l'écriture" i18n-placeholder="@@accounting.manual-entry.libelle.de.l.ecriture.6852da99"
+          <input [id]="idPrefix() + 'eh-label'" type="text" class="me-input" placeholder="Libellé de l'écriture" i18n-placeholder="@@accounting.manual-entry.libelle.de.l.ecriture.6852da99"
 
                  [ngModel]="store.entryLabel()" (ngModelChange)="onLabelChange($event)" />
 
@@ -178,13 +178,13 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
           <div class="form-field">
 
-            <label class="field-label" for="eh-piece-num" i18n="@@accounting.manual-entry.n.piece.a5108f6f">N° pièce</label>
+            <label class="field-label" [attr.for]="idPrefix() + 'eh-piece-num'" i18n="@@accounting.manual-entry.n.piece.a5108f6f">N° pièce</label>
 
             @if (store.editingEntryNumber() != null) {
-              <input id="eh-piece-num" type="text" class="me-input me-input--locked" readonly
+              <input [id]="idPrefix() + 'eh-piece-num'" type="text" class="me-input me-input--locked" readonly
                      [value]="store.editingEntryNumber()" title="Numéro de pièce (figé)" i18n-title="@@accounting.manual-entry.numero.de.piece.fige.30223eb7" />
             } @else {
-              <input id="eh-piece-num" type="text" class="me-input me-input--locked" readonly
+              <input [id]="idPrefix() + 'eh-piece-num'" type="text" class="me-input me-input--locked" readonly
                      value="Attribué à l'enregistrement" title="Le numéro de pièce est généré automatiquement" i18n-title="@@accounting.manual-entry.le.numero.de.piece.est.genere.automatiquement.c670f497" />
             }
 
@@ -194,9 +194,9 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
           <div class="form-field">
 
-            <label class="field-label" for="eh-ref" i18n="@@accounting.manual-entry.reference.f8130bb0">Référence</label>
+            <label class="field-label" [attr.for]="idPrefix() + 'eh-ref'" i18n="@@accounting.manual-entry.reference.f8130bb0">Référence</label>
 
-            <input id="eh-ref" type="text" class="me-input" maxlength="50"
+            <input [id]="idPrefix() + 'eh-ref'" type="text" class="me-input" maxlength="50"
 
                    placeholder="Réf. pièce externe" i18n-placeholder="@@accounting.manual-entry.ref.piece.externe.3f3a8f49"
 
@@ -208,9 +208,9 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
           <div class="form-field">
 
-            <label class="field-label" for="eh-piece-date" i18n="@@accounting.manual-entry.date.piece.8364a00e">Date pièce</label>
+            <label class="field-label" [attr.for]="idPrefix() + 'eh-piece-date'" i18n="@@accounting.manual-entry.date.piece.8364a00e">Date pièce</label>
 
-            <input id="eh-piece-date" type="date" class="me-input"
+            <input [id]="idPrefix() + 'eh-piece-date'" type="date" class="me-input"
 
                    [ngModel]="store.pieceDate()" (ngModelChange)="store.pieceDate.set($event)" />
 
@@ -271,6 +271,8 @@ export class EntryHeaderFormComponent {
   readonly refs = inject(EntryReferenceStore);
 
   readonly compact = input(false);
+  /** Préfixe des `id` du formulaire : évite les doublons quand il est rendu dans une modale. */
+  readonly idPrefix = input('');
 
   readonly lockJournal = input(false);
 

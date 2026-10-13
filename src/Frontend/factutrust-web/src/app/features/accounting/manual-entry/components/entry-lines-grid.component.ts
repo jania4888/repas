@@ -9,16 +9,16 @@ import { VatAssistService } from '../services/vat-assist.service';
 import { EntryGridNavigationService } from '../services/entry-grid-navigation.service';
 import { BalanceIndicatorComponent } from './balance-indicator.component';
 import { AccountingAmountInputComponent } from '../../shared/accounting-amount-input.component';
-import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
+import { EntryLine, FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
 
 @Component({
   selector: 'app-entry-lines-grid',
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, AutoCompleteModule, BalanceIndicatorComponent, AccountingAmountInputComponent],
   template: `
-    <section class="lines-grid card" aria-labelledby="lines-title">
+    <section class="lines-grid card" [attr.aria-labelledby]="idPrefix() + 'lines-title'">
       <div class="lines-grid__header">
-        <h2 id="lines-title" class="lines-grid__title">{{ title() }}</h2>
+        <h2 [id]="idPrefix() + 'lines-title'" class="lines-grid__title">{{ title() }}</h2>
         @if (store.totals().debit > 0 || store.totals().credit > 0) {
           <span class="lines-grid__balance-chip"
                 [class.balanced]="store.isBalanced()"
@@ -48,6 +48,7 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
         <p-table
           [value]="store.lines()"
           dataKey="clientLineId"
+          [rowTrackBy]="trackLine"
           [scrollable]="true"
           [scrollHeight]="compactMode() ? '35vh' : '55vh'"
           styleClass="p-datatable-sm entry-lines-table">
@@ -99,6 +100,7 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
                   <p-autoComplete
                     class="me-autocomplete"
                     [(ngModel)]="line.accountNumber"
+                    (ngModelChange)="onAccountInput(i, $event)"
                     [suggestions]="accountSuggestions"
                     (completeMethod)="onFilterAccounts($event)"
                     (onSelect)="onAccountSelect($event, i)"
@@ -145,7 +147,7 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
                   [rowIndex]="i"
                   side="debit"
                   [fractionDigits]="store.currencyDecimals()"
-                  [inputId]="'debit-' + i"
+                  [inputId]="idPrefix() + 'debit-' + i"
                   [ariaLabel]="loc_ui_tern_debit_ligne_3bdc7d + (i + 1)"
                   [disabled]="!!line.isVatGenerated"
                   (amountChange)="onDebitPreview(i)"
@@ -163,7 +165,7 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
                   [rowIndex]="i"
                   side="credit"
                   [fractionDigits]="store.currencyDecimals()"
-                  [inputId]="'credit-' + i"
+                  [inputId]="idPrefix() + 'credit-' + i"
                   [ariaLabel]="loc_ui_tern_credit_ligne_05f325 + (i + 1)"
                   [disabled]="!!line.isVatGenerated"
                   (amountChange)="onCreditPreview(i)"
@@ -238,6 +240,7 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
         [currencyCode]="store.currency()"
         [amountFormat]="store.amountFormat()"
         [canAutoBalance]="store.canAutoBalance()"
+        [neutralBalancedLabel]="neutralBalancedLabel()"
         (autoBalance)="store.autoBalance()" />
     </section>
   `,
@@ -310,10 +313,20 @@ export class EntryLinesGridComponent {
 
   readonly compactMode = input(false);
   readonly hideAnalyzeSlot = input(false);
+  /** Préfixe des `id` de la grille : évite les doublons quand elle est rendue dans une modale. */
+  readonly idPrefix = input('');
+  /** Libellé d'équilibre neutre (« Écriture équilibrée »), sans l'invitation à enregistrer. */
+  readonly neutralBalancedLabel = input(false);
   readonly functionalCurrency = FUNCTIONAL_CURRENCY;
   readonly title = input($localize`:@@accounting.entry-lines-grid.ts.lignes.d.ecriture.6e207f8b:Lignes d'écriture`);
 
   accountSuggestions: AccountSuggestion[] = [];
+
+  /**
+   * Identité stable des lignes pour le rendu du tableau. `updateLine` remplace l'objet ligne :
+   * sans ce suivi par `clientLineId`, la ligne est recréée à chaque frappe et le champ perd le focus.
+   */
+  readonly trackLine = (_index: number, line: EntryLine): string => line.clientLineId;
 
   allSelected(): boolean {
     const n = this.store.lines().length;
@@ -339,6 +352,17 @@ export class EntryLinesGridComponent {
 
   onFilterAccounts(event: { query: string }): void {
     this.accountSuggestions = this.refs.filterAccounts(event.query);
+  }
+
+  /**
+   * Frappe directe d'un numéro de compte (sans choisir de suggestion) : le store doit suivre, sinon
+   * les calculs dérivés (statut du compte, contrôles) restent sur l'ancienne valeur. Une sélection
+   * arrive ici sous forme d'objet et reste traitée par `onAccountSelect`.
+   */
+  onAccountInput(index: number, value: string | AccountSuggestion | null): void {
+    if (typeof value === 'string') {
+      this.store.updateLine(index, { accountNumber: value });
+    }
   }
 
   onAccountSelect(event: { value: AccountSuggestion }, index: number): void {

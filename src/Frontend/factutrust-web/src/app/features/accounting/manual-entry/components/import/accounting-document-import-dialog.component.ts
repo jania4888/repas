@@ -4,6 +4,7 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  LOCALE_ID,
   OnChanges,
   OnDestroy,
   Output,
@@ -11,9 +12,10 @@ import {
   ViewChild,
   computed,
   inject,
-  signal
+  signal,
+  viewChild
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT, formatNumber } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DialogModule } from 'primeng/dialog';
 import { Subscription } from 'rxjs';
@@ -28,6 +30,7 @@ import {
 } from '../../models/accounting-document-import.models';
 import { ThirdPartyQuickCreateComponent } from './third-party-quick-create.component';
 import { ImportProposalEditorComponent } from './import-proposal-editor.component';
+import { submittableRowNumbers, withRowNumberPrefix } from './import-proposal.utils';
 import { AccountingDocumentPreviewComponent } from './accounting-document-preview.component';
 import {
   AcceptedDocumentPreview,
@@ -37,6 +40,13 @@ import {
 } from './accounting-document-preview.util';
 
 type ImportPhase = 'idle' | 'preview' | 'extracting' | 'review' | 'error';
+
+/** Bandeau d'état de la section « Lignes d'écriture proposées » (un seul à la fois). */
+interface LinesBanner {
+  kind: 'reanalyzing' | 'loading' | 'accountsLoadFailed' | 'empty' | 'blocking' | 'singleLine' | 'unbalanced';
+  severity: 'error' | 'warning' | 'info';
+  message: string;
+}
 
 /**
  * Import d'une facture (vente ou achat) depuis la saisie manuelle d'écritures.
@@ -54,7 +64,8 @@ type ImportPhase = 'idle' | 'preview' | 'extracting' | 'review' | 'error';
   template: `
     <p-dialog
       header="Importer une facture" i18n-header="@@accounting.manual-entry.importer.une.facture.66ed8807"
-      [(visible)]="visible"
+      [visible]="visible"
+      (visibleChange)="onDialogVisibleChange($event)"
       [modal]="true"
       [style]="{ width: dialogWidth(), maxWidth: '98vw' }"
       [contentStyle]="{ overflow: 'auto', maxHeight: 'calc(100vh - 9rem)' }"
@@ -239,20 +250,13 @@ type ImportPhase = 'idle' | 'preview' | 'extracting' | 'review' | 'error';
                 </section>
               </div>
 
-              <!-- Écriture proposée (éditable) -->
-              <section class="adi-card adi-card--editor">
-                <app-import-proposal-editor
-                  #proposalEditor
-                  [proposal]="p"
-                  (stateChange)="onEditorStateChange()" />
-              </section>
-
               <!-- Diagnostics -->
-              @if (displayDiagnostics().length > 0) {
-                <section class="adi-card">
-                  <h3 class="adi-card__title" i18n="@@accounting.manual-entry.controles.3d337f2f">Contrôles</h3>
+              @if (diagnosticsView().length > 0) {
+                <section class="adi-card adi-diagnostics-card" #diagnosticsCard tabindex="-1"
+                         aria-labelledby="adi-diagnostics-title">
+                  <h3 id="adi-diagnostics-title" class="adi-card__title" i18n="@@accounting.manual-entry.controles.3d337f2f">Contrôles</h3>
                   <ul class="adi-diagnostics">
-                    @for (d of displayDiagnostics(); track $index) {
+                    @for (d of diagnosticsView(); track $index) {
                       <li class="adi-diagnostic" [class]="'adi-diagnostic--' + d.severity">
                         <i class="pi" [class.pi-times-circle]="d.severity === 'blocking'"
                            [class.pi-exclamation-triangle]="d.severity === 'warning'"
@@ -261,12 +265,32 @@ type ImportPhase = 'idle' | 'preview' | 'extracting' | 'review' | 'error';
                       </li>
                     }
                   </ul>
-                  @if (!canApplyNow() && !reanalyzing()) {
-                    <p class="adi-apply-hint" role="status" i18n="@@accounting.manual-entry.corrigez.les.controles.bloquants.ou.equilibrez.l.df86b9f6"> Corrigez les contrôles bloquants ou équilibrez l'écriture avant d'appliquer. </p>
-                  }
                 </section>
               }
             </div>
+
+              <!-- Lignes d'écriture proposées (éditables), pleine largeur sous la relecture -->
+              <section class="adi-card adi-lines" role="region" aria-labelledby="adi-lines-title"
+                       [class.is-busy]="reanalyzing()"
+                       [attr.aria-busy]="reanalyzing() ? 'true' : null">
+                <header class="adi-card__header adi-lines__header">
+                  <h3 id="adi-lines-title" class="adi-card__title" i18n="@@accounting.manual-entry.lignes.d.ecriture.proposees.0c7e6928">Lignes d'écriture proposées</h3>
+                  <!-- Pas de aria-live : la grille annonce déjà le solde ; seul le bandeau est annoncé. -->
+                  <p class="adi-lines__summary">{{ linesSummary() }}</p>
+                </header>
+                @if (linesBanner(); as b) {
+                  <div class="adi-lines-banner" [class]="'adi-lines-banner adi-lines-banner--' + b.severity"
+                       [attr.role]="b.severity === 'error' ? 'alert' : 'status'" [attr.data-banner]="b.kind">
+                    <span>{{ b.message }}</span>
+                    @if (b.kind === 'blocking') {
+                      <button type="button" class="adi-link" (click)="focusDiagnostics()" i18n="@@accounting.manual-entry.voir.les.controles.f35eaa1e">Voir les contrôles</button>
+                    }
+                  </div>
+                }
+                <div class="adi-lines__editor" [attr.inert]="reanalyzing() ? '' : null">
+                  <app-import-proposal-editor #proposalEditor [proposal]="p" />
+                </div>
+              </section>
             </div>
           }
         }
@@ -345,9 +369,9 @@ type ImportPhase = 'idle' | 'preview' | 'extracting' | 'review' | 'error';
           </div>
         } @else if (phase() === 'review') {
           <div class="adi-footer">
-            <app-button variant="secondary" (click)="chooseFile()" ariaLabel="Analyser une autre pièce" i18n-ariaLabel="@@accounting.manual-entry.analyser.une.autre.piece.09bd4d3a" i18n="@@accounting.manual-entry.autre.piece.de18e3bf"> Autre pièce </app-button>
+            <app-button variant="secondary" (click)="chooseAnotherFile()" ariaLabel="Analyser une autre pièce" i18n-ariaLabel="@@accounting.manual-entry.analyser.une.autre.piece.09bd4d3a" i18n="@@accounting.manual-entry.autre.piece.de18e3bf"> Autre pièce </app-button>
             <app-button variant="primary" icon="pi-check" iconPos="left"
-                        [disabled]="!canApplyNow()"
+                        [disabled]="!canApply()"
                         (click)="apply()"
                         ariaLabel="Appliquer la proposition à la saisie" i18n-ariaLabel="@@accounting.manual-entry.appliquer.la.proposition.a.la.saisie.be30f406" i18n="@@accounting.manual-entry.appliquer.a.la.saisie.1da9e067"> Appliquer à la saisie </app-button>
           </div>
@@ -369,6 +393,8 @@ type ImportPhase = 'idle' | 'preview' | 'extracting' | 'review' | 'error';
     .adi-hint-warn { color:var(--color-warning); }
 
     .adi-review { display:flex; flex-direction:column; gap:var(--spacing-3); }
+    /* Aucune carte ne se laisse écraser par la hauteur maximale de la colonne qui défile. */
+    .adi-review > * { flex:none; }
     .adi-columns { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:var(--spacing-3); }
     .adi-card { border:1px solid var(--color-border-default); border-radius:var(--radius-md); padding:var(--spacing-3); background:var(--color-background-elevated); }
     .adi-card__header { display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:var(--spacing-2); }
@@ -392,19 +418,28 @@ type ImportPhase = 'idle' | 'preview' | 'extracting' | 'review' | 'error';
     .adi-badge--ok { color:var(--color-success); }
     .adi-badge--warn { color:var(--color-warning); }
 
-    .adi-card--editor { padding:0; overflow:hidden; }
-
-    .adi-apply-hint { margin:var(--spacing-2) 0 0; font-size:var(--font-size-xs); color:var(--color-text-secondary); }
-
-    .adi-table { width:100%; border-collapse:collapse; font-size:var(--font-size-sm); }
-    .adi-table th, .adi-table td { padding:var(--spacing-2); border-bottom:1px solid var(--color-border-subtle); text-align:start; vertical-align:top; }
-    .adi-table tfoot th, .adi-table tfoot td { border-bottom:none; border-top:2px solid var(--color-border-default); font-weight:600; }
-    .adi-num { text-align:end; font-variant-numeric:tabular-nums; white-space:nowrap; }
-    .adi-account-label { display:block; color:var(--color-text-tertiary); font-size:var(--font-size-xs); }
-    .adi-chip { display:inline-block; margin-inline-start:var(--spacing-1); padding:0 var(--spacing-1); border-radius:var(--radius-sm); font-size:var(--font-size-xs); }
-    .adi-chip--danger { background:var(--color-danger); color:#fff; }
-    .adi-chip--warn { background:var(--color-warning); color:#000; }
-    .adi-balanced { margin:var(--spacing-2) 0 0; font-size:var(--font-size-xs); color:var(--color-success); display:flex; align-items:center; gap:var(--spacing-2); }
+    /* Section des lignes : pleine largeur, sous l'aperçu et la colonne de relecture. */
+    .adi-lines { grid-column:1 / -1; padding:0; min-inline-size:0; }
+    .adi-lines.is-busy .adi-lines__editor { opacity:.55; }
+    .adi-lines__header { padding-inline:var(--spacing-3); padding-block-start:var(--spacing-3); }
+    .adi-lines__header .adi-card__title { margin:0; }
+    .adi-lines__summary { margin:0; font-size:var(--font-size-sm); color:var(--color-text-secondary); font-variant-numeric:tabular-nums; }
+    .adi-lines-banner {
+      display:flex; flex-wrap:wrap; align-items:center; gap:var(--spacing-2);
+      margin-block:var(--spacing-2) 0; margin-inline:var(--spacing-3);
+      padding:var(--spacing-2) var(--spacing-3);
+      border-radius:var(--radius-md); border:1px solid var(--color-border-default);
+      font-size:var(--font-size-sm);
+    }
+    .adi-lines-banner--error { color:var(--color-danger); border-color:var(--color-danger); background:var(--color-danger-subtle, transparent); }
+    .adi-lines-banner--warning { color:var(--color-warning); border-color:var(--color-warning); background:var(--color-warning-subtle, transparent); }
+    .adi-lines-banner--info { color:var(--color-text-secondary); background:var(--color-background-subtle, transparent); }
+    .adi-link {
+      border:0; background:none; padding:0; font:inherit; color:inherit;
+      text-decoration:underline; cursor:pointer;
+    }
+    .adi-link:focus-visible { outline:2px solid var(--color-primary); outline-offset:2px; }
+    .adi-diagnostics-card:focus { outline:2px solid var(--color-primary); outline-offset:2px; }
 
     .adi-diagnostics { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:var(--spacing-2); }
     .adi-diagnostic { display:flex; gap:var(--spacing-2); font-size:var(--font-size-sm); }
@@ -447,18 +482,19 @@ type ImportPhase = 'idle' | 'preview' | 'extracting' | 'review' | 'error';
     .adi-preview-pane {
       min-inline-size:0;
       min-block-size:0;
-      block-size:min(78vh, 860px);
-      max-block-size:min(78vh, 860px);
+      block-size:min(58vh, 640px);
+      max-block-size:min(58vh, 640px);
     }
     .adi-review-layout > .adi-review {
       overflow:auto;
       min-inline-size:0;
       min-block-size:0;
-      max-block-size:min(78vh, 860px);
+      max-block-size:min(58vh, 640px);
     }
     @media (max-width: 960px) {
       .adi-review-layout { grid-template-columns:minmax(0, 1fr); }
       .adi-preview-pane { block-size:40vh; max-block-size:40vh; }
+      .adi-review-layout > .adi-review { max-block-size:none; overflow:visible; }
     }
   `
 })
@@ -471,6 +507,8 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
   private readonly confirmationService = inject(ConfirmationService);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly locale = inject(LOCALE_ID);
+  private readonly document = inject(DOCUMENT);
 
   @Input() visible = false;
   @Output() visibleChange = new EventEmitter<boolean>();
@@ -479,7 +517,8 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
   @Output() applied = new EventEmitter<{ proposal: JournalEntryProposal; file: File }>();
 
   @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
-  @ViewChild('proposalEditor') proposalEditor?: ImportProposalEditorComponent;
+  @ViewChild('diagnosticsCard') diagnosticsCard?: ElementRef<HTMLElement>;
+  readonly proposalEditor = viewChild<ImportProposalEditorComponent>('proposalEditor');
 
   readonly phase = signal<ImportPhase>('idle');
   readonly errorMessage = signal('');
@@ -490,7 +529,6 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
   readonly capabilityHint = signal<string | null>(null);
   /** Nom du service d'extraction externe quand il est actif ; pilote le message d'attente. */
   readonly externalProvider = signal<string | null>(null);
-  readonly displayDiagnostics = signal<ProposalDiagnostic[]>([]);
   readonly previewKind = signal<PreviewKind | null>(null);
   readonly imageUrl = signal<string | null>(null);
   readonly pdfUrl = signal<SafeResourceUrl | null>(null);
@@ -501,6 +539,95 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
   readonly methodLabel = computed(() => {
     const p = this.proposal();
     return p ? extractionMethodLabel(p.extraction.extractionMethod) : '';
+  });
+
+  /** Proposition éditée (contrôles recalculés) ; à défaut, celle de l'analyse. */
+  readonly merged = computed<JournalEntryProposal | null>(
+    () => this.proposalEditor()?.mergedProposal() ?? this.proposal()
+  );
+  readonly displayDiagnostics = computed<ProposalDiagnostic[]>(() => this.merged()?.diagnostics ?? []);
+  readonly hasBlocking = computed(() => !!this.merged()?.hasBlockingDiagnostic);
+  readonly blockingCount = computed(() => this.displayDiagnostics().filter(d => d.severity === 'blocking').length);
+  /** Référentiels de l'éditeur chargés (plan comptable, périodes, journaux). */
+  readonly refsReady = computed(() => {
+    const editor = this.proposalEditor();
+    return !!editor && !editor.refsLoading();
+  });
+  readonly submittableCount = computed(() => this.proposalEditor()?.submittableCount() ?? 0);
+  readonly isBalanced = computed(() => this.proposalEditor()?.balanced() ?? false);
+
+  /**
+   * Appliquer : pas de réanalyse en cours, référentiels chargés, aucun contrôle bloquant et au
+   * moins une ligne exploitable. Le déséquilibre et la ligne unique n'empêchent pas d'appliquer
+   * (confirmation demandée) : l'enregistrement reste bloqué par la saisie et par le serveur.
+   */
+  readonly canApply = computed(() =>
+    !this.reanalyzing() && this.refsReady() && !this.hasBlocking() && this.submittableCount() >= 1
+  );
+  readonly needsApplyConfirmation = computed(() => !this.isBalanced() || this.submittableCount() < 2);
+
+  /** Écart débit − crédit formaté avec la devise de l'écriture. */
+  private readonly formattedGap = computed(() => {
+    const editor = this.proposalEditor();
+    if (!editor) return { gap: '', currency: '' };
+    return {
+      gap: formatNumber(Math.abs(editor.balanceGap()), this.locale, editor.amountFormat()),
+      currency: editor.currencyCode()
+    };
+  });
+
+  readonly linesSummary = computed(() => {
+    const editor = this.proposalEditor();
+    if (!editor) return '';
+    const balance = formatNumber(editor.balanceGap(), this.locale, editor.amountFormat());
+    const currency = editor.currencyCode();
+    const count = this.submittableCount();
+    const blocking = this.blockingCount();
+    return $localize`:@@accounting.accounting-document-import-dialog.ts.solde.lignes.controles.bloquants.8ac4653c:Solde : ${balance}:balance: ${currency}:currency: · Lignes : ${count}:count: · Contrôles bloquants : ${blocking}:blocking:`;
+  });
+
+  readonly linesBanner = computed<LinesBanner | null>(() => {
+    const editor = this.proposalEditor();
+    if (this.reanalyzing()) {
+      return { kind: 'reanalyzing', severity: 'info', message: $localize`:@@accounting.accounting-document-import-dialog.ts.nouvelle.analyse.de.la.piece.en.cours.1bcc66e2:Nouvelle analyse de la pièce en cours…` };
+    }
+    if (!editor) return null;
+    if (editor.refsLoading()) {
+      return { kind: 'loading', severity: 'info', message: $localize`:@@accounting.accounting-document-import-dialog.ts.chargement.du.plan.comptable.dab5c7be:Chargement du plan comptable…` };
+    }
+    if (editor.accountsLoadFailed()) {
+      return { kind: 'accountsLoadFailed', severity: 'warning', message: $localize`:@@accounting.accounting-document-import-dialog.ts.le.plan.comptable.n.a.pas.pu.etre.charge.les.con.9b6aa699:Le plan comptable n'a pas pu être chargé : les contrôles de compte affichés sont ceux de l'analyse.` };
+    }
+    const count = this.submittableCount();
+    if (count === 0) {
+      return { kind: 'empty', severity: 'error', message: $localize`:@@accounting.accounting-document-import-dialog.ts.aucune.ligne.exploitable.saisissez.au.moins.une.59fd93cb:Aucune ligne exploitable : saisissez au moins une ligne avec un compte et un montant.` };
+    }
+    if (this.hasBlocking()) {
+      const blocking = this.blockingCount();
+      return { kind: 'blocking', severity: 'error', message: $localize`:@@accounting.accounting-document-import-dialog.ts.controles.bloquants.a.corriger.f95a78fa:Contrôles bloquants à corriger : ${blocking}:count:.` };
+    }
+    if (count === 1) {
+      return { kind: 'singleLine', severity: 'warning', message: $localize`:@@accounting.accounting-document-import-dialog.ts.une.ecriture.doit.comporter.au.moins.deux.lignes.8b6547b1:Une écriture doit comporter au moins deux lignes pour être enregistrée.` };
+    }
+    if (!this.isBalanced()) {
+      const { gap, currency } = this.formattedGap();
+      return { kind: 'unbalanced', severity: 'warning', message: $localize`:@@accounting.accounting-document-import-dialog.ts.ecriture.non.equilibree.ecart.vous.pourrez.l.app.dc7ff4d1:Écriture non équilibrée (écart ${gap}:gap: ${currency}:currency:). Vous pourrez l'appliquer, mais elle ne pourra pas être enregistrée tant qu'elle n'est pas équilibrée.` };
+    }
+    return null;
+  });
+
+  /**
+   * Contrôles affichés. Ceux recalculés côté client reçoivent le préfixe « Ligne N » (rangée de la
+   * grille). Ceux conservés tels quels de l'analyse gardent leur message : leur index désigne une
+   * ligne de la proposition d'origine, qui peut ne plus correspondre à la grille éditée.
+   */
+  readonly diagnosticsView = computed<ProposalDiagnostic[]>(() => {
+    const diagnostics = this.displayDiagnostics();
+    const editor = this.proposalEditor();
+    if (!editor) return diagnostics;
+    const serverDiagnostics = new Set(this.proposal()?.diagnostics ?? []);
+    const rowNumbers = submittableRowNumbers(editor.lines());
+    return diagnostics.map(d => (serverDiagnostics.has(d) ? d : withRowNumberPrefix(d, rowNumbers)));
   });
 
   readonly dialogWidth = computed(() => {
@@ -515,12 +642,34 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
   });
 
   private currentFile: File | null = null;
+  private confirmPending = false;
   private objectUrl: string | null = null;
   private selectionSeq = 0;
   /** Sens imposé par l'utilisateur, rejoué si l'analyse est relancée. */
   private forcedDirection: DocumentDirection | undefined;
   private subscription?: Subscription;
   private timer?: ReturnType<typeof setInterval>;
+  /**
+   * Échap qui ferme une liste déroulante ouverte (compte, tiers, TVA) : la liste se ferme d'abord,
+   * puis PrimeNG voit la modale au premier plan et demande sa fermeture. On ignore cette demande.
+   */
+  private escapeClosesOverlay = false;
+  private escapeResetTimer?: ReturnType<typeof setTimeout>;
+  private readonly escapeCaptureListener = (event: KeyboardEvent): void => {
+    if (event.key !== 'Escape' || !this.visible) return;
+    const target = event.target instanceof Element ? event.target : null;
+    if (!target || !this.host.nativeElement.contains(target)) return;
+    if (target.closest('[aria-expanded="true"]')) {
+      this.escapeClosesOverlay = true;
+      clearTimeout(this.escapeResetTimer);
+      // Après la fin de la propagation de cet événement (les microtâches passeraient trop tôt).
+      this.escapeResetTimer = setTimeout(() => (this.escapeClosesOverlay = false));
+    }
+  };
+
+  constructor() {
+    this.document.addEventListener('keydown', this.escapeCaptureListener, true);
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['visible']?.currentValue === true) {
@@ -529,6 +678,8 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
   }
 
   ngOnDestroy(): void {
+    this.document.removeEventListener('keydown', this.escapeCaptureListener, true);
+    clearTimeout(this.escapeResetTimer);
     this.selectionSeq++;
     this.stopTimer();
     this.subscription?.unsubscribe();
@@ -596,7 +747,7 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
     if (!current || current.direction === direction || !this.currentFile) {
       return;
     }
-    if (this.proposalEditor?.hasManualEdits()) {
+    if (this.hasManualEdits()) {
       this.confirmDiscardEdits(() => this.reanalyzeWithDirection(direction));
       return;
     }
@@ -609,7 +760,7 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
     if (!current || !this.currentFile) {
       return;
     }
-    if (this.proposalEditor?.hasManualEdits()) {
+    if (this.hasManualEdits()) {
       this.confirmDiscardEdits(() => this.reanalyzeAfterThirdPartyCreated(current.direction));
       return;
     }
@@ -624,7 +775,6 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
     this.subscription = this.importService.propose(this.currentFile, direction).subscribe({
       next: (p) => {
         this.proposal.set(p);
-        this.displayDiagnostics.set(p.diagnostics);
         this.reanalyzing.set(false);
       },
       error: (err: Error) => {
@@ -644,7 +794,6 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
     this.subscription = this.importService.propose(this.currentFile, direction).subscribe({
       next: (p) => {
         this.proposal.set(p);
-        this.displayDiagnostics.set(p.diagnostics);
         this.reanalyzing.set(false);
       },
       error: () => this.reanalyzing.set(false)
@@ -652,44 +801,99 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
   }
 
   apply(): void {
-    const merged = this.proposalEditor?.getMergedProposal();
-    if (!merged || !this.canApplyNow() || !this.currentFile) {
+    if (this.confirmPending || !this.canApply() || !this.currentFile || !this.proposalEditor()?.mergedProposal()) {
+      return;
+    }
+    if (!this.needsApplyConfirmation()) {
+      this.emitApplied();
+      return;
+    }
+    const singleLine = this.submittableCount() < 2;
+    const { gap, currency } = this.formattedGap();
+    this.confirm({
+      header: singleLine
+        ? $localize`:@@accounting.accounting-document-import-dialog.ts.ecriture.incomplete.f2fca376:Écriture incomplète`
+        : $localize`:@@accounting.accounting-document-import-dialog.ts.ecriture.non.equilibree.9a3c79dd:Écriture non équilibrée`,
+      message: singleLine
+        ? $localize`:@@accounting.accounting-document-import-dialog.ts.l.ecriture.ne.comporte.qu.une.seule.ligne.elle.s.25e2ace1:L'écriture ne comporte qu'une seule ligne. Elle sera reportée dans la saisie, mais ne pourra pas être enregistrée tant qu'elle n'a pas au moins deux lignes. Appliquer quand même ?`
+        : $localize`:@@accounting.accounting-document-import-dialog.ts.l.ecriture.presente.un.ecart.de.elle.sera.report.9b1d7480:L'écriture présente un écart de ${gap}:gap: ${currency}:currency:. Elle sera reportée dans la saisie, mais ne pourra pas être enregistrée tant qu'elle n'est pas équilibrée. Appliquer quand même ?`,
+      acceptLabel: $localize`:@@accounting.accounting-document-import-dialog.ts.appliquer.quand.meme.36c7b8b0:Appliquer quand même`,
+      rejectLabel: $localize`:@@accounting.accounting-document-import-dialog.ts.revenir.aux.lignes.0f53977f:Revenir aux lignes`,
+      accept: () => this.emitApplied()
+    });
+  }
+
+  hasManualEdits(): boolean {
+    return this.proposalEditor()?.hasManualEdits() ?? false;
+  }
+
+  /** « Autre pièce » : confirme avant de perdre les lignes modifiées. */
+  chooseAnotherFile(): void {
+    if (this.hasManualEdits()) {
+      this.confirmDiscardEdits(() => this.chooseFile());
+      return;
+    }
+    this.chooseFile();
+  }
+
+  /**
+   * Croix et Échap : PrimeNG demande la fermeture via `visibleChange` sans se masquer lui-même.
+   * Avec des lignes modifiées, on confirme d'abord ; sinon la modale reste ouverte.
+   */
+  onDialogVisibleChange(visible: boolean): void {
+    if (visible || this.confirmPending || this.escapeClosesOverlay) {
+      return;
+    }
+    if (this.phase() === 'review' && this.hasManualEdits()) {
+      this.confirmDiscardEdits(() => this.close());
+      return;
+    }
+    this.close();
+  }
+
+  /** Donne le focus à la carte « Contrôles » (lien du bandeau des lignes). */
+  focusDiagnostics(): void {
+    const card = this.diagnosticsCard?.nativeElement;
+    if (!card) return;
+    card.scrollIntoView({ block: 'nearest' });
+    card.focus();
+  }
+
+  /** Relit la proposition fusionnée au moment d'appliquer (après une éventuelle confirmation). */
+  private emitApplied(): void {
+    const merged = this.proposalEditor()?.mergedProposal();
+    if (!merged || !this.currentFile || !this.canApply()) {
       return;
     }
     this.applied.emit({ proposal: merged, file: this.currentFile });
     this.close();
   }
 
-  canApplyNow(): boolean {
-    if (this.reanalyzing()) {
-      return false;
-    }
-    const editor = this.proposalEditor;
-    if (!editor) {
-      const p = this.proposal();
-      return !!p && !p.hasBlockingDiagnostic;
-    }
-    const merged = editor.getMergedProposal();
-    return !merged.hasBlockingDiagnostic && editor.isBalanced();
-  }
-
-  onEditorStateChange(): void {
-    const editor = this.proposalEditor;
-    if (!editor) {
-      const p = this.proposal();
-      this.displayDiagnostics.set(p?.diagnostics ?? []);
-      return;
-    }
-    this.displayDiagnostics.set(editor.getMergedProposal().diagnostics);
-  }
-
   private confirmDiscardEdits(onConfirm: () => void): void {
-    this.confirmationService.confirm({
+    this.confirm({
       message: $localize`:@@accounting.accounting-document-import-dialog.ts.vos.modifications.sur.l.ecriture.propose.61542b1a:Vos modifications sur l'écriture proposée seront perdues. Continuer ?`,
       header: $localize`:@@accounting.accounting-document-import-dialog.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@accounting-document-import-dialog.component.acceptLabel.Continuer:Continuer`,
       rejectLabel: $localize`:@@accounting-document-import-dialog.component.rejectLabel.Annuler:Annuler`,
       accept: onConfirm
+    });
+  }
+
+  /**
+   * Une seule confirmation à la fois : Échap dans la confirmation atteint aussi la modale PrimeNG,
+   * qui redemanderait sa fermeture.
+   */
+  private confirm(options: { header: string; message: string; acceptLabel: string; rejectLabel: string; accept: () => void }): void {
+    this.confirmPending = true;
+    this.confirmationService.confirm({
+      ...options,
+      accept: () => {
+        this.confirmPending = false;
+        options.accept();
+      },
+      reject: () => {
+        this.confirmPending = false;
+      }
     });
   }
 
@@ -738,7 +942,6 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
       next: (p) => {
         this.stopTimer();
         this.proposal.set(p);
-        this.displayDiagnostics.set(p.diagnostics);
         this.phase.set('review');
       },
       error: (err: Error) => {
@@ -831,7 +1034,6 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
     this.clearHeldFile();
     this.phase.set('idle');
     this.proposal.set(null);
-    this.displayDiagnostics.set([]);
     this.errorMessage.set('');
     this.rejection.set(null);
     this.reanalyzing.set(false);

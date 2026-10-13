@@ -27119,6 +27119,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.manual-entry.ecriture.equilibree.4c532ec5": "Écriture équilibrée",
+  "@accounting.manual-entry.ecriture.equilibree.4c532ec5": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/balance-indicator.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.manual-entry.ecriture.equilibree.vous.pouvez.enregistrer.45eefb66": "Écriture équilibrée — vous pouvez enregistrer",
   "@accounting.manual-entry.ecriture.equilibree.vous.pouvez.enregistrer.45eefb66": {
     "x-files": [
@@ -28669,8 +28676,15 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.manual-entry.corrigez.les.controles.bloquants.ou.equilibrez.l.df86b9f6": " Corrigez les contrôles bloquants ou équilibrez l'écriture avant d'appliquer. ",
-  "@accounting.manual-entry.corrigez.les.controles.bloquants.ou.equilibrez.l.df86b9f6": {
+  "accounting.manual-entry.lignes.d.ecriture.proposees.0c7e6928": "Lignes d'écriture proposées",
+  "@accounting.manual-entry.lignes.d.ecriture.proposees.0c7e6928": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.voir.les.controles.f35eaa1e": "Voir les contrôles",
+  "@accounting.manual-entry.voir.les.controles.f35eaa1e": {
     "x-files": [
       "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
     ],
@@ -28792,6 +28806,7 @@
   "@ui.tern.client.1bdd79": {
     "x-files": [
       "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts",
+      "src/app/features/accounting/manual-entry/services/entry-reference.store.ts",
       "src/app/features/accounting/third-parties/third-parties.component.ts"
     ],
     "x-wave": "v7"
@@ -28800,6 +28815,7 @@
   "@ui.tern.fournisseur.97d91d": {
     "x-files": [
       "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts",
+      "src/app/features/accounting/manual-entry/services/entry-reference.store.ts",
       "src/app/features/accounting/third-parties/third-parties.component.ts",
       "src/app/features/forecasting/components/prepare-po-confirm-modal/prepare-po-confirm-modal.component.ts"
     ],
@@ -28819,6 +28835,62 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.accounting-document-import-dialog.ts.solde.lignes.controles.bloquants.8ac4653c": "Solde : {$balance} {$currency} · Lignes : {$count} · Contrôles bloquants : {$blocking}",
+  "@accounting.accounting-document-import-dialog.ts.solde.lignes.controles.bloquants.8ac4653c": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-document-import-dialog.ts.nouvelle.analyse.de.la.piece.en.cours.1bcc66e2": "Nouvelle analyse de la pièce en cours…",
+  "@accounting.accounting-document-import-dialog.ts.nouvelle.analyse.de.la.piece.en.cours.1bcc66e2": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-document-import-dialog.ts.chargement.du.plan.comptable.dab5c7be": "Chargement du plan comptable…",
+  "@accounting.accounting-document-import-dialog.ts.chargement.du.plan.comptable.dab5c7be": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-document-import-dialog.ts.le.plan.comptable.n.a.pas.pu.etre.charge.les.con.9b6aa699": "Le plan comptable n'a pas pu être chargé : les contrôles de compte affichés sont ceux de l'analyse.",
+  "@accounting.accounting-document-import-dialog.ts.le.plan.comptable.n.a.pas.pu.etre.charge.les.con.9b6aa699": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-document-import-dialog.ts.aucune.ligne.exploitable.saisissez.au.moins.une.59fd93cb": "Aucune ligne exploitable : saisissez au moins une ligne avec un compte et un montant.",
+  "@accounting.accounting-document-import-dialog.ts.aucune.ligne.exploitable.saisissez.au.moins.une.59fd93cb": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-document-import-dialog.ts.controles.bloquants.a.corriger.f95a78fa": "Contrôles bloquants à corriger : {$count}.",
+  "@accounting.accounting-document-import-dialog.ts.controles.bloquants.a.corriger.f95a78fa": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-document-import-dialog.ts.une.ecriture.doit.comporter.au.moins.deux.lignes.8b6547b1": "Une écriture doit comporter au moins deux lignes pour être enregistrée.",
+  "@accounting.accounting-document-import-dialog.ts.une.ecriture.doit.comporter.au.moins.deux.lignes.8b6547b1": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-document-import-dialog.ts.ecriture.non.equilibree.ecart.vous.pourrez.l.app.dc7ff4d1": "Écriture non équilibrée (écart {$gap} {$currency}). Vous pourrez l'appliquer, mais elle ne pourra pas être enregistrée tant qu'elle n'est pas équilibrée.",
+  "@accounting.accounting-document-import-dialog.ts.ecriture.non.equilibree.ecart.vous.pourrez.l.app.dc7ff4d1": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.accounting-document-import-dialog.ts.analyse.ia.indisponible.pour.votre.compt.4c261844": "Analyse IA indisponible pour votre compte : seules les factures émises par InstaFact pourront être lues.",
   "@accounting.accounting-document-import-dialog.ts.analyse.ia.indisponible.pour.votre.compt.4c261844": {
     "x-files": [
@@ -28828,6 +28900,48 @@
   },
   "accounting.accounting-document-import-dialog.ts.le.modele.vision.d.import.visionmodel.n.5ee55a7a": "Le modèle vision d'import ({$visionModel}) n'est pas prêt sur le serveur. Les photos de factures pourraient échouer — contactez l'administrateur InstaFact.",
   "@accounting.accounting-document-import-dialog.ts.le.modele.vision.d.import.visionmodel.n.5ee55a7a": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-document-import-dialog.ts.ecriture.incomplete.f2fca376": "Écriture incomplète",
+  "@accounting.accounting-document-import-dialog.ts.ecriture.incomplete.f2fca376": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-document-import-dialog.ts.ecriture.non.equilibree.9a3c79dd": "Écriture non équilibrée",
+  "@accounting.accounting-document-import-dialog.ts.ecriture.non.equilibree.9a3c79dd": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-document-import-dialog.ts.l.ecriture.ne.comporte.qu.une.seule.ligne.elle.s.25e2ace1": "L'écriture ne comporte qu'une seule ligne. Elle sera reportée dans la saisie, mais ne pourra pas être enregistrée tant qu'elle n'a pas au moins deux lignes. Appliquer quand même ?",
+  "@accounting.accounting-document-import-dialog.ts.l.ecriture.ne.comporte.qu.une.seule.ligne.elle.s.25e2ace1": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-document-import-dialog.ts.l.ecriture.presente.un.ecart.de.elle.sera.report.9b1d7480": "L'écriture présente un écart de {$gap} {$currency}. Elle sera reportée dans la saisie, mais ne pourra pas être enregistrée tant qu'elle n'est pas équilibrée. Appliquer quand même ?",
+  "@accounting.accounting-document-import-dialog.ts.l.ecriture.presente.un.ecart.de.elle.sera.report.9b1d7480": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-document-import-dialog.ts.appliquer.quand.meme.36c7b8b0": "Appliquer quand même",
+  "@accounting.accounting-document-import-dialog.ts.appliquer.quand.meme.36c7b8b0": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-document-import-dialog.ts.revenir.aux.lignes.0f53977f": "Revenir aux lignes",
+  "@accounting.accounting-document-import-dialog.ts.revenir.aux.lignes.0f53977f": {
     "x-files": [
       "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
     ],
@@ -28952,6 +29066,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.import-proposal.ts.la.date.d.ecriture.est.obligatoire.8392af27": "La date d'écriture est obligatoire.",
+  "@accounting.import-proposal.ts.la.date.d.ecriture.est.obligatoire.8392af27": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/import-proposal.utils.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.import-proposal.ts.la.date.d.ecriture.est.posterieure.a.la.65800431": "La date d'écriture est postérieure à la date du jour.",
   "@accounting.import-proposal.ts.la.date.d.ecriture.est.posterieure.a.la.65800431": {
     "x-files": [
@@ -28975,6 +29096,13 @@
   },
   "accounting.import-proposal.ts.le.total.ttc.du.document.tofixed.differe.9c9c7662": "Le total TTC du document ({$toFixed}) diffère du total de l'écriture ({$toFixed1}).",
   "@accounting.import-proposal.ts.le.total.ttc.du.document.tofixed.differe.9c9c7662": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/import-proposal.utils.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.import-proposal.ts.ligne.dffa3808": "Ligne {$rowNumber} — {$message}",
+  "@accounting.import-proposal.ts.ligne.dffa3808": {
     "x-files": [
       "src/app/features/accounting/manual-entry/components/import/import-proposal.utils.ts"
     ],

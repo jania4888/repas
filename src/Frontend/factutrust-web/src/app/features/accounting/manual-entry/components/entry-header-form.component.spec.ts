@@ -257,4 +257,26 @@ describe('EntryHeaderFormComponent — multi-devises', () => {
       expect(cmp.store.exchangeRate()).toBe(3.3142);
     });
   });
+
+describe('EntryHeaderFormComponent — identifiants', () => {
+  it('garde les identifiants historiques sans préfixe', async () => {
+    const fixture = await build({ flagEnabled: false, currencies: [TND] });
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('#eh-date')).not.toBeNull();
+    expect(el.querySelector('label[for="eh-date"]')).not.toBeNull();
+  });
+
+  it('préfixe les identifiants et les étiquettes associées', async () => {
+    const fixture = await build({ flagEnabled: false, currencies: [TND] });
+    fixture.componentRef.setInput('idPrefix', 'ipe-');
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('#eh-date')).toBeNull();
+    expect(el.querySelector('#ipe-eh-date')).not.toBeNull();
+    expect(el.querySelector('label[for="ipe-eh-date"]')).not.toBeNull();
+    el.querySelectorAll('label[for]').forEach(label => {
+      expect(label.getAttribute('for')).toMatch(/^ipe-/);
+    });
+  });
+});
 });
