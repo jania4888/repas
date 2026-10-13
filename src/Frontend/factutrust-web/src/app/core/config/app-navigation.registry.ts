@@ -8,7 +8,9 @@ import { QUICK_ACCESS_ITEMS } from './quick-access.config';
 import { isDelegatedFirmBlockedSalesPurchasesRoute } from './firm-navigation.registry';
 import {
   filterCompanyAccountingSearchEntries,
-  isCompanyAccountingRestricted
+  isCompanyAccountingRestricted,
+  isCompanyAllowedAccountingPath,
+  isAccountingGuardedPath
 } from './company-accounting-nav.config';
 
 export type NavSubItemAction = 'returnToFirm' | 'changeDossier';
@@ -1304,8 +1306,12 @@ export function getAllNavSearchEntries(auth: AuthService): NavSearchEntry[] {
   const base = getVisibleNavSearchEntries(auth);
   const seen = new Set(base.map(e => e.route));
   const delegatedFirm = auth.isAccountingFirm() && auth.isDelegatedMode();
+  const companyRestricted = isCompanyAccountingRestricted(auth);
   for (const extra of [...EXTRA_PAGE_ROUTES, ...EXTRA_CREATE_ROUTES]) {
     if (delegatedFirm && isDelegatedFirmBlockedSalesPurchasesRoute(extra.route)) {
+      continue;
+    }
+    if (companyRestricted && isAccountingGuardedPath(extra.route) && !isCompanyAllowedAccountingPath(extra.route)) {
       continue;
     }
     if (!seen.has(extra.route) && canSeeNavEntry(auth, extra)) {
