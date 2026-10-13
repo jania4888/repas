@@ -77,4 +77,27 @@ describe('serializeLetteringFilters', () => {
     filters.accountMatch = 'prefix';
     expect(serializeLetteringFilters(filters)['match']).toBe('prefix');
   });
+
+  it('serializes the trimmed free-text search and omits a blank one', () => {
+    const filters = createDefaultLetteringFilters('2026-01-01', '2026-12-31');
+    expect(serializeLetteringFilters(filters)['search']).toBeUndefined();
+    filters.search = '   ';
+    expect(serializeLetteringFilters(filters)['search']).toBeUndefined();
+    filters.search = '  FAC-12 ';
+    expect(serializeLetteringFilters(filters)['search']).toBe('FAC-12');
+  });
+});
+
+describe('parseLetteringQueryParams — search', () => {
+  it('reads search, trimmed and capped at 100 characters (server limit)', () => {
+    expect(parseLetteringQueryParams({}).filters.search).toBeNull();
+    expect(parseLetteringQueryParams({ search: '  ' }).filters.search).toBeNull();
+    expect(parseLetteringQueryParams({ search: ' FAC-12 ' }).filters.search).toBe('FAC-12');
+    expect(parseLetteringQueryParams({ search: 'y'.repeat(250) }).filters.search?.length).toBe(100);
+  });
+
+  it('round-trips search', () => {
+    const parsed = parseLetteringQueryParams({ account: '4111', search: 'Client X' });
+    expect(serializeLetteringFilters(parsed.filters)['search']).toBe('Client X');
+  });
 });

@@ -232,6 +232,20 @@ describe('LetteringSuggestionsStore', () => {
       expect(query.minAmount).toBeUndefined();
     }));
 
+    it('transmet la recherche chargée (nettoyée), comme lettering/lines', fakeAsync(() => {
+      api.getLetteringSuggestions.and.returnValue(of(result([])));
+      lettering.loadedFilters.set({ ...lettering.filters(), search: '  FAC-12  ' });
+
+      store.refresh();
+      tick(LETTERING_SUGGESTIONS_DEBOUNCE_MS);
+      expect(api.getLetteringSuggestions.calls.mostRecent().args[0].search).toBe('FAC-12');
+
+      lettering.loadedFilters.set({ ...lettering.filters(), search: '   ' });
+      store.refresh();
+      tick(LETTERING_SUGGESTIONS_DEBOUNCE_MS);
+      expect(api.getLetteringSuggestions.calls.mostRecent().args[0].search).toBeUndefined();
+    }));
+
     it('liste périmée pendant le recalcul : « Valider » désactivé jusqu\'à la réponse', fakeAsync(() => {
       const pending = new Subject<SuggestionsResponse>();
       api.getLetteringSuggestions.and.returnValue(pending);
@@ -501,6 +515,22 @@ describe('LetteringSuggestionsStore', () => {
       expect(api.getLetteringLines).not.toHaveBeenCalled();
       expect(api.getLetteringSuggestions).toHaveBeenCalledTimes(1);
       expect(lettering.error()).toContain('équilibrée');
+    }));
+
+    it('LETTERING_PERIOD_LOCKED : message neutre, pas de rechargement de l\'écran, recalcul des propositions (plan §4.6)', fakeAsync(() => {
+      api.letterEntries.and.returnValue(throwError(() => apiError(409, 'LETTERING_PERIOD_LOCKED')));
+      api.getLetteringSuggestions.and.returnValue(of(result([])));
+      lettering.info.set('message précédent');
+
+      store.validate(store.suggestions()[0]);
+      tick(LETTERING_SUGGESTIONS_DEBOUNCE_MS);
+
+      expect(api.getLetteringLines).not.toHaveBeenCalled();
+      expect(api.getLetteringSuggestions).toHaveBeenCalledTimes(1);
+      expect(lettering.error()).toContain('période clôturée');
+      expect(lettering.error()).toContain("Rien n'a été lettré");
+      // Pas de rechargement sur ce chemin : l'ancien message d'information ne doit pas rester.
+      expect(lettering.info()).toBeNull();
     }));
 
     it('réponse 200 sans succès : affiche l\'erreur du serveur', fakeAsync(() => {

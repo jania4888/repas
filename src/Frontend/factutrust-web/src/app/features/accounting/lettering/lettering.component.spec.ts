@@ -1,3 +1,4 @@
+import { mapSuggestion } from './utils/lettering-suggestions';
 import { By } from '@angular/platform-browser';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
@@ -135,6 +136,11 @@ describe('LetteringComponent', () => {
     expect(component['store'].group()).toBeNull();
     expect(component['store'].isSelected('d1')).toBeTrue();
     expect(component['store'].isSelected('c1')).toBeTrue();
+    // Mode complétion explicite (item 6) : la bannière s'affiche ; tant qu'aucune nouvelle ligne
+    // n'est ajoutée, il n'y a rien à compléter (cible nulle, « Valider » désactivé).
+    expect(component['store'].completionGroup()?.code).toBe('P00002');
+    expect(component['store'].completionTarget()).toBeNull();
+    expect(component['store'].canComplete()).toBeFalse();
   });
 
   it('onDrawerComplete is a no-op if the code does not match the currently open group', () => {
@@ -157,29 +163,80 @@ describe('LetteringComponent', () => {
     expect(component['store'].group()).not.toBeNull();
   });
 
-  it('promptUnletterByCode normalizes (trim/uppercase) and rejects malformed codes without calling the store (M2)', async () => {
+  it('promptOpenGroupByCode normalizes (trim/uppercase) and rejects malformed codes without calling the store (M2)', async () => {
     confirmation.prompt.and.returnValue(Promise.resolve('  not-a-code  '));
     const openGroupSpy = spyOn(component, 'openGroup');
 
-    await component['promptUnletterByCode']();
+    await component['promptOpenGroupByCode']();
 
     expect(openGroupSpy).not.toHaveBeenCalled();
     expect(component['store'].error()).toContain('invalide');
   });
 
-  it('promptUnletterByCode opens the group drawer (not a direct unletter) for a well-formed code (M2)', async () => {
+  it('promptOpenGroupByCode opens the group drawer (not a direct unletter) for a well-formed code (M2)', async () => {
     confirmation.prompt.and.returnValue(Promise.resolve('  l00001  '));
     const openGroupSpy = spyOn(component, 'openGroup');
 
-    await component['promptUnletterByCode']();
+    await component['promptOpenGroupByCode']();
 
     expect(openGroupSpy).toHaveBeenCalledWith('L00001');
   });
 
-  it('promptUnletterByCode passes maxLength: 16 to the confirmation prompt (M2)', async () => {
+  it('promptOpenGroupByCode passes maxLength: 16 to the confirmation prompt (M2)', async () => {
     confirmation.prompt.and.returnValue(Promise.resolve(null));
-    await component['promptUnletterByCode']();
+    await component['promptOpenGroupByCode']();
     expect(confirmation.prompt).toHaveBeenCalledWith(jasmine.objectContaining({ maxLength: 16 }));
+  });
+
+  it('promptOpenGroupByCode is a neutral "open" prompt, not a destructive one (plan §7.6)', async () => {
+    confirmation.prompt.and.returnValue(Promise.resolve(null));
+    await component['promptOpenGroupByCode']();
+    const args = confirmation.prompt.calls.mostRecent().args[0];
+    expect(args.acceptLabel).toBe('Ouvrir');
+    expect(args.acceptButtonStyleClass).toBeUndefined();
+  });
+
+  describe('actions menu (plan §7.6)', () => {
+    const item = (prefix: string) =>
+      component.actionsMenuItems().find(i => (i.label ?? '').startsWith(prefix))!;
+
+    it('shows "Ouvrir un groupe par code…" even without the unletter permission', () => {
+      spyOn(component['store'], 'canUnletter').and.returnValue(false);
+      const open = item('Ouvrir un groupe par code');
+      expect(open).toBeDefined();
+      expect(open.visible).toBeUndefined();
+      expect(component.actionsMenuItems().some(i => (i.label ?? '').startsWith('Délettrer'))).toBeFalse();
+    });
+
+    it('enables the ledger export only for a loaded exact account', () => {
+      const store = component['store'];
+      store.loadedFilters.set(null);
+      expect(item('Exporter le grand livre').disabled).toBeTrue();
+      store.loadedFilters.set({ ...store.filters(), account: '4111', accountMatch: 'exact' });
+      expect(item('Exporter le grand livre').disabled).toBeFalse();
+      store.loadedFilters.set({ ...store.filters(), account: '4111', accountMatch: 'prefix' });
+      expect(item('Exporter le grand livre').disabled).toBeTrue();
+      // Le brouillon des filtres n'a pas d'effet : seul le dernier chargement compte.
+      store.updateFilters({ ...store.filters(), account: '' });
+      store.loadedFilters.set({ ...store.filters(), account: '4111', accountMatch: 'exact' });
+      expect(item('Exporter le grand livre').disabled).toBeFalse();
+    });
+
+    it('delegates the ledger export to the store', () => {
+      const spy = spyOn(component['store'], 'exportLedger');
+      item('Exporter le grand livre').command!();
+      expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  it('maps the account type reported by the filters to a summary label (plan §7.3)', () => {
+    expect(component.accountTypeLabel()).toBeNull();
+    component.accountType.set(1);
+    expect(component.accountTypeLabel()).toBe('Compte client');
+    component.accountType.set(2);
+    expect(component.accountTypeLabel()).toBe('Compte fournisseur');
+    component.accountType.set(99);
+    expect(component.accountTypeLabel()).toBeNull();
   });
 
   it('load() rewrites the URL only after a successful store.load() (M3)', () => {
@@ -211,6 +268,61 @@ describe('LetteringComponent', () => {
 
   describe('propositions (Phase 3)', () => {
     const suggestion = { key: 'k1', lineIds: ['d1', 'c1'] } as unknown as LetteringSuggestion;
+
+    it('payload IA : propositions ajoutées seulement si le bandeau est affiché (drapeau actif)', () => {
+      const real = mapSuggestion({
+        key: 'k1', kind: 'SameReference', category: 'Exact', score: 90, confidence: 'High',
+        accountNumber: '4111', currencyCode: 'TND', thirdPartyId: null, thirdPartyKind: 0, thirdPartyName: null,
+        debitLines: [], creditLines: [], totalAmount: 10, localGap: 0, hasExchangeDifference: false,
+        bulkEligible: true, reasons: []
+      });
+      component['suggestions'].suggestions.set([real]);
+      component['suggestions'].totalFound.set(1);
+      component['store'].loadedOnce.set(true);
+
+      const off = component.buildAnalyzePayload() as Record<string, unknown>;
+      expect(off['highlights']).toEqual([]);
+      expect('suggestionsCount' in (off['summary'] as object)).toBeFalse();
+
+      proposalsFlag.set(true);
+      const on = component.buildAnalyzePayload() as Record<string, unknown>;
+      expect((on['highlights'] as unknown[]).length).toBe(1);
+      expect((on['summary'] as Record<string, unknown>)['suggestionsCount']).toBe(1);
+    });
+
+    it('payload IA : aucune proposition si le bandeau est masqué, avant le premier chargement ou pendant un recalcul', () => {
+      const real = mapSuggestion({
+        key: 'k1', kind: 'SameReference', category: 'Exact', score: 90, confidence: 'High',
+        accountNumber: '4111', currencyCode: 'TND', thirdPartyId: null, thirdPartyKind: 0, thirdPartyName: null,
+        debitLines: [], creditLines: [], totalAmount: 10, localGap: 0, hasExchangeDifference: false,
+        bulkEligible: true, reasons: []
+      });
+      const store = component['suggestions'];
+      store.suggestions.set([real]);
+      store.totalFound.set(1);
+      proposalsFlag.set(true);
+      const hasProposals = () =>
+        'suggestionsCount' in ((component.buildAnalyzePayload() as Record<string, unknown>)['summary'] as object);
+
+      component['store'].loadedOnce.set(false);
+      expect(hasProposals()).withContext('avant le premier chargement').toBeFalse();
+
+      component['store'].loadedOnce.set(true);
+      expect(hasProposals()).withContext('bandeau affiché').toBeTrue();
+
+      store.hidden.set(true);
+      expect(hasProposals()).withContext('bandeau masqué').toBeFalse();
+      store.hidden.set(false);
+
+      store.pending.set(true);
+      expect(hasProposals()).withContext('recalcul demandé (liste périmée)').toBeFalse();
+      store.pending.set(false);
+
+      store.loading.set(true);
+      expect(hasProposals()).withContext('recalcul en cours').toBeFalse();
+      store.loading.set(false);
+      expect(hasProposals()).toBeTrue();
+    });
 
     it('« Lettrer en masse… » du tiroir : ferme le tiroir et ouvre le dialogue de masse', () => {
       const open = spyOn(component['suggestions'], 'openBulkDialog');

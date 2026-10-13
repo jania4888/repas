@@ -12,7 +12,7 @@ import {
   LetteringSuggestionTruncationReason,
   LetteringSuggestionsResultDto
 } from '../../services/accounting.service';
-import { LETTERING_ERROR_CODES, LetteringFilters } from '../models/lettering.models';
+import { LETTERING_ERROR_CODES, LETTERING_SEARCH_MAX_LENGTH, LetteringFilters } from '../models/lettering.models';
 import { LETTERING_SUGGESTIONS_MAX, LetteringSuggestion } from '../models/lettering-suggestions.models';
 import {
   bulkAccounts,
@@ -424,6 +424,7 @@ export class LetteringSuggestionsStore {
     this.lettering.busyAction.set('suggestion');
     this.lettering.error.set(null);
     this.lettering.success.set(null);
+    this.lettering.info.set(null);
 
     this.api
       .letterEntries(suggestion.lineIds, false, 'Suggestion', suggestion.key)
@@ -481,6 +482,10 @@ export class LetteringSuggestionsStore {
         thirdPartyKind: filters.thirdParty?.kind ?? undefined,
         minAmount: filters.minAmount ?? undefined,
         maxAmount: filters.maxAmount ?? undefined,
+        // Même périmètre que la liste affichée : sans la recherche, une proposition pourrait
+        // porter sur des lignes masquées par le filtre (« Sélectionner » échouerait, « Valider »
+        // lettrerait des lignes invisibles).
+        search: filters.search?.trim().slice(0, LETTERING_SEARCH_MAX_LENGTH) || undefined,
         maxResults: LETTERING_SUGGESTIONS_MAX
       })
     ).pipe(

@@ -19,9 +19,14 @@ export interface AccountingFeatureFlags {
   multiCurrencyEnabled: boolean;
   /**
    * Propositions de lettrage déterministes + lettrage en masse (Phase 3 de la refonte du
-   * lettrage). Éteint par défaut : le bandeau, le tiroir et le bouton « Propositions
-   * automatiques » ne sont pas rendus et aucun appel `lettering/suggestions` ne part. Le serveur a
-   * son propre interrupteur (`Accounting:LetteringSuggestionsEnabled`) : les deux doivent être actifs.
+   * lettrage). Éteint par défaut : le bandeau, le tiroir, le dialogue de masse et le bouton
+   * « Propositions automatiques » ne sont pas rendus, aucun appel `lettering/suggestions` ni
+   * `lettering/bulk` ne part, et le payload de l'analyse IA reste celui de la Phase 2.
+   * A basculer CONJOINTEMENT avec le drapeau back `Accounting:LetteringSuggestionsEnabled`
+   * (éteint par défaut) : drapeau front seul, le bandeau disparaît au premier appel
+   * (400 `LETTERING_FEATURE_DISABLED`) ; drapeau back seul, aucun écran n'appelle l'API.
+   * Activation pilote (par navigateur) : `localStorage['ft.accounting.featureFlags'] =
+   * '{"letteringProposals":true}'` (lu au démarrage), ou `setFlag('letteringProposals', true)`.
    */
   letteringProposals: boolean;
 }

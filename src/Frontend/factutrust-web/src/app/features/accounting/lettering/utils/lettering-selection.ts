@@ -70,7 +70,12 @@ export function sideCounts(sel: readonly LetteringLine[]): LetteringSideCounts {
  * (`ValidateLinesAsync`), mais afficher le message avant l'appel évite un aller-retour voué à
  * l'échec.
  */
-export function selectionGuards(sel: readonly LetteringLine[]): LetteringSelectionGuards {
+export function selectionGuards(
+  sel: readonly LetteringLine[],
+  /** Lignes ignorées pour le contrôle de période clôturée : membres déjà lettrés d'un groupe en
+   *  cours de complétion (ils ne sont pas renvoyés au serveur). */
+  lockIgnoredIds?: ReadonlySet<string>
+): LetteringSelectionGuards {
   const currencies = new Set(sel.map(l => l.currency));
   const accounts = new Set(sel.map(l => l.accountNumber));
   // Lignes membres d'un groupe « P » (partiel) présentes dans la sélection : une seule ⇒ la
@@ -81,7 +86,8 @@ export function selectionGuards(sel: readonly LetteringLine[]): LetteringSelecti
   return {
     mixedCurrencies: currencies.size > 1,
     multipleAccounts: accounts.size > 1,
-    partialGroupCodes: [...partialCodes]
+    partialGroupCodes: [...partialCodes],
+    lockedLines: sel.some(l => l.periodLocked && !lockIgnoredIds?.has(l.lineId))
   };
 }
 

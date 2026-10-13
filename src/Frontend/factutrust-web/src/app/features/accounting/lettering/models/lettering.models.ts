@@ -35,7 +35,12 @@ export interface LetteringFilters {
   documentType: string | null;
   minAmount: number | null;
   maxAmount: number | null;
+  /** Recherche libre (libellé, pièce, tiers), 100 caractères au plus (contrat §4.1, `search`). */
+  search: string | null;
 }
+
+/** Longueur maximale de la recherche libre, alignée sur la borne serveur de `GET lettering/lines`. */
+export const LETTERING_SEARCH_MAX_LENGTH = 100;
 
 export function createDefaultLetteringFilters(from: string, to: string): LetteringFilters {
   return {
@@ -48,7 +53,8 @@ export function createDefaultLetteringFilters(from: string, to: string): Letteri
     state: 'unlettered',
     documentType: null,
     minAmount: null,
-    maxAmount: null
+    maxAmount: null,
+    search: null
   };
 }
 
@@ -150,6 +156,10 @@ export interface LetteringSelectionGuards {
   /** Codes des groupes « P » (partiels) présents dans la sélection. Un seul code ⇒ complétion
    *  possible via l'action « Compléter » ; plusieurs ⇒ Valider doit être désactivé (ambigu). */
   partialGroupCodes: string[];
+  /** Au moins une ligne sélectionnée (hors membres déjà lettrés d'un groupe en cours de
+   *  complétion) est dans une période clôturée (D9). Défense en profondeur : les volets rendent
+   *  déjà ces lignes non cochables, et le serveur refuse `LETTERING_PERIOD_LOCKED`. */
+  lockedLines: boolean;
 }
 
 /** Codes d'erreur métier stables renvoyés par le serveur (contrat §4.6). */
