@@ -121,6 +121,8 @@ public sealed class CreateManualJournalEntryCommandHandler : IRequestHandler<Cre
     private readonly IAccountingPeriodService _periodService;
     private readonly IJournalEntryRepository _journalEntries;
     private readonly IChartOfAccountRepository _chartOfAccounts;
+    private readonly IClientRepository _clients;
+    private readonly ISupplierRepository _suppliers;
     private readonly IAuditService _auditService;
     private readonly ICurrentUser _currentUser;
     private readonly IExchangeRateResolver _exchangeRates;
@@ -130,6 +132,8 @@ public sealed class CreateManualJournalEntryCommandHandler : IRequestHandler<Cre
         IAccountingPeriodService periodService,
         IJournalEntryRepository journalEntries,
         IChartOfAccountRepository chartOfAccounts,
+        IClientRepository clients,
+        ISupplierRepository suppliers,
         IAuditService auditService,
         ICurrentUser currentUser,
         IExchangeRateResolver exchangeRates,
@@ -138,6 +142,8 @@ public sealed class CreateManualJournalEntryCommandHandler : IRequestHandler<Cre
         _periodService = periodService;
         _journalEntries = journalEntries;
         _chartOfAccounts = chartOfAccounts;
+        _clients = clients;
+        _suppliers = suppliers;
         _auditService = auditService;
         _currentUser = currentUser;
         _exchangeRates = exchangeRates;
@@ -173,6 +179,12 @@ public sealed class CreateManualJournalEntryCommandHandler : IRequestHandler<Cre
         var mapped = ManualJournalLineMapper.Map(r.Lines);
         if (mapped.IsFailure)
             return Result.Failure<Guid>(mapped.Error);
+
+        // Un tiers fourni doit exister dans le dossier : sinon la ligne porterait un auxiliaire orphelin.
+        var thirdParty = await ManualJournalThirdPartyValidator.EnsureExistAsync(
+            _clients, _suppliers, r.Lines, cancellationToken);
+        if (thirdParty.IsFailure)
+            return Result.Failure<Guid>(thirdParty.Error);
 
         // Résolution serveur du taux puis conversion : les montants en devise de tenue transmis par
         // le client sont recalculés, jamais repris tels quels.
@@ -994,6 +1006,8 @@ public sealed class UpdateDraftJournalEntryCommandHandler : IRequestHandler<Upda
 {
     private readonly IJournalEntryRepository _journalEntries;
     private readonly IChartOfAccountRepository _chartOfAccounts;
+    private readonly IClientRepository _clients;
+    private readonly ISupplierRepository _suppliers;
     private readonly IAuditService _auditService;
     private readonly ICurrentUser _currentUser;
     private readonly ILetteringService _lettering;
@@ -1004,6 +1018,8 @@ public sealed class UpdateDraftJournalEntryCommandHandler : IRequestHandler<Upda
     public UpdateDraftJournalEntryCommandHandler(
         IJournalEntryRepository journalEntries,
         IChartOfAccountRepository chartOfAccounts,
+        IClientRepository clients,
+        ISupplierRepository suppliers,
         IAuditService auditService,
         ICurrentUser currentUser,
         ILetteringService lettering,
@@ -1013,6 +1029,8 @@ public sealed class UpdateDraftJournalEntryCommandHandler : IRequestHandler<Upda
     {
         _journalEntries = journalEntries;
         _chartOfAccounts = chartOfAccounts;
+        _clients = clients;
+        _suppliers = suppliers;
         _auditService = auditService;
         _currentUser = currentUser;
         _lettering = lettering;
@@ -1043,6 +1061,12 @@ public sealed class UpdateDraftJournalEntryCommandHandler : IRequestHandler<Upda
         var mappedLines = ManualJournalLineMapper.Map(request.Request.Lines);
         if (mappedLines.IsFailure)
             return Result.Failure(mappedLines.Error);
+
+        // Un tiers fourni doit exister dans le dossier — même contrôle que la saisie manuelle.
+        var thirdParty = await ManualJournalThirdPartyValidator.EnsureExistAsync(
+            _clients, _suppliers, request.Request.Lines, cancellationToken);
+        if (thirdParty.IsFailure)
+            return Result.Failure(thirdParty.Error);
 
         // Le taux se résout sur la date de l'écriture, que la modification d'un brouillon ne change
         // pas (le champ est verrouillé en édition). Lecture hors transaction, comme le contrôle des

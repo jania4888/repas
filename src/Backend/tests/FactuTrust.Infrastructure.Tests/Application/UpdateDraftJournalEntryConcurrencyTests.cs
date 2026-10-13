@@ -129,7 +129,9 @@ public sealed class UpdateDraftJournalEntryConcurrencyTests : IDisposable
     }
 
     private static UpdateDraftJournalEntryCommandHandler BuildEditHandler(Scope scope, bool isFirm) =>
-        new(scope.JournalEntries, ChartMock().Object, new Mock<IAuditService>().Object,
+        new(scope.JournalEntries, ChartMock().Object,
+            Fakes.ExistingThirdParties.Clients().Object, Fakes.ExistingThirdParties.Suppliers().Object,
+            new Mock<IAuditService>().Object,
             new FakeCurrentUser { IsAccountingFirmDelegatedContext = isFirm },
             scope.Lettering, scope.UnitOfWork,
             new FakeExchangeRateResolver(),

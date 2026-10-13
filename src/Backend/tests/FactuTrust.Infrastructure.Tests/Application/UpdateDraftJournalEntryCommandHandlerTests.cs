@@ -133,7 +133,7 @@ public sealed class UpdateDraftJournalEntryCommandHandlerTests
         var repo = new JournalEntryRepository(factory);
         var lettering = new LetteringService(factory, new TenantAmbientTransaction());
         return new UpdateDraftJournalEntryCommandHandler(
-            repo, chart.Object, audit,
+            repo, chart.Object, ExistingThirdParties.Clients().Object, ExistingThirdParties.Suppliers().Object, audit,
             new FakeCurrentUser { IsAccountingFirmDelegatedContext = isFirm },
             lettering,
             new PassthroughTenantUnitOfWork(),
