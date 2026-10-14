@@ -3,6 +3,7 @@ using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
 using FactuTrust.Infrastructure.Accounting;
 using FactuTrust.Infrastructure.Persistence;
+using FactuTrust.Infrastructure.Tests.Fixtures;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using AuditActions = FactuTrust.Domain.Entities.AuditActions;
@@ -243,6 +244,91 @@ public sealed class MonthlyDeclarationCatalogResetTests
         Assert.Equal(PayrollContributionComponent.SalariesNetTaxableBase, css.PayrollComponent);
         Assert.Equal(PayrollContributionComponent.WithholdingIrpp, irpp.WithheldPayrollComponent);
         Assert.Equal(PayrollContributionComponent.WithholdingCss, css.WithheldPayrollComponent);
+    }
+
+    // ── Contre un vrai SQL Server ─────────────────────────────────────────────
+
+    /// <summary>
+    /// Opt-in SQL Server réel : la base mémoire ne vérifie ni les index uniques ni les
+    /// transactions, c'est-à-dire précisément ce sur quoi la pose peut échouer.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Le cas qui compte est le <b>second</b> dossier : celui qui porte déjà les 46 codes du
+    /// catalogue et dont la pose doit les supprimer puis les réinsérer <b>dans le même lot</b>. Si
+    /// EF ordonnait l'INSERT avant le DELETE, l'index unique sur <c>Code</c> ferait échouer la pose
+    /// — et la base mémoire ne le dirait jamais.
+    /// </para>
+    /// <para>
+    /// On exerce aussi l'idempotence et la chaîne d'audit sur le vrai moteur : la transaction
+    /// sérialisable et la lecture du dernier maillon n'existent que là.
+    /// </para>
+    /// </remarks>
+    [SkippableFact]
+    public async Task Une_configuration_portant_deja_les_memes_codes_est_remplacee_sur_SQL_Server()
+    {
+        using var db = new SqlTestDatabase(nameof(MonthlyDeclarationCatalogResetTests));
+        Skip.If(!db.CanRun, "SQL Server/LocalDB indisponible dans ce bac à sable.");
+
+        var options = new DbContextOptionsBuilder<TenantDbContext>()
+            .UseSqlServer(db.ConnectionString!)
+            .Options;
+
+        await using (var context = new TenantDbContext(options))
+        {
+            await context.Database.EnsureDeletedAsync();
+            await context.Database.MigrateAsync();
+        }
+
+        // Première pose : le dossier reçoit les 46 rubriques.
+        await using (var context = new TenantDbContext(options))
+        {
+            var first = await MonthlyDeclarationCatalogReset.EnsureAppliedAsync(context, Options);
+            Assert.Equal(MonthlyDeclarationCatalogResetOutcome.Applied, first.Outcome);
+        }
+
+        // Le marqueur est retiré : le dossier porte les 46 codes, et la pose doit recommencer.
+        // C'est l'état qu'aucune base mémoire ne sait mettre à l'épreuve.
+        await using (var context = new TenantDbContext(options))
+        {
+            var marker = await context.MonthlyDeclarationRubricSeedLogs
+                .SingleAsync(l => l.CatalogVersion == MonthlyDeclarationCatalogReset.ResetVersion);
+            context.MonthlyDeclarationRubricSeedLogs.Remove(marker);
+            await context.SaveChangesAsync();
+        }
+
+        await using (var context = new TenantDbContext(options))
+        {
+            var again = await MonthlyDeclarationCatalogReset.EnsureAppliedAsync(context, Options);
+            Assert.Equal(MonthlyDeclarationCatalogResetOutcome.Applied, again.Outcome);
+        }
+
+        await using (var check = new TenantDbContext(options))
+        {
+            Assert.Equal(
+                MonthlyDeclarationCatalogs.V2.Rubrics.Count,
+                await check.MonthlyDeclarationRubrics.CountAsync());
+            Assert.Equal(
+                Enum.GetValues<MonthlyDeclarationFamily>().Length,
+                await check.MonthlyDeclarationFamilySettings.CountAsync(f => f.IsIncluded));
+            // Deux poses, deux entrées d'audit, chacune enchaînée à la précédente.
+            var entries = await check.AuditLogs
+                .Where(a => a.Action == AuditActions.Accounting.MonthlyDeclarationCatalogReset)
+                .OrderBy(a => a.CreatedAt)
+                .ToListAsync();
+            Assert.Equal(2, entries.Count);
+            Assert.Equal("GENESIS", entries[0].PreviousHash);
+            Assert.Equal(entries[0].Hash, entries[1].PreviousHash);
+            // La seconde pose a remplacé une configuration : elle en porte la sauvegarde.
+            Assert.NotNull(entries[1].OldValues);
+        }
+
+        // Troisième appel, marqueur en place : rien ne bouge.
+        await using (var context = new TenantDbContext(options))
+        {
+            var idempotent = await MonthlyDeclarationCatalogReset.EnsureAppliedAsync(context, Options);
+            Assert.Equal(MonthlyDeclarationCatalogResetOutcome.AlreadyApplied, idempotent.Outcome);
+        }
     }
 
     /// <summary>
