@@ -336,8 +336,8 @@
     "reason": "Retrait du calcul cable : l'ecran Calcul DM n'a plus de carte de regime ni de rapport de parite. Seuls des textes de regime disparaissent ; aucun texte d'affichage nouveau."
   },
   "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.view-model.ts": {
-    "sha": "c146eb2a4f87610c27a08fc9b7980d36c1607853180aa1c9906bad3fd9176c3d",
-    "reason": "Retrait du calcul cable : la colonne « Regime » devient « Origine du calcul » (Historique / Parametre / tiret), et l'avancement de la migration n'a plus d'objet."
+    "sha": "1604e4e7e7faf9a0c9fd81aec4752c32272c1d950974421accad94227a601ca9",
+    "reason": "Retrait du calcul cable : la colonne « Regime » devient « Origine du calcul », et l'avancement de la migration n'a plus d'objet. Les valeurs disent « Calcul historique » / « Calcul parametre » et non « Historique » / « Parametre » : le mot seul designe ailleurs un journal d'evenements, et une traduction par texte y poserait un faux ami."
   },
   "src/app/features/accounting/monthly-declaration/dm-mode-panel.component.ts": {
     "removed": true,
