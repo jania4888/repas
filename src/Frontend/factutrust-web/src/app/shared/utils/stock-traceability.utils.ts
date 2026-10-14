@@ -66,6 +66,21 @@ export function coercePickingPolicy(raw: unknown): number {
   return PICKING_NONE;
 }
 
+export function coerceCostingMethod(raw: unknown): number {
+  if (typeof raw === 'number' && Number.isInteger(raw)) {
+    if (raw === COSTING_FIFO) return COSTING_FIFO;
+    if (raw === COSTING_LIFO) return COSTING_LIFO;
+    return COSTING_AVERAGE;
+  }
+  if (typeof raw === 'string') {
+    const value = raw.trim().toLowerCase();
+    if (value === 'fifo' || value === '1') return COSTING_FIFO;
+    if (value === 'lifo' || value === '2') return COSTING_LIFO;
+    if (value === 'average' || value === '0') return COSTING_AVERAGE;
+  }
+  return COSTING_AVERAGE;
+}
+
 export function showLotSection(
   trackingMode: unknown,
   features: StockFeatures | null
@@ -124,15 +139,16 @@ function utcCalendarDay(value: string | Date): number | null {
 /** Mirrors TrackedDocumentStockService.IsLiveTracked on the backend. */
 export function isLiveTracked(
   trackingMode: unknown,
-  costingMethod: number,
+  costingMethod: unknown,
   features: StockFeatures | null
 ): boolean {
   if (!features) return false;
   const mode = coerceTrackingMode(trackingMode);
+  const costing = coerceCostingMethod(costingMethod);
   if (mode === TRACKING_MODE_LOT && features.lotTrackingEnabled) return true;
   if (mode === TRACKING_MODE_SERIAL && features.serialTrackingEnabled) return true;
   if (
-    (costingMethod === COSTING_FIFO || costingMethod === COSTING_LIFO)
+    (costing === COSTING_FIFO || costing === COSTING_LIFO)
     && features.fifoLifoValuationEnabled
   ) {
     return true;

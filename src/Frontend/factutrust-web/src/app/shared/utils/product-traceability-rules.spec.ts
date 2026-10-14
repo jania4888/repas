@@ -1,6 +1,8 @@
 import { StockFeatures } from '@core/services/stock.service';
 import {
+  COSTING_AVERAGE,
   COSTING_FIFO,
+  COSTING_LIFO,
   PICKING_FEFO,
   PICKING_NONE,
   TRACKING_MODE_LOT,
@@ -9,6 +11,7 @@ import {
 } from './stock-traceability.utils';
 import {
   DEFAULT_TRACEABILITY_STATE,
+  formatCostingMethodLabel,
   getCostingMethodOptions,
   getPickingPolicyOptions,
   getTrackingModeOptions,
@@ -117,6 +120,39 @@ describe('product-traceability-rules', () => {
   it('isTraceabilityEditable requires product and stock', () => {
     expect(isTraceabilityEditable('Produit', true)).toBe(true);
     expect(isTraceabilityEditable('Produit', false)).toBe(false);
+  });
+
+  // Régression : l'API renvoie les énums en chaînes PascalCase (JsonStringEnumConverter).
+  // Une chaîne 'Fifo' non coercée retombait en CMUP et corrompait la fiche au ré-enregistrement.
+  it('preserves FIFO when costing arrives as an API PascalCase string', () => {
+    const result = normalizeTraceabilityForm(
+      {
+        category: 'Produit',
+        isStockManaged: true,
+        trackingMode: TRACKING_MODE_NONE,
+        hasExpiryTracking: false,
+        pickingPolicy: PICKING_NONE,
+        costingMethod: 'Fifo' as unknown as number,
+        expiryAlertDays: null
+      },
+      allFeatures
+    );
+    expect(result.state.costingMethod).toBe(COSTING_FIFO);
+  });
+
+  it('locks CMUP in edit mode when original was the FIFO API string', () => {
+    const opts = getCostingMethodOptions(allFeatures, true, 'Fifo' as unknown as number);
+    const cmup = opts.find(o => o.value === 0);
+    expect(cmup?.disabled).toBe(true);
+  });
+
+  it('labels costing methods from both numbers and API strings', () => {
+    expect(formatCostingMethodLabel(COSTING_FIFO)).toBe('FIFO');
+    expect(formatCostingMethodLabel(COSTING_LIFO)).toBe('LIFO');
+    expect(formatCostingMethodLabel(COSTING_AVERAGE)).toBe('CMUP');
+    expect(formatCostingMethodLabel('Fifo')).toBe('FIFO');
+    expect(formatCostingMethodLabel('Lifo')).toBe('LIFO');
+    expect(formatCostingMethodLabel('Average')).toBe('CMUP');
   });
 
   it('resets picking when tracking mode is none', () => {

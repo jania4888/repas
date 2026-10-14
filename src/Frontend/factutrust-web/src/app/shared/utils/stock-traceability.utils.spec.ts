@@ -10,6 +10,7 @@ import {
   TRACKING_MODE_LOT,
   TRACKING_MODE_NONE,
   TRACKING_MODE_SERIAL,
+  coerceCostingMethod,
   coercePickingPolicy,
   coerceTrackingMode,
   entryAllocationsValid,
@@ -101,6 +102,38 @@ describe('coercePickingPolicy', () => {
   });
 });
 
+describe('coerceCostingMethod', () => {
+  it('keeps numeric costing method values', () => {
+    expect(coerceCostingMethod(COSTING_AVERAGE)).toBe(COSTING_AVERAGE);
+    expect(coerceCostingMethod(COSTING_FIFO)).toBe(COSTING_FIFO);
+    expect(coerceCostingMethod(COSTING_LIFO)).toBe(COSTING_LIFO);
+  });
+
+  it('maps API PascalCase strings from JsonStringEnumConverter', () => {
+    expect(coerceCostingMethod('Average')).toBe(COSTING_AVERAGE);
+    expect(coerceCostingMethod('Fifo')).toBe(COSTING_FIFO);
+    expect(coerceCostingMethod('Lifo')).toBe(COSTING_LIFO);
+  });
+
+  it('is case-insensitive', () => {
+    expect(coerceCostingMethod('FIFO')).toBe(COSTING_FIFO);
+    expect(coerceCostingMethod('lifo')).toBe(COSTING_LIFO);
+  });
+
+  it('maps numeric strings', () => {
+    expect(coerceCostingMethod('0')).toBe(COSTING_AVERAGE);
+    expect(coerceCostingMethod('1')).toBe(COSTING_FIFO);
+    expect(coerceCostingMethod('2')).toBe(COSTING_LIFO);
+  });
+
+  it('returns average for unknown values', () => {
+    expect(coerceCostingMethod(undefined)).toBe(COSTING_AVERAGE);
+    expect(coerceCostingMethod(null)).toBe(COSTING_AVERAGE);
+    expect(coerceCostingMethod('garbage')).toBe(COSTING_AVERAGE);
+    expect(coerceCostingMethod({})).toBe(COSTING_AVERAGE);
+  });
+});
+
 describe('needsManualLotPicker', () => {
   it('requires a picker for None and Manual, including API strings', () => {
     expect(needsManualLotPicker(PICKING_NONE)).toBe(true);
@@ -143,6 +176,11 @@ describe('isLiveTracked', () => {
 
   it('does not track serial products when serial tracking is disabled', () => {
     expect(isLiveTracked(TRACKING_MODE_SERIAL, COSTING_AVERAGE, features())).toBe(false);
+  });
+
+  it('tracks FIFO costing from an API PascalCase string when valuation is enabled', () => {
+    expect(isLiveTracked(TRACKING_MODE_NONE, 'Fifo', features({ fifoLifoValuationEnabled: true }))).toBe(true);
+    expect(isLiveTracked(TRACKING_MODE_NONE, 'Lifo', features({ fifoLifoValuationEnabled: true }))).toBe(true);
   });
 
   it('tracks FIFO costing when FIFO/LIFO valuation is enabled', () => {

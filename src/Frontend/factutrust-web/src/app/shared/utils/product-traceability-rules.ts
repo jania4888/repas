@@ -10,6 +10,7 @@ import {
   TRACKING_MODE_LOT,
   TRACKING_MODE_NONE,
   TRACKING_MODE_SERIAL,
+  coerceCostingMethod,
   coercePickingPolicy,
   coerceTrackingMode
 } from './stock-traceability.utils';
@@ -127,8 +128,9 @@ export function getCostingMethodOptions(
     return [{ label: 'CMUP', value: COSTING_AVERAGE }];
   }
 
+  const original = coerceCostingMethod(originalCostingMethod);
   const lockAverage = isEditMode
-    && (originalCostingMethod === COSTING_FIFO || originalCostingMethod === COSTING_LIFO);
+    && (original === COSTING_FIFO || original === COSTING_LIFO);
 
   return [
     { label: 'CMUP', value: COSTING_AVERAGE, disabled: lockAverage },
@@ -179,7 +181,7 @@ export function normalizeTraceabilityForm(
   let pickingPolicy = coercePickingPolicy(state.pickingPolicy);
   let hasExpiryTracking = !!state.hasExpiryTracking;
   let expiryAlertDays = state.expiryAlertDays;
-  let costingMethod = state.costingMethod ?? COSTING_AVERAGE;
+  let costingMethod = coerceCostingMethod(state.costingMethod);
 
   if (pickingPolicy === PICKING_MANUAL) {
     pickingPolicy = PICKING_NONE;
@@ -245,8 +247,9 @@ export function formatPickingPolicyLabel(policy: unknown): string {
   return '—';
 }
 
-export function formatCostingMethodLabel(method: number | undefined | null): string {
-  if (method === COSTING_FIFO) return 'FIFO';
-  if (method === COSTING_LIFO) return 'LIFO';
+export function formatCostingMethodLabel(method: unknown): string {
+  const m = coerceCostingMethod(method);
+  if (m === COSTING_FIFO) return 'FIFO';
+  if (m === COSTING_LIFO) return 'LIFO';
   return 'CMUP';
 }

@@ -57,6 +57,7 @@ import {
   showPickingField,
   TraceabilityFormState
 } from '@shared/utils/product-traceability-rules';
+import { coerceCostingMethod } from '@shared/utils/stock-traceability.utils';
 
 interface CategoryOption {
   label: string;
@@ -1574,10 +1575,10 @@ export class ProductFormComponent implements OnInit {
             trackingMode: product.trackingMode ?? 0,
             hasExpiryTracking: product.hasExpiryTracking ?? false,
             pickingPolicy: product.pickingPolicy ?? 0,
-            costingMethod: product.costingMethod ?? 0,
+            costingMethod: coerceCostingMethod(product.costingMethod),
             expiryAlertDays: product.expiryAlertDays ?? null
           });
-          this.originalCostingMethod.set(product.costingMethod ?? 0);
+          this.originalCostingMethod.set(coerceCostingMethod(product.costingMethod));
 
           this.syncDiscountControls(product.isDiscountEnabled ?? false);
           this.syncMarginControl();

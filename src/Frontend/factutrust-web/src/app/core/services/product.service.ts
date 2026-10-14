@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '@environments/environment';
 import { ApiResponse } from './auth.service';
+import { coerceCostingMethod } from '@shared/utils/stock-traceability.utils';
 
 export interface Product {
   id: string;
@@ -257,7 +258,7 @@ export class ProductService {
           isVariantTemplate: item.isVariantTemplate ?? false,
           parentProductId: item.parentProductId ?? null,
           trackingMode: item.trackingMode ?? 0,
-          costingMethod: item.costingMethod ?? 0,
+          costingMethod: coerceCostingMethod(item.costingMethod),
           quantityAvailable:
             item.isStockManaged && item.quantityAvailable != null
               ? Number(item.quantityAvailable)
@@ -382,7 +383,7 @@ export class ProductService {
           trackingMode: response.data.trackingMode ?? 0,
           hasExpiryTracking: response.data.hasExpiryTracking ?? false,
           pickingPolicy: response.data.pickingPolicy ?? 0,
-          costingMethod: response.data.costingMethod ?? 0,
+          costingMethod: coerceCostingMethod(response.data.costingMethod),
           expiryAlertDays: response.data.expiryAlertDays ?? null
         };
 
@@ -442,7 +443,7 @@ export class ProductService {
             isVariantTemplate: d.isVariantTemplate ?? false,
             parentProductId: d.parentProductId ?? null,
             trackingMode: d.trackingMode ?? 0,
-            costingMethod: d.costingMethod ?? 0
+            costingMethod: coerceCostingMethod(d.costingMethod)
           };
 
           return { ...response, data: item } as ApiResponse<ProductListItem>;

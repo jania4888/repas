@@ -52,6 +52,7 @@ import {
   createDefaultSerialRow,
   coercePickingPolicy,
   coerceTrackingMode,
+  coerceCostingMethod,
   TRACKING_MODE_SERIAL,
   shouldBlockInvoiceValidateForStock
 } from '@shared/utils/stock-traceability.utils';
@@ -1923,7 +1924,7 @@ export class InvoiceDetailComponent implements OnInit {
             if (!product) continue;
             productMeta.set(product.id, {
               isStockManaged: product.isStockManaged,
-              costingMethod: product.costingMethod ?? 0,
+              costingMethod: coerceCostingMethod(product.costingMethod),
               trackingMode: coerceTrackingMode(product.trackingMode)
             });
           }
