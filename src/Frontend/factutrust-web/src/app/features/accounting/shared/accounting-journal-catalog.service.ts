@@ -3,6 +3,7 @@ import { Observable, of, shareReplay } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { AccountingService } from '../services/accounting.service';
 import { ACCOUNTING_SUB_JOURNALS, AccountingJournalTab } from './accounting-journal-tabs.model';
+import { DeskTenantReset } from '@core/desk/desk-tenant-reset';
 
 /**
  * Source unique des journaux proposés par les écrans de consultation (journal, journaux
@@ -16,6 +17,15 @@ import { ACCOUNTING_SUB_JOURNALS, AccountingJournalTab } from './accounting-jour
 export class AccountingJournalCatalogService {
   private readonly api = inject(AccountingService);
   private journals$?: Observable<readonly AccountingJournalTab[]>;
+
+  constructor() {
+    inject(DeskTenantReset).register(() => this.clearCache());
+  }
+
+  /** Oublie le catalogue mis en cache : il appartient au dossier qui l'a chargé. */
+  clearCache(): void {
+    this.journals$ = undefined;
+  }
 
   /** Journaux standards qui ne sont jamais des journaux de banque (JB reste toujours autorisé). */
   private static readonly NonBankJournalCodes = new Set(['JV', 'JA', 'JC', 'JOD', 'JIM', 'JAN']);

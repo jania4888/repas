@@ -38,6 +38,8 @@ import { BankStatementImportService } from '../bank-statement-import/bank-statem
 import { JournalEntryProposal } from './models/accounting-document-import.models';
 import { EntryTabId } from './models/entry-form.model';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
+import { DeskWindowService } from '@core/desk/desk-window.service';
+import { withDeskClose } from '@core/desk/desk-window.model';
 
 @Component({
   selector: 'app-manual-entry',
@@ -236,6 +238,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 })
 export class ManualEntryComponent implements OnInit {
   private readonly errors = inject(ErrorHandlerService);
+  private readonly desk = inject(DeskWindowService);
   readonly store = inject(EntryFormStore);
   readonly refs = inject(EntryReferenceStore);
   private readonly submitService = inject(EntrySubmitService);
@@ -309,6 +312,10 @@ export class ManualEntryComponent implements OnInit {
     );
 
   constructor() {
+    effect(() => {
+      this.desk.publishTitle(this.router.url, this.pageTitle());
+    });
+
     let saveTimer: ReturnType<typeof setTimeout> | null = null;
     effect(() => {
       this.store.toDraftPayload();
@@ -410,7 +417,7 @@ export class ManualEntryComponent implements OnInit {
             this.store,
             result,
             afterSuccess,
-            (jc, dt) => this.navigateToJournal(jc, dt),
+            (jc, dt) => this.navigateToJournal(jc, dt, true),
             () => this.draftStore.clear()
           );
         }
@@ -451,17 +458,31 @@ export class ManualEntryComponent implements OnInit {
     });
   }
 
-  private navigateToJournal(journalCode: string, date: string): void {
+  isDirty(): boolean {
+    return this.store.isDirty();
+  }
+
+  canDeactivate(): boolean {
+    if (!this.isDirty()) return true;
+    return confirm(
+      $localize`:@@core.desk.manual-entry.discard:Des modifications non enregistrées seront perdues. Fermer cette fenêtre ?`
+    );
+  }
+
+  private navigateToJournal(journalCode: string, date: string, saved: boolean): void {
     const from = this.returnFrom() || date;
     const to = this.returnTo() || date;
     const jc = this.returnJournal() || journalCode;
-    this.router.navigate(['/accounting/journal'], {
-      queryParams: { journalCode: jc || undefined, from, to }
-    });
+    void this.router.navigate(
+      ['/accounting/journal'],
+      withDeskClose(saved, {
+        queryParams: { journalCode: jc || undefined, from, to }
+      })
+    );
   }
 
   cancelEdit(): void {
-    this.navigateToJournal(this.store.journalCode(), this.store.entryDate());
+    this.navigateToJournal(this.store.journalCode(), this.store.entryDate(), false);
   }
 
   private loadExistingEntry(entryId: string): void {
@@ -492,13 +513,16 @@ export class ManualEntryComponent implements OnInit {
 
   private leaveEditWithError(message: string): void {
     this.toast.add({ severity: 'error', summary: $localize`:@@manual-entry.component.summary.Modification_imp:Modification impossible`, detail: message, life: 6000 });
-    this.router.navigate(['/accounting/journal'], {
-      queryParams: {
-        journalCode: this.returnJournal() || undefined,
-        from: this.returnFrom() || undefined,
-        to: this.returnTo() || undefined
-      }
-    });
+    void this.router.navigate(
+      ['/accounting/journal'],
+      withDeskClose(true, {
+        queryParams: {
+          journalCode: this.returnJournal() || undefined,
+          from: this.returnFrom() || undefined,
+          to: this.returnTo() || undefined
+        }
+      })
+    );
   }
 
   restoreDraft(): void {

@@ -11,6 +11,7 @@ import { companyAccountingNavGuard } from './core/guards/company-accounting-nav.
 import { documentationAccessGuard } from './core/guards/documentation-access.guard';
 import { staffShellGuard } from './core/guards/staff-shell.guard';
 import { companyAssistanceGuard } from './core/guards/company-assistance.guard';
+import { deskWindowGuard } from './core/desk/desk-window.guard';
 import { CORE_TITLES } from './core/i18n/core-localize';
 
 export const routes: Routes = [
@@ -47,13 +48,19 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () => import('./core/layout/main-layout/main-layout.component').then(m => m.MainLayoutComponent),
-    canActivate: [authGuard, staffShellGuard, warehouseSelectedGuard, firmNativeRedirectGuard, delegatedFirmNavGuard, companyAccountingNavGuard, delegatedReadonlyGuard, moduleGuard],
+    canActivate: [authGuard, staffShellGuard, warehouseSelectedGuard, firmNativeRedirectGuard, delegatedFirmNavGuard, companyAccountingNavGuard, delegatedReadonlyGuard, moduleGuard, deskWindowGuard],
+    canActivateChild: [deskWindowGuard],
     children: [
       {
         path: 'access-denied',
         loadComponent: () =>
           import('./shared/components/access-denied/access-denied.component').then(m => m.AccessDeniedComponent),
         title: CORE_TITLES.accessDenied
+      },
+      {
+        path: 'desk',
+        loadComponent: () => import('./core/desk/desk-empty.component').then(m => m.DeskEmptyComponent),
+        title: $localize`:@@core.desk.route.bureau:Bureau - InstaFact`
       },
       {
         path: 'dashboard',

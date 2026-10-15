@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
+import { DeskTenantReset } from '@core/desk/desk-tenant-reset';
 import { AccountingJournalCatalogService } from './accounting-journal-catalog.service';
 import { AccountingService, JournalDto } from '../services/accounting.service';
 import { ACCOUNTING_SUB_JOURNALS } from './accounting-journal-tabs.model';
@@ -40,6 +41,20 @@ describe('AccountingJournalCatalogService', () => {
       expect(journals.map(j => j.code)).toEqual(['CB2']);
       done();
     });
+  });
+
+  it('relit le catalogue après un changement de dossier', () => {
+    accounting.getJournals.and.returnValue(
+      of({ success: true, data: [journal({ code: 'JV', label: 'Ventes' })] })
+    );
+
+    service.list().subscribe();
+    service.list().subscribe();
+    expect(accounting.getJournals).toHaveBeenCalledTimes(1);
+
+    TestBed.inject(DeskTenantReset).run();
+    service.list().subscribe();
+    expect(accounting.getJournals).toHaveBeenCalledTimes(2);
   });
 
   it('se replie sur les journaux standards complets pour list() en cas de catalogue vide', done => {

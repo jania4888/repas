@@ -416,12 +416,12 @@ export class BankStatementEntriesPostingComponent implements OnInit {
   }
 
   /** Des contreparties ont été modifiées et aucune écriture n'a encore été générée (plan §4.6). */
-  private hasUnsavedChanges(): boolean {
+  isDirty(): boolean {
     return this.view() === 'grid' && this.dirty();
   }
 
   canDeactivate(): boolean {
-    if (!this.hasUnsavedChanges()) return true;
+    if (!this.isDirty()) return true;
     return window.confirm(
       $localize`:@@accounting.bank-statement-entries.ts.vous.avez.des.contreparties.modifiees.non.gener.d3f1b1a2:Vous avez des contreparties modifiées, non générées. Quitter cette page ? Les changements seront perdus.`
     );
@@ -429,7 +429,7 @@ export class BankStatementEntriesPostingComponent implements OnInit {
 
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification(event: BeforeUnloadEvent): void {
-    if (this.hasUnsavedChanges()) {
+    if (this.isDirty()) {
       event.returnValue = $localize`:@@accounting.bank-statement-entries.ts.vous.avez.des.contreparties.modifiees.non.gener.3c2fef3b:Vous avez des contreparties modifiées, non générées.`;
     }
   }

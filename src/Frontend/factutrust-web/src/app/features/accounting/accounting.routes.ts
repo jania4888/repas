@@ -4,6 +4,7 @@ import { fixedAssetsFeatureGuard } from './shared/fixed-assets-feature.guard';
 import { permissionGuard } from '@core/guards/permission.guard';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { pendingChangesGuard } from './fixed-assets/pending-changes.guard';
+import { deskAwareCanDeactivate } from '@core/desk/desk-deactivate';
 
 export const ACCOUNTING_ROUTES: Routes = [
   {
@@ -42,7 +43,8 @@ export const ACCOUNTING_ROUTES: Routes = [
     path: 'manual-entry',
     loadComponent: () =>
       import('./manual-entry/manual-entry.component').then(m => m.ManualEntryComponent),
-    title: $localize`:@@accounting.routes.title.Saisie_manuelle_InstaF:Saisie manuelle - InstaFact`
+    title: $localize`:@@accounting.routes.title.Saisie_manuelle_InstaF:Saisie manuelle - InstaFact`,
+    canDeactivate: [deskAwareCanDeactivate(component => component.canDeactivate())]
   },
   {
     path: 'journal',
@@ -252,7 +254,7 @@ export const ACCOUNTING_ROUTES: Routes = [
     canActivate: [permissionGuard],
     // Confirme la perte de modifications non enregistrées à la navigation (T23). Écrite en garde
     // en ligne (plutôt qu'un import statique du composant) pour ne pas casser le lazy-loading.
-    canDeactivate: [(component: { canDeactivate: () => boolean }) => component.canDeactivate()],
+    canDeactivate: [deskAwareCanDeactivate(component => component.canDeactivate())],
     data: { permissions: [PERMISSIONS.accounting.read] },
     loadComponent: () =>
       import('./fiscal-result/fiscal-result.component').then(m => m.FiscalResultComponent),
@@ -261,7 +263,7 @@ export const ACCOUNTING_ROUTES: Routes = [
   {
     path: 'fiscal-parameters',
     canActivate: [permissionGuard],
-    canDeactivate: [(component: { canDeactivate: () => boolean }) => component.canDeactivate()],
+    canDeactivate: [deskAwareCanDeactivate(component => component.canDeactivate())],
     data: { permissions: [PERMISSIONS.accounting.read] },
     loadComponent: () =>
       import('./fiscal-parameters/fiscal-parameters.component').then(m => m.FiscalParametersComponent),
@@ -291,7 +293,7 @@ export const ACCOUNTING_ROUTES: Routes = [
     data: { permissions: [PERMISSIONS.accounting.currenciesManage] },
     // Confirme la perte des taux non enregistres a la navigation. Garde ecrite en ligne pour ne
     // pas casser le lazy-loading, comme pour fiscal-parameters.
-    canDeactivate: [(component: { canDeactivate: () => boolean }) => component.canDeactivate()],
+    canDeactivate: [deskAwareCanDeactivate(component => component.canDeactivate())],
     loadComponent: () =>
       import('./currencies/currency-edit.component').then(m => m.CurrencyEditComponent),
     title: $localize`:@@accounting.routes.title.Edition_de_devise_Inst:Edition de devise - InstaFact`
@@ -340,7 +342,7 @@ export const ACCOUNTING_ROUTES: Routes = [
     loadComponent: () =>
       import('./bank-statement-entries/bank-statement-entries-page.component').then(m => m.BankStatementEntriesPageComponent),
     canActivate: [permissionGuard],
-    canDeactivate: [(component: { canDeactivate: () => boolean }) => component.canDeactivate()],
+    canDeactivate: [deskAwareCanDeactivate(component => component.canDeactivate())],
     data: { permissions: [PERMISSIONS.accounting.create] },
     title: $localize`:@@accounting.routes.title.Releve_bancaire_ecritures:Relevé bancaire → écritures - InstaFact`
   },
@@ -349,7 +351,7 @@ export const ACCOUNTING_ROUTES: Routes = [
     loadComponent: () =>
       import('./bank-statement-entries/bank-statement-entries-session.component').then(m => m.BankStatementEntriesSessionComponent),
     canActivate: [permissionGuard],
-    canDeactivate: [(component: { canDeactivate: () => boolean }) => component.canDeactivate()],
+    canDeactivate: [deskAwareCanDeactivate(component => component.canDeactivate())],
     data: { permissions: [PERMISSIONS.accounting.create] },
     title: $localize`:@@accounting.routes.title.Releve_bancaire_ecritures:Relevé bancaire → écritures - InstaFact`
   },
@@ -358,7 +360,7 @@ export const ACCOUNTING_ROUTES: Routes = [
     loadComponent: () =>
       import('./bank-statement-entries/bank-statement-entries-posting.component').then(m => m.BankStatementEntriesPostingComponent),
     canActivate: [permissionGuard],
-    canDeactivate: [(component: { canDeactivate: () => boolean }) => component.canDeactivate()],
+    canDeactivate: [deskAwareCanDeactivate(component => component.canDeactivate())],
     data: { permissions: [PERMISSIONS.accounting.create] },
     title: $localize`:@@accounting.routes.title.Releve_bancaire_ecritures:Relevé bancaire → écritures - InstaFact`
   },

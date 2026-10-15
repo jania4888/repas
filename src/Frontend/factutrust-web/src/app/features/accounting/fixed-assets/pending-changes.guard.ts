@@ -1,7 +1,9 @@
 import { CanDeactivateFn } from '@angular/router';
+import { inject } from '@angular/core';
 // Import de type uniquement : évite d'entraîner le chargement du composant (lazy-loaded via
 // `loadComponent`) dans le chunk de routes, qui est instancié à l'initialisation.
 import type { FixedAssetDetailComponent } from './fixed-asset-detail.component';
+import { DeskWindowService } from '@core/desk/desk-window.service';
 
 /**
  * Garde de navigation CanDeactivate pour le détail d'immobilisation (T15 / C9).
@@ -12,5 +14,7 @@ import type { FixedAssetDetailComponent } from './fixed-asset-detail.component';
  * confirmation (boîte native) avant de quitter la page ; un formulaire vierge laisse passer librement.
  */
 export const pendingChangesGuard: CanDeactivateFn<FixedAssetDetailComponent> = (component): boolean => {
-  return component ? component.canDeactivate() : true;
+  if (!component) return true;
+  if (inject(DeskWindowService).bypassesDeactivate()) return true;
+  return component.canDeactivate();
 };

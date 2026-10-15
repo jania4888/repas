@@ -1,5 +1,5 @@
 /// <reference types="@angular/localize" />
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, firstValueFrom, tap, catchError, of, finalize, shareReplay } from 'rxjs';
@@ -9,6 +9,7 @@ import { AppModule } from '@core/models/app-module';
 import { createHttpContextSkipGlobalErrorUi } from '@core/http-context';
 import { clearWarehouseStorage } from './warehouse-storage';
 import { ToastService } from './toast.service';
+import { DeskLeaveRegistry } from '@core/desk/desk-leave.registry';
 import {
   ProductOnboardingChecklist,
   ProductOnboardingStatus,
@@ -429,6 +430,7 @@ export class AuthService {
   private readonly USER_KEY = 'ft_user';
 
   private userSignal = signal<User | null>(null);
+  private readonly deskLeave = inject(DeskLeaveRegistry);
 
   readonly user = this.userSignal.asReadonly();
   readonly isAuthenticated = computed(() => !!this.userSignal());
@@ -527,6 +529,17 @@ export class AuthService {
   }
 
   logout(): void {
+    const allowed = this.deskLeave.confirmLeave();
+    if (allowed instanceof Promise) {
+      void allowed.then(ok => {
+        if (ok) this.performLogout();
+      });
+      return;
+    }
+    if (allowed) this.performLogout();
+  }
+
+  private performLogout(): void {
     this.http.post(`${this.API_URL}/logout`, {}).pipe(
       catchError(() => of(null))
     ).subscribe(() => {

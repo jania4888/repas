@@ -224,6 +224,37 @@ export class EntryFormStore {
     );
   });
 
+  /** Instantané « propre ». `null` tant que l'écran n'a pas été chargé ou réinitialisé : on se rabat sur la saisie visible. */
+  private readonly pristinePayload = signal<string | null>(null);
+
+  markPristine(): void {
+    this.pristinePayload.set(this.editableSnapshot());
+  }
+
+  isDirty(): boolean {
+    if (this.loading()) return false;
+    const pristine = this.pristinePayload();
+    if (pristine === null) return this.hasUserInput();
+    return this.editableSnapshot() !== pristine;
+  }
+
+  private editableSnapshot(): string {
+    return JSON.stringify({
+      journalCode: this.journalCode(),
+      entryDate: this.entryDate(),
+      entryLabel: this.entryLabel(),
+      pieceRef: this.pieceRef(),
+      workNotes: this.workNotes(),
+      description: this.description(),
+      lines: this.lines().map(line => ({
+        accountNumber: line.accountNumber,
+        lineLabel: line.lineLabel,
+        debit: line.debit,
+        credit: line.credit
+      }))
+    });
+  }
+
   readonly canSubmit = computed(() =>
     this.isBalanced() && !this.loading() && this.lines().length >= 2 && !this.periodClosed()
   );
@@ -614,6 +645,7 @@ export class EntryFormStore {
     this.sourceEntityType.set(null);
     this.isReversal.set(false);
     this.letteredGroupCodes.set([]);
+    this.markPristine();
   }
 
   loadFromEntry(dto: JournalEntryDto): void {
@@ -673,6 +705,7 @@ export class EntryFormStore {
     this.error.set(null);
     this.successMsg.set(null);
     this.syncPeriodFromDate();
+    this.markPristine();
   }
 
   applyHeaderFromTemplate(journalCode: string, labelTemplate: string | null): void {

@@ -8,6 +8,8 @@ import { HeaderComponent } from '../header/header.component';
 import { SecondaryNavComponent } from '../secondary-nav/secondary-nav.component';
 import { WorkspaceTabBarComponent } from '../workspace-tab-bar/workspace-tab-bar.component';
 import { ChatPanelComponent } from '../../../features/ai-assistant/components/chat-panel/chat-panel.component';
+import { DeskOutletDirective } from '../../desk/desk-outlet.directive';
+import { DeskShellComponent } from '../../desk/desk-shell.component';
 import { AuthService } from '../../services/auth.service';
 import { BreadcrumbService } from '../../services/breadcrumb.service';
 import { AiChatSessionService } from '../../../features/ai-assistant/services/ai-chat-session.service';
@@ -35,7 +37,9 @@ import { ProductOnboardingApiService } from '../../onboarding/product-onboarding
     SecondaryNavComponent,
     WorkspaceTabBarComponent,
     ChatPanelComponent,
-    ProductTourHostComponent
+    ProductTourHostComponent,
+    DeskShellComponent,
+    DeskOutletDirective
   ],
   template: `
     <div class="full_container">
@@ -71,9 +75,10 @@ import { ProductOnboardingApiService } from '../../onboarding/product-onboarding
             [class.layout-distraction-free]="layoutFlags().hideLayout"
             [class.midde_cont--workspace]="showWorkspaceTabBar()"
             [class.midde_cont--fill-pane]="layoutFlags().fillPane">
-            @if (isAiAssistantRoute()) {
+            @if (isAiAssistantRoute() && !isFirmDelegatedLayout()) {
               <main
                 id="main-content"
+                tabindex="-1"
                 [class.layout-full-width]="layoutFlags().fullWidth">
                 <router-outlet></router-outlet>
               </main>
@@ -93,13 +98,28 @@ import { ProductOnboardingApiService } from '../../onboarding/product-onboarding
                 class="workspace-pane workspace-pane--work"
                 role="tabpanel"
                 aria-labelledby="workspace-tab-work"
+                [class.workspace-pane--desk]="isFirmDelegatedLayout()"
                 [hidden]="aiAssistantShell.activePane() === 'ai' && aiAssistantShell.aiTabOpen()"
                 [attr.inert]="aiAssistantShell.activePane() === 'ai' && aiAssistantShell.aiTabOpen() ? '' : null">
-                <main
-                  id="main-content"
-                  [class.layout-full-width]="layoutFlags().fullWidth">
-                  <router-outlet></router-outlet>
-                </main>
+                <app-desk-shell>
+                  <div class="desk-page" [class.desk-page--ai]="isFirmDelegatedLayout() && isAiAssistantRoute()">
+                    <main
+                      id="main-content"
+                      tabindex="-1"
+                      [class.layout-full-width]="layoutFlags().fullWidth">
+                      <router-outlet deskOutlet></router-outlet>
+                    </main>
+                    @if (isFirmDelegatedLayout() && isAiAssistantRoute() && hasAiAccess()) {
+                      <app-chat-panel
+                        [isOpen]="true"
+                        [embedded]="true"
+                        [workspaceTab]="false"
+                        [agentScope]="routeAgentScope()"
+                        (close)="onAiPanelClose()"
+                      />
+                    }
+                  </div>
+                </app-desk-shell>
               </div>
               @if (hasAiAccess() && aiAssistantShell.aiTabOpen()) {
                 <div
@@ -190,6 +210,31 @@ import { ProductOnboardingApiService } from '../../onboarding/product-onboarding
     .workspace-pane--work {
       overflow-y: auto;
       padding-bottom: var(--spacing-6);
+    }
+
+    .desk-page { display: contents; }
+
+    .workspace-pane--desk {
+      overflow: hidden;
+      padding-bottom: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .workspace-pane--desk > app-desk-shell {
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+
+    .workspace-pane--desk .desk-page {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    .workspace-pane--desk .desk-page--ai > app-chat-panel {
+      flex: 1 1 auto;
+      min-height: 0;
     }
 
     .workspace-pane--ai {

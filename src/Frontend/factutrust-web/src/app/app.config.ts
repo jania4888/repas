@@ -1,5 +1,5 @@
-import { APP_INITIALIZER, ApplicationConfig, LOCALE_ID, importProvidersFrom, DOCUMENT } from '@angular/core';
-import { provideRouter, withViewTransitions } from '@angular/router';
+import { APP_INITIALIZER, ApplicationConfig, LOCALE_ID, importProvidersFrom, DOCUMENT, inject } from '@angular/core';
+import { RouteReuseStrategy, provideRouter, withViewTransitions } from '@angular/router';
 import { PrimeNG } from 'primeng/config';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -16,6 +16,8 @@ import { erpBootEffectiveLocale } from './core/i18n/erp-boot-locale';
 import { AuthService } from './core/services/auth.service';
 import { ErpLocaleService } from './core/i18n/erp-locale.service';
 import { PRIMENG_AR_TRANSLATION } from './core/i18n/primeng-ar.translations';
+import { DeskRouteReuseStrategy } from './core/desk/desk-route-reuse.strategy';
+import { DeskWindowService } from './core/desk/desk-window.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,7 +27,18 @@ export const appConfig: ApplicationConfig = {
       useFactory: () =>
         !environment.erp?.arabicEnabled || erpBootEffectiveLocale !== 'ar' ? 'fr-TN' : 'ar-TN'
     },
-    provideRouter(routes, withViewTransitions()),
+    provideRouter(
+      routes,
+      withViewTransitions({
+        onViewTransitionCreated: ({ transition }) => {
+          const auth = inject(AuthService);
+          if (auth.isAccountingFirm() && auth.isDelegatedMode()) {
+            transition.skipTransition();
+          }
+        }
+      })
+    ),
+    { provide: RouteReuseStrategy, useClass: DeskRouteReuseStrategy },
     provideHttpClient(
       withFetch(),
       withInterceptors([localeInterceptor, authInterceptor, errorInterceptor])
@@ -43,8 +56,9 @@ export const appConfig: ApplicationConfig = {
     MessageService,
     {
       provide: APP_INITIALIZER,
-      useFactory: (auth: AuthService, locale: ErpLocaleService, prime: PrimeNG) => async () => {
+      useFactory: (auth: AuthService, locale: ErpLocaleService, prime: PrimeNG, desk: DeskWindowService) => async () => {
         await auth.bootstrapRefresh();
+        desk.syncMode();
         const user = auth.user();
         locale.resolve({
           userPreferredLanguage: user?.preferredLanguage ?? null
@@ -53,7 +67,7 @@ export const appConfig: ApplicationConfig = {
           prime.setTranslation(PRIMENG_AR_TRANSLATION);
         }
       },
-      deps: [AuthService, ErpLocaleService, PrimeNG],
+      deps: [AuthService, ErpLocaleService, PrimeNG, DeskWindowService],
       multi: true
     }
   ]

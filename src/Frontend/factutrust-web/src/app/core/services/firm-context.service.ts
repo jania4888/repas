@@ -6,6 +6,7 @@ import { firstValueFrom } from 'rxjs';
 import { environment } from '@environments/environment';
 import { createHttpContextSkipGlobalErrorUi } from '@core/http-context';
 import { AuthService, ApiResponse, AuthResponse } from './auth.service';
+import { DeskLeaveRegistry } from '@core/desk/desk-leave.registry';
 import { ErrorHandlerService } from './error-handler.service';
 import { ToastService } from './toast.service';
 
@@ -31,6 +32,7 @@ export class FirmContextService {
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
   private readonly errorHandler = inject(ErrorHandlerService);
+  private readonly deskLeave = inject(DeskLeaveRegistry);
   private readonly baseUrl = `${environment.apiUrl}/firm/context`;
   private readonly contextHttpOptions = { context: createHttpContextSkipGlobalErrorUi() };
 
@@ -97,6 +99,13 @@ export class FirmContextService {
       return true;
     }
 
+    const allowed = this.deskLeave.confirmLeave();
+    if (allowed instanceof Promise) {
+      if (!(await allowed)) return false;
+    } else if (!allowed) {
+      return false;
+    }
+
     try {
       const res = await firstValueFrom(
         this.http.post<ApiResponse<AuthResponse>>(
@@ -106,6 +115,7 @@ export class FirmContextService {
         )
       );
       if (!res.success || !res.data) {
+        this.deskLeave.abortTeardown();
         this.showContextError($localize`:@@core.firm-context.ts.impossible.de.quitter.le.dossier.client.72ba52ae:Impossible de quitter le dossier client.`);
         return false;
       }
@@ -113,11 +123,13 @@ export class FirmContextService {
       this.syncFromUser();
       const updated = this.auth.user();
       if (updated?.accessMode === 'delegated' || updated?.contextTenantId) {
+        this.deskLeave.abortTeardown();
         this.showContextError($localize`:@@core.firm-context.ts.le.contexte.cabinet.n.a.pas.pu.etre.rest.d5cd64d6:Le contexte cabinet n'a pas pu être restauré.`);
         return false;
       }
       return true;
     } catch (error) {
+      this.deskLeave.abortTeardown();
       this.showContextError($localize`:@@core.firm-context.ts.impossible.de.quitter.le.dossier.client.72ba52ae:Impossible de quitter le dossier client.`, error);
       return false;
     }

@@ -136,6 +136,18 @@ describe('EntryFormStore', () => {
     expect(store.letteredGroupCodes()).toEqual([]);
   });
 
+  it('isDirty reste faux après chargement et devient vrai seulement si la saisie change', () => {
+    store.resetForm();
+    expect(store.isDirty()).toBeFalse();
+    store.entryLabel.set('Achat fournitures');
+    expect(store.isDirty()).toBeTrue();
+    store.markPristine();
+    expect(store.isDirty()).toBeFalse();
+    store.entryLabel.set('Achat modifié');
+    store.loading.set(true);
+    expect(store.isDirty()).toBeFalse();
+  });
+
   it('loadFromEntry sets isReversal from reversesEntryId', () => {
     store.loadFromEntry({
       id: 'entry-rev',

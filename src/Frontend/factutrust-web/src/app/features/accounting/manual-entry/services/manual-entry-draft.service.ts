@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ColumnVisibility, EntryTabId } from '../models/entry-form.model';
+import { AuthService } from '@core/services/auth.service';
 
 export interface ManualEntryDraftLine {
   accountNumber: string;
@@ -30,6 +31,13 @@ export class ManualEntryDraftService {
   private static readonly STORAGE_KEY_V1 = 'factutrust:manual-entry:draft:v1';
   private static readonly TTL_DAYS = 7;
 
+  private readonly auth = inject(AuthService);
+
+  /** Clé du dossier courant. L'ancienne clé sans suffixe n'est lue qu'une fois, puis rattachée à ce dossier. */
+  storageKey(): string {
+    return `${ManualEntryDraftService.STORAGE_KEY_V2}:${this.tenantScope()}`;
+  }
+
   save(draft: Omit<ManualEntryDraft, 'savedAt' | 'schemaVersion'>): void {
     if (!this.isBrowser()) return;
     try {
@@ -38,8 +46,9 @@ export class ManualEntryDraftService {
         schemaVersion: 2,
         savedAt: new Date().toISOString()
       };
-      window.localStorage.setItem(ManualEntryDraftService.STORAGE_KEY_V2, JSON.stringify(payload));
+      window.localStorage.setItem(this.storageKey(), JSON.stringify(payload));
       window.localStorage.removeItem(ManualEntryDraftService.STORAGE_KEY_V1);
+      window.localStorage.removeItem(ManualEntryDraftService.STORAGE_KEY_V2);
     } catch {
       // Quota exceeded or unavailable — silently ignore.
     }
@@ -47,8 +56,13 @@ export class ManualEntryDraftService {
 
   load(): ManualEntryDraft | null {
     if (!this.isBrowser()) return null;
-    const v2 = this.loadFromKey(ManualEntryDraftService.STORAGE_KEY_V2);
-    if (v2) return v2;
+    const current = this.loadFromKey(this.storageKey());
+    if (current) return current;
+    const legacy = this.loadFromKey(ManualEntryDraftService.STORAGE_KEY_V2);
+    if (legacy) {
+      this.save(legacy);
+      return legacy;
+    }
     const v1 = this.loadFromKey(ManualEntryDraftService.STORAGE_KEY_V1);
     if (!v1) return null;
     return this.migrateV1ToV2(v1);
@@ -90,6 +104,7 @@ export class ManualEntryDraftService {
 
   clear(): void {
     if (!this.isBrowser()) return;
+    this.clearKey(this.storageKey());
     this.clearKey(ManualEntryDraftService.STORAGE_KEY_V2);
     this.clearKey(ManualEntryDraftService.STORAGE_KEY_V1);
   }
@@ -111,6 +126,12 @@ export class ManualEntryDraftService {
       (l.debit ?? 0) > 0 ||
       (l.credit ?? 0) > 0
     );
+  }
+
+  private tenantScope(): string {
+    const user = this.auth.user();
+    if (user?.accessMode === 'delegated' && user.contextTenantId) return user.contextTenantId;
+    return user?.tenantId || 'local';
   }
 
   private isBrowser(): boolean {
