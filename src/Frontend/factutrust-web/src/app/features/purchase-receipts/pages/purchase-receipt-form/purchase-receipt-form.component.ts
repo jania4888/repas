@@ -132,8 +132,8 @@ interface ReceiptLineRow {
       <div class="form-layout">
         <div class="form-main">
           <app-form-section title="Informations générales" i18n-title="@@purchase-receipts.pages.informations.generales.be6ba6e5" icon="pi-building" [number]="1">
-            <div class="form-grid-3">
-              <div class="form-group">
+            <div class="ft-form-grid ft-form-grid--3">
+              <div class="ft-field">
                 <label for="supplier" i18n="@@purchase-receipts.pages.fournisseur.bc374fa5">Fournisseur <span class="required">*</span></label>
                 <p-select
                   id="supplier"
@@ -151,7 +151,7 @@ interface ReceiptLineRow {
                 </p-select>
               </div>
 
-              <div class="form-group">
+              <div class="ft-field">
                 <label for="purchaseOrder" i18n="@@purchase-receipts.pages.bon.de.commande.4b9aea29">Bon de commande</label>
                 <p-select
                   id="purchaseOrder"
@@ -169,7 +169,7 @@ interface ReceiptLineRow {
                 </p-select>
               </div>
 
-              <div class="form-group">
+              <div class="ft-field">
                 <app-warehouse-selector
                   inputId="receipt-warehouse"
                   label="Entrepôt" i18n-label="@@purchase-receipts.pages.entrepot.64a6a11c"
@@ -179,7 +179,7 @@ interface ReceiptLineRow {
                 </app-warehouse-selector>
               </div>
 
-              <div class="form-group">
+              <div class="ft-field">
                 <label for="receiptNumber" i18n="@@purchase-receipts.pages.n.bon.de.reception.ad3cf1bd">N° bon de réception</label>
                 <input
                   pInputText
@@ -189,7 +189,7 @@ interface ReceiptLineRow {
                   class="w-full">
               </div>
 
-              <div class="form-group">
+              <div class="ft-field">
                 <label for="receiptDate" i18n="@@purchase-receipts.pages.date.de.reception.9a9c1f22">Date de réception <span class="required">*</span></label>
                 <p-datepicker
                   id="receiptDate"
@@ -200,7 +200,7 @@ interface ReceiptLineRow {
                 </p-datepicker>
               </div>
 
-              <div class="form-group">
+              <div class="ft-field">
                 <label for="supplierRef" i18n="@@purchase-receipts.pages.ref.fournisseur.98507c4b">Réf. fournisseur</label>
                 <input
                   pInputText
@@ -407,19 +407,48 @@ interface ReceiptLineRow {
               </table>
             </div>
             }
+
+            <div class="ft-totals" aria-live="polite" aria-atomic="true">
+              <h3 class="ft-totals__title" i18n="@@purchase-receipts.pages.totaux.a1ca02f8">Totaux</h3>
+              <div class="ft-totals__row">
+                <span i18n="@@purchase-receipts.pages.total.ht.2ca17ae6">Total HT</span>
+                <strong>{{ totalHT() | currency:'TND':'symbol':'1.3-3' }}</strong>
+              </div>
+              <div class="ft-totals__row">
+                <span i18n="@@purchase-receipts.pages.tva.fb62cb5d">TVA</span>
+                <strong>{{ totalVat() | currency:'TND':'symbol':'1.3-3' }}</strong>
+              </div>
+              <div class="ft-totals__row ft-totals__row--grand">
+                <span i18n="@@purchase-receipts.pages.total.ttc.9e80ff7c">Total TTC</span>
+                <strong>{{ totalTTC() | currency:'TND':'symbol':'1.3-3' }}</strong>
+              </div>
+              <div class="ft-totals__divider"></div>
+              <div class="ft-totals__row">
+                <span i18n="@@purchase-receipts.pages.total.commande.ht.e5a5e984">Total commandé HT</span>
+                <strong>{{ totalOrderedHT() | currency:'TND':'symbol':'1.3-3' }}</strong>
+              </div>
+              <div class="ft-totals__row">
+                <span i18n="@@purchase-receipts.pages.total.recu.ht.aef476e2">Total reçu HT</span>
+                <strong>{{ totalHT() | currency:'TND':'symbol':'1.3-3' }}</strong>
+              </div>
+              <div class="ft-totals__row ft-totals__row--pending">
+                <span i18n="@@purchase-receipts.pages.reste.a.recevoir.ht.b1ff628f">Reste à recevoir HT</span>
+                <strong>{{ remainingHT() | currency:'TND':'symbol':'1.3-3' }}</strong>
+              </div>
+            </div>
           </app-form-section>
 
           <app-form-section title="Informations complémentaires" i18n-title="@@purchase-receipts.pages.informations.complementaires.805470ce" icon="pi-file-edit" [number]="3">
-            <div class="form-grid-2">
-              <div class="form-group">
+            <div class="ft-form-grid">
+              <div class="ft-field">
                 <label for="transporter" i18n="@@purchase-receipts.pages.transporteur.7adadb36">Transporteur</label>
                 <input pInputText id="transporter" [(ngModel)]="transporterName" class="w-full" />
               </div>
-              <div class="form-group">
+              <div class="ft-field">
                 <label for="dnNumber" i18n="@@purchase-receipts.pages.n.bon.de.livraison.626cc0e6">N° bon de livraison</label>
                 <input pInputText id="dnNumber" [(ngModel)]="deliveryNoteNumber" class="w-full" />
               </div>
-              <div class="form-group span-full">
+              <div class="ft-field ft-field--full">
                 <label for="notes" i18n="@@purchase-receipts.pages.notes.70440046">Notes</label>
                 <textarea
                   pTextarea
@@ -470,35 +499,6 @@ interface ReceiptLineRow {
             }
           </app-form-section>
         </div>
-
-        <aside class="totals-panel">
-          <h3 i18n="@@purchase-receipts.pages.totaux.a1ca02f8">Totaux</h3>
-          <div class="total-row">
-            <span i18n="@@purchase-receipts.pages.total.ht.2ca17ae6">Total HT</span>
-            <span>{{ totalHT() | currency:'TND':'symbol':'1.3-3' }}</span>
-          </div>
-          <div class="total-row">
-            <span i18n="@@purchase-receipts.pages.tva.fb62cb5d">TVA</span>
-            <span>{{ totalVat() | currency:'TND':'symbol':'1.3-3' }}</span>
-          </div>
-          <div class="total-row grand">
-            <span i18n="@@purchase-receipts.pages.total.ttc.9e80ff7c">Total TTC</span>
-            <span>{{ totalTTC() | currency:'TND':'symbol':'1.3-3' }}</span>
-          </div>
-          <div class="divider"></div>
-          <div class="total-row">
-            <span i18n="@@purchase-receipts.pages.total.commande.ht.e5a5e984">Total commandé HT</span>
-            <span>{{ totalOrderedHT() | currency:'TND':'symbol':'1.3-3' }}</span>
-          </div>
-          <div class="total-row">
-            <span i18n="@@purchase-receipts.pages.total.recu.ht.aef476e2">Total reçu HT</span>
-            <span>{{ totalHT() | currency:'TND':'symbol':'1.3-3' }}</span>
-          </div>
-          <div class="total-row pending-total">
-            <span i18n="@@purchase-receipts.pages.reste.a.recevoir.ht.b1ff628f">Reste à recevoir HT</span>
-            <span>{{ remainingHT() | currency:'TND':'symbol':'1.3-3' }}</span>
-          </div>
-        </aside>
       </div>
 
       <div class="form-actions">

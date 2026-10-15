@@ -30,11 +30,10 @@
   gap: var(--spacing-3);
 }
 
+// Mise en page à une seule colonne : les sections s'empilent, les totaux vivent
+// désormais sous le tableau Articles (carte .ft-totals). Pleine largeur conservée
+// pour laisser respirer le tableau Articles (11 colonnes).
 .form-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
-  gap: var(--spacing-4);
-  align-items: start;
   width: 100%;
   max-width: 100%;
 }
@@ -46,40 +45,16 @@
   min-width: 0;
 }
 
-.form-grid-3 {
-  display: grid;
+// Section « Informations générales » : override local à 3 colonnes (la globale
+// .ft-form-grid de _form-layout.scss est à 2 colonnes — override explicitement autorisé).
+.ft-form-grid--3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--spacing-4);
-}
-
-.form-grid-2 {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--spacing-4);
 }
 
 @media (max-width: 900px) {
-  .form-grid-3,
-  .form-grid-2 {
+  .ft-form-grid--3 {
     grid-template-columns: 1fr;
   }
-}
-
-.span-full {
-  grid-column: 1 / -1;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-2);
-  min-width: 0;
-}
-
-.form-group label {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
 }
 
 .required {
@@ -340,51 +315,70 @@
   flex: 1;
 }
 
-.totals-panel {
-  background: var(--color-background-elevated);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-5);
-  box-shadow: var(--shadow-md);
-  position: sticky;
-  top: var(--spacing-4);
-  min-width: 0;
+// ─── Totaux (carte alignée à droite, sous le tableau Articles) ────────────────
+// Calquée sur la charte .ft-totals de la facture fournisseur. Propriétés logiques
+// uniquement (margin-inline/-block, border-block) pour rester RTL-safe (i18n:rtl:check).
+.ft-totals {
+  margin-block-start: var(--spacing-4);
+  margin-inline-start: auto; // pousse la carte à droite (début de ligne en RTL)
+  min-width: 280px;
+  max-width: 380px; // un peu plus large que la facture : libellés longs (« Reste à recevoir HT »)
   width: 100%;
+  background: var(--color-primary-50);
+  border: 1px solid var(--color-primary-100);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
   box-sizing: border-box;
   overflow-wrap: anywhere;
 }
 
-.totals-panel h3 {
-  margin: 0 0 var(--spacing-4);
-  font-size: var(--font-size-base);
+.ft-totals__title {
+  margin: 0 0 var(--spacing-1);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
 }
 
-.total-row {
+.ft-totals__row {
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
   gap: var(--spacing-3);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-2);
 }
 
-.total-row.grand {
+.ft-totals__row strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.ft-totals__row--grand {
+  margin-block-start: var(--spacing-1);
+  padding-block-start: var(--spacing-2);
+  border-block-start: 1px solid var(--color-primary-200);
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-  margin-top: var(--spacing-2);
+  color: var(--color-primary-700);
 }
 
-.total-row.pending-total span:last-child {
-  color: #ea580c;
+.ft-totals__row--pending strong {
+  color: #ea580c; // conserve l'orange « reste à recevoir »
   font-weight: var(--font-weight-semibold);
 }
 
-.divider {
+.ft-totals__divider {
   height: 1px;
-  background: var(--color-border-subtle);
-  margin: var(--spacing-3) 0;
+  background: var(--color-primary-200);
+  margin-block: var(--spacing-2);
+}
+
+@media (max-width: 640px) {
+  .ft-totals {
+    max-width: none;
+  }
 }
 
 .form-actions {
@@ -403,16 +397,6 @@
   color: var(--color-text-secondary);
 }
 
-@media (max-width: 1100px) {
-  .form-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .totals-panel {
-    position: static;
-  }
-}
-
 :host ::ng-deep {
   app-form-section .form-section {
     margin-bottom: 0;
@@ -426,11 +410,6 @@
 
   .p-datepicker {
     display: flex;
-  }
-
-  .form-grid-3 .p-select,
-  .form-grid-3 .p-datepicker {
-    width: 100%;
   }
 
   // PrimeNG autocomplete [dropdown]="true" : éviter l'effondrement de la colonne Article.
