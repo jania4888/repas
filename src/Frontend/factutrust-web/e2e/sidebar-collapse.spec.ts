@@ -32,9 +32,11 @@ test.describe('Sidebar collapse', () => {
     await expect(lockup).toBeVisible();
     const box = await lockup.boundingBox();
     expect(box).toBeTruthy();
-    expect(box!.height).toBeGreaterThan(52);
+    // Logo 2026 détouré au ras (≈ 4,4:1, sans marge transparente intégrée) : il occupe toute
+    // la largeur utile (208 px), d'où une boîte moins haute qu'avec l'ancien visuel 3:1.
+    expect(box!.height).toBeGreaterThan(36);
     expect(box!.height).toBeLessThan(90);
-    expect(box!.width).toBeGreaterThan(140);
+    expect(box!.width).toBeGreaterThan(170);
     expect(box!.width).toBeLessThan(232);
 
     await page.locator('.rail-collapse-btn').click();

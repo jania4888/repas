@@ -10,6 +10,12 @@ export const BRAND = {
   logoIcon: 'assets/branding/instafact-icon.webp',
   logoLockupOnDark: 'assets/branding/instafact-lockup-on-dark.webp',
   logoIconOnDark: 'assets/branding/instafact-icon-on-dark.webp',
+  // Logo de la fenêtre principale (menu latéral), détouré depuis art/branding/ par
+  // scripts/generate-instafact-shell-logo.py : « Insta » noir pour le bleu du thème,
+  // variante « Insta » blanc pour le marine du mode cabinet délégué.
+  shellLockup: 'assets/branding/instafact-shell-lockup.webp',
+  shellLockupOnNavy: 'assets/branding/instafact-shell-lockup-on-navy.webp',
+  shellIcon: 'assets/branding/instafact-shell-icon.webp',
 } as const;
 
 export function pageTitle(page: string): string {

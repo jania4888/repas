@@ -79,6 +79,11 @@ export class SidebarComponent implements OnInit {
     () => this.auth.isAccountingFirm() && this.auth.isDelegatedMode()
   );
 
+  /** « Insta » noir illisible sur le marine du mode délégué : variante blanche dans ce seul cas. */
+  readonly brandLockupSrc = computed(() =>
+    this.isFirmDelegatedSkin() ? BRAND.shellLockupOnNavy : BRAND.shellLockup
+  );
+
   /** At most one parent section with its submenu open; closed after each navigation. */
   expandedParentId: string | null = null;
 

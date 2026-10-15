@@ -583,10 +583,40 @@ describe('SidebarComponent — collapse', () => {
     const iconOnly = fixture.nativeElement.querySelectorAll('.icon-logo-only');
     expect(lockup.length).toBe(1);
     expect(iconOnly.length).toBe(0);
-    expect((lockup[0] as HTMLImageElement).src).toContain('instafact-lockup-on-dark');
+    // Fond marine du mode délégué : variante « Insta » blanc.
+    expect((lockup[0] as HTMLImageElement).src).toContain('instafact-shell-lockup-on-navy.webp');
     const lockupFilter = getComputedStyle(lockup[0] as HTMLImageElement).filter;
     expect(lockupFilter).not.toContain('invert');
     expect(lockupFilter).not.toContain('brightness(0)');
+  });
+
+  it('uses the theme-blue lockup outside the delegated skin', () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, firmUser);
+    TestBed.inject(FirmContextService).syncFromUser();
+
+    const fixture = TestBed.createComponent(SidebarComponent);
+    fixture.componentRef.setInput('collapsed', false);
+    fixture.detectChanges();
+
+    const lockup = fixture.nativeElement.querySelector('.icon-brand-lockup') as HTMLImageElement;
+    expect(lockup.src).toContain('instafact-shell-lockup.webp');
+    expect(lockup.src).not.toContain('on-navy');
+    expect(lockup.alt).toBe('InstaFact');
+  });
+
+  it('uses the theme-blue lockup for a company user', () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, studioCompanyUser);
+    TestBed.inject(FirmContextService).syncFromUser();
+
+    const fixture = TestBed.createComponent(SidebarComponent);
+    fixture.componentRef.setInput('collapsed', false);
+    fixture.detectChanges();
+
+    const lockup = fixture.nativeElement.querySelector('.icon-brand-lockup') as HTMLImageElement;
+    expect(lockup.src).toContain('instafact-shell-lockup.webp');
+    expect(lockup.src).not.toContain('on-navy');
   });
 
   it('sizes the expanded lockup from brand height minus inset', () => {
@@ -620,7 +650,7 @@ describe('SidebarComponent — collapse', () => {
     const iconOnly = fixture.nativeElement.querySelectorAll('.icon-logo-only');
     expect(lockup.length).toBe(0);
     expect(iconOnly.length).toBe(1);
-    expect((iconOnly[0] as HTMLImageElement).src).toContain('instafact-icon-on-dark');
+    expect((iconOnly[0] as HTMLImageElement).src).toContain('instafact-shell-icon.webp');
   });
 
   it('keeps the collapsed icon within the 72px rail', () => {

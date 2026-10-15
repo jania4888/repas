@@ -27,6 +27,10 @@
     "sha": "0ca8fb881d660da84d6e47b5931390de7b2f863557ca66d523318976562bd803",
     "reason": "Navigation par identifiant stable (NAV_ID / id d'entrée) au lieu du libellé ; libellés français inchangés (nav-labels.spec.ts, nav-item-ids.spec.ts, specs sidebar/secondary-nav)."
   },
+  "src/app/core/constants/brand.ts": {
+    "sha": "b5829c45e312a58682b868ea1d0c1fc4142ce8a0ec289580adb85fd4b6355d45",
+    "reason": "Trois chemins d'images ajoutés (logo de la fenêtre principale : lockup, variante marine du mode délégué, icône du menu replié) : aucun texte affiché, rien à traduire."
+  },
   "src/app/core/interceptors/error.interceptor.ts": {
     "sha": "d4de4bc1932715de36d42de3c2148e1b57912852486369828c7ddf77b596b80a",
     "reason": "Messages centralisés dans core-localize (texte identique) ; contexte entreprise invalide détecté par le code API TENANT_CONTEXT_INVALID, émis par le seul 403 dont le message contenait « Contexte entreprise » : comportement équivalent, robuste à la traduction."
