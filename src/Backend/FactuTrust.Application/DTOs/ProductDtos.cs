@@ -64,7 +64,17 @@ public sealed record ProductDetailDto
     public decimal UnitPrice { get; init; }
     public decimal? PurchasePrice { get; init; }
     public decimal? LastPurchasePrice { get; init; }
+
+    /// <summary>
+    /// Le coût unitaire AFFICHÉ, pour l'entrepôt par défaut. Malgré son nom historique, il vaut
+    /// le coût de la prochaine sortie quand l'article est valorisé FIFO/LIFO — voir
+    /// <see cref="DisplayedUnitCostIsNextExit"/>. Nom conservé : il est consommé par le front.
+    /// </summary>
     public decimal? WeightedAverageCost { get; init; }
+
+    /// <summary>Vrai ⇒ le coût affiché est celui de la prochaine sortie, pas un coût moyen.</summary>
+    public bool DisplayedUnitCostIsNextExit { get; init; }
+
     public decimal? ProfitMarginPercent { get; init; }
     public decimal SalePriceTtc { get; init; }
     public string Currency { get; init; } = null!;

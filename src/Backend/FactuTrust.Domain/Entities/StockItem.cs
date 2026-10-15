@@ -240,17 +240,41 @@ public sealed class StockItem : AggregateRoot
     /// <summary>
     /// Records an inventory adjustment (can be positive or negative).
     /// </summary>
+    /// <param name="unitCostOverride">
+    /// Coût à porter sur le mouvement. <c>null</c> = le coût moyen courant, comme auparavant.
+    /// </param>
+    /// <param name="updateWeightedAverage">
+    /// <c>true</c> recalcule le CMUP sur un écart POSITIF, comme le ferait une entrée. Faux par
+    /// défaut, et c'est le comportement historique : un ajustement ne déplaçait jamais le coût
+    /// moyen. L'activer est une décision comptable — elle change la valeur du stock.
+    /// </param>
     public Result AdjustStock(
         decimal newQuantity,
-        string? notes = null)
+        string? notes = null,
+        decimal? unitCostOverride = null,
+        bool updateWeightedAverage = false)
     {
         if (newQuantity < 0)
             return Result.Failure(Error.Validation("Quantity", "La quantité ne peut pas être négative"));
 
+        if (unitCostOverride is < 0)
+            return Result.Failure(Error.Validation("UnitCost", "Le coût unitaire ne peut pas être négatif"));
+
         var difference = newQuantity - QuantityOnHand;
-        
+
         if (difference == 0)
             return Result.Success(); // No change needed
+
+        var movementUnitCost = unitCostOverride ?? AverageCost;
+
+        // Même formule que RecordEntry : l'écart positif se comporte comme une entrée valorisée.
+        if (updateWeightedAverage && difference > 0 && unitCostOverride.HasValue)
+        {
+            var totalCurrentValue = QuantityOnHand * AverageCost;
+            var entryValue = difference * unitCostOverride.Value;
+            if (newQuantity > 0)
+                AverageCost = (totalCurrentValue + entryValue) / newQuantity;
+        }
 
         QuantityOnHand = newQuantity;
 
@@ -259,7 +283,7 @@ public sealed class StockItem : AggregateRoot
             MovementType.Adjustment,
             MovementReason.InventoryAdjustment,
             difference,
-            AverageCost,
+            movementUnitCost,
             QuantityOnHand,
             null,
             notes);

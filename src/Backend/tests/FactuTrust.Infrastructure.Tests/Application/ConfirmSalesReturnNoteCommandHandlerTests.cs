@@ -198,6 +198,7 @@ public sealed class ConfirmSalesReturnNoteCommandHandlerTests
             whRepo.Object,
             productRepo.Object,
             StockTestDoubles.Passthrough(stockRepo.Object),
+            StockTestDoubles.NoValuation(),
             new Mock<ICurrentUser>().Object,
             new Mock<IAuditService>().Object,
             NullLogger<ConfirmSalesReturnNoteCommandHandler>.Instance);

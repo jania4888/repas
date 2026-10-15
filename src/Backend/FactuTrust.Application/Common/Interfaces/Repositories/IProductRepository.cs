@@ -145,6 +145,14 @@ public interface IProductRepository : IRepository<Product>
     Task<IReadOnlyDictionary<Guid, string>> GetProductNamesByIdsAsync(
         IReadOnlyCollection<Guid> productIds,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Charge plusieurs produits en une requête (ids manquants simplement absents du résultat).
+    /// À préférer à une boucle de <c>GetByIdAsync</c>, qui fait un aller-retour par produit.
+    /// </summary>
+    Task<IReadOnlyDictionary<Guid, Product>> GetByIdsAsync(
+        IReadOnlyCollection<Guid> productIds,
+        CancellationToken cancellationToken = default);
 }
 
 /// <summary>Lightweight traceability snapshot for inventory and stock flows.</summary>

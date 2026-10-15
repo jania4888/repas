@@ -1,9 +1,14 @@
 using FactuTrust.Application.Common.Interfaces.Repositories;
+using FactuTrust.Application.Configuration;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.Reports;
 using FactuTrust.Domain.Entities;
+using FactuTrust.Domain.Enums;
+using FactuTrust.Domain.Services;
 using FactuTrust.Infrastructure.MultiTenancy;
+using FactuTrust.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace FactuTrust.Infrastructure.Repositories;
 
@@ -13,10 +18,14 @@ namespace FactuTrust.Infrastructure.Repositories;
 public sealed class StockItemRepository : IStockItemRepository
 {
     private readonly ITenantDbContextFactory _contextFactory;
+    private readonly StockTraceabilityOptions _options;
 
-    public StockItemRepository(ITenantDbContextFactory contextFactory)
+    public StockItemRepository(
+        ITenantDbContextFactory contextFactory,
+        IOptions<StockTraceabilityOptions> options)
     {
         _contextFactory = contextFactory;
+        _options = options.Value;
     }
 
     public async Task<StockItem?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -147,20 +156,6 @@ public sealed class StockItemRepository : IStockItemRepository
         return (items, totalCount);
     }
 
-    public async Task<decimal> GetTotalStockValueAsync(
-        Guid? warehouseId = null,
-        CancellationToken cancellationToken = default)
-    {
-        await using var context = _contextFactory.CreateContext();
-
-        var query = context.StockItems.Where(s => s.IsActive);
-
-        if (warehouseId.HasValue)
-            query = query.Where(s => s.WarehouseId == warehouseId.Value);
-
-        return await query.SumAsync(s => s.QuantityOnHand * s.AverageCost, cancellationToken);
-    }
-
     public async Task<IReadOnlyDictionary<Guid, decimal>> GetAvailableQuantityByProductIdsAsync(
         Guid warehouseId,
         IReadOnlyList<Guid> productIds,
@@ -246,19 +241,7 @@ public sealed class StockItemRepository : IStockItemRepository
         return await context.StockItems.AnyAsync(s => s.Id == id, cancellationToken);
     }
 
-    public async Task<int> CountStockStatusReportRowsAsync(
-        Guid? warehouseId,
-        Guid? categoryId,
-        string? search,
-        bool includeZeroStock,
-        CancellationToken cancellationToken = default)
-    {
-        var rows = await BuildStockStatusRowsAsync(
-            warehouseId, categoryId, search, includeZeroStock, cancellationToken);
-        return rows.Count;
-    }
-
-    public async Task<(IReadOnlyList<StockStatusReportRowDto> Items, int TotalCount)> GetStockStatusReportRowsAsync(
+    public async Task<StockStatusReportPage> GetStockStatusReportPageAsync(
         Guid? warehouseId,
         Guid? categoryId,
         string? search,
@@ -268,17 +251,25 @@ public sealed class StockItemRepository : IStockItemRepository
         int pageSize,
         CancellationToken cancellationToken = default)
     {
+        // UNE seule construction du jeu : les totaux sortent des mêmes lignes que la page.
         var rows = await BuildStockStatusRowsAsync(
             warehouseId, categoryId, search, includeZeroStock, cancellationToken);
         rows = SortStockStatusRows(rows, groupingMode);
 
-        var totalCount = rows.Count;
         var paged = rows
             .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToList();
 
-        return (paged, totalCount);
+        return new StockStatusReportPage(
+            paged,
+            rows.Count,
+            rows.Sum(r => r.QuantityOnHand),
+            // La somme des valeurs déjà calculées, jamais un recalcul P.U. × Qté : en FIFO/LIFO le
+            // P.U. est un coût de prochaine sortie, le produit serait faux.
+            rows.Sum(r => r.StockValue),
+            rows.Count(r => r.UnitCostIsNextExit),
+            rows.Count(r => r.QuantityDrift));
     }
 
     private async Task<List<StockStatusReportRowDto>> BuildStockStatusRowsAsync(
@@ -316,9 +307,10 @@ public sealed class StockItemRepository : IStockItemRepository
         if (!includeZeroStock)
             query = query.Where(x => x.s.QuantityOnHand > 0);
 
-        var fromStockItems = await query
-            .Select(x => new StockStatusReportRowDto
+        var raw = await query
+            .Select(x => new StockStatusRawRow
             {
+                StockItemId = x.s.Id,
                 ProductId = x.p.Id,
                 ProductCode = x.p.Code,
                 ProductName = x.p.Name,
@@ -328,10 +320,19 @@ public sealed class StockItemRepository : IStockItemRepository
                 WarehouseCode = x.w.Code,
                 WarehouseName = x.w.Name,
                 QuantityOnHand = x.s.QuantityOnHand,
-                UnitCost = x.s.AverageCost,
-                StockValue = x.s.QuantityOnHand * x.s.AverageCost
+                AverageCost = x.s.AverageCost,
+                CostingMethod = x.p.CostingMethod
             })
             .ToListAsync(cancellationToken);
+
+        // UNE seule requête supplémentaire, restreinte côté serveur par la jointure Products —
+        // donc pas de liste d'identifiants en paramètres, et aucun rapport avec la taille de page.
+        // Drapeau à false ⇒ dictionnaire vide et AUCUNE requête émise : l'écran est alors
+        // identique au bit près à ce qu'il était avant ce chantier.
+        var aggregates = await LoadLayerAggregatesAsync(
+            context, warehouseId, categoryId, search, cancellationToken);
+
+        var fromStockItems = raw.Select(r => ToRow(r, aggregates)).ToList();
 
         if (!includeZeroStock || !warehouseId.HasValue)
         {
@@ -383,7 +384,13 @@ public sealed class StockItemRepository : IStockItemRepository
                 WarehouseName = warehouse.Name,
                 QuantityOnHand = 0,
                 UnitCost = 0,
-                StockValue = 0
+                StockValue = 0,
+                // Ces produits n'ont aucun article de stock dans l'entrepôt : ni couche, ni coût.
+                // La méthode reste celle de la fiche, pour que le badge de l'écran reste cohérent.
+                CostingMethod = x.p.CostingMethod,
+                UnitCostIsNextExit = false,
+                HasValuationLayers = false,
+                QuantityDrift = false
             })
             .ToListAsync(cancellationToken);
         fromStockItems.AddRange(missingRows);
@@ -394,6 +401,10 @@ public sealed class StockItemRepository : IStockItemRepository
     /// <summary>
     /// Le SQL conserve le libellé français historique. La traduction n'est appliquée qu'en mémoire,
     /// après lecture, et seulement quand l'interface est en arabe.
+    ///
+    /// ⚠️ Cette méthode RECOPIE la ligne champ à champ. Tout champ ajouté à
+    /// <see cref="StockStatusReportRowDto"/> doit être repris ici, sinon il est perdu
+    /// EN ARABE UNIQUEMENT — sans qu'aucun test français ne le voie.
     /// </summary>
     private static void LocalizeUncategorized(List<StockStatusReportRowDto> rows)
     {
@@ -419,9 +430,153 @@ public sealed class StockItemRepository : IStockItemRepository
                 WarehouseName = row.WarehouseName,
                 QuantityOnHand = row.QuantityOnHand,
                 UnitCost = row.UnitCost,
-                StockValue = row.StockValue
+                StockValue = row.StockValue,
+                CostingMethod = row.CostingMethod,
+                UnitCostIsNextExit = row.UnitCostIsNextExit,
+                HasValuationLayers = row.HasValuationLayers,
+                QuantityDrift = row.QuantityDrift
             };
         }
+    }
+
+    /// <summary>
+    /// Les agrégats de couches, en UNE instruction SQL restreinte aux articles réellement valorisés
+    /// par couches.
+    ///
+    /// La restriction se fait par la jointure sur Products, et non par une liste d'identifiants :
+    /// pas de plafond des 2100 paramètres de SQL Server, et le coût ne dépend pas de la pagination.
+    ///
+    /// Les DEUX frontières (plus ancienne et plus récente) reviennent dans la même ligne : un seul
+    /// aller-retour sert FIFO et LIFO, et le choix se fait en mémoire, là où la méthode est connue.
+    /// Le départage par Id reprend celui du moteur de consommation — sans lui, deux réceptions de
+    /// la même milliseconde seraient confondues et l'écran annoncerait une « prochaine sortie »
+    /// que le moteur ne choisirait pas.
+    ///
+    /// Pas de ROW_NUMBER ni de SQL brut : les tests tournent sur le fournisseur en mémoire, qui ne
+    /// les traduit pas. Les sous-requêtes corrélées, elles, sont évaluées par les deux.
+    /// </summary>
+    private async Task<Dictionary<Guid, LayerAggregate>> LoadLayerAggregatesAsync(
+        TenantDbContext context,
+        Guid? warehouseId,
+        Guid? categoryId,
+        string? search,
+        CancellationToken cancellationToken)
+    {
+        if (!_options.FifoLifoValuationEnabled)
+            return new Dictionary<Guid, LayerAggregate>();
+
+        var query =
+            from s in context.StockItems.AsNoTracking()
+            join p in context.Products.AsNoTracking() on s.ProductId equals p.Id
+            where s.IsActive && p.IsActive && p.IsStockManaged
+                  && (p.CostingMethod == CostingMethod.Fifo || p.CostingMethod == CostingMethod.Lifo)
+            select new { s, p };
+
+        if (warehouseId.HasValue)
+            query = query.Where(x => x.s.WarehouseId == warehouseId.Value);
+
+        if (categoryId.HasValue)
+            query = query.Where(x => x.p.CategoryId == categoryId.Value);
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var term = search.Trim();
+            query = query.Where(x =>
+                EF.Functions.Like(x.p.Name, $"%{term}%") ||
+                EF.Functions.Like(x.p.Code, $"%{term}%"));
+        }
+
+        var rows = await query
+            .Select(x => new LayerAggregate
+            {
+                StockItemId = x.s.Id,
+                LayerCount = context.StockValuationLayers
+                    .Count(l => l.StockItemId == x.s.Id && l.RemainingQuantity > 0),
+                LayerQuantity = context.StockValuationLayers
+                    .Where(l => l.StockItemId == x.s.Id && l.RemainingQuantity > 0)
+                    .Sum(l => (decimal?)l.RemainingQuantity) ?? 0m,
+                LayerValue = context.StockValuationLayers
+                    .Where(l => l.StockItemId == x.s.Id && l.RemainingQuantity > 0)
+                    .Sum(l => (decimal?)(l.RemainingQuantity * l.UnitCost)) ?? 0m,
+                FirstInUnitCost = context.StockValuationLayers
+                    .Where(l => l.StockItemId == x.s.Id && l.RemainingQuantity > 0)
+                    .OrderBy(l => l.ReceivedAt).ThenBy(l => l.Id)
+                    .Select(l => (decimal?)l.UnitCost).FirstOrDefault(),
+                LastInUnitCost = context.StockValuationLayers
+                    .Where(l => l.StockItemId == x.s.Id && l.RemainingQuantity > 0)
+                    .OrderByDescending(l => l.ReceivedAt).ThenByDescending(l => l.Id)
+                    .Select(l => (decimal?)l.UnitCost).FirstOrDefault()
+            })
+            .ToListAsync(cancellationToken);
+
+        return rows.ToDictionary(r => r.StockItemId);
+    }
+
+    /// <summary>
+    /// La projection finale d'une ligne : c'est <see cref="StockValuation"/> qui décide, jamais
+    /// une formule locale. Un article sans agrégat (CMUP, ou drapeau à false) retombe sur le cache.
+    /// </summary>
+    private StockStatusReportRowDto ToRow(
+        StockStatusRawRow raw,
+        IReadOnlyDictionary<Guid, LayerAggregate> aggregates)
+    {
+        aggregates.TryGetValue(raw.StockItemId, out var aggregate);
+
+        var snapshot = StockValuation.FromAggregate(
+            raw.CostingMethod,
+            layered: _options.RequiresLayeredCosting(raw.CostingMethod),
+            raw.QuantityOnHand,
+            raw.AverageCost,
+            aggregate?.LayerQuantity ?? 0m,
+            aggregate?.LayerValue ?? 0m,
+            aggregate?.FirstInUnitCost,
+            aggregate?.LastInUnitCost,
+            hasLayers: (aggregate?.LayerCount ?? 0) > 0);
+
+        return new StockStatusReportRowDto
+        {
+            ProductId = raw.ProductId,
+            ProductCode = raw.ProductCode,
+            ProductName = raw.ProductName,
+            CategoryId = raw.CategoryId,
+            CategoryName = raw.CategoryName,
+            WarehouseId = raw.WarehouseId,
+            WarehouseCode = raw.WarehouseCode,
+            WarehouseName = raw.WarehouseName,
+            QuantityOnHand = snapshot.QuantityOnHand,
+            UnitCost = snapshot.UnitCost,
+            StockValue = snapshot.StockValue,
+            CostingMethod = snapshot.CostingMethod,
+            UnitCostIsNextExit = snapshot.UnitCostIsNextExit,
+            HasValuationLayers = snapshot.HasLayers,
+            QuantityDrift = snapshot.QuantityDrift
+        };
+    }
+
+    private sealed class StockStatusRawRow
+    {
+        public Guid StockItemId { get; init; }
+        public Guid ProductId { get; init; }
+        public string ProductCode { get; init; } = null!;
+        public string ProductName { get; init; } = null!;
+        public Guid? CategoryId { get; init; }
+        public string CategoryName { get; init; } = null!;
+        public Guid WarehouseId { get; init; }
+        public string WarehouseCode { get; init; } = null!;
+        public string WarehouseName { get; init; } = null!;
+        public decimal QuantityOnHand { get; init; }
+        public decimal AverageCost { get; init; }
+        public CostingMethod CostingMethod { get; init; }
+    }
+
+    private sealed class LayerAggregate
+    {
+        public Guid StockItemId { get; init; }
+        public int LayerCount { get; init; }
+        public decimal LayerQuantity { get; init; }
+        public decimal LayerValue { get; init; }
+        public decimal? FirstInUnitCost { get; init; }
+        public decimal? LastInUnitCost { get; init; }
     }
 
     private static List<StockStatusReportRowDto> SortStockStatusRows(

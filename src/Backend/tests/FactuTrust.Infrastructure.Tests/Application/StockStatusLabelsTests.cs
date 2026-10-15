@@ -22,8 +22,12 @@ public sealed class StockStatusLabelsTests
         Assert.Equal("Cet entrepôt est désactivé.", StockStatusLabels.WarehouseDisabled());
         Assert.Equal("Total général", StockStatusLabels.GrandTotal());
         Assert.Equal(
-            "Valorisation au coût moyen pondéré affiché (CMUP / couche FIFO-LIFO).",
+            "Valorisation selon la méthode de chaque article : CMUP, ou couches FIFO/LIFO.",
             StockStatusLabels.ValuationNote());
+        Assert.Equal(
+            "FIFO/LIFO : le P.U. affiché est le coût de la prochaine sortie. "
+            + "La valeur est la somme des couches restantes, donc P.U. × Qté ≠ Valeur.",
+            StockStatusLabels.NextExitUnitCostNote());
         Assert.Equal(
             "Entrepôt : Magasin — Catégorie : Boissons — Recherche : eau[%] — Inclut stock à zéro",
             StockStatusReportAssembler.BuildFiltersSummary("Magasin", "Boissons", "eau[%]", true));

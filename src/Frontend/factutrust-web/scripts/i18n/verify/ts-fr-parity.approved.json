@@ -342,5 +342,9 @@
   "src/app/features/accounting/monthly-declaration/dm-mode-panel.component.ts": {
     "removed": true,
     "reason": "Retrait du calcul cable : le panneau de changement de regime n'a plus d'objet — il n'y a plus de regime a choisir, ni de rampe de controles de parite a suivre. Suppression voulue."
+  },
+  "src/app/features/stock/stock-list/stock-list.component.ts": {
+    "sha": "69e48198d87ebb06fbe226bacd9378f4e06d3b973bf8737e01d6e0af3c6c30a5",
+    "reason": "Colonne « Coût unitaire » de la liste de stock : ajout d'une infobulle expliquant que, pour un article FIFO/LIFO, le P.U. affiché est le coût de la prochaine sortie et que la valeur reste la somme des couches (P.U. x Qte != Valeur). Nouveau segment FR assume ; aucun libellé existant modifié."
   }
 }

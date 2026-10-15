@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '@environments/environment';
 import { ApiResponse } from './auth.service';
-import { coercePickingPolicy, coerceTrackingMode } from '@shared/utils/stock-traceability.utils';
+import { coerceCostingMethod, coercePickingPolicy, coerceTrackingMode } from '@shared/utils/stock-traceability.utils';
 
 // --- Models ---
 
@@ -45,11 +45,18 @@ export interface StockItem {
     quantityReserved: number;
     minimumStock: number;
     maximumStock: number | null;
+    /** Cache CMUP brut de l'article. Pour l'affichage, utiliser `unitCost`. */
     averageCost: number;
+    /** Valeur réelle : somme des couches en FIFO/LIFO, quantité × CMUP sinon. */
     stockValue: number;
     isLowStock: boolean;
     isOutOfStock: boolean;
     costingMethod?: number;
+    /** Coût à afficher : coût de la prochaine sortie en FIFO/LIFO, CMUP sinon. */
+    unitCost?: number;
+    /** Vrai ⇒ `unitCost` × quantité ≠ `stockValue`, et c'est normal. */
+    unitCostIsNextExit?: boolean;
+    hasValuationLayers?: boolean;
 }
 
 export interface StockMovement {
@@ -109,6 +116,8 @@ export interface StockItemsResult {
     totalCount: number;
     page: number;
     pageSize: number;
+    /** Valeur de TOUT le stock filtré, servie par le back — pas la somme de la page affichée. */
+    totalStockValue?: number;
 }
 
 export interface RecordEntryRequest {
@@ -184,7 +193,24 @@ export class StockService {
         if (lowStockOnly) params = params.set('lowStockOnly', 'true');
         if (outOfStockOnly) params = params.set('outOfStockOnly', 'true');
 
-        return this.http.get<ApiResponse<StockItemsResult>>(`${this.API_URL}/items`, { params });
+        return this.http.get<ApiResponse<StockItemsResult>>(`${this.API_URL}/items`, { params }).pipe(
+            // L'API sérialise les énums par NOM ("Fifo"), alors que l'écran compare des nombres.
+            // Sans cette coercion, le badge de méthode affiche toujours « CMUP » et le bouton
+            // « Couches FIFO/LIFO » reste invisible, en silence. Les autres services la font déjà.
+            map(response => {
+                if (!response?.data?.items) return response;
+                return {
+                    ...response,
+                    data: {
+                        ...response.data,
+                        items: response.data.items.map(item => ({
+                            ...item,
+                            costingMethod: coerceCostingMethod(item.costingMethod)
+                        }))
+                    }
+                };
+            })
+        );
     }
 
     getStockAlerts(

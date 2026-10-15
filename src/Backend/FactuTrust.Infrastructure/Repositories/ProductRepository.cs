@@ -398,4 +398,19 @@ public sealed class ProductRepository : IProductRepository
             .Where(p => distinct.Contains(p.Id))
             .ToDictionaryAsync(p => p.Id, p => p.Name, cancellationToken);
     }
+
+    public async Task<IReadOnlyDictionary<Guid, Product>> GetByIdsAsync(
+        IReadOnlyCollection<Guid> productIds,
+        CancellationToken cancellationToken = default)
+    {
+        if (productIds.Count == 0)
+            return new Dictionary<Guid, Product>();
+
+        await using var context = _contextFactory.CreateContext();
+        var distinct = productIds.Distinct().ToList();
+        return await context.Products
+            .AsNoTracking()
+            .Where(p => distinct.Contains(p.Id))
+            .ToDictionaryAsync(p => p.Id, cancellationToken);
+    }
 }

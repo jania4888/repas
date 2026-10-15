@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Options;
+using FactuTrust.Application.Configuration;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Common.Interfaces.Services;
@@ -56,6 +58,11 @@ public sealed class InventoryCommandHandlerTests
                     id => new ProductTrackingInfo(
                         modes.FirstOrDefault(m => m.ProductId == id).Mode,
                         false)));
+        // La validation d'inventaire charge désormais les produits EN LOT, pour résoudre le coût
+        // des écarts positifs. Aucun produit retourné ⇒ repli sur le CMUP, comme auparavant.
+        repo
+            .Setup(p => p.GetByIdsAsync(It.IsAny<IReadOnlyCollection<Guid>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new Dictionary<Guid, Product>());
         return repo;
     }
 
@@ -197,6 +204,8 @@ public sealed class InventoryCommandHandlerTests
             stockRepo.Object,
             ProductRepoWithTracking().Object,
             StockTestDoubles.Passthrough(stockRepo.Object),
+            StockTestDoubles.NoValuation(),
+            Options.Create(new StockTraceabilityOptions()),
             tenant.Object);
 
         var result = await handler.Handle(new ValidateInventoryCommand(inventory.Id), CancellationToken.None);
@@ -238,6 +247,8 @@ public sealed class InventoryCommandHandlerTests
             new Mock<IStockItemRepository>().Object,
             ProductRepoWithTracking((product.Id, TrackingMode.Lot)).Object,
             mutation.Object,
+            StockTestDoubles.NoValuation(),
+            Options.Create(new StockTraceabilityOptions()),
             tenant.Object);
 
         var result = await handler.Handle(new ValidateInventoryCommand(inventory.Id), CancellationToken.None);
@@ -295,6 +306,8 @@ public sealed class InventoryCommandHandlerTests
             stockRepo.Object,
             ProductRepoWithTracking((product.Id, TrackingMode.Lot)).Object,
             mutation.Object,
+            StockTestDoubles.NoValuation(),
+            Options.Create(new StockTraceabilityOptions()),
             tenant.Object);
 
         var result = await handler.Handle(new ValidateInventoryCommand(inventory.Id), CancellationToken.None);
@@ -342,6 +355,8 @@ public sealed class InventoryCommandHandlerTests
             stockRepo.Object,
             ProductRepoWithTracking().Object,
             StockTestDoubles.Passthrough(stockRepo.Object),
+            StockTestDoubles.NoValuation(),
+            Options.Create(new StockTraceabilityOptions()),
             tenant.Object);
 
         var result = await handler.Handle(new ValidateInventoryCommand(inventory.Id), CancellationToken.None);
@@ -401,6 +416,8 @@ public sealed class InventoryCommandHandlerTests
             stockRepo.Object,
             ProductRepoWithTracking((counted.Id, TrackingMode.None), (confirmed.Id, TrackingMode.None)).Object,
             StockTestDoubles.Passthrough(stockRepo.Object),
+            StockTestDoubles.NoValuation(),
+            Options.Create(new StockTraceabilityOptions()),
             tenant.Object);
 
         var result = await handler.Handle(
@@ -446,6 +463,8 @@ public sealed class InventoryCommandHandlerTests
             stockRepo.Object,
             ProductRepoWithTracking().Object,
             StockTestDoubles.Passthrough(stockRepo.Object),
+            StockTestDoubles.NoValuation(),
+            Options.Create(new StockTraceabilityOptions()),
             tenant.Object);
 
         var result = await handler.Handle(

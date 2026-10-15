@@ -231,6 +231,7 @@ public static class DependencyInjection
         services.AddScoped<IStockMutationService, StockMutationService>();
         services.AddScoped<IProductAttributeRepository, ProductAttributeRepository>();
         services.AddScoped<IStockTraceabilityQuery, EfStockTraceabilityQuery>();
+        services.AddScoped<IStockValuationReader, EfStockValuationReader>();
         services.AddScoped<ISalesOrderRepository, SalesOrderRepository>();
         services.AddScoped<Application.Features.SalesOrders.Services.ISalesOrderStockReservationService,
             Application.Features.SalesOrders.Services.SalesOrderStockReservationService>();

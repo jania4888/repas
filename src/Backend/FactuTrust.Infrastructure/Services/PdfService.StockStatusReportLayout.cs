@@ -53,11 +53,20 @@ public partial class PdfService
                 $"{Amount(context.GrandTotalValue)} {context.Currency}").Bold();
         });
 
-        col.Item().PaddingTop(8).Text(
-                "Valorisation au coût moyen pondéré affiché (CMUP / couche FIFO-LIFO).")
+        col.Item().PaddingTop(8).Text(StockStatusLabels.ValuationNote())
             .FontSize(7)
             .Italic()
             .FontColor(Colors.Grey.Darken1);
+
+        // Note en pied de tableau plutôt qu'une 6ᵉ colonne : les largeurs sont relatives et la
+        // mise en page arabe casserait. Affichée seulement si l'état contient des lignes FIFO/LIFO.
+        if (context.Rows.Any(r => r.UnitCostIsNextExit))
+        {
+            col.Item().PaddingTop(2).Text(StockStatusLabels.NextExitUnitCostNote())
+                .FontSize(7)
+                .Italic()
+                .FontColor(Colors.Grey.Darken1);
+        }
     }
 
     private static void ComposeStockStatusByWarehouseThenCategory(ColumnDescriptor col, StockStatusPdfContext context)
@@ -269,6 +278,14 @@ public partial class PdfService
             .FontSize(7)
             .Italic()
             .FontColor(Colors.Grey.Darken1);
+
+        if (context.Rows.Any(r => r.UnitCostIsNextExit))
+        {
+            col.Item().PaddingTop(2).AlignRight().Text(StockStatusLabels.NextExitUnitCostNote())
+                .FontSize(7)
+                .Italic()
+                .FontColor(Colors.Grey.Darken1);
+        }
     }
 
     private static void ComposeArabicStockStatusByWarehouseThenCategory(ColumnDescriptor col, StockStatusPdfContext context)

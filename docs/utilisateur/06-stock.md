@@ -159,10 +159,15 @@ Dans **Stock > Gestion de stock**, un bandeau signale les lots bientôt périmé
 Par défaut, le coût de stock est le **CMUP** (coût moyen unitaire pondéré). Pour un produit, vous pouvez passer en **FIFO** (premier entré, premier sorti) ou **LIFO**.
 
 - FIFO / LIFO ne s'activent pas tant qu'il reste du stock valorisé en CMUP : créez d'abord une **couche d'ouverture** (bouton sur la fiche produit).
-- L'écran stock continue d'afficher un **coût unitaire** : pour FIFO/LIFO, c'est la valeur restante des couches / quantité.
+- L'écran stock affiche un **coût unitaire** dont le sens dépend de la méthode :
+  - **CMUP** : le coût moyen pondéré. `P.U. × Qté = Valeur`, comme toujours.
+  - **FIFO / LIFO** : le **coût de la prochaine sortie** — la couche la plus ancienne en FIFO, la plus récente en LIFO. La **valeur**, elle, reste la **somme des couches restantes**.
+    Sur ces lignes, **`P.U. × Qté` ne donne donc pas la valeur, et c'est normal** : une légende le rappelle sous le tableau, et un repère indique la méthode sur chaque ligne concernée.
+- La valeur affichée est **toujours** celle du stock réel : somme des couches en FIFO/LIFO, quantité × CMUP sinon. Un article dont les couches n'ont jamais été créées retombe sur le CMUP.
 - Un **transfert** recopie les couches (quantité, coût, date de réception, lot) vers l'entrepôt destination. Un **avoir** ou une **annulation** restitue les couches d'origine, pas une nouvelle couche à la date du jour.
 - Une facture **mixte** (FIFO + CMUP) déduit toutes les lignes gérées en stock dans la même transaction.
 - **LIFO** est disponible opérationnellement mais souvent **non retenu** pour les comptes statutaires tunisiens / IFRS. Demandez à votre expert-comptable avant de l'utiliser.
+- Une entrée d'**inventaire** ou de **comptage rapide** sans coût laisse l'article à zéro : corrigez-la par un **bon d'entrée chiffré**. Une option d'administration (désactivée par défaut) permet de la valoriser automatiquement au dernier prix d'achat ; elle **déplace le CMUP** des articles concernés, donc demandez l'avis de votre expert-comptable avant de l'activer.
 
 ---
 

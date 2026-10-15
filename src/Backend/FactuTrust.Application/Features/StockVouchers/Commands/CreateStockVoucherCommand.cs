@@ -9,6 +9,8 @@ using FactuTrust.Domain.ValueObjects;
 using AuditActions = FactuTrust.Domain.Entities.AuditActions;
 using MediatR;
 
+using FactuTrust.Application.Features.Stock.Services;
+
 namespace FactuTrust.Application.Features.StockVouchers.Commands;
 
 public sealed record CreateStockVoucherCommand(CreateStockVoucherDto Dto) : IRequest<Result<Guid>>;
@@ -19,6 +21,7 @@ public sealed class CreateStockVoucherCommandHandler : IRequestHandler<CreateSto
     private readonly IWarehouseRepository _warehouseRepository;
     private readonly IProductRepository _productRepository;
     private readonly IStockItemRepository _stockItemRepository;
+    private readonly IStockValuationReader _valuationReader;
     private readonly ICurrentUser _currentUser;
     private readonly IAuditService _auditService;
     private readonly ITenantContext _tenantContext;
@@ -29,6 +32,7 @@ public sealed class CreateStockVoucherCommandHandler : IRequestHandler<CreateSto
         IWarehouseRepository warehouseRepository,
         IProductRepository productRepository,
         IStockItemRepository stockItemRepository,
+        IStockValuationReader valuationReader,
         ICurrentUser currentUser,
         IAuditService auditService,
         ITenantContext tenantContext,
@@ -38,6 +42,7 @@ public sealed class CreateStockVoucherCommandHandler : IRequestHandler<CreateSto
         _warehouseRepository = warehouseRepository;
         _productRepository = productRepository;
         _stockItemRepository = stockItemRepository;
+        _valuationReader = valuationReader;
         _currentUser = currentUser;
         _auditService = auditService;
         _tenantContext = tenantContext;
@@ -125,8 +130,13 @@ public sealed class CreateStockVoucherCommandHandler : IRequestHandler<CreateSto
         if (requestedCost.HasValue)
             return requestedCost.Value;
 
-        var stockItem = await _stockItemRepository.GetByProductAndWarehouseAsync(
+        // Même cascade qu'avant, mais le coût d'un article FIFO/LIFO vient désormais de ses couches
+        // et non de son cache d'affichage. Hors transaction ici : le résolveur lit la valorisation
+        // déjà chargée, jamais les couches une par une.
+        var reading = await _valuationReader.GetByProductAndWarehouseAsync(
             product.Id, warehouseId, cancellationToken);
-        return stockItem?.AverageCost ?? product.LastPurchasePrice?.Amount ?? product.GetPurchasePrice().Amount;
+        return StockEntryCostResolver
+            .Resolve(reading, product, explicitUnitCost: null, allowPurchasePriceCascade: true)
+            .UnitCost;
     }
 }

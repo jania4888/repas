@@ -7,6 +7,8 @@ using FactuTrust.Domain.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
+using FactuTrust.Application.Features.Stock.Services;
+
 namespace FactuTrust.Application.Features.Stock.EventHandlers;
 
 /// <summary>
@@ -21,6 +23,7 @@ public sealed class RestoreStockOnInvoiceCancelledHandler : INotificationHandler
     private readonly IProductRepository _productRepository;
     private readonly IStockMovementRepository _stockMovementRepository;
     private readonly IStockMutationService _mutation;
+    private readonly IStockValuationReader _valuationReader;
     private readonly ILogger<RestoreStockOnInvoiceCancelledHandler> _logger;
 
     public RestoreStockOnInvoiceCancelledHandler(
@@ -30,6 +33,7 @@ public sealed class RestoreStockOnInvoiceCancelledHandler : INotificationHandler
         IProductRepository productRepository,
         IStockMovementRepository stockMovementRepository,
         IStockMutationService mutation,
+        IStockValuationReader valuationReader,
         ILogger<RestoreStockOnInvoiceCancelledHandler> logger)
     {
         _invoiceRepository = invoiceRepository;
@@ -38,6 +42,7 @@ public sealed class RestoreStockOnInvoiceCancelledHandler : INotificationHandler
         _productRepository = productRepository;
         _stockMovementRepository = stockMovementRepository;
         _mutation = mutation;
+        _valuationReader = valuationReader;
         _logger = logger;
     }
 
@@ -161,8 +166,15 @@ public sealed class RestoreStockOnInvoiceCancelledHandler : INotificationHandler
                     continue;
                 }
 
+                // Repli : ce chemin n'est pris que si la restauration par couches n'a pas pu
+                // s'appliquer plus haut. Le coût suit la méthode de l'article, plus le cache.
                 var stockItem = await _stockItemRepository.GetByProductAndWarehouseAsync(
                     line.ProductId.Value, targetWarehouse.Id, cancellationToken);
+                var reading = await _valuationReader.GetByProductAndWarehouseAsync(
+                    line.ProductId.Value, targetWarehouse.Id, cancellationToken);
+                var unitCost = StockEntryCostResolver
+                    .Resolve(reading, product, cachedAverageCost: stockItem?.AverageCost)
+                    .UnitCost;
 
                 var notes = $"Réintégration suite à annulation - Motif: {notification.Reason}";
                 var entryResult = await _mutation.ApplyAsync(new StockMutationRequest
@@ -171,7 +183,7 @@ public sealed class RestoreStockOnInvoiceCancelledHandler : INotificationHandler
                     WarehouseId = targetWarehouse.Id,
                     Kind = StockMutationKind.Entry,
                     Quantity = line.Quantity,
-                    UnitCost = stockItem?.AverageCost ?? 0m,
+                    UnitCost = unitCost,
                     Reason = MovementReason.CustomerReturn,
                     Reference = reference,
                     Notes = notes

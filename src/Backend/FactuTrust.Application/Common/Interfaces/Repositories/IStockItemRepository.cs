@@ -72,13 +72,6 @@ public interface IStockItemRepository : IRepository<StockItem>
         CancellationToken cancellationToken = default);
     
     /// <summary>
-    /// Gets the total stock value across all warehouses or for a specific warehouse.
-    /// </summary>
-    Task<decimal> GetTotalStockValueAsync(
-        Guid? warehouseId = null,
-        CancellationToken cancellationToken = default);
-
-    /// <summary>
     /// Sums available quantity (on hand − reserved) per product in the given warehouse for the specified product ids.
     /// </summary>
     Task<IReadOnlyDictionary<Guid, decimal>> GetAvailableQuantityByProductIdsAsync(
@@ -87,9 +80,14 @@ public interface IStockItemRepository : IRepository<StockItem>
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Flat rows for the current stock status report (products × warehouses), with optional filters.
+    /// Une page de l'état de stock ET ses totaux, construits en UNE SEULE passe.
+    ///
+    /// Remplace le couple « lire les lignes » + « compter », qui obligeait les appelants à
+    /// reconstruire tout le jeu une seconde fois juste pour sommer. Les totaux sont la somme des
+    /// <see cref="StockStatusReportRowDto.StockValue"/> du même jeu : jamais un recalcul
+    /// <c>P.U. × Qté</c>, qui serait faux en FIFO/LIFO.
     /// </summary>
-    Task<(IReadOnlyList<StockStatusReportRowDto> Items, int TotalCount)> GetStockStatusReportRowsAsync(
+    Task<StockStatusReportPage> GetStockStatusReportPageAsync(
         Guid? warehouseId,
         Guid? categoryId,
         string? search,
@@ -99,11 +97,16 @@ public interface IStockItemRepository : IRepository<StockItem>
         int pageSize,
         CancellationToken cancellationToken = default);
 
-    /// <summary>Count of rows matching stock status filters (for PDF cap).</summary>
-    Task<int> CountStockStatusReportRowsAsync(
-        Guid? warehouseId,
-        Guid? categoryId,
-        string? search,
-        bool includeZeroStock,
-        CancellationToken cancellationToken = default);
 }
+
+/// <summary>
+/// Une page de l'état de stock, avec les totaux du jeu COMPLET (pas de la page) et les compteurs
+/// qui permettent à l'écran de n'afficher la légende « P.U. = prochaine sortie » que si elle sert.
+/// </summary>
+public sealed record StockStatusReportPage(
+    IReadOnlyList<StockStatusReportRowDto> Items,
+    int TotalCount,
+    decimal GrandTotalQuantity,
+    decimal GrandTotalValue,
+    int LayeredRowCount,
+    int DriftRowCount);

@@ -13,10 +13,12 @@ internal static class ProductDetailMapper
     public static ProductDetailDto ToDetailDto(
         Product product,
         decimal? weightedAverageCost = null,
-        decimal? minimumStock = null)
+        decimal? minimumStock = null,
+        bool displayedUnitCostIsNextExit = false)
     {
         return new ProductDetailDto
         {
+            DisplayedUnitCostIsNextExit = displayedUnitCostIsNextExit,
             Id = product.Id,
             Code = product.Code,
             Name = product.Name,

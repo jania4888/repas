@@ -83,7 +83,9 @@ public sealed class GetStockStatusReportQueryHandler
 
         var search = StockStatusReportAssembler.SanitizeSearch(request.Search);
 
-        var (rows, totalCount) = await _stockItemRepository.GetStockStatusReportRowsAsync(
+        // Une seule construction du jeu : les totaux viennent des mêmes lignes que la page.
+        // Auparavant le jeu complet était reconstruit une seconde fois juste pour sommer.
+        var result = await _stockItemRepository.GetStockStatusReportPageAsync(
             request.WarehouseId,
             request.CategoryId,
             search,
@@ -92,23 +94,6 @@ public sealed class GetStockStatusReportQueryHandler
             request.Page,
             pageSize,
             cancellationToken);
-
-        decimal grandQty = 0;
-        decimal grandValue = 0;
-        if (totalCount > 0)
-        {
-            var (allRows, _) = await _stockItemRepository.GetStockStatusReportRowsAsync(
-                request.WarehouseId,
-                request.CategoryId,
-                search,
-                request.IncludeZeroStock,
-                request.GroupingMode,
-                1,
-                totalCount,
-                cancellationToken);
-            grandQty = allRows.Sum(r => r.QuantityOnHand);
-            grandValue = allRows.Sum(r => r.StockValue);
-        }
 
         _ = await _companyRepository.GetDefaultAsync(cancellationToken);
         const string currency = "TND";
@@ -119,15 +104,17 @@ public sealed class GetStockStatusReportQueryHandler
         return Result.Success(new StockStatusReportResultDto
         {
             GroupingMode = request.GroupingMode.ToString(),
-            TotalRows = totalCount,
+            TotalRows = result.TotalCount,
             Page = request.Page,
             PageSize = pageSize,
-            GrandTotalQuantity = grandQty,
-            GrandTotalValue = grandValue,
+            GrandTotalQuantity = result.GrandTotalQuantity,
+            GrandTotalValue = result.GrandTotalValue,
+            LayeredRowCount = result.LayeredRowCount,
+            DriftRowCount = result.DriftRowCount,
             Currency = currency,
             GeneratedAtUtc = _timeProvider.GetUtcNow().UtcDateTime,
             FiltersSummary = filtersSummary,
-            Rows = rows
+            Rows = result.Items
         });
     }
 }

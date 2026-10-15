@@ -610,5 +610,9 @@
   "src/app/features/accounting/monthly-declaration/dm-mode-panel.component.ts#DmModePanelComponent": {
     "removed": true,
     "reason": "Retrait du calcul cable : le panneau de changement de regime n'a plus d'objet — il n'y a plus de regime a choisir, ni de rampe de controles de parite a suivre. Suppression voulue."
+  },
+  "src/app/features/stock/stock-list/stock-list.component.html": {
+    "sha": "c226174004f3dc2dd604aa5ab8397fff78d257f4a376e5221d6b0df739f97770",
+    "reason": "Colonne « Coût unitaire » : tri bascule sur unitCost (coût affiché selon la méthode) au lieu d'averageCost (cache CMUP), et ajout d'une icône d'infobulle quand des lignes FIFO/LIFO sont presentes. Aucun texte FR ni identifiant i18n modifié."
   }
 }

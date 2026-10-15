@@ -7,6 +7,8 @@ using FactuTrust.Domain.Enums;
 using AuditActions = FactuTrust.Domain.Entities.AuditActions;
 using MediatR;
 
+using FactuTrust.Application.Features.Stock.Services;
+
 namespace FactuTrust.Application.Features.StockVouchers.Commands;
 
 public sealed record UpdateStockVoucherCommand(Guid Id, UpdateStockVoucherDto Dto) : IRequest<Result>;
@@ -17,6 +19,7 @@ public sealed class UpdateStockVoucherCommandHandler : IRequestHandler<UpdateSto
     private readonly IWarehouseRepository _warehouseRepository;
     private readonly IProductRepository _productRepository;
     private readonly IStockItemRepository _stockItemRepository;
+    private readonly IStockValuationReader _valuationReader;
     private readonly ICurrentUser _currentUser;
     private readonly IAuditService _auditService;
 
@@ -25,6 +28,7 @@ public sealed class UpdateStockVoucherCommandHandler : IRequestHandler<UpdateSto
         IWarehouseRepository warehouseRepository,
         IProductRepository productRepository,
         IStockItemRepository stockItemRepository,
+        IStockValuationReader valuationReader,
         ICurrentUser currentUser,
         IAuditService auditService)
     {
@@ -32,6 +36,7 @@ public sealed class UpdateStockVoucherCommandHandler : IRequestHandler<UpdateSto
         _warehouseRepository = warehouseRepository;
         _productRepository = productRepository;
         _stockItemRepository = stockItemRepository;
+        _valuationReader = valuationReader;
         _currentUser = currentUser;
         _auditService = auditService;
     }
@@ -79,9 +84,13 @@ public sealed class UpdateStockVoucherCommandHandler : IRequestHandler<UpdateSto
             }
             else
             {
-                var stockItem = await _stockItemRepository.GetByProductAndWarehouseAsync(
+                // Même cascade qu'avant, mais le coût d'un article FIFO/LIFO vient de ses couches
+                // et non de son cache d'affichage, qui est arrondi et peut avoir dérivé.
+                var reading = await _valuationReader.GetByProductAndWarehouseAsync(
                     product.Id, warehouse.Id, cancellationToken);
-                unitCost = stockItem?.AverageCost ?? product.LastPurchasePrice?.Amount ?? product.GetPurchasePrice().Amount;
+                unitCost = StockEntryCostResolver
+                    .Resolve(reading, product, explicitUnitCost: null, allowPurchasePriceCascade: true)
+                    .UnitCost;
             }
 
             var addResult = voucher.AddLine(product, lineDto.Quantity, unitCost, lineDto.Notes);

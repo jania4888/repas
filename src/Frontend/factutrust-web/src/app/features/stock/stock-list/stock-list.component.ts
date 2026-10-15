@@ -80,13 +80,20 @@ export class StockListComponent implements OnInit {
   items = signal<StockItem[]>([]);
   filteredItems = signal<StockItem[]>([]);
 
-  /** Totaux de la zone, calculés sur les lignes filtrées (tout est chargé côté client). */
+  /**
+   * Valeur de TOUT le stock, servie par le back et valorisée selon la méthode de chaque article.
+   * Les lignes chargées ici ne sont qu'une page : les sommer donnerait un sous-total présenté
+   * comme un total.
+   */
+  totalStockValue = signal<number | null>(null);
+
+  /** Totaux de la zone, calculés sur les lignes filtrées. */
   summaryMetrics = computed<TotalMetric[]>(() => {
     const items = this.filteredItems();
     return [
       { label: $localize`:@@stock.stock-list.ts.produits.48000473:Produits`, value: items.length, format: 'number', icon: 'pi-box', tone: 'primary' },
       { label: $localize`:@@stock.stock-list.ts.quantite.09a38fda:Quantité`, value: items.reduce((acc, i) => acc + i.quantityOnHand, 0), format: 'number', icon: 'pi-database', tone: 'cyan' },
-      { label: $localize`:@@stock.stock-list.ts.valeur.stock.73676303:Valeur stock`, value: items.reduce((acc, i) => acc + i.stockValue, 0), format: 'currency', icon: 'pi-wallet', tone: 'primary' },
+      { label: $localize`:@@stock.stock-list.ts.valeur.stock.73676303:Valeur stock`, value: this.stockValueFor(items), format: 'currency', icon: 'pi-wallet', tone: 'primary' },
       { label: $localize`:@@stock.stock-list.ts.en.alerte.79f4b44b:En alerte`, value: items.filter(i => i.isLowStock && !i.isOutOfStock).length, format: 'number', icon: 'pi-exclamation-triangle', tone: 'amber' },
       { label: $localize`:@@stock.stock-list.ts.rupture.fda77001:Rupture`, value: items.filter(i => i.isOutOfStock).length, format: 'number', icon: 'pi-ban', tone: 'rose' }
     ];
@@ -220,6 +227,7 @@ export class StockListComponent implements OnInit {
       next: (response) => {
         if (response.success && response.data) {
           this.items.set(response.data.items);
+          this.totalStockValue.set(response.data.totalStockValue ?? null);
           this.applyFilters();
         }
         this.loading.set(false);
@@ -263,9 +271,31 @@ export class StockListComponent implements OnInit {
     });
   }
 
+  /**
+   * Vrai dès qu'une ligne affiche un coût de prochaine sortie : c'est la condition pour expliquer
+   * à l'écran que « P.U. × Qté ≠ Valeur » sur ces lignes, au lieu de laisser croire à une erreur.
+   */
+  hasNextExitUnitCost(): boolean {
+    return this.filteredItems().some(i => i.unitCostIsNextExit === true);
+  }
+
+  readonly nextExitUnitCostHint = $localize`:@@stock.stock-list.ts.pu.prochaine.sortie.a71f0c52:FIFO/LIFO : le P.U. affiché est le coût de la prochaine sortie. La valeur est la somme des couches restantes, donc P.U. × Qté ≠ Valeur.`;
+
   // --- Stats Helpers ---
   calculateTotalValue(): number {
-    return this.items().reduce((acc, item) => acc + item.stockValue, 0);
+    return this.stockValueFor(this.items());
+  }
+
+  /**
+   * Le total servi par le back dès que rien n'a été filtré côté navigateur ; sinon la somme des
+   * lignes retenues, qui est alors bien le total de ce que l'utilisateur regarde.
+   */
+  private stockValueFor(rows: StockItem[]): number {
+    const serverTotal = this.totalStockValue();
+    if (serverTotal !== null && rows.length === this.items().length) {
+      return serverTotal;
+    }
+    return rows.reduce((acc, item) => acc + item.stockValue, 0);
   }
 
   countLowStock(): number {

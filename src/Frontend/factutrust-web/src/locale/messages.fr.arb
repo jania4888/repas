@@ -97030,6 +97030,20 @@
     ],
     "x-wave": "v6"
   },
+  "reports.stock-status.col.methode": "Méthode",
+  "@reports.stock-status.col.methode": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.legende.pu.prochaine.sortie.5b3de9a1": "FIFO/LIFO : le P.U. affiché est le coût de la prochaine sortie. La valeur est la somme des couches restantes, donc P.U. × Qté ≠ Valeur.",
+  "@reports.stock-status.legende.pu.prochaine.sortie.5b3de9a1": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
   "reports.stock.rapports.stock.00f72cdf": "Rapports Stock",
   "@reports.stock.rapports.stock.00f72cdf": {
     "x-files": [
@@ -108780,6 +108794,13 @@
   },
   "stock.stock-list.ts.valeur.stock.73676303": "Valeur stock",
   "@stock.stock-list.ts.valeur.stock.73676303": {
+    "x-files": [
+      "src/app/features/stock/stock-list/stock-list.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "stock.stock-list.ts.pu.prochaine.sortie.a71f0c52": "FIFO/LIFO : le P.U. affiché est le coût de la prochaine sortie. La valeur est la somme des couches restantes, donc P.U. × Qté ≠ Valeur.",
+  "@stock.stock-list.ts.pu.prochaine.sortie.a71f0c52": {
     "x-files": [
       "src/app/features/stock/stock-list/stock-list.component.ts"
     ],
@@ -126721,5 +126742,65 @@
       "src/app/shared/validation/validation-rules.ts"
     ],
     "x-wave": "v1"
+  },
+  "core.desk.overlay": "Fermez d'abord la fenêtre de dialogue.",
+  "@core.desk.overlay": {
+    "x-files": ["src/app/core/desk/desk-window.service.ts"]
+  },
+  "core.desk.cap": "Huit fenêtres sont déjà ouvertes. Fermez-en une pour continuer.",
+  "@core.desk.cap": {
+    "x-files": ["src/app/core/desk/desk-window.service.ts"]
+  },
+  "core.desk.titlebar": "Fenêtres",
+  "@core.desk.titlebar": {
+    "x-files": ["src/app/core/desk/desk-window.service.ts"]
+  },
+  "core.desk.leave.header": "Quitter le dossier",
+  "@core.desk.leave.header": {
+    "x-files": ["src/app/core/desk/desk-window.service.ts"]
+  },
+  "core.desk.leave.message": "Des modifications non enregistrées seront perdues : {$titles}",
+  "@core.desk.leave.message": {
+    "x-files": ["src/app/core/desk/desk-window.service.ts"]
+  },
+  "core.desk.leave.accept": "Quitter quand même",
+  "@core.desk.leave.accept": {
+    "x-files": ["src/app/core/desk/desk-window.service.ts"]
+  },
+  "core.desk.leave.reject": "Rester",
+  "@core.desk.leave.reject": {
+    "x-files": ["src/app/core/desk/desk-window.service.ts"]
+  },
+  "core.desk.empty.title": "Aucune fenêtre ouverte",
+  "@core.desk.empty.title": {
+    "x-files": ["src/app/core/desk/desk-empty.component.ts"]
+  },
+  "core.desk.empty.body": "Ouvrez un écran depuis le menu, ou reprenez un raccourci.",
+  "@core.desk.empty.body": {
+    "x-files": ["src/app/core/desk/desk-empty.component.ts"]
+  },
+  "core.desk.taskbar": "Fenêtres ouvertes",
+  "@core.desk.taskbar": {
+    "x-files": ["src/app/core/desk/desk-shell.component.ts"]
+  },
+  "core.desk.close-window": "Fermer {$title}",
+  "@core.desk.close-window": {
+    "x-files": ["src/app/core/desk/desk-shell.component.ts"]
+  },
+  "core.desk.minimize-window": "Réduire {$title}",
+  "@core.desk.minimize-window": {
+    "x-files": ["src/app/core/desk/desk-shell.component.ts"]
+  },
+  "core.desk.activate-window": "Afficher {$title}",
+  "@core.desk.activate-window": {
+    "x-files": ["src/app/core/desk/desk-shell.component.ts"]
+  },
+  "core.desk.route.bureau": "Bureau - InstaFact",
+  "@core.desk.route.bureau": {
+    "x-files": ["src/app/app.routes.ts"]
+  },
+  "core.desk.manual-entry.discard": "Des modifications non enregistrées seront perdues. Fermer cette fenêtre ?",
+  "@core.desk.manual-entry.discard": {
+    "x-files": ["src/app/features/accounting/manual-entry/manual-entry.component.ts"]
   }
 }

@@ -1,4 +1,5 @@
 using FactuTrust.Application.Common.Interfaces.Services;
+using FactuTrust.Application.Configuration;
 using FactuTrust.Application.Features.Stock.Services;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
@@ -8,6 +9,7 @@ using FactuTrust.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace FactuTrust.Infrastructure.Services;
 
@@ -21,15 +23,22 @@ public sealed class StockTransferCompletionService : IStockTransferCompletionSer
     private readonly ITenantDbContextFactory _contextFactory;
     private readonly IStockMutationService _mutation;
     private readonly ILogger<StockTransferCompletionService> _logger;
+    private readonly StockTraceabilityOptions _options;
 
+    /// <param name="options">
+    /// Facultatif : les options ne servent qu'au repli de valorisation. Paramètre optionnel pour
+    /// ne pas casser les sites de construction existants, qui n'en dépendent pas.
+    /// </param>
     public StockTransferCompletionService(
         ITenantDbContextFactory contextFactory,
         IStockMutationService mutation,
-        ILogger<StockTransferCompletionService> logger)
+        ILogger<StockTransferCompletionService> logger,
+        IOptions<StockTraceabilityOptions>? options = null)
     {
         _contextFactory = contextFactory;
         _mutation = mutation;
         _logger = logger;
+        _options = options?.Value ?? new StockTraceabilityOptions();
     }
 
     public async Task<Result> CompleteTransferAsync(Guid stockTransferId, CancellationToken cancellationToken = default)
@@ -215,16 +224,24 @@ public sealed class StockTransferCompletionService : IStockTransferCompletionSer
                     line.RequestedQuantity,
                     restoreSameWarehouse: false,
                     receivedAtByLayerId: id => store.GetLayer(id)?.ReceivedAt).ToList();
+                // Chemin nominal inchangé : les couches recopiées portent déjà leur propre coût.
+                // Seuls les REPLIS changent — ils lisaient le cache de l'article source, dérivé en
+                // FIFO/LIFO. Attention : la sortie source a déjà été appliquée plus haut, donc ses
+                // couches sont consommées ; le résolveur retombe alors sur le cache, comme avant.
+                var fallbackUnitCost = StockEntryCostResolver
+                    .Resolve(sourceStockItem, product, store, _options)
+                    .UnitCost;
+
                 if (destAllocations.Count == 0)
                 {
                     destAllocations = store.ListAllocations(StockDocumentKind.Transfer, line.Id)
-                        .Select(a => new StockAllocationInput(a.Quantity, a.ProductLotId, SerialId: a.SerialId, UnitCost: sourceStockItem.AverageCost))
+                        .Select(a => new StockAllocationInput(a.Quantity, a.ProductLotId, SerialId: a.SerialId, UnitCost: fallbackUnitCost))
                         .ToList();
                 }
 
                 var destUnitCost = destAllocations.Count > 0
                     ? destAllocations.Sum(a => a.Quantity * (a.UnitCost ?? 0m)) / destAllocations.Sum(a => a.Quantity)
-                    : sourceStockItem.AverageCost;
+                    : fallbackUnitCost;
 
                 var entryResult = _mutation.Apply(destStockItem, new StockMutationRequest
                 {

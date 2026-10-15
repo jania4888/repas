@@ -1,5 +1,6 @@
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
+using FactuTrust.Application.Features.Stock.Services;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
@@ -7,6 +8,7 @@ using FactuTrust.Domain.Services;
 using FactuTrust.Infrastructure.MultiTenancy;
 using FactuTrust.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace FactuTrust.Infrastructure.Services;
@@ -15,13 +17,20 @@ public sealed class StockMutationService : IStockMutationService
 {
     private readonly ITenantDbContextFactory _contextFactory;
     private readonly StockTraceabilityOptions _options;
+    private readonly ILogger<StockMutationService>? _logger;
 
+    /// <param name="logger">
+    /// Facultatif : ne sert qu'à signaler une dérive de valorisation, jamais à décider. Paramètre
+    /// optionnel pour ne pas casser les nombreux sites de construction des tests.
+    /// </param>
     public StockMutationService(
         ITenantDbContextFactory contextFactory,
-        IOptions<StockTraceabilityOptions> options)
+        IOptions<StockTraceabilityOptions> options,
+        ILogger<StockMutationService>? logger = null)
     {
         _contextFactory = contextFactory;
         _options = options.Value;
+        _logger = logger;
     }
 
     public Result Apply(
@@ -31,7 +40,7 @@ public sealed class StockMutationService : IStockMutationService
         IStockTraceabilityStore? store = null)
     {
         if (!RequiresTraceability(product) && !RequiresLayeredCosting(product))
-            return ApplyPassthrough(stockItem, request);
+            return ApplyPassthrough(stockItem, request, _options);
 
         if (store is null)
             return Result.Failure(Error.Validation("Store",
@@ -123,6 +132,9 @@ public sealed class StockMutationService : IStockMutationService
                     "Une couche de valorisation existe déjà. Impossible de recréer la couche d'ouverture."));
             }
 
+            // Lecture LÉGITIME du cache : c'est le point de bascule CMUP → FIFO/LIFO. Avant cette
+            // ligne il n'existe aucune couche, donc AverageCost EST la valorisation de l'article.
+            // Ne pas « corriger » cet appel en le faisant passer par le résolveur de coût.
             var layer = StockValuationLayer.Create(
                 item.Id,
                 item.QuantityOnHand,
@@ -180,12 +192,22 @@ public sealed class StockMutationService : IStockMutationService
         return false;
     }
 
+    /// <summary>
+    /// Délègue à la règle partagée. Ne PAS réintroduire le test en ligne ici : l'écran, le
+    /// diagnostic et ce moteur doivent appliquer exactement la même condition, drapeau compris,
+    /// sinon l'affichage annonce une valorisation que le stock ne porte pas.
+    /// </summary>
     private bool RequiresLayeredCosting(Product? product) =>
-        product is not null
-        && _options.FifoLifoValuationEnabled
-        && product.CostingMethod is CostingMethod.Fifo or CostingMethod.Lifo;
+        _options.RequiresLayeredCosting(product);
 
-    internal static Result ApplyPassthrough(StockItem stockItem, StockMutationRequest request) =>
+    /// <param name="options">
+    /// Facultatif : seule l'auto-valorisation des ajustements en dépend. Paramètre plutôt que
+    /// champ d'instance, parce que les bouchons de test appellent cette méthode statiquement.
+    /// </param>
+    internal static Result ApplyPassthrough(
+        StockItem stockItem,
+        StockMutationRequest request,
+        StockTraceabilityOptions? options = null) =>
         request.Kind switch
         {
             StockMutationKind.Entry => stockItem.RecordEntry(
@@ -207,7 +229,13 @@ public sealed class StockMutationService : IStockMutationService
                 request.Notes,
                 request.ReservedQuantity,
                 request.ShortfallQuantity),
-            StockMutationKind.Adjust => stockItem.AdjustStock(request.Quantity, request.Notes),
+            // Coût fourni par l'appelant (inventaire, comptage). Sans drapeau, la requête ne porte
+            // pas de coût et l'on retombe sur le comportement historique au bit près.
+            StockMutationKind.Adjust => stockItem.AdjustStock(
+                request.Quantity,
+                request.Notes,
+                unitCostOverride: request.UnitCost > 0 ? request.UnitCost : null,
+                updateWeightedAverage: options?.InventoryAutoValuationEnabled ?? false),
             _ => Result.Failure(Error.Validation("Kind", "Type de mutation de stock inconnu"))
         };
 
@@ -228,6 +256,31 @@ public sealed class StockMutationService : IStockMutationService
             }
         }
 
+        // Constat de dérive AVANT la mutation, pendant que l'état d'entrée est encore lisible.
+        // Journalisé, jamais bloquant : refuser une facture parce qu'une donnée historique a
+        // dérivé serait pire que le défaut qu'on signale. La réparation passe par son runbook.
+        if (RequiresLayeredCosting(product))
+        {
+            var openLayers = store.ListOpenLayers(stockItem.Id);
+            if (openLayers.Count > 0)
+            {
+                var drift = ValuationLayerInvariant.Inspect(
+                    stockItem.QuantityOnHand,
+                    stockItem.AverageCost,
+                    openLayers.Sum(l => l.RemainingQuantity),
+                    openLayers.Sum(l => l.RemainingValue));
+
+                if (drift.QuantityDrift || drift.ValueDrift)
+                {
+                    _logger?.LogWarning(
+                        "Dérive de valorisation sur l'article de stock {StockItemId} (produit {ProductId}) : "
+                        + "écart quantité {QuantityDelta}, écart valeur {ValueDelta}. "
+                        + "Voir docs/runbooks/stock-valuation-truth.md.",
+                        stockItem.Id, stockItem.ProductId, drift.QuantityDelta, drift.ValueDelta);
+                }
+            }
+        }
+
         var trackedRequest = request.Kind == StockMutationKind.ReleaseAndExit
             ? request with { Kind = StockMutationKind.Exit }
             : request;
@@ -245,7 +298,9 @@ public sealed class StockMutationService : IStockMutationService
 
         if (RequiresLayeredCosting(product))
         {
-            var remainingValue = store.ListOpenLayers(stockItem.Id).Sum(l => l.RemainingValue);
+            var remainingValue = StockValuation.RemainingValue(
+                store.ListOpenLayers(stockItem.Id)
+                    .Select(l => new ValuationLayerSnapshot(l.ReceivedAt, l.Id, l.RemainingQuantity, l.UnitCost)));
             stockItem.RecalculateDisplayAverageCost(remainingValue);
             var layerInvariant = ValuationLayerInvariant.AssertMatchesOnHand(
                 stockItem.QuantityOnHand,
@@ -519,9 +574,12 @@ public sealed class StockMutationService : IStockMutationService
             .Where(l => productLotId is null || l.ProductLotId == productLotId || l.ProductLotId is null)
             .ToList();
 
-        layers = product.CostingMethod == CostingMethod.Lifo
-            ? layers.OrderByDescending(l => l.ReceivedAt).ThenByDescending(l => l.Id).ToList()
-            : layers.OrderBy(l => l.ReceivedAt).ThenBy(l => l.Id).ToList();
+        // L'ordre de consommation vient de StockValuation, pas d'un tri local : c'est ce qui
+        // garantit que le « coût de la prochaine sortie » affiché par l'écran est bien la couche
+        // que ce code consommera.
+        layers = StockValuation
+            .OrderForConsumption(layers, product.CostingMethod, l => l.ReceivedAt, l => l.Id)
+            .ToList();
 
         var remaining = quantity;
         foreach (var layer in layers)
@@ -583,6 +641,18 @@ public sealed class StockMutationService : IStockMutationService
 
         if (difference > 0)
         {
+            // Le coût vient des COUCHES, pas du cache : sur un article FIFO/LIFO, AverageCost est
+            // un coût d'affichage arrondi, et l'écrire dans une nouvelle couche y graverait une
+            // valeur dérivée pour de bon. Lecture par le magasin ambiant, sous la transaction
+            // en cours — ouvrir un autre contexte ne verrait pas les couches non persistées.
+            var entryCost = StockEntryCostResolver.Resolve(
+                stockItem,
+                product,
+                store,
+                _options,
+                explicitUnitCost: request.UnitCost > 0 ? request.UnitCost : null,
+                allowPurchasePriceCascade: _options.InventoryAutoValuationEnabled);
+
             return ApplyLayeredEntry(
                 stockItem,
                 product,
@@ -590,7 +660,7 @@ public sealed class StockMutationService : IStockMutationService
                 store,
                 productLotId: null,
                 difference,
-                stockItem.AverageCost);
+                entryCost.UnitCost);
         }
 
         return ConsumeCostAndExit(

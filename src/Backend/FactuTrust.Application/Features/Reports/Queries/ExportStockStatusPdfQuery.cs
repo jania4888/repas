@@ -72,33 +72,29 @@ public sealed class ExportStockStatusPdfQueryHandler
 
         var search = StockStatusReportAssembler.SanitizeSearch(request.Search);
 
-        var count = await _stockItemRepository.CountStockStatusReportRowsAsync(
-            request.WarehouseId,
-            request.CategoryId,
-            search,
-            request.IncludeZeroStock,
-            cancellationToken);
-
-        if (count == 0)
-            return Result.Failure<InvoicePdfResult>(
-                new Error("NoData", StockStatusLabels.Empty()));
-
-        if (count > StockStatusReportConstants.MaxLinesForPdf)
-            return Result.Failure<InvoicePdfResult>(
-                new Error("TooManyLines", StockStatusLabels.TooManyLines()));
-
-        var (rows, _) = await _stockItemRepository.GetStockStatusReportRowsAsync(
+        // Une seule construction du jeu, là où il en fallait deux (compter puis relire). On demande
+        // une ligne de plus que le plafond : si elle arrive, c'est que le plafond est dépassé.
+        var result = await _stockItemRepository.GetStockStatusReportPageAsync(
             request.WarehouseId,
             request.CategoryId,
             search,
             request.IncludeZeroStock,
             request.GroupingMode,
             1,
-            count,
+            StockStatusReportConstants.MaxLinesForPdf + 1,
             cancellationToken);
 
-        var grandQty = rows.Sum(r => r.QuantityOnHand);
-        var grandValue = rows.Sum(r => r.StockValue);
+        if (result.TotalCount == 0)
+            return Result.Failure<InvoicePdfResult>(
+                new Error("NoData", StockStatusLabels.Empty()));
+
+        if (result.TotalCount > StockStatusReportConstants.MaxLinesForPdf)
+            return Result.Failure<InvoicePdfResult>(
+                new Error("TooManyLines", StockStatusLabels.TooManyLines()));
+
+        var rows = result.Items;
+        var grandQty = result.GrandTotalQuantity;
+        var grandValue = result.GrandTotalValue;
 
         var company = await _companyRepository.GetDefaultAsync(cancellationToken);
         var filtersSummary = StockStatusReportAssembler.BuildFiltersSummary(

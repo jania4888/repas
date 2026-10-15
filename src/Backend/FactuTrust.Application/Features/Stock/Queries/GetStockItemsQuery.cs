@@ -1,5 +1,6 @@
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Repositories;
+using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
 using MediatR;
@@ -23,7 +24,12 @@ public sealed record StockItemsResult(
     IReadOnlyList<StockItemDto> Items,
     int TotalCount,
     int Page,
-    int PageSize);
+    int PageSize,
+    /// <summary>
+    /// Valeur de TOUT le stock filtré, pas seulement de la page. Le KPI de l'écran la sommait
+    /// côté navigateur sur les 20 lignes affichées, et présentait ce sous-total comme un total.
+    /// </summary>
+    decimal TotalStockValue = 0m);
 
 /// <summary>
 /// DTO for stock item.
@@ -41,11 +47,21 @@ public sealed record StockItemDto(
     decimal QuantityReserved,
     decimal MinimumStock,
     decimal? MaximumStock,
+    /// <summary>Le cache CMUP de l'article, tel quel. Conservé pour ne pas faire mentir son nom.</summary>
     decimal AverageCost,
+    /// <summary>Valeur réelle : somme des couches en FIFO/LIFO, quantité × CMUP sinon.</summary>
     decimal StockValue,
     bool IsLowStock,
     bool IsOutOfStock,
-    CostingMethod CostingMethod);
+    CostingMethod CostingMethod,
+    /// <summary>
+    /// Le coût à AFFICHER : coût de la prochaine sortie en FIFO/LIFO, CMUP sinon.
+    /// C'est ce champ que l'écran montre, pas <paramref name="AverageCost"/>.
+    /// </summary>
+    decimal UnitCost = 0m,
+    /// <summary>Vrai ⇒ <paramref name="UnitCost"/> × quantité ≠ <paramref name="StockValue"/>, et c'est normal.</summary>
+    bool UnitCostIsNextExit = false,
+    bool HasValuationLayers = false);
 
 /// <summary>
 /// Handler for GetStockItemsQuery.
@@ -55,17 +71,20 @@ public sealed class GetStockItemsQueryHandler : IRequestHandler<GetStockItemsQue
     private readonly IStockItemRepository _stockItemRepository;
     private readonly IWarehouseRepository _warehouseRepository;
     private readonly IProductRepository _productRepository;
+    private readonly IStockValuationReader _valuationReader;
     private readonly ITenantContext _tenantContext;
 
     public GetStockItemsQueryHandler(
         IStockItemRepository stockItemRepository,
         IWarehouseRepository warehouseRepository,
         IProductRepository productRepository,
+        IStockValuationReader valuationReader,
         ITenantContext tenantContext)
     {
         _stockItemRepository = stockItemRepository;
         _warehouseRepository = warehouseRepository;
         _productRepository = productRepository;
+        _valuationReader = valuationReader;
         _tenantContext = tenantContext;
     }
 
@@ -87,19 +106,17 @@ public sealed class GetStockItemsQueryHandler : IRequestHandler<GetStockItemsQue
         var warehouses = await _warehouseRepository.GetActiveWarehousesAsync(cancellationToken);
         var warehouseDict = warehouses.ToDictionary(w => w.Id);
 
-        // Build product lookup (simplified - in real app would batch load)
-        var productDict = new Dictionary<Guid, Product>();
-        foreach (var productId in productIds)
-        {
-            var product = await _productRepository.GetByIdAsync(productId, cancellationToken);
-            if (product != null)
-                productDict[productId] = product;
-        }
+        // Chargements EN LOT : un aller-retour chacun, quelle que soit la taille de la page.
+        var productDict = await _productRepository.GetByIdsAsync(productIds, cancellationToken);
+        var valuations = await _valuationReader.GetByStockItemIdsAsync(
+            items.Select(i => i.Id).ToList(), cancellationToken);
 
         var dtos = items.Select(item =>
         {
             warehouseDict.TryGetValue(item.WarehouseId, out var warehouse);
             productDict.TryGetValue(item.ProductId, out var product);
+            valuations.TryGetValue(item.Id, out var valuation);
+            var cost = valuation?.Cost;
 
             return new StockItemDto(
                 item.Id,
@@ -115,12 +132,20 @@ public sealed class GetStockItemsQueryHandler : IRequestHandler<GetStockItemsQue
                 item.MinimumStock,
                 item.MaximumStock,
                 item.AverageCost,
-                item.StockValue,
+                // Valeur et coût affiché viennent de la valorisation, pas du cache. Sans lecture
+                // (article absent du jeu), on retombe exactement sur le comportement d'avant.
+                cost?.StockValue ?? item.StockValue,
                 item.IsLowStock,
                 item.QuantityOnHand == 0,
-                product?.CostingMethod ?? CostingMethod.Average);
+                product?.CostingMethod ?? CostingMethod.Average,
+                cost?.UnitCost ?? item.AverageCost,
+                cost?.UnitCostIsNextExit ?? false,
+                cost?.HasLayers ?? false);
         }).ToList();
 
-        return new StockItemsResult(dtos, totalCount, request.Page, request.PageSize);
+        var totalStockValue = await _valuationReader.GetTotalStockValueAsync(
+            request.WarehouseId, cancellationToken);
+
+        return new StockItemsResult(dtos, totalCount, request.Page, request.PageSize, totalStockValue);
     }
 }

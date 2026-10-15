@@ -12,6 +12,7 @@ import { ButtonComponent } from '@shared/components/button/button.component';
 import { StatCardComponent } from '@shared/components/stat-card/stat-card.component';
 import { PrintPreviewService } from '@core/services/print-preview.service';
 import { StockService, Warehouse } from '@core/services/stock.service';
+import { COSTING_FIFO, COSTING_LIFO, coerceCostingMethod } from '@shared/utils/stock-traceability.utils';
 import { ProductCategoryService, ProductCategorySelect } from '@core/services/product-category.service';
 import {
   ReportsApiService,
@@ -146,7 +147,7 @@ interface StockStatusPrimaryGroup {
             <tr>
               <td>{{ row.warehouseName }}</td>
               <td>{{ row.categoryName }}</td>
-              <td>{{ row.productCode }}</td>
+              <td>{{ row.productCode }}@if (row.unitCostIsNextExit) {<span class="method-badge">{{ costingLabel(row.costingMethod) }}</span>}</td>
               <td>{{ row.productName }}</td>
               <td class="text-right">{{ row.quantityOnHand | number:'1.0-3' }}</td>
               <td class="text-right">{{ row.unitCost | number:'1.3-3' }}</td>
@@ -173,7 +174,7 @@ interface StockStatusPrimaryGroup {
                   </ng-template>
                   <ng-template pTemplate="body" let-row>
                     <tr>
-                      <td>{{ row.productCode }}</td>
+                      <td>{{ row.productCode }}@if (row.unitCostIsNextExit) {<span class="method-badge">{{ costingLabel(row.costingMethod) }}</span>}</td>
                       <td>{{ row.productName }}</td>
                       <td class="text-right">{{ row.quantityOnHand | number:'1.0-3' }}</td>
                       <td class="text-right">{{ row.unitCost | number:'1.3-3' }}</td>
@@ -194,9 +195,27 @@ interface StockStatusPrimaryGroup {
           </section>
         }
       }
+
+      @if ((report()!.layeredRowCount ?? 0) > 0) {
+        <p class="valuation-legend" i18n="@@reports.stock-status.legende.pu.prochaine.sortie.5b3de9a1">FIFO/LIFO : le P.U. affiché est le coût de la prochaine sortie. La valeur est la somme des couches restantes, donc P.U. × Qté ≠ Valeur.</p>
+      }
     }
   `,
   styles: [`
+    .method-badge {
+      margin-inline-start: var(--spacing-2);
+      padding: 0 var(--spacing-1);
+      border-radius: var(--radius-sm);
+      background: var(--surface-200);
+      color: var(--text-color-secondary);
+      font-size: var(--font-size-xs);
+    }
+    .valuation-legend {
+      margin: var(--spacing-3) 0 0;
+      color: var(--text-color-secondary);
+      font-size: var(--font-size-sm);
+      font-style: italic;
+    }
     .snapshot-link { margin: 0 0 var(--spacing-4); font-size: var(--font-size-sm); }
     .snapshot-link a { color: var(--color-primary-600); }
     .ft-filters { margin-bottom: var(--spacing-6); }
@@ -386,6 +405,17 @@ export class StockStatusReportComponent implements OnInit {
     });
   }
 
+  /**
+   * Sigle de la méthode de valorisation. Les sigles ne se traduisent pas : ils sont identiques
+   * en français et en arabe, comme dans le reste des écrans de stock.
+   */
+  costingLabel(costingMethod: number | undefined): string {
+    const method = coerceCostingMethod(costingMethod);
+    if (method === COSTING_FIFO) return 'FIFO';
+    if (method === COSTING_LIFO) return 'LIFO';
+    return 'CMUP';
+  }
+
   exportCsv(): void {
     const data = this.report();
     if (!data?.rows?.length) return;
@@ -404,7 +434,8 @@ export class StockStatusReportComponent implements OnInit {
         $localize`:@@reports.stock-status.col.qte:Qté`,
         $localize`:@@reports.stock-status.col.pu:P.U.`,
         $localize`:@@reports.stock-status.col.valeur:Valeur`,
-        $localize`:@@reports.stock-status.col.devise:Devise`
+        $localize`:@@reports.stock-status.col.devise:Devise`,
+        $localize`:@@reports.stock-status.col.methode:Méthode`
       ];
       const lines = [
         header.join(';'),
@@ -417,7 +448,9 @@ export class StockStatusReportComponent implements OnInit {
             row.quantityOnHand,
             row.unitCost,
             row.stockValue,
-            data.currency
+            data.currency,
+            // Sans cette colonne, un P.U. de prochaine sortie est inexplicable dans l'export.
+            this.costingLabel(row.costingMethod)
           ].map(c => escape(String(c))).join(';'))
       ];
       const blob = new Blob(['\ufeff' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });

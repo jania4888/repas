@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Options;
+using FactuTrust.Application.Configuration;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Features.Stock.Commands;
@@ -106,7 +108,9 @@ public sealed class StockManualMutationCharacterizationTests
             WarehouseRepo(warehouse),
             ProductRepo(product),
             Tenant(),
-            StockTestDoubles.Passthrough(stockRepo.Object));
+            StockTestDoubles.Passthrough(stockRepo.Object),
+            StockTestDoubles.NoValuation(),
+            Options.Create(new StockTraceabilityOptions()));
 
         var result = await handler.Handle(
             new QuickStockCountCommand(product.Id, 7m, warehouse.Id),
@@ -130,7 +134,9 @@ public sealed class StockManualMutationCharacterizationTests
             WarehouseRepo(warehouse),
             ProductRepo(product),
             Tenant(),
-            StockTestDoubles.Passthrough(new Mock<IStockItemRepository>().Object));
+            StockTestDoubles.Passthrough(new Mock<IStockItemRepository>().Object),
+            StockTestDoubles.NoValuation(),
+            Options.Create(new StockTraceabilityOptions()));
 
         var result = await handler.Handle(
             new QuickStockCountCommand(product.Id, 1m, warehouse.Id),
@@ -160,6 +166,7 @@ public sealed class StockManualMutationCharacterizationTests
             productRepo.Object,
             movementRepo.Object,
             StockTestDoubles.Passthrough(stockRepo.Object),
+            StockTestDoubles.NoValuation(),
             NullLogger<RestoreStockOnInvoiceCancelledHandler>.Instance);
 
         await handler.Handle(notification, CancellationToken.None);
@@ -215,6 +222,7 @@ public sealed class StockManualMutationCharacterizationTests
             new Mock<IProductRepository>().Object,
             movementRepo.Object,
             StockTestDoubles.Passthrough(stockRepo.Object),
+            StockTestDoubles.NoValuation(),
             NullLogger<RestoreStockOnInvoiceCancelledHandler>.Instance);
 
         await handler.Handle(notification, CancellationToken.None);

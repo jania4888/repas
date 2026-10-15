@@ -23,6 +23,7 @@ public sealed class RestoreStockOnCreditNoteValidatedHandler : INotificationHand
     private readonly IProductRepository _productRepository;
     private readonly IStockMovementRepository _stockMovementRepository;
     private readonly IStockMutationService _mutation;
+    private readonly IStockValuationReader _valuationReader;
     private readonly ITrackedDocumentStockService _trackedStock;
     private readonly ILogger<RestoreStockOnCreditNoteValidatedHandler> _logger;
 
@@ -33,6 +34,7 @@ public sealed class RestoreStockOnCreditNoteValidatedHandler : INotificationHand
         IProductRepository productRepository,
         IStockMovementRepository stockMovementRepository,
         IStockMutationService mutation,
+        IStockValuationReader valuationReader,
         ITrackedDocumentStockService trackedStock,
         ILogger<RestoreStockOnCreditNoteValidatedHandler> logger)
     {
@@ -42,6 +44,7 @@ public sealed class RestoreStockOnCreditNoteValidatedHandler : INotificationHand
         _productRepository = productRepository;
         _stockMovementRepository = stockMovementRepository;
         _mutation = mutation;
+        _valuationReader = valuationReader;
         _trackedStock = trackedStock;
         _logger = logger;
     }
@@ -110,9 +113,16 @@ public sealed class RestoreStockOnCreditNoteValidatedHandler : INotificationHand
                 continue;
             }
 
+            // Ce chemin ne traite que du CMUP (les articles tracés sortent plus haut), mais il
+            // lisait le cache sans passer par la règle commune : aligné pour qu'il ne puisse pas
+            // devenir une source de dérive si la garde change.
             var stockItem = await _stockItemRepository.GetByProductAndWarehouseAsync(
                 line.ProductId.Value, targetWarehouse.Id, cancellationToken);
-            var unitCost = stockItem?.AverageCost ?? 0m;
+            var reading = await _valuationReader.GetByProductAndWarehouseAsync(
+                line.ProductId.Value, targetWarehouse.Id, cancellationToken);
+            var unitCost = StockEntryCostResolver
+                .Resolve(reading, product, cachedAverageCost: stockItem?.AverageCost)
+                .UnitCost;
 
             var entryResult = await _mutation.ApplyAsync(new StockMutationRequest
             {

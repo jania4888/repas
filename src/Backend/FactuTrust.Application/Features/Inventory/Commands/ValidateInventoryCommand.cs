@@ -7,6 +7,10 @@ using FactuTrust.Domain.Enums;
 using FluentValidation;
 using MediatR;
 
+using FactuTrust.Application.Configuration;
+using Microsoft.Extensions.Options;
+using FactuTrust.Application.Features.Stock.Services;
+
 namespace FactuTrust.Application.Features.Inventory.Commands;
 
 /// <summary>
@@ -82,6 +86,8 @@ public sealed class ValidateInventoryCommandHandler : IRequestHandler<ValidateIn
     private readonly IStockItemRepository _stockItemRepository;
     private readonly IProductRepository _productRepository;
     private readonly IStockMutationService _mutation;
+    private readonly IStockValuationReader _valuationReader;
+    private readonly StockTraceabilityOptions _stockOptions;
     private readonly ITenantContext _tenantContext;
 
     public ValidateInventoryCommandHandler(
@@ -89,12 +95,16 @@ public sealed class ValidateInventoryCommandHandler : IRequestHandler<ValidateIn
         IStockItemRepository stockItemRepository,
         IProductRepository productRepository,
         IStockMutationService mutation,
+        IStockValuationReader valuationReader,
+        IOptions<StockTraceabilityOptions> stockOptions,
         ITenantContext tenantContext)
     {
         _inventoryRepository = inventoryRepository;
         _stockItemRepository = stockItemRepository;
         _productRepository = productRepository;
         _mutation = mutation;
+        _valuationReader = valuationReader;
+        _stockOptions = stockOptions.Value;
         _tenantContext = tenantContext;
     }
 
@@ -131,23 +141,42 @@ public sealed class ValidateInventoryCommandHandler : IRequestHandler<ValidateIn
         var linesWithDifference = inventory.CountLines.Where(l => l.Difference != 0).ToList();
         var productIds = linesWithDifference.Select(l => l.ProductId).Distinct().ToList();
         var trackingByProduct = await _productRepository.GetTrackingInfoByIdsAsync(productIds, cancellationToken);
+        var productsById = await _productRepository.GetByIdsAsync(productIds, cancellationToken);
+
+        // Valorisations chargées EN LOT, avant la boucle : jamais une lecture par ligne.
+        var stockItemsByProduct = new Dictionary<Guid, Domain.Entities.StockItem>();
+        foreach (var productId in productIds)
+        {
+            var item = await _stockItemRepository.GetByProductAndWarehouseAsync(
+                productId, inventory.WarehouseId, cancellationToken);
+            if (item is not null)
+                stockItemsByProduct[productId] = item;
+        }
+
+        var valuations = await _valuationReader.GetByStockItemIdsAsync(
+            stockItemsByProduct.Values.Select(i => i.Id).ToList(), cancellationToken);
 
         foreach (var line in linesWithDifference)
         {
             if (!line.CountedQuantity.HasValue)
                 continue;
 
-            var stockItem = await _stockItemRepository.GetByProductAndWarehouseAsync(
-                line.ProductId, inventory.WarehouseId, cancellationToken);
+            stockItemsByProduct.TryGetValue(line.ProductId, out var stockItem);
 
             var tracking = trackingByProduct.GetValueOrDefault(line.ProductId);
             var trackingMode = tracking?.TrackingMode ?? TrackingMode.None;
+
+            StockCostReading? reading = null;
+            if (stockItem is not null)
+                valuations.TryGetValue(stockItem.Id, out reading);
 
             var mutationResult = await ApplyLineMutationAsync(
                 inventory,
                 line,
                 stockItem,
                 trackingMode,
+                reading,
+                productsById.GetValueOrDefault(line.ProductId),
                 cancellationToken);
 
             if (mutationResult.IsFailure)
@@ -186,6 +215,8 @@ public sealed class ValidateInventoryCommandHandler : IRequestHandler<ValidateIn
         InventoryCountLine line,
         StockItem? stockItem,
         TrackingMode trackingMode,
+        StockCostReading? reading,
+        Product? product,
         CancellationToken cancellationToken)
     {
         if (trackingMode == TrackingMode.Serial)
@@ -204,7 +235,8 @@ public sealed class ValidateInventoryCommandHandler : IRequestHandler<ValidateIn
                     $"Le numéro de lot est obligatoire pour « {line.ProductName} » (article suivi par lot)."));
             }
 
-            return ResultFrom(await ApplyLotAllocatedMutationAsync(inventory, line, stockItem, cancellationToken));
+            return ResultFrom(await ApplyLotAllocatedMutationAsync(
+                inventory, line, stockItem, reading, product, cancellationToken));
         }
 
         return ResultFrom(await _mutation.ApplyAsync(new StockMutationRequest
@@ -213,10 +245,26 @@ public sealed class ValidateInventoryCommandHandler : IRequestHandler<ValidateIn
             WarehouseId = inventory.WarehouseId,
             Kind = StockMutationKind.Adjust,
             Quantity = line.CountedQuantity!.Value,
+            // Coût d'un écart POSITIF. Sans le drapeau d'auto-valorisation, la cascade d'achat
+            // est désactivée et l'on retombe sur le cache, donc sur le comportement d'avant.
+            UnitCost = ResolveAdjustmentCost(reading, product, stockItem),
             Notes = $"Ajustement inventaire #{inventory.Id:N}",
             Reason = MovementReason.InventoryAdjustment
         }, cancellationToken));
     }
+
+    /// <summary>
+    /// Coût d'un écart d'inventaire positif : les couches pour un article FIFO/LIFO, le CMUP
+    /// sinon, et — seulement si le drapeau est actif — la cascade des prix d'achat plutôt que
+    /// zéro. Sans le drapeau, un article jamais valorisé reste à zéro, comme aujourd'hui.
+    /// </summary>
+    private decimal ResolveAdjustmentCost(StockCostReading? reading, Product? product, StockItem? stockItem) =>
+        StockEntryCostResolver.Resolve(
+            reading,
+            product,
+            explicitUnitCost: null,
+            allowPurchasePriceCascade: _stockOptions.InventoryAutoValuationEnabled,
+            cachedAverageCost: stockItem?.AverageCost).UnitCost;
 
     private static bool HasLotIdentity(InventoryCountLine line) =>
         line.ProductLotId.HasValue || !string.IsNullOrWhiteSpace(line.LotNumber);
@@ -225,6 +273,8 @@ public sealed class ValidateInventoryCommandHandler : IRequestHandler<ValidateIn
         PhysicalInventory inventory,
         InventoryCountLine line,
         StockItem? stockItem,
+        StockCostReading? reading,
+        Product? product,
         CancellationToken cancellationToken)
     {
         var difference = line.Difference;
@@ -240,7 +290,7 @@ public sealed class ValidateInventoryCommandHandler : IRequestHandler<ValidateIn
                 WarehouseId = inventory.WarehouseId,
                 Kind = StockMutationKind.Entry,
                 Quantity = qty,
-                UnitCost = stockItem?.AverageCost ?? 0,
+                UnitCost = ResolveAdjustmentCost(reading, product, stockItem),
                 Reason = MovementReason.InventoryAdjustment,
                 Notes = $"Ajustement inventaire lot {lotLabel}",
                 DocumentLineId = line.Id,

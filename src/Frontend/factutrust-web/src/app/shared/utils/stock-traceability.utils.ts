@@ -136,6 +136,20 @@ function utcCalendarDay(value: string | Date): number | null {
   return Date.UTC(Number(isoDate[1]), Number(isoDate[2]) - 1, Number(isoDate[3]));
 }
 
+/**
+ * Mirrors StockCostingPolicy.RequiresLayeredCosting on the backend: is this article really
+ * valued by layers, flag included? A FIFO/LIFO product with the flag off is valued CMUP by the
+ * engine, and the UI must say the same — hence a single function rather than an inline test.
+ */
+export function requiresLayeredCosting(
+  costingMethod: unknown,
+  features: StockFeatures | null
+): boolean {
+  if (!features?.fifoLifoValuationEnabled) return false;
+  const costing = coerceCostingMethod(costingMethod);
+  return costing === COSTING_FIFO || costing === COSTING_LIFO;
+}
+
 /** Mirrors TrackedDocumentStockService.IsLiveTracked on the backend. */
 export function isLiveTracked(
   trackingMode: unknown,
@@ -144,16 +158,9 @@ export function isLiveTracked(
 ): boolean {
   if (!features) return false;
   const mode = coerceTrackingMode(trackingMode);
-  const costing = coerceCostingMethod(costingMethod);
   if (mode === TRACKING_MODE_LOT && features.lotTrackingEnabled) return true;
   if (mode === TRACKING_MODE_SERIAL && features.serialTrackingEnabled) return true;
-  if (
-    (costing === COSTING_FIFO || costing === COSTING_LIFO)
-    && features.fifoLifoValuationEnabled
-  ) {
-    return true;
-  }
-  return false;
+  return requiresLayeredCosting(costingMethod, features);
 }
 
 export interface InvoiceValidateStockLine {

@@ -54,8 +54,18 @@ public static class StockStatusLabels
     public static string GrandTotal() => IsArabic ? "المجموع العام" : "Total général";
 
     public static string ValuationNote() => IsArabic
-        ? "التقييم حسب متوسط الكلفة المرجّح المعروض (متوسط الكلفة / طبقة FIFO-LIFO)."
-        : "Valorisation au coût moyen pondéré affiché (CMUP / couche FIFO-LIFO).";
+        ? "التقييم حسب طريقة كل صنف: متوسط الكلفة المرجّح، أو طبقات FIFO/LIFO."
+        : "Valorisation selon la méthode de chaque article : CMUP, ou couches FIFO/LIFO.";
+
+    /// <summary>
+    /// Note affichée UNIQUEMENT quand l'état contient des lignes FIFO/LIFO. Elle explique que
+    /// « P.U. × Qté ≠ Valeur » sur ces lignes : le P.U. y est le coût de la prochaine sortie,
+    /// alors que la valeur reste la somme des couches restantes. Sans cette note, l'écart passe
+    /// pour une erreur de calcul.
+    /// </summary>
+    public static string NextExitUnitCostNote() => IsArabic
+        ? "FIFO/LIFO: س.و. المعروض هو كلفة الخروج التالي؛ القيمة هي مجموع الطبقات المتبقية، لذلك س.و. × الكمية ≠ القيمة."
+        : "FIFO/LIFO : le P.U. affiché est le coût de la prochaine sortie. La valeur est la somme des couches restantes, donc P.U. × Qté ≠ Valeur.";
 
     public static string CompanyFallback() => IsArabic ? "الشركة" : "Société";
 

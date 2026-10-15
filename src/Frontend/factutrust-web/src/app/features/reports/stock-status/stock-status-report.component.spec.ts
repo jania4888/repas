@@ -9,6 +9,7 @@ import { StockService } from '@core/services/stock.service';
 import { ProductCategoryService } from '@core/services/product-category.service';
 import { PrintPreviewService } from '@core/services/print-preview.service';
 import { MessageService } from 'primeng/api';
+import { COSTING_LIFO } from '@shared/utils/stock-traceability.utils';
 
 describe('StockStatusReportComponent', () => {
   let fixture: ComponentFixture<StockStatusReportComponent>;
@@ -37,8 +38,16 @@ describe('StockStatusReportComponent', () => {
           warehouseName: 'Magasin',
           quantityOnHand: 2,
           unitCost: 10,
-          stockValue: 20
-        }]
+          stockValue: 20,
+          // Le service a déjà coercé l'énum (le back l'envoie par nom) : le composant
+          // reçoit un nombre. La coercion est testée dans reports-api.service.costing.spec.ts.
+          costingMethod: COSTING_LIFO,
+          unitCostIsNextExit: true,
+          hasValuationLayers: true,
+          quantityDrift: false
+        }],
+        layeredRowCount: 1,
+        driftRowCount: 0
       },
       message: null,
       errors: []
@@ -100,12 +109,33 @@ describe('StockStatusReportComponent', () => {
       $localize`:@@reports.stock-status.col.qte:Qté`,
       $localize`:@@reports.stock-status.col.pu:P.U.`,
       $localize`:@@reports.stock-status.col.valeur:Valeur`,
-      $localize`:@@reports.stock-status.col.devise:Devise`
+      $localize`:@@reports.stock-status.col.devise:Devise`,
+      $localize`:@@reports.stock-status.col.methode:Méthode`
     ].join(';');
 
     expect(csv.split(/\r?\n/)[0]).toBe(header);
     expect(csv).toContain('"Magasin"');
     expect(csv).toContain('"Article"');
+    // Sans la colonne Méthode, un P.U. de prochaine sortie est inexplicable dans l'export.
+    expect(csv).toContain('"LIFO"');
+  });
+
+  it('labels the method on layered rows', () => {
+    // Régression du commit 437e1284 : sans coercion en amont, le repère restait muet.
+    expect(fixture.componentInstance.costingLabel(
+      fixture.componentInstance.report()!.rows[0].costingMethod)).toBe('LIFO');
+  });
+
+  it('renders the next-exit legend only when layered rows are present', async () => {
+    const legend = () => (fixture.nativeElement as HTMLElement).querySelector('.valuation-legend');
+    expect(legend()).toBeTruthy();
+
+    const data = fixture.componentInstance.report()!;
+    fixture.componentInstance.report.set({ ...data, layeredRowCount: 0 });
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(legend()).toBeNull();
   });
 
   it('shows an info toast for NoData without reading the french sentence', () => {

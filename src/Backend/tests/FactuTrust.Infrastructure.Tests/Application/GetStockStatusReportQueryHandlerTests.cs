@@ -75,15 +75,19 @@ public sealed class GetStockStatusReportQueryHandlerTests
             }
         };
 
-        var stockRepo = new Mock<IStockItemRepository>();
+        // Le jeu n'est construit QU'UNE fois : les totaux sortent des mêmes lignes que la page,
+        // là où le handler relisait tout une seconde fois juste pour sommer.
+        var stockRepo = new Mock<IStockItemRepository>(MockBehavior.Strict);
         stockRepo
-            .Setup(r => r.GetStockStatusReportRowsAsync(
+            .Setup(r => r.GetStockStatusReportPageAsync(
                 null, null, null, false, StockStatusGroupingMode.WarehouseThenCategory, 1, 50, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((rows.Take(1).ToList(), 2));
-        stockRepo
-            .Setup(r => r.GetStockStatusReportRowsAsync(
-                null, null, null, false, StockStatusGroupingMode.WarehouseThenCategory, 1, 2, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((rows, 2));
+            .ReturnsAsync(new StockStatusReportPage(
+                rows.Take(1).ToList(),
+                TotalCount: 2,
+                GrandTotalQuantity: rows.Sum(r => r.QuantityOnHand),
+                GrandTotalValue: rows.Sum(r => r.StockValue),
+                LayeredRowCount: 0,
+                DriftRowCount: 0));
 
         var handler = CreateHandler(Guid.NewGuid(), out _, stockRepo);
         var result = await handler.Handle(
@@ -106,10 +110,11 @@ public sealed class GetStockStatusReportQueryHandlerTests
         if (stockRepoOverride is null)
         {
             stockRepo
-                .Setup(r => r.GetStockStatusReportRowsAsync(
+                .Setup(r => r.GetStockStatusReportPageAsync(
                     It.IsAny<Guid?>(), It.IsAny<Guid?>(), It.IsAny<string?>(), It.IsAny<bool>(),
                     It.IsAny<StockStatusGroupingMode>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((new List<StockStatusReportRowDto>(), 0));
+                .ReturnsAsync(new StockStatusReportPage(
+                    new List<StockStatusReportRowDto>(), 0, 0m, 0m, 0, 0));
         }
 
         warehouseRepo ??= new Mock<IWarehouseRepository>();

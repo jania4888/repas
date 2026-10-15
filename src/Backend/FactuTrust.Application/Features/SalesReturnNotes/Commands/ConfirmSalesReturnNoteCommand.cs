@@ -8,6 +8,8 @@ using AuditActions = FactuTrust.Domain.Entities.AuditActions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
+using FactuTrust.Application.Features.Stock.Services;
+
 namespace FactuTrust.Application.Features.SalesReturnNotes.Commands;
 
 public sealed record ConfirmSalesReturnNoteCommand(Guid Id) : IRequest<Result>;
@@ -22,6 +24,7 @@ public sealed class ConfirmSalesReturnNoteCommandHandler : IRequestHandler<Confi
     private readonly IWarehouseRepository _warehouseRepository;
     private readonly IProductRepository _productRepository;
     private readonly IStockMutationService _mutation;
+    private readonly IStockValuationReader _valuationReader;
     private readonly ICurrentUser _currentUser;
     private readonly IAuditService _auditService;
     private readonly ILogger<ConfirmSalesReturnNoteCommandHandler> _logger;
@@ -35,6 +38,7 @@ public sealed class ConfirmSalesReturnNoteCommandHandler : IRequestHandler<Confi
         IWarehouseRepository warehouseRepository,
         IProductRepository productRepository,
         IStockMutationService mutation,
+        IStockValuationReader valuationReader,
         ICurrentUser currentUser,
         IAuditService auditService,
         ILogger<ConfirmSalesReturnNoteCommandHandler> logger)
@@ -47,6 +51,7 @@ public sealed class ConfirmSalesReturnNoteCommandHandler : IRequestHandler<Confi
         _warehouseRepository = warehouseRepository;
         _productRepository = productRepository;
         _mutation = mutation;
+        _valuationReader = valuationReader;
         _currentUser = currentUser;
         _auditService = auditService;
         _logger = logger;
@@ -188,7 +193,14 @@ public sealed class ConfirmSalesReturnNoteCommandHandler : IRequestHandler<Confi
                 WarehouseId = warehouse.Id,
                 Kind = StockMutationKind.Entry,
                 Quantity = line.ReturnedQuantity,
-                UnitCost = stockItem?.AverageCost ?? 0m,
+                // Coût issu des couches pour un article FIFO/LIFO, du CMUP sinon. Les lignes dont
+                // les couches d'origine sont restaurées portent déjà leur propre coût : ce champ
+                // n'est alors qu'un repli.
+                UnitCost = StockEntryCostResolver.Resolve(
+                    await _valuationReader.GetByProductAndWarehouseAsync(
+                        line.ProductId, warehouse.Id, cancellationToken),
+                    product,
+                    cachedAverageCost: stockItem?.AverageCost).UnitCost,
                 Reason = MovementReason.CustomerReturn,
                 Reference = reference,
                 Notes = "Réintégration suite à bon de retour",

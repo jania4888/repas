@@ -1,3 +1,6 @@
+using FactuTrust.Application.Features.Stock.Services;
+using Microsoft.Extensions.Options;
+using FactuTrust.Application.Configuration;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Common.Interfaces.Services;
@@ -75,19 +78,25 @@ public sealed class QuickStockCountCommandHandler : IRequestHandler<QuickStockCo
     private readonly IProductRepository _productRepository;
     private readonly ITenantContext _tenantContext;
     private readonly IStockMutationService _mutation;
+    private readonly IStockValuationReader _valuationReader;
+    private readonly StockTraceabilityOptions _stockOptions;
 
     public QuickStockCountCommandHandler(
         IStockItemRepository stockItemRepository,
         IWarehouseRepository warehouseRepository,
         IProductRepository productRepository,
         ITenantContext tenantContext,
-        IStockMutationService mutation)
+        IStockMutationService mutation,
+        IStockValuationReader valuationReader,
+        IOptions<StockTraceabilityOptions> stockOptions)
     {
         _stockItemRepository = stockItemRepository;
         _warehouseRepository = warehouseRepository;
         _productRepository = productRepository;
         _tenantContext = tenantContext;
         _mutation = mutation;
+        _valuationReader = valuationReader;
+        _stockOptions = stockOptions.Value;
     }
 
     public async Task<Result<QuickStockCountResult>> Handle(QuickStockCountCommand request, CancellationToken cancellationToken)
@@ -155,12 +164,24 @@ public sealed class QuickStockCountCommandHandler : IRequestHandler<QuickStockCo
                 ? "Mise à jour via comptage rapide" 
                 : request.Notes;
             
+            // Coût d'un écart POSITIF. Drapeau éteint ⇒ la cascade d'achat est désactivée et l'on
+            // retombe sur le CMUP, donc sur le comportement d'avant.
+            var reading = await _valuationReader.GetByProductAndWarehouseAsync(
+                request.ProductId, warehouseId, cancellationToken);
+            var unitCost = StockEntryCostResolver.Resolve(
+                reading,
+                product,
+                explicitUnitCost: null,
+                allowPurchasePriceCascade: _stockOptions.InventoryAutoValuationEnabled,
+                cachedAverageCost: stockItem.AverageCost).UnitCost;
+
             var adjustResult = await _mutation.ApplyAsync(new StockMutationRequest
             {
                 ProductId = request.ProductId,
                 WarehouseId = warehouseId,
                 Kind = StockMutationKind.Adjust,
                 Quantity = request.ActualQuantity,
+                UnitCost = unitCost,
                 Notes = notes,
                 Reason = MovementReason.InventoryAdjustment
             }, cancellationToken);

@@ -59,7 +59,8 @@ public sealed class TrackedDocumentStockService : ITrackedDocumentStockService
             return true;
         if (product.TrackingMode == TrackingMode.Serial && _options.SerialTrackingEnabled)
             return true;
-        if ((product.CostingMethod is CostingMethod.Fifo or CostingMethod.Lifo) && _options.FifoLifoValuationEnabled)
+        // Règle partagée : surtout pas une copie du test. Voir StockCostingPolicy.
+        if (_options.RequiresLayeredCosting(product))
             return true;
         return false;
     }

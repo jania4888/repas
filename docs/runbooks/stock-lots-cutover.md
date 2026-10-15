@@ -17,7 +17,7 @@ Voir aussi : [`docs/utilisateur/06-stock.md`](../utilisateur/06-stock.md), [`doc
 | 3 | Pilote : `ProductVariantsEnabled` | ✅ Flag |
 | 4 | Pilote : `LotTrackingEnabled` (+ optionnel `ExpiryTrackingEnabled`) | ✅ Flag |
 | 5 | Produits pilotes : `PickingPolicy = Fefo` | ✅ Par produit |
-| 6 | Optionnel : `FifoLifoValuationEnabled` + couche d'ouverture | ✅ Flag ; couche irréversible tant que stock > 0 |
+| 6 | Optionnel : `FifoLifoValuationEnabled` + couche d'ouverture — voir [`stock-valuation-truth.md`](stock-valuation-truth.md) pour le diagnostic de dérive et la réparation du cache | ✅ Flag ; couche irréversible tant que stock > 0 |
 | 7 | Contrôle invariant lots = on-hand | — |
 
 Ne **jamais** activer Lot sur un produit dont `QuantityOnHand > 0` sans inventaire d'ouverture (refus métier). Ne **jamais** passer Average → FIFO sans couche d'ouverture (refus métier).

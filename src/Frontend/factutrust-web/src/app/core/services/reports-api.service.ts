@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, from, of, throwError } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { environment } from '@environments/environment';
 import { ApiResponse } from './auth.service';
+import { coerceCostingMethod } from '@shared/utils/stock-traceability.utils';
 
 export interface ClientPaymentReportRow {
   paymentId: string;
@@ -171,7 +172,22 @@ export class ReportsApiService {
     if (params.groupingMode) httpParams = httpParams.set('groupingMode', params.groupingMode);
     if (params.page != null) httpParams = httpParams.set('page', params.page.toString());
     if (params.pageSize != null) httpParams = httpParams.set('pageSize', params.pageSize.toString());
-    return this.http.get<ApiResponse<StockStatusReportResult>>(`${this.API_URL}/stock-status`, { params: httpParams });
+    return this.http.get<ApiResponse<StockStatusReportResult>>(`${this.API_URL}/stock-status`, { params: httpParams }).pipe(
+      // L'API sérialise les énums par NOM ("Fifo") : sans coercion, le badge de méthode serait muet.
+      map(response => {
+        if (!response?.data?.rows) return response;
+        return {
+          ...response,
+          data: {
+            ...response.data,
+            rows: response.data.rows.map(row => ({
+              ...row,
+              costingMethod: coerceCostingMethod(row.costingMethod)
+            }))
+          }
+        };
+      })
+    );
   }
 
   downloadStockStatusPdf(params: {
@@ -382,8 +398,16 @@ export interface StockStatusReportRow {
   warehouseCode: string;
   warehouseName: string;
   quantityOnHand: number;
+  /** CMUP, ou coût de la prochaine sortie si `unitCostIsNextExit`. */
   unitCost: number;
+  /** Valeur réelle : somme des couches en FIFO/LIFO, quantité × CMUP sinon. */
   stockValue: number;
+  /** Coercé en nombre par le service : l'API le sérialise par nom ("Fifo"). */
+  costingMethod?: number;
+  /** Vrai ⇒ `unitCost` × quantité ≠ `stockValue`, et c'est normal. */
+  unitCostIsNextExit?: boolean;
+  hasValuationLayers?: boolean;
+  quantityDrift?: boolean;
 }
 
 export interface StockStatusReportResult {
@@ -393,6 +417,10 @@ export interface StockStatusReportResult {
   pageSize: number;
   grandTotalQuantity: number;
   grandTotalValue: number;
+  /** Nombre de lignes dont le P.U. est un coût de prochaine sortie : 0 ⇒ pas de légende à afficher. */
+  layeredRowCount?: number;
+  /** Nombre de lignes dont les couches ne totalisent pas la quantité en stock. */
+  driftRowCount?: number;
   currency: string;
   generatedAtUtc: string;
   filtersSummary?: string | null;

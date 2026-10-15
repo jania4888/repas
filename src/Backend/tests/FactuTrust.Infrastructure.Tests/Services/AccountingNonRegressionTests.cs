@@ -185,6 +185,9 @@ public sealed class AccountingNonRegressionTests
         RegisterLooseMock<IProductRepository>(services);
         RegisterLooseMock<IStockMovementRepository>(services);
         RegisterLooseMock<IStockMutationService>(services);
+        // Comme IStockMutationService : l'implémentation réelle ouvre un contexte tenant, que ce
+        // montage DI n'a pas. Le handler stock partagé doit seulement rester CONSTRUCTIBLE.
+        RegisterLooseMock<IStockValuationReader>(services);
         services.AddSingleton(Options.Create(new CashDeskFeaturesOptions()));
 
         return services.BuildServiceProvider();

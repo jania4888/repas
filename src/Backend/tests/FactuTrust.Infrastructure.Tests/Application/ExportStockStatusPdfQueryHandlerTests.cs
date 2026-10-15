@@ -18,10 +18,7 @@ public sealed class ExportStockStatusPdfQueryHandlerTests
     public async Task Handle_ReturnsNoData_WhenCountIsZero()
     {
         var stockRepo = new Mock<IStockItemRepository>();
-        stockRepo
-            .Setup(r => r.CountStockStatusReportRowsAsync(
-                It.IsAny<Guid?>(), It.IsAny<Guid?>(), It.IsAny<string?>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(0);
+        SetupPage(stockRepo, new List<StockStatusReportRowDto>(), totalCount: 0);
 
         var handler = CreateHandler(stockRepo);
         var result = await handler.Handle(
@@ -36,10 +33,7 @@ public sealed class ExportStockStatusPdfQueryHandlerTests
     public async Task Handle_ReturnsTooManyLines_WhenAbovePdfCap()
     {
         var stockRepo = new Mock<IStockItemRepository>();
-        stockRepo
-            .Setup(r => r.CountStockStatusReportRowsAsync(
-                It.IsAny<Guid?>(), It.IsAny<Guid?>(), It.IsAny<string?>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(StockStatusReportConstants.MaxLinesForPdf + 1);
+        SetupPage(stockRepo, OneRow(), totalCount: StockStatusReportConstants.MaxLinesForPdf + 1);
 
         var handler = CreateHandler(stockRepo);
         var result = await handler.Handle(
@@ -54,30 +48,7 @@ public sealed class ExportStockStatusPdfQueryHandlerTests
     public async Task Handle_LogsAuditOnSuccess()
     {
         var stockRepo = new Mock<IStockItemRepository>();
-        stockRepo
-            .Setup(r => r.CountStockStatusReportRowsAsync(
-                It.IsAny<Guid?>(), It.IsAny<Guid?>(), It.IsAny<string?>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(1);
-        stockRepo
-            .Setup(r => r.GetStockStatusReportRowsAsync(
-                It.IsAny<Guid?>(), It.IsAny<Guid?>(), It.IsAny<string?>(), It.IsAny<bool>(),
-                It.IsAny<StockStatusGroupingMode>(), 1, 1, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((new List<StockStatusReportRowDto>
-            {
-                new()
-                {
-                    ProductId = Guid.NewGuid(),
-                    ProductCode = "P1",
-                    ProductName = "Produit",
-                    CategoryName = "Cat",
-                    WarehouseId = Guid.NewGuid(),
-                    WarehouseCode = "W1",
-                    WarehouseName = "Magasin",
-                    QuantityOnHand = 1,
-                    UnitCost = 1,
-                    StockValue = 1
-                }
-            }, 1));
+        SetupPage(stockRepo, OneRow(), totalCount: 1);
 
         var audit = new Mock<IAuditService>();
         var handler = CreateHandler(stockRepo, audit: audit);
@@ -107,15 +78,7 @@ public sealed class ExportStockStatusPdfQueryHandlerTests
         try
         {
             var stockRepo = new Mock<IStockItemRepository>();
-            stockRepo
-                .Setup(r => r.CountStockStatusReportRowsAsync(
-                    It.IsAny<Guid?>(), It.IsAny<Guid?>(), It.IsAny<string?>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(1);
-            stockRepo
-                .Setup(r => r.GetStockStatusReportRowsAsync(
-                    It.IsAny<Guid?>(), It.IsAny<Guid?>(), It.IsAny<string?>(), It.IsAny<bool>(),
-                    It.IsAny<StockStatusGroupingMode>(), 1, 1, It.IsAny<CancellationToken>()))
-                .ReturnsAsync((OneRow(), 1));
+            SetupPage(stockRepo, OneRow(), totalCount: 1);
 
             StockStatusPdfContext? captured = null;
             var pdf = new Mock<IPdfService>();
@@ -151,10 +114,7 @@ public sealed class ExportStockStatusPdfQueryHandlerTests
         try
         {
             var stockRepo = new Mock<IStockItemRepository>();
-            stockRepo
-                .Setup(r => r.CountStockStatusReportRowsAsync(
-                    It.IsAny<Guid?>(), It.IsAny<Guid?>(), It.IsAny<string?>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(0);
+            SetupPage(stockRepo, new List<StockStatusReportRowDto>(), totalCount: 0);
 
             var handler = CreateHandler(stockRepo);
             var result = await handler.Handle(
@@ -169,6 +129,28 @@ public sealed class ExportStockStatusPdfQueryHandlerTests
         {
             CultureInfo.CurrentUICulture = previous;
         }
+    }
+
+    /// <summary>
+    /// Amorce le dépôt sur la nouvelle API : UNE seule construction du jeu, totaux compris.
+    /// Le handler comptait puis relisait tout ; il ne fait plus qu'un appel.
+    /// </summary>
+    private static void SetupPage(
+        Mock<IStockItemRepository> stockRepo,
+        List<StockStatusReportRowDto> rows,
+        int totalCount)
+    {
+        stockRepo
+            .Setup(r => r.GetStockStatusReportPageAsync(
+                It.IsAny<Guid?>(), It.IsAny<Guid?>(), It.IsAny<string?>(), It.IsAny<bool>(),
+                It.IsAny<StockStatusGroupingMode>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new StockStatusReportPage(
+                rows,
+                totalCount,
+                rows.Sum(r => r.QuantityOnHand),
+                rows.Sum(r => r.StockValue),
+                rows.Count(r => r.UnitCostIsNextExit),
+                0));
     }
 
     private static List<StockStatusReportRowDto> OneRow() =>

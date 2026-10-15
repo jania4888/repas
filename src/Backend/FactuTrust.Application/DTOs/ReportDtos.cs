@@ -1,4 +1,5 @@
 using FactuTrust.Application.Features.Reports;
+using FactuTrust.Domain.Enums;
 
 namespace FactuTrust.Application.DTOs;
 
@@ -417,8 +418,29 @@ public sealed record StockStatusReportRowDto
     public string WarehouseCode { get; init; } = null!;
     public string WarehouseName { get; init; } = null!;
     public decimal QuantityOnHand { get; init; }
+
+    /// <summary>
+    /// CMUP : le coût moyen pondéré. FIFO/LIFO : le coût de la PROCHAINE SORTIE (voir
+    /// <see cref="UnitCostIsNextExit"/>).
+    /// </summary>
     public decimal UnitCost { get; init; }
+
+    /// <summary>Toujours la valeur réelle du stock : somme des couches en FIFO/LIFO, quantité × CMUP sinon.</summary>
     public decimal StockValue { get; init; }
+
+    public CostingMethod CostingMethod { get; init; }
+
+    /// <summary>
+    /// Vrai ⇒ <see cref="UnitCost"/> est un coût de prochaine sortie, donc
+    /// <c>UnitCost × QuantityOnHand ≠ StockValue</c>. L'écran DOIT l'expliquer.
+    /// </summary>
+    public bool UnitCostIsNextExit { get; init; }
+
+    /// <summary>Faux sur un article FIFO/LIFO ⇒ aucune couche : la ligne retombe sur le CMUP.</summary>
+    public bool HasValuationLayers { get; init; }
+
+    /// <summary>Vrai ⇒ les couches ne totalisent pas la quantité en stock. À réparer.</summary>
+    public bool QuantityDrift { get; init; }
 }
 
 public sealed record StockStatusReportResultDto
@@ -429,6 +451,12 @@ public sealed record StockStatusReportResultDto
     public int PageSize { get; init; }
     public decimal GrandTotalQuantity { get; init; }
     public decimal GrandTotalValue { get; init; }
+
+    /// <summary>Nombre de lignes dont le P.U. est un coût de prochaine sortie : 0 ⇒ pas de légende à afficher.</summary>
+    public int LayeredRowCount { get; init; }
+
+    /// <summary>Nombre de lignes dont les couches ne totalisent pas la quantité en stock.</summary>
+    public int DriftRowCount { get; init; }
     public string Currency { get; init; } = "TND";
     public DateTime GeneratedAtUtc { get; init; }
     public string? FiltersSummary { get; init; }

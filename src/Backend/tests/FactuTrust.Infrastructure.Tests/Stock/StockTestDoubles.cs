@@ -118,8 +118,40 @@ internal sealed class EmptyStockTraceabilityQuery : IStockTraceabilityQuery
         Task.FromResult<IReadOnlyDictionary<Guid, string>>(new Dictionary<Guid, string>());
 }
 
+/// <summary>
+/// Lecteur de valorisation vide : aucune couche, aucune lecture. Les appelants retombent alors sur
+/// le CMUP qu'ils passent en repli — c'est-à-dire exactement le comportement d'avant la lecture
+/// par couches. C'est ce qu'il faut pour les tests de caractérisation, qui doivent rester verts.
+/// </summary>
+internal sealed class EmptyStockValuationReader : IStockValuationReader
+{
+    public Task<IReadOnlyDictionary<Guid, StockCostReading>> GetByStockItemIdsAsync(
+        IReadOnlyCollection<Guid> stockItemIds,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyDictionary<Guid, StockCostReading>>(new Dictionary<Guid, StockCostReading>());
+
+    public Task<StockCostReading?> GetByProductAndWarehouseAsync(
+        Guid productId,
+        Guid warehouseId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<StockCostReading?>(null);
+
+    public Task<decimal> GetTotalStockValueAsync(
+        Guid? warehouseId = null,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(0m);
+
+    public Task<IReadOnlyList<StockValuationDriftRow>> ListValuationDriftAsync(
+        Guid? warehouseId = null,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<StockValuationDriftRow>>(Array.Empty<StockValuationDriftRow>());
+}
+
 internal static class StockTestDoubles
 {
+    /// <summary>Aucune valorisation lisible : repli sur le CMUP, comme avant le chantier couches.</summary>
+    public static IStockValuationReader NoValuation() => new EmptyStockValuationReader();
+
     public static IStockMutationService Passthrough(IStockItemRepository items) =>
         new FakePassthroughStockMutationService(items);
 
@@ -129,4 +161,14 @@ internal static class StockTestDoubles
     public static ITrackedDocumentStockService Untracked() => new AlwaysUntrackedDocumentStockService();
 
     public static IStockTraceabilityQuery EmptyLots() => new EmptyStockTraceabilityQuery();
+
+    /// <summary>
+    /// Le VRAI lecteur de valorisation, branché sur la base en mémoire. Volontairement pas un
+    /// bouchon : les tests qui valorisent une entrée doivent exercer la même lecture de couches
+    /// que la production, sinon ils valideraient un chemin qui n'existe pas.
+    /// </summary>
+    public static IStockValuationReader ValuationReader(
+        ITenantDbContextFactory factory,
+        StockTraceabilityOptions? options = null) =>
+        new EfStockValuationReader(factory, Options.Create(options ?? new StockTraceabilityOptions()));
 }

@@ -35,6 +35,7 @@ public sealed class RestoreStockOnCreditNoteValidatedHandlerTests
             productRepo.Object,
             movementRepo.Object,
             StockTestDoubles.Passthrough(stockItemRepo.Object),
+            StockTestDoubles.NoValuation(),
             StockTestDoubles.Untracked(),
             NullLogger<RestoreStockOnCreditNoteValidatedHandler>.Instance);
 
@@ -71,6 +72,7 @@ public sealed class RestoreStockOnCreditNoteValidatedHandlerTests
             productRepo.Object,
             movementRepo.Object,
             StockTestDoubles.Passthrough(stockItemRepo.Object),
+            StockTestDoubles.NoValuation(),
             StockTestDoubles.Untracked(),
             NullLogger<RestoreStockOnCreditNoteValidatedHandler>.Instance);
 

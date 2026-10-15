@@ -121,7 +121,12 @@
         <th pSortableColumn="warehouseName"><ng-container i18n="@@stock.stock-list.entrepot.c349c0bc">Entrepôt </ng-container> <p-sortIcon field="warehouseName"></p-sortIcon></th>
         <th pSortableColumn="quantityOnHand" class="text-right"><ng-container i18n="@@stock.stock-list.quantite.09a38fda">Quantité </ng-container> <p-sortIcon
             field="quantityOnHand"></p-sortIcon></th>
-        <th pSortableColumn="averageCost" class="text-right"><ng-container i18n="@@stock.stock-list.cout.unitaire.3735acf6">Coût unitaire </ng-container> <p-sortIcon field="averageCost"></p-sortIcon>
+        <th pSortableColumn="unitCost" class="text-right">
+          <ng-container i18n="@@stock.stock-list.cout.unitaire.3735acf6">Coût unitaire </ng-container>
+          <p-sortIcon field="unitCost"></p-sortIcon>
+          @if (hasNextExitUnitCost()) {
+          <i class="pi pi-info-circle ml-1 text-xs" [pTooltip]="nextExitUnitCostHint" tooltipPosition="top"></i>
+          }
         </th>
         <th pSortableColumn="stockValue" class="text-right"><ng-container i18n="@@stock.stock-list.valeur.68f92b0d">Valeur </ng-container> <p-sortIcon field="stockValue"></p-sortIcon></th>
         <th class="text-center" i18n="@@stock.stock-list.statut.659499f3">Statut</th>
@@ -151,7 +156,7 @@
             <span class="text-xs text-gray-500" i18n="@@stock.stock-list.min.485471ea">Min: {{ item.minimumStock }}</span>
           </div>
         </td>
-        <td class="value-cell">{{ item.averageCost | currency:'TND':'symbol':'1.3-3' }}</td>
+        <td class="value-cell">{{ (item.unitCost ?? item.averageCost) | currency:'TND':'symbol':'1.3-3' }}</td>
         <td class="value-cell">{{ item.stockValue | currency:'TND':'symbol':'1.3-3' }}</td>
         <td class="text-center">
           @if (item.isOutOfStock) {
