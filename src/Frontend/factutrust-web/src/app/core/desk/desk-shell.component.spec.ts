@@ -1,4 +1,4 @@
-import { signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -10,6 +10,18 @@ import { DeskWindowService } from './desk-window.service';
 import { DeskWindowStore } from './desk-window.store';
 import { DESK_SESSION_PREFIX } from './desk-window.model';
 
+@Component({
+  selector: 'app-desk-shell-host',
+  standalone: true,
+  imports: [DeskShellComponent],
+  template: `
+    <app-desk-shell>
+      <div data-desk-body>Journal comptable</div>
+    </app-desk-shell>
+  `
+})
+class DeskShellHostComponent {}
+
 describe('DeskShellComponent', () => {
   const user = signal({
     id: 'user-1',
@@ -20,7 +32,7 @@ describe('DeskShellComponent', () => {
   });
   let events: Subject<unknown>;
   let navigateByUrl: jasmine.Spy;
-  let fixture: ComponentFixture<DeskShellComponent>;
+  let fixture: ComponentFixture<DeskShellHostComponent>;
   let store: DeskWindowStore;
 
   beforeEach(async () => {
@@ -37,7 +49,7 @@ describe('DeskShellComponent', () => {
     document.querySelector('.p-dialog-mask')?.remove();
     navigateByUrl = jasmine.createSpy('navigateByUrl').and.resolveTo(true);
     await TestBed.configureTestingModule({
-      imports: [DeskShellComponent],
+      imports: [DeskShellHostComponent],
       providers: [
         {
           provide: AuthService,
@@ -64,7 +76,7 @@ describe('DeskShellComponent', () => {
     }).compileComponents();
 
     store = TestBed.inject(DeskWindowStore);
-    fixture = TestBed.createComponent(DeskShellComponent);
+    fixture = TestBed.createComponent(DeskShellHostComponent);
     store.upsert({
       key: '/accounting/chart',
       url: '/accounting/chart',
@@ -122,14 +134,32 @@ describe('DeskShellComponent', () => {
     expect(document.activeElement).toBe(tasks[0]);
   });
 
+  it('affiche le contenu projeté dans le canevas et le conserve hors dossier', () => {
+    const marker = markerIn(fixture);
+    expect(marker.textContent).toContain('Journal comptable');
+    expect(fixture.nativeElement.querySelector('.desk__canvas')?.contains(marker)).toBeTrue();
+
+    user.set(companyUser());
+    TestBed.inject(DeskWindowService).syncMode();
+    fixture.detectChanges();
+
+    const hidden = markerIn(fixture);
+    expect(hidden).toBe(marker);
+    expect(fixture.nativeElement.querySelector('.desk__titlebar')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.desk__taskbar')).toBeNull();
+
+    user.set(delegatedUser());
+    TestBed.inject(DeskWindowService).syncMode();
+    fixture.detectChanges();
+
+    const restored = markerIn(fixture);
+    expect(restored).toBe(marker);
+    expect(fixture.nativeElement.querySelector('.desk__canvas')?.contains(restored)).toBeTrue();
+    expect(fixture.nativeElement.querySelector('.desk__taskbar')).not.toBeNull();
+  });
+
   it('n’affiche pas de barre des tâches hors dossier délégué', () => {
-    user.set({
-      id: 'user-1',
-      tenantId: 'company-1',
-      accessMode: 'native',
-      contextTenantId: 'company-1',
-      tenantKind: 'company'
-    });
+    user.set(companyUser());
     TestBed.inject(DeskWindowService).syncMode();
     events.next(new NavigationEnd(1, '/dashboard', '/dashboard'));
     fixture.detectChanges();
@@ -146,6 +176,32 @@ describe('DeskShellComponent', () => {
     return found;
   }
 });
+
+function markerIn(fixture: ComponentFixture<DeskShellHostComponent>): HTMLElement {
+  const marker = fixture.nativeElement.querySelector('[data-desk-body]') as HTMLElement | null;
+  expect(marker).withContext('contenu projeté').not.toBeNull();
+  return marker as HTMLElement;
+}
+
+function delegatedUser() {
+  return {
+    id: 'user-1',
+    tenantId: 'firm-1',
+    accessMode: 'delegated',
+    contextTenantId: 'client-a',
+    tenantKind: 'accountingFirm'
+  };
+}
+
+function companyUser() {
+  return {
+    id: 'user-1',
+    tenantId: 'company-1',
+    accessMode: 'native',
+    contextTenantId: 'company-1',
+    tenantKind: 'company'
+  };
+}
 
 function clearDeskSession(): void {
   for (const key of Object.keys(sessionStorage)) {

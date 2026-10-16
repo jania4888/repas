@@ -11,30 +11,30 @@ import { DeskWindowService } from './desk-window.service';
     '[class.desk-on]': 'enabled()'
   },
   template: `
-    @if (enabled()) {
-      <div class="desk">
-        @if (active(); as window) {
-          <header class="desk__titlebar">
-            <h1 class="desk__title" id="desk-window-title">{{ window.title }}</h1>
-            <button
-              type="button"
-              class="desk__chrome"
-              [attr.aria-label]="minimizeLabel(window)"
-              (click)="minimize(window)">
-              <i class="fa-solid fa-window-minimize" aria-hidden="true"></i>
-            </button>
-            <button
-              type="button"
-              class="desk__chrome desk__chrome--close"
-              [attr.aria-label]="closeLabel(window)"
-              (click)="close(window)">
-              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-            </button>
-          </header>
-        }
-        <div class="desk__canvas">
-          <ng-content />
-        </div>
+    <div class="desk">
+      @if (enabled() && active(); as window) {
+        <header class="desk__titlebar">
+          <h1 class="desk__title" id="desk-window-title">{{ window.title }}</h1>
+          <button
+            type="button"
+            class="desk__chrome"
+            [attr.aria-label]="minimizeLabel(window)"
+            (click)="minimize(window)">
+            <i class="fa-solid fa-window-minimize" aria-hidden="true"></i>
+          </button>
+          <button
+            type="button"
+            class="desk__chrome desk__chrome--close"
+            [attr.aria-label]="closeLabel(window)"
+            (click)="close(window)">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </header>
+      }
+      <div class="desk__canvas">
+        <ng-content />
+      </div>
+      @if (enabled()) {
         <nav
           class="desk__taskbar"
           [attr.aria-label]="taskbarLabel"
@@ -59,10 +59,8 @@ import { DeskWindowService } from './desk-window.service';
             </div>
           }
         </nav>
-      </div>
-    } @else {
-      <ng-content />
-    }
+      }
+    </div>
   `,
   styles: [`
     :host { display: contents; }
@@ -72,6 +70,10 @@ import { DeskWindowService } from './desk-window.service';
       flex-direction: column;
       min-height: 0;
       min-width: 0;
+    }
+    :host:not(.desk-on) .desk,
+    :host:not(.desk-on) .desk__canvas {
+      display: contents;
     }
     .desk {
       display: flex;
@@ -83,6 +85,14 @@ import { DeskWindowService } from './desk-window.service';
       border-radius: 0.5rem;
       overflow: hidden;
       background: #fff;
+    }
+    .desk__canvas {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+    }
+    :host(.desk-on) .desk__canvas > * {
+      min-height: 100%;
     }
     .desk__titlebar {
       display: flex;
@@ -120,9 +130,6 @@ import { DeskWindowService } from './desk-window.service';
     .desk__task-close:hover { background: rgba(255, 255, 255, 0.14); }
     .desk__chrome--close:hover,
     .desk__task-close:hover { background: #b91c1c; color: #fff; }
-    .desk__canvas > * {
-      min-height: 100%;
-    }
     .desk__taskbar {
       display: flex;
       flex: 0 0 auto;
