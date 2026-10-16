@@ -35,6 +35,7 @@ describe('ManualEntryComponent', () => {
             getJournalTemplates: () => of({ success: true, data: [] }),
             createManualJournalEntry: () => of({ success: true, data: 'entry-id' }),
             updateDraftJournalEntry: () => of({ success: true, data: true }),
+            getJournal: () => of({ success: true, data: [] }),
             getJournalEntry: () => of({ success: true, data: null }),
             createJournalTemplate: () => of({ success: true }),
             getThirdPartyProfile: () => of({ success: true, data: null }),
@@ -81,6 +82,24 @@ describe('ManualEntryComponent', () => {
     expect(el.textContent).toContain('Saisie guidée');
     expect(el.textContent).toContain('Saisie par modèle');
     expect(el.textContent).toContain('Saisie récurrente');
+  });
+
+  it('place l’historique du journal sous la grille et hors du payload IA', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const main = el.querySelector('.entry-layout__main');
+    const grid = main?.querySelector('app-entry-lines-grid');
+    const history = main?.querySelector('app-entry-journal-history');
+    const tabs = main?.querySelector('app-entry-bottom-tabs');
+
+    expect(grid).toBeTruthy();
+    expect(history).toBeTruthy();
+    expect(tabs).toBeTruthy();
+    expect(grid!.compareDocumentPosition(history!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(history!.compareDocumentPosition(tabs!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+
+    const payload = JSON.stringify(fixture.componentInstance.buildManualEntryAnalyzePayload());
+    expect(payload).not.toContain('journalHistory');
+    expect(payload).not.toContain('Dernières écritures');
   });
 
   it('renders header form with journal field', () => {

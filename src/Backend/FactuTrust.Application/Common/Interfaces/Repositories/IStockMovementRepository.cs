@@ -1,4 +1,5 @@
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Features.DataExports;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
 
@@ -73,5 +74,12 @@ public interface IStockMovementRepository : IRepository<StockMovement>
     Task<IReadOnlyList<StockSnapshotRowDto>> GetStockSnapshotAtDateAsync(
         DateTime asOfEndOfDayUtc,
         Guid? warehouseId,
+        CancellationToken cancellationToken = default);
+
+    Task<CountedRows<StockMovementExportRow>> ListForExportAsync(
+        Guid? warehouseId,
+        DateTime? fromDate,
+        DateTime? toDate,
+        int maxRows,
         CancellationToken cancellationToken = default);
 }

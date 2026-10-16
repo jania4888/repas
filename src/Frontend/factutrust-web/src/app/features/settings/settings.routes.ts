@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { adminGuard } from '@core/guards/admin.guard';
 import { permissionGuard } from '@core/guards/permission.guard';
 import { platformSettingsGuard } from '@core/guards/platform-settings.guard';
+import { dataExportGuard } from '@core/guards/data-export.guard';
 import { storefrontManageGuard } from '@core/guards/storefront-manage.guard';
 import { PERMISSIONS } from '@core/config/permission-keys';
 
@@ -17,6 +18,12 @@ export const SETTINGS_ROUTES: Routes = [
     path: 'profile',
     loadComponent: () => import('./profile/profile.component').then(m => m.ProfileComponent),
     title: $localize`:@@settings.routes.title.Mon_profil_InstaFact:Mon profil - InstaFact`
+  },
+  {
+    path: 'data-export',
+    canActivate: [dataExportGuard],
+    loadComponent: () => import('./data-export/data-export.component').then(m => m.DataExportComponent),
+    title: $localize`:@@settings.routes.title.Mes_donnees_InstaFact:Mes données - InstaFact`
   },
   {
     path: 'company',

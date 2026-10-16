@@ -1,4 +1,5 @@
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Features.DataExports;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
 using FactuTrust.Domain.ValueObjects;
@@ -73,5 +74,15 @@ public interface IQuoteRepository : IRepository<Quote>
         DateTime? fromDate,
         DateTime? toDate,
         Guid? clientId,
+        CancellationToken cancellationToken = default);
+
+    Task<HeaderLinesExportData<QuoteExportRow, QuoteLineExportRow>> ListForExportAsync(
+        string? searchTerm,
+        QuoteStatus? status,
+        DateTime? fromDate,
+        DateTime? toDate,
+        Guid? clientId,
+        int documentMax,
+        int lineMax,
         CancellationToken cancellationToken = default);
 }

@@ -27,7 +27,12 @@ public sealed class StockStatusPdfTests
 
             Assert.Contains("État de stock", text);
             Assert.Contains("Total général", text);
+            Assert.Contains("Valeur HT", text);
+            Assert.Contains("Valeur TTC", text);
             Assert.Contains("1.500", text);
+            Assert.Contains("1.785", text);
+            Assert.Contains("fiche article", text);
+            Assert.True(pdf.GetPage(1).Width > pdf.GetPage(1).Height);
             Assert.DoesNotContain(letters, letter =>
                 (letter.FontName ?? "").Contains("Naskh", StringComparison.OrdinalIgnoreCase));
         }
@@ -53,6 +58,8 @@ public sealed class StockStatusPdfTests
             Assert.Contains(letters, letter =>
                 (letter.FontName ?? "").Contains("Naskh", StringComparison.OrdinalIgnoreCase));
             Assert.Contains("1.500", text);
+            Assert.Contains("1.785", text);
+            Assert.True(pdf.GetPage(1).Width > pdf.GetPage(1).Height);
             Assert.True(text.Count(c => c is >= '\u0600' and <= '\u06FF' or >= '\uFE70' and <= '\uFEFF') >= 8, text);
         }
         finally
@@ -88,11 +95,14 @@ public sealed class StockStatusPdfTests
                 WarehouseName = "Magasin",
                 QuantityOnHand = 1.5m,
                 UnitCost = 1m,
-                StockValue = 1.5m
+                StockValue = 1.5m,
+                VatRatePercent = 19,
+                StockValueTtc = 1.785m
             }
         },
         GrandTotalQuantity: 1.5m,
         GrandTotalValue: 1.5m,
         Currency: "TND",
+        GrandTotalValueTtc: 1.785m,
         RightToLeft: rightToLeft);
 }

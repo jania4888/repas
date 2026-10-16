@@ -6,6 +6,7 @@
 <!-- Page Header -->
 <app-page-header title="Gestion du Stock" i18n-title="@@stock.stock-list.gestion.du.stock.72df5586" subtitle="Suivez l'état de vos stocks en temps réel" i18n-subtitle="@@stock.stock-list.suivez.l.etat.de.vos.stocks.en.temps.ree.0283255f">
   <div class="stock-actions">
+    <app-export-excel-button dataset="stock-items" [filters]="stockExportFilters" />
     @if (canCreateStockVoucher()) {
       <a routerLink="/stock/entries/new" class="stock-btn stock-btn-entry">
         <i class="pi pi-arrow-down"></i>

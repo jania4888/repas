@@ -7,11 +7,16 @@ namespace FactuTrust.Application.Common.Interfaces.Services;
 public interface IAccountingReportingService
 {
     Task<Result<IReadOnlyList<ChartOfAccountDto>>> GetChartOfAccountsAsync(CancellationToken cancellationToken = default);
+    /// <param name="take">
+    /// Nombre maximum de pièces, après le tri date/numéro décroissant.
+    /// Nul : toute la période (journal, export, archive). Borné de 1 à 30.
+    /// </param>
     Task<Result<IReadOnlyList<JournalEntryDto>>> GetJournalEntriesAsync(
         string? journalCode,
         DateTime from,
         DateTime to,
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken = default,
+        int? take = null);
 
     /// <summary>
     /// Charge une écriture par identifiant (lignes + nombre de PJ). Indépendant de la politique

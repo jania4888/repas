@@ -205,7 +205,8 @@ public static class DependencyInjection
         services.AddScoped<IPaymentRepository, PaymentRepository>();
         services.AddScoped<IQuoteRepository, QuoteRepository>();
         services.AddScoped<IClientRepository, ClientRepository>();
-        services.AddScoped<ICompanyRepository, CompanyRepository>();
+            services.AddScoped<ICompanyRepository, CompanyRepository>();
+            services.AddScoped<FactuTrust.Application.Features.DataExports.IBusinessExcelWorkbookBuilder, Services.BusinessExcelWorkbookBuilder>();
         services.AddScoped<ITaxRepository, TaxRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();

@@ -21,6 +21,7 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcru
 import { SkeletonTableComponent, SkeletonColumn } from '@shared/components/skeleton/skeleton-table.component';
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
+import { ExportExcelButtonComponent } from '@shared/components/export-excel-button/export-excel-button.component';
 import { AnalyzeWithAiButtonComponent } from '@features/ai-assistant/components/analyze-with-ai-button/analyze-with-ai-button.component';
 import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen-payload.factory';
 import { InvoiceImportDialogComponent } from '@features/invoices/components/invoice-import-dialog/invoice-import-dialog.component';
@@ -73,6 +74,7 @@ interface StatusOption {
     SkeletonTableComponent,
     EmptyStateComponent,
     ButtonComponent,
+    ExportExcelButtonComponent,
     StatusBadgeComponent,
     TableTotalsBarComponent,
     AnalyzeWithAiButtonComponent,
@@ -103,6 +105,7 @@ interface StatusOption {
           (click)="openImportDialog()"
           ariaLabel="Importer une facture depuis un fichier (PDF, image, Word ou Excel)" i18n-ariaLabel="@@invoices.invoice-list.importer.une.facture.depuis.un.fichier.p.01937b6a" i18n="@@invoices.invoice-list.importer.une.facture.66ed8807"> Importer une facture </app-button>
       }
+      <app-export-excel-button [dataset]="invoiceExportDataset" [filters]="invoiceExportFilters" />
       @if (canCreateInvoice() && creditNotesOnlyMode()) {
         <app-button 
           variant="primary"
@@ -854,6 +857,21 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
+
+  get invoiceExportDataset(): string {
+    return this.creditNotesOnlyMode() ? 'credit-notes' : 'invoices';
+  }
+
+  readonly invoiceExportFilters = () => ({
+    search: this.searchTerm || null,
+    status: this.selectedStatus,
+    fromDate: this.dateRange?.[0] ?? null,
+    toDate: this.dateRange?.[1] ?? null,
+    clientId: this.selectedClient?.id ?? null,
+    unpaidOnly: this.unpaidOnlyMode(),
+    realizedRevenueOnly: this.revenueMode() ? this.realizedRevenueOnly() : false,
+    type: this.creditNotesOnlyMode() ? null : (this.documentType() ?? null)
+  });
 
   loadInvoices(): void {
     // Empêcher les requêtes multiples simultanées

@@ -2106,9 +2106,15 @@ export class AccountingService {
     return this.http.post<ApiResponse<MassReversalResultDto>>(`${this.base}/journal/mass-reverse`, { ids, reason });
   }
 
-  getJournal(journalCode: string | undefined, from: Date, to: Date): Observable<ApiResponse<JournalEntryDto[]>> {
+  getJournal(
+    journalCode: string | undefined,
+    from: Date,
+    to: Date,
+    take?: number
+  ): Observable<ApiResponse<JournalEntryDto[]>> {
     let p = new HttpParams().set('from', formatLocalDate(from)).set('to', formatLocalDate(to));
     if (journalCode) p = p.set('journalCode', journalCode);
+    if (take != null) p = p.set('take', String(take));
     return this.http.get<ApiResponse<JournalEntryDto[]>>(`${this.base}/journal`, { params: p });
   }
 

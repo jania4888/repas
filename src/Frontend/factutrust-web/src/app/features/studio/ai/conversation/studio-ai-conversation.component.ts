@@ -43,6 +43,7 @@ import { STUDIO_AI_LABELS, formatLabel } from '../studio-ai-labels';
             @if (item.kind === 'text' || item.kind === 'system') {
               <div
                 class="saic__bubble"
+                [attr.data-timeline-index]="$index"
                 [class.saic__bubble--user]="item.role === 'user'"
                 [class.saic__bubble--system]="item.kind === 'system'">
                 @if (item.kind === 'text') {
@@ -53,7 +54,7 @@ import { STUDIO_AI_LABELS, formatLabel } from '../studio-ai-labels';
             }
 
             @if (item.report; as report) {
-              <div class="saic__report">
+              <div class="saic__report" [attr.data-timeline-index]="$index">
                 <div class="saic__report-head">
                   <h5 class="saic__report-title">{{ report.title }}</h5>
                   <button
@@ -74,7 +75,7 @@ import { STUDIO_AI_LABELS, formatLabel } from '../studio-ai-labels';
 
             @if (item.failure; as failure) {
               @let view = failureView(failure);
-              <div class="saic__failure">
+              <div class="saic__failure" [attr.data-timeline-index]="$index">
                 <p class="saic__failure-eyebrow">{{ view.eyebrow }}</p>
                 <h5 class="saic__failure-title">{{ view.title }}</h5>
                 <p class="saic__text">{{ view.message }}</p>
@@ -255,14 +256,30 @@ export class StudioAiConversationComponent {
   private readonly scroller = viewChild<ElementRef<HTMLElement>>('scroller');
 
   constructor() {
-    // Une réponse qui arrive hors de la zone visible passe inaperçue : on suit le bas du fil dès
-    // qu'un élément est ajouté (micro-tâche : le DOM du nouvel élément existe déjà).
+    // Le DOM du nouvel élément existe à la micro-tâche suivante. On aligne alors la dernière
+    // question en haut du fil : caler sur scrollHeight montrait la fin du tableau, et
+    // scrollIntoView ferait défiler la page entière.
     effect(() => {
       this.items();
       const el = this.scroller()?.nativeElement;
       if (!el) return;
-      queueMicrotask(() => { el.scrollTop = el.scrollHeight; });
+      queueMicrotask(() => this.anchorToLatestQuestion(el));
     });
+  }
+
+  /** Défilement limité à `.saic__body` : la dernière bulle utilisateur, sinon le dernier élément. */
+  private anchorToLatestQuestion(el: HTMLElement): void {
+    if (!el.isConnected) return;
+    const nodes = el.querySelectorAll<HTMLElement>('[data-timeline-index]');
+    if (!nodes.length) return;
+    let target = nodes[nodes.length - 1];
+    for (let i = nodes.length - 1; i >= 0; i--) {
+      if (nodes[i].classList.contains('saic__bubble--user')) {
+        target = nodes[i];
+        break;
+      }
+    }
+    el.scrollTop = target.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop;
   }
 
   /**

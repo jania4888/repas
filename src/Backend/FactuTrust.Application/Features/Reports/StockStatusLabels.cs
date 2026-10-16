@@ -47,6 +47,19 @@ public static class StockStatusLabels
 
     public static string Value() => IsArabic ? "القيمة" : "Valeur";
 
+    public static string ValueHt() => IsArabic ? "قيمة دون أداءات" : "Valeur HT";
+
+    public static string ValueTtc() => IsArabic ? "قيمة شامل الضريبة" : "Valeur TTC";
+
+    public static string Vat() => "TVA";
+
+    /// <summary>
+    /// Toujours affichée : le TTC reprend la valeur HT et le taux actuel de la fiche, pas le bon de réception.
+    /// </summary>
+    public static string PurchaseTtcNote() => IsArabic
+        ? "قيمة شامل الضريبة = قيمة دون أداءات × (1 + نسبة TVA الحالية في بطاقة الصنف). هذه ليست نسبة إذن الاستلام. في FIFO/LIFO، س.و. × الكمية × (1 + TVA) ≠ قيمة شامل الضريبة."
+        : "Valeur TTC = valeur HT × (1 + taux de TVA actuel de la fiche article). Ce n'est pas le taux du bon de réception. En FIFO/LIFO, P.U. × Qté × (1 + TVA) ≠ Valeur TTC.";
+
     public static string Subtotal() => IsArabic ? "المجموع الجزئي" : "Sous-total";
 
     public static string Total() => IsArabic ? "المجموع" : "Total";

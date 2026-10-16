@@ -21,7 +21,7 @@ public sealed class GetChartOfAccountsQueryHandler
         => _reporting.GetChartOfAccountsAsync(cancellationToken);
 }
 
-public sealed record GetJournalEntriesQuery(string? JournalCode, DateTime From, DateTime To)
+public sealed record GetJournalEntriesQuery(string? JournalCode, DateTime From, DateTime To, int? Take = null)
     : IRequest<Result<IReadOnlyList<JournalEntryDto>>>;
 
 public sealed class GetJournalEntriesQueryHandler
@@ -35,7 +35,8 @@ public sealed class GetJournalEntriesQueryHandler
     }
 
     public Task<Result<IReadOnlyList<JournalEntryDto>>> Handle(GetJournalEntriesQuery request, CancellationToken cancellationToken)
-        => _reporting.GetJournalEntriesAsync(request.JournalCode, request.From, request.To, cancellationToken);
+        => _reporting.GetJournalEntriesAsync(
+            request.JournalCode, request.From, request.To, cancellationToken, request.Take);
 }
 
 public sealed record GetJournalEntryByIdQuery(Guid Id) : IRequest<Result<JournalEntryDto>>;

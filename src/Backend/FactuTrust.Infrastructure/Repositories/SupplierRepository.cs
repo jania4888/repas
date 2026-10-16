@@ -10,7 +10,7 @@ namespace FactuTrust.Infrastructure.Repositories;
 /// <summary>
 /// Repository implementation for Supplier aggregate.
 /// </summary>
-public sealed class SupplierRepository : ISupplierRepository
+public sealed partial class SupplierRepository : ISupplierRepository
 {
     private readonly TenantDbContextFactory _contextFactory;
 

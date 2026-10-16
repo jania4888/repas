@@ -87,7 +87,9 @@ public sealed class GetStockStatusReportQueryHandlerTests
                 GrandTotalQuantity: rows.Sum(r => r.QuantityOnHand),
                 GrandTotalValue: rows.Sum(r => r.StockValue),
                 LayeredRowCount: 0,
-                DriftRowCount: 0));
+                DriftRowCount: 0,
+                // 28,5 n'est pas 25 × 1,19 : le handler transmet la somme déjà faite, il ne recalcule pas.
+                GrandTotalValueTtc: 28.5m));
 
         var handler = CreateHandler(Guid.NewGuid(), out _, stockRepo);
         var result = await handler.Handle(
@@ -96,6 +98,8 @@ public sealed class GetStockStatusReportQueryHandlerTests
 
         Assert.True(result.IsSuccess);
         Assert.Equal(25, result.Value.GrandTotalValue);
+        Assert.Equal(28.5m, result.Value.GrandTotalValueTtc);
+        Assert.NotEqual(25m * 1.19m, result.Value.GrandTotalValueTtc);
         Assert.Equal(3, result.Value.GrandTotalQuantity);
     }
 
@@ -114,7 +118,7 @@ public sealed class GetStockStatusReportQueryHandlerTests
                     It.IsAny<Guid?>(), It.IsAny<Guid?>(), It.IsAny<string?>(), It.IsAny<bool>(),
                     It.IsAny<StockStatusGroupingMode>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new StockStatusReportPage(
-                    new List<StockStatusReportRowDto>(), 0, 0m, 0m, 0, 0));
+                    new List<StockStatusReportRowDto>(), 0, 0m, 0m, 0, 0, 0m));
         }
 
         warehouseRepo ??= new Mock<IWarehouseRepository>();

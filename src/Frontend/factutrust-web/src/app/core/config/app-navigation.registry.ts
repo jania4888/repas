@@ -542,7 +542,8 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         route: '/payments/cash-journal',
         icon: 'fa-solid fa-book',
         modules: [M.Treasury],
-        permissionsAll: ['payments:read']
+        permissionsAll: ['payments:read'],
+        navGroup: 'reports'
       },
       {
         id: 'treasury--reports-sales',
@@ -1078,6 +1079,7 @@ const ROUTE_SEARCH_GROUP: Record<string, NavSearchGroup> = {
   '/reports/stock': 'report',
   '/reports/stock-status': 'report',
   '/reports/payments': 'report',
+  '/payments/cash-journal': 'report',
   '/reports/analytics': 'report',
   '/reports/purchases-analytics': 'report',
   '/reports/profit': 'report',

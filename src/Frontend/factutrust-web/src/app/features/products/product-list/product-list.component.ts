@@ -23,6 +23,7 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcru
 import { SkeletonTableComponent, SkeletonColumn } from '@shared/components/skeleton/skeleton-table.component';
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
+import { ExportExcelButtonComponent } from '@shared/components/export-excel-button/export-excel-button.component';
 import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-totals-bar/table-totals-bar.component';
 import { ProductService, ProductListItem, ProductSearchParams } from '@core/services/product.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
@@ -61,6 +62,7 @@ interface CategoryOption {
     SkeletonTableComponent,
     EmptyStateComponent,
     ButtonComponent,
+    ExportExcelButtonComponent,
     TableTotalsBarComponent
   ],
   template: `
@@ -69,6 +71,7 @@ interface CategoryOption {
     <app-page-header 
       title="Produits & Services" i18n-title="@@products.product-list.produits.services.01d33b70" 
       subtitle="Gérez votre catalogue de produits et services" i18n-subtitle="@@products.product-list.gerez.votre.catalogue.de.produits.et.ser.33a68e21">
+      <app-export-excel-button dataset="products" [filters]="productExportFilters" />
       @if (canCreateProduct()) {
         <app-button 
           variant="primary"
@@ -487,6 +490,37 @@ export class ProductListComponent implements OnInit {
         }
       });
   }
+
+  readonly productExportFilters = () => {
+    const filters: {
+      search: string | null;
+      categoryId: string | null;
+      isActive: boolean | null;
+      excludeVariantTemplates?: boolean;
+      isVariantTemplate?: boolean;
+      hasParentProduct?: boolean;
+    } = {
+      search: this.searchTerm || null,
+      categoryId: this.selectedCategory,
+      isActive: this.selectedStatus
+    };
+    switch (this.selectedVariantFilter) {
+      case 'hideTemplates':
+        filters.excludeVariantTemplates = true;
+        break;
+      case 'templates':
+        filters.isVariantTemplate = true;
+        break;
+      case 'variants':
+        filters.hasParentProduct = true;
+        break;
+      case 'simple':
+        filters.hasParentProduct = false;
+        filters.isVariantTemplate = false;
+        break;
+    }
+    return filters;
+  };
 
   loadProducts(): void {
     this.loading.set(true);

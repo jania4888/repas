@@ -40,8 +40,10 @@ const INTENT_TO_TAB: Partial<Record<StudioAiIntent, StudioAiPreviewTab>> = {
 
 /**
  * Atelier Studio IA (`/studio/ai` quand le workbench est activé) — coquille 3 colonnes (PR 1.4) :
- * en-tête, colonne principale (composer + cartes ↔ aperçu ↔ progression ↔ résultat, avec le fil de
- * conversation), rail droit (modèles, actions rapides, historique, promo).
+ * en-tête, colonne principale, rail droit (modèles, actions rapides, historique, promo).
+ * Dans la colonne, le fil suit immédiatement la saisie (compose et aperçu) : le tableau d'une
+ * demande n'est plus repoussé sous les cartes ou la proposition. La progression et la carte de
+ * résultat de création restent au-dessus du fil.
  *
  * Composition « bête » : le store porte tout l'état de session ; cette page choisit seulement quoi
  * afficher et relie les sorties des composants aux méthodes du store. Le store est fourni ICI (pas

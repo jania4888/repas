@@ -8,7 +8,7 @@ namespace FactuTrust.Infrastructure.Repositories;
 /// <summary>
 /// Repository implementation for Product aggregate.
 /// </summary>
-public sealed class ProductRepository : IProductRepository
+public sealed partial class ProductRepository : IProductRepository
 {
     private readonly ITenantDbContextFactory _contextFactory;
 

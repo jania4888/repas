@@ -98,6 +98,8 @@ public sealed class ExportStockStatusPdfQueryHandlerTests
             Assert.Equal(title, captured!.Title);
             Assert.Equal(grouping, captured.GroupingModeLabel);
             Assert.Equal(rightToLeft, captured.RightToLeft);
+            Assert.Equal(1m, captured.GrandTotalValue);
+            Assert.Equal(1.19m, captured.GrandTotalValueTtc);
             Assert.Contains("ماء[%]", captured.FiltersSummary);
         }
         finally
@@ -150,7 +152,8 @@ public sealed class ExportStockStatusPdfQueryHandlerTests
                 rows.Sum(r => r.QuantityOnHand),
                 rows.Sum(r => r.StockValue),
                 rows.Count(r => r.UnitCostIsNextExit),
-                0));
+                0,
+                rows.Sum(r => r.StockValueTtc)));
     }
 
     private static List<StockStatusReportRowDto> OneRow() =>
@@ -166,7 +169,9 @@ public sealed class ExportStockStatusPdfQueryHandlerTests
             WarehouseName = "Magasin",
             QuantityOnHand = 1,
             UnitCost = 1,
-            StockValue = 1
+            StockValue = 1,
+            VatRatePercent = 19,
+            StockValueTtc = 1.19m
         }
     ];
 

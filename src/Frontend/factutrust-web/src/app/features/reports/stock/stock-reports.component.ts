@@ -7,6 +7,7 @@ import { TableModule } from 'primeng/table';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { StatCardComponent } from '@shared/components/stat-card/stat-card.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
+import { ExportExcelButtonComponent } from '@shared/components/export-excel-button/export-excel-button.component';
 import { formatLocalDate } from '@core/utils/date.util';
 import { StockReportsService, StockReportsData } from '../services/stock-reports.service';
 import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, StockSnapshotRow } from '@core/services/reports-api.service';
@@ -21,12 +22,14 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
     TableModule,
     PageHeaderComponent,
     StatCardComponent,
-    ButtonComponent
+    ButtonComponent,
+    ExportExcelButtonComponent
   ],
   template: `
     <app-page-header 
       title="Rapports Stock" i18n-title="@@reports.stock.rapports.stock.00f72cdf" 
       subtitle="Vue d'ensemble de votre stock, sa valeur et les alertes de rupture" i18n-subtitle="@@reports.stock.vue.d.ensemble.de.votre.stock.sa.valeur.088e4413">
+      <app-export-excel-button dataset="stock-movements" [filters]="movementExportFilters" />
       <app-button 
         variant="secondary"
         icon="pi-download"
@@ -486,6 +489,12 @@ export class StockReportsComponent implements OnInit {
   movementsFrom = '';
   movementsTo = '';
   movementsWarehouseId = '';
+
+  readonly movementExportFilters = () => ({
+    fromDate: this.movementsFrom || null,
+    toDate: this.movementsTo || null,
+    warehouseId: this.movementsWarehouseId || null
+  });
   movementsPage = 1;
   readonly movementsPageSize = 20;
 

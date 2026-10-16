@@ -15,7 +15,7 @@ namespace FactuTrust.Infrastructure.Repositories;
 /// <summary>
 /// Repository implementation for StockItem aggregate.
 /// </summary>
-public sealed class StockItemRepository : IStockItemRepository
+public sealed partial class StockItemRepository : IStockItemRepository
 {
     private readonly ITenantDbContextFactory _contextFactory;
     private readonly StockTraceabilityOptions _options;
@@ -266,10 +266,12 @@ public sealed class StockItemRepository : IStockItemRepository
             rows.Count,
             rows.Sum(r => r.QuantityOnHand),
             // La somme des valeurs déjà calculées, jamais un recalcul P.U. × Qté : en FIFO/LIFO le
-            // P.U. est un coût de prochaine sortie, le produit serait faux.
+            // P.U. est un coût de prochaine sortie, le produit serait faux. Le TTC suit la même
+            // règle : somme des lignes, jamais le total HT multiplié par un taux moyen.
             rows.Sum(r => r.StockValue),
             rows.Count(r => r.UnitCostIsNextExit),
-            rows.Count(r => r.QuantityDrift));
+            rows.Count(r => r.QuantityDrift),
+            rows.Sum(r => r.StockValueTtc));
     }
 
     private async Task<List<StockStatusReportRowDto>> BuildStockStatusRowsAsync(
@@ -321,7 +323,8 @@ public sealed class StockItemRepository : IStockItemRepository
                 WarehouseName = x.w.Name,
                 QuantityOnHand = x.s.QuantityOnHand,
                 AverageCost = x.s.AverageCost,
-                CostingMethod = x.p.CostingMethod
+                CostingMethod = x.p.CostingMethod,
+                VatRate = x.p.VatRate
             })
             .ToListAsync(cancellationToken);
 
@@ -371,28 +374,42 @@ public sealed class StockItemRepository : IStockItemRepository
                 EF.Functions.Like(x.p.Code, $"%{term}%"));
         }
 
-        var missingRows = await missingProductsQuery
-            .Select(x => new StockStatusReportRowDto
+        // Le taux est appliqué en mémoire : PurchaseStockValueTtc n'est pas traduisible en SQL.
+        var missingRows = (await missingProductsQuery
+            .Select(x => new
             {
                 ProductId = x.p.Id,
                 ProductCode = x.p.Code,
                 ProductName = x.p.Name,
                 CategoryId = x.p.CategoryId,
                 CategoryName = x.c != null ? x.c.Name : StockStatusReportConstants.UncategorizedLabel,
+                VatRate = x.p.VatRate,
+                CostingMethod = x.p.CostingMethod
+            })
+            .ToListAsync(cancellationToken))
+            .Select(x => new StockStatusReportRowDto
+            {
+                ProductId = x.ProductId,
+                ProductCode = x.ProductCode,
+                ProductName = x.ProductName,
+                CategoryId = x.CategoryId,
+                CategoryName = x.CategoryName,
                 WarehouseId = warehouse.Id,
                 WarehouseCode = warehouse.Code,
                 WarehouseName = warehouse.Name,
                 QuantityOnHand = 0,
                 UnitCost = 0,
                 StockValue = 0,
+                VatRatePercent = PurchaseStockValueTtc.Percent(x.VatRate),
+                StockValueTtc = PurchaseStockValueTtc.FromHt(0m, x.VatRate),
                 // Ces produits n'ont aucun article de stock dans l'entrepôt : ni couche, ni coût.
                 // La méthode reste celle de la fiche, pour que le badge de l'écran reste cohérent.
-                CostingMethod = x.p.CostingMethod,
+                CostingMethod = x.CostingMethod,
                 UnitCostIsNextExit = false,
                 HasValuationLayers = false,
                 QuantityDrift = false
             })
-            .ToListAsync(cancellationToken);
+            .ToList();
         fromStockItems.AddRange(missingRows);
         LocalizeUncategorized(fromStockItems);
         return fromStockItems;
@@ -431,6 +448,8 @@ public sealed class StockItemRepository : IStockItemRepository
                 QuantityOnHand = row.QuantityOnHand,
                 UnitCost = row.UnitCost,
                 StockValue = row.StockValue,
+                VatRatePercent = row.VatRatePercent,
+                StockValueTtc = row.StockValueTtc,
                 CostingMethod = row.CostingMethod,
                 UnitCostIsNextExit = row.UnitCostIsNextExit,
                 HasValuationLayers = row.HasValuationLayers,
@@ -546,6 +565,8 @@ public sealed class StockItemRepository : IStockItemRepository
             QuantityOnHand = snapshot.QuantityOnHand,
             UnitCost = snapshot.UnitCost,
             StockValue = snapshot.StockValue,
+            VatRatePercent = PurchaseStockValueTtc.Percent(raw.VatRate),
+            StockValueTtc = PurchaseStockValueTtc.FromHt(snapshot.StockValue, raw.VatRate),
             CostingMethod = snapshot.CostingMethod,
             UnitCostIsNextExit = snapshot.UnitCostIsNextExit,
             HasValuationLayers = snapshot.HasLayers,
@@ -567,6 +588,7 @@ public sealed class StockItemRepository : IStockItemRepository
         public decimal QuantityOnHand { get; init; }
         public decimal AverageCost { get; init; }
         public CostingMethod CostingMethod { get; init; }
+        public VatRate VatRate { get; init; }
     }
 
     private sealed class LayerAggregate

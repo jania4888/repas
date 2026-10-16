@@ -487,7 +487,7 @@
 
                       @if (child.icon) {
 
-                        <i [class]="child.icon" aria-hidden="true"></i>
+                        <i [class]="child.icon" [attr.data-nav-id]="child.id ?? null" aria-hidden="true"></i>
 
                       }
 
@@ -515,7 +515,7 @@
 
                       @if (child.icon) {
 
-                        <i [class]="child.icon" aria-hidden="true"></i>
+                        <i [class]="child.icon" [attr.data-nav-id]="child.id ?? null" aria-hidden="true"></i>
 
                       }
 

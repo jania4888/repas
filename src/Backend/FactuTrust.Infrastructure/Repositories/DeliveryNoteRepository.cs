@@ -14,7 +14,7 @@ namespace FactuTrust.Infrastructure.Repositories;
 /// <summary>
 /// Repository implementation for DeliveryNote aggregate.
 /// </summary>
-public sealed class DeliveryNoteRepository : IDeliveryNoteRepository
+public sealed partial class DeliveryNoteRepository : IDeliveryNoteRepository
 {
     private readonly ITenantDbContextFactory _contextFactory;
 

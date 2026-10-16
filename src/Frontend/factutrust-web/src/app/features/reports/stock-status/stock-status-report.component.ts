@@ -29,6 +29,7 @@ interface StockStatusSubGroup {
   rows: StockStatusReportRow[];
   subQuantity: number;
   subValue: number;
+  subValueTtc: number;
 }
 
 interface StockStatusPrimaryGroup {
@@ -36,6 +37,7 @@ interface StockStatusPrimaryGroup {
   subgroups: StockStatusSubGroup[];
   totalQuantity: number;
   totalValue: number;
+  totalValueTtc: number;
 }
 
 @Component({
@@ -104,6 +106,7 @@ interface StockStatusPrimaryGroup {
         <div class="stat-skeleton"></div>
         <div class="stat-skeleton"></div>
         <div class="stat-skeleton"></div>
+        <div class="stat-skeleton"></div>
       </div>
     } @else if (loadError()) {
       <div class="error-placeholder" role="alert">
@@ -113,8 +116,12 @@ interface StockStatusPrimaryGroup {
     } @else if (report()) {
       <div class="stats-grid" role="status" aria-live="polite">
         <app-stat-card
-          label="Valeur totale" i18n-label="@@reports.stock-status.valeur.totale"
+          label="Valeur totale HT" i18n-label="@@reports.stock-status.valeur.totale"
           [value]="formatAmount(report()!.grandTotalValue) + ' ' + report()!.currency"
+          icon="pi-dollar" variant="success" />
+        <app-stat-card
+          label="Valeur totale TTC" i18n-label="@@reports.stock-status.valeur.totale.ttc"
+          [value]="formatAmount(report()!.grandTotalValueTtc) + ' ' + report()!.currency"
           icon="pi-dollar" variant="success" />
         <app-stat-card
           label="Quantité totale" i18n-label="@@reports.stock-status.quantite.totale"
@@ -140,7 +147,9 @@ interface StockStatusPrimaryGroup {
               <th i18n="@@reports.stock-status.col.designation">Désignation</th>
               <th class="text-right" i18n="@@reports.stock-status.col.qte">Qté</th>
               <th class="text-right" i18n="@@reports.stock-status.col.pu">P.U.</th>
-              <th class="text-right" i18n="@@reports.stock-status.col.valeur">Valeur</th>
+              <th class="text-right" i18n="@@reports.stock-status.col.tva">TVA</th>
+              <th class="text-right" i18n="@@reports.stock-status.col.valeur">Valeur HT</th>
+              <th class="text-right" i18n="@@reports.stock-status.col.valeur.ttc">Valeur TTC</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-row>
@@ -151,7 +160,9 @@ interface StockStatusPrimaryGroup {
               <td>{{ row.productName }}</td>
               <td class="text-right">{{ row.quantityOnHand | number:'1.0-3' }}</td>
               <td class="text-right">{{ row.unitCost | number:'1.3-3' }}</td>
+              <td class="text-right">{{ row.vatRatePercent | number:'1.0-0' }} %</td>
               <td class="text-right amount">{{ row.stockValue | number:'1.3-3' }} {{ report()!.currency }}</td>
+              <td class="text-right amount">{{ row.stockValueTtc | number:'1.3-3' }} {{ report()!.currency }}</td>
             </tr>
           </ng-template>
         </p-table>
@@ -169,7 +180,9 @@ interface StockStatusPrimaryGroup {
                       <th i18n="@@reports.stock-status.col.designation">Désignation</th>
                       <th class="text-right" i18n="@@reports.stock-status.col.qte">Qté</th>
                       <th class="text-right" i18n="@@reports.stock-status.col.pu">P.U.</th>
-                      <th class="text-right" i18n="@@reports.stock-status.col.valeur">Valeur</th>
+                      <th class="text-right" i18n="@@reports.stock-status.col.tva">TVA</th>
+                      <th class="text-right" i18n="@@reports.stock-status.col.valeur">Valeur HT</th>
+                      <th class="text-right" i18n="@@reports.stock-status.col.valeur.ttc">Valeur TTC</th>
                     </tr>
                   </ng-template>
                   <ng-template pTemplate="body" let-row>
@@ -178,24 +191,37 @@ interface StockStatusPrimaryGroup {
                       <td>{{ row.productName }}</td>
                       <td class="text-right">{{ row.quantityOnHand | number:'1.0-3' }}</td>
                       <td class="text-right">{{ row.unitCost | number:'1.3-3' }}</td>
+                      <td class="text-right">{{ row.vatRatePercent | number:'1.0-0' }} %</td>
                       <td class="text-right amount">{{ row.stockValue | number:'1.3-3' }} {{ report()!.currency }}</td>
+                      <td class="text-right amount">{{ row.stockValueTtc | number:'1.3-3' }} {{ report()!.currency }}</td>
                     </tr>
                   </ng-template>
                 </p-table>
                 <div class="subtotal">
                   <span i18n="@@reports.stock-status.sous.total">Sous-total</span>
-                  <span>{{ sub.subQuantity | number:'1.0-3' }} — {{ sub.subValue | number:'1.3-3' }} {{ report()!.currency }}</span>
+                  <span class="subtotal-figures">
+                    <span>{{ sub.subQuantity | number:'1.0-3' }}</span>
+                    <span>{{ sub.subValue | number:'1.3-3' }} {{ report()!.currency }} <span i18n="@@reports.stock-status.suffix.ht">HT</span></span>
+                    <span>{{ sub.subValueTtc | number:'1.3-3' }} {{ report()!.currency }} <span i18n="@@reports.stock-status.suffix.ttc">TTC</span></span>
+                  </span>
                 </div>
               </div>
             }
             <div class="group-total">
               <span i18n="@@reports.stock-status.total.groupe">Total</span>
-              <span>{{ group.totalQuantity | number:'1.0-3' }} — {{ group.totalValue | number:'1.3-3' }} {{ report()!.currency }}</span>
+              <span class="subtotal-figures">
+                <span>{{ group.totalQuantity | number:'1.0-3' }}</span>
+                <span>{{ group.totalValue | number:'1.3-3' }} {{ report()!.currency }} <span i18n="@@reports.stock-status.suffix.ht">HT</span></span>
+                <span>{{ group.totalValueTtc | number:'1.3-3' }} {{ report()!.currency }} <span i18n="@@reports.stock-status.suffix.ttc">TTC</span></span>
+              </span>
             </div>
           </section>
         }
       }
 
+      @if (hasData()) {
+        <p class="valuation-legend" i18n="@@reports.stock-status.legende.ttc">Valeur TTC = valeur HT × (1 + taux de TVA actuel de la fiche article). Ce n'est pas le taux du bon de réception. En FIFO/LIFO, P.U. × Qté × (1 + TVA) ≠ Valeur TTC.</p>
+      }
       @if ((report()!.layeredRowCount ?? 0) > 0) {
         <p class="valuation-legend" i18n="@@reports.stock-status.legende.pu.prochaine.sortie.5b3de9a1">FIFO/LIFO : le P.U. affiché est le coût de la prochaine sortie. La valeur est la somme des couches restantes, donc P.U. × Qté ≠ Valeur.</p>
       }
@@ -223,18 +249,20 @@ interface StockStatusPrimaryGroup {
     .filter-label { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
     .filter-input { padding: var(--spacing-2) var(--spacing-3); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); min-width: 160px; }
     .zero-stock-check { display: flex; align-items: center; gap: var(--spacing-2); margin-inline-start: var(--spacing-2); }
-    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-4); margin-bottom: var(--spacing-6); }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacing-4); margin-bottom: var(--spacing-6); }
     .stat-skeleton { height: 96px; border-radius: var(--radius-lg); background: var(--color-neutral-100); }
     .section { background: var(--color-background); border-radius: var(--radius-lg); padding: var(--spacing-5); margin-bottom: var(--spacing-5); box-shadow: var(--shadow-sm); }
     .section-title { font-size: var(--font-size-xl); margin: 0 0 var(--spacing-4); }
     .subgroup { margin-bottom: var(--spacing-4); }
     .subgroup-title { font-size: var(--font-size-md); margin: 0 0 var(--spacing-2); color: var(--color-text-secondary); }
-    .subtotal, .group-total { display: flex; justify-content: space-between; font-size: var(--font-size-sm); padding: var(--spacing-2) 0; }
+    .subtotal, .group-total { display: flex; justify-content: space-between; gap: var(--spacing-3); font-size: var(--font-size-sm); padding: var(--spacing-2) 0; }
+    .subtotal-figures { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--spacing-4); }
     .group-total { font-weight: var(--font-weight-bold); border-top: 1px solid var(--color-border-subtle); margin-top: var(--spacing-2); }
     .text-right { text-align: end; }
     .amount { font-weight: var(--font-weight-semibold); }
     .empty-placeholder, .error-placeholder { padding: var(--spacing-8); text-align: center; color: var(--color-text-secondary); }
     .partial-hint { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--spacing-3); }
+    @media (max-width: 1100px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 768px) { .stats-grid { grid-template-columns: 1fr; } }
   `]
 })
@@ -433,9 +461,11 @@ export class StockStatusReportComponent implements OnInit {
         $localize`:@@reports.stock-status.col.designation:Désignation`,
         $localize`:@@reports.stock-status.col.qte:Qté`,
         $localize`:@@reports.stock-status.col.pu:P.U.`,
-        $localize`:@@reports.stock-status.col.valeur:Valeur`,
+        $localize`:@@reports.stock-status.col.valeur:Valeur HT`,
         $localize`:@@reports.stock-status.col.devise:Devise`,
-        $localize`:@@reports.stock-status.col.methode:Méthode`
+        $localize`:@@reports.stock-status.col.methode:Méthode`,
+        $localize`:@@reports.stock-status.col.tva.pct:TVA %`,
+        $localize`:@@reports.stock-status.col.valeur.ttc:Valeur TTC`
       ];
       const lines = [
         header.join(';'),
@@ -450,7 +480,9 @@ export class StockStatusReportComponent implements OnInit {
             row.stockValue,
             data.currency,
             // Sans cette colonne, un P.U. de prochaine sortie est inexplicable dans l'export.
-            this.costingLabel(row.costingMethod)
+            this.costingLabel(row.costingMethod),
+            row.vatRatePercent,
+            row.stockValueTtc
           ].map(c => escape(String(c))).join(';'))
       ];
       const blob = new Blob(['\ufeff' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
@@ -487,13 +519,15 @@ function buildPrimaryGroups(rows: StockStatusReportRow[], mode: StockStatusGroup
       label: subLabel,
       rows: subRows,
       subQuantity: subRows.reduce((a, r) => a + r.quantityOnHand, 0),
-      subValue: subRows.reduce((a, r) => a + r.stockValue, 0)
+      subValue: subRows.reduce((a, r) => a + r.stockValue, 0),
+      subValueTtc: subRows.reduce((a, r) => a + r.stockValueTtc, 0)
     }));
     return {
       label,
       subgroups,
       totalQuantity: subgroups.reduce((a, g) => a + g.subQuantity, 0),
-      totalValue: subgroups.reduce((a, g) => a + g.subValue, 0)
+      totalValue: subgroups.reduce((a, g) => a + g.subValue, 0),
+      totalValueTtc: subgroups.reduce((a, g) => a + g.subValueTtc, 0)
     };
   });
 }

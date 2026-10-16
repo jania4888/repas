@@ -1,5 +1,6 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Locator, Page } from '@playwright/test';
 import {
+  SseEvent,
   StudioMockContext,
   setupStudioAtelier,
   studioPlanEvents
@@ -246,6 +247,129 @@ test.describe('Atelier Studio IA — message pendant un plan (A19) et réinitial
     expect(ctx.find('/api/ai/conversations/conv-e2e-1', 'DELETE').length).toBe(1);
     await expect(page.getByRole('heading', { name: 'Décrivez le système que vous souhaitez créer' })).toBeVisible();
     await expect(page.locator('app-studio-ai-preview')).toHaveCount(0);
+  });
+});
+
+/** Rapport calculé à la volée : aucun plan, la vue reste « compose ». */
+function studioReportEvents(): SseEvent[] {
+  return [
+    { type: 'meta', content: JSON.stringify({ usedAdvancedModel: false, advancedModelFallbackReason: null }) },
+    {
+      type: 'studio_report_result',
+      content: JSON.stringify({
+        success: true,
+        title: 'ACHATS PAR FOURNISSEUR',
+        source: 'purchases',
+        sourceLabel: 'Achats',
+        result: {
+          columns: [
+            { key: 'name', label: 'SUPPLIERS · NAME', kind: 'dimension' },
+            { key: 'total', label: 'SOMME DE TOTAL AMOUNT', kind: 'measure', numeric: true },
+            { key: 'count', label: 'NOMBRE', kind: 'measure', numeric: true }
+          ],
+          rows: [
+            { name: 'Ste samir', total: 6770.55, count: 3 },
+            { name: 'Ste Mbarki', total: 583.1, count: 2 }
+          ],
+          totalRows: 2
+        },
+        warnings: [],
+        message: ''
+      })
+    },
+    { type: 'content', content: 'Voici le rapport.' },
+    { type: 'done', content: '', conversationId: 'conv-e2e-1' }
+  ];
+}
+
+async function box(locator: Locator) {
+  const value = await locator.boundingBox();
+  expect(value).not.toBeNull();
+  return value!;
+}
+
+test.describe('Atelier Studio IA — résultat sous la saisie', () => {
+  test('le tableau d’un rapport est sous la saisie, pas sous les cartes', async ({ page }) => {
+    const ctx = await setupStudioAtelier(page, { chatEvents: studioReportEvents() });
+    await page.setViewportSize({ width: 1440, height: 1200 });
+    await gotoAtelier(page);
+    await submitFromComposer(page, 'Créer un rapport d’articles regroupé par fournisseurs avec le total d’achats');
+
+    const composer = page.locator('app-studio-ai-composer').first();
+    const conversation = page.locator('app-studio-ai-conversation');
+    const cards = page.locator('app-studio-ai-intent-cards');
+    const report = conversation.getByRole('heading', { name: 'ACHATS PAR FOURNISSEUR' });
+    await expect(conversation).toHaveCount(1);
+    await expect(report).toBeVisible();
+    await expect(conversation.getByText('Ste samir')).toBeVisible();
+
+    const composerBox = await box(composer);
+    const conversationBox = await box(conversation);
+    const cardsBox = await box(cards);
+    const reportBox = await box(report);
+    expect(conversationBox.y).toBeGreaterThanOrEqual(composerBox.y + composerBox.height - 2);
+    expect(cardsBox.y).toBeGreaterThanOrEqual(conversationBox.y + conversationBox.height - 2);
+    expect(reportBox.y).toBeGreaterThan(composerBox.y);
+    expect(reportBox.y).toBeLessThan(1200);
+
+    await conversation.getByRole('button', { name: 'Graphique' }).click();
+    await expect(conversation.locator('canvas').first()).toBeVisible();
+    await conversation.getByRole('button', { name: 'Tableau' }).click();
+    await expect(conversation.getByText('Ste samir')).toBeVisible();
+
+    await conversation.getByRole('button', { name: 'Exporter' }).click();
+    await expect(page.getByText('CSV — page courante')).toBeVisible();
+    await page.keyboard.press('Escape');
+
+    const composerY = (await box(composer)).y;
+    await conversation.getByRole('button', { name: 'Masquer la conversation' }).click();
+    await expect(report).toBeHidden();
+    expect(Math.abs((await box(composer)).y - composerY)).toBeLessThan(2);
+    await conversation.getByRole('button', { name: 'Afficher la conversation' }).click();
+    await expect(report).toBeVisible();
+
+    await page.setViewportSize({ width: 900, height: 900 });
+    const composerNarrow = await box(composer);
+    const conversationNarrow = await box(conversation);
+    const cardsNarrow = await box(cards);
+    const railNarrow = await box(page.locator('app-studio-ai-rail'));
+    const mainNarrow = await box(page.locator('.studio-ai-page__main'));
+    expect(conversationNarrow.y).toBeGreaterThanOrEqual(composerNarrow.y + composerNarrow.height - 2);
+    expect(cardsNarrow.y).toBeGreaterThanOrEqual(conversationNarrow.y + conversationNarrow.height - 2);
+    expect(railNarrow.y).toBeGreaterThanOrEqual(mainNarrow.y + mainNarrow.height - 2);
+
+    await composer.locator('textarea').fill('Et le détail par article');
+    await page.getByRole('button', { name: 'Générer avec l’IA' }).first().click();
+    await expect(report).toHaveCount(2);
+
+    await conversation.getByRole('button', { name: 'Enregistrer comme état' }).first().click();
+    await expect(conversation.getByText('Enregistre cet état : ACHATS PAR FOURNISSEUR')).toBeVisible();
+    const chats = ctx.find('/api/ai/chat', 'POST');
+    expect(chats.length).toBe(3);
+    expect(JSON.stringify(chats[2].body)).toContain('Enregistre cet état');
+  });
+
+  test('avec une proposition, le fil reste sous la saisie et l’aperçu en dessous', async ({ page }) => {
+    await setupStudioAtelier(page, { chatEvents: studioPlanEvents() });
+    await page.setViewportSize({ width: 1440, height: 1100 });
+    await gotoAtelier(page);
+    await submitFromComposer(page, 'Crée un système de gestion des congés');
+
+    const followup = page.locator('.studio-ai-page__followup');
+    const conversation = page.locator('app-studio-ai-conversation');
+    const preview = page.locator('app-studio-ai-preview');
+    await expect(preview).toBeVisible();
+    await expect(conversation).toHaveCount(1);
+
+    const followupBox = await box(followup);
+    const conversationBox = await box(conversation);
+    const previewBox = await box(preview);
+    expect(conversationBox.y).toBeGreaterThanOrEqual(followupBox.y + followupBox.height - 2);
+    expect(previewBox.y).toBeGreaterThanOrEqual(conversationBox.y + conversationBox.height - 2);
+
+    await page.getByRole('tab', { name: /^Tables/ }).click();
+    await expect(page.getByRole('tab', { name: /^Tables/, selected: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Créer maintenant' })).toBeEnabled();
   });
 });
 

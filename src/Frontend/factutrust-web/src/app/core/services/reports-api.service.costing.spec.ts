@@ -29,6 +29,7 @@ describe('ReportsApiService.getStockStatus — coercion de la méthode', () => {
       productId: 'p', productCode: 'A', productName: 'Article', categoryName: 'Cat',
       warehouseId: 'w', warehouseCode: 'WH', warehouseName: 'Magasin',
       quantityOnHand: 40, unitCost: 175, stockValue: 6475,
+      vatRatePercent: 19, stockValueTtc: 7705.25,
       costingMethod, unitCostIsNextExit: true, hasValuationLayers: true, quantityDrift: false
     };
   }
@@ -74,6 +75,8 @@ describe('ReportsApiService.getStockStatus — coercion de la méthode', () => {
     // Le contrat assumé : sur une ligne FIFO/LIFO, P.U. × Qté ≠ Valeur.
     expect(data.rows[0].unitCost * data.rows[0].quantityOnHand).not.toBe(data.grandTotalValue);
     expect(data.grandTotalValue).toBe(6475);
+    expect(data.rows[0].unitCost * data.rows[0].quantityOnHand * 1.19).not.toBe(data.rows[0].stockValueTtc);
+    expect(data.rows[0].stockValueTtc).toBe(7705.25);
   });
 
   it('survives a payload without rows', () => {

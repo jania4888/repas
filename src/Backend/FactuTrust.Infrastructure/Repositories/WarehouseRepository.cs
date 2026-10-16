@@ -8,7 +8,7 @@ namespace FactuTrust.Infrastructure.Repositories;
 /// <summary>
 /// Repository implementation for Warehouse aggregate.
 /// </summary>
-public sealed class WarehouseRepository : IWarehouseRepository
+public sealed partial class WarehouseRepository : IWarehouseRepository
 {
     private readonly ITenantDbContextFactory _contextFactory;
 

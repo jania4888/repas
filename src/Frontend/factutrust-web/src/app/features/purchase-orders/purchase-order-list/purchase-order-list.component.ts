@@ -19,6 +19,7 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcru
 import { SkeletonTableComponent, SkeletonColumn } from '@shared/components/skeleton/skeleton-table.component';
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
+import { ExportExcelButtonComponent } from '@shared/components/export-excel-button/export-excel-button.component';
 import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-totals-bar/table-totals-bar.component';
 import { formatLocalDate } from '@core/utils/date.util';
 import {
@@ -42,7 +43,7 @@ interface StatusOption {
         TableModule, ButtonModule, InputTextModule, SelectModule,
         TagModule, TooltipModule, DatePickerModule, ToastModule,
         PageHeaderComponent, BreadcrumbComponent, SkeletonTableComponent,
-        EmptyStateComponent, ButtonComponent, TableTotalsBarComponent
+        EmptyStateComponent, ButtonComponent, ExportExcelButtonComponent, TableTotalsBarComponent
     ],
     template: `
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
@@ -50,6 +51,7 @@ interface StatusOption {
     <app-page-header
       title="Bons de commande" i18n-title="@@purchase-orders.purchase-order-list.bons.de.commande.aae719f0"
       subtitle="Gérez vos commandes fournisseurs et suivez les réceptions." i18n-subtitle="@@purchase-orders.purchase-order-list.gerez.vos.commandes.fournisseurs.et.suiv.4ecce812">
+      <app-export-excel-button dataset="purchase-orders" [filters]="purchaseOrderExportFilters" />
       @if (canCreatePurchaseOrder()) {
         <app-button
           variant="primary"
@@ -399,6 +401,14 @@ export class PurchaseOrderListComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
         this.searchSubject.complete();
     }
+
+    readonly purchaseOrderExportFilters = () => ({
+      search: this.searchTerm || null,
+      status: this.selectedStatus,
+      supplierId: this.selectedSupplierId,
+      fromDate: this.fromDate,
+      toDate: this.toDate
+    });
 
     loadOrders(): void {
         if (this.loading() && this.orders().length > 0) return;

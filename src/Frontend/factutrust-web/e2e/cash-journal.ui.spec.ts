@@ -111,7 +111,7 @@ async function installJournalMocks(page: Page): Promise<void> {
   );
 }
 
-test('le journal précède le lien Rapports, regroupe les catégories et imprime', async ({ page }) => {
+test('le journal est le premier lien Rapports, regroupe les catégories et imprime', async ({ page }) => {
   await installErpSession(page, { locale: 'fr' });
   await installJournalMocks(page);
 
@@ -142,6 +142,21 @@ test('le journal précède le lien Rapports, regroupe les catégories et imprime
   expect(labels[caisse + 1]).not.toBe('Journal de trésorerie');
   expect(journal).toBeGreaterThanOrEqual(0);
   expect(rapports).toBe(journal + 1);
+
+  const order = await page.locator('ul.submenu-list li').evaluateAll(items =>
+    items.map(li => {
+      const heading = li.querySelector('.submenu-separator__label');
+      if (heading) {
+        return `heading:${heading.textContent?.trim()}`;
+      }
+      return `link:${li.querySelector('a.submenu-link span')?.textContent?.trim()}`;
+    })
+  );
+  const headingIndex = order.indexOf('heading:Rapports');
+  const journalIndex = order.indexOf('link:Journal de trésorerie');
+  expect(headingIndex).toBeGreaterThanOrEqual(0);
+  expect(journalIndex).toBe(headingIndex + 1);
+  expect(order[journalIndex + 1]).toBe('link:Rapports');
 
   await page.locator('input[name="from"]').fill('2026-09-01');
   await page.locator('input[name="to"]').fill('2026-09-30');

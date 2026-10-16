@@ -66,16 +66,19 @@ import {
 } from '@shared/services/product-autocomplete.service';
 import { resolvePurchaseUnitPriceHt } from '@shared/utils/product-purchase-price.utils';
 import {
-  Subject,
-  switchMap,
-  of,
+  EMPTY,
   Observable,
-  debounceTime,
-  distinctUntilChanged,
-  tap,
+  Subject,
   catchError,
+  debounce,
+  finalize,
+  map,
+  of,
+  switchMap,
   takeUntil,
-  map
+  tap,
+  timeout,
+  timer
 } from 'rxjs';
 
 interface ReceiptLineRow {
@@ -290,6 +293,7 @@ interface ReceiptLineRow {
                           [dropdown]="true"
                           [forceSelection]="true"
                           [minLength]="0"
+                          [delay]="0"
                           appendTo="body"
                           panelStyleClass="receipt-product-panel"
                           [panelStyle]="{ minWidth: '280px' }"
@@ -565,8 +569,13 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
   private warehouseContext = inject(WarehouseContextService);
   private readonly barcodeLookup = inject(BarcodeLookupService);
   private readonly barcodeFeedback = inject(BarcodeFeedbackService);
-  private readonly searchSubject$ = new Subject<string>();
+  /** null annule une recherche serveur encore en debounce ou en vol. */
+  private readonly searchSubject$ = new Subject<string | null>();
   private readonly destroy$ = new Subject<void>();
+  /** Même seuil que ProductAutocompleteService : en dessous, le cache local suffit. */
+  private static readonly serverSearchMinLength = 3;
+  private static readonly productSearchTimeoutMs = 15_000;
+  private productSearchSeq = 0;
 
   loading = signal(true);
   submitting = signal(false);
@@ -660,14 +669,25 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
     }
 
     this.searchSubject$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      switchMap((query: string) => {
+      // Une annulation (cache chaud) part tout de suite pour couper le debounce
+      // et la requête précédente. La frappe serveur reste groupée sur 300 ms.
+      debounce((query: string | null) => (query === null ? of(0) : timer(300))),
+      switchMap((query: string | null) => {
+        if (query === null) {
+          return EMPTY;
+        }
+        const requestId = ++this.productSearchSeq;
         this.isLoadingProducts.set(true);
         return this.productAutocomplete.search(query).pipe(
-          catchError(() => {
-            this.isLoadingProducts.set(false);
+          timeout(PurchaseReceiptFormComponent.productSearchTimeoutMs),
+          catchError((error: unknown) => {
+            this.notifyProductSearchFailed(error, requestId);
             return of([] as ProductSuggestion[]);
+          }),
+          finalize(() => {
+            if (requestId === this.productSearchSeq) {
+              this.isLoadingProducts.set(false);
+            }
           })
         );
       }),
@@ -681,6 +701,30 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
         this.isLoadingProducts.set(false);
         this.productSuggestions.set([]);
       }
+    });
+  }
+
+  /**
+   * Timeout, coupure réseau et erreurs HTTP : message fixe, sans la saisie
+   * ni le détail technique. 401/403 gardent le libellé d'accès déjà localisé.
+   */
+  private notifyProductSearchFailed(error: unknown, requestId: number): void {
+    if (requestId !== this.productSearchSeq) {
+      return;
+    }
+    const fallback = $localize`:@@purchase-receipt-form.component.detail.impossible.de.charger.les.articles.reessayez:Impossible de charger les articles. Réessayez.`;
+    const status = (error as { status?: number } | null)?.status;
+    let detail = fallback;
+    if (status === 401 || status === 403) {
+      const extracted = this.errorHandler.extractErrorMessage(error);
+      if (extracted && !extracted.includes('localhost')) {
+        detail = extracted;
+      }
+    }
+    this.toastService.add({
+      severity: 'error',
+      summary: $localize`:@@purchase-receipt-form.component.summary.Erreur:Erreur`,
+      detail
     });
   }
 
@@ -1035,8 +1079,29 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
     this.loadTraceabilityContext();
   }
 
+  /**
+   * PrimeNG allume son spinner dans search() et ne l'éteint que si suggestions
+   * change de référence. Le cache chaud est donc réassigné tout de suite, même
+   * quand la requête est identique à la précédente (second clic sur le chevron).
+   */
   searchProducts(event: AutoCompleteCompleteEvent): void {
-    this.searchSubject$.next(event.query ?? '');
+    const query = (event.query ?? '').trim();
+    if (this.productAutocomplete.isV2Enabled && this.productAutocomplete.hasWarmCache) {
+      const local = this.productAutocomplete.filterLocal(query);
+      const canServeLocally = !query
+        || local.length > 0
+        || query.length < PurchaseReceiptFormComponent.serverSearchMinLength;
+      if (canServeLocally) {
+        // Invalide la requête serveur encore en vol pour qu'elle ne réécrase
+        // ni le spinner ni cette liste, et ne montre pas un toast tardif.
+        this.productSearchSeq++;
+        this.isLoadingProducts.set(false);
+        this.productSuggestions.set(local.map(suggestionToListItem));
+        this.searchSubject$.next(null);
+        return;
+      }
+    }
+    this.searchSubject$.next(query);
   }
 
   onProductSelect(line: ReceiptLineRow, event: AutoCompleteSelectEvent): void {

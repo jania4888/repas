@@ -428,6 +428,17 @@ public sealed record StockStatusReportRowDto
     /// <summary>Toujours la valeur réelle du stock : somme des couches en FIFO/LIFO, quantité × CMUP sinon.</summary>
     public decimal StockValue { get; init; }
 
+    /// <summary>
+    /// Taux de TVA actuel de la fiche article (0, 7, 13 ou 19). 0 si le taux stocké n'est pas un taux tunisien connu.
+    /// </summary>
+    public int VatRatePercent { get; init; }
+
+    /// <summary>
+    /// Valeur d'achat TTC : <see cref="StockValue"/> × (1 + <see cref="VatRatePercent"/> / 100).
+    /// Même base HT, donc en FIFO/LIFO P.U. × quantité × (1 + TVA) ≠ cette valeur.
+    /// </summary>
+    public decimal StockValueTtc { get; init; }
+
     public CostingMethod CostingMethod { get; init; }
 
     /// <summary>
@@ -452,6 +463,9 @@ public sealed record StockStatusReportResultDto
     public decimal GrandTotalQuantity { get; init; }
     public decimal GrandTotalValue { get; init; }
 
+    /// <summary>Somme des <see cref="StockStatusReportRowDto.StockValueTtc"/> du jeu filtré complet, pas de la page.</summary>
+    public decimal GrandTotalValueTtc { get; init; }
+
     /// <summary>Nombre de lignes dont le P.U. est un coût de prochaine sortie : 0 ⇒ pas de légende à afficher.</summary>
     public int LayeredRowCount { get; init; }
 
@@ -475,6 +489,7 @@ public sealed record StockStatusPdfContext(
     decimal GrandTotalQuantity,
     decimal GrandTotalValue,
     string Currency,
+    decimal GrandTotalValueTtc,
     bool RightToLeft = false);
 
 /// <summary>

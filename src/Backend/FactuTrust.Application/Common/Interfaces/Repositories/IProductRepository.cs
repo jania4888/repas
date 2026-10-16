@@ -1,3 +1,4 @@
+using FactuTrust.Application.Features.DataExports;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
 
@@ -152,6 +153,17 @@ public interface IProductRepository : IRepository<Product>
     /// </summary>
     Task<IReadOnlyDictionary<Guid, Product>> GetByIdsAsync(
         IReadOnlyCollection<Guid> productIds,
+        CancellationToken cancellationToken = default);
+
+    Task<CountedRows<ProductExportRow>> ListForExportAsync(
+        string? searchTerm,
+        ProductType? type,
+        bool? isActive,
+        Guid? categoryId,
+        bool excludeVariantTemplates,
+        bool? isVariantTemplate,
+        bool? hasParentProduct,
+        int maxRows,
         CancellationToken cancellationToken = default);
 }
 

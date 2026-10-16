@@ -211,6 +211,84 @@ describe('StudioAiPageComponent', () => {
     });
   });
 
+  describe('ordre de la colonne', () => {
+    beforeEach(async () => { await setup(); });
+
+    function follows(earlier: Element | null, later: Element | null): void {
+      expect(earlier).withContext('élément précédent').not.toBeNull();
+      expect(later).withContext('élément suivant').not.toBeNull();
+      expect(earlier!.compareDocumentPosition(later!) & Node.DOCUMENT_POSITION_FOLLOWING)
+        .withContext('ordre du DOM')
+        .toBeTruthy();
+    }
+
+    it('au repos enchaîne le hero, la saisie et les cartes, sans fil', () => {
+      const root = fixture.nativeElement as HTMLElement;
+      expect(root.querySelector('app-studio-ai-conversation')).toBeNull();
+      follows(root.querySelector('.studio-ai-page__hero'), root.querySelector('app-studio-ai-composer'));
+      follows(root.querySelector('app-studio-ai-composer'), root.querySelector('app-studio-ai-intent-cards'));
+    });
+
+    it('après envoi, place le fil sous la saisie et avant les cartes', () => {
+      fixture.componentInstance.submit({ text: 'Créer un rapport', attachments: [] });
+      fixture.detectChanges();
+
+      const root = fixture.nativeElement as HTMLElement;
+      expect(root.querySelectorAll('app-studio-ai-conversation').length).toBe(1);
+      follows(root.querySelector('app-studio-ai-composer'), root.querySelector('app-studio-ai-conversation'));
+      follows(root.querySelector('app-studio-ai-conversation'), root.querySelector('app-studio-ai-intent-cards'));
+    });
+
+    it('place l’erreur de compose entre la saisie et le fil, sans la répéter dans le fil', () => {
+      const store = fixture.componentInstance.store;
+      store.lastPrompt.set('Créer un rapport');
+      store.error.set('Trop de demandes.');
+      store.timeline.set([{ kind: 'text', role: 'user', text: 'Créer un rapport' }]);
+      fixture.detectChanges();
+
+      const root = fixture.nativeElement as HTMLElement;
+      follows(root.querySelector('app-studio-ai-composer'), root.querySelector('.studio-ai-page__error'));
+      follows(root.querySelector('.studio-ai-page__error'), root.querySelector('app-studio-ai-conversation'));
+      follows(root.querySelector('app-studio-ai-conversation'), root.querySelector('app-studio-ai-intent-cards'));
+      expect(root.querySelector('app-studio-ai-conversation .saic__error')).toBeNull();
+    });
+
+    it('en aperçu, place le fil sous la saisie de suivi et avant la proposition', () => {
+      fixture.componentInstance.store.timeline.set([{ kind: 'text', role: 'user', text: 'Créer un système' }]);
+      withPendingPlan();
+
+      const root = fixture.nativeElement as HTMLElement;
+      expect(root.querySelectorAll('app-studio-ai-conversation').length).toBe(1);
+      const composer = root.querySelector('app-studio-ai-composer');
+      expect(composer?.classList.contains('studio-ai-page__followup')).toBeTrue();
+      follows(composer, root.querySelector('app-studio-ai-conversation'));
+      follows(root.querySelector('app-studio-ai-conversation'), root.querySelector('app-studio-ai-preview'));
+    });
+
+    it('laisse la progression et la carte de résultat au-dessus du fil', () => {
+      const store = fixture.componentInstance.store;
+      store.timeline.set([{ kind: 'text', role: 'user', text: 'Créer un système' }]);
+      withPendingPlan();
+      store.phase.set('executing');
+      fixture.detectChanges();
+
+      const root = fixture.nativeElement as HTMLElement;
+      expect(root.querySelectorAll('app-studio-ai-conversation').length).toBe(1);
+      follows(root.querySelector('app-studio-ai-progress'), root.querySelector('app-studio-ai-conversation'));
+
+      store.result.set({
+        success: true, systemKey: 'conges', systemUrl: '/studio/systems/conges', displayName: 'Congés',
+        entityCount: 2, entities: [], warnings: [], message: ''
+      });
+      store.phase.set('completed');
+      fixture.detectChanges();
+
+      expect(root.querySelectorAll('app-studio-ai-conversation').length).toBe(1);
+      follows(root.querySelector('app-studio-ai-result-card'), root.querySelector('app-studio-ai-conversation'));
+      expect(root.querySelector('app-studio-ai-composer')).toBeNull();
+    });
+  });
+
   describe('A19 — message pendant un plan en attente', () => {
     beforeEach(async () => { await setup(); });
 

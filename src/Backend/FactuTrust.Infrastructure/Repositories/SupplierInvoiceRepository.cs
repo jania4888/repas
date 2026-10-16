@@ -13,7 +13,7 @@ namespace FactuTrust.Infrastructure.Repositories;
 /// <summary>
 /// Repository implementation for SupplierInvoice aggregate.
 /// </summary>
-public sealed class SupplierInvoiceRepository : ISupplierInvoiceRepository
+public sealed partial class SupplierInvoiceRepository : ISupplierInvoiceRepository
 {
     private readonly ITenantDbContextFactory _contextFactory;
 

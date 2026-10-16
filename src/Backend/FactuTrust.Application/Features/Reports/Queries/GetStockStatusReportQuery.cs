@@ -109,6 +109,7 @@ public sealed class GetStockStatusReportQueryHandler
             PageSize = pageSize,
             GrandTotalQuantity = result.GrandTotalQuantity,
             GrandTotalValue = result.GrandTotalValue,
+            GrandTotalValueTtc = result.GrandTotalValueTtc,
             LayeredRowCount = result.LayeredRowCount,
             DriftRowCount = result.DriftRowCount,
             Currency = currency,

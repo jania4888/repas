@@ -276,6 +276,23 @@
   &.fa-shapes               { color: #4f46e5; } /* Studio — indigo */
 }
 
+/* Sous-menu Paramètres uniquement — par id stable, pas par classe FA.
+   L'attribut est sur l'icône. Spécificité (1, 4, 4) : bat .fa-sliders ardoise
+   sans le recolorer ailleurs. Ne pas passer en !important : le thème Supérieur
+   et le skin délégué forcent la couleur de l'icône active. */
+#sidebar ul.submenu-list li a.submenu-link i[data-nav-id='settings--settings'][aria-hidden] {
+  color: #4f46e5; /* Paramètres généraux — indigo */
+}
+#sidebar ul.submenu-list li a.submenu-link i[data-nav-id='settings--settings-modules'][aria-hidden] {
+  color: #7c3aed; /* Modules — violet */
+}
+#sidebar ul.submenu-list li a.submenu-link i[data-nav-id='settings--settings-promotions'][aria-hidden] {
+  color: #db2777; /* Promotions — rose */
+}
+#sidebar ul.submenu-list li a.submenu-link i[data-nav-id='settings--settings-variant-axes'][aria-hidden] {
+  color: #0891b2; /* Axes de variantes — cyan */
+}
+
 // --------------------------------------------
 // TOPBAR — Cubic restyle (app-header only)
 // Scoped sous .topbar.main-header pour éviter les effets collatéraux.

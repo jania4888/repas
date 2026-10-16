@@ -10,7 +10,7 @@ namespace FactuTrust.Infrastructure.Repositories;
 /// <summary>
 /// Repository implementation for Client aggregate.
 /// </summary>
-public sealed class ClientRepository : IClientRepository
+public sealed partial class ClientRepository : IClientRepository
 {
     private readonly TenantDbContextFactory _contextFactory;
 

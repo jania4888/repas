@@ -1,4 +1,5 @@
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Features.DataExports;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
@@ -85,4 +86,14 @@ public interface IDeliveryNoteRepository : IRepository<DeliveryNote>
     /// </summary>
     [Obsolete("Use IDocumentNumberService instead.")]
     Task<DeliveryNoteNumber> GetNextNumberAsync(int year, CancellationToken cancellationToken = default);
+
+    Task<HeaderLinesExportData<DeliveryNoteExportRow, DeliveryNoteLineExportRow>> ListForExportAsync(
+        string? searchTerm,
+        DeliveryNoteStatus? status,
+        DateTime? fromDate,
+        DateTime? toDate,
+        Guid? clientId,
+        int documentMax,
+        int lineMax,
+        CancellationToken cancellationToken = default);
 }

@@ -1,4 +1,5 @@
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Features.DataExports;
 using FactuTrust.Domain.Entities;
 
 namespace FactuTrust.Application.Common.Interfaces.Repositories;
@@ -71,5 +72,17 @@ public interface IClientRepository : IRepository<Client>
     /// </summary>
     Task<IReadOnlyDictionary<Guid, string>> GetDisplayNamesByIdsAsync(
         IReadOnlyCollection<Guid> ids,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Export filtré (mêmes prédicats que <see cref="SearchAsync"/>). Ne charge pas les lignes si le plafond est dépassé.
+    /// Le chiffre d'affaires est un seul GROUP BY, pas un chargement de factures par client.
+    /// </summary>
+    Task<CountedRows<ClientExportRow>> ListForExportAsync(
+        string? searchTerm,
+        ClientType? type,
+        bool? isActive,
+        string? governorate,
+        int maxRows,
         CancellationToken cancellationToken = default);
 }

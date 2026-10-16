@@ -11,7 +11,8 @@ import { AccountingFeatureFlagsService } from '@features/accounting/shared/accou
 import { StudioNavService } from '@features/studio/studio-nav.service';
 import { StudioAiCapabilitiesService } from '@features/studio/ai/studio-ai-capabilities.service';
 import { StudioApprovalsBadgeService } from '@features/studio/approvals/studio-approvals-badge.service';
-import { NAV_ID } from '@core/config/nav-item-ids';
+import { getNavId, NAV_ID } from '@core/config/nav-item-ids';
+import { StockFeaturesStore } from '@core/services/stock-features-store.service';
 import { SidebarComponent } from './sidebar.component';
 
 const firmUser: User = {
@@ -908,7 +909,7 @@ describe('SidebarComponent — collapse', () => {
     effectivePermissions: ['payments:read', 'reports:view']
   };
 
-  it('places the treasury journal immediately above the Rapports link', () => {
+  it('places the treasury journal under the Rapports heading', () => {
     const auth = TestBed.inject(AuthService);
     setUser(auth, treasuryCompanyUser);
     TestBed.inject(FirmContextService).syncFromUser();
@@ -938,14 +939,16 @@ describe('SidebarComponent — collapse', () => {
     expect(heading?.closest('a,button')).toBeNull();
     expect(list.querySelectorAll('.submenu-separator').length).toBe(1);
 
-    const journalItem = links.find(link => link.textContent?.trim() === 'Journal de trésorerie')?.closest('li');
+    const journalLink = links.find(link => link.textContent?.trim() === 'Journal de trésorerie');
+    expect(journalLink?.getAttribute('href')).toContain('/payments/cash-journal');
+    const journalItem = journalLink?.closest('li');
     const separator = heading?.closest('li');
     const reportsItem = hub?.closest('li');
-    expect(journalItem?.nextElementSibling).toBe(separator);
-    expect(separator?.nextElementSibling).toBe(reportsItem);
+    expect(separator?.nextElementSibling).toBe(journalItem);
+    expect(journalItem?.nextElementSibling).toBe(reportsItem);
   });
 
-  it('omits the treasury Rapports heading when reports:view is missing', () => {
+  it('keeps the treasury journal under Rapports when reports:view is missing', () => {
     const auth = TestBed.inject(AuthService);
     setUser(auth, {
       ...treasuryCompanyUser,
@@ -963,7 +966,84 @@ describe('SidebarComponent — collapse', () => {
     const labels = links.map(link => link.textContent?.trim());
     expect(labels.at(-1)).toBe('Journal de trésorerie');
     expect(labels).not.toContain('Rapports');
-    expect(fixture.nativeElement.querySelector('.submenu-separator')).toBeNull();
+    const journalLink = links.find(link => link.textContent?.trim() === 'Journal de trésorerie');
+    expect(journalLink?.getAttribute('href')).toContain('/payments/cash-journal');
+
+    const heading = fixture.nativeElement.querySelector('.submenu-separator__label') as HTMLElement | null;
+    expect(heading?.textContent?.trim()).toBe('Rapports');
+    expect(heading?.closest('a,button')).toBeNull();
+    expect(fixture.nativeElement.querySelectorAll('.submenu-separator').length).toBe(1);
+    expect(heading?.closest('li')?.nextElementSibling).toBe(journalLink?.closest('li'));
     expect(links.some(link => link.getAttribute('href')?.includes('/reports/payments'))).toBeFalse();
+  });
+
+  const settingsCompanyUser: User = {
+    ...firmUser,
+    id: 'u-settings',
+    email: 'settings@test.c',
+    role: 'Administrator',
+    roleDisplay: 'Administrateur',
+    tenantKind: 'Company',
+    companyName: 'Ste Test',
+    enabledModuleIds: [1, 2, 5, 10, 14],
+    effectivePermissions: [
+      'settings:read',
+      'settings:update',
+      'pricing:read',
+      'products:read',
+      'withholding_tax:read',
+      'payroll:settings'
+    ]
+  };
+
+  it('colors settings submenu icons by stable id without reusing that id on other sliders', () => {
+    const auth = TestBed.inject(AuthService);
+    const store = TestBed.inject(StockFeaturesStore);
+    spyOn(store, 'ensureLoaded');
+    spyOn(store, 'productVariantsEnabled').and.returnValue(true);
+    setUser(auth, settingsCompanyUser);
+    TestBed.inject(FirmContextService).syncFromUser();
+
+    const fixture = TestBed.createComponent(SidebarComponent);
+    fixture.detectChanges();
+
+    const settings = fixture.componentInstance.navItems().find(item => getNavId(item) === NAV_ID.settings);
+    expect(settings).toBeTruthy();
+    fixture.componentInstance.toggleSubmenu(settings!);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.expandedParentId).toBe(NAV_ID.settings);
+
+    const icons = Array.from(
+      fixture.nativeElement.querySelectorAll('ul.submenu-list a.submenu-link i') as NodeListOf<HTMLElement>
+    );
+    expect(icons.map(icon => icon.getAttribute('data-nav-id'))).toEqual([
+      'settings--settings',
+      'settings--settings-modules',
+      'settings--settings-promotions',
+      'settings--settings-variant-axes'
+    ]);
+    expect(icons.map(icon => Array.from(icon.classList).sort().join(' '))).toEqual([
+      'fa-sliders fa-solid',
+      'fa-solid fa-th-large',
+      'fa-bullhorn fa-solid',
+      'fa-solid fa-th-large'
+    ].map(value => value.split(' ').sort().join(' ')));
+    expect(icons.every(icon => icon.getAttribute('aria-hidden') === 'true')).toBeTrue();
+
+    expandSection(fixture, 'Fiscal / TEJ');
+    const fiscalSliders = Array.from(
+      fixture.nativeElement.querySelectorAll('ul.submenu-list i.fa-sliders') as NodeListOf<HTMLElement>
+    );
+    expect(fiscalSliders.map(icon => icon.getAttribute('data-nav-id'))).toEqual([
+      'fiscal-tej--withholding-tax-settings'
+    ]);
+
+    expandSection(fixture, 'RH & Paie');
+    const payrollSliders = Array.from(
+      fixture.nativeElement.querySelectorAll('ul.submenu-list i.fa-sliders') as NodeListOf<HTMLElement>
+    );
+    expect(payrollSliders.map(icon => icon.getAttribute('data-nav-id'))).toEqual([
+      'hr-payroll--payroll-settings'
+    ]);
   });
 });

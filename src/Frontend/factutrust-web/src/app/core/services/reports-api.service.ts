@@ -402,6 +402,10 @@ export interface StockStatusReportRow {
   unitCost: number;
   /** Valeur réelle : somme des couches en FIFO/LIFO, quantité × CMUP sinon. */
   stockValue: number;
+  /** Taux de TVA actuel de la fiche article : 0, 7, 13 ou 19. */
+  vatRatePercent: number;
+  /** stockValue × (1 + vatRatePercent / 100). En FIFO/LIFO, P.U. × qté × (1 + TVA) ≠ cette valeur. */
+  stockValueTtc: number;
   /** Coercé en nombre par le service : l'API le sérialise par nom ("Fifo"). */
   costingMethod?: number;
   /** Vrai ⇒ `unitCost` × quantité ≠ `stockValue`, et c'est normal. */
@@ -417,6 +421,8 @@ export interface StockStatusReportResult {
   pageSize: number;
   grandTotalQuantity: number;
   grandTotalValue: number;
+  /** Somme des stockValueTtc du jeu filtré complet. */
+  grandTotalValueTtc: number;
   /** Nombre de lignes dont le P.U. est un coût de prochaine sortie : 0 ⇒ pas de légende à afficher. */
   layeredRowCount?: number;
   /** Nombre de lignes dont les couches ne totalisent pas la quantité en stock. */

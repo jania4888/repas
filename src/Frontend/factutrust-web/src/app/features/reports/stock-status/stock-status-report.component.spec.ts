@@ -26,6 +26,7 @@ describe('StockStatusReportComponent', () => {
         pageSize: 50,
         grandTotalQuantity: 2,
         grandTotalValue: 20,
+        grandTotalValueTtc: 23.8,
         currency: 'TND',
         generatedAtUtc: new Date().toISOString(),
         rows: [{
@@ -39,6 +40,8 @@ describe('StockStatusReportComponent', () => {
           quantityOnHand: 2,
           unitCost: 10,
           stockValue: 20,
+          vatRatePercent: 19,
+          stockValueTtc: 23.8,
           // Le service a déjà coercé l'énum (le back l'envoie par nom) : le composant
           // reçoit un nombre. La coercion est testée dans reports-api.service.costing.spec.ts.
           costingMethod: COSTING_LIFO,
@@ -108,9 +111,11 @@ describe('StockStatusReportComponent', () => {
       $localize`:@@reports.stock-status.col.designation:Désignation`,
       $localize`:@@reports.stock-status.col.qte:Qté`,
       $localize`:@@reports.stock-status.col.pu:P.U.`,
-      $localize`:@@reports.stock-status.col.valeur:Valeur`,
+      $localize`:@@reports.stock-status.col.valeur:Valeur HT`,
       $localize`:@@reports.stock-status.col.devise:Devise`,
-      $localize`:@@reports.stock-status.col.methode:Méthode`
+      $localize`:@@reports.stock-status.col.methode:Méthode`,
+      $localize`:@@reports.stock-status.col.tva.pct:TVA %`,
+      $localize`:@@reports.stock-status.col.valeur.ttc:Valeur TTC`
     ].join(';');
 
     expect(csv.split(/\r?\n/)[0]).toBe(header);
@@ -118,6 +123,37 @@ describe('StockStatusReportComponent', () => {
     expect(csv).toContain('"Article"');
     // Sans la colonne Méthode, un P.U. de prochaine sortie est inexplicable dans l'export.
     expect(csv).toContain('"LIFO"');
+    expect(csv).toContain('"19"');
+    expect(csv).toContain('"23.8"');
+  });
+
+  it('shows the HT total and the purchase TTC total', () => {
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(text).toContain('Valeur totale HT');
+    expect(text).toContain('Valeur totale TTC');
+    expect(text).toContain('20,000');
+    expect(text).toContain('23,800');
+  });
+
+  it('sums TTC per line when rates differ inside a group', () => {
+    const data = fixture.componentInstance.report()!;
+    const base = data.rows[0];
+    fixture.componentInstance.report.set({
+      ...data,
+      grandTotalValue: 300,
+      grandTotalValueTtc: 333,
+      rows: [
+        { ...base, productCode: 'A', stockValue: 100, stockValueTtc: 119, vatRatePercent: 19 },
+        { ...base, productId: 'p2', productCode: 'B', stockValue: 200, stockValueTtc: 214, vatRatePercent: 7 }
+      ]
+    });
+
+    const groups = fixture.componentInstance.primaryGroups();
+    expect(groups.length).toBe(1);
+    expect(groups[0].totalValue).toBe(300);
+    expect(groups[0].subgroups[0].subValueTtc).toBe(333);
+    expect(groups[0].totalValueTtc).toBe(333);
+    expect(groups[0].totalValueTtc).not.toBe(300 * 1.19);
   });
 
   it('labels the method on layered rows', () => {
@@ -126,16 +162,22 @@ describe('StockStatusReportComponent', () => {
       fixture.componentInstance.report()!.rows[0].costingMethod)).toBe('LIFO');
   });
 
-  it('renders the next-exit legend only when layered rows are present', async () => {
-    const legend = () => (fixture.nativeElement as HTMLElement).querySelector('.valuation-legend');
-    expect(legend()).toBeTruthy();
+  it('keeps the purchase TTC legend and shows the FIFO note only for layered rows', async () => {
+    const legends = () => Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('.valuation-legend')
+    ).map(el => el.textContent ?? '');
+
+    expect(legends().some(text => text.includes('fiche article'))).toBeTrue();
+    expect(legends().some(text => text.includes('prochaine sortie'))).toBeTrue();
 
     const data = fixture.componentInstance.report()!;
     fixture.componentInstance.report.set({ ...data, layeredRowCount: 0 });
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(legend()).toBeNull();
+    const after = legends();
+    expect(after.some(text => text.includes('fiche article'))).toBeTrue();
+    expect(after.some(text => text.includes('prochaine sortie'))).toBeFalse();
   });
 
   it('shows an info toast for NoData without reading the french sentence', () => {

@@ -1,4 +1,5 @@
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Features.DataExports;
 using FactuTrust.Application.Features.Reports;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
@@ -173,5 +174,16 @@ public interface ISupplierInvoiceRepository : IRepository<SupplierInvoice>
         DateTime toDate,
         Guid? supplierId,
         SalesJournalViewMode groupBy,
+        CancellationToken cancellationToken = default);
+
+    Task<HeaderLinesPaymentsExportData<SupplierInvoiceExportRow, SupplierInvoiceLineExportRow, SupplierPaymentExportRow>> ListForExportAsync(
+        string? searchTerm,
+        SupplierInvoiceStatus? status,
+        Guid? supplierId,
+        DateTime? fromDate,
+        DateTime? toDate,
+        bool unpaidOnly,
+        int documentMax,
+        int lineMax,
         CancellationToken cancellationToken = default);
 }

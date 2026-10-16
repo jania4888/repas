@@ -20,6 +20,7 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcru
 import { SkeletonTableComponent, SkeletonColumn } from '@shared/components/skeleton/skeleton-table.component';
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
+import { ExportExcelButtonComponent } from '@shared/components/export-excel-button/export-excel-button.component';
 import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-totals-bar/table-totals-bar.component';
 import { ClientService, ClientListItem, ClientSearchParams, ClientType, ClientListSummary } from '@core/services/client.service';
 import { AuthService } from '@core/services/auth.service';
@@ -59,6 +60,7 @@ interface StatusOption {
     SkeletonTableComponent,
     EmptyStateComponent,
     ButtonComponent,
+    ExportExcelButtonComponent,
     TableTotalsBarComponent
   ],
   template: `
@@ -67,6 +69,7 @@ interface StatusOption {
     <app-page-header 
       title="Clients" i18n-title="@@clients.client-list.clients.28e22fe3" 
       subtitle="Gérez vos clients et facturez plus vite." i18n-subtitle="@@clients.client-list.gerez.vos.clients.et.facturez.plus.vite.fb45edba">
+      <app-export-excel-button dataset="clients" [filters]="clientExportFilters" />
       @if (canCreateClient()) {
         <app-button 
           variant="primary"
@@ -383,6 +386,12 @@ export class ClientListComponent implements OnInit, OnDestroy {
     { label: $localize`:@@clients.client-list.ts.actifs.4fc3a980:Actifs`, value: true },
     { label: $localize`:@@clients.client-list.ts.inactifs.41c2d03e:Inactifs`, value: false }
   ];
+
+  readonly clientExportFilters = () => ({
+    search: this.searchTerm || null,
+    type: this.selectedType,
+    isActive: this.selectedStatus
+  });
 
   ngOnInit(): void {
     this.route.queryParamMap.pipe(take(1)).subscribe((paramMap) => {

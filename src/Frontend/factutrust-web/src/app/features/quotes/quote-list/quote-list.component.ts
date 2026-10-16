@@ -14,6 +14,7 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcru
 import { SkeletonTableComponent, SkeletonColumn } from '@shared/components/skeleton/skeleton-table.component';
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
+import { ExportExcelButtonComponent } from '@shared/components/export-excel-button/export-excel-button.component';
 import { StatusBadgeComponent, StatusBadgeStatus } from '@shared/components/status-badge/status-badge.component';
 import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-totals-bar/table-totals-bar.component';
 import { formatLocalDate } from '@core/utils/date.util';
@@ -57,6 +58,7 @@ interface StatusOption {
     SkeletonTableComponent,
     EmptyStateComponent,
     ButtonComponent,
+    ExportExcelButtonComponent,
     StatusBadgeComponent,
     TableTotalsBarComponent,
   ],
@@ -66,6 +68,7 @@ interface StatusOption {
     <app-page-header
       title="Devis" i18n-title="@@quotes.quote-list.devis.f7622f90"
       subtitle="Créez, envoyez et transformez vos devis en factures" i18n-subtitle="@@quotes.quote-list.creez.envoyez.et.transformez.vos.devis.e.28fd542f">
+      <app-export-excel-button dataset="quotes" [filters]="quoteExportFilters" />
       @if (canCreateQuote()) {
         <app-button
           variant="primary"
@@ -328,6 +331,13 @@ export class QuoteListComponent implements OnInit {
     this.loading.set(true);
     this.loadQuotes();
   }
+
+  readonly quoteExportFilters = () => ({
+    search: this.searchTerm || null,
+    status: this.activeOnly ? null : this.selectedStatus,
+    fromDate: this.dateRange?.[0] ?? null,
+    toDate: this.dateRange?.[1] ?? null
+  });
 
   loadQuotes(): void {
     // Éviter les appels multiples simultanés

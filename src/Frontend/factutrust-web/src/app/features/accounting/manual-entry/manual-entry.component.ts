@@ -29,6 +29,7 @@ import { EntrySummaryPanelComponent } from './components/entry-summary-panel.com
 import { EntryThirdPartyPanelComponent } from './components/entry-third-party-panel.component';
 import { EntryShortcutsPanelComponent } from './components/entry-shortcuts-panel.component';
 import { EntryBottomTabsComponent } from './components/entry-bottom-tabs.component';
+import { EntryJournalHistoryComponent, EntryJournalHistoryRefresh } from './components/entry-journal-history.component';
 import { GuidedEntryComponent } from './components/guided/guided-entry.component';
 import { EntryTemplateTabComponent } from './components/entry-template-tab.component';
 import { EntryRecurringTabComponent } from './components/entry-recurring-tab.component';
@@ -59,13 +60,14 @@ import { withDeskClose } from '@core/desk/desk-window.model';
     EntryThirdPartyPanelComponent,
     EntryShortcutsPanelComponent,
     EntryBottomTabsComponent,
+    EntryJournalHistoryComponent,
     GuidedEntryComponent,
     EntryTemplateTabComponent,
     EntryRecurringTabComponent,
     AccountingDocumentImportDialogComponent,
     BankStatementUploadDialogComponent
   ],
-  providers: [EntryFormStore, EntryReferenceStore, EntrySubmitService, VatAssistService],
+  providers: [EntryFormStore, EntryReferenceStore, EntrySubmitService, VatAssistService, EntryJournalHistoryRefresh],
   template: `
     <app-page-header [title]="pageTitle()"
                      [subtitle]="pageSubtitle()">
@@ -144,6 +146,7 @@ import { withDeskClose } from '@core/desk/desk-window.model';
                 [payloadBuilder]="buildManualEntryAnalyzePayload"
                 [disabled]="store.loading()" />
             </app-entry-lines-grid>
+            <app-entry-journal-history />
             <app-entry-bottom-tabs
               [pendingFiles]="pendingFiles()"
               (pendingFilesChange)="pendingFiles.set($event)"
@@ -250,6 +253,7 @@ export class ManualEntryComponent implements OnInit {
   private readonly draftStore = inject(ManualEntryDraftService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly bankStatementImport = inject(BankStatementImportService);
+  private readonly journalHistoryRefresh = inject(EntryJournalHistoryRefresh);
 
   readonly pendingDraft = signal<ManualEntryDraft | null>(null);
   readonly showTemplatePicker = signal(false);
@@ -420,6 +424,9 @@ export class ManualEntryComponent implements OnInit {
             (jc, dt) => this.navigateToJournal(jc, dt, true),
             () => this.draftStore.clear()
           );
+          if (afterSuccess !== 'navigate') {
+            this.journalHistoryRefresh.poke();
+          }
         }
       });
   }

@@ -384,6 +384,11 @@ describe('app-navigation.registry', () => {
         return false;
       }
       const path = route.split('?')[0].split('#')[0];
+      // Liste fermée : le journal de trésorerie est un état, mais il reste sous /payments
+      // pour ne pas exiger reports:view. Ne pas élargir à tout /payments/.
+      if (path === '/payments/cash-journal') {
+        return true;
+      }
       return path === '/reports' || path.startsWith('/reports/') || path.startsWith('/payroll/reports/');
     }
 
@@ -429,12 +434,15 @@ describe('app-navigation.registry', () => {
       expect(hr?.children?.find(c => c.route === '/payroll/declarations')?.navGroup).toBeUndefined();
     });
 
-    it('leaves the treasury cash journal outside the reports group', () => {
+    it('places the treasury cash journal in the reports group without widening its access', () => {
       const treasury = ALL_NAV_ITEMS.find(i => i.id === 'treasury');
-      expect(treasury?.children?.find(c => c.route === '/payments/cash-journal')?.navGroup).toBeUndefined();
+      const journal = treasury?.children?.find(c => c.route === '/payments/cash-journal');
+      expect(journal?.navGroup).toBe('reports');
+      expect(journal?.permissionsAll).toEqual(['payments:read']);
+      expect(journal?.modules).toEqual([AppModule.Treasury]);
     });
 
-    it('places the treasury cash journal immediately above the reports link', () => {
+    it('places the treasury cash journal as the first reports suffix item', () => {
       const treasury = ALL_NAV_ITEMS.find(i => i.id === 'treasury');
       const children = treasury?.children ?? [];
       expect(children.map(c => c.route)).toEqual([
@@ -451,16 +459,16 @@ describe('app-navigation.registry', () => {
       const journal = children.find(c => c.route === '/payments/cash-journal');
       expect(journal?.permissionsAll).toEqual(['payments:read']);
       expect(journal?.modules).toEqual([AppModule.Treasury]);
-      expect(journal?.navGroup).toBeUndefined();
+      expect(journal?.navGroup).toBe('reports');
 
       const reports = children[children.length - 1];
       expect(reports?.route).toBe('/reports/payments');
       expect(reports?.navGroup).toBe('reports');
       expect(reports?.permissionsAll).toEqual(['reports:view', 'payments:read']);
 
-      const reportsIndex = children.findIndex(c => c.route === '/reports/payments');
+      const journalIndex = children.findIndex(c => c.route === '/payments/cash-journal');
       expect(children.map((_, index) => showReportsSeparator(children, index))).toEqual(
-        children.map((_, index) => index === reportsIndex)
+        children.map((_, index) => index === journalIndex)
       );
     });
 
@@ -473,6 +481,13 @@ describe('app-navigation.registry', () => {
       expect(routes).toContain('/payroll/reports/payroll-book');
       expect(routes).toContain('/payroll/reports/payroll-journal');
       expect(routes).toContain('/recurring-contracts');
+    });
+
+    it('classifies the treasury cash journal as a report without requiring reports:view', () => {
+      const entry = buildFlatNavSearchEntries().find(e => e.route === '/payments/cash-journal');
+      expect(entry?.group).toBe('report');
+      expect(entry?.permissionsAll).toEqual(['payments:read']);
+      expect(entry?.modules).toEqual([AppModule.Treasury]);
     });
   });
 

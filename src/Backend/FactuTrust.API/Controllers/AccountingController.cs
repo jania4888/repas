@@ -123,11 +123,12 @@ public sealed class AccountingController : ControllerBase
         [FromQuery] string? journalCode,
         [FromQuery] DateTime? from,
         [FromQuery] DateTime? to,
+        [FromQuery] int? take,
         CancellationToken cancellationToken)
     {
         if (!from.HasValue || !to.HasValue)
             return BadRequest(ApiResponse<object>.Fail("Les paramètres from et to sont requis."));
-        var r = await _mediator.Send(new GetJournalEntriesQuery(journalCode, from.Value, to.Value), cancellationToken);
+        var r = await _mediator.Send(new GetJournalEntriesQuery(journalCode, from.Value, to.Value, take), cancellationToken);
         if (r.IsFailure)
             return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
         return Ok(ApiResponse<IReadOnlyList<JournalEntryDto>>.Ok(r.Value));

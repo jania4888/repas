@@ -20,6 +20,7 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcru
 import { SkeletonTableComponent, SkeletonColumn } from '@shared/components/skeleton/skeleton-table.component';
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
+import { ExportExcelButtonComponent } from '@shared/components/export-excel-button/export-excel-button.component';
 import { StatusBadgeComponent, StatusBadgeStatus } from '@shared/components/status-badge/status-badge.component';
 import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-totals-bar/table-totals-bar.component';
 import { DeliveryNoteService, DeliveryNoteSearchParams, DeliveryNoteListSummary } from '../../services/delivery-note.service';
@@ -56,6 +57,7 @@ interface StatusOption {
     SkeletonTableComponent,
     EmptyStateComponent,
     ButtonComponent,
+    ExportExcelButtonComponent,
     StatusBadgeComponent,
     TableTotalsBarComponent,
     BackendLabelPipe
@@ -73,6 +75,7 @@ interface StatusOption {
         [disabled]="printingReport() || !canPrintDeliveryNoteReport()"
         (click)="printDeliveryNoteReport()"
         ariaLabel="Imprimer l'état des bons de livraison (période et client optionnels)" i18n-ariaLabel="@@delivery-notes.pages.imprimer.l.etat.des.bons.de.livraison.pe.5e9a3cfc" i18n="@@delivery-notes.pages.imprimer.l.etat.389e5da9"> Imprimer l'état </app-button>
+      <app-export-excel-button dataset="delivery-notes" [filters]="deliveryNoteExportFilters" />
       @if (canCreateDeliveryNote()) {
         <app-button 
           variant="primary"
@@ -424,6 +427,14 @@ export class DeliveryNoteListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
+
+  readonly deliveryNoteExportFilters = () => ({
+    search: this.searchTerm || null,
+    status: this.selectedStatus,
+    fromDate: this.dateRange?.[0] ?? null,
+    toDate: this.dateRange?.[1] ?? null,
+    clientId: this.selectedClient?.id ?? null
+  });
 
   loadDeliveryNotes(): void {
     if (this.isLoadingInProgress) {

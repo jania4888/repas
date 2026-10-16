@@ -95,6 +95,7 @@ public sealed class ExportStockStatusPdfQueryHandler
         var rows = result.Items;
         var grandQty = result.GrandTotalQuantity;
         var grandValue = result.GrandTotalValue;
+        var grandValueTtc = result.GrandTotalValueTtc;
 
         var company = await _companyRepository.GetDefaultAsync(cancellationToken);
         var filtersSummary = StockStatusReportAssembler.BuildFiltersSummary(
@@ -113,6 +114,7 @@ public sealed class ExportStockStatusPdfQueryHandler
             GrandTotalQuantity: grandQty,
             GrandTotalValue: grandValue,
             Currency: "TND",
+            GrandTotalValueTtc: grandValueTtc,
             RightToLeft: StockStatusLabels.IsArabic);
 
         var pdfBytes = await _pdfService.GenerateStockStatusReportPdfAsync(context, cancellationToken);

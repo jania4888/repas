@@ -11,7 +11,7 @@ namespace FactuTrust.Infrastructure.Repositories;
 /// <summary>
 /// Repository implementation for PurchaseOrder aggregate.
 /// </summary>
-public sealed class PurchaseOrderRepository : IPurchaseOrderRepository
+public sealed partial class PurchaseOrderRepository : IPurchaseOrderRepository
 {
     private readonly TenantDbContextFactory _contextFactory;
 

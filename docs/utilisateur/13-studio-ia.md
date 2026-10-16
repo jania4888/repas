@@ -11,7 +11,7 @@ Pour ouvrir l’atelier : menu **Studio** puis **Assistant IA**, ou l’URL `/st
 L’atelier se compose de trois zones :
 
 - **L’en-tête** : le titre « Studio IA », un lien vers cette documentation et, une fois une conversation démarrée, le bouton **Nouvelle demande**.
-- **La colonne principale** : la zone de saisie, les cartes « Que voulez-vous créer ? », puis, quand une proposition existe, l’**aperçu** (Vue d’ensemble, Tables, Relations, Formulaires, Données, Rapports…) et le fil de la conversation.
+- **La colonne principale** : la zone de saisie, puis, dès qu’une demande est envoyée, le fil de la conversation juste en dessous (question, réponse et tableau). Les cartes « Que voulez-vous créer ? » viennent ensuite. Quand une proposition existe, l’**aperçu** (Vue d’ensemble, Tables, Relations, Formulaires, Données, Rapports…) vient aussi après le fil.
 - **Le rail droit** (à droite sur un grand écran, sous la colonne principale en dessous de 1280 px) : **Modèles de systèmes**, **Actions rapides**, **Historique** et une carte de suggestions.
 
 ---

@@ -53,6 +53,8 @@ public static class DependencyInjection
         services.AddScoped<AnnualBonusSyncService>();
         services.AddScoped<CnssRemittanceDataLoader>();
         services.AddScoped<PayrollHrDocumentDataLoader>();
+        services.AddScoped<Features.DataExports.BusinessDataExportCoordinator>();
+        services.AddScoped<Features.DataExports.BusinessExportFinalizer>();
 
         // FluentValidation
         services.AddValidatorsFromAssembly(assembly);

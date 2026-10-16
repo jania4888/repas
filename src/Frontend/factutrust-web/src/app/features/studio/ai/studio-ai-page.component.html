@@ -20,6 +20,24 @@
         (submitted)="submit($event)" />
     </ng-template>
 
+    <!-- Un seul fil : sous la saisie en compose/aperçu, après le suivi ou la carte de résultat sinon. -->
+    <ng-template #conversation>
+      @if (showConversation()) {
+        <app-studio-ai-conversation
+          class="studio-ai-page__conversation"
+          [items]="store.timeline()"
+          [suggestions]="store.suggestions()"
+          [status]="store.status()"
+          [busy]="store.busy()"
+          [error]="mainView() === 'compose' ? null : store.error()"
+          [lastPrompt]="store.lastPrompt()"
+          [(collapsed)]="conversationCollapsed"
+          (retry)="store.retry()"
+          (usePrompt)="usePrompt($event)"
+          (useSuggestion)="usePrompt($event)" />
+      }
+    </ng-template>
+
     <section class="studio-ai-page__main" aria-live="polite">
       @if (store.advancedModelFellBack()) {
         <div class="studio-ai-page__model" role="status" data-testid="model-fallback">
@@ -52,20 +70,23 @@
             </div>
           }
 
+          <ng-container *ngTemplateOutlet="conversation" />
+
           <app-studio-ai-intent-cards
             [capabilities]="capabilities.capabilities()"
             [disabled]="composerDisabled()"
             (pick)="pickIntent($event)" />
         }
         @case ('preview') {
+          <ng-container *ngTemplateOutlet="composer; context: { followupClass: 'studio-ai-page__followup' }" />
+          <ng-container *ngTemplateOutlet="conversation" />
           <app-studio-ai-preview
             [(activeTab)]="previewTab"
             (confirmRequested)="openConfirm()" />
-
-          <ng-container *ngTemplateOutlet="composer; context: { followupClass: 'studio-ai-page__followup' }" />
         }
         @case ('progress') {
           <app-studio-ai-progress [steps]="store.buildSteps()" />
+          <ng-container *ngTemplateOutlet="conversation" />
         }
         @case ('result') {
           <app-studio-ai-result-card
@@ -81,22 +102,8 @@
             (exportSystem)="openExport($event)"
             (duplicate)="openDuplicate($event)"
             (replay)="replayCurrent()" />
+          <ng-container *ngTemplateOutlet="conversation" />
         }
-      }
-
-      @if (showConversation()) {
-        <app-studio-ai-conversation
-          class="studio-ai-page__conversation"
-          [items]="store.timeline()"
-          [suggestions]="store.suggestions()"
-          [status]="store.status()"
-          [busy]="store.busy()"
-          [error]="mainView() === 'compose' ? null : store.error()"
-          [lastPrompt]="store.lastPrompt()"
-          [(collapsed)]="conversationCollapsed"
-          (retry)="store.retry()"
-          (usePrompt)="usePrompt($event)"
-          (useSuggestion)="usePrompt($event)" />
       }
     </section>
 

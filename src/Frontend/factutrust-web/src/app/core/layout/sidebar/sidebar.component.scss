@@ -606,7 +606,10 @@
 /* Couleurs d'icônes de sous-menus : pilotées par pluto-menu-theme.scss
    (sélecteurs `#sidebar … a.submenu-link i.fa-X`, spécificité ID requise pour
    primer sur la couleur de base). Volontairement absentes ici — un mapping sans
-   ID serait inerte (écrasé par l'ID Pluto). Voir pluto-menu-theme.scss. */
+   ID serait inerte (écrasé par l'ID Pluto). Voir pluto-menu-theme.scss.
+   Exception Paramètres : quatre teintes scopées par data-nav-id sur l'icône,
+   pas par classe FA. Ne pas recolorer .fa-sliders ici (Types de retenue,
+   Paramètres paie et la barre secondaire resteraient affectés). */
 
 /* =========================================================
    CABINET DÉLÉGUÉ — skin ContaAudit (scoped)

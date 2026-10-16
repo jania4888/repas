@@ -1,4 +1,5 @@
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Features.DataExports;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
 
@@ -54,4 +55,14 @@ public interface IPurchaseOrderRepository : IRepository<PurchaseOrder>
     /// Returns false when the order no longer matches confirmation preconditions in persistence.
     /// </summary>
     Task<bool> TryConfirmDraftAsync(Guid id, DateTime confirmedAt, CancellationToken cancellationToken = default);
+
+    Task<HeaderLinesExportData<PurchaseOrderExportRow, PurchaseOrderLineExportRow>> ListForExportAsync(
+        string? searchTerm,
+        PurchaseOrderStatus? status,
+        Guid? supplierId,
+        DateTime? fromDate,
+        DateTime? toDate,
+        int documentMax,
+        int lineMax,
+        CancellationToken cancellationToken = default);
 }

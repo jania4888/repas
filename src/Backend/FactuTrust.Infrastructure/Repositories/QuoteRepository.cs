@@ -12,7 +12,7 @@ namespace FactuTrust.Infrastructure.Repositories;
 /// <summary>
 /// Repository implementation for Quote aggregate.
 /// </summary>
-public sealed class QuoteRepository : IQuoteRepository
+public sealed partial class QuoteRepository : IQuoteRepository
 {
     private readonly ITenantDbContextFactory _contextFactory;
 

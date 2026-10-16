@@ -408,7 +408,7 @@ describe('SecondaryNavComponent', () => {
     expect(menu?.querySelector('.secondary-nav__section-label')).toBeNull();
   }));
 
-  it('places the treasury journal immediately above the Rapports link', fakeAsync(() => {
+  it('places the treasury journal under the Rapports heading', fakeAsync(() => {
     findTrigger(fixture.nativeElement, 'Trésorerie')!.click();
     fixture.detectChanges();
     tick();
@@ -435,8 +435,41 @@ describe('SecondaryNavComponent', () => {
 
     const journal = links.find(link => link.textContent?.trim() === 'Journal de trésorerie');
     const hub = links.find(link => link.textContent?.trim() === 'Rapports');
+    expect(journal?.getAttribute('href')).toContain('/payments/cash-journal');
     expect(hub?.getAttribute('href')).toContain('/reports/payments');
-    expect(journal?.nextElementSibling).toBe(heading);
-    expect(heading?.nextElementSibling).toBe(hub);
+    expect(heading?.nextElementSibling).toBe(journal);
+    expect(journal?.nextElementSibling).toBe(hub);
+  }));
+
+  it('keeps the treasury journal under Rapports when reports:view is missing', fakeAsync(() => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, {
+      ...companyUser,
+      effectivePermissions: ['payments:read']
+    });
+    TestBed.inject(FirmContextService).syncFromUser();
+    fixture.detectChanges();
+
+    findTrigger(fixture.nativeElement, 'Trésorerie')!.click();
+    fixture.detectChanges();
+    tick();
+
+    const menu = document.getElementById('secondary-nav-menu-treasury');
+    expect(menu).toBeTruthy();
+
+    const links = Array.from(menu!.querySelectorAll('a.secondary-nav__link')) as HTMLAnchorElement[];
+    const labels = links.map(link => link.textContent?.trim());
+    expect(labels.at(-1)).toBe('Journal de trésorerie');
+    expect(labels).not.toContain('Rapports');
+
+    const journal = links.find(link => link.textContent?.trim() === 'Journal de trésorerie');
+    expect(journal?.getAttribute('href')).toContain('/payments/cash-journal');
+    expect(links.some(link => link.getAttribute('href')?.includes('/reports/payments'))).toBeFalse();
+
+    const heading = menu!.querySelector('.secondary-nav__section-label') as HTMLElement | null;
+    expect(heading?.textContent?.trim()).toBe('Rapports');
+    expect(heading?.closest('a,button')).toBeNull();
+    expect(menu!.querySelectorAll('.secondary-nav__section-label').length).toBe(1);
+    expect(heading?.nextElementSibling).toBe(journal);
   }));
 });

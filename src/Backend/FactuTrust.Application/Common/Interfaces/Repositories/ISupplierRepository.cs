@@ -1,4 +1,5 @@
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Features.DataExports;
 using FactuTrust.Domain.Entities;
 
 namespace FactuTrust.Application.Common.Interfaces.Repositories;
@@ -48,4 +49,11 @@ public interface ISupplierRepository : IRepository<Supplier>
     /// Checks if a supplier has any purchase orders.
     /// </summary>
     Task<bool> HasPurchaseOrdersAsync(Guid supplierId, CancellationToken cancellationToken = default);
+
+    Task<CountedRows<SupplierExportRow>> ListForExportAsync(
+        string? searchTerm,
+        SupplierType? type,
+        bool? isActive,
+        int maxRows,
+        CancellationToken cancellationToken = default);
 }

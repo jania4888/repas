@@ -14,6 +14,7 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcru
 import { SkeletonTableComponent, SkeletonColumn } from '@shared/components/skeleton/skeleton-table.component';
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
+import { ExportExcelButtonComponent } from '@shared/components/export-excel-button/export-excel-button.component';
 import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-totals-bar/table-totals-bar.component';
 import {
     SupplierInvoiceService,
@@ -41,7 +42,7 @@ interface StatusOption {
         CommonModule, RouterModule, FormsModule, CurrencyPipe, DatePipe,
         TableModule, InputTextModule, SelectModule, TagModule, ToastModule,
         PageHeaderComponent, BreadcrumbComponent, SkeletonTableComponent,
-        EmptyStateComponent, ButtonComponent, TableTotalsBarComponent, BackendLabelPipe
+        EmptyStateComponent, ButtonComponent, ExportExcelButtonComponent, TableTotalsBarComponent, BackendLabelPipe
     ],
     template: `
     <app-breadcrumb [items]="breadcrumbItems()"></app-breadcrumb>
@@ -49,6 +50,7 @@ interface StatusOption {
     <app-page-header
       [title]="unpaidOnlyMode() ? loc_ui_tern_factures_impayees_fournisseurs_12bded : loc_ui_tern_factures_fournisseurs_1dcbc2"
       [subtitle]="unpaidOnlyMode() ? loc_ui_tern_factures_fournisseurs_non_reglees_ou_parti_50d35b : loc_ui_tern_consultez_et_gerez_les_factures_fournisseu_77faa5">
+      <app-export-excel-button dataset="supplier-invoices" [filters]="supplierInvoiceExportFilters" />
       @if (canCreateSupplierInvoice() && !unpaidOnlyMode()) {
         <app-button
           variant="primary"
@@ -319,6 +321,13 @@ export class SupplierInvoiceListComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
         this.searchSubject.complete();
     }
+
+    readonly supplierInvoiceExportFilters = () => ({
+      search: this.searchTerm || null,
+      status: this.selectedStatus,
+      supplierId: this.selectedSupplierId,
+      unpaidOnly: this.unpaidOnlyMode()
+    });
 
     loadInvoices(): void {
         if (this.loading() && this.invoices().length > 0) return;

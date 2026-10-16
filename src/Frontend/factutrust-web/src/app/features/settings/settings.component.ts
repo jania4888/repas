@@ -8,6 +8,7 @@ import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { environment } from '@environments/environment';
 import { StockFeaturesStore } from '@core/services/stock-features-store.service';
+import { canExportBusinessData } from '@core/data-export/data-export.catalog';
 
 interface SettingItem {
   title: string;
@@ -256,6 +257,16 @@ export class SettingsComponent {
           color: 'var(--color-success-500)'
         },
       );
+    }
+
+    if (canExportBusinessData(this.auth)) {
+      items.push({
+        title: $localize`:@@settings.settings.ts.mes.donnees:Mes données`,
+        description: $localize`:@@settings.settings.ts.copie.excel:Copie Excel de vos clients, documents et stocks, selon vos droits.`,
+        icon: 'pi pi-download',
+        route: 'data-export',
+        color: 'var(--color-primary-600)'
+      });
     }
 
     return items;

@@ -1,4 +1,5 @@
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Features.DataExports;
 using FactuTrust.Application.Features.Reports;
 using FactuTrust.Application.Features.Reports.Queries;
 using FactuTrust.Domain.Entities;
@@ -226,5 +227,18 @@ public interface IInvoiceRepository : IRepository<Invoice>
 
     Task<IReadOnlyList<Invoice>> GetByCashRegisterSessionIdAsync(
         Guid cashRegisterSessionId,
+        CancellationToken cancellationToken = default);
+
+    Task<HeaderLinesPaymentsExportData<InvoiceExportRow, InvoiceLineExportRow, InvoicePaymentExportRow>> ListForExportAsync(
+        string? searchTerm,
+        InvoiceStatus? status,
+        DateTime? fromDate,
+        DateTime? toDate,
+        Guid? clientId,
+        bool unpaidOnly,
+        InvoiceType? type,
+        bool realizedRevenueOnly,
+        int documentMax,
+        int lineMax,
         CancellationToken cancellationToken = default);
 }

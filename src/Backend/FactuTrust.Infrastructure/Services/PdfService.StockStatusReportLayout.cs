@@ -30,7 +30,7 @@ public partial class PdfService
             context.Title,
             string.Join(" — ", periodLines));
 
-        var pdf = BuildReport(header, landscape: false, col =>
+        var pdf = BuildReport(header, landscape: true, col =>
         {
             ComposeStockStatusReportBody(col, context);
         });
@@ -47,10 +47,12 @@ public partial class PdfService
 
         col.Item().PaddingTop(12).Row(row =>
         {
-            row.RelativeItem().Text("Total général").Bold();
+            row.RelativeItem().Text(StockStatusLabels.GrandTotal()).Bold();
             row.ConstantItem(80).AlignRight().Text(Amount(context.GrandTotalQuantity)).Bold();
-            row.ConstantItem(100).AlignRight().Text(
+            row.ConstantItem(120).AlignRight().Text(
                 $"{Amount(context.GrandTotalValue)} {context.Currency}").Bold();
+            row.ConstantItem(120).AlignRight().Text(
+                $"{Amount(context.GrandTotalValueTtc)} {context.Currency}").Bold();
         });
 
         col.Item().PaddingTop(8).Text(StockStatusLabels.ValuationNote())
@@ -58,8 +60,13 @@ public partial class PdfService
             .Italic()
             .FontColor(Colors.Grey.Darken1);
 
-        // Note en pied de tableau plutôt qu'une 6ᵉ colonne : les largeurs sont relatives et la
-        // mise en page arabe casserait. Affichée seulement si l'état contient des lignes FIFO/LIFO.
+        col.Item().PaddingTop(2).Text(StockStatusLabels.PurchaseTtcNote())
+            .FontSize(7)
+            .Italic()
+            .FontColor(Colors.Grey.Darken1);
+
+        // Paysage : TVA et valeur TTC tiennent à côté du HT. La note FIFO reste en pied,
+        // seulement si l'état contient des lignes à coût de prochaine sortie.
         if (context.Rows.Any(r => r.UnitCostIsNextExit))
         {
             col.Item().PaddingTop(2).Text(StockStatusLabels.NextExitUnitCostNote())
@@ -78,24 +85,22 @@ public partial class PdfService
             {
                 col.Item().PaddingTop(4).Text(categoryGroup.Key).FontSize(9).SemiBold();
                 ComposeStockStatusLineTable(col, categoryGroup);
-                var subQty = categoryGroup.Sum(r => r.QuantityOnHand);
-                var subVal = categoryGroup.Sum(r => r.StockValue);
-                col.Item().PaddingBottom(4).Row(row =>
-                {
-                    row.RelativeItem().Text($"Sous-total {categoryGroup.Key}").FontSize(8).Italic();
-                    row.ConstantItem(80).AlignRight().Text(Amount(subQty)).FontSize(8);
-                    row.ConstantItem(100).AlignRight().Text(Amount(subVal)).FontSize(8);
-                });
+                ComposeStockStatusSubtotal(
+                    col,
+                    StockStatusLabels.SubtotalLine(categoryGroup.Key),
+                    categoryGroup.Sum(r => r.QuantityOnHand),
+                    categoryGroup.Sum(r => r.StockValue),
+                    categoryGroup.Sum(r => r.StockValueTtc),
+                    bold: false);
             }
 
-            var whQty = warehouseGroup.Sum(r => r.QuantityOnHand);
-            var whVal = warehouseGroup.Sum(r => r.StockValue);
-            col.Item().PaddingBottom(6).Row(row =>
-            {
-                row.RelativeItem().Text($"Total {warehouseGroup.Key.WarehouseName}").Bold().FontSize(9);
-                row.ConstantItem(80).AlignRight().Text(Amount(whQty)).Bold().FontSize(9);
-                row.ConstantItem(100).AlignRight().Text(Amount(whVal)).Bold().FontSize(9);
-            });
+            ComposeStockStatusSubtotal(
+                col,
+                StockStatusLabels.TotalLine(warehouseGroup.Key.WarehouseName),
+                warehouseGroup.Sum(r => r.QuantityOnHand),
+                warehouseGroup.Sum(r => r.StockValue),
+                warehouseGroup.Sum(r => r.StockValueTtc),
+                bold: true);
         }
     }
 
@@ -108,24 +113,22 @@ public partial class PdfService
             {
                 col.Item().PaddingTop(4).Text(warehouseGroup.Key.WarehouseName).FontSize(9).SemiBold();
                 ComposeStockStatusLineTable(col, warehouseGroup);
-                var subQty = warehouseGroup.Sum(r => r.QuantityOnHand);
-                var subVal = warehouseGroup.Sum(r => r.StockValue);
-                col.Item().PaddingBottom(4).Row(row =>
-                {
-                    row.RelativeItem().Text($"Sous-total {warehouseGroup.Key.WarehouseName}").FontSize(8).Italic();
-                    row.ConstantItem(80).AlignRight().Text(Amount(subQty)).FontSize(8);
-                    row.ConstantItem(100).AlignRight().Text(Amount(subVal)).FontSize(8);
-                });
+                ComposeStockStatusSubtotal(
+                    col,
+                    StockStatusLabels.SubtotalLine(warehouseGroup.Key.WarehouseName),
+                    warehouseGroup.Sum(r => r.QuantityOnHand),
+                    warehouseGroup.Sum(r => r.StockValue),
+                    warehouseGroup.Sum(r => r.StockValueTtc),
+                    bold: false);
             }
 
-            var catQty = categoryGroup.Sum(r => r.QuantityOnHand);
-            var catVal = categoryGroup.Sum(r => r.StockValue);
-            col.Item().PaddingBottom(6).Row(row =>
-            {
-                row.RelativeItem().Text($"Total {categoryGroup.Key}").Bold().FontSize(9);
-                row.ConstantItem(80).AlignRight().Text(Amount(catQty)).Bold().FontSize(9);
-                row.ConstantItem(100).AlignRight().Text(Amount(catVal)).Bold().FontSize(9);
-            });
+            ComposeStockStatusSubtotal(
+                col,
+                StockStatusLabels.TotalLine(categoryGroup.Key),
+                categoryGroup.Sum(r => r.QuantityOnHand),
+                categoryGroup.Sum(r => r.StockValue),
+                categoryGroup.Sum(r => r.StockValueTtc),
+                bold: true);
         }
     }
 
@@ -137,20 +140,24 @@ public partial class PdfService
         {
             table.ColumnsDefinition(c =>
             {
-                c.RelativeColumn(1f);
-                c.RelativeColumn(2f);
-                c.RelativeColumn(0.8f);
+                c.RelativeColumn(1.1f);
+                c.RelativeColumn(2.2f);
+                c.RelativeColumn(0.7f);
                 c.RelativeColumn(0.9f);
-                c.RelativeColumn(1f);
+                c.RelativeColumn(0.6f);
+                c.RelativeColumn(1.1f);
+                c.RelativeColumn(1.1f);
             });
 
             table.Header(header =>
             {
-                header.Cell().Element(CellHeader).Text("Code");
-                header.Cell().Element(CellHeader).Text("Désignation");
-                header.Cell().Element(CellHeader).AlignRight().Text("Qté");
-                header.Cell().Element(CellHeader).AlignRight().Text("P.U.");
-                header.Cell().Element(CellHeader).AlignRight().Text("Valeur");
+                header.Cell().Element(CellHeader).Text(StockStatusLabels.Code());
+                header.Cell().Element(CellHeader).Text(StockStatusLabels.Designation());
+                header.Cell().Element(CellHeader).AlignRight().Text(StockStatusLabels.Quantity());
+                header.Cell().Element(CellHeader).AlignRight().Text(StockStatusLabels.UnitPrice());
+                header.Cell().Element(CellHeader).AlignRight().Text(StockStatusLabels.Vat());
+                header.Cell().Element(CellHeader).AlignRight().Text(StockStatusLabels.ValueHt());
+                header.Cell().Element(CellHeader).AlignRight().Text(StockStatusLabels.ValueTtc());
             });
 
             foreach (var row in rows)
@@ -159,10 +166,42 @@ public partial class PdfService
                 table.Cell().Element(CellBody).Text(row.ProductName);
                 table.Cell().Element(CellBody).AlignRight().Text(Amount(row.QuantityOnHand));
                 table.Cell().Element(CellBody).AlignRight().Text(Amount(row.UnitCost));
+                table.Cell().Element(CellBody).AlignRight().Text(VatPercent(row.VatRatePercent));
                 table.Cell().Element(CellBody).AlignRight().Text(Amount(row.StockValue));
+                table.Cell().Element(CellBody).AlignRight().Text(Amount(row.StockValueTtc));
             }
         });
     }
+
+    private static void ComposeStockStatusSubtotal(
+        ColumnDescriptor col,
+        string label,
+        decimal quantity,
+        decimal valueHt,
+        decimal valueTtc,
+        bool bold)
+    {
+        col.Item().PaddingBottom(bold ? 6 : 4).Row(row =>
+        {
+            if (bold)
+            {
+                row.RelativeItem().Text(label).Bold().FontSize(9);
+                row.ConstantItem(80).AlignRight().Text(Amount(quantity)).Bold().FontSize(9);
+                row.ConstantItem(110).AlignRight().Text(Amount(valueHt)).Bold().FontSize(9);
+                row.ConstantItem(110).AlignRight().Text(Amount(valueTtc)).Bold().FontSize(9);
+            }
+            else
+            {
+                row.RelativeItem().Text(label).FontSize(8).Italic();
+                row.ConstantItem(80).AlignRight().Text(Amount(quantity)).FontSize(8);
+                row.ConstantItem(110).AlignRight().Text(Amount(valueHt)).FontSize(8);
+                row.ConstantItem(110).AlignRight().Text(Amount(valueTtc)).FontSize(8);
+            }
+        });
+    }
+
+    private static string VatPercent(int percent) =>
+        percent.ToString(CultureInfo.InvariantCulture) + " %";
 
     private static IContainer CellHeader(IContainer c) =>
         c.DefaultTextStyle(x => x.SemiBold().FontSize(8))
@@ -196,7 +235,7 @@ public partial class PdfService
         {
             doc.Page(page =>
             {
-                page.Size(PageSizes.A4);
+                page.Size(PageSizes.A4.Landscape());
                 page.Margin(24);
                 page.DefaultTextStyle(textStyle);
                 page.Header().Element(c => ComposeArabicStockStatusHeader(c, context, string.Join(" — ", periodLines)));
@@ -269,12 +308,18 @@ public partial class PdfService
 
         col.Item().PaddingTop(12).Row(row =>
         {
-            row.ConstantItem(100).AlignRight().Text($"{Amount(context.GrandTotalValue)} {context.Currency}").Bold();
+            row.ConstantItem(120).AlignRight().Text($"{Amount(context.GrandTotalValueTtc)} {context.Currency}").Bold();
+            row.ConstantItem(120).AlignRight().Text($"{Amount(context.GrandTotalValue)} {context.Currency}").Bold();
             row.ConstantItem(80).AlignRight().Text(Amount(context.GrandTotalQuantity)).Bold();
             row.RelativeItem().AlignRight().Text(StockStatusLabels.GrandTotal()).Bold();
         });
 
         col.Item().PaddingTop(8).AlignRight().Text(StockStatusLabels.ValuationNote())
+            .FontSize(7)
+            .Italic()
+            .FontColor(Colors.Grey.Darken1);
+
+        col.Item().PaddingTop(2).AlignRight().Text(StockStatusLabels.PurchaseTtcNote())
             .FontSize(7)
             .Italic()
             .FontColor(Colors.Grey.Darken1);
@@ -302,6 +347,7 @@ public partial class PdfService
                     StockStatusLabels.SubtotalLine(categoryGroup.Key),
                     categoryGroup.Sum(r => r.QuantityOnHand),
                     categoryGroup.Sum(r => r.StockValue),
+                    categoryGroup.Sum(r => r.StockValueTtc),
                     bold: false);
             }
 
@@ -310,6 +356,7 @@ public partial class PdfService
                 StockStatusLabels.TotalLine(warehouseGroup.Key.WarehouseName),
                 warehouseGroup.Sum(r => r.QuantityOnHand),
                 warehouseGroup.Sum(r => r.StockValue),
+                warehouseGroup.Sum(r => r.StockValueTtc),
                 bold: true);
         }
     }
@@ -328,6 +375,7 @@ public partial class PdfService
                     StockStatusLabels.SubtotalLine(warehouseGroup.Key.WarehouseName),
                     warehouseGroup.Sum(r => r.QuantityOnHand),
                     warehouseGroup.Sum(r => r.StockValue),
+                    warehouseGroup.Sum(r => r.StockValueTtc),
                     bold: false);
             }
 
@@ -336,6 +384,7 @@ public partial class PdfService
                 StockStatusLabels.TotalLine(categoryGroup.Key),
                 categoryGroup.Sum(r => r.QuantityOnHand),
                 categoryGroup.Sum(r => r.StockValue),
+                categoryGroup.Sum(r => r.StockValueTtc),
                 bold: true);
         }
     }
@@ -344,21 +393,24 @@ public partial class PdfService
         ColumnDescriptor col,
         string label,
         decimal quantity,
-        decimal value,
+        decimal valueHt,
+        decimal valueTtc,
         bool bold)
     {
         col.Item().PaddingBottom(bold ? 6 : 4).Row(row =>
         {
             if (bold)
             {
-                row.ConstantItem(100).AlignRight().Text(Amount(value)).FontSize(9).Bold();
-                row.ConstantItem(80).AlignRight().Text(Amount(quantity)).FontSize(9).Bold();
+                row.ConstantItem(110).AlignRight().Text(Amount(valueTtc)).FontSize(9).Bold();
+                row.ConstantItem(110).AlignRight().Text(Amount(valueHt)).FontSize(9).Bold();
+                row.ConstantItem(70).AlignRight().Text(Amount(quantity)).FontSize(9).Bold();
                 row.RelativeItem().AlignRight().Text(label).FontSize(9).Bold();
             }
             else
             {
-                row.ConstantItem(100).AlignRight().Text(Amount(value)).FontSize(8);
-                row.ConstantItem(80).AlignRight().Text(Amount(quantity)).FontSize(8);
+                row.ConstantItem(110).AlignRight().Text(Amount(valueTtc)).FontSize(8);
+                row.ConstantItem(110).AlignRight().Text(Amount(valueHt)).FontSize(8);
+                row.ConstantItem(70).AlignRight().Text(Amount(quantity)).FontSize(8);
                 row.RelativeItem().AlignRight().Text(label).FontSize(8).Italic();
             }
         });
@@ -372,16 +424,20 @@ public partial class PdfService
         {
             table.ColumnsDefinition(c =>
             {
-                c.RelativeColumn(1f);
+                c.RelativeColumn(1.1f);
+                c.RelativeColumn(1.1f);
+                c.RelativeColumn(0.6f);
                 c.RelativeColumn(0.9f);
-                c.RelativeColumn(0.8f);
-                c.RelativeColumn(2f);
-                c.RelativeColumn(1f);
+                c.RelativeColumn(0.7f);
+                c.RelativeColumn(2.2f);
+                c.RelativeColumn(1.1f);
             });
 
             table.Header(header =>
             {
-                header.Cell().Element(CellHeader).AlignRight().Text(StockStatusLabels.Value());
+                header.Cell().Element(CellHeader).AlignRight().Text(StockStatusLabels.ValueTtc());
+                header.Cell().Element(CellHeader).AlignRight().Text(StockStatusLabels.ValueHt());
+                header.Cell().Element(CellHeader).AlignRight().Text(StockStatusLabels.Vat());
                 header.Cell().Element(CellHeader).AlignRight().Text(StockStatusLabels.UnitPrice());
                 header.Cell().Element(CellHeader).AlignRight().Text(StockStatusLabels.Quantity());
                 header.Cell().Element(CellHeader).AlignRight().Text(StockStatusLabels.Designation());
@@ -390,7 +446,9 @@ public partial class PdfService
 
             foreach (var row in rows)
             {
+                table.Cell().Element(CellBody).AlignRight().Text(Amount(row.StockValueTtc));
                 table.Cell().Element(CellBody).AlignRight().Text(Amount(row.StockValue));
+                table.Cell().Element(CellBody).AlignRight().Text(VatPercent(row.VatRatePercent));
                 table.Cell().Element(CellBody).AlignRight().Text(Amount(row.UnitCost));
                 table.Cell().Element(CellBody).AlignRight().Text(Amount(row.QuantityOnHand));
                 table.Cell().Element(CellBody).AlignRight().Text(row.ProductName);

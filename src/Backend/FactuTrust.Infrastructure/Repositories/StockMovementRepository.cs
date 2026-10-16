@@ -10,7 +10,7 @@ namespace FactuTrust.Infrastructure.Repositories;
 /// <summary>
 /// Repository implementation for StockMovement entity.
 /// </summary>
-public sealed class StockMovementRepository : IStockMovementRepository
+public sealed partial class StockMovementRepository : IStockMovementRepository
 {
     private readonly ITenantDbContextFactory _contextFactory;
 

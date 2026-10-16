@@ -27,6 +27,7 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcru
 import { SkeletonTableComponent, SkeletonColumn } from '@shared/components/skeleton/skeleton-table.component';
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
+import { ExportExcelButtonComponent } from '@shared/components/export-excel-button/export-excel-button.component';
 import { ConfirmationService } from '@core/services/confirmation.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { AuthService } from '@core/services/auth.service';
@@ -60,6 +61,7 @@ interface StatusOption {
     SkeletonTableComponent,
     EmptyStateComponent,
     ButtonComponent,
+    ExportExcelButtonComponent,
     TableTotalsBarComponent
   ],
   templateUrl: './stock-list.component.html',
@@ -75,6 +77,14 @@ export class StockListComponent implements OnInit {
   private auth = inject(AuthService);
 
   canCreateStockVoucher = computed(() => this.auth.hasPermission(PERMISSIONS.stockVouchers.create));
+
+  readonly stockExportFilters = () => ({
+    search: this.searchTerm || null,
+    warehouseId: this.selectedWarehouse?.id ?? null,
+    lowStockOnly: this.selectedStatus === 'lowStock',
+    outOfStockOnly: this.selectedStatus === 'outOfStock',
+    inStockOnly: this.selectedStatus === 'inStock'
+  });
 
   // Data Signals
   items = signal<StockItem[]>([]);

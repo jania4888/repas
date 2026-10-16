@@ -74,7 +74,8 @@ public sealed class AccountingReportingService : IAccountingReportingService
         string? journalCode,
         DateTime from,
         DateTime to,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        int? take = null)
     {
         var f = from.Date;
         var t = to.Date;
@@ -90,7 +91,12 @@ public sealed class AccountingReportingService : IAccountingReportingService
             q = q.Where(j => j.JournalCode == jc);
         }
 
-        var list = await q.OrderByDescending(j => j.EntryDate).ThenByDescending(j => j.EntryNumber).ToListAsync(cancellationToken);
+        var ordered = q.OrderByDescending(j => j.EntryDate).ThenByDescending(j => j.EntryNumber);
+        // take nul : toute la période. Sinon plafond 1–30, appliqué avant le comptage des pièces jointes.
+        IQueryable<JournalEntry> limited = take is int requested
+            ? ordered.Take(Math.Clamp(requested, 1, 30))
+            : ordered;
+        var list = await limited.ToListAsync(cancellationToken);
 
         // Nombre de pièces jointes par écriture, en une seule requête groupée (pas de N+1).
         var entryIds = list.Select(e => e.Id).ToList();

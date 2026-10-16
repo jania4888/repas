@@ -28,6 +28,13 @@ public sealed class StockStatusLabelsTests
             "FIFO/LIFO : le P.U. affiché est le coût de la prochaine sortie. "
             + "La valeur est la somme des couches restantes, donc P.U. × Qté ≠ Valeur.",
             StockStatusLabels.NextExitUnitCostNote());
+        Assert.Equal("Valeur HT", StockStatusLabels.ValueHt());
+        Assert.Equal("Valeur TTC", StockStatusLabels.ValueTtc());
+        Assert.Equal("TVA", StockStatusLabels.Vat());
+        Assert.Equal(
+            "Valeur TTC = valeur HT × (1 + taux de TVA actuel de la fiche article). "
+            + "Ce n'est pas le taux du bon de réception. En FIFO/LIFO, P.U. × Qté × (1 + TVA) ≠ Valeur TTC.",
+            StockStatusLabels.PurchaseTtcNote());
         Assert.Equal(
             "Entrepôt : Magasin — Catégorie : Boissons — Recherche : eau[%] — Inclut stock à zéro",
             StockStatusReportAssembler.BuildFiltersSummary("Magasin", "Boissons", "eau[%]", true));
@@ -47,6 +54,10 @@ public sealed class StockStatusLabelsTests
         Assert.Equal("عدد الأسطر كبير. صفّوا حسب المستودع أو الفئة قبل الطباعة.", StockStatusLabels.TooManyLines());
         Assert.Equal("هذا المستودع معطّل.", StockStatusLabels.WarehouseDisabled());
         Assert.Equal("في 04/10/2026 11:30", StockStatusLabels.AsOf(new DateTime(2026, 10, 4, 11, 30, 0)));
+        Assert.Equal("قيمة دون أداءات", StockStatusLabels.ValueHt());
+        Assert.Equal("قيمة شامل الضريبة", StockStatusLabels.ValueTtc());
+        Assert.Equal("TVA", StockStatusLabels.Vat());
+        Assert.Contains("بطاقة الصنف", StockStatusLabels.PurchaseTtcNote());
         Assert.Equal(
             "المستودع : Magasin — الفئة : Boissons — البحث : ماء[%][_] — يشمل المخزون الصفري",
             StockStatusReportAssembler.BuildFiltersSummary("Magasin", "Boissons", "ماء[%][_]", true));

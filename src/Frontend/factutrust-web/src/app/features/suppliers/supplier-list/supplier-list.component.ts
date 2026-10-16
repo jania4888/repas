@@ -17,6 +17,7 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcru
 import { SkeletonTableComponent, SkeletonColumn } from '@shared/components/skeleton/skeleton-table.component';
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
+import { ExportExcelButtonComponent } from '@shared/components/export-excel-button/export-excel-button.component';
 import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-totals-bar/table-totals-bar.component';
 import { SupplierService, SupplierListItem, SupplierSearchParams, SupplierType, SupplierListSummary } from '@core/services/supplier.service';
 import { AuthService } from '@core/services/auth.service';
@@ -55,6 +56,7 @@ interface StatusOption {
         SkeletonTableComponent,
         EmptyStateComponent,
         ButtonComponent,
+        ExportExcelButtonComponent,
         TableTotalsBarComponent
     ],
     template: `
@@ -63,6 +65,7 @@ interface StatusOption {
     <app-page-header
       title="Fournisseurs" i18n-title="@@suppliers.supplier-list.fournisseurs.06b6d88c"
       subtitle="Gérez vos fournisseurs pour les bons de commande." i18n-subtitle="@@suppliers.supplier-list.gerez.vos.fournisseurs.pour.les.bons.de.561fe7a4">
+      <app-export-excel-button dataset="suppliers" [filters]="supplierExportFilters" />
       @if (canCreateSupplier()) {
         <app-button
           variant="primary"
@@ -367,6 +370,12 @@ export class SupplierListComponent implements OnInit, OnDestroy {
         { label: $localize`:@@suppliers.supplier-list.ts.actifs.4fc3a980:Actifs`, value: true },
         { label: $localize`:@@suppliers.supplier-list.ts.inactifs.41c2d03e:Inactifs`, value: false }
     ];
+
+    readonly supplierExportFilters = () => ({
+      search: this.searchTerm || null,
+      type: this.selectedType,
+      isActive: this.selectedStatus
+    });
 
     ngOnInit(): void {
         this.route.queryParamMap.pipe(take(1)).subscribe((paramMap) => {

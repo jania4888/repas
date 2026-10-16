@@ -1,4 +1,5 @@
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Features.DataExports;
 using FactuTrust.Domain.Entities;
 
 namespace FactuTrust.Application.Common.Interfaces.Repositories;
@@ -97,6 +98,14 @@ public interface IStockItemRepository : IRepository<StockItem>
         int pageSize,
         CancellationToken cancellationToken = default);
 
+    Task<CountedRows<StockPositionExportRow>> ListForExportAsync(
+        string? searchTerm,
+        Guid? warehouseId,
+        bool lowStockOnly,
+        bool outOfStockOnly,
+        bool inStockOnly,
+        int maxRows,
+        CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -109,4 +118,5 @@ public sealed record StockStatusReportPage(
     decimal GrandTotalQuantity,
     decimal GrandTotalValue,
     int LayeredRowCount,
-    int DriftRowCount);
+    int DriftRowCount,
+    decimal GrandTotalValueTtc);
