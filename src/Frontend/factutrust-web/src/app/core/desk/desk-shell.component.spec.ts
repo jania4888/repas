@@ -134,6 +134,18 @@ describe('DeskShellComponent', () => {
     expect(document.activeElement).toBe(tasks[0]);
   });
 
+  it('place les onglets sous le titre et au-dessus du contenu', () => {
+    const title = fixture.nativeElement.querySelector('.desk__titlebar') as HTMLElement;
+    const taskbar = fixture.nativeElement.querySelector('.desk__taskbar') as HTMLElement;
+    const canvas = fixture.nativeElement.querySelector('.desk__canvas') as HTMLElement;
+    const marker = markerIn(fixture);
+
+    expect(title.compareDocumentPosition(taskbar) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(taskbar.compareDocumentPosition(canvas) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(canvas.contains(marker)).toBeTrue();
+    expect(marker.textContent).toContain('Journal comptable');
+  });
+
   it('affiche le contenu projeté dans le canevas et le conserve hors dossier', () => {
     const marker = markerIn(fixture);
     expect(marker.textContent).toContain('Journal comptable');

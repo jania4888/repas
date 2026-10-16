@@ -31,9 +31,6 @@ import { DeskWindowService } from './desk-window.service';
           </button>
         </header>
       }
-      <div class="desk__canvas">
-        <ng-content />
-      </div>
       @if (enabled()) {
         <nav
           class="desk__taskbar"
@@ -60,6 +57,9 @@ import { DeskWindowService } from './desk-window.service';
           }
         </nav>
       }
+      <div class="desk__canvas">
+        <ng-content />
+      </div>
     </div>
   `,
   styles: [`
@@ -137,7 +137,7 @@ import { DeskWindowService } from './desk-window.service';
       overflow-x: auto;
       padding: 0.25rem;
       background: var(--sidebar-delegated-navy-light, #0f2a5c);
-      border-block-start: 1px solid rgba(255, 255, 255, 0.12);
+      border-block-end: 1px solid rgba(255, 255, 255, 0.12);
     }
     .desk__task {
       display: flex;
