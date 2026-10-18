@@ -152,7 +152,8 @@ test('deep-link : les paramètres déclenchent un chargement avec les bons filtr
 
   await openLettering(page, '?account=4111&state=unlettered&from=2026-01-01&to=2026-10-11&autoLoad=1');
 
-  await expect(page.getByRole('heading', { name: 'Lettrage' })).toBeVisible({ timeout: 15_000 });
+  // Deux h1 « Lettrage » coexistent (titre de la fenêtre du bureau + titre de page) : cibler le titre de page.
+  await expect(page.locator('h1.page-title', { hasText: 'Lettrage' })).toBeVisible({ timeout: 15_000 });
   expect(requests.length).toBeGreaterThanOrEqual(1);
   const url = new URL(requests[0]);
   expect(url.searchParams.get('account')).toBe('4111');

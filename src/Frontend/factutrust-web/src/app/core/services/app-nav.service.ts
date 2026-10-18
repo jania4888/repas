@@ -339,10 +339,19 @@ export class AppNavService {
         modules: [AppModule.Accounting],
         permissionsAll: [PERMISSIONS.accounting.read]
       };
+      // Entrée route-only : placée avant le hub Comptabilité, en tête des raccourcis du dossier.
+      const dashboardItem: NavItem = {
+        id: NAV_ID.accountingDashboard,
+        label: $localize`:@@core.app-nav.ts.tableau.de.bord.a524057f:Tableau de bord`,
+        icon: 'fa-solid fa-gauge-high',
+        route: FIRM_DELEGATED_HOME_ROUTE,
+        modules: [AppModule.Accounting],
+        permissionsAll: [PERMISSIONS.accounting.read]
+      };
       const moduleItems = filterNavItems(this.auth, buildFirmDelegatedAccountingModuleNavItems());
       items = [
         ...items.slice(0, comptaIndex),
-        ...filterNavItems(this.auth, [comptaHub]),
+        ...filterNavItems(this.auth, [dashboardItem, comptaHub]),
         ...moduleItems,
         ...items.slice(comptaIndex + 1)
       ];

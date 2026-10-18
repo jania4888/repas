@@ -147,7 +147,9 @@ export class DeskWindowService {
   overlayOpen(): boolean {
     const query = this.document?.querySelector?.bind(this.document);
     if (!query) return false;
-    return !!query('.p-dialog-mask, ngb-modal-window');
+    // Une modale ng-bootstrap qui se ferme perd `show` avant de quitter le DOM (fondu de sortie) :
+    // la navigation déclenchée par son action de confirmation ne doit pas être bloquée.
+    return !!query('.p-dialog-mask, ngb-modal-window.show');
   }
 
   async activate(key: string): Promise<boolean> {

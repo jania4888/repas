@@ -15,6 +15,7 @@ using FactuTrust.Application.Features.Accounting.Lettering;
 using FactuTrust.Application.Features.Accounting.Loans;
 using FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
 using FactuTrust.Application.Features.Accounting.Queries;
+using FactuTrust.Application.Features.Accounting.Validators;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Enums;
 using MediatR;
@@ -1844,6 +1845,31 @@ public sealed class AccountingController : ControllerBase
         if (r.IsFailure)
             return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
         return Ok(ApiResponse<AccountingDashboardDto>.Ok(r.Value));
+    }
+
+    /// <summary>
+    /// Tableau de bord comptable du dossier, affiché à l'ouverture d'un dossier délégué par le
+    /// cabinet. Lecture seule ; la période est optionnelle (résolue côté serveur) et la comparaison
+    /// vaut <c>previous-month</c> (défaut) ou <c>previous-year</c>. Le dashboard historique
+    /// <c>GET /api/accounting/dashboard</c> reste inchangé.
+    /// </summary>
+    [HttpGet("dashboard/overview")]
+    [Authorize(Policy = PermissionPolicies.AccountingRead)]
+    [Authorize(Policy = PermissionPolicies.FirmDelegatedContext)]
+    public async Task<IActionResult> GetDashboardOverview(
+        [FromQuery] int? fiscalYear,
+        [FromQuery] int? month,
+        [FromQuery] string? comparison,
+        CancellationToken cancellationToken)
+    {
+        var window = DashboardComparisonCodes.TryParse(comparison);
+        if (window is null)
+            return BadRequest(ApiResponse<object>.Fail(GetAccountingOverviewQueryValidator.InvalidComparison));
+
+        var r = await _mediator.Send(new GetAccountingOverviewQuery(fiscalYear, month, window.Value), cancellationToken);
+        if (r.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+        return Ok(ApiResponse<AccountingOverviewDashboardDto>.Ok(r.Value));
     }
 
     [HttpPost("letter")]

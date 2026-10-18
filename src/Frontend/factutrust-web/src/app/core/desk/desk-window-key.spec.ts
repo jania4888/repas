@@ -37,6 +37,14 @@ describe('deskWindowKey', () => {
     expect(normalizeDeskUrl('/accounting/journal?to=2&from=1')).toBe('/accounting/journal?from=1&to=2');
   });
 
+  it('ouvre une seule fenêtre « Tableau de bord », insensible à la période en query string', () => {
+    expect(isDeskWindowUrl('/accounting/dashboard')).toBe(true);
+    expect(deskWindowKeyFromUrl('/accounting/dashboard')).toBe('/accounting/dashboard');
+    expect(deskWindowKeyFromUrl('/accounting/dashboard?fiscalYear=2026&month=10')).toBe(
+      '/accounting/dashboard'
+    );
+  });
+
   it('distingue une saisie nouvelle d’une écriture, et deux écritures entre elles', () => {
     expect(deskWindowKeyFromUrl('/accounting/manual-entry')).toBe('/accounting/manual-entry');
     expect(deskWindowKeyFromUrl('/accounting/manual-entry?entryId=0100056')).toBe(

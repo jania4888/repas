@@ -307,6 +307,11 @@ describe('SidebarComponent — firm navigation', () => {
     expect(compta?.route).toBe('/accounting/home');
     expect(compta?.children).toBeUndefined();
 
+    // « Tableau de bord » précède immédiatement le hub « Comptabilité ».
+    const dashboard = items.find(i => i.label === 'Tableau de bord');
+    expect(dashboard?.route).toBe('/accounting/dashboard');
+    expect(items.indexOf(dashboard!)).toBe(items.indexOf(compta!) - 1);
+
     const declarations = items.find(i => i.label === 'Declarations');
     const declarationLabels = declarations?.children?.map(c => c.label) ?? [];
     expect(declarationLabels).toContain('Declaration mensuelle');

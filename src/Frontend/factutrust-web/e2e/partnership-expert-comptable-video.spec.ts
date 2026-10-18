@@ -83,6 +83,7 @@ test.describe('Vidéo partenariat expert-comptable', () => {
     logScene('05-accounting', 'Parcours comptabilité SCE');
     await loginAsDemoUser(page);
     for (const route of [
+      '/accounting/dashboard',
       '/accounting/chart',
       '/accounting/journal',
       '/accounting/ledger',

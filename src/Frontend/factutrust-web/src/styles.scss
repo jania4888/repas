@@ -1968,9 +1968,17 @@ body .receipt-product-panel.p-autocomplete-overlay {
 @media print {
   app-sidebar,
   app-header,
+  app-secondary-nav,
   .sidebar_blog_2,
-  .page-header-actions {
+  .page-header-actions,
+  .desk__titlebar,
+  .desk__taskbar {
     display: none !important;
+  }
+
+  .desk__canvas {
+    overflow: visible !important;
+    height: auto !important;
   }
 
   #content {

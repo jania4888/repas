@@ -146,23 +146,25 @@ jobs:
   frontend-web-e2e-smoke:
     name: Web Playwright smoke
     runs-on: ubuntu-24.04 # épinglé : `ubuntu-latest` bascule sur Ubuntu 26 le 2026-10-19
+    # Le mot de passe SA vient du secret CI_SQL_SA_PASSWORD ; à défaut (dépôt miroir, fork, secret
+    # non configuré), un mot de passe de repli protège uniquement le conteneur SQL éphémère du runner.
     services:
       mssql:
         image: mcr.microsoft.com/mssql/server:2022-latest
         env:
           ACCEPT_EULA: Y
-          MSSQL_SA_PASSWORD: ${{ secrets.CI_SQL_SA_PASSWORD }}
+          MSSQL_SA_PASSWORD: ${{ secrets.CI_SQL_SA_PASSWORD || 'Ci_Sql_Sa_Fallback_Pw1!' }}
         ports:
           - 1433:1433
     env:
-      CI_SQL_SA_PASSWORD: ${{ secrets.CI_SQL_SA_PASSWORD }}
+      CI_SQL_SA_PASSWORD: ${{ secrets.CI_SQL_SA_PASSWORD || 'Ci_Sql_Sa_Fallback_Pw1!' }}
       FACTUTRUST_TEST_EMAIL: ci-e2e-smoke@factutrust.local
       FACTUTRUST_TEST_PASSWORD: Ci_E2e_Smoke_Pw1!Xy
       # The API is bound to loopback HTTP inside the ephemeral runner. Avoid
       # `dotnet dev-certs --trust`, which is interactive/unsupported on Linux CI.
       E2E_API_BASE: http://localhost:7000
-      ConnectionStrings__MasterConnection: Server=localhost,1433;Database=FactuTrust_Master;User Id=sa;Password=${{ secrets.CI_SQL_SA_PASSWORD }};TrustServerCertificate=True;Encrypt=True
-      ConnectionStrings__DefaultTenantConnection: Server=localhost,1433;Database=FactuTrust_Tenant_Default;User Id=sa;Password=${{ secrets.CI_SQL_SA_PASSWORD }};TrustServerCertificate=True;Encrypt=True
+      ConnectionStrings__MasterConnection: Server=localhost,1433;Database=FactuTrust_Master;User Id=sa;Password=${{ secrets.CI_SQL_SA_PASSWORD || 'Ci_Sql_Sa_Fallback_Pw1!' }};TrustServerCertificate=True;Encrypt=True
+      ConnectionStrings__DefaultTenantConnection: Server=localhost,1433;Database=FactuTrust_Tenant_Default;User Id=sa;Password=${{ secrets.CI_SQL_SA_PASSWORD || 'Ci_Sql_Sa_Fallback_Pw1!' }};TrustServerCertificate=True;Encrypt=True
     defaults:
       run:
         working-directory: src/Frontend/factutrust-web

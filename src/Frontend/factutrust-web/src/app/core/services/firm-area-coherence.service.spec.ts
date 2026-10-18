@@ -73,7 +73,7 @@ describe('FirmAreaCoherenceService', () => {
 
     setUser(auth, delegatedUser);
     await settle();
-    expect(navigateByUrl).toHaveBeenCalledOnceWith('/accounting/chart');
+    expect(navigateByUrl).toHaveBeenCalledOnceWith('/accounting/dashboard');
   });
 
   it('does not repeat the same redirection', async () => {
