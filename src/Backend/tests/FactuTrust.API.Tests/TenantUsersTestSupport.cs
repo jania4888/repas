@@ -47,6 +47,8 @@ public static class TenantUsersTestSupport
     /// and returns the resulting admin's access token/ids. This is the ONLY way to obtain an
     /// Administrator session that can successfully pass <c>TenantMiddleware</c> (resolvable tenant
     /// connection string) — a forged JWT for a nonexistent tenant would 500 there.
+    /// Transient failures (client timeout, HTTP error, 5xx) are retried up to 3 times with a
+    /// fresh company per attempt; a 4xx validation failure throws immediately.
     /// </summary>
     public static async Task<RegisteredCompany> RegisterCompanyAsync(HttpClient client)
     {

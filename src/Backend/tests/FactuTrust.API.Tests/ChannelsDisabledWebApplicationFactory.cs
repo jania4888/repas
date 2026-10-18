@@ -51,7 +51,10 @@ public class ChannelsDisabledWebApplicationFactory : WebApplicationFactory<Progr
     }
 
     // Les overloads de base ne sont pas virtuels : on les masque (les points d'appel sont
-    // tous typés en ChannelsDisabledWebApplicationFactory, le masquage suffit).
+    // tous typés en ChannelsDisabledWebApplicationFactory, le masquage suffit). Attention :
+    // une factory obtenue par WithWebHostBuilder est typée WebApplicationFactory<Program> —
+    // ses clients doivent passer par WithClientTimeout manuellement (voir les call sites
+    // RegisterSectorConfigurationTests / RegisterSectorTemplateSqlTests).
     public new HttpClient CreateClient() => WithClientTimeout(base.CreateClient());
 
     public new HttpClient CreateClient(WebApplicationFactoryClientOptions options) =>
