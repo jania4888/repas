@@ -86,6 +86,7 @@ public sealed class DelegatedAccessMiddlewareTests
     [Theory]
     [InlineData("POST", "/api/accounting/journal-entries")]
     [InlineData("GET", "/api/accounting/chart")]
+    [InlineData("GET", "/api/accounting/dashboard/overview")]
     public async Task Delegated_mode_allows_accounting_routes(string method, string path)
     {
         var (statusCode, nextCalled) = await InvokeAsync(method, path, "delegated");

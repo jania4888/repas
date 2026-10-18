@@ -517,6 +517,13 @@ public sealed class AccountingSettings
     public decimal ExchangeRateOverrideTolerancePercent { get; set; } = 5m;
 
     /// <summary>
+    /// Durée de vie (secondes) du cache mémoire du tableau de bord comptable du dossier délégué
+    /// (<c>GET /api/accounting/dashboard/overview</c>), par tenant et par période. 0 désactive le cache.
+    /// Les balances âgées (situation clients/fournisseurs) ne sont jamais mises en cache.
+    /// </summary>
+    public int DashboardOverviewCacheSeconds { get; set; } = 30;
+
+    /// <summary>
     /// Numéros de compte SCE portés par la configuration, pour un contrôle de forme au démarrage.
     /// </summary>
     /// <remarks>

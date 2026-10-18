@@ -454,3 +454,32 @@ public sealed class CloseAnnualPeriodCommandValidator : AbstractValidator<CloseA
             .InclusiveBetween(2000, 2100).WithMessage("L'exercice doit être entre 2000 et 2100.");
     }
 }
+
+/// <summary>Bornes de la requête du tableau de bord comptable du dossier (plan §3.3).</summary>
+public sealed class GetAccountingOverviewQueryValidator
+    : AbstractValidator<FactuTrust.Application.Features.Accounting.Queries.GetAccountingOverviewQuery>
+{
+    public const string MonthRequiresFiscalYear = "L'exercice est obligatoire quand le mois est précisé.";
+    public const string InvalidComparison = "Comparaison invalide : attendu previous-month ou previous-year.";
+
+    public GetAccountingOverviewQueryValidator()
+    {
+        RuleFor(x => x.FiscalYear)
+            .InclusiveBetween(2000, 2100)
+            .When(x => x.FiscalYear.HasValue)
+            .WithMessage("L'exercice doit être compris entre 2000 et 2100.");
+
+        RuleFor(x => x.Month)
+            .InclusiveBetween(1, 12)
+            .When(x => x.Month.HasValue)
+            .WithMessage("Le mois doit être compris entre 1 et 12.");
+
+        RuleFor(x => x)
+            .Must(x => x.FiscalYear.HasValue || !x.Month.HasValue)
+            .WithMessage(MonthRequiresFiscalYear);
+
+        RuleFor(x => x.Comparison)
+            .IsInEnum()
+            .WithMessage(InvalidComparison);
+    }
+}
