@@ -137,10 +137,29 @@ public sealed class InstaFactInvoicePdfParserTests
         Assert.Equal(1200.000m, second.LineTotalHt);
     }
 
+    [Fact]
+    public void TryParse_CanonicalNifSpelling_ReadsSellerAndBuyerNifs()
+    {
+        // Les pièces récentes impriment le matricule tel que stocké (« 1525071P/B/M/000 »),
+        // sans séparateur après le numéro — le parseur doit lire les deux orthographes.
+        var doc = Parse("Facture_FAC-COM-2026-000004_CanonicalNif.pdf");
+
+        Assert.Equal("1525071P/B/M/000", doc.Seller?.Nif);
+        Assert.Equal("STE SANITAIRE PLUS", doc.Seller?.Name);
+        Assert.Equal("6655443D/A/M/000", doc.Buyer?.Nif);
+        Assert.Equal("Dossier Démo Compta", doc.Buyer?.Name);
+
+        Assert.Equal(200.000m, doc.TotalHt);
+        Assert.Equal(38.000m, doc.TotalVat);
+        Assert.Null(doc.FiscalStampAmount);
+        Assert.Equal(238.000m, doc.TotalTtc);
+    }
+
     [Theory]
     [InlineData("Facture_FAC-2026-000012.pdf")]
     [InlineData("Facture_FAC-2026-000014.pdf")]
     [InlineData("Facture_FAC-2026-000026.pdf")]
+    [InlineData("Facture_FAC-COM-2026-000004_CanonicalNif.pdf")]
     public void TryParse_EveryFixture_IsFullyReconciled(string fileName)
     {
         var doc = Parse(fileName);

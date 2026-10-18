@@ -35,11 +35,13 @@ public sealed class InstaFactInvoicePdfParser
         new(@"Échéance\s*:\s*(\d{2}/\d{2}/\d{4})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex StatusRx =
         new(@"Statut\s*:\s*([A-Za-zÀ-ÿ]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    // Le premier séparateur est optionnel : les pièces impriment la forme canonique stockée
+    // « 1478395Q/B/N/000 », tandis que d'anciennes pièces l'imprimaient « 1478395/Q/B/N/000 ».
     private static readonly Regex SellerNifRx =
-        new(@"\bMF\s*:\s*([0-9]{6,8}\s*/\s*[A-Za-z]\s*/\s*[A-Za-z]\s*/\s*[A-Za-z]\s*/\s*[0-9]{3})",
+        new(@"\bMF\s*:\s*([0-9]{6,8}\s*/?\s*[A-Za-z]\s*/\s*[A-Za-z]\s*/\s*[A-Za-z]\s*/\s*[0-9]{3})",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex BuyerNifRx =
-        new(@"N°\s*Fisc\.?\s*:\s*([0-9]{6,8}\s*/\s*[A-Za-z]\s*/\s*[A-Za-z]\s*/\s*[A-Za-z]\s*/\s*[0-9]{3})",
+        new(@"N°\s*Fisc\.?\s*:\s*([0-9]{6,8}\s*/?\s*[A-Za-z]\s*/\s*[A-Za-z]\s*/\s*[A-Za-z]\s*/\s*[0-9]{3})",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex EmailRx =
         new(@"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}", RegexOptions.Compiled);
