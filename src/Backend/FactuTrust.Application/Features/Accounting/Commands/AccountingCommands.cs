@@ -62,7 +62,7 @@ public sealed class CreateSubAccountCommandHandler : IRequestHandler<CreateSubAc
         }
 
         var fiscalIdDuplicate = await CheckFiscalIdDuplicateAsync(
-            (AccountType)r.AccountType, r.FiscalId, cancellationToken);
+            _chartOfAccounts, (AccountType)r.AccountType, r.FiscalId, cancellationToken);
         if (fiscalIdDuplicate.IsFailure)
             return Result.Failure<Guid>(fiscalIdDuplicate.Error);
 
@@ -91,7 +91,8 @@ public sealed class CreateSubAccountCommandHandler : IRequestHandler<CreateSubAc
         {
             // Deux créations concurrentes sur le même matricule fiscal : la vérification applicative
             // ci-dessus ne voit pas l'autre transaction en vol, l'index unique filtré tranche.
-            var duplicate = await CheckFiscalIdDuplicateAsync((AccountType)r.AccountType, r.FiscalId, cancellationToken);
+            var duplicate = await CheckFiscalIdDuplicateAsync(
+                _chartOfAccounts, (AccountType)r.AccountType, r.FiscalId, cancellationToken);
             return Result.Failure<Guid>(duplicate.IsFailure
                 ? duplicate.Error
                 : Error.Conflict("Ce matricule fiscal vient d'être attribué à un autre compte."));
@@ -132,14 +133,20 @@ public sealed class CreateSubAccountCommandHandler : IRequestHandler<CreateSubAc
         return Result.Success(entity.Id);
     }
 
-    private async Task<Result> CheckFiscalIdDuplicateAsync(
-        AccountType accountType, string? rawFiscalId, CancellationToken cancellationToken, Guid? excludeId = null)
+    /// <summary>
+    /// Échec <see cref="FiscalIdDuplicateError"/> si un AUTRE compte auxiliaire du même type porte déjà
+    /// ce matricule fiscal. Format invalide ou vide : succès — le contrôle de format relève de
+    /// <c>ChartOfAccount.Create</c>/<c>SetFiscalId</c>. Partagé avec <see cref="UpdateAccountLabelCommandHandler"/>.
+    /// </summary>
+    internal static async Task<Result> CheckFiscalIdDuplicateAsync(
+        IChartOfAccountRepository chartOfAccounts, AccountType accountType, string? rawFiscalId,
+        CancellationToken cancellationToken, Guid? excludeId = null)
     {
         if (string.IsNullOrWhiteSpace(rawFiscalId) || !NIF.TryCanonicalize(rawFiscalId, out var canonical))
-            return Result.Success(); // format invalide ou vide : laissé à ChartOfAccount.Create/SetFiscalId
+            return Result.Success();
 
         var normalized = ChartOfAccount.NormalizeFiscalId(canonical);
-        var existing = await _chartOfAccounts.FindAuxiliaryByFiscalIdAsync(accountType, normalized, cancellationToken);
+        var existing = await chartOfAccounts.FindAuxiliaryByFiscalIdAsync(accountType, normalized, cancellationToken);
         if (existing is null || existing.Id == excludeId)
             return Result.Success();
 
@@ -321,12 +328,20 @@ public sealed class UpdateAccountLabelCommandHandler : IRequestHandler<UpdateAcc
         if (request.UpdateFiscalId)
         {
             var candidate = string.IsNullOrWhiteSpace(request.FiscalId) ? null : request.FiscalId!.Trim();
-            fiscalIdChanged = !string.Equals(candidate, oldFiscalId, StringComparison.Ordinal);
+            // Comparaison sur la forme canonique : resoumettre le même matricule sous une autre
+            // graphie (minuscules, forme historique 1525071/P/B/M/000) est un no-op, pas un audit.
+            // Une valeur non canonisable est gardée telle quelle pour que SetFiscalId renvoie
+            // l'erreur de format.
+            string? candidateCanonical = candidate is null
+                ? null
+                : NIF.TryCanonicalize(candidate, out var canonical) ? canonical : candidate;
+            fiscalIdChanged = !string.Equals(candidateCanonical, oldFiscalId, StringComparison.Ordinal);
             if (fiscalIdChanged)
             {
                 if (!string.IsNullOrEmpty(candidate))
                 {
-                    var duplicate = await CheckFiscalIdDuplicateAsync(account, candidate, cancellationToken);
+                    var duplicate = await CreateSubAccountCommandHandler.CheckFiscalIdDuplicateAsync(
+                        _chartOfAccounts, account.AccountType, candidate, cancellationToken, account.Id);
                     if (duplicate.IsFailure)
                         return duplicate;
                 }
@@ -346,7 +361,8 @@ public sealed class UpdateAccountLabelCommandHandler : IRequestHandler<UpdateAcc
         }
         catch (DbUpdateException ex) when (ChartOfAccountUniqueViolations.IsFiscalIdUniqueViolation(ex))
         {
-            var duplicate = await CheckFiscalIdDuplicateAsync(account, account.FiscalId!, cancellationToken, excludeId: account.Id);
+            var duplicate = await CreateSubAccountCommandHandler.CheckFiscalIdDuplicateAsync(
+                _chartOfAccounts, account.AccountType, account.FiscalId!, cancellationToken, account.Id);
             return duplicate.IsFailure
                 ? duplicate
                 : Result.Failure(Error.Conflict("Ce matricule fiscal vient d'être attribué à un autre compte."));
@@ -378,20 +394,6 @@ public sealed class UpdateAccountLabelCommandHandler : IRequestHandler<UpdateAcc
         }
 
         return Result.Success();
-    }
-
-    private async Task<Result> CheckFiscalIdDuplicateAsync(
-        ChartOfAccount account, string rawFiscalId, CancellationToken cancellationToken, Guid? excludeId = null)
-    {
-        if (!NIF.TryCanonicalize(rawFiscalId, out var canonical))
-            return Result.Success(); // format invalide : laissé à ChartOfAccount.SetFiscalId
-
-        var normalized = ChartOfAccount.NormalizeFiscalId(canonical);
-        var existing = await _chartOfAccounts.FindAuxiliaryByFiscalIdAsync(account.AccountType, normalized, cancellationToken);
-        if (existing is null || existing.Id == (excludeId ?? account.Id))
-            return Result.Success();
-
-        return Result.Failure(CreateSubAccountCommandHandler.FiscalIdDuplicateError(existing));
     }
 }
 

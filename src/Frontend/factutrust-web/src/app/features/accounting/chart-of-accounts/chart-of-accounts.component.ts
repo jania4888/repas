@@ -20,12 +20,11 @@ import { ToastService } from '@core/services/toast.service';
 import {
   accountSupportsFiscalId,
   extractFiscalIdServerError,
-  fiscalIdDuplicateMessage,
-  fiscalIdFormatError,
-  findFiscalIdDuplicate,
+  fiscalIdFieldError,
   normalizeFiscalIdInput
 } from './chart-account-fiscal-id';
 import { ChartAccountEditDialogComponent } from './chart-account-edit-dialog.component';
+import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directive';
 import { NIF_MAX_INPUT_LENGTH, isValidNif } from '@shared/validation/validation-rules';
 
 /** SCE tunisien : classe 1–7, chiffres, segments optionnels après un point (ex. 428.3). */
@@ -81,7 +80,8 @@ export function isFxBankLeaf(accountNumber: string, parent: string | null): bool
     AccountingFilterBarComponent,
     AccountingStatusBannerComponent,
     AnalyzeWithAiButtonComponent,
-    ChartAccountEditDialogComponent
+    ChartAccountEditDialogComponent,
+    NifMaskPasteDirective
   ],
   providers: [ConfirmationService],
   template: `
@@ -320,9 +320,10 @@ export function isFxBankLeaf(accountNumber: string, parent: string | null): bool
                   [(ngModel)]="form.fiscalId"
                   (ngModelChange)="fiscalIdServerError.set(null)"
                   (blur)="form.fiscalId = normalizeFiscalIdInput(form.fiscalId)"
+                  appNifMaskPaste
                   [maxlength]="fiscalIdMaxInputLength"
                   placeholder="Ex. 1234567A/B/M/000" i18n-placeholder="@@accounting.chart-of-accounts.ex.1234567a.b.m.000.9d9247ba"
-                  autocomplete="off" />
+                  autocomplete="off" spellcheck="false" />
                 @if (fiscalIdError(); as fiscalIdErr) {
                   <p id="coa-fiscal-id-error" class="coa-create-error" role="alert">{{ fiscalIdErr }}</p>
                 } @else {
@@ -667,14 +668,7 @@ export class ChartOfAccountsComponent implements OnInit {
   /** `null` si le champ est masqué ou valide ; sinon erreur serveur > format > doublon local. */
   fiscalIdError(): string | null {
     if (!this.showFiscalIdField()) return null;
-    const serverError = this.fiscalIdServerError();
-    if (serverError) return serverError;
-    const formatError = fiscalIdFormatError(this.form.fiscalId);
-    if (formatError) return formatError;
-    const normalized = normalizeFiscalIdInput(this.form.fiscalId);
-    if (!normalized) return null;
-    const duplicate = findFiscalIdDuplicate(this.rows(), this.form.accountType, normalized);
-    return duplicate ? fiscalIdDuplicateMessage(duplicate) : null;
+    return fiscalIdFieldError(this.fiscalIdServerError(), this.form.fiscalId, this.rows(), this.form.accountType);
   }
 
   normalizeFiscalIdInput(raw: string): string {
@@ -730,8 +724,10 @@ export class ChartOfAccountsComponent implements OnInit {
     }
     if (!this.showFiscalIdField()) {
       this.form.fiscalId = '';
-      this.fiscalIdServerError.set(null);
     }
+    // Une erreur serveur (ex. doublon) est propre au type choisi : elle ne survit pas au
+    // changement Client ↔ Fournisseur.
+    this.fiscalIdServerError.set(null);
   }
 
   /** Bascule Auxiliaire/Général depuis le sélecteur de hiérarchie — n'envoie jamais un matricule fiscal masqué. */
@@ -936,8 +932,17 @@ export class ChartOfAccountsComponent implements OnInit {
   }
 
   onEdited(): void {
+    const account = this.editing();
     this.closeEdit();
     this.load();
+    if (account) {
+      this.toast.add({
+        severity: 'success',
+        summary: $localize`:@@accounting.chart-of-accounts.ts.compte.modifie.b173f6a0:Compte modifié`,
+        detail: `${account.accountNumber} — ${account.label}`,
+        life: 4000
+      });
+    }
   }
 
   closeEdit(): void {

@@ -29,10 +29,13 @@ public interface IChartOfAccountRepository
         AccountType accountType, string accountPrefix, int maxRows, CancellationToken cancellationToken = default);
 }
 
-/// <summary>Projection légère d'un compte auxiliaire candidat au rapprochement par nom.</summary>
+/// <summary>Projection légère d'un compte auxiliaire candidat au rapprochement à l'import.</summary>
 public sealed record AuxiliaryAccountCandidate(
     Guid Id,
     string AccountNumber,
     string Label,
-    string? FiscalId,
-    string? FiscalIdNormalized);
+    string? FiscalIdNormalized,
+    /// <summary>Compte collectif de rattachement déclaré sur le compte (ex. 401), s'il existe.</summary>
+    string? AffectationAccountNumber,
+    /// <summary>Compte parent dans la hiérarchie, repli du compte d'affectation.</summary>
+    string? ParentAccountNumber);

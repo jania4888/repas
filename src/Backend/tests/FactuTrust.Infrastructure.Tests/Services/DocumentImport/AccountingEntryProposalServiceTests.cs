@@ -50,7 +50,8 @@ public sealed class AccountingEntryProposalServiceTests
     }
 
     private static AuxiliaryAccountCandidate Candidate(ChartOfAccount account) =>
-        new(account.Id, account.AccountNumber, account.Label, account.FiscalId, account.FiscalIdNormalized);
+        new(account.Id, account.AccountNumber, account.Label, account.FiscalIdNormalized,
+            account.AffectationAccountNumber, account.ParentAccountNumber);
 
     private static Harness BuildHarness(
         string? companyNif = OurNif,
@@ -551,6 +552,53 @@ public sealed class AccountingEntryProposalServiceTests
         Assert.Contains("41105", diagnostic.Message);
         // Le MF de la pièce ne doit jamais être recopié dans un message destiné à l'utilisateur.
         Assert.DoesNotContain("9545555", diagnostic.Message);
+    }
+
+    [Fact]
+    public async Task ProposeAsync_AuxiliaryMatchByFiscalId_ExposesItsAffectationAsCollectiveAccount()
+    {
+        // Contrat §4.3 : avec un compte rapproché, le collectif affiché est son compte
+        // d'affectation (sinon son parent, sinon le collectif par défaut).
+        var auxiliary = ChartOfAccount.Create(
+            "41105", "STE SLIMEN SARL", 4, null, AccountNatureType.Debit,
+            accountType: AccountType.Client, isAuxiliary: true,
+            affectationAccountNumber: "411", fiscalId: "9545555/E/E/E/525").Value;
+        var harness = BuildHarness(auxiliaryAccountByFiscalId: auxiliary);
+
+        var proposal = await ProposeAsync(harness, SampleInvoice());
+
+        Assert.Equal("41105", proposal.ThirdParty?.MatchedAccountNumber);
+        Assert.Equal("411", proposal.ThirdParty?.CollectiveAccountNumber);
+    }
+
+    [Fact]
+    public async Task ProposeAsync_AuxiliaryMatchByName_ExposesItsParentAsCollectiveAccount()
+    {
+        var document = SampleInvoice() with { Buyer = new ExtractedPartyDto { Name = "Ste Slimen", Nif = null } };
+        var auxiliary = ChartOfAccount.Create(
+            "41105", "Ste Slimen", 4, "411", AccountNatureType.Debit,
+            accountType: AccountType.Client, isAuxiliary: true).Value;
+        var harness = BuildHarness(auxiliaryAccountCandidates: [Candidate(auxiliary)]);
+
+        var proposal = await ProposeAsync(harness, document);
+
+        Assert.Equal("41105", proposal.ThirdParty?.MatchedAccountNumber);
+        Assert.Equal("411", proposal.ThirdParty?.CollectiveAccountNumber);
+    }
+
+    [Fact]
+    public async Task ProposeAsync_AuxiliaryMatchByFiscalId_OutsideTheThirdPartyPrefix_IsIgnored()
+    {
+        // Défense en profondeur : un compte fournisseur (40… ou autre) remonté pour une vente
+        // (préfixe 41 attendu) n'est jamais proposé, même si les données le permettaient.
+        var supplierAccount = AuxiliaryAccount(
+            "40114", "STE SLIMEN SARL", AccountType.Supplier, fiscalId: "9545555/E/E/E/525");
+        var harness = BuildHarness(auxiliaryAccountByFiscalId: supplierAccount);
+
+        var proposal = await ProposeAsync(harness, SampleInvoice());
+
+        Assert.Null(proposal.ThirdParty?.MatchedAccountNumber);
+        Assert.Contains(proposal.Diagnostics, d => d.Code == ProposalDiagnosticCodes.ThirdPartyNotMatched);
     }
 
     // ========================================================================

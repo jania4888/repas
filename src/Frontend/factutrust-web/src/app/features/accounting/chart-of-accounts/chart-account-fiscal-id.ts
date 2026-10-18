@@ -62,6 +62,27 @@ export function fiscalIdDuplicateMessage(account: Pick<ChartOfAccountDto, 'accou
   return $localize`:@@accounting.chart-of-accounts.ce.matricule.fiscal.est.deja.utilise.par.le:Ce matricule fiscal est déjà utilisé par le compte ${account.accountNumber}:accountNumber: — ${account.label}:label:.`;
 }
 
+/**
+ * Erreur à afficher sous le champ matricule fiscal, par priorité : erreur serveur > format >
+ * doublon local. `null` si la saisie est vide (champ facultatif) ou sans problème.
+ * Chaîne unique partagée par le dialogue de création et celui d'édition.
+ */
+export function fiscalIdFieldError(
+  serverError: string | null,
+  raw: string | null | undefined,
+  rows: readonly ChartOfAccountDto[],
+  accountType: number | null | undefined,
+  excludeId?: string | null
+): string | null {
+  if (serverError) return serverError;
+  const formatError = fiscalIdFormatError(raw);
+  if (formatError) return formatError;
+  const normalized = canonicalizeNif(raw);
+  if (!normalized) return null;
+  const duplicate = findFiscalIdDuplicate(rows, accountType, normalized, excludeId);
+  return duplicate ? fiscalIdDuplicateMessage(duplicate) : null;
+}
+
 /** Codes d'erreur métier §4.2 du contrat matricule fiscal. */
 const FISCAL_ID_DUPLICATE_CODE = 'ChartAccount.FiscalIdDuplicate';
 const FISCAL_ID_VALIDATION_CODE = 'Validation.FiscalId';

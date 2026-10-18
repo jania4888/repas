@@ -199,4 +199,85 @@ public sealed class UpdateAccountLabelCommandHandlerTests
 
         Assert.True(result.IsFailure);
     }
+
+    [Fact]
+    public async Task Handle_LabelOnlyChange_OnAnAccountWithAFiscalId_KeepsTheFiscalId()
+    {
+        // Rétrocompatibilité : un client qui n'envoie que le libellé (updateFiscalId absent) ne
+        // doit jamais effacer le matricule fiscal existant.
+        var account = AuxiliaryClientAccount(fiscalId: "1525071P/B/M/000");
+        var (handler, repo, audit, _) = Build(account);
+
+        var result = await handler.Handle(
+            new UpdateAccountLabelCommand(account.Id, "Nouveau libellé"), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal("1525071P/B/M/000", account.FiscalId);
+        Assert.Equal("1525071PBM000", account.FiscalIdNormalized);
+        repo.Verify(r => r.UpdateAsync(It.IsAny<ChartOfAccount>(), It.IsAny<CancellationToken>()), Times.Once);
+        audit.Verify(a => a.LogAsync(
+            AuditActions.Accounting.AccountFiscalIdUpdated,
+            It.IsAny<string>(), It.IsAny<Guid?>(), It.IsAny<object?>(), It.IsAny<object?>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_SameFiscalIdInAnotherSpelling_IsANoOp()
+    {
+        // Forme historique 1525071/P/B/M/000 = même matricule canonique : ni écriture ni audit.
+        var account = AuxiliaryClientAccount(fiscalId: "1525071P/B/M/000");
+        var (handler, repo, audit, _) = Build(account);
+
+        var result = await handler.Handle(
+            new UpdateAccountLabelCommand(account.Id, account.Label, UpdateFiscalId: true, FiscalId: "1525071/P/B/M/000"),
+            CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        repo.Verify(r => r.UpdateAsync(It.IsAny<ChartOfAccount>(), It.IsAny<CancellationToken>()), Times.Never);
+        audit.Verify(a => a.LogAsync(
+            It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid?>(),
+            It.IsAny<object?>(), It.IsAny<object?>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_UniqueIndexRaceOnUpdate_ReturnsTheDuplicateError()
+    {
+        // Deux éditions concurrentes passent toutes deux le contrôle applicatif ; SQL Server
+        // rejette la seconde (2601/2627 sur l'index filtré) et le re-contrôle voit la ligne gagnante.
+        var account = AuxiliaryClientAccount();
+        var winner = AuxiliaryClientAccount("41110", fiscalId: "1525071P/B/M/000");
+        var (handler, repo, _, _) = Build(account);
+        var sqlException = FactuTrust.Infrastructure.Tests.Common.SqlExceptionTestFactory.Create(
+            2627, "Violation of UNIQUE KEY constraint 'IX_ChartOfAccounts_AccountType_FiscalIdNormalized'.");
+        repo.Setup(r => r.UpdateAsync(It.IsAny<ChartOfAccount>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new Microsoft.EntityFrameworkCore.DbUpdateException("save failed", sqlException));
+        repo.Setup(r => r.FindAuxiliaryByFiscalIdAsync(
+                It.IsAny<AccountType>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(winner);
+
+        var result = await handler.Handle(
+            new UpdateAccountLabelCommand(account.Id, account.Label, UpdateFiscalId: true, FiscalId: "1525071P/B/M/000"),
+            CancellationToken.None);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal("ChartAccount.FiscalIdDuplicate", result.Error.Code);
+        Assert.Contains("41110", result.Error.Description, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData(2601, "IX_ChartOfAccounts_AccountType_FiscalIdNormalized", true)]
+    [InlineData(2627, "ix_chartofaccounts_accounttype_fiscalidnormalized", true)]
+    [InlineData(2601, "IX_OtherIndex", false)]
+    [InlineData(547, "IX_ChartOfAccounts_AccountType_FiscalIdNormalized", false)]
+    public void IsFiscalIdUniqueViolation_DetectsOnlyTheFiscalIdIndex(int number, string indexName, bool expected)
+    {
+        var sqlException = FactuTrust.Infrastructure.Tests.Common.SqlExceptionTestFactory.Create(
+            number, $"Violation on {indexName}.");
+        var dbUpdate = new Microsoft.EntityFrameworkCore.DbUpdateException("save failed", sqlException);
+
+        Assert.Equal(expected, ChartOfAccountUniqueViolations.IsFiscalIdUniqueViolation(dbUpdate));
+
+        Assert.False(ChartOfAccountUniqueViolations.IsFiscalIdUniqueViolation(
+            new Microsoft.EntityFrameworkCore.DbUpdateException("save failed", new InvalidOperationException())));
+    }
 }

@@ -221,7 +221,7 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
         // individualise déjà le tiers sans dépendre d'une fiche Client/Fournisseur.
         if (nifNormalized.Length > 0)
         {
-            var account = await MatchAccountByNifAsync(accountType, nifNormalized, cancellationToken);
+            var account = await MatchAccountByNifAsync(accountType, accountPrefix, nifNormalized, cancellationToken);
             if (account is not null)
                 return await BuildAuxiliaryAccountMatchAsync(
                     baseDto, kind, account, nif, defaultAccount, diagnostics, cancellationToken);
@@ -258,7 +258,7 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
 
             var accountNameResult = ThirdPartyNameMatcher.Match(
                 name,
-                nifNormalized.Length > 0 ? nifNormalized : null,
+                nifNormalized,
                 candidates,
                 c => c.Label,
                 c => c.FiscalIdNormalized);
@@ -277,7 +277,8 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
                         MatchedAccountId = acc.Id,
                         MatchedAccountNumber = acc.AccountNumber,
                         MatchedAccountLabel = acc.Label,
-                        MatchedAccountBy = "name"
+                        MatchedAccountBy = "name",
+                        CollectiveAccountNumber = CollectiveOf(acc, defaultAccount)
                     };
                 case NameMatchOutcome.Ambiguous:
                     diagnostics.Add(new ProposalDiagnosticDto(
@@ -367,29 +368,33 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
             MatchedAccountId = account.Id,
             MatchedAccountNumber = account.AccountNumber,
             MatchedAccountLabel = account.Label,
-            MatchedAccountBy = "nif"
+            MatchedAccountBy = "nif",
+            CollectiveAccountNumber = CollectiveOf(account, defaultAccount)
         };
 
         var fiche = await MatchFicheByNifAsync(kind == ThirdPartyKind.Client, nif, cancellationToken);
         if (fiche is null)
             return matched;
 
-        var collective = await ResolveCollectiveAccountAsync(kind, fiche.Value.Id, defaultAccount, cancellationToken);
+        // La fiche du même matricule est rattachée (lettrage par tiers, FEC), mais le compte
+        // collectif affiché reste celui du compte auxiliaire (contrat §4.3) ; le collectif de la
+        // fiche ne sert qu'au diagnostic de conflit.
+        var ficheCollective = await ResolveCollectiveAccountAsync(kind, fiche.Value.Id, defaultAccount, cancellationToken);
         matched = matched with
         {
             MatchedId = fiche.Value.Id,
             MatchedName = fiche.Value.Name,
-            MatchedBy = "nif",
-            CollectiveAccountNumber = collective
+            MatchedBy = "nif"
         };
 
-        if (!string.Equals(collective, account.AccountNumber, StringComparison.Ordinal)
-            && !string.Equals(collective, defaultAccount, StringComparison.Ordinal))
+        if (!string.Equals(ficheCollective, account.AccountNumber, StringComparison.Ordinal)
+            && !string.Equals(ficheCollective, matched.CollectiveAccountNumber, StringComparison.Ordinal)
+            && !string.Equals(ficheCollective, defaultAccount, StringComparison.Ordinal))
         {
             diagnostics.Add(new ProposalDiagnosticDto(
                 ProposalSeverities.Warning,
                 ProposalDiagnosticCodes.ThirdPartyAccountConflict,
-                $"La fiche « {fiche.Value.Name} » pointe vers le compte {collective}, différent du compte "
+                $"La fiche « {fiche.Value.Name} » pointe vers le compte {ficheCollective}, différent du compte "
                 + $"auxiliaire {account.AccountNumber} rapproché par matricule fiscal. Le compte auxiliaire "
                 + "est retenu pour cette écriture."));
         }
@@ -397,18 +402,34 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
         return matched;
     }
 
+    /// <summary>
+    /// Compte collectif affiché pour un compte auxiliaire rapproché : son compte d'affectation,
+    /// sinon son compte parent, sinon le collectif par défaut (4111 / 4011).
+    /// </summary>
+    private static string CollectiveOf(AuxiliaryAccountCandidate account, string defaultAccount) =>
+        !string.IsNullOrWhiteSpace(account.AffectationAccountNumber)
+            ? account.AffectationAccountNumber.Trim()
+            : !string.IsNullOrWhiteSpace(account.ParentAccountNumber)
+                ? account.ParentAccountNumber.Trim()
+                : defaultAccount;
+
     private async Task<AuxiliaryAccountCandidate?> MatchAccountByNifAsync(
-        AccountType accountType, string fiscalIdNormalized, CancellationToken cancellationToken)
+        AccountType accountType, string accountPrefix, string fiscalIdNormalized, CancellationToken cancellationToken)
     {
         try
         {
             var account = await _chartOfAccounts.FindAuxiliaryByFiscalIdAsync(
                 accountType, fiscalIdNormalized, cancellationToken);
-            if (account is null || !account.IsActive)
+            // Défense en profondeur : un compte inactif ou hors du préfixe du tiers (41/40) n'est
+            // jamais proposé, même si un héritage de données l'y a placé.
+            if (account is null
+                || !account.IsActive
+                || !account.AccountNumber.StartsWith(accountPrefix, StringComparison.Ordinal))
                 return null;
 
             return new AuxiliaryAccountCandidate(
-                account.Id, account.AccountNumber, account.Label, account.FiscalId, account.FiscalIdNormalized);
+                account.Id, account.AccountNumber, account.Label, account.FiscalIdNormalized,
+                account.AffectationAccountNumber, account.ParentAccountNumber);
         }
         catch (Exception ex)
         {
@@ -433,13 +454,13 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
 
     /// <summary>
     /// Normalise le matricule fiscal extrait d'une pièce pour comparaison avec
-    /// <see cref="ChartOfAccount.FiscalIdNormalized"/> : forme canonique de <see cref="NIF"/> si possible,
-    /// sinon repli alphanumérique (comme <see cref="SameMatricule"/>), pour une saisie incomplète.
+    /// <see cref="ChartOfAccount.FiscalIdNormalized"/> : lettres et chiffres en majuscules — la même
+    /// règle que <see cref="ChartOfAccount.NormalizeFiscalId"/>, appliquée directement à la saisie
+    /// brute (canoniser d'abord ne changerait pas le résultat : la forme canonique ne diffère que
+    /// par la ponctuation, que la normalisation retire de toute façon).
     /// </summary>
     private static string NormalizeInvoiceNif(string? raw) =>
-        NIF.TryCanonicalize(raw, out var canonical)
-            ? ChartOfAccount.NormalizeFiscalId(canonical)
-            : InvoiceImportParsing.NormalizeNif(raw);
+        InvoiceImportParsing.NormalizeNif(raw);
 
     private async Task<ThirdPartyFicheMatch?> MatchFicheByNifAsync(
         bool isSale, string nif, CancellationToken cancellationToken)
@@ -478,7 +499,7 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
                 var byName = await _mediator.Send(new GetClientsQuery(Search: name, PageSize: 10), cancellationToken);
                 var result = ThirdPartyNameMatcher.Match(
                     name,
-                    nifNormalized.Length > 0 ? nifNormalized : null,
+                    nifNormalized,
                     byName.Items,
                     c => c.Name,
                     c => InvoiceImportParsing.NormalizeNif(c.Nif));
@@ -488,7 +509,7 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
             var byNameSupplier = await _mediator.Send(new GetSuppliersQuery(Search: name, PageSize: 10), cancellationToken);
             var supplierResult = ThirdPartyNameMatcher.Match(
                 name,
-                nifNormalized.Length > 0 ? nifNormalized : null,
+                nifNormalized,
                 byNameSupplier.Items,
                 s => s.Name,
                 s => InvoiceImportParsing.NormalizeNif(s.Nif));

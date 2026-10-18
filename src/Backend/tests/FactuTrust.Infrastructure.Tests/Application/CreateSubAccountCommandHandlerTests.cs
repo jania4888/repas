@@ -224,4 +224,30 @@ public sealed class CreateSubAccountCommandHandlerTests
             It.Is<object?>(v => v != null && v.ToString()!.Contains("1525071P/B/M/000")),
             It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    [Fact]
+    public async Task Handle_UniqueIndexRaceOnInsert_ReturnsTheDuplicateError()
+    {
+        // Deux créations simultanées passent toutes deux le contrôle applicatif ; SQL Server
+        // rejette la seconde (2627 sur l'index filtré) et le re-contrôle voit la ligne gagnante.
+        var winner = ChartOfAccount.Create(
+            "41110", "Ste Slimen (concurrent)", 4, null, AccountNatureType.Debit,
+            accountType: AccountType.Client, isAuxiliary: true, fiscalId: "1525071P/B/M/000").Value;
+        var (handler, repo, _, _) = Build(existing: null);
+        var sqlException = FactuTrust.Infrastructure.Tests.Common.SqlExceptionTestFactory.Create(
+            2627, "Violation of UNIQUE KEY constraint 'IX_ChartOfAccounts_AccountType_FiscalIdNormalized'.");
+        repo.Setup(r => r.AddAsync(It.IsAny<ChartOfAccount>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new Microsoft.EntityFrameworkCore.DbUpdateException("save failed", sqlException));
+        // Premier appel (pré-contrôle) : rien ; second appel (re-contrôle après la course) : le gagnant.
+        var calls = 0;
+        repo.Setup(r => r.FindAuxiliaryByFiscalIdAsync(
+                It.IsAny<AccountType>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(() => ++calls == 1 ? null : winner);
+
+        var result = await handler.Handle(AuxiliaryClientCommand("1525071P/B/M/000"), CancellationToken.None);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal("ChartAccount.FiscalIdDuplicate", result.Error.Code);
+        Assert.Contains("41110", result.Error.Description, StringComparison.Ordinal);
+    }
 }

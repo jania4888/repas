@@ -81,20 +81,34 @@ DECLARE @sql nvarchar(max);
 -- d'être ajoutée et étant entièrement NULL ci-dessus, aucun doublon n'est possible en pratique, mais
 -- on ne pose JAMAIS un index unique sans l'avoir vérifié — un tenant dans un état inattendu ne doit
 -- jamais voir sa migration échouer ni son démarrage bloqué par TenantMigrationGuard.
-IF EXISTS (
-    SELECT 1 FROM [dbo].[ChartOfAccounts]
-    WHERE [FiscalIdNormalized] IS NOT NULL AND [IsAuxiliary] = 1
-    GROUP BY [AccountType], [FiscalIdNormalized]
-    HAVING COUNT(*) > 1)
+-- Le contrôle de doublon passe LUI AUSSI par sp_executesql : il référence [FiscalIdNormalized],
+-- colonne ajoutée dans ce même lot — une référence statique (même dans une branche jamais exécutée)
+-- fait échouer la COMPILATION du lot avec l'erreur 207 « Invalid column name 'FiscalIdNormalized' »,
+-- avant même l'exécution des ALTER TABLE ci-dessus.
+IF OBJECT_ID(N'dbo.ChartOfAccounts', N'U') IS NOT NULL
+   AND NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_ChartOfAccounts_AccountType_FiscalIdNormalized' AND object_id = OBJECT_ID(N'[dbo].[ChartOfAccounts]'))
 BEGIN
-    PRINT 'AddChartOfAccountFiscalId_Tenant : des comptes auxiliaires partagent déjà un même matricule fiscal pour le même type, IX_ChartOfAccounts_AccountType_FiscalIdNormalized (UNIQUE) n''est PAS posé. Réparer les doublons puis rejouer la migration.';
-END
-ELSE IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_ChartOfAccounts_AccountType_FiscalIdNormalized' AND object_id = OBJECT_ID(N'[dbo].[ChartOfAccounts]'))
-BEGIN
-    SET @sql = N'CREATE UNIQUE NONCLUSTERED INDEX [IX_ChartOfAccounts_AccountType_FiscalIdNormalized]
-        ON [dbo].[ChartOfAccounts] ([AccountType], [FiscalIdNormalized])
-        WHERE [FiscalIdNormalized] IS NOT NULL AND [IsAuxiliary] = 1' + @withOnline + N';';
-    EXEC sys.sp_executesql @sql;
+    DECLARE @hasDuplicates int;
+    EXEC sys.sp_executesql
+        N'SELECT @hasDuplicatesOut = CASE WHEN EXISTS (
+            SELECT 1 FROM [dbo].[ChartOfAccounts]
+            WHERE [FiscalIdNormalized] IS NOT NULL AND [IsAuxiliary] = 1
+            GROUP BY [AccountType], [FiscalIdNormalized]
+            HAVING COUNT(*) > 1) THEN 1 ELSE 0 END',
+        N'@hasDuplicatesOut int OUTPUT',
+        @hasDuplicatesOut = @hasDuplicates OUTPUT;
+
+    IF @hasDuplicates = 1
+    BEGIN
+        PRINT 'AddChartOfAccountFiscalId_Tenant : des comptes auxiliaires partagent déjà un même matricule fiscal pour le même type, IX_ChartOfAccounts_AccountType_FiscalIdNormalized (UNIQUE) n''est PAS posé. Réparer les doublons puis rejouer la migration.';
+    END
+    ELSE
+    BEGIN
+        SET @sql = N'CREATE UNIQUE NONCLUSTERED INDEX [IX_ChartOfAccounts_AccountType_FiscalIdNormalized]
+            ON [dbo].[ChartOfAccounts] ([AccountType], [FiscalIdNormalized])
+            WHERE [FiscalIdNormalized] IS NOT NULL AND [IsAuxiliary] = 1' + @withOnline + N';';
+        EXEC sys.sp_executesql @sql;
+    END
 END;
 """);
         }

@@ -206,7 +206,7 @@ interface LinesBanner {
                     <dl class="adi-facts">
                       <div><dt i18n="@@accounting.manual-entry.nom.7ff20370">Nom</dt><dd>{{ tp.matchedName || tp.name || '—' }}</dd></div>
                       <div><dt i18n="@@accounting.manual-entry.matricule.fiscal.304096c4">Matricule fiscal</dt><dd>{{ tp.nif || '—' }}</dd></div>
-                      @if (tpAccountNumber(tp); as auxNumber) {
+                      @if (tp.matchedAccountNumber; as auxNumber) {
                         <div><dt i18n="@@accounting.manual-entry.compte.auxiliaire.f30d2385">Compte auxiliaire</dt><dd class="adi-aux"><code>{{ auxNumber }}</code> — {{ tp.matchedAccountLabel }}</dd></div>
                       }
                       <div><dt i18n="@@accounting.manual-entry.compte.collectif.f1c7e97c">Compte collectif</dt><dd><code>{{ tp.collectiveAccountNumber }}</code></dd></div>
@@ -763,11 +763,6 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
       return;
     }
     this.reanalyzeWithDirection(direction);
-  }
-
-  /** Numéro du compte auxiliaire rapproché pour l'affichage, sinon `null`. */
-  tpAccountNumber(tp: ProposedThirdParty): string | null {
-    return tp.matchedAccountNumber ?? null;
   }
 
   /** Source du rapprochement à afficher : celle du compte si trouvé, sinon celle de la fiche tiers. 'nif' | 'name' | null. */

@@ -116,7 +116,8 @@ public sealed class ChartOfAccountRepository : IChartOfAccountRepository
             .Where(c => c.IsActive && c.IsAuxiliary && c.AccountType == accountType && c.AccountNumber.StartsWith(accountPrefix))
             .OrderBy(c => c.AccountNumber)
             .Take(maxRows)
-            .Select(c => new AuxiliaryAccountCandidate(c.Id, c.AccountNumber, c.Label, c.FiscalId, c.FiscalIdNormalized))
+            .Select(c => new AuxiliaryAccountCandidate(
+                c.Id, c.AccountNumber, c.Label, c.FiscalIdNormalized, c.AffectationAccountNumber, c.ParentAccountNumber))
             .ToListAsync(cancellationToken);
     }
 

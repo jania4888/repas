@@ -11,17 +11,16 @@ import { AccountingService, ChartOfAccountDto } from '../services/accounting.ser
 import {
   accountSupportsFiscalId,
   extractFiscalIdServerError,
-  fiscalIdDuplicateMessage,
-  fiscalIdFormatError,
-  findFiscalIdDuplicate,
+  fiscalIdFieldError,
   normalizeFiscalIdInput
 } from './chart-account-fiscal-id';
 import { NIF_MAX_INPUT_LENGTH } from '@shared/validation/validation-rules';
+import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directive';
 
 @Component({
   selector: 'app-chart-account-edit-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NifMaskPasteDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="coa-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="coa-edit-title" (keydown.escape)="close()">
@@ -69,9 +68,10 @@ import { NIF_MAX_INPUT_LENGTH } from '@shared/validation/validation-rules';
                 [(ngModel)]="fiscalId"
                 (ngModelChange)="serverError.set(null)"
                 (blur)="fiscalId = normalizeFiscalIdInput(fiscalId)"
+                appNifMaskPaste
                 [maxlength]="fiscalIdMaxInputLength"
                 placeholder="Ex. 1234567A/B/M/000" i18n-placeholder="@@accounting.chart-of-accounts.ex.1234567a.b.m.000.9d9247ba"
-                autocomplete="off" />
+                autocomplete="off" spellcheck="false" />
               @if (fiscalIdError(); as err) {
                 <p id="coa-edit-fiscal-id-error" class="coa-create-error" role="alert">{{ err }}</p>
               } @else {
@@ -234,14 +234,8 @@ export class ChartAccountEditDialogComponent implements OnInit, AfterViewInit {
 
   fiscalIdError(): string | null {
     if (!this.showFiscalIdField()) return null;
-    const serverError = this.serverError();
-    if (serverError) return serverError;
-    const formatError = fiscalIdFormatError(this.fiscalId);
-    if (formatError) return formatError;
-    const normalized = normalizeFiscalIdInput(this.fiscalId);
-    if (!normalized) return null;
-    const duplicate = findFiscalIdDuplicate(this.rows(), this.account().accountType, normalized, this.account().id);
-    return duplicate ? fiscalIdDuplicateMessage(duplicate) : null;
+    return fiscalIdFieldError(
+      this.serverError(), this.fiscalId, this.rows(), this.account().accountType, this.account().id);
   }
 
   normalizeFiscalIdInput(raw: string): string {
