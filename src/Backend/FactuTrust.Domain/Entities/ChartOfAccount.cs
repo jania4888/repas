@@ -1,6 +1,7 @@
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Enums;
 using FactuTrust.Domain.Services.Accounting;
+using FactuTrust.Domain.ValueObjects;
 
 namespace FactuTrust.Domain.Entities;
 
@@ -26,7 +27,20 @@ public sealed class ChartOfAccount : Entity
     /// <summary>Compte d'affectation (compte collectif de rattachement) pour un compte auxiliaire.</summary>
     public string? AffectationAccountNumber { get; private set; }
 
+    /// <summary>Matricule fiscal (forme canonique affichée, ex. <c>1525071P/B/M/000</c>), limité aux comptes auxiliaires Client/Fournisseur.</summary>
+    public string? FiscalId { get; private set; }
+    /// <summary>Forme normalisée (lettres et chiffres, majuscules) du matricule, utilisée pour l'unicité et le rapprochement à l'import.</summary>
+    public string? FiscalIdNormalized { get; private set; }
+
     private ChartOfAccount() { }
+
+    /// <summary>
+    /// Lettres et chiffres seuls, en majuscules. Même règle pour la forme canonique et la forme
+    /// historique — utilisée par <see cref="SetFiscalId"/> et exposée publiquement pour que les
+    /// handlers applicatifs effectuent la même normalisation avant une recherche de doublon.
+    /// </summary>
+    public static string NormalizeFiscalId(string canonical) =>
+        new(canonical.Where(char.IsLetterOrDigit).Select(char.ToUpperInvariant).ToArray());
 
     public static Result<ChartOfAccount> Create(
         string accountNumber,
@@ -37,7 +51,8 @@ public sealed class ChartOfAccount : Entity
         bool isSystem = false,
         AccountType accountType = AccountType.General,
         bool isAuxiliary = false,
-        string? affectationAccountNumber = null)
+        string? affectationAccountNumber = null,
+        string? fiscalId = null)
     {
         accountNumber = accountNumber?.Trim() ?? string.Empty;
         if (string.IsNullOrEmpty(accountNumber))
@@ -65,7 +80,7 @@ public sealed class ChartOfAccount : Entity
         var level = accountNumber.Length;
         affectationAccountNumber = string.IsNullOrWhiteSpace(affectationAccountNumber) ? null : affectationAccountNumber.Trim();
 
-        return Result.Success(new ChartOfAccount
+        var account = new ChartOfAccount
         {
             AccountNumber = accountNumber,
             Label = label,
@@ -78,7 +93,17 @@ public sealed class ChartOfAccount : Entity
             AccountType = accountType,
             IsAuxiliary = isAuxiliary,
             AffectationAccountNumber = affectationAccountNumber
-        });
+        };
+
+        // Un MF fourni sur un compte qui ne le supporte pas est refusé, jamais ignoré en silence.
+        if (!string.IsNullOrWhiteSpace(fiscalId))
+        {
+            var setFiscalId = account.SetFiscalId(fiscalId);
+            if (setFiscalId.IsFailure)
+                return Result.Failure<ChartOfAccount>(setFiscalId.Error);
+        }
+
+        return Result.Success(account);
     }
 
     public Result UpdateLabel(string label)
@@ -99,5 +124,45 @@ public sealed class ChartOfAccount : Entity
     {
         if (!IsSystem)
             IsActive = !IsActive;
+    }
+
+    /// <summary>
+    /// Pose ou efface le matricule fiscal (D1, D3). Une valeur vide/espaces efface toujours les
+    /// deux colonnes, même sur un compte qui ne supporterait pas la saisie d'un MF (effacer reste
+    /// permis). Une valeur non vide n'est acceptée que sur un compte auxiliaire Client ou
+    /// Fournisseur, non système, avec le préfixe attendu (41 pour Client, 40 pour Fournisseur) —
+    /// même préfixes que ceux proposés par le formulaire, pour que le rapprochement à l'import
+    /// retrouve toujours le compte.
+    /// </summary>
+    public Result SetFiscalId(string? raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            FiscalId = null;
+            FiscalIdNormalized = null;
+            return Result.Success();
+        }
+
+        if (IsSystem)
+            return Result.Failure(Error.Validation("FiscalId", "Un compte système ne peut pas porter de matricule fiscal."));
+
+        if (!IsAuxiliary || AccountType is not (AccountType.Client or AccountType.Supplier))
+            return Result.Failure(Error.Validation(
+                "FiscalId", "Le matricule fiscal n'est saisissable que sur un compte auxiliaire Client ou Fournisseur."));
+
+        var expectedPrefix = AccountType == AccountType.Client ? "41" : "40";
+        if (!AccountNumber.StartsWith(expectedPrefix, StringComparison.Ordinal))
+            return Result.Failure(Error.Validation(
+                "FiscalId",
+                $"Le compte {AccountNumber} ne commence pas par « {expectedPrefix} » : le matricule fiscal ne "
+                + "pourrait pas être retrouvé à l'import."));
+
+        var nif = NIF.Create(raw);
+        if (nif.IsFailure)
+            return Result.Failure(Error.Validation("FiscalId", NIF.FormatError));
+
+        FiscalId = nif.Value.Value;
+        FiscalIdNormalized = NormalizeFiscalId(FiscalId);
+        return Result.Success();
     }
 }

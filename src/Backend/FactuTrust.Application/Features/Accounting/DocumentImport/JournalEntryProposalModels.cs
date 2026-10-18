@@ -50,6 +50,18 @@ public static class ProposalDiagnosticCodes
     public const string WithholdingIgnored = "WithholdingIgnored";
     public const string ExtractionWarning = "ExtractionWarning";
     public const string MissingIssueDate = "MissingIssueDate";
+
+    // Rapprochement tiers/compte auxiliaire par matricule fiscal (plan « Matricule fiscal sur les
+    // comptes auxiliaires et rattachement à l'import de facture », §4.3) : avertissements seulement,
+    // ne bloquent jamais l'application de la proposition. Volontairement absents du
+    // CLIENT_RECALC_DIAGNOSTIC_CODES front : un recalcul client ne doit pas effacer un texte serveur
+    // qui cite des numéros de compte déterminés côté serveur.
+    /// <summary>Compte auxiliaire ou fiche rattaché par similarité de nom (pas par matricule fiscal).</summary>
+    public const string ThirdPartyMatchedByName = "ThirdPartyMatchedByName";
+    /// <summary>Plusieurs comptes auxiliaires ou fiches correspondent au nom : aucun n'a été choisi.</summary>
+    public const string ThirdPartyAmbiguous = "ThirdPartyAmbiguous";
+    /// <summary>La fiche rapprochée pointe vers un autre compte collectif que l'auxiliaire retenu par MF.</summary>
+    public const string ThirdPartyAccountConflict = "ThirdPartyAccountConflict";
 }
 
 public sealed record ProposalDiagnosticDto(
@@ -74,6 +86,13 @@ public sealed record ProposedThirdPartyDto
 
     /// <summary>Compte collectif retenu (profil comptable du tiers, sinon défaut 4111/4011).</summary>
     public string CollectiveAccountNumber { get; init; } = "";
+
+    /// <summary>Compte auxiliaire rapproché (ex. "40114"), si un compte 401x/411x spécifique a été trouvé.</summary>
+    public Guid? MatchedAccountId { get; init; }
+    public string? MatchedAccountNumber { get; init; }
+    public string? MatchedAccountLabel { get; init; }
+    /// <summary>Comment le compte auxiliaire a été rapproché : "nif", "name" ou null.</summary>
+    public string? MatchedAccountBy { get; init; }
 
     // Données extraites de la pièce — servent à pré-remplir la création d'un tiers.
     public string? Name { get; init; }

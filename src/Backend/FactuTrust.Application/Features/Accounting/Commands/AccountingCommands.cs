@@ -15,6 +15,7 @@ using FactuTrust.Domain.Services.Accounting;
 using FactuTrust.Domain.ValueObjects;
 using AuditActions = FactuTrust.Domain.Entities.AuditActions;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -60,6 +61,11 @@ public sealed class CreateSubAccountCommandHandler : IRequestHandler<CreateSubAc
                 return Result.Failure<Guid>(identity.Error);
         }
 
+        var fiscalIdDuplicate = await CheckFiscalIdDuplicateAsync(
+            (AccountType)r.AccountType, r.FiscalId, cancellationToken);
+        if (fiscalIdDuplicate.IsFailure)
+            return Result.Failure<Guid>(fiscalIdDuplicate.Error);
+
         var nature = (AccountNatureType)r.NatureType;
         var create = ChartOfAccount.Create(
             accountNumber,
@@ -70,19 +76,32 @@ public sealed class CreateSubAccountCommandHandler : IRequestHandler<CreateSubAc
             isSystem: false,
             accountType: (AccountType)r.AccountType,
             isAuxiliary: r.IsAuxiliary,
-            affectationAccountNumber: r.AffectationAccountNumber);
+            affectationAccountNumber: r.AffectationAccountNumber,
+            fiscalId: r.FiscalId);
         if (create.IsFailure)
             return Result.Failure<Guid>(create.Error);
 
         var entity = create.Value;
         entity.SetAuditInfo(_currentUser.Email ?? "system", false);
-        await _chartOfAccounts.AddAsync(entity, cancellationToken);
+        try
+        {
+            await _chartOfAccounts.AddAsync(entity, cancellationToken);
+        }
+        catch (DbUpdateException ex) when (ChartOfAccountUniqueViolations.IsFiscalIdUniqueViolation(ex))
+        {
+            // Deux créations concurrentes sur le même matricule fiscal : la vérification applicative
+            // ci-dessus ne voit pas l'autre transaction en vol, l'index unique filtré tranche.
+            var duplicate = await CheckFiscalIdDuplicateAsync((AccountType)r.AccountType, r.FiscalId, cancellationToken);
+            return Result.Failure<Guid>(duplicate.IsFailure
+                ? duplicate.Error
+                : Error.Conflict("Ce matricule fiscal vient d'être attribué à un autre compte."));
+        }
 
         await _auditService.LogAsync(
             AuditActions.Accounting.SubAccountCreated,
             "ChartOfAccount",
             entity.Id,
-            newValues: new { r.AccountNumber, r.Label, r.AccountClass },
+            newValues: new { r.AccountNumber, r.Label, r.AccountClass, entity.FiscalId },
             cancellationToken: cancellationToken);
 
         if (BankGlAccountRules.IsProvisionableLeaf(entity.AccountNumber, entity.IsActive))
@@ -112,6 +131,24 @@ public sealed class CreateSubAccountCommandHandler : IRequestHandler<CreateSubAc
 
         return Result.Success(entity.Id);
     }
+
+    private async Task<Result> CheckFiscalIdDuplicateAsync(
+        AccountType accountType, string? rawFiscalId, CancellationToken cancellationToken, Guid? excludeId = null)
+    {
+        if (string.IsNullOrWhiteSpace(rawFiscalId) || !NIF.TryCanonicalize(rawFiscalId, out var canonical))
+            return Result.Success(); // format invalide ou vide : laissé à ChartOfAccount.Create/SetFiscalId
+
+        var normalized = ChartOfAccount.NormalizeFiscalId(canonical);
+        var existing = await _chartOfAccounts.FindAuxiliaryByFiscalIdAsync(accountType, normalized, cancellationToken);
+        if (existing is null || existing.Id == excludeId)
+            return Result.Success();
+
+        return Result.Failure(FiscalIdDuplicateError(existing));
+    }
+
+    internal static Error FiscalIdDuplicateError(ChartOfAccount existing) => new(
+        "ChartAccount.FiscalIdDuplicate",
+        $"Ce matricule fiscal est déjà utilisé par le compte {existing.AccountNumber} — {existing.Label}.");
 }
 
 public sealed record CreateManualJournalEntryCommand(CreateManualJournalEntryRequest Request) : IRequest<Result<Guid>>;
@@ -244,7 +281,8 @@ public sealed class CreateManualJournalEntryCommandHandler : IRequestHandler<Cre
     }
 }
 
-public sealed record UpdateAccountLabelCommand(Guid Id, string Label) : IRequest<Result>;
+public sealed record UpdateAccountLabelCommand(Guid Id, string Label, bool UpdateFiscalId = false, string? FiscalId = null)
+    : IRequest<Result>;
 
 public sealed class UpdateAccountLabelCommandHandler : IRequestHandler<UpdateAccountLabelCommand, Result>
 {
@@ -269,22 +307,91 @@ public sealed class UpdateAccountLabelCommandHandler : IRequestHandler<UpdateAcc
             return Result.Failure(Error.NotFound("ChartOfAccount", request.Id));
 
         var oldLabel = account.Label;
-        var result = account.UpdateLabel(request.Label);
-        if (result.IsFailure)
-            return result;
+        var newLabel = (request.Label ?? string.Empty).Trim();
+        var labelChanged = !string.Equals(newLabel, oldLabel, StringComparison.Ordinal);
+        if (labelChanged)
+        {
+            var labelResult = account.UpdateLabel(newLabel);
+            if (labelResult.IsFailure)
+                return labelResult;
+        }
 
-        await _chartOfAccounts.UpdateAsync(account, cancellationToken);
-        await _bankProjection.SyncLabelAsync(account.AccountNumber, oldLabel, request.Label, cancellationToken);
+        var oldFiscalId = account.FiscalId;
+        var fiscalIdChanged = false;
+        if (request.UpdateFiscalId)
+        {
+            var candidate = string.IsNullOrWhiteSpace(request.FiscalId) ? null : request.FiscalId!.Trim();
+            fiscalIdChanged = !string.Equals(candidate, oldFiscalId, StringComparison.Ordinal);
+            if (fiscalIdChanged)
+            {
+                if (!string.IsNullOrEmpty(candidate))
+                {
+                    var duplicate = await CheckFiscalIdDuplicateAsync(account, candidate, cancellationToken);
+                    if (duplicate.IsFailure)
+                        return duplicate;
+                }
 
-        await _auditService.LogAsync(
-            AuditActions.Accounting.AccountLabelUpdated,
-            "ChartOfAccount",
-            account.Id,
-            oldValues: new { Label = oldLabel },
-            newValues: new { account.AccountNumber, Label = request.Label },
-            cancellationToken: cancellationToken);
+                var setResult = account.SetFiscalId(candidate);
+                if (setResult.IsFailure)
+                    return setResult;
+            }
+        }
+
+        if (!labelChanged && !fiscalIdChanged)
+            return Result.Success();
+
+        try
+        {
+            await _chartOfAccounts.UpdateAsync(account, cancellationToken);
+        }
+        catch (DbUpdateException ex) when (ChartOfAccountUniqueViolations.IsFiscalIdUniqueViolation(ex))
+        {
+            var duplicate = await CheckFiscalIdDuplicateAsync(account, account.FiscalId!, cancellationToken, excludeId: account.Id);
+            return duplicate.IsFailure
+                ? duplicate
+                : Result.Failure(Error.Conflict("Ce matricule fiscal vient d'être attribué à un autre compte."));
+        }
+
+        if (labelChanged)
+            await _bankProjection.SyncLabelAsync(account.AccountNumber, oldLabel, newLabel, cancellationToken);
+
+        if (labelChanged)
+        {
+            await _auditService.LogAsync(
+                AuditActions.Accounting.AccountLabelUpdated,
+                "ChartOfAccount",
+                account.Id,
+                oldValues: new { Label = oldLabel },
+                newValues: new { account.AccountNumber, Label = newLabel },
+                cancellationToken: cancellationToken);
+        }
+
+        if (fiscalIdChanged)
+        {
+            await _auditService.LogAsync(
+                AuditActions.Accounting.AccountFiscalIdUpdated,
+                "ChartOfAccount",
+                account.Id,
+                oldValues: new { account.AccountNumber, FiscalId = oldFiscalId },
+                newValues: new { account.AccountNumber, FiscalId = account.FiscalId },
+                cancellationToken: cancellationToken);
+        }
 
         return Result.Success();
+    }
+
+    private async Task<Result> CheckFiscalIdDuplicateAsync(
+        ChartOfAccount account, string rawFiscalId, CancellationToken cancellationToken, Guid? excludeId = null)
+    {
+        if (!NIF.TryCanonicalize(rawFiscalId, out var canonical))
+            return Result.Success(); // format invalide : laissé à ChartOfAccount.SetFiscalId
+
+        var normalized = ChartOfAccount.NormalizeFiscalId(canonical);
+        var existing = await _chartOfAccounts.FindAuxiliaryByFiscalIdAsync(account.AccountType, normalized, cancellationToken);
+        if (existing is null || existing.Id == (excludeId ?? account.Id))
+            return Result.Success();
+
+        return Result.Failure(CreateSubAccountCommandHandler.FiscalIdDuplicateError(existing));
     }
 }
 

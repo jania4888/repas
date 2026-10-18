@@ -6,6 +6,7 @@ using FactuTrust.Application.Features.Accounting.Commands;
 using FactuTrust.Application.Features.Accounting.Lettering;
 using FactuTrust.Application.Features.Accounting.Queries;
 using FactuTrust.Domain.Services.Accounting;
+using FactuTrust.Domain.ValueObjects;
 using FluentValidation;
 using Microsoft.Extensions.Options;
 
@@ -39,6 +40,17 @@ public sealed class CreateSubAccountCommandValidator : AbstractValidator<CreateS
 
         RuleFor(x => x.Request.AccountType)
             .InclusiveBetween(0, 3).WithMessage("Le type de compte doit être entre 0 et 3.");
+
+        // Un MF fourni sur un compte qui ne le supporte pas doit être refusé ici (400, message
+        // ciblé) plutôt que de remonter en erreur métier générique depuis ChartOfAccount.Create.
+        RuleFor(x => x.Request.FiscalId)
+            .MaximumLength(NIF.MaxInputLength)
+                .WithMessage($"Le matricule fiscal ne peut pas dépasser {NIF.MaxInputLength} caractères.")
+            .Must(NIF.IsValid)
+                .WithMessage(NIF.FormatError)
+            .Must((command, _) => command.Request.IsAuxiliary && command.Request.AccountType is 1 or 2)
+                .WithMessage("Le matricule fiscal n'est saisissable que sur un compte auxiliaire Client ou Fournisseur.")
+            .When(x => !string.IsNullOrWhiteSpace(x.Request.FiscalId));
     }
 }
 
@@ -158,6 +170,15 @@ public sealed class UpdateAccountLabelCommandValidator : AbstractValidator<Updat
         RuleFor(x => x.Label)
             .NotEmpty().WithMessage("Le libellé est obligatoire.")
             .MaximumLength(200).WithMessage("Le libellé ne peut pas dépasser 200 caractères.");
+
+        // L'éligibilité (compte auxiliaire Client/Fournisseur, préfixe) est tranchée par
+        // ChartOfAccount.SetFiscalId : elle dépend de l'état existant du compte, pas de la requête.
+        RuleFor(x => x.FiscalId)
+            .MaximumLength(NIF.MaxInputLength)
+                .WithMessage($"Le matricule fiscal ne peut pas dépasser {NIF.MaxInputLength} caractères.")
+            .Must(NIF.IsValid)
+                .WithMessage(NIF.FormatError)
+            .When(x => x.UpdateFiscalId && !string.IsNullOrWhiteSpace(x.FiscalId));
     }
 }
 
