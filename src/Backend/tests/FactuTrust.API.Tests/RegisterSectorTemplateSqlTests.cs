@@ -97,7 +97,8 @@ public sealed class RegisterSectorTemplateSqlTests : IClassFixture<ChannelsDisab
             await db.SaveChangesAsync();
         }
 
-        var client = dbRulesFactory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+        var client = ChannelsDisabledWebApplicationFactory.WithClientTimeout(
+            dbRulesFactory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false }));
         var unique = Guid.NewGuid().ToString("N")[..12];
         var dto = BuildDto(unique);
 
@@ -145,7 +146,8 @@ public sealed class RegisterSectorTemplateSqlTests : IClassFixture<ChannelsDisab
             });
         });
 
-        var client = dbRulesFactory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+        var client = ChannelsDisabledWebApplicationFactory.WithClientTimeout(
+            dbRulesFactory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false }));
         var unique = Guid.NewGuid().ToString("N")[..12];
         var dto = BuildDto(unique);
 
