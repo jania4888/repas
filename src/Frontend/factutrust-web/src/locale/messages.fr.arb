@@ -225,6 +225,13 @@
     ],
     "x-wave": "v1"
   },
+  "core.desk.route.bureau": "Bureau - InstaFact",
+  "@core.desk.route.bureau": {
+    "x-files": [
+      "src/app/app.routes.ts"
+    ],
+    "x-wave": "v1"
+  },
   "app.routes.title.Assistance_InstaFact": "Assistance - InstaFact",
   "@app.routes.title.Assistance_InstaFact": {
     "x-files": [
@@ -311,6 +318,13 @@
   },
   "core.accounting-modules.ts.saisie.manuelle.da81002e": "Saisie manuelle",
   "@core.accounting-modules.ts.saisie.manuelle.da81002e": {
+    "x-files": [
+      "src/app/core/config/accounting-modules.config.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.accounting-modules.ts.releve.bancaire.ecritures.426df845": "Relevé bancaire → écritures",
+  "@core.accounting-modules.ts.releve.bancaire.ecritures.426df845": {
     "x-files": [
       "src/app/core/config/accounting-modules.config.ts"
     ],
@@ -1430,6 +1444,13 @@
     ],
     "x-wave": "v1"
   },
+  "core.app-navigation.registry.ts.releve.bancaire.ecritures.426df845": "Relevé bancaire → écritures",
+  "@core.app-navigation.registry.ts.releve.bancaire.ecritures.426df845": {
+    "x-files": [
+      "src/app/core/config/app-navigation.registry.ts"
+    ],
+    "x-wave": "v1"
+  },
   "core.app-navigation.registry.ts.ajouter.un.client.1b5b4358": "Ajouter un client",
   "@core.app-navigation.registry.ts.ajouter.un.client.1b5b4358": {
     "x-files": [
@@ -2281,6 +2302,174 @@
   "@core.brand.tagline.long": {
     "x-files": [
       "src/app/core/constants/brand.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "dataExport.dataset.clients": "Clients",
+  "@dataExport.dataset.clients": {
+    "x-files": [
+      "src/app/core/data-export/data-export.catalog.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "dataExport.dataset.products": "Produits",
+  "@dataExport.dataset.products": {
+    "x-files": [
+      "src/app/core/data-export/data-export.catalog.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "dataExport.dataset.suppliers": "Fournisseurs",
+  "@dataExport.dataset.suppliers": {
+    "x-files": [
+      "src/app/core/data-export/data-export.catalog.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "dataExport.dataset.invoices": "Factures",
+  "@dataExport.dataset.invoices": {
+    "x-files": [
+      "src/app/core/data-export/data-export.catalog.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "dataExport.dataset.creditNotes": "Avoirs",
+  "@dataExport.dataset.creditNotes": {
+    "x-files": [
+      "src/app/core/data-export/data-export.catalog.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "dataExport.dataset.supplierInvoices": "Factures fournisseurs",
+  "@dataExport.dataset.supplierInvoices": {
+    "x-files": [
+      "src/app/core/data-export/data-export.catalog.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "dataExport.dataset.quotes": "Devis",
+  "@dataExport.dataset.quotes": {
+    "x-files": [
+      "src/app/core/data-export/data-export.catalog.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "dataExport.dataset.deliveryNotes": "Bons de livraison",
+  "@dataExport.dataset.deliveryNotes": {
+    "x-files": [
+      "src/app/core/data-export/data-export.catalog.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "dataExport.dataset.purchaseOrders": "Bons de commande",
+  "@dataExport.dataset.purchaseOrders": {
+    "x-files": [
+      "src/app/core/data-export/data-export.catalog.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "dataExport.dataset.stockItems": "Stock",
+  "@dataExport.dataset.stockItems": {
+    "x-files": [
+      "src/app/core/data-export/data-export.catalog.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "dataExport.dataset.stockMovements": "Mouvements de stock",
+  "@dataExport.dataset.stockMovements": {
+    "x-files": [
+      "src/app/core/data-export/data-export.catalog.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.desk.empty.title": "Aucune fenêtre ouverte",
+  "@core.desk.empty.title": {
+    "x-files": [
+      "src/app/core/desk/desk-empty.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.desk.empty.body": "Ouvrez un écran depuis le menu, ou reprenez un raccourci.",
+  "@core.desk.empty.body": {
+    "x-files": [
+      "src/app/core/desk/desk-empty.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.desk.taskbar": "Fenêtres ouvertes",
+  "@core.desk.taskbar": {
+    "x-files": [
+      "src/app/core/desk/desk-shell.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.desk.close-window": "Fermer {$title}",
+  "@core.desk.close-window": {
+    "x-files": [
+      "src/app/core/desk/desk-shell.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.desk.minimize-window": "Réduire {$title}",
+  "@core.desk.minimize-window": {
+    "x-files": [
+      "src/app/core/desk/desk-shell.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.desk.activate-window": "Afficher {$title}",
+  "@core.desk.activate-window": {
+    "x-files": [
+      "src/app/core/desk/desk-shell.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.desk.overlay": "Fermez d'abord la fenêtre de dialogue.",
+  "@core.desk.overlay": {
+    "x-files": [
+      "src/app/core/desk/desk-window.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.desk.cap": "Huit fenêtres sont déjà ouvertes. Fermez-en une pour continuer.",
+  "@core.desk.cap": {
+    "x-files": [
+      "src/app/core/desk/desk-window.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.desk.titlebar": "Fenêtres",
+  "@core.desk.titlebar": {
+    "x-files": [
+      "src/app/core/desk/desk-window.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.desk.leave.header": "Quitter le dossier",
+  "@core.desk.leave.header": {
+    "x-files": [
+      "src/app/core/desk/desk-window.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.desk.leave.message": "Des modifications non enregistrées seront perdues : {$titles}",
+  "@core.desk.leave.message": {
+    "x-files": [
+      "src/app/core/desk/desk-window.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.desk.leave.accept": "Quitter quand même",
+  "@core.desk.leave.accept": {
+    "x-files": [
+      "src/app/core/desk/desk-window.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.desk.leave.reject": "Rester",
+  "@core.desk.leave.reject": {
+    "x-files": [
+      "src/app/core/desk/desk-window.service.ts"
     ],
     "x-wave": "v1"
   },
@@ -7434,6 +7623,13 @@
     ],
     "x-wave": "v1"
   },
+  "core.app-nav.ts.tableau.de.bord.a524057f": "Tableau de bord",
+  "@core.app-nav.ts.tableau.de.bord.a524057f": {
+    "x-files": [
+      "src/app/core/services/app-nav.service.ts"
+    ],
+    "x-wave": "v1"
+  },
   "core.app-nav.ts.dossier.companyname.f0a59ef1": "Dossier : {$companyName}",
   "@core.app-nav.ts.dossier.companyname.f0a59ef1": {
     "x-files": [
@@ -8239,6 +8435,22 @@
     ],
     "x-wave": "v1"
   },
+  "dataExport.error.generic": "L'export n'a pas pu être téléchargé.",
+  "@dataExport.error.generic": {
+    "x-files": [
+      "src/app/core/services/data-export.service.ts",
+      "src/app/features/settings/data-export/data-export.component.ts",
+      "src/app/shared/components/export-excel-button/export-excel-button.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "dataExport.error.rateLimit": "Trop d'exports. Réessayez dans une minute.",
+  "@dataExport.error.rateLimit": {
+    "x-files": [
+      "src/app/core/services/data-export.service.ts"
+    ],
+    "x-wave": "v1"
+  },
   "core.error-handler.ts.mise.a.jour.de.la.base.de.donnees.en.cou.70713096": "Mise à jour de la base de données en cours ou bloquée. Réessayez dans quelques instants ou contactez l'administrateur si le problème persiste.",
   "@core.error-handler.ts.mise.a.jour.de.la.base.de.donnees.en.cou.70713096": {
     "x-files": [
@@ -8775,6 +8987,505 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.accounting-dashboard.tableau.de.bord.a524057f": "Tableau de bord",
+  "@accounting.accounting-dashboard.tableau.de.bord.a524057f": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.periode.de2110b7": "Période",
+  "@accounting.accounting-dashboard.periode.de2110b7": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.comparaison.17198bad": "Comparaison",
+  "@accounting.accounting-dashboard.comparaison.17198bad": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.exporter.0cd84bdc": " Exporter ",
+  "@accounting.accounting-dashboard.exporter.0cd84bdc": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.reessayer.895d416b": "Réessayer",
+  "@accounting.accounting-dashboard.reessayer.895d416b": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.aucune.ecriture.validee.pour.cette.periode.ec169c95": "Aucune écriture validée pour cette période",
+  "@accounting.accounting-dashboard.aucune.ecriture.validee.pour.cette.periode.ec169c95": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.changer.de.periode.dcd7fc1e": "Changer de période",
+  "@accounting.accounting-dashboard.changer.de.periode.dcd7fc1e": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.ouvrir.le.journal.6b6599fb": "Ouvrir le journal",
+  "@accounting.accounting-dashboard.ouvrir.le.journal.6b6599fb": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.indicateurs.cles.ad2f0ef9": " Indicateurs clés ",
+  "@accounting.accounting-dashboard.indicateurs.cles.ad2f0ef9": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.produits.48000473": "Produits",
+  "@accounting.accounting-dashboard.produits.48000473": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.charges.cfc370a2": "Charges",
+  "@accounting.accounting-dashboard.charges.cfc370a2": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.resultat.net.1bbe6f47": "Résultat net",
+  "@accounting.accounting-dashboard.resultat.net.1bbe6f47": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.tresorerie.disponible.0e0af55d": "Trésorerie disponible",
+  "@accounting.accounting-dashboard.tresorerie.disponible.0e0af55d": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.graphiques.a5050c7d": " Graphiques ",
+  "@accounting.accounting-dashboard.graphiques.a5050c7d": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.evolution.du.chiffre.d.affaires.598d1e2d": "Évolution du chiffre d'affaires",
+  "@accounting.accounting-dashboard.evolution.du.chiffre.d.affaires.598d1e2d": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.graphique.en.barres.chiffre.d.affaires.a.7ac5766d": "Graphique en barres : chiffre d'affaires mensuel, année en cours comparée à l'année précédente",
+  "@accounting.accounting-dashboard.graphique.en.barres.chiffre.d.affaires.a.7ac5766d": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.annee.1f910d98": "Année",
+  "@accounting.accounting-dashboard.annee.1f910d98": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.resultat.net.mensuel.30b73fb3": "Résultat net mensuel",
+  "@accounting.accounting-dashboard.resultat.net.mensuel.30b73fb3": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.graphique.en.courbe.resultat.net.mensuel.de.l.an.c9238248": "Graphique en courbe : résultat net mensuel de l'année en cours",
+  "@accounting.accounting-dashboard.graphique.en.courbe.resultat.net.mensuel.de.l.an.c9238248": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.indicateur.cbb35166": "Indicateur",
+  "@accounting.accounting-dashboard.indicateur.cbb35166": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.repartition.des.charges.f58e908a": "Répartition des charges",
+  "@accounting.accounting-dashboard.repartition.des.charges.f58e908a": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.graphique.en.anneau.repartition.des.charges.du.m.f2a9714c": "Graphique en anneau : répartition des charges du mois sélectionné",
+  "@accounting.accounting-dashboard.graphique.en.anneau.repartition.des.charges.du.m.f2a9714c": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.categorie.6b38300a": "Catégorie",
+  "@accounting.accounting-dashboard.categorie.6b38300a": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.montant.4adcd9fc": "Montant",
+  "@accounting.accounting-dashboard.montant.4adcd9fc": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.suivi.des.comptes.principaux.149c0fd2": " Suivi des comptes principaux ",
+  "@accounting.accounting-dashboard.suivi.des.comptes.principaux.149c0fd2": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.voir.la.balance.complete.cb493d84": "Voir la balance complète",
+  "@accounting.accounting-dashboard.voir.la.balance.complete.cb493d84": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.compte.c45740bb": "Compte",
+  "@accounting.accounting-dashboard.compte.c45740bb": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.intitule.9f19d904": "Intitulé",
+  "@accounting.accounting-dashboard.intitule.9f19d904": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.solde.e5977cf9": "Solde",
+  "@accounting.accounting-dashboard.solde.e5977cf9": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.variation.15920a45": "Variation",
+  "@accounting.accounting-dashboard.variation.15920a45": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.situation.clients.411.dcfa8588": "Situation clients (411)",
+  "@accounting.accounting-dashboard.situation.clients.411.dcfa8588": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.voir.toute.la.situation.clients.0f5e023f": "Voir toute la situation clients",
+  "@accounting.accounting-dashboard.voir.toute.la.situation.clients.0f5e023f": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.voir.tout.7b7d86e8": "Voir tout",
+  "@accounting.accounting-dashboard.voir.tout.7b7d86e8": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.statut.659499f3": "Statut",
+  "@accounting.accounting-dashboard.statut.659499f3": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.view-model.ts.a.echeance.ea798677": "À échéance",
+  "@accounting.accounting-dashboard.view-model.ts.a.echeance.ea798677": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html",
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.view-model.ts.echus.c8e22b3b": "Échus",
+  "@accounting.accounting-dashboard.view-model.ts.echus.c8e22b3b": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html",
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.total.b25928c6": "Total",
+  "@accounting.accounting-dashboard.total.b25928c6": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.graphique.en.anneau.situation.clients.montants.a.69a31b76": "Graphique en anneau : situation clients, montants à échéance et échus",
+  "@accounting.accounting-dashboard.graphique.en.anneau.situation.clients.montants.a.69a31b76": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.au.situation.asof.appdate.0ac5d3f0": "au {$INTERPOLATION}",
+  "@accounting.accounting-dashboard.au.situation.asof.appdate.0ac5d3f0": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.donnees.indisponibles.5679cb86": "Données indisponibles",
+  "@accounting.accounting-dashboard.donnees.indisponibles.5679cb86": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.situation.fournisseurs.401.6bbd22e3": "Situation fournisseurs (401)",
+  "@accounting.accounting-dashboard.situation.fournisseurs.401.6bbd22e3": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.voir.toute.la.situation.fournisseurs.24b03912": "Voir toute la situation fournisseurs",
+  "@accounting.accounting-dashboard.voir.toute.la.situation.fournisseurs.24b03912": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.graphique.en.anneau.situation.fournisseurs.monta.6b7e80a5": "Graphique en anneau : situation fournisseurs, montants à échéance et échus",
+  "@accounting.accounting-dashboard.graphique.en.anneau.situation.fournisseurs.monta.6b7e80a5": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.ecritures.echeances.et.documents.862fdd67": " Écritures, échéances et documents ",
+  "@accounting.accounting-dashboard.ecritures.echeances.et.documents.862fdd67": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.dernieres.ecritures.comptables.c9aaffdd": "Dernières écritures comptables",
+  "@accounting.accounting-dashboard.dernieres.ecritures.comptables.c9aaffdd": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.voir.toutes.les.ecritures.62690274": "Voir toutes les écritures",
+  "@accounting.accounting-dashboard.voir.toutes.les.ecritures.62690274": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.date.eb9a4bc1": "Date",
+  "@accounting.accounting-dashboard.date.eb9a4bc1": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.journal.57d7f743": "Journal",
+  "@accounting.accounting-dashboard.journal.57d7f743": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.n.piece.a5108f6f": "N° pièce",
+  "@accounting.accounting-dashboard.n.piece.a5108f6f": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.libelle.f5485bba": "Libellé",
+  "@accounting.accounting-dashboard.libelle.f5485bba": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.debit.f528224f": "Débit",
+  "@accounting.accounting-dashboard.debit.f528224f": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.credit.19194bdf": "Crédit",
+  "@accounting.accounting-dashboard.credit.19194bdf": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.echeances.fiscales.et.sociales.15096bfd": "Échéances fiscales et sociales",
+  "@accounting.accounting-dashboard.echeances.fiscales.et.sociales.15096bfd": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.voir.le.calendrier.a7b29a65": "Voir le calendrier",
+  "@accounting.accounting-dashboard.voir.le.calendrier.a7b29a65": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.documents.recents.e68a6780": "Documents récents",
+  "@accounting.accounting-dashboard.documents.recents.e68a6780": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.voir.tous.les.documents.c6ba5b47": "Voir tous les documents",
+  "@accounting.accounting-dashboard.voir.tous.les.documents.c6ba5b47": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.echeancier.7930f4ee": "Échéancier",
+  "@accounting.accounting-dashboard.echeancier.7930f4ee": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.ecriture.d5d8c87d": "Écriture",
+  "@accounting.accounting-dashboard.ecriture.d5d8c87d": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.dossier.8ed65788": "Dossier",
+  "@accounting.accounting-dashboard.dossier.8ed65788": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.comparaison.59745d30": "Comparaison :",
+  "@accounting.accounting-dashboard.comparaison.59745d30": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.genere.le.generatedat.appdate.medium.e239f0c6": " Généré le {$INTERPOLATION} ",
+  "@accounting.accounting-dashboard.genere.le.generatedat.appdate.medium.e239f0c6": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.html"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.ts.vue.d.ensemble.de.la.situation.comptable.7cbd45f1": "Vue d'ensemble de la situation comptable et financière de {$companyName}",
+  "@accounting.accounting-dashboard.ts.vue.d.ensemble.de.la.situation.comptable.7cbd45f1": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.ts.erreur.de.chargement.du.tableau.de.bord.1a7e5770": "Erreur de chargement du tableau de bord",
+  "@accounting.accounting-dashboard.ts.erreur.de.chargement.du.tableau.de.bord.1a7e5770": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.ts.erreur.reseau.0683007f": "Erreur réseau",
+  "@accounting.accounting-dashboard.ts.erreur.reseau.0683007f": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.ts.tpl.ouvrir.l.ecriture.adbe8318": "Ouvrir l'écriture {$journalCode} n° {$entryNumber} — {$label}",
+  "@accounting.accounting-dashboard.ts.tpl.ouvrir.l.ecriture.adbe8318": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.ts.tpl.telecharger.filename.fff6dacd": "Télécharger {$fileName}",
+  "@accounting.accounting-dashboard.ts.tpl.telecharger.filename.fff6dacd": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.view-model.ts.vs.mois.precedent.710c5821": "vs Mois précédent",
+  "@accounting.accounting-dashboard.view-model.ts.vs.mois.precedent.710c5821": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.view-model.ts.vs.n.1.b18e6842": "vs N-1",
+  "@accounting.accounting-dashboard.view-model.ts.vs.n.1.b18e6842": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.view-model.ts.resultat.net.1bbe6f47": "Résultat net",
+  "@accounting.accounting-dashboard.view-model.ts.resultat.net.1bbe6f47": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.view-model.ts.charges.cfc370a2": "Charges",
+  "@accounting.accounting-dashboard.view-model.ts.charges.cfc370a2": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-dashboard.view-model.ts.situation.30f6fed8": "Situation",
+  "@accounting.accounting-dashboard.view-model.ts.situation.30f6fed8": {
+    "x-files": [
+      "src/app/features/accounting/accounting-dashboard/accounting-dashboard.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.accounting-financial-statements.ts.etats.comptables.00e46d74": "États comptables",
   "@accounting.accounting-financial-statements.ts.etats.comptables.00e46d74": {
     "x-files": [
@@ -8812,6 +9523,13 @@
   },
   "accounting.routes.title.Comptabilit_InstaFact": "Comptabilité - InstaFact",
   "@accounting.routes.title.Comptabilit_InstaFact": {
+    "x-files": [
+      "src/app/features/accounting/accounting.routes.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.routes.title.Tableau_de_bord_InstaFact": "Tableau de bord - InstaFact",
+  "@accounting.routes.title.Tableau_de_bord_InstaFact": {
     "x-files": [
       "src/app/features/accounting/accounting.routes.ts"
     ],
@@ -9113,6 +9831,13 @@
   },
   "accounting.routes.title.Releve_bancaire_comptab": "Relevé bancaire - InstaFact",
   "@accounting.routes.title.Releve_bancaire_comptab": {
+    "x-files": [
+      "src/app/features/accounting/accounting.routes.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.routes.title.Releve_bancaire_ecritures": "Relevé bancaire → écritures - InstaFact",
+  "@accounting.routes.title.Releve_bancaire_ecritures": {
     "x-files": [
       "src/app/features/accounting/accounting.routes.ts"
     ],
@@ -12280,6 +13005,1476 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-entries.releve.bancaire.ecritures.426df845": "Relevé bancaire → écritures",
+  "@accounting.bank-statement-entries.releve.bancaire.ecritures.426df845": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts",
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts",
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.aucun.rapprochement.bancaire.n.est.effectue.8eff982f": "Aucun rapprochement bancaire n'est effectué.",
+  "@accounting.bank-statement-entries.aucun.rapprochement.bancaire.n.est.effectue.8eff982f": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.traitements.rapprochement.bancaire.35e5cc4d": "Traitements › Rapprochement bancaire",
+  "@accounting.bank-statement-entries.traitements.rapprochement.bancaire.35e5cc4d": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.source.du.releve.ee90a11b": "Source du relevé",
+  "@accounting.bank-statement-entries.source.du.releve.ee90a11b": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.choisissez.le.compte.bancaire.le.journal.de.banq.2f64a314": " Choisissez le compte bancaire, le journal de banque et le fichier à importer. ",
+  "@accounting.bank-statement-entries.choisissez.le.compte.bancaire.le.journal.de.banq.2f64a314": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.impossible.de.charger.les.comptes.bancaires.rees.0d837939": " Impossible de charger les comptes bancaires. Réessayez plus tard. ",
+  "@accounting.bank-statement-entries.impossible.de.charger.les.comptes.bancaires.rees.0d837939": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.aucun.compte.bancaire.eligible.pour.cette.compta.54b34de8": "Aucun compte bancaire éligible pour cette comptabilisation.",
+  "@accounting.bank-statement-entries.aucun.compte.bancaire.eligible.pour.cette.compta.54b34de8": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.associez.un.compte.comptable.532.a.un.compte.ban.33f2e1e2": "Associez un compte comptable 532 à un compte bancaire en dinars (TND) pour continuer.",
+  "@accounting.bank-statement-entries.associez.un.compte.comptable.532.a.un.compte.ban.33f2e1e2": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.compte.bancaire.485b42ca": "Compte bancaire",
+  "@accounting.bank-statement-entries.compte.bancaire.485b42ca": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.journal.de.banque.bfcb9d5a": "Journal de banque",
+  "@accounting.bank-statement-entries.journal.de.banque.bfcb9d5a": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.les.ecritures.seront.numerotees.dans.ce.journal.9027c3f3": "Les écritures seront numérotées dans ce journal.",
+  "@accounting.bank-statement-entries.les.ecritures.seront.numerotees.dans.ce.journal.9027c3f3": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.type.de.fichier.58a0c10e": "Type de fichier",
+  "@accounting.bank-statement-entries.type.de.fichier.58a0c10e": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.pdf.ou.image.analyse.par.l.ia.54432f1b": "PDF ou image — analysé par l'IA",
+  "@accounting.bank-statement-entries.pdf.ou.image.analyse.par.l.ia.54432f1b": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.csv.ou.excel.xlsx.1f85a221": "CSV ou Excel (.xlsx)",
+  "@accounting.bank-statement-entries.csv.ou.excel.xlsx.1f85a221": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.fichier.du.releve.515edb30": "Fichier du relevé",
+  "@accounting.bank-statement-entries.fichier.du.releve.515edb30": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.remplacer.db2c67bc": "Remplacer",
+  "@accounting.bank-statement-entries.remplacer.db2c67bc": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.glissez.deposez.votre.releve.ici.c2dee522": "Glissez-déposez votre relevé ici",
+  "@accounting.bank-statement-entries.glissez.deposez.votre.releve.ici.c2dee522": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ou.d5f10c9b": "ou",
+  "@accounting.bank-statement-entries.ou.d5f10c9b": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.choisir.un.fichier.75c27e25": "Choisir un fichier",
+  "@accounting.bank-statement-entries.choisir.un.fichier.75c27e25": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.csv.ou.xlsx.taille.maximale.mo.1f3b2c9a": "CSV ou XLSX — taille maximale : {$INTERPOLATION} Mo.",
+  "@accounting.bank-statement-entries.csv.ou.xlsx.taille.maximale.mo.1f3b2c9a": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.pdf.ou.image.taille.maximale.mo.2a7f1b9e": "PDF ou image — taille maximale : {$INTERPOLATION} Mo.",
+  "@accounting.bank-statement-entries.pdf.ou.image.taille.maximale.mo.2a7f1b9e": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.choisissez.un.compte.relie.a.un.compte.532.et.un.d91621bf": "Choisissez un compte relié à un compte 532 et un fichier pour continuer.",
+  "@accounting.bank-statement-entries.choisissez.un.compte.relie.a.un.compte.532.et.un.d91621bf": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.annuler.49ba3292": "Annuler",
+  "@accounting.bank-statement-entries.annuler.49ba3292": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts",
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.continuer.mappage.des.colonnes.18308f14": "Continuer — mappage des colonnes",
+  "@accounting.bank-statement-entries.continuer.mappage.des.colonnes.18308f14": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.continuer.analyse.par.l.ia.80851966": "Continuer — analyse par l'IA",
+  "@accounting.bank-statement-entries.continuer.analyse.par.l.ia.80851966": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.releves.importes.958c16b7": "Relevés importés",
+  "@accounting.bank-statement-entries.releves.importes.958c16b7": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.aucun.releve.importe.pour.ce.dossier.b32cafd1": "Aucun relevé importé pour ce dossier",
+  "@accounting.bank-statement-entries.aucun.releve.importe.pour.ce.dossier.b32cafd1": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.date.d.import.ab43ed73": "Date d'import",
+  "@accounting.bank-statement-entries.date.d.import.ab43ed73": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.banque.compte.a7408c6d": "Banque / compte",
+  "@accounting.bank-statement-entries.banque.compte.a7408c6d": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.periode.du.releve.2e902b44": "Période du relevé",
+  "@accounting.bank-statement-entries.periode.du.releve.2e902b44": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.lignes.41c7025e": "Lignes",
+  "@accounting.bank-statement-entries.lignes.41c7025e": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ecritures.generees.9847a764": "Écritures générées",
+  "@accounting.bank-statement-entries.ecritures.generees.9847a764": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.action.97c89a4d": "Action",
+  "@accounting.bank-statement-entries.action.97c89a4d": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.voir.les.ecritures.3e3b3dca": "Voir les écritures",
+  "@accounting.bank-statement-entries.voir.les.ecritures.3e3b3dca": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.mappage.des.colonnes.29edf60d": "Mappage des colonnes",
+  "@accounting.bank-statement-entries.mappage.des.colonnes.29edf60d": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.lecture.du.mappage.en.cours.9bde0b53": "Lecture du mappage en cours…",
+  "@accounting.bank-statement-entries.lecture.du.mappage.en.cours.9bde0b53": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.mappage.memorise.depuis.le.dernier.import.de.ce.c.8f3b2a1d": "Mappage mémorisé depuis le dernier import de ce compte — corrigez-le si le relevé a changé.",
+  "@accounting.bank-statement-entries.mappage.memorise.depuis.le.dernier.import.de.ce.c.8f3b2a1d": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.mappage.suggere.automatiquement.verifiez.l.apercu.9d4c6e2f": "Mappage suggéré automatiquement — vérifiez l'aperçu ci-dessous.",
+  "@accounting.bank-statement-entries.mappage.suggere.automatiquement.verifiez.l.apercu.9d4c6e2f": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.format.de.date.ambigu.verifiez.les.exemples.ci.d.a1f5c1c9": "Format de date ambigu : vérifiez les exemples ci-dessous.",
+  "@accounting.bank-statement-entries.format.de.date.ambigu.verifiez.les.exemples.ci.d.a1f5c1c9": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.lecture.du.fichier.6a0f3b9e": "Lecture du fichier",
+  "@accounting.bank-statement-entries.lecture.du.fichier.6a0f3b9e": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.apercu.des.lignes.brutes.1b7d4e2a": "Aperçu des lignes brutes",
+  "@accounting.bank-statement-entries.apercu.des.lignes.brutes.1b7d4e2a": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.association.des.colonnes.2c9e4a7f": "Association des colonnes",
+  "@accounting.bank-statement-entries.association.des.colonnes.2c9e4a7f": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.date.d.operation.e0766a55": "Date d'opération",
+  "@accounting.bank-statement-entries.date.d.operation.e0766a55": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.libelle.f5485bba": "Libellé",
+  "@accounting.bank-statement-entries.libelle.f5485bba": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts",
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.sens.des.montants.7028199a": "Sens des montants",
+  "@accounting.bank-statement-entries.sens.des.montants.7028199a": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.deux.colonnes.debit.et.credit.41a73dfa": "Deux colonnes : Débit et Crédit",
+  "@accounting.bank-statement-entries.deux.colonnes.debit.et.credit.41a73dfa": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.une.colonne.montant.signe.3e9c333e": "Une colonne : Montant signé",
+  "@accounting.bank-statement-entries.une.colonne.montant.signe.3e9c333e": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.montant.4adcd9fc": "Montant",
+  "@accounting.bank-statement-entries.montant.4adcd9fc": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts",
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.debit.f528224f": "Débit",
+  "@accounting.bank-statement-entries.debit.f528224f": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.credit.19194bdf": "Crédit",
+  "@accounting.bank-statement-entries.credit.19194bdf": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.soldes.d.ouverture.et.de.cloture.0e8d4c2a": "Soldes d'ouverture et de clôture",
+  "@accounting.bank-statement-entries.soldes.d.ouverture.et.de.cloture.0e8d4c2a": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.obligatoires.en.l.absence.de.colonne.solde.9c1a3e7b": "Obligatoires en l'absence de colonne solde.",
+  "@accounting.bank-statement-entries.obligatoires.en.l.absence.de.colonne.solde.9c1a3e7b": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.solde.d.ouverture.3f9b2c1e": "Solde d'ouverture",
+  "@accounting.bank-statement-entries.solde.d.ouverture.3f9b2c1e": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.solde.de.cloture.7a1d9c3f": "Solde de clôture",
+  "@accounting.bank-statement-entries.solde.de.cloture.7a1d9c3f": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.apercu.des.lignes.interpretees.4b7e2d9a": "Aperçu des lignes interprétées",
+  "@accounting.bank-statement-entries.apercu.des.lignes.interpretees.4b7e2d9a": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.memoriser.ce.mappage.pour.ce.compte.51734c56": "Mémoriser ce mappage pour ce compte",
+  "@accounting.bank-statement-entries.memoriser.ce.mappage.pour.ce.compte.51734c56": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.veuillez.associer.les.colonnes.obligatoires.date.2.4e8b1c9f": "Veuillez associer les colonnes obligatoires (date, libellé, montant) et renseigner un solde exploitable (colonne solde ou soldes d'ouverture/clôture).",
+  "@accounting.bank-statement-entries.veuillez.associer.les.colonnes.obligatoires.date.2.4e8b1c9f": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.retour.e5befb1f": "Retour",
+  "@accounting.bank-statement-entries.retour.e5befb1f": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.lire.les.lignes.e98f52c0": "Lire les lignes",
+  "@accounting.bank-statement-entries.lire.les.lignes.e98f52c0": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.vous.avez.un.fichier.selectionne.non.envoye.quit.65a902f6": "Vous avez un fichier sélectionné non envoyé. Quitter cette page ? Le fichier sera perdu.",
+  "@accounting.bank-statement-entries.ts.vous.avez.un.fichier.selectionne.non.envoye.quit.65a902f6": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.vous.avez.un.fichier.selectionne.non.envoye.38f669a0": "Vous avez un fichier sélectionné non envoyé.",
+  "@accounting.bank-statement-entries.ts.vous.avez.un.fichier.selectionne.non.envoye.38f669a0": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.chargement.des.propositions.2f80f455": "Chargement des propositions…",
+  "@accounting.bank-statement-entries.ts.chargement.des.propositions.2f80f455": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.aucune.ecriture.n.a.ete.creee.367e3d94": "Aucune écriture n'a été créée.",
+  "@accounting.bank-statement-entries.ts.aucune.ecriture.n.a.ete.creee.367e3d94": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.rien.n.a.ete.enregistre.dans.le.journal.ni.ecrit.472ec1e1": " rien n'a été enregistré dans le journal : ni écriture, ni numéro de pièce, ni règle mémorisée. ",
+  "@accounting.bank-statement-entries.ts.rien.n.a.ete.enregistre.dans.le.journal.ni.ecrit.472ec1e1": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.vos.modifications.de.comptes.tiers.et.libelles.s.57b3a15c": " Vos modifications de comptes, tiers et libellés sont conservées. ",
+  "@accounting.bank-statement-entries.ts.vos.modifications.de.comptes.tiers.et.libelles.s.57b3a15c": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.lignes.a.corriger.2e2da19f": "Lignes à corriger",
+  "@accounting.bank-statement-entries.ts.lignes.a.corriger.2e2da19f": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.retour.aux.propositions.13358e3a": "Retour aux propositions",
+  "@accounting.bank-statement-entries.ts.retour.aux.propositions.13358e3a": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.valider.les.ecritures.en.brouillard.50f4ac68": "Valider les écritures en brouillard",
+  "@accounting.bank-statement-entries.ts.valider.les.ecritures.en.brouillard.50f4ac68": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.voir.le.journal.1b6a9f33": "Voir le journal",
+  "@accounting.bank-statement-entries.ts.voir.le.journal.1b6a9f33": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.voir.l.historique.des.imports.7c8e1d44": "Voir l'historique des imports",
+  "@accounting.bank-statement-entries.ts.voir.l.historique.des.imports.7c8e1d44": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.importer.un.autre.releve.30586829": "Importer un autre relevé",
+  "@accounting.bank-statement-entries.ts.importer.un.autre.releve.30586829": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.journal.57d7f743": "Journal",
+  "@accounting.bank-statement-entries.ts.journal.57d7f743": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.telecharger.la.piece.justificative.4ae35fd4": "Télécharger la pièce justificative",
+  "@accounting.bank-statement-entries.ts.telecharger.la.piece.justificative.4ae35fd4": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.classer.par.l.ia.9665f0d2": "Classer par l'IA ({$INTERPOLATION})",
+  "@accounting.bank-statement-entries.ts.classer.par.l.ia.9665f0d2": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.toutes.c5f641e4": "Toutes",
+  "@accounting.bank-statement-entries.ts.toutes.c5f641e4": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.a.completer.b06198e1": "À compléter",
+  "@accounting.bank-statement-entries.ts.a.completer.b06198e1": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.pretes.36d3db42": "Prêtes",
+  "@accounting.bank-statement-entries.ts.pretes.36d3db42": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.au.compte.d.attente.471.f72babdb": "Au compte d'attente 471",
+  "@accounting.bank-statement-entries.ts.au.compte.d.attente.471.f72babdb": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.deja.comptabilisees.d9d7cf7c": "Déjà comptabilisées",
+  "@accounting.bank-statement-entries.ts.deja.comptabilisees.d9d7cf7c": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.a.corriger.filtre.9b1f2e3a": "À corriger",
+  "@accounting.bank-statement-entries.ts.a.corriger.filtre.9b1f2e3a": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.appliquer.le.compte.6cf13df4": "Appliquer le compte",
+  "@accounting.bank-statement-entries.ts.appliquer.le.compte.6cf13df4": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.appliquer.a4d66139": "Appliquer",
+  "@accounting.bank-statement-entries.ts.appliquer.a4d66139": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.appliquer.le.libelle.4ed1b935": "Appliquer le libellé",
+  "@accounting.bank-statement-entries.ts.appliquer.le.libelle.4ed1b935": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.tout.selectionner.06f2c1c0": "Tout sélectionner",
+  "@accounting.bank-statement-entries.ts.tout.selectionner.06f2c1c0": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.date.eb9a4bc1": "Date",
+  "@accounting.bank-statement-entries.ts.date.eb9a4bc1": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.libelle.du.releve.eb9efd4d": "Libellé du relevé",
+  "@accounting.bank-statement-entries.ts.libelle.du.releve.eb9efd4d": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.debit.f528224f": "Débit",
+  "@accounting.bank-statement-entries.ts.debit.f528224f": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts",
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.credit.19194bdf": "Crédit",
+  "@accounting.bank-statement-entries.ts.credit.19194bdf": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts",
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.statut.659499f3": "Statut",
+  "@accounting.bank-statement-entries.ts.statut.659499f3": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.compte.de.contrepartie.df81fd03": "Compte de contrepartie",
+  "@accounting.bank-statement-entries.ts.compte.de.contrepartie.df81fd03": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.tiers.435080ba": "Tiers",
+  "@accounting.bank-statement-entries.ts.tiers.435080ba": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.libelle.de.l.ecriture.9e5c8f10": "Libellé de l'écriture",
+  "@accounting.bank-statement-entries.ts.libelle.de.l.ecriture.9e5c8f10": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.tva.debit.seulement.3833f905": "TVA (débit seulement)",
+  "@accounting.bank-statement-entries.ts.tva.debit.seulement.3833f905": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.memoriser.72c86d0e": "Mémoriser",
+  "@accounting.bank-statement-entries.ts.memoriser.72c86d0e": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.generer.l.ecriture.de.cette.ligne.222c38bb": "Générer l'écriture de cette ligne",
+  "@accounting.bank-statement-entries.ts.generer.l.ecriture.de.cette.ligne.222c38bb": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.rechercher.un.tiers.0a1b4369": "Rechercher un tiers",
+  "@accounting.bank-statement-entries.ts.rechercher.un.tiers.0a1b4369": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.memoriser.cette.affectation.pour.les.prochains.r.58391091": "Mémoriser cette affectation pour les prochains relevés",
+  "@accounting.bank-statement-entries.ts.memoriser.cette.affectation.pour.les.prochains.r.58391091": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.aucune.ligne.a.comptabiliser.941c0e8c": "Aucune ligne à comptabiliser.",
+  "@accounting.bank-statement-entries.ts.aucune.ligne.a.comptabiliser.941c0e8c": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.page.precedente.6b7f9a21": "Page précédente",
+  "@accounting.bank-statement-entries.ts.page.precedente.6b7f9a21": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.page.suivante.1a9c7e02": "Page suivante",
+  "@accounting.bank-statement-entries.ts.page.suivante.1a9c7e02": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.generer.les.ecritures.en.brouillard.03aa9336": "Générer les écritures en brouillard",
+  "@accounting.bank-statement-entries.ts.generer.les.ecritures.en.brouillard.03aa9336": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.vous.avez.des.contreparties.modifiees.non.gener.d3f1b1a2": "Vous avez des contreparties modifiées, non générées. Quitter cette page ? Les changements seront perdus.",
+  "@accounting.bank-statement-entries.ts.vous.avez.des.contreparties.modifiees.non.gener.d3f1b1a2": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.vous.avez.des.contreparties.modifiees.non.gener.3c2fef3b": "Vous avez des contreparties modifiées, non générées.",
+  "@accounting.bank-statement-entries.ts.vous.avez.des.contreparties.modifiees.non.gener.3c2fef3b": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.compte.inconnu.du.plan.a0abf82a": "Compte inconnu du plan",
+  "@accounting.bank-statement-entries.ts.compte.inconnu.du.plan.a0abf82a": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.salarie.b41cc694": "Salarié — {$name} ({$number})",
+  "@accounting.bank-statement-entries.ts.salarie.b41cc694": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.page.sur.d2b4ac4f": "Page {$current} sur {$total}",
+  "@accounting.bank-statement-entries.ts.page.sur.d2b4ac4f": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.au.dela.du.maximum.autorise.de.par.envoi.de.e.a0f8c912": "Au-delà du maximum autorisé de {$max} ligne(s) par envoi : désélectionnez des lignes ou traitez-les en plusieurs envois.",
+  "@accounting.bank-statement-entries.ts.au.dela.du.maximum.autorise.de.par.envoi.de.e.a0f8c912": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.aucune.piece.justificative.pour.ce.releve.e7f06a74": "Aucune pièce justificative pour ce relevé.",
+  "@accounting.bank-statement-entries.ts.aucune.piece.justificative.pour.ce.releve.e7f06a74": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.ligne.s.selectionnee.s.sans.compte.valide.ou.san.08820478": "{$count} ligne(s) sélectionnée(s) sans compte valide ou sans tiers : complétez-les ou désélectionnez-les.",
+  "@accounting.bank-statement-entries.ts.ligne.s.selectionnee.s.sans.compte.valide.ou.san.08820478": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.ligne.s.selectionnee.s.a.generer.au.dela.du.maxi.863aa5ee": "{$count} ligne(s) sélectionnée(s) à générer, au-delà du maximum autorisé de {$max} par envoi.",
+  "@accounting.bank-statement-entries.ts.ligne.s.selectionnee.s.a.generer.au.dela.du.maxi.863aa5ee": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.generer.les.ecritures.f829d762": "Générer les écritures",
+  "@accounting.bank-statement-entries.ts.generer.les.ecritures.f829d762": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.generer.bd221c07": "Générer",
+  "@accounting.bank-statement-entries.ts.generer.bd221c07": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.annuler.49ba3292": "Annuler",
+  "@accounting.bank-statement-entries.ts.annuler.49ba3292": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.ecriture.s.seront.creees.en.brouillard.dans.le.j.3d3c6933": "{$count} écriture(s) seront créées en brouillard dans le journal {$journal}, une par ligne de relevé. Si une seule ligne échoue, aucune écriture n'est créée (tout ou rien).",
+  "@accounting.bank-statement-entries.ts.ecriture.s.seront.creees.en.brouillard.dans.le.j.3d3c6933": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.periode.du.au.d2e3f901": "Période du {$from} au {$to}.",
+  "@accounting.bank-statement-entries.ts.periode.du.au.d2e3f901": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.dont.ligne.s.au.compte.d.attente.471.c3e8a812": "Dont {$count} ligne(s) au compte d'attente 471.",
+  "@accounting.bank-statement-entries.ts.dont.ligne.s.au.compte.d.attente.471.c3e8a812": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.ligne.s.non.cochee.s.ne.seront.pas.generees.5f3b9a10": "{$count} ligne(s) non cochée(s) ne seront pas générées.",
+  "@accounting.bank-statement-entries.ts.ligne.s.non.cochee.s.ne.seront.pas.generees.5f3b9a10": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.ecriture.s.creee.s.en.brouillard.dans.le.journal.18a7e099": "{$count} écriture(s) créée(s) en brouillard dans le journal {$journal}.",
+  "@accounting.bank-statement-entries.ts.ecriture.s.creee.s.en.brouillard.dans.le.journal.18a7e099": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.numeros.a.a65df798": "Numéros {$first} à {$last}.",
+  "@accounting.bank-statement-entries.ts.numeros.a.a65df798": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.exercice.numeros.a.9b7c3e21": "Exercice {$year} — numéros {$first} à {$last}.",
+  "@accounting.bank-statement-entries.ts.exercice.numeros.a.9b7c3e21": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.ligne.s.ignoree.s.car.deja.comptabilisee.s.e5f.ba12c903": "{$count} ligne(s) ignorée(s) car déjà comptabilisée(s).",
+  "@accounting.bank-statement-entries.ts.ligne.s.ignoree.s.car.deja.comptabilisee.s.e5f.ba12c903": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.ligne.s.selectionnee.s.fb9ca8e8": "{$count} ligne(s) sélectionnée(s).",
+  "@accounting.bank-statement-entries.ts.ligne.s.selectionnee.s.fb9ca8e8": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.lignes.a.generer.dea07d81": "Lignes à générer",
+  "@accounting.bank-statement-entries.ts.lignes.a.generer.dea07d81": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.total.debits.9acf4842": "Total débits",
+  "@accounting.bank-statement-entries.ts.total.debits.9acf4842": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.total.credits.ec8c5525": "Total crédits",
+  "@accounting.bank-statement-entries.ts.total.credits.ec8c5525": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-posting.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.lecture.du.releve.en.cours.19edd5b1": " Lecture du relevé en cours… {$INTERPOLATION} / {$INTERPOLATION_1} ",
+  "@accounting.bank-statement-entries.lecture.du.releve.en.cours.19edd5b1": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.l.analyse.de.ce.releve.n.a.pas.abouti.bcff5d65": "L'analyse de ce relevé n'a pas abouti.",
+  "@accounting.bank-statement-entries.l.analyse.de.ce.releve.n.a.pas.abouti.bcff5d65": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.relancer.l.analyse.04afd2a6": "Relancer l'analyse",
+  "@accounting.bank-statement-entries.relancer.l.analyse.04afd2a6": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.retour.a.la.saisie.655e44f8": "Retour à la saisie",
+  "@accounting.bank-statement-entries.retour.a.la.saisie.655e44f8": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.ce.fichier.contient.plusieurs.releves.aaf84d84": " Ce fichier contient {$INTERPOLATION} relevés : chacun est contrôlé et enregistré séparément. ",
+  "@accounting.bank-statement-entries.ts.ce.fichier.contient.plusieurs.releves.aaf84d84": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.releve.affiche.ci.dessous.a7b05a90": "Relevé {$INTERPOLATION} — affiché ci-dessous",
+  "@accounting.bank-statement-entries.ts.releve.affiche.ci.dessous.a7b05a90": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.controle.du.releve.61a0ed11": "Contrôle du relevé",
+  "@accounting.bank-statement-entries.controle.du.releve.61a0ed11": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.verifiez.les.soldes.et.les.anomalies.avant.de.pa.6d73b08b": " Vérifiez les soldes et les anomalies avant de passer aux propositions d'écritures. ",
+  "@accounting.bank-statement-entries.verifiez.les.soldes.et.les.anomalies.avant.de.pa.6d73b08b": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.fichier.f0fa5745": "Fichier",
+  "@accounting.bank-statement-entries.fichier.f0fa5745": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.operations.lues.514a9d3b": "Opérations lues",
+  "@accounting.bank-statement-entries.operations.lues.514a9d3b": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.methode.2e94172a": "Méthode",
+  "@accounting.bank-statement-entries.methode.2e94172a": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.solde.d.ouverture.69f2e147": "Solde d'ouverture",
+  "@accounting.bank-statement-entries.solde.d.ouverture.69f2e147": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.total.credits.ec8c5525": "Total crédits",
+  "@accounting.bank-statement-entries.total.credits.ec8c5525": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.total.debits.9acf4842": "Total débits",
+  "@accounting.bank-statement-entries.total.debits.9acf4842": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.solde.calcule.0e690941": "Solde calculé",
+  "@accounting.bank-statement-entries.solde.calcule.0e690941": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ecart.6ae8dce8": "Écart",
+  "@accounting.bank-statement-entries.ecart.6ae8dce8": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.soldes.coherents.34d6074c": "Soldes cohérents",
+  "@accounting.bank-statement-entries.soldes.coherents.34d6074c": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.j.ai.verifie.les.operations.ci.dessous.et.je.sou.9b8b528e": " J'ai vérifié les opérations ci-dessous et je souhaite poursuivre malgré l'écart de solde. ",
+  "@accounting.bank-statement-entries.j.ai.verifie.les.operations.ci.dessous.et.je.sou.9b8b528e": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.ce.releve.appartient.au.compte.9322c6fb": " Ce relevé appartient au compte {$INTERPOLATION} (…{$INTERPOLATION_1}). ",
+  "@accounting.bank-statement-entries.ts.ce.releve.appartient.au.compte.9322c6fb": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.analyser.avec.ce.compte.aria.e97511c9": "Analyser avec ce compte bancaire",
+  "@accounting.bank-statement-entries.ts.analyser.avec.ce.compte.aria.e97511c9": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.analyser.avec.ce.compte.5beb184b": "Analyser avec ce compte",
+  "@accounting.bank-statement-entries.ts.analyser.avec.ce.compte.5beb184b": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.releve.d.un.compte.absent.a37e5d71": " Ce relevé appartient à un autre compte (RIB …{$INTERPOLATION}) qui n'existe pas dans ce dossier. Créez-le dans Paiements › Comptes bancaires, puis relancez l'import. ",
+  "@accounting.bank-statement-entries.ts.releve.d.un.compte.absent.a37e5d71": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.corriger.cette.ligne.1afe38ba": "Corriger cette ligne",
+  "@accounting.bank-statement-entries.ts.corriger.cette.ligne.1afe38ba": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.date.operation.957dc298": "Date opération",
+  "@accounting.bank-statement-entries.date.operation.957dc298": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.sens.55928a79": "Sens",
+  "@accounting.bank-statement-entries.ts.sens.55928a79": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.actions.c3cd636a": "Actions",
+  "@accounting.bank-statement-entries.ts.actions.c3cd636a": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.le.sens.doit.etre.choisi.05ab1c57": "Le sens doit être choisi avant d'enregistrer cette ligne.",
+  "@accounting.bank-statement-entries.ts.le.sens.doit.etre.choisi.05ab1c57": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.enregistrer.la.correction.aria.fc417966": "Enregistrer la correction",
+  "@accounting.bank-statement-entries.ts.enregistrer.la.correction.aria.fc417966": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.annuler.la.correction.aria.d446c36a": "Annuler la correction",
+  "@accounting.bank-statement-entries.ts.annuler.la.correction.aria.d446c36a": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.corrigee.5282db93": "Corrigée",
+  "@accounting.bank-statement-entries.ts.corrigee.5282db93": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.exclue.a7d097b5": "Exclue",
+  "@accounting.bank-statement-entries.ts.exclue.a7d097b5": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.modifier.cette.ligne.aria.390d3bd2": "Modifier cette ligne",
+  "@accounting.bank-statement-entries.ts.modifier.cette.ligne.aria.390d3bd2": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.exclure.cette.ligne.aria.b670e204": "Exclure cette ligne",
+  "@accounting.bank-statement-entries.ts.exclure.cette.ligne.aria.b670e204": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.retablir.91f08ee4": "Rétablir",
+  "@accounting.bank-statement-entries.ts.retablir.91f08ee4": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.lignes.corrigees.exclues.38e2f6e7": " {$INTERPOLATION} ligne(s) corrigée(s), {$INTERPOLATION_1} exclue(s) — le contrôle de solde sera recalculé par le serveur à l'enregistrement. ",
+  "@accounting.bank-statement-entries.ts.lignes.corrigees.exclues.38e2f6e7": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.abandonner.7a0662a3": "Abandonner",
+  "@accounting.bank-statement-entries.abandonner.7a0662a3": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.confirmer.les.lignes.08e40127": "Confirmer les lignes",
+  "@accounting.bank-statement-entries.confirmer.les.lignes.08e40127": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.releve.enregistre.d9b64443": "Relevé {$index} — déjà enregistré",
+  "@accounting.bank-statement-entries.ts.releve.enregistre.d9b64443": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.releve.en.cours.de.lecture.ca7d820f": "Relevé {$index} — en cours de lecture",
+  "@accounting.bank-statement-entries.ts.releve.en.cours.de.lecture.ca7d820f": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.releve.en.attente.de.controle.60ba996d": "Relevé {$index} — en attente de contrôle",
+  "@accounting.bank-statement-entries.ts.releve.en.attente.de.controle.60ba996d": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.releve.en.echec.d819b983": "Relevé {$index} — analyse en échec",
+  "@accounting.bank-statement-entries.ts.releve.en.echec.d819b983": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.releve.annule.f81a7fd0": "Relevé {$index} — annulé",
+  "@accounting.bank-statement-entries.ts.releve.annule.f81a7fd0": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.enregistrer.ce.releve.et.passer.aux.propositions.eb4f356b": "Enregistrer ce relevé et passer aux propositions d'écritures ?",
+  "@accounting.bank-statement-entries.ts.enregistrer.ce.releve.et.passer.aux.propositions.eb4f356b": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.vous.avez.des.corrections.non.enregistrees.quitt.18c5e8bc": "Vous avez des corrections non enregistrées. Quitter cette page ? Les changements seront perdus.",
+  "@accounting.bank-statement-entries.ts.vous.avez.des.corrections.non.enregistrees.quitt.18c5e8bc": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.vous.avez.des.corrections.non.enregistrees.90e23137": "Vous avez des corrections non enregistrées.",
+  "@accounting.bank-statement-entries.ts.vous.avez.des.corrections.non.enregistrees.90e23137": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bank-statement-entries-session.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.source.6da13add": "Source",
+  "@accounting.bank-statement-entries.ts.source.6da13add": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-stepper.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.compte.journal.fichier.ae422d7a": "Compte, journal, fichier",
+  "@accounting.bank-statement-entries.ts.compte.journal.fichier.ae422d7a": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-stepper.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.mappage.des.colonnes.29edf60d": "Mappage des colonnes",
+  "@accounting.bank-statement-entries.ts.mappage.des.colonnes.29edf60d": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-stepper.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.csv.excel.uniquement.15e658b0": "CSV / Excel uniquement",
+  "@accounting.bank-statement-entries.ts.csv.excel.uniquement.15e658b0": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-stepper.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.controle.des.lignes.lues.0b7b2d23": "Contrôle des lignes lues",
+  "@accounting.bank-statement-entries.ts.controle.des.lignes.lues.0b7b2d23": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-stepper.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.soldes.et.anomalies.32b6653f": "Soldes et anomalies",
+  "@accounting.bank-statement-entries.ts.soldes.et.anomalies.32b6653f": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-stepper.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.propositions.d.ecritures.f9251387": "Propositions d'écritures",
+  "@accounting.bank-statement-entries.ts.propositions.d.ecritures.f9251387": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-stepper.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.contreparties.a.valider.5c1bc756": "Contreparties à valider",
+  "@accounting.bank-statement-entries.ts.contreparties.a.valider.5c1bc756": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-stepper.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.resultat.7186e8ff": "Résultat",
+  "@accounting.bank-statement-entries.ts.resultat.7186e8ff": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-stepper.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ts.brouillons.crees.f7809bbc": "Brouillons créés",
+  "@accounting.bank-statement-entries.ts.brouillons.crees.f7809bbc": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-stepper.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.date.de.valeur.optionnel.5a9b1c0e": "Date de valeur (optionnel)",
+  "@accounting.bank-statement-entries.date.de.valeur.optionnel.5a9b1c0e": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-column-roles.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.aucune.9c3e0a1b": "Aucune",
+  "@accounting.bank-statement-entries.aucune.9c3e0a1b": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-column-roles.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.reference.optionnel.2e7b4f1d": "Référence (optionnel)",
+  "@accounting.bank-statement-entries.reference.optionnel.2e7b4f1d": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-column-roles.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.aucune.2.4b8a9c2f": "Aucune",
+  "@accounting.bank-statement-entries.aucune.2.4b8a9c2f": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-column-roles.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.libelle.complementaire.1.6c2e9a4d": "Libellé complémentaire 1 (optionnel)",
+  "@accounting.bank-statement-entries.libelle.complementaire.1.6c2e9a4d": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-column-roles.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.aucune.3.0b7f3e5a": "Aucune",
+  "@accounting.bank-statement-entries.aucune.3.0b7f3e5a": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-column-roles.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.libelle.complementaire.2.7d1a2f6b": "Libellé complémentaire 2 (optionnel)",
+  "@accounting.bank-statement-entries.libelle.complementaire.2.7d1a2f6b": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-column-roles.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.aucune.4.9e2c5a7d": "Aucune",
+  "@accounting.bank-statement-entries.aucune.4.9e2c5a7d": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-column-roles.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.colonne.solde.5f0d8b2c": "Colonne solde",
+  "@accounting.bank-statement-entries.colonne.solde.5f0d8b2c": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-column-roles.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.aucune.saisie.manuelle.des.soldes.3c9a1e7f": "Aucune — saisie manuelle des soldes",
+  "@accounting.bank-statement-entries.aucune.saisie.manuelle.des.soldes.3c9a1e7f": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-column-roles.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.sens.du.montant.negatif.8a3f0d2e": "Sens du montant négatif",
+  "@accounting.bank-statement-entries.sens.du.montant.negatif.8a3f0d2e": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-column-roles.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.negatif.debit.sortie.1a7c3e9f": "Négatif = débit (sortie)",
+  "@accounting.bank-statement-entries.negatif.debit.sortie.1a7c3e9f": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-column-roles.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.negatif.credit.entree.2b8d4f0a": "Négatif = crédit (entrée)",
+  "@accounting.bank-statement-entries.negatif.credit.entree.2b8d4f0a": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-column-roles.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ligne.0e1cce93": "Ligne",
+  "@accounting.bank-statement-entries.ligne.0e1cce93": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-parsed-lines.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.date.d.operation.2.ea3a5c22": "Date d'opération",
+  "@accounting.bank-statement-entries.date.d.operation.2.ea3a5c22": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-parsed-lines.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.date.de.valeur.3f5a1b4a": "Date de valeur",
+  "@accounting.bank-statement-entries.date.de.valeur.3f5a1b4a": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-parsed-lines.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.libelle.2.b9eb9e4b": "Libellé",
+  "@accounting.bank-statement-entries.libelle.2.b9eb9e4b": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-parsed-lines.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.montant.2.9e4e9f33": "Montant",
+  "@accounting.bank-statement-entries.montant.2.9e4e9f33": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-parsed-lines.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.anomalie.aa4bb1c9": "Anomalie",
+  "@accounting.bank-statement-entries.anomalie.aa4bb1c9": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-parsed-lines.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ligne.2.6a26d3e2": "ligne",
+  "@accounting.bank-statement-entries.ligne.2.6a26d3e2": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-parsed-lines.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ligne.95ab6e68": "Ligne",
+  "@accounting.bank-statement-entries.ligne.95ab6e68": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-rows-preview.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.apercu.limite.aux.20.premieres.lignes.du.fichi.a1c9b240": "Aperçu limité aux 20 premières lignes du fichier.",
+  "@accounting.bank-statement-entries.apercu.limite.aux.20.premieres.lignes.du.fichi.a1c9b240": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-rows-preview.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.ligne.d.en.tete.c7a9fd38": "Ligne d'en-tête",
+  "@accounting.bank-statement-entries.ligne.d.en.tete.c7a9fd38": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-settings.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.0.premiere.ligne.du.fichier.d496b02b": "0 = première ligne du fichier.",
+  "@accounting.bank-statement-entries.0.premiere.ligne.du.fichier.d496b02b": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-settings.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.format.de.date.5c0a44a1": "Format de date",
+  "@accounting.bank-statement-entries.format.de.date.5c0a44a1": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-settings.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.separateur.decimal.9b2f9a21": "Séparateur décimal",
+  "@accounting.bank-statement-entries.separateur.decimal.9b2f9a21": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-settings.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.virgule.1.250.000.ea6c9d10": "Virgule ( 1 250,000 )",
+  "@accounting.bank-statement-entries.virgule.1.250.000.ea6c9d10": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-settings.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.point.1.250.000.b.5a1d2e44": "Point ( 1,250.000 )",
+  "@accounting.bank-statement-entries.point.1.250.000.b.5a1d2e44": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-settings.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-entries.feuille.excel.4a1f0c56": "Feuille Excel",
+  "@accounting.bank-statement-entries.feuille.excel.4a1f0c56": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-entries/bse-tabular-settings.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.ts.l.import.de.releves.bancaires.n.est.pas.active.p.efb43f3b": "L'import de relevés bancaires n'est pas activé pour ce dossier.",
   "@accounting.bank-statement-import.ts.l.import.de.releves.bancaires.n.est.pas.active.p.efb43f3b": {
     "x-files": [
@@ -12434,8 +14629,92 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.ts.fichier.csv.ou.excel.illisible.verifiez.l.encoda.7b5cf56e": "Fichier CSV ou Excel illisible : vérifiez l'encodage ou le format du fichier.",
+  "@accounting.bank-statement-import.ts.fichier.csv.ou.excel.illisible.verifiez.l.encoda.7b5cf56e": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.mappage.de.colonnes.invalide.verifiez.les.roles.dcb2b879": "Mappage de colonnes invalide : vérifiez les rôles choisis pour chaque colonne.",
+  "@accounting.bank-statement-import.ts.mappage.de.colonnes.invalide.verifiez.les.roles.dcb2b879": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.aucune.operation.trouvee.avec.ce.mappage.4f9174e9": "Aucune opération trouvée avec ce mappage.",
+  "@accounting.bank-statement-import.ts.aucune.operation.trouvee.avec.ce.mappage.4f9174e9": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.trop.de.lignes.dans.ce.fichier.pour.un.import.ta.09354ea0": "Trop de lignes dans ce fichier pour un import tabulaire.",
+  "@accounting.bank-statement-import.ts.trop.de.lignes.dans.ce.fichier.pour.un.import.ta.09354ea0": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.ce.fichier.csv.ou.excel.a.ete.refuse.ca1118ef": "Ce fichier CSV ou Excel a été refusé.",
+  "@accounting.bank-statement-import.ts.ce.fichier.csv.ou.excel.a.ete.refuse.ca1118ef": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.l.import.csv.excel.n.est.pas.active.pour.ce.doss.bb7f2644": "L'import CSV/Excel n'est pas activé pour ce dossier.",
+  "@accounting.bank-statement-import.ts.l.import.csv.excel.n.est.pas.active.pour.ce.doss.bb7f2644": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.generation.refusee.au.moins.une.ligne.cochee.ne.1225763c": "Génération refusée : au moins une ligne cochée ne peut pas être générée. Rien n’a été créé.",
+  "@accounting.bank-statement-import.ts.generation.refusee.au.moins.une.ligne.cochee.ne.1225763c": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.ecran.perime.des.lignes.sont.a.la.fois.cochees.0d3c7a51": "Écran périmé : des lignes sont à la fois cochées pour la génération et exclues. Rechargez la page puis réessayez.",
+  "@accounting.bank-statement-import.ts.ecran.perime.des.lignes.sont.a.la.fois.cochees.0d3c7a51": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.certaines.lignes.ne.sont.ni.cochees.ni.explicite.98fdb994": "Certaines lignes ne sont ni cochées ni explicitement exclues : complétez la sélection avant de générer.",
+  "@accounting.bank-statement-import.ts.certaines.lignes.ne.sont.ni.cochees.ni.explicite.98fdb994": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.trop.de.lignes.pour.une.generation.en.une.seule.b7aa5129": "Trop de lignes pour une génération en une seule fois.",
+  "@accounting.bank-statement-import.ts.trop.de.lignes.pour.une.generation.en.une.seule.b7aa5129": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.un.autre.enregistrement.est.en.cours.pour.ce.rel.695a4ac4": "Un autre enregistrement est en cours pour ce relevé : rechargez puis réessayez.",
+  "@accounting.bank-statement-import.ts.un.autre.enregistrement.est.en.cours.pour.ce.rel.695a4ac4": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.ts.l.operation.a.echoue.reessayez.ou.contactez.le.s.23720b33": "L'opération a échoué. Réessayez ou contactez le support.",
   "@accounting.bank-statement-import.ts.l.operation.a.echoue.reessayez.ou.contactez.le.s.23720b33": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.resultat.incertain.propositions.rechargees.b7e1a4c2": "Le résultat est incertain : les propositions ont été rechargées. Vérifiez puis relancez.",
+  "@accounting.bank-statement-import.ts.resultat.incertain.propositions.rechargees.b7e1a4c2": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
     ],
@@ -12819,6 +15098,48 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.ts.date.illisible.sur.cette.ligne.3e8d10a4": "Date illisible sur cette ligne.",
+  "@accounting.bank-statement-import.ts.date.illisible.sur.cette.ligne.3e8d10a4": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.montant.illisible.sur.cette.ligne.ced218bc": "Montant illisible sur cette ligne.",
+  "@accounting.bank-statement-import.ts.montant.illisible.sur.cette.ligne.ced218bc": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.debit.et.credit.renseignes.sur.la.meme.ligne.b2b7fce3": "Débit et crédit renseignés sur la même ligne.",
+  "@accounting.bank-statement-import.ts.debit.et.credit.renseignes.sur.la.meme.ligne.b2b7fce3": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.solde.cumule.incoherent.avec.les.montants.de.la.4d172371": "Solde cumulé incohérent avec les montants de la ligne.",
+  "@accounting.bank-statement-import.ts.solde.cumule.incoherent.avec.les.montants.de.la.4d172371": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.ordre.des.lignes.inverse.par.rapport.au.releve.be647ced": "Ordre des lignes inversé par rapport au relevé.",
+  "@accounting.bank-statement-import.ts.ordre.des.lignes.inverse.par.rapport.au.releve.be647ced": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.cellules.calculees.formules.detectees.verifiez.l.3bb6a207": "Cellules calculées (formules) détectées : vérifiez les valeurs.",
+  "@accounting.bank-statement-import.ts.cellules.calculees.formules.detectees.verifiez.l.3bb6a207": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.ts.signalement.19e0c078": "Signalement",
   "@accounting.bank-statement-import.ts.signalement.19e0c078": {
     "x-files": [
@@ -12882,6 +15203,20 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.ts.historique.operation.similaire.deja.comptabilise.f7c508ac": "Historique (opération similaire déjà comptabilisée)",
+  "@accounting.bank-statement-import.ts.historique.operation.similaire.deja.comptabilise.f7c508ac": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.compte.d.attente.471.7725ea67": "Compte d'attente (471)",
+  "@accounting.bank-statement-import.ts.compte.d.attente.471.7725ea67": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.ts.le.compte.propose.n.existe.pas.dans.le.plan.comp.c9a91a03": "Le compte proposé n'existe pas dans le plan comptable du dossier : choisissez un compte existant.",
   "@accounting.bank-statement-import.ts.le.compte.propose.n.existe.pas.dans.le.plan.comp.c9a91a03": {
     "x-files": [
@@ -12910,10 +15245,143 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-statement-import.ts.compte.d.attente.utilise.en.l.absence.de.contrep.4a2ceeb2": "Compte d'attente utilisé en l'absence de contrepartie identifiée : à corriger avant comptabilisation définitive.",
+  "@accounting.bank-statement-import.ts.compte.d.attente.utilise.en.l.absence.de.contrep.4a2ceeb2": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.compte.d.attente.471.introuvable.ou.desactive.co.0d0d2976": "Compte d'attente (471) introuvable ou désactivé : complétez cette ligne manuellement.",
+  "@accounting.bank-statement-import.ts.compte.d.attente.471.introuvable.ou.desactive.co.0d0d2976": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.bank-statement-import.ts.point.a.verifier.3fd65f17": "Point à vérifier.",
   "@accounting.bank-statement-import.ts.point.a.verifier.3fd65f17": {
     "x-files": [
       "src/app/features/accounting/bank-statement-import/bank-statement-import.messages.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lecture.ia.non.effectuee": "Lecture IA non effectuée",
+  "@accounting.bank-statement-import.ts.lecture.ia.non.effectuee": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-posting.logic.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.1.pa.d281f138": "Lu par le service d'extraction documentaire (1 page)",
+  "@accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.1.pa.d281f138": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-posting.logic.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.page.d0085280": "Lu par le service d'extraction documentaire ({$count} pages)",
+  "@accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.page.d0085280": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-posting.logic.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.27912217": "Lu par le service d'extraction documentaire",
+  "@accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.27912217": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-posting.logic.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lecture.directe.completee.par.le.service.d.extra.e232c028": "Lecture directe complétée par le service d'extraction documentaire",
+  "@accounting.bank-statement-import.ts.lecture.directe.completee.par.le.service.d.extra.e232c028": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-posting.logic.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lecture.directe.du.pdf.aucune.ia.ba300454": "Lecture directe du PDF (aucune IA)",
+  "@accounting.bank-statement-import.ts.lecture.directe.du.pdf.aucune.ia.ba300454": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-posting.logic.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.l.ia.pages.lues.en.secours.9c5e1339": "Lu par l'IA — pages {$pages} lues en secours",
+  "@accounting.bank-statement-import.ts.lu.par.l.ia.pages.lues.en.secours.9c5e1339": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-posting.logic.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.l.ia.page.lue.en.secours.6fa79a4c": "Lu par l'IA — page {$page} lue en secours",
+  "@accounting.bank-statement-import.ts.lu.par.l.ia.page.lue.en.secours.6fa79a4c": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-posting.logic.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.l.ia.1.page.0bb90ccc": "Lu par l'IA (1 page)",
+  "@accounting.bank-statement-import.ts.lu.par.l.ia.1.page.0bb90ccc": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-posting.logic.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.l.ia.pages.d44397d6": "Lu par l'IA ({$count} pages)",
+  "@accounting.bank-statement-import.ts.lu.par.l.ia.pages.d44397d6": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-posting.logic.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.l.ia.sans.l.image.des.pages.21167785": "Lu par l'IA, sans l'image des pages",
+  "@accounting.bank-statement-import.ts.lu.par.l.ia.sans.l.image.des.pages.21167785": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-posting.logic.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lecture.directe.completee.par.une.ia.externe.b4615235": "Lecture directe complétée par une IA externe",
+  "@accounting.bank-statement-import.ts.lecture.directe.completee.par.une.ia.externe.b4615235": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-posting.logic.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lecture.directe.completee.par.l.ia.locale.bdf8d38c": "Lecture directe complétée par l'IA locale",
+  "@accounting.bank-statement-import.ts.lecture.directe.completee.par.l.ia.locale.bdf8d38c": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-posting.logic.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lecture.directe.pages.scannees.lues.par.une.ia.e.1e33d5e5": "Lecture directe + pages scannées lues par une IA externe",
+  "@accounting.bank-statement-import.ts.lecture.directe.pages.scannees.lues.par.une.ia.e.1e33d5e5": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-posting.logic.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lecture.directe.pages.scannees.lues.par.l.ia.loc.9d423ab4": "Lecture directe + pages scannées lues par l'IA locale",
+  "@accounting.bank-statement-import.ts.lecture.directe.pages.scannees.lues.par.l.ia.loc.9d423ab4": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-posting.logic.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.une.ia.externe.ba81ec2a": "Lu par une IA externe",
+  "@accounting.bank-statement-import.ts.lu.par.une.ia.externe.ba81ec2a": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-posting.logic.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-statement-import.ts.lu.par.l.ia.locale.04535067": "Lu par l'IA locale",
+  "@accounting.bank-statement-import.ts.lu.par.l.ia.locale.04535067": {
+    "x-files": [
+      "src/app/features/accounting/bank-statement-import/bank-statement-posting.logic.ts"
     ],
     "x-wave": "v7"
   },
@@ -13921,125 +16389,6 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.bank-statement-import.ts.lecture.ia.non.effectuee": "Lecture IA non effectuée",
-  "@accounting.bank-statement-import.ts.lecture.ia.non.effectuee": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.1.pa.d281f138": "Lu par le service d'extraction documentaire (1 page)",
-  "@accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.1.pa.d281f138": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.page.d0085280": "Lu par le service d'extraction documentaire ({$count} pages)",
-  "@accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.page.d0085280": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.27912217": "Lu par le service d'extraction documentaire",
-  "@accounting.bank-statement-import.ts.lu.par.le.service.d.extraction.documentaire.27912217": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ts.lecture.directe.completee.par.le.service.d.extra.e232c028": "Lecture directe complétée par le service d'extraction documentaire",
-  "@accounting.bank-statement-import.ts.lecture.directe.completee.par.le.service.d.extra.e232c028": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ts.lecture.directe.du.pdf.aucune.ia.ba300454": "Lecture directe du PDF (aucune IA)",
-  "@accounting.bank-statement-import.ts.lecture.directe.du.pdf.aucune.ia.ba300454": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ts.lu.par.l.ia.pages.lues.en.secours.9c5e1339": "Lu par l'IA — pages {$pages} lues en secours",
-  "@accounting.bank-statement-import.ts.lu.par.l.ia.pages.lues.en.secours.9c5e1339": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ts.lu.par.l.ia.page.lue.en.secours.6fa79a4c": "Lu par l'IA — page {$page} lue en secours",
-  "@accounting.bank-statement-import.ts.lu.par.l.ia.page.lue.en.secours.6fa79a4c": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ts.lu.par.l.ia.1.page.0bb90ccc": "Lu par l'IA (1 page)",
-  "@accounting.bank-statement-import.ts.lu.par.l.ia.1.page.0bb90ccc": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ts.lu.par.l.ia.pages.d44397d6": "Lu par l'IA ({$count} pages)",
-  "@accounting.bank-statement-import.ts.lu.par.l.ia.pages.d44397d6": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ts.lu.par.l.ia.sans.l.image.des.pages.21167785": "Lu par l'IA, sans l'image des pages",
-  "@accounting.bank-statement-import.ts.lu.par.l.ia.sans.l.image.des.pages.21167785": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ts.lecture.directe.completee.par.une.ia.externe.b4615235": "Lecture directe complétée par une IA externe",
-  "@accounting.bank-statement-import.ts.lecture.directe.completee.par.une.ia.externe.b4615235": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ts.lecture.directe.completee.par.l.ia.locale.bdf8d38c": "Lecture directe complétée par l'IA locale",
-  "@accounting.bank-statement-import.ts.lecture.directe.completee.par.l.ia.locale.bdf8d38c": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ts.lecture.directe.pages.scannees.lues.par.une.ia.e.1e33d5e5": "Lecture directe + pages scannées lues par une IA externe",
-  "@accounting.bank-statement-import.ts.lecture.directe.pages.scannees.lues.par.une.ia.e.1e33d5e5": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ts.lecture.directe.pages.scannees.lues.par.l.ia.loc.9d423ab4": "Lecture directe + pages scannées lues par l'IA locale",
-  "@accounting.bank-statement-import.ts.lecture.directe.pages.scannees.lues.par.l.ia.loc.9d423ab4": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ts.lu.par.une.ia.externe.ba81ec2a": "Lu par une IA externe",
-  "@accounting.bank-statement-import.ts.lu.par.une.ia.externe.ba81ec2a": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.bank-statement-import.ts.lu.par.l.ia.locale.04535067": "Lu par l'IA locale",
-  "@accounting.bank-statement-import.ts.lu.par.l.ia.locale.04535067": {
-    "x-files": [
-      "src/app/features/accounting/bank-statement-import/bank-statement-review.component.ts"
-    ],
-    "x-wave": "v7"
-  },
   "accounting.bank-statement-import.ts.acces.refuse.vos.droits.ont.peut.etre.change.rec.68412fb2": "Accès refusé : vos droits ont peut-être changé, reconnectez-vous.",
   "@accounting.bank-statement-import.ts.acces.refuse.vos.droits.ont.peut.etre.change.rec.68412fb2": {
     "x-files": [
@@ -14472,6 +16821,7 @@
     "x-files": [
       "src/app/features/accounting/budget-entry/budget-entry.component.ts",
       "src/app/features/accounting/budget-posts/budget-posts.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
       "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts",
       "src/app/features/accounting/currencies/currencies.component.ts",
       "src/app/features/accounting/currencies/currency-edit.component.ts",
@@ -14499,6 +16849,7 @@
     "x-files": [
       "src/app/features/accounting/budget-entry/budget-entry.component.ts",
       "src/app/features/accounting/budget-posts/budget-posts.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
       "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts",
       "src/app/features/accounting/currencies/currencies.component.ts",
       "src/app/features/accounting/currencies/currency-edit.component.ts",
@@ -15168,6 +17519,220 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.chart-of-accounts.plan.comptable.gestion.des.comptes.619b25d6": "Plan comptable — Gestion des comptes",
+  "@accounting.chart-of-accounts.plan.comptable.gestion.des.comptes.619b25d6": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.hierarchie.du.compte.edd80076": "Hiérarchie du compte",
+  "@accounting.chart-of-accounts.hierarchie.du.compte.edd80076": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.hierarchie.du.compte.non.modifiable.b559b297": "Hiérarchie du compte (non modifiable)",
+  "@accounting.chart-of-accounts.hierarchie.du.compte.non.modifiable.b559b297": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.identification.9d2c7063": "Identification",
+  "@accounting.chart-of-accounts.identification.9d2c7063": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.compte.numero.f569fef7": "Compte numéro",
+  "@accounting.chart-of-accounts.compte.numero.f569fef7": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.le.numero.d.un.compte.existant.n.est.pas.modifia.4afb2a5c": "Le numéro d'un compte existant n'est pas modifiable.",
+  "@accounting.chart-of-accounts.le.numero.d.un.compte.existant.n.est.pas.modifia.4afb2a5c": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.libelle.f5485bba": "Libellé",
+  "@accounting.chart-of-accounts.libelle.f5485bba": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.ex.client.societe.x.947766e4": "Ex. Client Société X",
+  "@accounting.chart-of-accounts.ex.client.societe.x.947766e4": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.matricule.fiscal.facultatif.2d99c70e": "Matricule fiscal (facultatif)",
+  "@accounting.chart-of-accounts.matricule.fiscal.facultatif.2d99c70e": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.ex.1234567a.b.m.000.9d9247ba": "Ex. 1234567A/B/M/000",
+  "@accounting.chart-of-accounts.ex.1234567a.b.m.000.9d9247ba": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.annuler.49ba3292": "Annuler",
+  "@accounting.chart-of-accounts.annuler.49ba3292": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.modifier.le.compte.018a44a1": "Modifier le compte ",
+  "@accounting.chart-of-accounts.modifier.le.compte.018a44a1": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.type.de.compte.b6544864": "Type de compte",
+  "@accounting.chart-of-accounts.type.de.compte.b6544864": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.type.3deb7456": "Type",
+  "@accounting.chart-of-accounts.type.3deb7456": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.sous.compte.de.7f47036e": "Sous compte de",
+  "@accounting.chart-of-accounts.sous.compte.de.7f47036e": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.compte.d.affectation.4a67171b": "Compte d'affectation",
+  "@accounting.chart-of-accounts.compte.d.affectation.4a67171b": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.non.modifiable.1c6df9f1": "Non modifiable",
+  "@accounting.chart-of-accounts.non.modifiable.1c6df9f1": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.utilise.pour.rattacher.automatiquement.a.ce.comp.1587022f": "Utilisé pour rattacher automatiquement à ce compte les factures importées de ce client.",
+  "@accounting.chart-of-accounts.utilise.pour.rattacher.automatiquement.a.ce.comp.1587022f": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.utilise.pour.rattacher.automatiquement.a.ce.comp.7579ceec": "Utilisé pour rattacher automatiquement à ce compte les factures importées de ce fournisseur.",
+  "@accounting.chart-of-accounts.utilise.pour.rattacher.automatiquement.a.ce.comp.7579ceec": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.client.1bdd79b1": "Client",
+  "@accounting.chart-of-accounts.client.1bdd79b1": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.fournisseur.97d91d89": "Fournisseur",
+  "@accounting.chart-of-accounts.fournisseur.97d91d89": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.autre.43dacf9e": "Autre",
+  "@accounting.chart-of-accounts.autre.43dacf9e": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.auxiliaire.b8c6c266": "Auxiliaire",
+  "@accounting.chart-of-accounts.auxiliaire.b8c6c266": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.general.5376df98": "Général",
+  "@accounting.chart-of-accounts.general.5376df98": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.la.modification.du.compte.a.echoue.5b8a6cb1": "La modification du compte a échoué.",
+  "@accounting.chart-of-accounts.la.modification.du.compte.a.echoue.5b8a6cb1": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.erreur.reseau.lors.de.la.modification.du.compte.bb78977b": "Erreur réseau lors de la modification du compte.",
+  "@accounting.chart-of-accounts.erreur.reseau.lors.de.la.modification.du.compte.bb78977b": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.matricule.fiscal.invalide.format.attendu.7.chiffres": "Matricule fiscal invalide. Format attendu : 7 chiffres, une lettre, puis code TVA / catégorie / établissement (ex. 1234567A/B/M/000).",
+  "@accounting.chart-of-accounts.matricule.fiscal.invalide.format.attendu.7.chiffres": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-fiscal-id.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.ce.matricule.fiscal.est.deja.utilise.par.le": "Ce matricule fiscal est déjà utilisé par le compte {$accountNumber} — {$label}.",
+  "@accounting.chart-of-accounts.ce.matricule.fiscal.est.deja.utilise.par.le": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-fiscal-id.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.chart-of-accounts.plan.comptable.b3f54c09": "Plan comptable",
   "@accounting.chart-of-accounts.plan.comptable.b3f54c09": {
     "x-files": [
@@ -15189,8 +17754,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.chart-of-accounts.rechercher.par.n.de.compte.ou.libelle.d5cc9f44": "Rechercher par n° de compte ou libellé…",
-  "@accounting.chart-of-accounts.rechercher.par.n.de.compte.ou.libelle.d5cc9f44": {
+  "accounting.chart-of-accounts.rechercher.par.n.de.compte.libelle.ou.matricule..c25eae50": "Rechercher par n° de compte, libellé ou matricule fiscal",
+  "@accounting.chart-of-accounts.rechercher.par.n.de.compte.libelle.ou.matricule..c25eae50": {
     "x-files": [
       "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
     ],
@@ -15273,8 +17838,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.chart-of-accounts.libelle.f5485bba": " Libellé ",
-  "@accounting.chart-of-accounts.libelle.f5485bba": {
+  "accounting.chart-of-accounts.matricule.fiscal.304096c4": "Matricule fiscal",
+  "@accounting.chart-of-accounts.matricule.fiscal.304096c4": {
     "x-files": [
       "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
     ],
@@ -15294,13 +17859,6 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.chart-of-accounts.auxiliaire.b8c6c266": "Auxiliaire",
-  "@accounting.chart-of-accounts.auxiliaire.b8c6c266": {
-    "x-files": [
-      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
-    ],
-    "x-wave": "v7"
-  },
   "accounting.chart-of-accounts.statut.659499f3": "Statut",
   "@accounting.chart-of-accounts.statut.659499f3": {
     "x-files": [
@@ -15310,6 +17868,13 @@
   },
   "accounting.chart-of-accounts.text.1b93795b": "—",
   "@accounting.chart-of-accounts.text.1b93795b": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.modifier.f260e757": " Modifier ",
+  "@accounting.chart-of-accounts.modifier.f260e757": {
     "x-files": [
       "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
     ],
@@ -15336,20 +17901,6 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.chart-of-accounts.plan.comptable.gestion.des.comptes.619b25d6": "Plan comptable — Gestion des comptes",
-  "@accounting.chart-of-accounts.plan.comptable.gestion.des.comptes.619b25d6": {
-    "x-files": [
-      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.chart-of-accounts.type.de.compte.b6544864": "Type de compte",
-  "@accounting.chart-of-accounts.type.de.compte.b6544864": {
-    "x-files": [
-      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
-    ],
-    "x-wave": "v7"
-  },
   "accounting.chart-of-accounts.fournisseur.a1324303": "{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT} Fournisseur",
   "@accounting.chart-of-accounts.fournisseur.a1324303": {
     "x-files": [
@@ -15371,64 +17922,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.chart-of-accounts.hierarchie.du.compte.edd80076": "Hiérarchie du compte",
-  "@accounting.chart-of-accounts.hierarchie.du.compte.edd80076": {
-    "x-files": [
-      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.chart-of-accounts.type.3deb7456": "Type",
-  "@accounting.chart-of-accounts.type.3deb7456": {
-    "x-files": [
-      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.chart-of-accounts.general.5376df98": "Général",
-  "@accounting.chart-of-accounts.general.5376df98": {
-    "x-files": [
-      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.chart-of-accounts.sous.compte.de.7f47036e": "Sous compte de",
-  "@accounting.chart-of-accounts.sous.compte.de.7f47036e": {
-    "x-files": [
-      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.chart-of-accounts.compte.d.affectation.4a67171b": "Compte d'affectation",
-  "@accounting.chart-of-accounts.compte.d.affectation.4a67171b": {
-    "x-files": [
-      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.chart-of-accounts.identification.9d2c7063": "Identification",
-  "@accounting.chart-of-accounts.identification.9d2c7063": {
-    "x-files": [
-      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.chart-of-accounts.compte.numero.f569fef7": "Compte numéro",
-  "@accounting.chart-of-accounts.compte.numero.f569fef7": {
-    "x-files": [
-      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
-    ],
-    "x-wave": "v7"
-  },
   "accounting.chart-of-accounts.ex.428.3.ou.41100001.5e8b90c4": "Ex. 428.3 ou 41100001",
   "@accounting.chart-of-accounts.ex.428.3.ou.41100001.5e8b90c4": {
-    "x-files": [
-      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.chart-of-accounts.ex.client.societe.x.947766e4": "Ex. Client Société X",
-  "@accounting.chart-of-accounts.ex.client.societe.x.947766e4": {
     "x-files": [
       "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
     ],
@@ -15478,13 +17973,6 @@
   },
   "accounting.chart-of-accounts.devise.iso": "Devise ISO",
   "@accounting.chart-of-accounts.devise.iso": {
-    "x-files": [
-      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.chart-of-accounts.annuler.49ba3292": "Annuler",
-  "@accounting.chart-of-accounts.annuler.49ba3292": {
     "x-files": [
       "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
     ],
@@ -15600,6 +18088,13 @@
   },
   "accounting.chart-of-accounts.ts.erreur.reseau.lors.de.la.creation.du.com.5e2cfce1": "Erreur réseau lors de la création du compte.",
   "@accounting.chart-of-accounts.ts.erreur.reseau.lors.de.la.creation.du.com.5e2cfce1": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.ts.compte.modifie.b173f6a0": "Compte modifié",
+  "@accounting.chart-of-accounts.ts.compte.modifie.b173f6a0": {
     "x-files": [
       "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
     ],
@@ -27553,6 +30048,146 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.entry-journal-history.title": "Dernières écritures",
+  "@accounting.entry-journal-history.title": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.loading": "Chargement des dernières écritures…",
+  "@accounting.entry-journal-history.loading": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.retry": "Réessayer",
+  "@accounting.entry-journal-history.retry": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.empty": "Aucune écriture sur les 12 derniers mois pour ce journal.",
+  "@accounting.entry-journal-history.empty": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.unbalanced": "Non équilibrée",
+  "@accounting.entry-journal-history.unbalanced": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.reversed": "Extournée",
+  "@accounting.entry-journal-history.reversed": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.current": "Écriture en cours",
+  "@accounting.entry-journal-history.current": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.open": "Ouvrir",
+  "@accounting.entry-journal-history.open": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.line": "N°",
+  "@accounting.entry-journal-history.line": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.account": "Compte",
+  "@accounting.entry-journal-history.account": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.label": "Libellé",
+  "@accounting.entry-journal-history.label": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.debit": "Débit",
+  "@accounting.entry-journal-history.debit": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.credit": "Crédit",
+  "@accounting.entry-journal-history.credit": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.period": "Journal {$code} — 12 derniers mois",
+  "@accounting.entry-journal-history.period": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.draft": "Brouillon",
+  "@accounting.entry-journal-history.draft": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.closed": "Clôturée",
+  "@accounting.entry-journal-history.closed": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.validated": "Validée",
+  "@accounting.entry-journal-history.validated": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.piece": "Pièce {$ref}",
+  "@accounting.entry-journal-history.piece": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.open-label": "Ouvrir l'écriture {$number}",
+  "@accounting.entry-journal-history.open-label": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-journal-history.error": "Impossible de charger les dernières écritures.",
+  "@accounting.entry-journal-history.error": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.manual-entry.solde.e5977cf9": " Solde ",
   "@accounting.manual-entry.solde.e5977cf9": {
     "x-files": [
@@ -28173,6 +30808,20 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.manual-entry.ouvre.la.page.dediee.d.import.de.releve.bancaire.adc9cd05": "Ouvre la page dédiée d'import de relevé bancaire (CSV/Excel ou PDF/image) vers des écritures en brouillard",
+  "@accounting.manual-entry.ouvre.la.page.dediee.d.import.de.releve.bancaire.adc9cd05": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-toolbar.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.releve.bancaire.ecritures.426df845": " Relevé bancaire → écritures ",
+  "@accounting.manual-entry.releve.bancaire.ecritures.426df845": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/entry-toolbar.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.manual-entry.annuler.49ba3292": " Annuler ",
   "@accounting.manual-entry.annuler.49ba3292": {
     "x-files": [
@@ -28599,6 +31248,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.manual-entry.compte.auxiliaire.f30d2385": "Compte auxiliaire",
+  "@accounting.manual-entry.compte.auxiliaire.f30d2385": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.manual-entry.compte.collectif.f1c7e97c": "Compte collectif",
   "@accounting.manual-entry.compte.collectif.f1c7e97c": {
     "x-files": [
@@ -28606,8 +31262,15 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.manual-entry.tiers.rapproche.9818df8a": "{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT} Tiers rapproché{$INTERPOLATION} ",
-  "@accounting.manual-entry.tiers.rapproche.9818df8a": {
+  "accounting.manual-entry.rapproche.par.matricule.fiscal.250ecc35": "{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT} Rapproché par matricule fiscal ",
+  "@accounting.manual-entry.rapproche.par.matricule.fiscal.250ecc35": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.rapproche.par.nom.verifiez.493910ae": "{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT} Rapproché par nom — vérifiez ",
+  "@accounting.manual-entry.rapproche.par.nom.verifiez.493910ae": {
     "x-files": [
       "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
     ],
@@ -28818,20 +31481,6 @@
       "src/app/features/accounting/manual-entry/services/entry-reference.store.ts",
       "src/app/features/accounting/third-parties/third-parties.component.ts",
       "src/app/features/forecasting/components/prepare-po-confirm-modal/prepare-po-confirm-modal.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "ui.tern.par.matricule.fiscal.ef1940": " par matricule fiscal",
-  "@ui.tern.par.matricule.fiscal.ef1940": {
-    "x-files": [
-      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "ui.tern.par.nom.4c4de0": " par nom",
-  "@ui.tern.par.nom.4c4de0": {
-    "x-files": [
-      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
     ],
     "x-wave": "v7"
   },
@@ -29799,6 +32448,13 @@
   },
   "accounting.manual-entry.ts.linecount.ligne.s.posee.s.verifiez.avant.40ef825e": "{$lineCount} ligne(s) posée(s). Vérifiez avant d'enregistrer.",
   "@accounting.manual-entry.ts.linecount.ligne.s.posee.s.verifiez.avant.40ef825e": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/manual-entry.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "core.desk.manual-entry.discard": "Des modifications non enregistrées seront perdues. Fermer cette fenêtre ?",
+  "@core.desk.manual-entry.discard": {
     "x-files": [
       "src/app/features/accounting/manual-entry/manual-entry.component.ts"
     ],
@@ -39266,6 +41922,13 @@
   },
   "audit.audit-action-labels.ts.libelle.de.compte.modifie.361c1e54": "Libellé de compte modifié",
   "@audit.audit-action-labels.ts.libelle.de.compte.modifie.361c1e54": {
+    "x-files": [
+      "src/app/features/audit/audit-action-labels.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "audit.audit-action-labels.ts.matricule.fiscal.du.compte.modifie.5e432a68": "Matricule fiscal du compte modifié",
+  "@audit.audit-action-labels.ts.matricule.fiscal.du.compte.modifie.5e432a68": {
     "x-files": [
       "src/app/features/audit/audit-action-labels.ts"
     ],
@@ -84971,6 +87634,34 @@
     ],
     "x-wave": "v4"
   },
+  "purchase-receipts.pages.totaux.a1ca02f8": "Totaux",
+  "@purchase-receipts.pages.totaux.a1ca02f8": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.total.commande.ht.e5a5e984": "Total commandé HT",
+  "@purchase-receipts.pages.total.commande.ht.e5a5e984": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.total.recu.ht.aef476e2": "Total reçu HT",
+  "@purchase-receipts.pages.total.recu.ht.aef476e2": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.reste.a.recevoir.ht.b1ff628f": "Reste à recevoir HT",
+  "@purchase-receipts.pages.reste.a.recevoir.ht.b1ff628f": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "purchase-receipts.pages.informations.complementaires.805470ce": "Informations complémentaires",
   "@purchase-receipts.pages.informations.complementaires.805470ce": {
     "x-files": [
@@ -85022,34 +87713,6 @@
   },
   "purchase-receipts.pages.supprimer.la.piece.jointe.9b073c7b": "Supprimer la pièce jointe",
   "@purchase-receipts.pages.supprimer.la.piece.jointe.9b073c7b": {
-    "x-files": [
-      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
-    ],
-    "x-wave": "v4"
-  },
-  "purchase-receipts.pages.totaux.a1ca02f8": "Totaux",
-  "@purchase-receipts.pages.totaux.a1ca02f8": {
-    "x-files": [
-      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
-    ],
-    "x-wave": "v4"
-  },
-  "purchase-receipts.pages.total.commande.ht.e5a5e984": "Total commandé HT",
-  "@purchase-receipts.pages.total.commande.ht.e5a5e984": {
-    "x-files": [
-      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
-    ],
-    "x-wave": "v4"
-  },
-  "purchase-receipts.pages.total.recu.ht.aef476e2": "Total reçu HT",
-  "@purchase-receipts.pages.total.recu.ht.aef476e2": {
-    "x-files": [
-      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
-    ],
-    "x-wave": "v4"
-  },
-  "purchase-receipts.pages.reste.a.recevoir.ht.b1ff628f": "Reste à recevoir HT",
-  "@purchase-receipts.pages.reste.a.recevoir.ht.b1ff628f": {
     "x-files": [
       "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
     ],
@@ -85155,6 +87818,13 @@
   },
   "purchase-receipts.purchase-receipt-form.ts.modifier.f260e757": "Modifier",
   "@purchase-receipts.purchase-receipt-form.ts.modifier.f260e757": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipt-form.component.detail.impossible.de.charger.les.articles.reessayez": "Impossible de charger les articles. Réessayez.",
+  "@purchase-receipt-form.component.detail.impossible.de.charger.les.articles.reessayez": {
     "x-files": [
       "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
     ],
@@ -96897,8 +99567,15 @@
     ],
     "x-wave": "v6"
   },
-  "reports.stock-status.valeur.totale": "Valeur totale",
+  "reports.stock-status.valeur.totale": "Valeur totale HT",
   "@reports.stock-status.valeur.totale": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.valeur.totale.ttc": "Valeur totale TTC",
+  "@reports.stock-status.valeur.totale.ttc": {
     "x-files": [
       "src/app/features/reports/stock-status/stock-status-report.component.ts"
     ],
@@ -96974,8 +99651,22 @@
     ],
     "x-wave": "v6"
   },
-  "reports.stock-status.col.valeur": "Valeur",
+  "reports.stock-status.col.tva": "TVA",
+  "@reports.stock-status.col.tva": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.col.valeur": "Valeur HT",
   "@reports.stock-status.col.valeur": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.col.valeur.ttc": "Valeur TTC",
+  "@reports.stock-status.col.valeur.ttc": {
     "x-files": [
       "src/app/features/reports/stock-status/stock-status-report.component.ts"
     ],
@@ -96988,8 +99679,36 @@
     ],
     "x-wave": "v6"
   },
+  "reports.stock-status.suffix.ht": "HT",
+  "@reports.stock-status.suffix.ht": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.suffix.ttc": "TTC",
+  "@reports.stock-status.suffix.ttc": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
   "reports.stock-status.total.groupe": "Total",
   "@reports.stock-status.total.groupe": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.legende.ttc": "Valeur TTC = valeur HT × (1 + taux de TVA actuel de la fiche article). Ce n'est pas le taux du bon de réception. En FIFO/LIFO, P.U. × Qté × (1 + TVA) ≠ Valeur TTC.",
+  "@reports.stock-status.legende.ttc": {
+    "x-files": [
+      "src/app/features/reports/stock-status/stock-status-report.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-status.legende.pu.prochaine.sortie.5b3de9a1": "FIFO/LIFO : le P.U. affiché est le coût de la prochaine sortie. La valeur est la somme des couches restantes, donc P.U. × Qté ≠ Valeur.",
+  "@reports.stock-status.legende.pu.prochaine.sortie.5b3de9a1": {
     "x-files": [
       "src/app/features/reports/stock-status/stock-status-report.component.ts"
     ],
@@ -97037,8 +99756,8 @@
     ],
     "x-wave": "v6"
   },
-  "reports.stock-status.legende.pu.prochaine.sortie.5b3de9a1": "FIFO/LIFO : le P.U. affiché est le coût de la prochaine sortie. La valeur est la somme des couches restantes, donc P.U. × Qté ≠ Valeur.",
-  "@reports.stock-status.legende.pu.prochaine.sortie.5b3de9a1": {
+  "reports.stock-status.col.tva.pct": "TVA %",
+  "@reports.stock-status.col.tva.pct": {
     "x-files": [
       "src/app/features/reports/stock-status/stock-status-report.component.ts"
     ],
@@ -101438,6 +104157,107 @@
     ],
     "x-wave": "v3"
   },
+  "dataExport.page.title": "Mes données",
+  "@dataExport.page.title": {
+    "x-files": [
+      "src/app/features/settings/data-export/data-export.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "dataExport.page.subtitle": "Téléchargez une copie Excel des données que vous pouvez lire.",
+  "@dataExport.page.subtitle": {
+    "x-files": [
+      "src/app/features/settings/data-export/data-export.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "dataExport.page.period": "Période",
+  "@dataExport.page.period": {
+    "x-files": [
+      "src/app/features/settings/data-export/data-export.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "dataExport.page.hint": " Sans période, l'historique complet est inclus, dans la limite du volume autorisé. Une copie incomplète n'est jamais téléchargée. ",
+  "@dataExport.page.hint": {
+    "x-files": [
+      "src/app/features/settings/data-export/data-export.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "dataExport.page.from": "Du",
+  "@dataExport.page.from": {
+    "x-files": [
+      "src/app/features/settings/data-export/data-export.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "dataExport.page.to": "Au",
+  "@dataExport.page.to": {
+    "x-files": [
+      "src/app/features/settings/data-export/data-export.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "dataExport.page.datasets": "Jeux de données",
+  "@dataExport.page.datasets": {
+    "x-files": [
+      "src/app/features/settings/data-export/data-export.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "dataExport.page.disclaimer": " Copie de consultation. Ce fichier n'est pas un document fiscal. ",
+  "@dataExport.page.disclaimer": {
+    "x-files": [
+      "src/app/features/settings/data-export/data-export.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "dataExport.page.download": " Télécharger le classeur ",
+  "@dataExport.page.download": {
+    "x-files": [
+      "src/app/features/settings/data-export/data-export.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.settings.ts.tableau.de.bord.a524057f": "Tableau de bord",
+  "@settings.settings.ts.tableau.de.bord.a524057f": {
+    "x-files": [
+      "src/app/features/settings/data-export/data-export.component.ts",
+      "src/app/features/settings/settings.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.settings.ts.parametres.ef8f0121": "Paramètres",
+  "@settings.settings.ts.parametres.ef8f0121": {
+    "x-files": [
+      "src/app/features/settings/data-export/data-export.component.ts",
+      "src/app/features/settings/settings.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "dataExport.error.title": "Export impossible",
+  "@dataExport.error.title": {
+    "x-files": [
+      "src/app/features/settings/data-export/data-export.component.ts",
+      "src/app/shared/components/export-excel-button/export-excel-button.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "dataExport.error.dateOrder": "La date de début doit précéder la date de fin.",
+  "@dataExport.error.dateOrder": {
+    "x-files": [
+      "src/app/features/settings/data-export/data-export.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "dataExport.error.emptySelection": "Cochez au moins un jeu de données.",
+  "@dataExport.error.emptySelection": {
+    "x-files": [
+      "src/app/features/settings/data-export/data-export.component.ts"
+    ],
+    "x-wave": "v3"
+  },
   "settings.modules.modules.04e9462c": "Modules",
   "@settings.modules.modules.04e9462c": {
     "x-files": [
@@ -103381,20 +106201,6 @@
     ],
     "x-wave": "v3"
   },
-  "settings.settings.ts.tableau.de.bord.a524057f": "Tableau de bord",
-  "@settings.settings.ts.tableau.de.bord.a524057f": {
-    "x-files": [
-      "src/app/features/settings/settings.component.ts"
-    ],
-    "x-wave": "v3"
-  },
-  "settings.settings.ts.parametres.ef8f0121": "Paramètres",
-  "@settings.settings.ts.parametres.ef8f0121": {
-    "x-files": [
-      "src/app/features/settings/settings.component.ts"
-    ],
-    "x-wave": "v3"
-  },
   "settings.settings.ts.mon.profil.faa6d321": "Mon profil",
   "@settings.settings.ts.mon.profil.faa6d321": {
     "x-files": [
@@ -103598,6 +106404,20 @@
     ],
     "x-wave": "v3"
   },
+  "settings.settings.ts.mes.donnees": "Mes données",
+  "@settings.settings.ts.mes.donnees": {
+    "x-files": [
+      "src/app/features/settings/settings.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.settings.ts.copie.excel": "Copie Excel de vos clients, documents et stocks, selon vos droits.",
+  "@settings.settings.ts.copie.excel": {
+    "x-files": [
+      "src/app/features/settings/settings.component.ts"
+    ],
+    "x-wave": "v3"
+  },
   "settings.routes.title.Param_tres_InstaFact": "Paramètres - InstaFact",
   "@settings.routes.title.Param_tres_InstaFact": {
     "x-files": [
@@ -103607,6 +106427,13 @@
   },
   "settings.routes.title.Mon_profil_InstaFact": "Mon profil - InstaFact",
   "@settings.routes.title.Mon_profil_InstaFact": {
+    "x-files": [
+      "src/app/features/settings/settings.routes.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.routes.title.Mes_donnees_InstaFact": "Mes données - InstaFact",
+  "@settings.routes.title.Mes_donnees_InstaFact": {
     "x-files": [
       "src/app/features/settings/settings.routes.ts"
     ],
@@ -108799,13 +111626,6 @@
     ],
     "x-wave": "v5"
   },
-  "stock.stock-list.ts.pu.prochaine.sortie.a71f0c52": "FIFO/LIFO : le P.U. affiché est le coût de la prochaine sortie. La valeur est la somme des couches restantes, donc P.U. × Qté ≠ Valeur.",
-  "@stock.stock-list.ts.pu.prochaine.sortie.a71f0c52": {
-    "x-files": [
-      "src/app/features/stock/stock-list/stock-list.component.ts"
-    ],
-    "x-wave": "v5"
-  },
   "stock.stock-list.ts.en.alerte.79f4b44b": "En alerte",
   "@stock.stock-list.ts.en.alerte.79f4b44b": {
     "x-files": [
@@ -108878,6 +111698,13 @@
   },
   "stock-list.component.detail.Impossible d": "Impossible de charger le stock",
   "@stock-list.component.detail.Impossible d": {
+    "x-files": [
+      "src/app/features/stock/stock-list/stock-list.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "stock.stock-list.ts.pu.prochaine.sortie.a71f0c52": "FIFO/LIFO : le P.U. affiché est le coût de la prochaine sortie. La valeur est la somme des couches restantes, donc P.U. × Qté ≠ Valeur.",
+  "@stock.stock-list.ts.pu.prochaine.sortie.a71f0c52": {
     "x-files": [
       "src/app/features/stock/stock-list/stock-list.component.ts"
     ],
@@ -124053,6 +126880,13 @@
     ],
     "x-wave": "v1"
   },
+  "dataExport.button": " Exporter Excel ",
+  "@dataExport.button": {
+    "x-files": [
+      "src/app/shared/components/export-excel-button/export-excel-button.component.ts"
+    ],
+    "x-wave": "v1"
+  },
   "shared.components.invoice-payments-panel.invoice-payments-panel.paiements.facture.d90f5199": " Paiements — Facture {$INTERPOLATION} ",
   "@shared.components.invoice-payments-panel.invoice-payments-panel.paiements.facture.d90f5199": {
     "x-files": [
@@ -126742,163 +129576,5 @@
       "src/app/shared/validation/validation-rules.ts"
     ],
     "x-wave": "v1"
-  },
-  "core.desk.overlay": "Fermez d'abord la fenêtre de dialogue.",
-  "@core.desk.overlay": {
-    "x-files": ["src/app/core/desk/desk-window.service.ts"]
-  },
-  "core.desk.cap": "Huit fenêtres sont déjà ouvertes. Fermez-en une pour continuer.",
-  "@core.desk.cap": {
-    "x-files": ["src/app/core/desk/desk-window.service.ts"]
-  },
-  "core.desk.titlebar": "Fenêtres",
-  "@core.desk.titlebar": {
-    "x-files": ["src/app/core/desk/desk-window.service.ts"]
-  },
-  "core.desk.leave.header": "Quitter le dossier",
-  "@core.desk.leave.header": {
-    "x-files": ["src/app/core/desk/desk-window.service.ts"]
-  },
-  "core.desk.leave.message": "Des modifications non enregistrées seront perdues : {$titles}",
-  "@core.desk.leave.message": {
-    "x-files": ["src/app/core/desk/desk-window.service.ts"]
-  },
-  "core.desk.leave.accept": "Quitter quand même",
-  "@core.desk.leave.accept": {
-    "x-files": ["src/app/core/desk/desk-window.service.ts"]
-  },
-  "core.desk.leave.reject": "Rester",
-  "@core.desk.leave.reject": {
-    "x-files": ["src/app/core/desk/desk-window.service.ts"]
-  },
-  "core.desk.empty.title": "Aucune fenêtre ouverte",
-  "@core.desk.empty.title": {
-    "x-files": ["src/app/core/desk/desk-empty.component.ts"]
-  },
-  "core.desk.empty.body": "Ouvrez un écran depuis le menu, ou reprenez un raccourci.",
-  "@core.desk.empty.body": {
-    "x-files": ["src/app/core/desk/desk-empty.component.ts"]
-  },
-  "core.desk.taskbar": "Fenêtres ouvertes",
-  "@core.desk.taskbar": {
-    "x-files": ["src/app/core/desk/desk-shell.component.ts"]
-  },
-  "core.desk.close-window": "Fermer {$title}",
-  "@core.desk.close-window": {
-    "x-files": ["src/app/core/desk/desk-shell.component.ts"]
-  },
-  "core.desk.minimize-window": "Réduire {$title}",
-  "@core.desk.minimize-window": {
-    "x-files": ["src/app/core/desk/desk-shell.component.ts"]
-  },
-  "core.desk.activate-window": "Afficher {$title}",
-  "@core.desk.activate-window": {
-    "x-files": ["src/app/core/desk/desk-shell.component.ts"]
-  },
-  "core.desk.route.bureau": "Bureau - InstaFact",
-  "@core.desk.route.bureau": {
-    "x-files": ["src/app/app.routes.ts"]
-  },
-  "core.desk.manual-entry.discard": "Des modifications non enregistrées seront perdues. Fermer cette fenêtre ?",
-  "@core.desk.manual-entry.discard": {
-    "x-files": ["src/app/features/accounting/manual-entry/manual-entry.component.ts"]
-  },
-  "dataExport.dataset.clients": "Clients",
-  "@dataExport.dataset.clients": {"x-files":["src/app/core/data-export/data-export.catalog.ts"],"x-wave":"v1"},
-  "dataExport.dataset.products": "Produits",
-  "@dataExport.dataset.products": {"x-files":["src/app/core/data-export/data-export.catalog.ts"],"x-wave":"v1"},
-  "dataExport.dataset.suppliers": "Fournisseurs",
-  "@dataExport.dataset.suppliers": {"x-files":["src/app/core/data-export/data-export.catalog.ts"],"x-wave":"v1"},
-  "dataExport.dataset.invoices": "Factures",
-  "@dataExport.dataset.invoices": {"x-files":["src/app/core/data-export/data-export.catalog.ts"],"x-wave":"v1"},
-  "dataExport.dataset.creditNotes": "Avoirs",
-  "@dataExport.dataset.creditNotes": {"x-files":["src/app/core/data-export/data-export.catalog.ts"],"x-wave":"v1"},
-  "dataExport.dataset.supplierInvoices": "Factures fournisseurs",
-  "@dataExport.dataset.supplierInvoices": {"x-files":["src/app/core/data-export/data-export.catalog.ts"],"x-wave":"v1"},
-  "dataExport.dataset.quotes": "Devis",
-  "@dataExport.dataset.quotes": {"x-files":["src/app/core/data-export/data-export.catalog.ts"],"x-wave":"v1"},
-  "dataExport.dataset.deliveryNotes": "Bons de livraison",
-  "@dataExport.dataset.deliveryNotes": {"x-files":["src/app/core/data-export/data-export.catalog.ts"],"x-wave":"v1"},
-  "dataExport.dataset.purchaseOrders": "Bons de commande",
-  "@dataExport.dataset.purchaseOrders": {"x-files":["src/app/core/data-export/data-export.catalog.ts"],"x-wave":"v1"},
-  "dataExport.dataset.stockItems": "Stock",
-  "@dataExport.dataset.stockItems": {"x-files":["src/app/core/data-export/data-export.catalog.ts"],"x-wave":"v1"},
-  "dataExport.dataset.stockMovements": "Mouvements de stock",
-  "@dataExport.dataset.stockMovements": {"x-files":["src/app/core/data-export/data-export.catalog.ts"],"x-wave":"v1"},
-  "dataExport.error.generic": "L'export n'a pas pu être téléchargé.",
-  "@dataExport.error.generic": {"x-files":["src/app/core/services/data-export.service.ts","src/app/features/settings/data-export/data-export.component.ts","src/app/shared/components/export-excel-button/export-excel-button.component.ts"],"x-wave":"v1"},
-  "dataExport.error.rateLimit": "Trop d'exports. Réessayez dans une minute.",
-  "@dataExport.error.rateLimit": {"x-files":["src/app/core/services/data-export.service.ts"],"x-wave":"v1"},
-  "dataExport.page.title": "Mes données",
-  "@dataExport.page.title": {"x-files":["src/app/features/settings/data-export/data-export.component.ts"],"x-wave":"v3"},
-  "dataExport.page.subtitle": "Téléchargez une copie Excel des données que vous pouvez lire.",
-  "@dataExport.page.subtitle": {"x-files":["src/app/features/settings/data-export/data-export.component.ts"],"x-wave":"v3"},
-  "dataExport.page.period": "Période",
-  "@dataExport.page.period": {"x-files":["src/app/features/settings/data-export/data-export.component.ts"],"x-wave":"v3"},
-  "dataExport.page.hint": " Sans période, l'historique complet est inclus, dans la limite du volume autorisé. Une copie incomplète n'est jamais téléchargée. ",
-  "@dataExport.page.hint": {"x-files":["src/app/features/settings/data-export/data-export.component.ts"],"x-wave":"v3"},
-  "dataExport.page.from": "Du",
-  "@dataExport.page.from": {"x-files":["src/app/features/settings/data-export/data-export.component.ts"],"x-wave":"v3"},
-  "dataExport.page.to": "Au",
-  "@dataExport.page.to": {"x-files":["src/app/features/settings/data-export/data-export.component.ts"],"x-wave":"v3"},
-  "dataExport.page.datasets": "Jeux de données",
-  "@dataExport.page.datasets": {"x-files":["src/app/features/settings/data-export/data-export.component.ts"],"x-wave":"v3"},
-  "dataExport.page.disclaimer": " Copie de consultation. Ce fichier n'est pas un document fiscal. ",
-  "@dataExport.page.disclaimer": {"x-files":["src/app/features/settings/data-export/data-export.component.ts"],"x-wave":"v3"},
-  "dataExport.page.download": " Télécharger le classeur ",
-  "@dataExport.page.download": {"x-files":["src/app/features/settings/data-export/data-export.component.ts"],"x-wave":"v3"},
-  "dataExport.error.title": "Export impossible",
-  "@dataExport.error.title": {"x-files":["src/app/features/settings/data-export/data-export.component.ts","src/app/shared/components/export-excel-button/export-excel-button.component.ts"],"x-wave":"v3"},
-  "dataExport.error.dateOrder": "La date de début doit précéder la date de fin.",
-  "@dataExport.error.dateOrder": {"x-files":["src/app/features/settings/data-export/data-export.component.ts"],"x-wave":"v3"},
-  "dataExport.error.emptySelection": "Cochez au moins un jeu de données.",
-  "@dataExport.error.emptySelection": {"x-files":["src/app/features/settings/data-export/data-export.component.ts"],"x-wave":"v3"},
-  "settings.settings.ts.mes.donnees": "Mes données",
-  "@settings.settings.ts.mes.donnees": {"x-files":["src/app/features/settings/settings.component.ts"],"x-wave":"v3"},
-  "settings.settings.ts.copie.excel": "Copie Excel de vos clients, documents et stocks, selon vos droits.",
-  "@settings.settings.ts.copie.excel": {"x-files":["src/app/features/settings/settings.component.ts"],"x-wave":"v3"},
-  "settings.routes.title.Mes_donnees_InstaFact": "Mes données - InstaFact",
-  "@settings.routes.title.Mes_donnees_InstaFact": {"x-files":["src/app/features/settings/settings.routes.ts"],"x-wave":"v3"},
-  "dataExport.button": " Exporter Excel ",
-  "@dataExport.button": {"x-files":["src/app/shared/components/export-excel-button/export-excel-button.component.ts"],"x-wave":"v1"},
-  "accounting.entry-journal-history.title": "Dernières écritures",
-  "@accounting.entry-journal-history.title": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.period": "Journal {$code} — 12 derniers mois",
-  "@accounting.entry-journal-history.period": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.loading": "Chargement des dernières écritures…",
-  "@accounting.entry-journal-history.loading": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.error": "Impossible de charger les dernières écritures.",
-  "@accounting.entry-journal-history.error": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.retry": "Réessayer",
-  "@accounting.entry-journal-history.retry": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.empty": "Aucune écriture sur les 12 derniers mois pour ce journal.",
-  "@accounting.entry-journal-history.empty": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.unbalanced": "Non équilibrée",
-  "@accounting.entry-journal-history.unbalanced": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.reversed": "Extournée",
-  "@accounting.entry-journal-history.reversed": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.current": "Écriture en cours",
-  "@accounting.entry-journal-history.current": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.open": "Ouvrir",
-  "@accounting.entry-journal-history.open": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.open-label": "Ouvrir l'écriture {$number}",
-  "@accounting.entry-journal-history.open-label": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.piece": "Pièce {$ref}",
-  "@accounting.entry-journal-history.piece": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.draft": "Brouillon",
-  "@accounting.entry-journal-history.draft": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.validated": "Validée",
-  "@accounting.entry-journal-history.validated": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.closed": "Clôturée",
-  "@accounting.entry-journal-history.closed": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.line": "N°",
-  "@accounting.entry-journal-history.line": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.account": "Compte",
-  "@accounting.entry-journal-history.account": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.label": "Libellé",
-  "@accounting.entry-journal-history.label": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.debit": "Débit",
-  "@accounting.entry-journal-history.debit": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
-  "accounting.entry-journal-history.credit": "Crédit",
-  "@accounting.entry-journal-history.credit": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]}
+  }
 }

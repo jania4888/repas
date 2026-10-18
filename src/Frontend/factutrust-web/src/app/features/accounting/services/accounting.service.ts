@@ -20,6 +20,15 @@ export interface ChartOfAccountDto {
   accountType?: number;
   isAuxiliary?: boolean;
   affectationAccountNumber?: string | null;
+  /** Matricule fiscal canonique (ex. 1234567A/B/M/000), uniquement pour les comptes auxiliaires Client/Fournisseur. */
+  fiscalId?: string | null;
+}
+
+export interface UpdateChartOfAccountRequest {
+  label: string;
+  fiscalId: string | null;
+  /** Si false/absent, fiscalId est ignoré côté API (les anciens clients n'écrasent jamais la valeur existante). */
+  updateFiscalId: boolean;
 }
 
 export interface JournalEntryDto {
@@ -1694,6 +1703,8 @@ export interface CreateSubAccountRequest {
   iban?: string | null;
   bankCurrency?: string | null;
   swiftBic?: string | null;
+  /** Matricule fiscal canonique ; absent/vide = pas de matricule fiscal. */
+  fiscalId?: string | null;
 }
 
 /** Compte 532 visible dans l'import de relevés, sans RIB/IBAN en clair. */
@@ -2706,6 +2717,13 @@ export class AccountingService {
 
   updateAccountLabel(id: string, label: string): Observable<ApiResponse<boolean>> {
     return this.http.put<ApiResponse<boolean>>(`${this.base}/chart-of-accounts/${id}`, { label });
+  }
+
+  /** PUT générique (libellé + matricule fiscal). `updateFiscalId` doit être `true` pour toucher le matricule fiscal. */
+  updateChartOfAccount(id: string, request: UpdateChartOfAccountRequest): Observable<ApiResponse<boolean>> {
+    return this.http.put<ApiResponse<boolean>>(`${this.base}/chart-of-accounts/${id}`, request, {
+      context: createHttpContextSkipGlobalErrorUi()
+    });
   }
 
   toggleAccountActive(id: string): Observable<ApiResponse<boolean>> {

@@ -232,6 +232,105 @@ describe('import-proposal.utils', () => {
     expect(merged.hasBlockingDiagnostic).toBe(true);
   });
 
+  describe('third-party diagnostics with matched auxiliary account', () => {
+    const accountsWithAux = [
+      ...accounts,
+      { id: '4', accountNumber: '401002', label: 'Fournisseur ACME', accountClass: 4, isActive: true, isSystem: false, natureType: 1, level: 5, accountType: 2, isAuxiliary: true }
+    ];
+
+    function proposalWithMatchedAux(matchedAccountNumber: string | null): JournalEntryProposal {
+      const p = baseProposal();
+      return {
+        ...p,
+        thirdParty: {
+          ...p.thirdParty!,
+          matchedAccountNumber,
+          matchedAccountId: matchedAccountNumber ? 'acc-4' : null,
+          matchedAccountLabel: matchedAccountNumber ? 'Fournisseur ACME' : null,
+          matchedAccountBy: matchedAccountNumber ? 'nif' : null
+        }
+      };
+    }
+
+    function snapshotWithLines(lines: ReturnType<typeof createEmptyLine>[]) {
+      return buildStoreSnapshot(
+        {
+          journalCode: 'JA',
+          entryDate: '2026-08-01',
+          entryLabel: 'Facture',
+          pieceRef: 'FAC-001',
+          pieceDate: '2026-08-01'
+        },
+        lines,
+        false,
+        true
+      );
+    }
+
+    it('ne signale pas ThirdPartyNotMatched quand la ligne porte le compte auxiliaire rapproché', () => {
+      const p = proposalWithMatchedAux('401002');
+      const lines = [
+        { ...createEmptyLine(), accountNumber: '607', lineLabel: 'HT', debit: 100, credit: null },
+        { ...createEmptyLine(), accountNumber: '401002', lineLabel: 'Fournisseur ACME', debit: null, credit: 100 }
+      ];
+      const snapshot = snapshotWithLines(lines);
+      const proposed = entryLinesToProposedLines(lines, p.lines, accountsWithAux, p.direction);
+
+      const diagnostics = recomputeImportDiagnostics(p, proposed, snapshot, accountsWithAux);
+
+      expect(diagnostics.some(d => d.code === 'ThirdPartyNotMatched')).toBe(false);
+    });
+
+    it('retombe sur le diagnostic collectif si aucune ligne ne porte le compte auxiliaire rapproché', () => {
+      // Le compte auxiliaire a été rapproché côté serveur, mais l'utilisateur a remis la ligne
+      // sur le compte collectif : le diagnostic « tiers non rapproché » doit réapparaître.
+      const p = proposalWithMatchedAux('401002');
+      const lines = [
+        { ...createEmptyLine(), accountNumber: '607', lineLabel: 'HT', debit: 100, credit: null },
+        { ...createEmptyLine(), accountNumber: '4011', lineLabel: 'Fournisseur', debit: null, credit: 100 }
+      ];
+      const snapshot = snapshotWithLines(lines);
+      const proposed = entryLinesToProposedLines(lines, p.lines, accountsWithAux, p.direction);
+
+      const diagnostics = recomputeImportDiagnostics(p, proposed, snapshot, accountsWithAux);
+
+      expect(diagnostics.some(d => d.code === 'ThirdPartyNotMatched')).toBe(true);
+    });
+
+    it('conserve le comportement existant (diagnostic sur le collectif) quand aucun compte auxiliaire n’a été rapproché', () => {
+      const p = proposalWithMatchedAux(null);
+      const lines = [
+        { ...createEmptyLine(), accountNumber: '607', lineLabel: 'HT', debit: 100, credit: null },
+        { ...createEmptyLine(), accountNumber: '4011', lineLabel: 'Fournisseur', debit: null, credit: 100 }
+      ];
+      const snapshot = snapshotWithLines(lines);
+      const proposed = entryLinesToProposedLines(lines, p.lines, accountsWithAux, p.direction);
+
+      const diagnostics = recomputeImportDiagnostics(p, proposed, snapshot, accountsWithAux);
+
+      expect(diagnostics.some(d => d.code === 'ThirdPartyNotMatched')).toBe(true);
+    });
+
+    it('préserve les diagnostics déjà produits par le serveur (ex. DuplicatePieceRef) même avec un compte auxiliaire rapproché', () => {
+      const p: JournalEntryProposal = {
+        ...proposalWithMatchedAux('401002'),
+        diagnostics: [
+          { severity: 'blocking', code: 'DuplicatePieceRef', message: 'Doublon', relatedLineIndex: null }
+        ],
+        hasBlockingDiagnostic: true
+      };
+      const lines = [
+        { ...createEmptyLine(), accountNumber: '607', lineLabel: 'HT', debit: 100, credit: null },
+        { ...createEmptyLine(), accountNumber: '401002', lineLabel: 'Fournisseur ACME', debit: null, credit: 100 }
+      ];
+      const snapshot = snapshotWithLines(lines);
+      const merged = mergeProposalWithStore(p, snapshot, accountsWithAux);
+
+      expect(merged.diagnostics.some(d => d.code === 'DuplicatePieceRef')).toBe(true);
+      expect(merged.diagnostics.some(d => d.code === 'ThirdPartyNotMatched')).toBe(false);
+    });
+  });
+
   it('isImportProposalBalanced ignores empty lines', () => {
     const lines = [
       { ...createEmptyLine(), accountNumber: '607', debit: 100, credit: null },

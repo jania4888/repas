@@ -202,6 +202,40 @@ public sealed class AccountingFamilyRulesTests
         Assert.Equal(3, found.Select(f => f.Fingerprint).Distinct().Count());
     }
 
+    /// <summary>
+    /// Plan « Matricule fiscal sur les comptes auxiliaires » §5.8 : un compte auxiliaire
+    /// individualise déjà le tiers par lui-même, une ligne posée sans fiche dessus n'est pas une
+    /// rupture. Le compte collectif « nu » (sans compte auxiliaire ni fiche), lui, reste signalé —
+    /// la régression à surveiller est que l'exclusion ne s'étende pas au collectif.
+    /// </summary>
+    [Fact]
+    public async Task Third_party_mismatch_excludes_an_auxiliary_account_without_a_fiche_but_still_flags_the_bare_collective()
+    {
+        var factory = NewFactory("ThirdPartyAuxiliaryExclusion");
+
+        await using (var db = factory.CreateContext())
+        {
+            db.ChartOfAccounts.Add(ChartOfAccount.Create(
+                "40114", "Fournisseur X", 4, null, AccountNatureType.Credit,
+                accountType: AccountType.Supplier, isAuxiliary: true).Value);
+            // Ligne sur le compte auxiliaire, sans fiche attachée : ne doit pas être signalée.
+            db.JournalEntries.Add(Entry(1, new DateTime(Year, 5, 2), null, null,
+                new JournalLineInput("40114", "Fournisseur X", 0m, 70m, null, ThirdPartyKind.None),
+                new JournalLineInput("607", "Achat", 70m, 0m, null, ThirdPartyKind.None)));
+            // Ligne sur le collectif nu, sans fiche attachée : doit rester signalée.
+            db.JournalEntries.Add(Entry(2, new DateTime(Year, 5, 3), null, null,
+                new JournalLineInput("4011", "Fournisseur", 0m, 50m, null, ThirdPartyKind.None),
+                new JournalLineInput("607", "Achat", 50m, 0m, null, ThirdPartyKind.None)));
+            await db.SaveChangesAsync();
+        }
+
+        var found = await EvaluateAsync(factory, new ThirdPartyAccountMismatchAuditRule());
+
+        var anomaly = Assert.Single(found);
+        Assert.DoesNotContain("40114", anomaly.Lines.Select(l => l.AccountNumber));
+        Assert.Contains("4011", anomaly.Lines.Select(l => l.AccountNumber));
+    }
+
     // ── Lettrage orphelin ─────────────────────────────────────────────────────────────────
 
     [Fact]

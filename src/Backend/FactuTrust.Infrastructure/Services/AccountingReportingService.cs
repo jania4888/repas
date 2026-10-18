@@ -64,7 +64,8 @@ public sealed class AccountingReportingService : IAccountingReportingService
                 Level = c.Level,
                 AccountType = (int)c.AccountType,
                 IsAuxiliary = c.IsAuxiliary,
-                AffectationAccountNumber = c.AffectationAccountNumber
+                AffectationAccountNumber = c.AffectationAccountNumber,
+                FiscalId = c.FiscalId
             })
             .ToListAsync(cancellationToken);
         return Result.Success<IReadOnlyList<ChartOfAccountDto>>(rows);

@@ -63,7 +63,7 @@ public sealed class AccountingController : ControllerBase
     {
         var r = await _mediator.Send(new CreateSubAccountCommand(request), cancellationToken);
         if (r.IsFailure)
-            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+            return BadRequest(ApiResponse<object>.FailWithCode(r.Error.Description, r.Error.Code));
         return Ok(ApiResponse<Guid>.Ok(r.Value));
     }
 
@@ -102,9 +102,11 @@ public sealed class AccountingController : ControllerBase
     [Authorize(Policy = PermissionPolicies.AccountingCreate)]
     public async Task<IActionResult> UpdateAccountLabel(Guid id, [FromBody] UpdateAccountLabelRequest request, CancellationToken cancellationToken)
     {
-        var r = await _mediator.Send(new UpdateAccountLabelCommand(id, request.Label), cancellationToken);
+        var r = await _mediator.Send(
+            new UpdateAccountLabelCommand(id, request.Label, request.UpdateFiscalId, request.FiscalId),
+            cancellationToken);
         if (r.IsFailure)
-            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+            return BadRequest(ApiResponse<object>.FailWithCode(r.Error.Description, r.Error.Code));
         return Ok(ApiResponse<bool>.Ok(true));
     }
 

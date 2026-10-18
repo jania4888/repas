@@ -810,8 +810,6 @@
   "ui.tern.reinitialiser.le.formulaire.36c3e7": "إعادة تعيين الاستمارة",
   "ui.tern.client.1bdd79": "الحريف",
   "ui.tern.fournisseur.97d91d": "المزوّد",
-  "ui.tern.par.matricule.fiscal.ef1940": "حسب المعرّف الجبائي",
-  "ui.tern.par.nom.4c4de0": "حسب الاسم",
   "ui.tern.instafact.pourront.etre.lues.dc81c8": "InstaFact يمكن قراءتها.",
   "accounting-document-import-dialog.component.acceptLabel.Continuer": "متابعة",
   "accounting-document-import-dialog.component.rejectLabel.Annuler": "إلغاء",

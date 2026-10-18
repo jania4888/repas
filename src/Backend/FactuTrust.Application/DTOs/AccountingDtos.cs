@@ -120,6 +120,8 @@ public sealed record ChartOfAccountDto
     public int AccountType { get; init; }
     public bool IsAuxiliary { get; init; }
     public string? AffectationAccountNumber { get; init; }
+    /// <summary>Matricule fiscal (forme canonique), ou null si non saisi / non applicable.</summary>
+    public string? FiscalId { get; init; }
 }
 
 public sealed record JournalEntryLineDto
@@ -731,6 +733,11 @@ public sealed record CreateSubAccountRequest
     public int AccountType { get; init; }
     public bool IsAuxiliary { get; init; }
     public string? AffectationAccountNumber { get; init; }
+    /// <summary>
+    /// Matricule fiscal facultatif. Absent ou vide = pas de MF. N'est accepté que sur un compte
+    /// auxiliaire Client ou Fournisseur ; refusé (jamais ignoré en silence) sinon.
+    /// </summary>
+    public string? FiscalId { get; init; }
     /// <summary>Ignorés si le compte n'est pas une feuille 5321/5324. RIB et IBAN facultatifs, mais ensemble.</summary>
     public string? BankCode { get; init; }
     public string? Rib { get; init; }
@@ -868,6 +875,13 @@ public sealed record ReplaceAccountRequest
 public sealed record UpdateAccountLabelRequest
 {
     public string Label { get; init; } = null!;
+    /// <summary>
+    /// Nouveau matricule fiscal, interprété seulement si <see cref="UpdateFiscalId"/> est vrai. Une
+    /// valeur vide ou null l'efface ; l'effacement est toujours permis. Ignoré par défaut pour
+    /// qu'un client qui n'envoie que <c>label</c> ne puisse jamais effacer le MF existant.
+    /// </summary>
+    public string? FiscalId { get; init; }
+    public bool UpdateFiscalId { get; init; }
 }
 
 public sealed record SaveVatDeclarationRequest

@@ -423,6 +423,104 @@ describe('AccountingDocumentImportDialogComponent', () => {
     expect(component.canApply()).toBe(true);
   });
 
+  describe('compte auxiliaire rapproché par matricule fiscal', () => {
+    function tp(overrides: Record<string, unknown> = {}) {
+      return {
+        kind: 2, matchedId: null, matchedName: null, matchedBy: null, collectiveAccountNumber: '4011',
+        name: 'ACME', nif: '1234567A/B/M/000', email: null, phone: null, street: null, city: null, postalCode: null, governorate: null,
+        ...overrides
+      };
+    }
+
+    function auxBadge(): HTMLElement | null {
+      return host().querySelector('[data-component-id="adi-match-badge"]');
+    }
+
+    function auxRow(): HTMLElement | null {
+      return (Array.from(host().querySelectorAll('.adi-facts dt'))
+        .find(dt => (dt.textContent ?? '').trim() === 'Compte auxiliaire')
+        ?.parentElement ?? null) as HTMLElement | null;
+    }
+
+    function tiersCard(): HTMLElement {
+      const card = host().querySelector('.adi-columns .adi-card');
+      expect(card).withContext('carte Tiers').not.toBeNull();
+      return card as HTMLElement;
+    }
+
+    it('affiche la ligne "Compte auxiliaire" et le badge "Rapproché par matricule fiscal" quand matchedAccountNumber vient du NIF', async () => {
+      await openReview(withDiagnostics([], {
+        thirdParty: tp({ matchedAccountId: 'acc-9', matchedAccountNumber: '401002', matchedAccountLabel: 'Fournisseur ACME', matchedAccountBy: 'nif' })
+      }));
+
+      const row = auxRow();
+      expect(row).not.toBeNull();
+      expect(row!.textContent).toContain('401002');
+      expect(row!.textContent).toContain('Fournisseur ACME');
+
+      const badge = auxBadge();
+      expect(badge).not.toBeNull();
+      expect(badge!.classList.contains('adi-badge--ok')).toBe(true);
+      expect(badge!.textContent).toContain('Rapproché par matricule fiscal');
+    });
+
+    it('affiche le badge d’avertissement "Rapproché par nom" quand matchedAccountBy vaut "name"', async () => {
+      await openReview(withDiagnostics([], {
+        thirdParty: tp({ matchedAccountId: 'acc-9', matchedAccountNumber: '401002', matchedAccountLabel: 'Fournisseur ACME', matchedAccountBy: 'name' })
+      }));
+
+      const badge = auxBadge();
+      expect(badge).not.toBeNull();
+      expect(badge!.classList.contains('adi-badge--warn')).toBe(true);
+      expect(badge!.textContent).toContain('Rapproché par nom');
+    });
+
+    it('masque la ligne "Compte auxiliaire" quand aucun compte auxiliaire n’a été rapproché', async () => {
+      await openReview(withDiagnostics([], { thirdParty: tp() }));
+      expect(auxRow()).toBeNull();
+    });
+
+    it('n’affiche plus l’avertissement "Tiers non rapproché" ni la création rapide quand un compte auxiliaire est rapproché', async () => {
+      await openReview(withDiagnostics([], {
+        thirdParty: tp({ matchedAccountId: 'acc-9', matchedAccountNumber: '401002', matchedAccountLabel: 'Fournisseur ACME', matchedAccountBy: 'nif' })
+      }));
+
+      // La carte Tiers elle-même ne doit plus porter l'avertissement ni la création rapide
+      // (le même libellé peut réapparaître côté panneau Contrôles si la ligne ne porte pas
+      // encore le compte auxiliaire proposé — hors périmètre de cette assertion).
+      expect(tiersCard().textContent).not.toContain('Tiers non rapproché');
+      expect(host().querySelector('app-accounting-third-party-quick-create')).toBeNull();
+    });
+
+    it('conserve l’ancien comportement (avertissement + création rapide) quand ni la fiche ni le compte auxiliaire ne sont rapprochés', async () => {
+      await openReview(withDiagnostics([], { thirdParty: tp() }));
+
+      expect(tiersCard().textContent).toContain('Tiers non rapproché');
+      expect(host().querySelector('app-accounting-third-party-quick-create')).not.toBeNull();
+      expect(auxBadge()).toBeNull();
+    });
+
+    it('conserve le badge "Rapproché par matricule fiscal" quand c’est la fiche (matchedId) qui est rapprochée par NIF, sans compte auxiliaire', async () => {
+      await openReview(withDiagnostics([], {
+        thirdParty: tp({ matchedId: 'sup-1', matchedName: 'ACME', matchedBy: 'nif' })
+      }));
+
+      const badge = auxBadge();
+      expect(badge).not.toBeNull();
+      expect(badge!.classList.contains('adi-badge--ok')).toBe(true);
+      expect(auxRow()).toBeNull();
+    });
+
+    it('rend un nom de tiers malveillant en texte, jamais en HTML (binding `{{ }}`, pas innerHTML)', async () => {
+      const malicious = '<img src=x onerror=alert(1)>ACME';
+      await openReview(withDiagnostics([], { thirdParty: tp({ name: malicious, matchedName: null }) }));
+
+      const el = fixture.nativeElement as HTMLElement;
+      expect(el.textContent).toContain(malicious);
+      expect(el.querySelector('img')).toBeNull();
+    });
+  });
+
   it('waits for the chart of accounts before computing account controls', async () => {
     const chart$ = new Subject<ChartResponse>();
     chartOfAccounts = () => chart$.asObservable();
