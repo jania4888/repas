@@ -1,0 +1,426 @@
+<div class="accounting-dashboard" [class.accounting-dashboard--printing]="printing()">
+  <app-page-header
+    title="Tableau de bord"
+    i18n-title="@@accounting.accounting-dashboard.tableau.de.bord.a524057f"
+    [subtitle]="subtitle()">
+    <div class="page-header-actions-inner no-print">
+      <div class="dashboard-field">
+        <label for="accounting-dashboard-period" i18n="@@accounting.accounting-dashboard.periode.de2110b7">Période</label>
+        <select
+          id="accounting-dashboard-period"
+          [ngModel]="selectedPeriodValue()"
+          (ngModelChange)="onPeriodChange($event)"
+          [disabled]="loading()">
+          @for (option of periodOptionsList(); track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+      <div class="dashboard-field">
+        <label for="accounting-dashboard-comparison" i18n="@@accounting.accounting-dashboard.comparaison.17198bad">Comparaison</label>
+        <select
+          id="accounting-dashboard-comparison"
+          [ngModel]="comparison()"
+          (ngModelChange)="onComparisonChange($event)"
+          [disabled]="loading()">
+          @for (option of comparisonOptionsList; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+      <button type="button" class="btn-secondary" (click)="print()" i18n="@@accounting.accounting-dashboard.exporter.0cd84bdc">
+        Exporter
+      </button>
+    </div>
+  </app-page-header>
+
+  @if (error()) {
+    <app-accounting-status-banner
+      variant="error"
+      [message]="error() ?? ''"
+      [showRetry]="true"
+      retryLabel="Réessayer"
+      i18n-retryLabel="@@accounting.accounting-dashboard.reessayer.895d416b"
+      (retry)="retry()" />
+  }
+
+  @if (loading()) {
+    <div class="dashboard-skeleton" aria-hidden="true">
+      <div class="kpi-grid">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <app-skeleton height="7.5rem" shape="rounded" />
+        }
+      </div>
+      <div class="charts-grid">
+        @for (i of [1, 2, 3]; track i) {
+          <app-skeleton height="18rem" shape="rounded" />
+        }
+      </div>
+      <div class="row3">
+        @for (i of [1, 2, 3]; track i) {
+          <app-skeleton height="16rem" shape="rounded" />
+        }
+      </div>
+    </div>
+  } @else if (isEmpty() && data()) {
+    <app-empty-state
+      icon="pi-inbox"
+      title="Aucune écriture validée pour cette période"
+      i18n-title="@@accounting.accounting-dashboard.aucune.ecriture.validee.pour.cette.periode.ec169c95"
+      actionLabel="Changer de période"
+      i18n-actionLabel="@@accounting.accounting-dashboard.changer.de.periode.dcd7fc1e"
+      (actionClick)="focusPeriodSelect()">
+    </app-empty-state>
+    <a routerLink="/accounting/journal" class="dashboard-empty-secondary">
+      <span i18n="@@accounting.accounting-dashboard.ouvrir.le.journal.6b6599fb">Ouvrir le journal</span>
+    </a>
+  } @else if (data(); as d) {
+    <section class="kpi-grid" aria-labelledby="dashboard-kpi-heading">
+      <h2 id="dashboard-kpi-heading" class="sr-only" i18n="@@accounting.accounting-dashboard.indicateurs.cles.ad2f0ef9">
+        Indicateurs clés
+      </h2>
+      <app-stat-card
+        appearance="solid"
+        variant="primary"
+        icon="fa-solid fa-sack-dollar"
+        label="Produits"
+        i18n-label="@@accounting.accounting-dashboard.produits.48000473"
+        [value]="d.totalRevenue.current | accountingAmount : d.currency"
+        [change]="roundToOneDecimal(d.totalRevenue.deltaPercent)"
+        [changeSuffix]="' ' + d.comparisonLabel" />
+      <app-stat-card
+        appearance="solid"
+        variant="warning"
+        icon="fa-solid fa-money-bill-wave"
+        label="Charges"
+        i18n-label="@@accounting.accounting-dashboard.charges.cfc370a2"
+        [value]="d.totalExpenses.current | accountingAmount : d.currency"
+        [change]="roundToOneDecimal(d.totalExpenses.deltaPercent)"
+        [changeSuffix]="' ' + d.comparisonLabel" />
+      <app-stat-card
+        appearance="solid"
+        [variant]="netResultTone()"
+        icon="fa-solid fa-scale-balanced"
+        label="Résultat net"
+        i18n-label="@@accounting.accounting-dashboard.resultat.net.1bbe6f47"
+        [value]="d.netResult.current | accountingAmount : d.currency"
+        [change]="roundToOneDecimal(d.netResult.deltaPercent)"
+        [changeSuffix]="' ' + d.comparisonLabel" />
+      <app-stat-card
+        appearance="solid"
+        variant="primary"
+        tone="cyan"
+        icon="fa-solid fa-wallet"
+        label="Trésorerie disponible"
+        i18n-label="@@accounting.accounting-dashboard.tresorerie.disponible.0e0af55d"
+        [value]="d.availableCash.current | accountingAmount : d.currency"
+        [change]="roundToOneDecimal(d.availableCash.deltaPercent)"
+        [changeSuffix]="' ' + d.comparisonLabel" />
+    </section>
+
+    <section class="charts-grid" aria-labelledby="dashboard-charts-heading">
+      <h2 id="dashboard-charts-heading" class="sr-only" i18n="@@accounting.accounting-dashboard.graphiques.a5050c7d">
+        Graphiques
+      </h2>
+      <app-chart-card
+        title="Évolution du chiffre d'affaires"
+        i18n-title="@@accounting.accounting-dashboard.evolution.du.chiffre.d.affaires.598d1e2d"
+        [subtitle]="d.periodLabel">
+        @if (revenueChartData(); as chart) {
+          <p-chart
+            type="bar"
+            [data]="chart"
+            [options]="revenueChartOptions"
+            [style]="{ height: '260px' }"
+            ariaLabel="Graphique en barres : chiffre d'affaires mensuel, année en cours comparée à l'année précédente"
+            i18n-ariaLabel="@@accounting.accounting-dashboard.graphique.en.barres.chiffre.d.affaires.a.7ac5766d" />
+          <table class="sr-only">
+            <caption i18n="@@accounting.accounting-dashboard.evolution.du.chiffre.d.affaires.598d1e2d">Évolution du chiffre d'affaires</caption>
+            <thead><tr><th scope="col">{{ chart.labels }}</th></tr></thead>
+            <tbody>
+              @for (dataset of chart.datasets; track dataset.label) {
+                <tr><th scope="row">{{ dataset.label }}</th>@for (v of dataset.data; track $index) { <td>{{ v }}</td> }</tr>
+              }
+            </tbody>
+          </table>
+        }
+      </app-chart-card>
+
+      <app-chart-card
+        title="Résultat net mensuel"
+        i18n-title="@@accounting.accounting-dashboard.resultat.net.mensuel.30b73fb3">
+        @if (netResultChartData(); as chart) {
+          <p-chart
+            type="line"
+            [data]="chart"
+            [options]="netResultChartOptions"
+            [style]="{ height: '260px' }"
+            ariaLabel="Graphique en courbe : résultat net mensuel de l'année en cours"
+            i18n-ariaLabel="@@accounting.accounting-dashboard.graphique.en.courbe.resultat.net.mensuel.de.l.an.c9238248" />
+          <table class="sr-only">
+            <caption i18n="@@accounting.accounting-dashboard.resultat.net.mensuel.30b73fb3">Résultat net mensuel</caption>
+            <tbody>
+              <tr>
+                @for (v of chart.datasets[0].data; track $index) { <td>{{ v }}</td> }
+              </tr>
+            </tbody>
+          </table>
+        }
+      </app-chart-card>
+
+      <app-chart-card
+        title="Répartition des charges"
+        i18n-title="@@accounting.accounting-dashboard.repartition.des.charges.f58e908a">
+        @if (expenseDoughnut(); as exp) {
+          <div class="doughnut-wrap">
+            <p-chart
+              type="doughnut"
+              [data]="exp.chartData"
+              [options]="expenseChartOptions"
+              [style]="{ height: '220px' }"
+              ariaLabel="Graphique en anneau : répartition des charges du mois sélectionné"
+              i18n-ariaLabel="@@accounting.accounting-dashboard.graphique.en.anneau.repartition.des.charges.du.m.f2a9714c" />
+          </div>
+          <ul class="chart-legend">
+            @for (item of exp.legend; track item.key) {
+              <li>
+                <span class="chart-legend__swatch" [style.background]="item.color"></span>
+                <span class="chart-legend__label">{{ item.label }}</span>
+                <span class="chart-legend__value">{{ item.percent | number : '1.1-1' }} %</span>
+              </li>
+            }
+          </ul>
+        }
+      </app-chart-card>
+    </section>
+
+    <section class="row3" aria-labelledby="dashboard-accounts-heading">
+      <h2 id="dashboard-accounts-heading" class="sr-only" i18n="@@accounting.accounting-dashboard.suivi.des.comptes.principaux.149c0fd2">
+        Suivi des comptes principaux
+      </h2>
+      <app-dashboard-panel
+        title="Suivi des comptes principaux"
+        i18n-title="@@accounting.accounting-dashboard.suivi.des.comptes.principaux.149c0fd2"
+        [hasActions]="true">
+        <a panel-actions routerLink="/accounting/balance" class="no-print">
+          <span i18n="@@accounting.accounting-dashboard.voir.la.balance.complete.cb493d84">Voir la balance complète</span>
+        </a>
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th scope="col" i18n="@@accounting.accounting-dashboard.compte.c45740bb">Compte</th>
+              <th scope="col" i18n="@@accounting.accounting-dashboard.intitule.9f19d904">Intitulé</th>
+              <th scope="col" class="num" i18n="@@accounting.accounting-dashboard.solde.e5977cf9">Solde</th>
+              <th scope="col" class="num" i18n="@@accounting.accounting-dashboard.variation.15920a45">Variation</th>
+              <th scope="col" class="no-print">&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of d.mainAccounts; track row.accountPrefix) {
+              <tr>
+                <td>{{ row.accountPrefix }}</td>
+                <td>{{ row.label }}</td>
+                <td class="num">{{ row.balance | accountingAmount : d.currency }}</td>
+                <td
+                  class="num delta"
+                  [class.delta--positive]="deltaTone(row.deltaPercent) === 'positive'"
+                  [class.delta--negative]="deltaTone(row.deltaPercent) === 'negative'"
+                  [attr.aria-label]="formatDeltaPercent(row.deltaPercent)">
+                  <i [class]="deltaIconClass(deltaTone(row.deltaPercent))" aria-hidden="true"></i>
+                  {{ formatDeltaPercent(row.deltaPercent) }}
+                </td>
+                <td class="no-print">
+                  @if (mainAccountSparkline(row); as spark) {
+                    <svg
+                      viewBox="0 0 120 28"
+                      class="sparkline"
+                      [class.sparkline--positive]="deltaTone(row.deltaPercent) === 'positive'"
+                      [class.sparkline--negative]="deltaTone(row.deltaPercent) === 'negative'"
+                      aria-hidden="true">
+                      <path [attr.d]="spark.area" fill="currentColor" opacity="0.15"></path>
+                      <path [attr.d]="spark.line" fill="none" stroke="currentColor" stroke-width="2"></path>
+                    </svg>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </app-dashboard-panel>
+
+      <app-dashboard-panel
+        title="Situation clients (411)"
+        i18n-title="@@accounting.accounting-dashboard.situation.clients.411.dcfa8588"
+        [hasActions]="true">
+        <a panel-actions routerLink="/accounting/aging" class="no-print" aria-label="Voir toute la situation clients" i18n-aria-label="@@accounting.accounting-dashboard.voir.toute.la.situation.clients.0f5e023f">
+          <span i18n="@@accounting.accounting-dashboard.voir.tout.7b7d86e8">Voir tout</span>
+        </a>
+        @if (d.clients; as situation) {
+          <div class="donut-wrap">
+            @if (clientsChart(); as chart) {
+              <p-chart
+                type="doughnut"
+                [data]="chart.chartData"
+                [options]="thirdPartyChartOptions"
+                [style]="{ height: '180px' }"
+                ariaLabel="Graphique en anneau : situation clients, montants à échéance et échus"
+                i18n-ariaLabel="@@accounting.accounting-dashboard.graphique.en.anneau.situation.clients.montants.a.69a31b76" />
+            }
+            <div class="donut-center">
+              <span class="donut-center__label" i18n="@@accounting.accounting-dashboard.total.b25928c6">Total</span>
+              <span class="donut-center__value">{{ situation.total | accountingAmount : d.currency }}</span>
+            </div>
+          </div>
+          <p class="donut-asof">
+            <span i18n="@@accounting.accounting-dashboard.au.situation.asof.appdate.0ac5d3f0">au {{ situation.asOf | appDate }}</span>
+          </p>
+        }
+      </app-dashboard-panel>
+
+      <app-dashboard-panel
+        title="Situation fournisseurs (401)"
+        i18n-title="@@accounting.accounting-dashboard.situation.fournisseurs.401.6bbd22e3"
+        [hasActions]="true">
+        <a panel-actions routerLink="/accounting/aging" class="no-print" aria-label="Voir toute la situation fournisseurs" i18n-aria-label="@@accounting.accounting-dashboard.voir.toute.la.situation.fournisseurs.24b03912">
+          <span i18n="@@accounting.accounting-dashboard.voir.tout.7b7d86e8">Voir tout</span>
+        </a>
+        @if (d.suppliers; as situation) {
+          <div class="donut-wrap">
+            @if (suppliersChart(); as chart) {
+              <p-chart
+                type="doughnut"
+                [data]="chart.chartData"
+                [options]="thirdPartyChartOptions"
+                [style]="{ height: '180px' }"
+                ariaLabel="Graphique en anneau : situation fournisseurs, montants à échéance et échus"
+                i18n-ariaLabel="@@accounting.accounting-dashboard.graphique.en.anneau.situation.fournisseurs.monta.6b7e80a5" />
+            }
+            <div class="donut-center">
+              <span class="donut-center__label" i18n="@@accounting.accounting-dashboard.total.b25928c6">Total</span>
+              <span class="donut-center__value">{{ situation.total | accountingAmount : d.currency }}</span>
+            </div>
+          </div>
+          <p class="donut-asof">
+            <span i18n="@@accounting.accounting-dashboard.au.situation.asof.appdate.0ac5d3f0">au {{ situation.asOf | appDate }}</span>
+          </p>
+        }
+      </app-dashboard-panel>
+    </section>
+
+    <section class="row4" aria-labelledby="dashboard-lists-heading">
+      <h2 id="dashboard-lists-heading" class="sr-only" i18n="@@accounting.accounting-dashboard.ecritures.echeances.et.documents.862fdd67">
+        Écritures, échéances et documents
+      </h2>
+      <app-dashboard-panel
+        title="Dernières écritures comptables"
+        i18n-title="@@accounting.accounting-dashboard.dernieres.ecritures.comptables.c9aaffdd"
+        [hasActions]="true"
+        [flush]="true">
+        <a panel-actions routerLink="/accounting/journal" class="no-print">
+          <span i18n="@@accounting.accounting-dashboard.voir.toutes.les.ecritures.62690274">Voir toutes les écritures</span>
+        </a>
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th scope="col" i18n="@@accounting.accounting-dashboard.date.eb9a4bc1">Date</th>
+              <th scope="col" i18n="@@accounting.accounting-dashboard.journal.57d7f743">Journal</th>
+              <th scope="col" i18n="@@accounting.accounting-dashboard.n.piece.a5108f6f">N° pièce</th>
+              <th scope="col" i18n="@@accounting.accounting-dashboard.libelle.f5485bba">Libellé</th>
+              <th scope="col" class="num" i18n="@@accounting.accounting-dashboard.debit.f528224f">Débit</th>
+              <th scope="col" class="num" i18n="@@accounting.accounting-dashboard.credit.19194bdf">Crédit</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (entry of d.recentEntries; track entry.id) {
+              <tr
+                class="dashboard-row-link"
+                [routerLink]="['/accounting/manual-entry']"
+                [queryParams]="{ entryId: entry.id }">
+                <td>{{ entry.entryDate | appDate }}</td>
+                <td>{{ entry.journalCode }}</td>
+                <td>{{ entry.entryNumber }}</td>
+                <td>{{ entry.label }}</td>
+                <td class="num">{{ entry.totalDebit | accountingAmount : d.currency }}</td>
+                <td class="num">{{ entry.totalCredit | accountingAmount : d.currency }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </app-dashboard-panel>
+
+      <app-dashboard-panel
+        title="Échéances fiscales et sociales"
+        i18n-title="@@accounting.accounting-dashboard.echeances.fiscales.et.sociales.15096bfd"
+        [hasActions]="true"
+        [flush]="true">
+        <a
+          panel-actions
+          [routerLink]="['/accounting/fiscal-schedule']"
+          [queryParams]="{ fiscalYear: d.fiscalYear }"
+          class="no-print">
+          <span i18n="@@accounting.accounting-dashboard.voir.le.calendrier.a7b29a65">Voir le calendrier</span>
+        </a>
+        <ul class="deadline-list">
+          @for (deadline of d.upcomingDeadlines; track deadline.id) {
+            <li class="deadline-row">
+              <span class="deadline-date">{{ deadline.dueDate | appDate }}</span>
+              <span class="deadline-label">{{ deadline.obligationLabel }}</span>
+              <span
+                class="deadline-pill"
+                [class.deadline-pill--soon]="deadlineUrgency(deadline.daysRemaining) === 'soon'"
+                [attr.aria-label]="deadline.obligationLabel + ' : ' + deadline.statusDisplay">
+                {{ deadlineCountdownLabel(deadline.daysRemaining) }}
+              </span>
+            </li>
+          }
+        </ul>
+      </app-dashboard-panel>
+
+      <app-dashboard-panel
+        title="Documents récents"
+        i18n-title="@@accounting.accounting-dashboard.documents.recents.e68a6780"
+        [hasActions]="true"
+        [flush]="true">
+        <a panel-actions routerLink="/accounting/journal" class="no-print">
+          <span i18n="@@accounting.accounting-dashboard.voir.tous.les.documents.c6ba5b47">Voir tous les documents</span>
+        </a>
+        <ul class="document-list">
+          @for (doc of d.recentDocuments; track doc.id) {
+            <li class="document-row">
+              <i [class]="documentIcon(doc.contentType)" aria-hidden="true"></i>
+              <span class="document-name">{{ doc.fileName }}</span>
+              <span class="document-meta">
+                {{ relativeAge(doc.createdAt) }} ·
+                @if (doc.source === 'fiscal-schedule') {
+                  <span i18n="@@accounting.accounting-dashboard.echeancier.7930f4ee">Échéancier</span>
+                } @else {
+                  <span i18n="@@accounting.accounting-dashboard.ecriture.d5d8c87d">Écriture</span>
+                }
+              </span>
+              <button
+                type="button"
+                class="document-download no-print"
+                (click)="downloadDocument(doc)"
+                [attr.aria-label]="documentDownloadAriaLabel(doc)">
+                <i class="fa-solid fa-download" aria-hidden="true"></i>
+              </button>
+            </li>
+          }
+        </ul>
+      </app-dashboard-panel>
+    </section>
+
+    <div class="print-only">
+      <p>
+        <strong i18n="@@accounting.accounting-dashboard.dossier.8ed65788">Dossier</strong> : {{ companyName() }}
+      </p>
+      <p>{{ d.periodLabel }}</p>
+      <p>
+        <span i18n="@@accounting.accounting-dashboard.comparaison.59745d30">Comparaison :</span> {{ d.comparisonLabel }}
+      </p>
+      <p i18n="@@accounting.accounting-dashboard.genere.le.generatedat.appdate.medium.e239f0c6">
+        Généré le {{ d.generatedAt | appDate : 'medium' }}
+      </p>
+    </div>
+  }
+</div>

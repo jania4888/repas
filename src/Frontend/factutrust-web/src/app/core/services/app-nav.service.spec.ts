@@ -370,6 +370,21 @@ describe('AppNavService — secondary nav parity', () => {
     expect(sidebarLabels).toContain('RH & Paie');
   });
 
+  it('places Tableau de bord right before the Comptabilité hub in delegated mode', () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, delegatedUser);
+    TestBed.inject(FirmContextService).syncFromUser();
+
+    const nav = TestBed.inject(AppNavService);
+    const items = nav.navItems();
+    const dashboardIndex = items.findIndex(i => i.route === '/accounting/dashboard');
+    const comptaIndex = items.findIndex(i => i.route === '/accounting/home');
+
+    expect(dashboardIndex).toBeGreaterThanOrEqual(0);
+    expect(comptaIndex).toBe(dashboardIndex + 1);
+    expect(items[dashboardIndex].label).toBe('Tableau de bord');
+  });
+
   it('hides Ventes/Achats/Trésorerie in sidebar for firm-managed delegated dossiers', () => {
     const auth = TestBed.inject(AuthService);
     setUser(auth, {
@@ -916,6 +931,6 @@ describe('AppNavService — lien du logo', () => {
     expect(nav.dashboardHomeLink()).toBe('/firm/dashboard');
 
     setUser(auth, delegatedUser);
-    expect(nav.dashboardHomeLink()).toBe('/accounting/chart');
+    expect(nav.dashboardHomeLink()).toBe('/accounting/dashboard');
   });
 });

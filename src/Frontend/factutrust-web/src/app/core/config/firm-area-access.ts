@@ -13,8 +13,12 @@ import { FIRM_DELEGATED_ONLY_SEGMENTS } from '@core/guards/firm-native-redirect.
  * revient dans le dossier. La sortie reste explicite (« Retour au cabinet »).
  */
 
-/** Écran d'accueil d'un dossier client ouvert en mode délégué. */
-export const FIRM_DELEGATED_HOME_ROUTE = '/accounting/chart';
+/**
+ * Écran d'accueil d'un dossier client ouvert en mode délégué : le tableau de bord comptable du
+ * dossier (KPI, graphiques, comptes principaux, écritures, échéances, documents). Le Plan
+ * comptable reste accessible via le hub « Comptabilité ».
+ */
+export const FIRM_DELEGATED_HOME_ROUTE = '/accounting/dashboard';
 
 /** Accueil de l'espace cabinet en mode natif. */
 export const FIRM_NATIVE_HOME_ROUTE = '/firm/dashboard';

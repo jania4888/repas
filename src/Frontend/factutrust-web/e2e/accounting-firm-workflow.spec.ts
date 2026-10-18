@@ -97,9 +97,9 @@ test.describe('Cabinet comptable — authenticated (staging)', () => {
   });
 
   test('delegated session never shows the cabinet dashboard', async ({ page }) => {
-    // 1. Login as FirmManager → open a client dossier (lands on /accounting/chart)
+    // 1. Login as FirmManager → open a client dossier (lands on /accounting/dashboard)
     // 2. await page.goto('/firm/dashboard');
-    // 3. await expect(page).toHaveURL(/\/accounting\/chart/);
+    // 3. await expect(page).toHaveURL(/\/accounting\/dashboard/);
     // 4. await expect(page.getByRole('heading', { name: /tableau de bord cabinet/i })).not.toBeVisible();
     // 5. await expect(page.locator('.main-header__firm-context')).toContainText('Dossier :');
     // 6. Same with /firm/clients and /firm/governance/time-sheets

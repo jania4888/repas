@@ -634,6 +634,133 @@ export interface AccountingDashboardDto {
   draftEntriesCount: number;
 }
 
+/** Fenêtre de comparaison du tableau de bord comptable du dossier (overview). */
+export type DashboardComparison = 'previous-month' | 'previous-year';
+
+/** KPI avec sa valeur précédente et sa variation (overview). */
+export interface OverviewKpiDto {
+  current: number;
+  previous: number;
+  deltaAbsolute: number;
+  deltaPercent: number | null;
+}
+
+/** Point mensuel du chiffre d'affaires, année courante vs année précédente. */
+export interface MonthlyRevenuePointDto {
+  month: number;
+  label: string;
+  current: number;
+  previousYear: number;
+}
+
+/** Point mensuel du résultat net (produits, charges, résultat), année courante. */
+export interface MonthlyNetResultPointDto {
+  month: number;
+  label: string;
+  revenue: number;
+  expenses: number;
+  netResult: number;
+}
+
+/** Part de la répartition des charges du mois sélectionné. */
+export interface ExpenseCategoryDto {
+  key: string;
+  label: string;
+  amount: number;
+  percent: number;
+}
+
+/** Ligne du suivi des comptes principaux (solde en signe brut débit − crédit). */
+export interface MainAccountRowDto {
+  accountPrefix: string;
+  label: string;
+  nature: 'Debit' | 'Credit';
+  balance: number;
+  previousBalance: number;
+  deltaAbsolute: number;
+  deltaPercent: number | null;
+  sparkline: number[];
+}
+
+/** Situation clients/fournisseurs (411/401) : à échéance / échus, à la date du jour. */
+export interface ThirdPartySituationDto {
+  asOf: string;
+  total: number;
+  notDue: number;
+  overdue: number;
+  thirdPartyCount: number;
+}
+
+/** Dernière écriture comptable listée au tableau de bord. */
+export interface RecentJournalEntryDto {
+  id: string;
+  entryDate: string;
+  journalCode: string;
+  entryNumber: number;
+  pieceRef?: string | null;
+  label: string;
+  totalDebit: number;
+  totalCredit: number;
+  isReversed: boolean;
+}
+
+/** Échéance fiscale/sociale à venir. */
+export interface UpcomingFiscalDeadlineDto {
+  id: string;
+  obligationType: number;
+  obligationLabel: string;
+  dueDate: string;
+  daysRemaining: number;
+  estimatedAmount: number;
+  currency: string;
+  status: number;
+  statusDisplay: string;
+}
+
+/** Document récent (pièce jointe d'écriture ou d'échéance fiscale). */
+export interface RecentDocumentDto {
+  id: string;
+  source: 'journal-entry' | 'fiscal-schedule';
+  ownerId: string;
+  ownerLabel: string;
+  fileName: string;
+  contentType: string;
+  sizeBytes: number;
+  createdAt: string;
+  downloadPath: string;
+}
+
+/** Tableau de bord comptable du dossier, affiché à l'ouverture d'un dossier délégué. */
+export interface AccountingOverviewDashboardDto {
+  fiscalYear: number;
+  month: number;
+  periodStart: string;
+  periodEnd: string;
+  periodLabel: string;
+  comparison: DashboardComparison;
+  comparisonFiscalYear: number;
+  comparisonMonth: number;
+  comparisonLabel: string;
+  currency: string;
+  generatedAt: string;
+  hasEntriesInPeriod: boolean;
+  availableYears: number[];
+  totalRevenue: OverviewKpiDto;
+  totalExpenses: OverviewKpiDto;
+  netResult: OverviewKpiDto;
+  availableCash: OverviewKpiDto;
+  revenueByMonth: MonthlyRevenuePointDto[];
+  netResultByMonth: MonthlyNetResultPointDto[];
+  expenseBreakdown: ExpenseCategoryDto[];
+  mainAccounts: MainAccountRowDto[];
+  clients: ThirdPartySituationDto | null;
+  suppliers: ThirdPartySituationDto | null;
+  recentEntries: RecentJournalEntryDto[];
+  upcomingDeadlines: UpcomingFiscalDeadlineDto[];
+  recentDocuments: RecentDocumentDto[];
+  warnings: string[];
+}
+
 /** Verrouillage définitif (irréversible) d'un exercice. */
 export interface FiscalYearLockDto {
   fiscalYear: number;
@@ -2384,6 +2511,24 @@ export class AccountingService {
       httpOpts.context = createHttpContextSkipGlobalErrorUi();
     }
     return this.http.get<ApiResponse<AccountingDashboardDto>>(`${this.base}/dashboard`, httpOpts);
+  }
+
+  /**
+   * Tableau de bord comptable du dossier (mode délégué uniquement). Sans paramètre, le backend
+   * choisit la période la plus pertinente et la renvoie dans la réponse.
+   */
+  getDashboardOverview(params?: {
+    fiscalYear?: number;
+    month?: number;
+    comparison?: DashboardComparison;
+  }): Observable<ApiResponse<AccountingOverviewDashboardDto>> {
+    let p = new HttpParams();
+    if (params?.fiscalYear != null) p = p.set('fiscalYear', params.fiscalYear);
+    if (params?.month != null) p = p.set('month', params.month);
+    if (params?.comparison) p = p.set('comparison', params.comparison);
+    return this.http.get<ApiResponse<AccountingOverviewDashboardDto>>(`${this.base}/dashboard/overview`, {
+      params: p
+    });
   }
 
   closePeriod(id: string): Observable<ApiResponse<boolean>> {

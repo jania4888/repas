@@ -16,6 +16,7 @@ export const NAV_ID = {
   fiscalTej: 'fiscal-tej',
   hrPayroll: 'hr-payroll',
   accounting: 'accounting',
+  accountingDashboard: 'accounting-dashboard',
   settings: 'settings',
   assistance: 'assistance',
   exchanges: 'exchanges',
