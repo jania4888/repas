@@ -17,13 +17,18 @@ public sealed class CreateSubAccountCommandHandlerTests
     private static (
         CreateSubAccountCommandHandler Handler,
         Mock<IChartOfAccountRepository> Repo,
-        Mock<IBankGlTreasuryProjectionService> Projection) Build(ChartOfAccount? existing)
+        Mock<IBankGlTreasuryProjectionService> Projection,
+        Mock<IAuditService> Audit) Build(
+            ChartOfAccount? existing, ChartOfAccount? auxiliaryAccountByFiscalId = null)
     {
         var repo = new Mock<IChartOfAccountRepository>();
         repo.Setup(r => r.GetByAccountNumberAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(existing);
         repo.Setup(r => r.AddAsync(It.IsAny<ChartOfAccount>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((ChartOfAccount e, CancellationToken _) => e);
+        repo.Setup(r => r.FindAuxiliaryByFiscalIdAsync(
+                It.IsAny<AccountType>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(auxiliaryAccountByFiscalId);
 
         var audit = new Mock<IAuditService>();
         audit.Setup(a => a.LogAsync(
@@ -44,7 +49,8 @@ public sealed class CreateSubAccountCommandHandlerTests
                 repo.Object, audit.Object, currentUser.Object, projection.Object,
                 NullLogger<CreateSubAccountCommandHandler>.Instance),
             repo,
-            projection);
+            projection,
+            audit);
     }
 
     private static CreateSubAccountCommand Command(
@@ -67,7 +73,7 @@ public sealed class CreateSubAccountCommandHandlerTests
     {
         var existing = ChartOfAccount.Create(
             "436712", "TVA collectée sur encaissements", 4, "43671", AccountNatureType.Credit).Value;
-        var (handler, repo, _) = Build(existing);
+        var (handler, repo, _, _) = Build(existing);
 
         var result = await handler.Handle(Command("436712"), CancellationToken.None);
 
@@ -81,7 +87,7 @@ public sealed class CreateSubAccountCommandHandlerTests
     [Fact]
     public async Task Handle_FreeAccountNumber_InsertsOnce()
     {
-        var (handler, repo, projection) = Build(null);
+        var (handler, repo, projection, _) = Build(null);
 
         var result = await handler.Handle(Command("436713"), CancellationToken.None);
 
@@ -96,7 +102,7 @@ public sealed class CreateSubAccountCommandHandlerTests
     [Fact]
     public async Task Handle_BankLeaf_ProjectsTreasuryAccount()
     {
-        var (handler, repo, projection) = Build(null);
+        var (handler, repo, projection, _) = Build(null);
 
         var result = await handler.Handle(new CreateSubAccountCommand(new CreateSubAccountRequest
         {
@@ -120,7 +126,7 @@ public sealed class CreateSubAccountCommandHandlerTests
     [Fact]
     public async Task Handle_BankLeaf_RibWithoutIban_FailsBeforeInsert()
     {
-        var (handler, repo, projection) = Build(null);
+        var (handler, repo, projection, _) = Build(null);
 
         var result = await handler.Handle(new CreateSubAccountCommand(new CreateSubAccountRequest
         {
@@ -142,7 +148,7 @@ public sealed class CreateSubAccountCommandHandlerTests
     [Fact]
     public async Task Handle_DottedSceNumber_InsertsOnce()
     {
-        var (handler, repo, _) = Build(null);
+        var (handler, repo, _, _) = Build(null);
 
         var result = await handler.Handle(Command("428.3", "Personnel — mutuelle complémentaire", "42"), CancellationToken.None);
 
@@ -150,5 +156,98 @@ public sealed class CreateSubAccountCommandHandlerTests
         repo.Verify(r => r.AddAsync(
             It.Is<ChartOfAccount>(a => a.AccountNumber == "428.3"),
             It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    // ── Matricule fiscal (plan « Matricule fiscal sur les comptes auxiliaires »). ──
+
+    private static CreateSubAccountCommand AuxiliaryClientCommand(string? fiscalId) =>
+        new(new CreateSubAccountRequest
+        {
+            AccountNumber = "41105",
+            Label = "Ste Slimen",
+            AccountClass = 4,
+            NatureType = 0,
+            AccountType = 1,
+            IsAuxiliary = true,
+            FiscalId = fiscalId
+        });
+
+    [Fact]
+    public async Task Handle_FiscalIdAlreadyUsedByAnotherAccount_FailsWithoutInsert()
+    {
+        var other = ChartOfAccount.Create(
+            "41110", "Ste Slimen (doublon)", 4, null, AccountNatureType.Debit,
+            accountType: AccountType.Client, isAuxiliary: true, fiscalId: "1525071P/B/M/000").Value;
+        var (handler, repo, _, _) = Build(existing: null, auxiliaryAccountByFiscalId: other);
+
+        var result = await handler.Handle(AuxiliaryClientCommand("1525071P/B/M/000"), CancellationToken.None);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal("ChartAccount.FiscalIdDuplicate", result.Error.Code);
+        Assert.Contains("41110", result.Error.Description, StringComparison.Ordinal);
+        repo.Verify(r => r.AddAsync(It.IsAny<ChartOfAccount>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_FiscalIdDuplicateErrorCode_IsDistinctFromTheAccountNumberConflictCode()
+    {
+        // Les deux conditions de doublon (numéro de compte vs matricule fiscal) doivent rester
+        // distinguables côté client : codes d'erreur différents.
+        var existing = ChartOfAccount.Create(
+            "436712", "TVA collectée sur encaissements", 4, "43671", AccountNatureType.Credit).Value;
+        var (handler, repo, _, _) = Build(existing);
+
+        var result = await handler.Handle(Command("436712"), CancellationToken.None);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal("Conflict", result.Error.Code);
+        Assert.NotEqual("ChartAccount.FiscalIdDuplicate", result.Error.Code);
+        repo.Verify(r => r.AddAsync(It.IsAny<ChartOfAccount>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_NewFiscalIdOnAnEligibleAccount_InsertsAndLogsFiscalIdInTheAudit()
+    {
+        var (handler, repo, _, audit) = Build(existing: null);
+
+        var result = await handler.Handle(AuxiliaryClientCommand("1525071P/B/M/000"), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        repo.Verify(r => r.AddAsync(
+            It.Is<ChartOfAccount>(a => a.FiscalId == "1525071P/B/M/000"),
+            It.IsAny<CancellationToken>()), Times.Once);
+        audit.Verify(a => a.LogAsync(
+            AuditActions.Accounting.SubAccountCreated,
+            "ChartOfAccount",
+            It.IsAny<Guid?>(),
+            It.IsAny<object?>(),
+            It.Is<object?>(v => v != null && v.ToString()!.Contains("1525071P/B/M/000")),
+            It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_UniqueIndexRaceOnInsert_ReturnsTheDuplicateError()
+    {
+        // Deux créations simultanées passent toutes deux le contrôle applicatif ; SQL Server
+        // rejette la seconde (2627 sur l'index filtré) et le re-contrôle voit la ligne gagnante.
+        var winner = ChartOfAccount.Create(
+            "41110", "Ste Slimen (concurrent)", 4, null, AccountNatureType.Debit,
+            accountType: AccountType.Client, isAuxiliary: true, fiscalId: "1525071P/B/M/000").Value;
+        var (handler, repo, _, _) = Build(existing: null);
+        var sqlException = FactuTrust.Infrastructure.Tests.Common.SqlExceptionTestFactory.Create(
+            2627, "Violation of UNIQUE KEY constraint 'IX_ChartOfAccounts_AccountType_FiscalIdNormalized'.");
+        repo.Setup(r => r.AddAsync(It.IsAny<ChartOfAccount>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new Microsoft.EntityFrameworkCore.DbUpdateException("save failed", sqlException));
+        // Premier appel (pré-contrôle) : rien ; second appel (re-contrôle après la course) : le gagnant.
+        var calls = 0;
+        repo.Setup(r => r.FindAuxiliaryByFiscalIdAsync(
+                It.IsAny<AccountType>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(() => ++calls == 1 ? null : winner);
+
+        var result = await handler.Handle(AuxiliaryClientCommand("1525071P/B/M/000"), CancellationToken.None);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal("ChartAccount.FiscalIdDuplicate", result.Error.Code);
+        Assert.Contains("41110", result.Error.Description, StringComparison.Ordinal);
     }
 }

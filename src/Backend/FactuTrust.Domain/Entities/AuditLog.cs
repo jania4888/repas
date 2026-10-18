@@ -365,6 +365,7 @@ public static class AuditActions
         public const string LetteredBulk = "Accounting.LetteredBulk";
         public const string SubAccountCreated = "Accounting.SubAccountCreated";
         public const string AccountLabelUpdated = "Accounting.AccountLabelUpdated";
+        public const string AccountFiscalIdUpdated = "Accounting.AccountFiscalIdUpdated";
         public const string AccountToggled = "Accounting.AccountToggled";
         public const string AccountReplaced = "Accounting.AccountReplaced";
         public const string JournalCreated = "Accounting.JournalCreated";

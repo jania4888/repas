@@ -181,14 +181,16 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
         List<ProposalDiagnosticDto> diagnostics,
         CancellationToken cancellationToken)
     {
-        var kind = isSale ? (int)ThirdPartyKind.Client : (int)ThirdPartyKind.Supplier;
+        var kind = isSale ? ThirdPartyKind.Client : ThirdPartyKind.Supplier;
+        var accountType = isSale ? AccountType.Client : AccountType.Supplier;
+        var accountPrefix = isSale ? "41" : "40";
         var defaultAccount = isSale
             ? TunisianPostingAccounts.Client
             : TunisianPostingAccounts.Supplier;
 
         var baseDto = new ProposedThirdPartyDto
         {
-            Kind = kind,
+            Kind = (int)kind,
             CollectiveAccountNumber = defaultAccount,
             Name = party?.Name,
             Nif = party?.Nif,
@@ -213,39 +215,228 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
             return baseDto;
         }
 
-        var match = isSale
-            ? await MatchClientAsync(name, nif, cancellationToken)
-            : await MatchSupplierAsync(name, nif, cancellationToken);
+        var nifNormalized = NormalizeInvoiceNif(nif);
 
-        if (match is null)
+        // (a) Compte auxiliaire (ex. 40114) par matricule fiscal : priorité la plus haute, le MF
+        // individualise déjà le tiers sans dépendre d'une fiche Client/Fournisseur.
+        if (nifNormalized.Length > 0)
+        {
+            var account = await MatchAccountByNifAsync(accountType, accountPrefix, nifNormalized, cancellationToken);
+            if (account is not null)
+                return await BuildAuxiliaryAccountMatchAsync(
+                    baseDto, kind, account, nif, defaultAccount, diagnostics, cancellationToken);
+        }
+
+        // (b) Fiche Client/Fournisseur par matricule fiscal — comportement historique inchangé.
+        var ficheByNif = await MatchFicheByNifAsync(isSale, nif, cancellationToken);
+        if (ficheByNif is not null)
+        {
+            var collective = await ResolveCollectiveAccountAsync(kind, ficheByNif.Value.Id, defaultAccount, cancellationToken);
+            return baseDto with
+            {
+                MatchedId = ficheByNif.Value.Id,
+                MatchedName = ficheByNif.Value.Name,
+                MatchedBy = "nif",
+                CollectiveAccountNumber = collective
+            };
+        }
+
+        string? rejectedByFiscalIdHomonym = null;
+
+        // (c) Compte auxiliaire par similarité de nom — unicité exigée (D5) : un compte ambigu
+        // arrête le rapprochement plutôt que de retomber en silence sur les fiches.
+        if (name.Length > 0)
+        {
+            var candidates = await _chartOfAccounts.ListActiveAuxiliaryAccountsAsync(
+                accountType, accountPrefix, MaxAuxiliaryAccountCandidates, cancellationToken);
+            if (candidates.Count == MaxAuxiliaryAccountCandidates)
+            {
+                _logger.LogWarning(
+                    "[AccountingDocumentImport] Rapprochement par nom du compte auxiliaire limité à {Max} candidats.",
+                    MaxAuxiliaryAccountCandidates);
+            }
+
+            var accountNameResult = ThirdPartyNameMatcher.Match(
+                name,
+                nifNormalized,
+                candidates,
+                c => c.Label,
+                c => c.FiscalIdNormalized);
+
+            switch (accountNameResult.Outcome)
+            {
+                case NameMatchOutcome.Unique:
+                    var acc = accountNameResult.Match!;
+                    diagnostics.Add(new ProposalDiagnosticDto(
+                        ProposalSeverities.Warning,
+                        ProposalDiagnosticCodes.ThirdPartyMatchedByName,
+                        $"Compte auxiliaire {acc.AccountNumber} — {acc.Label} rapproché par similarité de nom "
+                        + "(pas de matricule fiscal correspondant) : vérifiez avant d'enregistrer."));
+                    return baseDto with
+                    {
+                        MatchedAccountId = acc.Id,
+                        MatchedAccountNumber = acc.AccountNumber,
+                        MatchedAccountLabel = acc.Label,
+                        MatchedAccountBy = "name",
+                        CollectiveAccountNumber = CollectiveOf(acc, defaultAccount)
+                    };
+                case NameMatchOutcome.Ambiguous:
+                    diagnostics.Add(new ProposalDiagnosticDto(
+                        ProposalSeverities.Warning,
+                        ProposalDiagnosticCodes.ThirdPartyAmbiguous,
+                        $"Plusieurs comptes auxiliaires correspondent au nom « {name} » "
+                        + $"({string.Join(", ", accountNameResult.Candidates.Select(c => c.AccountNumber))}) : "
+                        + "aucun n'a été retenu automatiquement. Choisissez-le dans la grille."));
+                    return baseDto;
+                case NameMatchOutcome.RejectedByFiscalId:
+                    rejectedByFiscalIdHomonym = string.Join(
+                        ", ", accountNameResult.Candidates.Select(c => c.AccountNumber));
+                    break;
+            }
+        }
+
+        // (d) Fiche Client/Fournisseur par similarité de nom — même exigence d'unicité.
+        if (name.Length > 0)
+        {
+            var ficheNameResult = await MatchFicheByNameAsync(isSale, name, nifNormalized, cancellationToken);
+            switch (ficheNameResult.Outcome)
+            {
+                case NameMatchOutcome.Unique:
+                    var fiche = ficheNameResult.Match!;
+                    var collective = await ResolveCollectiveAccountAsync(kind, fiche.Id, defaultAccount, cancellationToken);
+                    diagnostics.Add(new ProposalDiagnosticDto(
+                        ProposalSeverities.Warning,
+                        ProposalDiagnosticCodes.ThirdPartyMatchedByName,
+                        $"{(isSale ? "Client" : "Fournisseur")} « {fiche.Name} » rapproché par similarité de nom "
+                        + "(pas de matricule fiscal correspondant) : vérifiez avant d'enregistrer."));
+                    return baseDto with
+                    {
+                        MatchedId = fiche.Id,
+                        MatchedName = fiche.Name,
+                        MatchedBy = "name",
+                        CollectiveAccountNumber = collective
+                    };
+                case NameMatchOutcome.Ambiguous:
+                    diagnostics.Add(new ProposalDiagnosticDto(
+                        ProposalSeverities.Warning,
+                        ProposalDiagnosticCodes.ThirdPartyAmbiguous,
+                        $"Plusieurs {(isSale ? "clients" : "fournisseurs")} correspondent au nom « {name} » "
+                        + $"({string.Join(", ", ficheNameResult.Candidates.Select(c => c.Name))}) : "
+                        + "aucun n'a été retenu automatiquement. Choisissez-le dans la grille."));
+                    return baseDto;
+                case NameMatchOutcome.RejectedByFiscalId:
+                    rejectedByFiscalIdHomonym ??= string.Join(
+                        ", ", ficheNameResult.Candidates.Select(c => c.Name));
+                    break;
+            }
+        }
+
+        // Rien de rapproché.
+        var notMatchedMessage = rejectedByFiscalIdHomonym is not null
+            ? (isSale
+                ? $"Un homonyme ({rejectedByFiscalIdHomonym}) porte un matricule fiscal différent de celui de la "
+                  + $"pièce : le client « {name} » n'a pas été rapproché automatiquement. Rattachez-le dans la grille."
+                : $"Un homonyme ({rejectedByFiscalIdHomonym}) porte un matricule fiscal différent de celui de la "
+                  + $"pièce : le fournisseur « {name} » n'a pas été rapproché automatiquement. Rattachez-le dans la grille.")
+            : (isSale
+                ? $"Le client « {name} » n'existe pas dans le dossier. Le compte collectif {defaultAccount} "
+                  + "est proposé sans auxiliaire : rattachez ou créez le tiers."
+                : $"Le fournisseur « {name} » n'existe pas dans le dossier. Le compte collectif {defaultAccount} "
+                  + "est proposé sans auxiliaire : rattachez ou créez le tiers.");
+
+        diagnostics.Add(new ProposalDiagnosticDto(
+            ProposalSeverities.Warning, ProposalDiagnosticCodes.ThirdPartyNotMatched, notMatchedMessage));
+        return baseDto;
+    }
+
+    /// <summary>Nombre maximal de comptes auxiliaires actifs chargés pour le rapprochement par nom.</summary>
+    private const int MaxAuxiliaryAccountCandidates = 5000;
+
+    private readonly record struct ThirdPartyFicheMatch(Guid Id, string Name);
+
+    private async Task<ProposedThirdPartyDto> BuildAuxiliaryAccountMatchAsync(
+        ProposedThirdPartyDto baseDto,
+        ThirdPartyKind kind,
+        AuxiliaryAccountCandidate account,
+        string nif,
+        string defaultAccount,
+        List<ProposalDiagnosticDto> diagnostics,
+        CancellationToken cancellationToken)
+    {
+        var matched = baseDto with
+        {
+            MatchedAccountId = account.Id,
+            MatchedAccountNumber = account.AccountNumber,
+            MatchedAccountLabel = account.Label,
+            MatchedAccountBy = "nif",
+            CollectiveAccountNumber = CollectiveOf(account, defaultAccount)
+        };
+
+        var fiche = await MatchFicheByNifAsync(kind == ThirdPartyKind.Client, nif, cancellationToken);
+        if (fiche is null)
+            return matched;
+
+        // La fiche du même matricule est rattachée (lettrage par tiers, FEC), mais le compte
+        // collectif affiché reste celui du compte auxiliaire (contrat §4.3) ; le collectif de la
+        // fiche ne sert qu'au diagnostic de conflit.
+        var ficheCollective = await ResolveCollectiveAccountAsync(kind, fiche.Value.Id, defaultAccount, cancellationToken);
+        matched = matched with
+        {
+            MatchedId = fiche.Value.Id,
+            MatchedName = fiche.Value.Name,
+            MatchedBy = "nif"
+        };
+
+        if (!string.Equals(ficheCollective, account.AccountNumber, StringComparison.Ordinal)
+            && !string.Equals(ficheCollective, matched.CollectiveAccountNumber, StringComparison.Ordinal)
+            && !string.Equals(ficheCollective, defaultAccount, StringComparison.Ordinal))
         {
             diagnostics.Add(new ProposalDiagnosticDto(
                 ProposalSeverities.Warning,
-                ProposalDiagnosticCodes.ThirdPartyNotMatched,
-                isSale
-                    ? $"Le client « {name} » n'existe pas dans le dossier. Le compte collectif {defaultAccount} "
-                      + "est proposé sans auxiliaire : rattachez ou créez le tiers."
-                    : $"Le fournisseur « {name} » n'existe pas dans le dossier. Le compte collectif {defaultAccount} "
-                      + "est proposé sans auxiliaire : rattachez ou créez le tiers."));
-            return baseDto;
+                ProposalDiagnosticCodes.ThirdPartyAccountConflict,
+                $"La fiche « {fiche.Value.Name} » pointe vers le compte {ficheCollective}, différent du compte "
+                + $"auxiliaire {account.AccountNumber} rapproché par matricule fiscal. Le compte auxiliaire "
+                + "est retenu pour cette écriture."));
         }
 
-        var collective = await ResolveCollectiveAccountAsync(
-            isSale ? ThirdPartyKind.Client : ThirdPartyKind.Supplier,
-            match.Value.Id,
-            defaultAccount,
-            cancellationToken);
-
-        return baseDto with
-        {
-            MatchedId = match.Value.Id,
-            MatchedName = match.Value.Name,
-            MatchedBy = match.Value.MatchedBy,
-            CollectiveAccountNumber = collective
-        };
+        return matched;
     }
 
-    private readonly record struct ThirdPartyMatch(Guid Id, string Name, string MatchedBy);
+    /// <summary>
+    /// Compte collectif affiché pour un compte auxiliaire rapproché : son compte d'affectation,
+    /// sinon son compte parent, sinon le collectif par défaut (4111 / 4011).
+    /// </summary>
+    private static string CollectiveOf(AuxiliaryAccountCandidate account, string defaultAccount) =>
+        !string.IsNullOrWhiteSpace(account.AffectationAccountNumber)
+            ? account.AffectationAccountNumber.Trim()
+            : !string.IsNullOrWhiteSpace(account.ParentAccountNumber)
+                ? account.ParentAccountNumber.Trim()
+                : defaultAccount;
+
+    private async Task<AuxiliaryAccountCandidate?> MatchAccountByNifAsync(
+        AccountType accountType, string accountPrefix, string fiscalIdNormalized, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var account = await _chartOfAccounts.FindAuxiliaryByFiscalIdAsync(
+                accountType, fiscalIdNormalized, cancellationToken);
+            // Défense en profondeur : un compte inactif ou hors du préfixe du tiers (41/40) n'est
+            // jamais proposé, même si un héritage de données l'y a placé.
+            if (account is null
+                || !account.IsActive
+                || !account.AccountNumber.StartsWith(accountPrefix, StringComparison.Ordinal))
+                return null;
+
+            return new AuxiliaryAccountCandidate(
+                account.Id, account.AccountNumber, account.Label, account.FiscalIdNormalized,
+                account.AffectationAccountNumber, account.ParentAccountNumber);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "[AccountingDocumentImport] Rapprochement du compte auxiliaire par matricule fiscal impossible.");
+            return null;
+        }
+    }
 
     /// <summary>
     /// Même matricule si les deux côtés se canonisent vers la forme carte, sinon repli sur la
@@ -261,69 +452,89 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
         return normalizedLeft.Length > 0 && normalizedLeft == normalizedRight;
     }
 
-    private async Task<ThirdPartyMatch?> MatchClientAsync(
-        string name, string nif, CancellationToken cancellationToken)
+    /// <summary>
+    /// Normalise le matricule fiscal extrait d'une pièce pour comparaison avec
+    /// <see cref="ChartOfAccount.FiscalIdNormalized"/> : lettres et chiffres en majuscules — la même
+    /// règle que <see cref="ChartOfAccount.NormalizeFiscalId"/>, appliquée directement à la saisie
+    /// brute (canoniser d'abord ne changerait pas le résultat : la forme canonique ne diffère que
+    /// par la ponctuation, que la normalisation retire de toute façon).
+    /// </summary>
+    private static string NormalizeInvoiceNif(string? raw) =>
+        InvoiceImportParsing.NormalizeNif(raw);
+
+    private async Task<ThirdPartyFicheMatch?> MatchFicheByNifAsync(
+        bool isSale, string nif, CancellationToken cancellationToken)
     {
+        if (nif.Length == 0)
+            return null;
+
         try
         {
-            if (nif.Length > 0)
+            if (isSale)
             {
                 var byNif = await _mediator.Send(new GetClientsQuery(Search: nif, PageSize: 10), cancellationToken);
                 var hit = byNif.Items.FirstOrDefault(c => SameMatricule(c.Nif, nif));
-                if (hit is not null)
-                    return new ThirdPartyMatch(hit.Id, hit.Name, "nif");
+                return hit is null ? null : new ThirdPartyFicheMatch(hit.Id, hit.Name);
             }
 
-            if (name.Length == 0)
-                return null;
-
-            var byName = await _mediator.Send(new GetClientsQuery(Search: name, PageSize: 10), cancellationToken);
-            var best = byName.Items
-                .Select(c => (Client: c, Score: InvoiceImportParsing.Similarity(name, c.Name)))
-                .Where(x => x.Score >= NameMatchThreshold)
-                .OrderByDescending(x => x.Score)
-                .FirstOrDefault();
-
-            return best.Client is null ? null : new ThirdPartyMatch(best.Client.Id, best.Client.Name, "name");
+            var byNifSupplier = await _mediator.Send(new GetSuppliersQuery(Search: nif, PageSize: 10), cancellationToken);
+            var hitSupplier = byNifSupplier.Items.FirstOrDefault(s => SameMatricule(s.Nif, nif));
+            return hitSupplier is null ? null : new ThirdPartyFicheMatch(hitSupplier.Id, hitSupplier.Name);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "[AccountingDocumentImport] Rapprochement client impossible.");
+            _logger.LogWarning(ex, "[AccountingDocumentImport] Rapprochement {Kind} par matricule fiscal impossible.",
+                isSale ? "client" : "fournisseur");
             return null;
         }
     }
 
-    private async Task<ThirdPartyMatch?> MatchSupplierAsync(
-        string name, string nif, CancellationToken cancellationToken)
+    private async Task<NameMatchResult<ThirdPartyFicheMatch>> MatchFicheByNameAsync(
+        bool isSale, string name, string nifNormalized, CancellationToken cancellationToken)
     {
         try
         {
-            if (nif.Length > 0)
+            if (isSale)
             {
-                var byNif = await _mediator.Send(new GetSuppliersQuery(Search: nif, PageSize: 10), cancellationToken);
-                var hit = byNif.Items.FirstOrDefault(s => SameMatricule(s.Nif, nif));
-                if (hit is not null)
-                    return new ThirdPartyMatch(hit.Id, hit.Name, "nif");
+                var byName = await _mediator.Send(new GetClientsQuery(Search: name, PageSize: 10), cancellationToken);
+                var result = ThirdPartyNameMatcher.Match(
+                    name,
+                    nifNormalized,
+                    byName.Items,
+                    c => c.Name,
+                    c => InvoiceImportParsing.NormalizeNif(c.Nif));
+                return MapFicheMatch(result, c => new ThirdPartyFicheMatch(c.Id, c.Name));
             }
 
-            if (name.Length == 0)
-                return null;
-
-            var byName = await _mediator.Send(new GetSuppliersQuery(Search: name, PageSize: 10), cancellationToken);
-            var best = byName.Items
-                .Select(s => (Supplier: s, Score: InvoiceImportParsing.Similarity(name, s.Name)))
-                .Where(x => x.Score >= NameMatchThreshold)
-                .OrderByDescending(x => x.Score)
-                .FirstOrDefault();
-
-            return best.Supplier is null ? null : new ThirdPartyMatch(best.Supplier.Id, best.Supplier.Name, "name");
+            var byNameSupplier = await _mediator.Send(new GetSuppliersQuery(Search: name, PageSize: 10), cancellationToken);
+            var supplierResult = ThirdPartyNameMatcher.Match(
+                name,
+                nifNormalized,
+                byNameSupplier.Items,
+                s => s.Name,
+                s => InvoiceImportParsing.NormalizeNif(s.Nif));
+            return MapFicheMatch(supplierResult, s => new ThirdPartyFicheMatch(s.Id, s.Name));
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "[AccountingDocumentImport] Rapprochement fournisseur impossible.");
-            return null;
+            _logger.LogWarning(ex, "[AccountingDocumentImport] Rapprochement {Kind} par nom impossible.",
+                isSale ? "client" : "fournisseur");
+            return NameMatchResult<ThirdPartyFicheMatch>.None();
         }
     }
+
+    /// <summary>Convertit un résultat de rapprochement sur un DTO fiche (client ou fournisseur) en <see cref="ThirdPartyFicheMatch"/>.</summary>
+    private static NameMatchResult<ThirdPartyFicheMatch> MapFicheMatch<T>(
+        NameMatchResult<T> result, Func<T, ThirdPartyFicheMatch> map) =>
+        result.Outcome switch
+        {
+            NameMatchOutcome.Unique => NameMatchResult<ThirdPartyFicheMatch>.Unique(map(result.Match!)),
+            NameMatchOutcome.Ambiguous =>
+                NameMatchResult<ThirdPartyFicheMatch>.Ambiguous(result.Candidates.Select(map).ToList()),
+            NameMatchOutcome.RejectedByFiscalId =>
+                NameMatchResult<ThirdPartyFicheMatch>.RejectedByFiscalId(result.Candidates.Select(map).ToList()),
+            _ => NameMatchResult<ThirdPartyFicheMatch>.None()
+        };
 
     /// <summary>
     /// Compte collectif du tiers : celui de son profil comptable lorsque l'annuaire des tiers est
@@ -367,7 +578,8 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
 
         return new ProposalAccountPlan
         {
-            ThirdPartyAccount = thirdParty.CollectiveAccountNumber,
+            // Un compte auxiliaire rapproché (par matricule fiscal ou par nom) prime sur le collectif.
+            ThirdPartyAccount = thirdParty.MatchedAccountNumber ?? thirdParty.CollectiveAccountNumber,
             DefaultResultAccount = defaultResultAccount,
             HtByAccount = htByAccount,
             VatAccount = isSale

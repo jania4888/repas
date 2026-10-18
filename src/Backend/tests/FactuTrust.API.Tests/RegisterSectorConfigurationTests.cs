@@ -410,7 +410,8 @@ public sealed class RegisterSectorConfigurationSqlTests : IClassFixture<Channels
             });
         });
 
-        var client = disabledFactory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+        var client = ChannelsDisabledWebApplicationFactory.WithClientTimeout(
+            disabledFactory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false }));
         var unique = Guid.NewGuid().ToString("N")[..12];
         var dto = BuildDto(
             unique,

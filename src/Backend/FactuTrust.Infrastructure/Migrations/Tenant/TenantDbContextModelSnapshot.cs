@@ -1163,6 +1163,14 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FiscalId")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("FiscalIdNormalized")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -1199,6 +1207,11 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasIndex("AccountNumber")
                         .IsUnique();
+
+                    b.HasIndex("AccountType", "FiscalIdNormalized")
+                        .IsUnique()
+                        .HasDatabaseName("IX_ChartOfAccounts_AccountType_FiscalIdNormalized")
+                        .HasFilter("[FiscalIdNormalized] IS NOT NULL AND [IsAuxiliary] = 1");
 
                     b.ToTable("ChartOfAccounts", (string)null);
                 });

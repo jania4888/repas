@@ -3815,6 +3815,18 @@ public partial class TenantDbContext : DbContext
             entity.Property(e => e.AccountType).HasConversion<int>().HasDefaultValue(AccountType.General);
             entity.Property(e => e.IsAuxiliary).HasDefaultValue(false);
             entity.Property(e => e.AffectationAccountNumber).HasMaxLength(32);
+
+            // Matricule fiscal (D1/D2/D3) : la forme canonique est affichée, la forme normalisée
+            // (lettres+chiffres majuscules) porte l'unicité et le rapprochement à l'import, insensibles
+            // à la ponctuation. L'unicité est filtrée aux comptes auxiliaires Client/Fournisseur, et
+            // couvre actifs ET inactifs : réactiver un compte (ToggleAccountActiveCommand) ne doit
+            // jamais recréer un doublon avec un compte déjà actif sur le même matricule.
+            entity.Property(e => e.FiscalId).HasMaxLength(20);
+            entity.Property(e => e.FiscalIdNormalized).HasMaxLength(20);
+            entity.HasIndex(e => new { e.AccountType, e.FiscalIdNormalized })
+                .IsUnique()
+                .HasFilter("[FiscalIdNormalized] IS NOT NULL AND [IsAuxiliary] = 1")
+                .HasDatabaseName("IX_ChartOfAccounts_AccountType_FiscalIdNormalized");
         });
     }
 
