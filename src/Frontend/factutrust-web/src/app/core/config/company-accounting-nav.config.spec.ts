@@ -73,6 +73,7 @@ describe('company-accounting-nav.config', () => {
     expect(isCompanyAllowedAccountingPath('/accounting/manual-entry')).toBe(false);
     expect(isCompanyAllowedAccountingPath('/accounting/home')).toBe(false);
     expect(isCompanyAllowedAccountingPath('/accounting/chart')).toBe(false);
+    expect(isCompanyAllowedAccountingPath('/accounting/dashboard')).toBe(false);
   });
 
   it('blocks the DM screens for a company user', () => {

@@ -5,6 +5,7 @@ import { permissionGuard } from '@core/guards/permission.guard';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { pendingChangesGuard } from './fixed-assets/pending-changes.guard';
 import { deskAwareCanDeactivate } from '@core/desk/desk-deactivate';
+import { firmDelegatedOnlyGuard } from '@core/guards/firm-delegated-only.guard';
 
 export const ACCOUNTING_ROUTES: Routes = [
   {
@@ -20,6 +21,16 @@ export const ACCOUNTING_ROUTES: Routes = [
     loadComponent: () =>
       import('./accounting-home/accounting-home.component').then(m => m.AccountingHomeComponent),
     title: $localize`:@@accounting.routes.title.Comptabilit_InstaFact:Comptabilité - InstaFact`
+  },
+  {
+    path: 'dashboard',
+    canActivate: [permissionGuard, firmDelegatedOnlyGuard],
+    data: { permissions: [PERMISSIONS.accounting.read] },
+    loadComponent: () =>
+      import('./accounting-dashboard/accounting-dashboard.component').then(
+        m => m.AccountingDashboardComponent
+      ),
+    title: $localize`:@@accounting.routes.title.Tableau_de_bord_InstaFact:Tableau de bord - InstaFact`
   },
   {
     path: 'chart',

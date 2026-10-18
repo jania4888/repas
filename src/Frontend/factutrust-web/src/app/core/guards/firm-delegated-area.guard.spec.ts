@@ -43,7 +43,7 @@ describe('firmDelegatedAreaGuard', () => {
       firmDelegatedAreaGuard({} as never, { url: '/firm/dashboard' } as never)
     );
     expect(result).not.toBe(true);
-    expect(TestBed.inject(Router).serializeUrl(result as never)).toBe('/accounting/chart');
+    expect(TestBed.inject(Router).serializeUrl(result as never)).toBe('/accounting/dashboard');
   });
 
   it('keeps the dossier switch route reachable in delegated mode', async () => {

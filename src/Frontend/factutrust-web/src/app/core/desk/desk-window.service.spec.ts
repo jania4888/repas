@@ -69,6 +69,7 @@ describe('DeskWindowService', () => {
 
   afterEach(() => {
     document.querySelector('.p-dialog-mask')?.remove();
+    document.querySelector('ngb-modal-window')?.remove();
     clearDeskSession();
   });
 
@@ -106,6 +107,16 @@ describe('DeskWindowService', () => {
     expect(toast.add).toHaveBeenCalledWith(jasmine.objectContaining({
       detail: 'Fermez d\'abord la fenêtre de dialogue.'
     }));
+  });
+
+  it('bloque la bascule pendant une modale ng-bootstrap affichée, pas pendant son fondu de fermeture', () => {
+    const modal = Object.assign(document.createElement('ngb-modal-window'), { className: 'modal fade show' });
+    document.body.append(modal);
+
+    expect(service.evaluate('/accounting/chart')).toEqual({ kind: 'block', reason: 'overlay' });
+
+    modal.classList.remove('show');
+    expect(service.evaluate('/accounting/chart').kind).toBe('allow');
   });
 
   it('détruit les handles au changement de dossier et ignore la session de l’autre dossier', () => {

@@ -347,6 +347,7 @@ public static class DependencyInjection
         services.AddScoped<IAccountingService, AccountingService>();
         services.AddScoped<IFiscalStampResolver, FiscalStampResolver>();
         services.AddScoped<IAccountingReportingService, AccountingReportingService>();
+        services.AddScoped<IAccountingOverviewService, AccountingOverviewService>();
         services.AddScoped<IThirdPartyDirectoryService, ThirdPartyDirectoryService>();
         services.AddScoped<ITenantCompanySummaryProvider, TenantCompanySummaryProvider>();
         services.AddScoped<IAccountingExportService, AccountingExportService>();

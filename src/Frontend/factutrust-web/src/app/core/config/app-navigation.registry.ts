@@ -777,6 +777,14 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['ai:chat', 'accounting:read']
       },
       {
+        id: 'accounting--accounting-dashboard',
+        label: $localize`:@@core.app-navigation.registry.ts.tableau.de.bord.a524057f:Tableau de bord`,
+        route: '/accounting/dashboard',
+        icon: 'fa-solid fa-gauge-high',
+        modules: [M.Accounting],
+        permissionsAll: ['accounting:read']
+      },
+      {
         id: 'accounting--accounting-home',
         label: $localize`:@@core.app-navigation.registry.ts.accueil.comptabilite.c3659c63:Accueil comptabilité`,
         route: '/accounting/home',

@@ -12,6 +12,10 @@ const firmNative = { isAccountingFirm: true, isDelegated: false };
 const company = { isAccountingFirm: false, isDelegated: false };
 
 describe('firm-area-access', () => {
+  it('points the delegated home route at the dossier dashboard', () => {
+    expect(FIRM_DELEGATED_HOME_ROUTE).toBe('/accounting/dashboard');
+  });
+
   describe('stripRoutePath', () => {
     it('removes query, hash and trailing slash', () => {
       expect(stripRoutePath('/firm/dashboard?x=1')).toBe('/firm/dashboard');
@@ -52,6 +56,7 @@ describe('firm-area-access', () => {
 
     it('leaves dossier routes alone', () => {
       expect(resolveFirmAreaRedirect('/accounting/chart', firmDelegated)).toBeNull();
+      expect(resolveFirmAreaRedirect('/accounting/dashboard', firmDelegated)).toBeNull();
       expect(resolveFirmAreaRedirect('/invoices', firmDelegated)).toBeNull();
       expect(resolveFirmAreaRedirect('/ai-assistant/comptabilite', firmDelegated)).toBeNull();
     });

@@ -607,6 +607,20 @@ export const FIRM_DELEGATED_QUICK_ACCESS = [
 
   {
 
+    label: $localize`:@@core.firm-navigation.registry.ts.tableau.de.bord.a524057f:Tableau de bord`,
+
+    icon: 'fa-solid fa-gauge-high',
+
+    route: '/accounting/dashboard',
+
+    permission: 'accounting:read',
+
+    section: 'navigation' as const
+
+  },
+
+  {
+
     label: $localize`:@@core.firm-navigation.registry.ts.journal.comptable.cc13c236:Journal comptable`,
 
     icon: 'fa-solid fa-book',

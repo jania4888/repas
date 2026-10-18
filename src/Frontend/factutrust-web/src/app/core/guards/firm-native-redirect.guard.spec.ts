@@ -97,6 +97,25 @@ describe('firmNativeRedirectGuard', () => {
     expect(result).toBe(true);
   });
 
+  it('allows delegated firm user on /accounting/dashboard', async () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, { ...firmUser, accessMode: 'delegated', contextTenantId: '00000000-0000-0000-0000-000000000003' });
+    const result = await TestBed.runInInjectionContext(() =>
+      firmNativeRedirectGuard({} as never, { url: '/accounting/dashboard' } as never)
+    );
+    expect(result).toBe(true);
+  });
+
+  it('redirects firm native user from /accounting/dashboard to /firm/dashboard', async () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, firmUser);
+    const result = await TestBed.runInInjectionContext(() =>
+      firmNativeRedirectGuard({} as never, { url: '/accounting/dashboard' } as never)
+    );
+    const router = TestBed.inject(Router);
+    expect(router.serializeUrl(result as never)).toContain('/firm/dashboard');
+  });
+
   it('redirects firm native user from /ai-assistant to /firm/dashboard', async () => {
     const auth = TestBed.inject(AuthService);
     setUser(auth, firmUser);
