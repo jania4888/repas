@@ -730,6 +730,37 @@ Rampe complète : `docs/runbooks/barcode-cutover.md`.
 
 ---
 
+## Erreur « Invalid column name 'FiscalId' » sur le plan comptable / l'import de factures
+
+Si l'écran plan comptable (création/édition d'un compte auxiliaire) ou l'import de factures par IA affiche une erreur HTTP **500** sur `POST /api/accounting/chart-of-accounts`, `PUT /api/accounting/chart-of-accounts/{id}` ou lors de la proposition d'écriture à l'import :
+
+- **Message :** `Invalid column name 'FiscalId'.` (ou `'FiscalIdNormalized'`).
+- **Cause :** la migration tenant `20261018100000_AddChartOfAccountFiscalId_Tenant` n'a pas été appliquée sur la base du tenant alors que le code backend interroge déjà ces colonnes sur `ChartOfAccounts` (matricule fiscal des comptes auxiliaires Client/Fournisseur, plan « Matricule fiscal sur les comptes auxiliaires et rattachement à l'import de facture »).
+
+### Solution
+
+Appliquer les migrations tenant via l'une des options de la section [Erreur HTTP 503](#erreur-http-503--tenant_migration_failed).
+
+**Script idempotent (production / DBA) :** [`docs/runbooks/sql/AddChartOfAccountFiscalId_Tenant.idempotent.sql`](runbooks/sql/AddChartOfAccountFiscalId_Tenant.idempotent.sql)
+
+**Vérification SQL :**
+
+```sql
+SELECT MigrationId FROM __EFMigrationsHistory
+WHERE MigrationId LIKE '%AddChartOfAccountFiscalId%';
+
+SELECT COL_LENGTH('dbo.ChartOfAccounts', 'FiscalId') AS FiscalIdColumnExists,
+       COL_LENGTH('dbo.ChartOfAccounts', 'FiscalIdNormalized') AS FiscalIdNormalizedColumnExists;
+
+SELECT name FROM sys.indexes
+WHERE name = 'IX_ChartOfAccounts_AccountType_FiscalIdNormalized'
+  AND object_id = OBJECT_ID('dbo.ChartOfAccounts');
+```
+
+Si l'index n'existe pas alors que les deux colonnes sont présentes, rejouer le script : il n'est intentionnellement pas posé en cas de doublon préexistant de matricule fiscal sur des comptes auxiliaires du même type (le script l'annonce par un `PRINT`).
+
+---
+
 ## En résumé
 
 - En **développement**, corriger l'erreur de migration puis redémarrer l'API.

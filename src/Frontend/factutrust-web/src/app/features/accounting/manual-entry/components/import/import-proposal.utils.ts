@@ -299,6 +299,9 @@ function buildThirdPartyDiagnostics(
   const tp = proposal.thirdParty;
   if (!tp) return [];
 
+  const auxNumber = tp.matchedAccountNumber?.trim();
+  if (auxNumber && proposedLines.some(l => l.accountNumber === auxNumber)) return [];
+
   const collective = tp.collectiveAccountNumber?.trim();
   if (!collective) return [];
 

@@ -96,6 +96,12 @@ export interface ProposedThirdParty {
   city: string | null;
   postalCode: string | null;
   governorate: string | null;
+  /** Compte auxiliaire Client/Fournisseur rapproché via son matricule fiscal (indépendamment de la fiche). */
+  matchedAccountId?: string | null;
+  matchedAccountNumber?: string | null;
+  matchedAccountLabel?: string | null;
+  /** 'nif' | 'name' | null — source du rapprochement du compte auxiliaire. */
+  matchedAccountBy?: 'nif' | 'name' | null;
 }
 
 export interface ProposedLine {

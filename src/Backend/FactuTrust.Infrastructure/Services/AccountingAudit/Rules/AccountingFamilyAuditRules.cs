@@ -194,9 +194,13 @@ public sealed class ThirdPartyAccountMismatchAuditRule : AccountingAuditRuleBase
                 (l.ThirdPartyKind == ThirdPartyKind.Client && !l.AccountNumber.StartsWith(ClientRoot))
                 // Fournisseur posé ailleurs que sur un 401.
                 || (l.ThirdPartyKind == ThirdPartyKind.Supplier && !l.AccountNumber.StartsWith(SupplierRoot))
-                // Compte collectif sans tiers : la balance auxiliaire ne bouclera pas.
+                // Compte collectif sans tiers : la balance auxiliaire ne bouclera pas. Un compte
+                // auxiliaire (40x.../41x...) individualise déjà le tiers par lui-même : une ligne
+                // posée sans fiche dessus n'est pas une rupture (D-matricule fiscal, plan §5.8).
                 || ((l.AccountNumber.StartsWith(ClientRoot) || l.AccountNumber.StartsWith(SupplierRoot))
-                    && l.ThirdPartyId == null))
+                    && l.ThirdPartyId == null
+                    && !c.Db.ChartOfAccounts.Any(a => a.AccountNumber == l.AccountNumber && a.IsAuxiliary
+                        && (a.AccountType == AccountType.Client || a.AccountType == AccountType.Supplier))))
             .Select(l => new MismatchedLine(
                 l.Id,
                 l.JournalEntryId,

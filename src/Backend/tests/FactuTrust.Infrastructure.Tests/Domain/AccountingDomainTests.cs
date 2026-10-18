@@ -377,7 +377,154 @@ public sealed class AccountingDomainTests
         Assert.Equal("411", account.ParentAccountNumber);
     }
 
+    // ── Matricule fiscal (plan « Matricule fiscal sur les comptes auxiliaires »). ──
+
+    private static ChartOfAccount AuxiliaryClientAccount(string number = "41105", bool isSystem = false) =>
+        ChartOfAccount.Create(
+            number, "STE SLIMEN", int.Parse(number[..1].ToString()), null, AccountNatureType.Debit,
+            isSystem: isSystem, accountType: AccountType.Client, isAuxiliary: true).Value;
+
+    private static ChartOfAccount AuxiliarySupplierAccount(string number = "40105") =>
+        ChartOfAccount.Create(
+            number, "Fournisseur X", int.Parse(number[..1].ToString()), null, AccountNatureType.Credit,
+            accountType: AccountType.Supplier, isAuxiliary: true).Value;
+
+    [Fact]
+    public void SetFiscalId_OnEligibleClientAccount_StoresCanonicalAndNormalizedForms()
+    {
+        var account = AuxiliaryClientAccount();
+
+        var result = account.SetFiscalId("1525071P/B/M/000");
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal("1525071P/B/M/000", account.FiscalId);
+        Assert.Equal("1525071PBM000", account.FiscalIdNormalized);
+    }
+
+    [Fact]
+    public void SetFiscalId_AcceptsTheLegacySpellingAndNormalizesItTheSameWay()
+    {
+        var account = AuxiliaryClientAccount();
+
+        var result = account.SetFiscalId("1525071/P/B/M/000");
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal("1525071PBM000", account.FiscalIdNormalized);
+    }
+
+    [Fact]
+    public void SetFiscalId_OnEligibleSupplierAccount_Succeeds()
+    {
+        var account = AuxiliarySupplierAccount();
+
+        var result = account.SetFiscalId("1772793W/A/M/000");
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(AccountType.Supplier, account.AccountType);
+    }
+
+    [Fact]
+    public void SetFiscalId_WithANullOrBlankValue_ClearsBothColumns()
+    {
+        var account = AuxiliaryClientAccount();
+        account.SetFiscalId("1525071P/B/M/000");
+
+        var result = account.SetFiscalId("   ");
+
+        Assert.True(result.IsSuccess);
+        Assert.Null(account.FiscalId);
+        Assert.Null(account.FiscalIdNormalized);
+    }
+
+    [Fact]
+    public void SetFiscalId_OnASystemAccount_Fails()
+    {
+        var account = AuxiliaryClientAccount(isSystem: true);
+
+        var result = account.SetFiscalId("1525071P/B/M/000");
+
+        Assert.True(result.IsFailure);
+        Assert.Equal("Validation.FiscalId", result.Error.Code);
+    }
+
+    [Fact]
+    public void SetFiscalId_OnANonAuxiliaryAccount_Fails()
+    {
+        var account = ChartOfAccount.Create(
+            "4111", "Clients", 4, null, AccountNatureType.Debit, accountType: AccountType.Client).Value;
+
+        var result = account.SetFiscalId("1525071P/B/M/000");
+
+        Assert.True(result.IsFailure);
+    }
+
+    [Fact]
+    public void SetFiscalId_OnAnAuxiliaryAccountOfTypeOther_Fails()
+    {
+        var account = ChartOfAccount.Create(
+            "41105", "Autre", 4, null, AccountNatureType.Debit,
+            accountType: AccountType.Other, isAuxiliary: true).Value;
+
+        var result = account.SetFiscalId("1525071P/B/M/000");
+
+        Assert.True(result.IsFailure);
+    }
+
+    [Fact]
+    public void SetFiscalId_OnAClientAccountWithTheSupplierPrefix_FailsCitingTheAccountNumber()
+    {
+        // Un compte Client doit commencer par "41" pour être retrouvé par le rapprochement à
+        // l'import ; "40105" est le préfixe Fournisseur.
+        var account = ChartOfAccount.Create(
+            "40105", "Mal classé", 4, null, AccountNatureType.Debit,
+            accountType: AccountType.Client, isAuxiliary: true).Value;
+
+        var result = account.SetFiscalId("1525071P/B/M/000");
+
+        Assert.True(result.IsFailure);
+        Assert.Contains("40105", result.Error.Description);
+    }
+
+    [Fact]
+    public void SetFiscalId_WithAnInvalidFormat_FailsWithTheNifFormatError()
+    {
+        var account = AuxiliaryClientAccount();
+
+        var result = account.SetFiscalId("not-a-nif");
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(NIF.FormatError, result.Error.Description);
+    }
+
+    [Fact]
+    public void Create_WithAFiscalIdOnAnEligibleAccount_SetsItAtomically()
+    {
+        var result = ChartOfAccount.Create(
+            "41105", "STE SLIMEN", 4, null, AccountNatureType.Debit,
+            accountType: AccountType.Client, isAuxiliary: true, fiscalId: "1525071P/B/M/000");
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal("1525071P/B/M/000", result.Value.FiscalId);
+    }
+
+    [Fact]
+    public void Create_WithAFiscalIdOnAnIneligibleAccount_RefusesTheWholeCreation()
+    {
+        // Un MF fourni sur un compte qui ne le supporte pas est refusé, jamais ignoré en silence.
+        var result = ChartOfAccount.Create(
+            "4111", "Clients", 4, null, AccountNatureType.Debit, fiscalId: "1525071P/B/M/000");
+
+        Assert.True(result.IsFailure);
+    }
+
+    [Fact]
+    public void NormalizeFiscalId_StripsSeparatorsAndUppercases()
+    {
+        Assert.Equal("1525071PBM000", ChartOfAccount.NormalizeFiscalId("1525071p/b/m/000"));
+    }
+
     #endregion
+
 
     #region AccountingPeriod
 

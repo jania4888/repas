@@ -19,7 +19,7 @@ export const NIF_PATTERN = /^[0-9]{7}[A-Z]\/[A-Z]\/[A-Z]\/[0-9]{3}$/;
 
 const NIF_COMPACT_PATTERN = /^([0-9]{7})([A-Z])([A-Z])([A-Z])([0-9]{3})$/;
 const NIF_LEGACY_PATTERN = /^([0-9]{7})\/([A-Z])\/([A-Z])\/([A-Z])\/([0-9]{3})$/;
-const NIF_MAX_INPUT_LENGTH = 40;
+export const NIF_MAX_INPUT_LENGTH = 40;
 
 /**
  * Tunisian phone number pattern.

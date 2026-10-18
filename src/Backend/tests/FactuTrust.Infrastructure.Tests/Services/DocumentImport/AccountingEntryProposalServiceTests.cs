@@ -37,13 +37,32 @@ public sealed class AccountingEntryProposalServiceTests
         return account;
     }
 
+    /// <summary>Compte auxiliaire Client/Fournisseur portant un matricule fiscal, pour (a)/(c).</summary>
+    private static ChartOfAccount AuxiliaryAccount(
+        string number, string label, AccountType accountType, string? fiscalId = null, bool active = true)
+    {
+        var account = ChartOfAccount.Create(
+            number, label, int.Parse(number[..1].ToString()), null, AccountNatureType.Debit,
+            accountType: accountType, isAuxiliary: true, fiscalId: fiscalId).Value;
+        if (!active)
+            account.ToggleActive();
+        return account;
+    }
+
+    private static AuxiliaryAccountCandidate Candidate(ChartOfAccount account) =>
+        new(account.Id, account.AccountNumber, account.Label, account.FiscalIdNormalized,
+            account.AffectationAccountNumber, account.ParentAccountNumber);
+
     private static Harness BuildHarness(
         string? companyNif = OurNif,
         IReadOnlySet<string>? missingAccounts = null,
         IReadOnlySet<string>? inactiveAccounts = null,
         AccountingPeriod? period = null,
         IReadOnlyList<ClientListDto>? clients = null,
-        IReadOnlyList<SupplierListDto>? suppliers = null)
+        IReadOnlyList<SupplierListDto>? suppliers = null,
+        ChartOfAccount? auxiliaryAccountByFiscalId = null,
+        IReadOnlyList<AuxiliaryAccountCandidate>? auxiliaryAccountCandidates = null,
+        string? ficheCollectiveAccountOverride = null)
     {
         var chart = new Mock<IChartOfAccountRepository>();
         chart.Setup(x => x.GetByAccountNumberAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
@@ -53,6 +72,18 @@ public sealed class AccountingEntryProposalServiceTests
                     return null;
                 return Account(n, active: inactiveAccounts?.Contains(n) != true);
             });
+
+        // (a) Rapprochement du compte auxiliaire par matricule fiscal : aucun par défaut.
+        chart.Setup(x => x.FindAuxiliaryByFiscalIdAsync(
+                It.IsAny<AccountType>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(auxiliaryAccountByFiscalId);
+
+        // (c) Rapprochement du compte auxiliaire par nom : aucun candidat par défaut. Un mock loose
+        // renverrait null (pas une liste vide) faute de configuration, ce qui provoquerait un NRE
+        // dans AccountingEntryProposalService — la configurer explicitement couvre tous les tests.
+        chart.Setup(x => x.ListActiveAuxiliaryAccountsAsync(
+                It.IsAny<AccountType>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(auxiliaryAccountCandidates ?? Array.Empty<AuxiliaryAccountCandidate>());
 
         var periods = new Mock<IAccountingPeriodRepository>();
         periods.Setup(x => x.GetByYearMonthAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
@@ -65,8 +96,14 @@ public sealed class AccountingEntryProposalServiceTests
         var directory = new Mock<IThirdPartyDirectoryService>();
         directory.Setup(x => x.GetProfileAsync(
                 It.IsAny<ThirdPartyKind>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Failure<ThirdPartyProfileDto>(
-                Error.Validation("ThirdPartyProfile", "Annuaire des tiers désactivé.")));
+            .ReturnsAsync(ficheCollectiveAccountOverride is null
+                ? Result.Failure<ThirdPartyProfileDto>(
+                    Error.Validation("ThirdPartyProfile", "Annuaire des tiers désactivé."))
+                : Result.Success(new ThirdPartyProfileDto
+                {
+                    CollectiveAccountNumber = ficheCollectiveAccountOverride,
+                    HasProfile = true
+                }));
 
         var mediator = new Mock<IMediator>();
         mediator.Setup(x => x.Send(It.IsAny<GetClientsQuery>(), It.IsAny<CancellationToken>()))
@@ -384,6 +421,184 @@ public sealed class AccountingEntryProposalServiceTests
         var counterpart = proposal.Lines[^1];
         Assert.Equal(TunisianPostingAccounts.Supplier, counterpart.AccountNumber);
         Assert.Equal(supplierId, counterpart.ThirdPartyId);
+    }
+
+    [Fact]
+    public async Task ProposeAsync_MatchesTheAuxiliaryAccountByFiscalIdAndUsesItAsCounterpart()
+    {
+        var auxiliary = AuxiliaryAccount(
+            "41105", "STE SLIMEN SARL", AccountType.Client, fiscalId: "9545555/E/E/E/525");
+        var harness = BuildHarness(auxiliaryAccountByFiscalId: auxiliary);
+
+        var proposal = await ProposeAsync(harness, SampleInvoice());
+
+        Assert.Equal(auxiliary.AccountNumber, proposal.ThirdParty?.MatchedAccountNumber);
+        Assert.Equal("nif", proposal.ThirdParty?.MatchedAccountBy);
+        Assert.Null(proposal.ThirdParty?.MatchedId);
+        Assert.DoesNotContain(proposal.Diagnostics, d => d.Code == ProposalDiagnosticCodes.ThirdPartyNotMatched);
+
+        var counterpart = proposal.Lines[0];
+        Assert.Equal(auxiliary.AccountNumber, counterpart.AccountNumber);
+    }
+
+    [Fact]
+    public async Task ProposeAsync_WhenTheAuxiliaryAccountAndFicheBothMatchByFiscalId_AttachesBoth()
+    {
+        var clientId = Guid.NewGuid();
+        var auxiliary = AuxiliaryAccount(
+            "41105", "STE SLIMEN SARL", AccountType.Client, fiscalId: "9545555/E/E/E/525");
+        var harness = BuildHarness(
+            auxiliaryAccountByFiscalId: auxiliary,
+            clients: [new ClientListDto { Id = clientId, Name = "STE SLIMEN SARL", Nif = "9545555/E/E/E/525" }]);
+
+        var proposal = await ProposeAsync(harness, SampleInvoice());
+
+        Assert.Equal(auxiliary.AccountNumber, proposal.ThirdParty?.MatchedAccountNumber);
+        Assert.Equal(clientId, proposal.ThirdParty?.MatchedId);
+        Assert.Equal("nif", proposal.ThirdParty?.MatchedBy);
+        Assert.DoesNotContain(proposal.Diagnostics, d => d.Code == ProposalDiagnosticCodes.ThirdPartyAccountConflict);
+
+        var counterpart = proposal.Lines[0];
+        Assert.Equal(auxiliary.AccountNumber, counterpart.AccountNumber);
+        Assert.Equal(clientId, counterpart.ThirdPartyId);
+    }
+
+    [Fact]
+    public async Task ProposeAsync_WhenTheFicheProfilePointsToADifferentAccount_WarnsAConflictButKeepsTheAuxiliary()
+    {
+        var clientId = Guid.NewGuid();
+        var auxiliary = AuxiliaryAccount(
+            "41105", "STE SLIMEN SARL", AccountType.Client, fiscalId: "9545555/E/E/E/525");
+        var harness = BuildHarness(
+            auxiliaryAccountByFiscalId: auxiliary,
+            clients: [new ClientListDto { Id = clientId, Name = "STE SLIMEN SARL", Nif = "9545555/E/E/E/525" }],
+            ficheCollectiveAccountOverride: "41106");
+
+        var proposal = await ProposeAsync(harness, SampleInvoice());
+
+        Assert.Equal(auxiliary.AccountNumber, proposal.ThirdParty?.MatchedAccountNumber);
+        Assert.Contains(proposal.Diagnostics, d => d.Code == ProposalDiagnosticCodes.ThirdPartyAccountConflict);
+
+        // Le compte auxiliaire rapproché par matricule fiscal l'emporte sur le profil de la fiche.
+        var counterpart = proposal.Lines[0];
+        Assert.Equal(auxiliary.AccountNumber, counterpart.AccountNumber);
+    }
+
+    [Fact]
+    public async Task ProposeAsync_WhenSeveralAuxiliaryAccountsMatchTheNameEqually_WarnsAmbiguousAndDoesNotPick()
+    {
+        var document = SampleInvoice() with { Buyer = new ExtractedPartyDto { Name = "Ste Slimen", Nif = null } };
+        var candidates = new[]
+        {
+            Candidate(AuxiliaryAccount("41105", "Ste Slimen", AccountType.Client)),
+            Candidate(AuxiliaryAccount("41106", "Ste Slimen", AccountType.Client))
+        };
+        var harness = BuildHarness(auxiliaryAccountCandidates: candidates);
+
+        var proposal = await ProposeAsync(harness, document);
+
+        Assert.Contains(proposal.Diagnostics, d => d.Code == ProposalDiagnosticCodes.ThirdPartyAmbiguous);
+        Assert.Null(proposal.ThirdParty?.MatchedAccountNumber);
+        Assert.Null(proposal.ThirdParty?.MatchedId);
+    }
+
+    [Fact]
+    public async Task ProposeAsync_WhenOneAuxiliaryAccountMatchesTheNameUniquely_AttachesItWithAWarning()
+    {
+        var document = SampleInvoice() with { Buyer = new ExtractedPartyDto { Name = "Ste Slimen", Nif = null } };
+        var candidates = new[] { Candidate(AuxiliaryAccount("41105", "Ste Slimen", AccountType.Client)) };
+        var harness = BuildHarness(auxiliaryAccountCandidates: candidates);
+
+        var proposal = await ProposeAsync(harness, document);
+
+        Assert.Equal("41105", proposal.ThirdParty?.MatchedAccountNumber);
+        Assert.Equal("name", proposal.ThirdParty?.MatchedAccountBy);
+        Assert.Contains(proposal.Diagnostics, d => d.Code == ProposalDiagnosticCodes.ThirdPartyMatchedByName);
+    }
+
+    [Fact]
+    public async Task ProposeAsync_WhenOnlyTheFicheMatchesByName_AttachesItWithAWarning()
+    {
+        var clientId = Guid.NewGuid();
+        var document = SampleInvoice() with { Buyer = new ExtractedPartyDto { Name = "Ste Slimen", Nif = null } };
+        var harness = BuildHarness(clients: [new ClientListDto { Id = clientId, Name = "Ste Slimen" }]);
+
+        var proposal = await ProposeAsync(harness, document);
+
+        Assert.Equal(clientId, proposal.ThirdParty?.MatchedId);
+        Assert.Equal("name", proposal.ThirdParty?.MatchedBy);
+        Assert.Null(proposal.ThirdParty?.MatchedAccountNumber);
+        Assert.Contains(proposal.Diagnostics, d => d.Code == ProposalDiagnosticCodes.ThirdPartyMatchedByName);
+    }
+
+    [Fact]
+    public async Task ProposeAsync_WhenTheNameMatchesAHomonymWithADifferentFiscalId_RejectsItAndWarnsCitingTheHomonym()
+    {
+        var document = SampleInvoice() with
+        {
+            Buyer = new ExtractedPartyDto { Name = "Ste Slimen", Nif = "9545555/E/E/E/525" }
+        };
+        var candidates = new[]
+        {
+            Candidate(AuxiliaryAccount("41105", "Ste Slimen", AccountType.Client, fiscalId: "1111111/A/A/A/000"))
+        };
+        var harness = BuildHarness(auxiliaryAccountCandidates: candidates);
+
+        var proposal = await ProposeAsync(harness, document);
+
+        Assert.Null(proposal.ThirdParty?.MatchedAccountNumber);
+        Assert.Null(proposal.ThirdParty?.MatchedId);
+        var diagnostic = Assert.Single(proposal.Diagnostics, d => d.Code == ProposalDiagnosticCodes.ThirdPartyNotMatched);
+        Assert.Contains("41105", diagnostic.Message);
+        // Le MF de la pièce ne doit jamais être recopié dans un message destiné à l'utilisateur.
+        Assert.DoesNotContain("9545555", diagnostic.Message);
+    }
+
+    [Fact]
+    public async Task ProposeAsync_AuxiliaryMatchByFiscalId_ExposesItsAffectationAsCollectiveAccount()
+    {
+        // Contrat §4.3 : avec un compte rapproché, le collectif affiché est son compte
+        // d'affectation (sinon son parent, sinon le collectif par défaut).
+        var auxiliary = ChartOfAccount.Create(
+            "41105", "STE SLIMEN SARL", 4, null, AccountNatureType.Debit,
+            accountType: AccountType.Client, isAuxiliary: true,
+            affectationAccountNumber: "411", fiscalId: "9545555/E/E/E/525").Value;
+        var harness = BuildHarness(auxiliaryAccountByFiscalId: auxiliary);
+
+        var proposal = await ProposeAsync(harness, SampleInvoice());
+
+        Assert.Equal("41105", proposal.ThirdParty?.MatchedAccountNumber);
+        Assert.Equal("411", proposal.ThirdParty?.CollectiveAccountNumber);
+    }
+
+    [Fact]
+    public async Task ProposeAsync_AuxiliaryMatchByName_ExposesItsParentAsCollectiveAccount()
+    {
+        var document = SampleInvoice() with { Buyer = new ExtractedPartyDto { Name = "Ste Slimen", Nif = null } };
+        var auxiliary = ChartOfAccount.Create(
+            "41105", "Ste Slimen", 4, "411", AccountNatureType.Debit,
+            accountType: AccountType.Client, isAuxiliary: true).Value;
+        var harness = BuildHarness(auxiliaryAccountCandidates: [Candidate(auxiliary)]);
+
+        var proposal = await ProposeAsync(harness, document);
+
+        Assert.Equal("41105", proposal.ThirdParty?.MatchedAccountNumber);
+        Assert.Equal("411", proposal.ThirdParty?.CollectiveAccountNumber);
+    }
+
+    [Fact]
+    public async Task ProposeAsync_AuxiliaryMatchByFiscalId_OutsideTheThirdPartyPrefix_IsIgnored()
+    {
+        // Défense en profondeur : un compte fournisseur (40… ou autre) remonté pour une vente
+        // (préfixe 41 attendu) n'est jamais proposé, même si les données le permettaient.
+        var supplierAccount = AuxiliaryAccount(
+            "40114", "STE SLIMEN SARL", AccountType.Supplier, fiscalId: "9545555/E/E/E/525");
+        var harness = BuildHarness(auxiliaryAccountByFiscalId: supplierAccount);
+
+        var proposal = await ProposeAsync(harness, SampleInvoice());
+
+        Assert.Null(proposal.ThirdParty?.MatchedAccountNumber);
+        Assert.Contains(proposal.Diagnostics, d => d.Code == ProposalDiagnosticCodes.ThirdPartyNotMatched);
     }
 
     // ========================================================================

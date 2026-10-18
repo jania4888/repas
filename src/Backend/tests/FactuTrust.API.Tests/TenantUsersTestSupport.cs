@@ -47,8 +47,37 @@ public static class TenantUsersTestSupport
     /// and returns the resulting admin's access token/ids. This is the ONLY way to obtain an
     /// Administrator session that can successfully pass <c>TenantMiddleware</c> (resolvable tenant
     /// connection string) — a forged JWT for a nonexistent tenant would 500 there.
+    /// Transient failures (client timeout, HTTP error, 5xx) are retried up to 3 times with a
+    /// fresh company per attempt; a 4xx validation failure throws immediately.
     /// </summary>
     public static async Task<RegisteredCompany> RegisterCompanyAsync(HttpClient client)
+    {
+        // Le provisionnement LocalDB derrière l'inscription est l'opération la plus lourde de
+        // la suite : sous CI Windows il échoue parfois de façon transitoire (expiration du
+        // client, 500 sur contention SQL). Trois tentatives bornées, avec une société unique
+        // à chaque essai ; seules les défaillances transitoires sont rejouées — un 400 de
+        // validation (régression réelle) échoue immédiatement.
+        const int maxAttempts = 3;
+        for (var attempt = 1; ; attempt++)
+        {
+            try
+            {
+                return await RegisterCompanyOnceAsync(client);
+            }
+            catch (Exception ex) when (attempt < maxAttempts && IsTransientRegistrationFailure(ex))
+            {
+                await Task.Delay(TimeSpan.FromSeconds(5));
+            }
+        }
+    }
+
+    private static bool IsTransientRegistrationFailure(Exception ex) =>
+        ex is TaskCanceledException or HttpRequestException or TransientRegistrationException;
+
+    /// <summary>Inscription rejetée par une erreur 5xx transitoire (contention LocalDB CI).</summary>
+    private sealed class TransientRegistrationException(string message) : Exception(message);
+
+    private static async Task<RegisteredCompany> RegisterCompanyOnceAsync(HttpClient client)
     {
         var unique = Guid.NewGuid().ToString("N")[..12];
         var nifDigits = (Convert.ToUInt64(unique, 16) % 10_000_000_000UL).ToString("D10");
@@ -74,9 +103,15 @@ public static class TenantUsersTestSupport
         var body = await response.Content.ReadFromJsonAsync<ApiResponse<AuthResponseDto>>(ApiJsonOptions);
         if (!response.IsSuccessStatusCode || body?.Data is null)
         {
-            throw new InvalidOperationException(
+            var message =
                 $"Company registration failed (status={response.StatusCode}): " +
-                $"{string.Join(";", body?.Errors ?? Array.Empty<string>())}");
+                $"{string.Join(";", body?.Errors ?? Array.Empty<string>())}";
+            if ((int)response.StatusCode >= 500)
+            {
+                throw new TransientRegistrationException(message);
+            }
+
+            throw new InvalidOperationException(message);
         }
 
         return new RegisteredCompany(

@@ -106,6 +106,7 @@ const ACTION_LABELS: Readonly<Record<string, string>> = {
   'Accounting.Lettered': $localize`:@@audit.audit-action-labels.ts.lettrage.cfcdd333:Lettrage`,
   'Accounting.SubAccountCreated': $localize`:@@audit.audit-action-labels.ts.sous.compte.cree.52578981:Sous-compte créé`,
   'Accounting.AccountLabelUpdated': $localize`:@@audit.audit-action-labels.ts.libelle.de.compte.modifie.361c1e54:Libellé de compte modifié`,
+  'Accounting.AccountFiscalIdUpdated': $localize`:@@audit.audit-action-labels.ts.matricule.fiscal.du.compte.modifie.5e432a68:Matricule fiscal du compte modifié`,
   'Accounting.AccountToggled': $localize`:@@audit.audit-action-labels.ts.compte.active.desactive.859ab080:Compte activé/désactivé`,
   'Accounting.FecExported': $localize`:@@audit.audit-action-labels.ts.export.fec.e7d31585:Export FEC`,
   'StockVoucher.Created': $localize`:@@audit.audit-action-labels.ts.bon.de.stock.cree.b4674fd5:Bon de stock créé`,

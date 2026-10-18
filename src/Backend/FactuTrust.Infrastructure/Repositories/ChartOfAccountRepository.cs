@@ -1,6 +1,7 @@
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Domain.Entities;
+using FactuTrust.Domain.Enums;
 using FactuTrust.Infrastructure.MultiTenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -90,6 +91,34 @@ public sealed class ChartOfAccountRepository : IChartOfAccountRepository
     {
         await using var context = _contextFactory.CreateContext();
         return await context.ChartOfAccounts.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+    }
+
+    // Jamais mis en cache : la détection de doublon de matricule fiscal doit voir l'état transactionnel
+    // courant (y compris des comptes créés/édités dans la même requête), contrairement aux autres
+    // lectures de ce référentiel qui tolèrent une fraîcheur de quelques minutes.
+    public async Task<ChartOfAccount?> FindAuxiliaryByFiscalIdAsync(
+        AccountType accountType, string fiscalIdNormalized, CancellationToken cancellationToken = default)
+    {
+        await using var context = _contextFactory.CreateContext();
+        return await context.ChartOfAccounts.AsNoTracking()
+            .FirstOrDefaultAsync(c =>
+                c.IsAuxiliary
+                && c.AccountType == accountType
+                && c.FiscalIdNormalized == fiscalIdNormalized,
+                cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<AuxiliaryAccountCandidate>> ListActiveAuxiliaryAccountsAsync(
+        AccountType accountType, string accountPrefix, int maxRows, CancellationToken cancellationToken = default)
+    {
+        await using var context = _contextFactory.CreateContext();
+        return await context.ChartOfAccounts.AsNoTracking()
+            .Where(c => c.IsActive && c.IsAuxiliary && c.AccountType == accountType && c.AccountNumber.StartsWith(accountPrefix))
+            .OrderBy(c => c.AccountNumber)
+            .Take(maxRows)
+            .Select(c => new AuxiliaryAccountCandidate(
+                c.Id, c.AccountNumber, c.Label, c.FiscalIdNormalized, c.AffectationAccountNumber, c.ParentAccountNumber))
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<ChartOfAccount> AddAsync(ChartOfAccount entity, CancellationToken cancellationToken = default)
