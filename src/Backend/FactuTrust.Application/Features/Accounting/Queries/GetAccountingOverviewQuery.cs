@@ -88,7 +88,8 @@ public sealed class GetAccountingOverviewQueryHandler
         if (core.IsFailure)
             return core;
 
-        var today = _timeProvider.GetLocalNow().Date;
+        // Même référence de date que les rapports de balance âgée (DateTime.UtcNow.Date).
+        var today = _timeProvider.GetUtcNow().Date;
         var warnings = new List<string>(core.Value.Warnings);
 
         var clients = await FoldAgingAsync(new GetClientAgingReportQuery(), today, ClientsAgingUnavailable, warnings, cancellationToken);

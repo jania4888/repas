@@ -75,6 +75,9 @@
       <span i18n="@@accounting.accounting-dashboard.ouvrir.le.journal.6b6599fb">Ouvrir le journal</span>
     </a>
   } @else if (data(); as d) {
+    @for (warning of d.warnings; track warning) {
+      <app-accounting-status-banner variant="warning" [message]="warning" />
+    }
     <section class="kpi-grid" aria-labelledby="dashboard-kpi-heading">
       <h2 id="dashboard-kpi-heading" class="sr-only" i18n="@@accounting.accounting-dashboard.indicateurs.cles.ad2f0ef9">
         Indicateurs clés
@@ -136,10 +139,15 @@
             i18n-ariaLabel="@@accounting.accounting-dashboard.graphique.en.barres.chiffre.d.affaires.a.7ac5766d" />
           <table class="sr-only">
             <caption i18n="@@accounting.accounting-dashboard.evolution.du.chiffre.d.affaires.598d1e2d">Évolution du chiffre d'affaires</caption>
-            <thead><tr><th scope="col">{{ chart.labels }}</th></tr></thead>
+            <thead>
+              <tr>
+                <th scope="col" i18n="@@accounting.accounting-dashboard.mois.0d304bea">Mois</th>
+                @for (label of chart.labels; track $index) { <th scope="col">{{ label }}</th> }
+              </tr>
+            </thead>
             <tbody>
               @for (dataset of chart.datasets; track dataset.label) {
-                <tr><th scope="row">{{ dataset.label }}</th>@for (v of dataset.data; track $index) { <td>{{ v }}</td> }</tr>
+                <tr><th scope="row">{{ dataset.label }}</th>@for (v of dataset.data; track $index) { <td>{{ v | accountingAmount : d.currency }}</td> }</tr>
               }
             </tbody>
           </table>
@@ -159,10 +167,16 @@
             i18n-ariaLabel="@@accounting.accounting-dashboard.graphique.en.courbe.resultat.net.mensuel.de.l.an.c9238248" />
           <table class="sr-only">
             <caption i18n="@@accounting.accounting-dashboard.resultat.net.mensuel.30b73fb3">Résultat net mensuel</caption>
-            <tbody>
+            <thead>
               <tr>
-                @for (v of chart.datasets[0].data; track $index) { <td>{{ v }}</td> }
+                <th scope="col" i18n="@@accounting.accounting-dashboard.mois.0d304bea">Mois</th>
+                @for (label of chart.labels; track $index) { <th scope="col">{{ label }}</th> }
               </tr>
+            </thead>
+            <tbody>
+              @for (dataset of chart.datasets; track dataset.label) {
+                <tr><th scope="row">{{ dataset.label }}</th>@for (v of dataset.data; track $index) { <td>{{ v | accountingAmount : d.currency }}</td> }</tr>
+              }
             </tbody>
           </table>
         }
@@ -181,7 +195,26 @@
               ariaLabel="Graphique en anneau : répartition des charges du mois sélectionné"
               i18n-ariaLabel="@@accounting.accounting-dashboard.graphique.en.anneau.repartition.des.charges.du.m.f2a9714c" />
           </div>
-          <ul class="chart-legend">
+          <table class="sr-only">
+            <caption i18n="@@accounting.accounting-dashboard.repartition.des.charges.f58e908a">Répartition des charges</caption>
+            <thead>
+              <tr>
+                <th scope="col" i18n="@@accounting.accounting-dashboard.categorie.6b38300a">Catégorie</th>
+                <th scope="col" i18n="@@accounting.accounting-dashboard.montant.4adcd9fc">Montant</th>
+                <th scope="col">%</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of exp.legend; track item.key) {
+                <tr>
+                  <th scope="row">{{ item.label }}</th>
+                  <td>{{ item.amount | accountingAmount : d.currency }}</td>
+                  <td>{{ item.percent | number : '1.1-1' }} %</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+          <ul class="chart-legend" aria-hidden="true">
             @for (item of exp.legend; track item.key) {
               <li>
                 <span class="chart-legend__swatch" [style.background]="item.color"></span>
@@ -256,7 +289,21 @@
           <span i18n="@@accounting.accounting-dashboard.voir.tout.7b7d86e8">Voir tout</span>
         </a>
         @if (d.clients; as situation) {
-          <div class="donut-wrap">
+          <table class="sr-only">
+            <caption i18n="@@accounting.accounting-dashboard.situation.clients.411.dcfa8588">Situation clients (411)</caption>
+            <thead>
+              <tr>
+                <th scope="col" i18n="@@accounting.accounting-dashboard.statut.659499f3">Statut</th>
+                <th scope="col" i18n="@@accounting.accounting-dashboard.montant.4adcd9fc">Montant</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row" i18n="@@accounting.accounting-dashboard.view-model.ts.a.echeance.ea798677">À échéance</th><td>{{ situation.notDue | accountingAmount : d.currency }}</td></tr>
+              <tr><th scope="row" i18n="@@accounting.accounting-dashboard.view-model.ts.echus.c8e22b3b">Échus</th><td>{{ situation.overdue | accountingAmount : d.currency }}</td></tr>
+              <tr><th scope="row" i18n="@@accounting.accounting-dashboard.total.b25928c6">Total</th><td>{{ situation.total | accountingAmount : d.currency }}</td></tr>
+            </tbody>
+          </table>
+          <div class="donut-wrap" aria-hidden="true">
             @if (clientsChart(); as chart) {
               <p-chart
                 type="doughnut"
@@ -274,6 +321,8 @@
           <p class="donut-asof">
             <span i18n="@@accounting.accounting-dashboard.au.situation.asof.appdate.0ac5d3f0">au {{ situation.asOf | appDate }}</span>
           </p>
+        } @else {
+          <p class="dashboard-unavailable" role="status" i18n="@@accounting.accounting-dashboard.donnees.indisponibles.5679cb86">Données indisponibles</p>
         }
       </app-dashboard-panel>
 
@@ -285,7 +334,21 @@
           <span i18n="@@accounting.accounting-dashboard.voir.tout.7b7d86e8">Voir tout</span>
         </a>
         @if (d.suppliers; as situation) {
-          <div class="donut-wrap">
+          <table class="sr-only">
+            <caption i18n="@@accounting.accounting-dashboard.situation.fournisseurs.401.6bbd22e3">Situation fournisseurs (401)</caption>
+            <thead>
+              <tr>
+                <th scope="col" i18n="@@accounting.accounting-dashboard.statut.659499f3">Statut</th>
+                <th scope="col" i18n="@@accounting.accounting-dashboard.montant.4adcd9fc">Montant</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row" i18n="@@accounting.accounting-dashboard.view-model.ts.a.echeance.ea798677">À échéance</th><td>{{ situation.notDue | accountingAmount : d.currency }}</td></tr>
+              <tr><th scope="row" i18n="@@accounting.accounting-dashboard.view-model.ts.echus.c8e22b3b">Échus</th><td>{{ situation.overdue | accountingAmount : d.currency }}</td></tr>
+              <tr><th scope="row" i18n="@@accounting.accounting-dashboard.total.b25928c6">Total</th><td>{{ situation.total | accountingAmount : d.currency }}</td></tr>
+            </tbody>
+          </table>
+          <div class="donut-wrap" aria-hidden="true">
             @if (suppliersChart(); as chart) {
               <p-chart
                 type="doughnut"
@@ -303,6 +366,8 @@
           <p class="donut-asof">
             <span i18n="@@accounting.accounting-dashboard.au.situation.asof.appdate.0ac5d3f0">au {{ situation.asOf | appDate }}</span>
           </p>
+        } @else {
+          <p class="dashboard-unavailable" role="status" i18n="@@accounting.accounting-dashboard.donnees.indisponibles.5679cb86">Données indisponibles</p>
         }
       </app-dashboard-panel>
     </section>
@@ -334,8 +399,13 @@
             @for (entry of d.recentEntries; track entry.id) {
               <tr
                 class="dashboard-row-link"
-                [routerLink]="['/accounting/manual-entry']"
-                [queryParams]="{ entryId: entry.id }">
+                tabindex="0"
+                role="link"
+                aria-label="Ouvrir l'écriture"
+                i18n-aria-label="@@accounting.accounting-dashboard.ouvrir.l.ecriture.634eb3a6"
+                (click)="openEntry(entry.id)"
+                (keydown.enter)="openEntry(entry.id, $event)"
+                (keydown.space)="openEntry(entry.id, $event)">
                 <td>{{ entry.entryDate | appDate }}</td>
                 <td>{{ entry.journalCode }}</td>
                 <td>{{ entry.entryNumber }}</td>

@@ -13,11 +13,11 @@ import {
   signal
 } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { EMPTY, Subject } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 import { ChartModule, UIChart } from 'primeng/chart';
 
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -55,7 +55,6 @@ import {
   documentIcon,
   formatCompactTnd,
   formatDeltaPercent,
-  formatFileSize,
   isEmptyPeriod,
   mainAccountSparkline,
   periodOptions,
@@ -96,6 +95,7 @@ export class AccountingDashboardComponent implements OnInit {
   private readonly erpFormat = inject(ErpFormatService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly injector = inject(Injector);
+  private readonly router = inject(Router);
 
   @ViewChildren(UIChart) private readonly charts?: QueryList<UIChart>;
 
@@ -195,20 +195,25 @@ export class AccountingDashboardComponent implements OnInit {
   readonly deadlineUrgency = deadlineUrgency;
   readonly deadlineCountdownLabel = deadlineCountdownLabel;
   readonly documentIcon = documentIcon;
-  readonly formatFileSize = formatFileSize;
   readonly mainAccountSparkline = mainAccountSparkline;
   readonly roundToOneDecimal = roundToOneDecimal;
 
   ngOnInit(): void {
     this.requestLoad$
       .pipe(
-        switchMap(request => this.api.getDashboardOverview(request)),
+        // L'erreur est absorbée dans le switchMap : le flux externe reste vivant et
+        // « Réessayer » / changement de période fonctionnent après une erreur réseau.
+        switchMap(request =>
+          this.api.getDashboardOverview(request).pipe(
+            catchError(err => {
+              this.onLoadError(err);
+              return EMPTY;
+            })
+          )
+        ),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe({
-        next: res => this.onLoadSuccess(res),
-        error: err => this.onLoadError(err)
-      });
+      .subscribe(res => this.onLoadSuccess(res));
 
     this.load();
   }
@@ -274,6 +279,12 @@ export class AccountingDashboardComponent implements OnInit {
   relativeAge(createdAt: string): string {
     const { value, unit } = relativeDocumentAge(createdAt, new Date());
     return this.erpFormat.relativeTime(value, unit);
+  }
+
+  /** Ouvre l'écriture (clic ou clavier : Entrée / Espace sur la ligne). */
+  openEntry(entryId: string, event?: Event): void {
+    event?.preventDefault();
+    void this.router.navigate(['/accounting/manual-entry'], { queryParams: { entryId } });
   }
 
   print(): void {

@@ -10,7 +10,6 @@ import {
   documentIcon,
   formatCompactTnd,
   formatDeltaPercent,
-  formatFileSize,
   isEmptyPeriod,
   mainAccountSparkline,
   periodOptions,
@@ -181,11 +180,4 @@ describe('accounting-dashboard.view-model', () => {
     });
   });
 
-  describe('formatFileSize', () => {
-    it('formats bytes, kilobytes and megabytes', () => {
-      expect(formatFileSize(500)).toBe('500 o');
-      expect(formatFileSize(240_000)).toBe('234 Ko');
-      expect(formatFileSize(1_500_000)).toBe('1,4 Mo');
-    });
-  });
 });

@@ -160,7 +160,10 @@ export function buildRevenueChartData(points: MonthlyRevenuePointDto[], fiscalYe
       {
         label: String(fiscalYear - 1),
         data: points.map(p => p.previousYear),
-        backgroundColor: '#cbd5e1',
+        // Gris moyen + contour foncé : contraste suffisant (≥ 3:1) sur fond blanc.
+        backgroundColor: '#94a3b8',
+        borderColor: '#475569',
+        borderWidth: 1,
         borderRadius: 4
       },
       {
@@ -267,9 +270,3 @@ export function relativeDocumentAge(
   return { value: Math.round(diffMonths / 12), unit: 'year' };
 }
 
-/** Taille lisible d'un fichier (« 240 Ko », « 1,2 Mo »). */
-export function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} o`;
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} Ko`;
-  return `${(bytes / (1024 * 1024)).toFixed(1).replace('.', ',')} Mo`;
-}

@@ -201,6 +201,19 @@
   &:hover {
     background: var(--color-background-subtle, #f8fafc);
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary, #2563eb);
+    outline-offset: -2px;
+    background: var(--color-background-subtle, #f8fafc);
+  }
+}
+
+.dashboard-unavailable {
+  margin: var(--spacing-4) 0;
+  color: var(--color-text-muted, #64748b);
+  font-size: var(--font-size-sm, 0.875rem);
+  text-align: center;
 }
 
 .delta {

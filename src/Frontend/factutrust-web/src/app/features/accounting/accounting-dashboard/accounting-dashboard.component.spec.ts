@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { Router, provideRouter } from '@angular/router';
+import { Subject, of, throwError } from 'rxjs';
 import { signal } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import localeFrTN from '@angular/common/locales/fr-TN';
@@ -136,10 +136,65 @@ describe('AccountingDashboardComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('shows the loading skeleton before the first response arrives', () => {
-    apiSpy.getDashboardOverview.and.returnValue(of({ success: true, data: buildOverview() }).pipe());
+  it('shows the loading skeleton until the first response arrives', () => {
+    const response$ = new Subject<{ success: boolean; data?: AccountingOverviewDashboardDto }>();
+    apiSpy.getDashboardOverview.and.returnValue(response$.asObservable());
     fixture.detectChanges();
-    expect(component.loading()).toBeFalse(); // of() emits synchronously, so loading flips immediately
+
+    expect(component.loading()).toBeTrue();
+    expect(fixture.nativeElement.querySelector('.dashboard-skeleton')).toBeTruthy();
+
+    response$.next({ success: true, data: buildOverview() });
+    response$.complete();
+    fixture.detectChanges();
+
+    expect(component.loading()).toBeFalse();
+    expect(fixture.nativeElement.querySelector('.dashboard-skeleton')).toBeNull();
+    expect(component.data()).toBeTruthy();
+  });
+
+  it('keeps the retry button working after a transport error', () => {
+    apiSpy.getDashboardOverview.and.returnValue(throwError(() => new Error('network down')));
+    fixture.detectChanges();
+    expect(component.error()).toBe('Erreur réseau');
+    expect(component.data()).toBeNull();
+
+    apiSpy.getDashboardOverview.calls.reset();
+    apiSpy.getDashboardOverview.and.returnValue(of({ success: true, data: buildOverview() }));
+    component.reload();
+    fixture.detectChanges();
+
+    expect(apiSpy.getDashboardOverview).toHaveBeenCalledTimes(1);
+    expect(component.error()).toBeNull();
+    expect(component.data()).toBeTruthy();
+  });
+
+  it('shows an unavailable state and the backend warnings when the aging blocks are missing', () => {
+    apiSpy.getDashboardOverview.and.returnValue(
+      of({
+        success: true,
+        data: buildOverview({ clients: null, suppliers: null, warnings: ['Situation clients indisponible'] })
+      })
+    );
+    fixture.detectChanges();
+
+    const unavailable = fixture.nativeElement.querySelectorAll('.dashboard-unavailable');
+    expect(unavailable.length).toBe(2);
+    const banners = fixture.nativeElement.querySelectorAll('app-accounting-status-banner');
+    expect(banners.length).toBe(1);
+    expect(banners[0].textContent).toContain('Situation clients indisponible');
+  });
+
+  it('opens the entry from the keyboard on a recent-entry row', () => {
+    fixture.detectChanges();
+    const router = TestBed.inject(Router);
+    const navigateSpy = spyOn(router, 'navigate').and.resolveTo(true);
+
+    const row: HTMLElement = fixture.nativeElement.querySelector('tr.dashboard-row-link');
+    expect(row.getAttribute('tabindex')).toBe('0');
+    row.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/accounting/manual-entry'], { queryParams: { entryId: 'e1' } });
   });
 
   it('renders the 4 KPI cards and the dossier name in the subtitle once loaded', () => {

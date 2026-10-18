@@ -46,10 +46,24 @@ test.describe('Tableau de bord comptable (dossier délégué)', () => {
       test.skip(true, 'Tableau de bord non accessible pour cette session de test');
     }
 
-    const options = await periodSelect.locator('option').allTextContents();
+    const options = await periodSelect.locator('option').allInnerTexts();
     test.skip(options.length < 2, 'Une seule période disponible');
 
+    const targetValue = await periodSelect.locator('option').nth(1).getAttribute('value');
+    const [fiscalYear, month] = (targetValue ?? '').split('-');
+
+    // La sélection d'une autre période doit déclencher une requête API portant cette période.
+    const overviewRequest = page.waitForRequest(
+      req =>
+        req.url().includes('/api/accounting/dashboard/overview') &&
+        req.url().includes(`fiscalYear=${fiscalYear}`) &&
+        req.url().includes(`month=${month}`),
+      { timeout: 10_000 }
+    );
     await periodSelect.selectOption({ index: 1 });
-    await expect(page.locator('app-skeleton, .p-skeleton').first()).toBeVisible({ timeout: 3_000 }).catch(() => undefined);
+    await overviewRequest;
+
+    await expect(page.locator('app-skeleton, .p-skeleton')).toHaveCount(0, { timeout: 15_000 });
+    await expect(periodSelect).toHaveValue(targetValue ?? '');
   });
 });

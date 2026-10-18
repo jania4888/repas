@@ -184,6 +184,11 @@ public sealed class AccountingOverviewService : IAccountingOverviewService
         var expenseBreakdown = BuildExpenseBreakdown(current, m);
         var mainAccounts = BuildMainAccounts(current, cmpData, m, cmpMonth);
 
+        // La période est « vide » s'il n'existe aucune écriture validée datée du mois (y compris
+        // l'écriture d'à-nouveau de janvier, exclue des mouvements par FiscalAnchorHelper).
+        var hasEntriesInPeriod = await PostedEntries(ctx)
+            .AnyAsync(e => e.EntryDate >= period.Start && e.EntryDate <= period.End, ct);
+
         var recentEntries = await LoadRecentEntriesAsync(ctx, ct);
         var upcomingDeadlines = await LoadUpcomingDeadlinesAsync(ctx, today, ct);
         var recentDocuments = await LoadRecentDocumentsAsync(ctx, ct);
@@ -202,7 +207,7 @@ public sealed class AccountingOverviewService : IAccountingOverviewService
             ComparisonLabel = PeriodLabel(cmpYear, cmpMonth),
             Currency = Money.DefaultCurrency,
             GeneratedAt = _timeProvider.GetUtcNow().UtcDateTime,
-            HasEntriesInPeriod = current.HasMovements(m),
+            HasEntriesInPeriod = hasEntriesInPeriod,
             AvailableYears = availableYears,
             TotalRevenue = totalRevenue,
             TotalExpenses = totalExpenses,
@@ -239,7 +244,6 @@ public sealed class AccountingOverviewService : IAccountingOverviewService
 
         public static YearData Empty { get; } = new(new Dictionary<string, decimal>(), new List<Movement>());
 
-        public bool HasMovements(int month) => _movements.Any(x => x.Month == month);
 
         /// <summary>Produits du mois : crédit − débit de la classe 7.</summary>
         public decimal Revenue(int month) => Sum(month, a => a.StartsWith('7'), credit: true);
@@ -444,6 +448,7 @@ public sealed class AccountingOverviewService : IAccountingOverviewService
     {
         // Q7/Q8 — 5 dernières pièces jointes de chaque source, fusionnées par date décroissante.
         var journalDocs = await ctx.JournalEntryAttachments.AsNoTracking()
+            .Where(a => a.JournalEntry.Status != JournalEntryStatus.Brouillon)
             .OrderByDescending(a => a.CreatedAt)
             .Take(5)
             .Select(a => new RecentDocumentDto

@@ -326,6 +326,51 @@ public sealed class AccountingOverviewServiceTests
     }
 
     [Fact]
+    public async Task Overview_RecentDocuments_ExcludeAttachmentsOfDraftEntries()
+    {
+        using (var ctx = _factory.CreateContext())
+        {
+            // Pièce jointe la plus récente, mais rattachée à une écriture en brouillon : jamais exposée.
+            var draft = ctx.JournalEntries.Single(e => e.Status == JournalEntryStatus.Brouillon);
+            ctx.JournalEntryAttachments.Add(JournalEntryAttachment.Create(
+                draft.Id, "brouillon.pdf", "/secret/storage/brouillon.pdf", "application/pdf", 10).Value);
+            ctx.SaveChanges();
+        }
+
+        var dto = (await BuildService().GetOverviewAsync(Feb2026, DashboardComparison.PreviousMonth)).Value;
+
+        Assert.Equal(2, dto.RecentDocuments.Count);
+        Assert.DoesNotContain(dto.RecentDocuments, d => d.FileName == "brouillon.pdf");
+    }
+
+    [Fact]
+    public async Task Overview_JanuaryWithOnlyOpeningEntry_IsNotFlaggedEmpty()
+    {
+        using (var ctx = _factory.CreateContext())
+        {
+            // Exercice 2027 : seule l'écriture d'à-nouveau (exclue des mouvements) est datée de janvier.
+            var lines = new[]
+            {
+                new JournalLineInput("4111", "À-nouveau clients", 700m, 0m, null, ThirdPartyKind.None),
+                new JournalLineInput("101", "À-nouveau capital", 0m, 700m, null, ThirdPartyKind.None)
+            };
+            var opening = JournalEntry.Create(
+                100, "AN", new DateTime(2027, 1, 1), "À-nouveau 2027", Guid.NewGuid(),
+                true, AccountingService.SourceOpeningBalance, Guid.NewGuid(), lines,
+                initialStatus: JournalEntryStatus.Validee).Value;
+            opening.SetAuditInfo("test", false);
+            ctx.JournalEntries.Add(opening);
+            ctx.SaveChanges();
+        }
+
+        var dto = (await BuildService().GetOverviewAsync(new OverviewPeriod(2027, 1), DashboardComparison.PreviousMonth)).Value;
+
+        Assert.True(dto.HasEntriesInPeriod);
+        Assert.Equal(0m, dto.TotalRevenue.Current);
+        Assert.Equal(700m, dto.MainAccounts.Single(a => a.AccountPrefix == "411").Balance);
+    }
+
+    [Fact]
     public async Task Overview_MonthWithoutEntries_FlagsEmptyPeriod_WithZeroKpis()
     {
         var dto = (await BuildService().GetOverviewAsync(new OverviewPeriod(2026, 5), DashboardComparison.PreviousMonth)).Value;
