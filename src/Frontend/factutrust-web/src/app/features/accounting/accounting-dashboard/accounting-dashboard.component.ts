@@ -34,6 +34,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 import {
   AccountingOverviewDashboardDto,
   AccountingService,
+  ApiResponse,
   DashboardComparison,
   RecentDocumentDto
 } from '../services/accounting.service';
@@ -62,7 +63,7 @@ import {
   roundToOneDecimal
 } from './accounting-dashboard.view-model';
 
-type LoadRequest = { fiscalYear?: number; month?: number; comparison?: DashboardComparison } | undefined;
+type LoadRequest = { fiscalYear?: number; month?: number; comparison?: DashboardComparison };
 
 /** Tableau de bord comptable du dossier, écran d'accueil d'une ouverture de dossier délégué. */
 @Component({
@@ -117,7 +118,6 @@ export class AccountingDashboardComponent implements OnInit {
 
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
-  readonly printing = signal(false);
   readonly data = signal<AccountingOverviewDashboardDto | null>(null);
 
   private readonly now = new Date();
@@ -182,17 +182,12 @@ export class AccountingDashboardComponent implements OnInit {
     }
   };
 
-  readonly expenseChartOptions = {
+  readonly doughnutChartOptions = {
     ...this.commonChartOptions,
     cutout: '68%'
   };
 
-  readonly thirdPartyChartOptions = {
-    ...this.commonChartOptions,
-    cutout: '68%'
-  };
-
-  private readonly requestLoad$ = new Subject<LoadRequest>();
+  private readonly requestLoad$ = new Subject<LoadRequest | undefined>();
 
   readonly formatDeltaPercent = formatDeltaPercent;
   readonly deltaTone = deltaTone;
@@ -218,10 +213,11 @@ export class AccountingDashboardComponent implements OnInit {
     this.load();
   }
 
-  load(): void {
+  /** Sans paramètre, le backend choisit la période ; la sélection courante est alignée sur la réponse. */
+  load(request?: LoadRequest): void {
     this.loading.set(true);
     this.error.set(null);
-    this.requestLoad$.next(undefined);
+    this.requestLoad$.next(request);
   }
 
   onPeriodChange(value: string): void {
@@ -235,18 +231,12 @@ export class AccountingDashboardComponent implements OnInit {
     this.reload();
   }
 
-  retry(): void {
-    this.reload();
-  }
-
-  private reload(): void {
-    this.loading.set(true);
-    this.error.set(null);
+  reload(): void {
     const { fiscalYear, month } = this.selectedPeriod();
-    this.requestLoad$.next({ fiscalYear, month, comparison: this.comparison() });
+    this.load({ fiscalYear, month, comparison: this.comparison() });
   }
 
-  private onLoadSuccess(res: { success: boolean; data?: AccountingOverviewDashboardDto; error?: string }): void {
+  private onLoadSuccess(res: ApiResponse<AccountingOverviewDashboardDto>): void {
     this.loading.set(false);
     if (res.success && res.data) {
       this.data.set(res.data);
@@ -287,11 +277,7 @@ export class AccountingDashboardComponent implements OnInit {
   }
 
   print(): void {
-    this.printing.set(true);
-    setTimeout(() => {
-      window.print();
-      this.printing.set(false);
-    });
+    window.print();
   }
 
   focusPeriodSelect(): void {

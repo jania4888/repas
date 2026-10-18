@@ -4,6 +4,7 @@ using FactuTrust.Application.Configuration;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.Accounting.Commands;
 using FactuTrust.Application.Features.Accounting.Lettering;
+using FactuTrust.Application.Features.Accounting.Queries;
 using FactuTrust.Domain.Services.Accounting;
 using FluentValidation;
 using Microsoft.Extensions.Options;
@@ -457,7 +458,7 @@ public sealed class CloseAnnualPeriodCommandValidator : AbstractValidator<CloseA
 
 /// <summary>Bornes de la requête du tableau de bord comptable du dossier (plan §3.3).</summary>
 public sealed class GetAccountingOverviewQueryValidator
-    : AbstractValidator<FactuTrust.Application.Features.Accounting.Queries.GetAccountingOverviewQuery>
+    : AbstractValidator<GetAccountingOverviewQuery>
 {
     public const string MonthRequiresFiscalYear = "L'exercice est obligatoire quand le mois est précisé.";
     public const string InvalidComparison = "Comparaison invalide : attendu previous-month ou previous-year.";

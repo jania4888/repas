@@ -1,4 +1,4 @@
-<div class="accounting-dashboard" [class.accounting-dashboard--printing]="printing()">
+<div class="accounting-dashboard">
   <app-page-header
     title="Tableau de bord"
     i18n-title="@@accounting.accounting-dashboard.tableau.de.bord.a524057f"
@@ -41,7 +41,7 @@
       [showRetry]="true"
       retryLabel="Réessayer"
       i18n-retryLabel="@@accounting.accounting-dashboard.reessayer.895d416b"
-      (retry)="retry()" />
+      (retry)="reload()" />
   }
 
   @if (loading()) {
@@ -62,7 +62,7 @@
         }
       </div>
     </div>
-  } @else if (isEmpty() && data()) {
+  } @else if (isEmpty()) {
     <app-empty-state
       icon="pi-inbox"
       title="Aucune écriture validée pour cette période"
@@ -176,7 +176,7 @@
             <p-chart
               type="doughnut"
               [data]="exp.chartData"
-              [options]="expenseChartOptions"
+              [options]="doughnutChartOptions"
               [style]="{ height: '220px' }"
               ariaLabel="Graphique en anneau : répartition des charges du mois sélectionné"
               i18n-ariaLabel="@@accounting.accounting-dashboard.graphique.en.anneau.repartition.des.charges.du.m.f2a9714c" />
@@ -261,7 +261,7 @@
               <p-chart
                 type="doughnut"
                 [data]="chart.chartData"
-                [options]="thirdPartyChartOptions"
+                [options]="doughnutChartOptions"
                 [style]="{ height: '180px' }"
                 ariaLabel="Graphique en anneau : situation clients, montants à échéance et échus"
                 i18n-ariaLabel="@@accounting.accounting-dashboard.graphique.en.anneau.situation.clients.montants.a.69a31b76" />
@@ -290,7 +290,7 @@
               <p-chart
                 type="doughnut"
                 [data]="chart.chartData"
-                [options]="thirdPartyChartOptions"
+                [options]="doughnutChartOptions"
                 [style]="{ height: '180px' }"
                 ariaLabel="Graphique en anneau : situation fournisseurs, montants à échéance et échus"
                 i18n-ariaLabel="@@accounting.accounting-dashboard.graphique.en.anneau.situation.fournisseurs.monta.6b7e80a5" />

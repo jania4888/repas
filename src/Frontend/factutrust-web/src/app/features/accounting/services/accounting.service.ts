@@ -1965,7 +1965,7 @@ export interface UpsertThirdPartyProfileRequest {
   accountingNotes?: string | null;
 }
 
-interface ApiResponse<T> {
+export interface ApiResponse<T> {
   success: boolean;
   data?: T;
   error?: string;

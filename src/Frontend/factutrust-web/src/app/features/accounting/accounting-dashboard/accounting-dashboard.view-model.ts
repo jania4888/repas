@@ -5,7 +5,6 @@ import {
   MainAccountRowDto,
   MonthlyNetResultPointDto,
   MonthlyRevenuePointDto,
-  RecentDocumentDto,
   ThirdPartySituationDto
 } from '../services/accounting.service';
 import { buildSparklinePaths } from '@shared/utils/sparkline-path.util';
@@ -71,8 +70,6 @@ export const EXPENSE_CATEGORY_COLORS: Record<string, string> = {
   depreciation: '#10b981',
   other: '#94a3b8'
 };
-
-const EXPENSE_PALETTE_FALLBACK = ['#2563eb', '#0ea5e9', '#8b5cf6', '#f59e0b', '#10b981', '#94a3b8'];
 
 /** Couleurs des deux graphiques « Situation clients/fournisseurs ». */
 export const THIRD_PARTY_COLORS = { notDue: '#2563eb', overdue: '#ef4444' };
@@ -198,12 +195,12 @@ export function buildExpenseDoughnutData(categories: ExpenseCategoryDto[]): {
   chartData: SimpleChartData;
   legend: ExpenseLegendItem[];
 } {
-  const legend = categories.map((c, i) => ({
+  const legend = categories.map(c => ({
     key: c.key,
     label: c.label,
     amount: c.amount,
     percent: c.percent,
-    color: EXPENSE_CATEGORY_COLORS[c.key] ?? EXPENSE_PALETTE_FALLBACK[i % EXPENSE_PALETTE_FALLBACK.length]
+    color: EXPENSE_CATEGORY_COLORS[c.key] ?? EXPENSE_CATEGORY_COLORS['other']
   }));
   return {
     chartData: {
@@ -275,9 +272,4 @@ export function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} o`;
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} Ko`;
   return `${(bytes / (1024 * 1024)).toFixed(1).replace('.', ',')} Mo`;
-}
-
-/** Repli affiché sous les documents récents sans aucune ligne. */
-export function hasRecentDocuments(docs: RecentDocumentDto[] | undefined | null): boolean {
-  return !!docs && docs.length > 0;
 }

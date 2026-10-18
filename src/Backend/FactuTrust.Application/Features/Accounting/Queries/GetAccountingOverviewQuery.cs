@@ -121,11 +121,7 @@ public sealed class GetAccountingOverviewQueryHandler
 
             return Fold(aging.Value, today);
         }
-        catch (OperationCanceledException)
-        {
-            throw;
-        }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.LogWarning(ex, "Balance âgée en erreur pour le tableau de bord.");
             warnings.Add(warning);

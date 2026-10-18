@@ -9,7 +9,6 @@ using FactuTrust.Infrastructure.Persistence;
 using FactuTrust.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
@@ -122,8 +121,7 @@ public sealed class AccountingOverviewServiceTests
             tenant.Object,
             cache ?? new MemoryCache(new MemoryCacheOptions()),
             new FixedTimeProvider(today ?? Today),
-            Options.Create(new AccountingSettings { DashboardOverviewCacheSeconds = cacheSeconds }),
-            NullLogger<AccountingOverviewService>.Instance);
+            Options.Create(new AccountingSettings { DashboardOverviewCacheSeconds = cacheSeconds }));
     }
 
     private static OverviewPeriod Feb2026 => new(2026, 2);
@@ -395,7 +393,7 @@ public sealed class AccountingOverviewServiceTests
         tenant.SetupGet(t => t.TenantId).Returns(TenantId);
         var service = new AccountingOverviewService(
             empty, tenant.Object, new MemoryCache(new MemoryCacheOptions()), new FixedTimeProvider(Today),
-            Options.Create(new AccountingSettings()), NullLogger<AccountingOverviewService>.Instance);
+            Options.Create(new AccountingSettings()));
 
         var period = await service.ResolvePeriodAsync(null, null);
         Assert.Equal(new OverviewPeriod(2026, 10), period);

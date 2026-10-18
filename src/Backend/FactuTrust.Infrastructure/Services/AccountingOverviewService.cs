@@ -13,7 +13,6 @@ using FactuTrust.Infrastructure.MultiTenancy;
 using FactuTrust.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace FactuTrust.Infrastructure.Services;
@@ -63,22 +62,19 @@ public sealed class AccountingOverviewService : IAccountingOverviewService
     private readonly IMemoryCache _cache;
     private readonly TimeProvider _timeProvider;
     private readonly Application.Configuration.AccountingSettings _settings;
-    private readonly ILogger<AccountingOverviewService> _logger;
 
     public AccountingOverviewService(
         ITenantDbContextFactory contextFactory,
         ITenantContext tenantContext,
         IMemoryCache cache,
         TimeProvider timeProvider,
-        IOptions<Application.Configuration.AccountingSettings> settings,
-        ILogger<AccountingOverviewService> logger)
+        IOptions<Application.Configuration.AccountingSettings> settings)
     {
         _contextFactory = contextFactory;
         _tenantContext = tenantContext;
         _cache = cache;
         _timeProvider = timeProvider;
         _settings = settings.Value;
-        _logger = logger;
     }
 
     private DateTime Today => _timeProvider.GetLocalNow().Date;
@@ -152,10 +148,9 @@ public sealed class AccountingOverviewService : IAccountingOverviewService
 
         var current = await LoadYearAsync(ctx, n, ct);
         var previous = await LoadYearAsync(ctx, p, ct);
-        YearData DataFor(int year) => year == n ? current : previous;
 
         // KPI du mois sélectionné vs fenêtre de comparaison.
-        var cmpData = DataFor(cmpYear);
+        var cmpData = cmpYear == n ? current : previous;
         var totalRevenue = Kpi(current.Revenue(m), cmpData.Revenue(cmpMonth));
         var totalExpenses = Kpi(current.Expenses(m), cmpData.Expenses(cmpMonth));
         var netResult = Kpi(current.Revenue(m) - current.Expenses(m), cmpData.Revenue(cmpMonth) - cmpData.Expenses(cmpMonth));
@@ -217,12 +212,9 @@ public sealed class AccountingOverviewService : IAccountingOverviewService
             NetResultByMonth = netResultByMonth,
             ExpenseBreakdown = expenseBreakdown,
             MainAccounts = mainAccounts,
-            Clients = null,
-            Suppliers = null,
             RecentEntries = recentEntries,
             UpcomingDeadlines = upcomingDeadlines,
-            RecentDocuments = recentDocuments,
-            Warnings = Array.Empty<string>()
+            RecentDocuments = recentDocuments
         });
     }
 

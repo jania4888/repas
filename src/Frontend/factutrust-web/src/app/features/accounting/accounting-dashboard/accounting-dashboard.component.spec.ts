@@ -193,11 +193,7 @@ describe('AccountingDashboardComponent', () => {
   it('calls window.print when exporting', () => {
     fixture.detectChanges();
     const printSpy = spyOn(window, 'print');
-    jasmine.clock().install();
     component.print();
-    expect(component.printing()).toBeTrue();
-    jasmine.clock().tick(1);
-    jasmine.clock().uninstall();
     expect(printSpy).toHaveBeenCalled();
   });
 
