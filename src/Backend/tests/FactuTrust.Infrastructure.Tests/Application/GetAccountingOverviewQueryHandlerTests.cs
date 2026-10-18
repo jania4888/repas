@@ -17,10 +17,14 @@ public sealed class GetAccountingOverviewQueryHandlerTests
 {
     private static readonly DateTime Today = new(2026, 10, 18);
 
+    /// <summary>
+    /// Horloge fixée à 23:30 UTC avec un fuseau local UTC+1 : la date locale est déjà le 19.
+    /// La date de référence des situations 411/401 doit rester la date UTC (comme les balances âgées).
+    /// </summary>
     private sealed class FixedTimeProvider : TimeProvider
     {
-        public override DateTimeOffset GetUtcNow() => new(Today, TimeSpan.Zero);
-        public override TimeZoneInfo LocalTimeZone => TimeZoneInfo.Utc;
+        public override DateTimeOffset GetUtcNow() => new(Today.AddHours(23).AddMinutes(30), TimeSpan.Zero);
+        public override TimeZoneInfo LocalTimeZone => TimeZoneInfo.CreateCustomTimeZone("UTC+1", TimeSpan.FromHours(1), "UTC+1", "UTC+1");
     }
 
     private static AccountingOverviewDashboardDto Core(params string[] warnings) => new()

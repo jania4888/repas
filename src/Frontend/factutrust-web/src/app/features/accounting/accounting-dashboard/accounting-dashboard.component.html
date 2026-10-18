@@ -141,7 +141,7 @@
             <caption i18n="@@accounting.accounting-dashboard.evolution.du.chiffre.d.affaires.598d1e2d">Évolution du chiffre d'affaires</caption>
             <thead>
               <tr>
-                <th scope="col" i18n="@@accounting.accounting-dashboard.mois.0d304bea">Mois</th>
+                <th scope="col" i18n="@@accounting.accounting-dashboard.annee.1f910d98">Année</th>
                 @for (label of chart.labels; track $index) { <th scope="col">{{ label }}</th> }
               </tr>
             </thead>
@@ -169,7 +169,7 @@
             <caption i18n="@@accounting.accounting-dashboard.resultat.net.mensuel.30b73fb3">Résultat net mensuel</caption>
             <thead>
               <tr>
-                <th scope="col" i18n="@@accounting.accounting-dashboard.mois.0d304bea">Mois</th>
+                <th scope="col" i18n="@@accounting.accounting-dashboard.indicateur.cbb35166">Indicateur</th>
                 @for (label of chart.labels; track $index) { <th scope="col">{{ label }}</th> }
               </tr>
             </thead>
@@ -401,8 +401,7 @@
                 class="dashboard-row-link"
                 tabindex="0"
                 role="link"
-                aria-label="Ouvrir l'écriture"
-                i18n-aria-label="@@accounting.accounting-dashboard.ouvrir.l.ecriture.634eb3a6"
+                [attr.aria-label]="entryAriaLabel(entry)"
                 (click)="openEntry(entry.id)"
                 (keydown.enter)="openEntry(entry.id, $event)"
                 (keydown.space)="openEntry(entry.id, $event)">

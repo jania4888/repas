@@ -36,7 +36,8 @@ import {
   AccountingService,
   ApiResponse,
   DashboardComparison,
-  RecentDocumentDto
+  RecentDocumentDto,
+  RecentJournalEntryDto
 } from '../services/accounting.service';
 import { FiscalScheduleService } from '../services/fiscal-schedule.service';
 import { AccountingAmountPipe } from '../shared/accounting-amount.pipe';
@@ -293,6 +294,11 @@ export class AccountingDashboardComponent implements OnInit {
 
   focusPeriodSelect(): void {
     document.getElementById('accounting-dashboard-period')?.focus();
+  }
+
+  /** Nom accessible distinct par ligne (journal, numéro, libellé) pour la navigation par liens. */
+  entryAriaLabel(entry: RecentJournalEntryDto): string {
+    return $localize`:@@accounting.accounting-dashboard.ts.tpl.ouvrir.l.ecriture.adbe8318:Ouvrir l'écriture ${entry.journalCode}:journalCode: n° ${entry.entryNumber}:entryNumber: — ${entry.label}:label:`;
   }
 
   documentDownloadAriaLabel(doc: RecentDocumentDto): string {

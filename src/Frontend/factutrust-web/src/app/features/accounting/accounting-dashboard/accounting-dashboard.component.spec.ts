@@ -192,6 +192,8 @@ describe('AccountingDashboardComponent', () => {
 
     const row: HTMLElement = fixture.nativeElement.querySelector('tr.dashboard-row-link');
     expect(row.getAttribute('tabindex')).toBe('0');
+    expect(row.getAttribute('aria-label')).toContain('VT');
+    expect(row.getAttribute('aria-label')).toContain('Vente');
     row.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
 
     expect(navigateSpy).toHaveBeenCalledWith(['/accounting/manual-entry'], { queryParams: { entryId: 'e1' } });
