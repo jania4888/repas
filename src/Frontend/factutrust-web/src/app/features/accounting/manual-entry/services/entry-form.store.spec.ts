@@ -328,5 +328,18 @@ describe('EntryFormStore', () => {
       store.applyDocumentProposal(documentProposal([line('607', 100, 0)]));
       expect(store.lines().length).toBe(2);
     });
+
+    it('reprend le compte auxiliaire 40114 résolu côté serveur sans y attacher d’auxiliaire si la ligne n’a pas de thirdPartyId', () => {
+      // Le backend résout déjà MatchedAccountNumber ?? CollectiveAccountNumber dans accountNumber ;
+      // le frontend ne fait que recopier. Sans thirdPartyId/thirdPartyKind, pas d'auxiliaire attaché
+      // (cf. test ci-dessus « n'attache pas d'auxiliaire sans type de tiers »).
+      store.applyDocumentProposal(documentProposal([
+        line('607', 100, 0),
+        line('40114', 0, 100)
+      ]));
+      const [, counterpart] = store.lines();
+      expect(counterpart.accountNumber).toBe('40114');
+      expect(counterpart.thirdParty).toBeNull();
+    });
   });
 });

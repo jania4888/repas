@@ -31,7 +31,9 @@ const CHART = [
   account('a-6061', '6061', 'Fournitures non stockables', 6),
   account('a-43666', '43666', 'TVA déductible', 4),
   account('a-401', '401', 'Fournisseurs', 4),
-  account('a-4011', '4011', 'Fournisseurs d\'exploitation', 4)
+  account('a-4011', '4011', 'Fournisseurs d\'exploitation', 4),
+  // Compte auxiliaire fournisseur avec matricule fiscal (matricule fiscal sur le plan comptable).
+  { ...account('a-40114', '40114', 'STE SANITAIRE PLUS', 4), isAuxiliary: true, accountType: 2, affectationAccountNumber: '401', fiscalId: '1525071P/B/M/000' }
 ];
 
 const SUPPLIERS = [{ id: 'sup-beta', name: 'Beta Distribution SARL', isActive: true }];
@@ -244,6 +246,61 @@ test('fermeture protégée : Échap après une modification demande confirmation
   await confirm.getByRole('button', { name: 'Annuler' }).click();
   await expect(dialog).toBeVisible();
   await expect(label).toHaveValue('Libellé modifié');
+});
+
+/** Proposition dont la contrepartie est passée sur le compte auxiliaire 40114 (aucune fiche rapprochée). */
+function proposalWithAuxiliaryAccount(matchedBy: 'nif' | 'name', diagnostics: Diagnostic[] = []) {
+  const base = proposal(diagnostics);
+  return {
+    ...base,
+    thirdParty: {
+      ...base.thirdParty,
+      matchedId: null, matchedName: null, matchedBy: null,
+      matchedAccountId: 'a-40114', matchedAccountNumber: '40114',
+      matchedAccountLabel: 'STE SANITAIRE PLUS', matchedAccountBy: matchedBy,
+      collectiveAccountNumber: '401',
+      name: 'STE SANITAIRE PLUS', nif: '1525071P/B/M/000'
+    },
+    lines: [
+      base.lines[0],
+      base.lines[1],
+      { ...base.lines[2], accountNumber: '40114', accountLabel: 'STE SANITAIRE PLUS', thirdPartyId: null, thirdPartyKind: null }
+    ]
+  };
+}
+
+test('contrepartie sur le compte auxiliaire rapproché par matricule fiscal', async ({ page }) => {
+  await page.setViewportSize({ width: 1600, height: 900 });
+  await installMocks(page, () => proposalWithAuxiliaryAccount('nif'));
+  const dialog = await openReview(page);
+
+  const badge = dialog.locator('[data-component-id="adi-match-badge"]');
+  await expect(badge).toContainText('Rapproché par matricule fiscal');
+  await expect(dialog).toContainText('Compte auxiliaire');
+  await expect(dialog).toContainText('40114');
+  await expect(dialog).not.toContainText('Tiers non rapproché');
+  await expect(dialog.locator('app-accounting-third-party-quick-create')).toHaveCount(0);
+  expect(await accountValues(dialog)).toEqual(['607', '43666', '40114']);
+
+  await applyButton(dialog).click();
+  await expect(dialog).toBeHidden();
+  const main = page.locator('.entry-lines-table');
+  const mainAccounts = await main.locator('input[placeholder="N° compte"]').evaluateAll(nodes => nodes.map(n => (n as HTMLInputElement).value));
+  expect(mainAccounts).toEqual(['607', '43666', '40114']);
+});
+
+test('rapprochement par nom sur le compte auxiliaire : badge et avertissement non bloquants', async ({ page }) => {
+  await page.setViewportSize({ width: 1600, height: 900 });
+  await installMocks(page, () => proposalWithAuxiliaryAccount('name', [
+    { severity: 'warning', code: 'ThirdPartyMatchedByName', message: 'Le fournisseur « STE SANITAIRE PLUS » a été rattaché au compte 40114 par similarité de nom. Vérifiez qu\'il s\'agit bien du même tiers.', relatedLineIndex: null }
+  ]));
+  const dialog = await openReview(page);
+
+  const badge = dialog.locator('[data-component-id="adi-match-badge"]');
+  await expect(badge).toContainText('Rapproché par nom — vérifiez');
+  await expect(dialog.locator('.adi-diagnostics-card')).toContainText('par similarité de nom');
+  await expect(dialog.locator('.adi-lines__summary')).toContainText('Contrôles bloquants : 0');
+  await expect(applyButton(dialog)).toBeEnabled();
 });
 
 test('960 px : une colonne, lignes visibles, pas de débordement horizontal', async ({ page }) => {

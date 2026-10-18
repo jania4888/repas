@@ -126900,5 +126900,164 @@
   "accounting.entry-journal-history.debit": "Débit",
   "@accounting.entry-journal-history.debit": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
   "accounting.entry-journal-history.credit": "Crédit",
-  "@accounting.entry-journal-history.credit": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]}
+  "@accounting.entry-journal-history.credit": {"x-files":["src/app/features/accounting/manual-entry/components/entry-journal-history.component.ts"]},
+  "accounting.chart-of-accounts.autre.43dacf9e": "Autre",
+  "@accounting.chart-of-accounts.autre.43dacf9e": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.ce.matricule.fiscal.est.deja.utilise.par.le": "Ce matricule fiscal est déjà utilisé par le compte {$accountNumber} — {$label}.",
+  "@accounting.chart-of-accounts.ce.matricule.fiscal.est.deja.utilise.par.le": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-fiscal-id.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.client.1bdd79b1": "Client",
+  "@accounting.chart-of-accounts.client.1bdd79b1": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.erreur.reseau.lors.de.la.modification.du.compte.bb78977b": "Erreur réseau lors de la modification du compte.",
+  "@accounting.chart-of-accounts.erreur.reseau.lors.de.la.modification.du.compte.bb78977b": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.ex.1234567a.b.m.000.9d9247ba": "Ex. 1234567A/B/M/000",
+  "@accounting.chart-of-accounts.ex.1234567a.b.m.000.9d9247ba": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.fournisseur.97d91d89": "Fournisseur",
+  "@accounting.chart-of-accounts.fournisseur.97d91d89": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.hierarchie.du.compte.non.modifiable.b559b297": "Hiérarchie du compte (non modifiable)",
+  "@accounting.chart-of-accounts.hierarchie.du.compte.non.modifiable.b559b297": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.la.modification.du.compte.a.echoue.5b8a6cb1": "La modification du compte a échoué.",
+  "@accounting.chart-of-accounts.la.modification.du.compte.a.echoue.5b8a6cb1": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.le.numero.d.un.compte.existant.n.est.pas.modifia.4afb2a5c": "Le numéro d'un compte existant n'est pas modifiable.",
+  "@accounting.chart-of-accounts.le.numero.d.un.compte.existant.n.est.pas.modifia.4afb2a5c": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.matricule.fiscal.304096c4": "Matricule fiscal",
+  "@accounting.chart-of-accounts.matricule.fiscal.304096c4": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.matricule.fiscal.facultatif.2d99c70e": "Matricule fiscal (facultatif)",
+  "@accounting.chart-of-accounts.matricule.fiscal.facultatif.2d99c70e": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.matricule.fiscal.invalide.format.attendu.7.chiffres": "Matricule fiscal invalide. Format attendu : 7 chiffres, une lettre, puis code TVA / catégorie / établissement (ex. 1234567A/B/M/000).",
+  "@accounting.chart-of-accounts.matricule.fiscal.invalide.format.attendu.7.chiffres": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-fiscal-id.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.modifier.f260e757": " Modifier ",
+  "@accounting.chart-of-accounts.modifier.f260e757": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.modifier.le.compte.018a44a1": "Modifier le compte ",
+  "@accounting.chart-of-accounts.modifier.le.compte.018a44a1": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.non.modifiable.1c6df9f1": "Non modifiable",
+  "@accounting.chart-of-accounts.non.modifiable.1c6df9f1": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.rechercher.par.n.de.compte.libelle.ou.matricule..c25eae50": "Rechercher par n° de compte, libellé ou matricule fiscal",
+  "@accounting.chart-of-accounts.rechercher.par.n.de.compte.libelle.ou.matricule..c25eae50": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.utilise.pour.rattacher.automatiquement.a.ce.comp.1587022f": "Utilisé pour rattacher automatiquement à ce compte les factures importées de ce client.",
+  "@accounting.chart-of-accounts.utilise.pour.rattacher.automatiquement.a.ce.comp.1587022f": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.utilise.pour.rattacher.automatiquement.a.ce.comp.7579ceec": "Utilisé pour rattacher automatiquement à ce compte les factures importées de ce fournisseur.",
+  "@accounting.chart-of-accounts.utilise.pour.rattacher.automatiquement.a.ce.comp.7579ceec": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-account-edit-dialog.component.ts",
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.compte.auxiliaire.f30d2385": "Compte auxiliaire",
+  "@accounting.manual-entry.compte.auxiliaire.f30d2385": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.rapproche.par.matricule.fiscal.250ecc35": "{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT} Rapproché par matricule fiscal ",
+  "@accounting.manual-entry.rapproche.par.matricule.fiscal.250ecc35": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.manual-entry.rapproche.par.nom.verifiez.493910ae": "{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT} Rapproché par nom — vérifiez ",
+  "@accounting.manual-entry.rapproche.par.nom.verifiez.493910ae": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "audit.audit-action-labels.ts.matricule.fiscal.du.compte.modifie.5e432a68": "Matricule fiscal du compte modifié",
+  "@audit.audit-action-labels.ts.matricule.fiscal.du.compte.modifie.5e432a68": {
+    "x-files": [
+      "src/app/features/audit/audit-action-labels.ts"
+    ],
+    "x-wave": "v6"
+  }
 }

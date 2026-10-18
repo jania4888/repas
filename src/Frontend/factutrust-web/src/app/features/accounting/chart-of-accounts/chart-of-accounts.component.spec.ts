@@ -17,10 +17,12 @@ describe('ChartOfAccountsComponent', () => {
   function createComponent(overrides: {
     createSubAccount?: ReturnType<AccountingService['createSubAccount']>;
     toggleAccountActive?: ReturnType<AccountingService['toggleAccountActive']>;
+    updateChartOfAccount?: ReturnType<AccountingService['updateChartOfAccount']>;
     extractErrorMessage?: string;
   } = {}): {
     component: ChartOfAccountsComponent;
     extractErrorMessage: jasmine.Spy;
+    updateChartOfAccount: jasmine.Spy;
   } {
     const apiMessage = overrides.extractErrorMessage
       ?? 'Le numéro de compte doit être un numéro SCE (chiffres, points autorisés).';
@@ -31,6 +33,9 @@ describe('ChartOfAccountsComponent', () => {
         networkFallback !== undefined && (err as HttpErrorResponse)?.status === 0
           ? networkFallback
           : apiMessage);
+    const updateChartOfAccount = jasmine.createSpy('updateChartOfAccount').and.returnValue(
+      overrides.updateChartOfAccount ?? of({ success: true, data: true })
+    );
 
     TestBed.configureTestingModule({
       providers: [
@@ -44,7 +49,8 @@ describe('ChartOfAccountsComponent', () => {
             ),
             toggleAccountActive: jasmine.createSpy('toggleAccountActive').and.returnValue(
               overrides.toggleAccountActive ?? of({ success: true, data: true })
-            )
+            ),
+            updateChartOfAccount
           }
         },
         { provide: AuthService, useValue: { hasPermission: () => true } },
@@ -56,7 +62,8 @@ describe('ChartOfAccountsComponent', () => {
 
     return {
       component: TestBed.runInInjectionContext(() => new ChartOfAccountsComponent()),
-      extractErrorMessage
+      extractErrorMessage,
+      updateChartOfAccount
     };
   }
 
@@ -269,5 +276,132 @@ describe('ChartOfAccountsComponent', () => {
     expect(request.rib).toBeNull();
     expect(request.iban).toBeNull();
     expect(component.showsFxCurrency()).toBeFalse();
+  });
+
+  describe('matricule fiscal des comptes auxiliaires', () => {
+    it('affiche le champ matricule fiscal uniquement pour Client/Fournisseur auxiliaires', () => {
+      const { component } = createComponent();
+      component.setType(3); // Autre
+      expect(component.showFiscalIdField()).toBeFalse();
+
+      component.setType(1); // Client
+      expect(component.showFiscalIdField()).toBeTrue();
+
+      component.setType(2); // Fournisseur
+      expect(component.showFiscalIdField()).toBeTrue();
+    });
+
+    it('vide le matricule fiscal saisi en repassant sur un type qui ne le supporte pas', () => {
+      const { component } = createComponent();
+      component.setType(1);
+      component.form.fiscalId = '1234567A/B/M/000';
+      component.setType(3);
+      expect(component.form.fiscalId).toBe('');
+    });
+
+    it('fiscalIdError renvoie null quand le champ est masqué, même si la saisie est invalide', () => {
+      const { component } = createComponent();
+      component.setType(3);
+      component.form.fiscalId = 'ABC';
+      expect(component.fiscalIdError()).toBeNull();
+    });
+
+    it('fiscalIdError signale un format invalide', () => {
+      const { component } = createComponent();
+      component.setType(1);
+      component.form.fiscalId = 'ABC123';
+      expect(component.fiscalIdError()).toContain('Matricule fiscal invalide');
+    });
+
+    it('fiscalIdError signale un doublon local sur le même type de compte', () => {
+      const { component } = createComponent();
+      component.rows.set([
+        account({ id: 'c1', accountNumber: '411001', label: 'Client ABC', accountType: 1, isAuxiliary: true, fiscalId: '1234567A/B/M/000' })
+      ]);
+      component.setType(1);
+      component.form.fiscalId = '1234567ABM000';
+      expect(component.fiscalIdError()).toContain('411001');
+    });
+
+    it('fiscalIdError ignore un doublon porté par un type de compte différent', () => {
+      const { component } = createComponent();
+      component.rows.set([
+        account({ id: 'c1', accountNumber: '401001', label: 'Fournisseur ABC', accountType: 2, isAuxiliary: true, fiscalId: '1234567A/B/M/000' })
+      ]);
+      component.setType(1);
+      component.form.fiscalId = '1234567ABM000';
+      expect(component.fiscalIdError()).toBeNull();
+    });
+
+    it('fiscalIdError est null pour un champ vide (facultatif)', () => {
+      const { component } = createComponent();
+      component.setType(1);
+      component.form.fiscalId = '';
+      expect(component.fiscalIdError()).toBeNull();
+    });
+
+    it('normalizeFiscalIdInput ramène la forme compacte à la forme carte', () => {
+      const { component } = createComponent();
+      expect(component.normalizeFiscalIdInput('1234567ABM000')).toBe('1234567A/B/M/000');
+    });
+
+    it('priorise l’erreur serveur sur l’erreur de format/doublon', () => {
+      const { component } = createComponent({
+        createSubAccount: throwError(() => new HttpErrorResponse({
+          status: 400,
+          error: { fieldErrors: { 'Request.FiscalId': [{ message: 'Déjà utilisé par un autre compte.' }] } }
+        }))
+      });
+      component.rows.set([
+        account({ accountNumber: '411009', label: 'Collectif clients', accountType: 1, isAuxiliary: false })
+      ]);
+      component.setType(1);
+      component.form.accountNumber = '411010';
+      component.form.label = 'Nouveau client';
+      component.form.fiscalId = '1234567ABM000';
+
+      component.create();
+
+      expect(component.fiscalIdError()).toBe('Déjà utilisé par un autre compte.');
+    });
+  });
+
+  describe('recherche canonisée par matricule fiscal', () => {
+    it('reconnaît une saisie compacte comme un matricule fiscal valide via normalizeFiscalIdInput', () => {
+      // Le composant canonise la saisie côté template/filtre avant de la transmettre au tableau ;
+      // normalizeFiscalIdInput + isValidNif (du module partagé) sont les briques testées isolément
+      // ailleurs. Ici on vérifie seulement que la forme compacte produit bien la forme carte
+      // utilisée pour matcher les comptes stockés.
+      const { component } = createComponent();
+      expect(component.normalizeFiscalIdInput('1525071PBM000')).toBe('1525071P/B/M/000');
+    });
+  });
+
+  describe('édition d’un compte existant', () => {
+    it('startEdit ouvre le dialogue d’édition pour le compte sélectionné', () => {
+      const { component } = createComponent();
+      const acc = account({ id: 'acc-1' });
+      component.startEdit(acc);
+      expect(component.editing()).toBe(acc);
+    });
+
+    it('closeEdit referme le dialogue', () => {
+      const { component } = createComponent();
+      component.startEdit(account({ id: 'acc-1' }));
+      component.closeEdit();
+      expect(component.editing()).toBeNull();
+    });
+
+    it('onEdited referme le dialogue et recharge la liste', () => {
+      const { component } = createComponent();
+      const api = TestBed.inject(AccountingService) as unknown as { getChartOfAccounts: () => unknown };
+      const getChartOfAccountsSpy = spyOn(api, 'getChartOfAccounts').and.returnValue(of({ success: true, data: [] }));
+      component.startEdit(account({ id: 'acc-1' }));
+
+      component.onEdited();
+
+      expect(component.editing()).toBeNull();
+      expect(getChartOfAccountsSpy).toHaveBeenCalled();
+    });
   });
 });

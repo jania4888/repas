@@ -17,6 +17,16 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
 import { AuthService } from '@core/services/auth.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { ToastService } from '@core/services/toast.service';
+import {
+  accountSupportsFiscalId,
+  extractFiscalIdServerError,
+  fiscalIdDuplicateMessage,
+  fiscalIdFormatError,
+  findFiscalIdDuplicate,
+  normalizeFiscalIdInput
+} from './chart-account-fiscal-id';
+import { ChartAccountEditDialogComponent } from './chart-account-edit-dialog.component';
+import { NIF_MAX_INPUT_LENGTH, isValidNif } from '@shared/validation/validation-rules';
 
 /** SCE tunisien : classe 1–7, chiffres, segments optionnels après un point (ex. 428.3). */
 export const SCE_ACCOUNT_NUMBER_PATTERN = /^[1-7]\d*(?:\.\d+)*$/;
@@ -70,7 +80,8 @@ export function isFxBankLeaf(accountNumber: string, parent: string | null): bool
     ButtonComponent,
     AccountingFilterBarComponent,
     AccountingStatusBannerComponent,
-    AnalyzeWithAiButtonComponent
+    AnalyzeWithAiButtonComponent,
+    ChartAccountEditDialogComponent
   ],
   providers: [ConfirmationService],
   template: `
@@ -87,7 +98,7 @@ export function isFxBankLeaf(accountNumber: string, parent: string | null): bool
               class="coa-search-input"
               [(ngModel)]="searchTerm"
               (ngModelChange)="onSearchChange()"
-              placeholder="Rechercher par n° de compte ou libellé…" i18n-placeholder="@@accounting.chart-of-accounts.rechercher.par.n.de.compte.ou.libelle.d5cc9f44"
+              placeholder="Rechercher par n° de compte, libellé ou matricule fiscal" i18n-placeholder="@@accounting.chart-of-accounts.rechercher.par.n.de.compte.libelle.ou.matricule..c25eae50"
               aria-label="Filtrer le plan comptable" i18n-aria-label="@@accounting.chart-of-accounts.filtrer.le.plan.comptable.f9c60a07" />
           </span>
         </div>
@@ -141,7 +152,7 @@ export function isFxBankLeaf(accountNumber: string, parent: string | null): bool
         [paginator]="true"
         [rows]="25"
         [rowsPerPageOptions]="[25, 50, 100]"
-        [globalFilterFields]="['accountNumber', 'label']"
+        [globalFilterFields]="['accountNumber', 'label', 'fiscalId']"
         [loading]="loading()"
         [rowHover]="true"
         [showCurrentPageReport]="true"
@@ -157,6 +168,7 @@ export function isFxBankLeaf(accountNumber: string, parent: string | null): bool
             <th pSortableColumn="label" scope="col">
               <ng-container i18n="@@accounting.chart-of-accounts.libelle.f5485bba"> Libellé </ng-container> <p-sortIcon field="label" />
             </th>
+            <th scope="col" class="coa-col-narrow" i18n="@@accounting.chart-of-accounts.matricule.fiscal.304096c4">Matricule fiscal</th>
             <th pSortableColumn="accountClass" scope="col" class="coa-col-narrow">
               <ng-container i18n="@@accounting.chart-of-accounts.classe.3c38412a"> Classe </ng-container> <p-sortIcon field="accountClass" />
             </th>
@@ -171,6 +183,13 @@ export function isFxBankLeaf(accountNumber: string, parent: string | null): bool
               <span class="coa-account-code" [style.paddingInlineStart.rem]="indentRem(r.level)">{{ r.accountNumber }}</span>
             </td>
             <td data-label="Libellé" i18n-data-label="@@accounting.chart-of-accounts.libelle.f5485bba">{{ r.label }}</td>
+            <td class="coa-col-narrow" data-label="Matricule fiscal" i18n-data-label="@@accounting.chart-of-accounts.matricule.fiscal.304096c4">
+              @if (r.fiscalId) {
+                <span class="coa-nif">{{ r.fiscalId }}</span>
+              } @else {
+                <span class="coa-aux-none" i18n="@@accounting.chart-of-accounts.text.1b93795b">—</span>
+              }
+            </td>
             <td class="coa-col-narrow coa-class-cell" data-label="Classe" i18n-data-label="@@accounting.chart-of-accounts.classe.3c38412a">{{ r.accountClass }}</td>
             <td class="coa-col-narrow" data-label="Système" i18n-data-label="@@accounting.chart-of-accounts.systeme.62d09520">
               <span
@@ -203,6 +222,14 @@ export function isFxBankLeaf(accountNumber: string, parent: string | null): bool
                   <button
                     type="button"
                     class="coa-toggle-btn"
+                    (click)="startEdit(r, $event)"
+                    [attr.aria-label]="loc_ui_tern_modifier_le_compte_018a44a1 + r.accountNumber"
+                    i18n="@@accounting.chart-of-accounts.modifier.f260e757">
+                    Modifier
+                  </button>
+                  <button
+                    type="button"
+                    class="coa-toggle-btn"
                     [disabled]="togglingId() === r.id"
                     (click)="confirmToggleActive(r)"
                     [attr.aria-label]="(r.isActive ? loc_ui_tern_desactiver_d28397 : loc_ui_tern_reactiver_822dbd) + loc_ui_tern_le_compte_e8f216 + r.accountNumber">
@@ -215,7 +242,7 @@ export function isFxBankLeaf(accountNumber: string, parent: string | null): bool
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="5" class="coa-empty">
+            <td colspan="7" class="coa-empty">
               <p class="coa-empty-title" i18n="@@accounting.chart-of-accounts.aucun.resultat.9e524fe1">Aucun résultat</p>
               <p class="coa-empty-hint" i18n="@@accounting.chart-of-accounts.ajustez.la.recherche.ou.actualisez.la.liste.c28a5fae">Ajustez la recherche ou actualisez la liste.</p>
             </td>
@@ -241,7 +268,7 @@ export function isFxBankLeaf(accountNumber: string, parent: string | null): bool
           <div class="coa-grid">
             <div class="coa-field">
               <label class="coa-lbl" for="coa-aux" i18n="@@accounting.chart-of-accounts.type.3deb7456">Type</label>
-              <select id="coa-aux" class="coa-inp" [(ngModel)]="form.isAuxiliary">
+              <select id="coa-aux" class="coa-inp" [(ngModel)]="form.isAuxiliary" (ngModelChange)="onAuxiliaryChange($event)">
                 <option [ngValue]="true" i18n="@@accounting.chart-of-accounts.auxiliaire.b8c6c266">Auxiliaire</option>
                 <option [ngValue]="false" i18n="@@accounting.chart-of-accounts.general.5376df98">Général</option>
               </select>
@@ -281,6 +308,30 @@ export function isFxBankLeaf(accountNumber: string, parent: string | null): bool
               <label class="coa-lbl" for="coa-label" i18n="@@accounting.chart-of-accounts.libelle.f5485bba">Libellé</label>
               <input id="coa-label" class="coa-inp" [(ngModel)]="form.label" placeholder="Ex. Client Société X" i18n-placeholder="@@accounting.chart-of-accounts.ex.client.societe.x.947766e4" />
             </div>
+            @if (showFiscalIdField()) {
+              <div class="coa-field coa-field-full">
+                <label class="coa-lbl" for="coa-fiscal-id" i18n="@@accounting.chart-of-accounts.matricule.fiscal.facultatif.2d99c70e">Matricule fiscal (facultatif)</label>
+                <input
+                  id="coa-fiscal-id"
+                  class="coa-inp coa-inp--nif"
+                  [class.coa-inp--invalid]="!!fiscalIdError()"
+                  [attr.aria-invalid]="fiscalIdError() ? true : null"
+                  [attr.aria-describedby]="fiscalIdError() ? 'coa-fiscal-id-error' : 'coa-fiscal-id-help'"
+                  [(ngModel)]="form.fiscalId"
+                  (ngModelChange)="fiscalIdServerError.set(null)"
+                  (blur)="form.fiscalId = normalizeFiscalIdInput(form.fiscalId)"
+                  [maxlength]="fiscalIdMaxInputLength"
+                  placeholder="Ex. 1234567A/B/M/000" i18n-placeholder="@@accounting.chart-of-accounts.ex.1234567a.b.m.000.9d9247ba"
+                  autocomplete="off" />
+                @if (fiscalIdError(); as fiscalIdErr) {
+                  <p id="coa-fiscal-id-error" class="coa-create-error" role="alert">{{ fiscalIdErr }}</p>
+                } @else {
+                  <p id="coa-fiscal-id-help" class="coa-help">
+                    {{ form.accountType === 1 ? loc_fiscalid_help_client_1587022f : loc_fiscalid_help_supplier_7579ceec }}
+                  </p>
+                }
+              </div>
+            }
           </div>
 
           @if (showsBankPanel()) {
@@ -327,6 +378,14 @@ export function isFxBankLeaf(accountNumber: string, parent: string | null): bool
           </div>
         </div>
       </div>
+    }
+
+    @if (editing(); as acc) {
+      <app-chart-account-edit-dialog
+        [account]="acc"
+        [rows]="rows()"
+        (saved)="onEdited()"
+        (closed)="closeEdit()" />
     }
   `,
   styles: `
@@ -498,6 +557,11 @@ export function isFxBankLeaf(accountNumber: string, parent: string | null): bool
     .coa-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-3); }
     .coa-field { display: flex; flex-direction: column; gap: var(--spacing-1); flex: 1 1 10rem; }
     .coa-field-wide { flex: 2 1 16rem; }
+    .coa-field-full { flex: 1 1 100%; }
+    .coa-inp--nif { font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace); letter-spacing: 0.02em; text-transform: uppercase; }
+    .coa-inp--invalid { border-color: #f04438; box-shadow: 0 0 0 3px rgba(240, 68, 56, 0.12); }
+    .coa-help { margin: 0; font-size: var(--font-size-xs); color: var(--color-text-tertiary); line-height: 1.4; }
+    .coa-nif { font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace); font-size: var(--font-size-sm); font-variant-numeric: tabular-nums; color: var(--color-text-primary); white-space: nowrap; }
     .coa-lbl { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
     .coa-inp { padding: var(--spacing-2) var(--spacing-3); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-background-elevated); color: var(--color-text-primary); font-size: var(--font-size-sm); width: 100%; }
     .coa-bank-hint {
@@ -533,6 +597,9 @@ export class ChartOfAccountsComponent implements OnInit {
   readonly loc_ui_tern_le_compte_e8f216 = $localize`:@@ui.tern.le.compte.e8f216: le compte `;
   readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
   readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_modifier_le_compte_018a44a1 = $localize`:@@accounting.chart-of-accounts.modifier.le.compte.018a44a1:Modifier le compte `;
+  readonly loc_fiscalid_help_client_1587022f = $localize`:@@accounting.chart-of-accounts.utilise.pour.rattacher.automatiquement.a.ce.comp.1587022f:Utilisé pour rattacher automatiquement à ce compte les factures importées de ce client.`;
+  readonly loc_fiscalid_help_supplier_7579ceec = $localize`:@@accounting.chart-of-accounts.utilise.pour.rattacher.automatiquement.a.ce.comp.7579ceec:Utilisé pour rattacher automatiquement à ce compte les factures importées de ce fournisseur.`;
   private readonly api = inject(AccountingService);
   private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
@@ -565,6 +632,12 @@ export class ChartOfAccountsComponent implements OnInit {
   readonly creating = signal(false);
   readonly togglingId = signal<string | null>(null);
   readonly tunisianBanks = signal<TunisianBankCatalogEntry[]>([]);
+  readonly fiscalIdServerError = signal<string | null>(null);
+  readonly editing = signal<ChartOfAccountDto | null>(null);
+  private editTriggerEl: HTMLElement | null = null;
+
+  /** Laisse l'utilisateur taper la forme historique avant la canonisation au blur. */
+  readonly fiscalIdMaxInputLength = NIF_MAX_INPUT_LENGTH;
 
   form = this.emptyForm();
   lastSuggestedNumber = '';
@@ -582,8 +655,30 @@ export class ChartOfAccountsComponent implements OnInit {
       bankCode: '',
       rib: '',
       iban: '',
-      bankCurrency: ''
+      bankCurrency: '',
+      fiscalId: ''
     };
+  }
+
+  showFiscalIdField(): boolean {
+    return accountSupportsFiscalId(this.form.accountType, this.form.isAuxiliary);
+  }
+
+  /** `null` si le champ est masqué ou valide ; sinon erreur serveur > format > doublon local. */
+  fiscalIdError(): string | null {
+    if (!this.showFiscalIdField()) return null;
+    const serverError = this.fiscalIdServerError();
+    if (serverError) return serverError;
+    const formatError = fiscalIdFormatError(this.form.fiscalId);
+    if (formatError) return formatError;
+    const normalized = normalizeFiscalIdInput(this.form.fiscalId);
+    if (!normalized) return null;
+    const duplicate = findFiscalIdDuplicate(this.rows(), this.form.accountType, normalized);
+    return duplicate ? fiscalIdDuplicateMessage(duplicate) : null;
+  }
+
+  normalizeFiscalIdInput(raw: string): string {
+    return normalizeFiscalIdInput(raw);
   }
 
   showsBankPanel(): boolean {
@@ -598,6 +693,7 @@ export class ChartOfAccountsComponent implements OnInit {
     this.form = this.emptyForm();
     this.lastSuggestedNumber = '';
     this.createError.set(null);
+    this.fiscalIdServerError.set(null);
     this.showCreate.set(true);
     if (this.tunisianBanks().length === 0) {
       this.api.getTunisianBanks().subscribe({
@@ -610,6 +706,7 @@ export class ChartOfAccountsComponent implements OnInit {
   closeCreate(): void {
     this.showCreate.set(false);
     this.createError.set(null);
+    this.fiscalIdServerError.set(null);
   }
 
   /** Sélectionne le type de compte et pré-remplit la hiérarchie (façon Axeane). */
@@ -630,6 +727,19 @@ export class ChartOfAccountsComponent implements OnInit {
     } else {
       this.form.isAuxiliary = false;
       this.form.affectationAccountNumber = null;
+    }
+    if (!this.showFiscalIdField()) {
+      this.form.fiscalId = '';
+      this.fiscalIdServerError.set(null);
+    }
+  }
+
+  /** Bascule Auxiliaire/Général depuis le sélecteur de hiérarchie — n'envoie jamais un matricule fiscal masqué. */
+  onAuxiliaryChange(isAuxiliary: boolean): void {
+    this.form.isAuxiliary = isAuxiliary;
+    if (!this.showFiscalIdField()) {
+      this.form.fiscalId = '';
+      this.fiscalIdServerError.set(null);
     }
   }
 
@@ -728,13 +838,15 @@ export class ChartOfAccountsComponent implements OnInit {
     return num.length >= 2
       && SCE_ACCOUNT_NUMBER_PATTERN.test(num)
       && sceAccountDigitCount(num) <= SCE_ACCOUNT_MAX_DIGITS
-      && this.form.label.trim().length > 0;
+      && this.form.label.trim().length > 0
+      && !this.fiscalIdError();
   }
 
   create(): void {
     if (!this.canSubmit() || this.creating()) return;
     const num = this.form.accountNumber.trim();
     this.createError.set(null);
+    this.fiscalIdServerError.set(null);
     const existing = this.rows().find(a => a.accountNumber === num);
     if (existing) {
       this.createError.set(this.formatDuplicateMessage(existing));
@@ -742,6 +854,8 @@ export class ChartOfAccountsComponent implements OnInit {
     }
     // Nature dérivée du type : Client → débit, Fournisseur → crédit, sinon mixte.
     const natureType = this.form.accountType === 1 ? 0 : this.form.accountType === 2 ? 1 : 2;
+    const fiscalId = this.showFiscalIdField() ? normalizeFiscalIdInput(this.form.fiscalId) : '';
+    this.form.fiscalId = fiscalId;
     const request: CreateSubAccountRequest = {
       accountNumber: num,
       label: this.form.label.trim(),
@@ -750,7 +864,8 @@ export class ChartOfAccountsComponent implements OnInit {
       natureType,
       accountType: this.form.accountType,
       isAuxiliary: this.form.isAuxiliary,
-      affectationAccountNumber: this.form.isAuxiliary ? (this.form.affectationAccountNumber || null) : null
+      affectationAccountNumber: this.form.isAuxiliary ? (this.form.affectationAccountNumber || null) : null,
+      fiscalId: fiscalId || null
     };
     if (isProvisionableBankLeaf(num)) {
       const rib = this.form.rib.trim();
@@ -781,12 +896,22 @@ export class ChartOfAccountsComponent implements OnInit {
           this.showCreate.set(false);
           this.load();
         } else {
-          this.createError.set(res.error ?? $localize`:@@ui.tern.la.creation.du.compte.a.echoue.f63cae:La création du compte a échoué.`);
+          const fiscalIdErr = extractFiscalIdServerError(res);
+          if (fiscalIdErr) {
+            this.fiscalIdServerError.set(fiscalIdErr);
+          } else {
+            this.createError.set(res.error ?? $localize`:@@ui.tern.la.creation.du.compte.a.echoue.f63cae:La création du compte a échoué.`);
+          }
         }
       },
       error: err => {
         this.creating.set(false);
-        this.createError.set(this.httpFailureMessage(err, $localize`:@@accounting.chart-of-accounts.ts.erreur.reseau.lors.de.la.creation.du.com.5e2cfce1:Erreur réseau lors de la création du compte.`));
+        const fiscalIdErr = extractFiscalIdServerError(err);
+        if (fiscalIdErr) {
+          this.fiscalIdServerError.set(fiscalIdErr);
+        } else {
+          this.createError.set(this.httpFailureMessage(err, $localize`:@@accounting.chart-of-accounts.ts.erreur.reseau.lors.de.la.creation.du.com.5e2cfce1:Erreur réseau lors de la création du compte.`));
+        }
       }
     });
   }
@@ -803,6 +928,22 @@ export class ChartOfAccountsComponent implements OnInit {
 
   ngOnInit(): void {
     this.load();
+  }
+
+  startEdit(account: ChartOfAccountDto, event?: Event): void {
+    this.editTriggerEl = (event?.currentTarget as HTMLElement | null) ?? null;
+    this.editing.set(account);
+  }
+
+  onEdited(): void {
+    this.closeEdit();
+    this.load();
+  }
+
+  closeEdit(): void {
+    this.editing.set(null);
+    this.editTriggerEl?.focus();
+    this.editTriggerEl = null;
   }
 
   confirmToggleActive(account: ChartOfAccountDto): void {
@@ -889,7 +1030,7 @@ export class ChartOfAccountsComponent implements OnInit {
   };
 
   onSearchChange(): void {
-    this.dt?.filterGlobal(this.searchTerm, 'contains');
+    this.dt?.filterGlobal(this.effectiveFilterTerm(), 'contains');
   }
 
   indentRem(level: number): number {
@@ -898,9 +1039,19 @@ export class ChartOfAccountsComponent implements OnInit {
     return n * 0.75;
   }
 
+  /**
+   * Terme de recherche effectif : si la saisie canonise en un matricule fiscal valide (ex. forme
+   * compacte `1525071PBM000`), on filtre sur la forme carte stockée plutôt que sur le texte brut.
+   */
+  private effectiveFilterTerm(): string {
+    const term = this.searchTerm;
+    const canonical = normalizeFiscalIdInput(term);
+    return canonical && isValidNif(canonical) ? canonical : term;
+  }
+
   private reapplyGlobalFilter(): void {
     setTimeout(() => {
-      this.dt?.filterGlobal(this.searchTerm, 'contains');
+      this.dt?.filterGlobal(this.effectiveFilterTerm(), 'contains');
     }, 0);
   }
 }

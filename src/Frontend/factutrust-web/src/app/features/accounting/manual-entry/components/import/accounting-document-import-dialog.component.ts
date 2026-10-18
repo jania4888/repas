@@ -26,6 +26,7 @@ import {
   DocumentDirection,
   JournalEntryProposal,
   ProposalDiagnostic,
+  ProposedThirdParty,
   extractionMethodLabel
 } from '../../models/accounting-document-import.models';
 import { ThirdPartyQuickCreateComponent } from './third-party-quick-create.component';
@@ -205,13 +206,23 @@ interface LinesBanner {
                     <dl class="adi-facts">
                       <div><dt i18n="@@accounting.manual-entry.nom.7ff20370">Nom</dt><dd>{{ tp.matchedName || tp.name || '—' }}</dd></div>
                       <div><dt i18n="@@accounting.manual-entry.matricule.fiscal.304096c4">Matricule fiscal</dt><dd>{{ tp.nif || '—' }}</dd></div>
+                      @if (tpAccountNumber(tp); as auxNumber) {
+                        <div><dt i18n="@@accounting.manual-entry.compte.auxiliaire.f30d2385">Compte auxiliaire</dt><dd class="adi-aux"><code>{{ auxNumber }}</code> — {{ tp.matchedAccountLabel }}</dd></div>
+                      }
                       <div><dt i18n="@@accounting.manual-entry.compte.collectif.f1c7e97c">Compte collectif</dt><dd><code>{{ tp.collectiveAccountNumber }}</code></dd></div>
                     </dl>
-                    @if (tp.matchedId) {
-                      <p class="adi-badge adi-badge--ok" i18n="@@accounting.manual-entry.tiers.rapproche.9818df8a">
-                        <i class="pi pi-check-circle" aria-hidden="true"></i>
-                        Tiers rapproché{{ tp.matchedBy === 'nif' ? loc_ui_tern_par_matricule_fiscal_ef1940 : loc_ui_tern_par_nom_4c4de0 }}
-                      </p>
+                    @if (tpMatched(tp)) {
+                      @if (tpMatchSource(tp) === 'nif') {
+                        <p class="adi-badge adi-badge--ok" role="status" data-component-id="adi-match-badge" i18n="@@accounting.manual-entry.rapproche.par.matricule.fiscal.250ecc35">
+                          <i class="pi pi-check-circle" aria-hidden="true"></i>
+                          Rapproché par matricule fiscal
+                        </p>
+                      } @else {
+                        <p class="adi-badge adi-badge--warn" role="status" data-component-id="adi-match-badge" i18n="@@accounting.manual-entry.rapproche.par.nom.verifiez.493910ae">
+                          <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+                          Rapproché par nom — vérifiez
+                        </p>
+                      }
                     } @else {
                       <p class="adi-badge adi-badge--warn" i18n="@@accounting.manual-entry.tiers.non.rapproche.l.ecriture.restera.s.30dc87a4">
                         <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
@@ -413,6 +424,8 @@ interface LinesBanner {
     .adi-facts dt { color:var(--color-text-secondary); margin:0; }
     .adi-facts dd { margin:0; font-variant-numeric:tabular-nums; text-align:end; }
     .adi-facts__total { border-top:1px solid var(--color-border-subtle); margin-top:var(--spacing-1); padding-top:var(--spacing-1); font-weight:600; }
+    .adi-aux { font-weight:500; color:var(--color-text-primary); white-space:nowrap; }
+    .adi-aux code { color:var(--color-text-primary) !important; font-weight:600; }
 
     .adi-badge { display:flex; align-items:center; gap:var(--spacing-2); margin:var(--spacing-2) 0 0; font-size:var(--font-size-xs); }
     .adi-badge--ok { color:var(--color-success); }
@@ -501,8 +514,6 @@ interface LinesBanner {
 export class AccountingDocumentImportDialogComponent implements OnChanges, OnDestroy {
   readonly loc_ui_tern_client_1bdd79 = $localize`:@@ui.tern.client.1bdd79:Client`;
   readonly loc_ui_tern_fournisseur_97d91d = $localize`:@@ui.tern.fournisseur.97d91d:Fournisseur`;
-  readonly loc_ui_tern_par_matricule_fiscal_ef1940 = $localize`:@@ui.tern.par.matricule.fiscal.ef1940: par matricule fiscal`;
-  readonly loc_ui_tern_par_nom_4c4de0 = $localize`:@@ui.tern.par.nom.4c4de0: par nom`;
   private readonly importService = inject(AccountingDocumentImportService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly sanitizer = inject(DomSanitizer);
@@ -752,6 +763,21 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
       return;
     }
     this.reanalyzeWithDirection(direction);
+  }
+
+  /** Numéro du compte auxiliaire rapproché pour l'affichage, sinon `null`. */
+  tpAccountNumber(tp: ProposedThirdParty): string | null {
+    return tp.matchedAccountNumber ?? null;
+  }
+
+  /** Source du rapprochement à afficher : celle du compte si trouvé, sinon celle de la fiche tiers. 'nif' | 'name' | null. */
+  tpMatchSource(tp: ProposedThirdParty): string | null {
+    return tp.matchedAccountNumber ? (tp.matchedAccountBy ?? null) : (tp.matchedId ? (tp.matchedBy ?? null) : null);
+  }
+
+  /** Vrai si une fiche tiers OU un compte auxiliaire a été rapproché. */
+  tpMatched(tp: ProposedThirdParty): boolean {
+    return !!tp.matchedId || !!tp.matchedAccountNumber;
   }
 
   /** Le tiers vient d'être créé : on relance la proposition pour rattacher l'auxiliaire. */
