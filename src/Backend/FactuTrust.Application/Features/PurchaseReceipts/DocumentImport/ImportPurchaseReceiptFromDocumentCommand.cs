@@ -8,6 +8,7 @@ using FactuTrust.Application.Features.AI.DocumentExtraction;
 using FactuTrust.Application.Features.Accounting.DocumentImport;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
+using FactuTrust.Domain.Enums;
 using Microsoft.Extensions.Logging;
 
 namespace FactuTrust.Application.Features.PurchaseReceipts.DocumentImport;

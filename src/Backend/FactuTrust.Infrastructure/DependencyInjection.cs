@@ -768,6 +768,12 @@ public static class DependencyInjection
         services.AddScoped<FactuTrust.Application.Features.Accounting.DocumentImport.IAccountingEntryProposalService,
             FactuTrust.Infrastructure.Services.DocumentImport.AccountingEntryProposalService>();
 
+        // Import de bon de réception depuis un document fournisseur (PDF ou image) : proposition
+        // de pré-remplissage en lecture seule, voir le plan § 2-4. Réutilise l'extracteur ci-dessus.
+        services.AddScoped<FactuTrust.Application.Features.PurchaseReceipts.DocumentImport.SupplierDocumentMatcher>();
+        services.AddScoped<FactuTrust.Application.Features.PurchaseReceipts.DocumentImport.ProductLineMatcher>();
+        services.AddScoped<FactuTrust.Application.Features.PurchaseReceipts.DocumentImport.ImportPurchaseReceiptFromDocumentHandler>();
+
         // AI Export — PowerPoint generation (Clean Architecture: contracts in Application, implementations here).
         services.Configure<FactuTrust.Infrastructure.Services.AI.Export.Storage.ExportStorageOptions>(
             configuration.GetSection("AiExport:Storage"));

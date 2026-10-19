@@ -30,6 +30,10 @@ import {
 import { SupplierService, SupplierListItem } from '@core/services/supplier.service';
 import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
+import { Router } from '@angular/router';
+import { PurchaseReceiptImportDialogComponent } from '../../components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component';
+import { PurchaseReceiptImportPrefillStore, PurchaseReceiptImportPayload } from '../../services/purchase-receipt-import-prefill.store';
+import { canImportPurchaseReceipt } from '../../utils/purchase-receipt-import.permissions';
 
 interface StatusOption {
   label: string;
@@ -45,7 +49,8 @@ interface StatusOption {
     TableModule, ButtonModule, InputTextModule, SelectModule,
     TagModule, DatePickerModule, ToastModule,
     PageHeaderComponent, BreadcrumbComponent, SkeletonTableComponent,
-    EmptyStateComponent, ButtonComponent, TableTotalsBarComponent
+    EmptyStateComponent, ButtonComponent, TableTotalsBarComponent,
+    PurchaseReceiptImportDialogComponent
   ],
   template: `
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
@@ -53,6 +58,13 @@ interface StatusOption {
     <app-page-header
       title="Bons de réception" i18n-title="@@purchase-receipts.pages.bons.de.reception.84d6ebb5"
       subtitle="Enregistrez et validez les réceptions de marchandises fournisseurs." i18n-subtitle="@@purchase-receipts.pages.enregistrez.et.validez.les.receptions.de.25825b29">
+      @if (canImport()) {
+        <app-button
+          variant="outline"
+          icon="pi-file-import"
+          iconPos="left"
+          (clicked)="importDialogVisible.set(true)" i18n="@@purchase-receipts.pages.importer.depuis.un.document.1a2b3c70"> Importer depuis un document </app-button>
+      }
       @if (canCreate()) {
         <app-button
           variant="primary"
@@ -61,6 +73,12 @@ interface StatusOption {
           routerLink="new" i18n="@@purchase-receipts.pages.nouveau.bon.de.reception.479ec866"> Nouveau bon de réception </app-button>
       }
     </app-page-header>
+
+    <app-purchase-receipt-import-dialog
+      [visible]="importDialogVisible()"
+      (visibleChange)="importDialogVisible.set($event)"
+      (imported)="onImported($event)">
+    </app-purchase-receipt-import-dialog>
 
     <div class="ft-filters">
       <div class="ft-filters__header">
@@ -327,8 +345,18 @@ export class PurchaseReceiptListComponent implements OnInit, OnDestroy {
   private supplierService = inject(SupplierService);
   private toastService = inject(ToastService);
   private auth = inject(AuthService);
+  private router = inject(Router);
+  private importPrefillStore = inject(PurchaseReceiptImportPrefillStore);
 
   canCreate = computed(() => this.auth.hasPermission(PERMISSIONS.purchaseReceipts.create));
+  canImport = computed(() => canImportPurchaseReceipt(this.auth));
+  importDialogVisible = signal(false);
+
+  onImported(payload: PurchaseReceiptImportPayload): void {
+    this.importPrefillStore.set(payload);
+    this.importDialogVisible.set(false);
+    this.router.navigate(['/purchase-receipts/new']);
+  }
 
   private destroy$ = new Subject<void>();
   private searchSubject = new Subject<string>();

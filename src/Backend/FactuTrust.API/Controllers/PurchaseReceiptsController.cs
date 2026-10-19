@@ -1,4 +1,5 @@
 using FactuTrust.API.Authorization;
+using FactuTrust.Application.Common.Files;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Common.Interfaces.Services;
@@ -389,7 +390,19 @@ public class PurchaseReceiptsController : ControllerBase
         if (receipt is null)
             return NotFound(ApiResponse<Guid>.Fail("Bon de réception introuvable."));
 
-        var safeFileName = Path.GetFileName(file.FileName);
+        UploadValidator.ValidationResult validation;
+        await using (var headerStream = file.OpenReadStream())
+        {
+            var (header, bytesRead) = await UploadValidator.ReadHeaderAsync(
+                headerStream, UploadValidator.RequiredHeaderBytes, cancellationToken);
+            validation = UploadValidator.Validate(
+                file.FileName, file.ContentType, file.Length, header.AsMemory(0, bytesRead), MaxUploadBytes);
+        }
+
+        if (!validation.IsValid)
+            return BadRequest(ApiResponse<Guid>.Fail(validation.ErrorMessage!));
+
+        var safeFileName = validation.SafeFileName!;
         var relativePath = Path.Combine(
             "purchase-receipts",
             id.ToString("N"),

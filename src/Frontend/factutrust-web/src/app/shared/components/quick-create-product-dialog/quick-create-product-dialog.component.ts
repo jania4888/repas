@@ -35,6 +35,21 @@ import {
   calculateVatAmount
 } from '@shared/utils/product-pricing.utils';
 
+/** Pré-remplissage depuis l'import de bon de réception (valeurs déjà converties, pas d'enum brut backend). */
+export interface QuickCreateProductPrefill {
+  code: string | null;
+  codeConflict: boolean;
+  name: string;
+  /** 'Produit' | 'Service' */
+  category: string;
+  unit: string | null;
+  vatRate: number;
+  purchasePrice: number | null;
+  barcode: string | null;
+  isStockManaged: boolean;
+  preferredSupplierId: string | null;
+}
+
 interface TypeOption {
   label: string;
   value: string;
@@ -198,6 +213,9 @@ const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
                   mode="decimal"
                   placeholder="0.000" i18n-placeholder="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.0.000.725af307"
                   styleClass="w-full" />
+                @if (purchasePrice() !== null) {
+                  <small class="form-hint" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.prix.d.achat.lu.sur.le.document.importe.1a2b3c60">Prix d'achat lu sur le document importé : {{ purchasePrice() | number:'1.3-3' }} TND</small>
+                }
               </div>
               <div class="form-group">
                 <label for="quick-vat"><ng-container i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.tva.fb62cb5d">TVA </ng-container> <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
@@ -642,6 +660,7 @@ export class QuickCreateProductDialogComponent {
         this.drawerOverlay.registerOpen();
       }
       this.resetForm();
+      this.applyPrefill(this._prefill);
       setTimeout(() => this.focusFirstField(), 200);
     } else if (!value && wasVisible && this.panelMode) {
       this.drawerOverlay.registerClose();
@@ -651,6 +670,16 @@ export class QuickCreateProductDialogComponent {
     return this._dialogVisible;
   }
   _dialogVisible = false;
+
+  /** Pré-remplissage depuis l'import de bon de réception (article non rapproché en base). */
+  @Input() set prefill(value: QuickCreateProductPrefill | null) {
+    this._prefill = value;
+    if (this._dialogVisible) this.applyPrefill(value);
+  }
+  get prefill(): QuickCreateProductPrefill | null {
+    return this._prefill;
+  }
+  private _prefill: QuickCreateProductPrefill | null = null;
 
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() productCreated = new EventEmitter<ProductListItem>();
@@ -681,6 +710,10 @@ export class QuickCreateProductDialogComponent {
   readonly isFodecApplicable = signal(false);
   readonly isStockManaged = signal(false);
   readonly description = signal('');
+  /** Prix d'achat lu sur un document importé, affiché à titre indicatif et transmis à la création. */
+  readonly purchasePrice = signal<number | null>(null);
+  private prefillBarcode: string | null = null;
+  private prefillPreferredSupplierId: string | null = null;
 
   readonly showStockManagement = computed(
     () => this.auth.hasModule(AppModule.Stock) && this.auth.hasPermission(PERMISSIONS.products.create)
@@ -780,10 +813,31 @@ export class QuickCreateProductDialogComponent {
     this.isFodecApplicable.set(false);
     this.applyStockDefaultForCategory('Produit');
     this.description.set('');
+    this.purchasePrice.set(null);
+    this.prefillBarcode = null;
+    this.prefillPreferredSupplierId = null;
     this.errorMessage.set(null);
     this.submitAttempted.set(false);
     this.codeTouched.set(false);
     this.nameTouched.set(false);
+  }
+
+  /** Applique le pré-remplissage d'import ; le code n'est repris que s'il n'entre pas en conflit. */
+  private applyPrefill(prefill: QuickCreateProductPrefill | null): void {
+    if (!prefill) return;
+    this.code.set(prefill.codeConflict ? '' : (prefill.code ?? ''));
+    this.name.set(prefill.name);
+    this.category.set(prefill.category);
+    this.applyStockDefaultForCategory(prefill.category);
+    this.unit.set(prefill.unit ?? 'Unité');
+    this.vatRate.set(prefill.vatRate);
+    if (prefill.purchasePrice !== null && prefill.purchasePrice !== undefined) {
+      this.purchasePrice.set(prefill.purchasePrice);
+      this.unitPrice.set(prefill.purchasePrice);
+    }
+    if (prefill.isStockManaged) this.isStockManaged.set(true);
+    this.prefillBarcode = prefill.barcode;
+    this.prefillPreferredSupplierId = prefill.preferredSupplierId;
   }
 
   submit(): void {
@@ -803,6 +857,9 @@ export class QuickCreateProductDialogComponent {
       vatRate: this.vatRate(),
       isStockManaged: this.resolveIsStockManaged(),
       isFodecApplicable: this.isFodecApplicable(),
+      ...(this.purchasePrice() !== null ? { purchasePrice: this.purchasePrice() } : {}),
+      ...(this.prefillBarcode ? { barcode: this.prefillBarcode } : {}),
+      ...(this.prefillPreferredSupplierId ? { preferredSupplierId: this.prefillPreferredSupplierId } : {}),
     };
 
     this.productService.createProduct(request).pipe(

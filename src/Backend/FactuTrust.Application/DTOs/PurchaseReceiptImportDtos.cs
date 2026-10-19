@@ -1,3 +1,4 @@
+using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
 
 namespace FactuTrust.Application.DTOs;

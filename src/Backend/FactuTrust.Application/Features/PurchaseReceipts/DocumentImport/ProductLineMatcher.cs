@@ -1,6 +1,7 @@
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.AI;
+using FactuTrust.Application.Features.Accounting.DocumentImport;
 using FactuTrust.Application.Features.Products.Queries;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
