@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { QuickCreateSupplierDialogComponent, QuickCreateSupplierPrefill } from './quick-create-supplier-dialog.component';
 import { SupplierService, SupplierType } from '@core/services/supplier.service';
@@ -125,7 +125,7 @@ describe('QuickCreateSupplierDialogComponent', () => {
     expect(component.showStreetError()).toBeTrue();
   });
 
-  it('runs a duplicate search (by NIF/name) when the name or NIF changes, and surfaces matches', () => {
+  it('runs a duplicate search (by NIF/name) when the name or NIF changes, and surfaces matches', fakeAsync(() => {
     supplierService.getSuppliers.and.returnValue(of({
       success: true,
       data: { items: [{ id: 'sup-1', name: 'ACME SARL', nif: '1772793W/A/M/000' }], total: 1 },
@@ -134,17 +134,70 @@ describe('QuickCreateSupplierDialogComponent', () => {
     } as any));
 
     component.onNameChange('ACME SARL');
+    expect(supplierService.getSuppliers).not.toHaveBeenCalled(); // anti-rebond : pas d'appel immédiat
 
-    expect(supplierService.getSuppliers).toHaveBeenCalled();
+    tick(300);
+
+    expect(supplierService.getSuppliers).toHaveBeenCalledTimes(1);
     const callArgs = supplierService.getSuppliers.calls.mostRecent().args[0] as { skipGlobalErrorUi?: boolean };
     expect(callArgs?.skipGlobalErrorUi).toBeTrue();
     expect(component.duplicates()).toEqual([{ id: 'sup-1', name: 'ACME SARL', nif: '1772793W/A/M/000' }]);
-  });
+  }));
+
+  it('debounces rapid changes into a single duplicate search', fakeAsync(() => {
+    component.onNameChange('A');
+    component.onNameChange('AC');
+    tick(100);
+    component.onNameChange('ACME');
+    tick(100);
+
+    expect(supplierService.getSuppliers).not.toHaveBeenCalled();
+    tick(200);
+
+    expect(supplierService.getSuppliers).toHaveBeenCalledTimes(1);
+  }));
+
+  it('cancels an in-flight duplicate search when a newer one starts', fakeAsync(() => {
+    const pending = new Subject<unknown>();
+    supplierService.getSuppliers.and.returnValues(pending.asObservable() as any, of({
+      success: true, data: { items: [], total: 0 }, message: null, errors: []
+    } as any));
+
+    component.onNameChange('ACME');
+    tick(300);
+    expect(supplierService.getSuppliers).toHaveBeenCalledTimes(1);
+
+    // Nouvelle frappe avant la réponse : la première souscription est abandonnée (switchMap).
+    component.onNameChange('ACME SARL');
+    tick(300);
+    expect(supplierService.getSuppliers).toHaveBeenCalledTimes(2);
+
+    // La réponse tardive de la première requête ne doit plus modifier la liste.
+    component.duplicates.set([]);
+    pending.next({ success: true, data: { items: [{ id: 'old', name: 'Vieux', nif: null }], total: 1 }, message: null, errors: [] });
+    tick();
+    expect(component.duplicates()).toEqual([]);
+  }));
 
   it('clears duplicates when the search term is too short', () => {
     component.duplicates.set([{ id: 'x', name: 'y', nif: null }]);
     component.onNameChange('a');
     expect(component.duplicates()).toEqual([]);
+  });
+
+  it('strips bidi control characters from extracted fields before creating the supplier', () => {
+    component.name.set('Fourni\u202Es\u202Cseur X');
+    component.street.set('1 rue \u202Etest\u202C');
+    component.city.set('Sousse');
+    component.governorate.set('Sousse');
+    supplierService.createSupplier.and.returnValue(of({ success: true, data: 'sup-new', message: null, errors: [] } as any));
+
+    component.submit();
+
+    const request = supplierService.createSupplier.calls.mostRecent().args[0] as { name: string; street: string };
+    expect(request.name).toBe('Fournisseur X');
+    expect(request.street).toBe('1 rue test');
+    expect(JSON.stringify(request)).not.toMatch(/[\u061C\u200E-\u200F\u202A-\u202E\u2066-\u2069]/);
   });
 
   it('creates the supplier and emits supplierCreated on success', () => {

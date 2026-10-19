@@ -128,7 +128,7 @@ const SUPPLIERS = [{
 
 async function installMocks(page: Page, locale: 'fr' | 'ar' = 'fr'): Promise<void> {
   await installErpSession(page, { locale });
-  await page.route('**/api/purchasereceipts/import-document/capabilities**', route => json(route, CAPABILITIES));
+  await page.route('**/api/purchasereceipts/import-document/capabilities**', route => json(route, ok(CAPABILITIES)));
   await page.route(/\/api\/products\/(p-chair|p-table|p-shelf)$/, route => {
     const id = route.request().url().split('/').pop()!;
     json(route, ok(PRODUCTS[id as keyof typeof PRODUCTS]));
@@ -377,8 +377,20 @@ test('écart de totaux et avertissement de doublon affichés dans le bandeau', a
   await expect(page.getByText('Un bon de réception similaire existe peut-être déjà pour ce fournisseur.')).toBeVisible();
   await expect(page.getByText("Le total calculé ne correspond pas au total lu sur le document.")).toBeVisible();
   await expect(page.getByText('Les totaux diffèrent du document : vérifiez quantités, prix et remises.')).toBeVisible();
-  await expect(page.getByText('Document (TTC)')).toBeVisible();
-  await expect(page.getByText('714,000')).toBeVisible();
+  // Bloc de comparaison : totaux imprimés (HT / TVA / TTC) face au total calculé du bon.
+  const totals = page.locator('.ft-totals');
+  await expect(totals.locator('.ft-totals__row', { hasText: 'Document (HT)' })).toContainText('600,000');
+  await expect(totals.locator('.ft-totals__row', { hasText: 'Document (TVA)' })).toContainText('114,000');
+  await expect(totals.locator('.ft-totals__row', { hasText: 'Document (TTC)' })).toContainText('714,000');
+  await expect(totals.locator('.ft-totals__row', { hasText: 'Bon (calculé, TTC)' })).toBeVisible();
+  // Ni timbre fiscal ni FODEC dans ce jeu de données : pas de note de comparaison.
+  await expect(page.getByText('Hors timbre fiscal et FODEC.')).toHaveCount(0);
+  // Le bandeau cite le fichier source et un libellé générique du moteur (jamais de nom commercial).
+  const banner = page.locator('.pirb');
+  await expect(banner).toContainText('bl-test.pdf');
+  await expect(banner).toContainText("Service d'extraction documentaire");
+  expect(((await banner.textContent()) ?? '').toLowerCase()).not.toContain('docstrange');
+  await expect(banner).toContainText("Sera joint au bon à l'enregistrement");
 });
 
 test('import en arabe (RTL) : parcours nominal sans fuite de texte latin', async ({ page }) => {

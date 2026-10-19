@@ -134,7 +134,67 @@ describe('PurchaseReceiptImportDialogComponent', () => {
 
     expect(component.phase()).toBe('error');
     expect(component.errorMessage()).toContain('volumineux');
+    expect(component.errorMessage()).toContain('10');
     expect(importDocumentSpy).not.toHaveBeenCalled();
+  });
+
+  it('respecte capabilities.maxFileBytes quand le backend déclare un plafond différent', () => {
+    capabilitiesSpy.and.returnValue(of({
+      available: true,
+      extractionProvider: 'docstrange',
+      externalProcessing: true,
+      maxFileBytes: 2 * 1024 * 1024,
+      canCreateSupplier: true,
+      canCreateProduct: true,
+      canAttach: true
+    }));
+    open();
+
+    const justOver = { name: 'moyen.pdf', type: 'application/pdf', size: 2 * 1024 * 1024 + 1 } as unknown as File;
+    component.onFileSelected(fileEvent(justOver));
+    fixture.detectChanges();
+
+    expect(component.phase()).toBe('error');
+    expect(component.errorMessage()).toContain('2 Mo');
+    expect(importDocumentSpy).not.toHaveBeenCalled();
+  });
+
+  it('accepte un fichier sous le plafond déclaré même si la valeur par défaut diffère', () => {
+    capabilitiesSpy.and.returnValue(of({
+      available: true,
+      extractionProvider: 'docstrange',
+      externalProcessing: true,
+      maxFileBytes: 20 * 1024 * 1024,
+      canCreateSupplier: true,
+      canCreateProduct: true,
+      canAttach: true
+    }));
+    open();
+
+    const big = { name: 'gros-mais-ok.pdf', type: 'application/pdf', size: 15 * 1024 * 1024 } as unknown as File;
+    component.onFileSelected(fileEvent(big));
+
+    expect(component.phase()).toBe('uploading');
+    expect(importDocumentSpy).toHaveBeenCalled();
+  });
+
+  it('la phase uploading propose aussi « Annuler » et revient à l’état initial', () => {
+    const events = new Subject<PurchaseReceiptImportEvent>();
+    importDocumentSpy.and.returnValue(events.asObservable());
+    open();
+
+    component.onFileSelected(fileEvent(pdfFile()));
+    fixture.detectChanges();
+    expect(component.phase()).toBe('uploading');
+
+    const cancelBtn = (fixture.nativeElement as HTMLElement).querySelector('.pid-state app-button');
+    expect(cancelBtn?.textContent).toContain('Annuler');
+
+    component.cancelImport();
+    fixture.detectChanges();
+    expect(component.phase()).toBe('idle');
+    events.next({ kind: 'done', proposal: sampleProposal() });
+    expect(component.phase()).toBe('idle');
   });
 
   it('passe par uploading puis analysing puis émet "imported" avec la proposition et le fichier', () => {

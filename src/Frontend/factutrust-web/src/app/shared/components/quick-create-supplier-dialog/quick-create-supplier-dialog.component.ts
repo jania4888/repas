@@ -7,6 +7,7 @@ import {
   signal,
   computed,
   HostListener,
+  OnDestroy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -25,6 +26,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { EMAIL_PATTERN, NIF_PATTERN, TUNISIAN_GOVERNORATES } from '@shared/validation';
 import { canonicalizeNif } from '@shared/validation/validation-rules';
+import { stripBidiControls } from '@shared/directives/app-no-bidi-controls.directive';
+import { Subject, of } from 'rxjs';
+import { catchError, debounceTime, map, switchMap, takeUntil } from 'rxjs/operators';
 
 export interface QuickCreateSupplierPrefill {
   name?: string | null;
@@ -207,7 +211,7 @@ const GOVERNORATE_OPTIONS: GovernorateOption[] = TUNISIAN_GOVERNORATES.map((g) =
     :host ::ng-deep .p-select { width: 100%; }
   `]
 })
-export class QuickCreateSupplierDialogComponent {
+export class QuickCreateSupplierDialogComponent implements OnDestroy {
   protected readonly locCreation = $localize`:@@shared.components.quick-create-supplier-dialog.ts.creation.1a2b3c54:Création...`;
   protected readonly locCreerEtSelectionner = $localize`:@@shared.components.quick-create-supplier-dialog.ts.creer.et.selectionner.1a2b3c55:Créer et sélectionner`;
   readonly SupplierType = SupplierType;
@@ -240,6 +244,21 @@ export class QuickCreateSupplierDialogComponent {
     if (this.visible) this.close();
   }
 
+  constructor() {
+    this.duplicateSearchTrigger$
+      .pipe(
+        debounceTime(300),
+        switchMap(() => this.fetchDuplicates()),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((items) => this.duplicates.set(items));
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   private readonly supplierService = inject(SupplierService);
   private readonly errorHandler = inject(ErrorHandlerService);
 
@@ -262,6 +281,9 @@ export class QuickCreateSupplierDialogComponent {
   readonly conflictSupplierId = signal<string | null>(null);
   readonly submitAttempted = signal(false);
   readonly duplicates = signal<{ id: string; name: string; nif: string | null }[]>([]);
+
+  private readonly duplicateSearchTrigger$ = new Subject<void>();
+  private readonly destroy$ = new Subject<void>();
 
   readonly nameTouched = signal(false);
   readonly emailTouched = signal(false);
@@ -347,22 +369,31 @@ export class QuickCreateSupplierDialogComponent {
     this.searchDuplicates();
   }
 
-  /** Garde anti-doublon, avant soumission : recherche par matricule fiscal puis par nom. */
+  /**
+   * Garde anti-doublon, avant soumission : recherche par matricule fiscal puis par nom.
+   * Anti-rebond de 300 ms, annulable : chaque frappe réinitialise le délai et le
+   * switchMap abandonne la requête encore en vol quand une nouvelle part.
+   */
   private searchDuplicates(): void {
+    const name = this.name().trim();
+    const nif = canonicalizeNif(this.nif());
+    if ([nif, name].every((t) => t.length < 2)) {
+      this.duplicates.set([]);
+    }
+    this.duplicateSearchTrigger$.next();
+  }
+
+  private fetchDuplicates() {
     const name = this.name().trim();
     const nif = canonicalizeNif(this.nif());
     const terms = [nif, name].filter((t) => t.length >= 2);
     if (terms.length === 0) {
-      this.duplicates.set([]);
-      return;
+      return of([] as { id: string; name: string; nif: string | null }[]);
     }
-    this.supplierService.getSuppliers({ search: terms[0], page: 1, pageSize: 5, skipGlobalErrorUi: true }).subscribe({
-      next: (res) => {
-        const items = res.data?.items ?? [];
-        this.duplicates.set(items.slice(0, 5).map((i) => ({ id: i.id, name: i.name, nif: i.nif })));
-      },
-      error: () => this.duplicates.set([])
-    });
+    return this.supplierService.getSuppliers({ search: terms[0], page: 1, pageSize: 5, skipGlobalErrorUi: true }).pipe(
+      map((res) => (res.data?.items ?? []).slice(0, 5).map((i) => ({ id: i.id, name: i.name, nif: i.nif }))),
+      catchError(() => of([] as { id: string; name: string; nif: string | null }[]))
+    );
   }
 
   onHide(): void {
@@ -394,15 +425,15 @@ export class QuickCreateSupplierDialogComponent {
     this.submitting.set(true);
 
     const request: CreateSupplierRequest = {
-      name: this.name().trim(),
+      name: stripBidiControls(this.name().trim()),
       type: this.type(),
-      nif: this.type() === SupplierType.Business ? canonicalizeNif(this.nif()) : undefined,
-      street: this.street().trim(),
-      city: this.city().trim(),
-      postalCode: this.postalCode().trim() || undefined,
-      governorate: this.governorate().trim(),
-      email: this.email().trim() || null,
-      phone: this.phone().trim() || undefined,
+      nif: this.type() === SupplierType.Business ? canonicalizeNif(stripBidiControls(this.nif())) : undefined,
+      street: stripBidiControls(this.street().trim()),
+      city: stripBidiControls(this.city().trim()),
+      postalCode: stripBidiControls(this.postalCode().trim()) || undefined,
+      governorate: stripBidiControls(this.governorate().trim()),
+      email: stripBidiControls(this.email().trim()) || null,
+      phone: stripBidiControls(this.phone().trim()) || undefined,
       paymentTermDays: 30,
     };
 

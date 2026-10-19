@@ -71,7 +71,15 @@ function makeProposal(overrides: Partial<PurchaseReceiptImportProposal> = {}): P
     },
     supplier: makeSupplier(),
     lines: [makeLine()],
-    documentTotals: { subTotal: 90, totalVat: 17.1, totalAmount: 107.1 },
+    documentTotals: {
+      totalHt: 90,
+      totalVat: 17.1,
+      fodecAmount: null,
+      fiscalStampAmount: null,
+      withholdingAmount: null,
+      totalTtc: 107.1,
+      vatBreakdown: []
+    },
     expectedReceiptTotals: { subTotal: 90, totalVat: 17.1, totalAmount: 107.1 },
     confidence: 'high',
     warnings: [],
@@ -581,6 +589,95 @@ describe('PurchaseReceiptFormComponent — import de document', () => {
       component.ngOnInit();
 
       expect(component.applyImport).toHaveBeenCalledWith(payload);
+    });
+  });
+
+  describe('métadonnées de la proposition dans le bandeau', () => {
+    it('conserve le nom du fichier source et le moteur d’extraction dans l’état d’import', () => {
+      component.applyImport({ proposal: makeProposal(), file: makeFile() } as PurchaseReceiptImportPayload);
+
+      expect(component.importState()?.fileName).toBe('facture.pdf');
+      expect(component.importState()?.extractionProvider).toBe('llm-vision');
+    });
+
+    it('expose les totaux imprimés du document (et non les totaux attendus calculés)', () => {
+      component.applyImport({ proposal: makeProposal(), file: makeFile() } as PurchaseReceiptImportPayload);
+
+      expect(component.importState()?.printedTotals?.totalTtc).toBe(107.1);
+      expect(component.hasPrintedDocumentTotals()).toBeTrue();
+      expect(component.hasStampOrFodecInPrintedTotals()).toBeFalse();
+    });
+
+    it('compare le TTC calculé au TTC du document hors timbre fiscal', () => {
+      const proposal = makeProposal({
+        documentTotals: {
+          totalHt: 90,
+          totalVat: 17.1,
+          fodecAmount: null,
+          fiscalStampAmount: 1,
+          withholdingAmount: null,
+          totalTtc: 108.1,
+          vatBreakdown: []
+        }
+      });
+      component.applyImport({ proposal, file: makeFile() } as PurchaseReceiptImportPayload);
+
+      // TTC document 108,1 dont 1 de timbre → attendu 107,1 = total calculé : pas d'écart.
+      component.totalTTC.set(107.1);
+      expect(component.hasStampOrFodecInPrintedTotals()).toBeTrue();
+      expect(component.importTotalsMismatch()).toBeFalse();
+
+      // Un écart réel reste signalé.
+      component.totalTTC.set(200);
+      expect(component.importTotalsMismatch()).toBeTrue();
+    });
+  });
+
+  describe('loadSuppliers (course avec applyImport)', () => {
+    it('conserve l’option injectée par l’import quand la liste paginée tardive ne la contient pas', () => {
+      // Simulation « au-delà du pageSize » : le fournisseur reconnu n'est pas dans la page renvoyée.
+      component.supplierService = {
+        getActiveSuppliers: jasmine.createSpy('getActiveSuppliers').and.returnValue(
+          of({
+            success: true,
+            data: {
+              items: [{ id: 's-other', name: 'Autre fournisseur' } as SupplierListItem],
+              page: 1, pageSize: 200, totalCount: 201, totalPages: 2, hasNextPage: true, hasPreviousPage: false
+            }
+          })
+        )
+      };
+
+      component.applyImport({ proposal: makeProposal(), file: makeFile() } as PurchaseReceiptImportPayload);
+      expect(component.suppliers().some((s: SupplierListItem) => s.id === 's-1')).toBeTrue();
+
+      // La réponse arrive après l'injection : elle ne doit pas la faire disparaître.
+      component.loadSuppliers();
+
+      const ids = component.suppliers().map((s: SupplierListItem) => s.id);
+      expect(ids).toContain('s-1');
+      expect(ids).toContain('s-other');
+      expect(component.suppliers().find((s: SupplierListItem) => s.id === 's-1')?.name).toBe('ACME');
+    });
+
+    it('ne duplique pas un fournisseur présent dans la liste chargée', () => {
+      component.supplierService = {
+        getActiveSuppliers: jasmine.createSpy('getActiveSuppliers').and.returnValue(
+          of({
+            success: true,
+            data: {
+              items: [{ id: 's-1', name: 'ACME (liste)' } as SupplierListItem],
+              page: 1, pageSize: 200, totalCount: 1, totalPages: 1, hasNextPage: false, hasPreviousPage: false
+            }
+          })
+        )
+      };
+
+      component.applyImport({ proposal: makeProposal(), file: makeFile() } as PurchaseReceiptImportPayload);
+      component.loadSuppliers();
+
+      expect(component.suppliers().filter((s: SupplierListItem) => s.id === 's-1').length).toBe(1);
+      expect(component.suppliers().find((s: SupplierListItem) => s.id === 's-1')?.name).toBe('ACME (liste)');
     });
   });
 });

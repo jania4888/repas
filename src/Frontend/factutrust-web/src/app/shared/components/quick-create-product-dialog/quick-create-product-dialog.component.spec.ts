@@ -178,4 +178,49 @@ describe('QuickCreateProductDialogComponent', () => {
     expect(component.visible).toBeTrue();
     expect(component.isStockManaged()).toBe(stockChoice);
   });
+
+  it('resets price and stock fields between two import prefills (no stale leak)', () => {
+    // Ligne A : prix d'achat lu 30, gestion de stock activée.
+    component.prefill = {
+      code: 'SHL-A', codeConflict: false, name: 'Étagère A', category: 'Produit',
+      unit: 'Unité', vatRate: 19, purchasePrice: 30, barcode: null,
+      isStockManaged: true, preferredSupplierId: null
+    };
+    openDialog();
+    expect(component.purchasePrice()).toBe(30);
+    expect(component.unitPrice()).toBe(30);
+    expect(component.isStockManaged()).toBeTrue();
+
+    // Ligne B : aucun prix lu, stock désactivé : rien ne doit survivre de la ligne A.
+    component.prefill = {
+      code: 'SHL-B', codeConflict: false, name: 'Étagère B', category: 'Produit',
+      unit: 'Unité', vatRate: 19, purchasePrice: null, barcode: null,
+      isStockManaged: false, preferredSupplierId: null
+    };
+
+    expect(component.purchasePrice()).toBeNull();
+    expect(component.unitPrice()).toBe(0);
+    expect(component.isStockManaged()).toBeFalse();
+    expect(component.code()).toBe('SHL-B');
+    expect(component.name()).toBe('Étagère B');
+  });
+
+  it('strips bidi control characters from extracted text before creating the product', () => {
+    openDialog();
+    // Pré-remplissage « empoisonné » par des caractères de contrôle bidi (données extraites).
+    component.prefill = {
+      code: 'SHL-1', codeConflict: false, name: 'Étagère \u202Emétallique\u202C', category: 'Produit',
+      unit: 'Unité', vatRate: 19, purchasePrice: 30, barcode: '61\u202E9\u202C12345', isStockManaged: true,
+      preferredSupplierId: null
+    };
+    productService.createProduct.and.returnValue(of({ success: true, data: 'p-new', message: null, errors: [] } as never) as never);
+    productService.getProduct.and.returnValue(of({ success: true, data: { id: 'p-new' }, message: null, errors: [] } as never) as never);
+
+    component.submit();
+
+    const request = submittedRequest();
+    expect(request.name).toBe('Étagère métallique');
+    expect(request.barcode).toBe('61912345');
+    expect(JSON.stringify(request)).not.toMatch(/[\u061C\u200E-\u200F\u202A-\u202E\u2066-\u2069]/);
+  });
 });

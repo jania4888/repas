@@ -34,6 +34,7 @@ import {
   calculateSaleTtc,
   calculateVatAmount
 } from '@shared/utils/product-pricing.utils';
+import { stripBidiControls } from '@shared/directives/app-no-bidi-controls.directive';
 
 /** Pré-remplissage depuis l'import de bon de réception (valeurs déjà converties, pas d'enum brut backend). */
 export interface QuickCreateProductPrefill {
@@ -822,7 +823,13 @@ export class QuickCreateProductDialogComponent {
     this.nameTouched.set(false);
   }
 
-  /** Applique le pré-remplissage d'import ; le code n'est repris que s'il n'entre pas en conflit. */
+  /**
+   * Applique le pré-remplissage d'import ; le code n'est repris que s'il n'entre
+   * pas en conflit. Chaque champ est réécrit depuis le nouveau pré-remplissage
+   * (null-safe) : la modale est réutilisée d'une ligne à l'autre et un champ
+   * seulement écrasé « quand il est fourni » y conserverait la valeur de la
+   * ligne précédente.
+   */
   private applyPrefill(prefill: QuickCreateProductPrefill | null): void {
     if (!prefill) return;
     this.code.set(prefill.codeConflict ? '' : (prefill.code ?? ''));
@@ -831,11 +838,9 @@ export class QuickCreateProductDialogComponent {
     this.applyStockDefaultForCategory(prefill.category);
     this.unit.set(prefill.unit ?? 'Unité');
     this.vatRate.set(prefill.vatRate);
-    if (prefill.purchasePrice !== null && prefill.purchasePrice !== undefined) {
-      this.purchasePrice.set(prefill.purchasePrice);
-      this.unitPrice.set(prefill.purchasePrice);
-    }
-    if (prefill.isStockManaged) this.isStockManaged.set(true);
+    this.purchasePrice.set(prefill.purchasePrice ?? null);
+    this.unitPrice.set(prefill.purchasePrice ?? 0);
+    this.isStockManaged.set(prefill.isStockManaged);
     this.prefillBarcode = prefill.barcode;
     this.prefillPreferredSupplierId = prefill.preferredSupplierId;
   }
@@ -848,9 +853,9 @@ export class QuickCreateProductDialogComponent {
     this.submitting.set(true);
 
     const request: CreateProductRequest = {
-      code: this.code().trim(),
-      name: this.name().trim(),
-      description: this.description().trim() || null,
+      code: stripBidiControls(this.code().trim()),
+      name: stripBidiControls(this.name().trim()),
+      description: stripBidiControls(this.description().trim()) || null,
       category: this.category(),
       unitPrice: this.unitPrice(),
       unit: this.unit(),
@@ -858,7 +863,7 @@ export class QuickCreateProductDialogComponent {
       isStockManaged: this.resolveIsStockManaged(),
       isFodecApplicable: this.isFodecApplicable(),
       ...(this.purchasePrice() !== null ? { purchasePrice: this.purchasePrice() } : {}),
-      ...(this.prefillBarcode ? { barcode: this.prefillBarcode } : {}),
+      ...(this.prefillBarcode ? { barcode: stripBidiControls(this.prefillBarcode) } : {}),
       ...(this.prefillPreferredSupplierId ? { preferredSupplierId: this.prefillPreferredSupplierId } : {}),
     };
 
