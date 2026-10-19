@@ -322,8 +322,9 @@ test("erreurs serveur (429, 500) et fermeture de la boîte de dialogue pendant u
   await expect(page.getByText('Erreur serveur. Veuillez réessayer plus tard.')).toBeVisible({ timeout: 15_000 });
   await expect(page.getByText(/System\.|Exception|StackTrace/i)).toHaveCount(0);
 
-  // Fermeture pendant un envoi en cours : la requête part mais n'est jamais résolue ; fermer la
-  // boîte de dialogue (Échap) désabonne l'import et ramène à la liste sans blocage ni erreur.
+  // Annulation pendant un envoi en cours : la requête part mais n'est jamais résolue ; le bouton
+  // « Annuler » de la phase d'envoi désabonne l'import et ramène la boîte à l'état initial,
+  // que l'on peut alors fermer sans blocage ni erreur.
   // (Le passage par la phase « analyse » avec sa barre « Annuler l'import » dépend d'événements
   // de progression d'upload réels, que les routes mockées de Playwright n'émettent jamais ; ce
   // cas est couvert au niveau unitaire dans purchase-receipt-import-dialog.component.spec.ts.)
@@ -334,6 +335,9 @@ test("erreurs serveur (429, 500) et fermeture de la boîte de dialogue pendant u
   await page.getByRole('button', { name: 'Réessayer' }).click();
   await page.locator('.pid-file-input').setInputFiles(PDF);
   await expect(page.getByText('Envoi du document…')).toBeVisible({ timeout: 15_000 });
+  await page.locator('.pid-state').getByRole('button', { name: 'Annuler' }).click();
+  // Retour à l'état initial : la zone de dépôt est de nouveau disponible, fermeture propre.
+  await expect(page.getByRole('button', { name: 'Choisir un fichier' })).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog', { name: 'Importer un bon de réception' })).toBeHidden();
   await expect(page.getByRole('heading', { name: 'Bons de réception' })).toBeVisible();
@@ -387,7 +391,7 @@ test('écart de totaux et avertissement de doublon affichés dans le bandeau', a
   await expect(page.getByText('Hors timbre fiscal et FODEC.')).toHaveCount(0);
   // Le bandeau cite le fichier source et un libellé générique du moteur (jamais de nom commercial).
   const banner = page.locator('.pirb');
-  await expect(banner).toContainText('bl-test.pdf');
+  await expect(banner).toContainText('bon-de-reception.pdf');
   await expect(banner).toContainText("Service d'extraction documentaire");
   expect(((await banner.textContent()) ?? '').toLowerCase()).not.toContain('docstrange');
   await expect(banner).toContainText("Sera joint au bon à l'enregistrement");
@@ -403,7 +407,9 @@ test('import en arabe (RTL) : parcours nominal sans fuite de texte latin', async
 
   await page.getByRole('button', { name: 'استيراد من مستند' }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
-  await page.locator('.pid-file-input').setInputFiles(PDF);
+  // Nom de fichier arabe (type MIME suffit à la validation) : le bandeau affiche le nom du
+  // fichier source — sans fuite latine.
+  await page.locator('.pid-file-input').setInputFiles({ ...PDF, name: 'سند-قبض' });
   await expect(page).toHaveURL(/\/purchase-receipts\/new$/, { timeout: 30_000 });
 
   const banner = page.locator('.pirb');

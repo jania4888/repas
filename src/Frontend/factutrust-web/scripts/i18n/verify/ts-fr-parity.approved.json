@@ -352,8 +352,8 @@
     "reason": "Colonne « Coût unitaire » de la liste de stock : ajout d'une infobulle expliquant que, pour un article FIFO/LIFO, le P.U. affiché est le coût de la prochaine sortie et que la valeur reste la somme des couches (P.U. x Qte != Valeur). Nouveau segment FR assume ; aucun libellé existant modifié."
   },
   "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts": {
-    "sha": "e9da160e2f9c13a141de0ba917e5c33f9f4512496ab206e9eebf72257f294a18",
-    "reason": "Import de bon de réception depuis un document : nouveaux textes FR (messages de pièce jointe, résolution de ligne importée, raisons de blocage 'Sélectionnez un fournisseur/un entrepôt', 'Associez ou créez le produit de la ligne'), toasts (fournisseur créé/produit appliqué) et constantes internes (ids ciblés par focusImportField, états de résolution 'pending'/'matched'/'mapped'/'created', statuts d'upload). Aucun texte existant modifié."
+    "sha": "b762bb4b98378d9a5b3e54e124552f2935e3e8b3f39c509eaa5b22fb2cc9c5f5",
+    "reason": "Import de bon de réception depuis un document : nouveaux textes FR (messages de pièce jointe, résolution de ligne importée, raisons de blocage 'Sélectionnez un fournisseur/un entrepôt', 'Associez ou créez le produit de la ligne'), toasts (fournisseur créé/produit appliqué) et constantes internes (ids ciblés par focusImportField, états de résolution 'pending'/'matched'/'mapped'/'created', statuts d'upload). Aucun texte existant modifié. Revue import document : $localize pour totaux imprimés et conservation des fournisseurs injectés lors du chargement."
   },
   "src/app/features/purchase-receipts/pages/purchase-receipt-list/purchase-receipt-list.component.ts": {
     "sha": "710dcb939934f8f923e263acbfc029590ce3e397a38f1612aba60103f0b8d443",

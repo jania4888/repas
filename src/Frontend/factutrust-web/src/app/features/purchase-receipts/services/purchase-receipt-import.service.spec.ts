@@ -146,7 +146,7 @@ describe('PurchaseReceiptImportService', () => {
     expect(state.error?.message).not.toContain('Http failure');
   }));
 
-  it('capabilities() déballe l'enveloppe ApiResponse et renvoie les données en cas de succès', () => {
+  it('capabilities() déballe l’enveloppe ApiResponse et renvoie les données en cas de succès', () => {
     let result: unknown;
     service.capabilities().subscribe((r) => (result = r));
     const req = http.expectOne((r) => r.url === `${base}/capabilities`);
@@ -172,7 +172,7 @@ describe('PurchaseReceiptImportService', () => {
     expect(result).toEqual(jasmine.objectContaining({ available: true, extractionProvider: 'llm' }));
   });
 
-  it('capabilities() renvoie null quand l'enveloppe est en échec (success=false)', () => {
+  it('capabilities() renvoie null quand l’enveloppe est en échec (success=false)', () => {
     let result: unknown = 'not-set';
     service.capabilities().subscribe((r) => (result = r));
     http

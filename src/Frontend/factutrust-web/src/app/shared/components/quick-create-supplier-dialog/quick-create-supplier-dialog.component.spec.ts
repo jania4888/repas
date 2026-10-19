@@ -186,10 +186,9 @@ describe('QuickCreateSupplierDialogComponent', () => {
   });
 
   it('strips bidi control characters from extracted fields before creating the supplier', () => {
+    fillValidBusinessForm();
     component.name.set('Fourni\u202Es\u202Cseur X');
     component.street.set('1 rue \u202Etest\u202C');
-    component.city.set('Sousse');
-    component.governorate.set('Sousse');
     supplierService.createSupplier.and.returnValue(of({ success: true, data: 'sup-new', message: null, errors: [] } as any));
 
     component.submit();

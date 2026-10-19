@@ -9,7 +9,7 @@
   "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.importer.un.bon.de.reception.1a2b3c01": "استيراد إذن استلام",
   "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.importer.un.bon.de.reception.depuis.un.document.1a2b3c02": "استيراد إذن استلام من مستند",
   "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.importez.un.bon.de.reception.existant.1a2b3c0b": "استورد إذن استلام موجودًا",
-  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.ou.deposez.le.fichier.ici.pdf.jpg.png.taille.1a2b3c0f": "أو أسقط الملف هنا — PDF أو JPG أو PNG (10 ميغابايت كحد أقصى)",
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.ou.deposez.le.fichier.ici.pdf.jpg.png.taille.1a2b3c0f": "أو أسقط الملف هنا — PDF أو JPG أو PNG (بحد أقصى {$maxMo} ميغابايت)",
   "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.saisir.manuellement.1a2b3c0a": "إدخال يدوي",
   "features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.a.faire.avant.d.enregistrer.1a2b3c28": "قبل الحفظ، يجب:",
   "features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.accepter.l.ecart.1a2b3c25": "قبول الفارق",
@@ -78,5 +78,12 @@
   "shared.components.quick-create-supplier-dialog.ts.impossible.de.creer.le.fournisseur.1a2b3c57": "تعذّر إنشاء المورّد.",
   "shared.components.quick-create-supplier-dialog.ts.matricule.fiscal.invalide.1a2b3c47": "المعرّف الجبائي غير صالح",
   "shared.components.quick-create-supplier-dialog.ts.un.fournisseur.avec.ces.informations.existe.de.1a2b3c58": "يوجد مورّد بهذه المعلومات مسبقًا.",
-  "shared.components.quick-create-supplier-dialog.ts.utiliser.ce.fournisseur.1a2b3c52": "استخدام هذا المورّد"
+  "shared.components.quick-create-supplier-dialog.ts.utiliser.ce.fournisseur.1a2b3c52": "استخدام هذا المورّد",
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.fichier.trop.volumineux.maximum.mo.1a2b3c18": "الملف كبير جدًا (الحد الأقصى {$maxMo} ميغابايت).",
+  "features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.sera.joint.au.bon.a.l.enregistrement.1a2b3c29": "سيتم إرفاقه بسند الاستلام عند الحفظ",
+  "features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.service.d.extraction.documentaire.1a2b3c36": "خدمة استخراج المستندات",
+  "features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.modele.d.import.ia.1a2b3c37": "نموذج استيراد بالذكاء الاصطناعي",
+  "purchase-receipts.pages.total.document.ht.a1b2c3e4": "المستند (دون الضريبة)",
+  "purchase-receipts.pages.tva.document.a1b2c3e5": "المستند (الضريبة)",
+  "purchase-receipts.pages.hors.timbre.fiscal.et.fodec.a1b2c3e6": "باستثناء الطابع الجبائي ومساهمة الفوديك."
 }
