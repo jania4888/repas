@@ -15,6 +15,7 @@ import { RouterModule } from '@angular/router';
         [class.btn-icon-only]="iconOnly"
         [class.btn-icon-always-visible]="iconOnly && iconAlwaysVisible"
         [attr.aria-label]="ariaLabel || null"
+        [attr.aria-describedby]="ariaDescribedBy || null"
         (click)="onClick($event)">
         <ng-container *ngTemplateOutlet="innerContent"></ng-container>
       </a>
@@ -26,6 +27,7 @@ import { RouterModule } from '@angular/router';
         [disabled]="disabled"
         [type]="type"
         [attr.aria-label]="ariaLabel || null"
+        [attr.aria-describedby]="ariaDescribedBy || null"
         (click)="onClick($event)">
         <ng-container *ngTemplateOutlet="innerContent"></ng-container>
       </button>
@@ -193,6 +195,7 @@ export class ButtonComponent {
   @Input() disabled = false;
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
   @Input() ariaLabel?: string;
+  @Input() ariaDescribedBy?: string;
   @Input() routerLink?: string | string[];
   @Input() queryParams?: Record<string, string | number | boolean | null | undefined>;
   /** When true and iconOnly, uses a higher-contrast icon color for visibility (e.g. in table action columns). */

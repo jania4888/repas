@@ -74,7 +74,10 @@ import {
   ProductMatchMethod
 } from '../../models/purchase-receipt-import.models';
 import { PurchaseReceiptImportPrefillStore, PurchaseReceiptImportPayload } from '../../services/purchase-receipt-import-prefill.store';
-import { PurchaseReceiptImportReviewBannerComponent } from '../../components/purchase-receipt-import-review-banner/purchase-receipt-import-review-banner.component';
+import {
+  PurchaseReceiptImportReviewBannerComponent,
+  ImportBlockingReason
+} from '../../components/purchase-receipt-import-review-banner/purchase-receipt-import-review-banner.component';
 import { PurchaseReceiptImportSupplierCardComponent } from '../../components/purchase-receipt-import-supplier-card/purchase-receipt-import-supplier-card.component';
 import {
   toSupplierType,
@@ -219,8 +222,10 @@ interface ImportReviewState {
               [gapAccepted]="importState()!.gapAccepted"
               [hasNameMatches]="importHasNameMatches()"
               [suggestionsConfirmed]="importState()!.suggestionsConfirmed"
+              [blockingReasons]="importBlockingReasons()"
               (acceptGap)="acceptImportGap()"
-              (confirmSuggestions)="confirmImportSuggestions()">
+              (confirmSuggestions)="confirmImportSuggestions()"
+              (selectReason)="focusImportField($event)">
             </app-purchase-receipt-import-review-banner>
           }
 
@@ -433,7 +438,7 @@ interface ImportReviewState {
                             }
                           </div>
                           @if (line.importInfo.resolution === 'pending') {
-                            <div class="line-import-actions">
+                            <div class="line-import-actions" [id]="'line-import-actions-' + line.importInfo.index">
                               @for (candidate of line.importInfo.candidates.slice(0, 3); track candidate.id) {
                                 <app-button variant="outline" size="sm" (clicked)="chooseLineCandidate(line, candidate)">
                                   {{ candidate.code }} — {{ candidate.name }}
@@ -666,20 +671,26 @@ interface ImportReviewState {
       </div>
 
       <div class="form-actions">
+        @if (importBlockingReasons().length > 0) {
+          <p id="import-blocking-summary" class="form-actions__hint" i18n="@@purchase-receipts.pages.enregistrement.bloque.tant.que.les.articles.importes.1a2b3c95">Enregistrement bloqué tant que les articles importés ne sont pas associés à un produit.</p>
+        }
         <app-button variant="outline" icon="pi-times" iconPos="left"
           routerLink="/purchase-receipts" i18n="@@purchase-receipts.pages.annuler.49ba3292"> Annuler </app-button>
         <app-button variant="secondary" icon="pi-save" iconPos="left"
           [disabled]="!canSave() || submitting()"
+          [ariaDescribedBy]="importBlockingReasons().length > 0 ? 'import-blocking-summary' : undefined"
           (clicked)="save('draft')">
           <ng-container i18n="@@purchase-receipts.pages.sel.enregistrement.enregistrer.en.brouillon.cd8328f3">{!!(submitting() && submitMode() === 'draft'), select, true {Enregistrement…} other {Enregistrer en brouillon}}</ng-container>
         </app-button>
         <app-button variant="primary" icon="pi-check" iconPos="left"
           [disabled]="!canSave() || submitting()"
+          [ariaDescribedBy]="importBlockingReasons().length > 0 ? 'import-blocking-summary' : undefined"
           (clicked)="save('save')">
           <ng-container i18n="@@purchase-receipts.pages.sel.enregistrement.enregistrer.1317c42c">{!!(submitting() && submitMode() === 'save'), select, true {Enregistrement…} other {Enregistrer}}</ng-container>
         </app-button>
         <app-button variant="primary" icon="pi-verified" iconPos="left"
           [disabled]="!canValidate() || submitting()"
+          [ariaDescribedBy]="importBlockingReasons().length > 0 ? 'import-blocking-summary' : undefined"
           (clicked)="save('validate')">
           <ng-container i18n="@@purchase-receipts.pages.sel.validation.valider.la.reception.21433cdd">{!!(submitting() && submitMode() === 'validate'), select, true {Validation…} other {Valider la réception}}</ng-container>
         </app-button>
@@ -1347,6 +1358,42 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
 
   importHasNameMatches(): boolean {
     return this.lines.some(l => l.importInfo?.matchMethod === 'name');
+  }
+
+  importBlockingReasons(): ImportBlockingReason[] {
+    if (!this.importState()) return [];
+    const reasons: ImportBlockingReason[] = [];
+    if (!this.selectedSupplierId) {
+      reasons.push({
+        text: $localize`:@@purchase-receipts.purchase-receipt-form.ts.selectionnez.un.fournisseur.a1b2c301:Sélectionnez un fournisseur.`,
+        targetId: 'supplier'
+      });
+    }
+    if (!this.selectedWarehouseId) {
+      reasons.push({
+        text: $localize`:@@purchase-receipts.purchase-receipt-form.ts.selectionnez.un.entrepot.a1b2c302:Sélectionnez un entrepôt.`,
+        targetId: 'receipt-warehouse'
+      });
+    }
+    for (const line of this.lines) {
+      if (line.importInfo && line.importInfo.resolution === 'pending') {
+        const lineNumber = line.importInfo.index + 1;
+        reasons.push({
+          text: $localize`:@@purchase-receipts.purchase-receipt-form.ts.associez.ou.creez.le.produit.de.la.ligne.a1b2c303:Associez ou créez le produit de la ligne ${lineNumber}:lineNumber:.`,
+          targetId: `line-import-actions-${line.importInfo.index}`
+        });
+      }
+    }
+    return reasons;
+  }
+
+  focusImportField(targetId: string): void {
+    const el = document.getElementById(targetId);
+    if (!el) return;
+    const focusable = el.matches('button, input, [tabindex]')
+      ? el
+      : el.querySelector<HTMLElement>('button, input, [tabindex]');
+    (focusable ?? el).focus();
   }
 
   acceptImportGap(): void {

@@ -4,6 +4,12 @@ import { ButtonComponent } from '@shared/components/button/button.component';
 import { PurchaseReceiptImportConfidence, PurchaseReceiptImportWarning } from '../../models/purchase-receipt-import.models';
 import { importWarningLabel } from '../../utils/purchase-receipt-import.mapping';
 
+/** Un point « à faire » avant de pouvoir enregistrer, avec l'élément du formulaire à mettre au focus. */
+export interface ImportBlockingReason {
+  text: string;
+  targetId: string;
+}
+
 /**
  * Bandeau de revue affiché au-dessus de la section 1 du formulaire quand le
  * bon de réception a été pré-rempli depuis un document importé. Purement
@@ -58,6 +64,19 @@ import { importWarningLabel } from '../../utils/purchase-receipt-import.mapping'
           <app-button variant="outline" size="sm" (clicked)="confirmSuggestions.emit()" i18n="@@features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.confirmer.les.suggestions.1a2b3c27">Confirmer les suggestions</app-button>
         </div>
       }
+
+      @if (blockingReasons.length > 0) {
+        <div class="pirb-todo">
+          <span class="pirb-todo__label" i18n="@@features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.a.faire.avant.d.enregistrer.1a2b3c28">À faire avant d'enregistrer :</span>
+          <ul class="pirb-todo__list">
+            @for (reason of blockingReasons; track reason.targetId) {
+              <li>
+                <button type="button" class="pirb-todo__btn" (click)="selectReason.emit(reason.targetId)">{{ reason.text }}</button>
+              </li>
+            }
+          </ul>
+        </div>
+      }
     </div>
   `,
   styles: [`
@@ -79,6 +98,14 @@ import { importWarningLabel } from '../../utils/purchase-receipt-import.mapping'
       display: flex; align-items: center; gap: var(--spacing-2); flex-wrap: wrap;
       font-size: var(--font-size-sm); color: var(--color-warning-700);
     }
+    .pirb-todo { display: flex; flex-direction: column; gap: var(--spacing-1); }
+    .pirb-todo__label { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-secondary); }
+    .pirb-todo__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--spacing-1); }
+    .pirb-todo__btn {
+      background: none; border: none; padding: 0; margin: 0; cursor: pointer;
+      font-size: var(--font-size-sm); color: var(--color-primary-700); text-decoration: underline;
+      text-align: start;
+    }
   `]
 })
 export class PurchaseReceiptImportReviewBannerComponent {
@@ -88,9 +115,11 @@ export class PurchaseReceiptImportReviewBannerComponent {
   @Input() gapAccepted = false;
   @Input() hasNameMatches = false;
   @Input() suggestionsConfirmed = false;
+  @Input() blockingReasons: ImportBlockingReason[] = [];
 
   @Output() acceptGap = new EventEmitter<void>();
   @Output() confirmSuggestions = new EventEmitter<void>();
+  @Output() selectReason = new EventEmitter<string>();
 
   protected readonly importWarningLabel = importWarningLabel;
 }
