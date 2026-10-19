@@ -37,6 +37,16 @@ public interface IPurchaseReceiptRepository : IRepository<PurchaseReceipt>
 
     Task<bool> ExistsNumberAsync(string number, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Vrai si un bon de réception non annulé existe déjà pour ce fournisseur avec le même
+    /// numéro de bon de livraison (comparaison exacte après <c>Trim</c>). Utilisé par l'import
+    /// de document pour avertir d'un doublon possible, jamais pour bloquer la création.
+    /// </summary>
+    Task<bool> ExistsActiveForSupplierDeliveryNoteAsync(
+        Guid supplierId,
+        string deliveryNoteNumber,
+        CancellationToken cancellationToken = default);
+
     Task<(IReadOnlyList<PurchasesJournalDetailRowDto> Rows, int TotalCount)> GetPurchasesJournalDetailPagedAsync(
         DateTime fromDate,
         DateTime toDate,

@@ -148,6 +148,21 @@ public sealed class PurchaseReceiptRepository : IPurchaseReceiptRepository
             .AnyAsync(r => r.Number.Value == number, cancellationToken);
     }
 
+    public async Task<bool> ExistsActiveForSupplierDeliveryNoteAsync(
+        Guid supplierId, string deliveryNoteNumber, CancellationToken cancellationToken = default)
+    {
+        var trimmed = (deliveryNoteNumber ?? string.Empty).Trim();
+        if (trimmed.Length == 0)
+            return false;
+
+        await using var context = _contextFactory.CreateContext();
+        return await context.PurchaseReceipts.AnyAsync(
+            r => r.SupplierId == supplierId
+                && r.DeliveryNoteNumber == trimmed
+                && r.Status != PurchaseReceiptStatus.Cancelled,
+            cancellationToken);
+    }
+
     public async Task<PurchaseReceipt> AddAsync(PurchaseReceipt entity, CancellationToken cancellationToken = default)
     {
         await using var context = _contextFactory.CreateContext();
