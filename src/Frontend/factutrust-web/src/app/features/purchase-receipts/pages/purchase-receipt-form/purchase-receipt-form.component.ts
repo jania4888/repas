@@ -67,7 +67,6 @@ import {
   PurchaseReceiptImportLine,
   PurchaseReceiptImportWarning,
   PurchaseReceiptImportExpectedTotals,
-  PurchaseReceiptImportExtractionProvider,
   PurchaseReceiptImportConfidence,
   ProductCandidate,
   ProductPrefill,
@@ -160,12 +159,8 @@ interface ImportLineInfo {
 
 /** État de revue d'un import de document en cours, tant que le bon n'est pas enregistré. */
 interface ImportReviewState {
-  fileName: string;
   sourceFile: File;
-  extractionProvider: PurchaseReceiptImportExtractionProvider;
-  ocrApplied: boolean;
   confidence: PurchaseReceiptImportConfidence | null;
-  documentType: string | null;
   /** Tous les avertissements, y compris ceux de ligne (filtrés à l'affichage). */
   warnings: PurchaseReceiptImportWarning[];
   supplier: PurchaseReceiptImportSupplier;
@@ -678,19 +673,19 @@ interface ImportReviewState {
           routerLink="/purchase-receipts" i18n="@@purchase-receipts.pages.annuler.49ba3292"> Annuler </app-button>
         <app-button variant="secondary" icon="pi-save" iconPos="left"
           [disabled]="!canSave() || submitting()"
-          [ariaDescribedBy]="importBlockingReasons().length > 0 ? 'import-blocking-summary' : undefined"
+          [ariaDescribedBy]="importBlockingSummaryId"
           (clicked)="save('draft')">
           <ng-container i18n="@@purchase-receipts.pages.sel.enregistrement.enregistrer.en.brouillon.cd8328f3">{!!(submitting() && submitMode() === 'draft'), select, true {Enregistrement…} other {Enregistrer en brouillon}}</ng-container>
         </app-button>
         <app-button variant="primary" icon="pi-check" iconPos="left"
           [disabled]="!canSave() || submitting()"
-          [ariaDescribedBy]="importBlockingReasons().length > 0 ? 'import-blocking-summary' : undefined"
+          [ariaDescribedBy]="importBlockingSummaryId"
           (clicked)="save('save')">
           <ng-container i18n="@@purchase-receipts.pages.sel.enregistrement.enregistrer.1317c42c">{!!(submitting() && submitMode() === 'save'), select, true {Enregistrement…} other {Enregistrer}}</ng-container>
         </app-button>
         <app-button variant="primary" icon="pi-verified" iconPos="left"
           [disabled]="!canValidate() || submitting()"
-          [ariaDescribedBy]="importBlockingReasons().length > 0 ? 'import-blocking-summary' : undefined"
+          [ariaDescribedBy]="importBlockingSummaryId"
           (clicked)="save('validate')">
           <ng-container i18n="@@purchase-receipts.pages.sel.validation.valider.la.reception.21433cdd">{!!(submitting() && submitMode() === 'validate'), select, true {Validation…} other {Valider la réception}}</ng-container>
         </app-button>
@@ -1170,12 +1165,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
     const canAttach = proposal.canAttach ?? this.auth.hasPermission(PERMISSIONS.purchaseReceipts.update);
 
     this.importState.set({
-      fileName: file.name,
       sourceFile: file,
-      extractionProvider: proposal.extractionProvider,
-      ocrApplied: proposal.ocrApplied,
       confidence: proposal.confidence,
-      documentType: proposal.documentType,
       warnings: proposal.warnings,
       supplier: proposal.supplier,
       supplierResolution: 'pending',
@@ -1360,6 +1351,11 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
     return this.lines.some(l => l.importInfo?.matchMethod === 'name');
   }
 
+  /** Id du résumé de blocage d'import, relié aux boutons d'enregistrement via aria-describedby. */
+  protected get importBlockingSummaryId(): string | undefined {
+    return this.importBlockingReasons().length > 0 ? 'import-blocking-summary' : undefined;
+  }
+
   importBlockingReasons(): ImportBlockingReason[] {
     if (!this.importState()) return [];
     const reasons: ImportBlockingReason[] = [];
@@ -1427,11 +1423,7 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
   }
 
   onSupplierCreated(s: QuickCreatedSupplier): void {
-    this.ensureSupplierOption(s.id, s.name);
-    this.selectedSupplierId = s.id;
-    this.quickCreateSupplierVisible = false;
-    this.updateImportState(state => ({ ...state, supplierResolution: 'created' }));
-    this.onSupplierChange();
+    this.selectImportedSupplier(s, 'created');
     this.toastService.add({
       severity: 'success',
       summary: $localize`:@@purchase-receipts.purchase-receipt-form.ts.fournisseur.cree.a1b2c3f0:Fournisseur créé`,
@@ -1440,10 +1432,14 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
   }
 
   onSupplierUseExisting(s: QuickCreatedSupplier): void {
+    this.selectImportedSupplier(s, 'chosen');
+  }
+
+  private selectImportedSupplier(s: QuickCreatedSupplier, resolution: 'created' | 'chosen'): void {
     this.ensureSupplierOption(s.id, s.name);
     this.selectedSupplierId = s.id;
     this.quickCreateSupplierVisible = false;
-    this.updateImportState(state => ({ ...state, supplierResolution: 'chosen' }));
+    this.updateImportState(state => ({ ...state, supplierResolution: resolution }));
     this.onSupplierChange();
   }
 

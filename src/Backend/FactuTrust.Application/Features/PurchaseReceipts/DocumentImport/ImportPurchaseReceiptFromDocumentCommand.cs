@@ -29,12 +29,6 @@ public sealed class ImportPurchaseReceiptFromDocumentHandler
     /// <summary>Même borne que <c>ImportInvoiceFromFileHandler</c> : au-delà, les lignes restent affichées mais non rapprochées.</summary>
     public const int MaxLinesToMatch = 50;
 
-    private static readonly string[] UnexpectedDocumentTypes =
-    {
-        DocumentTypes.CreditNote,
-        DocumentTypes.Unknown
-    };
-
     private readonly IAccountingDocumentExtractor _extractor;
     private readonly ICompanyRepository _companies;
     private readonly IPurchaseReceiptRepository _purchaseReceipts;
@@ -125,7 +119,7 @@ public sealed class ImportPurchaseReceiptFromDocumentHandler
                 null));
         }
 
-        if (UnexpectedDocumentTypes.Contains(doc.DocumentType))
+        if (doc.DocumentType is DocumentTypes.CreditNote or DocumentTypes.Unknown)
         {
             warnings.Add(new PurchaseReceiptImportWarningDto(
                 PurchaseReceiptImportWarningCodes.UnexpectedDocumentType,
@@ -195,7 +189,7 @@ public sealed class ImportPurchaseReceiptFromDocumentHandler
         await LogAuditAsync(command, fileSize, extractionProvider, doc.Lines.Count, lineDtos, supplierMatch, warnings, cancellationToken);
 
         _logger.LogInformation(
-            "Import de document de bon de réception : fournisseur={Provider}, lignes={LineCount}, " +
+            "Import de document de bon de réception : extracteur={Provider}, lignes={LineCount}, " +
             "rapprochées={MatchedCount}, fournisseur={Outcome}.",
             extractionProvider, doc.Lines.Count,
             lineDtos.Count(l => l.ProductId is not null), supplierMatch.Outcome);

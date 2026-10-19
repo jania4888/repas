@@ -30,7 +30,6 @@ public sealed class ProductLineMatcher
 {
     private const int CandidateQueryPageSize = 10;
     private const int MaxCandidates = 5;
-    private static readonly int[] BarcodeLengths = { 8, 12, 13, 14 };
 
     private readonly IProductRepository _products;
     private readonly IMediator _mediator;
@@ -57,9 +56,9 @@ public sealed class ProductLineMatcher
             if (byCode is not null)
                 return await ResolveAsync("code", byCode, line, reference, preferredSupplierId, cancellationToken);
 
-            if (reference!.Length is 8 or 12 or 13 or 14 && reference.All(char.IsDigit))
+            if (IsBarcodeShape(reference))
             {
-                var byBarcode = await _products.GetByBarcodeAsync(reference, cancellationToken);
+                var byBarcode = await _products.GetByBarcodeAsync(reference!, cancellationToken);
                 if (byBarcode is not null)
                     return await ResolveAsync("barcode", byBarcode, line, reference, preferredSupplierId, cancellationToken);
             }
@@ -104,6 +103,12 @@ public sealed class ProductLineMatcher
             await BuildPrefillAsync(line, reference, preferredSupplierId, cancellationToken),
             false);
     }
+
+    /// <summary>Forme d'un code-barres : uniquement des chiffres, longueur EAN-8/12/13/14.</summary>
+    private static bool IsBarcodeShape(string? reference) =>
+        !string.IsNullOrEmpty(reference)
+        && reference.Length is 8 or 12 or 13 or 14
+        && reference.All(char.IsDigit);
 
     /// <summary>
     /// Même normalisation qu'à la création rapide d'un produit : espaces supprimés, majuscules,
@@ -160,12 +165,11 @@ public sealed class ProductLineMatcher
         var vatRatePercent = InvoiceImportParsing.ClampVatRate(line.VatRatePercent);
         var vatRate = VatRateExtensions.FromPercent(vatRatePercent);
 
-        var isBarcodeShape = !string.IsNullOrEmpty(reference)
-            && reference.Length is 8 or 12 or 13 or 14 && reference.All(char.IsDigit);
+        var barcode = IsBarcodeShape(reference) ? reference : null;
 
         return new ProductPrefillDto(
             code, codeConflict, name, ProductType.Product,
-            line.UnitPriceHt, vatRate, line.Unit, isBarcodeShape ? reference : null,
+            line.UnitPriceHt, vatRate, line.Unit, barcode,
             IsStockManaged: true, preferredSupplierId);
     }
 }

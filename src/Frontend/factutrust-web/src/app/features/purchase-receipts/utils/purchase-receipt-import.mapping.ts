@@ -48,8 +48,7 @@ const UNIT_SYNONYMS: Record<string, string> = {
 export function normalizeImportUnit(value: string | null | undefined): string {
   const raw = (value ?? '').trim();
   if (!raw) return 'Unité';
-  const upper = raw.toUpperCase();
-  return UNIT_SYNONYMS[upper] ?? (raw.length > 0 ? raw : 'Unité');
+  return UNIT_SYNONYMS[raw.toUpperCase()] ?? raw;
 }
 
 /** Libellés des codes d'avertissement d'import (PurchaseReceiptImportWarningCodes côté backend). */

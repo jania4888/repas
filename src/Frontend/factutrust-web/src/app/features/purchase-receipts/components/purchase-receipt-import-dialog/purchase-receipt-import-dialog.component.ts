@@ -364,9 +364,7 @@ export class PurchaseReceiptImportDialogComponent implements OnDestroy {
   }
 
   cancelImport(): void {
-    this.importSub?.unsubscribe();
-    this.importSub = null;
-    this.stopElapsedTimer();
+    this.abortInFlight();
     this.phase.set('idle');
     this.selectedFileName.set(null);
     this.uploadPercent.set(0);
@@ -379,18 +377,21 @@ export class PurchaseReceiptImportDialogComponent implements OnDestroy {
 
   /** Déclenché par la fermeture native de p-dialog (croix, Échap, clic backdrop). */
   onHide(): void {
-    this.importSub?.unsubscribe();
-    this.importSub = null;
-    this.stopElapsedTimer();
+    this.abortInFlight();
     this.visibleChange.emit(false);
   }
 
   /** Fermeture programmatique (après un import réussi). */
   close(): void {
+    this.abortInFlight();
+    this._visible = false;
+    this.visibleChange.emit(false);
+  }
+
+  /** Interrompt un envoi/analyse en cours et arrête le minuteur (sans toucher à la phase ni au compteur). */
+  private abortInFlight(): void {
     this.importSub?.unsubscribe();
     this.importSub = null;
     this.stopElapsedTimer();
-    this._visible = false;
-    this.visibleChange.emit(false);
   }
 }
