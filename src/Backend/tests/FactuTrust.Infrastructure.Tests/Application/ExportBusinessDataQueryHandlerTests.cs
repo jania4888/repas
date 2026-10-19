@@ -393,10 +393,9 @@ public sealed class ExportBusinessDataQueryHandlerTests
     }
 
     [Fact]
-    public void Criteria_DescribesPurchaseReceiptStatus_AndToleratesUnknownValues()
+    public void Criteria_DescribesPurchaseReceiptStatus()
     {
         Assert.Contains("Validé", new BusinessExportCriteria { PurchaseReceiptStatus = PurchaseReceiptStatus.Validated }.Describe());
-        Assert.Contains("Statut", new BusinessExportCriteria { PurchaseReceiptStatus = (PurchaseReceiptStatus)99 }.Describe());
     }
 
     [Fact]

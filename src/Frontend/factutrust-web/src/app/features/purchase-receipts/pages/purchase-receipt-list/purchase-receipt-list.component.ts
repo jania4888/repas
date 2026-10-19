@@ -20,7 +20,6 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-totals-bar/table-totals-bar.component';
 import { ExportExcelButtonComponent } from '@shared/components/export-excel-button/export-excel-button.component';
-import { DataExportFilters } from '@core/services/data-export.service';
 import { formatLocalDate } from '@core/utils/date.util';
 import {
   PurchaseReceiptService,
@@ -400,7 +399,7 @@ export class PurchaseReceiptListComponent implements OnInit, OnDestroy {
   toDate: Date | null = null;
 
   /** Filtres de l'écran au moment du clic. Le statut Brouillon vaut 0 : il ne faut pas le convertir en null. */
-  readonly purchaseReceiptExportFilters = (): DataExportFilters => ({
+  readonly purchaseReceiptExportFilters = () => ({
     search: this.searchTerm || null,
     status: this.selectedStatus,
     supplierId: this.selectedSupplierId,
