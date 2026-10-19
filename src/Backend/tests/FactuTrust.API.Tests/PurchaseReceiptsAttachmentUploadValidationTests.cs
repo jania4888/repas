@@ -82,6 +82,7 @@ public sealed class PurchaseReceiptsAttachmentUploadValidationTests : IDisposabl
 
         Assert.IsType<BadRequestObjectResult>(result);
         Assert.False(Directory.Exists(_basePath) && Directory.EnumerateFiles(_basePath, "*", SearchOption.AllDirectories).Any());
+        _purchaseReceipts.Verify(x => x.AddAttachmentAsync(It.IsAny<PurchaseReceiptAttachment>(), It.IsAny<CancellationToken>()), Times.Never);
         _purchaseReceipts.Verify(x => x.UpdateAsync(It.IsAny<PurchaseReceipt>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
@@ -90,7 +91,7 @@ public sealed class PurchaseReceiptsAttachmentUploadValidationTests : IDisposabl
     {
         var receipt = NewReceipt();
         _purchaseReceipts.Setup(x => x.GetByIdWithDetailsAsync(receipt.Id, It.IsAny<CancellationToken>())).ReturnsAsync(receipt);
-        _purchaseReceipts.Setup(x => x.UpdateAsync(It.IsAny<PurchaseReceipt>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+        _purchaseReceipts.Setup(x => x.AddAttachmentAsync(It.IsAny<PurchaseReceiptAttachment>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
         var controller = BuildController();
         // Signature PNG minimale (8 octets) suivie de remplissage pour atteindre RequiredHeaderBytes.
         var pngBytes = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -102,6 +103,12 @@ public sealed class PurchaseReceiptsAttachmentUploadValidationTests : IDisposabl
         Assert.IsType<FactuTrust.API.Controllers.ApiResponse<Guid>>(ok.Value);
         Assert.True(Directory.Exists(_basePath));
         Assert.Single(Directory.EnumerateFiles(_basePath, "*", SearchOption.AllDirectories));
+        // La ligne fille doit être insérée via le chemin dédié (AddAttachmentAsync), pas via
+        // UpdateAsync qui l'attachait comme Unchanged et ne l'insérait jamais.
+        _purchaseReceipts.Verify(x => x.AddAttachmentAsync(
+            It.Is<PurchaseReceiptAttachment>(a => a.PurchaseReceiptId == receipt.Id && a.FileName == "photo.png"),
+            It.IsAny<CancellationToken>()), Times.Once);
+        _purchaseReceipts.Verify(x => x.UpdateAsync(It.IsAny<PurchaseReceipt>(), It.IsAny<CancellationToken>()), Times.Never);
         _auditService.Verify(x => x.LogAsync(
             It.Is<string>(a => a.Contains("Attachment")), It.IsAny<string>(), It.IsAny<Guid?>(), It.IsAny<object?>(), It.IsAny<object?>(),
             It.IsAny<CancellationToken>()), Times.Once);

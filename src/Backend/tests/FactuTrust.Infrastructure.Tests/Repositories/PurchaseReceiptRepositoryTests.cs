@@ -196,6 +196,140 @@ public sealed class PurchaseReceiptRepositoryTests : IDisposable
         Assert.Equal(339.15m, verified.TotalAmount.Amount);
     }
 
+    [Fact]
+    public async Task Attachment_added_to_a_reloaded_receipt_persists_its_row()
+    {
+        // Régression (contrat auto-attach de l'import de document) : UploadAttachment recharge le
+        // bon avec détails, appelle AddAttachment puis persistait via UpdateAsync. UpdateAsync
+        // faisait context.Attach(entity) : le nouvel enfant (clé Guid déjà assignée) était suivi
+        // comme Unchanged -> jamais INSERT (200 OK mais aucune ligne en base).
+        var (supplier, warehouse) = await PersistSupplierAndWarehouseAsync(
+            "Fournisseur BR Attach",
+            "br-attach@test.com",
+            "1234567/A/B/C/904");
+
+        var receipt = PurchaseReceipt.Create(
+            PurchaseReceiptNumber.Create("BR", 2026, 103),
+            supplier,
+            warehouse,
+            DateTime.UtcNow.Date).Value;
+
+        var added = await _repository.AddAsync(receipt);
+
+        // Flux exact du contrôleur : rechargement avec détails (contexte différent), puis ajout.
+        var detached = await _repository.GetByIdWithDetailsAsync(added.Id);
+        Assert.NotNull(detached);
+        Assert.Empty(detached!.Attachments);
+
+        var attachment = PurchaseReceiptAttachment.Create(
+            detached,
+            "bl-source.pdf",
+            "application/pdf",
+            2048,
+            "purchase-receipts/x/bl-source.pdf",
+            "tester").Value;
+        Assert.True(detached.AddAttachment(attachment).IsSuccess);
+
+        await _repository.AddAttachmentAsync(attachment);
+
+        using var verify = _contextFactory.CreateContext();
+        var persisted = await verify.PurchaseReceiptAttachments
+            .FirstOrDefaultAsync(a => a.PurchaseReceiptId == added.Id);
+        Assert.NotNull(persisted);
+        Assert.Equal(attachment.Id, persisted!.Id);
+        Assert.Equal("bl-source.pdf", persisted.FileName);
+        Assert.Equal("application/pdf", persisted.ContentType);
+        Assert.Equal(2048, persisted.SizeBytes);
+    }
+
+    [Fact]
+    public async Task DeleteAttachmentAsync_removes_the_persisted_row()
+    {
+        // Miroir du bug d'ajout : RemoveAttachment vidait la collection en mémoire puis UpdateAsync
+        // marquait la collection IsLoaded = false -> EF ne voyait jamais la suppression (fichier
+        // supprimé du disque, ligne orpheline en base).
+        var (supplier, warehouse) = await PersistSupplierAndWarehouseAsync(
+            "Fournisseur BR AttachDel",
+            "br-attachdel@test.com",
+            "1234567/A/B/C/905");
+
+        var receipt = PurchaseReceipt.Create(
+            PurchaseReceiptNumber.Create("BR", 2026, 104),
+            supplier,
+            warehouse,
+            DateTime.UtcNow.Date).Value;
+
+        var attachment = PurchaseReceiptAttachment.Create(
+            receipt,
+            "bl-a-supprimer.pdf",
+            "application/pdf",
+            1024,
+            "purchase-receipts/x/bl-a-supprimer.pdf",
+            "tester").Value;
+        Assert.True(receipt.AddAttachment(attachment).IsSuccess);
+
+        var added = await _repository.AddAsync(receipt);
+
+        var detached = await _repository.GetByIdWithDetailsAsync(added.Id);
+        Assert.NotNull(detached);
+        var persistedAttachment = Assert.Single(detached!.Attachments);
+        Assert.True(detached.RemoveAttachment(persistedAttachment.Id).IsSuccess);
+
+        await _repository.DeleteAttachmentAsync(persistedAttachment);
+
+        using var verify = _contextFactory.CreateContext();
+        Assert.False(await verify.PurchaseReceiptAttachments
+            .AnyAsync(a => a.PurchaseReceiptId == added.Id));
+    }
+
+    [Fact]
+    public async Task UpdateAsync_on_a_receipt_loaded_without_attachments_keeps_existing_attachment_rows()
+    {
+        // Garde-fou inverse : les chemins qui rechargent SANS les pièces jointes (édition des
+        // lignes, validation, annulation) ne doivent pas supprimer les lignes d'attachement.
+        var (supplier, warehouse) = await PersistSupplierAndWarehouseAsync(
+            "Fournisseur BR KeepAttach",
+            "br-keepattach@test.com",
+            "1234567/A/B/C/906");
+
+        var receipt = PurchaseReceipt.Create(
+            PurchaseReceiptNumber.Create("BR", 2026, 105),
+            supplier,
+            warehouse,
+            DateTime.UtcNow.Date).Value;
+
+        var attachment = PurchaseReceiptAttachment.Create(
+            receipt,
+            "bl-conserve.pdf",
+            "application/pdf",
+            1024,
+            "purchase-receipts/x/bl-conserve.pdf",
+            "tester").Value;
+        Assert.True(receipt.AddAttachment(attachment).IsSuccess);
+
+        var added = await _repository.AddAsync(receipt);
+
+        var detached = await _repository.GetByIdWithLinesAsync(added.Id);
+        Assert.NotNull(detached);
+        Assert.Empty(detached!.Attachments); // non chargées — ne doit pas signifier « supprimer »
+        detached.UpdateHeader(
+            detached.ReceiptDate,
+            detached.WarehouseId,
+            detached.SupplierReference,
+            detached.TransporterName,
+            detached.DeliveryNoteNumber,
+            "Notes mises à jour sans toucher aux pièces jointes");
+
+        await _repository.UpdateAsync(detached);
+
+        using var verify = _contextFactory.CreateContext();
+        var kept = await verify.PurchaseReceiptAttachments
+            .Where(a => a.PurchaseReceiptId == added.Id)
+            .ToListAsync();
+        Assert.Single(kept);
+        Assert.Equal("bl-conserve.pdf", kept[0].FileName);
+    }
+
     private async Task<ProductCategory> PersistCategoryAsync(string code, string name)
     {
         using var context = _contextFactory.CreateContext();

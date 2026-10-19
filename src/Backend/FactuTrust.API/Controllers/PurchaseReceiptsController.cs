@@ -445,7 +445,10 @@ public class PurchaseReceiptsController : ControllerBase
             return BadRequest(ApiResponse<Guid>.Fail(addResult.Error.Description));
         }
 
-        await _purchaseReceiptRepository.UpdateAsync(receipt, cancellationToken);
+        // Insert direct de la ligne fille : UpdateAsync attache le graphe détaché et suivrait le
+        // nouvel attachement (clé Guid déjà assignée) comme Unchanged — jamais INSERT (régression
+        // constatée : 200 OK + id retourné, mais aucune ligne en PurchaseReceiptAttachments).
+        await _purchaseReceiptRepository.AddAttachmentAsync(createResult.Value, cancellationToken);
 
         await _auditService.LogAsync(
             AuditActions.PurchaseReceipt.AttachmentAdded,
@@ -483,7 +486,9 @@ public class PurchaseReceiptsController : ControllerBase
         if (removeResult.IsFailure)
             return BadRequest(ApiResponse<object>.Fail(removeResult.Error.Description));
 
-        await _purchaseReceiptRepository.UpdateAsync(receipt, cancellationToken);
+        // Delete direct de la ligne fille : via UpdateAsync, la collection marquée IsLoaded = false
+        // masquait la suppression — le fichier disparaissait du disque mais la ligne restait en base.
+        await _purchaseReceiptRepository.DeleteAttachmentAsync(attachment, cancellationToken);
 
         var basePath = _configuration["AccountingAttachments:BasePath"]
             ?? Path.Combine(_environment.ContentRootPath ?? AppContext.BaseDirectory, "App_Data", "attachments");

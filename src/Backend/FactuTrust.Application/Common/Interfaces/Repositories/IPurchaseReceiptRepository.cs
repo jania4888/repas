@@ -38,6 +38,20 @@ public interface IPurchaseReceiptRepository : IRepository<PurchaseReceipt>
     Task<bool> ExistsNumberAsync(string number, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Insère une pièce jointe (nouvelle ligne) sur un bon de réception existant.
+    /// Ne passe PAS par <c>UpdateAsync</c> : celui-ci attache le graphe détaché, et un enfant
+    /// dont la clé Guid est déjà assignée serait suivi comme Unchanged (jamais INSERT).
+    /// Même approche que <c>FiscalScheduleRepository.AddAttachmentAsync</c>.
+    /// </summary>
+    Task AddAttachmentAsync(PurchaseReceiptAttachment attachment, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Supprime une pièce jointe existante (l'entité peut être détachée : seule sa clé sert
+    /// à retrouver la ligne à supprimer).
+    /// </summary>
+    Task DeleteAttachmentAsync(PurchaseReceiptAttachment attachment, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Vrai si un bon de réception non annulé existe déjà pour ce fournisseur avec le même
     /// numéro de bon de livraison (comparaison exacte après <c>Trim</c>). Utilisé par l'import
     /// de document pour avertir d'un doublon possible, jamais pour bloquer la création.

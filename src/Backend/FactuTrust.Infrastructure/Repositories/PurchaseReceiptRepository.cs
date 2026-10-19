@@ -333,6 +333,26 @@ public sealed class PurchaseReceiptRepository : IPurchaseReceiptRepository
         await context.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task AddAttachmentAsync(PurchaseReceiptAttachment attachment, CancellationToken cancellationToken = default)
+    {
+        // Insert direct de l'enfant (même pattern que FiscalScheduleRepository.AddAttachmentAsync) :
+        // Add() marque la pièce jointe Added, et les entités déjà cléfées atteintes par navigation
+        // (le bon, ses lignes, produits…) Unchanged — aucune écriture parasite sur le graphe.
+        // Ne pas utiliser UpdateAsync pour ça : Attach() suivrait le nouvel enfant (clé Guid déjà
+        // assignée) comme Unchanged et la ligne ne serait jamais insérée.
+        await using var context = _contextFactory.CreateContext();
+        context.PurchaseReceiptAttachments.Add(attachment);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteAttachmentAsync(PurchaseReceiptAttachment attachment, CancellationToken cancellationToken = default)
+    {
+        // Remove() attache l'entité détachée comme Deleted d'après sa clé — suffit pour le DELETE.
+        await using var context = _contextFactory.CreateContext();
+        context.PurchaseReceiptAttachments.Remove(attachment);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
         await using var context = _contextFactory.CreateContext();
