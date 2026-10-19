@@ -54,7 +54,8 @@ import {
 import {
   PurchaseOrderService,
   PurchaseOrderListItem,
-  PurchaseOrderStatus
+  PurchaseOrderStatus,
+  normalizePurchaseOrderStatus
 } from '@core/services/purchase-order.service';
 import { SupplierService, SupplierListItem } from '@core/services/supplier.service';
 import { ProductService, ProductListItem } from '@core/services/product.service';
@@ -980,11 +981,11 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
           this.purchaseOrderOptions.set([]);
           return;
         }
-        const eligible = res.data.items.filter(
-          (po: PurchaseOrderListItem) =>
-            po.status === PurchaseOrderStatus.Confirmed ||
-            po.status === PurchaseOrderStatus.PartiallyReceived
-        );
+        // L'API envoie le statut en texte ("Confirmed") : on le normalise avant de comparer à l'enum numérique.
+        const eligible = res.data.items.filter((po: PurchaseOrderListItem) => {
+          const status = normalizePurchaseOrderStatus(po.status as PurchaseOrderStatus | string);
+          return status === PurchaseOrderStatus.Confirmed || status === PurchaseOrderStatus.PartiallyReceived;
+        });
         this.purchaseOrderOptions.set(
           eligible.map(po => ({
             id: po.id,
