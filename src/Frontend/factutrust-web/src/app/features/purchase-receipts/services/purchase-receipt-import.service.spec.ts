@@ -146,25 +146,40 @@ describe('PurchaseReceiptImportService', () => {
     expect(state.error?.message).not.toContain('Http failure');
   }));
 
-  it('capabilities() renvoie les données en cas de succès', () => {
+  it('capabilities() déballe l'enveloppe ApiResponse et renvoie les données en cas de succès', () => {
     let result: unknown;
     service.capabilities().subscribe((r) => (result = r));
     const req = http.expectOne((r) => r.url === `${base}/capabilities`);
     expect(req.request.method).toBe('GET');
     req.flush({
-      available: true,
-      extractionProvider: 'llm',
-      ocrAvailable: true,
-      visionCapable: true,
-      externalProcessing: false,
-      maxFileBytes: 10_485_760,
-      acceptedContentTypes: ['application/pdf', 'image/jpeg', 'image/png'],
-      canCreateSupplier: true,
-      canCreateProduct: true,
-      canAttach: true
+      success: true,
+      data: {
+        available: true,
+        extractionProvider: 'llm',
+        ocrAvailable: true,
+        visionCapable: true,
+        externalProcessing: false,
+        maxFileBytes: 10_485_760,
+        acceptedContentTypes: ['application/pdf', 'image/jpeg', 'image/png'],
+        canCreateSupplier: true,
+        canCreateProduct: true,
+        canAttach: true
+      },
+      message: null,
+      errors: []
     });
 
     expect(result).toEqual(jasmine.objectContaining({ available: true, extractionProvider: 'llm' }));
+  });
+
+  it('capabilities() renvoie null quand l'enveloppe est en échec (success=false)', () => {
+    let result: unknown = 'not-set';
+    service.capabilities().subscribe((r) => (result = r));
+    http
+      .expectOne((r) => r.url === `${base}/capabilities`)
+      .flush({ success: false, data: null, message: 'indisponible', errors: [] });
+
+    expect(result).toBeNull();
   });
 
   it('capabilities() renvoie null en cas d’échec plutôt que de propager l’erreur', () => {

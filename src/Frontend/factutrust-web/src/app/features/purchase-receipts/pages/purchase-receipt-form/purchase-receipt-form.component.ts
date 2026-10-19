@@ -66,7 +66,8 @@ import {
   PurchaseReceiptImportSupplier,
   PurchaseReceiptImportLine,
   PurchaseReceiptImportWarning,
-  PurchaseReceiptImportExpectedTotals,
+  PurchaseReceiptImportTotals,
+  PurchaseReceiptImportExtractionProvider,
   PurchaseReceiptImportConfidence,
   ProductCandidate,
   ProductPrefill,
@@ -160,12 +161,17 @@ interface ImportLineInfo {
 /** État de revue d'un import de document en cours, tant que le bon n'est pas enregistré. */
 interface ImportReviewState {
   sourceFile: File;
+  /** Nom du fichier source, affiché dans le bandeau de revue. */
+  fileName: string;
+  /** Moteur d'extraction ayant produit la proposition (libellé générique dérivé dans le bandeau). */
+  extractionProvider: PurchaseReceiptImportExtractionProvider | null;
   confidence: PurchaseReceiptImportConfidence | null;
   /** Tous les avertissements, y compris ceux de ligne (filtrés à l'affichage). */
   warnings: PurchaseReceiptImportWarning[];
   supplier: PurchaseReceiptImportSupplier;
   supplierResolution: 'matched' | 'created' | 'chosen' | 'pending';
-  documentTotals: PurchaseReceiptImportExpectedTotals;
+  /** Totaux imprimés sur le document importé (timbre fiscal / FODEC inclus le cas échéant). */
+  printedTotals: PurchaseReceiptImportTotals;
   canCreateSupplier: boolean;
   canCreateProduct: boolean;
   canAttach: boolean;
@@ -212,6 +218,8 @@ interface ImportReviewState {
           @if (importState()) {
             <app-purchase-receipt-import-review-banner
               [confidence]="importState()!.confidence"
+              [sourceFileName]="importState()!.fileName"
+              [extractionProvider]="importState()!.extractionProvider"
               [warnings]="importHeaderWarnings()"
               [totalsMismatch]="importTotalsMismatch()"
               [gapAccepted]="importState()!.gapAccepted"
@@ -584,19 +592,38 @@ interface ImportReviewState {
                 <span i18n="@@purchase-receipts.pages.reste.a.recevoir.ht.b1ff628f">Reste à recevoir HT</span>
                 <strong>{{ remainingHT() | currency:'TND':'symbol':'1.3-3' }}</strong>
               </div>
-              @if (importState()) {
-                <div class="ft-totals__divider"></div>
-                <h3 class="ft-totals__title" i18n="@@purchase-receipts.pages.totaux.du.document.a1b2c3e0">Totaux du document</h3>
-                <div class="ft-totals__row">
-                  <span i18n="@@purchase-receipts.pages.total.document.ttc.a1b2c3e1">Document (TTC)</span>
-                  <strong>{{ importState()!.documentTotals.totalAmount | currency:'TND':'symbol':'1.3-3' }}</strong>
-                </div>
-                <div class="ft-totals__row">
-                  <span i18n="@@purchase-receipts.pages.bon.calcule.ttc.a1b2c3e2">Bon (calculé, TTC)</span>
-                  <strong>{{ totalTTC() | currency:'TND':'symbol':'1.3-3' }}</strong>
-                </div>
-                @if (importTotalsMismatch()) {
-                  <p class="ft-totals__mismatch" i18n="@@purchase-receipts.pages.les.totaux.differents.du.document.verifiez.a1b2c3e3"> Les totaux diffèrent du document : vérifiez quantités, prix et remises. </p>
+              @if (importState(); as imp) {
+                @if (hasPrintedDocumentTotals()) {
+                  <div class="ft-totals__divider"></div>
+                  <h3 class="ft-totals__title" i18n="@@purchase-receipts.pages.totaux.du.document.a1b2c3e0">Totaux du document</h3>
+                  @if (imp.printedTotals.totalHt !== null) {
+                    <div class="ft-totals__row">
+                      <span i18n="@@purchase-receipts.pages.total.document.ht.a1b2c3e4">Document (HT)</span>
+                      <strong>{{ imp.printedTotals.totalHt | currency:'TND':'symbol':'1.3-3' }}</strong>
+                    </div>
+                  }
+                  @if (imp.printedTotals.totalVat !== null) {
+                    <div class="ft-totals__row">
+                      <span i18n="@@purchase-receipts.pages.tva.document.a1b2c3e5">Document (TVA)</span>
+                      <strong>{{ imp.printedTotals.totalVat | currency:'TND':'symbol':'1.3-3' }}</strong>
+                    </div>
+                  }
+                  @if (imp.printedTotals.totalTtc !== null) {
+                    <div class="ft-totals__row">
+                      <span i18n="@@purchase-receipts.pages.total.document.ttc.a1b2c3e1">Document (TTC)</span>
+                      <strong>{{ imp.printedTotals.totalTtc | currency:'TND':'symbol':'1.3-3' }}</strong>
+                    </div>
+                  }
+                  @if (hasStampOrFodecInPrintedTotals()) {
+                    <p class="ft-totals__note" i18n="@@purchase-receipts.pages.hors.timbre.fiscal.et.fodec.a1b2c3e6">Hors timbre fiscal et FODEC.</p>
+                  }
+                  <div class="ft-totals__row">
+                    <span i18n="@@purchase-receipts.pages.bon.calcule.ttc.a1b2c3e2">Bon (calculé, TTC)</span>
+                    <strong>{{ totalTTC() | currency:'TND':'symbol':'1.3-3' }}</strong>
+                  </div>
+                  @if (importTotalsMismatch()) {
+                    <p class="ft-totals__mismatch" i18n="@@purchase-receipts.pages.les.totaux.differents.du.document.verifiez.a1b2c3e3"> Les totaux diffèrent du document : vérifiez quantités, prix et remises. </p>
+                  }
                 }
               }
             </div>
@@ -931,7 +958,13 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
     this.supplierService.getActiveSuppliers().subscribe({
       next: (res) => {
         if (res.success && res.data) {
-          this.suppliers.set(res.data.items);
+          // Ne pas écraser les options injectées entre-temps par un import
+          // (fournisseur reconnu hors liste paginée, ex. au-delà du pageSize) :
+          // la réponse, souvent résolue après applyImport, les ferait disparaître.
+          const fetched = res.data.items;
+          const fetchedIds = new Set(fetched.map((s) => s.id));
+          const injected = this.suppliers().filter((s) => !fetchedIds.has(s.id));
+          this.suppliers.set([...injected, ...fetched]);
         }
       }
     });
@@ -1166,11 +1199,13 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
 
     this.importState.set({
       sourceFile: file,
+      fileName: file.name,
+      extractionProvider: proposal.extractionProvider ?? null,
       confidence: proposal.confidence,
       warnings: proposal.warnings,
       supplier: proposal.supplier,
       supplierResolution: 'pending',
-      documentTotals: proposal.expectedReceiptTotals,
+      printedTotals: proposal.documentTotals,
       canCreateSupplier,
       canCreateProduct,
       canAttach,
@@ -1344,7 +1379,19 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
   importTotalsMismatch(): boolean {
     const state = this.importState();
     if (!state || state.gapAccepted) return false;
-    return compareImportTotals(state.documentTotals, this.totalTTC())?.mismatch ?? false;
+    return compareImportTotals(state.printedTotals, this.totalTTC())?.mismatch ?? false;
+  }
+
+  /** Au moins un total lu sur le document est exploitable : le bloc « Totaux du document » s'affiche. */
+  hasPrintedDocumentTotals(): boolean {
+    const t = this.importState()?.printedTotals;
+    return !!t && (t.totalHt !== null || t.totalVat !== null || t.totalTtc !== null);
+  }
+
+  /** Le TTC du document inclut un timbre fiscal ou un FODEC que le bon de réception ne porte pas. */
+  hasStampOrFodecInPrintedTotals(): boolean {
+    const t = this.importState()?.printedTotals;
+    return !!t && ((t.fiscalStampAmount ?? 0) > 0 || (t.fodecAmount ?? 0) > 0);
   }
 
   importHasNameMatches(): boolean {

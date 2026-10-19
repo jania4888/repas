@@ -5,6 +5,7 @@ import {
   Input,
   Output,
   ViewChild,
+  computed,
   inject,
   signal,
   OnDestroy
@@ -68,6 +69,12 @@ const DEFAULT_MAX_BYTES = 10 * 1024 * 1024;
                 <span class="pid-filename">{{ selectedFileName() }}</span>
               }
               <p-progressBar [value]="uploadPercent()" [showValue]="true" styleClass="pid-progress"></p-progressBar>
+              <app-button
+                variant="secondary"
+                icon="pi-times"
+                iconPos="left"
+                (click)="cancelImport()"
+                ariaLabel="Annuler l'import" i18n-ariaLabel="@@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.annuler.l.import.1a2b3c06" i18n="@@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.annuler.1a2b3c07"> Annuler </app-button>
             </div>
           }
           @case ('analysing') {
@@ -135,7 +142,7 @@ const DEFAULT_MAX_BYTES = 10 * 1024 * 1024;
                 iconPos="left"
                 (click)="chooseFile()"
                 ariaLabel="Choisir un fichier à importer" i18n-ariaLabel="@@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.choisir.un.fichier.a.importer.1a2b3c0d" i18n="@@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.choisir.un.fichier.1a2b3c0e"> Choisir un fichier </app-button>
-              <p class="pid-hint" i18n="@@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.ou.deposez.le.fichier.ici.pdf.jpg.png.taille.1a2b3c0f">Ou déposez le fichier ici — PDF, JPG, PNG (max 10 Mo)</p>
+              <p class="pid-hint">{{ dropHint() }}</p>
               @if (externalProcessing()) {
                 <p class="pid-hint pid-hint-privacy">
                   <i class="pi pi-info-circle" aria-hidden="true"></i>
@@ -199,11 +206,14 @@ export class PurchaseReceiptImportDialogComponent implements OnDestroy {
       this.warmUpMessage.set(null);
       this.externalProcessing.set(false);
       this.engineLabel.set(null);
+      this.maxFileBytes.set(DEFAULT_MAX_BYTES);
       this.progressLabel.set($localize`:@@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.lecture.du.document.1a2b3c11:Lecture du document…`);
 
       this.capabilitiesSub?.unsubscribe();
       this.capabilitiesSub = this.importService.capabilities().subscribe((caps) => {
         this.externalProcessing.set(!!caps?.externalProcessing);
+        // Plafond déclaré par le backend ; repli sur la valeur par défaut si absent ou invalide.
+        this.maxFileBytes.set(caps?.maxFileBytes && caps.maxFileBytes > 0 ? caps.maxFileBytes : DEFAULT_MAX_BYTES);
         if (caps?.extractionProvider === 'docstrange') {
           this.engineLabel.set($localize`:@@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.analyse.par.le.service.d.extraction.document.1a2b3c12:Analyse par le service d'extraction documentaire…`);
         } else if (caps?.extractionProvider === 'llm') {
@@ -238,6 +248,13 @@ export class PurchaseReceiptImportDialogComponent implements OnDestroy {
   readonly externalProcessing = signal(false);
   readonly engineLabel = signal<string | null>(null);
   readonly isDragging = signal(false);
+  /** Plafond de taille réellement appliqué ; aligné sur capabilities.maxFileBytes quand disponible. */
+  readonly maxFileBytes = signal(DEFAULT_MAX_BYTES);
+  readonly maxFileMo = computed(() => Math.max(1, Math.round(this.maxFileBytes() / (1024 * 1024))));
+  readonly dropHint = computed(
+    () =>
+      $localize`:@@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.ou.deposez.le.fichier.ici.pdf.jpg.png.taille.1a2b3c0f:Ou déposez le fichier ici — PDF, JPG, PNG (max ${this.maxFileMo()}:maxMo: Mo)`
+  );
 
   private importSub: Subscription | null = null;
   private warmUpSub: Subscription | null = null;
@@ -297,9 +314,9 @@ export class PurchaseReceiptImportDialogComponent implements OnDestroy {
       this.errorMessage.set($localize`:@@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.format.non.supporte.utilisez.un.pdf.ou.une.im.1a2b3c14:Format non supporté. Utilisez un PDF ou une image (JPG, PNG).`);
       return;
     }
-    if (file.size > DEFAULT_MAX_BYTES) {
+    if (file.size > this.maxFileBytes()) {
       this.phase.set('error');
-      this.errorMessage.set($localize`:@@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.fichier.trop.volumineux.maximum.10.mo.1a2b3c15:Fichier trop volumineux (maximum 10 Mo).`);
+      this.errorMessage.set($localize`:@@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.fichier.trop.volumineux.maximum.mo.1a2b3c18:Fichier trop volumineux (maximum ${this.maxFileMo()}:maxMo: Mo).`);
       return;
     }
 

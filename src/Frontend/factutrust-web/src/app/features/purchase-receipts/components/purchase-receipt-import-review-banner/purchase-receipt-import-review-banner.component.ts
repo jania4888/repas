@@ -1,7 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '@shared/components/button/button.component';
-import { PurchaseReceiptImportConfidence, PurchaseReceiptImportWarning } from '../../models/purchase-receipt-import.models';
+import {
+  PurchaseReceiptImportConfidence,
+  PurchaseReceiptImportExtractionProvider,
+  PurchaseReceiptImportWarning
+} from '../../models/purchase-receipt-import.models';
 import { importWarningLabel } from '../../utils/purchase-receipt-import.mapping';
 
 /** Un point « à faire » avant de pouvoir enregistrer, avec l'élément du formulaire à mettre au focus. */
@@ -36,6 +40,17 @@ export interface ImportBlockingReason {
           </p>
         </div>
       </div>
+
+      @if (sourceFileName) {
+        <div class="pirb-srcdoc">
+          <i class="pi pi-paperclip" aria-hidden="true"></i>
+          <b class="pirb-srcdoc__name">{{ sourceFileName }}</b>
+          @if (engineLabel) {
+            <span class="pirb-srcdoc__engine">{{ engineLabel }}</span>
+          }
+          <small class="pirb-srcdoc__note" i18n="@@features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.sera.joint.au.bon.a.l.enregistrement.1a2b3c29">Sera joint au bon à l'enregistrement</small>
+        </div>
+      }
 
       @if (warnings.length > 0) {
         <ul class="pirb-warnings">
@@ -91,6 +106,11 @@ export interface ImportBlockingReason {
     .pirb-icon { font-size: 1.25rem; color: var(--color-primary-600); margin-top: 2px; }
     .pirb-title { margin: 0; font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
     .pirb-sub { margin: var(--spacing-1) 0 0; font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+    .pirb-srcdoc { display: flex; align-items: center; gap: var(--spacing-2); flex-wrap: wrap; font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+    .pirb-srcdoc i { color: var(--color-primary-600); }
+    .pirb-srcdoc__name { font-weight: var(--font-weight-semibold); color: var(--color-text-primary); word-break: break-all; }
+    .pirb-srcdoc__engine { color: var(--color-text-tertiary); }
+    .pirb-srcdoc__note { flex-basis: 100%; font-size: var(--font-size-xs); color: var(--color-text-tertiary); }
     .pirb-warnings { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--spacing-1); }
     .pirb-warnings li { display: flex; align-items: flex-start; gap: var(--spacing-2); font-size: var(--font-size-sm); color: var(--color-warning-700); }
     .pirb-warnings li.pirb-warning--info { color: var(--color-text-tertiary); }
@@ -110,6 +130,10 @@ export interface ImportBlockingReason {
 })
 export class PurchaseReceiptImportReviewBannerComponent {
   @Input() confidence: PurchaseReceiptImportConfidence | null = null;
+  /** Nom du fichier source importé, affiché avec la note de pièce jointe. */
+  @Input() sourceFileName: string | null = null;
+  /** Moteur d'extraction de la proposition ; traduit en libellé générique, jamais de nom commercial. */
+  @Input() extractionProvider: PurchaseReceiptImportExtractionProvider | null = null;
   @Input() warnings: PurchaseReceiptImportWarning[] = [];
   @Input() totalsMismatch = false;
   @Input() gapAccepted = false;
@@ -122,4 +146,17 @@ export class PurchaseReceiptImportReviewBannerComponent {
   @Output() selectReason = new EventEmitter<string>();
 
   protected readonly importWarningLabel = importWarningLabel;
+
+  /** Libellé générique du moteur d'extraction (§5.2) ; null pour les lectures sans moteur externe. */
+  protected get engineLabel(): string | null {
+    switch (this.extractionProvider) {
+      case 'docstrange':
+        return $localize`:@@features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.service.d.extraction.documentaire.1a2b3c36:Service d'extraction documentaire`;
+      case 'llm-text':
+      case 'llm-vision':
+        return $localize`:@@features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.modele.d.import.ia.1a2b3c37:Modèle d'import IA`;
+      default:
+        return null;
+    }
+  }
 }

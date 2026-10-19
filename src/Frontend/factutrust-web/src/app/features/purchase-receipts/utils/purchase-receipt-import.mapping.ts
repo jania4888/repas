@@ -3,7 +3,7 @@ import {
   ApiProductType,
   ApiSupplierType,
   ApiVatRate,
-  PurchaseReceiptImportExpectedTotals
+  PurchaseReceiptImportTotals
 } from '../models/purchase-receipt-import.models';
 
 /**
@@ -95,15 +95,19 @@ const TOTALS_TOLERANCE_RATIO = 0.01;
 
 /**
  * Compare le total TTC lu sur le document à celui calculé à partir des lignes
- * du formulaire. Tolérance : 0,010 TND ou 1% (la plus permissive des deux).
+ * du formulaire. Le TTC du document est ramené hors timbre fiscal et FODEC :
+ * le bon de réception ne porte ni l'un ni l'autre (la retenue à la source ne
+ * fait pas partie du TTC et n'est pas déduite). Tolérance : 0,010 TND ou 1%
+ * (la plus permissive des deux). Renvoie null sans TTC de document exploitable.
  */
 export function compareImportTotals(
-  documentTotals: PurchaseReceiptImportExpectedTotals | null,
+  documentTotals: PurchaseReceiptImportTotals | null,
   computedTotalTtc: number
 ): ImportTotalsComparison | null {
-  if (!documentTotals) return null;
+  if (!documentTotals || documentTotals.totalTtc === null) return null;
 
-  const expected = documentTotals.totalAmount;
+  const expected =
+    documentTotals.totalTtc - (documentTotals.fiscalStampAmount ?? 0) - (documentTotals.fodecAmount ?? 0);
   const deltaAmount = Math.abs(expected - computedTotalTtc);
   const deltaRatio = expected !== 0 ? deltaAmount / Math.abs(expected) : (computedTotalTtc !== 0 ? 1 : 0);
   const mismatch = deltaAmount > TOTALS_TOLERANCE_AMOUNT && deltaRatio > TOTALS_TOLERANCE_RATIO;

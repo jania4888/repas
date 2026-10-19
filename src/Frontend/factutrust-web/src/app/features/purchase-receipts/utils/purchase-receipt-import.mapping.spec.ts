@@ -1,4 +1,5 @@
 import { SupplierType } from '@core/services/supplier.service';
+import { PurchaseReceiptImportTotals } from '../models/purchase-receipt-import.models';
 import {
   compareImportTotals,
   importWarningLabel,
@@ -91,32 +92,60 @@ describe('purchase-receipt-import.mapping', () => {
   });
 
   describe('compareImportTotals', () => {
-    it('renvoie null si les totaux du document sont absents', () => {
+    function docTotals(overrides: Partial<PurchaseReceiptImportTotals> = {}): PurchaseReceiptImportTotals {
+      return {
+        totalHt: 80,
+        totalVat: 20,
+        fodecAmount: null,
+        fiscalStampAmount: null,
+        withholdingAmount: null,
+        totalTtc: 100,
+        vatBreakdown: [],
+        ...overrides
+      };
+    }
+
+    it('renvoie null si les totaux du document sont absents ou sans TTC lu', () => {
       expect(compareImportTotals(null, 100)).toBeNull();
+      expect(compareImportTotals(docTotals({ totalTtc: null }), 100)).toBeNull();
     });
 
     it('ne signale rien dans le seuil de tolérance (0,010 TND ou 1%)', () => {
-      const result = compareImportTotals({ subTotal: 80, totalVat: 20, totalAmount: 100 }, 100.005);
+      const result = compareImportTotals(docTotals(), 100.005);
       expect(result?.mismatch).toBeFalse();
     });
 
     it('signale un écart hors seuil', () => {
-      const result = compareImportTotals({ subTotal: 80, totalVat: 20, totalAmount: 100 }, 150);
+      const result = compareImportTotals(docTotals(), 150);
       expect(result?.mismatch).toBeTrue();
       expect(result?.deltaAmount).toBeCloseTo(50, 3);
     });
 
+    it('compare hors timbre fiscal et FODEC : un TTC document les incluant n’est pas un écart', () => {
+      // Document : 100 TTC dont 1 de timbre fiscal et 2 de FODEC → attendu 97.
+      const result = compareImportTotals(docTotals({ fiscalStampAmount: 1, fodecAmount: 2 }), 97);
+      expect(result?.mismatch).toBeFalse();
+
+      const mismatch = compareImportTotals(docTotals({ fiscalStampAmount: 1, fodecAmount: 2 }), 100);
+      expect(mismatch?.mismatch).toBeTrue();
+    });
+
+    it('ne déduit pas la retenue à la source du TTC comparé', () => {
+      const result = compareImportTotals(docTotals({ withholdingAmount: 10 }), 100);
+      expect(result?.mismatch).toBeFalse();
+    });
+
     it('ne signale rien si l’écart relatif reste sous 1% malgré un écart absolu élevé', () => {
-      const result = compareImportTotals({ subTotal: 8000, totalVat: 2000, totalAmount: 10000 }, 10050);
+      const result = compareImportTotals(docTotals({ totalHt: 8000, totalVat: 2000, totalTtc: 10000 }), 10050);
       // deltaAmount = 50 (> 0.010) mais deltaRatio = 0.005 (<= 0.01) : la règle "la plus permissive des deux" s'applique.
       expect(result?.mismatch).toBeFalse();
     });
 
     it('gère un total de document nul sans lever d’exception', () => {
-      const zero = compareImportTotals({ subTotal: 0, totalVat: 0, totalAmount: 0 }, 0);
+      const zero = compareImportTotals(docTotals({ totalHt: 0, totalVat: 0, totalTtc: 0 }), 0);
       expect(zero?.mismatch).toBeFalse();
 
-      const nonZeroComputed = compareImportTotals({ subTotal: 0, totalVat: 0, totalAmount: 0 }, 50);
+      const nonZeroComputed = compareImportTotals(docTotals({ totalHt: 0, totalVat: 0, totalTtc: 0 }), 50);
       expect(nonZeroComputed?.mismatch).toBeTrue();
     });
   });

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpEventType } from '@angular/common/http';
-import { Observable, Subscriber, catchError, of, timeout, TimeoutError } from 'rxjs';
+import { Observable, Subscriber, catchError, map, of, timeout, TimeoutError } from 'rxjs';
 import { environment } from '@environments/environment';
 import { ApiResponse } from '@core/services/auth.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
@@ -82,10 +82,13 @@ export class PurchaseReceiptImportService {
    */
   capabilities(): Observable<PurchaseReceiptImportCapabilities | null> {
     return this.http
-      .get<PurchaseReceiptImportCapabilities>(`${this.baseUrl}/capabilities`, {
+      .get<ApiResponse<PurchaseReceiptImportCapabilities>>(`${this.baseUrl}/capabilities`, {
         context: createHttpContextSkipGlobalErrorUi()
       })
-      .pipe(catchError(() => of(null)));
+      .pipe(
+        map((res) => (res?.success ? (res.data ?? null) : null)),
+        catchError(() => of(null))
+      );
   }
 
   private toError(err: unknown): Error {
