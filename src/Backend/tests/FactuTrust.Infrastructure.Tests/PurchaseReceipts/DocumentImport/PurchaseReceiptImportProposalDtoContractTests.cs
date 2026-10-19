@@ -44,7 +44,7 @@ public sealed class PurchaseReceiptImportProposalDtoContractTests
             new List<SupplierCandidateDto>(), supplierPrefill);
 
         var header = new PurchaseReceiptImportHeaderDto(
-            DateTime.UtcNow, null, "FA-42", "TND", "Document d'origine : FA-42", null);
+            DateTime.UtcNow, "BL-42", null, "TND", "Document d'origine : FA-42", null);
 
         var totals = new PurchaseReceiptImportTotalsDto(
             100m, 19m, null, null, null, 119m,
