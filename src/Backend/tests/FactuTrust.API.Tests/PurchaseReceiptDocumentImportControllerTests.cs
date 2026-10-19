@@ -251,7 +251,16 @@ public sealed class PurchaseReceiptDocumentImportControllerTests
             .ReturnsAsync(Result.Success(new AccountingDocumentExtractionDto
             {
                 Seller = new ExtractedPartyDto { Name = "Fournisseur Test" },
-                Lines = Array.Empty<ExtractedLineDto>()
+                Lines = new[]
+                {
+                    new ExtractedLineDto
+                    {
+                        Designation = "Produit Test",
+                        Quantity = 1m,
+                        UnitPriceHt = 100m,
+                        VatRatePercent = 19
+                    }
+                }
             }));
 
         var result = await controller.Propose(PdfFile(), CancellationToken.None);
@@ -261,6 +270,36 @@ public sealed class PurchaseReceiptDocumentImportControllerTests
         Assert.True(body.Success);
         _extractor.Verify(
             x => x.ExtractAsync(It.IsAny<AccountingDocumentExtractionRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Theory]
+    [InlineData(AccountingDocumentExtractionMethods.LlmText)]
+    [InlineData(AccountingDocumentExtractionMethods.LlmVision)]
+    [InlineData(AccountingDocumentExtractionMethods.ExternalExtraction)]
+    public async Task Successful_but_empty_extraction_returns_400_with_the_blocking_message(string extractionMethod)
+    {
+        // Maquette pr-import-error-unreadable.html : une extraction réussie mais sans aucune ligne
+        // d'article (chemins LLM texte/vision comme Docstrange) doit être une erreur, pas un écran
+        // de revue vide sous un bandeau « pré-rempli ». La boîte de dialogue affiche le message
+        // backend dans son état d'erreur.
+        var controller = BuildController();
+        _extractor.Setup(x => x.ExtractAsync(It.IsAny<AccountingDocumentExtractionRequest>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success(new AccountingDocumentExtractionDto
+            {
+                Seller = new ExtractedPartyDto { Name = "Fournisseur Test" },
+                Lines = Array.Empty<ExtractedLineDto>(),
+                ExtractionMethod = extractionMethod
+            }));
+
+        var result = await controller.Propose(PdfFile(), CancellationToken.None);
+
+        Assert.IsType<BadRequestObjectResult>(result);
+        var body = Body<object>(result);
+        Assert.Equal("Aucune ligne d'article n'a pu être lue dans ce fichier.", body.Error);
+        // Même flux qu'un échec d'extraction : aucune entrée d'audit « DocumentAnalyzed ».
+        _auditService.Verify(x => x.LogAsync(
+            It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid?>(), It.IsAny<object?>(), It.IsAny<object?>(),
+            It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
