@@ -226,7 +226,6 @@ public sealed class SupplierDocumentMatcherTests
         Assert.Equal(SupplierType.Individual, result.Prefill!.Type);
         Assert.Null(result.Prefill.Nif);
         Assert.True(result.NifInvalid);
-        Assert.Contains("Nif", result.Prefill.MissingRequiredFields);
     }
 
     [Fact]

@@ -59,6 +59,40 @@ import {
 import { SupplierService, SupplierListItem } from '@core/services/supplier.service';
 import { ProductService, ProductListItem } from '@core/services/product.service';
 import { StockService } from '@core/services/stock.service';
+import { AuthService } from '@core/services/auth.service';
+import { PERMISSIONS } from '@core/config/permission-keys';
+import {
+  PurchaseReceiptImportProposal,
+  PurchaseReceiptImportSupplier,
+  PurchaseReceiptImportLine,
+  PurchaseReceiptImportWarning,
+  PurchaseReceiptImportExpectedTotals,
+  PurchaseReceiptImportExtractionProvider,
+  PurchaseReceiptImportConfidence,
+  ProductCandidate,
+  ProductPrefill,
+  ProductMatchMethod
+} from '../../models/purchase-receipt-import.models';
+import { PurchaseReceiptImportPrefillStore, PurchaseReceiptImportPayload } from '../../services/purchase-receipt-import-prefill.store';
+import { PurchaseReceiptImportReviewBannerComponent } from '../../components/purchase-receipt-import-review-banner/purchase-receipt-import-review-banner.component';
+import { PurchaseReceiptImportSupplierCardComponent } from '../../components/purchase-receipt-import-supplier-card/purchase-receipt-import-supplier-card.component';
+import {
+  toSupplierType,
+  toVatPercent,
+  toProductCategory,
+  normalizeImportUnit,
+  compareImportTotals,
+  importWarningLabel
+} from '../../utils/purchase-receipt-import.mapping';
+import {
+  QuickCreateSupplierDialogComponent,
+  QuickCreateSupplierPrefill,
+  QuickCreatedSupplier
+} from '@shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component';
+import {
+  QuickCreateProductDialogComponent,
+  QuickCreateProductPrefill
+} from '@shared/components/quick-create-product-dialog/quick-create-product-dialog.component';
 import {
   ProductAutocompleteService,
   ProductSuggestion,
@@ -99,6 +133,47 @@ interface ReceiptLineRow {
   lotAllocations: AllocationRow[];
   trackingMode?: number;
   pickingPolicy?: number;
+  /** Présent uniquement pour les lignes issues d'un import de document (PDF / image). */
+  importInfo?: ImportLineInfo;
+}
+
+/** Données extraites du document pour une ligne importée, et état de son rapprochement produit. */
+interface ImportLineInfo {
+  index: number;
+  extractedCode: string | null;
+  extractedDesignation: string | null;
+  extractedUnit: string | null;
+  extractedQuantity: number | null;
+  extractedUnitPriceHt: number | null;
+  extractedDiscountPercent: number | null;
+  extractedVatRatePercent: number | null;
+  matchMethod: ProductMatchMethod;
+  candidates: ProductCandidate[];
+  prefill: ProductPrefill | null;
+  /** Quantité absente ou <= 0 sur le document, remplacée par 1. */
+  quantityToCheck: boolean;
+  resolution: 'matched' | 'mapped' | 'created' | 'pending';
+}
+
+/** État de revue d'un import de document en cours, tant que le bon n'est pas enregistré. */
+interface ImportReviewState {
+  fileName: string;
+  sourceFile: File;
+  extractionProvider: PurchaseReceiptImportExtractionProvider;
+  ocrApplied: boolean;
+  confidence: PurchaseReceiptImportConfidence | null;
+  documentType: string | null;
+  /** Tous les avertissements, y compris ceux de ligne (filtrés à l'affichage). */
+  warnings: PurchaseReceiptImportWarning[];
+  supplier: PurchaseReceiptImportSupplier;
+  supplierResolution: 'matched' | 'created' | 'chosen' | 'pending';
+  documentTotals: PurchaseReceiptImportExpectedTotals;
+  canCreateSupplier: boolean;
+  canCreateProduct: boolean;
+  canAttach: boolean;
+  attachment: 'pending' | 'uploaded' | 'failed' | 'skipped';
+  gapAccepted: boolean;
+  suggestionsConfirmed: boolean;
 }
 
 @Component({
@@ -112,7 +187,9 @@ interface ReceiptLineRow {
     DialogModule, ToastModule,
     PageHeaderComponent, BreadcrumbComponent, FormSectionComponent,
     WarehouseSelectorComponent, ButtonComponent,
-    StockAllocationEditorComponent, BarcodeScanFieldComponent
+    StockAllocationEditorComponent, BarcodeScanFieldComponent,
+    PurchaseReceiptImportReviewBannerComponent, PurchaseReceiptImportSupplierCardComponent,
+    QuickCreateSupplierDialogComponent, QuickCreateProductDialogComponent
   ],
   styleUrl: './purchase-receipt-form.component.scss',
   template: `
@@ -134,7 +211,28 @@ interface ReceiptLineRow {
     } @else {
       <div class="form-layout">
         <div class="form-main">
+          @if (importState()) {
+            <app-purchase-receipt-import-review-banner
+              [confidence]="importState()!.confidence"
+              [warnings]="importHeaderWarnings()"
+              [totalsMismatch]="importTotalsMismatch()"
+              [gapAccepted]="importState()!.gapAccepted"
+              [hasNameMatches]="importHasNameMatches()"
+              [suggestionsConfirmed]="importState()!.suggestionsConfirmed"
+              (acceptGap)="acceptImportGap()"
+              (confirmSuggestions)="confirmImportSuggestions()">
+            </app-purchase-receipt-import-review-banner>
+          }
+
           <app-form-section title="Informations générales" i18n-title="@@purchase-receipts.pages.informations.generales.be6ba6e5" icon="pi-building" [number]="1">
+            @if (importState()) {
+              <app-purchase-receipt-import-supplier-card
+                [supplierInfo]="importState()!.supplier"
+                [canCreateSupplier]="importState()!.canCreateSupplier"
+                (selectCandidate)="onSupplierCandidateChosen($event)"
+                (createRequested)="openQuickCreateSupplier()">
+              </app-purchase-receipt-import-supplier-card>
+            }
             <div class="ft-form-grid ft-form-grid--3">
               <div class="ft-field">
                 <label for="supplier" i18n="@@purchase-receipts.pages.fournisseur.bc374fa5">Fournisseur <span class="required">*</span></label>
@@ -166,10 +264,13 @@ interface ReceiptLineRow {
                   [filter]="true"
                   filterBy="label"
                   [showClear]="true"
-                  [disabled]="isEdit() || !!lockedPurchaseOrderId"
+                  [disabled]="isEdit() || !!lockedPurchaseOrderId || !!importState()"
                   (onChange)="onPurchaseOrderChange()"
                   styleClass="w-full">
                 </p-select>
+                @if (importState()) {
+                  <small class="ft-field__hint" i18n="@@purchase-receipts.pages.indisponible.lors.d.un.import.depuis.un.document.1a2b3c80">Indisponible lors d'un import depuis un document.</small>
+                }
               </div>
 
               <div class="ft-field">
@@ -322,6 +423,28 @@ interface ReceiptLineRow {
                             </div>
                           </ng-template>
                         </p-autoComplete>
+                        @if (line.importInfo) {
+                          <div class="line-import-badge" [class.line-import-badge--pending]="line.importInfo.resolution === 'pending'">
+                            @switch (line.importInfo.resolution) {
+                              @case ('matched') { <span i18n="@@purchase-receipts.pages.puce.reconnu.1a2b3c90">Reconnu</span> }
+                              @case ('mapped') { <span i18n="@@purchase-receipts.pages.puce.associe.1a2b3c91">Associé</span> }
+                              @case ('created') { <span i18n="@@purchase-receipts.pages.puce.cree.1a2b3c92">Créé</span> }
+                              @default { <span i18n="@@purchase-receipts.pages.puce.a.resoudre.1a2b3c93">À résoudre</span> }
+                            }
+                          </div>
+                          @if (line.importInfo.resolution === 'pending') {
+                            <div class="line-import-actions">
+                              @for (candidate of line.importInfo.candidates.slice(0, 3); track candidate.id) {
+                                <app-button variant="outline" size="sm" (clicked)="chooseLineCandidate(line, candidate)">
+                                  {{ candidate.code }} — {{ candidate.name }}
+                                </app-button>
+                              }
+                              @if (importState()?.canCreateProduct) {
+                                <app-button variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="openQuickCreateProduct(line, i)" i18n="@@purchase-receipts.pages.creer.le.produit.1a2b3c94"> Créer le produit </app-button>
+                              }
+                            </div>
+                          }
+                        }
                       </td>
                       <td class="col-designation">
                         <input pInputText [value]="line.designation" [title]="line.designation" disabled class="w-full bg-muted" />
@@ -390,6 +513,28 @@ interface ReceiptLineRow {
                         </app-button>
                       </td>
                     </tr>
+                    @if (line.importInfo) {
+                    <tr class="line-import-row">
+                      <td [attr.colspan]="11">
+                        <span i18n="@@purchase-receipts.pages.document.a1b2c3d1">Document :</span>
+                        {{ line.importInfo.extractedCode }} — {{ line.importInfo.extractedDesignation }} —
+                        {{ line.importInfo.extractedQuantity }} {{ line.importInfo.extractedUnit }} ×
+                        {{ line.importInfo.extractedUnitPriceHt | number:'1.3-3' }}
+                        @if (line.importInfo.extractedVatRatePercent !== null) {
+                          — <span i18n="@@purchase-receipts.pages.tva.fb62cb5d">TVA</span> {{ line.importInfo.extractedVatRatePercent }}%
+                        }
+                        @if (line.importInfo.extractedVatRatePercent !== null && line.importInfo.extractedVatRatePercent !== line.vatRate) {
+                          <span class="line-import-row__note" i18n="@@purchase-receipts.pages.la.tva.du.document.differe.de.celle.de.l.artic.a1b2c3d2"> La TVA du document diffère de celle de l'article. Le bon utilise la TVA de l'article. </span>
+                        }
+                        @if (line.importInfo.quantityToCheck) {
+                          <span class="line-import-row__note" i18n="@@purchase-receipts.pages.quantite.a.verifier.a1b2c3d3"> Quantité à vérifier </span>
+                        }
+                        @for (w of importLineWarnings(line.importInfo.index); track w.code) {
+                          <span class="line-import-row__warning">{{ w.message || importWarningLabel(w.code) }}</span>
+                        }
+                      </td>
+                    </tr>
+                    }
                     @if (showLineTraceability(line)) {
                     <tr class="line-traceability-row">
                       <td [attr.colspan]="11">
@@ -439,6 +584,21 @@ interface ReceiptLineRow {
                 <span i18n="@@purchase-receipts.pages.reste.a.recevoir.ht.b1ff628f">Reste à recevoir HT</span>
                 <strong>{{ remainingHT() | currency:'TND':'symbol':'1.3-3' }}</strong>
               </div>
+              @if (importState()) {
+                <div class="ft-totals__divider"></div>
+                <h3 class="ft-totals__title" i18n="@@purchase-receipts.pages.totaux.du.document.a1b2c3e0">Totaux du document</h3>
+                <div class="ft-totals__row">
+                  <span i18n="@@purchase-receipts.pages.total.document.ttc.a1b2c3e1">Document (TTC)</span>
+                  <strong>{{ importState()!.documentTotals.totalAmount | currency:'TND':'symbol':'1.3-3' }}</strong>
+                </div>
+                <div class="ft-totals__row">
+                  <span i18n="@@purchase-receipts.pages.bon.calcule.ttc.a1b2c3e2">Bon (calculé, TTC)</span>
+                  <strong>{{ totalTTC() | currency:'TND':'symbol':'1.3-3' }}</strong>
+                </div>
+                @if (importTotalsMismatch()) {
+                  <p class="ft-totals__mismatch" i18n="@@purchase-receipts.pages.les.totaux.differents.du.document.verifiez.a1b2c3e3"> Les totaux diffèrent du document : vérifiez quantités, prix et remises. </p>
+                }
+              }
             </div>
           </app-form-section>
 
@@ -548,6 +708,19 @@ interface ReceiptLineRow {
           (clicked)="applyImportBl()" i18n="@@purchase-receipts.pages.appliquer.a4d66139"> Appliquer </app-button>
       </ng-template>
     </p-dialog>
+
+    <app-quick-create-supplier-dialog
+      [(visible)]="quickCreateSupplierVisible"
+      [prefill]="quickCreateSupplierPrefill"
+      (supplierCreated)="onSupplierCreated($event)"
+      (useExisting)="onSupplierUseExisting($event)">
+    </app-quick-create-supplier-dialog>
+
+    <app-quick-create-product-dialog
+      [(visible)]="quickCreateProductVisible"
+      [prefill]="quickCreateProductPrefillValue"
+      (productCreated)="onQuickProductCreated($event)">
+    </app-quick-create-product-dialog>
   `
 })
 export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
@@ -569,6 +742,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
   private warehouseContext = inject(WarehouseContextService);
   private readonly barcodeLookup = inject(BarcodeLookupService);
   private readonly barcodeFeedback = inject(BarcodeFeedbackService);
+  private readonly auth = inject(AuthService);
+  private readonly importStore = inject(PurchaseReceiptImportPrefillStore);
   /** null annule une recherche serveur encore en debounce ou en vol. */
   private readonly searchSubject$ = new Subject<string | null>();
   private readonly destroy$ = new Subject<void>();
@@ -618,6 +793,15 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
   importBlDialogVisible = false;
   importBlNumber = '';
 
+  /** Non nul pendant la revue d'un import de document (jusqu'à l'enregistrement). */
+  importState = signal<ImportReviewState | null>(null);
+  quickCreateSupplierVisible = false;
+  quickCreateSupplierPrefill: QuickCreateSupplierPrefill | null = null;
+  quickCreateProductVisible = false;
+  quickCreateProductPrefillValue: QuickCreateProductPrefill | null = null;
+  private lineIndexForNewProduct = -1;
+  protected readonly importWarningLabel = importWarningLabel;
+
   breadcrumbItems: BreadcrumbItem[] = [
     { label: $localize`:@@purchase-receipts.purchase-receipt-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
     { label: $localize`:@@purchase-receipts.purchase-receipt-form.ts.bons.de.reception.84d6ebb5:Bons de réception`, route: '/purchase-receipts' },
@@ -652,7 +836,16 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
     } else if (poId) {
       this.lockedPurchaseOrderId = poId;
       this.selectedPurchaseOrderId = poId;
+      // Un import en attente ne doit pas s'appliquer après coup sur un préremplissage BC.
+      this.importStore.clear();
       this.prefillFromPo(poId);
+    } else if (this.importStore.hasPending) {
+      const payload = this.importStore.consume();
+      if (payload) {
+        this.applyImport(payload);
+      } else {
+        this.loading.set(false);
+      }
     } else {
       this.loading.set(false);
     }
@@ -953,11 +1146,328 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
     }
   }
 
+  // --- Import de bon de réception depuis un document (PDF / image) --------
+
+  private applyImport(payload: PurchaseReceiptImportPayload): void {
+    const { proposal, file } = payload;
+    const canCreateSupplier = proposal.canCreateSupplier
+      && this.auth.hasPermission(PERMISSIONS.suppliers.create)
+      && !this.auth.isFirmDelegatedReadonly();
+    const canCreateProduct = proposal.canCreateProduct
+      && this.auth.hasPermission(PERMISSIONS.products.create)
+      && !this.auth.isFirmDelegatedReadonly();
+    const canAttach = proposal.canAttach ?? this.auth.hasPermission(PERMISSIONS.purchaseReceipts.update);
+
+    this.importState.set({
+      fileName: file.name,
+      sourceFile: file,
+      extractionProvider: proposal.extractionProvider,
+      ocrApplied: proposal.ocrApplied,
+      confidence: proposal.confidence,
+      documentType: proposal.documentType,
+      warnings: proposal.warnings,
+      supplier: proposal.supplier,
+      supplierResolution: 'pending',
+      documentTotals: proposal.expectedReceiptTotals,
+      canCreateSupplier,
+      canCreateProduct,
+      canAttach,
+      attachment: 'pending',
+      gapAccepted: false,
+      suggestionsConfirmed: false
+    });
+
+    const header = proposal.header;
+    this.deliveryNoteNumber = header.deliveryNoteNumber ?? '';
+    this.supplierReference = header.supplierReference ?? '';
+    this.receiptDate = header.receiptDate ? new Date(header.receiptDate) : new Date();
+    this.notes = header.suggestedNotes ?? '';
+
+    if (!this.selectedWarehouseId && header.suggestedWarehouseId) {
+      this.selectedWarehouseId = header.suggestedWarehouseId;
+    }
+
+    this.applyImportSupplier(proposal.supplier);
+
+    this.lines = proposal.lines.map(l => this.buildImportLine(l));
+
+    const distinctProductIds = Array.from(new Set(
+      this.lines.map(l => l.productId).filter((id): id is string => !!id)
+    ));
+
+    if (distinctProductIds.length === 0) {
+      this.loadTraceabilityContext();
+      this.recalculateTotals();
+      this.loading.set(false);
+      return;
+    }
+
+    let remaining = distinctProductIds.length;
+    for (const productId of distinctProductIds) {
+      this.productService.getProduct(productId).pipe(
+        catchError(() => of(null))
+      ).subscribe(res => {
+        const product = res?.success ? res.data ?? null : null;
+        const usable = product && product.isActive !== false;
+        for (const line of this.lines) {
+          if (line.productId !== productId) continue;
+          if (!usable) {
+            line.productId = null;
+            line.product = null;
+            if (line.importInfo) line.importInfo.resolution = 'pending';
+            continue;
+          }
+          line.product = product;
+          line.vatRate = product!.vatRate ?? line.vatRate;
+          line.trackingMode = coerceTrackingMode(product!.trackingMode);
+          line.unit = product!.unit ?? line.unit;
+        }
+        remaining--;
+        if (remaining <= 0) {
+          this.loadTraceabilityContext();
+          this.recalculateTotals();
+          this.loading.set(false);
+        }
+      });
+    }
+  }
+
+  private buildImportLine(l: PurchaseReceiptImportLine): ReceiptLineRow {
+    const quantity = l.quantity && l.quantity > 0 ? l.quantity : 1;
+    const quantityToCheck = !(l.quantity && l.quantity > 0);
+    const unit = normalizeImportUnit(l.unit);
+    const vatRate = l.productVatRatePercent ?? l.vatRatePercent ?? 19;
+    const resolution: ImportLineInfo['resolution'] = l.productId ? 'matched' : 'pending';
+
+    return {
+      id: null,
+      product: l.productId ? ({
+        id: l.productId,
+        code: l.productCode ?? '',
+        name: l.productName ?? l.designation ?? '',
+        description: null,
+        unit,
+        unitPrice: l.unitPriceHt ?? 0,
+        purchasePrice: l.unitPriceHt ?? 0,
+        vatRate,
+        typeDisplay: '',
+        categoryId: '',
+        category: '',
+        isActive: true,
+        isStockManaged: true
+      } as ProductListItem) : null,
+      productId: l.productId,
+      productCode: l.productCode ?? '',
+      productName: l.productName ?? '',
+      designation: l.designation ?? l.productName ?? '',
+      unit,
+      orderedQuantity: 0,
+      receivedQuantity: quantity,
+      alreadyReceivedQuantity: 0,
+      unitPriceHT: Math.max(0, l.unitPriceHt ?? 0),
+      discountPercent: l.discountPercent ?? 0,
+      vatRate,
+      purchaseOrderLineId: null,
+      trackingMode: 0,
+      pickingPolicy: 0,
+      lotAllocations: [createDefaultLotRow(quantity)],
+      importInfo: {
+        index: l.index,
+        extractedCode: l.extractedCode,
+        extractedDesignation: l.designation,
+        extractedUnit: l.unit,
+        extractedQuantity: l.quantity,
+        extractedUnitPriceHt: l.unitPriceHt,
+        extractedDiscountPercent: l.discountPercent,
+        extractedVatRatePercent: l.vatRatePercent,
+        matchMethod: l.matchMethod,
+        candidates: l.candidates,
+        prefill: l.prefill,
+        quantityToCheck,
+        resolution
+      }
+    };
+  }
+
+  private applyImportSupplier(supplier: PurchaseReceiptImportSupplier): void {
+    const matched = (supplier.matchOutcome === 'MatchedByNif' || supplier.matchOutcome === 'MatchedByName') && !!supplier.supplierId;
+    if (matched) {
+      this.ensureSupplierOption(supplier.supplierId!, supplier.supplierName);
+      this.selectedSupplierId = supplier.supplierId;
+      this.updateImportState(s => ({ ...s, supplierResolution: 'matched' }));
+      this.loadEligiblePurchaseOrders(supplier.supplierId!);
+    } else {
+      this.selectedSupplierId = null;
+      this.updateImportState(s => ({ ...s, supplierResolution: 'pending' }));
+    }
+    for (const c of supplier.candidates) {
+      if (c.isActive) this.ensureSupplierOption(c.id, c.name);
+    }
+  }
+
+  private ensureSupplierOption(id: string, name: string | null): void {
+    const current = this.suppliers();
+    if (current.some(s => s.id === id)) return;
+    this.suppliers.set([{
+      id,
+      name: name ?? '',
+      type: '',
+      typeDisplay: '',
+      nif: null,
+      email: null,
+      phone: null,
+      city: '',
+      governorate: '',
+      contactPerson: null,
+      paymentTermDays: 30,
+      isActive: true,
+      totalOrders: 0
+    } as SupplierListItem, ...current]);
+  }
+
+  private updateImportState(fn: (s: ImportReviewState) => ImportReviewState): void {
+    const current = this.importState();
+    if (!current) return;
+    this.importState.set(fn(current));
+  }
+
+  importHeaderWarnings(): PurchaseReceiptImportWarning[] {
+    return this.importState()?.warnings.filter(w => w.lineIndex === null) ?? [];
+  }
+
+  importLineWarnings(lineIndex: number): PurchaseReceiptImportWarning[] {
+    return this.importState()?.warnings.filter(w => w.lineIndex === lineIndex) ?? [];
+  }
+
+  importTotalsMismatch(): boolean {
+    const state = this.importState();
+    if (!state || state.gapAccepted) return false;
+    return compareImportTotals(state.documentTotals, this.totalTTC())?.mismatch ?? false;
+  }
+
+  importHasNameMatches(): boolean {
+    return this.lines.some(l => l.importInfo?.matchMethod === 'name');
+  }
+
+  acceptImportGap(): void {
+    this.updateImportState(s => ({ ...s, gapAccepted: true }));
+  }
+
+  confirmImportSuggestions(): void {
+    this.updateImportState(s => ({ ...s, suggestionsConfirmed: true }));
+  }
+
+  onSupplierCandidateChosen(id: string): void {
+    this.selectedSupplierId = id;
+    this.updateImportState(s => ({ ...s, supplierResolution: 'chosen' }));
+    this.onSupplierChange();
+  }
+
+  openQuickCreateSupplier(): void {
+    const prefill = this.importState()?.supplier.prefill;
+    this.quickCreateSupplierPrefill = prefill ? {
+      name: prefill.name,
+      type: toSupplierType(prefill.type),
+      nif: prefill.nif,
+      street: prefill.street,
+      city: prefill.city,
+      postalCode: prefill.postalCode,
+      governorate: prefill.governorate,
+      email: prefill.email,
+      phone: prefill.phone
+    } : null;
+    this.quickCreateSupplierVisible = true;
+  }
+
+  onSupplierCreated(s: QuickCreatedSupplier): void {
+    this.ensureSupplierOption(s.id, s.name);
+    this.selectedSupplierId = s.id;
+    this.quickCreateSupplierVisible = false;
+    this.updateImportState(state => ({ ...state, supplierResolution: 'created' }));
+    this.onSupplierChange();
+    this.toastService.add({
+      severity: 'success',
+      summary: $localize`:@@purchase-receipts.purchase-receipt-form.ts.fournisseur.cree.a1b2c3f0:Fournisseur créé`,
+      detail: $localize`:@@purchase-receipts.purchase-receipt-form.ts.fournisseur.cree.et.selectionne.a1b2c3f1:Le fournisseur a été créé et sélectionné.`
+    });
+  }
+
+  onSupplierUseExisting(s: QuickCreatedSupplier): void {
+    this.ensureSupplierOption(s.id, s.name);
+    this.selectedSupplierId = s.id;
+    this.quickCreateSupplierVisible = false;
+    this.updateImportState(state => ({ ...state, supplierResolution: 'chosen' }));
+    this.onSupplierChange();
+  }
+
+  chooseLineCandidate(line: ReceiptLineRow, candidate: ProductCandidate): void {
+    this.productService.getProduct(candidate.id).subscribe(res => {
+      if (!res.success || !res.data) return;
+      this.onProductSelect(line, { value: res.data } as AutoCompleteSelectEvent);
+    });
+  }
+
+  openQuickCreateProduct(line: ReceiptLineRow, index: number): void {
+    this.lineIndexForNewProduct = index;
+    const prefill = line.importInfo?.prefill;
+    this.quickCreateProductPrefillValue = prefill ? {
+      code: prefill.code,
+      codeConflict: prefill.codeConflict,
+      name: prefill.name,
+      category: toProductCategory(prefill.type),
+      unit: normalizeImportUnit(prefill.unit),
+      vatRate: toVatPercent(prefill.vatRate),
+      purchasePrice: prefill.purchasePrice,
+      barcode: prefill.barcode,
+      isStockManaged: prefill.isStockManaged,
+      preferredSupplierId: prefill.preferredSupplierId
+    } : null;
+    this.quickCreateProductVisible = true;
+  }
+
+  onQuickProductCreated(product: ProductListItem): void {
+    const line = this.lines[this.lineIndexForNewProduct];
+    this.quickCreateProductVisible = false;
+    if (!line) return;
+
+    const extractedCode = line.importInfo?.extractedCode?.trim().toLowerCase() || null;
+    this.onProductSelect(line, { value: product } as AutoCompleteSelectEvent);
+    if (line.importInfo) line.importInfo.resolution = 'created';
+
+    let appliedCount = 0;
+    if (extractedCode) {
+      for (const other of this.lines) {
+        if (other === line || other.productId) continue;
+        if (other.importInfo?.extractedCode?.trim().toLowerCase() !== extractedCode) continue;
+        this.onProductSelect(other, { value: product } as AutoCompleteSelectEvent);
+        if (other.importInfo) other.importInfo.resolution = 'created';
+        appliedCount++;
+      }
+    }
+    if (appliedCount > 0) {
+      this.toastService.add({
+        severity: 'info',
+        summary: $localize`:@@purchase-receipts.purchase-receipt-form.ts.produit.applique.a1b2c3f2:Produit appliqué`,
+        detail: $localize`:@@purchase-receipts.purchase-receipt-form.ts.applique.a.n.autre.s.ligne.s.a1b2c3f3:Appliqué à ${appliedCount}:count: autre(s) ligne(s)`
+      });
+    }
+    this.loadTraceabilityContext();
+    this.recalculateTotals();
+  }
+
   onSupplierChange(): void {
     this.selectedPurchaseOrderId = null;
     this.purchaseOrderOptions.set([]);
     if (this.selectedSupplierId) {
       this.loadEligiblePurchaseOrders(this.selectedSupplierId);
+    }
+    if (this.importState()) {
+      this.updateImportState(s => ({
+        ...s,
+        supplierResolution: this.selectedSupplierId
+          ? (s.supplierResolution === 'pending' ? 'chosen' : s.supplierResolution)
+          : 'pending'
+      }));
     }
   }
 
@@ -1118,6 +1628,15 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
     line.pickingPolicy = this.traceabilityByProduct().get(product.id)?.pickingPolicy ?? 0;
     line.lotAllocations = this.defaultAllocationsForProduct(product, line.receivedQuantity);
     if (!line.orderedQuantity) line.orderedQuantity = 0;
+    if (line.importInfo) {
+      if ((line.importInfo.extractedUnitPriceHt ?? 0) > 0) {
+        line.unitPriceHT = line.importInfo.extractedUnitPriceHt!;
+      }
+      line.discountPercent = line.importInfo.extractedDiscountPercent ?? 0;
+      if (line.importInfo.resolution === 'pending') {
+        line.importInfo.resolution = 'mapped';
+      }
+    }
     this.loadTraceabilityContext();
     this.recalculateTotals();
   }
@@ -1182,6 +1701,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
   save(mode: 'draft' | 'save' | 'validate'): void {
     if (!this.canSave() || !this.selectedSupplierId || !this.selectedWarehouseId) return;
 
+    const wasCreate = !this.savedId();
+
     if (mode === 'validate' && this.hasTrackedLines() && !this.canValidate()) {
       this.toastService.add({
         severity: 'warn',
@@ -1234,6 +1755,14 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
         if (!id) return;
         this.savedId.set(id);
         this.isEdit.set(true);
+      }),
+      switchMap(id => {
+        if (!id) return of(id);
+        const state = this.importState();
+        if (wasCreate && state && state.attachment === 'pending') {
+          return this.attachImportSource(id, state).pipe(map(() => id));
+        }
+        return of(id);
       }),
       switchMap(id => {
         if (!id) return of({ id: null as string | null, validated: false, error: null as unknown });
@@ -1384,6 +1913,42 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
 
       this.recalculateTotals();
       this.barcodeFeedback.success(product.name);
+    });
+  }
+
+  /**
+   * Jointe le document source après la création d'un bon depuis un import.
+   * Appelée une seule fois : `attachment` passe à `uploaded`/`failed` dès le
+   * premier essai, un second enregistrement ne renvoie pas le fichier.
+   */
+  private attachImportSource(id: string, state: ImportReviewState): Observable<void> {
+    if (!state.canAttach) {
+      this.updateImportState(s => ({ ...s, attachment: 'skipped' }));
+      this.toastService.add({
+        severity: 'info',
+        summary: $localize`:@@purchase-receipts.purchase-receipt-form.ts.piece.jointe.non.envoyee.a1b2c400:Pièce jointe non envoyée`,
+        detail: $localize`:@@purchase-receipts.purchase-receipt-form.ts.vous.n.avez.pas.le.droit.de.joindre.a1b2c401:Bon de réception enregistré. Vous n'avez pas le droit de joindre des fichiers : le document source n'a pas été joint.`
+      });
+      return of(void 0);
+    }
+    return this.receiptService.uploadAttachment(id, state.sourceFile).pipe(
+      map(res => {
+        this.updateImportState(s => ({ ...s, attachment: res.success ? 'uploaded' : 'failed' }));
+        if (!res.success) this.warnAttachmentFailed();
+      }),
+      catchError(() => {
+        this.updateImportState(s => ({ ...s, attachment: 'failed' }));
+        this.warnAttachmentFailed();
+        return of(void 0);
+      })
+    );
+  }
+
+  private warnAttachmentFailed(): void {
+    this.toastService.add({
+      severity: 'warn',
+      summary: $localize`:@@purchase-receipts.purchase-receipt-form.ts.piece.jointe.a1b2c402:Pièce jointe`,
+      detail: $localize`:@@purchase-receipts.purchase-receipt-form.ts.document.source.non.joint.a1b2c403:Bon de réception enregistré, mais le document source n'a pas pu être joint. Ajoutez-le depuis la section Pièces jointes.`
     });
   }
 
