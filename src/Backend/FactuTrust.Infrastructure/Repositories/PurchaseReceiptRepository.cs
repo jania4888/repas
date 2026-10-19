@@ -336,12 +336,19 @@ public sealed class PurchaseReceiptRepository : IPurchaseReceiptRepository
     public async Task AddAttachmentAsync(PurchaseReceiptAttachment attachment, CancellationToken cancellationToken = default)
     {
         // Insert direct de l'enfant (même pattern que FiscalScheduleRepository.AddAttachmentAsync) :
-        // Add() marque la pièce jointe Added, et les entités déjà cléfées atteintes par navigation
-        // (le bon, ses lignes, produits…) Unchanged — aucune écriture parasite sur le graphe.
+        // Add() marque la pièce jointe Added et traverse la navigation PurchaseReceipt (détachée,
+        // clé déjà assignée) — EF la marque alors Added aussi (insertion doublon). On force donc
+        // explicitement Unchanged sur tout le reste du graphe découvert : seule la nouvelle ligne
+        // fille est insérée.
         // Ne pas utiliser UpdateAsync pour ça : Attach() suivrait le nouvel enfant (clé Guid déjà
         // assignée) comme Unchanged et la ligne ne serait jamais insérée.
         await using var context = _contextFactory.CreateContext();
         context.PurchaseReceiptAttachments.Add(attachment);
+        foreach (var entry in context.ChangeTracker.Entries())
+        {
+            if (!ReferenceEquals(entry.Entity, attachment))
+                entry.State = EntityState.Unchanged;
+        }
         await context.SaveChangesAsync(cancellationToken);
     }
 
