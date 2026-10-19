@@ -89,6 +89,16 @@ public sealed class ImportPurchaseReceiptFromDocumentHandler
             return Result.Failure<PurchaseReceiptImportProposalDto>(extraction.Error);
 
         var doc = extraction.Value;
+
+        // Extraction réussie mais sans aucune ligne d'article exploitable : erreur bloquante, pas
+        // une « proposition » vide — sinon l'écran de revue afficherait un bandeau « pré-rempli »
+        // trompeur au-dessus de zéro ligne (maquette pr-import-error-unreadable.html). Comme pour
+        // un échec d'extraction, on s'arrête ici : aucun rapprochement et aucune entrée d'audit
+        // « DocumentAnalyzed » (l'audit n'a lieu qu'en cas de proposition effective).
+        if (doc.Lines is null || doc.Lines.Count == 0)
+            return Result.Failure<PurchaseReceiptImportProposalDto>(
+                Error.Validation("Lines", "Aucune ligne d'article n'a pu être lue dans ce fichier."));
+
         var extractionProvider = ResolveExtractionProvider(doc.ExtractionMethod);
 
         var warnings = new List<PurchaseReceiptImportWarningDto>();

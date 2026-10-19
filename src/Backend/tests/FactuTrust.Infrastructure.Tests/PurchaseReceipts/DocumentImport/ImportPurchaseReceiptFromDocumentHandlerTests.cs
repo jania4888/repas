@@ -202,6 +202,32 @@ public sealed class ImportPurchaseReceiptFromDocumentHandlerTests
             It.IsAny<CancellationToken>()), Times.Never);
     }
 
+    [Theory]
+    [InlineData(AccountingDocumentExtractionMethods.NativePdf)]
+    [InlineData(AccountingDocumentExtractionMethods.LlmText)]
+    [InlineData(AccountingDocumentExtractionMethods.LlmVision)]
+    [InlineData(AccountingDocumentExtractionMethods.ExternalExtraction)]
+    public async Task Successful_but_empty_extraction_fails_with_a_blocking_error_and_no_audit(string extractionMethod)
+    {
+        // Maquette pr-import-error-unreadable.html : un 200 avec zéro ligne produirait un écran de
+        // revue vide sous un bandeau « pré-rempli » trompeur — ce doit être une erreur (le contrôleur
+        // la traduit en 400 et la boîte de dialogue affiche le message en état d'erreur).
+        // Couvre à la fois le chemin LLM (texte/vision) et le chemin Docstrange (external-extraction).
+        var harness = new Harness();
+        harness.SetupExtraction(NewDoc(lines: Array.Empty<ExtractedLineDto>(), extractionMethod: extractionMethod));
+        var handler = harness.Build();
+
+        var result = await handler.HandleAsync(NewCommand(), CancellationToken.None);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal("Validation.Lines", result.Error.Code);
+        Assert.Equal("Aucune ligne d'article n'a pu être lue dans ce fichier.", result.Error.Description);
+        // Même flux qu'un échec d'extraction : aucune entrée d'audit « DocumentAnalyzed ».
+        harness.AuditService.Verify(x => x.LogAsync(
+            It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid?>(), It.IsAny<object?>(), It.IsAny<object?>(),
+            It.IsAny<CancellationToken>()), Times.Never);
+    }
+
     [Fact]
     public async Task Tenant_absent_fails_before_calling_the_extractor()
     {
