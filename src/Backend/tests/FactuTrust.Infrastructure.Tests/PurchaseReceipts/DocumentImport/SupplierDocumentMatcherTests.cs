@@ -149,6 +149,27 @@ public sealed class SupplierDocumentMatcherTests
         Assert.Equal(SupplierMatchOutcome.Ambiguous, result.Outcome);
         Assert.Null(result.SupplierId);
         Assert.NotEmpty(result.Candidates);
+        Assert.False(result.NifInvalid);
+    }
+
+    [Fact]
+    public async Task Ambiguous_outcome_reports_nif_invalid_when_the_extracted_nif_does_not_canonicalize()
+    {
+        // Code review item 11 : NifInvalid était toujours renvoyé à false pour Ambiguous, même
+        // lorsque le matricule extrait est manifestement illisible. "!!!" ne contient aucun
+        // caractère alphanumérique : une fois normalisé il devient vide, donc il ne départage pas
+        // les homonymes (contrairement à "NOT-A-NIF", qui se normalise en "NOTANIF" et mène à
+        // NameConflictsWithNif) — l'issue reste bien Ambiguous.
+        var a = NewSupplier("Societe Generale Distribution");
+        var b = NewSupplier("Societe Generale Distributions", nif: "1772794X/A/M/000");
+        var (matcher, _, _) = BuildSut(
+            byNif: null, searchResults: new[] { ToListDto(a), ToListDto(b) });
+
+        var result = await matcher.MatchAsync(
+            new ExtractedPartyDto { Name = "Societe Generale Distribution", Nif = "!!!" }, CancellationToken.None);
+
+        Assert.Equal(SupplierMatchOutcome.Ambiguous, result.Outcome);
+        Assert.True(result.NifInvalid);
     }
 
     [Fact]
@@ -163,6 +184,9 @@ public sealed class SupplierDocumentMatcherTests
 
         Assert.Equal(SupplierMatchOutcome.NameConflictsWithNif, result.Outcome);
         Assert.NotNull(result.Prefill);
+        // Le matricule extrait (CanonicalNif) canonicalise correctement — ce n'est pas lui qui est
+        // invalide, c'est juste qu'il appartient à un autre fournisseur existant.
+        Assert.False(result.NifInvalid);
     }
 
     [Fact]
@@ -186,6 +210,19 @@ public sealed class SupplierDocumentMatcherTests
         var result = await matcher.MatchAsync(new ExtractedPartyDto { Name = "Fournisseur Quelconque" }, CancellationToken.None);
 
         Assert.Equal(SupplierMatchOutcome.NotFound, result.Outcome);
+    }
+
+    [Fact]
+    public async Task Cancellation_is_not_swallowed_as_a_matching_failure()
+    {
+        // Code review item 10 : une OperationCanceledException ne doit pas être interceptée par le
+        // catch générique et renvoyée comme un NotFound silencieux — elle doit se propager.
+        var (matcher, _, mediator) = BuildSut();
+        mediator.Setup(x => x.Send(It.IsAny<GetSuppliersQuery>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new OperationCanceledException());
+
+        await Assert.ThrowsAsync<OperationCanceledException>(
+            () => matcher.MatchAsync(new ExtractedPartyDto { Name = "Fournisseur Quelconque" }, CancellationToken.None));
     }
 
     [Fact]

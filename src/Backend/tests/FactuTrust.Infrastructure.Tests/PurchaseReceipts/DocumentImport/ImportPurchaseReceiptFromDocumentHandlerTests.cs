@@ -266,6 +266,42 @@ public sealed class ImportPurchaseReceiptFromDocumentHandlerTests
     }
 
     [Fact]
+    public async Task Seller_with_a_garbled_nif_but_an_exact_company_name_still_swaps_to_the_buyer()
+    {
+        // Code review item 3 : un matricule bruité par l'OCR (non canonisable) ne doit pas, à lui
+        // seul, écarter un nom exactement identique — sinon la propre société du client serait
+        // traitée comme son propre fournisseur (régression de sécurité/correction).
+        var harness = new Harness();
+        harness.Companies.Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new[] { NewCompany() });
+        var seller = new ExtractedPartyDto { Name = "Ma Societe", Nif = "GARBLED!!!" };
+        var buyer = new ExtractedPartyDto { Name = "Fournisseur Reel", Nif = SupplierNif };
+        harness.SetupExtraction(NewDoc(seller: seller, buyer: buyer));
+        var handler = harness.Build();
+
+        var result = await handler.HandleAsync(NewCommand(), CancellationToken.None);
+
+        Assert.Equal("Fournisseur Reel", result.Value.Supplier.ExtractedName);
+        Assert.Contains(result.Value.Warnings, w => w.Code == PurchaseReceiptImportWarningCodes.PartiesSwapped);
+    }
+
+    [Fact]
+    public async Task Seller_with_a_different_canonical_nif_despite_a_similar_name_does_not_swap()
+    {
+        // Contre-exemple : un matricule qui canonicalise bel et bien, mais vers une AUTRE carte que
+        // celle de la société, doit continuer à écarter le rapprochement même si le nom est proche.
+        var harness = new Harness();
+        harness.Companies.Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new[] { NewCompany() });
+        var seller = new ExtractedPartyDto { Name = "Ma Societe", Nif = SupplierNif };
+        harness.SetupExtraction(NewDoc(seller: seller));
+        var handler = harness.Build();
+
+        var result = await handler.HandleAsync(NewCommand(), CancellationToken.None);
+
+        Assert.Equal("Ma Societe", result.Value.Supplier.ExtractedName);
+        Assert.DoesNotContain(result.Value.Warnings, w => w.Code == PurchaseReceiptImportWarningCodes.PartiesSwapped);
+    }
+
+    [Fact]
     public async Task Both_parties_matching_the_company_results_in_missing_supplier_without_proposing_the_company()
     {
         var harness = new Harness();
@@ -297,6 +333,23 @@ public sealed class ImportPurchaseReceiptFromDocumentHandlerTests
         Assert.Equal(55, result.Value.Lines.Count);
         Assert.All(result.Value.Lines.Skip(50), l => Assert.Equal("skipped", l.MatchMethod));
         Assert.Single(result.Value.Warnings, w => w.Code == PurchaseReceiptImportWarningCodes.TooManyLines);
+    }
+
+    [Fact]
+    public async Task Lines_beyond_fifty_still_count_towards_the_computed_totals()
+    {
+        // Code review item 4 : les lignes au-delà de MaxLinesToMatch=50 étaient auparavant exclues
+        // du total HT calculé, ce qui pouvait déclencher un faux TotalHtMismatch pour un document de
+        // plus de 50 lignes dont le total imprimé, lui, les inclut toutes.
+        var harness = new Harness();
+        var lines = Enumerable.Range(1, 55).Select(i => NewLine(reference: $"PROD-{i}", unitPriceHt: 100m, quantity: 1m)).ToArray();
+        harness.SetupExtraction(NewDoc(lines: lines, totalHt: 5500m));
+        var handler = harness.Build();
+
+        var result = await handler.HandleAsync(NewCommand(), CancellationToken.None);
+
+        Assert.DoesNotContain(result.Value.Warnings, w => w.Code == PurchaseReceiptImportWarningCodes.TotalHtMismatch);
+        Assert.Equal(5500m, result.Value.ExpectedReceiptTotals.SubTotal);
     }
 
     // ---------- Totaux ----------
@@ -378,6 +431,39 @@ public sealed class ImportPurchaseReceiptFromDocumentHandlerTests
     }
 
     // ---------- Bornes ----------
+
+    [Fact]
+    public async Task Invalid_vat_rate_warning_names_the_actual_nearest_valid_rate_not_a_hardcoded_nineteen()
+    {
+        // Code review item 8 : le message disait toujours "19 % a été retenu par défaut", même
+        // quand le taux le plus proche n'était pas 19 % (ici 5 % -\u003e 7 % est le plus proche, pas 19 %).
+        var harness = new Harness();
+        harness.SetupExtraction(NewDoc(lines: new[] { NewLine(vatRatePercent: 5, unitPriceHt: 100m, quantity: 1m) }));
+        var handler = harness.Build();
+
+        var result = await handler.HandleAsync(NewCommand(), CancellationToken.None);
+
+        var warning = Assert.Single(
+            result.Value.Warnings, w => w.Code == PurchaseReceiptImportWarningCodes.VatRateDefaulted);
+        Assert.Contains("5 %", warning.Message);
+        Assert.Contains("7 %", warning.Message);
+        Assert.DoesNotContain("19 %", warning.Message);
+    }
+
+    [Fact]
+    public async Task Invalid_vat_rate_warning_still_names_nineteen_when_it_is_genuinely_the_nearest_rate()
+    {
+        var harness = new Harness();
+        harness.SetupExtraction(NewDoc(lines: new[] { NewLine(vatRatePercent: 20, unitPriceHt: 100m, quantity: 1m) }));
+        var handler = harness.Build();
+
+        var result = await handler.HandleAsync(NewCommand(), CancellationToken.None);
+
+        var warning = Assert.Single(
+            result.Value.Warnings, w => w.Code == PurchaseReceiptImportWarningCodes.VatRateDefaulted);
+        Assert.Contains("20 %", warning.Message);
+        Assert.Contains("19 %", warning.Message);
+    }
 
     [Fact]
     public async Task Discount_out_of_range_is_dropped_and_signalled()
@@ -526,6 +612,24 @@ public sealed class ImportPurchaseReceiptFromDocumentHandlerTests
 
         Assert.Equal(expected, result.Value.CanCreateSupplier);
         Assert.Equal(expected, result.Value.CanCreateProduct);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task CanAttach_reflects_the_purchase_receipts_update_permission(bool canUpdate)
+    {
+        // Code review item 6 : CanAttach doit refléter le droit PurchaseReceipts.Update, pour que
+        // l'UI conditionne l'auto-attachement du fichier source après création.
+        var harness = new Harness();
+        harness.CurrentUser.Setup(x => x.HasPermission(It.IsAny<string>())).Returns(true);
+        harness.CurrentUser.Setup(x => x.HasPermission(Permissions.PurchaseReceipts.Update)).Returns(canUpdate);
+        harness.SetupExtraction(NewDoc());
+        var handler = harness.Build();
+
+        var result = await handler.HandleAsync(NewCommand(), CancellationToken.None);
+
+        Assert.Equal(canUpdate, result.Value.CanAttach);
     }
 
     // ---------- Audit ----------
