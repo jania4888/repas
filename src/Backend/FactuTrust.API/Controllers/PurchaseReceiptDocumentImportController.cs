@@ -1,6 +1,7 @@
 using FactuTrust.API.Authorization;
 using FactuTrust.Application.Common.Files;
 using FactuTrust.Application.Common.Interfaces;
+using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.AI;
 using FactuTrust.Application.Features.AI.DocumentExtraction;
@@ -45,18 +46,24 @@ public sealed class PurchaseReceiptDocumentImportController : ControllerBase
     private readonly ImportPurchaseReceiptFromDocumentHandler _handler;
     private readonly ICurrentUser _currentUser;
     private readonly IDocumentExtractionProvider? _externalExtraction;
+    private readonly IAiOcrService _ocr;
+    private readonly IImportAiModelResolutionService _importModelResolver;
     private readonly ILogger<PurchaseReceiptDocumentImportController> _logger;
     private readonly IHostEnvironment _environment;
 
     public PurchaseReceiptDocumentImportController(
         ImportPurchaseReceiptFromDocumentHandler handler,
         ICurrentUser currentUser,
+        IAiOcrService ocr,
+        IImportAiModelResolutionService importModelResolver,
         ILogger<PurchaseReceiptDocumentImportController> logger,
         IHostEnvironment environment,
         IDocumentExtractionProvider? externalExtraction = null)
     {
         _handler = handler;
         _currentUser = currentUser;
+        _ocr = ocr;
+        _importModelResolver = importModelResolver;
         _logger = logger;
         _environment = environment;
         _externalExtraction = externalExtraction;
@@ -70,14 +77,20 @@ public sealed class PurchaseReceiptDocumentImportController : ControllerBase
         var externalAvailable = _externalExtraction is not null
             && await _externalExtraction.IsAvailableAsync(cancellationToken);
 
+        var resolution = await _importModelResolver.ResolveAsync(null, cancellationToken);
+        var modelResolved = !string.IsNullOrWhiteSpace(resolution.Model.ProviderModelId);
+        // "Traitement externalisé" = Docstrange (service tiers) lit le document, OU le modèle
+        // résolu n'est pas exécuté localement (Ollama) — ex. OpenRouter/Modal/Cursor.
+        var isLocalModel = resolution.Model.Kind == LlmProviderKind.Ollama;
+
         var extractionProvider = externalAvailable ? "docstrange" : "llm";
 
         var dto = new PurchaseReceiptImportCapabilitiesDto(
-            Available: true,
+            Available: externalAvailable || modelResolved,
             ExtractionProvider: extractionProvider,
-            OcrAvailable: true,
-            VisionCapable: true,
-            ExternalProcessing: externalAvailable,
+            OcrAvailable: _ocr.IsAvailable,
+            VisionCapable: resolution.IsVisionCapable,
+            ExternalProcessing: externalAvailable || !isLocalModel,
             MaxFileBytes: ImportMaxBytes,
             AcceptedContentTypes: AcceptedContentTypes.ToArray(),
             CanCreateSupplier: _currentUser.HasPermission(Permissions.Suppliers.Create),

@@ -59,7 +59,7 @@ public sealed class PurchaseReceiptImportProposalDtoContractTests
         return new PurchaseReceiptImportProposalDto(
             "docstrange", true, "INVOICE", "FA-42", header, supplier,
             new List<PurchaseReceiptImportLineDto> { line }, totals, expectedTotals,
-            "high", new List<PurchaseReceiptImportWarningDto> { warning }, true, true);
+            "high", new List<PurchaseReceiptImportWarningDto> { warning }, true, true, true);
     }
 
     [Fact]
@@ -82,6 +82,7 @@ public sealed class PurchaseReceiptImportProposalDtoContractTests
         Assert.NotNull(node["warnings"]?[0]?["code"]);
         Assert.NotNull(node["canCreateSupplier"]);
         Assert.NotNull(node["canCreateProduct"]);
+        Assert.NotNull(node["canAttach"]);
     }
 
     [Fact]

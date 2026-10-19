@@ -9,6 +9,7 @@ using FactuTrust.Application.Features.Accounting.DocumentImport;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
+using FactuTrust.Domain.ValueObjects;
 using Microsoft.Extensions.Logging;
 
 namespace FactuTrust.Application.Features.PurchaseReceipts.DocumentImport;
@@ -94,7 +95,7 @@ public sealed class ImportPurchaseReceiptFromDocumentHandler
             return Result.Failure<PurchaseReceiptImportProposalDto>(extraction.Error);
 
         var doc = extraction.Value;
-        var extractionProvider = await ResolveExtractionProviderAsync(doc.ExtractionMethod, cancellationToken);
+        var extractionProvider = ResolveExtractionProvider(doc.ExtractionMethod);
 
         var warnings = new List<PurchaseReceiptImportWarningDto>();
         foreach (var raw in doc.Warnings)
@@ -188,7 +189,8 @@ public sealed class ImportPurchaseReceiptFromDocumentHandler
             InvoiceImportParsing.NormalizeConfidence(doc.Confidence),
             warnings,
             _currentUser.HasPermission(Permissions.Suppliers.Create),
-            _currentUser.HasPermission(Permissions.Products.Create));
+            _currentUser.HasPermission(Permissions.Products.Create),
+            _currentUser.HasPermission(Permissions.PurchaseReceipts.Update));
 
         await LogAuditAsync(command, fileSize, extractionProvider, doc.Lines.Count, lineDtos, supplierMatch, warnings, cancellationToken);
 
@@ -201,16 +203,18 @@ public sealed class ImportPurchaseReceiptFromDocumentHandler
         return Result.Success(proposal);
     }
 
-    private async Task<string> ResolveExtractionProviderAsync(string extractionMethod, CancellationToken cancellationToken)
-    {
-        if (extractionMethod != AccountingDocumentExtractionMethods.ExternalExtraction)
-            return extractionMethod;
-
-        if (_externalExtraction is not null && await _externalExtraction.IsAvailableAsync(cancellationToken))
-            return _externalExtraction.Name;
-
-        return AccountingDocumentExtractionMethods.ExternalExtraction;
-    }
+    /// <summary>
+    /// Étiquette affichée pour le fournisseur ayant produit l'extraction. L'extraction a déjà
+    /// réussi via <c>_externalExtraction</c> quand <paramref name="extractionMethod"/> vaut
+    /// <see cref="AccountingDocumentExtractionMethods.ExternalExtraction"/> — il n'y a donc rien à
+    /// re-vérifier ici (un second appel à <c>IsAvailableAsync</c> ne reflète que l'état présent,
+    /// pas celui au moment de l'extraction, et pouvait faire retomber l'étiquette sur le code
+    /// technique <c>"external-extraction"</c> au lieu du nom lisible du service).
+    /// </summary>
+    private string ResolveExtractionProvider(string extractionMethod) =>
+        extractionMethod == AccountingDocumentExtractionMethods.ExternalExtraction
+            ? _externalExtraction?.Name ?? "docstrange"
+            : extractionMethod;
 
     private static (ExtractedPartyDto? Party, bool SellerWasCompany) ResolveSupplierParty(
         AccountingDocumentExtractionDto doc, Company? company)
@@ -236,8 +240,13 @@ public sealed class ImportPurchaseReceiptFromDocumentHandler
         if (ThirdPartyMatricule.SameMatricule(company.Nif.Value, party.Nif))
             return true;
 
-        // Un matricule présent mais différent contredit un simple rapprochement par nom.
-        if (!string.IsNullOrWhiteSpace(party.Nif))
+        // Un matricule qui se canonise clairement vers une AUTRE carte contredit un rapprochement
+        // par nom : pas d'ambiguïté possible, c'est une autre entité fiscale.
+        // En revanche, un matricule illisible/mal reconnu par l'OCR (qui ne se canonise pas) ne
+        // doit JAMAIS, à lui seul, écarter un nom fortement similaire — sinon un OCR bruité ferait
+        // passer la propre société du client pour un fournisseur externe (régression de sécurité :
+        // la société deviendrait "son propre fournisseur" au lieu d'être reconnue et échangée).
+        if (NIF.TryCanonicalize(company.Nif.Value, out _) && NIF.TryCanonicalize(party.Nif, out _))
             return false;
 
         return !string.IsNullOrWhiteSpace(party.Name)
@@ -360,6 +369,19 @@ public sealed class ImportPurchaseReceiptFromDocumentHandler
 
             if (i >= MaxLinesToMatch)
             {
+                // Lignes au-delà de la borne de rapprochement : non rapprochées à un produit, mais
+                // toujours comptées dans les totaux attendus — sinon la comparaison avec le total
+                // HT du document (AddTotalsWarnings) déclenche un TotalHtMismatch artificiel dès
+                // qu'un document dépasse MaxLinesToMatch lignes.
+                var skippedDiscount = line.DiscountPercent is >= 0m and <= 100m ? line.DiscountPercent.Value : 0m;
+                var skippedQuantity = line.Quantity > 0m ? line.Quantity : 0m;
+                var skippedLineHt = TunisianValidationRules.RoundToMillimes(
+                    line.UnitPriceHt * skippedQuantity * (1m - skippedDiscount / 100m));
+                var skippedVatRate = InvoiceImportParsing.ClampVatRate(line.VatRatePercent);
+                var skippedLineVat = TunisianValidationRules.RoundToMillimes(skippedLineHt * skippedVatRate / 100m);
+                subTotal += skippedLineHt;
+                vat += skippedLineVat;
+
                 result.Add(new PurchaseReceiptImportLineDto(
                     i, line.Reference, line.Designation, line.Unit, line.Quantity, line.UnitPriceHt,
                     line.DiscountPercent, line.VatRatePercent, line.LineTotalHt,
@@ -410,10 +432,17 @@ public sealed class ImportPurchaseReceiptFromDocumentHandler
 
             if (!TunisianValidationRules.IsValidVatRate(line.VatRatePercent))
             {
+                // NB : on ne peut pas distinguer ici un taux « vraiment absent sur le document » d'un
+                // taux lu à 19 % — les deux prennent la même valeur par défaut en amont de l'extraction
+                // (ExtractedLineDto.VatRatePercent n'est pas nullable). Mais ce cas précis (19 %) passe
+                // IsValidVatRate et ne déclenche jamais cet avertissement : on sait donc qu'une valeur
+                // concrète — juste non tunisienne — a bien été lue (ex. 20 %), pas qu'elle est absente.
+                var nearestValidRate = InvoiceImportParsing.ClampVatRate(line.VatRatePercent);
                 warnings.Add(new PurchaseReceiptImportWarningDto(
                     PurchaseReceiptImportWarningCodes.VatRateDefaulted,
                     PurchaseReceiptImportWarningSeverities.Info,
-                    "Le taux de TVA de cette ligne n'est pas un taux tunisien valide ; 19 % a été retenu par défaut.",
+                    $"Le taux de TVA lu pour cette ligne ({line.VatRatePercent} %) n'est pas un taux tunisien valide ; " +
+                    $"le taux valide le plus proche ({nearestValidRate} %) a été retenu.",
                     i));
             }
 
@@ -426,6 +455,11 @@ public sealed class ImportPurchaseReceiptFromDocumentHandler
             {
                 var diffAbs = Math.Abs(computedLineHt - extractedLineHt);
                 var diffPct = extractedLineHt == 0m ? 0m : diffAbs / Math.Abs(extractedLineHt);
+                // Écart volontaire par rapport au plan (§ tableau des avertissements), qui décrit un
+                // OR (« plus de 1 % OU plus de 0,010 ») : un AND est utilisé ici pour éviter un flot de
+                // faux positifs sur les petites lignes (où un écart de quelques millimes dépasse
+                // facilement 1 % en relatif) tout en gardant le garde-fou absolu de 0,010 TND pour les
+                // lignes dont l'écart relatif est sous 1 % mais dont le montant est important.
                 if (diffAbs > 0.010m && diffPct > 0.01m)
                 {
                     warnings.Add(new PurchaseReceiptImportWarningDto(

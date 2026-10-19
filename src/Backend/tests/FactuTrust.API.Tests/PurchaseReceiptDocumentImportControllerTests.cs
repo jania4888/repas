@@ -44,6 +44,8 @@ public sealed class PurchaseReceiptDocumentImportControllerTests
     private readonly Mock<IAuditService> _auditService = new();
     private readonly Mock<IDocumentExtractionProvider> _externalExtraction = new();
     private readonly Mock<IHostEnvironment> _environment = new();
+    private readonly Mock<IAiOcrService> _ocr = new();
+    private readonly Mock<IImportAiModelResolutionService> _importModelResolver = new();
 
     private ImportPurchaseReceiptFromDocumentHandler BuildHandler()
     {
@@ -79,8 +81,18 @@ public sealed class PurchaseReceiptDocumentImportControllerTests
     {
         _currentUser.Setup(x => x.IsAccountingFirmDelegatedContext).Returns(false);
         _environment.Setup(x => x.EnvironmentName).Returns(isDevelopment ? "Development" : "Production");
+        _ocr.SetupGet(x => x.IsAvailable).Returns(true);
+        _importModelResolver
+            .Setup(x => x.ResolveAsync(It.IsAny<string?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new DocumentImportModelResolution(
+                new ParsedModelRef(LlmProviderKind.Ollama, "mistral", "ollama/mistral"),
+                DocumentImportModelSource.ServerFallback,
+                IsVisionCapable: false,
+                UsesLegacyVisionAppsettings: false,
+                VisionStrategy: ImportVisionStrategy.None));
         return new PurchaseReceiptDocumentImportController(
-            BuildHandler(), _currentUser.Object, NullLogger<PurchaseReceiptDocumentImportController>.Instance,
+            BuildHandler(), _currentUser.Object, _ocr.Object, _importModelResolver.Object,
+            NullLogger<PurchaseReceiptDocumentImportController>.Instance,
             _environment.Object, _externalExtraction.Object);
     }
 

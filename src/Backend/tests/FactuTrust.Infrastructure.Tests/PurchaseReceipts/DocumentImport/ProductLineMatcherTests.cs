@@ -167,6 +167,9 @@ public sealed class ProductLineMatcherTests
 
         Assert.Equal("none", result.MatchMethod);
         Assert.True(result.InactiveOrTemplate);
+        // Code review item 12 : un pré-remplissage doit tout de même être proposé, pour permettre
+        // une création rapide de remplacement plutôt que de forcer une saisie manuelle complète.
+        Assert.NotNull(result.Prefill);
     }
 
     [Fact]
@@ -179,6 +182,32 @@ public sealed class ProductLineMatcherTests
 
         Assert.Equal("none", result.MatchMethod);
         Assert.True(result.InactiveOrTemplate);
+        Assert.NotNull(result.Prefill);
+    }
+
+    [Fact]
+    public async Task Code_lookup_uses_the_same_normalization_as_the_quick_create_prefill()
+    {
+        // Code review item 5 : un produit créé rapidement lors d'un import précédent est stocké
+        // avec un code "nettoyé" (espaces supprimés, majuscules) — voir BuildPrefillAsync. Le
+        // document réimporté porte souvent la référence brute, avec un espace et une casse
+        // différente ("abc 123"). L'étape 1 (recherche par code) doit utiliser la même
+        // normalisation que le pré-remplissage pour retrouver ce produit.
+        var product = NewProduct("ABC123", "Produit Quick-Create");
+        var products = new Mock<IProductRepository>();
+        products.Setup(x => x.GetByCodeAsync("ABC123", It.IsAny<CancellationToken>())).ReturnsAsync(product);
+        products.Setup(x => x.GetByCodeAsync(It.Is<string>(c => c != "ABC123"), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Product?)null);
+        products.Setup(x => x.GetByBarcodeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync((Product?)null);
+        var mediator = new Mock<IMediator>();
+        mediator.Setup(x => x.Send(It.IsAny<GetProductsQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success(new PagedResult<ProductListDto> { Items = Array.Empty<ProductListDto>() }));
+        var matcher = new ProductLineMatcher(products.Object, mediator.Object);
+
+        var result = await matcher.MatchAsync(NewLine("Produit Quick-Create", reference: "abc 123"), null, CancellationToken.None);
+
+        Assert.Equal("code", result.MatchMethod);
+        Assert.Equal(product.Id, result.ProductId);
     }
 
     [Theory]

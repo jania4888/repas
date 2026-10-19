@@ -45,18 +45,23 @@ public sealed class ProductLineMatcher
         ExtractedLineDto line, Guid? preferredSupplierId, CancellationToken cancellationToken)
     {
         var reference = line.Reference?.Trim();
+        // Même normalisation (espaces supprimés, majuscules) qu'à la création rapide d'un produit
+        // depuis cet import (voir BuildPrefillAsync) : sinon un produit créé par « Créer rapidement »
+        // avec un code nettoyé ne se rapprocherait jamais sur le prochain import du même document,
+        // faute de correspondance exacte avec la référence brute (espace, casse).
+        var normalizedCode = NormalizeCode(reference);
 
-        if (!string.IsNullOrEmpty(reference))
+        if (!string.IsNullOrEmpty(normalizedCode))
         {
-            var byCode = await _products.GetByCodeAsync(reference, cancellationToken);
+            var byCode = await _products.GetByCodeAsync(normalizedCode, cancellationToken);
             if (byCode is not null)
-                return Resolve("code", byCode);
+                return await ResolveAsync("code", byCode, line, reference, preferredSupplierId, cancellationToken);
 
-            if (reference.Length is 8 or 12 or 13 or 14 && reference.All(char.IsDigit))
+            if (reference!.Length is 8 or 12 or 13 or 14 && reference.All(char.IsDigit))
             {
                 var byBarcode = await _products.GetByBarcodeAsync(reference, cancellationToken);
                 if (byBarcode is not null)
-                    return Resolve("barcode", byBarcode);
+                    return await ResolveAsync("barcode", byBarcode, line, reference, preferredSupplierId, cancellationToken);
             }
         }
 
@@ -77,7 +82,7 @@ public sealed class ProductLineMatcher
                 {
                     var full = await _products.GetByIdAsync(hits[0].Id, cancellationToken);
                     if (full is not null)
-                        return Resolve("name", full);
+                        return await ResolveAsync("name", full, line, reference, preferredSupplierId, cancellationToken);
                 }
 
                 if (hits.Count > 1)
@@ -100,12 +105,33 @@ public sealed class ProductLineMatcher
             false);
     }
 
-    private static ProductLineMatch Resolve(string matchMethod, Product product)
+    /// <summary>
+    /// Même normalisation qu'à la création rapide d'un produit : espaces supprimés, majuscules,
+    /// tronqué à 50 caractères. Utilisée à la fois pour la recherche par code (étape 1) et pour le
+    /// pré-remplissage / la détection de conflit, afin que les deux chemins s'accordent (cf. MatchAsync).
+    /// </summary>
+    private static string? NormalizeCode(string? reference)
+    {
+        if (string.IsNullOrEmpty(reference))
+            return null;
+
+        var cleaned = new string(reference.Where(c => !char.IsWhiteSpace(c)).ToArray()).ToUpperInvariant();
+        return cleaned.Length > 50 ? cleaned[..50] : cleaned;
+    }
+
+    private async Task<ProductLineMatch> ResolveAsync(
+        string matchMethod, Product product, ExtractedLineDto line, string? reference,
+        Guid? preferredSupplierId, CancellationToken cancellationToken)
     {
         if (!product.IsActive || ProductCommercialGuards.EnsureCanAppearOnDocument(product).IsFailure)
         {
+            // Produit inactif ou gabarit de variante : on ne peut pas s'y rattacher, mais on fournit
+            // malgré tout un pré-remplissage pour que l'utilisateur puisse créer rapidement un produit
+            // de remplacement plutôt que de saisir la ligne entièrement à la main.
             return new ProductLineMatch(
-                "none", null, null, null, null, Array.Empty<ProductCandidateDto>(), null, InactiveOrTemplate: true);
+                "none", null, null, null, null, Array.Empty<ProductCandidateDto>(),
+                await BuildPrefillAsync(line, reference, preferredSupplierId, cancellationToken),
+                InactiveOrTemplate: true);
         }
 
         return new ProductLineMatch(
@@ -116,12 +142,11 @@ public sealed class ProductLineMatcher
     private async Task<ProductPrefillDto> BuildPrefillAsync(
         ExtractedLineDto line, string? reference, Guid? preferredSupplierId, CancellationToken cancellationToken)
     {
+        var cleaned = NormalizeCode(reference);
         string? code = null;
         var codeConflict = false;
-        if (!string.IsNullOrEmpty(reference))
+        if (!string.IsNullOrEmpty(cleaned))
         {
-            var cleaned = new string(reference.Where(c => !char.IsWhiteSpace(c)).ToArray()).ToUpperInvariant();
-            cleaned = cleaned.Length > 50 ? cleaned[..50] : cleaned;
             var existing = await _products.GetByCodeAsync(cleaned, cancellationToken);
             if (existing is null)
                 code = cleaned;

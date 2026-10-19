@@ -25,7 +25,8 @@ public sealed record PurchaseReceiptImportProposalDto(
     string? Confidence,                   // "high" | "medium" | "low" (NormalizeConfidence)
     IReadOnlyList<PurchaseReceiptImportWarningDto> Warnings,
     bool CanCreateSupplier,               // HasPermission(Suppliers.Create)
-    bool CanCreateProduct);                // HasPermission(Products.Create)
+    bool CanCreateProduct,                // HasPermission(Products.Create)
+    bool CanAttach);                      // HasPermission(PurchaseReceipts.Update) — §5.4 : conditionne l'auto-attachement du fichier source après création
 
 public sealed record PurchaseReceiptImportHeaderDto(
     DateTime? ReceiptDate,                 // IssueDate du document, sinon null (l'UI met la date du jour)

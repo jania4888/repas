@@ -108,21 +108,23 @@ public sealed class SupplierDocumentMatcher
                 case NameMatchOutcome.Ambiguous:
                     return new SupplierMatchResult(
                         SupplierMatchOutcome.Ambiguous, null, null,
-                        ToCandidates(nameMatch.Candidates), BuildPrefill(party), false);
+                        ToCandidates(nameMatch.Candidates), BuildPrefill(party), IsNifInvalid(party));
 
                 case NameMatchOutcome.RejectedByFiscalId:
                     return new SupplierMatchResult(
                         SupplierMatchOutcome.NameConflictsWithNif, null, null,
-                        ToCandidates(nameMatch.Candidates), BuildPrefill(party), false);
+                        ToCandidates(nameMatch.Candidates), BuildPrefill(party), IsNifInvalid(party));
             }
 
             return new SupplierMatchResult(
                 SupplierMatchOutcome.NotFound, null, null,
                 Array.Empty<SupplierCandidateDto>(), BuildPrefill(party), IsNifInvalid(party));
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
             // Jamais de nom ni de matricule dans les journaux (voir plan, section 9 — confidentialité).
+            // L'annulation (OperationCanceledException) n'est pas un échec de rapprochement : elle doit
+            // se propager normalement plutôt que d'être avalée et renvoyée comme un "NotFound" silencieux.
             _logger.LogWarning(ex, "Rapprochement du fournisseur du document : échec de la requête.");
             return new SupplierMatchResult(
                 SupplierMatchOutcome.NotFound, null, null,
