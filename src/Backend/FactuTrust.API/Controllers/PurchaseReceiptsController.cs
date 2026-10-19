@@ -391,12 +391,15 @@ public class PurchaseReceiptsController : ControllerBase
             return NotFound(ApiResponse<Guid>.Fail("Bon de réception introuvable."));
 
         UploadValidator.ValidationResult validation;
+        string normalizedContentType;
         await using (var headerStream = file.OpenReadStream())
         {
             var (header, bytesRead) = await UploadValidator.ReadHeaderAsync(
                 headerStream, UploadValidator.RequiredHeaderBytes, cancellationToken);
+            var extension = Path.GetExtension(Path.GetFileName(file.FileName ?? string.Empty));
+            normalizedContentType = UploadValidator.NormalizeDeclaredContentType(file.ContentType, extension);
             validation = UploadValidator.Validate(
-                file.FileName, file.ContentType, file.Length, header.AsMemory(0, bytesRead), MaxUploadBytes);
+                file.FileName, normalizedContentType, file.Length, header.AsMemory(0, bytesRead), MaxUploadBytes);
         }
 
         if (!validation.IsValid)
@@ -422,7 +425,7 @@ public class PurchaseReceiptsController : ControllerBase
         var createResult = PurchaseReceiptAttachment.Create(
             receipt,
             safeFileName,
-            file.ContentType,
+            normalizedContentType,
             file.Length,
             relativePath,
             _currentUser.Email ?? _currentUser.UserId?.ToString());

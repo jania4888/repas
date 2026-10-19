@@ -116,14 +116,20 @@ public sealed class PurchaseReceiptDocumentImportController : ControllerBase
             var (header, bytesRead) = await UploadValidator.ReadHeaderAsync(
                 stream, UploadValidator.RequiredHeaderBytes, cancellationToken);
 
+            // Normalise un Content-Type vide/générique/alias (ex. "application/octet-stream",
+            // "image/jpg", une variante de casse) avant la validation : les octets magiques, pas le
+            // Content-Type déclaré, décident en dernier ressort — voir UploadValidator.
+            var extension = Path.GetExtension(Path.GetFileName(file.FileName ?? string.Empty));
+            var normalizedContentType = UploadValidator.NormalizeDeclaredContentType(file.ContentType, extension);
+
             var validation = UploadValidator.Validate(
-                file.FileName, file.ContentType, file.Length, header.AsMemory(0, bytesRead), ImportMaxBytes);
+                file.FileName, normalizedContentType, file.Length, header.AsMemory(0, bytesRead), ImportMaxBytes);
             if (!validation.IsValid)
                 return BadRequest(ApiResponse<object>.Fail(validation.ErrorMessage!));
 
             // Restriction supplémentaire : seuls PDF/JPEG/PNG sont acceptés ici, même si
             // UploadValidator accepterait d'autres formats de son allow-list générale (WEBP, GIF…).
-            if (!AcceptedContentTypes.Contains(file.ContentType?.Trim() ?? string.Empty))
+            if (!AcceptedContentTypes.Contains(normalizedContentType))
                 return BadRequest(ApiResponse<object>.Fail(
                     "Seuls les fichiers PDF, JPEG ou PNG sont acceptés pour cet import."));
 
@@ -133,7 +139,7 @@ public sealed class PurchaseReceiptDocumentImportController : ControllerBase
             buffer.Position = 0;
 
             var command = new ImportPurchaseReceiptFromDocumentCommand(
-                buffer, validation.SafeFileName!, file.ContentType ?? string.Empty);
+                buffer, validation.SafeFileName!, normalizedContentType);
             var result = await _handler.HandleAsync(command, cancellationToken);
 
             return result.IsSuccess

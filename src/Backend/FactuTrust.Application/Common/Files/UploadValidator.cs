@@ -70,6 +70,62 @@ public static class UploadValidator
         ".asp", ".aspx", ".jsp", ".jspx", ".cgi", ".htm", ".html", ".svg",
     };
 
+    /// <summary>
+    /// Browsers/clients commonly send a loose, generic, or legacy Content-Type for perfectly
+    /// legitimate files (empty header, the catch-all <c>application/octet-stream</c>, or the
+    /// pre-RFC JPEG aliases <c>image/jpg</c> / <c>image/pjpeg</c>). Rejecting those outright is a
+    /// functional regression, not a security gain — the extension + magic-byte checks already
+    /// catch a genuinely spoofed file. These are normalized to the extension's expected type by
+    /// <see cref="NormalizeDeclaredContentType"/> before <see cref="Validate"/> runs.
+    /// </summary>
+    private static readonly IReadOnlySet<string> GenericOrLegacyContentTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    {
+        string.Empty, "application/octet-stream", "image/jpg", "image/pjpeg",
+    };
+
+    /// <summary>Canonical Content-Type derived from the extension alone, for <see cref="NormalizeDeclaredContentType"/>.</summary>
+    private static readonly IReadOnlyDictionary<string, string> CanonicalContentTypeByExtension =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            [".pdf"] = "application/pdf",
+            [".jpg"] = "image/jpeg",
+            [".jpeg"] = "image/jpeg",
+            [".png"] = "image/png",
+        };
+
+    /// <summary>
+    /// Normalizes a client-declared Content-Type before it reaches <see cref="Validate"/>:
+    /// <list type="bullet">
+    /// <item>empty, <c>application/octet-stream</c>, or a legacy JPEG alias
+    /// (<c>image/jpg</c> / <c>image/pjpeg</c>) is replaced by the type <paramref name="extension"/>
+    /// is expected to carry (PDF/JPEG/PNG only — other extensions are returned unchanged, since
+    /// <see cref="Validate"/> already rejects their mismatches on its own allow-list);</item>
+    /// <item>a case variant of the extension's allowed type (e.g. <c>APPLICATION/PDF</c>) is
+    /// rewritten to the canonical casing so the exact-match allow-list in <see cref="Validate"/>
+    /// still accepts it.</item>
+    /// </list>
+    /// Magic bytes still decide the final verdict — this only stops a sloppy-but-honest
+    /// Content-Type header from rejecting a legitimate upload.
+    /// </summary>
+    public static string NormalizeDeclaredContentType(string? declaredContentType, string? extension)
+    {
+        var trimmed = (declaredContentType ?? string.Empty).Trim();
+        var ext = extension ?? string.Empty;
+
+        if (GenericOrLegacyContentTypes.Contains(trimmed)
+            && CanonicalContentTypeByExtension.TryGetValue(ext, out var derived))
+            return derived;
+
+        if (AllowedExtensionsToContentTypes.TryGetValue(ext, out var allowed))
+        {
+            var canonicalCasing = Array.Find(allowed, t => string.Equals(t, trimmed, StringComparison.OrdinalIgnoreCase));
+            if (canonicalCasing is not null)
+                return canonicalCasing;
+        }
+
+        return trimmed;
+    }
+
     /// <summary>Extensions with a fixed, reliable magic-byte signature we can verify.</summary>
     private static readonly IReadOnlyDictionary<string, Func<ReadOnlyMemory<byte>, bool>> MagicByteCheckers =
         new Dictionary<string, Func<ReadOnlyMemory<byte>, bool>>(StringComparer.OrdinalIgnoreCase)
@@ -201,9 +257,14 @@ public static class UploadValidator
     }
 
     /// <summary>
-    /// Rejects names with an intermediate "extension-shaped" segment that is itself allow-listed or
-    /// known-dangerous, e.g. <c>invoice.pdf.exe</c> or <c>report.csv.php</c> — the attacker relies on
-    /// some consumer looking only at the LAST extension while a web server executes the SECOND-to-last.
+    /// Rejects names with an intermediate "extension-shaped" segment that is itself known-dangerous,
+    /// e.g. <c>invoice.exe.pdf</c> or <c>report.php.csv</c> — the attacker relies on some consumer
+    /// looking only at the LAST extension while a web server executes an earlier one.
+    ///
+    /// Only <see cref="KnownDangerousExtensions"/> trigger this: an intermediate segment that is
+    /// merely allow-listed (e.g. <c>scan.pdf.pdf</c>, a common artifact of "Save As" re-appending
+    /// the extension) is harmless and must still be accepted — none of the allow-listed extensions
+    /// are ever treated as executable by this application.
     /// </summary>
     private static string? CheckForDoubleExtension(string safeName)
     {
@@ -213,7 +274,7 @@ public static class UploadValidator
         for (var i = 1; i < parts.Length - 1; i++)
         {
             var candidate = "." + parts[i];
-            if (AllowedExtensionsToContentTypes.ContainsKey(candidate) || KnownDangerousExtensions.Contains(candidate))
+            if (KnownDangerousExtensions.Contains(candidate))
                 return "Nom de fichier avec double extension non autorisé.";
         }
 

@@ -328,12 +328,12 @@
     "reason": "Littéraux de liaison passés en champs/méthodes $localize (lot 7) ; méthode = un message à placeholders qui rend le même texte FR ; écarts antérieurs (ICU, backendLabel) déjà relus Champ *Display / *Label renvoyé par l’API (libellé français) affiché via | backendLabel : valeur inchangée en français."
   },
   "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts#PurchaseReceiptFormComponent": {
-    "sha": "9f9ea229c40f93fab14fd46816a6baf6431ab1f5a39216ca4c9868dcd7241067",
-    "reason": "Ternaire de libellés « {{ c ? 'A' : 'B' }} » remplacé par un ICU select {!!(c), select, true {A} other {B}} : même branche affichée (vérité JS), texte traduisible. Ajout du pipe backendLabel : identité en français. Refonte mise en page : bloc totaux déplacé de la colonne de droite (aside) vers une carte .ft-totals sous le tableau Articles ; adoption de la charte ft-field/ft-form-grid (wrappers .form-group→.ft-field, grilles .form-grid-*→.ft-form-grid) ; montants <span>→<strong> et aria-live ajouté. Aucun texte FR ni identifiant i18n modifié."
+    "sha": "74033796c518755daf3d6cb64888221d832e912edd76f964230481eca38c6307",
+    "reason": "Import de bon de réception depuis un document (PDF/image) : bannière de revue reliée à blockingReasons/selectReason (points « à faire » = vrais boutons qui déplacent le focus), carte fournisseur importé, id dynamique sur les actions de ligne importée, résumé de blocage #import-blocking-summary relié aux boutons d'enregistrement par aria-describedby. Aucun texte FR existant modifié ; écarts antérieurs déjà relus conservés."
   },
   "src/app/features/purchase-receipts/pages/purchase-receipt-list/purchase-receipt-list.component.ts#PurchaseReceiptListComponent": {
-    "sha": "40d7eed5fffdc6d4be106b6ebb1348045c8944824f0342a62aa6e141aa88d324",
-    "reason": "Filtres de dates regroupés (.ft-filters__field) : même ordre et mêmes textes, le libellé ne se sépare plus de son champ au retour à la ligne (libellés arabes plus longs)."
+    "sha": "3debb553b5669499454ecfc55af94957d3c754042be7ef5776a65f02dae496e6",
+    "reason": "Import de bon de réception depuis un document : bouton d'ouverture de app-purchase-receipt-import-dialog ajouté, qui émet (imported) et (visibleChange). Écart antérieur sur les filtres de dates déjà relu conservé."
   },
   "src/app/features/quotes/quote-detail/quote-detail.component.ts#QuoteDetailComponent": {
     "sha": "5b4e238e99f7a97be1e5b6a3d8a7b459e2b11c97c1ef844c124365422cd464d5",
@@ -614,5 +614,13 @@
   "src/app/features/stock/stock-list/stock-list.component.html": {
     "sha": "c226174004f3dc2dd604aa5ab8397fff78d257f4a376e5221d6b0df739f97770",
     "reason": "Colonne « Coût unitaire » : tri bascule sur unitCost (coût affiché selon la méthode) au lieu d'averageCost (cache CMUP), et ajout d'une icône d'infobulle quand des lignes FIFO/LIFO sont presentes. Aucun texte FR ni identifiant i18n modifié."
+  },
+  "src/app/shared/components/button/button.component.ts#ButtonComponent": {
+    "sha": "b45fe3c3fac42a6a792082fe82ddb51957c22407946d176a2b2e32ef635a6bb0",
+    "reason": "Ajout de l'entrée ariaDescribedBy (optionnelle) et de la liaison [attr.aria-describedby] sur les deux variantes (lien routerLink et bouton), pour relier le résumé des blocages d'import du bon de réception aux boutons d'enregistrement. Aucun texte FR affecté."
+  },
+  "src/app/shared/components/quick-create-product-dialog/quick-create-product-dialog.component.ts#QuickCreateProductDialogComponent": {
+    "sha": "d113ebe301d4f72260722dbad107bdd14af471c161534ebcc43a08bbfabcb3da",
+    "reason": "Pré-remplissage depuis l'import de bon de réception (indice de prix d'achat lu sur le document, @if (purchasePrice() !== null)) ; aucun texte FR modifié. Écart antérieur non lié p-toggleswitch/p-inputSwitch (migration PrimeNG déjà en place dans l'arbre de travail, hors périmètre de cette fonctionnalité) conservé tel quel."
   }
 }
