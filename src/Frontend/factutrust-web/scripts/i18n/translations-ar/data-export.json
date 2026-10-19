@@ -23,6 +23,7 @@
   "dataExport.dataset.quotes": "عروض الأسعار",
   "dataExport.dataset.deliveryNotes": "سندات التسليم",
   "dataExport.dataset.purchaseOrders": "أوامر الشراء",
+  "dataExport.dataset.purchaseReceipts": "وصولات الاستلام",
   "dataExport.dataset.stockItems": "المخزون",
   "dataExport.dataset.stockMovements": "حركات المخزون",
   "settings.settings.ts.mes.donnees": "بياناتي",

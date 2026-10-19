@@ -137,6 +137,36 @@ public static class BusinessExportSheets
             Qty(r.ReceivedQuantity), Qty(r.InvoicedQuantity), Text(r.Unit), Money(r.UnitPrice), Money(r.SubTotal),
             Money(r.VatAmount), Money(r.Total), Text(r.Id))));
 
+    public static ExcelSheetModel PurchaseReceipts(IReadOnlyList<PurchaseReceiptExportRow> rows) =>
+        Sheet("Bons de réception", new[]
+        {
+            Col("Numéro"), Col("Date", ExcelColumnFormat.Date), Col("Statut"), Col("Fournisseur"),
+            Col("Bon de commande"), Col("Entrepôt"), Col("Réf. fournisseur"), Col("N° BL fournisseur"),
+            Col("Transporteur"), Col("Nb lignes", ExcelColumnFormat.Quantity), Col("Total HT", ExcelColumnFormat.Money),
+            Col("TVA", ExcelColumnFormat.Money), Col("Total TTC", ExcelColumnFormat.Money),
+            Col("Validé le", ExcelColumnFormat.DateTime), Col("Annulé le", ExcelColumnFormat.DateTime),
+            Col("Motif d'annulation"), Col("Notes"), Col("Identifiant")
+        }, rows.Select(r => Line(
+            Text(r.Number), Date(r.ReceiptDate), Text(Label(() => r.Status.ToDisplayString())), Text(r.SupplierName),
+            Text(r.PurchaseOrderNumber), Text(r.WarehouseName), Text(r.SupplierReference), Text(r.DeliveryNoteNumber),
+            Text(r.TransporterName), Qty(r.LineCount), Money(r.SubTotal), Money(r.TotalVat), Money(r.TotalAmount),
+            Date(r.ValidatedAt), Date(r.CancelledAt), Text(r.CancellationReason), Text(r.Notes), Text(r.Id))));
+
+    public static ExcelSheetModel PurchaseReceiptLines(IReadOnlyList<PurchaseReceiptLineExportRow> rows) =>
+        Sheet("Lignes BR", new[]
+        {
+            Col("Numéro"), Col("N° ligne", ExcelColumnFormat.Quantity), Col("Code"), Col("Désignation"), Col("Unité"),
+            Col("Qté commandée", ExcelColumnFormat.Quantity), Col("Qté reçue", ExcelColumnFormat.Quantity),
+            Col("Qté facturée", ExcelColumnFormat.Quantity), Col("Reste à facturer", ExcelColumnFormat.Quantity),
+            Col("PU HT", ExcelColumnFormat.Money), Col("Remise %", ExcelColumnFormat.Quantity), Col("TVA"),
+            Col("Total HT", ExcelColumnFormat.Money), Col("Montant TVA", ExcelColumnFormat.Money),
+            Col("Total TTC", ExcelColumnFormat.Money), Col("Identifiant")
+        }, rows.Select(r => Line(
+            Text(r.DocumentNumber), Qty(r.LineNumber), Text(r.ProductCode), Text(r.ProductName), Text(r.Unit),
+            Qty(r.OrderedQuantity), Qty(r.ReceivedQuantity), Qty(r.InvoicedQuantity),
+            Qty(Math.Max(0m, r.ReceivedQuantity - r.InvoicedQuantity)), Money(r.UnitPrice), Qty(r.DiscountPercent),
+            Text(r.VatRate.ToShortString()), Money(r.SubTotal), Money(r.VatAmount), Money(r.Total), Text(r.Id))));
+
     public static ExcelSheetModel Warehouses(IReadOnlyList<WarehouseExportRow> rows) =>
         Sheet("Entrepots", new[]
         {

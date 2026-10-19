@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FactuTrust.Infrastructure.Repositories;
 
-public sealed class PurchaseReceiptRepository : IPurchaseReceiptRepository
+public sealed partial class PurchaseReceiptRepository : IPurchaseReceiptRepository
 {
     private readonly ITenantDbContextFactory _contextFactory;
 

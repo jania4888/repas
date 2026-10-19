@@ -18,6 +18,7 @@ export const DATA_EXPORT_DATASETS: readonly DataExportDatasetOption[] = [
   { key: 'quotes', permission: PERMISSIONS.quotes.read, label: $localize`:@@dataExport.dataset.quotes:Devis` },
   { key: 'delivery-notes', permission: PERMISSIONS.deliveryNotes.read, label: $localize`:@@dataExport.dataset.deliveryNotes:Bons de livraison` },
   { key: 'purchase-orders', permission: PERMISSIONS.purchaseOrders.read, label: $localize`:@@dataExport.dataset.purchaseOrders:Bons de commande` },
+  { key: 'purchase-receipts', permission: PERMISSIONS.purchaseReceipts.read, label: $localize`:@@dataExport.dataset.purchaseReceipts:Bons de réception` },
   { key: 'stock-items', permission: PERMISSIONS.stock.read, label: $localize`:@@dataExport.dataset.stockItems:Stock` },
   { key: 'stock-movements', permission: PERMISSIONS.stock.read, label: $localize`:@@dataExport.dataset.stockMovements:Mouvements de stock` }
 ];

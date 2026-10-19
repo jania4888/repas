@@ -150,6 +150,20 @@ public class DataExportsController : ControllerBase
         Send(BusinessDataset.PurchaseOrders, Criteria(
             search: search, fromDate: fromDate, toDate: toDate, supplierId: supplierId, purchaseOrderStatus: status), cancellationToken);
 
+    [HttpGet("purchase-receipts")]
+    [Authorize(Policy = PermissionPolicies.PurchaseReceiptsRead)]
+    public Task<IActionResult> ExportPurchaseReceipts(
+        [FromQuery] string? search,
+        [FromQuery] PurchaseReceiptStatus? status,
+        [FromQuery] Guid? supplierId,
+        [FromQuery] Guid? purchaseOrderId,
+        [FromQuery] DateTime? fromDate,
+        [FromQuery] DateTime? toDate,
+        CancellationToken cancellationToken) =>
+        Send(BusinessDataset.PurchaseReceipts, Criteria(
+            search: search, fromDate: fromDate, toDate: toDate, supplierId: supplierId,
+            purchaseOrderId: purchaseOrderId, purchaseReceiptStatus: status), cancellationToken);
+
     [HttpGet("stock-items")]
     [Authorize(Policy = PermissionPolicies.StockRead)]
     public Task<IActionResult> ExportStockItems(
@@ -264,7 +278,9 @@ public class DataExportsController : ControllerBase
         SupplierInvoiceStatus? supplierInvoiceStatus = null,
         QuoteStatus? quoteStatus = null,
         DeliveryNoteStatus? deliveryNoteStatus = null,
-        PurchaseOrderStatus? purchaseOrderStatus = null) =>
+        PurchaseOrderStatus? purchaseOrderStatus = null,
+        Guid? purchaseOrderId = null,
+        PurchaseReceiptStatus? purchaseReceiptStatus = null) =>
         new()
         {
             Search = search,
@@ -292,6 +308,8 @@ public class DataExportsController : ControllerBase
             SupplierInvoiceStatus = supplierInvoiceStatus,
             QuoteStatus = quoteStatus,
             DeliveryNoteStatus = deliveryNoteStatus,
-            PurchaseOrderStatus = purchaseOrderStatus
+            PurchaseOrderStatus = purchaseOrderStatus,
+            PurchaseOrderId = purchaseOrderId,
+            PurchaseReceiptStatus = purchaseReceiptStatus
         };
 }

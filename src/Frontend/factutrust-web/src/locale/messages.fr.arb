@@ -2368,6 +2368,13 @@
     ],
     "x-wave": "v1"
   },
+  "dataExport.dataset.purchaseReceipts": "Bons de réception",
+  "@dataExport.dataset.purchaseReceipts": {
+    "x-files": [
+      "src/app/core/data-export/data-export.catalog.ts"
+    ],
+    "x-wave": "v1"
+  },
   "dataExport.dataset.stockItems": "Stock",
   "@dataExport.dataset.stockItems": {
     "x-files": [

@@ -1,4 +1,5 @@
 using FactuTrust.Application.DTOs;
+using FactuTrust.Application.Features.DataExports;
 using FactuTrust.Application.Features.Reports;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
@@ -29,6 +30,21 @@ public interface IPurchaseReceiptRepository : IRepository<PurchaseReceipt>
         Guid? purchaseOrderId,
         DateTime? fromDate,
         DateTime? toDate,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Export Excel : mêmes filtres que <see cref="SearchAsync"/> / <see cref="GetSummaryAsync"/>.
+    /// Compte d'abord documents et lignes ; au-delà des plafonds, renvoie un résultat bloqué sans charger les lignes.
+    /// </summary>
+    Task<HeaderLinesExportData<PurchaseReceiptExportRow, PurchaseReceiptLineExportRow>> ListForExportAsync(
+        string? searchTerm,
+        PurchaseReceiptStatus? status,
+        Guid? supplierId,
+        Guid? purchaseOrderId,
+        DateTime? fromDate,
+        DateTime? toDate,
+        int documentMax,
+        int lineMax,
         CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<PurchaseReceipt>> GetByPurchaseOrderIdAsync(

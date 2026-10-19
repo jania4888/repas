@@ -235,6 +235,43 @@ public sealed record PurchaseOrderLineExportRow(
     decimal Total,
     Guid Id);
 
+public sealed record PurchaseReceiptExportRow(
+    Guid Id,
+    string Number,
+    DateTime ReceiptDate,
+    PurchaseReceiptStatus Status,
+    string SupplierName,
+    string? PurchaseOrderNumber,
+    string WarehouseName,
+    string? SupplierReference,
+    string? DeliveryNoteNumber,
+    string? TransporterName,
+    int LineCount,
+    decimal SubTotal,
+    decimal TotalVat,
+    decimal TotalAmount,
+    DateTime? ValidatedAt,
+    DateTime? CancelledAt,
+    string? CancellationReason,
+    string? Notes);
+
+public sealed record PurchaseReceiptLineExportRow(
+    string DocumentNumber,
+    int LineNumber,
+    string ProductCode,
+    string ProductName,
+    string? Unit,
+    decimal OrderedQuantity,
+    decimal ReceivedQuantity,
+    decimal InvoicedQuantity,
+    decimal UnitPrice,
+    decimal? DiscountPercent,
+    VatRate VatRate,
+    decimal SubTotal,
+    decimal VatAmount,
+    decimal Total,
+    Guid Id);
+
 public sealed record WarehouseExportRow(
     Guid Id,
     string Code,
