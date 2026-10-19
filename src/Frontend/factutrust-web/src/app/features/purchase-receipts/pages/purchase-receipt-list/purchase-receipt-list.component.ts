@@ -77,7 +77,8 @@ interface StatusOption {
     <app-purchase-receipt-import-dialog
       [visible]="importDialogVisible()"
       (visibleChange)="importDialogVisible.set($event)"
-      (imported)="onImported($event)">
+      (imported)="onImported($event)"
+      (manualEntry)="onImportManualEntry()">
     </app-purchase-receipt-import-dialog>
 
     <div class="ft-filters">
@@ -354,6 +355,12 @@ export class PurchaseReceiptListComponent implements OnInit, OnDestroy {
 
   onImported(payload: PurchaseReceiptImportPayload): void {
     this.importPrefillStore.set(payload);
+    this.importDialogVisible.set(false);
+    this.router.navigate(['/purchase-receipts/new']);
+  }
+
+  /** Repli « Saisir manuellement » de l'état d'erreur du dialogue d'import (plan §1033). */
+  onImportManualEntry(): void {
     this.importDialogVisible.set(false);
     this.router.navigate(['/purchase-receipts/new']);
   }

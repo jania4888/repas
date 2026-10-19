@@ -44,7 +44,7 @@ export interface ImportBlockingReason {
       @if (sourceFileName) {
         <div class="pirb-srcdoc">
           <i class="pi pi-paperclip" aria-hidden="true"></i>
-          <b class="pirb-srcdoc__name">{{ sourceFileName }}</b>
+          <b class="pirb-srcdoc__name" dir="ltr">{{ sourceFileName }}</b>
           @if (engineLabel) {
             <span class="pirb-srcdoc__engine">{{ engineLabel }}</span>
           }
