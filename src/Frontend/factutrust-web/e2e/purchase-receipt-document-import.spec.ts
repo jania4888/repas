@@ -120,12 +120,22 @@ function proposal(opts: ProposalOptions = {}) {
   };
 }
 
+const SUPPLIERS = [{
+  id: 'sup-1', name: 'Fournisseur Alpha', type: 'Business', typeDisplay: 'Entreprise', nif: '1234567A',
+  email: null, phone: null, city: 'Tunis', governorate: 'Tunis', contactPerson: null,
+  paymentTermDays: 30, isActive: true, totalOrders: 0
+}];
+
 async function installMocks(page: Page, locale: 'fr' | 'ar' = 'fr'): Promise<void> {
   await installErpSession(page, { locale });
   await page.route('**/api/purchasereceipts/import-document/capabilities**', route => json(route, CAPABILITIES));
   await page.route(/\/api\/products\/(p-chair|p-table|p-shelf)$/, route => {
     const id = route.request().url().split('/').pop()!;
     json(route, ok(PRODUCTS[id as keyof typeof PRODUCTS]));
+  });
+  await page.route('**/api/suppliers**', route => {
+    if (route.request().method() !== 'GET') return route.fallback();
+    json(route, ok({ items: SUPPLIERS, page: 1, pageSize: 200, totalCount: 1, totalPages: 1, hasNextPage: false, hasPreviousPage: false }));
   });
 }
 
@@ -240,7 +250,7 @@ test('fournisseur et produit à créer depuis le document importé', async ({ pa
   await uploadAndWaitForForm(page);
 
   // Carte fournisseur : création rapide, pré-remplie, gouvernorat manquant à compléter.
-  await page.getByRole('button', { name: 'Créer un fournisseur' }).click();
+  await page.getByRole('button', { name: 'Créer ce fournisseur' }).click();
   const supplierDialog = page.getByRole('dialog', { name: 'Créer un fournisseur' });
   await expect(supplierDialog.locator('#qcsd-name')).toHaveValue('Nouveau Fournisseur SARL');
   await supplierDialog.locator('#qcsd-governorate').click();
